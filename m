@@ -1,451 +1,364 @@
-Return-Path: <linux-kernel+bounces-812021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6947EB531CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:13:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0C5B531D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:14:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A54A586EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45731480D44
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:14:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFECA31E0E7;
-	Thu, 11 Sep 2025 12:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cCnTjI2D"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C182522B4;
-	Thu, 11 Sep 2025 12:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E0A2522B4;
+	Thu, 11 Sep 2025 12:13:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E342EF66D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757592813; cv=none; b=UBKWjuYIbVPqrjfQ8HKiNJzxR54hcWfWt+37rKRwLk3LZMtefF7iW2W/qg9pC5LaVDyTnnT4kEoXCg9Qx3ZFy9XFyZnGdziBMeguQRLg8V/itYVWsULkTNXsDWWrWHBM3eP2H35d6VdiE0V4CB+LQtWNHZ7bfB68Hqr2OqwmdYU=
+	t=1757592837; cv=none; b=WYSkqJ2sGHHriIJ8RtRfNJkNY51bxnj0LpzjGmFKSCxcJvPNEIRpJu8daG0tnU39oRHTJuy4jA3G/zLRvglDOYcokd1eNWe6a9mFzL8smJ35iPQ0GRn4lc+k5OxGGt/kTcuFOSxLMvCZdE2X9bnrdcCe6z6Ia4cZsGAe04w7XI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757592813; c=relaxed/simple;
-	bh=2uYswM+1jOQM5cAWKOX/XlNNzu/lE3yQ81nRx9mx7nM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sRUXemHrv1PVv6Zz75sMiuJpFfYyWUgbEn2xulNqesHUU5BiOuOpp3X27rkZpe7rbCrkEQ6hFHp8b3AU2F3sU1j45WV1sIsE30mfTlRexTCupgbITOzUYcg3sQbqKaBp4MDyiMMOume6niT9EcoQ7FvnvyB1ml6GAKw4NRj0UhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cCnTjI2D; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32dd1238843so582489a91.3;
-        Thu, 11 Sep 2025 05:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757592809; x=1758197609; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eXZ0xggp2FT+wrAsK84tQSrwXGl2KswIB/w1VgAAZAA=;
-        b=cCnTjI2Dlei8FDSd2uC46d67W2xJ743PfuVFnttlhabv4vBEbMMIpBKzzYS1nohvrV
-         oscJIWLVvbB+vmUJXy7vrd27oDK7xmWXmOrwe1EaDk/8LQR90TgRxNfiEYyfQC2NKmbs
-         sUZ/1YfNRh+8oPhEp+phIh1aziL0RLACEOV/Wb+bByaoW9U1eX9RTV2Bgc8ni01ImyEV
-         sHxXwN5g5GPn9xm1WZrx5uYGOMzP8aZ63ut4+hDmu9BRaRk1MEKxCRlyKJ01qmNG2JQo
-         3M8KPvdlcx3rWZWky988/lbTns8H8G6U5G5llOJxxQDC/xPcQ53OMYAWb/m3pDY5T+ba
-         52Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757592809; x=1758197609;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eXZ0xggp2FT+wrAsK84tQSrwXGl2KswIB/w1VgAAZAA=;
-        b=hiLL1hsk+0h3t5p/dUgQnHoQSxdFIrz/ktG4oeXJFMpB8Rh8lbBwfeqqtXqJNthwvq
-         sVTEpW2KTokzfkl0wqkH0rQQC4AmvIudw7LP9Vh5aG3nU8CzbtBPJ+/1+k94TMCv7Gon
-         Z6LmpRhjGiXE0w9uhSeRyFN5Ga8GJoCy0aKUHWARtWyynOxQh+iqUT8sKZ9OTygkQ4ck
-         O2glAf+dt7hUw3WVtMTGkVAqM0zXWChTNhLG39nQr06nI9opsCNzCohwPgpQOLcpG8na
-         fZXfo4evUjAGp8lzEMowoBtBLL6+KTOyBz0g6lPetPknWgPC95kHIDt7ET5Ppy666ijY
-         GTzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCChCaiqPRGpvLYchdRVOc7szPLf4OqaaxdCK1YjUSOKcd6uw+3Qtl6ZHI+ZsHGOYkIrVKy0/0Ohfw4Ws=@vger.kernel.org, AJvYcCWZsbWh71rvG5qULWOnQ8HYNmq1jdro0LRJbZqajX9igZ7uP0os7oojvqQBisNKLfkQnKbdV0aiFa0zpQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEB/CmFbc8QTMTjbIJiZaWzIQYk3Qpaxhac+xE+dFK4+1F/oSW
-	k8w7CRiEGQjDfrC2wAkVVTP+ToZme+z/SQ6F1AhwPoctTY6pqHhrS9+kQQHj2w==
-X-Gm-Gg: ASbGncvpIiYEUT0GsOdC1OH7JIFJiwhwMe1aarSLrTmpSxPnyPBhUY9HeojBEaCQNnh
-	E4SSECHK+wQc352jpv3XERLPhQJDLxPjscE2NgE39LXPTNkKWiGbeUDhrQaIC1iI6eDUtbsZ6CX
-	xX3bhdI1NMF/N8UFXmhgOM1PGqSvS7o9yYG2jgGwEAm3bgcsm4jUgYvczJCW82aDETvMAMdQLYc
-	CHjN6O0naXMm+ti4bZ6JimU3tvDnMNXTLVmgywVA1Q1gHoowe1ZhiAQGBnt6hODmKU9meYr3LQP
-	5725GH+5Bqp5asMARuxTB4Hq7MA0bt6XDRDiKl9v8VWTNUzkKXSIpCEEh0Li7ONkcY1Jv/kPCtT
-	jNcjY7ffhHk9C2faqcijzQ0r9RA==
-X-Google-Smtp-Source: AGHT+IHI15p/BSRhnfNn15WZGX4hol/fmK9dvgSsWJQzgstI5IPs2mAcKuRKwY7mOpqEm6PL2oPdYg==
-X-Received: by 2002:a17:90b:33cf:b0:32b:9774:d33d with SMTP id 98e67ed59e1d1-32d43f6658cmr24778035a91.20.1757592809145;
-        Thu, 11 Sep 2025 05:13:29 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd9809e5asm2006870a91.3.2025.09.11.05.13.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 05:13:28 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id B5F7C420A6BE; Thu, 11 Sep 2025 19:13:25 +0700 (WIB)
-Date: Thu, 11 Sep 2025 19:13:25 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Christian Brauner <brauner@kernel.org>
-Cc: Simon Schuster <schuster.simon@siemens-energy.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs-brauner tree
-Message-ID: <aMK85cAoXwtta2FR@archie.me>
-References: <20250904113334.18822d43@canb.auug.org.au>
- <20250908120229.7a4e6db9@canb.auug.org.au>
- <20250910104944.3e420e96@canb.auug.org.au>
+	s=arc-20240116; t=1757592837; c=relaxed/simple;
+	bh=q279+ANsPSu/YYtd6f0fJh4tjZ4ld/qzOMuNm8xGXFI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OfSWIf+RSZAfBW+LTG0ZLg9rNugf2HqYb27/vg8xyW/9UI9fB5E/GgRQKY+JZNvLZ1/kLyKgt1WX+zuVDQez6NaYSxBLEgj047XL2vQ0YgyAgnMgtyzIk0vFd+bEB84L0+M+Ty4QLLBMjJLcE/li1/QSiZ2ieS2rYHpa4KxhdvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A590153B;
+	Thu, 11 Sep 2025 05:13:46 -0700 (PDT)
+Received: from [10.163.41.146] (unknown [10.163.41.146])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 600B03F66E;
+	Thu, 11 Sep 2025 05:13:50 -0700 (PDT)
+Message-ID: <f5309d23-0fe0-4f00-bb2c-4ab88018bc2e@arm.com>
+Date: Thu, 11 Sep 2025 17:43:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="MRaT2zXPHw09yZSn"
-Content-Disposition: inline
-In-Reply-To: <20250910104944.3e420e96@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
+To: Kevin Brodsky <kevin.brodsky@arm.com>,
+ linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ Catalin Marinas <catalin.marinas@arm.com>, Kees Cook <kees@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>,
+ Yeoreum Yun <yeoreum.yun@arm.com>
+References: <20250910104454.317067-1-kevin.brodsky@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250910104454.317067-1-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---MRaT2zXPHw09yZSn
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 10:49:44AM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Mon, 8 Sep 2025 12:02:29 +1000 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
-> >
-> > On Thu, 4 Sep 2025 11:33:34 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> > >=20
-> > > After merging the vfs-brauner tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >=20
-> > > In file included from include/rv/ltl_monitor.h:11,
-> > >                  from kernel/trace/rv/monitors/sleep/sleep.c:23:
-> > > include/rv/ltl_monitor.h: In function 'ltl_monitor_init':
-> > > include/rv/ltl_monitor.h:75:51: error: passing argument 1 of 'check_t=
-race_callback_type_task_newtask' from incompatible pointer type [-Wincompat=
-ible-pointer-types]
-> > >    75 |         rv_attach_trace_probe(name, task_newtask, handle_task=
-_newtask);
-> > >       |                                                   ^~~~~~~~~~~=
-~~~~~~~~
-> > >       |                                                   |
-> > >       |                                                   void (*)(vo=
-id *, struct task_struct *, long unsigned int)
-> > > include/rv/instrumentation.h:18:48: note: in definition of macro 'rv_=
-attach_trace_probe'
-> > >    18 |                 check_trace_callback_type_##tp(rv_handler);  =
-                           \
-> > >       |                                                ^~~~~~~~~~
-> > > In file included from kernel/trace/rv/monitors/sleep/sleep.c:3:
-> > > include/linux/tracepoint.h:260:49: note: expected 'void (*)(void *, s=
-truct task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, lon=
-g long unsigned int)'} but argument is of type 'void (*)(void *, struct tas=
-k_struct *, long unsigned int)'
-> > >   260 |         check_trace_callback_type_##name(void (*cb)(data_prot=
-o))        \
-> > >       |                                          ~~~~~~~^~~~~~~~~~~~~=
-~~
-> > > include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECL=
-ARE_TRACE_COMMON'
-> > >   270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(ar=
-gs), PARAMS(data_proto)) \
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECL=
-ARE_TRACE'
-> > >   481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),   =
-           \
-> > >       |         ^~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLAR=
-E_TRACE_EVENT'
-> > >   619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-> > >       |         ^~~~~~~~~~~~~~~~~~~
-> > > include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_E=
-VENT'
-> > >     9 | TRACE_EVENT(task_newtask,
-> > >       | ^~~~~~~~~~~
-> > > In file included from include/asm-generic/bug.h:7,
-> > >                  from arch/x86/include/asm/bug.h:103,
-> > >                  from arch/x86/include/asm/alternative.h:9,
-> > >                  from arch/x86/include/asm/barrier.h:5,
-> > >                  from include/asm-generic/bitops/generic-non-atomic.h=
-:7,
-> > >                  from include/linux/bitops.h:28,
-> > >                  from include/linux/kernel.h:23,
-> > >                  from include/linux/interrupt.h:6,
-> > >                  from include/linux/trace_recursion.h:5,
-> > >                  from include/linux/ftrace.h:10,
-> > >                  from kernel/trace/rv/monitors/sleep/sleep.c:2:
-> > > include/rv/ltl_monitor.h:75:51: error: passing argument 1 of 'registe=
-r_trace_task_newtask' from incompatible pointer type [-Wincompatible-pointe=
-r-types]
-> > >    75 |         rv_attach_trace_probe(name, task_newtask, handle_task=
-_newtask);
-> > >       |                                                   ^~~~~~~~~~~=
-~~~~~~~~
-> > >       |                                                   |
-> > >       |                                                   void (*)(vo=
-id *, struct task_struct *, long unsigned int)
-> > > include/linux/once_lite.h:28:41: note: in definition of macro 'DO_ONC=
-E_LITE_IF'
-> > >    28 |                 bool __ret_do_once =3D !!(condition);        =
-             \
-> > >       |                                         ^~~~~~~~~
-> > > include/rv/instrumentation.h:19:17: note: in expansion of macro 'WARN=
-_ONCE'
-> > >    19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NUL=
-L),                        \
-> > >       |                 ^~~~~~~~~
-> > > include/rv/ltl_monitor.h:75:9: note: in expansion of macro 'rv_attach=
-_trace_probe'
-> > >    75 |         rv_attach_trace_probe(name, task_newtask, handle_task=
-_newtask);
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:241:38: note: expected 'void (*)(void *, s=
-truct task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, lon=
-g long unsigned int)'} but argument is of type 'void (*)(void *, struct tas=
-k_struct *, long unsigned int)'
-> > >   241 |         register_trace_##name(void (*probe)(data_proto), void=
- *data)    \
-> > >       |                               ~~~~~~~^~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECL=
-ARE_TRACE_COMMON'
-> > >   270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(ar=
-gs), PARAMS(data_proto)) \
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECL=
-ARE_TRACE'
-> > >   481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),   =
-           \
-> > >       |         ^~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLAR=
-E_TRACE_EVENT'
-> > >   619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-> > >       |         ^~~~~~~~~~~~~~~~~~~
-> > > include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_E=
-VENT'
-> > >     9 | TRACE_EVENT(task_newtask,
-> > >       | ^~~~~~~~~~~
-> > > include/rv/ltl_monitor.h: In function 'ltl_monitor_destroy':
-> > > include/rv/ltl_monitor.h:92:51: error: passing argument 1 of 'unregis=
-ter_trace_task_newtask' from incompatible pointer type [-Wincompatible-poin=
-ter-types]
-> > >    92 |         rv_detach_trace_probe(name, task_newtask, handle_task=
-_newtask);
-> > >       |                                                   ^~~~~~~~~~~=
-~~~~~~~~
-> > >       |                                                   |
-> > >       |                                                   void (*)(vo=
-id *, struct task_struct *, long unsigned int)
-> > > include/rv/instrumentation.h:28:39: note: in definition of macro 'rv_=
-detach_trace_probe'
-> > >    28 |                 unregister_trace_##tp(rv_handler, NULL);     =
-                           \
-> > >       |                                       ^~~~~~~~~~
-> > > include/linux/tracepoint.h:254:40: note: expected 'void (*)(void *, s=
-truct task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, lon=
-g long unsigned int)'} but argument is of type 'void (*)(void *, struct tas=
-k_struct *, long unsigned int)'
-> > >   254 |         unregister_trace_##name(void (*probe)(data_proto), vo=
-id *data)  \
-> > >       |                                 ~~~~~~~^~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECL=
-ARE_TRACE_COMMON'
-> > >   270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(ar=
-gs), PARAMS(data_proto)) \
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECL=
-ARE_TRACE'
-> > >   481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),   =
-           \
-> > >       |         ^~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLAR=
-E_TRACE_EVENT'
-> > >   619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-> > >       |         ^~~~~~~~~~~~~~~~~~~
-> > > include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_E=
-VENT'
-> > >     9 | TRACE_EVENT(task_newtask,
-> > >       | ^~~~~~~~~~~
-> > > In file included from include/rv/ltl_monitor.h:11,
-> > >                  from kernel/trace/rv/monitors/pagefault/pagefault.c:=
-19:
-> > > include/rv/ltl_monitor.h: In function 'ltl_monitor_init':
-> > > include/rv/ltl_monitor.h:75:51: error: passing argument 1 of 'check_t=
-race_callback_type_task_newtask' from incompatible pointer type [-Wincompat=
-ible-pointer-types]
-> > >    75 |         rv_attach_trace_probe(name, task_newtask, handle_task=
-_newtask);
-> > >       |                                                   ^~~~~~~~~~~=
-~~~~~~~~
-> > >       |                                                   |
-> > >       |                                                   void (*)(vo=
-id *, struct task_struct *, long unsigned int)
-> > > include/rv/instrumentation.h:18:48: note: in definition of macro 'rv_=
-attach_trace_probe'
-> > >    18 |                 check_trace_callback_type_##tp(rv_handler);  =
-                           \
-> > >       |                                                ^~~~~~~~~~
-> > > In file included from kernel/trace/rv/monitors/pagefault/pagefault.c:=
-9:
-> > > include/linux/tracepoint.h:260:49: note: expected 'void (*)(void *, s=
-truct task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, lon=
-g long unsigned int)'} but argument is of type 'void (*)(void *, struct tas=
-k_struct *, long unsigned int)'
-> > >   260 |         check_trace_callback_type_##name(void (*cb)(data_prot=
-o))        \
-> > >       |                                          ~~~~~~~^~~~~~~~~~~~~=
-~~
-> > > include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECL=
-ARE_TRACE_COMMON'
-> > >   270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(ar=
-gs), PARAMS(data_proto)) \
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECL=
-ARE_TRACE'
-> > >   481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),   =
-           \
-> > >       |         ^~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLAR=
-E_TRACE_EVENT'
-> > >   619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-> > >       |         ^~~~~~~~~~~~~~~~~~~
-> > > include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_E=
-VENT'
-> > >     9 | TRACE_EVENT(task_newtask,
-> > >       | ^~~~~~~~~~~
-> > > In file included from include/asm-generic/bug.h:7,
-> > >                  from arch/x86/include/asm/bug.h:103,
-> > >                  from arch/x86/include/asm/alternative.h:9,
-> > >                  from arch/x86/include/asm/barrier.h:5,
-> > >                  from include/asm-generic/bitops/generic-non-atomic.h=
-:7,
-> > >                  from include/linux/bitops.h:28,
-> > >                  from include/linux/kernel.h:23,
-> > >                  from include/linux/interrupt.h:6,
-> > >                  from include/linux/trace_recursion.h:5,
-> > >                  from include/linux/ftrace.h:10,
-> > >                  from kernel/trace/rv/monitors/pagefault/pagefault.c:=
-2:
-> > > include/rv/ltl_monitor.h:75:51: error: passing argument 1 of 'registe=
-r_trace_task_newtask' from incompatible pointer type [-Wincompatible-pointe=
-r-types]
-> > >    75 |         rv_attach_trace_probe(name, task_newtask, handle_task=
-_newtask);
-> > >       |                                                   ^~~~~~~~~~~=
-~~~~~~~~
-> > >       |                                                   |
-> > >       |                                                   void (*)(vo=
-id *, struct task_struct *, long unsigned int)
-> > > include/linux/once_lite.h:28:41: note: in definition of macro 'DO_ONC=
-E_LITE_IF'
-> > >    28 |                 bool __ret_do_once =3D !!(condition);        =
-             \
-> > >       |                                         ^~~~~~~~~
-> > > include/rv/instrumentation.h:19:17: note: in expansion of macro 'WARN=
-_ONCE'
-> > >    19 |                 WARN_ONCE(register_trace_##tp(rv_handler, NUL=
-L),                        \
-> > >       |                 ^~~~~~~~~
-> > > include/rv/ltl_monitor.h:75:9: note: in expansion of macro 'rv_attach=
-_trace_probe'
-> > >    75 |         rv_attach_trace_probe(name, task_newtask, handle_task=
-_newtask);
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:241:38: note: expected 'void (*)(void *, s=
-truct task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, lon=
-g long unsigned int)'} but argument is of type 'void (*)(void *, struct tas=
-k_struct *, long unsigned int)'
-> > >   241 |         register_trace_##name(void (*probe)(data_proto), void=
- *data)    \
-> > >       |                               ~~~~~~~^~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECL=
-ARE_TRACE_COMMON'
-> > >   270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(ar=
-gs), PARAMS(data_proto)) \
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECL=
-ARE_TRACE'
-> > >   481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),   =
-           \
-> > >       |         ^~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLAR=
-E_TRACE_EVENT'
-> > >   619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-> > >       |         ^~~~~~~~~~~~~~~~~~~
-> > > include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_E=
-VENT'
-> > >     9 | TRACE_EVENT(task_newtask,
-> > >       | ^~~~~~~~~~~
-> > > include/rv/ltl_monitor.h: In function 'ltl_monitor_destroy':
-> > > include/rv/ltl_monitor.h:92:51: error: passing argument 1 of 'unregis=
-ter_trace_task_newtask' from incompatible pointer type [-Wincompatible-poin=
-ter-types]
-> > >    92 |         rv_detach_trace_probe(name, task_newtask, handle_task=
-_newtask);
-> > >       |                                                   ^~~~~~~~~~~=
-~~~~~~~~
-> > >       |                                                   |
-> > >       |                                                   void (*)(vo=
-id *, struct task_struct *, long unsigned int)
-> > > include/rv/instrumentation.h:28:39: note: in definition of macro 'rv_=
-detach_trace_probe'
-> > >    28 |                 unregister_trace_##tp(rv_handler, NULL);     =
-                           \
-> > >       |                                       ^~~~~~~~~~
-> > > include/linux/tracepoint.h:254:40: note: expected 'void (*)(void *, s=
-truct task_struct *, u64)' {aka 'void (*)(void *, struct task_struct *, lon=
-g long unsigned int)'} but argument is of type 'void (*)(void *, struct tas=
-k_struct *, long unsigned int)'
-> > >   254 |         unregister_trace_##name(void (*probe)(data_proto), vo=
-id *data)  \
-> > >       |                                 ~~~~~~~^~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:270:9: note: in expansion of macro '__DECL=
-ARE_TRACE_COMMON'
-> > >   270 |         __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(ar=
-gs), PARAMS(data_proto)) \
-> > >       |         ^~~~~~~~~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:481:9: note: in expansion of macro '__DECL=
-ARE_TRACE'
-> > >   481 |         __DECLARE_TRACE(name, PARAMS(proto), PARAMS(args),   =
-           \
-> > >       |         ^~~~~~~~~~~~~~~
-> > > include/linux/tracepoint.h:619:9: note: in expansion of macro 'DECLAR=
-E_TRACE_EVENT'
-> > >   619 |         DECLARE_TRACE_EVENT(name, PARAMS(proto), PARAMS(args))
-> > >       |         ^~~~~~~~~~~~~~~~~~~
-> > > include/trace/events/task.h:9:1: note: in expansion of macro 'TRACE_E=
-VENT'
-> > >     9 | TRACE_EVENT(task_newtask,
-> > >       | ^~~~~~~~~~~
-> > >=20
-> > > Presumably caused by commit
-> > >=20
-> > >   edd3cb05c00a ("copy_process: pass clone_flags as u64 across calltre=
-e")
-> > >=20
-> > > I have used the vfs-brauner tree from next-20250829 for today. =20
-> >=20
-> > I am still seeing this failure.
->=20
-> From today, I have instead just reverted these three commits:
->=20
->   c6ac444ff20c ("nios2: implement architecture-specific portion of sys_cl=
-one3")
->   bbc46b23af5b ("arch: copy_thread: pass clone_flags as u64")
->   edd3cb05c00a ("copy_process: pass clone_flags as u64 across calltree")
+On 10/09/25 4:14 PM, Kevin Brodsky wrote:
+> create_kpti_ng_temp_pgd() is currently defined (as an alias) in
+> mmu.c without matching declaration in a header; instead cpufeature.c
+> makes its own declaration. This is clearly not pretty, and as commit
+> ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
+> function signature") showed, it also makes it very easy for the
+> prototypes to go out of sync.
+> 
+> All this would be much simpler if kpti_install_ng_mappings() and
+> associated functions lived in mmu.c, where they logically belong.
+> This is what this patch does:
+> - Move kpti_install_ng_mappings() and associated functions from
+>   cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
+> - Make create_kpti_ng_temp_pgd() a static function that simply calls
+>   __create_pgd_mapping_locked() instead of aliasing it
+> - Mark all these functions __init
+> - Move __initdata after kpti_ng_temp_alloc (as suggested by
+>   checkpatch)
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+> Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
+> but a separate patch [1] will make use of it to add an
+> assertion.
+> 
+> [1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
+> ---
+> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+> Cc: Ard Biesheuvel <ardb@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Kees Cook <kees@kernel.org>,
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
 
-I can't help but wondering what Linus would have to react when these commits
-made their way to PR to him as-is without any fix...
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
---=20
-An old man doll... just what I always wanted! - Clara
+> ---
+>  arch/arm64/include/asm/mmu.h   |   6 ++
+>  arch/arm64/kernel/cpufeature.c |  97 ------------------------------
+>  arch/arm64/mm/mmu.c            | 106 ++++++++++++++++++++++++++++++---
+>  3 files changed, 103 insertions(+), 106 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+> index 49f1a810df16..624edd6c4964 100644
+> --- a/arch/arm64/include/asm/mmu.h
+> +++ b/arch/arm64/include/asm/mmu.h
+> @@ -104,5 +104,11 @@ static inline bool kaslr_requires_kpti(void)
+>  	return true;
+>  }
+>  
+> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> +void kpti_install_ng_mappings(void);
+> +#else
+> +static inline void kpti_install_ng_mappings(void) {}
+> +#endif
+> +
+>  #endif	/* !__ASSEMBLY__ */
+>  #endif
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index ef269a5a37e1..b99eaad48c14 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1940,103 +1940,6 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
+>  }
+>  #endif
+>  
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> -#define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
+> -
+> -extern
+> -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+> -			     phys_addr_t size, pgprot_t prot,
+> -			     phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
+> -
+> -static phys_addr_t __initdata kpti_ng_temp_alloc;
+> -
+> -static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
+> -{
+> -	kpti_ng_temp_alloc -= PAGE_SIZE;
+> -	return kpti_ng_temp_alloc;
+> -}
+> -
+> -static int __init __kpti_install_ng_mappings(void *__unused)
+> -{
+> -	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
+> -	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+> -	kpti_remap_fn *remap_fn;
+> -
+> -	int cpu = smp_processor_id();
+> -	int levels = CONFIG_PGTABLE_LEVELS;
+> -	int order = order_base_2(levels);
+> -	u64 kpti_ng_temp_pgd_pa = 0;
+> -	pgd_t *kpti_ng_temp_pgd;
+> -	u64 alloc = 0;
+> -
+> -	if (levels == 5 && !pgtable_l5_enabled())
+> -		levels = 4;
+> -	else if (levels == 4 && !pgtable_l4_enabled())
+> -		levels = 3;
+> -
+> -	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
+> -
+> -	if (!cpu) {
+> -		alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
+> -		kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
+> -		kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
+> -
+> -		//
+> -		// Create a minimal page table hierarchy that permits us to map
+> -		// the swapper page tables temporarily as we traverse them.
+> -		//
+> -		// The physical pages are laid out as follows:
+> -		//
+> -		// +--------+-/-------+-/------ +-/------ +-\\\--------+
+> -		// :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
+> -		// +--------+-\-------+-\------ +-\------ +-///--------+
+> -		//      ^
+> -		// The first page is mapped into this hierarchy at a PMD_SHIFT
+> -		// aligned virtual address, so that we can manipulate the PTE
+> -		// level entries while the mapping is active. The first entry
+> -		// covers the PTE[] page itself, the remaining entries are free
+> -		// to be used as a ad-hoc fixmap.
+> -		//
+> -		create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
+> -					KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+> -					kpti_ng_pgd_alloc, 0);
+> -	}
+> -
+> -	cpu_install_idmap();
+> -	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
+> -	cpu_uninstall_idmap();
+> -
+> -	if (!cpu) {
+> -		free_pages(alloc, order);
+> -		arm64_use_ng_mappings = true;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -static void __init kpti_install_ng_mappings(void)
+> -{
+> -	/* Check whether KPTI is going to be used */
+> -	if (!arm64_kernel_unmapped_at_el0())
+> -		return;
+> -
+> -	/*
+> -	 * We don't need to rewrite the page-tables if either we've done
+> -	 * it already or we have KASLR enabled and therefore have not
+> -	 * created any global mappings at all.
+> -	 */
+> -	if (arm64_use_ng_mappings)
+> -		return;
+> -
+> -	stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
+> -}
+> -
+> -#else
+> -static inline void kpti_install_ng_mappings(void)
+> -{
+> -}
+> -#endif	/* CONFIG_UNMAP_KERNEL_AT_EL0 */
+> -
+>  static void cpu_enable_kpti(struct arm64_cpu_capabilities const *cap)
+>  {
+>  	if (__this_cpu_read(this_cpu_vector) == vectors) {
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 183801520740..eff3295393ee 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -27,6 +27,7 @@
+>  #include <linux/kfence.h>
+>  #include <linux/pkeys.h>
+>  #include <linux/mm_inline.h>
+> +#include <linux/stop_machine.h>
+>  
+>  #include <asm/barrier.h>
+>  #include <asm/cputype.h>
+> @@ -466,14 +467,6 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
+>  	mutex_unlock(&fixmap_lock);
+>  }
+>  
+> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> -extern __alias(__create_pgd_mapping_locked)
+> -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+> -			     phys_addr_t size, pgprot_t prot,
+> -			     phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> -			     int flags);
+> -#endif
+> -
+>  static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm,
+>  				       enum pgtable_type pgtable_type)
+>  {
+> @@ -735,7 +728,102 @@ static void __init declare_vma(struct vm_struct *vma,
+>  }
+>  
+>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
+> -static pgprot_t kernel_exec_prot(void)
+> +#define KPTI_NG_TEMP_VA		(-(1UL << PMD_SHIFT))
+> +
+> +static phys_addr_t kpti_ng_temp_alloc __initdata;
+> +
+> +static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
+> +{
+> +	kpti_ng_temp_alloc -= PAGE_SIZE;
+> +	return kpti_ng_temp_alloc;
+> +}
+> +
+> +static void __init create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
+> +					   unsigned long virt, phys_addr_t size,
+> +					   pgprot_t prot,
+> +					   phys_addr_t (*pgtable_alloc)(enum pgtable_type),
+> +					   int flags)
+> +{
+> +	__create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
+> +				    pgtable_alloc, flags);
+> +}
+> +
+> +static int __init __kpti_install_ng_mappings(void *__unused)
+> +{
+> +	typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
+> +	extern kpti_remap_fn idmap_kpti_install_ng_mappings;
+> +	kpti_remap_fn *remap_fn;
+> +
+> +	int cpu = smp_processor_id();
+> +	int levels = CONFIG_PGTABLE_LEVELS;
+> +	int order = order_base_2(levels);
+> +	u64 kpti_ng_temp_pgd_pa = 0;
+> +	pgd_t *kpti_ng_temp_pgd;
+> +	u64 alloc = 0;
+> +
+> +	if (levels == 5 && !pgtable_l5_enabled())
+> +		levels = 4;
+> +	else if (levels == 4 && !pgtable_l4_enabled())
+> +		levels = 3;
+> +
+> +	remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
+> +
+> +	if (!cpu) {
+> +		alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
+> +		kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
+> +		kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
+> +
+> +		//
+> +		// Create a minimal page table hierarchy that permits us to map
+> +		// the swapper page tables temporarily as we traverse them.
+> +		//
+> +		// The physical pages are laid out as follows:
+> +		//
+> +		// +--------+-/-------+-/------ +-/------ +-\\\--------+
+> +		// :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
+> +		// +--------+-\-------+-\------ +-\------ +-///--------+
+> +		//      ^
+> +		// The first page is mapped into this hierarchy at a PMD_SHIFT
+> +		// aligned virtual address, so that we can manipulate the PTE
+> +		// level entries while the mapping is active. The first entry
+> +		// covers the PTE[] page itself, the remaining entries are free
+> +		// to be used as a ad-hoc fixmap.
+> +		//
+> +		create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
+> +					KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
+> +					kpti_ng_pgd_alloc, 0);
+> +	}
+> +
+> +	cpu_install_idmap();
+> +	remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
+> +	cpu_uninstall_idmap();
+> +
+> +	if (!cpu) {
+> +		free_pages(alloc, order);
+> +		arm64_use_ng_mappings = true;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +void __init kpti_install_ng_mappings(void)
+> +{
+> +	/* Check whether KPTI is going to be used */
+> +	if (!arm64_kernel_unmapped_at_el0())
+> +		return;
+> +
+> +	/*
+> +	 * We don't need to rewrite the page-tables if either we've done
+> +	 * it already or we have KASLR enabled and therefore have not
+> +	 * created any global mappings at all.
+> +	 */
+> +	if (arm64_use_ng_mappings)
+> +		return;
+> +
+> +	stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
+> +}
+> +
+> +static pgprot_t __init kernel_exec_prot(void)
+>  {
+>  	return rodata_enabled ? PAGE_KERNEL_ROX : PAGE_KERNEL_EXEC;
+>  }
+> 
+> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
 
---MRaT2zXPHw09yZSn
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMK84QAKCRD2uYlJVVFO
-o/ShAP9xqpaG8v636KcQcr6Ddn21rTqMA0S28OzFjdBF50TJKAD/bxGG3+yRlsvS
-YGjXA2ocI3KkLvKNnwD0uLZNJP9nwwA=
-=1N7L
------END PGP SIGNATURE-----
-
---MRaT2zXPHw09yZSn--
 
