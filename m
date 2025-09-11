@@ -1,110 +1,85 @@
-Return-Path: <linux-kernel+bounces-812784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2066AB53CC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:55:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DF1B53CC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A46A93AB4A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AC2E1CC63D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C2A266B72;
-	Thu, 11 Sep 2025 19:55:15 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DABF2267B89;
+	Thu, 11 Sep 2025 19:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hp4fV75B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E916924A04A;
-	Thu, 11 Sep 2025 19:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0154315F;
+	Thu, 11 Sep 2025 19:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757620515; cv=none; b=AVgUxObabaUdCQTdAsIch1Gw2jD+M04igGyTXH4oGzYqiRsIJRBb384oWonZS66xMnB+nVEp+AiHNvHzTcicYesRjzoASFPHglaXdw4tfLee56F3CVXrzaHKfW9LQkOh15QL1WCgGzVt7aY7bSZtwD+MoPDFapL0sncrNItsUpQ=
+	t=1757620658; cv=none; b=thaMhutmAhioiQONrOo1R8YATtF8BKXyj1YfXoc2e/eLan7pAhi0Svhu3ZEUVfydi99R5C7AL6ISwqPduBp8U2ypDACtXGLSHfLjkRKdzbKakA/FS2ADFN14oGr5hrBjbmpaB8IeDddWTO+GANc+dAXcIRVjgFlmLYAhWDwBM1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757620515; c=relaxed/simple;
-	bh=Xobcx+JBTN1wOClC166lyLtzG+jp5ZjUpFZ7pPrajjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=epeeXu/TtfI+UoUpDYS0KPbGmFJTDzzynWtFOc1NLtbEkn8hhHxAhKArGGogegznVYHFwgCZyyPjHZnEMt5WEfTS+mdx0ANHmfgIlfUBaFLdimonkfcsGyD9ANUxdBYV1nl4hit2lMa724JGFM3dQIePWpVUchmnUWHWlPnK854=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.168])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 05E0C335DB4;
-	Thu, 11 Sep 2025 19:55:10 +0000 (UTC)
-Date: Fri, 12 Sep 2025 03:55:02 +0800
-From: Yixun Lan <dlan@gentoo.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: Lee Jones <lee@kernel.org>, lgirdwood@gmail.com, broonie@kernel.org,
-	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mat.jonczyk@o2.pl, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	linux.amoon@gmail.com, troymitchell988@gmail.com,
-	guodong@riscstar.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v13 0/7] spacemit: introduce P1 PMIC support
-Message-ID: <20250911195502-GYA1223946@gentoo.org>
-References: <20250825172057.163883-1-elder@riscstar.com>
- <175690199980.2656286.5459018179105557107.b4-ty@kernel.org>
- <ec882a78-9604-45b1-9405-8f2f958f307c@riscstar.com>
+	s=arc-20240116; t=1757620658; c=relaxed/simple;
+	bh=qvZGaMRgnngt+aIivbrtkO1FDOUULEq9PP1s7JMEYlg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DLfzthdjy7xkHJA8wpzAZMg0XEWfFZwvC1nKsP9lArf2nvr8W+GLa33ZpBu8ppNtiQ0gt72AiFqQxI6teAccV6JlfUAfk+4HgGSJjlJs2fE/69Z3SKwASZrzYaHJel5I69qFjX2qWOBQqtoEu/Rs1GtnS77DmWXSr/+mxgQvqNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hp4fV75B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9A11C4CEF0;
+	Thu, 11 Sep 2025 19:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757620657;
+	bh=qvZGaMRgnngt+aIivbrtkO1FDOUULEq9PP1s7JMEYlg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hp4fV75B8HjcDeQUggPW+JahNGtfBa/MjVq8UNViaIbduH/f/firHL1WmgY37x7Hm
+	 7gVO81CNHcGyJYKbEP1sp4oUyL9cxHz7Ep28ig63U1TRCm1NALFXVMDwFC2/8TY4ee
+	 cZWEORtiTciO35JTUngpZ2gdhveKvUglPifHOCwDSDb4jLTxYe0jw2kujIkMWkZIKb
+	 lge80MRl0kuSiDwkl3B0ufydM5Pg7biWZjuCBbtJILfNfVj8i01C5qKUtiOwn1vE+7
+	 WQHhxUqh9qoYSjCULBZSEeaRRduFuIK+c0ihHrfYGf1TXbDtZzFylwWiQaW35NN8XN
+	 /Zm7HyXKNx+XA==
+Message-ID: <5c2b66fc-35c6-485f-b721-c8d57f77262b@kernel.org>
+Date: Thu, 11 Sep 2025 21:57:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ec882a78-9604-45b1-9405-8f2f958f307c@riscstar.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Update the DMA Rust entry
+To: gregkh@linuxfoundation.org
+Cc: rafael@kernel.org, abdiel.janulgue@gmail.com,
+ daniel.almeida@collabora.com, robin.murphy@arm.com, a.hindborg@kernel.org,
+ ojeda@kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250910094015.11551-1-dakr@kernel.org>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20250910094015.11551-1-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Alex,
+On 9/10/25 11:40 AM, Danilo Krummrich wrote:
+> Update the DMA Rust maintainers entry in the following two aspects:
+> 
+>   (1) Change Abdiel's entry to 'Reviewer'.
+> 
+>   (2) Take patches through the driver-core tree.
+> 
+> Abdiel won't do any more maintainer work on the DMA (or scatterlist)
+> infrastructure, but he'd like to be kept in the loop, hence change is
+> entry to 'R:'.
+> 
+> Analogous to [1], the DMA (and scatterlist) helpers are closely coupled
+> with the core device infrastructure and the device lifecycle, hence take
+> patches through the driver-core tree by default.
+> 
+> Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> Link: https://lore.kernel.org/r/20250725202840.2251768-1-ojeda@kernel.org [1]
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-On 11:36 Thu 11 Sep     , Alex Elder wrote:
-> On 9/3/25 7:19 AM, Lee Jones wrote:
-> > On Mon, 25 Aug 2025 12:20:49 -0500, Alex Elder wrote:
-> >> The SpacemiT P1 is an I2C-controlled PMIC that implements 6 buck
-> >> converters and 12 LDOs.  It contains a load switch, ADC channels,
-> >> GPIOs, a real-time clock, and a watchdog timer.
-> >>
-> >> This series introduces a multifunction driver for the P1 PMIC as
-> >> well as drivers for its regulators and RTC.
-> >>
-> >> [...]
-> > 
-> > Applied, thanks!
-> > 
-> > [1/7] dt-bindings: mfd: add support the SpacemiT P1 PMIC
-> >        commit: baac6755d3e8ddf47eee2be3ca72fe14ebae2143
-> > [2/7] mfd: simple-mfd-i2c: add SpacemiT P1 support
-> >        commit: 49833495c85f26d070e70148fd9607c6fbf927fd
-> > 
-> > --
-> > Lee Jones [李琼斯]
-> > 
-> 
-> Yixun Lan plans to merge patches 5-7 of this series.
-> 
-DT patches usually go as the last one, in this case, they effectively
-depened on patch 3 which adds the regulator support
-
-As Mark suggest it go via MFD, that leaves Jones to handle,
-It's close to the release of rc6, I'd hope it isn't too late..
-
-> That leaves patch 3, which enables regulator support, and patch
-> 4, which adds RTC support.
-> 
-> How should these two patches be merged?  Mark has reviewed the
-> regulator patch 3 and Alexandre has acked the RTC patch 4.
-> 
-> Thank you.
-> 
-> 					-Alex
-
--- 
-Yixun Lan (dlan)
+Applied to driver-core-linus, thanks!
 
