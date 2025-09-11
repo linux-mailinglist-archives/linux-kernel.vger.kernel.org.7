@@ -1,165 +1,246 @@
-Return-Path: <linux-kernel+bounces-812293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81FDAB535A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:36:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DBA3B535C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E2E27B3312
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:34:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35910AA3E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54F6340DB6;
-	Thu, 11 Sep 2025 14:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1404A34AAEE;
+	Thu, 11 Sep 2025 14:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPcZbDIl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ur3E4I/l"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B585F343D85;
-	Thu, 11 Sep 2025 14:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648A4345755
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:35:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601308; cv=none; b=nBrm4ne+dKX+Nh8u016lv2cGOuPeKuHoaCSzVdlWpU+NwH5wMm7O1y2WEotaEIPVGAnKmyIAl+kF4M1Dfnmc+dz02H5kQLVtaxQl8lwryXSCWx8DxI9/RXcfMCft78X6FhKvinCWwn35JwH7JOwMko+K7Jw6bSMtW8nwhBGW5qM=
+	t=1757601352; cv=none; b=fgX8fH2rxuLQe2uutiJuQroUQa8MN1gyjRbVAq7OSqNnJZS7uyMMfKT4GW7roaKOPdyQfNSpXRSva996Dg9xVYKDTTgMYrij89zAN4VptIJFMcZ3iBlTN+RZqtPhMdvmc4SdndEGZ4dDIiF91otuAR+5D0hcQ2A0BnH8yoGCIIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601308; c=relaxed/simple;
-	bh=lxH4g4rfuVupITpyNiYn0jyUWYGJEu6MhvfViL4ipQo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JojLcIxHKC38/yDoZ4JOm06QQwmUtRDDZiUKn7wBLR87Ndp8Dngb8GD2xBUWo5C9YmoBovjroKGLjDfWg1d5XXUsbiI1pU/pUFcusvoo7Ihrr2W3Gu+MopuJIxUrq7ITbTq1pUU2Zj6X/pwdWO81K2wG3CelZUE8d53fUIgCCWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPcZbDIl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC89C4CEF0;
-	Thu, 11 Sep 2025 14:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757601308;
-	bh=lxH4g4rfuVupITpyNiYn0jyUWYGJEu6MhvfViL4ipQo=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=UPcZbDIlob4l1tpZOsBnHtIv4ct4gWb7ifBmzpuffPmTeALf/RC/PFrHl/GcSMN7Y
-	 gz4YUjYuTKPHFzmyVpya/j4D54MrBtrXIvGaswOJDITTJ0B+ZySblVLoF7kdij4Igj
-	 6aEOpcgOfFhiZST01pihS2QEaJP+EtP7XX66ydKADsQqj+YfIfQL3Jskz6X80wt/b0
-	 LG/fhTvCF9skfYjxtAd3s0QMAur4IeMDqAiRZkPJPuE4VOcSBzjSM0BKNn+Hw4ckkk
-	 TFbwGrY4GbW8dzUSZEurobqpCTiU1QaIxfW+/QRcpzpJzRk2DFSt0aFQuQJrYUbBiu
-	 9QsmwYsJGe+og==
-Message-ID: <8aeda67e-404e-4deb-ac90-015f2325ef64@kernel.org>
-Date: Thu, 11 Sep 2025 16:35:00 +0200
+	s=arc-20240116; t=1757601352; c=relaxed/simple;
+	bh=ESnN9Qcq6l1yCzPzaK6lvWPHzemlXDh7SS20QlmOJhw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gdih0xMCYei1f5s/nWyAp6waQfKxRtK49pmWIYNamd1TXYs5o95In3ifazq5ES84hDNCoKfF8lNXVPkXFk37rSK0npOf1ASjkCaK9kseVch9zbqFKdqXzAZNh0/8jX/ZJ6XjYbPtat4lrTHBTNVBA5ULLun+pRFtoxdCBWR4vxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ur3E4I/l; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e96eb999262so487304276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:35:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757601349; x=1758206149; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KSlk+fROaTKkWUJzIAo9K1awGf90OVjnNrt1yoqzdVE=;
+        b=Ur3E4I/lQa4ZBL4va329+8YDzhQQOhTe/fMbdX1NgyoHQpE7OkLd/20ElkeQ0UdH0L
+         KPJUtzr2cM5NwX/tsEaoMwhK3cpnDo9WofSFknUMcRP5cAYEBiibkQ9/UOGPNIwone6I
+         511h3gd3yr9M4B3tjA0nDbFzDrzQu1CQvpeUZH6STqIwou0vh+Q7F7i2cR1k2fVqeIe4
+         4mr8JeuuQlUlQuNvDxHXMc00UOA4TdnfWGFZV4x4021hO87lmyJ4HoBj6csk5yzv64aa
+         ae4p6jmWoAUwXibEvRKtItwC9KSMh1Z7+rHSNNWte7XUnvNwwWJneGswcze+eLRvVpfB
+         NG1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757601349; x=1758206149;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KSlk+fROaTKkWUJzIAo9K1awGf90OVjnNrt1yoqzdVE=;
+        b=rxq1vhY6BPrzg+AOX3z2jub5/ky+KnnaeCnEWRhNeQ6vqVYZnlrBBub8USZa0yYSqU
+         IcJqKbpjtsGA25QOQgUbelxqDY/3Ldx+c1S3S4/FzAjKObHQa3FLlbnECpSRaIEjSHj1
+         YxGh7l0X99zwAxguXgd6qlXmQhfgqoQQl6q6eNASZ9nmcGIZo94RGly1bvEPlZci8lBj
+         X5uavJ3urAOO8k6CBfdBC2V4R7ecgP6uA06de/fUmfAwAv48ZYF4nLnEYx4ZHTX2eIWV
+         GZiAWc1c6jeAGclhWPeZLjDkHcCjvODy9TnDTTt3YIDrECvI3E9QtlOzLzCeWkmdVD8z
+         PNhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfIK8niLy5HfoH2o0vCULEJqdI6hiD3jhKlvG7ejfGDjPv/kslZtTBOQeiyeQy1FAY+PX3+AcZEhUA9Wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTOyDAHLe0t6h2zDTu9tvDCIFQ/ZZ6ImPAg7b99Xp17AkL2NtE
+	770csI1dY9Dveu53wOKjhAZz5NiAjIZT4YxUZMhj8yM2nICyiB92Np71sSQK5untco67cTrkzYE
+	w7hydq4qc77ThlEUGCfaP8CG7GsnG6QmofrwiCOo7iw==
+X-Gm-Gg: ASbGncut4dUNMCeZnOpqMUNyZQYUlkPVIQKGJp4qkObbDV+PP1OzEtmmRdKBXe9+3dc
+	xdiFkaz/LEKTdXA62fibrNoPKueQaHUdvBMOTHiwQpxG46nv1zHOZDyAfD5eINcq2QZ/X21AD6U
+	9DDUUttPCwoPt6JujpxuGfW6xQnOenZzHv8Ur9ImEjrZ54kTZ9GO+dHaZ8Zu0Af8y+DGFB8x+FX
+	7fai357
+X-Google-Smtp-Source: AGHT+IGfSKuM4c5fjR8Nmf/V6K6MW1d3ILicNhe4YrtpVSYxylfgXPVxzTMrmlTzxu1IKCMOAlIVCi0BHvOdfqFeTg8=
+X-Received: by 2002:a05:6902:400e:b0:e9d:6e8b:da82 with SMTP id
+ 3f1490d57ef6-e9f67f9d18dmr12808394276.40.1757601349146; Thu, 11 Sep 2025
+ 07:35:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] tty: serial: samsung: Remove unused artpec-8 specific
- code
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Ravi Patel <ravi.patel@samsung.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, jesper.nilsson@axis.com,
- lars.persson@axis.com, alim.akhtar@samsung.com, arnd@kernel.org,
- andriy.shevchenko@linux.intel.com, geert+renesas@glider.be,
- thierry.bultel.yh@bp.renesas.com, dianders@chromium.org,
- robert.marko@sartura.hr, schnelle@linux.ibm.com, kkartik@nvidia.com,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
- ksk4725@coasia.com, kenkim@coasia.com, smn1196@coasia.com,
- pjsin865@coasia.com, shradha.t@samsung.com
-References: <CGME20250911141714epcas5p29f591a1d645c9c69dc5b7d2c2d12af50@epcas5p2.samsung.com>
- <20250911141605.13034-1-ravi.patel@samsung.com>
- <20250911141605.13034-4-ravi.patel@samsung.com>
- <CAMuHMdVe-FULHWk3QCBENG7TsbEZyxj0N5shhESxWBWd49JmOw@mail.gmail.com>
- <6df0e227-896b-438a-913e-95b637aa2b14@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <6df0e227-896b-438a-913e-95b637aa2b14@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250829-pxa1908-genpd-v3-0-2aacaaaca271@dujemihanovic.xyz> <20250829-pxa1908-genpd-v3-3-2aacaaaca271@dujemihanovic.xyz>
+In-Reply-To: <20250829-pxa1908-genpd-v3-3-2aacaaaca271@dujemihanovic.xyz>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 11 Sep 2025 16:35:13 +0200
+X-Gm-Features: Ac12FXyuZ1jlXdj7-cEMF06sp4rqvDpYW1ns4WDjO-d3d9EX_Txs7Y_tLPOHUVM
+Message-ID: <CAPDyKFpcCCUi4nKNmvvtnXs1OdUz3aHK7G+Jbi9LzLt=o=+QTQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] clk: mmp: pxa1908: Instantiate power driver
+ through auxiliary bus
+To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/09/2025 16:29, Krzysztof Kozlowski wrote:
->>> --- a/drivers/tty/serial/samsung_tty.c
->>> +++ b/drivers/tty/serial/samsung_tty.c
->>
->>> @@ -2655,8 +2621,6 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
->>>                 .data = S5L_SERIAL_DRV_DATA },
->>>         { .compatible = "samsung,exynos850-uart",
->>>                 .data = EXYNOS850_SERIAL_DRV_DATA },
->>> -       { .compatible = "axis,artpec8-uart",
->>> -               .data = ARTPEC8_SERIAL_DRV_DATA },
->>>         { .compatible = "google,gs101-uart",
->>>                 .data = GS101_SERIAL_DRV_DATA },
->>>         { .compatible = "samsung,exynos8895-uart",
->>> @@ -2828,8 +2792,6 @@ OF_EARLYCON_DECLARE(s5pv210, "samsung,s5pv210-uart",
->>>                         s5pv210_early_console_setup);
->>>  OF_EARLYCON_DECLARE(exynos4210, "samsung,exynos4210-uart",
->>>                         s5pv210_early_console_setup);
->>> -OF_EARLYCON_DECLARE(artpec8, "axis,artpec8-uart",
->>> -                       s5pv210_early_console_setup);
->>>
->>>  static int __init gs101_early_console_setup(struct earlycon_device *device,
->>>                                             const char *opt)
->>
->> Removing these breaks backwards-compatibility with existing DTBs,
->> which lack the new "samsung,exynos8895-uart" fallback compatible value.
-> 
-> This was just applied, so ABI break would be fine. It should be however
-> clearly expressed in the commit msg.
-> 
-> I have a feeling that not much testing was happening in Samsung around
-> this patchset and only now - after I applied it - some things happen.
-> But it is damn too late, my tree is already closed which means this is
-> going to be the ABI.
+On Fri, 29 Aug 2025 at 18:22, Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz> =
+wrote:
+>
+> The power domain driver shares the APMU clock controller's registers.
+> Instantiate the power domain driver through the APMU clock driver using
+> the auxiliary bus.
+>
+> Also create a separate Kconfig entry for the PXA1908 clock driver to
+> allow (de)selecting the driver at will and selecting
+> CONFIG_AUXILIARY_BUS.
+>
+> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+> ---
+> v3:
+> - Move driver back to pmdomain subsystem, use auxiliary bus to
+>   instantiate the driver
+>
+> v2:
+> - Move to clk subsystem, instantiate the driver from the APMU clock
+>   driver
+> - Drop clock handling
+> - Squash MAINTAINERS patch
+> ---
+>  MAINTAINERS                        |  2 ++
+>  drivers/clk/Kconfig                |  1 +
+>  drivers/clk/mmp/Kconfig            | 10 ++++++++++
+>  drivers/clk/mmp/Makefile           |  5 ++++-
+>  drivers/clk/mmp/clk-pxa1908-apmu.c | 20 ++++++++++++++++++++
+>  5 files changed, 37 insertions(+), 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 34e5e218e83e0ed9882b111f5251601dd6549d4e..88c0df09d7b354f95864f5a48=
+daea3be14a90dc4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2869,7 +2869,9 @@ ARM/Marvell PXA1908 SOC support
+>  M:     Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+>  L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscribe=
+rs)
+>  S:     Maintained
+> +F:     Documentation/devicetree/bindings/clock/marvell,pxa1908.yaml
+>  F:     arch/arm64/boot/dts/marvell/mmp/
+> +F:     drivers/clk/mmp/Kconfig
+>  F:     drivers/clk/mmp/clk-pxa1908*.c
+>  F:     drivers/pmdomain/marvell/
+>  F:     include/dt-bindings/clock/marvell,pxa1908.h
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 4d56475f94fc1e28823fe6aee626a96847d4e6d5..68a9641fc649a23013b2d8a9e=
+9f5ecb31d623abb 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -511,6 +511,7 @@ source "drivers/clk/imx/Kconfig"
+>  source "drivers/clk/ingenic/Kconfig"
+>  source "drivers/clk/keystone/Kconfig"
+>  source "drivers/clk/mediatek/Kconfig"
+> +source "drivers/clk/mmp/Kconfig"
+>  source "drivers/clk/meson/Kconfig"
+>  source "drivers/clk/mstar/Kconfig"
+>  source "drivers/clk/microchip/Kconfig"
+> diff --git a/drivers/clk/mmp/Kconfig b/drivers/clk/mmp/Kconfig
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..b0d2fea3cda5de1284916ab75=
+d3af0412edcf57f
+> --- /dev/null
+> +++ b/drivers/clk/mmp/Kconfig
+> @@ -0,0 +1,10 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +config COMMON_CLK_PXA1908
+> +       bool "Clock driver for Marvell PXA1908"
+> +       depends on ARCH_MMP || COMPILE_TEST
+> +       depends on OF
+> +       default y if ARCH_MMP && ARM64
+> +       select AUXILIARY_BUS
+> +       help
+> +         This driver supports the Marvell PXA1908 SoC clocks.
+> diff --git a/drivers/clk/mmp/Makefile b/drivers/clk/mmp/Makefile
+> index 062cd87fa8ddcc6808b6236f8c4dd524aaf02030..0a94f2f0856389c8e959981cc=
+afbb02140a7733d 100644
+> --- a/drivers/clk/mmp/Makefile
+> +++ b/drivers/clk/mmp/Makefile
+> @@ -11,4 +11,7 @@ obj-$(CONFIG_MACH_MMP_DT) +=3D clk-of-pxa168.o clk-of-p=
+xa910.o
+>  obj-$(CONFIG_COMMON_CLK_MMP2) +=3D clk-of-mmp2.o clk-pll.o pwr-island.o
+>  obj-$(CONFIG_COMMON_CLK_MMP2_AUDIO) +=3D clk-audio.o
+>
+> -obj-$(CONFIG_ARCH_MMP) +=3D clk-of-pxa1928.o clk-pxa1908-apbc.o clk-pxa1=
+908-apbcp.o clk-pxa1908-apmu.o clk-pxa1908-mpmu.o
+> +obj-$(CONFIG_COMMON_CLK_PXA1908) +=3D clk-pxa1908-apbc.o clk-pxa1908-apb=
+cp.o \
+> +       clk-pxa1908-mpmu.o clk-pxa1908-apmu.o
+> +
+> +obj-$(CONFIG_ARCH_MMP) +=3D clk-of-pxa1928.o
+> diff --git a/drivers/clk/mmp/clk-pxa1908-apmu.c b/drivers/clk/mmp/clk-pxa=
+1908-apmu.c
+> index d3a070687fc5b9fb5338f377f82e7664ca0aac29..eab02c89c9153619ac53f7486=
+ed811f2cae12a43 100644
+> --- a/drivers/clk/mmp/clk-pxa1908-apmu.c
+> +++ b/drivers/clk/mmp/clk-pxa1908-apmu.c
+> @@ -1,4 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> @@ -85,6 +86,8 @@ static void pxa1908_axi_periph_clk_init(struct pxa1908_=
+clk_unit *pxa_unit)
+>  static int pxa1908_apmu_probe(struct platform_device *pdev)
+>  {
+>         struct pxa1908_clk_unit *pxa_unit;
+> +       struct auxiliary_device *adev;
+> +       int ret;
+>
+>         pxa_unit =3D devm_kzalloc(&pdev->dev, sizeof(*pxa_unit), GFP_KERN=
+EL);
+>         if (!pxa_unit)
+> @@ -94,6 +97,23 @@ static int pxa1908_apmu_probe(struct platform_device *=
+pdev)
+>         if (IS_ERR(pxa_unit->base))
+>                 return PTR_ERR(pxa_unit->base);
+>
+> +       adev =3D devm_kzalloc(&pdev->dev, sizeof(*adev), GFP_KERNEL);
+> +       if (!adev)
+> +               return -ENOMEM;
+> +
+> +       adev->name =3D "power";
+> +       adev->dev.parent =3D &pdev->dev;
+> +
+> +       ret =3D auxiliary_device_init(adev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D auxiliary_device_add(adev);
+> +       if (ret) {
+> +               auxiliary_device_uninit(adev);
+> +               return ret;
+> +       }
+> +
 
-Ah, no, I mixed up patches with recent DTS for Artpec-8. This serial ABI
-was accepted three years ago (!!!), so you are Geert absolutely right -
-that's ABI break.
+I think the above can be simplified with devm_auxiliary_device_create().
 
-Folks in Samsung, maybe try to organize some weekly sessions sharing
-knowledge after upstreaming reviews/feedbacks? I feel like you are
-repeating same mistakes.
+>         mmp_clk_init(pdev->dev.of_node, &pxa_unit->unit, APMU_NR_CLKS);
+>
+>         pxa1908_axi_periph_clk_init(pxa_unit);
+>
+> --
+> 2.51.0
+>
 
-Best regards,
-Krzysztof
+Kind regards
+Uffe
 
