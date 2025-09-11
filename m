@@ -1,210 +1,223 @@
-Return-Path: <linux-kernel+bounces-812302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864FBB535D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:40:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48FD4B535F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60D0E7BE6D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6CA5A5D38
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78DB33CEAA;
-	Thu, 11 Sep 2025 14:38:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F43934167B;
+	Thu, 11 Sep 2025 14:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GWp05F3K"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CbE/LbQC"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C23451AD
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D220E341662
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601531; cv=none; b=GBS+gmH2ZCQCFo5VIpu1PmmKLMah93Zm6wNims2MXFodOeglWsnx/Y756Hbo77ADcm9dIV2Nm8hdd3nTMbCor3Gjs1rmOueQFYBxaHv7Ywprd1EGalZQZsSEnhWW5MC9hPnL3YFtZgDBEPOgM41Ew9XeECPXg2UZP0O55HtjFlA=
+	t=1757601558; cv=none; b=BZCNJkyM1VhdM/ZG05Ij+aXkFcvFvss9qObD07apnG5qxIa0QNa9OIaUnzHmsPMO5Bd0KYQ7AgYzw/MeAb4PcMYsnwHxJalG3DLlw20MydSunqJXh2RtApHkzz/X6csuItQm4iMhAcjRsvNPucE6G7sp9lHWrA3J2JuwzrDUcCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601531; c=relaxed/simple;
-	bh=8soN6rxMf+hbwzPFHAOw0SiZ9+BEZ+Zf4oVMft6IHs0=;
+	s=arc-20240116; t=1757601558; c=relaxed/simple;
+	bh=t6RyhrLfGhw9qzteCVG9AMG+iFTGfnSwB9AnX4yy/F0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J/ZCDYRk7tNrv1lxOgF993/XuuiIKftxAwoM/dv0gHFeo1vvfKcy672lNjI0Fz21YzUALrMl7eFx+nYH2xqmEHUVchHVvmOeRv1HrveDBIaFot8TonAEVI1gbsiIYP2VecarxP+qMC//PYqe+R3xauH99M4tHySJOG8YvAiJldI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GWp05F3K; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757601528;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SIPv42Je3ufieqUPVRa/WfMuWNmuQmCrniAmwNhdfvM=;
-	b=GWp05F3KlG4MzvpOJfbQ03XdLljwV8AYx7HhvsGkxccwIAIVo9TOEvKbLXt0aaoRxyld3A
-	d3OC4noc8Xoj+F6ZLJJsIotOITbzm2kOIuiIeT5JUrijQrsNsbVQKzL9Rwg1f1gfTPFxdR
-	e6OvV/nJicseO7tadmvI/KDmDLiCp+k=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-601-SYs40iZxPz-_CHQsxwZYFw-1; Thu, 11 Sep 2025 10:38:46 -0400
-X-MC-Unique: SYs40iZxPz-_CHQsxwZYFw-1
-X-Mimecast-MFC-AGG-ID: SYs40iZxPz-_CHQsxwZYFw_1757601525
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-336e13bf342so4597931fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:38:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=Yl4XKVffzbjm7v7Mh53YT5YaYlhVxJ2Ivr0m0zPIw9ggUNb4/D/E8wgNlVp5UZzTruS7cWawegJmFS30MV6o55M7/kNjulmD9dhmMCeE8qextSCYBDZxtuzoNpKBq6Pl5q8FlLtaGZF5ZYq87mtCxcvaRX4qB8FxDfmRNijPt2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CbE/LbQC; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-ea0150ee46dso585926276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:39:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757601555; x=1758206355; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HbBobC0v4eff32ngfVq0VfnRgl2Ah0/8T2f7fqD3KKw=;
+        b=CbE/LbQCRJc0c7MHBrAlRUXwMmWciDvhRA1WE5SunzE1zQ3NIxGva+2xSl2nCHvx+x
+         hF47/JqCfnt+LVCgaKuBx9ZowcI2uo5JIJP+HcvH4L/d1eYW5q+KngHCa3BgBjDfHPyq
+         Ki4Zem7bBXMWhSNTGhRT/EXFbHPWF1AyMXHqp/JQjiWgvVbSiGTzTfRTo7iv9VapU5tv
+         llNQbIVXxhXjd6Y8mTKLVqoLQ0bGE6mDj5gWfwNSY+kZ+hqDCIRBf4U6E2SJvvgLRAm/
+         KMOrdQsf4Wb2U7qaJFmCoRH+lU5cJGhtQsS7QcR8g7v6d+3ydeTNGg2Othtc9rUsi8KO
+         UPEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757601525; x=1758206325;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SIPv42Je3ufieqUPVRa/WfMuWNmuQmCrniAmwNhdfvM=;
-        b=mcylDyL9oQNPoaFXIqGpI3T/QZvt9+osvbjqK8LYGmsmTiZwi+G0S3vShTtXv47xnA
-         5tZpYkNo0vG1zxpNUGZt5dji09VsffRWEVXkvKnZ69InzHzseEcisfzvgidKTSiiHA9A
-         fXu6+5xoSbv5avVEhxirLaxFkuRXETANWRw+lx7Iej/jrxNA2knAeOdL3fphG6UbqVqg
-         CRxF3ilbDB9M1xMZg7YFxihEwda0VPRUZSwmYA1OcnUk5HMKFNYLwNywE0voGmavCdyB
-         VUPNIC1OFowUx//WyuyEkd8U1vCgJN545Y02CUVpB+CAqBYhwfI3XQGSSlKe02+qpalx
-         or5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUaGcqToehn7AJwOCoGjmwj1YofCluc8qAHq8oq6yhLS/aiJFBpa2T8BVBGAsCLbyF6RG99aEHY6eyyoyk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHBCxhRRKecSAbGro/p0RoYrGCTYTOg2m9UHTRwhAMHNBjLugW
-	J8CW/BBnxcsDD4U3EazzSFxCOTgODLEITUjOu+7m8x867ibRCkfImVm9h6TTgpr9sX9B0MlK0+1
-	yvxR3GXuARz/NKF68gzFUMauTcVxJ2xebN+g0XONXiUbTGMxnCVXL3oivzPC+6U/Ehd7BEKGM+M
-	U4+YlFINZZ4gWeSM/siO0JYCBp21gW9WXT4xS4bZq5
-X-Gm-Gg: ASbGncvdI6t8lGEaihaf6qgI4lcWvRX6XA3Dx8SEVbsVdbCdzWQfYw+U5vYN/ZOaZjr
-	NVDEjny9NlOiqnhybwe0GLX4rcHn4qq0NAU+AJxwBUS+PHTnibs8duNHkVzqAiophl7VKK+hTEC
-	yeQsuhojGR50kDQKJCc8gufMU4I+GmTo+Ppb6ABQwiiMdglH46Ui48H2k=
-X-Received: by 2002:a2e:b8c1:0:b0:337:f217:a785 with SMTP id 38308e7fff4ca-33b5cbcec6amr63395101fa.23.1757601525173;
-        Thu, 11 Sep 2025 07:38:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbncV35xoEUNPKEtJTtLC8EEhusftfJk+xhn2Y5J2nM9pwSu2qk9ra9C5LYi9diVDd2gYDA6O1QJ6fGt/Xtv0=
-X-Received: by 2002:a2e:b8c1:0:b0:337:f217:a785 with SMTP id
- 38308e7fff4ca-33b5cbcec6amr63395031fa.23.1757601524652; Thu, 11 Sep 2025
- 07:38:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757601555; x=1758206355;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HbBobC0v4eff32ngfVq0VfnRgl2Ah0/8T2f7fqD3KKw=;
+        b=DfEm7Le2H0Kpdk81EwDRHzbmOJHvLGqj8A6DBtIXcT6h1NxUlVRzanGp3uJmQRqOR7
+         gLuunk+aagJw5//ZcZWa2LHgBE6WSSMxM9RFFom3pWrZfY9fg4Ge7uTQKtjhR+vCGw+2
+         fzkXSrRd6KKNvT+AEYHIaBYzUVmW4epy1rxDXaftTjobbfkACK/czgPrRwXZs62fm/N3
+         5SHpEjv15if19GH9k8uAItRBngfpH9IJbFhgXwjovnEwq+bXUof/c0DPpD8ciOopECVR
+         xt5dNxZ+Ya05o4u63iynNtIRU4OCd/ispfNIHYJsAzbu0SU20HVyipZM9wR0mAyCD1g8
+         VcDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAuACANm46i/qpmxSnHCJcggrBqSeI1cpkI1/vbL9gm6lRk08hYWFTEQx6L7SNJmpGzK4+9kyPUmx8g7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3rrvomrWkF/kTNhTv6ztivFYbGg783WUjTGZ4jPpiPHSa8x3k
+	9nHB1Kp0LFdLGodVEDtXcwV+14CKBtguf1ImltkAB0+U+nBIdUDwoR+i5hTL1U4I2qWxQiqMhxA
+	3jA2qDmkUb7TgWREYP2fHvE1wrQM/KiYEK1YNiEqjnw==
+X-Gm-Gg: ASbGncv7c1P4aFwpCXIxxDs5txJZiN5PpU3LAtLD0ZH9sJEpfM8cVzEYxeZFCN5qH/S
+	x8YAHu82hqhPR1c3we/EdLCfmlsgb74R/jskTBgBCvkqPI87OEO2UFX23pzANOzNrOCpxyTxPUP
+	5LnYFrm0x8mTuZQPS1jhh2mp6wW+9IeeQiPI8ODXr9LQ1idCgbwgEcNhSEzrRVG457UwMtVHX8/
+	/ycEejA9A7DAi5pN7BUO3xrlQrT/A==
+X-Google-Smtp-Source: AGHT+IFpL041NgNSYHspWH4yA4/NKoHQ52gMrPlor7yXw7ilhVJwKEDCxgkx2t/OXO5Qx5pnzT4qSKghDDvsooOyxsE=
+X-Received: by 2002:a05:6902:2b8d:b0:e93:2a04:5ca8 with SMTP id
+ 3f1490d57ef6-e9f66ed6197mr17981110276.20.1757601554561; Thu, 11 Sep 2025
+ 07:39:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910171706.173976-1-alessio.attilio.dev@gmail.com>
-In-Reply-To: <20250910171706.173976-1-alessio.attilio.dev@gmail.com>
-From: Alexander Aring <aahringo@redhat.com>
-Date: Thu, 11 Sep 2025 10:38:33 -0400
-X-Gm-Features: Ac12FXwK-hbBkhX-Cm9Le6saS3hUgNdFo5aoBszztbjqFgH7QHOAT5HCs_AG1SQ
-Message-ID: <CAK-6q+hYROHr2eEyJ+j5VWpmwDQd+fA+ZmDTps4rDKXnCq6tHg@mail.gmail.com>
-Subject: Re: [PATCH] * dlm: improve lock management and concurrency control
-To: Alessio Attilio <alessio.attilio.dev@gmail.com>
-Cc: teigland@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Alessio Attilio <alessio.attilio@engineer.com>
+References: <20250908-tisci-pd-boot-state-v2-1-a1a4173cf859@ideasonboard.com>
+In-Reply-To: <20250908-tisci-pd-boot-state-v2-1-a1a4173cf859@ideasonboard.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 11 Sep 2025 16:38:37 +0200
+X-Gm-Features: Ac12FXzjgykrwXF_mwcytWvOKCsY08WwCbQyF230DEbX6oK_0mRBUlw2K8vwsXE
+Message-ID: <CAPDyKFqj1Ed85z8Zwt5hioOGhiCxX95JZcHz98b6=zXm8tjR0A@mail.gmail.com>
+Subject: Re: [PATCH RFC v2] pmdomain: ti-sci: Set PD on/off state according to
+ the HW state
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kevin Hilman <khilman@baylibre.com>, vishalm@ti.com, sebin.francis@ti.com, d-gole@ti.com, 
+	Devarsh Thakkar <devarsht@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, 8 Sept 2025 at 10:35, Tomi Valkeinen
+<tomi.valkeinen@ideasonboard.com> wrote:
+>
+> At the moment the driver sets the power state of all the PDs it creates
+> to off, regardless of the actual HW state. This has two drawbacks:
+>
+> 1) The kernel cannot disable unused PDs automatically for power saving,
+>    as it thinks they are off already
+>
+> 2) A more specific case (but perhaps applicable to other scenarios
+>    also): bootloader enabled splash-screen cannot be kept on the screen.
+>
+> The issue in 2) is that the driver framework automatically enables the
+> device's PD before calling probe() and disables it after the probe().
+> This means that when the display subsystem (DSS) driver probes, but e.g.
+> fails due to deferred probing, the DSS PD gets turned off and the driver
+> cannot do anything to affect that.
+>
+> Solving the 2) requires more changes to actually keep the PD on during
+> the boot, but a prerequisite for it is to have the correct power state
+> for the PD.
+>
+> The downside with this patch is that it takes time to call the 'is_on'
+> op, and we need to call it for each PD. In my tests with AM62 SK, using
+> defconfig, I see an increase from ~3.5ms to ~7ms. However, the added
+> feature is valuable, so in my opinion it's worth it.
+>
+> The performance could probably be improved with a new firmware API which
+> returns the power states of all the PDs.
+>
+> There's also a related HW issue at play here: if the DSS IP is enabled
+> and active, and its PD is turned off without first disabling the DSS
+> display outputs, the DSS IP will hang and causes the kernel to halt if
+> and when the DSS driver accesses the DSS registers the next time.
+>
+> With the current upstream kernel, with this patch applied, this means
+> that if the bootloader enables the display, and the DSS driver is
+> compiled as a module, the kernel will at some point disable unused PDs,
+> including the DSS PD. When the DSS module is later loaded, it will hang
+> the kernel.
+>
+> The same issue is already there, even without this patch, as the DSS
+> driver may hit deferred probing, which causes the PD to be turned off,
+> and leading to kernel halt when the DSS driver is probed again. This
+> issue has been made quite rare with some arrangements in the DSS
+> driver's probe, but it's still there.
+>
+> With recent change from Ulf (e.g. commit 13a4b7fb6260 ("pmdomain: core:
+> Leave powered-on genpds on until late_initcall_sync")), the sync state
+> mechanism comes to rescue. It will keep the power domains enabled, until
+> the drivers have probed, or the sync-state is triggered via some other
+> mechanism (e.g. manually by the boot scripts).
+>
+> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> Tested-by: Kevin Hilman <khilman@baylibre.com>
+> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-On Wed, Sep 10, 2025 at 1:23=E2=80=AFPM Alessio Attilio
-<alessio.attilio.dev@gmail.com> wrote:
->
-> From: Alessio Attilio <alessio.attilio@engineer.com>
->
-> This patch introduces several improvements to lock handling in the DLM
-> subsystem, focusing on thread safety, correctness, and code clarity.
->
-> - Added explicit locking (spin_lock_bh/spin_unlock_bh) around accesses
->   to proc->locks and proc->asts in dlm_clear_proc_locks, ensuring safe
->   concurrent operations during lock cleanup.
-> - Replaced del_proc_lock with direct, lock-protected list operations
->   for improved clarity and correctness.
-> - Updated send_unlock to set RSB_MASTER_UNCERTAIN only when releasing
->   the last lock on an rsb, ensuring proper master confirmation.
-> - Improved handling of persistent and non-persistent locks by setting
->   appropriate flags (DLM_DFL_ORPHAN_BIT or DLM_IFL_DEAD_BIT) before
->   orphaning or unlocking.
-> - Removed outdated comments related to mutex protection and serialization
->   assumptions, reflecting the updated concurrency model.
->
-> Signed-off-by: Alessio Attilio <alessio.attilio.dev@gmail.com>
+Makes perfect sense to me! Applied for next, thanks!
 
-The patch doesn't compile for me as well. Please also make sure to run
-"scripts/checkpatch.pl" on your patch before sending it.
+Kind regards
+Uffe
+
 
 > ---
->  fs/dlm/lock.c | 99 ++++++++++++++++++++++++---------------------------
->  1 file changed, 46 insertions(+), 53 deletions(-)
+> Changes in v2:
+> - Clarify the current state wrt. sync state in the patch description
+> - Rebase to current upstream
+> - No other changes
+> - Link to v1: https://lore.kernel.org/r/20241022-tisci-pd-boot-state-v1-1-849a6384131b@ideasonboard.com
+> ---
+>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 24 +++++++++++++++++++++++-
+>  1 file changed, 23 insertions(+), 1 deletion(-)
 >
-> diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
-> index 6dd3a524cd35..9170b5c09823 100644
-> --- a/fs/dlm/lock.c
-> +++ b/fs/dlm/lock.c
-> @@ -3654,12 +3654,33 @@ static int send_convert(struct dlm_rsb *r, struct=
- dlm_lkb *lkb)
->         return error;
+> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> index 82df7e44250b..e5d1934f78d9 100644
+> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> @@ -200,6 +200,23 @@ static bool ti_sci_pm_idx_exists(struct ti_sci_genpd_provider *pd_provider, u32
+>         return false;
 >  }
 >
-> -/* FIXME: if this lkb is the only lock we hold on the rsb, then set
-> -   MASTER_UNCERTAIN to force the next request on the rsb to confirm
-> -   that the master is still correct. */
-> -
->  static int send_unlock(struct dlm_rsb *r, struct dlm_lkb *lkb)
+> +static bool ti_sci_pm_pd_is_on(struct ti_sci_genpd_provider *pd_provider,
+> +                              int pd_idx)
+> +{
+> +       bool is_on;
+> +       int ret;
+> +
+> +       if (!pd_provider->ti_sci->ops.dev_ops.is_on)
+> +               return false;
+> +
+> +       ret = pd_provider->ti_sci->ops.dev_ops.is_on(pd_provider->ti_sci,
+> +                                                    pd_idx, NULL, &is_on);
+> +       if (ret)
+> +               return false;
+> +
+> +       return is_on;
+> +}
+> +
+>  static int ti_sci_pm_domain_probe(struct platform_device *pdev)
 >  {
-> +       struct dlm_lkb *tmp;
-> +       int count =3D 0;
-> +
-> +       list_for_each_entry(tmp, &r->res_grantqueue, lkb_statequeue) {
-> +               if (is_process_copy(tmp))
-> +                       count++;
-> +       }
-> +       list_for_each_entry(tmp, &r->res_convertqueue, lkb_statequeue) {
-> +               if (is_process_copy(tmp))
-> +                       count++;
-> +       }
-> +       list_for_each_entry(tmp, &r->res_waitqueue, lkb_statequeue) {
-> +               if (is_process_copy(tmp))
-> +                       count++;
-> +       }
-> +
-> +/*
-> + * When releasing the last lock on the rsb, we mark the master as uncert=
-ain.
-> + * This ensures that the next lock request will verify the master node,
-> + * maintaining consistency across the cluster.
-> + */
-
-After unlocking the rsb should be moved to the inactive/toss state, if
-it's activated again it should be that there is a new lookup being
-done when it's necessary.
-This however is not being done at the state here. As you describe the
-problem it is about multiple concurrent requests the problem might be
-something different.
-There should be no cancel/unlock requests at the same time, cancel is
-only for requests or converts not for unlock, maybe what's missing
-here is to check on an invalid API usage at [0]?
-
-As far as I understood from your problem specification, a
-stacktrace/reproducer/coredump would be much more helpful here.
-
-...
-> -       spin_lock_bh(&ls->ls_clear_proc_locks);
-> -
-> +       spin_lock_bh(&proc->locks_spin);
->         /* in-progress unlocks */
->         list_for_each_entry_safe(lkb, safe, &proc->unlocking, lkb_ownqueu=
-e) {
->                 list_del_init(&lkb->lkb_ownqueue);
->                 set_bit(DLM_IFL_DEAD_BIT, &lkb->lkb_iflags);
->                 dlm_put_lkb(lkb);
->         }
-> +       spin_unlock_bh(&proc->locks_spin);
+>         struct device *dev = &pdev->dev;
+> @@ -231,6 +248,8 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+>                                                    index, &args)) {
 >
-> +       spin_lock_bh(&proc->asts_spin);
->         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
->                 list_del(&cb->list);
->                 dlm_free_cb(cb);
->         }
-> +       spin_unlock_bh(&proc->asts_spin);
+>                         if (args.args_count >= 1 && args.np == dev->of_node) {
+> +                               bool is_on;
+> +
+>                                 of_node_put(args.np);
+>                                 if (args.args[0] > max_id) {
+>                                         max_id = args.args[0];
+> @@ -264,7 +283,10 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+>                                     pd_provider->ti_sci->ops.pm_ops.set_latency_constraint)
+>                                         pd->pd.domain.ops.suspend = ti_sci_pd_suspend;
 >
-> -       spin_unlock_bh(&ls->ls_clear_proc_locks);
-
-This lock has after your patch only one lock/unlock user in user.c
-which makes this lock obsolete, however it seems your user.c changes
-are not part of your patch and got somehow missed.
-
-- Alex
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/fs/dlm/lock.c?h=3Dv6.17-rc5#n2892
-
+> -                               pm_genpd_init(&pd->pd, NULL, true);
+> +                               is_on = ti_sci_pm_pd_is_on(pd_provider,
+> +                                                          pd->idx);
+> +
+> +                               pm_genpd_init(&pd->pd, NULL, !is_on);
+>
+>                                 list_add(&pd->node, &pd_provider->pd_list);
+>                         } else {
+>
+> ---
+> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+> change-id: 20241022-tisci-pd-boot-state-33cf02efd378
+>
+> Best regards,
+> --
+> Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>
 
