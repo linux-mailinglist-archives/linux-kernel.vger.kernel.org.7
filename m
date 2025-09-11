@@ -1,102 +1,78 @@
-Return-Path: <linux-kernel+bounces-812034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B62B531FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:22:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EBC2B53202
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D657A96F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C3C61C87015
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8331320A2E;
-	Thu, 11 Sep 2025 12:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD95932142A;
+	Thu, 11 Sep 2025 12:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="MUwWEKoi"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iUtj1fUd"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BF5319858
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198FF320A3D;
+	Thu, 11 Sep 2025 12:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757593351; cv=none; b=X1nezqeIjqv0uoNUMr6aum6wfnsIYAFUYN1k9jF0TkOIuFE0YAoZzoPJ8aK1J3fNVfSMdeB0hAm8UEBbgbkLxHBlu0yizGrYbzoUqTLrz9iUPSIiQElsGOigHt7brihP67rYbrhAm7+CyDR+cH4LwwaFaUBpujz5TpeEIGk6rAk=
+	t=1757593392; cv=none; b=ud5PYkuFfYhkTplwgamKrWOWP75oEYA0TBxlxw61VRRWWIFOZBLLseZEfboi9w3KeaCywFycr56tsqbbGH5rbRAGJS/+JRj1BOQOA7FCJf6fDfDRT42gZPZf+rmHGk7CR3YT2LojCxYjJn9wz16ajPP4NMXlzl6yK0/BHOsMomU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757593351; c=relaxed/simple;
-	bh=K5yMCkZEPBamsnYLvIMHFL5NSEe6jr5yyoMtgbK8IPA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qdpjYKzX0qNjHN445O1de0OBjDauBa8SdPNhDgbFakPt2PFH66T3T9U454wFyDKa4yzxy40r0zrYl7813KP7gkTdK2G4rphswkve0g0w9rf6FLvJOm6lBD1teOjoy2k7r5utFzfMpCfDYHZZ+BcQOLqkPBb5IgEL0O9YyKUY/hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=MUwWEKoi; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757593346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=15ZbTdicaZVwX6eRBAn7SFw+ucv468vVpXD3Z7POy5s=;
-	b=MUwWEKoiyES1vPhJs0unFpxTiDo5PbhKVMm/NqVKY22OvOAkw1n3U1zg95mVlNnRhKm5Sv
-	myt3A6bBgczpHu6FQTvEC4nU023BTD92DCY7WTEgz/gv4V8lXJfEBXG1hOIWEJ1OCFGzse
-	8abrFRDgouFYsxPqILE+mk6zKZaeOAk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Vishal Bhakta <vishal.bhakta@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] scsi: vmw_pvscsi: Use str_enabled_disabled() helper in pvscsi_probe()
-Date: Thu, 11 Sep 2025 14:21:49 +0200
-Message-ID: <20250911122149.1389092-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757593392; c=relaxed/simple;
+	bh=R9YWyIzRE57e5iQ58DP3D1Bv44q/n3swKiLnk0qOFow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aObcC0ver6etms8Aa5L9K8iFO/6ZL+52kUeAEqnnbuWrzDMNU3JAk3Epf71ZNIg7lNrJxfg45+Vntzedotvl1BSoXUaatMp2anUuAicn34KbtSD2SgfDQIWK10uBhSOyRR7qzEhZyZhtzLFFxTSzRu16UsueoVY66dZcZxvxsdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iUtj1fUd; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Q/+TRdQQOjc8EYjaftE572NI2az6P7CG9X/fSzKljMY=; b=iUtj1fUdZYQfwG87ZFcRTVjPmu
+	pHHb7ps3QUmjzxqAUTyLpEa6bpn7lChUvw87X3534prp9QRaZIxyBq/ugdacwFslMYUYQryvTGxu1
+	uDL2ZYimDjFMfyQAYmthvKZMxE3HTeIyyOVTzy2J+6huwpf4UIxBljKVd7r7YuB0bqdQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uwgKF-0084ha-UU; Thu, 11 Sep 2025 14:22:55 +0200
+Date: Thu, 11 Sep 2025 14:22:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: phy: clear EEE runtime state in
+ PHY_HALTED/PHY_ERROR
+Message-ID: <b76c7f70-73b1-4d80-9e44-6305fcf0d09d@lunn.ch>
+References: <20250909131248.4148301-1-o.rempel@pengutronix.de>
+ <5078fdbe-b8ac-430a-ab5d-9fa2d493c7da@lunn.ch>
+ <aMEj8vjJY4h6kYbN@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMEj8vjJY4h6kYbN@pengutronix.de>
 
-Remove hard-coded strings by using the str_enabled_disabled() helper
-function.
+> As a follow-up I would propose a separate patch which clears additional
+> link-resolved state when the PHY enters HALTED, for example:
 
-Use pr_debug() instead of printk(KERN_DEBUG) to silence a checkpatch
-warning.
+This is good. Maybe mention in the commit message there will be a
+follow up for other state variables.
 
-Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/scsi/vmw_pvscsi.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/vmw_pvscsi.c b/drivers/scsi/vmw_pvscsi.c
-index 32242d86cf5b..4927c6a33bd8 100644
---- a/drivers/scsi/vmw_pvscsi.c
-+++ b/drivers/scsi/vmw_pvscsi.c
-@@ -25,6 +25,7 @@
- #include <linux/slab.h>
- #include <linux/workqueue.h>
- #include <linux/pci.h>
-+#include <linux/string_choices.h>
- 
- #include <scsi/scsi.h>
- #include <scsi/scsi_host.h>
-@@ -1508,8 +1509,8 @@ static int pvscsi_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		goto out_reset_adapter;
- 
- 	adapter->use_req_threshold = pvscsi_setup_req_threshold(adapter, true);
--	printk(KERN_DEBUG "vmw_pvscsi: driver-based request coalescing %sabled\n",
--	       adapter->use_req_threshold ? "en" : "dis");
-+	pr_debug("vmw_pvscsi: driver-based request coalescing %s\n",
-+		 str_enabled_disabled(adapter->use_req_threshold));
- 
- 	if (adapter->dev->msix_enabled || adapter->dev->msi_enabled) {
- 		printk(KERN_INFO "vmw_pvscsi: using MSI%s\n",
--- 
-2.51.0
-
+Thanks
+	Andrew
 
