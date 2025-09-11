@@ -1,258 +1,282 @@
-Return-Path: <linux-kernel+bounces-812638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB13B53AC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:53:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47993B53ACB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306461C84AD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E857CAA19F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:56:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3798235FC30;
-	Thu, 11 Sep 2025 17:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ADD35FC3C;
+	Thu, 11 Sep 2025 17:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bkf3Wnkq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="SsgQp0Pj"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2049.outbound.protection.outlook.com [40.107.243.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14338362092;
-	Thu, 11 Sep 2025 17:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757613187; cv=none; b=bZuhp0aLC7yp5KBNAfdTw8x8Eh5X3jZ05/ymr7UVdUYkzRE6aFGi/6bm/wO8fyOwatEzZZw1Z29o6OX0SjUr67YZ63/ue5AOgmiQ6Aioa/mupdmaZs+XEEupB2MndnvqAD0XCZ8IhJXZnOe+74wkrFW0g7a5eBIyTiR7mB1f354=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757613187; c=relaxed/simple;
-	bh=Z2+nBVkWPIG88TqQQAQmMSXJogs17OhTvk+WeLYH5XY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ec+DqISJgnY5v2YF+wVZwncqjcsdpNh0jWwX2oqK+g96WXV4/qijORmVhmEbCgkceOdAtdNqrVvLyy20JcfPKvA2WNMp2A6+n3DZYDP0XsndTt33O7m5jo8gagIdl/mV5++eeED2oKHqV4Lwn6INe+35g2FQYviu2brH2aM03Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bkf3Wnkq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520F5C4CEF0;
-	Thu, 11 Sep 2025 17:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757613186;
-	bh=Z2+nBVkWPIG88TqQQAQmMSXJogs17OhTvk+WeLYH5XY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Bkf3WnkqmhSBMwSLyzsGZ4azoGtNd8x/AeMvYcXme2KsLCIEMQZtg0JCCc0qUpn1v
-	 z+u3JV55OoKd/cRJ6z1iBNauxJ8IY3vgnqPeeCjoP6Me9/aABeN2uwINlWrmbuDTwg
-	 2ZAEVKEL4LaW+BUqXN5EXd9Z3vxEV7T36Ngf2dwKRUpV2qo0xtn+0oBYPXaDxpFMKo
-	 oi5aJWCkp7UljPT7nxxCFxB4+IUEG/RoY+2H0P0xN4n5nIPexb1NlE92bPoInX0VtG
-	 r4ZnCaWOYjkUaGV2sCttM3XsoIt94mqYpPGnYpbPB5uyczrJ7QqVvd3/6z+a1xgSi3
-	 HCnY4YKUgLeQA==
-Date: Thu, 11 Sep 2025 10:51:45 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Alexander Potapenko <glider@google.com>
-Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com,
-	Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] kmsan: Fix out-of-bounds access to shadow memory
-Message-ID: <20250911175145.GA1376@sol>
-References: <20250829164500.324329-1-ebiggers@kernel.org>
- <20250910194921.GA3153735@google.com>
- <CAG_fn=W_7o6ANs94GwoYjyjvY5kSFYHB6DwfE+oXM7TP1eP5dw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AB6635
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757613357; cv=fail; b=MIXcaQWXIbxqj2hmxR6VrKtY8wo4agGI5ZT3OoamtxMLVrUrkLmFPjXQYfPYKC2VM8MP+K/uc4U4BUbP3xmYVuGvKaUVPkJWfC2O53Crb1VW2ENye/tEPqQ+3K1hKnW078MWMatN6lkmlTHbTh977h+FKz5E6F7y6i9MmOaj810=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757613357; c=relaxed/simple;
+	bh=45WXE7cczDRerYskucewQpGTHSj5PjlAoBUohXlJl60=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rzRhX7yV1oIiS/zdtU4y9k+ozP1GHl7ZPMqxzfYh3c2rMS1aQWJSJzceB4hwgH0V9PV3kLCsuDQ9QdoSsz/OO8AZHgXz32eX5gPLg0XLYl7zT1mddVaZc+JfyFAksxRP5BlfzyEj+eeOK3+2JTyCXbblF5DYJ7Babrw7/tJWPRk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=SsgQp0Pj; arc=fail smtp.client-ip=40.107.243.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yJn179vS2BTJ6AebMzbkJz1OlGvaKZVfHQMdqb1IGYjz0Bbhayjm/c2B4jXce+nHE4Mqk0ShDeMkVoEDe/bSP1oujnBv6Bs+Azx4lNYaggC8d8TRmNqs19RnxODyLDM576BhUWKcdnoY1FmkVM+Z9rJtNKBoq0xZWLyDjLCU/ybEDF+P4Wo1lVU3bU7vCEfWjD5WZ3IcvivDfGSHN5aABhZVB+3WkF/ZjK+4mhdr/iDCdVZL6mIkYj52vXzVw3oOUe+oq4m9mUxiUdJPhxtbi52t2DU5kcyVAnxZwFOnErLeMXdKAtjuMUzvbbH11ZAkLkx0YZJsWw4XNiDGGb/c8w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UlJamb28xZuijTkHz7tbPzVLwaivp4YBzrDwUR4Q4v8=;
+ b=XoAS3iEdefEVZ+t45CWa+DuxcBPbO1lOxRRbUBo6bk9gGiyDqj1M9fgj+hjdz9d5lvBPrGHRPLJNsnbvXD7+Niqrk8OHoAhhq1azJ+4/Mc0x+keo/jikJJdo9faMQsWRvu29fL2+jxnuBhzio5hyDXoNu943T9r1fDdxtq4tSjJALcvD8NLDuARe0YJTQxh4FJJCDgCzrWjXbtN9CRJHluxy0mCObIfcAeR7EvsNqPpXyt8gsk81xCEjKZgFAlftkhdnMbrGDSF7IlEvshXb3Ti1GN8jgerHC8rNzNRE5E0/vXcpfz3J7EEccMH30S8bDX9T39tl24f7jdTK8d0J2w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UlJamb28xZuijTkHz7tbPzVLwaivp4YBzrDwUR4Q4v8=;
+ b=SsgQp0PjQb2DS75t7Q6yPKdTev1BC45MLWKB0ZXX9r/j6znKbIm2MXld1hNrF55IK9Yu+RKmzjnSnYXKISck1vwP/avASO/UsAogFmcjY2wIl6CCnEueGenNi8ccjyH9nBYpWLfWTtWqnW3nf/pRznzUSdQg/hHdYpoOpCRD1DY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by LV8PR12MB9154.namprd12.prod.outlook.com (2603:10b6:408:190::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 17:55:51 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 17:55:51 +0000
+Message-ID: <ccdc6dda-8341-4b77-a571-e0642499e3f7@amd.com>
+Date: Thu, 11 Sep 2025 12:55:49 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/amd/display: Only restore backlight after
+ amdgpu_dm_init or dm_resume
+To: Matthew Schwartz <matthew.schwartz@linux.dev>, chiahsuan.chung@amd.com,
+ alexander.deucher@amd.com, harry.wentland@amd.com, simona@ffwll.ch,
+ airlied@gmail.com, sunpeng.li@amd.com
+Cc: amd-gfx@lists.freedesktop.org, zaeem.mohamed@amd.com, misyl@froggi.es,
+ linux-kernel@vger.kernel.org
+References: <20250911174851.2767335-1-matthew.schwartz@linux.dev>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20250911174851.2767335-1-matthew.schwartz@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9P223CA0011.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:806:26::16) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG_fn=W_7o6ANs94GwoYjyjvY5kSFYHB6DwfE+oXM7TP1eP5dw@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|LV8PR12MB9154:EE_
+X-MS-Office365-Filtering-Correlation-Id: c28b8608-f9be-4eee-ebdc-08ddf15c724f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TVM0SnJkWDN6bGI5dUkrMzRocFV3Und0SzdVeGI1K0tnQUwybnhobHB5R1lM?=
+ =?utf-8?B?YkFnQklVeVRPZng4ODZUdlZmMGRocUZuaTZ4b0NHVWZGWldvaU5SV2pyYndL?=
+ =?utf-8?B?eFdtNytyL0l5UmdiMmRac21pUURqTTFaMGxaZTJ0QTFKdnlCdmRaTkpkczRa?=
+ =?utf-8?B?UElHdFNQWkdYWVRMdGZmNlNHb0RmUEV2QjRLeFk4Uk1IMVpkUTZzWklzVGNx?=
+ =?utf-8?B?TWkwWjFDek11c2lHcE0xejlrRUNXcmpiVXdRSW5mdExDQXowcmJnVTJGZTdK?=
+ =?utf-8?B?b3FiUHgzazlVSUFJTWtOZWR2SG8wU2JUWGxsRzErT3JyMmtTaWpFdGY3V0pZ?=
+ =?utf-8?B?Y3BKbnZoVTJUcWkyRUpWNEtaWGM1MWNQWmVmMFRrMm9kVE1NSXVtTnlqMVNr?=
+ =?utf-8?B?L1N5ZVRrWDNNbU1sWUttdlRIU2pGc0l5VW1LVkhJcnNmQW0rUmJLUHROZkFI?=
+ =?utf-8?B?MzdkZUxoWEpKM0E3RVBETmwwNDk1NnZkVWs3bzRHd2pjcmZVblpyY3Q1NytJ?=
+ =?utf-8?B?bXBBSjhFeDJZeVptQnZrak44bjBZU2JNcjBvQXUxWm5TRVF2Vk9idnQ3MVpN?=
+ =?utf-8?B?ZlM1RDhTdzBCYkRIZ3hhbzAvWEorc1I0c2hhR2s2MnZlR2NadFI5MmlxRm5M?=
+ =?utf-8?B?dDErNWF5cHVmeWxhc2lnWWJRb0ovN0J1cW1QME45RGsvamVwaWt2WnpYYTRi?=
+ =?utf-8?B?anFLcGVxT0lydTlORkFJWFpINFRKN05OZ3ZuUitRSGFhWmJzZnZZajIvRERo?=
+ =?utf-8?B?NTdkRVdkQ0VaNm5FVmphdFFISzRmcGZYY01UaFZiVVZqR1FBd2NGc3B1R2xJ?=
+ =?utf-8?B?bm5wWXhoYk9ub3oxY3hDVS8wVFkxOGxCM0t1QU9SWnc4UnlRSWxLRkJsS1hG?=
+ =?utf-8?B?NWlmdmxOVE9OVjRmT0FxYldXMTNtcjRBT3RWSXE3cnFLQkVJWngyYkprU0Fk?=
+ =?utf-8?B?M2xvOWtYQUFlWlVkOTdPTktJNmcxZUFuYmR1TGxCTlUwaTZobS9LcDl4Vlo2?=
+ =?utf-8?B?SmFKRVhYS3hUOUpzeE54VzdhM1RXcVN2L1A4T0JGdUFYMG8veXJUZ2RXM2hz?=
+ =?utf-8?B?emFZZXJCdzd0WUxIYWthSUZZNzNyanZNUGRvSDE4R2MrZmxvU3pyYnBJRkpV?=
+ =?utf-8?B?QlcvUklLZW50MldicEFPVVpHdlJHa0FKMnBjZ0w2N3lLUkpLRllMY3RRaUpu?=
+ =?utf-8?B?Nlh3ZEJXdW9ub2QrQjZneklrUGRVOFVWTlpSK2FVMzVnUi9NNWJ5YlBHNGNu?=
+ =?utf-8?B?dFpXUGc0V3FpTnhiUTdoeXVLVGExcTlHaHBpVlpVNUpYaFRSYTcvQzJDUXVo?=
+ =?utf-8?B?c2pvRW1tS0VGeWg4K1AzQWR3UDhidXp0U1dDVTRweWdKWkFTNE9qREZlbEN6?=
+ =?utf-8?B?QWVWV3lQQ3FadGkwQWNTSEUwTFdQamRsdDhvRG4vWEp2OEVXNk5TWjkwWkY5?=
+ =?utf-8?B?WjRLQ2I0aVhCRlZDcUVkNVJzaHRUeWdGYUV0SkNrSjNiZmRjUzh1T2xMN01S?=
+ =?utf-8?B?dlg4SUgyYUhBSmxLUXd3eTlhUUJ6UE1zM0ZHRElydjF2VVQzeEJKRlRiQnlT?=
+ =?utf-8?B?YUU2Qkt0ZW1DZ1NRMm1QR25QYWNWbkplQlNkd1RnRHo1U2VlVGg5eG9pT3ox?=
+ =?utf-8?B?dk9NY3lqSHNqb2ZlRytwOUhJcHZKQkhGcnk2S3BEei9zU21wa1htaVZad1BC?=
+ =?utf-8?B?dUR3YzJzZTBIL3lETDV1aEhuN0pvRVpzajdmUlI2ZGtvWmR2T0lxOFlZU2J3?=
+ =?utf-8?B?RjViNy85a0FpUm9TM2lUK2xzaHBneHh0cG0xSDlWaG1PRUFkakJXUWFpRWE4?=
+ =?utf-8?Q?wqEYetZTkWsMwqSsNSXyeVTLrmspZxXjQqXAo=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RnVSLzVPZ01nQ29ZL0gwM2YxQXF3ZG5nY1phWWJqdGR2MnU0S1VvL0JNc2N0?=
+ =?utf-8?B?Vm1IRWlKbUxvZisxK2ZENlhMbkZyejFjVWgzYVNVV3FBODVqRldUcmczbHA0?=
+ =?utf-8?B?MHFwY3BxVXZWait3TWI3MTdBYi9ET2JXMEhqUzlLdTlPeWRsOWlSMndtMlZP?=
+ =?utf-8?B?Y2NmVXJDR3poS0ZhZDR2Y2VvMGp6ZExFUTFNa0RHOHBBc3JRT3VvS1ZONm5E?=
+ =?utf-8?B?a3hJSVVaQ09Fam93MVFWNTVrMGNHQW9BZGQ1TEdCeFN3bHhYM3FmOGowTVM0?=
+ =?utf-8?B?bmNscjVsTCtmSVJFWXlYL3ZId0NFMjdyQWNRZ1F5SE5HV3hBQXg5Q3A3Tmsy?=
+ =?utf-8?B?ajJxbURlZmdhTTZ3dWxla2RsY0laU0t5dWVhVHpheUY4SCtMOGcyTzRsUGw5?=
+ =?utf-8?B?MFRHM2RjaVQ5dVhoWjJGL2xOZHBzYXpocmtYMU1rRzQydGRWbU1XUTkyTDRY?=
+ =?utf-8?B?YXJCb1NTQTBab3VjZlZEQVU0Q1d3cmp5VDdrYnhzVkIrV3Yyd29JTFVGY2VW?=
+ =?utf-8?B?NW9QZWpqejBoMW5XNjg2R0VWNW5tdllZZXBlQmlSbzhyVmpXQWFNbG9VTTJk?=
+ =?utf-8?B?aDZUNjdlWTlIN2NnZ2sxWC9sdWZkMExYeDErZ2QxbHlzeDdZRkd0eENWUTR5?=
+ =?utf-8?B?aTc2L2sxN2xqQWMvYTJiUFFlVUgza0VCdzlPdWJNVGdHYXlMWElwLzlVWi9C?=
+ =?utf-8?B?eVoyVHpkeC8xNGZPWXFNL2swSFZ1Q0ZmTEJmQ3BsRlFONVhaWmRETWRBOS9H?=
+ =?utf-8?B?TW00R0RYZWpidGhKK2hnL3lrOVFXdEh2Z25tZGRXeFR0dVpnK0ZJclFHa3l6?=
+ =?utf-8?B?anhJVDd0ME1mTlNQWitrMEdQQllUdXA2cmplSThJbDRpOEhlZkhkMmllZVJM?=
+ =?utf-8?B?M3FXdGdRaTVJUnhLaThndGFwbmYrWGxsa1JNNXpYMkVsQzI4TkdSRTZsVXgz?=
+ =?utf-8?B?WjRLY0FZUHI1VHBiQ3o3a3NlSlptV0VqWUZuSm5yQS9Vc1pHUUROZEZ6cklY?=
+ =?utf-8?B?dy9zUldFUWthdG5PelE0NGtsTXpWS0J1WnAvckNpbk00U1B0MEVKbGpuNDc3?=
+ =?utf-8?B?bmJ5MmV6MldBSnVEczJFTmQrcEt4am5BVkdDOGlvRkV0WVM4OUZPbklVUTJu?=
+ =?utf-8?B?WGlQL0VOK1hicy9OT1RQRWRzOENMWUpFSmZwWEVTZlRWRVovTWtyajRjVHZ1?=
+ =?utf-8?B?ZUNmdm1lS0NmZ01scWNTR1JCRnBCUkFIVGpBUUpDTGZnSHZVdzBENFlFcGE1?=
+ =?utf-8?B?WExhVVRCaGtJbVNRdFByZmdIcnMzMjRxTU03VHdwRml2Y1l2T2lVQ0xRY1Z2?=
+ =?utf-8?B?NHcyUnNjVkpRVmhtZ2pDcmhhSGdCcUtRdnVVQUdhV0xzaGlnZGNaaUdxZzQw?=
+ =?utf-8?B?R2xTWUlLRW1zOEUvMVdMTmpVV3JEYm1odjRSU3FqZk1JOU02d2dOY2RBcVox?=
+ =?utf-8?B?WXQ5WHI0dUZMakx1cHVxdTRmZHhrKzdjK3VDdFVENDM0dnVnU3h2aFp2WnVN?=
+ =?utf-8?B?dWk1d3o5SE5QL3JPNkNZZGsvWHg0Vmw0V1p6d3Z5ZCtiWDZQNVRSVkc1UHdq?=
+ =?utf-8?B?NCtteXZXcjB5MmJ5V2svZTBIbVRnTWVRQUo4cVp3dHhCNUc3d01YNDI5RGd0?=
+ =?utf-8?B?M1pDZ1FwdzVmcVFUOThrQlN1eGM3bHlWYjJFamxJTi9qb2JFVzJHbTR4NHRW?=
+ =?utf-8?B?Z0tLVGJPeDNuUElWV0hRbHpzSTFtTFFiNWRMSzcvMFNOR1pNMitQRHVQOG4z?=
+ =?utf-8?B?RkZ3aUVkYW94ck1EN09yemkrdExFRGlTUmNYOXQ0d3dhNm1RRm91bmtqcmhD?=
+ =?utf-8?B?Z1NuYU94YWxLN01rSG9SMTVYUHhka3VKZVNSRlk5YUk5Z1IwM0FCcFVmSGZ1?=
+ =?utf-8?B?am43UmRFYWxhZXlXYm1pVm1nZkpiaEdVRUt2OGlJVUZSdS80ZG50ZTdHbEJ1?=
+ =?utf-8?B?OCtGeHErd3VCK3JZQnRscC9rNmg4SmoxeGZPRnZPeS9FeG5DOUx2YVdtS0ZX?=
+ =?utf-8?B?TmtuZFBCUUhDSFBPRVBleHhvR0FuaUc2WHUwL1R5c2wzdGJTYzZPclA1NUVZ?=
+ =?utf-8?B?OHc5RXBibkFrMFM1Z1RkOVpwUEp4bjk5NmRUODlWTlFqUUFoM2NUUkMwcXdj?=
+ =?utf-8?Q?A5qPDjAMxvySazb5HwgOjYhGD?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c28b8608-f9be-4eee-ebdc-08ddf15c724f
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 17:55:51.5983
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ML8swqSHfdlD63LdO/gDzCjF1Ghkz8eACvFWeP1g92Mx+clZMBCvo3UzNwxB6TmbBP2iZr71ZwnSGxj98ISWzg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9154
 
-On Thu, Sep 11, 2025 at 11:09:17AM +0200, Alexander Potapenko wrote:
-> On Wed, Sep 10, 2025 at 9:49 PM Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > On Fri, Aug 29, 2025 at 09:45:00AM -0700, Eric Biggers wrote:
-> > > Running sha224_kunit on a KMSAN-enabled kernel results in a crash in
-> > > kmsan_internal_set_shadow_origin():
-> > >
-> > >     BUG: unable to handle page fault for address: ffffbc3840291000
-> > >     #PF: supervisor read access in kernel mode
-> > >     #PF: error_code(0x0000) - not-present page
-> > >     PGD 1810067 P4D 1810067 PUD 192d067 PMD 3c17067 PTE 0
-> > >     Oops: 0000 [#1] SMP NOPTI
-> > >     CPU: 0 UID: 0 PID: 81 Comm: kunit_try_catch Tainted: G                 N  6.17.0-rc3 #10 PREEMPT(voluntary)
-> > >     Tainted: [N]=TEST
-> > >     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
-> > >     RIP: 0010:kmsan_internal_set_shadow_origin+0x91/0x100
-> > >     [...]
-> > >     Call Trace:
-> > >     <TASK>
-> > >     __msan_memset+0xee/0x1a0
-> > >     sha224_final+0x9e/0x350
-> > >     test_hash_buffer_overruns+0x46f/0x5f0
-> > >     ? kmsan_get_shadow_origin_ptr+0x46/0xa0
-> > >     ? __pfx_test_hash_buffer_overruns+0x10/0x10
-> > >     kunit_try_run_case+0x198/0xa00
-> >
-> > Any thoughts on this patch from the KMSAN folks?  I'd love to add
-> > CONFIG_KMSAN=y to my crypto subsystem testing, but unfortunately the
-> > kernel crashes due to this bug :-(
-> >
-> > - Eric
+On 9/11/25 12:48 PM, Matthew Schwartz wrote:
+> On clients that utilize AMD_PRIVATE_COLOR properties for HDR support,
+> brightness sliders can include a hardware controlled portion and a
+> gamma-based portion. This is the case on the Steam Deck OLED when using
+> gamescope with Steam as a client.
 > 
-> Sorry, I was out in August and missed this email when digging through my inbox.
+> When a user sets a brightness level while HDR is active, the gamma-based
+> portion and/or hardware portion are adjusted to achieve the desired
+> brightness. However, when a modeset takes place while the gamma-based
+> portion is in-use, restoring the hardware brightness level overrides the
+> user's overall brightness level and results in a mismatch between what
+> the slider reports and the display's current brightness.
 > 
-> Curiously, I couldn't find any relevant crashes on the KMSAN syzbot
-> instance, but the issue is legit.
-> Thank you so much for fixing this!
+> To avoid overriding gamma-based brightness, only restore HW backlight
+> level after boot or resume. This ensures that the backlight level is
+> set correctly after the DC layer resets it while avoiding interference
+> with subsequent modesets.
 > 
-> Any chance you can add a test case for it to mm/kmsan/kmsan_test.c?
+> Fixes: 7875afafba84 ("drm/amd/display: Fix brightness level not retained over reboot")
+> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4551
+> Signed-off-by: Matthew Schwartz <matthew.schwartz@linux.dev>
 
-Unfortunately most of the KMSAN test cases already fail on upstream,
-which makes it difficult to develop new ones:
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
-[    1.322395] KTAP version 1
-[    1.322899] 1..1
-[    1.323644]     KTAP version 1
-[    1.324142]     # Subtest: kmsan
-[    1.324650]     # module: kmsan_test
-[    1.324667]     1..24
-[    1.325990]     # test_uninit_kmalloc: uninitialized kmalloc test (UMR report)
-[    1.327078] *ptr is true
-[    1.327525]     # test_uninit_kmalloc: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:173
-                   Expected report_matches(&expect) to be true, but is false
-[    1.330117]     not ok 1 test_uninit_kmalloc
-[    1.330474]     # test_init_kmalloc: initialized kmalloc test (no reports)
-[    1.332129] *ptr is false
-[    1.333384]     ok 2 test_init_kmalloc
-[    1.333729]     # test_init_kzalloc: initialized kzalloc test (no reports)
-[    1.335285] *ptr is false
-[    1.339418]     ok 3 test_init_kzalloc
-[    1.339791]     # test_uninit_stack_var: uninitialized stack variable (UMR report)
-[    1.341484] cond is false
-[    1.341927]     # test_uninit_stack_var: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:211
-                   Expected report_matches(&expect) to be true, but is false
-[    1.344844]     not ok 4 test_uninit_stack_var
-[    1.345262]     # test_init_stack_var: initialized stack variable (no reports)
-[    1.347083] cond is true
-[    1.347847]     ok 5 test_init_stack_var
-[    1.348145]     # test_params: uninit passed through a function parameter (UMR report)
-[    1.349926] arg1 is false
-[    1.350338] arg2 is false
-[    1.350746] arg is false
-[    1.351154] arg1 is false
-[    1.351561] arg2 is true
-[    1.351987]     # test_params: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:262
-                   Expected report_matches(&expect) to be true, but is false
-[    1.354751]     not ok 6 test_params
-[    1.355229]     # test_uninit_multiple_params: uninitialized local passed to fn (UMR report)
-[    1.357056] signed_sum3(a, b, c) is true
-[    1.357677]     # test_uninit_multiple_params: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:282
-                   Expected report_matches(&expect) to be true, but is false
-[    1.360393]     not ok 7 test_uninit_multiple_params
-[    1.360676]     # test_uninit_kmsan_check_memory: kmsan_check_memory() called on uninit local (UMR report)
-[    1.362916]     # test_uninit_kmsan_check_memory: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:309
-                   Expected report_matches(&expect) to be true, but is false
-[    1.365946]     not ok 8 test_uninit_kmsan_check_memory
-[    1.366415]     # test_init_kmsan_vmap_vunmap: pages initialized via vmap (no reports)
-[    1.368805]     ok 9 test_init_kmsan_vmap_vunmap
-[    1.369223]     # test_init_vmalloc: vmalloc buffer can be initialized (no reports)
-[    1.371106] buf[0] is true
-[    1.371937]     ok 10 test_init_vmalloc
-[    1.372396]     # test_uaf: use-after-free in kmalloc-ed buffer (UMR report)
-[    1.374021] value is true
-[    1.374463]     # test_uaf: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:378
-                   Expected report_matches(&expect) to be true, but is false
-[    1.376867]     not ok 11 test_uaf
-[    1.377229]     # test_percpu_propagate: uninit local stored to per_cpu memory (UMR report)
-[    1.378951] check is false
-[    1.379432]     # test_percpu_propagate: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:396
-                   Expected report_matches(&expect) to be true, but is false
-[    1.382201]     not ok 12 test_percpu_propagate
-[    1.382625]     # test_printk: uninit local passed to pr_info() (UMR report)
-[    1.384329] ffffc900002bfcd4 contains 0
-[    1.384933]     # test_printk: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:418
-                   Expected report_matches(&expect) to be true, but is false
-[    1.387474]     not ok 13 test_printk
-[    1.387824]     # test_init_memcpy: memcpy()ing aligned initialized src to aligned dst (no reports)
-[    1.390061]     ok 14 test_init_memcpy
-[    1.390327]     # test_memcpy_aligned_to_aligned: memcpy()ing aligned uninit src to aligned dst (UMR report)
-[    1.392359]     # test_memcpy_aligned_to_aligned: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:459
-                   Expected report_matches(&expect) to be true, but is false
-[    1.395181]     not ok 15 test_memcpy_aligned_to_aligned
-[    1.395467]     # test_memcpy_aligned_to_unaligned: memcpy()ing aligned uninit src to unaligned dst (UMR report)
-[    1.397845]     # test_memcpy_aligned_to_unaligned: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:483
-                   Expected report_matches(&expect) to be true, but is false
-[    1.400221]     # test_memcpy_aligned_to_unaligned: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:486
-                   Expected report_matches(&expect) to be true, but is false
-[    1.403059]     not ok 16 test_memcpy_aligned_to_unaligned
-[    1.403437]     # test_memcpy_initialized_gap: unaligned 4-byte initialized value gets a nonzero origin after memcpy() - (2 UMR reports)
-[    1.406077]     # test_memcpy_initialized_gap: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:532
-                   Expected report_matches(&expect) to be true, but is false
-[    1.408340]     # test_memcpy_initialized_gap: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:538
-                   Expected report_matches(&expect) to be true, but is false
-[    1.411063]     not ok 17 test_memcpy_initialized_gap
-[    1.411338]     # test_memset16: memset16() should initialize memory
-[    1.413393]     ok 18 test_memset16
-[    1.413651]     # test_memset32: memset32() should initialize memory
-[    1.415427]     ok 19 test_memset32
-[    1.415739]     # test_memset64: memset64() should initialize memory
-[    1.417513]     ok 20 test_memset64
-[    1.417783]     # test_long_origin_chain: origin chain exceeding KMSAN_MAX_ORIGIN_DEPTH (UMR report)
-[    1.419805]     # test_long_origin_chain: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:584
-                   Expected report_matches(&expect) to be true, but is false
-[    1.422415]     not ok 21 test_long_origin_chain
-[    1.422752]     # test_stackdepot_roundtrip: testing stackdepot roundtrip (no reports)
-[    1.424598]  kunit_try_run_case+0x19d/0xa50
-[    1.425243]  kunit_generic_run_threadfn_adapter+0x62/0xe0
-[    1.426252]  kthread+0x8cd/0xb40
-[    1.426747]  ret_from_fork+0x189/0x2b0
-[    1.427320]  ret_from_fork_asm+0x1a/0x30
-[    1.428245]     ok 22 test_stackdepot_roundtrip
-[    1.428519]     # test_unpoison_memory: unpoisoning via the instrumentation vs. kmsan_unpoison_memory() (2 UMR reports)
-[    1.430771] =====================================================
-[    1.431682] BUG: KMSAN: uninit-value in test_unpoison_memory+0x146/0x3e0
-[    1.432705]  test_unpoison_memory+0x146/0x3e0
-[    1.433356]  kunit_try_run_case+0x19d/0xa50
-[    1.433979]  kunit_generic_run_threadfn_adapter+0x62/0xe0
-[    1.434773]  kthread+0x8cd/0xb40
-[    1.435263]  ret_from_fork+0x189/0x2b0
-[    1.435846]  ret_from_fork_asm+0x1a/0x30
+Haven't picked it up, will wait a few days for more comments.
 
-[    1.436692] Local variable a created at:
-[    1.437270]  test_unpoison_memory+0x41/0x3e0
-[    1.437903]  kunit_try_run_case+0x19d/0xa50
+> ---
+> v2: Drop set_backlight_level and use dm->restore_backlight in
+> amdgpu_dm_commit_streams
+> ---
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 12 ++++++++----
+>   drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  7 +++++++
+>   2 files changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> index 7808a647a306c..2a5fa85505e84 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+> @@ -2037,6 +2037,8 @@ static int amdgpu_dm_init(struct amdgpu_device *adev)
+>   
+>   	dc_hardware_init(adev->dm.dc);
+>   
+> +	adev->dm.restore_backlight = true;
+> +
+>   	adev->dm.hpd_rx_offload_wq = hpd_rx_irq_create_workqueue(adev);
+>   	if (!adev->dm.hpd_rx_offload_wq) {
+>   		drm_err(adev_to_drm(adev), "failed to create hpd rx offload workqueue.\n");
+> @@ -3407,6 +3409,7 @@ static int dm_resume(struct amdgpu_ip_block *ip_block)
+>   		dc_set_power_state(dm->dc, DC_ACPI_CM_POWER_STATE_D0);
+>   
+>   		dc_resume(dm->dc);
+> +		adev->dm.restore_backlight = true;
+>   
+>   		amdgpu_dm_irq_resume_early(adev);
+>   
+> @@ -9802,7 +9805,6 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+>   	bool mode_set_reset_required = false;
+>   	u32 i;
+>   	struct dc_commit_streams_params params = {dc_state->streams, dc_state->stream_count};
+> -	bool set_backlight_level = false;
+>   
+>   	/* Disable writeback */
+>   	for_each_old_connector_in_state(state, connector, old_con_state, i) {
+> @@ -9922,7 +9924,6 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+>   			acrtc->hw_mode = new_crtc_state->mode;
+>   			crtc->hwmode = new_crtc_state->mode;
+>   			mode_set_reset_required = true;
+> -			set_backlight_level = true;
+>   		} else if (modereset_required(new_crtc_state)) {
+>   			drm_dbg_atomic(dev,
+>   				       "Atomic commit: RESET. crtc id %d:[%p]\n",
+> @@ -9979,13 +9980,16 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
+>   	 * to fix a flicker issue.
+>   	 * It will cause the dm->actual_brightness is not the current panel brightness
+>   	 * level. (the dm->brightness is the correct panel level)
+> -	 * So we set the backlight level with dm->brightness value after set mode
+> +	 * So we set the backlight level with dm->brightness value after initial
+> +	 * set mode. Use restore_backlight flag to avoid setting backlight level
+> +	 * for every subsequent mode set.
+>   	 */
+> -	if (set_backlight_level) {
+> +	if (dm->restore_backlight) {
+>   		for (i = 0; i < dm->num_of_edps; i++) {
+>   			if (dm->backlight_dev[i])
+>   				amdgpu_dm_backlight_set_level(dm, i, dm->brightness[i]);
+>   		}
+> +		dm->restore_backlight = false;
+>   	}
+>   }
+>   
+> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> index b937da0a4e4a0..6aae51c1beb36 100644
+> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
+> @@ -610,6 +610,13 @@ struct amdgpu_display_manager {
+>   	 */
+>   	u32 actual_brightness[AMDGPU_DM_MAX_NUM_EDP];
+>   
+> +	/**
+> +	 * @restore_backlight:
+> +	 *
+> +	 * Flag to indicate whether to restore backlight after modeset.
+> +	 */
+> +	bool restore_backlight;
+> +
+>   	/**
+>   	 * @aux_hpd_discon_quirk:
+>   	 *
 
-[    1.438766] Bytes 0-2 of 3 are uninitialized
-[    1.439433] Memory access of size 3 starts at ffffc90000347cd5
-
-[    1.440517] CPU: 3 UID: 0 PID: 99 Comm: kunit_try_catch Tainted: G                 N  6.17.0-rc5-00110-ge59a039119c3 #3 PREEMPT(none) 
-[    1.442247] Tainted: [N]=TEST
-[    1.442725] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
-[    1.444376] =====================================================
-[    1.445263] Disabling lock debugging due to kernel taint
-[    1.446103] =====================================================
-[    1.447007] BUG: KMSAN: uninit-value in test_unpoison_memory+0x23f/0x3e0
-[    1.447996]  test_unpoison_memory+0x23f/0x3e0
-[    1.448650]  kunit_try_run_case+0x19d/0xa50
-[    1.449319]  kunit_generic_run_threadfn_adapter+0x62/0xe0
-[    1.450122]  kthread+0x8cd/0xb40
-[    1.450611]  ret_from_fork+0x189/0x2b0
-[    1.451181]  ret_from_fork_asm+0x1a/0x30
-
-[    1.452010] Local variable b created at:
-[    1.452894]  test_unpoison_memory+0x56/0x3e0
-[    1.453537]  kunit_try_run_case+0x19d/0xa50
-
-[    1.454407] Bytes 0-2 of 3 are uninitialized
-[    1.455043] Memory access of size 3 starts at ffffc90000347cd1
-
-[    1.456182] CPU: 3 UID: 0 PID: 99 Comm: kunit_try_catch Tainted: G    B            N  6.17.0-rc5-00110-ge59a039119c3 #3 PREEMPT(none) 
-[    1.457925] Tainted: [B]=BAD_PAGE, [N]=TEST
-[    1.458545] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
-[    1.460239] =====================================================
-[    1.461617]     ok 23 test_unpoison_memory
-[    1.462056]     # test_copy_from_kernel_nofault: testing copy_from_kernel_nofault with uninitialized memory
-[    1.464122] ret is false
-[    1.464538]     # test_copy_from_kernel_nofault: EXPECTATION FAILED at mm/kmsan/kmsan_test.c:656
-                   Expected report_matches(&expect) to be true, but is false
-[    1.467250]     not ok 24 test_copy_from_kernel_nofault
-[    1.482563] # kmsan: pass:11 fail:13 skip:0 total:24
-[    1.483790] # Totals: pass:11 fail:13 skip:0 total:24
-[    1.484532] not ok 1 kmsan
 
