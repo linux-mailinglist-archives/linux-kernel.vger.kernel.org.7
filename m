@@ -1,109 +1,113 @@
-Return-Path: <linux-kernel+bounces-811590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C54FB52B37
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D04BCB52B38
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DBE3A060B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:10:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1EBA3A653E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125482D6E76;
-	Thu, 11 Sep 2025 08:09:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="fuDdhKdr"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A069F2D77E5;
+	Thu, 11 Sep 2025 08:10:09 +0000 (UTC)
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998B82D5952;
-	Thu, 11 Sep 2025 08:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862E42D543E;
+	Thu, 11 Sep 2025 08:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757578197; cv=none; b=iev93yJxQKzqWWJ/SdZke6NMNIU69yNM5l3JEaK10eorGeyCKvXjbkERNGSRFblLu56KNguipb8aLhGZu2j7msYe1LzE8KUffwB/Mr0ur03EVO+J0vBNDytXvwB0WB51JIf+oz6RngVKbUherO4oOV9d0VgXYK18A618n0wvg7Y=
+	t=1757578209; cv=none; b=mQoNIy4FXnzMoQgHm2CGMGYUPKcSrkVGUGk/J3TXDjaKSe+6v2mPefZ4/9Ay/YnCwPlaqtrUSK3IFKC5RrquYm0KtlrFJzHJvf+F5e+qQKx62HtZB2QphHvRBpq1cb+dnnXCvVNK5g50JE/5h4NGjlm7+2Xz34dE9XBq66SDwjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757578197; c=relaxed/simple;
-	bh=x352PQuhLLNf6YiSW+jdH4w7Z+cRMhcTOsK7TWAibzU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qDDRHuTdUBdJ6djLsL9O9tk+H2aRT8XsDlCeyVMRwvNNK5p+7mrGif0rqtKVmYV/Lhd21+7y48oZSPFQBNoKlFEnx9/DN+afns6xk6VgNOZncHgvfVfM7Uuj6OiZCkRtdfTj7IldqG9etlqlhelcdCtm9HsoLoaeIaX45upn98A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=fuDdhKdr; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id D2F3E21AC3;
-	Thu, 11 Sep 2025 10:09:53 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id YH6VOlBShjIH; Thu, 11 Sep 2025 10:09:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1757578193; bh=x352PQuhLLNf6YiSW+jdH4w7Z+cRMhcTOsK7TWAibzU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=fuDdhKdrSXxaYAPHhpfiXcmtnT926GU+qcEojSTORsEPqoel76uoRXDdpxMUdccPM
-	 3UmdTwgzFvn60ZXhAX5BywthCQXxvmGImelUv6ZaGfp4nuXYtsNUqNo8xTm5IOaW/G
-	 EcbiT9DdgSXEVhIS9WGpf98wG64U67QT8B7VVxMN8DE6pWrDJ9/5Xy7s1dW47IlxVB
-	 L3LFYl+YqsPlv92PV+veJTj17TIsNZNfjgnGlwxZJFlvduseMiq29W9PL005kAdSFG
-	 iubM+kckz5QPAUknYQYpa4MG861jZsjXrJw9pRC441mIjRsyqXy+o0QVVZCfuTq9ci
-	 JuUyGgUggRtSw==
-Date: Thu, 11 Sep 2025 08:09:33 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: bhelgaas@google.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
-	kwilczynski@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, lpieralisi@kernel.org,
-	mani@kernel.org, robh@kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Add PCIe Gen2x1 controller for
- RK3528
-Message-ID: <aMKDvcbJ2T-QNYxw@pie>
-References: <20250906135246.19398-3-ziyao@disroot.org>
- <20250909125029.2553286-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1757578209; c=relaxed/simple;
+	bh=4FX1V7mcXU6dg4/N3U7ZWrFANJaLVs5Bvh/bY8S/p7E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WUrIfTqLF6wI+iIdyh9AWXcg99fN8Ln2AGjdAdm15Kp/TfMBWKQUxqS29eReCnoSACU1nIK+r5n1ONdoAPGLFTq2rwM0/67ugWGehrwljVfBeS/dU+CDin1GYyaTrRAkaBe08M1+gMXH8DKi8HRZU8dd2iRiTHMglJanErpj+XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-24c89867a17so3999415ad.1;
+        Thu, 11 Sep 2025 01:10:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757578207; x=1758183007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J51ozOV+yFTScIbZgd7BkHzsTIFy4zOy031kpl4J1Jg=;
+        b=p7BfOj3PYanXgy7upWafPzNjVrVxzsW5HHFof+58EyQMq0Yr5pSioCXEbj8nT6MvdO
+         6XvCKSeBZjBfxsqyG10F6r4aPH7edwHNNsEpYjRc+02x2Yd0OQHIM8W9zOyBnwpCaELX
+         CEcyRYDC0ukB6x7oIluJnen+9LodS2LQ/06eXc91xGpidI4CrTZfBUf5uWXsmnIF5p7x
+         6DttMOWBoPeLgUmx+C7cV8gd9Eezf6wO0p9JIGczYqah7CMv0KpU3QNCieMYIPl7x4Fg
+         32JK7g4t1qohZ/4j7SN3yFXoGQii2hbVgg9gpiGt47J0VR9Z1DAscmonY2UR+uLBL20Q
+         BEtg==
+X-Forwarded-Encrypted: i=1; AJvYcCWi6xKhHO1OC9ggpEEVQ9eJ4D8TUblwCNEnN75wcvIDYP0XiME6dpD7Ohzy7NoBUBz+Vl/yUzEM1VUynhw=@vger.kernel.org, AJvYcCXkhewKWyJmLuJiN6DZwdgzCKPbEh1jr2WirHbftawprt8hWeE59wHO/gu6TPv1u8CJBiWcCUXrxKg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB4DPm4SvuWY6QTzdFFjwKlbge//sf91/XpC8oIElxgIqz0Ybl
+	+sMFMqdv/NsSOiz2n7y9ikU5B4/CRetv2Meon4HtSnLwQ7Jj3piIyaukD0JTc07nOYg=
+X-Gm-Gg: ASbGncsg8qqdmYTfi1hfqJCvW7tdomOYxeEPVDpMvTu4IL5hMWX0BirOuV0IxlOojOH
+	aPOGoQpeVM5SlhkKp0nE9KWQGbEw75LPkcT1doCHMXNi1VuyBAtrcAmJGvV5kPY/3QTdJ/EduVI
+	JdG28Eaxb34ALjLbnbxrPMGffJ/nDPk9CVswnB6n7df2oaULXmpTQiravHCufa2wnC755W2E4GD
+	Ov2sRDPa410Q0DYDMiJzZgWhsN8J55FlBzErhpEtW4CHPm+bVZRHSrk/ByBkG7/sMpsMdQKq6V2
+	bswvP3LHiRqY0vsZCDcyv7PDzFsyZu8yP+Ko+Lv6rMeAFN4tVZudfSHmgqFOkF9kmjZHU8GVSry
+	DpttxqAZ0Crv3av93wJYHiHJtwtbmGmQf4ok6xR4pxu8AQg==
+X-Google-Smtp-Source: AGHT+IEdqwJ7mCmZefSuQJdsuKM3hZAxtpkKwNjBnKye700Irz4TolMgdXYfy1R8r4fjyPSQ5nP/Pw==
+X-Received: by 2002:a17:903:3d06:b0:258:2476:77db with SMTP id d9443c01a7336-25824767953mr142304455ad.42.1757578206683;
+        Thu, 11 Sep 2025 01:10:06 -0700 (PDT)
+Received: from power-ThinkBook-15-G2-ITL.. ([116.128.244.171])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36cc5671sm11129925ad.22.2025.09.11.01.10.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 01:10:06 -0700 (PDT)
+From: Xueqin Luo <luoxueqin@kylinos.cn>
+To: rafael@kernel.org,
+	pavel@kernel.org,
+	lenb@kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Xueqin Luo <luoxueqin@kylinos.cn>
+Subject: [PATCH v2 0/2] PM: hibernate: make compression threads configurable and support dynamic crc arrays
+Date: Thu, 11 Sep 2025 16:09:49 +0800
+Message-ID: <cover.1757575365.git.luoxueqin@kylinos.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909125029.2553286-1-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Sep 09, 2025 at 08:50:29PM +0800, Chukun Pan wrote:
-> Hi,
-> 
-> > +			reg = <0x1 0x40000000 0x0 0x400000>,
-> > +			      <0x0 0xfe4f0000 0x0 0x10000>,
-> > +			      <0x0 0xfc000000 0x0 0x100000>;
-> 
-> Aligning the address for reg and ranges will look better:
-> 
-> 		reg = <0x1 0x40000000 0x0 0x400000>,
-> 		      <0x0 0xfe4f0000 0x0 0x010000>,
-> 		      <0x0 0xfc000000 0x0 0x100000>;
+Hi,
 
-Thanks, this makes sense.
+This is v2 of the series to make hibernate compression/decompression
+threads configurable and improve scalability.
 
-> BTW do we possibly need this?
-> https://github.com/rockchip-linux/kernel/commit/e9397245c4b1bd62ef929d221e20225d58467dc7
+Changes since v1:
+ - Added a new patch to dynamically allocate crc->unc_len/unc based on
+   the number of threads selected at runtime. This removes the compile-
+   time limit (CMP_THREADS) and enables support for arbitrary thread
+   counts.
+ - Enhanced the commit message of patch 1 to include more background
+   information and performance numbers showing resume latency
+   improvements when increasing compression threads.
 
-I'm still unsure its purpose, but am willing to adapt this change. See
-my reply to Jonas' comment.
 
-> > +			clocks = <&cru ACLK_PCIE>, <&cru HCLK_PCIE_SLV>,
-> > +				 <&cru HCLK_PCIE_DBI>, <&cru PCLK_PCIE>,
-> > +				 <&cru CLK_PCIE_AUX>, <&cru PCLK_PCIE_PHY>;
-> 
-> <&cru PCLK_PCIE_PHY> has already been defined in the combphy node,
-> is it repeated here?
+In our measurements (averaged over 10 runs), increasing compression
+threads from 3 to 5–6 improves resume latency by ~12% . Allowing
+runtime configurability enables integrators to tune performance across
+different hardware without recompiling the kernel. Dynamic allocation
+further removes the compile-time limit and supports arbitrary thread
+counts.	
 
-Yes, it should be managed by PHY instead of the controller. I'll fix it
-in v2.
+Xueqin Luo (2):
+  PM: hibernate: dynamically allocate crc->unc_len/unc for configurable
+    threads
+  PM: hibernate: make compression threads configurable
 
-> Thanks,
-> Chukun
+ kernel/power/swap.c | 66 ++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 59 insertions(+), 7 deletions(-)
 
-Best regards,
-Yao Zi
+-- 
+2.43.0
+
 
