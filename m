@@ -1,112 +1,137 @@
-Return-Path: <linux-kernel+bounces-811529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A31CB52A57
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:44:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73715B52A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:44:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47FB91BC0C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:44:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5491BC0D14
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21BB27FD54;
-	Thu, 11 Sep 2025 07:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF0027FD4A;
+	Thu, 11 Sep 2025 07:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="woWkgeB+"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qJrbXbuR"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4EB27EFE1;
-	Thu, 11 Sep 2025 07:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C416B27F018;
+	Thu, 11 Sep 2025 07:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757576639; cv=none; b=pY+nmVjirunFlWMDGwLbYwnOxv2XdfELcQPJZnWcw+CWzMVcDWOEi9VBgGaCPHbOqobaFRq3Zir6o3P1O91pmoJmUIOmZznRxjXdGwZoyF/dTHeJE0el/zsfZjurYonBWfFwo+GxLI3Zfe3Lx4anKef+f5yy5NfDISxjK3SkNHg=
+	t=1757576663; cv=none; b=i434IWSihpRtJVny5/pjb5OfAdX5xQIQMy2yYwmRzjMA9yS+MoF0rDDaKxprBy05UwZZSeCYrhQkK9O/mNlrl3kRdZPRFR5f36dLYyRh5ZRSYWky9XGuF4jxlCEVwDh3db7btt2JeBSCm6QHszaod62F3FCZ3JMkU1JGgtN3uhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757576639; c=relaxed/simple;
-	bh=xSsBhd9wl9OWCIdDg1strQ4Gj08jjYdy8SaR4+qPIds=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=isCp645/y8/4m68xuBFJ9YckKDn1X//p4FjCib9at+fse9xed/vO2yKOaRhE6aNgwAW+6tA9XOK0tpBIlXvtpE9L9PV1VZSQoX4h0uuuLxhYMLePneriaAF7BI+vwHj6Aa+fTEFrKaCvni4Sv5S6TszWUOoonYnHt34U4rzeFLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=woWkgeB+; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 8B19BC8F463;
-	Thu, 11 Sep 2025 07:43:38 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 67FA3606BB;
-	Thu, 11 Sep 2025 07:43:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3C48B102F1CED;
-	Thu, 11 Sep 2025 09:43:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757576633; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=3PWCgwLcwSLejuAlR8rVzGE518PeUERmFz0/d/WdfYg=;
-	b=woWkgeB+8YV0vtNWYSuBaLO1uznLAH0FweMoufdjarl9/H7hrqB3ARuXISnQqwSftfbjia
-	ba6R/9DrsLBkt6cN7IQ+vhxDsOCHeHO/gM+S7rAA991tLnTf7LE+/nqfuxuf4DZ++B/IOK
-	sHoziFxv+3ANQM3M6aWhRrCpaDVBgAgYZdi/318/0Pf9VLenmdvqAJYa/N0ARjEGGMG836
-	EJdOsQMf0xzupbUBWm5IdbqQMyHaia3O1NjkC62WgsSCBA19NyvtMW1K9jC3NVCsCrdllK
-	vBJ8YvhqS6LyXcyO7NHe5rFe5kUno4TLgPoq10r4vl5VMgEwcFFSgD1VDCOuAg==
-Date: Thu, 11 Sep 2025 09:43:39 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Hoan Tran
- <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
- Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
- Eberhard <pascal.eberhard@se.com>, Miquel Raynal
- <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 2/8] dt-bindings: soc: renesas: Add the Renesas RZ/N1
- GPIO Interrupt Multiplexer
-Message-ID: <20250911094339.5a70e906@bootlin.com>
-In-Reply-To: <20250910143316.GA4047084-robh@kernel.org>
-References: <20250909120041.154459-1-herve.codina@bootlin.com>
-	<20250909120041.154459-3-herve.codina@bootlin.com>
-	<20250910143316.GA4047084-robh@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757576663; c=relaxed/simple;
+	bh=tHy8/5haGilV0VRcRMRJASwjv/bqGLx4KS9qubUUoiA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIuJtV+l33TDkfrfkTdXKF9JP44gAwtWlRFsIfXaBA7L0dT5lIUcWOhZL6gFuYt/mIrAAl9lMhpSgDcA49tgcSEwjyLml6sBQbQ+YH31Mlvyt0rv9VD2mpXwyRE6k6JoWz35fktjQ+4GFhAlzc8ZYlZIV3BBXUB8RINjxiWzvh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qJrbXbuR; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B2PFKj028539;
+	Thu, 11 Sep 2025 07:44:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=SF9UyLlCqgFg6Q+kKvlcJIKzRNTFyy
+	249wIDKgX/LU4=; b=qJrbXbuRLLmPRDbFZ6OQX24CKaH+Z0bWYwaM3/evY5oWU8
+	aunGdthjetxcz3IOHhkArjZ7Otbu+Ag68YyTYHUxRQcT5NWXdVEz9N0mR9FKExyo
+	Aylc30/C5HqyXyhFpN6u2OjtArLA7UeGYOxlSEDVTBW9oZOrrfOogRISbLzpm1u5
+	VUZM10mcd1l1Ues4p/UNGeKK1C8U+anAhSlYAUj59amdEDW0VzZXm8lvoJin3Qvu
+	0Yh3bCC9CMKU+NSMhHEf4rSv1wgqXP36Ldu5w1wywxcVQhvnnaYDVx0vwwCYui2s
+	K1cudhXo99Tr6dn1yZXd7fZB8kYVMjw3A8zOEGGg==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukeqw7m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 07:44:12 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58B60CwY010618;
+	Thu, 11 Sep 2025 07:44:11 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4910sn4keu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 07:44:11 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58B7i7Fu31523122
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Sep 2025 07:44:07 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8030E2004E;
+	Thu, 11 Sep 2025 07:44:07 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 20E022004B;
+	Thu, 11 Sep 2025 07:44:07 +0000 (GMT)
+Received: from li-3a824ecc-34fe-11b2-a85c-eae455c7d911.ibm.com (unknown [9.87.156.46])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 11 Sep 2025 07:44:07 +0000 (GMT)
+Date: Thu, 11 Sep 2025 09:44:05 +0200
+From: Juergen Christ <jchrist@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>
+Subject: Re: [PATCH 2/3] s390/bitops: Limit return value range of __flogr()
+Message-ID: <4f3557f5-d8e0-4948-a653-ad48cd08331a-jchrist@linux.ibm.com>
+References: <20250910151216.646600-1-hca@linux.ibm.com>
+ <20250910151216.646600-3-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910151216.646600-3-hca@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX0jmqSXJdaG8s
+ ZlgVka/qBIste/JCh/nr1SNVM/3iobX7FOEO5iWbUaNopEZU4kgBR6ZkS+lpgcF6At5whrSqgSa
+ jQLGiZMTXhQ4G9LfNYbf3+AtNfZR6l6O6S4t7HPBJEz/71D+GLYAifMhnceR0dVArwoE/uOKKaP
+ oKUNIhUlOqwBlPTTFNuLWHkPASBNVN2RFptKkYzT1S4fPF+yPKOJFSZPW0aWp5cyhTaqn0x4GmC
+ 45bejWbSpRMRizFI8DauEbGdcQXyWTHyuFdbKKUejHskwLgd9jw/xGTsDJ8VTIJSlF1WB/BsVX0
+ XSIuDAGQMe3yZiQ+brLyI45oPrQOzQuIM9uy+l5vIuewETIEJVxuHlxyLRPyZMgoUSTPn3wcj+r
+ 7D8LzqHz
+X-Proofpoint-ORIG-GUID: hyqIYSe8nLjM-kZofKZKXt08J27pI2KY
+X-Proofpoint-GUID: hyqIYSe8nLjM-kZofKZKXt08J27pI2KY
+X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68c27dcc cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8
+ a=VnNF1IyMAAAA:8 a=2cfC6cEr_CBPIm7wQiMA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 bulkscore=0 clxscore=1011 adultscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
 
-Hi Rob,
-
-On Wed, 10 Sep 2025 09:33:16 -0500
-Rob Herring <robh@kernel.org> wrote:
-
-> On Tue, Sep 09, 2025 at 02:00:33PM +0200, Herve Codina (Schneider Electric) wrote:
-> > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
-> > interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
-> > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
-> > 
-> > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
-> > IRQ lines out of the 96 available to wire them to the GIC input lines.
-> > 
-> > Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
-> > ---
-> >  .../soc/renesas/renesas,rzn1-gpioirqmux.yaml  | 86 +++++++++++++++++++
-> >  1 file changed, 86 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/soc/renesas/renesas,rzn1-gpioirqmux.yaml  
+> With the recent ffs() and ffs64() optimization a logical and operation was
+> removed, which allows the compiler to tell that the return value range of
+> both functions. This may lead to compile warnings as reported by the kernel
+> test robot.
 > 
-> Documentation/devicetree/bindings/soc/renesas/renesas,rzn1-gpioirqmux.example.dts:42.13-45.34: Warning (interrupt_map): /example-0/interrupt-controller@51000480:interrupt-map: Missing property '#address-cells' in node /example-0/interrupt-controller, using 0 as fallback
-> Documentation/devicetree/bindings/soc/renesas/renesas,rzn1-gpioirqmux.example.dts:42.13-45.34: Warning (interrupt_map): /example-0/interrupt-controller@51000480:interrupt-map: Missing property '#address-cells' in node /example-0/interrupt-controller, using 0 as fallback
-> Documentation/devicetree/bindings/soc/renesas/renesas,rzn1-gpioirqmux.example.dts:42.13-45.34: Warning (interrupt_map): /example-0/interrupt-controller@51000480:interrupt-map: Missing property '#address-cells' in node /example-0/interrupt-controller, using 0 as fallback
+> Instead of only adding the not needed mask again, also add an __assume()
+> statement to tell newer compilers that they can assume a specific value
+> range. This allows newer compilers to optimize the not-needed logical and
+> operation away.
+> 
+> Also change the return type of flogr() to unsigned long and add the const
+> attribute to the function.
+> 
+> With this the reported warning is away, and in addition the kernel image
+> size is reduced by ~4kb.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508211859.UoYsJbLN-lkp@intel.com/
+> Fixes: de88e74889a3 ("s390/bitops: Slightly optimize ffs() and fls64()")
+> Suggested-by: Juergen Christ <jchrist@linux.ibm.com>
+> Signed-off-by: Heiko Carstens <hca@linux.ibm.com>
 
-Ok, I will add '#address-cells = <0>;' in the interrupt-controller node
-available in the example.
-
-Best regards,
-Hervé
+Reviewed-by: Juergen Christ <jchrist@linux.ibm.com>
 
