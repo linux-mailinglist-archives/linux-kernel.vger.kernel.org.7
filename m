@@ -1,117 +1,157 @@
-Return-Path: <linux-kernel+bounces-812320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AB5B53632
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B77AB53638
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F49A3A23BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D75216218E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5379D33769B;
-	Thu, 11 Sep 2025 14:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D14B343D79;
+	Thu, 11 Sep 2025 14:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="HNenGeBU"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gcO6tbv+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D0C1E1DE9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899B01E1DE9;
+	Thu, 11 Sep 2025 14:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757602114; cv=none; b=sO2pb+Z9aPnL2k9+U1IPgHg9c9VI4G0LJZlVQArMGFfY2eaSdfk2O1drliW1vga5slNPDYj6HaLjAdi+sUJc7VPyMUvq3Q2hWOVMDT25NQVbuTOi4VXhAkkiMG64WNzU9VkzP1zYCelNai4zgBQx1/kzfgMJS+em2rbY3wVT28Q=
+	t=1757602120; cv=none; b=GPOgBb6aCHrC5ksoPs7NX3UH0fkWBQoi3rk9D3jZ0MhwbiSk2a8uiRqA9ii/0Lb/GaQ96Au2OWQtitxPkQEG/1LLEBObVXPIuS2J2S2Nc+UhFinnX6BHjnccDLPGOY9XFjn2Db/b6qgpOhCUMwpbsdiiJDuB3TjpwfXC+M/SjOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757602114; c=relaxed/simple;
-	bh=m/uaz3DoAhptjbjeLIaLsPknzmvO3BfMZnCy8E8H0uc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ssD2wVHiU8U8Tad2b3gP6q+bauL/Y6VVpxai/uA973qo81vyN66f9SFTwOM4zotHoZWP7cli5CYVSulY+49YXiWMVNzji+UBBO3B2t2dWZJnLYJ7q1XDAWhKmFFH2MPBieaNBu4xXe1nxto4FtWlD8BsS56AmXu3KfEU9dEoLvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=HNenGeBU; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4cN0mR2sD2z9tVm;
-	Thu, 11 Sep 2025 16:48:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757602103;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rvKHZYTAposH6bvPHvR8LAHmRFjXDMsuj/JRvWzYtYc=;
-	b=HNenGeBUV+8reHKwcktBZK6xQpU960cV6EU0gzsd9aALYNOOto3DS55AoTXFp+rb288pit
-	Xp4xuBnQ6haTu7Acc0FE7W0RmfYnx6vsMnPCESSxI+452DX8k+Ux/z5EWP4XxEWQ6TAx4U
-	/UcDQDlfMRwMlYvCMKun5BGr+pdXc8EYxCTHyi0nrNOtzDxrHAxNvp3MG1SBanxsJqIokS
-	V3GqEY3smmpxIr2yPeUFPQACZIvY4CR5W+ww9QD/AqYecc4NaglcPsw2ysS2yChDmNj50x
-	4KzQxdhoYNYKyoMXnta9BNVKV9XPneByrO2XkJkZ5xxw7xFN+cN+P6xJmIgjnQ==
-Message-ID: <979f8223-68b0-4a75-b410-fd86cfe6c372@mailbox.org>
-Date: Thu, 11 Sep 2025 16:48:19 +0200
+	s=arc-20240116; t=1757602120; c=relaxed/simple;
+	bh=MUkZ6s7L3K4WQdR9PzbN5HgnLg96hS6zJMbKkQ2IXy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZJ/na9YQwRuAkqy+JOPHc2bVXHvuNyxay3Z0QGL78a/pcSBoy8skALFJEzrLxZU1MKtPKtWt/Hz/O4sOHp2l7qUIyi3YWojVphm+Fz6qpJBlh8Ew55xKPULln12MUhtczxECPLGP3GffIWvaTo9e9xXfhEqTWFQ5vXLQZLSgmHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gcO6tbv+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BFC8C4CEF5;
+	Thu, 11 Sep 2025 14:48:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757602120;
+	bh=MUkZ6s7L3K4WQdR9PzbN5HgnLg96hS6zJMbKkQ2IXy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gcO6tbv+F9psSGvj3NxQv8NjUx6DnnV1Hh/QR1Ap5pS37oOWw2a7wdhR+taBQmJB6
+	 RpozvBuvDcflnHgk8kjWEefqoKSt7cQb1fSzhjzCQWfOsQKdrBx/sFvjksAWC2NF9F
+	 cqYoRlZf8vojYDIWu00+a59ITVgcNsMZVAeuPKgrHCP12JQhGMyxp82ruk5SMA8Z2O
+	 G9LrOOEfzwk2hwVt2/6OJyqFHrsjtrEklcsdqgVKAvC6cSjDmUycdkeOo4JMlfsZ6F
+	 6F78jB9OJoElcvU6OegMSw9SRl5zVMrEPB1R2uBzMEu1kI+bwpNV3N96y6/t2+IGN3
+	 ZsPHjwB9Iy7Iw==
+Date: Thu, 11 Sep 2025 15:48:36 +0100
+From: Lee Jones <lee@kernel.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mfd tree
+Message-ID: <20250911144836.GO9224@google.com>
+References: <20250904154122.63acc45c@canb.auug.org.au>
+ <20250904063043.GE2764654@google.com>
+ <CACMJSev63kfCBTzQnija6Q+PNm8KgD-LWVKeqRJ2kLBtT7Zh6A@mail.gmail.com>
+ <20250904092319.GG2764654@google.com>
+ <20250909122227.4dbbeb6f@canb.auug.org.au>
+ <CACMJSeu8Zv7i+_2bH5Lp5fuE0aBUNRfuq5ne0rPCxXCij4orDA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] drm: ttm: do not direct reclaim when allocating high
- order pages
-To: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com>
- <e79a134b-89de-4da1-b64b-b890227fce8a@amd.com>
- <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
- <262a176a-4c80-40de-96e0-c97f50c20fe6@mailbox.org>
- <b7c57dc3-ed0e-402f-8a3c-f832357f8763@amd.com>
- <c6cbaa8d-cb90-45d5-b3b6-279196f958ce@mailbox.org>
- <3227b440-5dbf-433d-8658-f37f9561554a@amd.com>
-From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Content-Language: en-CA
-In-Reply-To: <3227b440-5dbf-433d-8658-f37f9561554a@amd.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: g8qgqzdim7qgfppq9qk4ijdh1518qo93
-X-MBO-RS-ID: 12c791ed71481f193a9
+In-Reply-To: <CACMJSeu8Zv7i+_2bH5Lp5fuE0aBUNRfuq5ne0rPCxXCij4orDA@mail.gmail.com>
 
-On 11.09.25 16:31, Christian König wrote:
-> On 11.09.25 14:49, Michel Dänzer wrote:
->>>>> What we are seeing here is on a low memory (4GiB) single node system with
->>>>> an APU, that it will have lots of latencies trying to allocate memory by
->>>>> doing direct reclaim trying to allocate order-10 pages, which will fail and
->>>>> down it goes until it gets to order-4 or order-3. With this change, we
->>>>> don't see those latencies anymore and memory pressure goes down as well.
->>>> That reminds me of the scenario I described in the 00862edba135 ("drm/ttm: Use GFP_TRANSHUGE_LIGHT for allocating huge pages") commit log, where taking a filesystem backup could cause Firefox to freeze for on the order of a minute.
->>>>
->>>> Something like that can't just be ignored as "not a problem" for a potential 30% performance gain.
->>>
->>> Well using 2MiB is actually a must have for certain HW features and we have quite a lot of people pushing to always using them.
->>
->> Latency can't just be ignored though. Interactive apps intermittently freezing because this code desperately tries to reclaim huge pages while the system is under memory pressure isn't acceptable.
+On Tue, 09 Sep 2025, Bartosz Golaszewski wrote:
+
+> On Tue, 9 Sept 2025 at 04:22, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > Hi all,
+> >
+> > On Thu, 4 Sep 2025 10:23:19 +0100 Lee Jones <lee@kernel.org> wrote:
+> > >
+> > > On Thu, 04 Sep 2025, Bartosz Golaszewski wrote:
+> > >
+> > > > On Thu, 4 Sept 2025 at 08:30, Lee Jones <lee@kernel.org> wrote:
+> > > > >
+> > > > > On Thu, 04 Sep 2025, Stephen Rothwell wrote:
+> > > > >
+> > > > > > After merging the mfd tree, today's linux-next build (x86_64 allmodconfig)
+> > > > > > failed like this:
+> > > > > >
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get':
+> > > > > > gpio-stmpe.c:(.text+0x21a7c29): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_get_direction':
+> > > > > > gpio-stmpe.c:(.text+0x21a7db2): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq_sync_unlock':
+> > > > > > gpio-stmpe.c:(.text+0x21a8166): undefined reference to `stmpe_reg_write'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a82ef): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8372): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_irq':
+> > > > > > gpio-stmpe.c:(.text+0x21a8c27): undefined reference to `stmpe_block_read'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8f05): undefined reference to `stmpe_reg_write'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a8f89): undefined reference to `stmpe_reg_write'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_disable':
+> > > > > > gpio-stmpe.c:(.text+0x21a91dc): undefined reference to `stmpe_disable'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_set':
+> > > > > > gpio-stmpe.c:(.text+0x21a93a4): undefined reference to `stmpe_reg_write'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a941e): undefined reference to `stmpe_set_bits'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_output':
+> > > > > > gpio-stmpe.c:(.text+0x21a95a4): undefined reference to `stmpe_set_bits'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_direction_input':
+> > > > > > gpio-stmpe.c:(.text+0x21a9705): undefined reference to `stmpe_set_bits'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_request':
+> > > > > > gpio-stmpe.c:(.text+0x21a983e): undefined reference to `stmpe_set_altfunc'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_dbg_show_one':
+> > > > > > gpio-stmpe.c:(.text+0x21a99c0): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9b8c): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9bb1): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9c61): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21a9e6c): undefined reference to `stmpe_reg_read'
+> > > > > > x86_64-linux-gnu-ld: vmlinux.o: in function `stmpe_gpio_probe':
+> > > > > > gpio-stmpe.c:(.text+0x21aa5b2): undefined reference to `stmpe_enable'
+> > > > > > x86_64-linux-gnu-ld: gpio-stmpe.c:(.text+0x21aa83e): undefined reference to `stmpe_disable'
+> > > > > >
+> > > > > > Presumably caused by commit
+> > > > > >
+> > > > > >   e160dd0ac8c3 ("mfd: stmpe: Allow building as module")
+> > > > >
+> > > > > Okay, I have removed this patch until it can be better tested.
+> > > > >
+> > > > > > I have used the mfd tree from next-20250903 for today.
+> > > > > >
+> > > > > > Note that commit
+> > > > > >
+> > > > > >  03db20aaa3ba ("gpio: stmpe: Allow to compile as a module")
+> > > > > >
+> > > > > > is in the gpio-brgl tree which has not been merged into linux-next at
+> > > > > > this point.
+> > > > >
+> > > > > Okay, perhaps these need to go in together then.
+> > > > >
+> > > > > Thanks Stephen.
+> > > > >
+> > > >
+> > > > I can take it through the GPIO tree if you will and set up an
+> > > > immutable branch for you. Or not if the potential conflict is minimal.
+> > >
+> > > An IB would be good.  Thank you.
+> >
+> > I am still seeing this failure.
+> >
 > 
-> Why should that not be acceptable?
+> The offending commit is still in Lee's tree[1]. FYI: It's also now in
+> the GPIO tree as commit df6a44003953 ("mfd: stmpe: Allow building as
+> module") and was made available in an immutable branch[2].
 
-Sounds like you didn't read / understand the scenario in the 00862edba135 commit log:
+Okay, I've dropped the offending commit.
 
-I was trying to use Firefox while restic was taking a filesystem backup, and it froze for up to a minute. After disabling direct reclaim, Firefox was perfectly usable without noticeable freezes in the same scenario.
-
-Show me the user who finds it acceptable to wait for a minute for interactive apps to respond, just in case some GPU operations might be 30% faster.
-
-
-> The purpose of the fallback is to allow displaying messages like "Your system is low on memory, please close some application!" instead of triggering the OOM killer directly.
-
-That's not the issue here.
-
+Feel free to keep it in your tree.
 
 -- 
-Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
-https://redhat.com             \               Libre software enthusiast
+Lee Jones [李琼斯]
 
