@@ -1,167 +1,136 @@
-Return-Path: <linux-kernel+bounces-812213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A26B5348A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:55:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC617B53495
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7BBE3AFC7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:54:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E54DB63233
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CE733A03D;
-	Thu, 11 Sep 2025 13:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47F9337688;
+	Thu, 11 Sep 2025 13:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="5k78R2l/"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LkK6jdpx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HnHouNSe"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56249335BAC;
-	Thu, 11 Sep 2025 13:52:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1C8335BBB;
+	Thu, 11 Sep 2025 13:52:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757598746; cv=none; b=Xg+2g1kTIBjyhzUdZNfxrTPstDoMSprQE5M6wFIjm2Qftgw+Mgl07Wt9rqGoerwoELhrZ4sJjM3k3cIMAgWAgCbzCoTI9s7Czp//pugVpxfxrnJZpeK2mZ/jlhj9m1nJ9vvHYq6/qaLxwj7yOoiDZWiwj0C5MoTh6ehsUb2Pde8=
+	t=1757598746; cv=none; b=Uze7yOf9Du22il+82coWq8ABTekp7TCJWf1Kkxrv+7CqbB2XHs1kq9Q9kNKDA04HdUnrd+YbRwB8aUxNs0TYfB+At9VM4NAN5Pa1ofLNrgcdhNF67BVuvNsSimdEeVcNiPL4WpZklsIb+ucBr3fUVdyu7j2MlAg+trrNFNAHDEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757598746; c=relaxed/simple;
-	bh=ugGrOHFKwLpQ/FAqUj88ex9ecPMgeZ93Xz/F6kz7Ipk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FLLl/aMFqzp0nkTFYvXASV6CDEoGiq/vrZPqZx869/8kUUZbnatfrjkILv1KgJW68sVvVJuds22cxRv43ubHDvttbFkD+MpNJQPGEkMGqKiYV8D6XdjfBFadWcirzmJTdkgHC95L5XzG5qNBfDEUZ+nurtwys/WGKN+jYSUV3WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=5k78R2l/; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from sunspire (unknown [IPv6:2a02:2f0e:3e0c:5b00:e2d5:5eff:fed9:f1c4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id EE96D173BE2;
-	Thu, 11 Sep 2025 16:52:16 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1757598737;
+	bh=deGvupzM/LLKwOeN5SKhrOyqbm5RrItp4EoBaXJwJCM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O2WzBguI/jdHVobNGI098Bm+zRFNRxM7WRW3HXBvFBJOcfYpNEbmpiq3rMgjIYFJunsqejQ2zONpARPCR7FUfxc6LSwkP+B3dxYET7qa3EYrT2U37TVg+gU95D55EV6QkgZYvcNle5Hv0WyXVe7+ILqLg7LdUs5TfLwLGfAW8c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LkK6jdpx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HnHouNSe; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757598742;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ByB8m0XZGJjjWznPQz1By0Xd5aiH/40HjBA/ZE/FsJk=;
-	b=5k78R2l/zhDR+Izq0IKJTG+iiuyxV9fVUoTp4V0jcnjeSD8Z5PR/eerR03d8tBnDHXM69Q
-	zl8Blt8eQ/knQk6pe+DXwVeIGFP1jULb7t2ru7loat7N6dK665TA76e8g2FcjcQmyNdhEA
-	kSQW+kIXeYgY/W1r0B2qTWIpI5xefN3YHeOE0xJ/d8OFkJ0miXEehOlYOcEc5kmUiCl9N5
-	XPTtswmvK/Q/uAefOby8ocLwlCW8D5TwGSjrHCgknOg3cs5hCG7nErO5QyRXgTF18ocgeZ
-	6T2RVvZumVFnKI3VBA7rnWsHpTw8m2HEaN6qCgCVbZXnP+KEARh7k+GrZ2UBeg==
-Date: Thu, 11 Sep 2025 16:52:14 +0300
-From: Petre Rodan <petre.rodan@subdimension.ro>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno S?? <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/14] iio: accel: bma220: reset registers during init
- stage
-Message-ID: <aMLUDkKhF_jhios0@sunspire>
-References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
- <20250910-bma220_improvements-v2-7-e23f4f2b9745@subdimension.ro>
- <a10a2f6d-6cb7-4922-b505-dc6994f0415f@kernel.org>
- <aMLCWFatVkePTxCa@sunspire>
- <391229ff-d85a-4707-8e7c-ea64e0e3d7cb@kernel.org>
+	bh=C92gKHTmPMKru6z9KnmAjno8euROQELszOPMKezd0q4=;
+	b=LkK6jdpxw21FjYkLcj1CNXjZ4trzKKHygKuDeJVQAC72SCjmTtdwpmSDIVJtOfvxUTtu/E
+	MrkjH9BZm9gcLa8xnTG+kkxvGY2DQJ/zGj+PXZSKW99G0V5DeX96wFvl+85VdqGdOisqAe
+	JrXYBwsSYyn9+ed/hrwNvwa9k6kWby3U9Po8aMzo6jNERFwwiCSK72ldY/U1f/hR+uqIZE
+	Oq9BVCOQutMM7+wZJIkIxg5h3u4koSSlorKovwuReQMFsYxcFeZ9oqhEanhx5i0mB1ogxg
+	4mRhgP43rBruIFfHEXSdV6yYmTXwKqDoLXKk7fTjaWRU0UnDAHpbrnnMfPGWGg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757598742;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=C92gKHTmPMKru6z9KnmAjno8euROQELszOPMKezd0q4=;
+	b=HnHouNSegRS6LE+/7RLUmAhvPaJKyUXtknAuAb6SrGfH+ZreDU91Pnl0x68VvI5zDFg8m/
+	fIoDD0wV6LaRjvDg==
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus
+ Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
+ Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
+ Eberhard <pascal.eberhard@se.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+In-Reply-To: <20250911090450.32c7cdbe@bootlin.com>
+References: <20250909120041.154459-1-herve.codina@bootlin.com>
+ <87y0qntkmy.ffs@tglx> <87segvtkha.ffs@tglx>
+ <20250911090450.32c7cdbe@bootlin.com>
+Date: Thu, 11 Sep 2025 15:52:21 +0200
+Message-ID: <87cy7xrt9m.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iH+gifm7e0GKs+gM"
-Content-Disposition: inline
-In-Reply-To: <391229ff-d85a-4707-8e7c-ea64e0e3d7cb@kernel.org>
+Content-Type: text/plain
 
+On Thu, Sep 11 2025 at 09:04, Herve Codina wrote:
+> On Tue, 09 Sep 2025 22:54:41 +0200
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+>> On Tue, Sep 09 2025 at 22:51, Thomas Gleixner wrote:
+>> > On Tue, Sep 09 2025 at 14:00, Herve Codina wrote:  
+>> >>   Patch 5 (new in v2)
+>> >>    - Convert irqchip/ls-extirq to use for_each_of_imap_item
+>> >>
+>> >>   Patch 6 (new in v2)
+>> >>    - Convert irqchip/renesas-rza1 to use for_each_of_imap_item  
+>> >
+>> > How are those two patches related to adding GPIO support?
+>> >
+>> > AFAICT, they are completely unrelated and just randomly sprinkled into
+>> > this series, but I might be missing something.  
+>> 
+>> Ah. I missed that this iterator got introduced in this series. Did you
+>> check whether that creates any conflicts against pending irqchip
+>> patches?
+>> 
+>
+> Indeed, I have a conflict in my patch 6 with 40c26230a1bf ("irqchip: Use int
+> type to store negative error codes").
+>
+> I can rebase my next iteration on top of 40c26230a1bf and mention this commit
+> in my next iteration cover letter but an immutable tag and referencing this
+> tag in the cover letter should be better.
 
---iH+gifm7e0GKs+gM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No. Don't do that.
 
+> What is the best approach?
 
-Hello.
+Just base it on upstream and mentioning the conflict in the cover
+letter. For actual merging, if it's ready before the merge window, we
+can sort it out by:
 
-On Thu, Sep 11, 2025 at 03:07:05PM +0200, Krzysztof Kozlowski wrote:
-> On 11/09/2025 14:36, Petre Rodan wrote:
-> >=20
-> > Hi Krzysztof,
-> >=20
-> > On Thu, Sep 11, 2025 at 09:35:52AM +0200, Krzysztof Kozlowski wrote:
-> >> On 10/09/2025 09:57, Petre Rodan wrote:
-> >>> Bring all configuration registers to default values during device pro=
-be().
-> >>>
-> >>> Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
-> >>> ---
-> >>>  drivers/iio/accel/bma220_core.c | 71 ++++++++++++++++++++++++++++---=
-----------
-> >>>  1 file changed, 49 insertions(+), 22 deletions(-)
-> >>>
-> >>> diff --git a/drivers/iio/accel/bma220_core.c b/drivers/iio/accel/bma2=
-20_core.c
-> >>> index b6f1374a9cca52966c1055113710061a7284cf5a..322df516c90a7c645eeca=
-579cae9803eb31caad1 100644
-> >>> --- a/drivers/iio/accel/bma220_core.c
-> >>> -static int bma220_init(struct spi_device *spi)
-> >>> +static int bma220_reset(struct spi_device *spi, bool up)
-> >>>  {
-> >>> -	int ret;
-> >>> -	static const char * const regulator_names[] =3D { "vddd", "vddio", =
-"vdda" };
-> >>> +	int i, ret;
-> >>> =20
-> >>> -	ret =3D devm_regulator_bulk_get_enable(&spi->dev,
-> >>
-> >>
-> >> You just added this code in patch 6. Don't add code which immediately
-> >> you remove. I understand you re-add this later, so basically it is a
-> >> move, but such patch diff is still confusing.
-> >=20
-> > sorry, but this is an artefact of 'git diff' I don't think I have no co=
-ntrol of.
->=20
->=20
-> Don't think so. Before bma220_init() was above bma220_power(). After
-> your patch bma220_init() is BELOW bma220_power(), so that's a move.
+  1) You putting patch (3-6) in front of the queue
 
-you are correct, these two functions did change places due to the fact that
-_init() started using _power(). I preffered to do the move instead
-of adding a forward declaration and leaving _power() between _init() and _d=
-einit().
-the code was optimized for how it will look at the end of all this patching.
+  2) Me picking up these 4 patches into a separate branch based on rc1
+     or later, which gets tagged and is consumable by the GPIO
+     maintainers.
 
-I thought you ment the code that was added the previous patch was not remov=
-ed per
-se from _init(), which was not the case.
+     Then I can merge that branch into irq/drivers and resolve the
+     conflict, which is trivial enough
 
-best regards,
-peter
+Alternatively GPIO folks pick up the whole lot and sort the conflict out
+with -next and Linus themself. No real preference from my side.
 
---iH+gifm7e0GKs+gM
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE2Ap/wXYVGTXsPl+pzyaZmYROfzAFAmjC1A4ACgkQzyaZmYRO
-fzDYSQ/+NsIyCuq4KGRtaJoCaj7kcc0VV6PmmVj+EYZVFOZmI9BaOzIDx3WjamLs
-d/oPMJ5ZywrFyAn0151VCYD2AW/wkAgQpa2Pvqyr1UfDWwAtwDO3Ou8w4VQFRyh1
-0/vuWknS80S9Ji4PrCUOnJgH19HynkKnssFd6tpnHbGixvBb4+WzeF7bGzsKCmn9
-fTg8zRRyh2WUWOC08xAL2QqycPHbldNrY5/PwmpRrcaEWTNgxKB2NrRuP7UwdsTE
-tVXeVKMvjIm73uHpt8v5qBcj4y6WPl5AT7Nn+sul54p1F3aBeaaFYpdViHxEVXHs
-yI2MpXYRo64bV+9q2Ga9Zfa9oB4ZhPWIIFZgswfVvJbe/FSTBKP7YS4nc2/45ksI
-S4SGEsJiGJ7L2RjOeYXjgASLYl9t23s/UXIF0y0WznfOwI3tY8QL3JJO8VlEsa6P
-6gHIvwnrdXqY4x+RKVPb/Q2wGFikKHCAKQtpBzfPPxoHZ8ou2Qyf370U6LUZbwfT
-AT1InecZKUhq6o9BSZugF6c9wJrGZyN/Z7SDtM+qi61Kt/KIeCRjFhq4FNUEYWCz
-tIPdM6FIbeRyMR+V5D0l43ki6EjGXOYCsKv2rc2cCKokSeoPcJ5UzbFHmdR3Iwqq
-RdRuQIVCYgP8HW1p8fpN0eNYkPEECt4tD/+rrMC/2jXQmYRm+zI=
-=HF3r
------END PGP SIGNATURE-----
-
---iH+gifm7e0GKs+gM--
+        tglx
 
