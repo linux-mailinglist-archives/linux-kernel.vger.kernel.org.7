@@ -1,183 +1,138 @@
-Return-Path: <linux-kernel+bounces-812757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BA4B53C50
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:34:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2E7B53C52
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 338D31CC1FC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7970C3BA40D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24A925F798;
-	Thu, 11 Sep 2025 19:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF24B266B6F;
+	Thu, 11 Sep 2025 19:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gmqLRgaB"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ukp69uTM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145A52DC765
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 19:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFC8262FC2;
+	Thu, 11 Sep 2025 19:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757619242; cv=none; b=mF01R5hHJnJUFrm0TYM1upjNgcnDXTu9rBQk9wcqplbLOWHLVZahLLlW6HRIGyArQ2x/bj7xU9w2AXemfCf8RZY74nEBqm9u2mqUzHefneQihQZz6RFmfa/iv2Z0Go/Df2PiYINSjvc4i1UhJkyUnjZO1ToNcocN2sa0CxOzm20=
+	t=1757619248; cv=none; b=n6jgtJqlVGQtREr+tGHk+WjbFlwrXcf0xlcNqalk4NOkdb1BT+MMVmGvTQCKJdYgsYapm/aTPAFEIaqXL9pab5E+8sDBSE+Z4CnEsmshThOmAXO8AxDMRO5MLDgsXzrgvCs6EOcnZgEq4V2ec5P61R7NRQPCrDFZO2EQKn5V1R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757619242; c=relaxed/simple;
-	bh=Y05O7Ah8m3VrEBiRrZdSc+R+4Iv9NkkVIZ6x07U3YEQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RCD2BZN8bBo4KwavMJ3QMsJib7o/lvcSlquz66nqIEBpz6DPsyeQXBej+/OC3951PVGED9KJ6WEliKESrKo2uKK5yAEjmcHiEm4mSWlkv9C9TlL9EgKMHuirNb0mGjHTWP1LK/MBNCGRJYDy8vVWBQkSdaFsDROqY/nId6EhMm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gmqLRgaB; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3d5526596c8so37366f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:34:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757619239; x=1758224039; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+2hRnWl9DPmgNwOJ9eqmgc5MwP0KykD19C+0v95Q7Lk=;
-        b=gmqLRgaB6zrJensKYRwiJsSqmkZQLwUBHov+JByPzki01NYPQXIg4ywhZMPo5A6xDQ
-         uqatsGlYvBWsQZ89+ADrQV1F0ltK0EVBQ3M28e2CzLJ5r99zjTfbPHZ+1aRmFrVsAa7E
-         OpO7AAzzWeMkUvcJU9hS2AIh2LMnoJzRZEfS8UvQCoafHvyvF+1xow+eH8+bQcjPTiEu
-         D0b+KwbUU40eRvug6HyU0sb9u0zYdar87oJqAuA9wa7r6tb3TUSncWO87hxZXeJqWgch
-         3OT2t4tg7Qk6fsBSEgNZHF1A6cKu473JC+gy1u4O8jQ0lOnHM39OiWWMgNMOcbfsXr5v
-         qovw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757619239; x=1758224039;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+2hRnWl9DPmgNwOJ9eqmgc5MwP0KykD19C+0v95Q7Lk=;
-        b=FMyHWRkM/63EigEuUrWCj+ZV8uE6e9/b4WTws8hcHyjV/dVYKmoYBz1CHfA7+PMtQu
-         68u06L0qHig0Y7OLoXaNHdp5EW0l89G9+CU4A+IujBX1KHQnJyOymnlKbK9uytD806ns
-         SGGFPnuvai3k9hzPysbt0sE+rsssLRNDXIrZ+FyKzK0p8/R2bgPNn4M6YRsCKSgP8k/2
-         m2ABTpRVJUj2Aa2z6H0kH5jDggjKOPlzHkhKIkXtvBxFq8SH6+AV/TD1fAmioMCoPHII
-         ZsDdHE2hDYdNUXbgUncjc3U0JWP01EHD+b5OsFc2gwMr9gkoYvtpDVFLR1/h0zP8lf+W
-         asgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVuhgmOrulS3AWJp/Hwu5l6IrhpHeFtOTHKBcCtHgzfnZMSR5K8MyPuLhFX5lAT0ZqpDPvtne+j7fLU6IY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUf1Uygfc08pgcoWQ2TVy3zmYV/OZeexSGJkYFe1BfGKpXrROf
-	nzoc+iXCNvtKVmXTDZtCWxLujgmZVgWLBNf+AB0D/Im7yLagRCc2zcQAhZlRUcpRPU5mvBGy4oN
-	NNvj2
-X-Gm-Gg: ASbGnctGOxbF5XpjkN6LAdHBr1TEk0+H/gwzHKayGNPW00nExhCBZZbXMCFX8hZyrpN
-	bxd4/xaAtaeFiZ2VYIeTZfeThr/U1K9op0pzBSu2XasJY6ljlaE6BTnZy+axnlOpcpBdXbTp608
-	kNNf+m4Y+x3/4dcLEEiLhn2tbkQxzXR0H9CJwRHIBwsRuPsPFTOLq1MGn+wgQnhBom6c2M35PLO
-	kAKcMgv81m64Ok/jrBCPLFF3WWzp/FXuMAl+4KKpS2HMDbvtXrIgHab6FQIjhuQ16J54MZWHqwg
-	9FyIvxfaLfxF820jb17M/TyR9stQzHjcZ5rsWJ5lpMZ8lXSbxOeJ+CRj+/6HfDuzEn2EJInpcpm
-	KayZUchTLXkdCSvZndUT4x81a+0o1eBEaVX7oFaWLA5JkVc/QBHpBIjc=
-X-Google-Smtp-Source: AGHT+IFGziCCby5D2Qd9w4NHMZF8PAOpitnAJxu/QUYRHu3OcmybUGvrHEdGkUEWhZ4AJdmxmzRrBg==
-X-Received: by 2002:a05:600c:6090:b0:45d:d289:f505 with SMTP id 5b1f17b1804b1-45f211f859dmr2930595e9.4.1757619239071;
-        Thu, 11 Sep 2025 12:33:59 -0700 (PDT)
-Received: from kuoka.. ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e015313aesm21482975e9.1.2025.09.11.12.33.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 12:33:58 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	cocci@inria.fr,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] coccinelle: of_table: Handle SPI device ID tables
-Date: Thu, 11 Sep 2025 21:33:55 +0200
-Message-ID: <20250911193354.56262-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1757619248; c=relaxed/simple;
+	bh=3NyElaORLL200umf0/Wos1L2DClK2fYg7pEpRVfXakM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MnfMJH7rxCyD6pJoay+nClQaJTHxzH5PVRAE1aEb0f86/7/1cWYMdor5Ms/m/tB/xJZ2FyL68ImfR8IJCdzSCNipSKQmhCQ0nujqSAwF4zmFe+qbU3zn1kQnNZu2CEhleUnU6B7uUM0vSX8Y4QFHWWPdQxoRxtuEJLpJhjF7GsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ukp69uTM; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757619247; x=1789155247;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=3NyElaORLL200umf0/Wos1L2DClK2fYg7pEpRVfXakM=;
+  b=Ukp69uTMS8PrVZ/TRq7quiOf/kMS0wlzxMWY093ZUJ0TCm16XMc8ZIXh
+   AhcLr1YHkHereazMwSXrHHgK0FSkSsCpYG8ZBD8ghJplbWFJP9LZQVvTB
+   taWtKLyQtk7e/tSubGzc1fqKf/2Vc04opGoqWtY5defbCFsgOsuhmd1fG
+   6wD5clP+L/IXuDZ4mY26pkMFfVyYJHVRIzrBnyccHjcRxlFVStCADzJpb
+   28cRA78RuxvWR4rN3cKQ31EBSfJT1X+WzuoQ9FbC9mG0apXluUgeWV7W8
+   4UUXPXJOHCYue3TfEtDK6gjz8I58aPiUxmrIzrjMJsEG7rttAWbDIqP0D
+   A==;
+X-CSE-ConnectionGUID: SCzbjSP3TYqwtjnxr1qAYw==
+X-CSE-MsgGUID: NvjzoskoRlOpe5CQK0RPag==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59907476"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59907476"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 12:34:06 -0700
+X-CSE-ConnectionGUID: qXZHMRNJQQ+0YMAox/yq/g==
+X-CSE-MsgGUID: suNI1DCDRaK90NvwqeYIjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="178961993"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.177])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 12:34:02 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
+ Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a
+ wrapper for sphinx-build
+In-Reply-To: <87zfb1p0r3.fsf@trenco.lwn.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1756969623.git.mchehab+huawei@kernel.org>
+ <e019f951190a732f9ac0b21bcda7e49af3bd5cbd.1756969623.git.mchehab+huawei@kernel.org>
+ <e13837a0ac46dffe39c600d11fdf33f538bdc9c3@intel.com>
+ <20250910145926.453f5441@foz.lan>
+ <45888ca6c88071c754784495b4ef69460ea67b4f@intel.com>
+ <fuv4p45tvjfdvwu2625s2l2kvcw64p4ohherlwyum3vmogmrfz@yb47nt66xgm6>
+ <87zfb1p0r3.fsf@trenco.lwn.net>
+Date: Thu, 11 Sep 2025 22:33:58 +0300
+Message-ID: <a1333c717bb5bcea7f7c616cbf8604fa259c3158@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2386; i=krzysztof.kozlowski@linaro.org;
- h=from:subject; bh=Y05O7Ah8m3VrEBiRrZdSc+R+4Iv9NkkVIZ6x07U3YEQ=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBowyQi+cSPrAv1rp5UH7+T2nsmq+xlq6yAIsx8P
- Qozzjt5QfuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMMkIgAKCRDBN2bmhouD
- 166OD/9YQ0dD2iuqqC+ZD585xgymLed/9O9kWjjSX7YCQy28HGCLCSvlMY/pYzOl7IOhZ1bAgyH
- 149EUs50IFMsFXPfofEnW/Y6dHjiNO5C8lD9F4NeycppZ1P0VbLOL3EIjoQfW83sP0EXT+hCbW1
- SJhUSPYjh7jLNKoorDG1oJiCZwc60G10DK+vG2KwKUC18PksmSUSXe8rog+C8KJO1LyhqmmhRmu
- FUVRa6cs1doCz3nEfssqNdS5SPn2tPBY52U4pJHEZxIkT8KlQjQ6B8kjLfnYtm5T9rCNq2kHg28
- tp4/x3RCWyOKQ5Jv3ZHy39kqSJ2Ud2U+5uF2J6O4CH6/O4Jt/mVAy2Y6bdbvw4Pq5iAH30BAbok
- CULqzqvuOw6s7GmRgC/XuoAAkQiWm9ArksRn5Z+5hboIMV6qtTn1u4cxtTDLwEe3OUa6vwAho47
- tag7LElYHUmuRgQFv7FROGw4qC4ZcLpyj5gfIh5Zffm12rlsARWMwvm6DSZJcNJC78yjpNq/SZU
- /nxAKmoHEGQLt8pwiVqY/lAc+2peYG9akyzMoz0Tlsb7BNp7AVvNt26ifsTDqvvNPl+g3Kf9w2S
- GsrPklvGEXuF2mPhDn7ABd/mt1gLw5GrykSMz0zVn9I52/coYtmU8Pg+Y7r3fh0b6pdsg2/ZLpP fR46MfihNPN+m+A==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-'struct spi_device_id' tables also need to be NULL terminated.
+On Thu, 11 Sep 2025, Jonathan Corbet <corbet@lwn.net> wrote:
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+>
+>> On Thu, Sep 11, 2025 at 01:23:55PM +0300, Jani Nikula wrote:
+>>> > 1. SPHINXDIRS. It needs a lot of magic to work, both before running
+>>> >    sphinx-build and after (inside conf.py);
+>>> 
+>>> Makes you wonder if that's the right solution to the original
+>>> problem. It was added as a kind of hack, and it stuck.
+>>
+>> The problem is, IMHO, due to the lack of flexibility of sphinx-build:
+>> It should have a way on it to do partial documentation builds.
+>
+> A couple of times I have looked into using intersphinx, making each book
+> into an actually separate book.  The thing I always run into is that
+> doing a complete docs build, with working references, would require
+> building everything twice.  This is probably worth another attempt one
+> of these years...
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- scripts/coccinelle/misc/of_table.cocci | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+I think the main factor in that should be whether it makes sense from
+overall documentation standpoint, not the technical details.
 
-diff --git a/scripts/coccinelle/misc/of_table.cocci b/scripts/coccinelle/misc/of_table.cocci
-index 4693ea744753..17881cb0884b 100644
---- a/scripts/coccinelle/misc/of_table.cocci
-+++ b/scripts/coccinelle/misc/of_table.cocci
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--/// Make sure (of/i2c/platform)_device_id tables are NULL terminated
-+/// Make sure (of/i2c/platform/spi)_device_id tables are NULL terminated
- //
- // Keywords: of_table i2c_table platform_table
- // Confidence: Medium
-@@ -15,14 +15,14 @@ identifier var, arr;
- expression E;
- @@
- (
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct \(of_device_id \| i2c_device_id \| platform_device_id \| spi_device_id\) arr[] = {
- 	...,
- 	{
- 	.var = E,
- *	}
- };
- |
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct \(of_device_id \| i2c_device_id \| platform_device_id \| spi_device_id\) arr[] = {
- 	...,
- *	{ ..., E, ... },
- };
-@@ -33,7 +33,7 @@ identifier var, arr;
- expression E;
- @@
- (
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct \(of_device_id \| i2c_device_id \| platform_device_id \| spi_device_id\) arr[] = {
- 	...,
- 	{
- 	.var = E,
-@@ -42,7 +42,7 @@ struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
- +	{ }
- };
- |
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct \(of_device_id \| i2c_device_id \| platform_device_id \| spi_device_id\) arr[] = {
- 	...,
- 	{ ..., E, ... },
- +	{ },
-@@ -55,7 +55,7 @@ identifier var, arr;
- expression E;
- @@
- (
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct \(of_device_id \| i2c_device_id \| platform_device_id \| spi_device_id\) arr[] = {
- 	...,
- 	{
- 	.var = E,
-@@ -63,7 +63,7 @@ struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
- 	@p1
- };
- |
--struct \(of_device_id \| i2c_device_id \| platform_device_id\) arr[] = {
-+struct \(of_device_id \| i2c_device_id \| platform_device_id \| spi_device_id\) arr[] = {
- 	...,
- 	{ ..., E, ... }
- 	@p1
+Having several books might make sense. It might even be helpful in
+organizing the documentation by audiences. But having the granularity of
+SPHINXDIRS with that would be overkill. And there needs to be a book to
+bring them together, and link to the other books, acting as the landing
+page.
+
+I believe it should be possible to generate the intersphinx inventory
+without generating the full html or pdf documentation. So I don't think
+it's actually two complete docs builds. It might speed things up to have
+a number of independent documentation builds.
+
+As to the working references, IIUC partial builds with SPHINXDIRS
+doesn't get that part right if there are references outside of the
+designated dirs, leading to warnings.
+
+
+BR,
+Jani.
+
+
+
+
+
+
 -- 
-2.48.1
-
+Jani Nikula, Intel
 
