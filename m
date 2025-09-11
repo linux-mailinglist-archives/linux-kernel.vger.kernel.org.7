@@ -1,98 +1,97 @@
-Return-Path: <linux-kernel+bounces-812023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962ACB531D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C715B531D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:15:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555245871FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:15:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0ED25872A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1ED3203AC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EF83203BB;
 	Thu, 11 Sep 2025 12:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oYWNWnOy"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VFSpG9NZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809C930BF5A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E5730E839;
+	Thu, 11 Sep 2025 12:15:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757592901; cv=none; b=u4tTrBXRFKoy7OndXHYg6y9H2DImPvUaLKUsGIJv5/mW6cBGdhNB5Y367sPRITQhvisITvaLLIKKYozo68rX/eOXZazUDkjCNqPsTl+hjPrVRd3jeOZJcyvVMy7mYjTyoPxvQ3OW1A9OzXjAbraiEcPhgOQWw+T1DVhrqmFTDPk=
+	t=1757592901; cv=none; b=irT9kWIxEt7G3XbDribQUeWNx+n/brVQT3sOfS3lzesAd739dndbhs687L2SV/EOaBusX0AJlswJJY/e/emNTsudSkwEw79BCTR3aiPNp7J1h/U9GoqsARxAFjvwwM4YObiZp0aiCrOxR1lfKOS/9O3G5lpaZo19/h5ODiYGprc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757592901; c=relaxed/simple;
-	bh=2sO+DVZXh/7ePgmsdKci7CudQiQa4F9VcP5LQIwNDEc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ealFGxIIQaxTY3rjijVvLArDBQt0guhFiUyPHuHPHaM8Er+pUJNN1tDPSP3SzV6TEw0It83oCyI+fXeAOVVQfUBdYxSBG9UlNgQlJfSAEa9eaDDo9f3EInnbGxe88hAfIo1a6EtE8gmdZDIjzwN5uOkURUWRC60FTmzbtUgO5Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oYWNWnOy; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757592887;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6jY+NSNeTG1AR6VFAUnjneRpFWvTY45p03yTsBUBKrk=;
-	b=oYWNWnOyhcIl2n4JD9ChJ/OOC5sdFHBkU0lPggQSC4aN99Q4shUApo01da/F4xe/xXezhu
-	j8rTNZIX0DNsr8cq0n0fFyDtwc5X5iwqThWdAYj+2TJ+KNTGr9nzd2vD9G64TZ4QzFpVzV
-	m90V6Gnx5upnms1jAoipRfv4o6pnAGw=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
+	bh=N7a7r3HteSZna52mR1fkckk8ZEMlEjNaoxOclceRim0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=upjbcTd8aRHwSAK/Ud5wFjb5IfqAJ+XFmytgyNj+5FlXI3bZ8Oz9mH0BKnZ+JyjoWclJwrAb47k4mD1v8q+WPrtQyc100rwaInS+Tt5DDzzRBOHpYPBZo91AxwzOsssUBNbCQHaLtmkhm70jA/z47pXxDXiMK2Vjp3hx8MajUhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VFSpG9NZ; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757592900; x=1789128900;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=N7a7r3HteSZna52mR1fkckk8ZEMlEjNaoxOclceRim0=;
+  b=VFSpG9NZTv2c5mpWSrw42O0Rr4HPwtg/YYQBqd5galEDoUOEtcNQWX2K
+   830Vti5DsEdXAk7hli0MUZ3GSaTSUq1XDBj+MRATwVHVubh105pOi3F1L
+   8zUMvAiMGEQXuX0zlXsTT4z7pqYEQbuzym0s9FHLGSH7rFM7XhhCiRK+7
+   5Ktt09PW9p0bJHRX3PJf51oOH7MBz/sZ/JarpVbfrtKUERA9lyuZuRsmT
+   HvSRLlQa1JcDnXOx6hSHxwNsU3sE/XK2ZZ6uqY7k5N2zMBEBoE+QO7wQp
+   eJ8JyH1WsfkygaMTgpWrL9TWVBEAoD7ZukwRcj4Jm9T4ea/wkodwplId8
+   A==;
+X-CSE-ConnectionGUID: 8+d5RsDWQoi5qVW5BoRY6w==
+X-CSE-MsgGUID: S6Q8lQCISoSZpEeSelhIcg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="77532762"
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="77532762"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 05:14:59 -0700
+X-CSE-ConnectionGUID: wirAOIDSQ+qmUTJG526ilQ==
+X-CSE-MsgGUID: H85REsf+RI6zF7t8M2EOWA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="210807215"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.244.3])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 05:14:58 -0700
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 863771201BB;
+	Thu, 11 Sep 2025 15:14:53 +0300 (EEST)
+Date: Thu, 11 Sep 2025 15:14:53 +0300
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Martin Hecht <mhecht73@gmail.com>
+Cc: linux-media@vger.kernel.org, michael.roeder@avnet.eu,
+	martin.hecht@avnet.eu, Tommaso Merciai <tomm.merciai@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] x86/olpc/xo15/sci: Replace deprecated strcpy() in xo15_sci_add()
-Date: Thu, 11 Sep 2025 14:14:05 +0200
-Message-ID: <20250911121407.1388703-2-thorsten.blum@linux.dev>
+Subject: Re: [PATCH v2] media: i2c: alvium: cleanup media bus formats
+Message-ID: <aMK9PQ62EYeJpgeo@kekkonen.localdomain>
+References: <20250909135938.2841635-1-mhecht73@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909135938.2841635-1-mhecht73@gmail.com>
 
-strcpy() is deprecated; use strscpy() instead.
+Hi Martin,
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/x86/platform/olpc/olpc-xo15-sci.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Tue, Sep 09, 2025 at 03:59:37PM +0200, Martin Hecht wrote:
+> This patch removes MEDIA_BUS_FMT_RBG888_1X24 and MEDIA_BUS_FMT_BGR888_1X24
+> as of that formats are not supported by Alvium currently.
+> The missing and supported MEDIA_BUS_FMT_RGB565_1X16 has been added.
 
-diff --git a/arch/x86/platform/olpc/olpc-xo15-sci.c b/arch/x86/platform/olpc/olpc-xo15-sci.c
-index 68244a3422d1..82c51b6ec528 100644
---- a/arch/x86/platform/olpc/olpc-xo15-sci.c
-+++ b/arch/x86/platform/olpc/olpc-xo15-sci.c
-@@ -7,6 +7,7 @@
- 
- #include <linux/device.h>
- #include <linux/slab.h>
-+#include <linux/string.h>
- #include <linux/workqueue.h>
- #include <linux/power_supply.h>
- #include <linux/olpc-ec.h>
-@@ -144,8 +145,8 @@ static int xo15_sci_add(struct acpi_device *device)
- 	if (!device)
- 		return -EINVAL;
- 
--	strcpy(acpi_device_name(device), XO15_SCI_DEVICE_NAME);
--	strcpy(acpi_device_class(device), XO15_SCI_CLASS);
-+	strscpy(acpi_device_name(device), XO15_SCI_DEVICE_NAME);
-+	strscpy(acpi_device_class(device), XO15_SCI_CLASS);
- 
- 	/* Get GPE bit assignment (EC events). */
- 	status = acpi_evaluate_integer(device->handle, "_GPE", NULL, &tmp);
+What's the pixel order used by the format in Alvium case?
+
 -- 
-2.51.0
+Regards,
 
+Sakari Ailus
 
