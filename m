@@ -1,143 +1,213 @@
-Return-Path: <linux-kernel+bounces-811714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408F8B52CF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:18:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C0BB52CF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6DB1C2071F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:19:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555111C2078C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFB12E9EC2;
-	Thu, 11 Sep 2025 09:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9042E8B9F;
+	Thu, 11 Sep 2025 09:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yBHad4Al"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VR3CFPlR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A012E8DE1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB2D214A8B;
+	Thu, 11 Sep 2025 09:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757582302; cv=none; b=IZe0rBVu/xuEh5urSect98GruHhm7+ug3Ir/+5WsKrSufBkDZL5h72anQnCtQhf0VGwkJX6V8cwi2SjpOhEYGRu7VXaq03G3VA69Mckfab48zPXdqJVxILWDegTJIP9gujqIhCUgfvDTPBMsHOLHXPpSWxDAEz8IlfzyGFN5ryI=
+	t=1757582337; cv=none; b=DSTb+j/T8yYrn/609XAqbyx2vlisyV2egDwcqB/DobmFw5nCgUJTDN1HKKxLIy6CK/uwzri2LhDy5k8T0QLJa5T4219en0JWhM6CEifMDEfi3XLPgIbSzziGMo2ENK9XPF4TDAhRRAy+E4LnoxPVJ10pT/D6f405SOBjcYX5mlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757582302; c=relaxed/simple;
-	bh=1B3D6WIyM4uKCWTK+JvwjK5rmKnBn1DsJarcuewJmQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HJxMqUn6vn92q6By4XjzTE+5vcnRjIDc98juZtGTjA6mbHyi74KBEhPI9JwhlNo2qKgm6jNMGbu/NlTgB5t4B+cKcGYToTkuwHdDDRPIXHOstSTBByQPyhl57enI6Fg2N3dSebLeP3yJfbfTP5wlLDaGHK5JIqBUeG7I0ga8lv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yBHad4Al; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-80e3612e1a7so82098985a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 02:18:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757582299; x=1758187099; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1B3D6WIyM4uKCWTK+JvwjK5rmKnBn1DsJarcuewJmQY=;
-        b=yBHad4AlHhN6xy1ETyIXTUjHUNyn8b1AyhTsMHAfhIed9rD2urdwr25RkJl/3nbDmo
-         1VWACUkvD7U3dYFobURlyHBwJJdDnpOtUHDT6WMqkM9y4XeoGBhk2Ru9hfAdfBfoTBqO
-         mJ2sJEeVKNHoSwzDgOZD34o0CJ4wsOwF45aUg8OsHxQOV6BMVRBPjlHEPc3y1eg3xuWz
-         w3lZ4EqqzNuLbF8ir0bMPq6eWdsBtOO4CNcj0NhrJ6o2WZw4K2d9JZIRCOMXo+ckdvK2
-         WlHQ8DAKM5F5YmF8fLW7d3BWgiLPrKXsjMA72uWERZna9hnOKwmoDz9alq8MGWJg27kC
-         ZA9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757582299; x=1758187099;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1B3D6WIyM4uKCWTK+JvwjK5rmKnBn1DsJarcuewJmQY=;
-        b=wkz4/FWFM8eM5kt3ocCSwtzZ7rFwo+N7faczvFwD1t0JkX+mBds8+gpadaHF705+Pt
-         9DbKCduK+CmpYYeFfJQpFoTBS7CgvSrIehvY7FjSEOJdnLdNJDdKGp06DL/FDmYhO3j+
-         3EMLQ+BUvQ8NL2jA57ASfWEUeM65hxDSumjdjbiAD1BjskcT4YHuwDzYekfEnH7a60p4
-         3cMsnWBft0/wgtvrB9d+gxui1uGLgEfWkhiQbgNjQnFc6GIjaPMnpnNP+vBlnLtiqlgf
-         K+VcWYV9GXXDWojeD+/cKmMca4rMUIsP9ddBDWSglQ6FYqBFexuRpWobnpf9BbX8pk6B
-         Rdkw==
-X-Gm-Message-State: AOJu0Yyl8N72wliMCMgfy/gR0SvF5zwoIRkohN+vkRqc4B4FdGB3TlzD
-	BDlenXa2M1sKJNWfdaucR+rVa6/DwDxQlC6AHik9Fpcs5w5s2eoe9uOoiJZmz4uUI9NXzxpzqBG
-	6vTqZXa52xBcDW9+FpZ3VxZGdssoNPcoerNXqUSk2
-X-Gm-Gg: ASbGnctWMjdy87PNR6qXzmax/TA8M1rhQIBTn50b3B4bfDbViUVz++PI/xIlKl1Vg8P
-	eEY3CwXpHxl81+mhhES1WVlzuI7HN3hotxq2B/mqpWpNykFxjZ7vVpuQnpecetie+rQSN9YXtu9
-	Xk40rNPd/o/LMuQe1QI7ep8uJnPxlqJ/SaOcjiqkwg96i2qvNl30hqvlSoowDzHtlpIFGqW/lli
-	M1VPU5W6LdUhQmst2HAwRRLkVLAToCPKLpmwDQ9tlBb
-X-Google-Smtp-Source: AGHT+IEAdn2JRKDnhaL2qmt37A4l17luV2CMhXbLee/vFTGYZd/pxxVUthlBX8HJQeQEoIdvrbi8slCg3eRXyv3n/Qs=
-X-Received: by 2002:a05:620a:45a7:b0:813:8842:93bf with SMTP id
- af79cd13be357-813c1e8e0femr1958044985a.40.1757582298381; Thu, 11 Sep 2025
- 02:18:18 -0700 (PDT)
+	s=arc-20240116; t=1757582337; c=relaxed/simple;
+	bh=6IJ6y6d+p19D/hsvQumBPOT9ry6MWZVMYgvu/00cO3s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZLyQHefYKGJJnbLY+zBjNlRLUKQ/H87o9H2PWK1m+Bm2zZMJ39SrggRPV2m9/pA2IQbVDH81DTO/Om+JhhKzJ2uN1mUI6HKLMx7ST6igDk3WAVoTkxc2yBCJWcfokHVuCW3HAm3xBX+L8MXrrWvFq4mTzk0RT/STmRsFW8KGoiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VR3CFPlR; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757582336; x=1789118336;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6IJ6y6d+p19D/hsvQumBPOT9ry6MWZVMYgvu/00cO3s=;
+  b=VR3CFPlRFRboi8SSOvJG7eQydRrWovJBBJs0YTXWI6RY5NFsENBT4mhd
+   LoRJOex9J72oB4TyfivhPyro+eQTDSSlCCAZCeiEhAfRXWkgpKGAGeOuX
+   dwWVJUKxbUPIbcIvj9f184vz6685HFnPFwlcL0ajjaFSKVyd1Kf86Jt5R
+   dg9zghgg8a3AN7cRI9BNl4Mn+iDHoOPztzmTxt+B0trbG3hyUxkV74xdT
+   MldlipinlvqCpC5hlLwhHhDlyRutxmtW8YO10JG80Fv1SGpT82wHw/wYJ
+   CjbDi619Jqgk+SEEuq35wMVpXdKa3YFiqHRB1o77RPhDgHRcysD/znrsQ
+   g==;
+X-CSE-ConnectionGUID: RJijFVtoSxanEKkc4D9V1A==
+X-CSE-MsgGUID: HpiQLCTqRYa6wov/lFV3hw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="47480608"
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="47480608"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 02:18:55 -0700
+X-CSE-ConnectionGUID: VJLiGQIxRS67ep4bpbco0A==
+X-CSE-MsgGUID: 7Ip+pSX1RC+vnwnEomkejA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="173209976"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 02:18:50 -0700
+Message-ID: <8121026d-aede-4f78-a081-b81186b96e9b@intel.com>
+Date: Thu, 11 Sep 2025 17:18:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910024328.17911-1-bagasdotme@gmail.com> <20250910024328.17911-8-bagasdotme@gmail.com>
-In-Reply-To: <20250910024328.17911-8-bagasdotme@gmail.com>
-From: Alexander Potapenko <glider@google.com>
-Date: Thu, 11 Sep 2025 11:17:41 +0200
-X-Gm-Features: AS18NWC9Ax6HJ7xE41xsztIAoL9MxJcZhppucVI7C3-6QUaMqtQ6glgozKyha94
-Message-ID: <CAG_fn=WPCtL2Knk7_so+9QMcUPY2wCG93BZN-rwJC+ELLgJ4nQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/13] Documentation: kasan: Use internal link to kunit
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Documentation <linux-doc@vger.kernel.org>, Linux DAMON <damon@lists.linux.dev>, 
-	Linux Memory Management List <linux-mm@kvack.org>, Linux Power Management <linux-pm@vger.kernel.org>, 
-	Linux Block Devices <linux-block@vger.kernel.org>, Linux BPF <bpf@vger.kernel.org>, 
-	Linux Kernel Workflows <workflows@vger.kernel.org>, Linux KASAN <kasan-dev@googlegroups.com>, 
-	Linux Devicetree <devicetree@vger.kernel.org>, Linux fsverity <fsverity@lists.linux.dev>, 
-	Linux MTD <linux-mtd@lists.infradead.org>, 
-	Linux DRI Development <dri-devel@lists.freedesktop.org>, 
-	Linux Kernel Build System <linux-kbuild@vger.kernel.org>, Linux Networking <netdev@vger.kernel.org>, 
-	Linux Sound <linux-sound@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Jonathan Corbet <corbet@lwn.net>, SeongJae Park <sj@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Huang Rui <ray.huang@amd.com>, 
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
-	Perry Yuan <perry.yuan@amd.com>, Jens Axboe <axboe@kernel.dk>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Dwaipayan Ray <dwaipayanray1@gmail.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, Joe Perches <joe@perches.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Eric Biggers <ebiggers@kernel.org>, tytso@mit.edu, Richard Weinberger <richard@nod.at>, 
-	Zhihao Cheng <chengzhihao1@huawei.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Waiman Long <longman@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Shay Agroskin <shayagr@amazon.com>, 
-	Arthur Kiyanovski <akiyano@amazon.com>, David Arinzon <darinzon@amazon.com>, 
-	Saeed Bishara <saeedb@amazon.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Alexandru Ciobotaru <alcioa@amazon.com>, 
-	The AWS Nitro Enclaves Team <aws-nitro-enclaves-devel@amazon.com>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Ranganath V N <vnranganath.20@gmail.com>, Steve French <stfrench@microsoft.com>, 
-	Meetakshi Setiya <msetiya@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, Bart Van Assche <bvanassche@acm.org>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
-	Jani Nikula <jani.nikula@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 15/22] KVM: x86: Don't emulate instructions guarded by
+ CET
+To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
+ minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
+ pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
+ seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
+ weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com
+References: <20250909093953.202028-1-chao.gao@intel.com>
+ <20250909093953.202028-16-chao.gao@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250909093953.202028-16-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 4:44=E2=80=AFAM Bagas Sanjaya <bagasdotme@gmail.com=
-> wrote:
->
-> Use internal linking to KUnit documentation.
->
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-Reviewed-by: Alexander Potapenko <glider@google.com>
+On 9/9/2025 5:39 PM, Chao Gao wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> Don't emulate the branch instructions, e.g., CALL/RET/JMP etc., when CET
+> is active in guest, return KVM_INTERNAL_ERROR_EMULATION to userspace to
+> handle it.
+> 
+> KVM doesn't emulate CPU behaviors to check CET protected stuffs while
+> emulating guest instructions, instead it stops emulation on detecting
+> the instructions in process are CET protected. By doing so, it can avoid
+> generating bogus #CP in guest and preventing CET protected execution flow
+> subversion from guest side.
+> 
+> Suggested-by: Chao Gao <chao.gao@intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>   arch/x86/kvm/emulate.c | 46 ++++++++++++++++++++++++++++++++----------
+>   1 file changed, 35 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
+> index 542d3664afa3..97a4d1e69583 100644
+> --- a/arch/x86/kvm/emulate.c
+> +++ b/arch/x86/kvm/emulate.c
+> @@ -178,6 +178,8 @@
+>   #define IncSP       ((u64)1 << 54)  /* SP is incremented before ModRM calc */
+>   #define TwoMemOp    ((u64)1 << 55)  /* Instruction has two memory operand */
+>   #define IsBranch    ((u64)1 << 56)  /* Instruction is considered a branch. */
+> +#define ShadowStack ((u64)1 << 57)  /* Instruction protected by Shadow Stack. */
+> +#define IndirBrnTrk ((u64)1 << 58)  /* Instruction protected by IBT. */
+>   
+>   #define DstXacc     (DstAccLo | SrcAccHi | SrcWrite)
+>   
+> @@ -4068,9 +4070,11 @@ static const struct opcode group4[] = {
+>   static const struct opcode group5[] = {
+>   	F(DstMem | SrcNone | Lock,		em_inc),
+>   	F(DstMem | SrcNone | Lock,		em_dec),
+> -	I(SrcMem | NearBranch | IsBranch,       em_call_near_abs),
+> -	I(SrcMemFAddr | ImplicitOps | IsBranch, em_call_far),
+> -	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
+> +	I(SrcMem | NearBranch | IsBranch | ShadowStack | IndirBrnTrk,
+> +	em_call_near_abs),
+> +	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack | IndirBrnTrk,
+> +	em_call_far),
+> +	I(SrcMem | NearBranch | IsBranch | IndirBrnTrk, em_jmp_abs),
+>   	I(SrcMemFAddr | ImplicitOps | IsBranch, em_jmp_far),
+>   	I(SrcMem | Stack | TwoMemOp,		em_push), D(Undefined),
+>   };
+> @@ -4332,11 +4336,11 @@ static const struct opcode opcode_table[256] = {
+>   	/* 0xC8 - 0xCF */
+>   	I(Stack | SrcImmU16 | Src2ImmByte | IsBranch, em_enter),
+>   	I(Stack | IsBranch, em_leave),
+> -	I(ImplicitOps | SrcImmU16 | IsBranch, em_ret_far_imm),
+> -	I(ImplicitOps | IsBranch, em_ret_far),
+> -	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch, intn),
+> +	I(ImplicitOps | SrcImmU16 | IsBranch | ShadowStack, em_ret_far_imm),
+> +	I(ImplicitOps | IsBranch | ShadowStack, em_ret_far),
+> +	D(ImplicitOps | IsBranch), DI(SrcImmByte | IsBranch | ShadowStack, intn),
+>   	D(ImplicitOps | No64 | IsBranch),
+> -	II(ImplicitOps | IsBranch, em_iret, iret),
+> +	II(ImplicitOps | IsBranch | ShadowStack, em_iret, iret),
+>   	/* 0xD0 - 0xD7 */
+>   	G(Src2One | ByteOp, group2), G(Src2One, group2),
+>   	G(Src2CL | ByteOp, group2), G(Src2CL, group2),
+> @@ -4352,7 +4356,7 @@ static const struct opcode opcode_table[256] = {
+>   	I2bvIP(SrcImmUByte | DstAcc, em_in,  in,  check_perm_in),
+>   	I2bvIP(SrcAcc | DstImmUByte, em_out, out, check_perm_out),
+>   	/* 0xE8 - 0xEF */
+> -	I(SrcImm | NearBranch | IsBranch, em_call),
+> +	I(SrcImm | NearBranch | IsBranch | ShadowStack, em_call),
+>   	D(SrcImm | ImplicitOps | NearBranch | IsBranch),
+>   	I(SrcImmFAddr | No64 | IsBranch, em_jmp_far),
+>   	D(SrcImmByte | ImplicitOps | NearBranch | IsBranch),
+> @@ -4371,7 +4375,8 @@ static const struct opcode opcode_table[256] = {
+>   static const struct opcode twobyte_table[256] = {
+>   	/* 0x00 - 0x0F */
+>   	G(0, group6), GD(0, &group7), N, N,
+> -	N, I(ImplicitOps | EmulateOnUD | IsBranch, em_syscall),
+> +	N, I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack | IndirBrnTrk,
+> +	em_syscall),
+>   	II(ImplicitOps | Priv, em_clts, clts), N,
+>   	DI(ImplicitOps | Priv, invd), DI(ImplicitOps | Priv, wbinvd), N, N,
+>   	N, D(ImplicitOps | ModRM | SrcMem | NoAccess), N, N,
+> @@ -4402,8 +4407,9 @@ static const struct opcode twobyte_table[256] = {
+>   	IIP(ImplicitOps, em_rdtsc, rdtsc, check_rdtsc),
+>   	II(ImplicitOps | Priv, em_rdmsr, rdmsr),
+>   	IIP(ImplicitOps, em_rdpmc, rdpmc, check_rdpmc),
+> -	I(ImplicitOps | EmulateOnUD | IsBranch, em_sysenter),
+> -	I(ImplicitOps | Priv | EmulateOnUD | IsBranch, em_sysexit),
+> +	I(ImplicitOps | EmulateOnUD | IsBranch | ShadowStack | IndirBrnTrk,
+> +	em_sysenter),
+> +	I(ImplicitOps | Priv | EmulateOnUD | IsBranch | ShadowStack, em_sysexit),
+>   	N, N,
+>   	N, N, N, N, N, N, N, N,
+>   	/* 0x40 - 0x4F */
+> @@ -4941,6 +4947,24 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
+>   	if (ctxt->d == 0)
+>   		return EMULATION_FAILED;
+>   
+> +	if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET) {
+> +		u64 u_cet, s_cet;
+> +		bool stop_em;
+> +
+> +		if (ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &u_cet) ||
+> +		    ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &s_cet))
+> +			return EMULATION_FAILED;
+> +
+> +		stop_em = ((u_cet & CET_SHSTK_EN) || (s_cet & CET_SHSTK_EN)) &&
+> +			  (opcode.flags & ShadowStack);
+> +
+> +		stop_em |= ((u_cet & CET_ENDBR_EN) || (s_cet & CET_ENDBR_EN)) &&
+> +			   (opcode.flags & IndirBrnTrk);
+
+Why don't check CPL here? Just for simplicity?
+
+> +		if (stop_em)
+> +			return EMULATION_FAILED;
+> +	}
+> +
+>   	ctxt->execute = opcode.u.execute;
+>   
+>   	if (unlikely(emulation_type & EMULTYPE_TRAP_UD) &&
+
 
