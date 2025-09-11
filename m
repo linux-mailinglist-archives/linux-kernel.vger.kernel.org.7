@@ -1,231 +1,356 @@
-Return-Path: <linux-kernel+bounces-811767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A0B4B52D91
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:45:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9781B52D98
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5C0658732C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:45:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4665958758B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51212F530A;
-	Thu, 11 Sep 2025 09:43:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C682EDD52
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C872EBDF0;
+	Thu, 11 Sep 2025 09:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYwaHgnR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECE92EB844;
+	Thu, 11 Sep 2025 09:44:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757583826; cv=none; b=biyk7nvHIuFI8nEKeR3asvdwh1Ee1bABgW1tanVxu5OwIC2lmEkX6DN2qCD9YqKMUrUyUmX2Sn39PkBeiOX4sZYhufJusdmxk77Q7TVlTX2W3/+NEdHe3M4aA5i0Op40xaDj1JI/fanG5GdJyohKIvOVi9wZUIB2yyVf7qUBs8o=
+	t=1757583851; cv=none; b=FeU2joZ8LSIeyR+t8PgsPnq/4JHcA+/+TJehCSDyLrfuVRvGHM/V+jFsm+hBwLNuGXxxteQpqvObK7jf5FIX8ZG8YjS+2JI5XsuzeraAlkg6mRvfHhUrj+s0csaJ+iZPGoRgQSa3b5kRWj7nIiSBX96zilqTHMMkeBMJ32h4bak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757583826; c=relaxed/simple;
-	bh=xMWlFDmCLb1Y/VLpkZpTuVQkBBmSyl2dG8QKqAL7ONw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Q/GnztCcxB6jTsYO7U4lXEcqdg1lJWbrn+6KqX8ZJxCoPHK6BGl54PQk5H9aXyxcwAm168qpvivP0g4ZHWoqkru1f9FbJ8cEf9MezqbncOQuibO2t1NIwusUGHTx0c+8Hjh2tyqQ2/lPvKk/6Ul+8dlD6qKYHk69m7K4K15Mv4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13ADC153B;
-	Thu, 11 Sep 2025 02:43:35 -0700 (PDT)
-Received: from [10.1.30.24] (e122027.cambridge.arm.com [10.1.30.24])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4EC5E3F694;
-	Thu, 11 Sep 2025 02:43:41 -0700 (PDT)
-Message-ID: <84c5f82e-5931-42c8-b577-123917a7d30c@arm.com>
-Date: Thu, 11 Sep 2025 10:43:39 +0100
+	s=arc-20240116; t=1757583851; c=relaxed/simple;
+	bh=kV7vZm9Eyd7Ie8xphsJvcVh9Ceje97yHegYdpuD0swc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qRgvtnPpUMyio4byCj4wklLFdS8kNCEVwyNF1gQ5rd3u1TZcQzJlVv0QWDH1K248YOglMtylfPgHJcmvA4uvNZys+PDBneV7Dlf+nVaTB2Hypich4uf31xWBjurv+ZHmJpxHBJ8RFYMTB6iSYHx+RzbajSzAHAlaXWBby4JTlSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYwaHgnR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19B4EC4CEF0;
+	Thu, 11 Sep 2025 09:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757583851;
+	bh=kV7vZm9Eyd7Ie8xphsJvcVh9Ceje97yHegYdpuD0swc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lYwaHgnRT+GFwqcavqxcw9A4C7X2fUz/eMmP2CAjUY9KxbeQ4TQg5XKYtWvKFkfyW
+	 NvzZTzaT2zvGhYjMljGyoHNlO5lt6yuSaoE8hSreAlQY/ZdNbIMxpPL4U62k4I2IXH
+	 a0NaZjV/Xa3AKAGw1spn5xg5qN6cz6YVhuojI+EWHls+w6rjRxpysYPv9GYSRxTFpJ
+	 0xosjezjr2D/5fTo2RQaCOqOFYY+vaxbSKdL+zm7IH3+oksSJ5kBksETELZcCVyPPR
+	 1dxuZOlSmTcmQWLWGXmHVez01boMB1HTG7E+YdgCxqTH/Z4IfoWS6fixP0yFukMD0X
+	 yil8bQMqkS20g==
+Date: Thu, 11 Sep 2025 10:44:04 +0100
+From: Simon Horman <horms@kernel.org>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <uwu@dram.page>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH net-next v10 2/5] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <20250911094404.GE30363@horms.kernel.org>
+References: <20250908-net-k1-emac-v10-0-90d807ccd469@iscas.ac.cn>
+ <20250908-net-k1-emac-v10-2-90d807ccd469@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drm/panthor: assign unique names to queues
-To: Chia-I Wu <olvaffe@gmail.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250902200624.428175-1-olvaffe@gmail.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250902200624.428175-1-olvaffe@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250908-net-k1-emac-v10-2-90d807ccd469@iscas.ac.cn>
 
-On 02/09/2025 21:06, Chia-I Wu wrote:
-> Userspace relies on the ring field of gpu_scheduler tracepoints to
-> identify a drm_gpu_scheduler.  The value of the ring field is taken from
-> sched->name.
+On Mon, Sep 08, 2025 at 08:34:26PM +0800, Vivian Wang wrote:
+> The Ethernet MACs found on SpacemiT K1 appears to be a custom design
+> that only superficially resembles some other embedded MACs. SpacemiT
+> refers to them as "EMAC", so let's just call the driver "k1_emac".
 > 
-> Because we typically have multiple schedulers running in parallel in
-> each process, assign unique names to schedulers such that userspace can
-> distinguish them.
+> Supports RGMII and RMII interfaces. Includes support for MAC hardware
+> statistics counters. PTP support is not implemented.
 > 
-> Signed-off-by: Chia-I Wu <olvaffe@gmail.com>
-
-Applied to drm-misc-next.
-
-Thanks,
-Steve
-
-> 
+> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
+> Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+> Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+> Reviewed-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+> Tested-by: Junhui Liu <junhui.liu@pigmoral.tech>
+> Tested-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 > ---
-> 
-> v2:
->  - include drm_client_id in the name to be truly unique
->  - remove unnecessary NULL in drm_sched_init_args initialization
->  - reformat to column width 100
-> 
-> v3:
->  - switch to kasprintf for queue name
->    - open to alternatives such as name[48], shorter prefix (e.g.,
->      panthor-q), etc.
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c   |  2 +-
->  drivers/gpu/drm/panthor/panthor_sched.c | 38 ++++++++++++++++++-------
->  drivers/gpu/drm/panthor/panthor_sched.h |  3 +-
->  3 files changed, 31 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-> index 9256806eb6623..be962b1387f03 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -1105,7 +1105,7 @@ static int panthor_ioctl_group_create(struct drm_device *ddev, void *data,
->  	if (ret)
->  		goto out;
->  
-> -	ret = panthor_group_create(pfile, args, queue_args);
-> +	ret = panthor_group_create(pfile, args, queue_args, file->client_id);
->  	if (ret < 0)
->  		goto out;
->  	args->group_handle = ret;
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index ba5dc3e443d9c..b328631c00489 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -360,6 +360,9 @@ struct panthor_queue {
->  	/** @entity: DRM scheduling entity used for this queue. */
->  	struct drm_sched_entity entity;
->  
-> +	/** @name: DRM scheduler name for this queue. */
-> +	char *name;
+>  drivers/net/ethernet/Kconfig            |    1 +
+>  drivers/net/ethernet/Makefile           |    1 +
+>  drivers/net/ethernet/spacemit/Kconfig   |   29 +
+>  drivers/net/ethernet/spacemit/Makefile  |    6 +
+>  drivers/net/ethernet/spacemit/k1_emac.c | 2156 +++++++++++++++++++++++++++++++
+
+This is a large patch, so I'm sure I've missed some things.
+But, overall, I think this is coming together.
+Thanks for your recent updates.
+
+As the Kernel Patch Robot noticed a problem,
+I've provided some minor feedback for your consideration.
+
+...
+
+> +static void emac_wr(struct emac_priv *priv, u32 reg, u32 val)
+> +{
+> +	writel(val, priv->iobase + reg);
+> +}
 > +
->  	/**
->  	 * @remaining_time: Time remaining before the job timeout expires.
->  	 *
-> @@ -901,6 +904,8 @@ static void group_free_queue(struct panthor_group *group, struct panthor_queue *
->  	if (queue->scheduler.ops)
->  		drm_sched_fini(&queue->scheduler);
->  
-> +	kfree(queue->name);
+> +static int emac_rd(struct emac_priv *priv, u32 reg)
+
+nit: maybe u32 would be a more suitable return type.
+
+> +{
+> +	return readl(priv->iobase + reg);
+> +}
+
+...
+
+> +static int emac_alloc_tx_resources(struct emac_priv *priv)
+> +{
+> +	struct emac_desc_ring *tx_ring = &priv->tx_ring;
+> +	struct platform_device *pdev = priv->pdev;
+> +	u32 size;
 > +
->  	panthor_queue_put_syncwait_obj(queue);
->  
->  	panthor_kernel_bo_destroy(queue->ringbuf);
-> @@ -3308,9 +3313,10 @@ static u32 calc_profiling_ringbuf_num_slots(struct panthor_device *ptdev,
->  
->  static struct panthor_queue *
->  group_create_queue(struct panthor_group *group,
-> -		   const struct drm_panthor_queue_create *args)
-> +		   const struct drm_panthor_queue_create *args,
-> +		   u64 drm_client_id, u32 gid, u32 qid)
->  {
-> -	const struct drm_sched_init_args sched_args = {
-> +	struct drm_sched_init_args sched_args = {
->  		.ops = &panthor_queue_sched_ops,
->  		.submit_wq = group->ptdev->scheduler->wq,
->  		.num_rqs = 1,
-> @@ -3323,7 +3329,6 @@ group_create_queue(struct panthor_group *group,
->  		.credit_limit = args->ringbuf_size / sizeof(u64),
->  		.timeout = msecs_to_jiffies(JOB_TIMEOUT_MS),
->  		.timeout_wq = group->ptdev->reset.wq,
-> -		.name = "panthor-queue",
->  		.dev = group->ptdev->base.dev,
->  	};
->  	struct drm_gpu_scheduler *drm_sched;
-> @@ -3398,6 +3403,15 @@ group_create_queue(struct panthor_group *group,
->  	if (ret)
->  		goto err_free_queue;
->  
-> +	/* assign a unique name */
-> +	queue->name = kasprintf(GFP_KERNEL, "panthor-queue-%llu-%u-%u", drm_client_id, gid, qid);
-> +	if (!queue->name) {
-> +		ret = -ENOMEM;
-> +		goto err_free_queue;
+> +	size = sizeof(struct emac_tx_desc_buffer) * tx_ring->total_cnt;
+> +
+> +	tx_ring->tx_desc_buf = kzalloc(size, GFP_KERNEL);
+
+nit: I think you can use kcalloc() here.
+
+> +	if (!tx_ring->tx_desc_buf)
+> +		return -ENOMEM;
+> +
+> +	tx_ring->total_size = tx_ring->total_cnt * sizeof(struct emac_desc);
+> +	tx_ring->total_size = ALIGN(tx_ring->total_size, PAGE_SIZE);
+> +
+> +	tx_ring->desc_addr = dma_alloc_coherent(&pdev->dev, tx_ring->total_size,
+> +						&tx_ring->desc_dma_addr,
+> +						GFP_KERNEL);
+> +	if (!tx_ring->desc_addr) {
+> +		kfree(tx_ring->tx_desc_buf);
+> +		return -ENOMEM;
 > +	}
 > +
-> +	sched_args.name = queue->name;
+> +	tx_ring->head = 0;
+> +	tx_ring->tail = 0;
 > +
->  	ret = drm_sched_init(&queue->scheduler, &sched_args);
->  	if (ret)
->  		goto err_free_queue;
-> @@ -3447,7 +3461,8 @@ static void add_group_kbo_sizes(struct panthor_device *ptdev,
->  
->  int panthor_group_create(struct panthor_file *pfile,
->  			 const struct drm_panthor_group_create *group_args,
-> -			 const struct drm_panthor_queue_create *queue_args)
-> +			 const struct drm_panthor_queue_create *queue_args,
-> +			 u64 drm_client_id)
->  {
->  	struct panthor_device *ptdev = pfile->ptdev;
->  	struct panthor_group_pool *gpool = pfile->groups;
-> @@ -3540,12 +3555,16 @@ int panthor_group_create(struct panthor_file *pfile,
->  	memset(group->syncobjs->kmap, 0,
->  	       group_args->queues.count * sizeof(struct panthor_syncobj_64b));
->  
-> +	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
-> +	if (ret)
-> +		goto err_put_group;
-> +
->  	for (i = 0; i < group_args->queues.count; i++) {
-> -		group->queues[i] = group_create_queue(group, &queue_args[i]);
-> +		group->queues[i] = group_create_queue(group, &queue_args[i], drm_client_id, gid, i);
->  		if (IS_ERR(group->queues[i])) {
->  			ret = PTR_ERR(group->queues[i]);
->  			group->queues[i] = NULL;
-> -			goto err_put_group;
-> +			goto err_erase_gid;
->  		}
->  
->  		group->queue_count++;
-> @@ -3553,10 +3572,6 @@ int panthor_group_create(struct panthor_file *pfile,
->  
->  	group->idle_queues = GENMASK(group->queue_count - 1, 0);
->  
-> -	ret = xa_alloc(&gpool->xa, &gid, group, XA_LIMIT(1, MAX_GROUPS_PER_POOL), GFP_KERNEL);
-> -	if (ret)
-> -		goto err_put_group;
-> -
->  	mutex_lock(&sched->reset.lock);
->  	if (atomic_read(&sched->reset.in_progress)) {
->  		panthor_group_stop(group);
-> @@ -3575,6 +3590,9 @@ int panthor_group_create(struct panthor_file *pfile,
->  
->  	return gid;
->  
-> +err_erase_gid:
-> +	xa_erase(&gpool->xa, gid);
-> +
->  err_put_group:
->  	group_put(group);
->  	return ret;
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/panthor/panthor_sched.h
-> index 742b0b4ff3a3c..f4a475aa34c0a 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.h
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.h
-> @@ -21,7 +21,8 @@ struct panthor_job;
->  
->  int panthor_group_create(struct panthor_file *pfile,
->  			 const struct drm_panthor_group_create *group_args,
-> -			 const struct drm_panthor_queue_create *queue_args);
-> +			 const struct drm_panthor_queue_create *queue_args,
-> +			 u64 drm_client_id);
->  int panthor_group_destroy(struct panthor_file *pfile, u32 group_handle);
->  int panthor_group_get_state(struct panthor_file *pfile,
->  			    struct drm_panthor_group_get_state *get_state);
+> +	return 0;
+> +}
 
+...
+
+> +static int emac_alloc_rx_resources(struct emac_priv *priv)
+> +{
+> +	struct emac_desc_ring *rx_ring = &priv->rx_ring;
+> +	struct platform_device *pdev = priv->pdev;
+> +	u32 buf_len;
+> +
+> +	buf_len = sizeof(struct emac_rx_desc_buffer) * rx_ring->total_cnt;
+> +
+> +	rx_ring->rx_desc_buf = kzalloc(buf_len, GFP_KERNEL);
+
+Ditto.
+
+> +	if (!rx_ring->rx_desc_buf)
+> +		return -ENOMEM;
+> +
+> +	rx_ring->total_size = rx_ring->total_cnt * sizeof(struct emac_desc);
+> +
+> +	rx_ring->total_size = ALIGN(rx_ring->total_size, PAGE_SIZE);
+> +
+> +	rx_ring->desc_addr = dma_alloc_coherent(&pdev->dev, rx_ring->total_size,
+> +						&rx_ring->desc_dma_addr,
+> +						GFP_KERNEL);
+> +	if (!rx_ring->desc_addr) {
+> +		kfree(rx_ring->rx_desc_buf);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	rx_ring->head = 0;
+> +	rx_ring->tail = 0;
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static int emac_mii_read(struct mii_bus *bus, int phy_addr, int regnum)
+> +{
+> +	struct emac_priv *priv = bus->priv;
+> +	u32 cmd = 0, val;
+> +	int ret;
+> +
+> +	cmd |= phy_addr & 0x1F;
+> +	cmd |= (regnum & 0x1F) << 5;
+
+nit: I think this could benefit from using FIELD_PREP
+     Likewise for similar patterns in this patch.
+
+> +	cmd |= MREGBIT_START_MDIO_TRANS | MREGBIT_MDIO_READ_WRITE;
+> +
+> +	emac_wr(priv, MAC_MDIO_DATA, 0x0);
+> +	emac_wr(priv, MAC_MDIO_CONTROL, cmd);
+> +
+> +	ret = readl_poll_timeout(priv->iobase + MAC_MDIO_CONTROL, val,
+> +				 !((val >> 15) & 0x1), 100, 10000);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = emac_rd(priv, MAC_MDIO_DATA);
+> +	return val;
+> +}
+
+...
+
+> +/*
+> + * Even though this MAC supports gigabit operation, it only provides 32-bit
+> + * statistics counters. The most overflow-prone counters are the "bytes" ones,
+> + * which at gigabit overflow about twice a minute.
+> + *
+> + * Therefore, we maintain the high 32 bits of counters ourselves, incrementing
+> + * every time statistics seem to go backwards. Also, update periodically to
+> + * catch overflows when we are not otherwise checking the statistics often
+> + * enough.
+> + */
+> +
+> +#define EMAC_STATS_TIMER_PERIOD		20
+> +
+> +static int emac_read_stat_cnt(struct emac_priv *priv, u8 cnt, u32 *res,
+> +			      u32 control_reg, u32 high_reg, u32 low_reg)
+> +{
+> +	u32 val;
+> +	int ret;
+> +
+> +	/* The "read" bit is the same for TX and RX */
+> +
+> +	val = MREGBIT_START_TX_COUNTER_READ | cnt;
+> +	emac_wr(priv, control_reg, val);
+> +	val = emac_rd(priv, control_reg);
+> +
+> +	ret = readl_poll_timeout_atomic(priv->iobase + control_reg, val,
+> +					!(val & MREGBIT_START_TX_COUNTER_READ),
+> +					100, 10000);
+> +
+> +	if (ret) {
+> +		netdev_err(priv->ndev, "Read stat timeout\n");
+> +		return ret;
+> +	}
+> +
+> +	*res = emac_rd(priv, high_reg) << 16;
+> +	*res |= (u16)emac_rd(priv, low_reg);
+
+nit: I think lower_16_bits() and lower_16_bits() would be appropriate here.
+
+> +
+> +	return 0;
+> +}
+
+...
+
+> +static void emac_update_counter(u64 *counter, u32 new_low)
+> +{
+> +	u32 old_low = (u32)*counter;
+> +	u64 high = *counter >> 32;
+
+Similarly, lower_32_bits() and upper_32_bits here.
+
+> +
+> +	if (old_low > new_low) {
+> +		/* Overflowed, increment high 32 bits */
+> +		high++;
+> +	}
+> +
+> +	*counter = (high << 32) | new_low;
+> +}
+> +
+> +static void emac_stats_update(struct emac_priv *priv)
+> +{
+> +	u64 *tx_stats_off = (u64 *)&priv->tx_stats_off;
+> +	u64 *rx_stats_off = (u64 *)&priv->rx_stats_off;
+> +	u64 *tx_stats = (u64 *)&priv->tx_stats;
+> +	u64 *rx_stats = (u64 *)&priv->rx_stats;
+
+nit: I think it would be interesting to use a union containing
+     1. the existing tx/rx stats struct and 2. an array of u64.
+     This may allow avoiding this cast. Which seems nice to me.
+     But YMMV.
+
+> +	u32 i, res;
+> +
+> +	assert_spin_locked(&priv->stats_lock);
+> +
+> +	if (!netif_running(priv->ndev) || !netif_device_present(priv->ndev)) {
+> +		/* Not up, don't try to update */
+> +		return;
+> +	}
+> +
+> +	for (i = 0; i < sizeof(priv->tx_stats) / sizeof(*tx_stats); i++) {
+> +		/*
+> +		 * If reading stats times out, everything is broken and there's
+> +		 * nothing we can do. Reading statistics also can't return an
+> +		 * error, so just return without updating and without
+> +		 * rescheduling.
+> +		 */
+> +		if (emac_tx_read_stat_cnt(priv, i, &res))
+> +			return;
+> +
+> +		/*
+> +		 * Re-initializing while bringing interface up resets counters
+> +		 * to zero, so to provide continuity, we add the values saved
+> +		 * last time we did emac_down() to the new hardware-provided
+> +		 * value.
+> +		 */
+> +		emac_update_counter(&tx_stats[i], res + (u32)tx_stats_off[i]);
+
+nit: maybe lower_32_bits(tx_stats_off[i]) ?
+
+> +	}
+> +
+> +	/* Similar remarks as TX stats */
+> +	for (i = 0; i < sizeof(priv->rx_stats) / sizeof(*rx_stats); i++) {
+> +		if (emac_rx_read_stat_cnt(priv, i, &res))
+> +			return;
+> +		emac_update_counter(&rx_stats[i], res + (u32)rx_stats_off[i]);
+
+Likewise, here for rx_stats_off[i].
+
+> +	}
+> +
+> +	mod_timer(&priv->stats_timer, jiffies + EMAC_STATS_TIMER_PERIOD * HZ);
+> +}
+
+...
+
+> +static u64 emac_get_stat_tx_dropped(struct emac_priv *priv)
+> +{
+> +	u64 result;
+> +	int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		result += READ_ONCE(per_cpu(*priv->stat_tx_dropped, cpu));
+> +	}
+
+nit: no need for {} here ?
+
+> +
+> +	return result;
+> +}
+
+...
 
