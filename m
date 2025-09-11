@@ -1,153 +1,118 @@
-Return-Path: <linux-kernel+bounces-811469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BBBB52982
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:02:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B36F0B5298C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA83166957
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:02:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C0F0580ADC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10015264F9F;
-	Thu, 11 Sep 2025 07:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27EF326738C;
+	Thu, 11 Sep 2025 07:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AAvuE2VD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R81DX7l4"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0827E329F0F;
-	Thu, 11 Sep 2025 07:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA34201278
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757574146; cv=none; b=Lw/T6juE5F2HwiLVuPUzTMj1aqscFMWNWyUlP4ma2sT95aURY9wQQff0KeIqh1+05xpdOhHlZta1sncR+0HLxevnVeplawjFyYh+ZLMPvfQJxXpeJWMJo17LSb7no4iC7oxu7f2rXbRmNP6eE+x+7QCwA7Pt4f5e0dyJ3cO/pDY=
+	t=1757574348; cv=none; b=MZe2xjjVwEr+YecDiB7NO6wpQwIvXLSOAXICL4KRZ6AXn9pjGBE7KKAG6CnT6g65dmHUBjKpBHwIp50QxwRTjRU/bBlt5Biqfy6oklp8+0JrFfGBEv2xFsUzpqNI0l3Ti9Bsj5l/j+ETWuz5JsicmdaevtxEucZghMUz6gZzhHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757574146; c=relaxed/simple;
-	bh=TtDGs5cCuBB/0vsasgCRdQvt55EHjiBp1kQwXGLwQow=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FEjyVFn5SRE5U1FaQgNiHWKuCRfECQt6RBDCyVj5ILALjvSsLkaM2HZq9SO1yzDhV33YyfJzHfO3H7SuHKuEXoJRqJRs/K3QTmnx8vvMeEZpyhlzL+Lxdnlcf9xQchEnaSXG+T6QHMdohww9Dp3aH3IwucW9jORH3zdPXfRiUVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AAvuE2VD; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757574145; x=1789110145;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=TtDGs5cCuBB/0vsasgCRdQvt55EHjiBp1kQwXGLwQow=;
-  b=AAvuE2VDtDuTPufjrNUlB1cTjmV6vx8YpofvwJ6GWcRxVYpEGcfnqwkd
-   iGp4xZ3x0mLM0T7SaeTswV69FgfJ4Y2bvySmY1T6va2K8xKazsbEQnu0E
-   ipLBjWYtuQIii+DMwWlFpCXwQJmynBkgzX6gx8Un5AkEQvpO1zy6QYI34
-   5k0gdxxy2RGSJ0Ka6ds+adv2iay5BH76w1ic5pdC5uz1Z2EeWOEKk+bli
-   O9g4UezI+NAuUvNrWHTzl/NZ9cUNSz9N3S8Txv6a1DC3KtChNhlfWz/5Z
-   hf+Nbbfm9DNPpgKLiOYfOVyhhmgjR3uk6wQANxqiNGldCv+Lh8vUiJ/vX
-   Q==;
-X-CSE-ConnectionGUID: ezK8Mu0dQiSWJl4gmVXnUA==
-X-CSE-MsgGUID: 0g7GE/j0QRixqdLw+5dhqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59844086"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="59844086"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:02:24 -0700
-X-CSE-ConnectionGUID: +uG7AjgWRzSKDV9DIsJjWw==
-X-CSE-MsgGUID: P+d9dd6/RUmd3TObSrB46A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="204381029"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:02:19 -0700
-Message-ID: <27d1afdc-350c-45a0-a4f9-1d9688314256@linux.intel.com>
-Date: Thu, 11 Sep 2025 15:02:16 +0800
+	s=arc-20240116; t=1757574348; c=relaxed/simple;
+	bh=yyiUFUCUBmqE1yB6VFtqNmcfwBmBV2+S6J/sE/W3Yq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ezXL84eHjJcnH5ERw5IXfqOiqSNUOl2HZDRolLrcFez30kdIliD38nq4ODwc6EoGgsquzuC8CSOAJkDtiATN0qQpHlQtV0rEgX/uTKCTHmuUWB57JsRfx+CDS9hRmcpM1BXo4bL4/G0C6Zv02QQdi8dChlaOlJdXp31owwosm98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R81DX7l4; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 6DC4A4E40C43;
+	Thu, 11 Sep 2025 07:05:43 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 29A29606BB;
+	Thu, 11 Sep 2025 07:05:43 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id D42F0102F28D9;
+	Thu, 11 Sep 2025 09:05:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757574342; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=NVEKI7kAnykMj9HJvXc3qX3+FSJ439W0rcfUBK46rSw=;
+	b=R81DX7l4+R9LcCwr7NzF9EUT276PBC5ktIypbV1Fuac8PHzflskebnl//yUwDRQIcH/klV
+	auTbKgwMC3TCiRzV0GylY3Q4GdhXGR19/JVFLKHcWyjEJqNLzbEOM60/c+z2EOL7if4k6H
+	BQT8B8lVwAXjHqMrsBi6Js48w5J+byicIuk7va5tDOcoo/PCs9FSkCEAsvSWxJHbfaEtV3
+	LVK84lT2lghh1Q8Fw2ipSmW3NPRHndCeso4AWmXR8jNudsf17jk5saTmU0qLu7XvrgfjEZ
+	qmI67rmjvsrzXvtGvfHS6H7xqd3wifwYho9+pqXxcAg4XxduYfsJhcld7zSN+Q==
+Date: Thu, 11 Sep 2025 09:04:50 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Hoan Tran
+ <hoan@os.amperecomputing.com>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+ Damm <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
+ Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Pascal
+ Eberhard <pascal.eberhard@se.com>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 0/8] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+Message-ID: <20250911090450.32c7cdbe@bootlin.com>
+In-Reply-To: <87segvtkha.ffs@tglx>
+References: <20250909120041.154459-1-herve.codina@bootlin.com>
+	<87y0qntkmy.ffs@tglx>
+	<87segvtkha.ffs@tglx>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 04/22] KVM: x86: Refresh CPUID on write to guest
- MSR_IA32_XSS
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
- minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
- pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
- seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
- weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com, xiaoyao.li@intel.com
-References: <20250909093953.202028-1-chao.gao@intel.com>
- <20250909093953.202028-5-chao.gao@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250909093953.202028-5-chao.gao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi Thomas,
 
+On Tue, 09 Sep 2025 22:54:41 +0200
+Thomas Gleixner <tglx@linutronix.de> wrote:
 
-On 9/9/2025 5:39 PM, Chao Gao wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
->
-> Update CPUID.(EAX=0DH,ECX=1).EBX to reflect current required xstate size
-> due to XSS MSR modification.
-> CPUID(EAX=0DH,ECX=1).EBX reports the required storage size of all enabled
-> xstate features in (XCR0 | IA32_XSS). The CPUID value can be used by guest
-> before allocate sufficient xsave buffer.
+> On Tue, Sep 09 2025 at 22:51, Thomas Gleixner wrote:
+> > On Tue, Sep 09 2025 at 14:00, Herve Codina wrote:  
+> >>   Patch 5 (new in v2)
+> >>    - Convert irqchip/ls-extirq to use for_each_of_imap_item
+> >>
+> >>   Patch 6 (new in v2)
+> >>    - Convert irqchip/renesas-rza1 to use for_each_of_imap_item  
+> >
+> > How are those two patches related to adding GPIO support?
+> >
+> > AFAICT, they are completely unrelated and just randomly sprinkled into
+> > this series, but I might be missing something.  
+> 
+> Ah. I missed that this iterator got introduced in this series. Did you
+> check whether that creates any conflicts against pending irqchip
+> patches?
+> 
 
-Nit:
-allocate -> allocating.
+Indeed, I have a conflict in my patch 6 with 40c26230a1bf ("irqchip: Use int
+type to store negative error codes").
 
-Otherwise,
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+I can rebase my next iteration on top of 40c26230a1bf and mention this commit
+in my next iteration cover letter but an immutable tag and referencing this
+tag in the cover letter should be better.
 
->
-> Note, KVM does not yet support any XSS based features, i.e. supported_xss
-> is guaranteed to be zero at this time.
->
-> Opportunistically skip CPUID updates if XSS value doesn't change.
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> ---
->   arch/x86/kvm/cpuid.c | 3 ++-
->   arch/x86/kvm/x86.c   | 2 ++
->   2 files changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-> index 46cf616663e6..b5f87254ced7 100644
-> --- a/arch/x86/kvm/cpuid.c
-> +++ b/arch/x86/kvm/cpuid.c
-> @@ -316,7 +316,8 @@ static void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
->   	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 1);
->   	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
->   		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
-> -		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
-> +		best->ebx = xstate_required_size(vcpu->arch.xcr0 |
-> +						 vcpu->arch.ia32_xss, true);
->   }
->   
->   static bool kvm_cpuid_has_hyperv(struct kvm_vcpu *vcpu)
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 6c167117018c..bbae3bf405c7 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -4020,6 +4020,8 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   		 */
->   		if (data & ~vcpu->arch.guest_supported_xss)
->   			return 1;
-> +		if (vcpu->arch.ia32_xss == data)
-> +			break;
->   		vcpu->arch.ia32_xss = data;
->   		vcpu->arch.cpuid_dynamic_bits_dirty = true;
->   		break;
+What is the best approach?
 
+Best regards,
+Hervé
 
