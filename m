@@ -1,319 +1,163 @@
-Return-Path: <linux-kernel+bounces-812359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A530CB536F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:07:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEED8B536F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:07:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 233F3566BD5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:07:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FA575825B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:07:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8793451B9;
-	Thu, 11 Sep 2025 15:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cTuI6rxt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B011734574C;
+	Thu, 11 Sep 2025 15:07:45 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB86343D88
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0953451B5;
+	Thu, 11 Sep 2025 15:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757603242; cv=none; b=X3cMVJopIbI5jOFjRC45KDTknQTqkyebiwz16WzXdfKWUQR20aECPTjyvw3psOZNDq8IfSmuiCZpEt2rcZJLY1mXFtabb7vQiBYr7/J/KwzQtvFSasghEMTU3+49d7mUmPLO71Rf/WFdLJtL9Am0z1okSU236Fx8oYPUbObMMyE=
+	t=1757603265; cv=none; b=dFTF1Kp52zAfgho0YiMAT7oc6Vspc9FnzAQ6rlwd/6qms0SIyLtgQDg31xqAZC7b9Lxkcnwt/NtXUVLBAr9pexLYIFe+HD75nM9LusToF1Dwi6Ig1PNrVFXdQc5s6NY6AzteZ4UG6te9NIGjBA93edvQuCnRiS1TVSVpxWlzmEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757603242; c=relaxed/simple;
-	bh=duiT42Dti2TzZNz5hr+s/p+56YnD/6L34BorvlTlUR8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JVhL2RhQ5b87H2BQ5Tl0o3QMP123+YishbJfGHtjdmNXljAGtPN6GNgdbtPaCrIjA7Ay0N+KabAOhVdF4i/AOuydFhsTjUaTwbRggSbJvbgqNFR72OD0ZNJo+BrPC0bHNBICUdpgZ36IrZv5gig+FTLJZwYUNdnX8UqXihmT9zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cTuI6rxt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757603237;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tFGTlkHvkhPXSSKabVvFO+EXS/7Ai/m84LArwY7OlsA=;
-	b=cTuI6rxtG8IMeCQ0hd0aiq6Lf20guBqtfMI7MP9TCW85An2kDP2TrMhzEZxYUOvXwUBGhL
-	r96saZ2QPj9XDMC355YvIn0zxfSYjJ/S65fVyFVUH+3Kpa57bekdJaQ9p4lAPWt+jUKmtu
-	Ld0eeZpvxusEtXxJnolCangKsr5cwgo=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-298-I4WiGaSpMqmge4LV8d-4XQ-1; Thu,
- 11 Sep 2025 11:07:14 -0400
-X-MC-Unique: I4WiGaSpMqmge4LV8d-4XQ-1
-X-Mimecast-MFC-AGG-ID: I4WiGaSpMqmge4LV8d-4XQ_1757603230
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBEEE18002CD;
-	Thu, 11 Sep 2025 15:07:09 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.44.33.21])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C508E1944AB5;
-	Thu, 11 Sep 2025 15:07:07 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL v2] Networking for v6.17-rc6
-Date: Thu, 11 Sep 2025 17:06:55 +0200
-Message-ID: <20250911150655.60220-1-pabeni@redhat.com>
+	s=arc-20240116; t=1757603265; c=relaxed/simple;
+	bh=EhWfT/fftabdP9MyEall17eTwl+LK4+xGKcp9fL+0cg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S/sUgK0ukBbqhQIUc49Du9445/B05qPEE9lluVHiJrOrQXOW4Hmq9gAc3JPWF2gweJcCgrjNuMLsjsLv6yNi5U8H97daDMJSbbJLDDUT9Z0sWYO/B55gBtQ8bSlamF+i+Ecn9xm8jllj8QMOKtvgxH3Im2uiOGTfXx0uqkUqTwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cN19D68wwz6GD8p;
+	Thu, 11 Sep 2025 23:06:24 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6F8BD1400D9;
+	Thu, 11 Sep 2025 23:07:40 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Sep
+ 2025 17:07:39 +0200
+Date: Thu, 11 Sep 2025 16:07:37 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Lecopzer Chen <lecopzerc@nvidia.com>
+Subject: Re: [PATCH v2 10/29] arm_mpam: Add cpuhp callbacks to probe MSC
+ hardware
+Message-ID: <20250911160737.0000492f@huawei.com>
+In-Reply-To: <20250910204309.20751-11-james.morse@arm.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+	<20250910204309.20751-11-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Linus!
+On Wed, 10 Sep 2025 20:42:50 +0000
+James Morse <james.morse@arm.com> wrote:
 
-I'm sorry for the extra noise. This should be hopefully the good one.
+> Because an MSC can only by accessed from the CPUs in its cpu-affinity
+> set we need to be running on one of those CPUs to probe the MSC
+> hardware.
+> 
+> Do this work in the cpuhp callback. Probing the hardware will only
+> happen before MPAM is enabled, walk all the MSCs and probe those we can
+> reach that haven't already been probed as each CPU's online call is made.
+> 
+> This adds the low-level MSC register accessors.
+> 
+> Once all MSCs reported by the firmware have been probed from a CPU in
+> their respective cpu-affinity set, the probe-time cpuhp callbacks are
+> replaced.  The replacement callbacks will ultimately need to handle
+> save/restore of the runtime MSC state across power transitions, but for
+> now there is nothing to do in them: so do nothing.
+> 
+> The architecture's context switch code will be enabled by a static-key,
+> this can be set by mpam_enable(), but must be done from process context,
+> not a cpuhp callback because both take the cpuhp lock.
+> Whenever a new MSC has been probed, the mpam_enable() work is scheduled
+> to test if all the MSCs have been probed. If probing fails, mpam_disable()
+> is scheduled to unregister the cpuhp callbacks and free memory.
+> 
+> CC: Lecopzer Chen <lecopzerc@nvidia.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
 
-The following changes since commit d69eb204c255c35abd9e8cb621484e8074c75eaa:
+Trivial suggestion inline. Either way
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-  Merge tag 'net-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-09-04 09:59:15 -0700)
+> +
+> +/* Before mpam is enabled, try to probe new MSC */
+> +static int mpam_discovery_cpu_online(unsigned int cpu)
+> +{
+> +	int err = 0;
+> +	struct mpam_msc *msc;
+> +	bool new_device_probed = false;
+> +
+> +	guard(srcu)(&mpam_srcu);
+> +	list_for_each_entry_srcu(msc, &mpam_all_msc, all_msc_list,
+> +				 srcu_read_lock_held(&mpam_srcu)) {
+> +		if (!cpumask_test_cpu(cpu, &msc->accessibility))
+> +			continue;
+> +
+> +		mutex_lock(&msc->probe_lock);
+> +		if (!msc->probed)
+> +			err = mpam_msc_hw_probe(msc);
+> +		mutex_unlock(&msc->probe_lock);
+> +
+> +		if (!err)
+> +			new_device_probed = true;
+> +		else
+> +			break;
+Unless this going to get more complex why not
 
-are available in the Git repository at:
+		if (err)
+			break;
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc6
+		new_device_probed = true;
+> +	}
+> +
+> +	if (new_device_probed && !err)
+> +		schedule_work(&mpam_enable_work);
+> +	if (err) {
+> +		mpam_disable_reason = "error during probing";
+> +		schedule_work(&mpam_broken_work);
+> +	}
+> +
+> +	return err;
+> +}
 
-for you to fetch changes up to 63a796558bc22ec699e4193d5c75534757ddf2e6:
+> +static void mpam_enable_once(void)
+> +{
+> +	mpam_register_cpuhp_callbacks(mpam_cpu_online, mpam_cpu_offline);
+> +
+> +	pr_info("MPAM enabled\n");
 
-  Revert "net: usb: asix: ax88772: drop phylink use in PM to avoid MDIO runtime PM wakeups" (2025-09-11 16:46:04 +0200)
+Feels too noisy given it should be easy enough to tell. pr_dbg() perhaps.
 
-----------------------------------------------------------------
-Including fixes from CAN, netfilter and wireless.
 
-We have an IPv6 routing regression with the relevant fix still
-a WiP. This v2 includes a last-minute revert to avoid more
-problems.
+> +}
 
-Current release - new code bugs:
-
-  - wifi: nl80211: completely disable per-link stats for now
-
-Previous releases - regressions:
-
-  - dev_ioctl: take ops lock in hwtstamp lower paths
-
-  - netfilter:
-    - fix spurious set lookup failures
-    - fix lockdep splat due to missing annotation
-
-  - genetlink: fix genl_bind() invoking bind() after -EPERM
-
-  - phy: transfer phy_config_inband() locking responsibility to phylink
-
-  - can: xilinx_can: fix use-after-free of transmitted SKB
-
-  - hsr: fix lock warnings
-
-  - eth: igb: fix NULL pointer dereference in ethtool loopback test
-
-  - eth: i40e: fix Jumbo Frame support after iPXE boot
-
-  - eth: macsec: sync features on RTM_NEWLINK
-
-Previous releases - always broken:
-
-  - tunnels: reset the GSO metadata before reusing the skb
-
-  - mptcp: make sync_socket_options propagate SOCK_KEEPOPEN
-
-  - can: j1939: implement NETDEV_UNREGISTER notification hanidler
-
-  - wifi: ath12k: fix WMI TLV header misalignment
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Alex Tran (1):
-      docs: networking: can: change bcm_msg_head frames member to support flexible array
-
-Alok Tiwari (1):
-      genetlink: fix genl_bind() invoking bind() after -EPERM
-
-Anssi Hannula (1):
-      can: xilinx_can: xcan_write_frame(): fix use-after-free of transmitted SKB
-
-Antoine Tenart (1):
-      tunnels: reset the GSO metadata before reusing the skb
-
-Carolina Jubran (1):
-      net: dev_ioctl: take ops lock in hwtstamp lower paths
-
-Davide Caratti (1):
-      selftests: can: enable CONFIG_CAN_VCAN as a module
-
-Florian Westphal (7):
-      netfilter: nft_set_bitmap: fix lockdep splat due to missing annotation
-      netfilter: nft_set_pipapo: don't check genbit from packetpath lookups
-      netfilter: nft_set_rbtree: continue traversal if element is inactive
-      netfilter: nf_tables: place base_seq in struct net
-      netfilter: nf_tables: make nft_set_do_lookup available unconditionally
-      netfilter: nf_tables: restart set lookup on base_seq change
-      MAINTAINERS: add Phil as netfilter reviewer
-
-Geert Uytterhoeven (1):
-      can: rcar_can: rcar_can_resume(): fix s2ram with PSCI
-
-Hangbin Liu (3):
-      hsr: use rtnl lock when iterating over ports
-      hsr: use hsr_for_each_port_rtnl in hsr_port_get_hsr
-      hsr: hold rcu and dev lock for hsr_get_port_ndev
-
-Jacob Keller (1):
-      i40e: fix Jumbo Frame support after iPXE boot
-
-Jakub Kicinski (4):
-      Merge branch 'mptcp-misc-fixes-for-v6-17-rc6'
-      Merge branch '1GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
-      Merge tag 'linux-can-fixes-for-6.17-20250910' of git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can
-      Merge tag 'nf-25-09-10-v2' of https://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-
-James Guan (1):
-      wifi: virt_wifi: Fix page fault on connect
-
-Jiawen Wu (1):
-      net: libwx: fix to enable RSS
-
-Johannes Berg (4):
-      wifi: iwlwifi: fix 130/1030 configs
-      Merge tag 'ath-current-20250909' of git://git.kernel.org/pub/scm/linux/kernel/git/ath/ath
-      Merge tag 'iwlwifi-fixes-2025-09-09' of https://git.kernel.org/pub/scm/linux/kernel/git/iwlwifi/iwlwifi-next
-      wifi: nl80211: completely disable per-link stats for now
-
-Jonas Gorski (1):
-      net: dsa: b53: fix ageing time for BCM53101
-
-Jonas Rebmann (1):
-      net: phy: NXP_TJA11XX: Update Kconfig with TJA1102 support
-
-Kohei Enju (1):
-      igb: fix link test skipping when interface is admin down
-
-Krister Johansen (1):
-      mptcp: sockopt: make sync_socket_options propagate SOCK_KEEPOPEN
-
-Matthieu Baerts (NGI0) (3):
-      netlink: specs: mptcp: fix if-idx attribute type
-      doc: mptcp: net.mptcp.pm_type is deprecated
-      selftests: mptcp: shellcheck: support v0.11.0
-
-Miaoqing Pan (2):
-      wifi: ath12k: Fix missing station power save configuration
-      wifi: ath12k: fix WMI TLV header misalignment
-
-Michal Schmidt (1):
-      i40e: fix IRQ freeing in i40e_vsi_request_irq_msix error path
-
-Nithyanantham Paramasivam (1):
-      wifi: cfg80211: Fix "no buffer space available" error in nl80211_get_station() for MLO
-
-Oleksij Rempel (1):
-      net: usb: asix: ax88772: drop phylink use in PM to avoid MDIO runtime PM wakeups
-
-Oscar Maes (1):
-      selftests: net: add test for destination in broadcast packets
-
-Paolo Abeni (3):
-      Merge branch 'hsr-fix-lock-warnings'
-      Merge tag 'wireless-2025-09-11' of https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
-      Revert "net: usb: asix: ax88772: drop phylink use in PM to avoid MDIO runtime PM wakeups"
-
-Petr Machata (1):
-      net: bridge: Bounce invalid boolopts
-
-Russell King (Oracle) (2):
-      net: phy: fix phy_uses_state_machine()
-      net: ethtool: fix wrong type used in struct kernel_ethtool_ts_info
-
-Stanislav Fomichev (1):
-      macsec: sync features on RTM_NEWLINK
-
-Stefan Wahren (1):
-      net: fec: Fix possible NPD in fec_enet_phy_reset_after_clk_enable()
-
-Tetsuo Handa (3):
-      can: j1939: implement NETDEV_UNREGISTER notification handler
-      can: j1939: j1939_sk_bind(): call j1939_priv_put() immediately when j1939_local_ecu_get() failed
-      can: j1939: j1939_local_ecu_get(): undo increment when j1939_local_ecu_get() fails
-
-Tianyu Xu (1):
-      igb: Fix NULL pointer dereference in ethtool loopback test
-
-Vladimir Oltean (2):
-      net: phylink: add lock for serializing concurrent pl->phydev writes with resolver
-      net: phy: transfer phy_config_inband() locking responsibility to phylink
-
- Documentation/netlink/specs/mptcp_pm.yaml          |   2 +-
- Documentation/networking/can.rst                   |   2 +-
- Documentation/networking/mptcp.rst                 |   8 +-
- MAINTAINERS                                        |   1 +
- drivers/net/can/rcar/rcar_can.c                    |   8 +-
- drivers/net/can/xilinx_can.c                       |  16 +--
- drivers/net/dsa/b53/b53_common.c                   |  17 ++-
- drivers/net/ethernet/freescale/fec_main.c          |   3 +-
- drivers/net/ethernet/intel/i40e/i40e_adminq_cmd.h  |   1 +
- drivers/net/ethernet/intel/i40e/i40e_common.c      |  34 ++++++
- drivers/net/ethernet/intel/i40e/i40e_main.c        |  18 +--
- drivers/net/ethernet/intel/i40e/i40e_prototype.h   |   2 +
- drivers/net/ethernet/intel/igb/igb_ethtool.c       |   5 +-
- drivers/net/ethernet/intel/igb/igb_main.c          |   3 +-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c       |  20 +++-
- drivers/net/ethernet/wangxun/libwx/wx_hw.c         |   4 -
- drivers/net/macsec.c                               |   1 +
- drivers/net/phy/Kconfig                            |   2 +-
- drivers/net/phy/phy.c                              |  12 +-
- drivers/net/phy/phy_device.c                       |   5 +-
- drivers/net/phy/phylink.c                          |  28 ++++-
- drivers/net/wireless/ath/ath12k/mac.c              | 122 +++++++++++----------
- drivers/net/wireless/ath/ath12k/wmi.c              |   2 +-
- drivers/net/wireless/intel/iwlwifi/pcie/drv.c      |  26 ++---
- drivers/net/wireless/virtual/virt_wifi.c           |   4 +-
- include/linux/ethtool.h                            |   4 +-
- include/net/netfilter/nf_tables.h                  |   1 -
- include/net/netfilter/nf_tables_core.h             |  10 +-
- include/net/netns/nftables.h                       |   1 +
- net/bridge/br.c                                    |   7 ++
- net/can/j1939/bus.c                                |   5 +-
- net/can/j1939/j1939-priv.h                         |   1 +
- net/can/j1939/main.c                               |   3 +
- net/can/j1939/socket.c                             |  52 +++++++++
- net/core/dev_ioctl.c                               |  22 +++-
- net/hsr/hsr_device.c                               |  28 +++--
- net/hsr/hsr_main.c                                 |   4 +-
- net/hsr/hsr_main.h                                 |   3 +
- net/ipv4/ip_tunnel_core.c                          |   6 +
- net/mptcp/sockopt.c                                |  11 +-
- net/netfilter/nf_tables_api.c                      |  66 +++++------
- net/netfilter/nft_lookup.c                         |  46 +++++++-
- net/netfilter/nft_set_bitmap.c                     |   3 +-
- net/netfilter/nft_set_pipapo.c                     |  20 +++-
- net/netfilter/nft_set_pipapo_avx2.c                |   4 +-
- net/netfilter/nft_set_rbtree.c                     |   6 +-
- net/netlink/genetlink.c                            |   3 +
- net/wireless/nl80211.c                             |  13 ++-
- tools/testing/selftests/net/Makefile               |   1 +
- tools/testing/selftests/net/broadcast_ether_dst.sh |  83 ++++++++++++++
- tools/testing/selftests/net/can/config             |   3 +
- tools/testing/selftests/net/mptcp/diag.sh          |   2 +-
- tools/testing/selftests/net/mptcp/mptcp_connect.sh |   2 +-
- tools/testing/selftests/net/mptcp/mptcp_join.sh    |   2 +-
- tools/testing/selftests/net/mptcp/mptcp_sockopt.sh |   2 +-
- tools/testing/selftests/net/mptcp/pm_netlink.sh    |   5 +-
- tools/testing/selftests/net/mptcp/simult_flows.sh  |   2 +-
- tools/testing/selftests/net/mptcp/userspace_pm.sh  |   2 +-
- 58 files changed, 542 insertions(+), 227 deletions(-)
- create mode 100755 tools/testing/selftests/net/broadcast_ether_dst.sh
- create mode 100644 tools/testing/selftests/net/can/config
 
 
