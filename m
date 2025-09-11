@@ -1,179 +1,183 @@
-Return-Path: <linux-kernel+bounces-811494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AE6B529F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:29:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC852B529F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:30:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8336858136E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:29:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A9EA030B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5905B26D4D4;
-	Thu, 11 Sep 2025 07:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="zgp44XFw"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521FC26C38D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203AF26F287;
+	Thu, 11 Sep 2025 07:29:43 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E902236FA;
+	Thu, 11 Sep 2025 07:29:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757575781; cv=none; b=T2DZ8ixbHeFkz0gPpAE4awMckCmyxDhyETTEAfPZ0uw5jFj+ImAgmimLPuO2lPt/Zl4Whx+9ywCoELnKuD+dYwyrR3teJ+0B5FqJhMOzSYsygT3QeeOIaHZdZde+ne1NJZLJkNLgBpPPEqImTno1mNp8PY9FtQ0ljYXAtpadikY=
+	t=1757575782; cv=none; b=Tq+cLy/hPLI8wYlQwrC5Brvip7irDusJ5zF8p1/dCor4F7ugJi6VHd8JJgowln2Jm/L6EKbnMNV1ClDeulGCrwCyG4x2yvtt3yfo2UkXbgcbpMEnAfFcS0OPyK1BEku88LpdlHe3HzNF/SvQGvIjndFJ3L01Hh/ugbe+GU23DZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757575781; c=relaxed/simple;
-	bh=dzyPDAyBY3iE453hKGZWh2GhozhS+rLJS+JK8T73SRs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L/D1fnzEO+rmuGvcLvU0u5Dtnbskl5LUVi9OpBkDfEPWvFnDf9pl4ft7O8w/VReomI4IUvpVXakRaDYVq+Ct5X7j5DAEynDA2vcXSk5vvmB8+T8OqtI717sfdGYe3Zr/SbxK5MzncdbhBgsNtxVXS5jVi7svcKHooGwma8/MAfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=zgp44XFw; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-251ace3e7caso5134625ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:29:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1757575777; x=1758180577; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D81Vt79I/BTOBBePW6+0X1oh6zDyKaYVMRC1TVaQyRM=;
-        b=zgp44XFwPbkb7o2cKpnE2r7Xs7lyjr3cY0QI3HrjgdAMbh33t/+5pXXQkW2WYVI5k4
-         gh9OK4ITqPQEKt272Qe5ZGfLR1PhrTkWsnMwPRx9vexHj3RpxsXU6/oWTg3QH12gPJd6
-         dq9lK3cBKwbcf2ypExkbHjSOxcRvzRuTcFPWLJZ21iUtqgYS22oPWVB9vl8UXiyVQInD
-         MlcHyJKYUXz7hr9V4wKVU3sRkvF6h8HgWlfPLLWFJb1OCPkYruVQNudDBIzLwkwNBAi6
-         9Oh57zk/RWXKrzNKhXLii6F4JOjfsMqdG9ETPmPx71gVAwGkHkmKGHAQHgzh2XUo+25j
-         ZJqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757575777; x=1758180577;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D81Vt79I/BTOBBePW6+0X1oh6zDyKaYVMRC1TVaQyRM=;
-        b=BnRrOZ0apQueMII9HB8ly8bSgTzTbZzTxXi1uWNxBtCD/BkBjbktioaSD8BIpQ5PfQ
-         hrl+TkeBGBLexv9xvgxOz4Tg82fc2mR3y3pKu2yXsalwanEwmHRNAF7cmj8/d7j6roYW
-         Qb1Q1Gn8BnrKbz+UL19AakrsOLXuHl4+ou5TN1+R+cbfveIXVROPenBYs7Et1Bu6tyI+
-         EridWpkbpxRUwTDoIpCQQ3oEcVMjnaJpn2nqsq6f2lJ4QJN0r4gQvA705QKcxM88NoEw
-         qQYlJozGE9NXBvBfLx8m6alsNiu8SCMtw6EnvL5CJnlvaiMPIom1GHfGIogT9qSu1mrc
-         NgXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNrAs75C2zsjdB+eG3Wgm5G9bMakpQOeIo5Z0WG/paQBryMv8aIqkNmvJQVdGPken7GIGy10wJY+NSG7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMjGLYJkAuPu0C8Hh0uJQqS/adRYLVFwjRzSO3V7CL8F6Y/q10
-	Yhrs2ksgKb2EG/P1vMonpd1MZ/NY/Ex5OVV2p/UZsxL2VGUXzaO/mXyptroZ0RS6DwE=
-X-Gm-Gg: ASbGncvu3xx/FA5eGmgYhLy0T+Qv5RIoU8UFIwMmlISV8Jx0KsCgGfJZwwKcGLwCO9H
-	U3UVxdw8MKr6JpEs7S5BhE6Yr9+P9yjFAanAk5Tz+AAmn44PfUS8/hZ1ZXUG0qtNQcde6txFpN2
-	7W9C9wJpD5cDvnQEzXKSh2TVdx5AHQ03t6QQvwnAXCyMNExzxvND05zh4YRb/HFu9rfEJorqRa2
-	e1gbS9RyNafdav7TLAGFlBbPOk3C4cFI4MpPW//QSrRD8A61DRoJG0mshx68JxT/HWIRU4qCJF7
-	vP4Wbvv1F1VMVqn/5f3ALGT+Uf91Ott0L3FYp6WOGQHX2cjHTTQEdVXZEATonQdkRGhsyiincUs
-	48s8H5BtLUNslYxKWxzrbt6k8a9og4r8Uu45vYP0Ki5BfZgslT2hkAKScAQ==
-X-Google-Smtp-Source: AGHT+IHO7xlf6/5dPDqWynFAANB+M0UuBkmme6pcsf85zd3+cmkflA/c+A0enwc+u10nZW1Fv/oP5w==
-X-Received: by 2002:a17:903:1111:b0:251:3d1c:81f4 with SMTP id d9443c01a7336-25173bbbab1mr288649825ad.54.1757575777526;
-        Thu, 11 Sep 2025 00:29:37 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:7811:c085:c184:85be])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c37293ef1sm9838395ad.41.2025.09.11.00.29.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 00:29:36 -0700 (PDT)
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: kbusch@kernel.org,
-	axboe@kernel.dk,
-	hch@lst.de,
-	sagi@grimberg.me,
-	xiubli@redhat.com,
-	idryomov@gmail.com,
-	ebiggers@kernel.org,
-	tytso@mit.edu,
-	jaegeuk@kernel.org,
-	akpm@linux-foundation.org
-Cc: visitorckw@gmail.com,
-	home7438072@gmail.com,
-	409411716@gms.tku.edu.tw,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	ceph-devel@vger.kernel.org,
-	linux-fscrypt@vger.kernel.org
-Subject: [PATCH v2 0/5] lib/base64: add generic encoder/decoder, migrate users
-Date: Thu, 11 Sep 2025 15:29:25 +0800
-Message-Id: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757575782; c=relaxed/simple;
+	bh=FBcDb9WffmtxjndTke6DMs1Lll7pb+m3IIT1AjKzrTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NQLMuU8mR5fGvCHd3kwY/kVjY34bjLHaGDQoKlN55ajs1AE2QFh1PEQcMxRXdd7t9b7Pv0/E8v1pAeIY9xhSpdkth/yfYJCLwJe+n+l4vXsdN93fSvrDkGrQc7xOCogVEh8uCAm28Cw053Vgi0IhFCJsag3lwlk457IdFFGEJ8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [124.127.222.9])
+	by gateway (Coremail) with SMTP id _____8DxO9JZesJoux8JAA--.19313S3;
+	Thu, 11 Sep 2025 15:29:29 +0800 (CST)
+Received: from [127.0.0.1] (unknown [124.127.222.9])
+	by front1 (Coremail) with SMTP id qMiowJCx3sFYesJoOouNAA--.41628S2;
+	Thu, 11 Sep 2025 15:29:28 +0800 (CST)
+Message-ID: <fb4e8ee2-ff13-4446-aa23-57f0332d0342@loongson.cn>
+Date: Thu, 11 Sep 2025 15:29:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] irqchip/loongson-pch-lpc: Use legacy domain for PCH-LPC
+ IRQ controller
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250909125840.638418-1-wangming01@loongson.cn>
+ <CAAhV-H4NDsrvuPH2o1D=UzTTH13Q62YxcHCZLN-QvZ2Dc5qEqw@mail.gmail.com>
+Content-Language: en-US
+From: Ming Wang <wangming01@loongson.cn>
+In-Reply-To: <CAAhV-H4NDsrvuPH2o1D=UzTTH13Q62YxcHCZLN-QvZ2Dc5qEqw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJCx3sFYesJoOouNAA--.41628S2
+X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAQECEmjCZKYBxwAAs+
+X-Coremail-Antispam: 1Uk129KBj93XoWxWrWfZF1kuryUJw4Uur47ZFc_yoWrAryrpF
+	45Ga9F9rZ8JF1UA3ZxCw10vryfA3s5t3y2ya1FkwnxAr9xZ3sY9F4jkFn09ryxAF98X3W7
+	Zr4jqFW8uF1YkFXCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2
+	xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_
+	Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwI
+	xGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
+	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2
+	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
+	Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
+	IF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8ctx3UUUUU=
+	=
 
-This series introduces a generic, customizable Base64 encoder/decoder to
-the kernel library, eliminating duplicated implementations and delivering
-significant performance improvements.
+Hi Huacai,
 
-The new helpers support a caller-supplied 64-character table and optional
-'=' padding, covering existing variants such as base64url (fscrypt) and
-Ceph's custom alphabet. As part of this series, both fscrypt and Ceph are
-migrated to the generic helpers, removing their local routines while
-preserving their specific formats.
+On 9/11/25 12:49, Huacai Chen wrote:
+> Hi, Wangming,
+> 
+> On Tue, Sep 9, 2025 at 8:58 PM Ming Wang <wangming01@loongson.cn> wrote:
+>>
+>> On certain Loongson platforms, drivers attempting to request a legacy
+>> ISA IRQ directly via request_irq() (e.g., IRQ 4) may fail. The
+>> virtual IRQ descriptor is not fully initialized and lacks a valid irqchip.
+>>
+>> This issue does not affect ACPI-enumerated devices described in DSDT,
+>> as their interrupts are properly mapped via the GSI translation path.
+>> This indicates the LPC irqdomain itself is functional but is not correctly
+>> handling direct VIRQ-to-HWIRQ mappings.
+>>
+>> The root cause is the use of irq_domain_create_linear(). This API sets
+>> up a domain for dynamic, on-demand mapping, typically triggered by a GSI
+>> request. It does not pre-populate the mappings for the legacy VIRQ range
+>> (0-15). Consequently, if no ACPI device claims a specific GSI
+>> (e.g., GSI 4), the corresponding VIRQ (e.g., VIRQ 4) is never mapped to
+>> the LPC domain. A direct call to request_irq(4, ...) then fails because
+>> the kernel cannot resolve this VIRQ to a hardware interrupt managed by
+>> the LPC controller.
+> If we create a legacy domain, the VIRQ0~15 are pre-allocated, then an
+> ACPI device claims GSI 4, what will happen?
+There will be no conflict. When the ACPI GSI mapping function is called,
+it first uses irq_find_mapping() to check for an existing mapping.
 
-On the encoder side, the implementation operates on 3-byte input blocks
-mapped directly to 4 output symbols, avoiding bit-by-bit streaming. This
-reduces shifts, masks, and loop overhead, achieving up to ~2.7x speedup
-over previous implementations while remaining fully RFC 4648-compatible.
+Since the legacy domain has already created the mapping, the lookup
+will succeed. The function will then simply return the existing VIRQ 4,
+bypassing any new allocation logic.
 
-On the decoder side, optimizations replace strchr()-based lookups with a
-direct mapping table. Together with stricter RFC 4648 validation, this
-yields a ~12-15x improvement in decode throughput.
+The simplified call flow for an ACPI device claiming GSI 4 (after my patch)
+is as follows:
 
-Overall, the series improves maintainability, correctness, and
-performance of Base64 handling across the kernel.
+acpi_register_gsi(..., .gsi=4, ...)
+   -> irq_create_fwspec_mapping(fwspec)
+     -> domain = irq_find_matching_fwspec(...)  // Finds lpc_domain
+     -> irq_domain_translate(...)               // Translates fwspec to 
+hwirq=4
+     -> virq = irq_find_mapping(lpc_domain, 4)  // SUCCESS, finds 
+existing VIRQ 4
+     -> return virq;                            // Returns 4
 
-Note:
-  - The included KUnit patch provides correctness and performance
-    comparison tests to help reviewers validate the improvements. All
-    tests pass locally on x86_64 (KTAP: pass:3 fail:0 skip:0). Benchmark
-    numbers are informational only and do not gate the tests.
-  - Updates nvme-auth call sites to the new API.
+> 
+>>
+>> The PCH-LPC interrupt controller is an i8259-compatible legacy device
+>> that requires a deterministic, static 1-to-1 mapping for IRQs 0-15 to
+>> support legacy drivers.
+>>
+>> Fix this by replacing irq_domain_create_linear() with
+>> irq_domain_create_legacy(). This API is specifically designed for such
+>> controllers. It establishes the required static 1-to-1 VIRQ-to-HWIRQ
+>> mapping for the entire legacy range (0-15) immediately upon domain
+>> creation. This ensures that any VIRQ in this range is always resolvable,
+>> making direct calls to request_irq() for legacy IRQs function correctly.
+>>
+>> Signed-off-by: Ming Wang <wangming01@loongson.cn>
+>> ---
+>>   drivers/irqchip/irq-loongson-pch-lpc.c | 9 +++++++--
+>>   1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/irqchip/irq-loongson-pch-lpc.c b/drivers/irqchip/irq-loongson-pch-lpc.c
+>> index 2d4c3ec128b8..68b09cc8c400 100644
+>> --- a/drivers/irqchip/irq-loongson-pch-lpc.c
+>> +++ b/drivers/irqchip/irq-loongson-pch-lpc.c
+>> @@ -200,8 +200,13 @@ int __init pch_lpc_acpi_init(struct irq_domain *parent,
+>>                  goto iounmap_base;
+>>          }
+>>
+>> -       priv->lpc_domain = irq_domain_create_linear(irq_handle, LPC_COUNT,
+>> -                                       &pch_lpc_domain_ops, priv);
+>> +       /*
+>> +        * The LPC interrupt controller is a legacy i8259-compatible device,
+>> +        * which requires a static 1:1 mapping for IRQs 0-15.
+>> +        * Use irq_domain_create_legacy to establish this static mapping early.
+> irq_domain_create_legacy()
+OK, I will fix it in the v2 patch.
+
+> 
+>> +        */
+>> +       priv->lpc_domain = irq_domain_create_legacy(irq_handle, LPC_COUNT, 0, 0,
+>> +                       &pch_lpc_domain_ops, priv);
+> The recommended indentation is:
+>         priv->lpc_domain = irq_domain_create_legacy(irq_handle, LPC_COUNT, 0, 0,
+> 
+>                     &pch_lpc_domain_ops, priv);
+> 
+> which means "&" is below "irq_handle".
+
+You are right. I will fix the indentation in the v2 patch.
 
 Thanks,
-Guan-Chun Wu
+Ming
 
----
-
-v1 -> v2:
-  - Add a KUnit test suite for lib/base64:
-      * correctness tests (multiple alphabets, with/without padding)
-      * simple microbenchmark for informational performance comparison
-  - Rework encoder/decoder:
-      * encoder: generalize to a caller-provided 64-character table and
-        optional '=' padding
-      * decoder: optimize and extend to generic tables
-  - fscrypt: migrate from local base64url helpers to generic lib/base64
-  - ceph: migrate from local base64 helpers to generic lib/base64
-
----
-
-Guan-Chun Wu (4):
-  lib/base64: rework encoder/decoder with customizable support and
-    update nvme-auth
-  lib: add KUnit tests for base64 encoding/decoding
-  fscrypt: replace local base64url helpers with generic lib/base64
-    helpers
-  ceph: replace local base64 encode/decode with generic lib/base64
-    helpers
-
-Kuan-Wei Chiu (1):
-  lib/base64: Replace strchr() for better performance
-
- drivers/nvme/common/auth.c |   7 +-
- fs/ceph/crypto.c           |  53 +-------
- fs/ceph/crypto.h           |   6 +-
- fs/ceph/dir.c              |   5 +-
- fs/ceph/inode.c            |   2 +-
- fs/crypto/fname.c          |  86 +------------
- include/linux/base64.h     |   4 +-
- lib/Kconfig.debug          |  19 ++-
- lib/base64.c               | 239 ++++++++++++++++++++++++++++++-------
- lib/tests/Makefile         |   1 +
- lib/tests/base64_kunit.c   | 230 +++++++++++++++++++++++++++++++++++
- 11 files changed, 466 insertions(+), 186 deletions(-)
- create mode 100644 lib/tests/base64_kunit.c
-
--- 
-2.34.1
+> 
+> Huacai
+> 
+>>          if (!priv->lpc_domain) {
+>>                  pr_err("Failed to create IRQ domain\n");
+>>                  goto free_irq_handle;
+>> --
+>> 2.43.0
+>>
 
 
