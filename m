@@ -1,282 +1,206 @@
-Return-Path: <linux-kernel+bounces-811536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1491AB52A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:46:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 590E1B52A6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0D511BC5835
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE1A1BC55D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACD2299944;
-	Thu, 11 Sep 2025 07:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8442A29ACC3;
+	Thu, 11 Sep 2025 07:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="TDK4leq3"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZ9CiPx8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3AB296BA9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D558296BC1
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757576790; cv=none; b=jtNG7SnmBGKb02aHadxdpWX+yYPsxeDACjdAIFhVAakl9e0p4fJi+2PnsZYGPEYnBbzRiQmrGvHWyRKcpC+sXaOtjrxdt3kbCFbC/ixs6jCJRCxQ8Mq8Yow732CTYYmUHclllXbmgZX9fFfmkZ6lpl0Yt8t1Hx69GEMcWZoDcks=
+	t=1757576842; cv=none; b=SwD4L2LXNaMaV8oSM3suhB1KI/Uh9H2ujVkeJCWP3gqGhfno3InZB/cZ803qJKIzst5wy/TRMKZpJ0A5nRVhEJyc4Yw5WabZicayqExWRO8fiOkrhN8RHfuGPds1k/70LNEJzlw9KSMgJrsbVUj/esnYRNxS7CXnVO4/x8IUBuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757576790; c=relaxed/simple;
-	bh=hyrovsqb25GvOk5ch0SE10QIDXuqIsRkz/P2XEfDCm4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Oow/PojyGQrg6pIB+ZlEYssP+fHT6YEoS+Um9qHsLKzGDJ49D1riNX5NChKpQu51GVLUe/jjrXK1bKNMweeNc4UjMysfNbVKvm9bkyXqVlpgX7jA8lie70dvtpKD8L6/nfFaT1HVdVq9FOH+Jvua3F3sswgHKfe6Z5xp1GclA/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=TDK4leq3; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b523af71683so402931a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:46:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1757576788; x=1758181588; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/o5UYWtgC17zidQRxgu3di44p2yuLDtqoBTP3KdD9qk=;
-        b=TDK4leq3UlGV/qzuVwuOMXfh6wGfrcmPYnDlI+gt1yO9LJYLd5J86OM1yHMIosStXN
-         QJVQRjBMCKcfr310lUmDDWlbCl0veaX7RPs1s630aPCwWRWnRebXEE5TLzCjnvWt9rto
-         GnKHuEDVUJy8kOYs8oxSjJqS+WWkNBYALPglTcsryNg1jn/rFCi9Y4pV2WbeWX6dmey8
-         Rlsfj3Ljc831tLj2taQWnrVtOQUtUQTo5YcwaeLFiPoNlrHvJw7ArM5y6PpWwCu7j/ZR
-         ZrQH/V323u38WrV/1a2K6xwtN+TCuB2B0s9p+Jg26g3AMRwW4YHThbPPTfhTEvKMAl12
-         rYww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757576788; x=1758181588;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/o5UYWtgC17zidQRxgu3di44p2yuLDtqoBTP3KdD9qk=;
-        b=Jocn/3Hu7J611QOGQKTKDZw34l0ExOk3Q+YRp51PhnkuP3UzSDlAaADQe5mx1OQDoB
-         Rr+qh59Ioq385ydYnIhzxj4aizNAR0Rgmlt+eYQ0LMGpPWgfSCjaWxoBkt8AT+JKk227
-         rmHPs/Q6BHXsEk+7eEZtiRgc3aMaCzzmfdrPvfdJp+IxqDWVXMY8cjEBBRPVzbdtADn0
-         y/x8LkF4kuC9zG670Zaq3kQlkOdcr1S37D2vNtKm2KTST6p+FSC44ns5qZ1HlTh7mZHh
-         jeYDYAmkJHktuPLdTy0Xin46muP8DDkF+E9j9a+UU0ToIGKCGWTUe/Q+WZTR89h077Eq
-         6dYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyXSrYDwcDrkE6B1Z2Pd0RP2SpVAIg12zkrE18qERc7BWX4SKwMD2A4s68JnZsJPt4Y7020qlEKBstJ0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTfC8d1aWQTKl3LxdNNbJN0i4GWlgpgru3RG6S79oTmEhvPjTa
-	6XH8O2AbwwsJvy/0ZawP76hpCdupi7T/oqrM7/zisELS3W2sE3r1b3zmzUih7J3X4PG90mnzxLc
-	CSJ88qII=
-X-Gm-Gg: ASbGncvxc3ScAmUxXF7GDbuEWQsYRTEZ8hDu6GjgSAkgSSkzYW58+ZlEczu7surgOn5
-	lq4xz7g0xX5vX2jxiUTKXIHyrXGbCu+hk9DOrD1yehDO/McfFg2utOPy1cZngN1/f6rTLOjiIUN
-	uKYi4wi4Jj9ArnnDFwuo0MWL61yqgunxsOdOFkK6u2aZImcniSkJmLMZjyNDWJSFti8e+LGUakL
-	SLmaSPXUCjvqN98/rHy3wGDeDyntKgANFGwQJBmFOFQoMMdMKUI3CuXSZlsAUc/U1bHGdBjWV+M
-	aMbYU3hUHPwZ/11Z2GZyBdWUf+4fdiyvKKLe+bvUYiCm9a0NgJLNe9yjVFa6O1zC7WsJhb+Ork1
-	uO0+rBhM73YNu3KH8gfeQQAAh81HOhtOla61sKEEBuHeaacD7/+EhU4VGFejcn5qSFA5u
-X-Google-Smtp-Source: AGHT+IHUrbIDUjSvWXWDJnw2/rvjU/6tI+i+eOkABLbPn89zVIkTMb70/fAZWJUo/N9Zo8PVFcB0yA==
-X-Received: by 2002:a05:6a20:939d:b0:24a:8315:7e2 with SMTP id adf61e73a8af0-2533fab6295mr27158794637.20.1757576787693;
-        Thu, 11 Sep 2025 00:46:27 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:7811:c085:c184:85be])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607a47c47sm1152799b3a.35.2025.09.11.00.46.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 00:46:26 -0700 (PDT)
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: 409411716@gms.tku.edu.tw
-Cc: akpm@linux-foundation.org,
-	axboe@kernel.dk,
-	ceph-devel@vger.kernel.org,
-	ebiggers@kernel.org,
-	hch@lst.de,
-	home7438072@gmail.com,
-	idryomov@gmail.com,
-	jaegeuk@kernel.org,
-	kbusch@kernel.org,
-	linux-fscrypt@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	sagi@grimberg.me,
-	tytso@mit.edu,
-	visitorckw@gmail.com,
-	xiubli@redhat.com
-Subject: [PATCH v2 5/5] ceph: replace local base64 encode/decode with generic lib/base64 helpers
-Date: Thu, 11 Sep 2025 15:46:17 +0800
-Message-Id: <20250911074617.694704-1-409411716@gms.tku.edu.tw>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
-References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
+	s=arc-20240116; t=1757576842; c=relaxed/simple;
+	bh=xG0wqREPO4jvc2whMHvR/DEgATLKUBA6P+zcRmExoUo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XEDbVMHt08fsxr9rPOgek9YSk9PY19DdTZMMmEre4xqm2NZl2U49wlMxRKh4yXc2bdTpzFyVAd2kWJNVH4C64jN/en2Akh5A0TqlAEWXs4Drua8FTJJicED48wwMQBJk2Xd8W6nAZgSPDq1rFM+NnlTtVf0XzaVlEVludo2QzwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZ9CiPx8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10DA1C4CEF1;
+	Thu, 11 Sep 2025 07:47:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757576841;
+	bh=xG0wqREPO4jvc2whMHvR/DEgATLKUBA6P+zcRmExoUo=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=eZ9CiPx8KWTZJDC6odQjuXXVQD7rkpTyZnWMi8AEs0/HPTp54WAYN5kkmTwAmAVSC
+	 GgO/LHB6PFRvqHDnNQ+iQdE5iWe6wtUWjbXWH2TkruniCfTk88OwI3hXRd7DdHtn6O
+	 edOSW8CN4qkfVtvRUJpyjjCnfQCNWS3j9vQayLmkZnIeXZLhRHUBs5Ewc26+Ti/A9Z
+	 6BisRrtu7yUDkbuJoxFIs0rt4cFCSTv/BLu8rchkUY5NUJLeK5sH0IrfP4c94nCdea
+	 gUWrNlTVKfXB8olh5bP4K9cUfLhxEaOJJmf20o3eyCzo43i0H6w0TVjfYzw5Z9yJXp
+	 frvSZOwyrHZpQ==
+Message-ID: <122b93a0-515d-49b0-9c0a-30313e040287@kernel.org>
+Date: Thu, 11 Sep 2025 15:47:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, feng.han@honor.com, jaegeuk@kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix wrong extent_info data for
+ precache extents
+To: wangzijie <wangzijie1@honor.com>, linux-f2fs-devel@lists.sourceforge.net
+References: <ad627632-298e-428b-9cfa-a5b5b50c147e@kernel.org>
+ <20250911065549.2929967-1-wangzijie1@honor.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250911065549.2929967-1-wangzijie1@honor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Remove the local ceph_base64_encode and ceph_base64_decode functions and
-replace their usage with the generic base64_encode and base64_decode
-helpers from the kernel's lib/base64 library.
+On 9/11/25 14:55, wangzijie wrote:
+>> On 9/10/25 21:58, wangzijie wrote:
+>>> When the data layout is like this:
+>>> dnode1:                     dnode2:
+>>> [0]      A                  [0]    NEW_ADDR
+>>> [1]      A+1                [1]    0x0
+>>> ...                         ....
+>>> [1016]   A+1016
+>>> [1017]   B (B!=A+1017)      [1017] 0x0
+>>>
+>>> We can build this kind of layout by following steps(with i_extra_isize:36):
+>>> ./f2fs_io write 1 0 1881 rand dsync testfile
+>>> ./f2fs_io write 1 1881 1 rand buffered testfile
+>>> ./f2fs_io fallocate 0 7708672 4096 testfile
+>>>
+>>> And when we map first data block in dnode2, we will get wrong extent_info data:
+>>> map->m_len = 1
+>>> ofs = start_pgofs - map->m_lblk = 1882 - 1881 = 1
+>>>
+>>> ei.fofs = start_pgofs = 1882
+>>> ei.len = map->m_len - ofs = 1 - 1 = 0
+>>
+>> Hi Zijie,
+>>
+>> I tried to reproduce w/ below steps:
+>>
+>> f2fs_io write 1 0 1881 rand dsync testfile
+>> f2fs_io write 1 1881 1 rand buffered testfile
+>> f2fs_io fallocate 0 7708672 4096 testfile
+>> umount
+>> mount
+>> f2fs_io precache_extents testfile
+>>
+>>          f2fs_io-921     [013] .....  1049.855817: f2fs_lookup_start: dev = (253,16), pino = 3, name:testfile, flags:65537
+>>          f2fs_io-921     [013] .....  1049.855870: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), DATA, sector = 139280, size = 4096
+>>          f2fs_io-921     [013] .....  1049.856116: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x5, oldaddr = 0x5553, newaddr = 0x5553, rw = READ(), type = HOT_NODE
+>>          f2fs_io-921     [013] .....  1049.856147: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174744, size = 4096
+>>          f2fs_io-921     [013] .....  1049.856273: f2fs_iget: dev = (253,16), ino = 5, pino = 3, i_mode = 0x81ed, i_size = 7712768, i_nlink = 1, i_blocks = 15080, i_advise = 0x0
+>>          f2fs_io-921     [013] .....  1049.856305: f2fs_lookup_end: dev = (253,16), pino = 3, name:testfile, ino:5, err:0
+>>          f2fs_io-921     [013] .....  1049.856316: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 0, type = Read
+>>          f2fs_io-921     [013] .....  1049.856317: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 0, read_ext_info(fofs: 0, len: 512, blk: 1055744)
+>>          f2fs_io-921     [013] .....  1049.856317: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 0, start blkaddr = 0x101c00, len = 0x200, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>>          f2fs_io-921     [013] .....  1049.856318: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 512, type = Read
+>>          f2fs_io-921     [013] .....  1049.856318: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 512, read_ext_info(fofs: 0, len: 0, blk: 0)
+>>          f2fs_io-921     [013] .....  1049.856323: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 512, len = 352, blkaddr = 18432, c_len = 0
+>>          f2fs_io-921     [013] .....  1049.856328: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x6, oldaddr = 0x5556, newaddr = 0x5556, rw = READ(), type = HOT_NODE
+>>          f2fs_io-921     [013] .....  1049.856329: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174768, size = 4096
+>>          f2fs_io-921     [021] .....  1049.856968: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 864, len = 160, blkaddr = 18784, c_len = 0
+>>          f2fs_io-921     [021] .....  1049.857002: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 512, start blkaddr = 0x4800, len = 0x200, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>>          f2fs_io-921     [021] .....  1049.857003: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1025, type = Read
+>>          f2fs_io-921     [021] .....  1049.857004: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1025, read_ext_info(fofs: 0, len: 0, blk: 0)
+>>          f2fs_io-921     [021] .....  1049.857010: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 1025, len = 511, blkaddr = 19457, c_len = 0
+>>          f2fs_io-921     [021] .....  1049.857011: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1025, start blkaddr = 0x4c01, len = 0x1ff, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>>          f2fs_io-921     [021] .....  1049.857012: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1537, type = Read
+>>          f2fs_io-921     [021] .....  1049.857012: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1537, read_ext_info(fofs: 0, len: 0, blk: 0)
+>>          f2fs_io-921     [021] .....  1049.857016: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 1537, len = 344, blkaddr = 20993, c_len = 0
+>>          f2fs_io-921     [021] .....  1049.857016: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1537, start blkaddr = 0x5201, len = 0x158, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>>          f2fs_io-921     [021] .....  1049.857017: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1882, type = Read
+>>          f2fs_io-921     [021] .....  1049.857017: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1882, read_ext_info(fofs: 0, len: 0, blk: 0)
+>>          f2fs_io-921     [021] .....  1049.857024: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x7, oldaddr = 0x5555, newaddr = 0x5555, rw = READ(), type = HOT_NODE
+>>          f2fs_io-921     [021] .....  1049.857026: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174760, size = 4096
+>>          f2fs_io-921     [021] .....  1049.857156: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1882, start blkaddr = 0x5201, len = 0x0, flags = 0, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>>
+>> It seems f2fs_update_read_extent_tree_range() won't insert a zero-sized extent?
+>> Or am I missing something?
+>>
+>> Thanks,
+> 
+> Hi, Chao
+> I test it again with below steps:
+> 
+> ./f2fs_io write 1 0 1881 rand dsync testfile
+> ./f2fs_io fallocate 0 7708672 4096 testfile
+> ./f2fs_io write 1 1881 1 rand buffered testfile
+> fsync testfile
+> umount
+> mount
+> ./f2fs_io precache_extents testfile
 
-This eliminates redundant implementations in Ceph, reduces code
-duplication, and leverages the optimized and well-maintained
-standard base64 code within the kernel.
+Oh, I can reproduce the bug w/ above scripts, thanks.
 
-The change keeps the existing encoding table and disables padding,
-ensuring no functional or format changes. At the same time, Ceph also
-benefits from the optimized encoder/decoder: encoding performance
-improves by ~2.7x and decoding by ~12-15x compared to the previous
-local implementation.
+Thanks,
 
-Overall, this improves maintainability, consistency with other kernel
-components, and runtime performance.
-
-Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
- fs/ceph/crypto.c | 53 +++++-------------------------------------------
- fs/ceph/crypto.h |  6 ++----
- fs/ceph/dir.c    |  5 +++--
- fs/ceph/inode.c  |  2 +-
- 4 files changed, 11 insertions(+), 55 deletions(-)
-
-diff --git a/fs/ceph/crypto.c b/fs/ceph/crypto.c
-index cab722619..a3cb4ad99 100644
---- a/fs/ceph/crypto.c
-+++ b/fs/ceph/crypto.c
-@@ -21,53 +21,9 @@
-  * used the base64 encoding defined for IMAP mailbox names (RFC 3501) instead,
-  * which replaces '-' and '_' by '+' and ','.
-  */
--static const char base64_table[65] =
-+const char ceph_base64_table[65] =
- 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,";
- 
--int ceph_base64_encode(const u8 *src, int srclen, char *dst)
--{
--	u32 ac = 0;
--	int bits = 0;
--	int i;
--	char *cp = dst;
--
--	for (i = 0; i < srclen; i++) {
--		ac = (ac << 8) | src[i];
--		bits += 8;
--		do {
--			bits -= 6;
--			*cp++ = base64_table[(ac >> bits) & 0x3f];
--		} while (bits >= 6);
--	}
--	if (bits)
--		*cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
--	return cp - dst;
--}
--
--int ceph_base64_decode(const char *src, int srclen, u8 *dst)
--{
--	u32 ac = 0;
--	int bits = 0;
--	int i;
--	u8 *bp = dst;
--
--	for (i = 0; i < srclen; i++) {
--		const char *p = strchr(base64_table, src[i]);
--
--		if (p == NULL || src[i] == 0)
--			return -1;
--		ac = (ac << 6) | (p - base64_table);
--		bits += 6;
--		if (bits >= 8) {
--			bits -= 8;
--			*bp++ = (u8)(ac >> bits);
--		}
--	}
--	if (ac & ((1 << bits) - 1))
--		return -1;
--	return bp - dst;
--}
--
- static int ceph_crypt_get_context(struct inode *inode, void *ctx, size_t len)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-@@ -316,7 +272,7 @@ int ceph_encode_encrypted_dname(struct inode *parent, char *buf, int elen)
- 	}
- 
- 	/* base64 encode the encrypted name */
--	elen = ceph_base64_encode(cryptbuf, len, p);
-+	elen = base64_encode(cryptbuf, len, p, false, ceph_base64_table);
- 	doutc(cl, "base64-encoded ciphertext name = %.*s\n", elen, p);
- 
- 	/* To understand the 240 limit, see CEPH_NOHASH_NAME_MAX comments */
-@@ -410,7 +366,8 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
- 			tname = &_tname;
- 		}
- 
--		declen = ceph_base64_decode(name, name_len, tname->name);
-+		declen = base64_decode(name, name_len,
-+				       tname->name, false, ceph_base64_table);
- 		if (declen <= 0) {
- 			ret = -EIO;
- 			goto out;
-@@ -424,7 +381,7 @@ int ceph_fname_to_usr(const struct ceph_fname *fname, struct fscrypt_str *tname,
- 
- 	ret = fscrypt_fname_disk_to_usr(dir, 0, 0, &iname, oname);
- 	if (!ret && (dir != fname->dir)) {
--		char tmp_buf[CEPH_BASE64_CHARS(NAME_MAX)];
-+		char tmp_buf[BASE64_CHARS(NAME_MAX)];
- 
- 		name_len = snprintf(tmp_buf, sizeof(tmp_buf), "_%.*s_%ld",
- 				    oname->len, oname->name, dir->i_ino);
-diff --git a/fs/ceph/crypto.h b/fs/ceph/crypto.h
-index 23612b2e9..c94da3818 100644
---- a/fs/ceph/crypto.h
-+++ b/fs/ceph/crypto.h
-@@ -8,6 +8,7 @@
- 
- #include <crypto/sha2.h>
- #include <linux/fscrypt.h>
-+#include <linux/base64.h>
- 
- #define CEPH_FSCRYPT_BLOCK_SHIFT   12
- #define CEPH_FSCRYPT_BLOCK_SIZE    (_AC(1, UL) << CEPH_FSCRYPT_BLOCK_SHIFT)
-@@ -89,10 +90,7 @@ static inline u32 ceph_fscrypt_auth_len(struct ceph_fscrypt_auth *fa)
-  */
- #define CEPH_NOHASH_NAME_MAX (180 - SHA256_DIGEST_SIZE)
- 
--#define CEPH_BASE64_CHARS(nbytes) DIV_ROUND_UP((nbytes) * 4, 3)
--
--int ceph_base64_encode(const u8 *src, int srclen, char *dst);
--int ceph_base64_decode(const char *src, int srclen, u8 *dst);
-+extern const char ceph_base64_table[65];
- 
- void ceph_fscrypt_set_ops(struct super_block *sb);
- 
-diff --git a/fs/ceph/dir.c b/fs/ceph/dir.c
-index 8478e7e75..830715988 100644
---- a/fs/ceph/dir.c
-+++ b/fs/ceph/dir.c
-@@ -998,13 +998,14 @@ static int prep_encrypted_symlink_target(struct ceph_mds_request *req,
- 	if (err)
- 		goto out;
- 
--	req->r_path2 = kmalloc(CEPH_BASE64_CHARS(osd_link.len) + 1, GFP_KERNEL);
-+	req->r_path2 = kmalloc(BASE64_CHARS(osd_link.len) + 1, GFP_KERNEL);
- 	if (!req->r_path2) {
- 		err = -ENOMEM;
- 		goto out;
- 	}
- 
--	len = ceph_base64_encode(osd_link.name, osd_link.len, req->r_path2);
-+	len = base64_encode(osd_link.name, osd_link.len,
-+			    req->r_path2, false, ceph_base64_table);
- 	req->r_path2[len] = '\0';
- out:
- 	fscrypt_fname_free_buffer(&osd_link);
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index fc543075b..94b729ccc 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -911,7 +911,7 @@ static int decode_encrypted_symlink(struct ceph_mds_client *mdsc,
- 	if (!sym)
- 		return -ENOMEM;
- 
--	declen = ceph_base64_decode(encsym, enclen, sym);
-+	declen = base64_decode(encsym, enclen, sym, false, ceph_base64_table);
- 	if (declen < 0) {
- 		pr_err_client(cl,
- 			"can't decode symlink (%d). Content: %.*s\n",
--- 
-2.34.1
+> 
+>          f2fs_io-8749    [003] .....    86.759281: f2fs_lookup_start: dev = (254,57), pino = 45485, name:testfile, flags:257
+>          f2fs_io-8749    [003] .....    86.759954: f2fs_iget: dev = (254,57), ino = 501391, pino = 45485, i_mode = 0x81ed, i_size = 7712768, i_nlink = 1, i_blocks = 15080, i_advise = 0x0
+>          f2fs_io-8749    [003] .....    86.759968: f2fs_lookup_end: dev = (254,57), pino = 45485, name:testfile, ino:501391, err:0
+>          f2fs_io-8749    [003] .....    86.760000: f2fs_lookup_extent_tree_start: dev = (254,57), ino = 501391, pgofs = 0, type = Read
+>          f2fs_io-8749    [003] .....    86.760020: f2fs_lookup_read_extent_tree_end: dev = (254,57), ino = 501391, pgofs = 0, read_ext_info(fofs: 0, len: 1881, blk: 3164707)
+>          f2fs_io-8749    [003] .....    86.760020: f2fs_map_blocks: dev = (254,57), ino = 501391, file offset = 0, start blkaddr = 0x304a23, len = 0x759, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+>          f2fs_io-8749    [003] .....    86.760021: f2fs_lookup_extent_tree_start: dev = (254,57), ino = 501391, pgofs = 1881, type = Read
+>          f2fs_io-8749    [003] .....    86.760022: f2fs_lookup_read_extent_tree_end: dev = (254,57), ino = 501391, pgofs = 1881, read_ext_info(fofs: 0, len: 0, blk: 0)
+>          f2fs_io-8749    [005] .....    86.760162: f2fs_update_read_extent_tree_range: dev = (254,57), ino = 501391, pgofs = 1881, len = 1, blkaddr = 2688335, c_len = 0
+>     *****f2fs_io-8749    [005] .....    86.760324: f2fs_update_read_extent_tree_range: dev = (254,57), ino = 501391, pgofs = 1882, len = 0, blkaddr = 2688336, c_len = 0  ******
+>          f2fs_io-8749    [005] .....    86.760326: f2fs_map_blocks: dev = (254,57), ino = 501391, file offset = 1881, start blkaddr = 0x29054f, len = 0x1, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+> 
+> 
+> inode:
+> i_ext: fofs:0 blkaddr:304a23 len:759
+> i_addr[0x9]     [0x  304a23 : 3164707]
+> ....
+> i_addr[0x368]   [0x  304d82 : 3165570]
+> 
+> dnode1:
+> [0]    [0x  304d83 : 3165571]
+> [1016] [0x  30517b : 3166587]
+> ...
+> [1017] [0x  29054f : 2688335]
+> 
+> dnode2:
+> [0]  	NEW_ADDR
+> [1]     [0x       0 : 0]
+> ...
+> 
+> 
+> 
+> 
+>>>
+>>> Fix it by skipping updating this kind of extent info.
+>>>
+>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>> ---
+>>>  fs/f2fs/data.c | 3 +++
+>>>  1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index 7961e0ddf..b8bb71852 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -1649,6 +1649,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+>>>  
+>>>  		switch (flag) {
+>>>  		case F2FS_GET_BLOCK_PRECACHE:
+>>> +			if (__is_valid_data_blkaddr(map->m_pblk) &&
+>>> +				start_pgofs - map->m_lblk == map->m_len)
+>>> +				map->m_flags &= ~F2FS_MAP_MAPPED;
+>>>  			goto sync_out;
+>>>  		case F2FS_GET_BLOCK_BMAP:
+>>>  			map->m_pblk = 0;
+> 
 
 
