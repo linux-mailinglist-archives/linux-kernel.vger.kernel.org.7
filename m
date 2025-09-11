@@ -1,211 +1,210 @@
-Return-Path: <linux-kernel+bounces-812301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4969DB535DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:40:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864FBB535D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5562C1884255
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:39:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60D0E7BE6D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDF433EAFB;
-	Thu, 11 Sep 2025 14:38:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78DB33CEAA;
+	Thu, 11 Sep 2025 14:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ljlHC1A9"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GWp05F3K"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2926C214A8B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455C23451AD
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601505; cv=none; b=GG94inniC70E2iwZPqcdYFRbC4pN2vVmK8ql/BKWmgA1OwEkKT/sF/lmZKqsXBCIEGyZlY2+q951DmNGpMuYfiOSRhyxWZ7HxDSKi10cQFAHstKtlvfGskZ3LHp5dMFAPCDFDP1zhYz/RdzCLG8wCdIY8JBhls+vM/KP1/jUef8=
+	t=1757601531; cv=none; b=GBS+gmH2ZCQCFo5VIpu1PmmKLMah93Zm6wNims2MXFodOeglWsnx/Y756Hbo77ADcm9dIV2Nm8hdd3nTMbCor3Gjs1rmOueQFYBxaHv7Ywprd1EGalZQZsSEnhWW5MC9hPnL3YFtZgDBEPOgM41Ew9XeECPXg2UZP0O55HtjFlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601505; c=relaxed/simple;
-	bh=gcBJssQhyGpxfwuSrDQk1DBIdTnWQiEdUdoDy8scbRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YhpcU1JK6e5zH7rBrvuUh9eUWYlwZWO3hb+Sjaxlfpb+PtwtRjkqPGzbEXVf/xa1rKr2ITmRqrrwXCJrTD+Fzf8aQVqQ+CAjlXhOeIF9A66jMroFm1Qzcd7grui/NnLo2MeY4UjlARq7lM4FLndeEuJ10NNTbKXaybEFvleHJHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ljlHC1A9; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B8i1JG003804;
-	Thu, 11 Sep 2025 14:38:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=8E4za3
-	cgBD/qHg6HrhjRiAOm8JdBVvYrIkWytWTR8TU=; b=ljlHC1A9iKAWpeFkl/sboT
-	qKJ7fvcGeGN7VpcnRXr8Cj4y+4ZmRJbvKcs6Z2dfpaBlLpvIhEiyFRhiaW2dOyoQ
-	g/rBmIq4MvLkmWTZsgQKlANAnq+2frzxnHEhUMz7bb0MPM9sfO7/P2jojeyolhpg
-	J43QmAORl6cDMQHuKZbvklgNiKyaRMbRFk1UhpjHYT5uQAxNMEMLiJkwbJfYjloW
-	Xjcnq0QKpUl93bdHLUpTyLxIDxa2o5A6/IBKRamlQVPGujDOKFVELRL5lhA+49gy
-	aRxcWE9P4zXPxay6nDajht9wzA/HHs8AmuU1Dxkzx8BexAWf0AGM/+Rve1gDB7AA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xyda4kq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 14:38:02 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58BEPWZm003808;
-	Thu, 11 Sep 2025 14:38:01 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xyda4kj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 14:38:01 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58BDgOSL010604;
-	Thu, 11 Sep 2025 14:38:00 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4910sn673b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 14:38:00 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BEbuob52167128
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 14:37:56 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3BFF820040;
-	Thu, 11 Sep 2025 14:37:56 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 300F52004B;
-	Thu, 11 Sep 2025 14:37:48 +0000 (GMT)
-Received: from [9.61.95.215] (unknown [9.61.95.215])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 11 Sep 2025 14:37:47 +0000 (GMT)
-Message-ID: <b751b212-c4a5-4e7e-ad0f-df8cd3de19f7@linux.ibm.com>
-Date: Thu, 11 Sep 2025 20:07:46 +0530
+	s=arc-20240116; t=1757601531; c=relaxed/simple;
+	bh=8soN6rxMf+hbwzPFHAOw0SiZ9+BEZ+Zf4oVMft6IHs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J/ZCDYRk7tNrv1lxOgF993/XuuiIKftxAwoM/dv0gHFeo1vvfKcy672lNjI0Fz21YzUALrMl7eFx+nYH2xqmEHUVchHVvmOeRv1HrveDBIaFot8TonAEVI1gbsiIYP2VecarxP+qMC//PYqe+R3xauH99M4tHySJOG8YvAiJldI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GWp05F3K; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757601528;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SIPv42Je3ufieqUPVRa/WfMuWNmuQmCrniAmwNhdfvM=;
+	b=GWp05F3KlG4MzvpOJfbQ03XdLljwV8AYx7HhvsGkxccwIAIVo9TOEvKbLXt0aaoRxyld3A
+	d3OC4noc8Xoj+F6ZLJJsIotOITbzm2kOIuiIeT5JUrijQrsNsbVQKzL9Rwg1f1gfTPFxdR
+	e6OvV/nJicseO7tadmvI/KDmDLiCp+k=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-601-SYs40iZxPz-_CHQsxwZYFw-1; Thu, 11 Sep 2025 10:38:46 -0400
+X-MC-Unique: SYs40iZxPz-_CHQsxwZYFw-1
+X-Mimecast-MFC-AGG-ID: SYs40iZxPz-_CHQsxwZYFw_1757601525
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-336e13bf342so4597931fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:38:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757601525; x=1758206325;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SIPv42Je3ufieqUPVRa/WfMuWNmuQmCrniAmwNhdfvM=;
+        b=mcylDyL9oQNPoaFXIqGpI3T/QZvt9+osvbjqK8LYGmsmTiZwi+G0S3vShTtXv47xnA
+         5tZpYkNo0vG1zxpNUGZt5dji09VsffRWEVXkvKnZ69InzHzseEcisfzvgidKTSiiHA9A
+         fXu6+5xoSbv5avVEhxirLaxFkuRXETANWRw+lx7Iej/jrxNA2knAeOdL3fphG6UbqVqg
+         CRxF3ilbDB9M1xMZg7YFxihEwda0VPRUZSwmYA1OcnUk5HMKFNYLwNywE0voGmavCdyB
+         VUPNIC1OFowUx//WyuyEkd8U1vCgJN545Y02CUVpB+CAqBYhwfI3XQGSSlKe02+qpalx
+         or5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUaGcqToehn7AJwOCoGjmwj1YofCluc8qAHq8oq6yhLS/aiJFBpa2T8BVBGAsCLbyF6RG99aEHY6eyyoyk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHBCxhRRKecSAbGro/p0RoYrGCTYTOg2m9UHTRwhAMHNBjLugW
+	J8CW/BBnxcsDD4U3EazzSFxCOTgODLEITUjOu+7m8x867ibRCkfImVm9h6TTgpr9sX9B0MlK0+1
+	yvxR3GXuARz/NKF68gzFUMauTcVxJ2xebN+g0XONXiUbTGMxnCVXL3oivzPC+6U/Ehd7BEKGM+M
+	U4+YlFINZZ4gWeSM/siO0JYCBp21gW9WXT4xS4bZq5
+X-Gm-Gg: ASbGncvdI6t8lGEaihaf6qgI4lcWvRX6XA3Dx8SEVbsVdbCdzWQfYw+U5vYN/ZOaZjr
+	NVDEjny9NlOiqnhybwe0GLX4rcHn4qq0NAU+AJxwBUS+PHTnibs8duNHkVzqAiophl7VKK+hTEC
+	yeQsuhojGR50kDQKJCc8gufMU4I+GmTo+Ppb6ABQwiiMdglH46Ui48H2k=
+X-Received: by 2002:a2e:b8c1:0:b0:337:f217:a785 with SMTP id 38308e7fff4ca-33b5cbcec6amr63395101fa.23.1757601525173;
+        Thu, 11 Sep 2025 07:38:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbncV35xoEUNPKEtJTtLC8EEhusftfJk+xhn2Y5J2nM9pwSu2qk9ra9C5LYi9diVDd2gYDA6O1QJ6fGt/Xtv0=
+X-Received: by 2002:a2e:b8c1:0:b0:337:f217:a785 with SMTP id
+ 38308e7fff4ca-33b5cbcec6amr63395031fa.23.1757601524652; Thu, 11 Sep 2025
+ 07:38:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 03/10] sched: Static key to check paravirt cpu push
-To: Yury Norov <yury.norov@gmail.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, tglx@linutronix.de, maddy@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        gregkh@linuxfoundation.org, vschneid@redhat.com, iii@linux.ibm.com,
-        huschle@linux.ibm.com, rostedt@goodmis.org, dietmar.eggemann@arm.com,
-        vineeth@bitbyteword.org, jgross@suse.com, pbonzini@redhat.com,
-        seanjc@google.com
-References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
- <20250910174210.1969750-4-sshegde@linux.ibm.com> <aMIrgI9J4fuXntRz@yury>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <aMIrgI9J4fuXntRz@yury>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 4-s6qgzZ4_xAyJU5GDYQ-xHSct33ia7x
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX77wIAqGq1zVd
- Z32/B5q/79s9DCEy1gVTVkPmFkssIw54e57ttoLUy0hvUX7dKnnpGzAtOg9Wodk9ObOVPVwe2hO
- xQH6GKODcQjyr8dumwMZMELDeSrzmwA0ivCtaa12X/BkAgE/kTbScTLnZQBarGvu9aHZucyNMig
- SYWT9LbbwAFzrQQmPicOHZxOh5aSKS1xy6f/53r2nJAQ3P16Z5NCAMRBGYO+6PLcUVNirLchm/h
- y7bIAWtbX2EAyzI3CyH886xBwpJ9KnmlqJmx/zQuPetUtwIOrpreunBZpErrfI6OvWEOWbocrOw
- 38CR9SyVCTqw9A7EtxEtQCIIpJyzQhFsTmLxoZjDsj+D9HVLUvVSawrWBy2OHk3WHiDU5J5OS08
- vhtxBee+
-X-Proofpoint-GUID: Yt9om58zlIVtqpVI4MU_7ppkAEDadAp1
-X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68c2deca cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=RFDGOpT60TssK192s-MA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-11_01,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060235
+References: <20250910171706.173976-1-alessio.attilio.dev@gmail.com>
+In-Reply-To: <20250910171706.173976-1-alessio.attilio.dev@gmail.com>
+From: Alexander Aring <aahringo@redhat.com>
+Date: Thu, 11 Sep 2025 10:38:33 -0400
+X-Gm-Features: Ac12FXwK-hbBkhX-Cm9Le6saS3hUgNdFo5aoBszztbjqFgH7QHOAT5HCs_AG1SQ
+Message-ID: <CAK-6q+hYROHr2eEyJ+j5VWpmwDQd+fA+ZmDTps4rDKXnCq6tHg@mail.gmail.com>
+Subject: Re: [PATCH] * dlm: improve lock management and concurrency control
+To: Alessio Attilio <alessio.attilio.dev@gmail.com>
+Cc: teigland@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Alessio Attilio <alessio.attilio@engineer.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
+On Wed, Sep 10, 2025 at 1:23=E2=80=AFPM Alessio Attilio
+<alessio.attilio.dev@gmail.com> wrote:
+>
+> From: Alessio Attilio <alessio.attilio@engineer.com>
+>
+> This patch introduces several improvements to lock handling in the DLM
+> subsystem, focusing on thread safety, correctness, and code clarity.
+>
+> - Added explicit locking (spin_lock_bh/spin_unlock_bh) around accesses
+>   to proc->locks and proc->asts in dlm_clear_proc_locks, ensuring safe
+>   concurrent operations during lock cleanup.
+> - Replaced del_proc_lock with direct, lock-protected list operations
+>   for improved clarity and correctness.
+> - Updated send_unlock to set RSB_MASTER_UNCERTAIN only when releasing
+>   the last lock on an rsb, ensuring proper master confirmation.
+> - Improved handling of persistent and non-persistent locks by setting
+>   appropriate flags (DLM_DFL_ORPHAN_BIT or DLM_IFL_DEAD_BIT) before
+>   orphaning or unlocking.
+> - Removed outdated comments related to mutex protection and serialization
+>   assumptions, reflecting the updated concurrency model.
+>
+> Signed-off-by: Alessio Attilio <alessio.attilio.dev@gmail.com>
 
-On 9/11/25 7:23 AM, Yury Norov wrote:
-> On Wed, Sep 10, 2025 at 11:12:03PM +0530, Shrikanth Hegde wrote:
->> CPUs are marked paravirt when there is contention for underlying
->> physical CPU.
->>
->> The push mechanism and check for paravirt CPUs are in sched tick
->> and wakeup. It should be close to no-op when there is no need for it.
->> Achieve that using static key.
->>
->> Architecture needs to enable this key when it decides there are
->> paravirt CPUs. Disable it when there are no paravirt CPUs.
-> 
+The patch doesn't compile for me as well. Please also make sure to run
+"scripts/checkpatch.pl" on your patch before sending it.
 
-Hi Yury, Thanks for looking into this series.
+> ---
+>  fs/dlm/lock.c | 99 ++++++++++++++++++++++++---------------------------
+>  1 file changed, 46 insertions(+), 53 deletions(-)
+>
+> diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
+> index 6dd3a524cd35..9170b5c09823 100644
+> --- a/fs/dlm/lock.c
+> +++ b/fs/dlm/lock.c
+> @@ -3654,12 +3654,33 @@ static int send_convert(struct dlm_rsb *r, struct=
+ dlm_lkb *lkb)
+>         return error;
+>  }
+>
+> -/* FIXME: if this lkb is the only lock we hold on the rsb, then set
+> -   MASTER_UNCERTAIN to force the next request on the rsb to confirm
+> -   that the master is still correct. */
+> -
+>  static int send_unlock(struct dlm_rsb *r, struct dlm_lkb *lkb)
+>  {
+> +       struct dlm_lkb *tmp;
+> +       int count =3D 0;
+> +
+> +       list_for_each_entry(tmp, &r->res_grantqueue, lkb_statequeue) {
+> +               if (is_process_copy(tmp))
+> +                       count++;
+> +       }
+> +       list_for_each_entry(tmp, &r->res_convertqueue, lkb_statequeue) {
+> +               if (is_process_copy(tmp))
+> +                       count++;
+> +       }
+> +       list_for_each_entry(tmp, &r->res_waitqueue, lkb_statequeue) {
+> +               if (is_process_copy(tmp))
+> +                       count++;
+> +       }
+> +
+> +/*
+> + * When releasing the last lock on the rsb, we mark the master as uncert=
+ain.
+> + * This ensures that the next lock request will verify the master node,
+> + * maintaining consistency across the cluster.
+> + */
 
-> Testing a bit is quite close to a no-op, isn't it? Have you measured
-> the performance impact that would advocate the static key? Please
-> share some numbers then. I believe I asked you about it on the previous
-> round.
+After unlocking the rsb should be moved to the inactive/toss state, if
+it's activated again it should be that there is a new lookup being
+done when it's necessary.
+This however is not being done at the state here. As you describe the
+problem it is about multiple concurrent requests the problem might be
+something different.
+There should be no cancel/unlock requests at the same time, cancel is
+only for requests or converts not for unlock, maybe what's missing
+here is to check on an invalid API usage at [0]?
 
-The reasons I thought to keep are:
+As far as I understood from your problem specification, a
+stacktrace/reproducer/coredump would be much more helpful here.
 
-1. In load balance there is cpumask_and which does a loop.
-Might be better to avoid it when it is not necessary.
+...
+> -       spin_lock_bh(&ls->ls_clear_proc_locks);
+> -
+> +       spin_lock_bh(&proc->locks_spin);
+>         /* in-progress unlocks */
+>         list_for_each_entry_safe(lkb, safe, &proc->unlocking, lkb_ownqueu=
+e) {
+>                 list_del_init(&lkb->lkb_ownqueue);
+>                 set_bit(DLM_IFL_DEAD_BIT, &lkb->lkb_iflags);
+>                 dlm_put_lkb(lkb);
+>         }
+> +       spin_unlock_bh(&proc->locks_spin);
+>
+> +       spin_lock_bh(&proc->asts_spin);
+>         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
+>                 list_del(&cb->list);
+>                 dlm_free_cb(cb);
+>         }
+> +       spin_unlock_bh(&proc->asts_spin);
+>
+> -       spin_unlock_bh(&ls->ls_clear_proc_locks);
 
-2. Since __cpu_paravirt_mask is going to in one of the memory node in large NUMA systems
-(likely on boot cpu node), access to it from other nodes might take time and costly when
-it is not in cache. one could say same for static key too. but cpumask can be large when
-NR_CPUS=8192 or so.
+This lock has after your patch only one lock/unlock user in user.c
+which makes this lock obsolete, however it seems your user.c changes
+are not part of your patch and got somehow missed.
 
+- Alex
 
-In most of the cases hackbench,schbench didn't show much difference.
-
-> 
->> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
->> ---
->>   kernel/sched/core.c  |  1 +
->>   kernel/sched/sched.h | 17 +++++++++++++++++
->>   2 files changed, 18 insertions(+)
->>
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 0f1e36bb5779..b8a84e4691c8 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -10967,4 +10967,5 @@ void sched_enq_and_set_task(struct sched_enq_and_set_ctx *ctx)
->>   #ifdef CONFIG_PARAVIRT
->>   struct cpumask __cpu_paravirt_mask __read_mostly;
->>   EXPORT_SYMBOL(__cpu_paravirt_mask);
->> +DEFINE_STATIC_KEY_FALSE(cpu_paravirt_push_tasks);
->>   #endif
->> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->> index b5367c514c14..8f9991453d36 100644
->> --- a/kernel/sched/sched.h
->> +++ b/kernel/sched/sched.h
->> @@ -3880,4 +3880,21 @@ void sched_enq_and_set_task(struct sched_enq_and_set_ctx *ctx);
->>   
->>   #include "ext.h"
->>   
->> +#ifdef CONFIG_PARAVIRT
->> +DECLARE_STATIC_KEY_FALSE(cpu_paravirt_push_tasks);
->> +
->> +static inline bool is_cpu_paravirt(int cpu)
->> +{
->> +	if (static_branch_unlikely(&cpu_paravirt_push_tasks))
->> +		return cpu_paravirt(cpu);
->> +
->> +	return false;
->> +}
-> 
-> So is_cpu_paravirt and cpu_paravirt are exactly the same in terms of
-> functionality. If you really believe that static branch benefits the
-> performance, it should go straight to the cpu_paravirt().
-> 
->> +#else	/* !CONFIG_PARAVIRT */
->> +static inline bool is_cpu_paravirt(int cpu)
->> +{
->> +	return false;
->> +}
->> +#endif	/* !CONFIG_PARAVIRT */
->> +
->>   #endif /* _KERNEL_SCHED_SCHED_H */
->> -- 
->> 2.47.3
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/fs/dlm/lock.c?h=3Dv6.17-rc5#n2892
 
 
