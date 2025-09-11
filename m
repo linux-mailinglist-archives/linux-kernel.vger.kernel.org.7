@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-812971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF45BB53F0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:23:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09DFFB53F0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:23:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073271C86FF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:23:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 502B61C8715D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99D62F5338;
-	Thu, 11 Sep 2025 23:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCC32F6583;
+	Thu, 11 Sep 2025 23:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzlkS6mx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHu/aOUK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11EC156F45;
-	Thu, 11 Sep 2025 23:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9F22F6563;
+	Thu, 11 Sep 2025 23:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757632995; cv=none; b=eGiyBDCKXwTfl3viyIO939ltkWbuHPAZV1ry0t81lDo+uJd9N3IIUFHgmK2G1Ij1goDbR2JJxWUoR62A3D9BpQN5YwTjhnkUVyDJPY95eYPz4KOtkJKbmoUUWR1cuaIaj13C7Pd4TGba5YdAMkyOTSsRH+3+Y1IXt3bvyKS2UqE=
+	t=1757632998; cv=none; b=F8S6ysgnWqqJiV3yejDSlzb2aZFDQIruJWaR5XZxtwpMKEp5i0XtrOT+wV0NSFW0GRtXw564wYmQJPGZDgviMFR8xevAv5PwwsuOuAPiiObDEKHQwm9QLGpf4hSMZdl97AzwkZZtVPxkP3Vp8aK51k5Zb6TeT1GckJhjwYkm51Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757632995; c=relaxed/simple;
-	bh=zKS1qog3ePk9Z6+h5QZDcuTiKqEZUbymRLcjTcUGg1Q=;
+	s=arc-20240116; t=1757632998; c=relaxed/simple;
+	bh=LVw0kihXPv2nJoGpHBBLOl7iJPth5gWYWTKn0o0RFZQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=C0W5a8a6BUd6p9L89Acaia+93mecIJy3+WqLSII1EnUZ+Ha8meQEi7JFCSCay1O+kPfeX88ZUMhIpjgOBWq9i0bh9MBblY2QKCiAi+aDytG+NaA1KjBVJRXq73ckq7UbPA6tPF+mjKJLujkOpXFRbUeFAvdTG4s2wqcqUZ3X3wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzlkS6mx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19469C4CEF0;
-	Thu, 11 Sep 2025 23:23:11 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ZmgKOYTPA/ho5nA1r53cmpgZHH7E7GBS/zfk1Wbp2SUrEvRT4DiPDbbMUUFBiEmOF2UTsT16KLSxMHn4Ca3HRpxIXMHxsF4Wbpr12FSvzvmuqtZHl+4XTLnV3aVh4M7w+ho7LR7gFsZJs5c+7xVdAoGYvNG1jt3FIIgbs40ENTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHu/aOUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41D4CC4CEF8;
+	Thu, 11 Sep 2025 23:23:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757632994;
-	bh=zKS1qog3ePk9Z6+h5QZDcuTiKqEZUbymRLcjTcUGg1Q=;
+	s=k20201202; t=1757632997;
+	bh=LVw0kihXPv2nJoGpHBBLOl7iJPth5gWYWTKn0o0RFZQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=DzlkS6mx1iWED/6xUenQWGO0nUTRECEGsPg3EmXNjdKy4jrkkWKq5LaMD5QI1mIYe
-	 cP40qG6qP+07+CeIcf82FjIHJpxm/BMWwtqNFnqF9c16LgN/8HCYY8Ze2RFhNJC173
-	 EodlPSw4GGWVbptOVfBLwj+jiuujr2nxdqAx+sLBoDuPBIu38uj0oOHEa0LTKJPoj/
-	 emm6/AxOcre9nM5vfpFTpayp6xygZ15MSnODX6gTQBV4TKm2ZWuULA5sP8VzRmrQSM
-	 PH8abPpl0BALOyxwAuiNHccGO8t7vyN4UV7sjJdLYCd2iMAcOENCOD2Ef3k1nNtYAD
-	 U6Ryay5HWMVVQ==
+	b=iHu/aOUK0ZpoUvvdiD7kal4B1R4p16zhjEDWaEKmSER7bVLCqYVZq0ijytsLhzQ9i
+	 cQIucew251f2h8kNCT43UAtxNyZo2dU49jHDN4QbxOPCdMMP19QUgyZhinkoydtqAJ
+	 ukI1aApk4kIKwebxbXCFegY/encyrukUCELYeViJIUBjGk535sg/DtLPdrymNLwiS9
+	 2EbYfvmnEq/ctarELt8qjwjkdCwtcxc5V49LPXByJ632QjCuNslj08VJzNLj1l/oKk
+	 Rf5M4E0iac1d16uLnfykzO/wRGGjUnI32zshH0pU98/BKgjL+Da9wLy3erqEFFdRxh
+	 JwH7o3eFCeD1Q==
 From: Mark Brown <broonie@kernel.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
  Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
@@ -51,12 +51,12 @@ To: Liam Girdwood <lgirdwood@gmail.com>, Miguel Ojeda <ojeda@kernel.org>,
  Daniel Almeida <daniel.almeida@collabora.com>
 Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  Alexandre Courbot <acourbot@nvidia.com>
-In-Reply-To: <20250908-regulator-remove-dynamic-v2-0-e575ae2cde6a@collabora.com>
-References: <20250908-regulator-remove-dynamic-v2-0-e575ae2cde6a@collabora.com>
-Subject: Re: (subset) [PATCH v2 0/2] rust: regulator: improve the
- ergonomics of Rust regulators
-Message-Id: <175763299182.199601.5497043017824444951.b4-ty@kernel.org>
-Date: Fri, 12 Sep 2025 00:23:11 +0100
+In-Reply-To: <20250910-regulator-remove-dynamic-v3-0-07af4dfa97cc@collabora.com>
+References: <20250910-regulator-remove-dynamic-v3-0-07af4dfa97cc@collabora.com>
+Subject: Re: [PATCH v3 0/2] rust: regulator: improve the ergonomics of Rust
+ regulators
+Message-Id: <175763299499.199601.11128092939663917696.b4-ty@kernel.org>
+Date: Fri, 12 Sep 2025 00:23:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,7 +67,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-56183
 
-On Mon, 08 Sep 2025 20:10:26 -0300, Daniel Almeida wrote:
+On Wed, 10 Sep 2025 14:54:30 -0300, Daniel Almeida wrote:
 > This small series comes after some extensive discussion on a few minor
 > changes that can improve the current Rust regulator API.
 > 
@@ -85,6 +85,8 @@ Thanks!
 
 [1/2] rust: regulator: remove Regulator<Dynamic>
       commit: b87ecbc54f22382ace1cf41645e8652a4ce44d52
+[2/2] rust: regulator: add devm_enable and devm_enable_optional
+      commit: 2e0fd4583d0efcdc260e61a22666c8368f505353
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
