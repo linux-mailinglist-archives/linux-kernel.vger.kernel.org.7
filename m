@@ -1,138 +1,153 @@
-Return-Path: <linux-kernel+bounces-811190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA3EB525B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41986B525B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:20:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852F31C27FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9858B581DEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2481990D9;
-	Thu, 11 Sep 2025 01:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FEF192D8A;
+	Thu, 11 Sep 2025 01:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mVWoWeFh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cIooxd9+"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4287E8634A;
-	Thu, 11 Sep 2025 01:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DE5156661
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757553624; cv=none; b=U2x2Cvf9xL20maTcJ77yZT22N1Dr3chVLZp2tfwRPWnffPZtwEcDZYs8yL9isSnGTZ/qfuLLR5+0Mb/nWtyRf8YpBrk225jVyTlbWwjb9IR4r6EjcpMu/OMLL7eFGl1cHJu/yMsx974K91bA3K/dj1ABsaiUMXwiu6yr2OvJmzo=
+	t=1757553638; cv=none; b=eotF+adQaAnEYC1anqkjApRemnJL+il8G4iGjIvoYJDZnIHL0fEFtrBe2gcNcoWSFGPbiabWaIHfNHling0KxadRIkKWmUk7hAAQC6T7ZMLjn8aver0SZ2R7pRiL5tONfZ3CD0SeCZSSh/Dl0y9FlTIk0flVfG1tpzhVdbRU75U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757553624; c=relaxed/simple;
-	bh=o6WRffcEM/8Gti6ksmiZu/eNzoCqTn5niA+O9XhwlAM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qjUEwTa0sA4++VYn0QWZYlXG/v0BJTEAn5shslyczV8YrsxIHWFQy6JpUAWIWr6PJfmOboVi2S0JRisu2Q0ayn5ThT+JKxxszyRK2DMqHRBTNXRKpv7Pd6sqQfIQFZtak7WzhLHvQXDOwQnBpb/MBUslRdtLXaHSBOUy1Qh8RPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mVWoWeFh; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757553622; x=1789089622;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=o6WRffcEM/8Gti6ksmiZu/eNzoCqTn5niA+O9XhwlAM=;
-  b=mVWoWeFhmA8+BFxH2lr2u+HE5EIk+B5AmU7k3itQM68GksnPSsxQe9Rc
-   1PDBAuectALHSjxxl3uwrqyxvphgNf87CNuR7YBiCuRAMBKKUwz1U2fva
-   EusPCcBAid2EhOdN2O5SM7Z406NoZY/smd5BPTF94EeHco979+oafHaO3
-   cCUxaeKwkWjhNEpXeN0gZvsRvscrynPfek4fuoRHU4u1gHt1j5xkYdw3O
-   8CDFXZh9eZmsL06TGTpmHnl5BHRX1UVZh8nKT8SnSzaEgDcunOb2wTbPI
-   2NBScHo25kbVDxxvuVmDAe/GrWkhrR0Z5hgpPomKhy2xxsQtc/SqJRJCQ
-   Q==;
-X-CSE-ConnectionGUID: FWRsP/UnRRqJVfaee71upw==
-X-CSE-MsgGUID: eIaD03YCQjGpVeewzrAQHw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="62509125"
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="62509125"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 18:20:21 -0700
-X-CSE-ConnectionGUID: nti9w0Y3SZSPtxjkz66Ebw==
-X-CSE-MsgGUID: TqIHeK1OTEyiZWGkno9aZw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="173119643"
-Received: from unknown (HELO [10.238.3.254]) ([10.238.3.254])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 18:20:17 -0700
-Message-ID: <3b3d361e-9543-4155-8837-037be854332f@linux.intel.com>
-Date: Thu, 11 Sep 2025 09:20:15 +0800
+	s=arc-20240116; t=1757553638; c=relaxed/simple;
+	bh=aGORLcrMRhgNWkSIItxPR4CntL83+XM7IVwmg9r3A5M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=R2ESAwrZbj+7ao9izbAwNna0mcesI1+AEdWBQDSkDbvAvgq+TjwCjTtbyXncGE4VNTCqtK/fuan3bLibopOuviSE8k6jHcAZ1r8RdHJq+WP7TIaG6Dn4jyE5IjH9pcjMyxWJ15QTvAFpkAg6ATVZhQLtQf/kFjq43OiHV1rzWHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cIooxd9+; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757553627; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=6rTAxnX2kPCvVjSV1Z9d0MDskdOa8h5diPJciFh9K6Q=;
+	b=cIooxd9+XhIcjyWCh2Dj+hYnAHBNNNKEzyKkBlYcc7G6zHcHhp7m+idh7ywtfizedHOLx4yGxIIHA76EzcG/3qMvP4nxMx07H53HkArJ9fqSurdvxk24LCTWbT5P0LqXnFgCeCr4niSI0EOrdWHLq/gw/0xpNN5xI//Vva8HQuU=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0Wnjxwc0_1757553626 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 11 Sep 2025 09:20:26 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Ryan Roberts <ryan.roberts@arm.com>, Yang Shi <yang@os.amperecomputing.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,  Will Deacon
+ <will@kernel.org>,  Mark Rutland <mark.rutland@arm.com>,  James Morse
+ <james.morse@arm.com>,  "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 2/2] arm64: tlbflush: Don't broadcast if mm was
+ only active on local cpu
+In-Reply-To: <dcc3b52d-0b86-47fc-8297-a6abc8af4c38@os.amperecomputing.com>
+	(Yang Shi's message of "Wed, 10 Sep 2025 16:58:25 -0700")
+References: <20250829153510.2401161-1-ryan.roberts@arm.com>
+	<20250829153510.2401161-3-ryan.roberts@arm.com>
+	<dcc3b52d-0b86-47fc-8297-a6abc8af4c38@os.amperecomputing.com>
+Date: Thu, 11 Sep 2025 09:20:25 +0800
+Message-ID: <871podlr8m.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] KVM: selftests: Add timing_info bit support in
- vmx_pmu_caps_test
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
- Mingwei Zhang <mizhang@google.com>, Zide Chen <zide.chen@intel.com>,
- Das Sandipan <Sandipan.Das@amd.com>, Shukla Manali <Manali.Shukla@amd.com>,
- Yi Lai <yi1.lai@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20250718001905.196989-1-dapeng1.mi@linux.intel.com>
- <20250718001905.196989-3-dapeng1.mi@linux.intel.com>
- <aMH1xwsK1eTjJh71@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <aMH1xwsK1eTjJh71@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
+Yang Shi <yang@os.amperecomputing.com> writes:
 
-On 9/11/2025 6:03 AM, Sean Christopherson wrote:
-> On Fri, Jul 18, 2025, Dapeng Mi wrote:
->> A new bit PERF_CAPABILITIES[17] called "PEBS_TIMING_INFO" bit is added
->> to indicated if PEBS supports to record timing information in a new
->> "Retried Latency" field.
+> Hi Ryan,
+>
+>
+> On 8/29/25 8:35 AM, Ryan Roberts wrote:
+>> There are 3 variants of tlb flush that invalidate user mappings:
+>> flush_tlb_mm(), flush_tlb_page() and __flush_tlb_range(). All of these
+>> would previously unconditionally broadcast their tlbis to all cpus in
+>> the inner shareable domain.
 >>
->> Since KVM requires user can only set host consistent PEBS capabilities,
->> otherwise the PERF_CAPABILITIES setting would fail, so add
->> pebs_timing_info bit into "immutable_caps" to block host inconsistent
->> PEBS configuration and cause errors.
-> Please explain the removal of anythread_deprecated.  AFAICT, something like this
-> is accurate:
->
-> Opportunistically drop the anythread_deprecated bit.  It isn't and likely
-> never was a PERF_CAPABILITIES flag, the test's definition snuck in when
-> the union was copy+pasted from the kernel's definition.
-
-Yes, would add this in next version. Thanks.
-
-
->
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> Tested-by: Yi Lai <yi1.lai@intel.com>
+>> But this is a waste of effort if we can prove that the mm for which we
+>> are flushing the mappings has only ever been active on the local cpu. In
+>> that case, it is safe to avoid the broadcast and simply invalidate the
+>> current cpu.
+>>
+>> So let's track in mm_context_t::active_cpu either the mm has never been
+>> active on any cpu, has been active on more than 1 cpu, or has been
+>> active on precisely 1 cpu - and in that case, which one. We update this
+>> when switching context, being careful to ensure that it gets updated
+>> *before* installing the mm's pgtables. On the reader side, we ensure we
+>> read *after* the previous write(s) to the pgtable(s) that necessitated
+>> the tlb flush have completed. This guarrantees that if a cpu that is
+>> doing a tlb flush sees it's own id in active_cpu, then the old pgtable
+>> entry cannot have been seen by any other cpu and we can flush only the
+>> local cpu.
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 >> ---
->>  tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>   arch/arm64/include/asm/mmu.h         | 12 ++++
+>>   arch/arm64/include/asm/mmu_context.h |  2 +
+>>   arch/arm64/include/asm/tlbflush.h    | 90 +++++++++++++++++++++++++---
+>>   arch/arm64/mm/context.c              | 30 +++++++++-
+>>   4 files changed, 123 insertions(+), 11 deletions(-)
 >>
->> diff --git a/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c b/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
->> index a1f5ff45d518..f8deea220156 100644
->> --- a/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
->> +++ b/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
->> @@ -29,7 +29,7 @@ static union perf_capabilities {
->>  		u64 pebs_baseline:1;
->>  		u64	perf_metrics:1;
->>  		u64	pebs_output_pt_available:1;
->> -		u64	anythread_deprecated:1;
->> +		u64	pebs_timing_info:1;
->>  	};
->>  	u64	capabilities;
->>  } host_cap;
->> @@ -44,6 +44,7 @@ static const union perf_capabilities immutable_caps = {
->>  	.pebs_arch_reg = 1,
->>  	.pebs_format = -1,
->>  	.pebs_baseline = 1,
->> +	.pebs_timing_info = 1,
->>  };
->>  
->>  static const union perf_capabilities format_caps = {
->> -- 
->> 2.34.1
->>
+>> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+>> index 6e8aa8e72601..ca32fb860309 100644
+>> --- a/arch/arm64/include/asm/mmu.h
+>> +++ b/arch/arm64/include/asm/mmu.h
+>> @@ -17,6 +17,17 @@
+>>   #include <linux/refcount.h>
+>>   #include <asm/cpufeature.h>
+>>   +/*
+>> + * Sentinal values for mm_context_t::active_cpu. ACTIVE_CPU_NONE indicates the
+>> + * mm has never been active on any CPU. ACTIVE_CPU_MULTIPLE indicates the mm
+>> + * has been active on multiple CPUs. Any other value is the ID of the single
+>> + * CPU that the mm has been active on.
+>> + */
+>> +enum active_cpu {
+>> +	ACTIVE_CPU_NONE = UINT_MAX,
+>> +	ACTIVE_CPU_MULTIPLE = UINT_MAX - 1,
+>> +};
+>> +
+>>   typedef struct {
+>>   	atomic64_t	id;
+>>   #ifdef CONFIG_COMPAT
+>> @@ -26,6 +37,7 @@ typedef struct {
+>>   	void		*vdso;
+>>   	unsigned long	flags;
+>>   	u8		pkey_allocation_map;
+>> +	unsigned int	active_cpu;
+>
+> Any reason why you don't use bit mask to mark the active CPUs? And
+> mm_struct also has cpu_bitmap to record the active CPUs which the
+> process has run on. Why not just use it? x86 uses it to determine
+> which CPUs kernel should send TLB flush IPI to. I understand this
+> series just check whether local cpu is the active cpu or not, but bit
+> mask should not make things more complicated. And it also can provide
+> more flexibility. We can extend this, for example, use IPI to send
+> local TLB flush if the number of active cpus is quite low. AFAIK, x86
+> added TLBI broadcast support too, and fallback to IPI if the number of
+> active cpus is <= 3. IIRC, Christohper's series did the similar
+> thing. He should be interested in this series too, cc'ed him.
+
+Agree!  One possible disadvantage of this series is that the benefit
+will gone after the process is migrated to another CPU.  This is quite
+common if the process isn't bound to a CPU on a system without many
+CPUs.  A cpumask will be helpful for this situation.
+
+>
+>>   } mm_context_t;
+>>     /*
+
+[snip]
+
+---
+Best Regards,
+Huang, Ying
 
