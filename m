@@ -1,153 +1,168 @@
-Return-Path: <linux-kernel+bounces-812373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E255B53741
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:16:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C0EB53755
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:18:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7DE5A6BDA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:15:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D621D188C329
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA24350853;
-	Thu, 11 Sep 2025 15:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940BF352FCD;
+	Thu, 11 Sep 2025 15:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PIunA2KN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sBZlDMUR"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97001350837
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BE734F48F
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757603660; cv=none; b=WwiWsR+HKdp90H3KdmheZlvb83lZe6mXyFZ6fx7XdmPeQNvcJ21sUogMwXTzHzqgKDG0dfOIpZG3IY6vhijjRlJc81ESLypdXXSHkRljlkLlA4Phj5B845mse8NiHX1bt8zUWfA1G/fKbYgHBBGuK+Gixp0Jp1zuwEuRZdeox7o=
+	t=1757603690; cv=none; b=RXvnFBaKvxZWPvOasULaeBoB26cGdcTW0qE/4PGGOaz/hidc1aQUyptutNMpdKyf6NfxPEzOkUJBnYmuwP03qgBcmNUj2Gey+Zy+jMptpt++t/A8XRdPAC/v0LeJHLUcJt6cNEfrViKQXbWiLo68YFYhEpkBYxkFh4RRB/YQcDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757603660; c=relaxed/simple;
-	bh=0JU93CxYWpf8MsUp2/Gmssw3P3OVuGPIO2YefZ1Rl74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y55koYemp/hj2qoAbl5eELQwwOHoDBt+Ya903g8q95I4x1CroPecbuATDWB5cndcdTRFVM5O57VfM9cHTwbV1MUJ/D92JeuHZBWMkqVTZBnz5Mp9uI+fBwgaYFQG1iiQZHCivWiDA5lSgweSC4Vm9dSmDXIUPbP0blNql8igtN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PIunA2KN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757603656;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UhkjH+hTcVoB2yqMPEhvNQAw1eYZHiJV4Zt4Zroar9Y=;
-	b=PIunA2KNLfZyOigvRH2H4H39bvKuXmGuOfmjV+ZEt1vVl1fLyxwpHC39eMUssaTdiiBhwE
-	hvvFSa8JbfeaaCRahBnacFYXgdT6yPJvLeM6xrhdsj5t1wJS9VVBHqAZHDEnIEq4FDvKq3
-	YIIbEaurlPYZ1ZJu+Hg1g8z/0FuP9Kw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-201-1MBZyD3sO--rBsXZgZZTeA-1; Thu,
- 11 Sep 2025 11:14:15 -0400
-X-MC-Unique: 1MBZyD3sO--rBsXZgZZTeA-1
-X-Mimecast-MFC-AGG-ID: 1MBZyD3sO--rBsXZgZZTeA_1757603652
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A4F2180029A;
-	Thu, 11 Sep 2025 15:14:11 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.88.69])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB60C1944CEB;
-	Thu, 11 Sep 2025 15:14:08 +0000 (UTC)
-Date: Thu, 11 Sep 2025 11:14:06 -0400
-From: Phil Auld <pauld@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Wang Tao <wangtao554@huawei.com>,
-	stable@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	tglx@linutronix.de, linux-kernel@vger.kernel.org,
-	tanghui20@huawei.com, zhangqiao22@huawei.com
-Subject: Re: [PATCH] sched/core: Fix potential deadlock on rq lock
-Message-ID: <20250911151318.GC396619@pauld.westford.csb>
-References: <20250911124249.1154043-1-wangtao554@huawei.com>
- <20250911135358.GY3245006@noisy.programming.kicks-ass.net>
- <aMLklWUzm1ZqZgZF@localhost.localdomain>
+	s=arc-20240116; t=1757603690; c=relaxed/simple;
+	bh=gFPP5AJxajK95ebcT+ygBcwnznDTFSpDjpt5bFKHJco=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CL1NsPl+YZqD6Ed8631HOjvaewWCMBa7m9T8aIWP2Q9+m/TiF1JGKXRMXdfUc5sHMJcfDEnpBtbUFqIP4EeVMug3F1EE4fNx4u0NocOXSQzVSd18n+yPpTewjKOTuz1cCqjX05dOWP7u/Fywz1j1eaonPXeMYxkzlXraerzxBbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sBZlDMUR; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8877677dbaeso18748639f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:14:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757603686; x=1758208486; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TL8sBN7m+ljpvNUUKvtA2Gj21T9prXayXIxSz2NFiTU=;
+        b=sBZlDMURowbtqyFhuvFBFXvaAZqP9GHX+AiR6MM5AmoPOhu/VkL8lPn6JlOwrOJjkx
+         Vlqh6AjuCmydboDwDpi5l9aaIIxopf65+aJ6kwz+8mQqEw30aDHfAgGcHDzXovMrHpSg
+         YBNUWD1Qi337fAuTI3PIoV1gJnIZPFGfRFW5FbcV+8/Jra3cNmbSK8N2I5u8rAndjDny
+         sbpjC5TA54XNEp3UAAEPsIXhcoTx4VHRcy5qVvQLv+X7yVU7RmLsw1YXvZrReVDvZ3E7
+         JsU5X/kB8qd4T7TJLl2a/tDnbo3FiBuxz6TbwONGqfQMwalkRoLWNxiheK1ZSFPMtNKB
+         GXGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757603686; x=1758208486;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TL8sBN7m+ljpvNUUKvtA2Gj21T9prXayXIxSz2NFiTU=;
+        b=cBDJPAFgjl/qVMsrP1D8Hi5m10Mg3ptd2pVsgHR4o/+XyYsUmMMSR37cUnN0VZMV6K
+         UKQnBUHVqfFs7qiExgxHF1cj4Cje+fSa8BOMAjXxRs6WdKE9MPm4BTVDflDfnMABK63j
+         trk1+mjnYxk7STW9IhjLsqagPwaBR/5ehKP5GsniPwZoW7BmhrhRO0Z73tUnSHqoWaiG
+         yRwYxZYUU+ZU5dZRXbT98TUKbHOCddfKUSaU3zZ+qGv3Gwd9HBuOb0Di3o8PX/i28Vij
+         7SFlHAXs1VGscytaDzzEQGqnWFnxmAlt1VFwdJ7fVtCz54APxeS3tAZiPbLjKeWZbv+u
+         hKVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHxwTo6n7TkrjUeXgdgiFWZF/k0TAlCsfQ+6cP7tYF92IikLt1/QPmOETv+E0vgn5x38sGtcBjaJU90+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOaosMZA34Se8NxZW02/lc77eaAOjXV7KA6TMYRK49aquNS1oL
+	J2B621D3AebantIyDeFUEtDJaOjZUo4CX3x9nqqLQ6auS/rCE8LAOlhXQPioG4Fa2gY=
+X-Gm-Gg: ASbGncsB8Tkjd7lI9/LUTzsRGBUr8nSbx8HL+FBVejT4XdGeeSqJ4uC/VzRHThOMlq7
+	Nf8CWURz3niF+I7PRhxt1ZeSbDShksTyvPsTEy+KQBuufn+p/o4/NaATOLSjF8hGoRKQ+JmmAxJ
+	EyRp258PNOFlpzRzj1V7k2ik9cOdmFHY5sKQQtFTTVkHLXhi4p61M3X1dzI/d9IyqIYxNjzDKl3
+	ZKejxzhNpGnPDPe2IEXzCqAX2NWJ0Zt/BmBUfWWnOVy40M2IXCa5hAS99ieG3//2hkj1h1+5r1x
+	95zO7cB/514wSsRChqw1PfpwnGVni500aUMaMsCH1t+w0A3XykCzLcpWKWJpv/6c9UsBTnDeakZ
+	09uJJfbt7waEyvNRGKnrqFtNUsUM2SCP7NkwKW/8aVfukJ9pFaJZrL5lkuldBfUsri4cy2Uarri
+	WSIrFPWIW/Jw==
+X-Google-Smtp-Source: AGHT+IE6DbCHQGT3GL1n9OFvLlun1jX9ds1zSORNzE+G+6Ju2SnMa2q2FJWS74CsRl89wRYBcZzTXg==
+X-Received: by 2002:a05:6602:2c06:b0:88d:4fd3:8131 with SMTP id ca18e2360f4ac-88d4fd38225mr1277407039f.19.1757603686287;
+        Thu, 11 Sep 2025 08:14:46 -0700 (PDT)
+Received: from ubuntu.localdomain (209-227-169-220.cpe.distributel.net. [209.227.169.220])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-88f2fabab2bsm68042039f.24.2025.09.11.08.14.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 08:14:45 -0700 (PDT)
+From: Raymond Mao <raymond.mao@linaro.org>
+To: linux-doc@vger.kernel.org,
+	devicetree-spec@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: ilias.apalodimas@linaro.org,
+	Raymond Mao <raymond.mao@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] docs: devicetree: overlay-notes: recommend top-level compatible in DTSO
+Date: Thu, 11 Sep 2025 08:14:36 -0700
+Message-Id: <20250911151436.2467758-1-raymond.mao@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMLklWUzm1ZqZgZF@localhost.localdomain>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Sep 11, 2025 at 05:02:45PM +0200 Frederic Weisbecker wrote:
-> Le Thu, Sep 11, 2025 at 03:53:58PM +0200, Peter Zijlstra a écrit :
-> > On Thu, Sep 11, 2025 at 12:42:49PM +0000, Wang Tao wrote:
-> > > When CPU 1 enters the nohz_full state, and the kworker on CPU 0 executes
-> > > the function sched_tick_remote, holding the lock on CPU1's rq
-> > > and triggering the warning WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3).
-> > > This leads to the process of printing the warning message, where the
-> > > console_sem semaphore is held. At this point, the print task on the
-> > > CPU1's rq cannot acquire the console_sem and joins the wait queue,
-> > > entering the UNINTERRUPTIBLE state. It waits for the console_sem to be
-> > > released and then wakes up. After the task on CPU 0 releases
-> > > the console_sem, it wakes up the waiting console_sem task.
-> > > In try_to_wake_up, it attempts to acquire the lock on CPU1's rq again,
-> > > resulting in a deadlock.
-> > > 
-> > > The triggering scenario is as follows:
-> > > 
-> > > CPU0								CPU1
-> > > sched_tick_remote
-> > > WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3)
-> > > 
-> > > report_bug							con_write
-> > > printk
-> > > 
-> > > console_unlock
-> > > 								do_con_write
-> > > 								console_lock
-> > > 								down(&console_sem)
-> > > 								list_add_tail(&waiter.list, &sem->wait_list);
-> > > up(&console_sem)
-> > > wake_up_q(&wake_q)
-> > > try_to_wake_up
-> > > __task_rq_lock
-> > > _raw_spin_lock
-> > > 
-> > > This patch fixes the issue by deffering all printk console printing
-> > > during the lock holding period.
-> > > 
-> > > Fixes: d84b31313ef8 ("sched/isolation: Offload residual 1Hz scheduler tick")
-> > > Signed-off-by: Wang Tao <wangtao554@huawei.com>
-> > 
-> > I fundamentally hate that deferred thing and consider it a printk bug.
-> > 
-> > But really, if you trip that WARN, fix it and the problem goes away.
-> 
-> And probably it triggers a lot of false positives. An overloaded housekeeping
-> CPU can easily be off for 2 seconds. We should make it 30 seconds.
->
+When managing multiple base device trees and overlays in a structured
+way (e.g. bundled in firmware or tools), it is helpful to identify the
+intended target base DT for each overlay, which can be done via a
+top-level compatible string in the overlay.
 
-It does trigger pretty easily. We've done some work to try to make better
-(spreading HK work around for example) but you can still hit it. Especially,
-if there are virtualization layers involved...
+This provides a way to identify which overlays should be applied once the
+DT is selected for the case when a device have a common firmware binary
+which only differs on the DT and overlays.
 
-Increasing that time a bit would be great :)
+This patch updates the document with a note and example for this
+practice.
+For more information on this firmware requirement, please see [1].
 
-Cheers,
-Phil
+[1] https://github.com/FirmwareHandoff/firmware_handoff/pull/74
 
+Suggested-by: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Signed-off-by: Raymond Mao <raymond.mao@linaro.org>
+---
+Changes in v2:
+- Updated commit message.
+Changes in v3
+- Rename to 'overlay-compatible' and rephrase the description accordingly.
 
-> Thanks.
-> 
-> -- 
-> Frederic Weisbecker
-> SUSE Labs
-> 
+ Documentation/devicetree/overlay-notes.rst | 32 ++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
+diff --git a/Documentation/devicetree/overlay-notes.rst b/Documentation/devicetree/overlay-notes.rst
+index 35e79242af9a..77284afba9a4 100644
+--- a/Documentation/devicetree/overlay-notes.rst
++++ b/Documentation/devicetree/overlay-notes.rst
+@@ -103,6 +103,38 @@ The above bar.dtso example modified to use target path syntax is::
+     ---- bar.dtso --------------------------------------------------------------
+ 
+ 
++Overlay identification
++----------------------
++
++When managing device tree overlays dynamically - such as bundling multiple base
++device trees and overlays within firmware, initramfs, or user-space tools - it
++is important to associate each overlay with its corresponding base device tree.
++
++To support this association, each overlay should define a top-level compatible
++string (referred to as the 'overlay-compatible' string). This string is
++intended to match the top-level compatible property of the target base device
++tree.
++
++By including this identifier, higher-level software or firmware can determine
++which base device tree an overlay is compatible with, and apply it accordingly.
++
++Example usage::
++
++    ---- bar.dtso - overlay with top-level compatible string -------------------
++	/dts-v1/;
++	/plugin/;
++	/ {
++		overlay-compatible = "corp,foo";
++
++		...
++	};
++    ---- bar.dtso --------------------------------------------------------------
++
++This top-level compatible string is not required by the kernel overlay
++mechanism itself, but it is strongly recommended for managing overlays in
++scalable systems.
++
++
+ Overlay in-kernel API
+ --------------------------------
+ 
 -- 
+2.25.1
 
 
