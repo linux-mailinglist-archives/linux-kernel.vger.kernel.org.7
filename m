@@ -1,91 +1,176 @@
-Return-Path: <linux-kernel+bounces-812967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694B2B53EF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:05:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C31B53EF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E5E11B2607A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6224444AC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6C42F5462;
-	Thu, 11 Sep 2025 23:05:11 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB732F5483;
+	Thu, 11 Sep 2025 23:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Xamq+/uq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 892A61A08A3;
-	Thu, 11 Sep 2025 23:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E845E2F531A
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757631911; cv=none; b=RBs+ZvJ8wKybf7bEe1eqpBvbkguPhw2Wkp6XKEjQcb1j/UHlj0REic8jQ6g7j6RvhPcieddOOtQdR24rFBNi/+zsWPS+Ea1tI0SPqAHG27HHAp75WiFOcdKbeH8nvZyzwA/uBDDSNRUfjAgwUCHfUhk2r5PP0g020zpd2hWJq48=
+	t=1757631989; cv=none; b=Q0mzV0Jlm+rGW7ESI+pT8xq+E3LdNSPSo1DdtpzfaTA7E+jqljYyESilARD3q2hhUz5JBxGu4PY5YlQu106y1wzgUc7RTOXacKgG83tKULQ+I/lxzTxtg/uAooQTUSFNpaRSUwJ92yph2QXWl+EpnvvHVabfeejg6SPOScLrVdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757631911; c=relaxed/simple;
-	bh=gFDDD0WpyznxGP95sLwGd53MUAD0tWTC/LTbrcnsw6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCd4MQFv2lZb51x7StZG1q/OgKEJpHeVtZGAZp+a2CEWrbVi9WU0S7qLy7A4xrqpwD77T5GkrL0GjQT8HcB1nh4au3/9mQJBSfLhh0RMQKmD8gCJ3qdCloCvaxbYlGTJF3xvsB3ZsslHMGNRwsxTM2d7dINEu7RG29ngXn3bwYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id A31F19AB; Thu, 11 Sep 2025 18:05:05 -0500 (CDT)
-Date: Thu, 11 Sep 2025 18:05:05 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian =?iso-8859-1?Q?G=F6ttsche?= <cgoettsche@seltendoof.de>,
-	linux-kernel@vger.kernel.org,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH] pid: use ns_capable_noaudit() when determining net
- sysctl  permissions
-Message-ID: <aMNVoSM7PauOrCPF@mail.hallyn.com>
-References: <20250910192605.16431-1-cgoettsche@seltendoof.de>
- <23663be0b8dc2a435bcc46a3d52e9e19@paul-moore.com>
+	s=arc-20240116; t=1757631989; c=relaxed/simple;
+	bh=zYm0m59md0YmJAnONrIhr+tPVXmFfeUu+aOXXuIcRMY=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=auqT9/qD4tvAtNDk7pK8TVeRBrepfxBwozTpSmzfEBqdsrBTjCt/r3vHG84UuYef8s6CfyQhmIAJA9NjEThVJltzYMvv6wxy0n0ZfYnCX7s7fej4jJFYnwsf0kF4w8PNWcYjZPZMf9b6yZWvZap7DJOyy8jL1uyPpmR8aLt/d60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Xamq+/uq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757631986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OQwBcPZWGnJ87xzP7ruqoRhyhedrtIzZGOwOMMIChZg=;
+	b=Xamq+/uq82BqIkgUYI+8gjYFCh8UhuPGlrpXY3gTQAWeXAfk2AB2XgQ9is5FWjR1M2r/zS
+	vZZha5b6T9SVsN4557fs0DiCh4eZQi5UtYv0bwBQoKkHhAOrHn5/nB2iXZeh/lpuOpZtKk
+	0kDIPAtQDvclj23W2TurS/clY3gcvlI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-196-YvqObOyDPT675tMG43FfYA-1; Thu,
+ 11 Sep 2025 19:06:23 -0400
+X-MC-Unique: YvqObOyDPT675tMG43FfYA-1
+X-Mimecast-MFC-AGG-ID: YvqObOyDPT675tMG43FfYA_1757631982
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A17BF1955EA4;
+	Thu, 11 Sep 2025 23:06:21 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 97BF51800451;
+	Thu, 11 Sep 2025 23:06:18 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, netdev@vger.kernel.org
+cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH net] rxrpc: Fix untrusted unsigned subtract
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <23663be0b8dc2a435bcc46a3d52e9e19@paul-moore.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2039267.1757631977.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 12 Sep 2025 00:06:17 +0100
+Message-ID: <2039268.1757631977@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Thu, Sep 11, 2025 at 04:46:20PM -0400, Paul Moore wrote:
-> On Sep 10, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
-> > 
-> > The capability check should not be audited since it is only being used
-> > to determine the inode permissions. A failed check does not indicate a
-> > violation of security policy but, when an LSM is enabled, a denial audit
-> > message was being generated.
-> > 
-> > The denial audit message can either lead to the capability being
-> > unnecessarily allowed in a security policy, or being silenced potentially
-> > masking a legitimate capability check at a later point in time.
-> > 
-> > Similar to commit d6169b0206db ("net: Use ns_capable_noaudit() when
-> > determining net sysctl permissions")
-> > 
-> > Fixes: 7863dcc72d0f ("pid: allow pid_max to be set per pid namespace")
-> > CC: Christian Brauner <brauner@kernel.org>
-> > CC: linux-security-module@vger.kernel.org
-> > CC: selinux@vger.kernel.org
-> > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> > ---
-> >  kernel/pid.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Reviewed-by: Paul Moore <paul@paul-moore.com>
+Fix the following Smatch Smatch static checker warning:
 
-Thanks.
+   net/rxrpc/rxgk_app.c:65 rxgk_yfs_decode_ticket()
+   warn: untrusted unsigned subtract. 'ticket_len - 10 * 4'
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+by prechecking the length of what we're trying to extract in two places in
+the token and decoding for a response packet.
 
-I'll queue this up in the capability tree, unless Christian wanted
-it in his.
+Also use sizeof() on the struct we're extracting rather specifying the siz=
+e
+numerically to be consistent with the other related statements.
 
--serge
+Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (=
+GSSAPI)")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lists.infradead.org/pipermail/linux-afs/2025-September/010=
+135.html
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: Simon Horman <horms@kernel.org>
+cc: linux-afs@lists.infradead.org
+cc: netdev@vger.kernel.org
+---
+ net/rxrpc/rxgk_app.c |   19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/net/rxrpc/rxgk_app.c b/net/rxrpc/rxgk_app.c
+index df684b5a8531..30275cb5ba3e 100644
+--- a/net/rxrpc/rxgk_app.c
++++ b/net/rxrpc/rxgk_app.c
+@@ -54,6 +54,10 @@ int rxgk_yfs_decode_ticket(struct rxrpc_connection *con=
+n, struct sk_buff *skb,
+ =
+
+ 	_enter("");
+ =
+
++	if (ticket_len < 10 * sizeof(__be32))
++		return rxrpc_abort_conn(conn, skb, RXGK_INCONSISTENCY, -EPROTO,
++					rxgk_abort_resp_short_yfs_tkt);
++
+ 	/* Get the session key length */
+ 	ret =3D skb_copy_bits(skb, ticket_offset, tmp, sizeof(tmp));
+ 	if (ret < 0)
+@@ -195,22 +199,23 @@ int rxgk_extract_token(struct rxrpc_connection *conn=
+, struct sk_buff *skb,
+ 		__be32 token_len;
+ 	} container;
+ =
+
++	if (token_len < sizeof(container))
++		goto short_packet;
++
+ 	/* Decode the RXGK_TokenContainer object.  This tells us which server
+ 	 * key we should be using.  We can then fetch the key, get the secret
+ 	 * and set up the crypto to extract the token.
+ 	 */
+ 	if (skb_copy_bits(skb, token_offset, &container, sizeof(container)) < 0)
+-		return rxrpc_abort_conn(conn, skb, RXGK_PACKETSHORT, -EPROTO,
+-					rxgk_abort_resp_tok_short);
++		goto short_packet;
+ =
+
+ 	kvno		=3D ntohl(container.kvno);
+ 	enctype		=3D ntohl(container.enctype);
+ 	ticket_len	=3D ntohl(container.token_len);
+ 	ticket_offset	=3D token_offset + sizeof(container);
+ =
+
+-	if (xdr_round_up(ticket_len) > token_len - 3 * 4)
+-		return rxrpc_abort_conn(conn, skb, RXGK_PACKETSHORT, -EPROTO,
+-					rxgk_abort_resp_tok_short);
++	if (xdr_round_up(ticket_len) > token_len - sizeof(container))
++		goto short_packet;
+ =
+
+ 	_debug("KVNO %u", kvno);
+ 	_debug("ENC  %u", enctype);
+@@ -285,4 +290,8 @@ int rxgk_extract_token(struct rxrpc_connection *conn, =
+struct sk_buff *skb,
+ 	 * also come out this way if the ticket decryption fails.
+ 	 */
+ 	return ret;
++
++short_packet:
++	return rxrpc_abort_conn(conn, skb, RXGK_PACKETSHORT, -EPROTO,
++				rxgk_abort_resp_tok_short);
+ }
+
 
