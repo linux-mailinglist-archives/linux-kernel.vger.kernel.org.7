@@ -1,239 +1,227 @@
-Return-Path: <linux-kernel+bounces-812452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8A63B5384B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:53:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94423B53850
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB27D7B747A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10B373BBA28
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED85B32F747;
-	Thu, 11 Sep 2025 15:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B44B353369;
+	Thu, 11 Sep 2025 15:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ziZtw1Ju"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2053.outbound.protection.outlook.com [40.107.96.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EAEPN/vA"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81507261B83;
-	Thu, 11 Sep 2025 15:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606007; cv=fail; b=GN6Dj6akoceI+D5b62Wh9F2tlRab3VoAux3JYlqLO1S68GvlCv4xaRS7huXB2gAulH0zkyUKR4LltQlrG/eylFdMofl0F3hsnxYeHQDZQxAG4qm5F4hhPEUZeOgCfgo+gfoKp4YhND/e9tFXiUvEG6WeqzQf55HAREXkCCgP3MI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606007; c=relaxed/simple;
-	bh=0PbXaodvUBVzjx+1fI/43yA3a0A6f3sMDd19UBfOd1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JzHQLev4qEjNiwfCkz4fzPruV9zBCXMySTXUw7zDexeV3s6XLvzP2EEtRz61Hus/F4zNNbe5LYdcn8GuiFwp5HnBON4BdUFrFgkpbVTc9d1SujF7uWX7HnTW3XZre/bJI/koxGFqa7KiQqp0rvZuTMHJkK7rfRJmCNSg3NCaCk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ziZtw1Ju; arc=fail smtp.client-ip=40.107.96.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ip5gJHS7PWBTHH9OoiI4T7ilLtdukEtSFjKISwTbiKM0exB3dWQspFTLr5QOuW3b+xMZJptQTiN9xRpvfz/+13YHaSsW0tilklBzuUdq38bYZc19YSLMI8VTI3Koo6aLiOwG+pA648XeXnBUX+/HPyg1Tv+FoVO/brsidkKUBYVqN8IL03mcAGYTwi0h0WTwAiWO/OoxAaFamYIiVpkiS7dOzLv80DZSkhFCoT3DwTQF3UlpRaqdtVIRsKbGIpgVDa6jE3il3GpGMrUixedWJh3O/ugb0Ie3/Q5DwBrPcUINlQ6lXvT7qpTXg0oTmXsFb/CZJnogehNQjwiaD95AGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=r81oeZrTJ4ncYTZcv/w45CYyx+1xnD5E5ocEAmByxeY=;
- b=qHrKZSNE7B1lprFzREQCiiQWtB+y3qDcn5TYHWiqBT0yOkXgi6L4PJ2j79q8I0gGJ6v/KDC5CGiReYpnTLbUvG0S6VwkznSmdfE3CaRaVGsDRdFdNBW5jh/fyyBkFH9n8anSMzgteop8Fnm+YPMwS85fodWz3+Vd6gchH+KXwveTfy3IcUadPQ/2fe7ovOlHL9qh0HaaUV3QmSraKqKfTt/E/381/4UQf8kSVHJJJj/1FXjhspnFNpHlnX09gGgKxuYZYNn/7NLcHWw3M8XdPV6dV+/4938rfqWJyGEzP5P8yfvT9mW9YvMTqWi9F+dQTRX+KeJGvQ1PVt0UAZhtgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=r81oeZrTJ4ncYTZcv/w45CYyx+1xnD5E5ocEAmByxeY=;
- b=ziZtw1JuavhvhzAB7aiclzDIKG0ZFizeOXdfmXKHVf8Bh/q8l5mgCb7WcDtvSLo4L9xyqjmBgkByIGp2umN5QomPnINK8t1jkC5QPTFPXxXmFSOp/uCHvzdPPMYFQC5bCPFOV+WdxvLaEV3lSerttzUG2q4DHOpvwZDtdfJohs0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- MN0PR12MB6272.namprd12.prod.outlook.com (2603:10b6:208:3c0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 15:53:22 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%4]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 15:53:21 +0000
-Date: Thu, 11 Sep 2025 11:53:14 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Nikolay Borisov <nik.borisov@suse.com>
-Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
-	Smita.KoralahalliChannabasappa@amd.com,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v6 10/15] x86/mce/amd: Enable interrupt vectors once
- per-CPU on SMCA systems
-Message-ID: <20250911155314.GA108087@yaz-khff2.amd.com>
-References: <20250908-wip-mca-updates-v6-0-eef5d6c74b9c@amd.com>
- <20250908-wip-mca-updates-v6-10-eef5d6c74b9c@amd.com>
- <d5377e66-dbbc-4883-b223-ef6c0360e0dd@suse.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5377e66-dbbc-4883-b223-ef6c0360e0dd@suse.com>
-X-ClientProxiedBy: BN0PR02CA0050.namprd02.prod.outlook.com
- (2603:10b6:408:e5::25) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5714352FCD;
+	Thu, 11 Sep 2025 15:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757606019; cv=none; b=kRlJo7c6sR+LuU75FeYUXWM6l7360GOsD9BH02RQPujIIDofl6MLSRNyxG9w9u/lDu4HLpmmX8Qn2o7qdeBjZUtAAIHJdiS1cxqt19gA7fvU8W35YKlhKZP2lki73a/0ZeDsPQ1ZWDoeIWjb6pameeRlp+BU8h3eiDG5MC/Rq6g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757606019; c=relaxed/simple;
+	bh=ejic9Ydpl1s5IMxgmzFSXx4gOtoiK+zcM93t1lGVahQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=kOUXz/Pb5oVBeENv5ciVHgvdPWyLoBD6CDAxw0OIw+qxMvRwyLR0uToNueEX2ctT3VAGAlikrrvXd8UZtLApaO/E9emrP6TXKc/HQxkoyQK0KlOMElAghTe9QsA7e/zR6yhIM3nplnfVO5AFb3M8HiOFMg3bzzun7e9YSJE6AGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EAEPN/vA; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-723bc91d7bbso7414347b3.3;
+        Thu, 11 Sep 2025 08:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757606016; x=1758210816; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XC8JzkTbSTTeU/T/H/KX2J99FzXAX5f+4Bnm1UuSlfM=;
+        b=EAEPN/vAuCjYC2P7prKZtozK/Ham/uS5NE9L8ebW64xnBuDE5PsoTYertLh9SOvILE
+         DIaUo/lV69mrEdoUCwqIr+wvWFdukPn/PaxnNw+d2cljfkijUZmEG3FoSE5lo76Qc+I7
+         TjqR9Q04hoh++MjmvXR2FUxCqX7Alekf9gtk0ammBXvCKUCcakniy0MFLecKjkSpPLO5
+         sDOvHQhwZeqoZEEjgBLz2/wo6tksR4PV7EZAY5WtftzOVRQ2LarZHEAlfHwvM+zpTFDM
+         +25YoZNEkfbrGcQAQTesQW9hccisDqpAumwuDYfdi9GoMidR4En/EAFTa960B3VCziqU
+         +8vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757606016; x=1758210816;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XC8JzkTbSTTeU/T/H/KX2J99FzXAX5f+4Bnm1UuSlfM=;
+        b=pqoMHMRD4ckMNnaPcp2DCZX7DvpYLv5JAPnB5V8TjCutO9hao/GBYU4eK9E+P7+4fV
+         dygllE06J/HAHgErv5my1NshJ5ieIMdGrGbZRGa8OivgJLfqXmQuh7mSBAXZ/aZP4TIm
+         8Y1zbH+/dPMyIyTqcgy7aOpn22yQuu7c8owhYVEI4Dk43Z4LG6776vEG12Ip9ka34IFu
+         EXxwRF6kLS/rmJRlOnOvov5m6Jjtb4sXzG+G+Sl9zE3oSuUXNttyXuQoFm5jb/u5GxJN
+         bko/fFREZyPsiw+5i/4QEPXfuM6AuB2wOyA11OQN7oxwmKoJeW3Ex0AfdM6saWPjqdH3
+         Yvvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrEGEyX2dK+w1k0gu3fSGKuIhHu8E7sQZSPGAgF8IZQCoShLsgF0w2JyacjD3ttExpuR8jHGISC+PgGOiEK/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS0KiPosoroMNqsZ5RkOFnxHHA42d2XlAqz+BMc7uIVg7me/wJ
+	yKedLE9v3LVoLCN4zXQZJcjd9lCHy8ecLYgrXMv8XHJe9WzlbT9If4g+YpnfjuTUxGpYqB+jrV6
+	oVJNzSQEQz1LJgJAAXQRbj1wAIbEq/grHXN3c0cA=
+X-Gm-Gg: ASbGncvvBX0vVY/FRmh/p8dlGADmjIegxxK2I6MXCGCXbQRbkq+s+WUMUkUgf71ePOe
+	JXbODeXpWxrZHyRZln+B9RjLIwFIbvP+FriXQ3Qt6IuX+I1De/VAZl9c5CCBanBzz/kjgeWLx8B
+	nwz0LjxIog4IRKic6rbOpjcZQOaRUgcX71PBve3kY+FpkyCnjOzIh1JoNAnctieVbTTQEX5BQSf
+	qIK17TGKPKTH/d3
+X-Google-Smtp-Source: AGHT+IHyJ401KlRoqnSKNwW3P85G3S4uk5dfmuqVQZWgvq7RFgnXBcf8Ob5//SNxMjw4AhITN4kpBDfS93WYccV+Z7c=
+X-Received: by 2002:a05:690c:3392:b0:71f:ede3:fc40 with SMTP id
+ 00721157ae682-727f534c72dmr162088207b3.40.1757606016240; Thu, 11 Sep 2025
+ 08:53:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|MN0PR12MB6272:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86079f10-a86b-41ef-d411-08ddf14b544c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?l1i2yw3/sgE14r8IeE1Ytonn+3jJ/Trxkn0REZtaYV5rEd0mCPtNRUZJbFxM?=
- =?us-ascii?Q?TaDUv3k4e3usK1aCayrA5OkWPhXMTCYZtCi+oHORL701p6e4gq8jDZQzRS9d?=
- =?us-ascii?Q?lOntUznC0OoNwY88xBYfYRinbfCFzyTIgAkwd7VpbrBKkmKXQoy0wBdRhAnV?=
- =?us-ascii?Q?42xalg9E/My+f+ofknnjcDXbhNiSL/tcbomdg69LCI/AD0ig2OfbwKtM1Cy3?=
- =?us-ascii?Q?ytmFKdo/DGuIriAN/3zCdDcj60ZmeILI73NOBinjkBYUx1maoWU4TZAT9Awr?=
- =?us-ascii?Q?e0HqX5BccSEA9dY3mDf1+e1YOGVat/217Uf2AX2CFwoqp0fLdV11GIiN/rMk?=
- =?us-ascii?Q?8HZDavmOj3Jwgz9kR/B/DuZXJQ3/K3p12rws13XiK5OWYReCQIl/fIthURr6?=
- =?us-ascii?Q?nmk2JUjfuP786+GODQOvkoez1pyQV2YXC+vGUU4hsk8lD+BXQa55H60kTqeU?=
- =?us-ascii?Q?d8kUlcay/uaHDYxCdR1NnqVgfazRkEvn2KLyhxVkEyr4qaqLq8MuUlnxbFJ+?=
- =?us-ascii?Q?FZqDkDxKX03jh6gozE5+V92ZIBOSRI35AyTh1hrxscIqWIi2dQ9T2AyFkWz+?=
- =?us-ascii?Q?JfSqS1r7Jr9KPxrXGsDChIYjRGe3eZnd2JVX1L+bnlJpvANIg4oaq+B5BDPo?=
- =?us-ascii?Q?jKq1Q0+K9mRYE6akAit4Yj/F/pLxlwUbNjoq6up7oauaM1GTc2/O0uwf/6sj?=
- =?us-ascii?Q?nAaCoSUrfSBuPEYlwRm43BZJ6gQH/2J72n5CTL84bIdibIKpYwLoPnSqyf/f?=
- =?us-ascii?Q?HtvIZY5dshfxkOtKi7HDeb07c2DGsMP3HXW5GQmnw9ByEX8ZH9AmqzprnICo?=
- =?us-ascii?Q?/tpzqk+YvNVPR09ZKL+unJRBlZAM/PeH7uFmqTNaopXzq+OxRoQHrU4MCdWF?=
- =?us-ascii?Q?F6n8Mj2oTWNn2GKSFhXIlX5LGnpLuv7Mk+fArbvh6/1mCNftvbnpjfD1gALZ?=
- =?us-ascii?Q?/+Pswre1n8wQe/dYZcY/OJUiJ3wK2w3wyzDHzxRTFb2FC4Cd8S36ph21mZBx?=
- =?us-ascii?Q?usdfkmMo1xpOc/OugR7Bz5WC2fbKugPTFKLLxNBzCoF29igp2vE4HL7up5Dm?=
- =?us-ascii?Q?YbZ34SttgkPhlnpZqlSCcW3JDUD0MbML0qIHQ3DYV5xxxsgwfi6B4NAsPjL6?=
- =?us-ascii?Q?lvARvfpPofLJgNMh4ldR8PbVO2HModDOuBSVWC2rpiTUieXsQwIzqG9ttTw6?=
- =?us-ascii?Q?Qr9eXTFZi8aRi2auJSGaUoeUUmJvxtauQqiqXMb9f3TO1Q7/BQs47Gw8z0By?=
- =?us-ascii?Q?9YNBVB9+eTMNeIiWr/OjWT3rt09sRIMNGZDAonyygOLUK3OWilLKxl9sBQ2v?=
- =?us-ascii?Q?DdsgVwdrKGQjcE9rVC4kTjgC9+eftkOrvRoZsMYvEUEhUCsLmpuOiZGtdC85?=
- =?us-ascii?Q?VyHUwyPyChO0H37ynHA390mT3sMLTpuyrKB07+tqHFhlQ4s63qG+GQet815v?=
- =?us-ascii?Q?zWiLOhsxYY703XNC7errfJX9iXUK8LQV?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?M0QOgKlFVAE7GUZ5rvVans1e4y1Cx+PTurXUYImnaIXnKff3jPJ4YXXmD+PK?=
- =?us-ascii?Q?F1+nloaY8CLfqow+OZW6DRKFeUGZ8AwyIMre4NW6fYZOisl5qKL8WHlv42l3?=
- =?us-ascii?Q?NetGcRlnMgDpBjiiODJhMQn4RRcJXC8IP9zPAu2zD4FCNUte7m+1m/r7jBZz?=
- =?us-ascii?Q?fUzh0PHaN26VI20bgbtJ0VHWmqS5cDHiLjM+xYUg+0F/Bc5v4aq1FHPOv1A9?=
- =?us-ascii?Q?yGF3tPCiq9RZp0aiISvxtiJO7pn0nlPlGz7/SAKuCM41i5imXeeqUuwNFlVl?=
- =?us-ascii?Q?YD+SyU1tJpBxLkryS0YLSX+hYGB2W40e4Fln5zQGURU1X0apEVwe7nzFPAXF?=
- =?us-ascii?Q?mCvFotCwBCvWyS4wyNBOYH2VGgt5DJit73941Xt4L5oEg3nmTa+Y8peZGqQH?=
- =?us-ascii?Q?iSGAQ09JhSMRQ/4NiQJlXkdHDYTTOUP3sv3npRF5Qh65lEN+sx5XYY+EEEoO?=
- =?us-ascii?Q?qHXuDP2bTtDUDxCu8Ihslebs77QkSZejWy66dN/qlsTJvET8HQHWLISowpgn?=
- =?us-ascii?Q?MzOrmCEDBX9mVCU5zn8nWU+VzgPMwYUL+lcpnLwhzWv4JpjpfipXqfNYwHt5?=
- =?us-ascii?Q?V128DxhrEWdLe8Mxtu4+wdrjWD2eO3+G6AJrfHzOBTumSHgNF+D5KuDzZcZM?=
- =?us-ascii?Q?6U6AnaYLQF9dIN3ZsQIYcBESq2R/f+oJVTzVUF3tetiXcgwknKMnFsDNxu75?=
- =?us-ascii?Q?hYK+vmSU8YetPuOegKyKKp//7bj/drA3o5htDPzTTFUwNNopz/HmmOU09kJd?=
- =?us-ascii?Q?P7mJM6KMPGM8LAr6itCwA3mOc7at/Iusitjjq8uydhSn/Y0StfbdeZZEVodt?=
- =?us-ascii?Q?aZT2BSz8sBGUZPGrHMSrdwxUfqKqZBgda7OynaZFntY4N1xj1oxSl02WsTeV?=
- =?us-ascii?Q?OBSWjv3iVx5vtZEi7ATA2eTNngjQzD0t3/pwkzXViVTfiSjEiPD9ixpBwJNw?=
- =?us-ascii?Q?TN5uN8gX/yRJgVZbfc4GZ6itdrkVGYGxJvQmrITZ+Eh9dYqUfWCPudC2qqIR?=
- =?us-ascii?Q?x2PbiKvAFpzJ8+vwmxNeKNQ5N9F7T4/OOR2XyNNX2E6wqJbJeUrIclC36opR?=
- =?us-ascii?Q?VWzzKvaRfiwBr0Z7+OBiymnvWfxo1wW/bcZxmUcT+nMpmgK0/G2Q9ZyzOGsh?=
- =?us-ascii?Q?+SQMVIKq4YdowJCnN9bb3gzL0Sj/ZQI1elA1+88Wb5Mwgj0T/p84yNzXKHWC?=
- =?us-ascii?Q?2JYJaUcPjOnbJrDvct8DUEoj4oG5v/xmlxfDc2sUBI91IDuhElFmKmaCqmSW?=
- =?us-ascii?Q?+Q8dAkeKNOW0hc1ZxgxZu7k1n48U+qgdzgkasGvJsbOkWwEkimLGsLpFI5jV?=
- =?us-ascii?Q?SOOG4bi7kpa32f8EtVdZlRTc9pBbCJSn8GbF8zmYbZJPhkRAE16JxFPplfmk?=
- =?us-ascii?Q?c10+AJSN4BbQuMcnjCeQVzwlCVt1cgfJ8uHlpx3B1cVlrU65kGVgfgiukDJm?=
- =?us-ascii?Q?Lud2Jc6WPwOg9cSBelYOt3vIfalMYa8attNyBpb50igEaqHpjjwP3x2HKYwJ?=
- =?us-ascii?Q?k1OXaUdHoJ6U1q7UF1iCzXIYZwj4Y3D/NCQip82Ek5ojIvmQilEKYGxl2jUC?=
- =?us-ascii?Q?4jYKSmCD+HTi7UcrASZFTgOYZUT9+hMcq6jr9xGz?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86079f10-a86b-41ef-d411-08ddf14b544c
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 15:53:21.5467
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dRODD4LcwJpjhFrxfMEzH0H0M20U/zGpT0CXLG5mLCki41bMqRRvWsERVfiRBG2VzylAwxWoobTERY4Vw0xQnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6272
+From: cen zhang <zzzccc427@gmail.com>
+Date: Thu, 11 Sep 2025 23:53:22 +0800
+X-Gm-Features: Ac12FXwwTCx1WdZ3n6mj5YIOSrHpP2qnz1AmFSQnSzVgUCDGoDI59rurvBNEkpQ
+Message-ID: <CAFRLqsWnWnDaY2a23HctbxLKquvw7Ax30YB-tdBmS59RtQ4JBw@mail.gmail.com>
+Subject: [BUG]: slab-use-after-free Write in sco_conn_put
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, johan.hedberg@gmail.com, marcel@holtmann.org
+Cc: linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, 
+	zhenghaoran154@gmail.com, r33s3n6@gmail.com, linux-bluetooth@vger.kernel.org, 
+	"gality369@gmail.com" <gality369@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 11, 2025 at 01:22:10PM +0300, Nikolay Borisov wrote:
-> 
-> 
-> On 9/8/25 18:40, Yazen Ghannam wrote:
-> > Scalable MCA systems have a per-CPU register that gives the APIC LVT
-> > offset for the thresholding and deferred error interrupts.
-> > 
-> > Currently, this register is read once to set up the deferred error
-> > interrupt and then read again for each thresholding block. Furthermore,
-> > the APIC LVT registers are configured each time, but they only need to
-> > be configured once per-CPU.
-> > 
-> > Move the APIC LVT setup to the early part of CPU init, so that the
-> > registers are set up once. Also, this ensures that the kernel is ready
-> > to service the interrupts before the individual error sources (each MCA
-> > bank) are enabled.
-> > 
-> > Apply this change only to SMCA systems to avoid breaking any legacy
-> > behavior. The deferred error interrupt is technically advertised by the
-> > SUCCOR feature. However, this was first made available on SMCA systems.
-> > Therefore, only set up the deferred error interrupt on SMCA systems and
-> > simplify the code.
-> > 
-> > Guidance from hardware designers is that the LVT offsets provided from
-> > the platform should be used. The kernel should not try to enforce
-> > specific values. However, the kernel should check that an LVT offset is
-> > not reused for multiple sources.
-> > 
-> > Therefore, remove the extra checking and value enforcement from the MCE
-> > code. The "reuse/conflict" case is already handled in
-> > setup_APIC_eilvt().
-> > 
-> > Tested-by: Tony Luck <tony.luck@intel.com>
-> > Reviewed-by: Tony Luck <tony.luck@intel.com>
-> > Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> > ---
-> > 
-> > Notes:
-> >      Link:
-> >      https://lore.kernel.org/r/20250825-wip-mca-updates-v5-15-865768a2eef8@amd.com
-> >      v5->v6:
-> >      * Applied "bools to flags" and other fixups from Boris.
-> >      v4->v5:
-> >      * Added back to set.
-> >      * Updated commit message with more details.
-> >      v3->v4:
-> >      * Dropped from set.
-> >      v2->v3:
-> >      * Add tags from Tony.
-> >      v1->v2:
-> >      * Use new per-CPU struct.
-> >      * Don't set up interrupt vectors.
-> > 
-> >   arch/x86/kernel/cpu/mce/amd.c | 121 ++++++++++++++++++------------------------
-> >   1 file changed, 53 insertions(+), 68 deletions(-)
-> > 
-> > diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-> > index 1b1b83b3aef9..a6f5c9339d7c 100644
-> > --- a/arch/x86/kernel/cpu/mce/amd.c
-> > +++ b/arch/x86/kernel/cpu/mce/amd.c
-> > @@ -43,9 +43,6 @@
-> >   /* Deferred error settings */
-> >   #define MSR_CU_DEF_ERR		0xC0000410
-> 
-> nit: While touching this code why not finally rename this in line with the
-> APM, section 9.3.1.4: MCA_INTR_CFG
-> 
-> Perhaps as a separate patch. I see that you did send a patch containing this
-> rename:
-> https://lore.kernel.org/all/20231118193248.1296798-13-yazen.ghannam@amd.com/
-> But I guess it didn't land.
+Hello maintainers,
 
-Yep, thanks for noticing. :)
+I would like to report  a use-after-free (UAF) vulnerability
+identified in the Bluetooth SCO (Synchronous Connection
+Oriented) connection handling code using
+our customized syzkaller on 6.17.0-rc5.
+The bug occurs due to concurrent access to freed
+sco_conn structures during connection failure scenarios.
 
-IIRC, I tried to reduce this set down to (mostly) functional changes.
+After my superficial analysis, the situation when race occurs may be as follows:
 
-I think that there is still more worthwhile refactoring to do.
+CONCURRENT CLEANUP PATHS:
+   - Path A: Socket close operation (Task 31374) triggers sco_sock_release()
+   - Path B: HCI connection failure triggers hci_abort_conn_sync() in
+workqueue (Task 352)
 
-Thanks,
-Yazen
+RACE CONDITION SEQUENCE:
+   a) Task 31374 releases socket, eventually leading to sco_conn_free()
+   b) sco_conn_free() sets hcon->sco_data = NULL and calls kfree(conn)
+   c) Task 352 (workqueue) executes hci_conn_failed() -> sco_connect_cfm()
+   d) sco_connect_cfm() calls sco_conn_del(hcon, bt_to_errno(status))
+   e) sco_conn_del() attempts to access already-freed sco_conn via
+hcon->sco_data
+
+The detail KASAN report as follow:
+==================================================================
+BUG: KASAN: slab-use-after-free in sco_conn_free net/bluetooth/sco.c:87 [inline]
+BUG: KASAN: slab-use-after-free in kref_put include/linux/kref.h:65 [inline]
+BUG: KASAN: slab-use-after-free in sco_conn_put+0xdd/0x410
+net/bluetooth/sco.c:107
+Write of size 8 at addr ffff88811cb96b50 by task kworker/u17:4/352
+
+CPU: 1 UID: 0 PID: 352 Comm: kworker/u17:4 Not tainted
+6.17.0-rc5-g717368f83676 #4 PREEMPT(voluntary)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: hci13 hci_cmd_sync_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x10b/0x170 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x191/0x550 mm/kasan/report.c:482
+ kasan_report+0xc4/0x100 mm/kasan/report.c:595
+ sco_conn_free net/bluetooth/sco.c:87 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ sco_conn_put+0xdd/0x410 net/bluetooth/sco.c:107
+ sco_connect_cfm+0xb4/0xae0 net/bluetooth/sco.c:1441
+ hci_connect_cfm include/net/bluetooth/hci_core.h:2082 [inline]
+ hci_conn_failed+0x20a/0x2e0 net/bluetooth/hci_conn.c:1313
+ hci_conn_unlink+0x55f/0x810 net/bluetooth/hci_conn.c:1121
+ hci_conn_del+0xb6/0x1110 net/bluetooth/hci_conn.c:1147
+ hci_abort_conn_sync+0x8c5/0xbb0 net/bluetooth/hci_sync.c:5689
+ hci_cmd_sync_work+0x281/0x380 net/bluetooth/hci_sync.c:332
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0x77e/0x1040 kernel/workqueue.c:3319
+ worker_thread+0xbee/0x1200 kernel/workqueue.c:3400
+ kthread+0x3c7/0x870 kernel/kthread.c:463
+ ret_from_fork+0x13a/0x1e0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 31370:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x30/0x70 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0x82/0x90 mm/kasan/common.c:405
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4382 [inline]
+ __kmalloc_noprof+0x22f/0x390 mm/slub.c:4394
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ sk_prot_alloc+0xae/0x220 net/core/sock.c:2239
+ sk_alloc+0x34/0x5a0 net/core/sock.c:2295
+ bt_sock_alloc+0x3c/0x330 net/bluetooth/af_bluetooth.c:151
+ sco_sock_alloc net/bluetooth/sco.c:562 [inline]
+ sco_sock_create+0xc0/0x350 net/bluetooth/sco.c:593
+ bt_sock_create+0x161/0x3b0 net/bluetooth/af_bluetooth.c:135
+ __sock_create+0x3ad/0x780 net/socket.c:1589
+ sock_create net/socket.c:1647 [inline]
+ __sys_socket_create net/socket.c:1684 [inline]
+ __sys_socket+0xd5/0x330 net/socket.c:1731
+ __do_sys_socket net/socket.c:1745 [inline]
+ __se_sys_socket net/socket.c:1743 [inline]
+ __x64_sys_socket+0x7a/0x90 net/socket.c:1743
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xc7/0x240 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 31374:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x30/0x70 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x3d/0x50 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2428 [inline]
+ slab_free mm/slub.c:4701 [inline]
+ kfree+0x199/0x3b0 mm/slub.c:4900
+ sk_prot_free net/core/sock.c:2278 [inline]
+ __sk_destruct+0x4aa/0x630 net/core/sock.c:2373
+ sco_sock_release+0x2ad/0x300 net/bluetooth/sco.c:1333
+ __sock_release net/socket.c:649 [inline]
+ sock_close+0xb8/0x230 net/socket.c:1439
+ __fput+0x3d1/0x9e0 fs/file_table.c:468
+ task_work_run+0x206/0x2a0 kernel/task_work.c:227
+ get_signal+0x1201/0x1410 kernel/signal.c:2807
+ arch_do_signal_or_restart+0x34/0x740 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop+0x68/0xc0 kernel/entry/common.c:40
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x1dd/0x240 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88811cb96800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 848 bytes inside of
+ freed 1024-byte region [ffff88811cb96800, ffff88811cb96c00)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x11cb90
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0x200000000000040(head|node=0|zone=2)
+page_type: f5(slab)
+raw: 0200000000000040 ffff888100042dc0 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 0200000000000040 ffff888100042dc0 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000100010 00000000f5000000 0000000000000000
+head: 0200000000000003 ffffea000472e401 00000000ffffffff 00000000ffffffff
+head: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff88811cb96a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88811cb96a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88811cb96b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                 ^
+ ffff88811cb96b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88811cb96c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+Best regards,
+Cen Zhang
 
