@@ -1,252 +1,120 @@
-Return-Path: <linux-kernel+bounces-812815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F944B53D0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:23:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53463B53D16
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24D3567E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:23:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA26A56888C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81A3277CB3;
-	Thu, 11 Sep 2025 20:22:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81681286D62;
+	Thu, 11 Sep 2025 20:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1pjQzEM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B887274669
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 20:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C23B6277CAE;
+	Thu, 11 Sep 2025 20:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757622179; cv=none; b=Arujg2rt/3/JvVdZoMJ9inzkGJKCZRs3iHGdnhxAciB8dcqQPmxeRrbHfqShuGrYPurIeFxVyfPKW7o9ORPi5+WcE9322NBpaeMV5JID2lXj8m+H/Wq1kiG1Xt5X9QxUV9cTzVFS6Q8E7gCD8Ke0Q1m+k6C/UAT0gvIpVBuvOSk=
+	t=1757622232; cv=none; b=m4D3wovXWzEDn91DSoupOyxXdSKYXLmduZpdkZ+nRVm/zlOu73+1FTlGntvRv6Safuojzxe06bJi+OzCuZjNLERL98Q88fWQ2NQSo17qWhSxzUIzdqScy7ZmRo7Z5JsjRKXp35Uqc6UitTXEaBudp+JvWXuZfYUeUIIVwHlp9CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757622179; c=relaxed/simple;
-	bh=t3Qxwy3AnC9M50lFGea/MNR0jGvER4KJxcZ+31kFsDs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FXpiRafYw95PiX/dI89arcRu3vPNBuVd4yR1a66hJBh1CVKNln/x78jX4aOxI95pnEzk0cFUsxLZaCt/e7pBIh6WX6Z9fd4xaiaZKIITCzIgTO55oZrkfkHdx3TXeUhevowDFYuK8eplAc6t9rWq7v1Dm+6EhkkyT/UHPvFpeVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from dude02.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::28])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <m.felsch@pengutronix.de>)
-	id 1uwnog-0005yg-QY; Thu, 11 Sep 2025 22:22:50 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-Date: Thu, 11 Sep 2025 22:22:46 +0200
-Subject: [PATCH v4 5/5] usb: misc: onboard_dev: add hub downstream port
- host vbus-supply handling
+	s=arc-20240116; t=1757622232; c=relaxed/simple;
+	bh=PyFbXxgLfiqZCSLfzMA8KQbt6qVlJRGfha6ahnEDLzc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=bDgX+k81w1YZpaEefL0ZkBHaELe848KhVJ2La7RxX4eQP9RvmQgnlQdU13SzTWgH3wVMrz/ArRIYvSh0ienT+iFrD3kghqi6iE4skS/Tti2NE3wr6c0DoLS8KkA5/Y0ZiWjL7DrjIjdfPLVtYnCHGsrAcgisVCM1EEA51TQ66V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1pjQzEM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C58CC4CEF0;
+	Thu, 11 Sep 2025 20:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757622232;
+	bh=PyFbXxgLfiqZCSLfzMA8KQbt6qVlJRGfha6ahnEDLzc=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=b1pjQzEMy2yEfO5xhEZKNCYYNn+84YT8n0FCmz6PXtf3xEglmx7H+FLN0zacJzkRU
+	 naXiqIwi53P7z5Z/3BbgTsyDXabHUZs2kg9bu16HxhKdrj5tUbOomsPbK44jMK42aJ
+	 a8joJ1C2NycPdbF0n0ZTEWAs0mdTUhRo8MTWh3yEyF2zurrQ/ytAiAXlXo5xbUwHsB
+	 KL15QX8/fTP632TChmLFtllwl1b1WJmKG9PoOeFGBUJG2YFy9i/hGKIGD+V6NaACj3
+	 RvmUyT5EutXQxjMPqJYGJd79lDaOJqi0uG8unke6g3Es23zGrCmphRy0nTl3I7h6Sc
+	 digylkavGJLFg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250911-v6-16-topic-usb-onboard-dev-v4-5-1af288125d74@pengutronix.de>
-References: <20250911-v6-16-topic-usb-onboard-dev-v4-0-1af288125d74@pengutronix.de>
-In-Reply-To: <20250911-v6-16-topic-usb-onboard-dev-v4-0-1af288125d74@pengutronix.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- Matthias Kaehlcke <mka@chromium.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Mark Brown <broonie@kernel.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, kernel@pengutronix.de, 
- Marco Felsch <m.felsch@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:1101:1d::28
-X-SA-Exim-Mail-From: m.felsch@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 11 Sep 2025 22:23:46 +0200
+Message-Id: <DCQ92VZ22KOU.14L0I1QBKBT29@kernel.org>
+Subject: Re: [PATCH v5 1/3] rust: i2c: add basic I2C device and driver
+ abstractions
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
+ "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Viresh Kumar"
+ <viresh.kumar@linaro.org>, "Asahi Lina" <lina+kernel@asahilina.net>,
+ "Wedson Almeida Filho" <wedsonaf@gmail.com>, "Alex Hung"
+ <alex.hung@amd.com>, "Tamir Duberstein" <tamird@gmail.com>, "Xiangfei Ding"
+ <dingxiangfei2009@gmail.com>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-i2c@vger.kernel.org>
+To: "Igor Korotin" <igor.korotin.linux@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250911154717.96637-1-igor.korotin.linux@gmail.com>
+ <20250911154936.97118-1-igor.korotin.linux@gmail.com>
+In-Reply-To: <20250911154936.97118-1-igor.korotin.linux@gmail.com>
 
-Some PCB designs don't use the dedicated USB hub port power GPIOs.
-Instead they route the signals to the host. So the host is in charge to
-power the VBUS supplies.
+On Thu Sep 11, 2025 at 5:49 PM CEST, Igor Korotin wrote:
+> +pub trait Driver: Send {
+> +    /// The type holding information about each device id supported by t=
+he driver.
+> +    // TODO: Use `associated_type_defaults` once stabilized:
+> +    //
+> +    // ```
+> +    // type IdInfo: 'static =3D ();
+> +    // ```
+> +    type IdInfo: 'static;
+> +
+> +    /// The table of device ids supported by the driver.
+> +    const I2C_ID_TABLE: Option<IdTable<Self::IdInfo>> =3D None;
+> +
+> +    /// The table of OF device ids supported by the driver.
+> +    const OF_ID_TABLE: Option<of::IdTable<Self::IdInfo>> =3D None;
+> +
+> +    /// The table of ACPI device ids supported by the driver.
+> +    const ACPI_ID_TABLE: Option<acpi::IdTable<Self::IdInfo>> =3D None;
+> +
+> +    /// I2C driver probe.
+> +    ///
+> +    /// Called when a new i2c client is added or discovered.
+> +    /// Implementers should attempt to initialize the client here.
+> +    fn probe(
+> +        dev: &I2cClient<device::Core>,
+> +        id_info: Option<&Self::IdInfo>,
+> +    ) -> Result<Pin<KBox<Self>>>;
+> +
+> +    /// I2C driver shutdown
+> +    ///
+> +    /// Called when
 
-As first step the USB hub OF information is parsed and possible optional
-vbus-supply regulators are added. This is done during the platform
-driver probe() function.
+Seems like you did forget to actually finish the comment.
 
-Afterwards, during the usb driver probe() function and in case this is
-an USB hub, the set/clear features hooks are registered via the new
-usb_hub_register_port_feature_hooks().
+> +    fn shutdown(dev: &I2cClient<device::Core>) {
 
-After this registration all generic usb hub set/clear features calls are
-passed to the onboard_dev driver too. This allows the driver to
-en-/disable the regulators.
+You should also provide a Pin<&Self> argument.
 
-Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
----
- drivers/usb/misc/onboard_usb_dev.c | 117 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 117 insertions(+)
+> +        let _ =3D dev;
+> +    }
 
-diff --git a/drivers/usb/misc/onboard_usb_dev.c b/drivers/usb/misc/onboard_usb_dev.c
-index 5b481876af1b2c10ce625fcf0fb8bfbe8905aa8c..1ceea75d30d320e5d2203c768b9641876ebd37ad 100644
---- a/drivers/usb/misc/onboard_usb_dev.c
-+++ b/drivers/usb/misc/onboard_usb_dev.c
-@@ -54,6 +54,12 @@ struct usbdev_node {
- 	struct list_head list;
- };
- 
-+struct onboard_dev_port_regulator {
-+	struct regulator *vbus_supply;
-+	unsigned int port;
-+	struct list_head list;
-+};
-+
- struct onboard_dev {
- 	struct regulator_bulk_data supplies[MAX_SUPPLIES];
- 	struct device *dev;
-@@ -65,6 +71,7 @@ struct onboard_dev {
- 	struct list_head udev_list;
- 	struct mutex lock;
- 	struct clk *clk;
-+	struct list_head ext_vbus_supplies;
- };
- 
- static int onboard_dev_get_regulators(struct onboard_dev *onboard_dev)
-@@ -226,6 +233,71 @@ static int onboard_dev_add_usbdev(struct onboard_dev *onboard_dev,
- 	return err;
- }
- 
-+static int onboard_dev_port_power(struct onboard_dev *onboard_dev, int port1,
-+				  bool enable)
-+{
-+	struct onboard_dev_port_regulator *regulator;
-+	struct regulator *vbus_supply = NULL;
-+
-+	list_for_each_entry(regulator, &onboard_dev->ext_vbus_supplies, list) {
-+		if (regulator->port == port1) {
-+			vbus_supply = regulator->vbus_supply;
-+			break;
-+		}
-+	}
-+
-+	/* External supplies are optional, return no error */
-+	if (!vbus_supply)
-+		return 0;
-+
-+	if (enable)
-+		return regulator_enable(vbus_supply);
-+
-+	return regulator_disable(vbus_supply);
-+}
-+
-+static int onboard_dev_add_ext_vbus_supplies(struct onboard_dev *onboard_dev)
-+{
-+	struct device *dev = onboard_dev->dev;
-+
-+	if (!onboard_dev->pdata->is_hub)
-+		return 0;
-+
-+	INIT_LIST_HEAD(&onboard_dev->ext_vbus_supplies);
-+
-+	for_each_child_of_node_scoped(dev->of_node, child) {
-+		struct onboard_dev_port_regulator *regulator;
-+		struct regulator *port_supply;
-+		u32 port;
-+
-+		port_supply = devm_of_regulator_get_optional(dev, child, "vbus");
-+		if (IS_ERR(port_supply)) {
-+			if (PTR_ERR(port_supply) == -ENODEV)
-+				continue;
-+			return PTR_ERR(port_supply);
-+		}
-+
-+		/*
-+		 * The VBUS of this downstream port is controlled by a host
-+		 * managed regulator
-+		 */
-+		if (of_property_read_u32(child, "reg", &port)) {
-+			dev_err(dev, "Failed to parse USB device reg property\n");
-+			return -EINVAL;
-+		}
-+
-+		regulator = devm_kzalloc(dev, sizeof(*regulator), GFP_KERNEL);
-+		if (!regulator)
-+			return -ENOMEM;
-+
-+		regulator->vbus_supply = port_supply;
-+		regulator->port = port;
-+		list_add(&regulator->list, &onboard_dev->ext_vbus_supplies);
-+	}
-+
-+	return 0;
-+}
-+
- static void onboard_dev_remove_usbdev(struct onboard_dev *onboard_dev,
- 				      const struct usb_device *udev)
- {
-@@ -460,6 +532,10 @@ static int onboard_dev_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, PTR_ERR(onboard_dev->reset_gpio),
- 				     "failed to get reset GPIO\n");
- 
-+	err = onboard_dev_add_ext_vbus_supplies(onboard_dev);
-+	if (err)
-+		return dev_err_probe(dev, err, "failed to parse port vbus supplies\n");
-+
- 	mutex_init(&onboard_dev->lock);
- 	INIT_LIST_HEAD(&onboard_dev->udev_list);
- 
-@@ -573,6 +649,44 @@ static struct platform_driver onboard_dev_driver = {
- #define VENDOR_ID_VIA		0x2109
- #define VENDOR_ID_XMOS		0x20B1
- 
-+static int onboard_dev_port_feature(struct usb_device *udev, bool set,
-+				    int feature, int port1)
-+{
-+	struct device *dev = &udev->dev;
-+	struct onboard_dev *onboard_dev = dev_get_drvdata(dev);
-+
-+	/*
-+	 * Check usb_hub_register_port_feature_hooks() if you want to extent
-+	 * the list of handled features. At the moment only power is synced
-+	 * after adding the hook.
-+	 */
-+	switch (feature) {
-+	case USB_PORT_FEAT_POWER:
-+		return onboard_dev_port_power(onboard_dev, port1, set);
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static int
-+onboard_dev_set_port_feature(struct usb_device *udev, int feature, int port1)
-+{
-+	return onboard_dev_port_feature(udev, true, feature, port1);
-+}
-+
-+static int
-+onboard_dev_clear_port_feature(struct usb_device *udev, int feature, int port1)
-+{
-+	return onboard_dev_port_feature(udev, false, feature, port1);
-+}
-+
-+static void
-+onboard_dev_register_hub_hooks(struct usb_device *udev)
-+{
-+	usb_hub_register_port_feature_hooks(udev, onboard_dev_set_port_feature,
-+					    onboard_dev_clear_port_feature);
-+}
-+
- /*
-  * Returns the onboard_dev platform device that is associated with the USB
-  * device passed as parameter.
-@@ -632,6 +746,9 @@ static int onboard_dev_usbdev_probe(struct usb_device *udev)
- 
- 	dev_set_drvdata(dev, onboard_dev);
- 
-+	if (onboard_dev->pdata->is_hub)
-+		onboard_dev_register_hub_hooks(udev);
-+
- 	err = onboard_dev_add_usbdev(onboard_dev, udev);
- 	if (err)
- 		return err;
-
--- 
-2.47.3
-
+Can you please also add an unbind() method analogous to PCI, platform, etc.=
+? It
+avoids that people have to use try_access() for accessing device resources =
+on
+remove().
 
