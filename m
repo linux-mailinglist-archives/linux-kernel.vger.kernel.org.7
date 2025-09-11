@@ -1,116 +1,100 @@
-Return-Path: <linux-kernel+bounces-812483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FB7B538BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:07:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9715DB538BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D33B3B9446
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:06:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1FC1188D174
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:06:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8943568E4;
-	Thu, 11 Sep 2025 16:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A063126D3;
+	Thu, 11 Sep 2025 16:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="lU4LzOPK"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gSTdd235";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZB+mVSl6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1131353366;
-	Thu, 11 Sep 2025 16:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A9F2E8B64
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606786; cv=none; b=KT7STawoZbHwmXAv31TOkAP3HwhWQH9atdJXezroaDijJ/jVOQvMOv2Ujnt/Qx2TCIqWyKcz/vPLTJXPp94ypaNzAjI2fFjhFZs7DU3XoNz4JpLf3xeY6UW2Lnh9F6wB3RMi8J+AARDtGHFS6hIYg3X1O9mmUUxxN+LssVaXO3s=
+	t=1757606779; cv=none; b=IJgL1WWsin5LJFD7LJIQMOBTnENlXbJt1Tme5j6D02r7Piz35EUinBTuJ5poEt+fny+AXLNUkiZBWkYD9TRdbVV/cMwjE1IQreKriTvSrDhqGdGKlc0g9kRvwJTRmnVM1PnO7OFSf3FxMex007BknUy8v3b2iPOMx/SPzCC7n74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606786; c=relaxed/simple;
-	bh=ciCOZGhabF8HNR4h9pq04kCRspkxj5kJMALIlh2nY/M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sLsdPYbx+oxE5m+2EPOyscB7Id0QVV11k3Q7bQUb4hJAuytVrbU8xRsXSoQOZtxwzL+3tZcpOlaiwAIDXeIyQy8bJggBgc+1ymxciBLSGfcqGA4N5yQhhp/2MZOYyXZVQvANCx3aPtEl7unG7+7H+Jip1GB8k22VNuMisXtSh6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=lU4LzOPK; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=itbn4svyCtOyKrWsQDdF9xn6MViM9FiPog00luIp7Hw=; b=lU4LzOPK68yTBqYSalE1clHwYN
-	5ZqJJgi9HtmpdzyYL3fKydZackJ0rBn6DiWtxo2NR2mhpxws1IaVOknCjfYk6auYUaFjRKiA2jyS4
-	xscLRNyHUm42jJrh1e2OoHgH0Oo5qw907QspE8L06J+qB5nZtgCEdeLtBjh4cfAR1+vouZ52YQDGh
-	/GNAzD46ms4S9FW30hQZNDg6LJkFVdh4QLMzdN5ab5UaAIl1TP7zm/ZD5oJWNRSr3lCsxOfMGoWp1
-	ewFyxQqNNNdlYo8e7pjQ1SVX71P20S7vc/idWdCd7lKc0TJXHXKOEhir3vv9GHvYbI7taNCXVNf8L
-	+VFLvWrQ==;
-Received: from i53875b0e.versanet.de ([83.135.91.14] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uwjo8-0003Pg-EB; Thu, 11 Sep 2025 18:06:00 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: arnd@arndb.de, Mikko Rapeli <mikko.rapeli@linaro.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- adrian.hunter@intel.com, victor.shih@genesyslogic.com.tw,
- ben.chuang@genesyslogic.com.tw, geert+renesas@glider.be,
- angelogioacchino.delregno@collabora.com, dlan@gentoo.org,
- zhoubinbin@loongson.cn
-Subject:
- Re: [PATCH] mmc: dw_mmc-rockchip: add dependency to ROCKCHIP_PM_DOMAINS
-Date: Thu, 11 Sep 2025 18:05:59 +0200
-Message-ID: <1813054.X513TT2pbd@diego>
-In-Reply-To:
- <CAPDyKFqLag_WkxqOCebvBCJy4TzZEqt-rFD_Z30sajUxgSpcaA@mail.gmail.com>
-References:
- <20250911144313.2774171-1-mikko.rapeli@linaro.org>
- <CAPDyKFqLag_WkxqOCebvBCJy4TzZEqt-rFD_Z30sajUxgSpcaA@mail.gmail.com>
+	s=arc-20240116; t=1757606779; c=relaxed/simple;
+	bh=iU2DoUdqIu/41hlO4Et0rRmSpD6vdN9AaGC5KGkS+dE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=njBC2dD3kW0FzpiiI35tJY5WdUpsvRE699tYVU8bg3N0cxjBnZt3inAV1XqI7LWRT9sJ9I1u6Z0TH9WIzG+Q2mHM3AfI+F8xziaYNlmTX6knRUUquV0qf5XQpyDJORclKDcLIYKajXQfQo3CF6n2/3B/dqrZRWdLU9IXzS/BQSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gSTdd235; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZB+mVSl6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757606774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hFzYOLWww3rLOwtwzx5pY9E/jU+fw35Yk7/XtGADgnc=;
+	b=gSTdd235J60TO0HDVpw9QqWXwFFy9bAUXDs0jq1dM9r//KU7XsyEzUdkoF5OeTTgsKs3xB
+	uTAS5Q7KHiqcG+zYrXvIB9ljcBOoW6hdpj2xc/x0XLPqNsmMqv0wDEKx219F5gBBMijj29
+	8kD2oY2ygdbpLriJgSrugj/cX+pCUbznICuTktctttKF89OSRPIZvP/iE+a3SO8N5lV0z6
+	0rVUyTsGnMsJHX24Sp3BcrACes+na+QnQzY9yIBpCdiioDIt49yxhEWdOYX7xgHuqKvGqy
+	X/8V6NvrL5k6+DNb/VT+rgspT/7rPeG1v3ZHbPSN1RqC6OYJipGmZuzRBgrtiA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757606774;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hFzYOLWww3rLOwtwzx5pY9E/jU+fw35Yk7/XtGADgnc=;
+	b=ZB+mVSl6zrHSwolxdMC+4S+azSv0PlSyOLMgM7mfeDaZna6uVcNJry//254fDmR5pbRoSe
+	lnSTzGm27q729DAw==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V4 26/36] rseq: Optimize event setting
+In-Reply-To: <6e0bcd7c-f842-4db0-b30b-5f6857b45b66@efficios.com>
+References: <20250908212737.353775467@linutronix.de>
+ <20250908212926.929787629@linutronix.de>
+ <6e0bcd7c-f842-4db0-b30b-5f6857b45b66@efficios.com>
+Date: Thu, 11 Sep 2025 18:06:13 +0200
+Message-ID: <871podrn2i.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain
 
-Hi,
+On Thu, Sep 11 2025 at 10:03, Mathieu Desnoyers wrote:
+> On 2025-09-08 17:32, Thomas Gleixner wrote:
+>>   static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+>>   {
+>> -	if (current->rseq.event.has_rseq)
+>> +	/* '&' is intentional to spare one conditional branch */
+>> +	if (current->rseq.event.sched_switch & current->rseq.event.has_rseq)
+>
+> I wonder.. except for the corner case of rseq unregistration,
+> when can we have sched_switch set but not has_rseq ?
+>
+> We could remove a load from the fast path and the AND if we
+> clear the sched_switch flag on rseq unregistration.
 
-Am Donnerstag, 11. September 2025, 17:03:14 Mitteleurop=C3=A4ische Sommerze=
-it schrieb Ulf Hansson:
-> On Thu, 11 Sept 2025 at 16:43, Mikko Rapeli <mikko.rapeli@linaro.org> wro=
-te:
-> > @@ -866,7 +866,7 @@ config MMC_DW_PCI
-> >
-> >  config MMC_DW_ROCKCHIP
-> >         tristate "Rockchip specific extensions for Synopsys DW Memory C=
-ard Interface"
-> > -       depends on MMC_DW && ARCH_ROCKCHIP
-> > +       depends on MMC_DW && ARCH_ROCKCHIP && ROCKCHIP_PM_DOMAINS
->=20
-> Rather than "depends on", I think a "select" is better to be added
-> from the platform's Kconfig. Probably drivers/soc/rockchip/Kconfig is
-> where to put this.
->=20
-> Assuming that ROCKCHIP_PM_DOMAINS is a critical piece for most
-> Rockchip platforms to work.
+We probably could. Though I doubt it matters much and I opted for
+correctness instead of premature optimization.
 
-I'd think
-=2D arch/arm64/Kconfig.platforms
-=2D arch/arm/mach-rockchip/Kconfig
-would be the correct positions.
+Thanks,
 
-And as Ulf suggested, this should be a "select"
-
-
-And I guess, always selecting it makes sense as well.
-
-Every supported soc back to the before 2012 RK3066 has controllable
-power-domains and while the driver is selected in both the arm32+64
-defconfigs, this still allows people to manually de-select the driver
-leaving most elements to defer.
-
-So yes, always-selecting the driver makes a lot of sense.
-
-
-Thanks
-Heiko
-
-
+        tglx
 
