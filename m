@@ -1,80 +1,144 @@
-Return-Path: <linux-kernel+bounces-811150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E90B524FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:27:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EBE2B524FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:32:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D7E41C8484B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:27:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 961191B24F42
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF9518A921;
-	Thu, 11 Sep 2025 00:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125C91419A9;
+	Thu, 11 Sep 2025 00:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YIhN/Jjk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxv8q+2j"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6996D184;
-	Thu, 11 Sep 2025 00:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2772717D2;
+	Thu, 11 Sep 2025 00:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757550436; cv=none; b=csElXkn/JI7rlBeuNDwEKwFf0woE8ikYvA6fRQOx9EfIx4rGxmrgbVWZlOANxPPdvkMRcB5ktzLN8ZaC3Iw1Z10VPKhI1wYRs4Yeecz8bDBR86XfCRM4kvO6TjLj3LkGY9JUDMdwnZb+uO7on2fERpFYheTa6FgPkEkx7UrVGuQ=
+	t=1757550716; cv=none; b=msN8WlsZm9b7IFS3PFh31w9RfKLCSIqXohDohLHAHHJT2VDFFZloUbDBabDoozUIj2kjWwtldNNKlRqud/a96rjyQilXerDI2YOM8bCthaVijzWh3zb8THfqpCGGx/wxqiunv+XmbkeUKVXi7piysTVaR7Td2Iq1Cpsg0Zz+fJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757550436; c=relaxed/simple;
-	bh=ekesoh0ujj8ocHBC1cUZS+xosIHxerCs0+Ur0dMvGi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FephN2I9hu9glLxOoeKuQcp+J8wZIEVyF39zuwx/UBcHmw1Rp6ggaEWZxuZuPB+nWoVVv42Af7z16zTBejcPkBomql0TozS5joahIv5gkY9piAgxhsEv7+DQmj7vERWVSCd4Lf6jYqTiAB7gJIPmZB6pVR3yCCPxOjTjyf9xBiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YIhN/Jjk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90746C4CEEB;
-	Thu, 11 Sep 2025 00:27:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757550436;
-	bh=ekesoh0ujj8ocHBC1cUZS+xosIHxerCs0+Ur0dMvGi0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YIhN/Jjk8lbtMZhvPs99IMb6DdxMzOmkgeqMoNjFFvsSopF4C03eCmdaNXFunkFvO
-	 tJTq/3wP9RJO953v+ZcFNXousLQ89L9a9Fxk3q0QJ25jSpKj6Vew4cN7EguQCDPCH9
-	 sHsefFAn5irX2yQFIuJaVaETLuvCq3YTu1MDf5cvsIBU4jpUjxbA1tZkhtQ6M/Bnix
-	 vJMmJNlCa+W8d8TwNUWKgi9CfTtwsahcoRWE1QdLP5Qp6tEaHKpNR9ldc5NlidxcGY
-	 +RTt664nXbt5PDp6riNGqdNGB1s4nrkEihivlt0a8pFnjERj0lV1yrsVN+yGtEYY5L
-	 a0ezPeEfv34dg==
-Date: Wed, 10 Sep 2025 17:27:14 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Simon Horman
- <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 05/11] tools: ynl-gen: define nlattr *array in
- a block scope
-Message-ID: <20250910172714.25274ad0@kernel.org>
-In-Reply-To: <3b52386e-6127-4bdc-b7db-e3c885b03f72@fiberby.net>
-References: <20250904-wg-ynl-prep@fiberby.net>
-	<20250904220156.1006541-5-ast@fiberby.net>
-	<20250905171809.694562c6@kernel.org>
-	<4eda9c57-bde0-43c3-b8a0-3e45f2e672ac@fiberby.net>
-	<20250906120754.7b90c718@kernel.org>
-	<3b52386e-6127-4bdc-b7db-e3c885b03f72@fiberby.net>
+	s=arc-20240116; t=1757550716; c=relaxed/simple;
+	bh=yXmCe0eO/MGZamsjfTzYUhWk0GYiWGiszqdYPvI3hSE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fdoSmT6xOe1HyJT6+hWcSLO8AOMkaY8kY/HFKhMJZVPbKjs+qRz9ttmLvSzO/ewMvzXYY6XYQUaN7v3VnvtHneCAeWRUCseX6ldDJzVG/IGfzJLEH2ssn5iLVR25grHQEtoUMqzOGBLihl9hfPgjJ9UT8tYbHB1nEt3Y9A4GF/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kxv8q+2j; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6228de28242so284354a12.0;
+        Wed, 10 Sep 2025 17:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757550712; x=1758155512; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lSwpihcUfwJPnP2twrhHg4lAoNTw6Z1GE9b1kjNX6d8=;
+        b=kxv8q+2j1gpz0Gb6u+MAp0OBRI9jiXqBPC06ujnK7Ac9aEH33ObYJ+3E6KVflCFn3O
+         i6bF+85hxcbSiOjVT7z59ruzj8gCSD5Js8xP6y7zURdxhMOBOVP6/AiSGQhNlMbqydgD
+         5tmxtu/AdEg7pjIg0jKA6Y9vyeiwzSJoQDAxQOoLThz7tjEhEiwTY1WKj4q/55nVEU+S
+         tLh4hjEhI9dn1NXgEmzMsAHCe4vFrcXkXolNKG5AbxLRSppBD2qctuGEXFUHt+tUIPfl
+         NFWKd/buy0i6KfupSqluZOxSqSAXnCNQaSCO84vqzVDgpHSint0XdRi1BCbZNWBUlLAY
+         oP4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757550712; x=1758155512;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lSwpihcUfwJPnP2twrhHg4lAoNTw6Z1GE9b1kjNX6d8=;
+        b=toU7NMPKD7E8zklwhMxe9l8xcZjHCyCtVg1aOn/NIGem7CSwop8eDAZcKnmG5pzMQo
+         Q58y5X9wQC2xEP/mAT1Mjc6BorblHmgmDE2L5t6bj/0Yh/8KBuiJ5+UUz3c6fyrmND59
+         5Tnzle37xjhkqjGAG8ezPP6Ms/SBRlFDWwM3uEe1o4cBjmSzNJy70zDYXdVwXS6OltJ7
+         NpYnzhILRapeyXuUym5RCZWtAmfxD5ke/NOdxYMF0Ij1/qgVeXUVkcqFP1yDlbEzQBPR
+         76GAwxq9nu5aLZEMAECm55OvMkdCkej4O+GYOjbHeDPWLMvOQCxtwZKwYaEqsRAsOIHn
+         IKzw==
+X-Forwarded-Encrypted: i=1; AJvYcCWY/T+1bUsXmpk9C8fp12EHZ0TH3Z6tqXIF5l8+XUu+gPGhMJUapjAo/n2Ch42PQwiIT+Fdjlrj@vger.kernel.org, AJvYcCWiR2OnOu8LVsAnA2isfa9xIll/odSVc/DDcp2fO2l/LdXaNrQ4XWiGEum0JeAsLx1wcQ6gIML2Si4T@vger.kernel.org, AJvYcCX8ppb2sJdlFx7VYj0O9rm2at6lQOmnteEA7Wdwsoxs7+Mzw44WIiOqWi3nQSeiMyhpXdmA9sjVwrq0Y7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmLAeR0M9jnaGS1qgvMt53cEPC6Ecys7I7B09w3jX+wFO/jxP2
+	HY90ONygZZmeAM4aOC07yqatTG+S5GkmKLjUuLMhJa6UH07XUgW20j61JQp8p+6uaC10nol+ie1
+	SYbkb1a1LSpchrbBsRYbv3fdDmXaIlek=
+X-Gm-Gg: ASbGnct0Sgd1BiZ0OCLbx5K1O6GFP+ifFWdhW1whccwq1CeJIt45xn7a22Obwrtw6eo
+	oBfVUI461ONFQ1TV8/hJvMjh5EmMvWCnJi8wLo0hCfsDoxyphATwywO0sHV5MrC6z0IoD5rF/C+
+	vtNo3bD3DY0hm5UYGD3B+PU7vGXhRx2bSGQ4V9F0hqpJL9rZgCWDnJ4hAhL3sm4vlacEZwW76Vd
+	sMHmFM=
+X-Google-Smtp-Source: AGHT+IG1XqFJ1otj8Vpfd6NEZMsXGp0V8er0kO9gouhW/ATeLKIBH9kMlg3YcwtitzuwaBb1+rjZShFy2l8ww5xn6D8=
+X-Received: by 2002:a05:6402:2b9b:b0:61a:7385:29e3 with SMTP id
+ 4fb4d7f45d1cf-62e7b009d54mr1414666a12.18.1757550712216; Wed, 10 Sep 2025
+ 17:31:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <8772b633bd936791c2adcfbc1e161a37305a8b08.1757056421.git.benchuanggli@gmail.com>
+ <a9fdc8f66a2d928cf83a3a050e5bdb7aff4d40db.1757056421.git.benchuanggli@gmail.com>
+ <76616ed2-ae07-4e1a-a275-e43e43fd65f6@intel.com>
+In-Reply-To: <76616ed2-ae07-4e1a-a275-e43e43fd65f6@intel.com>
+From: Ben Chuang <benchuanggli@gmail.com>
+Date: Thu, 11 Sep 2025 08:31:40 +0800
+X-Gm-Features: AS18NWCdC9PaSKUpY8PZUq71NICxFNvKt1aGrR9LrRkoFvCuJe6WWUG--PQgK-s
+Message-ID: <CACT4zj-WAayp_egCOWHf8yyNa72UReJxTpL6+YosAOQvwqqjpQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] mmc: sdhci-uhs2: Fix calling incorrect
+ sdhci_set_clock() function
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: victor.shih@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw, 
+	HL.Liu@genesyslogic.com.tw, SeanHY.Chen@genesyslogic.com.tw, 
+	victorshihgli@gmail.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, ulf.hansson@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Sep 2025 00:01:48 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
-> I left this for you to submit, there is a trivial conflict with patch 8
-> in my v2 posting.
+On Wed, Sep 10, 2025 at 2:55=E2=80=AFPM Adrian Hunter <adrian.hunter@intel.=
+com> wrote:
+>
+> On 05/09/2025 11:00, Ben Chuang wrote:
+> > From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> >
+> > Fix calling incorrect sdhci_set_clock() in __sdhci_uhs2_set_ios() when =
+the
+> > vendor defines its own sdhci_set_clock().
+> >
+> > Fixes: 10c8298a052b ("mmc: sdhci-uhs2: add set_ios()")
+> > Cc: stable@vger.kernel.org # v6.13+
+> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> > ---
+> > v2:
+> >  * remove the "if (host->ops->set_clock)" statement
+> >  * add "host->clock =3D ios->clock;"
+> >
+> > v1:
+> >  * https://lore.kernel.org/all/20250901094046.3903-1-benchuanggli@gmail=
+.com/
+> > ---
+> >  drivers/mmc/host/sdhci-uhs2.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs=
+2.c
+> > index 0efeb9d0c376..c459a08d01da 100644
+> > --- a/drivers/mmc/host/sdhci-uhs2.c
+> > +++ b/drivers/mmc/host/sdhci-uhs2.c
+> > @@ -295,7 +295,8 @@ static void __sdhci_uhs2_set_ios(struct mmc_host *m=
+mc, struct mmc_ios *ios)
+> >       else
+> >               sdhci_uhs2_set_power(host, ios->power_mode, ios->vdd);
+> >
+> > -     sdhci_set_clock(host, host->clock);
+> > +     host->ops->set_clock(host, ios->clock);
+> > +     host->clock =3D ios->clock;
+>
+> The change that host->clock has not yet been
+> set to ios->clock needs to be part of patch 1.
+> i.e. put the following in patch 1
+>
+> -       sdhci_set_clock(host, host->clock);
+> +       sdhci_set_clock(host, ios->clock);
+> +       host->clock =3D ios->clock;
+>
 
-Hah, no, please take this and submit as yours if you can. You can add
-me as Suggested-by. I already dropped it form my tree.
-Maintainers tend to throw random snippets of code at people, it's just
-quicker than explaining but we have enough commits in our name..
+I will update it in the next series. Thanks.
 
