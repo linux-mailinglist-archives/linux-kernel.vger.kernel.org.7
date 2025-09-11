@@ -1,231 +1,133 @@
-Return-Path: <linux-kernel+bounces-811637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E40BB52BE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:37:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79098B52BE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E0D0586803
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:37:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3356F3AEEF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B0E2E5B12;
-	Thu, 11 Sep 2025 08:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB332E5405;
+	Thu, 11 Sep 2025 08:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gbVdZ5or";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aLTXTZFS";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BXH35BNu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="onTJLSTl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZll/icZ"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98C52E2F14
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C9D2E2F04
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757579823; cv=none; b=I0o4sGGdAb9g7g3L2hg3GmSTpdGktD7eClicJOwbGOQNljedNAfttfmEYJF/Qjnepk5UFxC/a8VMpjG9hHYOQpM9iStjtljcl8feb8n0nr2LDDMuf/ZXgn2N6vyWkwumVd7E/1Is1VxpCQzLOMgOp02tAB+wrXORB5Ec+v2QznM=
+	t=1757579838; cv=none; b=lJzvEIOn8BmASuCNFvTz2W2tL77XLA2pjG/OGc2iglbuM3+7HW9oMv+bfF11AE3Q//rJldJLLbxCf3bgvqlab12/V/G2fD3OeNECVoocJ12A2R7r3ot99UJzmJlKPmlMsevShDubZ4fl9Q5L16rRjr8XLlt7GwoU6ey9C/vAMFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757579823; c=relaxed/simple;
-	bh=ZX7RRVZevogotEZL80A6v/Ith9MGrv9zZwmRgxBYRGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lRfgcOkMQXtezsmpNWZka1Ok9vloIjB10C3uRMZJBObXhzFfGN2xFyLpPVdvivl5rubcbXxaBctdUM30Hfv3Xw26yOhN1FhZAryQgGiSFfW/nHxoOy/Sj5liN8OQVl1D4JGlUIPbBQqNxELogXv/GnT7tPWbEQqcBAyMwwSnJU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gbVdZ5or; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aLTXTZFS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BXH35BNu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=onTJLSTl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EC21968608;
-	Thu, 11 Sep 2025 08:36:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757579819; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MVKatHAMv6K0HJB+fE+uvvzEY9BdzRg6mGSrDhfixOc=;
-	b=gbVdZ5ordIwsjok0HGyMjLJHMSMCvd7phfCfms+ZTddXEbopzWQoU9SS+FPbGVcufPMb2x
-	JMqA30UnF9uP4ZX8DjZuMTMu0J3iWh4dqAOgxyk/H1JXK2INNCBYcRL6RtLmBo7y9ghHvL
-	it6KQ2/afG8hGOw9P2K0/2NZIIl4e58=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757579819;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MVKatHAMv6K0HJB+fE+uvvzEY9BdzRg6mGSrDhfixOc=;
-	b=aLTXTZFSgnI5/Cod9GP6PRHmztHtOqVdF3UN4+Ox//+uZ9pn/LzTYv8Pv/vn52ReXpGA7L
-	LygYn7X671fZo2Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757579818; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MVKatHAMv6K0HJB+fE+uvvzEY9BdzRg6mGSrDhfixOc=;
-	b=BXH35BNu64iIGCB3YP2jGeLYcKsUThmhJ6XH1FZZJOeTGgj8j+AKxuheSOZ825qLuYyoJA
-	Fnp0TF+S3NW+tY9TPbQQJsr0ly3mI21S04Ty4JaNJv85r6FBeE9/XfvhuQjAIdfE3zrgCt
-	iZWZFl6rA6UgTWCABj5n/rG4pREhBLE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757579818;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MVKatHAMv6K0HJB+fE+uvvzEY9BdzRg6mGSrDhfixOc=;
-	b=onTJLSTlgfa3oXRqtjZDgBU2LdJbfKNHu4jUM0BmAA78X6XyIiUUKvU898EivdFRT7NBq1
-	eEDGqyXMCeegHVCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E01B213974;
-	Thu, 11 Sep 2025 08:36:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sqPSNSqKwmjPcgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 11 Sep 2025 08:36:58 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8E4F6A0A2D; Thu, 11 Sep 2025 10:36:58 +0200 (CEST)
-Date: Thu, 11 Sep 2025 10:36:58 +0200
-From: Jan Kara <jack@suse.cz>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>, 
-	Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, "David S . Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>, 
-	Oscar Salvador <osalvador@suse.de>, David Hildenbrand <david@redhat.com>, 
-	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>, 
-	Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>, 
-	Reinette Chatre <reinette.chatre@intel.com>, Dave Martin <Dave.Martin@arm.com>, 
-	James Morse <james.morse@arm.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-s390@vger.kernel.org, sparclinux@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, linux-mm@kvack.org, 
-	ntfs3@lists.linux.dev, kexec@lists.infradead.org, kasan-dev@googlegroups.com, 
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: Re: [PATCH v2 03/16] mm: add vma_desc_size(), vma_desc_pages()
- helpers
-Message-ID: <afrz7upbj463hmejktsw2dxvvty7a7jtsibyn4fdlwwyrzogrh@c3svlrvl4job>
-References: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
- <5ac75e5ac627c06e62401dfda8c908eadac8dfec.1757534913.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1757579838; c=relaxed/simple;
+	bh=dXdheL8JephKYsdZVZ5VzVXsD0ljrqlK8eaSDZXPjes=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CUxHpHisoL+IvKqphXbzU3jT/AIf0VNrYIWWKPzqimVclq/BzepTfrNNsRTRbuom+hyYVP5NIjw07yuJ0oMB+ZeuU/zlWOP1KUB+exFlnKFo2S2ivIVIdOZ4VgVocEw86qZolj0xi/JYrcOPD3Zif15H4xk7nUTFUq61AmCYq1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LZll/icZ; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b523fb676efso396156a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757579836; x=1758184636; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XlHLF6IxLX265PKrXSfqim3Osu2zErg+VtcQhos8Amk=;
+        b=LZll/icZ5VjvpnBEzb29UzebmcBqQssZq7pjCRL7oBISsR7v6SCCjNrrcYWA+N3nK9
+         P//u/BClj+MY7Nl7OXFnRn+tq3j8jCH2z0sSaX70MCT7lYP/x8Z/wGgpg5f27iE/W+dq
+         ujeEtLnToPnOP+ahq+FfrmbnFn2AsBAc5EugHySO1DTNOJdWO71hWIHARCzZkIPsGd2t
+         P9viFuOWg2Qn7WveBB4VL24TccMzdmMwF3TgR45OsJW83dq2hMJtkzWOLVoqZEXyjEgd
+         vrimvUYebj+cPkiJnIMMjiA7LdlExSzIvQh7ER+hG4JBBLF9m9DIbXTTxIzBiTHA3vZD
+         9pvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757579836; x=1758184636;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XlHLF6IxLX265PKrXSfqim3Osu2zErg+VtcQhos8Amk=;
+        b=cEUnJzdI9CxWysmiz5rkqROmglOVz1200nrCWGlEk7ICXub4+NgQaNHBHk3UPU1aOx
+         PO+kCyRRzxmybWEXhMj4EF5X1+1/5DDSOqcrZQIbYjmfSKwxG+ogFyfOnoTJESdWySkp
+         gvEyeyHJCqrqZIY29zrIqSmsa7DUPgCPXR8mgmSOflBLs+WdBqsTaV01OGahMb7ji5uw
+         ssZo6a9dVZA7OQHAIhOAN4Yhle/Nj4MqSBLm2r8AfIQrXq/qaDQAJllu5L/rJbP09btL
+         HZDAFvyep/MHTPtSMfa+v2h+t3EQN6gVtcp7I8HY8RpDxnhC5EUqxUu8rc8YEazqIM+6
+         /I6g==
+X-Gm-Message-State: AOJu0YwnTQelEiY+hA9H9h6JgwA7uXacnWze2PtYhjuCjNM63zHuLbl4
+	+2VM2A8x+4PlgG2yR8S1QJldLQmNrbivEIK5qzcm8O3vSzZ/GwVQowDPa8jP7fxj41vO/8NkzHO
+	qInFSNIqeaupcxp2kS4DHHw0XAxvOvL6S9ngo4MvTiKDJ/9tzUoFSBmw=
+X-Gm-Gg: ASbGnctctenlzGiSRGJ2Ve1cGu/RkTYQ5Cwf3xr/TK39mp+leieQI7CwNKaSxPSgPdG
+	QgNgRYBPnDA+HLRvp9/lwqwsLdcQykxgMjnkfdGDZbs7r2cRzikpkPCnNI39h+EZt2m6YU1Hmyf
+	toVIA+C7jpgfI+WmFIdGYBgjbF3+85QZ4pmvOCvTB4toJGlzBouKopy9SL2oLJvTt5NgRIk6E6A
+	/L6k2sE5ZnVt6hV4x59e890orvq8U3w+CBAoGbhcUSpLfOt/32D4pyZUIaJjzIQEl7blGfLkZ/I
+	mKEmhDI=
+X-Google-Smtp-Source: AGHT+IGR2+igFyrerQ3HlTU0fDr7FuwZJE+/EsvxJ0BM47OK3QyzESdHU/BATUPNXmekU8opkqkhhnxnT4KYCn47WJg=
+X-Received: by 2002:a17:903:230a:b0:24f:30dc:d3fe with SMTP id
+ d9443c01a7336-25170e428f3mr249071415ad.29.1757579835668; Thu, 11 Sep 2025
+ 01:37:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ac75e5ac627c06e62401dfda8c908eadac8dfec.1757534913.git.lorenzo.stoakes@oracle.com>
-X-Spamd-Result: default: False [-2.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,lwn.net,infradead.org,kernel.org,alpha.franken.de,linux.ibm.com,davemloft.net,gaisler.com,arndb.de,linuxfoundation.org,intel.com,fluxnic.net,linux.dev,suse.de,redhat.com,paragon-software.com,arm.com,zeniv.linux.org.uk,suse.cz,oracle.com,google.com,suse.com,linux.alibaba.com,gmail.com,vger.kernel.org,lists.linux.dev,kvack.org,lists.infradead.org,googlegroups.com,nvidia.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[59];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -2.30
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 11 Sep 2025 14:07:04 +0530
+X-Gm-Features: AS18NWDVnn8cWFJt-IwGb3BydlPhAt8pRyLoCxHvXGT9gVTi8T47w_BuQztkQok
+Message-ID: <CA+G9fYtUi3bnZ2zycCot6KGeZcn67JAvz=wZm=6f2w9ZnL=0Uw@mail.gmail.com>
+Subject: next-20250911: mm/slub.c:3960:27: error: a function declaration
+ without a prototype is deprecated in all versions of C void flush_all_rcu_sheaves()
+To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, clang-built-linux <llvm@lists.linux.dev>, 
+	linux-mm <linux-mm@kvack.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 10-09-25 21:21:58, Lorenzo Stoakes wrote:
-> It's useful to be able to determine the size of a VMA descriptor range used
-> on f_op->mmap_prepare, expressed both in bytes and pages, so add helpers
-> for both and update code that could make use of it to do so.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+The following build warnings / errors noticed on aram arm64 defconfig
+with clang-20 and clang-nightly toolchains on the Linux next-20250911 tag.
 
-Looks good, I presume more users will come later in the series :). Feel
-free to add:
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Build regression: next-20250911: mm/slub.c:3960:27: error: a function
+declaration without a prototype is deprecated in all versions of C
+void flush_all_rcu_sheaves()
 
-								Honza
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> ---
->  fs/ntfs3/file.c    |  2 +-
->  include/linux/mm.h | 10 ++++++++++
->  mm/secretmem.c     |  2 +-
->  3 files changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-> index c1ece707b195..86eb88f62714 100644
-> --- a/fs/ntfs3/file.c
-> +++ b/fs/ntfs3/file.c
-> @@ -304,7 +304,7 @@ static int ntfs_file_mmap_prepare(struct vm_area_desc *desc)
->  
->  	if (rw) {
->  		u64 to = min_t(loff_t, i_size_read(inode),
-> -			       from + desc->end - desc->start);
-> +			       from + vma_desc_size(desc));
->  
->  		if (is_sparsed(ni)) {
->  			/* Allocate clusters for rw map. */
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 892fe5dbf9de..0b97589aec6d 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3572,6 +3572,16 @@ static inline unsigned long vma_pages(const struct vm_area_struct *vma)
->  	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
->  }
->  
-> +static inline unsigned long vma_desc_size(struct vm_area_desc *desc)
-> +{
-> +	return desc->end - desc->start;
-> +}
-> +
-> +static inline unsigned long vma_desc_pages(struct vm_area_desc *desc)
-> +{
-> +	return vma_desc_size(desc) >> PAGE_SHIFT;
-> +}
-> +
->  /* Look up the first VMA which exactly match the interval vm_start ... vm_end */
->  static inline struct vm_area_struct *find_exact_vma(struct mm_struct *mm,
->  				unsigned long vm_start, unsigned long vm_end)
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 60137305bc20..62066ddb1e9c 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -120,7 +120,7 @@ static int secretmem_release(struct inode *inode, struct file *file)
->  
->  static int secretmem_mmap_prepare(struct vm_area_desc *desc)
->  {
-> -	const unsigned long len = desc->end - desc->start;
-> +	const unsigned long len = vma_desc_size(desc);
->  
->  	if ((desc->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
->  		return -EINVAL;
-> -- 
-> 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+## Build log
+mm/slub.c:3960:27: error: a function declaration without a prototype
+is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
+ 3960 | void flush_all_rcu_sheaves()
+      |                           ^
+      |                            void
+1 error generated.
+
+## Source
+* Kernel version: 6.17.0-rc5
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: 6.17.0-rc5-next-20250911
+* Git commit: 8f21d9da46702c4d6951ba60ca8a05f42870fe8f
+* Architectures: arm, arm64, i386,  mips, powerpc, riscv, s390
+* Toolchains: clang-20 and clang-nightly
+* clang: Debian clang version 20.1.8
+(++20250809043815+87f0227cb601-1~exp1~20250809163919.3)
+* Kconfigs: defconfig+lkftconfigs
+
+## Build
+* Build log: https://qa-reports.linaro.org/api/testruns/29853978/log_file/
+* Build details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250911/build/clang-20-defconfig/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/32XlFDtH7RdddaA6FHskupLDDSO
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32XlFDtH7RdddaA6FHskupLDDSO/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/32XlFDtH7RdddaA6FHskupLDDSO/config
+* Build log details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250911/log-parser-build-clang/clang-compiler-mm_slub_c-error-a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-c/
+
+--
+Linaro LKFT
 
