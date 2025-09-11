@@ -1,239 +1,197 @@
-Return-Path: <linux-kernel+bounces-812583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50DDBB539F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:06:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010C8B539F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6375FA01423
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:06:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A70ED16848B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:08:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 066AC35FC1F;
-	Thu, 11 Sep 2025 17:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 968E535E4F4;
+	Thu, 11 Sep 2025 17:07:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ni/1/8Fo"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2068.outbound.protection.outlook.com [40.107.96.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CheQUR/i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7D535FC18
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757610393; cv=fail; b=TV2oGJPw0GVm3CDRtNDGI7kIONPKmz203vajPoKhp82oM7aqeDqgBRS07mcxTqSx/YfTsLTHGtIsxI2Rk0huZpvXMi/Fim4MOd3l2VCkPyN90jFcJwTg9CJIKu95C+8tSxHSJQV0zteI/7VJkycj89FmDJu/nlJNWUMNFyCqYQU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757610393; c=relaxed/simple;
-	bh=1MrMIbw9+ArJYuN/m7cxvOKkQ7I19HwjKMq0UAUtaOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tgOtvImMaLhku6krnuurFItsragGZmctrxsiurZOQk/JlS4f/URS6/X0QY7CV6nMcpKymGWt0hV10pMwL696oaWmmI1ZznMDGAc6jFvgS3oTSrIe7xVTmjfQjHaeitPjdNZEeOt1jXQaXYl2GMB39mH0WZa6G8gBBWsOWdPiXrA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ni/1/8Fo; arc=fail smtp.client-ip=40.107.96.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s+CH1+lqMIMDnorGhvZva7/Tj6xzJ+nVqBOhgKTi8BzCQ+0VFYlhXFtTr1l0AuaxhM+mbKr3O+t0V3D6xnIulmDJgwP4e/Lh7QNIBf7qHQAc+SV3Z2MNhdOqHS7vsfpKB9rQhozfYEbiSemQfVOIyt52K10ou3ylGUr/YlqWZCIv7aBkM5rkVjWnp+AVhaOgiDJA3dlUQa1p/kRO9NrPCE4TdMiixyhtNY+wIkQ9S+TLb1hlmiSqGj5iB1q2OgdcqifmhWgMi+wrav+qx/M493HSeHWgPBRJTUdGoJA01Rtmh8q3pKQr3Teg6/kH03bt70anADHrFvfV8cb/5h/aoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bYz8rV2X8NoiRDnW0M1SWTleP3QX3BbT5bGMfwP0zV0=;
- b=iIAnA+y4jNPKMZwBbe6GZhjigVaV173i5NUkX6h51k2l+4fF6HvFyMjYU6SYSpXen4nQ4d/yTiX6glbe8BvLcSCEjrppjD2Lalv4Jd58Ca9lI42yGXkT/zZxYLTMV3LvaXYneAOteP72vpi3MFrTjHtl+KixkUQ+Fi0DoHDhvhm9LeQdxQkMD1WKWF+LukD0Bu+QfPy50rUoxgCbr9594Jf+k5rCUMB2WaL6Vww5hkhEGV5zXW/fDNYsGQSyq65g6m0xQTDBJS542wbrF07XGFvLOcHD/63NKITvbVwMJfq2sgCXFOzmSsBRPpC0kL69S6/7TYhE/LyuNmLh5gzyqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.ibm.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bYz8rV2X8NoiRDnW0M1SWTleP3QX3BbT5bGMfwP0zV0=;
- b=ni/1/8FoeqCROjVqarZ7tDOyh84eiwDQk2vrlht/BPhAHSz3IOCiEAVoqZ8EtlDUBCmshY/3iByJZXC6vXkEiKs1RBtR4D8KsYFFf0unIlv3n2CUaLR4J3t7uTyzbzZSiIsS0VCVQI2pnrSVWpIxgUHLG/49h4QlwB1lsaHa9nY=
-Received: from MW4PR04CA0191.namprd04.prod.outlook.com (2603:10b6:303:86::16)
- by PH7PR12MB7892.namprd12.prod.outlook.com (2603:10b6:510:27e::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 17:06:27 +0000
-Received: from SJ1PEPF0000231D.namprd03.prod.outlook.com
- (2603:10b6:303:86:cafe::44) by MW4PR04CA0191.outlook.office365.com
- (2603:10b6:303:86::16) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Thu,
- 11 Sep 2025 17:06:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SJ1PEPF0000231D.mail.protection.outlook.com (10.167.242.234) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Thu, 11 Sep 2025 17:06:26 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 11 Sep
- 2025 10:06:25 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Sep
- 2025 12:06:25 -0500
-Received: from [172.31.178.191] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 11 Sep 2025 10:06:19 -0700
-Message-ID: <5493a681-4438-4854-9cf4-c1e71ad2dbed@amd.com>
-Date: Thu, 11 Sep 2025 22:36:18 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC29B19C566
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757610474; cv=none; b=tFjMm39g5lqguCeO95GbMB82T1uG7kUWSe7l7UdT4mUh7BVuww5OV4XssuTC4VCri+ynIqSVWPMsrjoXWD99PvQiMKtB7EeON4iYHbGQYJ1EZmxVQId022UojdX1/bEg/s9I5bmft+Byt2rFTHYizxfho0GuorA7Br7P7w+87WA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757610474; c=relaxed/simple;
+	bh=hegmbTdn1yNC2UBMwnCcFb/Ouc5cQ0RQwUD/oCv3AUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LH8E8Vvhz6ch/kb+MPSCOdGdiaI15izWWnTksFA9lmko7s5PiMd/x3MI1WpSNQpFQIyEVeWyp68WLA6KaW8T2FBdna9I6jPg+TUQmheTKtYtQ+wXsyeafSO/W9yDRWh0Wp+Y8Nm323mEzfNJObWUY9IBGrsnOVPP23mKR07dmWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CheQUR/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFF7C4CEF0
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:07:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757610474;
+	bh=hegmbTdn1yNC2UBMwnCcFb/Ouc5cQ0RQwUD/oCv3AUI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CheQUR/iGx5FEuclHQn8fvVBJb+v09aAJZeHAeYpoHEaihoOaHiUSIvDW3wlCdbcX
+	 CyDQCLcIqm5YMUjWhySZPl5HxCFQorjanUufWx9Ziz9WFjuk6TYHnaPrLRXb+7xhli
+	 FMBURZrAD+uMmHqLzGH8ViqUa3Dd+0dO01bUETPI2PfP/lctQdH0ixw0W5IfuFWZvt
+	 nZcpExqyHbKaKsBH0AfhrQuxtWMDIfsOUQKumNqCPluQs8b5zhGdgBi0HTCky6Srrz
+	 kVbOl+O0iOswbv99re0GKoXOl2QUD+GUos9X3Cgn5oV67LnVgCe6zzATJ/KGyTTLpN
+	 JxHiMalba6hJA==
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-74526ca7a46so372908a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:07:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWCOyT8dM7HJ7vCQUADAJYmfUq52wMP3bMs/wsWeNFHANF8j6tIV4B++TvJ2CSNAC0H8dLpMhuEGvd337Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxcuIvg1wHUxFqNRMrxcWx+uw3hT8XrQnAhRsaGUTRgCjKRJmO
+	iDtozOe0xJFnAy52u3/ikUeOfEM7dOdcUnkxE3OoDk/BZInMfipJDNHi/GQpm0YFiMQDDSPSNVH
+	DBgtnu8TRxUwGHRt3vQ5JQTO/sZbscuQ=
+X-Google-Smtp-Source: AGHT+IHz7kFoI9nYZzdWf0EGe+F1PRDSTVqUP4uQIQDaa3hMRCOhQvgGPrv71EgXCT3iu5J7L2/KGoniXH5P7s/3qFs=
+X-Received: by 2002:a05:6830:67e3:b0:745:a336:7265 with SMTP id
+ 46e09a7af769-7534fe7141amr183400a34.0.1757610474026; Thu, 11 Sep 2025
+ 10:07:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 07/10] sched/core: Push current task from paravirt
- CPU
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-CC: <vschneid@redhat.com>, <iii@linux.ibm.com>, <huschle@linux.ibm.com>,
-	<rostedt@goodmis.org>, <dietmar.eggemann@arm.com>, <vineeth@bitbyteword.org>,
-	<jgross@suse.com>, <pbonzini@redhat.com>, <seanjc@google.com>,
-	<mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <tglx@linutronix.de>, <yury.norov@gmail.com>,
-	<maddy@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <gregkh@linuxfoundation.org>
-References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
- <20250910174210.1969750-8-sshegde@linux.ibm.com>
- <7227822a-0b4a-47cc-af7f-190f6d3b3e07@amd.com>
- <1617b0fb-273a-4d86-8247-c67968c07b3b@linux.ibm.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <1617b0fb-273a-4d86-8247-c67968c07b3b@linux.ibm.com>
+References: <2804546.mvXUDI8C0e@rafael.j.wysocki> <2244365.irdbgypaU6@rafael.j.wysocki>
+ <aMLaEwBHwiDhgaWM@localhost.localdomain>
+In-Reply-To: <aMLaEwBHwiDhgaWM@localhost.localdomain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 11 Sep 2025 19:07:42 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h3eWw3B15SamchCVWfxfEEbOOgjm4ZbmkTt9ijZvvHMA@mail.gmail.com>
+X-Gm-Features: Ac12FXw2h4F5WqWDGdQx79WJRXefZH6-kLNIMbIhFCvYNYkK5mZJ6omJ417od6g
+Message-ID: <CAJZ5v0h3eWw3B15SamchCVWfxfEEbOOgjm4ZbmkTt9ijZvvHMA@mail.gmail.com>
+Subject: Re: [PATCH v1 3/3] cpuidle: governors: menu: Special-case nohz_full CPUs
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Christian Loehle <christian.loehle@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB04.amd.com: kprateek.nayak@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF0000231D:EE_|PH7PR12MB7892:EE_
-X-MS-Office365-Filtering-Correlation-Id: 92184cae-d401-46c6-6495-08ddf1558b3d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVB6bEhlYkkvMGN4TUliMXFnSUhlL0wyU3ZYdTRhTkJPSlhJSEl3TmxUb1Yy?=
- =?utf-8?B?QitScVNHb09lakZpa2RBakU5RDZpR2pFT2svMThmNGVmOXRsWWFWRmc1VnBy?=
- =?utf-8?B?aCtEdmFQbUdmcFhaeEFrY05pNWg5cUlnVmxWL25ZZlNZY2ZmSmQ4ZnE3NGZN?=
- =?utf-8?B?cHl1RFVsSk9ENFQyT1N2MmxabTg4ZHRQdEk2VVNVR2JmeW1vOHVrTTdOcnZr?=
- =?utf-8?B?Sit3aFk2cENLRDBNNHVMNWFnTXNwcFRxNHEyQ2xFMjRPc2JobU9YampHckVE?=
- =?utf-8?B?ZXdxbFF6QzlTSG5MdFZWcHJVN0Mva0lWa2plcDZ3Ty9LOVZWSVUwZmVxbENx?=
- =?utf-8?B?SElOY1d3WW81TU1mRnlhbVdyWVpjT3R1RjBKOUc3a0liamhtU2lNMUlwVnVh?=
- =?utf-8?B?T1NRSmtlQTRjUUFqZmhaT2ZiNGhjQzhacHJkYTk2anF3NG0vTFZNVC9hK3Jm?=
- =?utf-8?B?SVZzOW5hWi9Uak5hSSt5Y0EzK0w0ZW9kNnkwMzNyTmRpR0hpMUVXVUZ0TlNU?=
- =?utf-8?B?S1RuYWhKbDdvQWxOcVJOaldiQzEzV1pkMHBySG9iUU1Tb1VqLzhSRDFkbWlK?=
- =?utf-8?B?QkNpL2xZS2ZpUzA2UjQwRVhUVzd6ckpPU1RwMXRmMkhqdGE0d2NYWVdieXRK?=
- =?utf-8?B?WUFlYUNKWjhBVCtCT3BhNk81Y0FjS3FjbU5aR2NncWNkUFJrVno4Q0dhdHgw?=
- =?utf-8?B?VlFRRmZkVEtxNjR6c2NyRUtxYm93ZnZPVmM0eDMzWkt0ZE1Va1NpVmFtQXFO?=
- =?utf-8?B?TUZGQmtNY2RGQjFQL1pxdm1KZTJuenpPOWJZU01LVHBGbEdieWtnUks2VHMz?=
- =?utf-8?B?cS8vWnJDUjhreE1EMTkrdGtYTG9OTmNpTURWZnhGM0x2NTRYK0FtTy82WUhT?=
- =?utf-8?B?SlJsZnF3Z3BPdW1lcjdrbXFkQkY0bjNCLytIS3JLMDJDWllQL1BqNWZiZm1w?=
- =?utf-8?B?L0VDQnhWYUtwZVFiTDBMSFR3SmEwR2Z5b0p0RmNTcGRyRUNwVVpDR3V6aXd2?=
- =?utf-8?B?S1IwMlVEcTVsWlVGVUhsQlRwUE53QWJrenFpOWdBNjdYbTE5VG9Va2pjV2ZS?=
- =?utf-8?B?RTd0cVlIUHF0aHBZcDY3VVBicUtQbHhoTS8xSkZXeDFzVVBsQWYxaVdCY1dk?=
- =?utf-8?B?dnJFSGQwa2ZteDZVSEVVWW1Tais1NGl3ZHY4NkVxRldGcGhsV1pvMlFoRys2?=
- =?utf-8?B?My9mQ0QwVWZhaWF2VFhBWm9xNys5RUpjUlRRdkRtNjFrRU1XMU5nZmRNTUxE?=
- =?utf-8?B?bkZoUFhJRm9IOGZtNXV1aE9mMWthZHpPZW85Z0xhREpsMmNQSEZycEtPdkZw?=
- =?utf-8?B?NHFpR21XQTBmdlNFV2h3UExmbUhrRlMvREZranBUcFltWkdud2V1bXo0M2N5?=
- =?utf-8?B?ZXRxRC82RmwwOVBuL3hKRDZZRk85MzNNZzNvKzBONGxxZVVVZTNKNUVFMXJp?=
- =?utf-8?B?RHdXM3lZVGYxL0pxdDlBaHpzTmxIQ05meU1wY2ZxNGVDcGZCVDhlZkg3ekhE?=
- =?utf-8?B?bU9rQTVTakdJazkwK21STTVaUVRsL2FzbmdxVHVnYlVOTW9id3Z6TUxVWEor?=
- =?utf-8?B?c3VYWVd6MjcrTHN6SkJwTFVQRmU1OHcwQmtxYnROdVlwRlNXWDk1Mk5BYUZG?=
- =?utf-8?B?QlJSb2I4M3Qvb2ovOUZnaVhSL2VsT0lHMGd1YlMzWHZyM1lMS0ZWdTBSVUQv?=
- =?utf-8?B?QnJDdmNXY2xvMnRYc3BmWVl3K3hlbGdnd3VlUXJzM0pRWnk2Um40NFlLZWp5?=
- =?utf-8?B?WVdKaDNFOCsvMDFPS2o3dWJ1UlNGVWtNL3lrdTBZbW9kZXdkRUpXbmZHOGxO?=
- =?utf-8?B?Smo4NzB5L05xS1c4bUE0YkxzbEhJaTVvd253V1F5cnZzR0sxVUtMMy9KTkxC?=
- =?utf-8?B?TWJ1R200Qml3QzF6Nzl5d0Z4TEFIUXJUekRGaE9oZkpKYlpGTlAvMStIUVA4?=
- =?utf-8?B?MThRYmlHb3ZKbWgyQU41N01hOGxLYnVGTFlTd0lvSG9ySUlyOWV3elhLRUdX?=
- =?utf-8?B?dTd1M240eDFpN252SXlCb2cyNG1XUXpuR0FSQlgyVTAyUUdTL25VcUtnblZ6?=
- =?utf-8?Q?8kJTHc?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 17:06:26.5683
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92184cae-d401-46c6-6495-08ddf1558b3d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF0000231D.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7892
+Content-Transfer-Encoding: quoted-printable
 
-Hello Shrikanth,
+On Thu, Sep 11, 2025 at 4:17=E2=80=AFPM Frederic Weisbecker <frederic@kerne=
+l.org> wrote:
+>
+> Le Wed, Aug 13, 2025 at 12:29:51PM +0200, Rafael J. Wysocki a =C3=A9crit =
+:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > When the menu governor runs on a nohz_full CPU and there are no user
+> > space timers in the workload on that CPU, it ends up selecting idle
+> > states with target residency values above TICK_NSEC all the time due to
+> > a tick_nohz_tick_stopped() check designed for a different use case.
+> >
+> > Namely, on nohz_full CPUs the fact that the tick has been stopped does
+> > not actually mean anything in particular, whereas in the other case it
+> > indicates that previously the CPU was expected to be idle sufficiently
+> > long for the tick to be stopped, so it is not unreasonable to expect
+> > it to be idle beyond the tick period length again.
+>
+> I understand what you mean but it may be hard to figure out for
+> reviewers. Can we rephrase it to something like:
+>
+> When nohz_full is not running, the fact that the tick is stopped
+> indicates the CPU has been idle for sufficiently long so that
+> nohz has deferred it to the next timer callback. So it is
+> not unreasonable to expect the CPU to be idle beyond the tick
+> period length again.
+>
+> However when nohz_full is running, the CPU may enter idle with the
+> tick already stopped. But this doesn't tell anything about the future
+> CPU's idleness.
 
-On 9/11/2025 10:22 PM, Shrikanth Hegde wrote:
->>> +    if (is_cpu_paravirt(cpu))
->>> +        push_current_from_paravirt_cpu(rq);
->>
->> Does this mean paravirt CPU is capable of handling an interrupt but may
->> not be continuously available to run a task?
-> 
-> When i run hackbench which involves fair bit of IRQ stuff, it moves out.
-> 
-> For example,
-> 
-> echo 600-710 > /sys/devices/system/cpu/paravirt
-> 
-> 11:31:54 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
-> 11:31:57 AM  598    2.04    0.00   77.55    0.00   18.37    0.00    1.02    0.00    0.00    1.02
-> 11:31:57 AM  599    1.01    0.00   79.80    0.00   17.17    0.00    1.01    0.00    0.00    1.01
-> 11:31:57 AM  600    0.00    0.00    0.00    0.00    0.00    0.00    0.99    0.00    0.00   99.01
-> 11:31:57 AM  601    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> 11:31:57 AM  602    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
-> 
-> 
-> There could some workloads which doesn't move irq's out, for which needs irqbalance change.
-> Looking into it.
-> 
->  Or is the VMM expected to set
->> the CPU on the paravirt mask and give the vCPU sufficient time to move the
->> task before yanking it away from the pCPU?
->>
-> 
-> If the vCPU is running something, it is going to run at some point on pCPU.
-> hypervisor will give the cycles to this vCPU by preempting some other vCPU.
-> 
-> It is that using this infra, there is should be nothing on that paravirt vCPU.
-> That way collectively VMM gets only limited request for pCPU which it can satify
-> without vCPU preemption.
+Sure, thanks for the hint.
 
-Ack! Just wanted to understand the usage.
+> >
+> > In some cases, this behavior causes latency in the workload to grow
+> > undesirably.  It may also cause the workload to consume more energy
+> > than necessary if the CPU does not spend enough time in the selected
+> > deep idle states.
+> >
+> > Address this by amending the tick_nohz_tick_stopped() check in question
+> > with a tick_nohz_full_cpu() one to avoid using the time till the next
+> > timer event as the predicted_ns value all the time on nohz_full CPUs.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >  drivers/cpuidle/governors/menu.c |   12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >
+> > --- a/drivers/cpuidle/governors/menu.c
+> > +++ b/drivers/cpuidle/governors/menu.c
+> > @@ -293,8 +293,18 @@
+> >        * in a shallow idle state for a long time as a result of it.  In=
+ that
+> >        * case, say we might mispredict and use the known time till the =
+closest
+> >        * timer event for the idle state selection.
+> > +      *
+> > +      * However, on nohz_full CPUs the tick does not run as a rule and=
+ the
+> > +      * time till the closest timer event may always be effectively in=
+finite,
+> > +      * so using it as a replacement for the predicted idle duration w=
+ould
+> > +      * effectively always cause the prediction results to be discarde=
+d and
+> > +      * deep idle states to be selected all the time.  That might intr=
+oduce
+> > +      * unwanted latency into the workload and cause more energy than
+> > +      * necessary to be consumed if the discarded prediction results a=
+re
+> > +      * actually accurate, so skip nohz_full CPUs here.
+> >        */
+> > -     if (tick_nohz_tick_stopped() && predicted_ns < TICK_NSEC)
+> > +     if (tick_nohz_tick_stopped() && !tick_nohz_full_cpu(dev->cpu) &&
+> > +         predicted_ns < TICK_NSEC)
+> >               predicted_ns =3D data->next_timer_ns;
+>
+> So, when !tick_nohz_full_cpu(dev->cpu), what is the purpose of this tick =
+stopped
+> special case?
+>
+> Is it because the next dynamic tick is a better prediction than the typic=
+al
+> interval once the tick is stopped?
 
-P.S. I remember discussions during last LPC where we could communicate
-this unavailability via CPU capacity. Was that problematic for some
-reason? Sorry if I didn't follow this discussion earlier.
+When !tick_nohz_full_cpu(dev->cpu), the tick is a safety net against
+getting stuck in a shallow idle state for too long.  In that case, if
+the tick is stopped, the safety net is not there and it is better to
+use a deep state.
 
-[..snip..]
->>> +    local_irq_save(flags);
->>> +    preempt_disable();
->>
->> Disabling IRQs implies preemption is disabled.
->>
-> 
-> Most of the places stop_one_cpu_nowait called with preemption & irq disabled.
-> stopper runs at the next possible opportunity.
+However, data->next_timer_ns is a lower limit for the idle state
+target residency because this is when the next timer is going to
+trigger.
 
-But is there any reason to do both local_irq_save() and
-preempt_disable()? include/linux/preempt.h defines preemptible() as:
+> Does that mean we might become more "pessimistic" concerning the predicte=
+d idle
+> time for nohz_full CPUs?
 
-    #define preemptible()   (preempt_count() == 0 && !irqs_disabled())
+Yes, and not just we might, but we do unless the idle periods in the
+workload are "long".
 
-so disabling IRQs should be sufficient right or am I missing something?
+> I guess too shallow C-states are still better than too deep but there sho=
+uld be
+> a word about that introduced side effect (if any).
 
-> 
-> stop_one_cpu_nowait
->  ->queues the task into stopper list
->     -> wake_up_process(stopper)
->        -> set need_resched
->          -> stopper runs as early as possible.
->         
--- 
-Thanks and Regards,
-Prateek
+Yeah, I agree.
 
+That said, on a nohz_full CPU there is no safety net against getting
+stuck in a shallow idle state because the tick is not present.  That's
+why currently the governors don't allow shallow states to be used on
+nohz_full CPUs.
+
+The lack of a safety net is generally not a problem when the CPU has
+been isolated to run something doing real work all the time, with
+possible idle periods in the workload, but there are people who
+isolate CPUs for energy-saving reasons and don't run anything on them
+on purpose.  For those folks, the current behavior to select deep idle
+states every time is actually desirable.
+
+So there are two use cases that cannot be addressed at once and I'm
+thinking about adding a control knob to allow the user to decide which
+way to go.
 
