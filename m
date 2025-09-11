@@ -1,144 +1,171 @@
-Return-Path: <linux-kernel+bounces-811459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BE68B52958
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:58:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 465C4B5295C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 172DD68148B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:58:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC9A1C21F0F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABF4266580;
-	Thu, 11 Sep 2025 06:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEEC266B67;
+	Thu, 11 Sep 2025 06:58:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrnw5fXA"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="krP0Mf43"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504AF25C822;
-	Thu, 11 Sep 2025 06:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD23023E355;
+	Thu, 11 Sep 2025 06:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757573832; cv=none; b=f9qlsxN4KCkWjXZoiRydyZaVv9i4/9fhYDwxaWRmGgR8IAHaMa+dMgfd7Oy3o3966YvCamCK41Z3GHfX9McRKNuZWhmCTpF6DoK/6BIWOmZ0wAAnauU1HsinJ45JXrz5SJCm9wOoZz37+H16U4PD/BcEBDfaHwtujCSiyyhgbeY=
+	t=1757573886; cv=none; b=n5DanHOMV3OEOZ4I2o8R53E8FVVPsjzXfhQBEUiSaWyQvlccU47UJWAGTT9j6mWG2POg5pmGjG6/RuAsSMixNr6fzcjxgrthp1pC0EKgD1cb3uzTA+IJXtVszsnnzRfvdKJVsn1P32CaruZTj2ptTia0zTP5ppBtNyvYptGrZG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757573832; c=relaxed/simple;
-	bh=5qxNxBaHIECN2bWWSlQ1Iok4Vh/OVqjxMD+R+PAgb0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RY2rigIQ52bZS9mCXxxxXPx697b6BsEWiXn6yKzO0UOFw0NdFxiXxGNTCUjFdTQT1CUYAsD6aIla2o8tzN+ZidPaQfRqWHTcmlvx0FHCv4fKNqOQ2q2/9JFMt/rvEPcaf9ghgzlGP1foqtqY/c6jjbnzl+SBnstfD27INSdPVcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrnw5fXA; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3e751508f21so243814f8f.0;
-        Wed, 10 Sep 2025 23:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757573829; x=1758178629; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6lHQVZXfr/Fsekd1rj68rPNkBJl9XCkWnPIsU6k6HNw=;
-        b=nrnw5fXAzpI5d0ZDvphyVCNIvHe6JSJMrQ82RdJ6B0hdZjtbuQfPoO+KDmvGno63fC
-         qdes32xL49HpHORyGCTlfjcsHEOFN1F+h5J3f7FLZc/Ug3NgvZamFc2EV6km11Iyf5OL
-         jZolRuPpmYcd0IlhUBoU6q3+ILnlLjPV+a1eoV0iMi4Xh8ORYqZPyS7MWpW3477avJzr
-         qvIanaWvTH0EFJFXYc6oVzmcMituUCatuSmY7OCW+YS6MD1xLyDloe/zgSmpXhSKIEWi
-         BvtDzmm7FFQBoL6CeMZzJ6fyfqWlghC9ZTyXtwWOO+yX+uHTvBo3mrkziGuvjehkgmkj
-         fLyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757573829; x=1758178629;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6lHQVZXfr/Fsekd1rj68rPNkBJl9XCkWnPIsU6k6HNw=;
-        b=JZXLVA+TvA0/6nUf6KOppmJ9UzqE5sKdaOg3HbqsKUu/l2hPUo1gMgxZYTyBSaWmnS
-         CyfDxAHAsOFqEaLCwCX7Xb142wP2MpHqRgbncoKaY7VoKjwjMEIzktfKWr1Gb8FA7S2N
-         teOVrsYN2jK7CXlIG767Bw8u3ROs2YsGluwqZmn9uaCfD4HALzADd6TWDOH/xIJmmtNo
-         OuzHw3s4U3CFnrT2raB8JRZ8lhTr/TPL5owxNaAXKvnE8TwTOCuh5p9JD2MKPWHXk9JE
-         IonUJsgk0RkDGUlE6myB2abAiqYm2h3HXwqYvUOcoQ5Pbr31IrDb2mhEtd0iEsW42l+D
-         Acxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVboXUhjogID1m+IrOVnVjpCo5t9OZcxcDHRTSN0OOch1haCIq465uHnS+QJxKHfUN2WAjtjIfm0rQS3s3I@vger.kernel.org, AJvYcCWhU2Ehxq/m2ke+0NhPQ7ZpPJAtITEw/33u+Joqd6TpIRVWLSv9hjWUuCIj5LY0brnpxZ5pz2e5GGS7IBMi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3XyxSXgxATtfeXhSzcIKexKDTITdlUAFoM85n2bUp/wq0prTB
-	qnxG183+cipeloXwMWsBTq54bpSn8wO+vWzpehmh5KGJiJBFDNBaQ+usyAiLRg==
-X-Gm-Gg: ASbGnctGSSB8AfYoMEQ0f8MrbPKRaKnHSRdPvKc/zPpuNXDUZvqqqNYhAVgQPItft7x
-	bByBtffA6udnKVdIIBkNXhT9KSakWvyQt7npxBexGg7T6PyIWtZNRtxZn77gnzq6W1lo3HwK8Xc
-	mYHdN+iljQFgr1Jl4MoYZiTfyLj065reZFuww1bb2XxfG9qLXogmvTK7FshcWQRPNfDG/mxd2/K
-	A89akUdNJVRUgRQSMO5cnJ/BdAHBbZoz3lSd3VW9tVCpZCe/fFHGMKhWbGOxldROOD7tJnILBVK
-	ewNvxe99hRI5qCBllZE1I7bgp8evgGggSiqOVFXhSlXV6u0owkvEDERoZGfkPVK3W8yHgCOZh75
-	FbcoA0YKA4g3no9B8Ae7HNwiOoh83K/XI5d05LVB6/gm6AMi4oZQ=
-X-Google-Smtp-Source: AGHT+IF+5VBBFKxjhiSQ+XH3RsoloRZLOVgcz/iCiOCu06pqDLFS++X03tFj7mQ67sSWgLPZ80dQ7w==
-X-Received: by 2002:a5d:5f87:0:b0:3e0:a5a2:eca8 with SMTP id ffacd0b85a97d-3e64ca74175mr15692042f8f.54.1757573828481;
-        Wed, 10 Sep 2025 23:57:08 -0700 (PDT)
-Received: from f.. (cst-prg-67-222.cust.vodafone.cz. [46.135.67.222])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760775880sm1258254f8f.2.2025.09.10.23.57.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 23:57:07 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	david@fromorbit.com,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] fs: expand dump_inode()
-Date: Thu, 11 Sep 2025 08:56:41 +0200
-Message-ID: <20250911065641.1564625-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757573886; c=relaxed/simple;
+	bh=ezYmetIuXixRHkPs5XqtQKqJxfsVsN9SqTJaOciWsro=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=B6kTphm3meICbP2KCIIiyIugyc3f9Vu43TiCA6Nqo4eopg9YbW0gRImJVcjvUYtP8TkLnNN6yeFbQc0h5t3Noyu1wJez780LWMfcSuakCYeo5E5Fwdtjecy4rlCr/aBA0vNMEMH1jnk/bXiGiaS98PqhEerlo4u/PzI1EtqRD3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=krP0Mf43; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58B6v1Uk3451381
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 10 Sep 2025 23:57:02 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58B6v1Uk3451381
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025082201; t=1757573824;
+	bh=lEaOcSoBLUph9n1Zjxl5jBw1XZCkL3NrlYg8XzrZUFI=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=krP0Mf43urhSNBqtVCqSlpqqaRB2ULapg86LJzirl5u3i0JRoOfXPMhSFPl282rO1
+	 c/MJna3YFTY0ZmLxcdmWQzk6C2Pr7da79A+gzJ3UJRWDYkR2pEVk2w8GOd73jln0cd
+	 A0hDmRLzu4QkkruOX1INFT5JNscCIXrFaHPkY66iBQRnzLCnZDqEJRpUYc5scmCxjQ
+	 bBfx8Url652IvOBbAQgx9Xp/0aeGEP9YrzTwwZp9MLtlrvsmsJD2WgM6+o9PJyH1Br
+	 +0t+boYOd09GKuESb3jybj2ov95D/dkrX7KPvZfgsK2lH98NFq2fBMXvw0eVgeOUZm
+	 2sHZodNui2Glw==
+Message-ID: <a8fa891e-0f35-449b-970c-24e5ca01e2f6@zytor.com>
+Date: Wed, 10 Sep 2025 23:57:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Xin Li <xin@zytor.com>
+Subject: Re: [RFC PATCH v1 1/5] x86/boot: Shift VMXON from KVM init to CPU
+ startup phase
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        linux-pm@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        rafael@kernel.org, pavel@kernel.org, brgerst@gmail.com,
+        david.kaplan@amd.com, peterz@infradead.org, andrew.cooper3@citrix.com,
+        kprateek.nayak@amd.com, arjan@linux.intel.com,
+        rick.p.edgecombe@intel.com, dan.j.williams@intel.com
+References: <20250909182828.1542362-1-xin@zytor.com>
+ <20250909182828.1542362-2-xin@zytor.com> <aMEn4czyuqrQ1+oF@intel.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aMEn4czyuqrQ1+oF@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-This adds fs name and few fields from struct inode: i_mode, i_opflags,
-i_flags, i_state and i_count.
+On 9/10/2025 12:25 AM, Chao Gao wrote:
+>> void vmx_vm_destroy(struct kvm *kvm)
+>> @@ -8499,10 +8396,6 @@ __init int vmx_hardware_setup(void)
+>>
+>> 	vmx_set_cpu_caps();
+>>
+>> -	r = alloc_kvm_area();
+>> -	if (r && nested)
+>> -		nested_vmx_hardware_unsetup();
+>> -
+> 
+> There is a "return r" at the end of this function. with the removal
+> of "r = alloc_kvm_area()", @r may be uninitialized.
 
-All values printed raw, no attempt to pretty-print anything.
+Good catch!
 
-Compile tested on i386 and runtime tested on amd64.
+There’s no need for r to have function-wide scope anymore; just return 0 at
+the end of vmx_hardware_setup() after changing the definition of r as the
+following
 
-Sample output:
-[   23.121281] VFS_WARN_ON_INODE("crap") encountered for inode ffff9a1a83ce3660
-               fs pipefs mode 10600 opflags 0x4 flags 0x0 state 0x38 count 0
+	if (nested) {
+		int r = 0;
+		...
+	}
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
 
-v2:
-- use 0x for hex values
-- add i_count
+BTW, it's a good habit to always initialize local variables, which helps to
+avoid this kind of mistakes I made here.
 
-generated against master, cosmetic changes are needed against the
-vfs-6.18.inode.refcount.preliminaries branch.
 
- fs/inode.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+>> diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
+>> index 916441f5e85c..0eec314b79c2 100644
+>> --- a/arch/x86/power/cpu.c
+>> +++ b/arch/x86/power/cpu.c
+>> @@ -206,11 +206,11 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
+>> 	/* cr4 was introduced in the Pentium CPU */
+>> #ifdef CONFIG_X86_32
+>> 	if (ctxt->cr4)
+>> -		__write_cr4(ctxt->cr4);
+>> +		__write_cr4(ctxt->cr4 & ~X86_CR4_VMXE);
+> 
+> any reason to mask off X86_CR4_VMXE here?
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 01ebdc40021e..95fada5c45ea 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2911,10 +2911,18 @@ EXPORT_SYMBOL(mode_strip_sgid);
-  *
-  * TODO: add a proper inode dumping routine, this is a stub to get debug off the
-  * ground.
-+ *
-+ * TODO: handle getting to fs type with get_kernel_nofault()?
-+ * See dump_mapping() above.
-  */
- void dump_inode(struct inode *inode, const char *reason)
- {
--       pr_warn("%s encountered for inode %px", reason, inode);
-+	struct super_block *sb = inode->i_sb;
-+
-+	pr_warn("%s encountered for inode %px\n"
-+		"fs %s mode %ho opflags 0x%hx flags 0x%x state 0x%x count %d\n",
-+		reason, inode, sb->s_type->name, inode->i_mode, inode->i_opflags,
-+		inode->i_flags, inode->i_state, atomic_read(&inode->i_count));
- }
- 
- EXPORT_SYMBOL(dump_inode);
--- 
-2.43.0
+In this patch set, X86_CR4_VMXE is an indicator of whether VMX is on.  I
+used a per-CPU variable to track that, but later it seems better to track
+X86_CR4_VMXE.
+
+> 
+> I assume before suspend, VMXOFF is executed and CR4.VMXE is cleared. then
+> ctxt->cr4 here won't have CR4.VMXE set.
+
+What you said is for APs per my understanding.
+
+cpu_{enable,disable}_virtualization() in arch/x86/power/cpu.c are only used
+to execute VMXON/VMXOFF on BSP.
+
+TBH, there are lot of power management details I don't understand, e.g., AP
+states don't seem saved.  But the changes here are required to make S4
+work :)
 
 
