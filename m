@@ -1,157 +1,162 @@
-Return-Path: <linux-kernel+bounces-812082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60CDAB532B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:49:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A1BB532B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834123AAF99
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:49:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 065AC7AD643
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FEB322747;
-	Thu, 11 Sep 2025 12:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3DC243367;
+	Thu, 11 Sep 2025 12:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OPczHEo/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ulLDjnv5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C0E15746E;
-	Thu, 11 Sep 2025 12:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9E815746E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594970; cv=none; b=PlIclExB3bI0J5KUYoBhYIVdOQK2fKXkTPkJrYxtImbsH7hg2+auF0sV4LVBOKYj6rGGPqbI5xIgy0hM9B2Qekq10qabu/HqzAjZZdyl/Ate21km12NmcEPqb0hCAT5ilG8mXoy0QpwKZfKIEfjIUjeZF+0fUQgrXfgAkKYPf5A=
+	t=1757594962; cv=none; b=Ggz+T5qP99ihZnQVAZqzkL02FFf2kNwoxkE3nL3fKn2yak+FUYCDD4thMruuCkncJitkI/ozY+9+oSggIs8b6nZfttlZfaWMYqUk5cC7Tcng7A/cj0XzJOFAdWW+IU27o5UuW36GThHpAwGhrHOMHiM0PQEZ4uIaknRhkDW/rkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594970; c=relaxed/simple;
-	bh=95VGmn5zYkdSFvwiFR9CCNoXOXQuzw0/aWLYKuW80lw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=e54Ss4lGmC3K4dPuujn9/Q7lM8Aco1XDc6EMKgv+a1UYIXAXQRsfEHgm4fVX5GR012EPlR+IGW0u8sXQg519LhHNp/6pFcytRC5riWtNa7IWQoctDrlqh4AQOw3kA9wec8vlL4pka/f52fCdB1j8k0+v8fAb3oL8Km47UA8Je2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OPczHEo/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BBQnrZ026440;
-	Thu, 11 Sep 2025 12:49:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	o1CjqlXhvL+dqcsZqbFvvfk8Xta9TV6JWB9PtbZ0BjE=; b=OPczHEo/9jaGv9CX
-	IdGQHF71IePA1SoA9c2Jjy7IWzLcusSfCQNqqhJEONEs0erQ5J4D/cczOZujZZTM
-	M8TFfRibu0oVcs+hEQinP/RAjFxHwE6AKYqnTHzPc1qyWCmSW0H88zbQa9k37Lqd
-	Emj7RCzGqgIIpJSnQ15NTYNR5eoG+0dOLd0GKaToWXIuYorpKh7zjU30rwe6AxhC
-	DcOkwRh49/xkzRqzBvvJ0nprE36pXdp8R5o5NXIapodNguX7Dr0v5PA+gBKshInm
-	6VhVqZTXSECoh1HB1GMTHomfBiKtj3UXmovCHr9n3WPfxdRudlYa6AU6N7PxV6HD
-	XE3nLQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj0ykxt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 12:49:19 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58BCnHr8009491
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 12:49:17 GMT
-Received: from [10.206.103.106] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 11 Sep
- 2025 05:49:11 -0700
-Message-ID: <0ca4f6bb-b2a2-4f98-a494-bb0507bafcd5@quicinc.com>
-Date: Thu, 11 Sep 2025 18:19:02 +0530
+	s=arc-20240116; t=1757594962; c=relaxed/simple;
+	bh=C+IX8JQ2COSyVo9kw+3dxUx1yrGzrT5oSKuWeoymk8w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q7uXgnxspzI/bb5DUES41vnA7LPpjjrndO7E4tv8WofAdDbiHc8TF8bSbiBt61K5jm5cBIaMiWmpWPSnwJUON0uvXn8YfRrtQGMDmYbMfGZrRqQEMX2WpR+wzXVVJ6BWoIWyloAu42ocCTSqwn2isTnADqNa20zeAW7ay9t3bA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ulLDjnv5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C127AC4CEF0
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:49:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757594961;
+	bh=C+IX8JQ2COSyVo9kw+3dxUx1yrGzrT5oSKuWeoymk8w=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ulLDjnv5s2w9RYBclhdpuAJs1GHrigt0gpobBci4xdrs4EHC4pxSZCOllmlQm4mBS
+	 yDvmp+YtntA81dcy0Gv5W+AGWq5/gVY2aGMVYgyz53L8nNQqElh/flXj/+jS6Md9N6
+	 /u8quAjxDpOCr9Jk6CMnb+2034puv+gRX3GygubXjQ7j9V9l3yU8kncP1g+uZPr28Q
+	 cYyS9Hlm4jIqcyyOvytMfmCiLYgXIOSAVJLXqQrW9DH1roATZLVNDCuJ0Aw+7V90B4
+	 Gb1LxaYzzE4jmNpZJ7aWPyHb695KyLaiHl4Qv42mbgfXr8Ncp6nPWvru3QQRW4T45R
+	 Eohs1uRziz8Rg==
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-61da7b78978so368186eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:49:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWdF3NfX4wAk+Ho8WIYLzctqh8Bjx9+MLKUxmsJqxB+zs7HNrbrHYUYRUvJNzdHaqU0Zxil/KkerQD6B00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGcByo9wh2PPA1FkaXfyhYblxFNAgjS70KpMiUd7riTM+wCcio
+	dim7pIGb/Yx2Zr02OtMKQeqjcOx4nQqJIAf3jfNVbX5joXE8ChbOSiqifi+JqrUKUZmVocodYIV
+	t7e/uSxdvNsj4z7G5vc5ciV3+Qus+z08=
+X-Google-Smtp-Source: AGHT+IE0SZNhbg9/joMdRy/snswIByXzzTetPcERXhI96bVCxl0PqbwsRuWEUn2JI5L4Xv306WxjljMtTRct025/xTs=
+X-Received: by 2002:a05:6820:515:b0:621:9802:d190 with SMTP id
+ 006d021491bc7-6219802d300mr5397523eaf.7.1757594961098; Thu, 11 Sep 2025
+ 05:49:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: monaco-evk-camera: Add DT overlay
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: Vikram Sharma <quic_vikramsa@quicinc.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <quic_svankada@quicinc.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Ravi Shankar
-	<quic_rshankar@quicinc.com>,
-        Vishal Verma <quic_vishverm@quicinc.com>
-References: <20250909114241.840842-1-quic_vikramsa@quicinc.com>
- <20250909114241.840842-4-quic_vikramsa@quicinc.com>
- <w54mpkzk7irjb7m5jiouxhj77czj4ex72oqioaph4o5qhcsay2@qjolctktsu4s>
- <8104bb41-e827-4daa-bc96-9b6678a9d345@quicinc.com>
- <3d26b554-727a-44cb-a1a9-56f49775ba3a@quicinc.com>
- <j475dpcflsibhrim44wjmtbfcfht5jzvptlzrj354oyjee5mit@wmfc6zmrkbfs>
-Content-Language: en-US
-From: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
-In-Reply-To: <j475dpcflsibhrim44wjmtbfcfht5jzvptlzrj354oyjee5mit@wmfc6zmrkbfs>
+References: <20250911112058.3610201-1-treapking@chromium.org>
+ <20250911112058.3610201-2-treapking@chromium.org> <2025091129-harmonics-clambake-6240@gregkh>
+In-Reply-To: <2025091129-harmonics-clambake-6240@gregkh>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 11 Sep 2025 14:49:09 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0incdNCxt=0AAdtbsBVdazZMCWG=15PUAnnpz8Rvr=psg@mail.gmail.com>
+X-Gm-Features: Ac12FXyGERKfjrx2iuB_mbuxwFyy1_UKlI57GpG116b6xucqLEYqrQVyDeENyJw
+Message-ID: <CAJZ5v0incdNCxt=0AAdtbsBVdazZMCWG=15PUAnnpz8Rvr=psg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Pin-yen Lin <treapking@chromium.org>
+Cc: Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Hsin-Te Yuan <yuanhsinte@chromium.org>, linux-pm@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: DnpLQNfpcOq7b1_m4H8RFmoDZtxR2qx6
-X-Proofpoint-GUID: DnpLQNfpcOq7b1_m4H8RFmoDZtxR2qx6
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfX15Lt/VU2vMEm
- QTxoNQx6IOx0kCqzgsv0JVD+mSxb5/G34E2gcuu01cw8dyqhpgYmxVvTWxOiwsWKoWGkm5bvr+D
- sIMYxrgn8VQlfHCtYksLf5Eo9Yn88kUJAIlnsG2TzakfmWeL9AebUI+Qj74RKS0Ex6b4ErcWwuT
- 8KA9FKKwUNSEbn90zZvjfIQbAuF/oC24gDzxU8OE2Vl0al/GSWrB/aGnpCk70K+29/Y4SKbiJ+a
- esQtoxqI/up9PEPywcrDL8iR4Br+HjJc8DPpO11VgIdFTzLIC3duD0JcKAnQdK3WZrn1sAe9bXL
- /sSpuFAwUocLMUrASt3WGVMW418aWVgbNedBNpZqRGn6f4DXcI47ja97T1tiCQcFYIwqFRdIWP9
- wDU/1Ugn
-X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c2c54f cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=5w7gkbzRxSBdikr_-JgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060024
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 11, 2025 at 2:28=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Sep 11, 2025 at 07:16:03PM +0800, Pin-yen Lin wrote:
+> > Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
+> > and resume, and functions like device_reorder_to_tail() and
+> > device_link_add() doesn't try to reorder the consumers with such flag.
+> >
+> > However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
+> > check this flag before triggering dpm_wait, leading to potential hang
+> > during suspend/resume.
+> >
+> > This can be reproduced on MT8186 Corsola Chromebook with devicetree lik=
+e:
+> >
+> > usb-a-connector {
+> >         compatible =3D "usb-a-connector";
+> >         port {
+> >                 usb_a_con: endpoint {
+> >                         remote-endpoint =3D <&usb_hs>;
+> >                 };
+> >         };
+> > };
+> >
+> > usb_host {
+> >         compatible =3D "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
+> >         port {
+> >                 usb_hs: endpoint {
+> >                         remote-endpoint =3D <&usb_a_con>;
+> >                 };
+> >         };
+> > };
+> >
+> > In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlink
+> > between usb_host (supplier) and usb-a-connector (consumer) is created.
+> >
+> > Use device_link_flag_is_sync_state_only() to check this in
+> > dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
+> >
+> > Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_ST=
+ATE_ONLY flag")
+> > Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> > ---
+> >
+> > Changes in v2:
+> > - Update commit message
+> > - Use device_link_flag_is_sync_state_only()
+> >
+> >  drivers/base/power/main.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> > index 2ea6e05e6ec9..73a1916170ae 100644
+> > --- a/drivers/base/power/main.c
+> > +++ b/drivers/base/power/main.c
+> > @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *d=
+ev, bool async)
+> >        * walking.
+> >        */
+> >       list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_nod=
+e)
+> > -             if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> > +             if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> > +                 !device_link_flag_is_sync_state_only(link->flags))
+> >                       dpm_wait(link->supplier, async);
+> >
+> >       device_links_read_unlock(idx);
+> > @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *d=
+ev, bool async)
+> >        * unregistration).
+> >        */
+> >       list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_nod=
+e)
+> > -             if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> > +             if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> > +                 !device_link_flag_is_sync_state_only(link->flags))
+> >                       dpm_wait(link->consumer, async);
+> >
+> >       device_links_read_unlock(idx);
+>
+> The way you use this new function does not require it to have been
+> exported to modules :(
 
-
-On 11-09-2025 15:38, Dmitry Baryshkov wrote:
-> On Thu, Sep 11, 2025 at 02:49:59PM +0530, Nihal Kumar Gupta wrote:
->>
->> On 10-09-2025 12:33, Vikram Sharma wrote:
->>> On 9/9/2025 7:31 PM, Dmitry Baryshkov wrote:
->>>> On Tue, Sep 09, 2025 at 05:12:40PM +0530, Vikram Sharma wrote:
->>>>> From: Nihal Kumar Gupta<quic_nihalkum@quicinc.com>
->>>>>
->>>>> Enable IMX577 sensor using the CCI1 interface on Monaco EVK.
->>>>> Camera reset is controlled through an I2C expander,
->>>>> and power supply is managed via tlmm GPIO74.
->>>> Why is done as an overlay? Is it a seprate mezzanine?
->>> It’s not a separate mezzanine; monaco-evk does not come with an attached camera 
->>> sensor by default.
->>> The overlay simply reflects an optional camera sensor attachment (e.g., IMX577 
->>> on CSIPHY1)
->>> That is why camera sensor is configured in monaco-evk-camera.dtso instead of 
->>> modifying the base monaco-evk.dts.
->>> Please suggest and alternative approach if you feel this is not correct
->> Dmitry, Do you agree with this justification or you have a follow-up comment?
->> Can we post v2 with the same change addressing other comments.
-> The previous email didn't land to the mailing list, I'm not sure why.
-> 
-> Anyway:
-> - What are other options that we might support? Having a single
->   monaco-evk-camera overlay means that this is the only configuration
->   that we plan to support.
-> 
-> - It all should have been described in the commit message. Please update
->   it for the next revision.
-
-Yes, We have planned to support device tree overlay of the IMX577 sensor via CSIPHY1 only.
-I'll update the commit message in v2
-
-Regards,
-Nihal Kumar Gupta
+Also, I'd just make it non-static (without exporting it to modules)
+and use it in the same patch because the new usage is the reason for
+exporting.
 
