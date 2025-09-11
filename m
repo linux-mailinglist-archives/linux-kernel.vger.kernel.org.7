@@ -1,141 +1,255 @@
-Return-Path: <linux-kernel+bounces-811451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A79FAB5293F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:52:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711B9B52945
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E27E17A1C3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:51:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 092E37A30CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD80C26560A;
-	Thu, 11 Sep 2025 06:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD1E266B67;
+	Thu, 11 Sep 2025 06:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QUTcuoel"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="liA0bLaX"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A961DF97D;
-	Thu, 11 Sep 2025 06:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022C61DF97D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757573561; cv=none; b=psrpVqpUmqI0qlePlUu2wo2mJhRF/laVkqX/ONniEwgXsi2Il5Wz5mmlEecmeI/NVdVM4R/XsIpO2DQTsuXFNppRQuq62Er2kEcbu+JdNNTqMbW2ushCjHaHpyM2kDN2ANvXth5+UHezxNzSWFaTh9TYVSI6+miJOL46WMsWq4I=
+	t=1757573584; cv=none; b=Kml03Rf3s/wkl52hIGF9x5ZH+3xVAIgGwvSOjVgSCbolqYz7w0nlI3ENESTDRbT4LnIu6gq1zDIUlxwsOdtrWwxZ/cBbQp+H4QQyDSFz/USiLOF9578vJekZLOUJMD3bH2/s3dXQhthJOhVFCim7WrxqKNIu7aggQOmUvfgLSiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757573561; c=relaxed/simple;
-	bh=U4NaHTrJuPhGYd9RgDnrJSxb0pLpENgCkrEDV03NA/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jPnNzOIZBwHL/ehFYyoDwjMsFMmQmMz+DMxrS4jzAC9uHGfb9VNjAsSUk/fqWp4w0Y9js353pooV888ACJnOhnnaNRl6xEnwNxwkyeI5uE02Qj00PB1hGpV01iSqaiP2aQHtONuRlH27JnYNuJX02YSKd054Oe8ZY+NKsH5DHAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QUTcuoel; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757573559; x=1789109559;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=U4NaHTrJuPhGYd9RgDnrJSxb0pLpENgCkrEDV03NA/8=;
-  b=QUTcuoeln3OHAmk0RZuAYDpi1QNYnB07pPmjQ6kRclABMnaPp9cFwDH9
-   eT3AeJY/uWCOCXL1i7YulmHIKxOkxdLOanFJKjbp0FbJ8OEjPTPRfILpm
-   CIuYfxPqC3kyhCNR+k72STnPTMNzj/oVsbu5vv76g2/jvJkU3zmqZzqMK
-   T4AOiWLGMd6PfMCLqLO7P5pdYA47S8Lsxht1zAzEGSgNYS6SuuDjGmX/f
-   ZsCJcogWEE1Jd8eNRjYSSxfr26NzoF0MUwge+KNg+/nXA9IOuk2Tt+LDH
-   yETLRCIb0+fL45f9sS22k5HB/s2Fcz+OAZDAJHmrL8j+YXMVOuvOI+e12
-   Q==;
-X-CSE-ConnectionGUID: Z2Wc160yTGul6Wk4XwdAXA==
-X-CSE-MsgGUID: TA8z09QuSqSkFgQKpxznrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59960569"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="59960569"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 23:52:39 -0700
-X-CSE-ConnectionGUID: 1DLSL7J7R9Kr+mYeZY1wJA==
-X-CSE-MsgGUID: SJJ63r95S3639eCF7AT+pA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="172899554"
-Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 23:52:34 -0700
-Message-ID: <708d43af-3d87-4412-896b-1fbac1ef81b2@linux.intel.com>
-Date: Thu, 11 Sep 2025 14:52:31 +0800
+	s=arc-20240116; t=1757573584; c=relaxed/simple;
+	bh=MosfAOPXggOaMXmK1NE1OB2KAznkuBaD9gE8puz8LQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNjxngR8VLHdgFgGJlvCrxsF84TdyJL0MeUIrSqlk1GwYQ1XycSdMSJvvpLukCEnQwgA3sqU5xFD5vbShwHa+hs7AMEWqliUYT1KWld++k9oQgXJjzGTRiPUzkHt7gk5IsFlKBMRGl4dH5XcpbSeXCKnIxVNoIGXACb4i5c0+VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=liA0bLaX; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7726c7ff7e5so338807b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:53:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1757573581; x=1758178381; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GmZdHMjW2ierOJlMW2a8YzsyJfuW1roryoxn9+9Fw3c=;
+        b=liA0bLaX+joYazF+rBZL5B5lAGkvvl6Flwzx7mbFtKhxg4nhURdpf9BXcSj72R2fDH
+         EG7cCWYeuHH7xp2s4XEwqPF+ol+Npt+llfkGNBN2OW6dqMxN2Ei8DbTj+dKJg3pVmo1q
+         SxWOSGK6wgVJhPwjDELYH2WZ9EBV+JO9GUIedMSKs4FmmQx+csm3dB6BcIA3C4ehYiKt
+         ynTmysU3oVBh9ITHWs31RgRocOAn9BdN61hht8XwMMdp7QEArWp8pAq/oHbT50HAIJOQ
+         cILKNzanuM7rMoX6T1VcLOfosUPwjPCsRtlrTb0sylGxi/i26xnomE3tpR85MYmi46Lo
+         /Klw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757573581; x=1758178381;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GmZdHMjW2ierOJlMW2a8YzsyJfuW1roryoxn9+9Fw3c=;
+        b=uaCIt8NMsoBSSs/8WiLJkRspRHc86B9vo+OX9J+no7rhOGFpLToTBZZEWABzaAPM5r
+         VLUX0PXJuVzEKCgWAwnulTIw+YrNssAwRQk3tvtqlkj66M7l3uxCB9WQUjq3M2WGh+Z4
+         Be0fp/F25UYatsXR4x2FCOLmpT8sQ6ybVkGkGDZPUDK4vVi4034dKX5kPp5zgSb74JFF
+         6ALDxsStXUpZnqxbEy5QyDr7uQsIZ5dxXwYZoAgH3F+TG8o2BWchd7LXVhqWfAvgqKcu
+         BUMKWw4IbW7Bi2fPES0WaLp3f1Y25vdPYfgmrt4FZ0v+ZqbID55BZRisGbvsRjE9Oscx
+         ZkhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzY3LOl7KtHemkfD3oQ5rHQY1K/KONWcqcfiC5np9d7+X334ErlJfY0rfRZ2f/q0p/ZsDKQB2jry/5gwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfP0pXpwGPjw8FBNq+12mzhVSO7CMjhLm9sAq9WfSqTPqU/R/q
+	+VGhMSfVCEgJUPtp1mPKsLWVM18xgmD+7R8nzH3rfwBcGv4V8jaWZIz1yCbolcPYtrM=
+X-Gm-Gg: ASbGncvqADot9+juAcjj05xsBYmpdaeFASaxu3Mn1sJgfu2Zp2cKX8Jwt8l7A2J8NUP
+	FuLX4GVQAnk6FuHd1yVB5/RqY6i0kAkJSoXmTMc0zzFNorBpxCBDuhMpF8IGYwGqHDYaBeyOo3q
+	dhLTrl+1mIwjA4LYucl7cWadB6cr83Lxg6rUV2ADF6ecJ+Vlejwh9oLy7broSl16YhIxKFd6z+Y
+	Gmdv/57MXmQL1L6zb/V2gxw5nCMV9lufftm0FWgjm+y+mcr4LBNTHLqpA+/u3dusRpWuyVNgeZt
+	Y1+ywmvM6M1w2fSpTPEpjGtK66f+0iJhDiAUx5w1bKpRUvGUjUMv7/ARqSAJ40Kfsw68v+Dg6Ur
+	zdhcRcknvY9dDvatHwzb3NeXz257SMnrzsUuMJUYgYXvMHdP7SZ/qH82207h19bm8ntqIa2w9Xk
+	FEy3tuSHWq
+X-Google-Smtp-Source: AGHT+IGasaLzOYam5A1QsgyXdSjCVIvWR7XOAwof9JLu91tc4jZXAZZcaQdzlfPlVrkI/CXhO/i++w==
+X-Received: by 2002:a05:6a21:6d9f:b0:248:4d59:93dd with SMTP id adf61e73a8af0-2534640cda7mr22645053637.52.1757573581062;
+        Wed, 10 Sep 2025 23:53:01 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-91-142.pa.nsw.optusnet.com.au. [49.180.91.142])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a387b5c5sm835488a12.34.2025.09.10.23.53.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 23:53:00 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1uwbAv-00000000RJK-3hpp;
+	Thu, 11 Sep 2025 16:52:57 +1000
+Date: Thu, 11 Sep 2025 16:52:57 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	josef@toxicpanda.com, kernel-team@fb.com, amir73il@gmail.com,
+	linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-xfs@vger.kernel.org, ocfs2-devel@lists.linux.dev
+Subject: Re: [PATCH v3 2/4] fs: hide ->i_state handling behind accessors
+Message-ID: <aMJxydmz_azN7Kce@dread.disaster.area>
+References: <20250911045557.1552002-1-mjguzik@gmail.com>
+ <20250911045557.1552002-3-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 02/22] KVM: x86: Report XSS as to-be-saved if there
- are supported features
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
- minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
- pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
- seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
- weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com, xiaoyao.li@intel.com
-References: <20250909093953.202028-1-chao.gao@intel.com>
- <20250909093953.202028-3-chao.gao@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <20250909093953.202028-3-chao.gao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911045557.1552002-3-mjguzik@gmail.com>
 
+On Thu, Sep 11, 2025 at 06:55:55AM +0200, Mateusz Guzik wrote:
+> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 
+So why did you choose these specific wrapper functions?
 
-On 9/9/2025 5:39 PM, Chao Gao wrote:
-> From: Sean Christopherson <seanjc@google.com>
->
-> Add MSR_IA32_XSS to list of MSRs reported to userspace if supported_xss
-> is non-zero, i.e. KVM supports at least one XSS based feature.
->
-> Before enabling CET virtualization series, guest IA32_MSR_XSS is
-> guaranteed to be 0, i.e., XSAVES/XRSTORS is executed in non-root mode
-> with XSS == 0, which equals to the effect of XSAVE/XRSTOR.
->
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> Reviewed-by: Chao Gao <chao.gao@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-
-Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
-
+Some commentary on why you choose this specific API would be very
+useful here.
 
 > ---
->   arch/x86/kvm/x86.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index f32d3edfc7b1..47b60f275fd7 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -335,7 +335,7 @@ static const u32 msrs_to_save_base[] = {
->   	MSR_IA32_RTIT_ADDR3_A, MSR_IA32_RTIT_ADDR3_B,
->   	MSR_IA32_UMWAIT_CONTROL,
->   
-> -	MSR_IA32_XFD, MSR_IA32_XFD_ERR,
-> +	MSR_IA32_XFD, MSR_IA32_XFD_ERR, MSR_IA32_XSS,
->   };
->   
->   static const u32 msrs_to_save_pmu[] = {
-> @@ -7470,6 +7470,10 @@ static void kvm_probe_msr_to_save(u32 msr_index)
->   		if (!(kvm_get_arch_capabilities() & ARCH_CAP_TSX_CTRL_MSR))
->   			return;
->   		break;
-> +	case MSR_IA32_XSS:
-> +		if (!kvm_caps.supported_xss)
-> +			return;
-> +		break;
->   	default:
->   		break;
->   	}
+>  block/bdev.c                     |   4 +-
+>  drivers/dax/super.c              |   2 +-
+>  fs/buffer.c                      |   4 +-
+>  fs/crypto/keyring.c              |   2 +-
+>  fs/crypto/keysetup.c             |   2 +-
+>  fs/dcache.c                      |   8 +-
+>  fs/drop_caches.c                 |   2 +-
+>  fs/fs-writeback.c                | 123 ++++++++++++++++---------------
+>  fs/inode.c                       | 103 +++++++++++++-------------
+>  fs/libfs.c                       |   6 +-
+>  fs/namei.c                       |   8 +-
+>  fs/notify/fsnotify.c             |   2 +-
+>  fs/pipe.c                        |   2 +-
+>  fs/quota/dquot.c                 |   2 +-
+>  fs/sync.c                        |   2 +-
+>  include/linux/backing-dev.h      |   5 +-
+>  include/linux/fs.h               |  55 +++++++++++++-
+>  include/linux/writeback.h        |   4 +-
+>  include/trace/events/writeback.h |   8 +-
+>  mm/backing-dev.c                 |   2 +-
+>  security/landlock/fs.c           |   2 +-
+>  21 files changed, 198 insertions(+), 150 deletions(-)
+> 
+> diff --git a/block/bdev.c b/block/bdev.c
+> index b77ddd12dc06..77f04042ac67 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -67,7 +67,7 @@ static void bdev_write_inode(struct block_device *bdev)
+>  	int ret;
+>  
+>  	spin_lock(&inode->i_lock);
+> -	while (inode->i_state & I_DIRTY) {
+> +	while (inode_state_read(inode) & I_DIRTY) {
+>  		spin_unlock(&inode->i_lock);
+>  		ret = write_inode_now(inode, true);
+>  		if (ret)
 
+This isn't an improvement.
+
+It makes the code harder to read, and now I have to go look at the
+implementation of a set of helper functions to determine if that's
+the right helper to use for the context the code is operating in.
+
+What would be an improvement is making all the state flags disappear
+behind the same flag APIs as other high level objects that
+filesystems interface with. e.g. folio flags use
+folio_test.../folio_set.../folio_clear...
+
+Looking wider, at least XFS, ext4 and btrfs use these same
+set/test/clear flag APIs for feature and mount option flags. XFS
+also uses them for oeprational state in mount, journal and per-ag
+structures, etc. It's a pretty common pattern.
+
+Using it for the inode state flags would lead to code like this:
+
+	spin_lock(&inode->i_lock);
+	while (inode_test_dirty(inode)) {
+	.....
+
+That's far cleaner and easier to understand and use than an API that
+explicitly encodes the locking context of the specific access being
+made in the helper names.
+
+IOWs, the above I_DIRTY flag ends up with a set of wrappers that
+look like:
+
+bool inode_test_dirty_unlocked(struct inode *inode)
+{
+	return inode->i_state & I_DIRTY;
+}
+
+bool inode_test_dirty(struct inode *inode)
+{
+	lockdep_assert_held(&inode->i_lock);
+	return inode_test_dirty_unlocked(inode);
+}
+
+void inode_set_dirty(struct inode *inode)
+{
+	lockdep_assert_held(&inode->i_lock);
+	inode->i_state |= I_DIRTY;
+}
+
+void inode_clear_dirty(struct inode *inode)
+{
+	lockdep_assert_held(&inode->i_lock);
+	inode->i_state &= ~I_DIRTY;
+}
+
+With this, almost no callers need to know about the I_DIRTY flag -
+direct use of it is a red flag and/or an exceptional case.  It's
+self documenting that it is an exceptional case, and it better have
+a comment explaining why it is safe....
+
+This also gives us the necessary lockdep checks to ensure the right
+locks are held when modifications are being made.
+
+And best of all, the wrappers can be generated by macros; they don't
+need to be directly coded and maintained.
+
+Yes, we have compound state checks, but like page-flags.h we can
+manually implement those few special cases such as this one:
+
+> @@ -1265,7 +1265,7 @@ void sync_bdevs(bool wait)
+>  		struct block_device *bdev;
+>  
+>  		spin_lock(&inode->i_lock);
+> -		if (inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW) ||
+> +		if (inode_state_read(inode) & (I_FREEING|I_WILL_FREE|I_NEW) ||
+
+-		if (inode->i_state & (I_FREEING|I_WILL_FREE|I_NEW) ||
++		if (inode_test_new_or_freeing(inode)) ||
+
+bool inode_test_new_or_freeing(struct inode *inode)
+{
+	lockdep_assert_held(&inode->i_lock);
+	return inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW);
+}
+
+Or if we want to avoid directly using flags in these wrappers,
+we write them like this:
+
+bool inode_test_new_or_freeing(struct inode *inode)
+{
+	return inode_test_freeing(inode) ||
+		inode_test_will_free(inode) ||
+		inode_test_new(inode);
+}
+
+Writing the compound wrappers this way then allows future
+improvements such as changing the state flags to atomic bitops so
+we can remove all the dependencies on holding inode->i_lock to
+manipulate state flags safely.
+
+Hence I think moving the state flags behind an API similar to folio
+state flags makes the code easier to read and use correctly, whilst
+also providing the checking that the correct locks are held at the
+correct times. It also makes it  easier to further improve the
+implementation in future because all the users of the API are
+completely isolated from the implmentation....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
