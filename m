@@ -1,305 +1,252 @@
-Return-Path: <linux-kernel+bounces-812859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 751CBB53DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:27:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95A4AB53DBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 231D216922B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:27:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BE4BA078C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533222DEA7B;
-	Thu, 11 Sep 2025 21:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934842DECA5;
+	Thu, 11 Sep 2025 21:28:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="V+MytfQ3"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2072.outbound.protection.outlook.com [40.107.94.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CZdqbf2u"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3BB2C2357;
-	Thu, 11 Sep 2025 21:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757626056; cv=fail; b=ewYQZXAvwzWMuX8dF1GS40drv4LHVYI0/uwMDJzY9YP6eOeXxV2QiDa17JCZ74F98whzA5Knpyi48gK/iuAwwVzTFY+putYFGAD1/V+gJ+6A2ShNKpXgLHg3S3y7JVkhST3axNeVfL8MOSI4LNgpkZrLTT9AkLQBTEqAjpbhnY4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757626056; c=relaxed/simple;
-	bh=YJGmrowHQYpQsdOIrOz4xgbafZfW3v+U4QG/aq3T0AI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YAmyntS92HDrGKzz6aGZF8pOJ5JrIZoXuNlGG8DvPCDeVhg7oLtRWVCP51w+x0tcvWKUbczt78D4Jlb6fisORDZiEX5sFmiulk25mbkErp4qWeYddzIk7WEyTOm0emoPaybx1+2Yj6iG6VsruCqy0m7DBFA/tgyC+7xky5rTmTY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=V+MytfQ3; arc=fail smtp.client-ip=40.107.94.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XhYvGqaPZigGiLYr6QbfALWEq3eaDjSuqEqUGeotAwasARA9H3HILfMe1gxBn6Y0j+Lrjj4l4G1At3vySnLMDDsDWeYQujoNJ1jhbMNGCURCtlgnGHaGDYwarLFwB5cpiiNcWCMn0E3YZR/h/GNbUCxk4fYr/kkOaw1E85hqTx8X2st6DTj1Uz9WQTi76p9pJy2e4rXL6G6mkZSqbqSCi/+i1vjxwb6yJ2bmreB+QO5NmFmEus9ILk4oP7kDKTnzZHmAeo19tEBi6DpCjTe7VXEpBnRXyT7/GgfQL1pTLsD7LIYrOiJoEAOZWlWujtPDRchcfh0Gc6Jasj4g0o1ZOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RQeAp6c9O3D3RfiiJtmxNiFW29ulv+kUmotU735NpQs=;
- b=dyr7BxytbVNe3JCFqH0G/Pp8cxkRxxHYKuFSWa43+xrFjSpbfv6mRydFUIBOu2P9yLjoKNE4+IBbLOczAUE/DSKTiFlA/9d9pg4vRI5id+/7kGf2FGjZXr8v6jZChCO+YwE4f+59FUC358n6esgfXbKBxott04A8CUfp+mseI38/wryNcK4hnArBigJMzGubLkEytBr5LDLXrVgjWhnOcmUpsPQ2vaNAaObaKjnvZIuFlLZ+/xMjmmZwooMqyESORmQU54KkliOCCKXsKlBetiHgFIzXH5OR3HJJtgLn9ELmTnsG1ViHSIu/YoHk53dBEPE1G+C7cuN1MjyPqBg98g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RQeAp6c9O3D3RfiiJtmxNiFW29ulv+kUmotU735NpQs=;
- b=V+MytfQ33ikXaN6IVBWVyT+FyNO6sEweWjvNiVxfmH68Uw6H/+ZTtkMAmetBtRdN69z8hF31bKONwXLC+zJGOtK1rMcs8CvXLB7cxpznMIJJVoPE5grFIzgHfRZzwq+e31uVtAny21HZ1daglXELtZb17DGVCTImpJrXHKvJQLU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com (2603:10b6:5:389::22)
- by CY8PR12MB8066.namprd12.prod.outlook.com (2603:10b6:930:70::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 21:27:29 +0000
-Received: from DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e]) by DM4PR12MB5070.namprd12.prod.outlook.com
- ([fe80::20a9:919e:fd6b:5a6e%3]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 21:27:29 +0000
-Message-ID: <2abffe1f-e289-4261-97f0-cfc4cf674fd0@amd.com>
-Date: Thu, 11 Sep 2025 16:27:27 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] x86/efistub: Obtain SEV CC blob address from the
- stub
-To: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, Borislav Petkov <bp@alien8.de>
-References: <20250909080631.2867579-5-ardb+git@google.com>
- <20250909080631.2867579-7-ardb+git@google.com>
-Content-Language: en-US
-From: Tom Lendacky <thomas.lendacky@amd.com>
-Autocrypt: addr=thomas.lendacky@amd.com; keydata=
- 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
- vFkWitqCJg==
-In-Reply-To: <20250909080631.2867579-7-ardb+git@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DS2PEPF0000455D.namprd21.prod.outlook.com
- (2603:10b6:f:fc00::515) To DM4PR12MB5070.namprd12.prod.outlook.com
- (2603:10b6:5:389::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1626E2C2357
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757626108; cv=none; b=dCgc2Yc/vluM0Cx2tcM3X3MvMA0GhJU2976Osat51Hugh2UqYQNDkNe8mt1SX7f4o9AVHiNOca+85ucK/NgQCs+kQi+RmGdiAg1hbaVktI8g+bOK6ahIihmASb1ICKgGxTFHeYJxI4CL7FZuDg/jfpjA1Dvd8yMoVjDiwX3KiKM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757626108; c=relaxed/simple;
+	bh=/cCjXZtrqpy7VHvisyVa/Rdug0JeWOd0noi/GFcDP60=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rFD7VJNTgbq65ckpXQX6odIO1bjzLvO7ZTOLxt9NOeq74y78uWA1Zd+Hm+rhzlTF98YBmO1K56gRQFKd+q2wD7U+XtiPD6CfHqxHva5snwJGTAvwtFqzW+K5sHUZ084NHgmVXKAkzk+jaNp5wwp7pXKI/7Wzd7slXzLbMVSiqRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CZdqbf2u; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3e46fac8421so1062923f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757626105; x=1758230905; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0XmPWjwHkYZP0cjDM6/TOrZ9Pu7V+x53nqGWgCRHLe0=;
+        b=CZdqbf2uY+SU4AcG1d8n+8VIfH4drOsltEU2WTGL8JvA/6oyTiy3lPBlzjHvszyjUN
+         Vjs8qAbsauZLLnuBxN23lhLiD7/P4uVb/bK/UK9eOPZpCjEHFnLMi2ctwCrDePk2xwT+
+         sgMrlkcCw251UD+e0c5bd+FGp4ng8kd+UD8czo0zTCNExXoocF90LHw3/6RH/5ssNv0h
+         UFan73gJPfS/OzczJ6lNeBto5kxPOIE7uMh7bu6+MUHG4gGZRvZCGGUUZA5a0ceo1lOm
+         YCGyMghGPRREceTAAAUXyOD7e9osGfrXMq1UE9byncoR52Wzk3naCELIv6/VRTeHAyZR
+         tVjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757626105; x=1758230905;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0XmPWjwHkYZP0cjDM6/TOrZ9Pu7V+x53nqGWgCRHLe0=;
+        b=uxhch49s1sdDBmszUuqXM4tJz8/0RAahT3Hkz5vdOwEtd47BiLR1QV0Q2qciXBFf29
+         cSxTZCiHrLmjWgF+ltT8wF8WFM8/igJ20RNG85zGWhvVRNtLIKpzF+lb2lXgo0dr2X8P
+         x9dlmuvtqr2gCN3hD5fNZOx1Djb+V+wpRAyCp+XBr0iBtcJ9Amf3t+7KmNKxSQNs4mnR
+         H14k4G6YpHAsmvUqUcnWLcew5d5zCbVAEka6kh5EFQkT3zhvNBbBqxLyKFMjOPVmsvDT
+         3Wx5fOVIo4hNpYCp36dIWsm4l26i/PzdMCFjzwln87+7FOtDFKrsAAcjQzGNfXBw1TvZ
+         OkrA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Hk9nNo9b+d3w3AGdB+IOvOdy4NM7wfCTVtVc80rYtdEBvdwmCQFunJBRWg0yVVu3bH0Gs28DHATG9QQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycjizz9qWOnYLmHghNy4NPlTKQAPzm0tMp+gVs602WVrk1pkLP
+	7iwO0SF8iAzac2m+62oracIgjhT3KiDlVNcyOiezxTcIvuROA7t1vcUSpjtQW3/Xvbc=
+X-Gm-Gg: ASbGncs0Bc0Tsm25iGfPUJHXm+srII7qayKiP44eRqkGwM63vLzIWDC+YlKf678GWRt
+	YzjStIrWPpp77MB+NebF/C5xJVHddgcSv1/ox5JzmamsYgPgjbfX6Fw4HW3LJ/N/qvz6EIr19zv
+	aA9MDG57MiI3qoh4qh9YydS4Du/7OS45BijvaSyCGw/Xw89TK63l6pZUvJ3HtwTr789uEEIm11T
+	xAQ+NQ3x2oWCzLZ+cv1OmJYnyLJ7WItc3fwcsTMxJNn+RSIlayZB7DmPpd6utqdQkmMxfczMIPN
+	niyPRbZfoynYuwDefiIa1dbmyxP02SspqjSbw/z0ghxcLsuQ2Srhe9Ue8nViL3no/WnwTxHWn2s
+	rfU2mAfPsdCLOtg7V09t8pW1o/hMSmeitF+0=
+X-Google-Smtp-Source: AGHT+IGTc0rcdmQ0qqcNXcSMBd6YBfVvs/8+uIuw4BgL2H05vO3tLXTMHz7QbjVlp6IDwRn3LlLQ6Q==
+X-Received: by 2002:a05:6000:230c:b0:3dc:1473:18bc with SMTP id ffacd0b85a97d-3e765530b01mr725312f8f.0.1757626105382;
+        Thu, 11 Sep 2025 14:28:25 -0700 (PDT)
+Received: from localhost ([2.223.125.77])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0372ae57sm36200245e9.8.2025.09.11.14.28.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 14:28:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5070:EE_|CY8PR12MB8066:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1f39264-72fa-472e-9e10-08ddf17a02be
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?d0xjUlNUdGgvWTg5cWpvMWovbExpdFdmaE9zSlRWRmNRdUIwNU00bG8zZS9X?=
- =?utf-8?B?SVBtZVBYd0Z6a3hTUXo1Q3lPSjN1U1dHalNySitVckV6aEhyUGpCQUdYcU1L?=
- =?utf-8?B?Ky81bVNTR0kzVzlGQlFYampTbWlWOVY5amNHa3Z0Yk4yclhDeEMwVEdqWGo2?=
- =?utf-8?B?WWI5UWliQytYT2RlUDdpWFZRcnVteHR1bUkrdlRlWGFIWHY3dG12TW5PVDln?=
- =?utf-8?B?OHU1MFErZnVjNWVBOGFiUmk3VWRVaXBVR2tGMFExRm1uMnV6L2RkR1p0NVox?=
- =?utf-8?B?TUYvWk0zVW83L1BSVk9aaXFFOFkvRGptWnVaL2ppek1qNElVTXNrMXJZOXov?=
- =?utf-8?B?czNBZmgxR3RlYUllNU1lMEdFdlJPV1RYeGZ3RlpmT2tvM3hOT2duZTUyL2sy?=
- =?utf-8?B?bHY4ZlF4Z2JJdy9MdFRUa3pnTDNjUEczWGdWNGU3cG44SE1ZWlBPSTNYeGtK?=
- =?utf-8?B?My9aOFZ2TEs5bjI1Tk5QbkJFc092ajlkc2NQVm1QQ0FEbEsyeUNDNS9wR2J2?=
- =?utf-8?B?bHF3OCtEK0lyblNtWjR4emo3OFJKdS9GeW94bjhUcmhXZzNKYVRlSGFDMTBI?=
- =?utf-8?B?ZTlmNUxnSXpBRkpFdm1rWGt5dk0wRnRqUkZVeVd5eG9vOW4vTEtRMW1qRnlD?=
- =?utf-8?B?VC8xK1JjSVRkSjFxY0szVkhZRk9nQm1hTzdpcVRiOTE5OEtudGlhZFpXd2sw?=
- =?utf-8?B?cmtGeTdJRG55UGRKY1ZOdGN5SXRpUGRYU05PYVc4anBaTGs5cUdQU1c3VXVF?=
- =?utf-8?B?N2R3SElmd0R4Ly9ONTIxSUJDbEorWGExcGdSckFHdXJDTzE0VDBISnpuMmJG?=
- =?utf-8?B?N2NLRFJPU0kzdFp0V3haWTJqWGJpL1k4TnllYXN4bG5mZTZNMElrTjlmSmdz?=
- =?utf-8?B?ZHpxb0lGUDNYOWg1TFlGRStCaU1xaUJYamlsMmVtcnJiNTFXNHZIS2tHanZp?=
- =?utf-8?B?T3ZkNWw2SDN5YkxjdEhwV3VrOGlXOGNVTnJvRW01Q2V4NUVsNWJzZFhXckdU?=
- =?utf-8?B?aHlFZ1dKalVOdDh4WFh1THZObWl4ekFXY3Avci9jMTJtbUd6cEs4ZFpOOG5S?=
- =?utf-8?B?YURtcnBGaUpUak9zWDBsTXA4dFFtY3ppd0ZJakxhNU5wQjM2Wjh5VjJjWnQ1?=
- =?utf-8?B?QjJJdnk4OXhua2Z3Y2U5cWxNQ3BzRTlhckFIbEFrL2R6MW1XSWFWYVhVdzhr?=
- =?utf-8?B?SWt0VFU2WHE1WU9uYjdTZWVMOTAwby90VFFEOS95NjlaWG1wVExKN3dYQ0sr?=
- =?utf-8?B?a3RXN0VoVDlyY1VmYVVReGFRVzA3UjF6RVlqMXZBbmNFN1BLYUswUy9YZ2Fr?=
- =?utf-8?B?Q1ljMXdzVFRpL1RjVmdwK0xXYzZLNlBOWjgwbDljUkhTTmVtOXZhdkpPajNW?=
- =?utf-8?B?UnY3SXFZWEJoWHc5V3B0Q3prZlBsaGUxYU9RaDBFZUR3Z1F4dG8vdmRiSm9U?=
- =?utf-8?B?TXdmWVVHekZHc2lKMlMxOVVsSlF6WVdoWStRSkhVeTRCTmpUWU10Q2w3VS9F?=
- =?utf-8?B?RWhaeVRzZi9iYWFTY2VHenJRWlRNSGlJYXJGQS90V0svREFLb3ZBaVZQREhu?=
- =?utf-8?B?ekg2MW1FRUo3UmpMR2JFTFdnMzJpdHlRSjA3ZlZ3d1g0OWREZkM2QlZZMFFQ?=
- =?utf-8?B?YXZRRHcxYVI0d2xUbFJVdnB6bk9xenA2V0FWakxCSG1sV3ViRTV3MEh1RU9r?=
- =?utf-8?B?Ni9HbmNGbG5NSW54Y3BQVzRuMHFUOUE4cjg5cHlLbTEzLzhrb09udko3Z0JV?=
- =?utf-8?B?VkY3c001UDdrK2Z0WEZCOStyV3Zxb2RIbzhhdFZ5NUllYk5JeDJjM2NnK052?=
- =?utf-8?B?Q2lGL2RRU2NCTVV6b3c2M1ZCTWpDT2NTUDNJN1VsWHQxU1VuNlFzMy9DOElC?=
- =?utf-8?B?TmRIUTZaQ0M0ejZJaDNHSUUvZ3c5MkRlUTlaaWtlNHhQS3kvSG4rWE85K2My?=
- =?utf-8?Q?5BFkEQg7b1k=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5070.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TGlEVnA1SU9HMFpnbHJDUktmdjl1QkgyUllZcDVBbk9QOEo0MEhHYzdTajIy?=
- =?utf-8?B?amIyMm4vYVRXNEF2dyt2SExoLzFOWUcwTitCeHdNTGd6b2Y5M01vMU84bDRD?=
- =?utf-8?B?TGRSZTZrZzFPcWpQK1pVbldtNElSaHE1ZGY3VytJdlZna3Y4OURsOC9sQjI4?=
- =?utf-8?B?MnpLanJDS2xrU3Q2Y21YRTgwNHJmcFFNWW9aREM5aGZKOEhPaVFEWjlOQ1lV?=
- =?utf-8?B?bVBSV0hwVzNnNFY3R0dtL09xbk9FTTJ2TUkzd2xYN0hRblBQaElMUFNRYkpL?=
- =?utf-8?B?Tm05YWVtdml6Sm9TZkY5S0NucEpRd1E3WG5zUktxREozVUQ3OWV1ZXA5Wng1?=
- =?utf-8?B?MWc1VE8yV3RLQnJTUGpNSkl6bFg2Q0czZlR3UVdUYTRUVkVqbHlSRlRsdTdt?=
- =?utf-8?B?WVNIakxUbHZMVHBsYU5tT24xcm04bWc2MWhUNWZ3bUkxdk1WTW9PRC9Zc1lB?=
- =?utf-8?B?OUVxa1gveHYxR2tFWmdYNWpFdVBYTjZWTVk3dEZHNXFWOGZmTHpNL1Q3eDN6?=
- =?utf-8?B?Q2pYVjRTTlZXdEhWSEJXNXRyQVVkN2tFcVJuYjRjK0xCNm9HUGRVbHNEYkdt?=
- =?utf-8?B?bStEbFMzT2lQaE03UUVNRjFlc0tGUEw1YXpZS2FKaEJpMmR4Y3hKR3NxVkEz?=
- =?utf-8?B?ZG1IZjlQU3JDWExpbGluU3cwZGpxb2VGVFh6RTN5ZHRhZWV6QjE4ZUdpbCsv?=
- =?utf-8?B?ai9BaklQS0VqaHcyTXJ5TzVmUHB1T3JlYjR2THBBTnluaHZvaEgxb05ET1Av?=
- =?utf-8?B?dWxQcDFtN0VrbHhJRTZNUk1UdEpxTFFwazltRUZzL2FFZk4wekZnekMxeXV3?=
- =?utf-8?B?YUdNdkpBSTRxT082aHNLNzRPOTlYRGpxQSswcGZ2dFpuWU5NQmNiNWhXcllp?=
- =?utf-8?B?a1d2WTZwdFVhelNremZRcEFrblp3ZHpqZXRmeVR3UnFaRVQveEorTythTlQr?=
- =?utf-8?B?YWhJL1ZpM2lPVHgrbndaSk9OUW9UaXdtcEJXK3dheVFqdTVZQm0xZjFUOUhW?=
- =?utf-8?B?SitmZlpmVVBzZmpaNmFUOU5UNld5Z0ZGQ0xDVzZJaDFVL1BjUUpxYlUzTHFk?=
- =?utf-8?B?MWxJdGVVRWpsaEdNYTYyLzJRNUhEMHZIaFFVVmlaSlliSmVtdVJuRmJmdlpL?=
- =?utf-8?B?aXJWa3I3dnptdis3ZHdnaU5WV2hWMHkzMWkxTUxEaTMxQm9EK29lMEgyKzZj?=
- =?utf-8?B?NkxQS1IvWnM5N01FcG1FSU85M3pSNWRHaUlHQ3NRMEMzK2hZcDhPaUVkbmtH?=
- =?utf-8?B?WG5HdnUwL295TmJwKzJwNi9USWEwV0JyclloelBZcXMvbTN1c3crQmdKOXpH?=
- =?utf-8?B?a3Mxb2JyWDd6NDhWWXEwM1lhQk1HWUpjM05Gc2psWk9CbjUrVmt6cVFpZ1Qw?=
- =?utf-8?B?WWd4cTkvOHl0ZDM0dzVmbDBnODE4dm5odnUvTy9FeCs1cHJ5ZWxLVFFSSWM5?=
- =?utf-8?B?Q0wreC9HR24yZU02SmNvRUR2SmUxNHdNUnl1TERyYjZ3empqeEZjbjZPUVl1?=
- =?utf-8?B?UEl0WGpnQVJqSWtKZ1dKRnlxZFFrWXpmVXptemRiMVNMMUFabjdXcG1Pclox?=
- =?utf-8?B?Vlk3YVVJQW42ZUxZa053aUlSUjdKd1UzLytabThJaTNRdkJreDRxdE50SHlw?=
- =?utf-8?B?U3FBdURNL3ZXdmtBaUxubldEcjBtTVJjeXc2Y1BNbnpmSmtKOFRlRHJ0Tkg2?=
- =?utf-8?B?QUMxZFNOTUJmV2FadlF0RS9iZWNNUTBYTkVFSjU5N0IxNWozbjJFbm5vYVRP?=
- =?utf-8?B?VWN3TkNaMGVuaUJnZG5aNEVtNXRaODQ5TWRMODErQXovWitvVkRXakhyTUlo?=
- =?utf-8?B?dkdXejFDNjZKTEwrR3BhVG53R243aEhsM3d0TlhQdlAzTjRvOFFhckgwdnVa?=
- =?utf-8?B?WnFJQnFHN1RzeVprVHJ1NVF3MW1NT3cvcVZhMldZWktGL1hLYlk1OU5HU3lK?=
- =?utf-8?B?b1VjTEtDNDdYQm81UnhrUjZUSVhIZnRTMzlacHVFdThDMkxndVRtUHJaQzJH?=
- =?utf-8?B?d3Q3TUFkSSthaDN6NDZRa1BUaFVmelQ0V1VrRVlEMG80aHZlM3EyYkR5VWVl?=
- =?utf-8?B?WG9QbmR4MWNYbTEycW96U29tRmYxb0RLSW50VVlUdE9CeldleFpTZmNWSElI?=
- =?utf-8?Q?padXOSsNau/SAci8hJWey7eFg?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1f39264-72fa-472e-9e10-08ddf17a02be
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5070.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 21:27:29.2214
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EVIVQF595jjMaoNTijQObl4A1uJSwHjZSl+En5RFcysoym/SaGHkiC2wXem7hMK4+U0MeuRfYthdr45xg8vhNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB8066
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 11 Sep 2025 22:28:24 +0100
+Message-Id: <DCQAGDC63M8X.3DVH6I9FA0IZD@linaro.org>
+Cc: "Johan Hovold" <johan@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 4/4] phy: qcom: edp: Add Glymur platform support
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Abel Vesa" <abel.vesa@linaro.org>, "Vinod Koul" <vkoul@kernel.org>,
+ "Kishon Vijay Abraham I" <kishon@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Bjorn Andersson" <andersson@kernel.org>,
+ "Dmitry Baryshkov" <lumag@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>, "Neil Armstrong" <neil.armstrong@linaro.org>
+X-Mailer: aerc 0.20.1
+References: <20250911-phy-qcom-edp-add-glymur-support-v3-0-1c8514313a16@linaro.org> <20250911-phy-qcom-edp-add-glymur-support-v3-4-1c8514313a16@linaro.org>
+In-Reply-To: <20250911-phy-qcom-edp-add-glymur-support-v3-4-1c8514313a16@linaro.org>
 
-On 9/9/25 03:06, Ard Biesheuvel wrote:
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> The x86 EFI stub no longer boots the core kernel via the traditional
-> decompressor but jumps straight to it, avoiding all the page fault
-> handling and other complexity that is entirely unnecessary when booting
-> via EFI, which guarantees that all system memory is mapped 1:1.
-> 
-> The SEV startup code in the core kernel expects the address of the CC
-> blob configuration table in boot_params, so store it there when booting
-> from EFI with SEV-SNP enabled. This removes the need to call
-> sev_enable() from the EFI stub.
-> 
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+On Thu Sep 11, 2025 at 3:45 PM BST, Abel Vesa wrote:
+> The Qualcomm Glymur platform has the new v8 version
+> of the eDP/DP PHY. So rework the driver to support this
+> new version and add the platform specific configuration data.
+
+It is a bit confusing. Subject suggests that it is an addition
+of a new platform but patch itself and description looks more like a
+rework rather than new platform addition.
+
+The ->aux_cfg_size() rework here reminds me
+913463587d52 phy: qcom: edp: Introduce aux_cfg array for version specific a=
+ux settings
+
+Ideally this should be split into rework and adding support for a
+new platform. Or please update the commit desc and subject to explain
+why this is the way.
+
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
->  drivers/firmware/efi/libstub/x86-stub.c | 21 +++++++++++++++-----
->  1 file changed, 16 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-> index 0d05eac7c72b..c4ef645762ec 100644
-> --- a/drivers/firmware/efi/libstub/x86-stub.c
-> +++ b/drivers/firmware/efi/libstub/x86-stub.c
-> @@ -681,17 +681,28 @@ static efi_status_t exit_boot(struct boot_params *boot_params, void *handle)
->  	return EFI_SUCCESS;
->  }
->  
-> -static bool have_unsupported_snp_features(void)
-> +static bool check_snp_features(struct boot_params *bp)
+>  drivers/phy/qualcomm/phy-qcom-edp.c | 240 ++++++++++++++++++++++++++++++=
++++++-
+>  1 file changed, 234 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/p=
+hy-qcom-edp.c
+> index 7b642742412e63149442e4befeb095307ec38173..b670cda0fa066d3ff45c66b73=
+cc67e165e55b79a 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
+
+[..]
+
+>  static int qcom_edp_phy_init(struct phy *phy)
 >  {
-> +	u64 status = sev_get_status();
->  	u64 unsupported;
->  
-> -	unsupported = snp_get_unsupported_features(sev_get_status());
-> +	unsupported = snp_get_unsupported_features(status);
->  	if (unsupported) {
->  		efi_err("Unsupported SEV-SNP features detected: 0x%llx\n",
->  			unsupported);
-> -		return true;
-> +		return false;
->  	}
-> -	return false;
+>  	struct qcom_edp *edp =3D phy_get_drvdata(phy);
+> @@ -224,7 +241,11 @@ static int qcom_edp_phy_init(struct phy *phy)
+>  	if (ret)
+>  		goto out_disable_supplies;
+> =20
+> -	memcpy(aux_cfg, edp->cfg->aux_cfg, sizeof(aux_cfg));
+> +	memcpy(aux_cfg, edp->cfg->aux_cfg, edp->cfg->aux_cfg_size);
+
+So, if I understand this correctly, when or if init sequence will
+span beyond DP_PHY_AUX_CFG9 and DP_AUX_CFG_SIZE won't be updated,
+then we might end up doing something fishy here?
+
+Maybe add an if-check or even
+BUILD_BUG_ON(edp->cfg->aux_cfg_size > sizeof(aux_cfg))
+or something like this? Or kmalloc aux_cfg eventually at least,
+however it seems to overcomplicate things.
+
+[..]
+
+> +static int qcom_edp_com_configure_ssc_v8(const struct qcom_edp *edp)
+> +{
+> +	const struct phy_configure_opts_dp *dp_opts =3D &edp->dp_opts;
+> +	u32 step1;
+> +	u32 step2;
 > +
-> +	if (status & MSR_AMD64_SEV_SNP_ENABLED) {
-> +		void *tbl = get_efi_config_table(EFI_CC_BLOB_GUID);
+> +	switch (dp_opts->link_rate) {
+> +	case 1620:
+> +	case 2700:
+> +	case 8100:
+> +		step1 =3D 0x5b;
+> +		step2 =3D 0x02;
+> +		break;
 > +
-> +		if (!tbl) {
-> +			efi_err("SEV-SNP is enabled but CC blob not found\n");
-> +			return false;
-> +		}
-> +		bp->cc_blob_address = (u32)(unsigned long)tbl;
-
-I think we ran into bugs where the cc_blob_address was random data from a
-boot loader when SNP wasn't active and that's why we always initialize it
-to 0:
-
-4b1c74240757 ("x86/boot: Don't propagate uninitialized boot_params->cc_blob_address")
-
-So we probably need the same statement that is at the beginning of the
-decompressor sev_enable() at the very beginning of this function to ensure
-cc_blob_address is set to zero:
-
-	/*    
-	 * bp->cc_blob_address should only be set by boot/compressed kernel.
-	 * Initialize it to 0 to ensure that uninitialized values from
-	 * buggy bootloaders aren't propagated.
-	 */
-	if (bp)
-		bp->cc_blob_address = 0;
-
-Thanks,
-Tom
-
+> +	case 5400:
+> +		step1 =3D 0x5b;
+> +		step2 =3D 0x02;
+> +		break;
+> +
+> +	default:
+> +		/* Other link rates aren't supported */
+> +		return -EINVAL;
 > +	}
-> +	return true;
->  }
->  
->  static void efi_get_seed(void *seed, int size)
-> @@ -831,7 +842,7 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
->  
->  	hdr = &boot_params->hdr;
->  
-> -	if (have_unsupported_snp_features())
-> +	if (!check_snp_features(boot_params))
->  		efi_exit(handle, EFI_UNSUPPORTED);
->  
->  	if (IS_ENABLED(CONFIG_EFI_DXE_MEM_ATTRIBUTES)) {
+> +
+> +	writel(0x01, edp->pll + DP_QSERDES_V8_COM_SSC_EN_CENTER);
+> +	writel(0x00, edp->pll + DP_QSERDES_V8_COM_SSC_ADJ_PER1);
+> +	writel(0x6b, edp->pll + DP_QSERDES_V8_COM_SSC_PER1);
+> +	writel(0x02, edp->pll + DP_QSERDES_V8_COM_SSC_PER2);
+> +	writel(step1, edp->pll + DP_QSERDES_V8_COM_SSC_STEP_SIZE1_MODE0);
+> +	writel(step2, edp->pll + DP_QSERDES_V8_COM_SSC_STEP_SIZE2_MODE0);
+> +
+> +	return 0;
+> +}
+> +
+> +static int qcom_edp_com_configure_pll_v8(const struct qcom_edp *edp)
+> +{
+> +	const struct phy_configure_opts_dp *dp_opts =3D &edp->dp_opts;
+> +	u32 div_frac_start2_mode0;
+> +	u32 div_frac_start3_mode0;
+> +	u32 dec_start_mode0;
+> +	u32 lock_cmp1_mode0;
+> +	u32 lock_cmp2_mode0;
+> +	u32 code1_mode0;
+> +	u32 code2_mode0;
+> +	u32 hsclk_sel;
+> +
+> +	switch (dp_opts->link_rate) {
+> +	case 1620:
+> +		hsclk_sel =3D 0x5;
+> +		dec_start_mode0 =3D 0x34;
+> +		div_frac_start2_mode0 =3D 0xc0;
+> +		div_frac_start3_mode0 =3D 0x0b;
+> +		lock_cmp1_mode0 =3D 0x37;
+> +		lock_cmp2_mode0 =3D 0x04;
+> +		code1_mode0 =3D 0x71;
+> +		code2_mode0 =3D 0x0c;
+> +		break;
+> +
+> +	case 2700:
+> +		hsclk_sel =3D 0x3;
+> +		dec_start_mode0 =3D 0x34;
+> +		div_frac_start2_mode0 =3D 0xc0;
+> +		div_frac_start3_mode0 =3D 0x0b;
+> +		lock_cmp1_mode0 =3D 0x07;
+> +		lock_cmp2_mode0 =3D 0x07;
+> +		code1_mode0 =3D 0x71;
+> +		code2_mode0 =3D 0x0c;
+> +		break;
+> +
+> +	case 5400:
+> +		hsclk_sel =3D 0x2;
+> +		dec_start_mode0 =3D 0x4f;
+> +		div_frac_start2_mode0 =3D 0xa0;
+> +		div_frac_start3_mode0 =3D 0x01;
+> +		lock_cmp1_mode0 =3D 0x18;
+> +		lock_cmp2_mode0 =3D 0x15;
+> +		code1_mode0 =3D 0x14;
+> +		code2_mode0 =3D 0x25;
+> +		break;
+> +
+> +	case 8100:
+> +		hsclk_sel =3D 0x2;
+> +		dec_start_mode0 =3D 0x4f;
+> +		div_frac_start2_mode0 =3D 0xa0;
+> +		div_frac_start3_mode0 =3D 0x01;
+> +		lock_cmp1_mode0 =3D 0x18;
+> +		lock_cmp2_mode0 =3D 0x15;
+> +		code1_mode0 =3D 0x14;
+> +		code2_mode0 =3D 0x25;
+> +		break;
+
+These sections for 5400 and 8100 rates seem to be the same. Is it correct?
+If yes, then maybe join them together and drop duplicating lines?
+
+There is probably similar thingy in qcom_edp_com_configure_ssc_v8() above.
+
+Best regards,
+Alexey
 
 
