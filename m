@@ -1,149 +1,206 @@
-Return-Path: <linux-kernel+bounces-811449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67782B5293C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:50:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA3FAB5293D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24E683B888A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:50:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C2FE467EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9961D258CF7;
-	Thu, 11 Sep 2025 06:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555A623E355;
+	Thu, 11 Sep 2025 06:52:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g8miqO8M"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BfUHFvJl"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2074.outbound.protection.outlook.com [40.107.243.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C3E3C17
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757573446; cv=none; b=H19SJ6UBVif0wccNhROhJLTDJOrUP0KRx7bdm27uC2h0ms8lhp3tOrsSm9vGpnNIxmpsPcKsMPhmn2e4fQO/owIXTy+GQPyvtT9u16Lz8vUwnyduRLhzY0jUekk/5L8EQJeVYWIIofzlo3nYLOqlemJNkpDRjfw5ooe+jyGb2ak=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757573446; c=relaxed/simple;
-	bh=Qmej7+PbGLzKdrf5NwREGPDWn8BnQ+ox2SidyFmQdxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fvEjkOO51E9DoMy06MV7qufPpMkXAIc3LwbQYzhdXD1nki2ttXoTJvPHUA6KCaqDCpwoOdvoNQZlc9REH2Dy8IuOFAbg0AatySdDnMLi2wz8HCbsaVBhqZpmbJzJuNlUEy1cyeMQn7HYxkKYDSrm52ChXzXBOUZ1ihplu8NwX+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g8miqO8M; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45de2856648so38615e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757573442; x=1758178242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FYiFEl1cKyTzdaxqboCqwBqA3eL+ISbCaMPkWSxLypQ=;
-        b=g8miqO8MH7v0Sh2srPCNhFG9xWSnHgiVS+YO6GPjGEQFxbceLY1h0O//4pI2jxVmr7
-         gLUgW5gc4V4Si2l6IhOTWF+pER28TGXEx+YbY2ymCnwAN3hRlTOSysH5idEJsRuLoX32
-         vKcVDFbfTcSVTlII87VzYGJ2+HCH5qTcAXcboRYPZViCBXzulSPe7l/nyYscc9uNGmJb
-         +OL6I0xW8cm9ogUsqYFbqIRo57MkR72e5DQned7q8aj0E3Vqkzsexp+UgDkE8u2Gv/Mj
-         M8vBBPURMZoIGn1YFUAKAti0sEpEvlb/D8Vw+DPT5UYTou0qpSzZxFL4eBwW8UdV3fTD
-         V9dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757573442; x=1758178242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FYiFEl1cKyTzdaxqboCqwBqA3eL+ISbCaMPkWSxLypQ=;
-        b=fvIHhxQvqThZtiWApC/KWHu5+G1HHFpGAoBkYI2cWDRFzF5vqhdsoA8EieUXnvmKou
-         hPGlb3VDkQo54NO7Eh3ruY0W5nvmf1ory1c4wm5FcqpRZv97GqT0lxefSsBhd7mNm+hY
-         tp6tZzcHESnQQ2JRXGUGql2iPiRNzq4LleyIvfJ8bWt1/IuYhFwTHF3zf7KWmnYWHer+
-         TqEHywQ11qHftdRWUP8HnnKjdRoIgF+N4pvuAb+rTC0hbVKX8AORbK4xQl9x3tB3iYH4
-         kIoBvf5HpH6dbH5ZEIJv9HqNrZ0lZu129kxzbUqtq505oIDA666aSBCFll/w4v4fE/7x
-         PzMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXglNy5lf3S1MSGwO9kqmwqVBCai50G7QmbN2f5mC7znsB3It18AE1obF4bSHQ3Z9pUMaSGgJfsQ35fWVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweGbD0pjCZk2XNM2er0m2JppLGCwSSPIQWLcYzEittgoHBmqAo
-	LDMSRN3vZdoxBeBe23yPUhYMXAMq9dEOtP/3DxaCN1RVRdq3/TJgKuU686oKoo3sPUn4cB5hA3u
-	dNrs+7FenP5R4BIe9NjFMf1Fe32MP3hEoEfR0K+K6
-X-Gm-Gg: ASbGncvijT3wW8FsxwhkKK1oeuQCAIelq6fDRj29rX/7kFX9r/bUIcKA2uF3QNLsD5K
-	e2ilvEyVpm9qvPWLUL8GldF7b0abR12+cpRQQT8juPQHI501ytnlKAVZOGmRn4JB33pvSlY87Lq
-	VPqb8HerxGzoSp+sUJnxDQ8ThlkPKp4wxXgnZyvGF8CgSS/CyOo2MYybr0WboaI8daDnz+irGos
-	f0M/wVh4VvOMTiarDDVCLzIPNEMhcGnb0CG6MQT
-X-Google-Smtp-Source: AGHT+IFJbf1IyXGBCFdg7upsR0ji8KKP+f1JtPl42/vxHPTsLQ1LycUtAnMTQe1qYHPH1lEHLbkyiQchIBkA8tyrg54=
-X-Received: by 2002:a05:600c:12c9:b0:45d:cfca:a92d with SMTP id
- 5b1f17b1804b1-45df74af1b6mr2252505e9.2.1757573442443; Wed, 10 Sep 2025
- 23:50:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2C21DF97D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757573554; cv=fail; b=swuGs+lx65r15ok21DTwtnh1JenwPq/LkmZZ9GTLIKCdWyNWDhuN2d87smvcMMJ2K/vd09vEH6eQPgwQmKcHFvrUguU2JZue3d3w17C9IRsv3fhQU/L0VxkNdQl9tHQNPzEyNbn9+nyPe/T6acJhHR4401Oig/PEyfepAEA4xgI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757573554; c=relaxed/simple;
+	bh=jmgzLAQzoK/SF6VdcMClra6u26JI9jOcQ1LhHLh1diY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=p2badkIqCb22eJU7/pTqINBlhz1cPLhocFmWjFfu8YR4U6yE2N5FumQvV52I/njwrZSEaijakxrLROTTUE80aMwj7n2NmOuraU4JGEWzPmSXCT+SxRCBzT+/30SHmw3YVJ2VUH/epjDl5es0r+bzGuYhrxlcPeAIzLh5gezSe30=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BfUHFvJl; arc=fail smtp.client-ip=40.107.243.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VGmg4AuS93KgyfJM2QFO8ooT4OjiWy8YSumSEz82z3+TLYyqyntyzDQJAyLMF35Cs/h3hkR4Apj4aJVxr548sWj9Vk1yWHvnVwyFqnRoEzjNT9YaOtjaXUf3PiH6BvCU95qVHTLuCD1pIViJm0ct1tQEoMOlQIGpLvXHnAM3mrvCroEdwSbAEnOUD0BYLdBuAIkGm2o0g6zb4rLmuWCwKTQI+U9GAW7wqzpXJmCGIIuQKhCLs3er06eat3FqFh0tYdpHbFIU2CQVZjbMRV9FUmsPH/jk3b+ddowLNfDF4ytZDpvYC7DNzlL+LKwrVKYlrPEK/3hFLm/1VgCI1FIm/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AxPM18u9L/TWZyYAUklhIemM2z8hLEMm7HGtIwBeR+c=;
+ b=IwjMFngLYL9o8PDRDeljB/sD8stYX72IP55yfz6hEtO6l9iNwuM/36vgM/BgjQW1FSsWVNJxPDIRq903Hu/mhSixk6lLQAY4ml41RQJO3BmmXYhrDx+1c2AXIc+Ad/psBe1TDEL2VIaAeKU4CJkZc8qGCP/Sq+E/SOAK/py5sLGwhV4D3xJ++YvzBSdQY1DKHYmMKHZ/PiCFYl7kntfWy4apwf4jaMTspkLP1+mnYZ+/ZQ/uvObK2OPOZbusrerSuW0IjB84d/6oR7Afzknda40Tl17eayz9Bm4lBUtV0YN7jXaOqzkxlT6nZPgysRjCnynVSO8bTqdlgIU/OSnKxA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AxPM18u9L/TWZyYAUklhIemM2z8hLEMm7HGtIwBeR+c=;
+ b=BfUHFvJlE+8nyBKoI0W9b2bIfV/Ry6Xb8Etm0QAoJ9Wnjj2SVjzYNi+Ntx5VQmsUeSWZp6XmGozb/KUXNAxF30HFeWwv0b3nhNPkai+OhogYe9PZCyonap3/VegrWZ6OTSIPtJ8RhDENsaVj15Rm0VX5g0eV8DqdHMJgUlRM28Q=
+Received: from BYAPR05CA0012.namprd05.prod.outlook.com (2603:10b6:a03:c0::25)
+ by CY3PR12MB9554.namprd12.prod.outlook.com (2603:10b6:930:109::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 06:52:30 +0000
+Received: from CO1PEPF000075F4.namprd03.prod.outlook.com
+ (2603:10b6:a03:c0:cafe::64) by BYAPR05CA0012.outlook.office365.com
+ (2603:10b6:a03:c0::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9137.6 via Frontend Transport; Thu,
+ 11 Sep 2025 06:52:29 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ CO1PEPF000075F4.mail.protection.outlook.com (10.167.249.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Thu, 11 Sep 2025 06:52:29 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Wed, 10 Sep
+ 2025 23:52:29 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Sep
+ 2025 01:52:28 -0500
+Received: from [172.31.178.191] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Wed, 10 Sep 2025 23:52:25 -0700
+Message-ID: <1198e424-cd1d-407d-8050-c561e57dd2b3@amd.com>
+Date: Thu, 11 Sep 2025 12:22:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904114854.1913155-1-khtsai@google.com> <2025090651-unifier-award-3e0a@gregkh>
-In-Reply-To: <2025090651-unifier-award-3e0a@gregkh>
-From: Kuen-Han Tsai <khtsai@google.com>
-Date: Thu, 11 Sep 2025 14:50:15 +0800
-X-Gm-Features: AS18NWAMPsNVcx8vukdIJf2WC9FuB49krMkFwHqi-L2lEbkeXdxFuuWz00OB9vc
-Message-ID: <CAKzKK0oi85bnyT3Lq_TXz8YwFrmBxQd8K1q7hRDv-Oww75F_tQ@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: f_ncm: Fix NPE in ncm_bind error path
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: zack.rusin@broadcom.com, krzysztof.kozlowski@linaro.org, 
-	namcao@linutronix.de, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/fair: use cpumask_weight_and() in
+ sched_balance_find_dst_group()
+To: Yury Norov <yury.norov@gmail.com>, Ingo Molnar <mingo@redhat.com>, "Peter
+ Zijlstra" <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+	"Vincent Guittot" <vincent.guittot@linaro.org>, Dietmar Eggemann
+	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
+	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
+	<vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
+References: <20250911034454.494852-1-yury.norov@gmail.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250911034454.494852-1-yury.norov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB05.amd.com: kprateek.nayak@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000075F4:EE_|CY3PR12MB9554:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7901b14-e97f-4428-5140-08ddf0ffc6c9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|921020|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b1AvaFNkNVRZdXNVcUpmL0lOOHNJTStrZTFOam5WeUZnMEg3QkJXOHk0eVl4?=
+ =?utf-8?B?M1BpUU9XN2syUm1nN01KMnJWOXl5YjQweXFhL0orMU9Vcnc1dERlbEJKK284?=
+ =?utf-8?B?bVMvRXRkY0FFdTZaaWJid3F1YVFZb2VGY3U0WDBjY2lxRTM5NmZicHhTSmwr?=
+ =?utf-8?B?bjcxSFVNMDdpbVJ2MVhLcUp1SWRlRlJCd00xS3B0Z2hSbGh1SnpYRHd0ODlH?=
+ =?utf-8?B?NmFtQzI2eDJwYURXR1VwUDVySkMvYzlLemNBWnplWHc0Y1J3ZlV0b0Z3Z09G?=
+ =?utf-8?B?bXpFZmtERXg1MStKbW5wdDRJS05nYUVqMmw3cHVSWE5Nb3pETkhaYloyalM0?=
+ =?utf-8?B?RXZmQkZEWmJPRVdMam9BUVU1L1NxVzhlTUlqSHJ4YUVlM0JyNk4yb1lhS1lp?=
+ =?utf-8?B?VjZMOHB1WkJnbndXek9MVCtGNjE3eGhxUW00bnFLd3lUSGdaMURuekU4ck16?=
+ =?utf-8?B?YktYeWRJRTl1Z1ZaY1NCbVY2SXhqL2JCNDZUMTV2Z3hSQTZuRkdKM040WFlV?=
+ =?utf-8?B?MkJJRkhNN3owOGZDT1ZVaVZkb0ZLSGdlUkRFZkl1SXlFU1BkL0lpUVBNaEhH?=
+ =?utf-8?B?dkRyQVF6YXJsZ2JtUlVpY3Jwbml3MWN0TDh3S0svNlQxek5PR3AxZUZYcHNO?=
+ =?utf-8?B?T3NqRVhnVWx1U2IxNEdsRTRaek81dDBvbHpzS3E4eGJWaGJENGhtL0o5MWFq?=
+ =?utf-8?B?akgyMld3NTBYSkVCb0h2Y2d0OHR1cDd4LzRLV2tSajFvTUlKelFnR0h5dzBh?=
+ =?utf-8?B?OW4xZXBZRXhoZjZKcmxyQzFjM0szSUhiSXlaaEpmWEpkbW9WWkJCRG45TFhX?=
+ =?utf-8?B?OFl2dFB0aEJHT2hCQ292M3pnZjdUdWxzSTRIRTdOZ1JDbllkby92bW15ckVJ?=
+ =?utf-8?B?VzZDV0VYN09GcDR0SDRHZVliZnNRNHVjbzgrMk8rTStnWU16TkkxWEJ5QmZQ?=
+ =?utf-8?B?OVladnBYTkpFKy9YSHlUcDJtVERWM3ljcEFjS1NCSUh3ejU5L1h4SXFTZ2pZ?=
+ =?utf-8?B?L2FITEpTb05OaFgrTmdIWUlkaXI5QXc4d3FKUDhrUFdMaTBGN0g4VWxXdWZI?=
+ =?utf-8?B?dEZVM2pNR1JSd2Y2NnhIOUxzWDdabkxZdldnOU9ValE4NDQxRStIMjYwdjFN?=
+ =?utf-8?B?NFZUd3oyUG43ckVmS2hGT0JGTkdGVmlwMzY5WlFNazgxR1pDT1NnQnhDZStm?=
+ =?utf-8?B?SGZUeGNMRE14cHpoMHJ3cTdFZ1VmM3AyZXYvc2Q0ZzV6RENQVUc3NTYzc3Qx?=
+ =?utf-8?B?QzNGNS9PRkhtczR2VTdnNm15MW1wYm1CMUozMHlzTVd4WjUza2lXczRkTEdG?=
+ =?utf-8?B?UVYzSmpXcGROdlArUk1GNXl0dFUyQ2wrMEpyUk9XcGthbGIwbnFOR2lYTi9Q?=
+ =?utf-8?B?QTVEUE5aSWRWRTZCOGU4WmtCQzFkSDVHSWVBM2JxRm1yMnZQcnJmWWpsbXpQ?=
+ =?utf-8?B?dHMxQkJqVDBmMFY1Z0hMRUJlM2tqSUV4Ylh6ZnlCWVBZbkJ5UnhrdC9JY241?=
+ =?utf-8?B?QXJncmpxM0ZNa3NQRm5kbmpjbDBQYmNLZjhqbnRIMVk4VlVQb2QrZkJ0MDRX?=
+ =?utf-8?B?cThOeVY0UEhsbXp6U1RwenZYdURraEptMGp6Qm1JZFdyS0MvQlEvNVMwRFVF?=
+ =?utf-8?B?bWF0MHQrUmZHa1laWWVCUXFMQ2k3a0FwVUxtTHJvQ2JCNEdrblpaNkE2VE1F?=
+ =?utf-8?B?WDVYWkg4bHR2NWtnL01EWHI1RVJlaGVWcVdZUFhhdmp4aDJzNEIwY3NEckYr?=
+ =?utf-8?B?c0grTVdybng3TlA2YXp4Qk1Vc2FZZnNLa3ZzUHlSbzBTYXNLNzVQTU5RdkMx?=
+ =?utf-8?B?Qjd3a2lNQUYwc1NJNnprUnpXWi9iTnp0bmp4WHNicEpNZTdCVWFSTVVlTWdv?=
+ =?utf-8?B?QW1RVjdVVzRmOCsxdWVFaHQ5c2k1ZytXNi9RQXJEcThJRFBLTkZnb1lwbEU5?=
+ =?utf-8?B?b2E4RWZLeHQ1bHExYklXVEFPa09yNFlsV0dRbyswNTFYNHh1Q29oZ255cFh4?=
+ =?utf-8?B?a0NFV2xFNVFVdnEzbmdOaUh3R3kwbTN4QzVyc3FXUFl0Q0h4SE95MDFxMkty?=
+ =?utf-8?B?d080Z1R4RHlLZE90ZGdOTFMvZkxBR2Z1bFhFQT09?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(921020)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 06:52:29.7525
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7901b14-e97f-4428-5140-08ddf0ffc6c9
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000075F4.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY3PR12MB9554
 
-Hi Greg,
+Hello Yury,
 
-On Sat, Sep 6, 2025 at 8:15=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
->
-> On Thu, Sep 04, 2025 at 07:46:13PM +0800, Kuen-Han Tsai wrote:
-> > When an ncm_bind/unbind cycle occurs, the ncm->notify_req pointer is
-> > left pointing to a stale address. If a subsequent call to ncm_bind()
-> > fails to allocate the endpoints, the function jumps to the unified erro=
-r
-> > label. The cleanup code sees the stale ncm->notify_req pointer and call=
-s
-> > usb_ep_free_request().
-> >
-> > This results in a NPE because it attempts to access the free_request
-> > function through the endpoint's operations table (ep->ops), which is
-> > NULL.
-> >
-> > Refactor the error path to use cascading goto labels, ensuring that
-> > resources are freed in reverse order of allocation. Besides, explicitly
-> > set pointers to NULL after freeing them.
->
-> Why must the pointers be set to NULL?  What is checking and requiring
-> that?
+On 9/11/2025 9:14 AM, Yury Norov wrote:
+> From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> 
+> In the group_has_spare case, the function creates a temporary cpumask
+> to just calculate weight of (p->cpus_ptr & sched_group_span(local)).
+> 
+> We've got a dedicated helper for it.
 
-I set them to null as a standard safety measure to prevent potential
-use-after-free issues. I can remove it if you prefer.
+Neat! I didn't realize this existed back when I added that cpumask_and()
++ cpumask_weight() combo. Please feel free to include:
 
->
-> And this unwinding is tailor-made for the guard() type of logic, why not
-> convert this code to do that instead, which will fix all of these bugs
-> automatically, right?
+Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
 
-The __free() cleanup mechanism is unfortunately infeasible in this
-case. The usb_ep_free_request(ep, req) requires two parameters, but
-the automatic cleanup mechanism only needs one: the resource being
-freed.
+> 
+> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> ---
+>  kernel/sched/fair.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 7229339cbb1b..4ec012912cd1 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -10821,10 +10821,9 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
+>  			 * take care of it.
+>  			 */
+>  			if (p->nr_cpus_allowed != NR_CPUS) {
+> -				struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
+> -
+> -				cpumask_and(cpus, sched_group_span(local), p->cpus_ptr);
+> -				imb_numa_nr = min(cpumask_weight(cpus), sd->imb_numa_nr);
+> +				unsigned w = cpumask_weight_and(p->cpus_ptr,
+> +								sched_group_span(local));
+> +				imb_numa_nr = min(w, sd->imb_numa_nr);
+>  			}
+>  
+>  			imbalance = abs(local_sgs.idle_cpus - idlest_sgs.idle_cpus);
 
-Since the struct usb_request doesn't contain the pointer to its
-associated endpoint, the @free function cannot retrieve the ep pointer
-it needs for the cleanup call.  We would need to add an endpoint
-pointer to usb_request to make it work. However, this will be a
-significant change and we might also need to refactor drivers that use
-the usb_ep_free_request(ep, req), usb_ep_queue(ep, req) and
-usb_ep_dequeue(ep, req) as the endpoint parameter is no longer needed.
+-- 
+Thanks and Regards,
+Prateek
 
-I also want to point out that this bug isn't specific to the f_ncm
-driver. The f_acm, f_rndis and f_ecm are also vulnerable because their
-bind paths have the same flaw. We have already observed this issue in
-both f_ncm and f_acm on Android devices.
-
-My plan was to merge this fix for f_ncm first and then apply the same
-pattern to the other affected drivers. However, I am happy to have a
-more thorough design discussion if you feel using __free()/guard()
-automatic cleanup is the better path forward.
-
-Regards,
-Kuen-Han
 
