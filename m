@@ -1,181 +1,201 @@
-Return-Path: <linux-kernel+bounces-811142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25537B524E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:01:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6259B524E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD0443B44E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:01:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF384581CC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0EB015E8B;
-	Thu, 11 Sep 2025 00:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB421DFFD;
+	Thu, 11 Sep 2025 00:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lxAooDmc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="VGcVaBXn"
+Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BC95DDD2
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474F0748F;
+	Thu, 11 Sep 2025 00:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757548912; cv=none; b=seOtDRP1BVooqOtgb3jcQAtSffdDxmUPnFJqpHPUSzL//7rKfFDRJXKKyODjj9W8pvKHUX6Ijm1bCipOS8iWiIILm3I3fOOKy5i/fvinQQrwdg06DZIuBUks16sRdh9qVCK8npLDR6RzHxdmoMgUc0iClwIW/f4gwdT7QVDwXfg=
+	t=1757548920; cv=none; b=sLc7+H5tkY0uqTV1nqIEfzt77IfQnSDEERXsL0oGA9aJhwyKFXUkJV3Dxn5z3NasgnE728wipv1RwTjZge/WBsHqi0A0I3BHjYz+E68GqL8GTuYDnkVHWkgRaKiCODI4mprabUs344tUO5fYEQzBOR99h7o66vtLv+lnKQvwioI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757548912; c=relaxed/simple;
-	bh=SB9N+sI+8G4mvBryp4BJKi1IVFXxHA3hyZok3VfZH5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H822lyQlVOCG3KqSy/Q3C1u+eNAaLCR1OELehjWRVJUdKMxZXAV2G59I8VtD5HOJVciAQKG0h82PGrfaNeScEHR/VfhzvGpDFo7/35I8EBuewuapI9LBAp8JyQ+UtedkqqMIWVcB12ax7zM9tWLsRh6wiSYeI4Eg1vNIjAzpBYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lxAooDmc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58AJ65pY024136
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:01:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1ssHk0MR3leUPXS1eErL4m3b
-	O9D30qutJLy5o4w/GPI=; b=lxAooDmcJkqWlFAR3sT3tUYa5zRZReqxaKjyx+q+
-	fXc4aIS9YXzA9rjRBeVguyP5oD/fRETDwAaiZJ2owTDfwUmJMKNvzDs2kjR4gU50
-	vje6i9sBgsk/V6DPYOO2EUbRJ0lc3kJMGiuf9HQ1TcvuZEfVa031NmDtAaJFoSO1
-	42kBKst4YJ2SaBd/ZWylyeA4CpcaG8e+1zVBTHtKc/f84usjLmsyXCQ2glitC0qp
-	cLvDX9Q74IOLujgVCldtcYddIrXKFZoHyWAx9/6kuWxVDpKJ1k9fHgZkH3wgfXDl
-	CyhkMoHw8j1uSZk5ZYHOfUuggdTMIe1QtYLxJm2A0pbISg==
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com [209.85.221.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493f6h0ms3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:01:43 +0000 (GMT)
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-544b12e328fso17171e0c.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:01:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757548902; x=1758153702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ssHk0MR3leUPXS1eErL4m3bO9D30qutJLy5o4w/GPI=;
-        b=YKJpwHJhd8W/0aOszczY2m2LCexznfq8hSRZ4PssGp2S4gpjGinsqS21MImhGEYbaB
-         66l7JM5HpNU5vJH2LpM9AUV836Dn4CUwBxiWlla6twWEyaxh3x1fbj5s+7lz8t3kaR99
-         FqbIPny1shYdFjYxiPypSOpxeauKNAr0x9FeLIBSOgHsZbN3ybwcuD70a6oNRwAQDfiQ
-         mpYpXll1lJzHMWcWDv357/M6B9AYgFP7wg6Ib95hALyEwxg1fjOFy9p82sKbcBGSRr7T
-         4YdGsBWG/kX8vKZC+RvHd5c+T6P0LQSSUyOOBblJTjRy4l8l4X4YnMoCT+QKFSdJs8yD
-         mr9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVAGTMSSsen705AgENc7Wew3mzGMaEiI/O3JSL0z7aZ5vMaeTAx+qkoy0EU1lUWGfNuM6gzRjbviI3vcfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR0XvHYdSWzs73CbYww9Bl15LquOj2o201UtvQpg3FrSNB5nGY
-	TxwxvOpn62KgGiBnktvrvMMkMLIaeTq3gpmASIGpQAKclZAZHxuS+GzSVxwzNgysxpNPxx95R1X
-	H7xcnlCjnFmAD5blH4gHH5qielU/ebslSo+6qrSwWvEhI4UcCr6MQGFc1sxlrZysMBu8=
-X-Gm-Gg: ASbGnct1j51pUNDXln9areX/+ImSfoaID/W319pBr8mf70YwFROso0n1IhE2Z9dImx1
-	vB61Z/q1nT6rf1cih9UgeUJaD1V69kB/XFqPViTXRvCzjDPoB5mYLZIcW4b9gyJVGzuNFbz1wTx
-	bTrYnHWMRomqUnS47Zdsa2OK6MLBJlhwfq3YTGQ6YzJf5uWSpUTp6fNrqxei2TSkENGTBf1Ehh2
-	meJfAL5dwYO4oCkgjQz4Od6F2oH/gstRC1irXueibEfSyUIYJ3V8KKm71FeUAId6VNhbFmniZA5
-	KQT5OBE/yUJIcOJtqHQscugUyR6rBmrO+nTZ/A4ZJEKLH/hQp23qYOYtwCqCShOe8l2ZlPNJEdB
-	OkPRdOldg0jwZZIoMKMENsJ4myM22cTul5Tl8gK64b6KR4dbgEHcR
-X-Received: by 2002:a05:6122:3d05:b0:53c:6d68:1cce with SMTP id 71dfb90a1353d-5473d47bf22mr5786024e0c.16.1757548901579;
-        Wed, 10 Sep 2025 17:01:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEaJQlOSyFqlengO9hG1qMSeWHYmCMLahQJhuHv+8HeoNe1vwHzEtQ3ebepX/z3Qg2HtnLVGA==
-X-Received: by 2002:a05:6122:3d05:b0:53c:6d68:1cce with SMTP id 71dfb90a1353d-5473d47bf22mr5785971e0c.16.1757548901152;
-        Wed, 10 Sep 2025 17:01:41 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1a8211a4sm202201fa.39.2025.09.10.17.01.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 17:01:38 -0700 (PDT)
-Date: Thu, 11 Sep 2025 03:01:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] arm64: dts: qcom: qcm6490: Introduce Particle Tachyon
-Message-ID: <2tnzsjw3xy5jct4bcmahcwhjbzlmyxgcx6fzlz5qrzxume2uoy@phpcz6mnydlt>
-References: <20250910-tachyon-v1-0-5090bfd133e0@oss.qualcomm.com>
+	s=arc-20240116; t=1757548920; c=relaxed/simple;
+	bh=hcPnMipU2xqeVVWkjAP2fKprVNClO0nQS9RLP+GCumk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=efLGDEmu/jo8q2yTbTsbjiCXh8g/+9fjWzl2zlPOOoakaMvvm+FKhCIkoBU7qkBfyR9M3q2QrFHjOZ+xi487egW09ztHOHKcnVzu0nsDY+p6cz3Q6dpYD4iwXOfConIoqDd5+b/uUQ+H/yxU+Ptkino82apMiqg6Q1KMC+cKqDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=VGcVaBXn; arc=none smtp.client-ip=193.104.135.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
+	s=202008; t=1757548915;
+	bh=hcPnMipU2xqeVVWkjAP2fKprVNClO0nQS9RLP+GCumk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VGcVaBXnbMBS5Aq7c37tqFGeHyRyrIxBUmXQQ04+cwqej6MYGPoDJmZ4gTMP9jA4H
+	 fls++6Ivu6BsQHF5Zyc9FffCbdYugrf/w8IxzTvFhdKZFudv9Xyr58cupp5U3Sml++
+	 zBbhVZRQN4vTuyIzfkc3jozO0tsStW27onFnyzKWNqnIZBEhUFp8djorMwBDhdflxH
+	 flbKMfYRzr0t4ge/YB0vKxPKwqDVwhQ74m+ogHDjb740HW+eH6NObDVojxBa7Qzaha
+	 VKOfn/oiIEjNCdIddhFyFEZ2PAnUB4XEGnJ6kBb/+lTPMz7mA01Y+QJAFTWbeafz+x
+	 bmPLX9Rz985QA==
+Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
+	by mail1.fiberby.net (Postfix) with ESMTPSA id DA8066000C;
+	Thu, 11 Sep 2025 00:01:54 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by x201s (Postfix) with ESMTP id 01FCC201AFC;
+	Thu, 11 Sep 2025 00:01:48 +0000 (UTC)
+Message-ID: <3b52386e-6127-4bdc-b7db-e3c885b03f72@fiberby.net>
+Date: Thu, 11 Sep 2025 00:01:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-tachyon-v1-0-5090bfd133e0@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: TQgrzOiNqcINvOxymxLF9_L_qfYJY31X
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEwMDE3NyBTYWx0ZWRfX8jJaaNii905T
- 0RjTDzFs6g67pDt2BkmJ3tTaAU7UapwpPRaWECkicv2BmJI+Y89Qj74+fC0oZaNwfj8yT0oAmE3
- uMx0XESef48cBQ0ZdK1wZ7k3RzvMRvwcJad7ff2BSOhNg1FpMZAYPvBXfWcRVh6+C/YwhdyJ1rb
- 7Aa6fmR+tUOUINc6tA46p80JJ0D1U9dDe96CJT7yXWvqWI95PRfgcHD0CrO8eR0+oEdqlBk7KhY
- lLyP9wf+cpIzhAIIFHNBjXdGhRpbHGBHwtdtu9651mUS5hCh5cWT0TcLU1jsSXWNguBHcDgCMwv
- I3JuDDWjdDaFaL+BGb5MO+VyjcZXn9R3VQcxzS4+Rz6KCVprqCajsbxwAXa8g07LAhBAzPLwhuN
- FYtDgVPO
-X-Authority-Analysis: v=2.4 cv=WPB/XmsR c=1 sm=1 tr=0 ts=68c21167 cx=c_pps
- a=+D9SDfe9YZWTjADjLiQY5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=7AODkVuKAAAA:8 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=ZljO1qPqrEt1h5dnOlAA:9 a=CjuIK1q_8ugA:10
- a=vmgOmaN-Xu0dpDh8OwbV:22 a=sRHRY8H3vKB1GfNvUtpx:22
-X-Proofpoint-GUID: TQgrzOiNqcINvOxymxLF9_L_qfYJY31X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509100177
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 05/11] tools: ynl-gen: define nlattr *array in a
+ block scope
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>,
+ Simon Horman <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, wireguard@lists.zx2c4.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250904-wg-ynl-prep@fiberby.net>
+ <20250904220156.1006541-5-ast@fiberby.net>
+ <20250905171809.694562c6@kernel.org>
+ <4eda9c57-bde0-43c3-b8a0-3e45f2e672ac@fiberby.net>
+ <20250906120754.7b90c718@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <ast@fiberby.net>
+In-Reply-To: <20250906120754.7b90c718@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 06:05:36PM -0500, Bjorn Andersson wrote:
-> Introduce the Particle Tachyon board (https://www.particle.io/tachyon/),
-> a single board compute with 5G connectivity and AI accelerator.
+On 9/6/25 7:07 PM, Jakub Kicinski wrote:
+> On Sat, 6 Sep 2025 13:13:29 +0000 Asbjørn Sloth Tønnesen wrote:
+>> In patch 4, it is about a variable used by multiple Type classes having
+>> presence_type() = 'count', which is currently 3 classes:
+>> - TypeBinaryScalarArray
+>> - TypeMultiAttr
+>> - TypeArrayNest (later renamed to TypeIndexedArray)
+>>
+>> In patch 5, I move code for a special variable used by one Type class,
+>> to be contained within that class. It makes it easier to ensure that the
+>> variable is only defined, when used, and vice versa. This comes at the
+>> cost of the generated code looking generated.
 > 
-> The boards currently ships with the Android Boot Loader, but replacing
-> this with abl2esp allows writing a EFI System Parition and OS partitions
-> to all of LUN0, and a more UEFI boot experience. A prebuilt version of
-> abl2esp is provided at [1], as abl2esp-v6.elf.
+> So you're agreeing?
 > 
-> With a (very) recent version of QDL, a flash programmer from a Tachyon
-> software release, and a full distro image, this can be achieved with:
+>> If we should make the generated code look like it was written by humans,
+>> then I would move the definition of these local variables into a class
+>> method, so `i` can be generated by the generic implementation, and `array`
+>> can be implemented in it's class. I will take a stab at this, but it might
+>> be too much refactoring for this series, eg. `len` is also defined local
+>> to conditional blocks multiple branches in a row.
+>>
+>> tools/net/ynl/generated/nl80211-user.c:
+>> nl80211_iftype_data_attrs_parse(..) {
+>>     [..]
+>>     ynl_attr_for_each_nested(attr, nested) {
+>>       unsigned int type = ynl_attr_type(attr);
+>>
+>>       if (type == NL80211_BAND_IFTYPE_ATTR_IFTYPES) {
+>>         unsigned int len;
+>>         [..]
+>>       } else if (type == NL80211_BAND_IFTYPE_ATTR_HE_CAP_MAC) {
+>>         unsigned int len;
+>>         [..]
+>>       [same pattern 8 times, so 11 times in total]
+>>       } else if (type == NL80211_BAND_IFTYPE_ATTR_EHT_CAP_PPE) {
+>>         unsigned int len;
+>>         [..]
+>>       }
+>>     }
+>>     return 0;
+>> }
 > 
->   qdl prog_firehose_ddr.elf write abl_a abl2esp-v6.elf write abl_b abl2esp-v6.elf write 0 image.raw
+> It's pretty easily doable, I already gave up on not calling _attr_get()
+> for sub-messages.
 > 
-> The following firmware files are currently used, on top of what's in
-> linux-firmware already:
->   qcom/qcm6490/particle/tachyon/a660_zap.mbn
->   qcom/qcm6490/particle/tachyon/adsp.mbn
->   qcom/qcm6490/particle/tachyon/cdsp.mbn
->   qcom/qcm6490/particle/tachyon/ipa_fws.mbn
->   qcom/qcm6490/particle/tachyon/modem.mbn
+>> That looks very generated, I would have `len` defined together with `type`,
+>> and a switch statement would also look a lot more natural, but maybe leave
+>> the if->switch conversion for the compiler to detect.
+> 
+> diff --git a/tools/net/ynl/pyynl/ynl_gen_c.py b/tools/net/ynl/pyynl/ynl_gen_c.py
+> index fb7e03805a11..8a1f8a477566 100755
+> --- a/tools/net/ynl/pyynl/ynl_gen_c.py
+> +++ b/tools/net/ynl/pyynl/ynl_gen_c.py
+> @@ -243,7 +243,7 @@ from lib import SpecSubMessage, SpecSubMessageFormat
+>           raise Exception(f"Attr get not implemented for class type {self.type}")
+>   
+>       def attr_get(self, ri, var, first):
+> -        lines, init_lines, local_vars = self._attr_get(ri, var)
+> +        lines, init_lines, _ = self._attr_get(ri, var)
+>           if type(lines) is str:
+>               lines = [lines]
+>           if type(init_lines) is str:
+> @@ -251,10 +251,6 @@ from lib import SpecSubMessage, SpecSubMessageFormat
+>   
+>           kw = 'if' if first else 'else if'
+>           ri.cw.block_start(line=f"{kw} (type == {self.enum_name})")
+> -        if local_vars:
+> -            for local in local_vars:
+> -                ri.cw.p(local)
+> -            ri.cw.nl()
+>   
+>           if not self.is_multi_val():
+>               ri.cw.p("if (ynl_attr_validate(yarg, attr))")
+> @@ -2101,6 +2097,7 @@ _C_KW = {
+>               else:
+>                   raise Exception(f"Per-op fixed header not supported, yet")
+>   
+> +    var_set = set()
+>       array_nests = set()
+>       multi_attrs = set()
+>       needs_parg = False
+> @@ -2118,6 +2115,13 @@ _C_KW = {
+>               multi_attrs.add(arg)
+>           needs_parg |= 'nested-attributes' in aspec
+>           needs_parg |= 'sub-message' in aspec
+> +
+> +        try:
+> +            _, _, l_vars = aspec._attr_get(ri, '')
+> +            var_set |= set(l_vars) if l_vars else set()
+> +        except:
+> +            pass  # _attr_get() not implemented by simple types, ignore
+> +    local_vars += list(var_set)
+>       if array_nests or multi_attrs:
+>           local_vars.append('int i;')
+>       if needs_parg:
+I left this for you to submit, there is a trivial conflict with patch 8
+in my v2 posting.
 
-Is it locked? Would it be possible to Particle-signed firmware into
-linux-firmware?
+It gives a pretty nice diffstat when comparing the generated code:
 
-> 
-> In addition to bug fixes that has landed in v6.17-rc this depends on
-> [2], which is available in linux-next.
-> 
-> [1] https://github.com/qualcomm/abl2esp/releases/tag/v1.0
-> [2] https://lore.kernel.org/all/20250811-sc7280-mdss-reset-v1-0-83ceff1d48de@oss.qualcomm.com/
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
-> Bjorn Andersson (3):
->       dt-bindings: vendor-prefixes: Add Particle Industries
->       dt-bindings: arm: qcom: Add Particle Tachyon
->       arm64: dts: qcom: qcm6490: Introduce the Particle Tachyon
-> 
->  Documentation/devicetree/bindings/arm/qcom.yaml    |   1 +
->  .../devicetree/bindings/vendor-prefixes.yaml       |   2 +
->  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
->  .../boot/dts/qcom/qcm6490-particle-tachyon.dts     | 877 +++++++++++++++++++++
->  4 files changed, 881 insertions(+)
-> ---
-> base-commit: 5f540c4aade9f1d58fb7b9490b4b7d5214ec9746
-> change-id: 20250910-tachyon-e3548941397d
-> 
-> Best regards,
-> -- 
-> Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> 
-
--- 
-With best wishes
-Dmitry
+  devlink-user.c      |  187 +++----------------
+  dpll-user.c         |   10 -
+  ethtool-user.c      |   49 +----
+  fou-user.c          |    5
+  handshake-user.c    |    3
+  mptcp_pm-user.c     |    3
+  nfsd-user.c         |   16 -
+  nl80211-user.c      |  159 +---------------
+  nlctrl-user.c       |   21 --
+  ovpn-user.c         |    7
+  ovs_datapath-user.c |    9
+  ovs_flow-user.c     |   89 ---------
+  ovs_vport-user.c    |    7
+  rt-addr-user.c      |   14 -
+  rt-link-user.c      |  183 ++----------------
+  rt-neigh-user.c     |   14 -
+  rt-route-user.c     |   26 --
+  rt-rule-user.c      |   11 -
+  tc-user.c           |  380 +++++----------------------------------
+  tcp_metrics-user.c  |    7
+  team-user.c         |    5
+  21 files changed, 175 insertions(+), 1030 deletions(-)
 
