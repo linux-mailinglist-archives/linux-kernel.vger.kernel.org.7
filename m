@@ -1,158 +1,162 @@
-Return-Path: <linux-kernel+bounces-812306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 255A0B535FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B06B535F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:43:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB5B17787D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:41:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D80E8163BD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A10012E92CF;
-	Thu, 11 Sep 2025 14:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NVXKW70I"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA50133EB16;
+	Thu, 11 Sep 2025 14:40:51 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0E4214A8B;
-	Thu, 11 Sep 2025 14:41:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E514327A36;
+	Thu, 11 Sep 2025 14:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601667; cv=none; b=ruWV/mGwK/4yjnhM5N9wtAHzfTD9PLBNIjpceGBVeFJBBpOmfW7tm94uEHLJKNlcfn6VTx+5lZ6tnrP2AyZ0NYLYndiUxUYE500oHE+1vq05kR/fciXo4VOYtH1RMWyFY45A3UUZ3diWkecXJitcBkt4uQjeBswBiRdv7iyn2oE=
+	t=1757601651; cv=none; b=dZ/NrkaTpkARebIqlkXlXqJlAYgHUjbboQSrljS2zp+D9iE4V3e5qIiHx6lCVZrN3AnDTLAx8LZNWn4b3m7LHB3ltoLsWC/sVRhAH/0Ij4hj0PrnUox9mq3byxWNp9wc2dLZfkPj6nCtu8NvKd7tRrlwsYrADMNIZnyTExScHfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601667; c=relaxed/simple;
-	bh=0k9K5Z0+Nwwz0NRSWVtjlErXcniZ4G8o1OcRaDrpy4A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q5NypE6nD0PRlX/hvDQEq/upd2QEpQXL3jxAB80S+W5L6mWmHxhBJWFEhrm143G3hGc+b+yntLPKSo/zOeseKnnUsbgEFd5L/XIdRPbIrL68m+U4cSUVR6MwNaNXxs3ffcLTnN0rZx9Wm2Jcx3c6NTgNfO4GTl6uSX8F63A0iOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NVXKW70I; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-772679eb358so712752b3a.1;
-        Thu, 11 Sep 2025 07:41:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757601666; x=1758206466; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yyBSb1K+ID+ZIw5PFaCdNQifUNTYtrcbftSQOft9yWU=;
-        b=NVXKW70IdTSkTDqEXP9xvVLQMPDp4BKMtWVWimT5dmo6vk3gkWFGCGVbKpleGQS8CI
-         4REJwFVDzUyUnchhCVtkeE1UQZxckPzQ6ViuHqV9D60s70TscroCyikbTWkto1EMNI/s
-         ZsjfZi1NGsjLL/43qfudVwm1UkswHn/UF8aJoaxjFgabflm8LgKx0HT6kXYx94UCvURg
-         emkWC6b44korFiO54TkgSRojZSBu5nHyRYUdTvuzEwS5iPlTbjd4ImVC2IYBjDPjOZpK
-         JDe/pIoTIq6N7bT8CqyvbHitHLJlnE+g6nw+OQLg/l2XuaJPAOIwT3RXPAVEgfDLLn43
-         kDBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757601666; x=1758206466;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yyBSb1K+ID+ZIw5PFaCdNQifUNTYtrcbftSQOft9yWU=;
-        b=YN0jTorNOdQoYT13bY5JFdI/qWaL36+J66HqfAxwd6nrWPlO1UuKuo32ILduA0mnqr
-         jO+AvKZZbf1XoPhSlkMZcD0KP/NgFQzYxbD2K2N5czOOW1elDxBWXn8u0mVXTrZIVkSX
-         EzZ7mPHAl5QkS7me5NPDZi3C1nBZcgwaP3vXy2Q3he4gpAdNkHMHu681VnyJOKwLBwWz
-         OjQ/qF8gU+g2koh9VT31M22wySbz74y2fhA1OVA28RAqEPIylkH5WF9u93mJkzZDspYp
-         /jbjCTv+whj/Hyn9VdfjLnddZXlCLNV8yhAlQB4OEF7w5u8I1UEOpl0tCGFm0JVEmwJW
-         Nr4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUhlNZT1f07ahQg9FJ5A3/n8YAPuv7uenaqqS2Ync7wHkQiGKBYNeAeKOzgpx4zYOnFSgzhNSE3s6waIOwroDDD@vger.kernel.org, AJvYcCWdt0fFpZZ76oMHg6o1MiklrvHGDnmbuAr+8JhbZRg75rZ/y3bJF1a5VjETQvQaNpQR653fy0jFYBtM@vger.kernel.org, AJvYcCX1x2Y9j+0vnwHusWy6NBrzR59waMOSgUo5vknweWGOahUEAkuqKdMU+nI3F+XxzzBJrSZC88/q+wwuF0k=@vger.kernel.org, AJvYcCXtHPZMIK1YgOwPSgW2wJiZQK45xWfGGv/RrshCeRiGmLs/w085yBLK2og3iT2Pezf6zbVwuAl6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYxChl2dHbG13jpfZE4LFkb2wDPR94wUnFyCtjKKIC2ns5bTLX
-	l+1F+NfTIiqBNRiNrQMHmua4VVi4AiGnal34MK3Qd+U+VoIfxeeJvGMu
-X-Gm-Gg: ASbGncs0SF88BNH0dfrYkcHCdm9sXOMzgrw1RzeGQjWx2iJDu1JdzYlUAKRuCkOrbox
-	ytPXrLaO/7mZBYSEq3MkixPVaTmhoUy8WcYHhPNT91K5oabAYbdfmQKMnLJdO7Z82I0DLaUmc86
-	26EpSPDq8uZi8f2qoQt+koLV/yO5va6NmZU2LCZZ2Min2iNmQ5V1W8yopLzjvq4WyjVgwuOh9uu
-	UYbi+W5DXgu7OzrMQQZ5XdEVyYtJecInOcYOVKllCihfNq7AKU168tWXiz/RSfACnAKqxCJk6Vc
-	tpqywg1d/qb3sXLmW+PF7Kiso6QspXl0QkFTCnK8xgQ1Kp3SFzF0gNey3Qe0asELrD33TyfEtSM
-	CJClArW2FTI9FkHwJZsMG01i7VPVC2hIKBKUq+Gd6m3h2c4m1Bu5xJg==
-X-Google-Smtp-Source: AGHT+IF9eyJd8b0T+uwEAz0byGH03qdVJNvPLIp965+c17AGC9jU6i6mh2I8DUh/ICkQsmhTp7I9eA==
-X-Received: by 2002:a05:6a00:889:b0:772:45ee:9bb6 with SMTP id d2e1a72fcca58-7742dccdc8bmr23098620b3a.9.1757601665601;
-        Thu, 11 Sep 2025 07:41:05 -0700 (PDT)
-Received: from LAPTOP-PN4ROLEJ.localdomain ([58.215.202.202])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607a47abfsm2370442b3a.32.2025.09.11.07.40.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 07:41:05 -0700 (PDT)
-From: Slavin Liu <slavin452@gmail.com>
-To: Simon Horman <horms@verge.net.au>,
-	Julian Anastasov <ja@ssi.bg>
-Cc: Slavin Liu <slavin452@gmail.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	lvs-devel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v3] ipvs: Defer ip_vs_ftp unregister during netns cleanup
-Date: Thu, 11 Sep 2025 22:40:20 +0800
-Message-Id: <20250911144020.479-1-slavin452@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250909212113.481-1-slavin452@gmail.com>
-References: 
+	s=arc-20240116; t=1757601651; c=relaxed/simple;
+	bh=hOsnU96Duj7H4bPDhf52O/jlQhb37T2g9azDqZMBjWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K3KvboCF+MA6DEcEEVVryBNBEwtgl597o0PNj/zYqNOKEnIfemyMLx75Xsas40x5OJeiy9rvndMXC8GLU6LL11gr/+T9R374ksHYUFPCHiojZxfxZHPlBgD1N6D+UcuOAd7APDlB5LXSp4u4uUQALtJLPS2T0b5DI6vdtMKjghw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id B789214021E;
+	Thu, 11 Sep 2025 14:40:47 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 03B0E80012;
+	Thu, 11 Sep 2025 14:40:45 +0000 (UTC)
+Date: Thu, 11 Sep 2025 10:41:38 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+Cc: mhiramat@kernel.org, mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH] ftrace: Fix softlockup in ftrace_module_enable
+Message-ID: <20250911104138.2830f60b@gandalf.local.home>
+In-Reply-To: <aMLPm__QGrQCwz1t@vova-pc>
+References: <aMLPm__QGrQCwz1t@vova-pc>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: hi6f91d6okink33npqhpi3e7caan7557
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 03B0E80012
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+OOMtyr7KDu/cgNi/2DzXP8bE2weFBwgw=
+X-HE-Tag: 1757601645-820143
+X-HE-Meta: U2FsdGVkX19ZShW5iPu+9iFzhpbRyHXteCdIPZGoi0/VqS5aVBfzITW1SLiALf/hghAVjavrpChJyB7VLo64KWK+Xd5L83Vrh0HP1UB/RFVc6A8DuITunnZ7FY2WmHz5SxouPd2OPHD+baJpikvArBJu3IlQden+hjeGnd7+m+0NuIHb60QtkfrmTmJAjLL5vsC77y2xBew9ZeGR/Vhg1bNx6Wc3+dPkjhjbE0jMvVpdmuIo+ZwNNW77h1ZtWMVwrt8uMxGFTvucOh2cMj+uYgBJ4Aw6ujRwf8bwFylYN3+3yhMAGTi6XveDn1ssGwDc6TdWNtH8bqhO8nTxlIl8pHrioMDok+CZ
 
-On the netns cleanup path, __ip_vs_ftp_exit() may unregister ip_vs_ftp
-before connections with valid cp->app pointers are flushed, leading to a
-use-after-free.
+On Thu, 11 Sep 2025 15:33:15 +0200
+Vladimir Riabchun <ferr.lambarginio@gmail.com> wrote:
 
-Fix this by introducing a global `module_removing` flag, set to true in
-ip_vs_ftp_exit() before unregistering the pernet subsystem. In
-__ip_vs_ftp_exit(), skip ip_vs_ftp unregister if called during netns
-cleanup (when module_removing is false) and defer it to
-__ip_vs_cleanup_batch(), which unregisters all apps after all connections
-are flushed. If called during module exit, unregister ip_vs_ftp
-immediately.
+> A soft lockup was observed when loading amdgpu module,
 
-Fixes: 61b1ab4583e2 ("IPVS: netns, add basic init per netns.")
-Suggested-by: Julian Anastasov <ja@ssi.bg>
-Signed-off-by: Slavin Liu <slavin452@gmail.com>
----
- net/netfilter/ipvs/ip_vs_ftp.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I'd like to see more about that soft lockup.
 
-diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
-index d8a284999544..4db58c42ff9a 100644
---- a/net/netfilter/ipvs/ip_vs_ftp.c
-+++ b/net/netfilter/ipvs/ip_vs_ftp.c
-@@ -53,6 +53,7 @@ enum {
- 	IP_VS_FTP_EPSV,
- };
- 
-+static bool module_exiting;
- /*
-  * List of ports (up to IP_VS_APP_MAX_PORTS) to be handled by helper
-  * First port is set to the default port.
-@@ -605,7 +606,7 @@ static void __ip_vs_ftp_exit(struct net *net)
- {
- 	struct netns_ipvs *ipvs = net_ipvs(net);
- 
--	if (!ipvs)
-+	if (!ipvs || !module_exiting)
- 		return;
- 
- 	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
-@@ -627,7 +628,9 @@ static int __init ip_vs_ftp_init(void)
-  */
- static void __exit ip_vs_ftp_exit(void)
- {
-+	module_exiting = true;
- 	unregister_pernet_subsys(&ip_vs_ftp_ops);
-+	module_exiting = false;
- 	/* rcu_barrier() is called by netns */
- }
- 
--- 
-2.34.1
+> this is the same issue that was fixed in
+> commit d0b24b4e91fc ("ftrace: Prevent RCU stall on PREEMPT_VOLUNTARY
+> kernels") and commit 42ea22e754ba ("ftrace: Add cond_resched() to
+> ftrace_graph_set_hash()").
 
+The above cond_resched() is in the loop of all records that actually look
+at all records! And that can be pretty big. On my server, it shows on boot:
+
+
+[    1.934175] ftrace: allocating 45706 entries in 180 pages
+[    1.934177] ftrace: allocated 180 pages with 4 groups
+
+That means the loop will go through 45,706 entries. That's quite a lot and
+a cond_resched() makes perfect sense.
+
+> 
+> Fix it the same way by adding cond_resched() in ftrace_module_enable.
+> 
+> Signed-off-by: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+> ---
+>  kernel/trace/ftrace.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+> index a69067367c29..23c4d37c7bcd 100644
+> --- a/kernel/trace/ftrace.c
+> +++ b/kernel/trace/ftrace.c
+> @@ -7526,6 +7526,9 @@ void ftrace_module_enable(struct module *mod)
+>  
+>  	do_for_each_ftrace_rec(pg, rec) {
+>  		int cnt;
+> +
+> +		cond_resched();
+> +
+>  		/*
+>  		 * do_for_each_ftrace_rec() is a double loop.
+>  		 * module text shares the pg. If a record is
+
+This loop is different. Let me show a bit more context:
+
+	do_for_each_ftrace_rec(pg, rec) {
+		int cnt;
+		/*
+		 * do_for_each_ftrace_rec() is a double loop.
+		 * module text shares the pg. If a record is
+		 * not part of this module, then skip this pg,
+		 * which the "break" will do.
+		 */
+		if (!within_module(rec->ip, mod))
+			break;
+
+See this "if (!within_module(rec->ip, mod))" break?
+
+Look at the dmesg output again, and you'll see "groups" mentioned.
+
+[    1.934177] ftrace: allocated 180 pages with 4 groups
+
+That "4 groups" means there are 4 "page groups". That's the "pg" in the
+do_for_each_ftrace_recr() function.
+
+This means in my scenario, it loops 4 times. And then it will loop through
+each module.
+
+How big is the amdgpu driver? How many functions does it have?
+
+ # grep amdgpu /sys/kernel/tracing/available_filter_functions | wc -l
+
+And I'm guessing that this is only an issue when ftrace is enabled:
+
+		if (ftrace_start_up && cnt) {
+			int failed = __ftrace_replace_code(rec, 1);
+			if (failed) {
+				ftrace_bug(failed, rec);
+				goto out_loop;
+			}
+		}
+
+As that could slow things down.
+
+If this is all the case, then the cond_resched() should be with the
+ftrace_start_up code and not in the open like you have it.
+
+		if (ftrace_start_up && cnt) {
+			int failed = __ftrace_replace_code(rec, 1);
+			if (failed) {
+				ftrace_bug(failed, rec);
+				goto out_loop;
+			}
++			cond_resched();
+		}
+
+
+-- Steve
 
