@@ -1,64 +1,117 @@
-Return-Path: <linux-kernel+bounces-812015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06ACB531B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:06:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D85B531C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5959A5682B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:06:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 132FB7A5CA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4D531D757;
-	Thu, 11 Sep 2025 12:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53B131D758;
+	Thu, 11 Sep 2025 12:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyp5/pkS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="k8qq71z0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ADF1A2387;
-	Thu, 11 Sep 2025 12:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A421A2387;
+	Thu, 11 Sep 2025 12:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757592373; cv=none; b=t7cKsPCdfVpZcIFVyTVtO8RCTW/oC/4Q/DZ8J2CacKJROuxP3yFifBK6YgeKK7sW7TVe3IHzkwYnYXgCt/qv8u1kClgIU7fKfGLnohFw87FT8JPgEPnH7VCEAmSsGg7logEihGLajSd3l22AoGfSb9cABE781a8G8AIZsrfnc7I=
+	t=1757592468; cv=none; b=RQTxHonIMgOgz1RexmtR9DEC22/ZxXihjq/DMVeUtrrOus8PomTiUa4iwyM1Tc24VXeQLaUCctmPuJhWJnQRrzVw6vjJZNm80wcydHFz5SxBIyyXoH3Cjs017fHbvJ7CCg2ElCnjjhTKTuSX4BfTIH7M3mp01mWBsJnpkwCvbME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757592373; c=relaxed/simple;
-	bh=OSJ2jcFpwfXRBQx9mfDbM5b/WgIMM0wznG9i3vTrIuY=;
+	s=arc-20240116; t=1757592468; c=relaxed/simple;
+	bh=HHKC+IKV/VfhS1hZ4YhHYn9ufSE37UX8C5dkef9QnAQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TkWY/FLKLWOxRoZQyJ79yNhH9cEJLUoShtqmtSF5lrPGjaj2bLM25RvNFFGwdHsGl36qpXMJ8GH6jmVXb7JTs78VPlsfTm4U0T/Xqvc/93obchl/OsQBKXefxdwWqKKbkmwXpCOn7Z5YmuQ/SLQU1TtPoQZ4T1FVdufAWNKn1rI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyp5/pkS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C273C4CEF0;
-	Thu, 11 Sep 2025 12:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757592373;
-	bh=OSJ2jcFpwfXRBQx9mfDbM5b/WgIMM0wznG9i3vTrIuY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=nyp5/pkSEPU4nb/IushypKjW6jEAJhrBGduY6GreNHoH/wvjbG2NouOvyhNawBf8r
-	 L8OYf9AYhIwmAfkRImAGl+lYyqyFe18Gry13Egdrp0LA/MuGMkMb8dzglHAG2Yn0h6
-	 YAIE4ZHIfk+coYcRtrrD/mi/WHq74tN/IPwunfQFrQLV5HAWxe3sfDDf3UmWTnbgyl
-	 v4cYJehGLcjshyNrip+KAYoCftezRRpEFJOnt5hgQBRPDXZfJlyXxEoDlWlj8kacXR
-	 BWgJTfmjmg/RtcXzQxR4/OzVEPCvpzAJiGW1hB6Qo63aeGwU9x62F/5OZYEomwN5lF
-	 7nlAlxENJMwLA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id CCDFDCE0C39; Thu, 11 Sep 2025 05:06:11 -0700 (PDT)
-Date: Thu, 11 Sep 2025 05:06:11 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zqiang <qiang.zhang@linux.dev>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, frederic@kernel.org,
-	neeraj.upadhyay@kernel.org, boqun.feng@gmail.com, urezki@gmail.com,
-	rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] srcu/tiny: Remove preempt_disable/enable() in
- srcu_gp_start_if_needed()
-Message-ID: <ab97f38c-2750-4cd7-a9a4-6c25fc1cc45d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250909133928.615218-1-qiang.zhang@linux.dev>
- <4c7d977b-7d09-48e0-9a88-bae93fa5e401@paulmck-laptop>
- <20250910143620.GA561834@joelbox2>
- <e5e69dc3-ebd3-47ae-b193-bc4b2de36904@paulmck-laptop>
- <70fa9fd07e4fe2b1b498109f3450804e731fd7ce@linux.dev>
- <430d5714-4a00-4a75-b763-34918f8017c3@paulmck-laptop>
- <1133458227af4b9a7a0cee284502a0643f1fad3f@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kQuIn4x6hvgKPSspcR0DCL0uaXmo+xq1Ct52ZbHKBEOASctMIBNY8h8GGMSB1yIfwZ18YzFTIK76LlRe5x6gkm24Mq+y8CMlRyiQ6md/dG3xt3KDyQS8MRsVNlKyaSNciwKf890Ss2JiHbItsRFvT+ElbGL2+9fTS17s+Z8b3Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=k8qq71z0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B84fHU032047;
+	Thu, 11 Sep 2025 12:06:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=c30ZQnsvAEyuVkRVamQoGQaRen0nYI
+	Ra+BA7jFqu78U=; b=k8qq71z07GrReGd9S9mOiL2kfz2BW5pit9iGHWyQ501+3o
+	18SrSVgXyKIh3fgbTocFTOqLMtqSFK4cxX7BIxE3tS22XZO0MuuzR1offUBCNMnq
+	oKDIaYOBM6OqV/8/2nb5TYMMtbfty7TIxuJR1UwI7ijudG7hBz2n8mEO1/1JtIWQ
+	dCG50x7Is5mNMQX/2OgEzJRaOS4B3WAK5BbVoavZQgJ0vMUStU+M4xrwJU761IBV
+	72RsuHX8BmU9AXx/ZC8PQ4TAp5bfKtZi3PWfc0gEnh3wsk+FWngrjfyj6wXqFlUw
+	ta9dp/wt1kSFBm9tnzdcdwRJffzZgn8TZgXdZhNg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffmge8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 12:06:56 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58BButst022969;
+	Thu, 11 Sep 2025 12:06:55 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffmge1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 12:06:55 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58B99ZNi011435;
+	Thu, 11 Sep 2025 12:06:54 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9unx8m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 12:06:54 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BC6qp621103260
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Sep 2025 12:06:52 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 592C42004B;
+	Thu, 11 Sep 2025 12:06:52 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 95E1D20040;
+	Thu, 11 Sep 2025 12:06:51 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 11 Sep 2025 12:06:51 +0000 (GMT)
+Date: Thu, 11 Sep 2025 14:06:50 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Mark Rutland <Mark.Rutland@arm.com>
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+Message-ID: <80be36e5-d6e1-4b37-a1ca-47e92ac21b02-agordeev@linux.ibm.com>
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908073931.4159362-3-kevin.brodsky@arm.com>
+ <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
+ <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
+ <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
+ <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
+ <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
+ <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
+ <b2e52967-7ca1-411e-9c66-8d3483624ca7-agordeev@linux.ibm.com>
+ <250835cd-f07a-4b8a-bc01-ace24b407efc@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,96 +120,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1133458227af4b9a7a0cee284502a0643f1fad3f@linux.dev>
+In-Reply-To: <250835cd-f07a-4b8a-bc01-ace24b407efc@arm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: EOlye06iv3wrpFZ8EV5hsz2FcaKHpkNR
+X-Proofpoint-GUID: 51K6fRL5QpJCzFIQhT_Qazz7bChQjXpl
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c2bb60 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=7CQSdrXTAAAA:8
+ a=jRhVRVM2bwpbWWX_RR8A:9 a=CjuIK1q_8ugA:10 a=a-qgeE7W1pNrGK8U0ZQC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX8pGJfFgtntNW
+ /kOIUEwDJMICGimD1/ufjSKSVIfmo3TNK7+Fxsinl9Egq+oGXoolAwIU93iuesvkQ3s13VVlzhh
+ JIgGdj6U9PokjpkHg4ykDpABkraxfLb3HERwg3941FM1HXB2esU2ebixaknpbywBxWh5hGHimsp
+ ci9R67AshxoJpy340lLj5ssEfi6eKhyjCh5p8fZq/k83GFNAv5ZYjhl/Hqc7I+sNgjVlWR40LHM
+ kZLurS1M60tPSFVJMaBaPvAXWRbQAESVilgI8Vf2JWna8t2s571X/x3Ahb2bFBInNwL1PkLtgz0
+ aizOmw9YsKcqSGhvZ6E05+Xu1Xlt46nNfGetQx37HOL9xVINKsAa7u5yRb/jAsXOIQWyZmkfM1v
+ 9y5BFajA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_04,2025-09-11_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-On Thu, Sep 11, 2025 at 11:46:36AM +0000, Zqiang wrote:
-> > 
-> > On Thu, Sep 11, 2025 at 12:36:45AM +0000, Zqiang wrote:
-> > 
-> > > 
-> > > On Wed, Sep 10, 2025 at 10:36:20AM -0400, Joel Fernandes wrote:
-> > >  
-> > >  > 
-> > >  > [..]
-> > >  > > kernel/rcu/srcutiny.c | 4 +---
-> > >  > > 1 file changed, 1 insertion(+), 3 deletions(-)
-> > >  > > 
-> > >  > > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> > >  > > index b52ec45698e8..b2da188133fc 100644
-> > >  > > --- a/kernel/rcu/srcutiny.c
-> > >  > > +++ b/kernel/rcu/srcutiny.c
-> > >  > > @@ -181,10 +181,9 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
-> > >  > > {
-> > >  > > unsigned long cookie;
-> > >  > > 
-> > >  > > - preempt_disable(); // Needed for PREEMPT_LAZY
-> > >  > > + lockdep_assert_preemption_disabled();
-> > >  > 
-> > >  > nit: Do we still want to keep the comment that the expectation of preemption
-> > >  > being disabled is for the LAZY case?
-> > >  > 
-> > >  Good point, and I do believe that we do. Zqiang, any reason not to
-> > >  add this comment back in?
-> > >  
-> > >  in rcu-tree, this commit:
-> > >  
-> > >  (935147775c977 "EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=n kernels")
-> > >  
-> > >  make preempt disable needed for CONFIG_PREEMPT=y or CONFIG_PREEMPT_LAZY=y
-> > >  when the CONFIG_SMP=n. do we need to replace "Needed for PREEMPT_LAZY"
-> > >  comments with "Needed for PREEMPT or PREEMPT_LAZY"?
-> > > 
-> > Good point as well, thank you! And I need to decide whether I should
-> > send that patch upstream. Its original purpose was to test PREEMPT_LAZY=y
-> > better than could be tested with PREEMPT_LAZY.
-> > 
-> > Thoughts?
-> 
-> I will add "Needed for PREEMPT_LAZY" comments, if this commit (935147775c977) is
-> send to upstream, will update comments again in the future.
+On Wed, Sep 10, 2025 at 06:11:54PM +0200, Kevin Brodsky wrote:
 
-That sounds good to me, thank you!
+Hi Kevin,
 
-							Thanx, Paul
-
-> Thanks
-> Zqiang
-> 
-> > 
-> >  Thanx, Paul
-> > 
-> > > 
-> > > Thanks
-> > >  Zqiang
-> > >  
-> > >  
-> > >  
-> > >  Thanx, Paul
-> > >  
-> > >  > 
-> > >  > thanks,
-> > >  > 
-> > >  > - Joel
-> > >  > 
-> > >  > 
-> > >  > > cookie = get_state_synchronize_srcu(ssp);
-> > >  > > if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
-> > >  > > - preempt_enable();
-> > >  > > return;
-> > >  > > }
-> > >  > > WRITE_ONCE(ssp->srcu_idx_max, cookie);
-> > >  > > @@ -194,7 +193,6 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
-> > >  > > else if (list_empty(&ssp->srcu_work.entry))
-> > >  > > list_add(&ssp->srcu_work.entry, &srcu_boot_list);
-> > >  > > }
-> > >  > > - preempt_enable();
-> > >  > > }
-> > >  > > 
-> > >  > > /*
-> > >  > > -- 
-> > >  > > 2.48.1
-> > >  > >
-> > >  >
-> > >
+> On 09/09/2025 16:38, Alexander Gordeev wrote:
+> >>>>> Would that integrate well with LAZY_MMU_DEFAULT etc?
+> >>>> Hmm... I though the idea is to use LAZY_MMU_* by architectures that
+> >>>> want to use it - at least that is how I read the description above.
+> >>>>
+> >>>> It is only kasan_populate|depopulate_vmalloc_pte() in generic code
+> >>>> that do not follow this pattern, and it looks as a problem to me.
+> >> This discussion also made me realise that this is problematic, as the
+> >> LAZY_MMU_{DEFAULT,NESTED} macros were meant only for architectures'
+> >> convenience, not for generic code (where lazy_mmu_state_t should ideally
+> >> be an opaque type as mentioned above). It almost feels like the kasan
+> >> case deserves a different API, because this is not how enter() and
+> >> leave() are meant to be used. This would mean quite a bit of churn
+> >> though, so maybe just introduce another arch-defined value to pass to
+> >> leave() for such a situation - for instance,
+> >> arch_leave_lazy_mmu_mode(LAZY_MMU_FLUSH)?
+> > What about to adjust the semantics of apply_to_page_range() instead?
 > >
+> > It currently assumes any caller is fine with apply_to_pte_range() to
+> > enter the lazy mode. By contrast, kasan_(de)populate_vmalloc_pte() are
+> > not fine at all and must leave the lazy mode. That literally suggests
+> > the original assumption is incorrect.
+> >
+> > We could change int apply_to_pte_range(..., bool create, ...) to e.g.
+> > apply_to_pte_range(..., unsigned int flags, ...) and introduce a flag
+> > that simply skips entering the lazy mmu mode.
+> 
+> This is pretty much what Ryan proposed [1r] some time ago, although for
+> a different purpose (avoiding nesting). There wasn't much appetite for
+> it then, but I agree that this would be a more logical way to go about it.
+> 
+> - Kevin
+> 
+> [1r]
+> https://lore.kernel.org/all/20250530140446.2387131-4-ryan.roberts@arm.com/
+
+May be I missing the point, but I read it as an opposition to the whole
+series in general and to the way apply_to_pte_range() would be altered
+in particular:
+
+ static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
+ 				     unsigned long addr, unsigned long end,
+ 				     pte_fn_t fn, void *data, bool create,
+-				     pgtbl_mod_mask *mask)
++				     pgtbl_mod_mask *mask, bool lazy_mmu)
+
+The idea of instructing apply_to_page_range() to skip the lazy mmu mode
+was not countered. Quite opposite, Liam suggested exactly the same:
+
+<quote>
+Could we do something like the pgtbl_mod_mask or zap_details and pass
+through a struct or one unsigned int for create and lazy_mmu?
+
+These wrappers are terrible for readability and annoying for argument
+lists too.
+
+Could we do something like the pgtbl_mod_mask or zap_details and pass
+through a struct or one unsigned int for create and lazy_mmu?
+
+At least we'd have better self-documenting code in the wrappers.. and if
+we ever need a third boolean, we could avoid multiplying the wrappers
+again.
+<quote>
+
+Thanks!
 
