@@ -1,177 +1,256 @@
-Return-Path: <linux-kernel+bounces-812965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B046B53EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:03:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DFEB53EDE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79F7D1CC2430
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:03:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F88D7B64AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3434B2F90E9;
-	Thu, 11 Sep 2025 23:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941052F4A03;
+	Thu, 11 Sep 2025 22:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WodLG1be"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cYhBc1rQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EB02F546E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:02:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338AB2153E7
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757631753; cv=none; b=oNt+O4P0IENhOpDuRVCDivRGZLt6/NfFpxcb2FUCmSljk84Kf5rX8F9rsi+eXpSOX4/kUBaG4f1pXDlcBTqi5QvQaGz/D34ZDpni2O3v7nCo8SXKej8ISvkwvwunMiSYAufKaxiZADdLt5pgoJwrP6MU5xyL9dbPPVBMvEIG4xU=
+	t=1757631510; cv=none; b=tfdlDU2DZqoPV1Za90PYhkDILRMiaUFTouGNerrucm1YXfmNqLPnc7Tot8RyaA/K/Ni7RgDdQC3oqZGfr5o8z8KQzRyMa5ayZCy1LL0jUPidd4FqUuHApuq9NhKXaB4ehAY9hXLPupQqnjR7enKsEIfSk0lHEcBmOCpfk0I3y0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757631753; c=relaxed/simple;
-	bh=Fc+a+QzXc+TZBIolL7Y1Rn6e5z/KVffeLjbh9jDPAEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hil3hce/8Xee1AK+/pYGezHGcxOeTanzZTlz2XQDAdrzwdlFCA4xVujG6L3L4MetuZ9pVeqEgocAAWb4DIaSnP1evRVDlJNQOWOgDZDkilC92dNiu3bHUehBBPOVhbTTT1JsSyr6ARpLSLdYCUXtlQiBFaXCZRykFW2E+YHaNqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WodLG1be; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1757631510; c=relaxed/simple;
+	bh=0Duddb0GkVxMc51fG06LWjua3CZrk2jECLZXHnRhzx8=;
+	h=To:cc:Subject:From:MIME-Version:Content-Type:Date:Message-ID; b=tFmh7y7DDrDSNXBb41vorO8OrhGZfAEYO8zqHsNN70Pv6CGJGYx50AjqSV6PtkOo/z/1yVs3Jh+btDNFrL+PkTDLF0DwVOcLEjE8MJonLHlVkbnIUWMziXaUj7sR7W88oYtBsf8DBr3uw7+JHw6TlRXNKSsnvu7YkLshq5o+8nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cYhBc1rQ; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757631751;
+	s=mimecast20190719; t=1757631507;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xpQfGQvyVQ9OG4v6u5HPL2iypq3YcMiRupYpuBp8hgk=;
-	b=WodLG1beH0EoWG6r/s+UXzhKUs5TSuiJnVTGBXg+A8gOhL0cu0JpPf0QWSaOBOWI0QyO8X
-	LsACeu1qFFqxIvyD/3ar9SuorIufBS7Vci/Z5ZuAIGRGs55n3EIRJuRugFRwT4GCXkrnh4
-	ifgs4PEAwdxjFxiY5tvWJXyU8pQVNio=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UE3p0qtQ5K2A4+RW8M2HqTZuytmzSPCz5SQUWEcMJmg=;
+	b=cYhBc1rQZAWwPolVeRjoBJA4hpIxt3nyTsvGQ+3s2nBYCmp/RjGB0KUtqY267fVDb+VQOv
+	pXsadLcYqWhU4Z3thMmBeqLlWlKVwMPrWkE1il0CYbbDRQQYXg6+n6ZpbJWVdYMPY5b2oK
+	CnuxTk29M7z3Kv94gacQhxMLklWHczA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-678-T_FfWwLHOvuT8_GjnlcWKw-1; Thu,
- 11 Sep 2025 19:02:28 -0400
-X-MC-Unique: T_FfWwLHOvuT8_GjnlcWKw-1
-X-Mimecast-MFC-AGG-ID: T_FfWwLHOvuT8_GjnlcWKw_1757631745
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-KRXhT9jiNMiP5RxYQ58tcQ-1; Thu,
+ 11 Sep 2025 18:58:24 -0400
+X-MC-Unique: KRXhT9jiNMiP5RxYQ58tcQ-1
+X-Mimecast-MFC-AGG-ID: KRXhT9jiNMiP5RxYQ58tcQ_1757631502
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 156B5180028C;
-	Thu, 11 Sep 2025 23:02:25 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.64.100])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7B8E61944CCA;
-	Thu, 11 Sep 2025 23:02:20 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: Daniel Almeida <daniel.almeida@collabora.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	linux-media@vger.kernel.org (open list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b),
-	linaro-mm-sig@lists.linaro.org (moderated list:DMA BUFFER SHARING FRAMEWORK:Keyword:\bdma_(?:buf|fence|resv)\b)
-Subject: [PATCH v4 3/3] rust: Add dma_buf stub bindings
-Date: Thu, 11 Sep 2025 18:57:40 -0400
-Message-ID: <20250911230147.650077-4-lyude@redhat.com>
-In-Reply-To: <20250911230147.650077-1-lyude@redhat.com>
-References: <20250911230147.650077-1-lyude@redhat.com>
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 35C831800452;
+	Thu, 11 Sep 2025 22:58:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 27A5030002C6;
+	Thu, 11 Sep 2025 22:58:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+To: Dan Carpenter <dan.carpenter@linaro.org>, netdev@vger.kernel.org
+cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S. Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    Simon Horman <horms@kernel.org>, linux-afs@lists.infradead.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH net] rxrpc: Fix unhandled errors in rxgk_verify_packet_integrity()
+From: David Howells <dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2038796.1757631483.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 11 Sep 2025 23:58:16 +0100
+Message-ID: <2038804.1757631496@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-In order to implement the gem export callback, we need a type to represent
-struct dma_buf. So - this commit introduces a set of stub bindings for
-dma_buf. These bindings provide a ref-counted DmaBuf object, but don't
-currently implement any functionality for using the DmaBuf.
+    =
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
+rxgk_verify_packet_integrity() may get more errors than just -EPROTO from
+rxgk_verify_mic_skb().  Pretty much anything other than -ENOMEM constitute=
+s
+an unrecoverable error.  In the case of -ENOMEM, we can just drop the
+packet and wait for a retransmission.
 
+Similar happens with rxgk_decrypt_skb() and its callers.
+
+Fix rxgk_decrypt_skb() or rxgk_verify_mic_skb() to return a greater variet=
+y
+of abort codes and fix their callers to abort the connection on any error
+apart from -ENOMEM.
+
+Also preclear the variables used to hold the abort code returned from
+rxgk_decrypt_skb() or rxgk_verify_mic_skb() to eliminate uninitialised
+variable warnings.
+
+Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (=
+GSSAPI)")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lists.infradead.org/pipermail/linux-afs/2025-April/009739.=
+html
+Closes: https://lists.infradead.org/pipermail/linux-afs/2025-April/009740.=
+html
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jakub Kicinski <kuba@kernel.org>
+cc: "David S. Miller" <davem@davemloft.net>
+cc: Eric Dumazet <edumazet@google.com>
+cc: Paolo Abeni <pabeni@redhat.com>
+cc: Simon Horman <horms@kernel.org>
+cc: linux-afs@lists.infradead.org
+cc: netdev@vger.kernel.org
 ---
-V3:
-* Rename as_ref() to from_raw()
-V4:
-* Add missing period to rustdoc at top of file
+ net/rxrpc/rxgk.c        |   18 ++++++++++--------
+ net/rxrpc/rxgk_app.c    |   10 ++++++----
+ net/rxrpc/rxgk_common.h |   14 ++++++++++++--
+ 3 files changed, 28 insertions(+), 14 deletions(-)
 
- rust/kernel/dma_buf.rs | 40 ++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs     |  1 +
- 2 files changed, 41 insertions(+)
- create mode 100644 rust/kernel/dma_buf.rs
+diff --git a/net/rxrpc/rxgk.c b/net/rxrpc/rxgk.c
+index 1e19c605bcc8..dce5a3d8a964 100644
+--- a/net/rxrpc/rxgk.c
++++ b/net/rxrpc/rxgk.c
+@@ -475,7 +475,7 @@ static int rxgk_verify_packet_integrity(struct rxrpc_c=
+all *call,
+ 	struct krb5_buffer metadata;
+ 	unsigned int offset =3D sp->offset, len =3D sp->len;
+ 	size_t data_offset =3D 0, data_len =3D len;
+-	u32 ac;
++	u32 ac =3D 0;
+ 	int ret =3D -ENOMEM;
+ =
 
-diff --git a/rust/kernel/dma_buf.rs b/rust/kernel/dma_buf.rs
-new file mode 100644
-index 0000000000000..50be3e4dd4098
---- /dev/null
-+++ b/rust/kernel/dma_buf.rs
-@@ -0,0 +1,40 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! DMA buffer API.
-+//!
-+//! C header: [`include/linux/dma-buf.h`](srctree/include/linux/dma-buf.h)
-+
-+use bindings;
-+use kernel::types::*;
-+
-+/// A DMA buffer object.
-+///
-+/// # Invariants
-+///
-+/// The data layout of this type is equivalent to that of `struct dma_buf`.
-+#[repr(transparent)]
-+pub struct DmaBuf(Opaque<bindings::dma_buf>);
-+
-+// SAFETY: `struct dma_buf` is thread-safe
-+unsafe impl Send for DmaBuf {}
-+// SAFETY: `struct dma_buf` is thread-safe
-+unsafe impl Sync for DmaBuf {}
-+
-+#[expect(unused)]
-+impl DmaBuf {
-+    /// Convert from a `*mut bindings::dma_buf` to a [`DmaBuf`].
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller guarantees that `self_ptr` points to a valid initialized `struct dma_buf` for the
-+    /// duration of the lifetime of `'a`, and promises to not violate rust's data aliasing rules
-+    /// using the reference provided by this function.
-+    pub(crate) unsafe fn from_raw<'a>(self_ptr: *mut bindings::dma_buf) -> &'a Self {
-+        // SAFETY: Our data layout is equivalent to `dma_buf` .
-+        unsafe { &*self_ptr.cast() }
-+    }
-+
-+    pub(crate) fn as_raw(&self) -> *mut bindings::dma_buf {
-+        self.0.get()
-+    }
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index fcffc3988a903..59242d83efe21 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -81,6 +81,7 @@
- pub mod device_id;
- pub mod devres;
- pub mod dma;
-+pub mod dma_buf;
- pub mod driver;
- #[cfg(CONFIG_DRM = "y")]
- pub mod drm;
--- 
-2.51.0
+ 	_enter("");
+@@ -499,9 +499,10 @@ static int rxgk_verify_packet_integrity(struct rxrpc_=
+call *call,
+ 	ret =3D rxgk_verify_mic_skb(gk->krb5, gk->rx_Kc, &metadata,
+ 				  skb, &offset, &len, &ac);
+ 	kfree(hdr);
+-	if (ret =3D=3D -EPROTO) {
+-		rxrpc_abort_eproto(call, skb, ac,
+-				   rxgk_abort_1_verify_mic_eproto);
++	if (ret < 0) {
++		if (ret !=3D -ENOMEM)
++			rxrpc_abort_eproto(call, skb, ac,
++					   rxgk_abort_1_verify_mic_eproto);
+ 	} else {
+ 		sp->offset =3D offset;
+ 		sp->len =3D len;
+@@ -524,15 +525,16 @@ static int rxgk_verify_packet_encrypted(struct rxrpc=
+_call *call,
+ 	struct rxgk_header hdr;
+ 	unsigned int offset =3D sp->offset, len =3D sp->len;
+ 	int ret;
+-	u32 ac;
++	u32 ac =3D 0;
+ =
+
+ 	_enter("");
+ =
+
+ 	ret =3D rxgk_decrypt_skb(gk->krb5, gk->rx_enc, skb, &offset, &len, &ac);
+-	if (ret =3D=3D -EPROTO)
+-		rxrpc_abort_eproto(call, skb, ac, rxgk_abort_2_decrypt_eproto);
+-	if (ret < 0)
++	if (ret < 0) {
++		if (ret !=3D -ENOMEM)
++			rxrpc_abort_eproto(call, skb, ac, rxgk_abort_2_decrypt_eproto);
+ 		goto error;
++	}
+ =
+
+ 	if (len < sizeof(hdr)) {
+ 		ret =3D rxrpc_abort_eproto(call, skb, RXGK_PACKETSHORT,
+diff --git a/net/rxrpc/rxgk_app.c b/net/rxrpc/rxgk_app.c
+index b94b77a1c317..df684b5a8531 100644
+--- a/net/rxrpc/rxgk_app.c
++++ b/net/rxrpc/rxgk_app.c
+@@ -187,7 +187,7 @@ int rxgk_extract_token(struct rxrpc_connection *conn, =
+struct sk_buff *skb,
+ 	struct key *server_key;
+ 	unsigned int ticket_offset, ticket_len;
+ 	u32 kvno, enctype;
+-	int ret, ec;
++	int ret, ec =3D 0;
+ =
+
+ 	struct {
+ 		__be32 kvno;
+@@ -236,9 +236,11 @@ int rxgk_extract_token(struct rxrpc_connection *conn,=
+ struct sk_buff *skb,
+ 			       &ticket_offset, &ticket_len, &ec);
+ 	crypto_free_aead(token_enc);
+ 	token_enc =3D NULL;
+-	if (ret < 0)
+-		return rxrpc_abort_conn(conn, skb, ec, ret,
+-					rxgk_abort_resp_tok_dec);
++	if (ret < 0) {
++		if (ret !=3D -ENOMEM)
++			return rxrpc_abort_conn(conn, skb, ec, ret,
++						rxgk_abort_resp_tok_dec);
++	}
+ =
+
+ 	ret =3D conn->security->default_decode_ticket(conn, skb, ticket_offset,
+ 						    ticket_len, _key);
+diff --git a/net/rxrpc/rxgk_common.h b/net/rxrpc/rxgk_common.h
+index 7370a5655985..80164d89e19c 100644
+--- a/net/rxrpc/rxgk_common.h
++++ b/net/rxrpc/rxgk_common.h
+@@ -88,11 +88,16 @@ int rxgk_decrypt_skb(const struct krb5_enctype *krb5,
+ 		*_offset +=3D offset;
+ 		*_len =3D len;
+ 		break;
++	case -EBADMSG: /* Checksum mismatch. */
+ 	case -EPROTO:
+-	case -EBADMSG:
+ 		*_error_code =3D RXGK_SEALEDINCON;
+ 		break;
++	case -EMSGSIZE:
++		*_error_code =3D RXGK_PACKETSHORT;
++		break;
++	case -ENOPKG: /* Would prefer RXGK_BADETYPE, but not available for YFS. =
+*/
+ 	default:
++		*_error_code =3D RXGK_INCONSISTENCY;
+ 		break;
+ 	}
+ =
+
+@@ -127,11 +132,16 @@ int rxgk_verify_mic_skb(const struct krb5_enctype *k=
+rb5,
+ 		*_offset +=3D offset;
+ 		*_len =3D len;
+ 		break;
++	case -EBADMSG: /* Checksum mismatch */
+ 	case -EPROTO:
+-	case -EBADMSG:
+ 		*_error_code =3D RXGK_SEALEDINCON;
+ 		break;
++	case -EMSGSIZE:
++		*_error_code =3D RXGK_PACKETSHORT;
++		break;
++	case -ENOPKG: /* Would prefer RXGK_BADETYPE, but not available for YFS. =
+*/
+ 	default:
++		*_error_code =3D RXGK_INCONSISTENCY;
+ 		break;
+ 	}
+ =
 
 
