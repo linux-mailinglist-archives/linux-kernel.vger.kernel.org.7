@@ -1,173 +1,230 @@
-Return-Path: <linux-kernel+bounces-812573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39D21B539E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:04:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CDF9B539E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:04:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5FA55A7A1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:03:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D060E7AF43C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED49F74BE1;
-	Thu, 11 Sep 2025 17:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A161F362080;
+	Thu, 11 Sep 2025 17:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UlRLIenv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oGn/PNUn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UlRLIenv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="oGn/PNUn"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWg5mlZu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6D335FC39
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C248B329F05;
+	Thu, 11 Sep 2025 17:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757610167; cv=none; b=FtLzZm1Z4v78ITRqXVW3PRHe77+vyTix6k6BC5/bvhrAUh/dl6F4CBrUj3l+0giTSLQN35yEj5BpXo/sWNH8A1+1RJhOue/vi1UKH+AT9Q2zr4dwmsZ12WbCE7kwOZKSv+PBWtbJVyeSekrdViURaHJDOcZLLhZnKUuXt/cAlTQ=
+	t=1757610215; cv=none; b=EvyVilcmbSMf+Zx6/yCFQMOTkGLdhzXNBH7V4CMeNNzgmQmmNfoIYvxSfmHMrCjsZcy2GngBkdTkLCCxasuJZMGS5ml76g3q6dP1/Ies4BAGcOEHoiqSw6rAPaCgqQJ+W3H+o5qOR+A5Z8TI9W18MtbEmuFYbIUa8F4Foi+rYQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757610167; c=relaxed/simple;
-	bh=2bRHwmHX5rn1+DO9kZ0MmLe1t+SjB2iull3FQiSUXxI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hHxMk1fKMa/iij5qdwK9c70pU2Ae1nQw15GPW2jRMl+wFWeWjFXoOBWJUtvnSqcojouMTY3yiMw8EGsIUF8tBMJ2uHubAn37KoShRX6e7W3d9bGiWQaAEv3jmfRnHtnAeMM3TKThCq9pUVrN6UMjh8bZokXNd3cEUh1JuQHkgJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UlRLIenv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oGn/PNUn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UlRLIenv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=oGn/PNUn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 4B129385FB;
-	Thu, 11 Sep 2025 17:02:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757610155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gU8uzwxAYobW2SW2rVaJMdcJbOZvC5xNrUDaVXNRGxg=;
-	b=UlRLIenv1BNmXoAJVTeMxpBMoAOaKHc+pxyu8MYuMXV9fqIzZ772TMdMW3aU9SyOhqvpu8
-	R2akgspt2OlhZShcE7t4dWKxIt5YhY8i24bHvKqb7c5INKHxKjJ0O+qvtYZPfNYp8VD06D
-	5JRoTmIMTR0olrImNVE8InGeFX+Jc2M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757610155;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gU8uzwxAYobW2SW2rVaJMdcJbOZvC5xNrUDaVXNRGxg=;
-	b=oGn/PNUniXADceo50TVabUOMevpYbP0N9zyRD3gLNzAzq1D7glDcZHWggPBOKsv2PZAEqQ
-	JVylQibCsPAR0iDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757610155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gU8uzwxAYobW2SW2rVaJMdcJbOZvC5xNrUDaVXNRGxg=;
-	b=UlRLIenv1BNmXoAJVTeMxpBMoAOaKHc+pxyu8MYuMXV9fqIzZ772TMdMW3aU9SyOhqvpu8
-	R2akgspt2OlhZShcE7t4dWKxIt5YhY8i24bHvKqb7c5INKHxKjJ0O+qvtYZPfNYp8VD06D
-	5JRoTmIMTR0olrImNVE8InGeFX+Jc2M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757610155;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gU8uzwxAYobW2SW2rVaJMdcJbOZvC5xNrUDaVXNRGxg=;
-	b=oGn/PNUniXADceo50TVabUOMevpYbP0N9zyRD3gLNzAzq1D7glDcZHWggPBOKsv2PZAEqQ
-	JVylQibCsPAR0iDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3A2C413AD6;
-	Thu, 11 Sep 2025 17:02:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KKnpDasAw2gUJAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 11 Sep 2025 17:02:35 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Thu, 11 Sep 2025 19:02:39 +0200
-Subject: [PATCH 6/6] slab: don't validate slab pointer in
- free_debug_processing()
+	s=arc-20240116; t=1757610215; c=relaxed/simple;
+	bh=TTvuVinawS9W8wQljk6tvfI7GWfVRErAFH+QsdIVE4c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gdfq/sRKRSCJDhC7f/nGiEIeo/1HTPh4FPrlXcW//3o5IL+ggg/qvlHjYZ8uuqL6jZG4P3DWtqEQiLbB3BeC1wtlsbqJHIlf/94GmuoZY4fG4VJuLucrdg79VjI4XvIQRmGmgzkhRIw5vns3+FVsX18YVrKSkSgQ91wJQbFOwBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWg5mlZu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2F3EC4CEF0;
+	Thu, 11 Sep 2025 17:03:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757610215;
+	bh=TTvuVinawS9W8wQljk6tvfI7GWfVRErAFH+QsdIVE4c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AWg5mlZueWphEPcsiD+kwmQxEI7Ezhsu6WDl4OW4KDkE1U3zFeH6Z27HNNML2NBgf
+	 W+Fdlt9dr/92zKgGTbhtEgey1Ry2xc34L3adAFvpv4vwuvQGgVM2Y9VJPYS0YEY56u
+	 PRgrmuDiufwz1wRyljITASUEfC4U5GZw4SRSuPbdzccLzxtopNeG2zypDoIv09hZaF
+	 2qD/a2ZZjAQfQvKMGYLULtB93dUrA+VJSxFkYjfiGkScgAPQIdltwA1x5gB9nfI8+H
+	 5yEbE+FZQAwy1LRGOYPGbN4KWYm+G8fp1LB67rmi8d5uzNm+nxK+UL0bSUIGGlY7Cu
+	 8ARBZdCU/Kjvw==
+Date: Thu, 11 Sep 2025 22:33:18 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicornxw@gmail.com>, kwilczynski@kernel.org, 
+	u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, alex@ghiti.fr, arnd@arndb.de, 
+	bwawrzyn@cisco.com, bhelgaas@google.com, unicorn_wang@outlook.com, 
+	conor+dt@kernel.org, 18255117159@163.com, kishon@kernel.org, krzk+dt@kernel.org, 
+	lpieralisi@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, 
+	s-vadapalli@ti.com, tglx@linutronix.de, thomas.richard@bootlin.com, 
+	sycamoremoon376@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org, sophgo@lists.linux.dev, 
+	rabenda.cn@gmail.com, chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, 
+	fengchun.li@sophgo.com
+Subject: Re: [PATCH v2 3/7] PCI: sg2042: Add Sophgo SG2042 PCIe driver
+Message-ID: <rarvqtex3vsve3sscaky3rw727hwp5avmxve3lluwoviqbt6m6@h3nlqbi2s3fd>
+References: <cover.1757467895.git.unicorn_wang@outlook.com>
+ <162d064228261ccd0bf9313a20288e510912effd.1757467895.git.unicorn_wang@outlook.com>
+ <xmk5uvnw7mcizxpaoarvx2c2sejaz2skaiyyac7oo5y6loyjgp@5v3sldwbqpw5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250911-slub-slab-validation-v1-6-8b67eb3b3dc5@suse.cz>
-References: <20250911-slub-slab-validation-v1-0-8b67eb3b3dc5@suse.cz>
-In-Reply-To: <20250911-slub-slab-validation-v1-0-8b67eb3b3dc5@suse.cz>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: Harry Yoo <harry.yoo@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
- David Rientjes <rientjes@google.com>, 
- Roman Gushchin <roman.gushchin@linux.dev>, 
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.2
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLwn5r54y1cp81no5tmbbew5oc)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <xmk5uvnw7mcizxpaoarvx2c2sejaz2skaiyyac7oo5y6loyjgp@5v3sldwbqpw5>
 
-The struct slab pointer has been obtained one from the object being
-freed on all the paths that lead to this function. In all cases this
-already includes the test for slab type of the struct page which struct
-slab is overlaying. Thus we would not reach this function if it was
-not a valid slab pointer in the first place.
+On Wed, Sep 10, 2025 at 10:56:23AM GMT, Inochi Amaoto wrote:
+> On Wed, Sep 10, 2025 at 10:08:39AM +0800, Chen Wang wrote:
+> > From: Chen Wang <unicorn_wang@outlook.com>
+> > 
+> > Add support for PCIe controller in SG2042 SoC. The controller
+> > uses the Cadence PCIe core programmed by pcie-cadence*.c. The
+> > PCIe controller will work in host mode only, supporting data
+> > rate(gen4) and lanes(x16 or x8).
+> > 
+> > Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+> > ---
+> >  drivers/pci/controller/cadence/Kconfig       |  10 ++
+> >  drivers/pci/controller/cadence/Makefile      |   1 +
+> >  drivers/pci/controller/cadence/pcie-sg2042.c | 104 +++++++++++++++++++
+> >  3 files changed, 115 insertions(+)
+> >  create mode 100644 drivers/pci/controller/cadence/pcie-sg2042.c
+> > 
+> > diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
+> > index 666e16b6367f..02a639e55fd8 100644
+> > --- a/drivers/pci/controller/cadence/Kconfig
+> > +++ b/drivers/pci/controller/cadence/Kconfig
+> > @@ -42,6 +42,15 @@ config PCIE_CADENCE_PLAT_EP
+> >  	  endpoint mode. This PCIe controller may be embedded into many
+> >  	  different vendors SoCs.
+> >  
+> > +config PCIE_SG2042_HOST
+> > +	tristate "Sophgo SG2042 PCIe controller (host mode)"
+> > +	depends on OF && (ARCH_SOPHGO || COMPILE_TEST)
+> > +	select PCIE_CADENCE_HOST
+> > +	help
+> > +	  Say Y here if you want to support the Sophgo SG2042 PCIe platform
+> > +	  controller in host mode. Sophgo SG2042 PCIe controller uses Cadence
+> > +	  PCIe core.
+> > +
+> >  config PCI_J721E
+> >  	tristate
+> >  	select PCIE_CADENCE_HOST if PCI_J721E_HOST != n
+> > @@ -67,4 +76,5 @@ config PCI_J721E_EP
+> >  	  Say Y here if you want to support the TI J721E PCIe platform
+> >  	  controller in endpoint mode. TI J721E PCIe controller uses Cadence PCIe
+> >  	  core.
+> > +
+> >  endmenu
+> > diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
+> > index 9bac5fb2f13d..5e23f8539ecc 100644
+> > --- a/drivers/pci/controller/cadence/Makefile
+> > +++ b/drivers/pci/controller/cadence/Makefile
+> > @@ -4,3 +4,4 @@ obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
+> >  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep.o
+> >  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
+> >  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
+> > +obj-$(CONFIG_PCIE_SG2042_HOST) += pcie-sg2042.o
+> > diff --git a/drivers/pci/controller/cadence/pcie-sg2042.c b/drivers/pci/controller/cadence/pcie-sg2042.c
+> > new file mode 100644
+> > index 000000000000..c026e1ca5d6e
+> > --- /dev/null
+> > +++ b/drivers/pci/controller/cadence/pcie-sg2042.c
+> > @@ -0,0 +1,104 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * pcie-sg2042 - PCIe controller driver for Sophgo SG2042 SoC
+> > + *
+> > + * Copyright (C) 2025 Sophgo Technology Inc.
+> > + * Copyright (C) 2025 Chen Wang <unicorn_wang@outlook.com>
+> > + */
+> > +
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/pci.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pm_runtime.h>
+> > +
+> > +#include "pcie-cadence.h"
+> > +
+> > +/*
+> > + * SG2042 only supports 4-byte aligned access, so for the rootbus (i.e. to
+> > + * read/write the Root Port itself, read32/write32 is required. For
+> > + * non-rootbus (i.e. to read/write the PCIe peripheral registers, supports
+> > + * 1/2/4 byte aligned access, so directly using read/write should be fine.
+> > + */
+> > +
+> > +static struct pci_ops sg2042_pcie_root_ops = {
+> > +	.map_bus	= cdns_pci_map_bus,
+> > +	.read		= pci_generic_config_read32,
+> > +	.write		= pci_generic_config_write32,
+> > +};
+> > +
+> > +static struct pci_ops sg2042_pcie_child_ops = {
+> > +	.map_bus	= cdns_pci_map_bus,
+> > +	.read		= pci_generic_config_read,
+> > +	.write		= pci_generic_config_write,
+> > +};
+> > +
+> > +static int sg2042_pcie_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct pci_host_bridge *bridge;
+> > +	struct cdns_pcie *pcie;
+> > +	struct cdns_pcie_rc *rc;
+> > +	int ret;
+> > +
+> > +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*rc));
+> > +	if (!bridge) {
+> > +		dev_err_probe(dev, -ENOMEM, "Failed to alloc host bridge!\n");
+> > +		return -ENOMEM;
+> > +	}
+> > +
+> > +	bridge->ops = &sg2042_pcie_root_ops;
+> > +	bridge->child_ops = &sg2042_pcie_child_ops;
+> > +
+> > +	rc = pci_host_bridge_priv(bridge);
+> > +	pcie = &rc->pcie;
+> > +	pcie->dev = dev;
+> > +
+> > +	platform_set_drvdata(pdev, pcie);
+> > +
+> > +	pm_runtime_set_active(dev);
+> > +	pm_runtime_no_callbacks(dev);
+> > +	devm_pm_runtime_enable(dev);
+> > +
+> > +	ret = cdns_pcie_init_phy(dev, pcie);
+> > +	if (ret) {
+> > +		dev_err_probe(dev, ret, "Failed to init phy!\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = cdns_pcie_host_setup(rc);
+> > +	if (ret) {
+> > +		dev_err_probe(dev, ret, "Failed to setup host!\n");
+> > +		cdns_pcie_disable_phy(pcie);
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> 
+> > +static void sg2042_pcie_remove(struct platform_device *pdev)
+> > +{
+> > +	struct cdns_pcie *pcie = platform_get_drvdata(pdev);
+> > +
+> > +	cdns_pcie_disable_phy(pcie);
+> > +}
+> > +
+> 
+> I think this remove is useless, as it is almost impossible to
+> remove a pcie at runtime.
+> 
 
-One less obvious case is that kmem_cache_free() trusts virt_to_slab()
-blindly so it may be NULL if the slab type check is false. But with
-SLAB_CONSISTENCY_CHECKS, cache_from_obj() called also from
-kmem_cache_free() catches this and returns NULL, which terminates
-freeing immediately.
+Why impossible? We only have concerns with removing PCIe controllers
+implementing irqchip, but this driver is not implementing it and using an
+external irqchip controller.
 
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/slub.c | 5 -----
- 1 file changed, 5 deletions(-)
+So it is safe and possible to remove this driver during runtime.
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 93df6e82af37c798c3fa5574c9d825f0f4a83013..106dbce64acdf32c1d271ec130c35c0ec0e15630 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3487,11 +3487,6 @@ static inline bool free_debug_processing(struct kmem_cache *s,
- 	int cnt = 0;
- 
- 	if (s->flags & SLAB_CONSISTENCY_CHECKS) {
--		if (!validate_slab_ptr(slab)) {
--			slab_err(s, slab, "Not a valid slab page");
--			goto out;
--		}
--
- 		if (!check_slab(s, slab))
- 			goto out;
- 	}
+- Mani
 
 -- 
-2.51.0
-
+மணிவண்ணன் சதாசிவம்
 
