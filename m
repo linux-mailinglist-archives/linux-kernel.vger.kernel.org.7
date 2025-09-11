@@ -1,184 +1,215 @@
-Return-Path: <linux-kernel+bounces-812610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E92B53A4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:24:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 302E2B53A4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FCCF5A4365
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D90203A6BE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8BF35FC18;
-	Thu, 11 Sep 2025 17:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E725135FC25;
+	Thu, 11 Sep 2025 17:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTHNBy5a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hAc95k3O"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B4B20FA9C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656B6326D54
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757611483; cv=none; b=EAk6m0uZdPRvf+0UxedlDVIphiOBKyOUp8xl34YtwwbO78pVVNJECCjKEdpg5VgU1VvJEsci3VWJhpPQwl/RkrlBvmQneeXuu5cLC2QdT/Uaf+OV9jAPO467NO049ZRkGNAL0ekKZLGZVlp8bsU9PNhJopG51Yr7g2Xaed0N77U=
+	t=1757611512; cv=none; b=KoTJOSNjdvzfhiy89SoezoE7fDEfwvyg6pNrcXVKsvgSTsMkJRz+xxEIVpZ1g/nLGOgN79tIk2ahLAYfBRoniQTTED9b8BjKAsQ+ZipqlEKgJ/DVMKWEBMJU/Uz8jFkzlj65j97LEPO91czzlfvqnB0269/JDQWd9ghlgMHmtl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757611483; c=relaxed/simple;
-	bh=rUSira1eldMhRbCG3CRundU6gRCbCix6glN7E6cuuok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FeExiAj1UKp+jYR0pg/Dujpp4VkKk7I5dADDT86EYIgHDpdJ454prGXXbfgT7qYTWhiGj4EzFxRa9TBPfSsYYaXS+P5w7l0P2dSKiKQB1l8hCQSHTPfsKYFuqZe5HBQuj1tT5jqdhIuOKjOgveJoxe0yWmP4zOCmyLupvzPVj9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTHNBy5a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CEC2C4CEF8;
-	Thu, 11 Sep 2025 17:24:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757611483;
-	bh=rUSira1eldMhRbCG3CRundU6gRCbCix6glN7E6cuuok=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QTHNBy5atytspwvpdN6J5kn7AGjGhcfMoZ75WG/sgpMrfBG654uwszVs8YrgIE2n/
-	 TN6N5EAsp1YvmhjJsW/vp9uX2/GMxa1q8VuQw66TSw8bchYARMVImbU0J4fBF9xm8G
-	 lMaEC1y5Xjm9hU1cQPohtcYHjHnJqbijcfTaOAgvo89B1aX4YHi9z6kmxEbua1nkF6
-	 SyVYJLSTbRAsiBdlLjrWjv1Q8MlZdlKu4eiBxMRf4+pIHR/EMCL8XB8D4eeLaVH9Q3
-	 8Z+wJzLCU5+65NkGgzBVNGXMPuRAsZLV8RyMBHGKJOfsZNl7LREgR8cDN9sKciI4RY
-	 03s4wylOWVUig==
-Message-ID: <a1749113-0b7e-43e7-a603-d1cf00c6a03f@kernel.org>
-Date: Thu, 11 Sep 2025 19:24:39 +0200
+	s=arc-20240116; t=1757611512; c=relaxed/simple;
+	bh=wg7hslR1FR2QUgzA+5Q/NuwdCqUhPpK5744j2u/08mw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjR8v/M1+/F7CfXf4cptRMfTduXygRG38tMSogk6aEGHn5m97KvTY8k39C6YLz641hWN3jIEz0cEhspkAqgm+8ix5UgQmDxa9bc0yiXI/4XR3VZH+lNLF1CzjUCFgrk+n4/mS5N5Kr+n1i3jEzHH96zgsL/btuyk/a0tny9wEi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hAc95k3O; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45ddc7d5731so7366445e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:25:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757611509; x=1758216309; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=66hww0i42bGnBY1WyrFAxgF0MA47MP7lxex8W0+v584=;
+        b=hAc95k3Obwg1hMjDC2b1dtRgunbRcuQvBBj6hJr0GBsTXD8wlsIaqjspPhB5Sa2v5s
+         mUNoCraS2TIAEBvrCzs+3GP2Cy3fajJNobWcUQotxtwhGVlXJVxDgtp+tuSkGodm36fS
+         0hSVCww2VC/scQ+QpRWAxQIWjIfShCEDOoHnPBW5xIWefZjJwDdIJrdW6dSJdLsBMjww
+         IEiHexM7LzZZcxefp96VvkrOIHOLqVZy7Jm2XJks6/uasuHldKS/+zuN8ypMaiP9AP8i
+         ScmczsWsqhVTpJJkEHGezqqaY7GyG/CaeEBWwoz+pWjLGw0BeHOhsFMgV7TQtqxICTbt
+         CLQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757611509; x=1758216309;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=66hww0i42bGnBY1WyrFAxgF0MA47MP7lxex8W0+v584=;
+        b=kyU2PgryBAJyqbOAUyjqdiivy5iQjvNhhgJ3hog6FL1quD7TK1Y/4NmMso+wPjVbzu
+         jg6RLRtZxDdgU+wOGEFtlNOEH/kB4YMjminPLh1jq7MHtcSs55b2dBdgKbC4sQEldKuP
+         ptQJBSoa6a8tP2CK+m1JqeQDz3jfyBSXjT3XH5AORs7HydfZQDf5H0RbWjiqorrGysTY
+         xftvQ232dU9iCCXy/P398g4ISwWTMmU8Jd77tT/JimuCEXkDaEKOWjqsBXmWQgXtIa/9
+         P6eOlpY13f9EhVLaF/fz3awzoW/x6f0k0zPxJni8rqPYYY2/Xh+Umqgkr05d8AIWGb6Y
+         Hapg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCqwesaK5zuzfRjXjTtwR5ygrUOuza53C95/IsqA8Cxi6ChVUpjT9gmzUc+7kzf2FOYt+ATDqSNlWmrY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynFeGlrmgEP6xuVU6ps81s6pDDOa70qe4+DZ5+AKDR9ushoux0
+	iNDxbhXGsfXD2YegeRUhjkL89ps3vNPgpFSmQJLVz65FCGthGEmbynVB
+X-Gm-Gg: ASbGncuUhXXggzEpVaUOmJ/XRwfq4n3cPfyVvo/+AE901vow9QSB8l75IGbNi4vg19R
+	OWN4TVfPrs7kGWZV+VQIYV8yvSxNkV56Z8dZVt95Ob4wgxNjW+o+S00lEzhAWjbFSMmhzCXyLjD
+	lm73mqiu4HxhtKDjEaRMWOs5flhKSgsP3BNjYLMwbR0fZVQqAKLEUcHkReKIq2YhJOWFbuWxn9C
+	yVFOGq9d6N2K0DSI4LoCTOLMiwwXu5ruucwAeRgsH/9rxDBK83WaVJViJUCRNcXIoAY0KwI1gbB
+	p2LnJ75xNm4sRC/ilP4keI2IroWDJF/JUc6cgYS76pIdcP7DcktQjy0kgM2rBlX7ev3LD0oAhbM
+	0hpBCszUxYUg4fUzhqMHjh4s1VAA04HqmCpywSV7jvGvGfomcXQ==
+X-Google-Smtp-Source: AGHT+IEaEQOTywFYBJnwC3JrY90Mp6xQbmA2EeG+g3Ac9ehgcskjHnu2dwm7OKqmhaMFqIZZy0my7g==
+X-Received: by 2002:a05:600c:19d1:b0:45d:98be:ee8f with SMTP id 5b1f17b1804b1-45f212609f5mr1816215e9.26.1757611508226;
+        Thu, 11 Sep 2025 10:25:08 -0700 (PDT)
+Received: from devbig569.cln6.facebook.com ([2a03:2880:31ff:70::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0187f0a7sm18431515e9.3.2025.09.11.10.25.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 10:25:07 -0700 (PDT)
+Date: Thu, 11 Sep 2025 10:25:05 -0700
+From: Yueyang Pan <pyyjason@gmail.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Usama Arif <usamaarif642@gmail.com>, David Wang <00107082@163.com>,
+	akpm@linux-foundation.org, kent.overstreet@linux.dev,
+	vbabka@suse.cz, hannes@cmpxchg.org, rientjes@google.com,
+	roman.gushchin@linux.dev, harry.yoo@oracle.com,
+	shakeel.butt@linux.dev, pasha.tatashin@soleen.com,
+	souravpanda@google.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+Message-ID: <aMMF8elYvlPoOF+J@devbig569.cln6.facebook.com>
+References: <20250909234942.1104356-1-surenb@google.com>
+ <20cafc1c.a658.199394de44e.Coremail.00107082@163.com>
+ <aMLvCCZbmpSE/aql@devbig569.cln6.facebook.com>
+ <902f5f32-2f03-4230-aab0-a886fd8e4793@gmail.com>
+ <CAJuCfpGezf06eR7WnzizpwTaxZ5Rm8jbeW4y87zcr6LZuJ9MZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] dt-bindings: riscv: Add trace components
- description
-To: cp0613@linux.alibaba.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, guoren@kernel.org
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250911124448.1771-1-cp0613@linux.alibaba.com>
- <20250911124448.1771-2-cp0613@linux.alibaba.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250911124448.1771-2-cp0613@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpGezf06eR7WnzizpwTaxZ5Rm8jbeW4y87zcr6LZuJ9MZA@mail.gmail.com>
 
-On 11/09/2025 14:44, cp0613@linux.alibaba.com wrote:
-> From: Chen Pei <cp0613@linux.alibaba.com>
+On Thu, Sep 11, 2025 at 09:18:29AM -0700, Suren Baghdasaryan wrote:
+> On Thu, Sep 11, 2025 at 9:00 AM Usama Arif <usamaarif642@gmail.com> wrote:
+> >
+> >
+> >
+> > On 11/09/2025 16:47, Yueyang Pan wrote:
+> > > On Thu, Sep 11, 2025 at 11:03:50PM +0800, David Wang wrote:
+> > >>
+> > >> At 2025-09-10 07:49:42, "Suren Baghdasaryan" <surenb@google.com> wrote:
+> > >>> While rare, memory allocation profiling can contain inaccurate counters
+> > >>> if slab object extension vector allocation fails. That allocation might
+> > >>> succeed later but prior to that, slab allocations that would have used
+> > >>> that object extension vector will not be accounted for. To indicate
+> > >>> incorrect counters, mark them with an asterisk in the /proc/allocinfo
+> > >>> output.
+> > >>> Bump up /proc/allocinfo version to reflect change in the file format.
+> > >>>
+> > >>> Example output with invalid counters:
+> > >>> allocinfo - version: 2.0
+> > >>>           0        0 arch/x86/kernel/kdebugfs.c:105 func:create_setup_data_nodes
+> > >>>           0        0 arch/x86/kernel/alternative.c:2090 func:alternatives_smp_module_add
+> > >>>          0*       0* arch/x86/kernel/alternative.c:127 func:__its_alloc
+> > >>>           0        0 arch/x86/kernel/fpu/regset.c:160 func:xstateregs_set
+> > >>>           0        0 arch/x86/kernel/fpu/xstate.c:1590 func:fpstate_realloc
+> > >>>           0        0 arch/x86/kernel/cpu/aperfmperf.c:379 func:arch_enable_hybrid_capacity_scale
+> > >>>           0        0 arch/x86/kernel/cpu/amd_cache_disable.c:258 func:init_amd_l3_attrs
+> > >>>      49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+> > >>>       32768        1 arch/x86/kernel/cpu/mce/genpool.c:132 func:mce_gen_pool_create
+> > >>>           0        0 arch/x86/kernel/cpu/mce/amd.c:1341 func:mce_threshold_create_device
+> > >>>
+> > >>
+> > >> Hi,
+> > >> The changes may  break some client tools, mine included....
+> > >> I don't mind adjusting my tools, but still
+> > >> Is it acceptable  to change
+> > >>       49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+> > >> to
+> > >>       +49152      +48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create*
+> > >>
+> > >> The '+' sign make it still standout when view from a terminal, and client tools, not all of them though, might not need any changes.
+> > >> And when client want to filter out inaccurate data items, it could be done by checking the tailing '*" of func name.
+> > >
+> > > I agree with David on this point. We already have monitoring tool built on top
+> > > of this output across meta fleet. Ideally we would like to keep the format of
+> > > of size and calls the same, even for future version, because adding a * will
+> > > change the format from int to str, which leads to change over the regex parser
+> > > many places.
+> > >
+> > > I think simply adding * to the end of function name or filename is sufficient
+> > > as they are already str.
+> > >
+> >
+> > Instead of:
+> >
+> > 49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+> >
+> > Could we do something like:
+> >
+> > 49152      48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create(inaccurate)
 > 
-> This patch has added property definitions related to the riscv
-
-Please do not use "This commit/patch/change", but imperative mood. See
-longer explanation here:
-https://elixir.bootlin.com/linux/v6.16/source/Documentation/process/submitting-patches.rst#L94
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-
-> trace component, providing a foundation for subsequent driver
-> implementations.
+> If there is a postprocessing then this would break sometimes later
+> when the function name is parsed, right? So IMO that just postpones
+> the breakage.
+> 
+> >
+> > This should hopefully not require any changes to the tools that are consuming this file.
+> > I think it might be better to use "(inaccurate)" (without any space after function name) or
+> > some other text instead of "+" or "*" to prevent breaking such tools. I dont think we need
+> > to even increment allocinfo version number as well then?
+> 
+> I'm wondering if we add a new column at the end like this:
+> 
+> 49152      48 arch/x86/kernel/cpu/mce/core.c:2709
+> func:mce_device_create [inaccurate]
+> 
+> would that break the parsing tools?
+> Well-designed parsers usually throw away additional fields which they
+> don't know how to parse. WDYT?
 > 
 
+It would break the parse now as we count the number of string to decide if 
+there is an optional module name or not. I don't think it is a big 
+deal to fix though.
 
-...
+I think one more important thing is probably to reach a consensus on 
+what format can be changed in the future, for example say, we can 
+keep adding columns but not change the format the type of one column.
+With such consensus in mind, it will be easier to design the parser. 
+And I guess many companies will build parser upon this info for fleet-
+wise collection.
 
-> +$id: http://devicetree.org/schemas/riscv/trace/riscv,trace,funnel.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: RISC-V Trace Funnel Controller
-> +
-> +description: |
-> +  riscv trace funnel controller description.
-> +
-> +maintainers:
-> +  - Chen Pei <cp0613@linux.alibaba.com>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: riscv_trace,funnel-controller
+> >
+> > >>
+> > >> (There would be some corner cases, for example, the '+' sign may not needed when the value reach a negative value if some underflow bug happened)
+> > >>
+> > >>
+> > >> Thanks
+> > >> David.
+> > >>
+> > >>
+> > >>> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+> > >>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > >>> ---
+> > >>
+> > >
+> > > Thanks
+> > > Pan
+> >
 
-You need to start following DTS coding style.
-
-
-
-> +  reg:
-> +    description: A memory region containing registers for funnel controller
-> +
-> +  ports:
-> +    description: Input/Output port definitions
-> +
-> +  level:
-> +    description: Level of the funnel (e.g., 1 means close to the encoder)
-> +
-> +additionalProperties: true
-
-No clue from where you got this, but that's not how DT bindings are
-written. Maybe you used some AI tools for that - in that case, it would
-be strong grumpy NAK. :( You just waste community time with such approach.
-
-Please start from scratch from example-schema or known good bindings.
-
-Best regards,
-Krzysztof
+Thanks
+Pan
 
