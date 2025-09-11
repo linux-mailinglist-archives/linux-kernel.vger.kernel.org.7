@@ -1,408 +1,187 @@
-Return-Path: <linux-kernel+bounces-811403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30BEB528A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:18:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B88B528A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59484A05590
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B855175A82
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1D4257453;
-	Thu, 11 Sep 2025 06:18:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C651170826
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5BA2580EC;
+	Thu, 11 Sep 2025 06:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Xn79Xbsq"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C7611CBA
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757571507; cv=none; b=sphujzAB2vy0IWaIugG27d1nGNtfnRepWK1Mp5lgrTC+k7XQrBMHglBqyOOhFyasMCW97MMecdT1Glc6xsNDxSCxUIylpOfPPwLL+cK6oW6BdOrv2fguAB/ThrAxGErIM4bJmLJNDzxfgIHWx971kA3yR97Vm4F8P+KEweZOk9k=
+	t=1757571614; cv=none; b=XHskawv8Hn/r9URkunqmApLA8JvHYKYwMWK5z+39dlWwkE7gc0Myl5FhxStLNHFwf4OWgX/Wrs7bXxTPClfQ2YzRS0LLYQ2h+5ZpD0spvS8u5jpKUbVteSX9h8ibZHFwsHwIJshASviRuC8zZrYg7J0rStnFPA3rp7NVTtKXQp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757571507; c=relaxed/simple;
-	bh=yRVhX516zaSAc0d2JbI94r7Z3sFSU9AJVGD2yvyoJ28=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k1xk8pOknkckWd3DPPtUJyqbyZ8wpUeg1bvwuLAjgaiJVu1zf0N/JEaG+dPSjBZi1vFocxB3C1osp4O7pnGYPIEAEJm6OCfvYK90eP9hvvjqdYV7yk9Kwiqym664mrdPWPZRxvd8Y/8cD+rMX30qTQ0lMemYH6BNBIy6mQ+c2AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42351153B;
-	Wed, 10 Sep 2025 23:18:15 -0700 (PDT)
-Received: from [10.164.18.53] (unknown [10.164.18.53])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E8A6F3F66E;
-	Wed, 10 Sep 2025 23:18:19 -0700 (PDT)
-Message-ID: <f8c268ce-798a-4d3a-bab2-16eea633f9db@arm.com>
-Date: Thu, 11 Sep 2025 11:48:17 +0530
+	s=arc-20240116; t=1757571614; c=relaxed/simple;
+	bh=+OcTPhDXmteRe1PNLIfDFfpfOT4FMCkRaR60k0PaIgw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DSCVaWTt08e/2ZaiSWL9JBV3LbuUu07hUthd9FcejEbv3EvJbhtulSWgaZhV+v+8FUqB/u/uE+FlLSYVnzLr0Fokqlpw01kdR5M3nh6I1RhsEw9cDDlMQ6+Q7LHwR9t16obKgSbOO8if/2WzeYXShbltSVg8gmk0CiQaYfVP/dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Xn79Xbsq; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Forwarded-Encrypted: i=1; AJvYcCVpV05arJb/df2LDqwEGY92EPwb11YSWgjJEikbBwl0I5TUc5tGst6LWPnFnhBF/GFKOq2aSav3HIXNnxQ=@vger.kernel.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757571608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gW9kGgY5O1ezjweXONJKB6kktYtOO1YmCHdIBztrWyg=;
+	b=Xn79XbsqbLl4R1+fOVr4W+sHo7icAgTQQF762ElORdpIJGIq1riEe6VeIEROhw+rk5uPSt
+	zy7mi3q4ramyhrBcASxCrvxigNBdoKaVOvEqwY917SNCnPOmjHHl7YyGhXonOgiyVeD/Df
+	KYxjD+uO0ItBOresAqjq4Q6Y/JyDPjU=
+X-Gm-Message-State: AOJu0Yx00gkSnCPV4O5sfxga6KfTQGetWGKEGe1+ktGYoP7BuFkzgxlK
+	wCVAUxqa1ewyrsMmM6noGVLVJMtQY4N6l2SYrPUN/ntXKABCaYls49zujsSGd5507jxmVbUScD2
+	lVHLgECmf1PJIdYC2VOWAAgNK7UNcdi8=
+X-Google-Smtp-Source: AGHT+IFGtnt2Vv6SnW1AjDnoJHfVqQd98eP0nU8GK5mtsYSq4Y3GNWAX/MZSUTzZwyESeMv3dbmLCN1SIFPpKRJDb6Q=
+X-Received: by 2002:a05:6214:20a1:b0:720:e4bd:d3f3 with SMTP id
+ 6a1803df08f44-762245144aamr20961806d6.26.1757571592842; Wed, 10 Sep 2025
+ 23:19:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: mm: Move KPTI helpers to mmu.c
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Catalin Marinas <catalin.marinas@arm.com>, Kees Cook <kees@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Will Deacon <will@kernel.org>,
- Yeoreum Yun <yeoreum.yun@arm.com>
-References: <20250910104454.317067-1-kevin.brodsky@arm.com>
- <41f3227e-b945-4303-90b7-732affb0a101@arm.com>
- <CAMj1kXEmfCHpssFjn_+4ZjKCUaWPeiVwznCpGumTfz33k-rfkg@mail.gmail.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <CAMj1kXEmfCHpssFjn_+4ZjKCUaWPeiVwznCpGumTfz33k-rfkg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250911021401.734817-1-balrogg+code@gmail.com> <9CD4E5BC-185A-47E6-9A2C-1B5416DC57EE@nvidia.com>
+In-Reply-To: <9CD4E5BC-185A-47E6-9A2C-1B5416DC57EE@nvidia.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+Date: Thu, 11 Sep 2025 14:19:13 +0800
+X-Gmail-Original-Message-ID: <CABzRoyYo_dmzEJHQGiA3zc4uC_M9yKzEZ6L+VSbdG-t6fnahZA@mail.gmail.com>
+X-Gm-Features: AS18NWAZxQBFYdwpNshSnWdM9G9E87ityKhXYKHZyrw40T9emGfPhd7ZwGCqXPs
+Message-ID: <CABzRoyYo_dmzEJHQGiA3zc4uC_M9yKzEZ6L+VSbdG-t6fnahZA@mail.gmail.com>
+Subject: Re: [PATCH] mm: avoid poison consumption when splitting THP
+To: Zi Yan <ziy@nvidia.com>, Andrew Zaborowski <balrogg@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Miaohe Lin <linmiaohe@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Migadu-Flow: FLOW_OUT
 
+On Thu, Sep 11, 2025 at 12:11=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
+>
+> On 10 Sep 2025, at 22:14, Andrew Zaborowski wrote:
+>
+> > Handling a memory failure pointing inside a huge page requires splittin=
+g
+> > the page.  The splitting logic uses a mechanism, implemented in
+> > migrate.c:try_to_map_unused_to_zeropage(), that inspects contents of
+> > individual pages to find zero-filled pages.  The read access to the
+> > contents may cause a new, synchronous exception like an x86 Machine
+> > Check, delivered before the initial memory_failure() finishes, ending
+> > in a crash.
+> >
+> > Luckily memory_failure() already sets the has_hwpoisoned flag on the
+> > folio right before try_to_split_thp_page().  Don't enable the shared
+> > zeropage mechanism (RMP_USE_SHARED_ZEROPAGE flag) down in
+> > __split_unmapped_folio() when the original folio has has_hwpoisoned.
 
+Nit: s/__split_unmapped_folio/__folio_split/
 
-On 11/09/25 11:38 AM, Ard Biesheuvel wrote:
-> On Thu, 11 Sept 2025 at 07:13, Anshuman Khandual
-> <anshuman.khandual@arm.com> wrote:
->>
->>
->>
->> On 10/09/25 4:14 PM, Kevin Brodsky wrote:
->>> create_kpti_ng_temp_pgd() is currently defined (as an alias) in
->>> mmu.c without matching declaration in a header; instead cpufeature.c
->>> makes its own declaration. This is clearly not pretty, and as commit
->>> ceca927c86e6 ("arm64: mm: Fix CFI failure due to kpti_ng_pgd_alloc
->>> function signature") showed, it also makes it very easy for the
->>> prototypes to go out of sync.
->>>
->>> All this would be much simpler if kpti_install_ng_mappings() and
->>> associated functions lived in mmu.c, where they logically belong.
->>> This is what this patch does:
->>> - Move kpti_install_ng_mappings() and associated functions from
->>>   cpufeature.c to mmu.c, add a declaration to <asm/mmu.h>
->>> - Make create_kpti_ng_temp_pgd() a static function that simply calls
->>>   __create_pgd_mapping_locked() instead of aliasing it
->>> - Mark all these functions __init
->>> - Move __initdata after kpti_ng_temp_alloc (as suggested by
->>>   checkpatch)
->>>
->>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
->>> ---
->>> Note: as things stand, create_kpti_ng_temp_pgd() could be removed,
->>> but a separate patch [1] will make use of it to add an
->>> assertion.
->>>
->>> [1] https://lore.kernel.org/all/20250813145607.1612234-3-chaitanyas.prakash@arm.com/
->>> ---
->>> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
->>> Cc: Ard Biesheuvel <ardb@kernel.org>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Kees Cook <kees@kernel.org>,
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Yeoreum Yun <yeoreum.yun@arm.com>
->>> ---
->>>  arch/arm64/include/asm/mmu.h   |   6 ++
->>>  arch/arm64/kernel/cpufeature.c |  97 ------------------------------
->>>  arch/arm64/mm/mmu.c            | 106 ++++++++++++++++++++++++++++++---
->>>  3 files changed, 103 insertions(+), 106 deletions(-)
->>>
->>> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
->>> index 49f1a810df16..624edd6c4964 100644
->>> --- a/arch/arm64/include/asm/mmu.h
->>> +++ b/arch/arm64/include/asm/mmu.h
->>> @@ -104,5 +104,11 @@ static inline bool kaslr_requires_kpti(void)
->>>       return true;
->>>  }
->>>
->>> +#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->>> +void kpti_install_ng_mappings(void);
->>
->> Could the declarations be moved here instead ?
-> 
-> Why?
+As Zi mentioned, remap_page() is called in __folio_split() ;)
 
-To avoid both typedef and external instance declaration in the C
-code even though there is just a single call site in there. Also
-is not bit cleaner as well ?
-> 
->> Otherwise LGTM.
->>
->> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
->> index 624edd6c4964..062465939192 100644
->> --- a/arch/arm64/include/asm/mmu.h
->> +++ b/arch/arm64/include/asm/mmu.h
->> @@ -106,6 +106,8 @@ static inline bool kaslr_requires_kpti(void)
->>
->>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->>  void kpti_install_ng_mappings(void);
->> +typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
->> +kpti_remap_fn idmap_kpti_install_ng_mappings;
->>  #else
->>  static inline void kpti_install_ng_mappings(void) {}
->>  #endif
->> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->> index eff3295393ee..1b5c3c590e95 100644
->> --- a/arch/arm64/mm/mmu.c
->> +++ b/arch/arm64/mm/mmu.c
->> @@ -750,8 +750,6 @@ static void __init create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
->>
->>  static int __init __kpti_install_ng_mappings(void *__unused)
->>  {
->> -       typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
->> -       extern kpti_remap_fn idmap_kpti_install_ng_mappings;
->>         kpti_remap_fn *remap_fn;
->>
->>         int cpu = smp_processor_id();
->>
->>> +#else
->>> +static inline void kpti_install_ng_mappings(void) {}
->>> +#endif
->>> +
->>>  #endif       /* !__ASSEMBLY__ */
->>>  #endif
->>> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->>> index ef269a5a37e1..b99eaad48c14 100644
->>> --- a/arch/arm64/kernel/cpufeature.c
->>> +++ b/arch/arm64/kernel/cpufeature.c
->>> @@ -1940,103 +1940,6 @@ static bool has_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
->>>  }
->>>  #endif
->>>
->>> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->>> -#define KPTI_NG_TEMP_VA              (-(1UL << PMD_SHIFT))
->>> -
->>> -extern
->>> -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
->>> -                          phys_addr_t size, pgprot_t prot,
->>> -                          phys_addr_t (*pgtable_alloc)(enum pgtable_type), int flags);
->>> -
->>> -static phys_addr_t __initdata kpti_ng_temp_alloc;
->>> -
->>> -static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
->>> -{
->>> -     kpti_ng_temp_alloc -= PAGE_SIZE;
->>> -     return kpti_ng_temp_alloc;
->>> -}
->>> -
->>> -static int __init __kpti_install_ng_mappings(void *__unused)
->>> -{
->>> -     typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
->>> -     extern kpti_remap_fn idmap_kpti_install_ng_mappings;
->>> -     kpti_remap_fn *remap_fn;
->>> -
->>> -     int cpu = smp_processor_id();
->>> -     int levels = CONFIG_PGTABLE_LEVELS;
->>> -     int order = order_base_2(levels);
->>> -     u64 kpti_ng_temp_pgd_pa = 0;
->>> -     pgd_t *kpti_ng_temp_pgd;
->>> -     u64 alloc = 0;
->>> -
->>> -     if (levels == 5 && !pgtable_l5_enabled())
->>> -             levels = 4;
->>> -     else if (levels == 4 && !pgtable_l4_enabled())
->>> -             levels = 3;
->>> -
->>> -     remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
->>> -
->>> -     if (!cpu) {
->>> -             alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
->>> -             kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
->>> -             kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
->>> -
->>> -             //
->>> -             // Create a minimal page table hierarchy that permits us to map
->>> -             // the swapper page tables temporarily as we traverse them.
->>> -             //
->>> -             // The physical pages are laid out as follows:
->>> -             //
->>> -             // +--------+-/-------+-/------ +-/------ +-\\\--------+
->>> -             // :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
->>> -             // +--------+-\-------+-\------ +-\------ +-///--------+
->>> -             //      ^
->>> -             // The first page is mapped into this hierarchy at a PMD_SHIFT
->>> -             // aligned virtual address, so that we can manipulate the PTE
->>> -             // level entries while the mapping is active. The first entry
->>> -             // covers the PTE[] page itself, the remaining entries are free
->>> -             // to be used as a ad-hoc fixmap.
->>> -             //
->>> -             create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
->>> -                                     KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
->>> -                                     kpti_ng_pgd_alloc, 0);
->>> -     }
->>> -
->>> -     cpu_install_idmap();
->>> -     remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
->>> -     cpu_uninstall_idmap();
->>> -
->>> -     if (!cpu) {
->>> -             free_pages(alloc, order);
->>> -             arm64_use_ng_mappings = true;
->>> -     }
->>> -
->>> -     return 0;
->>> -}
->>> -
->>> -static void __init kpti_install_ng_mappings(void)
->>> -{
->>> -     /* Check whether KPTI is going to be used */
->>> -     if (!arm64_kernel_unmapped_at_el0())
->>> -             return;
->>> -
->>> -     /*
->>> -      * We don't need to rewrite the page-tables if either we've done
->>> -      * it already or we have KASLR enabled and therefore have not
->>> -      * created any global mappings at all.
->>> -      */
->>> -     if (arm64_use_ng_mappings)
->>> -             return;
->>> -
->>> -     stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
->>> -}
->>> -
->>> -#else
->>> -static inline void kpti_install_ng_mappings(void)
->>> -{
->>> -}
->>> -#endif       /* CONFIG_UNMAP_KERNEL_AT_EL0 */
->>> -
->>>  static void cpu_enable_kpti(struct arm64_cpu_capabilities const *cap)
->>>  {
->>>       if (__this_cpu_read(this_cpu_vector) == vectors) {
->>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
->>> index 183801520740..eff3295393ee 100644
->>> --- a/arch/arm64/mm/mmu.c
->>> +++ b/arch/arm64/mm/mmu.c
->>> @@ -27,6 +27,7 @@
->>>  #include <linux/kfence.h>
->>>  #include <linux/pkeys.h>
->>>  #include <linux/mm_inline.h>
->>> +#include <linux/stop_machine.h>
->>>
->>>  #include <asm/barrier.h>
->>>  #include <asm/cputype.h>
->>> @@ -466,14 +467,6 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
->>>       mutex_unlock(&fixmap_lock);
->>>  }
->>>
->>> -#ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->>> -extern __alias(__create_pgd_mapping_locked)
->>> -void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
->>> -                          phys_addr_t size, pgprot_t prot,
->>> -                          phys_addr_t (*pgtable_alloc)(enum pgtable_type),
->>> -                          int flags);
->>> -#endif
->>> -
->>>  static phys_addr_t __pgd_pgtable_alloc(struct mm_struct *mm,
->>>                                      enum pgtable_type pgtable_type)
->>>  {
->>> @@ -735,7 +728,102 @@ static void __init declare_vma(struct vm_struct *vma,
->>>  }
->>>
->>>  #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->>> -static pgprot_t kernel_exec_prot(void)
->>> +#define KPTI_NG_TEMP_VA              (-(1UL << PMD_SHIFT))
->>> +
->>> +static phys_addr_t kpti_ng_temp_alloc __initdata;
->>> +
->>> +static phys_addr_t __init kpti_ng_pgd_alloc(enum pgtable_type type)
->>> +{
->>> +     kpti_ng_temp_alloc -= PAGE_SIZE;
->>> +     return kpti_ng_temp_alloc;
->>> +}
->>> +
->>> +static void __init create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys,
->>> +                                        unsigned long virt, phys_addr_t size,
->>> +                                        pgprot_t prot,
->>> +                                        phys_addr_t (*pgtable_alloc)(enum pgtable_type),
->>> +                                        int flags)
->>> +{
->>> +     __create_pgd_mapping_locked(pgdir, phys, virt, size, prot,
->>> +                                 pgtable_alloc, flags);
->>> +}
->>> +
->>> +static int __init __kpti_install_ng_mappings(void *__unused)
->>> +{
->>> +     typedef void (kpti_remap_fn)(int, int, phys_addr_t, unsigned long);
->>> +     extern kpti_remap_fn idmap_kpti_install_ng_mappings;
->>> +     kpti_remap_fn *remap_fn;
->>> +
->>> +     int cpu = smp_processor_id();
->>> +     int levels = CONFIG_PGTABLE_LEVELS;
->>> +     int order = order_base_2(levels);
->>> +     u64 kpti_ng_temp_pgd_pa = 0;
->>> +     pgd_t *kpti_ng_temp_pgd;
->>> +     u64 alloc = 0;
->>> +
->>> +     if (levels == 5 && !pgtable_l5_enabled())
->>> +             levels = 4;
->>> +     else if (levels == 4 && !pgtable_l4_enabled())
->>> +             levels = 3;
->>> +
->>> +     remap_fn = (void *)__pa_symbol(idmap_kpti_install_ng_mappings);
->>> +
->>> +     if (!cpu) {
->>> +             alloc = __get_free_pages(GFP_ATOMIC | __GFP_ZERO, order);
->>> +             kpti_ng_temp_pgd = (pgd_t *)(alloc + (levels - 1) * PAGE_SIZE);
->>> +             kpti_ng_temp_alloc = kpti_ng_temp_pgd_pa = __pa(kpti_ng_temp_pgd);
->>> +
->>> +             //
->>> +             // Create a minimal page table hierarchy that permits us to map
->>> +             // the swapper page tables temporarily as we traverse them.
->>> +             //
->>> +             // The physical pages are laid out as follows:
->>> +             //
->>> +             // +--------+-/-------+-/------ +-/------ +-\\\--------+
->>> +             // :  PTE[] : | PMD[] : | PUD[] : | P4D[] : ||| PGD[]  :
->>> +             // +--------+-\-------+-\------ +-\------ +-///--------+
->>> +             //      ^
->>> +             // The first page is mapped into this hierarchy at a PMD_SHIFT
->>> +             // aligned virtual address, so that we can manipulate the PTE
->>> +             // level entries while the mapping is active. The first entry
->>> +             // covers the PTE[] page itself, the remaining entries are free
->>> +             // to be used as a ad-hoc fixmap.
->>> +             //
->>> +             create_kpti_ng_temp_pgd(kpti_ng_temp_pgd, __pa(alloc),
->>> +                                     KPTI_NG_TEMP_VA, PAGE_SIZE, PAGE_KERNEL,
->>> +                                     kpti_ng_pgd_alloc, 0);
->>> +     }
->>> +
->>> +     cpu_install_idmap();
->>> +     remap_fn(cpu, num_online_cpus(), kpti_ng_temp_pgd_pa, KPTI_NG_TEMP_VA);
->>> +     cpu_uninstall_idmap();
->>> +
->>> +     if (!cpu) {
->>> +             free_pages(alloc, order);
->>> +             arm64_use_ng_mappings = true;
->>> +     }
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +void __init kpti_install_ng_mappings(void)
->>> +{
->>> +     /* Check whether KPTI is going to be used */
->>> +     if (!arm64_kernel_unmapped_at_el0())
->>> +             return;
->>> +
->>> +     /*
->>> +      * We don't need to rewrite the page-tables if either we've done
->>> +      * it already or we have KASLR enabled and therefore have not
->>> +      * created any global mappings at all.
->>> +      */
->>> +     if (arm64_use_ng_mappings)
->>> +             return;
->>> +
->>> +     stop_machine(__kpti_install_ng_mappings, NULL, cpu_online_mask);
->>> +}
->>> +
->>> +static pgprot_t __init kernel_exec_prot(void)
->>>  {
->>>       return rodata_enabled ? PAGE_KERNEL_ROX : PAGE_KERNEL_EXEC;
->>>  }
->>>
->>> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
->>
+> >
+> > Note: we're disabling a potentially useful feature, some of the
+> > individual pages that aren't poisoned might be zero-filled.  One
+> > argument for not trying to add a mechanism to maybe re-scan them later,
+> > apart from code cost, is that the owning process is likely being
+> > killed and the memory released.
+>
+> Sounds reasonable to me.
 
+Makes sense to me as well!
+
+>
+> >
+> > Signed-off-by: Andrew Zaborowski <balrogg+code@gmail.com>
+> > ---
+> >  mm/huge_memory.c    | 3 ++-
+> >  mm/memory-failure.c | 6 ++++--
+> >  2 files changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 9c38a95e9f0..1568f0308b9 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -3588,6 +3588,7 @@ static int __folio_split(struct folio *folio, uns=
+igned int new_order,
+> >               struct list_head *list, bool uniform_split)
+> >  {
+> >       struct deferred_split *ds_queue =3D get_deferred_split_queue(foli=
+o);
+> > +     bool has_hwpoisoned =3D folio_test_has_hwpoisoned(folio);
+>
+> The state needs to be stored here because __split_unmapped_folio()
+> clears the flag. Maybe add a comment here to prevent people
+> from =E2=80=9Coptimizing=E2=80=9D it by calling folio_test_has_hwpoisoned=
+(folio)
+> in the code below.
+>
+> (I wanted to until I checked the definition of folio_test_has_hwpoisoned(=
+))
+
+folio_test_has_hwpoisoned() requires a large folio. That is safe in this
+context, since this path is only ever called for large folios.
+
+Cheers,
+Lance
+
+>
+> >       XA_STATE(xas, &folio->mapping->i_pages, folio->index);
+> >       struct folio *end_folio =3D folio_next(folio);
+> >       bool is_anon =3D folio_test_anon(folio);
+> > @@ -3858,7 +3859,7 @@ static int __folio_split(struct folio *folio, uns=
+igned int new_order,
+> >       if (nr_shmem_dropped)
+> >               shmem_uncharge(mapping->host, nr_shmem_dropped);
+> >
+> > -     if (!ret && is_anon)
+> > +     if (!ret && is_anon && !has_hwpoisoned)
+> >               remap_flags =3D RMP_USE_SHARED_ZEROPAGE;
+> >       remap_page(folio, 1 << order, remap_flags);
+> >
+> > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> > index fc30ca4804b..2d755493de9 100644
+> > --- a/mm/memory-failure.c
+> > +++ b/mm/memory-failure.c
+> > @@ -2352,8 +2352,10 @@ int memory_failure(unsigned long pfn, int flags)
+> >                * otherwise it may race with THP split.
+> >                * And the flag can't be set in get_hwpoison_page() since
+> >                * it is called by soft offline too and it is just called
+> > -              * for !MF_COUNT_INCREASED.  So here seems to be the best
+> > -              * place.
+> > +              * for !MF_COUNT_INCREASED.
+> > +              * It also tells __split_unmapped_folio() to not bother
+>
+> s/__split_unmapped_folio/__folio_split/, since remap_page() is
+> called in __folio_split().
+>
+> > +              * using the shared zeropage -- the all-zeros check would
+> > +              * consume the poison.  So here seems to be the best plac=
+e.
+> >                *
+> >                * Don't need care about the above error handling paths f=
+or
+> >                * get_hwpoison_page() since they handle either free page
+> > --
+> > 2.45.2
+>
+> Otherwise, Acked-by: Zi Yan <ziy@nvidia.com>
+>
+> Best Regards,
+> Yan, Zi
+>
 
