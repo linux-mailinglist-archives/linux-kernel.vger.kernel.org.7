@@ -1,231 +1,115 @@
-Return-Path: <linux-kernel+bounces-812237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02F25B534D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:08:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0644B534D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4750B7B34C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E023E1C213BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3495A338F30;
-	Thu, 11 Sep 2025 14:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3ADC335BC7;
+	Thu, 11 Sep 2025 14:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="IUOCQuQN"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0OeAeiu"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A78335BAC
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599659; cv=pass; b=Lp9jvnRJrmLDFKUYboCAZy8K2fVQP5hFgO/gBL2zcs3oZexVgfcUrtiISMzGMvj6W71Jb7jlfSvtCagU3oPpW2nbCycaQKmSekedQ9f1a7ek2JvBY2/aVtld2ca2ueJ6ucbxhZBq1EuFXBK9mFbcm+eWT04p74A/qDzDt01XGcY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599659; c=relaxed/simple;
-	bh=cIkV7AkIFz+EB8sehB84jMlaU/ssUx+ypzwXlejkCl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eOu0Vk9ISCSDoj1b51yVf0P4O9RJ9cqTtqfS3M7v9kJPzlHTA4F/IFrLXMJ8iQYfsQL7DaCZOxtoD4wrM3vaUEAfqGpJFpyB/pjwxLsaKxsOC+AEzz4y/nAGaesAQI1AWYP2ujs1haNtVEawv6PKpvwGbHyQQC5rW202lKuUb4k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=IUOCQuQN; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757599634; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=S04N+GkCJ1MHG20sbm/3ruuj5bbE1dYDgAvuScXITqVIqi/I9qoDW1Dlv3RGpnxRWJCx3kQ1DLtNFuxOKf8GfCvrrH97AZWdTA7IDIZhJ95aYLN/SNEY38yjINkOl6bF7SKJmX0RIBDG/BJhZmjbinFvoYC2Y0OIlOfRhAUclCs=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757599634; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=maQDhni1KuOzHozNIUlJWn4AVUDYhTZ9mYfJ6K46ZKM=; 
-	b=Y30vzkFsSITll5YcHoq3PyH8Ak6HFRx7aqR4VLPkF6tD6C45IqzB8TB6NipUWXtb8lDJZDCVA2gsbuhpGBBVDiX1pSeFtdODUJu5b4asq7Yy57SlwceOxwdfyMbBO43AK5yR4kIDaSaOh0QY8H8Vb2EKBPYC+YgjhXP3nX9Cbck=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757599634;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
-	bh=maQDhni1KuOzHozNIUlJWn4AVUDYhTZ9mYfJ6K46ZKM=;
-	b=IUOCQuQN5S2n93moiJDqHSih0iXU2QiWgtb8F9UPba90HEd6E6suqy+hrqbGKjJ1
-	xfElXUZm6JHWyCoIn8a7F2TlDDIFQswTQVPwClHEuKNfz6gYAbr4n7HQajpkXACjbQa
-	J4KSM/DlMsc1g6etOjW6w1nuDXODoUO3dWW0ynA8=
-Received: by mx.zohomail.com with SMTPS id 1757599632046725.3637611709158;
-	Thu, 11 Sep 2025 07:07:12 -0700 (PDT)
-Date: Thu, 11 Sep 2025 15:07:07 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, Rob Herring <robh@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH v2 4/4] drm/panfrost: Display list of device JM contexts
- over debugfs
-Message-ID: <ocdqnyqu2xgkc4fcnjbpb4gzcoaqlzp532id22p6lqsyyewaz5@hsa7bnwgirri>
-References: <20250904001054.147465-1-adrian.larumbe@collabora.com>
- <20250904001054.147465-5-adrian.larumbe@collabora.com>
- <5a6d3ffe-1edd-4082-ad7a-85256ececa86@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C709129B8F8;
+	Thu, 11 Sep 2025 14:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757599657; cv=none; b=Zy+uN1CV+mwtiFmjyhYDW3qpH1a4y4ISwdsO75pVIgQHMLs28JlwT0rIPZ+c+BwffSk7VS6EMwVeOLcaXPRxKOtImQ1sO57d2Yfyu9GwfYBEvOluHcWIGP3c3a4kMWx9rkt8XIrLX4lYRT8y5sY50VlL0lG1XD8QIffzzjkv9uI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757599657; c=relaxed/simple;
+	bh=AeDu1CaxVTDYh4Mj66HpOGBzQ8r3uynQZo5ononj6MM=;
+	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YE+DEHx6QosoH40R+2Nplm1iDmboLH2L2L42jDkO76RgoRn2yE6jNqonBgmsPvAndhUZ/lImUIDiGUwpZlwFupGDS1NvnHoOkVkcY/8UTn626hlMfH8KedzSRwQYbAGxPWfiKELlU3zXfwGCezJvonplMd8Q92LwRrSUdyNj1c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0OeAeiu; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-56afe77bc1eso860276e87.0;
+        Thu, 11 Sep 2025 07:07:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757599654; x=1758204454; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KWdoAQyPoyWoa/AF8wZgmr5DlRUGvc+N3yrK4JDeCfk=;
+        b=L0OeAeiuqAJ81SoMbtf06J166v4+Ar9jv3kaxncxDS6MJNIRUgw9XZCH4hIeYszP2C
+         T0m7v6sSGDIneBZF/pUVgPCoMHydWwARk/ohjqqas4f0avY8aDEOBnOIPNRZUUrdfILW
+         TAmEZ3yrlpGlfaNBmqG014/g59sJrYHcxz7ZXYGhAVGsUEqfyBQ2ubRFD4XhkYSA06v+
+         ZFAUrJUdIg+Y/mdKHGLRtuDt2K7PEgnxvvryNo9oNJlApHfKgrc99v0bYnkCpXJg76Zw
+         MMkV6EDPktBaJjT+RJgcX2L4K1WJ+p/9dVvQoPZeBO0RVf7AhE6XLYsXww7qUgGZP90U
+         fr9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757599654; x=1758204454;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KWdoAQyPoyWoa/AF8wZgmr5DlRUGvc+N3yrK4JDeCfk=;
+        b=eiArzhTbCNCGLHFQg7ZHsv53haq1G5ZRC5rU1YUQgtUCKk6/F3fFyDs1W5uvuvuMvJ
+         qrc9vgzTbohsGjwJEaCgdFB0E8Q4pzq4s56zp4m/kw5Y7LPSJuOaRf1OQ6CyMTsga48n
+         1Q5XkAcxvlgPP9KxU/8uD9V5r/20o3kn8CKMTRe1I9GS1ou6yJQd2d65JeZwOFpeUJQj
+         IlnuBFWx31I+Rjo88YBV8+BKhsntk2v4/Yi/a820fdkKH9+UkvTfA8zmBZnnqC4iL+QY
+         Dm7h0J3B3gb2gsTgSkHCAWwS5l15vepJUlSp2NSSAqc49pcVD4Oje4O4Z16ut6/4Ht1C
+         NbCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBN0lp45xeKJDe4yG6xRl8WUznBJ8BPfDELlFdJfKbKoiXOWTfk/bzgoz9gXYUpUVynblu91cUqrCj@vger.kernel.org, AJvYcCWEIx3X6VlPJd9kRfOTkbOAaRFgDkwj9RlMuGZzwEIMOTbIeDUU4QnRvpsXHTTOj0y0wz22Pr1g+QI1O8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUYWJ/929AUaym+mRMIZ0lQL6TL70rjoOqxJskb0rlahe+6e+W
+	56E/f1OhZxyzBilh+gkmObo8CGImticTds3PWiZHP6K0Ozaw21EsHxTo2sgFVA==
+X-Gm-Gg: ASbGncs6mwai+DWIh81OXj23R0c/o0Fk7lhSDgKofHoepCmhdd2E5pnMGTZqG34teDw
+	7w8TwUFUjGMoTXAoe6ctLN9KlmMUwXDidOG0in2G1l6C6H7iZabyQ5RxxKh3Dajq+l21y7+bRKm
+	lYcWk5Vp3xeQQikt9E8V+SuNAdP5mGFxJfM36Si+gTW+8fJf09ZP1PoMjSsPewfnXHh70QGjXZm
+	j26P007USWFtvU528R8dehDYqA3y+ci9cTzIpeDuoeLjjnRjX8z+3kV9hhutBQw8wG12UMv9fWC
+	HbcVUT2JYwKyNsISZ9tc0ry2uofuD4Gqi7WuYyyRCqggFblqUbBwgfWoLrpOS0uZky1FKmvLIXS
+	JkWfo8MTwdd3G5KSQ5UYngS5aXh+STNwQZp0=
+X-Google-Smtp-Source: AGHT+IEVVc/yX1meJqG+W1c8MfFiXyru8ek+D0e4SEFl5rxe+yJxt96wq0iK1eguGRJwQVawiISfQg==
+X-Received: by 2002:a05:6512:b91:b0:55b:92f9:c625 with SMTP id 2adb3069b0e04-56260e41a41mr6522124e87.20.1757599653661;
+        Thu, 11 Sep 2025 07:07:33 -0700 (PDT)
+Received: from foxbook (bfg216.neoplus.adsl.tpnet.pl. [83.28.44.216])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e5cf2f467sm447096e87.43.2025.09.11.07.07.32
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 11 Sep 2025 07:07:33 -0700 (PDT)
+Date: Thu, 11 Sep 2025 16:07:30 +0200
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] usb: xhci: Don't change status on length mismatch
+Message-ID: <20250911160730.1ad437e4.michal.pecio@gmail.com>
+In-Reply-To: <20250911160632.46245dc4.michal.pecio@gmail.com>
+References: <20250911160632.46245dc4.michal.pecio@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5a6d3ffe-1edd-4082-ad7a-85256ececa86@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 10.09.2025 16:42, Steven Price wrote:
-> On 04/09/2025 01:08, Adrián Larumbe wrote:
-> > From: Boris Brezillon <boris.brezillon@collabora.com>
-> >
-> > For DebugFS builds, create a filesystem knob that, for every single open
-> > file of the Panfrost DRM device, shows its command name information and
-> > PID (when applicable), and all of its existing JM contexts.
-> >
-> > For every context, show its priority and job config.
-> >
-> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
-> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> > ---
-> >  drivers/gpu/drm/panfrost/panfrost_drv.c | 97 +++++++++++++++++++++++++
-> >  1 file changed, 97 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> > index 02f704ec4961..b3d14b887da4 100644
-> > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
-> > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
-> > @@ -712,6 +712,48 @@ static int panthor_gems_show(struct seq_file *m, void *data)
-> >  	return 0;
-> >  }
-> >
-> > +static void show_panfrost_jm_ctx(struct panfrost_jm_ctx *jm_ctx, u32 handle,
-> > +				 struct seq_file *m)
-> > +{
-> > +	struct drm_device *ddev = ((struct drm_info_node *)m->private)->minor->dev;
-> > +	const char *prio = NULL;
-> > +
-> > +	static const char * const prios[] = {
-> > +		[DRM_SCHED_PRIORITY_HIGH] = "HIGH",
-> > +		[DRM_SCHED_PRIORITY_NORMAL] = "NORMAL",
-> > +		[DRM_SCHED_PRIORITY_LOW] = "LOW",
-> > +	};
-> > +
-> > +	if (jm_ctx->slots[0].sched_entity.priority !=
-> > +	    jm_ctx->slots[1].sched_entity.priority)
-> > +		drm_warn(ddev, "Slot priorities should be the same in a single context");
-> > +
-> > +	if (jm_ctx->slots[0].sched_entity.priority < ARRAY_SIZE(prios))
-> > +		prio = prios[jm_ctx->slots[0].sched_entity.priority];
-> > +
-> > +	seq_printf(m, " JM context %u: priority %s config %x\n",
-> > +		   handle, prio ? prio : "UNKNOWN", jm_ctx->config);
->
-> NIT: If you assign prio to "UNKNOWN" to begin with (rather than NULL)
-> you can avoid this ?: operator.
+It seems unwise to hide errors simply because the driver lost track
+of how much data was actually transferred.
 
-Acked.
+Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+---
+ drivers/usb/host/xhci-ring.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-> > +}
-> > +
-> > +static int show_file_jm_ctxs(struct panfrost_file_priv *pfile,
-> > +			     struct seq_file *m)
-> > +{
-> > +	struct panfrost_jm_ctx *jm_ctx;
-> > +	unsigned long i;
-> > +
-> > +	xa_lock(&pfile->jm_ctxs);
-> > +	xa_for_each(&pfile->jm_ctxs, i, jm_ctx) {
-> > +		jm_ctx = panfrost_jm_ctx_get(jm_ctx);
-> > +		xa_unlock(&pfile->jm_ctxs);
-> > +		show_panfrost_jm_ctx(jm_ctx, i, m);
-> > +		panfrost_jm_ctx_put(jm_ctx);
-> > +		xa_lock(&pfile->jm_ctxs);
-> > +	}
-> > +	xa_unlock(&pfile->jm_ctxs);
->
-> Is it so bad if we just held the xa lock for the whole loop? It just
-> seems unnecessarily complex.
-
-xa_unlock() is defined as a spinlock which are fast. I'm often of the view that the
-critical region should be as narrow as possible, especially when debug code is clashing
-with the normal operation of the driver.
-
-> Thanks,
-> Steve
->
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static struct drm_info_list panthor_debugfs_list[] = {
-> >  	{"gems", panthor_gems_show, 0, NULL},
-> >  };
-> > @@ -725,9 +767,64 @@ static int panthor_gems_debugfs_init(struct drm_minor *minor)
-> >  	return 0;
-> >  }
-> >
-> > +static int show_each_file(struct seq_file *m, void *arg)
-> > +{
-> > +	struct drm_info_node *node = (struct drm_info_node *)m->private;
-> > +	struct drm_device *ddev = node->minor->dev;
-> > +	int (*show)(struct panfrost_file_priv *, struct seq_file *) =
-> > +		node->info_ent->data;
-> > +	struct drm_file *file;
-> > +	int ret;
-> > +
-> > +	ret = mutex_lock_interruptible(&ddev->filelist_mutex);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	list_for_each_entry(file, &ddev->filelist, lhead) {
-> > +		struct task_struct *task;
-> > +		struct panfrost_file_priv *pfile = file->driver_priv;
-> > +		struct pid *pid;
-> > +
-> > +		/*
-> > +		 * Although we have a valid reference on file->pid, that does
-> > +		 * not guarantee that the task_struct who called get_pid() is
-> > +		 * still alive (e.g. get_pid(current) => fork() => exit()).
-> > +		 * Therefore, we need to protect this ->comm access using RCU.
-> > +		 */
-> > +		rcu_read_lock();
-> > +		pid = rcu_dereference(file->pid);
-> > +		task = pid_task(pid, PIDTYPE_TGID);
-> > +		seq_printf(m, "client_id %8llu pid %8d command %s:\n",
-> > +			   file->client_id, pid_nr(pid),
-> > +			   task ? task->comm : "<unknown>");
-> > +		rcu_read_unlock();
-> > +
-> > +		ret = show(pfile, m);
-> > +		if (ret < 0)
-> > +			break;
-> > +
-> > +		seq_puts(m, "\n");
-> > +	}
-> > +
-> > +	mutex_unlock(&ddev->filelist_mutex);
-> > +	return ret;
-> > +}
-> > +
-> > +static struct drm_info_list panfrost_sched_debugfs_list[] = {
-> > +	{ "sched_ctxs", show_each_file, 0, show_file_jm_ctxs },
-> > +};
-> > +
-> > +static void panfrost_sched_debugfs_init(struct drm_minor *minor)
-> > +{
-> > +	drm_debugfs_create_files(panfrost_sched_debugfs_list,
-> > +				 ARRAY_SIZE(panfrost_sched_debugfs_list),
-> > +				 minor->debugfs_root, minor);
-> > +}
-> > +
-> >  static void panfrost_debugfs_init(struct drm_minor *minor)
-> >  {
-> >  	panthor_gems_debugfs_init(minor);
-> > +	panfrost_sched_debugfs_init(minor);
-> >  }
-> >  #endif
-> >
-
-Adrian Larumbe
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index fe60b2ae9f1d..5233ed3e4ed6 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -890,7 +890,6 @@ static void xhci_td_cleanup(struct xhci_hcd *xhci, struct xhci_td *td,
+ 		xhci_warn(xhci, "URB req %u and actual %u transfer length mismatch\n",
+ 			  urb->transfer_buffer_length, urb->actual_length);
+ 		urb->actual_length = 0;
+-		status = 0;
+ 	}
+ 	/* TD might be removed from td_list if we are giving back a cancelled URB */
+ 	if (!list_empty(&td->td_list))
+-- 
+2.48.1
 
