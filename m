@@ -1,224 +1,167 @@
-Return-Path: <linux-kernel+bounces-811398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 451D7B52895
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:16:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93211B5289E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5328C1C25457
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DA305810D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2A0242D9E;
-	Thu, 11 Sep 2025 06:16:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61579258EE8;
+	Thu, 11 Sep 2025 06:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mvek0Zjq"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606FDF4FA;
-	Thu, 11 Sep 2025 06:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4786AF4FA;
+	Thu, 11 Sep 2025 06:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757571377; cv=none; b=on9w1RWmR0wAmodZCnLAx0iXkW4nymhyM6W48RJ5I3fkra6H+jAs1y8H7vHzDpT/ONxl1Y2CixmJWlVhg1F3UAZQHYrJq0n5punc2r8w0rBcj3R97Q9mdJGDx/X4zkzyBUI5Nq1Qv4RHDsRWsxRIqiO95zTF0FmrPnj7HkkzKgs=
+	t=1757571424; cv=none; b=mEhG/mx+/BM0IGT3kBEOd3auURDXoWsvgtwZYgWTrbW63+HQ8gXHo5CnScx1/RS2mIfIpPlfSj9h7e+OdONF75MWJ9dVTGfaT3NVKmXq1Id6nT/JuMzv7TCwIi7hAvkU/mTR+XAvXyRhrmEqzp5yK7vggVcPp6bj0su2VxUWsew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757571377; c=relaxed/simple;
-	bh=6tT/sMbOlPZXTXG48em4wrGVHsB3PzPKyQqADoF2tJ8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cl3ezCg3KiLgSrRQQB16GWrVYaEuyXrCMafdEyVgSS4B1bF/tHCVZ7R5P/AyyRq/EPJY0Yl4kHJtmeKwnpF2W5DEnTieeyDAGijlqLTkpc+60AMy0b1WgfL+lvJJLgdkGgJvfFSHRYt4sjMEF0xHFeC2dgxtSh2dH5y5+E78p2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cMnPT37wNzYQv9V;
-	Thu, 11 Sep 2025 14:16:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EA2801A181A;
-	Thu, 11 Sep 2025 14:16:11 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgCn8IwracJolbd5CA--.11817S3;
-	Thu, 11 Sep 2025 14:16:11 +0800 (CST)
-Subject: Re: [PATCH 3/3] md: factor out sync completion update into helper
-To: linan666@huaweicloud.com, song@kernel.org, neil@brown.name,
- namhyung@gmail.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250911020441.2858174-1-linan666@huaweicloud.com>
- <20250911020441.2858174-3-linan666@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <d380b0c4-7d2c-0f3a-5f69-c5cd1c3832c3@huaweicloud.com>
-Date: Thu, 11 Sep 2025 14:16:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1757571424; c=relaxed/simple;
+	bh=6ER7NmlEmraWod3pVcUyD++3p1gLNbMgEjXMejMJ/TY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ec9D7dvZRVDFvz/SSrPpDUjRy5yKopmmLfu0h2HoXj5zOVYtbOPOVArset1C6lQQbTlb7uCi/en0InOGloqQONVKRm7pDY0ANxCx/Pdonl2Y9KjRPIv4XhsXNagO1NyHWmZrs2izsxpAguCDrWpx41g/n6qZgYT6vhiGX9g7JZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mvek0Zjq; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 26A864E40BA4;
+	Thu, 11 Sep 2025 06:16:58 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id D126B606D6;
+	Thu, 11 Sep 2025 06:16:57 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6C51D102F29D2;
+	Thu, 11 Sep 2025 08:16:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757571417; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=2VfQIzqjmdvrj2wF3mCiNeqmLyVAPi3fnAIClyJ+Xek=;
+	b=mvek0ZjqP8arBxPfzTtaJd0OmQcyEUs0lNC4tP0Vft5Dh2JLYm8/QrLjQdvSCH9zKV/u/2
+	7trMPMvsMu7aqDZZD/QCoG3+yYd8Dn03DVPt86r+nib40pIosPS/SWqwoZMYmWgj8KNwbF
+	Hh77mzogQgcy+GOTR8SsssfVs8WhofvTv+YG66osEKLX0E3NAlhBGXelQpFNiG/H/u4ZXT
+	rJubhcvYzcTjrrsHOdhoo92/dsyQEuSkgkeqBzrbduA8+xOeDYjayx2U6Tp1dZ36Y6aS5h
+	BMYsDxu4BtpZpSFZ8EWzVHJr1gD+XOtxfjEIifrBSwSQQHrJ4rd8IbjIjcIaBg==
+Message-ID: <85faa80c-0536-46d8-8f3a-00ae78499fd0@bootlin.com>
+Date: Thu, 11 Sep 2025 08:16:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250911020441.2858174-3-linan666@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCn8IwracJolbd5CA--.11817S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxGF4UAryfKFWUAF45tr4UXFb_yoW7Jr4xp3
-	yftF9xGr1UXFWaqFW7J3WDAFWruryUtrZrtryag34xJr1fKrnrGFyY9w1xJryDA34vyr4F
-	q3y5Wrs8u3Wjg3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUZYFZUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: dsa: microchip: Select SPI_MODE 0 for KSZ8463
+To: Tristram.Ha@microchip.com
+Cc: thomas.petazzoni@bootlin.com, miquel.raynal@bootlin.com,
+ Woojung.Huh@microchip.com, pascal.eberhard@se.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com, andrew@lunn.ch,
+ olteanv@gmail.com, kuba@kernel.org, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com
+References: <20250910-fix-omap-spi-v1-1-fd732c42b7be@bootlin.com>
+ <DM3PR11MB87367B6B13B1497C5994884BEC0EA@DM3PR11MB8736.namprd11.prod.outlook.com>
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <DM3PR11MB87367B6B13B1497C5994884BEC0EA@DM3PR11MB8736.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+Hi Tristram
 
-ÔÚ 2025/09/11 10:04, linan666@huaweicloud.com Ð´µÀ:
-> From: Li Nan <linan122@huawei.com>
+On 9/11/25 12:10 AM, Tristram.Ha@microchip.com wrote:
+>> KSZ8463 expects the SPI clock to be low on idle and samples data on
+>> rising edges. This fits SPI mode 0 (CPOL = 0 / CPHA = 0) but the SPI
+>> mode is set to 3 for all the switches supported by the driver. This
+>> can lead to invalid read/write on the SPI bus.
+>>
+>> Set SPI mode to 0 for the KSZ8463.
+>> Leave SPI mode 3 as default for the other switches.
+>>
+>> Signed-off-by: Bastien Curutchet (Schneider Electric)
+>> <bastien.curutchet@bootlin.com>
+>> Fixes: 84c47bfc5b3b ("net: dsa: microchip: Add KSZ8463 switch support to KSZ DSA
+>> driver")
+>> ---
+>>   drivers/net/dsa/microchip/ksz_spi.c | 7 +++++--
+>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/dsa/microchip/ksz_spi.c
+>> b/drivers/net/dsa/microchip/ksz_spi.c
+>> index
+>> d8001734b05741446fa78a1e88c2f82e894835ce..dcc0dbddf7b9d70fbfb31d4b260b80
+>> ca78a65975 100644
+>> --- a/drivers/net/dsa/microchip/ksz_spi.c
+>> +++ b/drivers/net/dsa/microchip/ksz_spi.c
+>> @@ -139,6 +139,7 @@ static int ksz_spi_probe(struct spi_device *spi)
+>>          const struct regmap_config *regmap_config;
+>>          const struct ksz_chip_data *chip;
+>>          struct device *ddev = &spi->dev;
+>> +       u32 spi_mode = SPI_MODE_3;
+>>          struct regmap_config rc;
+>>          struct ksz_device *dev;
+>>          int i, ret = 0;
+>> @@ -155,8 +156,10 @@ static int ksz_spi_probe(struct spi_device *spi)
+>>          dev->chip_id = chip->chip_id;
+>>          if (chip->chip_id == KSZ88X3_CHIP_ID)
+>>                  regmap_config = ksz8863_regmap_config;
+>> -       else if (chip->chip_id == KSZ8463_CHIP_ID)
+>> +       else if (chip->chip_id == KSZ8463_CHIP_ID) {
+>>                  regmap_config = ksz8463_regmap_config;
+>> +               spi_mode = SPI_MODE_0;
+>> +       }
+>>          else if (chip->chip_id == KSZ8795_CHIP_ID ||
+>>                   chip->chip_id == KSZ8794_CHIP_ID ||
+>>                   chip->chip_id == KSZ8765_CHIP_ID)
+>> @@ -185,7 +188,7 @@ static int ksz_spi_probe(struct spi_device *spi)
+>>                  dev->pdata = spi->dev.platform_data;
+>>
+>>          /* setup spi */
+>> -       spi->mode = SPI_MODE_3;
+>> +       spi->mode = spi_mode;
+>>          ret = spi_setup(spi);
+>>          if (ret)
+>>                  return ret;
+>>
+>> ---
+>> base-commit: c65e2aee8971eb9d4bc2b8edc3a3a62dc98f0410
+>> change-id: 20250910-fix-omap-spi-d7c64f2416df
 > 
-> Repeatedly reading 'mddev->recovery' flags in md_do_sync() may introduce
-> potential risk if this flag is modified during sync, leading to incorrect
-> offset updates. Therefore, replace direct 'mddev->recovery' checks with
-> 'action'.
-> 
-> Move sync completion update logic into helper md_finish_sync(), which
-> improves readability and maintainability.
-> 
-> The reshape completion update remains safe as it only updated after
-> successful reshape when MD_RECOVERY_INTR is not set and 'curr_resync'
-> equals 'max_sectors'.
-> 
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->   drivers/md/md.c | 80 +++++++++++++++++++++++++++----------------------
->   1 file changed, 45 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index f3abfc140481..a77c59527d4c 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -9298,6 +9298,49 @@ static bool sync_io_within_limit(struct mddev *mddev)
->   	       (raid_is_456(mddev) ? 8 : 128) * sync_io_depth(mddev);
->   }
->   
-> +/*
-> + * Update sync offset and mddev status when sync completes
-> + */
-> +static void md_finish_sync(struct mddev *mddev, enum sync_action action)
-> +{
-> +	struct md_rdev *rdev;
-> +
-> +	switch (action) {
-> +	case ACTION_RESYNC:
-> +	case ACTION_REPAIR:
-And check?
-
-> +		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
-> +			mddev->curr_resync_completed = MaxSector;
-> +		mddev->resync_offset = mddev->curr_resync_completed;
-> +		break;
-> +	case ACTION_RECOVER:
-> +		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
-> +			mddev->curr_resync_completed = MaxSector;
-> +		rcu_read_lock();
-> +		rdev_for_each_rcu(rdev, mddev)
-> +			if (mddev->delta_disks >= 0 &&
-> +			    rdev_needs_recovery(rdev, mddev->curr_resync_completed))
-> +				rdev->recovery_offset = mddev->curr_resync_completed;
-> +		rcu_read_unlock();
-> +		break;
-> +	case ACTION_RESHAPE:
-> +		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
-> +		    mddev->delta_disks > 0 &&
-> +		    mddev->pers->finish_reshape &&
-> +		    mddev->pers->size &&
-> +		    !mddev_is_dm(mddev)) {
-> +			mddev_lock_nointr(mddev);
-> +			md_set_array_sectors(mddev, mddev->pers->size(mddev, 0, 0));
-> +			mddev_unlock(mddev);
-> +			if (!mddev_is_clustered(mddev))
-> +				set_capacity_and_notify(mddev->gendisk,
-> +							mddev->array_sectors);
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +}
-> +
->   #define SYNC_MARKS	10
->   #define	SYNC_MARK_STEP	(3*HZ)
->   #define UPDATE_FREQUENCY (5*60*HZ)
-> @@ -9313,7 +9356,6 @@ void md_do_sync(struct md_thread *thread)
->   	int last_mark,m;
->   	sector_t last_check;
->   	int skipped = 0;
-> -	struct md_rdev *rdev;
->   	enum sync_action action;
->   	const char *desc;
->   	struct blk_plug plug;
-> @@ -9603,46 +9645,14 @@ void md_do_sync(struct md_thread *thread)
->   	}
->   	mddev->pers->sync_request(mddev, max_sectors, max_sectors, &skipped);
->   
-> -	if (!test_bit(MD_RECOVERY_CHECK, &mddev->recovery) &&
-> -	    mddev->curr_resync_completed > MD_RESYNC_ACTIVE) {
-> -		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
-> -			mddev->curr_resync_completed = MaxSector;
-> -
-> -		if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
-> -			mddev->resync_offset = mddev->curr_resync_completed;
-> -		} else {
-> -			if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
-> -			    test_bit(MD_RECOVERY_RECOVER, &mddev->recovery)) {
-> -				rcu_read_lock();
-> -				rdev_for_each_rcu(rdev, mddev)
-> -					if (mddev->delta_disks >= 0 &&
-> -					    rdev_needs_recovery(rdev, mddev->curr_resync_completed))
-> -						rdev->recovery_offset = mddev->curr_resync_completed;
-> -				rcu_read_unlock();
-> -			}
-> -		}
-> -	}
-> +	if (mddev->curr_resync > MD_RESYNC_ACTIVE)
-> +		md_finish_sync(mddev, action);
->    skip:
->   	/* set CHANGE_PENDING here since maybe another update is needed,
->   	 * so other nodes are informed. It should be harmless for normal
->   	 * raid */
->   	set_mask_bits(&mddev->sb_flags, 0,
->   		      BIT(MD_SB_CHANGE_PENDING) | BIT(MD_SB_CHANGE_DEVS));
-> -
-> -	if (test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
-> -			!test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
-> -			mddev->delta_disks > 0 &&
-> -			mddev->pers->finish_reshape &&
-> -			mddev->pers->size &&
-> -			!mddev_is_dm(mddev)) {
-> -		mddev_lock_nointr(mddev);
-> -		md_set_array_sectors(mddev, mddev->pers->size(mddev, 0, 0));
-> -		mddev_unlock(mddev);
-> -		if (!mddev_is_clustered(mddev))
-> -			set_capacity_and_notify(mddev->gendisk,
-> -						mddev->array_sectors);
-> -	}
-> -
->   	spin_lock(&mddev->lock);
->   	if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
->   		/* We completed so min/max setting can be forgotten if used. */
+> Actually it is best to completely remove the code.  The SPI mode should
+> be dictated by spi-cpol and spi-cpha settings in the device tree.  I do
+> not know why that code was there from the beginning.
 > 
 
-I like this patch, and I feel we can also passin the action to to
-pers->sync_request as well, and convert personality to switch case
-as well.
+Ok, I didn't know these settings were available on the device-tree, I 
+can remove the spi->mode setting in a new patch.
 
-Thanks,
-Kuai
+> All KSZ switches can use SPI mode 0 and 3, and 3 is recommended for high
+> SPI frequency.  Sometimes a bug/quirk in the SPI bus driver prevents the
+> very first SPI transfer to be successful in mode 3 because of a missed
+> rising edge clock signal, so it is forced to use mode 0.  (The Atmel SPI
+> bus driver has this issue in some old kernel versions.)
+> 
+> As for KSZ8463 I have always used mode 3 and do not know of any issue of
+> using that mode.
+> 
+
+I have issues on the first transfer with the AM335x's spi-omap2-mcspi 
+driver. I first tried to fix this driver but since the KSZ8463's 
+datasheet explicitly mentions that it expects the CLK to be low at idle, 
+I thought this was the right fix.
+
+But I'll fix the SPI driver then, thanks.
+
+
+Best regards,
+-- 
+Bastien Curutchet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
