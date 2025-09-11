@@ -1,353 +1,356 @@
-Return-Path: <linux-kernel+bounces-812383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D289AB53768
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:19:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC05B53790
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 906074E2D6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:19:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A87EA189403F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228F836932C;
-	Thu, 11 Sep 2025 15:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2087F352FD7;
+	Thu, 11 Sep 2025 15:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJxmD03/"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="MSNxem0R"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013046.outbound.protection.outlook.com [40.107.162.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB63369327;
-	Thu, 11 Sep 2025 15:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757603761; cv=none; b=Cg93ju21T9TXDOJGI59gYObI4numKu2H2UEKOwmcr2GRHKcDxdmjBLTNn14KXNUQ+kXO11KbFVVKqNe4Yuj7RjS/8JgVObzQ4lORbk89E3ovef/GcIIQbJtXe6Vjl2zT+8pZa/+Q8W8Xn8Du95zuuwJAthv3brZPsP3bB6g0UwU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757603761; c=relaxed/simple;
-	bh=hNLDfMeuBPoPYzsUzYLN/cJRYAooo5sjV68bKl/RUPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Iyt2wKJW2gdvyJuO/NQQiiIpawfBPhqWcCJI9TuVe6niwfs/PIpZS87OA3BV+JQH3GB3oa4+aPAXetbljkd/jryAUneHo3PH2Lon8qHENI5wUV9csKaJ68KJKBVkZGZu4E0pKEWVcNSletHFN+jAMUKtWQCBF5aKE/+aUXyWICw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJxmD03/; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45deccb2c1eso6723535e9.1;
-        Thu, 11 Sep 2025 08:15:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757603757; x=1758208557; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+kSQgeyXNErbEiMbYm90Cp8n5GIHwFnPoCAdpOTaHz4=;
-        b=nJxmD03/gPxwDsQvsvajh32B9kNd7DXNvPpFFzDIC6Il0voE4IIzbKuY+i1fmxqLG3
-         uyZI6kKfVAEj2v1QqWYZt/6mbtIKWBKynryuQhWnrqEZfqR/c8oijUdi5xMvgqqiza7P
-         cXpqoOpNPzWOoOlTg5XeMnwJuaqBpGevN0rZXv+bHoPy7+B0nIKMMqXO+DRvGkpZGeES
-         iaxPlRXGvVcVfb0V+YizA0baHsXDz26b/41NOwzKnokFwX7eKlc17v8/augkIsXSalr2
-         xwTeEFgZMDM2Vqayq4V7Z01/38cC/a97jJzw8HBqxuQ0ypDVFwLXfeTRXvPv4ekuqGta
-         FGLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757603757; x=1758208557;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+kSQgeyXNErbEiMbYm90Cp8n5GIHwFnPoCAdpOTaHz4=;
-        b=ulT7RSZgDLCnOV9rdBOahYiBIilojDvzSNU852z7iejSe2VxUL6Smj/bTpmO5Kx4O8
-         Shu7qRrE9WTjrJR2tu+Q3ITtDHA8YWtgmgY4shys+w8qNwvEHHy1JjkV6GpYf+DAUjoJ
-         tQr6FWuC49xnYjCZsdaDVnavaZcdfzVGPwd0ESHu7hpvSE8w8x/Flj//gcL+R0iojH99
-         22eqlBh830wrmmgsfLcUYtczoUjLRocElj5KjTaDDFrHmmBT1kT7iZBDBZqdQBDvlczs
-         e0zKipjkTcSPzfRoTA/1IJO9y3Kq3l7AL4XZhKjjbtN4krleHXUpM7ZkYQcHF2zdz5sD
-         zFcA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/arrhu1pYDgF5Sq12GO+wLZYJHpkxxPJjx2bwIr+husAD1mrDOXBUSV3N4IQzJATjIJDFFk3FkNf2PYTo@vger.kernel.org, AJvYcCXewc1tilC3p279MTdeomN3kfHsUgZVZr3B2jrU8wpCI10q8kUpn0axxSOgz6CJ0q3yxf+dlOMeL2YSHuo2@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI7HGq19fPZbgVbwc++DZQ5phfsGzabkBC6ce9CBQmfa7g5N7V
-	C1NML8rArmUtuWRYk8tn/irxGOiOrPKlNacK91prn3yYnIfFyA+TO9PR
-X-Gm-Gg: ASbGncsM1lh0//MLnnaC51jb2jO5n2zrqGlSUE7Nm9NgH3SarIT0I4XIfh5Dxu1zQDn
-	8f1F2iPQWgyhZopwBR8/OzCqDkPaVjgu04814DXPdWWOE8SUlApflLg+PPZyrSY1mG8ZtMIVnhx
-	ZDa9O+ROLhdJ9T+2rkpfBdst3R7eCG9a6AsZ1y4D6PP0NeqxnyqmS4BJTfCVUtI0k36rbOWFiZk
-	jN+lXpPU0/gdRDeRokjv1XQzpv35ToaItmuzwQXMeAR/6zammt35LP1D5ESqay7yDqt10EcDTGg
-	6pMzsjWai2Qoc9FBoCmVwmfpwgHTKV6sz3cEwOSDca9lL3LBn5poEhGVwnYNYJ3MBhRIIHBFo18
-	21sbquQUi+4yyXALC2x/+CfQSerhnbGHKuizNq1FdahfErqs1
-X-Google-Smtp-Source: AGHT+IEcROfkg5rCzoOVrVgraVaQTsespGTGiPDzFcdURnbnqY3KxBGgnlK8ozrGTvLYi2J45FN9FQ==
-X-Received: by 2002:a05:6000:26c6:b0:3e7:4701:d1a3 with SMTP id ffacd0b85a97d-3e74701d5bamr15012175f8f.38.1757603757111;
-        Thu, 11 Sep 2025 08:15:57 -0700 (PDT)
-Received: from f (cst-prg-67-222.cust.vodafone.cz. [46.135.67.222])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c4490sm26922615e9.19.2025.09.11.08.15.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 08:15:56 -0700 (PDT)
-Date: Thu, 11 Sep 2025 17:15:47 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: buggered I_CREATING implementation?
-Message-ID: <lsqpkeiqraemymog6l5msgx3x4nczbyxg55ffelntnzp43grop@bdk6ezmz5wg5>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3DC320396;
+	Thu, 11 Sep 2025 15:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757603923; cv=fail; b=PClsZN1aR6009ZtD1VSnTrjSRlKQ/Qx6Fv7UnLw6XngNaQX3gRlbUmQmVvW+1bbdp5BarlXGP6dLPslnl2756twbyWweAaOmx0zQmaFWUBW97+8Dis2b4AyFEHrI96s3BcgAhElDuN1jEaopcGMrVXJatIxcV6yxPQKMYlzXF2U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757603923; c=relaxed/simple;
+	bh=8sGQXb+IpS196cBo42FercTlkffm+C94C4GEuqG33+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Mfoa8ViCTDwJjPpAhu/U43Us7rdjN/LZEsT8ZTaCZmvUW5xTFtfD9PUBVWoDX1a9poIvdqtm4Z9Tfx0OlRG9cs1rCsTOYMSMYIoDJgpVHEEYy3nGLDIbTArUiPKR+7GZUqyiJlCx1mnJqA60qEUHieXLBhbLF2o2KLkBkhPyaAc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=MSNxem0R; arc=fail smtp.client-ip=40.107.162.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=h1eqfCaSSXWF1m8QIP7QDIqW49nz5BYPlaIYeW5JHuWfrMbCJYwq3k8g73oDGy5aMP+iRhqE0TevT1TeUB7meQFJivimTvTvT/otYeSAzxzi+MxvuN9PWkEhCkD46nOJlNTdfBrHc8YeweThCoEI6wxhwgbplYL4jYa09FzNY8Nmp4/NwYjsqD8oZ5I17SQsKmrfpeGjEkUMXP2FeF+xbvQ6sOwyBl1zmspxuYwUmFwbPlzIHkZbXYXuMCYN6jtGloZrfbvKl8YU5I4vYKX3g/XyTcIMHSDLc0U9e88jARGu/7h/I4YyioB9tsJKBX5LqUUGC7eehfPogjFX+Zwx/A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=btq2Nmd5j0A24I4A9mWNr+OYdS8csQku3ZV3dHpm2xQ=;
+ b=vWJBuY6JRxEPwmlX9ES79KtIGXwDLSbrFWUuVwcyhaT4coRxY1WaJOJ7vxiUeaGAbw/UNUAWX9VwMSOX+xrOTxwPm96+GPdlZVVt89yiKgrFH1LGuvyTBKG6YgU38xDGrxcscBqF2Z04xt6Vy3xEhBINzf1mqu2PJf6wVgo+DBK4abZXLj13ZoOSh83EH0NWdwcdiqC17C/e5+GNYYnPh6t/R8heQbIVie9yfRLCpHzxFL4tEXHJKJEOy4gBjCJ7KTklkMd3clYxQcCrzFgLm+cTTYmkTr7PdWNzyiRAKrB4yCu88TeD5a954qwdYU0fLDTFQF8j6+3nU0GoJZneYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=btq2Nmd5j0A24I4A9mWNr+OYdS8csQku3ZV3dHpm2xQ=;
+ b=MSNxem0RxPxENzgCGAIbLuPvw0jMlktLJOBSGjhPBrBj9dE4YUPKCW4I7B8B8+sq2vZtkxpHNR7g526A/wPfRTjB0eJHam9Fvl5tClyBJDGG3NhvX73ZQ/Fb6Om/tRXT8pUK9SfhAnqEkp6ewd+sR7ELcLNrfYjuHBZr0CYJlCtauYuSTbtVNUraAjv7BkobQZdbYjs4/dgCndXRW4ujtlb131y3StBfX3fjodCly2fbn2EI4fIsmQeXX80kElLhZW0PLS5chh5GYfoCaQuz0+lRq1Oqp71oguArqdu0HHbOUuXmfaGuON4xg0KMNfv/GjWqsvYdkCW+AGz4UnFw8Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by VE1PR04MB7392.eurprd04.prod.outlook.com (2603:10a6:800:1b2::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.19; Thu, 11 Sep
+ 2025 15:18:33 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9115.015; Thu, 11 Sep 2025
+ 15:18:33 +0000
+Date: Thu, 11 Sep 2025 11:18:23 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/11] dmaengine: add support for device_link
+Message-ID: <aMLoP1/Wmay2v37G@lizhi-Precision-Tower-5810>
+References: <20250903-v6-16-topic-sdma-v1-0-ac7bab629e8b@pengutronix.de>
+ <20250903-v6-16-topic-sdma-v1-9-ac7bab629e8b@pengutronix.de>
+ <aLhUv+mtr1uZTCth@lizhi-Precision-Tower-5810>
+ <20250909120309.5zgez5exbvxn5z3y@pengutronix.de>
+ <aMA88W/rDxFesEx+@lizhi-Precision-Tower-5810>
+ <20250910193545.gx3qoyjamoxlncqd@pengutronix.de>
+ <aMHwbogOA6QTc3Dm@lizhi-Precision-Tower-5810>
+ <20250911115056.5iufhnjdhsbiwugw@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911115056.5iufhnjdhsbiwugw@pengutronix.de>
+X-ClientProxiedBy: BYAPR01CA0034.prod.exchangelabs.com (2603:10b6:a02:80::47)
+ To AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|VE1PR04MB7392:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8cd219a-0aa4-4428-0983-08ddf14678c8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|19092799006|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cbf2GmXuESKhrUTvLkDaULFA/37+cm3Hqdqs74xtr2utq3vJWH0SLVIO/9LB?=
+ =?us-ascii?Q?BkmgV13iJ/H3Jwf4bj1kcxT2Ca/wWknikjmyE8X19ByBuEfUGs59zqZHJ8Bi?=
+ =?us-ascii?Q?2J83ag2TCWIEUpox78l9T81OwsxaSQzF8v41ly81LYETtsfPePGyUJRXEOdt?=
+ =?us-ascii?Q?3YTt43ji2qhuYwONXcK3ntN5PEAfD93nLrIo7/iFGWn1GC1b4wl40wbddjwB?=
+ =?us-ascii?Q?ylu0zvIoKFiXvdcpOMKpfbwPEkf1gjLs1Ohf7Kna8mVWrCv5fQwiSlnERmvO?=
+ =?us-ascii?Q?8gQ11z8emRUxhDghdMLBsPAnPNBxVF45rF57Ewu2P2a/J2JxOLImHBZR+0nG?=
+ =?us-ascii?Q?+kwKMTHnImNyqdvoSzIqBVW4sG4hB+qG4JOjTyfMFF8B+dTTJWU1SKrdho50?=
+ =?us-ascii?Q?YqJ9m5ZgVFU5SnqduA/ZPaWsT8hhBuS5pZ99ADTrx0rkq3r+kMUGHEqjsh90?=
+ =?us-ascii?Q?qI26ZLVEl6p5GSesgrrJtPpSD6mGJXl1lBOdFY5dPF1g1zUm+wu5j7J8gwyn?=
+ =?us-ascii?Q?/2usot4f0iodhEAcDxlGSmKYWT02UWAHadwcUw1ocVAtzpjAsVNFodH31kzS?=
+ =?us-ascii?Q?dforN/iYUHBByqRgpgn3LUcP6JC6JBl5T1/P+Qp6KwD0fN3XyGg3qUjkNHnW?=
+ =?us-ascii?Q?Yrffx15kO9hEb0+ie6tRtS+cbrWzsZzDGY3xZnM7l71nuF7i3szcwVhNVb8B?=
+ =?us-ascii?Q?4Lu6G50U3WJYL26rJCkHDarJ4e10p9dLqayaRnHnNhqt7N0N1GFkXvqgz2j3?=
+ =?us-ascii?Q?6qHHK8ky4O8/8RvKNMVY6c8kiKMzPU0GTgDUd6iZCItK0jUka1NgANFgaBxH?=
+ =?us-ascii?Q?c3MzvG4LZwz8YFZ2RBeSu5P3JBJyv9rbrNFWNWY7VO1KL6/iWOo+Aq+rj3Eu?=
+ =?us-ascii?Q?MaM3WZfRLpqF5Vgk+EHy57SClMsSJfQbePi9Eddr4iV7Swz2rqYZNiKWumyQ?=
+ =?us-ascii?Q?zIV/ZmDeVhHXHsd45ci30q/SfKc4Lp8MUM7+4UXh++TH/84eN/CtI6Ojyl0K?=
+ =?us-ascii?Q?nnTPCXiQpdQXSi5OS/QbTHdOlVzdVNQ+opaBJsf5lwgJi7zJFBHQfjNX88aR?=
+ =?us-ascii?Q?sC+cZ5U6OL3YHd9IpZhs3l5ZcClN97LaGBtPTz3egX8GUBiu/Ucb+ZD4OWgZ?=
+ =?us-ascii?Q?+yFVCnOhO4VdtefrFKNSOIhRT+y0WyqYWVAKrNQFzW5/5F8QFVNJg2nN77uW?=
+ =?us-ascii?Q?YTfA/GqfR6oPqqCwh+Yt1HEn310uiRfQn3BrNlSGqYgsh6eZKpaikLPNmTjP?=
+ =?us-ascii?Q?iPD9oqvgtruzZ4YB6/RKihfHwqaNtuuyhcwy29HCNXDlYBDI1+OgwBYmcHHy?=
+ =?us-ascii?Q?bIKbV8zxVhtZiKf18oeAHkRaCMVcCDt2XPdzLzm4KkHOhmfRFymOmlYWy+5Y?=
+ =?us-ascii?Q?STATsnZp0hJNvTdXAAzEwh9yqm96w8KgH6MLjkKgPx5vM3j+AQa6jNGYXA8M?=
+ =?us-ascii?Q?O8qSvWVE2s2ljPNIRsgxdr6xtVQyVP1ydh8nSOCa2VDp2MYneC2RUXIp1pOp?=
+ =?us-ascii?Q?h6B9qFafGfLwxa8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(19092799006)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?a/4qi7mtxl3EgfraiV7+Ya2EFDnv1UBFZQv9CcBnds6ObdSCoOMWSHpDhp+8?=
+ =?us-ascii?Q?RANsOx9rneDXKdUlE4cPlsRhI59MJf2rWBRFGvD5Tc47kkyyYaYPa/qHqzxY?=
+ =?us-ascii?Q?w7Iyks9ggI6+mkEFuavEYN9S5oIvYSjDu7xyZwtSebn0YkUPbR6Bj4Xlivw1?=
+ =?us-ascii?Q?km84N88cInJpiKm6SEMmZ8CxXTls8DNsmXM6HDGZtDMCMnHpSJQct08cL3ZX?=
+ =?us-ascii?Q?+HG5l+hQ7N87fT86rkyxAXz9TWGZPIvecZlm9WMFRIpYYoCj7kYBgacu14Jq?=
+ =?us-ascii?Q?DmRC5HCEK8FNXMqX/zTiU05d8+U/Yp6hDjU7zv2OpT+ThGefT3vdF3YMaK3K?=
+ =?us-ascii?Q?uituaDKjPe4Tfna3fG4RSWqgoeAVH6wMRkPSV4mQ0/kqoUq85vGJezauEWRN?=
+ =?us-ascii?Q?PZ3fuh+5K0rolqnCDZHgCuVhJZ/635lI14HZ+u9jCAThWi/5gf4Ni4lp+uig?=
+ =?us-ascii?Q?8qwIS/7+qS50iUQ1SeZ44oEnE1Qx4lTSOYacng46iOpv7viLFsWE2FLAYmhT?=
+ =?us-ascii?Q?dJqTuUH45n0UdarA5R7gcWWPlLpeP/QsMu3CDtX5ANLUTCg1zDt+RRJ2CS44?=
+ =?us-ascii?Q?83i9gDeSPqdP7A88zbzarafGC665CLYu2sbuaQMJnK06rkZCKv8C74A02cxW?=
+ =?us-ascii?Q?aglm84xqQByGMsIHDK8I3N3gghxYpByjWjza3AM4hxWGQBMDNGQMwasxrT5h?=
+ =?us-ascii?Q?epXjL2RhFRYLOP+HExJ0dAeB5EJVKYvVyM50Vpl9zKP/MXpcL6tCAlXlkUaU?=
+ =?us-ascii?Q?5+MvdIFkFyQ5IKzqZRxeaIq6qxTpCg76aHsjDI2qmeuWp8rsXdNrjkb6ZOAn?=
+ =?us-ascii?Q?IaT5iBdreX7NZnDrudLoTGS6119/l+9ZER/JmDgcd1OwXA9Q1fqrTxc0YC6P?=
+ =?us-ascii?Q?/IsyDlUYI3TbVQcyXmSEbpuQo1BfcFkVzCcj0dyyr07F+hreVIt4y20nto2M?=
+ =?us-ascii?Q?FaBGmarMQX5nNHt6rpARSEBcjComjRsIiXz3k9aekuU9oVhJh0GimZjY4I9Z?=
+ =?us-ascii?Q?wxPfd6PuDYJwOrzhk4PJCYN1mHCPM9SR8jSEYPsUeapYusLoUdfGm4HqliKa?=
+ =?us-ascii?Q?dMDKcjw+/CRxLB1KXt/cQYPWQRUxdsVNhCwIIF7Sbmy4HEMFBQSWKA8DBMq/?=
+ =?us-ascii?Q?pleAkiLTk8VXsnw+L6ReNGNWNy6JtM9YYzn2dXtbUr+3efBuuaf83t6lfcGP?=
+ =?us-ascii?Q?F1SMr79cvLcLDfwaD5yhXXK3VBE6d6f7oHljIslaa7rp6vwitTt84TJwibh5?=
+ =?us-ascii?Q?RN30J/nBwBlna/79kAblffSbEwNiN3bNvmEMCEKgmY3m3GTiqIc9HtqNfBXr?=
+ =?us-ascii?Q?/6wlS3mZp8yh0ueBYso0XJR3ovt8qMOx8x9ARuWdTGt4WHCNTOnu1grMAPiU?=
+ =?us-ascii?Q?3i6M7xMcdyhzOFcSjNyqU0/+W1QHcJYUVC/77rVu/YwF8JnlC+t5tCDO5scf?=
+ =?us-ascii?Q?UIqb45PX43NLU1460zg9JzUJ9j4SvlYqJYn6JNJSx6b2jcglqgC5nHWe8kPR?=
+ =?us-ascii?Q?KiM5AeeGlmvbiERuVbgJJOnFzYAvWvuGEopZU1t6b5k/szwkmvXM9cHEpf6N?=
+ =?us-ascii?Q?RRdTahYFuEUbqzwsu5t2uflXiG/ZKu8Z+VfwWb+p?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8cd219a-0aa4-4428-0983-08ddf14678c8
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 15:18:33.5411
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fszt/F6131Tzq2zpVbF1B8PzjLsH5Bt3GJkgQWBrwNKf5z3lSr9zgLaFHIy551e/W+DphXwUQXsXsaIhACM95A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7392
 
-I'm looking at sanitizing the I_* flags and the current implementation
-of I_CREATING reads like a bug.
+On Thu, Sep 11, 2025 at 01:50:56PM +0200, Marco Felsch wrote:
+> On 25-09-10, Frank Li wrote:
+> > On Wed, Sep 10, 2025 at 09:35:45PM +0200, Marco Felsch wrote:
+> > > On 25-09-09, Frank Li wrote:
+> > >
+> > > ...
+> > >
+> > > > > > > diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> > > > > > > index 758fcd0546d8bde8e8dddc6039848feeb1e24475..a50652bc70b8ce9d4edabfaa781b3432ee47d31e 100644
+> > > > > > > --- a/drivers/dma/dmaengine.c
+> > > > > > > +++ b/drivers/dma/dmaengine.c
+> > > > > > > @@ -817,6 +817,7 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> > > > > > >  	struct fwnode_handle *fwnode = dev_fwnode(dev);
+> > > > > > >  	struct dma_device *d, *_d;
+> > > > > > >  	struct dma_chan *chan = NULL;
+> > > > > > > +	struct device_link *dl;
+> > > > > > >
+> > > > > > >  	if (is_of_node(fwnode))
+> > > > > > >  		chan = of_dma_request_slave_channel(to_of_node(fwnode), name);
+> > > > > > > @@ -858,6 +859,13 @@ struct dma_chan *dma_request_chan(struct device *dev, const char *name)
+> > > > > > >  	/* No functional issue if it fails, users are supposed to test before use */
+> > > > > > >  #endif
+> > > > > > >
+> > > > > > > +	dl = device_link_add(dev, chan->device->dev, DL_FLAG_AUTOREMOVE_CONSUMER);
+> > > > > >
+> > > > > > chan->device->dev is dmaengine devices. But some dmaengine's each channel
+> > > > > > have device, consumer should link to chan's device, not dmaengine device
+> > > > > > because some dmaengine support per channel clock\power management.
+> > > > >
+> > > > > I get your point. Can you give me some pointers please? To me it seems
+> > > > > like the dma_chan_dev is only used for sysfs purpose according the
+> > > > > dmaengine.h.
+> > > >
+> > > > Not really, there are other dma engineer already reuse it for other purpose.
+> > > > So It needs update kernel doc for dma_chan_dev.
+> > >
+> > > Can you please provide me some pointers? I checked the kernel code base
+> > > for the struct::dma_chan_dev. I didn't found any references within the
+> > > dmaengine drivers. The only usage I found was for the sysfs purpose.
+> >
+> > static void k3_configure_chan_coherency(struct dma_chan *chan, u32 asel)
+> > {
+> > 	struct device *chan_dev = &chan->dev->device;
+> > 	...
+> > }
+> >
+> > >
+> > > > > > chan's device's parent devices is dmaengine devices. it should also work
+> > > > > > for sdma case
+> > > > >
+> > > > > I see, this must be tested of course.
+> > > > > > >         if (chan->device->create_devlink) {
+> > > > > >                 u32 flags = DL_FLAG_STATELESS | DL_FLAG_PM_RUNTIME | DL_FLAG_AUTOREMOVE_CONSUMER;
+> > > > >
+> > > > > According device_link.rst: using DL_FLAG_STATELESS and
+> > > > > DL_FLAG_AUTOREMOVE_CONSUMER is invalid.
+> > > > >
+> > > > > >                 if (pm_runtime_active(dev))
+> > > > > >                         flags |= DL_FLAG_RPM_ACTIVE;
+> > > > >
+> > > > > This is of course interessting, thanks for the hint.
+> > > > >
+> > > > > > When create device link (apply channel), consume may active.
+> > > > >
+> > > > > I have read it as: "resue the supplier and ensure that the supplier
+> > > > > follows the consumer runtime state".
+> > > > >
+> > > > > >                 dl = device_link_add(chan->slave, &chan->dev->device, flags);
+> > > > >
+> > > > > Huh.. you used the dmaengine device too?
+> > > >
+> > > > /**
+> > > >  * struct dma_chan_dev - relate sysfs device node to backing channel device
+> > > >  * @chan: driver channel device
+> > > >  * @device: sysfs device
+> > > >  * @dev_id: parent dma_device dev_id
+> > > >  * @chan_dma_dev: The channel is using custom/different dma-mapping
+> > > >  * compared to the parent dma_device
+> > > >  */
+> > > > struct dma_chan_dev {
+> > > > 	struct dma_chan *chan;
+> > > > 	struct device device;
+> > > > 	int dev_id;
+> > > > 	bool chan_dma_dev;
+> > > > };
+> > > >
+> > > > struct dma_chan {
+> > > > 	struct dma_device *device; /// this one should be dmaengine
+> > > > 	struct dma_chan_dev *dev; /// this one is pre-chan device.
+> > > > }
+> > >
+> > > I've tested your approach but it turns out that teh dma_chan_dev has no
+> > > driver. Of course we could use the DL_FLAG_STATELESS flag but this is
+> > > described as:
+> > >
+> > > | When driver presence on the supplier is irrelevant and only correct
+> > > | suspend/resume and shutdown ordering is needed, the device link may
+> > > | simply be set up with the ``DL_FLAG_STATELESS`` flag.  In other words,
+> > > | enforcing driver presence on the supplier is optional.
+> > >
+> > > I want to enforce the driver presence, therefore I used the manged flags
+> > > which excludes the DL_FLAG_STATELESS, if I get it right.
+> > >
+> > > Please see the below the debug output:
+> > >
+> > > ** use the dmaengine device as supplier **
+> > >
+> > > device_link_init_status: supplier.dev:30bd0000.dma-controller supplier.drv:imx-sdma supplier.status:0x2 consumer:dev:30840000.spi consumer.drv:spi_imx consumer.status:0x1
+> > > device_link_init_status: supplier.dev:30e10000.dma-controller supplier.drv:imx-sdma supplier.status:0x2 consumer:dev:30c20000.sai consumer.drv:fsl-sai consumer.status:0x1
+> > >
+> > >
+> > > ** use the dma channel device as supplier **
+> > >
+> > > device_link_init_status: supplier.dev:dma0chan0 supplier.drv:no-driver supplier.status:0x0 consumer:dev:30840000.spi consumer.drv:spi_imx consumer.status:0x1
+> > > device_link_init_status: supplier.dev:dma0chan1 supplier.drv:no-driver supplier.status:0x0 consumer:dev:30840000.spi consumer.drv:spi_imx consumer.status:0x1
+> >
+> > It should be similar with phy drivers, which phy_create() create individual
+> > phy devices (like dma channel devices).
+>
+> Unfortunately phy drivers do use the DL_FLAG_STATELESS mechanism. My
+> main goal was to have managed links to overcome the current situation:
+> dmaengine drivers can be removed without removing the consumer drivers
+> first.
+>
+> You have a valid point by making use dma-channel devices ( dma<X>cha<Y>)
+> to manage suspend/resume, as well as runtime-PM for each channel.
+>
+> But I see this rather as an addition to my solution because these links
+> must be stateless and stateless/unmanaged links don't guarantee the
+> correct remove order (my main goal).
 
-It showed up in this patchset:
-https://lore.kernel.org/all/20180729220453.13431-2-viro@ZenIV.linux.org.uk/
+If that, phy should have simiar problems. It should be resolved at higher
+layer to avoid fix this kinds of problem one by one.
 
-The relevant commit:
-commit c2b6d621c4ffe9936adf7a55c8b1c769672c306f
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Thu Jun 28 15:53:17 2018 -0400
+>
+> That beeing said, I'm not sure how you want to handle the clock/power
+> enablement per channel-device. This would require additional work on the
+> dma_devclass to add a proper .pm hook else the PM and runtime-PM calls
+> are only forwarded to the parent dmaengine driver. On this level the
+> dmaengine driver has no knowledge which channel is going to be
+> enabled/disabled.
 
-    new primitive: discard_new_inode()
+I have draft runtime pm patch for eDMA.
 
-            We don't want open-by-handle picking half-set-up in-core
-    struct inode from e.g. mkdir() having failed halfway through.
-[snip]
-            Solution: new flag (I_CREATING) set by insert_inode_locked() and
-    removed by unlock_new_inode() and a new primitive (discard_new_inode())
-    to be used by such halfway-through-setup failure exits instead of
-    unlock_new_inode() / iput() combinations.  That primitive unlocks new
-    inode, but leaves I_CREATING in place.
+>
+> In conclusion, I see my approach as valid to ensure the correct remove
+> order. Your suggestion is valid and can be added later on too since this
+> needs more work to have a proper per-channel runtime-PM.
 
-            iget_locked() treats finding an I_CREATING inode as failure
-    (-ESTALE, once we sort out the error propagation).
-            insert_inode_locked() treats the same as instant -EBUSY.
-            ilookup() treats those as icache miss.
+We need pave a good road. This part is common dma-engine, which is worth to
+do good solution.
 
-So as far as I understand the intent was to make it so that discarded
-inodes can be tested for with:
-	(inode->i_state & (I_NEW | I_CREATING) == I_CREATING)
+Frank
 
-But that's not what the patch is doing.
-
-In insert_inode_locked() every inserted inode gets both flags:
-                if (likely(!old)) {
-                        spin_lock(&inode->i_lock);
-                        inode->i_state |= I_NEW | I_CREATING;
-                        hlist_add_head_rcu(&inode->i_hash, head);
-                        spin_unlock(&inode->i_lock);
-                        spin_unlock(&inode_hash_lock);
-                        return 0;
-                }
-
-This means another call for the same inode will find it and:
-
-                if (unlikely(old->i_state & I_CREATING)) {
-                        spin_unlock(&old->i_lock);
-                        spin_unlock(&inode_hash_lock);
-                        return -EBUSY;
-                }
-
-... return with -EBUSY instead of waiting to check what will happen with it.
-
-The call to wait_on_inode() which can be found later:
-                __iget(old);
-                spin_unlock(&old->i_lock);
-                spin_unlock(&inode_hash_lock);
-                wait_on_inode(old);
-                if (unlikely(!inode_unhashed(old))) {
-                        iput(old);
-                        return -EBUSY;
-                }
-
-... only ever gets to execute if the inode is fully constructed *or* it
-was added to the hash with a routine which does not set I_CREATING,
-which does not add up.
-
-So if I understand correctly what was the intended behavior, my
-counterproposal is to retire I_CREATING and instead add I_DISCARDED
-which would be set by discard_new_inode().
-
-Then insert_inode_locked() and others can do things like:
-                if (unlikely(old->i_state & I_DISCARDED)) {
-                        spin_unlock(&old->i_lock);
-                        spin_unlock(&inode_hash_lock);
-                        return -EBUSY;
-                }
-	[snip]
-                wait_on_inode(old);
-                if (unlikely(old->i_state & I_DISCARDED || !inode_unhashed(old))) {
-                        iput(old);
-                        return -EBUSY;
-                }
-
-The flag thing aside, there is weird bug in this routine in inode traversal:
-               hlist_for_each_entry(old, head, i_hash) {
-                        if (old->i_ino != ino)
-                                continue;
-                        if (old->i_sb != sb)
-                                continue;
-                        spin_lock(&old->i_lock);
-                        if (old->i_state & (I_FREEING|I_WILL_FREE)) {
-                                spin_unlock(&old->i_lock);
-                                continue;
-                        }
-                        break;
-                }
-
-This will intentionally skip I_FREEING|I_WILL_FREE instead of waiting on
-it to leave the hash. I verified this is the only place in the file
-doing this, others call __wait_on_freeing_inode(). It reads like a bug
-to me because it allows the caller looking for this inode to insert
-their own copy and progress outside of the routine.
-
-The current inode_unhashed checks after wait_on_inode could be replaced
-with something like:
-
-bool inode_can_use() {
-	if (inode->i_state & I_DISCARDED)
-		return false;
-	if (inode_unhashed(inode))
-		return false;
-	return true;
-}
-
-or maybe wait_on_inode could grow a return value and do the work inside.
-
-I also noticed wait_on_inode is defined in include/linux/writeback.h,
-but the only users are fs/gfs2 and fs/inode.c, so it will probably want
-a different home.
-
-Comments?
-
-Below is a non-operational WIP diff to replace the flag, it does not add the
-aforementioned checks after wait_on_inode yet or do any cleanups:
-
-diff --git a/fs/dcache.c b/fs/dcache.c
-index 60046ae23d51..c1188ff2fbd1 100644
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1981,7 +1981,7 @@ void d_instantiate_new(struct dentry *entry, struct inode *inode)
- 	spin_lock(&inode->i_lock);
- 	__d_instantiate(entry, inode);
- 	WARN_ON(!(inode->i_state & I_NEW));
--	inode->i_state &= ~I_NEW & ~I_CREATING;
-+	inode->i_state &= ~I_NEW;
- 	/*
- 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
- 	 * ___wait_var_event() either sees the bit cleared or
-diff --git a/fs/inode.c b/fs/inode.c
-index 95fada5c45ea..9b6d5a644cf5 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -1029,7 +1029,7 @@ static struct inode *find_inode(struct super_block *sb,
- 			__wait_on_freeing_inode(inode, is_inode_hash_locked);
- 			goto repeat;
- 		}
--		if (unlikely(inode->i_state & I_CREATING)) {
-+		if (unlikely(inode->i_state & I_DISCARDED)) {
- 			spin_unlock(&inode->i_lock);
- 			rcu_read_unlock();
- 			return ERR_PTR(-ESTALE);
-@@ -1070,7 +1070,7 @@ static struct inode *find_inode_fast(struct super_block *sb,
- 			__wait_on_freeing_inode(inode, is_inode_hash_locked);
- 			goto repeat;
- 		}
--		if (unlikely(inode->i_state & I_CREATING)) {
-+		if (unlikely(inode->i_state & I_DISCARDED)) {
- 			spin_unlock(&inode->i_lock);
- 			rcu_read_unlock();
- 			return ERR_PTR(-ESTALE);
-@@ -1181,7 +1181,7 @@ void unlock_new_inode(struct inode *inode)
- 	lockdep_annotate_inode_mutex_key(inode);
- 	spin_lock(&inode->i_lock);
- 	WARN_ON(!(inode->i_state & I_NEW));
--	inode->i_state &= ~I_NEW & ~I_CREATING;
-+	inode->i_state &= ~I_NEW;
- 	/*
- 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
- 	 * ___wait_var_event() either sees the bit cleared or
-@@ -1195,10 +1195,14 @@ EXPORT_SYMBOL(unlock_new_inode);
- 
- void discard_new_inode(struct inode *inode)
- {
-+	u32 state;
- 	lockdep_annotate_inode_mutex_key(inode);
- 	spin_lock(&inode->i_lock);
--	WARN_ON(!(inode->i_state & I_NEW));
--	inode->i_state &= ~I_NEW;
-+	state = inode->i_state;
-+	WARN_ON(!(state & I_NEW));
-+	state &= ~I_NEW;
-+	state |= I_DISCARDED;
-+	WRITE_ONCE(inode->i_state, state);
- 	/*
- 	 * Pairs with the barrier in prepare_to_wait_event() to make sure
- 	 * ___wait_var_event() either sees the bit cleared or
-@@ -1783,6 +1787,7 @@ int insert_inode_locked(struct inode *inode)
- 	while (1) {
- 		struct inode *old = NULL;
- 		spin_lock(&inode_hash_lock);
-+repeat:
- 		hlist_for_each_entry(old, head, i_hash) {
- 			if (old->i_ino != ino)
- 				continue;
-@@ -1790,20 +1795,21 @@ int insert_inode_locked(struct inode *inode)
- 				continue;
- 			spin_lock(&old->i_lock);
- 			if (old->i_state & (I_FREEING|I_WILL_FREE)) {
--				spin_unlock(&old->i_lock);
--				continue;
-+				__wait_on_freeing_inode(inode, true);
-+				old = NULL;
-+				goto repeat;
- 			}
- 			break;
- 		}
- 		if (likely(!old)) {
- 			spin_lock(&inode->i_lock);
--			inode->i_state |= I_NEW | I_CREATING;
-+			inode->i_state |= I_NEW;
- 			hlist_add_head_rcu(&inode->i_hash, head);
- 			spin_unlock(&inode->i_lock);
- 			spin_unlock(&inode_hash_lock);
- 			return 0;
- 		}
--		if (unlikely(old->i_state & I_CREATING)) {
-+		if (unlikely(old->i_state & I_DISCARDED)) {
- 			spin_unlock(&old->i_lock);
- 			spin_unlock(&inode_hash_lock);
- 			return -EBUSY;
-@@ -1826,7 +1832,6 @@ int insert_inode_locked4(struct inode *inode, unsigned long hashval,
- {
- 	struct inode *old;
- 
--	inode->i_state |= I_CREATING;
- 	old = inode_insert5(inode, hashval, test, NULL, data);
- 
- 	if (old != inode) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 601d036a6c78..1928ffc55f09 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2559,7 +2559,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
-  * I_OVL_INUSE		Used by overlayfs to get exclusive ownership on upper
-  *			and work dirs among overlayfs mounts.
-  *
-- * I_CREATING		New object's inode in the middle of setting up.
-+ * I_DISCARDED		Inode creation failed.
-  *
-  * I_DONTCACHE		Evict inode as soon as it is not used anymore.
-  *
-@@ -2595,7 +2595,7 @@ static inline void kiocb_clone(struct kiocb *kiocb, struct kiocb *kiocb_src,
- #define I_DIRTY_TIME		(1 << 11)
- #define I_WB_SWITCH		(1 << 12)
- #define I_OVL_INUSE		(1 << 13)
--#define I_CREATING		(1 << 14)
-+#define I_DISCARDED		(1 << 14)
- #define I_DONTCACHE		(1 << 15)
- #define I_SYNC_QUEUED		(1 << 16)
- #define I_PINNING_NETFS_WB	(1 << 17)
-diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-index 1e23919c0da9..cda77ca84bad 100644
---- a/include/trace/events/writeback.h
-+++ b/include/trace/events/writeback.h
-@@ -24,7 +24,7 @@
- 		{I_LINKABLE,		"I_LINKABLE"},		\
- 		{I_WB_SWITCH,		"I_WB_SWITCH"},		\
- 		{I_OVL_INUSE,		"I_OVL_INUSE"},		\
--		{I_CREATING,		"I_CREATING"},		\
-+		{I_DISCARDED,		"I_DISCARDED"},		\
- 		{I_DONTCACHE,		"I_DONTCACHE"},		\
- 		{I_SYNC_QUEUED,		"I_SYNC_QUEUED"},	\
- 		{I_PINNING_NETFS_WB,	"I_PINNING_NETFS_WB"},	\
+>
+> Regards,
+>   Marco
+>
+> >
+> > > ------------[ cut here ]------------
+> > > WARNING: CPU: 0 PID: 51 at /drivers/base/core.c:1387 device_links_driver_bound+0x170/0x3a0
+> > > ...
+> > > ---[ end trace 0000000000000000 ]---
+> > > ------------[ cut here ]------------
+> > >
+> > > As said, I get your point regarding the usage of the dma-channel device
+> > > but I didn't found any reference to a driver which used the dma-channel
+> > > device. Also since I want to have the supply driver to enforced by the
+> > > devlink I don't want to use the DL_FLAG_STATELESS flag.
+> >
+> > Maybe add DL_FLAG, link to parent's device driver. Need some time to
+> > investigate more. PHY driver should good example to refer to.
+> >
+> > >
+> > > Regarding your point, that some DMA controllers may have seperate clocks
+> > > for each channel: I think this can be handled by the dmaengine driver,
+> > > e.g. via the device_alloc_chan_resources() hook.
+> >
+> > device_alloc_chan_resources() is not efficient enough, most driver allocate
+> > channel at probe, so clk of this channel will be always on. ideally, only
+> > when consumer devices is runtime resume state,  turn on dma channel clock.
+> >
+> > Frank
+> > >
+> > > @all
+> > > I'm pleased about any input :)
+> > >
+> > > Regards,
+> > >   Marco
+> >
 
