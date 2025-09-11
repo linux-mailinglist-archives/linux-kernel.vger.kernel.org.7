@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-811188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12BA9B525AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:19:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93205B525B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:20:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02C517B64C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:19:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4763B218D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB54119258E;
-	Thu, 11 Sep 2025 01:19:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DB019644B;
+	Thu, 11 Sep 2025 01:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="g1xf8/Kk"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwXNKMFS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3606646BF;
-	Thu, 11 Sep 2025 01:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D92346BF;
+	Thu, 11 Sep 2025 01:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757553557; cv=none; b=pjMDv1STZZv3kKuJsa7IyuBFafYiOO8Z06SBkMpsQnnxCKTiypvRmOqp0k79beKyt2Yb6HwNPyOVq49t/rWPMUXsLjdDHY/DY8DZvvLZ2Ixb7d0cwcTTYA1CSoTlm+T46sjYY3i1xGk+ZHy2Ngt+ArTPyxjW7TFrEag36FwA55Q=
+	t=1757553613; cv=none; b=TR17OvvjrqXtkm18W5BEC7DI3eZYeg/tHV30hLmH5AWNsYYtFjQ7th5d4+uBZRO1pdUs2tfJtPuFMOA7K38zU1kfADhR/zD0feu6IDP+P4vd7ZNsXI4QrbTkWJZzEMwgcpOB/NYjVN3UtBdfAp+bo/ukM541+BKsA1yHfYgI9rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757553557; c=relaxed/simple;
-	bh=qvhgtC2h3ETUIgnFRZFbzu/JYAKwAWMBnSFugUc679g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EppGde8BpL9rCJzmQEkgCsONJO2rfJ0ZHcXDmnkD+P6yGqyArHjxFhLGiGEPTsNqXQCc+t4TlYs3CUOI30B5ASRoOxPGtl4qvoOCtWML39isFrwQxfwLR5y2n2he8cVBgy8hpKoq9JLNg3Zpxo6Lhf+K4MADEccJZMxwpBFQ3g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=g1xf8/Kk; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=3RmRZf9ZN1qFLW6+btemuGyf7rW4veZ9+qaLWx/0nFc=;
-	b=g1xf8/Kk96D+nhvpAAMglx6bg62mJo7C01X9Baabluk5kI8Vhew44CTTCE2gPS
-	Gug2mn1yubXbDZZMks/F3HTMSpLKDeFglg0rT3XbrW1OhlEaQcamSwdP0/gESPo8
-	PUEbunxNocZP2AJLxOIuKTveghzGMDjh6wF3x3o9O+psY=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgA3ZdlvI8JoJilfBA--.45492S3;
-	Thu, 11 Sep 2025 09:18:41 +0800 (CST)
-Date: Thu, 11 Sep 2025 09:18:38 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>, linux@ew.tq-group.com,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] arm64: dts: tqma8mpql-mba8mpxl: Add MicIn routing
-Message-ID: <aMIjbtfLTzCMZZjV@dragon>
-References: <20250822140742.3352401-1-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1757553613; c=relaxed/simple;
+	bh=JrsAE3DudXpygIBh+cQxJTpyw6cSMLRJAioIz1JeHQc=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=bDAu4uSBYq03r2y48VoUL8NijfsqGbA/JRc07vicHgYhoywl8Jbj1aHb1wnc/A2A7q1lUSwaiXVeNWNr5G75hqZm8seXsPI5H7lfET2g6gR9nrlO9TbGNh7t8ldAxZSudm2FnDmukRgZFnxag2OFb2XSWFmokOhw/Bs0fOJycEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwXNKMFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD9D7C4CEEB;
+	Thu, 11 Sep 2025 01:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757553612;
+	bh=JrsAE3DudXpygIBh+cQxJTpyw6cSMLRJAioIz1JeHQc=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=jwXNKMFSd+Z+48vmfPOHspdim+MokURq4pIkiDVsU6gg/7eGdKMJQA5o8vFCoO/A7
+	 VvnFcQhBawSk0/MBXrI+Fgb70Pomccs+Jc/M07vOF5nN4rLd8bgPKDeLT7Z0UBRlKp
+	 Doc4INHpRjbKLnSntuT5hWugvD7fJ1NL49FJ+Sxg+BlAjnQnVFdJTLQq5BpqX0SZTf
+	 +x6N0BqxP43CVwi2fjYD2TKqZ17tGBAROErHEj2NIslyls04lsNcTh9kWXndouj7Or
+	 b4EGy39tuIRPzWbm4V0VSQU9e7ozEaldfsOj7KxsHqpwJKrF4YHq9jjwYr/x6+9HPk
+	 tUqXoaz3KDsMA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE00A383BF69;
+	Thu, 11 Sep 2025 01:20:16 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250822140742.3352401-1-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:Ms8vCgA3ZdlvI8JoJilfBA--.45492S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtFWkWr1DGr15AFyxWF4kWFg_yoWDtrb_Aw
-	4xua1qyan5tFnFqan0qrWkWr9IgrWUCr13Jr13Wr4kJF97Zr4DtryDtF93WrZrCa9rKrW3
-	Awn8XryFy34akjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbRBTUUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNRGvFWjCI3FnMgAA3z
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next 0/8] tools: ynl: fix errors reported by Ruff
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175755361550.1619866.7130732289820892310.git-patchwork-notify@kernel.org>
+Date: Thu, 11 Sep 2025 01:20:15 +0000
+References: <20250909-net-next-ynl-ruff-v1-0-238c2bccdd99@kernel.org>
+In-Reply-To: <20250909-net-next-ynl-ruff-v1-0-238c2bccdd99@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: donald.hunter@gmail.com, kuba@kernel.org, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, Aug 22, 2025 at 04:07:41PM +0200, Alexander Stein wrote:
-> MicIn is connected to IN3_L. Add routing including the Mic Bias.
+Hello:
+
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 09 Sep 2025 23:07:46 +0200 you wrote:
+> When looking at the YNL code to add a new feature, my text editor
+> automatically executed 'ruff check', and found out at least one
+> interesting error: one variable was used while not being defined.
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
-It doesn't apply to imx/dt64 branch.
-
-Shawn
-
-> ---
->  .../arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts | 7 +++++++
->  1 file changed, 7 insertions(+)
+> I then decided to fix this error, and all the other ones reported by
+> Ruff. After this series, 'ruff check' reports no more errors with
+> version 0.12.12.
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-> index 2d4eaf9c02b88..1924d51bcbcd8 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-> @@ -245,6 +245,13 @@ sound {
->  		audio-asrc = <&easrc>;
->  		audio-cpu = <&sai3>;
->  		audio-codec = <&tlv320aic3x04>;
-> +		audio-routing =
-> +			"IN3_L", "Mic Jack",
-> +			"Mic Jack", "Mic Bias",
-> +			"IN1_L", "Line In Jack",
-> +			"IN1_R", "Line In Jack",
-> +			"Line Out Jack", "LOL",
-> +			"Line Out Jack", "LOR";
->  	};
->  
->  	sound-xcvr {
-> -- 
-> 2.43.0
-> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,1/8] tools: ynl: fix undefined variable name
+    https://git.kernel.org/netdev/net-next/c/7a3aaaa9fce7
+  - [net-next,2/8] tools: ynl: avoid bare except
+    https://git.kernel.org/netdev/net-next/c/287bc89bb41f
+  - [net-next,3/8] tools: ynl: remove assigned but never used variable
+    https://git.kernel.org/netdev/net-next/c/02962ddb3936
+  - [net-next,4/8] tools: ynl: remove f-string without any placeholders
+    https://git.kernel.org/netdev/net-next/c/d8e0e25406a1
+  - [net-next,5/8] tools: ynl: remove unused imports
+    https://git.kernel.org/netdev/net-next/c/389712b0da1f
+  - [net-next,6/8] tools: ynl: remove unnecessary semicolons
+    https://git.kernel.org/netdev/net-next/c/616129d6b421
+  - [net-next,7/8] tools: ynl: use 'cond is None'
+    https://git.kernel.org/netdev/net-next/c/10d32b0ddcc1
+  - [net-next,8/8] tools: ynl: check for membership with 'not in'
+    https://git.kernel.org/netdev/net-next/c/f6259ba70e7e
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
