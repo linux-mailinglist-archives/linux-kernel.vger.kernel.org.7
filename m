@@ -1,127 +1,147 @@
-Return-Path: <linux-kernel+bounces-812131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F305BB5335A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:14:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0758B53363
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B44853B3B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:14:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70567177A32
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C057D324B06;
-	Thu, 11 Sep 2025 13:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7085324B1D;
+	Thu, 11 Sep 2025 13:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YwhyprMN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DMs5BdlM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BMNY8ka5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9925322A3E;
-	Thu, 11 Sep 2025 13:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F078A2E8E17;
+	Thu, 11 Sep 2025 13:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757596437; cv=none; b=kexmzFDkgWPwywiTyYbKKbODWTBZBRSPJvcf5H7nM+WSSfhCGjt0vWQ7IOUbfGhd6qIqGNPqXAHEb5AqJcLMvnqT0dsYFX6exSMnPhWLdKJAxrAGSBMUSkNC+oKRfoBpY4VGo2fap2ousFSbjGS1mwy/K9jquOYvriwcHQtLa1Y=
+	t=1757596481; cv=none; b=iXSoCuNQ+BLQ2uiGYft7FEpe/hzs3Ktl59+RkfEfvj1nc7YCr7rTz7MZMl031ciWi9pOkzKlAzJ6odNFsTk2k8eLETGj0i1rA2SufEocK6S2JpLhxQ8H/VKjMhbjp6s0RvuJeSzpp/rPuTJGLgJTrptSflkjrxHPAe0CSFax6r8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757596437; c=relaxed/simple;
-	bh=73iFDOiXCdvBY18nxzbc6eGmunQplWXFUz3cd2PJnKw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YUC+m9S7AyubLHykrQyObZ6RbxdIyEwbSskgFALR+pLjDn6yxeIkBtG0rNlZtX9UhDG/25OGbLpks9qK+SIndVbheXq+05P9iqIMzHcSTJsCk/XxaesK2YcU6wbxm90pqE4tsAUDoh2rSSv3lur5Xo+WwRITN7zul/SM+Q8KZGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YwhyprMN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DMs5BdlM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757596434;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KKIj5kDbTyAEjfbreZnJcy5S7eAGhbm+kpBtmsNVvJs=;
-	b=YwhyprMNVk57f+Oc68D5wFyfwuwwwKm195k9ihL7SPD6PF0I0atIGbMHryHrWjOxalLODQ
-	oF4jkMFAD4nN77NIV9JOQ3OXJnJmMhF6L7Jt65SlGNAIpYVmWKTWKHLyhmeztadZu4/1md
-	gWToVbiyBRnDpG1CoJR0YbCVRT0RKg+oBuTIJmZ91RG8tQF/JqcCcuM/KEAze6rCDpFDzl
-	NDnHXcExaRSUDzvYt4bP0SObLizlHrncrrJane/UuC+GZ1Gn9B5r4JbSMcukXYICKAq1C1
-	gQ5AbZyzh4+H3p7vOo25D02cVt6j965bqSVfEGkn1V9SA4fJ+MWYbPeHJModBg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757596434;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KKIj5kDbTyAEjfbreZnJcy5S7eAGhbm+kpBtmsNVvJs=;
-	b=DMs5BdlMWyO1rxZPEsqWhZH//6ROEFekjl1NQEXqq9/SwNZpNYJu1uvi4QL0EOpBsTeeiI
-	0HcMpAwmJ/UPOVBg==
-To: Breno Leitao <leitao@debian.org>
-Cc: Mike Galbraith <efault@gmx.de>, Simon Horman <horms@kernel.org>,
- kuba@kernel.org, calvin@wbinvd.org, Pavel Begunkov
- <asml.silence@gmail.com>, Johannes Berg <johannes@sipsolutions.net>,
- paulmck@kernel.org, LKML <linux-kernel@vger.kernel.org>,
- netdev@vger.kernel.org, boqun.feng@gmail.com, Petr Mladek
- <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, Steven
- Rostedt <rostedt@goodmis.org>
-Subject: Re: netconsole: HARDIRQ-safe -> HARDIRQ-unsafe lock order warning
-In-Reply-To: <cbvfyefqdyy6py2fswqp3licm3ynrsmc3jclgnbubp72elmai7@kwvks5yhkybc>
-References: <4c4ed7b836828d966bc5bf6ef4d800389ba65e77.camel@gmx.de>
- <otlru5nr3g2npwplvwf4vcpozgx3kbpfstl7aav6rqz2zltvcf@famr4hqkwhuv>
- <d1679c5809ffdc82e4546c1d7366452d9e8433f0.camel@gmx.de>
- <7a2b44c9e95673829f6660cc74caf0f1c2c0cffe.camel@gmx.de>
- <tx2ry3uwlgqenvz4fsy2hugdiq36jrtshwyo4a2jpxufeypesi@uceeo7ykvd6w>
- <5b509b1370d42fd0cc109fc8914272be6dcfcd54.camel@gmx.de>
- <tgp5ddd2xdcvmkrhsyf2r6iav5a6ksvxk66xdw6ghur5g5ggee@cuz2o53younx>
- <84a539f4kf.fsf@jogness.linutronix.de>
- <trqtt6vhf6gp7euwljvbbmvf76m4nrgcoi3wu3hb5higzsfyaa@udmgv5lwahn4>
- <847by65wfj.fsf@jogness.linutronix.de>
- <cbvfyefqdyy6py2fswqp3licm3ynrsmc3jclgnbubp72elmai7@kwvks5yhkybc>
-Date: Thu, 11 Sep 2025 15:19:53 +0206
-Message-ID: <84ecsdxhbi.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1757596481; c=relaxed/simple;
+	bh=KX7xrHa+olS2oROnPjX8J2BFoTeFIgxJ4Lv3gDXpUMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GX3V14Xn2ZpYGQK/bY2awgq4BF4HuKsM1SYB2PVvk65zddQ69iJAbVeha+CrqB+Abz6pVbK9xaOczzuiKp3sZ/dm6+X6ATv5hpDOzMbrh4LCs6V6qV7DewqCcimcUZEv+NRugqJcL7HmgfpOz8hvF1LyEfKt0XV4tgTCA1bToZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BMNY8ka5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C8EDC4CEF8;
+	Thu, 11 Sep 2025 13:14:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757596480;
+	bh=KX7xrHa+olS2oROnPjX8J2BFoTeFIgxJ4Lv3gDXpUMk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BMNY8ka5NU+VI1MvoMs8tdN9twEhfEOt6uHnMuw/zG9gVEyVe/5lVgCJ02DWkmQLq
+	 Fdl3RoRxTueqgHTHfbVxagk8VtPvmwoEyZEau6cD7wse+rO2nbfwmJmmiS553+DP2B
+	 yZ2WsSAMYwSJGbjThMmq184i//iYfBog+QuW84FpNFuhkUyC2+JoPzcfaD9Ztl8I78
+	 1gPLPfUZkieEE52ZtrlTwyr5e027kXiXhtJhWQuAYcNDC9WqmWB1PVx6ZfIC6jcIQd
+	 XfPzPxjtqx1fJ5gagtreHl0mLS/Bz0TnTtqOcTBQYcwz+rQz/XSLpRvbtAo6AeJly1
+	 9KlPyFS3bVuoQ==
+Date: Thu, 11 Sep 2025 14:14:33 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Asuna <spriteovo@gmail.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Han Gao <rabenda.cn@gmail.com>, rust-for-linux@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kbuild@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH v2] RISC-V: re-enable gcc + rust builds
+Message-ID: <20250911-reprogram-conductor-f02af5f6d03e@spud>
+References: <20250909-gcc-rust-v2-v2-1-35e086b1b255@gmail.com>
+ <20250910-harmless-bamboo-ebc94758fdad@spud>
+ <6bceca9d-44cd-4373-a456-7c2129b418e3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Pv6XXkkXxcuB8WU5"
+Content-Disposition: inline
+In-Reply-To: <6bceca9d-44cd-4373-a456-7c2129b418e3@gmail.com>
 
-On 2025-09-10, Breno Leitao <leitao@debian.org> wrote:
->> d) Not implementing ->write_atomic() and instead implement a kmsg_dumper
->>    for netconsole. This registers a callback that is called during
->>    panic.
->> 
->>    Con: The kmsg_dumper interface has nothing to do with consoles, so it
->>         would require some effort coordinating with the console drivers.
->
-> I am looking at kmsg_dumper interface, and it doesn't have the buffers
-> that need to be dumper.
->
-> So, if I understand corect, my kmsg_dumper callback needs to handle loop
-> into the messages buffer and print the remaining messages, right?
 
-Correct.
+--Pv6XXkkXxcuB8WU5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> In other words, do I need to track what messages were sent in
-> netconsole, and then iterate in the kmsgs buffer 
-> to find messages that hasn't been sent, and send from there?
+On Thu, Sep 11, 2025 at 12:46:01PM +0800, Asuna wrote:
+> On 9/10/25 10:27 PM, Conor Dooley wrote:
+> > FWIW, this --- breaks git, and anything after this line (including your
+> > signoff) is lost when the patch is applied.
+>=20
+> I used b4 command to prepare and send the cover letter and patch for v2, =
+not
+> sure what happened.
 
-Yes, right now it would not even be possible to do the proper tracking
-since the sequence numbers are not exposed to the console printers and
-they are not part of kmsg_dump interface.
+Dunno. Maybe while editing your commit message you omitted the signoff
+somehow? I don't use b4-submit, so I don't know how it formats stuff. If
+it inserted the --- and what was below it was your intended cover
+letter, your patch itself might be missing the signoff?
+>=20
+> I see that other people's patches have a [PATCH 0/n] email as a start that
+> describes their patch series, this is called a cover-letter in b4 and
+> git-send-email right?
 
-As it is right now, the kmsg_dumper would just print what is available
-in the ringbuffer, even if most of the messages have already been
-printed during runtime. Certainly not optimal.
+Yes it is. Not really needed if you only have one patch though.
 
->>    Pro: There is absolute freedom for the dumper to implement its own
->>         panic-only solution to get messages out.
->
-> What about calls to .write_atomic() calls that are not called during
-> panic? Will those be lost in this approach?
+> > The riscv patchwork CI stuff is really unhappy with this change:
+> > init/Kconfig:87: syntax error
+> > init/Kconfig:87: invalid statement
+> > init/Kconfig:88: invalid statement
+> > init/Kconfig:89:warning: ignoring unsupported character '`'
+> > init/Kconfig:89:warning: ignoring unsupported character '`'
+> > init/Kconfig:89:warning: ignoring unsupported character '.'
+> > init/Kconfig:89: unknown statement "This"
+> >=20
+> > Is this bogus, or can rustc-bindgen-libclang-version return nothing
+> > under some conditions where rust is not available?
+> > Should this have 2 default lines like some other options in the file?
+>=20
+> This is because rustc-bindgen-libclang-version can't find the bindgen and
+> returns nothing. Sorry I forgot to mention this, it's another reason why I
+> wanted to separate the script, in a separate script we can easily fallback
+> to return 0 when an error is encountered.
+>=20
+> Adding a second line `default 0` doesn't work, I'll try to fix it. BTW, w=
+hen
+> I fix it, if the diff isn't too large, do I need to open a v3 patch, or
+> simply replying to the thread just fine?
 
-In this approach you would not implement ->write_atomic(), so there
-would be no such calls. All printing would be deferred to the dedicated
-printing kthread.
+Feel free to reply with the diff if you're looking to discuss the
+implantation, but for the sake of the various bits of automation
+(patchwork, ci bots etc) please submit a v3 when you're happy with what
+you've produced.
 
-Anyway, it looks like we have agreed to allow unsafe ->write_atomic()
-callbacks.
+--Pv6XXkkXxcuB8WU5
+Content-Type: application/pgp-signature; name="signature.asc"
 
-John
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMLLNgAKCRB4tDGHoIJi
+0sTWAQDdTuuMdgIe7i+D0GfClKSNwZiGeo6RL2W+QEs7l4LftQD7BqPNj+VBOnFy
+pCrKuAA/4HOvXEmHWCYJdIAAEL+4bA0=
+=CuGR
+-----END PGP SIGNATURE-----
+
+--Pv6XXkkXxcuB8WU5--
 
