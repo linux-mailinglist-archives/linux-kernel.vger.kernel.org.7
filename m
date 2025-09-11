@@ -1,108 +1,153 @@
-Return-Path: <linux-kernel+bounces-812371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E139B53732
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:15:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E255B53741
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:16:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09BCB7B3B76
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C7DE5A6BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCD435335A;
-	Thu, 11 Sep 2025 15:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA24350853;
+	Thu, 11 Sep 2025 15:14:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4xvhmHO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PIunA2KN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB71F350835;
-	Thu, 11 Sep 2025 15:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97001350837
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757603644; cv=none; b=gnFOwdzvHoAPNbC/o3IoVezjKg0+Zeuc77g35o4dkG0EkflsC+7oNwcz9GTUp4Ri+lbu4YBeqopUgxyQtMp1uxlrZbnRMcTWobUOkR6dusHFc3E+Pqo7rJ9uBf+z/HXgs91/9ssUBIJ/0eCN5qeLKxuPUHJm5CexyRg35nAVhgI=
+	t=1757603660; cv=none; b=WwiWsR+HKdp90H3KdmheZlvb83lZe6mXyFZ6fx7XdmPeQNvcJ21sUogMwXTzHzqgKDG0dfOIpZG3IY6vhijjRlJc81ESLypdXXSHkRljlkLlA4Phj5B845mse8NiHX1bt8zUWfA1G/fKbYgHBBGuK+Gixp0Jp1zuwEuRZdeox7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757603644; c=relaxed/simple;
-	bh=XBnEBB90OcOXKmWP2giYQ6rYXI4N+81XE3LHFRw6NVg=;
+	s=arc-20240116; t=1757603660; c=relaxed/simple;
+	bh=0JU93CxYWpf8MsUp2/Gmssw3P3OVuGPIO2YefZ1Rl74=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DUr/ag2GmcmeIQtMx0wchKILpj9JJcCktHn/Y0sbvVIQmcfBUjWpN9C/m3m5fbgjQ4XSuZ8keO8xlmgE6sS4Y6+3VvaqKzbqpshLkKQnkChx1ksSkQcfwgp5stJ2Kz1JRMFhJEv3c325nj6fOi6xREnGo027uaKKTAz4Doif0Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4xvhmHO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11BDCC4CEF0;
-	Thu, 11 Sep 2025 15:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757603644;
-	bh=XBnEBB90OcOXKmWP2giYQ6rYXI4N+81XE3LHFRw6NVg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J4xvhmHOFYX2agkANpI9Y+NhgTgkzS3WODQQMpflnaGZZqA2mJR1ALkkuPq9CVBh8
-	 9rzo6WtNPP1ZsjIsl9HBOE6vxDz4/PsTHfzTBiuXSJZSb57vsPKz0nTJJ2z7U+iHR/
-	 FZbbyYGQuVzTyGItMAUQzoSIm9vqQQKy4leV6xRWJUTzPaxLEM0Wwf0LJoD3jmNRXK
-	 mOc4W/5kBn/a4ucPDYYvkiHwoMgzKVVzg/IXhO9TaSMPgO+XiZYfTvT3hxVNvUeths
-	 vq23ggWWCqC7VE1J4w1Eukfd6qwEQDAn99rirX2TsZT+qoesYNrihvhMMuodcScJ89
-	 43hmD2VBv5szg==
-Date: Thu, 11 Sep 2025 16:14:00 +0100
-From: Lee Jones <lee@kernel.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, jcormier@criticallink.com,
-	Job Sava <jsava@criticallink.com>, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
-Subject: [GIT PULL v2] Immutable branch between MFD and Input due for the
- v6.18 merge window
-Message-ID: <20250911151400.GR9224@google.com>
-References: <20250826134631.1499936-1-mwalle@kernel.org>
- <20250903113255.GK2163762@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y55koYemp/hj2qoAbl5eELQwwOHoDBt+Ya903g8q95I4x1CroPecbuATDWB5cndcdTRFVM5O57VfM9cHTwbV1MUJ/D92JeuHZBWMkqVTZBnz5Mp9uI+fBwgaYFQG1iiQZHCivWiDA5lSgweSC4Vm9dSmDXIUPbP0blNql8igtN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PIunA2KN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757603656;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UhkjH+hTcVoB2yqMPEhvNQAw1eYZHiJV4Zt4Zroar9Y=;
+	b=PIunA2KNLfZyOigvRH2H4H39bvKuXmGuOfmjV+ZEt1vVl1fLyxwpHC39eMUssaTdiiBhwE
+	hvvFSa8JbfeaaCRahBnacFYXgdT6yPJvLeM6xrhdsj5t1wJS9VVBHqAZHDEnIEq4FDvKq3
+	YIIbEaurlPYZ1ZJu+Hg1g8z/0FuP9Kw=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-201-1MBZyD3sO--rBsXZgZZTeA-1; Thu,
+ 11 Sep 2025 11:14:15 -0400
+X-MC-Unique: 1MBZyD3sO--rBsXZgZZTeA-1
+X-Mimecast-MFC-AGG-ID: 1MBZyD3sO--rBsXZgZZTeA_1757603652
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8A4F2180029A;
+	Thu, 11 Sep 2025 15:14:11 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.88.69])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB60C1944CEB;
+	Thu, 11 Sep 2025 15:14:08 +0000 (UTC)
+Date: Thu, 11 Sep 2025 11:14:06 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Wang Tao <wangtao554@huawei.com>,
+	stable@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	tglx@linutronix.de, linux-kernel@vger.kernel.org,
+	tanghui20@huawei.com, zhangqiao22@huawei.com
+Subject: Re: [PATCH] sched/core: Fix potential deadlock on rq lock
+Message-ID: <20250911151318.GC396619@pauld.westford.csb>
+References: <20250911124249.1154043-1-wangtao554@huawei.com>
+ <20250911135358.GY3245006@noisy.programming.kicks-ass.net>
+ <aMLklWUzm1ZqZgZF@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250903113255.GK2163762@google.com>
+In-Reply-To: <aMLklWUzm1ZqZgZF@localhost.localdomain>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Here is an updated PR containing a recent fix:
+On Thu, Sep 11, 2025 at 05:02:45PM +0200 Frederic Weisbecker wrote:
+> Le Thu, Sep 11, 2025 at 03:53:58PM +0200, Peter Zijlstra a �crit :
+> > On Thu, Sep 11, 2025 at 12:42:49PM +0000, Wang Tao wrote:
+> > > When CPU 1 enters the nohz_full state, and the kworker on CPU 0 executes
+> > > the function sched_tick_remote, holding the lock on CPU1's rq
+> > > and triggering the warning WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3).
+> > > This leads to the process of printing the warning message, where the
+> > > console_sem semaphore is held. At this point, the print task on the
+> > > CPU1's rq cannot acquire the console_sem and joins the wait queue,
+> > > entering the UNINTERRUPTIBLE state. It waits for the console_sem to be
+> > > released and then wakes up. After the task on CPU 0 releases
+> > > the console_sem, it wakes up the waiting console_sem task.
+> > > In try_to_wake_up, it attempts to acquire the lock on CPU1's rq again,
+> > > resulting in a deadlock.
+> > > 
+> > > The triggering scenario is as follows:
+> > > 
+> > > CPU0								CPU1
+> > > sched_tick_remote
+> > > WARN_ON_ONCE(delta > (u64)NSEC_PER_SEC * 3)
+> > > 
+> > > report_bug							con_write
+> > > printk
+> > > 
+> > > console_unlock
+> > > 								do_con_write
+> > > 								console_lock
+> > > 								down(&console_sem)
+> > > 								list_add_tail(&waiter.list, &sem->wait_list);
+> > > up(&console_sem)
+> > > wake_up_q(&wake_q)
+> > > try_to_wake_up
+> > > __task_rq_lock
+> > > _raw_spin_lock
+> > > 
+> > > This patch fixes the issue by deffering all printk console printing
+> > > during the lock holding period.
+> > > 
+> > > Fixes: d84b31313ef8 ("sched/isolation: Offload residual 1Hz scheduler tick")
+> > > Signed-off-by: Wang Tao <wangtao554@huawei.com>
+> > 
+> > I fundamentally hate that deferred thing and consider it a printk bug.
+> > 
+> > But really, if you trip that WARN, fix it and the problem goes away.
+> 
+> And probably it triggers a lot of false positives. An overloaded housekeeping
+> CPU can easily be off for 2 seconds. We should make it 30 seconds.
+>
 
-a377b1be3a0e ("mfd: tps6594: Explicitly include bitfield.h")
+It does trigger pretty easily. We've done some work to try to make better
+(spreading HK work around for example) but you can still hit it. Especially,
+if there are virtualization layers involved...
 
-LINK: https://lore.kernel.org/all/DCKNRRN0Q2I7.WFT5U4QKA9XS@kernel.org/
+Increasing that time a bit would be great :)
 
------
+Cheers,
+Phil
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-input-v6.18-1
-
-for you to fetch changes up to a377b1be3a0ed51ccabfe22908ebde065848313c:
-
-  mfd: tps6594: Explicitly include bitfield.h (2025-09-11 16:06:02 +0100)
-
-----------------------------------------------------------------
-[UPDATED] Immutable branch between MFD and Input due for the v6.18 merge window
-
-----------------------------------------------------------------
-Job Sava (1):
-      input: tps6594-pwrbutton: Add power button functionality
-
-Michael Walle (2):
-      mfd: tps6594: Add power button functionality
-      mfd: tps6594: Add board power-off support
-
-Nathan Chancellor (1):
-      mfd: tps6594: Explicitly include bitfield.h
-
- drivers/input/misc/Kconfig             |  10 +++
- drivers/input/misc/Makefile            |   1 +
- drivers/input/misc/tps6594-pwrbutton.c | 126 +++++++++++++++++++++++++++++++++
- drivers/mfd/tps6594-core.c             |  59 ++++++++++++++-
- 4 files changed, 194 insertions(+), 2 deletions(-)
- create mode 100644 drivers/input/misc/tps6594-pwrbutton.c
+> Thanks.
+> 
+> -- 
+> Frederic Weisbecker
+> SUSE Labs
+> 
 
 -- 
-Lee Jones [李琼斯]
+
 
