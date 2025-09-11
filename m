@@ -1,86 +1,47 @@
-Return-Path: <linux-kernel+bounces-812263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2296EB5352F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:24:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE78B53533
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17C837A6C51
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:22:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51215A5266
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B003375CD;
-	Thu, 11 Sep 2025 14:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C46338F2A;
+	Thu, 11 Sep 2025 14:25:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="StwsJvNo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GU32iu6p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F703320CC8
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C563F326D5C;
+	Thu, 11 Sep 2025 14:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757600667; cv=none; b=h29jhswsI8jKomT8RYNGGkyxARDIT2DVmHMTvNqy5Mv5Bq4QrM+O7YohOx7GbIxy/ryrE+TtfHcYSHikjkwdwlJJmoWFq8xGeRBnsBzp2WXmyhVIDSfXl17hAhEmJZpZyYMpjakIRk7RsxYuw3/AIrtLHZiLWytWwa3r+tbwO8Q=
+	t=1757600701; cv=none; b=psm81NNE+dEXS6FxeOA/Owkx7RxS2O8x7/gog4TQgWaLp0p8uIty5L7xwMvTtLoTlhwsJWdqr36aMY8MTF9kmQaX3tvHsFqsX2mO4PxCD9/fXBsLZtepkAst8wvo5ZcJru1P3x8S9d692X3gZNNLzCn10XgTFw9POwPpGUtpjAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757600667; c=relaxed/simple;
-	bh=Y6a/86+wjytTrdNd1x/+Y3lFyfNxUHDS/sgjqthX3Ug=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IifQNCJiCFoG1G25bk9udC5EJ+Z2oPXov8oPF8ZkFXcNjtR6MnPMKajOYPwfhBNyPBS+0U5WlDewZdKZmFI/GBBI5wxE5Eel9N7rugKZM7V6YMnm07kFnQe32vbP6sVixsaMZ5ErIPt0Xh+k/xARL6rkgIQSgwmmlNrWraftSow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=StwsJvNo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757600665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MHsNAGKvOotxj7lLw2vsOxsdCk/iz2T3/ZLVYRgdaOw=;
-	b=StwsJvNo+vnhbS1Z+NHyDzzuiRl4xurw9xxGhxOzucCx1XVAZVStXfzPolDhYUGENsa+Di
-	fKYmzPnXI3Ts2z0Lw513qvru1PMTlaVl1Ro21IXyaoC21xtJ05hJX5EOudInTsTqSXWyNL
-	KvmnZIWQRZBLyt+WheEuQHfbXYYYQhU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-244-X5ASO3z4NZWTiLroS11mwQ-1; Thu, 11 Sep 2025 10:24:23 -0400
-X-MC-Unique: X5ASO3z4NZWTiLroS11mwQ-1
-X-Mimecast-MFC-AGG-ID: X5ASO3z4NZWTiLroS11mwQ_1757600662
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b9912a07dso4031995e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:24:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757600661; x=1758205461;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MHsNAGKvOotxj7lLw2vsOxsdCk/iz2T3/ZLVYRgdaOw=;
-        b=LJPGgij46tbxB5gY9SqZgRozkb5ZHY9LFOlz32A4vf6QVVCi2SPeHo9N/+9pk2aYCq
-         sT9yj1mMWuLiRKhvuEIqr6m/YVIcPkWQg6Kt25RRNaxPJYE1hdAJ+6r3XJkvSdxxNgRr
-         QhdVquY3wRYVb8EZ9KQySqJVsqYVoK4VxaZMjhCa4qlNopHyYAIJLNcL/yVQ5QLXHV4Y
-         PpqQ2ivbAyAaiR1jCjLgPGhvucZLBGjykY6OpuYxC5JXknK+g48NL8R5A11NOgq1L86Z
-         LdYsRmojhahpFUdvtP6O0BQiqH7roOHspepa/h93fHwxgsR4NZmDUaLnV+iHEXvsQb3b
-         3gAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHgWN41PbY7WmJJwJJfF6A85M+S1mnmYLZybtcdqx4wjaJRcIRdTM/avBTUkxiPYj4LCMBA1S4y+rB5lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKI86QA3txIeGiuB0k7Qoajrfci5IW5dmHTNFjcItZMmoZn7uj
-	JiaokzBKfTXgHyI8Kj45ieHUTmFuJLCfUDZdfa674GebZ/YXw/OivA8ASUtphx7AdX6nCRnfdTC
-	1NzAWlOhqYSKx5tSU+LfKsPVKtj6qvdv2zeWCHNU4ZFHXCLgpvuNRiRcnmPVynrSITQmk1YfgMw
-	==
-X-Gm-Gg: ASbGncvn4SJZ/h4g/YZ9mk7/Ca5W7JJQdRQh4REBtt6bWrCTi2eKa40r79c3sUZyKC4
-	0ELwm7MPRxhz9KvHDB3cU/gVi2fRM7l+3MzqoBXDLUcKu6J4yVK5ajeuZpfjwla0psJBBsgKMjE
-	/dCYeR8xXeHEwKHJaxjqVjs3wrHG5NS5zkiJ8G8lBFZTIB92ibKG5rqUY0rH1WbtfpYgAoWMJpU
-	i12416U5dq2fQgZlICA00Nw+dRxDSpfdh5/+6Pctu52Y5aVNZ42ObbMifqP/eGBQqCff3r8YXKb
-	F9oynkhzuhX77XaakW2+xqIiWumbFt7mCE1EzjBLBOY=
-X-Received: by 2002:adf:b350:0:b0:3e7:41ac:45f8 with SMTP id ffacd0b85a97d-3e741ac4939mr10290873f8f.55.1757600661471;
-        Thu, 11 Sep 2025 07:24:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH9vOlqkWFXwoDUxcYYpXeQRpsUkfeWLqOyZ0rHn85FAwejsWx3SKbDB72PCR7M/2FZa6TABA==
-X-Received: by 2002:adf:b350:0:b0:3e7:41ac:45f8 with SMTP id ffacd0b85a97d-3e741ac4939mr10290856f8f.55.1757600661007;
-        Thu, 11 Sep 2025 07:24:21 -0700 (PDT)
-Received: from [192.168.0.115] ([216.128.11.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0372aea2sm26368435e9.7.2025.09.11.07.24.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 07:24:20 -0700 (PDT)
-Message-ID: <45cd5086-193f-4344-a5f0-78dde71474d7@redhat.com>
-Date: Thu, 11 Sep 2025 16:24:19 +0200
+	s=arc-20240116; t=1757600701; c=relaxed/simple;
+	bh=o5UoR0p3i+I37l9rj80SYoiobhLcn2GcF65dUEf7GS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lszr71GlISa4MjamamQsgd6nFlbAwMJQErQDRBLjxWswjU8WjAidaBJJhJojyKoqNC29Dp+n8PfIPapownWqgwwgvS+igO3BSeMWUZpTlZ5ajwevs45hdmKUe74VqIlPSx8QD5KSkpnXbojQ83hm+tNgiQVAlhq3neBQvZQ9HNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GU32iu6p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A9F4C4CEF0;
+	Thu, 11 Sep 2025 14:24:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757600701;
+	bh=o5UoR0p3i+I37l9rj80SYoiobhLcn2GcF65dUEf7GS4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GU32iu6p9IOUCZkZxtnmsnbSCC+LeUc7Tm9gxyOiMyAB/uj89pADGq42Y4xdHTc9I
+	 jLU1PP1vP+euESTLZ7GUxQ53I5SA+hh4wfvruHI6UgDcoIoxd69ocLEtBWANL4ANRr
+	 pd9yjSY0UIPHo8tleyVU3SP2P2OB9hlAYSaPF2BKAukZQkHwFd4zQ9HbTix1lNn0K3
+	 DaIYDjEFF9bVtoVwp7vMvOYcd22f16i6cIQe100rI2hIOVDJKVNCauK2SgdCspB5lb
+	 g67BYER6jt3a4J0sZ5nAi0TfloslmzbbjfxZsNqag9mdZ5nFQMOt/KBBsiI9CF5a7p
+	 UCPVdKZPHQavg==
+Message-ID: <f0312e65-8c74-4c0b-9db3-7c98009dc03e@kernel.org>
+Date: Thu, 11 Sep 2025 16:24:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,42 +49,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] Networking for v6.17-rc6
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250911131034.47905-1-pabeni@redhat.com>
+Subject: Re: [PATCH 2/3] arm64: dts: axis: Add samsung,exynos8895-uart
+ compatible for serial node
+To: Ravi Patel <ravi.patel@samsung.com>, gregkh@linuxfoundation.org,
+ jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, jesper.nilsson@axis.com, lars.persson@axis.com,
+ alim.akhtar@samsung.com, arnd@kernel.org
+Cc: andriy.shevchenko@linux.intel.com, geert+renesas@glider.be,
+ thierry.bultel.yh@bp.renesas.com, dianders@chromium.org,
+ robert.marko@sartura.hr, schnelle@linux.ibm.com, kkartik@nvidia.com,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+ ksk4725@coasia.com, kenkim@coasia.com, smn1196@coasia.com,
+ pjsin865@coasia.com, shradha.t@samsung.com
+References: <20250911141605.13034-1-ravi.patel@samsung.com>
+ <CGME20250911141710epcas5p190bae9561e3886250c74a9e11def935b@epcas5p1.samsung.com>
+ <20250911141605.13034-3-ravi.patel@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-In-Reply-To: <20250911131034.47905-1-pabeni@redhat.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250911141605.13034-3-ravi.patel@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/11/25 3:10 PM, Paolo Abeni wrote:
-> The following changes since commit d69eb204c255c35abd9e8cb621484e8074c75eaa:
+On 11/09/2025 16:16, Ravi Patel wrote:
+> Add the samsung,exynos8895-uart compatible in the serial node
+> and also add samsung,uart-fifosize property.
 > 
->   Merge tag 'net-6.17-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-09-04 09:59:15 -0700)
+> This is to remove the axis,artpec8-uart specific code (which is
+> kind of duplicated) from the driver and use the other matching
+> exynos8895 uart code for ARTPEC-8.
 > 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc6
-> 
-> for you to fetch changes up to 62e1de1d3352d4c64ebc0335a01186f421cbe6e7:
-> 
->   Merge tag 'wireless-2025-09-11' of https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless (2025-09-11 12:49:53 +0200)
-> 
-> ----------------------------------------------------------------
-
-Please do not pull.
-
-We just received a report about a change included here causing
-regressions (usb, again).
-
-I'll send a v2 soon with the blame commit reverted.
-
-Thanks,
-
-Paolo
+> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/axis/artpec8.dtsi | 3 ++-
 
 
+Please do not combine subsystems. This is a SoC patch, must be sent
+separately.
+
+I mentioned this on mailing list many times... recently:
+https://lore.kernel.org/all/20250907-zippy-auburn-koel-d6da32@kuoka/
+
+
+Best regards,
+Krzysztof
 
