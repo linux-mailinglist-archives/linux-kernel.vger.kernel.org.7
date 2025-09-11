@@ -1,132 +1,180 @@
-Return-Path: <linux-kernel+bounces-812093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75CF2B532D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:55:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB81B532D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECCF5A4417
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:55:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BB1C1C85D4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB9B322A31;
-	Thu, 11 Sep 2025 12:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA532324B0A;
+	Thu, 11 Sep 2025 12:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T5I3wIMm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i0HYpqA9"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E58BF23AB8A;
-	Thu, 11 Sep 2025 12:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FB0322A1F
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757595303; cv=none; b=n+PtN9VXP/2S+GPfcRiuT8BsfeGKSj4mjz790cvvuTeAbPICVIN3EnCagaIAQeJrWuiKt8vs+B1VZavOalCUlSa3DYwgUnmwDcyXYTdYHeNUEC+WTPrJ0lj6KyOzAKUQpUaWVXa34d0+PvFiF34e6ziHNz0tgyjfgxsfE89er6w=
+	t=1757595305; cv=none; b=IhGEJY2O5H/m8PEk3272LsQyKVkRiuEI+7Ad3yDubB0QTiwQ6R56rFERE//SSd7ufBIVZmfQDU9jiicIha5oOw5N5GXo9uKcQGzSgUIogVI5zkbT6MyAGdzxvxZl0o1sLpNoSib2hGc8uphiYX7vClnmmcVlK8QaLZKMM5wDk+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757595303; c=relaxed/simple;
-	bh=kUamfGGx5n3Z4g26DreT0zQfkgHhAnmsXNz8Phr6jjk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=g7vnXaQTY0ZMNwhjfHVq3e+CezWzh8H+AKEGw6sanamVl6geB4Wx2XEBkvub8eyQq6kkIuE/fHl5/GPzJCfUEqai5Lmad4SnPwVHdLvlj5BYbwJIlVTWntgj1yaQ6vw7fpDgHQ74iknu1CnY2L4zRug9Suu73QSmxx/WZ3OakFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T5I3wIMm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60ED4C4CEF0;
-	Thu, 11 Sep 2025 12:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757595300;
-	bh=kUamfGGx5n3Z4g26DreT0zQfkgHhAnmsXNz8Phr6jjk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=T5I3wIMm5cR8a7a8WIxYydkdkIWoLqIj7V6/zWw71DH25JL9DP9yLQnXHhpi1bWFH
-	 Jon60CTykRcl0LAPokqhcMq4rrRhPfbLsV5zeLoYnn4s07U7FtgkEcuvAbd57nI6ot
-	 KkgssJlfjtGe9P8oQcRuY2OkbhKe74E7fDg7hwftRaohU38Yt6ZRDGUdDnb0esJOz6
-	 KHrz3LIogWUSmr1172LVAly2UiMx73tH4OCx01UbqcQbDmeZHao2EuTWBz0ahn2W6E
-	 5CV4hDY1CaYtVRglDbYgVEmgk28xuWlsInDndYIIaDRffAsqz+kfK2BD9A4X4abTuv
-	 nFnxtKx469X8A==
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-746d3b0d926so263800a34.1;
-        Thu, 11 Sep 2025 05:55:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXV2Pkk35tqFyWxS6zteP3gR52/sEExyQg7ismuHdodV/dPZgiqGSHnaMSLfxt9oW2xibr8uzMvN1Hmiqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeviPbcUjoqUnBIRbQLIbSDfEABHz2OQXeRdcQolFKXY1AOOQl
-	Axw4df2NKFq4JpatCACgXYDHqwhgHFEZyo58Rg5UHYfbPDF6x6BkPLuZymvIoBojbgz0HR3Au58
-	4XGdxlIYHg4DBpCCTGKfLFmcR5Iihj1Q=
-X-Google-Smtp-Source: AGHT+IG98WhLqVCwMY/2AvCS2rEBfCNKgym1hWiGmI+LlUs45ABBWM3HslvA2dJfb4fFE30Rskq85kM3n2B5GVb0bF4=
-X-Received: by 2002:a05:6830:2584:b0:745:a21c:6a6a with SMTP id
- 46e09a7af769-74c7115e030mr11993928a34.12.1757595299560; Thu, 11 Sep 2025
- 05:54:59 -0700 (PDT)
+	s=arc-20240116; t=1757595305; c=relaxed/simple;
+	bh=2oSOqVZN2yEJdOr1yjJzjaX0EOiSKgZ7QouF6tLg8hI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T6wlFwuvyvo+fHR9V9xogdx+v14KHRsl+9OtNiQ1+gqinK0LkS93QygCP48107ZBNaM5NGBHQ8iC7Ny3O61GyHSEEJp8t/QAtDiHFsn43Gpz4tYBoU7P5vanu8g95yIQNDuwaAYAzb0vYV7xrl5CaffAlK46IjjWbxUsGQheZyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i0HYpqA9; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e2055ce7b3so479575f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:55:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757595302; x=1758200102; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lzHYWAUSXTU099HyzOJQWZd7CmwZnR6rVbbpZB00I6A=;
+        b=i0HYpqA9pIZnYpH66vlaiYOoUVo2UcmMd8R1bZO1Br3fDvHP+XPLOWDweEnV9BG28l
+         KMKIHIzqJVThkhBxjoonazAog5ojh8jILz2Ho5p9H+2irfGIsTAq0VF6jqSvTTlWl01g
+         daNCOngDBz+dKWsV76O8rk3udNhCD1QFVtAgU6K3NgDa5iwuwjL7rUAeKgeDyixhotbb
+         6/Zj08lQJtTUQJXRd2ABrbVpg/boX6pgUxdq32ovPgeZVfgE1iS/GGFX9vbhi6mks5Ae
+         cwksYUyX966LFxtasKaaA4ifA+3ZkJLpg8IGObzFFsaohT04aIjla/ZJP0AxSMcBUMxk
+         tDqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757595302; x=1758200102;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lzHYWAUSXTU099HyzOJQWZd7CmwZnR6rVbbpZB00I6A=;
+        b=KdwDougoOeUEa0pYJxoeq+PKH4a5KSnWZ7+sby8rQKePN/cF2M3OsOUCYfUiu6vd/5
+         eWTthDhHtVqlfOW1T+JdHHKQgW1YaGRDUGqxAEfIS0tl/2bbCgt4Q9wgFLYG908HeA+X
+         lWdKc4RpeqTpQcPa9HEN/YybEqMMZDMUyO4IXuUG08qWMoRGng6Z8d+B+0kn45Sp0fYm
+         S3RpYzPnNuhKd+vki/8KLs+/Fodsw817MJmSO2mXdy3RtuEegD4ux1kamlX7m3yFhSCx
+         RtAmO++b7eO4kZjPsg7xv/1qswR5HfhCxzGwlZRKdfj6sXz7z5G33aOEjGeiGKVz1X5A
+         1APQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrfLHeSCtMH5tX226o54+NrfAFPwbrhRu0ADmDgfnZarTJPcs4lMq/yNyHxQmS0Ol5xUqdyG4KwfxBO9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4BMdohTZNh9psdmlQyLRks/CVP92BGi2LGqRw5Zq9L7JQo/eU
+	iEcTIa2JAPUHR9mV7T4AQlnDsYoS+HFw4rsrX7QkwqzF2bZv/lImALqRvpQgM9YLF5w=
+X-Gm-Gg: ASbGncspew1mAa4Sw/m0xFAMacZaQm2zeyyKxYBjBb7Au/3cFGdT4lAezWiCikt1EcI
+	+s19twA8Efh+H8hpgjE1KzUZ0+wtq74Fj10wcnr2AfFa2SaiiaLIYsUpcrRkgxrtpRXsOuE1p3g
+	qZhskrQZp/vv0Gkb03NNuOouBC3F5Osg6LpPCnzi5bAzPoHBvYAy0v7zD1Sb3z6dTHkWwrseQPM
+	E7wW0Q0aBTnU3SePmvViydqPHI5h5aU5Px0Ji4jzA64kNujvOvMwbpssk+RI9gE24xuIVvQrkdd
+	Ykto4yY6Dxm+lWkIm7YLyQgcvwfvgClH1eUBIjprGPI0dprL8NGROnmOYWvyIJUo75VMd12dgnF
+	WpGit1T3dnAcqK+U0YYN1husictdIfKmyr9dPfarebgAAHZRLLyAJVUmzZZP8R/3e4d4xz/5aiF
+	Q6S/e7GfVMcaeWj0NIU2Ro+Ww=
+X-Google-Smtp-Source: AGHT+IEebi/zE5XDYf831iEgQZ391cMJunsa1tiSBIWMBmOGscKQgCSQqBnDSCMdT7jr02fwbzNWdQ==
+X-Received: by 2002:a05:6000:2003:b0:3e4:bb5f:ee6d with SMTP id ffacd0b85a97d-3e641a6015bmr16847418f8f.15.1757595301674;
+        Thu, 11 Sep 2025 05:55:01 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:d521:838e:7c69:f457? ([2a05:6e02:1041:c10:d521:838e:7c69:f457])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3e7607d7593sm2360205f8f.43.2025.09.11.05.55.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 05:55:01 -0700 (PDT)
+Message-ID: <b4d2ad54-54d5-4c26-be49-b6ac671683d2@linaro.org>
+Date: Thu, 11 Sep 2025 14:55:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Sep 2025 14:54:48 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j-OGp-djCo7m8Y92v1FOPTYbPp4tw_d1N4jyS_4gfgFA@mail.gmail.com>
-X-Gm-Features: Ac12FXwqS_NWGj2I3GSYyJaA8rO-OqDwtZiyLBPTk9_i-irvZti3A1x1AEJMQdk
-Message-ID: <CAJZ5v0j-OGp-djCo7m8Y92v1FOPTYbPp4tw_d1N4jyS_4gfgFA@mail.gmail.com>
-Subject: [GIT PULL] Power management fixes for v6.17-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Linus,
-
-Please pull from the tag
-
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.17-rc6
-
-with top-most commit bddce1c7a5ab3ec2dd0fc404f4155c0c17e847b2
-
- Merge branches 'pm-sleep' and 'pm-em'
-
-on top of commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-
- Linux 6.17-rc5
-
-to receive power management fixes for 6.17-rc6.
-
-These fix a nasty hibernation regression introduced during the 6.16
-cycle, an issue related to energy model management occurring on Intel
-hybrid systems where some CPUs are offline to start with, and two
-regressions in the amd-pstate driver:
-
- - Restore a pm_restrict_gfp_mask() call in hibernation_snapshot() that
-   was removed incorrectly during the 6.16 development cycle (Rafael
-   Wysocki)
-
- - Introduce a function for registering a perf domain without triggering
-   a system-wide CPU capacity update and make the intel_pstate driver
-   use it to avoid recurring unsuccessful attempts to update capacities
-   of all CPUs in the system (Rafael Wysocki)
-
- - Fix setting of CPPC.min_perf in the active mode with performance
-   governor in the amd-pstate driver to restore its expected behavior
-   changed recently (Gautham Shenoy)
-
- - Avoid mistakenly setting EPP to 0 in the amd-pstate driver after
-   system resume as a result of recent code changes (Mario Limonciello)
-
-Thanks!
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+ linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
+ ghennadi.procopciuc@oss.nxp.com
+References: <20250910155759.75380-1-daniel.lezcano@linaro.org>
+ <20250910155759.75380-3-daniel.lezcano@linaro.org>
+ <20250910183212.6640e662@jic23-huawei>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250910183212.6640e662@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
----------------
+Hi Jonathan,
 
-Gautham R. Shenoy (1):
-      cpufreq/amd-pstate: Fix setting of CPPC.min_perf in active mode
-for performance governor
+thanks for the review
 
-Mario Limonciello (AMD) (1):
-      cpufreq/amd-pstate: Fix a regression leading to EPP 0 after resume
+On 10/09/2025 19:32, Jonathan Cameron wrote:
+> On Wed, 10 Sep 2025 17:57:56 +0200
+> Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
 
-Rafael J. Wysocki (2):
-      PM: EM: Add function for registering a PD without capacity update
-      PM: hibernate: Restrict GFP mask in hibernation_snapshot()
+[ ... ]
 
----------------
+>> +/* Main Configuration Register */
+>> +#define REG_ADC_MCR(__base)		((__base) + 0x00)
+> 
+> I'm not really convinced these macros help over just having
+> readl(info->regs + NXP_SADC_MCR_REG);
 
- drivers/cpufreq/amd-pstate.c   | 19 +++++++++++--------
- drivers/cpufreq/intel_pstate.c |  4 ++--
- include/linux/energy_model.h   | 10 ++++++++++
- kernel/power/energy_model.c    | 29 +++++++++++++++++++++++++----
- kernel/power/hibernate.c       |  1 +
- 5 files changed, 49 insertions(+), 14 deletions(-)
+That is really a matter of taste :)
+
+I used to create this format in order to stick the macros with the 
+debugfs register code which is not part of these changes. There is a 
+similar format in drivers/clocksource/timer-nxp-stm.c or 
+driver/thermal/mediatek/lvts.c IMHO is less prone to error than base + 
+REG all around the code.
+
+Do you want me to convert all the macros to info->__base + MACRO ?
+
+[ ... ]
+
+>> +static const struct iio_chan_spec nxp_sar_adc_iio_channels[] = {
+>> +	ADC_CHAN(0, IIO_VOLTAGE),
+>> +	ADC_CHAN(1, IIO_VOLTAGE),
+>> +	ADC_CHAN(2, IIO_VOLTAGE),
+>> +	ADC_CHAN(3, IIO_VOLTAGE),
+>> +	ADC_CHAN(4, IIO_VOLTAGE),
+>> +	ADC_CHAN(5, IIO_VOLTAGE),
+>> +	ADC_CHAN(6, IIO_VOLTAGE),
+>> +	ADC_CHAN(7, IIO_VOLTAGE),
+>> +	IIO_CHAN_SOFT_TIMESTAMP(32),
+> 
+> Whilst we only insist on monotonic numbering, putting it all the way down
+> at 32 seems excessive. Why not 8?  Perhaps a comment if this is to avoid
+> moving it for some future feature.
+
+The ADC has 8 channels for external acquisition however others channels 
+8->31 are described as reserved. They may evolve in the future to more 
+channels. That is probably the reason why 32 is used here.
+
+[ ... ]
+
+>> +	indio_dev->name = dev_name(dev);
+> 
+> This should be the 'part number'.  That is a little ill defined
+> for a SoC integrated ADC, but generally not what we get from dev_name()
+> on the platform_device.
+
+Sorry, I don't get the comment. If I refer to the different drivers 
+there is not consistency with the iio_dev->name.
+
+rtq6056.c:      indio_dev->name = "rtq6056";
+rzg2l_adc.c:    indio_dev->name = DRIVER_NAME;
+sc27xx_adc.c:   indio_dev->name = dev_name(dev);
+mt6359-auxadc.c:  indio_dev->name = adc_dev->chip_info->model_name;
+mcp3911.c:      indio_dev->name = spi_get_device_id(spi)->name;
+
+Are you suggesting to use the compatible part number ?
+
+	indio->name = "s32g2-sar-adc";
+
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
