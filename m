@@ -1,118 +1,123 @@
-Return-Path: <linux-kernel+bounces-812672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03426B53B49
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17714B53B55
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:25:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3E511CC32DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61255189EC89
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED841369330;
-	Thu, 11 Sep 2025 18:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8671F36809B;
+	Thu, 11 Sep 2025 18:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QLfIzDYC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="LzY/w8/E"
+Received: from fuchsia.ash.relay.mailchannels.net (fuchsia.ash.relay.mailchannels.net [23.83.222.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5349347F4A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757614690; cv=none; b=Bao2QMI85MgGkgcI6EZ+JLN3MfhekfqRCdnVfVrTU1f+rqG2YUj0XTD9paRo2Ghwr5jsxRKAtWaWZBsl3j1oGZTH7zQxwq3Cug9rAP7Ap4vBHsAuEv3M8/PuQqYuH9ADC2oeBvqE/pOkwPc4cen4c+o9rFIZc6F/jJvf1b8J46E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757614690; c=relaxed/simple;
-	bh=clA8GqiEaZLpxSps/Zg9+uXbFOxSOUyl+6EIrGzL37g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SiJP2fXkdRQWGddupsbVTJ+mGKKd6Ht6SkHRxNxvXM29h78aKDvMfkW55GL9Mt0UnSSDWcXbCWwKKTc2aTOOvaZX8GhP8qp2wb3TzcOW2R6X4g0EbioE71HyzUhBdhubPrYgJifgQTQIWVjJ42XqFAl5gCTy2WuiLF18/r8K2PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QLfIzDYC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CA75C4CEFA
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:18:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757614690;
-	bh=clA8GqiEaZLpxSps/Zg9+uXbFOxSOUyl+6EIrGzL37g=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=QLfIzDYCHc0/UNmTxImRu5nZHNoGCtg5/JZmaRjEOnoKDCf3RLPNrxMTvHsBDzTqp
-	 BVCYw0Yf15yTITpxUrhGNq6uiB8uIpZnuUBoIHTYQ3k8VgYxIvT/gZ0UW5aCS96Zv4
-	 lKHsAsgVa7Hh8yO8oKxyekmV1cK1niIt6gZzgYU9tWbIpevjl2fUF5UxWBqiXMbrxP
-	 CGpCtxfmeQIOi6F6Nl6sIeBYPwRID+E1Ya2Embdk8AaFxaLylcLD46Me15Re57e6xI
-	 WIjC79qlRk/xHIzDFsKMHDNsH5eU5uStSYF9Zn3YHMBOjfzrKRkRo0D97+JMF/k1xG
-	 BByAcFeZ22png==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-336d2b0ea8dso8170521fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:18:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV51V7r79ExTtGy7y7GBw9GMN9ilJB8OcVy3uDiU86HCxDzrMKSods6ZAgqVEEJhQvqdAKNkwfWAsjsi+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySCai3Ur+r6hHA+gSb3mXfonteqXJd7HrH+M0xF5Rwv+M36PAC
-	W1ROpgV+2ICgVov1uzMD2+0xK+mKMqT+662eHeb1VemIncKRIzcKsp4A9o+7X0qgvt3r6cRJHZe
-	eWaFGQfjQyFZ93p/csWKdhClWeUjTbSQ=
-X-Google-Smtp-Source: AGHT+IFNhBqlOYMX7VhHL/3/WsyBugQCqv4OR+B6SohRHQQkUzEv33t/qS3NjuPROvGHTdFWqUdjtxSUm5WWLxfziaM=
-X-Received: by 2002:a05:651c:4386:20b0:338:1ce5:4034 with SMTP id
- 38308e7fff4ca-3513d96a5femr123181fa.32.1757614688354; Thu, 11 Sep 2025
- 11:18:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2649124DD13;
+	Thu, 11 Sep 2025 18:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.222.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757615106; cv=pass; b=H/Nku2+pQBUXOC0CBFeUYxzcy8imGSk/LRnkZYpIWJzIpj01fWjM02w0OKhTogCs4+M0fXTQplSkEZDN1gsigTd5XHTm/+5kaZAqfxHtSC0NGA0OzXi50PX7j1TVydLUsAFWsQzJpxagHICVT07ZH6ug3u1ed5K7PQM9eLMddaM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757615106; c=relaxed/simple;
+	bh=WwDKNviDEA6uHAFz9Yp0OPtqfD47QY6biWgK1Hnh4aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXYX6yLidzPvNDffIZgGf+xREIlHvKRx0o5QUevfC7tx0nGJzimx+FyGKA0DbgMbWI3yDd6g7DWtsWHeuE6KgmCXV7jdqRPkauLZwuQVB7J3h44ujcbVZu8YDSuW6PYaSs3VjWLfqggYFGh9aXoxjR+u7yuTCsPTe/DePypmkH4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=LzY/w8/E; arc=pass smtp.client-ip=23.83.222.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 241631A7AC1;
+	Thu, 11 Sep 2025 18:18:09 +0000 (UTC)
+Received: from pdx1-sub0-mail-a316.dreamhost.com (100-104-249-162.trex-nlb.outbound.svc.cluster.local [100.104.249.162])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 8DA4A1A63B1;
+	Thu, 11 Sep 2025 18:18:08 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757614688; a=rsa-sha256;
+	cv=none;
+	b=kOv0Nixcl2tVIxpa5HUC262/eI5rmNXfnM1/wBYhQIDJ8qFRfsLCwt35FXEZZO3NqCcsb3
+	pDYpx7uHzj02mR/TE36un4nG4eeud/3QC04TBlir9R6KnAzMhLDcDr8mSYvfXUIN12qH0h
+	4vTbBqj3OBV9w5wdtDIWPZlGbWjxqP7/a2e6Q55fcjrh+05YxIuCuAtDa0hNP6t4ueHeW9
+	hOoNcI/4xVUHCZNrIsTm/rnO+R6Z2lSiQqLVD6nwcdk8R1zuXpnAHhj6ccfXYYAIqhxuer
+	KL3FL/7xvsNhiy6Agr3k7TvbdVQqrbvlKwQ7soBuUfl5MxIl+tYL/XRWcXckNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1757614688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=WwDKNviDEA6uHAFz9Yp0OPtqfD47QY6biWgK1Hnh4aI=;
+	b=CHGNo8do+hWRbVisxMhRXsiBhnmxoD4CE/9RzPpIbGQBObdykqR3eTpi4RLVTsDwarrOZB
+	kq9cDpMjLfrD/5TeCVlF4jnv1PUXLmthy+cop7Q8rYb8ntXJOxy6U2qthRiDRPlBugnKrC
+	bYsasAPzM3IF9C/Bh28zrm8jgletzhHGxWNh6YwrI7hoz1WH7zcMsAvaRXQAGJmI0LF+iD
+	JRr/nZs0qJBKuIfLZPVbRx04znf9bzSzLB1X2w7aNH74icVuPrGafc4BPEmF675j85ObaE
+	5Un+1vJ8ixN3570x1F7gvhJSpNSKEVcHqUqocpxGL83XeWj/kMAOify9sIkamQ==
+ARC-Authentication-Results: i=1;
+	rspamd-7b5fd646f8-2rcbz;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Belong-Imminent: 470f186b1ecd2ef6_1757614688971_2644890682
+X-MC-Loop-Signature: 1757614688971:4168443260
+X-MC-Ingress-Time: 1757614688971
+Received: from pdx1-sub0-mail-a316.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.104.249.162 (trex/7.1.3);
+	Thu, 11 Sep 2025 18:18:08 +0000
+Received: from offworld (syn-076-167-199-067.res.spectrum.com [76.167.199.67])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a316.dreamhost.com (Postfix) with ESMTPSA id 4cN5QR6tyGzFP;
+	Thu, 11 Sep 2025 11:18:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1757614688;
+	bh=WwDKNviDEA6uHAFz9Yp0OPtqfD47QY6biWgK1Hnh4aI=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=LzY/w8/EtH/v5rW2ELrJQ58G9a71xLJBr29V1KCkHA7UB+GzPxwD0+frxeJ5D8fUR
+	 QEvFkevHdX++xJIw7FYlhAT+Z+lz2bmp8B7eLHaYbXWK1ginF2+aZwAzTLEPDpp55Z
+	 D2ehuNw2S32s700x0/KpdqIqJUzgXmHUdKgKGT29LcqIkOc+4zjH0sszOjJ8yF11hT
+	 ped+FkwzgAZ0orZoB+AlBEvgudoPQg8S0u4PVHwKfgY+dnopeqI1+78aTtqvNAJaig
+	 j9Imz6KKv7yH2l41YgcuC5AqO712aVS5lwSp7RTJDP0gkCT0oXCzz0dEoB7+Y3borJ
+	 CuZWXsRFYDqFw==
+Date: Thu, 11 Sep 2025 11:18:05 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+Cc: paulmck@kernel.org, josh@joshtriplett.org, frederic@kernel.org,
+	neeraj.upadhyay@kernel.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [PATCH v2] rcu/segcblist: Use WRITE_ONCE() for rclp->len
+ decrement
+Message-ID: <20250911181805.zowj27hon5nazhyp@offworld>
+References: <20250911162641.796716-1-kaushlendra.kumar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908181059.1785605-1-wens@kernel.org> <20250908181059.1785605-3-wens@kernel.org>
- <aMMQSR7yYBQkY4CI@shell.armlinux.org.uk>
-In-Reply-To: <aMMQSR7yYBQkY4CI@shell.armlinux.org.uk>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Fri, 12 Sep 2025 02:17:55 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64n_eMBiUaT1S=V6v4Bqv5hLP8vP3=20sp4w4Fxh7RcOQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyLWsyObIH64arQzyilGb9hj5BcnDeSxUoNsS-pX-JbEZMJGsbKHCxIoyA
-Message-ID: <CAGb2v64n_eMBiUaT1S=V6v4Bqv5hLP8vP3=20sp4w4Fxh7RcOQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v4 02/10] net: stmmac: Add support for Allwinner
- A523 GMAC200
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Andre Przywara <andre.przywara@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250911162641.796716-1-kaushlendra.kumar@intel.com>
+User-Agent: NeoMutt/20220429
 
-On Fri, Sep 12, 2025 at 2:09=E2=80=AFAM Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> Hi,
->
-> I drafted this but never sent it and can't remember why, but it's
-> relevant for v5 that you recently posted. Same concern with v5.
->
-> On Tue, Sep 09, 2025 at 02:10:51AM +0800, Chen-Yu Tsai wrote:
-> > +     switch (plat->mac_interface) {
-> > +     case PHY_INTERFACE_MODE_MII:
-> > +             /* default */
-> > +             break;
-> > +     case PHY_INTERFACE_MODE_RGMII:
-> > +     case PHY_INTERFACE_MODE_RGMII_ID:
-> > +     case PHY_INTERFACE_MODE_RGMII_RXID:
-> > +     case PHY_INTERFACE_MODE_RGMII_TXID:
-> > +             reg |=3D SYSCON_EPIT | SYSCON_ETCS_INT_GMII;
-> > +             break;
-> > +     case PHY_INTERFACE_MODE_RMII:
-> > +             reg |=3D SYSCON_RMII_EN;
-> > +             break;
-> > +     default:
-> > +             return dev_err_probe(dev, -EINVAL, "Unsupported interface=
- mode: %s",
-> > +                                  phy_modes(plat->mac_interface));
->
-> I'm guessing that there's no way that plat->phy_interface !=3D
-> plat->mac_interface on this platform? If so, please use
-> plat->phy_interface here.
+On Thu, 11 Sep 2025, Kaushlendra Kumar wrote:
 
-Makes sense. Looking at stmmac_platform.c, for us mac_interface only comes
-from phy_interface.
+>Use WRITE_ONCE() for rclp->len decrement in rcu_cblist_dequeue() to
+>maintain consistency with rcu_cblist_enqueue(), which already uses
+>WRITE_ONCE() for rclp->len increment. It maintains consistent access
+>patterns to the rclp->len field across both enqueue and dequeue operations.
+>
+>Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
 
-I'll wait a day before sending yet another version.
-
-ChenYu
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
 
