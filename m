@@ -1,83 +1,73 @@
-Return-Path: <linux-kernel+bounces-811170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0689B5252B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:51:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB786B52535
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93791C20F60
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:51:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E818C1C21BEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720FB200BA1;
-	Thu, 11 Sep 2025 00:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0EE1DED63;
+	Thu, 11 Sep 2025 00:55:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1pxoLt6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="USDNm4tN"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99C6F1DE4CD;
-	Thu, 11 Sep 2025 00:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E642C17D2;
+	Thu, 11 Sep 2025 00:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757551848; cv=none; b=KRZpJfamGwvEWoxbTuhMAINPs0Zs6HgAbqpA86bukAg4KTawCA51qHtVrGvJonTbT4NwBWRi2ryXnrUeU7tjMkyvQG48BXMq5A50bp6DOPQar1l5aGab1J4zwfb01TFBrN1RwXk9oLpcbVqjvCG4H+G1K4ji5G/htZbnWa4rhDI=
+	t=1757552111; cv=none; b=nGc7ZW5HaYTn2IX43quVuG7ErrmVRatQTdjvNX3CKWOQBwO/b0UH6np9GxZFi24iwf2BbLTvtY7I9Bm+984avTmusLlBe47cAfgDEYXLs8aRxSL2hqF+1mmlUntDmktDwvZj1LjFktf9Uvrd0u8UflCFvW6P59EfMgoEXV7KBYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757551848; c=relaxed/simple;
-	bh=CCzEqYjRt9XWktduZvjN/8dY64I8avmb7eUyz9LoKxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F5gEPOfXJyYRpM5PDPtCaou9oZeKvmNINh79gcGGe2zV/r1PYDYHvzGPzMxKjl5Legz+v/GeKX8T7dfMusMlli5vS9+fxPzZjCAiuUR+kY4KqyCLfLS9NCT0DvYZjcNH1vDuJgQCYDCRw23p02H9xAYfpDx+4hxiWjx8gW2dtdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1pxoLt6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3BC7C4CEEB;
-	Thu, 11 Sep 2025 00:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757551848;
-	bh=CCzEqYjRt9XWktduZvjN/8dY64I8avmb7eUyz9LoKxk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b1pxoLt6g/EcpvVYn4QDPnaMSs5+Pq2BTmIcKYki/RMPxWIWVjwg9xHq0JKqC9EeG
-	 l0V9dmuhbyIu/1NnA7Rn9DaPhy9bkXn4elZPFSgRqYd4uYziaQeKXukxhKyFBJiQZ3
-	 34Q+eyRB9pdUShBB/lcfIZONCfNr+r8y3dz5lpbA50XEsDZkfDo/TizqzTtTaITa0R
-	 Gx1QJ8wTS7KbYi5dN0oHL1QIsFFC3ShyKSw2suZGaeg1LOvI+l6TdaXICSNSOGhH80
-	 z/IqasKXgx0gdd7o0efDJBxpxkHBVwruX3tqjzr5m2J02vgijS22yBSFl0F9h5ppP9
-	 0hrBP3ppvJsBw==
-Date: Wed, 10 Sep 2025 17:50:46 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Hubert =?UTF-8?B?V2nFm25pZXdza2k=?=
- <hubert.wisniewski.25632@gmail.com>, stable@vger.kernel.org,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Lukas Wunner <lukas@wunner.de>, Russell King
- <linux@armlinux.org.uk>, Xu Yang <xu.yang_2@nxp.com>,
- linux-usb@vger.kernel.org
-Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
- PM to avoid MDIO runtime PM wakeups
-Message-ID: <20250910175046.689f6abb@kernel.org>
-In-Reply-To: <aMD6W80KfjcSz4In@pengutronix.de>
-References: <20250908112619.2900723-1-o.rempel@pengutronix.de>
-	<20250909165803.656d3442@kernel.org>
-	<aMD6W80KfjcSz4In@pengutronix.de>
+	s=arc-20240116; t=1757552111; c=relaxed/simple;
+	bh=lZzCS+MeXaNofG/AVijdQBYuo0tukXfrPem+nM3WxZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lYT0btTPuV0dHkX7YbJJ+vnkcU6AAieb1UNqSCUCp+hgoD7ft4Y5h1xZOO/0E3gU7qDS8o4kryGa+vBt1OiWOIPheMwjqbl5bX3kTYMjyjwX35lB9wKFhN4LK34elb+OfQHGzLtAhcgA/9gUcTDKpNksz9odNX/qTDKzi+0P7L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=USDNm4tN; arc=none smtp.client-ip=1.95.21.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=VWNzekpPLwPTQVybzuyW2DHLqEF96+Dlyy5rNIWbA7o=;
+	b=USDNm4tNkU2k64S9XzIbZLGDzVIk/XC/RsjSRoSgD+c3gEduwW9DX55lUZQHyA
+	L7y6RVcSz/gQaAE67AWdTUdElPAgD7yA0CmulF/oyjOWRqruFciH0Swpmn2jbcPJ
+	pqWimNutWW7FyJzXMfA23UfhFa//WTCZhcZvgFhkQ31iI=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgB3b7rOHcJoCbFNBA--.8694S3;
+	Thu, 11 Sep 2025 08:54:40 +0800 (CST)
+Date: Thu, 11 Sep 2025 08:54:38 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: imx8mp: add interconnect for lcdif-hdmi
+Message-ID: <aMIdzu2eLMXk_OLp@dragon>
+References: <20250821160137.108735-1-m.felsch@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250821160137.108735-1-m.felsch@pengutronix.de>
+X-CM-TRANSID:Mc8vCgB3b7rOHcJoCbFNBA--.8694S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUOksqUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiNxBGq2jCHdDDJgAA3I
 
-On Wed, 10 Sep 2025 06:11:07 +0200 Oleksij Rempel wrote:
-> On Tue, Sep 09, 2025 at 04:58:03PM -0700, Jakub Kicinski wrote:
-> > On Mon,  8 Sep 2025 13:26:19 +0200 Oleksij Rempel wrote:  
-> > > No extra phylink PM handling is required for this driver:
-> > > - .ndo_open/.ndo_stop control the phylink start/stop lifecycle.  
-> > 
-> > Meaning the interface is never suspended when open?  
+On Thu, Aug 21, 2025 at 06:01:37PM +0200, Marco Felsch wrote:
+> Add the missing interconnect for the lcdif-hdmi.
 > 
-> Ack.
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
-Alright, last time we touched usbnet we broke Linus's setup.
-So let's say a quick prayer and..
-:D
+Applied, thanks!
+
 
