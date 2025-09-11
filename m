@@ -1,200 +1,183 @@
-Return-Path: <linux-kernel+bounces-811575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A322B52B10
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:02:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00943B52B13
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:03:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E2151C8362E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:02:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79EC75856B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:02:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680112D9786;
-	Thu, 11 Sep 2025 08:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02862BEC55;
+	Thu, 11 Sep 2025 08:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b="0D03UL2u"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11022130.outbound.protection.outlook.com [52.101.66.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mw/sdP1I"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387062DF14F;
-	Thu, 11 Sep 2025 08:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.130
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757577657; cv=fail; b=IzptWrE2t/34jfoph4AwTBoVOBJqHmRJFxtYRXuI9aJ6OOg4mvy27rXAH42OCSzwp4VSvXiZhRuaIUEmllsrmmnppImLpw5BUVW3yU7JqCV5WfUJ/7b66WmcOA8JgGjSfmawkf+H5agmqPGgkOkS8xftVA/BxoD/GQ2/3qMTerU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757577657; c=relaxed/simple;
-	bh=m1uQ5eDItBkAnNmZmMKshDsRuLTlu+KQEc0CuzVzL40=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=YeWsDcdwza+adqK44xNteKaiWowf6/n/GIgb5wVF57ECRTSWfPNQEu9z3HrxUNZPmrYRQh2wBM889gSieMQVZ8Hnt1gp0IWCtvrP/F3ztteqcg3e5jKQHBBCw1iQtvvQk5R8oCV4jI3AMoVRzwJVhUrmr6e5MP9JbwJuZXtEIoQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com; spf=pass smtp.mailfrom=gocontroll.com; dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b=0D03UL2u; arc=fail smtp.client-ip=52.101.66.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gocontroll.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OYFW3o+QO9kwYLdobABzNPfrXiXxx0wZ3BLyXlLZHM16AYiJNTwqM5dZ/4eBmFh4g58F0mOeLxVEYDicS/UJGYc4g/jVar8QVX1o00ao2RSQyIUKrkIAyCMLLT63sVzMnvy9IFjGaAjGjVSRFpBQMF7YFixmGrvHFPdq3mkmAeiFqqqodFGPSfZQhAt4x5nlUBYJVXD2meN8mXrMgdKvLdtbKPf4/cL9cUCqyxJ1BP1RCp0WdbjtZ7ZUa/tvmihAn7xPLs3ffaeBk3vQzOCRr8faOJsXhJB/5yz3v5GDMedMRDwW9nPyJWIOnhVT0VROPWtJ2hTuT/RaGwkUbIJ55g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z3uEXza7a6g5nkWzhF/1MVg3QUXAMCoLVdNgR57ki+g=;
- b=ik0Lruj+ZOIT64S3GU5et+duFu0ZGJbAlVX71RJky0Os0lMhsm1HYsEQhreSxAZGZMFzWs1wbqmW9HB0y/WRm1cXP/E+HSnA5BzUXkyPB3CopekUGF6rnTE2dYqI5mA3oW624HxZqPs2jKRObO7KVX+ZBkp3vg02XfMvA+YIzj1JUdtHWrC7fs/pmrrw7nlrg6xB8yBaTddm/Nh3iWPu0+wtH3cAYaZqSTqG+WshB7XG5GTQUYX8RIqlpHaItXb4Ghc5mZ64rjMo7KDIizJhxlTAgtzBVZLlhFepULFJfacchQtUH6JEBsOKY/Qhv92u1UEU9oVUK0xpkDrBktoCUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=gocontroll.com; dmarc=pass action=none
- header.from=gocontroll.com; dkim=pass header.d=gocontroll.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF738228C9D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757577719; cv=none; b=mWV06+6hocCn13bADas0aZuIM29GTTC2h3v/NLFrnpoOA5P2sIFg+OntQ77UBkPnYSrE69jCg83Od9MnVhCjGWK3Ink5rvtQN4NMwQ2Fdr/ha6qeKr5YOhxyH3V+becKjCxoyjGzXkyjTWWnSGPwIbXL4YzTjboZQD2avMf7Gc0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757577719; c=relaxed/simple;
+	bh=r3nlowwjMaQ/DTsh1EREqs/rZLGp/Bbjxj968KhOW0Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tGQKy0+MYo0E+TCIKNXK7b2Fwxv6D3omtrbUUROhHDV6NfgBofziYZ2oJkQI7z7DwISzwRJAUcR7yX6WbREregmqoERgBgocQ+Tys8PQ4OgOulaoqjzvzD3D4U+j2tmovu0N5Z/KrNUaSOX/UXB5K2S5nUXKRIlXb5JDiu69ig0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mw/sdP1I; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-622b4b14a75so798914a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:01:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gocontrollcom.onmicrosoft.com; s=selector1-gocontrollcom-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z3uEXza7a6g5nkWzhF/1MVg3QUXAMCoLVdNgR57ki+g=;
- b=0D03UL2uiy54HX9jG57gMwwX9LX59O83ibX38pWr9MSZbCLTBAEf6Urd1Xx8Pwe+h0ga6XRqiUvVXlJT56aeI1G4A9cV8TkcJOf+y3uzEmgGFNij8LHy2TsmiC8zSq/BqrkrpcKfuCmZ8CUPtBJe3KTyLdS9ox68pXojnaQ9q8RPQ3h67pe/Rq0zeaKa/l2gKGbGjVL3r+fbWCb4MUT3nJrISGl4fpq6XNrh/4yrDr4GzooZzplpATeEoZ3rzl4nYdF6qvCoYaLbFZ9N6scYpyQOwV8GxdtxcC3GQQcBusfNwqzOsoM8Xakpt2Ye4owC+SzcrSZoHTZ9jd7D6ZwzZw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=gocontroll.com;
-Received: from PA4PR04MB7630.eurprd04.prod.outlook.com (2603:10a6:102:ec::16)
- by GV2PR04MB11835.eurprd04.prod.outlook.com (2603:10a6:150:2fe::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.14; Thu, 11 Sep
- 2025 08:00:49 +0000
-Received: from PA4PR04MB7630.eurprd04.prod.outlook.com
- ([fe80::311b:ad3a:4a62:7b5f]) by PA4PR04MB7630.eurprd04.prod.outlook.com
- ([fe80::311b:ad3a:4a62:7b5f%6]) with mapi id 15.20.9115.015; Thu, 11 Sep 2025
- 08:00:48 +0000
-Message-ID: <66b609da-328a-4b33-93f8-ff5bb274c765@gocontroll.com>
-Date: Thu, 11 Sep 2025 10:00:46 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] backlight: add max25014atg backlight
-To: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fbdev@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20250911-max25014-v3-0-d03f4eba375e@gocontroll.com>
- <20250911-max25014-v3-2-d03f4eba375e@gocontroll.com>
-Content-Language: en-US
-From: Maud Spierings <maudspierings@gocontroll.com>
-In-Reply-To: <20250911-max25014-v3-2-d03f4eba375e@gocontroll.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR10CA0015.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:208:17c::25) To PA4PR04MB7630.eurprd04.prod.outlook.com
- (2603:10a6:102:ec::16)
+        d=linaro.org; s=google; t=1757577716; x=1758182516; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nbq7CnHUsLvzkU9CVJEXqvGteh0jaX1oE3HpDJf7OoQ=;
+        b=mw/sdP1IfpcVWfEhxI3/IOa3klXWuPkGIdAnAd0+obyAAPjPwvM0rSBRdlW9fQC/rJ
+         y6nzrwBNqoP1JmzaO5pOmDb9tqa239IBa9eXBYdbApXljVEhTrmEKzmmXgUVTauE5AJ3
+         U34bXCalZZwNl4m6h47DhqWAp2CcX6w4PwwCKDpaDcXRB1t6kI0wa8F0dFM900jZ75tE
+         8rx6va3yAviZOoMeCRc7hUY2JjsGeOU+Qom4iHsA+MY815eSw/J9190I981GaTF4rEpE
+         piZgN23Q26DszJqOEq2y+PCtWpwSVgdRilhPFq8QHnw2IG2GssrO2KRPdkWCmMwFzft5
+         /Lrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757577716; x=1758182516;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Nbq7CnHUsLvzkU9CVJEXqvGteh0jaX1oE3HpDJf7OoQ=;
+        b=AzdRpukUjgm4aMsYCaCIQddqE2dqS3QJfQiTZnh9o4sqioK492foiqstuZYSOhmTiO
+         /mFyKFOSm2wmj2IWzwFgvBy3ESOFhxDR82iHgu6sWyyvurnI/kfRWKLGJ3O2ewrtZMxp
+         P/BGnx5mJCGagMy0AvH7PKN1vodjoe/kqFgbFmVXevwBMoL37eDUaKiCSxUxEgwqm78w
+         uDrqLP8cqE4m6lCyAMLM5oTO02mIFwZFtz/p6Wa1jEurPVsj9yUpZc4jg/5e5oswlTsJ
+         bZgtjHw/CD/9Ton80mC7CC4BgYd5e2GQrRbjtVduSOK4b3Vywd4fdNXETw078PDvpHHv
+         zWAg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/Z5MIVvCGWJYUMVIe1ipaiVbnzb7fJHBF4uTcem5LWEmwuud+5FcxItANQHLw3Ury9Prw0dtGzsZ7aOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyADbhU4Ts/DDHBpQQ3z1NtC6KkRgCDRYo+KnNo3PRPOMkLPZ84
+	25119xjWZxAceKyzVjn8iCv26I4V5XTnZkoW8oJHOR/lB5ScQUNj8kVD5vr3ASRceVwdaNdz0lL
+	HJt8zbDSrLPLjVcyMQPudp1XHFgjFoqY9Na+u2DEgYw==
+X-Gm-Gg: ASbGnctIwIDRDgFVMnjvZbWvkGj/t+dspoERla8jQoA82VfixK+AV9u2qebr7EmtdIh
+	P5oQ1Rxj4XiVAiCM3X844pdWQAw0fNMI6nj3GyO9uCozf4nst9kNyXa50UyBwAhchHMTkhHuxHH
+	HtOLNLmbs85XxMIkKKO3gGX1wGVbsfxwR3gUsgA06Bh+UEA97766UBtogrG5KLYag+J2Zpi60hG
+	BwEnFHU1Q1P/7zfsX2rzxvtddqSyOX0kicCdSBYv+RU3RU=
+X-Google-Smtp-Source: AGHT+IG6zpt4N2ZLviN0xhWnmdqEQNtahumwSKyotYHAFlM4fGkZBmGF2YsB5/O6QD1jrpKptqRXXFl9OuxHXljCReE=
+X-Received: by 2002:a05:6402:24cd:b0:61c:9852:bbb0 with SMTP id
+ 4fb4d7f45d1cf-6237ebc6f49mr15900698a12.19.1757577716167; Thu, 11 Sep 2025
+ 01:01:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7630:EE_|GV2PR04MB11835:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47b50ad5-7f78-4d1c-ce9b-08ddf1095190
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|10070799003|376014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eW1TbmVTcHovTHVTbHhCU0NRWUI1ZG1SS1Via3U2eEFtcThYRWJOQUI1N0FG?=
- =?utf-8?B?ZlVVZlhZUEdpd1YrU1R2WVI3U2xuTmpwK094T1M5U1pLY0JOSHVkVEhhNU5I?=
- =?utf-8?B?Uy9kaXBDMWR5am9XdkdUTmlaeFRDZmpZa1FSUmM5bmVMaFB6SnFwR2FhZ0pQ?=
- =?utf-8?B?SUhSR3EyUlRwNE1QRXpnSk9acjhnUFpDejNUcWFOckNTU21QL2dGTEl4akph?=
- =?utf-8?B?YUNGdzdDREdydEFlRndBTmxLbnA2bC94ZVNrcU1DbWpSZGdVL1hpamxDMEhi?=
- =?utf-8?B?MzA0M1RGTGhiV3JzSG5OVS9CWW0zUS9Vc3pDWmpPS01wY1JKL2F2dDZ2SVk5?=
- =?utf-8?B?aGk5S05ncVNnT1NtYmNmV0QvcXJqcWhPMVRCR1I3N3hRblh4d0hvbDZLTkZZ?=
- =?utf-8?B?U1lLQ2svZ0NyOHhoY0RvUFYrZXZTYkh1djJGZjgvSjd6cFpFTEdEbytJSk9W?=
- =?utf-8?B?alVLSGRRTnA2QjlzbHUweGFZb0REQ3J5TUZqdVdHRldDZlBLcG9FQ0pyc0ZF?=
- =?utf-8?B?dVBRZ0lIQkdwZUIzKzZud1BZbDhJMk95SGpsajROT1R5TGduNFMrc1BVeXht?=
- =?utf-8?B?TVNKYVhoUFNoRnVLVE1xRml6WjRlRlpFSGFlaTQyNnFOZzBqZzNtMm9kazJl?=
- =?utf-8?B?dXgxNWE3ZkQyd3RQa2xmRDVPWUNZV1dxZmRLOWVBdFpRdUdTT0tEZXc1bmNs?=
- =?utf-8?B?ejNBcG5XUElkUjBpVWV2SmJPcFFpTFU2S2NXMzRDaTcxMVpTOWpETys0dm9C?=
- =?utf-8?B?UFF2dktWL0lvZ3F3Y0R0YVh0RWtnVnMrTVJGOHN0SGMvU1VBaGE2eG01Vkll?=
- =?utf-8?B?N2IvV3RGVXdnTDFFWEFIZXVxby91RHMzbVFUOGphNjc5ajNvKzRxMi9qYVZw?=
- =?utf-8?B?aE0zWFdQclhrZStFaDhRaXViNXpkMFBuVmxMUXNMbEx2Wks0Qm9TWmpJTTlI?=
- =?utf-8?B?TWVJS2VvdUlIenhnMExYcmlRY2tVdjc3aHlsdzMveFdnT3ZmdUpvbWduZGJ2?=
- =?utf-8?B?YlUybGNvaHVoNmx3bTU0bG5DM01Tdi9PbkNjalYxNEpPNGd1aGxmV2EyRzQ1?=
- =?utf-8?B?bUdJNGdxelBraVhNcllPZ25wVWY1SXJhbExXVnlXcEtGMkMrWHdONE16UzU1?=
- =?utf-8?B?c0dFU2t3T0lKckN0aHQyampub1o1bzJGb2RiaExFaFhRWHF4OEtDNHV4V0p3?=
- =?utf-8?B?aFhnNGRjdUdndFQrMWZEVUtQcGhkREhtL05OWXJIVE9VeHhidHB1WmdISFVa?=
- =?utf-8?B?S2FLVXpTRm03ZG5lZWh1WXA1Y2lNUFBwMXR6U212M1d4MjNRbmN3aVArWVlz?=
- =?utf-8?B?SkNLOVJuUnNOVmwvRlBTcXF0czFCbXVieGhXRVZJd2dkUlJDMnc0V2I4WmhR?=
- =?utf-8?B?Y3BCc1lpM2hTQ0JUc2MydUtuRjhtY2RqdFNvSE9aUlZEOS9OSVk5NTFsR3VT?=
- =?utf-8?B?MzQ0bE9sVTNDc2FFV1V1S0VTUUwyVEtHaFZidVVYTms5RERYSHRyaklBTWIv?=
- =?utf-8?B?MjdNZmJITTQxZ3ZJbU1YMGpUTHY5by8wb25WclRWUUpkMkR2eUFkcmdLMG96?=
- =?utf-8?B?S1c0L3Fka2ovaDNjdVYzcVN0ajhNWFhYNEtMSzFIaUNMN0trYVJIVjlFU21T?=
- =?utf-8?B?ZTlUV1l6T0tBWmZVVjZBL3MwVTRZM1dNR2tZQmh4Y2UxQ3RLNVJoR2FtQTZH?=
- =?utf-8?B?TjNqRTVqTzdMc2VUYzJpUWNaNnJiMkpDazVuR2xqN2NNUW1CNnlwWWQ4Skl5?=
- =?utf-8?B?cERMVHRTZ0VpbTNMUmE1TXRnMjM1dEdVQjBBM2QwNHp5YzkzdnpWOUx4Z3dx?=
- =?utf-8?B?Uk9aU1ZyeitleThra1JUeTNBQXVjQnBvN0wyc0ppNitUdjhqaHBoM0VLZTM0?=
- =?utf-8?B?ajd1RWNXL2VXZ3ZuYnZLVkJPTnF3cUxCWjJsTHJrNEk5MHRYMzFkZFdNZ2Yw?=
- =?utf-8?B?Z3lpM0xaQnF2NmhrSXhySXNWaDNIdS9qdkJEWmpPVUI5Q1o3UTZlNTRNcFdP?=
- =?utf-8?B?bVZ4aFJDQ3RBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7630.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(10070799003)(376014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Unc2T0xaS05PT2Q0cllXUXI1MUVuRzNoOC9nZlZtazVZK2FyZnNQVytkMWFZ?=
- =?utf-8?B?VEpXSU1xazlzRk9JcXZIOHRRem91eGNocmNUQ3AybUFZUkd1ZmtnNGR5MUM2?=
- =?utf-8?B?K1pQQ2RTTmZvY1VEWmY4S3JubEQxdU1zN2RDNzVMODJ3ZVAxaUpjamVrL1lR?=
- =?utf-8?B?T2JhM0RiMkl2T1paUnFjTit2SGtKT3Q2cGQxYyt3bElVRnpsWHRhTDJZTnBN?=
- =?utf-8?B?dlpwK2JVMU1sTG5EQU5DbnRNSWp5NmVuQmwyeWVJcE5Ia1l5ZkorTEhrcFM4?=
- =?utf-8?B?QStNQ2ErSUdxNHFMdnlTd3lUZFVRMjgxVHJxdFd5emZjK0RGV3g1Y1FSNDdV?=
- =?utf-8?B?bVlrcVUvR3NDYVlMbDdhalNTdFB6NUwzazhUSVRKQldsSzRJU2dGSnBoSFpD?=
- =?utf-8?B?L0FYMmpIdzBGT3FxSkFscFRCOGs5VDMzVXJpN0tyS1ltNHpUZFlWZDg3N3U2?=
- =?utf-8?B?aExNZEl3WVBXTUxMQ0NsK25FaEdHbmpMMFMySmkxL25BeGc1TzZWWURTRGFO?=
- =?utf-8?B?WTdyQTdyV3paaGFtVUlXVTRhTnc5T3Z0TlZDOWk4bk9QR0hOQkY1WHp0elht?=
- =?utf-8?B?clVLYTNBRTZjcjZnalFsYWNGS3Btcml1K2NBUWU1NEhQUXMrMGRUV0xsd3FJ?=
- =?utf-8?B?V3l1MktpdDJnL0JYNDgwajJPZlVoZ2RCRjdhWjNyWFJ4SmFxSFJLYVk5Nkpp?=
- =?utf-8?B?aVo5LzFQRkt0Y1dqRjVzQVNNZTNuZXJSdUpKVmRxQlY0UjNSa05SRkdOQ3hL?=
- =?utf-8?B?VTRQdkdZTlRWTFpudmgxMERCQktjT1pISEMxMlZ3RG9QVEoyU2xCRjZSemQr?=
- =?utf-8?B?SWlCMmN1anlvYUsrY3MyeHBJTkJjUWtZaU9QcEx1UXRYWVhvTUo5UC9TY1o1?=
- =?utf-8?B?S1ZTWHFJOGtQYm1leDZWbnZJSkNrWlVGMnZGcTFIMk5NRytOV1FpV2tpM2s2?=
- =?utf-8?B?N05aaHU5eUxkeEpOYThXQ1MxVkVtQmVNdG9tYUpLVE93M3MrWWRaYWtRQTRs?=
- =?utf-8?B?SitvSG96MldGWlFHdWRkMEo4N0ppRHlUbnVHZ0dxVXl6TktSQXdZeExWZmVu?=
- =?utf-8?B?MHlMbldsaTZnOGNDdGZXSUJKVnBkR0FTSXNrUllxaWZvN3dEaFh3NnBkUnph?=
- =?utf-8?B?MmxKU1ByM1I0YnJmWDlYL2Q1ZGhGNW1GWUFPQnZ5eFRBYU9Vd1ZsT1h5Mk41?=
- =?utf-8?B?RUNjc3JiREV1bStEOHFyM0JEUzQyam04TDAyZUhWeFZCcUVnU0dLVnhhdEpm?=
- =?utf-8?B?RTM4TmYvdnBJSTlzRnczZFdmeHRHd3pWZkNubjAvR0FDcUpzZjV1NUVUeU4w?=
- =?utf-8?B?RTVVUCtlcWNRaGdxb1gveXZhMVk1ODNiRjYxL3ZLeEpIYXY2ejAvbndPanRz?=
- =?utf-8?B?VzlsR2cvUC9FMnphVGJLb1BGUWtEMmNmczVMTUR6M0p2dC8zdCtINy8wbzJi?=
- =?utf-8?B?ODBMbXp3SzVsVjVtb21CWWNJMFFKNk1hSEtQVSswZDQxNWNpRktpQXVtT2Vp?=
- =?utf-8?B?K2NEamorcExnc2pDVWh6VXB3TlM4VnFlcHU4WWZDTmpOcnNzenBmeHRTeGdY?=
- =?utf-8?B?eUF3OU5hZGNnbzNxZ0hXSnNEUWR1L0JtSXZ0a2J0NHhyYzJOZ3puL1dZVHIw?=
- =?utf-8?B?a1RsM0tlWU1PMGs1aEZRWE1oR2wwRWZWVmorSGwwbzRVVTh6eXFlaEZFWGQ0?=
- =?utf-8?B?MC8zZU1ONEkwU1RJNHlQYjdrNXJIMnZlZlhyY0dzR1FLaGdZNGhZYVJwMGZI?=
- =?utf-8?B?ZHl6NVhIQ1lxZnhhdW1OcDVZUUViaDJhd05saDZiR1NUc1NJYXpFam1YRnB4?=
- =?utf-8?B?YldPQ3NNT3VrOWVFenhYTUZKUjBsVUlYdVZVWk1zWjMrczM3NXBad2ZPTE1a?=
- =?utf-8?B?SU55cUtRaEhQc0kzRWdxVjlWMzVxTWc0K2VabFhTdjBZSGpxcnhkYTBROFdL?=
- =?utf-8?B?aTQ3SFJoKzFMOUlUY3k1RHhXb0dEVmJGT2NSN3BLa1RVOElLV0l0amVsbENu?=
- =?utf-8?B?SW00c0M0ck0vdWpMQWdzcjIzYVB4amo5d2pQeXB2RUlWMHZGOHQ1U0kwMGRi?=
- =?utf-8?B?RW1mc0dRbnMwZ2NWS2pZSjNWTWRRYld0UUI0dk41MDk4OFEyVkwrMlA1NXdj?=
- =?utf-8?B?TUJvaWc1ZlN0N1NibWo5N29ELzdPRWhKaEczUHJzZC8xZHpzUERrY1FSak9s?=
- =?utf-8?B?d00rRGVrdXJVeHhhWDhYTXZzdHRsNktwOGlKMHN1OUFkcytaNjhhRXN0ZXdo?=
- =?utf-8?B?aU4yZnhpV2RKY3VuOStTdFpZSGlnPT0=?=
-X-OriginatorOrg: gocontroll.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47b50ad5-7f78-4d1c-ce9b-08ddf1095190
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7630.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 08:00:48.4045
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4c8512ff-bac0-4d26-919a-ee6a4cecfc9d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3yQyd2Zq3yNjp3js/iZ1Z8s5iU8thep9vJtPEGl7BgmDqaJ68uxNaHcmMXvyPIz/Ies0RL9DFG7nea0m6FFJLhgpcf8fRy4E6yUjHgszxYo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR04MB11835
+References: <20250910084316.356169-1-hupu.gm@gmail.com>
+In-Reply-To: <20250910084316.356169-1-hupu.gm@gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Thu, 11 Sep 2025 10:01:44 +0200
+X-Gm-Features: Ac12FXwgSPXMa-9RpAyKZYVfc4fDEfTkurE60V5IY_jArDjaBcp7KI0zMxkxXnw
+Message-ID: <CAKfTPtCyL=ofg4yLtfG7zsoBMDnP48KCeUELT_Hddd3gnWeYEw@mail.gmail.com>
+Subject: Re: [RESEND][RFC] sched: Introduce removed.load_sum for precise load propagation
+To: hupu <hupu.gm@gmail.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/11/25 09:53, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
-> 
-> The Maxim MAX25014 is a 4-channel automotive grade backlight driver IC
-> with integrated boost controller.
-> 
-> Signed-off-by: Maud Spierings maudspierings@gocontroll.com
+On Wed, 10 Sept 2025 at 10:43, hupu <hupu.gm@gmail.com> wrote:
+>
+> Currently, load_sum to be propagated is estimated from
+> (removed_runnable * divider) >> SCHED_CAPACITY_SHIFT, which relies on
+> runnable_avg as an approximation. This approach can introduce precision
+> loss due to the shift operation, and the error may become more visible
+> when small tasks frequently enter and leave the queue.
 
-b4 has been complaining for a bit but I couldn't figure out why, I just 
-figured it out. The SoB tag is malformed somehow, the <> around the 
-email address is missing. Will fix this in the next version.
+Do you have a level of error ? Do you have a typical use case ?
 
-Kind regards,
-Maud
+>
+> This patch introduces removed.load_sum to directly accumulate
+> se->avg.load_sum when tasks dequeue, and uses it during load
+> propagation. By doing so:
+>
+>   a) Avoid relying on runnable_avg-based approximation and obtain
+>      higher precision in load_sum propagation;
+>   b) Eliminate precision loss from the shift operation, especially
+>      with frequent short-lived tasks;
+>   c) Reduce one multiplication and shift in the hotpath, which
+>      theoretically lowers overhead (though the impact is minor).
+
+This doesn't work because rq's load_sum tracks current weight whereas
+se's load_sum doesn't include the weight which is only applied on se's
+load_avg. So you can't directly add/sub se's load_sum and rq's
+load_sum. Only load_avg of both se and rq use the same unit.
+
+Also we don't want to track both load_sum and load_avg, only one is
+enough and by the above it is load_avg
+
+Then, why is it a problem only for load and not util or runnable ?
+
+>
+> Signed-off-by: hupu <hupu.gm@gmail.com>
+> ---
+>  kernel/sched/fair.c  | 8 +++++---
+>  kernel/sched/sched.h | 1 +
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b173a059315c..b8cf3687804b 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -4561,7 +4561,8 @@ static void migrate_se_pelt_lag(struct sched_entity *se) {}
+>  static inline int
+>  update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+>  {
+> -       unsigned long removed_load = 0, removed_util = 0, removed_runnable = 0;
+> +       unsigned long removed_load_sum = 0, removed_load = 0;
+> +       unsigned long removed_util = 0, removed_runnable = 0;
+>         struct sched_avg *sa = &cfs_rq->avg;
+>         int decayed = 0;
+>
+> @@ -4572,6 +4573,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+>                 raw_spin_lock(&cfs_rq->removed.lock);
+>                 swap(cfs_rq->removed.util_avg, removed_util);
+>                 swap(cfs_rq->removed.load_avg, removed_load);
+> +               swap(cfs_rq->removed.load_sum, removed_load_sum);
+>                 swap(cfs_rq->removed.runnable_avg, removed_runnable);
+>                 cfs_rq->removed.nr = 0;
+>                 raw_spin_unlock(&cfs_rq->removed.lock);
+> @@ -4609,8 +4611,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
+>                  * removed_runnable is the unweighted version of removed_load so we
+>                  * can use it to estimate removed_load_sum.
+>                  */
+> -               add_tg_cfs_propagate(cfs_rq,
+> -                       -(long)(removed_runnable * divider) >> SCHED_CAPACITY_SHIFT);
+> +               add_tg_cfs_propagate(cfs_rq, -(long)removed_load_sum);
+>
+>                 decayed = 1;
+>         }
+> @@ -4792,6 +4793,7 @@ static void remove_entity_load_avg(struct sched_entity *se)
+>         ++cfs_rq->removed.nr;
+>         cfs_rq->removed.util_avg        += se->avg.util_avg;
+>         cfs_rq->removed.load_avg        += se->avg.load_avg;
+> +       cfs_rq->removed.load_sum        += se->avg.load_sum;
+>         cfs_rq->removed.runnable_avg    += se->avg.runnable_avg;
+>         raw_spin_unlock_irqrestore(&cfs_rq->removed.lock, flags);
+>  }
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index be9745d104f7..659935a5c694 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -682,6 +682,7 @@ struct cfs_rq {
+>         struct {
+>                 raw_spinlock_t  lock ____cacheline_aligned;
+>                 int             nr;
+> +               unsigned long   load_sum;
+>                 unsigned long   load_avg;
+>                 unsigned long   util_avg;
+>                 unsigned long   runnable_avg;
+> --
+> 2.43.0
+>
 
