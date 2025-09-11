@@ -1,178 +1,92 @@
-Return-Path: <linux-kernel+bounces-811987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A69B5314C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:46:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87779B53155
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D2B2586363
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:46:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C31D173471
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7DE2DBF5B;
-	Thu, 11 Sep 2025 11:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="neQOcDIq"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDB531AF0E;
+	Thu, 11 Sep 2025 11:46:29 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A83822127B;
-	Thu, 11 Sep 2025 11:46:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC9A047F4A
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757591173; cv=none; b=lYqAD4mxNsYzsuOrU0GLl7MIXvXM6abiMNDoRV8vdNqy4xWw4VFnAgoFPvF3ha3New+u2Tb3bnROhGZF+Ykyq2B7BPxk/gURfbD/okJ6ao9InCwRP81NopPZOyXUThXB5EwskdNJiiwilk5pDV4LSaKS+mnMAgl2xhHfJ/fWmqc=
+	t=1757591188; cv=none; b=KhiFfSBlflqKDqY62l+bP/SeUJQ0I73tvI1Yskt07GcAfORLLZ00h7+Etk9GOmxeVkfpnEwYM4OYCr8DPXrtfgcQ+DikF4AOy8A73KQxLxmqvVw3AW2YS4yoh2aThD0GrNN1fzug3jjgs25yGl+Mx8pcur3M4DhhuwGkCXr6qAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757591173; c=relaxed/simple;
-	bh=i6adV/YvvfS3A0eCN3aNnsH8pWOr3Go3Jeg8Z9Js2dQ=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=eQ5ctco9rCLic1Btv1hD8wYdSe8COGTulnIXhz2eNigAb9ZqLpyJ4gjK0cjHN8REIWKxnsQx6MnNnDongvzj7B82yWHXAUFte+t9yI7/fGD279e8SBNirqhLjIho3kVrDUWeE/FTa4We5y0CfE4k2KrPWvPU5/2g8p59uvcPDh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=neQOcDIq; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 95990593;
-	Thu, 11 Sep 2025 13:44:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757591095;
-	bh=i6adV/YvvfS3A0eCN3aNnsH8pWOr3Go3Jeg8Z9Js2dQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=neQOcDIqb24rv6kVas+prerXQxMyJdwfajzdf077qOjbV2ZVjzpQSu0WM9ClFGvPS
-	 iMACgKv0VGynZIoM+dEf4Iz+lx6ojrh/nDh86qG34MSTJU5MoDHWRQHBTNOsQqv8Xx
-	 jWKI4BRinfBvPQH4rS7jixyBukPglEs/gyG2jy6Q=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757591188; c=relaxed/simple;
+	bh=EGRb3OGYajjFz+8JB/DJDwM4RyFKCzgEFAGSASmRrA0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fXLJA5G9vniY5+ezUqc9H7u8RdXDuQlL5BB9RdyI7eVhpdXOhWnXG1m8TitOgXHtISZ7fF/9CMjySdSSTqyVpMwQ5q9RJAYf4R8yKY17iFw7DYwrHzsSFtm082e1H7hLy/Tsu1cS0LibDq9fOjzqJWgL6epKq7Wy2RsUH1N4IIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4cMwd52PKqzRkHY;
+	Thu, 11 Sep 2025 19:41:45 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 63E53140156;
+	Thu, 11 Sep 2025 19:46:22 +0800 (CST)
+Received: from huawei.com (10.50.165.33) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
+ 2025 19:46:21 +0800
+From: Jinqian Yang <yangjinqian1@huawei.com>
+To: <oliver.upton@linux.dev>, <yuzenghui@huawei.com>, <maz@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <liuyonglong@huawei.com>,
+	<wangzhou1@hisilicon.com>, <yangjinqian1@huawei.com>
+Subject: [PATCH v3 0/2] KVM: arm64: make EL2 feature fields writable in ID_AA64MMFR1_EL1
+Date: Thu, 11 Sep 2025 19:46:19 +0800
+Message-ID: <20250911114621.3724469-1-yangjinqian1@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250911-imx335_binning-v2-8-30a28df74df6@ideasonboard.com>
-References: <20250911-imx335_binning-v2-0-30a28df74df6@ideasonboard.com> <20250911-imx335_binning-v2-8-30a28df74df6@ideasonboard.com>
-Subject: Re: [PATCH v2 8/8] media: imx335: Switch to {enable,disable}_streams
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Tommaso Merciai <tomm.merciai@gmail.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Thu, 11 Sep 2025 12:46:07 +0100
-Message-ID: <175759116755.1246375.6132980092125123604@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-Quoting Jai Luthra (2025-09-11 09:14:24)
-> Switch from s_stream to enable_streams and disable_streams callbacks.
->=20
+Allow userspace to downgrade EL2 features (TWED, HCX) to ensure VM live
+migration compatibility between hosts with varying feature support.
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Although ID_AA64MMFR1_EL1.VH is an EL2 feature, it is still kept as non-
+writable in userspace. When FEAT_E2H0 is not implemented, HCR_EL2.E2H is
+res1. When E2H=1, EL2 operates in VHE mode. In this case, if userspace
+modifies the VH bit to 0, the Guest's kernel will still run in vEL2, leading
+to inconsistency. 
 
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/imx335.c | 53 +++++++++++++++++++++-------------------=
-------
->  1 file changed, 24 insertions(+), 29 deletions(-)
->=20
-> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> index c985edab7e2a965ccd9427b013cbb3fa8778de2b..a1af70d050bca79255ac9303e=
-8508de919bc4fdc 100644
-> --- a/drivers/media/i2c/imx335.c
-> +++ b/drivers/media/i2c/imx335.c
-> @@ -1019,13 +1019,19 @@ static int imx335_set_framefmt(struct imx335 *imx=
-335)
->  }
-> =20
->  /**
-> - * imx335_start_streaming() - Start sensor stream
-> - * @imx335: pointer to imx335 device
-> + * imx335_enable_streams() - Enable sensor streams
-> + * @sd: V4L2 subdevice
-> + * @state: V4L2 subdevice state
-> + * @pad: The pad to enable
-> + * @streams_mask: Bitmask of streams to enable
->   *
->   * Return: 0 if successful, error code otherwise.
->   */
-> -static int imx335_start_streaming(struct imx335 *imx335)
-> +static int imx335_enable_streams(struct v4l2_subdev *sd,
-> +                                struct v4l2_subdev_state *state, u32 pad,
-> +                                u64 streams_mask)
->  {
-> +       struct imx335 *imx335 =3D to_imx335(sd);
->         const struct imx335_reg_list *reg_list;
->         int ret;
-> =20
-> @@ -1099,37 +1105,24 @@ static int imx335_start_streaming(struct imx335 *=
-imx335)
->  }
-> =20
->  /**
-> - * imx335_stop_streaming() - Stop sensor stream
-> - * @imx335: pointer to imx335 device
-> - */
-> -static void imx335_stop_streaming(struct imx335 *imx335)
-> -{
-> -       cci_write(imx335->cci, IMX335_REG_MODE_SELECT,
-> -                 IMX335_MODE_STANDBY, NULL);
-> -       pm_runtime_put(imx335->dev);
-> -}
-> -
-> -/**
-> - * imx335_set_stream() - Enable sensor streaming
-> - * @sd: pointer to imx335 subdevice
-> - * @enable: set to enable sensor streaming
-> + * imx335_disable_streams() - Disable sensor streams
-> + * @sd: V4L2 subdevice
-> + * @state: V4L2 subdevice state
-> + * @pad: The pad to disable
-> + * @streams_mask: Bitmask of streams to disable
->   *
->   * Return: 0 if successful, error code otherwise.
->   */
-> -static int imx335_set_stream(struct v4l2_subdev *sd, int enable)
-> +static int imx335_disable_streams(struct v4l2_subdev *sd,
-> +                                  struct v4l2_subdev_state *state, u32 p=
-ad,
-> +                                  u64 streams_mask)
->  {
->         struct imx335 *imx335 =3D to_imx335(sd);
-> -       struct v4l2_subdev_state *state;
-> -       int ret =3D 0;
-> -
-> -       state =3D v4l2_subdev_lock_and_get_active_state(sd);
-> -
-> -       if (enable)
-> -               ret =3D imx335_start_streaming(imx335);
-> -       else
-> -               imx335_stop_streaming(imx335);
-> +       int ret;
-> =20
-> -       v4l2_subdev_unlock_state(state);
-> +       ret =3D cci_write(imx335->cci, IMX335_REG_MODE_SELECT,
-> +                       IMX335_MODE_STANDBY, NULL);
-> +       pm_runtime_put(imx335->dev);
-> =20
->         return ret;
->  }
-> @@ -1249,7 +1242,7 @@ static int imx335_parse_hw_config(struct imx335 *im=
-x335)
-> =20
->  /* V4l2 subdevice ops */
->  static const struct v4l2_subdev_video_ops imx335_video_ops =3D {
-> -       .s_stream =3D imx335_set_stream,
-> +       .s_stream =3D v4l2_subdev_s_stream_helper,
->  };
-> =20
->  static const struct v4l2_subdev_pad_ops imx335_pad_ops =3D {
-> @@ -1259,6 +1252,8 @@ static const struct v4l2_subdev_pad_ops imx335_pad_=
-ops =3D {
->         .set_selection =3D imx335_get_selection,
->         .get_fmt =3D v4l2_subdev_get_fmt,
->         .set_fmt =3D imx335_set_pad_format,
-> +       .enable_streams =3D imx335_enable_streams,
-> +       .disable_streams =3D imx335_disable_streams,
->  };
-> =20
->  static const struct v4l2_subdev_ops imx335_subdev_ops =3D {
->=20
-> --=20
-> 2.51.0
->
+v1: https://lore.kernel.org/linux-arm-kernel/20250325121126.1380681-1-yangjinqian1@huawei.com/
+v2: https://lore.kernel.org/linux-arm-kernel/20250909034415.3822478-1-yangjinqian1@huawei.com/
+
+Change Log:
+v1->v2:
+  -Added support for downgrading TWED and VH fields.
+  -Added corresponding test cases to the set_id_regs selftest.
+
+v2->v3:
+  -Kept VH non-writable.
+  -Separated kernel patches and self-test patches.
+
+Jinqian Yang (2):
+  KVM: arm64: Make ID_AA64MMFR1_EL1.{HCX, TWED} writable from userspace
+  KVM: arm64: selftests: Test writes to ID_AA64MMFR1_EL1.{HCX, TWED}
+
+ arch/arm64/kvm/sys_regs.c                       | 2 --
+ tools/testing/selftests/kvm/arm64/set_id_regs.c | 2 ++
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.33.0
+
 
