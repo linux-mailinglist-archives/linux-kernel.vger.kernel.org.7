@@ -1,295 +1,114 @@
-Return-Path: <linux-kernel+bounces-811585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AF24B52B26
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:05:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7E6B52B2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A623AE251
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:05:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3CB67BFAB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECCA2D5950;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263CB2D4807;
 	Thu, 11 Sep 2025 08:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GdFsbzd8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eykry1+l"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8C02D29BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002322D29D0;
 	Thu, 11 Sep 2025 08:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757577933; cv=none; b=oeidedLVKLSnPG6bplHc6++2Udq5Jj3bfflHVS+l+xPSA8G/rtZhYLJdZCTXWwlNiiAT6Y+dzMCfkIuSrsUvuofJvVsRWDvlRbxXUJ+iAa2V6DWchb4TFTxf3CRlsVnCsfJQmsh33kPnS/RE/xAJHmEsMnBVTtaBNvyUH4p3NeM=
+	t=1757577933; cv=none; b=bEpMPTtqiqWsR18jeQr4g3LqeOzgZgwkoNBXOvFCXFajNuoWvM90bf8D0Kmv0BcmqiIOfGtPEljmN/kI/ET5nlpRqiSFOuT5quTxeS2b3ARCWrt58wgRsdoBfMMPx0kz2X+CVrXSXfkRazYkVHjH+rRcl01BPokMi9L5JHZnFuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757577933; c=relaxed/simple;
-	bh=IuyXmFfyNmVFfYy0X6AvB4CsaM/2s6wLUM8k5vXFo8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BZGcMxvM+/s+nFV0+lNW2oERIXWBEQ5VdmaqYAtm4MI7Sq8RXJs1CigTdgHCbRe3MDrXpuNev81UZ8zPeNyuCxlEDHJNJklFuojWTCEYtPOYUBx963y8GSC0p62+08Jj4h7MzKRVzhzLihEZCmc3SJoO8unS09IGXc8w+Obfl+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GdFsbzd8; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757577932; x=1789113932;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IuyXmFfyNmVFfYy0X6AvB4CsaM/2s6wLUM8k5vXFo8c=;
-  b=GdFsbzd8YxqfJRCvAq6QkfONpZFsYUX2/mrrxPay2ALeuLPKR4Qnw71z
-   4UuS1TZqFnJ0Cz5HbDFVrqWJi4/WPHIZpmx/FKrGYnl8f0CSMBMiCc0v8
-   UFsTVE/MZsLx3aGF2ntr+WD+3AvXVIOgYLFVsZqT89Ck96Lx2+PCxbBd7
-   TlD8OEL7+yjnL8+ZTWOzo5lgkGNjDkI0EMralPfUwT4fO4WfKcPTUTOSc
-   wjmG4IbJZtbydbn+uQAUX7nIlEyxVsL7I/4aFsLxqAhfNOhAIwIOH4yf1
-   KjfPgftCRJ2vymf07O2/WbLvWip/ZkRkjrVS6CXCdBgondfcK4GiGUldn
-   Q==;
-X-CSE-ConnectionGUID: GuqmpCG1Svyb6cPxBVeiMA==
-X-CSE-MsgGUID: 14ipyfPNTYCzPw8RRd9BOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59976314"
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="59976314"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 01:05:31 -0700
-X-CSE-ConnectionGUID: jbhKYp7IS9yFtbeuXx+7xQ==
-X-CSE-MsgGUID: 1EhbMNRFSmuKGBmNnDju/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="177963143"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.238.14]) ([10.124.238.14])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 01:05:26 -0700
-Message-ID: <bd2999b5-f2fc-4d86-a5c8-0d1af4d51bc0@intel.com>
-Date: Thu, 11 Sep 2025 16:05:23 +0800
+	bh=kyEZTSyTVT22OnQt8GD5B8uSiBJmJtF2ytLQyJXbi8A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XilmAt33CHtOjwjtwdBpOtPpUpylg/oI1k5Pe5G2WPSGteog7SdNkJa5fmuPOJWpqooYXfzIZTlpKXilRVxd3mTkjxiOsJqUCZW2hm2R00vqa+uHqtbsQ26ydKXwtJqjAPM1+l8aW4tngygyU8jmDIeHdhEBm85tZ8YdWkZEWlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eykry1+l; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45b9814efbcso9320595e9.0;
+        Thu, 11 Sep 2025 01:05:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757577930; x=1758182730; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WILfbNWCo4ARUml9R1JlxJoUwAPnqw4NB8gmHT/M6qY=;
+        b=eykry1+lrwbI2HbdlCpkQjGooFfiE0WiogxB8hulMIk3iR6AIXJ47uJeDFPIMDDv8i
+         E0zYnmLAzWAsDHyKii855aL4GtMzdJ8cULUp3+QGK6lNyf9E1b+p9fPoL5I2O8mTaqeI
+         ehTOho0xJyjwU744DtAdzxIh5dtS7d7ehO0jtEwf/JPUbKOBqRq/lNzprXEXij4pxzqM
+         aiLGY7I3oAGEPCm0otDJWIuoA+H9nFQAtCKD1rtrhqAKbn9QY12hxdl52TzGGl6uXYId
+         jDX4zNB56QPi5umdlwRvGVW5zvtAZRNR8nFcZpPH6MiOk9JRh9uyi1nsFAmx6xLBnKPO
+         zvkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757577930; x=1758182730;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WILfbNWCo4ARUml9R1JlxJoUwAPnqw4NB8gmHT/M6qY=;
+        b=w5lzcfPaZt5GFt/Fd2UTkYpUd26ZXSg+lISm66XNvFFk5QSLOSVNZDmiMb3CZcaezE
+         wQCyGiK4VjIBFf1UK5rmw1LStXQ8UaFhOA4oyBlfLfAfLFBptoewkD0PKAFtX2U8yTdh
+         wV0L5MXdjsgR4el54lHmDNL+aw0vKDKw+UNZBGHDO0OqWKI3hJ0Jlm+PYzwWKffhIjvQ
+         m8K8A/rHnggfhYt4IAz2gu5FzYpHuCGY0OYP7ZerJXbFBq+fBQZ43nCjVoO206KlURW4
+         wFJIWcIzDJZRqL+S/WKpMaoYYq1/1ij7s/lEIZjDJCdWu6tpjWEs8HbuKh+/FvVrLYGq
+         g7QA==
+X-Forwarded-Encrypted: i=1; AJvYcCW08nSJCo+tms9l/I4KqLAHEzNSkjpjT/swecsKNE/4tEPTPbeUf6gx62oY4OC+k8AagFDnvmY0@vger.kernel.org, AJvYcCWcqeK8xuNmI8zWVAPLIT+46tQJo2hCaAvhT5PXx+P1btdkndfiuIGgxZcBx0PmcFYhzLm3cvvN5wYkIXM=@vger.kernel.org, AJvYcCX7iuY4UItFIrAZAyaXuWMZggJusjJvVf8fXOGT++AIojhor7lo/Hcj5D9kaRptIitfzeawbP87uMmk41rvtUx4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiJgU6+EhH8yurMHHWv+4gyXLnpKyKE2/MSAn4G184f4VR/j9r
+	aGombQ5WZPWjZtN5LHunp2/kyJUn1GcopHoEUrQt6Mjvyn5CYQ06o4Nc
+X-Gm-Gg: ASbGncu0vr2vKw1Azub2n9QBMozypaZdQTvpOuGy3w/OJVwvpg9qbu/t60cKRoqrVuk
+	8/S8AyWsx6WaB7+HoPFloPMH4XHaO5M0UwOKg0nan3W3ipxHURoiiXHL9uiWb7fuvYDpyMVwdPY
+	2Q1TkexKIuzA/uHPSbR5BXXP/5KmStMcdOy7/wKTxJId3eYoiJJZmzmwxmqTDFKA1D5VTF8XZMn
+	PCNnKAdJyVjDIN0WDCH4rKTDuYFcsR0v3GFx0VhO6NjLCVShGVnajWd6jOP1M4cu48NpdL4kHzk
+	GfeIXQXWNSMDoC9k4Pv8eD0qx5EzVg6W7ZaPOqe7GaCsPiA3C1FyAbeWwF5jUn2rg/t2BpLBhH7
+	KzzK1Q3se3q8azPbYQwo=
+X-Google-Smtp-Source: AGHT+IGgAGUcNXjgllFkYVY1TZbEoX/w4+CCWy19jehwdaJkLLJthfSn7prFns29wdUb+u9szALQ7Q==
+X-Received: by 2002:a05:600c:c0cd:b0:45c:b5c3:ea37 with SMTP id 5b1f17b1804b1-45dfd5e3d97mr17699455e9.11.1757577930042;
+        Thu, 11 Sep 2025 01:05:30 -0700 (PDT)
+Received: from archlinux ([143.58.192.81])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0152ffc1sm9246035e9.3.2025.09.11.01.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 01:05:29 -0700 (PDT)
+Date: Thu, 11 Sep 2025 09:05:27 +0100
+From: Andre Carvalho <asantostc@gmail.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 4/5] netconsole: resume previously deactivated
+ target
+Message-ID: <nvbscfpi75on4pkv5niyzxkheobyxqofju7lr5a6kfywssgedj@tn4cgo4zj3qc>
+References: <20250909-netcons-retrigger-v1-0-3aea904926cf@gmail.com>
+ <20250909-netcons-retrigger-v1-4-3aea904926cf@gmail.com>
+ <jcvsmfivr27bchhk2t2lt2l35ixjs2adaos6hqwfydpulq7gxm@5aprxim4vvoa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 11/22] KVM: VMX: Emulate read and write to CET MSRs
-To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- hpa@zytor.com, john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
- minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
- pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
- seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
- weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com
-References: <20250909093953.202028-1-chao.gao@intel.com>
- <20250909093953.202028-12-chao.gao@intel.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250909093953.202028-12-chao.gao@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jcvsmfivr27bchhk2t2lt2l35ixjs2adaos6hqwfydpulq7gxm@5aprxim4vvoa>
 
-On 9/9/2025 5:39 PM, Chao Gao wrote:
-> From: Yang Weijiang <weijiang.yang@intel.com>
+On Wed, Sep 10, 2025 at 12:50:07PM -0700, Breno Leitao wrote:
+> > +		if (nt->state == STATE_DEACTIVATED && event == NETDEV_UP)  {
+> > +			if (!strncmp(nt->np.dev_name, dev->name, IFNAMSIZ))
 > 
-> Add emulation interface for CET MSR access. The emulation code is split
-> into common part and vendor specific part. The former does common checks
-> for MSRs, e.g., accessibility, data validity etc., then passes operation
-> to either XSAVE-managed MSRs via the helpers or CET VMCS fields.
+> Don't you need to check for dev_mac here as well?
 
-I planed to continue the review after Sean posts v15 as he promised.
-But I want to raise my question regarding it sooner so I just ask it on v14.
+I believe so. Will fix that and try to cover this case on the selftest too.
 
-Do we expect to put the accessibility and data validity check always in 
-__kvm_{s,g}_msr(), when the handling cannot be put in 
-kvm_{g,s}et_common() only? i.e., there will be 3 case:
-
-- All the handling in kvm_{g,s}et_common(), when the MSR emulation is 
-common to vmx and svm.
-
-- generic accessibility and data validity check in __kvm_{g,s}et_msr() 
-and vendor specific handling in {vmx,svm}_{g,s}et_msr()
-
-- generic accessibility and data validity check in __kvm_{g,s}et_msr() , 
-vendor specific handling in {vmx,svm}_{g,s}et_msr() and other generic 
-handling in kvm_{g,s}et_common()
-
-> SSP can only be read via RDSSP. Writing even requires destructive and
-> potentially faulting operations such as SAVEPREVSSP/RSTORSSP or
-> SETSSBSY/CLRSSBSY. Let the host use a pseudo-MSR that is just a wrapper
-> for the GUEST_SSP field of the VMCS.
+> > +				schedule_work(&nt->resume_wq);
 > 
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> Tested-by: Mathias Krause <minipli@grsecurity.net>
-> Tested-by: John Allen <john.allen@amd.com>
-> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Chao Gao <chao.gao@intel.com>
-> ---
-> v14:
-> - Update both hardware MSR value and VMCS field when userspace writes to
->    MSR_IA32_S_CET. This keeps guest FPU and VMCS always inconsistent
->    regarding MSR_IA32_S_CET.
-> ---
->   arch/x86/kvm/vmx/vmx.c | 19 +++++++++++++
->   arch/x86/kvm/x86.c     | 60 ++++++++++++++++++++++++++++++++++++++++++
->   arch/x86/kvm/x86.h     | 23 ++++++++++++++++
->   3 files changed, 102 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 227b45430ad8..22bd71bebfad 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -2106,6 +2106,15 @@ int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   		else
->   			msr_info->data = vmx->pt_desc.guest.addr_a[index / 2];
->   		break;
-> +	case MSR_IA32_S_CET:
-> +		msr_info->data = vmcs_readl(GUEST_S_CET);
-> +		break;
-> +	case MSR_KVM_INTERNAL_GUEST_SSP:
-> +		msr_info->data = vmcs_readl(GUEST_SSP);
-> +		break;
-> +	case MSR_IA32_INT_SSP_TAB:
-> +		msr_info->data = vmcs_readl(GUEST_INTR_SSP_TABLE);
-> +		break;
->   	case MSR_IA32_DEBUGCTLMSR:
->   		msr_info->data = vmx_guest_debugctl_read();
->   		break;
-> @@ -2424,6 +2433,16 @@ int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   		else
->   			vmx->pt_desc.guest.addr_a[index / 2] = data;
->   		break;
-> +	case MSR_IA32_S_CET:
-> +		vmcs_writel(GUEST_S_CET, data);
-> +		kvm_set_xstate_msr(vcpu, msr_info);
-> +		break;
-> +	case MSR_KVM_INTERNAL_GUEST_SSP:
-> +		vmcs_writel(GUEST_SSP, data);
-> +		break;
-> +	case MSR_IA32_INT_SSP_TAB:
-> +		vmcs_writel(GUEST_INTR_SSP_TABLE, data);
-> +		break;
->   	case MSR_IA32_PERF_CAPABILITIES:
->   		if (data & PMU_CAP_LBR_FMT) {
->   			if ((data & PMU_CAP_LBR_FMT) !=
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a6036eab3852..79861b7ad44d 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -1886,6 +1886,44 @@ static int __kvm_set_msr(struct kvm_vcpu *vcpu, u32 index, u64 data,
->   
->   		data = (u32)data;
->   		break;
-> +	case MSR_IA32_U_CET:
-> +	case MSR_IA32_S_CET:
-> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
-> +		    !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT))
-> +			return KVM_MSR_RET_UNSUPPORTED;
-> +		if (!kvm_is_valid_u_s_cet(vcpu, data))
-> +			return 1;
-> +		break;
-> +	case MSR_KVM_INTERNAL_GUEST_SSP:
-> +		if (!host_initiated)
-> +			return 1;
-> +		fallthrough;
-> +		/*
-> +		 * Note that the MSR emulation here is flawed when a vCPU
-> +		 * doesn't support the Intel 64 architecture. The expected
-> +		 * architectural behavior in this case is that the upper 32
-> +		 * bits do not exist and should always read '0'. However,
-> +		 * because the actual hardware on which the virtual CPU is
-> +		 * running does support Intel 64, XRSTORS/XSAVES in the
-> +		 * guest could observe behavior that violates the
-> +		 * architecture. Intercepting XRSTORS/XSAVES for this
-> +		 * special case isn't deemed worthwhile.
-> +		 */
-> +	case MSR_IA32_PL0_SSP ... MSR_IA32_INT_SSP_TAB:
-> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
-> +			return KVM_MSR_RET_UNSUPPORTED;
-> +		/*
-> +		 * MSR_IA32_INT_SSP_TAB is not present on processors that do
-> +		 * not support Intel 64 architecture.
-> +		 */
-> +		if (index == MSR_IA32_INT_SSP_TAB && !guest_cpu_cap_has(vcpu, X86_FEATURE_LM))
-> +			return KVM_MSR_RET_UNSUPPORTED;
-> +		if (is_noncanonical_msr_address(data, vcpu))
-> +			return 1;
-> +		/* All SSP MSRs except MSR_IA32_INT_SSP_TAB must be 4-byte aligned */
-> +		if (index != MSR_IA32_INT_SSP_TAB && !IS_ALIGNED(data, 4))
-> +			return 1;
-> +		break;
->   	}
->   
->   	msr.data = data;
-> @@ -1930,6 +1968,20 @@ static int __kvm_get_msr(struct kvm_vcpu *vcpu, u32 index, u64 *data,
->   		    !guest_cpu_cap_has(vcpu, X86_FEATURE_RDPID))
->   			return 1;
->   		break;
-> +	case MSR_IA32_U_CET:
-> +	case MSR_IA32_S_CET:
-> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
-> +		    !guest_cpu_cap_has(vcpu, X86_FEATURE_IBT))
-> +			return KVM_MSR_RET_UNSUPPORTED;
-> +		break;
-> +	case MSR_KVM_INTERNAL_GUEST_SSP:
-> +		if (!host_initiated)
-> +			return 1;
-> +		fallthrough;
-> +	case MSR_IA32_PL0_SSP ... MSR_IA32_INT_SSP_TAB:
-> +		if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK))
-> +			return KVM_MSR_RET_UNSUPPORTED;
-> +		break;
->   	}
->   
->   	msr.index = index;
-> @@ -4220,6 +4272,10 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   		vcpu->arch.guest_fpu.xfd_err = data;
->   		break;
->   #endif
-> +	case MSR_IA32_U_CET:
-> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> +		kvm_set_xstate_msr(vcpu, msr_info);
-> +		break;
->   	default:
->   		if (kvm_pmu_is_valid_msr(vcpu, msr))
->   			return kvm_pmu_set_msr(vcpu, msr_info);
-> @@ -4569,6 +4625,10 @@ int kvm_get_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->   		msr_info->data = vcpu->arch.guest_fpu.xfd_err;
->   		break;
->   #endif
-> +	case MSR_IA32_U_CET:
-> +	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
-> +		kvm_get_xstate_msr(vcpu, msr_info);
-> +		break;
->   	default:
->   		if (kvm_pmu_is_valid_msr(vcpu, msr_info->index))
->   			return kvm_pmu_get_msr(vcpu, msr_info);
-> diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> index cf4f73a95825..95d2a82a4674 100644
-> --- a/arch/x86/kvm/x86.h
-> +++ b/arch/x86/kvm/x86.h
-> @@ -735,4 +735,27 @@ static inline void kvm_set_xstate_msr(struct kvm_vcpu *vcpu,
->   	kvm_fpu_put();
->   }
->   
-> +#define CET_US_RESERVED_BITS		GENMASK(9, 6)
-> +#define CET_US_SHSTK_MASK_BITS		GENMASK(1, 0)
-> +#define CET_US_IBT_MASK_BITS		(GENMASK_ULL(5, 2) | GENMASK_ULL(63, 10))
-> +#define CET_US_LEGACY_BITMAP_BASE(data)	((data) >> 12)
-> +
-> +static inline bool kvm_is_valid_u_s_cet(struct kvm_vcpu *vcpu, u64 data)
-> +{
-> +	if (data & CET_US_RESERVED_BITS)
-> +		return false;
-> +	if (!guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) &&
-> +	    (data & CET_US_SHSTK_MASK_BITS))
-> +		return false;
-> +	if (!guest_cpu_cap_has(vcpu, X86_FEATURE_IBT) &&
-> +	    (data & CET_US_IBT_MASK_BITS))
-> +		return false;
-> +	if (!IS_ALIGNED(CET_US_LEGACY_BITMAP_BASE(data), 4))
-> +		return false;
-> +	/* IBT can be suppressed iff the TRACKER isn't WAIT_ENDBR. */
-> +	if ((data & CET_SUPPRESS) && (data & CET_WAIT_ENDBR))
-> +		return false;
-> +
-> +	return true;
-> +}
->   #endif
+> I would prefer to have the enablement done inline here, instead of
+> scheduling a task.
 
+That makes sense. I believe I'll need an alternative to netpoll_setup that can be 
+called with rtnl already held. I'll attempt to do this for v2.
+
+Thanks for the review!
 
