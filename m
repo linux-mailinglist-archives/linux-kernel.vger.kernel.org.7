@@ -1,161 +1,174 @@
-Return-Path: <linux-kernel+bounces-811483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42ADCB529BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56147B52938
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF0A15676D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65D3F1BC63DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C14B266EEA;
-	Thu, 11 Sep 2025 07:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B288C1B81D3;
+	Thu, 11 Sep 2025 06:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AMQAQzrS"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDqTogg/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F11329F2D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FCE329F17
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757575220; cv=none; b=gvHjiNV1DwfNcb/wIjGJx8hmdz4WPwdKfRTZmbTUxAErcQBDXvv3S9cbpVLGcfyKdqMmpqYIaqWiLiB4osV+L/c9BPEYfuBNZVdAx6D73izhVWA51N4jmuNUhP0fTAw6a5JQoM5Phsd8ibrsqnoarGu6hyFAIDx8g0dM+lLdjcY=
+	t=1757573224; cv=none; b=oqrvfBi0oub8mlLtK5dQWwb0RR/9+oPr2B6UuU+HxTiDjvnbbKnphhrr84pJVqB6PrWqpZCcQKjEVF7v8aQvNq7LplGZJbhKv9/cD20wpTNTX86lb2VGcUk+1t6qcCjmXLTRd0RYYf9/z4YjPZ+YnsAyX1GA1ZeO4wnRb65Kw4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757575220; c=relaxed/simple;
-	bh=FFFZOEtzLooP94LFZkfn6bByeWGQ5C7Y5GLiw0synX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=pSDL/G847B+0zb6KufM8Yvl3g3cGygeFNU0DJMlEYHuTNEePIMypshU4Y1zAXWe9QV1GtNI9+31SCTpvn5T9RocPIBVFWzKg9IxfZqDCh/4AjoyqjHGkWAbGTrgHwY2MBlY1YOYzrR5A1eluDIcXotvI7/ifh1VlLcCqLo4CRnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AMQAQzrS; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B4lKKS019188;
-	Thu, 11 Sep 2025 07:20:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=yNqAtT
-	/aliri3+dN8b0Rc4k4zSy8N4HZNRUjg2zdfqQ=; b=AMQAQzrSC1N+VfS3f+kSjo
-	T9LIu2WMvN5tF9rXdXUWsFAztLDr2H4pYVnR/LS7DbkxrVHD3JpJJ2MAO+WkcK73
-	9dCdDk82UctiS8MMkgaj7YH2MKcNErg/1WPT7CKOolnQbX2iIB93DheLscCcdC7d
-	Bl2ch4VShQGtByY0ez79fjtUJWeRwonqZ0Xb9BUwqqz2rikOwJwyurmSGXvYRQil
-	7pprLU7BJCvJ+Js8RRu4AJ6nDvHbv9o3r/SMZ+N+18lokZQ4ndHLC53s1zzEzGZ0
-	Qmx/8LRP0uAciPOxKdXntXjrTNb4GuqBAliS5dnFhmsFBkVHmr/hRK08LoMUn2qQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bct2dgh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 07:20:06 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58B7JSMD020847;
-	Thu, 11 Sep 2025 07:20:06 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bct2dgc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 07:20:05 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58B6wq1O001188;
-	Thu, 11 Sep 2025 07:20:05 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 491203m9uf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 07:20:05 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58B7K45E60293542
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 07:20:04 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F149758D79;
-	Thu, 11 Sep 2025 06:45:27 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4EAB458D50;
-	Thu, 11 Sep 2025 06:45:18 +0000 (GMT)
-Received: from [9.98.110.226] (unknown [9.98.110.226])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 11 Sep 2025 06:45:11 +0000 (GMT)
-Message-ID: <8f0c39e3-af68-4f01-94e5-e63ee52864df@linux.ibm.com>
-Date: Thu, 11 Sep 2025 12:15:09 +0530
+	s=arc-20240116; t=1757573224; c=relaxed/simple;
+	bh=UNkEK/+v8YFYH93TXwLCYphEnHYTGoL2h1B5QkNiX5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=diBjbb+D+Hq7DqXa+6/8Wh2ZdQwTq3ujXeby7vh7UAWHpbhDlYLFeA0Hb9MllDmxo0OnhLBdVtksSnsFfxs0Nu7SdEztYLeSCSStMcrP7QRxhkMWxa0NsZOPel/YzT748oPB47pH2c5uP1xur9Ae/5yzI6WuYH+ZZc8A4hYMWTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDqTogg/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7D56C4CEF5
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:47:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757573223;
+	bh=UNkEK/+v8YFYH93TXwLCYphEnHYTGoL2h1B5QkNiX5A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=aDqTogg/x5B5VsSt8/kz5FPgXX7+tYY9sr3Hy5vAQhf81ZQevjSehnV5CXVefe6X7
+	 nHfoqQTW5Kub4CbyAFq7syhi2NRtlHxHUk6mkw8oJ5DvbLzz7OE4iKVcqRdNMkrys6
+	 fAK3naosSZetHzlqlCqIMdv4SqrD748FMtDzlD6EOVm/Ir7xvwaMdDlf5TykYIduem
+	 4j6xg31PBrG5FvD2AO1WMb7TXbK+/4AlR53AioYdR8HP8cszdu7Qx+6Y24U7nlCjK7
+	 8Ynhp0YwfffeJOp2COIDnEkXxO6dGIi3/GAr1BlvKNhsTrt9XZlnNbJZxJ6mbL/ELo
+	 toUC5ESovhYPw==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-56088927dcbso389999e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:47:03 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzYBBN5jDzxBqaEWQ9j/PLmLwLS0dfDZ8lIUcgMCw9Sdgrhf62o
+	iPjGvcbLtqeLrVFHVSAtXiZCbgXPwng+RTCpYM6geM7IvuABtmI0RfPZFfLPjFoC7WQHz3V7FbT
+	T+HgaOngT8PpPJIXsxf7tPjSSJYCFioU=
+X-Google-Smtp-Source: AGHT+IFPziz6yAUhOMEN9vYJnis370gYAsrnXe7pj2ivzaPBYrP6p3ssblPvJE3LSh39/rPwy90mxH37lGdGB+y+AzI=
+X-Received: by 2002:a05:6512:b25:b0:560:8b86:75b9 with SMTP id
+ 2adb3069b0e04-5625b989121mr5495629e87.0.1757573222026; Wed, 10 Sep 2025
+ 23:47:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched: fair: drop useless cpumask_empty() in
- find_energy_efficient_cpu()
-To: Yury Norov <yury.norov@gmail.com>
-References: <20250911023426.457745-1-yury.norov@gmail.com>
-Content-Language: en-US
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        linux-kernel@vger.kernel.org,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <20250911023426.457745-1-yury.norov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX5zPFdRRsVaJo
- Po7ABAhWLwofQwiJWZKqpKLYdTyZepwDaE/HD+lf19yUGP9lOTGUBx0hOc79jCqBM/BC5SDpLdY
- CFzPuqtDjlhWfh/U9sRhoKkOKmicVoDd0w6JJIrNr8y2Ihgovh0AfshDs2kWEq5piVgfFXkChJs
- 5p0iymy2Oc49nhzbLGV2DHlfdHvkc5R4bvj3AcPx5a/VkTIB1of8fqG9sMnYOzW6kDIiFUyMKq+
- 95p26eWRcGLdhg0JOUNnxCZcIdc7BpT1iZ6tTTTqIhSg33bQI7yFC8H63K21NSsax3vuRkfwsGO
- RQEbxMrAgH2q+51dfV2U4mgXV2DBUB914hNONxTb/RyOVd3/+80TKXHqPjlKPDHb+uaLECnHOoa
- K0pDaduD
-X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c27826 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
- a=6Bb8fD9tztjf4PytmToA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 3F6g7Uqw7JqiW9Dq09P6Liu43JzwoHXG
-X-Proofpoint-ORIG-GUID: GtCv1V-k3dSnSIgAtiOdzGH-UJb2c802
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
+References: <20250910015738.14848-2-bagasdotme@gmail.com>
+In-Reply-To: <20250910015738.14848-2-bagasdotme@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 11 Sep 2025 08:46:50 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHCi1pr3XNzwe7b7EFBkPGjkppeNWNSvy4wU1VBHj9kfA@mail.gmail.com>
+X-Gm-Features: Ac12FXxCOpeQs8heCJzZMxjO42fQ-GoYKFNHg4uenzykKBXf8CyKCUzom2vG158
+Message-ID: <CAMj1kXHCi1pr3XNzwe7b7EFBkPGjkppeNWNSvy4wU1VBHj9kfA@mail.gmail.com>
+Subject: Re: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Documentation <linux-doc@vger.kernel.org>, Linux EFI <linux-efi@vger.kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/09/25 08:04, Yury Norov wrote:
-> From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> 
-> cpumask_empty() call is O(N) and useless, because the previous
-> cpumask_and() returns false for empty 'cpus'.
-> 
-
-LGTM
-
-Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-
-Thanks,
-Madadi Vineeth Reddy
-
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+On Wed, 10 Sept 2025 at 03:58, Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+>
+> From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+>
+> Since the Handover Protocol was deprecated, the recommended approach is
+> to provide an initrd using a UEFI boot service with the
+> LINUX_EFI_INITRD_MEDIA_GUID device path. Documentation for the new
+> approach has been no more than an admonition with a link to an existing
+> implementation.
+>
+> Provide a short explanation of this functionality, to ease future
+> implementations without having to reverse engineer existing ones.
+>
+> Signed-off-by: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+> Link: https://lore.kernel.org/r/20250428131206.8656-2-hugo@whynothugo.nl
+> [Bagas: Don't use :ref: link to EFI stub documentation]
+> Co-developed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 > ---
->  kernel/sched/fair.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index b173a059315c..7229339cbb1b 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -8320,9 +8320,7 @@ static int find_energy_efficient_cpu(struct task_struct *p, int prev_cpu)
->  		int max_spare_cap_cpu = -1;
->  		int fits, max_fits = -1;
->  
-> -		cpumask_and(cpus, perf_domain_span(pd), cpu_online_mask);
-> -
-> -		if (cpumask_empty(cpus))
-> +		if (!cpumask_and(cpus, perf_domain_span(pd), cpu_online_mask))
->  			continue;
->  
->  		/* Account external pressure for the energy estimation */
+>  Documentation/admin-guide/efi-stub.rst |  3 +++
+>  Documentation/arch/x86/boot.rst        | 35 ++++++++++++++++++++------
+>  2 files changed, 30 insertions(+), 8 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/efi-stub.rst b/Documentation/admin-guide/efi-stub.rst
+> index 090f3a185e1897..2f0f040f6913a4 100644
+> --- a/Documentation/admin-guide/efi-stub.rst
+> +++ b/Documentation/admin-guide/efi-stub.rst
+> @@ -79,6 +79,9 @@ because the image we're executing is interpreted by the EFI shell,
+>  which understands relative paths, whereas the rest of the command line
+>  is passed to bzImage.efi.
+>
+> +.. hint::
+> +   It is also possible to provide an initrd using UEFI boot services. See
+> +   :ref:`pe-coff-entry-point` for details.
+>
 
+Better say 'using a Linux-specific UEFI protocol at boot time'. The
+boot services are a specific set of APIs none of which have anything
+to do with initrd loading.
+
+>  The "dtb=" option
+>  -----------------
+> diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
+> index 77e6163288db08..fadbe66517bdf2 100644
+> --- a/Documentation/arch/x86/boot.rst
+> +++ b/Documentation/arch/x86/boot.rst
+> @@ -1431,12 +1431,31 @@ The boot loader *must* fill out the following fields in bp::
+>  All other fields should be zero.
+>
+>  .. note::
+> -     The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
+> -     entry point, combined with the LINUX_EFI_INITRD_MEDIA_GUID based initrd
+> -     loading protocol (refer to [0] for an example of the bootloader side of
+> -     this), which removes the need for any knowledge on the part of the EFI
+> -     bootloader regarding the internal representation of boot_params or any
+> -     requirements/limitations regarding the placement of the command line
+> -     and ramdisk in memory, or the placement of the kernel image itself.
+> +   The EFI Handover Protocol is deprecated in favour of the ordinary PE/COFF
+> +   entry point described below.
+>
+> -[0] https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
+> +.. _pe-coff-entry-point:
+> +
+> +PE/COFF entry point
+> +===================
+> +
+> +When compiled with ``CONFIG_EFI_STUB=y``, the kernel can be executed as a
+> +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
+> +implementation details.
+> +
+> +The stub loader can request the initrd via a UEFI protocol. For this to work,
+> +the firmware or bootloader needs to register a handle which implements the
+
+... which carries implementations of the ``EFI_LOAD_FILE2`` protocol
+and the device path protocol exposing the
+``LINUX_EFI_INITRD_MEDIA_GUID`` vendor media device path.
+
+> +``EFI_LOAD_FILE2`` protocol with the ``LINUX_EFI_INITRD_MEDIA_GUID`` device
+> +path. In this case, a kernel booting via the EFI stub will use the ``LoadFile``
+> +function on the registered handle to obtain a reference to the initrd.
+> +
+
+... will invoke LoadFile2::LoadFile() method on the registered
+protocol to instruct the firmware to load the initrd into a memory
+location chosen by the kernel/EFI stub.
+
+> +This approach removes the need for any knowledge on the part of the EFI
+> +bootloader regarding the internal representation of boot_params or any
+> +requirements/limitations regarding the placement of the command line and
+> +ramdisk in memory, or the placement of the kernel image itself.
+> +
+> +For sample implementations, refer to `the original u-boot implementation`_ or
+> +`the implementation in candyboot`_.
+> +
+> +.. _the original u-boot implementation: https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
+> +.. _the implementation in candyboot: https://git.sr.ht/~whynothugo/candyboot/tree/4097b2538d7f1cf85f03922bf42409490b666202/item/src/main.rs#L225
+>
+
+What is candyboot, and why are we adding this plug for it into the
+Linux documentation?
 
