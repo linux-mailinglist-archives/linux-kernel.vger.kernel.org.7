@@ -1,194 +1,134 @@
-Return-Path: <linux-kernel+bounces-811541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80AAAB52A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:50:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8C3B52A80
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C77A57BC9F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:48:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AC753B0123
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FDF29BD80;
-	Thu, 11 Sep 2025 07:50:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9034229BDBB;
+	Thu, 11 Sep 2025 07:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ovSMRW9J"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cYTD3Z+j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637BC26CE02
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80379267B7F;
+	Thu, 11 Sep 2025 07:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757577018; cv=none; b=ppqZg75iCYFQWozYV9keibwAR/9zXyqjJzaJKLLn1xcfXbfvoW7+29yIJBXYEiGIgaAwN4GTc8SNrYZ90EJp02Fd1ULrLPZBhRH3S6EU6X3fpLC+fM48CcoHkIK2u77g54qCWQUzUfjRxDUVwrKUIOLM+IQA2BX1cyBKRPOvhgI=
+	t=1757577034; cv=none; b=fbDw3ZLCkEVmr7W8g10QW7ra4aIFl5cXKsGYlFynd0m9vWS5l7kAwe6dMvCcmFMspxJh8n97O97HR6o0ek9wKwOQ88to/ZmzdGowYuRHHaxumukuB44XtaxOnyJbBe5hZ+Rg5tubB64HvBabp9OQ9Ga6hDKDXWBwJQJlIAgOOgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757577018; c=relaxed/simple;
-	bh=Cb6NPWAnj0ygLjUxD5zBKi6mIgeuA6YFs/mGlYMTqCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D3IkAkilJUYxrqPIcV9gKRM+mtY+IbbGFgatnEqHVZtGgHljjkDFdtiURQzjSc9EonnzNU/1SKlNI5zgtyPoClgaRkv0jjZBmITy5Vnj9EJ3HlZPP8t4kuc83ugFLgmRPYUxzsplNf62q+HKYNP4UvwYKDDpU5IUwOrBUO29Zmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ovSMRW9J; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-62189987b47so214875eaf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:50:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757577015; x=1758181815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tZ6E6bW5eiC9q7CDA3LI31bAgUOE0PZhjrPZI2/QSuQ=;
-        b=ovSMRW9JZgE3qU0vwOhwHOBOxiT2uvlqCS3WVsrSJS7nLlPfUqTucK4y3Zfj+dzVmC
-         GgZ+ZU1yPGTnXRZbSsM4J/OPUQQooCVuW/Vsgfvcv8zKDsfodAx7XehMMvqo/uSEu8YR
-         /yT9cXeMgESOa371HdcoWIwyhVqaJMN7XAUpSdaC+65cy5iSwUV/l30Du4tCxUaTflCy
-         CPaE4TOMoT7GqbCQx213GeiTUYdxzC7oVgvII/6rt0ekRiN5Ri1gdwnTcCJ5McgUqbb2
-         tZVo3mqwQ3LW2QdEA9mH5HiV6YXeLUiT47L4tf+ozbMPCJQhc6UYtaudzK30o1KM/S2X
-         T3fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757577015; x=1758181815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tZ6E6bW5eiC9q7CDA3LI31bAgUOE0PZhjrPZI2/QSuQ=;
-        b=eJnqZtBLoNnd8B+ylG+RsKZVhqyWy88zv8xb9qS6zAmBbVzcRuvFARDCYmEubc4XBv
-         OZwIQSRTXO/jC2s8TKRbg5gMLQjJ/QeG36AmVvggqrdGlZ0myzYCoFrw6CvUmjSPmoor
-         0xOoQMe4g5Bm7+JqXdzbCbbjkZvZjz4hkGMkq+mNkcvjK3yVbv1ug0mPSEjQAdcP9wBP
-         EblCnn4qacQi5SANmdsdmaHvUT/NTVC3mTJziCfqyykj2lTRdGtnTMxCmQuFEpzmBo5d
-         Fy6nPUe64u2fO3GKl+H0p31zxcV1KCL0QLDdsb1EsHDDPY7bUrRn/F2164GT3lM/VG2S
-         27yA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbFdRUU7P6Lr2yZIENEhLaJ00sFW3drHtXH/0UXlUKOTq38TkhHUzegkzNYHG9i6becjZ1rCUYqfbLbkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykYVZrpx1BnGs4Pnk9u63twopLuydIoaspzMNqknUw/Y1IUhc3
-	pjkMHmBYuzKHwB63SRr8wijB9ObGcH0Fl5z3eYrhp9eHLPbZ5SMeE+5Y8ZzeARfao+qtlKB2vSX
-	ECvOe/YbTpi4dnVRellwmeeg7yT5eO+jB89fRy7ZSYw==
-X-Gm-Gg: ASbGncsqdmJJfojNdHbcPdKA9osuXOHRB/jU2TONYLeHS+XZm5RR/lZBgmtpHkwCDmn
-	0JDaqejja5fbtk7LqDR3RBbzS53qWA4Zrlnhj1Lh01n0+Zg/Qr83cHqXhnS5GDTbncengSMojTR
-	zf/FRwaZFfpbfxVk9pb2i5AnpIeGXYWvqifI7UCqkKYFkP9ax7bjQaAHCod+eQX5LMoQLvD3gmA
-	PrlZsWI
-X-Google-Smtp-Source: AGHT+IHM+qomPa7mkwPaxbF4J0ZwMvmQZ4r3i08spiXwqRdColY0ofOiN+xC4zPpK9pKKDVK1an+zwdrKVe+3sc2KLA=
-X-Received: by 2002:a05:6820:1518:b0:620:ea78:ceb4 with SMTP id
- 006d021491bc7-6217897a730mr7686244eaf.0.1757577015334; Thu, 11 Sep 2025
- 00:50:15 -0700 (PDT)
+	s=arc-20240116; t=1757577034; c=relaxed/simple;
+	bh=m30L7S1WvoRggLHv6LreiIlctXHF+XJ1XKVdT0+e9qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cx1i5Aus6eO3UnCtDVA+OpXxpr6hC9l/RRHJv2x2PyzAPC3JMUn0CvdIIklcNHT68wJYD3OAgfwZSkEmrfSP0iFgPFDd10IJZaMdZxhSHpA3cL9veWDL7VrH9peOwUabEAjOeSWZuQegfEjziuPxPBrHLFyHwd7qT/Hh6S9ADlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cYTD3Z+j; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757577033; x=1789113033;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=m30L7S1WvoRggLHv6LreiIlctXHF+XJ1XKVdT0+e9qo=;
+  b=cYTD3Z+jVrnTnd+ax8CniyL9wCCIrU39kQ2kCsqPB86fHwq/dodoLqsM
+   7wvrTYNaLhLZkp7uiB66+DN5wRqDWIACq7ROnFZilW9nBqbmePNYsRagU
+   zIe26nDcheavVzEE15kBP0lXFJXLtUcs8/RNgigp2akp5dF1OHRj9a7Wq
+   gwE+RkP75WeEhjgNhTTzhp6SIFWbK/muwPdgCr7ABAKI8/HT6n5he//Pv
+   U1mwujWx5zTG8J5jh9ldzFFxdgCt1AVGyvVY05jGr1EQjUVsrgICxk6nb
+   buF//Ceghj+IR0xkN9PIHSrMwc0+q1kddeGvQvqzJwS9JYmapuDvwCRyf
+   Q==;
+X-CSE-ConnectionGUID: 9iNcqjASRm+TBvYVltk7+g==
+X-CSE-MsgGUID: 3SifTtzVTWmL+zXuclYbtA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="58941625"
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="58941625"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:50:32 -0700
+X-CSE-ConnectionGUID: /rkAzoZPQPW19fuKTvUXuA==
+X-CSE-MsgGUID: uzsJIT7GTJKG20+iNoc2mA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="178821912"
+Received: from smile.fi.intel.com ([10.237.72.51])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:50:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1uwc4R-000000022QJ-0Efr;
+	Thu, 11 Sep 2025 10:50:19 +0300
+Date: Thu, 11 Sep 2025 10:50:18 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Lee Jones <lee@kernel.org>, Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>, Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <legoffic.clement@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	James Cowgill <james.cowgill@blaize.com>,
+	Matt Redfearn <matt.redfearn@blaize.com>,
+	Neil Jones <neil.jones@blaize.com>,
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Yang Shen <shenyang39@huawei.com>, Imre Kaloz <kaloz@openwrt.org>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com, imx@lists.linux.dev,
+	linux-unisoc@lists.infradead.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 0/3] gpio/pinctrl/mfd: use more common syntax for
+ compound literals
+Message-ID: <aMJ_Ohp5YtYNFnYV@smile.fi.intel.com>
+References: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250813060339.2977604-1-jens.wiklander@linaro.org>
- <20250813060339.2977604-3-jens.wiklander@linaro.org> <aJ1-YpgvGt4_6CFU@sumit-X1>
- <CABdmKX2FPg+hO55qWndMajuWP0kZH=OWEh9v-d8aO6HQWyxJtQ@mail.gmail.com> <CAO_48GEqkf_Jm8kSTPEDZkZy-YmT56Zs1Jx9zCvzETPsCzrkEg@mail.gmail.com>
-In-Reply-To: <CAO_48GEqkf_Jm8kSTPEDZkZy-YmT56Zs1Jx9zCvzETPsCzrkEg@mail.gmail.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Thu, 11 Sep 2025 09:50:04 +0200
-X-Gm-Features: Ac12FXyvCWRnQD7Gsb8VWVWslCX8Upv9AarUZnTiiQT33HIlYHfy4GNTnaJlFIg
-Message-ID: <CAHUa44HHSKwiBYPMSY5hj6wyWc9-uvtQVx+JLx4M5yjD5AwyTg@mail.gmail.com>
-Subject: Re: [PATCH v11 2/9] dma-buf: dma-heap: export declared functions
-To: Sumit Semwal <sumit.semwal@linaro.org>
-Cc: "T.J. Mercier" <tjmercier@google.com>, Sumit Garg <sumit.garg@kernel.org>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
-	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
-	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	Yong Wu <yong.wu@mediatek.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
-	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>, 
-	Rouven Czerwinski <rouven.czerwinski@linaro.org>, robin.murphy@arm.com, 
-	Sumit Garg <sumit.garg@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hi Sumit,
+On Wed, Sep 10, 2025 at 09:25:44AM +0200, Bartosz Golaszewski wrote:
+> As discussed[1] with Andy: it's probably better to use a more common
+> syntax for compound literals so fix the commits that converted GPIO
+> chips to using the new generic GPIO chip API and make them explicitly
+> spell out the type they're initializing.
+> 
+> Each commit in this series can go directly into its respective tree:
+> MFD, pinctrl and GPIO.
 
-On Thu, Sep 11, 2025 at 9:15=E2=80=AFAM Sumit Semwal <sumit.semwal@linaro.o=
-rg> wrote:
->
-> Hello Jens,
->
-> On Fri, 15 Aug 2025 at 05:00, T.J. Mercier <tjmercier@google.com> wrote:
-> >
-> > On Wed, Aug 13, 2025 at 11:13=E2=80=AFPM Sumit Garg <sumit.garg@kernel.=
-org> wrote:
-> > >
-> > > On Wed, Aug 13, 2025 at 08:02:51AM +0200, Jens Wiklander wrote:
-> > > > Export the dma-buf heap functions to allow them to be used by the O=
-P-TEE
-> > > > driver. The OP-TEE driver wants to register and manage specific sec=
-ure
-> > > > DMA heaps with it.
-> Thank you for the series.
->
-> Could you please use EXPORT_SYMBOL_GPL_NS instead of EXPORT_SYMBOL for th=
-ese?
+Thank you! All look good to me,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
-Sure, what namespace do you want in the argument for
-EXPORT_SYMBOL_GPL_NS()? "DMA_BUF"?
+> [1] https://lore.kernel.org/all/20250909-gpio-mmio-gpio-conv-part4-v1-13-9f723dc3524a@linaro.org/
 
->
-> With that change, please feel free to use my
-> Acked-by: Sumit Semwal <sumit.semwal@linaro.org>
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks,
-Jens
 
-> > > >
-> > > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
-> > > > Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> > > > ---
-> > > >  drivers/dma-buf/dma-heap.c | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > >
-> > >
-> > > Can we get an ack from DMAbuf maintainers here? With that we should b=
-e
-> > > able to queue this patch-set for linux-next targetting the 6.18 merge
-> > > window.
-> > >
-> > > -Sumit
-> >
-> > Reviewed-by: T.J. Mercier <tjmercier@google.com>
-> >
-> > Sorry I haven't been able to participate much upstream lately.
-> > >
-> > > > diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.=
-c
-> > > > index 3cbe87d4a464..cdddf0e24dce 100644
-> > > > --- a/drivers/dma-buf/dma-heap.c
-> > > > +++ b/drivers/dma-buf/dma-heap.c
-> > > > @@ -202,6 +202,7 @@ void *dma_heap_get_drvdata(struct dma_heap *hea=
-p)
-> > > >  {
-> > > >       return heap->priv;
-> > > >  }
-> > > > +EXPORT_SYMBOL(dma_heap_get_drvdata);
-> > > >
-> > > >  /**
-> > > >   * dma_heap_get_name - get heap name
-> > > > @@ -214,6 +215,7 @@ const char *dma_heap_get_name(struct dma_heap *=
-heap)
-> > > >  {
-> > > >       return heap->name;
-> > > >  }
-> > > > +EXPORT_SYMBOL(dma_heap_get_name);
-> > > >
-> > > >  /**
-> > > >   * dma_heap_add - adds a heap to dmabuf heaps
-> > > > @@ -303,6 +305,7 @@ struct dma_heap *dma_heap_add(const struct dma_=
-heap_export_info *exp_info)
-> > > >       kfree(heap);
-> > > >       return err_ret;
-> > > >  }
-> > > > +EXPORT_SYMBOL(dma_heap_add);
-> > > >
-> > > >  static char *dma_heap_devnode(const struct device *dev, umode_t *m=
-ode)
-> > > >  {
-> > > > --
-> > > > 2.43.0
-> > > >
->
-> Best,
-> Sumit.
 
