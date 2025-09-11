@@ -1,150 +1,117 @@
-Return-Path: <linux-kernel+bounces-812411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87992B537CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:31:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E5BB537D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D0884E2582
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:31:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 328CF189E255
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7874214A9B;
-	Thu, 11 Sep 2025 15:31:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161DB3FFD;
-	Thu, 11 Sep 2025 15:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B2F19D88F;
+	Thu, 11 Sep 2025 15:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iySdujC1"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB373FFD
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757604712; cv=none; b=ZeJZ5GHCF5M4ODtDCwXOfqt30Pa6ZS7x9Oxu+s2Cr9hecN5vVokBRcjgbfWo2V3Sb/IHXxi8bBHINfn7/aM5vlxByz1szTNTnHcnn3oFg1FyWtOSiWe+uc1HAYNS3EfdPUBQt+N2z1kquZWIapI4EXXWLE51RBOyR8uQ0o09qLA=
+	t=1757604770; cv=none; b=pPaNUQ5ejsgiJKX3LvhExb0BOrQ55O203+67+pI7xE2RJISBdh/q3itvuDE1mUx9ZwmyS652XtnU74ObDkuSbcWmvDCzJzrCThi1ACQ9LLzYgVZ47LSTF1L7v65RvnUqHvlIs3hqGti+1tlxxx0ZnleDWWYcqvWOEl+UULgipX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757604712; c=relaxed/simple;
-	bh=WGLQJ4HQwkkBe6Q8BjXQ13kUxNZL5cfjEQ7dcCSNxok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t0c4fQz5vqJNFUD+1H3cESwgBY0ydYLoYq8DfCQC0f/keHYumdisFpRDkIcESyu0vGWMR0IDjFaWc8pl3Ben46tMWjQaDZSWZIPObaj/NZ2LVrJ16YsKE4Gks+Qlwjyii3zMGONZXjZ9uNvZTLOwCUKUKs8NjlVO6KfPbTRwwHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C145C153B;
-	Thu, 11 Sep 2025 08:31:40 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D7233F63F;
-	Thu, 11 Sep 2025 08:31:44 -0700 (PDT)
-Message-ID: <aaefa134-b520-42d2-a700-4f7382b0318f@arm.com>
-Date: Thu, 11 Sep 2025 16:31:43 +0100
+	s=arc-20240116; t=1757604770; c=relaxed/simple;
+	bh=YkMv6YjsyCNBVi5yIMwaJK92TSsQZwK3ovRalXzSm4E=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SSstd3NbdZ8hEQzjTO8l1QWkKe8f4WdJNWj9pctjSBV2w4omSPoz9nd7pHQXSnk6y+vpG/KrWzhWDB4BMO5dMypVQ2+f2RUZUTqQROtL4XTWIQLedk8FUvrsQX5fRbSp+9DOd1nfUg1V3AIREHbjKbdust2tF8aNkFONtNQyzLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iySdujC1; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45cb6428c46so10828845e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:32:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757604767; x=1758209567; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1Y/244DiSphAJbtkVDW8SEmzh2Ums4Tc++EtjExWiik=;
+        b=iySdujC1QrQC4czP+CEbV8VuLXtpy7ttLEReliaXH+L1WUDFIll2p2Nq2C4MOgFt7B
+         ITpv/BKt9xlrsw2BGVNtb3HpzYTTk1Ocv14dn84Ang34rCKRSVBzfeC4Wqaa56AQDV2v
+         sfk7eHUaJojWt1nZogl2kE31d4fsHxWURkdgsOyOpggTf6KE7C+2jGvGd70/GWCtqAsH
+         Aw7vLyevFtKOvTHAqAVNw11cg4SEZ2xusdwrb1jjk0QxEr2mtlZ1cKSmoIh6JQLfvaHT
+         rOOQWKma3SgRVzw3U6zqFblQGjJb2eJHkoYlpzoUMTKG3IGyQQIVljpGM/myjg66oYAo
+         xFtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757604767; x=1758209567;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1Y/244DiSphAJbtkVDW8SEmzh2Ums4Tc++EtjExWiik=;
+        b=k0tqmcz4ayLSgW02e+BEWx51pQIvSVwhMxLmAwX5HlfWdvq4odtLvTVJL3kqAYXWSB
+         ca68d6bi1iz0WZlrmLllCXgvDyt47B8ZiGMjpPP/TqJ/E3iBE60Vy10FXEAiSQyrQSDq
+         OTti/ts5Iroi92hndqmu5xKajboWpVvUb9jOak5ax7zO8yct5q1tPPTj+reAPCitSy3i
+         wg9ImvWY+0t7GNbVEWXl/+kDRZ46Du/E2PavvCdCoDibYGKzOoUm2emwlNi7h35LEt2G
+         asi/ZxBIU3BMBuKn3ekv6L/kIkrbYMHvJ3dZaaXnPkSb7A00o9VKntgpAo0k2XMAn9la
+         p8og==
+X-Forwarded-Encrypted: i=1; AJvYcCUHZpyGpGAi7gxEApLIW9zFli23AD5WZV90WYLJ8c/JZqqQFL2xsW9vQe76sQXspePOpmlPlzeoJt8KeEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlS4AEYVFt6m1d0IkTb5oDrhp72lsir3osDxVnWnZGbtz83FPL
+	sdKeuLNOfSOAK8eAxr6Nvs6vDrEKYNYLH3/KGpBIsdtUPYT1/Eb1mvCW
+X-Gm-Gg: ASbGncuZbOnz0XuM3ZGV6RI3OY5Ox8+HrGHmHjlEUNKHh7pP3TM4uOYihfNV9y82Yq2
+	TP1v5eHlq5zlxafXxx7hmY5Fwp6No4O5kuy65lSPaYRFTOQe+TO7Mo/p9Vj+ohMK5PrunLyUZW4
+	tc5v607maFCiBMIgKes+5I7Fk+DeaCKQJHayPjG4fXTxEnfkaTNlfpcUY09kvp66CbyAKphzh1c
+	1x8Jpl7bsKrHALQsEt6vDQ6ZViz9Wu/sxa5yirWhh3aCTR1naKCPmTxINQ8sS1VcxxYjPpL/NHV
+	eaocJged9NI3f6PhGi3aTcoH/Y22fXMpPBDRx2hPxkZ//NIt9V8adLkHnUb2G+GUMfgfOi0z/8i
+	ScaX8CytWLX07qczfi0cHUt9qImp6vCggQx9Ft/Llr7A0UJSDPxcOcY7Wd5QVW/wlnrTZTdyY+M
+	mvYB9Xw/G9Y20DVkje8CwWpqLxfsGAfqR8+Us=
+X-Google-Smtp-Source: AGHT+IGDFl50WTcAW8FK5GtCVqo1WVM9JouN+PbJLJQUqledX8LqT6eikYMKGBvqjaGPWeZ+ftRl4g==
+X-Received: by 2002:a05:600c:17d8:b0:45e:598:90b0 with SMTP id 5b1f17b1804b1-45e05989245mr18195835e9.9.1757604766795;
+        Thu, 11 Sep 2025 08:32:46 -0700 (PDT)
+Received: from localhost (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e01baa70dsm30941195e9.15.2025.09.11.08.32.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 08:32:45 -0700 (PDT)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	thierry.reding@gmail.com,
+	jonathanh@nvidia.com,
+	devicetree@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kartik Rajput <kkartik@nvidia.com>
+Subject: Re: [PATCH] arm64: tegra: Add I2C nodes for Tegra264
+Date: Thu, 11 Sep 2025 17:32:38 +0200
+Message-ID: <175760472294.2784204.12720978219175288045.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250828102803.497871-1-kkartik@nvidia.com>
+References: <20250828102803.497871-1-kkartik@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/29] arm_mpam: Add helpers for managing the locking
- around the mon_sel registers
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-13-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250910204309.20751-13-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi James,
+From: Thierry Reding <treding@nvidia.com>
 
-On 9/10/25 21:42, James Morse wrote:
-> The MSC MON_SEL register needs to be accessed from hardirq for the overflow
-> interrupt, and when taking an IPI to access these registers on platforms
-> where MSC are not accesible from every CPU. This makes an irqsave
-> spinlock the obvious lock to protect these registers. On systems with SCMI
-> mailboxes it must be able to sleep, meaning a mutex must be used. The
-> SCMI platforms can't support an overflow interrupt.
+
+On Thu, 28 Aug 2025 15:58:03 +0530, Kartik Rajput wrote:
+> Add I2C nodes for Tegra264.
 > 
-> Clearly these two can't exist for one MSC at the same time.
 > 
-> Add helpers for the MON_SEL locking. The outer lock must be taken in a
-> pre-emptible context before the inner lock can be taken. On systems with
-> SCMI mailboxes where the MON_SEL accesses must sleep - the inner lock
-> will fail to be 'taken' if the caller is unable to sleep. This will allow
-> callers to fail without having to explicitly check the interface type of
-> each MSC.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Change since v1:
->  * Made accesses to outer_lock_held READ_ONCE() for torn values in the failure
->    case.
-> ---
->  drivers/resctrl/mpam_devices.c  |  3 +--
->  drivers/resctrl/mpam_internal.h | 37 +++++++++++++++++++++++++++++----
->  2 files changed, 34 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 24dc81c15ec8..a26b012452e2 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -748,8 +748,7 @@ static int mpam_msc_drv_probe(struct platform_device *pdev)
->  
->  		mutex_init(&msc->probe_lock);
->  		mutex_init(&msc->part_sel_lock);
-> -		mutex_init(&msc->outer_mon_sel_lock);
-> -		raw_spin_lock_init(&msc->inner_mon_sel_lock);
-> +		mpam_mon_sel_lock_init(msc);
->  		msc->id = pdev->id;
->  		msc->pdev = pdev;
->  		INIT_LIST_HEAD_RCU(&msc->all_msc_list);
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index 828ce93c95d5..4cc44d4e21c4 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -70,12 +70,17 @@ struct mpam_msc {
->  
->  	/*
->  	 * mon_sel_lock protects access to the MSC hardware registers that are
-> -	 * affected by MPAMCFG_MON_SEL.
-> +	 * affected by MPAMCFG_MON_SEL, and the mbwu_state.
-> +	 * Access to mon_sel is needed from both process and interrupt contexts,
-> +	 * but is complicated by firmware-backed platforms that can't make any
-> +	 * access unless they can sleep.
-> +	 * Always use the mpam_mon_sel_lock() helpers.
-> +	 * Accessed to mon_sel need to be able to fail if they occur in the wrong
-> +	 * context.
->  	 * If needed, take msc->probe_lock first.
->  	 */
-> -	struct mutex		outer_mon_sel_lock;
-> -	raw_spinlock_t		inner_mon_sel_lock;
-> -	unsigned long		inner_mon_sel_flags;
-> +	raw_spinlock_t		_mon_sel_lock;
-> +	unsigned long		_mon_sel_flags;
->  
 
-These stale variables can be removed in the patch that introduced them,
-outer_mon_sel_lock, inner_mon_sel_lock, inner_mon_sel_flags. Jonathan
-has already pointed out the stale comment and paragraph in the commit
-message.
+Applied, thanks!
 
-Thanks,
+[1/1] arm64: tegra: Add I2C nodes for Tegra264
+      commit: 7afa0f58751a85bae003fd1f0a283b9fbe7611dd
 
-Ben
-
+Best regards,
+-- 
+Thierry Reding <treding@nvidia.com>
 
