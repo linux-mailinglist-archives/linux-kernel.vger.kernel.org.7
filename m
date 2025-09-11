@@ -1,137 +1,157 @@
-Return-Path: <linux-kernel+bounces-811995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2729B53169
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:50:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F9C6B5316C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A38D3AF5F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AABA13A40B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE84309EFF;
-	Thu, 11 Sep 2025 11:49:58 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8042C159A;
-	Thu, 11 Sep 2025 11:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFDE309EEC;
+	Thu, 11 Sep 2025 11:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcqFlboC"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016782C159A;
+	Thu, 11 Sep 2025 11:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757591398; cv=none; b=X1VXZfbzVWjYDQOyQk//qqycNgNeACZs1s60Jn4Jf54z+oAn8fm6lbC9XbW5i4vxcKUtYdZYHCcXJSRhV09/85djYhLPcDg3xyrnseRHypvvQjQAIlzXDcIWM3S+6ghVCNvwyrN+nHzUUYm5HI9F2siTlkNA2d1w2UlorbChp+A=
+	t=1757591438; cv=none; b=QiPTjlCoylBOneQRDvCit1XDIxE95rmvtsTjBGz2sR5KuceSDx79zqglnGgxNx3IwB+UgtMOLvA6OsohG/hJVLLnsR2FwD+GFhjRopBXNUbrfXYFUJhVc8p0DvuW6ArsybPn9FBec5RPthg68JXyDGQEWwqiElLxnbmKbTBm50A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757591398; c=relaxed/simple;
-	bh=jU7cQJWKbEmzN+FcnVCf5vLe/NA8j+GUwLOmZOFuYZ4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Q48bbBZB/iln51+JGvWJPP5CEQ0L/nu07VVAjIY8U7JRwtAMUsbdj3orheyBYMSbBKN/mDFqHQK/rUhv+goyWDEypSit+OAFCJzeIWpYt8ceBFGE92KPHeCtHjCcihAPMcceerbzoCKSIE+Eq/pLIgsb6Aom6aS93iI/ZZmuEO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8CxbNJft8JoLDgJAA--.19746S3;
-	Thu, 11 Sep 2025 19:49:51 +0800 (CST)
-Received: from [10.130.10.66] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowJAxT+Zet8JoVPWNAA--.57205S3;
-	Thu, 11 Sep 2025 19:49:51 +0800 (CST)
-Subject: Re: [PATCH v1 2/2] LoongArch: Return 0 for user tasks in
- arch_stack_walk_reliable()
-To: Jinyang He <hejinyang@loongson.cn>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, Xi Zhang <zhangxi@kylinos.cn>,
- live-patching@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250909113106.22992-1-yangtiezhu@loongson.cn>
- <20250909113106.22992-3-yangtiezhu@loongson.cn>
- <5e45a1a9-4ac3-56ee-1415-0b2128b4ed9a@loongson.cn>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <c3431ce4-0026-3a05-fa50-281cd34aba4e@loongson.cn>
-Date: Thu, 11 Sep 2025 19:49:50 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1757591438; c=relaxed/simple;
+	bh=EpZa+svNV4qrmtWACPZ9BCc39P+d1Ph7ttNi7LFJYKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aIoR4k4dBS6DOdCKLivKYkcgPCX5gTgDe7bzy2IUC0Kqm1UGUOytgQh39uRZQBaVajHLzI/6HAA0WHK1NSayIIgMW1Z+3ZHT/rJ63NVbMmNO24eEg0eG7TwaR6VjTuAdULBVeYTHUre7ivjbXkap+aSVWR3LHXfpMDHcU01ZyxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcqFlboC; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4f7053cc38so413424a12.2;
+        Thu, 11 Sep 2025 04:50:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757591436; x=1758196236; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EpZa+svNV4qrmtWACPZ9BCc39P+d1Ph7ttNi7LFJYKE=;
+        b=DcqFlboCSXc8FK6N2JbviAfevXiMuPerBYOjk4XngNqJxA7AMmis+aj7ALuLi8ArGg
+         gPEGqdi05t412M8seyTFeczKCPzFHu9eOkmgxpzWnJK33/ipBnNtM7TF5HO2DNmli1Nm
+         hHSVN1JXyocuCkllsQyDaMCarHAoaZNhCF0ecHdxb4Cpoxm5XBe/zmXyt3o9HLl+Hd+0
+         9A+zHiRZajr6ncYv6C/TEWrcIg4Ts0zoYhuzB16BCxwSm9bBcGtJJlIHQ8TMhGjbwX/C
+         yvJdmOIoEqwAsqhYNbQWSTIQk3yR3VjEA3JmDXd3hRG8xvnZghTYE+pCM89iZopcyFJf
+         h0CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757591436; x=1758196236;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EpZa+svNV4qrmtWACPZ9BCc39P+d1Ph7ttNi7LFJYKE=;
+        b=nwO/zbReNkxec6YamWjt1hbO3NvPlgoq0cx1qFc1u2G2llGKSrL6Ol/WQBR4HiezYK
+         1wdKNNVgh7dHb5U5eGf0WTvakK9ojtVSPRhal2EThnxFTemjcsxyiVWdl5WX+tsUpxmB
+         IZJmjDIRCC/KPzwFt+QZ8i9IbM5GsG54jmLd/OLXlOAYoqqpBLF6VKb5rP6QbDcwuVVS
+         4KQu9yELlOiH+Ze86+/J/w8o7tiX+A4Y9/HC8saIj+Vq2EJ2VcydANm9ZoxBLMXtBkEq
+         0WISpzPJxXL8ehnCXuaG3WmY6KmbPNY6Rs18IvNSIUvTEY1IxnoOAPo2xxsCMZYqlWR8
+         pUJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJn59hSWOVygVSBCXEL9q28i+zk5lbLEgrPeDa0Kd5QNSmM09UZvedjoeSDVq6Kq8PGe0Y/eDo2+k=@vger.kernel.org, AJvYcCWJohQAnZGzcnGOK5SL+ZYbu5960h45YhgHqJNfPIR4m0UC+cSDRwcI2SRYJV5rBqz3zZTxU8kqvG3p@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzLWxj6to5b2EUls4Tk+W0Uuv/I98r1igYJ9yk7vP70UUuke/A
+	7wYY7BwOrQBdZL16BogCYdKgjkwdq+eLmdaopTKYOZGpPmazDt5mnr1o8OIQLobg
+X-Gm-Gg: ASbGncv0m9Rfqtu2Nr30d1xvLa8PuoLUqaAR+YfMo8DVFthQbzfiCEq79WZNBYxAHoJ
+	V5Pfrb6A+/7dPZRP4XJRMqw6lLXRpcp4YtnQjr0w4jCMZVdOe31EPrCLQ1jfj0s720X5HQ1fage
+	7v0wNlAzKvEZtiO3jmmw8d0jy16W6tJqpTcw8yfklky0RQPDlGixCECig38YrGijMpxjfX4e4Zs
+	6kYMhZJCdEu5FLLFUfYm7pinYoWDXIK1zWGsUH0YbxJajfx55rbPt+RQiYJlQLYHvHVaYmoR4qS
+	YepXiL1QVOX3bVeqGAJA/Y9R6WGNR84BPKX98L5d6xxbUVJYI4fL/SeEJJusksmcn8UotB6CeEq
+	GSTkHA+AWNrvD3T3ednjRcsZt3Q==
+X-Google-Smtp-Source: AGHT+IGo4cNTzv8D/C3O5jzdK4t4nju+tLQ5RjuQxdw+dRvSukvm1eBI227YW3OZNuKSPWPl/Uwu1A==
+X-Received: by 2002:a17:902:f644:b0:25c:8aa4:db9b with SMTP id d9443c01a7336-25c8aa4de8amr11417045ad.55.1757591435081;
+        Thu, 11 Sep 2025 04:50:35 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3a84a486sm17194565ad.65.2025.09.11.04.50.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 04:50:34 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 3852F41FA3A1; Thu, 11 Sep 2025 18:50:32 +0700 (WIB)
+Date: Thu, 11 Sep 2025 18:50:31 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Hugo Osvaldo Barrera <hugo@whynothugo.nl>,
+	Ard Biesheuvel <ardb@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux EFI <linux-efi@vger.kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
+Message-ID: <aMK3h1zvHc0sK-F3@archie.me>
+References: <20250910015738.14848-2-bagasdotme@gmail.com>
+ <CAMj1kXHCi1pr3XNzwe7b7EFBkPGjkppeNWNSvy4wU1VBHj9kfA@mail.gmail.com>
+ <c30fb598-2878-4bdd-ab84-4f4d07d0db5d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5e45a1a9-4ac3-56ee-1415-0b2128b4ed9a@loongson.cn>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxT+Zet8JoVPWNAA--.57205S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7trW7XF1fAFykCFW5ur43CFX_yoW8tr4rpr
-	95C3ZxKFyUtr9YgF9rGr1DXFy8Jw4kZw1DGF1rJ3W7ZF1Yqr1Fgw429ayj9rsxArWkJw4a
-	kr15trykua17JacCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
-	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_MaUUUU
-	U
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pQMjPvYcKYXv/Znk"
+Content-Disposition: inline
+In-Reply-To: <c30fb598-2878-4bdd-ab84-4f4d07d0db5d@app.fastmail.com>
 
-On 2025/9/10 上午9:11, Jinyang He wrote:
-> On 2025-09-09 19:31, Tiezhu Yang wrote:
-> 
->> When testing the kernel live patching with "modprobe livepatch-sample",
->> there is a timeout over 15 seconds from "starting patching transition"
->> to "patching complete", dmesg shows "unreliable stack" for user tasks
->> in debug mode. When executing "rmmod livepatch-sample", there exists
->> the similar issue.
 
-...
+--pQMjPvYcKYXv/Znk
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> @@ -57,9 +62,14 @@ int arch_stack_walk_reliable(stack_trace_consume_fn 
->> consume_entry,
->>       }
->>       regs->regs[1] = 0;
->>       regs->regs[22] = 0;
->> +    regs->csr_prmd = task->thread.csr_prmd;
->>       for (unwind_start(&state, task, regs);
->>            !unwind_done(&state) && !unwind_error(&state); 
->> unwind_next_frame(&state)) {
->> +        /* Success path for user tasks */
->> +        if (user_mode(regs))
->> +            return 0;
->> +
->>           addr = unwind_get_return_address(&state);
->>           /*
-> Hi, Tiezhu,
-> 
-> We update stack info by get_stack_info when meet ORC_TYPE_REGS in
-> unwind_next_frame. And in arch_stack_walk(_reliable), we always
-> do unwind_done before unwind_next_frame. So is there anything
-> error in get_stack_info which causing regs is user_mode while
-> stack is not STACK_TYPE_UNKNOWN?
+On Thu, Sep 11, 2025 at 01:22:54PM +0200, Hugo Osvaldo Barrera wrote:
+> On Thu, 11 Sep 2025, at 08:46, Ard Biesheuvel wrote:
+> > On Wed, 10 Sept 2025 at 03:58, Bagas Sanjaya <bagasdotme@gmail.com> wro=
+te:
+> >> +.. _pe-coff-entry-point:
+> >> +
+> >> +PE/COFF entry point
+> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> +
+> >> +When compiled with ``CONFIG_EFI_STUB=3Dy``, the kernel can be execute=
+d as a
+> >> +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
+> >> +implementation details.
+> >> +
+>=20
+> This should be a link rather than a path to the source file.
 
-When testing the kernel live patching, the error code path in
-unwind_next_frame() is:
+I think you miss the point of Jon's comment on your original submission [1].
+Long story short, in Sphinx, one would cross-reference to other documentati=
+on
+files (so-called internal linking) either with :doc: or :ref: directives. In
+case of kernel docs, there is third and preferred way: simply mentioning the
+full docs path. The latter is preferred as it is simpler and also allows
+building only portion of docs (with make SPHINXDIRS=3D<dir>) without trigge=
+ring
+any reference warnings. Hence why I did addressing his comment.
+For more information, see Documentation/doc-guide/sphinx.rst.
 
-   switch (orc->fp_reg) {
-           case ORC_REG_PREV_SP:
-                   p = (unsigned long *)(state->sp + orc->fp_offset);
-                   if (!stack_access_ok(state, (unsigned long)p, 
-sizeof(unsigned long)))
-                           goto err;
+Thanks.
 
-for this case, get_stack_info() does not return 0 due to in_task_stack()
-is not true, then goto error, state->stack_info.type = STACK_TYPE_UNKNOWN
-and state->error = true. In arch_stack_walk_reliable(), the loop will be
-break and it returns -EINVAL, thus causing unreliable stack.
+[1]: https://lore.kernel.org/all/87ecx1x4su.fsf@trenco.lwn.net/
 
-Maybe it can check whether the task is in userspace and set
-state->stack_info.type = STACK_TYPE_UNKNOWN in get_stack_info(),
-but I think no need to do that because it has similar effect with
-this patch.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-Thanks,
-Tiezhu
+--pQMjPvYcKYXv/Znk
+Content-Type: application/pgp-signature; name=signature.asc
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMK3hwAKCRD2uYlJVVFO
+o36/AQDD19K0EP/+/owVXzhNUdOG9EOWEnIpWj2tCVMdZuD1PwEA3NarBLej0ESv
+RU3OAch14DpFEiIzH8kMbTYmc9sG+gk=
+=nlH3
+-----END PGP SIGNATURE-----
+
+--pQMjPvYcKYXv/Znk--
 
