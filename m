@@ -1,146 +1,193 @@
-Return-Path: <linux-kernel+bounces-812558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB236B539BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:56:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D85B539B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835521CC3058
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:56:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 439961CC3F55
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A5335E4E6;
-	Thu, 11 Sep 2025 16:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F2435CEB3;
+	Thu, 11 Sep 2025 16:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="D7Li4eg/"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZhkXURv7"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2042.outbound.protection.outlook.com [40.107.244.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA65235E4D6;
-	Thu, 11 Sep 2025 16:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757609730; cv=none; b=ZfN/SXpJ5tehCHhp2EoDQxjCD1gIiSH1iXiuTOp2i446rkl7nOA6zp/4GXU31FOP2BxiQg2bzjO9V/dedzxCTOGaa5EyLGRJxwSLK81g9GXpVC8KOYDrmV9R9x4wPEP1k3KKMli7R20Y5+GDIDCDtOt2f+RrJsTWuvv0bAcsvpM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757609730; c=relaxed/simple;
-	bh=4cJtU/t0FdZWw6KNuoCu6d8SJpl8M6ogjVQ+HQSCxs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a/LDfSK/E2HrZzXdm5p7ktZo2msfsOD1b4+9GdRaREmdnoQxarHDGA2Klk0Cqult3D2hhatx1iHoPmKQZugGzNdUIK4WdWg5FwFN0OFlLeVqCX7RUGlLAf18bfpn/PoapsHbd8XCgSqgY9DuZqyOxEq8gYZrLrWL5dbnGwWOzk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=D7Li4eg/; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EC6BD40E0140;
-	Thu, 11 Sep 2025 16:55:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id GbyUNlOUsH3D; Thu, 11 Sep 2025 16:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1757609721; bh=Stz8ndbzOk/9lU3pydnqDDO5LXGN0x06KMzK037HgYM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D7Li4eg/w8pnztqcM7ecRESztUR9tum0X9oJHu4Z/XN2jMVK9EfdPBUyX6wQAGqo3
-	 h++oKCCutBYR1CrsdatsNeyyhv+0Ksizc676Z82wRojyzdFP4E0G9dcU8+2QK7usCi
-	 uZkbiqpyR+HWPQSeLgZPNpRIlKQ0CacKeoHDoUFLMFf+TYPjCWB/Pi/3eGMOGa83CA
-	 +4tmWZnUwSLVr+RocnncpF/huY4zxZNOxX8Z0H1FCuurslt1a663c9hDyIfUX/mHRk
-	 zjFyVotOlW9s/CIEOGm50fx2kWM0I2rFdJN0NGQZ3fRSQQnSIhDXpQv7hZIzOT/YZF
-	 D0UeOK4Jpz8iWEGj27wrUDECSPDoDLGtbN3DXpS6afcBwatk5m4A2xcTWkiJU+o9Fv
-	 t5hh/QBQCVcfFW6lq/fYlncq0QEDosZ80eKBw8bHect2KjZenwvQ/zkKtgjBexOnsW
-	 2Tl+moHboBA+phbXKvIadnCQnO/0n7rs71D7IrmaHHZsN5VC4/5yVBdca+lgfysxlm
-	 R9CZXHs6C7OFsWTVaoaUFBETLqsU+u4fB0G38IuNeyNwgreoUiuilAHb0rE6GzTwTj
-	 OtmcD7GObLXc61+ukIxfrmPOtfdlEEiTYrxEAmSPSf0LCFAFdK+arkEdkV2QCrr4S6
-	 YhTnE/xQ1EjaP4m1TSHySTE4=
-Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id DCB2540E0174;
-	Thu, 11 Sep 2025 16:54:38 +0000 (UTC)
-Date: Thu, 11 Sep 2025 18:54:33 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tony.luck@intel.com,
-	Dave.Martin@arm.com, james.morse@arm.com, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
-	hpa@zytor.com, kas@kernel.org, rick.p.edgecombe@intel.com,
-	akpm@linux-foundation.org, paulmck@kernel.org, frederic@kernel.org,
-	pmladek@suse.com, rostedt@goodmis.org, kees@kernel.org,
-	arnd@arndb.de, fvdl@google.com, seanjc@google.com,
-	thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
-	perry.yuan@amd.com, manali.shukla@amd.com, sohil.mehta@intel.com,
-	xin@zytor.com, Neeraj.Upadhyay@amd.com, peterz@infradead.org,
-	tiala@microsoft.com, mario.limonciello@amd.com,
-	dapeng1.mi@linux.intel.com, michael.roth@amd.com,
-	chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	kvm@vger.kernel.org, peternewman@google.com, eranian@google.com,
-	gautham.shenoy@amd.com
-Subject: Re: [PATCH v18 26/33] fs/resctrl: Introduce mbm_assign_on_mkdir to
- enable assignments on mkdir
-Message-ID: <20250911165433.GBaML-yTUZHkywuJIe@fat_crate.local>
-References: <cover.1757108044.git.babu.moger@amd.com>
- <3b73498a18ddd94b0c6ab5568a23ec42b62af52a.1757108044.git.babu.moger@amd.com>
- <20250911150850.GAaMLmAoi5fTIznQzY@fat_crate.local>
- <0bacc30d-0e0d-45da-ab13-dca971f27e2c@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 336FE26E71C
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757609723; cv=fail; b=PbmJtvN6YsoKNvaEb36J4LdR+dcI1tm987V3KX5DjpRpHMplTdq1tG2mZz9RQ/Vqhgze5KE93gxzsJG+wrjWRy2e8Wu4BXikjBXDcNTN1JNMGrR1WFkG3rVN51wTcom3NVME8BKwFbgF4y6ofVKzfEXLvRBIPD60wIQzF5Bhbi8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757609723; c=relaxed/simple;
+	bh=x7YUb8cJBNTk9oiBYHqcJ4A+czioDs1jNvJwf5JqSEA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=r/Q8OziQR26/lUdgS5WJ5kDLJ+34MgIXLhNdydk4y7Cd051rg7A+MghYkuQd+QVizhsY+K86UGUbAPVsI9Lc3thO8Xwil/PR0vlxagAIq1/3vLnF9SlksL/hEcA16FJhKuu3G8LFxyjWLwUUvGRFYj97ywKCiqo4WxGnV8SYwEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZhkXURv7; arc=fail smtp.client-ip=40.107.244.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UfpHBizKml4iW3JQJ0YcKx/nKtKSKRze5hND2qpJkdFecP40Kcp6yAxHRXj702lhnFmnDI8JfOhbQ7jPjrWa7LmGPf7uen8po7Qeu7g1+95OvtFwJ28LtQBezoMxVP/pTOZdjowGCko5NBtmtdS3tQFdh9Ex2Yix5I5M1GypfoqmZNqc/5v2PNsA/cbVl4CuuNhTrN25DK4mCXSBcsfTVbFZuQuhrigBR08L/R0xtsbEBUUcdV5b175EzWXAMoh2e/D+4g7EhyGU3McTJZKXfvsunninYmPrH3pEG1MkIAN3pduq8jeqUBFEMaPmSP6NtA9ObqZrYtGcneFUb6BR/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cHJIQDRXRxe/A5BO6Kyb/HdGn2RhuqHSl+ZW3QMssGE=;
+ b=AtseyD99hw1e0beKj4qG9qnWk8+juuqRiGcAwz388stxLkunFhTbjgFxbg/+BdES0LjnSDmAzbvsbX9hjFp9PKgzJtI+Tdh24ZwiG0zE52iz2gNDW5ARuiMPi7SM0J1weGlaFHjx98rWmNAa0tup98eF5I12x3NUZRGX3Q9PSy6AIuUnDTK7Fw5W7seal9bb1EQsW/39wXFGmSfWXUqn25uyGOQOyaOw5DuaOZLJejNXE+1u7RQNnM7seKDbQN6Mu4y/8aOh0bH4ZHiFcHi9J4PTrTMn/A4MtB5T6httMuca3g689jfIrRoFskOOP1c2iiXfnxFqwifC/JIbw+KWFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.ibm.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cHJIQDRXRxe/A5BO6Kyb/HdGn2RhuqHSl+ZW3QMssGE=;
+ b=ZhkXURv7AfjpCR1p4Qd3N18JFUEP1Jq3vDyR/buqjXVWxxvtcwr1uGXj0Cya7HLK2KrEAhkoxgNhzxbWPqYyoME78oVMtyGwvSxpF12d3hcR4U3N9tnFAwhYHWkBYxfL0NkbSPEqeCAML1ePYKLVV+GgBbaJTE5DbDSxB/ctaFg=
+Received: from BL1P223CA0022.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::27)
+ by PH7PR12MB5901.namprd12.prod.outlook.com (2603:10b6:510:1d5::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 16:55:16 +0000
+Received: from BL02EPF00029928.namprd02.prod.outlook.com
+ (2603:10b6:208:2c4:cafe::9e) by BL1P223CA0022.outlook.office365.com
+ (2603:10b6:208:2c4::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.16 via Frontend Transport; Thu,
+ 11 Sep 2025 16:55:16 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
+Received: from satlexmb08.amd.com (165.204.84.17) by
+ BL02EPF00029928.mail.protection.outlook.com (10.167.249.53) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9115.13 via Frontend Transport; Thu, 11 Sep 2025 16:55:15 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb08.amd.com
+ (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 11 Sep
+ 2025 09:55:15 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Sep
+ 2025 11:55:15 -0500
+Received: from [172.31.178.191] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Thu, 11 Sep 2025 09:55:09 -0700
+Message-ID: <1d406410-631d-487a-9b02-ed23d2cb8302@amd.com>
+Date: Thu, 11 Sep 2025 22:25:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <0bacc30d-0e0d-45da-ab13-dca971f27e2c@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 05/10] sched/fair: Don't consider paravirt CPUs for
+ wakeup and load balance
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+CC: <vschneid@redhat.com>, <iii@linux.ibm.com>, <huschle@linux.ibm.com>,
+	<rostedt@goodmis.org>, <dietmar.eggemann@arm.com>, <vineeth@bitbyteword.org>,
+	<jgross@suse.com>, <pbonzini@redhat.com>, <seanjc@google.com>,
+	<mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
+	<vincent.guittot@linaro.org>, <tglx@linutronix.de>, <yury.norov@gmail.com>,
+	<maddy@linux.ibm.com>, <linux-kernel@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <gregkh@linuxfoundation.org>
+References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
+ <20250910174210.1969750-6-sshegde@linux.ibm.com>
+ <d0aa1a34-2097-405c-b431-907fd973ad96@amd.com>
+ <e3826a8d-98cc-4497-85ce-5d92e0556cea@linux.ibm.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <e3826a8d-98cc-4497-85ce-5d92e0556cea@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB05.amd.com: kprateek.nayak@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00029928:EE_|PH7PR12MB5901:EE_
+X-MS-Office365-Filtering-Correlation-Id: a124b2bb-9449-4113-ca6b-08ddf153fb7b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|7416014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bHZVM3NwY2xRNE5WWGR1MlFTTzYybjk2dVBhM2Mya09CendBZ2lyMHlYRkpz?=
+ =?utf-8?B?YS9lbnMyYStCdC9zaFhhYXF2VkIwNmJjUTN2ajd3SWVQeGJjaUdHL25aSXd4?=
+ =?utf-8?B?djNvQ29Wa3YxUllhdVR2YXdFV29WWE9ObEhKR3FmQ1lITm16VEg5RHAzZGZT?=
+ =?utf-8?B?OUtZL082M2h3S3k1azBzSVNLV3hlY0dIYThMR0JTMTJxU254Q0VJaEo0YlNp?=
+ =?utf-8?B?UnFsSjcvYS9mazk5Nzh5aGdjQjNuZE9FS2xzRVhTYWJtSlhuN1FhMEJGYm9l?=
+ =?utf-8?B?UThKM0Vubk1qSitpYWVhaWFPMjMxMGovWHBuM2c4VDFXUmFwRmZsWXk5TEQ4?=
+ =?utf-8?B?dkVvazlrQWxNNU1qU1BFUGZsVURYS1NEeVQ3SmlXN2hWdEYzbS9CMWtsL2hJ?=
+ =?utf-8?B?MGZNQnlVR2pmUjFDdWVKeVlweGNva1BHMWovdHllRVB5OU40aENhaFMvajla?=
+ =?utf-8?B?aVlOOHhLeGVWajBsY3lCWTQvc3dqWk9oOHA3Y0YrZVFxY0FVakx5U2F0ak5D?=
+ =?utf-8?B?QnZ5QmVJV2J0dmZBb1ZYWHVSSG9MTFNZMFFmamVqQmIzbVJSTjZ1ZmZGNTU4?=
+ =?utf-8?B?eDN3Rm51elRhWk42ZWpFdjNSQnBIMmdidEp4MFdLSFYzeDZzVDNnT25TZlVw?=
+ =?utf-8?B?Y1RYVVJjNHZZUktHZlBaRWRoVThlZDV3N2FQQ0Y5Y2x1d3NJLzFWL3IxRHQv?=
+ =?utf-8?B?WXdnUGpSQitRRFpmMW1oSDFtSHByaktCcDd2amZWd3dGVVo3ZmhVckdSMWl4?=
+ =?utf-8?B?Rmc2NlhWbyszZ0ZUbEJ0ODZYbjcvd01SR0ZwaVdBK09TUWRQYVRTUU8yeHpD?=
+ =?utf-8?B?RXFaKzh6VVlLZ1NOVXl3Q1lVREtxR1UvemkyMCtJYnREcHVwZVUycVdzdXJr?=
+ =?utf-8?B?L2lOTG5FMS9PTFA4dk1XSEdBd3FWN1U2Q0t5SEcvSGFod0YvS1pVajNFb2xq?=
+ =?utf-8?B?MXViWWRFUGJwNDBBeU5WKytTZEg3UW1hNWk4Z0VoTUp0NXlNTjVYbkhGZHdN?=
+ =?utf-8?B?OW90dVdhTkFIbUtNV2o4S0hZQXdNbDV4QW9SQXloUlJpeVJBRWlIV3lhUlpP?=
+ =?utf-8?B?dWdsbGhMeUNRUmROa2dja0ZVRUl0U3o4eEZkaEsyWWJ5OEtoeWlOYkJibmJU?=
+ =?utf-8?B?ZXdzaUFPNTlITkVyTmpoUW0wMTQ1Slhwc3JYWWllQTFzbjdCVElpc0ZlcXBq?=
+ =?utf-8?B?WVNRNzVLQ3c1MlhlRkVGZkxwV3JHYUgvNGZDRkNyKzk5RmZOUlRWWUdNdHVC?=
+ =?utf-8?B?aEdFQXNocm5OMnRBaVN1UUVTMlNMMnZ1Y1RLSWR2WEZ2VGVBT2tOeHo3YzdK?=
+ =?utf-8?B?eVhLTi9HSjBYSVBJQnR5TC9BTWFLZzlHM3J6ditLRlpQa3hCSmhmekFkUmdF?=
+ =?utf-8?B?NU11YjhnY3FDRmErdVF4dFFuU3daVVJSdm9qWTRtRW1CUzVFVG0va0QxcHJT?=
+ =?utf-8?B?K1R1aGpoQWEvSFRqcXhWaDNtMFlUY3YvakVsODhWb253U0M5eDllVG51R3Fa?=
+ =?utf-8?B?WEdMTEVxVEx2K09adEtpcm55djFLN3ROK0ZxNUxrWE5mL05xWnR4YTBKUGU1?=
+ =?utf-8?B?R0NJOUx5QXpSSUNBZHB5ZzB6NlR4TDFNS0N1NmlVOGRtQXpnNXpuOUhkNmdz?=
+ =?utf-8?B?Wnk5UHNjN1JiS1ZGWUY2NjdzY0h4SVVVb2wvUXlKNEx4N1JVZlQ2UUYwTjlE?=
+ =?utf-8?B?a3V0cmdIS0Zxa1NaMEgxN3grekVKNFd5NXRkNmRXbyt3Q0tzMHRjZlUzazQx?=
+ =?utf-8?B?ZE1MSWcyY1o5OVMvQlltaVorT1l5cHRJK0M3Zzd3bEJ3RmdYUzRzUVcvRjND?=
+ =?utf-8?B?d0txcGRvYnp6N2g0OEo2Wm44ditZcEFVSTVuQUxIUGtlbGwwL0Fwdk9MdU40?=
+ =?utf-8?B?UVNCMTlQWDNiVE5mTCthejRudEc4K3V0V0w4QllMTmI2dThVU0FMem8xNHZO?=
+ =?utf-8?B?N3NZeW12S1FGcnNmcDFtYmdFVkFrYi8yUlNZWllWbExRaE5xSk9JRDdPbGxi?=
+ =?utf-8?B?Y1BCcXdtN1g5Z04yQTFaelFOWU1FSnZZa1FaRlVES0V6cEFwNldTNkU0ZWZL?=
+ =?utf-8?Q?txLnJ6?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(7416014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 16:55:15.9819
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a124b2bb-9449-4113-ca6b-08ddf153fb7b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00029928.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5901
 
-On Thu, Sep 11, 2025 at 09:24:01AM -0700, Reinette Chatre wrote:
-> About repeating things: As I see it the annoying repeating results from desire to
-> follow the "context-problem-solution" changelog script while also ensuring each
-> patch stands on its own. With these new features many patches share the same context
-> and then copy&paste results. I see how this can be annoying when going through
-> the series and I can also see how this is a lazy approach since the context is
-> not tailored to each patch. Will work on this.
+Hello Shrikanth,
 
-Thanks. And I know it makes sense to repeat things to introduce the context
-but let's try to keep that at minimum and only when absolutely necessary.
+On 9/11/2025 9:26 PM, Shrikanth Hegde wrote:
+>>> +check_new_cpu:
+>>> +    if (is_cpu_paravirt(new_cpu))
+>>> +        return cpu;
+>>> +    else
+>>
+>> nit. redundant else.
+>>
+> 
+> Do you mean "is_cpu_paravirt(new_cpu) ? cpu; new_cpu"
 
-> About too much text that explains the obvious: I hear you and will add these criteria
-> to how changelogs are measured. I do find the criteria a bit subjective though and expect
-> that I will not get this right immediately and appreciate and welcome your feedback until
-> I do.
+Sorry for the confusion! I meant we can have:
 
-Yeah, that's fine, don't worry. But it is actually very simple: if it is
-visible from the diff itself, then there's no need to state it again in text.
-That would be waste of text.
+	if (is_cpu_paravirt(new_cpu))
+		return cpu;
 
-Lemme paste my old git archeology example here in the hope it makes things
-more clear. :-)
+	return new_cpu;
 
-Do not talk about *what* the patch is doing in the commit message - that
-should be obvious from the diff itself. Rather, concentrate on the *why*
-it needs to be done.
-
-Imagine one fine day you're doing git archeology, you find the place in
-the code about which you want to find out why it was changed the way it 
-is now.
-
-You do git annotate <filename> ... find the line, see the commit id and
-you do:
-
-git show <commit id>
-
-You read the commit message and there's just gibberish and nothing's
-explaining *why* that change was done. And you start scratching your head,
-trying to figure out why. Because the damn commit message is not worth the
-electrons used to display it with.
-
-This happens to us maintainers at least once a week.
+Since we return from the if clause, we don't need to specify else.
 
 -- 
-Regards/Gruss,
-    Boris.
+Thanks and Regards,
+Prateek
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
