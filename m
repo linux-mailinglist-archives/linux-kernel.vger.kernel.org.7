@@ -1,159 +1,159 @@
-Return-Path: <linux-kernel+bounces-812607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B7FCB53A42
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:21:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFB0DB53A47
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:22:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B21481085
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067C41CC6FC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:22:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E302435AAA0;
-	Thu, 11 Sep 2025 17:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3000135FC36;
+	Thu, 11 Sep 2025 17:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZWnFDPBw"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1+7enbL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB7F22AE45
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BCB22AE45;
+	Thu, 11 Sep 2025 17:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757611282; cv=none; b=htzym7dz7KRz54rm2D6pyW8IJfUFdZ8jsEs80Ac+1MhppI5szALkhLXAYi6rxKNHUp064xJicZQeIQxI+3peWssCiXY5GIJp67arHtUwLiWfxs08H//M/hbax789keHTa6sp55VRhAzOTyJto5CzVJ1/eTflRJCu9C913thhDTY=
+	t=1757611340; cv=none; b=fgLugqNTu3KvqQ9wSTMDq2v5x1vlOydmLRvjokgSFG0wj01LHOhgI/FsFlzeQl87Oe3mgCkJCg7jtwRDjOTFhX6o/3YV3ciopRFJp7K6yJvgv+NK4Dv2nzD6au5YykUn4rI7ad5VUCV8KUZZfqRxNJ4gjnEwPZrumUJAGW3o8TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757611282; c=relaxed/simple;
-	bh=7rIm9WjRZd9JuaOSROjUnRkylLjDgnwq4rskGRGEbUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7CK4w5KV6ZjJ0RarkxynmSIQRYXb/gShaP90ugp/ub8XtUW0m9QCoYmK5/PWcz7B150Dq1hgRKz6YEs8lCsqUhgaXB6MDbP8yMwLRYBPj7uqcNp0IH3k7BoA/ohG/GHzhamwTzTV8wEluVl6pguhNjqdQTPiWyD8xOWp1/r9Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZWnFDPBw; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24c7848519bso9374965ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:21:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757611279; x=1758216079; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vDDVkg+xa80N8UWuTp0DGWDueAKU9QzcFw4kQKYVzM=;
-        b=ZWnFDPBwYS86eEUZhxFrYsyI38juewS3wdLQZ4qRVZ0X+qxuxukB6/HdfBi2i81H4g
-         xw2/8PsL6F0jxPW+uM/PptU3djT92nrazAGI8rp+Yy32eHqbJoRnK0ezmSapEd5H79aC
-         IvW+G0WLrKd/3B6wUkdrmIWsBlRGnDCJ2mX8VFdMT9s3Nsk6v2/+DEhN9udmLb3Ap7Ib
-         5rxU94jUBbgrT36d6WR7+lfQHUpEBwyGFa+jX+aXzbnzueSJ+Rv5w8Kqe0+soyCHZJ5B
-         D0m10vaL9pbDNEaQoNeWoJS/fOSlL/abVWylxqo6X/+DdGXldMxRF2mrgu5CDgcd8lX7
-         irsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757611279; x=1758216079;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0vDDVkg+xa80N8UWuTp0DGWDueAKU9QzcFw4kQKYVzM=;
-        b=QvgQtrHZjbYAAmLerbqc2oSjuFPIF1frmY70acWKaR3Nl2y5lT4hYVZkxMLQNBaMPr
-         0kes3EoJTeXXJ9QHfuuJqfYWzZGFgHgKs8gNHemF2b6w/fvnm0B8wA2UAHUczEoE6uxi
-         ViRJJ45RJvhuu2PKbkaJVGYRUcpx3aDcagrrMIT7WpozDPs4B7FRs+LV45E49h6nbjQ4
-         27SEbRYaBUNT21Gj6rZe9WPf+OVTn6ZRoLHREVrpbvwTdG5bEIEPzWh5e0gXxiSBX/4e
-         f1Vw7GPN8YGh1GR5Qv+XRFs0VKX/mejaaMYedwTXuT1pjPDradXNth4fUfvoIhvKxKeZ
-         vYLw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8EdjE4reKMIdzcT9MBmY0hX0djkU6CHVzTM8qrFU6hOmhGmRgStHFhTWoeYS6YDT9GagyTS9vaKZg9D0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydEqP6aRXfBV4rawnDlJxguGbQOs9ugY10Vw0l7XViUla1qKaR
-	CeqmX+Wwsq7YOTj13v+Z2Kuc77OWywvojA2M82yALJW8z5eMq6KQZX/5lUiWmg==
-X-Gm-Gg: ASbGncsCLLdISvjkyICfKkypBb+E0NU3SzGBNDoY2jN1Q0CVvYW1R0JC2gU/2jFeqEb
-	eT9xVmRwDK0NKptDqJ0/rPTsQiUMcMwXiImAvtRgLhvQh5hA6TOZ7Djj7dLZdPN87WLa7EgoW52
-	F/l358LkbAOg+/iTXMQvVrGbo+lvyCv4F64aaqYDRhMLkk5I6l2wKkz0J3gRtpdENhzen5ayHna
-	H/bIU+O1MEQjC6EbXhGEbpOQwOrDMDT+Q/ljXF/Tg7x93bL8yesNk//GfCr7OT2ehiIevilvw8k
-	MrX66gVc0/utRABfRQg6XQIFYmZC3clA2giRBPOpQKEq8ErHqdF1BuDMEv0W5iBiMHrIv4hfPfo
-	JjlhEczjOmcZqY/ME2gzfQV4+L+y4vcpGKDhGYC0VeVpUBk6AW66Klgjfz2jILYhi77aWaqE=
-X-Google-Smtp-Source: AGHT+IGt11v43/OCzei9AUr8sE+gCMZP1QzI5b16NaBk0bAYGF3TuTg1wi96fzB1ckkChCMxeDmnqw==
-X-Received: by 2002:a17:902:e78b:b0:24c:9a51:9a4b with SMTP id d9443c01a7336-25d25b8922cmr1844555ad.21.1757611278952;
-        Thu, 11 Sep 2025 10:21:18 -0700 (PDT)
-Received: from visitorckw-System-Product-Name ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36cc53a1sm24890605ad.2.2025.09.11.10.21.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 10:21:18 -0700 (PDT)
-Date: Fri, 12 Sep 2025 01:21:16 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Nick Terrell <terrelln@fb.com>, David Sterba <dsterba@suse.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] lib/decompress: Use designated initializers for struct
- compress_format
-Message-ID: <aMMFDOdQzmnPdfmU@visitorckw-System-Product-Name>
-References: <20250910232350.1308206-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757611340; c=relaxed/simple;
+	bh=sPSofgC3H7kMscp1zOTagbsJvZ1aMo9X58h+p2xWCnU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h928UzHSWkQTFgbLlZBpERdsFKdmrUVvLQ/aegStVzVIYk2z+eK05zxpiTeSpTyjPB/dSU/8S2xhyeyFjWJKo3GvvLbv0+YbOlzO7tOfh/47yn4kssdmTFq1nX5OMP7+gUYPHAwukMsDx6OQA4c+pt6m23ugp0SNCrG0aucUlVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1+7enbL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84923C4CEF0;
+	Thu, 11 Sep 2025 17:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757611339;
+	bh=sPSofgC3H7kMscp1zOTagbsJvZ1aMo9X58h+p2xWCnU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=G1+7enbLihV6SDGfZSqxHKHrRGJEIJ1gduStBJwioMaSGvSrDro5SnP7odsXQu7av
+	 uoIdyU6XkMu/TA+ZUnOS0GbIow087ptVkUoQzHLJ8SSsZZhr5AOXSBYeLiwsFUR5D6
+	 KKSR5fM2IJVzGAMBL1w842tGJur3qc9FkHqIE4+zuM9MIeVejY1wlTnfrzZ9BRA9hT
+	 ybmK1NlIOEurPFOrx0TLepwIphn5g9vpDAzG8ZYkRJyrX9xgWXE/1fEeXZH9WFgS4I
+	 Eae0DHhEItjtAMBxXrBQ3YMvHrzqUHO3YJXneeIVquJ0V5NHmilGLtPSvltYCTKVJe
+	 G6O3O0Y5dpywA==
+Message-ID: <abfaef6f-dd40-441d-86ec-7cd37c1e06b5@kernel.org>
+Date: Thu, 11 Sep 2025 19:22:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910232350.1308206-2-thorsten.blum@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] tty: serial: samsung: Remove unused artpec-8 specific
+ code
+To: Ravi Patel <ravi.patel@samsung.com>,
+ 'Geert Uytterhoeven' <geert@linux-m68k.org>
+Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, jesper.nilsson@axis.com,
+ lars.persson@axis.com, alim.akhtar@samsung.com, arnd@kernel.org,
+ andriy.shevchenko@linux.intel.com, geert+renesas@glider.be,
+ thierry.bultel.yh@bp.renesas.com, dianders@chromium.org,
+ robert.marko@sartura.hr, schnelle@linux.ibm.com, kkartik@nvidia.com,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
+ ksk4725@coasia.com, kenkim@coasia.com, smn1196@coasia.com,
+ pjsin865@coasia.com, shradha.t@samsung.com
+References: <CGME20250911141714epcas5p29f591a1d645c9c69dc5b7d2c2d12af50@epcas5p2.samsung.com>
+ <20250911141605.13034-1-ravi.patel@samsung.com>
+ <20250911141605.13034-4-ravi.patel@samsung.com>
+ <CAMuHMdVe-FULHWk3QCBENG7TsbEZyxj0N5shhESxWBWd49JmOw@mail.gmail.com>
+ <6df0e227-896b-438a-913e-95b637aa2b14@kernel.org>
+ <8aeda67e-404e-4deb-ac90-015f2325ef64@kernel.org>
+ <000101dc2335$ccd62f60$66828e20$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <000101dc2335$ccd62f60$66828e20$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 01:23:51AM +0200, Thorsten Blum wrote:
-> Switch 'compressed_formats[]' to the more modern and flexible designated
-> initializers. This improves readability and allows struct fields to be
-> reordered. Also use a more concise sentinel marker.
+On 11/09/2025 18:04, Ravi Patel wrote:
+>>>>> -OF_EARLYCON_DECLARE(artpec8, "axis,artpec8-uart",
+>>>>> -                       s5pv210_early_console_setup);
+>>>>>
+>>>>>  static int __init gs101_early_console_setup(struct earlycon_device *device,
+>>>>>                                             const char *opt)
+>>>>
+>>>> Removing these breaks backwards-compatibility with existing DTBs,
+>>>> which lack the new "samsung,exynos8895-uart" fallback compatible value.
+>>>
+>>> This was just applied, so ABI break would be fine. It should be however
+>>> clearly expressed in the commit msg.
+>>>
+>>> I have a feeling that not much testing was happening in Samsung around
+>>> this patchset and only now - after I applied it - some things happen.
+>>> But it is damn too late, my tree is already closed which means this is
+>>> going to be the ABI.
+>>
+>> Ah, no, I mixed up patches with recent DTS for Artpec-8. This serial ABI
+>> was accepted three years ago (!!!), so you are Geert absolutely right -
+>> that's ABI break.
 > 
-> Remove the curly braces around the for loop while we're at it.
+> Thank you for your review.
 > 
-> No functional changes intended.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> The DTS patches for ARTPEC-8 is added recently (https://lore.kernel.org/linux-samsung-soc/20250901051926.59970-1-ravi.patel@samsung.com/)
+> Before that, there was no user (in DT) of "axis,artpec8-uart" compatible.
+> So I am not convinced of ABI break (considering patch #1 and #2 goes first with review comment fixes)
 
-Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 
-Regards,
-Kuan-Wei
+ABI is defined by bindings and implemented by kernel. Having DTS user is
+irrelevant to fact whether ABI is or is not broken.
 
-> ---
->  lib/decompress.c | 21 ++++++++++-----------
->  1 file changed, 10 insertions(+), 11 deletions(-)
-> 
-> diff --git a/lib/decompress.c b/lib/decompress.c
-> index ab3fc90ffc64..7785471586c6 100644
-> --- a/lib/decompress.c
-> +++ b/lib/decompress.c
-> @@ -49,15 +49,15 @@ struct compress_format {
->  };
->  
->  static const struct compress_format compressed_formats[] __initconst = {
-> -	{ {0x1f, 0x8b}, "gzip", gunzip },
-> -	{ {0x1f, 0x9e}, "gzip", gunzip },
-> -	{ {0x42, 0x5a}, "bzip2", bunzip2 },
-> -	{ {0x5d, 0x00}, "lzma", unlzma },
-> -	{ {0xfd, 0x37}, "xz", unxz },
-> -	{ {0x89, 0x4c}, "lzo", unlzo },
-> -	{ {0x02, 0x21}, "lz4", unlz4 },
-> -	{ {0x28, 0xb5}, "zstd", unzstd },
-> -	{ {0, 0}, NULL, NULL }
-> +	{ .magic = {0x1f, 0x8b}, .name = "gzip", .decompressor = gunzip },
-> +	{ .magic = {0x1f, 0x9e}, .name = "gzip", .decompressor = gunzip },
-> +	{ .magic = {0x42, 0x5a}, .name = "bzip2", .decompressor = bunzip2 },
-> +	{ .magic = {0x5d, 0x00}, .name = "lzma", .decompressor = unlzma },
-> +	{ .magic = {0xfd, 0x37}, .name = "xz", .decompressor = unxz },
-> +	{ .magic = {0x89, 0x4c}, .name = "lzo", .decompressor = unlzo },
-> +	{ .magic = {0x02, 0x21}, .name = "lz4", .decompressor = unlz4 },
-> +	{ .magic = {0x28, 0xb5}, .name = "zstd", .decompressor = unzstd },
-> +	{ /* sentinel */ }
->  };
->  
->  decompress_fn __init decompress_method(const unsigned char *inbuf, long len,
-> @@ -73,11 +73,10 @@ decompress_fn __init decompress_method(const unsigned char *inbuf, long len,
->  
->  	pr_debug("Compressed data magic: %#.2x %#.2x\n", inbuf[0], inbuf[1]);
->  
-> -	for (cf = compressed_formats; cf->name; cf++) {
-> +	for (cf = compressed_formats; cf->name; cf++)
->  		if (!memcmp(inbuf, cf->magic, 2))
->  			break;
->  
-> -	}
->  	if (name)
->  		*name = cf->name;
->  	return cf->decompressor;
-> -- 
-> 2.51.0
-> 
+Having DTS user determines the known impact of known ABI breakage.
+
+Best regards,
+Krzysztof
 
