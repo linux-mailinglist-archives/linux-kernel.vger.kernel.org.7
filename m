@@ -1,222 +1,544 @@
-Return-Path: <linux-kernel+bounces-812278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C05B53567
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:32:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D83DB53571
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D40173C1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7CB1CC2CF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198CE33CE9C;
-	Thu, 11 Sep 2025 14:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873BA228CB8;
+	Thu, 11 Sep 2025 14:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fLqTDN2o"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2079.outbound.protection.outlook.com [40.107.212.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SOXre/iX"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308563203B4
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601106; cv=fail; b=QaazwvaoOsE0n7f+nQ6I15cbos/8DHQ/QnRWaSxpI3BPK3Ft+PKYMia6AHfADAyQrcxRy4NjnQyDiEQ1oZH5HzIBkwXWfau+Ldq1teSoFYn80ajr12R6C1qiS/rdhvoZysz92vE6USse0dJkW9ZSeAlxcMRS5HoxSAnYyqzNZlg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601106; c=relaxed/simple;
-	bh=TWBvncnkxokRqgEdYuhSY/46/LA8XDyYkooOawrFVpE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PsqX5twrFjnivANTKKD8tIakAcOigMJceFSzmIrtkvWhdFyo4dyiy2zpECCyRTEFZFOcAJWzifmI1gKapREmFyd35UhWRPFfy50g8QwKpqnJGfWrB8CKyiUmviLupEWkMhQ66iH86ZeEZDZFVxBTbFds3IzdGG7RqSZcWXjXO5s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fLqTDN2o; arc=fail smtp.client-ip=40.107.212.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sSB36nP5daFZyWtXprrLaj8a0uQ5GAy4ds5f86m5a9MetF7CzRJbOYMdyUIs4PT5Pajea5a3hKUUwP2wktsAxUp1LdEuNn8gTfTqvWPFrJfYmz5hn0dPFxvULroJY3bK7LmHVNcEWNxxec3BmuabKRpuoTQEDln9GCUvkTTCoSdyqACi045AzbpQemISM3fpTPajg0NqebF7RPQ9MkYbQjSMZhH7vd0INc9yhjEXh2ut+tzvWvDgliAXLjjQ27oS7v2XabriamNCMsxJsSzjSENL87t92Re/apVI/gqWFUPVekSijBW64zMAJoL2ncwXhfMuWgIP6Nlt2YidXdEHZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DbMVnIMIAR6VxhJtbbvVdKdzjVsHUmXghJlrFZiQJ60=;
- b=hjYAuBdqFzlNgwsC5JAjq3pSDpbq4ovTQrX63qjAJXdPXm0jfu+k6Je5WcykMjrT4Dq0ZQcLOCaBOX92x4bYx70ej8wAflR+lfZnubg1eCJ3ofzlBiePwn2LxtBCcgSVIlhh63R8qFgDu97AtEJOsZe9IlvisYKkNpvzR2Wb4/jQLtXDCvl+dtz4vU/Z7tJ38cAOMvWGIQROc+4/TPgOcpqa+UbTewhhhVL49yIFuYryX20oCEHDRyceJNlR0bYRPpYXUgitMIsd3tOaGSfG9R1JH5jvBR89imWjf8nKNUsf249CSR/febJVWSku6K+KYs/tPYiZkg31MD9sqEUKCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DbMVnIMIAR6VxhJtbbvVdKdzjVsHUmXghJlrFZiQJ60=;
- b=fLqTDN2ojmDwWZGYrOfrOJpldroBkZXnWMwAnxKpAzL/sGQrRJoi0aDoKqZDP3Fr/n9ni1cdfaQcQJ2I7Ds3xv+E5vWG+FBLDj0o+XmSd9oMGhOAg/bLNO/AAa4KvmJAwK0Dx/XHEw4rgT0BuEq0dTtZa81aVXjdvo1/OX1msO8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by MW4PR12MB7481.namprd12.prod.outlook.com (2603:10b6:303:212::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 14:31:37 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 14:31:36 +0000
-Message-ID: <3227b440-5dbf-433d-8658-f37f9561554a@amd.com>
-Date: Thu, 11 Sep 2025 16:31:27 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: ttm: do not direct reclaim when allocating high
- order pages
-To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com>
- <e79a134b-89de-4da1-b64b-b890227fce8a@amd.com>
- <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
- <262a176a-4c80-40de-96e0-c97f50c20fe6@mailbox.org>
- <b7c57dc3-ed0e-402f-8a3c-f832357f8763@amd.com>
- <c6cbaa8d-cb90-45d5-b3b6-279196f958ce@mailbox.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <c6cbaa8d-cb90-45d5-b3b6-279196f958ce@mailbox.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MN2PR05CA0031.namprd05.prod.outlook.com
- (2603:10b6:208:c0::44) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D7E338F51
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757601154; cv=none; b=glcxjlMIZXRG2li8xIRLvPTlYc3cbU4wAsBDtyKYLJ5hrQI+TSMh7WFW+Sds0eL/WrASn/II5UxmeWdmffoXASo19KItSKbVCrILbw+U7BDdacVb9Lf22r8PYOR2d453n1kA7b9hEG5HRftOdG/z1bm3oWLd4bKKvhH+RbVU98M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757601154; c=relaxed/simple;
+	bh=eCZcmRvkeBZItFAG3mOym3+dfp8SxuJgpD5cNHuveIU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kjB5c9GTdmarMVsipK4obb/NaJR7/y3TftWiwjpgjf0W87gHQLcGe3ozLAeuZti90wXDDPQ6Ydrlrb0Mudo+sohdz/i7sRxnHSh1YIUXznpXOq68x4QXIbPkL46Dpfu+8FMEF6TVR5PdKCxDderVdfjlyR1DleoLQ2mjZ88/kZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SOXre/iX; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e98a18faa35so759150276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:32:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757601151; x=1758205951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m3G1Q8trf1KrPeh7JRBVP/u6wl+tP3n7DRT+geP906w=;
+        b=SOXre/iXppfTNsYCBLL1ZXefoz+sx8eOHLylq+WfkLQxqIoqbpZ+yNFwyj4sSRp3dr
+         0dJXB78mCFKVTXKtp1l/prnnacSu5LBRJDo5mFJnUYplYG9BXaSIVE6ar+f8gJ84m4lH
+         0jL8LfqsbThN2V0Z45qB1xv/nJcYXXxFvjbRjL6XoMB4n/kf9Tt1cRdtechU5iizm+Zn
+         O9XmLtmUVJ4Y2h5TAD7LJY6pmom9/iSrxQwg3VpIAKapmULuk8dOWsvhFS0DXYlqspJt
+         X7zxAir4DTiDliOqjAwhEzzjt4DZ7aXPK0trmiADp8R7cadQO3p+D/15g+yDkxYjz7Ce
+         b08Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757601151; x=1758205951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m3G1Q8trf1KrPeh7JRBVP/u6wl+tP3n7DRT+geP906w=;
+        b=hJtD5NY6fW57X/IFFqhckHRJpH4eU+36kdXmRmNXSdtvOM5NYugQ80zkX3GFC3nTIe
+         xlo4uZh2qkkQAFSx43xSwEAUKzWCMmq5E/zSCft3ymuIYC2EoCaFBvAUxCn9rMoo8m7Z
+         X7wTardQvbdb3r3TgvmAXYrX96HG2tRI2KfkhTDUhJKcSErwcF4MMiPycKdqP0frX9Wf
+         J7vEaY8CbyOikKHP0GoJEsCFAz1UP9kiD4Hz+cP41XqDcLY8iGEkxz/Fz+i/ndALQhf3
+         g5DVbKkX9Z/dt3wuAVT8Bu9cDNdOtr5CwiXKXenmuVaOAxkg/PWnl4AWJgtSu/7sElfB
+         Rwaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiGCg8PxspZy+nOQ7gBOSHn4MEQt8OE0+8qWG7tSkDTBpEo2G+0ejzkUgzShJkqd3bbRoDImmPwIUhZUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3JymChlne7KewhJ4+tD/ipAb1VVqDr8nZTGvnyRmuI39p1I78
+	J7hl+D4rcF/dd3wCEDGjbP9QOknYBScCEBaMJUTNBkQmwD/8cG6hAtme+1zjoLPNBJNML8eviA8
+	Y2jVBIF6FApN6x31NHXTAtHaVMPvHsU01O5mKjRPtLw==
+X-Gm-Gg: ASbGncv73Df5dvB1CGdDrxefoC2pY3f9x0tW/fYuMQTUgv2GecgsATIPm8Ix01UpOfV
+	5KJDfPn2OWaNWHu1/uLGbtMe4cEyATt8LmmpJXV5sOzWKmfK50yYA0N8tEzU4lkdjeqwuqWt36a
+	ruDL+xqtaMHwb4ExDTo3RD2QVqIZp1z0lut3Fi3XvRH8inOi+MlUS3M8Dq9dhz5QkO8CDDAwrfa
+	MWgvlvymiDnkMgq5c4=
+X-Google-Smtp-Source: AGHT+IHk66zPIbwvGUfliID4rNwdavLJX3B1E/zwo4X1IyK21WKvR0Vm876Pd397O+CLNkNssnCw0oVSGGUIeIlQnHA=
+X-Received: by 2002:a05:6902:1892:b0:ea3:d40a:2563 with SMTP id
+ 3f1490d57ef6-ea3d40a2737mr1135991276.41.1757601150819; Thu, 11 Sep 2025
+ 07:32:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MW4PR12MB7481:EE_
-X-MS-Office365-Filtering-Correlation-Id: e47a5785-2cfe-4b98-94b9-08ddf13fe9cd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UDlZZFVSQlNLL2EwWkFlVjNXUkRMNlMwdTFIMllYd1c3a3V3TFh4ZUdKdS9V?=
- =?utf-8?B?UzZSSGRpZ0NXYytJVG1pUzI0dzQ2blQ4emRXYWNaZTJib3VreEZFN2ZRQ2k4?=
- =?utf-8?B?aGVLeEtMcFduK21HY3Exa3Q3em8vNDcyeEtQeGFnbk9taENSbTR5ajBvbzJR?=
- =?utf-8?B?WG5UZ0ZQSlJGTDBjTGt3OTZqZG96enNyWWpCejQvN2NPSTJqOVdMZ2JjOWRI?=
- =?utf-8?B?aERUTFFWNXVsV0p0cUErY29tdmJJYXM1a3pEY05QT1hNZjU3dzVITEFsQWtv?=
- =?utf-8?B?NUtyaDA0STQwdkJxQ1FJcVhnY2NkL21kbndJS2EwemNzaExUbXZsVlhwM0NU?=
- =?utf-8?B?TnIzUkVLV1M1c0ZEY1AwNzB3T205ci9qSlVWYnlrWVpmMGwrSEtXbTFra2NC?=
- =?utf-8?B?NTNFY2JRWUtNWEtGaWo3MDRkZnVKWTZyTUNsYXd3RFJsZlI3YStvQk9wRCtL?=
- =?utf-8?B?dllrR1JIek8vbGwrQ2c5UURKOFBwaGE0UUl2ZnhyOUtWY3FidlBwUk9sMlVW?=
- =?utf-8?B?bUJ3UjdQTk8rSEJVcDRCak1tZHIvVDljZFN5V1RodlgzMy83NFArMW1sdlB2?=
- =?utf-8?B?SGIwS2Y4T2lJek0yc1d5Mk9FTXZrMkZoRy9aSzlnQUxvcmw3bVdJbGI1enJ1?=
- =?utf-8?B?YWEvYXBVdktEZlZJS0VTTWZCRE5ycVFtTjErMFRVUkpkckRlMnpIM0dUTkNo?=
- =?utf-8?B?N1k4ZGFFdjVzVEM2em4vTmQrUWRjWlhhRSs5V3pqNlZMMjlGMDBEQUhrdFla?=
- =?utf-8?B?T040VDgxaHNoZHR0S0JFdEV1dHcvWDFiZkFNZjJmWnU1YW1FbVQxNzY2ZXFn?=
- =?utf-8?B?WmdJRlowTnkvUTBZYlpXK21EVFYrWnVNR0pFZmFhczdKbWY4QU1IVlVKTVRy?=
- =?utf-8?B?aUY0ZFVmQW80Sm5Db3hWS2c0MmFGYVFyKzdrQXBFWkFFMDFFSFh1WnhDaFZn?=
- =?utf-8?B?SXhQRTl6RVJWUGlndVM3WHlzRDBlbHY2YVdoMWs1ZGZOdHQzdWYxUHNwYmJR?=
- =?utf-8?B?OGJQbmE2L0UwS3JIZ1RodDFyTTdRMDY2aFowQVdZam1qSE1iTmNGeFdpcXZB?=
- =?utf-8?B?bkRHTHgzZkxibEZRTnhaYmhqZzBGWGNha0RSaCtPcUJEZHFBdUpwRmNETXJo?=
- =?utf-8?B?NXNibUNXQUhkdGkxYjNPNVRwdmlBbUZ3elBpTDRmRHRSbllOeCtBY2cvaUlv?=
- =?utf-8?B?S0FhczBWNjAydjk1M1JHYmZrSU9abWNuYjF0M1ZsQlFOMmNRQnNyWk5QNk1S?=
- =?utf-8?B?MHpHdkxkazV0VGFxWXhlWHhYcGtEbGtjcTNtNmhEWWs3cTVUNTM3VkdqVjdy?=
- =?utf-8?B?VkJXaUNwUEV1VmFkUThuNnNpNmxqS29nTXhhVlMwN0Ixc1ZIYXFOYTdhZzVC?=
- =?utf-8?B?UUMwRHZXcmxmTVVCa29Fcm5xRXpqM0QvenBRVC9oWEtRZUprODhMMzJ2WjdB?=
- =?utf-8?B?bW9RY0U2SkJvYkxib01QQkVRb3gxU3I3RkxNRThVanUzenA1M3Fhc0UvRW5w?=
- =?utf-8?B?Zk1OejhXM0d3Q1p6S1pIYVJlV0dRVEhjN3hCc3Y5YUEvUmtVcDZLc0RoR0lZ?=
- =?utf-8?B?MkltZ210WjNTMUpwZFVreFBJVkVUY2k3RUtDT0ErcXJxRzF0Ym9iTEdiSzN4?=
- =?utf-8?B?UkRSY0l2TVpmY0g1a0tkRkVWUHRpQmlUOGJ6aXlPOXlaU1M5RURrOWVzTnFP?=
- =?utf-8?B?RFRVOEdpdityRmVKZjQ4T0toV1ZTRCtESzFLeUtaNzdCb3FCcUN5RU9qQ2Vn?=
- =?utf-8?B?L24yYU4zRVlQTHdTYlB6WFRyckRoMmh1cTBOWHJxYUY3dGdqck5XYnRyZlVo?=
- =?utf-8?B?ZHlsWVF3cTJ3dGUxVlZDTnZ3SitXbFRUYTJOcFB6R2FTN3cwV29YRXl1ZGpa?=
- =?utf-8?B?VzU5OENjelRZNmJhNVd4NU1tR3QzNm05UXZuNkg3TEU5a3NCRVdyWWNudVhU?=
- =?utf-8?Q?SCtdf1j0UrY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UFd3dUtVWDdNTVdTM1FQSUxwZElVRmltTnpiTVdBSXhEUmRuN0VPYW9xbmd6?=
- =?utf-8?B?TC81VlZORzlXdWRiQmdTMXFvZHhmT0N3Q2hiY295ZDU2aXMwRkxaNlFsb005?=
- =?utf-8?B?eFpubWY3TGhDZGtzQVN0SXo1WTBWK3NyTkpseE5leGdMSWp0Tk03YlF6Rmk3?=
- =?utf-8?B?aTFHVzBuNTJTNWkyNWFIWHNBb1g5WTF1cnVxSVU2a3VWbktQRERKcFRucTdn?=
- =?utf-8?B?N1daQm54RnpvYTRxOVN0RGFzY0F2ZnBEMnM2Q1pCOEhoa1FtR0E3bUxhNGNn?=
- =?utf-8?B?T1gvZHZDdnhva2wxZFVjbGI0Tk9kZmVTOTJ4SnhiZjhlQUNRQjBhVDFDcVl5?=
- =?utf-8?B?MDc2ZkxCWUovRWZIUms5ZS9MRzlIY0Z5UEQ0NjJQYXhtQ0hDOTUzd29tQXNI?=
- =?utf-8?B?SzcrN09rRnR3M25rVjZ3U29lMEZHcXpwamJ0cUNJaCszbTN4Tm0vSERibmgy?=
- =?utf-8?B?VkNMWVYyUmtZalRGTnQvUlZlTUNCckdXb3lEZ3Q5ekoySjZqdWcvYkQ4dUFE?=
- =?utf-8?B?SVlUTk9Ma1pLemhFWHg3QWFGekZwQ3p5UWg0c0JPVERIdmphQlNidUNoMkVZ?=
- =?utf-8?B?REFXQmhwR1VkR3NMa1FicWFVTThyTXNibFM3czhZOTJxanZWUUFMMEo2SUps?=
- =?utf-8?B?Ym9valI4bi9qUXhOL05waStySVhMVVlzWDY0NW1WQ3JFTkZSZDVFdjQxRUZB?=
- =?utf-8?B?L1lzT29NbnFOYS9JZHIrOTRieVd2NkVIMW1WaVNudEVRNlRLQkRWSGV1MUlk?=
- =?utf-8?B?b29tM0hBcHVUY3R0NmZuc0xwSDhmeUZkUUszaGFzU3VUYUkvUXg2QVFGVzNQ?=
- =?utf-8?B?MERDNlNXN1RoMGxiVVdQV2c1ckU5Z0ZONnV3TWxMZUUwbGpucEcxSXAyRXd0?=
- =?utf-8?B?QUw2VDFkWDZ2RUNoS3Q1ekxGSUgyb04zQ2pjZFhaYVVYazdXdmVzS1VHRjFQ?=
- =?utf-8?B?R1VBcnNNRmgvTytsaURMYmdEYVNZYzVidjFkNUhJZCtBRFZnMVRyanBuQU9X?=
- =?utf-8?B?dU9NSTZvNFhUb096VzBvamJwYm91YkZCYW02Q0dBVmV5b1ZKTXl5cVd0YUtS?=
- =?utf-8?B?ODdoblgvbHlhUE4yVWRhK052WllXejdPS09RQ1lEb0VhV3BvclQ2d2tML25P?=
- =?utf-8?B?dE14MTJjcU5FTFlZblZvOTRUelE3cFd5cC9aY2tqMk5HZ0htSEkvZGs3M2py?=
- =?utf-8?B?QWlwMzNQWmdkVFR4QUc2U3crdG10Y2VDaDhTbEN3eUxaMlY0dWNvSUlXVS9k?=
- =?utf-8?B?SzVwWVVEZWtxTjFVZU0wWEZsVC9Gb2FyVDgydnZ0eGpuQ0xXN3VkT1NkOEpK?=
- =?utf-8?B?amtmeTRIVHJ1NUdEUkk0Vm8wWGlXT2ZnSnVUajJQOGlyWTd5bzdDSmpmbEVw?=
- =?utf-8?B?WG5va3ZlUzJFZHRERC9zTWVhNENXYUM3SXB0SG9TYmQvWlZNYTJyYS9hVVIy?=
- =?utf-8?B?eTZtOFlINnl1YVIzVndqL2taUUxSMkpPR3RxYVVsSklZWDQvRS9NWWN4dkRJ?=
- =?utf-8?B?Vy9yUlM5TXlBUTJXbU5kNlVjSWtZa2ZwQStocE1tU3N3ZERubTlXWXh5b2dC?=
- =?utf-8?B?YU5LMzFIZHJYdjJCZGJ1YVhseFJNSnoramFzbmY3TlYxZjQ4ZWxHeEdLMlRH?=
- =?utf-8?B?a2NGcFVlSTZRYUgyK0J3RFBwNmx5TklWV29kK3BuMVh6TU42TUFNM0MyWXZ4?=
- =?utf-8?B?aDFNMmMzSm1IUUZoeTIzMDR6YkpGTlVIUnVaMzNicHdSNTlpd2Fab3JKRzhE?=
- =?utf-8?B?TjJQRjV3ak91TURrak5jcTF2elpIK2p1M3Y5Zm13QUZyVjdpMjYvVzROLy9B?=
- =?utf-8?B?cTNkc0N3ZVR6cmlYVWpETEhlTGhlZVc2OG1RejVZVHhoSVJZVmp1ZUxJbGFa?=
- =?utf-8?B?U1hONVp0WVlzSk1NTmt5TEd6VDV5cG1TOG9WMFpnZW5rTHpsQWRXYzUrVVpz?=
- =?utf-8?B?QThyUTA0elQzd3VVV3oxTGlHRjhTOVlwTEFiZjYrUjlaV1p2RGkzL043NUdW?=
- =?utf-8?B?N0t6OE5YV1A0TVl2TFpESmszeXc1emswREk5OXBrVGhibm1KLy9ESE03SWM2?=
- =?utf-8?B?R0dDdGw0aEtWOTZ0NUVxT1lKdkxsSG10V05nUkJDYU1ZK0d4eDl6SCsveC80?=
- =?utf-8?Q?sgczo+cclpoZTqgcEVlkorpzo?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e47a5785-2cfe-4b98-94b9-08ddf13fe9cd
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 14:31:36.7164
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cWC132J46WzzOpDFxA44zTz50aVrqXfRYQ0FeFf29pi+FOHbvmy8PjwcvC9g45xD
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7481
+References: <20250829-pxa1908-genpd-v3-0-2aacaaaca271@dujemihanovic.xyz> <20250829-pxa1908-genpd-v3-2-2aacaaaca271@dujemihanovic.xyz>
+In-Reply-To: <20250829-pxa1908-genpd-v3-2-2aacaaaca271@dujemihanovic.xyz>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Thu, 11 Sep 2025 16:31:55 +0200
+X-Gm-Features: Ac12FXxKrX9P2Lh17PZPTTUHZfR9xq35WTK20siD_z-ekoywxELI_UvNVL-MSOI
+Message-ID: <CAPDyKFqTVUZn5F7ss7qCtNktCGfSaXCB+cGOnN9rH0hjTwJkhw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] pmdomain: marvell: Add PXA1908 power domains
+To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	David Wronek <david@mainlining.org>, Karel Balej <balejk@matfyz.cz>, phone-devel@vger.kernel.org, 
+	~postmarketos/upstreaming@lists.sr.ht, linux-arm-kernel@lists.infradead.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11.09.25 14:49, Michel Dänzer wrote:
->>>> What we are seeing here is on a low memory (4GiB) single node system with
->>>> an APU, that it will have lots of latencies trying to allocate memory by
->>>> doing direct reclaim trying to allocate order-10 pages, which will fail and
->>>> down it goes until it gets to order-4 or order-3. With this change, we
->>>> don't see those latencies anymore and memory pressure goes down as well.
->>> That reminds me of the scenario I described in the 00862edba135 ("drm/ttm: Use GFP_TRANSHUGE_LIGHT for allocating huge pages") commit log, where taking a filesystem backup could cause Firefox to freeze for on the order of a minute.
->>>
->>> Something like that can't just be ignored as "not a problem" for a potential 30% performance gain.
->>
->> Well using 2MiB is actually a must have for certain HW features and we have quite a lot of people pushing to always using them.
-> 
-> Latency can't just be ignored though. Interactive apps intermittently freezing because this code desperately tries to reclaim huge pages while the system is under memory pressure isn't acceptable.
+On Fri, 29 Aug 2025 at 18:22, Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz> =
+wrote:
+>
+> Marvell's PXA1908 SoC has a few power domains for its VPU, GPU, image
+> processor and DSI PHY. Add a driver to control these.
+>
+> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+> ---
+> v3:
+> - Move driver back to pmdomain subsystem, use auxiliary bus to
+>   instantiate the driver
+> - Drop redundant 'struct device' pointer in 'struct pxa1908_pd'
+> - Fix pxa1908_pd_is_on() for DSI domain
+> - Replace usleep_range() with fsleep()
+> - Use dev_err_probe() where sensible
+>
+> v2:
+> - Move to clk subsystem, instantiate the driver from the APMU clock
+>   driver
+> - Drop clock handling
+> - Squash MAINTAINERS patch
+> ---
+>  MAINTAINERS                                        |   1 +
+>  drivers/pmdomain/Kconfig                           |   1 +
+>  drivers/pmdomain/Makefile                          |   1 +
+>  drivers/pmdomain/marvell/Kconfig                   |  18 ++
+>  drivers/pmdomain/marvell/Makefile                  |   3 +
+>  .../pmdomain/marvell/pxa1908-power-controller.c    | 268 +++++++++++++++=
+++++++
+>  6 files changed, 292 insertions(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 88f7bd50686eb1f6bcd4f34c6827f27ad44ea4e8..34e5e218e83e0ed9882b111f5=
+251601dd6549d4e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2871,6 +2871,7 @@ L:        linux-arm-kernel@lists.infradead.org (mod=
+erated for non-subscribers)
+>  S:     Maintained
+>  F:     arch/arm64/boot/dts/marvell/mmp/
+>  F:     drivers/clk/mmp/clk-pxa1908*.c
+> +F:     drivers/pmdomain/marvell/
+>  F:     include/dt-bindings/clock/marvell,pxa1908.h
+>  F:     include/dt-bindings/power/marvell,pxa1908-power.h
+>
+> diff --git a/drivers/pmdomain/Kconfig b/drivers/pmdomain/Kconfig
+> index 91f04ace35d4b024fafdf6af4e26a179640eb82f..23076ae90e6641dea8e5dbc85=
+1d041cd7929cee6 100644
+> --- a/drivers/pmdomain/Kconfig
+> +++ b/drivers/pmdomain/Kconfig
+> @@ -7,6 +7,7 @@ source "drivers/pmdomain/apple/Kconfig"
+>  source "drivers/pmdomain/arm/Kconfig"
+>  source "drivers/pmdomain/bcm/Kconfig"
+>  source "drivers/pmdomain/imx/Kconfig"
+> +source "drivers/pmdomain/marvell/Kconfig"
+>  source "drivers/pmdomain/mediatek/Kconfig"
+>  source "drivers/pmdomain/qcom/Kconfig"
+>  source "drivers/pmdomain/renesas/Kconfig"
+> diff --git a/drivers/pmdomain/Makefile b/drivers/pmdomain/Makefile
+> index 7030f44a49df9e91b1c9d1b6d12690a6248671fb..ebc802f13eb953db750f5a950=
+7caa64c637a957a 100644
+> --- a/drivers/pmdomain/Makefile
+> +++ b/drivers/pmdomain/Makefile
+> @@ -5,6 +5,7 @@ obj-y                                   +=3D apple/
+>  obj-y                                  +=3D arm/
+>  obj-y                                  +=3D bcm/
+>  obj-y                                  +=3D imx/
+> +obj-y                                  +=3D marvell/
+>  obj-y                                  +=3D mediatek/
+>  obj-y                                  +=3D qcom/
+>  obj-y                                  +=3D renesas/
+> diff --git a/drivers/pmdomain/marvell/Kconfig b/drivers/pmdomain/marvell/=
+Kconfig
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..6c4084c826670266b7d948438=
+f6e6d76acb416e2
+> --- /dev/null
+> +++ b/drivers/pmdomain/marvell/Kconfig
+> @@ -0,0 +1,18 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +menu "Marvell PM Domains"
+> +       depends on ARCH_MMP || COMPILE_TEST
+> +
+> +config PXA1908_PM_DOMAINS
+> +       tristate "Marvell PXA1908 power domains"
+> +       depends on OF
+> +       depends on PM
+> +       default y if ARCH_MMP && ARM64
+> +       select AUXILIARY_BUS
+> +       select MFD_SYSCON
+> +       select PM_GENERIC_DOMAINS
+> +       select PM_GENERIC_DOMAINS_OF
+> +       help
+> +         Say Y here to enable support for Marvell PXA1908's power domani=
+s.
+> +
+> +endmenu
+> diff --git a/drivers/pmdomain/marvell/Makefile b/drivers/pmdomain/marvell=
+/Makefile
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..22c25013f6c856a2ca01a121e=
+830279ee88eb0ed
+> --- /dev/null
+> +++ b/drivers/pmdomain/marvell/Makefile
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +
+> +obj-$(CONFIG_PXA1908_PM_DOMAINS) +=3D pxa1908-power-controller.o
+> diff --git a/drivers/pmdomain/marvell/pxa1908-power-controller.c b/driver=
+s/pmdomain/marvell/pxa1908-power-controller.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..29134629861abcf46959f9dcc=
+98d3f05a4cc5b72
+> --- /dev/null
+> +++ b/drivers/pmdomain/marvell/pxa1908-power-controller.c
+> @@ -0,0 +1,268 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2025 Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+> + */
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/container_of.h>
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/regmap.h>
+> +#include <linux/units.h>
+> +
+> +#include <dt-bindings/power/marvell,pxa1908-power.h>
+> +
+> +/* VPU, GPU, ISP */
+> +#define APMU_PWR_CTRL_REG      0xd8
+> +#define APMU_PWR_BLK_TMR_REG   0xdc
+> +#define APMU_PWR_STATUS_REG    0xf0
+> +
+> +/* DSI */
+> +#define APMU_DEBUG             0x88
+> +#define DSI_PHY_DVM_MASK       BIT(31)
+> +
+> +#define POWER_ON_LATENCY_US    300
+> +#define POWER_OFF_LATENCY_US   20
+> +
+> +#define NR_DOMAINS     5
+> +
+> +struct pxa1908_pd_ctrl {
+> +       struct generic_pm_domain *domains[NR_DOMAINS];
+> +       struct genpd_onecell_data onecell_data;
+> +       struct regmap *base;
+> +};
+> +
+> +struct pxa1908_pd_data {
+> +       u32 reg_clk_res_ctrl;
+> +       u32 pwr_state;
+> +       u32 hw_mode;
+> +       bool keep_on;
+> +       int id;
+> +};
+> +
+> +struct pxa1908_pd {
+> +       const struct pxa1908_pd_data data;
+> +       struct generic_pm_domain genpd;
+> +       bool initialized;
+> +};
+> +
+> +static inline bool pxa1908_pd_is_on(struct pxa1908_pd *pd)
+> +{
+> +       struct pxa1908_pd_ctrl *ctrl =3D dev_get_drvdata(&pd->genpd.dev);
 
-Why should that not be acceptable?
+The genpd.dev is owned by the genpd core and must not be used like this.
 
-The purpose of the fallback is to allow displaying messages like "Your system is low on memory, please close some application!" instead of triggering the OOM killer directly.
+Please find another way to derive the needed data.
 
-In that situation latency is not really a priority any more, but rather functionality.
+> +
+> +       return pd->data.id !=3D PXA1908_POWER_DOMAIN_DSI
+> +               ? regmap_test_bits(ctrl->base, APMU_PWR_STATUS_REG, pd->d=
+ata.pwr_state)
+> +               : regmap_test_bits(ctrl->base, APMU_DEBUG, DSI_PHY_DVM_MA=
+SK);
+> +}
+> +
+> +static int pxa1908_pd_power_on(struct generic_pm_domain *genpd)
+> +{
+> +       struct pxa1908_pd *pd =3D container_of(genpd, struct pxa1908_pd, =
+genpd);
+> +       struct pxa1908_pd_ctrl *ctrl =3D dev_get_drvdata(&genpd->dev);
 
-> Maybe there could be some kind of mechanism which periodically scans BOs for sub-optimal page orders and tries migrating their storage to more optimal pages.
+Ditto.
 
-Well the problem usually happens because automatic page de-fragmentation is turned off, we had quite a number of bug reports for that.
 
-So you are basically suggesting to implement something on the BO level which the system administrator has previously turned off on the page level.
+> +       const struct pxa1908_pd_data *data =3D &pd->data;
+> +       unsigned int status;
+> +       int ret =3D 0;
+> +
+> +       regmap_set_bits(ctrl->base, data->reg_clk_res_ctrl, data->hw_mode=
+);
+> +       if (data->id !=3D PXA1908_POWER_DOMAIN_ISP)
+> +               regmap_write(ctrl->base, APMU_PWR_BLK_TMR_REG, 0x20001fff=
+);
+> +       regmap_set_bits(ctrl->base, APMU_PWR_CTRL_REG, data->pwr_state);
+> +
+> +       fsleep(POWER_ON_LATENCY_US);
 
-On the other hand in this particular case it could be that the system just doesn't has not enough memory for the particular use case.
+I assume the fsleep here is intentional and should be combined with
+the poll-timeout below. Although I wonder why we can't just poll
+immediately and by using some reasonable period+timeout instead?
 
->> So that TTM still falls back to lower order allocations is just a compromise to not trigger the OOM killer.
->>
->> What we could do is to remove the fallback, but then Cascardos use case wouldn't be working any more at all.
-> 
-> Surely the issue is direct reclaim, not the fallback.
+> +
+> +       ret =3D regmap_read_poll_timeout(ctrl->base, APMU_PWR_STATUS_REG,=
+ status,
+> +                                      status & data->pwr_state, 6, 25 * =
+USEC_PER_MSEC);
 
-I would rather say the issue is that fallback makes people think that direct reclaim isn't mandatory.
+Please avoid hardcoding periods/timeouts here.
 
-Regards,
-Christian.
+> +       if (ret =3D=3D -ETIMEDOUT)
+> +               dev_err(&genpd->dev, "timed out powering on domain '%s'\n=
+", pd->genpd.name);
+> +
+> +       return ret;
+> +}
+> +
+> +static int pxa1908_pd_power_off(struct generic_pm_domain *genpd)
+> +{
+> +       struct pxa1908_pd *pd =3D container_of(genpd, struct pxa1908_pd, =
+genpd);
+> +       struct pxa1908_pd_ctrl *ctrl =3D dev_get_drvdata(&genpd->dev);
+> +       const struct pxa1908_pd_data *data =3D &pd->data;
+> +       unsigned int status;
+> +       int ret;
+> +
+> +       regmap_clear_bits(ctrl->base, APMU_PWR_CTRL_REG, data->pwr_state)=
+;
+> +
+> +       fsleep(POWER_OFF_LATENCY_US);
+
+Ditto.
+
+> +
+> +       ret =3D regmap_read_poll_timeout(ctrl->base, APMU_PWR_STATUS_REG,=
+ status,
+> +                                      !(status & data->pwr_state), 6, 25=
+ * USEC_PER_MSEC);
+
+Ditto.
+
+> +       if (ret =3D=3D -ETIMEDOUT) {
+> +               dev_err(&genpd->dev, "timed out powering off domain '%s'\=
+n", pd->genpd.name);
+> +               return ret;
+> +       }
+> +
+> +       return regmap_clear_bits(ctrl->base, data->reg_clk_res_ctrl, data=
+->hw_mode);
+> +}
+> +
+> +static inline int pxa1908_dsi_power_on(struct generic_pm_domain *genpd)
+> +{
+> +       struct pxa1908_pd_ctrl *ctrl =3D dev_get_drvdata(&genpd->dev);
+> +
+> +       return regmap_set_bits(ctrl->base, APMU_DEBUG, DSI_PHY_DVM_MASK);
+> +}
+> +
+> +static inline int pxa1908_dsi_power_off(struct generic_pm_domain *genpd)
+> +{
+> +       struct pxa1908_pd_ctrl *ctrl =3D dev_get_drvdata(&genpd->dev);
+> +
+> +       return regmap_clear_bits(ctrl->base, APMU_DEBUG, DSI_PHY_DVM_MASK=
+);
+> +}
+> +
+> +#define DOMAIN(_id, _name, ctrl, mode, state) \
+> +       [_id] =3D { \
+> +               .data =3D { \
+> +                       .reg_clk_res_ctrl =3D ctrl, \
+> +                       .hw_mode =3D BIT(mode), \
+> +                       .pwr_state =3D BIT(state), \
+> +                       .id =3D _id, \
+> +               }, \
+> +               .genpd =3D { \
+> +                       .name =3D _name, \
+> +                       .power_on =3D pxa1908_pd_power_on, \
+> +                       .power_off =3D pxa1908_pd_power_off, \
+> +               }, \
+> +       }
+> +
+> +static struct pxa1908_pd domains[NR_DOMAINS] =3D {
+> +       DOMAIN(PXA1908_POWER_DOMAIN_VPU, "vpu", 0xa4, 19, 2),
+> +       DOMAIN(PXA1908_POWER_DOMAIN_GPU, "gpu", 0xcc, 11, 0),
+> +       DOMAIN(PXA1908_POWER_DOMAIN_GPU2D, "gpu2d", 0xf4, 11, 6),
+> +       DOMAIN(PXA1908_POWER_DOMAIN_ISP, "isp", 0x38, 15, 4),
+> +       [PXA1908_POWER_DOMAIN_DSI] =3D {
+> +               .genpd =3D {
+> +                       .name =3D "dsi",
+> +                       .power_on =3D pxa1908_dsi_power_on,
+> +                       .power_off =3D pxa1908_dsi_power_off,
+> +                       /*
+> +                        * TODO: There is no DSI driver written yet and u=
+ntil then we probably
+> +                        * don't want to power off the DSI PHY ever.
+> +                        */
+> +                       .flags =3D GENPD_FLAG_ALWAYS_ON,
+> +               },
+> +               .data =3D {
+> +                       /* See above. */
+> +                       .keep_on =3D true,
+> +               },
+> +       },
+> +};
+> +
+> +static void pxa1908_pd_remove(struct auxiliary_device *auxdev)
+> +{
+> +       struct pxa1908_pd *pd;
+> +       int ret;
+> +
+> +       for (int i =3D NR_DOMAINS - 1; i >=3D 0; i--) {
+> +               pd =3D &domains[i];
+> +
+> +               if (!pd->initialized)
+> +                       continue;
+> +
+> +               if (pxa1908_pd_is_on(pd) && !pd->data.keep_on)
+> +                       pxa1908_pd_power_off(&pd->genpd);
+> +
+> +               ret =3D pm_genpd_remove(&pd->genpd);
+> +               if (ret)
+> +                       dev_err(&pd->genpd.dev, "failed to remove domain =
+'%s': %d\n",
+> +                               pd->genpd.name, ret);
+> +       }
+> +}
+> +
+> +static int
+> +pxa1908_pd_init(struct pxa1908_pd_ctrl *ctrl, int id, struct device *dev=
+)
+> +{
+> +       struct pxa1908_pd *pd =3D &domains[id];
+> +       int ret;
+> +
+> +       ctrl->domains[id] =3D &pd->genpd;
+> +
+> +       ret =3D pm_genpd_init(&pd->genpd, NULL, !pd->data.keep_on);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret, "domain '%s' failed to ini=
+tialize\n",
+> +                                    pd->genpd.name);
+> +
+> +       dev_set_drvdata(&pd->genpd.dev, ctrl);
+
+As stated above, please don't abuse the genpd.dev like this.
+
+> +
+> +       /* Make sure the state of the hardware is synced with the domain =
+table above. */
+> +       if (pd->data.keep_on) {
+> +               ret =3D pd->genpd.power_on(&pd->genpd);
+
+This should be managed before pm_genpd_init() is called.
+
+> +               if (ret)
+> +                       return dev_err_probe(dev, ret, "failed to power o=
+n domain '%s'\n",
+> +                                            pd->genpd.name);
+> +       } else {
+> +               if (pxa1908_pd_is_on(pd)) {
+> +                       dev_warn(dev,
+> +                                "domain '%s' is on despite being default=
+ off; powering off\n",
+> +                                pd->genpd.name);
+> +
+> +                       ret =3D pd->genpd.power_off(&pd->genpd);
+
+Ditto.
+
+> +                       if (ret)
+> +                               return dev_err_probe(dev, ret,
+> +                                                    "failed to power off=
+ domain '%s'\n",
+> +                                                    pd->genpd.name);
+> +               }
+> +       }
+> +
+> +       pd->initialized =3D true;
+> +
+> +       return 0;
+> +}
+> +
+> +static int
+> +pxa1908_pd_probe(struct auxiliary_device *auxdev, const struct auxiliary=
+_device_id *aux_id)
+> +{
+> +       struct pxa1908_pd_ctrl *ctrl;
+> +       struct device *dev =3D &auxdev->dev;
+> +       int ret;
+> +
+> +       ctrl =3D devm_kzalloc(dev, sizeof(*ctrl), GFP_KERNEL);
+> +       if (!ctrl)
+> +               return -ENOMEM;
+> +
+> +       auxiliary_set_drvdata(auxdev, ctrl);
+> +
+> +       ctrl->base =3D syscon_node_to_regmap(dev->parent->of_node);
+> +       if (IS_ERR(ctrl->base))
+> +               return dev_err_probe(dev, PTR_ERR(ctrl->base), "no regmap=
+ available\n");
+> +
+> +       ctrl->onecell_data.domains =3D ctrl->domains;
+> +       ctrl->onecell_data.num_domains =3D NR_DOMAINS;
+> +
+> +       for (int i =3D 0; i < NR_DOMAINS; i++) {
+> +               ret =3D pxa1908_pd_init(ctrl, i, dev);
+> +               if (ret)
+> +                       goto err;
+> +       }
+> +
+> +       return of_genpd_add_provider_onecell(dev->parent->of_node, &ctrl-=
+>onecell_data);
+> +
+> +err:
+> +       pxa1908_pd_remove(auxdev);
+> +       return ret;
+> +}
+> +
+> +static const struct auxiliary_device_id pxa1908_pd_id[] =3D {
+> +       { .name =3D "clk_pxa1908_apmu.power" },
+> +       { }
+> +};
+> +MODULE_DEVICE_TABLE(auxiliary, pxa1908_pd_id);
+> +
+> +static struct auxiliary_driver pxa1908_pd_driver =3D {
+> +       .probe =3D pxa1908_pd_probe,
+> +       .remove =3D pxa1908_pd_remove,
+> +       .id_table =3D pxa1908_pd_id,
+> +};
+> +module_auxiliary_driver(pxa1908_pd_driver);
+> +
+> +MODULE_AUTHOR("Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>");
+> +MODULE_DESCRIPTION("Marvell PXA1908 power domain driver");
+> +MODULE_LICENSE("GPL");
+>
+> --
+> 2.51.0
+>
+
+Kind regards
+Uffe
 
