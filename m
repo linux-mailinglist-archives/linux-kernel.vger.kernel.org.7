@@ -1,189 +1,124 @@
-Return-Path: <linux-kernel+bounces-812973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21753B53F0D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:23:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 513CEB53F04
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E4001C87660
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:24:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0808B58110C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70CE2F83D5;
-	Thu, 11 Sep 2025 23:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=allelesecurity.com header.i=@allelesecurity.com header.b="ebbjXFRj"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61B032F3C19;
+	Thu, 11 Sep 2025 23:19:56 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0014.hostedemail.com [216.40.44.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973A72F363A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50648156F45;
+	Thu, 11 Sep 2025 23:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757633010; cv=none; b=IIRxp0aV+lmH8C2Jztobvlurh0S58xO3R677kcDwFuOQMw7ullCdx0Cn2/pesF9dX5Kf9VlOsTyIc/H0VjkV93uyx0DPTdBtKiCh/43kDRUJRJxbKIzt3W2s/0kwC++/1c0nRXVFwfCyWi2LQaY9GrQNr3twiXSSv5glX6pCj3Q=
+	t=1757632796; cv=none; b=X6xS+zJxcaWv/+Q8nC6V1Qpk1wIJO7/R5MLWl5zlFzIgaJQrjgdA9skaa2wI+LeFvHC+qvdh57LHoigb+Hom9fvNnOnRbqp7App+TfkfphTta6H41cO4peyJtmnp3tNj4rLZ6C9TXmsip36dWP85BNE3V0M+xu2diHR13+dSHGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757633010; c=relaxed/simple;
-	bh=OK4EM30A44/2NRD+i7sqe2wrH7v7/w7Fs43IiXrmW/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OLorXKIy7TR5lKxsRw+odYYkvqLeDJgk6BlMUVcyc2mMzy538lhr0Hu8ECKGPXl67fQNMFaGE7e8U1z7sadTTJGNoCNxd2Gfi1yuLv+mTOGowu7SBuevwayTkzS2BfR9IqIvF252Qa4M76yoNWMlfrQ7+K/DC0r3ljSWMazmorI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=allelesecurity.com; spf=pass smtp.mailfrom=allelesecurity.com; dkim=pass (1024-bit key) header.d=allelesecurity.com header.i=@allelesecurity.com header.b=ebbjXFRj; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=allelesecurity.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=allelesecurity.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7722c8d2694so1371496b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=allelesecurity.com; s=google; t=1757633008; x=1758237808; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xUAVZ0bvWLEB4KH4GpIrKampHs79U2eTT5vozQ57bm4=;
-        b=ebbjXFRjyCj5eIvDcF1CwlLMPTmbjFm2KyQj2hoge9FYUM2k7WThi235HJJRA6KNBd
-         aDAAMUIG9xAnvGOvxnSoKFglsrCwUo/FO+UGeGY4MZ6RVTMxGEsJ2UqhWZV//8CbUX9d
-         stHyBOPWq4s6RkJYoHvWBD0qSiCfIhHrcnU24=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757633008; x=1758237808;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xUAVZ0bvWLEB4KH4GpIrKampHs79U2eTT5vozQ57bm4=;
-        b=cMjEpF9uUchcjxDwBhOCz1rg6NYdkKM1uESUT17BetzZSBM7b6hdJ3YfLYoIqyXKXl
-         s8qToZDEjXgu8Ambjaf6jJDbK82hhLMElfQgjKzA7TufqS9HF6rDG8PQZ3xmme6VVs/W
-         HA3F/s1emt/tIqHP7X7c3S8/4Z93SaG9tQ98sIdD/BV0NtahbYYBnXPhwTUtCpJOzsrg
-         pGsshXK1O2CmBd7gajAD+OxtJjVHJFJXBdJDQlql/IUAfy4Vp2QuFT3gODn490GhdXRU
-         qYrLdkcx0kHlXuJosS7vibIRSWRpnlPLveOcDPiBJ2ptDK/w+iWBg3eoX1md3+KPFMx7
-         jMfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXR7bO/1cT6N+WCiDiOzDm0cGqwFPLyBOiA2JGxmVnZurT/69Xmm6bZJrjGv3vFlR8DkxxLsJLZwKDe/vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylAuk15XAJOb6ItGXV9wt93Qbi9h6aGEofitlU/k5sZNnUaEFv
-	iROpwakwtUylLuB0MtZzY7WJmpEvFwMQJBpUR4C0zzV/i/iqRWw1jbD08jz1NF/lNM8=
-X-Gm-Gg: ASbGncvX/SFDHpbiGgi23D2Xrn7TlXo2ZuFnhezN76+83ik2C8lu2L4+ntu2I1RXtLG
-	maP+DvarhzkZIIpu7m7oz4pCXYv3dGG9DXVF6+y5SnjCV5iwn3k7S8jbVVFA+Zq3WHm/NOB5p9d
-	vNr3tn+8CcgWviAm8h8tXFxmZOmeulsrczESE9+PXkio92YUFyfczdKTjMgegmXFEynx3VdjwEn
-	fCmbcwDXfS9EjmVTyF+WhBUpSH/E2aJxUUgE1MgfSfSTK5zfeOPnwAOFiFR1le+cil0yu/ugRjl
-	hKXO4Y6qicXZ4t0yScmep8u6xJINy55q4invE/hazxJOfkV4Yit+/mVzacLkYvLQlbO31uuPe+h
-	fmksOSGM3iUYXsMu3BmsR03ZGRQvgF4h1X41Kp/iel5lHlQs=
-X-Google-Smtp-Source: AGHT+IFvKd338ahGShVcXp/lcPNOy/KrM/N8yKlB9s8nlHQO0F4Ghy1Sxbe8aSBOfbnPHwLPS++9sg==
-X-Received: by 2002:a05:6a00:b4e:b0:771:e451:4ee3 with SMTP id d2e1a72fcca58-776120e50c8mr1094199b3a.12.1757633007810;
-        Thu, 11 Sep 2025 16:23:27 -0700 (PDT)
-Received: from fedoraserver42research ([179.105.152.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760955263fsm2927152b3a.8.2025.09.11.16.23.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 16:23:27 -0700 (PDT)
-From: Anderson Nascimento <anderson@allelesecurity.com>
-To: Eric Dumazet <edumazet@google.com>,
-	Neal Cardwell <ncardwell@google.com>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Dmitry Safonov <0x7f454c46@gmail.com>,
-	Salam Noureddine <noureddine@arista.com>,
-	Francesco Ruggeri <fruggeri@arista.com>
-Cc: Anderson Nascimento <anderson@allelesecurity.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH v3] net/tcp: Fix a NULL pointer dereference when using TCP-AO with TCP_REPAIR
-Date: Thu, 11 Sep 2025 20:07:44 -0300
-Message-ID: <20250911230743.2551-3-anderson@allelesecurity.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757632796; c=relaxed/simple;
+	bh=uod826s70yyCvC1XsHR+nFj3UJnMt9c9pTrRfcjC6sQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L09sjATE9PAtHQSYdJ0xPgL+9GuiWMG1r7KYCsyOCySOsjQ2DGSLt8woQ7YPo5PgwV5HZP7Gzv6CRquoeUS1KJDAw4GDHJAuLKN7dgSy63Zr35X4GRtNfywc8m1VALk6ioXoLVQV9GsN4QOHVAdBIc9iN+7MUD8ZRiwaLZj2Izk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf05.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id 33F75BA470;
+	Thu, 11 Sep 2025 23:19:51 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf05.hostedemail.com (Postfix) with ESMTPA id EFAD42000D;
+	Thu, 11 Sep 2025 23:19:47 +0000 (UTC)
+Date: Thu, 11 Sep 2025 19:20:40 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>,
+ Namhyung Kim <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>, Tom
+ Zanussi <zanussi@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ian
+ Rogers <irogers@google.com>, aahringo@redhat.com, Douglas Raillard
+ <douglas.raillard@arm.com>
+Subject: Re: [PATCH 1/7] tracing: Replace syscall RCU pointer assignment
+ with READ/WRITE_ONCE()
+Message-ID: <20250911192040.6c5ccb51@gandalf.local.home>
+In-Reply-To: <e7d9ecb7-8bdb-4c91-b727-375a2c5a190e@paulmck-laptop>
+References: <20250805192646.328291790@kernel.org>
+	<20250805193234.745705874@kernel.org>
+	<e7d9ecb7-8bdb-4c91-b727-375a2c5a190e@paulmck-laptop>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: j69ngrk3k3cwoteu3qpdqyxwn9994qpc
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: EFAD42000D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18Jc5T7+knTA84TUSWHIrdOpuy4N+vyd1U=
+X-HE-Tag: 1757632787-331222
+X-HE-Meta: U2FsdGVkX18sRJI2pFkyN/C99yBs64fIGEOlwhwlaWmUGEXdRsRmOotiVjq6Gnx1kyy2p030rRxkBf8QZKa6+KQkfR6fFVCPwA/C5OALou8NULq5pO0luSfPzVq/42cCbsdjBga3maMjILaMrz0GFLySC9i1s+2Nl20NLamnda+kKkCT7U/TneLOdAFtgEmyEqAf9z3C6KPbpseRx5vNZziyvW5xwaND2N9/39gw9kM06VqGyDHitONHwLxtuGdTvWKM5Q0DVPWhb1Y1AH5QGvIJ01mFNq9lqc4aJwTPE5V3Wn6EYerSH+lm+c4jgHCqBML5/5cQf6JrYCIjRHBaKAxJ+tK+G01m4yv2GUf3vh0U6IoG52rp5Gruxgz0AtRqDOH5KcZFAuaBWQJ0XAxFEw==
 
-A NULL pointer dereference can occur in tcp_ao_finish_connect() during a
-connect() system call on a socket with a TCP-AO key added and TCP_REPAIR
-enabled.
 
-The function is called with skb being NULL and attempts to dereference it
-on tcp_hdr(skb)->seq without a prior skb validation.
+Finally have time to get back to these patches.
 
-Fix this by checking if skb is NULL before dereferencing it.
+On Wed, 6 Aug 2025 11:39:57 -0700
+"Paul E. McKenney" <paulmck@kernel.org> wrote:
 
-The commentary is taken from bpf_skops_established(), which is also called
-in the same flow. Unlike the function being patched,
-bpf_skops_established() validates the skb before dereferencing it.
+> On Tue, Aug 05, 2025 at 03:26:47PM -0400, Steven Rostedt wrote:
+> > From: Steven Rostedt <rostedt@goodmis.org>
+> > 
+> > The syscall events are pseudo events that hook to the raw syscalls. The
+> > ftrace_syscall_enter/exit() callback is called by the raw_syscall
+> > enter/exit tracepoints respectively whenever any of the syscall events are
+> > enabled.
+> > 
+> > The trace_array has an array of syscall "files" that correspond to the
+> > system calls based on their __NR_SYSCALL number. The array is read and if
+> > there's a pointer to a trace_event_file then it is considered enabled and
+> > if it is NULL that syscall event is considered disabled.
+> > 
+> > Currently it uses an rcu_dereference_sched() to get this pointer and a
+> > rcu_assign_ptr() or RCU_INIT_POINTER() to write to it. This is unnecessary
+> > as the file pointer will not go away outside the synchronization of the
+> > tracepoint logic itself. And this code adds no extra RCU synchronization
+> > that uses this.
+> > 
+> > Replace these functions with a simple READ_ONCE() and WRITE_ONCE() which
+> > is all they need. This will also allow this code to not depend on
+> > preemption being disabled as system call tracepoints are now allowed to
+> > fault.
+> > 
+> > Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>  
+> 
+> >From an RCU-removal viewpoint:  
+> 
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-int main(void){
-	struct sockaddr_in sockaddr;
-	struct tcp_ao_add tcp_ao;
-	int sk;
-	int one = 1;
+Thanks for the review. I'm also removing the __rcu that triggered the bot.
 
-	memset(&sockaddr,'\0',sizeof(sockaddr));
-	memset(&tcp_ao,'\0',sizeof(tcp_ao));
+> 
+> But is it possible to give some sort of warning just in case some creative
+> future developer figures out how to make the file pointer go away outside
+> of the synchronization of the tracepoint logic itself?
 
-	sk = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+That would be quite a big change, and since this is the core code to it,
+that future change should fix up this code as well. All the modification
+happens in this file so nothing should be hidden.
 
-	sockaddr.sin_family = AF_INET;
+If they do get it wrong, it should crash pretty amazingly if there's any
+testing ;-)
 
-	memcpy(tcp_ao.alg_name,"cmac(aes128)",12);
-	memcpy(tcp_ao.key,"ABCDEFGHABCDEFGH",16);
-	tcp_ao.keylen = 16;
-
-	memcpy(&tcp_ao.addr,&sockaddr,sizeof(sockaddr));
-
-	setsockopt(sk, IPPROTO_TCP, TCP_AO_ADD_KEY, &tcp_ao,
-	sizeof(tcp_ao));
-	setsockopt(sk, IPPROTO_TCP, TCP_REPAIR, &one, sizeof(one));
-
-	sockaddr.sin_family = AF_INET;
-	sockaddr.sin_port = htobe16(123);
-
-	inet_aton("127.0.0.1", &sockaddr.sin_addr);
-
-	connect(sk,(struct sockaddr *)&sockaddr,sizeof(sockaddr));
-
-return 0;
-}
-
-$ gcc tcp-ao-nullptr.c -o tcp-ao-nullptr -Wall
-$ unshare -Urn
-# ip addr add 127.0.0.1 dev lo
-# ./tcp-ao-nullptr
-
-BUG: kernel NULL pointer dereference, address: 00000000000000b6
-PGD 1f648d067 P4D 1f648d067 PUD 1982e8067 PMD 0
-Oops: Oops: 0000 [#1] SMP NOPTI
-Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop
-Reference Platform, BIOS 6.00 11/12/2020
-RIP: 0010:tcp_ao_finish_connect (net/ipv4/tcp_ao.c:1182)
-
-Fixes: 7c2ffaf ("net/tcp: Calculate TCP-AO traffic keys")
-Signed-off-by: Anderson Nascimento <anderson@allelesecurity.com>
----
-Changes in v3
-- Remove the attribution of 'ao->risn' to '0' in the else case.
-- Do not add the full decoded stack trace
-- Link to v2: https://lore.kernel.org/all/20250911034337.43331-2-anderson@allelesecurity.com/
-Changes in v2:
-- Wrap the description at 75 columns
-- Add full decoded stack trace
-- Link to v1: https://lore.kernel.org/all/20250911013052.2233-1-anderson@allelesecurity.com/
-
- net/ipv4/tcp_ao.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/net/ipv4/tcp_ao.c b/net/ipv4/tcp_ao.c
-index bbb8d5f0eae7..3338b6cc85c4 100644
---- a/net/ipv4/tcp_ao.c
-+++ b/net/ipv4/tcp_ao.c
-@@ -1178,7 +1178,9 @@ void tcp_ao_finish_connect(struct sock *sk, struct sk_buff *skb)
- 	if (!ao)
- 		return;
- 
--	WRITE_ONCE(ao->risn, tcp_hdr(skb)->seq);
-+	/* sk with TCP_REPAIR_ON does not have skb in tcp_finish_connect */
-+	if (skb)
-+		WRITE_ONCE(ao->risn, tcp_hdr(skb)->seq);
- 	ao->rcv_sne = 0;
- 
- 	hlist_for_each_entry_rcu(key, &ao->head, node, lockdep_sock_is_held(sk))
--- 
-2.51.0
-
+-- Steve
 
