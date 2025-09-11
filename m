@@ -1,130 +1,109 @@
-Return-Path: <linux-kernel+bounces-811853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A9EB52E9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:36:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26EA5B52E9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340515A3171
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:36:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46E417B985D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F6831158A;
-	Thu, 11 Sep 2025 10:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A08C311C10;
+	Thu, 11 Sep 2025 10:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFiT8THp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MPeidlrL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9569C3115A0
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A4A314A95
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757586709; cv=none; b=QcI73tk//8UHsel7ysd5IMN689qrX3WcSTadd7LexYuDD228oVbPkrCnJL7DbeYgg5SrGoYQOlMieyO2JMcTeyJhvhETJYkS19+N/hExMXPiD+ANf/Y995KVpf2bKTtU+sRQYc67TsMBxYOg0+ntWHxASjMzeOg23WK3hbbjlgw=
+	t=1757586712; cv=none; b=pUvWkuDkZUsz4khqUpxOLTxd0eg4JDUcpUCQAq1N8V6M8+pbta+vDLxvpykIgI1iFzMbvMIxarNvD2f279cmpqrJd2Vt2CoiMBQ2G8A/rgIS7doSNy2vk+Bl7E7LePALrNOs0AUQn0fxjFxr3WXJj1ULCxkooewJRymnNFBTGlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757586709; c=relaxed/simple;
-	bh=xaPe7WTboY6+/tPQNyhe8Htaun8q0KWDYpAJ4c9xb4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FvJeoAVmbGUm+ETQtqsxZ2Sg8W4ARRLO0Ol7BGAWP89weErAqWaTJvBJFmRxTt9SYXdM8q0BpJhr/+Baibtv6dsCY3PxDHjLg4mAcPx4EppavEX71kaXpGAtP0WpNr2T9iIyzJKwGtZwZJQ92wafYcETEPZBE8GzQ4WA8M9s7vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFiT8THp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39F73C4CEF0
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:31:49 +0000 (UTC)
+	s=arc-20240116; t=1757586712; c=relaxed/simple;
+	bh=gS2weFUR+ncgV5TkM5dtRR0yU4ygK56P4uQOCMuOTVQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOuiofjd5iZ7QBpBd5Pd4YGSGnY0Fopya+ggPw0FZ92abP8euX0bTTQZRrVI3ePXolUWDD6HqR3Sl0aVhKfNReoH2oPW6NfxyUvI8Aa5zigUhoN30S/IV4xLHaWPm87Kq1TgSkMnt5spKen6rmUvJ9NOApTpvnR4gbeFGH4JfkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MPeidlrL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8575EC4CEF0;
+	Thu, 11 Sep 2025 10:31:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757586709;
-	bh=xaPe7WTboY6+/tPQNyhe8Htaun8q0KWDYpAJ4c9xb4g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DFiT8THp5lZHrVka74NLFyRStJbrTYWBc4EmtpFwYy66jD4REiTMvhBAWpPp/vUPE
-	 IfMUeltYdNawHOcxkgmUPQsukgiewWPRolOOUGCQCqJoqQpFRZJWKfe8FWQDGL0nDf
-	 bzRSgmLWwjfdUbeDfiPFqdYXmTUTIgJ7WXKLrsVEhScF0I/r/I9n7Co73pypwTzqJ+
-	 d4+sjPkouu5J6qZVHevWiZWtWyfQxgZNgBL5zDmOgq+YJ5Jn1hy1oBTaI2OfZ4miWg
-	 kE9p7D6Z9XOjLqrLf4lILkEeVObPVR51m4e9M6Q69YOWayNNlUCBS37Z/pfqQGR8vs
-	 PZPdxfio5q8lg==
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7459fa1ef2aso577953a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:31:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqdowsRnfLRZ4+XwmDT3yDJCujLxoA8V649MZ5Qy8DmvVRoAo8jqOTeI//ddqLPCb2vuMHSf6bZj0hI10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4wgqZwxppDIl8KM0sut/qvUR+SHRHmBswvDkQcG9HQalVp4pp
-	Nb1Nv1+SvDpd+bKD9fBxcyUXdltw4sSD/5oqe7j0jQ4I1V2DyS3/veOGxM2HWzRsgfTwH/cIHKP
-	caXDK+wnh6I7LliIr1lNkD0GBr0G84Ok=
-X-Google-Smtp-Source: AGHT+IHHqcVDj1OR3RKUpL+hwMYtQNeAHfRxOjE8VI69WXeSCnFBIKD4xZFw5ff9F2oLdfPcCewT212Xf+wkZvrkyjs=
-X-Received: by 2002:a05:6830:348e:b0:74b:3422:f33d with SMTP id
- 46e09a7af769-74c66acfea9mr10519629a34.0.1757586708559; Thu, 11 Sep 2025
- 03:31:48 -0700 (PDT)
+	s=k20201202; t=1757586712;
+	bh=gS2weFUR+ncgV5TkM5dtRR0yU4ygK56P4uQOCMuOTVQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MPeidlrLVFVQvIMpDQUjBt7aE3/Koh8LezVfJHAhOLft/ifOxDs13u2ZqvtoWoplT
+	 f8A0Ju+FqdQyY/Z0RsvmB72DQLhrT0SOkF3OG3WXG8Zkcs/Nir5ZQxaQyuFrCL0+80
+	 Iv9ImkmL3OQign8E/ewgSOAr2XvyYORbC9IjV9nPd+WX7QRjRA7+NKWkrc5P9zsk7z
+	 ia2CFHUPHpD1HslbGUD7dtuCqjl1jfN9FbixTEh/TLohC6cl7C02C2WEiEqzlQd/rD
+	 LJO2XzZFnHJ+f9bCaLr27zvRUSxY54MzsimYXoxrZjaZiAavcQ7j24WcczVzXqWIpv
+	 +1WPDmxyt05Iw==
+Date: Thu, 11 Sep 2025 11:31:47 +0100
+From: Lee Jones <lee@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [GIT PULL] Immutable branch between the MFD and GPIO trees for
+ v6.18-rc1
+Message-ID: <20250911103147.GI9224@google.com>
+References: <20250904130516.72266-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12740505.O9o76ZdvQC@rafael.j.wysocki> <871polxs9c.ffs@tglx>
- <CAJZ5v0jyN0=aGFOwE8fzuXi=1LgiLR5wgvvsAihGB0qpUp=mUQ@mail.gmail.com>
- <CAJZ5v0gsiuK5iFY6cHaqEgP8R1sz_pWGoqac2orYvXqLE2xbDQ@mail.gmail.com>
- <87o6rowrsp.ffs@tglx> <CAJZ5v0htmEeivbQaumRc7zw_Zx68GpUy98ksA9L42LupjO6tWA@mail.gmail.com>
- <87ldmqwgjc.ffs@tglx>
-In-Reply-To: <87ldmqwgjc.ffs@tglx>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Sep 2025 12:31:36 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gW+A-eyckySFrHc7=Qr9URdRX6NqvPgkq4gZEvs_uBWg@mail.gmail.com>
-X-Gm-Features: Ac12FXzgGiowTvScHQ01Ay90U85oEzvZ5PQbqDaWOC0Z8BaVn36F5KL13kIgeVI
-Message-ID: <CAJZ5v0gW+A-eyckySFrHc7=Qr9URdRX6NqvPgkq4gZEvs_uBWg@mail.gmail.com>
-Subject: Re: [PATCH v1] cpu: Add missing check to cpuhp_smt_enable()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PM <linux-pm@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Christian Loehle <christian.loehle@arm.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250904130516.72266-1-brgl@bgdev.pl>
 
-On Sun, Sep 7, 2025 at 3:14=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Fri, Sep 05 2025 at 22:56, Rafael J. Wysocki wrote:
-> > On Fri, Sep 5, 2025 at 10:47=E2=80=AFPM Thomas Gleixner <tglx@linutroni=
-x.de> wrote:
-> >>
-> >> On Fri, Sep 05 2025 at 15:27, Rafael J. Wysocki wrote:
-> >> > On Fri, Sep 5, 2025 at 3:13=E2=80=AFPM Rafael J. Wysocki <rafael@ker=
-nel.org> wrote:
-> >> >> Well, manual online can be used for onlining the secondary thread o=
-f a
-> >> >> core where the primary thread is offline, so this is technically
-> >> >> possible already.
-> >> >>
-> >> >> > Something like the completely untested below.
-> >> >>
-> >> >> So given the above, shouldn't topology_is_core_online() check if an=
-y
-> >> >> thread in the given core is online?
-> >> >
-> >> > Besides, this would cause the siblings of offline SMT threads to be
-> >> > skipped while enabling SMT via sysfs (using
-> >> > /sys/devices/system/cpu/smt/control), but I'm not sure if this is th=
-e
-> >> > expectation in the field today.  The current behavior is to online a=
-ll
-> >> > secondary SMT threads (and more, but that part is quite arguably
-> >> > broken).
-> >>
-> >> It is broken, because the initial logic is to bring up primary threads
-> >> unconditionally and then refuse to bring up sibling threads.
-> >>
-> >> With "maxcpus=3Dxxx" this obviously limits the amount of primary threa=
-ds,
-> >> so there is arguably no point to online any of the related secondary
-> >> threads of them.
-> >>
-> >> The initial implementation was naively making that assumption, but the
-> >> core check which was added due to PPC made this actually correct.
-> >>
-> >> It just did not snap with me back then, but it's actually the correct
-> >> thing to do, no?
-> >
-> > It would at least be consistent with the existing PPC behavior. :-)
->
-> Correct.
+On Thu, 04 Sep 2025, Bartosz Golaszewski wrote:
 
-So are you going to send a patch or do you want me to do something?
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Lee,
+> 
+> Please pull the following MFD changes that depend on commits I already
+> have in the GPIO tree for the next merge window.
+> 
+> Thanks,
+> Bartosz
+> 
+> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+> 
+>   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio/mfd-stmpe-for-v6.18-rc1
+> 
+> for you to fetch changes up to df6a44003953fb23ad67f82d299e439e7ff7150a:
+> 
+>   mfd: stmpe: Allow building as module (2025-09-04 15:00:53 +0200)
+> 
+> ----------------------------------------------------------------
+> Immutable branch between the MFD and GPIO trees for v6.18-rc1
+> 
+> Allow building the MFD STMPE driver as module.
+> 
+> ----------------------------------------------------------------
+> Alexander Stein (1):
+>       mfd: stmpe: Allow building as module
+> 
+>  drivers/mfd/Kconfig | 10 +++++-----
+>  drivers/mfd/stmpe.c |  6 ++++++
+>  2 files changed, 11 insertions(+), 5 deletions(-)
 
-From a user standpoint, this issue is a regression in 6.16, so it
-would be good to address it before final 6.17.
+Pulled, thanks.
+
+-- 
+Lee Jones [李琼斯]
 
