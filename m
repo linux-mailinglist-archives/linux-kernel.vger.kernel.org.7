@@ -1,205 +1,153 @@
-Return-Path: <linux-kernel+bounces-811468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E17B5297F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:01:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BBBB52982
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0028F4E1F59
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:01:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA83166957
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C5026980B;
-	Thu, 11 Sep 2025 07:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10015264F9F;
+	Thu, 11 Sep 2025 07:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNGHzc5L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AAvuE2VD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5121A1553A3;
-	Thu, 11 Sep 2025 07:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0827E329F0F;
+	Thu, 11 Sep 2025 07:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757574087; cv=none; b=o3XpmL+auTgb//k6WLK3Tx+5XY+cfOmutxvC44/CETza+lhthTg+pMlVamgMTh02szc0f0cqyUPkmWpxrVgMzZ64WJr+MCUR7D+uYErdLELCLlAKrPoPrh4Cn+nEbw3jZ39FXKaU2xTBHAzBxau2lp9oMOcU8nIqi+8iVlg8U7Q=
+	t=1757574146; cv=none; b=Lw/T6juE5F2HwiLVuPUzTMj1aqscFMWNWyUlP4ma2sT95aURY9wQQff0KeIqh1+05xpdOhHlZta1sncR+0HLxevnVeplawjFyYh+ZLMPvfQJxXpeJWMJo17LSb7no4iC7oxu7f2rXbRmNP6eE+x+7QCwA7Pt4f5e0dyJ3cO/pDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757574087; c=relaxed/simple;
-	bh=qr122yp8JUYBZU96I18Z8ELkl5DxLXHRqTyQLe7CWAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Krk4FDfqexsK4L2B5ZrpOZy/H5qiAFvLfe2G6B7UqvQxGPzjiXge/02hcolJI6RUGT+/nURzb4F2qF4kJ9nzurLuah58GuvLM+zmEb9xlcJNBbLxSg8vkOLWCzR6+d5fwhxyt9ej0QO56tPZsZ4xQtkvNavTVfUoG+BK8dwBKAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNGHzc5L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A72C4CEF1;
-	Thu, 11 Sep 2025 07:01:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757574086;
-	bh=qr122yp8JUYBZU96I18Z8ELkl5DxLXHRqTyQLe7CWAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kNGHzc5LShxDoby6w+5B0rArOpeaiVE7rVvfrO816zAUBMrrpPJ0dUr2xaf4QLWhy
-	 mY+qNgBlxPEy3zXyUFdDDnJB7hi5Du0P4X6pW0kdRkHGArzrm9yHV3/MYgsA8NDNol
-	 kmc10a26FwkUmvRqIHSernvfMzY0CdmAsh3Czgj8l9W7P7M98o4M3GihQZm0juWDRk
-	 toFJKJ3PZMpypAvEJVOGELJQc633e95pfQW2Kg002tmNI4Q1oSKL6qki07jMnup1Ke
-	 H+qB+p4h7SiSVsY56tuJxfXBJm07+J0rYDESBrULBjJSENWLQsudeVU2Kao2Bgs1zO
-	 ZqAhYn49Hv17Q==
-Date: Thu, 11 Sep 2025 09:01:24 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: "T.J. Mercier" <tjmercier@google.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Jonathan Corbet <corbet@lwn.net>, Andrew Davis <afd@ti.com>, 
-	Jared Kangas <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, iommu@lists.linux.dev, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v7 0/5] dma-buf: heaps: Create a CMA heap for each CMA
- reserved region
-Message-ID: <20250911-didactic-authentic-cockle-e6d5fc@houat>
-References: <20250721-dma-buf-ecc-heap-v7-0-031836e1a942@kernel.org>
- <20250826-vagabond-catfish-of-courtesy-cbfa76@houat>
- <20250910-vigorous-attractive-gorilla-af6fec@houat>
- <CABdmKX29ftpNro+d=Ce6JGoMaG0UQeBbzL7DXiBkGkC0nwacTQ@mail.gmail.com>
+	s=arc-20240116; t=1757574146; c=relaxed/simple;
+	bh=TtDGs5cCuBB/0vsasgCRdQvt55EHjiBp1kQwXGLwQow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FEjyVFn5SRE5U1FaQgNiHWKuCRfECQt6RBDCyVj5ILALjvSsLkaM2HZq9SO1yzDhV33YyfJzHfO3H7SuHKuEXoJRqJRs/K3QTmnx8vvMeEZpyhlzL+Lxdnlcf9xQchEnaSXG+T6QHMdohww9Dp3aH3IwucW9jORH3zdPXfRiUVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AAvuE2VD; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757574145; x=1789110145;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=TtDGs5cCuBB/0vsasgCRdQvt55EHjiBp1kQwXGLwQow=;
+  b=AAvuE2VDtDuTPufjrNUlB1cTjmV6vx8YpofvwJ6GWcRxVYpEGcfnqwkd
+   iGp4xZ3x0mLM0T7SaeTswV69FgfJ4Y2bvySmY1T6va2K8xKazsbEQnu0E
+   ipLBjWYtuQIii+DMwWlFpCXwQJmynBkgzX6gx8Un5AkEQvpO1zy6QYI34
+   5k0gdxxy2RGSJ0Ka6ds+adv2iay5BH76w1ic5pdC5uz1Z2EeWOEKk+bli
+   O9g4UezI+NAuUvNrWHTzl/NZ9cUNSz9N3S8Txv6a1DC3KtChNhlfWz/5Z
+   hf+Nbbfm9DNPpgKLiOYfOVyhhmgjR3uk6wQANxqiNGldCv+Lh8vUiJ/vX
+   Q==;
+X-CSE-ConnectionGUID: ezK8Mu0dQiSWJl4gmVXnUA==
+X-CSE-MsgGUID: 0g7GE/j0QRixqdLw+5dhqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="59844086"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="59844086"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:02:24 -0700
+X-CSE-ConnectionGUID: +uG7AjgWRzSKDV9DIsJjWw==
+X-CSE-MsgGUID: P+d9dd6/RUmd3TObSrB46A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="204381029"
+Received: from unknown (HELO [10.238.0.107]) ([10.238.0.107])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:02:19 -0700
+Message-ID: <27d1afdc-350c-45a0-a4f9-1d9688314256@linux.intel.com>
+Date: Thu, 11 Sep 2025 15:02:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="mvqneghb5gn2pldr"
-Content-Disposition: inline
-In-Reply-To: <CABdmKX29ftpNro+d=Ce6JGoMaG0UQeBbzL7DXiBkGkC0nwacTQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 04/22] KVM: x86: Refresh CPUID on write to guest
+ MSR_IA32_XSS
+To: Chao Gao <chao.gao@intel.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ john.allen@amd.com, mingo@kernel.org, mingo@redhat.com,
+ minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org,
+ pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com,
+ seanjc@google.com, shuah@kernel.org, tglx@linutronix.de,
+ weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com, xiaoyao.li@intel.com
+References: <20250909093953.202028-1-chao.gao@intel.com>
+ <20250909093953.202028-5-chao.gao@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20250909093953.202028-5-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---mvqneghb5gn2pldr
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v7 0/5] dma-buf: heaps: Create a CMA heap for each CMA
- reserved region
-MIME-Version: 1.0
 
-Hi TJ,
+On 9/9/2025 5:39 PM, Chao Gao wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+>
+> Update CPUID.(EAX=0DH,ECX=1).EBX to reflect current required xstate size
+> due to XSS MSR modification.
+> CPUID(EAX=0DH,ECX=1).EBX reports the required storage size of all enabled
+> xstate features in (XCR0 | IA32_XSS). The CPUID value can be used by guest
+> before allocate sufficient xsave buffer.
 
-On Wed, Sep 10, 2025 at 01:44:45PM -0700, T.J. Mercier wrote:
-> On Wed, Sep 10, 2025 at 12:33=E2=80=AFAM Maxime Ripard <mripard@kernel.or=
-g> wrote:
-> >
-> > On Tue, Aug 26, 2025 at 09:36:03AM +0200, Maxime Ripard wrote:
-> > > Hi,
-> > >
-> > > On Mon, Jul 21, 2025 at 01:17:29PM +0200, Maxime Ripard wrote:
-> > > > Here's another attempt at supporting user-space allocations from a
-> > > > specific carved-out reserved memory region.
-> > > >
-> > > > The initial problem we were discussing was that I'm currently worki=
-ng on
-> > > > a platform which has a memory layout with ECC enabled. However, ena=
-bling
-> > > > the ECC has a number of drawbacks on that platform: lower performan=
-ce,
-> > > > increased memory usage, etc. So for things like framebuffers, the
-> > > > trade-off isn't great and thus there's a memory region with ECC dis=
-abled
-> > > > to allocate from for such use cases.
-> > > >
-> > > > After a suggestion from John, I chose to first start using heap
-> > > > allocations flags to allow for userspace to ask for a particular ECC
-> > > > setup. This is then backed by a new heap type that runs from reserv=
-ed
-> > > > memory chunks flagged as such, and the existing DT properties to sp=
-ecify
-> > > > the ECC properties.
-> > > >
-> > > > After further discussion, it was considered that flags were not the
-> > > > right solution, and relying on the names of the heaps would be enou=
-gh to
-> > > > let userspace know the kind of buffer it deals with.
-> > > >
-> > > > Thus, even though the uAPI part of it had been dropped in this seco=
-nd
-> > > > version, we still needed a driver to create heaps out of carved-out=
- memory
-> > > > regions. In addition to the original usecase, a similar driver can =
-be
-> > > > found in BSPs from most vendors, so I believe it would be a useful
-> > > > addition to the kernel.
-> > > >
-> > > > Some extra discussion with Rob Herring [1] came to the conclusion t=
-hat
-> > > > some specific compatible for this is not great either, and as such =
-an
-> > > > new driver probably isn't called for either.
-> > > >
-> > > > Some other discussions we had with John [2] also dropped some hints=
- that
-> > > > multiple CMA heaps might be a good idea, and some vendors seem to do
-> > > > that too.
-> > > >
-> > > > So here's another attempt that doesn't affect the device tree at al=
-l and
-> > > > will just create a heap for every CMA reserved memory region.
-> > > >
-> > > > It also falls nicely into the current plan we have to support cgrou=
-ps in
-> > > > DRM/KMS and v4l2, which is an additional benefit.
-> > > >
-> > > > Let me know what you think,
-> > > > Maxime
-> > >
-> > > Any chance we can get this merged?
-> >
-> > Guys, can we move forward on this?
-> >
-> > Maxime
->=20
-> Hi Maxime,
->=20
-> Sorry I've been MIA the last couple of months.
->=20
-> The docs for the "reusable" property say, "device driver(s) owning the
-> region need to be able to reclaim it back", but how can a driver
-> reclaim memory backing a dmabuf, since pages allocated for a dmabuf
-> aren't necessarily movable. Couldn't a user allocate all of it, and
-> refuse to close those dmabufs?
+Nit:
+allocate -> allocating.
 
-I guess, but how is that any different than what we're doing on the
-default allocator already?
+Otherwise,
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
 
-It also has to be reusable, and will not be able to reclaim any memory
-allocated through the heap.
+>
+> Note, KVM does not yet support any XSS based features, i.e. supported_xss
+> is guaranteed to be zero at this time.
+>
+> Opportunistically skip CPUID updates if XSS value doesn't change.
+>
+> Suggested-by: Sean Christopherson <seanjc@google.com>
+> Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+> Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Reviewed-by: Chao Gao <chao.gao@intel.com>
+> Tested-by: Mathias Krause <minipli@grsecurity.net>
+> Tested-by: John Allen <john.allen@amd.com>
+> Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Signed-off-by: Chao Gao <chao.gao@intel.com>
+> ---
+>   arch/x86/kvm/cpuid.c | 3 ++-
+>   arch/x86/kvm/x86.c   | 2 ++
+>   2 files changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+> index 46cf616663e6..b5f87254ced7 100644
+> --- a/arch/x86/kvm/cpuid.c
+> +++ b/arch/x86/kvm/cpuid.c
+> @@ -316,7 +316,8 @@ static void kvm_update_cpuid_runtime(struct kvm_vcpu *vcpu)
+>   	best = kvm_find_cpuid_entry_index(vcpu, 0xD, 1);
+>   	if (best && (cpuid_entry_has(best, X86_FEATURE_XSAVES) ||
+>   		     cpuid_entry_has(best, X86_FEATURE_XSAVEC)))
+> -		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+> +		best->ebx = xstate_required_size(vcpu->arch.xcr0 |
+> +						 vcpu->arch.ia32_xss, true);
+>   }
+>   
+>   static bool kvm_cpuid_has_hyperv(struct kvm_vcpu *vcpu)
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 6c167117018c..bbae3bf405c7 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -4020,6 +4020,8 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   		 */
+>   		if (data & ~vcpu->arch.guest_supported_xss)
+>   			return 1;
+> +		if (vcpu->arch.ia32_xss == data)
+> +			break;
+>   		vcpu->arch.ia32_xss = data;
+>   		vcpu->arch.cpuid_dynamic_bits_dirty = true;
+>   		break;
 
-> I backported this to 6.6 and ran it on a Pixel. While there are
-> already similar out-of-tree dmabuf heap drivers that expose heaps for
-> these reserved regions, they do more than just cma_alloc (multiple
-> flavors of buffer securing, use case specific alignment and padding,
-> and slightly different allocation strategies) so I don't think this
-> series would allow us to completely drop the custom heap code, but
-> it's a nice start.
-
-Thanks for testing, and I totally expect more heaps coming for things
-like protected memory, but it should indeed reduce the number of heap
-drivers needed going forward.
-
-> Does the cgroup part come in because the plan is to add charging in
-> cma_heap.c?
-
-Yes, and the system heap as well.
-
-Maxime
-
---mvqneghb5gn2pldr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMJzxAAKCRAnX84Zoj2+
-dsvHAX9IpZOMjeU0ynWChRbSjBVdeZtylN7gZQL2xiSKdre2cCOs+EzPryzJzsTk
-tRNxMScBfAwmOazIjwKlseNgI+HDT4rryBoWdzpYERPwpsG4vLSlAqtaiPiPmf41
-ekyA/2h0Sg==
-=POxF
------END PGP SIGNATURE-----
-
---mvqneghb5gn2pldr--
 
