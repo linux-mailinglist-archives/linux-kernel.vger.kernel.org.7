@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-812914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4A3B53E19
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0A4B53E1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3221B23F28
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:51:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEB2172569
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF7D2DF137;
-	Thu, 11 Sep 2025 21:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBA3286D71;
+	Thu, 11 Sep 2025 21:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozq+D2C+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xWIpP9xk"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA9C221FC7;
-	Thu, 11 Sep 2025 21:50:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027AA24A063
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757627457; cv=none; b=RludT40Hbr9N+T/CiD9pYHrbI/sQAyG+OWeqzz7WAYaLJ+60Rg0YZIp0RoUS6bD0XE6XTh4QwdCz7sOYbp0T0p/hTMEQ1LYdv+DVcz62e/MgsYzVanbKoAJ+xMKGJ5SQt6/xIpl5bfpEmBKUEOUFws1tuhfaJQjwXmGxbm53bUo=
+	t=1757627499; cv=none; b=jmhQzYPb0ec0CfIa0KvYnaExCMl6hU7mQYhFYJq51w0UH5tYTG6OrySmPjV75VTto69aSaXwQJdab6I1fCzGd7CPB+4CcaMxC55dDZFlizQRGOuZPTkmCwnmXII5PepsmKq4mrnZykEzXBO+kATa1QmMkkgvKGwgQver8ARCReU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757627457; c=relaxed/simple;
-	bh=Hz9e0HFlq+zXEzB/rfvsHu35U4ac6B40wqnCcPyJZIw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=swgGGppc8TRyA0+Q1CcwWAXYdCrgnu+oOxOcrWdL0cn4YcGLAIN0F2nhx2cC0qgL0Ly6CICICmltvD4cSFpuQKLxD82QftDX+EoU8vpDsyChu7qdF9qHqPcNRDDFBJMFBYTUXCObwVx76YWjwN94NhNmLZePGQz9YvWCZookS8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozq+D2C+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C9DC4CEF0;
-	Thu, 11 Sep 2025 21:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757627457;
-	bh=Hz9e0HFlq+zXEzB/rfvsHu35U4ac6B40wqnCcPyJZIw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ozq+D2C+V9PZ13HhyI4leB00OvhAlFKEwb8JfjE7gqQ8TRC4xioR5zopXOCuine7l
-	 OffQXYToSok7eRxmzL8MML87r7nJpBB41ysbJdnJ4vbk9bq6dstBO8DhoFRROGT4yX
-	 jUEjQTYlVG0j7sVkpx58EMsvqvnddZumtndaLehBJbOKTSkGbbrkZHMuw8cC3XBVkm
-	 OojFD8oWk2OXdSM3I+aovqX7JgzML+WBjMl2zd97cv/dew/Z8glGEqlHPiyNW0NGrF
-	 hGKfHP3xRzeXA3S5r+RAsJPx3vUBxN0iQ/9YmBIT4s4YTmcKLwAPGAfbPW3uc+4vq8
-	 aYYy2cxP2clGQ==
-Date: Thu, 11 Sep 2025 14:50:55 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
-	Atish Patra <atishp@rivosinc.com>,
-	Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>,
-	Vince Weaver <vincent.weaver@maine.edu>
-Subject: Re: [PATCH v3 00/15] Legacy hardware/cache events as json
-Message-ID: <aMNEP5rMBkq2ODAW@google.com>
-References: <20250828205930.4007284-1-irogers@google.com>
- <aMHbIGRFeQlq9ABx@google.com>
- <CAP-5=fXN5oe7tLCnuBnoYKm68GhuMXP00AjszRyPc_XpDkacxQ@mail.gmail.com>
+	s=arc-20240116; t=1757627499; c=relaxed/simple;
+	bh=Lkd9HrF1b+4mfTI1YOCZ2mACyXtFE/0MVQte2SFRQY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IvcBkNy1TCjRlSbNRJjD9feMxseaaDU+nQ83OySkFx6axfHQHZwrLPAM6pxfk670hRXk/iMbC4cdgEPrMMovR11f+24To9ePOAFeUTnXRHk0Q3GCYi6aoxknATr5Trt3hV//Z903fxSkvdE+4fjuTL6qSiHHDRmz6KLTYcFnaDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xWIpP9xk; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4b5d6ce4ed7so159711cf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:51:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757627497; x=1758232297; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=67rcoc0tiLSiwLVQ0lP6T2Ab+0hzeaK8IugOY+L2aq0=;
+        b=xWIpP9xkxNRAzi0K1DxDejVdvGkdTCcwJV0de1cuk5nUO/LZKtptGOxF35JJXYiS73
+         nFgfpgxI8FiPGnLQydRpw2+e9G8eBLCCwUXAfl5uWdvemiydXqBhBSU58LJCf+6EdR7w
+         ak/30BR9FHfgvw7B7sr9ANnNigECoiQFV1a20ktE3njL0BhbBfQ3DPytV7F9l3EsJOCQ
+         aoqXd2yLN5Wt0UGecQnFHlELrME50mTc7FgZZT3djZZ7nfMrKnWSgSyXjR7JI6rKqtr9
+         fL6Q6yWjFlcNoJDJ4tC3JUkYUceZtwKzwCye9x+gZrDqj3DVnjnoDqew9/dz572WOkHK
+         WHrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757627497; x=1758232297;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=67rcoc0tiLSiwLVQ0lP6T2Ab+0hzeaK8IugOY+L2aq0=;
+        b=Y+47dcKPpSfMzCoO5N+s13frOoYA4p2JjpcuP6dX0l5BWxLrTh6xMxXnzMECLNAWE/
+         ORFFGvlapLz80liUikOrub1QGaV9en7MdCwOp+9No0+zV5oxbTwN6CRjRLC6VdiR6tVs
+         IL536T9cTc2FzW52OqZPIfkfP2AhV9QzTBMm+rQmmC3nMLbD0PW38bRWal/z4mpeAiJ0
+         NlP/um0oXeBYN/2DVktUHbd0MOwzxoad6l9D7AHL9cEG5dr7o3Gnn3oCdxaynC0Hd1xc
+         MYBvzKCCpkFvoea0F7iHKDGVKkMyEu91Pbfnq9ydmTkJbWnngfGy2r3fXQfE+1t8C+9x
+         vezg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNmIOwywE9+po4M1ChJg24ZNUJfNjSJqw3WLoP9sKDQ+qy9l2/D/SxE/pecjhqNN4TRuVoxvPkXEEY11M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbEd6+krsZIl3B6VhKWHYKAGAVBIqKzP2P+BizEsp2o2jJ3YDP
+	1jf0Rg5kkjfbEGSZ6eJWFQUV/adQdPY/0DESfpoz8wKOX4OSu2bVbkGU4ld0W5Ac5c3WpidAYhP
+	FaGFz11eiHJgNw9SR24hxsOpXSMzTy2WU0E4GYHan
+X-Gm-Gg: ASbGncsUNwhHRm5Ryg2Jt7yNj8OGOpCEeXP86mDLtyvUOwogL96zqmFZ8eA8jf82kUc
+	nPMmAg7t91mrqjKbCyHZG7bXuxw6pOQbHPvGdrVYO1u9DZL11hTwdVQXMlCvJExsO6h67GFk2Og
+	e9Tsc6PhjGc8rPXPAFNWZAU7R93ILEYC5tzoAagMJeCVQo+TwZTZFRbV/NFMjYlDYf/safbqlPV
+	eu4UFiVH2v90KIFR5FlEotRm1EE4WUW+fX50R4VfqjA
+X-Google-Smtp-Source: AGHT+IFKCZ97d8yEAXy0IzqL/xIeSOsq8eTyCtL7p4R+IKNl+kbV2vPdoUW+XGceL7axm7TLgZ+JNFRKf5KyFaTuUv0=
+X-Received: by 2002:a05:622a:c9:b0:4b3:4ed0:c6f6 with SMTP id
+ d75a77b69052e-4b62522c93bmr17274971cf.16.1757627496389; Thu, 11 Sep 2025
+ 14:51:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXN5oe7tLCnuBnoYKm68GhuMXP00AjszRyPc_XpDkacxQ@mail.gmail.com>
+References: <20250909233409.1013367-1-surenb@google.com> <20250909233409.1013367-4-surenb@google.com>
+ <zxbgiqf4d3nlww2xxoea7rud3q4oj2osk657xnhu6r7du4lf3p@es7mqt7joo7b>
+ <CAJuCfpFV0d=JSwA8zDpdrg4C2TpTTZypeX0Qype-EFKHho2bQQ@mail.gmail.com> <yfebg4bs4nck7kvc3d3irbxpfja45pcyjbtip2jtcojiv5pj4f@jp53hiso6vga>
+In-Reply-To: <yfebg4bs4nck7kvc3d3irbxpfja45pcyjbtip2jtcojiv5pj4f@jp53hiso6vga>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 11 Sep 2025 14:51:25 -0700
+X-Gm-Features: AS18NWAYJD7p3_wAWHt6t9BtXnrobKcobygiyfTNh5kX10qBbZB119SkJzlYs_E
+Message-ID: <CAJuCfpEAfvFfFdNusJwPQGXM2sTMaB4RoEwjrUtwp1n3Afwk=Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] alloc_tag: avoid warnings when freeing non-compound
+ "tail" pages
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
+	usamaarif642@gmail.com, 00107082@163.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 02:58:05PM -0700, Ian Rogers wrote:
-> On Wed, Sep 10, 2025 at 1:10 PM Namhyung Kim <namhyung@kernel.org> wrote:
-> > A nit.  Can we have one actual event and an alias of it?
+On Thu, Sep 11, 2025 at 2:45=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Thu, Sep 11, 2025 at 01:12:11PM -0700, Suren Baghdasaryan wrote:
+> > On Thu, Sep 11, 2025 at 1:01=E2=80=AFPM Shakeel Butt <shakeel.butt@linu=
+x.dev> wrote:
+> > >
+> > > On Tue, Sep 09, 2025 at 04:34:09PM -0700, Suren Baghdasaryan wrote:
+> > > > When freeing "tail" pages of a non-compount high-order page, we pro=
+perly
+> > > > subtract the allocation tag counters, however later when these page=
+s are
+> > > > released, alloc_tag_sub() will issue warnings because tags for thes=
+e pages
+> > > > are NULL.
+> > > > This issue was originally anticipated by Vlastimil in his review [1=
+] and
+> > > > then recently reported by David.
+> > > > Prevent warnings by marking the tags empty.
+> > > >
+> > > > [1] https://lore.kernel.org/all/6db0f0c8-81cb-4d04-9560-ba73d63db4b=
+8@suse.cz/
+> > > >
+> > > > Suggested-by: David Wang <00107082@163.com>
+> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > > ---
+> > > >  mm/page_alloc.c | 9 ++++++++-
+> > > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > > index 1760346bbd24..d21a411e807e 100644
+> > > > --- a/mm/page_alloc.c
+> > > > +++ b/mm/page_alloc.c
+> > > > @@ -5240,9 +5240,16 @@ static void ___free_pages(struct page *page,=
+ unsigned int order,
+> > > >               __free_frozen_pages(page, order, fpi_flags);
+> > > >       else if (!head) {
+> > > >               pgalloc_tag_sub_pages(tag, (1 << order) - 1);
+> > > > -             while (order-- > 0)
+> > > > +             while (order-- > 0) {
+> > > > +                     /*
+> > > > +                      * The "tail" pages of this non-compound high=
+-order
+> > > > +                      * page will have no code tags, so to avoid w=
+arnings
+> > > > +                      * mark them as empty.
+> > > > +                      */
+> > > > +                     clear_page_tag_ref(page + (1 << order));
+> > >
+> > > Do we need something similar for the release_pages() code path or is =
+it
+> > > happening already?
 > >
-> > I think 'branch-instructions' will be the actual event and 'branches'
-> > will be the alias.  Then the description will be like
+> > Pages released with release_pages() should have valid tags, so I
+> > expect no warnings.
 > >
-> >   branch-instructions
-> >       [Retired branch instructions.  Unit: cpu_atom]
-> >   ...
-> >
-> >   branches
-> >       [This event is an alias of branch-instructions.]
-> >
-> > The same goes to 'cycles' and 'cpu-cycles'.
-> 
-> Similar 'cs' and 'context-switches' in
-> tools/perf/pmu-events/arch/common/common/software.json.
-> 
-> So there are a few different ways to do this:
-> 
-> 1) In perf list detect two events have the same encoding and list them together.
-> 2) In the json have a new aliases list then either:
-> 2.1) gets expanded in jevents.py as part of the build,
-> 2.2) passes into the pmu-events.c and the C code is updated to use an
-> alias list associated with each event.
-> 
-> Option (1) will have something like quadratic complexity, but a fast
-> perf list isn't a particular goal I've heard of.
-> Option (2.2) will mean the existing binary searches for events will
-> become a binary search for an event and then linear searches through
-> the aliases. To make this not a slowdown we'd likely need more lookup
-> tables to avoid the linear searches.
-> Option (2.1) feels the most plausible. I was hoping the json and the
-> sysfs layout would kind of match, this would be true after the
-> jevents.py expands the aliases. This option is already kind of already
-> done in the legacy cache case as the
-> tools/perf/pmu-events/make_legacy_cache.py is making this. We'd still
-> need option (1) with this.
-> 
-> Anyway, I'm not sure these downsides are countered by a slightly
-> smaller hardware.json and software.json, or maybe we should just go
-> with option 1 if the perf list output is all you care about. Let me
-> know if you see a different way of making it happen. I don't think the
-> vendors will be particularly happy for their upstream formats to
-> change given other tools will rely on them.
+>
+> Oh so this is orthogonal to your first patch which is replacing
+> __free_page with release_pages(). This non-compound high-order page is
+> not an issue in the codepath vm_module_tags_populate(), correct?
 
-Well, I was asking just to update the description in JSON.  I'm not sure
-if it's a common problem we need to solve.  Updating a few known aliases
-in the hardware and software description would be fine.
-
-Thanks,
-Namhyung
-
+Yes, these are independent fixes.
 
