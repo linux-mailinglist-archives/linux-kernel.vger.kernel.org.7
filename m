@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-811399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A3AB52896
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBE3B52897
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D5BA3B3C74
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:16:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589A64600E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD04257846;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E51257843;
 	Thu, 11 Sep 2025 06:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4dw0eOz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dp9pIKGD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89472571D7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188B6257453
 	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757571380; cv=none; b=IyUITLD5Sf2NbVs9LSTfheLZgjhrYlG70Z5KA4vCBTgOVEAkoH1fe/Dl3tNcBB8rzP0SKHuZIk2PgBwE7+L9vDwMkDxugKbfODDfz6xmaTO422MnYWolRhZbVJBKiw/plBD3+sx/SdtgYrLt1gAN4BgmZbicBEF1SArtVMRGAM0=
+	t=1757571381; cv=none; b=NCyHdFKZUgmTH9oq+Sl1IJ0O4t3qoNE1gABW/1xiJLXPah57z4SPBgQyRJz/SJZCV9u79HTYNUyUKMpkuUTITTg1yLF/x2BAr93eIFBu5pGmVzoR39ZVKZJCmayidO6RmYACbH7cJIy4LKvkFdd3JUaQ/bAVuXc42MLPyua0c10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757571380; c=relaxed/simple;
-	bh=ROX9J4DVISbZb0WSpNLVp5LK08+J+x9wXLeyIYlyDEU=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OTXIlVyeM4OU+I3ugJhwx0n5yiZaDcZKfooBKyRkdbHcflzjX7RadcKHQerSPEeYNXmCZGRJreGw5D/QdstU2adYEKeUXoaKwkbDzH+cElBpXYnDeobXGwJAvJ9F3u1T5tuzRqN/V2kb/r6bAOICJQXadZXncxaOHWZ+YM3Yk18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4dw0eOz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E425DC4CEF1;
-	Thu, 11 Sep 2025 06:16:19 +0000 (UTC)
+	s=arc-20240116; t=1757571381; c=relaxed/simple;
+	bh=bQfgfWONvdz/3iYAkuBR5e3H14h6gOvtW3RNK3GueZw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=YpcyJCMopX9xmEjiPA2egwGkto7m/SmKlVuou4iyyHpoZSq2r4cj+pEVgWUATVCuNK0pBQfWZ3azIltwQWfnx3ngmWepM9Lq9wUou+zHu9F5IOPX2OQJK9a9klkWwLNCyGsdXR7p5x4pVOwIid6xyXH1y7fYPt4BeV5c+nUmw04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dp9pIKGD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FDA0C4CEF9;
+	Thu, 11 Sep 2025 06:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1757571380;
-	bh=ROX9J4DVISbZb0WSpNLVp5LK08+J+x9wXLeyIYlyDEU=;
-	h=From:Subject:Date:To:Cc:From;
-	b=S4dw0eOz3n22Yeeki35UO5y88R0ejc6uP0MsjXcRYh7aEhnIJuBQePwu2Du0gkZkA
-	 oFINonXgj6kvCTF6UBQ4Clm9Fko74Kfh+ExQM3qGrP2bA+aU78c5fYkq9lPmIkfJoj
-	 JBcdYEUd7dzf3YNeBsA6MGKglmZQx9BGywOKkTaIzegzRDRSfNjWAv2V6V1wMehfw3
-	 iGpqZAeQPAEVsd2uNKv9jJkNsQvSzq326IOZVpwbtCxdBqXGufcCzXCjSincx5loKL
-	 iHbg1DUp7Tp1GaHu2OR7ES7OXUOtWzEok8t/3uKzrpNDXYQvqd11zThGwy8LOcL9p2
-	 KZnEQiTna42Ew==
+	bh=bQfgfWONvdz/3iYAkuBR5e3H14h6gOvtW3RNK3GueZw=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=dp9pIKGDDaayfu9vUTe6fUhaqaxz/OKt0qMUDdvy1zxBI4SyxZ6YZ4zKZCcjF2JY6
+	 C+IhcQFdur8x7r4FwOr0g+hmHsd/cRzepd1o7sVOTMqSk/fp/AOuPcvj4kFsXjgqSG
+	 7V8UVYRYFq73c22jvOtL1+n0wxxSnajBZ1pi/mPPyBNc/K7rRH0PQ1hZdwBlEtSRjH
+	 dZZhfKbSfWV16kyxnAYbpM9kj1CdC0IpyGCEA9IRJu6aZCmqIwmwHZRZKc1zEFaeji
+	 P6kUsCe+jWGl0ZsIXd4VLZ1qXVHj5Bs+6+y8zyge98TvPw4DmiUzsoT8jfPAsQL6IZ
+	 dKgghe2j7s9kg==
 From: Drew Fustini <fustini@kernel.org>
-Subject: [PATCH 0/2] RISC-V: Detect Ssqosid extension and handle srmcfg CSR
-Date: Wed, 10 Sep 2025 23:15:28 -0700
-Message-Id: <20250910-ssqosid-v6-17-rc5-v1-0-72cb8f144615@kernel.org>
+Date: Wed, 10 Sep 2025 23:15:29 -0700
+Subject: [PATCH 1/2] RISC-V: Detect the Ssqosid extension
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,11 +50,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAABpwmgC/x3MPQqAMAxA4atIZgOxoFWvIg61TTWLPw2IIL27x
- fEb3ntBOQkrjNULiW9ROfaCpq7Ab25fGSUUgyHT0kADql6HSsC7w8Zi8i1G72npemfJGSjdmTj
- K8z+nOecPLhFm7GMAAAA=
-X-Change-ID: 20250909-ssqosid-v6-17-rc5-fcc0b68a70a2
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250910-ssqosid-v6-17-rc5-v1-1-72cb8f144615@kernel.org>
+References: <20250910-ssqosid-v6-17-rc5-v1-0-72cb8f144615@kernel.org>
+In-Reply-To: <20250910-ssqosid-v6-17-rc5-v1-0-72cb8f144615@kernel.org>
 To: Paul Walmsley <paul.walmsley@sifive.com>, 
  Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
  Alexandre Ghiti <alex@ghiti.fr>, Conor Dooley <conor@kernel.org>
@@ -66,94 +65,54 @@ Cc: =?utf-8?q?Kornel_Dul=C4=99ba?= <mindal@semihalf.com>,
  liu.qingtao2@zte.com.cn, linux-riscv@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Drew Fustini <fustini@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3783; i=fustini@kernel.org;
- h=from:subject:message-id; bh=ROX9J4DVISbZb0WSpNLVp5LK08+J+x9wXLeyIYlyDEU=;
- b=owGbwMvMwCF2+43O4ZsaG3kYT6slMWQcytRQ2qlr5vAsuW/a9ksyU3e+fLIvJXdybo6HbuHku
- UqVXz7ndZSyMIhxMMiKKbJs+pB3YYlX6NcF819sg5nDygQyhIGLUwAm8qeMkeFluFDnK66aH98/
- Fs2ve/Py3sx/M7Yk+O36WS48PWcj/00Zhv/O1xqNv4cb993yXV3tEC4z7Xu9+LL4DUFHtXRyF0Y
- dDOcHAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1721; i=fustini@kernel.org;
+ h=from:subject:message-id; bh=bQfgfWONvdz/3iYAkuBR5e3H14h6gOvtW3RNK3GueZw=;
+ b=owGbwMvMwCF2+43O4ZsaG3kYT6slMWQcyjSOX/H7dFblKT/nC29r983LWpv3smDT4jcBl2N9b
+ 2aIu+uv7ihlYRDjYJAVU2TZ9CHvwhKv0K8L5r/YBjOHlQlkCAMXpwBM5O9Nhv8R0rtv8hw1SjO7
+ ySE2+R93eCrXc39TjaoHT2svSRxS2v+M4b8737yps16XHbmh5u93/3OnbGXViohrKb+41OQ8o18
+ s/McJAA==
 X-Developer-Key: i=fustini@kernel.org; a=openpgp;
  fpr=1B6F948213EA489734F3997035D5CD577C1E6010
 
-This series adds support for the RISC-V Quality-of-Service Identifiers
-(Ssqosid) extension [1] which adds the srmcfg register. This CSR 
-configures a hart with two identifiers: a Resource Control ID (RCID)
-and a Monitoring Counter ID (MCID). These identifiers accompany each
-request issued by the hart to shared resource controllers.
+Ssqosid is the RISC-V Quality-of-Service (QoS) Identifiers specification
+which defines the Supervisor Resource Management Configuration (srmcfg)
+register.
 
-Background on RISC-V QoS:
-
-The Ssqosid extension is used by the RISC-V Capacity and Bandwidth
-Controller QoS Register Interface (CBQRI) specification [2]. QoS in
-this context is concerned with shared resources on an SoC such as cache
-capacity and memory bandwidth. Intel and AMD already have QoS features
-on x86 and ARM has MPAM. There is an existing user interface in Linux:
-the resctrl virtual filesystem [3].
-
-The srmcfg CSR provides a mechanism by which a software workload (e.g.
-a process or a set of processes) can be associated with an RCID and an
-MCID. CBQRI defines operations to configure resource usage limits, in
-the form of capacity or bandwidth. CBQRI also defines operations to
-configure counters to track the resource utilization.
-
-Goal for this series:
-
-These two patches are taken from the implementation of resctrl support
-for RISC-V CBQRI. Please refer to the proof-of-concept RFC [4] for
-details on the resctrl implementation. More recently, I have rebased
-the CBQRI support on mainline [5]. Big thanks to James Morse for the
-tireless work to extract resctrl from arch/x86 and make it available
-to all archs.
-
-I think it makes sense to first focus on the detection of Ssqosid and
-handling of srmcfg when switching tasks. It has been tested against a
-QEMU branch that implements Ssqosid and CBQRI [6]. A test driver [7]
-was used to set srmcfg for the current process. This allows switch_to
-to be tested without resctrl.
-
-Changes from RFC v2:
- - Rename all instances of the sqoscfg CSR to srmcfg to match the
-   ratified Ssqosid spec
- - RFC v2: https://lore.kernel.org/linux-riscv/20230430-riscv-cbqri-rfc-v2-v2-0-8e3725c4a473@baylibre.com/
-
-Changes from RFC v1:
- - change DEFINE_PER_CPU to DECLARE_PER_CPU for cpu_sqoscfg in qos.h to
-   prevent linking error about multiple definition. Move DEFINE_PER_CPU
-   for cpu_sqoscfg into qos.c
- - renamed qos prefix in function names to sqoscfg to be less generic
- - handle sqoscfg the same way has_vector and has_fpu are handled in the
-   vector patch series
- - RFC v1: https://lore.kernel.org/linux-riscv/20230410043646.3138446-1-dfustini@baylibre.com/
-
-[1] https://github.com/riscv/riscv-ssqosid/releases/tag/v1.0
-[2] https://github.com/riscv-non-isa/riscv-cbqri/releases/tag/v1.0
-[3] https://docs.kernel.org/filesystems/resctrl.html
-[4] https://lore.kernel.org/linux-riscv/20230419111111.477118-1-dfustini@baylibre.com/
-[5] https://github.com/tt-fustini/linux/tree/b4/cbqri-v6-17-rc5
-[6] https://github.com/tt-fustini/qemu/tree/riscv-cbqri-rqsc-pptt
-[7] https://github.com/tt-fustini/linux/tree/ssqosid-v6-17-rc5-debug
-
+Link: https://github.com/riscv/riscv-ssqosid/releases/tag/v1.0
+Signed-off-by: Kornel Dulęba <mindal@semihalf.com>
+[fustini: rebase on v6.17-rc5]
 Signed-off-by: Drew Fustini <fustini@kernel.org>
 ---
-Drew Fustini (2):
-      RISC-V: Detect the Ssqosid extension
-      RISC-V: Add support for srmcfg CSR from Ssqosid ext
+ arch/riscv/include/asm/hwcap.h | 1 +
+ arch/riscv/kernel/cpufeature.c | 1 +
+ 2 files changed, 2 insertions(+)
 
- MAINTAINERS                        |  6 ++++++
- arch/riscv/Kconfig                 | 17 ++++++++++++++++
- arch/riscv/include/asm/csr.h       |  8 ++++++++
- arch/riscv/include/asm/hwcap.h     |  1 +
- arch/riscv/include/asm/processor.h |  3 +++
- arch/riscv/include/asm/qos.h       | 41 ++++++++++++++++++++++++++++++++++++++
- arch/riscv/include/asm/switch_to.h |  3 +++
- arch/riscv/kernel/cpufeature.c     |  1 +
- 8 files changed, 80 insertions(+)
----
-base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-change-id: 20250909-ssqosid-v6-17-rc5-fcc0b68a70a2
+diff --git a/arch/riscv/include/asm/hwcap.h b/arch/riscv/include/asm/hwcap.h
+index affd63e11b0a344c33a73647351ac02a94e42981..b4239f4f092d036ee3d037177b990e317d34a77f 100644
+--- a/arch/riscv/include/asm/hwcap.h
++++ b/arch/riscv/include/asm/hwcap.h
+@@ -106,6 +106,7 @@
+ #define RISCV_ISA_EXT_ZAAMO		97
+ #define RISCV_ISA_EXT_ZALRSC		98
+ #define RISCV_ISA_EXT_ZICBOP		99
++#define RISCV_ISA_EXT_SSQOSID		100
+ 
+ #define RISCV_ISA_EXT_XLINUXENVCFG	127
+ 
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index 743d53415572e071fb22851161bd079ef3158b7c..e202564f6f7b550f3b44a0826b5a67d5c4ebee96 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -533,6 +533,7 @@ const struct riscv_isa_ext_data riscv_isa_ext[] = {
+ 	__RISCV_ISA_EXT_DATA(ssaia, RISCV_ISA_EXT_SSAIA),
+ 	__RISCV_ISA_EXT_DATA(sscofpmf, RISCV_ISA_EXT_SSCOFPMF),
+ 	__RISCV_ISA_EXT_SUPERSET(ssnpm, RISCV_ISA_EXT_SSNPM, riscv_xlinuxenvcfg_exts),
++	__RISCV_ISA_EXT_DATA(ssqosid, RISCV_ISA_EXT_SSQOSID),
+ 	__RISCV_ISA_EXT_DATA(sstc, RISCV_ISA_EXT_SSTC),
+ 	__RISCV_ISA_EXT_DATA(svade, RISCV_ISA_EXT_SVADE),
+ 	__RISCV_ISA_EXT_DATA_VALIDATE(svadu, RISCV_ISA_EXT_SVADU, riscv_ext_svadu_validate),
 
-Best regards,
 -- 
-Drew Fustini <fustini@kernel.org>
+2.34.1
 
 
