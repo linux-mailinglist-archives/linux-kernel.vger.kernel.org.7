@@ -1,195 +1,125 @@
-Return-Path: <linux-kernel+bounces-811148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1D77B524F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:23:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AFE9B524F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDB9B1C83D17
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:23:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE4C2443E19
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E618D636;
-	Thu, 11 Sep 2025 00:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD7E18DB0D;
+	Thu, 11 Sep 2025 00:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i52ZFODY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="HG3VRjGj"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12CF13AD05;
-	Thu, 11 Sep 2025 00:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24528F49
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757550173; cv=none; b=KOpCVLNBu+76ms4u5dLu8OHjHF1eabxjb0pZerw8h0+yvhSvVXjHs9SQJwye7MhDF5sY140LplDLB7E3SOKSBqxgQTgTYrv11jhXYjqyhcYo5N0g660/h5lOhPPjBet4rw148yfw5gzxc3VAHMdJrbzut17RvafRWy5jcxUpng8=
+	t=1757550249; cv=none; b=YhMAXzkBKI8SnN7V6gSAjevcrjl/4nkxECspRGvRIduIAw8u9AiYHr5fgb0PRH9iybU7UENLh5xREvkPZCQA0KYnUD3Sif4UCKeD1W6q8Fq+omsf+8MusBDAFfsqFDpGjfvlQeMD3ZKUmcquEav4Nmd4Y81Wc3EgeY5LfXQtUbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757550173; c=relaxed/simple;
-	bh=3jhXISuBePjdRc28QV10bEyxfZW++/4+rnhlfaFG4TQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NLwv0uoltSpMMW0TqcaQCLDe4hhLj7z34p5uENl/l1ciLZvPh0UC+DS7svKk/kR4WTrso1cRPhXUddQNvN3IgzonE7A6Jpg+XthcRWHZptvbp/BNvnAP0t4KsIhFoJ1r7i+YC3knUiM50L62UnIgtj2CWs/crQ/6TjlQhsWQRzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i52ZFODY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5974C4CEEB;
-	Thu, 11 Sep 2025 00:22:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757550173;
-	bh=3jhXISuBePjdRc28QV10bEyxfZW++/4+rnhlfaFG4TQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=i52ZFODYMHww4ukoSCYBB0gKhmjOdv13UwWd/T2dMkrFLDRdbz+wXLy0QDuA11pNZ
-	 nMJjH5kGv1IMZtdlU756ENaoseb6TyMpt2PWVbdkpvIdLBJhcULyypP+/rq5wk4n2a
-	 CwQ09Y0DsLJgb8sQ2alPWPsNUxLEIFbzxgOHcw5rBhEaSrH1KAd9vXkcanro4XJ33w
-	 KpFMcVr+iCU2Z/Ax1JVehK/0fdXfiKrjbMKc9apyuh7h+HTtazKx7YSBzl4fKyfVSt
-	 wkm1pklByS/tk6PcmH1t2uL+7OZr/NwBTptVWA0Fd4acws5ZWTgYPSpoWhMTVsIqhj
-	 q7gHm3gx6v+0g==
-Date: Wed, 10 Sep 2025 17:22:51 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?xYF1a2Fzeg==?= Majewski <lukasz.majewski@mailbox.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Richard Cochran
- <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>
-Subject: Re: [net-next v19 4/7] net: mtip: Add net_device_ops functions to
- the L2 switch driver
-Message-ID: <20250910172251.072a8d36@kernel.org>
-In-Reply-To: <20250910231552.13a5d963@wsk>
-References: <20250824220736.1760482-1-lukasz.majewski@mailbox.org>
-	<20250824220736.1760482-5-lukasz.majewski@mailbox.org>
-	<20250827082512.438fd68a@kernel.org>
-	<20250907183854.06771a13@wsk>
-	<20250908180535.4a6490bf@kernel.org>
-	<20250910231552.13a5d963@wsk>
+	s=arc-20240116; t=1757550249; c=relaxed/simple;
+	bh=qUdeIgHd1H/gRzOkRxjDb083t96xp1CDvpLuyVz7iCE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=K9bcgfo723o2+lYWY+7xzgRNOWW+BQD82XrNsfqJxQyJ0uBjjjJVMBLo3jUEI39qttGdFCHdf9Lp3ALURpeebY3Ek9MF6yeqVLqh9f4Q680+LMBAFn/wtl+Gm+WypZVOE8vAXTQVNUoy54PjzfBq3mndK90p+vPJ3hVAmQoiyPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=HG3VRjGj; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3fe48646d40so6691205ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 17:24:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1757550246; x=1758155046; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qqQF9ujtoYtNLZ3rwwE148hM4Ro9xnZ4FQwRMaFPQTI=;
+        b=HG3VRjGjfTQ1pdJ8AC+iaDKdAHagZ5L++24d4JJlSePTBnTS/JlIwws0we3wKmiZJS
+         0MTqgk1yc1DYpb9XShumTDBoQNKGzA62AjZn9NrK1QVWcTelsu4D2rbYv59YhJ1SKt9j
+         +R7s7n7595uszBq0LyJG6BicKc8Wv46rGMijMUEDeEtLsxdPfDNQU57MJC/LvCXTBKIg
+         TDcqxBIDjcxPj8zdTA9pKKYah301iX29qXo7z694af2yTtnNMTibjAFShoUXKvRkfySK
+         3fc6MRbtB/hWBuk5sEXaVNz3XjaHxX1XktuJuhzaCJTWxjCHz0X9KTN95pckpLnNaFeB
+         UHZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757550246; x=1758155046;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qqQF9ujtoYtNLZ3rwwE148hM4Ro9xnZ4FQwRMaFPQTI=;
+        b=YzGuYcK2vadU/8SOU3+Kx3CNjxGrmkpVBrsD4VhpsQCAGtMX0Ma7eQtv5MhE4NyvRk
+         KghGcLs7NpCxyY4gVNAJbDKflKS3WAYMi/cPGoYrTufTJJtmR0doXrg5aacWclSkrgLj
+         kmEiGafUIKT/flklnVEdCGKgzVkwngT65n7JJ4HdtNuUzXfoHUlVDFeVA4f7nCEdpr6I
+         olVvN/daGuuLIVTUJUdRixsOCaHI5DrDpjmLRLbjH9udQPW6XbjFIs84jVOpiy9/RWe5
+         S5opsAg7ezfzCEcUfVkyGBErEZyrGIKMHkZbfDc2limQqIclEaIs/cBr4PtPO2/gL1As
+         cJ/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrAJnDl0VayQKy4SGTc55LtTk67dvBcqi9b/LOUG59NkuzoEnMiR2VoxugexbTRwaI1mqHXspjpSk0hyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyCpSRBda4ZwXodd4yisVzkZY7+l6od27mke+EmBVcRa1zMzx+
+	7m3PmzbgZr6KOQm76o4kLOaef8kE9z3gUXeB5mKNkvGau40R8jSO0gfBI8vDtzDTHBsTmodblda
+	wT915
+X-Gm-Gg: ASbGncsD522hIj+QfGDFrWQ4TQGKotRV3AsVuGwIQB3cGKDAQuVuIkso6BtkIC8eRSc
+	rhXjSCJCuXXe9J80puPIsxws4G3545c6kBCYIlae1HuyGH3D0qwepUOMhqblaPZBxGA4gf2bmUm
+	7X0dF1kHj0yvI2zUOpYR5QE3CvP8gRHulSocCBJg0cQtxrJVqC2kVeQUsjWCgdAwKGQFwyLU8Lt
+	ZL8IxErIOH5V178VzIcng0Lhb1KTJo4qYnppoG4wuNCo503FJtmaDRPAVeNZhEWJTCMb3kMfXo+
+	KRXI8R+VAZ6cyhbCebgs1Qw+YmXvZwTogYZgfxxiW+ub8EOB72NAAQq1KFHdTBAwMpmIrMxM
+X-Google-Smtp-Source: AGHT+IHOpts6PVtb95Al/bNQQ1qhB8ljPd6T6n47gEgj2bnO6EB5y7aCVxDcocz/y27CAZKkBJJjjA==
+X-Received: by 2002:a5d:9496:0:b0:887:56c3:e6d8 with SMTP id ca18e2360f4ac-88ec3362a7emr225090439f.8.1757550246549;
+        Wed, 10 Sep 2025 17:24:06 -0700 (PDT)
+Received: from [127.0.0.1] ([99.196.129.100])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-88f2f0f9a03sm5557039f.17.2025.09.10.17.24.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 17:24:06 -0700 (PDT)
+From: Jens Axboe <axboe@kernel.dk>
+To: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>, 
+ Li Nan <linan122@huawei.com>, Nathan Chancellor <nathan@kernel.org>
+Cc: linux-raid@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250910-llbitmap-fix-64-div-for-32-bit-v1-1-453a5c8e3e00@kernel.org>
+References: <20250910-llbitmap-fix-64-div-for-32-bit-v1-1-453a5c8e3e00@kernel.org>
+Subject: Re: [PATCH] md/md-llbitmap: Use DIV_ROUND_UP_SECTOR_T
+Message-Id: <175755023939.60476.3963353529532795428.b4-ty@kernel.dk>
+Date: Wed, 10 Sep 2025 18:23:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-2ce6c
 
-On Wed, 10 Sep 2025 23:15:52 +0200 =C5=81ukasz Majewski wrote:
-> > > I do use skb =3D buld_skb() which, "builds" the SKB around the memory
-> > > page (from pool).
-> > >=20
-> > > Then, I "pass" this data (and swap it) to upper layer of the network
-> > > stack.
-> > >=20
-> > > The same approach is used in the fec_main.c driver:
-> > > https://elixir.bootlin.com/linux/v6.17-rc3/source/drivers/net/etherne=
-t/freescale/fec_main.c#L1853
-> > >   =20
-> >=20
-> > I probably cut out too much context. I think I was quoting from Tx,
-> > indeed on Rx this is not an issue. =20
->=20
-> Ok. No adjustments needed then. Good :)
 
-No, you were talking about build_skb() which is Rx.
-This is the patch that adds Tx. Tx is wrong.
-You can't modify the skb unless you call skb_cow().
-Or just copy the data out to your local buffer.
+On Wed, 10 Sep 2025 13:47:26 -0700, Nathan Chancellor wrote:
+> When building for 32-bit platforms, there are several link (if builtin)
+> or modpost (if a module) errors due to dividends of type 'sector_t' in
+> DIV_ROUND_UP:
+> 
+>   arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o: in function `llbitmap_resize':
+>   drivers/md/md-llbitmap.c:1017:(.text+0xae8): undefined reference to `__aeabi_uldivmod'
+>   arm-linux-gnueabi-ld: drivers/md/md-llbitmap.c:1020:(.text+0xb10): undefined reference to `__aeabi_uldivmod'
+>   arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o: in function `llbitmap_end_discard':
+>   drivers/md/md-llbitmap.c:1114:(.text+0xf14): undefined reference to `__aeabi_uldivmod'
+>   arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o: in function `llbitmap_start_discard':
+>   drivers/md/md-llbitmap.c:1097:(.text+0x1808): undefined reference to `__aeabi_uldivmod'
+>   arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o: in function `llbitmap_read_sb':
+>   drivers/md/md-llbitmap.c:867:(.text+0x2080): undefined reference to `__aeabi_uldivmod'
+>   arm-linux-gnueabi-ld: drivers/md/md-llbitmap.o:drivers/md/md-llbitmap.c:895: more undefined references to `__aeabi_uldivmod' follow
+> 
+> [...]
 
-> > > You may have port =3D=3D 1 || port =3D=3D 2 when you receive packet f=
-rom
-> > > ingres ports.
-> > > You may also have port =3D=3D 0xFF when you first time encounter the =
-SA
-> > > on the port and port =3D=3D 0 when you send/receive data from the "ho=
-st"
-> > > interface.
-> > >=20
-> > > When port 1/2 is "detected" then the net dev for this particular
-> > > port is used. In other cases the one for NAPI is used (which is one
-> > > of those two - please see comment above).
-> > >=20
-> > > This was the approach from original NXP (Freescale) driver. It in
-> > > some way prevents from "starvation" from net devices when L2 switch
-> > > is disabled and I need to provide port separation.
-> > >=20
-> > > (port separation in fact is achieved by programming L2 switch
-> > > registers and is realized in HW).   =20
-> >=20
-> > But what if we have mixed traffic from port 1 and 2?
-> > Does the current code correctly Rx the packets from port 1 on the
-> > netdev from port 1 and packets from port 2 on the netdev from port 2? =
-=20
->=20
-> Yes, it does.
->=20
-> In the mtip_rx_napi() you have call to mtip_switch_rx() which accepts
-> pointer to port variable.
->=20
-> It sets it according to the information provided by the switch IP block
-> HW and also adjust the skb's ndev.
->=20
-> I'm just wondering if the snippet from mtip_rx_napi():
-> -------8<--------
-> if ((port =3D=3D 1 || port =3D=3D 2) && fep->ndev[port - 1]
-> 	mtip_switch_tx(fep->ndev[port - 1]);
-> else
-> 	mtip_switch_tx(napi->dev);
-> ------->8-------- =20
->=20
-> could be replaced just with mtip_switch_tx(napi->dev);
-> as TX via napi->dev shall be forward to both ports if required.
->=20
-> I will check if this can be done in such a way.
+Applied, thanks!
 
-Not napi->dev. You have to attribute sent packets to the right netdev.
+[1/1] md/md-llbitmap: Use DIV_ROUND_UP_SECTOR_T
+      commit: 7935b843ce2184164f41c3b5c64e9f52994306f4
 
-> > > As I said - we do have only ONE queue, which corresponds to uDMA0
-> > > when the switch is enabled. This single queue is responsible for
-> > > handling transmission for both ports (this is how the HW is
-> > > designed).   =20
-> >=20
-> > Right but kernel has two SW queues. =20
->=20
-> You mean a separate SW queues for each devices? This is not supported
-> in the MTIP L2 switch driver. Maybe such high level SW queues
-> management is available in the upper layers?
+Best regards,
+-- 
+Jens Axboe
 
-Not possible, each netdev has it's own private qdisc tree.
 
-> > Which can be independently
-> > stopped. =20
->=20
-> It supports separate RX and TX HW queues (i.e. ring buffers for
-> descriptors) for the uDMA0 when switch is enabled.
->=20
-> When you want to send data (no matter from which lan[01] device) the
-> same mtip_start_xmit() is called, the HW TX descriptor is setup and is
-> passed via uDMA0 to L2 switch IP block.
->=20
-> For next TX transmission (even from different port) we assign another
-> descriptor from the ring buffer.
->=20
-> > So my concerns is that for example port 1 is very busy so
-> > the queue is full of packets for port 1, port 1's netdev's queue gets
-> > stopped. Then port 2 tries to Tx, queue is shared, and is full, so
-> > netdev 2's SW queue is also stopped. Then we complete the packets,
-> > because packets were for port 1 we wake the queue for port 1. But
-> > port 2 also got stopped, even tho it never put a packet on the ring..
-> >  =20
->=20
-> As fair as I can tell - both ports call mtip_start_xmit(), their data
-> is serialized to the TX queue (via descriptors).
->=20
-> Queued descriptors are sent always at some point (or overridden if
-> critical error encountered).
->=20
-> > Long story short I think you need to always stop and start queues from
-> > both netdevs.. There's just 2 so not too bad of a hack. =20
->=20
-> Maybe there are some peculiarities in for example bridge code (or upper
-> network stack layers in general), but I think, that I don't need any
-> extra "queue" management for TX code of MTIP L2 switch.
 
-I think I explained this enough times. Next version is v20.
-If it's not significantly better than this one, I'm going to have=20
-to ask you to stop posting this driver.
 
