@@ -1,159 +1,126 @@
-Return-Path: <linux-kernel+bounces-812851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE0EB53D99
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:21:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B1EB53DA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4617189A8F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:21:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51DB73A1C74
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6938927979F;
-	Thu, 11 Sep 2025 21:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1BF229B18;
+	Thu, 11 Sep 2025 21:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fJtlTnQx"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D+fNm4/I"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C7223D7E6
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F722DC762
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757625655; cv=none; b=NsSZVkVAFSOzvtqqWT1rGGzzr8FnD9c/gb1H53+GsNellTV5dmEPm2oPCuMBQyAFlY8aQbGFczTAjC1Z+jz85EY0ib+Yuf8DW1TRJwL8EGNbDv5IZ3wRDttHZegL1/fspbGMZqmZANHGipa3sA5eWl84cDfhM11GdQbzGzsnOgk=
+	t=1757625670; cv=none; b=CBy7BYLLQuSXSEbIxIVPYYuCrSDPkbw5rW1v05+4ZWCuUb6sShSeKdvJ2CuvRGk0zlpYZm9Ph91mzghvNRJlhIW8eD5SKm3VQvlZ1aRt+2/FNb8eDrU/WPYs0Tz4OOxLwf0+J/Kug0FIsryzX0kJBOx6hTNa0lDS9gacsuD5m1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757625655; c=relaxed/simple;
-	bh=/qbqklOy73Xy205h9CiRY2qnxrIANAuJGQ6ZqXMNk3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FKSEOQAmifrZKBhSNfBlzWuzDaL/lY995Dpufs1DXwZ6qO0hSXkaWlqMWNI/pTSWrNkgZUmU4CcA0I4LlgWOBRqLBNqfCVuZHZZzX039PaQkvYSW8w0PpoSpOIpBHfAbaeFzqbgtNddmnmhdT4inIU+f0rf8v2YIE8EHHGfyqIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fJtlTnQx; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-74572fb94b3so1177762a34.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757625653; x=1758230453; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9Xdz7g9XJCi94PW1u7R25e+prar+7bf8nt1qt2s44Ts=;
-        b=fJtlTnQx+tCkgTeyaqjf96obb1M2sYcjGcX5aIcWXGTpeaTXHLF9IZncZjkkH9x2Nj
-         viOQwrZnCAOpbc+/OoNfuRdRBjpuClf/t4Z2nvRRsxDRBh2FP3PGdbU91NExOcx1ExZu
-         PiKH5lwRca/PdiJwMA3QGg4quXpf9Cj5nKoqUe/YVfrl1M13v7I8M0/0qCqKH4ujnwKb
-         gsDGUjiINsajfAbMlXbgnkx7cB3or0urFE50JoyaYapeoZwR1JdRHPX3TBFrQsMPR2nX
-         zaKSE8tWsXVudCMQ0WoxtEuMA311RMH/mO69p7m01I5RrakHioobfQegeKojUIsTNcJR
-         1I6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757625653; x=1758230453;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9Xdz7g9XJCi94PW1u7R25e+prar+7bf8nt1qt2s44Ts=;
-        b=sjActM5A+ZfMLz0/ucCXrWM3SKel2WrW4zRvl18D/nRj6pxvsa69Ovx4HOgopPHtVL
-         QT2PItuI0gGU1II3PH/M7wHDOvlP+OchD7zHhHJV/V3sMqRsjpxd0w9NM5T5XyRXZ25+
-         N0+PFzQYpQYz/o6bdeOobhtoHWpuMxRjk++cM7sZTh/Q9wU6hMpjTbJxPan7FoRI5SmT
-         3lE940allRQg5FZS8pFkJ6ifW3nqgncxuLKsVTc5+MY3MwjDCrPWiSLT72tZWXkjcbcY
-         Cgv+OhRiw0nvjxiZpL6sAvImGsPDBzSzF76zS6K3OrkItERkslh6PS4nJWSr3Vsa3p79
-         q8RA==
-X-Forwarded-Encrypted: i=1; AJvYcCXSgJUb66XHDKJJtBEBzhvE0Mf2J3UTW1Lmz4Z5Lf3+f7KZ3akxjCjcbBHdBdCDjcWGk5OKEXESgao0ci4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKY9ww9FY+0iV1zuJLNqLCnedVD1IEFvp+pn8YV+FxmE1RWtTc
-	Pg4ItnrZ47xyZYdUpZewjo3aMBIE2uOOCKhdKDeLlzfw5b3EKuKgoxRPeXYMrb+BY64=
-X-Gm-Gg: ASbGncvm7Pt16XWjaza6KdJWCqmUts4ZhWa2R0SdaqauOXCd/FBLoneBfYZ30bL2ZAB
-	JnGpOm2b1aYo3aluBACEc9Q4Lyo+YNaTrfq5XE6FB4gwBWF4KR4xUJwbM+19K5f3aJaCmD+yTWY
-	F6h4z2N6j6t/OZfZH8CDvowPLJhlhDgDY+ZNJir2UfE6sEvqpD/0C0ojkqPPCDDmwup8B5ANHgn
-	r4ogXgD77AxA1ZJX0Kl6dShxbAZW7USQUpSW7PSvB4PMaxZSv1zEX9gEa0wbY1p6DB6bVwooDIq
-	urD3P5q+8s7v4N8ZBw3beyF4I4ZbTxkyHZvVr/Uoou8Cq/TEy/5dMmghAFHCLIfJ7fHadV8Xj0h
-	MjoVKIV0C/k7UHza0U7O5Deh73qxwBUFLbGHgGlaREM//uJoJoi33Up9yMDX8DPlE69ggg3yaA6
-	U=
-X-Google-Smtp-Source: AGHT+IEfEi9Sgc3MO/DgYcQbM9cS1aO0i6OLl4q1kcdgGhUYaznl1ArLjqw2SU9iu7Litt3zO5owUA==
-X-Received: by 2002:a05:6808:1384:b0:43b:35de:29c5 with SMTP id 5614622812f47-43b8da0bd91mr288002b6e.30.1757625652844;
-        Thu, 11 Sep 2025 14:20:52 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:d684:59db:8b2a:5451? ([2600:8803:e7e4:1d00:d684:59db:8b2a:5451])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b82abd2d5sm441365b6e.26.2025.09.11.14.20.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 14:20:51 -0700 (PDT)
-Message-ID: <92306c8a-a2ec-4a43-80d7-c8e0c1cc0ee1@baylibre.com>
-Date: Thu, 11 Sep 2025 16:20:50 -0500
+	s=arc-20240116; t=1757625670; c=relaxed/simple;
+	bh=QyJtcQPcEZ8nVwrzFwz0lmfAF0Jafs45nc9NO4VMVgU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gzo+WgtecsjurQGybcwmp5YD621uo91vCikbkPkCGxZmDdspjT+sj2BF1JtxhkEnAyas6lLYx0PmMkQ3S5UFq1Z7soV9EDzZPxUF4ZqqMC+zTbkbO7/RRy1GIkVzuvfyGqJiKHtvTIYNE4gCvYgzc/ywMqjzjaNJWHkzKk2Yng0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D+fNm4/I; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757625664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MPivr8Py3B0NFnkMK/EAFf26R7QjGJ5nyyS4H+kZWOI=;
+	b=D+fNm4/IHZLnhovA9pOg+KEttvFQV6CxJN3casz3kzgxMhWTJDi3MjM3zgvsfnPunmwGch
+	r1ggQQkNk4M8yPG1AI8/xfgkx41nBxlUWT2ZH4GvjtMfAkV8YemVPT5rZP9myO2Mze5QAO
+	txHBcZ23RTpFW2SUi1XKuYipImY6C68=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-483-cxm8U4-5OE623rJNTXZ19w-1; Thu,
+ 11 Sep 2025 17:21:02 -0400
+X-MC-Unique: cxm8U4-5OE623rJNTXZ19w-1
+X-Mimecast-MFC-AGG-ID: cxm8U4-5OE623rJNTXZ19w_1757625660
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1AB631800452;
+	Thu, 11 Sep 2025 21:21:00 +0000 (UTC)
+Received: from pauld.westford.csb (unknown [10.22.64.134])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4BDF430002C6;
+	Thu, 11 Sep 2025 21:20:57 +0000 (UTC)
+Date: Thu, 11 Sep 2025 17:20:54 -0400
+From: Phil Auld <pauld@redhat.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: simplify task_numa_find_cpu()
+Message-ID: <20250911212054.GD7235@pauld.westford.csb>
+References: <20250911203136.548844-1-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-References: <20250910-bd79112-v4-0-f82f43746a8c@gmail.com>
- <20250910-bd79112-v4-2-f82f43746a8c@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20250910-bd79112-v4-2-f82f43746a8c@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911203136.548844-1-yury.norov@gmail.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 9/10/25 6:24 AM, Matti Vaittinen wrote:
+On Thu, Sep 11, 2025 at 04:31:35PM -0400 Yury Norov wrote:
+> From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+> 
+> Use for_each_cpu_and() and drop some housekeeping code.
+> 
+> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 
-...
+The "housekeeping" part threw me off for a second. I was looking for
+isolation related code being dropped :)
 
-> diff --git a/drivers/iio/adc/rohm-bd79112.c b/drivers/iio/adc/rohm-bd79112.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..a2a3affe2c6dc86a237a164139c27ec66dc9d131
-> --- /dev/null
-> +++ b/drivers/iio/adc/rohm-bd79112.c
-> @@ -0,0 +1,553 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * ROHM ADC driver for BD79112 signal monitoring hub.
-> + * Copyright (C) 2025, ROHM Semiconductor.
-> + *
-> + * SPI communication derived from ad7923.c and ti-ads7950.c
 
-Really? I wrote the ti-ads7950 driver and I can't say I see the
-resemblance. ;-)
+Reviewed-by: Phil Auld <pauld@redhat.com>
 
-> + */
-> +
 
-...
+> ---
+>  kernel/sched/fair.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 0990ed90c14e..c48c0975fe7a 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -2474,11 +2474,8 @@ static void task_numa_find_cpu(struct task_numa_env *env,
+>  		maymove = !load_too_imbalanced(src_load, dst_load, env);
+>  	}
+>  
+> -	for_each_cpu(cpu, cpumask_of_node(env->dst_nid)) {
+> -		/* Skip this CPU if the source task cannot migrate */
+> -		if (!cpumask_test_cpu(cpu, env->p->cpus_ptr))
+> -			continue;
+> -
+> +	/* Skip CPUs if the source task cannot migrate */
+> +	for_each_cpu_and(cpu, cpumask_of_node(env->dst_nid), env->p->cpus_ptr) {
+>  		env->dst_cpu = cpu;
+>  		if (task_numa_compare(env, taskimp, groupimp, maymove))
+>  			break;
+> -- 
+> 2.43.0
+> 
+> 
 
-> +static int bd79112_get_gpio_pins(const struct iio_chan_spec *cs, int num_channels)
-
-u32 would make more sense when dealing with bit flags.
-
-> +{
-> +	int i, gpio_channels;
-
-same for the local variable.
-
-...
-
-> +static int bd79112_probe(struct spi_device *spi)
-> +{
-
-...
-
-> +
-> +	data->read_xfer[0].tx_buf = &data->read_tx[0];
-> +	data->read_xfer[0].len = sizeof(data->read_tx);
-> +	data->read_xfer[0].cs_change = 1;
-> +	data->read_xfer[1].rx_buf = &data->read_rx;
-> +	data->read_xfer[1].len = sizeof(data->read_rx);
-> +	spi_message_init_with_transfers(&data->read_msg, data->read_xfer, 2);
-> +
-> +	data->write_xfer.tx_buf = &data->reg_write_tx[0];
-> +	data->write_xfer.len = sizeof(data->reg_write_tx);
-> +	spi_message_init_with_transfers(&data->write_msg, &data->write_xfer, 1);
-
-If these messages never change (other than the data in the buffers), you can
-call devm_spi_optimize_message() here on each message to get reduced CPU usage
-on every SPI message for free.
+-- 
 
 
