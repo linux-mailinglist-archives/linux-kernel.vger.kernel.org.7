@@ -1,130 +1,111 @@
-Return-Path: <linux-kernel+bounces-811310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD52B52753
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 05:47:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61614B52750
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 05:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FA1C7BADE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:43:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED5EA00043
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B5423A9A8;
-	Thu, 11 Sep 2025 03:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YKQVvCXh"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399D323D7ED;
+	Thu, 11 Sep 2025 03:45:06 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FED216E26
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E7823D7D4;
+	Thu, 11 Sep 2025 03:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757562299; cv=none; b=jvhHfWAtallaAnopsxniWnq6xL9vPFCeUgeupD6OFFhLueyOpXebNfiTlMzuN3MHmGEzyMR/iqugxNVPz+ug9GMP0HkAdwBPS+c4geSFYcEf/Bo3K6Pjdte04VZDmrOY8XZhRPp2Hc8JGAfyBVQr+AndCGz7LbgR9bYhy8Hhy0E=
+	t=1757562305; cv=none; b=Jtf1X7AaDTMlmt5n5Ei2o3gM6LOqSOau8/4dwtDWP9Tads1/UF8JOap2mhtjqmWdTFQWv8U0He9f9o+KQmOUoFAYrAdvh0XVnWKJC9wx06GwLO2ohXgrZXZwzX/8Y/JAi01OUq5sC8DY7TwhkFB161tnGdQ0tkL8ZbV9/Ko2G7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757562299; c=relaxed/simple;
-	bh=FeBkI+DIqbKuWPeey3r5Aq7+0VqdTIhyf7KTvq5WyfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UXtLvTWl6Bxkdf+zi4f2J3MsBE8Mpx2FiQxE3Wgkhfy4qOVRqp+kOu2+jDyxuyIk72nGMPadVmI1jT+eTWt+40iL/eBfUzfypdPN+TNVlTxpj8/LOjhyn2Q3T9VL67MQWBwXNJaIwGsHppSSdHhOdJeqPtbwcFfzWu2flvyX3Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YKQVvCXh; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2570bf6058aso3471105ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757562298; x=1758167098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gp7NlDOj8s1C6nikuQpES2a8b5/gpCrL3jTyE2azAEo=;
-        b=YKQVvCXhXsCO2mmdx659EkPVv2noNuWkj4tfEgQwNzU/+W2K3g2HOE4ilutW2CJWS9
-         2QYycULuSGUjoZrDtN8N4kD54qsVzcbkLM/KFCj5DS2K4Lw051yyDPf1PmQGJGsngxZ4
-         Aj/R3giODqyohYy5J34P3PCLMQH6vmEL89kgK5AoRYZ/VFER1BKG51w9y0g+NS4Af/gM
-         4srg0NBADpNhMp7cYOHW270coHMgVzjRfGsYSKsOyv1aR299NDsoo2y4k3NtZyEY/+WE
-         vPWa9BsZNaoAlHzyYG6oIphN6A/cy0NbVCm44yL4XkO11HFBo39eWghHMinzIoTPajq4
-         PwOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757562298; x=1758167098;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gp7NlDOj8s1C6nikuQpES2a8b5/gpCrL3jTyE2azAEo=;
-        b=Gjuv7VizXp9uQzyeqAJZKpjxKpZMkm2jkTGmo3LhTAjo/W22uY/029yOVynsk+g525
-         mRxxya5CvS7BLcrafLkbbqNV/9G8+N0h1aBO9v/ki7DVdK+KRIyCWHr50+9iRMgYSjRn
-         gUnpNYRvjIkwLI5ur23xNkizE2z4dtb+4hMezT0lQ8aXeQJRPjhOpAhRiv02/9a/+tIi
-         dE2MLxvjB19JLf/isXU0RKD3XL4snGkTJTiAmTRltOFaEyFDxzqyndQg7lXCmO1q+fGj
-         olOLruj9wch8YWPX0KWhNTUBGOxvpfdJv9krxQ5GiasKCbQvGa+dYLaASkf2X2vOHi5g
-         9ayA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUhJ3dHxCIGITFOsCfcfI0Z0Vj/0oSIkLG9kyUgiYWZ4llX6NmMIHs5pVTP2bkWUW76NDvBC5qA95xKhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAiRnq0X6J5tDzPXGQsceTxTuv/wwfwa6m+/9YTXdRoLvT5Kk2
-	vHAEVapFEEH408Gsl1T8bWg/jLVbZRrbSgyo41aulOUMe8v6kviXQ5B5
-X-Gm-Gg: ASbGncu7rKO0JP7/IQ6chfCbeeLUuVZJdL7YN+NIppK1E5iGSCO74STZRBthv5e6bI1
-	zwbZmunc5OmxV/mrvtGmaKNbZymAFGQsAmPoNDkp1/dihuBuf/UJRJA+dl3szwj8bXeC+Bv5Guk
-	FDR0/rojUyXwjjiIfGpaDw/R7Nowj971Xva9vqY6TZO41zX9Geq94zyk3Q1fXFs0PdZOX/lwckW
-	5Tz8smaYcwD3OJBKLV6FF6GoUa1aDidR+eNVj0qF5q/bN+fK/bT9MQfgzh3jiq4u/GVSciZHaIZ
-	0W3rsldLOzbFXGDbfVKqRJwKx1G5fF0D3OuMSYjMtN6VmEoFYeJ/e0tz1/toFPXXnduN2UcLgTA
-	s/88wTqi3Ye+lesduldC5yWLR2LY8v9wP
-X-Google-Smtp-Source: AGHT+IE9eIw3BYWelQzgiLIf4tSTJAM7ag7P7YkdABaf0pm4V8ouHglCKbgNfTPQ99v5GJCsHPGMZQ==
-X-Received: by 2002:a17:902:f549:b0:24e:e5c9:ecfd with SMTP id d9443c01a7336-251728629c4mr228614175ad.42.1757562297473;
-        Wed, 10 Sep 2025 20:44:57 -0700 (PDT)
-Received: from localhost ([216.228.125.130])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a35b7e31sm365453a12.11.2025.09.10.20.44.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 20:44:56 -0700 (PDT)
-From: Yury Norov <yury.norov@gmail.com>
-To: Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org
-Cc: Yury Norov <yury.norov@gmail.com>
-Subject: [PATCH] sched/fair: use cpumask_weight_and() in sched_balance_find_dst_group()
-Date: Wed, 10 Sep 2025 23:44:52 -0400
-Message-ID: <20250911034454.494852-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757562305; c=relaxed/simple;
+	bh=mK6CIu5Uu2i1yzCLpH5ZIdGXcRymGnnPqRJ5jLbp3EY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QqpqnfCCUQFxYr0UJCMqO2GgTY2UO6kddq+dJLTn+jSKVDqrnk7eeFke+FNn8cv7yYlidXSz0bLCNJcOksINx+f+CB15UkfbdNxc+Jo0Cojwz2R9Q+Vi9mQfAj3mLzc6qJvwK6S0P3nvyMr/ErPH41O2XfXnhfGoJvjIQUqhpWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 667622C0666D;
+	Thu, 11 Sep 2025 05:44:53 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 4BA77440FD6; Thu, 11 Sep 2025 05:44:53 +0200 (CEST)
+Date: Thu, 11 Sep 2025 05:44:53 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: "Bowman, Terry" <terry.bowman@amd.com>
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	alison.schofield@intel.com, dan.j.williams@intel.com,
+	bhelgaas@google.com, shiju.jose@huawei.com, ming.li@zohomail.com,
+	Smita.KoralahalliChannabasappa@amd.com, rrichter@amd.com,
+	dan.carpenter@linaro.org, PradeepVineshReddy.Kodamati@amd.com,
+	Benjamin.Cheatham@amd.com,
+	sathyanarayanan.kuppuswamy@linux.intel.com,
+	linux-cxl@vger.kernel.org, alucerop@amd.com, ira.weiny@intel.com,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v11 20/23] CXL/PCI: Export and rename merge_result() to
+ pci_ers_merge_result()
+Message-ID: <aMJFtZHJBOLLMHIX@wunner.de>
+References: <20250827013539.903682-1-terry.bowman@amd.com>
+ <20250827013539.903682-21-terry.bowman@amd.com>
+ <aK67_CP7l7c7CSPp@wunner.de>
+ <f1ddffe9-e1ea-45b5-9042-e9aa6ce41e34@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1ddffe9-e1ea-45b5-9042-e9aa6ce41e34@amd.com>
 
-From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+On Wed, Sep 10, 2025 at 10:57:17AM -0500, Bowman, Terry wrote:
+> On 8/27/2025 3:04 AM, Lukas Wunner wrote:
+> > On Tue, Aug 26, 2025 at 08:35:35PM -0500, Terry Bowman wrote:
+> >> +++ b/include/linux/pci.h
+> >> @@ -2760,6 +2760,17 @@ static inline bool pci_is_thunderbolt_attached(struct pci_dev *pdev)
+> >>  void pci_uevent_ers(struct pci_dev *pdev, enum  pci_ers_result err_type);
+> >>  #endif
+> >>  
+> >> +#if defined(CONFIG_PCIEAER)
+> >> +pci_ers_result_t pci_ers_merge_result(enum pci_ers_result orig,
+> >> +				      enum pci_ers_result new);
+> >> +#else
+> >> +static inline pci_ers_result_t pci_ers_merge_result(enum pci_ers_result orig,
+> >> +						    enum pci_ers_result new)
+> >> +{
+> >> +	return PCI_ERS_RESULT_NONE;
+> >> +}
+> >> +#endif
+> >> +
+> >>  #include <linux/dma-mapping.h>
+> >>  
+> >>  #define pci_emerg(pdev, fmt, arg...)	dev_emerg(&(pdev)->dev, fmt, ##arg)
+> > Would it be possible for you to just declare a local version of
+> > pci_ers_merge_result() within drivers/cxl/ which is encapsulated by
+> > "#ifndef CONFIG_PCIEAER"?
+> >
+> > That would avoid the need to make this public in include/linux/pci.h.
+> 
+> The move of local merge_result() to exported pci_merge_result() was requested
+> by Jonathan Cameron:
+> https://lore.kernel.org/linux-cxl/20250627120541.00003a14@huawei.com/
+> 
+> I believe the intent was to make reuse of the PCI merge function to keep the
+> PCI and CXL UCE flows somewhat similar.
 
-In the group_has_spare case, the function creates a temporary cpumask
-to just calculate weight of (p->cpus_ptr & sched_group_span(local)).
+That's not my point.  My point is, can you avoid declaring the static inline
+in include/linux/pci.h if you move it to drivers/cxl/ and encapsulate by
+"#ifndef CONFIG_PCIEAER"?  I'm only referring to the static inline stub.
 
-We've got a dedicated helper for it.
+Thanks,
 
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
----
- kernel/sched/fair.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 7229339cbb1b..4ec012912cd1 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -10821,10 +10821,9 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
- 			 * take care of it.
- 			 */
- 			if (p->nr_cpus_allowed != NR_CPUS) {
--				struct cpumask *cpus = this_cpu_cpumask_var_ptr(select_rq_mask);
--
--				cpumask_and(cpus, sched_group_span(local), p->cpus_ptr);
--				imb_numa_nr = min(cpumask_weight(cpus), sd->imb_numa_nr);
-+				unsigned w = cpumask_weight_and(p->cpus_ptr,
-+								sched_group_span(local));
-+				imb_numa_nr = min(w, sd->imb_numa_nr);
- 			}
- 
- 			imbalance = abs(local_sgs.idle_cpus - idlest_sgs.idle_cpus);
--- 
-2.43.0
-
+Lukas
 
