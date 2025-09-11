@@ -1,156 +1,357 @@
-Return-Path: <linux-kernel+bounces-811324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3F2B5277D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:13:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B560CB5277F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B8BF1B27B3A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BDB93ABECE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:15:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCCA235072;
-	Thu, 11 Sep 2025 04:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5582225768;
+	Thu, 11 Sep 2025 04:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TP7aENOH"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTeUgwFO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68C933D8
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 04:13:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57BA329F24;
+	Thu, 11 Sep 2025 04:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757563989; cv=none; b=N8yNfyNRLXYWVO39RXKJhtn7ELmuh75VR9U2DuKAJqJcqeNmxKyXZzlR4hSHDUVXthrVaZazEBI2k/t9pK3nmQyFSbdj2X1YXqoYlbumu3VhaXRhmoYgvAvXnq7Cm+BgJaFSANM0+E0X6Sfy3ZjA1bABumn2uT0H3OzFvqG6Ll4=
+	t=1757564131; cv=none; b=X5khx3B8GivecvI1K+SU5/itezmYk5xRVOyEsBtVkWVmxySoE6uYmL5rK1jU7kbr7B14vU7rX2yskzjrMgudzb2Q9hXLE+1Ly7SDeQJUGWS/PQ81ERGVpufagpmIuSMEYfvNLFz8LBrrLYBDH94q4hhermMVKPcqTmITaW1oCEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757563989; c=relaxed/simple;
-	bh=4hPqeARqosqWLxCTuKgajaum+hmQ8OE3/VQMa53ni1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NuyjUZKQ4qd1vFVzMhLH4rglIiXlYPrv/R9/y+6EAK2oPu+d1D7odlxRX6LjFi+eGYMj3HEYmrxFYLw3yGv0Bwl4SMrHDDXfnAQRPMLTQ+88BCt0UYv4FSqmuzty+sVPz5pYSjtR2C5tKBXnJGjncrO5BewiBBZDJcoxh9q1MFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TP7aENOH; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-407a4e744ddso86655ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 21:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757563987; x=1758168787; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=655H2KsDR2fJVpZxOxrIYfh0mMw4vNi/WkGORS683L0=;
-        b=TP7aENOHdNHPU2w9M7uuu/NQ3Eo5VX76pqnDm76uUl6a4/D5j3fCPkbMpQSQ9KoF3E
-         N5fV5ckv/xAjHtdSV5CCiFNHb6wl4dJTux/vLLbr1HyRc66UUKJrdkmD7sjoSSoI723E
-         LAXSwGw/B5l5K2l3G58TVrPRpdtbqxHE6Zyo7AggU3rlHRHBSZM63+LLOtLStZJNkQ2u
-         R825P5KXuna7jKq+Q2dHqDJ2Q4QRkm3IiFJcg/7cJedtgNoz1YizoQvxrZF4zQ5xoEvo
-         RsKszRZK5SsXr98SmZOA4yXUOXpDjh2SEuTlaMACZifLbZwVBthZ8f2Wr8GdtOIwv4AY
-         77wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757563987; x=1758168787;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=655H2KsDR2fJVpZxOxrIYfh0mMw4vNi/WkGORS683L0=;
-        b=oiGd+kvasNczWtZIjIn6bb0JDFTILJs5vekSAwI/FUJ9xwUl7Biiuo9Xch+PXJ+Zaa
-         RmLyy8cS7mzmxGZVjDVbOshwb5BZzuPq4tJ+X+7Q2tYip8QSmUtMB6ltOQHc6OLrLyL2
-         v1cNX7d1MnGWf9Nh6bTWdyTlO9Y33by6QFRa0zH4Q8DDrhBmk9MJaE+Zm2WXfx4cafmY
-         ZR/VoeV9vTjO5GJiuSGqCXzCKdkgDKZhBJDTKMmCj+Sj7ZYR//N0A+e9XL9WlpnrbRDU
-         MY//qGdow8z/muL8GoPAQYuz6/+9I+U9+ok78D4rSN6sR0uWK1qU4eYMyVX26pH2QIAe
-         ioVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU7qS4vjSaDato7h4FanoS1ktKnxnTOQ3ws/he1FC3R81czZK7JswcL8v8xQ4C7ESAYK+UmenDZYnbV+gI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP7SJaR0fbAwfZihu1LKfYKcwiPD0uLzIFFWDsL0NH5oCM0lUl
-	r62NZTE9P/OWJYuyodNsawLktCM5Igt1SMWyzEOM6aeE0BrQdmDPXtnOd9Pzvwm2Cr3AFm6bKwi
-	MwuQbeSNcshRoV3g+LOPEhZ4AK0oj3tRaaVuOeWMX
-X-Gm-Gg: ASbGncvqXW5Rd8RbtSl7YixvEroChSPCft+BOvLjy2Thz7cdfHbs/1tMki7I09DsjFY
-	DpFOlshkCQAeVLAyv0z25qlDgsSM9kQ6+Z19z8zwPiJuP4DlYIYFMyCZiwThS6/52igATsgxMKm
-	BhtnJ6PRj3Rw+PxzvaIiwuj3fWnWfSGIm4FZ2+uD+Xu2m9x4VknCL+DNF6NoyMLIdM1xrvXqdp0
-	eg/dwiBti/bbb8MyMOHDjtAozSj3cfnoXjlNNoIkC8y1KPuDNJEJ2flqhOolHCMlhIEZ1CbxzYJ
-	2Xt42khiYstY
-X-Google-Smtp-Source: AGHT+IHv1ItPg0yNbNTAbRbd+dYBW1J+7hh4D9M3hrHAIY9YZPJlVrQTruWC+uuHkhaInaUCnDNzxMkNh4AP1jHfRfA=
-X-Received: by 2002:a05:6e02:b2f:b0:405:3b66:9a92 with SMTP id
- e9e14a558f8ab-4170e5ad87dmr9132195ab.7.1757563986398; Wed, 10 Sep 2025
- 21:13:06 -0700 (PDT)
+	s=arc-20240116; t=1757564131; c=relaxed/simple;
+	bh=pl5ztVqBzotyrP88+BDm0jks7M0I/AiqLdfl9ck2p/k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JdfAIolii6zrVKTMFoise2kp8bnL5wJGJoMZCz440ef2ZoyyfdnE8s70rnsZtm+n+7tw0JtxSheI2wr5+x1JwInpDMjEoO9vY+yv7QEJRZxhavMPX7aJs3Q45GgRshcrwBGHRzChfsqFrzl8mWl68MRY2/wzIXwS0LaSH1U401Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTeUgwFO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2857C4CEF1;
+	Thu, 11 Sep 2025 04:15:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757564130;
+	bh=pl5ztVqBzotyrP88+BDm0jks7M0I/AiqLdfl9ck2p/k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=TTeUgwFOPtv3ZMu+mJOoPgDZN5SsYcBckCJNNhamVhbOuydkrvqjRH5zCQbd8Omaz
+	 0BmT7pB6ASwwowzocmtmLZCMAIOI+dBGPwINDh2XSHufQ4vs3zgaP04vyvEB0PXqrb
+	 snneQN7qUTxr7VrRnJ1lngRe3UARe9u8eJ1x/oDW7x4Idpf7si8M4e9qBAw6h/HVfG
+	 zxJ2zLd6eRk2leo7bKwn+X2gn+9x/Ix+bMHdr9Gq+6kiGuLKRMACBJM2CA/41AOPeU
+	 zmDVevDlfC7W77RYIW11dvDf9ESJ7cyTWAFkLDiO22C84vvqHNMFh3YI6ilckslNP7
+	 nE1NqLXMKJReQ==
+X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Arto Merilainen <amerilainen@nvidia.com>, dan.j.williams@intel.com
+Cc: linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
+	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Yilun Xu <yilun.xu@linux.intel.com>, linux-pci@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Subject: Re: [PATCH v4 07/10] PCI/IDE: Add IDE establishment helpers
+In-Reply-To: <yq5azfbjq2nf.fsf@kernel.org>
+References: <20250717183358.1332417-1-dan.j.williams@intel.com>
+ <20250717183358.1332417-8-dan.j.williams@intel.com>
+ <9683c850-3152-4da5-97f1-3e86ba39e8d3@nvidia.com>
+ <6896333756c9f_184e1f100ef@dwillia2-xfh.jf.intel.com.notmuch>
+ <21903f51-1ed0-41a4-a8c8-cfa78ce6093d@nvidia.com>
+ <yq5azfbjq2nf.fsf@kernel.org>
+Date: Thu, 11 Sep 2025 09:45:22 +0530
+Message-ID: <yq5a1pod4obp.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801034004.3314737-1-guanyulin@google.com>
- <20250801034004.3314737-4-guanyulin@google.com> <2025081313-senate-unhearing-4396@gregkh>
- <CAOuDEK2=UyjYbPQeSxVSmiLu6A36m4Tt9xADHyamJHM61-vhmQ@mail.gmail.com> <2025090646-goal-unranked-8bf8@gregkh>
-In-Reply-To: <2025090646-goal-unranked-8bf8@gregkh>
-From: Guan-Yu Lin <guanyulin@google.com>
-Date: Thu, 11 Sep 2025 12:13:00 +0800
-X-Gm-Features: AS18NWBUElxTEKNR08wOLreLTj6AigqMLhYkSvv469cq9sa8UA5hUbv44bWJnKg
-Message-ID: <CAOuDEK3Zv0qErDfCaRX_AH3buht4hP3XnuF3+T6-3aLw1_a2Ag@mail.gmail.com>
-Subject: Re: [PATCH v15 3/4] xhci: sideband: add api to trace sideband usage
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: mathias.nyman@intel.com, hannelotta@gmail.com, zijun.hu@oss.qualcomm.com, 
-	xu.yang_2@nxp.com, stern@rowland.harvard.edu, 
-	andriy.shevchenko@linux.intel.com, ben@decadent.org.uk, 
-	quic_wcheng@quicinc.com, krzysztof.kozlowski@linaro.org, 
-	dh10.jung@samsung.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Sat, Sep 6, 2025 at 9:11=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
+Aneesh Kumar K.V <aneesh.kumar@kernel.org> writes:
+
+> Arto Merilainen <amerilainen@nvidia.com> writes:
 >
-> On Tue, Aug 26, 2025 at 12:37:00PM +0800, Guan-Yu Lin wrote:
-> > On Wed, Aug 13, 2025 at 10:51=E2=80=AFPM Greg KH <gregkh@linuxfoundatio=
-n.org> wrote:
-> > >
-> > > On Fri, Aug 01, 2025 at 03:39:32AM +0000, Guan-Yu Lin wrote:
-> > > > +config USB_XHCI_SIDEBAND_SUSPEND
-> > >
-> > > Again, why is a new config option needed here?  Why can't we just use
-> > > the existing one?  Why would you ever want one and not the other?
-> > >
-> > USB_XHCI_SIDEBAND focuses on the normal use case where the system is
-> > active, while USB_XHCI_SIDEBAND_SUSPEND enables the sideband during
-> > system sleep (Suspend-to-RAM). The design allows the user to determine
-> > the degree of support for the sideband in the system. We could add the
-> > "select" keyword to automatically enable USB_XHCI_SIDEBAND once
-> > USB_XHCI_SIDEBAND_SUSPEND is enabled.
+>> On 8.8.2025 20.26, dan.j.williams@intel.com wrote:
+>>> Arto Merilainen wrote:
+>>>> The first revision of this patch had address association register
+>>>> programming but it has since been removed. Could you comment if there is
+>>>> a reason for this change?
+>>> 
+>>> We chatted about it around this point in the original review thread [1].
+>>> tl;dr SEV-TIO and TDX Connect did not see a strict need for it. However,
+>>> the expectation was always to circle back and revive it if it turned out
+>>> later to be required.
+>>
+>> Thank you for the reference. I suppose it is ok to rely on the default 
+>> streams on the first iteration, and add a follow-up patch in the ARM CCA 
+>> device assignment support series in case it is the only architecture 
+>> that depends on them.
+>>
+>>> 
+>>>> Some background: This might be problematic for ARM CCA. I recall seeing
+>>>> a comment stating that the address association register programming can
+>>>> be skipped on some architectures (e.g., apparently AMD uses a separate
+>>>> table that contains the StreamID) but on ARM CCA the StreamID
+>>>> association AFAIK happens through these registers.
+>>> 
+>>> Can you confirm and perhaps work with Aneesh to propose an incremental
+>>> patch to add that support back? It might be something that we let the
+>>> low level TSM driver control. Like an additional address association
+>>> object that can be attached to 'struct pci_ide' by the low level TSM
+>>> driver.
+>>
+>> Aneesh, could you perhaps extend the IDE driver by adding the RP address 
+>> association register programming in the next revision of the DA support 
+>> series?
+>>
 >
-> But why would you want only one of these options and not both?  The
-> whole goal of this feature is for power savings, which means that
-> suspend is needed by everyone.  Don't increase the config variable
-> combinations for no good reason.
+> Sure, I can add that change as part of next update. 
 >
 
-Thanks for the suggestions. I'll remove USB_XHCI_SIDEBAND_SUSPEND in
-the next version.
+This is the change I am adding
 
-> > > > +EXPORT_SYMBOL_GPL(xhci_sideband_check);
-> > > > +#endif /* IS_ENABLED(CONFIG_USB_XHCI_SIDEBAND_SUSPEND) */
-> > >
-> > > #ifdef in .c files is generally not a good idea, is it really needed
-> > > here?  Maybe it is, it's hard to unwind...
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > Given that CONFIG_USB_XHCI_SIDEBAND_SUSPEND depends on
-> > CONFIG_USB_XHCI_SIDEBAND and adds only a single function, I think it
-> > is preferable to place the new code in the same file. This approach
-> > prevents unnecessary code fragmentation and improves maintainability
-> > by keeping related functions together.
->
-> We put #ifdefs in .h files.  That's a long-time-rule for decades to
-> ensure that we can maintain this codebase for even more decades to come.
-> Please do not break that rule just to keep things close if it's not
-> required.
->
-> thanks,
->
-> greg k-h
+ drivers/pci/ide.c                        | 128 ++++++++++++++++++++++-
+ drivers/virt/coco/arm-cca-host/arm-cca.c |  13 +++
+ include/linux/pci-ide.h                  |   7 ++
+ 3 files changed, 147 insertions(+), 1 deletion(-)
 
-Thanks for the suggestions. This concern would be addressed once we
-use only CONFIG_USB_XHCI_SIDEBAND to control all features.
+diff --git a/drivers/pci/ide.c b/drivers/pci/ide.c
+index 3f772979eacb..23d1712ba97a 100644
+--- a/drivers/pci/ide.c
++++ b/drivers/pci/ide.c
+@@ -101,7 +101,7 @@ void pci_ide_init(struct pci_dev *pdev)
+ 	pdev->ide_cap = ide_cap;
+ 	pdev->nr_link_ide = nr_link_ide;
+ 	pdev->nr_sel_ide = nr_streams;
+-	pdev->nr_ide_mem = nr_ide_mem;
++	pdev->nr_ide_mem = min(nr_ide_mem, PCI_IDE_AASOC_REG_MAX);
+ }
+ 
+ struct stream_index {
+@@ -213,11 +213,13 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
+ 				.rid_start = pci_dev_id(rp),
+ 				.rid_end = pci_dev_id(rp),
+ 				.stream_index = no_free_ptr(ep_stream)->stream_index,
++				.nr_mem = 0,
+ 			},
+ 			[PCI_IDE_RP] = {
+ 				.rid_start = pci_dev_id(pdev),
+ 				.rid_end = rid_end,
+ 				.stream_index = no_free_ptr(rp_stream)->stream_index,
++				.nr_mem = 0,
+ 			},
+ 		},
+ 		.host_bridge_stream = no_free_ptr(hb_stream)->stream_index,
+@@ -228,6 +230,109 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
+ }
+ EXPORT_SYMBOL_GPL(pci_ide_stream_alloc);
+ 
++static int add_range_merge_overlap(struct range *range, int az, int nr_range,
++				   u64 start, u64 end)
++{
++	int i;
++
++	if (start >= end)
++		return nr_range;
++
++	/* get new start/end: */
++	for (i = 0; i < nr_range; i++) {
++
++		if (!range[i].end)
++			continue;
++
++		/* Try to add to the end */
++		if (range[i].end + 1 == start) {
++			range[i].end = end;
++			return nr_range;
++		}
++
++		/* Try to add to the start */
++		if (range[i].start == end + 1) {
++			range[i].start = start;
++			return nr_range;
++		}
++	}
++
++	/* Need to add it: */
++	return add_range(range, az, nr_range, start, end);
++}
++
++int pci_ide_add_address_assoc_block(struct pci_dev *pdev,
++				    struct pci_ide *ide,
++				    u64 start, u64 end)
++{
++	struct pci_ide_partner *partner;
++
++	if (!pci_is_pcie(pdev)) {
++		pci_warn_once(pdev, "not a PCIe device\n");
++		return -EINVAL;
++	}
++
++	switch (pci_pcie_type(pdev)) {
++	case PCI_EXP_TYPE_ENDPOINT:
++
++		if (pdev != ide->pdev)
++			return -EINVAL;
++		partner = &ide->partner[PCI_IDE_RP];
++		break;
++	default:
++		pci_warn_once(pdev, "invalid device type\n");
++		return -EINVAL;
++	}
++
++	if (partner->nr_mem >= pdev->nr_ide_mem)
++		return -ENOMEM;
++
++	partner->nr_mem = add_range_merge_overlap(partner->mem,
++					   PCI_IDE_AASOC_REG_MAX, partner->nr_mem,
++					   start, end);
++	return 0;
++}
++
++
++int pci_ide_merge_address_assoc_block(struct pci_dev *pdev,
++				      struct pci_ide *ide, u64 start, u64 end)
++{
++	struct pci_ide_partner *partner;
++
++	if (!pci_is_pcie(pdev)) {
++		pci_warn_once(pdev, "not a PCIe device\n");
++		return -EINVAL;
++	}
++
++	switch (pci_pcie_type(pdev)) {
++	case PCI_EXP_TYPE_ENDPOINT:
++
++		if (pdev != ide->pdev)
++			return -EINVAL;
++		partner = &ide->partner[PCI_IDE_RP];
++		break;
++	default:
++		pci_warn_once(pdev, "invalid device type\n");
++		return -EINVAL;
++	}
++
++	for (int i = 0; i < PCI_IDE_AASOC_REG_MAX; i++) {
++		struct range *r = &partner->mem[i];
++
++		if (r->start < start)
++			start = r->start;
++		if (r->end > end)
++			end = r->end;
++		r->start = 0;
++		r->end = 0;
++	}
++	partner->mem[0].start = start;
++	partner->mem[0].end = end;
++	partner->nr_mem = 1;
++
++	return 0;
++}
++
+ /**
+  * pci_ide_stream_free() - unwind pci_ide_stream_alloc()
+  * @ide: idle IDE settings descriptor
+@@ -424,6 +529,21 @@ void pci_ide_stream_setup(struct pci_dev *pdev, struct pci_ide *ide)
+ 
+ 	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_2, val);
+ 
++	for (int i = 0; i < settings->nr_mem; i++) {
++		val = FIELD_PREP(PCI_IDE_SEL_ADDR_1_VALID, 1) |
++			FIELD_PREP(PCI_IDE_SEL_ADDR_1_BASE_LOW,
++				   lower_32_bits(settings->mem[i].start)) |
++			FIELD_PREP(PCI_IDE_SEL_ADDR_1_LIMIT_LOW,
++				   lower_32_bits(settings->mem[i].end));
++		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_1(i), val);
++
++		val = upper_32_bits(settings->mem[i].end);
++		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_2(i), val);
++
++		val = upper_32_bits(settings->mem[i].start);
++		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_3(i), val);
++	}
++
+ 	/*
+ 	 * Setup control register early for devices that expect
+ 	 * stream_id is set during key programming.
+@@ -453,6 +573,12 @@ void pci_ide_stream_teardown(struct pci_dev *pdev, struct pci_ide *ide)
+ 	pos = sel_ide_offset(pdev, settings);
+ 
+ 	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_CTL, 0);
++	for (int i = settings->nr_mem - 1; i >= 0; i--) {
++		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_3(i), 0);
++		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_2(i), 0);
++		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_1(i), 0);
++	}
++
+ 	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_2, 0);
+ 	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_1, 0);
+ 	settings->setup = 0;
+diff --git a/drivers/virt/coco/arm-cca-host/arm-cca.c b/drivers/virt/coco/arm-cca-host/arm-cca.c
+index c9717698af56..28993f9277e4 100644
+--- a/drivers/virt/coco/arm-cca-host/arm-cca.c
++++ b/drivers/virt/coco/arm-cca-host/arm-cca.c
+@@ -137,6 +137,7 @@ static int cca_tsm_connect(struct pci_dev *pdev)
+ {
+ 	struct pci_dev *rp = pcie_find_root_port(pdev);
+ 	struct cca_host_pf0_dsc *dsc_pf0;
++	struct resource *res;
+ 	struct pci_ide *ide;
+ 	int rc, stream_id;
+ 
+@@ -163,9 +164,21 @@ static int cca_tsm_connect(struct pci_dev *pdev)
+ 	if (rc)
+ 		goto err_stream;
+ 
++	/*
++	 * Try to use the available address assoc register blocks.
++	 * If we fail with ENOMEM, create one block covering the entire
++	 * address range. (Should work for arm64)
++	 */
++	pci_dev_for_each_resource(pdev, res) {
++		rc = pci_ide_add_address_assoc_block(pdev, ide, res->start, res->end);
++		if (rc == -ENOMEM)
++			pci_ide_merge_address_assoc_block(pdev, ide, res->start, res->end);
++	}
++
+ 	pci_ide_stream_setup(pdev, ide);
+ 	pci_ide_stream_setup(rp, ide);
+ 
++
+ 	rc = tsm_ide_stream_register(ide);
+ 	if (rc)
+ 		goto err_tsm;
+diff --git a/include/linux/pci-ide.h b/include/linux/pci-ide.h
+index c3838d11af88..3d4f7f462a8d 100644
+--- a/include/linux/pci-ide.h
++++ b/include/linux/pci-ide.h
+@@ -19,6 +19,7 @@ enum pci_ide_partner_select {
+ 	PCI_IDE_HB = PCI_IDE_PARTNER_MAX,
+ };
+ 
++#define PCI_IDE_AASOC_REG_MAX	6
+ /**
+  * struct pci_ide_partner - Per port pair Selective IDE Stream settings
+  * @rid_start: Partner Port Requester ID range start
+@@ -34,6 +35,8 @@ struct pci_ide_partner {
+ 	u8 stream_index;
+ 	unsigned int setup:1;
+ 	unsigned int enable:1;
++	int nr_mem;
++	struct range mem[PCI_IDE_AASOC_REG_MAX];
+ };
+ 
+ /**
+@@ -60,6 +63,10 @@ struct pci_ide {
+ 
+ struct pci_ide_partner *pci_ide_to_settings(struct pci_dev *pdev, struct pci_ide *ide);
+ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev);
++int pci_ide_add_address_assoc_block(struct pci_dev *pdev,
++				    struct pci_ide *ide, u64 start, u64 end);
++int pci_ide_merge_address_assoc_block(struct pci_dev *pdev,
++				      struct pci_ide *ide, u64 start, u64 end);
+ void pci_ide_stream_free(struct pci_ide *ide);
+ int  pci_ide_stream_register(struct pci_ide *ide);
+ void pci_ide_stream_unregister(struct pci_ide *ide);
+-- 
+2.43.0
 
-Regards,
-Guan-Yu
 
