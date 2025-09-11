@@ -1,112 +1,121 @@
-Return-Path: <linux-kernel+bounces-812847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50042B53D8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:12:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB13B53D91
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09DC53A838F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:12:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8F95A619B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455D92DAFCC;
-	Thu, 11 Sep 2025 21:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92972D23A9;
+	Thu, 11 Sep 2025 21:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gq26FmxM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDmFaItZ"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A150220685;
-	Thu, 11 Sep 2025 21:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1576226D1D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757625152; cv=none; b=nq/ygTjG3X1siWl18sBChCGQYTydPH5cF31rwZKz8iNXsAgXLxKGaix4SlB2InGFCJDUZCK2Em+xwIs9hABE4OPyGu0PiDbTUk2YX7k8wVWyMqqOq8H9DKO4J0H3n1YIYGadsO6uwkcnwGyj4Ho5hOk7Gop+/pNmy7vgZuivf98=
+	t=1757625593; cv=none; b=Gh03rM43X8Y2ZRE3hnfUw25Iv1WzoEZ8PJ1z0SNjpytKpj+5VXQaXYLUsOycGo0hoYEIyN7lwyX8d6aQ2DhCCBmafqO5xXPg+aUgLWUEfa2nBPW0BxR1SVpjfNpVJNj32bwinnvjaDIg/3ccNalvEuALsKC47QwybH4lSBO5j2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757625152; c=relaxed/simple;
-	bh=+Vvnf5OW+rlrUpmdHjX4Ph1IZZBMUh7UgFAb+ElL2ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njy1Wkw1IZ1V65qzRZt/PnKmfKxcxyFjzV+zW3K6G512wLC0fHlNWMsykeTnuYuM63/9Y1KPXTuAmfBnPASjzLXcenNzuKT7YJa5w+xtIfcydMY5BSVDfQd/Mc/kCG70WKBVUFDIpDw+FAzut6X/rrWvTfVDkhouiUzroWodpew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gq26FmxM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF8CEC4CEF0;
-	Thu, 11 Sep 2025 21:12:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757625152;
-	bh=+Vvnf5OW+rlrUpmdHjX4Ph1IZZBMUh7UgFAb+ElL2ag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gq26FmxMitRLKCy/IwiH2B3nDPAXwT/so2F5Ez0TzzBKj11Z9dAlD8RX9spG5F9yW
-	 x77cke6FD4BZ0mi++QnZvGgvceRsT75sRktaZQ4xgh9nPj/sZIC4Rbijd9CabDXDCE
-	 QzHXwyta9F4FWLA/wwthe3BqvEI37fxp4d1Q8bTuhG+MzQlhzpvuO05aHYh/hO3Bh6
-	 UXY44+ra4iWRn4RYLuObEWFYhs3TqkBYcJNKwnoHlqfPaeE92ss94QrC9X9mMY/8Ki
-	 J56ciQhs4GnsZTKzLrlySgIJUeZUDlBBWYrfBrR8qZIxZ4fPxdRPvIGZs+UB+0fgMm
-	 arcMtdXb/E07A==
-Date: Thu, 11 Sep 2025 14:12:30 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Guilherme Amadio <amadio@gentoo.org>, Ian Rogers <irogers@google.com>,
-	adrian.hunter@intel.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, mingo@kernel.org,
-	peterz@infradead.org
-Subject: Re: perf --help triggers an assertion
-Message-ID: <aMM7PtxJx83aUJ7z@google.com>
-References: <20250701201027.1171561-3-namhyung@kernel.org>
- <20250909094953.106706-1-amadio@gentoo.org>
- <CAP-5=fVCeBz+hgCsctCe7BByaL7GqKVUbDcW4R=2th0C1O0m0w@mail.gmail.com>
- <aMF0iWh4yTK5KwcJ@gentoo.org>
- <aMMq7I5TBoL7SX6z@x1>
+	s=arc-20240116; t=1757625593; c=relaxed/simple;
+	bh=ZyPDRqtHrtRo6RS6NEQpI4Vkf7xjG4tkb2WBalHMUuA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l6fqMiwpuKqNZ9NxZrTzZJniA/u80HszD+2XpkHn0x+QZaCh2E8MxiumAQhbCrdcI6ABJOqGSht+UuXaRaaOvL4njd8FR/yDFWYeXsM/Fe3N7G3LvrITh38C0TWdRcnvrGFhHfHKZ3eo8vC28m0Wo8YiGOTupPSijlWLSb98f4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDmFaItZ; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b4c29d2ea05so1590535a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:19:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757625591; x=1758230391; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dCVXswtPSZVCLCjAl0jds66ffhqyicYLAeBU90M6SCc=;
+        b=SDmFaItZLotlM1TKpLmTAo7LUyu+EZ16EsUR81/TK2CbSj9DaRYoy8aLvx1/Sorhon
+         SJjnH5GMjVdIRp3Adz/a9sMJn4EbO2qMu8veyNZ+zriQlGI5PbB73vgWDRgoJyhk7c4O
+         Y2DDygE1ouA9kAOVWhVLkoWNDHNohur4PElWRK9nWqs4qJsZIk1lARKga82MU6jGj7Zl
+         60Dhi+f5qxuMD5GcCiCDnbd6aa/fwO2WldSxGzqzqdjonlrlSQqBwH0vOmqTolP5QoiN
+         RvwrYGluusdHLRAwXm5muTRxXjhoWX65kW1OGp2QIsduZXU23xo1oX51AHGazQHrTIkx
+         IV9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757625591; x=1758230391;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dCVXswtPSZVCLCjAl0jds66ffhqyicYLAeBU90M6SCc=;
+        b=GEtKJNymfy6nFfaKEcGyWy1Cjuz5/IRhpNSqlGZipijHsHgtg9eq4QNNOfmPuTF+lq
+         LN9218kRIepfmpMJWcZOvYv8vNmQOBCl2KF+npczXFNHaHTUpgQc1DakE44778xiqDrF
+         JS9nO4dnkP8dwVRsfkLnzxrHC7y9XB1xBjGsA6fPz/nLZzhEY4qDylcWjBrppia0ieUM
+         Ue68UUtcEnDEcuT8KRJ9iEzTtPR2PAhQ51+9OtEftDpHaycGKLsb7YEBYT4kn1i3hzec
+         BZxbxewtXSirOIKjhUXG8MfMwTLn7dU+IP+RW7m/l5cxIwet3og3LLNBfvoE6xDRSKyW
+         YSww==
+X-Forwarded-Encrypted: i=1; AJvYcCUWcMVv4vG/GNKJgWbPxYKaw2BjWbONJVZYb1qE4nuT7p5nO/QK0sVyisRcVq/8LuVg+GQbhhOY+zwPHXQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSV9FyBfstfcoevP+rzlZaDC6+z+jekOEYdxX2I67Dw1h61gTj
+	E10fhOpX6U6IlrLAZCGeyAqE9sYVNba16E0BCM7mpll3TzhmCEslvVoP
+X-Gm-Gg: ASbGncvgBKjmHXUQDDiqz/OX3M2dG3lG1IewKH+SxL01sVvNrsYlx9wIMEPPmsHvEdX
+	3kqsaXVX+rnC9esdIIOK+kN2eWm03TLTHReaSbisp8cGunzcGh37wtlIavsWgzs0ZAY/HNuU5Rs
+	2yilMAg1m0bXuzgIpAdREZ3GzgTV7VSah5nASi1r6Sj5Ao7MIr8XGhQWwJNyFMXfGrNHqx6nMyN
+	wzgqP09pCQO6iayOxftGzEAS9uiJMN1JuA2usXvA/ngY1eXn3mgOfrGynOLF2LMxl6HVuM2Ofk/
+	mS1TB4jN2g3pPAuIHHObjoJX+ekMPfz5PgiayX0J2R8rAAUqBSj57PINEkOEILMI8Po7/CMjdOC
+	GtyLzu1mgQmQM9kqdRRiU4YW/aS0yLg==
+X-Google-Smtp-Source: AGHT+IFknLy46R8DrU3R1UF2UfI88LA3kT8awp1njQ6Kqe+escyqeF1fEg1h2lHnX5XJFvgCyZ3POA==
+X-Received: by 2002:a17:902:f644:b0:25c:43f7:7e40 with SMTP id d9443c01a7336-25d2ab45d41mr6864765ad.10.1757625591055;
+        Thu, 11 Sep 2025 14:19:51 -0700 (PDT)
+Received: from archlinux ([152.245.61.23])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36dbb159sm28705045ad.13.2025.09.11.14.19.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 14:19:50 -0700 (PDT)
+From: =?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Henrik Rydberg <rydberg@bitmath.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	linux-input@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
+Subject: [RFC PATCH 0/2] Input: add fts2ba61y touchscreen driver
+Date: Thu, 11 Sep 2025 21:19:08 +0000
+Message-ID: <20250911211910.45903-1-ghatto404@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMMq7I5TBoL7SX6z@x1>
 
-On Thu, Sep 11, 2025 at 05:02:52PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Sep 10, 2025 at 02:52:25PM +0200, Guilherme Amadio wrote:
-> > On Tue, Sep 09, 2025 at 11:31:51AM -0700, Ian Rogers wrote:
-> > > On Tue, Sep 9, 2025 at 2:49 AM Guilherme Amadio <amadio@gentoo.org> wrote:
-> > > > I was updating perf's package in Gentoo Linux and noticed some problems
-> > > > which were not there before. I tested with the version below and the problem
-> > > > still seems to be there. perf --help triggers an assertion (see below).
-> > > > Looking in the list, it seems related to the patch below:
-> 
-> > > > https://lore.kernel.org/linux-perf-users/20250701201027.1171561-3-namhyung@kernel.org/
-> 
-> <SNIP>
-> 
-> > > I tried to reproduce the same version with various options: DEBUG=1
-> > > -UNDEBUG in EXTRA_CFLAGS, -fsanitize=address. Being in various
-> > > directories with "perf-" prefixed files. I'm afraid I wasn't able to
-> > > reproduce. The assert is trying to avoid a memory leak, so
-> > > non-critical, and I couldn't in a quick inspection eye-ball an issue.
-> > > Without getting a reproduction I don't think I can make progress with
-> > > the issue.
->  
-> > I do not have any special setup on my machine (if you consider Gentoo
-> > not special, of course). I just did a git bisect and arrived at commit
-> > 9401d1771dad99bfc795dd2ae0c292343fd1f78d, which is the commit I linked
-> > above. I used>
-> 
-> ⬢ [acme@toolbx perf-tools-next]$ git show 9401d1771dad99bfc795dd2ae0c292343fd1f78d
-> fatal: bad object 9401d1771dad99bfc795dd2ae0c292343fd1f78d
-> ⬢ [acme@toolbx perf-tools-next]$ 
-> 
-> Looking for the patch title I got to this one:
-> 
-> commit 1fdf938168c4d26fa279d4f204768690d1f9c4ae
-> Author: Namhyung Kim <namhyung@kernel.org>
-> Date:   Tue Jul 1 13:10:27 2025 -0700
-> 
->     perf tools: Fix use-after-free in help_unknown_cmd()
+This patchset adds support for the ST-Microelectronics FTS2BA61Y,
+a capacitive multi-touch touchscreen controller. this touchscreen
+is used in many mobile devices, like ones from the Galaxy S22 series
+and the Z Fold 5. Ivaylo Ivanov wrote the driver originally,
+and I'm upstreaming it on his behalf.
 
-Sorry for the trouble.  The hupu's patch should fix the problem.
+Thanks!
 
-Thanks,
-Namhyung
+Eric Gonçalves (2):
+  dt-bindings: input: add ST-Microelectronics FTS2BA61Y touchscreen
+    binding
+  Input: add support for the STM FTS2BA61Y touchscreen
+
+ .../input/touchscreen/st,fts2ba61y.yaml       |  52 ++
+ drivers/input/touchscreen/Kconfig             |  11 +
+ drivers/input/touchscreen/Makefile            |   1 +
+ drivers/input/touchscreen/fts2ba61y.c         | 588 ++++++++++++++++++
+ 4 files changed, 652 insertions(+)
+ create mode 100755 Documentation/devicetree/bindings/input/touchscreen/st,fts2ba61y.yaml
+ create mode 100644 drivers/input/touchscreen/fts2ba61y.c
+
+-- 
+2.50.1
 
 
