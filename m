@@ -1,546 +1,180 @@
-Return-Path: <linux-kernel+bounces-812469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B1FB5388B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:02:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE9DB5388D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 487161CC5541
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:01:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06655188EF53
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B183570A1;
-	Thu, 11 Sep 2025 15:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B8034F497;
+	Thu, 11 Sep 2025 16:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Fw1aLMNN"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLK+2vUl"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB8B3570B1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1720A38DD3
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606381; cv=none; b=LRnUR/q0MUlfI+4rh5plISmF3ehyOwtlOKLMDOe5Aqi4QAsfjGU2OxbYSa64s+8eCtNJQ2zJjqN02TGr+oBysPjLt5LUs0WTm0/2uPSLam8bjdLCIXjBEK4Xltg73A4Bm/EughoPMhhm3CV2xJYGd7noetr8SeTEZtmZkq6TJUM=
+	t=1757606431; cv=none; b=ByYPkW3GNUdNetbN9ilxRZBtbA9ZWys8ezMSyNsb5hn4jQ2hqPLww/JYyywxc1Cb5pZHgGl7D+rt8f0RUbCOAOUxrLJ0T8hoIqxuMM0NLSIRw9jV66ylGgez86GYdh9w0gKGU66B8PrizNMsDAqFFnnqn/nZBg4ptTMEiyTy9wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606381; c=relaxed/simple;
-	bh=l4DWTuhQEMyrzTsl7hOJSbCLHP5xq0ha2Zew7zXPyeY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Sjkz0CEW7MmkU9hPE1L5miUfREpircV5v1a9KKZ3eSerjW9+rdAetN3MuqpQm3Yb9ksf9fB0uIQTVMsRYNaw8ouREX9CJV59XKJV+II5C5h4c+qrsvNtio6lJtcUnWQiaFUzHQGsiiQ/4aVWMEpQ39HMMHnkPl4+fxKCTtfJLfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Fw1aLMNN; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-25bf9dda1fdso1421655ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:59:38 -0700 (PDT)
+	s=arc-20240116; t=1757606431; c=relaxed/simple;
+	bh=PD/FI/pmd9ph95fgxp5hRItvoi/pLpBLehKGW/dS3yg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oZt1mfyEgYZrFmxTuv/4Wt031Jb0u0c6BeywEDBHfgy26XBeY7oGuwB1Abww78/h7UuyCZbsnybmjFKu/hjbFvXeUTMJfpmMuSkKUOoX5qE1h+JhltEJ8G9wSnf1Lxa+R6MXuVj5FKE5ETY925vMAaCfV2crxLG9Cw4ep21LAYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLK+2vUl; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-723c971b63bso6759496d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:00:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757606378; x=1758211178; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dcOnUF1U1PZg880W/AxFiJs+QjKGSBs0jPeBEW1iTDE=;
-        b=Fw1aLMNNeDrAJ0U0Viu502gLubyEMvOqZCnMOlBQHu7mb6dDtaLiJwiYmI1/tHurtV
-         Ki+t0jb1RjnjzM4QYHCB1FksvJknKQW205Tzmda63t92BQgls1LE2yEhyDd5oOTdrHEv
-         1z0teu6JCekm18UqBCuslo3MBAJSn0Ug9tlOmNctNKH5tq42J4w1+8CPsulg8Zr7wJpi
-         B4QcueOoOCYteuPCH6eAN07Ge73Uc8OzbB9f+dhOCOxOHU3Gvxo9M0LyfPJ1B1/+7Dd3
-         beHDqhFYr3X65nWmAKA+CiMfOmi+RzG8c5Zg71Hy8FMQn9IdCdRLdL9Cv1lF1MpQXHri
-         Dm5Q==
+        d=gmail.com; s=20230601; t=1757606429; x=1758211229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2V6Ly8wut6TjSsWUqfM+DfRRL6BttFfoiFg8qrKV2gs=;
+        b=iLK+2vUl6X5O4b6lzjFhxfonn5O6BmZm/Dz9K3Oseh2ceQc+m68seAUIh0w74BbSYo
+         d26g+dT8A1Vj4Pmr6enBs14GrE/rr1RYpMgYNb+UpmAN/G+kAJc7rNl7fkmZYQJ/ogUz
+         6cOtQtZDSrLfgEW27j/g6PpNeQgYKDjxnRDfLuOE2w0XUCmNzgYCxtAdW03hWpeD/EMa
+         SRr4puN8Nb8bjd16IA7uHzJKxvOgEzwtChRosKarx4lDfBwQfxZAeQEyO5M2RqN1f99K
+         a4aaBn0YtyUufF2YGTpIqfUW8UfglO/hU0Tt9XvnFqXPDP4MpXcn69n0n0gMOB5xOT6g
+         SBww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757606378; x=1758211178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dcOnUF1U1PZg880W/AxFiJs+QjKGSBs0jPeBEW1iTDE=;
-        b=m2SC4SdnTrZyI8+V1ScitgPPsA5/reHu0cV17+TtC140ZAHmjUm7ZlTRyDJ9/ub/y7
-         h/aHBYSeLa+mN77ETd8QXAk8f4ROVZeC/khlU42QW4gkXv7x9n3QEwDKOZu4MFRiQC8z
-         Ht1AndbAeB022Wz6NbDIFJpvp0DvtTk5GipTauti3XWPwfF5iDrEIVm3/WwbORXPagAl
-         yDvUVSkB5t4pWZwKIuKdBRYjk8c2dniJBcOK+goIZcaAy0NHlarOt3vRN/qnqs53DIxu
-         Nkc5H3WQ+fqe8C6bmCQMrgdoOUIJruoiLuivqzV2PU+iybAJvPqqNcPp0fz2U/u7Pi4z
-         T5Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCWc1G/IivRZiUa95D/mFwTka0Njtrr+1eDU6nA5KNJS88IyDZ0I1fINouwvlhoTEkYT1mT4iH+8wxBCtmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZQaZMlhVkMer5HOTnoaP6QdHHp2BlablzOSjmYD0Clh1x7vRq
-	wQP5zy07dC9mRlHCCj3sE1SNM9A2N3vp+yObK03afOnB/G+TrK/VY00knvdAgRq1YO29mixbFET
-	nTRck+vj7Q4GU+Ar54nq2j2cydPEa95CEoKyphfJu+g==
-X-Gm-Gg: ASbGncsPJrWr6mGelGe3DwDtJNbIf30DdV7hfbpOqdDYR5FrqBzXEaB57fhpgC6dpmr
-	31l8KmPBmnoOZiSjFNCI6PN3eGRES6T5I5IopLVO262nzRdAt7ImQiF9AIFFdsO1jX+bkQ4Ws8I
-	yTYEnckUAIHibf0OdW8EWt8e1hcDOFVGFrSILlulUVXZgO48aObMMaoKN//N+hNpLwhjOUMjxCQ
-	cI9J/zmbuF5LhKdLMFoLCwV97WrYK0Wp/eglxI2S6jCHYn0DJ1L5W/BrQgi
-X-Google-Smtp-Source: AGHT+IFgi3xZ2iyGah3A4pqApYs7u4F2FR8QgKMKAxLaiJqHl1jwWScgvmEohwMntLodwZUjliIOOvFHEczXP5qDVD0=
-X-Received: by 2002:a17:902:ec8e:b0:24e:af92:70e0 with SMTP id
- d9443c01a7336-2516da031a3mr141475155ad.1.1757606377975; Thu, 11 Sep 2025
- 08:59:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757606429; x=1758211229;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2V6Ly8wut6TjSsWUqfM+DfRRL6BttFfoiFg8qrKV2gs=;
+        b=Djoyqp+g7klzJKYeZkMprDhkMzRBrDq3qiusrkSFkQgyc2Kq6epU1mwThtWfXLXJYN
+         xoueqa4eV8G9MUh6JBeyhdVBZQS+n8WUEcKbmX59vf3p1Mm6riiv9kaNSV1rlU2ZNYri
+         N88/oS8GwYERpFCmGZicPqnhSp1Ks5eFt3ly5Rd0XPIPCGWgmp3BQAnqmp1I7ZW3BqR6
+         jLwi8woVZ9hFyuLOFHX8S4doaihZdD2AKWKtswkhONjpdHpz3GRxZd/M8SO+FFixqi+D
+         0f3Ut88pVrcg7ddUaCr9P8n/s0fRuW+Rcf2q/SydVWtqZpxb1UyXLh7akT9yxzd5mqt0
+         UPmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLGAk2OU0hf8CXsiE78GyZRaAgQmhRSZADb9ghz3dyxtUVSlIAYsfMv4X3hQnMFkWStQXrZyDfKUCU57k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkMllPiLLCOKQNf8zvNSs3see3b++bL2T9Rn1hRHusFha6HM6M
+	4VinGpifrNfQ2HItnjH1eiXPQIPm6iOjR0uq1xdsBaZXNU5baWq5cPD0
+X-Gm-Gg: ASbGnctc02nAmUpKVfLGaVwR/y/RzvJWcBTraYz1GPgDvP8uxxj9Q/mDvFs7w2L3deh
+	GnJ2++BJvjMyPDiLV6sBVTOWQUIGyCZ7YpbG6GowBRXzPfhV0NxbKjusQOa6ZA5f1PVPAkYpJbt
+	Ty7o29XzMG5N+Gkyom964DEhIaR3h63vK/NwwtWIzReU8/I7g7RiHc0FIL0C01TVRkJFxoSimEH
+	pQ2YPjcj/bFuoHqX6qB5S97nzNBKVv3ilOvAod64leT/mwr0kPzdn5KoA3mGKV5Sd5hsnnGo/G+
+	9o/ZLSaMI/OZ4CoaYKLebl2Ju0ST2n/Mb+Pn5T/vOwfeN3R10M2IJ+b6aokJTa7NsG+b6U5FEu7
+	eMDzkH+FpHqRKUxd/gsXDVLvv5FhbEwh6R26j3zDZ8pznlbs6HNNiCIF5DLvOM6+73Y8Pbze6s0
+	bCYA==
+X-Google-Smtp-Source: AGHT+IH92AYdKJB1ynLJH9ZT+vCjzmP7qU2FX7m29cFy2od6zEeX0Ch7ZKM8aLmHgcXgjZIwQiQSxQ==
+X-Received: by 2002:ad4:5b8d:0:b0:70f:a42b:1b65 with SMTP id 6a1803df08f44-73943d7d1dfmr226888706d6.66.1757606426756;
+        Thu, 11 Sep 2025 09:00:26 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1145:4:1456:e851:ddd5:be9f? ([2620:10d:c091:500::1:8948])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-763be01498csm12891126d6.48.2025.09.11.09.00.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 09:00:26 -0700 (PDT)
+Message-ID: <902f5f32-2f03-4230-aab0-a886fd8e4793@gmail.com>
+Date: Thu, 11 Sep 2025 12:00:23 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911072925.547163-1-409411716@gms.tku.edu.tw> <20250911074159.656943-1-409411716@gms.tku.edu.tw>
-In-Reply-To: <20250911074159.656943-1-409411716@gms.tku.edu.tw>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Thu, 11 Sep 2025 08:59:26 -0700
-X-Gm-Features: Ac12FXy3YKPoYEwvmwz20U9emEECiKRnYWsVa-UrNyueRxf6yjGvOJ86ByCDIU0
-Message-ID: <CADUfDZpSjONx+KcATaH+JELbQy+1fq0JVvh9tNjDgABs4rhjbA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] lib/base64: rework encoder/decoder with
- customizable support and update nvme-auth
-To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org, 
-	ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com, 
-	jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+Content-Language: en-GB
+To: Yueyang Pan <pyyjason@gmail.com>, David Wang <00107082@163.com>,
+ Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz,
+ hannes@cmpxchg.org, rientjes@google.com, roman.gushchin@linux.dev,
+ harry.yoo@oracle.com, shakeel.butt@linux.dev, pasha.tatashin@soleen.com,
+ souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250909234942.1104356-1-surenb@google.com>
+ <20cafc1c.a658.199394de44e.Coremail.00107082@163.com>
+ <aMLvCCZbmpSE/aql@devbig569.cln6.facebook.com>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <aMLvCCZbmpSE/aql@devbig569.cln6.facebook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 12:43=E2=80=AFAM Guan-Chun Wu <409411716@gms.tku.ed=
-u.tw> wrote:
->
-> Rework base64_encode() and base64_decode() with extended interfaces
-> that support custom 64-character tables and optional '=3D' padding.
-> This makes them flexible enough to cover both standard RFC4648 Base64
-> and non-standard variants such as base64url.
->
-> The encoder is redesigned to process input in 3-byte blocks, each
-> mapped directly into 4 output symbols. Base64 naturally encodes
-> 24 bits of input as four 6-bit values, so operating on aligned
-> 3-byte chunks matches the algorithm's structure. This block-based
-> approach eliminates the need for bit-by-bit streaming, reduces shifts,
-> masks, and loop iterations, and removes data-dependent branches from
-> the main loop. Only the final 1 or 2 leftover bytes are handled
-> separately according to the standard rules. As a result, the encoder
-> achieves ~2.8x speedup for small inputs (64B) and up to ~2.6x
-> speedup for larger inputs (1KB), while remaining fully RFC4648-compliant.
->
-> The decoder replaces strchr()-based lookups with direct table-indexed
-> mapping. It processes input in 4-character groups and supports both
-> padded and non-padded forms. Validation has been strengthened: illegal
-> characters and misplaced '=3D' padding now cause errors, preventing
-> silent data corruption.
->
-> These changes improve decoding performance by ~12-15x.
->
-> Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
-> over 1000 runs, tested with KUnit):
->
-> Encode:
->  - 64B input: avg ~90ns -> ~32ns  (~2.8x faster)
->  - 1KB input: avg ~1332ns -> ~510ns  (~2.6x faster)
->
-> Decode:
->  - 64B input: avg ~1530ns -> ~122ns   (~12.5x faster)
->  - 1KB input: avg ~27726ns -> ~1859ns (~15x faster)
->
-> Update nvme-auth to use the reworked base64_encode() and base64_decode()
-> interfaces, which now require explicit padding and table parameters.
-> A static base64_table is defined to preserve RFC4648 standard encoding
-> with padding enabled, ensuring functional behavior remains unchanged.
->
-> While this is a mechanical update following the lib/base64 rework,
-> nvme-auth also benefits from the performance improvements in the new
-> encoder/decoder, achieving faster encode/decode without altering the
-> output format.
->
-> The reworked encoder and decoder unify Base64 handling across the kernel
-> with higher performance, stricter correctness, and flexibility to support
-> subsystem-specific variants.
->
-> Co-developed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> Co-developed-by: Yu-Sheng Huang <home7438072@gmail.com>
-> Signed-off-by: Yu-Sheng Huang <home7438072@gmail.com>
-> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> ---
->  drivers/nvme/common/auth.c |   7 +-
->  include/linux/base64.h     |   4 +-
->  lib/base64.c               | 238 ++++++++++++++++++++++++++++---------
->  3 files changed, 192 insertions(+), 57 deletions(-)
->
-> diff --git a/drivers/nvme/common/auth.c b/drivers/nvme/common/auth.c
-> index 91e273b89..4d57694f8 100644
-> --- a/drivers/nvme/common/auth.c
-> +++ b/drivers/nvme/common/auth.c
-> @@ -161,6 +161,9 @@ u32 nvme_auth_key_struct_size(u32 key_len)
->  }
->  EXPORT_SYMBOL_GPL(nvme_auth_key_struct_size);
->
-> +static const char base64_table[65] =3D
-> +       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=
-";
-> +
->  struct nvme_dhchap_key *nvme_auth_extract_key(unsigned char *secret,
->                                               u8 key_hash)
->  {
-> @@ -178,7 +181,7 @@ struct nvme_dhchap_key *nvme_auth_extract_key(unsigne=
-d char *secret,
->         if (!key)
->                 return ERR_PTR(-ENOMEM);
->
-> -       key_len =3D base64_decode(secret, allocated_len, key->key);
-> +       key_len =3D base64_decode(secret, allocated_len, key->key, true, =
-base64_table);
->         if (key_len < 0) {
->                 pr_debug("base64 key decoding error %d\n",
->                          key_len);
-> @@ -663,7 +666,7 @@ int nvme_auth_generate_digest(u8 hmac_id, u8 *psk, si=
-ze_t psk_len,
->         if (ret)
->                 goto out_free_digest;
->
-> -       ret =3D base64_encode(digest, digest_len, enc);
-> +       ret =3D base64_encode(digest, digest_len, enc, true, base64_table=
-);
->         if (ret < hmac_len) {
->                 ret =3D -ENOKEY;
->                 goto out_free_digest;
-> diff --git a/include/linux/base64.h b/include/linux/base64.h
-> index 660d4cb1e..22351323d 100644
-> --- a/include/linux/base64.h
-> +++ b/include/linux/base64.h
-> @@ -10,7 +10,7 @@
->
->  #define BASE64_CHARS(nbytes)   DIV_ROUND_UP((nbytes) * 4, 3)
->
-> -int base64_encode(const u8 *src, int len, char *dst);
-> -int base64_decode(const char *src, int len, u8 *dst);
-> +int base64_encode(const u8 *src, int len, char *dst, bool padding, const=
- char *table);
-> +int base64_decode(const char *src, int len, u8 *dst, bool padding, const=
- char *table);
->
->  #endif /* _LINUX_BASE64_H */
-> diff --git a/lib/base64.c b/lib/base64.c
-> index 9416bded2..b2bd5dab5 100644
-> --- a/lib/base64.c
-> +++ b/lib/base64.c
-> @@ -15,104 +15,236 @@
->  #include <linux/string.h>
->  #include <linux/base64.h>
->
-> -static const char base64_table[65] =3D
-> -       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=
-";
-> +#define BASE64_6BIT_MASK      0x3f /* Mask to extract lowest 6 bits */
-> +#define BASE64_BITS_PER_BYTE  8
-> +#define BASE64_CHUNK_BITS     6
-> +
-> +/* Output-char-indexed shifts: for output chars 0,1,2,3 respectively */
-> +#define BASE64_SHIFT_OUT0      (BASE64_CHUNK_BITS * 3) /* 18 */
-> +#define BASE64_SHIFT_OUT1      (BASE64_CHUNK_BITS * 2) /* 12 */
-> +#define BASE64_SHIFT_OUT2      (BASE64_CHUNK_BITS * 1) /* 6  */
-> +/* OUT3 uses 0 shift and just masks with BASE64_6BIT_MASK */
-> +
-> +/* For extracting bytes from the 24-bit value (decode main loop) */
-> +#define BASE64_SHIFT_BYTE0        (BASE64_BITS_PER_BYTE * 2) /* 16 */
-> +#define BASE64_SHIFT_BYTE1        (BASE64_BITS_PER_BYTE * 1) /* 8  */
-> +
-> +/* Tail (no padding) shifts to extract bytes */
-> +#define BASE64_TAIL2_BYTE0_SHIFT  ((BASE64_CHUNK_BITS * 2) - BASE64_BITS=
-_PER_BYTE)       /* 4  */
-> +#define BASE64_TAIL3_BYTE0_SHIFT  ((BASE64_CHUNK_BITS * 3) - BASE64_BITS=
-_PER_BYTE)       /* 10 */
-> +#define BASE64_TAIL3_BYTE1_SHIFT  ((BASE64_CHUNK_BITS * 3) - (BASE64_BIT=
-S_PER_BYTE * 2)) /* 2  */
-> +
-> +/* Extra: masks for leftover validation (no padding) */
-> +#define BASE64_MASK(n) ({        \
-> +       unsigned int __n =3D (n);  \
-> +       __n ? ((1U << __n) - 1U) : 0U; \
-> +})
-> +#define BASE64_TAIL2_UNUSED_BITS  (BASE64_CHUNK_BITS * 2 - BASE64_BITS_P=
-ER_BYTE)     /* 4 */
-> +#define BASE64_TAIL3_UNUSED_BITS  (BASE64_CHUNK_BITS * 3 - BASE64_BITS_P=
-ER_BYTE * 2) /* 2 */
->
->  static inline const char *find_chr(const char *base64_table, char ch)
->  {
->         if ('A' <=3D ch && ch <=3D 'Z')
-> -               return base64_table + ch - 'A';
-> +               return base64_table + (ch - 'A');
->         if ('a' <=3D ch && ch <=3D 'z')
-> -               return base64_table + 26 + ch - 'a';
-> +               return base64_table + 26 + (ch - 'a');
->         if ('0' <=3D ch && ch <=3D '9')
-> -               return base64_table + 26 * 2 + ch - '0';
-> -       if (ch =3D=3D base64_table[26 * 2 + 10])
-> -               return base64_table + 26 * 2 + 10;
-> -       if (ch =3D=3D base64_table[26 * 2 + 10 + 1])
-> -               return base64_table + 26 * 2 + 10 + 1;
-> +               return base64_table + 52 + (ch - '0');
-> +       if (ch =3D=3D base64_table[62])
-> +               return &base64_table[62];
-> +       if (ch =3D=3D base64_table[63])
-> +               return &base64_table[63];
 
-All the changes in this function look cosmetic. Could you fold them
-into the patch that introduced the function to avoid touching the
-lines multiple times?
 
-Best,
-Caleb
+On 11/09/2025 16:47, Yueyang Pan wrote:
+> On Thu, Sep 11, 2025 at 11:03:50PM +0800, David Wang wrote:
+>>
+>> At 2025-09-10 07:49:42, "Suren Baghdasaryan" <surenb@google.com> wrote:
+>>> While rare, memory allocation profiling can contain inaccurate counters
+>>> if slab object extension vector allocation fails. That allocation might
+>>> succeed later but prior to that, slab allocations that would have used
+>>> that object extension vector will not be accounted for. To indicate
+>>> incorrect counters, mark them with an asterisk in the /proc/allocinfo
+>>> output.
+>>> Bump up /proc/allocinfo version to reflect change in the file format.
+>>>
+>>> Example output with invalid counters:
+>>> allocinfo - version: 2.0
+>>>           0        0 arch/x86/kernel/kdebugfs.c:105 func:create_setup_data_nodes
+>>>           0        0 arch/x86/kernel/alternative.c:2090 func:alternatives_smp_module_add
+>>>          0*       0* arch/x86/kernel/alternative.c:127 func:__its_alloc
+>>>           0        0 arch/x86/kernel/fpu/regset.c:160 func:xstateregs_set
+>>>           0        0 arch/x86/kernel/fpu/xstate.c:1590 func:fpstate_realloc
+>>>           0        0 arch/x86/kernel/cpu/aperfmperf.c:379 func:arch_enable_hybrid_capacity_scale
+>>>           0        0 arch/x86/kernel/cpu/amd_cache_disable.c:258 func:init_amd_l3_attrs
+>>>      49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+>>>       32768        1 arch/x86/kernel/cpu/mce/genpool.c:132 func:mce_gen_pool_create
+>>>           0        0 arch/x86/kernel/cpu/mce/amd.c:1341 func:mce_threshold_create_device
+>>>
+>>
+>> Hi, 
+>> The changes may  break some client tools, mine included.... 
+>> I don't mind adjusting my tools, but still
+>> Is it acceptable  to change 
+>>       49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+>> to
+>>       +49152      +48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create*
+>>
+>> The '+' sign make it still standout when view from a terminal, and client tools, not all of them though, might not need any changes. 
+>> And when client want to filter out inaccurate data items, it could be done by checking the tailing '*" of func name.
+> 
+> I agree with David on this point. We already have monitoring tool built on top 
+> of this output across meta fleet. Ideally we would like to keep the format of 
+> of size and calls the same, even for future version, because adding a * will 
+> change the format from int to str, which leads to change over the regex parser 
+> many places.
+> 
+> I think simply adding * to the end of function name or filename is sufficient 
+> as they are already str.
+> 
 
->         return NULL;
->  }
->
->  /**
-> - * base64_encode() - base64-encode some binary data
-> + * base64_encode() - base64-encode with custom table and optional paddin=
-g
->   * @src: the binary data to encode
->   * @srclen: the length of @src in bytes
-> - * @dst: (output) the base64-encoded string.  Not NUL-terminated.
-> + * @dst: (output) the base64-encoded string. Not NUL-terminated.
-> + * @padding: whether to append '=3D' characters so output length is a mu=
-ltiple of 4
-> + * @table: 64-character encoding table to use (e.g. standard or URL-safe=
- variant)
->   *
-> - * Encodes data using base64 encoding, i.e. the "Base 64 Encoding" speci=
-fied
-> - * by RFC 4648, including the  '=3D'-padding.
-> + * Encodes data using the given 64-character @table. If @padding is true=
-,
-> + * the output is padded with '=3D' as described in RFC 4648; otherwise p=
-adding
-> + * is omitted. This allows generation of both standard and non-standard
-> + * Base64 variants (e.g. URL-safe encoding).
->   *
->   * Return: the length of the resulting base64-encoded string in bytes.
->   */
-> -int base64_encode(const u8 *src, int srclen, char *dst)
-> +int base64_encode(const u8 *src, int srclen, char *dst, bool padding, co=
-nst char *table)
->  {
->         u32 ac =3D 0;
-> -       int bits =3D 0;
-> -       int i;
->         char *cp =3D dst;
->
-> -       for (i =3D 0; i < srclen; i++) {
-> -               ac =3D (ac << 8) | src[i];
-> -               bits +=3D 8;
-> -               do {
-> -                       bits -=3D 6;
-> -                       *cp++ =3D base64_table[(ac >> bits) & 0x3f];
-> -               } while (bits >=3D 6);
-> -       }
-> -       if (bits) {
-> -               *cp++ =3D base64_table[(ac << (6 - bits)) & 0x3f];
-> -               bits -=3D 6;
-> +       while (srclen >=3D 3) {
-> +               ac =3D ((u32)src[0] << (BASE64_BITS_PER_BYTE * 2)) |
-> +                        ((u32)src[1] << (BASE64_BITS_PER_BYTE)) |
-> +                        (u32)src[2];
-> +
-> +               *cp++ =3D table[ac >> BASE64_SHIFT_OUT0];
-> +               *cp++ =3D table[(ac >> BASE64_SHIFT_OUT1) & BASE64_6BIT_M=
-ASK];
-> +               *cp++ =3D table[(ac >> BASE64_SHIFT_OUT2) & BASE64_6BIT_M=
-ASK];
-> +               *cp++ =3D table[ac & BASE64_6BIT_MASK];
-> +
-> +               src +=3D 3;
-> +               srclen -=3D 3;
->         }
-> -       while (bits < 0) {
-> -               *cp++ =3D '=3D';
-> -               bits +=3D 2;
-> +
-> +       switch (srclen) {
-> +       case 2:
-> +               ac =3D ((u32)src[0] << (BASE64_BITS_PER_BYTE * 2)) |
-> +                    ((u32)src[1] << (BASE64_BITS_PER_BYTE));
-> +
-> +               *cp++ =3D table[ac >> BASE64_SHIFT_OUT0];
-> +               *cp++ =3D table[(ac >> BASE64_SHIFT_OUT1) & BASE64_6BIT_M=
-ASK];
-> +               *cp++ =3D table[(ac >> BASE64_SHIFT_OUT2) & BASE64_6BIT_M=
-ASK];
-> +               if (padding)
-> +                       *cp++ =3D '=3D';
-> +               break;
-> +       case 1:
-> +               ac =3D ((u32)src[0] << (BASE64_BITS_PER_BYTE * 2));
-> +               *cp++ =3D table[ac >> BASE64_SHIFT_OUT0];
-> +               *cp++ =3D table[(ac >> BASE64_SHIFT_OUT1) & BASE64_6BIT_M=
-ASK];
-> +               if (padding) {
-> +                       *cp++ =3D '=3D';
-> +                       *cp++ =3D '=3D';
-> +               }
-> +               break;
->         }
->         return cp - dst;
->  }
->  EXPORT_SYMBOL_GPL(base64_encode);
->
->  /**
-> - * base64_decode() - base64-decode a string
-> + * base64_decode() - base64-decode with custom table and optional paddin=
-g
->   * @src: the string to decode.  Doesn't need to be NUL-terminated.
->   * @srclen: the length of @src in bytes
->   * @dst: (output) the decoded binary data
-> + * @padding: when true, accept and handle '=3D' padding as per RFC 4648;
-> + *           when false, '=3D' is treated as invalid
-> + * @table: 64-character encoding table to use (e.g. standard or URL-safe=
- variant)
->   *
-> - * Decodes a string using base64 encoding, i.e. the "Base 64 Encoding"
-> - * specified by RFC 4648, including the  '=3D'-padding.
-> + * Decodes a string using the given 64-character @table. If @padding is =
-true,
-> + * '=3D' padding is accepted as described in RFC 4648; otherwise '=3D' i=
-s
-> + * treated as an error. This allows decoding of both standard and
-> + * non-standard Base64 variants (e.g. URL-safe decoding).
->   *
->   * This implementation hasn't been optimized for performance.
->   *
->   * Return: the length of the resulting decoded binary data in bytes,
->   *        or -1 if the string isn't a valid base64 string.
->   */
-> -int base64_decode(const char *src, int srclen, u8 *dst)
-> +static inline int base64_decode_table(char ch, const char *table)
-> +{
-> +       if (ch =3D=3D '\0')
-> +               return -1;
-> +       const char *p =3D find_chr(table, ch);
-> +
-> +       return p ? (p - table) : -1;
-> +}
-> +
-> +static inline int decode_base64_block(const char *src, const char *table=
-,
-> +                                     int *input1, int *input2,
-> +                                     int *input3, int *input4,
-> +                                     bool padding)
-> +{
-> +       *input1 =3D base64_decode_table(src[0], table);
-> +       *input2 =3D base64_decode_table(src[1], table);
-> +       *input3 =3D base64_decode_table(src[2], table);
-> +       *input4 =3D base64_decode_table(src[3], table);
-> +
-> +       /* Return error if any base64 character is invalid */
-> +       if (*input1 < 0 || *input2 < 0 || (!padding && (*input3 < 0 || *i=
-nput4 < 0)))
-> +               return -1;
-> +
-> +       /* Handle padding */
-> +       if (padding) {
-> +               if (*input3 < 0 && *input4 >=3D 0)
-> +                       return -1;
-> +               if (*input3 < 0 && src[2] !=3D '=3D')
-> +                       return -1;
-> +               if (*input4 < 0 && src[3] !=3D '=3D')
-> +                       return -1;
-> +       }
-> +       return 0;
-> +}
-> +
-> +int base64_decode(const char *src, int srclen, u8 *dst, bool padding, co=
-nst char *table)
->  {
-> -       u32 ac =3D 0;
-> -       int bits =3D 0;
-> -       int i;
->         u8 *bp =3D dst;
-> +       int input1, input2, input3, input4;
-> +       u32 val;
->
-> -       for (i =3D 0; i < srclen; i++) {
-> -               const char *p =3D find_chr(base64_table, src[i]);
-> +       if (srclen =3D=3D 0)
-> +               return 0;
->
-> -               if (src[i] =3D=3D '=3D') {
-> -                       ac =3D (ac << 6);
-> -                       bits +=3D 6;
-> -                       if (bits >=3D 8)
-> -                               bits -=3D 8;
-> -                       continue;
-> +       /* Validate the input length for padding */
-> +       if (padding && (srclen & 0x03) !=3D 0)
-> +               return -1;
-> +
-> +       while (srclen >=3D 4) {
-> +               /* Decode the next 4 characters */
-> +               if (decode_base64_block(src, table, &input1, &input2, &in=
-put3,
-> +                                       &input4, padding) < 0)
-> +                       return -1;
-> +               if (padding && srclen > 4) {
-> +                       if (input3 < 0 || input4 < 0)
-> +                               return -1;
->                 }
-> -               if (p =3D=3D NULL || src[i] =3D=3D 0)
-> +               val =3D ((u32)input1 << BASE64_SHIFT_OUT0) |
-> +                     ((u32)input2 << BASE64_SHIFT_OUT1) |
-> +                     ((u32)((input3 < 0) ? 0 : input3) << BASE64_SHIFT_O=
-UT2) |
-> +                     (u32)((input4 < 0) ? 0 : input4);
-> +
-> +               *bp++ =3D (u8)(val >> BASE64_SHIFT_BYTE0);
-> +
-> +               if (input3 >=3D 0)
-> +                       *bp++ =3D (u8)(val >> BASE64_SHIFT_BYTE1);
-> +               if (input4 >=3D 0)
-> +                       *bp++ =3D (u8)val;
-> +
-> +               src +=3D 4;
-> +               srclen -=3D 4;
-> +       }
-> +
-> +       /* Handle leftover characters when padding is not used */
-> +       if (!padding && srclen > 0) {
-> +               switch (srclen) {
-> +               case 2:
-> +                       input1 =3D base64_decode_table(src[0], table);
-> +                       input2 =3D base64_decode_table(src[1], table);
-> +                       if (input1 < 0 || input2 < 0)
-> +                               return -1;
-> +
-> +                       val =3D ((u32)input1 << BASE64_CHUNK_BITS) | (u32=
-)input2; /* 12 bits */
-> +                       if (val & BASE64_MASK(BASE64_TAIL2_UNUSED_BITS))
-> +                               return -1; /* low 4 bits must be zero */
-> +
-> +                       *bp++ =3D (u8)(val >> BASE64_TAIL2_BYTE0_SHIFT);
-> +                       break;
-> +               case 3:
-> +                       input1 =3D base64_decode_table(src[0], table);
-> +                       input2 =3D base64_decode_table(src[1], table);
-> +                       input3 =3D base64_decode_table(src[2], table);
-> +                       if (input1 < 0 || input2 < 0 || input3 < 0)
-> +                               return -1;
-> +
-> +                       val =3D ((u32)input1 << (BASE64_CHUNK_BITS * 2)) =
-|
-> +                             ((u32)input2 << BASE64_CHUNK_BITS) |
-> +                             (u32)input3; /* 18 bits */
-> +
-> +                       if (val & BASE64_MASK(BASE64_TAIL3_UNUSED_BITS))
-> +                               return -1; /* low 2 bits must be zero */
-> +
-> +                       *bp++ =3D (u8)(val >> BASE64_TAIL3_BYTE0_SHIFT);
-> +                       *bp++ =3D (u8)((val >> BASE64_TAIL3_BYTE1_SHIFT) =
-& 0xFF);
-> +                       break;
-> +               default:
->                         return -1;
-> -               ac =3D (ac << 6) | (p - base64_table);
-> -               bits +=3D 6;
-> -               if (bits >=3D 8) {
-> -                       bits -=3D 8;
-> -                       *bp++ =3D (u8)(ac >> bits);
->                 }
->         }
-> -       if (ac & ((1 << bits) - 1))
-> -               return -1;
-> +
->         return bp - dst;
->  }
->  EXPORT_SYMBOL_GPL(base64_decode);
-> --
-> 2.34.1
->
->
+Instead of:
+
+49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+
+Could we do something like:
+
+49152      48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create(inaccurate)
+
+This should hopefully not require any changes to the tools that are consuming this file.
+I think it might be better to use "(inaccurate)" (without any space after function name) or
+some other text instead of "+" or "*" to prevent breaking such tools. I dont think we need
+to even increment allocinfo version number as well then?
+
+>>
+>> (There would be some corner cases, for example, the '+' sign may not needed when the value reach a negative value if some underflow bug happened)
+>>
+>>
+>> Thanks
+>> David.
+>>
+>>
+>>> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+>>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>>> ---
+>>
+> 
+> Thanks
+> Pan
+
 
