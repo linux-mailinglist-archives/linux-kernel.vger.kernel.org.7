@@ -1,140 +1,145 @@
-Return-Path: <linux-kernel+bounces-812040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B376B5320F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:29:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C688DB53234
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C75A82EE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:28:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B4DA7B3441
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35E0321442;
-	Thu, 11 Sep 2025 12:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8484322C66;
+	Thu, 11 Sep 2025 12:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UvOLrkMH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m0aQaF3B"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462AE23D7D1;
-	Thu, 11 Sep 2025 12:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350B1322A24
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757593734; cv=none; b=rLNsM/QQbaB2vWd7Xx3bjeOdpki6fN5Rv7sxCJqFAaQ6JzicqrXzp2LasGCLN/5sUHc+crDtzbvryUQQgOWFGudzsI/DSfooIJ+Zpkiqzl2zGAMqaahufo8KnNeQ0lSlSAKLje+21D8PmXR/V30o7J+4I6aQU4OSjHXwe1BC2DA=
+	t=1757593766; cv=none; b=icgqxlUmYxgxbn60kRLnyMrHSzc8L5sLEKMo7MnK1I0x2UPolbbN0C3z6//HY+6hIUSxvdp7S39HO+sZSFY24tEXtcczaGDVxNgNL9imo+WKoAxnLI1QdputiwfNI11txZjMRtbHpEdN/v2ddalUeRJ6s6TWzWetTBDIGL+S2lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757593734; c=relaxed/simple;
-	bh=cOxH4L+r13ac6AWe2+G4yXqo8aVVu5wvCvByGl2iHkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fiQlX0A74OCsnv8FqoGwGVgc+ZWJ2ik0CHvTu3VVkGQSEFXogwUA4c4UO1fHLq6BOnq5yNN0gwQL8eqXKFIiHmPfEfpxhR/kiLcT/0KT2lMa+1UjKaaWXV2Et273p89nIzekYElpf+GrbTuwv1Rs4vp+u8UPlUxNfINNQ3juNnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UvOLrkMH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B913C4CEF0;
-	Thu, 11 Sep 2025 12:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757593733;
-	bh=cOxH4L+r13ac6AWe2+G4yXqo8aVVu5wvCvByGl2iHkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UvOLrkMHmOSr7Ireijjhav+ydIi780aZXaoV0O0BGMrOMxLn5+UvlKW9VbQhP6nmp
-	 IT9X8DURLQCtz20pPbCtJKvXAZa8yPAEVF9IRCwRVichVIxoBCirEECJHy8RpEUO2y
-	 7YJS/JpEY661ATtGqNwBCLL+nw/XpHlDp+jl4ilQ=
-Date: Thu, 11 Sep 2025 14:28:51 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Hsin-Te Yuan <yuanhsinte@chromium.org>, linux-pm@vger.kernel.org,
-	Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] PM: sleep: Don't wait for SYNC_STATE_ONLY device
- links
-Message-ID: <2025091129-harmonics-clambake-6240@gregkh>
-References: <20250911112058.3610201-1-treapking@chromium.org>
- <20250911112058.3610201-2-treapking@chromium.org>
+	s=arc-20240116; t=1757593766; c=relaxed/simple;
+	bh=VIaFKqE75CM+elK2XI4KYXHHvaxVuznQBropijUaKvI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XB+CIdvFyuSFs6bWkm1KyzZcx8V0vYKy6dDvH2Adl1jJc3LQVj4w5Ga0ou5Iu4POe87dTlGYb9/Cm7eQzBjRmfvlXTl9ElE3jRkoCJySTq3bqX1ISsT/SrbBvwBFXQO6RYAAe11nrXiSPS3v3b2/KXd5ziEhg6IVmLpGMzUbLL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m0aQaF3B; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b9edf4cf6cso585576f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:29:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757593763; x=1758198563; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FYKFAdjOYASo/WjabAdPI3Sw4noi+10vn2fGFK6NGHo=;
+        b=m0aQaF3BLAjPuFljvYviGv3JW/AMIEly9WA5rh+j98zrA4zQqrvoYg1hkaTOmQMzh4
+         9FU4B6W8WjmIQgyrZyzeFfgJBGt0Z+vz7Sn0MhB3Yr1yyk+vkBrkg0ORuqKQqjkzrpBh
+         bUVou+7L+xCGSfMuPORmYOMaIGv4T7g91Q3tVMuUvZyQg8onLbcki/LygQxQ1Z/FdLAV
+         6vtZ0wGiyl3ubxOYCBpCZJKWE/ZFIdn74eXSssssw4YjJpKMz+4A4LbpCWf78eQ7dLf0
+         xgaf/nxny8DhcwdcwnGG/gXMM0n3K5IevI+l+QRhQTNQujaDqBguoM6nmX6Tz/mCFQxY
+         Ayyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757593763; x=1758198563;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FYKFAdjOYASo/WjabAdPI3Sw4noi+10vn2fGFK6NGHo=;
+        b=SjkQrkCgL28/5Jsx64qHqKv/DFcLXPO70OUHkbU6z4lKxN7ocIyAzTA/9MDGoFXM4d
+         al3DkWXTdDh/K1Sj2KxGrpczCfYgiWZoKMLt7rQD8iSPmDCxJrtl4ET6VV1a9EqNPNzv
+         0r75hGb6H8hGmCFbPA7itGIT9nEdeM/sqxtM2IsWbpK0CjE9RF4/80S7Z3JWoosajyVW
+         AwEjIZz/JN2CQFx7HOzD4BqAYY4qUMDR0vimcvC6Hr8DeOW2w2OLbgR6s9FGTf8iXOx7
+         n1UuJ/l+sRwBHKJ6KPjYxMUNvnB/jOtm1feDP66HF9YVfw81W1oS0Gjpbnn2FzAWVA0p
+         jCtw==
+X-Forwarded-Encrypted: i=1; AJvYcCWok/57gQ8dKQ3ysJjWOsVKhhEria8Z4Wu9z2qHiWJ0XgEctWPl1R4Q6zZ9tUJHg9HLQjv8U935Bs1io34=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7P+M8Zo3d2NrV38W6/MtSqccOioPisGr+h4fvWceA9rj3B9NK
+	VLpF1I+zHNNmskX6/+SDOyy6Zgtv/Y1oG3jH2FMGbdppLvkA27AKsY1VlJFYyg20O8E=
+X-Gm-Gg: ASbGncuoMp64AKhXardbLuBEFtHVC9ZT0Ab+sZbS5r5eX33agWNZY9Ej0xWbqrHtXJu
+	kMAt+XVhzD/s8qViiGBpX+XI+zll2Y+SrNj168pyfAth9CWNQe/62lhpseoNdM5pNctk/6if/tg
+	wFfUpctvCx82B5+BEG+z5KJ5qluMD88njg+HRiZ+CNq95wZ98TrTkPUUKKGSiaQ1gDjQM59FNWV
+	5xoJXVkalSDewUX9Qmfr8kHBh25TthzIKhXaPcxgkUftKLsoc415gbGTJiPsFNHz6QzMXggIxwm
+	roYsJ91IGsJCYX+iuZnoph3oOG3oJ2QmwMpwW7+N0PwFCtk1iBoPumzCMIkxkwtiG8EJCTzE8q2
+	0jKP7DBdhcrEls/LnOeUDBhN1PpHFXPBwUw==
+X-Google-Smtp-Source: AGHT+IE4wZnmN0HF5vilM8y4TE0lu9yYsqD43OkvBy4fyb1qhM9Qox4fLexabkHws0JYYvrRpH+fmg==
+X-Received: by 2002:a05:6000:3103:b0:3dc:2912:15c0 with SMTP id ffacd0b85a97d-3e636d8f8e9mr16633511f8f.1.1757593762609;
+        Thu, 11 Sep 2025 05:29:22 -0700 (PDT)
+Received: from hackbox.lan ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd424sm2230444f8f.36.2025.09.11.05.29.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 05:29:21 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Thu, 11 Sep 2025 15:28:51 +0300
+Subject: [PATCH 4/6] drm/msm/mdss: Add Glymur device configuration
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911112058.3610201-2-treapking@chromium.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250911-glymur-display-v1-4-d391a343292e@linaro.org>
+References: <20250911-glymur-display-v1-0-d391a343292e@linaro.org>
+In-Reply-To: <20250911-glymur-display-v1-0-d391a343292e@linaro.org>
+To: Rob Clark <robin.clark@oss.qualcomm.com>, 
+ Dmitry Baryshkov <lumag@kernel.org>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Kuogee Hsieh <quic_khsieh@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=894; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=VIaFKqE75CM+elK2XI4KYXHHvaxVuznQBropijUaKvI=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBowsCUdGmh3ForSq9QMyjokksSbUSHlc5VCaSEp
+ Z/TmI90GCWJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCaMLAlAAKCRAbX0TJAJUV
+ VqhRD/98jWD57j5rtDVLUAmyM7r+QH6yH7G4HtwgYCTfk4b9yqkUtRFB99WCwwyLcSIPW+5vWT3
+ G/7lYSdK+6ZkOnVdQYfuzZqmVIgMU0nr8gB3LTHyUAsI3ssZP+0mLTJQxH/5OtiDbOoldMPDDri
+ WmGQGY8ChrT+z9LFFdHnG3WytJE1RqkKTChVym0dUCmulLNjeiEOZZa5hXZs0vDeXVq0e/+ZxpN
+ 18XQXNojihi+l6o6Vom8r5GERiFnptA4aMMs1ksRJmewxwr5zDh3lrzdPsKTI4S5sKNoKCOFa44
+ SBrHee4vRiqfhVXgmTNTQDOQl8UapqVlEjozHl8rA6nNspaFJeHT9cM6ZpQstSnQUnBMVW5LVUU
+ VHFEM2KTUnG/gvgxjBfQbrTtgyu8VGrB9IVGfZxysai6mdioklApSIRaS1MMYKYMFHNUBDDu/Nv
+ ZtgzjHw6HOAbuZtsEhqdJfvAzF1NLJaWLQrXAfTJt1W9QyjGBz/7+CYp9WgbkrRKANOQwL/rvAG
+ vEzYT/JwTeusAn/XRifhUPHf2oxMCvGzfqITVgG1au/FJiUqutUn8XKtwNEdb3ATi3i0n+ehPta
+ 91zyKEzsYhb+dsLm8+d5w4Q8ZLhA6RZ1tnuiFrLH8X1+6xggAaWK9fIGS76n7A2bsKxZTB/tS2Q
+ F+cXo1n16s7mPxg==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Thu, Sep 11, 2025 at 07:16:03PM +0800, Pin-yen Lin wrote:
-> Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
-> and resume, and functions like device_reorder_to_tail() and
-> device_link_add() doesn't try to reorder the consumers with such flag.
-> 
-> However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
-> check this flag before triggering dpm_wait, leading to potential hang
-> during suspend/resume.
-> 
-> This can be reproduced on MT8186 Corsola Chromebook with devicetree like:
-> 
-> usb-a-connector {
->         compatible = "usb-a-connector";
->         port {
->                 usb_a_con: endpoint {
->                         remote-endpoint = <&usb_hs>;
->                 };
->         };
-> };
-> 
-> usb_host {
->         compatible = "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
->         port {
->                 usb_hs: endpoint {
->                         remote-endpoint = <&usb_a_con>;
->                 };
->         };
-> };
-> 
-> In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlink
-> between usb_host (supplier) and usb-a-connector (consumer) is created.
-> 
-> Use device_link_flag_is_sync_state_only() to check this in
-> dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
-> 
-> Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_STATE_ONLY flag")
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
-> ---
-> 
-> Changes in v2:
-> - Update commit message
-> - Use device_link_flag_is_sync_state_only()
-> 
->  drivers/base/power/main.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> index 2ea6e05e6ec9..73a1916170ae 100644
-> --- a/drivers/base/power/main.c
-> +++ b/drivers/base/power/main.c
-> @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *dev, bool async)
->  	 * walking.
->  	 */
->  	list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_node)
-> -		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
-> +		if (READ_ONCE(link->status) != DL_STATE_DORMANT &&
-> +		    !device_link_flag_is_sync_state_only(link->flags))
->  			dpm_wait(link->supplier, async);
->  
->  	device_links_read_unlock(idx);
-> @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *dev, bool async)
->  	 * unregistration).
->  	 */
->  	list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_node)
-> -		if (READ_ONCE(link->status) != DL_STATE_DORMANT)
-> +		if (READ_ONCE(link->status) != DL_STATE_DORMANT &&
-> +		    !device_link_flag_is_sync_state_only(link->flags))
->  			dpm_wait(link->consumer, async);
->  
->  	device_links_read_unlock(idx);
+Add Mobile Display Subsystem (MDSS) support for the Glymur platform.
 
-The way you use this new function does not require it to have been
-exported to modules :(
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/gpu/drm/msm/msm_mdss.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-thanks,
+diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
+index 2d0e3e784c044db8ac0c478446d211a982cf0350..60bd6af83a8846f2ad751ea625a20e419c80638b 100644
+--- a/drivers/gpu/drm/msm/msm_mdss.c
++++ b/drivers/gpu/drm/msm/msm_mdss.c
+@@ -553,6 +553,7 @@ static const struct msm_mdss_data data_153k6 = {
+ 
+ static const struct of_device_id mdss_dt_match[] = {
+ 	{ .compatible = "qcom,mdss", .data = &data_153k6 },
++	{ .compatible = "qcom,glymur-mdss", .data = &data_57k },
+ 	{ .compatible = "qcom,msm8998-mdss", .data = &data_76k8 },
+ 	{ .compatible = "qcom,qcm2290-mdss", .data = &data_76k8 },
+ 	{ .compatible = "qcom,sa8775p-mdss", .data = &data_74k },
 
-greg k-h
+-- 
+2.45.2
+
 
