@@ -1,115 +1,182 @@
-Return-Path: <linux-kernel+bounces-812236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0644B534D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:07:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26348B534DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E023E1C213BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:08:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D4471C22DF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3ADC335BC7;
-	Thu, 11 Sep 2025 14:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A276335BD5;
+	Thu, 11 Sep 2025 14:08:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0OeAeiu"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=whynothugo.nl header.i=@whynothugo.nl header.b="kr9/qo0I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kQvPsas3"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C709129B8F8;
-	Thu, 11 Sep 2025 14:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AD2335BBC;
+	Thu, 11 Sep 2025 14:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599657; cv=none; b=Zy+uN1CV+mwtiFmjyhYDW3qpH1a4y4ISwdsO75pVIgQHMLs28JlwT0rIPZ+c+BwffSk7VS6EMwVeOLcaXPRxKOtImQ1sO57d2Yfyu9GwfYBEvOluHcWIGP3c3a4kMWx9rkt8XIrLX4lYRT8y5sY50VlL0lG1XD8QIffzzjkv9uI=
+	t=1757599679; cv=none; b=oOhSLoF+cz+s50jErwdvYHdsnzcc7y34Q9/gWSE3RsPzq5QNhdtTEIPnIRo9NkfSb68M2Vxg9S+rj70Ow4GwD7AzIM9+Sto1W11fjB4abxvm/LU43JStZP/iSQuNjtozWenpz30sCniw/CUUiCHxHPa9Vk9wSvGfPLCK12Ax+yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599657; c=relaxed/simple;
-	bh=AeDu1CaxVTDYh4Mj66HpOGBzQ8r3uynQZo5ononj6MM=;
-	h=Date:From:To:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YE+DEHx6QosoH40R+2Nplm1iDmboLH2L2L42jDkO76RgoRn2yE6jNqonBgmsPvAndhUZ/lImUIDiGUwpZlwFupGDS1NvnHoOkVkcY/8UTn626hlMfH8KedzSRwQYbAGxPWfiKELlU3zXfwGCezJvonplMd8Q92LwRrSUdyNj1c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0OeAeiu; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-56afe77bc1eso860276e87.0;
-        Thu, 11 Sep 2025 07:07:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757599654; x=1758204454; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KWdoAQyPoyWoa/AF8wZgmr5DlRUGvc+N3yrK4JDeCfk=;
-        b=L0OeAeiuqAJ81SoMbtf06J166v4+Ar9jv3kaxncxDS6MJNIRUgw9XZCH4hIeYszP2C
-         T0m7v6sSGDIneBZF/pUVgPCoMHydWwARk/ohjqqas4f0avY8aDEOBnOIPNRZUUrdfILW
-         TAmEZ3yrlpGlfaNBmqG014/g59sJrYHcxz7ZXYGhAVGsUEqfyBQ2ubRFD4XhkYSA06v+
-         ZFAUrJUdIg+Y/mdKHGLRtuDt2K7PEgnxvvryNo9oNJlApHfKgrc99v0bYnkCpXJg76Zw
-         MMkV6EDPktBaJjT+RJgcX2L4K1WJ+p/9dVvQoPZeBO0RVf7AhE6XLYsXww7qUgGZP90U
-         fr9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757599654; x=1758204454;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KWdoAQyPoyWoa/AF8wZgmr5DlRUGvc+N3yrK4JDeCfk=;
-        b=eiArzhTbCNCGLHFQg7ZHsv53haq1G5ZRC5rU1YUQgtUCKk6/F3fFyDs1W5uvuvuMvJ
-         qrc9vgzTbohsGjwJEaCgdFB0E8Q4pzq4s56zp4m/kw5Y7LPSJuOaRf1OQ6CyMTsga48n
-         1Q5XkAcxvlgPP9KxU/8uD9V5r/20o3kn8CKMTRe1I9GS1ou6yJQd2d65JeZwOFpeUJQj
-         IlnuBFWx31I+Rjo88YBV8+BKhsntk2v4/Yi/a820fdkKH9+UkvTfA8zmBZnnqC4iL+QY
-         Dm7h0J3B3gb2gsTgSkHCAWwS5l15vepJUlSp2NSSAqc49pcVD4Oje4O4Z16ut6/4Ht1C
-         NbCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBN0lp45xeKJDe4yG6xRl8WUznBJ8BPfDELlFdJfKbKoiXOWTfk/bzgoz9gXYUpUVynblu91cUqrCj@vger.kernel.org, AJvYcCWEIx3X6VlPJd9kRfOTkbOAaRFgDkwj9RlMuGZzwEIMOTbIeDUU4QnRvpsXHTTOj0y0wz22Pr1g+QI1O8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUYWJ/929AUaym+mRMIZ0lQL6TL70rjoOqxJskb0rlahe+6e+W
-	56E/f1OhZxyzBilh+gkmObo8CGImticTds3PWiZHP6K0Ozaw21EsHxTo2sgFVA==
-X-Gm-Gg: ASbGncs6mwai+DWIh81OXj23R0c/o0Fk7lhSDgKofHoepCmhdd2E5pnMGTZqG34teDw
-	7w8TwUFUjGMoTXAoe6ctLN9KlmMUwXDidOG0in2G1l6C6H7iZabyQ5RxxKh3Dajq+l21y7+bRKm
-	lYcWk5Vp3xeQQikt9E8V+SuNAdP5mGFxJfM36Si+gTW+8fJf09ZP1PoMjSsPewfnXHh70QGjXZm
-	j26P007USWFtvU528R8dehDYqA3y+ci9cTzIpeDuoeLjjnRjX8z+3kV9hhutBQw8wG12UMv9fWC
-	HbcVUT2JYwKyNsISZ9tc0ry2uofuD4Gqi7WuYyyRCqggFblqUbBwgfWoLrpOS0uZky1FKmvLIXS
-	JkWfo8MTwdd3G5KSQ5UYngS5aXh+STNwQZp0=
-X-Google-Smtp-Source: AGHT+IEVVc/yX1meJqG+W1c8MfFiXyru8ek+D0e4SEFl5rxe+yJxt96wq0iK1eguGRJwQVawiISfQg==
-X-Received: by 2002:a05:6512:b91:b0:55b:92f9:c625 with SMTP id 2adb3069b0e04-56260e41a41mr6522124e87.20.1757599653661;
-        Thu, 11 Sep 2025 07:07:33 -0700 (PDT)
-Received: from foxbook (bfg216.neoplus.adsl.tpnet.pl. [83.28.44.216])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e5cf2f467sm447096e87.43.2025.09.11.07.07.32
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 11 Sep 2025 07:07:33 -0700 (PDT)
-Date: Thu, 11 Sep 2025 16:07:30 +0200
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Mathias Nyman <mathias.nyman@intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] usb: xhci: Don't change status on length mismatch
-Message-ID: <20250911160730.1ad437e4.michal.pecio@gmail.com>
-In-Reply-To: <20250911160632.46245dc4.michal.pecio@gmail.com>
-References: <20250911160632.46245dc4.michal.pecio@gmail.com>
+	s=arc-20240116; t=1757599679; c=relaxed/simple;
+	bh=12qnGEA+L3OAnlRsUnuhOCXh35RWwj/l9yuG+xevubk=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=omH0pMl/pLxFvKfmDRUadBmsuqBVBhNo9SlbFdXH6YBdMGgkLWKvTGljpZbfsjmaLITIwZ9Q7JNSOjY+aW6W0DhFib32AC7XopVg5CPJ09cizpCqiTXnr/5SvtiBccY8hn07vOqMLoqaP5mkCyvSE8M4TSv+Wds7/5Qp2yBQf9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=whynothugo.nl; spf=pass smtp.mailfrom=whynothugo.nl; dkim=pass (2048-bit key) header.d=whynothugo.nl header.i=@whynothugo.nl header.b=kr9/qo0I; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kQvPsas3; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=whynothugo.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=whynothugo.nl
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 12C4BEC01BC;
+	Thu, 11 Sep 2025 10:07:56 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 11 Sep 2025 10:07:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=whynothugo.nl;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
+	 t=1757599676; x=1757686076; bh=uEYnB7YMtFbSpYh+8MMip4fPKS/ZUyYV
+	YWNehhXOTE4=; b=kr9/qo0ISKDlWJ5KNrqoZVK+DPe6Lsd8QHDbIMGUyVyH5mwW
+	TrA91v56mW8brtJXHIfHqwMItmOPElkDmffgnqaLiIgr+S6GeDrNtZqSY/IIOLVS
+	5zqgBDLqqCpuogK6h/ccFP70X6BwXgg0Cqj/wBkblcuLWs2ewNXOeH130JqXwi/f
+	93kAT3blIsFva9yplGdQLc0TsEFZWSLBjEPtxtogCE2kM9hVE68obWOiGmpL4eFj
+	Ww/TygoyOObGnSJRW4BQrgH1rLFyanTR6cNv6akFbXl0Lgwu+oXgnAtoq2YrvX/y
+	JpuWsnCMh+Vv9eNJUrFPlDnT+WXZX07eL9PlgA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757599676; x=
+	1757686076; bh=uEYnB7YMtFbSpYh+8MMip4fPKS/ZUyYVYWNehhXOTE4=; b=k
+	QvPsas3rd8ezxuleI6AedCwncxX+JXzlFK81agdv0pfkdTDCuE9AscRSCVbfdNVX
+	kPRltPRAZUje5fT2MxRSky/srnO1pefZXpGxV9fTESh+CS2e+M34unrgdg177gE4
+	rlGkhCqYdXPRq2OubbxA3MMYuAwspa/8L5TZgj1FXDjP5iC47fDVICI8uwEvqrbx
+	mQvEKh/DAZfdEVLl2rPEbk2k8Kczd7wmUSOvCY249xWO7oNDTcYFNZi60IDNYScN
+	draChjEDkjOyH4t0RzkCWhdf7ywhGqXgTg5ol4d9wqc6Tfdhj0ItWnZr5ULD1aUU
+	5A+lpqhpA/E2YAHQhncjg==
+X-ME-Sender: <xms:u9fCaFV0gW_P_N0mxkY2P50XupraMSZ9ZgGmhYIYt7pUsZWaArwp7Q>
+    <xme:u9fCaFkC9QQ_2luoXLEOikKgMfGe5PfGlAayfsQA15odYhvkXnwxodSG7ldgu5GwA
+    6MOu3LbPYE_dakddA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvieefiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdfjuhhgohcu
+    qfhsvhgrlhguohcuuegrrhhrvghrrgdfuceohhhughhoseifhhihnhhothhhuhhgohdrnh
+    hlqeenucggtffrrghtthgvrhhnpeduieefkedvhfdugefggfeghfekffeitdehjeejtdek
+    vdelvedtvedvfefhjefgtdenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhsrhdrhh
+    htpdhmrghinhdrrhhsnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhephhhughhoseifhhihnhhothhhuhhgohdrnhhlpdhnsggprhgtphhtthhope
+    duvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggv
+    pdhrtghpthhtohepsggrghgrshguohhtmhgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
+    eprghruggssehkvghrnhgvlhdrohhrghdprhgtphhtthhopeigkeeisehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtth
+    hopegurghvvgdrhhgrnhhsvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthht
+    oheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtohepmhhinhhgohesrhgvughhrg
+    htrdgtohhmpdhrtghpthhtoheplhhinhhugidqughotgesvhhgvghrrdhkvghrnhgvlhdr
+    ohhrgh
+X-ME-Proxy: <xmx:u9fCaFTmhRdBs2ToqP4Tt3Mnyp88sSmArfIEpmzTY9ppQavryaNN7A>
+    <xmx:u9fCaI2UTBfUjJ0SEoKa4lSkfHAWZJ6iqnmTqGGsBt4cXvdHCDOhWg>
+    <xmx:u9fCaPw5uP6rTf5DhAkdMnJ0cpBLQ3Yj6E2oiItpkMZbLRndQfpgDg>
+    <xmx:u9fCaEz7xm4AiWVg2EEYvbybf-CLHyxp-Zlh7uQXPujzYJzlNawgzw>
+    <xmx:vNfCaNuJKCMlb9oiBMfJQbAUkRjjWNkqIGnvrvfjjFZfj-OqNXt-XuUl>
+Feedback-ID: ib8c04050:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 439D21B4006D; Thu, 11 Sep 2025 10:07:55 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-ThreadId: Atl5U7xjKeAs
+Date: Thu, 11 Sep 2025 16:07:33 +0200
+From: "Hugo Osvaldo Barrera" <hugo@whynothugo.nl>
+To: "Ard Biesheuvel" <ardb@kernel.org>
+Cc: "Bagas Sanjaya" <bagasdotme@gmail.com>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Linux Documentation" <linux-doc@vger.kernel.org>,
+ "Linux EFI" <linux-efi@vger.kernel.org>, "Jonathan Corbet" <corbet@lwn.net>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
+ "Borislav Petkov" <bp@alien8.de>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>
+Message-Id: <4f36eee9-7e25-4e2f-ab9d-82f9732d0bf1@app.fastmail.com>
+In-Reply-To: 
+ <CAMj1kXFtdqN+cDVVWK1KTbfyfe0kazHt1t1XmPz58uf+axknOg@mail.gmail.com>
+References: <20250910015738.14848-2-bagasdotme@gmail.com>
+ <CAMj1kXHCi1pr3XNzwe7b7EFBkPGjkppeNWNSvy4wU1VBHj9kfA@mail.gmail.com>
+ <c30fb598-2878-4bdd-ab84-4f4d07d0db5d@app.fastmail.com>
+ <CAMj1kXFtdqN+cDVVWK1KTbfyfe0kazHt1t1XmPz58uf+axknOg@mail.gmail.com>
+Subject: Re: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-It seems unwise to hide errors simply because the driver lost track
-of how much data was actually transferred.
 
-Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
----
- drivers/usb/host/xhci-ring.c | 1 -
- 1 file changed, 1 deletion(-)
+On Thu, 11 Sep 2025, at 14:49, Ard Biesheuvel wrote:
+> On Thu, 11 Sept 2025 at 13:23, Hugo Osvaldo Barrera <hugo@whynothugo.nl> wrote:
+>>
+>>
+>>
+>> On Thu, 11 Sep 2025, at 08:46, Ard Biesheuvel wrote:
+>> > On Wed, 10 Sept 2025 at 03:58, Bagas Sanjaya <bagasdotme@gmail.com> wrote:
+>> >>
+>> >> From: Hugo Osvaldo Barrera <hugo@whynothugo.nl>
+>> >>
+> ...
+>> >> +For sample implementations, refer to `the original u-boot implementation`_ or
+>> >> +`the implementation in candyboot`_.
+>> >> +
+>> >> +.. _the original u-boot implementation: https://github.com/u-boot/u-boot/commit/ec80b4735a593961fe701cc3a5d717d4739b0fd0
+>> >> +.. _the implementation in candyboot: https://git.sr.ht/~whynothugo/candyboot/tree/4097b2538d7f1cf85f03922bf42409490b666202/item/src/main.rs#L225
+>> >>
+>> >
+>> > What is candyboot, and why are we adding this plug for it into the
+>> > Linux documentation?
+>>
+>> It's a UEFI stub loader which can load the Linux kernel and provide it with an
+>> initramfs using the above described protocol.
+>>
+>> The original version of this patch was based on my notes researching _how_
+>> to implement this stub loader. The implementation is quite minimal, so I think
+>> it serves as a useful reference example.
+>>
+>
+> I think one example reference is sufficient, and I think piggybacking
+> a plug of your own project onto a documentation refactoring patch is
+> slightly dodgy, to be completely honest.
 
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index fe60b2ae9f1d..5233ed3e4ed6 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -890,7 +890,6 @@ static void xhci_td_cleanup(struct xhci_hcd *xhci, struct xhci_td *td,
- 		xhci_warn(xhci, "URB req %u and actual %u transfer length mismatch\n",
- 			  urb->transfer_buffer_length, urb->actual_length);
- 		urb->actual_length = 0;
--		status = 0;
- 	}
- 	/* TD might be removed from td_list if we are giving back a cancelled URB */
- 	if (!list_empty(&td->td_list))
+I don't know what kind of reaction you're expecting. The documentation
+improvements were a side-effect of developing candyboot. You're free to
+exclude the mention if you feel it is inadequate, but I don't appreciate
+the personal attack.
+
+> Where is candyboot used, and what does it add to the existing u-boot
+> reference, which is the most widely used EFI implementation after EDK2
+> for non-x86 systems?
+
+candyboot can be used to produce a single bootable UEFI binary bundling
+the kernel, cmdline and initrd. This binary can be signed to boot using
+SecureBoot on regular consumer hardware. It is typically useful is
+situations where u-boot isn't supported, and useless in most situations
+where u-boot is usable.
+
+The use-case is somewhat tangential here; the reference is merely as a
+minimal (single file) reference implementation of the feature being
+described here.
+
+> If anything, we should be referring to the OVMF implementation here.
+
+Agreed (I didn't know of its existence), here's a link to it:
+
+https://github.com/tianocore/edk2/blob/502f0dfda4f2c4d1cc091f68b6467b6ef12cab45/OvmfPkg/QemuKernelLoaderFsDxe/QemuKernelLoaderFsDxe.c#L908
+
 -- 
-2.48.1
+Hugo
 
