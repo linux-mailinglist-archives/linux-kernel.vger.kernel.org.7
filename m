@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-812225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F0EB534BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6817B534BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AA371B26C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:00:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAA8B3B9E5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1CE32C316;
-	Thu, 11 Sep 2025 14:00:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376BD3375A4;
+	Thu, 11 Sep 2025 14:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfx82vAF"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="c+pZUSm5"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D02B335BAC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942F1334385;
 	Thu, 11 Sep 2025 14:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599208; cv=none; b=Op1uzL77bRPJJQVlB5ISs5o/y3ramMl69/lJALM4eEOVgZtczvzPCPCc09/O/A2smxoMJrDksxlM1pCxyZLSaLpZy94sWzd8VAhIyDDy1CY4W4dRDgeHXMeIew7fHZmCFeeqojZ8bEaa7IoPB3oyFH+/o+mAUEC+RpnmviGUlRw=
+	t=1757599208; cv=none; b=rSAVAAUq9HTN1tXTb97CQomm6YFwxUXYF/Tclvkj0N04Q+ubCDdfSJM9WU1sA1e0xuSmGgynLqZzzPyv2+lXuui6F0nr+70jfcLuMEWNk6dWspzqU9zs2ThBzn6BjHsl9cvUA39D6G+zZsX/pONhaqTLsI74/AUdN3WEv7Oxatc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757599208; c=relaxed/simple;
-	bh=KAWNXHJC490Xdv/Jm2f53Hj3dPJm3UGG+5Ivgh+fgdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XbAt4bJvLVAW3ksDvyYBqV+iE/bmHqzKsKDBFXm1mK+K/yh9tyJAUG136vjJer+F2ee9omLAfWmozbsYC0Ohw0cbvJrLdNfcNVYp4v3vjJJJZRaapu9efO/kaTP7mUvGbbeQ3YtpgGN/pftcSvG1aWRGHIPn5OCh+hx1RgWFNfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bfx82vAF; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-afcb7322da8so147391166b.0;
-        Thu, 11 Sep 2025 07:00:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757599205; x=1758204005; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KAWNXHJC490Xdv/Jm2f53Hj3dPJm3UGG+5Ivgh+fgdU=;
-        b=bfx82vAFhYi+SX740k7qwg2iP9PoEMkZ3IbRbQxka6tZT+l7zd5rCMOG/bpUXDzYmT
-         R+Tj8FUjjoPi6Semtrz/IrtH5V8mtuJhIW6w/yz7YJ/MAdVUT4ERsyfN7lMtpPcuDDEE
-         IOv5gMMtPqqxKUMHpHo0YNfwFvDHeM10sul8y5bVMY9eZ49ZLFD2X9DIILoibQTbbZW+
-         tQL3Tv8029O9aQNV7jf6GMtViZqYn7yGsmfanNr0LoJQFbiJ1ee4p/BEaHHrI4TZ8ngh
-         Ytjn4hoobaYOR6DuVl2+H0pjw0Li2/l8Z8VIC1jIGvqO6tMOWeoJbNr8LQo7S8hizorU
-         qviw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757599205; x=1758204005;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KAWNXHJC490Xdv/Jm2f53Hj3dPJm3UGG+5Ivgh+fgdU=;
-        b=hWuD5MOJLmCrWJw+DTwXorx7lLfNAuVGJuR5ktpDgnDeZlV9O0eSPWcUd1ZF1loEUA
-         QLwmVH+yRJ0pIIPlR9nP2yAsLLAW9mB/xUTn8qaVXGwx/LSFMZLXAaKR0fhszBWGUaxQ
-         TSS11z3juxDWZrT29UU8yQX1Nv8poe0Xrp2ziBAe0s598lYmgWU5hUkFQE5nZd2TXd/1
-         Ww7ygy50bYy8hRMI5KuGi9yMTdt+99u5rawjN2Qk1d5ON6HbLRsxPO16GC+macKwnb31
-         MoN01+Soy+uH+j3g01iVOFnEgYJnoMq5dpsdcT8gLZAzD/TYM+DSE+H7xvddJtqbI96J
-         K2AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8s/J4se0AiILfSRGCN5oFczziv4ZK9eZsqzuXy8Ojb9vlG6v3Gry69DC0Pzn3UooRcxON88kdesy/@vger.kernel.org, AJvYcCVNCVohKGkQLX6n+QkR88nn0mSZOyzs2sqOTPjBUfYcGUFcdglT4wSxhjjLB304IlNib3z5Jusfcw+vISku@vger.kernel.org, AJvYcCWP6EKBrrm+WzEao2mehCUAJSE5n7Pxjj1A0TexV512l+Uj2mmYvby9s+Bh8uedVV4uxxhqRjSc/kD4@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeLQSO+dJrFRtU+HOfo1BANkNr9fbc5i6n8Sf+2zyP8biLPArq
-	tYI3k6S0vzC0Fo5H/OEVP9j7zxzdSO6Jm/ckhXK3SMzGnw1WKRg5OBHmPU9qUvn7RereFXp+TtT
-	vQc1VzO+x+GOdlSK9kfYFLTAPcuGPUyE=
-X-Gm-Gg: ASbGnctA/zZ7xppr1/KCz/D/i90lHSZn1dRqz+EnH1UrLDKRWYpshjwY9pzURpvIInk
-	m+ctv4TfoZuoZp7t3dnm8pTbvkf3Fl61Bi6tV3J8UYKD+v1s1x/rX1GIhfBqlK0RBfg+Zdyu8BQ
-	l24B/JcDUlLobB4ma1aEgTLgHvywtz9a8m6uwA+lo+CmQW56XdRcSAOh4rN+XCVL3VPVHIKz1Hu
-	sni+2XDfw==
-X-Google-Smtp-Source: AGHT+IFMSIxT0DvJYxyQvFL1fjp2tZVRPvFNOGQw2mzuUtE1CKhFGnz+lVXAWGyHgFJrJmYFfytJFnJ0QvBeWqr9YRA=
-X-Received: by 2002:a17:906:fe08:b0:b04:3a9c:33ac with SMTP id
- a640c23a62f3a-b04b16bc468mr1856224966b.50.1757599204251; Thu, 11 Sep 2025
- 07:00:04 -0700 (PDT)
+	bh=1ZpIIGiAzp9dlmnlhXDwO9rr0Iyle3/GOpYyQPgYY/c=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nnNtQ+R+lqo7Axllup3bRxEUCLykKlH03FlXcgyEeLZvwtq+8Uu6j98I7TUnebCXSsJvvyE7v6lyLHhErFIQ8BnWLm/Y214j2k/ScDTWzkZYcrohyFa3RXcfJcX1Fciv76tClTlVwfybpX9hGj1a4VAYTuRMVesQgtI6v8iGyrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=c+pZUSm5; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=1ZpIIGiAzp9dlmnlhXDwO9rr0Iyle3/GOpYyQPgYY/c=;
+	t=1757599206; x=1758808806; b=c+pZUSm5LbqVBJ6KT8JD/3Ay0wzIiFiO38ppszYCZencX0+
+	ozBBP72BYDJO7LFpEFEOQbkwejkhYdpjw/xZCyfBVUw9TRvqb6mNPnxVeGAz3FRp63AP5tjvTL6Na
+	bU3oV5htnojFLFIrSOwhwYzSBWsFD6O58zkrFrltAJFE13j+vo2ya3vC8X9aU+hYReGhReXlNu9+M
+	Z/IUbCW5MgG+kXiDrT/0iZ4Py1DD1jHWUCk4aRxVZdgGiATF9SJ/BBekwLau2K+vvyUXq2/v8737t
+	jSObblBK1U1wnLnWcakw9hKB293UKLM5EXkvX/j5i3aXHSTVnguG5SO/txRNdfCw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uwhq3-0000000FP2l-2ojG;
+	Thu, 11 Sep 2025 15:59:51 +0200
+Message-ID: <cf3eef898266e5a8064c6cc5d2c12a9b0971f75c.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 RFC 0/7] KFuzzTest: a new kernel fuzzing framework
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Alexander Potapenko <glider@google.com>
+Cc: Ethan Graham <ethan.w.s.graham@gmail.com>, ethangraham@google.com, 
+	andreyknvl@gmail.com, brendan.higgins@linux.dev, davidgow@google.com, 
+	dvyukov@google.com, jannh@google.com, elver@google.com, rmoar@google.com, 
+	shuah@kernel.org, tarasmadan@google.com, kasan-dev@googlegroups.com, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, 	dhowells@redhat.com, lukas@wunner.de,
+ ignat@cloudflare.com, 	herbert@gondor.apana.org.au, davem@davemloft.net,
+ linux-crypto@vger.kernel.org
+Date: Thu, 11 Sep 2025 15:59:50 +0200
+In-Reply-To: <6eda1208c08130e00cb54e557bc4858ce10a4a94.camel@sipsolutions.net>
+References: <20250901164212.460229-1-ethan.w.s.graham@gmail.com>
+		 <513c854db04a727a20ad1fb01423497b3428eea6.camel@sipsolutions.net>
+		 <CAG_fn=Vco04b9mUPgA1Du28+P4q4wgKNk6huCzU34XWitCL8iQ@mail.gmail.com>
+		 (sfid-20250910_124126_320471_24812999) <6eda1208c08130e00cb54e557bc4858ce10a4a94.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
- <20250910-bma220_improvements-v2-7-e23f4f2b9745@subdimension.ro>
- <a10a2f6d-6cb7-4922-b505-dc6994f0415f@kernel.org> <aMLCWFatVkePTxCa@sunspire>
- <391229ff-d85a-4707-8e7c-ea64e0e3d7cb@kernel.org> <aMLUDkKhF_jhios0@sunspire>
-In-Reply-To: <aMLUDkKhF_jhios0@sunspire>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 11 Sep 2025 16:59:26 +0300
-X-Gm-Features: Ac12FXx2dgo7w9UN0OCgpi1IaYy5kDkzCRoK71yDqZm3JQPTr_NmqaDeLEStBnw
-Message-ID: <CAHp75VdGX7ntm356mm4fLKtYfpuUMnHx7xZVE90MOd_CxTwmmQ@mail.gmail.com>
-Subject: Re: [PATCH v2 07/14] iio: accel: bma220: reset registers during init stage
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, "Nuno S??" <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-malware-bazaar: not-scanned
 
-On Thu, Sep 11, 2025 at 4:52=E2=80=AFPM Petre Rodan <petre.rodan@subdimensi=
-on.ro> wrote:
-> On Thu, Sep 11, 2025 at 03:07:05PM +0200, Krzysztof Kozlowski wrote:
-> > On 11/09/2025 14:36, Petre Rodan wrote:
-> > > On Thu, Sep 11, 2025 at 09:35:52AM +0200, Krzysztof Kozlowski wrote:
-> > >> On 10/09/2025 09:57, Petre Rodan wrote:
+Hi again :-)
 
-...
+So I've been spending another day on this, looking at kafl/nyx as
+promised, and thinking about afl++ integration.
 
-> > >> You just added this code in patch 6. Don't add code which immediatel=
-y
-> > >> you remove. I understand you re-add this later, so basically it is a
-> > >> move, but such patch diff is still confusing.
-> > >
-> > > sorry, but this is an artefact of 'git diff' I don't think I have no =
-control of.
-> >
-> >
-> > Don't think so. Before bma220_init() was above bma220_power(). After
-> > your patch bma220_init() is BELOW bma220_power(), so that's a move.
->
-> you are correct, these two functions did change places due to the fact th=
-at
-> _init() started using _power(). I preffered to do the move instead
-> of adding a forward declaration and leaving _power() between _init() and =
-_deinit().
-> the code was optimized for how it will look at the end of all this patchi=
-ng.
+> I've been looking also at broader fuzzing tools such as nyx-fuzz and
+> related kafl [1] which are cool in theory (and are intended to address
+> your "cannot fork VMs quickly enough" issue), but ... while running a
+> modified host kernel etc. is sufficient for research, it's practically
+> impossible for deploying things since you have to stay on top of
+> security etc.
+>=20
+> [1] https://intellabs.github.io/kAFL/tutorials/linux/fuzzing_linux_kernel=
+.html
+>=20
+> That said, it seems to me that upstream kvm code actually has Intel-PT
+> support and also dirty page logging (presumably for VM migration), so
+> I'm not entirely sure what the nyx/kafl host kernel actually really
+> adds. But I have yet to research this in detail, I've now asked some
+> folks at Intel who work(ed) on it.
 
-The idea is to balance between two, but for certain I agree with
-Krzysztof, we need to avoid "ping-pong"ing the code in the same
-series. If you need to move, create a no change patch that _just
-moves_ one function up in the code.
+It's actually a bit more nuanced - it can work without Intel-PT using
+instrumentation for feedback and using the upstream kvm PML APIs, but
+then it requires the "vmware backdoor" enabled.
 
-> I thought you ment the code that was added the previous patch was not rem=
-oved per
-> se from _init(), which was not the case.
+Also, the qemu they have is based on version 4.2, according to the bug
+tracker there were two failed attempts at forward-porting it.
 
 
+> Which I'm not arguing is bad, quite the opposite, but I'm also close to
+> just giving up on the whole UML thing precisely _because_ of it, since
+> there's no way anyone can compete with Google's deployment, and adding
+> somewhat competing infrastructure to the kernel will just complicate
+> matters. Which is maybe unfortunate, because a fork/fuzz model often
+> seems more usable in practice, and in particular can also be used more
+> easily for regression tests.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Or maybe not given the state of the kafl/nyx world... :)
+
+I also just spent a bunch of time looking at integrating afl++ with kcov
+and it seems ... tricky? There seem to be assumptions on the data format
+in afl++, but the kcov data format is entirely different, both for block
+and compare tracking. I think it could be made to work most easily by
+first supporting -fsanitize-coverage=3Dtrace-pc-guard in kcov (which is
+clang only at this point), and adding a new KCOV_TRACE_ mode for it, one
+that indexes by guard pointer and assigns incrementing numbers to those
+like afl does, or so?
+
+I'd think it'd be useful to also be able to run afl++ on the kfuzztests
+proposed here by forwarding the kcov data. For this though, it seems it
+might also be useful to actually wait for remote kcov to finish? Yeah
+there's still the whole state issue, but at least (remote) kcov will
+only trace code that's actually relevant to the injected data. This
+would be with afl running as a normal userspace process against the
+kfuzztest of the kernel it's running in, but with some additional setup
+it'd also be possible to apply it to UML with forking to avoid state
+issues.
+
+(And yes, kcov seems to work fine on UML.)
+
+I guess I'll go play with this some unless someone sees total show-
+stoppers.
+
+johannes
 
