@@ -1,172 +1,166 @@
-Return-Path: <linux-kernel+bounces-811549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63BFEB52AAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:56:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D525FB52AB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C254F7AA589
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:54:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7B21BC2B40
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C92229E114;
-	Thu, 11 Sep 2025 07:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E002C0F7B;
+	Thu, 11 Sep 2025 07:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Iu/xuWao";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XIlM4cTN"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pgc9bvnw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F462BEC55;
-	Thu, 11 Sep 2025 07:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18ABE2C08AC;
+	Thu, 11 Sep 2025 07:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757577351; cv=none; b=nn3rxH7acZGs5D6TvkXiF40IstQxeVA/7zgCAOgST6lqqTcBNlHNCsylse/ctaAoTfkG6mT1HqyCH4g4phOiilK+/PFcYvItfj7lAJnmCyMOSBZUOe4EwxOPTiQEQa1rIS1Fauy8JvZBoMbsdcjftQsKmN3DcD/r64jHG2eYaxA=
+	t=1757577382; cv=none; b=XwttPDhdQtf8ImqUeuFRprJobsi7qYjmb9PPDnlxj7ust1H7LoxWtRZjcq4oCPvqzSlqmO/nn+iJDO8AQz7nzHHhDRplNjYY+Mk666co0x9xfFSugu/UgfAOrtCG8jqc1swWfnRo7212jc0PHmFnR69jX/WErGH28Rc/dlXVsFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757577351; c=relaxed/simple;
-	bh=0i8hnUhy8sTZUL4Vq1iThkRVn9V+TzPj40ZtrBzJyFE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Ff0+wVd02L4GqDbPqKcpwaT/20HayKZaGR6DmggLs/x4fRrV8SYQRIGHbdKokp8PJkb11ECqqmxcVxVBsrzCt1mNMBfvXWvYnOuqJqBQysei4xzrx6hZcr5dfX8oPaAysRYmFTsRGh8hvwjuzK0eQUWVkFF+nlBSVqxlS99jljU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Iu/xuWao; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XIlM4cTN; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 612031400147;
-	Thu, 11 Sep 2025 03:55:48 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 11 Sep 2025 03:55:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757577348;
-	 x=1757663748; bh=xezEPREPJQkkrl73Yff7UEqumVCaWAif9r9fc2gAvZU=; b=
-	Iu/xuWaoII7KNzuVcloK0wQmhd56+d5wX0Bleltp/a1sZa3XhGzX/yG9JsPSkl/7
-	2cu0Mu9lmvGcmqeKU6/KrMP/1aCgzIef4N/ewbqrmGkduxdjqLHlEalPav5le4TA
-	+jbgQ1Z+mvU5GokUwPzbGIhEj3HxlMneK0jBDzXQV6kMI00VxiXlnhook7P+C5Y7
-	UriP1BgBZbVa1zMIyagjnMw+2sY7iskhAR0+3srbSjSH0y3Yg7G1I2wCRXsEXXYs
-	8KS2JECjFLMhfIZNMjx0egOaiCksw2shqo/EvFx/UtUO1SZUtqDZzPy4b136cHwy
-	fnHZvT9pGYqsuKxHDCD1Vw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757577348; x=
-	1757663748; bh=xezEPREPJQkkrl73Yff7UEqumVCaWAif9r9fc2gAvZU=; b=X
-	IlM4cTNCufTDuTwE3rh5KIXiSVCwiy8YX9A8fo53sWQ4p2TKGrlQ/9DVCBOHTBG0
-	ffEsLPh+36l9na0nrD2CgxP/dy96GoNkRtEQRzG5aK6nn56aYQGtYTO9P7Y8UiUs
-	an20A9oCUfkbsypc1JODoplvQuBjF8st8s1x31lQ2U0SYE4Jn1XlEMxhnjGHJwJg
-	CNtYItDmOsxdBDmvbtNp8EHZzfn0AGkDnlRRUoNT54QTlsnpmjuslvLqJymldyuB
-	7h+E3hJYEoPPv37Hpq0Dkh4acaBuHq9oAPE4oR1s4jxxyqb8Wde0k9toW89TrDKm
-	U4uNM1J+ErI42a2u/TYQg==
-X-ME-Sender: <xms:goDCaKLlbLhafX1ItUb5fO7F7xQAPgD71xlygMsk3wgbEP7eJM2VEQ>
-    <xme:goDCaCJu-9GwvmuDVC8Y37QomJEPe0pHbKXVqPPiqeh9QFxf908KEUF8un4MQt4Yp
-    DHkwlYQwPBqiaQ5cv4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvheeivdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvkedpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheptghhvghsthgvrhdrrgdruhhnrghlsegrrhhinhgtledrtghomhdprh
-    gtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhr
-    tghpthhtoheprghnughrvggrshesghgrihhslhgvrhdrtghomhdprhgtphhtthhopehgvg
-    gvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheprghlvgigrghn
-    uggvrhdrshhvvghrughlihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrhhgih
-    hordhprghrrggtuhgvlhhlohhssehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhurhgv
-    nhgssehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrg
-    gurdhorhhgpdhrtghpthhtohepihhrrgdrfigvihhnhiesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:g4DCaPln0xPi_AdWtVR-mPv6uC8M-3Q_mjf16Kd5LjcVVSzFRbJ7CA>
-    <xmx:g4DCaDlZzyLWYRlZII_JRVLfe6viWHF9oK_S1UNgWncQPOR1vmL64w>
-    <xmx:g4DCaJdy81733zjxS4Q3r5w2j6PHhciLt1QMfw2trLXRldoMsUuYcw>
-    <xmx:g4DCaJIi6RXGIaczaDEPnKMDiC-8AkssR85-snNhqeii8rn1LFIfJA>
-    <xmx:hIDCaH7vVqOM0fbJf4funeExzGloqdRoMAB7v2eOhCknP0mHQleXCcBx>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D083E700065; Thu, 11 Sep 2025 03:55:46 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757577382; c=relaxed/simple;
+	bh=NdLKAQlWUr0SnI1fWCp+SY3s4Yp8zDJc9KTErx0pre0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=J+PIdW+pWqEamePuK2udi79z2kH4TDfB7ufgmKiEZs7U5H/hO6TlaPulIEPnXgQn58oSAn21EpO9fKWk1uPD5N6xf6Gp+Ln5ZTrO+8teTIFq+smLY0APL3S/XWB6y/oHvodzInDtzo1QVkrWol2IBKzbdIDlh5tx7aIddUEzsZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pgc9bvnw; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757577381; x=1789113381;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NdLKAQlWUr0SnI1fWCp+SY3s4Yp8zDJc9KTErx0pre0=;
+  b=Pgc9bvnwgYzyS/oxiqWP3c9lw0aP9dn6rxdlL3PzA8mxIhVDLI7VWEIc
+   PXuh849AQsKYhULkJnZnk7DSxbw9JozFxpOraUc/j7xLlm5D6kCDTjD7Y
+   qz3Zh2FW3XvqrvYZ/V4Qcc2VyOW57vGxXyFD7tUNySMsZBPfRvBabDVW5
+   Edv4vebcGuwLbMEUn3zKVInFdT7tBMpXOkttM6wP6bImWYGr/7sZa0IJe
+   WHFpyn+L6Qlwkc3v+P5xRvCIVIy3Y22KYq6QWDcZ3NF05oOk8KvXoYzyy
+   OFLKYQtZLQWtlNrvxbZR1QUpDksD97mlyB6mXBb9oV/9ganG0ASleeG5L
+   Q==;
+X-CSE-ConnectionGUID: S31QwmsYTrWq/jWcxfR/fg==
+X-CSE-MsgGUID: vFxmZBZaSb6V1uc1Zvmy7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="58942205"
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="58942205"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:56:20 -0700
+X-CSE-ConnectionGUID: vPGNxPT3TFm13imjCknavQ==
+X-CSE-MsgGUID: PTSScRSiSEyaM2fCiqO+cQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="210757574"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.187])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:56:13 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: linux-pci@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	amd-gfx@lists.freedesktop.org,
+	David Airlie <airlied@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 00/11] PCI: Resizable BAR improvements
+Date: Thu, 11 Sep 2025 10:55:54 +0300
+Message-Id: <20250911075605.5277-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AmcCJOTBQ5ho
-Date: Thu, 11 Sep 2025 09:53:45 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andreas Larsson" <andreas@gaisler.com>, ksummit@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
- linux-mm@kvack.org, imx@lists.linux.dev,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Richard Weinberger" <richard@nod.at>,
- "Lucas Stach" <l.stach@pengutronix.de>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Ankur Arora" <ankur.a.arora@oracle.com>,
- "David Hildenbrand" <david@redhat.com>,
- "Mike Rapoport" <rppt@kernel.org>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>,
- "Suren Baghdasaryan" <surenb@google.com>,
- "Ira Weiny" <ira.weiny@intel.com>, "Nishanth Menon" <nm@ti.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "Chester A. Unal" <chester.a.unal@arinc9.com>,
- "Sergio Paracuellos" <sergio.paracuellos@gmail.com>
-Message-Id: <363853cd-7f10-4aa9-8850-47eee6d516b9@app.fastmail.com>
-In-Reply-To: <5d2fec2b-8e59-417e-b9e6-12c6e27dd5f0@gaisler.com>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <5d2fec2b-8e59-417e-b9e6-12c6e27dd5f0@gaisler.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 11, 2025, at 07:38, Andreas Larsson wrote:
->
-> We have a upcoming SoC with support for up to 16 GiB of DRAM. When that is
-> used in LEON sparc32 configuration (using 36-bit physical addressing), a
-> removed CONFIG_HIGHMEM would be a considerable limitation, even after an
-> introduction of different CONFIG_VMSPLIT_* options for sparc32.
+pci.c has been used as catch everything that doesn't fits elsewhere
+within PCI core and thus resizable BAR code has been placed there as
+well. Move Resizable BAR related code to a newly introduced rebar.c to
+reduce size of pci.c. After move, there are no pci_rebar_*() calls from
+pci.c indicating this is indeed well-defined subset of PCI core.
 
-I agree that without highmem that chip is going to be unusable from Linux,
-but I wonder if there is a chance to actually use it even with highmem,
-for a combination of reasons:
+Endpoint drivers perform Resizable BAR related operations which could
+well be performed by PCI core to simplify driver-side code. This
+series adds a few new API functions to that effect and converts the
+drivers to use the new APIs (in separate patches).
 
-- sparc32 has 36-bit addressing in the MMU, but Linux apparently never
-  supported a 64-bit phys_addr_t here, which would be required.
-  This is probably the easiest part and I assume you already have patches
-  for it.
+While at it, also convert BAR sizes bitmask to u64 as PCIe spec already
+specifies more sizes than what will fit u32 to make the API typing more
+future-proof. The extra sizes beyond 128TB are not added at this point.
 
-- As far as I can tell, the current lowmem area is 192MB, which would
-  be ok(-ish) on a 512MB maxed-out SPARCstation, but for anything bigger
-  you likely run out of lowmem long before being able to touch the
-  all highmem pages. This obviously depends a lot on the workload.
+These are based on pci/main, there are two minor conflicts with the
+work in pci/resource but I'm hesitant to base this on top of it as this
+is otherwise entirely independent. If we end up having to pull the
+bridge window select changes, there should be no reason why this does
+have to become collateral damage (so my suggestion, if this is good to
+go in this cycle, to take this into a separate branch than pci/resource
+and deal with those small conflicts while merging into pci/next).
 
-- If you come up with patches to extend lowmem to 2GB at the expense
-  of a lower TASK_SIZE, you're still  looking at a ration of 7:1 with
-  14GB of highmem on the maxed-out configuration, so many workloads
-  would still struggle to actually use that memory for page cache.
+I've tested sysfs resize, i915, and xe BAR resizing functionality. In
+the case of xe, I did small hack patch as its resize is anyway broken
+as is because BAR0 pins the bridge window so resizing BAR2 fails. My
+hack caused other problems further down the road (likely because BAR0
+is in use by the driver so releasing it messed assumptions xe driver
+has) but the BAR resize itself was working which was all I was
+interested to know. I'm not planning to pursue fixing the pinning
+problem within xe driver because the core changes to consider maximum
+size of the resizable BARs should take care of the main problem by
+different means.
 
-- If we remove HIGHPTE (as discussed in this thread) but keep HIGHMEM,
-  you probably still lose on the 16GB configuration. On 4GB configurations,
-  HIGHPTE is not really a requirement, but for workloads with many
-  concurrent tasks using a lot of virtual address space, you would
-  likely want to /add/ HIGHPTE support on sparc32 first.
+Some parts of this are to be used by the resizable BAR changes into the
+resource fitting/assingment logic but these seem to stand on their own
+so sending these out now to reduce the size of the other patch series.
 
-When you say "used in LEON sparc32 configuration", does that mean
-you can also run Linux in some other confuration like an rv64
-kernel on a NOEL-V core on that chip?
 
-Aside from the upcoming SoC and whatever happens to that, what is
-the largest LEON Linux memory configuration that you know is used
-in production today and still requires kernel updates beyond ~2029?
+Ilpo Järvinen (11):
+  PCI: Move Resizable BAR code into rebar.c
+  PCI: Cleanup pci_rebar_bytes_to_size() and move into rebar.c
+  PCI: Move pci_rebar_size_to_bytes() and export it
+  PCI: Improve Resizable BAR functions kernel doc
+  PCI: Add pci_rebar_size_supported() helper
+  drm/i915/gt: Use pci_rebar_size_supported()
+  drm/xe/vram: Use PCI rebar helpers in resize_vram_bar()
+  PCI: Add pci_rebar_get_max_size()
+  drm/xe/vram: Use pci_rebar_get_max_size()
+  drm/amdgpu: Use pci_rebar_get_max_size()
+  PCI: Convert BAR sizes bitmasks to u64
 
-      Arnd
+ Documentation/driver-api/pci/pci.rst        |   3 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c  |   8 +-
+ drivers/gpu/drm/i915/gt/intel_region_lmem.c |  10 +-
+ drivers/gpu/drm/xe/xe_vram.c                |  32 +-
+ drivers/pci/Makefile                        |   2 +-
+ drivers/pci/iov.c                           |   9 +-
+ drivers/pci/pci-sysfs.c                     |   2 +-
+ drivers/pci/pci.c                           | 145 ---------
+ drivers/pci/pci.h                           |   5 +-
+ drivers/pci/rebar.c                         | 318 ++++++++++++++++++++
+ drivers/pci/setup-res.c                     |  78 -----
+ include/linux/pci.h                         |  15 +-
+ 12 files changed, 354 insertions(+), 273 deletions(-)
+ create mode 100644 drivers/pci/rebar.c
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.39.5
+
 
