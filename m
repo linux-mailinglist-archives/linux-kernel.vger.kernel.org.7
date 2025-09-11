@@ -1,240 +1,159 @@
-Return-Path: <linux-kernel+bounces-812438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C39B53822
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:47:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7EFB53820
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B10BAA4EF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D3941CC1D76
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:48:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0361E21C16A;
-	Thu, 11 Sep 2025 15:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A12345729;
+	Thu, 11 Sep 2025 15:47:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ma8eQ+/z"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkT6qUXG"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE3328E3F;
-	Thu, 11 Sep 2025 15:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DBD28E3F
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757605669; cv=none; b=jfJjs9uhdO0Kk/ORWQWrUBq9CCAzRMUCoyUW/pDjPGY52ptjliG3BakvQM0CmyKSpipoatBm+fdTMsGslVFtU0Et2eyd+mC+iiVDdZpVB66WYlqaJiZV4bFLm+WelkB8dpNGLHV/kXou/HhjZ19CO0HVTmaFJw7UOfOA8tWycqw=
+	t=1757605652; cv=none; b=GTHUN+7vB8ndJkoVVfsn2OyI4krCBurGu3Vy7osLiZV7BxbFwwx9PJC3eOU4bj/lhjDWhq1RlL0WBRAdyugoJkYpxvYRAmn4fG4TjnWa4zZOMBalT0Akg79oT8AH2aujj11KhOTl0adZyg1ddUNnFOZUmpqyTcsNypmrlfG4tw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757605669; c=relaxed/simple;
-	bh=KrD4lWSdecI/+3bwPZe4TX6Cn1GbTfULQTAKLOkD7LE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gjlJ6Px9i3XUj3bv9Yn61xvKu892Rm+LldzwS4nuFsBtX+XamkQeyrXcQlwF///sB4K8YWAcrfxh/5j9pNWv/MLzvR/FQimvuvjb7ERCFCiyv99WklkBFHP2TWv6OuLn3y4DOLpi8VAVMu//tn33rAn2Q6GV0+YW8g1ezpxh/Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ma8eQ+/z; arc=none smtp.client-ip=209.85.221.43
+	s=arc-20240116; t=1757605652; c=relaxed/simple;
+	bh=CugXlghZYBFLvgEK/vYdr8mfPvn0Xn1Vb78W8OcEnkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1AmdC1onw09w6dhyvBPjpdmLztFnuiFtvSlSFRewLniDk5vD2nl70NiC/jNJ8ipRniaEW63E23r+vDDix+srbaZnfNfn8TREqQsa4ZnaeRkp02DjiBpk/xjYnYSU3afYzE3FGayYsEY5rOnM2THUYlslEFvEOXeGg6PmkC/gaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkT6qUXG; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3da4c14a5f9so1218737f8f.0;
-        Thu, 11 Sep 2025 08:47:46 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45ed646b656so3027485e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:47:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757605665; x=1758210465; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6It5EKz33aRi1AJML35SuBmEOUc5T/In7sSeVq9N+wM=;
-        b=ma8eQ+/z5JBXd4oAeAqrn8N/GKJM3i82x+i0TiLUyLTSfMCMGkU867CJBa2bSTFYN5
-         bSkVYYmeZE17XbPWISF8UWBjZ+HgtIrclp4L78Syjvyh8mb/iI6IUV4DTkYknohJfnX9
-         qBDImYfMaRC92aNglgM/Jbem3XbmD42LKt4/xxohXN4UFj5Rc5qUvrRq9pUfZnfwougA
-         ga+1yCNGQmK9Lt/vs2lr1tsPckDbpOA3/nkpO7CTFNo/fyCEqDNF9WW5DFMbXt6hycHl
-         lS5XqmpbphR+ehLZR7yuIa1uH/HbqI09gECN/hciOObZN2mwoq3DDnR6z4QUIckQorxu
-         ocyA==
+        d=gmail.com; s=20230601; t=1757605648; x=1758210448; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wFx9oDnda6VBYzco4HQeSyIICMaeMRy33Q5Glx2a6V4=;
+        b=gkT6qUXG9KaGRWIiMiWAcRgXsK2Z+EGg5vF9MEntCf0AIKLZclomz0egyL2pw0lp7N
+         R2sGFSHwmHXfwXRQpU2YYNgZIKV3hzKimamhzBxpO3Zs+s1ZegYC85Edv2Du1+53Qumn
+         AORNlnd/Svf8f6/Ly1SvKP2yIu770UXFb/remfRnBYKMya+r7AQDgYPiGn3xgjUGHcB/
+         s5oPFumZfgk/RE8wdEIb6zgtSg1e8qi+YTpv16oq+SMhdZCeleOS6vFU+2yzOfNr494e
+         x5+gdhXvNDqFbvtJ5rPGAZ0UpnftNrlN6rwhgDNtJWjaZm3Qkq09s9Bvd3QjyfFm/iut
+         j+3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757605665; x=1758210465;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6It5EKz33aRi1AJML35SuBmEOUc5T/In7sSeVq9N+wM=;
-        b=LNlkWrj/WEqmTRX8kLvWNMr6bqWRKxyGnDgTXB2WsUu/ZDaOHQJkUP76VqVP82oB42
-         HKd1z7S5Bmuj+FOXFSvgfkpawoDSE2RFnnpjcjtrbjoW+53nS0/HlSxppv1Qw49luhLc
-         autCHGunKM0pFnDniKe610FVAKQpa5m9mBUORq0hyLcsVNZXXLcSontWanc0jKla0Udd
-         PTsEDRCxM4H8IqGqic33AQGbxd+NumYiyKVS4irn8jsKNuzQiId4Bctwkg8NzUkIP0bc
-         Gb/mR5lWgNzu1MdgcNNxFfLf8mFRq1ZtlIXDnB6IiVGM37lpS6wM96zBZ/C/NF4HQU5u
-         nI4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVz4aZ94dMOtaYnbqXuq0e/42vmdW+JwSbD64nqultNefBhAPxRcmXRUi2pjN4n6B4778NRim0yGyC9mLYolpk=@vger.kernel.org, AJvYcCWnDWvw0ANXFzC6vcFjYqvk5c+r1YfV1rThquWdd9jdo/XnLh5SEj/ekQWc5glT3dxpxQOqh9MIwm/55JBf@vger.kernel.org, AJvYcCWtV0VMldnJLa5+G8Z2Y/vjV5wpEdEKxFf+SStYb7ugQU5yJTnd/7bFpwZpfQO1v6PTWmtP5Vy4T8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEluU3XpNDERxBI2p1GoXgeId1u7pvftG2kuR2Ot2o530pYpSu
-	I9Jyg9ZpRr2AdShUixE5QvXVt6i1QRaW0DdgXx5H76bJgHcruhPt8ArBD41lMw==
-X-Gm-Gg: ASbGncuCHKdtd+DwgiWHNv0B5l8JWEu3ghGeN66Gsfn1M5SKabElL8S+dfLhL+dCyWS
-	2nvhbuEXcebhTPSn18CW2w0JWQVDIja1K5Owdv/cYtkavpC856KyHvEDnuTcRZh60Eg8T+uU9sW
-	pc/d3aDdKBBqMS15KFerU0Z+6/NL7pqKYvJFdO3glWeAyYMZ6MW5VO8V9LXkQTEu5zEmA2TSlp6
-	Zoyvgabom+hH4wa4TMlEZBHH5rtQP1yBLOQOjna3hHRopFtxPkzBZKyIybZTrACxacFzVhjalcU
-	U7zepVAG+Qq2WAuijnQbEsunEnF9M+gEebtdzL2k/cangf0Rkw561p17attRWwwzs/5auk/6WoW
-	jNTvTHau4VeMVascHIdWw+bS13RrxPSvBnsALaH8zGs/8p44=
-X-Google-Smtp-Source: AGHT+IGorxw+6+vyKtDRsWImO+qVuBEhRyUsI34lT7rPMpPKae3x0GLKWl+jIXB3rC0Tb7IKUutSxg==
-X-Received: by 2002:a5d:64e9:0:b0:3e2:3717:cce5 with SMTP id ffacd0b85a97d-3e75e16b341mr3223389f8f.30.1757605665150;
-        Thu, 11 Sep 2025 08:47:45 -0700 (PDT)
-Received: from localhost.localdomain ([152.37.120.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e03729c76sm28250545e9.6.2025.09.11.08.47.42
+        d=1e100.net; s=20230601; t=1757605648; x=1758210448;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wFx9oDnda6VBYzco4HQeSyIICMaeMRy33Q5Glx2a6V4=;
+        b=MeikMlNSKas3QgdkJrixc6MfaGzsX19vILEmPFX7Ngh9jyhMW9SBoLJZRxMcgFsTqe
+         e7rO7/Bt/+2LX5/ZBMcd2mATS5wlY5xSEVwXZf5uqPzdpqjSKOJah0YAMHZpbv1WoIca
+         SXxGIUyBn08crrJ8lYjPqV58swXsribyZs77SAtnHGXJllpRflqKsJRoh3X7Tvtk71CX
+         ue08DqjinoVohRoDfSbnMZDTlpAZEL/1HFTHORsyqeEAAld8KDu9Zj3XvV2nRnszwXP/
+         r1pitfB4w7gE6VM6JIKX0kiBYzobnMzWcM1zIHZPAfylpVKpY3xnuRivXMB7bEAYXOkc
+         L7nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCS7S/A7jn0706bnwKDfCJELFnUw2im9QzgRhautX/VR9VGn3NEwwl0Rgt5XUxqO3+wgFmiGSGPMox1rw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKPhfMjk5yIwkM5zchQ/Qt3F/eBK2IRrjKh6nK3DkAnt0YAJj9
+	EO/6MvU98gNQuTAvkb5VaKfXphkI0sHx82vqRYrZMuw8U0RZcrno+NsH
+X-Gm-Gg: ASbGncuWRjFbqd5Picwfb2jyZncJZVfm8BVqSBLSMoth6UQvhHdEHoEToCLuooNpiIz
+	9orfLZFr2ubXqkzxFRekfvT+H990oN8g2WJS9JQU0nh39acTrYvXijP92Tbf1EGwTiYU5HGVMK2
+	Ov5gpa/uYRvk2vUQL0NiUFCMIRWRxK7pl7L47JuYUEtriP3J5O96Z4wPzrFe4191s4BjXF5q5yY
+	8OTTJQ2fIL0ASm7ZXvP80Wz727B4bvxIxcsyS76dGe1l152AOsaXbWErsmHTc+fv/DV3lUayT6M
+	T/D4NI8RuaJ9uT+68xVgWCA+8ACz17Md82HnGfMmye2PoA/mCBWyZk/6R/TKEtOO/NNue6yc/bZ
+	TEXjjW0gYMbBZsxMuqLdiWetdecPXHszmCZWhfjGw0V/bPSV3
+X-Google-Smtp-Source: AGHT+IFwYbz7NjDqxXwpnaGQMVwcC9yGmE42myK59UTXFjX0Z6krF3VrWIOyB5o/f16GdxD74dmXBw==
+X-Received: by 2002:a05:600c:5493:b0:45d:98be:ee9e with SMTP id 5b1f17b1804b1-45ddde6a3f0mr164977525e9.1.1757605647599;
+        Thu, 11 Sep 2025 08:47:27 -0700 (PDT)
+Received: from devbig569.cln6.facebook.com ([2a03:2880:31ff:6::])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0152ffc1sm16239635e9.3.2025.09.11.08.47.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 08:47:44 -0700 (PDT)
-From: Igor Korotin <igor.korotin.linux@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Asahi Lina <lina+kernel@asahilina.net>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alex Hung <alex.hung@amd.com>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Xiangfei Ding <dingxiangfei2009@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: [PATCH v5 0/3] rust: i2c: Add basic I2C driver abstractions
-Date: Thu, 11 Sep 2025 16:47:17 +0100
-Message-ID: <20250911154717.96637-1-igor.korotin.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 11 Sep 2025 08:47:26 -0700 (PDT)
+Date: Thu, 11 Sep 2025 08:47:20 -0700
+From: Yueyang Pan <pyyjason@gmail.com>
+To: David Wang <00107082@163.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
+	usamaarif642@gmail.com, rientjes@google.com,
+	roman.gushchin@linux.dev, harry.yoo@oracle.com,
+	shakeel.butt@linux.dev, pasha.tatashin@soleen.com,
+	souravpanda@google.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+Message-ID: <aMLvCCZbmpSE/aql@devbig569.cln6.facebook.com>
+References: <20250909234942.1104356-1-surenb@google.com>
+ <20cafc1c.a658.199394de44e.Coremail.00107082@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20cafc1c.a658.199394de44e.Coremail.00107082@163.com>
 
-This patch series lays the groundwork for writing Linux I2C drivers in 
-Rust by:
+On Thu, Sep 11, 2025 at 11:03:50PM +0800, David Wang wrote:
+> 
+> At 2025-09-10 07:49:42, "Suren Baghdasaryan" <surenb@google.com> wrote:
+> >While rare, memory allocation profiling can contain inaccurate counters
+> >if slab object extension vector allocation fails. That allocation might
+> >succeed later but prior to that, slab allocations that would have used
+> >that object extension vector will not be accounted for. To indicate
+> >incorrect counters, mark them with an asterisk in the /proc/allocinfo
+> >output.
+> >Bump up /proc/allocinfo version to reflect change in the file format.
+> >
+> >Example output with invalid counters:
+> >allocinfo - version: 2.0
+> >           0        0 arch/x86/kernel/kdebugfs.c:105 func:create_setup_data_nodes
+> >           0        0 arch/x86/kernel/alternative.c:2090 func:alternatives_smp_module_add
+> >          0*       0* arch/x86/kernel/alternative.c:127 func:__its_alloc
+> >           0        0 arch/x86/kernel/fpu/regset.c:160 func:xstateregs_set
+> >           0        0 arch/x86/kernel/fpu/xstate.c:1590 func:fpstate_realloc
+> >           0        0 arch/x86/kernel/cpu/aperfmperf.c:379 func:arch_enable_hybrid_capacity_scale
+> >           0        0 arch/x86/kernel/cpu/amd_cache_disable.c:258 func:init_amd_l3_attrs
+> >      49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+> >       32768        1 arch/x86/kernel/cpu/mce/genpool.c:132 func:mce_gen_pool_create
+> >           0        0 arch/x86/kernel/cpu/mce/amd.c:1341 func:mce_threshold_create_device
+> >
+> 
+> Hi, 
+> The changes may  break some client tools, mine included.... 
+> I don't mind adjusting my tools, but still
+> Is it acceptable  to change 
+>       49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create
+> to
+>       +49152      +48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_create*
+> 
+> The '+' sign make it still standout when view from a terminal, and client tools, not all of them though, might not need any changes. 
+> And when client want to filter out inaccurate data items, it could be done by checking the tailing '*" of func name.
 
- 1. Core abstractions 
-    Introduce `i2c::I2cClient`, `i2c::I2cAdapter`, `i2c::Driver` and 
-    built on the existing `struct i2c_client`, `struct i2c_adapter` 
-    and `struct i2c_driver`, with safe Rust wrappers around probe, 
-    transfer, and teardown logic.
+I agree with David on this point. We already have monitoring tool built on top 
+of this output across meta fleet. Ideally we would like to keep the format of 
+of size and calls the same, even for future version, because adding a * will 
+change the format from int to str, which leads to change over the regex parser 
+many places.
 
- 2. Manual device creation  
-    Provide an API to register an I2C device at runtime from Rust using
-    `I2cBoardInfo` and `I2cAdapter`, including automatic cleanup when 
-    the driver unloads.
+I think simply adding * to the end of function name or filename is sufficient 
+as they are already str.
 
- 3. Sample driver (legacy table, OF & ACPI)  
-    Add `rust_driver_i2c`, a sample that:
-      - creates an I2C client device using `i2c::Registration::new()`
-      - binds to an I2C client via: 
-        - legacy I2C-ID table, 
-        - Open Firmware (device-tree) compatible strings, or
-        - ACPI IDs.
-      - destroyes the I2C client device on exit.
+> 
+> (There would be some corner cases, for example, the '+' sign may not needed when the value reach a negative value if some underflow bug happened)
+> 
+> 
+> Thanks
+> David.
+> 
+> 
+> >Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+> >Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> >---
+> 
 
-Together, these three patches:
-
-- Establish the essential Rust traits and types for I2C drivers.
-- Enable driver binding via legacy ID table, device-tree (OF), or ACPI
-- Enable manual device creation at runtime.
-- Ship a samples showing typical usage 
-
-Igor Korotin (3):
-  rust: i2c: add basic I2C device and driver abstractions
-  rust: i2c: add manual I2C device creation abstractions
-  samples: rust: add Rust I2C sample driver
-
-Changelog
----------
-v5:
- - Rename missed pdev variables to idev (thanks to Daniel).
- - Import `crate::device_id::RawDeviceIdIndex` and 
-   `crate::types::AlwaysRefCounted` in i2c.rs.
- - Switch dev_dbg to dev_info in the sample I2C driver messages.
- - Make `I2cAdapter::get()` return `ARef<I2cAdapter>` instead of 
-   `&I2cAdapter`.
- - Remove `TryFrom<device::Device<Ctx>> for I2cAdapter<Ctx>` (unused; 
-   to be reintroduced in a later I2C series).
- - Remove `AsRef<device::Device<Ctx>> for I2cAdapter<Ctx>` (unused; 
-   to be reintroduced in a later I2C series).
- - Add `AsRef<I2cAdapter> for I2cAdapter<Ctx>`.
- - Use i2c_get/put_adapter instead of get/put_device for 
-   `AlwaysRefCounted<I2cAdapter>`.
- - Update safety comment for `unsafe impl Sync for Registration {}`.
- - Tweak comment for `I2cBoardInfo::new`.
- - Adjust build-time assertion message in `Adapter::register`.
- - Link to v4: https://lore.kernel.org/rust-for-linux/20250820151427.1812482-1-igor.korotin.linux@gmail.com/ 
-v4:
- - Renamed `i2c::I2cAdapterRef` to `i2c::I2cAdapter`.
- - Renamed `i2c::Device` to `i2c::I2cClient` for consistency with 
-   `i2c::I2cAdapter` and to avoid confusion with `i2c::Adapter`
- - Reworked `i2c::I2cAdapter` to be an Opaque around `i2c_adapter` struct
- - Implemented AlwaysRefCounted trait for `i2c::I2cAdapter`. 
- - Fixed numerous comment mistakes and typos all over the code, thanks 
-   to Danilo and Daniel
- - Got rid of all unwrap() use-cases in i2c.rs and rust_driver_i2c.rs.
-   This covers 0-day kernel panic <202508071027.8981cbd4-lkp@intel.com>
- - Removed unnecessary casts.
- - Replaced all addr_of_mut! macros to &raw mut.
- - In `i2c::Adapter::register` method build assert if all ID tables are 
-   None.
- - Renamed all pdrv and pdev instances to idrv and idev respectivly 
- - Implemented an ealry return in `i2c::Adapter::i2c_id_info`
- - Added all missing Safety comments. 
- - Removed `unsafe impl<Ctx: device::DeviceContext> crate::types::AlwaysRefCounted for Device<Ctx>` 
-   implementation which came to v3 from v2 by mistake.
- - Added more details regarding i2c-stub driver usage in rust_driver_i2c
-   comment.
- - Changed `i2c::I2cAdapter::get` return type from `Option<Self>` to 
-   `Result<&'static Self>`.
- - Added Daniel Almeida as a reviewer to the "I2C Subsystem [RUST]" entry 
-   in MAINTAINERS, per his offer.
- - Link to v3: https://lore.kernel.org/rust-for-linux/20250801153742.13472-1-igor.korotin.linux@gmail.com/
-v3: 
- - removed unnecessary i2c_get_clientdata and i2c_set_clientdata rust 
-   helpers. Using generic accessors implemented in [1] instead.
- - Reimplemented i2c::DeviceId based on changes in [2].
- - Using from_result in i2c::Adapter::probe_callback
- - Using explicit drop() for i2c client private data in 
-   `i2c::Adapter::remove_callback`
- - replaced device::Device::as_ref() with device::Device::from_raw in 
-   `i2c::Device::as_ref()`. It is renamed in device::Device.
- - Build Rust I2C only if I2C is built-in
- - Reimplement overcomplicated trait i2c::DeviceOwned the same way it is 
-   implemented in auxiliary [3].
- - Merge rust_device_i2c and rust_driver_i2c samples. Resulting 
-   rust_driver_i2c creates pined i2c_client using i2c::Registration::new 
-   and probes newly created i2c_client.
- - Created a new entry in MAINTAINERS file containing i2c.rs and 
-   rust_driver_i2c.rs in it.
- - Link to v2: [4] 
-
- [1] https://lore.kernel.org/lkml/20250621195118.124245-3-dakr@kernel.org/
- [2] https://lore.kernel.org/rust-for-linux/20250711040947.1252162-1-fujita.tomonori@gmail.com/
- [3] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/rust/kernel/auxiliary.rs?h=v6.16-rc4#n299
- [4] https://lore.kernel.org/rust-for-linux/20250704153332.1193214-1-igor.korotin.linux@gmail.com/ 
-
-v2:
- - Merged separated ACPI support patches since ACPI-table support is 
-   merged into driver-core-next.
- - Added I2cAdapterRef and I2cBoardInfo abstractions 
- - Added DeviceState generic parameter which is used for `i2c::Device`
-   as a sign if the device is created manually
- - Added `DeviceOwned` abstraction which is a safe reference to a 
-   manually created `i2c::Device<Ctx, state::Owned>`. 
- - Added Rust manual I2C device creation sample
- - Link to v1: https://lore.kernel.org/rust-for-linux/20250626174623.904917-1-igor.korotin.linux@gmail.com/
-
- MAINTAINERS                     |   9 +
- rust/bindings/bindings_helper.h |   1 +
- rust/kernel/i2c.rs              | 547 ++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs              |   2 +
- samples/rust/Kconfig            |  11 +
- samples/rust/Makefile           |   1 +
- samples/rust/rust_driver_i2c.rs | 128 ++++++++
- 7 files changed, 699 insertions(+)
- create mode 100644 rust/kernel/i2c.rs
- create mode 100644 samples/rust/rust_driver_i2c.rs
-
-
-base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
--- 
-2.43.0
-
+Thanks
+Pan
 
