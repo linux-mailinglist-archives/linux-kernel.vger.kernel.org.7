@@ -1,156 +1,120 @@
-Return-Path: <linux-kernel+bounces-812652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8AB8B53AF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:59:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B256B53AF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23685A7F22
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:59:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3ED97BE6A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93C33680BB;
-	Thu, 11 Sep 2025 17:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0B91990A7;
+	Thu, 11 Sep 2025 18:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sj6ChNil"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DBBF35690E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="C+oZKZkH"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5203629A6;
+	Thu, 11 Sep 2025 18:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757613489; cv=none; b=hwfFiifxpIhho/uj1GITktUeHqxputWpVSR9IQ7rkZT2i2U6tkqkNhBIX+VXY8vYm3rIeoHZusN3tP4X4B0IAb9V+rP32Qb+zAWLIibMo+T8pwhSGSaxbK12uVD/hLZ8O6V+4BoOnCCHoGBQVxUNBjr5ufyhvpSEU04tL/XHlSo=
+	t=1757613624; cv=none; b=DAquanXoeLni4PrW+FX0fUBAINwTH0Hzy29RafQapnvS4YXbL3rbVneIDlkOUItpIHGtAX55/q/c/Na0iGQP9n4ooyZI9M2vFcCO6DWO8TLpFAl6pdspT9gecWiLfxEpKpi0rI51jedIaYRkHpRx6q4etnO/0C4xWS+wg1YHVcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757613489; c=relaxed/simple;
-	bh=Pm9Apo4QHpXic38DAH5OGxtr6ou8VcwBJFVP53wjRfE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KhSBR4hTxRskpWxeAGxGtnp9bikCcEcQwM6tpzscEBm7RET8D1GywglCMTH+9/UawTai0VdLNotuJh/+/WNVgvXrYzFL+iWjhtkHkS7GDXCZC/XQ+p1JZ0WsnPd1oQROjvM53snL9P8aVlKWpKRS27Ewb5gYbwgF7B6jGQ0A4JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sj6ChNil; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7725147ec88so631671b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:58:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757613487; x=1758218287; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Iw7YUMOBfQ9U5b9jGNBg6dyHxPq4WQMdK/IHZCbdPrk=;
-        b=Sj6ChNil8uV1gQtJZ2ETvPGy1/VD3BKPBiojbm18ihfQvKgS1H5LcakMRcVpL4+XH5
-         5uCVGRZsb78ENUdItmK1X4zj9L33Kq6hcKFq3Oz2QUZoYcpRjDBGP2hBBNqZpB26OqQn
-         Nb+7iBnZeegBpFpzxITyiasNYDKwUjyfeL1aIFTCVW1YMg7HEu0tNGcPpcTFXyECOINO
-         Ia/3LZU7Q6Jj8qAXCm6jDNu0Zlk+SayC5FUNsJBOh8RmC6JMappuY6em2ydJ+B4QDbqf
-         AaqPhi0leb5LKyCw+KCrDzQGwnJ/vaeqa54Ae4+LFVCroYtBo4YFvEKLBUzUYUOs/CyM
-         7fVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757613487; x=1758218287;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Iw7YUMOBfQ9U5b9jGNBg6dyHxPq4WQMdK/IHZCbdPrk=;
-        b=C25IcAk7+agspj78hP8v3GOkAiQhA2lhVFiNUMN3KQAbqms7MWcp09/NPkz7VyvY/D
-         gGVL0AtuNpPMLrjQxZA5rzewOGqdLrolFL/3qARxMASnGXAgpfFKebnSIO6AUx+BuzQe
-         hNAJ1kMHN/ZxW6jo5wePhqQDAMGhfjYoCHW3AhsQ9VJOv8VHwGoHNB8/WApoD7ICItZI
-         sbOgmuy77teZ0BuRHtxNkZEXPJ3VSbcnC4X/TVeXwlFCLj+OjHza7QdDCePu+IqRM0Vo
-         N5P8X7c068oG8m7WhAyNKT8RxoVeYa0D+Vl3crZg8TVZ9oGjSae8St0O9YSrAqbxjZIe
-         UPsg==
-X-Forwarded-Encrypted: i=1; AJvYcCXFI3X3VJBZOp0B9abmqPwJCy/pfZ5r1PA35fikQKIaep339LiTYOg080trLn8n4h1Hs8NQW1h0uDgSJGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXPcUxRIuzAN5J1mv2Z32uUYsjW3poxts1BmgFt+j6nJWqmIxg
-	RdFjmnPm6bITjb0Aj8rR0KXodGyQTsZrC4fUEYX26AsrVZYf9mt+lTGJ
-X-Gm-Gg: ASbGncsKiNs5IVQ0H714N5lm3v/KVYU3pM0/jxJXf1py8z+iZ+y8ljfbzspb6Y5MVbq
-	QNi42lU0X7ANo+Jr6ayKBt6rT3jBnrzzTH4uDQdASNtf8yb3TSxIy1cyn1j+FqK63kkdNk7RJz4
-	JVDxTWRxP6RFNPNb/tWXPbAAK/GLAZlHquiVVmVlvpSZV8d0ovghMgM7s2yRYVUw15H+U1CwDsy
-	4+mljGHfkdOTb4js4jLpZPJYAZzHxsLRL4ZKh8SgRASgJa3KdTmWdBklpJRmA/l8w6X9gKEnBnC
-	G+kWXkiOUuNgPkMiPuJ6aAzFq9DuJXGj/kURdLTlXrQOfJRtPz4kiFeTj72RfQdT9qP9frRTSKu
-	rnko0QWKMmoxO67A54kzZSfd9cGoQnw6uaaJBjojPRS8M23Tq2bQ6ncE=
-X-Google-Smtp-Source: AGHT+IG77yXU5YlLI1tFffiCTEQpvWi9veG5l2RgvVH0S57Unqa0HNc8Ibh+Grt38fgXKTYeu86E+Q==
-X-Received: by 2002:a05:6a21:3394:b0:243:d1bd:fbac with SMTP id adf61e73a8af0-2602820cf69mr266598637.7.1757613486523;
-        Thu, 11 Sep 2025 10:58:06 -0700 (PDT)
-Received: from LAPTOP-PN4ROLEJ.localdomain ([223.112.146.162])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b34254sm2731524b3a.75.2025.09.11.10.58.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 10:58:06 -0700 (PDT)
-From: Slavin Liu <slavin452@gmail.com>
-To: Simon Horman <horms@verge.net.au>,
-	Julian Anastasov <ja@ssi.bg>
-Cc: Slavin Liu <slavin452@gmail.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	lvs-devel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] ipvs: Defer ip_vs_ftp unregister during netns cleanup
-Date: Fri, 12 Sep 2025 01:57:59 +0800
-Message-Id: <20250911175759.474-1-slavin452@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250911144020.479-1-slavin452@gmail.com>
-References: 
+	s=arc-20240116; t=1757613624; c=relaxed/simple;
+	bh=tdvBhQ5ZnKYbcb47s5OjQO4PUGCNXBnLaUkmBb2aqMY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DTl8wtGiILQBF10aeXojUDROGRyOvCJbnm6s0P3JJr1+UbDVdYYKbfddeGITYQszwa4cdLqouZgvBqGfr7Kt4P435LDG5on5rlZgXVPS/mh6FeUXGTmOrqMg+wFuaxRDP0lEUaM3A8d5kOL4pPnsYZSGMdMo6O/U736ZkwcSEA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=C+oZKZkH; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.65.209.91] (unknown [20.236.10.206])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B5F8B211AD2F;
+	Thu, 11 Sep 2025 11:00:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B5F8B211AD2F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757613617;
+	bh=pYPpw5QSY0vqFa2WfBw8sfrfmd1IsrmJuPcZom6xu0Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C+oZKZkH1JCXhDGk9O5OVWqRdsW05R5Qgbm4RJLONZsNkAr44elTq8ZHi79I3/p+D
+	 GMnSqZRdrEzg4+/tBKvJgZfevpANKGLTqSEnJB7RGw+08qrUnv3f7IyIW9aYi3MsUp
+	 PkDCrWYiPHHzg5E2RUNk2afsp3tPAZO13qn8Pef4=
+Message-ID: <e1f9590f-4b81-4026-91c3-c4a48373fddc@linux.microsoft.com>
+Date: Thu, 11 Sep 2025 11:00:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/5] mshv: Introduce new hypercall to map stats page
+ for L1VH partitions
+To: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ prapal@linux.microsoft.com, tiala@microsoft.com, anirudh@anirudhrb.com,
+ paekkaladevi@linux.microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com,
+ Jinank Jain <jinankjain@linux.microsoft.com>
+References: <1757546089-2002-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1757546089-2002-6-git-send-email-nunodasneves@linux.microsoft.com>
+ <949318ba-7623-42d2-90fd-0664915d994c@linux.microsoft.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <949318ba-7623-42d2-90fd-0664915d994c@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On the netns cleanup path, __ip_vs_ftp_exit() may unregister ip_vs_ftp
-before connections with valid cp->app pointers are flushed, leading to a
-use-after-free.
+On 9/11/2025 9:32 AM, Easwar Hariharan wrote:
+> On 9/10/2025 4:14 PM, Nuno Das Neves wrote:
+>> From: Jinank Jain <jinankjain@linux.microsoft.com>
+>>
+>> Introduce HVCALL_MAP_STATS_PAGE2 which provides a map location (GPFN)
+>> to map the stats to. This hypercall is required for L1VH partitions,
+>> depending on the hypervisor version. This uses the same check as the
+>> state page map location; mshv_use_overlay_gpfn().
+>>
+>> Add mshv_map_vp_state_page() helpers to use this new hypercall or the
+>> old one depending on availability.
+>>
+>> For unmapping, the original HVCALL_UNMAP_STATS_PAGE works for both
+>> cases.
+>>
+>> Signed-off-by: Jinank Jain <jinankjain@linux.microsoft.com>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> ---
+>>  drivers/hv/mshv_root.h         | 10 ++--
+>>  drivers/hv/mshv_root_hv_call.c | 89 ++++++++++++++++++++++++++++++++--
+>>  drivers/hv/mshv_root_main.c    | 25 ++++++----
+>>  include/hyperv/hvgdk_mini.h    |  1 +
+>>  include/hyperv/hvhdk_mini.h    |  7 +++
+>>  5 files changed, 112 insertions(+), 20 deletions(-)
+>>
+> <snip>
+> 
+>> @@ -849,10 +850,13 @@ static void mshv_vp_stats_unmap(u64 partition_id, u32 vp_index)
+>>  	};
+>>  
+>>  	identity.vp.stats_area_type = HV_STATS_AREA_SELF;
+>> -	hv_call_unmap_stat_page(HV_STATS_OBJECT_VP, &identity);
+>> +	hv_unmap_stats_page(HV_STATS_OBJECT_VP, NULL, &identity);
+>> +
+>> +	if (stats_pages[HV_STATS_AREA_PARENT] == stats_pages[HV_STATS_AREA_SELF])
+>> +		return;
+> 
+> Nit, without patch 2, this hunk is a no-op. Despite that, looks good to me.
+> 
+Ah, thanks - in fact it probably should have been in that patch instead of
+this one in the first place.
 
-Fix this by introducing a global `exiting_module` flag, set to true in
-ip_vs_ftp_exit() before unregistering the pernet subsystem. In
-__ip_vs_ftp_exit(), skip ip_vs_ftp unregister if called during netns
-cleanup (when module_removing is false) and defer it to
-__ip_vs_cleanup_batch(), which unregisters all apps after all connections
-are flushed. If called during module exit, unregister ip_vs_ftp
-immediately.
-
-Fixes: 61b1ab4583e2 ("IPVS: netns, add basic init per netns.")
-Suggested-by: Julian Anastasov <ja@ssi.bg>
-Signed-off-by: Slavin Liu <slavin452@gmail.com>
----
- net/netfilter/ipvs/ip_vs_ftp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
-index d8a284999544..206c6700e200 100644
---- a/net/netfilter/ipvs/ip_vs_ftp.c
-+++ b/net/netfilter/ipvs/ip_vs_ftp.c
-@@ -53,6 +53,7 @@ enum {
- 	IP_VS_FTP_EPSV,
- };
- 
-+static bool exiting_module;
- /*
-  * List of ports (up to IP_VS_APP_MAX_PORTS) to be handled by helper
-  * First port is set to the default port.
-@@ -605,7 +606,7 @@ static void __ip_vs_ftp_exit(struct net *net)
- {
- 	struct netns_ipvs *ipvs = net_ipvs(net);
- 
--	if (!ipvs)
-+	if (!ipvs || !exiting_module)
- 		return;
- 
- 	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
-@@ -627,6 +628,7 @@ static int __init ip_vs_ftp_init(void)
-  */
- static void __exit ip_vs_ftp_exit(void)
- {
-+	exiting_module = true;
- 	unregister_pernet_subsys(&ip_vs_ftp_ops);
- 	/* rcu_barrier() is called by netns */
- }
--- 
-2.34.1
+> Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+> 
+>>  
+>>  	identity.vp.stats_area_type = HV_STATS_AREA_PARENT;
+>> -	hv_call_unmap_stat_page(HV_STATS_OBJECT_VP, &identity);
+>> +	hv_unmap_stats_page(HV_STATS_OBJECT_VP, NULL, &identity);
+>>  }
+> 
+> <snip>
 
 
