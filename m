@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-812080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6BAB532AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60CDAB532B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:49:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84C917BC3E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 834123AAF99
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094BC322552;
-	Thu, 11 Sep 2025 12:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FEB322747;
+	Thu, 11 Sep 2025 12:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2Jgjxe0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OPczHEo/"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535F0243367;
-	Thu, 11 Sep 2025 12:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C0E15746E;
+	Thu, 11 Sep 2025 12:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594817; cv=none; b=Inw/djCo98URhdN9WKD2pxVSzefAKXrmKemz7GiTEwpO2PFl9vy/io4h1+/N6RhC4wevVnADNoUMQvWVgMrhS7xbb9G5ve6LglLwUFZL9nDNm8Ej5FnMYMHJTEcoWQD4IWBVMKTeB8Hb5HMnExsYbtp5BJKR7DukRcO/pqrFvZc=
+	t=1757594970; cv=none; b=PlIclExB3bI0J5KUYoBhYIVdOQK2fKXkTPkJrYxtImbsH7hg2+auF0sV4LVBOKYj6rGGPqbI5xIgy0hM9B2Qekq10qabu/HqzAjZZdyl/Ate21km12NmcEPqb0hCAT5ilG8mXoy0QpwKZfKIEfjIUjeZF+0fUQgrXfgAkKYPf5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594817; c=relaxed/simple;
-	bh=ZMKRsM2d2FmjPym3iMEMNiiUE1WxtkOsfG1kTOUZ+po=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CRzUdM5A3aU9Vv0jArtMtxwfRoazMe7P872DMOqntxUPtO1Ahw2RvF3akR53HZLN1IWmWCzg5/8K1jkrojmGEQOLxYDi13beQe4YlSmWqDVJjipsnykPlbW5vUZM5i/L6mla73njPrtbs9faRqkAHO5v2T/iRajaRvV6N5scF20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2Jgjxe0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1842C4CEF1;
-	Thu, 11 Sep 2025 12:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757594816;
-	bh=ZMKRsM2d2FmjPym3iMEMNiiUE1WxtkOsfG1kTOUZ+po=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=b2Jgjxe0smjNxwt90PXOQmhfvrW+ekazryG1m+dsEte/g78R+1fK3qaDluF7kr6qw
-	 DOUSJCOcA1AxyvONbB/ozhz0+y2dBOVqOu1Npn4WNDyBu0uKNYhPZcI5gSvrxShHsA
-	 JahfpeIWpvJth+407eK40K+s2A6BHrfSYHtL/DPAdToRxSNbDeLCoCxQn86SIUuIGk
-	 YWGOFAF4lrSbKcYkJPXMYY0KzQQ2SNnLs89YCEMmlxTVk8emI6d5xVNPdLO3qjITm7
-	 qSlhqA5q/vBTAeTXwmixuXgvjIqOB/4KixRAVS5iQNIruTnDfHHodcyWPNoY4n/ayS
-	 Y/RuMddb9f1Hw==
-Message-ID: <ce74db34-77bc-4207-94c8-6e0580189448@kernel.org>
-Date: Thu, 11 Sep 2025 14:46:51 +0200
+	s=arc-20240116; t=1757594970; c=relaxed/simple;
+	bh=95VGmn5zYkdSFvwiFR9CCNoXOXQuzw0/aWLYKuW80lw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=e54Ss4lGmC3K4dPuujn9/Q7lM8Aco1XDc6EMKgv+a1UYIXAXQRsfEHgm4fVX5GR012EPlR+IGW0u8sXQg519LhHNp/6pFcytRC5riWtNa7IWQoctDrlqh4AQOw3kA9wec8vlL4pka/f52fCdB1j8k0+v8fAb3oL8Km47UA8Je2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OPczHEo/; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BBQnrZ026440;
+	Thu, 11 Sep 2025 12:49:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	o1CjqlXhvL+dqcsZqbFvvfk8Xta9TV6JWB9PtbZ0BjE=; b=OPczHEo/9jaGv9CX
+	IdGQHF71IePA1SoA9c2Jjy7IWzLcusSfCQNqqhJEONEs0erQ5J4D/cczOZujZZTM
+	M8TFfRibu0oVcs+hEQinP/RAjFxHwE6AKYqnTHzPc1qyWCmSW0H88zbQa9k37Lqd
+	Emj7RCzGqgIIpJSnQ15NTYNR5eoG+0dOLd0GKaToWXIuYorpKh7zjU30rwe6AxhC
+	DcOkwRh49/xkzRqzBvvJ0nprE36pXdp8R5o5NXIapodNguX7Dr0v5PA+gBKshInm
+	6VhVqZTXSECoh1HB1GMTHomfBiKtj3UXmovCHr9n3WPfxdRudlYa6AU6N7PxV6HD
+	XE3nLQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj0ykxt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 12:49:19 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58BCnHr8009491
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 12:49:17 GMT
+Received: from [10.206.103.106] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 11 Sep
+ 2025 05:49:11 -0700
+Message-ID: <0ca4f6bb-b2a2-4f98-a494-bb0507bafcd5@quicinc.com>
+Date: Thu, 11 Sep 2025 18:19:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,131 +64,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/12] gpu: nova-core: move GSP boot code to a
- dedicated method
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
- Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
- nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-References: <20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com>
- <20250911-nova_firmware-v5-2-5a8a33bddca1@nvidia.com>
- <e1755470-587b-4a43-8171-3d031b7fb4f4@kernel.org>
- <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: monaco-evk-camera: Add DT overlay
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Vikram Sharma <quic_vikramsa@quicinc.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
+        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
+        <will@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <quic_svankada@quicinc.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Ravi Shankar
+	<quic_rshankar@quicinc.com>,
+        Vishal Verma <quic_vishverm@quicinc.com>
+References: <20250909114241.840842-1-quic_vikramsa@quicinc.com>
+ <20250909114241.840842-4-quic_vikramsa@quicinc.com>
+ <w54mpkzk7irjb7m5jiouxhj77czj4ex72oqioaph4o5qhcsay2@qjolctktsu4s>
+ <8104bb41-e827-4daa-bc96-9b6678a9d345@quicinc.com>
+ <3d26b554-727a-44cb-a1a9-56f49775ba3a@quicinc.com>
+ <j475dpcflsibhrim44wjmtbfcfht5jzvptlzrj354oyjee5mit@wmfc6zmrkbfs>
 Content-Language: en-US
-In-Reply-To: <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Nihal Kumar Gupta <quic_nihalkum@quicinc.com>
+In-Reply-To: <j475dpcflsibhrim44wjmtbfcfht5jzvptlzrj354oyjee5mit@wmfc6zmrkbfs>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: DnpLQNfpcOq7b1_m4H8RFmoDZtxR2qx6
+X-Proofpoint-GUID: DnpLQNfpcOq7b1_m4H8RFmoDZtxR2qx6
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfX15Lt/VU2vMEm
+ QTxoNQx6IOx0kCqzgsv0JVD+mSxb5/G34E2gcuu01cw8dyqhpgYmxVvTWxOiwsWKoWGkm5bvr+D
+ sIMYxrgn8VQlfHCtYksLf5Eo9Yn88kUJAIlnsG2TzakfmWeL9AebUI+Qj74RKS0Ex6b4ErcWwuT
+ 8KA9FKKwUNSEbn90zZvjfIQbAuF/oC24gDzxU8OE2Vl0al/GSWrB/aGnpCk70K+29/Y4SKbiJ+a
+ esQtoxqI/up9PEPywcrDL8iR4Br+HjJc8DPpO11VgIdFTzLIC3duD0JcKAnQdK3WZrn1sAe9bXL
+ /sSpuFAwUocLMUrASt3WGVMW418aWVgbNedBNpZqRGn6f4DXcI47ja97T1tiCQcFYIwqFRdIWP9
+ wDU/1Ugn
+X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c2c54f cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
+ a=5w7gkbzRxSBdikr_-JgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060024
 
-On 9/11/25 2:17 PM, Alexandre Courbot wrote:
-> On Thu Sep 11, 2025 at 8:22 PM JST, Danilo Krummrich wrote:
->> On 9/11/25 1:04 PM, Alexandre Courbot wrote:
->>> +    /// Attempt to start the GSP.
->>> +    ///
->>> +    /// This is a GPU-dependent and complex procedure that involves loading firmware files from
->>> +    /// user-space, patching them with signatures, and building firmware-specific intricate data
->>> +    /// structures that the GSP will use at runtime.
->>> +    ///
->>> +    /// Upon return, the GSP is up and running, and its runtime object given as return value.
->>> +    pub(crate) fn start_gsp(
->>> +        pdev: &pci::Device<device::Bound>,
->>> +        bar: &Bar0,
->>> +        chipset: Chipset,
->>> +        gsp_falcon: &Falcon<Gsp>,
->>> +        _sec2_falcon: &Falcon<Sec2>,
->>> +    ) -> Result<()> {> +        let dev = pdev.as_ref();
->>> +
->>> +        let bios = Vbios::new(dev, bar)?;
->>> +
->>> +        let fb_layout = FbLayout::new(chipset, bar)?;
->>> +        dev_dbg!(dev, "{:#x?}\n", fb_layout);
->>> +
->>> +        Self::run_fwsec_frts(dev, gsp_falcon, bar, &bios, &fb_layout)?;
->>> +
->>> +        // Return an empty placeholder for now, to be replaced with the GSP runtime data.
->>> +        Ok(())
->>> +    }
+
+
+On 11-09-2025 15:38, Dmitry Baryshkov wrote:
+> On Thu, Sep 11, 2025 at 02:49:59PM +0530, Nihal Kumar Gupta wrote:
 >>
->> I'd rather create the Gsp structure already, move the code to Gsp::new() and
->> return an impl PinInit<Self, Error>. If you don't want to store any of the
->> object instances you create above yet, you can just stuff all the code into an
->> initializer code block, as you do in the next patch with
->> gfw::wait_gfw_boot_completion().
+>> On 10-09-2025 12:33, Vikram Sharma wrote:
+>>> On 9/9/2025 7:31 PM, Dmitry Baryshkov wrote:
+>>>> On Tue, Sep 09, 2025 at 05:12:40PM +0530, Vikram Sharma wrote:
+>>>>> From: Nihal Kumar Gupta<quic_nihalkum@quicinc.com>
+>>>>>
+>>>>> Enable IMX577 sensor using the CCI1 interface on Monaco EVK.
+>>>>> Camera reset is controlled through an I2C expander,
+>>>>> and power supply is managed via tlmm GPIO74.
+>>>> Why is done as an overlay? Is it a seprate mezzanine?
+>>> It’s not a separate mezzanine; monaco-evk does not come with an attached camera 
+>>> sensor by default.
+>>> The overlay simply reflects an optional camera sensor attachment (e.g., IMX577 
+>>> on CSIPHY1)
+>>> That is why camera sensor is configured in monaco-evk-camera.dtso instead of 
+>>> modifying the base monaco-evk.dts.
+>>> Please suggest and alternative approach if you feel this is not correct
+>> Dmitry, Do you agree with this justification or you have a follow-up comment?
+>> Can we post v2 with the same change addressing other comments.
+> The previous email didn't land to the mailing list, I'm not sure why.
 > 
-> I don't think that would work, or be any better even if it did. The full
-> GSP initialization is pretty complex and all we need to return is one
-> object created at the beginning that doesn't need to be pinned.
-> Moreover, the process is also dependent on the GPU family and completely
-> different on Hopper/Blackwell.
-
-Why would it not work? There is no difference between the code above being
-executed from an initializer block or directly in Gsp::new().
-> You can see the whole process on [1]. `libos` is the object that is
-> returned (although its name and type will change). All the rest it
-> loading, preparing and running firmware, and that is done on the GPU. I
-> think it would be very out of place in the GSP module.
+> Anyway:
+> - What are other options that we might support? Having a single
+>   monaco-evk-camera overlay means that this is the only configuration
+>   that we plan to support.
 > 
-> It is also very step-by-step: run this firmware, wait for it to
-> complete, run another one, wait for a specific message from the GSP, run
-> the sequencer, etc. And most of this stuff is thrown away once the GSP
-> is running. That's where the limits of what we can do with `pin_init!`
-> are reached, and the GSP object doesn't need to be pinned anyway.
+> - It all should have been described in the commit message. Please update
+>   it for the next revision.
 
-I don't see that, in the code you linked you have a bunch of calls that don't
-return anything that needs to survive, this can be in an initializer block.
+Yes, We have planned to support device tree overlay of the IMX577 sensor via CSIPHY1 only.
+I'll update the commit message in v2
 
-And then you have
-
-let mut libos = gsp::GspMemObjects::new(pdev, bar)?;
-
-which only needs the device reference and the bar reference.
-
-So you can easily write this as:
-
-try_pin_init!(Self {
-   _: {
-      // all the throw-away stuff from above
-   },
-   libos <- gsp::GspMemObjects::new(pdev, bar),
-   _: {
-      libos.do_some_stuff_mutable()?;
-   }
-})
-> By keeping the initialization in the GPU, we can keep the GSP object
-> architecture-independent, and I think it makes sense from a design point
-> of view. That's not to say this code should be in `gpu.rs`, maybe we
-> want to move it to a GPU HAL, or if we really want this as part of the
-> GSP a `gsp/boot` module supporting all the different archs. But I'd
-> prefer to think about this when we start supporting several
-> architectures.
-
-Didn't we talk about a struct Gsp that will eventually be returned by
-Self::start_gsp(), or did I make this up in my head?
-
-The way I think about this is that we'll have a struct Gsp that represents the
-entry point in the driver to mess with the GSP command queue.
-
-But either way, this throws up two questions, if Self::start_gsp() return a
-struct GspMemObjects instead (which is probably the same thing with a different
-name), then:
-
-Are we sure this won't need any locks? If it will need locking (which I expect)
-then it needs pin-init.
-
-If it never needs pinning why did you write it as
-
-gsp <- Self::start_gsp(pdev, bar, spec.chipset, gsp_falcon, sec2_falcon)?,
-
-in a patch 3?
-> [1] https://github.com/Gnurou/linux/blob/gsp_init_rebase/drivers/gpu/nova-core/gpu.rs#L305
-
+Regards,
+Nihal Kumar Gupta
 
