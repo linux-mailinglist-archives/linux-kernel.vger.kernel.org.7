@@ -1,162 +1,221 @@
-Return-Path: <linux-kernel+bounces-812025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99A3CB531D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A82DB531DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 049CC3BB284
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC69A1C25FB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC79320CB1;
-	Thu, 11 Sep 2025 12:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA37932142E;
+	Thu, 11 Sep 2025 12:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ys/xrdkX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="nwW6MrjD"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA47D320A05
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C610320CA4
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:15:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757592920; cv=none; b=nzMxQAvTs5qTazZ8/iHwNLDP35WHzyddScp1ws4W379P9nWF3+JKE9tFe5K6x6U7y+MwzFZhAQah6pfiRBr6svqwPWKtMkj+v1RUUNJoplwK3PLSuB1g9+3qwVjC1S1C6+RJTkgbcJF025UI0MviarolloRZG0VXYufIzkWdEsM=
+	t=1757592926; cv=none; b=JoWuXctYV9Ngda9j3ovqKWgfhn3U7tiLGQsA0dUdqDGjLx+y88XUhBlsOybADsNPLGNAgPSARrNh130NR25bfRXyD2GmWIHD6t2rKQ+VSHjrTPIF0JY4DXL2WG+pF/oyVCqfCW7CTN2Q1F8Mearca/b0aU/Q48DT9C5FeGxPJkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757592920; c=relaxed/simple;
-	bh=KbY+GfGU8eYAzle6VU7JlfVLLGsvLi8waFEDCQACGmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1iVjwXSTlLA4+s1aBcIbkTJ5dMJ/VauGbo7MoXaoOd+5Vk9b1I0SMVdDTAYX1Marp45ulxnFsN4CZZySN7AwRx2zX8F97ZbbmVbg7qgJsMKqDSjcdKO+UX+XelV94mu14pYgO5z3xq91x3i2hdtt/BQw7j/0HPyahK6NZqPDks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ys/xrdkX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BBFZnf025757
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:15:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=GObnP9Nzl1ngqqfb5uQqTa0c
-	8SykTYTzmwIuZSpc42E=; b=Ys/xrdkXQnosg3YlpDRWCeLeLg8FbSXtg8MsXSpw
-	AN/92kmr8tSxNnuQDnjH90RM2cM45oDGUsM1XtOMJJ4QyxoSh+OX5LEaPclOInpy
-	7cUtWy70FAMS+Kpw50FxUHBSOIYjgzYpjAkXoY3Sw5Tp8uzqwIA/DnbzsIfc+Pl4
-	qdHmZA7TY50BaEvmDngVQNVmk2W85sovX7rsd+k9Ubab6cOghGrzgPMxl4NlhZ/u
-	OybwRPheFSvquObjVpGuPY1n1e+1aAe/Smi86+jgQ6HD0k3pPUjGlZnrirbN7rna
-	eLYBA5mkqen6XKa36xi1PSiJcTZb4t76PvIKuyodrh3pNw==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj0yg7x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:15:17 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-70edbfb260fso11965936d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:15:17 -0700 (PDT)
+	s=arc-20240116; t=1757592926; c=relaxed/simple;
+	bh=/DNmTsKU2YQxjE0a0HP3UiiRHt/9KrkhYaTXKbwcjD0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UIwIprfBmnKMhz0Wv+BWkpT5GcZCAQD+M+aFFrF9aWBqhFIsEjn9iDIs49ZFOShwkrcKT94YqjCr5ukNFRZyeMPyaEDCfHi7yFRHSvTXgDDEn1HseX3owF4dYEX6TXr/iV9KZiZslMj3l2c9zrByLpAG7+Kp/j/xUxNn6XMcur0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=nwW6MrjD; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77269d19280so556309b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1757592924; x=1758197724; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=edkglS5aPIxkVAhweNonmsQnCtG5vsLjFWEbqDByJiU=;
+        b=nwW6MrjD+OZJX6mH/V9OEhjahwKuEBid/hhioKIBczUzXovjuotueUhM9+UqOmHxI/
+         +dV+octOWCOYH7Y7X1/NnFN/pkV4NpDuQlwajP8Rd9ytbtR+XNkjWf1HKeQoTppEvLE0
+         8vnjfq9I8MlwDpw6C09neZZMEt7jXe6azbvPeqbiSDusdkHUcpGXSLd2Dp/f1l5kTCRT
+         aPOUMXQx1vVmS6uxG4Qic7HQt1Fm5kDtM5rGmJF6ovRYjmm/o+Xi9eNlWaHajKKWrtSw
+         yH5ic5BQDLb3LgRIFSnoS1uZ7uqa6LxMiSD66PHM1CjTmbbsfFzk67Wb5/cOOu5BxRWH
+         +iyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757592916; x=1758197716;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GObnP9Nzl1ngqqfb5uQqTa0c8SykTYTzmwIuZSpc42E=;
-        b=MA7TiTjh3FuYs2+ElUOtuT3z+sOf6mRuT+fk5D8Iuf/FCDxbtRgonhGpqVMpqUCz8C
-         7pS6X0nuNb0ztAkfCYuhgvi3pOx7d4fONDK0hOMtwRhSeJMqe9o7BkZWB42lx1S3r93a
-         x1kv8jSw1H/8Mhdo6N+xYjWn0q4BAtOPOV9VrhVKL3a4pkEmKwQEPk6xxsKkh+gwwbcM
-         ZwrtJpMBW1GUEvp7JIX++M2I5fj82HDmGgPKUEB+TFtNGSuKjx5KMhhDmmXHr0bRTv0q
-         +IIvZjFHhK9Xs396XuSKOERdMnchkRx/yP8AUP0P+LauhqkKjZX4Zzv6mjRx/F8b9os6
-         tqMg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+//q8Vw5FA440zj+nuSLxzxHVXtLMuGuwH/j2B3ydDTSRA2ZNKwS/IRL4qAJELwFIEps2HrRZSidxBnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuLK+IGKhqPqap/q0ws97HNLY7WGC8/mK8s3EuwwUjApYQFhXT
-	gHDfFgQ9W3/KcyPC/c2Gvk/sclKmSkWt+V75EUT8Iw2t7t48mgNzCf1mARqK8dQxJ1wif0QV2Vi
-	QSw5BgvLyHAj7KplWN/S95XgIoVg46dQD3atQHwQvQJexPcXIFg3bCM0F0GQ/+QpY2uc=
-X-Gm-Gg: ASbGnctwxYEkB0rc5i2HQOfXnT2rieIRqaeIQIOnvqg/QfKHV5fD/ha06G4nJ+qSGSj
-	n7J0hM7Rt9A819GicHsnDLiHKWSLW2DyZyEvVXrjxDvJoWE9tf+QcqcKNMmggJyj4Cze/VyqmYU
-	4/8iKtTluFnoHj2VQiZ9r9O2HXLHx/AzwQRI1vPITnFcq5ZV8oBkLyzpTVObz/DDaLTFqi+HgQz
-	6t8PyFJ3wTnQFWTiivv9CUOiHfeyetkRXF8U113ZJ0+eCmyFpCJVz0vkPOZcdaRX/35x9d0tQUO
-	GnPdNitgRbEjMi/sWHygYNNq+qfmEByZM5kIaJEbadvFsIXUZaPbj6RYoVjEq2/6Lgu/H4S+jtL
-	sXB71s07+hhg1XfQBvl2L4/fADf5sQqzKmNJj/VQX5sgQGTXnJTjf
-X-Received: by 2002:ad4:5ca1:0:b0:766:be67:3e63 with SMTP id 6a1803df08f44-766be673f37mr367826d6.18.1757592916337;
-        Thu, 11 Sep 2025 05:15:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFaS5hb658YOvULqbl+MwDx8ZfHggQ7H5w2l6Z+qTVeR5//f0vC8RYh8k3Hi2nLpn+vGPE7Qw==
-X-Received: by 2002:ad4:5ca1:0:b0:766:be67:3e63 with SMTP id 6a1803df08f44-766be673f37mr366986d6.18.1757592915639;
-        Thu, 11 Sep 2025 05:15:15 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1c6ca914sm2605981fa.67.2025.09.11.05.15.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 05:15:13 -0700 (PDT)
-Date: Thu, 11 Sep 2025 15:15:11 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Wenmeng Liu <quic_wenmliu@qualcomm.com>
-Cc: Loic Poulain <loic.poulain@oss.qualcomm.com>,
-        Robert Foss <rfoss@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, vladimir.zapolskiy@linaro.org,
-        todor.too@gmail.com, bryan.odonoghue@linaro.org,
-        linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v5 3/3] arm64: dts: qcom: lemans-evk-camera: Add DT
- overlay
-Message-ID: <ex5oojf6lqti45joyjxpyi2ev4mjcitw4lz6cszu6lustrby4j@zzigwnu4pbxo>
-References: <20250911-camss_rb8-v5-0-c078e4e22d91@oss.qualcomm.com>
- <20250911-camss_rb8-v5-3-c078e4e22d91@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1757592924; x=1758197724;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=edkglS5aPIxkVAhweNonmsQnCtG5vsLjFWEbqDByJiU=;
+        b=lVIOOg5iJpQJC/snBwyueXlvOoC2Jc+eXXu/uDEHXF0eIVDbIRZGhT7yO0w17jO+YD
+         G0mtyQCSDmpoNQtSOpIPE4fElJi9ZKOiFH4Lu8gwvsnnzyugdW+haUtD8Zc2dpoER1yK
+         ScSB4d5h3MVICAchlvrucSd2uXP06+fwHZaN/zv8+AKDQhpqBgw/OxbTSZ89ZvZH+a+P
+         5X1vpCwi44W+YAjPlTnrxQJKRbrQz+LSXqZItGFT2q1kDqrOQ6QucS7VOP4n0vvIcdBY
+         9TW2lgrMVyphdd63GKTqlwAexfT07FWyUE9fH+CzQ1GVBX1brIvtB3luhnkK5xCXSuPh
+         bB2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVQaedmfWY01TTodt/ffeT1uyEtDAN6YdoL/DED/6+3+XAhP/VJhUHrv2Pab0+hPIdOj90YOZZt5IM5kJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylqEwviX++tQuL13OvcpccQ9jIfWHWJahoppQKycPaC8aDJeWN
+	C3lpg1JmcrWKfWcn74sPFno5Qk00R42oG1u14GzesW9LElwT60c40w922CsRuBG1EQ==
+X-Gm-Gg: ASbGnctm+HRmbzZbUu/JydaSK1ymP9FxCLsM7hyP7wvTeWIMgb9pwIKaTQvFvlReCuG
+	ECjNPpNuwbSiTaXPK4zK23EOdMRJAfqSbQHwa6aIdlW0kg81YH0Pae+sxIjwbk/CTiMFjnouTGr
+	IGYgYmy/ly0NqMEAeLTolpzm6gZb8R0hqvOY1YIos755z4Nz63Al7+ILSGzM9Ci/B9BrZkuvy0g
+	cbKGck6djsxqcQp1xA4E1sIqx+shC8x3+s9h2Snbgb3QjQhAEjVRmisRA1rtTNsvEdXyticUKLr
+	/WXcv13vNYpUl4l//VLvoQZaKdtgEWGl1f6mW1W2xCWHRU+LeiwKiOEPB0fMScvDA0KX8N3zzy7
+	OMAV2eNin6cR2btv2g0BCWU/aR7V0TywComVnATmUUICD6xtl5Jp0CwreMVYqo5sbmnfkV88=
+X-Google-Smtp-Source: AGHT+IFgOkdGq5x9NJ+zU1c1dBgNDsfTwSsAjnSI6VcIJfup8RDIJaGYOd3IR4zKYJVMBvEDdL+5xA==
+X-Received: by 2002:a05:6a00:1acb:b0:772:43a9:d587 with SMTP id d2e1a72fcca58-7742ddf13cfmr19926689b3a.20.1757592924243;
+        Thu, 11 Sep 2025 05:15:24 -0700 (PDT)
+Received: from ?IPV6:2401:4900:8898:6c44:fc6:e0b:3bf0:1af0? ([2401:4900:8898:6c44:fc6:e0b:3bf0:1af0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b17acasm1957738b3a.58.2025.09.11.05.15.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 05:15:23 -0700 (PDT)
+Message-ID: <36a85af7-75b1-46db-8df8-e83372d33b93@beagleboard.org>
+Date: Thu, 11 Sep 2025 17:45:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911-camss_rb8-v5-3-c078e4e22d91@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: oTMayM0A-zcDc_rYRWmWsQsI8Z0TC3w3
-X-Proofpoint-GUID: oTMayM0A-zcDc_rYRWmWsQsI8Z0TC3w3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfX7W5/mxx64Nr9
- 9g+AWx4I/1FM6T04s/U/fdyW5PdvfCnWBG8sguA7FywipXN2ybq4hnB3DzRA1p7fVscFlQvgYWJ
- pnKxVmXI8qcy3cDzDnF5Rq2BwCs5RaK/c/loEUmhDiDGWhP6hgpUCCZESV1cZqsRPq/Hx3KfNI+
- a042MBcmSKDXNcx4RZizZBLZU9fbfLEnHDx6lGo8Iw/r4j4rLke/EIkW+0kWT1YfrsoeHl/WCwe
- WPRoNHWWQtA3GsS8JUR+wFfJolNkFMvmnA2qLFl7GGo2umTN+WbeHKa/q/KUNFcWLnAeNKvpz4A
- ltTkuuomn2WKbSB8+sYrLiCL/zuUwjwBvo/UZmuMTqIztaNeVFqRqURtz623Lve5VfcFIPMIAMy
- Fdriex00
-X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c2bd55 cx=c_pps
- a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=D9gf5YVWuHi62kVfqNsA:9
- a=CjuIK1q_8ugA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060024
+User-Agent: Mozilla Thunderbird
+Subject: Re: Device tree representation of (hotplug) connectors: discussion at
+ ELCE
+To: Herve Codina <herve.codina@bootlin.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: David Gibson <david@gibson.dropbear.id.au>,
+ Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Jason Kridner <jkridner@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, devicetree-compiler@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>
+References: <20250902105710.00512c6d@booty> <aLkiNdGIXsogC6Rr@zatzit>
+ <337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
+ <aL5dNtzwiinq_geg@zatzit> <20250908145155.4f130aec@bootlin.com>
+ <aL-2fmYsbexEtpNp@zatzit> <20250909114126.219c57b8@bootlin.com>
+ <aMD_qYx4ZEASD9A1@zatzit> <20250911104828.48ef2c0e@bootlin.com>
+ <CAMuHMdUUGoaetdsTEVx27TYQZ_khzyCn0wzi2+TibYcvkg1fXw@mail.gmail.com>
+ <20250911122333.2e25e208@bootlin.com>
+Content-Language: en-US
+From: Ayush Singh <ayush@beagleboard.org>
+In-Reply-To: <20250911122333.2e25e208@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 11, 2025 at 07:55:16PM +0800, Wenmeng Liu wrote:
-> Enable IMX577 via CCI1 on LeMans EVK Core Kit.
-> 
-> The LeMans EVK board does not include a camera sensor
-> by default, this overlay reflects the possibility of
-> attaching an optional camera sensor.
-> For this reason, the camera sensor configuration is
-> placed in lemans-evk-camera.dtso, rather than
-> modifying the base lemans-evk.dts.
 
-So, is it the only camera configuration that we are going to support?
-If not, what happens when we get the second sensor or second set of
-sensors to support?
+On 9/11/25 15:53, Herve Codina wrote:
+> Hi Geert,
+>
+> On Thu, 11 Sep 2025 10:54:02 +0200
+> Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+>> Hi Hervé,
+>>
+>> On Thu, 11 Sept 2025 at 10:48, Herve Codina <herve.codina@bootlin.com> wrote:
+>>> On Wed, 10 Sep 2025 14:33:45 +1000
+>>> David Gibson <david@gibson.dropbear.id.au> wrote:
+>>>> On Tue, Sep 09, 2025 at 11:41:26AM +0200, Herve Codina wrote:
+>>>>> Suppose a base board with 2 connectors:
+>>>>>   - connA
+>>>>>   - connB
+>>>>>
+>>>>> Case 1: Addons are independant
+>>>>>                 +--------+
+>>>>>    connA <----> | AddonA |
+>>>>>                 +--------+
+>>>>>                            +--------+
+>>>>>    connB <---------------->| AddonB |
+>>>>>                            +--------+
+>>>>>
+>>>>> With addonA and B two addon board each connected at one connector without any
+>>>>> relationship between addon A and B
+>>>>>
+>>>>> Case 2: Only one Addons using ressources from both connector
+>>>>>
+>>>>>                  +------+
+>>>>>    connA <-----> |Addon |
+>>>>>                  |      |
+>>>>>    connB <-----> |      |
+>>>>>                  +------+
+>>>> Case 2 is what I'm talking about.  Case 1 is the easy one.
+>>>>   
+>>>>> The addon is connected to both connector and uses ressources from connA and
+>>>>> connB in a dependent manner.
+>>>>>
+>>>>>
+>>>>> The Case 2 can be solved using a connector that described both connA and connB.
+>>>>> Having the split connA and connB is a mechanical point of view.
+>>>> I don't think that's a good solution, because it means you have to
+>>>> make that decision at the board layer.  If I understand his case
+>>>> correctly, you have a board where you could do either case 1 or case 2
+>>>> at runtime.  We'd want the differences between these cases to only be
+>>>> reflected on the addon device tree, not the base board device tree.
+>>> Based on my understanding of Geer's use-case, I think decision at base
+>>> board level will be needed.
+>>>
+>>> base board        addon board
+>>>    connA +--------+conn1
+>>>    connB +--------+conn2
+>>>    connC +
+>>>
+>>> Or
+>>>
+>>> base board        addon board
+>>>    connA +--------+conn1
+>>>    connB +    ,---+conn2
+>>>    connC +---'
+>>>
+>>> Or any other combination that would match.
+>>>
+>>>  From the addon board point of view, the only think we can
+>>> say is "me, as an addon board, I need a connector of type 'foo' and a
+>>> connector of type 'bar'".
+>>>
+>>> Also, at base board level, statically defined in the DT
+>>> connA is described (type 'foo'), connB and connC are
+>>> described (type 'bar').
+>> Correct.
+>>
+>>> The choice to map connA to the type 'foo' connector expected by the addon
+>>> and the choice to map connB or connC to the type 'bar' connector expected by
+>>> the addon can only be done at runtime and probably with the help of a driver
+>>> that have the knowledge of the 3 connectors.
+>>>
+>>> I have the feeling that the choice of physical connectors to which the addon
+>>> board is connected to is a human choice when the board is connected.
+>> All these choices and decisions apply to single-connector add-on boards, too.
+>>
+> Yes, in our use case (me and Luca), each addon has an eeprom, wired exactly the
+> same on all supported addon, which allows to known the exact addon. Also addon
+> insertions and removals are detected using some gpios wired to the connector.
+>
+> Based on that our specific driver handling our specific connector perform the
+> following operations on addon insertion detection:
+>    - load a first addon DT to have access to the eeprom
+>    - Read the eeprom to determine the addon type
+>    - load the DT matching with the addon type
+>
+> This part is of course connector type specific. I mean having an eeprom with
+> some encoded addon type values and hotplug detection with gpio is a part of
+> the contract between the board and the addon (part of connector specification).
+>
+> Best regards,
+> Hervé
+>
 
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Wenmeng Liu <quic_wenmliu@qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile               |  4 +
->  arch/arm64/boot/dts/qcom/lemans-evk-camera.dtso | 97 +++++++++++++++++++++++++
+My usecase is a bit more complicated, since I am trying to model all the 
+available headers on BeagleBoard.org sbcs (particularly PocketBeagle 2 
+initially) as connectors. However, that still ends up being a single 
+connector which can have multiple addon-boards simultaneously instead of 
+the other way around.
 
-At least the filename should mention that this is imx577.
 
->  2 files changed, 101 insertions(+)
+Best Regards,
 
--- 
-With best wishes
-Dmitry
+Ayush Singh
+
 
