@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-812254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CF1B5351A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:21:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F3D5B5351C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9606AA2D3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:21:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A8EC3AC307
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F2E31DDAE;
-	Thu, 11 Sep 2025 14:21:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA45F338F51;
+	Thu, 11 Sep 2025 14:21:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3fRxzJNH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zup7xF4Q"
 Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BE7212FB9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B786E32C312
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757600469; cv=none; b=QVg1FKhmm46jFIZlhutUNkWW9GSW6EBQ/OIHCxsNz61al+NtgExlhVe9YNT6zdsX/c1ydPUbyQAUBrku/8O51okJd428urxmVhxDI3Rj2KE+kqHOmsZ2KY5FO+m7Jzp56CP0JTUKQ2KMGhsO2zhztrBLmoBhOQVsbSY+fFjOTXo=
+	t=1757600473; cv=none; b=KXUvulypuWTvbA+0t5onQZ7UZmflMhcpwtU1VSFAlbHTf6JvklC21SbLfkFMH9sXQgr5KuTnHZh9rJumoA9qBf8WuV/fTI/wsjDcGH4N4A4vDkR1fWwv3/w0exBtonPF9ou5ziiP5X3v2Gk2W7Tny1E+ojA8dapfQdlwbId+f/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757600469; c=relaxed/simple;
-	bh=+iYwU3lAJZN4irjGgO7FnAikEFpf8kacEm1KMOnoLBg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cpYjB+nipjVQS4vwqBHlNSRmhCStY1iCazkXMLeOHittp/QWd8HlQvCCTY/Pb+nNHsc+kdE9+dc//hyffXF9jSIV4mPshrnGZOBZEvbnJudIyD4NjpAAAgUzRx4uow2kKp/Fd7RUUsSAOYHcojI12VnNR+yz3U1DL7C+YWrw6v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3fRxzJNH; arc=none smtp.client-ip=209.85.210.201
+	s=arc-20240116; t=1757600473; c=relaxed/simple;
+	bh=faJE+cTueXsphf9F2YTETRq7iQrxqJIPSY5Wh3BTBzY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=XDrXXGOmxcVe++gjZXdr/bmomRE1Aw76qsG0khl4NkaagoD7x9jbgQMRVc66dzKK3lcLxjtf5flhAtCUXvTyhT1Y4cQyQRwWhGKMjzXoyE6IlJc+ISKqOo+VYm9bnet2K0IFf362Bbb3CARI1IrHogUS0ij7iB/Er+Iufax2MPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zup7xF4Q; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7725b77b795so734565b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:21:07 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77264a9408cso1532685b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:21:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757600467; x=1758205267; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BXpKyC+FtSuNs0YLqsRlk5q4vvwtie8skRJ55fTgeiY=;
-        b=3fRxzJNHgCMbaPx6pKhdQkp0+jihAeT3dp61558GeulI03lflmoJmFaMh6UUARDVff
-         PASyDbCvocIam9I/pqITXuXj6jl1jqfmUFpgY7FKw8/lZhW41aZL9IsoE5aCAHn+mX7X
-         Qs50sWhgc/K0y0kwXShHMyTfP8MXWrlAFTnX5+JVVz+7AKAg6RyQvO5Fd/72WHUw45sb
-         JTDHpxi7/LT9og9yoAxtlm3ps4YkEdppSuDc3hDihfhYUS68P2xoryiAU7RdHSTEkZ+Y
-         0tmoNwJLHdA5U/l4g3hX71BG3Qe76g6ZRiivMJymbq116uMxegHCGbuf3wSJGsbgVJiG
-         qt2Q==
+        d=google.com; s=20230601; t=1757600471; x=1758205271; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=di9vlGGwM3+bJg1YPMe3g5gvCbV0sk+DG/t3kCN+JkE=;
+        b=zup7xF4QMFeplfJCe42tIwLdzE52Ge0PA/59veXAquSw5GgWEd1w4F3WK69SsyEjwo
+         9LrROVzpMsF8dqU31smPQNRERvmxkngrAcbF26iZvLL+T17lBLx7p4Cy+6rVlVcsTW/b
+         JUN5XcKKji06mRvVd5Qofqq2t+xLPpsTHyMBkK1ElM6EqXVKCJiGnMcNbu0HJGYji4nF
+         oh7rOJMwH4I554VvZIgAcHjGg9u3J3beQIYRrNrzjozRevz4RGixTDzDKYbiqmsxSGkY
+         C/QDQeqg1tF22a4tIyxxzqQBZThRI3wUPtTfqzwlSvET18IrrRXZlXaiRGC6ma2R3z7u
+         pOlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757600467; x=1758205267;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BXpKyC+FtSuNs0YLqsRlk5q4vvwtie8skRJ55fTgeiY=;
-        b=AM0HJ2bE4r/dB2wo2IPUe3QRHzLmv+MBnXirCd0LKp5hCHeCjJ0ACZIi6MYeeVTIVC
-         TQqSWH59B9aiKOo0s2fbXUweJoIUf51Rt1qZo1QQVlwn1QBYdbBCXH8gGerlyPUagS0B
-         d393SU3U6THToqlNtLcHU72Uu1DvH0TWw0mjIu4oPTJUn/LS6vWvkiC2IqBYmv2vaWCr
-         Z1CdMxxLr/RVqEK6tETIAu0khbytCvCqJIDdsBPWWPOnoo8Zr39g3GUaaOs5jnMOsa+R
-         tVwAVqdEzbbJpOo35T1DXJx5d0ZCZIS7munJjHf+Rh2nPYfzYFg2uO2V0qoDDPcuEgwX
-         R/OA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvFNH5Jr/U7TIPIAV0/QbyTWoHLQfioTSrD5lFXM080cJJJ+3O5665P6JykDTjpioA+WKpLqfpHywGqNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF+fKKyFrbmIokqQmp+x5Av9S90zdE3ZuI1qwlphcv6DN3dqJg
-	6nELWMPWSaVkILD68n7kZ61tmGvdeqg8s40PS7y3zbFRYOsWgkpCEueamTapWXx/Nsiwn3zZL84
-	j5Nw1TOFgylrMW6q3gA==
-X-Google-Smtp-Source: AGHT+IGxazJ6wSRTWeq83hZ8mq5zVKYCYBbAtGgqkOmgLsu8aqytxOCePqUp/OIJ0Q3QGgdvYcabZuO39IHBHJs=
-X-Received: from pgam28.prod.google.com ([2002:a05:6a02:2b5c:b0:b47:1324:ea0a])
+        d=1e100.net; s=20230601; t=1757600471; x=1758205271;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=di9vlGGwM3+bJg1YPMe3g5gvCbV0sk+DG/t3kCN+JkE=;
+        b=dFCFjVc473yIEttjmbP0sU6nbcjVulf1hEP8AnDwreeyXKvt7s9vjm5BbyXZxez160
+         rn4bKlujtNJr4k9uVmorMv+798nlnfFlsKSb125vaWW3KzNJyES5gqDh4bK4ZPr000Vo
+         DjLzrYp8J88pBifYryaVoGfxF48IEDSu6KFqCrvuoeTom609P4D6hV00gLDrjOO7+jeL
+         DEHCaeiexjtV+nylVws9pdDAjraQeNUxJK7O6SudviC5pksOxfiML7kXR6bzwAWJdJTl
+         U1FXWcwRA6j/Rets6HZfIh7hXYQcRLs8+URgUwhfAsOwgY11wX7owCB6Ek3uLSo2uMFt
+         YBpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsu/4etlzibUO38Qjx3ZgYXIVIbVNFER48q7KuSYUMqau6nDKjS5TJ8LMTvgPwqLl1wOL6mBfjDVDwOdQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbxeqMun2mJJv8I14VVHnM4EJqRBrcMHPmR3UqW6fNlHX+Wyhy
+	fZVI/PkIsXOvBFtcQ7hlJ3JQ953HYcjqFCIGXR2Oxmn9+1z93JDLIs5bTMJqa7euA0SqLTtuvRn
+	JN8k1ya2vYhrg98M/JQ==
+X-Google-Smtp-Source: AGHT+IEDuORbCh7ohTP+tivq97Pf4Ap22u0st5ArBD+NLXFiMsoCRDqV5AuP+Csi9xEgcunezW7ghFIJ8zClIOU=
+X-Received: from pgew14.prod.google.com ([2002:a63:af0e:0:b0:b4c:5356:a130])
  (user=guanyulin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:939e:b0:251:5160:f6c4 with SMTP id adf61e73a8af0-25345e324ebmr25326771637.50.1757600467216;
- Thu, 11 Sep 2025 07:21:07 -0700 (PDT)
-Date: Thu, 11 Sep 2025 14:20:12 +0000
+ 2002:a05:6300:210b:b0:251:1b8c:5643 with SMTP id adf61e73a8af0-253466eca6amr27762178637.50.1757600470961;
+ Thu, 11 Sep 2025 07:21:10 -0700 (PDT)
+Date: Thu, 11 Sep 2025 14:20:13 +0000
+In-Reply-To: <20250911142051.90822-1-guanyulin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250911142051.90822-1-guanyulin@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250911142051.90822-1-guanyulin@google.com>
-Subject: [PATCH v16 0/4] Support system sleep with offloaded usb transfers
+Message-ID: <20250911142051.90822-2-guanyulin@google.com>
+Subject: [PATCH v16 1/4] usb: xhci-plat: separate dev_pm_ops for each pm_event
 From: Guan-Yu Lin <guanyulin@google.com>
 To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, hannelotta@gmail.com, 
 	zijun.hu@oss.qualcomm.com, xu.yang_2@nxp.com, stern@rowland.harvard.edu, 
@@ -82,122 +85,70 @@ Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Guan-Yu Lin <guanyulin@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Wesley Cheng and Mathias Nyman's USB offload design enables a co-processor
-to handle some USB transfers, potentially allowing the system to sleep
-(suspend-to-RAM) and save power. However, Linux's System Sleep model halts
-the USB host controller when the main system isn't managing any USB
-transfers. To address this, the proposal modifies the system to recognize
-offloaded USB transfers and manage power accordingly. This way, offloaded
-USB transfers could still happen during system sleep (Suspend-to-RAM).
+Separate dev_pm_ops for different power events such as suspend, thaw,
+and hibernation. This is crucial when xhci-plat driver needs to adapt
+its behavior based on different power state changes.
 
-This involves two key steps:
-1. Transfer Status Tracking: Propose offload_usage and corresponding apis
-drivers could track USB transfers on the co-processor, ensuring the
-system is aware of any ongoing activity.
-2. Power Management Adjustment:  Modifications to the USB driver stack
-(xhci host controller driver, and USB device drivers) allow the system to
-sleep (Suspend-to-RAM) without disrupting co-processor managed USB
-transfers. This involves adding conditional checks to bypass some power
-management operations in the System Sleep model.
-
-changelog
-----------
-Changes in v16:
-- Consolidate configs into only CONFIG_USB_XHCI_SIDEBAND.
-
-Changes in v15:
-- Rebase on TOT.
-
-Changes in v14:
-- Introduce CONFIG_USB_OFFLOAD for control usb offload related features.
-- Specify __must_hold marco on usb_offload_check().
-- Cosmetics changes on coding style.
-
-Changes in v13:
-- Ensure offload_usage is modified only when the device is neither
-  suspended nor marked as "offload_at_suspend".
-- Move lock manipulations into usb_offload_get()/usb_offload_put().
-- Cosmetics changes on coding style.
-
-Changes in v12:
-- Rebase on TOT.
-- Cosmetics changes on coding style.
-
-Changes in v11:
-- Use USB subsystem wrappers in usb_offload_get()/usb_offload_put().
-- Refine logics and add comment in usb_suspend_both()/usb_resume_both().
-
-Changes in v10:
-- Remove unnecessary operations in dwc3 driver.
-- Introduce CONFIG_USB_XHCI_SIDEBAND_SUSPEND to enable/disable offloaded
-  usb transfers during system Suspend-to-RAM.
-- Modify the approach to detect offloaded USB transfers when the system
-  resumes from Suspend-to-RAM.
-- Mark sideband activity when sideband interrupters are created/removed.
-- Cosmetics changes on coding style.
-
-Changes in v9:
-- Remove unnecessary white space change.
-
-Changes in v8:
-- Change the runtime pm api to correct the error handling flow.
-- Not flushing endpoints of actively offloaded USB devices to avoid
-  possible USB transfer conflicts.
-
-Changes in v7:
-- Remove counting mechanism in struct usb_hcd. The USB device's offload
-  status will be solely recorded in each related struct usb_device.
-- Utilizes `needs_remote_wakeup` attribute in struct usb_interface to
-  control the suspend flow of USB interfaces and associated USB endpoints.
-  This addresses the need to support interrupt transfers generated by
-  offloaded USB devices while the system is suspended.
-- Block any offload_usage change during USB device suspend period.
-
-Changes in v6:
-- Fix build errors when CONFIG_USB_XHCI_SIDEBAND is disabled.
-- Explicitly specify the data structure of the drvdata refereced in
-  dwc3_suspend(), dwc3_resume().
-- Move the initialization of counters to the patches introducing them.
-
-Changes in v5:
-- Walk through the USB children in usb_sideband_check() to determine the
-  sideband activity under the specific USB device. 
-- Replace atomic_t by refcount_t.
-- Reduce logs by using dev_dbg & remove __func__.
-
-Changes in v4:
-- Isolate the feature into USB driver stack.
-- Integrate with series "Introduce QC USB SND audio offloading support"
-
-Changes in v3:
-- Integrate the feature with the pm core framework.
-
-Changes in v2:
-- Cosmetics changes on coding style.
-
-[v3] PM / core: conditionally skip system pm in device/driver model
-[v2] usb: host: enable suspend-to-RAM control in userspace
-[v1] [RFC] usb: host: Allow userspace to control usb suspend flows
+Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
 ---
+ drivers/usb/host/xhci-plat.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
 
-Guan-Yu Lin (4):
-  usb: xhci-plat: separate dev_pm_ops for each pm_event
-  usb: offload: add apis for offload usage tracking
-  xhci: sideband: add api to trace sideband usage
-  usb: host: enable USB offload during system sleep
-
- drivers/usb/core/Makefile         |   1 +
- drivers/usb/core/driver.c         |  50 +++++++++--
- drivers/usb/core/offload.c        | 136 ++++++++++++++++++++++++++++++
- drivers/usb/core/usb.c            |   1 +
- drivers/usb/host/xhci-plat.c      |  42 ++++++++-
- drivers/usb/host/xhci-plat.h      |   1 +
- drivers/usb/host/xhci-sideband.c  |  36 ++++++++
- include/linux/usb.h               |  18 ++++
- include/linux/usb/xhci-sideband.h |   9 ++
- 9 files changed, 284 insertions(+), 10 deletions(-)
- create mode 100644 drivers/usb/core/offload.c
-
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 5eb51797de32..df2e942ad5f7 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -454,7 +454,7 @@ void xhci_plat_remove(struct platform_device *dev)
+ }
+ EXPORT_SYMBOL_GPL(xhci_plat_remove);
+ 
+-static int xhci_plat_suspend(struct device *dev)
++static int xhci_plat_suspend_common(struct device *dev)
+ {
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+ 	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+@@ -482,6 +482,16 @@ static int xhci_plat_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
++static int xhci_plat_suspend(struct device *dev)
++{
++	return xhci_plat_suspend_common(dev);
++}
++
++static int xhci_plat_freeze(struct device *dev)
++{
++	return xhci_plat_suspend_common(dev);
++}
++
+ static int xhci_plat_resume_common(struct device *dev, bool power_lost)
+ {
+ 	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+@@ -529,6 +539,11 @@ static int xhci_plat_resume(struct device *dev)
+ 	return xhci_plat_resume_common(dev, false);
+ }
+ 
++static int xhci_plat_thaw(struct device *dev)
++{
++	return xhci_plat_resume_common(dev, false);
++}
++
+ static int xhci_plat_restore(struct device *dev)
+ {
+ 	return xhci_plat_resume_common(dev, true);
+@@ -558,9 +573,9 @@ static int __maybe_unused xhci_plat_runtime_resume(struct device *dev)
+ const struct dev_pm_ops xhci_plat_pm_ops = {
+ 	.suspend = pm_sleep_ptr(xhci_plat_suspend),
+ 	.resume = pm_sleep_ptr(xhci_plat_resume),
+-	.freeze = pm_sleep_ptr(xhci_plat_suspend),
+-	.thaw = pm_sleep_ptr(xhci_plat_resume),
+-	.poweroff = pm_sleep_ptr(xhci_plat_suspend),
++	.freeze = pm_sleep_ptr(xhci_plat_freeze),
++	.thaw = pm_sleep_ptr(xhci_plat_thaw),
++	.poweroff = pm_sleep_ptr(xhci_plat_freeze),
+ 	.restore = pm_sleep_ptr(xhci_plat_restore),
+ 
+ 	SET_RUNTIME_PM_OPS(xhci_plat_runtime_suspend,
 -- 
 2.51.0.384.g4c02a37b29-goog
 
