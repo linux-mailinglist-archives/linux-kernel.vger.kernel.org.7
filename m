@@ -1,112 +1,86 @@
-Return-Path: <linux-kernel+bounces-812709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F28B53BB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:40:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E37C1B53BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:47:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3BCE16FAAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:40:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CD4916B573
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C856B2DC78F;
-	Thu, 11 Sep 2025 18:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="dhqE+MUG"
-Received: from mail-10696.protonmail.ch (mail-10696.protonmail.ch [79.135.106.96])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1998259C93;
+	Thu, 11 Sep 2025 18:46:49 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8191B2DC77E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEF4221264;
+	Thu, 11 Sep 2025 18:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757616016; cv=none; b=VP96dtm9NLObxJv2JULR6Zrlxo5nKuEm6i3fDZ3JuQSfWQze3+yKHT5ZaPbLgFJdE7Hgwpwql8WDE3i2kSiFY5Y97etzK4a6oONsMxK9fch1CkBuBUZ4gtzlbx/9BTpL7OX0h7T81NVBcMyp/DHBIouPVoS+VUE+N3S+Sm+j7rs=
+	t=1757616409; cv=none; b=azifFdFToM/UqJ+sgXgTFdbvnKcW/x7A8UZAPZFae5fUTakQ0sK86tdM7VYkiRCQRPinUXMEqMUgTdVwu63flxLjZCE0igZw3m44N+mwXoerQrrQoMwB4ia6rOry9TCJakxsNmj4ZGnXZkmT3/3Jax3O8pHE66mMXD/bQylEVts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757616016; c=relaxed/simple;
-	bh=CBLCtg/bjrDjIxEQ2uJLcZ9eKg1J7B0cpzHMd/YdBk8=;
-	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=X3KmqZQEKBX9EVI5DMoW5v0eHR25l6/rFxN+Ym6zViIAPhoR0+cwbPK1cO2ZT3ATN7Xej68QHRj9BYgMzqlne8dPkV9VNJDX6GX6zrky7nfRpENBMFYFcyYlzBgtNBuZnnB9ewY8n/VwkpWNW5fWGBgJebiPAYtHF21WrFfxsWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=dhqE+MUG; arc=none smtp.client-ip=79.135.106.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1757616005; x=1757875205;
-	bh=CBLCtg/bjrDjIxEQ2uJLcZ9eKg1J7B0cpzHMd/YdBk8=;
-	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=dhqE+MUGkusBG3JEheb/vg6DuB7G8iiNJo6Q25XEBdBZd016IlvJLcQCZMrBKEItj
-	 NSQY12th92AetAKm2m8SihxWeFR8CW2iAamhBE23Wtd6u6IKa2y+guRClQllUjHzFr
-	 z8Ok46AlAx3xhDdQ7dxKcSVEUatBd4VCjFuP6Li2nqBUu3wB72+zmbpyMOC0W7BLhX
-	 X1Fu6uGMtP+Q3FhdQXPcB2C6yN2goNqxrVtPwaHgOhPx3aVNz6RpZYWW3W/yq2NNev
-	 CBhK6L/BDn938IMqWS20xdEVLEOijpHYLQ3FYlWtz7WlkX2zDjm+7u5MF2nFgZk+VA
-	 djXkZu/N/ZlfQ==
-Date: Thu, 11 Sep 2025 18:39:59 +0000
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: DistractedLinguist <DistractedLinguist@proton.me>
-Subject: I got bit by the stochastic parrot when apologizing (to LKML and Alexander Viro; by Hans Reiser)
-Message-ID: <js2F0hMRQx22Zft8fmp1rPPcQnrU1Q6Gpd9-wrguyWL0qepBKpbaJ5k6YHTw18ok2HTKz2WZNfUiS3kdxDICKZ5sNzlckrCViYqjMzZPzEM=@proton.me>
-Feedback-ID: 159306980:user:proton
-X-Pm-Message-ID: ea074a16638282b2a567191aec1eb6325ab9a2ae
+	s=arc-20240116; t=1757616409; c=relaxed/simple;
+	bh=6h4+B1DqahcriJNK3O58emrdy15GdClOiz1aQ1JH8Gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EC/E/Nhj50KCVpmhcFSFjTaHyhtg2WfqIIUb3K2DfSD5vMdXEADHf3m6myZsrPXumApC7Q6viD4BO4G3O7jZm/bTlt/EgmDIQ3qp0Ej3vo+XFHbUjKfzERVkwqyHhd+dZkbB4A+Wc6dzBXciLKcUBuRPu8iI9IeDFrnthNeLivk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 59C4859536;
+	Thu, 11 Sep 2025 18:41:21 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 7806930;
+	Thu, 11 Sep 2025 18:41:19 +0000 (UTC)
+Date: Thu, 11 Sep 2025 14:42:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Vladimir Riabchun <ferr.lambarginio@gmail.com>
+Cc: 20250911104138.2830f60b@gandalf.local.home,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ mark.rutland@arm.com, mhiramat@kernel.org
+Subject: Re: [PATCH] ftrace: Fix softlockup in ftrace_module_enable
+Message-ID: <20250911144212.3d02a964@gandalf.local.home>
+In-Reply-To: <20250911143758.06ef1230@gandalf.local.home>
+References: <aMLPm__QGrQCwz1t@vova-pc>
+	<20250911104138.2830f60b@gandalf.local.home>
+	<aMMSCQAINWfiDA4L@vova-pc>
+	<20250911143758.06ef1230@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: qrqfu6146gkhy94y8dwz7k1k8yoydi1t
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 7806930
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/AzPnRW+Tj/CnIAsFrS8MzHjACCjyIjx4=
+X-HE-Tag: 1757616079-434514
+X-HE-Meta: U2FsdGVkX18sosWUMSWyx/eychXluvFXBAraUI2Xl8EJ6iermT4zDGrjacUWItUnewDLtld/RvbvqL4XjecQjmAYpdHBiaBiUZNoIXBy2DvO70ynzLixWoZmlkwF9IFtett8Dwr90mbm/QtHc4p78fYYBrnUQRldYJer9Lpgwt6bSTAD92xvg4RUnBM6j1KhFoZIRafA61QwUJclXrZXk2xGtlzHjSzFvIjb8Rkzk7VhDCHJS6UFUNNMVntbBTdLG8oF6qwQcuoAa1kTj16j+4qGJCmbRo6cWhzdWWYaFOrtco0iDqyBbdiMgx/Ha04hUiEHcAseu0xcU6rW0wlYo3dBi1u84Mxs1sdVv6XpxQf/25kHMnoZoLM/+MOZp6Fr
 
-Editor note: Mr. Reiser sent this to me to post on his behalf. I will print=
- and send any replies to Mr. Reiser for his review and comment.=C2=A0
+On Thu, 11 Sep 2025 14:37:58 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-A kind journalist scanned my handwritten apology, and it got posted all ove=
-r the place. The original of my posting can be found here: (https://lkml.or=
-g/lkml/2024/1/18/245)
+> > Probably it may worth moving cond_resched under within_module check, but
+> > before test_for_valid_rec call.  
+> 
+> Hmm, do modules even have weak functions? If they don't then that test is
+> useless.
 
-"Viro was this guy whose career focus was locking."
+Doing a quick search, I see that they do :-/
 
-The OCR software changed the "o" to an "a" to make it:
+drivers/tty/tty_ioctl.c:__weak int kernel_termios_to_user_termios(struct termios2 __user *u,
 
-"Viro was this guy whose career focus was lacking.=E2=80=9D=C2=A0
+Looks like sparc can overwrite it. Thus, I'm guessing a module could add a
+function and an arch may make it different. That means we still need this
+for now.
 
-Everyone must have thought: "He was an ass then, and he is still an ass, pl=
-us he sure has that wrong."
+Yeah, just send a v2 with the cond_resched() after the check for module.
 
-Alexander Viro knows more about locking than I ever will, and it would have=
- been a privilege to have been able to learn from him if my social skills h=
-ad been enough to earn me that privilege.
-
-I can see that for a stochastic parrot, which understands word pattern prob=
-abilities not word meanings, "focus was lacking" is a far more probable wor=
-d pattern than "focus was locking". Sigh.
-
-My humble apologies to Alexander Viro and the LKML.=C2=A0
-
-If people are interested in my experiences of humans being worse than AI's =
-due to their stochastic parroting being more affected by what they want to =
-be true, or want to hear, ask me. It might be off-topic for the LKML though=
-.
-
-I humbly apologize to all those in the community that I hurt by my crime, i=
-ncluding those who invested so much into coding Resier4 for so little pay o=
-nly to have the dream we pursued dashed by my terrible crime.
-
-If I should parole I will try to make all the amends I can to those I have =
-harmed. In prison we learn to start by trying to make a "living amends", wh=
-ich means to change who we are so that we are no longer the person we were =
-when we committed our crime. I have been working on that for 19 years, and =
-I believe I am no longer the man I was, but instead a man who understands M=
-LK's words: "only love can fight hate.", a man who has gone from having no =
-patience for the Serenity Prayer to understanding just how much it can impr=
-ove my life, and a man who is now more humble and more eager to take the ti=
-me to acknowledge the ways in which others are right.
-
-If I parole I can attempt to do more "indirect amends" as prisoners call it=
-, in which we try to make up for our crimes through acts of service to the =
-community. I have some chip design, filesystem design, economics of free so=
-ftware and AI design ideas I will pursue if I am found worthy of a second c=
-hance in society. (Details if asked). Alas, I cannot make direct amends to =
-the lovely person I killed.
-
-Once again, I apologize to all. Humbly apologize.
+-- Steve
 
