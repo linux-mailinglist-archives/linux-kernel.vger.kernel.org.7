@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-812731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1447B53BF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:57:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F51B53BF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E90071C23DB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:57:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 857A01C24A7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC8C23E23C;
-	Thu, 11 Sep 2025 18:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB322571D4;
+	Thu, 11 Sep 2025 18:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gV3TjGJ8"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPXe2a0d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B222DC76B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10349241663;
+	Thu, 11 Sep 2025 18:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757617020; cv=none; b=QkcTPHtuyV+6VX3S1jd/Y+jP5IuvVpOoaSnXEZTqiZMPJitj5swS9/FQhgkewxTAQxGMfyxCPUxzaucVuVODjFowcJ3J798ih/JGvLtQAiKyu89rctk/wmCUlDoU11SxnrAQBVUQ7QtB33UZol1OI/wq8RWJN4ghoDbFzF1xZUk=
+	t=1757617046; cv=none; b=actdmVmvO4NnE9e75r839D54G2PWJyGKyKCsZw7maLjpplCPs7ZTSoppMoZDRypkq5XjtvSJuuz3vbfeEqoY7SDmgdMQ3nqa5mj9XG8DaJF51uJgD+/4HG2WeXEQc6yeuj12ZXIKP5RWMGTf+iTyydyYQYu3+uwyGNBy8MBvBzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757617020; c=relaxed/simple;
-	bh=+LCm/guDeyM1pbOuWuHtb4/FeaKd5L/pPsDtV39K60U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dJJwT4tFYj9YSNa1CUPRyNubffi4HjSL7r5PiYXWsdgSiywb1+WoGo0bZV8OWgPOaSxucU51DerLsTQxWJwW2Ckx06ZT0n3lcuZvCmZPFfC9VHpgFh7PjRCnFrja1thxhmmrRZeNLrUqrUXCS/OFoxebidcBxUgQPWjKHkeDeFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gV3TjGJ8; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24b150fb800so2008905ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757617018; x=1758221818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LCm/guDeyM1pbOuWuHtb4/FeaKd5L/pPsDtV39K60U=;
-        b=gV3TjGJ8LnGmlHHPLpbBjReQu4ixKleZIm+ZD8DQT/YaZp907tWks6PDPJUebnRUnl
-         P7wPAFvCMCGGG19H+7G5JfoBk+FNQhall+k6zD8FCOmGX4XIVcmoBc341XWlUAquZatm
-         gRWw2/U+Vtdg6zPS2as7Ge1EkcwyMR2zd7HHoDYlNfAyz2bX3gVCv3Tq/5ng1glov7R0
-         gaFdCr1T0pAErIV5vfcEAN5kAML54NnTTpFAs/iZ1pT5BlzEVS/x35DEyv25OJCA/3vd
-         f8vhRBq6gMNy7aZpsCaE6kT0LS6ghj6GNR3Uz9uI7sDwpQCba1DkJcfNXPNcqizxVBAT
-         5HbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757617018; x=1758221818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+LCm/guDeyM1pbOuWuHtb4/FeaKd5L/pPsDtV39K60U=;
-        b=DvlyGZf55u9RvFAGQ/H4cbU09nnM7D9AJj3Q2zun9+RSTJTQGv20CdOr0TW0ydiLPx
-         O/IM2QFFtdQw4WelvNQIIxZxA+adNkLD2jWeGQBUawEpVPB6JdH3cg4Gt9k0cxydopzl
-         YKBMqIPBfj4NN+OmxYf0ktAqk0wXf/KV5eNnpNNyNIT8TxAqx+4Vmp8m0GZfTumZjVqg
-         S3hrajSwQi0mrlt/dena/ZEySNtm5uom1XhRGh43VSCK8NIapVvtPw82rAck0lwAtP+0
-         sanWNS6hKuvA7EYYEJ7mLOdlIKoKPeyFjMuwJ+gNIeMLN7wuBgEX3bcNrwQlKXBocCSM
-         x2wA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFFhLEjXftFMW12fbT4ItUm4AkNA3pN61ZLuwSj78K0oFgOd/1XqwWSk3krmJOKbNoVxUiGtluqbrSM0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeuGArvMiGwg6xet4hFpC0KmyEArB03NmGV8XqP6VJQ6S8OPVx
-	YHzuqZgF0760/oE6zLoCDWRZw+fRo44eHaFO8ui+m0q+tJ8pohTDILLiU1g+iV/XFDx+wj8siul
-	PVo7Z4JG289aGsB22M7zzAw7e3klauzA=
-X-Gm-Gg: ASbGnctrOCZy6qnThkTdFqkRVc+IHZ/lfb6+/xh4e324HRs1Jq5jGBV3w8lTXF1lV21
-	28XD9k0+AzdI2nrL7rhZtdjVzec0WjUKDu0xvueovnymKuxf6PXwHuVyx05+41/+U3urkDQF1y2
-	LZfPo8/2Z27g3+gjLFy6adPHcDzSFqLTrABfyqCgYV5jF7o64I0Xoj3/1h+M6V9v7VpgNZ5vjfn
-	ZvG6/SrWF96ZkT0A6atmVUsbDTpuxCnBsKQZDmJPWlCrgytQKm2mGoDiPl0PcnorO3NyNrKaTQh
-	ORiod4Jn5hvLvDmofKxgA6x11RwCl8GfVG8X
-X-Google-Smtp-Source: AGHT+IHNFxuMr0HNx3D6r2wcpirNJhsmcZ57cU/PHQO1QLIR7pH1pxNHnnOqtqoIkCYjHEr/A+GFV0gytg3T57f+NhU=
-X-Received: by 2002:a17:902:cf4d:b0:24d:5f38:ab67 with SMTP id
- d9443c01a7336-25d28f02f06mr1425645ad.11.1757617017970; Thu, 11 Sep 2025
- 11:56:57 -0700 (PDT)
+	s=arc-20240116; t=1757617046; c=relaxed/simple;
+	bh=KCkueulLNti5rMZqCXMGdCyFB/dsr9EyeiTawIyR368=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q5GdaL+kbS6FdTe7SXwe2SYx4oGlNpgEwkq6T8lj5HQxgG4cQnbjhJLrO+rBwsZdAQjNV5TxgUR5D4hM/B4o9lzrhLB4JAsqfK8ExEp/1rCavDfoopvY6sv07Tpf2Urkt3RjYBS4OTCD3wEURm5s7MOD2TSes1qX4fLWXL3OEXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPXe2a0d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B20F6C4CEF0;
+	Thu, 11 Sep 2025 18:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757617045;
+	bh=KCkueulLNti5rMZqCXMGdCyFB/dsr9EyeiTawIyR368=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hPXe2a0dGVS5459STIEhC4WAQbQAl+LplIH20+wlU2UYWvUDO0EblzkRyRechR4mS
+	 WdXrsqBRlRj+l+d2Q5dFenY4suqR7RiuMRXdql/ZZ1ogtq+ZjyMxRogPGmc287RywJ
+	 jhHXN4aU6miVRnmJ7bPF8uW0oFtp7FL8bHwOpWkOx6SZKAXp48DDII12uv/kF9RRRS
+	 DQZ0zE7cslJpdPOEgMeGLPhJrIE/cACzpr3I9DNUKVbN+14tOy211IvgRiZXtgYF/g
+	 KUSFrIEH71s5ufhQXmpEWJmobiYtYpo2+nj/hbg+A9+wH16xFGyAp0aO5wRwm0ft3b
+	 PG22aPHf2Sopw==
+Date: Thu, 11 Sep 2025 19:57:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Alex Elder <elder@riscstar.com>
+Cc: Lee Jones <lee@kernel.org>, lgirdwood@gmail.com,
+	alexandre.belloni@bootlin.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mat.jonczyk@o2.pl, dlan@gentoo.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	alex@ghiti.fr, linux.amoon@gmail.com, troymitchell988@gmail.com,
+	guodong@riscstar.com, linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH v13 0/7] spacemit: introduce P1 PMIC support
+Message-ID: <7aba368e-709b-49b0-b62c-f2f8250c8628@sirena.org.uk>
+References: <20250825172057.163883-1-elder@riscstar.com>
+ <175690199980.2656286.5459018179105557107.b4-ty@kernel.org>
+ <ec882a78-9604-45b1-9405-8f2f958f307c@riscstar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910151216.646600-1-hca@linux.ibm.com> <20250910151216.646600-2-hca@linux.ibm.com>
- <20250911013243.GA292340@ax162>
-In-Reply-To: <20250911013243.GA292340@ax162>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 11 Sep 2025 20:56:45 +0200
-X-Gm-Features: AS18NWAUx9lYss-jo7KrNo_jJvvrg-Q82uuHNeRXFQerGQpzkza6gztmm6xMjOU
-Message-ID: <CANiq72mr96hE+7HUVedpqyg2jePYqeXGGgwpdPWb4Z_Dj7htYg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Compiler Attributes: Add __assume macro
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Juergen Christ <jchrist@linux.ibm.com>, linux-kernel@vger.kernel.org, 
-	linux-s390@vger.kernel.org, Sven Schnelle <svens@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="66pqKUP3ZIOBeGN0"
+Content-Disposition: inline
+In-Reply-To: <ec882a78-9604-45b1-9405-8f2f958f307c@riscstar.com>
+X-Cookie: Your domestic life may be harmonious.
 
-On Thu, Sep 11, 2025 at 3:32=E2=80=AFAM Nathan Chancellor <nathan@kernel.or=
-g> wrote:
->
-> It may be worth noting that careful analysis should be performed when
-> adding this attribute since clang's documentation [1] (more on that
-> below...) notes that it could hurt optimizations just as much as it
-> could help it.
 
-Yeah, it can be tricky, and I assume it may depend on the compiler
-version too, i.e. the result could change over time. At least for
-"build asserts relying on optimizations" it is clear if it stops
-working, but here I assume we may have new compiler versions getting
-released that stop doing what the developer intended. But perhaps is
-not a problem in practice for the cases we care? Does someone know?
+--66pqKUP3ZIOBeGN0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> Looking at this link sent me down a bit of a rabbit hole :) Prior to
-> Clang 19.1.0 [2], assume was an OpenMP attribute, which has completely
-> different semantics and errors out when used in the way the series does:
+On Thu, Sep 11, 2025 at 11:36:41AM -0500, Alex Elder wrote:
 
-Oh... :(
+> That leaves patch 3, which enables regulator support, and patch
+> 4, which adds RTC support.
 
-Cheers,
-Miguel
+> How should these two patches be merged?  Mark has reviewed the
+> regulator patch 3 and Alexandre has acked the RTC patch 4.
+
+We'd both have been expecting them to go via MFD.
+
+--66pqKUP3ZIOBeGN0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjDG40ACgkQJNaLcl1U
+h9AXdQf+IdRJpWhqD0mkQabeBSF65aLfa+7LECsPIv5ruSPrNRMsy61871+68Cyf
+XSkwNm0j+n9bp3BKgf2siTNQJP7avTj7SEn3DAwkK8o9ADoOezTymr27J++8fQBu
+TejL9xAOdrFLn1hx2wthV5GtW63+q3xaM2FECQUfabMy5q7FsBXi9iKNQzfrE2td
++1BpNUyYqqBf2HZekcEGmsD585KvZ3boJo21s4RPl9IIS4cjKpcDC+rCHuf5bg4H
+SXousx1d16uFhqMQ56sHRrtX2cc34nPL2baF3bun4otN0OH+y0R+Xj5U8tlXS7y9
+rjXUS6wQJWZ1XE3BbYVgWPfdIvxPhg==
+=I2Nw
+-----END PGP SIGNATURE-----
+
+--66pqKUP3ZIOBeGN0--
 
