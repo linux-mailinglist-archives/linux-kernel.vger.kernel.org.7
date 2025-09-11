@@ -1,125 +1,198 @@
-Return-Path: <linux-kernel+bounces-812252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63DC9B53513
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:20:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291C3B53515
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 019CA7A541C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:18:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8F635A3CE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC1931B126;
-	Thu, 11 Sep 2025 14:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878E223D7C8;
+	Thu, 11 Sep 2025 14:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="N/D3kTRV"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8aqCPFN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF46219301
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9A4266B67
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757600404; cv=none; b=qKCYosIHePGPaUJpgqOMoDYtUaThVC/833ANaD/TgVM/PPjMCCKGJ1kK/inu5LXXeLQGQ/F5BNS6QaOY5ZVZzLNITc/I4vN4n+4SSS4BfxTTpx0QF/YQQ8ZpI+C6wxkLfe+HUStzpkquc8n2ly6mcfdXRoN9Fv+yiZfjSe//PeQ=
+	t=1757600427; cv=none; b=f5n0iwSD6ryBWbvxGKvxvg6Luk4ZaNAbgR924hHEMNcWwo/bkwuGaBUYCpwT6fxYOpNCGKFcqlgLQBy25IGCBv4CYIWs3fALx8ZRbQMbUh8F74OOX78XQq4tuOFxlwIdZZxhJdSN6r/EXXWYGuCFel8AYKPzdwSSqbzHZWMZZbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757600404; c=relaxed/simple;
-	bh=pwt3sKMZTwzi5oyWxEN+3RjXfWcYCwF9ayzyhmI5SI4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cnpktNakiZUDjvfp3Texp8L/mqZjmtMU76LRKo+4sXG8aZbgUsQ0pVqwO+BJj3fIMD7DgtXR0YKuevusPUGgNLAI5F4KcufpRj6UDSZGWqDnL+WGyptcSDEk4hrVXPMg6xYb9eW6VBzz13IHd8gIgb8y1+qSO8CF5uh5i7YLXAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=N/D3kTRV; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-329d88c126cso788731a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757600402; x=1758205202; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DrndfxQ6TSaH0WN9cPCMXVX2wBUepc9wx8k6s7n8/YI=;
-        b=N/D3kTRVJ0Md3+4rJA2zr2UqhttOJGt4rNlPBF260FaGnE2MpP7SzBmDt8bla/gFYN
-         NtRZ3gufW3x7wxyAApRnDVDLiKpcTraAL7Szr61YLZAtwqGrxFAAuu1nxGJ9E3BfBZOB
-         jBPyyoDI4/jX2y0LKWt/h7ooOiMx5YUwcLKxgTVVdanl9WfYxCfG6BJW/jKtVRB/sRL7
-         kh3bPiSFCr9r9nexa3Mrn1FLmwK1dPDJpD5I6WyqT9NdUKRxiv3ycvq5FIjcJimwTouI
-         yctrR+QXhf2Kszu2aiZuk97CtmuC1HfINxEAcXwonFrxrGne630y0++tWxc39+3rLBwT
-         B06A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757600402; x=1758205202;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DrndfxQ6TSaH0WN9cPCMXVX2wBUepc9wx8k6s7n8/YI=;
-        b=hA4/pw4iR1uGVT88stYmvtj5WuMsnQ4k6vZFcYy5oCb6VpEsKOGmxp9NoIKf3NVLF1
-         OG1xq6CDkTZztwHL6emIHyfMkWjhxgp/8n2xqj3/CZ9unWWtf11vyp0IId12yjk37Bvu
-         jIh+8dLOR24mq+kOB7oRKkZcsLBRVNU31o3vHemLspvosPN054dIBiWgXw7m2tOu2hEk
-         aILOk0RiSxTGPiPHp3XFx4Fx7EZLmTx2OBsq5pgGFM8/azNj60tXXyaJSI0xeyKZS2fp
-         of4imKHVUeGypyumgUnk/tK/3jZBsY6wPjov2qNy2hc5lpSfFGfbag7GIn8zDdWIMW6Z
-         SMjQ==
-X-Gm-Message-State: AOJu0Yz2mqub/gqijNtNesGTpGseqUAl7iIzSYrDFBq7EmpDdN6BXzOB
-	wXdgtpQwWb+R2N5WrHNv0lQpmbvuDq8j5Lci7xpwIvSgPkY1kgmoU375iKUfJSPCquVwSSjiuqn
-	+/7Tvvg==
-X-Google-Smtp-Source: AGHT+IGoY4XzeimX4Qx5PFV5aBnqr9j6/zervU1TviGGl7Q4s1fC/e4Znd1pw4jlyG8vHmJxWf0THQuaDkQ=
-X-Received: from pjbso14.prod.google.com ([2002:a17:90b:1f8e:b0:327:4fa6:eaa1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d448:b0:32b:5dbf:e48
- with SMTP id 98e67ed59e1d1-32d43f045bbmr22319570a91.1.1757600401669; Thu, 11
- Sep 2025 07:20:01 -0700 (PDT)
-Date: Thu, 11 Sep 2025 07:20:00 -0700
-In-Reply-To: <20250909182828.1542362-1-xin@zytor.com>
+	s=arc-20240116; t=1757600427; c=relaxed/simple;
+	bh=7Y1g/p6iZza6skOHn7hu32dRsTE6Q4vUODm53ZSfRsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5qu8XtFzcOhdeQB4Sne34lM8/L7+ZKFeefKGobm7VgPx5FQ4KyX4wgUhUbbXFWV2xdu4Q+Ihm1In5oMApDkBH/W5msetjsFNSIWfZK8avVccWipO/AHfkU4oWCSng65UvL+0+UZy1rE2iASTnRjAx5tLq4UuvtuKQ5FNgYBs3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8aqCPFN; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757600425; x=1789136425;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7Y1g/p6iZza6skOHn7hu32dRsTE6Q4vUODm53ZSfRsI=;
+  b=n8aqCPFNMmnx306denV0+GSgvHpW+GSNKQgeVUJyx9T5RcXzfAO2SnMo
+   BVb6vGng0ARUjdwCg+3UKwXYW41lAMRTJQKn/3GHOm8IITsiL/XeqFyZc
+   hhjDSb2Lsf9uiG8AvNVecRRap7TOOAkC0y1iIvr5CWYQ3rLxZpbq4eY4X
+   CPI4//DblEBojZNkjnrGKw0jdQmZ2CbhyRLjb98LZePYDqobXnaYxsEcw
+   TNZuDAjKrTGq6dKxcfEc1PZ25NKRzyqwgozXU15gGgsq7PAm35oh58aZK
+   17GPx3cd4oolIKsPbyYeQn5dqnmNfz5i8trdg4vfa6+K1hxF7yKiV2kcK
+   A==;
+X-CSE-ConnectionGUID: k2XG2NPnRnags2E9pCG5Og==
+X-CSE-MsgGUID: 2Hk7S/C8T/63pHC/XtfJ5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="71311417"
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="71311417"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 07:20:24 -0700
+X-CSE-ConnectionGUID: et4gFRYMR6Cuaq8mVNEQbQ==
+X-CSE-MsgGUID: qPSCSHpdQVKCwhhKeESM5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="204465229"
+Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 11 Sep 2025 07:20:23 -0700
+Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uwi9r-0000Nc-2c;
+	Thu, 11 Sep 2025 14:20:19 +0000
+Date: Thu, 11 Sep 2025 22:20:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alessio Attilio <alessio.attilio.dev@gmail.com>, aahringo@redhat.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	teigland@redhat.com, gfs2@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Alessio Attilio <alessio.attilio@engineer.com>
+Subject: Re: [PATCH] * dlm: improve lock management and concurrency control
+Message-ID: <202509112216.Jvy0G9Jd-lkp@intel.com>
+References: <20250910171706.173976-1-alessio.attilio.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250909182828.1542362-1-xin@zytor.com>
-Message-ID: <aMLakCwFW1YEWFG4@google.com>
-Subject: Re: [RFC PATCH v1 0/5] x86/boot, KVM: Move VMXON/VMXOFF handling from
- KVM to CPU lifecycle
-From: Sean Christopherson <seanjc@google.com>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-pm@vger.kernel.org, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	hpa@zytor.com, rafael@kernel.org, pavel@kernel.org, brgerst@gmail.com, 
-	david.kaplan@amd.com, peterz@infradead.org, andrew.cooper3@citrix.com, 
-	kprateek.nayak@amd.com, arjan@linux.intel.com, chao.gao@intel.com, 
-	rick.p.edgecombe@intel.com, dan.j.williams@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910171706.173976-1-alessio.attilio.dev@gmail.com>
 
-On Tue, Sep 09, 2025, Xin Li (Intel) wrote:
-> There is now broad consensus that TDX should be decoupled from KVM. To
-> achieve this separation, it is necessary to move VMXON/VMXOFF handling
-> out of KVM. Sean has also discussed this approach in several TDX patch
-> series threads, e.g. [1], and has already done a round of refactoring
-> in KVM [2].
-> 
-> The simplest thing we could think of is to execute VMXON during the CPU
-> startup phase and VMXOFF during the CPU shutdown phase, even although
-> this leaves VMX on when it doesn't strictly need to be on.
-> 
-> This RFC series demonstrates the idea and seeks feedback from the KVM
-> community on its viability.
+Hi Alessio,
 
-Sorry, but this is not at all aligned with where I want things to go.  I don't
-want to simply move VMXON into the kernel, I want to extract *all* of the system-
-wide management code from KVM and into a separate base module.  That is obviously
-a much more invasive and difficult series to develop, but it's where we need to
-go to truly decouple core virtualization functionality from KVM.
+kernel test robot noticed the following build errors:
 
-VPID and ASID allocation need to be managed system-wide, otherwise running KVM
-alongside another hypervisor-like entity will result in data corruption due to
-shared TLB state.
+[auto build test ERROR on teigland-dlm/next]
+[also build test ERROR on linus/master v6.17-rc5 next-20250911]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Ditto for user-return MSRs, AMD's MSR_AMD64_TSC_RATIO, and probably a few other
-things I'm forgetting.
+url:    https://github.com/intel-lab-lkp/linux/commits/Alessio-Attilio/dlm-improve-lock-management-and-concurrency-control/20250911-012449
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git next
+patch link:    https://lore.kernel.org/r/20250910171706.173976-1-alessio.attilio.dev%40gmail.com
+patch subject: [PATCH] * dlm: improve lock management and concurrency control
+config: hexagon-randconfig-001-20250911 (https://download.01.org/0day-ci/archive/20250911/202509112216.Jvy0G9Jd-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250911/202509112216.Jvy0G9Jd-lkp@intel.com/reproduce)
 
-I also want to keep the code as a module, both to avoid doing VMXON unconditionally,
-and for debug/testing purposes (being able to unload and reload is tremendously
-valuable on that front).  This one isn't negotiable for me.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509112216.Jvy0G9Jd-lkp@intel.com/
 
-And most importantly, all of that needs to be done in a way that is fully
-bisectable.  As proposed, this series will break horribly due to enabling VMXON
-during early boot without any way to do VMXOFF.
+All errors (new ones prefixed by >>):
 
-In short, I don't want to half-ass this just so that I can get overwhelmed with
-more TDX patches.
+>> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
+    6181 |         list_for_each_entry_safe(lkb, safe, &proc->unlocking, lkb_ownqueue) {
+         |                                       ^
+>> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
+>> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
+>> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
+>> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
+>> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
+>> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
+>> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
+    6189 |         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
+         |                                  ^
+>> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
+>> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
+>> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
+>> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
+>> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
+>> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
+>> fs/dlm/lock.c:6189:31: error: use of undeclared identifier 'cb_safe'
+    6189 |         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
+         |                                      ^
+>> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
+    6189 |         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
+         |                                  ^
+>> fs/dlm/lock.c:6189:31: error: use of undeclared identifier 'cb_safe'
+    6189 |         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
+         |                                      ^
+>> fs/dlm/lock.c:6189:31: error: use of undeclared identifier 'cb_safe'
+>> fs/dlm/lock.c:6189:31: error: use of undeclared identifier 'cb_safe'
+   fatal error: too many errors emitted, stopping now [-ferror-limit=]
+   20 errors generated.
+
+
+vim +/safe +6181 fs/dlm/lock.c
+
+597d0cae0f99f6 David Teigland  2006-07-12  6148  
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6149  static void clean_proc_locks(struct dlm_ls *ls, struct dlm_user_proc *proc)
+ef0c2bb05f40f9 David Teigland  2007-03-28  6150  {
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6151  	struct dlm_lkb *lkb;
+ef0c2bb05f40f9 David Teigland  2007-03-28  6152  
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6153  	dlm_lock_recovery(ls);
+ef0c2bb05f40f9 David Teigland  2007-03-28  6154  
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6155  	while (1) {
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6156  		lkb = NULL;
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6157  		spin_lock_bh(&proc->locks_spin);
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6158  		if (!list_empty(&proc->locks)) {
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6159  			lkb = list_entry(proc->locks.next, struct dlm_lkb,
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6160  					 lkb_ownqueue);
+ef0c2bb05f40f9 David Teigland  2007-03-28  6161  			list_del_init(&lkb->lkb_ownqueue);
+ef0c2bb05f40f9 David Teigland  2007-03-28  6162  		}
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6163  		spin_unlock_bh(&proc->locks_spin);
+ef0c2bb05f40f9 David Teigland  2007-03-28  6164  
+ef0c2bb05f40f9 David Teigland  2007-03-28  6165  		if (!lkb)
+ef0c2bb05f40f9 David Teigland  2007-03-28  6166  			break;
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6167  
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6168  		if (lkb->lkb_exflags & DLM_LKF_PERSISTENT) {
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6169  			set_bit(DLM_DFL_ORPHAN_BIT, &lkb->lkb_dflags);
+597d0cae0f99f6 David Teigland  2006-07-12  6170  			orphan_proc_lock(ls, lkb);
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6171  		} else {
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6172  			set_bit(DLM_IFL_DEAD_BIT, &lkb->lkb_iflags);
+597d0cae0f99f6 David Teigland  2006-07-12  6173  			unlock_proc_lock(ls, lkb);
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6174  		}
+597d0cae0f99f6 David Teigland  2006-07-12  6175  
+597d0cae0f99f6 David Teigland  2006-07-12  6176  		dlm_put_lkb(lkb);
+597d0cae0f99f6 David Teigland  2006-07-12  6177  	}
+a1bc86e6bddd34 David Teigland  2007-01-15  6178  
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6179  	spin_lock_bh(&proc->locks_spin);
+a1bc86e6bddd34 David Teigland  2007-01-15  6180  	/* in-progress unlocks */
+a1bc86e6bddd34 David Teigland  2007-01-15 @6181  	list_for_each_entry_safe(lkb, safe, &proc->unlocking, lkb_ownqueue) {
+a1bc86e6bddd34 David Teigland  2007-01-15  6182  		list_del_init(&lkb->lkb_ownqueue);
+e1af8728f600f6 Alexander Aring 2023-03-06  6183  		set_bit(DLM_IFL_DEAD_BIT, &lkb->lkb_iflags);
+a1bc86e6bddd34 David Teigland  2007-01-15  6184  		dlm_put_lkb(lkb);
+a1bc86e6bddd34 David Teigland  2007-01-15  6185  	}
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6186  	spin_unlock_bh(&proc->locks_spin);
+a1bc86e6bddd34 David Teigland  2007-01-15  6187  
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6188  	spin_lock_bh(&proc->asts_spin);
+986ae3c2a8dfc1 Alexander Aring 2024-03-28 @6189  	list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
+986ae3c2a8dfc1 Alexander Aring 2024-03-28  6190  		list_del(&cb->list);
+2bec1bbd55cf96 Alexander Aring 2024-03-28  6191  		dlm_free_cb(cb);
+a1bc86e6bddd34 David Teigland  2007-01-15  6192  	}
+cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6193  	spin_unlock_bh(&proc->asts_spin);
+a1bc86e6bddd34 David Teigland  2007-01-15  6194  
+85e86edf951a8a David Teigland  2007-05-18  6195  	dlm_unlock_recovery(ls);
+597d0cae0f99f6 David Teigland  2006-07-12  6196  }
+a1bc86e6bddd34 David Teigland  2007-01-15  6197  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
