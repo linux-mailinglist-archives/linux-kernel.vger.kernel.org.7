@@ -1,284 +1,352 @@
-Return-Path: <linux-kernel+bounces-812012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C66B531B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:04:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADE90B531B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:04:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60FE048516A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:04:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95C371BC7BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:05:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245EC31DD87;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95A6F31DDA8;
 	Thu, 11 Sep 2025 12:04:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BEICEPI+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o254A2S4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11B12E9EAD
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA74D3128D4;
+	Thu, 11 Sep 2025 12:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757592273; cv=none; b=OVjrZ9ZPxgg0Hzt+0vhMb/6eGs9gQmuOmk6qEjulTn6kLyBrzl4Raha1a2RIBUzbhJzm5g5ncsR2G4fvyL6SPDFgpo1kuNXGZX2qv8GSu9DW3drpcTkurYI7hHSNB7jrF7Q7VNQDnrpi/3vufpZwcDrdCideAAiu77ymCHlRhNc=
+	t=1757592273; cv=none; b=RxtbYSnchecJlEM9z4nKwOOgNBPfafONpDk4ARwPP7prjigmTWpMAs4nDVXa5FyVXaInuAqalAhYYrK2/pxlk7B2CbRb5jWEKBVJwcguOQu9y5FHWRtH638CtY/zxlRndW1L47XWA/MWMkA8/hdVUekXHrq/S235OD/m2DzD6w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757592273; c=relaxed/simple;
-	bh=Wt0bC5mvDF/uHEWIdzjdJu0LeGAa2X3RPBVPJei0lk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AuLSROuwCoddnt1Myw3a1/NJnkuCj0gIZUrpQQQVZU3PH4FVCGP5+iwyfjPdfgHebK4ti6Gz07F0EvCGg0el8HzR0aFVvFNbapVWAyDPw/joHU8YTew1P1v2E0Xfcg035NCDYXphjDe8DKQgHWJdYBTn7rm8sOcVrceJiFrPGz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BEICEPI+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757592270;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EuZPErlVPfP4Zi7OehwAoScM8rfscgPVz8IjeFSlZfc=;
-	b=BEICEPI+XKEA1tgJ61XnCtifDdNA0RJaEhVHg29X8Jyr5qs1Wv+sDcCzgWLKCp9JhVzO90
-	6Uz977rR0LxC9CTD5IjrmA+4B1llAZnpQIn5Zv5ueAoNUru6FC0UW6DFTBMaYRNDOGc4Ld
-	t2IB/ET8P35zeVNZ1a8Q+rqgEgNNLdA=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-411-OBZ6-pWENc-5EUAGwnApxw-1; Thu, 11 Sep 2025 08:04:29 -0400
-X-MC-Unique: OBZ6-pWENc-5EUAGwnApxw-1
-X-Mimecast-MFC-AGG-ID: OBZ6-pWENc-5EUAGwnApxw_1757592268
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45e037fd142so4709315e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:04:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757592268; x=1758197068;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EuZPErlVPfP4Zi7OehwAoScM8rfscgPVz8IjeFSlZfc=;
-        b=h7qtw5unv2NiXyci7Mm0iHBOTza4yIAP82D5wCllOvXFuKxqihR3VQAmA+Yae3rDTF
-         SAWxw4FAMKp99TjXXaypjyasoceUrBqbJiJiurV1FM5kdRV9dX0TqmEA79MO/VDb79E2
-         M4zY22M52PTL5qkXDmZN+Tn83lCIdmJXn4UfRbLy/duigMm+7fYuiH40HRmKbPHmHVFk
-         inGaPAyMiLD/h+MypjB6mVqF9HAe8diQznfW42bVCKNyrhOTh0JAwxyHqwE6Jp7GJpT2
-         c4p3c4IZiGZT9IANvxVrgVyLs8NxSbWvC9duexANnoCuMLewLt+U3VWV5XWP5PRPPGRP
-         B9TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJiLWp1wHhESaLnaunjvVYoXhkSp3sxByNPZBOWwn1FqmABZW1OpxQHyxk9PGIjtlLOFZtYBHOlDrSZtY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9O1QgYr6Nb/x7oXsxUyLj5MBm0gyxrlH/hqbBnswQ11xacRAz
-	aA/0MTQy2HSadIyJuqHGRqm6aeJH7EHWmxB0aTOicxdovA7rPIZdK3HFBZ5tcClYWQWB6CaWufF
-	LszgFelDschuw/5FN4iVdt0EyrNNC+dS+8ePN1FGq+088Kk+uJjYktiYwBGg9UJB+mA==
-X-Gm-Gg: ASbGncsuyc05qWkCzahTw+tyrh4tvpzMCedZ1nvTu0d/VXJGcsFC/P0Q1EQS0PgOjMH
-	h4OpyBfxUtOpQDlPRQ1zc2rWwbVZSszB8YkK2KSQVMYb3MxK7DIzEeCeKRoO4uEGoJk46aciaCk
-	s1RIhFC2xNnUlX5XZFTIvIam/rlYXb7tlpC3RDCTJUfJgYmOHI59HzHwZeXpurhQgXCSVmNCG7y
-	M/TrluL2ltV+vv5R2f2O83q2eo4AnW3epRhH1BIwStyJHoOIqX2GnLHrBuPQNNG7FMXo2KtjxKW
-	xe14hjvjAJe9YXaHPjMl3EU6IeDLRXSTS2kKCEIMxNnFPldqPIBj+BSN85VPM2hFLrCc7ByAgGo
-	VOkmFZYvDQ4Mz6WQoVLTzLskzddfcqFd2NHX8Rz9zSS3Q/h7IUMhR/v+txxnFU8PF2+0=
-X-Received: by 2002:a05:600c:17d8:b0:45e:598:90b0 with SMTP id 5b1f17b1804b1-45e05989245mr12298565e9.9.1757592268215;
-        Thu, 11 Sep 2025 05:04:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE8gojWv48o7hPnSlLmGoQLH2lzL/OCbhuDjeyev+XCC7h++EYG0R0k7MthrD+iGwxnZwbgRA==
-X-Received: by 2002:a05:600c:17d8:b0:45e:598:90b0 with SMTP id 5b1f17b1804b1-45e05989245mr12298135e9.9.1757592267679;
-        Thu, 11 Sep 2025 05:04:27 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f42:b000:db8b:7655:f60f:812b? (p200300d82f42b000db8b7655f60f812b.dip0.t-ipconnect.de. [2003:d8:2f42:b000:db8b:7655:f60f:812b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0187f0a7sm13295915e9.3.2025.09.11.05.04.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 05:04:27 -0700 (PDT)
-Message-ID: <6f1857b8-45db-4017-b6e8-02ecfa2104a3@redhat.com>
-Date: Thu, 11 Sep 2025 14:04:24 +0200
+	bh=Xg8WPyY4Z2e/E6IlZJLdf5Ee7eBmYQHurcIBELdCrEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cTacmU7Mb0NtiuJhbawiFNUl5CInMrvzwodFYeDhw5zUlgS0/LwCxVIRU4bdvSsdXeh5RxrvkmpQClv7jHwd7R14ta6gi0L4XKrFLIrCtBgVq7A1rEXNgF4A7+Ulr6FTXm9lHpb9RcvIYlZJ9zGAj0R2uaAUgEAj65lQMc0t4p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o254A2S4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC95C4CEF0;
+	Thu, 11 Sep 2025 12:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757592273;
+	bh=Xg8WPyY4Z2e/E6IlZJLdf5Ee7eBmYQHurcIBELdCrEw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=o254A2S4acpiYC5vQbnVB9cqvLl2eUTw6ADcSIvghj3LoBH8AO0qFyS2GXuC389aH
+	 RK+cFV+F/cwGtT6aagNHEaLSghVwL7VtA87EI5661g2cxlfo9aQxPrbWEuDzKY7tY2
+	 /60HrOSA6QAOR+WdCaQxSjKFBazmNjPJzu9rJWZ7VC0MkTpyDenggWuOV+9A3ROx1w
+	 +wLFgneCu7aPkV528ZfyGYKb+NieXQya9a9852GpoJ5tz1fI2cBjVGQDVbCJTbiF3j
+	 +vENVLVJ4zR1pSzuzxgWek2XSesckW4jrJZJnMMHhYierVw6XyrxZpTKiON9lcybas
+	 TY9saRptMCskQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C6428CE0C39; Thu, 11 Sep 2025 05:04:31 -0700 (PDT)
+Date: Thu, 11 Sep 2025 05:04:31 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Oliver Sang <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, linux-kernel@vger.kernel.org,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-trace-kernel@vger.kernel.org, yonghong.song@linux.dev
+Subject: Re: [paulmck-rcu:dev.2025.08.13a] [tracing]  364ac25d46:
+ WARNING:at_arch/x86/mm/fault.c:#do_user_addr_fault
+Message-ID: <f1223eab-3a31-4765-82a7-1d5d8af25a17@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <202508211038.c93e8603-lkp@intel.com>
+ <68044ea3-32c1-4d72-9bd3-fe2031669d79@paulmck-laptop>
+ <aLebLoM2OQD+KPxQ@xsang-OptiPlex-9020>
+ <d1ee722b-eb90-4b7e-9c2f-2db7d3b33ce9@paulmck-laptop>
+ <20250903113112.247eb552@batman.local.home>
+ <ea678a68-6a32-42d7-a9c7-f80261d02093@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 03/15] mm/rmap: extend rmap and migration support
- device-private entries
-To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250908000448.180088-1-balbirs@nvidia.com>
- <20250908000448.180088-4-balbirs@nvidia.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250908000448.180088-4-balbirs@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ea678a68-6a32-42d7-a9c7-f80261d02093@paulmck-laptop>
 
-On 08.09.25 02:04, Balbir Singh wrote:
-
-subject:
-
-"mm/rmap: rmap and migration support for device-private PMD entries"
-
-
-> Add device-private THP support to reverse mapping infrastructure,
-> enabling proper handling during migration and walk operations.
+On Fri, Sep 05, 2025 at 06:43:34AM -0700, Paul E. McKenney wrote:
+> On Wed, Sep 03, 2025 at 11:31:12AM -0400, Steven Rostedt wrote:
+> > On Wed, 3 Sep 2025 03:31:31 -0700
+> > "Paul E. McKenney" <paulmck@kernel.org> wrote:
+> > 
+> > > > by applying the patch, the issue gone. but since you said this is a 'diagnostic
+> > > > patch', not sure if it's a real fix. anyway:
+> > > > 
+> > > > Tested-by: kernel test robot <oliver.sang@intel.com>  
+> > > 
+> > > Thank you very much!  This tells me that something on the code path from
+> > > the tracepoint to the BPF program needs to have preemption disabled.
+> > > I will leave the diagnostic patch in my tree, and will be looking into
+> > > what the real fix should be.
+> > 
+> > Was it a BPF program that triggered this? I couldn't get that from the
+> > backtrace. Also, is this only a x86 32bit issue?
 > 
-> The key changes are:
-> - add_migration_pmd()/remove_migration_pmd(): Handle device-private
->    entries during folio migration and splitting
-> - page_vma_mapped_walk(): Recognize device-private THP entries during
->    VMA traversal operations
-> 
-> This change supports folio splitting and migration operations on
-> device-private entries.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Cc: Rakie Kim <rakie.kim@sk.com>
-> Cc: Byungchul Park <byungchul@sk.com>
-> Cc: Gregory Price <gourry@gourry.net>
-> Cc: Ying Huang <ying.huang@linux.alibaba.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Oscar Salvador <osalvador@suse.de>
-> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> Cc: Nico Pache <npache@redhat.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Dev Jain <dev.jain@arm.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: Mika Penttilä <mpenttil@redhat.com>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Francois Dugast <francois.dugast@intel.com>
-> 
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> ---
+> Excellent question, now that you mention it!  Your thought is that
+> one of the other preemption-disablings might need to be moved?
 
-[...]
+And a quick chat with Yonghong Song (added on CC) pointed out one bug
+in my conversion, namely that when BPF is invoked from a tracepoint,
+it expects that BPF-program entry and exit will happen on the same CPU.
+So I disabled migration, as shown in the upcated commit below.
 
+This can result in duplicate preemption disabling on the non-BPF code
+paths.  Please let me know if this is a problem, easy fix if so.
 
-> +++ b/mm/page_vma_mapped.c
-> @@ -250,12 +250,11 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
->   			pvmw->ptl = pmd_lock(mm, pvmw->pmd);
->   			pmde = *pvmw->pmd;
->   			if (!pmd_present(pmde)) {
-> -				swp_entry_t entry;
-> +				swp_entry_t entry = pmd_to_swp_entry(pmde);
->   
->   				if (!thp_migration_supported() ||
->   				    !(pvmw->flags & PVMW_MIGRATION))
->   					return not_found(pvmw);
-> -				entry = pmd_to_swp_entry(pmde);
->   				if (!is_migration_entry(entry) ||
->   				    !check_pmd(swp_offset_pfn(entry), pvmw))
->   					return not_found(pvmw);
+Thoughts?
 
-Why this change? Looks unrelated.
+							Thanx, Paul
 
-> @@ -277,6 +276,15 @@ bool page_vma_mapped_walk(struct page_vma_mapped_walk *pvmw)
->   			 * cannot return prematurely, while zap_huge_pmd() has
->   			 * cleared *pmd but not decremented compound_mapcount().
+------------------------------------------------------------------------
 
-Reminder to self: cleanup compound_mapcount() leftovers
+commit 69f96ca7b79912d58e8efddb09c45c0ee9dee6a1
+Author: Paul E. McKenney <paulmck@kernel.org>
+Date:   Wed Jul 16 12:34:26 2025 -0700
 
->   			 */
-> +			swp_entry_t entry;
-> +
-> +			entry = pmd_to_swp_entry(pmde);
+    tracing: Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast
+    
+    The current use of guard(preempt_notrace)() within __DECLARE_TRACE()
+    to protect invocation of __DO_TRACE_CALL() means that BPF programs
+    attached to tracepoints are non-preemptible.  This is unhelpful in
+    real-time systems, whose users apparently wish to use BPF while also
+    achieving low latencies.  (Who knew?)
+    
+    One option would be to use preemptible RCU, but this introduces
+    many opportunities for infinite recursion, which many consider to
+    be counterproductive, especially given the relatively small stacks
+    provided by the Linux kernel.  These opportunities could be shut down
+    by sufficiently energetic duplication of code, but this sort of thing
+    is considered impolite in some circles.
+    
+    Therefore, use the shiny new SRCU-fast API, which provides somewhat faster
+    readers than those of preemptible RCU, at least on my laptop, where
+    task_struct access is more expensive than access to per-CPU variables.
+    And SRCU fast provides way faster readers than does SRCU, courtesy of
+    being able to avoid the read-side use of smp_mb().  Also, it is quite
+    straightforward to create srcu_read_{,un}lock_fast_notrace() functions.
+    
+    While in the area, SRCU now supports early boot call_srcu().  Therefore,
+    remove the checks that used to avoid such use from rcu_free_old_probes()
+    before this commit was applied:
+    
+    e53244e2c893 ("tracepoint: Remove SRCU protection")
+    
+    The current commit can be thought of as an approximate revert of that
+    commit, with some compensating additions of preemption disabling pointed
+    out by Steven Rostedt (thank you, Steven!).  This preemption disabling
+    uses guard(preempt_notrace)(), and while in the area a couple of other
+    use cases were also converted to guards.
+    
+    However, Yonghong Song points out that BPF expects non-sleepable BPF
+    programs to remain on the same CPU, which means that migration must
+    be disabled whenever preemption remains enabled.  In addition, non-RT
+    kernels have performance expectations on BPF that would be violated
+    by allowing the BPF programs to be preempted.
+    
+    Therefore, continue to disable preemption in non-RT kernels, and protect
+    the BPF program with both SRCU and migration disabling for RT kernels,
+    and even then only if preemption is not already disabled.
+    
+    [ paulmck: Apply kernel test robot and Yonghong Song feedback. ]
+    
+    Link: https://lore.kernel.org/all/20250613152218.1924093-1-bigeasy@linutronix.de/
+    Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+    Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+    Cc: Steven Rostedt <rostedt@goodmis.org>
+    Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+    Cc: <bpf@vger.kernel.org>
 
-swp_entry_t entry = pmd_to_swp_entry(pmde);
-
-> +
-> +			if (is_device_private_entry(entry)) {
-> +				pvmw->ptl = pmd_lock(mm, pvmw->pmd);
-> +				return true;
-> +			}
-> +
->   			if ((pvmw->flags & PVMW_SYNC) &&
->   			    thp_vma_suitable_order(vma, pvmw->address,
->   						   PMD_ORDER) &&
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 236ceff5b276..6de1baf7a4f1 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1063,8 +1063,10 @@ static int page_vma_mkclean_one(struct page_vma_mapped_walk *pvmw)
->   		} else {
->   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->   			pmd_t *pmd = pvmw->pmd;
-> -			pmd_t entry;
-> +			pmd_t entry = pmdp_get(pmd);
->   
-> +			if (!pmd_present(entry))
-> +				continue;
->   			if (!pmd_dirty(*pmd) && !pmd_write(*pmd))
->   				continue;
->   
-
-If you just did a pmdp_get() you should use it in these functions as 
-well. If not (cleanup later), do a straight *pmd like the others.
-
-
-
-Apart from that nothing jumped at me.
-
--- 
-Cheers
-
-David / dhildenb
-
+diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+index 826ce3f8e1f851..9f8b19cd303acc 100644
+--- a/include/linux/tracepoint.h
++++ b/include/linux/tracepoint.h
+@@ -33,6 +33,8 @@ struct trace_eval_map {
+ 
+ #define TRACEPOINT_DEFAULT_PRIO	10
+ 
++extern struct srcu_struct tracepoint_srcu;
++
+ extern int
+ tracepoint_probe_register(struct tracepoint *tp, void *probe, void *data);
+ extern int
+@@ -115,7 +117,10 @@ void for_each_tracepoint_in_module(struct module *mod,
+ static inline void tracepoint_synchronize_unregister(void)
+ {
+ 	synchronize_rcu_tasks_trace();
+-	synchronize_rcu();
++	if (IS_ENABLED(CONFIG_PREEMPT_RT))
++		synchronize_srcu(&tracepoint_srcu);
++	else
++		synchronize_rcu();
+ }
+ static inline bool tracepoint_is_faultable(struct tracepoint *tp)
+ {
+@@ -266,23 +271,29 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+ 		return static_branch_unlikely(&__tracepoint_##name.key);\
+ 	}
+ 
+-#define __DECLARE_TRACE(name, proto, args, cond, data_proto)		\
++#define __DECLARE_TRACE(name, proto, args, cond, data_proto)			\
+ 	__DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), PARAMS(data_proto)) \
+-	static inline void __do_trace_##name(proto)			\
+-	{								\
+-		if (cond) {						\
+-			guard(preempt_notrace)();			\
+-			__DO_TRACE_CALL(name, TP_ARGS(args));		\
+-		}							\
+-	}								\
+-	static inline void trace_##name(proto)				\
+-	{								\
+-		if (static_branch_unlikely(&__tracepoint_##name.key))	\
+-			__do_trace_##name(args);			\
+-		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
+-			WARN_ONCE(!rcu_is_watching(),			\
+-				  "RCU not watching for tracepoint");	\
+-		}							\
++	static inline void __do_trace_##name(proto)				\
++	{									\
++		if (cond) {							\
++			if (IS_ENABLED(CONFIG_PREEMPT_RT) && preemptible()) {	\
++				guard(srcu_fast_notrace)(&tracepoint_srcu);	\
++				guard(migrate)();				\
++				__DO_TRACE_CALL(name, TP_ARGS(args));		\
++			} else {						\
++				guard(preempt_notrace)();			\
++				__DO_TRACE_CALL(name, TP_ARGS(args));		\
++			}							\
++		}								\
++	}									\
++	static inline void trace_##name(proto)					\
++	{									\
++		if (static_branch_unlikely(&__tracepoint_##name.key))		\
++			__do_trace_##name(args);				\
++		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {			\
++			WARN_ONCE(!rcu_is_watching(),				\
++				  "RCU not watching for tracepoint");		\
++		}								\
+ 	}
+ 
+ #define __DECLARE_TRACE_SYSCALL(name, proto, args, data_proto)		\
+diff --git a/include/trace/perf.h b/include/trace/perf.h
+index a1754b73a8f55b..348ad1d9b5566e 100644
+--- a/include/trace/perf.h
++++ b/include/trace/perf.h
+@@ -71,6 +71,7 @@ perf_trace_##call(void *__data, proto)					\
+ 	u64 __count __attribute__((unused));				\
+ 	struct task_struct *__task __attribute__((unused));		\
+ 									\
++	guard(preempt_notrace)();					\
+ 	do_perf_trace_##call(__data, args);				\
+ }
+ 
+@@ -85,9 +86,8 @@ perf_trace_##call(void *__data, proto)					\
+ 	struct task_struct *__task __attribute__((unused));		\
+ 									\
+ 	might_fault();							\
+-	preempt_disable_notrace();					\
++	guard(preempt_notrace)();					\
+ 	do_perf_trace_##call(__data, args);				\
+-	preempt_enable_notrace();					\
+ }
+ 
+ /*
+diff --git a/include/trace/trace_events.h b/include/trace/trace_events.h
+index 4f22136fd4656c..fbc07d353be6b6 100644
+--- a/include/trace/trace_events.h
++++ b/include/trace/trace_events.h
+@@ -436,6 +436,7 @@ __DECLARE_EVENT_CLASS(call, PARAMS(proto), PARAMS(args), PARAMS(tstruct), \
+ static notrace void							\
+ trace_event_raw_event_##call(void *__data, proto)			\
+ {									\
++	guard(preempt_notrace)();					\
+ 	do_trace_event_raw_event_##call(__data, args);			\
+ }
+ 
+@@ -447,9 +448,8 @@ static notrace void							\
+ trace_event_raw_event_##call(void *__data, proto)			\
+ {									\
+ 	might_fault();							\
+-	preempt_disable_notrace();					\
++	guard(preempt_notrace)();					\
+ 	do_trace_event_raw_event_##call(__data, args);			\
+-	preempt_enable_notrace();					\
+ }
+ 
+ /*
+diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+index 62719d2941c900..21bb6779821476 100644
+--- a/kernel/tracepoint.c
++++ b/kernel/tracepoint.c
+@@ -25,6 +25,9 @@ enum tp_func_state {
+ extern tracepoint_ptr_t __start___tracepoints_ptrs[];
+ extern tracepoint_ptr_t __stop___tracepoints_ptrs[];
+ 
++DEFINE_SRCU_FAST(tracepoint_srcu);
++EXPORT_SYMBOL_GPL(tracepoint_srcu);
++
+ enum tp_transition_sync {
+ 	TP_TRANSITION_SYNC_1_0_1,
+ 	TP_TRANSITION_SYNC_N_2_1,
+@@ -34,6 +37,7 @@ enum tp_transition_sync {
+ 
+ struct tp_transition_snapshot {
+ 	unsigned long rcu;
++	unsigned long srcu_gp;
+ 	bool ongoing;
+ };
+ 
+@@ -46,6 +50,7 @@ static void tp_rcu_get_state(enum tp_transition_sync sync)
+ 
+ 	/* Keep the latest get_state snapshot. */
+ 	snapshot->rcu = get_state_synchronize_rcu();
++	snapshot->srcu_gp = start_poll_synchronize_srcu(&tracepoint_srcu);
+ 	snapshot->ongoing = true;
+ }
+ 
+@@ -56,6 +61,8 @@ static void tp_rcu_cond_sync(enum tp_transition_sync sync)
+ 	if (!snapshot->ongoing)
+ 		return;
+ 	cond_synchronize_rcu(snapshot->rcu);
++	if (!poll_state_synchronize_srcu(&tracepoint_srcu, snapshot->srcu_gp))
++		synchronize_srcu(&tracepoint_srcu);
+ 	snapshot->ongoing = false;
+ }
+ 
+@@ -101,17 +108,29 @@ static inline void *allocate_probes(int count)
+ 	return p == NULL ? NULL : p->probes;
+ }
+ 
+-static void rcu_free_old_probes(struct rcu_head *head)
++static void srcu_free_old_probes(struct rcu_head *head)
+ {
+ 	kfree(container_of(head, struct tp_probes, rcu));
+ }
+ 
++static void rcu_free_old_probes(struct rcu_head *head)
++{
++	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
++}
++
+ static inline void release_probes(struct tracepoint *tp, struct tracepoint_func *old)
+ {
+ 	if (old) {
+ 		struct tp_probes *tp_probes = container_of(old,
+ 			struct tp_probes, probes[0]);
+ 
++		/*
++		 * Tracepoint probes are protected by either RCU or
++		 * Tasks Trace RCU and also by SRCU.  By calling the SRCU
++		 * callback in the [Tasks Trace] RCU callback we cover
++		 * both cases. So let us chain the SRCU and [Tasks Trace]
++		 * RCU callbacks to wait for both grace periods.
++		 */
+ 		if (tracepoint_is_faultable(tp))
+ 			call_rcu_tasks_trace(&tp_probes->rcu, rcu_free_old_probes);
+ 		else
 
