@@ -1,150 +1,133 @@
-Return-Path: <linux-kernel+bounces-812060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7C0B53265
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:35:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DA7BB53268
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:35:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B041A84218
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:33:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B823BA84F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33604322A0E;
-	Thu, 11 Sep 2025 12:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB90321442;
+	Thu, 11 Sep 2025 12:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p/hfNz8F"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cjTBt33t"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CC0322A08
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC443218A8;
+	Thu, 11 Sep 2025 12:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594018; cv=none; b=sH1a+ZAldGSv5DcuXOneF/p2EwpSDZvFQJlsxO9tt/XQdbPj9lgec9B2OsWAb0dwDYYL1/N6OCgZ22z0dwpevuBQXXyZsx8yDFm7oYRJAuwIso59RQeOzklXe+njFGm70msmBjB5qwjCF9lHiQbL9nBuid1+elBUhQb040k8cGk=
+	t=1757594038; cv=none; b=Cvuz2sGPv4IMVDai7dbTLEKdg+TLwqEvI4jLjf6ovS1g+cMvyVkfYreIZ3RuNuQPJ6oSod9GFzE0wgoVJS/lag4sla+6y0ALYTjWglX86Gz0ZcypLccaEQ+gw1POON+kQ7kztKhXmXAOCHNjBtagGJniW1GO8RV1EX1ExYcQWRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594018; c=relaxed/simple;
-	bh=VE1roVfRus68bBPTerPNOcsbtdx+CTPzLCSXO4Sv5PI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zu2+cEOle5BBgvJi4LpMzACgzaqxAdmMWroSHBwCWksi2EQA4hCeQW1gl0QuZs+SJyvReN+HPpr5YG6XfFk6FziWM25srbmquPwT4rGcNISXQ/C8OcmH4Fgg+hVM53oK+07kpa6SFOCwCUthAjvTkShAYdH2GW9rxU5hyI9ZjNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p/hfNz8F; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45dda7d87faso4501915e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:33:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757594015; x=1758198815; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=77w/BLu3louQ5LAeAyTpxsMARQdOP7fXiEQcpRRVAfE=;
-        b=p/hfNz8FyXbfz8wSydDkHFhvFh5pbEd3jnxW8vjsvF8CqiJwvrRoKYDrpP07Sb/wc6
-         Z4E5IQwNqJcN7dINKaFHD8gB41HuuxKSdPk3pv0UhcksdM7XNpqOa61z5ZVjmletvrx+
-         EYvpaWNvp1NlxoomYo/odLPdDwOxybfUA1HRaGtclHj7eaICViJ0S8SzS/fGkUI1RT7O
-         Y4JKxdMazQneyfjFAfIzc8nKCar970Rr0eWaucl5MOYHLnEK1XcIhmXH42CNN1aQcnS3
-         BZVNjURcWLEkFDJlhARcVwnDE5s8Drc5HJiRtGgzV/QtFECKm91QpuvTWfWTRp7YpNnO
-         58Qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757594015; x=1758198815;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=77w/BLu3louQ5LAeAyTpxsMARQdOP7fXiEQcpRRVAfE=;
-        b=myLVX6XlMiIQvqAsiex1Tdf3dHbHx9LW2KWjo9JpPLJ8VuTODlY+758xT3QU1SH0Zm
-         3n15f6eevcsdc6ay+kRT1IwIvaUjdqzXeSI8UHozdOAMo4h/5je9MgeOrEwIYvsOCrRZ
-         8C3N2SA4e05/33tVRyK9uA0C90THfturPgjbxuDyG7A/okxnY/KOr/D/2rR+m8ScwDg3
-         eY8t25sxsGyGPFLiampu7fq8z5JGUmKw347I73g5DONLR2x3LyrlR0mK1zbRc/pVl60E
-         zfSx3qkaSwyQc/tPSD3/DbhTvVXLwL8TpkTi0GcqPgTgHTDHiYkh5+iJ3ERSabAG7gMW
-         9t9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWQNDpjo8TMs4gFRf/jEz4N9lf43lV3nHXpkiyTkymlG6+JLKBD5kQF8y7e5m9YVnCykNdGOT3P5n6THqo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS3piCLODsC9zCkfWluCX8bnVTOAUpElX0HxUwpCDcMr56/5y3
-	bgG45Vj1YEaZ5lLrFXMvJs6d1wWQH20sH5+7zaFMLA8Tjdg3xsl3cnXr85XThsSKVaU=
-X-Gm-Gg: ASbGnct3LrfI97Pro2TjXyBrESLvBZj19UoWB6+642fZe2dMNf3vOKwh+fOArEbs7zx
-	dWkmYYHbguLHXW7zns980OVrkyhqQNpVRmgWn0MjFcPMIS0PR+36m2Rj3pCQXiR2EMbGy0m6rak
-	8jcaehSKPAtfgPYShr4FzwyQBxGQKOLbe31EbN/1iVA8O2kBG+Me152dX18Pa/9iAyTBmkLnqqS
-	iOItICM51vtweljmzrHG1KoOdayOg6soSVwbuxw882neoD9tdufMB9ZCsTFi8ZtO2o6TxNb3f6Q
-	8Si2ylO1HZmNE7HpXUqYSjbOwDAQiisj95reC6rNkUfIqIejPHRGTF6oSjj2jq+ShFEMlUBNuJk
-	kllaYJITf2EhJJlnP5SM5rA==
-X-Google-Smtp-Source: AGHT+IERNyAnFxuua9N1uDZtOVhilat+DKTgWSq+/gMo1aCu3TqF6Sb2iqngQDwNMVzvjL69GHQfIQ==
-X-Received: by 2002:a05:600c:1993:b0:45b:8b3e:9f66 with SMTP id 5b1f17b1804b1-45dddeb93b3mr157844605e9.13.1757594014898;
-        Thu, 11 Sep 2025 05:33:34 -0700 (PDT)
-Received: from linaro.org ([86.121.170.194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0153fbd5sm13210085e9.5.2025.09.11.05.33.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 05:33:33 -0700 (PDT)
-Date: Thu, 11 Sep 2025 15:33:31 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] phy: qcom: edp: Add Glymur platform support
-Message-ID: <2mcs5cov44frxyvg3k3nuov3zedaoc6ayd5dpoh7r5kcsxa5eu@qrqxpvnrkgj2>
-References: <20250909-phy-qcom-edp-add-glymur-support-v2-0-02553381e47d@linaro.org>
- <20250909-phy-qcom-edp-add-glymur-support-v2-3-02553381e47d@linaro.org>
- <3bo2xr3jb3hrzsetjzd62dmcif2biizvoanxwtyhr2dmkb4g7x@dgrcvzujcwgq>
- <wetzewmbraeawwintmxqntjhvennq5iu2jeegel3glk7y6rsnf@4vwscm5bwezr>
- <fff688c9-af7d-43fd-a3f1-00209842bcc9@oss.qualcomm.com>
+	s=arc-20240116; t=1757594038; c=relaxed/simple;
+	bh=5BSLEmmZfBl3Yfv1/mzYUDJC2GYRHmDh0UNrwBqh1S8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BJTltpVtnzVKoYHKf5B0HGVxsYEE9+qJzpxFtGvuKBi/mWTJx6Qmp1kKP5uraQ3HBs/KabF0zWjVxImg2hAQDvIYdT1kSPAW12qrZeqg+GTMYXKsIq+qchNl616JjehZkRD8HgZcOFbyY8cn3F03L6H1FPzkCXJlnujNsZENXRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cjTBt33t; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BCTbFo032212;
+	Thu, 11 Sep 2025 12:33:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=RVFkoRRBKKz5sipdqgF9mKvUy2RClS
+	ffA3CKrweZn1g=; b=cjTBt33tZraloKZ0Q9HIuzjJdeu6uh4HJfRtNATeZH4MWk
+	4V1wUbl1LljoqhmZgQkzeXXuob1fk6UbvvTC/5Dyi8p8oQLre3wG8068nWrOvhjZ
+	CzsYceKJmqyMuSTLeY03Nk0UVUknaB0ZSszAx/ZIp0vDpLgmvLgO7hUSDVJRN1mU
+	JIqLycwZ4tbg6AVbx1DHGcJQ8hhp0Jcwzfm5+nlkJGoCxgdr58CBGxC7MZm7Nvrq
+	MoO67MrkcGGCr8ukIJZDf9NofI+1EvtITVzPTgs0HHnTZvKEY40XNdmJHYsuLujs
+	MvTZWFODSbWCG/Qv7IBnzklQUP2MFrCkTrgK1wqg==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bct3xjg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 12:33:53 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58BAGII5017188;
+	Thu, 11 Sep 2025 12:33:53 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmnk8a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 12:33:53 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BCXnqH49283398
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Sep 2025 12:33:49 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8D69C2004B;
+	Thu, 11 Sep 2025 12:33:49 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 73ACF20043;
+	Thu, 11 Sep 2025 12:33:49 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 11 Sep 2025 12:33:49 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Heiko Carstens
+ <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH] s390/entry: Remove unused TIF flags
+In-Reply-To: <27e149cc-ff11-4007-a0fe-5f7b0e8263c5-agordeev@linux.ibm.com>
+	(Alexander Gordeev's message of "Thu, 11 Sep 2025 14:29:38 +0200")
+References: <20250911092806.3262481-1-svens@linux.ibm.com>
+	<27e149cc-ff11-4007-a0fe-5f7b0e8263c5-agordeev@linux.ibm.com>
+Date: Thu, 11 Sep 2025 14:33:49 +0200
+Message-ID: <yt9dms71rwwi.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fff688c9-af7d-43fd-a3f1-00209842bcc9@oss.qualcomm.com>
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX6k9cppJso/2i
+ VIdW8p4UOXSVnNHMKFiGjvrcLX952/qDto/h4aYWZ0soW0E2vaZZOCfhyfcfIjqWXgFZY5KbMRX
+ +H4z+hgmQagXN6GFHKsjlFF6Wco6y7z1rA7TMYJap58tbhOtwCipTWufpR00nFpI0i/tJjoHVQd
+ Pe7nrCqvU7mPazE7mKpdTprc6XR2bMYvM0mi2u8Fmg2liLDCotrK26KH5E+mcRX5khKVP0dqinV
+ H9squxylmG5e3hCvftHfdXcZJi4kcrd2Hf+7e3B7Chd2g23evDyg0H1CAVscXm+wXMpkQ7PXQkF
+ CI89KluJpwb/Tb+vvTd5+djvg10khLRsshmzlxZzdzmM/O87LXVuA6rWjOwj9h1So0CywdqCkOz
+ AO+UAbox
+X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c2c1b2 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8 a=a09s8FFkOzqO_mdx6S4A:9
+X-Proofpoint-GUID: lpJdG9Ut0YpC1iOhpKUg7zsBjv9jURvQ
+X-Proofpoint-ORIG-GUID: lpJdG9Ut0YpC1iOhpKUg7zsBjv9jURvQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
 
-On 25-09-11 11:18:53, Konrad Dybcio wrote:
-> On 9/11/25 10:52 AM, Abel Vesa wrote:
-> > On 25-09-09 14:12:46, Dmitry Baryshkov wrote:
-> >> On Tue, Sep 09, 2025 at 01:07:28PM +0300, Abel Vesa wrote:
-> >>> The Qualcomm Glymur platform has the new v8 version
-> >>> of the eDP/DP PHY. So rework the driver to support this
-> >>> new version and add the platform specific configuration data.
-> >>>
-> >>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> >>> ---
-> >>>  drivers/phy/qualcomm/phy-qcom-edp.c | 242 ++++++++++++++++++++++++++++++++++--
-> >>>  1 file changed, 235 insertions(+), 7 deletions(-)
-> >>>
-> >>> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
-> >>> index ca9bb9d70e29e1a132bd499fb9f74b5837acf45b..b670cda0fa066d3ff45c66b73cc67e165e55b79a 100644
-> >>> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
-> >>> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
-> >>> @@ -26,13 +26,15 @@
-> >>>  #include "phy-qcom-qmp-qserdes-com-v4.h"
-> >>>  #include "phy-qcom-qmp-qserdes-com-v6.h"
-> >>>  
-> >>> +#include "phy-qcom-qmp-dp-qserdes-com-v8.h"
-> >>> +
-> >>>  /* EDP_PHY registers */
-> >>>  #define DP_PHY_CFG                              0x0010
-> >>>  #define DP_PHY_CFG_1                            0x0014
-> >>>  #define DP_PHY_PD_CTL                           0x001c
-> >>>  #define DP_PHY_MODE                             0x0020
-> >>>  
-> >>> -#define DP_AUX_CFG_SIZE                         10
-> >>> +#define DP_AUX_CFG_SIZE                         13
-> >>
-> >> If it differs from platform to platform, do we need to continue defining
-> >> it?
-> >>
-> >> Also, if the AUX CFG size has increased, didn't it cause other registers
-> >> to shift too?
-> > 
-> > AFAICT, all platforms have AUX_CFG0 through AUX_CFG12, we just didn't
-> > need to write anything to the last two so far.
-> 
-> I checked 7180/7280/8180/8280/x1e/Glymur and they all do
-> 
-> It would make sense to perhaps spell this out explicitly in a separate
-> patch
+Alexander Gordeev <agordeev@linux.ibm.com> writes:
 
-Makes sense. Will do.
+> On Thu, Sep 11, 2025 at 11:28:06AM +0200, Sven Schnelle wrote:
+>
+> Hi Sven,
+>
+>> The conversion of s390 to generic entry missed to remove the
+>> TIF_SYSCALL*/TIF_SECCOMP flags. Remove them as they are unused now.
+>> 
+>> Fixes: 56e62a737028 ("s390: convert to generic entry")
+>> Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+>> ---
+>>  arch/s390/include/asm/thread_info.h | 10 ----------
+>>  1 file changed, 10 deletions(-)
+>
+> Which branch this patch is against?
+> (It does not apply neither to devel nor to master).
 
-Thanks.
+It's against Thomas' branch:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git rseq/perf
 
