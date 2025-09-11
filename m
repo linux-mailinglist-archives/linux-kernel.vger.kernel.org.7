@@ -1,98 +1,85 @@
-Return-Path: <linux-kernel+bounces-811674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C79EB52C61
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:59:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47515B52C68
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE9177AC222
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2102A5A28D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:00:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA26C2E6CC0;
-	Thu, 11 Sep 2025 08:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D4C2E7646;
+	Thu, 11 Sep 2025 08:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="DkTvEnnk"
-Received: from fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.199.210.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7X39oPG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CB0329F09
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.199.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16AC2E6CBB;
+	Thu, 11 Sep 2025 08:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757581156; cv=none; b=cHFag3MQLqj+S3wfvxvK3UfzDE13Q02D+nbG29u3wuA5jcE+dCeKmnxfG2NtnqllteWNDgWhgHYB12qwnPdVwdLM2r6pkB6+Zmkz9cgacx2GlEZT0YC8y3t5f0gga6hcGPYSl/W8X/Ut4mVRxFbq/jJSF1ic5/JqpM2sE84y38U=
+	t=1757581198; cv=none; b=qsvfk3RMjsvbFVaQpfRsNNFyZ/NmXOnj9p0tx8qZhP+6slgmPPV02SFQ0/SrPdizI41xA6pZCZWhMO9+xeV4HmWVXyOFbRmoNq7iCKJmQmEEbl4aONyZn1iXcQ35AqBKfNJ3ZCaIo/UB80J1L9dQKLKN2k4ywfGJGLFQXlWU3RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757581156; c=relaxed/simple;
-	bh=lPFuFth3LtF8PyqQ8PKRH72fHpUv6OJSmDx6KuEGzBs=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mLKMu77KA4tob70/3qg1cdmzrT/4I+08vVpMbcGtVJeLPhMIdGkT1PC/PiiI/AXLrLEJV9Fs2h8GFfetkTWXkS15crZfNcLaPah9tSqZjelVSScwy+WuEAQ+GTaBWEYih2clZVBENvGlZNCPtyw+7Vn0A+vVX5g+/O1CvJ5CZTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=DkTvEnnk; arc=none smtp.client-ip=18.199.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1757581154; x=1789117154;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=lPFuFth3LtF8PyqQ8PKRH72fHpUv6OJSmDx6KuEGzBs=;
-  b=DkTvEnnk0Y/SU40Yg98GlDUMBJnxbrU0zoLX+epr1Bs79kh39h8pp2SS
-   39/8hCsDgGBCIB0Y5T8mNUtN2UGwuxlyAkrNjhpPMHsySIUwIDnDvR+U0
-   NkR5hbVlfYZLk+uGn1lZSLmt1pEHCHGopb7GGCtUAPRXiSvfIdPYDfWyR
-   tUYQ/AyqULJa5dx8dfe9zCxH7xIez0U6J15JPkqO7xr5LCMKLYWu24gPo
-   XThHaBQuhW1W2xBSLkZ0GrECyZ1xy3zul/eF+W1eGta5YCr1frIHdI3Gk
-   8nJSAVODaQIt8CRliKPSjgQHm50keA4z9jgH1PRom1eyFoNnuZJzt2cyF
-   g==;
-X-CSE-ConnectionGUID: WyJJCXoYSCKMoBKbF3Acuw==
-X-CSE-MsgGUID: 18Z5O92mQ3y9x9lfjoiWCg==
-X-IronPort-AV: E=Sophos;i="6.18,256,1751241600"; 
-   d="scan'208";a="1845391"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-014.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 08:59:03 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [54.240.197.225:23756]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.10.48:2525] with esmtp (Farcaster)
- id 27f1d6e4-4f82-4887-8615-0403675c2ebb; Thu, 11 Sep 2025 08:59:03 +0000 (UTC)
-X-Farcaster-Flow-ID: 27f1d6e4-4f82-4887-8615-0403675c2ebb
-Received: from EX19D003EUB001.ant.amazon.com (10.252.51.97) by
- EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 11 Sep 2025 08:59:03 +0000
-Received: from u5934974a1cdd59.ant.amazon.com (10.146.13.110) by
- EX19D003EUB001.ant.amazon.com (10.252.51.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Thu, 11 Sep 2025 08:58:57 +0000
-From: Fernand Sieber <sieberf@amazon.com>
-To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, "Mel
- Gorman" <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-	<linux-kernel@vger.kernel.org>, Yury Norov <yury.norov@gmail.com>
-Subject: Re: [PATCH] sched/fair: use cpumask_weight_and() in sched_balance_find_dst_group()
-Date: Thu, 11 Sep 2025 10:58:39 +0200
-Message-ID: <175758085303.159541.15261282962506645321.b4-ty@amazon.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250911034454.494852-1-yury.norov@gmail.com>
-References: <20250911034454.494852-1-yury.norov@gmail.com>
+	s=arc-20240116; t=1757581198; c=relaxed/simple;
+	bh=di3tOqn8KDjRSNmUzjcZz5ibzOySkfRcW/PH6lItTeg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rmc7/+7WB5MB/9q/Sshafgbu6iUGcIg1YKyP0+RBF6Mb5qsqSRKbF9aIQbqb6bN5rbZuqwVC4v2nPLFnxc5Sxig47d8X5anFs/zmkCmnIfvlFrTM55dswBS4Xyp5SIHsrTEczpAmy8FeOyd0l2M/qElkJiSLz9fB6K9j5/zwpa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7X39oPG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DE82C4CEF0;
+	Thu, 11 Sep 2025 08:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757581197;
+	bh=di3tOqn8KDjRSNmUzjcZz5ibzOySkfRcW/PH6lItTeg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d7X39oPGOFriWKB/puO3tXJcs5u3pQmXfNPNNI8u5ge2mMCrfGBsH2Rh7NKcXunnn
+	 ObfoQli7du9d2GcWiz3ksJ57w7LGYFGJuZEsrqz1lxF9fFztZFpwweu8GBTjFMKdWd
+	 zkPbcElNMpHhcq3l0yKWfScfPTbVH2XNqm8qoZmuCWitfZdeAa/oZeWsoXXdZlx9mu
+	 S5M+MpRqQMTueSmR81hl4/YoijM9bnmlnmtRyzMgTXGtJCEvBAcQyUyWmzxy6VanGx
+	 iQETccGAWvBynljLCuzzzQgxgMZHVVp4JjtBQabjYy+linbjJ4XAqaGypJIvHsXRJw
+	 rzS47xbNu5qTQ==
+Date: Thu, 11 Sep 2025 10:59:49 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
+	Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH 32/32] selftests/namespaces: add file handle selftests
+Message-ID: <20250911-vorurteil-gemacht-c62d1349fc33@brauner>
+References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
+ <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org>
+ <f65cf3ae-069d-4ade-9fc9-03f01c7e1649@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-ClientProxiedBy: EX19D041UWA002.ant.amazon.com (10.13.139.121) To
- EX19D003EUB001.ant.amazon.com (10.252.51.97)
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f65cf3ae-069d-4ade-9fc9-03f01c7e1649@acm.org>
 
-T24gV2VkLCAxMCBTZXAgMjAyNSAyMzo0NDo1MiAtMDQwMCwgWXVyeSBOb3JvdiB3cm90ZToKPiBJ
-biB0aGUgZ3JvdXBfaGFzX3NwYXJlIGNhc2UsIHRoZSBmdW5jdGlvbiBjcmVhdGVzIGEgdGVtcG9y
-YXJ5IGNwdW1hc2sKPiB0byBqdXN0IGNhbGN1bGF0ZSB3ZWlnaHQgb2YgKHAtPmNwdXNfcHRyICYg
-c2NoZWRfZ3JvdXBfc3Bhbihsb2NhbCkpLgo+Cj4gV2UndmUgZ290IGEgZGVkaWNhdGVkIGhlbHBl
-ciBmb3IgaXQuCj4KPgoKTEdUTQoKUmV2aWV3ZWQtYnk6IEZlcm5hbmQgU2llYmVyIDxzaWViZXJm
-QGFtYXpvbi5jb20+CgotLQpUaGFua3MsCkZlcm5hbmQKCgoKQW1hem9uIERldmVsb3BtZW50IENl
-bnRyZSAoU291dGggQWZyaWNhKSAoUHJvcHJpZXRhcnkpIExpbWl0ZWQKMjkgR29nb3NvYSBTdHJl
-ZXQsIE9ic2VydmF0b3J5LCBDYXBlIFRvd24sIFdlc3Rlcm4gQ2FwZSwgNzkyNSwgU291dGggQWZy
-aWNhClJlZ2lzdHJhdGlvbiBOdW1iZXI6IDIwMDQgLyAwMzQ0NjMgLyAwNwo=
+On Wed, Sep 10, 2025 at 02:46:21PM -0700, Bart Van Assche wrote:
+> On 9/10/25 7:37 AM, Christian Brauner wrote:
+> > +	snprintf(ns_path, sizeof(ns_path), "/proc/self/ns/net");
+> > +	ns_fd = open(ns_path, O_RDONLY);
+> 
+> Here and also in TEST(nsfs_uts_handle), ns_path is not modified. Does
+> this mean that "/proc/self/ns/net" can be stored in a static const char
+> array and also that the snprintf() call can be left out? In case I would
+> have missed the reason why the path is copied, how about using
+> asprintf() or strdup() instead of snprintf()?
 
+Yep, that can just be a static string. Thanks.
 
