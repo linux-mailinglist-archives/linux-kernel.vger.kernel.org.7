@@ -1,227 +1,205 @@
-Return-Path: <linux-kernel+bounces-811467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 790FEB5297B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:01:28 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E17B5297F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F101A1C807FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:01:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0028F4E1F59
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C72E26B769;
-	Thu, 11 Sep 2025 07:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C5026980B;
+	Thu, 11 Sep 2025 07:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="SkDTEaxA"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNGHzc5L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337D426A1B6;
-	Thu, 11 Sep 2025 07:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5121A1553A3;
+	Thu, 11 Sep 2025 07:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757574022; cv=none; b=mEXg8vMs3O4ckzhb4NCHwde//9fff+cBtBT1KCQQ3oe9qvqpQc8sgBdFODadWF0wmftDBLE64yl/C/OsF7zXs1+ALtXLk2X+//VEEdRvew5G9W99AkUS92pEZpqn6alBwwRU9CZUs/3f2u+jtrifjSGp8bL5+i3+k6U0EI8m35o=
+	t=1757574087; cv=none; b=o3XpmL+auTgb//k6WLK3Tx+5XY+cfOmutxvC44/CETza+lhthTg+pMlVamgMTh02szc0f0cqyUPkmWpxrVgMzZ64WJr+MCUR7D+uYErdLELCLlAKrPoPrh4Cn+nEbw3jZ39FXKaU2xTBHAzBxau2lp9oMOcU8nIqi+8iVlg8U7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757574022; c=relaxed/simple;
-	bh=e02AXsrIhddBZnge/kfTWxo3s0wzqn5n5hJK4I40gEI=;
+	s=arc-20240116; t=1757574087; c=relaxed/simple;
+	bh=qr122yp8JUYBZU96I18Z8ELkl5DxLXHRqTyQLe7CWAE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uh+soEzq7IcqCEfdRhhHO+Naw8xJoWIzhUFRvmlZQtfFoUXI2r2/2HpOi07yJuRE4KvHOl3dkk0KTfILa+5hcK5XAwHM9HWfk2Eift93pdoN6QK/p//oak1vG8acLkJtSdHjJXaNkxwu1N5pXhHpHmtR77KMBcBLPOT4BxURB0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=SkDTEaxA; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1172A14864B3;
-	Thu, 11 Sep 2025 09:00:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1757574009; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=QsXFqDE+gmRD/x0bUEZx45QWv+5GScBR7g2luqrlIYA=;
-	b=SkDTEaxAF/y7/E/ddlcleMBHPgPMOy3DyxO+bPFOYjadfbjxLx8Vn35uRe8fGrp3g5Wl7O
-	9mcjOrYctUVC+BV7dGmXGw677vFln8Gph0+gKxp/s6N1I+5d5uV6wFDZ8w+kbEcqj8PwDx
-	zGpGQWmWCqCKMlAd3L989jVNWSb4cLGBfXRAjDgkAlsEHNdHDEvKZzTIeKYxELrozdhtwB
-	SCNwLW/uTWnu/R9/fzksJSDvvbVDId/2NHzR9kQ8Vo+ZyqxH3AxhT2LJYATQuTQKXdmp8b
-	OP9//XgDNL4EGE5U75+FjIOxQc05qgd27U81taWCbHoku9d74a6Y52tN9IfnDg==
-Date: Thu, 11 Sep 2025 09:00:03 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Ryan Wanner <ryan.wanner@microchip.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: microchip: sama7d65: Add GPIO buttons and LEDs
-Message-ID: <20250911-breeder-hardness-d3ffa4bfbb6d@thorsis.com>
-Mail-Followup-To: Ryan Wanner <ryan.wanner@microchip.com>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org,
-	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-	claudiu.beznea@tuxon.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-leds@vger.kernel.org
-References: <20250909160842.392075-1-Ryan.Wanner@microchip.com>
- <20250910-retake-attic-ac1fe3429a1e@thorsis.com>
- <20250910-alkalize-overtime-930a59a7d169@thorsis.com>
- <fa5d44ca-d1ea-4c72-a998-b10f098b25f8@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Krk4FDfqexsK4L2B5ZrpOZy/H5qiAFvLfe2G6B7UqvQxGPzjiXge/02hcolJI6RUGT+/nURzb4F2qF4kJ9nzurLuah58GuvLM+zmEb9xlcJNBbLxSg8vkOLWCzR6+d5fwhxyt9ej0QO56tPZsZ4xQtkvNavTVfUoG+BK8dwBKAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNGHzc5L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A72C4CEF1;
+	Thu, 11 Sep 2025 07:01:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757574086;
+	bh=qr122yp8JUYBZU96I18Z8ELkl5DxLXHRqTyQLe7CWAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kNGHzc5LShxDoby6w+5B0rArOpeaiVE7rVvfrO816zAUBMrrpPJ0dUr2xaf4QLWhy
+	 mY+qNgBlxPEy3zXyUFdDDnJB7hi5Du0P4X6pW0kdRkHGArzrm9yHV3/MYgsA8NDNol
+	 kmc10a26FwkUmvRqIHSernvfMzY0CdmAsh3Czgj8l9W7P7M98o4M3GihQZm0juWDRk
+	 toFJKJ3PZMpypAvEJVOGELJQc633e95pfQW2Kg002tmNI4Q1oSKL6qki07jMnup1Ke
+	 H+qB+p4h7SiSVsY56tuJxfXBJm07+J0rYDESBrULBjJSENWLQsudeVU2Kao2Bgs1zO
+	 ZqAhYn49Hv17Q==
+Date: Thu, 11 Sep 2025 09:01:24 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Sumit Semwal <sumit.semwal@linaro.org>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Jonathan Corbet <corbet@lwn.net>, Andrew Davis <afd@ti.com>, 
+	Jared Kangas <jkangas@redhat.com>, Mattijs Korpershoek <mkorpershoek@kernel.org>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, iommu@lists.linux.dev, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v7 0/5] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+Message-ID: <20250911-didactic-authentic-cockle-e6d5fc@houat>
+References: <20250721-dma-buf-ecc-heap-v7-0-031836e1a942@kernel.org>
+ <20250826-vagabond-catfish-of-courtesy-cbfa76@houat>
+ <20250910-vigorous-attractive-gorilla-af6fec@houat>
+ <CABdmKX29ftpNro+d=Ce6JGoMaG0UQeBbzL7DXiBkGkC0nwacTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="mvqneghb5gn2pldr"
 Content-Disposition: inline
-In-Reply-To: <fa5d44ca-d1ea-4c72-a998-b10f098b25f8@microchip.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <CABdmKX29ftpNro+d=Ce6JGoMaG0UQeBbzL7DXiBkGkC0nwacTQ@mail.gmail.com>
 
-Hello Ryan,
 
-Am Wed, Sep 10, 2025 at 10:16:03AM -0700 schrieb Ryan Wanner:
-> On 9/9/25 23:25, Alexander Dahl wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> > 
-> > Hello Ryan,
-> > 
-> > Am Wed, Sep 10, 2025 at 08:20:28AM +0200 schrieb Alexander Dahl:
-> >> Hello Ryan,
-> >>
-> >> Am Tue, Sep 09, 2025 at 09:08:38AM -0700 schrieb Ryan.Wanner@microchip.com:
-> >>> From: Ryan Wanner <Ryan.Wanner@microchip.com>
-> >>>
-> >>> Add the USER button as a GPIO input as well as add the LEDs and enable
-> >>> the blue LED as a heartbeat.
-> >>>
-> >>> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> >>> ---
-> >>>  .../dts/microchip/at91-sama7d65_curiosity.dts | 49 +++++++++++++++++++
-> >>>  1 file changed, 49 insertions(+)
-> >>>
-> >>> diff --git a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-> >>> index f091cc40a9f0..2fe34c59d942 100644
-> >>> --- a/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-> >>> +++ b/arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts
-> >>> @@ -11,6 +11,7 @@
-> >>>  #include "sama7d65-pinfunc.h"
-> >>>  #include "sama7d65.dtsi"
-> >>>  #include <dt-bindings/mfd/atmel-flexcom.h>
-> >>> +#include <dt-bindings/input/input.h>
-> >>>  #include <dt-bindings/pinctrl/at91.h>
-> >>>
-> >>>  / {
-> >>> @@ -26,6 +27,42 @@ chosen {
-> >>>             stdout-path = "serial0:115200n8";
-> >>>     };
-> >>>
-> >>> +   gpio-keys {
-> >>> +           compatible = "gpio-keys";
-> >>> +
-> >>> +           pinctrl-names = "default";
-> >>> +           pinctrl-0 = <&pinctrl_key_gpio_default>;
-> >>> +
-> >>> +           button {
-> >>> +                   label = "PB_USER";
-> >>> +                   gpios = <&pioa PIN_PC10 GPIO_ACTIVE_LOW>;
-> >>> +                   linux,code = <KEY_PROG1>;
-> >>> +                   wakeup-source;
-> >>> +           };
-> >>> +   };
-> >>> +
-> >>> +   leds {
-> >>> +           compatible = "gpio-leds";
-> >>> +           pinctrl-names = "default";
-> >>> +           pinctrl-0 = <&pinctrl_led_gpio_default>;
-> >>> +
-> >>> +           led-red {
-> >>> +                   label = "red";
-> >>> +                   gpios = <&pioa PIN_PB17 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
-> >>> +           };
-> >>> +
-> >>> +           led-green {
-> >>> +                   label = "green";
-> >>> +                   gpios = <&pioa PIN_PB15 GPIO_ACTIVE_HIGH>; /* Conflict with pwm. */
-> >>> +           };
-> >>> +
-> >>> +           led-blue {
-> >>> +                   label = "blue";
-> >>> +                   gpios = <&pioa PIN_PA21 GPIO_ACTIVE_HIGH>;
-> >>> +                   linux,default-trigger = "heartbeat";
-> >>> +           };
-> >>> +   };
-> >>
-> >> The label property is deprecated.  Please use the properties "color"
-> >> and "function" for new boards.  See devicetree binding documentation
-> >> for LEDs.
-> > 
-> > From a quick glance, this seems to be an RGB-LED, so I would suggest
-> > to not model it as three distinct LEDs, but make use of the
-> > "leds-group-multicolor" feature, example:
-> > 
-> >  59         multi-led {
-> >  60                 compatible = "leds-group-multicolor";
-> >  61                 color = <LED_COLOR_ID_RGB>;
-> >  62                 function = LED_FUNCTION_INDICATOR;
-> >  63                 leds = <&led_red>, <&led_green>, <&led_blue>;
-> >  64         };
-> 
-> I see, I was not aware of this feature. This would combine all of the
-> LED pins into one RGB light correct, it seems from sysfs that this is
-> the case.
+--mvqneghb5gn2pldr
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 0/5] dma-buf: heaps: Create a CMA heap for each CMA
+ reserved region
+MIME-Version: 1.0
 
-The group-multicolor feature was merged for kernel v6.6 so it's still
-quite new.  I tried this some time ago, so this is from memory only.
-The three single color gpio leds are still visible in sysfs, but you
-can not control them independently anymore, only through the sysfs
-interface of that one multicolor led.
+Hi TJ,
 
-> Would having the default-trigger="heartbeat" still be allowed for the
-> led-blue node or should that be moved into the multi-led node? From the
-> bindings it seems that the default trigger is still in the gpio-led nodes.
+On Wed, Sep 10, 2025 at 01:44:45PM -0700, T.J. Mercier wrote:
+> On Wed, Sep 10, 2025 at 12:33=E2=80=AFAM Maxime Ripard <mripard@kernel.or=
+g> wrote:
+> >
+> > On Tue, Aug 26, 2025 at 09:36:03AM +0200, Maxime Ripard wrote:
+> > > Hi,
+> > >
+> > > On Mon, Jul 21, 2025 at 01:17:29PM +0200, Maxime Ripard wrote:
+> > > > Here's another attempt at supporting user-space allocations from a
+> > > > specific carved-out reserved memory region.
+> > > >
+> > > > The initial problem we were discussing was that I'm currently worki=
+ng on
+> > > > a platform which has a memory layout with ECC enabled. However, ena=
+bling
+> > > > the ECC has a number of drawbacks on that platform: lower performan=
+ce,
+> > > > increased memory usage, etc. So for things like framebuffers, the
+> > > > trade-off isn't great and thus there's a memory region with ECC dis=
+abled
+> > > > to allocate from for such use cases.
+> > > >
+> > > > After a suggestion from John, I chose to first start using heap
+> > > > allocations flags to allow for userspace to ask for a particular ECC
+> > > > setup. This is then backed by a new heap type that runs from reserv=
+ed
+> > > > memory chunks flagged as such, and the existing DT properties to sp=
+ecify
+> > > > the ECC properties.
+> > > >
+> > > > After further discussion, it was considered that flags were not the
+> > > > right solution, and relying on the names of the heaps would be enou=
+gh to
+> > > > let userspace know the kind of buffer it deals with.
+> > > >
+> > > > Thus, even though the uAPI part of it had been dropped in this seco=
+nd
+> > > > version, we still needed a driver to create heaps out of carved-out=
+ memory
+> > > > regions. In addition to the original usecase, a similar driver can =
+be
+> > > > found in BSPs from most vendors, so I believe it would be a useful
+> > > > addition to the kernel.
+> > > >
+> > > > Some extra discussion with Rob Herring [1] came to the conclusion t=
+hat
+> > > > some specific compatible for this is not great either, and as such =
+an
+> > > > new driver probably isn't called for either.
+> > > >
+> > > > Some other discussions we had with John [2] also dropped some hints=
+ that
+> > > > multiple CMA heaps might be a good idea, and some vendors seem to do
+> > > > that too.
+> > > >
+> > > > So here's another attempt that doesn't affect the device tree at al=
+l and
+> > > > will just create a heap for every CMA reserved memory region.
+> > > >
+> > > > It also falls nicely into the current plan we have to support cgrou=
+ps in
+> > > > DRM/KMS and v4l2, which is an additional benefit.
+> > > >
+> > > > Let me know what you think,
+> > > > Maxime
+> > >
+> > > Any chance we can get this merged?
+> >
+> > Guys, can we move forward on this?
+> >
+> > Maxime
+>=20
+> Hi Maxime,
+>=20
+> Sorry I've been MIA the last couple of months.
+>=20
+> The docs for the "reusable" property say, "device driver(s) owning the
+> region need to be able to reclaim it back", but how can a driver
+> reclaim memory backing a dmabuf, since pages allocated for a dmabuf
+> aren't necessarily movable. Couldn't a user allocate all of it, and
+> refuse to close those dmabufs?
 
-Sorry, not sure here.  I put linux-leds in Cc, maybe someone over
-there can answer.  If this does not fit how Microchip wants to handle
-that LED on their boards I think that's fine, too.  Just wanted to
-make people aware of the possibility.
+I guess, but how is that any different than what we're doing on the
+default allocator already?
 
-Greets
-Alex
+It also has to be reusable, and will not be able to reclaim any memory
+allocated through the heap.
 
-> 
-> Best,
-> Ryan
-> > 
-> > Greets
-> > Alex
-> > 
-> >>
-> >> Thanks and greetings
-> >> Alex
-> >>
-> >>> +
-> >>>     memory@60000000 {
-> >>>             device_type = "memory";
-> >>>             reg = <0x60000000 0x40000000>;
-> >>> @@ -352,6 +389,18 @@ pinctrl_i2c10_default: i2c10-default {
-> >>>             bias-pull-up;
-> >>>     };
-> >>>
-> >>> +   pinctrl_key_gpio_default: key-gpio-default {
-> >>> +           pinmux = <PIN_PC10__GPIO>;
-> >>> +           bias-pull-up;
-> >>> +   };
-> >>> +
-> >>> +   pinctrl_led_gpio_default: led-gpio-default {
-> >>> +           pinmux = <PIN_PB15__GPIO>,
-> >>> +                    <PIN_PB17__GPIO>,
-> >>> +                    <PIN_PA21__GPIO>;
-> >>> +           bias-pull-up;
-> >>> +   };
-> >>> +
-> >>>     pinctrl_sdmmc1_default: sdmmc1-default {
-> >>>             cmd-data {
-> >>>                     pinmux = <PIN_PB22__SDMMC1_CMD>,
-> >>> --
-> >>> 2.43.0
-> >>>
-> >>>
-> >>
-> 
-> 
+> I backported this to 6.6 and ran it on a Pixel. While there are
+> already similar out-of-tree dmabuf heap drivers that expose heaps for
+> these reserved regions, they do more than just cma_alloc (multiple
+> flavors of buffer securing, use case specific alignment and padding,
+> and slightly different allocation strategies) so I don't think this
+> series would allow us to completely drop the custom heap code, but
+> it's a nice start.
+
+Thanks for testing, and I totally expect more heaps coming for things
+like protected memory, but it should indeed reduce the number of heap
+drivers needed going forward.
+
+> Does the cgroup part come in because the plan is to add charging in
+> cma_heap.c?
+
+Yes, and the system heap as well.
+
+Maxime
+
+--mvqneghb5gn2pldr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMJzxAAKCRAnX84Zoj2+
+dsvHAX9IpZOMjeU0ynWChRbSjBVdeZtylN7gZQL2xiSKdre2cCOs+EzPryzJzsTk
+tRNxMScBfAwmOazIjwKlseNgI+HDT4rryBoWdzpYERPwpsG4vLSlAqtaiPiPmf41
+ekyA/2h0Sg==
+=POxF
+-----END PGP SIGNATURE-----
+
+--mvqneghb5gn2pldr--
 
