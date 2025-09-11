@@ -1,108 +1,99 @@
-Return-Path: <linux-kernel+bounces-811464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D9BB5296A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:00:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 926A1B52976
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F4F4566C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E56A68254A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4D626B742;
-	Thu, 11 Sep 2025 06:59:57 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB569266EEA;
+	Thu, 11 Sep 2025 07:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="qVHYzEIx"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52859265632
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CD125DB1A
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757573997; cv=none; b=AUy5hCgtAyjurWu7b1bjQ6yM23d8JUMoZ75L0/DemSwe9RC6eNXAWH/PcS2a3LOPShH0y/p2xw/oxryIQBg5rrtQORSzab7dpNNr3OKHwUq48vHJb2M9o9J+lhk0CQ7hDvPaVneeRPb7H4zL4/ssJ0r6itKZIbT2lVJrllzlnSQ=
+	t=1757574017; cv=none; b=FujsiQROqjgRG1abBAcTd7bxaPEzrXVFFYSI9d2muUC2wW9OLM5eX62Fij7DXidPojT5FswH8nZJj9YetFqcr1oLOdijpODM+8Ud4KcuxZdlWRL26f6JdjGullV7qFlhepHVOrGqbSfVtFsk17wAC9aHuvBmGIN5V84cG87zXZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757573997; c=relaxed/simple;
-	bh=s3kbGH2m7tYAq0Ru+MGjztJlEXICfIdT9WzMkCBCWFM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mC8mnUJwoL8xBfbp7pOGW5wysVy97q+RwrtP1Nh8PLXBLdv4UJFWp7mfGRaXB7fZe3yp49ZPKIedtL+i1JaD8V7rfWas8kvO1YrOyHWV88EO4k143G96y9GbJAB6wpH7vtPW50ZemcQioPyahGIAQ7pcAmwJqLOWvIQngXpuCMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=ratatoskr.trumtrar.info)
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <s.trumtrar@pengutronix.de>)
-	id 1uwbHd-0002uj-JG; Thu, 11 Sep 2025 08:59:53 +0200
-From: Steffen Trumtrar <s.trumtrar@pengutronix.de>
-Date: Thu, 11 Sep 2025 08:59:33 +0200
-Subject: [PATCH v3 3/3] Documentation: ABI: add lp5860 led matrix
- controller
+	s=arc-20240116; t=1757574017; c=relaxed/simple;
+	bh=HdnqPYodhpR04ucnmjP64RcI7avQd7r4ewcWEUbKzTs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TizBO1INRfw+v+pjKnYz2McAiHIyOzVqAO2YvuzuCo3Wb5cgSEw3/9YW+3YUZQ1GA40vE67s+bVIJcvNqwTVsG4EDWCe4JG5m8VJ4lIXkREzo8za3+M7P29n1NxzLsa+NOo3xQAg/8KJIHq2JjqYFttYt/p7QrnVDyUQdQCrIOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=qVHYzEIx; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=HdnqPYodhpR04ucnmjP64RcI7avQd7r4ewcWEUbKzTs=;
+	t=1757574006; x=1758783606; b=qVHYzEIxJzOU75po5L7Zq0HBpahgJorBeX1BCIV4O2q6tPx
+	lZUtIs/jzpedTne/QhOCDU9PbdTQbXVt490PCcj6bco12RlyZ5Q5tKyzWDbq3nqXzVK96JbfJz6hV
+	1EFcQWdF8wLcqGNnYVBCFZiU9b2YpvAxkOLeyGqz79GeQ06LXzdoHJUrrNnvRVaI4SOlurdOU6zV2
+	7rhE1TdNRdS8F3+0rZwtOufkfc8uepScGvEHJmEC6tSPkdWyEPFa8yfBLaaf2RPnGRcXtv4eX/scF
+	9QhEJOfejRZ3tuQh8Sx+/cxQVmRyb7ywG+SoeJNfT+IkexVID/FInlIvMM6OWJRg==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uwbHi-0000000Enrr-2rRz;
+	Thu, 11 Sep 2025 08:59:58 +0200
+Message-ID: <579899d18d5aa4422f970d28e19dc363c9ed218a.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 05/10] um: Determine sleep based on need_resched()
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Tiwei Bie <tiwei.bie@linux.dev>
+Cc: richard@nod.at, anton.ivanov@cambridgegreys.com,
+ benjamin@sipsolutions.net, 	arnd@arndb.de, linux-um@lists.infradead.org,
+ linux-kernel@vger.kernel.org, 	tiwei.btw@antgroup.com
+Date: Thu, 11 Sep 2025 08:59:57 +0200
+In-Reply-To: <20250911043918.2950727-1-tiwei.bie@linux.dev>
+References: 
+	<55cace5b8e1078bd04b4a1acb5df9faa6a83b6e8.camel@sipsolutions.net>
+	 <20250911043918.2950727-1-tiwei.bie@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250911-v6-14-topic-ti-lp5860-v3-3-390738ef9d71@pengutronix.de>
-References: <20250911-v6-14-topic-ti-lp5860-v3-0-390738ef9d71@pengutronix.de>
-In-Reply-To: <20250911-v6-14-topic-ti-lp5860-v3-0-390738ef9d71@pengutronix.de>
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Steffen Trumtrar <kernel@pengutronix.de>, Pavel Machek <pavel@kernel.org>, 
- Mark Brown <broonie@kernel.org>
-Cc: linux-leds@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel@pengutronix.de, Steffen Trumtrar <s.trumtrar@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.trumtrar@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-malware-bazaar: not-scanned
 
-The lp5860 is an LED matrix controller that can be connected to SPI or I2C.
-It supports setting the maximum brightness of the three basic
-colors (R,G,B) with a global value.
+On Thu, 2025-09-11 at 12:39 +0800, Tiwei Bie wrote:
+> On Wed, 10 Sep 2025 14:10:37 +0200, Johannes Berg wrote:
+> > On Sun, 2025-08-10 at 13:51 +0800, Tiwei Bie wrote:
+> > > From: Tiwei Bie <tiwei.btw@antgroup.com>
+> > >=20
+> > > With SMP and NO_HZ enabled, the CPU may still need to sleep even
+> > > if the timer is disarmed. Switch to deciding whether to sleep based
+> > > on pending resched. This is a preparation for adding SMP support.
+> >=20
+> > What's the rationale for need_resched()? Is that somehow defined for
+> > this? Is it what other architectures use? I guess I'm just not entirely
+> > sure what it means.
+>=20
+> Here is a relevant document:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
+ocumentation/scheduler/sched-arch.rst?h=3Dv6.17-rc5#n37
+>=20
+> There is a similar check on x86:
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/a=
+rch/x86/kernel/process.c?h=3Dv6.17-rc5#n916
 
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org
-Signed-off-by: Steffen Trumtrar <s.trumtrar@pengutronix.de>
----
- Documentation/ABI/testing/sysfs-class-spi-lp5860 | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Ah cool, thanks for the pointers. Though "1." part there is a bit
+confusing, I guess I'll send a patch to reword it :)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-spi-lp5860 b/Documentation/ABI/testing/sysfs-class-spi-lp5860
-new file mode 100644
-index 0000000000000000000000000000000000000000..80b22a9d6642100a25efbf658cfed8604150baa5
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-spi-lp5860
-@@ -0,0 +1,23 @@
-+What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/b_global_brightness_set
-+Date:           July 2025
-+KernelVersion:  6.16
-+Contact:        Steffen Trumtrar <kernel@pengutronix.de>
-+Description:
-+	Contains and sets the global brightness for the B color group.
-+	Can be adjusted in 128 steps from 0% to 100% of the maximum brightness.
-+
-+What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/g_global_brightness_set
-+Date:           July 2025
-+KernelVersion:  6.16
-+Contact:        Steffen Trumtrar <kernel@pengutronix.de>
-+Description:
-+	Contains and sets the global brightness for the G color group.
-+	Can be adjusted in 128 steps from 0% to 100% of the maximum brightness.
-+
-+What:           /sys/class/spi_master/spi<bus>/spi<bus>.<dev>/r_global_brightness_set
-+Date:           July 2025
-+KernelVersion:  6.16
-+Contact:        Steffen Trumtrar <kernel@pengutronix.de>
-+Description:
-+	Contains and sets the global brightness for the R color group.
-+	Can be adjusted in 128 steps from 0% to 100% of the maximum brightness.
+FWIW I already applied a few patches, but I'll take another look,
+hopefully today.
 
--- 
-2.49.0
-
+johannes
 
