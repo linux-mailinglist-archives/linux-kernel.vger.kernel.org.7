@@ -1,160 +1,214 @@
-Return-Path: <linux-kernel+bounces-811278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 027E9B526EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 05:16:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80100B526F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 05:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE9456420A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AFFB1BC769E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E3020FAB2;
-	Thu, 11 Sep 2025 03:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Iu2+ar6f"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093E321772A;
+	Thu, 11 Sep 2025 03:16:22 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB8974414;
-	Thu, 11 Sep 2025 03:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AB3E22AE5D;
+	Thu, 11 Sep 2025 03:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757560573; cv=none; b=W5Pxt8LejSb9ivcfcq1gnprA1nb624Fs0U3V9yWJJ7YgLJAAiFDJo3EeR7rq4nQoi9NWrQhPzhszbpk/zdAVBnSefkoyyUn1yRW4h6wkN/cqojVtHXaXj2zz+ANFnWRyP23LmCWP4bUzXtjTE00Sdvn2juR+qCpnHxLpRSTQm84=
+	t=1757560581; cv=none; b=hpQIswUX/VcMS4TzB+UgjawVjLdlsQeo24evo+m6g1Lvwo8oOa8GugzZ/fofFISPzGcsoy0/NdLMSf3ECCUP1C3MmlxZrsdnxnxv1veddtsswGjO1nzhLfT6mD5Exa4kVB6blfK3ksJxPTKP3tcKTB3LI9mgc0d35/j17fpkPjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757560573; c=relaxed/simple;
-	bh=5RU9K0ZqeBi6mxA1bWf3vNZQjh8NMxKm1C9xcTnVl/M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gWU/y/9g/xRumT2ELVTOzEgiIKYMW3rHcufQl21h9ojK4/e7D6ygq2yIrtNgrOr5c2bblzjYAczDiFNO6aTLIdq0GwyPJO3El/5CeCoyWH6AQf3vJbb4MwDNo2Lig4X8ZIFomBKpTzVFm7hEMneuj6WvT7qaAWg8oeANJHIkeRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Iu2+ar6f; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ixyFk/mPVbulQ4uqtT21qMKNSvDLRazah5rKk0kSLi4=;
-	b=Iu2+ar6fQlNutZuCJkF+3sJZ2IgG3mhmq63+GEblQ0bld8heODl7TTuf66RQoB
-	HCTuHMqeLq4UapcHboJSS/CJoGzyOFIlqOBW4FsvgIoWOcxsXzsCD683Ho7Lawyg
-	6FIZIzzgLL5DvfGg4OOpWbx/6Ht5StLH5S/LMhtnHtRYw=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDnl8rVPsJoQ0FPBA--.49162S3;
-	Thu, 11 Sep 2025 11:15:35 +0800 (CST)
-Date: Thu, 11 Sep 2025 11:15:33 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux@ew.tq-group.com
-Subject: Re: [PATCH v2 2/2] arm64: dts: freescale: add initial device tree
- for TQMa91xx/MBa91xxCA
-Message-ID: <aMI-1QVqrQeG75y6@dragon>
-References: <20250901100432.139163-1-alexander.stein@ew.tq-group.com>
- <20250901100432.139163-3-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1757560581; c=relaxed/simple;
+	bh=BCic20U1W6tjlE9fQUq/4Xj/TUPn96EwmRRFUqjcqHs=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=qo1LB6294KU9v01IOufgbAK1c1XBznR/ToBwEF5OrDNhCNapQhZU2hTW/fxACnVFNryES250/WGu7zGQdS8lsiQmTSeulpdDfWMa26F/ak46sSpadOuMbTOM54swiKZY72UEuqF+rOxkAQYUxr/VC/Vuj6U1B7ORHPn2nz5NGq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4cMjPq0mBMzKHMtt;
+	Thu, 11 Sep 2025 11:16:15 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 619551A135D;
+	Thu, 11 Sep 2025 11:16:15 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgAncY39PsJogZxrCA--.9809S3;
+	Thu, 11 Sep 2025 11:16:15 +0800 (CST)
+Subject: Re: [PATCH 2/3] md: fix incorrect sync progress update on sync read
+ errors
+To: linan666@huaweicloud.com, song@kernel.org, neil@brown.name,
+ namhyung@gmail.com
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250911020441.2858174-1-linan666@huaweicloud.com>
+ <20250911020441.2858174-2-linan666@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <319b7c8e-7595-d4a5-b9a2-11ebea670281@huaweicloud.com>
+Date: Thu, 11 Sep 2025 11:16:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250901100432.139163-3-alexander.stein@ew.tq-group.com>
-X-CM-TRANSID:Mc8vCgDnl8rVPsJoQ0FPBA--.49162S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCFy5ZFy7CFW8AryxGrW3ZFb_yoW5ZF1Dp3
-	WkCrZ5WrWfGFyxur9Iqw40gr98Jw4rJayDuryYgFW7KrZ5uryftwn8Krs3WryxXw4rX3yU
-	WFn3ZrnxAF15WaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UZ189UUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCwXFZWjCG0lVNgABs0
+In-Reply-To: <20250911020441.2858174-2-linan666@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAncY39PsJogZxrCA--.9809S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3AF4UuFyftw47Cr1xuF4Durg_yoW7WFykp3
+	93XasxKr1UZFWaqFWUXw1DAFZ5ZrWjyFWDtrWag3yxJw1rtr17GFyY93W8JryDJ3sYya1F
+	q34rJrsxZ3WUWaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Sep 01, 2025 at 12:04:30PM +0200, Alexander Stein wrote:
-> This adds support for TQMa91xx module attached to MBa91xxCA board.
-> TQMa91xx is a SOM series using i.MX91 SOC. The SOM features PMIC, RAM,
-> e-MMC and some optional peripherals like SPI-NOR, RTC, EEPROM,
-> gyroscope and secure element.
+Hi,
+
+ÔÚ 2025/09/11 10:04, linan666@huaweicloud.com Ð´µÀ:
+> From: Li Nan <linan122@huawei.com>
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> When a sync read fails and badblocks recording fails (exceeding the 512),
+
+I think it's better to faulty this rdev directly, user really need to
+replace this disk ASAP.
+
+Thanks,
+Kuai
+
+> the device is not immediately marked Faulty. Instead, 'recovery_disabled'
+> is set, and non-In_sync devices are removed later. This preserves array
+> availability: if users never read the damaged region, the raid remains
+> available and gains fault tolerance.
+> 
+> However, during the brief window before the device removal,
+> resync/recovery_offset was incorrectly updated to include the bad sectors.
+> This could lead to inconsistent data being read from those sectors.
+> 
+> Fix it by:
+>   - Set MD_RECOVERY_ERROR when bad block recording fails for sync reads.
+>   - Do not update curr_resync_completed if MD_RECOVERY_ERROR set.
+>   - Use curr_resync_completed as the final resync progress indicator.
+> 
+> Fixes: 5e5702898e93 ("md/raid10: Handle read errors during recovery better.")
+> Fixes: 3a9f28a5117e ("md/raid1: improve handling of read failure during recovery.")
+> Signed-off-by: Li Nan <linan122@huawei.com>
 > ---
-> Changes in v2:
-> * TQMa91xx series includes both CA & LA variant (socket & LGA)
->   adjust commit message accordingly
-> * Use JTAG pinctrl by GPIO controller
-> * Rename DT node name 'imu' to 'accelerometer'
+>   drivers/md/md.c     | 48 ++++++++++++++++++---------------------------
+>   drivers/md/raid10.c |  2 +-
+>   2 files changed, 20 insertions(+), 30 deletions(-)
 > 
->  arch/arm64/boot/dts/freescale/Makefile        |   1 +
->  .../freescale/imx91-tqma9131-mba91xxca.dts    | 739 ++++++++++++++++++
->  .../boot/dts/freescale/imx91-tqma9131.dtsi    | 295 +++++++
->  3 files changed, 1035 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/imx91-tqma9131-mba91xxca.dts
->  create mode 100644 arch/arm64/boot/dts/freescale/imx91-tqma9131.dtsi
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 0094830126b4..f3abfc140481 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -9470,18 +9470,20 @@ void md_do_sync(struct md_thread *thread)
+>   		     time_after_eq(jiffies, update_time + UPDATE_FREQUENCY) ||
+>   		     (j - mddev->curr_resync_completed)*2
+>   		     >= mddev->resync_max - mddev->curr_resync_completed ||
+> -		     mddev->curr_resync_completed > mddev->resync_max
+> -			    )) {
+> +		     mddev->curr_resync_completed > mddev->resync_max)) {
+>   			/* time to update curr_resync_completed */
+>   			wait_event(mddev->recovery_wait,
+>   				   atomic_read(&mddev->recovery_active) == 0);
+> -			mddev->curr_resync_completed = j;
+> -			if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery) &&
+> -			    j > mddev->resync_offset)
+> -				mddev->resync_offset = j;
+> -			update_time = jiffies;
+> -			set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
+> -			sysfs_notify_dirent_safe(mddev->sysfs_completed);
+> +
+> +			if (!test_bit(MD_RECOVERY_ERROR, &mddev->recovery)) {
+> +				mddev->curr_resync_completed = j;
+> +				if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery) &&
+> +				    j > mddev->resync_offset)
+> +					mddev->resync_offset = j;
+> +				update_time = jiffies;
+> +				set_bit(MD_SB_CHANGE_CLEAN, &mddev->sb_flags);
+> +				sysfs_notify_dirent_safe(mddev->sysfs_completed);
+> +			}
+>   		}
+>   
+>   		while (j >= mddev->resync_max &&
+> @@ -9594,7 +9596,7 @@ void md_do_sync(struct md_thread *thread)
+>   	wait_event(mddev->recovery_wait, !atomic_read(&mddev->recovery_active));
+>   
+>   	if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+> -	    !test_bit(MD_RECOVERY_INTR, &mddev->recovery) &&
+> +	    !test_bit(MD_RECOVERY_ERROR, &mddev->recovery) &&
+>   	    mddev->curr_resync >= MD_RESYNC_ACTIVE) {
+>   		mddev->curr_resync_completed = mddev->curr_resync;
+>   		sysfs_notify_dirent_safe(mddev->sysfs_completed);
+> @@ -9602,32 +9604,20 @@ void md_do_sync(struct md_thread *thread)
+>   	mddev->pers->sync_request(mddev, max_sectors, max_sectors, &skipped);
+>   
+>   	if (!test_bit(MD_RECOVERY_CHECK, &mddev->recovery) &&
+> -	    mddev->curr_resync > MD_RESYNC_ACTIVE) {
+> +	    mddev->curr_resync_completed > MD_RESYNC_ACTIVE) {
+> +		if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
+> +			mddev->curr_resync_completed = MaxSector;
+> +
+>   		if (test_bit(MD_RECOVERY_SYNC, &mddev->recovery)) {
+> -			if (test_bit(MD_RECOVERY_INTR, &mddev->recovery)) {
+> -				if (mddev->curr_resync >= mddev->resync_offset) {
+> -					pr_debug("md: checkpointing %s of %s.\n",
+> -						 desc, mdname(mddev));
+> -					if (test_bit(MD_RECOVERY_ERROR,
+> -						&mddev->recovery))
+> -						mddev->resync_offset =
+> -							mddev->curr_resync_completed;
+> -					else
+> -						mddev->resync_offset =
+> -							mddev->curr_resync;
+> -				}
+> -			} else
+> -				mddev->resync_offset = MaxSector;
+> +			mddev->resync_offset = mddev->curr_resync_completed;
+>   		} else {
+> -			if (!test_bit(MD_RECOVERY_INTR, &mddev->recovery))
+> -				mddev->curr_resync = MaxSector;
+>   			if (!test_bit(MD_RECOVERY_RESHAPE, &mddev->recovery) &&
+>   			    test_bit(MD_RECOVERY_RECOVER, &mddev->recovery)) {
+>   				rcu_read_lock();
+>   				rdev_for_each_rcu(rdev, mddev)
+>   					if (mddev->delta_disks >= 0 &&
+> -					    rdev_needs_recovery(rdev, mddev->curr_resync))
+> -						rdev->recovery_offset = mddev->curr_resync;
+> +					    rdev_needs_recovery(rdev, mddev->curr_resync_completed))
+> +						rdev->recovery_offset = mddev->curr_resync_completed;
+>   				rcu_read_unlock();
+>   			}
+>   		}
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index 02e1c3db70ca..c3cfbb0347e7 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -2543,7 +2543,7 @@ static void fix_recovery_read_error(struct r10bio *r10_bio)
+>   
+>   					conf->mirrors[dw].recovery_disabled
+>   						= mddev->recovery_disabled;
+> -					set_bit(MD_RECOVERY_INTR,
+> +					set_bit(MD_RECOVERY_ERROR,
+>   						&mddev->recovery);
+>   					break;
+>   				}
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 947de7f125caf..3a937232d6f29 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -338,6 +338,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8qxp-tqma8xqps-mb-smarc-2.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8ulp-9x9-evk.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx8ulp-evk.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx91-11x11-evk.dtb
-> +dtb-$(CONFIG_ARCH_MXC) += imx91-tqma9131-mba91xxca.dtb
->  dtb-$(CONFIG_ARCH_MXC) += imx93-9x9-qsb.dtb
->  
->  imx93-9x9-qsb-i3c-dtbs += imx93-9x9-qsb.dtb imx93-9x9-qsb-i3c.dtbo
-> diff --git a/arch/arm64/boot/dts/freescale/imx91-tqma9131-mba91xxca.dts b/arch/arm64/boot/dts/freescale/imx91-tqma9131-mba91xxca.dts
-> new file mode 100644
-> index 0000000000000..d9e471e00d760
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/imx91-tqma9131-mba91xxca.dts
-> @@ -0,0 +1,739 @@
-> +// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
-> +/*
-> + * Copyright (c) 2022-2025 TQ-Systems GmbH <linux@ew.tq-group.com>,
-> + * D-82229 Seefeld, Germany.
-> + * Author: Markus Niebel
-> + * Author: Alexander Stein
-> + */
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/input/input.h>
-> +#include <dt-bindings/leds/common.h>
-> +#include <dt-bindings/net/ti-dp83867.h>
-> +#include <dt-bindings/pwm/pwm.h>
-> +#include <dt-bindings/usb/pd.h>
-> +#include "imx91-tqma9131.dtsi"
-> +
-> +/{
-> +	model = "TQ-Systems i.MX91 TQMa91xxLA/TQMa91xxCA on MBa91xxCA starter kit";
-> +	compatible = "tq,imx91-tqma9131-mba91xxca", "tq,imx91-tqma9131", "fsl,imx91";
-> +	chassis-type = "embedded";
-> +
-> +	chosen {
-> +		stdout-path = &lpuart1;
-> +	};
-> +
-> +	aliases {
-> +		eeprom0 = &eeprom0;
-> +		ethernet0 = &eqos;
-> +		ethernet1 = &fec;
-> +		gpio0 = &gpio1;
-> +		gpio1 = &gpio2;
-> +		gpio2 = &gpio3;
-> +		gpio3 = &gpio4;
-> +		i2c0 = &lpi2c1;
-> +		i2c1 = &lpi2c2;
-> +		i2c2 = &lpi2c3;
-> +		mmc0 = &usdhc1;
-> +		mmc1 = &usdhc2;
-> +		rtc0 = &pcf85063;
-> +		rtc1 = &bbnsm_rtc;
-> +		serial0 = &lpuart1;
-> +		serial1 = &lpuart2;
-
-serial should go before rtc right?  I fixed it up and applied both
-patches.
-
-Shawn
 
 
