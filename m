@@ -1,205 +1,170 @@
-Return-Path: <linux-kernel+bounces-812218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE625B534A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:57:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A153BB534A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AC6C3B3196
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:57:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF0E5805C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CE754763;
-	Thu, 11 Sep 2025 13:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8050432F77F;
+	Thu, 11 Sep 2025 13:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="E8XgB5JL"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tgz476OI"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5396532F75F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B6654763;
+	Thu, 11 Sep 2025 13:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599031; cv=none; b=sTUarOD+HySVPAWXUJRHg+xcWvPXcn56Uxv9tZoDyY/lpGhDiLHQlkq2hvEapUAV5ID8fVvNGggbUvYDqZer6jrNpwiq5SxPiasJjD/oWA7jN79gmK+ymIuviiJYKF22pexgXo/hD2qCSSAH1n+jeWZQJfFLpIw6QwVJ0EnU25k=
+	t=1757599028; cv=none; b=S/x7B/ZNbr7HLK9GYKoLZ3H2p+lQfM7V9QQqE9w1bAi0cDwz2AaxINjAWXMHB2HNlvjZH4lMkU8YW5aPn3hX1qz9f6zqwC+sCiC3ErUMtqrDWD+6zLZdIKlOdPXv5bsko4nHXO3FOyNIYTKcdGap5BxIyCcMdmb+m4OghxyxlKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599031; c=relaxed/simple;
-	bh=oDf5VY2SMDhWKzWUCn3C1u6sbTRxHqiOGBPOElxerfE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tIItsWVklViFhjZWAJIlK/M6T5q7qONnBHLvCF/AFVdBBoQXr/JKkPFATzjBt1m4/RoWWcZkd3y8ZmluRiFthOG0FPsimXaAiR8LQ0oShS+8Bjf0q9Q6pQBS+I2skjwH6k8YtvpzblmcVD94WfMIA18AbvxNs/9i6+IHWUKMMoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=E8XgB5JL; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 9C4DEC6B3BD;
-	Thu, 11 Sep 2025 13:56:51 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 73D0160630;
-	Thu, 11 Sep 2025 13:57:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A837E102F28F0;
-	Thu, 11 Sep 2025 15:56:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757599026; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=+8MOtjR/SCOGwiIdk6r9cBes34StJlpvtG+zzPpGcNk=;
-	b=E8XgB5JLS/mPkRP1zvTiKqUhwKzCA50gJAmpUmbn01XBtfVmKS4Mmx2LW+weWFYiXbLH8B
-	7U+nZamCADWhQ7XINEFNoWGdB6kbpB2qEKCacWxQ2puVuYq/3970GdAsI/HvDBhLCYI8a6
-	THjK6d4knuwr10/hrmHRGtt4684EiGcs9uAoFv8id8p42I1TgMzZQ+wTUsiwHWgitCRJV5
-	A4gtTMa0gNDS1DmQ9wLQkI4ZVAVL9rdt227qpHd/5W4ml06QAyFjhTILEGmzZzoh/rLZAU
-	TMgyahAWNFF02OROSkqTXN1H4J7HdvZERF+ls+yJlZ0wezFot/vxH8S4YrQJ1g==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Cheng Ming Lin <linchengming884@gmail.com>
-Cc: richard@nod.at,  vigneshr@ti.com,  robh@kernel.org,  krzk+dt@kernel.org,
-  conor+dt@kernel.org,  tudor.ambarus@linaro.org,
-  mmkurbanov@salutedevices.com,  Takahiro.Kuwano@infineon.com,
-  pratyush@kernel.org,  linux-mtd@lists.infradead.org,
-  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  alvinzhou@mxic.com.tw,  Cheng Ming Lin <chengminglin@mxic.com.tw>
-Subject: Re: [PATCH v2 1/3] dt-bindings: mtd: spi-nand: Add
- enable-randomizer-otp property
-In-Reply-To: <CAAyq3SZUToRjWVgAX_=We7cMFjVjuGLvFYBSpOG=M_e_MD6aeQ@mail.gmail.com>
-	(Cheng Ming Lin's message of "Thu, 11 Sep 2025 16:30:11 +0800")
-References: <20250910030301.1368372-1-linchengming884@gmail.com>
-	<20250910030301.1368372-2-linchengming884@gmail.com>
-	<87wm66d67k.fsf@bootlin.com>
-	<CAAyq3SbXiPUjZE7OCAe1=uw4h82bFN7DSU4bLx1dhKe_XFtu=w@mail.gmail.com>
-	<878qilbes9.fsf@bootlin.com>
-	<CAAyq3SZUToRjWVgAX_=We7cMFjVjuGLvFYBSpOG=M_e_MD6aeQ@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Thu, 11 Sep 2025 15:56:42 +0200
-Message-ID: <87wm659jol.fsf@bootlin.com>
+	s=arc-20240116; t=1757599028; c=relaxed/simple;
+	bh=hMtSvkMWxqsg6lCV2CppqzXzxo4LhI0P6FR0oVl35t8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UV8fF7+rJX468gycZayfUhG2xdeZu80gyG4V2muDvoLVGHK2/qaeI0W/oe6k6AgB0Glm5G9YR8+SYZALMPPGdDnmmIf3y3BkqTzDm1R0WG3j7a2ajtBTWYmXmHnwr4OazXSZXHbDHCMNPPDDOmEWpC6ZwllbpIlys50Svg4XfpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tgz476OI; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-544a2cf582dso466958e0c.3;
+        Thu, 11 Sep 2025 06:57:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757599026; x=1758203826; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kcao4rN5X0cmuLo7SXDeH3m9W8a/UbP7jZQS+UPEOSA=;
+        b=Tgz476OIWvzZgFY+ZBRYwhugv1gX4Pg7yhyq50pOHKXfZ1x+XcZLB1xFlZXeuJoTLH
+         ipdpPlXg5kYgVeZeelwfA+frpoT1UdANRqPLZB1RR7f2LuTL3EZsXp9XUOpoO+T8BIGo
+         aS5T14RB9xbX8Q7LbiANzeiLh6AqLZ0NjBiQA4rgI3fLCD9qjjoK8jns/dOe4p2YbDdS
+         od+TJBW4m86GR5nty0Pk6WAOPBU5stFQRUwn1FzBj5NVKkLH2fsWjjSebZbz+7qzhi9n
+         cHZdYxHj/fWrSs//AT75fAKMnRw90C3vI0U1pS9EHh3TYUinuziZ5healXbVneWgKEXG
+         vp4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757599026; x=1758203826;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kcao4rN5X0cmuLo7SXDeH3m9W8a/UbP7jZQS+UPEOSA=;
+        b=qjZ4nXIAxyRVImuQZ4wgV9bB100ITUE7XVS2bYi2FfxCgan60Dy6fKRvFobDX7S4HW
+         +7dlock56iYL20W3QxxCrhPT3zSB1fZuYDmsH81Rtqnv0km1EhjCQicHh+Knqgckyb+n
+         I6sLmbaEss/E/rnlr8gJzqGBNjHoYWgEfCOowNh0IYDOJkLUGXTAS2FZJuImL8YUAlJi
+         P1KKTT4QudDWwzizRPXp05OYyQdlr6rUX9UHBQvUGnp25ZdqDuefb7w8gw7CPDiGPb/x
+         AZj7Gkc9C9anz57jg+oQUg5+ikirbhs859uj+KaBt4ur61mhujWw46orQ0a1dMWlUEZW
+         Nlag==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ8epqO07kDS63Ijaw4Uk5CXsA4YuJlOHZOPhNzK5A82VmyyMxePtL90VhtCJHaSMRyGt4A2FqqrzS3hg=@vger.kernel.org, AJvYcCWLTG01aaIwp0kRRvOIJxyz2fwKLwzxLxBxL/EZ9nMMfGskxOeeoSlMjsm9TPfCJ3wy7YpLP9LzWsXZ@vger.kernel.org, AJvYcCXjpKMrEVN0r/QgQz5i+s3QTF11Da0f9bK4nQiywQDlhWw+o6H/BiOaXb/8Jt9VxT2y4x1BwJey+ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZvsifFsDMpWDr4+SshysZw+WQihk5gLl6DzJ1GbKjFObewNhO
+	Vo4GEZeO28zkepGt2IkC0R8gnhiIr6rJvSeXB0wg1sBGrWlDWV6dcl53aCyD2nyY1tk9+GCEciy
+	/kLJ1Nsx+FY7txovNTRN0FWE7UyOJbls=
+X-Gm-Gg: ASbGncuHCjH0uninmlLm5fkeGhpDVnkhIbSAOoAHtusIhU52iTe1damhnrb9gnxMrLK
+	HRhZARHV8w4n+X7cKx6ZuppFOqvbRDFfTvobWJ7B7l8cnv9xWAnsVPc6vV4y1825a1AM/g0Fn9/
+	n3qQ31Eivt6nCfOo8Q/YexKzt7UrpxxfxfTZGHk/DOVGYS/FWEeJjWD6o3Q4qf6URxn90y3wR9j
+	U+Ff+o/DdHr2WBYlUhKJwh1infU/v+WhONL/1naCUd3Sw==
+X-Google-Smtp-Source: AGHT+IHfaoER7CZHtltL7LNT+pecj12ZrOtK26TcGYDPu6M3eY+1PHAZQ3dMlk8ej2Fyxc3mQCfwAgq8TtigXExrlwA=
+X-Received: by 2002:a05:6122:658b:b0:544:4ee5:1334 with SMTP id
+ 71dfb90a1353d-5472a006752mr6515775e0c.2.1757599025751; Thu, 11 Sep 2025
+ 06:57:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
+ <20250909161901.10733-1-ryanzhou54@gmail.com> <20250911013242.oxm2kwfaqvmybbhk@synopsys.com>
+ <xbfvykzfi26pyaycd7efbqvmraxcu6zzgqjfxtk33wcsjsnnal@5e3g4pq5qcj3> <CAJZ5v0gT26VK-sHmgK_S4RjjO3Uc-ZmoAYos43S5yWh0zWc9DA@mail.gmail.com>
+In-Reply-To: <CAJZ5v0gT26VK-sHmgK_S4RjjO3Uc-ZmoAYos43S5yWh0zWc9DA@mail.gmail.com>
+From: ryan zhou <ryanzhou54@gmail.com>
+Date: Thu, 11 Sep 2025 21:56:54 +0800
+X-Gm-Features: AS18NWDPE-BY2oqlpK1jbYCknJ2acQon-GvjcezpUvo-Fhxi1ToAyAixY67txWo
+Message-ID: <CAPwe5RP14woNEiux4e4xfL0W=53rogmcionLuvYt37aLz-i-nA@mail.gmail.com>
+Subject: Re: [PATCH v2] drvier: usb: dwc3: Fix runtime PM trying to activate
+ child device xxx.dwc3 but parent is not active
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Xu Yang <xu.yang_2@nxp.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+	"stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "royluo@google.com" <royluo@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
-
->> >> This is a NAND wide feature, so we should probably add a prefix, such=
- as
->> >> "nand,".
->> >>
->> >> Now, what about this "otp" suffix? Many (if not all) chips have a
->> >> volatile setting for that. About the naming, "otp" often reflects to =
-the
->> >> OTP area, which is not what you imply here, as you want to insist
->> >> (rightfully) on the fact that this feature cannot be disabled.
->> >
->> > Yes, my intention is that once the randomizer feature is enabled, it
->> > should not be disabled again.
->>
->> I believe the motivation behind this choice is incorrect and does not
->> fit such an OS as Linux. We want to give the system administrator the
->> choice to select and unselect features as it sees fit. So if there is a
->> volatile way to enable something, we should go for it and we will pay
->> the extra penalty of a set_feature() (or whatever) command after each
->> boot. Making this type of change permanent makes development and
->> debugging much more painful. There are plenty of configurations that we
->> refuse to apply with non volatile configurations. In general, stateful
->> modes are problematic if they are kept after a reboot and we try our
->> best to avoid them.
->>
->> Once this feature is enabled, for the lifetime of "a product", it does
->> not make sense to disable it indeed. And the DT must remain correct, if
->> it is changed in a non compatible way, that's the administrator
->> responsibility.
->>
->> So are there ways to enable this feature in a way that returns to the
->> default state after a reset?
+Rafael J. Wysocki <rafael@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=8811=E6=
+=97=A5=E5=91=A8=E5=9B=9B 19:36=E5=86=99=E9=81=93=EF=BC=9A
 >
-> Thank you for the detailed feedback. I understand and agree with the
-> principle of favoring volatile configurations to give administrators
-> more control and simplify debugging.
+> On Thu, Sep 11, 2025 at 12:58=E2=80=AFPM Xu Yang <xu.yang_2@nxp.com> wrot=
+e:
+> >
+> > Hi Ryan,
+> >
+> > On Thu, Sep 11, 2025 at 01:32:47AM +0000, Thinh Nguyen wrote:
+> > > On Wed, Sep 10, 2025, Ryan Zhou wrote:
+> > > > Issue description:During the wake-up sequence, if the system invoke=
+s
+> > > >  dwc3->resume and detects that the parent device of dwc3 is in a
+> > > > runtime suspend state, the system will generate an error: runtime P=
+M
+> > > > trying to activate child device xxx.dwc3 but parent is not active.
+> > > >
+> > > > Solution:At the dwc3->resume entry point, if the dwc3 controller
+> > > > is detected in a suspended state, the function shall return
+> > > > immediately without executing any further operations.
+> > > >
+> > > > Signed-off-by: Ryan Zhou <ryanzhou54@gmail.com>
+> > > > ---
+> > > >  drivers/usb/dwc3/core.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >
+> > > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > > index 370fc524a468..06a6f8a67129 100644
+> > > > --- a/drivers/usb/dwc3/core.c
+> > > > +++ b/drivers/usb/dwc3/core.c
+> > > > @@ -2687,6 +2687,9 @@ int dwc3_pm_resume(struct dwc3 *dwc)
+> > > >     struct device *dev =3D dwc->dev;
+> > > >     int             ret =3D 0;
+> > > >
+> > > > +   if (pm_runtime_suspended(dev))
+> > > > +           return ret;
+> > > > +
+> > >
+> > > Is this a documented behavior where the device should remain runtime
+> > > suspend on system resume? I feel that that this should be configurabl=
+e
+> > > by the user or defined the PM core. I don't think we should change
+> > > default behavior here just to workaround the issue that we're facing.
+> > >
+> > > What if the user wants to keep the old behavior and resume up the dev=
+ice
+> > > on system resume?
+> >
+> > What about resume the device firstly if it's already runtime suspended =
+when
+> > call dwc3_pm_suspend(). Therefor, the old behavior can be kept and the =
+issue
+> > can be avoided.
+> >
+> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > index 370fc524a468..1b8dbb260017 100644
+> > --- a/drivers/usb/dwc3/core.c
+> > +++ b/drivers/usb/dwc3/core.c
+> > @@ -2672,6 +2672,9 @@ int dwc3_pm_suspend(struct dwc3 *dwc)
+> >         struct device *dev =3D dwc->dev;
+> >         int             ret;
+> >
+> > +       if (pm_runtime_suspended(dev))
+> > +               pm_runtime_resume(dev);
 >
-> Yes, it is possible to enable this feature in a way that it returns
-> to the default state after a reset.
->
-> We can use the standard set_feature command to set the RANDEN bit to 1,
-> which enables the randomizer. This configuration is volatile and will
-> not persist through a power cycle. The feature will remain disabled by
-> default on each boot unless it is explicitly enabled again.
->
-> I will update the patch to implement this volatile approach.
+> You can just call pm_runtime_resume() here without the preliminary check.
 
-I would be in favour of implementing this method. Hence, no more OTP
-constraint to express in the binding either.
+If the device is active before sleep, skip runtime_resume after wakeup
+and just call dwc3->suspend.
 
->> > You are correct that this bit does not
->> > belong to the OTP area, but rather to the v2 volatile register. The v2
->> > volatile register has a default value that can be changed through a
->> > special OTP configuration register program operation. Regarding the
->> > "otp" suffix, I will remove it to avoid misunderstanding.
->> >
->> >>
->> >> Also, this is a per-chip configuration, while I would have welcomed a
->> >> per-partition configuration. I can easily imagine two cases:
->> >>
->> >> - The boot ROM, for longevity purposes, expects the first blocks
->> >>   containing the bootloader to be scrambled. However the rest of the
->> >>   system does not really care and disables randomization.
->> >>
->> >> - The boot ROM is not capable of de-scrambling, however the rest of t=
-he
->> >>   system relies on the (probably) more robust scrambling feature.
->> >>
->> >> In both cases a chip wide variable is not relevant.
->> >
->> > The scrambling and descrambling are handled by the NAND flash hardware
->> > itself. Therefore, the boot ROM does not need to support a descrambling
->> > feature.
->> >
->> > In the case of Macronix parts, the randomizer is controlled through a
->> > configuration register, and once it is enabled it covers the entire ch=
-ip
->> > (main and/or spare depending on the randopt bit). There is no hardware
->> > mechanism to enable it only on certain ranges.
->>
->> After thinking once again, I am no longer aligned with myself from the
->> past. This is perhaps too Macronix specific in the end and if it is a
->> fully transparent feature, then why not.
->>
->> Are there any ways we can read the raw data (unscrambled) once
->> scrambling has been enabled? (I mean, without changing the user default
->> OTP state). Maybe one big difference with the raw NAND world that needs
->> to be taken into account is that the chip itself always return
->> unscrambled data, hence we probably do not care much, from a Linux
->> perspective.
->
-> Unfortunately, there is no way to do this. If a user decides to use the
-> randomizer feature, they must enable it before programming the user OTP
-> area. If the randomizer is not enabled before the user OTP is programmed,
-> any subsequent reads will result in corrupted data.
->
-> Marconix raw NAND chip itself does not always return unscrambled data.
->
-> The ability to read unscrambled data is dependent on whether the
-> randomizer feature was enabled and configured correctly. When the
-> randomizer is turned on, the chip's internal hardware automatically
-> handles the unscrambling process. If the feature is not enabled, the
-> data read from the memory will be the raw, scrambled information, which
-> is unusable without the correct key and algorithm. In other words, the
-> chip only returns unscrambled data if randomizer feature is enabled.
+Thanks=EF=BC=8C
 
-That is interesting and might be useful. In Linux we will enable the
-scrambler if the data property is enabled before we get to play with the
-OTP anyway, so hopefully people will get it right.
-
-Regarding the property name, it is going to be a per SPI NAND chip
-property. I am still not sure whether we should make this prop generic
-or not. Perhaps the safest approach is to keep it vendor specific, but
-the concept of scrambling internal data for longevity purposes is common
-enough to deserve a nand- prefix. Although it's gonna be like ECC
-engines, we'll need to decide which part of the system handles the
-scrambling (software, hardware on host or chip itself) and whether it is
-enabled per-chip or per-partition when that's possible.
-
-I am open to suggestions.
-
-Thanks,
-Miqu=C3=A8l
+Ryan
 
