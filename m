@@ -1,129 +1,99 @@
-Return-Path: <linux-kernel+bounces-812088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22E74B532C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14308B532C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6BBF585A21
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28EF93B1E3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE67C32252A;
-	Thu, 11 Sep 2025 12:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1669A322A22;
+	Thu, 11 Sep 2025 12:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cNlaDRcg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="j5jyOipc"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D1D322767
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA31C27EFE1;
+	Thu, 11 Sep 2025 12:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757595049; cv=none; b=bfxtAvbxm2/CKf4WWbQHO0vucQx1mOOR8Mzms6VOJrkIpfubjqWSAADXv0kGUlRJ6hYbQcyA7baVpqVkt0+YXa/E1DCvLtZScHETzQT/IYz9rOrlmXMtdW6Qvj5u3zsjecOjjbJ6Fh8z3vXoeOTGKXndNK8kQCsPCl7bg15zemw=
+	t=1757595101; cv=none; b=UTDre0k286igcgbL4zuFIKpRoaSgpuJKztLi3jD4528Sk5/wAMHQhQScxbZWBrkhaBu7L41C7s44OeSnpa0FTh1gdHovKU6zKoYCr2hUTLVylObThTc5vDczgh0iuUF38Bxh6KvciScyfhZ1YpjVqD7ceWjsAYSNXV/zgWlVb14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757595049; c=relaxed/simple;
-	bh=tJGoCAXqOzuddBjl4jN3Sc3VycflEXLnDPekZVtOt+4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gLTEPO85S/OgjdZnxOsW6MvmBscdI/LlR2xGmUfStxwQ03H0a5r63AYh2W1Kyr9fAnQGLyn9YWIUbty3tcZcVs9unHXCg0PqAduJqwHsmQ4q8H1XqVesobnTyATe3eIhGop7WPGkyjJB2CSdPdXy9A/IHFRyDVV6Yx9nJTlRzFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cNlaDRcg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEAD0C4AF09
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:50:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757595048;
-	bh=tJGoCAXqOzuddBjl4jN3Sc3VycflEXLnDPekZVtOt+4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=cNlaDRcgWbChNThLzsHJ0nSPSPwbSBoZs1iK1fDrhnZ/mROkqzmdcUkZdn5wTfWho
-	 jpg0Nps06leWAHtJ1leacWlB9HcLbNgMvG9D1C7USUjSLyzbj2KoQi6PVyDGZ2mrHJ
-	 a6DtEJzpmP+EfBr6ToU+qmYUcUelwjqg9fFXRRvNzGdkNydus1PLdDfpisQQu0X4LP
-	 g5KXJQ5VNCfIrx14LcF8hBlXKHOlklrIpUD6n39Fzn7/Lm506FQ+Z3o5yMf3HiZW0u
-	 YQT7UOTWycWQfWnSRiQheq1eUc2eW3r1gPPmHIvW1mec2dtAACms3tZgVETOiTsMiW
-	 ouqN+ObMLMgBA==
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-61bd4e002afso174605eaf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 05:50:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUMpVsxy9URXLseXU3RG7F8YpRWOYDBSiiGQaStz9ra7ZjQ7JBE6OqcWtvExhhjOEJyKUNE3svp/TTrnm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqP79+vZ9E+BKR3jPMZ+OZ79/WBrhgtFPzryT3lr2KkJROGqfz
-	0YPc5kaclsKCT7c3UtNP2xO88Vtl3GsNU2Gj2r+h0N1z5Wl+S0tMPHr+cNQ5cs2YnICHUn3hA+b
-	mHJQDKxFQu6VNd/JnqZqTdX6sT9w7/nc=
-X-Google-Smtp-Source: AGHT+IHxJsKUfu0kNJmQcWf2p4gCIbzxH4/zmcLfjneUPJkQ11l+6BwO9/YIzjCoKy5wdYDt3DB/P7BJc9MXRsm29dE=
-X-Received: by 2002:a05:6820:168d:b0:621:a8cc:3a6d with SMTP id
- 006d021491bc7-621a8cc3fafmr2679459eaf.3.1757595048159; Thu, 11 Sep 2025
- 05:50:48 -0700 (PDT)
+	s=arc-20240116; t=1757595101; c=relaxed/simple;
+	bh=/CZchbUJJx5iuYCB9vz7gVfz/c1LrOO8szmAw5gDyDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQRde7EkPbD99jLM971Z60qMfsQrzbKRqUsaPTlXQ2wgtDWpYACqssZP1lpS/sPXRnGc76L18mqzQRFtkEMuHpnxNpcLC1BgDdhQKRs6WgZkN09+0DF5Kxp4VR+CE5N8m2ew8nSugkxtKWIZ+pSr8kpwlk+Ij0INxaKyY6iTOMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=j5jyOipc; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=v+5rP8nGZfUE7JovJkiq3wIxYuLAUJaHuDcq9FK6N2o=; b=j5jyOipc7CF+6IrtAD8U6rzM+N
+	VTg3B4CS4xefU8x9b56O+oumZqqhJmMFMn8HWy5FCrix6LQr53E1wrfwJTwUpIUmqymE2YohLIxPS
+	gGyhFS4UJq4MZKJbb2zL550hMOTzkwsUupEOFC7cu3uYP2+W9pN13nrPYDUv70mJAZafsfIj5gWlW
+	pjyGeqxb7eNyjrmiPdXnc6kEGwQt3GfP/8mc6kEMg4yzBNOvjWYti9tdhcpM7AES2/U1fPDlicDVP
+	fhm2341mm88VopLKqpBw1gPHdv8RnHXiI+NnARfvJ9GGomDSp4TPJid8PxYrvLOdzDa9TTiDXWUrn
+	Ihz5WVRg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44464)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uwglt-0000000032i-2qAs;
+	Thu, 11 Sep 2025 13:51:29 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uwglp-000000002Mx-3vtO;
+	Thu, 11 Sep 2025 13:51:25 +0100
+Date: Thu, 11 Sep 2025 13:51:25 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: rohan.g.thomas@altera.com
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Matthew Gerlach <matthew.gerlach@altera.com>
+Subject: Re: [PATCH net-next] net: stmmac: est: Drop frames causing HLBS error
+Message-ID: <aMLFzSLBHxsk9YI8@shell.armlinux.org.uk>
+References: <20250911-hlbs_2-v1-1-cb655e8995b7@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911112058.3610201-1-treapking@chromium.org>
-In-Reply-To: <20250911112058.3610201-1-treapking@chromium.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Sep 2025 14:50:36 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jMXzka7XgG7eXHOFntbSupHrhYvUsLP_YvDz10HpbMcQ@mail.gmail.com>
-X-Gm-Features: Ac12FXy1al6eSJJVOZe39AB-nzoBqzW7cKPlPDQxDvKD9wP_zx2hUDROhAJfMXY
-Message-ID: <CAJZ5v0jMXzka7XgG7eXHOFntbSupHrhYvUsLP_YvDz10HpbMcQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] driver core: Export device_link_flag_is_sync_state_only()
-To: Pin-yen Lin <treapking@chromium.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Hsin-Te Yuan <yuanhsinte@chromium.org>, linux-pm@vger.kernel.org, 
-	Chen-Yu Tsai <wenst@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911-hlbs_2-v1-1-cb655e8995b7@altera.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Thu, Sep 11, 2025 at 1:21=E2=80=AFPM Pin-yen Lin <treapking@chromium.org=
-> wrote:
->
-> Export device_link_flag_is_sync_state_only() for future patches.
->
-> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
->
-> ---
->
-> Changes in v2:
-> - New in v2
->
->  drivers/base/core.c    | 3 ++-
->  include/linux/device.h | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index d22d6b23e758..cc6af9b0d59d 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -287,10 +287,11 @@ static bool device_is_ancestor(struct device *dev, =
-struct device *target)
->  #define DL_MARKER_FLAGS                (DL_FLAG_INFERRED | \
->                                  DL_FLAG_CYCLE | \
->                                  DL_FLAG_MANAGED)
-> -static inline bool device_link_flag_is_sync_state_only(u32 flags)
-> +bool device_link_flag_is_sync_state_only(u32 flags)
->  {
->         return (flags & ~DL_MARKER_FLAGS) =3D=3D DL_FLAG_SYNC_STATE_ONLY;
->  }
-> +EXPORT_SYMBOL_GPL(device_link_flag_is_sync_state_only);
+On Thu, Sep 11, 2025 at 04:38:16PM +0800, Rohan G Thomas via B4 Relay wrote:
+> @@ -109,6 +109,11 @@ static void est_irq_status(struct stmmac_priv *priv, struct net_device *dev,
+>  
+>  		x->mtl_est_hlbs++;
+>  
+> +		for (i = 0; i < txqcnt; i++) {
+> +			if (value & BIT(i))
+> +				x->mtl_est_txq_hlbs[i]++;
+> +		}
 
-As Greg said, this isn't necessary.
+There's no need for the parens around the for loop.
 
->
->  /**
->   * device_is_dependent - Check if one device depends on another one
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 0470d19da7f2..e27d0bf7c43d 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -1197,6 +1197,7 @@ const char *dev_driver_string(const struct device *=
-dev);
->  struct device_link *device_link_add(struct device *consumer,
->                                     struct device *supplier, u32 flags);
->  void device_link_del(struct device_link *link);
-> +bool device_link_flag_is_sync_state_only(u32 flags);
+I'm afraid I can't provide much more of a review as I don't have the
+documentation for GMAC4 or XGMAC.
 
-No, you only need it in drivers/base/base.h
-
->  void device_link_remove(void *consumer, struct device *supplier);
->  void device_links_supplier_sync_state_pause(void);
->  void device_links_supplier_sync_state_resume(void);
-> --
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
