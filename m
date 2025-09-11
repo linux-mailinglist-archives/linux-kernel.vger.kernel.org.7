@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-812742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335B3B53C12
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:03:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F88FB53C16
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:04:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E36C1C828D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:03:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 878B43BA2AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7B4256C71;
-	Thu, 11 Sep 2025 19:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B484325484D;
+	Thu, 11 Sep 2025 19:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UeFzjKXa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgJmdhFv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE132DC77C;
-	Thu, 11 Sep 2025 19:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B8D2DC77C;
+	Thu, 11 Sep 2025 19:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757617381; cv=none; b=V4aQ+WPGhgy1uPPGWVYzGdCajbwSuF3B3gnA/sj9Y0RQHDb/cZb1uXqUwoXA4O5mgM3vaFJOqigLUZcM8KyDIkzgX56QDaadigR/6apbYjOzNdc2M+ioPb4yXwwZaIMVxNa5w2Zedf8W71y0FaV4KYQPtr87IKEmL7PbpD0rWh4=
+	t=1757617464; cv=none; b=AdBXCQOW/c2E15y96ig2IAYCq4p5nM7n4FPuykFhH3IUAEagJDU3vIymCwTdQWoYqkjWLuZQG6PSlIMjVh3ebdrirw5QI4S00tY7o1S1UeoIIbPCA9yt9A30tvsJ6MJNWzdhWNLuqKoWkw4KVbcToMBRIMfnRf0dbZIXEWFd/zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757617381; c=relaxed/simple;
-	bh=pkxJEvD9oHck9UgN12PpVFUBvVOlUSiUpDQ2JqkUolw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I8oBy+kDZDtKrMXfs29JFomX6dvr0TB8eN1V0N3lxOfuwS4ax1EjRppan5S/8Kh7S65SUgCYYkNthVt+Z4OX9mGk41C/K7NTksVrfdskw0+st69VkqNx3qFCA0eSp203ybsv3h5Z2yAkD1URq+eZC0SY1Dc/SPBZG/Fiif0Eb+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UeFzjKXa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BB8wCC006691;
-	Thu, 11 Sep 2025 19:02:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YBMq/kQPD507cJcIsE32kLWWx91RqZvJnUcZVgxldy0=; b=UeFzjKXaXxMHTu+R
-	/dDkqKcyfzDP2fDFuRajFy+1jnHiTj4aDDvOSERrufeJ7BNMirJxvJg0AXHOewIG
-	hgSzos46ekSIWx+R+SJDsfZqmNbPnmFMlupGEZAG7LB4v3TR30gkJNeMCFTCJVno
-	ttbfIv6+ud4F0Lmapk+e9FWzrPQkDmxJHOlj1iDIT+wtAUCK3bGZK3V2LagKsihN
-	ErAaN2ShhprwoS321xaKDZswLXPkOkBBy2g60pHY07WjG5+IO4LRTq8PFe4OsUIG
-	0zkzJjKG10qq/QzlsNHKTAV+b29E4tnwsE8lbOrqcpKM6mJeCyh+3C3dzCBmUGKk
-	W4vYSA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490e8ah0d7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 19:02:56 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58BJ2tdS023791
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 19:02:55 GMT
-Received: from [10.110.119.34] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.24; Thu, 11 Sep
- 2025 12:02:54 -0700
-Message-ID: <6a7bc6b1-7eb6-40a4-82bf-c547b4c07b51@quicinc.com>
-Date: Thu, 11 Sep 2025 12:02:54 -0700
+	s=arc-20240116; t=1757617464; c=relaxed/simple;
+	bh=rAkxJv/3foIdEfVT/80z5+2GaTUuEqXXoELt3KTULG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TDOynYbLI4BLoqKRGKVIc9fYxFu1dummK6/nRr79NVo7Q6PHyYQzKbiqkIBzi671HJWHRJnayqZAx8QgkG8B36k6g4YmDNroF8DonMMKzFBFXXq5rWGFtKvAebztW4vlxe/Pon+kABh/igTTQs2cR/Ooy201h4z87/e9QnBxkEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgJmdhFv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C146C4CEF0;
+	Thu, 11 Sep 2025 19:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757617463;
+	bh=rAkxJv/3foIdEfVT/80z5+2GaTUuEqXXoELt3KTULG8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NgJmdhFvffaNkMSKeLoRpu+BnvJeOxJacaNKJSvtWNB1ifuG1HbrVSUULpPk+HQTF
+	 okO7XR2T2wbnFk5b984nMc3a+aawQ7vgfYEdNW9JXoRJsq1CSz9U4Nu5zaLWmLy1RA
+	 YwQldVWYU9cZZpA9+abgE4xT0KNL/Tuvr4RMb/CQoN8XNEl3mBRPj6/z3lNeH+lJqR
+	 GO5W3DaTKfRg0oXV4gSl8J4aZN/GKze3RboCNWE+38ZCoQE16qhsbxhCVYZqfBuub5
+	 GlVDqhyoovt7YtbvdcWqnkTAFI9ruXz7XSXrymPM0p/SIwPWNBRdcPJjKqUuGvJzt8
+	 OxbFMrs3ZEXwA==
+Date: Thu, 11 Sep 2025 12:03:02 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Alexander Potapenko <glider@google.com>
+Cc: Marco Elver <elver@google.com>, kasan-dev@googlegroups.com,
+	Dmitry Vyukov <dvyukov@google.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] kmsan: Fix out-of-bounds access to shadow memory
+Message-ID: <20250911190302.GF1376@sol>
+References: <20250829164500.324329-1-ebiggers@kernel.org>
+ <20250910194921.GA3153735@google.com>
+ <CAG_fn=W_7o6ANs94GwoYjyjvY5kSFYHB6DwfE+oXM7TP1eP5dw@mail.gmail.com>
+ <20250911175145.GA1376@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] arm64: dts: qcom: x1e80100: Add IRIS video codec
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Dikshita
- Agarwal" <dikshita.agarwal@oss.qualcomm.com>,
-        Vikash Garodia
-	<vikash.garodia@oss.qualcomm.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250911-x1e-iris-dt-v1-0-63caf0fd202c@linaro.org>
-Content-Language: en-US
-From: Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <20250911-x1e-iris-dt-v1-0-63caf0fd202c@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=H7Dbw/Yi c=1 sm=1 tr=0 ts=68c31ce0 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8
- a=wr40s-WhVdFOp0t4KT0A:9 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: xC-FY3M2P3zEvi9nImD0SjHfT6BvorZk
-X-Proofpoint-ORIG-GUID: xC-FY3M2P3zEvi9nImD0SjHfT6BvorZk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzOSBTYWx0ZWRfX7XL/cs737wu/
- keer3JJPlXFSl71M7OR94zcZRqThjL/0/6+BfNTSr8p2WCuxVNZ/ipqFT3XNJTOR7nFR8m5hGz4
- 7tmI3RqkApGWRoYK3qW5BI1BFfprl3Zq8sTPmlWlYAWSQiQs4GlLtHtqfC0cxASt3Wmsfp9vIFk
- eiBfaFjeuF+78ZPg2zb7ZwHMvdlvtcSSOqxuYy/1mQDD0nbhi41t6KvYj2Ve8LZ1eme7M9KGaL0
- gZrEVuhQ1frknA+ZX5AamNike9+pfTxKwCVKXVfaa6nBidOzjXO3QOxTbZtGzqeNPV+lKDeqDx5
- JJxNmwQwYiDJPMkRmKqKiWcDvUO9LfdqqtGsYIlhnIOPann5DizVJEnGJuXfwM82oZWZMaoObsv
- Ycfayg0o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-11_03,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 bulkscore=0 impostorscore=0 adultscore=0 phishscore=0
- clxscore=1011 suspectscore=0 priorityscore=1501 spamscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060039
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250911175145.GA1376@sol>
 
-On 9/11/2025 11:38 AM, Stephan Gerhold wrote:
-> Add the necessary definitions to enable the IRIS video codec for
-> accelerated video decoding on the X1E CRD and Lenovo ThinkPad T14s. The
-> additions are largely copied as-is from sm8550.dtsi with some minor changes
-> necessary for X1E.
+On Thu, Sep 11, 2025 at 10:51:45AM -0700, Eric Biggers wrote:
+> On Thu, Sep 11, 2025 at 11:09:17AM +0200, Alexander Potapenko wrote:
+> > On Wed, Sep 10, 2025 at 9:49 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > On Fri, Aug 29, 2025 at 09:45:00AM -0700, Eric Biggers wrote:
+> > > > Running sha224_kunit on a KMSAN-enabled kernel results in a crash in
+> > > > kmsan_internal_set_shadow_origin():
+> > > >
+> > > >     BUG: unable to handle page fault for address: ffffbc3840291000
+> > > >     #PF: supervisor read access in kernel mode
+> > > >     #PF: error_code(0x0000) - not-present page
+> > > >     PGD 1810067 P4D 1810067 PUD 192d067 PMD 3c17067 PTE 0
+> > > >     Oops: 0000 [#1] SMP NOPTI
+> > > >     CPU: 0 UID: 0 PID: 81 Comm: kunit_try_catch Tainted: G                 N  6.17.0-rc3 #10 PREEMPT(voluntary)
+> > > >     Tainted: [N]=TEST
+> > > >     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+> > > >     RIP: 0010:kmsan_internal_set_shadow_origin+0x91/0x100
+> > > >     [...]
+> > > >     Call Trace:
+> > > >     <TASK>
+> > > >     __msan_memset+0xee/0x1a0
+> > > >     sha224_final+0x9e/0x350
+> > > >     test_hash_buffer_overruns+0x46f/0x5f0
+> > > >     ? kmsan_get_shadow_origin_ptr+0x46/0xa0
+> > > >     ? __pfx_test_hash_buffer_overruns+0x10/0x10
+> > > >     kunit_try_run_case+0x198/0xa00
+> > >
+> > > Any thoughts on this patch from the KMSAN folks?  I'd love to add
+> > > CONFIG_KMSAN=y to my crypto subsystem testing, but unfortunately the
+> > > kernel crashes due to this bug :-(
+> > >
+> > > - Eric
+> > 
+> > Sorry, I was out in August and missed this email when digging through my inbox.
+> > 
+> > Curiously, I couldn't find any relevant crashes on the KMSAN syzbot
+> > instance, but the issue is legit.
+> > Thank you so much for fixing this!
+> > 
+> > Any chance you can add a test case for it to mm/kmsan/kmsan_test.c?
 > 
-> The PAS interface used to boot the IRIS firmware is not functional in EL2.
+> Unfortunately most of the KMSAN test cases already fail on upstream,
+> which makes it difficult to develop new ones:
 
-Just to confirm my understanding of above statement. The patches below
-works w/ the Gunyah and Linux running at NS-EL1 and "not functional in
-EL2" means Video working w/ the KVM Hypervisor on X1E right? 
+The KMSAN test failures bisect to the following commit:
 
-> The code to start it without using PAS exists already in the Venus driver,
-> but was not ported over to IRIS yet. Discussions how to model the
-> video-firmware IOMMU are still ongoing, so disable IRIS in x1-el2.dtso for
-> now to avoid regressions when running in EL2.
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
-> ---
-> Stephan Gerhold (4):
->       arm64: dts: qcom: x1e80100: Add IRIS video codec
->       arm64: dts: qcom: x1-el2: Disable IRIS for now
->       arm64: dts: qcom: x1e80100-crd: Enable IRIS video codec
->       arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s: Enable IRIS
-> 
->  arch/arm64/boot/dts/qcom/x1-el2.dtso               |  5 ++
->  .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    |  5 ++
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts          |  4 +
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 87 ++++++++++++++++++++++
->  4 files changed, 101 insertions(+)
-> ---
-> base-commit: 8f21d9da46702c4d6951ba60ca8a05f42870fe8f
-> change-id: 20250909-x1e-iris-dt-eb0494a130ca
-> 
-> Best regards,
+    commit f90b474a35744b5d43009e4fab232e74a3024cae
+    Author: Vlastimil Babka <vbabka@suse.cz>
+    Date:   Mon Mar 10 13:40:17 2025 +0100
 
+        mm: Fix the flipped condition in gfpflags_allow_spinning()
 
--- 
----Trilok Soni
+I'm not sure why.  Apparently something related to lib/stackdepot.c.
+
+Reverting that commit on top of upstream fixes the KMSAN tests.
+
+- Eric
 
