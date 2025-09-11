@@ -1,191 +1,166 @@
-Return-Path: <linux-kernel+bounces-811899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267B1B52F48
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:08:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BCD7B52F8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52C916EFBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:08:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C5D161EE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C5531194E;
-	Thu, 11 Sep 2025 11:06:22 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E693126C5;
+	Thu, 11 Sep 2025 11:07:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hod9mBrO"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C2C3112D8;
-	Thu, 11 Sep 2025 11:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D934D311C2D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757588782; cv=none; b=FfUqTIwNeutusgoYGzd4tIk0yAUpbRvaefizBWW2jlHBJAEGwZz3fEYfYHH28Xz5LZydm9ETRp7MZZrJLfYzsZhXsRdjL6PO4VjLuduMP6tL81/6GaLTwhwZSZ5bY8wumYCjwKNXiXY0/3XMqkupKUc9VM9rIvTBcKU48Z9P5VU=
+	t=1757588873; cv=none; b=m9hSMDuIywtX1T1Z2jZjGFBm2iXpGo0thQZOBaX7HpfKs0/naO4rudS8yK6F4HlYkbijuWNd0zlQV9lI8ijTX6VSapI9eHFjCRxEKv5GeZYTFIJ3llZJa1mHMwLBhFxU6dOSs6QZZHlFHsfl4naKf13hbJR1U8OO03vz2JA51XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757588782; c=relaxed/simple;
-	bh=GpOaQXv0EXTYsKvd/SPj5ZJhvQ2VPjLsr3QDgpJeGeg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KZrpIpIXK0F1j37SupKXdFnfspSUQCtsMVA++lm9+albNSB+Xt10cZ4fMWXZS91DFr+D/ITXlDNlHJUNvFYN8IjWtQm1CS5X2BSIHeEAJiFbTORs8ry35RlqZq5/7j25M3qXKOd3FBQe0gSBpNVsuj0HDXj6Hzh/k+cBF3v0eAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMvlH2pWCz6L64s;
-	Thu, 11 Sep 2025 19:02:03 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C5FCD1402F5;
-	Thu, 11 Sep 2025 19:06:16 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Sep
- 2025 13:06:15 +0200
-Date: Thu, 11 Sep 2025 12:06:14 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 04/29] ACPI / PPTT: Add a helper to fill a cpumask
- from a cache_id
-Message-ID: <20250911120614.00001e92@huawei.com>
-In-Reply-To: <20250910204309.20751-5-james.morse@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-5-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757588873; c=relaxed/simple;
+	bh=mgTLTLACjhM9EBGHYwseoPp1aR5txfklo9jEXFmIxNM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DsZxJ+sPDtcGAw1KggNnXl5Cm1gNiV4pvVm9RbgG64xZQv956RAQM3+mfvPoB00ZWdtWa+X+XyCe/FsqavH53wiWFk8L2NDHZv2bPrubFdlxchpTFNl6bsW8v+j1lao9+NXS4tiwgvBlT5FiaeLMBsP+YB4Ti4Tb93YNlebBhps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=hod9mBrO; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58BB7MSE789549;
+	Thu, 11 Sep 2025 06:07:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757588842;
+	bh=eFPOsL/px2E+fmQT2eS4LFUjQzfYRFJgDTiudOOWFAA=;
+	h=From:To:CC:Subject:Date;
+	b=hod9mBrOZi2SvoCJMj8wZnBQfx8GhzMR6gD4ssUyXixv8vEC9FYcnO98kAvS4fHA9
+	 q6VgUVYeuLAFJpcIfqfXrBqvdY3C88Ak0yJIhyQOqojl6WQ+L+nFgxcI9ZpaeSRD2C
+	 Z0yRRLIHq6WbbjF9G+gtoSx8oEjxSSsPFN6fhWDg=
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58BB7LaF1014037
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 11 Sep 2025 06:07:21 -0500
+Received: from DFLE207.ent.ti.com (10.64.6.65) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 11
+ Sep 2025 06:07:20 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE207.ent.ti.com
+ (10.64.6.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 11 Sep 2025 06:07:21 -0500
+Received: from a0512632.dhcp.ti.com (a0512632.dhcp.ti.com [172.24.233.20])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58BB7FP32031347;
+	Thu, 11 Sep 2025 06:07:16 -0500
+From: Swamil Jain <s-jain1@ti.com>
+To: <jyri.sarha@iki.fi>, <tomi.valkeinen@ideasonboard.com>,
+        <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+        <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+        <aradhya.bhatia@linux.dev>
+CC: <h-shenoy@ti.com>, <devarsht@ti.com>, <vigneshr@ti.com>, <praneeth@ti.com>,
+        <u-kumar1@ti.com>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <s-jain1@ti.com>
+Subject: [PATCH v6 0/3] Decouple max_pclk check from constant display feats
+Date: Thu, 11 Sep 2025 16:37:12 +0530
+Message-ID: <20250911110715.2873596-1-s-jain1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, 10 Sep 2025 20:42:44 +0000
-James Morse <james.morse@arm.com> wrote:
+In an effort to make the existing compatibles more usable, we are
+removing the max_pclk_khz form dispc_features structure and doing the
+supported pixel clock checks using clk_round_rate().
 
-> MPAM identifies CPUs by the cache_id in the PPTT cache structure.
-> 
-> The driver needs to know which CPUs are associated with the cache.
-> The CPUs may not all be online, so cacheinfo does not have the
-> information.
-> 
-> Add a helper to pull this information out of the PPTT.
-> 
-> CC: Rohit Mathew <Rohit.Mathew@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
-> Changes since v1:
->  * Added punctuation to the commit message.
->  * Removed a comment about an alternative implementaion.
->  * Made the loop continue with a warning if a CPU is missing from the PPTT.
-> 
-> Changes since RFC:
->  * acpi_count_levels() now returns a value.
->  * Converted the table-get stuff to use Jonathan's cleanup helper.
+Changes are fully backwards compatible.
 
-Why for this case does it makes sense to not just use acpi_get_pptt()?
+After integration of OLDI support[0], we need additional patches in
+OLDI to identify the VP that has OLDI. We have to do this since
+OLDI driver owns the VP clock (its serial clock) and we cannot perform
+clock operations on those VP clock from tidss driver. This issue was
+also reported upstream when DSI fixes[1] had some clock related calls
+in tidss driver. When "clk_round_rate()" is called, ideally it should
+have gone to "sci_clk_determine_rate()" to query DM but it doesn't since
+clock is owned by OLDI not tidss.
 
-Also you don't introduce the acpi_get_table_reg() helper until patch 6.
+So add a member is_ext_vp_clk[] in tidss_device structure to identify
+this and avoid performing clock operations for VP if it has OLDI panel.
+For the same checks in OLDI driver, atomic_check() hook is added to its
+bridge_funcs.
+In the atomic_check() chain, first the bridge_atomic_check() is called
+and then crtc_atomic_check() is called. So mode clock is first checked
+in oldi driver and then skipped in tidss driver.
 
+Had the tidss_oldi structure been exposed to tidss_dispc.c, we could
+have directly checked VP type in dispc but since the structure is defined
+in tidss_oldi.c , we have to add additional member to tidss_device
+structure.
 
->  * Dropped Sudeep's Review tag due to the cleanup change.
-> ---
->  drivers/acpi/pptt.c  | 59 ++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/acpi.h |  6 +++++
->  2 files changed, 65 insertions(+)
-> 
-> diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> index c5f2a51d280b..c379a9952b00 100644
-> --- a/drivers/acpi/pptt.c
-> +++ b/drivers/acpi/pptt.c
-> @@ -966,3 +966,62 @@ int find_acpi_cache_level_from_id(u32 cache_id)
->  
->  	return -ENOENT;
->  }
-> +
-> +/**
-> + * acpi_pptt_get_cpumask_from_cache_id() - Get the cpus associated with the
-> + *					   specified cache
-> + * @cache_id: The id field of the unified cache
+[0]: https://lore.kernel.org/all/20250528122544.817829-1-aradhya.bhatia@linux.dev/
+[1]: https://lore.kernel.org/all/DA6TT575Z82D.3MPK8HG5GRL8U@kernel.org/
 
-Similar comment to previous patch. If we are going to make this unified only
-can we reflect that in the function name.  I worry this will get reused
-and that restriction will surprise.
+Changelog v5->v6
+- Drop caching logic
+- Add comments for tolerance value
+  (We are targeting another series for reducing tolerance value)
+- Minor fixes in commit message
 
+v5 patch link:
+https://lore.kernel.org/all/20250819192113.2420396-1-s-jain1@ti.com/
 
-> + * @cpus: Where to build the cpumask
-> + *
-> + * Determine which CPUs are below this cache in the PPTT. This allows the property
-> + * to be found even if the CPUs are offline.
-> + *
-> + * The PPTT table must be rev 3 or later,
-> + *
-> + * Return: -ENOENT if the PPTT doesn't exist, or the cache cannot be found.
-> + * Otherwise returns 0 and sets the cpus in the provided cpumask.
-> + */
-> +int acpi_pptt_get_cpumask_from_cache_id(u32 cache_id, cpumask_t *cpus)
-> +{
-> +	u32 acpi_cpu_id;
-> +	int level, cpu, num_levels;
-> +	struct acpi_pptt_cache *cache;
-> +	struct acpi_pptt_cache_v1 *cache_v1;
-> +	struct acpi_pptt_processor *cpu_node;
-> +	struct acpi_table_header *table __free(acpi_table) = acpi_get_table_ret(ACPI_SIG_PPTT, 0);
-> +
-> +	cpumask_clear(cpus);
-> +
-> +	if (IS_ERR(table))
-> +		return -ENOENT;
-> +
-> +	if (table->revision < 3)
-> +		return -ENOENT;
-> +
-> +	for_each_possible_cpu(cpu) {
-> +		acpi_cpu_id = get_acpi_id_for_cpu(cpu);
-> +		cpu_node = acpi_find_processor_node(table, acpi_cpu_id);
-> +		if (WARN_ON_ONCE(!cpu_node))
-> +			continue;
-> +		num_levels = acpi_count_levels(table, cpu_node, NULL);
-> +
-> +		/* Start at 1 for L1 */
-> +		for (level = 1; level <= num_levels; level++) {
-> +			cache = acpi_find_cache_node(table, acpi_cpu_id,
-> +						     ACPI_PPTT_CACHE_TYPE_UNIFIED,
-> +						     level, &cpu_node);
-> +			if (!cache)
-> +				continue;
-> +
-> +			cache_v1 = ACPI_ADD_PTR(struct acpi_pptt_cache_v1,
-> +						cache,
-> +						sizeof(struct acpi_pptt_cache));
+Changelog v4->v5
+- Rename is_oldi_vp[] to is_ext_vp_clk[]
+- Store both pixel clock round_rate and attempted_rate to reduce
+  clk_round_rate() calls while validating modes
+- Code changes suggested by Tomi[2]
+- Minor fixes in comments and commit message
 
-sizeof(*cache) makes more sense to me.
+[2]: https://lore.kernel.org/all/8cd9d1c4-2e9f-4766-b224-21925c4f991d@ideasonboard.com/
 
-> +
-> +			if (cache->flags & ACPI_PPTT_CACHE_ID_VALID &&
-> +			    cache_v1->cache_id == cache_id)
-> +				cpumask_set_cpu(cpu, cpus);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
+v4 patch link:
+https://lore.kernel.org/all/20250704094851.182131-1-j-choudhary@ti.com/
 
+Changelog v3->v4:
+- Minor cosmetic fixes in code, comments and commit message
+- Pick up R-by and add Fixes tag
+
+v3 patch link:
+https://lore.kernel.org/all/20250701095541.190422-1-j-choudhary@ti.com/
+
+Changelog v2->v3:
+- Add changes for OLDI
+- Rename max_pclk as it is misleading
+- Change commit message to make it more appropriate
+- Drop unnecessary zero initialization
+
+v2 patch link:
+https://lore.kernel.org/all/20250618100509.20386-1-j-choudhary@ti.com/
+
+Changelog v1->v2:
+- Rebase it on linux-next after OLDI support series as all of its
+  patches are reviewed and tested and it touches one of the functions
+  used.
+  
+v1 patch link:
+https://lore.kernel.org/all/20250618075804.139844-1-j-choudhary@ti.com/
+
+Jayesh Choudhary (3):
+  drm/tidss: oldi: Add property to identify OLDI supported VP
+  drm/tidss: Remove max_pclk_khz from tidss display features:
+  drm/tidss: oldi: Add atomic_check hook for oldi bridge
+
+ drivers/gpu/drm/tidss/tidss_dispc.c | 78 +++++++++++------------------
+ drivers/gpu/drm/tidss/tidss_dispc.h |  1 -
+ drivers/gpu/drm/tidss/tidss_drv.h   |  1 +
+ drivers/gpu/drm/tidss/tidss_oldi.c  | 23 +++++++++
+ 4 files changed, 54 insertions(+), 49 deletions(-)
 
 
