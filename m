@@ -1,205 +1,326 @@
-Return-Path: <linux-kernel+bounces-812690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F4FB53B78
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:33:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58A41B53B73
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34C734E3307
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:33:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ABC75A1078
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:33:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087F336C062;
-	Thu, 11 Sep 2025 18:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CCA36934E;
+	Thu, 11 Sep 2025 18:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ScsAs25f"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M9ybLtRd"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E6E27FD5B;
-	Thu, 11 Sep 2025 18:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDD5248891;
+	Thu, 11 Sep 2025 18:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757615596; cv=none; b=Rf3ZLS60m3b4aOmAjsnHmyaD104X8kUVuG6LTCO9/ZUNrZdCz1grzkYaFYoLmpj+wvfYaYs+KZgLUXcqK040/mkyzG6wmfB64clSBeKkkitPnM0+LFZFVRZrYKNIsYdcXQjMmtlzM/qLnCKeSFN/lEPoq9NzlMQ/1b75W2V33fM=
+	t=1757615588; cv=none; b=XconWTBflbn9S1ZIEd+FaH6Gz03JMEhiQIEQsLJE5qvu/+wU46m0Gi+NLwHnl+zSGE3vgOeMkSGj0WGFJLGjRNQWYuFagjI1um0DwGmqa/0e18hGdbBNM5R79PIICwqqeCLtjMz4UNcWnLfQgFZs1q44WLQ+nhdda58nkX1apE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757615596; c=relaxed/simple;
-	bh=ck5UhhM7ahmNVtuybHiqx1PE1IHgAdJHgJZx+XtttAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D8Zk/KekYn/mosF5h3bns00AIYQjLigKqI2iBKRUeApS4AZgwufg+3Dy+V/ZooQKowNnT7uSCSiCc4HEQOqyw25XnjG7+wm/GuFJE46X5TASn6M5LrEmxPk2UUBf2YU0rnyf7sy2e4ZzBRFKwx1uFRNuC5xLIxvPpngTvDG3s4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ScsAs25f; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B9u5Ka026934;
-	Thu, 11 Sep 2025 18:33:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=QWix6YwOudrids1O38gaCCzCkdi4dxsLUSL/w46KJ
-	Zk=; b=ScsAs25fLQPd3+Mddi6UBaeuDanD8nEmS3DbqvGaWA7Ikkkt8MW+M3FLB
-	GL7OITRvYNu21DO5ouMAW19PgUerfPca0nGbnGxSmVkGVs+wZzibpxJKgV8hkU+a
-	JSYqc4D9MIJ8981ZoCWwo0x+h/qgdkYx8v1LkVS0ZBREOLw0JtBFy6oHf0dGQYHD
-	jzbdrASPXUnSQBRbW6W2io6dqdC+IUT1JZuUCJjxqFcEF5RFW8wPrLitDBt8g762
-	lkD8TuAcJ5+WwCl80dCNkUWTDwU3dGue+6airUUwQ9mf6nttbBW0jeecMdPoBnA7
-	TORRcO6crVNN0p9TyvvMc+NeBUJKw==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmx6n8t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 18:33:10 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58BI0u8s017172;
-	Thu, 11 Sep 2025 18:33:09 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmq2c3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 18:33:09 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BIX82e32310010
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 18:33:08 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6466858059;
-	Thu, 11 Sep 2025 18:33:08 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B03A058058;
-	Thu, 11 Sep 2025 18:33:07 +0000 (GMT)
-Received: from IBM-D32RQW3.ibm.com (unknown [9.61.249.32])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 11 Sep 2025 18:33:07 +0000 (GMT)
-From: Farhan Ali <alifm@linux.ibm.com>
-To: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc: alex.williamson@redhat.com, helgaas@kernel.org, alifm@linux.ibm.com,
-        schnelle@linux.ibm.com, mjrosato@linux.ibm.com
-Subject: [PATCH v3 00/10] Error recovery for vfio-pci devices on s390x
+	s=arc-20240116; t=1757615588; c=relaxed/simple;
+	bh=0dEZRZcWJvIpfDc1GJ4yBAEBn08Nx7B8lnOW/NH+O0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hH5RuSnalCn22pPOlp56H3OIVkLg6X6dT13WaMNZ+Zng4KbdIkhvqWBV5hTIZlQ7YfFB2XfbZZpcTgs/Ucv0SBfIUz8lOhOc68t0C7TggrZHofNIaDshPmFFHBeKDiK+kFXOI3B0ElYLR2q+aKlRWjcDf8aNqjweV/YHfDBYaAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M9ybLtRd; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757615586; x=1789151586;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0dEZRZcWJvIpfDc1GJ4yBAEBn08Nx7B8lnOW/NH+O0w=;
+  b=M9ybLtRdLi2AY18LrK3a3ghXeF48IHO/clUJh7K/Iz2ZA05oDem9P38R
+   GH4Wf4Cbw4ySOM2SFk0ffpc6P8kBRepOhLOv+MiO3t+SsbrGdLuYR65+a
+   RlVDsM4l9aAwVeqmUXU1/ftJrD2QzXYOYGMNUqnOfIIz3GFErcVh/qqwj
+   c7Rrt2rFs6kixXi656JOztIBJs0Qks6+KVxVJkcCA8+qYgcOefklsmB4i
+   IiSKiFC+/gWXRe+QRJ3wViXL3BK0xoZR1X0d3/XNZMOiviwA2vxbulT1q
+   AyE9iK97JrtG28+pVueZGrrn5lRfDRTO9M3WzF2Qqh1gLcp1D13EPpZGc
+   w==;
+X-CSE-ConnectionGUID: o6c1F8clQAiAyF+dZuaeCg==
+X-CSE-MsgGUID: YdL0ZuSCTwS+3fveXOef4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11550"; a="59190797"
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="59190797"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 11:33:05 -0700
+X-CSE-ConnectionGUID: 4ggz1poUQQGEewY8kMpBoA==
+X-CSE-MsgGUID: mLcmMhLLQ8mlyT8lrwpYQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
+   d="scan'208";a="204530602"
+Received: from xpardee-mobl.amr.corp.intel.com (HELO [10.246.154.149]) ([10.246.154.149])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 11:33:05 -0700
+Message-ID: <dfa61f8c-c49b-4c29-9999-cdff97fbb43f@linux.intel.com>
 Date: Thu, 11 Sep 2025 11:32:57 -0700
-Message-ID: <20250911183307.1910-1-alifm@linux.ibm.com>
-X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/6] platform/x86:intel/pmc: Show device and function
+ number
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com,
+ Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org
+References: <20250815224611.2460255-1-xi.pardee@linux.intel.com>
+ <20250815224611.2460255-6-xi.pardee@linux.intel.com>
+ <c9aa04ae-f942-cf73-d046-78d0f90f373d@linux.intel.com>
+ <7fae6fc8-6df5-4d1f-90ec-b6bf159e62da@linux.intel.com>
+ <ed041865-c5aa-1312-e401-8cf333ac0820@linux.intel.com>
+Content-Language: en-US
+From: Xi Pardee <xi.pardee@linux.intel.com>
+In-Reply-To: <ed041865-c5aa-1312-e401-8cf333ac0820@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ncZO6VLDxwHY4cwuEFFdKqBAD1ApAOpq
-X-Proofpoint-ORIG-GUID: ncZO6VLDxwHY4cwuEFFdKqBAD1ApAOpq
-X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68c315e6 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=pxXGJ1xoj55wCGANvjsA:9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfX1zHPwCY/WLna
- 6T4ZOT5K7jlD0WX3MYWiZY07QVnmL4ZgDgQrK73NKHJloUIcghLZ9+7KgpYY3HMmwDEgumVIVz1
- v/UMGYKqr/RFiHOROPwcRdN1malMxkKFXA4ialCzjWzj8W4UL8T9joI2pOPXp9CqwGppB/TbUHG
- zo1lw4qEgdwz9/eqcYFxvBalmQF1mhFGJ5a3+Wl2K35WNM54LLAPUuqj984w5Izkuwpt9vefCZb
- UqgIafsyFChRV7hOogJHQsTO8A5Ky+/hBXcDbm79P/0H3BBveJGjh6Gx8jbQlCjZTOp+SOCQscv
- wLLkm71TmBk/HiyMvmEYYaK1352dJ56rg7oh3duHzGNzjqYkZf67v+aACyzZxKchdAcHWW1KSV5
- PjLBC0w1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-11_03,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1011 suspectscore=0 spamscore=0 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
 
-Hi,
+Hi Ilpo,
 
-This Linux kernel patch series introduces support for error recovery for
-passthrough PCI devices on System Z (s390x). 
+Thanks for the review. I will fix the patch based on your comments and 
+send another version separately.
 
-Background
-----------
-For PCI devices on s390x an operating system receives platform specific
-error events from firmware rather than through AER.Today for
-passthrough/userspace devices, we don't attempt any error recovery and
-ignore any error events for the devices. The passthrough/userspace devices
-are managed by the vfio-pci driver. The driver does register error handling
-callbacks (error_detected), and on an error trigger an eventfd to
-userspace.  But we need a mechanism to notify userspace
-(QEMU/guest/userspace drivers) about the error event. 
+On 9/8/2025 4:03 AM, Ilpo Järvinen wrote:
+> On Sun, 7 Sep 2025, Xi Pardee wrote:
+>
+>> Hi Ilpo,
+>>
+>> Thanks for the review.
+>>
+>> On 8/28/2025 6:56 AM, Ilpo Järvinen wrote:
+>>> On Fri, 15 Aug 2025, Xi Pardee wrote:
+>>>
+>>>> Add support to show device and function number for S0ix blockers. This
+>>>> feature depends on S0ix blocker substate requirement table and BDF
+>>>> association table. This feature is available for platforms starting from
+>>>> Pather Lake.
+>>>>
+>>>> Only a subset of S0ix blockers has device and function number associated
+>>>> to it. Get the availability information from the substate requirement
+>>>> table. Get the device and function number mapping information for each
+>>>> S0ix blocker from the BDF association table.
+>>>>
+>>>> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+>>>> ---
+>>>>    drivers/platform/x86/intel/pmc/core.c | 182 +++++++++++++++++++++++++-
+>>>>    drivers/platform/x86/intel/pmc/core.h |  23 +++-
+>>>>    2 files changed, 203 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/platform/x86/intel/pmc/core.c
+>>>> b/drivers/platform/x86/intel/pmc/core.c
+>>>> index a0b948a875a5a..69ee40cbb8b8a 100644
+>>>> --- a/drivers/platform/x86/intel/pmc/core.c
+>>>> +++ b/drivers/platform/x86/intel/pmc/core.c
+>
+>>>> +		const char *name = NULL;
+>>>> +		struct list_head *cur;
+>>>> +		struct bdf_entry *bdf;
+>>>> +		struct pmc *pmc;
+>>>> +
+>>>> +		pmc = pmcdev->pmcs[pmcidx];
+>>>> +		if (!pmc)
+>>>> +			continue;
+>>>> +
+>>>> +		list_for_each(cur, pmc->bdf_list) {
+>>>> +			bdf = list_entry(cur, struct bdf_entry, node);
+>>>> +			if (bdf->name != name) {
+>>>> +				seq_printf(s, "pmc%d: %30s | %15x | %15x |\n",
+>>>> pmcidx,
+>>> %u
+>> Will change it in next version.
+> I don't remember if I mentioned it earlier but if you're going to address
+> the review comment fully. There's no need to "ack" them like this. I
+> trust you make the changes you don't contest.
+>
+> By doing so, we can both save time by only focusing on the points which
+> are contested or need further discussion. :-)
+>
+>
+>>>> +	if (!maps[*r_idx][*i_idx].name)
+>>>> +		(*r_idx)++;
+>>>> +
+>>>> +	// Iteration reaches the end of the maps
+>>>> +	if (*r_idx >= arr_size)
+>>>> +		return NULL;
+>>>> +
+>>>> +	for (; *r_idx < arr_size; (*r_idx)++) {
+>>>> +		const char *ip_name;
+>>> Can't you put this to the innermost block?
+>> Will move it in next version.
+>>>> +		if (reset)
+>>> Why you need this?
+>> The purpose of this function is to return the name of the NEXT s0ix blocker
+>> with BDF information.
+>>
+>> r_idx and i_idx are used to keep track of the current position of the
+>> iteration, therefore i_idx could not be reset to 0 at the first run of the
+>> inner for loop. After the first run of inner for loop reset should be set to
+>> true so in next run of the outer for loop i_idx could be reset to 0 (which
+>> mean the iteration reaches the next s0ix blocker map).
+> But why you cannot reset i_idx after the inner for () loop and drop
+> this reset variable entirely?
+Yes, I will do that in next version.
+>
+>>>> +			*i_idx = 0;
+>>>> +
+>>>> +		for (; maps[*r_idx][*i_idx].name; reset = TRUE, (*i_idx)++) {
+>>> true
+>>>
+>>> This is hard enough to understand even without that "for (;". Would
+>>> probably be better to use while () instead.
+>> Will change to while loop in next version.
+>>>> +			if (!maps[*r_idx][*i_idx].blk)
+>>>> +				continue;
+>>>> +
+>>>> +			bool exist = **lpm_req_regs & BIT(BDF_EXIST_BIT);
+>>>> +			(*lpm_req_regs)++;
+>>>> +			if (exist) {
+>>>> +				ip_name = maps[*r_idx][*i_idx].name;
+>>>> +				(*i_idx)++;
+>>>> +				return ip_name;
+>>>> +			}
+>>>> +		}
+>>>> +	}
+>>>> +	return NULL;
+>>>> +}
+>>> TBH, this entire function is horrible mess, two nested iterators as
+>>> pointers, etc.
+>>>
+>>> I'm very far from following all what going on here.
+>>>
+>>> I suppose I've not seen this patch previously?
+>> To achieve the NEXT name of the s0ix blocker with BDF information we need to
+>> iterate through two (set of) maps in parallel. The s0ix_blocker_maps provide
+>> names of all s0ix blockers and the lpm_req_regs map shows that which s0ix
+>> blocker has associated BDF information.
+>>
+>> if maps[*r_idx][*i_idx].blk is set, that means it is a s0ix blocker. For each
+>> s0ix blocker, if **lpm_req_regs & BIT(BDF_EXIST_BIT) is set, that means this
+>> blocker has associated BDF information. Pointers are used to keep track of the
+>> current position of the two (set of) maps so the function provides the NEXT
+>> name of the s0ix blocker with associated BDF info.
+>>
+>> I will probably switch to use a temporary data structure, such as list, to
+>> store all s0ix blockers with BDF info and then iterate through this list in
+>> pmc_core_process_bdf() call instead. That will make the logic easier to follow
+>> and maintain. I will also add more comments to next version of this patch.
+> My out-of-band suggestion was to convert i_idx into a correctly typed
+> pointer  as it's the last-level array, you only need to do two things for
+> the pointer:
+>
+> - set it to start of the next array when r_idx increases.
+> - increment the pointer with ++.
+>>>> +static int pmc_core_process_bdf(struct pmc_dev *pmcdev,  struct pmc *pmc,
+>>>> u32 data,
+>>>> +				unsigned int *r_idx, unsigned int *i_idx, u32
+>>>> **lpm_req_regs,
+>>>> +				const char **name)
+>>>> +{
+>>>> +	unsigned int i;
+>>>> +
+>>>> +	if (!data)
+>>>> +		return 0;
+>>>> +
+>>>> +	if (!*name)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	for (i = BDF_FUN_LOW_BIT; i <= BDF_FUN_HIGH_BIT; i++) {
+>>> I think you can iterate 0 ... __fls(FIELD_MAX()).
+>> Each 16 bit represents one device and the associated function numbers for one
+>> s0ix blocker.
+>>
+>> Bit 4-0 indicates the device number.
+>>
+>> Bit 12-5 indicates function numbers.
+>>
+>> Bit 15 indicates if the next 16 bit is associated to the same s0ix blocker as
+>> the current word.
+>>
+>> Between bit 12 and bit 5, each bit position represents one function number.
+>> Bit 5 represents function 0 and bit 12 represents function 7. I will add more
+>> comments in the next version.
+>>
+>> Will change to use __fls(FIELD_MAX()) in next version.
+> Yes, these are fields which are to be defined with GENMASK()/BIT(). Then
+> this code just has to figure out how to deal with that change and my
+> suggestion was to use fls construct. If you find better approach, those
+> can be used as well but my point is that this iteration should be sourced
+> from the GENMASK_U16(12, 5).
+>
+>>>> +	name = pmc_core_get_next_bdf_ip_name(pmc, &r_idx, &i_idx,
+>>>> &lpm_reg_regs);
+>>>> +	if (!name)
+>>>> +		return -EINVAL;
+>>>> +
+>>>> +	pmc->bdf_list = devm_kzalloc(&pmcdev->pdev->dev, sizeof(struct
+>>>> list_head), GFP_KERNEL);
+>>> Should use sizeof(*xx).
+>>>
+>>> But why you need to allocate the list head and not have it in place
+>>> within the pmc's struct?
+>> The memory for bdf_list is only allocated when the bdf information is
+>> available to achieve.
+>>
+>> intel_pmc_core driver can check if the memory is allocated to decide whether
+>> to create a file in debugfs for bdf in pmc_core_dbgfs_register().
+> But can't you use empty list check for that?
+I can use the empty list check in pmc_core_dbgfs_register() instead.
+>
+>>>> +	if (!pmc->bdf_list)
+>>>> +		return -ENOMEM;
+>>>> +
+>>>> +	INIT_LIST_HEAD(pmc->bdf_list);
+>>>> +
+>>>> +	for (; sample_id < max_sample_id; sample_id++) {
+>>>> +		u32 data;
+>>>> +
+>>>> +		ret = pmt_telem_read32(ep, sample_id, &data, 1);
+>>>> +		if (ret) {
+>>>> +			dev_err(&pmcdev->pdev->dev,
+>>>> +				"couldn't read bdf: %d\n", ret);
+>>> One line.
+>> Will change it in next version.
+>>>> +			return ret;
+>>>> +		}
+>>>> +
+>>>> +		if (sample_id == header_id) {
+>>>> +			size = (data & GENMASK(BDF_SIZE_HIGH_BIT,
+>>>> BDF_SIZE_LOW_BIT))
+>>>> +			       >> BDF_SIZE_LOW_BIT;
+>>> Define the field and use FIELD_GET().
+>> Will change it in next version.
+>>>> +			header_id += size + 1;
+>>> No, I just cannot understand what's going on here, it's hopeless. Always
+>>> when I think I've finally understood what its all about you throw a curve
+>>> ball like this.
+>> There is one header line (32 bit) between each type of s0ix blocker in the bdf
+>> association table. The bit 23-26 in header line indicates the size of each
+>> section of one specific type of s0ix blocker in this table.
+>>
+>> header_id is used  to keep track of the id of each header so we will process
+>> the header line differently from the other lines.
+>>
+>> I will add more detailed comment in next version.
+> I suspect naming the fields with defines and using FIELD_GET() will
+> already get you far.
+>
+> Perhaps BDF_SIZE (=what remains when you take those custom coded bit field
+> postfix out of the current naming) should be renamed into something like
+> BDF_SECTION_SIZE for better clarity.
 
-Proposal
---------
-We can expose this error information (currently only the PCI Error Code)
-via a device feature. Userspace can then obtain the error information 
-via VFIO_DEVICE_FEATURE ioctl and take appropriate actions such as driving 
-a device reset.
+Will use FIELD_GET() to get the information in next version.
 
-I would appreciate some feedback on this series.
+Thanks for reviewing the patch.
 
-Thanks
-Farhan
+Xi
 
-ChangeLog
----------
-v2 series https://lore.kernel.org/all/20250825171226.1602-1-alifm@linux.ibm.com/
-v2 -> v3
-   - Patch 1 avoids saving any config space state if the device is in error
-   (suggested by Alex)
-
-   - Patch 2 adds additional check only for FLR reset to try other function 
-     reset method (suggested by Alex).
-
-   - Patch 3 fixes a bug in s390 for resetting PCI devices with multiple
-     functions. Creates a new flag pci_slot to allow per function slot.
-
-   - Patch 4 fixes a bug in s390 for resource to bus address translation.
-
-   - Rebase on 6.17-rc5
-
-
-v1 series https://lore.kernel.org/all/20250813170821.1115-1-alifm@linux.ibm.com/
-v1 - > v2
-   - Patches 1 and 2 adds some additional checks for FLR/PM reset to 
-     try other function reset method (suggested by Alex).
-
-   - Patch 3 fixes a bug in s390 for resetting PCI devices with multiple
-     functions.
-
-   - Patch 7 adds a new device feature for zPCI devices for the VFIO_DEVICE_FEATURE 
-     ioctl. The ioctl is used by userspace to retriece any PCI error
-     information for the device (suggested by Alex).
-
-   - Patch 8 adds a reset_done() callback for the vfio-pci driver, to
-     restore the state of the device after a reset.
-
-   - Patch 9 removes the pcie check for triggering VFIO_PCI_ERR_IRQ_INDEX.
-
-Farhan Ali (10):
-  PCI: Avoid saving error values for config space
-  PCI: Add additional checks for flr reset
-  PCI: Allow per function PCI slots
-  s390/pci: Add architecture specific resource/bus address translation
-  s390/pci: Restore IRQ unconditionally for the zPCI device
-  s390/pci: Update the logic for detecting passthrough device
-  s390/pci: Store PCI error information for passthrough devices
-  vfio-pci/zdev: Add a device feature for error information
-  vfio: Add a reset_done callback for vfio-pci driver
-  vfio: Remove the pcie check for VFIO_PCI_ERR_IRQ_INDEX
-
- arch/s390/include/asm/pci.h        |  30 +++++++-
- arch/s390/pci/pci.c                |  74 ++++++++++++++++++++
- arch/s390/pci/pci_event.c          | 107 ++++++++++++++++-------------
- arch/s390/pci/pci_irq.c            |   9 +--
- drivers/pci/host-bridge.c          |   4 +-
- drivers/pci/hotplug/s390_pci_hpc.c |  10 ++-
- drivers/pci/pci.c                  |  40 +++++++++--
- drivers/pci/pcie/aer.c             |   5 ++
- drivers/pci/pcie/dpc.c             |   5 ++
- drivers/pci/pcie/ptm.c             |   5 ++
- drivers/pci/slot.c                 |  14 +++-
- drivers/pci/tph.c                  |   5 ++
- drivers/pci/vc.c                   |   5 ++
- drivers/vfio/pci/vfio_pci_core.c   |  20 ++++--
- drivers/vfio/pci/vfio_pci_intrs.c  |   3 +-
- drivers/vfio/pci/vfio_pci_priv.h   |   8 +++
- drivers/vfio/pci/vfio_pci_zdev.c   |  45 +++++++++++-
- include/linux/pci.h                |   1 +
- include/uapi/linux/vfio.h          |  14 ++++
- 19 files changed, 330 insertions(+), 74 deletions(-)
-
--- 
-2.43.0
-
+>
 
