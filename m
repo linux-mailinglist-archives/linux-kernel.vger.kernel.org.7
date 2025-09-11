@@ -1,189 +1,112 @@
-Return-Path: <linux-kernel+bounces-812244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863A5B534F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:12:58 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2DFB534F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:13:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA041C83794
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:13:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CF504E12A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67114337683;
-	Thu, 11 Sep 2025 14:12:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6B8322A3B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 840803376A9;
+	Thu, 11 Sep 2025 14:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWuBeIMm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7513375CF;
+	Thu, 11 Sep 2025 14:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599973; cv=none; b=RIFw//AK23zqlPJr64Qt8ciaDbAnhBKz4CylXX97x8FqqYxXuYqamxbb7jyc5aoCMBKlPmv5eD8Wv4c7SoYixHQ/PieolxJuR/MOqS7pFyCME+AuGv1BtOoRgC5QNIoEw1uMgaZHcQYkXNVJcaXhpk5V/evZ5w+Pev1JRhe/Jl0=
+	t=1757600005; cv=none; b=dZmRJopPY+aQRNO/QrlPxkv+fv9a3SELzjz/m++dP0pkVWQSjbZifG0kJjNP4j0GyEt+nIu1luHGY2Cw3E9GOEo7hZ/TPACJ0v1XlvhWTlRyJXgJucCgPDtp9El/NmsUa9Qsz8OQideuod6vz9dWhKnyQ2RfNFgUd5lfsxWkABk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599973; c=relaxed/simple;
-	bh=INs0GJC7GbrwXVSSHaoSwI9JA2Oyr1lKNTN+LW9xdmY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LhDolqTG6N8ofTlPt48Bz55Z50Kq+4ZZMO14iwtSJhn7MP0wED9QGBKeuWQTnANeNZLjXKq4HlOE5K7XgfF9LFQOkjLlTq9pNDKHt9kh7hzbLwb3ptA2CtgzW7fi6H+ps9PgQvgMR6agbihy7GM1CbG41YWJoTHDakU3bHipUFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3A251153B;
-	Thu, 11 Sep 2025 07:12:42 -0700 (PDT)
-Received: from [10.1.32.180] (unknown [10.1.32.180])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B4473F694;
-	Thu, 11 Sep 2025 07:12:49 -0700 (PDT)
-Message-ID: <3e3f15a1-77d4-4391-91bb-7a5eb0e93a63@arm.com>
-Date: Thu, 11 Sep 2025 15:12:48 +0100
+	s=arc-20240116; t=1757600005; c=relaxed/simple;
+	bh=CHLQC8UNFWx/L02U/6dzT5ziaf7nOpGIRoDp4xoRfbE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bGUsVCaihfcaf+t3RDciF0U6J6pJV+wbohhGLqujUj0TRQBQB2cMR2sQxLOzWNc8Arjx5WKMPCWJPAlfb6fsweAGNv3T+my31RozAlXAHUwP38+UakyyRl3mb1lgklE/dNqe7srVed5oNCpRonGGoVzRigpDUkwVVVBAv8gffyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWuBeIMm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57306C4CEF0;
+	Thu, 11 Sep 2025 14:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757600004;
+	bh=CHLQC8UNFWx/L02U/6dzT5ziaf7nOpGIRoDp4xoRfbE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hWuBeIMm3esoMaBijLO33dqTzWLpqs9LRS4ho6OVCRrj2rczlDPhMf8NtbWzDu8b8
+	 UE+3MrwY/yX2C4KzLOeEN+xA1IC8u3PvPeZC7RCK0YRlHylNQ1kXyfaXvu31RtVkB+
+	 rrA20zfzSh3H5XGG5VIdhPQNwLu7h8MF5tkX7ivIY5Lw6YVEa3bptnknnAN3fpr8d1
+	 yOpelE6rV+rjQkcKyxmYUxxw+r94vfbvQMTtv2C7r4BE4CgcIeoDsOzbqd3roZGca9
+	 1DibgW2dG42gpCnPtfK/PqEmdt2yM4Fz6PyVfxolnuRmzZ3PtZ5uGpvfWFd7adXk4Q
+	 2Nu5AuYdXbgJw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uwi37-00000005NmT-3OkK;
+	Thu, 11 Sep 2025 14:13:21 +0000
+Date: Thu, 11 Sep 2025 15:13:21 +0100
+Message-ID: <86a531cc1q.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-acpi@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Will Deacon <will@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,
+	Sven Peter <sven@kernel.org>,
+	Janne Grunau
+ <j@jannau.net>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	James Clark
+ <james.clark@linaro.org>
+Subject: Re: [PATCH 01/25] irqdomain: Add firmware info reporting interface
+In-Reply-To: <87ikhsvvau.ffs@tglx>
+References: <20250908163127.2462948-1-maz@kernel.org>
+	<20250908163127.2462948-2-maz@kernel.org>
+	<87ikhsvvau.ffs@tglx>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/2] arm64: tlbflush: Move invocation of
- __flush_tlb_range_op() to a macro
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, James Morse <james.morse@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250829153510.2401161-1-ryan.roberts@arm.com>
- <20250829153510.2401161-2-ryan.roberts@arm.com>
- <4ac449f1-d5cc-42d6-bded-2db6984d55f0@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <4ac449f1-d5cc-42d6-bded-2db6984d55f0@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, mark.rutland@arm.com, will@kernel.org, rafael@kernel.org, robh@kernel.org, saravanak@google.com, gregkh@linuxfoundation.org, sven@kernel.org, j@jannau.net, suzuki.poulose@arm.com, james.clark@linaro.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 11/09/2025 06:50, Anshuman Khandual wrote:
+On Tue, 09 Sep 2025 10:18:01 +0100,
+Thomas Gleixner <tglx@linutronix.de> wrote:
 > 
-> 
-> On 29/08/25 9:05 PM, Ryan Roberts wrote:
->> __flush_tlb_range_op() is a pre-processor macro that takes the TLBI
->> operation as a string, and builds the instruction from it. This prevents
->> passing the TLBI operation around as a variable. __flush_tlb_range_op()
->> also takes 7 other arguments.
->>
->> Adding extra invocations for different TLB operations means duplicating
->> the whole thing, but those 7 extra arguments are the same each time.
->>
->> Add an enum for the TLBI operations that __flush_tlb_range() uses, and a
->> macro to pass the operation name as a string to __flush_tlb_range_op(),
->> and the rest of the arguments using __VA_ARGS_.
->>
->> The result is easier to add new TLBI operations to, and to modify any of
->> the other arguments as they only appear once.
->>
->> Suggested-by: James Morse <james.morse@arm.com>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>  arch/arm64/include/asm/tlbflush.h | 30 ++++++++++++++++++++++++------
->>  1 file changed, 24 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
->> index 18a5dc0c9a54..f66b8c4696d0 100644
->> --- a/arch/arm64/include/asm/tlbflush.h
->> +++ b/arch/arm64/include/asm/tlbflush.h
->> @@ -11,6 +11,7 @@
->>  #ifndef __ASSEMBLY__
->>  
->>  #include <linux/bitfield.h>
->> +#include <linux/build_bug.h>
->>  #include <linux/mm_types.h>
->>  #include <linux/sched.h>
->>  #include <linux/mmu_notifier.h>
->> @@ -433,12 +434,32 @@ static inline bool __flush_tlb_range_limit_excess(unsigned long start,
->>  	return false;
->>  }
->>  
->> +enum tlbi_op {
->> +	TLBI_VALE1IS,
->> +	TLBI_VAE1IS,
->> +};
->> +
->> +#define flush_tlb_range_op(op, ...)					\
->> +do {									\
->> +	switch (op) {							\
->> +	case TLBI_VALE1IS:						\
->> +		__flush_tlb_range_op(vale1is, __VA_ARGS__);		\
->> +		break;							\
->> +	case TLBI_VAE1IS:						\
->> +		__flush_tlb_range_op(vae1is, __VA_ARGS__);		\
->> +		break;							\
->> +	default:							\
->> +		BUILD_BUG_ON_MSG(1, "Unknown TLBI op");			\
->> +	}								\
->> +} while (0)
->> +
->>  static inline void __flush_tlb_range_nosync(struct mm_struct *mm,
->>  				     unsigned long start, unsigned long end,
->>  				     unsigned long stride, bool last_level,
->>  				     int tlb_level)
->>  {
->>  	unsigned long asid, pages;
->> +	enum tlbi_op tlbi_op;
->>  
->>  	start = round_down(start, stride);
->>  	end = round_up(end, stride);
->> @@ -452,12 +473,9 @@ static inline void __flush_tlb_range_nosync(struct mm_struct *mm,
->>  	dsb(ishst);
->>  	asid = ASID(mm);
->>  
->> -	if (last_level)
->> -		__flush_tlb_range_op(vale1is, start, pages, stride, asid,
->> -				     tlb_level, true, lpa2_is_enabled());
->> -	else
->> -		__flush_tlb_range_op(vae1is, start, pages, stride, asid,
->> -				     tlb_level, true, lpa2_is_enabled());
->> +	tlbi_op = last_level ? TLBI_VALE1IS : TLBI_VAE1IS;
->> +	flush_tlb_range_op(tlbi_op, start, pages, stride, asid, tlb_level,
->> +			   true, lpa2_is_enabled());
->>  
->>  	mmu_notifier_arch_invalidate_secondary_tlbs(mm, start, end);
->>  }
-> 
-> Should the remaining __flush_tlb_range_op() in flush_tlb_kernel_range()
-> converted into flush_tlb_range_op() adding another similar enum variable
-> i.e TLBI_VAALE1IS ? Because this will ensure that there is one variant
-> helper i.e flush_tlb_range_op() that gets called.
+> On Mon, Sep 08 2025 at 17:31, Marc Zyngier wrote:
 
-Yeah maybe. I don't really have a strong opinion.
+[...]
 
-Will posted an RFC for converting all this to functions a while ago. That's the
-better baseline to build this all on I think.
+> > @@ -69,6 +90,8 @@ void of_phandle_args_to_fwspec(struct device_node *np, const u32 *args,
+> >   * @translate:	Given @fwspec, decode the hardware irq number (@out_hwirq) and
+> >   *		linux irq type value (@out_type). This is a generalised @xlate
+> >   *		(over struct irq_fwspec) and is preferred if provided.
+> > + * @get_info: Given @info, report additional firmware-provided information.
+> > + *            Optional.
+> 
+> get_info() is pretty generic. Can we have some more descriptive name for
+> that? Also please keep the tabular formatting of the doc intact.
 
-> 
-> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
-> index f66b8c4696d0..a23169751deb 100644
-> --- a/arch/arm64/include/asm/tlbflush.h
-> +++ b/arch/arm64/include/asm/tlbflush.h
-> @@ -437,6 +437,7 @@ static inline bool __flush_tlb_range_limit_excess(unsigned long start,
->  enum tlbi_op {
->         TLBI_VALE1IS,
->         TLBI_VAE1IS,
-> +       TLBI_VAALE1IS,
->  };
-> 
->  #define flush_tlb_range_op(op, ...)                                    \
-> @@ -448,6 +449,9 @@ do {                                                                        \
->         case TLBI_VAE1IS:                                               \
->                 __flush_tlb_range_op(vae1is, __VA_ARGS__);              \
->                 break;                                                  \
-> +       case TLBI_VAALE1IS:                                             \
-> +               __flush_tlb_range_op(vaale1is, __VA_ARGS__);            \
-> +               break;                                                  \
->         default:                                                        \
->                 BUILD_BUG_ON_MSG(1, "Unknown TLBI op");                 \
->         }                                                               \
-> @@ -517,7 +521,7 @@ static inline void flush_tlb_kernel_range(unsigned long start, unsigned long end
->         }
-> 
->         dsb(ishst);
-> -       __flush_tlb_range_op(vaale1is, start, pages, stride, 0,
-> +       flush_tlb_range_op(TLBI_VAALE1IS, start, pages, stride, 0,
->                              TLBI_TTL_UNKNOWN, false, lpa2_is_enabled());
->         dsb(ish);
->         isb();
+Would get_fwspec_info() be descriptive enough?
 
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
