@@ -1,163 +1,203 @@
-Return-Path: <linux-kernel+bounces-812761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1270FB53C57
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:35:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6A5FB53C56
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B95765A73A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:35:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587E216469E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF6531B10D;
-	Thu, 11 Sep 2025 19:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 129EB267B89;
+	Thu, 11 Sep 2025 19:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="emibbQwN"
-Received: from mail-il1-f226.google.com (mail-il1-f226.google.com [209.85.166.226])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="kASgYeAZ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F01A26CE2E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 19:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.226
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757619327; cv=none; b=IarIxrGRjbvhK+jxXXZAJfwSFeyXi6tutMNcF2LVjiJf6rfqUTYPbbBhVJQ90N2bDunTOIVPObcrCghq9MX+xG/aEPjKDKTRg/WDvJoGcS0tXS/7DMrIcLh7sq95+R8c4XzTMOoq0NH3GsZa8y1EJIEB7MMdT8kr238BHhpcpfM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757619327; c=relaxed/simple;
-	bh=G1NiFDz8oZhTB5nWROQ4ml+rvTNq7sXuFIg0das2/hA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Vkactl3KbP0f1DBp37xwt/ZSXYsYCTLniDR7qEHomyLzdRfOrS308QllbTe0CdKtSCiywH/6hUg3RIkyV/B+lnB0VrwhRD8wrpLBtD4ROzKbP0CJlUHXvVYnG4xSk2pzMm+BGIQa/gGx/1PeRPekVxunZIJSRcWskAXPVUvZjkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=emibbQwN; arc=none smtp.client-ip=209.85.166.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-il1-f226.google.com with SMTP id e9e14a558f8ab-410c884decfso10922785ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:35:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757619325; x=1758224125;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:dkim-signature
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IUECdZ3lR6R7TzQiSPdeZzqdUGndQHKhb6XoefEvstI=;
-        b=l6w/Bv79vzW9vo0/gqAiaItyp12cU5Vg5Co68rZ9xasNbqvYmn7Jz6MYdFKLTJxmwo
-         XVGE8Wg2nNEQC3wQjr+lZLqnqItnl9lYWM1xA9XPc4DPuYwOpJAIPAIzRkSKrKNovcXX
-         /1kC0bewIkJXrR6JD7ggF2ksYDS9jzZ5+P+QHr+DAnTh0q+koC0Jy7mHzB7TTHNJHYeD
-         JsIj6qubalC6nECWAwFbqMfdujK3seMszw0pa+M2k3AKy5AZXQ90Jk5y5ZEZeaoGM1GI
-         hSVrOJCQ3CdT1/DvNkhH18F+0VpEyjUcr5BsdOuLActrZnXo6QaJwZyG03JpN4bHPW2v
-         3CDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPXKZrm/sB9dGhQRTx5Oe5w2SJ6NxP5nP+PzfuV4+Tq08ZQluon+tgZxoKgkqf7iz7J0KgHEFCNbxyxeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFwD/YqwhvhicdxeTNbR1x8moDgUR/crZQPv51LZak7JJK8gb9
-	Zci6ObjbOYx5L85lXGw1wPm239Zi42Il9KO0DUH32LUxzQTz8j2EhFHA+ZAu2O9KFCJ39uPOV+w
-	H1uxyz2mFuPVVjKGNGyKwQE1ym8qcRpwzY+Jz9pM0RgUKDXOlxQwP7UrnyOSC/OWfOaRYteeWvz
-	cXoSZRzf/hWLBPzoCNPvWgsq/ezm9htKQ0+ZU+Xl/p5F9Bw4bnmwOlLbkZKDhP6lqPILRspDfGH
-	s7mJuRzRc88LcuUJhNeA6lUC+bq
-X-Gm-Gg: ASbGncsqHhvwaZEmrZj2lHl5gRvsaiNZ60FoxS1pQhbk7X++Q88aPCFPa2Wjwerr6qQ
-	tE0LoP6CP9G2HgjuNKmgBtSkYF4hDb5/q9cbq1dYQLmTi5ZADp1/uVBJEQngkHrByXJd9j+r2n/
-	HncKduK07BiTL0+D3BvzCE3/1DJTo30JUiwl7cyryF58/TmCJi1UFawoMW0hZZSiOeE3dHPJOjt
-	KzS7hX9uvNooOYsNr73PzMvLN+0MhDiCeHUfM0yBSamUxsxX2qVIbXJ7/1xbjP/q+XXok9OJZTx
-	Nrd8ryNCNzmpdE+f46+YhFkOLZXBSwDWMAfh/o0xeRsv7RnD1lZNayKoV8FIdNJGUiYAykfvnfr
-	zX8TmjaB/7fn98WVQooLxPWi8fWh1l+6YHm8ooshnQyxx3gxCQ+O3mKArnrkl3r9RwtwAw0fuuO
-	AnfJ7x5w==
-X-Google-Smtp-Source: AGHT+IGxr/wPEm58nGwJSDzxQSxtWvtyghjkNRMY14L5kZxXwhhCXPcDsDrjn96MG+tL8Bb4k3vXQLic+m/b
-X-Received: by 2002:a05:6e02:160c:b0:40c:c955:b67d with SMTP id e9e14a558f8ab-420a4dec2f8mr11941325ab.28.1757619325433;
-        Thu, 11 Sep 2025 12:35:25 -0700 (PDT)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-25.dlp.protect.broadcom.com. [144.49.247.25])
-        by smtp-relay.gmail.com with ESMTPS id e9e14a558f8ab-41df8ae2838sm1851735ab.42.2025.09.11.12.35.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 11 Sep 2025 12:35:25 -0700 (PDT)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-25d449089e8so1395115ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:35:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1757619324; x=1758224124; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IUECdZ3lR6R7TzQiSPdeZzqdUGndQHKhb6XoefEvstI=;
-        b=emibbQwNR5ANtylk/Fg7nozSRC3LmbE+jNFooTV5nQ5qATD1j92iuaOAI3XZsgmfpH
-         3N1lDOaAzYTQ/pKOSjvTE0DBnevyMp4BUbUhqxRuUfRTcqYmWdti8BL5gokx4t5yIVqY
-         KYUmXAoAqFEGUjVWbaOit21gr0EaKKNawdCJA=
-X-Forwarded-Encrypted: i=1; AJvYcCVXIT79uzYv3/CiWT+XcsKxcgGZBKk3Fea6s8x8qBypb5y1zPINtMSxRzP1iQ7xGNIgpGYdd4E6GG5Ec2E=@vger.kernel.org
-X-Received: by 2002:a17:902:ea0d:b0:24c:f15c:a692 with SMTP id d9443c01a7336-25d27c21b85mr5780635ad.42.1757619324043;
-        Thu, 11 Sep 2025 12:35:24 -0700 (PDT)
-X-Received: by 2002:a17:902:ea0d:b0:24c:f15c:a692 with SMTP id d9443c01a7336-25d27c21b85mr5780335ad.42.1757619323656;
-        Thu, 11 Sep 2025 12:35:23 -0700 (PDT)
-Received: from hyd-csg-thor2-h1-server2.dhcp.broadcom.net ([192.19.203.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3ad3404csm25839285ad.113.2025.09.11.12.35.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 12:35:22 -0700 (PDT)
-From: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	andrew+netdev@lunn.ch,
-	horms@kernel.org
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com,
-	vsrama-krishna.nemani@broadcom.com,
-	vikas.gupta@broadcom.com,
-	Bhargava Marreddy <bhargava.marreddy@broadcom.com>,
-	Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
-Subject: [v7, net-next 01/10] bng_en: make bnge_alloc_ring() self-unwind on failure
-Date: Fri, 12 Sep 2025 01:04:56 +0530
-Message-ID: <20250911193505.24068-2-bhargava.marreddy@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
-References: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A051C25F798
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 19:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757619325; cv=pass; b=dGRRDf9PzZql08th2YCUM1v1vFg/5U2S42k0OxN2R8ZL9kMutFhvX616EV7U6fMtzSu0nQ+d7mtQUa9B99BJ5jRo9q+JwarXD7fksSJWk7JpSTTCgk5bPE9mO+MkqqVrQwiV93xUbDR60cXtamcDCFQKlWj1wnJFEwGfXWFlT6I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757619325; c=relaxed/simple;
+	bh=yKPuSiB4DaFpEdabMvyhA/f31/QRzEWyp4sbMnEmhn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EEy4Hk5U7f0UcoiAozAptPzzN7C2rQBcW7uH6HOjlLqCtFAias8KoxhxXw5/GU/MY9uoV3n9X+iJA2Sz3nPWHi9DCf/iWFDCzKzU25zuITObDhK794aOimzVIP3Jkb6DB96SkB8s5oIMIcIG5FQLmgFgjEE/LC1t2dGP9ByfINo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=kASgYeAZ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757619302; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=R8NUsHG1jmmI+81c8fHhLqdf1yGWxoItdONK7onzteCxZVJNiplmTLW6vQ/y5Q6/q3TuBFNnpvYqyVMJsns9NwUROGHRGO/pceBRmlNEtJ450neTC74IY3xduTAumhH1pxyqxHqUCYZIaKdyBZBA0yecthB03H7xUN8icatoGCk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757619302; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=XJjFIh9EwKZBb5wnlvbbwIsPRnAfea2hTk/TU92RDko=; 
+	b=RoC38DpPTLa9T44d9yb9F6hTf7V0K9uY9t/A+ulce7g9VQbjNNJB4c1uVWcC5S85NkoUEBGAC2pDnzruiMvtn+KVXrBKkd4+iiJRj/kon9FjHXN9wEfDalic0aLOEgDF47TjhkcAT10fxm3rEVBl9iTbMJnCAxm5ZpNzaMDNfIQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757619302;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:Content-Transfer-Encoding:In-Reply-To:Message-Id:Reply-To;
+	bh=XJjFIh9EwKZBb5wnlvbbwIsPRnAfea2hTk/TU92RDko=;
+	b=kASgYeAZqSNVf5terchRPavq0KfI3xRfO1oZKDZihwhtSyPXSQQ0WupRazY7pyan
+	ZTXqbcOklXF5tN/3tXqfeWFoNFKxQX9XY4qmrj/Jm4rNe1VUrJYGUfUDquDq9INCoi/
+	C/JMVRiJqa+7YZZxzvB45ZVAaCB7YvZHv9klqPwE=
+Received: by mx.zohomail.com with SMTPS id 175761930133947.356696681226936;
+	Thu, 11 Sep 2025 12:35:01 -0700 (PDT)
+Date: Thu, 11 Sep 2025 20:34:57 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Boris Brezillon <boris.brezillon@collabora.com>, kernel@collabora.com, Rob Herring <robh@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH v2 3/4] drm/panfrost: Expose JM context IOCTLs to UM
+Message-ID: <4sp5ary2xfd7yjqux4yex5vtb3gmcrhwsg5mnoeirubzf62eot@ydroedwvv6pb>
+References: <20250904001054.147465-1-adrian.larumbe@collabora.com>
+ <20250904001054.147465-4-adrian.larumbe@collabora.com>
+ <1b270301-c5d1-4054-a602-aa6e227bd85e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+In-Reply-To: <1b270301-c5d1-4054-a602-aa6e227bd85e@arm.com>
 
-Ensure bnge_alloc_ring() frees any intermediate allocations
-when it fails. This enables later patches to rely on this
-self-unwinding behavior.
+On 10.09.2025 16:42, Steven Price wrote:
+> On 04/09/2025 01:08, Adrián Larumbe wrote:
+> > From: Boris Brezillon <boris.brezillon@collabora.com>
+> >
+> > Minor revision of the driver must be bumped because this expands the
+> > uAPI. On top of that, let user know the available priorities so that
+> > they can create contexts with legal priority values.
+> >
+> > Signed-off-by: Boris Brezillon <boris.brezillon@collabora.com>
+> > Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> > ---
+> >  drivers/gpu/drm/panfrost/panfrost_drv.c | 35 +++++++++++++++++++++++--
+> >  1 file changed, 33 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > index 398c067457d9..02f704ec4961 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_runtime.h>
+> >  #include <drm/panfrost_drm.h>
+> > +#include <drm/drm_auth.h>
+> >  #include <drm/drm_debugfs.h>
+> >  #include <drm/drm_drv.h>
+> >  #include <drm/drm_ioctl.h>
+> > @@ -109,6 +110,15 @@ static int panfrost_ioctl_get_param(struct drm_device *ddev, void *data, struct
+> >  #endif
+> >  		break;
+> >
+> > +	case DRM_PANFROST_PARAM_ALLOWED_JM_CTX_PRIORITIES:
+> > +		param->value = BIT(PANFROST_JM_CTX_PRIORITY_LOW) |
+> > +			       BIT(PANFROST_JM_CTX_PRIORITY_MEDIUM);
+> > +
+> > +		/* High prio require CAP_SYS_NICE or DRM_MASTER */
+> > +		if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
+>
+> NIT: This is repeating the check in jm_ctx_prio_to_drm_sched_prio(). It
+> would be nice to have this check in one place to ensure that the two
+> cannot get out of sync.
 
-Signed-off-by: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
-Reviewed-by: Vikas Gupta <vikas.gupta@broadcom.com>
-Reviewed-by: Rajashekar Hudumula <rajashekar.hudumula@broadcom.com>
----
- drivers/net/ethernet/broadcom/bnge/bnge_rmem.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+I noticed some other drivers are performing the same check, e.g.
 
-diff --git a/drivers/net/ethernet/broadcom/bnge/bnge_rmem.c b/drivers/net/ethernet/broadcom/bnge/bnge_rmem.c
-index 52ada65943a..98b4e9f55bc 100644
---- a/drivers/net/ethernet/broadcom/bnge/bnge_rmem.c
-+++ b/drivers/net/ethernet/broadcom/bnge/bnge_rmem.c
-@@ -95,7 +95,7 @@ int bnge_alloc_ring(struct bnge_dev *bd, struct bnge_ring_mem_info *rmem)
- 						     &rmem->dma_arr[i],
- 						     GFP_KERNEL);
- 		if (!rmem->pg_arr[i])
--			return -ENOMEM;
-+			goto err_free_ring;
- 
- 		if (rmem->ctx_mem)
- 			bnge_init_ctx_mem(rmem->ctx_mem, rmem->pg_arr[i],
-@@ -116,10 +116,13 @@ int bnge_alloc_ring(struct bnge_dev *bd, struct bnge_ring_mem_info *rmem)
- 	if (rmem->vmem_size) {
- 		*rmem->vmem = vzalloc(rmem->vmem_size);
- 		if (!(*rmem->vmem))
--			return -ENOMEM;
-+			goto err_free_ring;
- 	}
--
- 	return 0;
-+
-+err_free_ring:
-+	bnge_free_ring(bd, rmem);
-+	return -ENOMEM;
- }
- 
- static int bnge_alloc_ctx_one_lvl(struct bnge_dev *bd,
--- 
-2.47.3
+- amdgpu: in amdgpu_ctx_priority_permit()
+- imagination: remap_priority
+- panthor ...
 
+Which makes me wonder, maybe adding a helper to drm_auth.c would be good in this case?
+Anyway, that perhaps should be matter for a different patch .
+
+
+> > +			param->value |= BIT(PANFROST_JM_CTX_PRIORITY_HIGH);
+> > +		break;
+> > +
+> >  	default:
+> >  		return -EINVAL;
+> >  	}
+> > @@ -295,8 +305,7 @@ static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
+> >  			return -ENODEV;
+> >  	}
+> >
+> > -	/* TODO: Use the default JM context until ctx management IOCTLs are exposed */
+> > -	jm_ctx = panfrost_jm_ctx_from_handle(file, 0);
+> > +	jm_ctx = panfrost_jm_ctx_from_handle(file, args->jm_ctx_handle);
+>
+> I'm not sure if this should go in this patch or the previous one, but:
+> we need to add a check that the padding is 0. Personally I'd be tempted
+> to put it in the previous patch and enforce that jm_ctx_handle is zeroed
+> too (and drop that check here when you also remove the TODO).
+
+Acked.
+
+> >  	if (!jm_ctx) {
+> >  		ret = -EINVAL;
+> >  		goto out_put_syncout;
+> > @@ -547,6 +556,24 @@ static int panfrost_ioctl_set_label_bo(struct drm_device *ddev, void *data,
+> >  	return ret;
+> >  }
+> >
+> > +static int panfrost_ioctl_jm_ctx_create(struct drm_device *dev, void *data,
+> > +					struct drm_file *file)
+> > +{
+> > +	return panfrost_jm_ctx_create(file, data);
+> > +}
+> > +
+> > +static int panfrost_ioctl_jm_ctx_destroy(struct drm_device *dev, void *data,
+> > +					 struct drm_file *file)
+> > +{
+> > +	const struct drm_panfrost_jm_ctx_destroy *args = data;
+> > +
+> > +	/* We can't destroy the default context created when the file is opened. */
+> > +	if (!args->handle)
+> > +		return -EINVAL;
+>
+> Also need a check for padding being non-zero.
+>
+> Thanks,
+> Steve
+>
+> > +
+> > +	return panfrost_jm_ctx_destroy(file, args->handle);
+> > +}
+> > +
+> >  int panfrost_unstable_ioctl_check(void)
+> >  {
+> >  	if (!unstable_ioctls)
+> > @@ -614,6 +641,8 @@ static const struct drm_ioctl_desc panfrost_drm_driver_ioctls[] = {
+> >  	PANFROST_IOCTL(PERFCNT_DUMP,	perfcnt_dump,	DRM_RENDER_ALLOW),
+> >  	PANFROST_IOCTL(MADVISE,		madvise,	DRM_RENDER_ALLOW),
+> >  	PANFROST_IOCTL(SET_LABEL_BO,	set_label_bo,	DRM_RENDER_ALLOW),
+> > +	PANFROST_IOCTL(JM_CTX_CREATE,	jm_ctx_create,	DRM_RENDER_ALLOW),
+> > +	PANFROST_IOCTL(JM_CTX_DESTROY,	jm_ctx_destroy,	DRM_RENDER_ALLOW),
+> >  };
+> >
+> >  static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
+> > @@ -710,6 +739,8 @@ static void panfrost_debugfs_init(struct drm_minor *minor)
+> >   * - 1.3 - adds JD_REQ_CYCLE_COUNT job requirement for SUBMIT
+> >   *       - adds SYSTEM_TIMESTAMP and SYSTEM_TIMESTAMP_FREQUENCY queries
+> >   * - 1.4 - adds SET_LABEL_BO
+> > + * - 1.5 - adds JM_CTX_{CREATE,DESTROY} ioctls and extend SUBMIT to allow
+> > + *	   context creation with configurable priorities/affinity
+> >   */
+> >  static const struct drm_driver panfrost_drm_driver = {
+> >  	.driver_features	= DRIVER_RENDER | DRIVER_GEM | DRIVER_SYNCOBJ,
+
+Adrian Larumbe
 
