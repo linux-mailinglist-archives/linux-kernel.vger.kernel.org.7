@@ -1,174 +1,117 @@
-Return-Path: <linux-kernel+bounces-812908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C2DB53E0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:47:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E993CB53E08
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:47:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D7073AA94B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2B5B18A0003
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A98A2DF144;
-	Thu, 11 Sep 2025 21:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46392DF6E6;
+	Thu, 11 Sep 2025 21:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VJ7nEJoU"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="H3dLQbcD"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B84F21D5BC
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE53F2DEA7B
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757627073; cv=none; b=LnKOdBDZb2ZldgGURhNosld3we9sxEWdUmMsRys8neMwr0pzClcCiE94+BKtwHeB73OTX5osCrWuJxDPjgMjwY6n6rgQaqyiani2k9CO2+lZwI9GoikUg9jBAoh2XHVHdu/XTbqNbPCiMLRsu+jGW3zHHoJ1fB/Xs3sWd8+xfyE=
+	t=1757627100; cv=none; b=Ztl8VHrnIslDt9KVPbWKik/eUA7N3D1qGg1e/ALKmKx+GGyqCo0CAEMj3xVrn3ztC/rT0BQ6L/W37gJ0zB0/VMcEoDFpINk8X+DBouPfAJL1p9pPOmgNhAHYablRYop9q/r/DYpnyqWe0InoGgtbvu4HMvqz6+d0EOMd+u/6KOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757627073; c=relaxed/simple;
-	bh=mUvIbGyVkrFQ44a7PRrcV1n+CvoSl3HqAUu9F1HIHoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JPfqnnI1J2a6PVFdR0PiE01jw4EFp7yh9FDKawmotUOe0KyyIq4qAgD9n15GCk/I1Z6n4dNukiUFEEl4xYbDyeiJ2OfislfIk39qgJsO+r6FyvSGgPMUcosUM4hgXRNjanZQXGLjRKH2UGueC+fTynriFQpqvAWkP45naZx3Y0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VJ7nEJoU; arc=none smtp.client-ip=91.218.175.186
+	s=arc-20240116; t=1757627100; c=relaxed/simple;
+	bh=eH6fm5pzpaE7JZf8WIIl08Tft5ebABJ4h0vZtfafd0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o3cvLZ/VRYtRAmJmkncjSAqHwcHPiHSY0I3pJoah9wfST4n2h3alTfwWYsDveETmEAAIZ+vUaYHpp700Xl1v95EXqwPdDc2X05eB2j4SUAhFZ0LX8d+/ZbWW95BnSZXT+J6PZ3J2yJ9c+3S+Y/5LE80wUJdm8rGAhZa41Dnj5BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=H3dLQbcD; arc=none smtp.client-ip=91.218.175.185
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+Date: Thu, 11 Sep 2025 14:44:50 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757627057;
+	t=1757627095;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=oSsmD+PT9J7Rok4sUSj0iKhGngM/Czt934IPRIT54X8=;
-	b=VJ7nEJoURZKTp3AMNtFWZTZunptkFQ3hJgZglAaJad3SE5RQGE7N02UZ9TARw4BB+lpOR5
-	nURSLtXRGfi5KPF/YKeyNijYlKtsPbK0w3DVsbSa/OA1fa+SDxUn9LX65EXs8w2JP0qL/2
-	+4WjlieDhlKy932EffdHd3HHlTcvCYk=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Johannes Berg <johannes@sipsolutions.net>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Takashi Iwai <tiwai@suse.de>,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: aoa: Remove redundant size arguments from strscpy()
-Date: Thu, 11 Sep 2025 23:43:22 +0200
-Message-ID: <20250911214334.1482982-2-thorsten.blum@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0A29RAJZH8PG2jCbsFMQRYsD8GmFmnNdYOX2gwfe4Lw=;
+	b=H3dLQbcDZZfN0YTwx8Yx5vRwlMz8fXhAnF+DfEkbdJyg3YoJt9VzaKBAzCtvpUS9yIeFog
+	aQMsWa9vB6Mj/4XGLcWaJ0A7p8SyBtbbgPBb4rOkMx9j3HHqfFDreElJsT1kJ94gTj6sAu
+	6zIXWg2AXMnSItiuKyIxhJFw3Wq1+PU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
+	usamaarif642@gmail.com, 00107082@163.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] alloc_tag: avoid warnings when freeing non-compound
+ "tail" pages
+Message-ID: <yfebg4bs4nck7kvc3d3irbxpfja45pcyjbtip2jtcojiv5pj4f@jp53hiso6vga>
+References: <20250909233409.1013367-1-surenb@google.com>
+ <20250909233409.1013367-4-surenb@google.com>
+ <zxbgiqf4d3nlww2xxoea7rud3q4oj2osk657xnhu6r7du4lf3p@es7mqt7joo7b>
+ <CAJuCfpFV0d=JSwA8zDpdrg4C2TpTTZypeX0Qype-EFKHho2bQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpFV0d=JSwA8zDpdrg4C2TpTTZypeX0Qype-EFKHho2bQQ@mail.gmail.com>
 X-Migadu-Flow: FLOW_OUT
 
-The size parameter of strscpy() is optional if the destination buffer
-has a fixed length and strscpy() can automatically determine its size
-using sizeof(). This makes many explicit size arguments redundant.
+On Thu, Sep 11, 2025 at 01:12:11PM -0700, Suren Baghdasaryan wrote:
+> On Thu, Sep 11, 2025 at 1:01 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+> >
+> > On Tue, Sep 09, 2025 at 04:34:09PM -0700, Suren Baghdasaryan wrote:
+> > > When freeing "tail" pages of a non-compount high-order page, we properly
+> > > subtract the allocation tag counters, however later when these pages are
+> > > released, alloc_tag_sub() will issue warnings because tags for these pages
+> > > are NULL.
+> > > This issue was originally anticipated by Vlastimil in his review [1] and
+> > > then recently reported by David.
+> > > Prevent warnings by marking the tags empty.
+> > >
+> > > [1] https://lore.kernel.org/all/6db0f0c8-81cb-4d04-9560-ba73d63db4b8@suse.cz/
+> > >
+> > > Suggested-by: David Wang <00107082@163.com>
+> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > ---
+> > >  mm/page_alloc.c | 9 ++++++++-
+> > >  1 file changed, 8 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > index 1760346bbd24..d21a411e807e 100644
+> > > --- a/mm/page_alloc.c
+> > > +++ b/mm/page_alloc.c
+> > > @@ -5240,9 +5240,16 @@ static void ___free_pages(struct page *page, unsigned int order,
+> > >               __free_frozen_pages(page, order, fpi_flags);
+> > >       else if (!head) {
+> > >               pgalloc_tag_sub_pages(tag, (1 << order) - 1);
+> > > -             while (order-- > 0)
+> > > +             while (order-- > 0) {
+> > > +                     /*
+> > > +                      * The "tail" pages of this non-compound high-order
+> > > +                      * page will have no code tags, so to avoid warnings
+> > > +                      * mark them as empty.
+> > > +                      */
+> > > +                     clear_page_tag_ref(page + (1 << order));
+> >
+> > Do we need something similar for the release_pages() code path or is it
+> > happening already?
+> 
+> Pages released with release_pages() should have valid tags, so I
+> expect no warnings.
+> 
 
-Remove them to shorten and simplify the code.
-
-No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- sound/aoa/codecs/onyx.c    | 2 +-
- sound/aoa/codecs/tas.c     | 2 +-
- sound/aoa/codecs/toonie.c  | 2 +-
- sound/aoa/core/alsa.c      | 8 ++++----
- sound/aoa/fabrics/layout.c | 9 +++------
- 5 files changed, 10 insertions(+), 13 deletions(-)
-
-diff --git a/sound/aoa/codecs/onyx.c b/sound/aoa/codecs/onyx.c
-index ac347a14f282..fe59a7c59091 100644
---- a/sound/aoa/codecs/onyx.c
-+++ b/sound/aoa/codecs/onyx.c
-@@ -1013,7 +1013,7 @@ static int onyx_i2c_probe(struct i2c_client *client)
- 		goto fail;
- 	}
- 
--	strscpy(onyx->codec.name, "onyx", MAX_CODEC_NAME_LEN);
-+	strscpy(onyx->codec.name, "onyx");
- 	onyx->codec.owner = THIS_MODULE;
- 	onyx->codec.init = onyx_init_codec;
- 	onyx->codec.exit = onyx_exit_codec;
-diff --git a/sound/aoa/codecs/tas.c b/sound/aoa/codecs/tas.c
-index 804b2ebbe28f..68b420a35fec 100644
---- a/sound/aoa/codecs/tas.c
-+++ b/sound/aoa/codecs/tas.c
-@@ -892,7 +892,7 @@ static int tas_i2c_probe(struct i2c_client *client)
- 	/* seems that half is a saner default */
- 	tas->drc_range = TAS3004_DRC_MAX / 2;
- 
--	strscpy(tas->codec.name, "tas", MAX_CODEC_NAME_LEN);
-+	strscpy(tas->codec.name, "tas");
- 	tas->codec.owner = THIS_MODULE;
- 	tas->codec.init = tas_init_codec;
- 	tas->codec.exit = tas_exit_codec;
-diff --git a/sound/aoa/codecs/toonie.c b/sound/aoa/codecs/toonie.c
-index 0da5af129492..b59967c49e0a 100644
---- a/sound/aoa/codecs/toonie.c
-+++ b/sound/aoa/codecs/toonie.c
-@@ -126,7 +126,7 @@ static int __init toonie_init(void)
- 	if (!toonie)
- 		return -ENOMEM;
- 
--	strscpy(toonie->codec.name, "toonie", sizeof(toonie->codec.name));
-+	strscpy(toonie->codec.name, "toonie");
- 	toonie->codec.owner = THIS_MODULE;
- 	toonie->codec.init = toonie_init_codec;
- 	toonie->codec.exit = toonie_exit_codec;
-diff --git a/sound/aoa/core/alsa.c b/sound/aoa/core/alsa.c
-index 7fce8581ddbd..aad7dfe089c7 100644
---- a/sound/aoa/core/alsa.c
-+++ b/sound/aoa/core/alsa.c
-@@ -28,10 +28,10 @@ int aoa_alsa_init(char *name, struct module *mod, struct device *dev)
- 		return err;
- 	aoa_card = alsa_card->private_data;
- 	aoa_card->alsa_card = alsa_card;
--	strscpy(alsa_card->driver, "AppleOnbdAudio", sizeof(alsa_card->driver));
--	strscpy(alsa_card->shortname, name, sizeof(alsa_card->shortname));
--	strscpy(alsa_card->longname, name, sizeof(alsa_card->longname));
--	strscpy(alsa_card->mixername, name, sizeof(alsa_card->mixername));
-+	strscpy(alsa_card->driver, "AppleOnbdAudio");
-+	strscpy(alsa_card->shortname, name);
-+	strscpy(alsa_card->longname, name);
-+	strscpy(alsa_card->mixername, name);
- 	err = snd_card_register(aoa_card->alsa_card);
- 	if (err < 0) {
- 		printk(KERN_ERR "snd-aoa: couldn't register alsa card\n");
-diff --git a/sound/aoa/fabrics/layout.c b/sound/aoa/fabrics/layout.c
-index e68b4cb4df29..bb2a0ef3004b 100644
---- a/sound/aoa/fabrics/layout.c
-+++ b/sound/aoa/fabrics/layout.c
-@@ -949,8 +949,7 @@ static void layout_attached_codec(struct aoa_codec *codec)
- 				ldev->gpio.methods->set_lineout(codec->gpio, 1);
- 			ctl = snd_ctl_new1(&lineout_ctl, codec->gpio);
- 			if (cc->connected & CC_LINEOUT_LABELLED_HEADPHONE)
--				strscpy(ctl->id.name,
--					"Headphone Switch", sizeof(ctl->id.name));
-+				strscpy(ctl->id.name, "Headphone Switch");
- 			ldev->lineout_ctrl = ctl;
- 			aoa_snd_ctl_add(ctl);
- 			ldev->have_lineout_detect =
-@@ -964,15 +963,13 @@ static void layout_attached_codec(struct aoa_codec *codec)
- 						   ldev);
- 				if (cc->connected & CC_LINEOUT_LABELLED_HEADPHONE)
- 					strscpy(ctl->id.name,
--						"Headphone Detect Autoswitch",
--						sizeof(ctl->id.name));
-+						"Headphone Detect Autoswitch");
- 				aoa_snd_ctl_add(ctl);
- 				ctl = snd_ctl_new1(&lineout_detected,
- 						   ldev);
- 				if (cc->connected & CC_LINEOUT_LABELLED_HEADPHONE)
- 					strscpy(ctl->id.name,
--						"Headphone Detected",
--						sizeof(ctl->id.name));
-+						"Headphone Detected");
- 				ldev->lineout_detected_ctrl = ctl;
- 				aoa_snd_ctl_add(ctl);
- 			}
--- 
-2.50.1
-
+Oh so this is orthogonal to your first patch which is replacing
+__free_page with release_pages(). This non-compound high-order page is
+not an issue in the codepath vm_module_tags_populate(), correct?
 
