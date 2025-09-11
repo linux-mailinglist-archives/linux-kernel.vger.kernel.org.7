@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-812544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97103B5397E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:41:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771BDB53986
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61524A04F3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA41D1CC279B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FC935A2AB;
-	Thu, 11 Sep 2025 16:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31F7362064;
+	Thu, 11 Sep 2025 16:40:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VAP+/3aI"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BHLoIa5+"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B2435AAD2
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EEC35AAB9
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:40:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757608855; cv=none; b=KW4QnchtimU7odSxq09iPCTlwXYUK3OeD52bGRWeWm54C9jVZTyCjBEY5xYSte1EPxx+e1G4K0a/vvDIwbb3nYPGqZtaQH7ram0VDsWKn138v4BcyKQXfcfRAmjmOp2Zv2qT0CQpfqjqttk8qb9ccn4RtGAw5Uivm788eS2363Q=
+	t=1757608857; cv=none; b=LlrrCLLzoKdqppT+X2zqygPdZpr+wYOI/4HZKUIGwcfJ4BqCVxqW+hOqrXAnIBS2bzqhgUC+4Ltdi3awv5y6UuEWCZ1bJ2OskBiZ/v4Xsp18RL1ro5HmN3g2097dRxd/n7/s3iaQlDGXdisxfymR3wxYsM5fTR+84qGKVgJjhNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757608855; c=relaxed/simple;
-	bh=hTnvvxl+lyL52rYp9D+lJFkBieFPMCtFihiRlKLamkE=;
+	s=arc-20240116; t=1757608857; c=relaxed/simple;
+	bh=RPBQwPNuYyYtQUtZ2JZFYIKb6yx1lRSpbGv4ihtUNa0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gbPCr4FBplWwJtS+MlH8apbqdrCTS1SlFQXXkHljdASC/ZFcBo5223l9RdL6+9rgu+xTxbIDSQD2wOkjzyG/+fMOq4yu1oNcBm/8X+J40ceZtPnr3w/YJgLG2yvhpKqztIIthC5rZ1JaXs8cvxN2/vVoR3iX/ETgmDBB25f6lGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VAP+/3aI; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:To:Cc; b=fjVt/dLG+6+i5SiyUZy1zz/asUOZPzu4sTJMNIIjn5TI2HoWFGngFELpQWRjgUnv0SNajpt4edKFFwXPkdWUYln8IuuUndmb2wj/idIssy3nxvAvPYY3Pf9McqUJlCigVhpirQ2G8xdl2VYdN4pKBW7trZvzA6kF0nVVJN1Ak/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BHLoIa5+; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3e2fdddd01dso275871f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:40:52 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so8351545e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:40:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757608851; x=1758213651; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757608852; x=1758213652; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DJ9s0RW4TlNtw5bKE6LaaAXASB0Bfcws+yTXIrMiB70=;
-        b=VAP+/3aIuDYC/oz2sITHnDr+D9kFO9OCv3prXN3cT7PeLp8RpUPwQyYa4DhiWsg4wq
-         rvMSqi+hO/HObWJ2Oq8U8Yg2ZgAhBzzWBzJ2j4OENeZDr+1R4fiXhyb/rqX0H41RwLK6
-         mt2SvyjSmDLS2DfNLfnK8TuUGENJngZO5GA3HlLnY8aOqRPfGjZcVVu1Lit/b57YFmpQ
-         VA4d2v+h5SJfL2b2JXXZWyDmanqecdRQWQcSkSR9a2mlEw0lsK0Po5zxSVXiGEnnj9AP
-         Qj1G3WIc+/fwDrtkWDslCelYvKegEvVEF21zB+ZqNrWUzqKSBOTh3FyeKF0Ox5HW1PoV
-         D/9Q==
+        bh=uMQMHx+8Y9PVtHu5Fhv1ceibqlTqO0/BLpLsbyBHbrQ=;
+        b=BHLoIa5+gzOmNMr0fYq78vEnc9uG8tGUGlDRut6vINYZkTQkybTQYtt7vM9yi6YWGh
+         jc8RVqtVKVlp+N4up1Ovkd8istgYRw9TzOWFJRPSrGDGB3VkJZn5lcgLv5ab6BKCErTm
+         SbfRXGrFCUczlIl5JSa/4N7AvnnbYJSH/UoEXm/OPKqsfiD9xoTu/hID3fDKV/HSO6Y0
+         RmDXGXqEAsf00zaITMNteR8drVrfBbIVMT7ClbrRou0/cNiNiP7VnSiq+EvGAnR55sUN
+         +R57fkBaHOU9gN4FLa30QdEyGz93S2BxskNGZrAEZMvgp1K7X6CvVTkJO03KvdO1m6tR
+         HgtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757608851; x=1758213651;
+        d=1e100.net; s=20230601; t=1757608852; x=1758213652;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DJ9s0RW4TlNtw5bKE6LaaAXASB0Bfcws+yTXIrMiB70=;
-        b=iBidF24k70o7MypLschzN4xvGD2MrxY0ceMJYqIGqYgH/+hlyjeQsDW21eQN/x8/Nm
-         MRmLcI1WpR1qjwXlbAkppWnHQDezIQiypn7zcGjs1Iab42an6+y+6MpRn6rLCNQMxmTT
-         H0qDMhG6VZzGHFixLc1b07FN81mZjBhhSHN8/W1+kHk0ccXqG9cTzJ6ljnUWk4WU66OP
-         mdU1jgGrrmSMX8BMFz+915tiZcxMDEDrXEIu2wgdQDYEmoiC2abqtmy8LgvRtka35egt
-         vIolawqsvc6l/Wk56ILOGgAxC293AODu9HUlnd+Hv++HMHsXzdW3kk/Q2KaTzaYAR86Q
-         kiYw==
-X-Gm-Message-State: AOJu0YxMar0BSRwxJfnBJn92z3frLrMoDs+zmyZ9AMIHESjxJyHSYm3F
-	04Rpz1M0dpbXTZyV+2LzE2dUQvoby6qRMr3xLbYEp+lbkuPG0p8Knrz/
-X-Gm-Gg: ASbGncvIfytgM8l0g8LQwkwxnvoSeVFQH0C0gWrleykiVVXCnXRMgT2SJ/PS5u4o14E
-	KWSgDlahQLMur75BvSHgw/b999sClXHgq4nF6XhsbpVwOwbQkKn56RipW6PNfRxZghCwFzrB913
-	D32Oa22quJZgfhKkVD1sr3v7jOVMSn/VuVcgseghWwvje8rnGQ6RK/duglYLfkrgYgsPBh+b45P
-	6Ki+z/TToY3kLrGBIVRiGYdVG4PTSL2oEH7OErhf3aa8jezwz4v+5eIwf64gCGEgE/EacY0aZxR
-	pw6pkLjBQlZlqSHoaBQIgXS5PQqE1czPMdYTouiXK6375qik0ke8B8kT96r/OjKwhrUxO7PLY/L
-	Smy9E3vSFVlvufQUZIftcAIHVvYKU2afPbw==
-X-Google-Smtp-Source: AGHT+IFZzKABY43DwcNpn0sIkbPkCHkfh0kQ0czrR2B5ofp4usmiPOKFnkWKHqqX0qUfZ2kpalXOwg==
-X-Received: by 2002:a5d:5d0a:0:b0:3e0:37f3:7778 with SMTP id ffacd0b85a97d-3e7657ae107mr16246f8f.26.1757608850960;
-        Thu, 11 Sep 2025 09:40:50 -0700 (PDT)
+        bh=uMQMHx+8Y9PVtHu5Fhv1ceibqlTqO0/BLpLsbyBHbrQ=;
+        b=U3et+3j6IJHHcgH81bYnmEu0vihaq6dzds881DABe8K6ZNhBS0+629AC0tBHtEV2Xy
+         uCWY7DN08ccYMjZi8f9qMsnzPKYnUS2TJ5PNxdP04GYkCRjVyaW7Bko8xRbeB3M/6AOx
+         vmA25hmZ6sKOLFYJf0Ue6Brm7HkRFb7EmKhg7sHwI2q5lYuxiTx1QTKGA4P7YmD2ZB7r
+         9Gh6jvRd7NsnCKwLmnhSGBJi+ZlIDen1s0JCSn3U77iOBLZONGH0GXbbDW0pArX3oEGQ
+         AiaF92WvETljgKILw7SwVOOUFd+YSXPkZF+QIMxjG/YeyfdJxCgwKBZc9cu3tKR7QBvB
+         zHAA==
+X-Gm-Message-State: AOJu0YxTCMsd4SEtsqXlj6IZiGq+ji117N4xaGLy9VXCp4hWCezhqdYx
+	feliiUvyJi+AqsopkzbppFGILRS9qNwwcRA6b6JU5p8k+BHAG9/Y4eIS
+X-Gm-Gg: ASbGncsjKR9Fw3YPLR6cExm9upzBziXSaQYEvKNfAxWIGNMa/oVozect9DDNfDDXk6e
+	VbHXYjbfYzpGBHXBlueDcIaun2e25HEXKnJ2s3WRgsUoBltZH2ObdOYesHEaPP5BC0A8UE23jx2
+	9I1O4/E+fRi23l45z0KEF1YjbQX562+/dWSTUlaXwGrw1vPewnFnMUhrq189DfLG6vtrpedWXld
+	KN6Tz8gG5YlCu+V0XjazDdcBBNZxONEJPWmgWMNaTLrK1BhawyJ+BzZ2ZPdnCYdmScmcg8s5gWo
+	8FuzEEVIViQmB20S/nUU6CcPBK9FX3UUn/kueWan/luBIIxe+3DG8MopXB2VhBAltYxADRlz4Nz
+	N6Ivw30xiBqxcgQ7DmNI+QitFYRibYHQ6UOJUtPDcCUir
+X-Google-Smtp-Source: AGHT+IEV2fAo5+1KU/1dEim/AbauImb4ZS8yoNPDcA6mm9LIEdb6hwKHDMfpgtEkevMzMRNv1mgNcA==
+X-Received: by 2002:a05:600c:1c19:b0:45d:d259:9a48 with SMTP id 5b1f17b1804b1-45f2128cba7mr155095e9.9.1757608852107;
+        Thu, 11 Sep 2025 09:40:52 -0700 (PDT)
 Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e01519f67sm16926915e9.1.2025.09.11.09.40.50
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e01575fadsm32846505e9.6.2025.09.11.09.40.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 09:40:50 -0700 (PDT)
+        Thu, 11 Sep 2025 09:40:51 -0700 (PDT)
 From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Date: Thu, 11 Sep 2025 18:39:59 +0200
-Subject: [PATCH 3/4] clk: st: flexgen: remove unused compatible
+Date: Thu, 11 Sep 2025 18:40:00 +0200
+Subject: [PATCH 4/4] dt-bindings: clock: st: flexgen: remove deprecated
+ compatibles
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +83,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250911-master-v1-3-5d5d5ea9af22@gmail.com>
+Message-Id: <20250911-master-v1-4-5d5d5ea9af22@gmail.com>
 References: <20250911-master-v1-0-5d5d5ea9af22@gmail.com>
 In-Reply-To: <20250911-master-v1-0-5d5d5ea9af22@gmail.com>
 To: Patrice Chotard <partice.chotard@foss.st.com>, 
@@ -94,155 +95,49 @@ To: Patrice Chotard <partice.chotard@foss.st.com>,
 Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
  devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4682; i=rgallaispou@gmail.com;
- h=from:subject:message-id; bh=hTnvvxl+lyL52rYp9D+lJFkBieFPMCtFihiRlKLamkE=;
- b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBowvuMbY1OQnXPxpMBncePehdQ10L+g/H6JEtbv
- Llk2v7/cUOJAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaML7jAAKCRDnIYpo1BLC
- tYd6D/9CeOdaET0JgwgX5keygapOzB//kV385w0P358vyQ7CnF1H+k4iUSrwV7zb2vA+j7t9Qyt
- 9DNzrNmJA6JyBx26lu14UFwHl8muLg6QGp58YPd6hrU1+49CrQLwX5b9P86dAJ/gJvYJzhdJCkM
- LPy87Iy4LI2TUpaerZIccGhQYG4MtKb9t49GTHptLwcBY7MC5ZCooeoifzhPlUXXmVXlqNGdQLK
- rK/z4UCUHXtr3zU0GkOmgpDxV6zwIU98mUpv927D1C0n9LVUabX5v09fj1tAGTEedfo3RCfUftR
- FnsBGg4Uop/ay2M3HWnT+Gjih+Mg74t/emauYRKQhxMUoyTxhrL1zWccuwISxjti2775niY/mro
- X4helvzgrfuqBv0oCJpzgAIyYaTrE3af/9HZi9Sn9slkSSx/jRPi7efKoCQGAt9Jm3vjnVkn3Tp
- GjA68iEz7cs3brDE7bb/QYt6xLpFF4qyyjujDiwlUX1GK6qZ+Kyr0UxisxsP8D3iIJNUQuQmbJl
- RC/knn3+z1oBonq6eDiJZGQrnw484UByKsOmWVDE+MUS/1hNDucQSJ6Hv7kSYQ7vS7zaVBUGB2g
- fIbrxcsoZRUEYF+ZwEkPC10uhCL131HE694p/5tNRRR47iQot/b/c1UQ40gQ8s2gMFzLeDBvSci
- GsnhcVm0C+5Kjsg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1176; i=rgallaispou@gmail.com;
+ h=from:subject:message-id; bh=RPBQwPNuYyYtQUtZ2JZFYIKb6yx1lRSpbGv4ihtUNa0=;
+ b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBowvuMhoMAqyg4f7fuJzIMrdJHVjiH3Pjtk3Qyt
+ 6C1PmXFFlmJAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaML7jAAKCRDnIYpo1BLC
+ tcXuEACV0LaWPJcYAtrzhR+HUM1hlanPrthmPqzH1P5CP1R8qHkOgPC1Je5dJ6GbZ6ww3m7LWSu
+ qnVmynGir6SfQSjeGy8BxOW2QtF5hACVCtxbj99E2Y6CME8TN189WQA5sKh+hZ552OVE4HydKmm
+ 5X/FsBHjTMfGEUVYt94jgMWOu9ZdRTrbljkPeZFBcHxn9DXqSXrVsFByeXVYy0R6qyzQKzBuHCy
+ DpsVZlkzBpsmKc0rhOEkW6dXcxHBcW8ZSaiY4A6V7zJx0CU0HZXGa37e6A3OHMk7NzdvVdsHOt9
+ wUZzXrOb5neMOR0uvKyUI+huOqaX8e60KPSG9gdPlMZ38EeCtRy9EYjEm9GFPVLf2LMpmfCBJ3a
+ RzTtxg6ZWLVI52hhCjWI1KpUD1X7nXF7ziGedtfbQbbouMTyGIwkM/L13iVwfFzEDBYfSOrtp6R
+ Tqan0wj4eJEdbfg0j/wT8LyOWkxN8II7NGrBb1DVvE1jSjJJZpYKAPYPJDjtsCUepOMk5vRDfe0
+ T1fbWm1oJCAvLiZaV8Ber7aWciZJOjMyicInGQCLWCfkex1jSvVa/bMbzsxpRFmS61I4gtqfgbK
+ Exh/tNbOonAl+n44/6BWPBDNKSESBaEV/b5V3pFUfLxI4QTDzr8ijiKRJDMajmFHFdDCcpx/UQM
+ UxRer5rlsjPLcFQ==
 X-Developer-Key: i=rgallaispou@gmail.com; a=openpgp;
  fpr=20997BF613E7EF6D5FFDBA2FE7218A68D412C2B5
 
-Following B2120 boards removal in commit dee546e1adef ("ARM: sti: drop
-B2120 board support"), several compatibles are left unused.  Remove
-them.
+st/stih407-clock.dtsi file has been removed in commit 65322c1daf51
+("clk: st: flexgen: remove unused compatible").  This file has three
+compatibles which are now dangling.  Remove them from documentation.
 
 Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
 ---
- drivers/clk/st/clk-flexgen.c | 80 --------------------------------------------
- 1 file changed, 80 deletions(-)
+ Documentation/devicetree/bindings/clock/st/st,flexgen.txt | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index 5292208c4dd8b45edfe7c2722e934dd0299c6d34..e8e7626c76db06b2255908a6658bca1f42600c85 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -303,16 +303,6 @@ static const struct clkgen_data clkgen_video = {
- 	.mode = 1,
- };
- 
--static const struct clkgen_clk_out clkgen_stih407_a0_clk_out[] = {
--	/* This clk needs to be on so that memory interface is accessible */
--	{ .name = "clk-ic-lmi0", .flags = CLK_IS_CRITICAL },
--};
--
--static const struct clkgen_data clkgen_stih407_a0 = {
--	.outputs = clkgen_stih407_a0_clk_out,
--	.outputs_nb = ARRAY_SIZE(clkgen_stih407_a0_clk_out),
--};
--
- static const struct clkgen_clk_out clkgen_stih410_a0_clk_out[] = {
- 	/* Those clks need to be on so that memory interface is accessible */
- 	{ .name = "clk-ic-lmi0", .flags = CLK_IS_CRITICAL },
-@@ -324,51 +314,6 @@ static const struct clkgen_data clkgen_stih410_a0 = {
- 	.outputs_nb = ARRAY_SIZE(clkgen_stih410_a0_clk_out),
- };
- 
--static const struct clkgen_clk_out clkgen_stih407_c0_clk_out[] = {
--	{ .name = "clk-icn-gpu", },
--	{ .name = "clk-fdma", },
--	{ .name = "clk-nand", },
--	{ .name = "clk-hva", },
--	{ .name = "clk-proc-stfe", },
--	{ .name = "clk-proc-tp", },
--	{ .name = "clk-rx-icn-dmu", },
--	{ .name = "clk-rx-icn-hva", },
--	/* This clk needs to be on to keep bus interconnect alive */
--	{ .name = "clk-icn-cpu", .flags = CLK_IS_CRITICAL },
--	/* This clk needs to be on to keep bus interconnect alive */
--	{ .name = "clk-tx-icn-dmu", .flags = CLK_IS_CRITICAL },
--	{ .name = "clk-mmc-0", },
--	{ .name = "clk-mmc-1", },
--	{ .name = "clk-jpegdec", },
--	/* This clk needs to be on to keep A9 running */
--	{ .name = "clk-ext2fa9", .flags = CLK_IS_CRITICAL },
--	{ .name = "clk-ic-bdisp-0", },
--	{ .name = "clk-ic-bdisp-1", },
--	{ .name = "clk-pp-dmu", },
--	{ .name = "clk-vid-dmu", },
--	{ .name = "clk-dss-lpc", },
--	{ .name = "clk-st231-aud-0", },
--	{ .name = "clk-st231-gp-1", },
--	{ .name = "clk-st231-dmu", },
--	/* This clk needs to be on to keep bus interconnect alive */
--	{ .name = "clk-icn-lmi", .flags = CLK_IS_CRITICAL },
--	{ .name = "clk-tx-icn-disp-1", },
--	/* This clk needs to be on to keep bus interconnect alive */
--	{ .name = "clk-icn-sbc", .flags = CLK_IS_CRITICAL },
--	{ .name = "clk-stfe-frc2", },
--	{ .name = "clk-eth-phy", },
--	{ .name = "clk-eth-ref-phyclk", },
--	{ .name = "clk-flash-promip", },
--	{ .name = "clk-main-disp", },
--	{ .name = "clk-aux-disp", },
--	{ .name = "clk-compo-dvp", },
--};
--
--static const struct clkgen_data clkgen_stih407_c0 = {
--	.outputs = clkgen_stih407_c0_clk_out,
--	.outputs_nb = ARRAY_SIZE(clkgen_stih407_c0_clk_out),
--};
--
- static const struct clkgen_clk_out clkgen_stih410_c0_clk_out[] = {
- 	{ .name = "clk-icn-gpu", },
- 	{ .name = "clk-fdma", },
-@@ -482,19 +427,6 @@ static const struct clkgen_data clkgen_stih418_c0 = {
- 	.outputs_nb = ARRAY_SIZE(clkgen_stih418_c0_clk_out),
- };
- 
--static const struct clkgen_clk_out clkgen_stih407_d0_clk_out[] = {
--	{ .name = "clk-pcm-0", },
--	{ .name = "clk-pcm-1", },
--	{ .name = "clk-pcm-2", },
--	{ .name = "clk-spdiff", },
--};
--
--static const struct clkgen_data clkgen_stih407_d0 = {
--	.flags = CLK_SET_RATE_PARENT,
--	.outputs = clkgen_stih407_d0_clk_out,
--	.outputs_nb = ARRAY_SIZE(clkgen_stih407_d0_clk_out),
--};
--
- static const struct clkgen_clk_out clkgen_stih410_d0_clk_out[] = {
- 	{ .name = "clk-pcm-0", },
- 	{ .name = "clk-pcm-1", },
-@@ -596,18 +528,10 @@ static const struct of_device_id flexgen_of_match[] = {
- 		.compatible = "st,flexgen-video",
- 		.data = &clkgen_video,
- 	},
--	{
--		.compatible = "st,flexgen-stih407-a0",
--		.data = &clkgen_stih407_a0,
--	},
- 	{
- 		.compatible = "st,flexgen-stih410-a0",
- 		.data = &clkgen_stih410_a0,
- 	},
--	{
--		.compatible = "st,flexgen-stih407-c0",
--		.data = &clkgen_stih407_c0,
--	},
- 	{
- 		.compatible = "st,flexgen-stih410-c0",
- 		.data = &clkgen_stih410_c0,
-@@ -616,10 +540,6 @@ static const struct of_device_id flexgen_of_match[] = {
- 		.compatible = "st,flexgen-stih418-c0",
- 		.data = &clkgen_stih418_c0,
- 	},
--	{
--		.compatible = "st,flexgen-stih407-d0",
--		.data = &clkgen_stih407_d0,
--	},
- 	{
- 		.compatible = "st,flexgen-stih410-d0",
- 		.data = &clkgen_stih410_d0,
+diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+index c918075405babb99a8f930f4a4430f57269417af..a9d1c19f30a3366c2ec86b6fe84e412b4b41ea56 100644
+--- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
++++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
+@@ -64,12 +64,9 @@ Required properties:
+   audio use case)
+   "st,flexgen-video", "st,flexgen" (enable clock propagation on parent
+ 					and activate synchronous mode)
+-  "st,flexgen-stih407-a0"
+   "st,flexgen-stih410-a0"
+-  "st,flexgen-stih407-c0"
+   "st,flexgen-stih410-c0"
+   "st,flexgen-stih418-c0"
+-  "st,flexgen-stih407-d0"
+   "st,flexgen-stih410-d0"
+   "st,flexgen-stih407-d2"
+   "st,flexgen-stih418-d2"
 
 -- 
 2.51.0
