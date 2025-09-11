@@ -1,133 +1,139 @@
-Return-Path: <linux-kernel+bounces-811638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79098B52BE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:37:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7958B52BE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3356F3AEEF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730161C83D40
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB332E5405;
-	Thu, 11 Sep 2025 08:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF0A2E5B36;
+	Thu, 11 Sep 2025 08:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LZll/icZ"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="onzkfL6g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C9D2E2F04
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD8CE2E283A;
+	Thu, 11 Sep 2025 08:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757579838; cv=none; b=lJzvEIOn8BmASuCNFvTz2W2tL77XLA2pjG/OGc2iglbuM3+7HW9oMv+bfF11AE3Q//rJldJLLbxCf3bgvqlab12/V/G2fD3OeNECVoocJ12A2R7r3ot99UJzmJlKPmlMsevShDubZ4fl9Q5L16rRjr8XLlt7GwoU6ey9C/vAMFU=
+	t=1757579842; cv=none; b=FtrsK2R115sCsPiu2rx649zJ2b5g6Qsbot4lOKgeenWjLUtKBhyU6RBeZDGOdBVflkQZkWVF2z9qLZOLqasrBH6FmeDFXqp+fRqjGOS090ydHTkpn4W+UYgNHAc/V6BX959z2HjN5xZMrbYmTv4GLrGfxXoZYrwfdduM8n/1z6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757579838; c=relaxed/simple;
-	bh=dXdheL8JephKYsdZVZ5VzVXsD0ljrqlK8eaSDZXPjes=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=CUxHpHisoL+IvKqphXbzU3jT/AIf0VNrYIWWKPzqimVclq/BzepTfrNNsRTRbuom+hyYVP5NIjw07yuJ0oMB+ZeuU/zlWOP1KUB+exFlnKFo2S2ivIVIdOZ4VgVocEw86qZolj0xi/JYrcOPD3Zif15H4xk7nUTFUq61AmCYq1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LZll/icZ; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b523fb676efso396156a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757579836; x=1758184636; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XlHLF6IxLX265PKrXSfqim3Osu2zErg+VtcQhos8Amk=;
-        b=LZll/icZ5VjvpnBEzb29UzebmcBqQssZq7pjCRL7oBISsR7v6SCCjNrrcYWA+N3nK9
-         P//u/BClj+MY7Nl7OXFnRn+tq3j8jCH2z0sSaX70MCT7lYP/x8Z/wGgpg5f27iE/W+dq
-         ujeEtLnToPnOP+ahq+FfrmbnFn2AsBAc5EugHySO1DTNOJdWO71hWIHARCzZkIPsGd2t
-         P9viFuOWg2Qn7WveBB4VL24TccMzdmMwF3TgR45OsJW83dq2hMJtkzWOLVoqZEXyjEgd
-         vrimvUYebj+cPkiJnIMMjiA7LdlExSzIvQh7ER+hG4JBBLF9m9DIbXTTxIzBiTHA3vZD
-         9pvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757579836; x=1758184636;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XlHLF6IxLX265PKrXSfqim3Osu2zErg+VtcQhos8Amk=;
-        b=cEUnJzdI9CxWysmiz5rkqROmglOVz1200nrCWGlEk7ICXub4+NgQaNHBHk3UPU1aOx
-         PO+kCyRRzxmybWEXhMj4EF5X1+1/5DDSOqcrZQIbYjmfSKwxG+ogFyfOnoTJESdWySkp
-         gvEyeyHJCqrqZIY29zrIqSmsa7DUPgCPXR8mgmSOflBLs+WdBqsTaV01OGahMb7ji5uw
-         ssZo6a9dVZA7OQHAIhOAN4Yhle/Nj4MqSBLm2r8AfIQrXq/qaDQAJllu5L/rJbP09btL
-         HZDAFvyep/MHTPtSMfa+v2h+t3EQN6gVtcp7I8HY8RpDxnhC5EUqxUu8rc8YEazqIM+6
-         /I6g==
-X-Gm-Message-State: AOJu0YwnTQelEiY+hA9H9h6JgwA7uXacnWze2PtYhjuCjNM63zHuLbl4
-	+2VM2A8x+4PlgG2yR8S1QJldLQmNrbivEIK5qzcm8O3vSzZ/GwVQowDPa8jP7fxj41vO/8NkzHO
-	qInFSNIqeaupcxp2kS4DHHw0XAxvOvL6S9ngo4MvTiKDJ/9tzUoFSBmw=
-X-Gm-Gg: ASbGnctctenlzGiSRGJ2Ve1cGu/RkTYQ5Cwf3xr/TK39mp+leieQI7CwNKaSxPSgPdG
-	QgNgRYBPnDA+HLRvp9/lwqwsLdcQykxgMjnkfdGDZbs7r2cRzikpkPCnNI39h+EZt2m6YU1Hmyf
-	toVIA+C7jpgfI+WmFIdGYBgjbF3+85QZ4pmvOCvTB4toJGlzBouKopy9SL2oLJvTt5NgRIk6E6A
-	/L6k2sE5ZnVt6hV4x59e890orvq8U3w+CBAoGbhcUSpLfOt/32D4pyZUIaJjzIQEl7blGfLkZ/I
-	mKEmhDI=
-X-Google-Smtp-Source: AGHT+IGR2+igFyrerQ3HlTU0fDr7FuwZJE+/EsvxJ0BM47OK3QyzESdHU/BATUPNXmekU8opkqkhhnxnT4KYCn47WJg=
-X-Received: by 2002:a17:903:230a:b0:24f:30dc:d3fe with SMTP id
- d9443c01a7336-25170e428f3mr249071415ad.29.1757579835668; Thu, 11 Sep 2025
- 01:37:15 -0700 (PDT)
+	s=arc-20240116; t=1757579842; c=relaxed/simple;
+	bh=XslGsUoupOrtKg0lfUcpg0DWyp4IyzJwG6qK2UD+EvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dbW6m0th6SUQWYGa6ebtXyyJliODSoqZLTFzohCj8VeaWDqqUggZTs0IG9EWh7vUWBuNcH27I5fU9wnxm9NGIIISeKJc8GN7g4ruEGeCqSBi3waGtOVo4bx9v82oy9NyAiVyvsfyBO2bUB7jzfl8wN1nbi83DE3uVlczAVET0EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=onzkfL6g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E4BC4CEF1;
+	Thu, 11 Sep 2025 08:37:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757579842;
+	bh=XslGsUoupOrtKg0lfUcpg0DWyp4IyzJwG6qK2UD+EvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=onzkfL6g4ORhBQHe5opjlNM4i/9UWLfnOlBcbo6tco7YIiVmFxoBXNzNlvZouFfhM
+	 cElFlnyK2WOHyP/Tf/ViME1lb6m2jIPpF/8y22493TMwBHxZgTFlKq13ZFrf/U3bjr
+	 gnlCTs9l2sHTZEsaoiT4R7IZ2Tdp9+IXckb1vcuY=
+Date: Thu, 11 Sep 2025 10:37:19 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: "Farber, Eliav" <farbere@amazon.com>
+Cc: "jesse.brandeburg@intel.com" <jesse.brandeburg@intel.com>,
+	"anthony.l.nguyen@intel.com" <anthony.l.nguyen@intel.com>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"vitaly.lifshits@intel.com" <vitaly.lifshits@intel.com>,
+	"post@mikaelkw.online" <post@mikaelkw.online>,
+	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"Chocron, Jonathan" <jonnyc@amazon.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH 5.10.y] e1000e: fix EEPROM length types for overflow
+ checks
+Message-ID: <2025091122-obsolete-earthen-8c9b@gregkh>
+References: <20250910173138.8307-1-farbere@amazon.com>
+ <2025091131-tractor-almost-6987@gregkh>
+ <f524c24888924a999c3bb90de0099b78@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 11 Sep 2025 14:07:04 +0530
-X-Gm-Features: AS18NWDVnn8cWFJt-IwGb3BydlPhAt8pRyLoCxHvXGT9gVTi8T47w_BuQztkQok
-Message-ID: <CA+G9fYtUi3bnZ2zycCot6KGeZcn67JAvz=wZm=6f2w9ZnL=0Uw@mail.gmail.com>
-Subject: next-20250911: mm/slub.c:3960:27: error: a function declaration
- without a prototype is deprecated in all versions of C void flush_all_rcu_sheaves()
-To: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, clang-built-linux <llvm@lists.linux.dev>, 
-	linux-mm <linux-mm@kvack.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Ben Copeland <benjamin.copeland@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f524c24888924a999c3bb90de0099b78@amazon.com>
 
-The following build warnings / errors noticed on aram arm64 defconfig
-with clang-20 and clang-nightly toolchains on the Linux next-20250911 tag.
+On Thu, Sep 11, 2025 at 06:13:33AM +0000, Farber, Eliav wrote:
+> > On Wed, Sep 10, 2025 at 05:31:38PM +0000, Eliav Farber wrote:
+> >> Fix a compilation failure when warnings are treated as errors:
+> >>
+> >> drivers/net/ethernet/intel/e1000e/ethtool.c: In function ‘e1000_set_eeprom’:
+> >> ./include/linux/overflow.h:71:15: error: comparison of distinct pointer types lacks a cast [-Werror]
+> >>    71 |  (void) (&__a == __d);   \
+> >>       |               ^~
+> >> drivers/net/ethernet/intel/e1000e/ethtool.c:582:6: note: in expansion of macro ‘check_add_overflow’
+> >>   582 |  if (check_add_overflow(eeprom->offset, eeprom->len, &total_len) ||
+> >>       |      ^~~~~~~~~~~~~~~~~~
+> >>
+> >> To fix this, change total_len and max_len from size_t to u32 in 
+> >> e1000_set_eeprom().
+> >> The check_add_overflow() helper requires that the first two operands 
+> >> and the pointer to the result (third operand) all have the same type.
+> >> On 64-bit builds, using size_t caused a mismatch with the u32 fields
+> >> eeprom->offset and eeprom->len, leading to type check failures.
+> >>
+> >> Fixes: ce8829d3d44b ("e1000e: fix heap overflow in e1000_set_eeprom")
+> >> Signed-off-by: Eliav Farber <farbere@amazon.com>
+> >> ---
+> >>  drivers/net/ethernet/intel/e1000e/ethtool.c | 2 +-
+> >>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/net/ethernet/intel/e1000e/ethtool.c 
+> >> b/drivers/net/ethernet/intel/e1000e/ethtool.c
+> >> index 4aca854783e2..584378291f3f 100644
+> >> --- a/drivers/net/ethernet/intel/e1000e/ethtool.c
+> >> +++ b/drivers/net/ethernet/intel/e1000e/ethtool.c
+> >> @@ -559,7 +559,7 @@ static int e1000_set_eeprom(struct net_device 
+> >> *netdev,  {
+> >>       struct e1000_adapter *adapter = netdev_priv(netdev);
+> >>       struct e1000_hw *hw = &adapter->hw;
+> >> -     size_t total_len, max_len;
+> >> +     u32 total_len, max_len;
+> >>       u16 *eeprom_buff;
+> >>       int ret_val = 0;
+> >>       int first_word;
+> >> --
+> >> 2.47.3
+> >>
+> >
+> > Why is this not needed in Linus's tree?
+> Kernel 5.10.243 enforces the same type, but this enforcement is
+> absent from 5.15.192 and later:
+> /*
+>  * For simplicity and code hygiene, the fallback code below insists on
+>  * a, b and *d having the same type (similar to the min() and max()
+>  * macros), whereas gcc's type-generic overflow checkers accept
+>  * different types. Hence we don't just make check_add_overflow an
+>  * alias for __builtin_add_overflow, but add type checks similar to
+>  * below.
+>  */
+> #define check_add_overflow(a, b, d) __must_check_overflow(({	\
 
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
+Yeah, the min() build warning mess is slowly propagating back to older
+kernels over time as we take these types of fixes backwards.  I count 3
+such new warnings in the new 5.10 release, not just this single one.
 
-Build regression: next-20250911: mm/slub.c:3960:27: error: a function
-declaration without a prototype is deprecated in all versions of C
-void flush_all_rcu_sheaves()
+Overall, how about fixing this up so it doesn't happen anymore by
+backporting the min() logic instead?  That should solve this build
+warning, and keep it from happening again in the future?  I did that for
+newer kernel branches, but never got around to it for these.
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+thanks,
 
-## Build log
-mm/slub.c:3960:27: error: a function declaration without a prototype
-is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
- 3960 | void flush_all_rcu_sheaves()
-      |                           ^
-      |                            void
-1 error generated.
-
-## Source
-* Kernel version: 6.17.0-rc5
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: 6.17.0-rc5-next-20250911
-* Git commit: 8f21d9da46702c4d6951ba60ca8a05f42870fe8f
-* Architectures: arm, arm64, i386,  mips, powerpc, riscv, s390
-* Toolchains: clang-20 and clang-nightly
-* clang: Debian clang version 20.1.8
-(++20250809043815+87f0227cb601-1~exp1~20250809163919.3)
-* Kconfigs: defconfig+lkftconfigs
-
-## Build
-* Build log: https://qa-reports.linaro.org/api/testruns/29853978/log_file/
-* Build details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250911/build/clang-20-defconfig/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/32XlFDtH7RdddaA6FHskupLDDSO
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32XlFDtH7RdddaA6FHskupLDDSO/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/32XlFDtH7RdddaA6FHskupLDDSO/config
-* Build log details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250911/log-parser-build-clang/clang-compiler-mm_slub_c-error-a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-c/
-
---
-Linaro LKFT
+greg k-h
 
