@@ -1,357 +1,126 @@
-Return-Path: <linux-kernel+bounces-811325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B560CB5277F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:15:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A28B5278A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BDB93ABECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE6417AF361
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5582225768;
-	Thu, 11 Sep 2025 04:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E638239E65;
+	Thu, 11 Sep 2025 04:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TTeUgwFO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fq73+69Q"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57BA329F24;
-	Thu, 11 Sep 2025 04:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D1521CC4B;
+	Thu, 11 Sep 2025 04:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757564131; cv=none; b=X5khx3B8GivecvI1K+SU5/itezmYk5xRVOyEsBtVkWVmxySoE6uYmL5rK1jU7kbr7B14vU7rX2yskzjrMgudzb2Q9hXLE+1Ly7SDeQJUGWS/PQ81ERGVpufagpmIuSMEYfvNLFz8LBrrLYBDH94q4hhermMVKPcqTmITaW1oCEM=
+	t=1757564736; cv=none; b=LlGagTzYiWgpa6KTE4tIt9BUcXow0a7hrBVGoHPtCyg/x5XE5YmErhQcyqDj7z6GCZkOhniPISISfPJjF6A4+fDhV0BfyR/caG1DTN+O/tR47JmYRhl97AYcDYfV2UNRKSYBUbWUqp2YjfRQk+/JWGqKgPI6DHDofiqR0vTzqjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757564131; c=relaxed/simple;
-	bh=pl5ztVqBzotyrP88+BDm0jks7M0I/AiqLdfl9ck2p/k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JdfAIolii6zrVKTMFoise2kp8bnL5wJGJoMZCz440ef2ZoyyfdnE8s70rnsZtm+n+7tw0JtxSheI2wr5+x1JwInpDMjEoO9vY+yv7QEJRZxhavMPX7aJs3Q45GgRshcrwBGHRzChfsqFrzl8mWl68MRY2/wzIXwS0LaSH1U401Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TTeUgwFO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2857C4CEF1;
-	Thu, 11 Sep 2025 04:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757564130;
-	bh=pl5ztVqBzotyrP88+BDm0jks7M0I/AiqLdfl9ck2p/k=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TTeUgwFOPtv3ZMu+mJOoPgDZN5SsYcBckCJNNhamVhbOuydkrvqjRH5zCQbd8Omaz
-	 0BmT7pB6ASwwowzocmtmLZCMAIOI+dBGPwINDh2XSHufQ4vs3zgaP04vyvEB0PXqrb
-	 snneQN7qUTxr7VrRnJ1lngRe3UARe9u8eJ1x/oDW7x4Idpf7si8M4e9qBAw6h/HVfG
-	 zxJ2zLd6eRk2leo7bKwn+X2gn+9x/Ix+bMHdr9Gq+6kiGuLKRMACBJM2CA/41AOPeU
-	 zmDVevDlfC7W77RYIW11dvDf9ESJ7cyTWAFkLDiO22C84vvqHNMFh3YI6ilckslNP7
-	 nE1NqLXMKJReQ==
-X-Mailer: emacs 30.2 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Arto Merilainen <amerilainen@nvidia.com>, dan.j.williams@intel.com
-Cc: linux-kernel@vger.kernel.org, bhelgaas@google.com, aik@amd.com,
-	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Yilun Xu <yilun.xu@linux.intel.com>, linux-pci@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [PATCH v4 07/10] PCI/IDE: Add IDE establishment helpers
-In-Reply-To: <yq5azfbjq2nf.fsf@kernel.org>
-References: <20250717183358.1332417-1-dan.j.williams@intel.com>
- <20250717183358.1332417-8-dan.j.williams@intel.com>
- <9683c850-3152-4da5-97f1-3e86ba39e8d3@nvidia.com>
- <6896333756c9f_184e1f100ef@dwillia2-xfh.jf.intel.com.notmuch>
- <21903f51-1ed0-41a4-a8c8-cfa78ce6093d@nvidia.com>
- <yq5azfbjq2nf.fsf@kernel.org>
-Date: Thu, 11 Sep 2025 09:45:22 +0530
-Message-ID: <yq5a1pod4obp.fsf@kernel.org>
+	s=arc-20240116; t=1757564736; c=relaxed/simple;
+	bh=gJnYOPzdo6ssOCrlDjCBTak4rNUDqYdeq+5rMBMORzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dqrC6i1oVgEOXrzf3crcsjUrJ6L64PxmM3RwNK0sUKf2CxbHrHCgKMXJ6azhvDXg412QN8blY87WSLbhScB2lyn4GZ/2IEfNorAJ5NBDoQ8QutckMMbfb25WRTO7WgDSJQ0R9hZawnNtCwH1qjGDD48SPn2BbsP/Q3X3+el2mVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fq73+69Q; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b4d4881897cso232910a12.0;
+        Wed, 10 Sep 2025 21:25:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757564734; x=1758169534; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lXf+831GAW4XGMdB/fNW4pX/VnlQwGVpdh2Lw4++Nqw=;
+        b=fq73+69QrkN2ydVehUFkdF3Zt0jGhUjPNBXih5Y15Cn5rJC1yKhhdSG191zwy01Rzz
+         +G7Ywz2isJ5wtPtb2C1mS0DGNQyfWbnggzyemUaHZI0eZYl+Ns9oM9zqJXRNcHyoUl7H
+         YFnYdsNMJOm90BOXNTQ/jJoN1PAMoWTz5pRb+NXkkLE40bM1XicxkqyLWgZbIk7R77cQ
+         FpBoZ39iQDk7eHGGR2oywdlxHsDasAYcCmE+CBqBMDHd/7TVerWcwgsVyNx2YId2H0Z3
+         866YLbsPD/fijmGHgq9/BqOxje3b9Kbaks/NDttReg5KOA6w3QJt7YuziQ6KCkOXLgKO
+         mwtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757564734; x=1758169534;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lXf+831GAW4XGMdB/fNW4pX/VnlQwGVpdh2Lw4++Nqw=;
+        b=QIDVBTCWXas8XyR0DMY5ITJN4XA15de8y8fSjAP3uE0vTt6elwJZhuqyaSVS9Zg621
+         7RTGdY2bOMJouV4FR57nsHfiYbhH99i8QQtgFClSkKW5dglVCtB8dhYXGWnDf4KD7/rm
+         3Bju/PX2VEgPjox2t2vqeLyNWJ2A6dBan/oJ3vKmEcMejuVAjQ35eFG7wzfUHlgsj4yJ
+         FKX0orstXQEHQpfZm3+3XE1TY3j76DVQxhScjQ6O4/WJ6YZiLZn9wGfjdthfk4v+MbR7
+         e5X1Fnnfwg8tY92h36fNv3lyw1N1i7bJGSWwf3x3e7H4bI0mxVvYsfByUJGlyORyJJu4
+         7LIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTDhdKYF6Tm3fx3Y7WtQzAJj8WAGRs922e9WWFeiDlSbxOhg3ezcDzULK5flED1t1gi8XQb3qxLqk=@vger.kernel.org, AJvYcCUnh7xS6Py1ZTfVW+4352KSH/npS1/ug3E34AJMDAxCgY3j+5W4ihRfbeSCnBoPPL2mp+4/3wAt79JPTwjrblQRhjRh@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw30+3lUZv48P4aVuagvYMfhFThTMAaRIbYEpXPNbw9PI1WEd+O
+	W16nezOINsEThiIf4vlb206QUb6cXK0j3o25t2fboYqx9pV3uKMYKYfIZPGgLTOj
+X-Gm-Gg: ASbGncuuyDKpisM1vbAEIEYza5plfSEtKmaO3Thdv+oIwrOtBkCemXI290RRQY88kp3
+	od3ej/aJMVRg9C7Bqq8X9EUg0APoMy8eTGR+BR2hzXvb7Buu/SseNOCI1o6K/DPXWk6XC0vLeUs
+	v54zGK/DZY+Asja735pmGzGL7WQTVWbcXY9erImzRZ3XK2VtWxj3UVOz5w1NplSpMG/lpGrc9Te
+	0jaJtO1dO/qfqUcrQvrPASRHgqoTHKR4x7dNtd1wXCwc1cYQ8ejM9ggINNQKkWBW4RUkIXOqfmQ
+	ycwhoLzHyVuFqxIjHdiWOWtO39g8rqCuGS0+xZxY2QNRiu9COhVTVCN2lCs4JfGUQGtUAdDhxNE
+	7acncCi3a6JPG44QPFdK2FVTjc6bvEseLQ7ry
+X-Google-Smtp-Source: AGHT+IGC5MjRF/MqVca5PsMuyiyvNqgxC0kBEDkCSVAEXCwvU23v1minb2qLF2nJcMycaftAPbk8ug==
+X-Received: by 2002:a17:902:d2c4:b0:24c:965a:f97e with SMTP id d9443c01a7336-2516f05008amr231038125ad.2.1757564733891;
+        Wed, 10 Sep 2025 21:25:33 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3ab4345csm4106115ad.96.2025.09.10.21.25.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Sep 2025 21:25:32 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 38EE3420A6BE; Thu, 11 Sep 2025 11:25:30 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Tracing <linux-trace-kernel@vger.kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Tom Zanussi <zanussi@kernel.org>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 0/5] histogram docs formatting cleanup
+Date: Thu, 11 Sep 2025 11:25:22 +0700
+Message-ID: <20250911042527.22573-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Developer-Signature: v=1; a=openpgp-sha256; l=904; i=bagasdotme@gmail.com; h=from:subject; bh=gJnYOPzdo6ssOCrlDjCBTak4rNUDqYdeq+5rMBMORzw=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmH/E4/ts+eNbn63tqFX6xzzpc1cOrNmBg3dcZrtZBzj /Om7zpo11HKwiDGxSArpsgyKZGv6fQuI5EL7WsdYeawMoEMYeDiFICJ7NzF8D82nm3d9bdLXSTm XnwiVix4i9uu03+zvNue456K109mPH3HyHA+c5V5dNTVdbODk7pezOZulZ21etnPNarn5yioP32 kM5EBAA==
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-Aneesh Kumar K.V <aneesh.kumar@kernel.org> writes:
+Hi,
 
-> Arto Merilainen <amerilainen@nvidia.com> writes:
->
->> On 8.8.2025 20.26, dan.j.williams@intel.com wrote:
->>> Arto Merilainen wrote:
->>>> The first revision of this patch had address association register
->>>> programming but it has since been removed. Could you comment if there is
->>>> a reason for this change?
->>> 
->>> We chatted about it around this point in the original review thread [1].
->>> tl;dr SEV-TIO and TDX Connect did not see a strict need for it. However,
->>> the expectation was always to circle back and revive it if it turned out
->>> later to be required.
->>
->> Thank you for the reference. I suppose it is ok to rely on the default 
->> streams on the first iteration, and add a follow-up patch in the ARM CCA 
->> device assignment support series in case it is the only architecture 
->> that depends on them.
->>
->>> 
->>>> Some background: This might be problematic for ARM CCA. I recall seeing
->>>> a comment stating that the address association register programming can
->>>> be skipped on some architectures (e.g., apparently AMD uses a separate
->>>> table that contains the StreamID) but on ARM CCA the StreamID
->>>> association AFAIK happens through these registers.
->>> 
->>> Can you confirm and perhaps work with Aneesh to propose an incremental
->>> patch to add that support back? It might be something that we let the
->>> low level TSM driver control. Like an additional address association
->>> object that can be attached to 'struct pci_ide' by the low level TSM
->>> driver.
->>
->> Aneesh, could you perhaps extend the IDE driver by adding the RP address 
->> association register programming in the next revision of the DA support 
->> series?
->>
->
-> Sure, I can add that change as part of next update. 
->
+Here's a formatting assortment for trace histogram docs. The shortlog
+below should be self-explanatory.
 
-This is the change I am adding
+Enjoy!
 
- drivers/pci/ide.c                        | 128 ++++++++++++++++++++++-
- drivers/virt/coco/arm-cca-host/arm-cca.c |  13 +++
- include/linux/pci-ide.h                  |   7 ++
- 3 files changed, 147 insertions(+), 1 deletion(-)
+Bagas Sanjaya (5):
+  Documentation: trace: histogram: Fix histogram trigger subsection
+    number order
+  Documentation: trace: histogram-design: Trim trailing vertices in
+    diagram explanation text
+  Documentation: trace: historgram-design: Separate sched_waking
+    histogram section heading and the following diagram
+  Documentation: trace: histogram-design: Wrap introductory note in
+    note:: directive
+  Documentation: trace: histogram: Link to ftrace docs
 
-diff --git a/drivers/pci/ide.c b/drivers/pci/ide.c
-index 3f772979eacb..23d1712ba97a 100644
---- a/drivers/pci/ide.c
-+++ b/drivers/pci/ide.c
-@@ -101,7 +101,7 @@ void pci_ide_init(struct pci_dev *pdev)
- 	pdev->ide_cap = ide_cap;
- 	pdev->nr_link_ide = nr_link_ide;
- 	pdev->nr_sel_ide = nr_streams;
--	pdev->nr_ide_mem = nr_ide_mem;
-+	pdev->nr_ide_mem = min(nr_ide_mem, PCI_IDE_AASOC_REG_MAX);
- }
- 
- struct stream_index {
-@@ -213,11 +213,13 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
- 				.rid_start = pci_dev_id(rp),
- 				.rid_end = pci_dev_id(rp),
- 				.stream_index = no_free_ptr(ep_stream)->stream_index,
-+				.nr_mem = 0,
- 			},
- 			[PCI_IDE_RP] = {
- 				.rid_start = pci_dev_id(pdev),
- 				.rid_end = rid_end,
- 				.stream_index = no_free_ptr(rp_stream)->stream_index,
-+				.nr_mem = 0,
- 			},
- 		},
- 		.host_bridge_stream = no_free_ptr(hb_stream)->stream_index,
-@@ -228,6 +230,109 @@ struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev)
- }
- EXPORT_SYMBOL_GPL(pci_ide_stream_alloc);
- 
-+static int add_range_merge_overlap(struct range *range, int az, int nr_range,
-+				   u64 start, u64 end)
-+{
-+	int i;
-+
-+	if (start >= end)
-+		return nr_range;
-+
-+	/* get new start/end: */
-+	for (i = 0; i < nr_range; i++) {
-+
-+		if (!range[i].end)
-+			continue;
-+
-+		/* Try to add to the end */
-+		if (range[i].end + 1 == start) {
-+			range[i].end = end;
-+			return nr_range;
-+		}
-+
-+		/* Try to add to the start */
-+		if (range[i].start == end + 1) {
-+			range[i].start = start;
-+			return nr_range;
-+		}
-+	}
-+
-+	/* Need to add it: */
-+	return add_range(range, az, nr_range, start, end);
-+}
-+
-+int pci_ide_add_address_assoc_block(struct pci_dev *pdev,
-+				    struct pci_ide *ide,
-+				    u64 start, u64 end)
-+{
-+	struct pci_ide_partner *partner;
-+
-+	if (!pci_is_pcie(pdev)) {
-+		pci_warn_once(pdev, "not a PCIe device\n");
-+		return -EINVAL;
-+	}
-+
-+	switch (pci_pcie_type(pdev)) {
-+	case PCI_EXP_TYPE_ENDPOINT:
-+
-+		if (pdev != ide->pdev)
-+			return -EINVAL;
-+		partner = &ide->partner[PCI_IDE_RP];
-+		break;
-+	default:
-+		pci_warn_once(pdev, "invalid device type\n");
-+		return -EINVAL;
-+	}
-+
-+	if (partner->nr_mem >= pdev->nr_ide_mem)
-+		return -ENOMEM;
-+
-+	partner->nr_mem = add_range_merge_overlap(partner->mem,
-+					   PCI_IDE_AASOC_REG_MAX, partner->nr_mem,
-+					   start, end);
-+	return 0;
-+}
-+
-+
-+int pci_ide_merge_address_assoc_block(struct pci_dev *pdev,
-+				      struct pci_ide *ide, u64 start, u64 end)
-+{
-+	struct pci_ide_partner *partner;
-+
-+	if (!pci_is_pcie(pdev)) {
-+		pci_warn_once(pdev, "not a PCIe device\n");
-+		return -EINVAL;
-+	}
-+
-+	switch (pci_pcie_type(pdev)) {
-+	case PCI_EXP_TYPE_ENDPOINT:
-+
-+		if (pdev != ide->pdev)
-+			return -EINVAL;
-+		partner = &ide->partner[PCI_IDE_RP];
-+		break;
-+	default:
-+		pci_warn_once(pdev, "invalid device type\n");
-+		return -EINVAL;
-+	}
-+
-+	for (int i = 0; i < PCI_IDE_AASOC_REG_MAX; i++) {
-+		struct range *r = &partner->mem[i];
-+
-+		if (r->start < start)
-+			start = r->start;
-+		if (r->end > end)
-+			end = r->end;
-+		r->start = 0;
-+		r->end = 0;
-+	}
-+	partner->mem[0].start = start;
-+	partner->mem[0].end = end;
-+	partner->nr_mem = 1;
-+
-+	return 0;
-+}
-+
- /**
-  * pci_ide_stream_free() - unwind pci_ide_stream_alloc()
-  * @ide: idle IDE settings descriptor
-@@ -424,6 +529,21 @@ void pci_ide_stream_setup(struct pci_dev *pdev, struct pci_ide *ide)
- 
- 	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_2, val);
- 
-+	for (int i = 0; i < settings->nr_mem; i++) {
-+		val = FIELD_PREP(PCI_IDE_SEL_ADDR_1_VALID, 1) |
-+			FIELD_PREP(PCI_IDE_SEL_ADDR_1_BASE_LOW,
-+				   lower_32_bits(settings->mem[i].start)) |
-+			FIELD_PREP(PCI_IDE_SEL_ADDR_1_LIMIT_LOW,
-+				   lower_32_bits(settings->mem[i].end));
-+		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_1(i), val);
-+
-+		val = upper_32_bits(settings->mem[i].end);
-+		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_2(i), val);
-+
-+		val = upper_32_bits(settings->mem[i].start);
-+		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_3(i), val);
-+	}
-+
- 	/*
- 	 * Setup control register early for devices that expect
- 	 * stream_id is set during key programming.
-@@ -453,6 +573,12 @@ void pci_ide_stream_teardown(struct pci_dev *pdev, struct pci_ide *ide)
- 	pos = sel_ide_offset(pdev, settings);
- 
- 	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_CTL, 0);
-+	for (int i = settings->nr_mem - 1; i >= 0; i--) {
-+		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_3(i), 0);
-+		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_2(i), 0);
-+		pci_write_config_dword(pdev, pos + PCI_IDE_SEL_ADDR_1(i), 0);
-+	}
-+
- 	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_2, 0);
- 	pci_write_config_dword(pdev, pos + PCI_IDE_SEL_RID_1, 0);
- 	settings->setup = 0;
-diff --git a/drivers/virt/coco/arm-cca-host/arm-cca.c b/drivers/virt/coco/arm-cca-host/arm-cca.c
-index c9717698af56..28993f9277e4 100644
---- a/drivers/virt/coco/arm-cca-host/arm-cca.c
-+++ b/drivers/virt/coco/arm-cca-host/arm-cca.c
-@@ -137,6 +137,7 @@ static int cca_tsm_connect(struct pci_dev *pdev)
- {
- 	struct pci_dev *rp = pcie_find_root_port(pdev);
- 	struct cca_host_pf0_dsc *dsc_pf0;
-+	struct resource *res;
- 	struct pci_ide *ide;
- 	int rc, stream_id;
- 
-@@ -163,9 +164,21 @@ static int cca_tsm_connect(struct pci_dev *pdev)
- 	if (rc)
- 		goto err_stream;
- 
-+	/*
-+	 * Try to use the available address assoc register blocks.
-+	 * If we fail with ENOMEM, create one block covering the entire
-+	 * address range. (Should work for arm64)
-+	 */
-+	pci_dev_for_each_resource(pdev, res) {
-+		rc = pci_ide_add_address_assoc_block(pdev, ide, res->start, res->end);
-+		if (rc == -ENOMEM)
-+			pci_ide_merge_address_assoc_block(pdev, ide, res->start, res->end);
-+	}
-+
- 	pci_ide_stream_setup(pdev, ide);
- 	pci_ide_stream_setup(rp, ide);
- 
-+
- 	rc = tsm_ide_stream_register(ide);
- 	if (rc)
- 		goto err_tsm;
-diff --git a/include/linux/pci-ide.h b/include/linux/pci-ide.h
-index c3838d11af88..3d4f7f462a8d 100644
---- a/include/linux/pci-ide.h
-+++ b/include/linux/pci-ide.h
-@@ -19,6 +19,7 @@ enum pci_ide_partner_select {
- 	PCI_IDE_HB = PCI_IDE_PARTNER_MAX,
- };
- 
-+#define PCI_IDE_AASOC_REG_MAX	6
- /**
-  * struct pci_ide_partner - Per port pair Selective IDE Stream settings
-  * @rid_start: Partner Port Requester ID range start
-@@ -34,6 +35,8 @@ struct pci_ide_partner {
- 	u8 stream_index;
- 	unsigned int setup:1;
- 	unsigned int enable:1;
-+	int nr_mem;
-+	struct range mem[PCI_IDE_AASOC_REG_MAX];
- };
- 
- /**
-@@ -60,6 +63,10 @@ struct pci_ide {
- 
- struct pci_ide_partner *pci_ide_to_settings(struct pci_dev *pdev, struct pci_ide *ide);
- struct pci_ide *pci_ide_stream_alloc(struct pci_dev *pdev);
-+int pci_ide_add_address_assoc_block(struct pci_dev *pdev,
-+				    struct pci_ide *ide, u64 start, u64 end);
-+int pci_ide_merge_address_assoc_block(struct pci_dev *pdev,
-+				      struct pci_ide *ide, u64 start, u64 end);
- void pci_ide_stream_free(struct pci_ide *ide);
- int  pci_ide_stream_register(struct pci_ide *ide);
- void pci_ide_stream_unregister(struct pci_ide *ide);
+ Documentation/trace/histogram-design.rst | 151 ++++++++++++-----------
+ Documentation/trace/histogram.rst        |  38 +++---
+ 2 files changed, 96 insertions(+), 93 deletions(-)
+
+
+base-commit: f44a29784f685804d9970cfb0d3439c9e30981d7
 -- 
-2.43.0
+An old man doll... just what I always wanted! - Clara
 
 
