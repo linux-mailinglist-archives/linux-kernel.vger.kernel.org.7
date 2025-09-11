@@ -1,188 +1,510 @@
-Return-Path: <linux-kernel+bounces-812738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A53B53C04
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:00:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B29B53C06
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F053B1F37
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:00:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5AFCAA58D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4C42257820;
-	Thu, 11 Sep 2025 19:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a4CJlwA6"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D56B254AE4;
+	Thu, 11 Sep 2025 19:00:50 +0000 (UTC)
+Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6E223F40D
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 19:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C8B2DC77C;
+	Thu, 11 Sep 2025 19:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757617213; cv=none; b=ZVL3E2GyWrQ4I28jwcFGNOXoG7jDOi8thm0J4trWkDG3MQXIkl4wyqZkK7Cg/A2bura5XV/Pwome3N2hO1V6ec6AqMbA2kPwkQ63K05uIXx1CS/rOKEM4/xmpKlfLPrBpmyf3QYugoMgTw0YGkyx1+2/x1wZx/Xy9PkvrTvuwso=
+	t=1757617249; cv=none; b=W5OHC/hv0J7jtlsZhHVzMs+M0eyCdBLe4228y80AMrbc4b51i7ioBmqAGFOhfF4i7IOo9nt91UETBCHisYXRlDPAUX05mq2Jpln6yZbpfFMe3vaVhambcuuHryCIZByWZbOl8CGLu3Mqe5pFdjCSmbOfypo5O5PnZIlD6JcJQR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757617213; c=relaxed/simple;
-	bh=jEuIH5ZZU/EeovpVRYUTQgyVitJw0q9Q0W9biAJS/lc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VIerG9V9KaTCPqaIFH9lNTt+CNwVgwMlxGSHKslkgd6Pri+mhjLt78MKmwt2sRi0D6yIE3YpRTOWXCAWgulTh6jo4tPJULX20FTvM+GixsEuJZmnJTeYimHI5oebndXxGutlgQi0U3aM8YN9Ph2IF/2QJ1FLPnLSP5Z8nhQXG4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a4CJlwA6; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-77264a94031so830669b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 12:00:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757617211; x=1758222011; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=03MaJ+6ytyPItqY2qyW/Ajcv1dYvzwe/SXOVragEWgY=;
-        b=a4CJlwA6VVy3uyYy7GblD9FTXrIHb3du8k7MPiIQOeNw7U7Du8t/SxkfXUsQal8lOQ
-         MMB5JeEk+CO+6xCxtVm/wtcQuyoyUWnF1TvGrcMcT5gHd25nitXVwmOMbdl1jhIoXYMl
-         tnwu3idsErMW9kh4uGukwd94ZIVr6mpIjvm9Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757617211; x=1758222011;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=03MaJ+6ytyPItqY2qyW/Ajcv1dYvzwe/SXOVragEWgY=;
-        b=UcUUOzI0AQL2M+nnjMSonzd4czjubN5lbTMA1IIhjbelQKDXtQlIjicjHNBTrlXpKt
-         V4oqX1vpTgufCj+8OOnejhDJB4LhmGNp5B4RIvsUp9hL/tY2jmU0887MIzvZg1bEONvO
-         0UOlm5ZdlFlaupC/dCFYKFX2mW1v97cL76OkTqeuf8SuqEPOrZuJEt2Xv2ix/CVdkLZR
-         m/oihkLGMp7oyZwqS+QZpFSpiiNjkkNVrqYFY1nm7xFWypCzQL5OYlpXjTY/23nJEPcX
-         7PKu0TboPXDF32Fz4qY4ujhpR+l2EcbJTvv2UxWPvJ87HwfRVUK45WOKfSZHmuUBW1m5
-         5aaw==
-X-Forwarded-Encrypted: i=1; AJvYcCVGCvlagK3yQPxYIe9ZoI9IIIzvldzayDCgwfQoejQnPS+5Vtqz88Esh/UcG9JREAMCXPDNrJcHMjNVG9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGjngJ7mq/QGsgCEF2mUU3qSykuemXabU3jBlIADjJxajfMZpV
-	abfESqzAiEt0pqAkuOPCZPFlHbhoU/2+UiFXhjTQKozUF1O+YsIWmqJJGF4l3RCznw==
-X-Gm-Gg: ASbGncvgQsWd2M94KjWAYVQysCHyei6QG1MvunYJ+Eu3mDNGVkAayMyemO2eC+Xm7sE
-	5YIxMmHQiRTyNv21Mzt022msvHCDsZ3C2l//jEIK7NFGIV1erOfV6yxJddD8PiSxhqbjSm56FJS
-	JAsgrmO2Y4yz53Ko+1XKZjS511NCUor8K8CLzrsJV+c/ONIG+JUapXoX5z/HIssgToj0VwWj7FE
-	8CUOMFtHjKwMNC5Ul3hk3x5eh0lIofiRuP/dl4j9VjsG8XLhVmza05bJUHllUI3jEPiLF2tDYlB
-	lW8nGhVeixFWCkyLLWoESNAarL9NlaExphwLjdQUqdR9qCbpq++AWG1Gz0466TJolmqw0uq/CDe
-	oGfJaIs4hYpWWElaeHyz8m7vUopufOEi4Ip2oKux8l9ilf11X+MQOkhR6UVJzDTVO4EkYMxBSdV
-	PSPzVC
-X-Google-Smtp-Source: AGHT+IF+E6MG4K4ru1HMLDWmmyjU/+acTljGFHni8hj8gJV4DBQdRTFv1WxeplPA7OnCTPEFvHrPHQ==
-X-Received: by 2002:a17:902:d592:b0:246:441f:f144 with SMTP id d9443c01a7336-25d27c2236fmr3853315ad.56.1757617209513;
-        Thu, 11 Sep 2025 12:00:09 -0700 (PDT)
-Received: from localhost ([2a00:79e0:2e14:7:6690:568:13de:b368])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-25c3b305427sm25200305ad.138.2025.09.11.12.00.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 12:00:08 -0700 (PDT)
-Date: Thu, 11 Sep 2025 12:00:06 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Georgi Djakov <djakov@kernel.org>,
-	Odelu Kukatla <quic_okukatla@quicinc.com>,
-	cros-qcom-dts-watchers@chromium.org,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sc7280: Drop aggre{1,2}_noc QOS
- clocks on Herobrine
-Message-ID: <aMMcNn82AmSavJYf@google.com>
-References: <20250825155557.v2.1.I018984907c1e6322cf4710bd1ce805580ed33261@changeid>
- <20250825155557.v2.2.Idebf1d8bd8ff507462fef9dc1ff47e84c01e9b60@changeid>
- <90b13660-1844-4701-8e63-7fde2f093db0@oss.qualcomm.com>
+	s=arc-20240116; t=1757617249; c=relaxed/simple;
+	bh=bfsMRE1n8bCmcMd24jI8o9ZdZ/6D3p7i3S2yV/v7qZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YNvULKHRzpTLNKblCu+WvM+ynMOaI4uKEpvnajJEuterjZ06QHQC0SZhZISp7mlpqVH3LDwYUFKE7xJ/KkBjTfnrVBz89m1BXVFOl+6xyUrnwP3TQ83INdbM9p9Je+GotG+zT3p0mliiydQ40LOc3z/5MgEySzbRSddX0Kc26Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
+Received: from MUA
+	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <mhej@vps-ovh.mhejs.net>)
+	id 1uwmX2-00000002drh-0A1a;
+	Thu, 11 Sep 2025 21:00:32 +0200
+Message-ID: <bddbbb71-fa9e-4998-940a-64e2f09977ba@maciej.szmigiero.name>
+Date: Thu, 11 Sep 2025 21:00:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <90b13660-1844-4701-8e63-7fde2f093db0@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] KVM: selftests: Test TPR / CR8 sync and interrupt
+ masking
+To: Naveen N Rao <naveen@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+ Sean Christopherson <seanjc@google.com>, Maxim Levitsky
+ <mlevitsk@redhat.com>, Suravee Suthikulpanit
+ <Suravee.Suthikulpanit@amd.com>,
+ Alejandro Jimenez <alejandro.j.jimenez@oracle.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1756139678.git.maciej.szmigiero@oracle.com>
+ <a5efbf76990d023c7cf21c5a4c170f4ad0234d85.1756139678.git.maciej.szmigiero@oracle.com>
+ <ck4k7g7pd77ojfptkp4yg6qz66queg2n6eo4o54ezhdbv4rvgn@mpuss5twpxhi>
+Content-Language: en-US, pl-PL
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Autocrypt: addr=mail@maciej.szmigiero.name; keydata=
+ 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
+Disposition-Notification-To: "Maciej S. Szmigiero"
+ <mail@maciej.szmigiero.name>
+In-Reply-To: <ck4k7g7pd77ojfptkp4yg6qz66queg2n6eo4o54ezhdbv4rvgn@mpuss5twpxhi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: mhej@vps-ovh.mhejs.net
 
-Hi Konrad,
-
-On Tue, Sep 02, 2025 at 02:02:15PM +0200, Konrad Dybcio wrote:
-> On 8/26/25 12:55 AM, Brian Norris wrote:
-> > Ever since these two commits
-> > 
-> >   fbd908bb8bc0 ("interconnect: qcom: sc7280: enable QoS configuration")
-> >   2b5004956aff ("arm64: dts: qcom: sc7280: Add clocks for QOS configuration")
-> > 
-> > Herobrine systems fail to boot due to crashes like the following:
-> > 
-> > [    0.243171] Kernel panic - not syncing: Asynchronous SError Interrupt
-> > [    0.243173] CPU: 7 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0 #1 c5464041cff584ced692726af2c4400fa2bde1db
-> > [    0.243178] Hardware name: Qualcomm Technologies, Inc. sc7280 CRD platform (rev5+) (DT)
-> > [    0.243180] Call trace:
-> > [    0.243182]  dump_backtrace+0x104/0x128
-> > [    0.243194]  show_stack+0x24/0x38
-> > [    0.243202]  __dump_stack+0x28/0x38
-> > [    0.243208]  dump_stack_lvl+0x28/0xb8
-> > [    0.243211]  dump_stack+0x18/0x30
-> > [    0.243215]  panic+0x134/0x340
-> > [    0.243219]  nmi_panic+0x48/0x98
-> > [    0.243227]  arm64_serror_panic+0x6c/0x80
-> > [    0.243245]  arm64_is_fatal_ras_serror+0xd8/0xe0
-> > [    0.243261]  do_serror+0x5c/0xa8
-> > [    0.243265]  el1h_64_error_handler+0x34/0x48
-> > [    0.243272]  el1h_64_error+0x7c/0x80
-> > [    0.243285]  regmap_mmio_read+0x5c/0xc0
-> > [    0.243289]  _regmap_bus_reg_read+0x78/0xf8
-> > [    0.243296]  regmap_update_bits_base+0xec/0x3a8
-> > [    0.243300]  qcom_icc_rpmh_probe+0x2d4/0x490
-> > [    0.243308]  platform_probe+0xb4/0xe0
-> > [...]
-> > 
-> > Specifically, they fail in qcom_icc_set_qos() when trying to write the
-> > QoS settings for qhm_qup1. Several of the previous nodes (qhm_qspi,
-> > qhm_qup0, ...) seem to configure without crashing.
-> > 
-> > We suspect that the TZ firmware on these devices does not expose QoS
-> > regions to Linux. The right solution here might involve deleting both
-> > 'clocks' and 'reg', but 'reg' would cause more problems. Linux is
-> > already OK with a missing 'clocks', since pre-2b5004956aff DTBs need to
-> > be supported, so we go with an easier solution.
+On 10.09.2025 15:33, Naveen N Rao wrote:
+> On Mon, Aug 25, 2025 at 06:44:29PM +0200, Maciej S. Szmigiero wrote:
+>> From: "Maciej S. Szmigiero" <maciej.szmigiero@oracle.com>
+>>
+>> Add a few extra TPR / CR8 tests to x86's xapic_state_test to see if:
+>> * TPR is 0 on reset,
+>> * TPR, PPR and CR8 are equal inside the guest,
+>> * TPR and CR8 read equal by the host after a VMExit
+>> * TPR borderline values set by the host correctly mask interrupts in the
+>> guest.
+>>
+>> These hopefully will catch the most obvious cases of improper TPR sync or
+>> interrupt masking.
+>>
+>> Do these tests both in x2APIC and xAPIC modes.
+>> The x2APIC mode uses SELF_IPI register to trigger interrupts to give it a
+>> bit of exercise too.
+>>
+>> Signed-off-by: Maciej S. Szmigiero <maciej.szmigiero@oracle.com>
+>> ---
+>>   .../testing/selftests/kvm/include/x86/apic.h  |   5 +
+>>   .../selftests/kvm/x86/xapic_state_test.c      | 265 +++++++++++++++++-
+>>   2 files changed, 267 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/kvm/include/x86/apic.h b/tools/testing/selftests/kvm/include/x86/apic.h
+>> index 80fe9f69b38d..67285e533e14 100644
+>> --- a/tools/testing/selftests/kvm/include/x86/apic.h
+>> +++ b/tools/testing/selftests/kvm/include/x86/apic.h
+>> @@ -27,7 +27,11 @@
+>>   #define	APIC_LVR	0x30
+>>   #define		GET_APIC_ID_FIELD(x)	(((x) >> 24) & 0xFF)
+>>   #define	APIC_TASKPRI	0x80
+>> +#define		APIC_TASKPRI_TP_SHIFT	4
+>> +#define		APIC_TASKPRI_TP_MASK	GENMASK(7, 4)
+>>   #define	APIC_PROCPRI	0xA0
+>> +#define		APIC_PROCPRI_PP_SHIFT	4
+>> +#define		APIC_PROCPRI_PP_MASK	GENMASK(7, 4)
 > 
-> Just to make sure I'm reading this right - the clocks enable just fine,
-> but it's the writes to the QoS settings that trigger the hang?
+> These can probably be simplified with get()/set() macros. Something like
+> this:
+> #define	GET_APIC_PRI(x)		(((x) >> 4) & 0xF)
+> #define	SET_APIC_PRI(x, y)	(((x) & ~0xF0) | (((y) & 0xF) << 4))
 
-Yes.
+Seems reasonable, however I am not a fan of manually encoding
+masks like 0xF0 - will use GENMASK(7, 4) inside these macros instead.
 
-> Any chance skipping qhm_qup1 specifically makes things better?
+>>   #define	APIC_EOI	0xB0
+>>   #define	APIC_SPIV	0xF0
+>>   #define		APIC_SPIV_FOCUS_DISABLED	(1 << 9)
+>> @@ -67,6 +71,7 @@
+>>   #define	APIC_TMICT	0x380
+>>   #define	APIC_TMCCT	0x390
+>>   #define	APIC_TDCR	0x3E0
+>> +#define	APIC_SELF_IPI	0x3F0
+>>   
+>>   void apic_disable(void);
+>>   void xapic_enable(void);
+>> diff --git a/tools/testing/selftests/kvm/x86/xapic_state_test.c b/tools/testing/selftests/kvm/x86/xapic_state_test.c
+>> index fdebff1165c7..968e5e539a1a 100644
+>> --- a/tools/testing/selftests/kvm/x86/xapic_state_test.c
+>> +++ b/tools/testing/selftests/kvm/x86/xapic_state_test.c
+>> @@ -1,9 +1,11 @@
+>>   // SPDX-License-Identifier: GPL-2.0-only
+>>   #include <fcntl.h>
+>> +#include <stdatomic.h>
+>>   #include <stdio.h>
+>>   #include <stdlib.h>
+>>   #include <string.h>
+>>   #include <sys/ioctl.h>
+>> +#include <unistd.h>
+>>   
+>>   #include "apic.h"
+>>   #include "kvm_util.h"
+>> @@ -16,6 +18,245 @@ struct xapic_vcpu {
+>>   	bool has_xavic_errata;
+>>   };
+>>   
+>> +#define IRQ_VECTOR 0x20
+>> +
+>> +/* See also the comment at similar assertion in memslot_perf_test.c */
+>> +static_assert(ATOMIC_INT_LOCK_FREE == 2, "atomic int is not lockless");
+>> +
+>> +static atomic_uint tpr_guest_irq_sync_val;
+>> +
+>> +static void tpr_guest_irq_sync_flag_reset(void)
+>> +{
+>> +	atomic_store_explicit(&tpr_guest_irq_sync_val, 0,
+>> +			      memory_order_release);
+>> +}
+>> +
+>> +static unsigned int tpr_guest_irq_sync_val_get(void)
+>> +{
+>> +	return atomic_load_explicit(&tpr_guest_irq_sync_val,
+>> +				    memory_order_acquire);
+>> +}
+>> +
+>> +static void tpr_guest_irq_sync_val_inc(void)
+>> +{
+>> +	atomic_fetch_add_explicit(&tpr_guest_irq_sync_val, 1,
+>> +				  memory_order_acq_rel);
+>> +}
+>> +
+>> +static void tpr_guest_irq_handler_xapic(struct ex_regs *regs)
+>> +{
+>> +	tpr_guest_irq_sync_val_inc();
+>> +
+>> +	xapic_write_reg(APIC_EOI, 0);
+>> +}
+>> +
+>> +static void tpr_guest_irq_handler_x2apic(struct ex_regs *regs)
+>> +{
+>> +	tpr_guest_irq_sync_val_inc();
+>> +
+>> +	x2apic_write_reg(APIC_EOI, 0);
+>> +}
+>> +
+>> +static void tpr_guest_irq_queue(bool x2apic)
+>> +{
+>> +	if (x2apic) {
+>> +		x2apic_write_reg(APIC_SELF_IPI, IRQ_VECTOR);
+>> +	} else {
+>> +		uint32_t icr, icr2;
+>> +
+>> +		icr = APIC_DEST_SELF | APIC_DEST_PHYSICAL | APIC_DM_FIXED |
+>> +			IRQ_VECTOR;
+>> +		icr2 = 0;
+>> +
+>> +		xapic_write_reg(APIC_ICR2, icr2);
+>> +		xapic_write_reg(APIC_ICR, icr);
+>> +	}
+>> +}
+>> +
+>> +static uint8_t tpr_guest_tpr_get(bool x2apic)
+>> +{
+>> +	uint32_t taskpri;
+>> +
+>> +	if (x2apic)
+>> +		taskpri = x2apic_read_reg(APIC_TASKPRI);
+>> +	else
+>> +		taskpri = xapic_read_reg(APIC_TASKPRI);
+> 
+> Rather than pass x2apic flag to all these helpers, it might be better to
+> have a global is_x2apic, and helpers for reading APIC registers.  See
+> tools/testing/selftests/kvm/x86/apic_bus_clock_test.c for an example
+> that we should be able to adopt here.
 
-Yes, it seems so. Or specifically, this diff:
+will do.
 
---- a/drivers/interconnect/qcom/sc7280.c
-+++ b/drivers/interconnect/qcom/sc7280.c
-@@ -52,12 +52,6 @@ static struct qcom_icc_node qhm_qup1 = {
- 	.id = SC7280_MASTER_QUP_1,
- 	.channels = 1,
- 	.buswidth = 4,
--	.qosbox = &(const struct qcom_icc_qosbox) {
--		.num_ports = 1,
--		.port_offsets = { 0x8000 },
--		.prio = 2,
--		.urg_fwd = 0,
--	},
- 	.num_links = 1,
- 	.links = { SC7280_SLAVE_A1NOC_SNOC },
- };
+>> +
+>> +	return (taskpri & APIC_TASKPRI_TP_MASK) >> APIC_TASKPRI_TP_SHIFT;
+>> +}
+>> +
+>> +static uint8_t tpr_guest_ppr_get(bool x2apic)
+>> +{
+>> +	uint32_t procpri;
+>> +
+>> +	if (x2apic)
+>> +		procpri = x2apic_read_reg(APIC_PROCPRI);
+>> +	else
+>> +		procpri = xapic_read_reg(APIC_PROCPRI);
+>> +
+>> +	return (procpri & APIC_PROCPRI_PP_MASK) >> APIC_PROCPRI_PP_SHIFT;
+>> +}
+>> +
+>> +static uint8_t tpr_guest_cr8_get(void)
+>> +{
+>> +	uint64_t cr8;
+>> +
+>> +	asm volatile ("mov %%cr8, %[cr8]\n\t" : [cr8] "=r"(cr8));
+>> +
+>> +	return cr8 & GENMASK(3, 0);
+> 
+> Why mask off the remaining bits? Shouldn't they all be zero?
 
-> Could you please share your exact software version (which I assume is really
-> just the version of TF-A in this case) so I can try and reproduce it?
+The remaining bits of CR8 are reserved and while they
+are all zero in the current CPUs they in principle could
+be used for something else in the future.
 
-I'm not much of an expert on the makeup of QCOM firmware, but reading my
-firmware logs, that'd be:
+>> +}
+>> +
+>> +static void tpr_guest_check_tpr_ppr_cr8_equal(bool x2apic)
+>> +{
+>> +	uint8_t tpr;
+>> +
+>> +	tpr = tpr_guest_tpr_get(x2apic);
+>> +
+>> +	GUEST_ASSERT_EQ(tpr_guest_ppr_get(x2apic), tpr);
+>> +	GUEST_ASSERT_EQ(tpr_guest_cr8_get(), tpr);
+>> +}
+>> +
+>> +static void tpr_guest_code(uint64_t x2apic)
+>> +{
+>> +	cli();
+>> +
+>> +	if (x2apic)
+>> +		x2apic_enable();
+>> +	else
+>> +		xapic_enable();
+>> +
+>> +	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
+> 
+> Would be good to confirm that the guest reads a zero TPR here on
+> startup.
 
-  coreboot-v1.9308_26_0.0.22-32067-g641732a20a
+Will add such check.
 
-and
+>> +
+>> +	tpr_guest_irq_queue(x2apic);
+>> +
+>> +	/* TPR = 0 but IRQ masked by IF=0, should not fire */
+>> +	udelay(1000);
+>> +	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 0);
+>> +
+>> +	sti();
+>> +
+>> +	/* IF=1 now, IRQ should fire */
+>> +	while (tpr_guest_irq_sync_val_get() == 0)
+>> +		cpu_relax();
+>> +	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 1);
+>> +
+>> +	GUEST_SYNC(0);
+>> +	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
+>> +
+>> +	tpr_guest_irq_queue(x2apic);
+>> +
+>> +	/* IRQ masked by barely high enough TPR now, should not fire */
+>> +	udelay(1000);
+>> +	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 1);
+>> +
+>> +	GUEST_SYNC(1);
+>> +	tpr_guest_check_tpr_ppr_cr8_equal(x2apic);
+>> +
+>> +	/* TPR barely low enough now to unmask IRQ, should fire */
+>> +	while (tpr_guest_irq_sync_val_get() == 1)
+>> +		cpu_relax();
+>> +	GUEST_ASSERT_EQ(tpr_guest_irq_sync_val_get(), 2);
+>> +
+>> +	GUEST_DONE();
+>> +}
+> 
+> You don't necessarily have to do it, but it would be good to have a test
+> where the guest updates the TPR too -- as a way to confirm that V_TPR is
+> kept in sync with CR8 and TPR.
 
-  BL31: v2.8(debug):v2.8-776-g0223d1576
+Sure, but this self test is supposed to prevent regressions with respect
+to the AVIC TPR sync issue so further extensions will probably have to
+come later.
 
-IIUC, the latter points to TF-A hash:
+>> +
+>> +static uint8_t lapic_tpr_get(struct kvm_lapic_state *xapic)
+>> +{
+>> +	return (*((u32 *)&xapic->regs[APIC_TASKPRI]) & APIC_TASKPRI_TP_MASK) >>
+>> +		APIC_TASKPRI_TP_SHIFT;
+>> +}
+>> +
+>> +static void lapic_tpr_set(struct kvm_lapic_state *xapic, uint8_t val)
+>> +{
+>> +	*((u32 *)&xapic->regs[APIC_TASKPRI]) &= ~APIC_TASKPRI_TP_MASK;
+>> +	*((u32 *)&xapic->regs[APIC_TASKPRI]) |= val << APIC_TASKPRI_TP_SHIFT;
+>> +}
+>> +
+>> +static uint8_t sregs_tpr(struct kvm_sregs *sregs)
+>> +{
+>> +	return sregs->cr8 & GENMASK(3, 0);
+> 
+> Here too.. do we need to mask the reserved bits?
 
-  0223d15764ed Merge "feat(docs): allow verbose build" into integration
+As above, I think they should be masked for future-proofing.
 
-Brian
+>> +}
+>> +
+>> +static void test_tpr_check_tpr_zero(struct kvm_vcpu *vcpu)
+>> +{
+>> +	struct kvm_lapic_state xapic;
+>> +
+>> +	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
+>> +
+>> +	TEST_ASSERT_EQ(lapic_tpr_get(&xapic), 0);
+>> +}
+>> +
+>> +static void test_tpr_check_tpr_cr8_equal(struct kvm_vcpu *vcpu)
+>> +{
+>> +	struct kvm_sregs sregs;
+>> +	struct kvm_lapic_state xapic;
+>> +
+>> +	vcpu_sregs_get(vcpu, &sregs);
+>> +	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
+>> +
+>> +	TEST_ASSERT_EQ(sregs_tpr(&sregs), lapic_tpr_get(&xapic));
+>> +}
+>> +
+>> +static void test_tpr_mask_irq(struct kvm_vcpu *vcpu, bool mask)
+>> +{
+>> +	struct kvm_lapic_state xapic;
+>> +	uint8_t tpr;
+>> +
+>> +	static_assert(IRQ_VECTOR >= 16, "invalid IRQ vector number");
+>> +	tpr = IRQ_VECTOR / 16;
+>> +	if (!mask)
+>> +		tpr--;
+>> +
+>> +	vcpu_ioctl(vcpu, KVM_GET_LAPIC, &xapic);
+>> +	lapic_tpr_set(&xapic, tpr);
+>> +	vcpu_ioctl(vcpu, KVM_SET_LAPIC, &xapic);
+>> +}
+>> +
+>> +static void test_tpr(struct kvm_vcpu *vcpu, bool x2apic)
+>> +{
+>> +	bool run_guest = true;
+>> +
+>> +	vcpu_args_set(vcpu, 1, (uint64_t)x2apic);
+>> +
+>> +	/* According to the SDM/APM the TPR value at reset is 0 */
+>> +	test_tpr_check_tpr_zero(vcpu);
+>> +	test_tpr_check_tpr_cr8_equal(vcpu);
+>> +
+>> +	tpr_guest_irq_sync_flag_reset();
+>> +
+>> +	while (run_guest) {
+>> +		struct ucall uc;
+>> +
+>> +		alarm(2);
+>> +		vcpu_run(vcpu);
+>> +		alarm(0);
+>> +
+>> +		switch (get_ucall(vcpu, &uc)) {
+>> +		case UCALL_ABORT:
+>> +			REPORT_GUEST_ASSERT(uc);
+>> +			break;
+>> +		case UCALL_DONE:
+>> +			test_tpr_check_tpr_cr8_equal(vcpu);
+>> +
+>> +			run_guest = false;
+>> +			break;
+>> +		case UCALL_SYNC:
+>> +			test_tpr_check_tpr_cr8_equal(vcpu);
+>> +
+>> +			if (uc.args[1] == 0)
+>> +				test_tpr_mask_irq(vcpu, true);
+>> +			else if (uc.args[1] == 1)
+>> +				test_tpr_mask_irq(vcpu, false);
+> 
+> Having wrappers around that will make this clearer, I think:
+> 	test_tpr_set_tpr()
+> 	test_tpr_clear_tpr()
+> or such?
+
+Will do test_tpr_{set,clear}_tpr_mask() since the test isn't
+clearing TPR to zero but to IRQ_VECTOR / 16 - 1.
+
+>> +			else
+>> +				TEST_FAIL("Unknown SYNC %lu", uc.args[1]);
+>> +			break;
+>> +		default:
+>> +			TEST_FAIL("Unknown ucall result 0x%lx", uc.cmd);
+>> +			break;
+>> +		}
+>> +	}
+>> +}
+>> +
+>>   static void xapic_guest_code(void)
+>>   {
+>>   	cli();
+>> @@ -195,6 +436,12 @@ static void test_apic_id(void)
+>>   	kvm_vm_free(vm);
+>>   }
+>>   
+>> +static void clear_x2apic_cap_map_apic(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
+>> +{
+>> +	vcpu_clear_cpuid_feature(vcpu, X86_FEATURE_X2APIC);
+>> +	virt_pg_map(vm, APIC_DEFAULT_GPA, APIC_DEFAULT_GPA);
+>> +}
+>> +
+>>   static void test_x2apic_id(void)
+>>   {
+>>   	struct kvm_lapic_state lapic = {};
+>> @@ -230,10 +477,17 @@ int main(int argc, char *argv[])
+>>   	};
+>>   	struct kvm_vm *vm;
+>>   
+>> +	/* x2APIC tests */
+>> +
+>>   	vm = vm_create_with_one_vcpu(&x.vcpu, x2apic_guest_code);
+>>   	test_icr(&x);
+>>   	kvm_vm_free(vm);
+>>   
+>> +	vm = vm_create_with_one_vcpu(&x.vcpu, tpr_guest_code);
+>> +	vm_install_exception_handler(vm, IRQ_VECTOR, tpr_guest_irq_handler_x2apic);
+>> +	test_tpr(x.vcpu, true);
+> 
+> Any reason not to pass in a pointer to x similar to test_icr()?
+
+test_tpr() does not need the remaining members of that struct
+so passing just the struct kvm_vcpu part essentially enforces that.
+
+> 
+> - Naveen
+> 
+
+Thanks,
+Maciej
+
 
