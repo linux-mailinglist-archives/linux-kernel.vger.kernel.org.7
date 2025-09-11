@@ -1,165 +1,169 @@
-Return-Path: <linux-kernel+bounces-811702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99602B52CC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:12:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ACF8B52CC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D44F8189B950
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:12:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E521856759B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0634826E71F;
-	Thu, 11 Sep 2025 09:11:58 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCAA26E71F;
+	Thu, 11 Sep 2025 09:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hbIRJvoy"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677202E7F02;
-	Thu, 11 Sep 2025 09:11:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2899A2E88B1
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757581917; cv=none; b=IgD68BNt/86GGA6wpAitiMcVU0bxxYY8jz69Z4SOwMboODvNAVPEZuClte9B5tFbeBpBTyTvvTe3YtuC+sWncq/JhdCtxCpkplCrbbPCdJYk5HZU4PqpGUrhVm8Za0f6uDX7rZZACE5W4DHoF802ETWJaVmbS12c978GWyrCtog=
+	t=1757581943; cv=none; b=Ov+yxDeUgSe6Mfe/xGDkB+mXG2M5p38b07f7g8O2NjQO/S1Q+VbUFBcwHBXftOblG13AN36TkTV53rp5eSWbBXqz3/NFWshhgs/4b/3WFa9tv7CP6Y2aylKnphwdZHmqO8abwT35eIiI1lvF0d86wZdIR1OkU1a9b9POrzz+iT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757581917; c=relaxed/simple;
-	bh=JpZBDBeKFOKzO+Oxv9nxvig4ZFN8i+yjFK9KZNu4CYA=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dbbhpLb+LpL548ix+8r5cCk42Y2Li0YU8QIwRoSrn8IDQ5xua2W4A6Moo6Zs2DFoHvBo0arUCVxp11IaQWbgWjrGD3aRrwxaMNUBTKBCVU/d20NxwPLtnJJqLzzjveBR5wAOiSZjbnY779rZvhQukZemFYwO3K8YDgsvERdCzg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMsDz0ybLz6LD55;
-	Thu, 11 Sep 2025 17:09:07 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C491D1400D3;
-	Thu, 11 Sep 2025 17:11:46 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Sep
- 2025 11:11:46 +0200
-Date: Thu, 11 Sep 2025 10:11:44 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-CC: <rafael@kernel.org>, <lenb@kernel.org>, <robert.moore@intel.com>,
-	<andrew@kernel.org>, <bfaccini@nvidia.com>, <eahariha@linux.microsoft.com>,
-	<dan.j.williams@intel.com>, <thorsten.blum@linux.dev>, <gourry@gourry.net>,
-	<nunodasneves@linux.microsoft.com>, <wangyuquan1236@phytium.com.cn>,
-	<linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<acpica-devel@lists.linux.dev>
-Subject: Re: [PATCH] acpi,srat: Fix incorrect device handle check for
- Generic Initiator
-Message-ID: <20250911101144.00001a84@huawei.com>
-In-Reply-To: <998939f5-e0f9-457f-98a2-73f687ad29cc@linux.alibaba.com>
-References: <20250910093949.5793-1-xueshuai@linux.alibaba.com>
-	<20250910105729.000070a5@huawei.com>
-	<998939f5-e0f9-457f-98a2-73f687ad29cc@linux.alibaba.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757581943; c=relaxed/simple;
+	bh=BGsmBXzehjF13MQf30PFGpNo/vzV9SyOez+N2SR1Vog=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GuwV1VyN0R9r07/E5v7xIwy/OX5dTAycFpWKl2x0o6tm0I+H3xBR++gDEGWLmDW1zeeB9o1LtODEUGAp6Bs1FrZmi1h3PA734lvC4K95n9zyoDa4xPw+BjWYvfTVnl38glRYqFTHyzZmmLf9P44VKQ+kec3wibZzwCHjiX0DL4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hbIRJvoy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B2mJx7029252;
+	Thu, 11 Sep 2025 09:12:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=ZLeqRFZW477Mv1AvfEJf1/Q37ynfkU
+	f8aL4tvu2p3zY=; b=hbIRJvoyzPWvOj8GENPNC4ZU7a6lHWobCG+lTXfiXaPY8X
+	xtWF6x4PHJDi0WY6Ib+SImKUoXwLnunApZpBLkd4+KrTdfgV6/jw3QAq7HGK8CnX
+	EvGza+JDNKVD5kElBe+KhGOBuU7Z/j6UrMmLauSWQfG0zQQ+iK+nlHLLpC+vRlk+
+	51gx3jAAf7nTsV0WUy+XeqqnWuMYwloVlxvuE9acEBHJtYjYAHgmPi1zWck0D8aY
+	EDt/YeJj41gCshLk0s/3G67DY7VTMOowiyc6tq9H9+eTmScs5NGXPOwfKM6OkaZ2
+	K6uJRikdaTMDunH6RXMeeLFWcJ2nCOuaEi3KF/yw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bct2yv0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 09:12:01 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58B980AY027411;
+	Thu, 11 Sep 2025 09:12:00 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bct2yuv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 09:12:00 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58B6s6EN017219;
+	Thu, 11 Sep 2025 09:11:59 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmmta4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 09:11:59 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58B9Bt7x57278822
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Sep 2025 09:11:55 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B31A32004E;
+	Thu, 11 Sep 2025 09:11:55 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6A2422004B;
+	Thu, 11 Sep 2025 09:11:55 +0000 (GMT)
+Received: from tuxmaker.linux.ibm.com (unknown [9.152.85.9])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 11 Sep 2025 09:11:55 +0000 (GMT)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+        Michael Jeanson
+ <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+        Heiko Carstens
+ <hca@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Peter Zijlstra
+ <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Boqun
+ Feng <boqun.feng@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sean
+ Christopherson <seanjc@google.com>, Wei Liu <wei.liu@kernel.org>,
+        Dexuan
+ Cui <decui@microsoft.com>, x86@kernel.org,
+        Arnd Bergmann
+ <arnd@arndb.de>, Huacai Chen <chenhuacai@kernel.org>,
+        Paul Walmsley
+ <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V4 33/36] s390: Use generic TIF bits
+In-Reply-To: <20250908212927.373210812@linutronix.de> (Thomas Gleixner's
+	message of "Mon, 8 Sep 2025 23:32:34 +0200 (CEST)")
+References: <20250908212737.353775467@linutronix.de>
+	<20250908212927.373210812@linutronix.de>
+Date: Thu, 11 Sep 2025 11:11:55 +0200
+Message-ID: <yt9dqzwds690.fsf@linux.ibm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfXzuSo1cpcTbgk
+ Q8+CZ3acE65tVdxVMaD2cbJ6IF3SvA3O+DXswp5AIhyWqsocws1pC4C3l2BqjE5rLrRKjRep9Qy
+ KdZb3OvQ9O4IWRWYSLFTMfkmko+dsxXU3PUO+JKrEwG22jaIX1ueWHM4okjFMi7Bq6a1TPBrWtJ
+ HgyMBL+xUMLhOjuRckE8qkTQRo58Af5c8U9Yi630Fs9EkY674FurlJ7iI3wpP8hlgSY91brP3i6
+ DdPmH84CBnoKbxbzyS/hZOQJowJmZ0Qcw3Pj1MdK6bAPhFpc6Cwj3YR7JHDSLpLUrIRYAt1fxdv
+ YuBO5AAmxpYyBxLadR49ShskoQf8vL9rmw5skIKA2yJbVazkxzwX4rXgAE024d17CD4fd5+02mG
+ TuPLNHFH
+X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c29261 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=kDN6fFDDvmrDChyy9gMA:9
+X-Proofpoint-GUID: YuJHFk-KAQCBijC3eMIuVqpZ0J7WgFWf
+X-Proofpoint-ORIG-GUID: wKZbnpgPHU1EuL1-8zSu5pXB-xiX9XhR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
 
-On Thu, 11 Sep 2025 12:28:00 +0800
-Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+Thomas Gleixner <tglx@linutronix.de> writes:
 
-> =E5=9C=A8 2025/9/10 17:57, Jonathan Cameron =E5=86=99=E9=81=93:
-> > On Wed, 10 Sep 2025 17:39:49 +0800
-> > Shuai Xue <xueshuai@linux.alibaba.com> wrote:
-> >  =20
-> >> The Generic Initiator Affinity Structure in SRAT table uses device
-> >> handle type field to indicate the device type. According to ACPI
-> >> specification, the device handle type value of 1 represents PCI device,
-> >> not 0.
-> >>
-> >> Fix this by defining explicit macros for device handle types and using
-> >> the correct check for PCI devices:
-> >>
-> >> - ACPI_SRAT_ACPI_DEVICE_HANDLE (0): ACPI device handle
-> >> - ACPI_SRAT_PCI_DEVICE_HANDLE (1): PCI device handle
-> >>
-> >> Fixes: 894c26a1c274 ("ACPI: Support Generic Initiator only domains")
-> >> Reported-by: Wu Zongyong <wuzongyong@linux.alibaba.com>
-> >> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com> =20
-> >=20
-> > The actbl3.h additions need to go through acpcia and then have a link
-> > tag in here to show that it was merged.  Perhaps just fix it with a num=
-ber
-> > for now and follow up with the acpcia stuff in the longer run? =20
->=20
-> Sure, I will drop changes in actbl3.h to make it easy to progress.
->=20
-> >=20
-> > Also note clearly this only affects a debug print - no functional bug.
-> > That may change whether people choose to backport this or not. =20
->=20
-> Yes.
->=20
-> >=20
-> > I'm curious on whether you are thinking of wiring this up so that
-> > we can set the appropriate nodes on PCI Devices other than by doing it
-> > with _PXM().  For obscure reasons there can be references both ways
-> > (so DSDT Device entry -> SRAT via _PXM, and SRAT -> Device via this fie=
-ld
-> > of generic initiators).
-> >=20
-> > For now we only implement the first one so all we need is a node to be
-> > instantiated for the GI to sit in.
-> >=20
-> > Come to think of it the fix that made PCI device entries in DSDT with _=
-PXM
-> > turn up in the right place was reverted (for a problem with broken firm=
-ware
-> > on AMD threadripper systems - IIRC that I think is long solved).
-> > Not sure if that path even works today and the one this code is about h=
-as
-> > never been hooked up. =20
->=20
-> You mean add a new map like pxm_to_node_map[]?
+> No point in defining generic items and the upcoming RSEQ optimizations are
+> only available with this _and_ the generic entry infrastructure, which is
+> already used by s390. So no further action required here.
 >
-=20
-Two things involved here. If a _PXM entry exists for the PCI device, then u=
-nreverting:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D0d76bcc960e6057750fcf556b65da13f8bbdfd2b
-or something to replace that is needed.  There may still be a problem somew=
-here
-as we never entirely figured out the cause last time.  It is also possible =
-this got
-fixed via another method in the meantime so first thing to do is to put som=
-e devices
-in a GI only node and see if the numa node value in sysfs is correct.
+> This leaves a comment about the AUDIT/TRACE/SECCOMP bits which are handled
+> by SYSCALL_WORK in the generic code, so they seem redundant, but that's a
+> problem for the s390 wizards to think about.
+>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Heiko Carstens <hca@linux.ibm.com>
+> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+> Cc: Sven Schnelle <svens@linux.ibm.com>
+>
+> --- a/arch/s390/include/asm/thread_info.h
+> +++ b/arch/s390/include/asm/thread_info.h
+> @@ -56,43 +56,35 @@ void arch_setup_new_exec(void);
+> [..]
 
-For the entry you are touching here to be passed to the actual set_dev_node=
-() we'd
-probably do it by stashing any GI entries found when parsing SRAT in an xar=
-ray or similar and
-adding a lookup to see if we have a match in that xarray but not a _PXM in =
-pci_acpi_setup().
+> +/* These could move over to SYSCALL_WORK bits, no? */
+>  #define TIF_SYSCALL_TRACE	24	/* syscall trace active */
+>  #define TIF_SYSCALL_AUDIT	25	/* syscall auditing active */
+>  #define TIF_SECCOMP		26	/* secure computing */
+>  #define TIF_SYSCALL_TRACEPOINT	27	/* syscall tracepoint instrumentation */
 
-Not particularly hard to do, but have to be very careful wrt to broken bios=
- descriptions
-of the topologies.=20
+Looks like these flags are a leftover of the conversion to generic
+entry and are no longer used. I'll send a patch on top of your patchset
+which remove them.
 
-Jonathan
-
-
-> >=20
-> > Thanks for the fix!
-> >=20
-> > Jonathan
-> >=20
-> >  =20
->=20
-> Thanks.
->=20
-> Best Regards,
-> Shuai
-
+Thanks!
+Sven
 
