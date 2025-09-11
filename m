@@ -1,191 +1,187 @@
-Return-Path: <linux-kernel+bounces-812467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689C6B5387B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:59:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BC7B53867
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:58:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F791A02FC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:59:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58FA9188CA47
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF367352FC8;
-	Thu, 11 Sep 2025 15:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2333570B2;
+	Thu, 11 Sep 2025 15:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="s5vvQM8N"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pdTTYlLZ"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A1B35208C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680002153D4;
+	Thu, 11 Sep 2025 15:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606256; cv=none; b=OP0Kv802ivfQ4Tn5D+rfmBy8VZKo1FKWaR6gEhKMf6uhla8bmNhzibWdV+vZ4RCm3rThQeJIDy6fYhHVgrZZOnu8RfcJbeMAG+KGpQykKhb1xX9lTycd+2T4mhvFE8JglV2t9qxmIheiydxabOO2zKb90p6AnkQ0APOm+GRenB8=
+	t=1757606251; cv=none; b=mr7nQ3MgxlopJlO6bpRws7o9laAfeOwt70iNIkty9ecJ1ZBZ3/cggpNa2uGoPG0BkRaW/SOaJUd4Tg1qfUAyJ1liw8bCdWJ0vmj8I1b059gvGAJY5DUb+YHCHil9H1okpLBKJLFX9OXXnN+yWGJz0eDWzosAkpRqEC6qewt+Bwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606256; c=relaxed/simple;
-	bh=4ABrTSDZ57iC3tz4EOR6OqnmNd7tMzJcUfePHoeMfU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s4E0a/3cLWhPLBmWDL8JSWa/OZzts7J65KAPmvqecbusWfxnxJyhxvNqRKJ/1pgWio6/s8Re9C8XwL3pT4TUXWzFPTRSG0U/j9oBeUxPCDh0uyd82cLmIWRVvmZgI0fp/AwdRTTCe5y+lPArMs/8QENnIpCrnOGIwv/v2fLwkd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=s5vvQM8N; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BCnHjk028671;
-	Thu, 11 Sep 2025 15:57:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=hR/2y1
-	7EnbK2MMU7nd0ZkeNZdUrDyWTrnM4xm/omK2Q=; b=s5vvQM8Nx3oU1NguNkfFsH
-	H+8S5mqyTk+KEDU7K+uK5YIMgKibg4IwEnqnTtGcPnfsNY1Qo8Mz71GCxre8kg43
-	8/2FD/7BaOhW5xqnEzKeWG2mrprz/jP5mGTk4NmpFWyjkGZADrMrR3Byhf77JJXo
-	QNL0lc93wdXqwOiO6NTgSquRm/IKviywy2XMFZL8O3JGmwYKYHq0rgokMXpM7w+v
-	jqbpYfSunlpw7fYQksyrGs3d1xu4fKjKNE+/n9RYAjYatnViTieQFO49DsA0UavW
-	vEDJR83zKdG+zcXeGUQgav8HtDoncd3BGkcVXoMzau7KodVyN58Vr8FTILjXmeHQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xydajk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 15:57:12 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58BFo1u8018580;
-	Thu, 11 Sep 2025 15:57:11 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xydajjw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 15:57:11 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58BENWIL001188;
-	Thu, 11 Sep 2025 15:57:10 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 491203p9rs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 15:57:10 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BFv7oN49217970
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 15:57:07 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 08BFC20040;
-	Thu, 11 Sep 2025 15:57:07 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 80B5120043;
-	Thu, 11 Sep 2025 15:56:58 +0000 (GMT)
-Received: from [9.61.95.215] (unknown [9.61.95.215])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 11 Sep 2025 15:56:58 +0000 (GMT)
-Message-ID: <e3826a8d-98cc-4497-85ce-5d92e0556cea@linux.ibm.com>
-Date: Thu, 11 Sep 2025 21:26:56 +0530
+	s=arc-20240116; t=1757606251; c=relaxed/simple;
+	bh=a0IIVelCiz6nryZoqnORSBXKjaIL+ikdZr6o/qVwlUI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G2gRz0PnsW/QwpEc1yD6S0Q9kuzlnY/8Yium6Kpponk3/7grdb1SEWc4dx6nWk6wAS8xotnYzcnSpMp6mdHrYEDBsp3E85vMraZ7napV9G90oUjRmRih9BYxQ+d3+RhjBlS0muyN7tgzDQLK0yv24JQSKBguJswGf1iEW0w2wHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pdTTYlLZ; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757606246;
+	bh=a0IIVelCiz6nryZoqnORSBXKjaIL+ikdZr6o/qVwlUI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pdTTYlLZhlHYQlP+o9qAP3T5h/uYT/eUY6MgioNeVwDR2es8HfSrZ/6rwp3EEP15U
+	 eneYP0SGS97k3TfBmSmDyCE9pY8rACdPRp6dEWiKBaP5mvngZqVI1jCzSTVNqm/wDp
+	 MJIdpEc5iNj2IHusnFg8BO8P6L995xLc8CVLv0+m0oxeFSGFA1cLO+kZbugo/VtXXy
+	 6QwMwwTKTSWXk2/Abop9vXmOS+R+yDHeOaUUVCBkT2ENSwNwjtmyrBuZmpR7eW5Kyc
+	 XlLXRxXAWjPpm8aRfOn1Np/UUriW9FL2kLkuHGDT7c8nbe29G0y2Jghzz0plWkcZjF
+	 +FrcGplk9Bnvg==
+Received: from benjamin-XPS-13-9310.. (unknown [IPv6:2a01:e0a:120:3210:36e5:357f:56a7:54dd])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: benjamin.gaignard)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 198CC17E0C96;
+	Thu, 11 Sep 2025 17:57:26 +0200 (CEST)
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+To: joro@8bytes.org,
+	robin.murphy@arm.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	nicolas.dufresne@collabora.com,
+	jgg@ziepe.ca,
+	p.zabel@pengutronix.de,
+	mchehab@kernel.org
+Cc: iommu@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com,
+	linux-media@vger.kernel.org,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>
+Subject: [PATCH v9 0/7] Add support for Verisilicon IOMMU used by media codec blocks
+Date: Thu, 11 Sep 2025 17:57:10 +0200
+Message-ID: <20250911155720.180465-1-benjamin.gaignard@collabora.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 05/10] sched/fair: Don't consider paravirt CPUs for
- wakeup and load balance
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: vschneid@redhat.com, iii@linux.ibm.com, huschle@linux.ibm.com,
-        rostedt@goodmis.org, dietmar.eggemann@arm.com, vineeth@bitbyteword.org,
-        jgross@suse.com, pbonzini@redhat.com, seanjc@google.com,
-        mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
-        maddy@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org
-References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
- <20250910174210.1969750-6-sshegde@linux.ibm.com>
- <d0aa1a34-2097-405c-b431-907fd973ad96@amd.com>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <d0aa1a34-2097-405c-b431-907fd973ad96@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: EoQsnxEWE1fI354CANC2daJRZduOKjwS
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX40KWbzuYW4yb
- HAkT/MkP3dT8oVyRGsBmRbDj8DxlBiVmoppZy4vOpQlrlkaNFcagd7duMX8LekGfxPqeiWxbPCG
- 0jdB9Uq2b28bszHS69d9zU/QCuccRH25xJW8jgMJFfQUUnr9eA5TJVGmR6B+V3cZ3ubgN5ztd4A
- DkCgZoDxs0+/luDXoaIXiBJGs2VAxUneyqzv0jRWEBsYMZAyuofYeEukbYDT0/r42fqNiLgt8Jr
- 2n1GIHqgt3XMBKNrPB01/0UoAgMYt+YiAveDpD018CWULDfRrayT1JPThOu4R1VAt7eDdUQRxfD
- XhYXBPPE5H16s5a9vZQQx/oFEav6qSbZXNZ9cOM3BhC2McMszLw5IX5stZzgm/WAhZR9If2yIpC
- SGIfN9Dr
-X-Proofpoint-GUID: snWUdQdLKZTGcpGH5mLV10L87_zdZ_yv
-X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68c2f158 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=ex1m0Fpx1afbAyXWguEA:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-11_02,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060235
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
+Hi all,
 
+This patch series adds support for the Verisilicon IOMMU, which is found in front
+of hardware encoder and decoder blocks in several SoCs using Verisilicon IP. 
+A first implementation of this IOMMU is available on the Rockchip RK3588 SoC.
 
-On 9/11/25 10:53 AM, K Prateek Nayak wrote:
-> Hello Shrikanth,
-> 
-> On 9/10/2025 11:12 PM, Shrikanth Hegde wrote:
->> @@ -8563,7 +8563,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
->>   		if (!is_rd_overutilized(this_rq()->rd)) {
->>   			new_cpu = find_energy_efficient_cpu(p, prev_cpu);
->>   			if (new_cpu >= 0)
->> -				return new_cpu;
->> +				goto check_new_cpu;
-> 
-> Should this fallback to the overutilized path if the most energy
-> efficient CPU is found to be paravirtualized or should
-> find_energy_efficient_cpu() be made aware of it?
-> 
->>   			new_cpu = prev_cpu;
->>   		}
->>   
->> @@ -8605,7 +8605,12 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
->>   	}
->>   	rcu_read_unlock();
->>   
->> -	return new_cpu;
->> +	/* If newly found or prev_cpu is a paravirt cpu, use current cpu */
->> +check_new_cpu:
->> +	if (is_cpu_paravirt(new_cpu))
->> +		return cpu;
->> +	else
-> 
-> nit. redundant else.
-> 
+Rockchip provides a driver for this hardware in their 6.1 kernel branch:
+https://github.com/rockchip-linux/kernel/blob/develop-6.1/drivers/iommu/rockchip-iommu-av1d.c
 
-Do you mean "is_cpu_paravirt(new_cpu) ? cpu; new_cpu"
+This series includes:
+- a new binding for the Verisilicon IOMMU
+- a driver implementation
+- DT updates for RK3588
 
-This needs to return cpu instead of true/false. maybe i not seeing the obvious.
+The driver was forward-ported from Rockchip’s 6.1 implementation, 
+the prefix was renamed to vsi for generality, and several fixes were applied.
 
->> +		return new_cpu;
->>   }
->>   
->>   /*
->> @@ -11734,6 +11739,12 @@ static int sched_balance_rq(int this_cpu, struct rq *this_rq,
->>   
->>   	cpumask_and(cpus, sched_domain_span(sd), cpu_active_mask);
->>   
->> +#ifdef CONFIG_PARAVIRT
->> +	/* Don't spread load to paravirt CPUs */
->> +	if (static_branch_unlikely(&cpu_paravirt_push_tasks))
->> +		cpumask_andnot(cpus, cpus, cpu_paravirt_mask);
->> +#endif
-> 
-> Can something similar be also be done in select_idle_sibling() and
-> sched_balance_find_dst_cpu() for wakeup path?
+AV1 decoding was tested using the stateless VPU driver and Fluster.
+The test results show a score of 205/239, which confirms that no regressions
+were introduced by this series.
 
-That's a good suggestion. don't make a choice which is a paravirt CPU.
-Will explore.
+Feedback and testing welcome.
 
-> 
->> +
->>   	schedstat_inc(sd->lb_count[idle]);
->>   
->>   redo:
+changes in version 9:
+- removing blanks lines.
+
+changes in version 8:
+- Add myself in MAINTAINERS file.
+- Add API to restore VSI iommu context from decoder driver
+- Fix reported checkpatch issues: add comment in pinlock_t declaration
+  and remove blank line.
+- Include board name in defconfig patch commit message
+
+changes in version 7:
+- fix locking issues.
+- add a patch in AV1 video decoder to manage per context iommu domain.
+- fix compilation issues when build as module.
+- remove useless "rockchip,rk3588-av1-iommu" compatible in driver code.
+
+changes in version 6:
+- rework lock schema in vsi_iommu_attach_device() so
+  it protected against concurrent invalidation.
+- flush the cache after changing of domain.
+
+changes in version 5:
+- change locking schema to use 2 spin_locks: one to protect vsi_domain
+  data and one to protect vsi_iommu structure.
+- make suspend/resume more robust by calling disable/enable function.
+- rebased on top of v6.16-rc5
+
+changes in version 4:
+- rename and reorder compatibles fields.
+- Kconfig dependencies
+- Fix the remarks done by Jason and Robin: locking, clocks, macros
+  probing, pm_runtime, atomic allocation.
+
+changes in version 3:
+- Change compatible to "rockchip,rk3588-iommu-1.2"
+- Fix compatible in .yaml
+- Update DT and driver to use "rockchip,rk3588-iommu-1.2" compatible
+- Set CONFIG_VSI_IOMMU as module in defconfig
+- Create an identity domain for the driver
+- Fix double flush issue
+- Rework attach/detach logic
+- Simplify xlate function
+- Discover iommu device like done in ARM driver
+- Remove ARM_DMA_USE_IOMMU from Kconfig
+
+changes in version 2:
+- Add a compatible "rockchip,rk3588-av1-iommu"
+- Fix clock-names in binding 
+- Remove "vsi_mmu" label in binding example.
+- Rework driver probe function
+- Remove double flush
+- Rework driver internal structures and avoid allocate
+  in xlate function.
+- Do not touch to VPU driver anymore (path removed)
+- Add a patch to enable the driver in arm64 defconfig
+
+Benjamin Gaignard (7):
+  dt-bindings: vendor-prefixes: Add Verisilicon
+  dt-bindings: iommu: verisilicon: Add binding for VSI IOMMU
+  iommu: Add verisilicon IOMMU driver
+  MAINTAINERS: Add entry for Verisilicon IOMMU driver
+  media: verisilicon: AV1: Restore IOMMU context before decoding a frame
+  arm64: dts: rockchip: Add verisilicon IOMMU node on RK3588
+  arm64: defconfig: enable Verisilicon IOMMU for Rockchip RK3588
+
+ .../bindings/iommu/verisilicon,iommu.yaml     |  71 ++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ MAINTAINERS                                   |   8 +
+ arch/arm64/boot/dts/rockchip/rk3588-base.dtsi |  11 +
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/iommu/Kconfig                         |  11 +
+ drivers/iommu/Makefile                        |   1 +
+ drivers/iommu/vsi-iommu.c                     | 808 ++++++++++++++++++
+ .../verisilicon/rockchip_vpu981_hw_av1_dec.c  |  15 +
+ include/linux/vsi-iommu.h                     |  21 +
+ 10 files changed, 949 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iommu/verisilicon,iommu.yaml
+ create mode 100644 drivers/iommu/vsi-iommu.c
+ create mode 100644 include/linux/vsi-iommu.h
+
+-- 
+2.43.0
 
 
