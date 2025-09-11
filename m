@@ -1,159 +1,137 @@
-Return-Path: <linux-kernel+bounces-811994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A94E8B53165
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:50:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2729B53169
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D66C33BEE74
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A38D3AF5F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE643191DE;
-	Thu, 11 Sep 2025 11:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnPnn9lN"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD2E3168E3
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE84309EFF;
+	Thu, 11 Sep 2025 11:49:58 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8042C159A;
+	Thu, 11 Sep 2025 11:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757591308; cv=none; b=H9a1rPrM17yg7mGnqKSQkzJp8crq02NE0gDbRjg5wPx85+s9CHG4Uv/ZAWg+5eiO87aTfVbyZCKQcH0JPOM+falo6QoYqLag4RWrcJiz/sdNskaKJFG7OAjdcnoXytUG2YGuzxA6pINlXNFgkqdgErjNpnOvLsxc8aMOINKDFDU=
+	t=1757591398; cv=none; b=X1VXZfbzVWjYDQOyQk//qqycNgNeACZs1s60Jn4Jf54z+oAn8fm6lbC9XbW5i4vxcKUtYdZYHCcXJSRhV09/85djYhLPcDg3xyrnseRHypvvQjQAIlzXDcIWM3S+6ghVCNvwyrN+nHzUUYm5HI9F2siTlkNA2d1w2UlorbChp+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757591308; c=relaxed/simple;
-	bh=EkTK2XTSrHY3G5pm+FqDACFPq7N6pH7nHaRPNHNccS8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fb8qt/z4+NdPF/45cVfZAuOW/KxjaP7AcZr2RpfK00aTdXv5KwwCAKBrmyl8S5cHEC5I7ipSutYCFNWNThlhqpDPhEpRuC3uI2DWIKj/8PwI2giFlAcvyDB6NyB0CDkG37i7GS9eApIsDjlv9/mQAXHuu/gB2NiMz9anGpAibHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WnPnn9lN; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b042cc3954fso112738066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 04:48:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757591304; x=1758196104; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EkTK2XTSrHY3G5pm+FqDACFPq7N6pH7nHaRPNHNccS8=;
-        b=WnPnn9lN6UEVALTkokHcSJwnGGCtTn2FndHOFVjUteY97stitD0fRCzqDQ0CuW0suu
-         bnab8Xl22IG1J3rTS3LjYh4TPcO8KG1xSKh401ZBxtn4pCMI3lZe6+B1taDKxNGzcLBU
-         jdm7/TkBM+ZobyrdQ+l0lyNwolYvSD7eJi2IPKaA04QjUkJyViB/DExHxD2KrQEdEQsm
-         TEo8FTuZhY+yvchYdh4Okg+H4kyievNtVumu8rfeBJPqWTy9wzV05JJL+95FY1OZupxC
-         /72RUfh7HZADmoAg7W3eUYtIWh0hDSxfCYwKn9xbZ84gSR0mMuf9XGAGnVZT3/zzB0gD
-         gmKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757591304; x=1758196104;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EkTK2XTSrHY3G5pm+FqDACFPq7N6pH7nHaRPNHNccS8=;
-        b=Frs2WZrjd4nff9XFLzYbYyyLbDeemi0xwrsoOWUV5dj63jT5ej5JC8GybC833iLhi3
-         hKRhYYLcj4tAcZXYpB83CQgTGpVnIowDvli4uNnGgJBfcCzPZi+6k6ma0usy1xu8Kc8x
-         7R3bYBYvvaGXpKaOgGxy6nVkwo8r3GfdG9ULTVUzjh3WvYxXX3Ylmm8qYT4Zax9YYHsq
-         E4slGarEixOa21DOP68dzGopvcewhag8Dd2z4LRszFiWfb02Lc4MCeEUIzuyV7u43uzv
-         J/LbJ3kvWbvJ6UzzFcbBDK0qxp16VbTxlCugVpEfZXrgXw44HP87TsjKzeHxoICKJUgi
-         eC3g==
-X-Forwarded-Encrypted: i=1; AJvYcCX58vYs7IHl8wE4YKWuQYdkReTZGBli5VXy/KMb3B+LTv/fdOP3FLUxHFPdM+OkBEaZWph+7A/e5Yk8OOY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz08CEydygkkVNUnjVRC5fTEZ6+3YBeZNFs6J+Xu9ltM3oaBQ8s
-	00dMVp9FGx1cV/i/fvKUc2U9IrhmiwSbNARpNzoh+XU6Axo8m87UDGQNMMCLSSwxhNZ8T92JPTx
-	JWRoKHXrq7kAZM3gCYPkUu9pbCuaDQ5c=
-X-Gm-Gg: ASbGncvsm/vvjnXuBjtGd59wxirrx3GFi2Cwn/imKmSYYR92dTkBEjqZYaAsN3SWDT2
-	+57FtBLW7VqOkq/UIzymK1kz9ubIV6V2xOafMSe/XFdCAEVUJ53MJ+DZtCyQ3YO9ZYh6qUeTLFC
-	ytLotbibZL3TZ/AHlUgH4KFZFvrtSeqbt6uAv0AeeXUyu5NiOjnfc+eVFU60/iCK4Wl+0TchKRa
-	B9i7ImRy2zR5h2b4g==
-X-Google-Smtp-Source: AGHT+IFo70V+ej40+aX5Z/eRHJRCaW/Iqhahk/Ha781IK84/veOVnzt9N3EBI1U+cUalJ9ig/yIFZ2KLCeQ+wQEV8Cg=
-X-Received: by 2002:a17:907:e98b:b0:b04:85bc:a926 with SMTP id
- a640c23a62f3a-b04b13fe4efmr1871379366b.11.1757591304254; Thu, 11 Sep 2025
- 04:48:24 -0700 (PDT)
+	s=arc-20240116; t=1757591398; c=relaxed/simple;
+	bh=jU7cQJWKbEmzN+FcnVCf5vLe/NA8j+GUwLOmZOFuYZ4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Q48bbBZB/iln51+JGvWJPP5CEQ0L/nu07VVAjIY8U7JRwtAMUsbdj3orheyBYMSbBKN/mDFqHQK/rUhv+goyWDEypSit+OAFCJzeIWpYt8ceBFGE92KPHeCtHjCcihAPMcceerbzoCKSIE+Eq/pLIgsb6Aom6aS93iI/ZZmuEO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [113.200.148.30])
+	by gateway (Coremail) with SMTP id _____8CxbNJft8JoLDgJAA--.19746S3;
+	Thu, 11 Sep 2025 19:49:51 +0800 (CST)
+Received: from [10.130.10.66] (unknown [113.200.148.30])
+	by front1 (Coremail) with SMTP id qMiowJAxT+Zet8JoVPWNAA--.57205S3;
+	Thu, 11 Sep 2025 19:49:51 +0800 (CST)
+Subject: Re: [PATCH v1 2/2] LoongArch: Return 0 for user tasks in
+ arch_stack_walk_reliable()
+To: Jinyang He <hejinyang@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Huacai Chen
+ <chenhuacai@kernel.org>, Xi Zhang <zhangxi@kylinos.cn>,
+ live-patching@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250909113106.22992-1-yangtiezhu@loongson.cn>
+ <20250909113106.22992-3-yangtiezhu@loongson.cn>
+ <5e45a1a9-4ac3-56ee-1415-0b2128b4ed9a@loongson.cn>
+From: Tiezhu Yang <yangtiezhu@loongson.cn>
+Message-ID: <c3431ce4-0026-3a05-fa50-281cd34aba4e@loongson.cn>
+Date: Thu, 11 Sep 2025 19:49:50 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-32-4dd56e7359d8@kernel.org> <CAOQ4uxhwJBLCzfKs0dVFOpcgP=LQU5hkRxVeLLR6g-qOxb9ocQ@mail.gmail.com>
- <20250911-ergriffen-autopilot-7e0488c135c7@brauner>
-In-Reply-To: <20250911-ergriffen-autopilot-7e0488c135c7@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 11 Sep 2025 13:48:12 +0200
-X-Gm-Features: Ac12FXzjtgrAdVd9rTS0ov85U74TI4ZgGunYM07J1bauwFv-Hur8qy96NfA8slA
-Message-ID: <CAOQ4uxh9mWHYtP6JdvW6HEPgCqe4=3pcJ0V4SVa__8i_EFxUmw@mail.gmail.com>
-Subject: Re: [PATCH 32/32] selftests/namespaces: add file handle selftests
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <5e45a1a9-4ac3-56ee-1415-0b2128b4ed9a@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxT+Zet8JoVPWNAA--.57205S3
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7trW7XF1fAFykCFW5ur43CFX_yoW8tr4rpr
+	95C3ZxKFyUtr9YgF9rGr1DXFy8Jw4kZw1DGF1rJ3W7ZF1Yqr1Fgw429ayj9rsxArWkJw4a
+	kr15trykua17JacCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_MaUUUU
+	U
 
-On Thu, Sep 11, 2025 at 11:15=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Wed, Sep 10, 2025 at 07:30:03PM +0200, Amir Goldstein wrote:
-> > On Wed, Sep 10, 2025 at 4:40=E2=80=AFPM Christian Brauner <brauner@kern=
-el.org> wrote:
-> > >
-> > > Add a bunch of selftests for namespace file handles.
-> > >
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> >
-> > Obviously, I did not go over every single line, but for the general
-> > test template and test coverage you may add:
-> >
-> > Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > However, see my comment on file handle support patch.
-> > The test matrix is incomplete.
->
-> I mean, I'll just drop to non-root in the non-cross ns tests:
->
-> /* Drop to unprivileged uid/gid */
-> ASSERT_EQ(setresgid(65534, 65534, 65534), 0); /* nogroup */
-> ASSERT_EQ(setresuid(65534, 65534, 65534), 0); /* nobody */
->
+On 2025/9/10 上午9:11, Jinyang He wrote:
+> On 2025-09-09 19:31, Tiezhu Yang wrote:
+> 
+>> When testing the kernel live patching with "modprobe livepatch-sample",
+>> there is a timeout over 15 seconds from "starting patching transition"
+>> to "patching complete", dmesg shows "unreliable stack" for user tasks
+>> in debug mode. When executing "rmmod livepatch-sample", there exists
+>> the similar issue.
 
-That would be good I think.
+...
 
-> > Maybe it would be complete if test is run as root and then
-> > as non root, but then I think the test needs some changes
-> > for running as root and opening non-self ns.
-> >
-> > I am not sure what the standard is wrt running the selftests
-> > as root /non-root.
-> >
-> > I see that the userns isolation tests do:
-> > /* Map current uid/gid to root in the new namespace */
-> >
-> > Are you assuming that non root is running this test
-> > or am I missing something?
->
-> No, I'm not assuming that. I just need a new user namespace and become
-> root in it to assume privilege over it so I can test that decoding
-> doesn't work from an ancestor userns owned namespace.
->
+>> @@ -57,9 +62,14 @@ int arch_stack_walk_reliable(stack_trace_consume_fn 
+>> consume_entry,
+>>       }
+>>       regs->regs[1] = 0;
+>>       regs->regs[22] = 0;
+>> +    regs->csr_prmd = task->thread.csr_prmd;
+>>       for (unwind_start(&state, task, regs);
+>>            !unwind_done(&state) && !unwind_error(&state); 
+>> unwind_next_frame(&state)) {
+>> +        /* Success path for user tasks */
+>> +        if (user_mode(regs))
+>> +            return 0;
+>> +
+>>           addr = unwind_get_return_address(&state);
+>>           /*
+> Hi, Tiezhu,
+> 
+> We update stack info by get_stack_info when meet ORC_TYPE_REGS in
+> unwind_next_frame. And in arch_stack_walk(_reliable), we always
+> do unwind_done before unwind_next_frame. So is there anything
+> error in get_stack_info which causing regs is user_mode while
+> stack is not STACK_TYPE_UNKNOWN?
 
-With dropping to unprivileged uid/gid in parent, I understand it should wor=
-k.
-I guess I wasn't sure if dropping to unprivileged uid/gid was required for =
-the
-test to pass when the test is run as root user, but with the addition of
-dropping to unprivileged uid/gid - feel free to add:
+When testing the kernel live patching, the error code path in
+unwind_next_frame() is:
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+   switch (orc->fp_reg) {
+           case ORC_REG_PREV_SP:
+                   p = (unsigned long *)(state->sp + orc->fp_offset);
+                   if (!stack_access_ok(state, (unsigned long)p, 
+sizeof(unsigned long)))
+                           goto err;
 
+for this case, get_stack_info() does not return 0 due to in_task_stack()
+is not true, then goto error, state->stack_info.type = STACK_TYPE_UNKNOWN
+and state->error = true. In arch_stack_walk_reliable(), the loop will be
+break and it returns -EINVAL, thus causing unreliable stack.
+
+Maybe it can check whether the task is in userspace and set
+state->stack_info.type = STACK_TYPE_UNKNOWN in get_stack_info(),
+but I think no need to do that because it has similar effect with
+this patch.
 
 Thanks,
-Amir.
+Tiezhu
+
 
