@@ -1,145 +1,256 @@
-Return-Path: <linux-kernel+bounces-812710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03893B53BBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:43:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922DCB53BBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 236F37AC0D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:41:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 953197B478D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F7F2DC777;
-	Thu, 11 Sep 2025 18:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD772DC77C;
+	Thu, 11 Sep 2025 18:43:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XXxdyqbW"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J3VTVgYa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tv0QVVLK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7152F2DC76F
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A141E18E25;
+	Thu, 11 Sep 2025 18:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757616193; cv=none; b=Y4KfAjwojp7EBZlJpBriS+Fdvekk1BOFTwNZDltARD2C88WP006/LBmm4HxARMYT2gxR2HdLvtX2oCwKTKmsXS/iC9X3/6481kke1jBZMo94BjXfslpJmO91oWXvc+toMGyo5Rf1OWDJ9kOM05lluTgl1b1pMo9jU7MUTIW7odo=
+	t=1757616219; cv=none; b=ah3/W8a58bdP3IRstSYnr6TQH9f8RdRO7YBRSsWb4ycV3RkY8BBAHJqst5ma9WIWITyf3Qp1eLAOID8AsjEywcdya3mhnhiOS97QwJIAppwCaYDGWXbiS6rcrfqDHLBBpOuhM/hIGU2GieQL008MRdWoWK+wVPbeGvMe3MKrpnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757616193; c=relaxed/simple;
-	bh=EcEcABLK/dcKQ9JWVUCiNd/eISIFCjI2vQDwfd4qgsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FhnSLeftjt2dRpXoCfzWfkXIM6V8Rp0f6OuMtj+bwgsDmLTJMEUtMu38yhCqvqv7opaEM2KgNxjqhXygZessP0AtvZ7YK6/cFRPVNYCH/R1neb+Tnye/UC+CwOvLrAo5aBT9wRzpEQ0J/2mTR3ltdkoSTS22C6dntgjWyFea9Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XXxdyqbW; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 11 Sep 2025 11:42:50 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757616177;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JKfsBIjjBs8pCarTDYZ380mGeD1i48PO8H8V6haIuBY=;
-	b=XXxdyqbW2SGskkdgZ/rJMJue/1nScUY19rrTLrPPz4OVLJMvxhMn67kkpt+DVXOfnxcXwP
-	rUi/hBVVpalMpFcdyXaIbMKbPeSzQCr05n2lwybhV8Vz3naZLTMdx2HAubQSlBd6dF78Ti
-	0kjk/i9g408ssx6NGLP8uPpZ436EaWs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Jack Thomson <jackabt.amazon@gmail.com>
-Cc: maz@kernel.org, pbonzini@redhat.com, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, shuah@kernel.org,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	isaku.yamahata@intel.com, roypat@amazon.co.uk,
-	kalyazin@amazon.co.uk, jackabt@amazon.com
-Subject: Re: [PATCH 3/6] KVM: arm64: Add pre_fault_memory implementation
-Message-ID: <aMMYKqWsAZ4y0WI7@linux.dev>
-References: <20250911134648.58945-1-jackabt.amazon@gmail.com>
- <20250911134648.58945-4-jackabt.amazon@gmail.com>
+	s=arc-20240116; t=1757616219; c=relaxed/simple;
+	bh=BDxQOdVVBMTn9aNH5Xz6oOcBeuuA45KdEfLblmt03T8=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=MIwQlXkY677OnkGx20K/pjfYuuyOQ1xLpiS+6BCSHRk9ANA7FDWkECQMkYBKfDZ6EZ8NihWtC/EPVaLNZ/aj0mZPrJyyGGue+PQmRcxySA1xEbJ0vqXAfL0RDU5h5js5XMFVu+SIs56DPoGH4eB3nFw4xCPNh1DQoPEzsjbcAUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J3VTVgYa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tv0QVVLK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 11 Sep 2025 18:43:34 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757616215;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=M+SwbaV+z741t7Z4xx5J9hnTfc7fGZ0sO6dSGu6a1TU=;
+	b=J3VTVgYaaaX0reWV8bIGv6hZhPlJsJwnxQB3BgDQbRSkwHsFdcEeKkMXitmIKSa4nwZTo1
+	YsUr9N3jtDq5CprJJLZDcti5ZQDwf1ke5RQyivJqqR71MOCny1cHbOUuiBTRWabPzRCqrV
+	mbl/dn/DRabBafAMDuDPkSHsIUZxTRacYbG2AkQ6kTiCfPkQb21rd4CD1eo7BYLuegkBOZ
+	WWEUc0pH7pGQNsRgtnKB+Q5p7bAUQst6RIxPhLfFB/nyfssy5svem+Dlsh1Q6RL1o54SZj
+	O8MnDYlr0smt0OV/s4tIdgri9b6z2tJgPI4wRabFVINyno51FY2SH0CdvON5Ug==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757616215;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=M+SwbaV+z741t7Z4xx5J9hnTfc7fGZ0sO6dSGu6a1TU=;
+	b=Tv0QVVLKn9tECTiU7+XWnxS+eyG9BMzhHSyxOL4tGqg4nQrNoAMZdEnLuwyi0dWMRhulZC
+	GwufA5iYAvRMcDAA==
+From: "tip-bot2 for Kai Huang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/tdx] x86/virt/tdx: Use precalculated TDVPR page physical address
+Cc: Kai Huang <kai.huang@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Kiryl Shutsemau <kas@kernel.org>, Farrah Chen <farrah.chen@intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911134648.58945-4-jackabt.amazon@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Message-ID: <175761621420.709179.7149926715895756681.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 02:46:45PM +0100, Jack Thomson wrote:
-> @@ -1607,7 +1611,7 @@ static int __user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  			    struct kvm_s2_trans *nested,
->  			    struct kvm_memory_slot *memslot,
->  			    long *page_size, unsigned long hva,
-> -			    bool fault_is_perm)
-> +			    bool fault_is_perm, bool pre_fault)
->  {
->  	int ret = 0;
->  	bool topup_memcache;
-> @@ -1631,10 +1635,13 @@ static int __user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	vm_flags_t vm_flags;
->  	enum kvm_pgtable_walk_flags flags = KVM_PGTABLE_WALK_MEMABORT_FLAGS;
->  
-> +	if (pre_fault)
-> +		flags |= KVM_PGTABLE_WALK_PRE_FAULT;
-> +
->  	if (fault_is_perm)
->  		fault_granule = kvm_vcpu_trap_get_perm_fault_granule(vcpu);
-> -	write_fault = kvm_is_write_fault(vcpu);
-> -	exec_fault = kvm_vcpu_trap_is_exec_fault(vcpu);
-> +	write_fault = !pre_fault && kvm_is_write_fault(vcpu);
-> +	exec_fault = !pre_fault && kvm_vcpu_trap_is_exec_fault(vcpu);
+The following commit has been merged into the x86/tdx branch of tip:
 
-I'm not a fan of this. While user_mem_abort() is already a sloppy mess,
-one thing we could reliably assume is the presence of a valid fault
-context. Now we need to remember to special-case our interpretation of a
-fault on whether or not we're getting invoked for a pre-fault.
+Commit-ID:     e414b1005891d74bb0c3d27684c58dfbfbd1754b
+Gitweb:        https://git.kernel.org/tip/e414b1005891d74bb0c3d27684c58dfbfbd=
+1754b
+Author:        Kai Huang <kai.huang@intel.com>
+AuthorDate:    Tue, 09 Sep 2025 19:55:53 +12:00
+Committer:     Dave Hansen <dave.hansen@linux.intel.com>
+CommitterDate: Thu, 11 Sep 2025 11:38:28 -07:00
 
-I'd rather see the pre-fault infrastructure compose a synthetic fault
-context (HPFAR_EL2, ESR_EL2, etc.). It places the complexity where it
-belongs and the rest of the abort handling code should 'just work'.
+x86/virt/tdx: Use precalculated TDVPR page physical address
 
-> +long kvm_arch_vcpu_pre_fault_memory(struct kvm_vcpu *vcpu,
-> +				    struct kvm_pre_fault_memory *range)
-> +{
-> +	int r;
-> +	hva_t hva;
-> +	phys_addr_t end;
-> +	long page_size;
-> +	struct kvm_memory_slot *memslot;
-> +	phys_addr_t ipa = range->gpa;
-> +	gfn_t gfn = gpa_to_gfn(range->gpa);
-> +
-> +	while (true) {
-> +		page_size = PAGE_SIZE;
-> +		memslot = gfn_to_memslot(vcpu->kvm, gfn);
-> +		if (!memslot)
-> +			return -ENOENT;
-> +
-> +		if (kvm_slot_has_gmem(memslot)) {
-> +			r = __gmem_abort(vcpu, ipa, NULL, memslot, false, true);
-> +		} else {
-> +			hva = gfn_to_hva_memslot_prot(memslot, gfn, NULL);
-> +			if (kvm_is_error_hva(hva))
-> +				return -EFAULT;
-> +			r = __user_mem_abort(vcpu, ipa, NULL, memslot, &page_size, hva, false,
-> +					     true);
-> +		}
-> +
-> +		if (r != -EAGAIN)
-> +			break;
-> +
-> +		if (signal_pending(current))
-> +			return -EINTR;
-> +
-> +		if (kvm_check_request(KVM_REQ_VM_DEAD, vcpu))
-> +			return -EIO;
-> +
-> +		cond_resched();
-> +	};
+All of the x86 KVM guest types (VMX, SEV and TDX) do some special context
+tracking when entering guests. This means that the actual guest entry
+sequence must be noinstr.
 
-Why do we need another retry loop? Looks like we've already got one in
-the arch-generic code.
+Part of entering a TDX guest is passing a physical address to the TDX
+module. Right now, that physical address is stored as a 'struct page'
+and converted to a physical address at guest entry. That page=3D>phys
+conversion can be complicated, can vary greatly based on kernel
+config, and it is definitely _not_ a noinstr path today.
 
-Thanks,
-Oliver
+There have been a number of tinkering approaches to try and fix this
+up, but they all fall down due to some part of the page=3D>phys
+conversion infrastructure not being noinstr friendly.
+
+Precalculate the page=3D>phys conversion and store it in the existing
+'tdx_vp' structure.  Use the new field at every site that needs a
+tdvpr physical address. Remove the now redundant tdx_tdvpr_pa().
+Remove the __flatten remnant from the tinkering.
+
+Note that only one user of the new field is actually noinstr. All
+others can use page_to_phys(). But, they might as well save the effort
+since there is a pre-calculated value sitting there for them.
+
+[ dhansen: rewrite all the text ]
+
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Reviewed-by: Kiryl Shutsemau <kas@kernel.org>
+Tested-by: Farrah Chen <farrah.chen@intel.com>
+---
+ arch/x86/include/asm/tdx.h  |  2 ++
+ arch/x86/kvm/vmx/tdx.c      |  9 +++++++++
+ arch/x86/virt/vmx/tdx/tdx.c | 21 ++++++++-------------
+ 3 files changed, 19 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/include/asm/tdx.h b/arch/x86/include/asm/tdx.h
+index 6120461..6b338d7 100644
+--- a/arch/x86/include/asm/tdx.h
++++ b/arch/x86/include/asm/tdx.h
+@@ -171,6 +171,8 @@ struct tdx_td {
+ struct tdx_vp {
+ 	/* TDVP root page */
+ 	struct page *tdvpr_page;
++	/* precalculated page_to_phys(tdvpr_page) for use in noinstr code */
++	phys_addr_t tdvpr_pa;
+=20
+ 	/* TD vCPU control structure: */
+ 	struct page **tdcx_pages;
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 04b6d33..75326a7 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -852,6 +852,7 @@ void tdx_vcpu_free(struct kvm_vcpu *vcpu)
+ 	if (tdx->vp.tdvpr_page) {
+ 		tdx_reclaim_control_page(tdx->vp.tdvpr_page);
+ 		tdx->vp.tdvpr_page =3D 0;
++		tdx->vp.tdvpr_pa =3D 0;
+ 	}
+=20
+ 	tdx->state =3D VCPU_TD_STATE_UNINITIALIZED;
+@@ -2931,6 +2932,13 @@ static int tdx_td_vcpu_init(struct kvm_vcpu *vcpu, u64=
+ vcpu_rcx)
+ 		return -ENOMEM;
+ 	tdx->vp.tdvpr_page =3D page;
+=20
++	/*
++	 * page_to_phys() does not work in 'noinstr' code, like guest
++	 * entry via tdh_vp_enter(). Precalculate and store it instead
++	 * of doing it at runtime later.
++	 */
++	tdx->vp.tdvpr_pa =3D page_to_phys(tdx->vp.tdvpr_page);
++
+ 	tdx->vp.tdcx_pages =3D kcalloc(kvm_tdx->td.tdcx_nr_pages, sizeof(*tdx->vp.t=
+dcx_pages),
+ 			       	     GFP_KERNEL);
+ 	if (!tdx->vp.tdcx_pages) {
+@@ -2993,6 +3001,7 @@ free_tdvpr:
+ 	if (tdx->vp.tdvpr_page)
+ 		__free_page(tdx->vp.tdvpr_page);
+ 	tdx->vp.tdvpr_page =3D 0;
++	tdx->vp.tdvpr_pa =3D 0;
+=20
+ 	return ret;
+ }
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index 330b560..eac4032 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -1504,11 +1504,6 @@ static inline u64 tdx_tdr_pa(struct tdx_td *td)
+ 	return page_to_phys(td->tdr_page);
+ }
+=20
+-static inline u64 tdx_tdvpr_pa(struct tdx_vp *td)
+-{
+-	return page_to_phys(td->tdvpr_page);
+-}
+-
+ /*
+  * The TDX module exposes a CLFLUSH_BEFORE_ALLOC bit to specify whether
+  * a CLFLUSH of pages is required before handing them to the TDX module.
+@@ -1520,9 +1515,9 @@ static void tdx_clflush_page(struct page *page)
+ 	clflush_cache_range(page_to_virt(page), PAGE_SIZE);
+ }
+=20
+-noinstr __flatten u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args=
+ *args)
++noinstr u64 tdh_vp_enter(struct tdx_vp *td, struct tdx_module_args *args)
+ {
+-	args->rcx =3D tdx_tdvpr_pa(td);
++	args->rcx =3D td->tdvpr_pa;
+=20
+ 	return __seamcall_dirty_cache(__seamcall_saved_ret, TDH_VP_ENTER, args);
+ }
+@@ -1583,7 +1578,7 @@ u64 tdh_vp_addcx(struct tdx_vp *vp, struct page *tdcx_p=
+age)
+ {
+ 	struct tdx_module_args args =3D {
+ 		.rcx =3D page_to_phys(tdcx_page),
+-		.rdx =3D tdx_tdvpr_pa(vp),
++		.rdx =3D vp->tdvpr_pa,
+ 	};
+=20
+ 	tdx_clflush_page(tdcx_page);
+@@ -1652,7 +1647,7 @@ EXPORT_SYMBOL_GPL(tdh_mng_create);
+ u64 tdh_vp_create(struct tdx_td *td, struct tdx_vp *vp)
+ {
+ 	struct tdx_module_args args =3D {
+-		.rcx =3D tdx_tdvpr_pa(vp),
++		.rcx =3D vp->tdvpr_pa,
+ 		.rdx =3D tdx_tdr_pa(td),
+ 	};
+=20
+@@ -1708,7 +1703,7 @@ EXPORT_SYMBOL_GPL(tdh_mr_finalize);
+ u64 tdh_vp_flush(struct tdx_vp *vp)
+ {
+ 	struct tdx_module_args args =3D {
+-		.rcx =3D tdx_tdvpr_pa(vp),
++		.rcx =3D vp->tdvpr_pa,
+ 	};
+=20
+ 	return seamcall(TDH_VP_FLUSH, &args);
+@@ -1754,7 +1749,7 @@ EXPORT_SYMBOL_GPL(tdh_mng_init);
+ u64 tdh_vp_rd(struct tdx_vp *vp, u64 field, u64 *data)
+ {
+ 	struct tdx_module_args args =3D {
+-		.rcx =3D tdx_tdvpr_pa(vp),
++		.rcx =3D vp->tdvpr_pa,
+ 		.rdx =3D field,
+ 	};
+ 	u64 ret;
+@@ -1771,7 +1766,7 @@ EXPORT_SYMBOL_GPL(tdh_vp_rd);
+ u64 tdh_vp_wr(struct tdx_vp *vp, u64 field, u64 data, u64 mask)
+ {
+ 	struct tdx_module_args args =3D {
+-		.rcx =3D tdx_tdvpr_pa(vp),
++		.rcx =3D vp->tdvpr_pa,
+ 		.rdx =3D field,
+ 		.r8 =3D data,
+ 		.r9 =3D mask,
+@@ -1784,7 +1779,7 @@ EXPORT_SYMBOL_GPL(tdh_vp_wr);
+ u64 tdh_vp_init(struct tdx_vp *vp, u64 initial_rcx, u32 x2apicid)
+ {
+ 	struct tdx_module_args args =3D {
+-		.rcx =3D tdx_tdvpr_pa(vp),
++		.rcx =3D vp->tdvpr_pa,
+ 		.rdx =3D initial_rcx,
+ 		.r8 =3D x2apicid,
+ 	};
 
