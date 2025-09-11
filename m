@@ -1,174 +1,130 @@
-Return-Path: <linux-kernel+bounces-812417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA6EB537E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:34:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF975B537E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D0CCAA2B96
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 798F35A1319
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8030D350D77;
-	Thu, 11 Sep 2025 15:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C37DQb3O"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B32C3451B5;
+	Thu, 11 Sep 2025 15:34:28 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DBB314A62
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE6221C179
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757604818; cv=none; b=QFBGNqZisHA45ykBehxLpS2qzZCrIqQD4fuOZzYsV85OGI4hT92CzKmDTz3C7iyFNVTmOKtkvGZvU1Ktdo0Soh/sOCGmson3dzJATKCsFQ+0i7TePX6hBt35wWHktt4tjK740K8qKFkQlkDkDHlIpc1/p+KIIAEr06VqHeN09XA=
+	t=1757604868; cv=none; b=awLtVkqrxujOj2y865Iv7+HU9sdRoBvKb5xCIA9VfGo9H/1WXtMEJuW3iMNUGZPanP40Y6/ajcYZ3ipWxuSZbFCadnrfa6v3xYHgSW7lbR32kNmehHxsLCE640hpmcaQSZXvEYtdSwV25t6prcpqjSB+HyhorMWpfFpL+BgXPBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757604818; c=relaxed/simple;
-	bh=eBaSEHFlOb+Sj2Ytt8kEDY7Z0F2L8DBgrNrEPL5tY/4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UAZc/w88h9Guh12qEPTtWubgb0L9h029C7srVRE/j67pGZUKFL0nRsHyLaEnKlFMUjzmEfanQLfntOOfNezNhu3iEYt3ykQ3mdWmTC0VorTVIb/QvIXS3SigeSp8cyqP3JGwiy2CenvEh++zny0QPO0JRCy1ut1AYcvM7bUMewg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C37DQb3O; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757604806;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ff/wyuZO5UIQVkCR2N2KX4E1vX6xd5TgHmsu3ejak7Q=;
-	b=C37DQb3OEJOJsqSu2+34RxAJXBOa8EL9L4biqD5chRL3DhDnVB9duDnfJvNl+Ip2kBMf+o
-	W6h0neeBYXplrNbQuxWPsow9OirZjuPEsGMhg46k+mXfF82dQTipBWqLVlWwLWn79w8NVX
-	33OYtb0xp0cVFt4l9QgolRLmDJTm8Y8=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Linu Cherian <lcherian@marvell.com>,
-	James Clark <james.clark@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH v2] coresight: Fix possible deadlock in coresight_panic_cb
-Date: Thu, 11 Sep 2025 11:33:15 -0400
-Message-Id: <20250911153315.3607119-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1757604868; c=relaxed/simple;
+	bh=s8//uLaIyKucZnZ8MLKchIsTir7RSr+sKexuxxcUPco=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=perS4Nv46TrNt+iCGkVcOtlwk+ndJ3MUZJK9ZIS21B/cLhTTZWNPmCreAvvvbA3GCkdBEEzcU2E5CSHs9M8r/GYAcTLccEytNuGEseRlFf+NdUIZIEHDqQoyp8hvTwN85sadHUQgwM2FV3g+JTHsq0tAhfxcsQfxXwvuVTe317Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-88a930b80bdso230617739f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:34:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757604865; x=1758209665;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TfoQRV18n2TXavn1Lm8saXuaz+6pSqsVAdNPhzd660c=;
+        b=eXUvfN8H0Pa/KXsFVL9kN0oPDdCy7bUO1tbNMbSvNsvMcJLBWkkNtcFvcVKzAhzI3T
+         9d05d8XS7CGaMitIA0OQhoj1//O0aQEwVfa3KOPzQc5cpt/DAxRmPqB5cJOOWfvdFEii
+         Sqk/0YeyYWpwumYQKXYxyiSWAAM6tvSu0F19tcPjVdLY4TUyp1qITD0wagxfgZAyNb+1
+         NBbw1xeZyT+2azJORR/bN6e75eYLp3uXdTX3KoaWjylV2D1Dy4fh5YYX+u7RvDuR/rba
+         RUoFYa9KajDChvO43LKXphXoFloGgSDW9lOjjaK4neD5hJjouiuniSaV0ePVxSE6B3BZ
+         Ucwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtrAHqcDpGcpqfMQgLJuMuINxhMGoX5Ey7AKy8MgiIwvaKITjFmIp/Vmb+LExvmCU8SUckiEqHkG/o+rE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpNF/8e4ojIhiOgcB79JVWS1022RfMWhuXcaQPUGCbJe/kWBpX
+	7vRdl1jD8oTATrXr6sFTEO3iBV3rxwHKTrEI5W2sz0KUF7671qXsVu3YkO0dJ1TvrsTg0wifTX9
+	H0kdYvzoS0Iu3S0ph6LhZ00CQpmkEgYr6sbo5bLRMKbcU1nPpJtAwop5O5OY=
+X-Google-Smtp-Source: AGHT+IGX+yKtSj+JzzsB0n6KIsgUET53Ks5lrcXKQf7kZZ+8PzzchxgMZ6WrdhrXxq9KKZhuN+vOkxVX9QyKZIFTVuXxcDg8zjWj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Received: by 2002:a05:6e02:1909:b0:3e5:4e4f:65df with SMTP id
+ e9e14a558f8ab-4209e64b9dfmr331225ab.9.1757604865442; Thu, 11 Sep 2025
+ 08:34:25 -0700 (PDT)
+Date: Thu, 11 Sep 2025 08:34:25 -0700
+In-Reply-To: <68232e7b.050a0220.f2294.09f6.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c2ec01.050a0220.3c6139.003f.GAE@google.com>
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+To: edwards@nvidia.com, jgg@ziepe.ca, leon@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-coresight_panic_cb is called with interrupts disabled during panics.
-However, bus_for_each_dev calls bus_to_subsys which takes
-bus_kset->list_lock without disabling IRQs. This will cause a deadlock
-if a panic occurs while one of the other coresight functions that uses
-bus_for_each_dev is running.
+syzbot has found a reproducer for the following issue on:
 
-Maintain a separate list of coresight devices to access during a panic.
+HEAD commit:    5f540c4aade9 Add linux-next specific files for 20250910
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=157dab12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
+dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b52362580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b41642580000
 
-Fixes: 46006ceb5d02 ("coresight: core: Add provision for panic callbacks")
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/df0dfb072f52/disk-5f540c4a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/20649042ae30/vmlinux-5f540c4a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4c16358268b8/bzImage-5f540c4a.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+GID entry ref leak for dev syz1 index 2 ref=615
+WARNING: drivers/infiniband/core/cache.c:809 at release_gid_table drivers/infiniband/core/cache.c:806 [inline], CPU#0: kworker/u8:2/36
+WARNING: drivers/infiniband/core/cache.c:809 at gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886, CPU#0: kworker/u8:2/36
+Modules linked in:
+CPU: 0 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
+Workqueue: ib-unreg-wq ib_unregister_work
+RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
+RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
+Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 a0 43 91 8c 4c 89 e6 44 89 fa e8 fb 67 f5 f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
+RSP: 0018:ffffc90000ac7908 EFLAGS: 00010246
+RAX: 621d731dcb27e200 RBX: ffff88806241b8d8 RCX: ffff888141289e40
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
+RBP: 1ffff1100c48371b R08: ffff8880b8724253 R09: 1ffff110170e484a
+R10: dffffc0000000000 R11: ffffed10170e484b R12: ffff888027503e00
+R13: ffff88806241b800 R14: ffff8880289a2400 R15: 0000000000000002
+FS:  0000000000000000(0000) GS:ffff8881259f0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555569847588 CR3: 00000000338c8000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ ib_device_release+0xd2/0x1c0 drivers/infiniband/core/device.c:509
+ device_release+0x99/0x1c0 drivers/base/core.c:-1
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x228/0x480 lib/kobject.c:737
+ process_one_work kernel/workqueue.c:3263 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x47c/0x820 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
 ---
-
-Changes in v2:
-- Add a comment describing csdev_lock/list
-- Consolidate list removal in coresight_device_release
-
- drivers/hwtracing/coresight/coresight-core.c | 43 +++++++++++---------
- include/linux/coresight.h                    |  1 +
- 2 files changed, 25 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-index fa758cc21827..4e28e56f2e30 100644
---- a/drivers/hwtracing/coresight/coresight-core.c
-+++ b/drivers/hwtracing/coresight/coresight-core.c
-@@ -1042,10 +1042,19 @@ static void coresight_clear_default_sink(struct coresight_device *csdev)
- 	}
- }
- 
-+/*
-+ * Dedicated list of devices for use by during panic (which may occur with
-+ * interrupts disabled).
-+ */
-+static DEFINE_SPINLOCK(csdev_lock);
-+static LIST_HEAD(csdev_list);
-+
- static void coresight_device_release(struct device *dev)
- {
- 	struct coresight_device *csdev = to_coresight_device(dev);
- 
-+	scoped_guard(spinlock_irq, &csdev_lock)
-+		list_del(&csdev->csdev_list);
- 	fwnode_handle_put(csdev->dev.fwnode);
- 	free_percpu(csdev->perf_sink_id_map.cpu_map);
- 	kfree(csdev);
-@@ -1357,6 +1366,10 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
- 			goto err_out;
- 		}
- 	}
-+
-+	scoped_guard(spinlock_irq, &csdev_lock)
-+		list_add(&csdev->csdev_list, &csdev_list);
-+
- 	/*
- 	 * Make sure the device registration and the connection fixup
- 	 * are synchronised, so that we don't see uninitialised devices
-@@ -1563,28 +1576,20 @@ const struct bus_type coresight_bustype = {
- 	.name	= "coresight",
- };
- 
--static int coresight_panic_sync(struct device *dev, void *data)
--{
--	int mode;
--	struct coresight_device *csdev;
--
--	/* Run through panic sync handlers for all enabled devices */
--	csdev = container_of(dev, struct coresight_device, dev);
--	mode = coresight_get_mode(csdev);
--
--	if ((mode == CS_MODE_SYSFS) || (mode == CS_MODE_PERF)) {
--		if (panic_ops(csdev))
--			panic_ops(csdev)->sync(csdev);
--	}
--
--	return 0;
--}
--
- static int coresight_panic_cb(struct notifier_block *self,
- 			       unsigned long v, void *p)
- {
--	bus_for_each_dev(&coresight_bustype, NULL, NULL,
--				 coresight_panic_sync);
-+	struct coresight_device *csdev;
-+
-+	guard(spinlock)(&csdev_lock);
-+	list_for_each_entry(csdev, &csdev_list, csdev_list) {
-+		/* Run through panic sync handlers for all enabled devices */
-+		int mode = coresight_get_mode(csdev);
-+
-+		if ((mode == CS_MODE_SYSFS || mode == CS_MODE_PERF) &&
-+		    panic_ops(csdev))
-+			panic_ops(csdev)->sync(csdev);
-+	}
- 
- 	return 0;
- }
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 4ac65c68bbf4..a5e62ebd03b5 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -302,6 +302,7 @@ struct coresight_device {
- 	/* system configuration and feature lists */
- 	struct list_head feature_csdev_list;
- 	struct list_head config_csdev_list;
-+	struct list_head csdev_list;
- 	raw_spinlock_t cscfg_csdev_lock;
- 	void *active_cscfg_ctxt;
- };
--- 
-2.35.1.1320.gc452695387.dirty
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
