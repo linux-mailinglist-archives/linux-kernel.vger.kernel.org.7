@@ -1,247 +1,216 @@
-Return-Path: <linux-kernel+bounces-812274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84600B53554
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:30:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D94B5355A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CEAA17ABD02
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:29:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E349F1CC2AD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B0C33CE8F;
-	Thu, 11 Sep 2025 14:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9AFF33CEB1;
+	Thu, 11 Sep 2025 14:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Af4pJ3d4"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="ZYgtspXS"
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2080.outbound.protection.outlook.com [40.107.114.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092DE136351
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601041; cv=none; b=rBQ8Mb5JODJHKMgj06P4wWgzu2x6+veREraja72t6kgQCQkY6keR4cjd0tCCQq0XWesy7GH/aSuyi4ZzY0yrtiMcoyeXFsxVEH0hlakIy2PfHOu9xgWYrjp9GaKBUF/vwS/vPyau9OqN2C0T+IHyvv0pguBBpEq/KRwle1Bz0/I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601041; c=relaxed/simple;
-	bh=pqyfwB94mn5F08T72bRZ17AuLDDDWAbJHDGZr/i2Xqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WAoNhVj0qlc2rnN7KnDTIGlxuUzj7boriM+BoW9rFe6PRf1d6yUBab5WIdirlBCoZE65sO9sfTmOWtWdOVtB/4j+09zib5JDIwWlDXWcWq1XhWfdgCSnXwxRpScy39QvKvv6E5CcrXkigkxa/uPE2aL3BplbguU8PqxIskpyK0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Af4pJ3d4; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 11 Sep 2025 14:30:31 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757601035;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0ggZBAjhYjIflaDH1RktcBl45HG8nhXAZG/qjhNo9vw=;
-	b=Af4pJ3d4AxqymMzi7MWDMC/qm2UPqpLWI0/cF/PpxmZJf7yE05u1WNdLdZ/wIdEECzISNb
-	BnvqOi6giWGl8XkKWZK2NZRqleJDA8D5eZi5Ii65UFHVdvXJwrQTC7WXEu+bUNFqLXyfgR
-	oPiPfo1gBKEoAQ0lNb1zkpt7wyaqU/E=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Chengming Zhou <zhouchengming@bytedance.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] mm: zswap: interact directly with zsmalloc
-Message-ID: <f5hn4awbmkelckl6khlaosw3tbfrwzvf5l7kn6mnqpbastsdnh@77mqvfjzyfys>
-References: <20250829162212.208258-1-hannes@cmpxchg.org>
- <20250829162212.208258-2-hannes@cmpxchg.org>
- <r3dzlbqyvhaho5zuac7eba6pxz47zy3cz4lopxza3ls3ibadlh@6evm5aryyuxp>
- <20250909150156.GB1474@cmpxchg.org>
- <46xtfjznexpdlemxjwykin5k74oqomedb2fyli5jrb4xnquuke@ztcmxhmhlkx7>
- <20250910134240.GA1111@cmpxchg.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30551136351;
+	Thu, 11 Sep 2025 14:30:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.114.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757601049; cv=fail; b=affJw1hNrse9wfq3PQmSgYICCaAdVdSwHQ9MRkWp5B1ELc4d5YqF77qN5F1+HoP8BRePmRemmG9ET39YqODm0BcetIDzwEVh7lJCELxyus0zoxdKubM8gibmRHj2DEBXxDJoitvwYJXjUOFLsbJBYtf9wSKhArzJO9Irce168R0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757601049; c=relaxed/simple;
+	bh=4NrdeUmrLAz0Y4ZonA377ATag/YNJRFHuubcu40vw9Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rGYclSrJtpc2OMGITK+bTy4tHvaRq9217OgJOw4dEvSQfj6G/onIcJygVd15Cd3Ku9+/jb+xAuGObnnGP3opesHFqfjRMa/celp9sV+zWmwIB4B9WmgM3sN+E1zyuffNGmmP8mE6bDyvfgfDKYfyOfK9YV7HtYKDtgxEvxst9zs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=ZYgtspXS; arc=fail smtp.client-ip=40.107.114.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fm41EJdKAI7Mo4/kdyteYk75BCB/P7888k2m7/FCtOK1WraH7cWKvpzsXkSjrihMn0K/tbisAejlo4pRUvJMYF2mPBqM/Cnh5oahB5jM5+gw/e3cAg6m7pVCe1dAiooKyWe+wEdJ8dzDD4HMUjPyaMhII/xExWt1Jq/sC9XKbPPY1MKbAX/uPetCv+qYJa76he5mMgPZRJ2RYhYts0k1wbGFxgDh2MVQ3NpPQ4F3YJSScaUIgdXV09QG4HNIvnslHssjKaKwhUvkAJcr/WrWT5R6+tTfBE3o+RpNz4Dn5guE74kQNom/r9Tqvrx75RWnmYoXohgV3TB4gWVGrjVuDQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4NrdeUmrLAz0Y4ZonA377ATag/YNJRFHuubcu40vw9Y=;
+ b=XYi+loQ436sX2jmA4dZpU+41yDTtO3yoqbdSw3w9IRfABaLX/8OwqTsCDBGy8CB+wKcTsrqEAosD8iUGQ4mSRLPlrgBHA8cNGwQgPjwlAqPjPb2qqqui2VEeSsmPZBMzi/xe6fGO4ODlqYI17JeRNmuQW4fZKIpZr+UYA0qMUUWewsFLKn+ezU5LkSObTo9lwMVcynZQHAoXZrEpNsxkNkl6e/zqnkNxaDibe78qM2qhd6vudDnn9nVWWHMC1wQPfXZcKmTt+npUP2evxj6fJLWC6y6M4rvIDL13S2XWBRHHe4AsrH7eOYaR9tsw+gSz63I17iaduOwGKu8KKCY1jg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4NrdeUmrLAz0Y4ZonA377ATag/YNJRFHuubcu40vw9Y=;
+ b=ZYgtspXSeupMXcsho1qvGPnH8pq2tgNKDQWhCRQDodGCCOtUx48nJR6s1jQPXXrA00ZaH2FDkGHvWytiMj7PqAyu6rcIcXO70dtfRQCmkq9aupMpcp3fGpRYPlQhKPs73ghosrGfM/CXCGJ3HT+FxG/psGH24Hu3BWrmuD/Udv4=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by OS3PR01MB7706.jpnprd01.prod.outlook.com (2603:1096:604:17b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 14:30:42 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 14:30:42 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>, "Lad, Prabhakar"
+	<prabhakar.csengg@gmail.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Fabrizio Castro
+	<fabrizio.castro.jz@renesas.com>, Tommaso Merciai
+	<tommaso.merciai.xr@bp.renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, Andrzej Hajda
+	<andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, Robert
+ Foss <rfoss@kernel.org>, laurent.pinchart
+	<laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, magnus.damm
+	<magnus.damm@gmail.com>
+Subject: RE: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI
+ clocks
+Thread-Topic: [PATCH v8 2/6] clk: renesas: rzv2h-cpg: Add support for DSI
+ clocks
+Thread-Index: AQHcHO5DkziJYuZpG0uP0S9PdlSgdLSMY2uAgAFLCQCAAGfOAIAAANyA
+Date: Thu, 11 Sep 2025 14:30:42 +0000
+Message-ID:
+ <TY3PR01MB113460EF10FB5D9067D61358F8609A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250903161718.180488-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250903161718.180488-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <db2fc907-218c-4688-aebf-4a929f21b074@ideasonboard.com>
+ <CA+V-a8vghwkHKWoqU8NQ3O9ZdHxB+cEvMv7Z9LQOMsZcx9vjPA@mail.gmail.com>
+ <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com>
+In-Reply-To: <f1e671a3-77af-4ae2-aa6e-bde93aaa54b7@ideasonboard.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS3PR01MB7706:EE_
+x-ms-office365-filtering-correlation-id: 181c0ee4-f367-4156-27e6-08ddf13fc9ce
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|1800799024|7416014|366016|38070700021;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?SEU4dXdKa3hTUHh4RE5SeS93bUlmRXpqU0pRcGdkVHV5UkpFK1d4NDVKTDNB?=
+ =?utf-8?B?MU9tOXhwc0lubHUrMTlkSGF5OXg0RGdIT2FvVjhyUFdVRkZaSzlaUytHR0c2?=
+ =?utf-8?B?aVFqeTdHSDNVVmpUTFpkRFFua3BYTE1La2ZYWjRnc3JGQkxTNGh2SUtxRTRu?=
+ =?utf-8?B?QmJLL1MzT1ZYems0WVE3OHNVV1RZNE4vUG9oVW5HYzFPdlhSNmtqTTdtYkRC?=
+ =?utf-8?B?ZGF6WXIvaDdjUW5HakZucFVpdEd3Uzc3M3lvODJpUWQveitlODNvSmM1L0d5?=
+ =?utf-8?B?MnhnWVUweVhzYnpUKzVDL3RIbTVEd3p0T2xWUHNjKzk3MzNxYXQzWHV6T0Nk?=
+ =?utf-8?B?Wm8vMVhuQUNpMXRUT1FXRVVKRmFtYXhaU1plb0ZIeFhlQzE1VjZydGVERlA4?=
+ =?utf-8?B?ZUUvcWVmbnpBZ2RtQm0wZXpJSHNwR084TUN6S1dJQ3JSWjRBVDdSQWUxSC9H?=
+ =?utf-8?B?UDhUc0UvNEVuclB3S3lOUjk3U2U4UTdZd1lBRXBuQ2dQMXNvMEpKam5qQVJu?=
+ =?utf-8?B?bzZlSGdaMzl4NE5FTEFHVC9KMDQzMXU1UXpqY2E0amp0bitrV01wZFJwYUZH?=
+ =?utf-8?B?OGVEak5UMlNCTlJBWFB0bnAwS2pnbjRZSyt6aGpHbStveklwaWpXS0YxM2U5?=
+ =?utf-8?B?dmxTWWViQmxzTGhacjFmVXdRQldlMVRaR0xwQVdwSExKSEFRdVk1b3BkTjFv?=
+ =?utf-8?B?dzZoWkIzRUFVR0VXekpJcnp5VXBMTUNYYUhQQmEvRkJCMGxDbXlpc1dGMmw3?=
+ =?utf-8?B?d29LSzhXdFpWdWRoUlc5UG1QSmlwdXQrelBBMVMybnZYTkFWTVZVWEVwallH?=
+ =?utf-8?B?YlhZT2VJdHRoQjVvallsRmZNWjkrdW5YcFNqSkFBSjJpSm80TGhOMjA3bG9h?=
+ =?utf-8?B?bWNVN0YvSm0yQkZHdEQwYWxtMUlSelN1NjFLTGVaUmNLWmJNU2x5cnloU0dE?=
+ =?utf-8?B?YjMrbjAvdGNGSVZNbG5EeEplZ0Z4YmNxYnAvS04vUUxhQU9tOUloaUlFdmtZ?=
+ =?utf-8?B?aDlZRU05RmlsenRNTVlvaVo2amJPRVp3NWV0Ny90SVhldzZYL011dC9SQTVR?=
+ =?utf-8?B?ZXk2WkxqNVN0RWdEajhlNlQrQ1hmbk4zRFpvVXBGc1BqMklqcEsrcFYwbFlU?=
+ =?utf-8?B?eG5oWWt5V2VPOG4vc3J4bUxNZndYa3NPdDE0Y2YzZGs2THhqaEFnZmc3aDN0?=
+ =?utf-8?B?eEV5bnArVSsyT1NXSzAySVJuNytlNmtzYUtJNUozd2VxTExmTC9iU3Y3N3dv?=
+ =?utf-8?B?YkRyeDZIUnI1WExkbmZUSThOaXA3b2pZdlRTOUl1cWQwL2x4WEIreURFWnR0?=
+ =?utf-8?B?S09kOTRBTFZVbXpNMUN2OTJNaEdCMDNibzl3ZnAreThpWStUZzhFS3ZxWHBj?=
+ =?utf-8?B?WjQ5QitYL1RBK0JjZ1FVRGdpVU5mMjIyRmt3QkpFeXh1anhLS3crWFBibzhl?=
+ =?utf-8?B?L0RpRFMrdThsK20raFl2enliQmFQV0xWYWZxRkJoTWUrdmNvNWVWVEVGeDAw?=
+ =?utf-8?B?ZGR1QVFLMTVFc1JsaDlHamVZVTdTOU9uVTNTd3kzMy9waVEwb29CNzM4UzJi?=
+ =?utf-8?B?MUprT3J0MEZ5ZW9IaVdMVmRXVU1aVUFXOGk4OWkxZTE1aXRKVnpPVHRoVHlW?=
+ =?utf-8?B?cHY0MVhRdmpQN2FONXhiUFFZaDc0RHBWQVVLaTBBZnFYRW1CZU01QVVZS2Jn?=
+ =?utf-8?B?NzFFNXg2SVBHU0hURnQ0MHFnTnk5SHpEUmRJUWhKTkdvRXMvNHFsZnVZRTEw?=
+ =?utf-8?B?M24vbG5mbnB4TU1VaUwyRHBMbWZCWG4yUzNhREtiS3NDQ2ZLUUhkaTRNL2Vq?=
+ =?utf-8?B?eFd1UzcxZWxTM3kwdFF4REM4NlhvMjVSRGhwZVIrbFZiZ3IvVmJpenBqNTI3?=
+ =?utf-8?B?emYrZkNJNVBuY0hodVN1MjQ5enE1QUtkZWp3MUFMUWdmb2JWUUpRNFQ1cW9H?=
+ =?utf-8?B?T0IvK3EzejRaYVh4dnYrM25aL3RSdUc3WFRjRUx1a2x0aTRpbXlCWkxjTm05?=
+ =?utf-8?Q?CMAdJRRy4M5vqwx6k5LipAl6/hpLzc=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?RU9LUUtYb1psMlVpeTFiZmhXbm5TY2lUV0Fqd0JJNnc4a3pnRVBhczY0aGcv?=
+ =?utf-8?B?aEprdi81TGpyYUJMc3RoUHhxUnhhaCt6a2dBRzZudko3QVpRUVhwYmIxZDdS?=
+ =?utf-8?B?cmhtUUEwV2NLZ2Y0UHAzYTU5Q0xSSnNsY28vMmFrdDVEU0V0VXl2QStreFht?=
+ =?utf-8?B?SDN0LytBSVlsNUZZOEU2TkZNcVJDT2x6QVNLRGZuNTNnVHQ0ZUNCa3ppUFZD?=
+ =?utf-8?B?dlZja2I2MUc1ZWkycklYdHJyK21JNHg1L3JHT1BRR0RFendJdjRGZUlUMU1L?=
+ =?utf-8?B?RUwvSkVWUVFWQTF5MTgyYkNmbGRtalMrdDZXK0Njc3FaOFBPbk91SGFTek0w?=
+ =?utf-8?B?Q2s3T25ieFlHRzVPVWJ6Q0FReGhndVhCQmFIVngwMzFzUXphRU1GUTBmQ2Ry?=
+ =?utf-8?B?S0dUc2k5em5hM2hvNVZwUkVEaVhkb2ZnbVQ2NzVZNVFpWjh6Sy8vbWhndTVn?=
+ =?utf-8?B?NWM1c1VVeFNiQUF4KzdodEpiMWhlUkprTEozblVSc1VtNHM0Nkh6NkROVlZE?=
+ =?utf-8?B?anhHWHZDM3BDb2JhakpWQkNIK0VSQmRKUXZMSlM5VUhBS1ZMN015cWwyNGNW?=
+ =?utf-8?B?bVpBb0tUcjFLZFFBaFpuUU42U2hOTGdER0F6T1JXalFTU1dEb3U4Ly8rcm1N?=
+ =?utf-8?B?cnhjOFZWS0p5Snk3Zk5pUWxEOWpLb3R6U1FNUlBVS3JwQ3hhckFyeXI4S1Rx?=
+ =?utf-8?B?Rk5naVdSVHBVWmQva0R6dkVSczh0citocEd6by9PT1pEZThDSmtBdmtmeFZD?=
+ =?utf-8?B?bXRYalVEQmo3QzdhUVZZeEJBL3ZLOHNOOFczcHFERDNxTWlNejRSWlhMbVh3?=
+ =?utf-8?B?bnV4YUZFa1NSa0VvOENJUDk3QTRSYllhQldVdDNXc2hEbnk1VkF2TTdpeEZ2?=
+ =?utf-8?B?UnM4SER2ejRWbVpEZHZDY1Q2UXVhaUpsSTZ2UGhrNTZ3VHV6bUZ6N3I4ck1o?=
+ =?utf-8?B?RWZ5d3g2TFRUZW1BM3lvRml1U2Q5ZFZJNE9Hdk1POEV2cDlPL2xTZlo4NVlX?=
+ =?utf-8?B?NjJMMi9kdTNDN2c2RlRZMnNKekNpelQvWWx4MGQ4dnVOZ3RNLytHdWc1NG8y?=
+ =?utf-8?B?TXhsNkZ2dER6ZFVTZ21KS25MNkFkMEthcXhEeHFJM1JSSkdNeG5yVm1lOE90?=
+ =?utf-8?B?N0xkTld1Q1c2SUdHSmdBNm5uM01jRGZPVkVld0N6UU9zNitkTU44OHBFcGRm?=
+ =?utf-8?B?UTdXR1RTVjNEV1NWVTYvQTZobURKejVnRE1jTWdnbWVPak9ZdXdhanlpL2lh?=
+ =?utf-8?B?RVFlVEc2MDNTclR4TkdySEZyVkpQWVZzRHZ3Q0NRQ1ZxZkQrQ1JMK1N3bTF2?=
+ =?utf-8?B?RnZWYUJEbi9tRWdJZ1c5b0cwSjYwTm5LaTNWMEdrZWoxenV4ZGhCYjlkcmVk?=
+ =?utf-8?B?YlpRMTBGdzAwUytnNnFJdld1RWJWTWdKV20xVkRaaW5rZ0NLdGhWYkhrTVV2?=
+ =?utf-8?B?QktyazBXRE1Nc1ZFMnppWkt4QkdzRFY1UHJLazA5S1NPWE1JcWlxOGxDOE1y?=
+ =?utf-8?B?NzdnUk1WWTd1NGlYS2xKQ0wxSmVuRHM5SlUzR2lqNUR0T09MazdRYTZWSXRx?=
+ =?utf-8?B?d3VtTDZ5TzEyMzBIZzErSzRaTkliS0lMMkF0cHJyekJpOHRwWGUyajROeEQw?=
+ =?utf-8?B?bnR6RGsxOXRBanF1ay94eGVLRENLMy9XMmhHaDhxL3RKTncwSW91aHVNaFJD?=
+ =?utf-8?B?M1BuWTExNFdoekVQOEpYakJMbzl6ajFoY2ttbUlNNlNBWVM3Q2pQOFNpOEN0?=
+ =?utf-8?B?ZjlZY2dYc1lpN1JwUzV3Tk5aVzFLcnBGRlVHOFYvbkhzYTN0dWNaYmRFRUth?=
+ =?utf-8?B?MmJRWnFhWmVpVzFZMzM4WWlVSEM3aVNDMUt0RjdtMjJUL1hvQ1IrUy9Tdzhh?=
+ =?utf-8?B?aVZwMGdKK3dEOHZpd2NhR3krOWdoSGhIWUc0ZXlrRTNtVVh2Z1pnVnUvNHlj?=
+ =?utf-8?B?R2lKNDhZa1RJbmJ6TmM2TXgyR0NvRlJrSHduZGNDV0JNeVBBb29TcHNUWnRS?=
+ =?utf-8?B?K3YzUUhianFYaTBPR0RIZTNJMDRldWpNQ2tuOVBFZFpLblllTVo4YWJFRStF?=
+ =?utf-8?B?N3pUekFKbkNQUTNieURIOGcxTmlpeFJqYXlmdStaWHJKamdmaW91WW9GbWg1?=
+ =?utf-8?B?YXgvZ0x4ci9DSEI1QjVWQzRqOUtLZTk5c0tjV1BTMmwxNk1kdUd4clhjN3dl?=
+ =?utf-8?B?U2c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910134240.GA1111@cmpxchg.org>
-X-Migadu-Flow: FLOW_OUT
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 181c0ee4-f367-4156-27e6-08ddf13fc9ce
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2025 14:30:42.7391
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: qxygiHLi/4U1VjGOGERdPfMuBB656rsKzkkh93HLfztbuBcJwAnx3nM/XKykyFABOlfigg2mn1Oz2jBDGD32hWRPsIJQHnTvb6a8+eKcoyE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB7706
 
-On Wed, Sep 10, 2025 at 09:42:40AM -0400, Johannes Weiner wrote:
-> On Tue, Sep 09, 2025 at 08:10:43PM +0000, Yosry Ahmed wrote:
-> > On Tue, Sep 09, 2025 at 04:01:56PM +0100, Johannes Weiner wrote:
-> > > On Fri, Sep 05, 2025 at 06:53:15PM +0000, Yosry Ahmed wrote:
-> > > > On Fri, Aug 29, 2025 at 05:15:26PM +0100, Johannes Weiner wrote:
-> > > > > zswap goes through the zpool layer to enable runtime-switching of
-> > > > > allocator backends for compressed data. However, since zbud and z3fold
-> > > > > were removed in 6.15, zsmalloc has been the only option available.
-> > > > > 
-> > > > > As such, the zpool indirection is unnecessary. Make zswap deal with
-> > > > > zsmalloc directly. This is comparable to zram, which also directly
-> > > > > interacts with zsmalloc and has never supported a different backend.
-> > > > > 
-> > > > > Note that this does not preclude future improvements and experiments
-> > > > > with different allocation strategies. Should it become necessary, it's
-> > > > > possible to provide an alternate implementation for the zsmalloc API,
-> > > > > selectable at compile time. However, zsmalloc is also rather mature
-> > > > > and feature rich, with years of widespread production exposure; it's
-> > > > > encouraged to make incremental improvements rather than fork it.
-> > > > > 
-> > > > > In any case, the complexity of runtime pluggability seems excessive
-> > > > > and unjustified at this time. Switch zswap to zsmalloc to remove the
-> > > > > last user of the zpool API.
-> > > > > 
-> > > > > Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> > > > > ---
-> > > > [..]
-> > > > > @@ -315,52 +292,29 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
-> > > > >  error:
-> > > > >  	if (pool->acomp_ctx)
-> > > > >  		free_percpu(pool->acomp_ctx);
-> > > > > -	if (pool->zpool)
-> > > > > -		zpool_destroy_pool(pool->zpool);
-> > > > > +	if (pool->zs_pool)
-> > > > > +		zs_destroy_pool(pool->zs_pool);
-> > > > >  	kfree(pool);
-> > > > >  	return NULL;
-> > > > >  }
-> > > > >  
-> > > > >  static struct zswap_pool *__zswap_pool_create_fallback(void)
-> > > > >  {
-> > > > > -	bool has_comp, has_zpool;
-> > > > > -
-> > > > > -	has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
-> > > > > -	if (!has_comp && strcmp(zswap_compressor,
-> > > > > -				CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
-> > > > > +	if (!crypto_has_acomp(zswap_compressor, 0, 0) &&
-> > > > > +	    strcmp(zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
-> > > > >  		pr_err("compressor %s not available, using default %s\n",
-> > > > >  		       zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT);
-> > > > >  		param_free_charp(&zswap_compressor);
-> > > > >  		zswap_compressor = CONFIG_ZSWAP_COMPRESSOR_DEFAULT;
-> > > > > -		has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
-> > > > > -	}
-> > > > > -	if (!has_comp) {
-> > > > > -		pr_err("default compressor %s not available\n",
-> > > > > -		       zswap_compressor);
-> > > > > -		param_free_charp(&zswap_compressor);
-> > > > > -		zswap_compressor = ZSWAP_PARAM_UNSET;
-> > > > > -	}
-> > > > > -
-> > > > > -	has_zpool = zpool_has_pool(zswap_zpool_type);
-> > > > > -	if (!has_zpool && strcmp(zswap_zpool_type,
-> > > > > -				 CONFIG_ZSWAP_ZPOOL_DEFAULT)) {
-> > > > > -		pr_err("zpool %s not available, using default %s\n",
-> > > > > -		       zswap_zpool_type, CONFIG_ZSWAP_ZPOOL_DEFAULT);
-> > > > > -		param_free_charp(&zswap_zpool_type);
-> > > > > -		zswap_zpool_type = CONFIG_ZSWAP_ZPOOL_DEFAULT;
-> > > > > -		has_zpool = zpool_has_pool(zswap_zpool_type);
-> > > > > -	}
-> > > > > -	if (!has_zpool) {
-> > > > > -		pr_err("default zpool %s not available\n",
-> > > > > -		       zswap_zpool_type);
-> > > > > -		param_free_charp(&zswap_zpool_type);
-> > > > > -		zswap_zpool_type = ZSWAP_PARAM_UNSET;
-> > > > > +		if (!crypto_has_acomp(zswap_compressor, 0, 0)) {
-> > > > > +			pr_err("default compressor %s not available\n",
-> > > > > +			       zswap_compressor);
-> > > > > +			zswap_compressor = ZSWAP_PARAM_UNSET;
-> > > > > +			return NULL;
-> > > > > +		}
-> > > > 
-> > > > Hmm it seems like there may be a change of behavior here. If
-> > > > zswap_compressor == CONFIG_ZSWAP_COMPRESSOR_DEFAULT at the beginning and
-> > > > crypto_has_acomp() returns false, the old code will go into the second
-> > > > if (!has_comp) block, printing an error, freeing the string, and setting
-> > > > zswap_compressor to ZSWAP_PARAM_UNSET, then we eventually return NULL.
-> > > > 
-> > > > It seems like the new code will just call zswap_pool_create() anyway.
-> > > > 
-> > > > Am I missing something here?
-> > > 
-> > > I don't think that scenario is possible, due to the way the Kconfig
-> > > works. Whatever backend I select for CONFIG_ZSWAP_COMPRESSOR_DEFAULT
-> > > pulls in the crypto module as built-in/=y. It should always be there.
-> > 
-> > What if none of the CONFIG_ZSWAP_COMPRESSOR_DEFAULT_* options are
-> > selected (i.e. empty string)? Also, can CONFIG_ZSWAP_COMPRESSOR_DEFAULT
-> > be set directly to an arbitrary string?
-> 
-> No, that isn't possible. It's a multiple choice symbol that forces one
-> of the options and has a valid default value. I tried to made it an
-> empty string in .config by hand, but oldconfig restored it; if I
-> remove the DEFAULT_* line entirely, oldconfig reprompts.
-
-Good to know, I honestly never really know how kconfig handles these
-things.
-
-> 
-> > I would prefer if the code behavior did not change to rely on the config
-> > possibilities.
-> 
-> How about this on top?
-> 
-> From f842e1338594c4b78456f878731a261a074d5277 Mon Sep 17 00:00:00 2001
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> Date: Wed, 10 Sep 2025 09:00:01 -0400
-> Subject: [PATCH] yosry
-> 
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> ---
->  mm/zswap.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index c88ad61b232c..991fe380c61e 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -314,6 +314,10 @@ static struct zswap_pool *__zswap_pool_create_fallback(void)
->  		}
->  	}
->  
-> +	/* Kconfig bug? */
-> +	if (WARN_ON(!crypto_has_acomp(zswap_compressor, 0, 0)))
-> +		return NULL;
-> +
->  	return zswap_pool_create(zswap_compressor);
->  }
-
-Sure, looks good, although I think it's clearer (and smaller diff) to
-preserve the old structure instead, up to you:
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index c88ad61b232cf..bbfc087792648 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -300,18 +300,21 @@ static struct zswap_pool *zswap_pool_create(char *compressor)
-
- static struct zswap_pool *__zswap_pool_create_fallback(void)
- {
--       if (!crypto_has_acomp(zswap_compressor, 0, 0) &&
-+       bool has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
-+
-+       if (!has_comp &&
-            strcmp(zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT)) {
-                pr_err("compressor %s not available, using default %s\n",
-                       zswap_compressor, CONFIG_ZSWAP_COMPRESSOR_DEFAULT);
-                param_free_charp(&zswap_compressor);
-                zswap_compressor = CONFIG_ZSWAP_COMPRESSOR_DEFAULT;
--               if (!crypto_has_acomp(zswap_compressor, 0, 0)) {
--                       pr_err("default compressor %s not available\n",
--                              zswap_compressor);
--                       zswap_compressor = ZSWAP_PARAM_UNSET;
--                       return NULL;
--               }
-+               has_comp = crypto_has_acomp(zswap_compressor, 0, 0);
-+       }
-+       if (!has_comp) {
-+               pr_err("default compressor %s not available\n",
-+                      zswap_compressor);
-+               zswap_compressor = ZSWAP_PARAM_UNSET;
-+               return NULL;
-        }
-
-        return zswap_pool_create(zswap_compressor);
->  
-> -- 
-> 2.51.0
-> 
+SGkgVG9taSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUb21pIFZh
+bGtlaW5lbiA8dG9taS52YWxrZWluZW4rcmVuZXNhc0BpZGVhc29uYm9hcmQuY29tPg0KPiBTZW50
+OiAxMSBTZXB0ZW1iZXIgMjAyNSAxNToyNg0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY4IDIvNl0g
+Y2xrOiByZW5lc2FzOiByenYyaC1jcGc6IEFkZCBzdXBwb3J0IGZvciBEU0kgY2xvY2tzDQo+IA0K
+PiBIaSwNCj4gDQo+IA0KPiBJbiBmYWN0LCBpZiB0aGUgRFNJIGlzIHNvIHBpY2t5IGFib3V0IHRo
+ZSByYXRlLCBJIGZpbmQgdGhlIEhXIGRlc2lnbg0KPiBvZGQ6IGluIGcybCB0aGUgcGl4ZWwgY2xv
+Y2sgYW5kIHRoZSBEU0kgY2xvY2sgY29tZSBmcm9tIGEgc2luZ2xlIHNvdXJjZSwgd2hpY2gga2Vl
+cHMgdGhlbSBuZWF0bHkgaW4NCj4gc3luYy4gSWYgdGhhdCBpcyByZXF1aXJlZCwgd2h5IGNoYW5n
+ZSB0aGUgZGVzaWduIGhlcmUgc28gdGhhdCB0aGUgRFNJIFBMTCBpcyBpbmRlcGVuZGVudCBvZiB0
+aGUgcGl4ZWwNCj4gY2xvY2ssIHlldCBzdGlsbCB0aGUgRFNJIFBMTCBtdXN0IGJlIHByb2dyYW1t
+ZWQgdG8gYmUgZXhhY3RseSBtYXRjaGVkIHRvIHRoZSBwaXhlbCBjbG9jay4NCg0KRzJMIERTSSBp
+cyBmcm9tIFJlbmVzYXMgd2hlcmUgYXMgVjJIIGZyb20gZGlmZmVyZW50IHZlbmRvci4gSGVuY2Ug
+dGhlIGRpZmZlcmVuY2UuDQoNCkNoZWVycywNCkJpanUNCg==
 
