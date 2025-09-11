@@ -1,138 +1,119 @@
-Return-Path: <linux-kernel+bounces-812421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4554FB537F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:38:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 486A9B537F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1EF13B3025
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039D53BB6CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C54346A15;
-	Thu, 11 Sep 2025 15:37:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A781DBB3A;
-	Thu, 11 Sep 2025 15:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE9B34DCEB;
+	Thu, 11 Sep 2025 15:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGsOXkd+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37456343D7A;
+	Thu, 11 Sep 2025 15:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757605075; cv=none; b=nCgFfmIhQQDpLqBlYhuQcg/eYGvsvnTy9ntReVgMbFHMeJ7FJHcCEqqtxdgjBEwWRvl8HTp8ZeuBIZDLEcO3nDXyLX3fGaSbesVkzL29q89iYCs57sNbbZElJXN+Ax60nwNSJ0X1K9e/FYMJyfxEMj7b0bTSo1CbOWPJn6hJWM4=
+	t=1757605087; cv=none; b=QKBD0dJJTqePYF53kYAMSYxVST3LEmIb2bNHjLcVu6IVBnQASGqxhcSCxH72f3mBZHfBZClZp0qI/K1tTsbo+zhHXu3Ue0xCSnSAJxXlSaKv/o6gqyxL1PFXT8fASK5cH445zuEMrzflw90QdjQr5paklKKNACoezBhFEovnWHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757605075; c=relaxed/simple;
-	bh=xpWjJY4jsD9WDvdhB99ir+nxRdi42JwdQD/EacCb4k8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u94V8hEoX0GactTEZYNYsYYLn5nKEo+6d9Nwr9f+vxLYxamXFlP3vQUfT+slnLkCVpn/oway+r0yUQnr40Iz0f4UsqAZdsfV3BE3MS1zoQ2vvtXNkG4wzIu0iU+nHCARksNX5msXufEUt/FYedQfrzuWpudWuu8S+lXby3SlPv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69F29153B;
-	Thu, 11 Sep 2025 08:37:44 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E3363F63F;
-	Thu, 11 Sep 2025 08:37:48 -0700 (PDT)
-Message-ID: <8ed9fbe9-1075-4abb-91d0-20203906a4dc@arm.com>
-Date: Thu, 11 Sep 2025 16:37:46 +0100
+	s=arc-20240116; t=1757605087; c=relaxed/simple;
+	bh=6P7TRYNOF7lDU5UaN1FbR0F71Q85GTIwRzbYM8hTeno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bvivyX6eicKqcGyRJ99vGGARsP4ymIxeqUDqciWJcrBfVxyNTiwh8zGSTH9IHqv7nbdJ1LqJAbGr1nqltTXlt6+CcFJOAV1k4/jvvSfqhT53yxUd310hAOTpoxUyEOsI+MUKcx2W2G/qbsrATWCPczuzriaFm4pbr2gPjPm8jNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGsOXkd+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 077EBC4CEF0;
+	Thu, 11 Sep 2025 15:38:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757605086;
+	bh=6P7TRYNOF7lDU5UaN1FbR0F71Q85GTIwRzbYM8hTeno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WGsOXkd+1Y4hHnazxMQbb6HbneQJPdyJzgI/ZuSK3L1vKkYOIydxBe6mZo1udgV6b
+	 Xg2fAMNVaoqQdsW0Ox9CO92bmONWVPL9lPnFJxmklBs2inzz5uFMKybYHa/uovgY2G
+	 KY6+L3Q6gthV+FHggk8D/dS0DDFX8DhEbwAmvUQ9+4Dr6wBdpZYepnTVkltz7xRSFX
+	 drV8N5P5XVCQ8ZJFjVqXc//k2GxIwCuwvfy1mYHNAjRXHm3liCU9G1cBwOKUITojts
+	 eDhSki1ZfzoKELpiWTAVGJlN2c584OVz5Vv7aUywy4wyGe8/Ui//CJWE1isC4UjisC
+	 Sd8qCapieGd3Q==
+Date: Thu, 11 Sep 2025 16:38:00 +0100
+From: Will Deacon <will@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
+	ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
+ operation
+Message-ID: <aMLs2LcnflSw2uNr@willie-the-truck>
+References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+ <20250816151929.197589-5-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/29] arm_mpam: Probe the hardware features resctrl
- supports
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-14-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250910204309.20751-14-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816151929.197589-5-yeoreum.yun@arm.com>
 
-Hi James,
-
-On 9/10/25 21:42, James Morse wrote:
-> Expand the probing support with the control and monitor types
-> we can use with resctrl.
+On Sat, Aug 16, 2025 at 04:19:27PM +0100, Yeoreum Yun wrote:
+> Refactor futex atomic operations using ll/sc method with
+> clearing PSTATE.PAN to prepare to apply FEAT_LSUI on them.
 > 
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 > ---
-> Changes since v1:
->  * added an underscore to a variable name.
+>  arch/arm64/include/asm/futex.h | 132 +++++++++++++++++++++------------
+>  1 file changed, 84 insertions(+), 48 deletions(-)
 > 
-> Changes since RFC:
->  * Made mpam_ris_hw_probe_hw_nrdy() more in C.
->  * Added static assert on features bitmap size.
-> ---
->  drivers/resctrl/mpam_devices.c  | 151 ++++++++++++++++++++++++++++++++
->  drivers/resctrl/mpam_internal.h |  53 +++++++++++
->  2 files changed, 204 insertions(+)
+> diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
+> index bc06691d2062..ab7003cb4724 100644
+> --- a/arch/arm64/include/asm/futex.h
+> +++ b/arch/arm64/include/asm/futex.h
+> @@ -7,17 +7,21 @@
 > 
-[snip]
->  
->  	spin_lock(&partid_max_lock);
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index 4cc44d4e21c4..5ae5d4eee8ec 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -112,6 +112,55 @@ static inline void mpam_mon_sel_lock_init(struct mpam_msc *msc)
->  	raw_spin_lock_init(&msc->_mon_sel_lock);
->  }
->  
-> +/*
-> + * When we compact the supported features, we don't care what they are.
-> + * Storing them as a bitmap makes life easy.
-> + */
-> +typedef u16 mpam_features_t;
-> +
-> +/* Bits for mpam_features_t */
-> +enum mpam_device_features {
-> +	mpam_feat_ccap_part = 0,
-> +	mpam_feat_cpor_part,
-> +	mpam_feat_mbw_part,
-> +	mpam_feat_mbw_min,
-> +	mpam_feat_mbw_max,
-> +	mpam_feat_mbw_prop,
-> +	mpam_feat_msmon,
-> +	mpam_feat_msmon_csu,
-> +	mpam_feat_msmon_csu_capture,
-> +	mpam_feat_msmon_csu_hw_nrdy,
-> +	mpam_feat_msmon_mbwu,
-> +	mpam_feat_msmon_mbwu_capture,
-> +	mpam_feat_msmon_mbwu_rwbw,
-> +	mpam_feat_msmon_mbwu_hw_nrdy,
-> +	mpam_feat_msmon_capt,
-> +	MPAM_FEATURE_LAST,
-> +};
+>  #include <linux/futex.h>
+>  #include <linux/uaccess.h>
+> +#include <linux/stringify.h>
+> 
+>  #include <asm/errno.h>
+> 
+> -#define FUTEX_MAX_LOOPS	128 /* What's the largest number you can think of? */
+> +#define LLSC_MAX_LOOPS	128 /* What's the largest number you can think of? */
+> 
+> -#define __futex_atomic_op(insn, ret, oldval, uaddr, tmp, oparg)		\
+> -do {									\
+> -	unsigned int loops = FUTEX_MAX_LOOPS;				\
+> +#define LLSC_FUTEX_ATOMIC_OP(op, insn)					\
+> +static __always_inline int						\
+> +__llsc_futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)	\
+> +{									\
+> +	unsigned int loops = LLSC_MAX_LOOPS;				\
+> +	int ret, oldval, tmp;						\
+>  									\
+>  	uaccess_enable_privileged();					\
+> -	asm volatile(							\
+> +	asm volatile("// __llsc_futex_atomic_" #op "\n"			\
+>  "	prfm	pstl1strm, %2\n"					\
+>  "1:	ldxr	%w1, %2\n"						\
+>  	insn "\n"							\
+> @@ -35,45 +39,103 @@ do {									\
+>  	: "r" (oparg), "Ir" (-EAGAIN)					\
+>  	: "memory");							\
+>  	uaccess_disable_privileged();					\
+> -} while (0)
+> +									\
+> +	if (!ret)							\
+> +		*oval = oldval;						\
 
-I added a garbled comment about this for v1. What I was trying to say is
-that I don't think this quite matches what resctrl supports. For
-instance, I don't think mpam_feat_ccap_part matches a resctrl feature.
+Why push the store to '*oval' down into here?
 
-Thanks,
-
-Ben
-
+Will
 
