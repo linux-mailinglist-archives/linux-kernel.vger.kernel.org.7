@@ -1,148 +1,266 @@
-Return-Path: <linux-kernel+bounces-811265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73497B526AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:49:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999FCB526AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:52:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2631A179FCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:49:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5EBB1B2771F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B05C61DE2BD;
-	Thu, 11 Sep 2025 02:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF59222332E;
+	Thu, 11 Sep 2025 02:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LS7IA5tc"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="II+tdFEI"
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7431B4AEE2
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 02:49:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026A18EFD1;
+	Thu, 11 Sep 2025 02:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757558947; cv=none; b=rv91L/HTd6hTTpDBk7w/QMx3MbNNuLMQJ+Pfr11oLT2Sl7QJH4oa8Hj3lpgpJbgb+4qZovSmYG7m9t+/IuB4Ntoy3rfF0t1sOn1Ry2lvDYy5ZSwl7JToa3uNStafcTNSDLz/hVqladZJ6j6Sjc5zniKwvQR3uxhh787FW9uTY/I=
+	t=1757559153; cv=none; b=ZsozGdNB1rPLnhn4tMfFdYiT+ptPrSt795QhZzmstK2VW9i9VvZzlmD1jYGiE2+A5Oy4UsSdzx/Q8rQyq1eLyP2MFu1jDp4a4w/+rNC3fThSkryHCZJG/ZT1lmVASWG9ABHCG6Qw0qTKdh+EXx2g069Fz9xfZ15osBxom8glJgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757558947; c=relaxed/simple;
-	bh=muKQ5yHvUIEGcVFO4CGTi6UHB66Qkw60+GsfVH2MQtA=;
+	s=arc-20240116; t=1757559153; c=relaxed/simple;
+	bh=wBdHXnDdAAnQuJHkeV8C1uQMDmdRFSU3OZaPFPd7cM0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Iz/t0kxAJleGc+/G7TzEC7DR2D8N53nNCvpR+Xpw+JUh3FgMPaSLqlzvuhXL26MqUh9VIlKH7yhfSXTOpuRIv+sdK/j1GxKKGFsv1F+uWLfHkETNbapO76NuPpkk/dq0i2ScjjoE4gkowRvxyDT0ZbDLCqfVB9AwtJ5T/txrpro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LS7IA5tc; arc=none smtp.client-ip=209.85.208.43
+	 To:Cc:Content-Type; b=GhTV2qnDQjXzMmsdG+RCbTvlvRGP4UgsY8Xp5lzWFlzBrV+EJhT4ouD3VsI/fRC5/3plBoRxHpzcI4mXVacMMldCAvOsOtRXA4P6ojf3Quv9xK/2hwoS27b2TMHoHSRuFWf5of1v5qW/h3Xk417hDzdx59AG+/7RfoaOzm4h/XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=II+tdFEI; arc=none smtp.client-ip=209.85.160.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6228de28242so383962a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 19:49:05 -0700 (PDT)
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-31d6b8be249so249949fac.0;
+        Wed, 10 Sep 2025 19:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757558944; x=1758163744; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5OZoiAx3D14NUhogiseSPH9gCaOHyrKTxNV9KPmuGJk=;
-        b=LS7IA5tcIf+ETMtMs5g8VbVGNL4Zc/lUFSfDQhbZpZ6ccYn+5mqm/ty9b2AFQV/kfO
-         5TUemuhi+oEHkgBFlhV5iIyV1IEoIz7ueAkXDuoabsJj5eu3KJPrhcE3eIKgs47tFlDQ
-         ZZv+Z3rTDAAOa2sOnW5jqhym/ma0r44fkfG1bwRzxTCi5rAi8VjwrBxFoI0o4ILEE2f4
-         QL2pTtZn4u/NCi1dbin0Ak2R5xT2WscMi3ux7d6i6GfrvkOh+hgmlptetOJXVJL93/T0
-         zPwJXf7TKasnQSKLLxR920Rr6WYiZhu1k7h0S2kgyuZBHGlzYXE/aTZ7dH4z1eV8pHwL
-         IMJw==
+        d=gmail.com; s=20230601; t=1757559150; x=1758163950; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bpMjHp2LWdB4AWDkPscdVaO0VRTcuWiIT22FTu9B1MU=;
+        b=II+tdFEI1amfhHAHE4c5mPvKbGBmlxi2I0kOBDyu3BgOf3MMgMYTSebu9F9756tRdy
+         OfdvFESNtPJx/g/JF44zDQP/avEv6kiQmkG5IZxsAEKm9FG06vWPXajr+U0uxpT1PZwX
+         k74t1Ng3nvIH1I7OEfw+Va1kXlWm3O08/yxtrArsc8dF0HgFNij56CP4eqa0koibl/am
+         U9DyeBA6U2LpEIBvYoShhcBNCsWiOeA3x2Ic9A/r61FCWCL4rV3o06UrQ9ZORqt80njB
+         In9BkEWDmD/TAw1j6AGNq/gXI2l6wGIiguAwd+LTBNOnNpsYkGYPXogJXrg8gohyHPX+
+         tmEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757558944; x=1758163744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5OZoiAx3D14NUhogiseSPH9gCaOHyrKTxNV9KPmuGJk=;
-        b=scC/0Sj/hjxZ969pAedHOIscoE9k6dkiV1TqrvzIxbO4/44E8Vxnf9YOwGUXBAKnL1
-         4bbuVpwFYUIc4oZ0LYvDhxL6Way0whGH+XCEGxiypWfxo9+/ES1kteRlzGuIADNvOwMK
-         Of1w7Cn6hAJk3TsGmNzwBib51kbugCM/C6CpZsV/DK3nVnVOeRtmYuoXrF/ZflJmcNwz
-         T0XhMvTtZQ0UFs/uJT4OF9oeQPfAdAKHY2lE1m+vXUrwlQvSeT/+krl06OT+Fsz1dtvJ
-         NCivu6H1IBRa0roYGt+lqEDK+etu5M0+MNb1DZAs36HOKeZq/U2HqYbk4DbjLxb1a9v3
-         mqYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe8qVEdluQ/dZMTHpICUkTlgCwvS/P/w/CGkiTJp9eQ/3Qhd6Ic1SNa1ujxjLCfrKpzyrw1nvDOMSzWcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn8wBnoQ8tIQClZYLtpmmkgK8UevmckHgt6GhRf+Pdt0dTwiRs
-	pijez8N8Gdop/JGpdoxbMiarXgKEYrgx1K+2dAM62mt95iQS5AhApd9Jw8o675l1tEb9Ar2Ewat
-	PrvrkBNX0nw4VtbBfhX+YPD0LPsdsWrU=
-X-Gm-Gg: ASbGnctuV0psGSh2r722EMdZZ2ZX5yKBPuhdGz5BuMJSmnb8xzzsc75mE0EdJ+l+GCh
-	jjLTmH5NPi1yw49xmdJ4Q+wuAsv6ocXtYtbkgVNTRKOZo6tbWiYvIk58C9mweVvyAj05S5tkpIg
-	DoNc6Sj8Z8jaj2EjBPSQQF+3xSlIN2g9pL3E+vqZMQ+uMLixInpFmd3owWVKsEXm9xcJPjhPhIV
-	pgrs8vgIyY=
-X-Google-Smtp-Source: AGHT+IEYHmvG/jugLq7AgXA4mg/ZW7DuKWF7PgpBRp/DjnIiezoiI7BVOiKnT/2u6xwHYZ46AUuUh+pceBX2k8UFMyc=
-X-Received: by 2002:a50:f605:0:b0:61c:c9f0:643b with SMTP id
- 4fb4d7f45d1cf-62e7532be3bmr1184638a12.0.1757558943455; Wed, 10 Sep 2025
- 19:49:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757559150; x=1758163950;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bpMjHp2LWdB4AWDkPscdVaO0VRTcuWiIT22FTu9B1MU=;
+        b=B2U8wLVRi/26Px5kXVQZP4WU/db3ph7KTfKlsvq3TZ+iDQpNhNzqQZuQzz/M5h3jjp
+         OfwML9X90eXqCkOXRnPbOuI+9CmAi5UAZJX599CpOhDTmCPyOZpr6OZCv7IIbvrN2cwb
+         oqMTKttIBTCJvXWV3ScSITvL5DxntAlenYlx2ofaw8Int5mRS/x7X6lPWBWfAuTEESGc
+         gcNq58rF1wELxL5TPrL1/V8H2NYrEfq4Q9Z0ilqUnvUv4tieFExAJZbksRyyMNghknrX
+         CCeLQL3rmUUgadvtlQxilwsjCP4kXVZ+aA+LS3Y3MHwXI7uVM/puF4fk7s6J7QaEWqsw
+         zbdA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHlZ0IewAt7RwXaZfr/hlQ9xa15C2c8WpHfQPc9lrQSdmWx4gXw5t9FqtgCSPXG9XIZi3O5RTLt4ndhRy0@vger.kernel.org, AJvYcCXbx+SLS2OfJQHKPy38GhTF3XqgknHK+UjGHAAX6GX3OQWFUgzX6gNo4SF8d/EVV15beJHQQ4XLDNGaCh92@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkVEHI/lEojjdJTf5fxyIsHOs/5pY1AmX54E+LfMo5XdY8X6fM
+	4/LlT+YJRixzJ+o6IQmCWjktYRUeJjbA1IIirYODC8gln8+IcBVG9uAR5iw1OGjIkkntXaVlHHp
+	u3LjU5lEWb5UAYAoKj+OfCuZ9E97PWVg=
+X-Gm-Gg: ASbGncvCq9IVCQgY4m+6agVyQg4m+k/6CCxoKGuy/3Uw79NAinhbSyLebYemwa+UJx4
+	0fZ0Ljk17D8lZ1qWOYF/ZcnIYTnUnJ6LqyNCbhSPpxp8Olp4M5gSDCNqy4EslWxaDtcSFebNf8o
+	yUKfYyrPHEb0wpkB8S3Bs2CgLamLCq6GsBB/U6zpVrqkgrVNs7AB89eKDjgEKxZJdDdqFUWncDh
+	o45ZskqOri2KD9YoJh/vkoC6YtJdz+VJc0d/rk=
+X-Google-Smtp-Source: AGHT+IFv2XibXXypOlqv0RILHKkLaMk/1jc9mR92t82jtZp+Vm0vVDQ6eAhrLbih1UZ+0wzcwt9/oVQRFlYGSifHFZw=
+X-Received: by 2002:a05:6870:524d:b0:321:2680:2f84 with SMTP id
+ 586e51a60fabf-3226284cc7bmr8304474fac.3.1757559150312; Wed, 10 Sep 2025
+ 19:52:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910160833.3464-1-ryncsn@gmail.com> <20250910160833.3464-12-ryncsn@gmail.com>
- <CABzRoyZc1zHHy5eFaO5hRY=bM36xsk3COd=r18KahmrP11tpSw@mail.gmail.com> <CABzRoyaAA3D0nfkQcBMjZ7crUckJXXpGmYfmq6ojQC+BQUigFw@mail.gmail.com>
-In-Reply-To: <CABzRoyaAA3D0nfkQcBMjZ7crUckJXXpGmYfmq6ojQC+BQUigFw@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 11 Sep 2025 10:48:26 +0800
-X-Gm-Features: AS18NWC5UawFwugDPvNI2uWDDImGqhex1CbdEPqHScQ40krGyxpQdpVNzqIYko8
-Message-ID: <CAMgjq7CtYpe4sEYaw2carqGskvchV9Z+1yn2Wa3nMP2VguV_eQ@mail.gmail.com>
-Subject: Re: [PATCH v3 11/15] mm, swap: use the swap table for the swap cache
- and switch API
-To: Lance Yang <lance.yang@linux.dev>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <baohua@kernel.org>, Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
-	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-kernel@vger.kernel.org
+References: <20250909095611.803898-1-zhangchunyan@iscas.ac.cn>
+ <20250909095611.803898-2-zhangchunyan@iscas.ac.cn> <6b2f12aa-8ed9-476d-a69d-f05ea526f16a@redhat.com>
+ <CAAfSe-vbvGQy9JozQY3vsqrrPrTaWYMcNw+NaDf3nReWz8ynZg@mail.gmail.com> <8f9a4a13-2881-4baf-ab62-3d0d79e0cd3c@redhat.com>
+In-Reply-To: <8f9a4a13-2881-4baf-ab62-3d0d79e0cd3c@redhat.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Thu, 11 Sep 2025 10:51:54 +0800
+X-Gm-Features: Ac12FXw931KhRWiAwZHuKU_RVXZ29toqGSbWPbkJSujEUI17HyVR0UbdKmmlFK4
+Message-ID: <CAAfSe-snV-XZ3xGmK6gXNXw-D3ECWbyQgG+WG3c5gAsREz4ccQ@mail.gmail.com>
+Subject: Re: [PATCH V10 1/5] mm: softdirty: Add pte_soft_dirty_available()
+To: David Hildenbrand <david@redhat.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 10:34=E2=80=AFAM Lance Yang <lance.yang@linux.dev> =
-wrote:
+On Wed, 10 Sept 2025 at 16:51, David Hildenbrand <david@redhat.com> wrote:
 >
-> On Thu, Sep 11, 2025 at 10:27=E2=80=AFAM Lance Yang <lance.yang@linux.dev=
-> wrote:
+> On 10.09.25 10:25, Chunyan Zhang wrote:
+> > Hi David,
 > >
-> > Hi Kairui,
+> > On Tue, 9 Sept 2025 at 19:42, David Hildenbrand <david@redhat.com> wrote:
+> >>
+> >> On 09.09.25 11:56, Chunyan Zhang wrote:
+> >>> Some platforms can customize the PTE soft dirty bit and make it unavailable
+> >>> even if the architecture allows providing the PTE resource.
+> >>>
+> >>> Add an API which architectures can define their specific implementations
+> >>> to detect if the PTE soft-dirty bit is available, on which the kernel
+> >>> is running.
+> >>>
+> >>> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> >>> ---
+> >>>    fs/proc/task_mmu.c      | 17 ++++++++++++++++-
+> >>>    include/linux/pgtable.h | 10 ++++++++++
+> >>>    mm/debug_vm_pgtable.c   |  9 +++++----
+> >>>    mm/huge_memory.c        | 10 ++++++----
+> >>>    mm/internal.h           |  2 +-
+> >>>    mm/mremap.c             | 10 ++++++----
+> >>>    mm/userfaultfd.c        |  6 ++++--
+> >>>    7 files changed, 48 insertions(+), 16 deletions(-)
+> >>>
+> >>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> >>> index 29cca0e6d0ff..20a609ec1ba6 100644
+> >>> --- a/fs/proc/task_mmu.c
+> >>> +++ b/fs/proc/task_mmu.c
+> >>> @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >>>         * -Werror=unterminated-string-initialization warning
+> >>>         *  with GCC 15
+> >>>         */
+> >>> -     static const char mnemonics[BITS_PER_LONG][3] = {
+> >>> +     static char mnemonics[BITS_PER_LONG][3] = {
+> >>>                /*
+> >>>                 * In case if we meet a flag we don't know about.
+> >>>                 */
+> >>> @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >>>                [ilog2(VM_SEALED)] = "sl",
+> >>>    #endif
+> >>>        };
+> >>> +/*
+> >>> + * We should remove the VM_SOFTDIRTY flag if the PTE soft-dirty bit is
+> >>> + * unavailable on which the kernel is running, even if the architecture
+> >>> + * allows providing the PTE resource and soft-dirty is compiled in.
+> >>> + */
+> >>> +#ifdef CONFIG_MEM_SOFT_DIRTY
+> >>> +     if (!pte_soft_dirty_available())
+> >>> +             mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
+> >>> +#endif
+> >>> +
+> >>>        size_t i;
+> >>>
+> >>>        seq_puts(m, "VmFlags: ");
+> >>> @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
+> >>>    static inline void clear_soft_dirty(struct vm_area_struct *vma,
+> >>>                unsigned long addr, pte_t *pte)
+> >>>    {
+> >>> +     if (!pte_soft_dirty_available())
+> >>> +             return;
+> >>>        /*
+> >>>         * The soft-dirty tracker uses #PF-s to catch writes
+> >>>         * to pages, so write-protect the pte as well. See the
+> >>> @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+> >>>    {
+> >>>        pmd_t old, pmd = *pmdp;
+> >>>
+> >>> +     if (!pte_soft_dirty_available())
+> >>> +             return;
+> >>> +
+> >>>        if (pmd_present(pmd)) {
+> >>>                /* See comment in change_huge_pmd() */
+> >>>                old = pmdp_invalidate(vma, addr, pmdp);
+> >>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> >>> index 4c035637eeb7..c0e2a6dc69f4 100644
+> >>> --- a/include/linux/pgtable.h
+> >>> +++ b/include/linux/pgtable.h
+> >>> @@ -1538,6 +1538,15 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
+> >>>    #endif
+> >>>
+> >>>    #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+> >>> +
+> >>> +/*
+> >>> + * Some platforms can customize the PTE soft dirty bit and make it unavailable
+> >>> + * even if the architecture allows providing the PTE resource.
+> >>> + */
+> >>> +#ifndef pte_soft_dirty_available
+> >>> +#define pte_soft_dirty_available()   (true)
+> >>> +#endif
+> >>> +
+> >>>    #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> >>>    static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> >>>    {
+> >>> @@ -1555,6 +1564,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+> >>>    }
+> >>>    #endif
+> >>>    #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
+> >>> +#define pte_soft_dirty_available()   (false)
+> >>>    static inline int pte_soft_dirty(pte_t pte)
+> >>>    {
+> >>>        return 0;
+> >>> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> >>> index 830107b6dd08..98ed7e22ccec 100644
+> >>> --- a/mm/debug_vm_pgtable.c
+> >>> +++ b/mm/debug_vm_pgtable.c
+> >>> @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
+> >>>    {
+> >>>        pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
+> >>>
+> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> >>> +     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) || !pte_soft_dirty_available())
+> >>
+> >> I suggest that you instead make pte_soft_dirty_available() be false without CONFIG_MEM_SOFT_DIRTY.
+> >>
+> >> e.g., for the default implementation
+> >>
+> >> define pte_soft_dirty_available()       IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
+> >>
+> >> That way you can avoid some ifefs and cleanup these checks.
 > >
-> > I'm hitting a build error with allnoconfig:
+> > Do you mean something like this:
 > >
-> > In file included from mm/shmem.c:44:
-> > mm/swap.h: In function =E2=80=98folio_index=E2=80=99:
-> > mm/swap.h:462:24: error: implicit declaration of function
-> > =E2=80=98swp_offset=E2=80=99; did you mean =E2=80=98pmd_offset=E2=80=99=
-?
-> > [-Wimplicit-function-declaration]
-> > 462 | return swp_offset(folio->swap);
+> > --- a/include/linux/pgtable.h
+> > +++ b/include/linux/pgtable.h
+> > @@ -1538,6 +1538,16 @@ static inline pgprot_t pgprot_modify(pgprot_t
+> > oldprot, pgprot_t newprot)
+> >   #endif
 > >
-> > It looks like a header might be missing in mm/swap.h. Please let me kno=
-w
-> > if you need any more information.
+> >   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+> > +#ifndef arch_soft_dirty_available
+> > +#define arch_soft_dirty_available()     (true)
+> > +#endif
+> > +#define pgtable_soft_dirty_supported()
+> > (IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) && arch_soft_dirty_available())
+> > +
+> >   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> >   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> >   {
+> > @@ -1555,6 +1565,7 @@ static inline pmd_t pmd_swp_clear_soft_dirty(pmd_t pmd)
+> >   }
+> >   #endif
+> >   #else /* !CONFIG_HAVE_ARCH_SOFT_DIRTY */
+> > +#define pgtable_soft_dirty_supported() (false)
 >
-> Confirmed that just adding #include <linux/swapops.h> into mm/swap.h fixe=
-s it.
+> Maybe we can simplify to
 >
-> diff --git a/mm/swap.h b/mm/swap.h
-> index ad339547ee8c..271e8c560fcc 100644
-> --- a/mm/swap.h
-> +++ b/mm/swap.h
-> @@ -3,6 +3,7 @@
->  #define _MM_SWAP_H
+> #ifndef pgtable_soft_dirty_supported
+> #define pgtable_soft_dirty_supported()  IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
+> #endif
 >
->  #include <linux/atomic.h> /* for atomic_long_t */
-> +#include <linux/swapops.h>
->  struct mempolicy;
->  struct swap_iocb;
->
-> Cheers,
-> Lance
->
+> And then just let the arch that overrides this function just make it
+> respect IS_ENABLED(CONFIG_MEM_SOFT_DIRTY).
 
-Hi Lance,
+Ok, got you, I will address it.
 
-You are testing V2 not V3 right? The build error is in V2 and I can
-confirm that. But In V3 I've added "ifdef CONFIG_SWAP" for the
-swp_offset usage in swap.h. I've just tested allnoconfig and it
-works fine on aarch64 and x86_64.
+Thanks for your review,
+Chunyan
 
-V2: https://lore.kernel.org/linux-mm/20250905191357.78298-12-ryncsn@gmail.c=
-om/
+
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
