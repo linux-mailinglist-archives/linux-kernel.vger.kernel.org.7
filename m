@@ -1,179 +1,167 @@
-Return-Path: <linux-kernel+bounces-812736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B145B53BFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 486FCB53BEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:56:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC991C24FA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:58:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518641C23DD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C0723A994;
-	Thu, 11 Sep 2025 18:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FCB256C83;
+	Thu, 11 Sep 2025 18:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NZbXclo4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mzr2+QVj"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861972580DE
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89401188CB1
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757617085; cv=none; b=DkFoqDjlh75X/It9T7aZemlajg3xC3+Imdebl6IBN7bsy/qP9yOc0lbQ84XJ5Fl728I3spkquxbyATe8HKgh0fn63qFq0/fvN/0xWtHCpBpmRJkt/6Yw2BT5UT7JGfvJ5bYOyhHt030EpOjlSvQTw9zc6xveiPKYyDv+d3o6xAU=
+	t=1757616977; cv=none; b=lVsZhLjGm68AtluTQOLVdkTUefVeKLTM4XXOWzMD7UNmvCFIU8ZL4EgFVNEYzs/mEoME5nKImyvtdAsHd3SmbxOz81wQH2AlFM21fU0kdRf6venfAM/OSPfX36TWDgYvXOJIsH397uQO1YaeQhCT5PcmY/VjlhQoBM6FVcy/8t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757617085; c=relaxed/simple;
-	bh=+JcwaQYd4cBTxmEGAdRJxKYHNmiXtA5RMwM/mUVaLUw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qLOwR9op52Ond5RimCtgfoGuZI73K8SJl3Sh4eaLd9i8EEClk/AE3MC+FuZjcV7nCBqsbF7+l5xI1SU2clAOx3ezf3EagcDOGl7XNyDWENgtWNwEQp/EbHiiu1Dcik8+VJ63ihQuMvD8ap0SluB2cmGNWLXlt4FswRZ3oNSTUgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NZbXclo4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757617082;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hr9sW3BjTFKY3DYpNIZDkHu3BlkpeUh/q+hBT8sn1m0=;
-	b=NZbXclo4taWJI49rtkZ/Ajbp78bjqCNK+T6LvEFbW3w0gbNkFOZEcK1wRbkRglnB0cmh8R
-	yNJkZP3no8C79/QC21T7hmnF39/LBny0Lfw3JQbSL6s9osFgYa0t21tyVIBykrYlSaJRwp
-	oS8lSbup89C4r89HZLjDTjYrqOLzbSE=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-zH4zTbozNmmL1UvFqZwF5A-1; Thu,
- 11 Sep 2025 14:58:01 -0400
-X-MC-Unique: zH4zTbozNmmL1UvFqZwF5A-1
-X-Mimecast-MFC-AGG-ID: zH4zTbozNmmL1UvFqZwF5A_1757617078
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7265D1800291;
-	Thu, 11 Sep 2025 18:57:56 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.65.223])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B9B5519560B1;
-	Thu, 11 Sep 2025 18:57:51 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Cc: David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Shankari Anand <shankari.ak0208@gmail.com>,
-	Asahi Lina <lina+kernel@asahilina.net>
-Subject: [PATCH v2 2/2] rust/drm: Add gem::impl_aref_for_gem_obj!
-Date: Thu, 11 Sep 2025 14:56:05 -0400
-Message-ID: <20250911185739.511510-2-lyude@redhat.com>
-In-Reply-To: <20250911185739.511510-1-lyude@redhat.com>
-References: <20250911185739.511510-1-lyude@redhat.com>
+	s=arc-20240116; t=1757616977; c=relaxed/simple;
+	bh=G9PVOicImObvMdXVVb+6plfEYjjJkzKtfTB6xhY7oiI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ezugph3W/+Ae8rvc/t6LhU5KADhH21m0O9a0tj2EGFxVFOUtXQLszm64LweLRsU7uUqQr+RZqLEycq95robNvXW3c0MaN72mgweNngp2EAiTQ+hT01Otn27wvGyt+iGpkR1gAvG470lt3lWIk7eekZl/X1JYqv00fDw0K1psma0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mzr2+QVj; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3e751508f21so831203f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757616974; x=1758221774; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rekHjTbST2J3gdgDOG8ibNuPO2c1lzAXyA1v5TU/iWo=;
+        b=mzr2+QVj6hfChvNZtEBi7N5IVkR8wG7RNXuLgNFMC1IuIAL8olZtuyX110M3WscCYR
+         XshgRYC6teY+fUJVGfbApIzhhVw2A8kyQXoJikTwdYIhmhuCYZ8MnCB5f+EjpFdCHdar
+         1rSNYn9dEiMQ8nOxDIr1UC3fwQIRRJIQJVklQHgqT2XnJHvXls1AjqC1Ykzd9A4bIC/c
+         G5pv1G3Wt14KqtCmIf5pCV3hGXhL5oY0/ow4I34/qeitfkOEjDkO2a9gZdAxBbF3uBcI
+         MJFHSIpBNjanXcyu6Dflur/p2VQCxT7MUuo7QsAYygrq4lBNHu798a4d+Ueo90JtTROf
+         BWIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757616974; x=1758221774;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rekHjTbST2J3gdgDOG8ibNuPO2c1lzAXyA1v5TU/iWo=;
+        b=hUPZ7qnsSyKvUP56/uuIAvJyzW4keRf3NHQfAPlxWTzR6Tjyvhl0IG8ISO44LXtI8C
+         3+MdFU+bj+LNVvH5akflkuPUGWktwBqwMWfV2mneyFsT315zEmntUVWyBqAa4H0Ny1u0
+         raLEJPh0OytBb5FmMXCvt9LZkGwNyaamRwSR/s+RzfTgTAQZqetlXEd4hfE8VcgWbOny
+         wGv4uYEhhXacafFsDdVJ9a+M0ehcbSKjk1f8rRv8v5MXGvuBRQnUmVFWDsJsQOcRyeML
+         mYrxX/Rbypi0nyjWMYkSzdYnTWMkr2OdCWMM6yOVKUfvJ7s8uxvebx/c2O3eybsx91gA
+         1Chg==
+X-Forwarded-Encrypted: i=1; AJvYcCW38fyvVWJpIWflRBl0h/yAVVhqLjO60ID0QHGbbKYHQ5QHQUwAg4hGat8SESjq5HAk8pSA7NL5MXbUNks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYqucW0Rn8pbXB7lKWHsxxy5Bb7BYcQ/04Wcn1xrg0w4vRJ53a
+	VvXqXJOQFTX0arByxbfMj38bJWt8nY4bIG1rtcMkDZMUbwRHa1d2sWENpM/yppmHlzk=
+X-Gm-Gg: ASbGncuLOBlP/oelgH4GpN4pQV+XmigjAV+syOmioU1tooHAfVs0S0gfmG7COEJJsHD
+	lEtpfAMifjKEaegjZLQFBmTFboD4JLP56fMmUqfNqtyrepNKmqR+ziY/tRIHZpJeDOAiu16m8/4
+	zliej1llfZQG3Z6RPviFhxR3KiFKWS3uxIJbHb+c35n7NKPbClBktvxrmhOtEz8FLkrOBo0m2zN
+	nRIU3evyzj+dORJypm71YUq86JV2LFM+4Rbcypmb8tAGLwk2Dnq3O7H56P/CrjrzAB2pMV0Ccxc
+	wbMGHqrnvN7pHW4fY8YN+L4NQ/8NBxoWwWuG/aMvvbsODN+L55tsQATI/jCYg0UI5UaNIOrqIbi
+	TD03BboUD1apnposaFsPAbqefc6m6mwYui0z/gqu1H/wIVxw2Vfh1GxsuGVexteiGvo3iF11gp/
+	JCcOhBALsf5XgY
+X-Google-Smtp-Source: AGHT+IEuCngj6El+msipl1V3catUDI1SMJQ5OlW0Wjxj8ggiY+iRRQHMDi9h8+t5G0p3xbR8aE2/SQ==
+X-Received: by 2002:a05:6000:2509:b0:3d9:70cc:6dd0 with SMTP id ffacd0b85a97d-3e765a05342mr397079f8f.33.1757616973832;
+        Thu, 11 Sep 2025 11:56:13 -0700 (PDT)
+Received: from ?IPV6:2a05:6e02:1041:c10:d521:838e:7c69:f457? ([2a05:6e02:1041:c10:d521:838e:7c69:f457])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45e016b5c5dsm37360275e9.14.2025.09.11.11.56.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 11:56:13 -0700 (PDT)
+Message-ID: <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org>
+Date: Thu, 11 Sep 2025 20:56:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
+ Mikko Perttunen <mperttunen@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250828055104.8073-1-clamor95@gmail.com>
+ <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-In the future we're going to be introducing more GEM object types in rust
-then just gem::Object<T>. Since all types of GEM objects have refcounting,
-let's introduce a macro that we can use in the gem crate in order to copy
-this boilerplate implementation for each type: impl_aref_for_gem_obj!().
+On 11/09/2025 18:27, Thierry Reding wrote:
+> On Thu, Aug 28, 2025 at 08:50:58AM +0300, Svyatoslav Ryhel wrote:
+>> SOCTHERM is thermal sensor and thermal throttling controller found in Tegra
+>> SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
+>> with Tegra114 and needs only a few slight adjustmets of fuse calibration
+>> process.
+>>
+>> ---
+>> Changes in v2:
+>> - no changes, resend.
+>>
+>> Changes in v3:
+>> - expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
+>>    configuration further" commit
+>> - changes title of "thermal: tegra: soctherm-fuse: parametrize
+>>    configuration further" to "thermal: tegra: soctherm-fuse: prepare
+>>    calibration for Tegra114 support"
+>> - Tegra11x > Tegra114 and Tegra12x > Tegra124
+>> - ft and cp shift bits dropped
+>> - clarified tegra114 precision
+>> - lower_precision > use_lower_precision
+>> - nominal calibration ft and cp hardcoded into SoC specific structures
+>> - added tegra114-soctherm header into dt-bindings
+>>
+>> Changes in v4:
+>> - fixed Tegra124/132/210 cp mask
+>> - dropped TEGRA114_SOCTHERM_SENSOR_NUM from header
+>> - TEGRA_SOCTHERM_THROT_LEVEL_ made SoC specific
+>> - adjusted soctherm node and inclusions in tegra114.dtsi
+>> - dropped use_lower_presision and nominal_calib_cp options
+>>
+>> Changes in v5:
+>> - fixed CPU and GPU hotspot offset values
+>> - added static_assert()s to assert the TEGRA114_* and TEGRA124_*
+>>    counterparts are equal
+>> ---
+>>
+>> Svyatoslav Ryhel (6):
+>>    soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
+>>    dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
+>>      System
+>>    thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
+>>      support
+>>    dt-bindings: thermal: add Tegra114 soctherm header
+>>    thermal: tegra: add Tegra114 specific SOCTHERM driver
+>>    ARM: tegra: Add SOCTHERM support on Tegra114
+> 
+> Hi Daniel,
+> 
+> there's a build-time dependency on patch 4 in both patches 5 and 6. Do
+> you want to pick up patches 2-5 from this series and I pick up patch 1
+> and hold off on applying patch 6 until after the merge window? We could
+> also do a shared branch, but it may not be worth the extra hassle.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/drm/gem/mod.rs | 53 +++++++++++++++++++++++++++-----------
- 1 file changed, 38 insertions(+), 15 deletions(-)
+I can take the patches 2-5. Regarding a shared branch or wait for the 
+next version, I would prefer the latter
 
-diff --git a/rust/kernel/drm/gem/mod.rs b/rust/kernel/drm/gem/mod.rs
-index daa92f0eac68e..dbcc2464d96b3 100644
---- a/rust/kernel/drm/gem/mod.rs
-+++ b/rust/kernel/drm/gem/mod.rs
-@@ -15,6 +15,43 @@
- };
- use core::{ops::Deref, ptr::NonNull};
- 
-+/// A macro for implementing [`AlwaysRefCounted`] for any GEM object type.
-+///
-+/// Since all GEM objects use the same refcounting scheme.
-+macro_rules! impl_aref_for_gem_obj {
-+    (
-+        impl $( <$( $tparam_id:ident ),+> )? for $type:ty
-+        $(
-+            where
-+                $( $bind_param:path : $bind_trait:path ),+
-+        )?
-+    ) => {
-+        // SAFETY: All gem objects are refcounted
-+        unsafe impl $( <$( $tparam_id ),+> )? crate::types::AlwaysRefCounted for $type
-+        $(
-+            where
-+                $( $bind_param : $bind_trait ),+
-+        )?
-+        {
-+            fn inc_ref(&self) {
-+                // SAFETY: The existence of a shared reference guarantees that the refcount is
-+                // non-zero.
-+                unsafe { bindings::drm_gem_object_get(self.as_raw()) };
-+            }
-+
-+            unsafe fn dec_ref(obj: core::ptr::NonNull<Self>) {
-+                // SAFETY: `obj` is a valid pointer to an `Object<T>`.
-+                let obj = unsafe { obj.as_ref() };
-+
-+                // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-+                unsafe { bindings::drm_gem_object_put(obj.as_raw()) };
-+            }
-+        }
-+    };
-+}
-+
-+pub(crate) use impl_aref_for_gem_obj;
-+
- /// A type alias for retrieving a [`Driver`]s [`DriverFile`] implementation from its
- /// [`DriverObject`] implementation.
- ///
-@@ -253,21 +290,7 @@ extern "C" fn free_callback(obj: *mut bindings::drm_gem_object) {
-     }
- }
- 
--// SAFETY: Instances of `Object<T>` are always reference-counted.
--unsafe impl<T: DriverObject> crate::types::AlwaysRefCounted for Object<T> {
--    fn inc_ref(&self) {
--        // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
--        unsafe { bindings::drm_gem_object_get(self.as_raw()) };
--    }
--
--    unsafe fn dec_ref(obj: NonNull<Self>) {
--        // SAFETY: `obj` is a valid pointer to an `Object<T>`.
--        let obj = unsafe { obj.as_ref() };
--
--        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
--        unsafe { bindings::drm_gem_object_put(obj.as_raw()) }
--    }
--}
-+impl_aref_for_gem_obj!(impl<T> for Object<T> where T: DriverObject);
- 
- impl<T: DriverObject> super::private::Sealed for Object<T> {}
- 
 -- 
-2.51.0
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
