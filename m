@@ -1,167 +1,135 @@
-Return-Path: <linux-kernel+bounces-812730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486FCB53BEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:56:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2AC2B53BF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 518641C23DD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:56:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA7B7AA36FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FCB256C83;
-	Thu, 11 Sep 2025 18:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 819C02571D4;
+	Thu, 11 Sep 2025 18:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mzr2+QVj"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmRsfn/N"
+Received: from mail-ed1-f66.google.com (mail-ed1-f66.google.com [209.85.208.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89401188CB1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364C5223DD6
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757616977; cv=none; b=lVsZhLjGm68AtluTQOLVdkTUefVeKLTM4XXOWzMD7UNmvCFIU8ZL4EgFVNEYzs/mEoME5nKImyvtdAsHd3SmbxOz81wQH2AlFM21fU0kdRf6venfAM/OSPfX36TWDgYvXOJIsH397uQO1YaeQhCT5PcmY/VjlhQoBM6FVcy/8t0=
+	t=1757617031; cv=none; b=Qxk2Y6chw1v791l6Xo+unALseoL7zJuAw1T5NgrT4luD2to2cLUsg/MnqW6fvhcaB7DVcsa4GsEt6U433e77zLNoF3FCg7ZXiioyQ9XrPv9bEYvztE7mfBgZXplVXn+Tgw7JoCqvikxmo804OkW7t35/9tzDmJ5i16CMnw0NuY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757616977; c=relaxed/simple;
-	bh=G9PVOicImObvMdXVVb+6plfEYjjJkzKtfTB6xhY7oiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ezugph3W/+Ae8rvc/t6LhU5KADhH21m0O9a0tj2EGFxVFOUtXQLszm64LweLRsU7uUqQr+RZqLEycq95robNvXW3c0MaN72mgweNngp2EAiTQ+hT01Otn27wvGyt+iGpkR1gAvG470lt3lWIk7eekZl/X1JYqv00fDw0K1psma0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mzr2+QVj; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3e751508f21so831203f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:56:15 -0700 (PDT)
+	s=arc-20240116; t=1757617031; c=relaxed/simple;
+	bh=s9bQCZmwLqgSpo6W3MThOpW7wZh6pS3/XtZlBy31OMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=opu81IxG3rsAYYGWmivy5DFTAIE7jfxvizxr2eROBJr0OKaU5zQftcOv/K87fHkOS8eMQwTz6sAUFXygWLvFq78r5XVGr1Mwh0Jsy8yUqOAEXTGl9iBC5+KSVmXD9XdR+G5v1d1eoh2P4d1Bf1jYrLzXXeicRgjbgORYfLZCQiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VmRsfn/N; arc=none smtp.client-ip=209.85.208.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f66.google.com with SMTP id 4fb4d7f45d1cf-6188b6f7f15so1436727a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:57:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757616974; x=1758221774; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rekHjTbST2J3gdgDOG8ibNuPO2c1lzAXyA1v5TU/iWo=;
-        b=mzr2+QVj6hfChvNZtEBi7N5IVkR8wG7RNXuLgNFMC1IuIAL8olZtuyX110M3WscCYR
-         XshgRYC6teY+fUJVGfbApIzhhVw2A8kyQXoJikTwdYIhmhuCYZ8MnCB5f+EjpFdCHdar
-         1rSNYn9dEiMQ8nOxDIr1UC3fwQIRRJIQJVklQHgqT2XnJHvXls1AjqC1Ykzd9A4bIC/c
-         G5pv1G3Wt14KqtCmIf5pCV3hGXhL5oY0/ow4I34/qeitfkOEjDkO2a9gZdAxBbF3uBcI
-         MJFHSIpBNjanXcyu6Dflur/p2VQCxT7MUuo7QsAYygrq4lBNHu798a4d+Ueo90JtTROf
-         BWIQ==
+        d=gmail.com; s=20230601; t=1757617028; x=1758221828; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pr9tX7pp1WDhvourRe0B/uP9WABiFIXN6KF2E46kYr8=;
+        b=VmRsfn/NjoecdgCm5VD6IcHmT5U25QkMdKJI0QoSZ0NuFuYI3ZXuUCrutoVA9ug291
+         uUVtAPKbIRdnSAZ3qliG9dV8ldDzr0ugv6oeDtrnI6Nc4sLHqIJrxPCGrtVhsHSli0q5
+         e+mnOwqKaL1CF29Jlzze37wW0PadKTM6WR1OYR6Imx0gommAyzm0tfCHLcouAmIK/viR
+         znUaU468UMJE4BGZIbwQlSqTN/VqKJrVOl2TKSwWX7Wxl87IvDxrRY5yFcGTUxKjixLs
+         LybuOg9D3AZy+CsToMOA87QRhAbTQnOEm+LaSBipmqnRbUT61vhK3z+QTMrGQKFtOTuN
+         Ftiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757616974; x=1758221774;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rekHjTbST2J3gdgDOG8ibNuPO2c1lzAXyA1v5TU/iWo=;
-        b=hUPZ7qnsSyKvUP56/uuIAvJyzW4keRf3NHQfAPlxWTzR6Tjyvhl0IG8ISO44LXtI8C
-         3+MdFU+bj+LNVvH5akflkuPUGWktwBqwMWfV2mneyFsT315zEmntUVWyBqAa4H0Ny1u0
-         raLEJPh0OytBb5FmMXCvt9LZkGwNyaamRwSR/s+RzfTgTAQZqetlXEd4hfE8VcgWbOny
-         wGv4uYEhhXacafFsDdVJ9a+M0ehcbSKjk1f8rRv8v5MXGvuBRQnUmVFWDsJsQOcRyeML
-         mYrxX/Rbypi0nyjWMYkSzdYnTWMkr2OdCWMM6yOVKUfvJ7s8uxvebx/c2O3eybsx91gA
-         1Chg==
-X-Forwarded-Encrypted: i=1; AJvYcCW38fyvVWJpIWflRBl0h/yAVVhqLjO60ID0QHGbbKYHQ5QHQUwAg4hGat8SESjq5HAk8pSA7NL5MXbUNks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYqucW0Rn8pbXB7lKWHsxxy5Bb7BYcQ/04Wcn1xrg0w4vRJ53a
-	VvXqXJOQFTX0arByxbfMj38bJWt8nY4bIG1rtcMkDZMUbwRHa1d2sWENpM/yppmHlzk=
-X-Gm-Gg: ASbGncuLOBlP/oelgH4GpN4pQV+XmigjAV+syOmioU1tooHAfVs0S0gfmG7COEJJsHD
-	lEtpfAMifjKEaegjZLQFBmTFboD4JLP56fMmUqfNqtyrepNKmqR+ziY/tRIHZpJeDOAiu16m8/4
-	zliej1llfZQG3Z6RPviFhxR3KiFKWS3uxIJbHb+c35n7NKPbClBktvxrmhOtEz8FLkrOBo0m2zN
-	nRIU3evyzj+dORJypm71YUq86JV2LFM+4Rbcypmb8tAGLwk2Dnq3O7H56P/CrjrzAB2pMV0Ccxc
-	wbMGHqrnvN7pHW4fY8YN+L4NQ/8NBxoWwWuG/aMvvbsODN+L55tsQATI/jCYg0UI5UaNIOrqIbi
-	TD03BboUD1apnposaFsPAbqefc6m6mwYui0z/gqu1H/wIVxw2Vfh1GxsuGVexteiGvo3iF11gp/
-	JCcOhBALsf5XgY
-X-Google-Smtp-Source: AGHT+IEuCngj6El+msipl1V3catUDI1SMJQ5OlW0Wjxj8ggiY+iRRQHMDi9h8+t5G0p3xbR8aE2/SQ==
-X-Received: by 2002:a05:6000:2509:b0:3d9:70cc:6dd0 with SMTP id ffacd0b85a97d-3e765a05342mr397079f8f.33.1757616973832;
-        Thu, 11 Sep 2025 11:56:13 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:d521:838e:7c69:f457? ([2a05:6e02:1041:c10:d521:838e:7c69:f457])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-45e016b5c5dsm37360275e9.14.2025.09.11.11.56.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 11:56:13 -0700 (PDT)
-Message-ID: <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org>
-Date: Thu, 11 Sep 2025 20:56:12 +0200
+        d=1e100.net; s=20230601; t=1757617028; x=1758221828;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pr9tX7pp1WDhvourRe0B/uP9WABiFIXN6KF2E46kYr8=;
+        b=PCCz//REHPKS1YlMpaagAvpp/5YzPyzJql3Y1EZz2Sq5al49Cq9hjdYHObT0eCK4go
+         PQRnKop2P/VXuHQNwvRnve6E46w86cyEYP99EXVx5iCLBlyiHD78h1FtPFMqO4j7Vvqj
+         CHANUOnex4DIfvJSG7kILpt1jxT7E3KaDbNCW69uVl9Ej3pPQODoUR44v6RiXj96Lp5L
+         Om8824a4sEd5qoS5pZ4nl3ET6dOziHNTDhFQ384IbsUdajRcYSMDL4ENmOcHIbPt493X
+         NJIKzcLcOlYN19/+uISrZCm84SPJkBiAHkKD0ypjNxqeJ4DbtjUM94+56G/Ly2+P2vd0
+         xJvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwnIo6CckTgttIG7VlHP9s5lP+zMe4CHbK6eqaP4dbYmgfnjuGAqP8NYQawWrVHcWKQYbu6ozHyxQDCe8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzubGDsNgCung3KJEIOphvnJTAE5p8iLZr58HIw41+SkYjaWSJV
+	+lj6RDxNJPxQ56cWN11xRa8gIJ6tVEWtQCeqDKE3Ja05ntx7gSYuags7DbwUAaRHmoc8+imsw3G
+	B/SDP9GCQc++0Sv4n08Y7SMJC6UFNdwU=
+X-Gm-Gg: ASbGncs5An7RVSHERIOH950iLipEKvZIwNXma6Gemj3DbND85JY52myU+lfynUfx5LU
+	85m6238x2GR0omiZTpJpyN99SYgG0+i1+ayvqTI4uBA2r+to9twKp+Lm4n1GLq9+Gt4V6sjBb+e
+	y2UwoZE5pQuYaofmZDCN9hwNrJCgLJHKSyVlt1J7djtwTQ3IUevKlpN938OoWSUg0WpLpaTLNMI
+	9OlMErukOrJH4qLtD/KcjyfF+PykQlKVzffMk0NKMM6jo2f0w4=
+X-Google-Smtp-Source: AGHT+IGKxDih6ERXHwgyq0yZdSI3KYy7AT+aqJ67B4OiUGV2Ac/JxHPP/UIhhWHfeURuCo8qEbRbLD4HPdE5MiweW1U=
+X-Received: by 2002:a05:6402:40d5:b0:61d:2405:b47c with SMTP id
+ 4fb4d7f45d1cf-62ed864bcc9mr495434a12.37.1757617028259; Thu, 11 Sep 2025
+ 11:57:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Svyatoslav Ryhel <clamor95@gmail.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
- Mikko Perttunen <mperttunen@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250828055104.8073-1-clamor95@gmail.com>
- <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250911034655.3916002-1-ankur.a.arora@oracle.com>
+ <20250911034655.3916002-6-ankur.a.arora@oracle.com> <aMLdZyjYqFY1xxFD@arm.com>
+In-Reply-To: <aMLdZyjYqFY1xxFD@arm.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Thu, 11 Sep 2025 20:56:31 +0200
+X-Gm-Features: AS18NWD_vDg9CGLpqBo3-WZ0dCqpbP__-WdZRDuhupRZ7xI3H77I9oF8KLziKGM
+Message-ID: <CAP01T778qzHqNYanGtQ_UB9av9BtxLYdf2xWnJWtsf=-w=gANA@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] rqspinlock: Use smp_cond_load_acquire_timeout()
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	bpf@vger.kernel.org, arnd@arndb.de, will@kernel.org, peterz@infradead.org, 
+	akpm@linux-foundation.org, mark.rutland@arm.com, harisokn@amazon.com, 
+	cl@gentwo.org, ast@kernel.org, zhenglifeng1@huawei.com, 
+	xueshuai@linux.alibaba.com, joao.m.martins@oracle.com, 
+	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/09/2025 18:27, Thierry Reding wrote:
-> On Thu, Aug 28, 2025 at 08:50:58AM +0300, Svyatoslav Ryhel wrote:
->> SOCTHERM is thermal sensor and thermal throttling controller found in Tegra
->> SoC starting from Tegra114. Existing Tegra124 setup is mostly compatible
->> with Tegra114 and needs only a few slight adjustmets of fuse calibration
->> process.
->>
->> ---
->> Changes in v2:
->> - no changes, resend.
->>
->> Changes in v3:
->> - expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
->>    configuration further" commit
->> - changes title of "thermal: tegra: soctherm-fuse: parametrize
->>    configuration further" to "thermal: tegra: soctherm-fuse: prepare
->>    calibration for Tegra114 support"
->> - Tegra11x > Tegra114 and Tegra12x > Tegra124
->> - ft and cp shift bits dropped
->> - clarified tegra114 precision
->> - lower_precision > use_lower_precision
->> - nominal calibration ft and cp hardcoded into SoC specific structures
->> - added tegra114-soctherm header into dt-bindings
->>
->> Changes in v4:
->> - fixed Tegra124/132/210 cp mask
->> - dropped TEGRA114_SOCTHERM_SENSOR_NUM from header
->> - TEGRA_SOCTHERM_THROT_LEVEL_ made SoC specific
->> - adjusted soctherm node and inclusions in tegra114.dtsi
->> - dropped use_lower_presision and nominal_calib_cp options
->>
->> Changes in v5:
->> - fixed CPU and GPU hotspot offset values
->> - added static_assert()s to assert the TEGRA114_* and TEGRA124_*
->>    counterparts are equal
->> ---
->>
->> Svyatoslav Ryhel (6):
->>    soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
->>    dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
->>      System
->>    thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
->>      support
->>    dt-bindings: thermal: add Tegra114 soctherm header
->>    thermal: tegra: add Tegra114 specific SOCTHERM driver
->>    ARM: tegra: Add SOCTHERM support on Tegra114
-> 
-> Hi Daniel,
-> 
-> there's a build-time dependency on patch 4 in both patches 5 and 6. Do
-> you want to pick up patches 2-5 from this series and I pick up patch 1
-> and hold off on applying patch 6 until after the merge window? We could
-> also do a shared branch, but it may not be worth the extra hassle.
+On Thu, 11 Sept 2025 at 16:32, Catalin Marinas <catalin.marinas@arm.com> wrote:
+>
+> On Wed, Sep 10, 2025 at 08:46:55PM -0700, Ankur Arora wrote:
+> > Switch out the conditional load inerfaces used by rqspinlock
+> > to smp_cond_read_acquire_timeout().
+> > This interface handles the timeout check explicitly and does any
+> > necessary amortization, so use check_timeout() directly.
+>
+> It's worth mentioning that the default smp_cond_load_acquire_timeout()
+> implementation (without hardware support) only spins 200 times instead
+> of 16K times in the rqspinlock code. That's probably fine but it would
+> be good to have confirmation from Kumar or Alexei.
+>
+> > diff --git a/kernel/bpf/rqspinlock.c b/kernel/bpf/rqspinlock.c
+> > index 5ab354d55d82..4d2c12d131ae 100644
+> > --- a/kernel/bpf/rqspinlock.c
+> > +++ b/kernel/bpf/rqspinlock.c
+> [...]
+> > @@ -313,11 +307,8 @@ EXPORT_SYMBOL_GPL(resilient_tas_spin_lock);
+> >   */
+> >  static DEFINE_PER_CPU_ALIGNED(struct qnode, rqnodes[_Q_MAX_NODES]);
+> >
+> > -#ifndef res_smp_cond_load_acquire
+> > -#define res_smp_cond_load_acquire(v, c) smp_cond_load_acquire(v, c)
+> > -#endif
+> > -
+> > -#define res_atomic_cond_read_acquire(v, c) res_smp_cond_load_acquire(&(v)->counter, (c))
+> > +#define res_atomic_cond_read_acquire_timeout(v, c, t)                \
+> > +     smp_cond_load_acquire_timeout(&(v)->counter, (c), (t))
+>
+> BTW, we have atomic_cond_read_acquire() which accesses the 'counter' of
+> an atomic_t. You might as well add an atomic_cond_read_acquire_timeout()
+> in atomic.h than open-code the atomic_t internals here.
+>
 
-I can take the patches 2-5. Regarding a shared branch or wait for the 
-next version, I would prefer the latter
++1, and then drop res_atomic_cond_read_acquire_timeout from this file.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+> Otherwise the patch looks fine to me, much simpler than the previous
+> attempt.
+>
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
