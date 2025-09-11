@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-812566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2C8B539D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:02:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1521CB539D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 511917AB337
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4FBC3BAB41
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A106522AE45;
-	Thu, 11 Sep 2025 17:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0831435FC27;
+	Thu, 11 Sep 2025 17:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WbgY6OLf"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwgNdkGX"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D9F329F05
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA89350833
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757610139; cv=none; b=JhPh8vNgFIPlKZz34G/5rKfgQNw0oPfsH26+fz3/3JUvEc0KDAxFGg6ForS+FygnxUWy2wTIebf6lAkSZ5OTBgiP3alD8872sNvfS+YhD1BukZM0CW3iNh9uNK0snJyxiRJHqR6+aQk+AZMaJnF1AYaEHwPC3LJi1plbb/LByxQ=
+	t=1757610141; cv=none; b=XlOoZioQrmW5+g21kyEJWbxZShHJY2NodEDw2aFrZyFYxNYqYvLzuyjDhlCU+2WmL7KiyO1Molk9A8bl62sCj2BmaLGKJAvFu99rr07JKS4Y62XimZq3wXKLbgJsY1qhklbaMmkQJNgJVUrjkInxO0KHWUdJzOnP+7DO7uP3RVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757610139; c=relaxed/simple;
-	bh=8R6+RH+mErEiPPdYOOstKc0iqhFv59uOICnzE3FZ1Uc=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=t9x/wIK5X62FHJPHS7TJqN29kYrCBM8dWxdug7vFLr/fqmDI5D5exPNT5BzVuWq9CkFDYWGU+raD3NlfVyR+XBsJs/ImRvDQv6sgR7H7zDYG+xnWRAk/4DL2GLzf+nYa5T7kd6yxhce7fDeI4FN9tcUnhjPUQf/OHAT2Ba1+xAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WbgY6OLf; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1757610141; c=relaxed/simple;
+	bh=zJg6XHeseMqyVJBkLEj26VisHJUB1RXdwSibXem5MNs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Re6MZXtLViVkpplNow/qij/gJZsBkZFIuBk0HYRro78bpYAZcy7W/bcm8TBnl3EDPabMj9WjVOCuUG93Z5RxI5PpygCtg1SF6krlm0W73Tv97ILMXUWb44VzEKudN2PLjUFHOIBcWF0IfC980txSTeGliLB75MgMEO5AYsRZX9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KwgNdkGX; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61d3d622a2bso3096673a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:02:18 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-622b4b14a75so1913264a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:02:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757610137; x=1758214937; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RSnllEdABgmRcLsHtfpUL8gI7RsqTdIWFArVq050vuk=;
-        b=WbgY6OLfqLdDd/PnqcGDOegxagDsMiHcHjMBhJlpHjO+Ax0+3ftUJBazdAKaGwOKiV
-         3ubcTV3tgojFNWTV5xnJyydkgjncU1iR+UK1Ggv4CUK7j8J0ir5vw4p8WLQtphKIGI+c
-         wlJ/JKZuGUOJCggvN7FULGK+/BJ7GDdQeO+5tbN5fsM8SygOyh+FzoddCbJuDwWiniU2
-         5LGeH86H2rZpaJxNgIWqJ4AgWrvxLBIrtUg/Z4DxuIVS6w/33RjmnI8REZdluDz0Or1J
-         rUhYwOb/VbLoEThZsdMZfex985ybyhXn5UGt0DaT7JB80ssWcpqsKd1dmPXvQ25FBbpx
-         k7eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757610137; x=1758214937;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1757610138; x=1758214938; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=RSnllEdABgmRcLsHtfpUL8gI7RsqTdIWFArVq050vuk=;
-        b=wiLmLjLlndr4+1SBV8EUfPRMnvhRJS14TciLXt2inwi/jDh73+LYambx4ATS2KRSBd
-         mCVrNBSDhx7J+m0Fsn06+vZxkJHxhTC7pFw7jSzcmR6Ut+x2fNSzEqaKh4GSZT5i7mAW
-         OvLiVA0Qfh1gk11U5wc6mfNmwqNEXOnh6kZk4M+m6MOQznliwBr4hJ99asTM6iA5P4r4
-         EGeyG59g2sXi6jSG1KlmB6WLckIpV/OkvbJqltA/rXFHkdARw9J5fWKBqzFNqrkX34O2
-         IkML2qg5E3LuAnoZvM5igUL3mg+62ljIHYhoBZXoylRpb1o/f75EvO0eFhd3BREkkyFp
-         s70A==
-X-Forwarded-Encrypted: i=1; AJvYcCUxCUsBNzX2NAk6/57gLmmhGwI8pYO1/FMU8N36hAoip9aoqVbXsrqP05IRkbpPU2/iK73Ruo7bUoWW7+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoDLBy0DAE+9SjvfLrt4RUIzdYQmhzMiQUa9+rBjr+ZUgm8zep
-	e7gvCn3wNA1W+BALJlAfYOvqqBw415q6AEFwGslVvhDfLiRaoUkdkyo=
-X-Gm-Gg: ASbGncvZ5Q9zyyHVLp3GPMzTo7k4IWvdzXZmUeEKY4mf+zOKgEyb1lsJEvyZufSA3oX
-	CRgvWhMzbmEm2VKISggQGKfh7Pg6/QM0RoEZuQojd3hcFu6phwQhbVn1TgLmWIkaryqkh9QTKdW
-	HME6EhalhsOxHc5MxFtFv0iy3gGPEkpGfpTXZG5Pr9X+uiBTIt2ortsl+mFVxRDonbsCsH6Vqwk
-	zCj6D3khfZ6foB4W4ydQ77gVsShRgtVYjNw05XOFoxmqT9J/XYkFibBiiMVJWHUIV0iGqZMf8Iy
-	qvt01o/eoGXKor7TpmldML1WDsAYOQC8QAP1yqrqsphuvbbnlO+XX+h7Mw/qr+GbtB/Yu8hSV8B
-	8ni/do71eOuUJ60mmrBF/T+eOEbyBXPalRyRU/4WsW3yWumgpaqBTZ6T+kc3s40AzkNeeR5xdPX
-	rAUIuIyYIHm/cYsE116Mhk
-X-Google-Smtp-Source: AGHT+IGVr9IIEZr+8Z2efkcqBDn+wu417ZpSCDs1Qv8LcIf/zr0I3mWUWCQKBCdz8daDEq9iNNIPEg==
-X-Received: by 2002:a17:907:9623:b0:afa:1d2c:bbd1 with SMTP id a640c23a62f3a-b07c25b5bf1mr8227066b.30.1757610136353;
-        Thu, 11 Sep 2025 10:02:16 -0700 (PDT)
+        bh=FJk0hVL26JapxqBeuQwzrSE0cPApYyqFtLP73ac9uj4=;
+        b=KwgNdkGXUWRaQ6bHaRpjg2s0MH3Lbt5Q7M3uM4+OW/FshYbUCyuz+0kBxfr8ElXL45
+         61X9aGMj6E7K4MMN4xP4bVNFmg0H30qQGPUZl+BZoYVlPPwU3VcUIO9KRVu2SemzUzV6
+         ErxYkGtcFiE4AWdW0tqeYvn+lowQU4VpqSjJ8QK0Wc2eF0T5EXJokX3pg8zjcx6cgxc0
+         keXbhmsy4bfOu4pr8a9LK6Z0Kf7JmI4v+TrkOV0O8Nvb5MwLe8oN87pREp3sWwmbqMrS
+         xorQhk/25uWBoHf0kWB2roWWDwlWEx2S6VF+Ql8ptM1vlhjyPxMbVLQwZQ3xfqygFfju
+         ACEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757610138; x=1758214938;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FJk0hVL26JapxqBeuQwzrSE0cPApYyqFtLP73ac9uj4=;
+        b=pMea/MjbticXHKoJvxqsrYI1UI2xG9pn82Xf9arl7628UAaCji7ufb8MP8mgT1duoP
+         guVRlpGRvJQgEsm0VEH9Tna8B38UcF70ZiKwHhL83t5XKcKcCWUYgM79kAPEc2gINwiR
+         unOpYQ0fzxMszQVc/xIZmTS/OJQVfpPnGZYGqeNAepjQ0lIFB/qyKE8dswzBRpvnVPzR
+         K7iGMztw9EusyahaNN1KHKhV8MAptdp2MgsZiLH/WdLS08jvoYXJXWMSFkn3u9clLw/w
+         W1NtIBNQxx0CIxmB9GISfpIoNQaphl96hYrC8UOAfCfE5bKCbOLn/NS2OkEFbuuEyV51
+         F6Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVtYJjLJ8vw/AcfZ4bIfWZanULPWwQTcesep3NAFyxrrRO3np6XBqwWNqG2RQHE40BxU37xxvEFp0+EYMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsJRwgOHg72LTYskIHuB/1QtbGkQzH0lzB/Lp/EcnEcEH1rR1H
+	VC2Nj/Hd15wbCINISsmKLaXD/MxUjwb+6xykGNxlpPvO97LUnA7Kifg=
+X-Gm-Gg: ASbGncsclRHESAsFcAyKoE2oFR6py0JZZo+H0RElU/nTLYYiedCmcE7UffUmk4m4rze
+	PGRGKcUxW1sXvPX7U98ZCV3Bkg33M5eL06XnRm24blwjTiaX/4mzelYZOmgfQktwfPhnV4czi/i
+	mMXj4ClEUYCjqWEP24Tr8MyfRQbcJx5xJgseda7FDA0MvlAbsRbz5dxBuoXmTV2COYfzhw7KU3W
+	Oe/+AjDBTDb/pBk8t+86ijz26BwtW8+vTvq/lhOX1t59Wl8j06y96YF52gCvd5riAP2S38XALaG
+	X+TnHPxvvt8icmGNf9Y9CHxoI3BDT5kivmZhJXGQQiPfMIdt0VwmIF3Qe/A5u5v7Q/OnLd99vux
+	JybgyLl4c4IiPtSF78BHIHsUQmt5GjJAm2xT6R+4ebwF9muxk0oYwc+gN/5IxcIR2YqC4vMWuMp
+	Zvc6W0cykUrMjMci74ukPh0s6Um0qCay4=
+X-Google-Smtp-Source: AGHT+IHx2KcsYmCWeBeWcnkZxEbDJE1L/17SMXH4yrK85mCe32s1OPDe2bxpZe+SNwy+ZLdoE3wGEg==
+X-Received: by 2002:a17:907:3f92:b0:b07:a76e:db6e with SMTP id a640c23a62f3a-b07a76edcecmr394044366b.21.1757610137790;
+        Thu, 11 Sep 2025 10:02:17 -0700 (PDT)
 Received: from [192.168.1.17] (host-79-12-163-148.retail.telecomitalia.it. [79.12.163.148])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da43esm166632966b.14.2025.09.11.10.02.15
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da43esm166632966b.14.2025.09.11.10.02.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 10:02:15 -0700 (PDT)
+        Thu, 11 Sep 2025 10:02:17 -0700 (PDT)
 From: Anna Maniscalco <anna.maniscalco2000@gmail.com>
-Subject: [PATCH 0/2] Make hang check aware of preemption
-Date: Thu, 11 Sep 2025 19:01:03 +0200
-Message-Id: <20250911-preemption_aware_hangcheck-v1-0-974819876819@gmail.com>
+Date: Thu, 11 Sep 2025 19:01:04 +0200
+Subject: [PATCH 1/2] drm/msm/registers: Sync GPU registers from mesa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,10 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAE8Aw2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDS0ND3YKi1NTcghKgsvjE8sSi1HiQquSM1ORsXYskyyRjcwOL1LTkZCW
- gAUClaZkVYMOjY2trAfxZh5lsAAAA
-X-Change-ID: 20250911-preemption_aware_hangcheck-8b9b3708efcc
+Message-Id: <20250911-preemption_aware_hangcheck-v1-1-974819876819@gmail.com>
+References: <20250911-preemption_aware_hangcheck-v1-0-974819876819@gmail.com>
+In-Reply-To: <20250911-preemption_aware_hangcheck-v1-0-974819876819@gmail.com>
 To: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
  Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
  Abhinav Kumar <abhinav.kumar@linux.dev>, 
@@ -97,43 +97,35 @@ Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
  freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
  Anna Maniscalco <anna.maniscalco2000@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757610134; l=1269;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757610134; l=980;
  i=anna.maniscalco2000@gmail.com; s=20240815; h=from:subject:message-id;
- bh=8R6+RH+mErEiPPdYOOstKc0iqhFv59uOICnzE3FZ1Uc=;
- b=pxPb5b9aCV51Le4kGnwLMyZIQhK3o8Ug+ZnmnU6U5fkPwQolNF6qcJjTKzmy8b1c8ePzdfTmi
- FM4IB/E95smA3LI7KRo9fVl+MPFLaG0croAd8N0tJ33O723VIYSQ2nd
+ bh=zJg6XHeseMqyVJBkLEj26VisHJUB1RXdwSibXem5MNs=;
+ b=6yDKz4TF8Fm0al2rGgmBcFOPLrGluHEtzD0SQuvnW97plvnBs59JWWYiRVtR2tY23untSlWyE
+ w3opJ7KenRxCmtic1o7RGJPWob1R6omI5Jfn4+0zw1wZKsTDtm+q/1+
 X-Developer-Key: i=anna.maniscalco2000@gmail.com; a=ed25519;
  pk=0zicFb38tVla+iHRo4kWpOMsmtUrpGBEa7LkFF81lyY=
 
-Ever since we added support for preemption hangcheck has been somewhat
-broken as it is not aware of multiple rings.
-
-In some cases it might not recognize that one ring is stuck if the gpu
-switches in and out of it.
+In particular bring in `CP_ALWAYS_ON_CONTEXT`
 
 Signed-off-by: Anna Maniscalco <anna.maniscalco2000@gmail.com>
 ---
-Anna Maniscalco (2):
-      drm/msm/registers: Sync GPU registers from mesa
-      drm/msm: preemption aware hangcheck
+ drivers/gpu/drm/msm/registers/adreno/a6xx.xml | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/gpu/drm/msm/adreno/a5xx_gpu.c         |  3 +-
- drivers/gpu/drm/msm/adreno/a6xx_gmu.c         |  3 +-
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c         | 28 +++++++++++++--
- drivers/gpu/drm/msm/adreno/a6xx_gpu.h         |  1 +
- drivers/gpu/drm/msm/adreno/a6xx_preempt.c     | 25 +++++++++----
- drivers/gpu/drm/msm/adreno/adreno_gpu.c       |  3 +-
- drivers/gpu/drm/msm/msm_gpu.c                 | 51 +++++++++++++++++++++------
- drivers/gpu/drm/msm/msm_gpu.h                 |  3 ++
- drivers/gpu/drm/msm/msm_ringbuffer.h          |  6 ++++
- drivers/gpu/drm/msm/registers/adreno/a6xx.xml |  1 +
- 10 files changed, 103 insertions(+), 21 deletions(-)
----
-base-commit: b5bad77e1e3c7249e4c0c88f98477e1ee7669b63
-change-id: 20250911-preemption_aware_hangcheck-8b9b3708efcc
+diff --git a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
+index 9459b603821711a1a7ed44f0f1a567cf989b749b..6ea5479670970cc610ca25e71aa41af5f328f560 100644
+--- a/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
++++ b/drivers/gpu/drm/msm/registers/adreno/a6xx.xml
+@@ -254,6 +254,7 @@ by a particular renderpass/blit.
+ 		<bitfield name="CONTEXT" low="4" high="5"/>
+ 	</bitset>
+ 	<reg64 offset="0x0980" name="CP_ALWAYS_ON_COUNTER"/>
++	<reg64 offset="0x0982" name="CP_ALWAYS_ON_CONTEXT"/>
+ 	<reg32 offset="0x098D" name="CP_AHB_CNTL"/>
+ 	<reg32 offset="0x0A00" name="CP_APERTURE_CNTL_HOST" variants="A6XX"/>
+ 	<reg32 offset="0x0A00" name="CP_APERTURE_CNTL_HOST" type="a7xx_aperture_cntl" variants="A7XX-"/>
 
-Best regards,
 -- 
-Anna Maniscalco <anna.maniscalco2000@gmail.com>
+2.51.0
 
 
