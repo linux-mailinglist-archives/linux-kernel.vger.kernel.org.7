@@ -1,282 +1,273 @@
-Return-Path: <linux-kernel+bounces-811905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA512B52FC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:15:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E69C2B52FCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7CE93A73EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:15:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFBE177666
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D203126DF;
-	Thu, 11 Sep 2025 11:11:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBB03126C5;
+	Thu, 11 Sep 2025 11:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="kfTWZwMz"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="sxHpqSMq"
+Received: from mail-yx1-f45.google.com (mail-yx1-f45.google.com [74.125.224.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9B1C312838;
-	Thu, 11 Sep 2025 11:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3C831283F
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757589106; cv=none; b=mOKvTXxRgQ2H4LhrOqi9mrBZVVHyLv7EstaouSQbr+mBjBoSP4ymWUcAPfAI4WM/9USTI7e0yFmnKyyHASkh7NS09nemPy7CJDg58In2NY/0Q3S/rUUwk6LHtKXroJKWoA4qHj6H1MY2K7zUw7T5MKWWJ4SIhps5FB8c0Jm7DDo=
+	t=1757589119; cv=none; b=oQIkcTVKzI6FyBU0VZEN5ifsoxCjh59/sNsxbqVL+EZ5eN2l62vGWogbK+aynJi0m08qvGSzxykfzIabVX+wRrV5/jGcpzt0NbKPruJFv3UXQ51cRIw+6+a47sHUTf3lo3fXKxf8llCUzj3voIgTrvscIzQr8ZZci9ZPYrjtREQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757589106; c=relaxed/simple;
-	bh=ZicswJt9W2wtis1MhknedD7TIPkGFjcjQ0LmjRvb9T4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ojOb2NkPa6mVh2nYDw2BSBRhPnNZDy6KgKfHbGK+VZN3FyEIl0P71gufwhjsBuaVOI+tTB76Qr1p+NjAna0hRm4QNMQGSwuU+H9iJFqccP9adBFvtXc8m/Esy01UdLemNnbAwG4swwvK3skoSit+SqnL4RZVRjq3PUKnEaJQiC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=kfTWZwMz; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B9jJ0L026069;
-	Thu, 11 Sep 2025 04:11:37 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=IWTicSappntxUxW8mOAPYaZ
-	p9rNWX5+1afQH6X1ORkg=; b=kfTWZwMzBVXE0AC8vP0UOPpw1QTW1pD5arHuVRS
-	QChdJsGIPOHtEGlPxt0V6gICf8hiJbvEVfIMna1cc6i8pk7Vz/wyNf8z0nD33AlU
-	MG7I3fFjM/9EoCtc6pQ1szJTgHGTruIflu3a/rykpixEElg6k85lHIL8mLGnDujw
-	9srClSUfi66vR7MP041TZ4nFOGidaOobvk4YiBaseMnqmvPbWcAvjkLtjHQoq8tF
-	U76Twt3eIzDc/Ur/reya7m1tqg7h0NfbXZy8pbxqhKDnta/jQRJK6kuJexSh37v7
-	s3rLg25RvsZrohyK+0vrvHxerhRz3XY4OyotEqxzPrkxS/Q==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 493v2s85j1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 04:11:36 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 11 Sep 2025 04:11:42 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 11 Sep 2025 04:11:42 -0700
-Received: from marvell-OptiPlex-Tower-Plus-7020.. (unknown [10.28.38.120])
-	by maili.marvell.com (Postfix) with ESMTP id 06B463F7098;
-	Thu, 11 Sep 2025 04:11:32 -0700 (PDT)
-From: Shashank Gupta <shashankg@marvell.com>
-To: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <shashankg@marvell.com>, <bbhushan2@marvell.com>, <sgoutham@marvell.com>
-Subject: [RFC PATCH] PCI: fix concurrent pci_bus_add_device() execution during SR-IOV VF creation
-Date: Thu, 11 Sep 2025 16:41:06 +0530
-Message-ID: <20250911111106.2522786-1-shashankg@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757589119; c=relaxed/simple;
+	bh=gVFXcbZQ+9b0oRAjYg149MD2xbFgWe31Cp48AQ8Ym5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZoQUsWSysyzn/klwucyjc9I2IYaEAQybWMRVhdkyVMb/9KbFdoK0iVpf0oqhzKKvmrzOTZ7SWNF4Yei6ZKsAFs7Gm3f/aAx8A5qZTDyjLmiiMWIE+SR1is5B3eFNqaGevYpXI2jOXoNzuYofNa6hg4COVAOxQEnFqHrx8EJC2Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=sxHpqSMq; arc=none smtp.client-ip=74.125.224.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yx1-f45.google.com with SMTP id 956f58d0204a3-60f476e97f1so163297d50.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 04:11:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1757589116; x=1758193916; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=efbdMdx8ppc0y57jvJ/WyQmejsRqkjVJNHYS/A58AwU=;
+        b=sxHpqSMqb9ka0iiLV3hdG66SvoXg/qEh8SrOQugbdoOGfZpcu+wpRethOzFV+BPOJJ
+         zWR22diHkCNFat05VlrQhpIvQeOEwHOJCNbQ17yS6u4GGqQi0BM1NFTope6KzWhp8LaO
+         j/blGLAfLPkZeFZ49m+0sYf6UXwlYAdp4QnchU7ikmK+BJZsE0K5QvaEbaf2JkIYuMVi
+         t9N4HCIwXxZNn627IP2hS94H9HimDMlTX5rmCorP+cLhiLf2/FOvF1Awpk7oO1gdtZI4
+         JlIcnEHOpiOXZDEDLpP/B083+jOfvpSfjt0ktPNxZR3NhQDGtCpRw0ZAOSBvxq6XrGPy
+         nFJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757589116; x=1758193916;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=efbdMdx8ppc0y57jvJ/WyQmejsRqkjVJNHYS/A58AwU=;
+        b=mVOgKWkChn4iyRTPClL1YWasS8hkmhiMx8CidfS7sDcmQwnj2cIOunp3k6INxGkFt8
+         kC9eMJyxIkJc8H6VK6rvENYizCk8rk5IHCotDazyVCrFIy/lM4Sl3oeKg7RI1hXca282
+         tcFlRBk7OTBlJeE59OwpXeIOFAs6L+9MMP2DiOY7GUPX1ZblUkK9duKxkuxKrKdYEWBO
+         Rykizf8bfM/3/tSCGw6dwhet+JOmY/YPgrG2FE9OUorFsD8IPbtH19YOqlvIYCgXQoDo
+         44lF8Q3nEk8Uxv8yE6203CZkGuG24RfG/lxqV8TVCZELqDka3/vT918gbhSsfCJL6+VI
+         cZhA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2/ZKwbYbyMiK7wzAUNIjIsaEqKhrO64Hg6uDVK2U0hBKgJ3OKcSTTkp0QnrtRTzCIkbVXATlUKnvus6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHKl9gfKxanAvVFFE9Kh5j7EkMUMWXZDEaSgXvvM68TKDsvtxg
+	jxCXJtsnh9Zx9D86N48a9tJ0F3Db12/nB2z0dHbRjA+gv/7bg8qrKQJ80MxoOvrW8dOIdQ3XCGg
+	1gbDX4jcef0x6DGO9433dz73DhdbijXFH7xkQMwQl9Q==
+X-Gm-Gg: ASbGncv0XgQBwH5kuV4PPA4o3vUl9XLcz9BaMeuXZZQ1q/Mdpkkhr60W/3MK7W0tUiD
+	FHIK/Sgsk+6MKrc/FJ02klVIw6GXYlUeclVbRNgf80MC0SlSr99kCXaUsSvCWGdwAEhuqvaFZvC
+	0i5fM1MwiyuB55PE7dRXpBL6LdRbaXKuruQl2r8sDwMQfjpMmL8JLwUL+LxEXmGq1Vh7oH7cKV9
+	NmD9nIR59meVPGkigTnEq/Tu67btjeInWFoP/E68pSXBY49y84VJ2/4Tv3y
+X-Google-Smtp-Source: AGHT+IE7y61jt3BTlrPRKkVkpCYFN38tMn+ivWJPXhndffSVM4yTnzAa+3i9UFwR0NwUlApg9Hm4vAD5GYaII64RmTA=
+X-Received: by 2002:a53:bb8c:0:b0:5f5:1097:6eb5 with SMTP id
+ 956f58d0204a3-61028ea0f6cmr13119918d50.31.1757589115637; Thu, 11 Sep 2025
+ 04:11:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: TNe00e84WmzNRu1ecvYAMyvN-lhOcSv7
-X-Proofpoint-ORIG-GUID: TNe00e84WmzNRu1ecvYAMyvN-lhOcSv7
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDA4OCBTYWx0ZWRfX2QdE/7ENdGyp fW7fUdTjyHvDylk5V9NdQJpI4WSPwktpnHUA9TiHd4Gmq6RTit0MFOngaLd2jkQj7NMMoQNL4U1 sJ2UbaKu/xPPA2+HJamuhZ+v28iA5csHDvyR2PNipb4bckoCpRfMGWQF7xGhf5tF24wtgAVz4ue
- +hI3jUt7d/Brsc/jyqUvxRGzipRi5z6/kahZ+rWqgQqrMb9iRKfUEdnfC9NbeMjZuKuGysDIIb9 7STM4k95GWA8uGy2kkLAt6C+OhlC+A6c7HCM1b3typI8iXh7G2aWCrA++qgGNfihjJRTpFbplJd eIRsXkDhMw5HC/CEIq3V+LuvlqZnl096Y9s8xwla1GI40ZOVCyhO9dEinu9J2sjgc4s2ObMTKD/ 0zSCt3Z3
-X-Authority-Analysis: v=2.4 cv=T4yMT+KQ c=1 sm=1 tr=0 ts=68c2ae68 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=yJojWOMRYYMA:10 a=M5GUcnROAAAA:8 a=0muEbM_J4OP6Rna8yOEA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-11_01,2025-03-28_01
+References: <20250911-csi-bgr-rgb-v2-0-e6c6b10c1040@kernel.org> <20250911-csi-bgr-rgb-v2-3-e6c6b10c1040@kernel.org>
+In-Reply-To: <20250911-csi-bgr-rgb-v2-3-e6c6b10c1040@kernel.org>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Thu, 11 Sep 2025 12:11:36 +0100
+X-Gm-Features: Ac12FXwM4P6Wgf9tLO5WbK4KrfQkMtG4PtgDAGpSmTQ1XNJtyPSZGehGiSIImmA
+Message-ID: <CAPY8ntBG=ghLmFGkA4-Tg4pAzAv6jWARkyiZU-4uCVhQuwZa9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] media: tc358743: Fix the RGB MBUS format
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Mats Randgaard <matrandg@cisco.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil@kernel.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Hans Verkuil <hans.verkuil@cisco.com>
+Content-Type: text/plain; charset="UTF-8"
 
-When enabling SR-IOV VFs via sriov_numvfs, a race can occur between
-VF creation (`pci_iov_add_virtfn()`) and a parallel PCI bus rescan.
-This may cause duplicate sysfs resource files to be created for the
-same VF. `pci_device_add()` links the VF into the bus list before calling
-`pci_bus_add_device()`. During this window, a parallel pci rescan
-may iterate over the same VF and call `pci_bus_add_device()` before
-the PCI_DEV_ADDED flag is set by sriov_numvfs, leading to duplicate
-sysfs entries.
+Hi Maxime
 
-sysfs: cannot create duplicate filename
-'/devices/platform/0.soc/878020000000.pci/pci0002:00/0002:00:02.0/0002:03:00.3/resource2'
-CPU: 10 PID: 1787 Comm: tee Tainted: G        W
-6.1.67-00053-g785627de1dee #150
-Hardware name: Marvell CN106XX board (DT)
-Call trace:
- dump_backtrace.part.0+0xe0/0xf0
- show_stack+0x18/0x30
- dump_stack_lvl+0x68/0x84
- dump_stack+0x18/0x34
- sysfs_warn_dup+0x64/0x80
- sysfs_add_bin_file_mode_ns+0xd4/0x100
- sysfs_create_bin_file+0x74/0xa4
- pci_create_attr+0xf0/0x190
- pci_create_resource_files+0x48/0xc0
- pci_create_sysfs_dev_files+0x1c/0x30
- pci_bus_add_device+0x30/0xc0
- pci_bus_add_devices+0x38/0x84
- pci_bus_add_devices+0x64/0x84
- pci_rescan_bus+0x30/0x44
- rescan_store+0x7c/0xa0
- bus_attr_store+0x28/0x3c
- sysfs_kf_write+0x44/0x54
- kernfs_fop_write_iter+0x118/0x1b0
- vfs_write+0x20c/0x294
- ksys_write+0x6c/0x100
- __arm64_sys_write+0x1c/0x30
+On Thu, 11 Sept 2025 at 10:15, Maxime Ripard <mripard@kernel.org> wrote:
+>
+> The tc358743 is an HDMI to MIPI-CSI2 bridge. It supports two of the
+> three HDMI 1.4 video formats: RGB 4:4:4 and YCbCr 422.
 
-To prevent this, introduce a new in-progress private flag
-(PCI_DEV_ADD_INPROG) in struct pci_dev and use it as an atomic
-guard around pci_bus_add_device(). This ensures only one thread
-can progress with device addition at a time.
+It accepts 3 HDMI video formats: 24bpp RGB 4:4:4, 24bpp YCbCr 4:4:4,
+or 16bpp YCbCr 4:2:2.
 
-The flag is cleared once the device has been added or the attempt
-has finished, avoiding duplicate sysfs entries.
+It supports outputting the incoming video data as either 24bpp RGB
+4:4:4 or 16bpp YCbCr 4:2:2, and will convert the incoming HDMI video
+data to either of these.
+(Rereading the datasheet it can also send YCbCr 4:4:4, but that's
+non-standard as it by default reuses data type 0x24 which is RGB888,
+but says it uses RAW12 packing!)
 
-Signed-off-by: Shashank Gupta <shashankg@marvell.com>
----
+> RGB 4:4:4 is converted to the MIPI-CSI2 RGB888 video format, and listed
+> in the driver as MEDIA_BUS_FMT_RGB888_1X24.
+>
+> Most CSI2 receiver drivers then map MEDIA_BUS_FMT_RGB888_1X24 to
+> V4L2_PIX_FMT_RGB24.
+>
+> However, V4L2_PIX_FMT_RGB24 is defined as having its color components in
+> the R, G and B order, from left to right. MIPI-CSI2 however defines the
+> RGB888 format with blue first.
+>
+> This essentially means that the R and B will be swapped compared to what
+> V4L2_PIX_FMT_RGB24 defines.
+>
+> The proper MBUS format would be BGR888, so let's use that.
+>
+> Fixes: d32d98642de6 ("[media] Driver for Toshiba TC358743 HDMI to CSI-2 bridge")
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/media/i2c/tc358743.c | 51 ++++++++++++++++++++++++++++++++++++--------
+>  1 file changed, 42 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
+> index 1cc7636e446d77d7c6266ca86517496261d2b039..a3054cd823da4cf3db24c6b2bfbf0fcaa43f2814 100644
+> --- a/drivers/media/i2c/tc358743.c
+> +++ b/drivers/media/i2c/tc358743.c
+> @@ -693,11 +693,21 @@ static void tc358743_set_csi_color_space(struct v4l2_subdev *sd)
+>                 i2c_wr16_and_or(sd, CONFCTL, ~MASK_YCBCRFMT,
+>                                 MASK_YCBCRFMT_422_8_BIT);
+>                 mutex_unlock(&state->confctl_mutex);
+>                 break;
+>         case MEDIA_BUS_FMT_RGB888_1X24:
+> -               v4l2_dbg(2, debug, sd, "%s: RGB 888 24-bit\n", __func__);
+> +               /*
+> +                * The driver was initially introduced with RGB888
+> +                * support, but CSI really means BGR.
+> +                *
+> +                * Since we might have applications that would have
+> +                * hard-coded the RGB888, let's support both.
+> +                */
+> +               v4l2_warn(sd, "RGB format isn't actually supported by the hardware. The application should be fixed to use BGR.");
 
-Issue trace:
-------------
+warn_once? Otherwise repeatedly setting the format to RGB888 will spam
+the kernel log.
+(Annoying that there doesn't appear to be a v4l2_warn_once macro)
 
-CPU2 (sriov_numvfs)                          CPU4 (pci rescan)
-------------------------------------------  --------------------------
-pci_iov_add_virtfn()
-  pci_device_add(virtfn)   # VF linked to bus
-                                          pci_bus_add_devices()
-                                            iterates over VF
-						PCI_DEV_ADDED not set yet
-													
-  pci_bus_add_device()
-	create sysfs file
-        pci_dev_assign_added() set PCI_DEV_ADDED
-						pci_bus_add_device()
-						 duplicate sysfs file
-														
+> +               fallthrough;
+> +       case MEDIA_BUS_FMT_BGR888_1X24:
+> +               v4l2_dbg(2, debug, sd, "%s: BGR 888 24-bit\n", __func__);
+>                 i2c_wr8_and_or(sd, VOUT_SET2,
+>                                 ~(MASK_SEL422 | MASK_VOUT_422FIL_100) & 0xff,
+>                                 0x00);
+>                 i2c_wr8_and_or(sd, VI_REP, ~MASK_VOUT_COLOR_SEL & 0xff,
+>                                 MASK_VOUT_COLOR_RGB_FULL);
+> @@ -1354,15 +1364,28 @@ static int tc358743_log_status(struct v4l2_subdev *sd)
+>                         (i2c_rd16(sd, CSI_STATUS) & MASK_S_RXACT) ?
+>                         "yes" : "no");
+>         v4l2_info(sd, "Stopped: %s\n",
+>                         (i2c_rd16(sd, CSI_STATUS) & MASK_S_HLT) ?
+>                         "yes" : "no");
+> -       v4l2_info(sd, "Color space: %s\n",
+> -                       state->mbus_fmt_code == MEDIA_BUS_FMT_UYVY8_1X16 ?
+> -                       "YCbCr 422 16-bit" :
+> -                       state->mbus_fmt_code == MEDIA_BUS_FMT_RGB888_1X24 ?
+> -                       "RGB 888 24-bit" : "Unsupported");
+> +
+> +       switch (state->mbus_fmt_code) {
+> +       case MEDIA_BUS_FMT_BGR888_1X24:
+> +               /*
+> +                * The driver was initially introduced with RGB888
+> +                * support, but CSI really means BGR.
+> +                *
+> +                * Since we might have applications that would have
+> +                * hard-coded the RGB888, let's support both.
+> +                */
+> +               fallthrough;
+> +       case MEDIA_BUS_FMT_RGB888_1X24:
+> +               v4l2_info(sd, "Color space: BGR 888 24-bit\n");
+> +               break;
+> +       case MEDIA_BUS_FMT_UYVY8_1X16:
+> +               v4l2_info(sd, "Color space: YCbCr 422 16-bit\n");
+> +               break;
 
-Issue Log :
------------
+This has lost printing "Unsupported" if not one of the supported
+formats, however I don't think there is a way for that to ever happen.
+As it's not an enum, the compiler shouldn't be complaining of
+unhandled values.
 
-[CPU 2] = sriov_numfs creating 9 vfs 
-[CPU 4] = Pci rescan
+> +       }
+>
+>         v4l2_info(sd, "-----%s status-----\n", is_hdmi(sd) ? "HDMI" : "DVI-D");
+>         v4l2_info(sd, "HDCP encrypted content: %s\n",
+>                         hdmi_sys_status & MASK_S_HDCP ? "yes" : "no");
+>         v4l2_info(sd, "Input color space: %s %s range\n",
+> @@ -1695,24 +1718,33 @@ static int tc358743_enum_mbus_code(struct v4l2_subdev *sd,
+>                 struct v4l2_subdev_state *sd_state,
+>                 struct v4l2_subdev_mbus_code_enum *code)
+>  {
+>         switch (code->index) {
+>         case 0:
+> -               code->code = MEDIA_BUS_FMT_RGB888_1X24;
+> +               code->code = MEDIA_BUS_FMT_BGR888_1X24;
+>                 break;
+>         case 1:
+>                 code->code = MEDIA_BUS_FMT_UYVY8_1X16;
+>                 break;
+> +       case 2:
+> +               /*
+> +                * We need to keep RGB888 for backward compatibility,
+> +                * but we should list it last for userspace to pick BGR.
+> +                */
+> +               code->code = MEDIA_BUS_FMT_RGB888_1X24;
+> +               break;
+>         default:
+>                 return -EINVAL;
+>         }
+>         return 0;
+>  }
+>
+>  static u32 tc358743_g_colorspace(u32 code)
+>  {
+>         switch (code) {
+> +       case MEDIA_BUS_FMT_BGR888_1X24:
+> +               fallthrough;
 
-[   93.486440] [CPU : 2]`==>pci_iov_add_virtfn: bus = PCI Bus 0002:20 slot = 0 func= 4 	# sriov_numvfs vf is getting created for vf 4
-[   93.494002] [CPU : 4]`->pci_bus_add_devices: child-bus = 						    # Pci rescan
-[   93.494003] [CPU : 4]`->pci_bus_add_devices: bus = PCI Bus 0002:20				
-[   93.500178] pci 0002:20:00.4: [177d:a0f3] type 00 class 0x108000
-[   93.507825] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 0        # pci rescan iterating on created vfs
-[   93.513288] [CPU : 2]`->pci_device_add : bus = PCI Bus 0002:20 slot = 0, func= 4     # sriov_numvfs: vf 4 added in the cus list
-[   93.519388] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 1	    # pci rescan : vf iterated 1
-[   93.525438] [CPU : 2]`->pci_bus_add_device: slot = 0 func= 4	                        # sriov_numvfs: enter in adding vf 4 in sys/proc fs
-[   93.532515] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 2	    # pci rescan : vf iterated 2
-[   93.539904] [CPU : 2]`->pci_bus_add_device create sysfs pci_create_sysfs_dev_files: slot = 0 func= 4 # sriov: vf 4 sysfs file created
-[   93.547032] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 3        # pci rescan : vf iterated 3
-[   93.552714] rvu_cptvf 0002:20:00.4: Adding to iommu group 85
-[   93.559812] [CPU : 4]`->pci_bus_add_devices iterated dev : slot =  0 func = 4	    # pci rescan : vf iterated 4
-[   93.569002] rvu_cptvf 0002:20:00.4: enabling device (0000 -> 0002)
-[   93.576069] [CPU : 4]`->pci_bus_add_devices PCI_DEV_ADDED not set : slot =  0 func = 4 # pci rescan : vf 4 PCI_DEV_ADDED flag not set by sriov_numvfs 
-[   93.576070] [CPU : 4]`->pci_bus_add_device: slot = 0 func= 4							  # pci rescan : enter for adding vf 4 in sys/proc fs 
-[   93.576072] [CPU : 4]`->pci_bus_add_device create sysfs pci_create_sysfs_dev_files: slot = 0 func= 4 # pci rescan : going to create sysfs file
-[   93.576078] sysfs: cannot create duplicate filename '/devices/platform/0.soc/878020000000.pci/pci0002:00/0002:00:1f.0/0002:20:00.4/resource2' # duplication detected
-[   93.608709] [CPU : 2]`->pci_dev_assign_added set PCI_DEV_ADDED : slot = 0, func= 4        # sriov_numvfs : PCI_DEV_ADDED is set
-[   93.617714] CPU: 4 PID: 811 Comm: tee Not tainted 6.1.67-00054-g3acfa4185b96-dirty #159
-[   93.630399] [CPU : 2]<==pci_iov_add_virtfn: bus = PCI Bus 0002:20 slot = 0 func= 4         
+Do we need a fallthrough when there is no extra code between the two cases?
 
+Otherwise it looks good to me.
 
-Fix trace (with patch):
------------------------
+  Dave
 
-CPU2 (sriov_numvfs)                   CPU4 (pci rescan)
-----------------------------------   --------------------------
-pci_iov_add_virtfn()
-  pci_device_add(virtfn)   # VF linked to bus
-	pci_bus_add_device() enter
-		set PCI_DEV_ADD_INPROG
-                                     pci_bus_add_device() enter
-                                     PCI_DEV_ADD_INPROG already set
-                                     return
-	pci_dev_assign_added()
-	pci_dev_clear_inprog()
-
-Fix log:
--------
-
-[CPU 2] = sriov_numfs creating 9 vfs 
-[CPU 4] = Pci rescan
-
-[  178.296167] pci 0002:20:00.5: [177d:a0f3] type 00 class 0x108000
-[  178.302680] pci 0002:00:1b.0: PCI bridge to [bus 1c]
-[  178.307746] [CPU : 2]`->pci_bus_add_device Enter : slot = 0, func= 5   # sriov_numvfs: adding vf5 in sys/proc
-[  178.313636] pci 0002:00:1c.0: PCI bridge to [bus 1d]
-[  178.318592] [CPU : 2]`->pci_bus_add_device set PCI_DEV_ADD_INPROG : slot = 0, func= 5  # sriov_numvfs: vf 5 PCI_DEV_ADD_INPROG flag set
-[  178.324939] pci 0002:00:1d.0: PCI bridge to [bus 1e]
-[  178.329895] [CPU : 2]`->pci_bus_add_device PCI_DEV_ADDED is not set: slot = 0, func= 5 # sriov_numvfs: vf 5 check if PCI_DEV_ADDED flag is set before proceed to create sysfs file
-[  178.337719] pci 0002:00:1e.0: PCI bridge to [bus 1f]
-[  178.342704] rvu_cptvf 0002:20:00.5: Adding to iommu group 86
-[  178.350586] [CPU : 4]`->pci_bus_add_device Enter : slot = 0, func= 5     # pci rescan : since PCI_DEV_ADDED flag is not set it enter the pci_bus_add_device for vf 5
-[  178.355597] rvu_cptvf 0002:20:00.5: enabling device (0000 -> 0002)
-[  178.361193] [CPU : 4]`->pci_bus_add_device PCI_DEV_ADD_INPROG is already set : slot = 0, func= 5  # pci rescan : check PCI_DEV_ADD_INPROG flag, it is already set 
-[  178.373726] [CPU : 4] <- pci_bus_add_device return : slot = 0, func= 5	# pri rescan : return 
-[  178.382852] pci_bus 0003:01: busn_res: [bus 01] end is updated to 01
-[  178.395474] [CPU : 2]`->pci_dev_assign_added set PCI_DEV_ADDED : slot = 0, func= 5    # sriov_numvfs: set PCI_DEV_ADDED for vf5
-[  178.395721] [CPU : 2]`->pci_dev_clear_inprog unset PCI_DEV_ADD_INPROG : slot = 0, func= 5 # sriov_numvfs : clear PCI_DEV_ADD_INPROG for vf5 
-[  178.403289] [CPU : 2] <- pci_bus_add_device return : slot = 0, func= 5
- drivers/pci/bus.c |  8 ++++++++
- drivers/pci/pci.h | 11 +++++++++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-index feafa378bf8e..cafce1c4ec3d 100644
---- a/drivers/pci/bus.c
-+++ b/drivers/pci/bus.c
-@@ -331,6 +331,13 @@ void pci_bus_add_device(struct pci_dev *dev)
- {
- 	int retval;
- 
-+	if (pci_dev_add_inprog_check_and_set(dev))
-+		return;
-+
-+	if (pci_dev_is_added(dev)) {
-+		pci_dev_clear_inprog(dev);
-+		return;
-+	}
- 	/*
- 	 * Can not put in pci_device_add yet because resources
- 	 * are not assigned yet for some devices.
-@@ -347,6 +354,7 @@ void pci_bus_add_device(struct pci_dev *dev)
- 		pci_warn(dev, "device attach failed (%d)\n", retval);
- 
- 	pci_dev_assign_added(dev, true);
-+	pci_dev_clear_inprog(dev);
- }
- EXPORT_SYMBOL_GPL(pci_bus_add_device);
- 
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index ffccb03933e2..a2d01db8e837 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -366,17 +366,28 @@ static inline bool pci_dev_is_disconnected(const struct pci_dev *dev)
- #define PCI_DEV_ADDED 0
- #define PCI_DPC_RECOVERED 1
- #define PCI_DPC_RECOVERING 2
-+#define PCI_DEV_ADD_INPROG 3
- 
- static inline void pci_dev_assign_added(struct pci_dev *dev, bool added)
- {
- 	assign_bit(PCI_DEV_ADDED, &dev->priv_flags, added);
- }
- 
-+static inline void pci_dev_clear_inprog(struct pci_dev *dev)
-+{
-+	clear_bit(PCI_DEV_ADD_INPROG, &dev->priv_flags);
-+}
-+
- static inline bool pci_dev_is_added(const struct pci_dev *dev)
- {
- 	return test_bit(PCI_DEV_ADDED, &dev->priv_flags);
- }
- 
-+static inline bool pci_dev_add_inprog_check_and_set(struct pci_dev *dev)
-+{
-+	return test_and_set_bit(PCI_DEV_ADD_INPROG, &dev->priv_flags);
-+}
-+
- #ifdef CONFIG_PCIEAER
- #include <linux/aer.h>
- 
--- 
-2.34.1
-
+>         case MEDIA_BUS_FMT_RGB888_1X24:
+>                 return V4L2_COLORSPACE_SRGB;
+>         case MEDIA_BUS_FMT_UYVY8_1X16:
+>                 return V4L2_COLORSPACE_SMPTE170M;
+>         default:
+> @@ -1746,11 +1778,12 @@ static int tc358743_set_fmt(struct v4l2_subdev *sd,
+>         struct tc358743_state *state = to_state(sd);
+>
+>         u32 code = format->format.code; /* is overwritten by get_fmt */
+>         int ret = tc358743_get_fmt(sd, sd_state, format);
+>
+> -       if (code == MEDIA_BUS_FMT_RGB888_1X24 ||
+> +       if (code == MEDIA_BUS_FMT_BGR888_1X24 ||
+> +           code == MEDIA_BUS_FMT_RGB888_1X24 ||
+>             code == MEDIA_BUS_FMT_UYVY8_1X16)
+>                 format->format.code = code;
+>         format->format.colorspace = tc358743_g_colorspace(format->format.code);
+>
+>         if (ret)
+> @@ -2166,11 +2199,11 @@ static int tc358743_probe(struct i2c_client *client)
+>         sd->entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+>         err = media_entity_pads_init(&sd->entity, 1, &state->pad);
+>         if (err < 0)
+>                 goto err_hdl;
+>
+> -       state->mbus_fmt_code = MEDIA_BUS_FMT_RGB888_1X24;
+> +       state->mbus_fmt_code = MEDIA_BUS_FMT_BGR888_1X24;
+>
+>         sd->dev = &client->dev;
+>
+>         mutex_init(&state->confctl_mutex);
+>
+>
+> --
+> 2.50.1
+>
 
