@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-812980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A83B53F38
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:43:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F6FB53F3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B97477BD540
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:41:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0282E566FEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BD72FB60B;
-	Thu, 11 Sep 2025 23:41:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF4C270545;
+	Thu, 11 Sep 2025 23:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iV9GvsvY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JQ1QSFS6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E812F530A;
-	Thu, 11 Sep 2025 23:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E5E199BC;
+	Thu, 11 Sep 2025 23:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757634113; cv=none; b=EPWQ/1fdA+oiWZvdHktFhzrAUkzsHERPvlzUirlTa18vOlWV/Du0e1IdeVxgx36DSEuV8zRIQpGI3aFe93x6K2T1LrTOxEmx3sESlxvDbS0tu1eo9g1v98HF46kBBVWWVQ04rZG+Q0G9YW2D8H9GTqo6FaYngNIprDNx8/DsfJE=
+	t=1757634611; cv=none; b=ncIMVB53Gz2GS4RiV990opNYkt5j7IZkGfRy8pvmjuNd4/1cOkSmBy63LNlhKXeIcrOpiDd7oQVbDxN+H3+oQIH1L4mZZBjrx8AbSIEupheTOuhr4BGd3VPuq9qWN69+aPUB1l5g5STZtbCTeBK6A9kgx41uxYuQ/8SjuvqKHDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757634113; c=relaxed/simple;
-	bh=DQD93jM5hLlaAKaCjIrnWOXXTTrKJoX2wFhzmsThdaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hnMNHMd26/yw5Nnb5da11GAryfnqv1gl8nwQkKKPjUf+RgfG8TH6cYXXgc4TPr1xeoXFspgOP+cWw0IiWq4yMcITIYim9xHq1KktbPcp4GIn2m9X5AP8FAMpxbL8pevop+ZFy7HVc5XvjjkEV2XNAEin7WIUl5QdUL6DQvhPNhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iV9GvsvY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17220C4CEF0;
-	Thu, 11 Sep 2025 23:41:50 +0000 (UTC)
+	s=arc-20240116; t=1757634611; c=relaxed/simple;
+	bh=QKIx7fZK8zw1ZQePuU1g94DQ2X7z2ZTh+XIeZvk0UM0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=hhQfc6ULiaiOLZXt0O1icDRCisZFk8huFcuqoHhTAhyaNtHv2PDAL3DfBgqcuuU1QD2nX+aloSviAlYCS/n5ErZksEt5OlIJIPIT6/pa/bAxpyJznbezBNss3okkvI0s1vS1cviY2LNMyL0MsPcN52xOHGSjqAD35/wNP+pBtRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JQ1QSFS6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3294C4CEF0;
+	Thu, 11 Sep 2025 23:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757634112;
-	bh=DQD93jM5hLlaAKaCjIrnWOXXTTrKJoX2wFhzmsThdaM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iV9GvsvYOgiktqrfpfVkGvm1Vxt267Fr6jnDO3liYSIjN187mdA56yiqXB8xYP9JN
-	 CSJ4SXd00YvZ3TbH2Aij7xG6xFlaefX2TUHO8GQ3N3fs3J+sdhvm0+FTdGW/nE/uP2
-	 7RGA/TIEuu6ehQh1EL8t9agDEyvSvQvOf8bZKL701zR6c9Lb7/aO+p1+DhiJOVKIt8
-	 tmr8MuIACNe0dCjnMIm29YShTZ9VXjEp3bnvKzqWfvywtfMGmOJQUc5B/S7KYK2ykw
-	 eNoeXYPwanry9hHff6nR+a/kXrvbQ34vdOFt3c3QjHcpf595+nyLzrBZ8GdyLI21g6
-	 b5imPfFMNtivg==
-Date: Thu, 11 Sep 2025 19:41:48 -0400
-From: Keith Busch <kbusch@kernel.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Vernon Yang <vernon2gm@gmail.com>, mahesh@linux.ibm.com,
-	bhelgaas@google.com, oohall@gmail.com,
-	linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Vernon Yang <yanglincheng@kylinos.cn>,
-	Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>, linux-cxl@vger.kernel.org,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	Dongdong Liu <liudongdong3@huawei.com>
-Subject: Re: [PATCH] PCI/AER: Fix NULL pointer access by aer_info
-Message-ID: <aMNePLmIkz3LE6EP@kbusch-mbp>
-References: <20250904182527.67371-1-vernon2gm@gmail.com>
- <20250911225457.GA1596803@bhelgaas>
+	s=k20201202; t=1757634610;
+	bh=QKIx7fZK8zw1ZQePuU1g94DQ2X7z2ZTh+XIeZvk0UM0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=JQ1QSFS6RKEQ01TESP1k6caAM9JSd9RQD3kXW5vWAp6AuPxwVd1/27pnBDrPnZ0OC
+	 UE4OE4jYLRBrKz5ea7OrcAg1x74LHsnORyCCWY/LbBK6799lfQIK6DXija394YBtmK
+	 rsvVrw8D4Nbx3I+jjC8ELhZ9s/EMCfVUTlbaVnKqsQicQhyzghuWQ4TYdTcJHlyAYx
+	 hxJA0OGQIJlxEa5OGVUWCKpDMt3nPUVNIfnWL0EV8C4RCiaer0WAPtMYl9y5lp2mtX
+	 WQi5ZK5vMF1mghrwRryAJV3c4w48IlJJd+UNCFDHEcT7Yf0+8ZiV2SMh9TYTc+NGoS
+	 xej68HboxQ/6g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AFB4A383BF6C;
+	Thu, 11 Sep 2025 23:50:14 +0000 (UTC)
+Subject: Re: [GIT PULL] Networking for v6.17-rc6
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250911131034.47905-1-pabeni@redhat.com>
+References: <20250911131034.47905-1-pabeni@redhat.com>
+X-PR-Tracked-List-Id: <netdev.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250911131034.47905-1-pabeni@redhat.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc6
+X-PR-Tracked-Commit-Id: 62e1de1d3352d4c64ebc0335a01186f421cbe6e7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 63a796558bc22ec699e4193d5c75534757ddf2e6
+Message-Id: <175763461328.2348576.9957004045210482039.pr-tracker-bot@kernel.org>
+Date: Thu, 11 Sep 2025 23:50:13 +0000
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911225457.GA1596803@bhelgaas>
 
-On Thu, Sep 11, 2025 at 05:54:57PM -0500, Bjorn Helgaas wrote:
-> [+cc Terry, Robert, CXL list, Smita, Dongdong]
-> 
-> On Fri, Sep 05, 2025 at 02:25:27AM +0800, Vernon Yang wrote:
-> > From: Vernon Yang <yanglincheng@kylinos.cn>
-> > 
-> > The kzalloc(GFP_KERNEL) may return NULL, so all accesses to
-> > aer_info->xxx will result in kernel panic. Fix it.
-> > 
-> > Signed-off-by: Vernon Yang <yanglincheng@kylinos.cn>
-> 
-> Applied to pci/aer for v6.18, thanks, Vernon!
-> 
-> Not directly related to this patch, but I'm concerned about some users
-> of dev->aer_cap.
+The pull request you sent on Thu, 11 Sep 2025 15:10:34 +0200:
 
-pci_aer_init is called pretty early during boot. If we can't malloc a
-few hundred bytes at that point, the aer_cap users will be the least of
-your concerns. :)
+> git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.17-rc6
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/63a796558bc22ec699e4193d5c75534757ddf2e6
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
