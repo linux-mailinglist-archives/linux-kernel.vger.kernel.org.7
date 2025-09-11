@@ -1,110 +1,200 @@
-Return-Path: <linux-kernel+bounces-811208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87615B525E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:41:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03952B525E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABD8B7B693E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:40:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B34186872DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29960207A18;
-	Thu, 11 Sep 2025 01:41:44 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AE21FF7D7;
+	Thu, 11 Sep 2025 01:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g71JBFKK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2727C134AC;
-	Thu, 11 Sep 2025 01:41:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227A91E3DCF;
+	Thu, 11 Sep 2025 01:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757554903; cv=none; b=ug9hH4iSdNP0bpkKJX93VNOwxOTeg43hhzF7BgTXcFATZ3CsMvIknqXbkzX2a7MYk7sCd61MHOjk+Crlf9p1Z4P98IsnNlW7OKNWKMgmhxIWOlGaO757kf5L8j/ymJ4bgqAyg/sjN96YxHmHZuSAvDmCerCyJbIdL8szLINtqS4=
+	t=1757554926; cv=none; b=hfBz+i+l64uNXWY6msJAjGgzRhl9KjRgx4AFIKpKrke0aQTv7CKO0JyvAxhO3zyFEkGnaUIMu54JiAdCbxRY4UTasSNjFWJ2ny90U/le3XQlQ3U7nFWUC16bMtQTXtEoG9SchNYF2rxdboC0ET7WBvdY9ajRp/MeaBsa/7OCRNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757554903; c=relaxed/simple;
-	bh=mo3vajXLH/2QvyUhdCUaJ0EkVJHEWji6L/thoSNnZ64=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lz8pTQAdDLwYpFVsd+hgtQ8pgG+opMJofKG4dWgePHeFBa4er45WjKfAZ+WvLrlLaGY6G8Jd6jXhP9pElPWLN6BEXGOH9992fB1mYR+nkUipJaZ5PPWK843pgdW0eEhzPKS/c6Bx+oq2mhAoAjIszx0HMSm9oSarTyrK+ABvqzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com; spf=pass smtp.mailfrom=mucse.com; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mucse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mucse.com
-X-QQ-mid: esmtpgz11t1757554872tc579cd9b
-X-QQ-Originating-IP: xT4NDMmYFTqBtVk0lcsunVOxMngI/KCKIfxLuoWVbyI=
-Received: from localhost ( [203.174.112.180])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 11 Sep 2025 09:41:10 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13489420341655443329
-Date: Thu, 11 Sep 2025 09:41:10 +0800
-From: Yibo Dong <dong100@mucse.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "Anwar, Md Danish" <a0501179@ti.com>, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	horms@kernel.org, corbet@lwn.net, gur.stavi@huawei.com,
-	maddy@linux.ibm.com, mpe@ellerman.id.au, danishanwar@ti.com,
-	lee@trager.us, gongfan1@huawei.com, lorenzo@kernel.org,
-	geert+renesas@glider.be, Parthiban.Veerasooran@microchip.com,
-	lukas.bulwahn@redhat.com, alexanderduyck@fb.com,
-	richardcochran@gmail.com, kees@kernel.org, gustavoars@kernel.org,
-	rdunlap@infradead.org, vadim.fedorenko@linux.dev,
-	netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH net-next v11 4/5] net: rnpgbe: Add basic mbx_fw support
-Message-ID: <B2AAE00532783CC8+20250911014110.GB1855272@nic-Precision-5820-Tower>
-References: <20250909120906.1781444-1-dong100@mucse.com>
- <20250909120906.1781444-5-dong100@mucse.com>
- <68fc2f5c-2cbd-41f6-a814-5134ba06b4b5@ti.com>
- <20250909135822.2ac833fc@kernel.org>
- <00A30C785FE598BA+20250910060821.GB1832711@nic-Precision-5820-Tower>
- <20250910180334.54e55869@kernel.org>
+	s=arc-20240116; t=1757554926; c=relaxed/simple;
+	bh=OLQaS2gRdqg4w8Ub5cQaE+UPyxaGSnZ/EID3luKpLnc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O5rGRrtknWuuJoNzYrd3Y28asxIka+3lV+9e34wkE22UGln0Wg7xDspEJ6AGUbJezYLZyla7QzTIaLS36eDOS3ICY4OC0rULRVojbM7XflERZCOT9m0wTw0OqEx3DzZiq1Kozwg+2IBrNGXZZOEVYfuWm6vyZqel+ZuhQbLswAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g71JBFKK; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757554924; x=1789090924;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OLQaS2gRdqg4w8Ub5cQaE+UPyxaGSnZ/EID3luKpLnc=;
+  b=g71JBFKKkpqlm6XXUR9rYUxjPN3dspdsFGBT7odTZ0fihHH8npIzWh8O
+   hPet0ifSkjxdkcxxk+FX8XBo7aEApbGKzC8ORhsiZigN8MnDsv1neEe+W
+   EMyqxzLQFdf2oGCYYCEjmDfxP7NzAo8qQQex3AWZipE3nK3wEXw1Rw/Ut
+   CD9eFBzVvFLdOeIN8k5I9nqtVX6SNe73fxnUEYqeZ/BAS6FRtGrmAOgZU
+   b4WIan4D+wbfOznS6Qzfpimg9kjBtONyEYSqHoVWPlxsqKKj/E6PdxoZx
+   BmGeKs6TV4XiIOcCNcICRpfg/UCuXFRiqNFyG3QZ608ZIN1X7C0POjaH3
+   A==;
+X-CSE-ConnectionGUID: BeoyfMdSRu6QoJB8Bhyjgw==
+X-CSE-MsgGUID: 0L+97gdTRJCjln9CVH2B2g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="71258736"
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="71258736"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 18:42:03 -0700
+X-CSE-ConnectionGUID: V/4WYwkxRbeiNetauNkHbg==
+X-CSE-MsgGUID: 7IB96zRxTIu9sp8LY7LiAQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="172738171"
+Received: from unknown (HELO [10.238.3.254]) ([10.238.3.254])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 18:42:00 -0700
+Message-ID: <727fbc0a-7edf-46a3-abaf-90ef32615b04@linux.intel.com>
+Date: Thu, 11 Sep 2025 09:41:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910180334.54e55869@kernel.org>
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:mucse.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MiI3m6WAbdszeBSpBgYiegVacIGel61EC591mlZiGjM7aZc4wt+JrB9v
-	DfOlkvu3YghshGLSxIYtwJ1ecZPiYfH8lu4WOdB36WQCaht4efqXcoLtxx3K6BWSaCsmnSi
-	j7N23dkn8vSHd2QwrvyI/+WsIBCkDeqX5ttZTar9YHEkcQpZHj5J5KgZ4MePD7I9O2q5UmI
-	HAnAU7hPMgsPaXR1d/b2//8DkE6ogGxHRvCCjjX+ty2QzGD2GRxDTlRPcS7NuicEc63ZlnV
-	Xh5QEZasedmvIcEVZnAOZT/8THJ2i70aS4cA7r0XRUqaSLt6lJ+fgxVi0Y1bsOmOFHbqKCG
-	e/e/PGzlYoJZPXso2HbkB+qGzoFzoG8xwHmLkvPUaZjZL6nre4N9stsTDXYzp6aRCU5n547
-	wsoo0BJ+hJ1c7cl8hY4BEe0XXYp8MQYH9MbPhmbd1QSGj0R/fTAfu5NfzR+MTwrAOAQE1mT
-	NlEo5kvbAPpHGiER5ReMxsR2v65TSTVF/RQybAHroJI5rzL14fQXTxzf1kxJ+es234E40D5
-	F5IT2Nb3LenyuT6mMKpwiAF6LLDgd6OpGAz6Q4kJTXD1eP13Aob7L3m8G/DNP5ALDhm/jrF
-	yihXpvy9vrybBk7xbTWCes5Zpt5HzgHevCKlmM/DZzQtppoDxgHMWkMo2J0HtE0QZIznll4
-	qet4AdNxuW0Q890Q2Y4ksvmMSdct4toZGmGHv2DyJ6mQeuZTzxtuMtxhKsxeuROyzlHCsSD
-	CT1F65DnZ7RIwm2jCIAsHkrDqoZjkqZxMw9ubHH/R/2Fkuwt/basl/zS9PpSkfqYEajH66L
-	FxCDqm75a/zqC4NnknqsvIYDwIKFropwqYwH2zPvUvPrQi27Vap+39QMrXFT0HHTqEe8Bd3
-	99UpKb2j1iyXJNoDjdg4AOwS6TeIKiXeKPTWlswYapCXTzHfHIBCpiwGuinBT67f52DJpUl
-	aj1rtU7EuY3nO+sRRv+XOTpAvFzbZiszfPA21SRg6QzuW12tsoT2KbDbPuRtDPUnABQMswh
-	EglwTfE19RbORH8xHE2CmOxsAgl9/Arzc/ihWFnttJbQJzaGAD5o9libCWb3TFtLcKOlPhW
-	llgDuNPWI3b
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] KVM: Selftests: Validate more arch-events in
+ pmu_counters_test
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+ Mingwei Zhang <mizhang@google.com>, Zide Chen <zide.chen@intel.com>,
+ Das Sandipan <Sandipan.Das@amd.com>, Shukla Manali <Manali.Shukla@amd.com>,
+ Yi Lai <yi1.lai@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250718001905.196989-1-dapeng1.mi@linux.intel.com>
+ <20250718001905.196989-4-dapeng1.mi@linux.intel.com>
+ <aMIO5ZLNur5JkdYl@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aMIO5ZLNur5JkdYl@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 06:03:34PM -0700, Jakub Kicinski wrote:
-> On Wed, 10 Sep 2025 14:08:21 +0800 Yibo Dong wrote:
-> > 	do {
-> > 		err = mucse_mbx_get_info(hw);
-> > 		if (err != -ETIMEDOUT)
-> > 			break;
-> > 		/* only retry with ETIMEDOUT, others just return */
-> > 	} while (try_cnt--);
-> 
-> 	do {
-> 		err = bla();
-> 	} while (err == -ETIMEDOUT && try_cnt--);
-> 
 
-Got it, I will fix it in next version.
+On 9/11/2025 7:51 AM, Sean Christopherson wrote:
+> On Fri, Jul 18, 2025, Dapeng Mi wrote:
+>> Clearwater Forest introduces 5 new architectural events (4 topdown
+>> level 1 metrics events and LBR inserts event). This patch supports
+>> to validate these 5 newly added events. The detailed info about these
+>> 5 events can be found in SDM section 21.2.7 "Pre-defined Architectural
+>>  Performance Events".
+>>
+>> It becomes unrealistic to traverse all possible combinations of
+>> unavailable events mask (may need dozens of minutes to finish all
+>> possible combination validation). So only limit unavailable events mask
+>> traverse to the first 8 arch-events.
+> Split these into separate patches.  Buring a meaningful change like this in a big
+> patch that seemingly just adds architectural collateral is pure evil.
+>> @@ -612,15 +620,19 @@ static void test_intel_counters(void)
+>>  			pr_info("Testing arch events, PMU version %u, perf_caps = %lx\n",
+>>  				v, perf_caps[i]);
+>>  			/*
+>> -			 * To keep the total runtime reasonable, test every
+>> -			 * possible non-zero, non-reserved bitmap combination
+>> -			 * only with the native PMU version and the full bit
+>> -			 * vector length.
+>> +			 * To keep the total runtime reasonable, especially after
+>> +			 * the total number of arch-events increasing to 13, It's
+>> +			 * impossible to test every possible non-zero, non-reserved
+>> +			 * bitmap combination. Only test the first 8-bits combination
+>> +			 * with the native PMU version and the full bit vector length.
+>>  			 */
+>>  			if (v == pmu_version) {
+>> -				for (k = 1; k < (BIT(NR_INTEL_ARCH_EVENTS) - 1); k++)
+>> +				int max_events = min(NR_INTEL_ARCH_EVENTS, 8);
+> Too arbitrary, and worse, bad coverage.  And honestly, even iterating over 255
+> (or 512?) different values is a waste of time.  Ha!  And test_arch_events() is
+> buggy, it takes unavailable_mask as u8 instead of a u32.  I'll slot in a patch
+> to fix that.
+>
+> As for the runtime, I think it's time to throw in the towel in terms of brute
+> forcing the validation space, and just test a handful of hopefully-interesting
+> values, e.g.
+>
+> ---
+>  .../selftests/kvm/x86/pmu_counters_test.c     | 38 +++++++++++--------
+>  1 file changed, 23 insertions(+), 15 deletions(-)
+>
+> diff --git a/tools/testing/selftests/kvm/x86/pmu_counters_test.c b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
+> index cfeed0103341..09ad68675576 100644
+> --- a/tools/testing/selftests/kvm/x86/pmu_counters_test.c
+> +++ b/tools/testing/selftests/kvm/x86/pmu_counters_test.c
+> @@ -577,6 +577,26 @@ static void test_intel_counters(void)
+>  		PMU_CAP_FW_WRITES,
+>  	};
+>  
+> +	/*
+> +	 * To keep the total runtime reasonable, test only a handful of select,
+> +	 * semi-arbitrary values for the mask of unavailable PMU events.  Test
+> +	 * 0 (all events available) and all ones (no events available) as well
+> +	 * as alternating bit sequencues, e.g. to detect if KVM is checking the
+> +	 * wrong bit(s).
+> +	 */
+> +	const uint32_t unavailable_masks[] = {
+> +		0x0,
+> +		0xffffffffu,
+> +		0xf0f0f0f0u,
+> +		0x0f0f0f0fu,
+> +		0xaaaaaaaau,
+> +		0xa0a0a0a0u,
+> +		0x0a0a0a0au,
+> +		0x55555555u,
+> +		0x50505050u,
+> +		0x05050505u,
+> +	};
 
-Thanks for your feedback.
+Looks good to me. Just a minor suggestion, better to move 0x55555555u
+closely before and after 0xaaaaaaaau since they are the 2 complementary
+items. This makes the sequences more easily understood. Thanks.
 
+
+> +
+>  	/*
+>  	 * Test up to PMU v5, which is the current maximum version defined by
+>  	 * Intel, i.e. is the last version that is guaranteed to be backwards
+> @@ -614,16 +634,7 @@ static void test_intel_counters(void)
+>  
+>  			pr_info("Testing arch events, PMU version %u, perf_caps = %lx\n",
+>  				v, perf_caps[i]);
+> -			/*
+> -			 * To keep the total runtime reasonable, test every
+> -			 * possible non-zero, non-reserved bitmap combination
+> -			 * only with the native PMU version and the full bit
+> -			 * vector length.
+> -			 */
+> -			if (v == pmu_version) {
+> -				for (k = 1; k < (BIT(NR_INTEL_ARCH_EVENTS) - 1); k++)
+> -					test_arch_events(v, perf_caps[i], NR_INTEL_ARCH_EVENTS, k);
+> -			}
+> +
+>  			/*
+>  			 * Test single bits for all PMU version and lengths up
+>  			 * the number of events +1 (to verify KVM doesn't do
+> @@ -632,11 +643,8 @@ static void test_intel_counters(void)
+>  			 * ones i.e. all events being available and unavailable.
+>  			 */
+>  			for (j = 0; j <= NR_INTEL_ARCH_EVENTS + 1; j++) {
+> -				test_arch_events(v, perf_caps[i], j, 0);
+> -				test_arch_events(v, perf_caps[i], j, -1u);
+> -
+> -				for (k = 0; k < NR_INTEL_ARCH_EVENTS; k++)
+> -					test_arch_events(v, perf_caps[i], j, BIT(k));
+> +				for (k = 1; k < ARRAY_SIZE(unavailable_masks); k++)
+> +					test_arch_events(v, perf_caps[i], j, unavailable_masks[k]);
+>  			}
+>  
+>  			pr_info("Testing GP counters, PMU version %u, perf_caps = %lx\n",
 
