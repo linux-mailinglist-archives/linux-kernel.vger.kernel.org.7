@@ -1,175 +1,136 @@
-Return-Path: <linux-kernel+bounces-811617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A06B52B95
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:26:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A676EB52B97
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F133217F1B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5F71899F93
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6892E03ED;
-	Thu, 11 Sep 2025 08:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3542E03ED;
+	Thu, 11 Sep 2025 08:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="UvYXYB38"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Jldt/Gva"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AE12DF158
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3096E2DFF12
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757579190; cv=none; b=s3kNGELPz8IbkCBenFfjYcpUpPpZf9uSEPhv6FRpzjxQZQqjw7tsRt5kwZwRb5TtnEkoblHpV7G+nZrROgG7jIiXlJncB5pRdXKGFjYPK3bCdmDw9bc3UP2FnjJdHfyHGLCAtVqWSUcEhyH7EZtZQm4u0oRmTwI+LLCW4nBZlAI=
+	t=1757579204; cv=none; b=VfZk7oKS+IczIMvMYIEHs7vWLHOWipNS0l3OIdn+mqShW0Ew7QW1z7sEUU/j314qhtN7bDbx54Otpe58AVtqjLdoUDcRoFow6BipnFl+ptb9x1HFQnMPUlSmKGFB/og9WhwoCUCfeGzp9zAXdxF80HpB7o5V4JOkaAhZfpYqmOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757579190; c=relaxed/simple;
-	bh=sGlO0xzqKsKudQJzHT8W9TExdYgCpxAuexAQoa1dev4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=EWE8Oey7vwfYgEzPzO0nOL2SXcB11lcrYwRL30qTt7DPHjHQ4mP1f1svrUIHJSHMaVSYFNgjaeou718wuIO2PuAnYHQjR81Dekp4qCCZtIxFoy0n2COfME5C7zB57e3ma4+RvktyTpRb6Sr6djTfWX3Yp3TJCuCUD9j1+6HpsdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=UvYXYB38; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1757579204; c=relaxed/simple;
+	bh=7G0Gigbg3lf2yJzEbCtDBXBUZOCpEa9S5paz6bcYs70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T+0ru9l4NiK9PROuHWfFULpMv3kNvDj3KDGCj4wQmcG3I/Nkik0QDKz2pEwzagD7FmhmUUTZtKcOva+87CMZxyoMD7nPtZCBX/+nme2x/GYn+012uuS0ORSM8Qhfx2siPZox7IPMvS8iCNIlQrnTLxLrbulJsTLjRlTd+wWgP7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Jldt/Gva; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cMrHy1Sj9z9sZK;
+	Thu, 11 Sep 2025 10:26:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1757579198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=impNTtmimBVpMpk2A50bdGSwXBnav8MDAIfgL8/eWtk=;
+	b=Jldt/GvasF0DV+wmm9a3Ok4LtMDbdKNGmHtXARNqBIJeTHN6hd/iVYVXbxTk9dwleGVlIZ
+	GoBIl8DPCDgv5p8y6a9AvLOh1Anlfvte27rL9RtlXC/iwPiSMhMEEVUpLREsOMidsdyNkE
+	rKxP06KIMbma2xmS0fRDS6oP1K0SpMVfRoEk+nJ1FA8WCaXA7ONFL3yq8dIZo9VU0aHQs9
+	YpNlQZbdXJvZ+56ZJ+GeLyDJxCIDgFFhxYH1rAttfuYzRB1M1xnjPL02xT41/u8fZ6QLw7
+	gXlHYhJ92dwFlHZ4p91L6qm9FuKMnWslriKsR/HyWi9AU3xp7Xs47JVMfsZggA==
+Message-ID: <262a176a-4c80-40de-96e0-c97f50c20fe6@mailbox.org>
+Date: Thu, 11 Sep 2025 10:26:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1757579176;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E0lBJocEKP3lSk1wr86/mwJVJDEiyUS7mBzgQ49GMVs=;
-	b=UvYXYB38THPhssZVA2dz5yQ7+FZptseAx24L6CpmC6aXfLG+i0gREKXUGr1xLnswZ8BFK3
-	9qg9d9RV//SzyO141pSwtZgScqbmc7WjBjxO7XnI5SeIM3yVgvcdIFtj/tf7L9Vpp25go/
-	ZS/NM/lk6h/aF250h9ERX+LRkFGSU05LOoJRp6BLWKhLszqWGMqSvVT+h7zTfEAkrAGTwa
-	6l0BnycrBvwtpak1skf2bPZijXAMlDdPUp8ZK+/LNzDdHbnxGcvjHsAY+D1EN8sPrccYE2
-	G6H8mURCIog9lY4PcjcXYBenx9rg91c0A626gPvm98UM+QISf/KvEorWpUma2A==
-Content-Type: multipart/signed;
- boundary=c4d98de91abd6d1006b609cb4621827d77940c66045ae6e96f5d64cd32ef;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Thu, 11 Sep 2025 10:26:03 +0200
-Message-Id: <DCPTTD0NKOE6.1HKQ87ESFOT6D@cknow.org>
-Cc: "Ulf Hansson" <ulf.hansson@linaro.org>, "Heiko Stuebner"
- <heiko@sntech.de>, "Rafael J . Wysocki" <rafael@kernel.org>, "Tomi
- Valkeinen" <tomi.valkeinen@ideasonboard.com>, "Thierry Reding"
- <thierry.reding@gmail.com>, "Saravana Kannan" <saravanak@google.com>,
- "Sebastian Reichel" <sebastian.reichel@collabora.com>, "Jonathan Hunter"
- <jonathanh@nvidia.com>, <linux-rockchip@lists.infradead.org>, "Konrad
- Dybcio" <konradybcio@kernel.org>, "Peng Fan" <peng.fan@oss.nxp.com>,
- <linux-pm@vger.kernel.org>, "Johan Hovold" <johan@kernel.org>, "Sebin
- Francis" <sebin.francis@ti.com>, "Michal Simek" <michal.simek@amd.com>,
- <linux-arm-kernel@lists.infradead.org>, "Maulik Shah"
- <maulik.shah@oss.qualcomm.com>, "Stephen Boyd" <sboyd@kernel.org>, "Bjorn
- Andersson" <andersson@kernel.org>, "Christian Hewitt"
- <christianshewitt@gmail.com>, <linux-kernel@vger.kernel.org>, "Abel Vesa"
- <abel.vesa@linaro.org>, "Nicolas Frattaroli"
- <nicolas.frattaroli@collabora.com>
-Subject: Re: [PATCH 0/5] pmdomain: Restore behaviour for disabling unused PM
- domains
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>
-References: <20250909111130.132976-1-ulf.hansson@linaro.org>
- <DCPDDIZ3S1CM.3DJYY5U4T6V4U@cknow.org>
- <CAMuHMdVxjOLZsas4+nmAkZjbJsQjxdkZvZ8tTY9pq2zz3gvFNQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdVxjOLZsas4+nmAkZjbJsQjxdkZvZ8tTY9pq2zz3gvFNQ@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
-
---c4d98de91abd6d1006b609cb4621827d77940c66045ae6e96f5d64cd32ef
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Subject: Re: [PATCH] drm: ttm: do not direct reclaim when allocating high
+ order pages
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com, Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com>
+ <e79a134b-89de-4da1-b64b-b890227fce8a@amd.com>
+ <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
+From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
+Content-Language: en-CA
+In-Reply-To: <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: 5d904369927bf810511
+X-MBO-RS-META: 1b4dh5w49qn5wku16r8i3c8fbdzjok5y
 
-Hi Geert,
-
-On Thu Sep 11, 2025 at 9:18 AM CEST, Geert Uytterhoeven wrote:
-> On Wed, 10 Sept 2025 at 21:33, Diederik de Haas <didi.debian@cknow.org> w=
-rote:
->> On Tue Sep 9, 2025 at 1:11 PM CEST, Ulf Hansson wrote:
->> > Recent changes to genpd prevents those PM domains being powered-on dur=
-ing
->> > initialization from being powered-off during the boot sequence. Based =
-upon
->> > whether CONFIG_PM_CONFIG_PM_GENERIC_DOMAINS_OF is set of not, genpd re=
-lies
->> > on the sync_state mechanism or the genpd_power_off_unused() (which is =
-a
->> > late_initcall_sync), to understand when it's okay to allow these PM do=
-mains
->> > to be powered-off.
->> >
->> > This new behaviour in genpd has lead to problems on different platform=
-s [1].
->> >
->> > In this series, I am therefore suggesting to restore the behavior of
->> > genpd_power_off_unused() along with introducing a new genpd config fla=
-g,
->> > GENPD_FLAG_NO_STAY_ON, to allow genpd OF providers to opt-out from the=
- new
->> > behaviour.
+On 10.09.25 14:52, Thadeu Lima de Souza Cascardo wrote:
+> On Wed, Sep 10, 2025 at 02:11:58PM +0200, Christian König wrote:
+>> On 10.09.25 13:59, Thadeu Lima de Souza Cascardo wrote:
+>>> When the TTM pool tries to allocate new pages, it stats with max order. If
+>>> there are no pages ready in the system, the page allocator will start
+>>> reclaim. If direct reclaim fails, the allocator will reduce the order until
+>>> it gets all the pages it wants with whatever order the allocator succeeds
+>>> to reclaim.
+>>>
+>>> However, while the allocator is reclaiming, lower order pages might be
+>>> available, which would work just fine for the pool allocator. Doing direct
+>>> reclaim just introduces latency in allocating memory.
+>>>
+>>> The system should still start reclaiming in the background with kswapd, but
+>>> the pool allocator should try to allocate a lower order page instead of
+>>> directly reclaiming.
+>>>
+>>> If not even a order-1 page is available, the TTM pool allocator will
+>>> eventually get to start allocating order-0 pages, at which point it should
+>>> and will directly reclaim.
 >>
->> Is it expected that I'm still seeing this on a Rock64 (rk3328), just
->> like before [1]?
+>> Yeah that was discussed before quite a bit but at least for AMD GPUs that is absolutely not something we should do.
 >>
->>   [   17.124202] rockchip-pm-domain ff100000.syscon:power-controller: sy=
-nc_state() pending due to ff300000.gpu
->>   [   17.129799] rockchip-pm-domain ff100000.syscon:power-controller: sy=
-nc_state() pending due to ff350000.video-codec
->>   [   17.140003] rockchip-pm-domain ff100000.syscon:power-controller: sy=
-nc_state() pending due to ff360000.video-codec
->
-> Yes, as the sync state is still blocked on them.
-> Disabling unused PM Domains is done independently of sync state.
->
->> This is with a 6.17-rc5 kernel with this patch set applied.
->> And it also has this patch from Christian Hewitt added, now in v3:
->> https://lore.kernel.org/linux-rockchip/20250906120810.1833016-1-christia=
-nshewitt@gmail.com/
+>> The performance difference between using high and low order pages can be up to 30%. So the added extra latency is just vital for good performance.
 >>
->> When I boot into a 6.17-rc5 kernel without any patches applied, I do get
->> the 2 for ff350000.video-codec and ff360000.video-codec, but not the
->> ff300000.gpu one.
+>> We could of course make that depend on the HW you use if it isn't necessary for some other GPU, but at least both NVidia and Intel seem to have pretty much the same HW restrictions.
 >>
->> Interestingly:
->> ff300000.gpu -> power-domains =3D <&power RK3328_PD_GPU>;
->> ff350000.video-codec -> power-domains =3D <&power RK3328_PD_VPU>;
->> ff360000.video-codec -> power-domains =3D <&power RK3328_PD_VIDEO>;
->>
->> I would be surprised if that was a coincidence.
->
-> Fw_devlinks ignores the index cell (RK3328_PD_*), hence all links are
-> created pointing to the pmdomain controller (in case it has a platform
-> driver) or the first pmdomain (in case it has not). thus blocking the
-> sync state call and power-down for _all_ pmdomains managed by the
-> controller.
+>> NVidia has been working on extending this to even use 1GiB pages to reduce the TLB overhead even further.
+> 
+> But if the system cannot reclaim or is working hard on reclaiming, it will
+> not allocate that page and the pool allocator will resort to lower order
+> pages anyway.
+> 
+> In case the system has pages available, it will use them. I think there is
+> a balance here and I find this one is reasonable. If the system is not
+> under pressure, it will allocate those higher order pages, as expected.
+> 
+> I can look into the behavior when the system might be fragmented, but I
+> still believe that the pool is offering such a protection by keeping those
+> higher order pages around. It is when the system is under memory presure
+> that we need to resort to lower order pages.
+> 
+> What we are seeing here is on a low memory (4GiB) single node system with
+> an APU, that it will have lots of latencies trying to allocate memory by
+> doing direct reclaim trying to allocate order-10 pages, which will fail and
+> down it goes until it gets to order-4 or order-3. With this change, we
+> don't see those latencies anymore and memory pressure goes down as well.
+That reminds me of the scenario I described in the 00862edba135 ("drm/ttm: Use GFP_TRANSHUGE_LIGHT for allocating huge pages") commit log, where taking a filesystem backup could cause Firefox to freeze for on the order of a minute.
 
-I don't think I fully understand this (not your problem due to lack of
-knowledge on my part), but you mentioning 'fw_devlink' rang a bell.
+Something like that can't just be ignored as "not a problem" for a potential 30% performance gain.
 
-Some time ago Nicolas Frattaroli and I worked on an image for PINE64's
-*Quartz* devices and that added ``fw_devlink=3Doff`` to cmdline.
-I've been using it on all my Rockchip based devices, without
-understanding that parameter ... but (apparently) on my 'rock64-test'
-device, where I tested it with, I had removed that parameter.
-Putting that parameter back ... and those warnings are gone!
 
-Thanks a LOT for that hint!
-
-Groetjes,
-  Diederik
-
---c4d98de91abd6d1006b609cb4621827d77940c66045ae6e96f5d64cd32ef
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaMKHoQAKCRDXblvOeH7b
-bo6/AQDBs8RXL9MZybJJhHinLOCxYw9QduO4Nxl/I3V6lRVjfgD/cp0KvoFONOMG
-zBh0Hr6do6+m3BaFnV2rsF15IgfvlAg=
-=3jJl
------END PGP SIGNATURE-----
-
---c4d98de91abd6d1006b609cb4621827d77940c66045ae6e96f5d64cd32ef--
+-- 
+Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
+https://redhat.com             \               Libre software enthusiast
 
