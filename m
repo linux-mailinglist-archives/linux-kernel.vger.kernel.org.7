@@ -1,250 +1,290 @@
-Return-Path: <linux-kernel+bounces-811628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E36B52BBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:33:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E95EB52BAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65EEDA82098
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A844584792
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:31:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F172E424F;
-	Thu, 11 Sep 2025 08:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104F92E11D2;
+	Thu, 11 Sep 2025 08:31:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUoQQ2CP"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iuuWLvAB"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2058.outbound.protection.outlook.com [40.107.93.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE922E2DDD;
-	Thu, 11 Sep 2025 08:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757579597; cv=none; b=CksXEG/fe6fFFZN0DLh62ASDmi79yfV3WSdWOEQLn/hnE8Ny+f3mW2Kt6AmBFMj9dTAmGCS96OaONNsOwpQIklbNMS6AzE9fUT/T4Erce/EroC9WPju9/B53t6Fk+rDLcCCt6HmrFLDy12676r2gMo0SGgDR1O6Bu/BRlUck8Bc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757579597; c=relaxed/simple;
-	bh=3y4YlpQgFOakANmVtupNUaNj8c4aAn46gSngVpASFVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gI9/dMSws6nxklvxyd7BnFyEqnSzaD10G+4spbLGZmwLq2dAPhmMcJ2tL3aGKb2FrvDpMC3LtCUeR+MQMKZaOjuwYHPIOILEVQWpkoePVCD1VORReJoEH+C4pBgyyFZ3Ks96YAUZhtu6oh+Y6myX0BLgw+njYTmdkCweIOeJgxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PUoQQ2CP; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b4cb3367d87so309535a12.3;
-        Thu, 11 Sep 2025 01:33:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757579595; x=1758184395; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CnbArWoU2ISWToPXD7OZnOf0opXllax5l5gFXhrBoAQ=;
-        b=PUoQQ2CP6hykwyhO5EFLAI0HDVtWMtRXnVmf7l2H/qnz6SOB7hANGBmnXaAdBB0H9d
-         gg86EpW4LMIuFiTSf+RzTlIuG0TMCYSZOStiLRrwVuSuhsnyGMEmIW7iVT3Ys2Cwbzmw
-         YyErOG7v9kyJWXKvA+eVhmaGY/teg65WPsNzAmyVmwgP5ZfMlRUwdxkh4GWrqlv70Nqf
-         OYYNMUWz4jMDXYd0aspf2XX5+ikSKLTfW6iAoVicYpk1fBHYcUkMRnWPpqYshr4KQA9o
-         poPJIe48rF10iT+E3BB/u8JX0Zb1g538hilDFcmIh96XNa4R8ml+vdZd5JRxs4NOCQ9E
-         tNOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757579595; x=1758184395;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CnbArWoU2ISWToPXD7OZnOf0opXllax5l5gFXhrBoAQ=;
-        b=SWfeA6T+OypugYmsOMbXcasi4YBFgFlhSDLdsRxM1DvNsNtNXXb/8xzXDHdCykSFqr
-         IPMbYgjczkuQeoNqHy7OPuQOA7paGODYbYATeB/TFievsrMImKFrC+rFQLEtUwWx0JbS
-         dQEyvLcPYXSqriq3hw3jhFiEa2Gm7OZNTgb0X+vB9rKbZOXyPLn0BZUph7vmBtnxwmgQ
-         L2m1icT6TX3KMnyU0q7w8IMr35hJ2KsLjMXIi6d2oT3s9FmAN4uJpC7xfdd0Kt5IdB5I
-         M/4Zs5Sh11uJ6WACqNSNymQMzqEhcAGk2IkLQ2/N/MEgEz6wbSV9FeSiinoZIoHPn421
-         7TRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUa4fppSICuSe4r4V+3IBrEeVRVJvCuT0V7vd5h2wiBtnX1YAiTcY8GFmEFLSlaYgtnpYuCSyDnji5O@vger.kernel.org, AJvYcCUho2qGvpCTGkeE1j10f8UkM0N50OrCmSjbakVkUZPiC9SkIa/cIXVHDwoqOJb/YXva9egQH7Et+fEw4U7W@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywebhr95dBVoDfaCn4vQS5J8F4582Zwt/dhz/KSLtj/ZwGvJeN/
-	k1sOr6ZDeJyeKs2UkeotydeArLYmWsC0DlYvJFsIKiBxguIZYTXg5KnKk3XCmNhx/nL0t9wzWS0
-	s42Jot1YBeOv/1VdjTkfQGY4hQWBdZZc=
-X-Gm-Gg: ASbGnctqJJ3ufC9nh0hQAcevszwFGaQUotOngUitEjasTW8ehFF9sVk3aY+Pt3nKn1M
-	Noj5+Bd2vQ3sT7D4pgWyjCjVHX5kInPkHdXx5RmXerMDwqSQ2TZwZkPsAyrXuVeH969jB8eD0W1
-	8tlIl0Pqz9njXSSbWO9p1y76jOBLiqdOJXVIOxjENHEgi/lErSFMA3GKtc2MgRZk6oDQ6NpkeFg
-	pyUAbQmwHSC3+8pMaHfZFuCHw+PegWrhQWvX+EldI5ohZPx2FyEQfeRyWawgjKaloPVIzLoHzRd
-	Ub58JovKPGwKLlga0qjAPrHgVvU=
-X-Google-Smtp-Source: AGHT+IG8BtdFSE6kHeYKfIZq6jZS1X581jssKQmKNroJamTHQzuwuaMV6i/iYNhQS+YaIVe1y2TXQfivk4+BrAk94fU=
-X-Received: by 2002:a17:903:ac8:b0:24d:1f99:713a with SMTP id
- d9443c01a7336-251715f32demr276729255ad.31.1757579594694; Thu, 11 Sep 2025
- 01:33:14 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEEF2E1749;
+	Thu, 11 Sep 2025 08:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757579502; cv=fail; b=Gy8XfGIG5FOFnXhkA/VIYTu2XVUez1lXCj9PLmVVpkrRSGRzsmF8fyfOt2wDYkd1SkH9j4hsKbvbyeojssFXhnhYm4nbSXe6G1d1zDpxLXiu5n04Dh3dG9qeYWeSFlwfDE/zZwWBnvFjaeNcprmhAH17wEAru83pkgM37fP60Kw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757579502; c=relaxed/simple;
+	bh=0z18peg5KF4YktABTp0zHPuIgwK8fyZqmlf3aAQKoSM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=r5+TjQmlR5b1DKIpJ6utkahVEmj/vdFTh2mjUPRQ2mWiYOWwsDl+U8yP0VsKQeox+5wE0yG5sFaMQ3YxRekqXjwMElbccujWmkzeGjGBurTCt1RxSsHR9LGkzuZlE8w925FVmF0Yy9ZXhl+zcBj/QxqrN1YuAbbazucewM8jGzU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iuuWLvAB; arc=fail smtp.client-ip=40.107.93.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ATL2rJmifpn8Yl4lSNsh9X78fDguR+izyWd2OR4QE/jlx1EimGaSsBPbfdVYSKIUGiVbNNn6ldiQRdWC/Vv277r+Jb6qAtE83ZXMtsHt6iv0cjxJuZi377rkhxy3OziEfcL7MbNHK2aZjCPxvX+w+LZs2lPLKitfdWSRiJcrKpIEFxVcQPs5YswSe41uli4wNVdqHqQ17nRI1Pj044VpTwjHN7vi0tom8ntm+cPi+pUw+5/wTJtu712cIkXL3id2Ea9u118KxV2/SslpSPpkhDFR4XGMSr1udhl/U8t2Aq0Kdhz2hOY0Uyq3MOSsP+NgGtqTTzS/33YaRfGnxlPiog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Uxu3y5qiLoyHQlEoAme334VvKeAUNRrwXWEvT9Lhfl8=;
+ b=d0ZlM44TUOtQu3t0SVk7s1JQ7L7TYJWDTU4O148ukPLGFoqEdhlO1kwH0+H2X4l/jeZw3vBrgLh3ufpC3dXKpEBGqKMXgG/lDgSf8auGzSxHgFBvTrbLPcr1SVqGB/jz64hqU/DXxAvhoL6RO3M+kyahctxjAdQQdfmA1ovlyKzL5N5CgYLZJ8Gjyc80FIroCnNsXysXLFyeqhG2T50DPiLa/igYjOEzjhXWnPpPakiuT+Wy2omIZNkt3WUqUvPxXJV4ZGttzYM1VlvB5oLu9JVXy3+NOpSnAffY2ujrhGv/6NrB634M7HIjT5Vx9vWLNQ56LOWqWZYSBrqbfOY63w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Uxu3y5qiLoyHQlEoAme334VvKeAUNRrwXWEvT9Lhfl8=;
+ b=iuuWLvABn8gPdrlPU2MOVsXVi85Tu4TZnG8fRilCiVPU9y4IKfd1ZEKRhtotPbR4GsXFTeGynxfiMsdPAElC/l8Vmvt+3EunJkgob84WVPcs9EkXfmekz4hP506h7T5+ou55H9bT0luQsNUZ6iM/4yEcaZ9tirsHLehUorOiQyE=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH3PR12MB9194.namprd12.prod.outlook.com (2603:10b6:610:19f::7)
+ by DM4PR12MB8452.namprd12.prod.outlook.com (2603:10b6:8:184::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 08:31:36 +0000
+Received: from CH3PR12MB9194.namprd12.prod.outlook.com
+ ([fe80::53fb:bf76:727f:d00f]) by CH3PR12MB9194.namprd12.prod.outlook.com
+ ([fe80::53fb:bf76:727f:d00f%5]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 08:31:36 +0000
+Message-ID: <b588a211-c3d7-40b2-88d4-76af9042feed@amd.com>
+Date: Thu, 11 Sep 2025 18:31:28 +1000
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [RFC PATCH v1 34/38] coco: guest: arm64: Validate mmio range
+ found in the interface report
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+ Arto Merilainen <amerilainen@nvidia.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, lukas@wunner.de,
+ Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+ Steven Price <steven.price@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ kvmarm@lists.linux.dev, linux-coco@lists.linux.dev
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-35-aneesh.kumar@kernel.org>
+ <d57d12ce-78c6-4381-80eb-03e9e94f9903@nvidia.com>
+ <c3291a06-1154-4c89-a77b-73e2a3ef61ee@nvidia.com>
+ <yq5ay0ql364h.fsf@kernel.org>
+From: Alexey Kardashevskiy <aik@amd.com>
+Content-Language: en-US
+In-Reply-To: <yq5ay0ql364h.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SY2PR01CA0031.ausprd01.prod.outlook.com
+ (2603:10c6:1:15::19) To CH3PR12MB9194.namprd12.prod.outlook.com
+ (2603:10b6:610:19f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910030301.1368372-1-linchengming884@gmail.com>
- <20250910030301.1368372-2-linchengming884@gmail.com> <87wm66d67k.fsf@bootlin.com>
- <CAAyq3SbXiPUjZE7OCAe1=uw4h82bFN7DSU4bLx1dhKe_XFtu=w@mail.gmail.com> <878qilbes9.fsf@bootlin.com>
-In-Reply-To: <878qilbes9.fsf@bootlin.com>
-From: Cheng Ming Lin <linchengming884@gmail.com>
-Date: Thu, 11 Sep 2025 16:30:11 +0800
-X-Gm-Features: Ac12FXwhYnAHezSNyjRb8gyVR6NYH3foWyjyBMaPAVIUSYBpDcXrbIGyMsdT4nU
-Message-ID: <CAAyq3SZUToRjWVgAX_=We7cMFjVjuGLvFYBSpOG=M_e_MD6aeQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: mtd: spi-nand: Add
- enable-randomizer-otp property
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, tudor.ambarus@linaro.org, mmkurbanov@salutedevices.com, 
-	Takahiro.Kuwano@infineon.com, pratyush@kernel.org, 
-	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, alvinzhou@mxic.com.tw, 
-	Cheng Ming Lin <chengminglin@mxic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB9194:EE_|DM4PR12MB8452:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0bb663e6-9eb5-4982-a140-08ddf10d9eb9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VGloWldzR242MU1BTVI1NGNSSGxlaiszVFBWSWtFVHNla0QzRzVwS3REM0lV?=
+ =?utf-8?B?OTRyRGFlL1d1bnk0bmlxdkluSlh5NHNQbWV6a2k4WnQyYUNDNERqcGp6MDlL?=
+ =?utf-8?B?S25Lb2w3OVlJYm9qRFpET1pTUHRjS1RNMmpqVkdUNmpMZ2hXS2ZOZkRBQ3Jn?=
+ =?utf-8?B?OGN4dWMrTnhuUHhzTkJWelQvSTNseHJYVmZMcVU0LzFaUGozQmVFZ3RtbGpw?=
+ =?utf-8?B?ai82bThDSlRKOGVEcXhKcFAvZVNwWW1lVmM3dG4xUkZucktZa2o1L1hIZ0gw?=
+ =?utf-8?B?TVkzYWMxL1FNdUV3UFltNFRpV3JDMzlOWm5vYmVxeVVHNkxpQWNxZnlLL3RM?=
+ =?utf-8?B?eHRhekhid3VIZUM1a1QzMDdPS3lpeEZOTHcrTHcwNXZSMFVEUncwQ2dxczZY?=
+ =?utf-8?B?bHdFY0VncDQ2QkZHMTRuZVN5Yzl6THhpRWN2em5Yc0lBdTJIYzZLVVVvdHlE?=
+ =?utf-8?B?NkVNYmFLRGphM1c1b1E4bnlJcXZRbHBOY0J0WmEwVk4vc2F6NWkrVG5mQXdo?=
+ =?utf-8?B?UlhyNVV6TFRjMjJjK0ZTdEU1V3JhMUdEYUU1ckN2V3Z5eGk2RHBleGdjdkZG?=
+ =?utf-8?B?TTFYK2FESmN3T040cEFQNjYzbUhPK0h5blB1elRLM0NKS216alFaRkZZUUxB?=
+ =?utf-8?B?T3pQQ3pFY2dnV3h1SXVHajEvU00xczkwK3g2ZGlOQk1QVlBiQVpjV0tUTWMz?=
+ =?utf-8?B?R2ZrcVNHYXh6UWlLcXRxRXNCYXlVMzBGK2FNOW1qUEI3RkptcFFOM1VwaVdp?=
+ =?utf-8?B?Ry9Jb3NSZm9xQ1hZNzAxdWs0alZpV0VnMTV6RWNnbnhnbVBCWTFzNU9HajZj?=
+ =?utf-8?B?WHRZZ0huSFpaUnBQSDFWdUQrRi9TalNVMmJ5eGIwb0dXVWtSdy8xWmNHU1hF?=
+ =?utf-8?B?TVYrRzdCaEdXWnVDR1U4ems1aGVPbmNnWnU0dXhxZkUyVUo1OVlNVmRaZWdm?=
+ =?utf-8?B?M2FCOWZYNWNmMW9uMDNNNzMxYkY1TXNkNVIrZ0JaZGcxY0tFaHhjaUk0TlJI?=
+ =?utf-8?B?TEJhYWtqdDNKRW05dEF2LzcrVUJobU5BbkxlMzZoTTVvTGNQWHFXNFUzdGJX?=
+ =?utf-8?B?MXhYa2JqQndjc2h1UFBJTkRCV1o1Zk5tZWtmblRyRVJXY1hheDJpakU3WnBC?=
+ =?utf-8?B?eHNzZnJPMGtoTlRMbjdqcGI4Nm9qSVROVGRqNjYxMGlIU3EvTVEyLzlYaVkw?=
+ =?utf-8?B?TTd2VGlEVS9mMVZHZTJQV1RVK2NPTklHa2hieXA0YXI3V0p0cXpwWThaam1O?=
+ =?utf-8?B?SDh3cGl4cmtiYjRZSUkxNFZIVkdzMFVEVFg3Sy9YTGNSbVNZRlFockorOGtv?=
+ =?utf-8?B?R2RiM0M4Uk5VM2RpTDZzQ3l3V0lwclltbDhVb3BrelRpN2ZxaXgwcERobHZT?=
+ =?utf-8?B?L3JkSkp1OUk4cmc0S29LRlB0UFZ2M2RxOExBdUo2dE1GR0tUeFR4YnNqOS95?=
+ =?utf-8?B?UnE5VVNONmNVS28zUU0zMGR0TC9vdWxFYU5kMlFnZ0d3MDB2bE9namU3SEJR?=
+ =?utf-8?B?SzFWdW5uYTZqemhFYmpZYnMvcEU2VEZ0ZWN2NmI4ZXY0YVZlS2xZWnNQVXR1?=
+ =?utf-8?B?OWI5R1Bja0xpemZuT1NjZCttNDJWbHl0dFhjSWhBZUxVWWNSRWtKM1lpZkNV?=
+ =?utf-8?B?MHMvcjc3bUZxUUcrVXVyaDBMZ3VyYlBwWVNqSEUxQ2x2a1FoZGJpck92NE8w?=
+ =?utf-8?B?K1BhSjZ3SlowSmxuN2JJZ0RkSElobEQ1QmdKaDlVU05hTUhyc2VnUHozRXp5?=
+ =?utf-8?B?T3VUM0pqeUt3YXNtK3dIcWtkK0E4TVpuNlU1Y0w3OEFZM2ZHQXRjVlNUdFpQ?=
+ =?utf-8?B?WWx1SndVMnB3SEN1QmJYNktvcUZ3TjZ4NTBvWjY5UDhmSjlveFF1dTdUcmxx?=
+ =?utf-8?B?cUNtaG4xNGgveXFrbCsvNk5sQnlSQnJaM3ZlTXNnd3RYSi9xdWZuMnY5TmFr?=
+ =?utf-8?Q?X2shtuzNeW8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB9194.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NkhPdFhlTG4xa1JOWmt4dWpUbFlHS2FXSm5RVnBSVno0Mi9JZzllalN0Ulpu?=
+ =?utf-8?B?bEdvVHRjRWs0NkYybnFUc005L3NHNVZTQ09HNFpkSjhLaHMwcWpydWZzdmJX?=
+ =?utf-8?B?L0NLMEZzRG9qUnNCMkRpWlB6RzVWcklQcnE3RzFZMWFJQURCbGZHcUVvT2x5?=
+ =?utf-8?B?ZXhXa0RmT2k1b25MVmY1SHBadFNDTHdqSTZ3Vkh0VDkwYWxVRlplV0tyODkx?=
+ =?utf-8?B?MkJKajBHbUpwditkYndyOERwMysxTWdWU20vNGlnMUF6WlJ4VFgwK1diak9s?=
+ =?utf-8?B?SHhNRVRxNzdaVVY0YmpVZStyUGh0KzhZbU1jRjRYYlNITkdJSXlpWldpcE5F?=
+ =?utf-8?B?cU0xTW1PclZrMTMwTGI0bE1YelRKUzhsOWpnSndpUG9uWWVIQkNoYkJBcEYx?=
+ =?utf-8?B?SDRQMlZSd2o5YVRVdjR0ZjdsbzBxWUlMaW1yYjNnU2Z0Y2wwZzFGQ1ozTFZq?=
+ =?utf-8?B?MlBVeWU4cE1tWHRuRnErb0EzNzJ6VXgvTFRVZFpCUkJRaGpPNXdFbU5yZFNF?=
+ =?utf-8?B?MHRWdnBOZmFIQk0wcExTS3JXbSs4dG01a2M5U2R2MmxUeGRFbVQzZmtUKzF3?=
+ =?utf-8?B?UHdDQTUwQW9TWlBRcHcwcUNVOTRlWE41TVhuMDdQdWt4UTdtU2JoR1VNTnZG?=
+ =?utf-8?B?aDJkVTVTdkxMTWt6aHRlaVJONTJsVWt5WHJScDAxN0pZOVVOZFR1cTRHR0tv?=
+ =?utf-8?B?UTlKNkJJRVdRS3p2R2xPSEhBTTA2Sk44R2RGTTVEdkZZNjZ5U2FxMHZRNndJ?=
+ =?utf-8?B?VFRSYmIyeFREdXUzNkgrbkRFclIyZ0lxUGg3T21Iei9taC95Q2QyTTQ2b3Yz?=
+ =?utf-8?B?anMwMTU2L3B4TUJTVXFPRFBJTkNRaUFNa1ZFbEQ3SW5wNVBmcFBzYVYydkpR?=
+ =?utf-8?B?YWw4MndOSzY5cFdkY1FBR09COWFYcWFtb20rTm1Yd3dtSnJtNE1PN3hjMzNj?=
+ =?utf-8?B?Z0UxQXRwa2I5am1kWUFvRXVTSWxSSnpEV2pYbVAzdFhTWkNxUk4ycjBXVzJP?=
+ =?utf-8?B?bDRFY1ljOXo1UUxlc3E1ellWU2FBSUxlZzFnZnh0dTE2dFhHZlNrQnh2dko3?=
+ =?utf-8?B?UXR3Mk93R3RvV2YzSWhsUS9BMHBFSjk3aUJVV2kvdDI5ZzlKSVR3QkgwNTNN?=
+ =?utf-8?B?NDBhelNrZGpBS0EyQzlXUTVVV25wajYzRWRQUFVXNlJQMUVYRzExY2tpT2xm?=
+ =?utf-8?B?KzBQSkpMMERRTmtJWEhKcDVuN1prT3hKQ3VweUtMNDN5SkxEZlhRTi8ybFBk?=
+ =?utf-8?B?SnMreUFsYmdKZC9Yc05mb0ZBVkdpSFZ1WlF6eVM2UHpmck94UDc2UkZ2YWJW?=
+ =?utf-8?B?TytrcUg3TWgvSC9ZSGU5b1FqTmxuSjR0NXhKNGs3V0M1S0hSRVFOUjlIdDBV?=
+ =?utf-8?B?MVQ3VFhTb0VvK1J6bjNnMm5UNW8zaWg2Vk1CcDZiU05aWHEyVXJIaHBGcHox?=
+ =?utf-8?B?T2NwS0dZa2dtd0RQUW1nQVZ5c2NFbWVSU21yQmFjL3Zkdi9sQVA1U2ZkbVhp?=
+ =?utf-8?B?dElIbzVtQ3dJcGZvRW5SRTg4SWpTWXRZSmVXMG51Rmd0b09idXVSanRlZFZQ?=
+ =?utf-8?B?V2ZteWpmR1hNQzErblh2UlpkRDZvQUpVaWlwQXpLbDJBWlF0NEVkWmlrRk5X?=
+ =?utf-8?B?ak9vL2dZUnhNWGFFUjd5UmZPSC9MdGxPdHZUVk5pb3NpZnJhdHdZSExreEdx?=
+ =?utf-8?B?eldrTVE5OWhISnpxSUxMMUlwMGt3bERyZlBzVzlIeVMrYmJQb21rZ2V2U0pI?=
+ =?utf-8?B?anVQSHdIa1g4UzRTeVU4ZExIZEkvM0JLK3hxeG94SitnNEkvS0RmRm44cEtT?=
+ =?utf-8?B?UUdvZEFUSDFqZlFpOW4wZ0hXclpEdWVneDNCRFdoSHM4TFI5Y0lIWXE0dnZF?=
+ =?utf-8?B?aEFDL3B2TXBBbk9RSUFMVFIycld3amNrUy9waUd5ZjhWMHhVM2dmYmtQWDZn?=
+ =?utf-8?B?OWNZSGVXcWRvQ0p1UmM2YlY5L296eFEvbmZrWEY5Qjh4dVF2M0NHRjNXK3VP?=
+ =?utf-8?B?QzBtS3J1WVRYMGlIclFKcGZnbEZoUXN5eDBUYzM5MFVIZGM3S2ZBTkZwZnVu?=
+ =?utf-8?B?TDBrbTFySmkxVXR1ZG0wQWFJMUVKalFPOHF0TFNzeU9sVVZPU0hqNUNxNjNr?=
+ =?utf-8?Q?rmBB9jVZB/BUlh9zQ7vLYoBCD?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0bb663e6-9eb5-4982-a140-08ddf10d9eb9
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB9194.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 08:31:35.9391
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ly6ooJIK61320lpvOTIkWEUAY7beQ2IF9t9u/gjEFQsdES7kBOYJR9p5aacOuNnsciTD4GV4yAyurX1eHfab2g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8452
 
-Hi Miquel,
 
-Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2025=E5=B9=B49=E6=9C=88=
-11=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=883:59=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> Hi Cheng Ming,
->
-> On 11/09/2025 at 15:24:35 +08, Cheng Ming Lin <linchengming884@gmail.com>=
- wrote:
->
-> > Hi Miquel,
-> >
-> > Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2025=E5=B9=B49=E6=
-=9C=8810=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=885:10=E5=AF=AB=E9=81=
-=93=EF=BC=9A
-> >>
-> >> Hello Cheng Ming,
-> >>
-> >> On 10/09/2025 at 11:02:59 +08, Cheng Ming Lin <linchengming884@gmail.c=
-om> wrote:
-> >>
-> >> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> >> >
-> >> > Add a new boolean property "enable-randomizer-otp" to enable the
-> >> > randomizer feature on supported SPI-NAND devices.
-> >> >
-> >> > Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> >> > ---
-> >> >  Documentation/devicetree/bindings/mtd/spi-nand.yaml | 4 ++++
-> >> >  1 file changed, 4 insertions(+)
-> >> >
-> >> > diff --git a/Documentation/devicetree/bindings/mtd/spi-nand.yaml b/D=
-ocumentation/devicetree/bindings/mtd/spi-nand.yaml
-> >> > index 77a8727c7..432bc79e9 100644
-> >> > --- a/Documentation/devicetree/bindings/mtd/spi-nand.yaml
-> >> > +++ b/Documentation/devicetree/bindings/mtd/spi-nand.yaml
-> >> > @@ -21,6 +21,10 @@ properties:
-> >> >      description: Encode the chip-select line on the SPI bus
-> >> >      maxItems: 1
-> >> >
-> >> > +  enable-randomizer-otp:
-> >>
-> >> This is a NAND wide feature, so we should probably add a prefix, such =
-as
-> >> "nand,".
-> >>
-> >> Now, what about this "otp" suffix? Many (if not all) chips have a
-> >> volatile setting for that. About the naming, "otp" often reflects to t=
-he
-> >> OTP area, which is not what you imply here, as you want to insist
-> >> (rightfully) on the fact that this feature cannot be disabled.
-> >
-> > Yes, my intention is that once the randomizer feature is enabled, it
-> > should not be disabled again.
->
-> I believe the motivation behind this choice is incorrect and does not
-> fit such an OS as Linux. We want to give the system administrator the
-> choice to select and unselect features as it sees fit. So if there is a
-> volatile way to enable something, we should go for it and we will pay
-> the extra penalty of a set_feature() (or whatever) command after each
-> boot. Making this type of change permanent makes development and
-> debugging much more painful. There are plenty of configurations that we
-> refuse to apply with non volatile configurations. In general, stateful
-> modes are problematic if they are kept after a reboot and we try our
-> best to avoid them.
->
-> Once this feature is enabled, for the lifetime of "a product", it does
-> not make sense to disable it indeed. And the DT must remain correct, if
-> it is changed in a non compatible way, that's the administrator
-> responsibility.
->
-> So are there ways to enable this feature in a way that returns to the
-> default state after a reset?
 
-Thank you for the detailed feedback. I understand and agree with the
-principle of favoring volatile configurations to give administrators
-more control and simplify debugging.
+On 11/9/25 15:33, Aneesh Kumar K.V wrote:
+> Arto Merilainen <amerilainen@nvidia.com> writes:
+> 
+>> On 31.7.2025 14.39, Arto Merilainen wrote:
+>>> On 28.7.2025 16.52, Aneesh Kumar K.V (Arm) wrote:
+>>>
+>>>> +    for (int i = 0; i < interface_report->mmio_range_count; i++,
+>>>> mmio_range++) {
+>>>> +
+>>>> +        /*FIXME!! units in 4K size*/
+>>>> +        range_id = FIELD_GET(TSM_INTF_REPORT_MMIO_RANGE_ID,
+>>>> mmio_range->range_attributes);
+>>>> +
+>>>> +        /* no secure interrupts */
+>>>> +        if (msix_tbl_bar != -1 && range_id == msix_tbl_bar) {
+>>>> +            pr_info("Skipping misx table\n");
+>>>> +            continue;
+>>>> +        }
+>>>> +
+>>>> +        if (msix_pba_bar != -1 && range_id == msix_pba_bar) {
+>>>> +            pr_info("Skipping misx pba\n");
+>>>> +            continue;
+>>>> +        }
+>>>> +
+>>>
+>>>
+>>> MSI-X and PBA can be placed to a BAR that has other registers as well.
+>>> While the PCIe specification recommends BAR-level isolation for MSI-X
+>>> structures, it is not mandated. It is enough to have sufficient
+>>> isolation within the BAR. Therefore, skipping the MSI-X and PBA BARs
+>>> altogether may leave registers unintentionally mapped via unprotected
+>>> IPA when they should have been mapped via protected IPA.
+>>>
+>>> Instead of skipping the whole BAR, would it make sense to determine
+>>> where the MSI-X related regions reside, and skip validation only from
+>>> these regions?
+>>
+>> I re-reviewed my suggestion, and what I proposed here seems wrong.
+>> However, I think there is a different more generic problem related to
+>> the MSI-X table, PBA and non-TEE ranges.
+>>
+>> If a BAR is sparse (e.g., it has TEE pages and the MSI-X table, PBA or
+>> non-TEE areas), the TDISP interface report may contain multiple ranges
+>> with the same range_id (/BAR id). In case a BAR contains some registers
+>> in low addresses, the MSI-X table and other registers after the MSI-X
+>> table, the interface report is expected to have two ranges for the same
+>> BAR with different "first 4k page" and "size" fields.
+>>
+>> This creates a tricky problem given that RSI_VDEV_VALIDATE_MAPPING
+>> requires both the ipa_base and pa_base which should correspond to the
+>> same location. In above scenario, the PA of the first range would
+>> correspond to the BAR base whereas the second range would correspond to
+>> a location residing after the MSI-X table.
+>>
+>> Assuming that the report contains obfuscated (but linear) physical
+>> addresses, it would be possible to create heuristics for this case.
+>> However, the fundamental problem is that none of the "first 4k page"
+>> fields in the ranges is guaranteed to correspond to the base of any BAR:
+>> Consider a case where the MSI-X table is in the beginning of a BAR and
+>> it is followed by a single TEE range. If the MSI-X is not locked, the
+>> "first 4k page" field will not correspond to the beginning of the BAR.
+>> If the realm naiviely reads the ipa_base using pci_resouce_n() and
+>> corresponding pa_base from the interface report, the addresses won't
+>> match and the validation will fail.
+>>
+>> It seems that interpreting the interface report cannot be done without
+>> knowledge of the device's register layout. Therefore, I don't think the
+>> ranges can be validated/remapped automatically without involving the
+>> device driver, but there should be APIs for reading the interface
+>> report, and for requesting making specific ranges protected.
+>>
+> 
+> But we need to validate the interface report before accepting the device,
+> and the device driver is only loaded after the device has been accepted.
+> 
+> Can we assume that only the MSI-X table and PBA ranges may be missing
+> from the interface report, while all other non-secure regions are
+> reported as NON-TEE ranges?
 
-Yes, it is possible to enable this feature in a way that it returns
-to the default state after a reset.
+In case of the "some registers"+MSIX+"some more registers" BAR#X, I'd rather expect 3 ranges in the report and not just 2, for each subrange, sorted, with/without NonTEE bit set, as the PCIe spec suggests (sort of, I struggle parsing it):
 
-We can use the standard set_feature command to set the RANDEN bit to 1,
-which enables the randomizer. This configuration is volatile and will
-not persist through a power cycle. The feature will remain disabled by
-default on each boot unless it is explicitly enabled again.
+===
+When reporting the MMIO range for a TDI, the MMIO ranges must be reported in the logical order in which the TDI MMIO
+range is configured such that the first range reported corresponds to first range of pages in the TDI and so on
+===
 
-I will update the patch to implement this volatile approach.
+And if the number of pages in the report differs from the BAR size, then we should fail validation. Otherwise it is impossible to tell from the report's MMIO addresses what part of a BAR needs to be validated (==TEE) and if the guest device driver has to know it - then reports are just useless (which is hardly true).
 
->
-> > You are correct that this bit does not
-> > belong to the OTP area, but rather to the v2 volatile register. The v2
-> > volatile register has a default value that can be changed through a
-> > special OTP configuration register program operation. Regarding the
-> > "otp" suffix, I will remove it to avoid misunderstanding.
-> >
-> >>
-> >> Also, this is a per-chip configuration, while I would have welcomed a
-> >> per-partition configuration. I can easily imagine two cases:
-> >>
-> >> - The boot ROM, for longevity purposes, expects the first blocks
-> >>   containing the bootloader to be scrambled. However the rest of the
-> >>   system does not really care and disables randomization.
-> >>
-> >> - The boot ROM is not capable of de-scrambling, however the rest of th=
-e
-> >>   system relies on the (probably) more robust scrambling feature.
-> >>
-> >> In both cases a chip wide variable is not relevant.
-> >
-> > The scrambling and descrambling are handled by the NAND flash hardware
-> > itself. Therefore, the boot ROM does not need to support a descrambling
-> > feature.
-> >
-> > In the case of Macronix parts, the randomizer is controlled through a
-> > configuration register, and once it is enabled it covers the entire chi=
-p
-> > (main and/or spare depending on the randopt bit). There is no hardware
-> > mechanism to enable it only on certain ranges.
->
-> After thinking once again, I am no longer aligned with myself from the
-> past. This is perhaps too Macronix specific in the end and if it is a
-> fully transparent feature, then why not.
->
-> Are there any ways we can read the raw data (unscrambled) once
-> scrambling has been enabled? (I mean, without changing the user default
-> OTP state). Maybe one big difference with the raw NAND world that needs
-> to be taken into account is that the chip itself always return
-> unscrambled data, hence we probably do not care much, from a Linux
-> perspective.
 
-Unfortunately, there is no way to do this. If a user decides to use the
-randomizer feature, they must enable it before programming the user OTP
-area. If the randomizer is not enabled before the user OTP is programmed,
-any subsequent reads will result in corrupted data.
+> If so, we could retrieve the MSI-X guest real address details from
+> config space and map the beginning of the BAR correctly.
+> 
+> Dan / Yilun — how is this handled in Intel TDX?
+> 
+>  From what I can see, the AMD patches appear to encounter the same issue.
 
-Marconix raw NAND chip itself does not always return unscrambled data.
+I am skipping MSIX BAR because T=1 is tied to C=1 so after such validation, the BAR belongs to the guest and the hw will reject VFIO-PCI (==HV) attempts to write to MSIX BAR. Probably too straight forward though and I can try assigning it to the host (and add Cbit in those PTEs), and see how the PSP handles it (not). Thanks,
 
-The ability to read unscrambled data is dependent on whether the
-randomizer feature was enabled and configured correctly. When the
-randomizer is turned on, the chip's internal hardware automatically
-handles the unscrambling process. If the feature is not enabled, the
-data read from the memory will be the raw, scrambled information, which
-is unusable without the correct key and algorithm. In other words, the
-chip only returns unscrambled data if randomizer feature is enabled.
 
->
-> Thanks,
-> Miqu=C3=A8l
+> 
+> -aneesh
 
-Thanks,
-Cheng Ming Lin
+-- 
+Alexey
+
 
