@@ -1,222 +1,115 @@
-Return-Path: <linux-kernel+bounces-812384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 865DEB53784
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:21:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7E62B536FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61EC15C0BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:19:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9031A582737
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4B436997E;
-	Thu, 11 Sep 2025 15:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C87D346A13;
+	Thu, 11 Sep 2025 15:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="H9jOcS9S"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LqXsidjq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968E33570D9;
-	Thu, 11 Sep 2025 15:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757603768; cv=pass; b=IFs3LHMEYprVkz9Tt50hKjYdx5J+Qqu+PAcHFAgrQyZpFw8MFCKii//qspsN4dYx+oDxm5vWX9eXzaEN4rho84bYUHeIEALEb8+4kzM4ibI9Zf5hpkI0ylMJdC1HWtXrdZx2kjfm4GM3QdGY31MiCZ12KPOy1CocIwmjkA6EwLo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757603768; c=relaxed/simple;
-	bh=8m+L9EuCiB2kd+H+6i0/olJjoUQfOiV+U9l4XmnkecM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O8sxg1crDxLfeTODI7/MG9tYdLYJB3ntOFIhUQprfx1HA4pST7FZa2dfnbahKqJNxdVLNgn84cS2zqLp7dkWob3keICLP3iTjCvqgn9WZEsz7nScVfzlFX0yyAsV7a2MXHrXPFrVmFqHodDba/WSM+x0H3SVfe3P9kdDaJAOQAA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=H9jOcS9S; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757603713; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=XdFivKCZ1zSV2DL8A2apCZSVhyGEctH5ibbsN5jnFp92ih8VPPHUt1cYWhfClmon7J3wdT8XMj835fnw3QSHdTqDIxOx9aCzGLYJA3MrC1PM35mhAw9g4XRSaMvjWn0Ebda4XdnOLXWLtITXwA+ZSUO3MG9s0cd845vDoG9CAYo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757603713; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=5GbnEMgGDcefdIhwqbOGABlaP4C+kCbcjuGMBFPW0FU=; 
-	b=AJrDS76FnZIW0jLOYXGptiWpzTsBY+npeA8L7BwDefMBU9NbrNHLq5zshxQ6M9UrIsvXqA9LyHtkTCul0qwIFQh2RuSjtHZnC0VBqs5hohXvNancIOHVZC2uroKOXNJxEcmbfsCm1bodh69SN+uOvAnD+aTfYV6zKMe8pJ4GNiI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757603713;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=5GbnEMgGDcefdIhwqbOGABlaP4C+kCbcjuGMBFPW0FU=;
-	b=H9jOcS9Sf+b45wYgJY5wui9mLzHAFv/8dEF8qzkXIwmkNeLdBo+3737VQFbvZ329
-	cmuyy3V5VCxxklt+8rkDs/4GE0lvqHaocm3GFfgriUVQNIxO+SuJiePrxoKtuMAXu3C
-	ptx0CFAAXKTJtBC4k5JxeWR+Itv5KV3s+U4F5ous=
-Received: by mx.zohomail.com with SMTPS id 1757603711035627.8749849505076;
-	Thu, 11 Sep 2025 08:15:11 -0700 (PDT)
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-To: airlied@gmail.com,
-	amergnat@baylibre.com,
-	andrew+netdev@lunn.ch,
-	andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com,
-	ariel.dalessandro@collabora.com,
-	broonie@kernel.org,
-	chunkuang.hu@kernel.org,
-	conor+dt@kernel.org,
-	davem@davemloft.net,
-	dmitry.torokhov@gmail.com,
-	edumazet@google.com,
-	flora.fu@mediatek.com,
-	heiko@sntech.de,
-	houlong.wei@mediatek.com,
-	jeesw@melfas.com,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	kuba@kernel.org,
-	lgirdwood@gmail.com,
-	linus.walleij@linaro.org,
-	louisalexis.eyraud@collabora.com,
-	luiz.dentz@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	marcel@holtmann.org,
-	matthias.bgg@gmail.com,
-	mchehab@kernel.org,
-	minghsiu.tsai@mediatek.com,
-	mripard@kernel.org,
-	p.zabel@pengutronix.de,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	sean.wang@kernel.org,
-	simona@ffwll.ch,
-	support.opensource@diasemi.com,
-	tiffany.lin@mediatek.com,
-	tzimmermann@suse.de,
-	yunfei.dong@mediatek.com
-Cc: devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-bluetooth@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-sound@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH v2 12/12] dt-bindings: input: Convert MELFAS MIP4 Touchscreen to DT schema
-Date: Thu, 11 Sep 2025 12:10:01 -0300
-Message-ID: <20250911151001.108744-13-ariel.dalessandro@collabora.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250911151001.108744-1-ariel.dalessandro@collabora.com>
-References: <20250911151001.108744-1-ariel.dalessandro@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C7234575B;
+	Thu, 11 Sep 2025 15:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757603447; cv=none; b=tkKNT9VMwBzdgppkUQnfgM0ySE/nJsGPh/3Yn87NRgPZlXsl7rsbAXQHXN/qMQKAeQGMWHr8Lri+cjx/RCAuZJDoAQxZiGrEKnIaKZGyXatfZhXwr0Xp/KhWckarBhC/gqC5mp1ItmcBaUYZ4tS/0iJVdoWhZpL6C4aYisYa2Tc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757603447; c=relaxed/simple;
+	bh=vESIC3H1d33KdZFzxixmTx3M3eMgo+ACg9D5yt4PcCg=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=fcz+PtNFzUmNOGZvEYuZRjTyVeI9MoiLGBnvF0iEb1iwWgyN7+GQVT6zdQclNq/1Ln7kABf40qeHCFNH0LysgI2jlIFv3UPFNCUiO13jPylg9+urxvCpe9qXToiTH4xtmZKBT7aNqKF4GNSU8LO9/kQqjsVHs5JN1Vr7HdeF//A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LqXsidjq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8E05C4CEF0;
+	Thu, 11 Sep 2025 15:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757603447;
+	bh=vESIC3H1d33KdZFzxixmTx3M3eMgo+ACg9D5yt4PcCg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=LqXsidjq1YDfMhTjyyakuA68Sau14+CsdPbk3pQa+JSDz5kxLm7YDkVGntQ/4uSAI
+	 dAkVnqb0HX0u6CWNQNaJdzT9BmfotW5DRlHJazp0lsSVsThxnCp45Op3a7khPHZvry
+	 GT3N+DzSKbVP2EiXnWC+mYkIbf058x5V7jbqdmF7WR5TsSXc2xy1cD79c+wtThIIAN
+	 GznqcxdzTIkF/DeBipkrf2l1mcuDELKujjEnT4PVAjT8PCBKZ7nnecAl1erTjnF/xy
+	 f45o2nGeu98bY7PF05jyA1OsiBOXIsDYZ/SGE3bNKaXo2S+gtk/XHEnMDt4bNp6Urj
+	 GXPViTOV9Vwgw==
+Message-ID: <013e03cd-6d8d-4bf9-ba52-5001d10444b7@kernel.org>
+Date: Fri, 12 Sep 2025 00:10:43 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+From: Chanwoo Choi <chanwoo@kernel.org>
+Content-Language: en-US
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "open list:DEVICE FREQUENCY (DEVFREQ)" <linux-pm@vger.kernel.org>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Chanwoo Choi <chanwoo@kernel.org>,
+ MyungJoo Ham <myungjoo.ham@samsung.com>,
+ Kyungmin Park <kyungmin.park@samsung.com>
+Subject: [GIT PULL] devfreq next for 6.18
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Convert the existing text-based DT bindings for MELFAS MIP4 Touchscreen
-controller to a DT schema.
+Dear Rafael,
 
-Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../input/touchscreen/melfas,mip4_ts.yaml     | 56 +++++++++++++++++++
- .../input/touchscreen/melfas_mip4.txt         | 20 -------
- 2 files changed, 56 insertions(+), 20 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
- delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
+This is devfreq-next pull request. I add detailed description of
+this pull request on the following tag. Please pull devfreq with
+following updates.
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml b/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
-new file mode 100644
-index 0000000000000..314be65c56caa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/touchscreen/melfas,mip4_ts.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/input/touchscreen/melfas,mip4_ts.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: MELFAS MIP4 Touchscreen
-+
-+maintainers:
-+  - Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-+
-+properties:
-+  compatible:
-+    const: melfas,mip4_ts
-+
-+  reg:
-+    description: I2C address of the chip (0x48 or 0x34)
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  ce-gpios:
-+    description:
-+      GPIO connected to the CE (chip enable) pin of the chip (active high)
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        touchscreen@34 {
-+            compatible = "melfas,mip4_ts";
-+            reg = <0x34>;
-+
-+            interrupts-extended = <&tlmm 13 IRQ_TYPE_EDGE_FALLING>;
-+            ce-gpios = <&tlmm 12 GPIO_ACTIVE_HIGH>;
-+
-+            pinctrl-0 = <&touchscreen_default>;
-+            pinctrl-names = "default";
-+        };
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt b/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
-deleted file mode 100644
-index b2ab5498e5190..0000000000000
---- a/Documentation/devicetree/bindings/input/touchscreen/melfas_mip4.txt
-+++ /dev/null
-@@ -1,20 +0,0 @@
--* MELFAS MIP4 Touchscreen
--
--Required properties:
--- compatible: must be "melfas,mip4_ts"
--- reg: I2C slave address of the chip (0x48 or 0x34)
--- interrupts: interrupt to which the chip is connected
--
--Optional properties:
--- ce-gpios: GPIO connected to the CE (chip enable) pin of the chip
--
--Example:
--	i2c@00000000 {
--		touchscreen: melfas_mip4@48 {
--			compatible = "melfas,mip4_ts";
--			reg = <0x48>;
--			interrupt-parent = <&gpio>;
--			interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
--			ce-gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
--		};
--	};
--- 
-2.50.1
+Best Regards,
+Chanwoo Choi
 
+
+The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
+
+  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git tags/devfreq-next-for-6.18
+
+for you to fetch changes up to eddb5ba91b289faa15117d4fc1c2fb223f3493c2:
+
+  PM / devfreq: rockchip-dfi: add support for LPDDR5 (2025-09-09 23:37:39 +0900)
+  
+----------------------------------------------------------------
+  
+Update devfreq next for v6.18
+
+Detailed description for this pull request:
+- Add support for LPDDR5 for Rockhip RK3588 SoC on rockchip-dfi devfreq driver.
+
+- Fix an issue where DDR cycle counts on RK3588/RK3528 with LPDDR4(X)
+  are reported as half by adding a cycle multiplier to the DFI driver
+  on rockchip-dfi devfreq-event driver.
+
+- Fix missing error pointer dereference of regulator instance
+  and remove redundant condition on on mtk-cci-devfreq.c devfreq driver.
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      PM / devfreq: mtk-cci: Fix potential error pointer dereference in probe()
+
+Liao Yuanhong (1):
+      PM / devfreq: mtk-cci: avoid redundant conditions
+
+Nicolas Frattaroli (2):
+      PM / devfreq: rockchip-dfi: double count on RK3588
+      PM / devfreq: rockchip-dfi: add support for LPDDR5
+
+ drivers/devfreq/event/rockchip-dfi.c | 91 ++++++++++++++++++++++++++++--------
+ drivers/devfreq/mtk-cci-devfreq.c    |  5 +-
+ include/soc/rockchip/rk3588_grf.h    |  8 +++-
+ include/soc/rockchip/rockchip_grf.h  |  1 +
+ 4 files changed, 82 insertions(+), 23 deletions(-)
 
