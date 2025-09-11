@@ -1,78 +1,259 @@
-Return-Path: <linux-kernel+bounces-812351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C763B536C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:02:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67F71B536D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:03:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57F293AEF98
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:00:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147681CC3C4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970ED3469E4;
-	Thu, 11 Sep 2025 14:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AERr1Yeu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDEB342CAF;
+	Thu, 11 Sep 2025 15:00:40 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B073451BE;
-	Thu, 11 Sep 2025 14:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6C7231355A;
+	Thu, 11 Sep 2025 15:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757602781; cv=none; b=Uxj4qIiho/wecsNbB2ZYop345e6hzNrRWnYQ2/QqxhbqbVtbGyEOOu4TeNJMiLrz9FGjVhMWlyf64z374FCztpe3k3ILdvQS17DOoAytF1YghMp6x2f0AUea1GSZQqevekSDZIuffohx/DCTT2WkIwBfIVvqu+fZR0IL7C/Tan8=
+	t=1757602840; cv=none; b=n4UflG/QWYaFovmoaKtW0ktoNmWWBbB4zvaZinUc5lhSqZoFK8IS3SDme7X4NI88/zx2Dra1wNqSryf82fht+3agwi/Eywmw4MggmubCH4SMesU4+7YIdruDO8XTM/3PNMwXvklgS1t7tZwbo8qKyTnPX1VutufD3MGgb6BEAg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757602781; c=relaxed/simple;
-	bh=d9nAFXGJzmeWzLCo0MGgmQRlh5gWyfX0TrCYQC8mEIk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=jdsH6fzsf5Xi1ztGPFZHKELnoFQNy0CLyGQJnoQtPpQ97CN66KaELM0hc/OCO9KTryLWHCETjjFD93FK93XJwq3MrN0fNw5G/ldwsUfgG8QcNlBd5NtOw4gTQAV8WPATQfg+AHLuEIkApdDKqhcTxaTzVYZDNYFFLpcK+zCPm+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AERr1Yeu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE1B0C4CEF0;
-	Thu, 11 Sep 2025 14:59:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757602780;
-	bh=d9nAFXGJzmeWzLCo0MGgmQRlh5gWyfX0TrCYQC8mEIk=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=AERr1Yeum+bWPl8xQvvh75i/6VVOcutsllTdjwjlg4aS+vudiUiH2/kvyXmRlQO0u
-	 gaq+x+uTYpwSE0FoNrI8l7wffqnFdr/b8yyuNK9xco1QBW9NyHLpQ68GX/HOq7XZje
-	 XSabv07yNgkvPk+NEAI8z/V/BjdgWk2AvnvMapqhDF6cqZWOv0npI12JBXWRl0OSfU
-	 R0Oo3cAHjfj+9L5+OBy2b6vG+C/MWtqWgXc2/EbebUOhB8xlFnF9yQpSXaEtLGMoT4
-	 lZW9+5jHYqPZ1Wpn9xdzQPZtjr3u2dstolJgSTRYufxmmBvo9z5QALRzWpejFfknlO
-	 okjpx496nP/XA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF8A383BF69;
-	Thu, 11 Sep 2025 14:59:44 +0000 (UTC)
-Subject: Re: [GIT PULL] hotfixes for 6.17-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250910200250.b110da062c9561aa092c479f@linux-foundation.org>
-References: <20250910200250.b110da062c9561aa092c479f@linux-foundation.org>
-X-PR-Tracked-List-Id: <mm-commits.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250910200250.b110da062c9561aa092c479f@linux-foundation.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-09-10-20-00
-X-PR-Tracked-Commit-Id: a68172d95c2845d2b5455b072b4ff51ba32650e9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4f553c1e2c7b81e957b5463bd7efad2465a586f8
-Message-Id: <175760278335.2208976.10071544460985449453.pr-tracker-bot@kernel.org>
-Date: Thu, 11 Sep 2025 14:59:43 +0000
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, mm-commits@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1757602840; c=relaxed/simple;
+	bh=OOC9yP53JCA8miopYLpoW4SfdRDHAJte+PkBlrYrHy8=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mcpyBYADfGuxTUdDJNuyJ8lXWmpVpdHzq0I79kR7QtsxZZoiDvS3pWGwG3LBqDAW1Kky0zO30M8dl2uPSpCCakvrycQmb7bh/Lf53HtI3gXmJs5ShJG3l8ks1LgfsTPCNRZRevZ7lFPSaZkrr7hFb5FOlOqTY+EfGTBOQghNvPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cN0zQ1Gh7z6LDB4;
+	Thu, 11 Sep 2025 22:57:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 35CF01402F8;
+	Thu, 11 Sep 2025 23:00:34 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Sep
+ 2025 17:00:33 +0200
+Date: Thu, 11 Sep 2025 16:00:31 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>, Ben Horgan <ben.horgan@arm.com>
+Subject: Re: [PATCH v2 09/29] arm_mpam: Add MPAM MSC register layout
+ definitions
+Message-ID: <20250911160031.000026c7@huawei.com>
+In-Reply-To: <20250910204309.20751-10-james.morse@arm.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+	<20250910204309.20751-10-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-The pull request you sent on Wed, 10 Sep 2025 20:02:50 -0700:
+On Wed, 10 Sep 2025 20:42:49 +0000
+James Morse <james.morse@arm.com> wrote:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2025-09-10-20-00
+> Memory Partitioning and Monitoring (MPAM) has memory mapped devices
+> (MSCs) with an identity/configuration page.
+> 
+> Add the definitions for these registers as offset within the page(s).
+Hi James,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4f553c1e2c7b81e957b5463bd7efad2465a586f8
+I'm not sure why some things ended up in this patch and others didn't.
+MPAMCFG_EN for example isn't here.
 
-Thank you!
+If doing a separate 'register defines' patch I'd do the lot as of
+the current spec.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> 
+> Link: https://developer.arm.com/documentation/ihi0099/latest/
+
+Maybe link a specific version? I'm not sure if I'm looking at is the same one
+as you were when you wrote this. That will become worse over time.  I'm definitely
+seeing extra bits in a number of registers.
+
+I'm lazy enough not to go see if the cover letter calls out a version.
+
+Anyhow, various small things on ordering that would have made this easier to review
+against the spec.
+
+Jonathan
+
+
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> ---
+> Changes since v1:
+>  * Whitespace.
+>  * Added constants for CASSOC and XCL.
+>  * Merged FLT/CTL defines.
+>  * Fixed MSMON_CFG_CSU_CTL_TYPE_CSU definition.
+> 
+> Changes since RFC:
+>  * Renamed MSMON_CFG_MBWU_CTL_TYPE_CSU as MSMON_CFG_CSU_CTL_TYPE_CSU
+>  * Whitepsace churn.
+>  * Cite a more recent document.
+>  * Removed some stale feature, fixed some names etc.
+> ---
+>  drivers/resctrl/mpam_internal.h | 267 ++++++++++++++++++++++++++++++++
+>  1 file changed, 267 insertions(+)
+> 
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index 02e9576ece6b..109f03df46c2 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -152,4 +152,271 @@ extern struct list_head mpam_classes;
+>  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
+>  				   cpumask_t *affinity);
+>  
+> +/*
+> + * MPAM MSCs have the following register layout. See:
+> + * Arm Memory System Resource Partitioning and Monitoring (MPAM) System
+> + * Component Specification.
+> + * https://developer.arm.com/documentation/ihi0099/latest/
+
+Maybe be friendly and give some section number references.
+
+> + */
+> +#define MPAM_ARCHITECTURE_V1    0x10
+> +
+> +/* Memory mapped control pages: */
+> +/* ID Register offsets in the memory mapped page */
+> +#define MPAMF_IDR		0x0000  /* features id register */
+> +#define MPAMF_MSMON_IDR		0x0080  /* performance monitoring features */
+
+Any reason this one is out of order with respect to the addresses?
+
+> +#define MPAMF_IMPL_IDR		0x0028  /* imp-def partitioning */
+> +#define MPAMF_CPOR_IDR		0x0030  /* cache-portion partitioning */
+> +#define MPAMF_CCAP_IDR		0x0038  /* cache-capacity partitioning */
+> +#define MPAMF_MBW_IDR		0x0040  /* mem-bw partitioning */
+> +#define MPAMF_PRI_IDR		0x0048  /* priority partitioning */
+> +#define MPAMF_CSUMON_IDR	0x0088  /* cache-usage monitor */
+> +#define MPAMF_MBWUMON_IDR	0x0090  /* mem-bw usage monitor */
+> +#define MPAMF_PARTID_NRW_IDR	0x0050  /* partid-narrowing */
+> +#define MPAMF_IIDR		0x0018  /* implementer id register */
+> +#define MPAMF_AIDR		0x0020  /* architectural id register */
+
+These 3 as well. I'm not sure what the ordering is conveying but probably easier to just
+to put them in address order.
+
+There are some other cases of this below.
+
+
+> +/* MPAMF_IIDR - MPAM implementation ID register */
+> +#define MPAMF_IIDR_PRODUCTID	GENMASK(31, 20)
+> +#define MPAMF_IIDR_PRODUCTID_SHIFT	20
+> +#define MPAMF_IIDR_VARIANT	GENMASK(19, 16)
+> +#define MPAMF_IIDR_VARIANT_SHIFT	16
+> +#define MPAMF_IIDR_REVISON	GENMASK(15, 12)
+> +#define MPAMF_IIDR_REVISON_SHIFT	12
+> +#define MPAMF_IIDR_IMPLEMENTER	GENMASK(11, 0)
+> +#define MPAMF_IIDR_IMPLEMENTER_SHIFT	0
+I'd expect to see FIELD_GET/ PREP rather than use of shifts. Can we drop the defines?
+
+Pick an order for reg field definitions. Until here they've been low to high.
+
+
+> +/* Error conditions in accessing memory mapped registers */
+> +#define MPAM_ERRCODE_NONE			0
+> +#define MPAM_ERRCODE_PARTID_SEL_RANGE		1
+> +#define MPAM_ERRCODE_REQ_PARTID_RANGE		2
+> +#define MPAM_ERRCODE_MSMONCFG_ID_RANGE		3
+> +#define MPAM_ERRCODE_REQ_PMG_RANGE		4
+> +#define MPAM_ERRCODE_MONITOR_RANGE		5
+> +#define MPAM_ERRCODE_INTPARTID_RANGE		6
+> +#define MPAM_ERRCODE_UNEXPECTED_INTERNAL	7
+
+Seems there are more in latest spec..
+> +
+> +/*
+> + * MSMON_CFG_CSU_CTL - Memory system performance monitor configure cache storage
+> + *                    usage monitor control register
+> + * MSMON_CFG_MBWU_CTL - Memory system performance monitor configure memory
+> + *                     bandwidth usage monitor control register
+> + */
+> +#define MSMON_CFG_x_CTL_TYPE			GENMASK(7, 0)
+> +#define MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L	BIT(15)
+> +#define MSMON_CFG_x_CTL_MATCH_PARTID		BIT(16)
+> +#define MSMON_CFG_x_CTL_MATCH_PMG		BIT(17)
+> +#define MSMON_CFG_x_CTL_SCLEN			BIT(19)
+On the spec I'm looking at this is reserved in CSU_CTL
+
+> +#define MSMON_CFG_x_CTL_SUBTYPE			GENMASK(22, 20)
+> +#define MSMON_CFG_x_CTL_OFLOW_FRZ		BIT(24)
+> +#define MSMON_CFG_x_CTL_OFLOW_INTR		BIT(25)
+> +#define MSMON_CFG_x_CTL_OFLOW_STATUS		BIT(26)
+> +#define MSMON_CFG_x_CTL_CAPT_RESET		BIT(27)
+> +#define MSMON_CFG_x_CTL_CAPT_EVNT		GENMASK(30, 28)
+> +#define MSMON_CFG_x_CTL_EN			BIT(31)
+
+I guess this combining of definitions will show some advante in common code
+later but right now it seems confusing given not all bits are present in both.
+
+> +
+> +#define MSMON_CFG_MBWU_CTL_TYPE_MBWU			0x42
+> +#define MSMON_CFG_CSU_CTL_TYPE_CSU			0x43
+> +
+> +/*
+> + * MSMON_CFG_CSU_FLT -  Memory system performance monitor configure cache storage
+> + *                      usage monitor filter register
+> + * MSMON_CFG_MBWU_FLT - Memory system performance monitor configure memory
+> + *                      bandwidth usage monitor filter register
+> + */
+> +#define MSMON_CFG_x_FLT_PARTID			GENMASK(15, 0)
+> +#define MSMON_CFG_x_FLT_PMG			GENMASK(23, 16)
+> +
+> +#define MSMON_CFG_MBWU_FLT_RWBW			GENMASK(31, 30)
+> +#define MSMON_CFG_CSU_FLT_XCL			BIT(31)
+> +
+> +/*
+> + * MSMON_CSU - Memory system performance monitor cache storage usage monitor
+> + *            register
+> + * MSMON_CSU_CAPTURE -  Memory system performance monitor cache storage usage
+> + *                     capture register
+> + * MSMON_MBWU  - Memory system performance monitor memory bandwidth usage
+> + *               monitor register
+> + * MSMON_MBWU_CAPTURE - Memory system performance monitor memory bandwidth usage
+> + *                     capture register
+> + */
+> +#define MSMON___VALUE		GENMASK(30, 0)
+> +#define MSMON___NRDY		BIT(31)
+> +#define MSMON___NRDY_L		BIT(63)
+> +#define MSMON___L_VALUE		GENMASK(43, 0)
+> +#define MSMON___LWD_VALUE	GENMASK(62, 0)
+> +
+> +/*
+> + * MSMON_CAPT_EVNT - Memory system performance monitoring capture event
+> + *                  generation register
+> + */
+> +#define MSMON_CAPT_EVNT_NOW	BIT(0)
+> +
+>  #endif /* MPAM_INTERNAL_H */
+
 
