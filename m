@@ -1,154 +1,150 @@
-Return-Path: <linux-kernel+bounces-811643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE45BB52C00
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:41:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75635B52C02
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:42:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065121B27539
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:42:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1988DA03007
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC9B2E5B04;
-	Thu, 11 Sep 2025 08:41:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E1D2E54BF;
+	Thu, 11 Sep 2025 08:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWOrrQlo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BG2qJ6Qj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41C2E54B0
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2808E2206A7;
+	Thu, 11 Sep 2025 08:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757580093; cv=none; b=dSzBbkhnUF1UIoFIzkUrpHPJZQ+PAz5bteirz0WjrcRIzplKeDlfifo5C5jKSnuT+/jLIitYrstnczhYvsYoqjreUB+z34mWZWH79mhIQs0bnoXFdgsozTlpf24mizsHGy/SFwx5Q3bMnwbKzbUaxb1mo9bMRavFeaz/h8Gehcc=
+	t=1757580134; cv=none; b=dSXmUyceUoXrdLMlVFYbHtqlyWZuBa/2meS824DMlcWgTQ53iyG3sRdUtBpvriFGPFIuKlpoRs9H3BSgLpVqz/OrmkI4Pe4n9NHLluHqHxpUh3sPC0ZFlC8WLnwDYF+g/45SD8njSMEd+q16Qt/KBK23C8814affFAcaEHExc2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757580093; c=relaxed/simple;
-	bh=rKZlrOiOpYWSNGkzGrMllX51wmmYySviIaeS+Q92BC8=;
+	s=arc-20240116; t=1757580134; c=relaxed/simple;
+	bh=Tb4mY4mFW4j6C2X7p0oCDZvBDicQe45QQXnOwRSNQ+w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CTva085KNBZvo+xMqadenaYFIMoxlgd4Mypzs6ktSzWBjP1dEa7JhQ8TuCcJWW7vybk9rf29JXr1+Ud5z8yUc01AsJ/tSNDidrL1ZUryqJ2/v8XrfSGA3S+RhXix5+z3mloZ0NLRkhi62zmKpoUZUhyq4ch7JEX61+aiYTgSTf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWOrrQlo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FC1C4CEFC
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:41:33 +0000 (UTC)
+	 To:Cc:Content-Type; b=deDaLQ7D/LkrR9TpB3rjiBVEc7R4ZyURLjjl/wM3J6m9nWfcgH6tM+4MwSHzFk/ArFJwxBnAELEyf9L175Ai0O7WeKEyrSkbt2jp+Lb5oQhd63TAn8KU8vuc0z5qObb0Qv3065ZGKLG52QiNH58wFsPeFDwq4fxGadZXZMHCGME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BG2qJ6Qj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FACC4AF09;
+	Thu, 11 Sep 2025 08:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757580093;
-	bh=rKZlrOiOpYWSNGkzGrMllX51wmmYySviIaeS+Q92BC8=;
+	s=k20201202; t=1757580133;
+	bh=Tb4mY4mFW4j6C2X7p0oCDZvBDicQe45QQXnOwRSNQ+w=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XWOrrQloZH7dBQBSbIdAuzeWR9WNueYMdJNYrJU+zW4j1th+z0BKgc1wVYCpwUbfs
-	 UeZYF3n9C6s8oKe9mV1j08qQj7yZsSOwBq3UAvdOxR7yfeJNs6c3m4A/L3KeeK3rO4
-	 /Ju1ANHhxnOVNHVgmttMQQ8zsFUIf/gzHBnkX2YsYDGs/7vyfznWx72uD/gqrFClvc
-	 PPjub7rQyNgQvRYUu/VQvYY3rtKH5wLp2iwJJo+0sUBxkEl7qcXOB9dKx9Kkh5XFbz
-	 44wn1jcCLb/lF7lYYOa0JfIodNXqCpah4DAaFBu+5curf961KgaqgltrmLp78o3rfn
-	 gAJefxN6x1arQ==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-afcb7a16441so64931066b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:41:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXjZipPEsgRgFLujCPYbDOjlntVOduzW2hO6Ieh2G0qkIqY3Vt9xyMydilkmnZy7yPDUT94cY3VjRL6gFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSMjq4nelNIr50JjHP7YmbF65kWnx5jWkAZyBgz1sMLugHLfEk
-	4HEEfNLY7w5zI1oPN/YAufUz9nXUuB0C9CnVxXHR7QQ4lar5JUEI6370oDu3duVllVk8Ra3r3Vf
-	YDGIM1ycj5BruowKZP4k5hhyJv9xhC70=
-X-Google-Smtp-Source: AGHT+IEyB92D+HyH8vTtrcoIFQUagsci7gdRxSdRn2/h7d/2hIo9GfgU3oeg8ffU0IcQ/q+cWAoYmPWmXjrYcxt50vo=
-X-Received: by 2002:a17:907:6d17:b0:b04:a1ec:d071 with SMTP id
- a640c23a62f3a-b04b1780c10mr2048468066b.56.1757580091931; Thu, 11 Sep 2025
- 01:41:31 -0700 (PDT)
+	b=BG2qJ6Qj3Zgd++kVqEIb9CEfgHmTEriGlx0wYjQMHmcDoD6Qtgg6ut9K+LQJY55PF
+	 qenM8/pC8YXiU0dg8P3PBKZO5rIvQpFYTJQL1bBFWQVjTqGHuav6Aj7DOVqwoO+j4J
+	 5uGvKWD8iVFfVKPuvN8P4k4gCW9vcIsTB0rh6I14wvfmUtValRWnCa12MfdqSOzVmT
+	 JGp0zoSzN5YqKDQ2tPgY00HkB82u1niAX5YaCuJCDlycd9roJP3EIzI6AWSdtUbmox
+	 ljZFCqKYhlj+RaYjg7I7VARqMttJNPNzUPD1u9dxERTsdY0DFRXl19/CCNyeg9t4Xi
+	 cjnJ9RuyPwfpw==
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so63647366b.3;
+        Thu, 11 Sep 2025 01:42:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUS12fO5x0pkTjQwi6VNK4Ft9+3pOTKmVq5sBRYp2ET0iQzixQ8lFeZRR2llPVXdAAb8hfl7tVYsVHa1Q==@vger.kernel.org, AJvYcCVfwlo4NAZmGBuuvRhLcznx6s3F/FLqWWqvXRNo5RE8POBuS880x7NcDQz4XUBKe7b2XL7ubY0jibWDplk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywvt2wpS8ciMquhFsqKEVxd93yA5P1a2SJcGVLc4T14JZNe18ET
+	iNpKfjekR5OnL1Mgk6vBApfPedT8hIBtac+SlFbVnBEA9xcpkXKwbpdW3akyjBjijM+O7Jz6xes
+	ePUuBh79Qbf8GyBZybDmFZxXrrZ2tS20=
+X-Google-Smtp-Source: AGHT+IGCNRWZexHleebCSpfx1aSECkro4rJmPTtqtIk5TyiQEHbOwU5Kk+Tgn7aWOoS0ew5Z1CnEGtBPHPMKfsUUoFE=
+X-Received: by 2002:a17:907:1ca2:b0:aff:fe6:78f0 with SMTP id
+ a640c23a62f3a-b04b16c47f5mr1929541466b.54.1757580132302; Thu, 11 Sep 2025
+ 01:42:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910091033.725716-1-chenhuacai@loongson.cn> <202509110853.ASZKE1gv-lkp@intel.com>
-In-Reply-To: <202509110853.ASZKE1gv-lkp@intel.com>
+References: <20250911083546.649949-1-wangming01@loongson.cn>
+In-Reply-To: <20250911083546.649949-1-wangming01@loongson.cn>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 11 Sep 2025 16:41:20 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H70c=kZf4rjEfiXnpmNb0PjWb_kh7L4ZKhVzpa=teMvFg@mail.gmail.com>
-X-Gm-Features: AS18NWBEH_um46mN5E-6MDwPMMRBZZk6Qm4uTjND-wWAR5mBCU5LXN5YjIUn7ks
-Message-ID: <CAAhV-H70c=kZf4rjEfiXnpmNb0PjWb_kh7L4ZKhVzpa=teMvFg@mail.gmail.com>
-Subject: Re: [PATCH V2] LoongArch: Align ACPI structures if ARCH_STRICT_ALIGN enabled
-To: kernel test robot <lkp@intel.com>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, oe-kbuild-all@lists.linux.dev, 
-	loongarch@lists.linux.dev, Xuefeng Li <lixuefeng@loongson.cn>, 
-	Guo Ren <guoren@kernel.org>, Xuerui Wang <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Binbin Zhou <zhoubinbin@loongson.cn>, 
-	Xi Ruoyao <xry111@xry111.site>
+Date: Thu, 11 Sep 2025 16:42:01 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4FtYpgrWnvTm0=2_kit5ETxyhJCXFoV=66NKgVbipPrA@mail.gmail.com>
+X-Gm-Features: AS18NWBB5OUFbWKCB0yhIXcdIShPf3lhsEnwkMqfw21SM-WpT2sYaBJihfEkMvE
+Message-ID: <CAAhV-H4FtYpgrWnvTm0=2_kit5ETxyhJCXFoV=66NKgVbipPrA@mail.gmail.com>
+Subject: Re: [PATCH v2] irqchip/loongson-pch-lpc: Use legacy domain for
+ PCH-LPC IRQ controller
+To: Ming Wang <wangming01@loongson.cn>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 9:00=E2=80=AFAM kernel test robot <lkp@intel.com> w=
-rote:
+On Thu, Sep 11, 2025 at 4:35=E2=80=AFPM Ming Wang <wangming01@loongson.cn> =
+wrote:
 >
-> Hi Huacai,
+> On certain Loongson platforms, drivers attempting to request a legacy
+> ISA IRQ directly via request_irq() (e.g., IRQ 4) may fail. The
+> virtual IRQ descriptor is not fully initialized and lacks a valid irqchip=
+.
 >
-> kernel test robot noticed the following build warnings:
+> This issue does not affect ACPI-enumerated devices described in DSDT,
+> as their interrupts are properly mapped via the GSI translation path.
+> This indicates the LPC irqdomain itself is functional but is not correctl=
+y
+> handling direct VIRQ-to-HWIRQ mappings.
 >
-> [auto build test WARNING on linus/master]
-> [also build test WARNING on v6.17-rc5 next-20250910]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> The root cause is the use of irq_domain_create_linear(). This API sets
+> up a domain for dynamic, on-demand mapping, typically triggered by a GSI
+> request. It does not pre-populate the mappings for the legacy VIRQ range
+> (0-15). Consequently, if no ACPI device claims a specific GSI
+> (e.g., GSI 4), the corresponding VIRQ (e.g., VIRQ 4) is never mapped to
+> the LPC domain. A direct call to request_irq(4, ...) then fails because
+> the kernel cannot resolve this VIRQ to a hardware interrupt managed by
+> the LPC controller.
 >
-> url:    https://github.com/intel-lab-lkp/linux/commits/Huacai-Chen/LoongA=
-rch-Align-ACPI-structures-if-ARCH_STRICT_ALIGN-enabled/20250910-171140
-> base:   linus/master
-> patch link:    https://lore.kernel.org/r/20250910091033.725716-1-chenhuac=
-ai%40loongson.cn
-> patch subject: [PATCH V2] LoongArch: Align ACPI structures if ARCH_STRICT=
-_ALIGN enabled
-> config: loongarch-randconfig-001-20250911 (https://download.01.org/0day-c=
-i/archive/20250911/202509110853.ASZKE1gv-lkp@intel.com/config)
-> compiler: loongarch64-linux-gcc (GCC) 15.1.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20250911/202509110853.ASZKE1gv-lkp@intel.com/reproduce)
+> The PCH-LPC interrupt controller is an i8259-compatible legacy device
+> that requires a deterministic, static 1-to-1 mapping for IRQs 0-15 to
+> support legacy drivers.
 >
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202509110853.ASZKE1gv-lkp=
-@intel.com/
-This seems like a compiler issue...
-https://github.com/AOSC-Tracking/linux/commit/1e9ee413357ef58dd902f6ec55013=
-d2a2f2043eb
+> Fix this by replacing irq_domain_create_linear() with
+> irq_domain_create_legacy(). This API is specifically designed for such
+> controllers. It establishes the required static 1-to-1 VIRQ-to-HWIRQ
+> mapping for the entire legacy range (0-15) immediately upon domain
+> creation. This ensures that any VIRQ in this range is always resolvable,
+> making direct calls to request_irq() for legacy IRQs function correctly.
+>
+> Signed-off-by: Ming Wang <wangming01@loongson.cn>
+Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
 
-Huacai
-
 >
-> All warnings (new ones prefixed by >>):
+> ---
+> Changes in v2:
+>   - Address review comments from Huacai Chen.
+>   - Fix function call indentation style.
+> ---
+>  drivers/irqchip/irq-loongson-pch-lpc.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 >
->    In file included from include/acpi/acpi.h:24,
->                     from drivers/acpi/acpica/tbprint.c:10:
->    drivers/acpi/acpica/tbprint.c: In function 'acpi_tb_print_table_header=
-':
-> >> include/acpi/actypes.h:530:43: warning: 'strncmp' argument 1 declared =
-attribute 'nonstring' is smaller than the specified bound 8 [-Wstringop-ove=
-rread]
->      530 | #define ACPI_VALIDATE_RSDP_SIG(a)       (!strncmp (ACPI_CAST_P=
-TR (char, (a)), ACPI_SIG_RSDP, (sizeof(a) < 8) ? ACPI_NAMESEG_SIZE : 8))
->          |                                           ^~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    drivers/acpi/acpica/tbprint.c:105:20: note: in expansion of macro 'ACP=
-I_VALIDATE_RSDP_SIG'
->      105 |         } else if (ACPI_VALIDATE_RSDP_SIG(ACPI_CAST_PTR(struct=
- acpi_table_rsdp,
->          |                    ^~~~~~~~~~~~~~~~~~~~~~
->    In file included from include/acpi/acpi.h:26:
->    include/acpi/actbl.h:69:14: note: argument 'signature' declared here
->       69 |         char signature[ACPI_NAMESEG_SIZE] ACPI_NONSTRING;     =
-  /* ASCII table signature */
->          |              ^~~~~~~~~
+> diff --git a/drivers/irqchip/irq-loongson-pch-lpc.c b/drivers/irqchip/irq=
+-loongson-pch-lpc.c
+> index 2d4c3ec128b8..01fe4325ff84 100644
+> --- a/drivers/irqchip/irq-loongson-pch-lpc.c
+> +++ b/drivers/irqchip/irq-loongson-pch-lpc.c
+> @@ -200,8 +200,13 @@ int __init pch_lpc_acpi_init(struct irq_domain *pare=
+nt,
+>                 goto iounmap_base;
+>         }
 >
->
-> vim +530 include/acpi/actypes.h
->
-> cacba8657351f7 Lv Zheng    2013-09-23  529
-> 64b9dfd0776e9c Ahmed Salem 2025-04-25 @530  #define ACPI_VALIDATE_RSDP_SI=
-G(a)       (!strncmp (ACPI_CAST_PTR (char, (a)), ACPI_SIG_RSDP, (sizeof(a) =
-< 8) ? ACPI_NAMESEG_SIZE : 8))
-> 4fa4616e279df8 Bob Moore   2015-07-01  531  #define ACPI_MAKE_RSDP_SIG(de=
-st)        (memcpy (ACPI_CAST_PTR (char, (dest)), ACPI_SIG_RSDP, 8))
-> cacba8657351f7 Lv Zheng    2013-09-23  532
->
+> -       priv->lpc_domain =3D irq_domain_create_linear(irq_handle, LPC_COU=
+NT,
+> -                                       &pch_lpc_domain_ops, priv);
+> +       /*
+> +        * The LPC interrupt controller is a legacy i8259-compatible devi=
+ce,
+> +        * which requires a static 1:1 mapping for IRQs 0-15.
+> +        * Use irq_domain_create_legacy() to establish this static mappin=
+g early.
+> +        */
+> +       priv->lpc_domain =3D irq_domain_create_legacy(irq_handle, LPC_COU=
+NT, 0, 0,
+> +                                                   &pch_lpc_domain_ops, =
+priv);
+>         if (!priv->lpc_domain) {
+>                 pr_err("Failed to create IRQ domain\n");
+>                 goto free_irq_handle;
 > --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> 2.43.0
+>
 
