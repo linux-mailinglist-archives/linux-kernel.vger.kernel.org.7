@@ -1,329 +1,262 @@
-Return-Path: <linux-kernel+bounces-811872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8207CB52EF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:48:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B26E3B52EF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 185385605CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:48:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F6D17DBFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54AE0185E4A;
-	Thu, 11 Sep 2025 10:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrLoymcv"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F382D7DD4;
+	Thu, 11 Sep 2025 10:48:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E762BEFF3
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEAA1482F2;
+	Thu, 11 Sep 2025 10:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757587671; cv=none; b=J49KTpB/sHw413PIlNE06LaECUKeuHZamYmyLQdBFH1pQXRpx+9/VjcWPsLIphQTNlMNGHl/jV2iwlNB7wqe25t8fAzwyarUACJuloY8Fp1XRGC/ZvwP1YUtm4G+4g6wYz4dH/+xVjvD3p+ZBq5VjUjEe/bI63gpxR4QLwdsrgQ=
+	t=1757587717; cv=none; b=p0FRcxOOuo+zNcN//0WRWr8CCgpJ3KLqWjTQrOUgDuY3LdJCkGGixYx2npgkg4vrUqGrHcGXSao0u8Vbkp+PXFh/mtBFlQOuOUI4p6BiD+q9G5ZvqZxgPq2IGpboJgCwES+8RtabkI7jfNtul0ONCk1vKIyix9r7G/NiFIKv7KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757587671; c=relaxed/simple;
-	bh=llKb4ipHcHyfqkAIQL5U+jOFXKk13xNneyFOZxJYqDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nF1tjIfPhxnESjU3Uvcy67JpSHceNsqiznSXBSwMgWoDiP/qCFS0sxO+rqmb+qtMsBWNgT4enjdYTcjD0iO+++jdXkBSKEwx3VV7GhuOjLRFqOifHR7cuQUN5mFW1RbIe7hvGsIgZvyDxWqtsw5MUx0icHfus5OLXZwyaqNA0ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DrLoymcv; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-71d603b674aso3971267b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:47:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757587668; x=1758192468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qn4R1pbzgofD6MTxiACftWXcks9s8P2JUQtoZ0XEQag=;
-        b=DrLoymcv9KBKqtm3ton997wsJMl7WuuXR1iZUpi+pDwFdVdqJT0M6pLkV1PTG2jaGH
-         wD9ymzNj7fAe2zjfTk6LjF5AdLUexG+XhdmtnuAYgPCaHevvs6PweHV4XnTWHYHHA/LZ
-         vL8TBHilCq5U0mF78Qid3pa/HlTt1jQ6HS1+rIFPBgmotqRD+0LluA/L3oft0E8By6f8
-         7e5a4Imsio2CpDNcMHesyRjXWYVBv+vCNHrXhbR+ugGyW2wWO5+akeGlQjZtQws3l9uv
-         y3SHSoWxk3OQzj2HXIUd6CbOW4xffogT+U1TDP+a2Vi3M3Pjg55ROeqbxjrNDqm49SHg
-         80QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757587668; x=1758192468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qn4R1pbzgofD6MTxiACftWXcks9s8P2JUQtoZ0XEQag=;
-        b=dYsJGM3Ak7r+cW9dg5sCKGR0MsyJgigBROHwJN5dRzDaVSfJqKxVDOAVgJ65HmMnOZ
-         lB/loO5b3A+pOdQW0Ys2YLqymqFCuuekSrVkDa1xZS6zSEwwncLpTcrmnXoCiOlT/XVL
-         1Ue5J0fSNGIhX9DtM32h6GFIqPAfE3bL/jhrzg9BacpozTyShvE1d+mI57/HyK3rt576
-         wOuYiv2Yl3N6XGowjYkuMwu+mWT2G6ZYXhx16aBjpVn5AkldarQTD7ZPjocO7mw4z+tE
-         zh6UlQjfzghuAV8PfVJi7HeOR4XneBRAFGv7hKZgpXivLS3Hh3uCIITpku6qiWwp+ZL9
-         7Cpw==
-X-Forwarded-Encrypted: i=1; AJvYcCW65pMTxYpmim6J9S5xUODkXVK8oJ2JiEBYiTeM6d87tR56UMUnDxE4eaURVO1a7VkZVJZvxVhLCOWDYmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8wJW7/kAHlZWlKGqz/isWlklsOpI5H77KKXMZljPcck7wFH+M
-	iNKhGfQa2xnCZn24RR4t3xTOyqhvPZ/JEodwQ/kNd0i5CFS17XKaAN8D9FTQcM0Oxq1jsz2zgt6
-	tfly9o9omZkDCokXpbf2/XUKa+ea6fM8=
-X-Gm-Gg: ASbGncutiO8vDLBFlLBb4wVu6wnWZWCaTNsUT2n/ZVtDGSIYgxc3XiUkyZ4zKmTj48T
-	sx4eZv7j5SeVKsC5QVolSj3OGoXNBEy3rkTvEna8YV7LjOHVxkfwUb5YXl5JERgNjSo97iUjr75
-	nSbHSmj8myfiCaMoF8Nvf9iuNbHZClW5OQME2auGiA5JZMJdXbMG8RMtWuD5Cqj2UZrMf26s4D2
-	L6Dm6umN6jbxqAZ0a6gweRPKwbZPtIJMmwmA2LWX620kOeAhkb0
-X-Google-Smtp-Source: AGHT+IF2eGTYJAKVreu091MVH3moUSvTghJyuC0dRIIVCC2sh+snH/czvNQpCqcspY1v7mXB/0XTLNiU8L7M5ftwMpY=
-X-Received: by 2002:a05:690c:450e:b0:721:1649:b041 with SMTP id
- 00721157ae682-727f2dbf5e4mr180137607b3.2.1757587667843; Thu, 11 Sep 2025
- 03:47:47 -0700 (PDT)
+	s=arc-20240116; t=1757587717; c=relaxed/simple;
+	bh=DsixxijLlQvnubZxi4JzQTtHQTj0CSjUiFJ3c+Ght1M=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aHGQxNbJHWeP2gXY0I5fovlgSRBqP6sQaOgP7TmsTRGSkRa5/pwiW216Wpe2AZN8s7ofjEBzgZpsi1RNjIJCGl6X2GrsP3mjVsM6IGaaKyBD27l7VT9JU++QwHiytx0CI5Vv3v+kxzqa4eSh5AAaS95JxGN2cx9AotXZ7NQvZ/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMvLq3F3rz6L5WM;
+	Thu, 11 Sep 2025 18:44:19 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id C88241402F5;
+	Thu, 11 Sep 2025 18:48:32 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Sep
+ 2025 12:48:31 +0200
+Date: Thu, 11 Sep 2025 11:48:30 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2 01/29] ACPI / PPTT: Add a helper to fill a cpumask
+ from a processor container
+Message-ID: <20250911114830.00002930@huawei.com>
+In-Reply-To: <20250911114337.0000487e@huawei.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+	<20250910204309.20751-2-james.morse@arm.com>
+	<20250911114337.0000487e@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904015048.1801451-1-a0282524688@gmail.com> <20250911100043.GH9224@google.com>
-In-Reply-To: <20250911100043.GH9224@google.com>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Thu, 11 Sep 2025 18:47:36 +0800
-X-Gm-Features: AS18NWAGX3WtCQoVZDVAI9xUo0zmugnI0RXp3sT2snc3J7PbhZfKY4UJ-0j4Eb0
-Message-ID: <CAOoeyxU+ZrMsRMpn2oTGy4aCHgDwu_CNJYXJ5cjokS7tt8XuGQ@mail.gmail.com>
-Subject: Re: [PATCH RESEND v14 0/7] Add Nuvoton NCT6694 MFD drivers
-To: Lee Jones <lee@kernel.org>
-Cc: tmyu0@nuvoton.com, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, jdelvare@suse.com, alexandre.belloni@bootlin.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Dear Lee,
+On Thu, 11 Sep 2025 11:43:37 +0100
+Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
 
-Thanks for your feedback.
+> On Wed, 10 Sep 2025 20:42:41 +0000
+> James Morse <james.morse@arm.com> wrote:
+> 
+> > The ACPI MPAM table uses the UID of a processor container specified in
+> > the PPTT to indicate the subset of CPUs and cache topology that can
+> > access each MPAM System Component (MSC).
+> > 
+> > This information is not directly useful to the kernel. The equivalent
+> > cpumask is needed instead.
+> > 
+> > Add a helper to find the processor container by its id, then walk
+> > the possible CPUs to fill a cpumask with the CPUs that have this
+> > processor container as a parent.
+> > 
+> > CC: Dave Martin <dave.martin@arm.com>
+> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Signed-off-by: James Morse <james.morse@arm.com>  
+> 
+> Hi James,
+> 
+> Sorry I missed v1.  Busy few weeks.
+> 
+> I think one resource leak plus a few suggested changes that
+> I'm not that bothered about.
+Ignore the resource leak. I didn't read acpi_get_pptt() properly.  No bug there.
 
-The series applies and builds cleanly on my local tree based on commit
-8f5ae30d69d7 (v6.17-rc1).
-My branch currently looks like this:
+So consider the comments below, but I'm fine with this as is.
 
-1ba54e97c6fe (HEAD -> mfd_v14_v6.17-rc1) rtc: Add Nuvoton NCT6694 RTC suppo=
-rt
-6a71b8c05f1f hwmon: Add Nuvoton NCT6694 HWMON support
-bf0b59ad47d3 watchdog: Add Nuvoton NCT6694 WDT support
-36a8e58f7368 can: Add Nuvoton NCT6694 CANFD support
-8cf61471f368 i2c: Add Nuvoton NCT6694 I2C support
-f0d3b273fd93 gpio: Add Nuvoton NCT6694 GPIO support
-e86e2fb37ed7 mfd: Add core driver for Nuvoton NCT6694
-8f5ae30d69d7 (tag: v6.17-rc1) Linux 6.17-rc1
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
+> 
+> Jonathan
+> 
+> 
+> > ---
+> > Changes since v1:
+> >  * Replaced commit message with wording from Dave.
+> >  * Fixed a stray plural.
+> >  * Moved further down in the file to make use of get_pptt() helper.
+> >  * Added a break to exit the loop early.
+> > 
+> > Changes since RFC:
+> >  * Removed leaf_flag local variable from acpi_pptt_get_cpus_from_container()
+> > 
+> > Changes since RFC:
+> >  * Dropped has_leaf_flag dodging of acpi_pptt_leaf_node()
+> >  * Added missing : in kernel-doc
+> >  * Made helper return void as this never actually returns an error.
+> > ---
+> >  drivers/acpi/pptt.c  | 83 ++++++++++++++++++++++++++++++++++++++++++++
+> >  include/linux/acpi.h |  3 ++
+> >  2 files changed, 86 insertions(+)
+> > 
+> > diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
+> > index 54676e3d82dd..1728545d90b2 100644
+> > --- a/drivers/acpi/pptt.c
+> > +++ b/drivers/acpi/pptt.c
+> > @@ -817,3 +817,86 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+> >  	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
+> >  					  ACPI_PPTT_ACPI_IDENTICAL);
+> >  }  
+> 
+> > +/**
+> > + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
+> > + *                                       processor container
+> > + * @acpi_cpu_id:	The UID of the processor container.
+> > + * @cpus:		The resulting CPU mask.
+> > + *
+> > + * Find the specified Processor Container, and fill @cpus with all the cpus
+> > + * below it.
+> > + *
+> > + * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
+> > + * Container, they may exist purely to describe a Private resource. CPUs
+> > + * have to be leaves, so a Processor Container is a non-leaf that has the
+> > + * 'ACPI Processor ID valid' flag set.
+> > + *
+> > + * Return: 0 for a complete walk, or an error if the mask is incomplete.
+> > + */
+> > +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
+> > +{
+> > +	struct acpi_pptt_processor *cpu_node;
+> > +	struct acpi_table_header *table_hdr;
+> > +	struct acpi_subtable_header *entry;
+> > +	unsigned long table_end;
+> > +	u32 proc_sz;
+> > +
+> > +	cpumask_clear(cpus);
+> > +
+> > +	table_hdr = acpi_get_pptt();  
+> 
+> This calls acpi_get_table() so you need to put it again or every call
+> to this leaks a reference count.  I messed around with DEFINE_FREE() for this
+> but it doesn't fit that well as the underlying call doesn't return the table.
+> This one does though so you could do a pptt specific one.  
+> 
+> Or just acpi_put_table(table_hdr); at exit path from this function.
+> 
+> 
+> > +	if (!table_hdr)
+> > +		return;
+> > +
+> > +	table_end = (unsigned long)table_hdr + table_hdr->length;
+> > +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
+> > +			     sizeof(struct acpi_table_pptt));  
+> Hmm. Not related to this patch but I have no idea why acpi_get_pptt()
+> doesn't return a struct acpi_table_pptt as if it did this would be a simple
+> + 1 and not require those who only sometimes deal with ACPI code to go
+> check what that macro actually does!
+> 
+> 
+> > +	proc_sz = sizeof(struct acpi_pptt_processor);  
+> Maybe sizeof (*cpu_node) is more helpful to reader.
+> Also shorter so you could do
+> 	while ((unsigned long)entry + sizeof(*cpu_node) <= table_end)
+> 
+> > +	while ((unsigned long)entry + proc_sz <= table_end) {
+> > +		cpu_node = (struct acpi_pptt_processor *)entry;  
+> 
+> For me, assigning this before checking the type is inelegant.
+> but the nesting does get deep without it so I guess this is ok maybe, though
+> I wonder if better reorganized to combine a different bunch of conditions.
+> I think this is functionally identival.
+> 
+> 		if (entry->type == ACPI_PTT_TYPE_PROCESSOR) {
+> 			struct acpi_pptt_processor *cpu_node = 
+> 				(struct acpi_pptt_processor *)entry;
+> 			if ((cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) &&
+> 			    (!acpi_pptt_leaf_node(table_hdr, cpu_node) &&
+> 			    (cpu_node->acpi_processor_id == acpi_cpu_id)) {
+> 				acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
+> 				break;
+> 		
+> 			}
+> 		}
+> 		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
+> 				     entry->length);
+> 
+> More generally I wonder if it is worth adding a for_each_acpi_pptt_entry() macro.
+> There is some precedence in drivers acpi such as for_each_nhlt_endpoint()
+> 
+> That's probably material for another day though unless you think it brings
+> enough benefits to do it here.
+> 
+> 
+> > +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
+> > +		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
+> > +			if (!acpi_pptt_leaf_node(table_hdr, cpu_node)) {
+> > +				if (cpu_node->acpi_processor_id == acpi_cpu_id) {
+> > +					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
+> > +					break;
+> > +				}
+> > +			}
+> > +		}
+> > +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
+> > +				     entry->length);
+> > +	}
+> > +}
+> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> > index 1c5bb1e887cd..f97a9ff678cc 100644
+> > --- a/include/linux/acpi.h
+> > +++ b/include/linux/acpi.h
+> > @@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int level);
+> >  int find_acpi_cpu_topology_cluster(unsigned int cpu);
+> >  int find_acpi_cpu_topology_package(unsigned int cpu);
+> >  int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
+> > +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
+> >  #else
+> >  static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
+> >  {
+> > @@ -1562,6 +1563,8 @@ static inline int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
+> >  {
+> >  	return -EINVAL;
+> >  }
+> > +static inline void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
+> > +						     cpumask_t *cpus) { }
+> >  #endif
+> >  
+> >  void acpi_arch_init(void);  
+> 
 
-To be absolutely sure there is no mismatch, I will rebase onto the
-same tag once more, rebuild, re-test the kernel, and then RESEND the
-series.
-
-Please let me know if you are applying on a different base tree or if
-there are other prerequisites I might have missed.
-
-Thanks again for your review and your time.
-
-
-Best regards,
-Ming
-
-Lee Jones <lee@kernel.org> =E6=96=BC 2025=E5=B9=B49=E6=9C=8811=E6=97=A5 =E9=
-=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=886:00=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> On Thu, 04 Sep 2025, a0282524688@gmail.com wrote:
->
-> > From: Ming Yu <a0282524688@gmail.com>
-> >
-> > This patch series introduces support for Nuvoton NCT6694, a peripheral
-> > expander based on USB interface. It models the chip as an MFD driver
-> > (1/7), GPIO driver(2/7), I2C Adapter driver(3/7), CANfd driver(4/7),
-> > WDT driver(5/7), HWMON driver(6/7), and RTC driver(7/7).
-> >
-> > The MFD driver implements USB device functionality to issue
-> > custom-define USB bulk pipe packets for NCT6694. Each child device can
-> > use the USB functions nct6694_read_msg() and nct6694_write_msg() to iss=
-ue
-> > a command. They can also request interrupt that will be called when the
-> > USB device receives its interrupt pipe.
-> >
-> > The following introduces the custom-define USB transactions:
-> >         nct6694_read_msg - Send bulk-out pipe to write request packet
-> >                            Receive bulk-in pipe to read response packet
-> >                            Receive bulk-in pipe to read data packet
-> >
-> >         nct6694_write_msg - Send bulk-out pipe to write request packet
-> >                             Send bulk-out pipe to write data packet
-> >                             Receive bulk-in pipe to read response packe=
-t
-> >                             Receive bulk-in pipe to read data packet
-> >
-> > Changes since version 13:
-> > - Update to guard(spinlock_irqsave)() in nct6694.c
-> > - Add struct i2c_adapter_quirks in i2c-nct6694.c
-> > - Rebased on top of v6.17-rc1 as requested
->
-> I thought you were going to rebase this onto v6.17-rc1?
->
-> It still does not apply.
->
-> > Changes since version 12:
-> > - Implement IDA in MFD driver to handle per-device IDs
-> > - Use spinlock to replace irq mutex lock
-> > - Use same email address in the signature
-> >
-> > Changes since version 11:
-> > - Use platform_device's id to replace IDA
-> > - Modify the irq_domain_add_simple() to irq_domain_create_simple() in
-> >   nct6694.c
-> > - Update struct data_bittiming_params related part in nct6694_canfd.c
-> > - Fix the typo in the header in nct6694-hwmon.c
-> >
-> > Changes since version 10:
-> > - Add change log for each patch
-> > - Fix mfd_cell to MFD_CELL_NAME() in nct6694.c
-> > - Implement IDA to allocate id in gpio-nct6694.c, i2c-nct6694.c,
-> >   nct6694_canfd.c and nct6694_wdt.c
-> > - Add header <linux/bitfield.h> in nct6694_canfd.c
-> > - Add support to config tdc in nct6694_canfd.c
-> > - Add module parameters to configure WDT's timeout and pretimeout value
-> >   in nct6694_wdt.c
-> >
-> > Changes since version 9:
-> > - Add devm_add_action_or_reset() to dispose irq mapping
-> > - Add KernelDoc to exported functions in nct6694.c
-> >
-> > Changes since version 8:
-> > - Modify the signed-off-by with my work address
-> > - Rename all MFD cell names to "nct6694-xxx"
-> > - Add irq_dispose_mapping() in the error handling path and in the remov=
-e
-> >   function
-> > - Fix some comments in nct6694.c and in nct6694.h
-> > - Add module parameters to configure I2C's baudrate in i2c-nct6694.c
-> > - Rename all function names nct6694_can_xxx to nct6694_canfd_xxx in
-> >   nct6694_canfd.c
-> > - Fix nct6694_canfd_handle_state_change() in nct6694_canfd.c
-> > - Fix nct6694_canfd_start() to configure NBTP and DBTP in nct6694_canfd=
-.c
-> > - Add can_set_static_ctrlmode() in nct6694_canfd.c
-> >
-> > Changes since version 7:
-> > - Add error handling for devm_mutex_init()
-> > - Modify the name of the child devices CAN1 and CAN2 to CAN0 and CAN1.
-> > - Fix multiline comments to net-dev style in nct6694_canfd.c
-> >
-> > Changes since version 6:
-> > - Fix nct6694_can_handle_state_change() in nct6694_canfd.c
-> > - Fix warnings in nct6694_canfd.c
-> > - Move the nct6694_can_priv's bec to the end in nct6694_canfd.c
-> > - Fix warning in nct6694_wdt.c
-> > - Fix temp_hyst's data type to signed variable in nct6694-hwmon.c
-> >
-> > Changes since version 5:
-> > - Modify the module name and the driver name consistently
-> > - Fix mfd_cell to MFD_CELL_NAME() and MFD_CELL_BASIC()
-> > - Drop unnecessary macros in nct6694.c
-> > - Update private data and drop mutex in nct6694_canfd.c
-> > - Fix nct6694_can_handle_state_change() in nct6694_canfd.c
-> >
-> > Changes since version 4:
-> > - Modify arguments in read/write function to a pointer to cmd_header
-> > - Modify all callers that call the read/write function
-> > - Move the nct6694_canfd.c to drivers/net/can/usb/
-> > - Fix the missing rx offload function in nct6694_canfd.c
-> > - Fix warngings in nct6694-hwmon.c
-> >
-> > Changes since version 3:
-> > - Modify array buffer to structure for each drivers
-> > - Fix defines and comments for each drivers
-> > - Add header <linux/bits.h> and use BIT macro in nct6694.c and
-> >   gpio-nct6694.c
-> > - Modify mutex_init() to devm_mutex_init()
-> > - Add rx-offload helper in nct6694_canfd.c
-> > - Drop watchdog_init_timeout() in nct6694_wdt.c
-> > - Modify the division method to DIV_ROUND_CLOSEST() in nct6694-hwmon.c
-> > - Drop private mutex and use rtc core lock in rtc-nct6694.c
-> > - Modify device_set_wakeup_capable() to device_init_wakeup() in
-> >   rtc-nct6694.c
-> >
-> > Changes since version 2:
-> > - Add MODULE_ALIAS() for each child driver
-> > - Modify gpio line names be a local variable in gpio-nct6694.c
-> > - Drop unnecessary platform_get_drvdata() in gpio-nct6694.c
-> > - Rename each command in nct6694_canfd.c
-> > - Modify each function name consistently in nct6694_canfd.c
-> > - Modify the pretimeout validation procedure in nct6694_wdt.c
-> > - Fix warnings in nct6694-hwmon.c
-> >
-> > Changes since version 1:
-> > - Implement IRQ domain to handle IRQ demux in nct6694.c
-> > - Modify USB_DEVICE to USB_DEVICE_AND_INTERFACE_INFO API in nct6694.c
-> > - Add each driver's command structure
-> > - Fix USB functions in nct6694.c
-> > - Fix platform driver registration in each child driver
-> > - Sort each driver's header files alphabetically
-> > - Drop unnecessary header in gpio-nct6694.c
-> > - Add gpio line names in gpio-nct6694.c
-> > - Fix errors and warnings in nct6694_canfd.c
-> > - Fix TX-flow control in nct6694_canfd.c
-> > - Fix warnings in nct6694_wdt.c
-> > - Drop unnecessary logs in nct6694_wdt.c
-> > - Modify start() function to setup device in nct6694_wdt.c
-> > - Add voltage sensors functionality in nct6694-hwmon.c
-> > - Add temperature sensors functionality in nct6694-hwmon.c
-> > - Fix overwrite error return values in nct6694-hwmon.c
-> > - Add write value limitation for each write() function in nct6694-hwmon=
-.c
-> > - Drop unnecessary logs in rtc-nct6694.c
-> > - Fix overwrite error return values in rtc-nct6694.c
-> > - Modify to use dev_err_probe API in rtc-nct6694.c
-> >
-> >
-> > Ming Yu (7):
-> >   mfd: Add core driver for Nuvoton NCT6694
-> >   gpio: Add Nuvoton NCT6694 GPIO support
-> >   i2c: Add Nuvoton NCT6694 I2C support
-> >   can: Add Nuvoton NCT6694 CANFD support
-> >   watchdog: Add Nuvoton NCT6694 WDT support
-> >   hwmon: Add Nuvoton NCT6694 HWMON support
-> >   rtc: Add Nuvoton NCT6694 RTC support
-> >
-> >  MAINTAINERS                         |  12 +
-> >  drivers/gpio/Kconfig                |  12 +
-> >  drivers/gpio/Makefile               |   1 +
-> >  drivers/gpio/gpio-nct6694.c         | 499 +++++++++++++++
-> >  drivers/hwmon/Kconfig               |  10 +
-> >  drivers/hwmon/Makefile              |   1 +
-> >  drivers/hwmon/nct6694-hwmon.c       | 949 ++++++++++++++++++++++++++++
-> >  drivers/i2c/busses/Kconfig          |  10 +
-> >  drivers/i2c/busses/Makefile         |   1 +
-> >  drivers/i2c/busses/i2c-nct6694.c    | 196 ++++++
-> >  drivers/mfd/Kconfig                 |  15 +
-> >  drivers/mfd/Makefile                |   2 +
-> >  drivers/mfd/nct6694.c               | 388 ++++++++++++
-> >  drivers/net/can/usb/Kconfig         |  11 +
-> >  drivers/net/can/usb/Makefile        |   1 +
-> >  drivers/net/can/usb/nct6694_canfd.c | 832 ++++++++++++++++++++++++
-> >  drivers/rtc/Kconfig                 |  10 +
-> >  drivers/rtc/Makefile                |   1 +
-> >  drivers/rtc/rtc-nct6694.c           | 297 +++++++++
-> >  drivers/watchdog/Kconfig            |  11 +
-> >  drivers/watchdog/Makefile           |   1 +
-> >  drivers/watchdog/nct6694_wdt.c      | 307 +++++++++
-> >  include/linux/mfd/nct6694.h         | 102 +++
-> >  23 files changed, 3669 insertions(+)
-> >  create mode 100644 drivers/gpio/gpio-nct6694.c
-> >  create mode 100644 drivers/hwmon/nct6694-hwmon.c
-> >  create mode 100644 drivers/i2c/busses/i2c-nct6694.c
-> >  create mode 100644 drivers/mfd/nct6694.c
-> >  create mode 100644 drivers/net/can/usb/nct6694_canfd.c
-> >  create mode 100644 drivers/rtc/rtc-nct6694.c
-> >  create mode 100644 drivers/watchdog/nct6694_wdt.c
-> >  create mode 100644 include/linux/mfd/nct6694.h
-> >
-> > --
-> > 2.34.1
-> >
->
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
 
