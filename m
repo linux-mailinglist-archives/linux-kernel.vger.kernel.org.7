@@ -1,120 +1,133 @@
-Return-Path: <linux-kernel+bounces-812116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FAEB53323
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:05:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0121B53327
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7D767BA9A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3755A3CA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C83324B32;
-	Thu, 11 Sep 2025 13:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17123322A1F;
+	Thu, 11 Sep 2025 13:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/RqLoLg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKj13BX8"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97521320CC7;
-	Thu, 11 Sep 2025 13:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E59761FFE;
+	Thu, 11 Sep 2025 13:07:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757595842; cv=none; b=f0t/WKTkqYjoffyOIbKwaNG6dJ4dY4gCEtvlaGfiu2fgB1SNB9WCNQr9NAICqLEKlVxXtw+iVPq8dOrEzJzEjBQbxwWMcMXNvgpJjgDVprGawg4/nwBLprJWBdMhwMSGPO3L7iyuidOz0Zz+1RQGnRo4YclRa1VLRuJd9ZnUuyQ=
+	t=1757596026; cv=none; b=NQFmoO6uZtn6geuSIMaajd/iKRVIrjr9vtGbps/sQeQcIqDeAeqbgaQO3gaguxw0hUiB6VB0U3w+fds1+JIIJb04kU/UqUNoLL+bCsdQCikqTV/OMLJkUxeSSCP8ooL25FDPkhryZvTAo4hPsRFCCYiri9JSUo0OqYFCVk6XkAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757595842; c=relaxed/simple;
-	bh=GwqAHVRPsszIE7g35d/vmUuyVRMTwBHaHgAjeOkpHK0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TbVLX6ksC/eIzF/9ldXsgkf3KA2YCh3uiDjTmEU/0kx3IzbTpCQsdOBj4KloT5JX9OLL7VkqvCjs/nw19/oZYGuKxSitG3BJzdPq2W8y8zJiYowf6sfw0yll0UFqUzK1c5gDDEay98GZjKugmTS5mASyvLY7ovi0rwVwhoVbv6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/RqLoLg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1D88C4CEF0;
-	Thu, 11 Sep 2025 13:03:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757595842;
-	bh=GwqAHVRPsszIE7g35d/vmUuyVRMTwBHaHgAjeOkpHK0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=b/RqLoLgtL3sgmIEZ1Vld4VoMBD9bicGqKbkFUhP4M/7ZzlxS2U+K3cS+udDxmCLQ
-	 RJ6bzdG4i5o0cQp/b0Vbv44OXcEhW87PiaCKxPen2uxh2Vr5cYcirgUl5n9j0HuaKR
-	 A/9iTmMryZRKPBUD++2wtt4LeTRYshF3/tmZNVRybSROgOK9mDg/WTgLVAAOc4JHnV
-	 o8ah2TicKR/FyOaZ3W0lC+PJO0fYXIEKMcaSUSldVZeGsk/AMoLfy08PaMg8Vzdnrw
-	 ew5Si9T1xsPX6M6IgdaEs6RkYbKTe66jt9HAD82onoPrRKtHL6U+NKSAXl/i7PBxoU
-	 2Fb5jROE0frIg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,  Santhosh Kumar K
- <s-k6@ti.com>,  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  stable@vger.kernel.org,  Daniel Golle
- <daniel@makrotopia.org>
-Subject: Re: [PATCH v2] mtd: core: always verify OOB offset in
- mtd_check_oob_ops()
-In-Reply-To: <a208824c-acf6-4a48-8fde-f9926a6e4db5@gmail.com>
-References: <20250901-mtd-validate-ooboffs-v2-1-c1df86a16743@gmail.com>
-	<175708415877.334139.11409801733118104229.b4-ty@bootlin.com>
-	<454e092d-5b75-4758-a0e9-dfbb7bf271d7@ti.com> <87348tbeqg.fsf@bootlin.com>
-	<a208824c-acf6-4a48-8fde-f9926a6e4db5@gmail.com>
-Date: Thu, 11 Sep 2025 15:03:58 +0200
-Message-ID: <mafs0v7lpi1j5.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757596026; c=relaxed/simple;
+	bh=hUIlfLdWs8KrHz8bnt9UfgV74P5yJ7K2YZbNpacyVZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YnwoMLk+C/5v5nypseNT8+ObHE9mMohbDccb0tcH2LdoqO3NXf8npSawUZtSE1gLNoxMNAuyk8wKjX7ek9amEXLbwUkZ6W4ikORgTDPUe/keUfVurkOxS1ECXMUoEG2xT/edkO9TfX5pO6HbKaIUwpWG0Zhp1j0ZYUkb/3mGUA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKj13BX8; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-77287fb79d3so581392b3a.1;
+        Thu, 11 Sep 2025 06:07:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757596024; x=1758200824; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qHm+I2EmjAjANzed28NlwQzUNIuNjC1w9Dx1d+YLRi0=;
+        b=ZKj13BX8Gnj4eXNC9H5dsMU8ZB9TRQED8CRKWDlQrrIvnVumfVSrX/vK6u3uX0PVUf
+         TJLwg/Wph9aGF//2VWvwlYYRacVUN7sCUxu/IBxWWmRUjwLTKIvBjLwnyXeCK2u35XfR
+         7GDY6YcbwIja2oUJ6/ZwX5uUdMGAzCjLONS1vTwHrtkdAbiFEgIktqHlKueIgDJGFv5r
+         k/6WodSWvE+I/4q8mCI9izNVCrLWjRdeakdwONkNQO9UPyeEik88TN6pK+hmnU86V+hc
+         phqernfz7wI3s+KzPvP5SWW8vHefUiCmWvommvxWZWM9Jg+QtoehLWniKDCKVejKs6Zg
+         m/Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757596024; x=1758200824;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qHm+I2EmjAjANzed28NlwQzUNIuNjC1w9Dx1d+YLRi0=;
+        b=INc+wOh9HIrYmqyfc5wcg+YRxVV0G9mfHneFMYDFJB8cFIi16GY4AOfLDXB3wpGgPU
+         8dHwQSpxU7XIQka1uVUdZtYcRhUpxsMtooK2VInEg6owJNDX1CiYsGmAWfs4IwgfrbLY
+         ygbu2TzOmaBVYGQL1ijlnsAod/6bCAXYO4FUVn7veD6pP7zemXdhJWtUdyB1EpRjEtRM
+         AQD3dEbu7GFG6P05pooKlvFOvNRZqiw5rNeVm6w4tWQo0hmL4qGlvZUowi0yNq/4DW80
+         6OBiQfl3i6sWrJd524cOItP++QKzMvWTUOWBsOZEiPSqDdZMhcnwmREmE7IIptO4lnD0
+         csFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVhvj8T358TsGE1jBFIdSG7SwzxVbPXFAcQERuJM8dzuSHCcvYndHyrqTj9QkmiPYjN8Vu8Mg9c@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhBqldH+9NMFEDsC4511lwfb9MGTPgEv5+GV6FmQFRbsfj/ggJ
+	OXrvsoG3/LloY6eXB4aokzVIArYhc/nmMcIo3b+pKGP9IMYnZorMCrqO
+X-Gm-Gg: ASbGncsk9eprDh/cyBw35fehLccwvhmOckPlPnZBE6PcVEhwaO9hGYlI7gD7teqq8r2
+	VHbqvrSSdh4a2w//dE4UUQX7h/iPeDxDLxwPDoRYEc4kAmhGY6kc4QUkiBSvWraFA2OqOsh4yPB
+	ADATH7Nft2L3PVse3r4wGHwCjkxYusSAWg4yrMOeHVCJcGGWrV9tDz3iq6dO12yfmZKpEyFfte+
+	PQeHl7fgmVc/24KlE462SwUSAeBQ49bkjRYGpCc0t0D2o4cm0C68/a2vNRj1OMAr9JRWwwoxf69
+	UPJTQ7OJ6fYDtD5bWfG78tGxFobL4F+8VN1unTKyIDVRFFjvRpCuvjuhId0Vr5rdw2L5mV9ViPn
+	GnY9EKgu4VKXRc8fQ9u7onxDF8cyV8id/PkhzIhwwGEPF6NIF7KQ=
+X-Google-Smtp-Source: AGHT+IF6OeRpInObyiPOKH13KWd8a6xyOTlxGrdUC++H3qdAy4kDLtxwmAOn2WxMk97ChRbSbgZh5A==
+X-Received: by 2002:a05:6a20:939d:b0:246:458:8531 with SMTP id adf61e73a8af0-2533bfd9437mr28380664637.4.1757596024114;
+        Thu, 11 Sep 2025 06:07:04 -0700 (PDT)
+Received: from zhr-ThinkStation-K.mioffice.cn ([43.224.245.231])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760793b6b1sm2077519b3a.20.2025.09.11.06.07.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 06:07:03 -0700 (PDT)
+From: Hongru Zhang <zhanghongru06@gmail.com>
+X-Google-Original-From: Hongru Zhang <zhanghongru@xiaomi.com>
+To: stephen.smalley.work@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	omosnace@redhat.com,
+	paul@paul-moore.com,
+	selinux@vger.kernel.org,
+	zhanghongru06@gmail.com,
+	zhanghongru@xiaomi.com
+Subject: Re: [PATCH] selinux: Make avc cache slot size configurable during boot
+Date: Thu, 11 Sep 2025 21:06:53 +0800
+Message-ID: <20250911130653.967139-1-zhanghongru@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAEjxPJ4-+WfGPLev5QU_+_NgBx68zdBBQ6x_+aonzbk4f9BNEw@mail.gmail.com>
+References: <CAEjxPJ4-+WfGPLev5QU_+_NgBx68zdBBQ6x_+aonzbk4f9BNEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 11 2025, Gabor Juhos wrote:
+> >  static inline u32 avc_hash(u32 ssid, u32 tsid, u16 tclass)
+> >  {
+> > -       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (AVC_CACHE_SLOTS - 1);
+> > +       return (ssid ^ (tsid<<2) ^ (tclass<<4)) & (avc_cache_slots - 1);
+> 
+> If you are making the number of buckets adjustable, you should also
+> change the hash function to better deal with multiple numbers of
 
-> Hi Miquel, Santhosh,
->
-> 2025. 09. 11. 10:00 keltez=C3=A9ssel, Miquel Raynal =C3=ADrta:
->> Hello,
->>=20
->> On 11/09/2025 at 11:52:27 +0530, Santhosh Kumar K <s-k6@ti.com> wrote:
->>=20
->>> Hello,
->>>
->>> On 05/09/25 20:25, Miquel Raynal wrote:
->>>> On Mon, 01 Sep 2025 16:24:35 +0200, Gabor Juhos wrote:
->>>>> Using an OOB offset past end of the available OOB data is invalid,
->>>>> irregardless of whether the 'ooblen' is set in the ops or not. Move
->>>>> the relevant check out from the if statement to always verify that.
->>>>>
->>>>> The 'oobtest' module executes four tests to verify how reading/writing
->>>>> OOB data past end of the devices is handled. It expects errors in case
->>>>> of these tests, but this expectation fails in the last two tests on
->>>>> MTD devices, which have no OOB bytes available.
->>>>>
->>>>> [...]
->>>> Applied to mtd/next, thanks!
->>>> [1/1] mtd: core: always verify OOB offset in mtd_check_oob_ops()
->>>>        commit: bf7d0543b2602be5cb450d8ec5a8710787806f88
->>>
->>> I'm seeing a failure in SPI NOR flashes due to this patch:
->>> (Tested on AM62x SK with S28HS512T OSPI NOR flash)
->
-> Sorry for the inconvenience.
->
->> Gabor, can you check what happens with mtdblock?
+Thank you for the advice. When running the test model, I sampled
+/sys/fs/selinux/avc/hash_stats once per second for a total of 1800 times
+and analyzed the distribution uniformity of the hash algorithm using the
+sampled data.
 
-My guess from a quick look at the code is that NOR devices have
-mtd->oobsize =3D=3D 0 and mtd_read() sets ops->ooboffs and ops->ooblen to 0.
-So now that this check is not guarded by if (ops->ooblen), it gets
-triggered for NOR devices on the mtd_read() path and essentially turns
-into an if (0 >=3D 0), returning -EINVAL.
+Baseline: 512 nodes, 512 buckets
+Comparison: 8192 nodes, 8192 buckets
 
-Maybe a better check is if ((ops->ooboffs + ops->ooblen) > mtd_oobavail())?
+Metrics (Average value over 1800 samples):
+* Bucket utilization rate (higher -> better, same chain length assumed)
+	* Baseline: 52.5%
+	* Comparison: 49.5%
+* Max chain length (lower -> better, positive correlation with worst-case latency)
+	* Baseline: 7.5
+	* Comparison: 11.4
 
-Note that the equality is not an error in this case. I haven't worked
-with the OOB code much so I am not sure if this condition makes sense,
-but seems to do so at first glance at least.
+Experimental results show that scaling buckets and nodes from 512 to 8192:
+1. The distribution uniformity under the current hash algorithm does not
+degrade significantly;
+2. The maximum chain length rise significantly, potentially degrading
+worst-case performance (ignoring other code in avc_search_node function).
 
-[...]
+Details:
+url: https://gist.github.com/zhr250/cb7ebca61ff5455098082677d75b1795
 
---=20
-Regards,
-Pratyush Yadav
+I will modify the hash algorithm in the avc_hash function and collect data
+again to see if we can achieve performance improvements.
 
