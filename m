@@ -1,106 +1,138 @@
-Return-Path: <linux-kernel+bounces-811189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93205B525B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:20:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA3EB525B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4763B218D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:20:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852F31C27FBA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 01:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DB019644B;
-	Thu, 11 Sep 2025 01:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2481990D9;
+	Thu, 11 Sep 2025 01:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwXNKMFS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mVWoWeFh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D92346BF;
-	Thu, 11 Sep 2025 01:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4287E8634A;
+	Thu, 11 Sep 2025 01:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757553613; cv=none; b=TR17OvvjrqXtkm18W5BEC7DI3eZYeg/tHV30hLmH5AWNsYYtFjQ7th5d4+uBZRO1pdUs2tfJtPuFMOA7K38zU1kfADhR/zD0feu6IDP+P4vd7ZNsXI4QrbTkWJZzEMwgcpOB/NYjVN3UtBdfAp+bo/ukM541+BKsA1yHfYgI9rE=
+	t=1757553624; cv=none; b=U2x2Cvf9xL20maTcJ77yZT22N1Dr3chVLZp2tfwRPWnffPZtwEcDZYs8yL9isSnGTZ/qfuLLR5+0Mb/nWtyRf8YpBrk225jVyTlbWwjb9IR4r6EjcpMu/OMLL7eFGl1cHJu/yMsx974K91bA3K/dj1ABsaiUMXwiu6yr2OvJmzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757553613; c=relaxed/simple;
-	bh=JrsAE3DudXpygIBh+cQxJTpyw6cSMLRJAioIz1JeHQc=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=bDAu4uSBYq03r2y48VoUL8NijfsqGbA/JRc07vicHgYhoywl8Jbj1aHb1wnc/A2A7q1lUSwaiXVeNWNr5G75hqZm8seXsPI5H7lfET2g6gR9nrlO9TbGNh7t8ldAxZSudm2FnDmukRgZFnxag2OFb2XSWFmokOhw/Bs0fOJycEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwXNKMFS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD9D7C4CEEB;
-	Thu, 11 Sep 2025 01:20:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757553612;
-	bh=JrsAE3DudXpygIBh+cQxJTpyw6cSMLRJAioIz1JeHQc=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=jwXNKMFSd+Z+48vmfPOHspdim+MokURq4pIkiDVsU6gg/7eGdKMJQA5o8vFCoO/A7
-	 VvnFcQhBawSk0/MBXrI+Fgb70Pomccs+Jc/M07vOF5nN4rLd8bgPKDeLT7Z0UBRlKp
-	 Doc4INHpRjbKLnSntuT5hWugvD7fJ1NL49FJ+Sxg+BlAjnQnVFdJTLQq5BpqX0SZTf
-	 +x6N0BqxP43CVwi2fjYD2TKqZ17tGBAROErHEj2NIslyls04lsNcTh9kWXndouj7Or
-	 b4EGy39tuIRPzWbm4V0VSQU9e7ozEaldfsOj7KxsHqpwJKrF4YHq9jjwYr/x6+9HPk
-	 tUqXoaz3KDsMA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE00A383BF69;
-	Thu, 11 Sep 2025 01:20:16 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757553624; c=relaxed/simple;
+	bh=o6WRffcEM/8Gti6ksmiZu/eNzoCqTn5niA+O9XhwlAM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qjUEwTa0sA4++VYn0QWZYlXG/v0BJTEAn5shslyczV8YrsxIHWFQy6JpUAWIWr6PJfmOboVi2S0JRisu2Q0ayn5ThT+JKxxszyRK2DMqHRBTNXRKpv7Pd6sqQfIQFZtak7WzhLHvQXDOwQnBpb/MBUslRdtLXaHSBOUy1Qh8RPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mVWoWeFh; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757553622; x=1789089622;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=o6WRffcEM/8Gti6ksmiZu/eNzoCqTn5niA+O9XhwlAM=;
+  b=mVWoWeFhmA8+BFxH2lr2u+HE5EIk+B5AmU7k3itQM68GksnPSsxQe9Rc
+   1PDBAuectALHSjxxl3uwrqyxvphgNf87CNuR7YBiCuRAMBKKUwz1U2fva
+   EusPCcBAid2EhOdN2O5SM7Z406NoZY/smd5BPTF94EeHco979+oafHaO3
+   cCUxaeKwkWjhNEpXeN0gZvsRvscrynPfek4fuoRHU4u1gHt1j5xkYdw3O
+   8CDFXZh9eZmsL06TGTpmHnl5BHRX1UVZh8nKT8SnSzaEgDcunOb2wTbPI
+   2NBScHo25kbVDxxvuVmDAe/GrWkhrR0Z5hgpPomKhy2xxsQtc/SqJRJCQ
+   Q==;
+X-CSE-ConnectionGUID: FWRsP/UnRRqJVfaee71upw==
+X-CSE-MsgGUID: eIaD03YCQjGpVeewzrAQHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="62509125"
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="62509125"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 18:20:21 -0700
+X-CSE-ConnectionGUID: nti9w0Y3SZSPtxjkz66Ebw==
+X-CSE-MsgGUID: TqIHeK1OTEyiZWGkno9aZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
+   d="scan'208";a="173119643"
+Received: from unknown (HELO [10.238.3.254]) ([10.238.3.254])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Sep 2025 18:20:17 -0700
+Message-ID: <3b3d361e-9543-4155-8837-037be854332f@linux.intel.com>
+Date: Thu, 11 Sep 2025 09:20:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next 0/8] tools: ynl: fix errors reported by Ruff
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175755361550.1619866.7130732289820892310.git-patchwork-notify@kernel.org>
-Date: Thu, 11 Sep 2025 01:20:15 +0000
-References: <20250909-net-next-ynl-ruff-v1-0-238c2bccdd99@kernel.org>
-In-Reply-To: <20250909-net-next-ynl-ruff-v1-0-238c2bccdd99@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: donald.hunter@gmail.com, kuba@kernel.org, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, horms@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 09 Sep 2025 23:07:46 +0200 you wrote:
-> When looking at the YNL code to add a new feature, my text editor
-> automatically executed 'ruff check', and found out at least one
-> interesting error: one variable was used while not being defined.
-> 
-> I then decided to fix this error, and all the other ones reported by
-> Ruff. After this series, 'ruff check' reports no more errors with
-> version 0.12.12.
-> 
-> [...]
-
-Here is the summary with links:
-  - [net-next,1/8] tools: ynl: fix undefined variable name
-    https://git.kernel.org/netdev/net-next/c/7a3aaaa9fce7
-  - [net-next,2/8] tools: ynl: avoid bare except
-    https://git.kernel.org/netdev/net-next/c/287bc89bb41f
-  - [net-next,3/8] tools: ynl: remove assigned but never used variable
-    https://git.kernel.org/netdev/net-next/c/02962ddb3936
-  - [net-next,4/8] tools: ynl: remove f-string without any placeholders
-    https://git.kernel.org/netdev/net-next/c/d8e0e25406a1
-  - [net-next,5/8] tools: ynl: remove unused imports
-    https://git.kernel.org/netdev/net-next/c/389712b0da1f
-  - [net-next,6/8] tools: ynl: remove unnecessary semicolons
-    https://git.kernel.org/netdev/net-next/c/616129d6b421
-  - [net-next,7/8] tools: ynl: use 'cond is None'
-    https://git.kernel.org/netdev/net-next/c/10d32b0ddcc1
-  - [net-next,8/8] tools: ynl: check for membership with 'not in'
-    https://git.kernel.org/netdev/net-next/c/f6259ba70e7e
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] KVM: selftests: Add timing_info bit support in
+ vmx_pmu_caps_test
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Jim Mattson <jmattson@google.com>,
+ Mingwei Zhang <mizhang@google.com>, Zide Chen <zide.chen@intel.com>,
+ Das Sandipan <Sandipan.Das@amd.com>, Shukla Manali <Manali.Shukla@amd.com>,
+ Yi Lai <yi1.lai@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250718001905.196989-1-dapeng1.mi@linux.intel.com>
+ <20250718001905.196989-3-dapeng1.mi@linux.intel.com>
+ <aMH1xwsK1eTjJh71@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aMH1xwsK1eTjJh71@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
+On 9/11/2025 6:03 AM, Sean Christopherson wrote:
+> On Fri, Jul 18, 2025, Dapeng Mi wrote:
+>> A new bit PERF_CAPABILITIES[17] called "PEBS_TIMING_INFO" bit is added
+>> to indicated if PEBS supports to record timing information in a new
+>> "Retried Latency" field.
+>>
+>> Since KVM requires user can only set host consistent PEBS capabilities,
+>> otherwise the PERF_CAPABILITIES setting would fail, so add
+>> pebs_timing_info bit into "immutable_caps" to block host inconsistent
+>> PEBS configuration and cause errors.
+> Please explain the removal of anythread_deprecated.  AFAICT, something like this
+> is accurate:
+>
+> Opportunistically drop the anythread_deprecated bit.  It isn't and likely
+> never was a PERF_CAPABILITIES flag, the test's definition snuck in when
+> the union was copy+pasted from the kernel's definition.
+
+Yes, would add this in next version. Thanks.
+
+
+>
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> Tested-by: Yi Lai <yi1.lai@intel.com>
+>> ---
+>>  tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c b/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
+>> index a1f5ff45d518..f8deea220156 100644
+>> --- a/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
+>> +++ b/tools/testing/selftests/kvm/x86/vmx_pmu_caps_test.c
+>> @@ -29,7 +29,7 @@ static union perf_capabilities {
+>>  		u64 pebs_baseline:1;
+>>  		u64	perf_metrics:1;
+>>  		u64	pebs_output_pt_available:1;
+>> -		u64	anythread_deprecated:1;
+>> +		u64	pebs_timing_info:1;
+>>  	};
+>>  	u64	capabilities;
+>>  } host_cap;
+>> @@ -44,6 +44,7 @@ static const union perf_capabilities immutable_caps = {
+>>  	.pebs_arch_reg = 1,
+>>  	.pebs_format = -1,
+>>  	.pebs_baseline = 1,
+>> +	.pebs_timing_info = 1,
+>>  };
+>>  
+>>  static const union perf_capabilities format_caps = {
+>> -- 
+>> 2.34.1
+>>
 
