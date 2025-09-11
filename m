@@ -1,69 +1,95 @@
-Return-Path: <linux-kernel+bounces-811743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C746CB52D5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:32:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 099E9B52D5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8285C3A8A8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E6C3AD3C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723512EA476;
-	Thu, 11 Sep 2025 09:32:46 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3518207A32;
-	Thu, 11 Sep 2025 09:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65932EA481;
+	Thu, 11 Sep 2025 09:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="QC+t+69u"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65AF2EA147
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757583166; cv=none; b=VM/m82d4MyYfHBpYZ1OwFJ4t2qg8Sf0qZjSuDsryDQCmd6QBW8mqx30cp1kTbL/kIY7/uMzc01cg9jM6B2QwDvSufZczn/wi8Z69yT/VRXRsWTsr72lp7zi2Vwrlo8VEgmZyjlwxP8NlOsEhhhVrNuzdtwqPbHNCLAf5+cb+IaU=
+	t=1757583184; cv=none; b=eXorWsdDB9vbFHerPFZ8A/5XJm1cc7l9wE/Ei+3iVNbWtnGqoMVaVdC8PbnHpQHw7XFCq010yzYAD7V8JiT0JsinRrqmr1rRHQhEld203ejN4w+vg80sWjlU3j6jjbrp+yxhsK6bK5YS+I9+OQr13K9SYUAn2tCyXDvjwpLACqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757583166; c=relaxed/simple;
-	bh=6XWm9UEcZAEjNVEeWdfrgb1ntSWKErVvbenCRbHpvf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BDS/dbpmT/h7t8BydHb1adGA3lUFnyvs/4bohZL9ElCfUWnJ0S43DlKo6pB0r0DqCVuxcrBbudrp5V6xhybkhjk63zjePQaL6Ukk/xbsErnk4iyXLYezElj8lallqCPW3tuCOjZrUVU/pihmPzAErfrdUF9xLdM/ixWeycLzSVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EE58153B;
-	Thu, 11 Sep 2025 02:32:35 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 820E53F694;
-	Thu, 11 Sep 2025 02:32:43 -0700 (PDT)
-Date: Thu, 11 Sep 2025 10:32:41 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 2/2] tools headers: Remove unused arm32 asm/kvm.h copy
-Message-ID: <20250911093241.GD12516@e132581.arm.com>
-References: <20250910-james-tools-header-cleanup-v1-0-7ae4bedc99e0@linaro.org>
- <20250910-james-tools-header-cleanup-v1-2-7ae4bedc99e0@linaro.org>
+	s=arc-20240116; t=1757583184; c=relaxed/simple;
+	bh=6zJl6jcafeCZ6YmJZKiwF1mOHdjn2LFeup/aII/uTkE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dDj67kfXULRKQq8B+pMHztfJNPgSb6irUNaQgMZmzgmz72ENmSR7z7PM+sP3Tf8wI0ztcDiS39UHFXp/LhE1xiEepJDbIElj6O43v2BbA1DA8PYqGFZz66PFlpJ4+ket3xBtW92C+Hg5jsjfrsdC3Ke5lKKvDimgMxh0gM4THks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=QC+t+69u; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=6zJl6jcafeCZ6YmJZKiwF1mOHdjn2LFeup/aII/uTkE=;
+	t=1757583182; x=1758792782; b=QC+t+69uG4DucNnuK/YfvucwvFZUNe4Gccx1wH0hgKL6Zi2
+	ch4Qkl16qFgxchDiDpaYI7UMsH1JZ5+ZdzHLvw7mw1jgImQUZXBfrMGlCQHE5ectmDaPdDrT6Yu8G
+	cCFmhKKXNFa/y76hX5uwgQn+PV2ytjQ2Buv4RdiDHurx0LTSZp3+If/1V84FVNFVM8aS+g94yYp9R
+	xXq2iCHfw5HfsKtsBYzy1PVXh0Tq/9WSBULDfxRjhmCTM2lv9H19BP35QOXTzwIEKB1XPaAKqAdKg
+	vKHke2r2WJVT326aBvybWXFNdHv3sCLdzY9sFbUz5hk873zVWHC7clFuZecWbDhA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1uwdfk-0000000F14S-3HyQ;
+	Thu, 11 Sep 2025 11:32:57 +0200
+Message-ID: <03cb4661a6135a641c5a3779f2cb424356b8e345.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 08/10] um: Add initial SMP support
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Tiwei Bie <tiwei.bie@linux.dev>, richard@nod.at, 
+	anton.ivanov@cambridgegreys.com
+Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	benjamin@sipsolutions.net, arnd@arndb.de, tiwei.btw@antgroup.com
+Date: Thu, 11 Sep 2025 11:32:56 +0200
+In-Reply-To: <20250810055136.897712-9-tiwei.bie@linux.dev> (sfid-20250810_075311_619208_642A3A1A)
+References: <20250810055136.897712-1-tiwei.bie@linux.dev>
+	 <20250810055136.897712-9-tiwei.bie@linux.dev>
+	 (sfid-20250810_075311_619208_642A3A1A)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-james-tools-header-cleanup-v1-2-7ae4bedc99e0@linaro.org>
+X-malware-bazaar: not-scanned
 
-On Wed, Sep 10, 2025 at 02:30:12PM +0100, James Clark wrote:
-> arm32 KVM was removed in commit 541ad0150ca4 ("arm: Remove 32bit KVM
-> host support"). None of the kvm selftests are compiled for arm32 and
-> it's not indirectly included from anywhere either, so delete it.
-> 
-> Signed-off-by: James Clark <james.clark@linaro.org>
+On Sun, 2025-08-10 at 13:51 +0800, Tiwei Bie wrote:
+> From: Tiwei Bie <tiwei.btw@antgroup.com>
+>=20
+> Add initial symmetric multi-processing (SMP) support to UML. With
+> this support enabled, users can tell UML to start multiple virtual
+> processors, each represented as a separate host thread.
+>=20
+> In UML, kthreads and normal threads (when running in kernel mode)
+> can be scheduled and executed simultaneously on different virtual
+> processors. However, the userspace code of normal threads still
+> runs within their respective single-threaded stubs.
+>=20
+> That is, SMP support is currently available both within the kernel
+> and across different processes, but still remains limited within
+> threads of the same process in userspace.
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+Another thing that isn't covered is anything relating to interrupt
+affinity, I guess? Is that automatically not working, or will it look
+like you can change things but that not do anything?
+
+I don't think it's important now (though eventually I would actually
+like to have it for our simulations), but was just thinking about it.
+
+johannes
 
