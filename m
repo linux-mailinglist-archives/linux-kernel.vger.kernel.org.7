@@ -1,159 +1,173 @@
-Return-Path: <linux-kernel+bounces-812608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB0DB53A47
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:22:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 919D8B53A4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067C41CC6FC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:22:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 012937AB613
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3000135FC36;
-	Thu, 11 Sep 2025 17:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857E835FC3D;
+	Thu, 11 Sep 2025 17:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1+7enbL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrD2ri/X"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BCB22AE45;
-	Thu, 11 Sep 2025 17:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE202322DB5
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757611340; cv=none; b=fgLugqNTu3KvqQ9wSTMDq2v5x1vlOydmLRvjokgSFG0wj01LHOhgI/FsFlzeQl87Oe3mgCkJCg7jtwRDjOTFhX6o/3YV3ciopRFJp7K6yJvgv+NK4Dv2nzD6au5YykUn4rI7ad5VUCV8KUZZfqRxNJ4gjnEwPZrumUJAGW3o8TM=
+	t=1757611353; cv=none; b=QqoICEIsDpZJCsi0BOCgbP61NcLUOYYjL27LjDaWqrdo2OsFFS2fo3xTmf/y6AsKwIGPvlYnMsiEekJzBN0CjIIwop/2TVm/YY5zEJEB9BZzBWyGjyfQ3JT88EpPtKi7JaOi0+Fw4SgfcjkRLZjwFh4kEHPwDtCMvUdMMYB+6Ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757611340; c=relaxed/simple;
-	bh=sPSofgC3H7kMscp1zOTagbsJvZ1aMo9X58h+p2xWCnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h928UzHSWkQTFgbLlZBpERdsFKdmrUVvLQ/aegStVzVIYk2z+eK05zxpiTeSpTyjPB/dSU/8S2xhyeyFjWJKo3GvvLbv0+YbOlzO7tOfh/47yn4kssdmTFq1nX5OMP7+gUYPHAwukMsDx6OQA4c+pt6m23ugp0SNCrG0aucUlVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1+7enbL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84923C4CEF0;
-	Thu, 11 Sep 2025 17:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757611339;
-	bh=sPSofgC3H7kMscp1zOTagbsJvZ1aMo9X58h+p2xWCnU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=G1+7enbLihV6SDGfZSqxHKHrRGJEIJ1gduStBJwioMaSGvSrDro5SnP7odsXQu7av
-	 uoIdyU6XkMu/TA+ZUnOS0GbIow087ptVkUoQzHLJ8SSsZZhr5AOXSBYeLiwsFUR5D6
-	 KKSR5fM2IJVzGAMBL1w842tGJur3qc9FkHqIE4+zuM9MIeVejY1wlTnfrzZ9BRA9hT
-	 ybmK1NlIOEurPFOrx0TLepwIphn5g9vpDAzG8ZYkRJyrX9xgWXE/1fEeXZH9WFgS4I
-	 Eae0DHhEItjtAMBxXrBQ3YMvHrzqUHO3YJXneeIVquJ0V5NHmilGLtPSvltYCTKVJe
-	 G6O3O0Y5dpywA==
-Message-ID: <abfaef6f-dd40-441d-86ec-7cd37c1e06b5@kernel.org>
-Date: Thu, 11 Sep 2025 19:22:11 +0200
+	s=arc-20240116; t=1757611353; c=relaxed/simple;
+	bh=6SGthHS4qrvYOf3o0liwoAGvJXCeYkPogYQn1CUGiwo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=THtIAKrwYbX7FDv4lvwH9vY3KZztqYarjWWrz7aG7+++8C0vcRXt91feLDB6SV3FemRS512XFIxqaP172zrqy92+Gmdr05tp3QW5JmRoZjscfrRAkzja9wFEhE+MQD+ClfDqgYRO2CEKkCunW7JkE48SwvjzxpoYKMmq1JsIHOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NrD2ri/X; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e751508f21so771640f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:22:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757611350; x=1758216150; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=al+SGVJLrQ5Ai/9RbesG/7WJAj4tFEzw9mmlTmlbQoY=;
+        b=NrD2ri/X+HgTLoJdS5cK3jk/4XvZ/tr7aKsdf6UxEr52HXyXTc1RGcHizDLthifJcd
+         bES/yBJ9mtCLx3aUJ5G9XNO44NLVj5t8DkPubgRI64qkdUuVM5PMvqFLiVy3CZlY9Rx0
+         ErfvxL7JWpX7xgAHdZrLJ/346oPk1AZ8ep7R01fTjmEtErwZzpSJW3SMQQh4F+BXaJrU
+         dr7Wb9EPHMb5gGnBq5MzpVjzwJyooz6WAtLyyv2Qo6IPBnrdTtTVWk+AyD0zTa1wtUXI
+         6on7dzQIFFdfISzzhnvQ6hsCr2JMYsk7LC1tO7Nf9jOdAwQOSJc/hvLNhEaGZ0zF/4nd
+         LAqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757611350; x=1758216150;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=al+SGVJLrQ5Ai/9RbesG/7WJAj4tFEzw9mmlTmlbQoY=;
+        b=KCTbhwXpuEPDvZCOAoVkgL/wLufd1QCIzvrs44a3om2Mhkgrp8WuGcWNqx4doGlkPf
+         rGY8UUoY30ECLzN6pQDe1Hy+n2U4dvzlN9cW6tOqJkKbNQJTbzt9S9HMjWOLv3J71fvP
+         SsaraZkH/aDv1r5RrU+5574j6LgwhEs0GoIpJVdcKhsTJYf6Uvd6L6tZtanSnCLXHPXz
+         SxyxwmB6E/oComDNApWX3akR0TcT0S8CT/m4psmZmUfwhPEcY2BLU6/AleSntTTFRl9I
+         x+Iw/CI09BSKxdIfX25NrUxpijoJ+M0m6Ikzvwu4C5pQOoaph89uQ9y08jmL4dfj48kx
+         cy7g==
+X-Forwarded-Encrypted: i=1; AJvYcCV1Bq5noKcH0Snew7+AIoAuytNDqdSu5A+8O7QW0t8f9w9JByCbgIPVsp/2vqQXmKOppz72xz4bP5jgckI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmGs5d3n6Dccoq3Bj0fb36bJSg5q+OBDNJmEgfmffwmlWJd4TY
+	kvkJSyrc7lasygIQhipOkpojigK4dbucETknNdtGCJFlpmYjUAgpQtou
+X-Gm-Gg: ASbGncs7IwhlQj0r8M5uAgqX/6rtDMcQVPAROrQS7v9jxPX5w/xDvsuyu0xoWDd7HB0
+	V8HViT6KrU9WQpj7YKRQ7pyMoe0stSiD5td2aaoQSq/b7WRhcZyYDTJ6uLFFyDB3bXCBJDO4Zmp
+	DbDo+8uI8S0Tm3Nu412HOsfrWJg6D67P10Xnw0Guwysja4v+vVmTWV02+bMFezhWtD+6rQ9KTWL
+	Ft3Dn88bACQGETSggSD5i4c+62gSLHPaqkDizDCOikcZ2t+OVbBNtBFoWh9a9HX9wQRvHxU0C8B
+	NdY8PYIlt8jVgH+T3OtbGDSELQnDxYflIt+6wwXGOTqhgyX+7uj230LEGuMbEeSgjdbV9WD6s04
+	OotxCUqpG4wNEStXDt66uZZpYAIjIhYZRpSy+LbK6kbp54yxf62PftLLbP+8RkEoFtKe3x31QqS
+	YLQTU6X+4d
+X-Google-Smtp-Source: AGHT+IEkwCAU/UDUcPwD0Y2oC6Cjayd4uEvKVlhGx0N1h1LmikPqq6SKErYIBBoArS7lWmOvMtPcYw==
+X-Received: by 2002:a05:6000:26c1:b0:3e3:2c0b:dc3d with SMTP id ffacd0b85a97d-3e7657b9cdcmr160359f8f.17.1757611349960;
+        Thu, 11 Sep 2025 10:22:29 -0700 (PDT)
+Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607e13f4sm3156998f8f.57.2025.09.11.10.22.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 10:22:28 -0700 (PDT)
+Date: Thu, 11 Sep 2025 19:22:26 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Thierry Reding <treding@nvidia.com>, 
+	Svyatoslav Ryhel <clamor95@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
+Message-ID: <o6agzaasqcnfibvtf5hgvjxlbrcgz4ulld657xfduhitk465pd@l27ge5ilkpjv>
+References: <20250829122235.119745-1-clamor95@gmail.com>
+ <wmbbnybxsnbhnkifqfwp7g7bklurxgx3qe4djxcwdcs6aketcy@kqiwizt46gee>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] tty: serial: samsung: Remove unused artpec-8 specific
- code
-To: Ravi Patel <ravi.patel@samsung.com>,
- 'Geert Uytterhoeven' <geert@linux-m68k.org>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, jesper.nilsson@axis.com,
- lars.persson@axis.com, alim.akhtar@samsung.com, arnd@kernel.org,
- andriy.shevchenko@linux.intel.com, geert+renesas@glider.be,
- thierry.bultel.yh@bp.renesas.com, dianders@chromium.org,
- robert.marko@sartura.hr, schnelle@linux.ibm.com, kkartik@nvidia.com,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-arm-kernel@axis.com,
- ksk4725@coasia.com, kenkim@coasia.com, smn1196@coasia.com,
- pjsin865@coasia.com, shradha.t@samsung.com
-References: <CGME20250911141714epcas5p29f591a1d645c9c69dc5b7d2c2d12af50@epcas5p2.samsung.com>
- <20250911141605.13034-1-ravi.patel@samsung.com>
- <20250911141605.13034-4-ravi.patel@samsung.com>
- <CAMuHMdVe-FULHWk3QCBENG7TsbEZyxj0N5shhESxWBWd49JmOw@mail.gmail.com>
- <6df0e227-896b-438a-913e-95b637aa2b14@kernel.org>
- <8aeda67e-404e-4deb-ac90-015f2325ef64@kernel.org>
- <000101dc2335$ccd62f60$66828e20$@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <000101dc2335$ccd62f60$66828e20$@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 11/09/2025 18:04, Ravi Patel wrote:
->>>>> -OF_EARLYCON_DECLARE(artpec8, "axis,artpec8-uart",
->>>>> -                       s5pv210_early_console_setup);
->>>>>
->>>>>  static int __init gs101_early_console_setup(struct earlycon_device *device,
->>>>>                                             const char *opt)
->>>>
->>>> Removing these breaks backwards-compatibility with existing DTBs,
->>>> which lack the new "samsung,exynos8895-uart" fallback compatible value.
->>>
->>> This was just applied, so ABI break would be fine. It should be however
->>> clearly expressed in the commit msg.
->>>
->>> I have a feeling that not much testing was happening in Samsung around
->>> this patchset and only now - after I applied it - some things happen.
->>> But it is damn too late, my tree is already closed which means this is
->>> going to be the ABI.
->>
->> Ah, no, I mixed up patches with recent DTS for Artpec-8. This serial ABI
->> was accepted three years ago (!!!), so you are Geert absolutely right -
->> that's ABI break.
-> 
-> Thank you for your review.
-> 
-> The DTS patches for ARTPEC-8 is added recently (https://lore.kernel.org/linux-samsung-soc/20250901051926.59970-1-ravi.patel@samsung.com/)
-> Before that, there was no user (in DT) of "axis,artpec8-uart" compatible.
-> So I am not convinced of ABI break (considering patch #1 and #2 goes first with review comment fixes)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4m23ttv7p46bf745"
+Content-Disposition: inline
+In-Reply-To: <wmbbnybxsnbhnkifqfwp7g7bklurxgx3qe4djxcwdcs6aketcy@kqiwizt46gee>
 
 
-ABI is defined by bindings and implemented by kernel. Having DTS user is
-irrelevant to fact whether ABI is or is not broken.
+--4m23ttv7p46bf745
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 0/4] clk: tegra: add DFLL support for Tegra114
+MIME-Version: 1.0
 
-Having DTS user determines the known impact of known ABI breakage.
+On Mon, Sep 01, 2025 at 04:57:37PM +0200, Thierry Reding wrote:
+> On Fri, Aug 29, 2025 at 03:22:30PM +0300, Svyatoslav Ryhel wrote:
+> > DFLL is a dedicated clock source for the Fast CPU. The DFLL is based on
+> > a ring oscillator and translates voltage changes into frequency
+> > compensation changes needed to prevent the CPU from failing and is
+> > essential for correct CPU frequency scaling.
+> >=20
+> > ---
+> > Changes in v2:
+> > - dropped 'drivers:' from commit title
+> > - aligned naming to Tegra114
+> >=20
+> > Changes in v3:
+> > - add DFLL support for Tegra 114 was split into dt header addition,
+> >   DFLL reset configuration and CVB tables implementation.
+> > - added cleaner commit message to dt header commit
+> > - added T210_ prefixes to Tegra210 CVB table macros
+> >=20
+> > Changes in v4:
+> > - expanded commit message of car header adding commit
+> >=20
+> > Changes in v5:
+> > - renamed tegra114-car.h to nvidia,tegra114-car.h
+> > ---
+> >=20
+> > Svyatoslav Ryhel (4):
+> >   dt-bindings: reset: add Tegra114 car header
+> >   clk: tegra: add DFLL DVCO reset control for Tegra114
+> >   clk: tegra: dfll: add CVB tables for Tegra114
+> >   ARM: tegra: Add DFLL clock support for Tegra114
+>=20
+> Hi Michael, Stephen,
+>=20
+> Given the cross-dependency between the dt-bindings header, the driver
+> and the DT, do you want me to pick this up into the Tegra tree and
+> resolve the dependency there?
 
-Best regards,
-Krzysztof
+I've applied these four patches to the Tegra tree now and plan to send
+the drivers/clk bits to you as a pull request. Let me know if you have
+any objections.
+
+Thanks,
+Thierry
+
+--4m23ttv7p46bf745
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjDBVIACgkQ3SOs138+
+s6EsbhAAveaZCF46Un/jnPJTP0ZvUFKqK9n8UqAdtzZLD+01XEz7gWGYGh3c7296
+Exo4ShFpAdHtu0ebHjCPd7xNk97wRwKMx8VxhjBST4RBW7hqZSjs/b4ErAY0i7Ya
+qnLXVUTqJxMD8RjinA0ndzyIzxp2VBRKQlhC/9EUkHBE5BPWcndfrGtwy2mWL417
+iDSLGZiGx+XT9a2XKV04kioYJbgfPASIvDKJU9XtLTVKU238rvhfolLhuZGsN8eE
+Fgadt1EwK7msPvrVJZVgp9SiM9riqzVHfIPnPcUC9fLvHjiVjBeSzXuH/88yYObE
++xdh0n77T2iNhwvV2g403iWvmmkDHc2ofy7NP37cvj87p+FsAGnFF5Fss4zpfxl9
+pzRYn6EuYS1dm9KNGRvphvOqSCzUeOooFEMSz+UuH9v5WpauW8njKUk5TZDPoHaX
+LxRg5de6hCkoN4sntE4MLyJKMuu67IkG8/RyKNF0Uxv9S75URyk3a89doNr/nqoN
+CK5aaxRrmR9W8l573himO4rrVw/A/x8CwR52HZrXBXwj0X4ILbRMQVVjPppLdeg6
+/BZFb5jUWFfFNz0x2Ws/IkojZprXFsoaMu1i5fTmkLbPOWUmkMj7neP1lDtvmxCS
+p4ZPhDJA6UHCnzCRCEOLd2he0jSxufBBNXjZdv9jo5i8PpGeq6g=
+=F/Cm
+-----END PGP SIGNATURE-----
+
+--4m23ttv7p46bf745--
 
