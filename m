@@ -1,91 +1,80 @@
-Return-Path: <linux-kernel+bounces-812514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E09B53910
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:23:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58791B53923
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A92BE586EC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:23:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A39C2B6193E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAF436932C;
-	Thu, 11 Sep 2025 16:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qGf+UbSM"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E16C369325;
-	Thu, 11 Sep 2025 16:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E393570C3;
+	Thu, 11 Sep 2025 16:22:28 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B704353376;
+	Thu, 11 Sep 2025 16:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757607704; cv=none; b=og22/mEZ3BoBXZudufy0NC7C7sI0kp+vOHFiaTj80QCMhBLQNOUqBAwJevl6Dfq9TNlEzn+N3CKrQpq2aklcgZFN5vBWdHG5FDeNO7asbD2g65iFrwjFRi/q8EnEcD4PX9Zf17Fty6W5faZu+LGC7sVebPKGcF+qB1lgz3ge1l4=
+	t=1757607748; cv=none; b=eu8y61/vwxwb2m53amTJEZ0NXyJHMUv8qX0JITZeyxfwD/04qvAl0dJUf0A65QkfTevd9zp2ZSsRjZsAtMj8kzhWv80DbpdS3RtL41MwI2gx+k0gzRhAToENmTGkGGT9zYa9+DL5GKv4qVL2nUfnSzXIjk5RM41gnx8MHOMHO3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757607704; c=relaxed/simple;
-	bh=GodpCmrKLL3EdmdoxCdmcfKHCBD/nTts2aDBxkcPeTY=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KvKAIUEr2/HJ++iFiI/jV6vjTmkwxC0YXwoBg2LeL0PpbY2E4kJzaNJgNEt13qwFTVzH4JznCypEbDQLxme1Nidv1EBvJKfGLwneqjjOfmydmN7nmdwKLyLITBJniRnOruIdEv4bJgOWJDB1aBjlJ3VFqbKTMJMN7kihOWbO10k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qGf+UbSM; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.64.208.243] (unknown [52.148.140.42])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 100F2211AA2B;
-	Thu, 11 Sep 2025 09:21:41 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 100F2211AA2B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1757607702;
-	bh=Lsfv+w79ZkuH1nCaWnwi79l4YRkl4gV9wTkGdE4xfus=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=qGf+UbSMYa/mOMoz+tqUVa8lwdvZXltO60pPRXvrSAXZYrKgPFik5QRmCYsDm9+On
-	 44f9PUDnlO0UeW/szlTitmtemXH9y8mntKJWH6YsSVld8mzZlmimNIO38ha7wgso68
-	 YVBooGXhDWv7f1VTL7pV67prf7YhWNGRggSI/eb8=
-Message-ID: <56eb6aac-19be-40f2-ba2e-a0ca8fcb3df2@linux.microsoft.com>
-Date: Thu, 11 Sep 2025 09:21:42 -0700
+	s=arc-20240116; t=1757607748; c=relaxed/simple;
+	bh=8Id42XX2zqGQ6Zh1PELYGc9D6wQEYttKQHGpyDrfKxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZC91yh2AUvJmEUCeROYLtk9ZuSEZ6vwUUxGXqRoNgpx04P8uZosqVamHCWDNlu7/LDgnWCPTWn4Bvjq/U7S3FUqL17CaUVoysSs4dnaXmm6MbOmyIGoyXBENdnzdsluvBIb8TFLzHxUTxEoU5hTVyRs6164GkHuPni+V1yoN+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A51CC4CEF0;
+	Thu, 11 Sep 2025 16:22:25 +0000 (UTC)
+Date: Thu, 11 Sep 2025 17:22:22 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Yeoreum Yun <yeoreum.yun@arm.com>, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
+	ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v7 0/6] support FEAT_LSUI and apply it on futex
+ atomic ops
+Message-ID: <aML3Ps1xeTCVCdTn@arm.com>
+References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+ <aMLmNnehYX6gqEIf@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
- prapal@linux.microsoft.com, tiala@microsoft.com, anirudh@anirudhrb.com,
- paekkaladevi@linux.microsoft.com, easwar.hariharan@linux.microsoft.com,
- kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com
-Subject: Re: [PATCH v2 2/5] mshv: Add the HVCALL_GET_PARTITION_PROPERTY_EX
- hypercall
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-References: <1757546089-2002-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1757546089-2002-3-git-send-email-nunodasneves@linux.microsoft.com>
-From: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
-Content-Language: en-US
-In-Reply-To: <1757546089-2002-3-git-send-email-nunodasneves@linux.microsoft.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMLmNnehYX6gqEIf@willie-the-truck>
 
-On 9/10/2025 4:14 PM, Nuno Das Neves wrote:
-> From: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
+On Thu, Sep 11, 2025 at 04:09:42PM +0100, Will Deacon wrote:
+> On Sat, Aug 16, 2025 at 04:19:23PM +0100, Yeoreum Yun wrote:
+> > Since Armv9.6, FEAT_LSUI supplies the load/store instructions for
+> > previleged level to access to access user memory without clearing
+> > PSTATE.PAN bit.
+> > 
+> > This patchset support FEAT_LSUI and applies in futex atomic operation
+> > where can replace from ldxr/stlxr pair implmentation with clearing
+> > PSTATE.PAN bit to correspondant load/store unprevileged atomic operation
+> > without clearing PSTATE.PAN bit.
+> > 
+> > (Sorry, I've sent wrongly for patch version 7 and resend it.
+> >  Again, sorry for mail-boom).
 > 
-> This hypercall can be used to fetch extended properties of a
-> partition. Extended properties are properties with values larger than
-> a u64. Some of these also need additional input arguments.
-> 
-> Add helper function for using the hypercall in the mshv_root driver.
-> 
-> Signed-off-by: Purna Pavan Chandra Aekkaladevi <paekkaladevi@linux.microsoft.com>
-> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Reviewed-by: Anirudh Rayabharam <anirudh@anirudhrb.com>
-> Reviewed-by: Praveen K Paladugu <prapal@linux.microsoft.com>
-> ---
->  drivers/hv/mshv_root.h         |  2 ++
->  drivers/hv/mshv_root_hv_call.c | 31 ++++++++++++++++++++++++++
->  include/hyperv/hvgdk_mini.h    |  1 +
->  include/hyperv/hvhdk.h         | 40 ++++++++++++++++++++++++++++++++++
->  include/hyperv/hvhdk_mini.h    | 26 ++++++++++++++++++++++
->  5 files changed, 100 insertions(+)
+> I tried to review this but I can't find any details about FEAT_LSUI in
+> the latest Arm ARM. Where should I be looking for the architecture spec?
 
-<snip>
+Unfortunately, it's just in the public xml at the moment. Hopefully
+we'll get a release of the Arm ARM by the end of the year. Otherwise, in
+the private 2024 arch spec. Not ideal though.
 
-Reviewed-by: Easwar Hariharan <easwar.hariharan@linux.microsoft.com>
+If you'd rather wait until in turns up in the public spec, fine by me.
+
+-- 
+Catalin
 
