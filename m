@@ -1,93 +1,98 @@
-Return-Path: <linux-kernel+bounces-811870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1C1B52EE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:45:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A59DB52EE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B45DA022DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:45:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 892881B2730F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 247AB2561A2;
-	Thu, 11 Sep 2025 10:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NuT7IwUb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EE32701BB;
+	Thu, 11 Sep 2025 10:46:30 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F101288DB;
-	Thu, 11 Sep 2025 10:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5D21A5B8D;
+	Thu, 11 Sep 2025 10:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757587545; cv=none; b=VMx/jTuPig4Wy1PhXAQygfccm3BGpNfX5Nzd9hvVwWPfCAuRspt27lKSQXzC6PikDxgq1cdsDoj/BZ8cOdAtbQRPa+DccObVQ2B8EstwInmK4RcolMtJnxWzN1JqMlh4rBKBkfofIR28FgOgPM9Ajq3MhA3dtXngL6b9UT8F8R8=
+	t=1757587590; cv=none; b=JQr3+ybAAO/6asjzaFskr5xcNOV+AmH4g4o1CYIWWFvZzujAR7wRzFYunwLwEUl/pgDixhwCoQ6Td3Zgt51Y5cv0e0JW2rqe5X2XY4pIWvEphBdlk/ryrTQ+2F8UdI1mREt11YHLhbo6wji+x3wDqMNkvKxMBVu75r2gD1404tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757587545; c=relaxed/simple;
-	bh=PGyDk1kwqGlGnY3yqeZ/nZfsn2kc59VhhIU4X3i/eeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LI0cl6HmdwXhwypMxQCj+OcYf5N1Zx3XipGc4RYVMoJh8uMbMN+Co4R2mVQjyH+JrS/ZWrVwTviPZD7TH7qXJLHJg52jCaC0rOEmRW0ywFljNrZts74yMRznrTmD+rhbQ2dNscoAHtwhqwaXGV+JhvOUsgFhXJrlNYbyHbmhgn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NuT7IwUb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DFFFC4CEF0;
-	Thu, 11 Sep 2025 10:45:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757587545;
-	bh=PGyDk1kwqGlGnY3yqeZ/nZfsn2kc59VhhIU4X3i/eeU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NuT7IwUbgks03qK2f0vhYdkQCen+8efFQlrm47Cx6jX3sPXHFNHTMnraulcUqesJC
-	 B2lz34YXedawFyi4zm46L+nfH3bBrY1Ms7xsxIa3ehMFqKdp/laLj0xmSbFLSoM+8Q
-	 70Fa0AV6eM564L9iFrsiJgBBy5/7xymNcAw6FYfOY87bG+K8ItiAy1R4rendvueBdm
-	 p/Oz8zdiLGDojoD8iClA1zNi2gRbcTpRKcpqz8ZtE39gyFnrlZ3KZ70x4rFmTM017l
-	 5ld/W+ON8o4V794YJxICl4fpum2zWzewp5Dr3CgMP9FnqfACJvnlEkaPCHhllXCRRh
-	 dGIl3qz0hD/bw==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1uweoA-00000007A23-1Dov;
-	Thu, 11 Sep 2025 12:45:42 +0200
-Date: Thu, 11 Sep 2025 12:45:42 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 05/19] tools/docs: python_version: move version check
- from sphinx-pre-install
-Message-ID: <uuiuvshiofi23es4rr6mzjdruagua34la7vfsw3qo6ozwgs7vj@bskm4epl4twu>
-References: <cover.1756969623.git.mchehab+huawei@kernel.org>
- <784ca5070326558220cc275deaa046a274badebe.1756969623.git.mchehab+huawei@kernel.org>
- <12f948d2bb995d9321ce07d8765e00bcbd822402@intel.com>
- <20250910142427.61347215@foz.lan>
- <62eddeec2ac82b6631957a8ce1dea330fd6862f7@intel.com>
+	s=arc-20240116; t=1757587590; c=relaxed/simple;
+	bh=WAOZDn5QZ0vs3L1qbFBWRG00N1eyQ5jvWWLJJULHrHQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=R99EawzpPQVodYYep37LF5wx626fuV9OgnRvMlVhUW8i/ThWWGEvEpB/y5INQOqG35paTri9XVQ1tFpvsCJrDJR98FzEerIYnXAdo27iaIcd/TfbZh6NH09n7xeyfQYhfCvVF3b12Di3R/h39DamWx+PnYcr0+35NGppmy/zgi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMvMp6b6fz6L56J;
+	Thu, 11 Sep 2025 18:45:10 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id F0B2A1400D3;
+	Thu, 11 Sep 2025 18:46:25 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Sep
+ 2025 12:46:24 +0200
+Date: Thu, 11 Sep 2025 11:46:23 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2 02/29] ACPI / PPTT: Stop acpi_count_levels()
+ expecting callers to clear levels
+Message-ID: <20250911114623.00007cd3@huawei.com>
+In-Reply-To: <20250910204309.20751-3-james.morse@arm.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+	<20250910204309.20751-3-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62eddeec2ac82b6631957a8ce1dea330fd6862f7@intel.com>
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Sep 11, 2025 at 01:28:28PM +0300, Jani Nikula wrote:
-> On Wed, 10 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > Em Wed, 10 Sep 2025 13:14:33 +0300
-> > Jani Nikula <jani.nikula@linux.intel.com> escreveu:
-> >
-> >> On Thu, 04 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> >> > +        # Restart script using the newer version  
-> >> 
-> >> I thought the whole idea of restarting was completely rejected by
-> >> approximately everyone?!
-> >
-> > This patch is just moving the code. There is a patch after this one
-> > changing the behavior.
+On Wed, 10 Sep 2025 20:42:42 +0000
+James Morse <james.morse@arm.com> wrote:
+
+> In acpi_count_levels(), the initial value of *levels passed by the
+> caller is really an implementation detail of acpi_count_levels(), so it
+> is unreasonable to expect the callers of this function to know what to
+> pass in for this parameter.  The only sensible initial value is 0,
+> which is what the only upstream caller (acpi_get_cache_info()) passes.
 > 
-> Shouldn't we fix that kind of problems first, instead of refactoring?
-
-The patch order doesn't matter, provided that it won't break bisect.
-
--- 
-Thanks,
-Mauro
+> Use a local variable for the starting cache level in acpi_count_levels(),
+> and pass the result back to the caller via the function return value.
+> 
+> Gid rid of the levels parameter, which has no remaining purpose.
+> 
+> Fix acpi_get_cache_info() to match.
+> 
+> Suggested-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
