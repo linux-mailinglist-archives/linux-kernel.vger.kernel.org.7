@@ -1,115 +1,137 @@
-Return-Path: <linux-kernel+bounces-811661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7351FB52C39
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:52:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A4E9B52C3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B73CB1BC33E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D85071BC3EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EDC2E6114;
-	Thu, 11 Sep 2025 08:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42182E6137;
+	Thu, 11 Sep 2025 08:52:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LsKsJbWz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JZRFB0Ke"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD861F5851;
-	Thu, 11 Sep 2025 08:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C8B92E5B0E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757580716; cv=none; b=dFxBdgwzey8rwL7A/7RaOCdkeaa2USi57xZ1CKon3gnp2c5GHGxh4Fd6zHEZWmBBwbWIjSVhV/1BqYa7CvCS8FMIHAddtDLcRMbqlSffNprHPLSO8epFSO2Yg/XtSHmVheiQSFRhLp1c+lzu9lnTZcTl+ITJkKS3ue+DBc7E4bo=
+	t=1757580739; cv=none; b=MPZzhDKJUQ2hhmooO3kJJiRuYHvlhJ00aHh4YUdAmqsdhdYNREkAf8KmbHR7HbCc3b2oGgCwYvdSwFNz9QLsPmJUMNeOo4/HzkTOBKL5HA04yd0RbD/5wOfWOj9znBNCwLsvygdmiKqzkvlAoivH0okYTUCL+H/1O6fMvjee5/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757580716; c=relaxed/simple;
-	bh=pSGlt6/+W2nibb4b8wVtcHSpDe4HPa3+qg0Y1LB/eW8=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mgdRJ0kASjB0dw+2MGTjJUSXv34GF1Scxtgx8lCqR97dSek32ZViYi1PAOJTs8Wkh5C2+a0BXcIko+t0JeD2QZhxeGIznNfv4nns48FhUInRRLR7ETsvn0nU+8icEAfRwb+2uuhtbdrQs+E1uhMXOKeofd8QQFzqppdJq289bmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LsKsJbWz; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757580715; x=1789116715;
-  h=from:to:in-reply-to:references:subject:message-id:date:
-   mime-version:content-transfer-encoding;
-  bh=pSGlt6/+W2nibb4b8wVtcHSpDe4HPa3+qg0Y1LB/eW8=;
-  b=LsKsJbWzFJq7bXEEswidcRiyYudtwSBZwGs9CT9hh3tU2ydx7H4XnK52
-   v/GSKcIUnGeZJdbE0B9EwVC7BVIFT4k6P5MF68FfczpuyIgzjgQjAd1RT
-   OQm19UO8b7XyGH1IpKrEGIYrDjvsPy3vFsNykYmkS/0lK2aNRm0Kx4xDw
-   X25ubj5DYTPpU+mHwO3eRCgbuL0xNOtk3pTGpgy5shTrz4hDXSQ6VXBFa
-   YkJm7E2/JeAPcry0IIMz+MKqxz2vMTRNnarDqybs/Efr1dQodYw5KyVk6
-   WY1SlfCYjSf4JIkYqzAcVRrhNHeH2kS4y5Vp7eRIJkVyDuk+qoHEBHyBG
-   g==;
-X-CSE-ConnectionGUID: JejZ7o5lRAOaAamRGF5H4A==
-X-CSE-MsgGUID: ulrfaijyQQCQ1KrNvfbNNw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59599531"
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="59599531"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 01:51:55 -0700
-X-CSE-ConnectionGUID: PjoPVMnwQ6OV0XvzGJgpDw==
-X-CSE-MsgGUID: eGlujMz9SAaiy7i5AhWVeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="172926059"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.187])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 01:51:52 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Hans de Goede <hansg@kernel.org>, 
- Xi Pardee <xi.pardee@linux.intel.com>
-In-Reply-To: <20250910210629.11198-1-xi.pardee@linux.intel.com>
-References: <20250910210629.11198-1-xi.pardee@linux.intel.com>
-Subject: Re: [PATCH v4 0/5] Enable SSRAM support in PTL and LNL
-Message-Id: <175758070621.12104.14529289787048036133.b4-ty@linux.intel.com>
-Date: Thu, 11 Sep 2025 11:51:46 +0300
+	s=arc-20240116; t=1757580739; c=relaxed/simple;
+	bh=kZ5fy3elgau6E9A2kLbn2WoncgvNZoGo+/fR8M35qT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qMhB/hRJa/mAbsWmnOJaPPzqizfPgPM3X5foqqZ8qW+ewFIF0gibWHeEyFDGOolgG4kr0jK+w+llDiPFsZ+5AJDoEa+2eV+jsf1Yed17HkmAYGjRoOxh7HWHRrIo4ZDh46qBfHVLYS3kPRgqt6GSXT+rB059cdG6COHydZyu0LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JZRFB0Ke; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3e46fac8421so444480f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:52:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757580736; x=1758185536; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u8qJmsLMZ59bKpzRgTLez2aQP8hw0rBkTZMNNSe6hBQ=;
+        b=JZRFB0KeLs8Ij4PmVWP7EmYXSooGPShhxU+UiJRDgsvBIHwZDgdROxL/Wp7q2N4bRg
+         h62SQ3YcaRwTXu0JzH1CVWZ+32dm6vfClYIjpOjvuk+csJDo9YbeKlSVmrl3SjZHs6sS
+         GP3cgC0uaec2t/6hfMnRa9+Y/cSkhsr+8evdzITUULWyUzvfoXU+K8UhC4NycHScOC1G
+         6x8T2mJIIuANu0jJe5XGs4hJJjEybp3L/anh3X8E5L6T/9l+yQpgcL25j+5t/SA1kCyo
+         CQ/J1FhyQXMGeFZYQBLmNQkxcC6LL4OKxGLwHgKGCpt4amBDlRLYJOp4lIrzxniwRzIz
+         +4bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757580736; x=1758185536;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u8qJmsLMZ59bKpzRgTLez2aQP8hw0rBkTZMNNSe6hBQ=;
+        b=ONtdYymBe4G3Y7Oh5u6gA1gUHjDE54YNSCZloMbAxjEk9iC3I5gk2ZBP0IW1h23cl/
+         +RrswTbW9baDwCWcsUY5+LIkXpm+8K9QcLCWUA1VbqJ+5iaVu+/wuKlUJ2O6PQRP+vQA
+         xIkNJ0UvbP+QrADK/766DX/gUKOPIGX99DojQOE8+rdMKT7I2IAwTrzzYDwapyfQmBsT
+         /hzfDWHgzEqRaG1BHVF0hBc0YZubq+3uuvbvT3FHM5EzSC1I4iZEOEZq1haiPEH2inAb
+         7T+c54LGdHLC/owILFuavLWLUHNIWLZqAqmWuuO9eLUg5dJTUhiuXg9zojtYne6P5cWy
+         kqkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPyop/hMPmUYnTC7umyyIVBLpf8hhKr52Dd6zKuW9SrxqLCSQzF8dOJRBtk/BxoAIYdDxRgOOGFgilZGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrmobgiYbHTnCLRL1nHVSyTUuEL2FveFeC+gkADHGNMq+SmVxp
+	mBlaxFsyS3BL0EvnPmUcOArTSiSpLJwcB9wToPhGR5hEF6Pq9Dg8T3IDxMNIK1zyYhM=
+X-Gm-Gg: ASbGncuTRrxS9xh/loYe9ZoOosSiLLkXduy/r6MvKazQ5B1Jdl63dfyhkk786POr9Ob
+	r2NV328pL0k7BzLPANhH05aF55juIBk3fIa+bmF338E5Ggme0KpXfwm2rJL/T89TJfJCxhIgc5u
+	y3eqZ/oYwmjRkmjCb+QuHhMwupQGjSvzqrlxFe50iAIdq+a2WKU/1M4BZRt8sqCAgHib+44Yy3y
+	Yt9qAFMiTfCQaGrFPOpxOAZXas414vJXLYwYnPpT7CoDRl+cVP82qav3TwvHMr7qvDBzDLxbeBX
+	4DB6WGhYByn8EleLWROLZq96tLhXm+QdAUNUTJZyRBeBUAnmhjr5ZOiejSQ58KHK/dZjZHWeTO9
+	zBdqhGP94QqgCyd3At8LM8Q==
+X-Google-Smtp-Source: AGHT+IHqlhwEH3jYn5iJwUlpidH2lKZr/CFhHYU+IwRD/boV7YUGofPRtjLqATt1fADPaiU6f8KjMQ==
+X-Received: by 2002:a5d:588c:0:b0:3e1:6b:bb17 with SMTP id ffacd0b85a97d-3e64c4a8213mr14929470f8f.48.1757580735700;
+        Thu, 11 Sep 2025 01:52:15 -0700 (PDT)
+Received: from linaro.org ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760786cddsm1619682f8f.14.2025.09.11.01.52.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 01:52:14 -0700 (PDT)
+Date: Thu, 11 Sep 2025 11:52:13 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] phy: qcom: edp: Add Glymur platform support
+Message-ID: <wetzewmbraeawwintmxqntjhvennq5iu2jeegel3glk7y6rsnf@4vwscm5bwezr>
+References: <20250909-phy-qcom-edp-add-glymur-support-v2-0-02553381e47d@linaro.org>
+ <20250909-phy-qcom-edp-add-glymur-support-v2-3-02553381e47d@linaro.org>
+ <3bo2xr3jb3hrzsetjzd62dmcif2biizvoanxwtyhr2dmkb4g7x@dgrcvzujcwgq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3bo2xr3jb3hrzsetjzd62dmcif2biizvoanxwtyhr2dmkb4g7x@dgrcvzujcwgq>
 
-On Wed, 10 Sep 2025 14:06:20 -0700, Xi Pardee wrote:
-
-> This series enables SSRAM support, including achieving PMC information,
-> low power mode substate requirements in Lunar Lake and Panther Lake
-> platforms for Intel PMC Core driver. This patch series will not modify
-> the functionality of Intel PMC Core driver in previous platforms.
+On 25-09-09 14:12:46, Dmitry Baryshkov wrote:
+> On Tue, Sep 09, 2025 at 01:07:28PM +0300, Abel Vesa wrote:
+> > The Qualcomm Glymur platform has the new v8 version
+> > of the eDP/DP PHY. So rework the driver to support this
+> > new version and add the platform specific configuration data.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  drivers/phy/qualcomm/phy-qcom-edp.c | 242 ++++++++++++++++++++++++++++++++++--
+> >  1 file changed, 235 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
+> > index ca9bb9d70e29e1a132bd499fb9f74b5837acf45b..b670cda0fa066d3ff45c66b73cc67e165e55b79a 100644
+> > --- a/drivers/phy/qualcomm/phy-qcom-edp.c
+> > +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
+> > @@ -26,13 +26,15 @@
+> >  #include "phy-qcom-qmp-qserdes-com-v4.h"
+> >  #include "phy-qcom-qmp-qserdes-com-v6.h"
+> >  
+> > +#include "phy-qcom-qmp-dp-qserdes-com-v8.h"
+> > +
+> >  /* EDP_PHY registers */
+> >  #define DP_PHY_CFG                              0x0010
+> >  #define DP_PHY_CFG_1                            0x0014
+> >  #define DP_PHY_PD_CTL                           0x001c
+> >  #define DP_PHY_MODE                             0x0020
+> >  
+> > -#define DP_AUX_CFG_SIZE                         10
+> > +#define DP_AUX_CFG_SIZE                         13
 > 
-> The first patch enables SSRAM support for Lunar Lake platforms. The next
-> three patches introduces a new table in telemetry region to get substate
-> requirement information for platforms starting from Panther Lake. The
-> last patch enables SSRAM support for Panther Lake platforms.
+> If it differs from platform to platform, do we need to continue defining
+> it?
 > 
-> [...]
+> Also, if the AUX CFG size has increased, didn't it cause other registers
+> to shift too?
 
-
-Thank you for your contribution, it has been applied to my local
-review-ilpo-next branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo-next branch only once I've pushed my
-local branch there, which might take a while.
-
-The list of commits applied:
-[1/5] platform/x86:intel/pmc: Enable SSRAM support for Lunar Lake
-      commit: feae929d8e6cb4e8d78a930c8b75326229e6b921
-[2/5] platform/x86:intel/pmc: Move telemetry endpoint register handling
-      commit: 1e508af6bc4b24a7924b619800f1b138281f0e82
-[3/5] platform/x86:intel/pmc: Improve function to show substate header
-      commit: 612326e0a87a5c75d35146ee172eb46bcd09089a
-[4/5] platform/x86:intel/pmc: Show substate requirement for S0ix blockers
-      commit: a22bc8643889ef5a3c032700f69001fdc457413c
-[5/5] platform/x86:intel/pmc: Enable SSRAM support for Panther Lake
-      commit: 8e54e493c9926105e771873b151d5eba80fbb856
-
---
- i.
-
+AFAICT, all platforms have AUX_CFG0 through AUX_CFG12, we just didn't
+need to write anything to the last two so far.
 
