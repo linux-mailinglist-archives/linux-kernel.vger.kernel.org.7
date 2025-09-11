@@ -1,112 +1,138 @@
-Return-Path: <linux-kernel+bounces-812420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3B8FB537F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4554FB537F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD54B3BD8B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1EF13B3025
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF120343D7A;
-	Thu, 11 Sep 2025 15:36:06 +0000 (UTC)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B495213E02A;
-	Thu, 11 Sep 2025 15:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C54346A15;
+	Thu, 11 Sep 2025 15:37:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A781DBB3A;
+	Thu, 11 Sep 2025 15:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757604966; cv=none; b=XtRaW7J4OcJLDEpAYO7jAWEd/gZpvTTVcowhIryUsZVXCCCfPwEgObdUcUcDGp49rmtkN9NY2fX93FKWiNO63/oHZWkNjrkXKrvAfjqrEYtn4yuw/oXE2pQKKFITeY7h9F4giKXFax5oJoMO7JVDxNArI18Xw8WSplq6VxylkCQ=
+	t=1757605075; cv=none; b=nCgFfmIhQQDpLqBlYhuQcg/eYGvsvnTy9ntReVgMbFHMeJ7FJHcCEqqtxdgjBEwWRvl8HTp8ZeuBIZDLEcO3nDXyLX3fGaSbesVkzL29q89iYCs57sNbbZElJXN+Ax60nwNSJ0X1K9e/FYMJyfxEMj7b0bTSo1CbOWPJn6hJWM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757604966; c=relaxed/simple;
-	bh=rxW6LjatMXABSFF50dD6Mr7NKj8XRfl0EDC8vjfgTtg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eqq6vs4ukhMCD1vbBAUDD9KiGfJQ1+heK3/S9dA5QmQbHJBM0wzSbLLiGrP01ior62TWkLN0PutKJ/5/A5KFC3H0YRE/tTCp2v0hFx7zAzy5gjosQB1dhiyE4gXdX4kUgDZQXuTEAOCNW6pRGVnBQB/uxl4JWSuCwMoMHh9iAvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-8a1d640b50eso599178241.1;
-        Thu, 11 Sep 2025 08:36:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757604963; x=1758209763;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HED7AzArbGTC5OcrHXoQ6N9kTMoymyrW7L3VT9L9XFM=;
-        b=o0UscLgNOK+YBv//2BpmXPF/ay8d0VIdzFz0QpjM26j5/Y12JpIXvPN6e3VCGNCZ/C
-         hoeyvDYOvSEzEkd873/rs6/xQ+dZvWwfo9IAamciopdgczPqdyJI+NASi3QJlzhictIb
-         MCTkTZAjOFFnuK5WCOUkRkbO7XmKDOt2B0w3ZC/u5UTFNHsWr8LPQXuukJj0Ia5GfUGo
-         /QIzozwWBZ7sGoEdDha5M80oH2uN7GirFXixvrIkwwVHbJRUsL+ooUTxxElbsu7F34kK
-         AdRYcoE8/HeGHhWbGkbeOpQrayB9129yTKnEkTX4MOT2VLspAGIBrx0KmrIg92vYJWCc
-         7iPA==
-X-Forwarded-Encrypted: i=1; AJvYcCW1yicO1EPQ91Bft5eq1ftzlT1mwWc8uZJ8OLyY9fbZtr9n2d4YC3oWWC3aoRJ9SHeP+Q/KFiQtGYOlDTqH8jTfyR0=@vger.kernel.org, AJvYcCWB0a4a3u0xvicDGhTCrfWLtYfJKozPivv5Vyu3eUcYMPnUe0oxz8aluwRXll2YSzijDKJt2SUrFqa2yex9@vger.kernel.org, AJvYcCWG0fOJmIS5HOF0GQxwf5QnxwkMa9K5IUxv5XBlFdKeXwY0FQ+2lt6upZXcuLtaoW6D2OSkCdqrilqD@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEGwJ/Nolah8Hiz76TgD4y8ZqIKZtYaVQoo8Z/EswOpV7Cpy2f
-	GYJ6VCFPySPRTM53Qpw9oNhpztY0JxrGxJni2JQu24VKe12uCz42eczTw1eoZbkA
-X-Gm-Gg: ASbGncuM5WtHfguJVL0HC+SSqwTCawzr5NWB6fuX+hh7g6giuBQJvSNwi8ZB7JLYU71
-	DsG7Qwf2etc0/i6kcwSQ2mpKYihxa2qePszH/YMNc+iZ8RyNRhDL1owJGld2l7FC5M/+5n5CZPu
-	UrYxRd9ak2xAah8d1/Ojz1Ow546IPiIjACvOpeKtN9wtBLA0XDtMV0qm10i0VnY4comgO4LAMP3
-	ESQoGri3bTJ3WLRGsrDuZgTUshpWk1DiJZJG7fM8jiimJUYC/DCurWM+sidsmCc4q7bWXPzLG55
-	1pr/sN+SbJQ2mIJaWPcKid9XhfMRb+vxJdtfPJ19xrh2LW7qP9Y3mXE43qV+zbMlET3o4gRM6OU
-	sFAWKVNyUhAHRf55Dl+YzT/I5QT03fAl3d0th3UydUx/5kLdBnh16GUbS14+80EYdsYkkzQM=
-X-Google-Smtp-Source: AGHT+IGZLE5uNG1QZnGgdGLhzdmxXsyScuFuR3i6AkV1j53y6QtH9IKqHHhEqfnvV1UKuHuLfUHZaw==
-X-Received: by 2002:a67:e709:0:b0:4e9:cd8e:c28f with SMTP id ada2fe7eead31-5560908cef6mr22754137.1.1757604963385;
-        Thu, 11 Sep 2025 08:36:03 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8ccd640ab51sm283853241.19.2025.09.11.08.36.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 08:36:03 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-8a1d640b50eso599158241.1;
-        Thu, 11 Sep 2025 08:36:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX+ojZiUPrnZwwn5GzAZ5uxxWXcmhEbtD8tgk9s//0TXqfcw4mOgzOE6ccd9u+xyi+yTWEjvf00HZ8qtnAmEc8xxfs=@vger.kernel.org, AJvYcCX4eiR/G2wJL9titnBM2OAUzJz7tGZ/ovRa4DogJWK3a8SPoOvtwAgOWTW4wbJcyQajG6QRIexU5/7g@vger.kernel.org, AJvYcCXR8jO2htrbaAuxrmvzqsW0Fng89rvv3/bjZplWdEDsXV8TR0YEoOpEX9yqF8ZtlPkTS+owS3n+z8GNlwrt@vger.kernel.org
-X-Received: by 2002:a05:6102:374f:b0:524:4800:77a8 with SMTP id
- ada2fe7eead31-5560908dc48mr21383137.5.1757604962863; Thu, 11 Sep 2025
- 08:36:02 -0700 (PDT)
+	s=arc-20240116; t=1757605075; c=relaxed/simple;
+	bh=xpWjJY4jsD9WDvdhB99ir+nxRdi42JwdQD/EacCb4k8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u94V8hEoX0GactTEZYNYsYYLn5nKEo+6d9Nwr9f+vxLYxamXFlP3vQUfT+slnLkCVpn/oway+r0yUQnr40Iz0f4UsqAZdsfV3BE3MS1zoQ2vvtXNkG4wzIu0iU+nHCARksNX5msXufEUt/FYedQfrzuWpudWuu8S+lXby3SlPv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69F29153B;
+	Thu, 11 Sep 2025 08:37:44 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E3363F63F;
+	Thu, 11 Sep 2025 08:37:48 -0700 (PDT)
+Message-ID: <8ed9fbe9-1075-4abb-91d0-20203906a4dc@arm.com>
+Date: Thu, 11 Sep 2025 16:37:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250817145135.166591-1-biju.das.jz@bp.renesas.com> <20250817145135.166591-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20250817145135.166591-3-biju.das.jz@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Sep 2025 17:35:50 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXaZpM4VKarTxS5JdazZj9HAiYc1o=YhFiJCdMra2=4Xg@mail.gmail.com>
-X-Gm-Features: AS18NWBiBreY4smpMUQm1HruUYPp5Rw6clODld_mbh98V88VzBpKfWDiBXbno-k
-Message-ID: <CAMuHMdXaZpM4VKarTxS5JdazZj9HAiYc1o=YhFiJCdMra2=4Xg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r9a09g047e57-smarc: Use schmitt
- input for NMI function
-To: Biju <biju.das.au@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 13/29] arm_mpam: Probe the hardware features resctrl
+ supports
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-14-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250910204309.20751-14-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, 17 Aug 2025 at 16:51, Biju <biju.das.au@gmail.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> The latest RZ/G3E pin control document (rev 1.2) recommends using Schmitt
-> input when PS0 pin used as NMI function. Enable Schmitt input for PS0 pin.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Hi James,
 
-Makes perfect sense, sp
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.18.
+On 9/10/25 21:42, James Morse wrote:
+> Expand the probing support with the control and monitor types
+> we can use with resctrl.
+> 
+> CC: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+> Changes since v1:
+>  * added an underscore to a variable name.
+> 
+> Changes since RFC:
+>  * Made mpam_ris_hw_probe_hw_nrdy() more in C.
+>  * Added static assert on features bitmap size.
+> ---
+>  drivers/resctrl/mpam_devices.c  | 151 ++++++++++++++++++++++++++++++++
+>  drivers/resctrl/mpam_internal.h |  53 +++++++++++
+>  2 files changed, 204 insertions(+)
+> 
+[snip]
+>  
+>  	spin_lock(&partid_max_lock);
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index 4cc44d4e21c4..5ae5d4eee8ec 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -112,6 +112,55 @@ static inline void mpam_mon_sel_lock_init(struct mpam_msc *msc)
+>  	raw_spin_lock_init(&msc->_mon_sel_lock);
+>  }
+>  
+> +/*
+> + * When we compact the supported features, we don't care what they are.
+> + * Storing them as a bitmap makes life easy.
+> + */
+> +typedef u16 mpam_features_t;
+> +
+> +/* Bits for mpam_features_t */
+> +enum mpam_device_features {
+> +	mpam_feat_ccap_part = 0,
+> +	mpam_feat_cpor_part,
+> +	mpam_feat_mbw_part,
+> +	mpam_feat_mbw_min,
+> +	mpam_feat_mbw_max,
+> +	mpam_feat_mbw_prop,
+> +	mpam_feat_msmon,
+> +	mpam_feat_msmon_csu,
+> +	mpam_feat_msmon_csu_capture,
+> +	mpam_feat_msmon_csu_hw_nrdy,
+> +	mpam_feat_msmon_mbwu,
+> +	mpam_feat_msmon_mbwu_capture,
+> +	mpam_feat_msmon_mbwu_rwbw,
+> +	mpam_feat_msmon_mbwu_hw_nrdy,
+> +	mpam_feat_msmon_capt,
+> +	MPAM_FEATURE_LAST,
+> +};
 
-Gr{oetje,eeting}s,
+I added a garbled comment about this for v1. What I was trying to say is
+that I don't think this quite matches what resctrl supports. For
+instance, I don't think mpam_feat_ccap_part matches a resctrl feature.
 
-                        Geert
+Thanks,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Ben
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
