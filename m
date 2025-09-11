@@ -1,171 +1,418 @@
-Return-Path: <linux-kernel+bounces-811460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 465C4B5295C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:58:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21671B5295F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BC9A1C21F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFEE95673F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BEEC266B67;
-	Thu, 11 Sep 2025 06:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE6326980B;
+	Thu, 11 Sep 2025 06:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="krP0Mf43"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="zRXe1w4G"
+Received: from esa3.fujitsucc.c3s2.iphmx.com (esa3.fujitsucc.c3s2.iphmx.com [68.232.151.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD23023E355;
-	Thu, 11 Sep 2025 06:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757573886; cv=none; b=n5DanHOMV3OEOZ4I2o8R53E8FVVPsjzXfhQBEUiSaWyQvlccU47UJWAGTT9j6mWG2POg5pmGjG6/RuAsSMixNr6fzcjxgrthp1pC0EKgD1cb3uzTA+IJXtVszsnnzRfvdKJVsn1P32CaruZTj2ptTia0zTP5ppBtNyvYptGrZG4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757573886; c=relaxed/simple;
-	bh=ezYmetIuXixRHkPs5XqtQKqJxfsVsN9SqTJaOciWsro=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=B6kTphm3meICbP2KCIIiyIugyc3f9Vu43TiCA6Nqo4eopg9YbW0gRImJVcjvUYtP8TkLnNN6yeFbQc0h5t3Noyu1wJez780LWMfcSuakCYeo5E5Fwdtjecy4rlCr/aBA0vNMEMH1jnk/bXiGiaS98PqhEerlo4u/PzI1EtqRD3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=krP0Mf43; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 58B6v1Uk3451381
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 10 Sep 2025 23:57:02 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 58B6v1Uk3451381
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025082201; t=1757573824;
-	bh=lEaOcSoBLUph9n1Zjxl5jBw1XZCkL3NrlYg8XzrZUFI=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=krP0Mf43urhSNBqtVCqSlpqqaRB2ULapg86LJzirl5u3i0JRoOfXPMhSFPl282rO1
-	 c/MJna3YFTY0ZmLxcdmWQzk6C2Pr7da79A+gzJ3UJRWDYkR2pEVk2w8GOd73jln0cd
-	 A0hDmRLzu4QkkruOX1INFT5JNscCIXrFaHPkY66iBQRnzLCnZDqEJRpUYc5scmCxjQ
-	 bBfx8Url652IvOBbAQgx9Xp/0aeGEP9YrzTwwZp9MLtlrvsmsJD2WgM6+o9PJyH1Br
-	 +0t+boYOd09GKuESb3jybj2ov95D/dkrX7KPvZfgsK2lH98NFq2fBMXvw0eVgeOUZm
-	 2sHZodNui2Glw==
-Message-ID: <a8fa891e-0f35-449b-970c-24e5ca01e2f6@zytor.com>
-Date: Wed, 10 Sep 2025 23:57:01 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C6D26B2D7;
+	Thu, 11 Sep 2025 06:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.151.212
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757573891; cv=fail; b=MMx5upK4m1VhwJVKgBCH5ueF4PXgV2LWut30lXNTuE99Ui5rhe1rf4Z9zwhjyOJ2rAjqe5Y1S6Kmle3Zci/urWC3SkPfOLRetj1jAMCUfZjXWJTWgTZSdycWN4V1aqWP0wse0O+U8NTKfy1qccSUqHosPnGZflLUE8FKqtmpQ2g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757573891; c=relaxed/simple;
+	bh=LMZH0ODIE3N4jwA824Z8/DtZmy/URkDJ4PYfY72Se20=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=A/Q56cH4HsOtVPC/676NjA5lSohf5H9/bVLM2CFVsyLMG7xpkCriELxO5dPpqQs6vjnUIfbQ59+1FA8LymtVZzv4/Bd4dftf4ZuJJf129bc/l6AkIp74aM/FPLucrtn3Hm+P8DwtXPXLyg+FXtSjvip6SNr8/HQVyCE6vuSxjhY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=zRXe1w4G; arc=fail smtp.client-ip=68.232.151.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj1;
+  t=1757573888; x=1789109888;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=LMZH0ODIE3N4jwA824Z8/DtZmy/URkDJ4PYfY72Se20=;
+  b=zRXe1w4GDAENrbiP+GmZgf9KODms3yeOPO32zPRBpAMLf3sfIsp8f2p4
+   +TocXYeepEs4XtOTMQkJJefenk4hTTEuh5/Prnh3twvvJKkwqw4v5g5KK
+   wlijZD4k0KvqC91wm4B+GInf0SpQyH0FRm1Ornt6PihJnbyCM8+50+aqA
+   HfUgwfRtrDN2k/CHPMANc8j2T7vknXRMZzTQyrUI0ZHkQssqk4mGKeYFf
+   exqsy6H6t1qBOwzd3vaeoyRed1V6HojFwA8xVj8w1Vr8wzLwxRBK6M5Cd
+   PRU/ABL4jKrU4BugQAicSjb6NPi89U1sGgw2FbjW1ZBN4kRH9yvbWB4m6
+   w==;
+X-CSE-ConnectionGUID: Y2aLvVQRRYiwDWQnaB6elw==
+X-CSE-MsgGUID: LmpwaUnBTcyX5WnWkE5dyA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="78789624"
+X-IronPort-AV: E=Sophos;i="6.18,256,1751209200"; 
+   d="scan'208";a="78789624"
+Received: from mail-os0jpn01on2078.outbound.protection.outlook.com (HELO JPN01-OS0-obe.outbound.protection.outlook.com) ([40.107.113.78])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 15:57:53 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UNhzmlZ/nUFjgA6vER57rxLVh/IIquIimSp2zypL/PrrhukazCAvyjAXh0FEY+gjJ7WC314WO8x0lZgZtbYEbwSmCyoDV0XJ7cBXY1nkSQiZDggANk9//EbB4A1YWJAopYQj1yp+ud8vfFUz86Y0DWniA4E6Q4Q2umXO2d8jc1iUEbWsjQG2nwYAnRqB0EtzCTamyVHT3D21XGSWVTyI21cfexLa0S4vUWkZVsHwbsT0IqV/qgtJv6KISFObYyFLH/GW54V7zvesapMGgYmvH7XunSCOQVd38YzICwKYlG6Q3I5jfDox4BFemuXNNdB0x5k8rlwQPlqPgwqlqLPn+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=W4h/mS/Vzg3h2gMn4RZ0rpdPYxHemAGmU+0S0BdsOdc=;
+ b=ddnbbS9fvyADi/54hsButaIt9Deauu4wPDWEyDYNzDSXpz/7lsf6/4Ym1erYn7VTd4DqMSHh2stGwaYxK1gT5bMG8cbtNwjcMKJLWc1d+Syk+7JO02JX+/Qm0FrBZ2vzfqJ1ZK4Ww+amabDXjaGepZOPih8nXepgqCsm7DVCJQdATdfX4rWoIaM3V8AmZ3Ks8YNLGQCTKXfIhvk7zG9IvFu6AT2Brw3AG5u7SVvxLglac07e78MukQ6sn8znlhGMDx7Sr3PdMDBvebo39dODsM0Nfw+yWMuxts71ghfy7/GLtG5w1YrpqKi6PMtWl/seuqNCsQqUUH9HW0zMZyy87A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+Received: from TY3PR01MB9983.jpnprd01.prod.outlook.com (2603:1096:400:1dc::6)
+ by TYWPR01MB9804.jpnprd01.prod.outlook.com (2603:1096:400:224::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 06:57:51 +0000
+Received: from TY3PR01MB9983.jpnprd01.prod.outlook.com
+ ([fe80::f8a:4f35:cc76:bdc1]) by TY3PR01MB9983.jpnprd01.prod.outlook.com
+ ([fe80::f8a:4f35:cc76:bdc1%6]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 06:57:51 +0000
+From: "Kazuhiro Abe (Fujitsu)" <fj1078ii@fujitsu.com>
+To: 'Ilkka Koskinen' <ilkka@os.amperecomputing.com>
+CC: Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+	<guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>, "Rafael J.
+ Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v3] ACPI: AGDI: Add interrupt signaling mode support
+Thread-Topic: [PATCH v3] ACPI: AGDI: Add interrupt signaling mode support
+Thread-Index: AQHcHh171tqf09K4SkK1ciG0VLTs/LSJqfEAgAPpfaA=
+Date: Thu, 11 Sep 2025 06:57:51 +0000
+Message-ID:
+ <TY3PR01MB99836C3D57503E70C8B8C9E9D509A@TY3PR01MB9983.jpnprd01.prod.outlook.com>
+References: <20250905042751.945616-1-fj1078ii@aa.jp.fujitsu.com>
+ <bd45c06a-77cc-2ab3-122e-41dee1aee0ac@os.amperecomputing.com>
+In-Reply-To: <bd45c06a-77cc-2ab3-122e-41dee1aee0ac@os.amperecomputing.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ActionId=67e4a6db-a8d9-45e9-a9df-263040abeb91;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_ContentBits=0;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Enabled=true;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Method=Privileged;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Name=FUJITSU-PUBLIC?;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SetDate=2025-09-11T06:56:54Z;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_SiteId=a19f121d-81e1-4858-a9d8-736e267fd4c7;MSIP_Label_1e92ef73-0ad1-40c5-ad55-46de3396802f_Tag=10,
+ 0, 1, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=fujitsu.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB9983:EE_|TYWPR01MB9804:EE_
+x-ms-office365-filtering-correlation-id: 1eb2f72f-d803-4cff-cee0-08ddf1008663
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|38070700021|1580799027;
+x-microsoft-antispam-message-info:
+ =?iso-2022-jp?B?NjNZb3pyc0lpbURVcThiZEwySVhMRm5sVEpkdURZOXdjOVY2ajNJdWxh?=
+ =?iso-2022-jp?B?d2NXcDk0dlhXT3lqYndrUmJQUXhHWHRlTTNDRit5Z1R0b21ZSzF4WitQ?=
+ =?iso-2022-jp?B?cWNlYTBrUXJTeE9Dbm1GZVpIYXlzRzNHUVBaY3h5clRReFljUWllQkxT?=
+ =?iso-2022-jp?B?QmdvdXc2UHJucFpBdndCVU5jaHRBc2FZWUtKZnByTUl1eEw1SDFVdVFR?=
+ =?iso-2022-jp?B?MXZZZHcwSkRRU0VSUVdwUlRHRGhkOWNGSnBFNVdydUsvc1lyVjhOdklv?=
+ =?iso-2022-jp?B?cFNsL1ROMnlVd01ERk1CUVM4cmhBNkVXL2ZhaEtJMGhZSzBScTRYcVox?=
+ =?iso-2022-jp?B?MEVwVkdsNEpaK3IxUWdxZ2p0NWMrc2xHRmxIZjZqTUJhS3RoQkM0UHJU?=
+ =?iso-2022-jp?B?WGxSeVVIRnp1V1JzVFRjMXdlN0J4dHYxSHJ1cjNEWktZWjJrL3h4Vk9E?=
+ =?iso-2022-jp?B?VDZmME4rT2VmU2JnZ1JySVV5NlJHeVlXOFZ3RzFZWkQvVGxZalNkby83?=
+ =?iso-2022-jp?B?cDlMNE96WTVNdkdkUmlRcDF3cmRyYW9tTjcxRXJiMWpsMkxYZWhqUjhF?=
+ =?iso-2022-jp?B?S2xKTHFCRlV0c2hNUW8rcEVPTmNndTJWN2h3bVVUWGFZK045dnN2YlhR?=
+ =?iso-2022-jp?B?ZytNVFJsYTB4bGcrL1czSU91bUtWanRVWW14YmpyRmExdzAzTFVxQTA3?=
+ =?iso-2022-jp?B?QXpvN3ZoRWtJa2tSNHBYWFZKZzVobncxRC9VdG9FdkszaENDQlgyUmdj?=
+ =?iso-2022-jp?B?U05yU2hsOEhPWFZwdXdyN2FTcHY3WE1MMUZCS0lsakk3dmFERUZBaTcw?=
+ =?iso-2022-jp?B?QjlLWFlpbDRrdjVEeUQ1aTkxeHFicE9nWEpCeDJTdEpaL2lWb0ZncHhM?=
+ =?iso-2022-jp?B?bzVsaWxoaDhoYVcycytESFFsOGtjRlBxellxMkNSbVIzbDZ3NkN4ZXRy?=
+ =?iso-2022-jp?B?eGRtVWVzZzlXU0gvUUtoUW9MZ3g4dFhOYkFvTVNaZDJKNWNqMmJQb09E?=
+ =?iso-2022-jp?B?TXA3ZGhHeXl1SnNLUjdXeDhWbHluSlBSWjVjbVM5SGpBU2F3Z3ZqbE5I?=
+ =?iso-2022-jp?B?MW16Ym1tK2RtUi9ZQXRpQktXbnNPN2UxdmNrQkh3aEFkR2Y1b2pudVdl?=
+ =?iso-2022-jp?B?am8xVm1wQkpGdldsU2c1VDMrSy9GVVBpQTBBZXZKcUQrZ3o4YWFxUnVw?=
+ =?iso-2022-jp?B?WW1BY3M5NDlNQzIxNk5LU0FVY2ZzNmx4REp2MmtRL0o0K1ErQXJjYVJJ?=
+ =?iso-2022-jp?B?SlVTRUErWUFhaFFReVBpbWIvUTF5dEd6ZFI5RTZPS1VYemMzSXV5UzMr?=
+ =?iso-2022-jp?B?VWh2MHBIRWVQdE41NFlKLzROYXpBTzltQUFtbGRMT3V3d1V4Z0diT2lw?=
+ =?iso-2022-jp?B?cEcyaUlzY0pnTWttMW5COThVa3l6YW4rbnFZTEtGTE5XeE9meWpSUXlP?=
+ =?iso-2022-jp?B?ci9vRnA2Q2FIYUZjNmxaaHVlcU5IdmlZcE02KzhEb1o3ZVJPQldNM1FM?=
+ =?iso-2022-jp?B?OENmMFlodlVSL21iYm0xLzlLYjJmS3cyQURUTWhaRCtZY2JSNXJGVUZC?=
+ =?iso-2022-jp?B?aWFwd2ZRSjdvYVIySCtrRVNGQmgvOFROR2V6Q1hoWmo4MVZBa05QQmJP?=
+ =?iso-2022-jp?B?ZURWblZGd2xzUU93d2N6dElwb0puaXZrTkxLWVNpUjJzeWRYa3cxQUYz?=
+ =?iso-2022-jp?B?UWgwSVB2Y1JidUM2djN2UVZPU21nWVRiSXlaWmMxZkRTcmlWako3Vmwx?=
+ =?iso-2022-jp?B?dTlqbUMyYW53WUhGRkN4Y0xPcVU3OUdCWnBBSitrd0pLeVNOWVJZVUJ1?=
+ =?iso-2022-jp?B?bjNOeFZMNUVGdkdFSHZYTU0vcWlOeWFGaERhWmJDa2NtMHpvVmNRZTVY?=
+ =?iso-2022-jp?B?cUpkZS9nckowcGIyRldleW9GZjVkeDhJMkJHeXNPOGdQZlE3SlZvb2U2?=
+ =?iso-2022-jp?B?eDBuYjVyK2JGNFlVWHlad0JxQ2RGMk1rM1hyN0JGMG1rSDFYVGYxazNV?=
+ =?iso-2022-jp?B?eklaVGRXRlN5TzZwU25SUkFYeFBrRmhLT0lPa0g4WXdQYnNkNGZhNEhk?=
+ =?iso-2022-jp?B?YU9obGR5c0o2Y1FSUkRYcE9UUVhBOFZBOURIY2lyc2JjbnpHa1p2OVk4?=
+ =?iso-2022-jp?B?TU5ZL2hrOVh3ZTFvR0lSZm5HN0w3c3FsbUdZc0I2ckllN1RzSU5NZEts?=
+ =?iso-2022-jp?B?NVZWTmFjZ1N2VENIcWFwWk9mSjd0U0Fq?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:ja;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB9983.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021)(1580799027);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-2022-jp?B?SmtacURjdWF6dURubzVOMTQ0TWVVRU9YQWoxdnZmZ25xdVd4Tit1a3R4?=
+ =?iso-2022-jp?B?VDdHV0ZXRnZZejlCa002ZlNpY1BxRmQ3VHFLaHdoaWp5YVZiblduNXdv?=
+ =?iso-2022-jp?B?bHpiMUpFUS9IQUlLNytpYmRnKzM2bjFKQ05sQnN4U2IzRlBCcUZhc0xO?=
+ =?iso-2022-jp?B?bVhQeTUzSTdEaWU5OVRtcnJFdDQ2M1ZqZHF3T0d1VWZyeFJXL0ZrYUpY?=
+ =?iso-2022-jp?B?UFB4VmZ2TG9oMWpCMVg2K1VidThCOE1XeXNBcFl4dm5GbnVFWm1CT01u?=
+ =?iso-2022-jp?B?clQ3Yi9FZXpSOWNUMWxPV0xVQi9SMytnK0lRVlhsUXY2bDE1cmJYbDVK?=
+ =?iso-2022-jp?B?OHZpTkFHaEJ6Q0pBWXViL1lKSDhzT0hKU3hXN0t2Y3c4OWUxTldoWTF3?=
+ =?iso-2022-jp?B?WnFIM0xCMG9Tbjk4MVNHcnc4eHdGMFROMkVDUEdmTUl1WkxaSEl1YmtH?=
+ =?iso-2022-jp?B?UDRERnpuWG53QnNCR0hqTElLK0d2c3lCMDkyc0hwbzZTaEFNNjdXNmdk?=
+ =?iso-2022-jp?B?a0VlYnB0UjlEbWtxc1d0MWdmWlc5UzZOT3pkSml6UDZZR2N6Y3RNdXVy?=
+ =?iso-2022-jp?B?ZEZjTVBnU1lkU0lnN0FQaThubTNDeC9rM2tMRHhZYzdIblQvUldvUksx?=
+ =?iso-2022-jp?B?aTh5UW1PbkhHRGZEcFVremV0WTl0QkFEakFnRlJaZlFlQ3NvdGEzVmVs?=
+ =?iso-2022-jp?B?eWFZUDNwRzVsdWdHOVVtTGpGL3dGdWkvVDc5RGlkOXdZU2VQMnlrQ3kr?=
+ =?iso-2022-jp?B?dDBzbWR1alREMlZrQlJWSE0xZFNDeHNnM25ESmZKS2ZONmhla25PVkRn?=
+ =?iso-2022-jp?B?TFlrUzJWcUlyNUlFN1Azd1VWRi9NSjZuV3NsMlBkK09aYnpCWFZtdUpl?=
+ =?iso-2022-jp?B?WUdmRVNKVFhXeWtXWS82QkQwV1BIWXU2c3d3a3ZIbVc2d3UrQ2pPdDQ3?=
+ =?iso-2022-jp?B?N1ViQTJFbFBkM0RySHpxQVFDSS9NNldLTG9MREc1ZWU1UkNIdS9SUVRx?=
+ =?iso-2022-jp?B?ZDBOZFlzQU80MHpXdU9UUjM1YkRWdEZabmhyelZ0RXQ1RmpocmloNVZo?=
+ =?iso-2022-jp?B?dzViZk9ZUFB4UUx2ZURSUHVQYzdMa2RlQkgzVlNsYWduYmtueUkzYmRO?=
+ =?iso-2022-jp?B?cE9FVDk2dlFsMW0zZVVKZjk4UHplVlBPQy9qV25vbUlmTGNTT1F1Y3Q5?=
+ =?iso-2022-jp?B?ZHc5M1dQOUNpWVU1bTBENVgrR1dRZnJlZU1vSEJITEU4aDhMUmtGRWtq?=
+ =?iso-2022-jp?B?VndDOW5WRE84VmpOdiszQmpOVVdUSjdGUXZrRWRMMmFiK2JRVERocDd4?=
+ =?iso-2022-jp?B?SHZNVWcrK2VTclRnaEtoV3N0RUE0VUNnTmVrRUtoQVpWSEloazRyMG92?=
+ =?iso-2022-jp?B?RG84aDAyMHZ1cXdjUVYzNGs5V0NNcml2dCtlcDR2NzRWQkRpd1NwaHJU?=
+ =?iso-2022-jp?B?TVFCektHbVRXcW5LUzVUZWpZUzY3aWVXcjJYSXBWN1dmZXJ3VnQvTmYy?=
+ =?iso-2022-jp?B?NUpwVi9uYXdJbDlxd0lhT1lvT1ZrTEkxWmFGTFQ2a1N1cmtpOXNRZlNX?=
+ =?iso-2022-jp?B?RmxXRWVOU1lnQjRzeFBBTlZ2YXREbzh4anA1aFdrUHk3VkJIMUROMlJt?=
+ =?iso-2022-jp?B?d3ZxRmZnd1o3ZEo1U3pVUm9sL1I5ZzkvRURiL2NmSnBSREk2TUd0M3VW?=
+ =?iso-2022-jp?B?RXJVUUtWd2lndVpQTjlNbkp2TWYzNjdsa2lnd1c5Qk5Zb2NlWGpkWHVR?=
+ =?iso-2022-jp?B?TytWTVdRd1luZEh0STI1eDVZTTM4MllGOXFLVHZQMmlxalM5NCtBRXhU?=
+ =?iso-2022-jp?B?OVVTa2g2eExRT0RaUEw4dEtiU3lBT2FOeG54UHVYSVFjK0lMNWxDRUFT?=
+ =?iso-2022-jp?B?UUlUb1NsSUZ0SThvcjdzN1lRaHVMU0k1M3VicjRlTVlpaDFWUi9UL3lG?=
+ =?iso-2022-jp?B?N3NKRnlzZEJFcVlRZkQzcmJQeGdJTzhBN1dnVmNtOFppNHU3TXcvZEtk?=
+ =?iso-2022-jp?B?bVp3UmVsMGVwaWhKcVNHMjNFVStyd3k4c0paT0NGc2lxcTRwL0ZaVVFj?=
+ =?iso-2022-jp?B?eFBhQ2ZOQ0lveDFwKzBjWlhvMW9CY0ZwNWFEU0hsUysvWGh6QzY0ajhm?=
+ =?iso-2022-jp?B?S3ovdWxCOE1QdUo2TlU1eHlkQVE0V1VVYjVTTDVlMWRYNnhhRVJzeGlD?=
+ =?iso-2022-jp?B?Rm43SDhvd1E5bTdOdnZDNkNzZ2xzQ0ZEN1VwMjlCVUltdWxJcnlSQ05M?=
+ =?iso-2022-jp?B?U29Rd2xyUVlmSmRIZjlQVnVkZ0cwNDVMUHV0SWV4OGNnbjc0NzJNbDhV?=
+ =?iso-2022-jp?B?ankxY09JMUhNTElvNFZERnh5ZTE1MS9UN1E9PQ==?=
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Xin Li <xin@zytor.com>
-Subject: Re: [RFC PATCH v1 1/5] x86/boot: Shift VMXON from KVM init to CPU
- startup phase
-To: Chao Gao <chao.gao@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-pm@vger.kernel.org, seanjc@google.com, pbonzini@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        rafael@kernel.org, pavel@kernel.org, brgerst@gmail.com,
-        david.kaplan@amd.com, peterz@infradead.org, andrew.cooper3@citrix.com,
-        kprateek.nayak@amd.com, arjan@linux.intel.com,
-        rick.p.edgecombe@intel.com, dan.j.williams@intel.com
-References: <20250909182828.1542362-1-xin@zytor.com>
- <20250909182828.1542362-2-xin@zytor.com> <aMEn4czyuqrQ1+oF@intel.com>
-Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <aMEn4czyuqrQ1+oF@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	uKtFbX0ZHog5vSC6fBjHs7JLD2W6OfjHAHTzljG5rBNpJGIIGpmCzdbCdLKHTVC3jhcl6wSuXP/VbeEbtkoh4nzpfj+28O7v/UEhccfsdW2KXJn4RyPu93mMMR3zyT8FkyuzOJ3vuHnUsCLwqFt1DRoSAjjbF5RZkbLAddFwfd7Gsvw8jJqb4p6Ul0Yw0b6VgvZSbjKXGwTDrCDs1UNL6AohcKMRFVPJixFoNYqxrv/shM4/k8fSfA79reVG5fNObT6uisbryklzuqmpiPt5moSrSHQLC5smFlxF0lNUdP1P90LDvzb/+k5iF1so0v6y+gJW4DO4Y0UA0tfSNlS4J8SHy0PEe1qDz+qw7sppETE9PZzg+YVIQi7GMUW3SZELtR1Xv7yI3uP302jEs3MO6QcZVzvcsAvYhR94dSSaob4DbdzI1y8alwKx3zAccRMv3CDaIy74yz231YXMtcFhH8TKR5Bz5ztEaVxQBNZeUJdCgeP2q4WjXNAKadX1CsCfLkmXS03vaHxW71tYqzqbUw6xf87zRSvaMvzZWiQiLg233TCG/KGh4iJ8eeCfm5IPVxe3Ec/8PPGQ4rRtVv7V19mOLrrHLs6wAIe8Lntr+zmWNVU3vrzLA20/RxMQbvMk
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB9983.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1eb2f72f-d803-4cff-cee0-08ddf1008663
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Sep 2025 06:57:51.3348
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: plDAcVHNpCr+iKscJLfzDTvhqjZwsXL/x4jhNInas9L3FjeQyWn2EzvSyBrkvYQRCnJSoR/5i0+vANl4Iv6sfeiQqTy+JL6TkSz9/KVw5J0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9804
 
-On 9/10/2025 12:25 AM, Chao Gao wrote:
->> void vmx_vm_destroy(struct kvm *kvm)
->> @@ -8499,10 +8396,6 @@ __init int vmx_hardware_setup(void)
->>
->> 	vmx_set_cpu_caps();
->>
->> -	r = alloc_kvm_area();
->> -	if (r && nested)
->> -		nested_vmx_hardware_unsetup();
->> -
-> 
-> There is a "return r" at the end of this function. with the removal
-> of "r = alloc_kvm_area()", @r may be uninitialized.
+Hi Ilkka
 
-Good catch!
+> Hi Kazuhiro,
+>=20
+> On Fri, 5 Sep 2025, Kazuhiro Abe wrote:
+> > AGDI has two types of signaling modes: SDEI and interrupt.
+> > Currently, the AGDI driver only supports SDEI.
+> > Therefore, add support for interrupt signaling mode The interrupt
+> > vector is retrieved from the AGDI table, and call panic function when
+> > an interrupt occurs.
+> >
+> > Signed-off-by: Kazuhiro Abe <fj1078ii@aa.jp.fujitsu.com>
+>=20
+>=20
+> Looks good to me.
+>=20
+> Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+>=20
 
-There’s no need for r to have function-wide scope anymore; just return 0 at
-the end of vmx_hardware_setup() after changing the definition of r as the
-following
+Thanks for your review.
 
-	if (nested) {
-		int r = 0;
-		...
-	}
+Best Regards,
+Kazuhiro Abe
 
-
-BTW, it's a good habit to always initialize local variables, which helps to
-avoid this kind of mistakes I made here.
-
-
->> diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
->> index 916441f5e85c..0eec314b79c2 100644
->> --- a/arch/x86/power/cpu.c
->> +++ b/arch/x86/power/cpu.c
->> @@ -206,11 +206,11 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
->> 	/* cr4 was introduced in the Pentium CPU */
->> #ifdef CONFIG_X86_32
->> 	if (ctxt->cr4)
->> -		__write_cr4(ctxt->cr4);
->> +		__write_cr4(ctxt->cr4 & ~X86_CR4_VMXE);
-> 
-> any reason to mask off X86_CR4_VMXE here?
-
-In this patch set, X86_CR4_VMXE is an indicator of whether VMX is on.  I
-used a per-CPU variable to track that, but later it seems better to track
-X86_CR4_VMXE.
-
-> 
-> I assume before suspend, VMXOFF is executed and CR4.VMXE is cleared. then
-> ctxt->cr4 here won't have CR4.VMXE set.
-
-What you said is for APs per my understanding.
-
-cpu_{enable,disable}_virtualization() in arch/x86/power/cpu.c are only used
-to execute VMXON/VMXOFF on BSP.
-
-TBH, there are lot of power management details I don't understand, e.g., AP
-states don't seem saved.  But the changes here are required to make S4
-work :)
-
+>=20
+> Hanjun & Sudeep, what's your thought on enabling the use of regular inter=
+rupts
+> here? I do agree the spec talks about non-maskable ones and to my underst=
+anding
+> that's what the idea was indeed.
+>=20
+> Cheers, Ilkka
+>=20
+>=20
+> > ---
+> > I keep normal IRQ code when NMI cannot be used.
+> > If there is any concern, please let me know.
+> >
+> > v2->v3
+> > - Fix bug in the return value of agdi_probe function.
+> > - Remove unnecessary curly braces in the agdi_remove function.
+> >
+> > v2:
+> > https://lore.kernel.org/all/20250829101154.2377800-1-fj1078ii@aa.jp.fu
+> > jitsu.com/
+> > v1->v2
+> > - Remove acpica update since there is no need to update define value
+> >   for this patch.
+> > ---
+> > drivers/acpi/arm64/agdi.c | 95
+> ++++++++++++++++++++++++++++++++++++---
+> > 1 file changed, 88 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/drivers/acpi/arm64/agdi.c b/drivers/acpi/arm64/agdi.c
+> > index e0df3daa4abf..2313a46f01cd 100644
+> > --- a/drivers/acpi/arm64/agdi.c
+> > +++ b/drivers/acpi/arm64/agdi.c
+> > @@ -16,7 +16,11 @@
+> > #include "init.h"
+> >
+> > struct agdi_data {
+> > +	unsigned char flags;
+> > 	int sdei_event;
+> > +	unsigned int gsiv;
+> > +	bool use_nmi;
+> > +	int irq;
+> > };
+> >
+> > static int agdi_sdei_handler(u32 sdei_event, struct pt_regs *regs,
+> > void *arg) @@ -48,6 +52,55 @@ static int agdi_sdei_probe(struct
+> platform_device *pdev,
+> > 	return 0;
+> > }
+> >
+> > +static irqreturn_t agdi_interrupt_handler_nmi(int irq, void *dev_id)
+> > +{
+> > +	nmi_panic(NULL, "Arm Generic Diagnostic Dump and Reset NMI
+> Interrupt event issued\n");
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static irqreturn_t agdi_interrupt_handler_irq(int irq, void *dev_id)
+> > +{
+> > +	panic("Arm Generic Diagnostic Dump and Reset Interrupt event
+> issued\n");
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +static int agdi_interrupt_probe(struct platform_device *pdev,
+> > +				struct agdi_data *adata)
+> > +{
+> > +	unsigned long irq_flags;
+> > +	int ret;
+> > +	int irq;
+> > +
+> > +	irq =3D acpi_register_gsi(NULL, adata->gsiv, ACPI_EDGE_SENSITIVE,
+> ACPI_ACTIVE_HIGH);
+> > +	if (irq < 0) {
+> > +		dev_err(&pdev->dev, "cannot register GSI#%d (%d)\n",
+> adata->gsiv, irq);
+> > +		return irq;
+> > +	}
+> > +
+> > +	irq_flags =3D IRQF_PERCPU | IRQF_NOBALANCING | IRQF_NO_AUTOEN |
+> > +		    IRQF_NO_THREAD;
+> > +	/* try NMI first */
+> > +	ret =3D request_nmi(irq, &agdi_interrupt_handler_nmi, irq_flags,
+> > +			  "agdi_interrupt_nmi", NULL);
+> > +	if (ret) {
+> > +		ret =3D request_irq(irq, &agdi_interrupt_handler_irq,
+> > +				  irq_flags, "agdi_interrupt_irq", NULL);
+> > +		if (ret) {
+> > +			dev_err(&pdev->dev, "cannot register IRQ %d\n", ret);
+> > +			acpi_unregister_gsi(adata->gsiv);
+> > +			return ret;
+> > +		}
+> > +		enable_irq(irq);
+> > +		adata->irq =3D irq;
+> > +	} else {
+> > +		enable_nmi(irq);
+> > +		adata->irq =3D irq;
+> > +		adata->use_nmi =3D true;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > static int agdi_probe(struct platform_device *pdev) {
+> > 	struct agdi_data *adata =3D dev_get_platdata(&pdev->dev); @@ -55,12
+> > +108,15 @@ static int agdi_probe(struct platform_device *pdev)
+> > 	if (!adata)
+> > 		return -EINVAL;
+> >
+> > -	return agdi_sdei_probe(pdev, adata);
+> > +	if (adata->flags & ACPI_AGDI_SIGNALING_MODE)
+> > +		return agdi_interrupt_probe(pdev, adata);
+> > +	else
+> > +		return agdi_sdei_probe(pdev, adata);
+> > }
+> >
+> > -static void agdi_remove(struct platform_device *pdev)
+> > +static void agdi_sdei_remove(struct platform_device *pdev,
+> > +			     struct agdi_data *adata)
+> > {
+> > -	struct agdi_data *adata =3D dev_get_platdata(&pdev->dev);
+> > 	int err, i;
+> >
+> > 	err =3D sdei_event_disable(adata->sdei_event);
+> > @@ -83,6 +139,29 @@ static void agdi_remove(struct platform_device *pde=
+v)
+> > 			adata->sdei_event, ERR_PTR(err));
+> > }
+> >
+> > +static void agdi_interrupt_remove(struct platform_device *pdev,
+> > +				  struct agdi_data *adata)
+> > +{
+> > +	if (adata->irq !=3D -1) {
+> > +		if (adata->use_nmi)
+> > +			free_nmi(adata->irq, NULL);
+> > +		else
+> > +			free_irq(adata->irq, NULL);
+> > +
+> > +		acpi_unregister_gsi(adata->gsiv);
+> > +	}
+> > +}
+> > +
+> > +static void agdi_remove(struct platform_device *pdev) {
+> > +	struct agdi_data *adata =3D dev_get_platdata(&pdev->dev);
+> > +
+> > +	if (adata->flags & ACPI_AGDI_SIGNALING_MODE)
+> > +		agdi_interrupt_remove(pdev, adata);
+> > +	else
+> > +		agdi_sdei_remove(pdev, adata);
+> > +}
+> > +
+> > static struct platform_driver agdi_driver =3D {
+> > 	.driver =3D {
+> > 		.name =3D "agdi",
+> > @@ -94,7 +173,7 @@ static struct platform_driver agdi_driver =3D { void
+> > __init acpi_agdi_init(void) {
+> > 	struct acpi_table_agdi *agdi_table;
+> > -	struct agdi_data pdata;
+> > +	struct agdi_data pdata =3D {0};
+> > 	struct platform_device *pdev;
+> > 	acpi_status status;
+> >
+> > @@ -104,11 +183,13 @@ void __init acpi_agdi_init(void)
+> > 		return;
+> >
+> > 	if (agdi_table->flags & ACPI_AGDI_SIGNALING_MODE) {
+> > -		pr_warn("Interrupt signaling is not supported");
+> > -		goto err_put_table;
+> > +		pdata.gsiv =3D agdi_table->gsiv;
+> > +	} else {
+> > +		pdata.sdei_event =3D agdi_table->sdei_event;
+> > 	}
+> >
+> > -	pdata.sdei_event =3D agdi_table->sdei_event;
+> > +	pdata.irq =3D -1;
+> > +	pdata.flags =3D agdi_table->flags;
+> >
+> > 	pdev =3D platform_device_register_data(NULL, "agdi", 0, &pdata,
+> sizeof(pdata));
+> > 	if (IS_ERR(pdev))
+> > --
+> > 2.43.0
+> >
+> >
 
