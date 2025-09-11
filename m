@@ -1,206 +1,298 @@
-Return-Path: <linux-kernel+bounces-811453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B22E6B52949
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:56:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0E3B52957
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCD7F1C214C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:56:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 765EC464B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076FD258CF7;
-	Thu, 11 Sep 2025 06:55:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143F6145A05;
+	Thu, 11 Sep 2025 06:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="g5/UuQQB"
-Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="k7TB30xJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3FA6145A05
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DF026A1BE
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757573756; cv=none; b=ZB75Brw1mNjVhXE5xMoMIC/IagM52gMaFnXOEWJp2weU7VVaLbjyRgcMkr/kv8DswLwQ5PCf6RhausPUm5iKJmlm0HHtQlVn6hrGWRcU1ZqtlXe7uXwxw+MdaHEp+bLh7pUUDngUZ8w1Samo6ZQo5b9MiQKQ7VW8/TiHg6j82YU=
+	t=1757573802; cv=none; b=A9XJWod6YrOwbYf8F099E7yULHhxlpBmoSzMniL78nH0BIb/Y7dGTRhBq8DFw2mc/swjjXFQwOZxRLVHVhfxDs05QmaCj3puRwTBP48jCFd+OeaHgXjrmWnpc8WQiTDfHl7a2aKb7hcKq2MGZus5oQYQYYTzgzwmEmZ3BnIfhsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757573756; c=relaxed/simple;
-	bh=SLthlOhaJGA95i5s9TcubNYUQfB7xXOGHWUxx/fc6CU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E5OERef10Sc8V0o/e0BhOIE+lcJ+MemGEbvoH9uol/OQWidWEUTnzYSllsTR+8b0KPNnys1UGFBiMY7vBCciJBQQwiar+xf55gGOtW2GdtrzM8TexHBhW6sriFPDt5pi9urEZxkSDT7YLiC5IHOjld8yZqHTCI9UlQbAa5q6QhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=g5/UuQQB; arc=none smtp.client-ip=81.70.192.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=To:From;
-	bh=XOFayJC+PaTyeYE+oOlYMFS/9p9GqfLdhmodvRmn3SY=;
-	b=g5/UuQQBomgKxgCsmze2dlhfNE2jwKOUGT9hZWsLCHTPJOmET3bjShuhEuy0iWNYC0gL8oM2g
-	tvgDWGoEFx8BF6DUTKL5gkowtUuTvpwQid26CSwi7rrXDb8GAMf4/MDqJLC4QYCXPFDMGSuFQD2
-	31iorsFx4NRCaQ3dynvszQc=
-Received: from w012.hihonor.com (unknown [10.68.27.189])
-	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cMpGr6XyLzYlZK3;
-	Thu, 11 Sep 2025 14:55:32 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w012.hihonor.com
- (10.68.27.189) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
- 2025 14:55:50 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
- 2025 14:55:50 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <linux-f2fs-devel@lists.sourceforge.net>
-CC: <chao@kernel.org>, <feng.han@honor.com>, <jaegeuk@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <wangzijie1@honor.com>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix wrong extent_info data for precache extents
-Date: Thu, 11 Sep 2025 14:55:49 +0800
-Message-ID: <20250911065549.2929967-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <ad627632-298e-428b-9cfa-a5b5b50c147e@kernel.org>
-References: <ad627632-298e-428b-9cfa-a5b5b50c147e@kernel.org>
+	s=arc-20240116; t=1757573802; c=relaxed/simple;
+	bh=sblEJvuu+yGOs0V9hFTmaATfIDhOqrS8xdqAJkutzKw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CeuwtBZRgvfBj7XIrvq3uC/VmSlVs2i9IWG/q9QfR4fISlyoyLZoz9fH3cSsLn79/50wEXVXLTN9fgv/+Nk8hDkHSvhC//UtH67B1Wfy9FPgzzdwH8FJ2wPPhbh1h5NbVN8az2Y3d9Z94codjJX5cFE5Wll43lCXEfk0GhN9ucE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=k7TB30xJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B2IVXD015051
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:56:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	L0/f9kwfpciu7DfEkuARJ15E4Z8kw8VAZZm5KrXW658=; b=k7TB30xJ6YBYISUC
+	t1Xchjhihv1zKFGNzmUAnVSpbPi3lhNYnUNDoYH/lkA3LUpiznRCmDrhD28ZYrI1
+	LI8R5eV1SA/r0ZiZ2JJJ0xvi+CBQa8EJRVtevg/KtY8021k8r63iKHPRPnALlEQp
+	l8lQO0YBOk4JQ4/LJV1O5inedvf0G+NdnUDpUIdfEGmGy3LjW1OGx5WRT6kAW9tZ
+	HUPPc4DnX3YPmeABeRNheK1z2q8cbyR+Zu9aQl05f8xjJsFR4+tdJcDl/PAhA4Dx
+	FN1W5h2xlddmbrD7+/TOM1O8Y5ML0/PZsFKTmXClSWscA7U07TgGcqGs9a0q2NXg
+	sG5aFQ==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490e4m6fhn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:56:39 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7741ef59d18so381084b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 23:56:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757573798; x=1758178598;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L0/f9kwfpciu7DfEkuARJ15E4Z8kw8VAZZm5KrXW658=;
+        b=iGmwvyyW8D6j8PYQGy9YZ+eeaWOWXseKu31zxdhbFnCYOzEqKnMpUdGNilaBAThXbe
+         joSsvl7+0UaGhWk506I4+9CXneJ2mi4lnPI2Myywo4X3nr7ktyAfiSr2cP4gsotza/Ur
+         WlprNGc47WxcrEKTYM6PgwtF2yHJLq3IpFUY+GsgxApQ2xoJXsaFHoJ2z/PK6jP1egJ2
+         xqwDTJ6y52NZTwB59px4tzKEVjKs8DZVblS/mEdN+u7tOhomBIThknBTG2UphLYbl09m
+         V1YDTVExyGB91jEMyZ5r1ha+PJQVcjvxkisb2MlnSGdHe2jCpYmepElhweR+kJytrfUL
+         t0EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWP80pSwBxD2zJGYfakMateel4vt3cTq0JwclO1ErVZna/MOsf3rZQHDBhxuPCvJO8//rXEmeB4EMm8P60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZLo2lheXzCA53gTkFAo2AWzT5D/Gzqc3CmBPrSVJuf5TgYCR+
+	cQelEPqNz0mt4I5grnNUQN+rfCykuaOw9KBi65MCX483UYUvnlRX5FxhiPBZ/FQwAQzRHY8Ggoi
+	UnkowV6QlGIwEoD5kUyCYIJL1Tis3wCl314eT1FJlGtVgyEIcDjZfFVvBlWOfPmGtCV8=
+X-Gm-Gg: ASbGncu+VdQmQmpI9ddlWN8Os5aj14LXSK3z15mBkyqX1WR5kDSgS37ZOvsxHMS4/Eo
+	efFbwMcbPUWSZfx02YklPSr07gfqi7sJw3avgtcISNd5bfUbTFzLZ/BGICPFW1dXxeDNQUzpQ4H
+	7IZkpDOAD8Kc7WpNPZRPABoP6JOhGtXpypNfCALmF5fCk6WXdeF8gtv4mePRZVIj9DoG9+ijVXb
+	cn/6B9K6H7N+9eQMmzHIOtLTP+undRswc5eqp1HHIeF3ffStGmzUy6qB0g7ZDmsP4v7HrlSOJWh
+	cyCZYVCuWopFs0oCv5BoBnz5EPN3XgvtJZ9NxbSEoTF5WQgOu0akJDc2o5ktpQ2XK+OQnfYBwsz
+	nD+m06XMRvb8DaFEmNFoIORBmc+ChkLU=
+X-Received: by 2002:a05:6a00:13a0:b0:770:579a:bb84 with SMTP id d2e1a72fcca58-7742dca7eb8mr19249064b3a.5.1757573798364;
+        Wed, 10 Sep 2025 23:56:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGQJqIhfBQbD1AYfL/Znlo74DGsw2IRepNE1WdWQRW2mKhFrPcwTfZ5gu3E11Lb2M8x804pDw==
+X-Received: by 2002:a05:6a00:13a0:b0:770:579a:bb84 with SMTP id d2e1a72fcca58-7742dca7eb8mr19249026b3a.5.1757573797778;
+        Wed, 10 Sep 2025 23:56:37 -0700 (PDT)
+Received: from [10.133.33.180] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b33c45sm966960b3a.71.2025.09.10.23.56.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 23:56:37 -0700 (PDT)
+Message-ID: <730f8cdd-e863-4b33-96b3-dcfb9cea7e1e@oss.qualcomm.com>
+Date: Thu, 11 Sep 2025 14:56:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w001.hihonor.com (10.68.25.235) To a011.hihonor.com
- (10.68.31.243)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: ufs: core: Fix data race in CPU latency PM QoS
+ request handling
+To: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+        James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com
+Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
+        quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
+        adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
+        neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
+        quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com,
+        zhongqiu.han@oss.qualcomm.com
+References: <20250902074829.657343-1-zhongqiu.han@oss.qualcomm.com>
+Content-Language: en-US
+From: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+In-Reply-To: <20250902074829.657343-1-zhongqiu.han@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzOCBTYWx0ZWRfX2dgXy8ANrC89
+ k2N0Iz6Q9J6ObGzGDwyvMy59F/M5CInZNrHkT1wCk2Zq91levrjaTjQuo963nTSBmclV6S7IX4a
+ 43rMW+5hjYSONl2yaIj1/1iYeIr3nu+TKwcBnVraE+ZrbJqsMvO3RLO7+E6Z4IfwTjg3hiM/IC5
+ 0YCP4Byavs0fq3CO1yx6EFZr0IFLtsENGqyxUSmXnCtmQZrZ0geVX1+ZMRP+NBQn1/g2pr04I4t
+ i1QYZdg6ALjWddPUzfMYXFu+Q5oeiOjc1lKFiiEdeQb+mkeJNYobw9VSl1peOGRL4m4VBycq1mr
+ i0znl62s6d/oR4rOO1NH+b0nKEmFIZ6GS/npL4NAbe8amnk7oj4gHh082P+3bA5ymurKBma7tNz
+ U9fpid2O
+X-Authority-Analysis: v=2.4 cv=J66q7BnS c=1 sm=1 tr=0 ts=68c272a7 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=7YBbx7_t3QDw2YeiogQA:9 a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-GUID: 10FeJizQgIuZh0v2i2OltDZy3wNL0Kwl
+X-Proofpoint-ORIG-GUID: 10FeJizQgIuZh0v2i2OltDZy3wNL0Kwl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
+ adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060038
 
-> On 9/10/25 21:58, wangzijie wrote:
-> > When the data layout is like this:
-> > dnode1:                     dnode2:
-> > [0]      A                  [0]    NEW_ADDR
-> > [1]      A+1                [1]    0x0
-> > ...                         ....
-> > [1016]   A+1016
-> > [1017]   B (B!=A+1017)      [1017] 0x0
-> > 
-> > We can build this kind of layout by following steps(with i_extra_isize:36):
-> > ./f2fs_io write 1 0 1881 rand dsync testfile
-> > ./f2fs_io write 1 1881 1 rand buffered testfile
-> > ./f2fs_io fallocate 0 7708672 4096 testfile
-> > 
-> > And when we map first data block in dnode2, we will get wrong extent_info data:
-> > map->m_len = 1
-> > ofs = start_pgofs - map->m_lblk = 1882 - 1881 = 1
-> > 
-> > ei.fofs = start_pgofs = 1882
-> > ei.len = map->m_len - ofs = 1 - 1 = 0
+On 9/2/2025 3:48 PM, Zhongqiu Han wrote:
+> The cpu_latency_qos_add/remove/update_request interfaces lack internal
+> synchronization by design, requiring the caller to ensure thread safety.
+> The current implementation relies on the `pm_qos_enabled` flag, which is
+> insufficient to prevent concurrent access and cannot serve as a proper
+> synchronization mechanism. This has led to data races and list corruption
+> issues.
 > 
-> Hi Zijie,
+> A typical race condition call trace is:
 > 
-> I tried to reproduce w/ below steps:
+> [Thread A]
+> ufshcd_pm_qos_exit()
+>    --> cpu_latency_qos_remove_request()
+>      --> cpu_latency_qos_apply();
+>        --> pm_qos_update_target()
+>          --> plist_del              <--(1) delete plist node
+>      --> memset(req, 0, sizeof(*req));
+>    --> hba->pm_qos_enabled = false;
 > 
-> f2fs_io write 1 0 1881 rand dsync testfile
-> f2fs_io write 1 1881 1 rand buffered testfile
-> f2fs_io fallocate 0 7708672 4096 testfile
-> umount
-> mount
-> f2fs_io precache_extents testfile
+> [Thread B]
+> ufshcd_devfreq_target
+>    --> ufshcd_devfreq_scale
+>      --> ufshcd_scale_clks
+>        --> ufshcd_pm_qos_update     <--(2) pm_qos_enabled is true
+>          --> cpu_latency_qos_update_request
+>            --> pm_qos_update_target
+>              --> plist_del          <--(3) plist node use-after-free
 > 
->          f2fs_io-921     [013] .....  1049.855817: f2fs_lookup_start: dev = (253,16), pino = 3, name:testfile, flags:65537
->          f2fs_io-921     [013] .....  1049.855870: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), DATA, sector = 139280, size = 4096
->          f2fs_io-921     [013] .....  1049.856116: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x5, oldaddr = 0x5553, newaddr = 0x5553, rw = READ(), type = HOT_NODE
->          f2fs_io-921     [013] .....  1049.856147: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174744, size = 4096
->          f2fs_io-921     [013] .....  1049.856273: f2fs_iget: dev = (253,16), ino = 5, pino = 3, i_mode = 0x81ed, i_size = 7712768, i_nlink = 1, i_blocks = 15080, i_advise = 0x0
->          f2fs_io-921     [013] .....  1049.856305: f2fs_lookup_end: dev = (253,16), pino = 3, name:testfile, ino:5, err:0
->          f2fs_io-921     [013] .....  1049.856316: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 0, type = Read
->          f2fs_io-921     [013] .....  1049.856317: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 0, read_ext_info(fofs: 0, len: 512, blk: 1055744)
->          f2fs_io-921     [013] .....  1049.856317: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 0, start blkaddr = 0x101c00, len = 0x200, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
->          f2fs_io-921     [013] .....  1049.856318: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 512, type = Read
->          f2fs_io-921     [013] .....  1049.856318: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 512, read_ext_info(fofs: 0, len: 0, blk: 0)
->          f2fs_io-921     [013] .....  1049.856323: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 512, len = 352, blkaddr = 18432, c_len = 0
->          f2fs_io-921     [013] .....  1049.856328: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x6, oldaddr = 0x5556, newaddr = 0x5556, rw = READ(), type = HOT_NODE
->          f2fs_io-921     [013] .....  1049.856329: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174768, size = 4096
->          f2fs_io-921     [021] .....  1049.856968: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 864, len = 160, blkaddr = 18784, c_len = 0
->          f2fs_io-921     [021] .....  1049.857002: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 512, start blkaddr = 0x4800, len = 0x200, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
->          f2fs_io-921     [021] .....  1049.857003: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1025, type = Read
->          f2fs_io-921     [021] .....  1049.857004: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1025, read_ext_info(fofs: 0, len: 0, blk: 0)
->          f2fs_io-921     [021] .....  1049.857010: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 1025, len = 511, blkaddr = 19457, c_len = 0
->          f2fs_io-921     [021] .....  1049.857011: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1025, start blkaddr = 0x4c01, len = 0x1ff, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
->          f2fs_io-921     [021] .....  1049.857012: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1537, type = Read
->          f2fs_io-921     [021] .....  1049.857012: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1537, read_ext_info(fofs: 0, len: 0, blk: 0)
->          f2fs_io-921     [021] .....  1049.857016: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 5, pgofs = 1537, len = 344, blkaddr = 20993, c_len = 0
->          f2fs_io-921     [021] .....  1049.857016: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1537, start blkaddr = 0x5201, len = 0x158, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
->          f2fs_io-921     [021] .....  1049.857017: f2fs_lookup_extent_tree_start: dev = (253,16), ino = 5, pgofs = 1882, type = Read
->          f2fs_io-921     [021] .....  1049.857017: f2fs_lookup_read_extent_tree_end: dev = (253,16), ino = 5, pgofs = 1882, read_ext_info(fofs: 0, len: 0, blk: 0)
->          f2fs_io-921     [021] .....  1049.857024: f2fs_submit_folio_bio: dev = (253,16), ino = 1, folio_index = 0x7, oldaddr = 0x5555, newaddr = 0x5555, rw = READ(), type = HOT_NODE
->          f2fs_io-921     [021] .....  1049.857026: f2fs_submit_read_bio: dev = (253,16)/(253,16), rw = READ(), NODE, sector = 174760, size = 4096
->          f2fs_io-921     [021] .....  1049.857156: f2fs_map_blocks: dev = (253,16), ino = 5, file offset = 1882, start blkaddr = 0x5201, len = 0x0, flags = 0, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
+> This patch introduces a dedicated mutex to serialize PM QoS operations,
+> preventing data races and ensuring safe access to PM QoS resources.
+> Additionally, READ_ONCE is used in the sysfs interface to ensure atomic
+> read access to pm_qos_enabled flag.
 > 
-> It seems f2fs_update_read_extent_tree_range() won't insert a zero-sized extent?
-> Or am I missing something?
+> Fixes: 2777e73fc154 ("scsi: ufs: core: Add CPU latency QoS support for UFS driver")
+> Signed-off-by: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+
+Hi Martin K. Petersen,
+
+Just a gentle ping on this patch,
+
+Would appreciate any feedback when you have time. Thanks!
+
+
+
+
+> ---
+> v1 -> v2:
+> - Fix misleading indentation by adding braces to if statements in pm_qos logic.
+> - Resolve checkpatch strict mode warning by adding an inline comment for pm_qos_mutex.
+> - Link to v1: https://lore.kernel.org/all/20250901085117.86160-1-zhongqiu.han@oss.qualcomm.com/
 > 
-> Thanks,
+>   drivers/ufs/core/ufs-sysfs.c |  2 +-
+>   drivers/ufs/core/ufshcd.c    | 25 ++++++++++++++++++++++---
+>   include/ufs/ufshcd.h         |  3 +++
+>   3 files changed, 26 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
+> index 4bd7d491e3c5..8f7975010513 100644
+> --- a/drivers/ufs/core/ufs-sysfs.c
+> +++ b/drivers/ufs/core/ufs-sysfs.c
+> @@ -512,7 +512,7 @@ static ssize_t pm_qos_enable_show(struct device *dev,
+>   {
+>   	struct ufs_hba *hba = dev_get_drvdata(dev);
+>   
+> -	return sysfs_emit(buf, "%d\n", hba->pm_qos_enabled);
+> +	return sysfs_emit(buf, "%d\n", READ_ONCE(hba->pm_qos_enabled));
+>   }
+>   
+>   /**
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 926650412eaa..98b9ce583386 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -1047,14 +1047,19 @@ EXPORT_SYMBOL_GPL(ufshcd_is_hba_active);
+>    */
+>   void ufshcd_pm_qos_init(struct ufs_hba *hba)
+>   {
+> +	mutex_lock(&hba->pm_qos_mutex);
+>   
+> -	if (hba->pm_qos_enabled)
+> +	if (hba->pm_qos_enabled) {
+> +		mutex_unlock(&hba->pm_qos_mutex);
+>   		return;
+> +	}
+>   
+>   	cpu_latency_qos_add_request(&hba->pm_qos_req, PM_QOS_DEFAULT_VALUE);
+>   
+>   	if (cpu_latency_qos_request_active(&hba->pm_qos_req))
+>   		hba->pm_qos_enabled = true;
+> +
+> +	mutex_unlock(&hba->pm_qos_mutex);
+>   }
+>   
+>   /**
+> @@ -1063,11 +1068,16 @@ void ufshcd_pm_qos_init(struct ufs_hba *hba)
+>    */
+>   void ufshcd_pm_qos_exit(struct ufs_hba *hba)
+>   {
+> -	if (!hba->pm_qos_enabled)
+> +	mutex_lock(&hba->pm_qos_mutex);
+> +
+> +	if (!hba->pm_qos_enabled) {
+> +		mutex_unlock(&hba->pm_qos_mutex);
+>   		return;
+> +	}
+>   
+>   	cpu_latency_qos_remove_request(&hba->pm_qos_req);
+>   	hba->pm_qos_enabled = false;
+> +	mutex_unlock(&hba->pm_qos_mutex);
+>   }
+>   
+>   /**
+> @@ -1077,10 +1087,15 @@ void ufshcd_pm_qos_exit(struct ufs_hba *hba)
+>    */
+>   static void ufshcd_pm_qos_update(struct ufs_hba *hba, bool on)
+>   {
+> -	if (!hba->pm_qos_enabled)
+> +	mutex_lock(&hba->pm_qos_mutex);
+> +
+> +	if (!hba->pm_qos_enabled) {
+> +		mutex_unlock(&hba->pm_qos_mutex);
+>   		return;
+> +	}
+>   
+>   	cpu_latency_qos_update_request(&hba->pm_qos_req, on ? 0 : PM_QOS_DEFAULT_VALUE);
+> +	mutex_unlock(&hba->pm_qos_mutex);
+>   }
+>   
+>   /**
+> @@ -10764,6 +10779,10 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
+>   	mutex_init(&hba->ee_ctrl_mutex);
+>   
+>   	mutex_init(&hba->wb_mutex);
+> +
+> +	/* Initialize mutex for PM QoS request synchronization */
+> +	mutex_init(&hba->pm_qos_mutex);
+> +
+>   	init_rwsem(&hba->clk_scaling_lock);
+>   
+>   	ufshcd_init_clk_gating(hba);
+> diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+> index 30ff169878dc..a16f857a052f 100644
+> --- a/include/ufs/ufshcd.h
+> +++ b/include/ufs/ufshcd.h
+> @@ -962,6 +962,7 @@ enum ufshcd_mcq_opr {
+>    * @ufs_rtc_update_work: A work for UFS RTC periodic update
+>    * @pm_qos_req: PM QoS request handle
+>    * @pm_qos_enabled: flag to check if pm qos is enabled
+> + * @pm_qos_mutex: synchronizes PM QoS request and status updates
+>    * @critical_health_count: count of critical health exceptions
+>    * @dev_lvl_exception_count: count of device level exceptions since last reset
+>    * @dev_lvl_exception_id: vendor specific information about the
+> @@ -1135,6 +1136,8 @@ struct ufs_hba {
+>   	struct delayed_work ufs_rtc_update_work;
+>   	struct pm_qos_request pm_qos_req;
+>   	bool pm_qos_enabled;
+> +	/* synchronizes PM QoS request and status updates */
+> +	struct mutex pm_qos_mutex;
+>   
+>   	int critical_health_count;
+>   	atomic_t dev_lvl_exception_count;
 
-Hi, Chao
-I test it again with below steps:
 
-./f2fs_io write 1 0 1881 rand dsync testfile
-./f2fs_io fallocate 0 7708672 4096 testfile
-./f2fs_io write 1 1881 1 rand buffered testfile
-fsync testfile
-umount
-mount
-./f2fs_io precache_extents testfile
-
-         f2fs_io-8749    [003] .....    86.759281: f2fs_lookup_start: dev = (254,57), pino = 45485, name:testfile, flags:257
-         f2fs_io-8749    [003] .....    86.759954: f2fs_iget: dev = (254,57), ino = 501391, pino = 45485, i_mode = 0x81ed, i_size = 7712768, i_nlink = 1, i_blocks = 15080, i_advise = 0x0
-         f2fs_io-8749    [003] .....    86.759968: f2fs_lookup_end: dev = (254,57), pino = 45485, name:testfile, ino:501391, err:0
-         f2fs_io-8749    [003] .....    86.760000: f2fs_lookup_extent_tree_start: dev = (254,57), ino = 501391, pgofs = 0, type = Read
-         f2fs_io-8749    [003] .....    86.760020: f2fs_lookup_read_extent_tree_end: dev = (254,57), ino = 501391, pgofs = 0, read_ext_info(fofs: 0, len: 1881, blk: 3164707)
-         f2fs_io-8749    [003] .....    86.760020: f2fs_map_blocks: dev = (254,57), ino = 501391, file offset = 0, start blkaddr = 0x304a23, len = 0x759, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
-         f2fs_io-8749    [003] .....    86.760021: f2fs_lookup_extent_tree_start: dev = (254,57), ino = 501391, pgofs = 1881, type = Read
-         f2fs_io-8749    [003] .....    86.760022: f2fs_lookup_read_extent_tree_end: dev = (254,57), ino = 501391, pgofs = 1881, read_ext_info(fofs: 0, len: 0, blk: 0)
-         f2fs_io-8749    [005] .....    86.760162: f2fs_update_read_extent_tree_range: dev = (254,57), ino = 501391, pgofs = 1881, len = 1, blkaddr = 2688335, c_len = 0
-    *****f2fs_io-8749    [005] .....    86.760324: f2fs_update_read_extent_tree_range: dev = (254,57), ino = 501391, pgofs = 1882, len = 0, blkaddr = 2688336, c_len = 0  ******
-         f2fs_io-8749    [005] .....    86.760326: f2fs_map_blocks: dev = (254,57), ino = 501391, file offset = 1881, start blkaddr = 0x29054f, len = 0x1, flags = 2, seg_type = 8, may_create = 0, multidevice = 0, flag = 6, err = 0
-
-
-inode:
-i_ext: fofs:0 blkaddr:304a23 len:759
-i_addr[0x9]     [0x  304a23 : 3164707]
-....
-i_addr[0x368]   [0x  304d82 : 3165570]
-
-dnode1:
-[0]    [0x  304d83 : 3165571]
-[1016] [0x  30517b : 3166587]
-...
-[1017] [0x  29054f : 2688335]
-
-dnode2:
-[0]  	NEW_ADDR
-[1]     [0x       0 : 0]
-...
-
-
-
-
-> > 
-> > Fix it by skipping updating this kind of extent info.
-> > 
-> > Signed-off-by: wangzijie <wangzijie1@honor.com>
-> > ---
-> >  fs/f2fs/data.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index 7961e0ddf..b8bb71852 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -1649,6 +1649,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
-> >  
-> >  		switch (flag) {
-> >  		case F2FS_GET_BLOCK_PRECACHE:
-> > +			if (__is_valid_data_blkaddr(map->m_pblk) &&
-> > +				start_pgofs - map->m_lblk == map->m_len)
-> > +				map->m_flags &= ~F2FS_MAP_MAPPED;
-> >  			goto sync_out;
-> >  		case F2FS_GET_BLOCK_BMAP:
-> >  			map->m_pblk = 0;
-
+-- 
+Thx and BRs,
+Zhongqiu Han
 
