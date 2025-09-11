@@ -1,198 +1,204 @@
-Return-Path: <linux-kernel+bounces-812253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291C3B53515
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:20:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46CF1B5351A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8F635A3CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9606AA2D3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878E223D7C8;
-	Thu, 11 Sep 2025 14:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F2E31DDAE;
+	Thu, 11 Sep 2025 14:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n8aqCPFN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3fRxzJNH"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9A4266B67
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BE7212FB9
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757600427; cv=none; b=f5n0iwSD6ryBWbvxGKvxvg6Luk4ZaNAbgR924hHEMNcWwo/bkwuGaBUYCpwT6fxYOpNCGKFcqlgLQBy25IGCBv4CYIWs3fALx8ZRbQMbUh8F74OOX78XQq4tuOFxlwIdZZxhJdSN6r/EXXWYGuCFel8AYKPzdwSSqbzHZWMZZbk=
+	t=1757600469; cv=none; b=QVg1FKhmm46jFIZlhutUNkWW9GSW6EBQ/OIHCxsNz61al+NtgExlhVe9YNT6zdsX/c1ydPUbyQAUBrku/8O51okJd428urxmVhxDI3Rj2KE+kqHOmsZ2KY5FO+m7Jzp56CP0JTUKQ2KMGhsO2zhztrBLmoBhOQVsbSY+fFjOTXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757600427; c=relaxed/simple;
-	bh=7Y1g/p6iZza6skOHn7hu32dRsTE6Q4vUODm53ZSfRsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j5qu8XtFzcOhdeQB4Sne34lM8/L7+ZKFeefKGobm7VgPx5FQ4KyX4wgUhUbbXFWV2xdu4Q+Ihm1In5oMApDkBH/W5msetjsFNSIWfZK8avVccWipO/AHfkU4oWCSng65UvL+0+UZy1rE2iASTnRjAx5tLq4UuvtuKQ5FNgYBs3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n8aqCPFN; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757600425; x=1789136425;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7Y1g/p6iZza6skOHn7hu32dRsTE6Q4vUODm53ZSfRsI=;
-  b=n8aqCPFNMmnx306denV0+GSgvHpW+GSNKQgeVUJyx9T5RcXzfAO2SnMo
-   BVb6vGng0ARUjdwCg+3UKwXYW41lAMRTJQKn/3GHOm8IITsiL/XeqFyZc
-   hhjDSb2Lsf9uiG8AvNVecRRap7TOOAkC0y1iIvr5CWYQ3rLxZpbq4eY4X
-   CPI4//DblEBojZNkjnrGKw0jdQmZ2CbhyRLjb98LZePYDqobXnaYxsEcw
-   TNZuDAjKrTGq6dKxcfEc1PZ25NKRzyqwgozXU15gGgsq7PAm35oh58aZK
-   17GPx3cd4oolIKsPbyYeQn5dqnmNfz5i8trdg4vfa6+K1hxF7yKiV2kcK
-   A==;
-X-CSE-ConnectionGUID: k2XG2NPnRnags2E9pCG5Og==
-X-CSE-MsgGUID: 2Hk7S/C8T/63pHC/XtfJ5g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="71311417"
-X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
-   d="scan'208";a="71311417"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 07:20:24 -0700
-X-CSE-ConnectionGUID: et4gFRYMR6Cuaq8mVNEQbQ==
-X-CSE-MsgGUID: qPSCSHpdQVKCwhhKeESM5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
-   d="scan'208";a="204465229"
-Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 11 Sep 2025 07:20:23 -0700
-Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uwi9r-0000Nc-2c;
-	Thu, 11 Sep 2025 14:20:19 +0000
-Date: Thu, 11 Sep 2025 22:20:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alessio Attilio <alessio.attilio.dev@gmail.com>, aahringo@redhat.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	teigland@redhat.com, gfs2@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Alessio Attilio <alessio.attilio@engineer.com>
-Subject: Re: [PATCH] * dlm: improve lock management and concurrency control
-Message-ID: <202509112216.Jvy0G9Jd-lkp@intel.com>
-References: <20250910171706.173976-1-alessio.attilio.dev@gmail.com>
+	s=arc-20240116; t=1757600469; c=relaxed/simple;
+	bh=+iYwU3lAJZN4irjGgO7FnAikEFpf8kacEm1KMOnoLBg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cpYjB+nipjVQS4vwqBHlNSRmhCStY1iCazkXMLeOHittp/QWd8HlQvCCTY/Pb+nNHsc+kdE9+dc//hyffXF9jSIV4mPshrnGZOBZEvbnJudIyD4NjpAAAgUzRx4uow2kKp/Fd7RUUsSAOYHcojI12VnNR+yz3U1DL7C+YWrw6v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3fRxzJNH; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--guanyulin.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7725b77b795so734565b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:21:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757600467; x=1758205267; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BXpKyC+FtSuNs0YLqsRlk5q4vvwtie8skRJ55fTgeiY=;
+        b=3fRxzJNHgCMbaPx6pKhdQkp0+jihAeT3dp61558GeulI03lflmoJmFaMh6UUARDVff
+         PASyDbCvocIam9I/pqITXuXj6jl1jqfmUFpgY7FKw8/lZhW41aZL9IsoE5aCAHn+mX7X
+         Qs50sWhgc/K0y0kwXShHMyTfP8MXWrlAFTnX5+JVVz+7AKAg6RyQvO5Fd/72WHUw45sb
+         JTDHpxi7/LT9og9yoAxtlm3ps4YkEdppSuDc3hDihfhYUS68P2xoryiAU7RdHSTEkZ+Y
+         0tmoNwJLHdA5U/l4g3hX71BG3Qe76g6ZRiivMJymbq116uMxegHCGbuf3wSJGsbgVJiG
+         qt2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757600467; x=1758205267;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BXpKyC+FtSuNs0YLqsRlk5q4vvwtie8skRJ55fTgeiY=;
+        b=AM0HJ2bE4r/dB2wo2IPUe3QRHzLmv+MBnXirCd0LKp5hCHeCjJ0ACZIi6MYeeVTIVC
+         TQqSWH59B9aiKOo0s2fbXUweJoIUf51Rt1qZo1QQVlwn1QBYdbBCXH8gGerlyPUagS0B
+         d393SU3U6THToqlNtLcHU72Uu1DvH0TWw0mjIu4oPTJUn/LS6vWvkiC2IqBYmv2vaWCr
+         Z1CdMxxLr/RVqEK6tETIAu0khbytCvCqJIDdsBPWWPOnoo8Zr39g3GUaaOs5jnMOsa+R
+         tVwAVqdEzbbJpOo35T1DXJx5d0ZCZIS7munJjHf+Rh2nPYfzYFg2uO2V0qoDDPcuEgwX
+         R/OA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvFNH5Jr/U7TIPIAV0/QbyTWoHLQfioTSrD5lFXM080cJJJ+3O5665P6JykDTjpioA+WKpLqfpHywGqNs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF+fKKyFrbmIokqQmp+x5Av9S90zdE3ZuI1qwlphcv6DN3dqJg
+	6nELWMPWSaVkILD68n7kZ61tmGvdeqg8s40PS7y3zbFRYOsWgkpCEueamTapWXx/Nsiwn3zZL84
+	j5Nw1TOFgylrMW6q3gA==
+X-Google-Smtp-Source: AGHT+IGxazJ6wSRTWeq83hZ8mq5zVKYCYBbAtGgqkOmgLsu8aqytxOCePqUp/OIJ0Q3QGgdvYcabZuO39IHBHJs=
+X-Received: from pgam28.prod.google.com ([2002:a05:6a02:2b5c:b0:b47:1324:ea0a])
+ (user=guanyulin job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a20:939e:b0:251:5160:f6c4 with SMTP id adf61e73a8af0-25345e324ebmr25326771637.50.1757600467216;
+ Thu, 11 Sep 2025 07:21:07 -0700 (PDT)
+Date: Thu, 11 Sep 2025 14:20:12 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910171706.173976-1-alessio.attilio.dev@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250911142051.90822-1-guanyulin@google.com>
+Subject: [PATCH v16 0/4] Support system sleep with offloaded usb transfers
+From: Guan-Yu Lin <guanyulin@google.com>
+To: gregkh@linuxfoundation.org, mathias.nyman@intel.com, hannelotta@gmail.com, 
+	zijun.hu@oss.qualcomm.com, xu.yang_2@nxp.com, stern@rowland.harvard.edu, 
+	andriy.shevchenko@linux.intel.com, amardeep.rai@intel.com, 
+	dominique.martinet@atmark-techno.com, quic_wcheng@quicinc.com, 
+	sakari.ailus@linux.intel.com, dh10.jung@samsung.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Guan-Yu Lin <guanyulin@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alessio,
+Wesley Cheng and Mathias Nyman's USB offload design enables a co-processor
+to handle some USB transfers, potentially allowing the system to sleep
+(suspend-to-RAM) and save power. However, Linux's System Sleep model halts
+the USB host controller when the main system isn't managing any USB
+transfers. To address this, the proposal modifies the system to recognize
+offloaded USB transfers and manage power accordingly. This way, offloaded
+USB transfers could still happen during system sleep (Suspend-to-RAM).
 
-kernel test robot noticed the following build errors:
+This involves two key steps:
+1. Transfer Status Tracking: Propose offload_usage and corresponding apis
+drivers could track USB transfers on the co-processor, ensuring the
+system is aware of any ongoing activity.
+2. Power Management Adjustment:  Modifications to the USB driver stack
+(xhci host controller driver, and USB device drivers) allow the system to
+sleep (Suspend-to-RAM) without disrupting co-processor managed USB
+transfers. This involves adding conditional checks to bypass some power
+management operations in the System Sleep model.
 
-[auto build test ERROR on teigland-dlm/next]
-[also build test ERROR on linus/master v6.17-rc5 next-20250911]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+changelog
+----------
+Changes in v16:
+- Consolidate configs into only CONFIG_USB_XHCI_SIDEBAND.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alessio-Attilio/dlm-improve-lock-management-and-concurrency-control/20250911-012449
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/teigland/linux-dlm.git next
-patch link:    https://lore.kernel.org/r/20250910171706.173976-1-alessio.attilio.dev%40gmail.com
-patch subject: [PATCH] * dlm: improve lock management and concurrency control
-config: hexagon-randconfig-001-20250911 (https://download.01.org/0day-ci/archive/20250911/202509112216.Jvy0G9Jd-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250911/202509112216.Jvy0G9Jd-lkp@intel.com/reproduce)
+Changes in v15:
+- Rebase on TOT.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509112216.Jvy0G9Jd-lkp@intel.com/
+Changes in v14:
+- Introduce CONFIG_USB_OFFLOAD for control usb offload related features.
+- Specify __must_hold marco on usb_offload_check().
+- Cosmetics changes on coding style.
 
-All errors (new ones prefixed by >>):
+Changes in v13:
+- Ensure offload_usage is modified only when the device is neither
+  suspended nor marked as "offload_at_suspend".
+- Move lock manipulations into usb_offload_get()/usb_offload_put().
+- Cosmetics changes on coding style.
 
->> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
-    6181 |         list_for_each_entry_safe(lkb, safe, &proc->unlocking, lkb_ownqueue) {
-         |                                       ^
->> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
->> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
->> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
->> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
->> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
->> fs/dlm/lock.c:6181:32: error: use of undeclared identifier 'safe'
->> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
-    6189 |         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
-         |                                  ^
->> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
->> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
->> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
->> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
->> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
->> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
->> fs/dlm/lock.c:6189:31: error: use of undeclared identifier 'cb_safe'
-    6189 |         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
-         |                                      ^
->> fs/dlm/lock.c:6189:27: error: use of undeclared identifier 'cb'
-    6189 |         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
-         |                                  ^
->> fs/dlm/lock.c:6189:31: error: use of undeclared identifier 'cb_safe'
-    6189 |         list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
-         |                                      ^
->> fs/dlm/lock.c:6189:31: error: use of undeclared identifier 'cb_safe'
->> fs/dlm/lock.c:6189:31: error: use of undeclared identifier 'cb_safe'
-   fatal error: too many errors emitted, stopping now [-ferror-limit=]
-   20 errors generated.
+Changes in v12:
+- Rebase on TOT.
+- Cosmetics changes on coding style.
 
+Changes in v11:
+- Use USB subsystem wrappers in usb_offload_get()/usb_offload_put().
+- Refine logics and add comment in usb_suspend_both()/usb_resume_both().
 
-vim +/safe +6181 fs/dlm/lock.c
+Changes in v10:
+- Remove unnecessary operations in dwc3 driver.
+- Introduce CONFIG_USB_XHCI_SIDEBAND_SUSPEND to enable/disable offloaded
+  usb transfers during system Suspend-to-RAM.
+- Modify the approach to detect offloaded USB transfers when the system
+  resumes from Suspend-to-RAM.
+- Mark sideband activity when sideband interrupters are created/removed.
+- Cosmetics changes on coding style.
 
-597d0cae0f99f6 David Teigland  2006-07-12  6148  
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6149  static void clean_proc_locks(struct dlm_ls *ls, struct dlm_user_proc *proc)
-ef0c2bb05f40f9 David Teigland  2007-03-28  6150  {
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6151  	struct dlm_lkb *lkb;
-ef0c2bb05f40f9 David Teigland  2007-03-28  6152  
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6153  	dlm_lock_recovery(ls);
-ef0c2bb05f40f9 David Teigland  2007-03-28  6154  
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6155  	while (1) {
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6156  		lkb = NULL;
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6157  		spin_lock_bh(&proc->locks_spin);
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6158  		if (!list_empty(&proc->locks)) {
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6159  			lkb = list_entry(proc->locks.next, struct dlm_lkb,
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6160  					 lkb_ownqueue);
-ef0c2bb05f40f9 David Teigland  2007-03-28  6161  			list_del_init(&lkb->lkb_ownqueue);
-ef0c2bb05f40f9 David Teigland  2007-03-28  6162  		}
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6163  		spin_unlock_bh(&proc->locks_spin);
-ef0c2bb05f40f9 David Teigland  2007-03-28  6164  
-ef0c2bb05f40f9 David Teigland  2007-03-28  6165  		if (!lkb)
-ef0c2bb05f40f9 David Teigland  2007-03-28  6166  			break;
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6167  
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6168  		if (lkb->lkb_exflags & DLM_LKF_PERSISTENT) {
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6169  			set_bit(DLM_DFL_ORPHAN_BIT, &lkb->lkb_dflags);
-597d0cae0f99f6 David Teigland  2006-07-12  6170  			orphan_proc_lock(ls, lkb);
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6171  		} else {
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6172  			set_bit(DLM_IFL_DEAD_BIT, &lkb->lkb_iflags);
-597d0cae0f99f6 David Teigland  2006-07-12  6173  			unlock_proc_lock(ls, lkb);
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6174  		}
-597d0cae0f99f6 David Teigland  2006-07-12  6175  
-597d0cae0f99f6 David Teigland  2006-07-12  6176  		dlm_put_lkb(lkb);
-597d0cae0f99f6 David Teigland  2006-07-12  6177  	}
-a1bc86e6bddd34 David Teigland  2007-01-15  6178  
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6179  	spin_lock_bh(&proc->locks_spin);
-a1bc86e6bddd34 David Teigland  2007-01-15  6180  	/* in-progress unlocks */
-a1bc86e6bddd34 David Teigland  2007-01-15 @6181  	list_for_each_entry_safe(lkb, safe, &proc->unlocking, lkb_ownqueue) {
-a1bc86e6bddd34 David Teigland  2007-01-15  6182  		list_del_init(&lkb->lkb_ownqueue);
-e1af8728f600f6 Alexander Aring 2023-03-06  6183  		set_bit(DLM_IFL_DEAD_BIT, &lkb->lkb_iflags);
-a1bc86e6bddd34 David Teigland  2007-01-15  6184  		dlm_put_lkb(lkb);
-a1bc86e6bddd34 David Teigland  2007-01-15  6185  	}
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6186  	spin_unlock_bh(&proc->locks_spin);
-a1bc86e6bddd34 David Teigland  2007-01-15  6187  
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6188  	spin_lock_bh(&proc->asts_spin);
-986ae3c2a8dfc1 Alexander Aring 2024-03-28 @6189  	list_for_each_entry_safe(cb, cb_safe, &proc->asts, list) {
-986ae3c2a8dfc1 Alexander Aring 2024-03-28  6190  		list_del(&cb->list);
-2bec1bbd55cf96 Alexander Aring 2024-03-28  6191  		dlm_free_cb(cb);
-a1bc86e6bddd34 David Teigland  2007-01-15  6192  	}
-cc9f8fbfb34e86 Alessio Attilio 2025-09-10  6193  	spin_unlock_bh(&proc->asts_spin);
-a1bc86e6bddd34 David Teigland  2007-01-15  6194  
-85e86edf951a8a David Teigland  2007-05-18  6195  	dlm_unlock_recovery(ls);
-597d0cae0f99f6 David Teigland  2006-07-12  6196  }
-a1bc86e6bddd34 David Teigland  2007-01-15  6197  
+Changes in v9:
+- Remove unnecessary white space change.
+
+Changes in v8:
+- Change the runtime pm api to correct the error handling flow.
+- Not flushing endpoints of actively offloaded USB devices to avoid
+  possible USB transfer conflicts.
+
+Changes in v7:
+- Remove counting mechanism in struct usb_hcd. The USB device's offload
+  status will be solely recorded in each related struct usb_device.
+- Utilizes `needs_remote_wakeup` attribute in struct usb_interface to
+  control the suspend flow of USB interfaces and associated USB endpoints.
+  This addresses the need to support interrupt transfers generated by
+  offloaded USB devices while the system is suspended.
+- Block any offload_usage change during USB device suspend period.
+
+Changes in v6:
+- Fix build errors when CONFIG_USB_XHCI_SIDEBAND is disabled.
+- Explicitly specify the data structure of the drvdata refereced in
+  dwc3_suspend(), dwc3_resume().
+- Move the initialization of counters to the patches introducing them.
+
+Changes in v5:
+- Walk through the USB children in usb_sideband_check() to determine the
+  sideband activity under the specific USB device. 
+- Replace atomic_t by refcount_t.
+- Reduce logs by using dev_dbg & remove __func__.
+
+Changes in v4:
+- Isolate the feature into USB driver stack.
+- Integrate with series "Introduce QC USB SND audio offloading support"
+
+Changes in v3:
+- Integrate the feature with the pm core framework.
+
+Changes in v2:
+- Cosmetics changes on coding style.
+
+[v3] PM / core: conditionally skip system pm in device/driver model
+[v2] usb: host: enable suspend-to-RAM control in userspace
+[v1] [RFC] usb: host: Allow userspace to control usb suspend flows
+---
+
+Guan-Yu Lin (4):
+  usb: xhci-plat: separate dev_pm_ops for each pm_event
+  usb: offload: add apis for offload usage tracking
+  xhci: sideband: add api to trace sideband usage
+  usb: host: enable USB offload during system sleep
+
+ drivers/usb/core/Makefile         |   1 +
+ drivers/usb/core/driver.c         |  50 +++++++++--
+ drivers/usb/core/offload.c        | 136 ++++++++++++++++++++++++++++++
+ drivers/usb/core/usb.c            |   1 +
+ drivers/usb/host/xhci-plat.c      |  42 ++++++++-
+ drivers/usb/host/xhci-plat.h      |   1 +
+ drivers/usb/host/xhci-sideband.c  |  36 ++++++++
+ include/linux/usb.h               |  18 ++++
+ include/linux/usb/xhci-sideband.h |   9 ++
+ 9 files changed, 284 insertions(+), 10 deletions(-)
+ create mode 100644 drivers/usb/core/offload.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0.384.g4c02a37b29-goog
+
 
