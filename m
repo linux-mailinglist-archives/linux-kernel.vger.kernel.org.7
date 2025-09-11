@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-812366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41177B53706
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:11:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E139B53732
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 433BD583967
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:11:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09BCB7B3B76
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53ECA346A0C;
-	Thu, 11 Sep 2025 15:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCD435335A;
+	Thu, 11 Sep 2025 15:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0dxe1ZU"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J4xvhmHO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316F93469EB
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB71F350835;
+	Thu, 11 Sep 2025 15:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757603505; cv=none; b=MnDFfIPdnRgWL0iYyZppoO0jr7slZAjzvV+LVTIEP46exYFBM4gaZbmQszEHnxzVa4hyZo/rwnlQxGDww6Cc8A7WJk9ZilDvRDWfi4+GqSwkvylt+49zxkiOgL406UICrqj41w54UthQe2qwCAAmJCAkNFPjvHnNEVsTQsADtgA=
+	t=1757603644; cv=none; b=gnFOwdzvHoAPNbC/o3IoVezjKg0+Zeuc77g35o4dkG0EkflsC+7oNwcz9GTUp4Ri+lbu4YBeqopUgxyQtMp1uxlrZbnRMcTWobUOkR6dusHFc3E+Pqo7rJ9uBf+z/HXgs91/9ssUBIJ/0eCN5qeLKxuPUHJm5CexyRg35nAVhgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757603505; c=relaxed/simple;
-	bh=e9kv85eYZpW09Sz+LBjMWCQsY/b15orHC+8wBoqJAFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nf7bu/IFdR07Erfxo4fFFHGVW3jiCAK+WL4+CkMflj7+TlRjWP7QoKvCVLyAg7ls46w7iJaS4+jlvPh1jAUxmrKQxOCRnk0klirI5Xcox7Cox8Jd6qE6ECgJn4V5tpSKj67G25cCtYhsFPMHp9bkEdX0cQk4WEZZiLS97/8CU5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b0dxe1ZU; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-620724883e6so1747498a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:11:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757603502; x=1758208302; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TJXD0d9dznPgcTPNThW/LqxiTrPZwdyiS6ep+9wlnic=;
-        b=b0dxe1ZUOP9q83YrjVN5dEeNykK1nkVZ5ttP6fYQQ65yhPNinj6wrjYyKq97Zeu6KO
-         OU1WhS/tSlFkggMR0S55m3VzrzEgnwG/XfS2m6wjCS1Q6b0izTZQ0g1PWzGJEsTVROV0
-         9GhQ+7W5VCRIrMqmMlMjQ3U+HCZNdHC/fsRrELJPEAK+pLmA1W+10lo2ZkHsRY7+PYuc
-         iZF8Bu6YN8PpaMNc0cjMPyjkyCerm+VLS8tT6zLxAPIlsZSAb1JHNREcxa2m6YHKnLq5
-         kkM2p7+gup70AzZHOlzmRE7iTSZ6/squHvZYlKEgjND3GmpeYliqGQjZM+/2uw96vNkm
-         4ybg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757603502; x=1758208302;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TJXD0d9dznPgcTPNThW/LqxiTrPZwdyiS6ep+9wlnic=;
-        b=WCHVyfHmCM1CPsFokJ4x5lApOFxNUkV8hjmuqc9BThlMgAXiVsey3tjlGaZyXfsWMb
-         3jWAmwgydPIhAearT8686EBgo01iCtP62HfhswtU6Fr9c/gqba48oVZ5OAszsKNq/f2j
-         Hw2dO/E+bWvM3nHEG5te0iQDbiFAhIxI1iLXU0eXI0OpPSrV/DAC1MWGM1SMBId/D+3P
-         dATuUWGrlYBsGnJTErUmkTDeKzul3+GL24jiCPP0lGTkfTjeU/xTHpZr1y5OM5X0mfO3
-         zlDSMw3I+X/O/6+EbYiPAK/ueg6nEP/iCF8Q2fXAl4SUzS1p0Jw3Pg5Wb5eqYikpPuK8
-         xVRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVY3vmOO2BznRmN85anHVcr19UbYwkMKgxBoQdvjLFXxYLnllYlobQyK3HlX9FXdGFTv/o7M11gZeja8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFv5Tcqn+dIXz4zU6Uezwc7OIpcMzJnSn+ExYnDnwXeqlTuQ/B
-	P56ZVXEf1zksE+CHoqHTE5uhURMQ6ooCmCZno7nIWXAOhgllVoBmhhna
-X-Gm-Gg: ASbGnctPiD6A4G/2rVq4MFrRq4TXfd4P+pdYpiAhYVc+Hh2EvA8XMQsgiTmYrRIFil9
-	aBN2TiIpF4V3MhMGZ5s2Gxn6Dxh9+WjkzMl9jwk0IZPtKog+KAJPq6RxDsROotYPccvSZx52p+m
-	HAY91RMytuMHxJYeHhl4kBa8VkJUfXORgyNB48CKMurs20UfoqY4iYTmRGgI4Wu385jBteG0YPy
-	axWj5rF9DcmdrSVyeQ2Mfm2yn4NO7r2FeMdrfUOikNKcjYPGpPmC3IX4rluWOl/YaLG5flfrWF8
-	AP3H10P3HR5Y0XZohs0sA8QHMMcRPBo2IF0p8a6DmsPJYL5bMX770UfQ96t3DzD8ZfP1Yl+cxuI
-	vTj9jrLo00MiD55GLaCQ2aWFv68pIyuNQPqrAakceWVMXPplD8AYUW37sdZXL/zJB4RsnGMg=
-X-Google-Smtp-Source: AGHT+IFu/p3XCl9aAF361ZEinW5yYkUkoSXzrLLXvUd2NuKZyhoe8iX783XV/nHzhkHTR9LYfTKaug==
-X-Received: by 2002:a17:907:3ea8:b0:b04:25e6:2dbe with SMTP id a640c23a62f3a-b04b16d8182mr1906360766b.63.1757603502321;
-        Thu, 11 Sep 2025 08:11:42 -0700 (PDT)
-Received: from ?IPV6:2a02:8109:8617:d700:fe0f:5a9d:7cd0:4679? ([2a02:8109:8617:d700:fe0f:5a9d:7cd0:4679])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32dd3efsm148194566b.55.2025.09.11.08.11.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 08:11:41 -0700 (PDT)
-Message-ID: <bfe25a26-fef3-4ab3-9ae2-ac9245fd5830@gmail.com>
-Date: Thu, 11 Sep 2025 17:11:40 +0200
+	s=arc-20240116; t=1757603644; c=relaxed/simple;
+	bh=XBnEBB90OcOXKmWP2giYQ6rYXI4N+81XE3LHFRw6NVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DUr/ag2GmcmeIQtMx0wchKILpj9JJcCktHn/Y0sbvVIQmcfBUjWpN9C/m3m5fbgjQ4XSuZ8keO8xlmgE6sS4Y6+3VvaqKzbqpshLkKQnkChx1ksSkQcfwgp5stJ2Kz1JRMFhJEv3c325nj6fOi6xREnGo027uaKKTAz4Doif0Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J4xvhmHO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11BDCC4CEF0;
+	Thu, 11 Sep 2025 15:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757603644;
+	bh=XBnEBB90OcOXKmWP2giYQ6rYXI4N+81XE3LHFRw6NVg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J4xvhmHOFYX2agkANpI9Y+NhgTgkzS3WODQQMpflnaGZZqA2mJR1ALkkuPq9CVBh8
+	 9rzo6WtNPP1ZsjIsl9HBOE6vxDz4/PsTHfzTBiuXSJZSb57vsPKz0nTJJ2z7U+iHR/
+	 FZbbyYGQuVzTyGItMAUQzoSIm9vqQQKy4leV6xRWJUTzPaxLEM0Wwf0LJoD3jmNRXK
+	 mOc4W/5kBn/a4ucPDYYvkiHwoMgzKVVzg/IXhO9TaSMPgO+XiZYfTvT3hxVNvUeths
+	 vq23ggWWCqC7VE1J4w1Eukfd6qwEQDAn99rirX2TsZT+qoesYNrihvhMMuodcScJ89
+	 43hmD2VBv5szg==
+Date: Thu, 11 Sep 2025 16:14:00 +0100
+From: Lee Jones <lee@kernel.org>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, jcormier@criticallink.com,
+	Job Sava <jsava@criticallink.com>, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
+Subject: [GIT PULL v2] Immutable branch between MFD and Input due for the
+ v6.18 merge window
+Message-ID: <20250911151400.GR9224@google.com>
+References: <20250826134631.1499936-1-mwalle@kernel.org>
+ <20250903113255.GK2163762@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: i2c: alvium: cleanup media bus formats
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org, michael.roeder@avnet.eu,
- martin.hecht@avnet.eu, Tommaso Merciai <tomm.merciai@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250909135938.2841635-1-mhecht73@gmail.com>
- <aMK9PQ62EYeJpgeo@kekkonen.localdomain>
-Content-Language: en-US
-From: Martin Hecht <mhecht73@gmail.com>
-In-Reply-To: <aMK9PQ62EYeJpgeo@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250903113255.GK2163762@google.com>
 
-Hi Sakari,
+Here is an updated PR containing a recent fix:
 
+a377b1be3a0e ("mfd: tps6594: Explicitly include bitfield.h")
 
-On 9/11/25 14:14, Sakari Ailus wrote:
-> Hi Martin,
-> 
-> On Tue, Sep 09, 2025 at 03:59:37PM +0200, Martin Hecht wrote:
->> This patch removes MEDIA_BUS_FMT_RBG888_1X24 and MEDIA_BUS_FMT_BGR888_1X24
->> as of that formats are not supported by Alvium currently.
->> The missing and supported MEDIA_BUS_FMT_RGB565_1X16 has been added.
-> 
-> What's the pixel order used by the format in Alvium case?
-> 
+LINK: https://lore.kernel.org/all/DCKNRRN0Q2I7.WFT5U4QKA9XS@kernel.org/
 
-The Alvium has a fixed pixel order currently what should be BGR during 
-transmission of any RGB format as described in MIPI-CSI2 spec 1.3. We 
-tested with MEDIA_BUS_FMT_RGB888_1X24 as well as 
-MEDIA_BUS_FMT_RGB888_3X8 for RGB24 in several SoCs like imx8mm, imx8mp 
-and Xilinx CSI2RX subsystem on ZynqMP and Versal.
-Does that answer your question?
+-----
 
-BR Martin
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-input-v6.18-1
+
+for you to fetch changes up to a377b1be3a0ed51ccabfe22908ebde065848313c:
+
+  mfd: tps6594: Explicitly include bitfield.h (2025-09-11 16:06:02 +0100)
+
+----------------------------------------------------------------
+[UPDATED] Immutable branch between MFD and Input due for the v6.18 merge window
+
+----------------------------------------------------------------
+Job Sava (1):
+      input: tps6594-pwrbutton: Add power button functionality
+
+Michael Walle (2):
+      mfd: tps6594: Add power button functionality
+      mfd: tps6594: Add board power-off support
+
+Nathan Chancellor (1):
+      mfd: tps6594: Explicitly include bitfield.h
+
+ drivers/input/misc/Kconfig             |  10 +++
+ drivers/input/misc/Makefile            |   1 +
+ drivers/input/misc/tps6594-pwrbutton.c | 126 +++++++++++++++++++++++++++++++++
+ drivers/mfd/tps6594-core.c             |  59 ++++++++++++++-
+ 4 files changed, 194 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/input/misc/tps6594-pwrbutton.c
+
+-- 
+Lee Jones [李琼斯]
 
