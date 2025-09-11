@@ -1,160 +1,102 @@
-Return-Path: <linux-kernel+bounces-812500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717E3B538EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:20:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5970B538F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:21:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FF32580B99
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:20:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3102D1C2204E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D35543570C5;
-	Thu, 11 Sep 2025 16:20:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4A619D88F;
-	Thu, 11 Sep 2025 16:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A013570CB;
+	Thu, 11 Sep 2025 16:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="rM748PJP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0059131CA6D;
+	Thu, 11 Sep 2025 16:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757607623; cv=none; b=THvRF4n+Sb2N6Yrjw1/SUYS7tVSKdUFj8TmnAjsmDkNkEWb0KMutE7r/MA70KOwO7EbWTO83K1hhbNmrdZ4naoTAUsN4zNIVy3YGL8C5Yy0Ft58j48s1PknD96VlIWAwhTjnSgGgiHIT8FXJCb7pTsX4VeXyBNjv8Hcajx2k/Z0=
+	t=1757607655; cv=none; b=T0ipjBoPg+ALazMbRe2cBh3gwvY9U5QkOFXR1gxf+p3s5qpXSfCFNWfLNo7DjFjyareTmeF+P8oHyohhI1Fe5Lh+qbpinUvifWWhyCZEhomjXNhhvKFGqNwa7Xl4hKFXtyM3JftwuI9MHrv3xdaASdkYs2mh0qI7fA5uEkVNuxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757607623; c=relaxed/simple;
-	bh=MUCy2q9vMw8ioDr48jZmAFItWaAOEsqUD4pLsZQbVHo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SlRsic5ZjppT3DAqstveAlmQgiU6Y7q/0f2QC1y2cdMdxF9NyvvO0RAaSOMuI9kV5l8560V571R/EkDlnt0oL6kYyk6Wqf5ADxLWaQmfMTmXdiiD7fHRJwqqSTL6y31GmhAsabVvD8rAoAZGRzNA7cy4FaiHSgCFaSPkZVLyEv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D43CB1756;
-	Thu, 11 Sep 2025 09:20:12 -0700 (PDT)
-Received: from [10.57.70.14] (unknown [10.57.70.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 462913F694;
-	Thu, 11 Sep 2025 09:20:14 -0700 (PDT)
-Message-ID: <076c7f16-fe56-49a8-910e-7d71d3f8f0b4@arm.com>
-Date: Thu, 11 Sep 2025 18:20:11 +0200
+	s=arc-20240116; t=1757607655; c=relaxed/simple;
+	bh=7DGtYB4l6A8XtCsI/RpY4QjkVB//jE93oWxCdSj+ldk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Iab3Iv950ZNCxs8S5ZQ/BQY26oBiNEGkFYEqIGPkVF/CFfGtKkew4Jwg6Y/+8XbefzPIsH0XwwgbUpkH8Cj63J5cCCWAUoj0BvtdikAFizABWt43ErZ5En/DQkJ/ORO3MMwh86E6IXBryjHuxTrfI5KepdPyEs17ZoJ0vRP4XKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=rM748PJP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2397FC4CEF0;
+	Thu, 11 Sep 2025 16:20:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757607653;
+	bh=7DGtYB4l6A8XtCsI/RpY4QjkVB//jE93oWxCdSj+ldk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rM748PJPizFLzaQLcQoKtqzmz65BYYOvp9r3AeVu6FmaDkgFL2Nt2AZi6avFcdoXa
+	 IT8N+OTSXO3o4qGe+26afis+z3pOpuxnNrr/O3NRExEIEnIfImgri120DSlhBn9n4X
+	 gYFUXbci8jPg3yb5vqS8upwlLJYwUHCkUWdgUczU=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 5.10.244
+Date: Thu, 11 Sep 2025 18:20:48 +0200
+Message-ID: <2025091149-atop-bleep-5a24@gregkh>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
- Mark Rutland <Mark.Rutland@arm.com>
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908073931.4159362-3-kevin.brodsky@arm.com>
- <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
- <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
- <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
- <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
- <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
- <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
- <b2e52967-7ca1-411e-9c66-8d3483624ca7-agordeev@linux.ibm.com>
- <250835cd-f07a-4b8a-bc01-ace24b407efc@arm.com>
- <80be36e5-d6e1-4b37-a1ca-47e92ac21b02-agordeev@linux.ibm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <80be36e5-d6e1-4b37-a1ca-47e92ac21b02-agordeev@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/09/2025 14:06, Alexander Gordeev wrote:
-> On Wed, Sep 10, 2025 at 06:11:54PM +0200, Kevin Brodsky wrote:
->
-> Hi Kevin,
->
->> On 09/09/2025 16:38, Alexander Gordeev wrote:
->>>>>>> Would that integrate well with LAZY_MMU_DEFAULT etc?
->>>>>> Hmm... I though the idea is to use LAZY_MMU_* by architectures that
->>>>>> want to use it - at least that is how I read the description above.
->>>>>>
->>>>>> It is only kasan_populate|depopulate_vmalloc_pte() in generic code
->>>>>> that do not follow this pattern, and it looks as a problem to me.
->>>> This discussion also made me realise that this is problematic, as the
->>>> LAZY_MMU_{DEFAULT,NESTED} macros were meant only for architectures'
->>>> convenience, not for generic code (where lazy_mmu_state_t should ideally
->>>> be an opaque type as mentioned above). It almost feels like the kasan
->>>> case deserves a different API, because this is not how enter() and
->>>> leave() are meant to be used. This would mean quite a bit of churn
->>>> though, so maybe just introduce another arch-defined value to pass to
->>>> leave() for such a situation - for instance,
->>>> arch_leave_lazy_mmu_mode(LAZY_MMU_FLUSH)?
->>> What about to adjust the semantics of apply_to_page_range() instead?
->>>
->>> It currently assumes any caller is fine with apply_to_pte_range() to
->>> enter the lazy mode. By contrast, kasan_(de)populate_vmalloc_pte() are
->>> not fine at all and must leave the lazy mode. That literally suggests
->>> the original assumption is incorrect.
->>>
->>> We could change int apply_to_pte_range(..., bool create, ...) to e.g.
->>> apply_to_pte_range(..., unsigned int flags, ...) and introduce a flag
->>> that simply skips entering the lazy mmu mode.
->> This is pretty much what Ryan proposed [1r] some time ago, although for
->> a different purpose (avoiding nesting). There wasn't much appetite for
->> it then, but I agree that this would be a more logical way to go about it.
->>
->> - Kevin
->>
->> [1r]
->> https://lore.kernel.org/all/20250530140446.2387131-4-ryan.roberts@arm.com/
-> May be I missing the point, but I read it as an opposition to the whole
-> series in general and to the way apply_to_pte_range() would be altered
-> in particular:
->
->  static int apply_to_pte_range(struct mm_struct *mm, pmd_t *pmd,
->  				     unsigned long addr, unsigned long end,
->  				     pte_fn_t fn, void *data, bool create,
-> -				     pgtbl_mod_mask *mask)
-> +				     pgtbl_mod_mask *mask, bool lazy_mmu)
->
-> The idea of instructing apply_to_page_range() to skip the lazy mmu mode
-> was not countered. Quite opposite, Liam suggested exactly the same:
+I'm announcing the release of the 5.10.244 kernel.
 
-Yes that's a fair point. It would be sensible to post a new series
-trying to eliminate the leave()/enter() calls in mm/kasan as you
-suggested. Still I think that it makes sense to define an API to handle
-that situation ("pausing" lazy_mmu), as discussed with David H.
+All users of the 5.10 kernel series must upgrade.
 
-- Kevin
+The updated 5.10.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-5.10.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
->
-> <quote>
-> Could we do something like the pgtbl_mod_mask or zap_details and pass
-> through a struct or one unsigned int for create and lazy_mmu?
->
-> These wrappers are terrible for readability and annoying for argument
-> lists too.
->
-> Could we do something like the pgtbl_mod_mask or zap_details and pass
-> through a struct or one unsigned int for create and lazy_mmu?
->
-> At least we'd have better self-documenting code in the wrappers.. and if
-> we ever need a third boolean, we could avoid multiplying the wrappers
-> again.
-> <quote>
->
-> Thanks!
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/ABI/testing/sysfs-devices-system-cpu |    1 
+ Documentation/admin-guide/hw-vuln/index.rst        |    1 
+ Documentation/admin-guide/hw-vuln/vmscape.rst      |  110 ++++++++
+ Documentation/admin-guide/kernel-parameters.txt    |   11 
+ Makefile                                           |    2 
+ arch/x86/Kconfig                                   |    9 
+ arch/x86/include/asm/cpufeatures.h                 |    2 
+ arch/x86/include/asm/entry-common.h                |    7 
+ arch/x86/include/asm/nospec-branch.h               |    2 
+ arch/x86/kernel/cpu/bugs.c                         |  264 ++++++++++++++-------
+ arch/x86/kernel/cpu/common.c                       |   74 +++--
+ arch/x86/kvm/x86.c                                 |    9 
+ drivers/base/cpu.c                                 |    6 
+ include/linux/cpu.h                                |    1 
+ 14 files changed, 390 insertions(+), 109 deletions(-)
+
+Greg Kroah-Hartman (1):
+      Linux 5.10.244
+
+Pawan Gupta (7):
+      Documentation/hw-vuln: Add VMSCAPE documentation
+      x86/vmscape: Enumerate VMSCAPE bug
+      x86/vmscape: Add conditional IBPB mitigation
+      x86/vmscape: Enable the mitigation
+      x86/bugs: Move cpu_bugs_smt_update() down
+      x86/vmscape: Warn when STIBP is disabled with SMT
+      x86/vmscape: Add old Intel CPUs to affected list
+
 
