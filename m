@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-811965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1356FB530FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:41:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD68EB5310E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:42:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F86566C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:41:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEB431C8455A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CAF324B24;
-	Thu, 11 Sep 2025 11:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7272A3375AA;
+	Thu, 11 Sep 2025 11:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLwxjRmC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gC6zRqT/"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484A331C573;
-	Thu, 11 Sep 2025 11:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688AC33438D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:37:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757590661; cv=none; b=StV4HxUZbJtwI5E4q9sZHMsbRFWjfnpQDFjSBwLImGa/z7VhOUSOav/1R8cOxBO/wL4MtrfHqMcmeBXMxgKW8QoazaCtbQEHUXAHsv56WsQDdjWgfT1pWhtwpKpOm8mdM2DlGfAw3YdqwL3Jv8W0rG3zEIGYJCiblqogNoFFzEY=
+	t=1757590678; cv=none; b=P7al5I7/b3zL+B1EPWJdMuUFD0+rP15a/gT73hgAqE68HBFlEeedXEgtYuU9xBXFAs9szMyjjyj52Si37egZ4BQXZ4k0/UjMxqXd2l2USkP6a5Hxdq2nnNZoaiGp4IAnAqGlbFDTQYgVEsB7ZMkOibkjNLQSEoVS2jTyqtWHIwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757590661; c=relaxed/simple;
-	bh=qDute3CFkCv8B2In8pozv0w3/FWgNnabl9BzbKm+i9k=;
+	s=arc-20240116; t=1757590678; c=relaxed/simple;
+	bh=GNFr34R7rej45ssdHKM1DXp7hmxvIRT4IOH0+shk3Qg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6c+bXbzfvR9lAvTZd7XnCCgHempz+Sg6Je8Ap2vh/ph6pfXMvTn45+WZRCjzbHV8WcZgBkZfz81J2mqxeShvjcV+QdYwr7f2+VHzgttHS/px11HUxK9GpoHOtpdAnsRJE249vMDh1zxfjOb6em2kniKozhRkgxEG32FRauZ+Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLwxjRmC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7845C4CEF1;
-	Thu, 11 Sep 2025 11:37:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757590660;
-	bh=qDute3CFkCv8B2In8pozv0w3/FWgNnabl9BzbKm+i9k=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=JLwxjRmCuzx3Muna3mWf/Tt8HlEurrjcI1GEwwTMTDwx41nfeYLyFV79H15TIjJ+x
-	 m3RZolskM4lA+CjktbQHYFwA9qeq8zOKM/7F1EkUegyAg/QSVCO4loEFkd4RuAWTHT
-	 3yCJzlTs59rl1r813BF+JPVKi8wU/zZi3uSAc+9GUMF14BJAtrtax2KpRCAVKqLgjN
-	 fRmlXptew4UPehmaGpf1FrXP0tOv2pDSQjqhcxHS7++4Jg8g3kQgp4MtPQlgjheoyc
-	 ANMrsz5QLZXQie0TMy37NzKqGfRcjRTGXclIlwg3nfZTROJ8YyWkzT0hJDkBG3jwBp
-	 1Mq/z4Wb9cJvg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8A38BCE0C39; Thu, 11 Sep 2025 04:37:39 -0700 (PDT)
-Date: Thu, 11 Sep 2025 04:37:39 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Zqiang <qiang.zhang@linux.dev>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>, frederic@kernel.org,
-	neeraj.upadhyay@kernel.org, boqun.feng@gmail.com, urezki@gmail.com,
-	rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] srcu/tiny: Remove preempt_disable/enable() in
- srcu_gp_start_if_needed()
-Message-ID: <430d5714-4a00-4a75-b763-34918f8017c3@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250909133928.615218-1-qiang.zhang@linux.dev>
- <4c7d977b-7d09-48e0-9a88-bae93fa5e401@paulmck-laptop>
- <20250910143620.GA561834@joelbox2>
- <e5e69dc3-ebd3-47ae-b193-bc4b2de36904@paulmck-laptop>
- <70fa9fd07e4fe2b1b498109f3450804e731fd7ce@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H/aXA65ULRz4YkofzMu1D2Bog5RkBGs7c0Do8tjih+Bvz3drWexO2wZAjNqOvV50hBd4qepBIjGd2mc8yL9c5P2nvWwDDlCovdbeec7uDMhK7Z3oM95sXsfJK8TuQ3Xibz5TifVuRmvFlhNi3CusFbuS/aan6HXsHsyY0D0RfSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gC6zRqT/; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=vb4npP54T1KcXZKWzVGoONGakfBAiuQeQvLs4VeRip0=; b=gC6zRqT/BDIlTDZ+BSA7B82hfO
+	LxFUbFCVy5Ac0LSuHeUO4h0U88oSWLr7Yvv/rCS7CrYWBqESxG+x2MG+DgyniUshEz6Wehh6Z7KwV
+	co2xtQIJxpyEWkFzoy3jiKikZB3JoSnZ1SPzwC7siOr45YBgUEGCMl1irANAyLaeBabfTWXdho8EI
+	mKpHfKc0xbZmWbBSahbdrG8Bhp/+HMD8MhORBO+LXxkbVBnjYAzH24Gda1ZNIDysQM9shkrQ1katk
+	sOAHcdGuwzB3bjZb9y7yFn8qAYCuaLI5D2kUtu6VZvqnKFxbKCpV0eMOj35LtT62VlEI9esR/jdJo
+	ogFjtsmQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uwfcZ-0000000A3oN-3fWI;
+	Thu, 11 Sep 2025 11:37:47 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B59C73002EB; Thu, 11 Sep 2025 13:37:46 +0200 (CEST)
+Date: Thu, 11 Sep 2025 13:37:46 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Fernand Sieber <sieberf@amazon.com>
+Cc: mingo@redhat.com, vincent.guittot@linaro.org, juri.lelli@redhat.com,
+	dietmar.eggemann@arm.com, bsegall@google.com, graf@amazon.com,
+	wangtao554@huawei.com, tanghui20@huawei.com, zhangqiao22@huawei.com,
+	linux-kernel@vger.kernel.org, nh-open-source@amazon.com,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+Subject: Re: [PATCH RESEND] sched/fair: Only increment deadline once on yield
+Message-ID: <20250911113746.GO4067720@noisy.programming.kicks-ass.net>
+References: <20250911095113.203439-1-sieberf@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,80 +65,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <70fa9fd07e4fe2b1b498109f3450804e731fd7ce@linux.dev>
+In-Reply-To: <20250911095113.203439-1-sieberf@amazon.com>
 
-On Thu, Sep 11, 2025 at 12:36:45AM +0000, Zqiang wrote:
-> > 
-> > On Wed, Sep 10, 2025 at 10:36:20AM -0400, Joel Fernandes wrote:
-> > 
-> > > 
-> > > [..]
-> > >  > kernel/rcu/srcutiny.c | 4 +---
-> > >  > 1 file changed, 1 insertion(+), 3 deletions(-)
-> > >  > 
-> > >  > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-> > >  > index b52ec45698e8..b2da188133fc 100644
-> > >  > --- a/kernel/rcu/srcutiny.c
-> > >  > +++ b/kernel/rcu/srcutiny.c
-> > >  > @@ -181,10 +181,9 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
-> > >  > {
-> > >  > unsigned long cookie;
-> > >  > 
-> > >  > - preempt_disable(); // Needed for PREEMPT_LAZY
-> > >  > + lockdep_assert_preemption_disabled();
-> > >  
-> > >  nit: Do we still want to keep the comment that the expectation of preemption
-> > >  being disabled is for the LAZY case?
-> > > 
-> > Good point, and I do believe that we do. Zqiang, any reason not to
-> > add this comment back in?
+On Thu, Sep 11, 2025 at 11:51:13AM +0200, Fernand Sieber wrote:
+> If a task yields, the scheduler may decide to pick it again. The task in
+> turn may decide to yield immediately or shortly after, leading to a tight
+> loop of yields.
 > 
-> in rcu-tree, this commit:
+> If there's another runnable task as this point, the deadline will be
+> increased by the slice at each loop. This can cause the deadline to runaway
+> pretty quickly, and subsequent elevated run delays later on as the task
+> doesn't get picked again. The reason the scheduler can pick the same task
+> again and again despite its deadline increasing is because it may be the
+> only eligible task at that point.
 > 
-> (935147775c977 "EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=n kernels")
+> Fix this by updating the deadline only to one slice ahead.
 > 
-> make preempt disable needed for CONFIG_PREEMPT=y or CONFIG_PREEMPT_LAZY=y
-> when the CONFIG_SMP=n. do we need to replace "Needed for PREEMPT_LAZY"
-> comments with "Needed for PREEMPT or PREEMPT_LAZY"?
+> Note, we might want to consider iterating on the implementation of yield as
+> follow up:
+> * the yielding task could be forfeiting its remaining slice by
+>   incrementing its vruntime correspondingly
 
-Good point as well, thank you!  And I need to decide whether I should
-send that patch upstream.  Its original purpose was to test PREEMPT_LAZY=y
-better than could be tested with PREEMPT_LAZY.
+This..
 
-Thoughts?
-
-							Thanx, Paul
-
-> Thanks
-> Zqiang
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index b173a059315c..d6a0d22d08d7 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -8921,7 +8921,7 @@ static void yield_task_fair(struct rq *rq)
+>  	 */
+>  	rq_clock_skip_update(rq);
 > 
-> 
-> > 
-> >  Thanx, Paul
-> > 
-> > > 
-> > > thanks,
-> > >  
-> > >  - Joel
-> > >  
-> > >  
-> > >  > cookie = get_state_synchronize_srcu(ssp);
-> > >  > if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
-> > >  > - preempt_enable();
-> > >  > return;
-> > >  > }
-> > >  > WRITE_ONCE(ssp->srcu_idx_max, cookie);
-> > >  > @@ -194,7 +193,6 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
-> > >  > else if (list_empty(&ssp->srcu_work.entry))
-> > >  > list_add(&ssp->srcu_work.entry, &srcu_boot_list);
-> > >  > }
-> > >  > - preempt_enable();
-> > >  > }
-> > >  > 
-> > >  > /*
-> > >  > -- 
-> > >  > 2.48.1
-> > >  >
-> > >
-> >
+> -	se->deadline += calc_delta_fair(se->slice, se);
+> +	se->deadline = se->vruntime + calc_delta_fair(se->slice, se);
+
+Have you tried:
+
+	se->vruntime = se->deadline;
+	se->deadline += calc_delta_fair(se->slice, se);
+
+instead?
 
