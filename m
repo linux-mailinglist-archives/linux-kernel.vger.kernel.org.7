@@ -1,148 +1,406 @@
-Return-Path: <linux-kernel+bounces-812471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84FF9B5388F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:02:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427C6B538AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CE23188FAE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:01:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E2BB7BD033
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB10E356901;
-	Thu, 11 Sep 2025 16:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4843B33EB10;
+	Thu, 11 Sep 2025 16:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ay2mMBBP"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fO0ruPj5"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED8831D722;
-	Thu, 11 Sep 2025 16:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B90186E2E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757606433; cv=none; b=jwVPkzzSC7MegLlBtX2FcpyiqlW/Dm4yVXLj3fINDykxocM9sm68eoJv33t5Wox3j4mo8iftOD7ZZh9kxvPQb7P4Sc6FL0USFHaobbNLzvafqyQTSdvHHcsr57WaeN35GO6f/g0hdJ4j6syFMXe5v6lAqlErZsg5i483Sn5bLuM=
+	t=1757606539; cv=none; b=D7jb4vS/nWUC/Y5+aLDlqIu6WLTF/s6SmJE2f0nuumo/0Jp/XaMOqtHxA7BS2A6Kdcd7njZKZkCgSZHCKr5pOblIepaDOugK22ApCfz/GTRj1Jswz+adCSZOHya+X9vWkrt4xubPNGFVBj8uqST/SrWvPDCgYA8dp5+nQBS8C9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757606433; c=relaxed/simple;
-	bh=GE0xcxm4c2iY0e8q2XTeX+zYsDTrE+bg4a5A1tk7/vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGgSSm8AVtIFZOzjN+KY+f23qoht2e6KarnLYK+GcuHikNR3jBkWBznVGIOP4oMFavqcMnIIX8ekBfbQw5njj8E/wdz9JvicqxKzqVL4Rf3J8sgBZwWBSF+YjdRLVCRncJkwNf57EYiXGOwEN9nz4GQeIHKgKqmCj9QOHA3JF8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ay2mMBBP; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1757606539; c=relaxed/simple;
+	bh=ja4l6tQHfNpkMCIta8k4I1ropneqlWhPUSRbmS5G/VY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Svn/c/dbVDQAo1yqNGHFAD5M9g1SDeQMw8eiI98pTIJROv0xM+yHzilew/u8rUxyOWfh5feQsUWKeoQvsz29PT5/lkT94KVXsIuXi25v2/sjnoMk27gjNKnT84bJ/Uhzz94fS0HrzVdaSkXsuMgiLnSkla8cyucMBr5sYveTtz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fO0ruPj5; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3c68ac7e18aso665752f8f.2;
-        Thu, 11 Sep 2025 09:00:31 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-336e44ca0e4so7771651fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:02:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757606429; x=1758211229; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yw1pbGwnPzhlpLPQ0ur7N3j93CRnmPtC1nCr4I/6flc=;
-        b=ay2mMBBPa73kZY5m6IniiixZVGwf2uHeJWg/Q823tnAalWfFdjUX1r7zlq8v6oCRS8
-         u5g8sBhkm2qMii3W/jm89Mqp7fim+i3fBiB/uB/Q8I0rMhj6+9eiTq8szXyvFYGcBhE3
-         Zeu+bVY9CkZV8ka4I4NB7THFItlTSxT7nS8hKtPKETkYzPgfkP13SbIjIn3gBK349IbD
-         08zoWxCOijIZIXKo059jl1TeG5YlErkc7lYUsuTdidu0h94ymNI2wX10FCMzTdXJsDxH
-         FFCvexkGb6KM25Y0mqPbMHJYmqywmk6MoTZsJm3X2cYXejpopHy4AyawAxvjd3jx3Mki
-         BAQw==
+        d=gmail.com; s=20230601; t=1757606535; x=1758211335; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oQ80rsevTEAVCbWvfZ4aYNxV0MEBLVr92nhBL/c8nOE=;
+        b=fO0ruPj5eWk9Oknl7XtM+NmN6HbLHuWwgnJXXHO63rrHfcRlkgWaQaRkEuWmyYXv9+
+         ELIbtKc5noQKZYf9mD46OIRB80013VYbZmHi+G1b3a+QGCj4sWeZI9mfbsgpcZKjIPQC
+         rA3Iq/IYMGIEnTp5UFYY5wpF9oGQLvGJsn7JZ7LB9MrDoaeSEcwouglnQ0Y2KQkN3LE2
+         1IACzvPFuh43dpax9PAaA72J/nSgawOMOkxdeXaA+SsmMBr8O3+5eT7B1bx+wPa7syK9
+         Gg+DMbirt+wIpFzolDGNbOkVTiu1eSLBiRyA1KeATqSV3uYCvUS0CODmfa1dzcFXHODm
+         ++Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757606430; x=1758211230;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yw1pbGwnPzhlpLPQ0ur7N3j93CRnmPtC1nCr4I/6flc=;
-        b=aXqIjXsGPJpcogdzuWb4FNygq8mvXVxOp4EVvUMrgtnteBjXUezYt608jb9y75wbJ2
-         YunPpPOKj1hx9I2pZB1CSRpO+/KPkr9yOQhRnnLBnserAZU1l/bVu+kjjxz5HGjFcIMO
-         sVYxy3pNDgkYhKjr9Db1qMjb1Jg5p2URKCKwAF7DDBQWNsVFyMuKxQgPoM6XvxJqSe8Z
-         atOUnIW4Z0RV9bl2tNsBalFDzhHiZWDIgSJLGTj70qG6UP+kbNwJnzPqL+20lAIp0NhZ
-         fKl4kF6gpB/NzlMWrYKIsKUnObRdooDuV4qp93ZcCa5+H64wLeGFlSflkeUGUq29Ab9A
-         4TZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVpz0ynJwvjjSW2UQNmVliRVudZyqKoxh8HYI9USk5h8xbCL4DF6ufDAzRIp5OUUGZvyUSofjUQirSqQk=@vger.kernel.org, AJvYcCVJlAljEHQ1FHhMidIlX7FdL8xiVszvwYmKFE9JRp/N1UF167GqPRrR9JNvTDNhl0ybE9K+tOoKVdyxs8GB@vger.kernel.org, AJvYcCWL95zWeQc3+bgP1aUlCRAApqF6qVstlBXj6XGnyZA1LFLb74rJk1pAzd8FgpJCtbWdJDCaXRy9KYPX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5eoRiEUYhO8lFCoULOKT1gZSQBnmMtN7i4uSlvTSMB2tE0oPM
-	1wtHa1g0dbuLEFHjXSsh5SVnWUSzvk0CZweWgbS00wgoInTEpS/KuTEtA8RNCA==
-X-Gm-Gg: ASbGnctvw7Opuf0osuwUKLkSl4bafW6ILvYl9SF4xUJfNNCgkZfOc4Efo5h7hI0Dspz
-	sosHdf+YniuMfCjzw0mFFXMlmk5Jfiaj2K08iYpCNWh0zjZtgKEKZLca4CrLhmkrSrCbCN/NVcE
-	VMXxoFVe75+Vi2Ojkevmsq1D3ctCjxmaXr+DHXq0SQt2v3HfFh1AxKzqIVEWFnsWsSsq6jovATO
-	0zEpsOfjT6aHAPQ/W3nfiOC+9ak7DWDQuMBVICjFkWqdAXS+c+j0xwcjLyzKAJU8csTwCeiwWTB
-	1tlzRuyvajQB92eb3D3g1v8A1ka2zXGqdbDDCmq0x1/6pj193g5i4e0AVQcJ55+Q7wb0qfkg+QL
-	cVJJLxT8ExT0QHFUnHGP/09M730HjZzmLEkyznddetV5Mb1CeMKTUidOha7rESAHFB63vrsxR37
-	Nz58w5cLfNvR3XKrUjtpJvvbottmS/ew==
-X-Google-Smtp-Source: AGHT+IE4FyMH+lPLjJdLSD2D7MlTZ856s4BURksHTllKCni2L9sAI9mHlulu3BwY6zUtLp9HvYR0/w==
-X-Received: by 2002:adf:ef08:0:b0:3e7:5fce:4788 with SMTP id ffacd0b85a97d-3e75fce489fmr2359327f8f.10.1757606429369;
-        Thu, 11 Sep 2025 09:00:29 -0700 (PDT)
-Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0372bbd3sm27830415e9.10.2025.09.11.09.00.27
+        d=1e100.net; s=20230601; t=1757606535; x=1758211335;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oQ80rsevTEAVCbWvfZ4aYNxV0MEBLVr92nhBL/c8nOE=;
+        b=Z1V5ZtDUMIVK67a2G9fMHlwOCQK84pZtQ83wG1YfS6612oEODei3pOfrcaHyMNax6R
+         vyCd9DhDeG3OBh0WmSXyQ8oygsp6NF8f+rziy0OiyAjHFToToaARaPnrohjvGWEnyb3Q
+         lETPRh/Cg27idHuRJD5f+PPa63fB0pgndhV533QPZnkfnTqejaAiuw4n6IzS18cPklEq
+         gQXD0oVU/3Ltb1yibu4rnUXBQz6VeY9dueUJcDO+2u6ZdbddRelV2gbuXTOUBjbAaoS0
+         3k+8OP8SkY7xUP7jqIS9CPYSsGOf3E6ncjvsHiaXEkXHWJv4vfysHZDcG2bjiNqFitUg
+         UFMg==
+X-Forwarded-Encrypted: i=1; AJvYcCUP2NcifAx1caL3JWe9vmsYIAsbnx+k+kQsgDD/NmxWXhZcK0rtp41WOcK6Z+UmzMPd7S2bQtEN0Li/C5M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN8swPrArWiCQFOlaW2w2XCl27f3d2b9Ms6zfwWdSy0AHptEPj
+	I+9xKpbXLwICFg7r4KRJQoG8CCzTBZtrmvfbW+Ll6cPlP1Sj4d9E+Yj1
+X-Gm-Gg: ASbGnctWPS72HLoZ7JwLPokFWTOaJ2fJMVx1y+yeyy0FbeTt7VPTkQ/CXQIENhnh21h
+	7EYsD5Ky4xCy1fsAQKHofiDZ1AW2qqvtja/zpjFxRO61OgKOXC1FxKbSg4/+hbWVSle4q3H3FZf
+	o+IBdd36MI3xrjL5Ws1RtTEZbDi8utxqmtmvaYGi8BmRX0dCfeYQH2XUilERdVC3TwJwjCHr9OD
+	ppQvj6ApYijIvp28lAEQuuoq6vunKpjV99kuvAqg7T7iLCsTCkD/NM7J27RoVO6CNqkEvg2HB1s
+	GerFiLELePYVDVfMPVm/tH/ZNddRWZ8p/N2hihlMIPD8YZQqY7pTFSwEc0GSkxvtA1VySmtbKex
+	SErEqXa3T/rIGziX3l7VdoWmBI9EWlOBOn2t16Wquptje9uL5nqKC6pprl1E32w==
+X-Google-Smtp-Source: AGHT+IHYvj7C7RKH/yw36gpiv3e48n0trxYj+pXjOfSK/8iAC0HvWSRW3yA1g5uSHLrEwZ5uSoRcKQ==
+X-Received: by 2002:a05:651c:221a:b0:350:adaa:6b93 with SMTP id 38308e7fff4ca-350adaa6d49mr1966491fa.6.1757606534880;
+        Thu, 11 Sep 2025 09:02:14 -0700 (PDT)
+Received: from SC-WS-02452.corp.sbercloud.ru ([37.78.148.183])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1a820665sm3381581fa.33.2025.09.11.09.02.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 09:00:28 -0700 (PDT)
-Date: Thu, 11 Sep 2025 18:00:26 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Ion Agorria <ion@agorria.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] ARM: tegra: add device-tree for Xiaomi Mi Pad
- (A0101)
-Message-ID: <2tmlhaymx73frvv3qv7qvaagzwvh3cepringiyvhsmqrdgfy5i@fvspt74y6nj7>
-References: <20250909074958.92704-1-clamor95@gmail.com>
- <20250909074958.92704-3-clamor95@gmail.com>
+        Thu, 11 Sep 2025 09:02:14 -0700 (PDT)
+From: Sergey Bashirov <sergeybashirov@gmail.com>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Bashirov <sergeybashirov@gmail.com>
+Subject: [PATCH] NFSD: Impl multiple extents in block/scsi layoutget
+Date: Thu, 11 Sep 2025 19:02:03 +0300
+Message-ID: <20250911160208.69086-1-sergeybashirov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aldenwximqaufmm3"
-Content-Disposition: inline
-In-Reply-To: <20250909074958.92704-3-clamor95@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+This patch allows the pNFS server to respond with multiple extents
+in a layoutget request. As a result, the number of layoutget requests
+is significantly reduced for various file access patterns, including
+random and parallel writes, avoiding unnecessary load to the server.
+On the client side, this improves the performance of writing large
+files and allows requesting layouts with minimum length greater than
+PAGE_SIZE.
 
---aldenwximqaufmm3
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v1 2/2] ARM: tegra: add device-tree for Xiaomi Mi Pad
- (A0101)
-MIME-Version: 1.0
+Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
+---
+Checked with smatch, tested on pNFS block volume setup.
 
-On Tue, Sep 09, 2025 at 10:49:58AM +0300, Svyatoslav Ryhel wrote:
-[...]
-> diff --git a/arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts b/arch/arm/boot/dts/nvidia/tegra124-xiaomi-mocha.dts
-[...]
-> +	host1x@50000000 {
-> +		dsia: dsi@54300000 {
-> +			status = "okay";
-> +
-> +			avdd-dsi-csi-supply = <&avdd_dsi_csi>;
-> +			nvidia,ganged-mode = <&dsib>;
-> +
-> +			panel@0 {
-> +				compatible = "sharp,lq079l1sx01";
-> +				reg = <0>;
+ fs/nfsd/blocklayout.c    | 167 +++++++++++++++++++++++++++++----------
+ fs/nfsd/blocklayoutxdr.c |  36 ++++++---
+ fs/nfsd/blocklayoutxdr.h |   5 ++
+ 3 files changed, 157 insertions(+), 51 deletions(-)
 
-Looks like there are no bindings for this panel and I don't see any
-patches anywhere that add them. Am I looking in the wrong places?
+diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
+index fde5539cf6a6..d53f3ec8823a 100644
+--- a/fs/nfsd/blocklayout.c
++++ b/fs/nfsd/blocklayout.c
+@@ -17,48 +17,39 @@
+ #define NFSDDBG_FACILITY	NFSDDBG_PNFS
+ 
+ 
++/**
++ * nfsd4_block_map_extent - get extent that covers the start of segment
++ * @inode: inode of the file requested by the client
++ * @fhp: handle of the file requested by the client
++ * @seg: layout subrange requested by the client
++ * @minlength: layout min length requested by the client
++ * @bex: output block extent structure
++ *
++ * Get an extent from the file system that starts at @seg->offset or below,
++ * but may be shorter than @seg->length.
++ *
++ * Return values:
++ *   %nfs_ok: Success, @bex is initialized and valid
++ *   %nfserr_layoutunavailable: Failed to get extent for requested @seg
++ *   OS errors converted to NFS errors
++ */
+ static __be32
+-nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
+-		const struct svc_fh *fhp, struct nfsd4_layoutget *args)
++nfsd4_block_map_extent(struct inode *inode, const struct svc_fh *fhp,
++		const struct nfsd4_layout_seg *seg, u64 minlength,
++		struct pnfs_block_extent *bex)
+ {
+-	struct nfsd4_layout_seg *seg = &args->lg_seg;
+ 	struct super_block *sb = inode->i_sb;
+-	u32 block_size = i_blocksize(inode);
+-	struct pnfs_block_extent *bex;
+ 	struct iomap iomap;
+ 	u32 device_generation = 0;
+ 	int error;
+ 
+-	if (locks_in_grace(SVC_NET(rqstp)))
+-		return nfserr_grace;
+-
+-	if (seg->offset & (block_size - 1)) {
+-		dprintk("pnfsd: I/O misaligned\n");
+-		goto out_layoutunavailable;
+-	}
+-
+-	/*
+-	 * Some clients barf on non-zero block numbers for NONE or INVALID
+-	 * layouts, so make sure to zero the whole structure.
+-	 */
+-	error = -ENOMEM;
+-	bex = kzalloc(sizeof(*bex), GFP_KERNEL);
+-	if (!bex)
+-		goto out_error;
+-	args->lg_content = bex;
+-
+ 	error = sb->s_export_op->map_blocks(inode, seg->offset, seg->length,
+ 					    &iomap, seg->iomode != IOMODE_READ,
+ 					    &device_generation);
+ 	if (error) {
+ 		if (error == -ENXIO)
+-			goto out_layoutunavailable;
+-		goto out_error;
+-	}
+-
+-	if (iomap.length < args->lg_minlength) {
+-		dprintk("pnfsd: extent smaller than minlength\n");
+-		goto out_layoutunavailable;
++			return nfserr_layoutunavailable;
++		return nfserrno(error);
+ 	}
+ 
+ 	switch (iomap.type) {
+@@ -74,9 +65,9 @@ nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
+ 			/*
+ 			 * Crack monkey special case from section 2.3.1.
+ 			 */
+-			if (args->lg_minlength == 0) {
++			if (minlength == 0) {
+ 				dprintk("pnfsd: no soup for you!\n");
+-				goto out_layoutunavailable;
++				return nfserr_layoutunavailable;
+ 			}
+ 
+ 			bex->es = PNFS_BLOCK_INVALID_DATA;
+@@ -93,27 +84,119 @@ nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
+ 	case IOMAP_DELALLOC:
+ 	default:
+ 		WARN(1, "pnfsd: filesystem returned %d extent\n", iomap.type);
+-		goto out_layoutunavailable;
++		return nfserr_layoutunavailable;
+ 	}
+ 
+ 	error = nfsd4_set_deviceid(&bex->vol_id, fhp, device_generation);
+ 	if (error)
+-		goto out_error;
++		return nfserrno(error);
++
+ 	bex->foff = iomap.offset;
+ 	bex->len = iomap.length;
++	return nfs_ok;
++}
+ 
+-	seg->offset = iomap.offset;
+-	seg->length = iomap.length;
++/**
++ * nfsd4_block_map_segment - get extent array for the requested layout
++ * @inode: inode of the file requested by the client
++ * @fhp: handle of the file requested by the client
++ * @seg: layout range requested by the client
++ * @minlength: layout min length requested by the client
++ * @bl: output array of block extents
++ *
++ * Get an array of consecutive block extents that span the requested
++ * layout range. The resulting range may be shorter than requested if
++ * all preallocated block extents are used.
++ *
++ * Return values:
++ *   %nfs_ok: Success, @bl initialized and valid
++ *   %nfserr_layoutunavailable: Failed to get extents for requested @seg
++ *   OS errors converted to NFS errors
++ */
++static __be32
++nfsd4_block_map_segment(struct inode *inode, const struct svc_fh *fhp,
++		const struct nfsd4_layout_seg *seg, u64 minlength,
++		struct pnfs_block_layout *bl)
++{
++	struct nfsd4_layout_seg subseg = *seg;
++	u32 i;
++	__be32 nfserr;
+ 
+-	dprintk("GET: 0x%llx:0x%llx %d\n", bex->foff, bex->len, bex->es);
+-	return 0;
++	for (i = 0; i < bl->nr_extents; i++) {
++		struct pnfs_block_extent *extent = bl->extents + i;
++		u64 extent_len;
++
++		nfserr = nfsd4_block_map_extent(inode, fhp, &subseg,
++				minlength, extent);
++		if (nfserr != nfs_ok)
++			return nfserr;
++
++		extent_len = extent->len - (subseg.offset - extent->foff);
++		if (extent_len >= subseg.length) {
++			bl->nr_extents = i + 1;
++			return nfs_ok;
++		}
++
++		subseg.offset = extent->foff + extent->len;
++		subseg.length -= extent_len;
++	}
++
++	return nfs_ok;
++}
++
++static __be32
++nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
++		const struct svc_fh *fhp, struct nfsd4_layoutget *args)
++{
++	struct nfsd4_layout_seg *seg = &args->lg_seg;
++	u64 seg_length;
++	struct pnfs_block_extent *first_bex, *last_bex;
++	struct pnfs_block_layout *bl;
++	u32 nr_extents_max = PAGE_SIZE / sizeof(bl->extents[0]) - 1;
++	u32 block_size = i_blocksize(inode);
++	__be32 nfserr;
++
++	if (locks_in_grace(SVC_NET(rqstp)))
++		return nfserr_grace;
++
++	nfserr = nfserr_layoutunavailable;
++	if (seg->offset & (block_size - 1)) {
++		dprintk("pnfsd: I/O misaligned\n");
++		goto out_error;
++	}
++
++	/*
++	 * Some clients barf on non-zero block numbers for NONE or INVALID
++	 * layouts, so make sure to zero the whole structure.
++	 */
++	nfserr = nfserrno(-ENOMEM);
++	bl = kzalloc(struct_size(bl, extents, nr_extents_max), GFP_KERNEL);
++	if (!bl)
++		goto out_error;
++	bl->nr_extents = nr_extents_max;
++	args->lg_content = bl;
++
++	nfserr = nfsd4_block_map_segment(inode, fhp, seg,
++			args->lg_minlength, bl);
++	if (nfserr != nfs_ok)
++		goto out_error;
++	first_bex = bl->extents;
++	last_bex = bl->extents + bl->nr_extents - 1;
++
++	nfserr = nfserr_layoutunavailable;
++	seg_length = last_bex->foff + last_bex->len - seg->offset;
++	if (seg_length < args->lg_minlength) {
++		dprintk("pnfsd: extent smaller than minlength\n");
++		goto out_error;
++	}
++
++	seg->offset = first_bex->foff;
++	seg->length = last_bex->foff - first_bex->foff + last_bex->len;
++	return nfs_ok;
+ 
+ out_error:
+ 	seg->length = 0;
+-	return nfserrno(error);
+-out_layoutunavailable:
+-	seg->length = 0;
+-	return nfserr_layoutunavailable;
++	return nfserr;
+ }
+ 
+ static __be32
+diff --git a/fs/nfsd/blocklayoutxdr.c b/fs/nfsd/blocklayoutxdr.c
+index e50afe340737..68c112d47cee 100644
+--- a/fs/nfsd/blocklayoutxdr.c
++++ b/fs/nfsd/blocklayoutxdr.c
+@@ -14,12 +14,25 @@
+ #define NFSDDBG_FACILITY	NFSDDBG_PNFS
+ 
+ 
++/**
++ * nfsd4_block_encode_layoutget - encode block/scsi layout extent array
++ * @xdr: stream for data encoding
++ * @lgp: layoutget content, actually an array of extents to encode
++ *
++ * This function encodes the opaque loc_body field in the layoutget response.
++ * Since the pnfs_block_layout4 and pnfs_scsi_layout4 structures on the wire
++ * are the same, this function is used by both layout drivers.
++ *
++ * Return values:
++ *   %nfs_ok: Success, all extents encoded into @xdr
++ *   %nfserr_toosmall: Not enough space in @xdr to encode all the data
++ */
+ __be32
+ nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
+ 		const struct nfsd4_layoutget *lgp)
+ {
+-	const struct pnfs_block_extent *b = lgp->lg_content;
+-	int len = sizeof(__be32) + 5 * sizeof(__be64) + sizeof(__be32);
++	const struct pnfs_block_layout *bl = lgp->lg_content;
++	u32 i, len = sizeof(__be32) + bl->nr_extents * PNFS_BLOCK_EXTENT_SIZE;
+ 	__be32 *p;
+ 
+ 	p = xdr_reserve_space(xdr, sizeof(__be32) + len);
+@@ -27,14 +40,19 @@ nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
+ 		return nfserr_toosmall;
+ 
+ 	*p++ = cpu_to_be32(len);
+-	*p++ = cpu_to_be32(1);		/* we always return a single extent */
++	*p++ = cpu_to_be32(bl->nr_extents);
+ 
+-	p = svcxdr_encode_deviceid4(p, &b->vol_id);
+-	p = xdr_encode_hyper(p, b->foff);
+-	p = xdr_encode_hyper(p, b->len);
+-	p = xdr_encode_hyper(p, b->soff);
+-	*p++ = cpu_to_be32(b->es);
+-	return 0;
++	for (i = 0; i < bl->nr_extents; i++) {
++		const struct pnfs_block_extent *bex = bl->extents + i;
++
++		p = svcxdr_encode_deviceid4(p, &bex->vol_id);
++		p = xdr_encode_hyper(p, bex->foff);
++		p = xdr_encode_hyper(p, bex->len);
++		p = xdr_encode_hyper(p, bex->soff);
++		*p++ = cpu_to_be32(bex->es);
++	}
++
++	return nfs_ok;
+ }
+ 
+ static int
+diff --git a/fs/nfsd/blocklayoutxdr.h b/fs/nfsd/blocklayoutxdr.h
+index 7d25ef689671..54fe7f517a94 100644
+--- a/fs/nfsd/blocklayoutxdr.h
++++ b/fs/nfsd/blocklayoutxdr.h
+@@ -21,6 +21,11 @@ struct pnfs_block_range {
+ 	u64				len;
+ };
+ 
++struct pnfs_block_layout {
++	u32				nr_extents;
++	struct pnfs_block_extent	extents[] __counted_by(nr_extents);
++};
++
+ /*
+  * Random upper cap for the uuid length to avoid unbounded allocation.
+  * Not actually limited by the protocol.
+-- 
+2.43.0
 
-Thierry
-
---aldenwximqaufmm3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjC8hkACgkQ3SOs138+
-s6GQkg//fg2ezajsxhrYNBgzzBWPE4ciQl6ByB86MJ/Ekj1RF9X3y0n7k8esbTb9
-bUNtsPIXmVc5gNSharst/8YiVjBZ1l1T/g2WgSIWdoT0qatLQaTQjvFB2vNKWAnk
-fFbXKJg88ZFAy8KE9CaHbdodUy3GtiWzflY/hN+wrrHhCINAO7UwDls4T4uB5DMS
-UWXFerQ14jQP+llMah5gs80ycmQwbRwtz130sYrCcs3JTsn+dOeZPU/Y3CimsgIr
-9oi6iBe3C9FJU6Gn+jHXShJLR0qD5EwKM0MuEIB3ZOpOKwU40EkEhjY0h/IgWiq5
-jrQdsG29i7j5bcf+rTxRt2z3PmXpfhtUbIXJeaBiaT6wEf8afzCtMCcDe8YP3FYJ
-yc+FHPB7XH9wIWxbH6wagdTWvsz2SkXSAaziCcH+MTX4M8JbjVS/wU8T3Ma0NkFV
-g3tHYgix0EdLgbrBe1obbn04XAoiFit+tZGGDtBsyQyH/P/b/R6iZ71dBuBIXgxz
-h6emUSxMcMi/owzGej8FPGvI5+MDl9qgu9YHO0vE6lBQm3f5VS09ASd7SipSkgyX
-XbzX5x4Uazr4MZFmE59WiWXi3uZ7amxcgYEVTguhn+z2n4qsneWygzWuC1IdME4/
-xr0NL1BKc8j25XtjeayTUXLFGdv7fjp4u3niUUAHUAwj2i9JFS0=
-=tBkQ
------END PGP SIGNATURE-----
-
---aldenwximqaufmm3--
 
