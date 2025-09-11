@@ -1,89 +1,79 @@
-Return-Path: <linux-kernel+bounces-812677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAB80B53B53
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:24:26 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F4FB53B78
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:33:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56F01CC43D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:24:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 34C734E3307
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5DC369982;
-	Thu, 11 Sep 2025 18:24:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087F336C062;
+	Thu, 11 Sep 2025 18:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H1l45Rkv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ScsAs25f"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31E036809B
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E6E27FD5B;
+	Thu, 11 Sep 2025 18:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757615046; cv=none; b=SPfYCXjcxsBJjv27xcy9sHqSVHzuguvsrgOz6aFTgKamuCw6ZeLPEdrCB6cAY5PJrae825CBhjeUeohRFFeY06oqWhroAYgT5NsKVFX/HQ5SEPIJmAPTbZHsI7l4KkWQD/W8INQWaMEBC9oV2I3H6V3RQ9vZAWQeA2PVcuixe3s=
+	t=1757615596; cv=none; b=Rf3ZLS60m3b4aOmAjsnHmyaD104X8kUVuG6LTCO9/ZUNrZdCz1grzkYaFYoLmpj+wvfYaYs+KZgLUXcqK040/mkyzG6wmfB64clSBeKkkitPnM0+LFZFVRZrYKNIsYdcXQjMmtlzM/qLnCKeSFN/lEPoq9NzlMQ/1b75W2V33fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757615046; c=relaxed/simple;
-	bh=V9BznF2Pb/TnOldcpMEp9IpbwXPfPKAjSWmMSHWv27U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TO5UGDKQCOcbn6+f+DfbIuT3YRtYRRsfVT7opv1SuFM/h+3P2xqZmdLD25BOsLRCibJVtsbGLpMAWL+mutGiJh+QtJMgoednxR7HutI8R5B1K2BPZYv0brHIU+2Dk6uf6KMzw0/EVSxwhTSe2DwucD6bevuQbviE2Xh7ZgkQF8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H1l45Rkv; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757615045; x=1789151045;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=V9BznF2Pb/TnOldcpMEp9IpbwXPfPKAjSWmMSHWv27U=;
-  b=H1l45RkvQ3/hxaEvCE+eerkrXXim8W25ji3KGfjQFF3SDsTX/O1WTd8p
-   qrdAe6QnHk6c7j+SFkYRIidg1CTYH60Wg5vJ6JLXehlcv+myehztRJiUa
-   ZYQOA9CCmi79DXYzFD8SJUgXqKpmXMtBEC8AADimEV8LNwuoIJKzC/miF
-   /797E2rvnbqCj/nbLLbAaap/9RaYvJpzGfrNmoNWl04XqIWN2qJgz9BTR
-   XVGYPuKZWDrZ8U+0R7m4VId1r+AWWhy5hh1SFtRckaOgLpvrEoFEMEogz
-   lLDJEIVLTY4YnFL0maysZyeqbDvfq6VNYCO83R8yL/bo3WeIv3pdKA8Rq
-   g==;
-X-CSE-ConnectionGUID: 3K7g4pjpTr6kjOvMI92d3A==
-X-CSE-MsgGUID: 9+HCiur+RDu731bbCmeJFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="77413648"
-X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
-   d="scan'208";a="77413648"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 11:24:04 -0700
-X-CSE-ConnectionGUID: 2OkQa8MRTZqXV8QROiQoVw==
-X-CSE-MsgGUID: Dbhzcl7CSyOmme73+bc4Rw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
-   d="scan'208";a="173058313"
-Received: from b04f130c83f2.jf.intel.com ([10.165.154.98])
-  by orviesa010.jf.intel.com with ESMTP; 11 Sep 2025 11:24:04 -0700
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Tim Chen <tim.c.chen@intel.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Libo Chen <libo.chen@oracle.com>,
-	Abel Wu <wuyun.abel@bytedance.com>,
-	Len Brown <len.brown@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Chen Yu <yu.c.chen@intel.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Zhao Liu <zhao1.liu@intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	Arjan Van De Ven <arjan.van.de.ven@intel.com>
-Subject: [PATCH v3 2/2] sched: Fix sched domain build error for GNR, CWF in SNC-3 mode
-Date: Thu, 11 Sep 2025 11:30:57 -0700
-Message-Id: <208a0a8278a28521e7bbc5114cf9899d31875d15.1757614784.git.tim.c.chen@linux.intel.com>
-X-Mailer: git-send-email 2.32.0
-In-Reply-To: <cover.1757614784.git.tim.c.chen@linux.intel.com>
-References: <cover.1757614784.git.tim.c.chen@linux.intel.com>
+	s=arc-20240116; t=1757615596; c=relaxed/simple;
+	bh=ck5UhhM7ahmNVtuybHiqx1PE1IHgAdJHgJZx+XtttAA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=D8Zk/KekYn/mosF5h3bns00AIYQjLigKqI2iBKRUeApS4AZgwufg+3Dy+V/ZooQKowNnT7uSCSiCc4HEQOqyw25XnjG7+wm/GuFJE46X5TASn6M5LrEmxPk2UUBf2YU0rnyf7sy2e4ZzBRFKwx1uFRNuC5xLIxvPpngTvDG3s4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ScsAs25f; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B9u5Ka026934;
+	Thu, 11 Sep 2025 18:33:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=QWix6YwOudrids1O38gaCCzCkdi4dxsLUSL/w46KJ
+	Zk=; b=ScsAs25fLQPd3+Mddi6UBaeuDanD8nEmS3DbqvGaWA7Ikkkt8MW+M3FLB
+	GL7OITRvYNu21DO5ouMAW19PgUerfPca0nGbnGxSmVkGVs+wZzibpxJKgV8hkU+a
+	JSYqc4D9MIJ8981ZoCWwo0x+h/qgdkYx8v1LkVS0ZBREOLw0JtBFy6oHf0dGQYHD
+	jzbdrASPXUnSQBRbW6W2io6dqdC+IUT1JZuUCJjxqFcEF5RFW8wPrLitDBt8g762
+	lkD8TuAcJ5+WwCl80dCNkUWTDwU3dGue+6airUUwQ9mf6nttbBW0jeecMdPoBnA7
+	TORRcO6crVNN0p9TyvvMc+NeBUJKw==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmx6n8t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 18:33:10 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58BI0u8s017172;
+	Thu, 11 Sep 2025 18:33:09 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmq2c3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 18:33:09 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BIX82e32310010
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Sep 2025 18:33:08 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6466858059;
+	Thu, 11 Sep 2025 18:33:08 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B03A058058;
+	Thu, 11 Sep 2025 18:33:07 +0000 (GMT)
+Received: from IBM-D32RQW3.ibm.com (unknown [9.61.249.32])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 11 Sep 2025 18:33:07 +0000 (GMT)
+From: Farhan Ali <alifm@linux.ibm.com>
+To: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Cc: alex.williamson@redhat.com, helgaas@kernel.org, alifm@linux.ibm.com,
+        schnelle@linux.ibm.com, mjrosato@linux.ibm.com
+Subject: [PATCH v3 00/10] Error recovery for vfio-pci devices on s390x
+Date: Thu, 11 Sep 2025 11:32:57 -0700
+Message-ID: <20250911183307.1910-1-alifm@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,140 +81,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ncZO6VLDxwHY4cwuEFFdKqBAD1ApAOpq
+X-Proofpoint-ORIG-GUID: ncZO6VLDxwHY4cwuEFFdKqBAD1ApAOpq
+X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68c315e6 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=pxXGJ1xoj55wCGANvjsA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfX1zHPwCY/WLna
+ 6T4ZOT5K7jlD0WX3MYWiZY07QVnmL4ZgDgQrK73NKHJloUIcghLZ9+7KgpYY3HMmwDEgumVIVz1
+ v/UMGYKqr/RFiHOROPwcRdN1malMxkKFXA4ialCzjWzj8W4UL8T9joI2pOPXp9CqwGppB/TbUHG
+ zo1lw4qEgdwz9/eqcYFxvBalmQF1mhFGJ5a3+Wl2K35WNM54LLAPUuqj984w5Izkuwpt9vefCZb
+ UqgIafsyFChRV7hOogJHQsTO8A5Ky+/hBXcDbm79P/0H3BBveJGjh6Gx8jbQlCjZTOp+SOCQscv
+ wLLkm71TmBk/HiyMvmEYYaK1352dJ56rg7oh3duHzGNzjqYkZf67v+aACyzZxKchdAcHWW1KSV5
+ PjLBC0w1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-11_03,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1011 suspectscore=0 spamscore=0 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
 
-It is possible for Granite Rapids (GNR) and Clearwater Forest
-(CWF) to have up to 3 dies per package. When sub-numa cluster (SNC-3)
-is enabled, each die will become a separate NUMA node in the package
-with different distances between dies within the same package.
+Hi,
 
-For example, on GNR, we see the following numa distances for a 2 socket
-system with 3 dies per socket:
+This Linux kernel patch series introduces support for error recovery for
+passthrough PCI devices on System Z (s390x). 
 
-    package 1       package2
-	----------------
-	|               |
-    ---------       ---------
-    |   0   |       |   3   |
-    ---------       ---------
-	|               |
-    ---------       ---------
-    |   1   |       |   4   |
-    ---------       ---------
-	|               |
-    ---------       ---------
-    |   2   |       |   5   |
-    ---------       ---------
-	|               |
-	----------------
+Background
+----------
+For PCI devices on s390x an operating system receives platform specific
+error events from firmware rather than through AER.Today for
+passthrough/userspace devices, we don't attempt any error recovery and
+ignore any error events for the devices. The passthrough/userspace devices
+are managed by the vfio-pci driver. The driver does register error handling
+callbacks (error_detected), and on an error trigger an eventfd to
+userspace.  But we need a mechanism to notify userspace
+(QEMU/guest/userspace drivers) about the error event. 
 
-node distances:
-node     0    1    2    3    4    5
-0:   	10   15   17   21   28   26
-1:   	15   10   15   23   26   23
-2:   	17   15   10   26   23   21
-3:   	21   28   26   10   15   17
-4:   	23   26   23   15   10   15
-5:   	26   23   21   17   15   10
+Proposal
+--------
+We can expose this error information (currently only the PCI Error Code)
+via a device feature. Userspace can then obtain the error information 
+via VFIO_DEVICE_FEATURE ioctl and take appropriate actions such as driving 
+a device reset.
 
-The node distances above led to 2 problems:
+I would appreciate some feedback on this series.
 
-1. Asymmetric routes taken between nodes in different packages led to
-asymmetric scheduler domain perspective depending on which node you
-are on.  Current scheduler code failed to build domains properly with
-asymmetric distances.
+Thanks
+Farhan
 
-2. Multiple remote distances to respective tiles on remote package create
-too many levels of domain hierarchies grouping different nodes between
-remote packages.
+ChangeLog
+---------
+v2 series https://lore.kernel.org/all/20250825171226.1602-1-alifm@linux.ibm.com/
+v2 -> v3
+   - Patch 1 avoids saving any config space state if the device is in error
+   (suggested by Alex)
 
-For example, the above GNR-X topology lead to NUMA domains below:
+   - Patch 2 adds additional check only for FLR reset to try other function 
+     reset method (suggested by Alex).
 
-Sched domains from the perspective of a CPU in node 0, where the number
-in bracket represent node number.
+   - Patch 3 fixes a bug in s390 for resetting PCI devices with multiple
+     functions. Creates a new flag pci_slot to allow per function slot.
 
-NUMA-level 1    [0,1] [2]
-NUMA-level 2    [0,1,2] [3]
-NUMA-level 3    [0,1,2,3] [5]
-NUMA-level 4    [0,1,2,3,5] [4]
+   - Patch 4 fixes a bug in s390 for resource to bus address translation.
 
-Sched domains from the perspective of a CPU in node 4
-NUMA-level 1    [4] [3,5]
-NUMA-level 2    [3,4,5] [0,2]
-NUMA-level 3    [0,2,3,4,5] [1]
+   - Rebase on 6.17-rc5
 
-Scheduler group peers for load balancing from the perspective of CPU 0
-and 4 are different.  Improper task could be chosen for load balancing
-between groups such as [0,2,3,4,5] [1].  Ideally you should choose nodes
-in 0 or 2 that are in same package as node 1 first.  But instead tasks
-in the remote package node 3, 4, 5 could be chosen with an equal chance
-and could lead to excessive remote package migrations and imbalance of
-load between packages.  We should not group partial remote nodes and
-local nodes together.
-Simplify the remote distances for CWF-X and GNR-X for the purpose of
-sched domains building, which maintains symmetry and leads to a more
-reasonable load balance hierarchy.
 
-The sched domains from the perspective of a CPU in node 0 NUMA-level 1
-is now
-NUMA-level 1    [0,1] [2]
-NUMA-level 2    [0,1,2] [3,4,5]
+v1 series https://lore.kernel.org/all/20250813170821.1115-1-alifm@linux.ibm.com/
+v1 - > v2
+   - Patches 1 and 2 adds some additional checks for FLR/PM reset to 
+     try other function reset method (suggested by Alex).
 
-The sched domains from the perspective of a CPU in node 4 NUMA-level 1
-is now
-NUMA-level 1    [4] [3,5]
-NUMA-level 2    [3,4,5] [0,1,2]
+   - Patch 3 fixes a bug in s390 for resetting PCI devices with multiple
+     functions.
 
-We have the same balancing perspective from node 0 or node 4.  Loads are
-now balanced equally between packages.
+   - Patch 7 adds a new device feature for zPCI devices for the VFIO_DEVICE_FEATURE 
+     ioctl. The ioctl is used by userspace to retriece any PCI error
+     information for the device (suggested by Alex).
 
-Tested-by: Zhao Liu <zhao1.liu@intel.com>
-Co-developed-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
----
- arch/x86/kernel/smpboot.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+   - Patch 8 adds a reset_done() callback for the vfio-pci driver, to
+     restore the state of the device after a reset.
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 33e166f6ab12..3f894c525e49 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -515,6 +515,34 @@ static void __init build_sched_topology(void)
- 	set_sched_topology(topology);
- }
- 
-+int arch_sched_node_distance(int from, int to)
-+{
-+	int d = node_distance(from, to);
-+
-+	if (!x86_has_numa_in_package)
-+		return d;
-+
-+	switch (boot_cpu_data.x86_vfm) {
-+	case INTEL_GRANITERAPIDS_X:
-+	case INTEL_ATOM_DARKMONT_X:
-+		if (d < REMOTE_DISTANCE)
-+			return d;
-+
-+		/*
-+		 * Trim finer distance tuning for nodes in remote package
-+		 * for the purpose of building sched domains.  Put NUMA nodes
-+		 * in each remote package in the same sched group.
-+		 * Simplify NUMA domains and avoid extra NUMA levels including
-+		 * different NUMA nodes in remote packages.
-+		 *
-+		 * GNR and CWF don't expect systmes with more than 2 packages
-+		 * and more than 2 hops between packages.
-+		 */
-+		d = sched_avg_remote_numa_distance;
-+	}
-+	return d;
-+}
-+
- void set_cpu_sibling_map(int cpu)
- {
- 	bool has_smt = __max_threads_per_core > 1;
+   - Patch 9 removes the pcie check for triggering VFIO_PCI_ERR_IRQ_INDEX.
+
+Farhan Ali (10):
+  PCI: Avoid saving error values for config space
+  PCI: Add additional checks for flr reset
+  PCI: Allow per function PCI slots
+  s390/pci: Add architecture specific resource/bus address translation
+  s390/pci: Restore IRQ unconditionally for the zPCI device
+  s390/pci: Update the logic for detecting passthrough device
+  s390/pci: Store PCI error information for passthrough devices
+  vfio-pci/zdev: Add a device feature for error information
+  vfio: Add a reset_done callback for vfio-pci driver
+  vfio: Remove the pcie check for VFIO_PCI_ERR_IRQ_INDEX
+
+ arch/s390/include/asm/pci.h        |  30 +++++++-
+ arch/s390/pci/pci.c                |  74 ++++++++++++++++++++
+ arch/s390/pci/pci_event.c          | 107 ++++++++++++++++-------------
+ arch/s390/pci/pci_irq.c            |   9 +--
+ drivers/pci/host-bridge.c          |   4 +-
+ drivers/pci/hotplug/s390_pci_hpc.c |  10 ++-
+ drivers/pci/pci.c                  |  40 +++++++++--
+ drivers/pci/pcie/aer.c             |   5 ++
+ drivers/pci/pcie/dpc.c             |   5 ++
+ drivers/pci/pcie/ptm.c             |   5 ++
+ drivers/pci/slot.c                 |  14 +++-
+ drivers/pci/tph.c                  |   5 ++
+ drivers/pci/vc.c                   |   5 ++
+ drivers/vfio/pci/vfio_pci_core.c   |  20 ++++--
+ drivers/vfio/pci/vfio_pci_intrs.c  |   3 +-
+ drivers/vfio/pci/vfio_pci_priv.h   |   8 +++
+ drivers/vfio/pci/vfio_pci_zdev.c   |  45 +++++++++++-
+ include/linux/pci.h                |   1 +
+ include/uapi/linux/vfio.h          |  14 ++++
+ 19 files changed, 330 insertions(+), 74 deletions(-)
+
 -- 
-2.32.0
+2.43.0
 
 
