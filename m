@@ -1,101 +1,77 @@
-Return-Path: <linux-kernel+bounces-811913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 693FEB53012
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:22:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DF2B53010
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1AA67BA3C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F1D2A8421A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DAE3101B2;
-	Thu, 11 Sep 2025 11:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49E1314A94;
+	Thu, 11 Sep 2025 11:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppYGLHOt"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x2mx97Jb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE053126BC;
-	Thu, 11 Sep 2025 11:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076D123F26B
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:21:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757589537; cv=none; b=BL6qED+KUiNcT6ecvfketJIIK7hUIn5oNv0m4PrMPvA+eMnJ881aIeobqpHqDfxFwWxAnu2ie4NqPV6rUvqSah8PuupUR4R4IkVlIjPqREhRd3ApvMxFijIvny9U/+P2wxlRA2rQxTwOmbuJYrmKifwQpD+lLBVWN/QbMMrJf4w=
+	t=1757589695; cv=none; b=Yf3ehQ/cnc3lbIyFUTSOQKGjiHKn8YQNTavF2MKw7izT38AgFnIOSwdsGNyum7Rb3lXtuNl9mJMiQXa6xyIzHDRKknjDIdhGt8XBpFlfXlSyiMPY2ANAOu3zVD7VHfXUyb9bBmw7AJj2r1OIPNoTq5FSZeyuhMrEc+MpyK4r2Rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757589537; c=relaxed/simple;
-	bh=1LxAfjPxuMG917X1MqeC+0Qq87gUbsh5VDPiGco/VFY=;
+	s=arc-20240116; t=1757589695; c=relaxed/simple;
+	bh=K+E9/yeGsKbPhGfqZ6gZJ2YNepukT/TA+KQzMcGNGUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ePqsfCLFF6mlYCqtstedAC9uT1KwahRUtnoziU4qyndAD7FXrjbgER27oscmpB+oWJAJUfqGE7pHDa0iPWXg2Iy/5abbNkZSACjvTtImQciHqU9rHRQT3/dXbodIVPSR1ziJHb3uMIQNVXe6R9vMNnUWO5bQDVD0p1BNUbLRFYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppYGLHOt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 183A5C4CEF0;
-	Thu, 11 Sep 2025 11:18:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757589537;
-	bh=1LxAfjPxuMG917X1MqeC+0Qq87gUbsh5VDPiGco/VFY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=HAIT02K7kdtMbxtCy5TXVpAQjq+/dipWYhvCHbc/TqF5SwGjRob4oKg5kpmuC8/2QBF6FV6ll4NDm8Tqc/ImhLUBgvMTTnm9NzGJkQ9oRk64z7801i08ZaH907VW/Io/L2J9nZp/sxfaEmuPqTwFeO2kwTzlM0McVLYl+MdE/rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x2mx97Jb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 297BBC4CEF0;
+	Thu, 11 Sep 2025 11:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757589694;
+	bh=K+E9/yeGsKbPhGfqZ6gZJ2YNepukT/TA+KQzMcGNGUw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ppYGLHOtM2vaZSDkbqowuqB8hISfuuNHlxbPomXH57Io0KN8L48e4OW5xYK5ubaN2
-	 OmlU5QG6oaeqPdILIafek7s+/UTg4fIoldzwfebkDpegsSAJy4pNlvu0cT+DkKEVAx
-	 6ic+k/j88/6oEkM0o2Ztu32Uso7pcM5R4lz5FM4gcDXCeCXI6doljN1QomuknpgZBl
-	 AkvnUgmUOUmnxlWeqCgj/BjaH0t0AIDC5tbcKczsasUqeSRyriRCQIjbM4HYcwxSCg
-	 dMUoyI/cHhtx6Knom8kVFvRa/jFQfofVjmGL4I/BAljP5T/8Kxb/XkX57IhNfO6otX
-	 uRQgl3AZC12KQ==
-Date: Thu, 11 Sep 2025 12:18:50 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Cc: Srinivas Kandagatla <srini@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
-	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
-	prasad.kumpatla@oss.qualcomm.com, ajay.nandam@oss.qualcomm.com
-Subject: Re: [RESEND PATCH v4 0/3] Fix lpaif_type and DAI configuration for
- I2S interface
-Message-ID: <25cb27a9-f81b-4bf8-996c-03044425253e@sirena.org.uk>
-References: <20250911063612.2242184-1-mohammad.rafi.shaik@oss.qualcomm.com>
+	b=x2mx97JbkuP9s+pduAzZ6iKIwTM9omOBVgFUZmDgkJbLb2p54LjaVpsnfo42H9ET5
+	 CcuZQGAduD8rGZdjMMMZCtTIseKsaeTAFZquREeSQkpJdtBss+phCyiUKDz2Cy6lFI
+	 OBio14vVk6seCQ/Tgw571QKNCMGdVaWFaU5tCwuM=
+Date: Thu, 11 Sep 2025 13:21:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [GIT PULL] w1: drivers for v6.18
+Message-ID: <2025091122-squire-anagram-7578@gregkh>
+References: <20250909181534.101604-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nJ/Zyz6nZp2XFF/R"
-Content-Disposition: inline
-In-Reply-To: <20250911063612.2242184-1-mohammad.rafi.shaik@oss.qualcomm.com>
-X-Cookie: Your domestic life may be harmonious.
-
-
---nJ/Zyz6nZp2XFF/R
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250909181534.101604-2-krzysztof.kozlowski@linaro.org>
 
-On Thu, Sep 11, 2025 at 12:06:09PM +0530, Mohammad Rafi Shaik wrote:
-> Fix the lpaif_type configuration for the I2S interface.
-> The proper lpaif interface type required to allow DSP to vote
-> appropriate clock setting for I2S interface and also Add support
-> for configuring the DAI format on MI2S interfaces to allow setting
-> the appropriate bit clock and frame clock polarity, ensuring correct
-> audio data transmissionover MI2S.
+On Tue, Sep 09, 2025 at 08:15:34PM +0200, Krzysztof Kozlowski wrote:
+> Hi Greg,
+> 
+> Just two minor improvements.
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+> 
+>   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-w1.git tags/w1-drv-6.18
 
-You previously sent this on *Monday* - please allow reasonable time for
-review.
+Pulled and pushed out, thanks.
 
---nJ/Zyz6nZp2XFF/R
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjCsBoACgkQJNaLcl1U
-h9C8Awf/VLSb1fxaHygc3SkZp87V4K5m8Wn9dfhp/6F0UZXkgADb4zj+jbWnsTe5
-SgiyFisBobL8S7WnPdWsFallMXv8MdISm4YSsXxolFTb40+0BOwSpNLhUIN1VsaV
-20Ry1PquKTnOJptQMdWPKEtKjhiryUCYw+z8g0J+crvg2PjhqpUoQ3xBcvXzqceD
-pslC9wD06R+t0sMISOqoLrp5SbEm2uZAeQzsY6WxIviLQkz30kPccqjRzi7Zi5qx
-IqXhNJveGNj7mAl8AB6eJfpb01hg59j3kv1DIRVX/67kThj1/7omk2T/R2Riy5Im
-vwU0o3nvV+K7AsUWuJzepNpMp+i/Rg==
-=jJb5
------END PGP SIGNATURE-----
-
---nJ/Zyz6nZp2XFF/R--
+greg k-h
 
