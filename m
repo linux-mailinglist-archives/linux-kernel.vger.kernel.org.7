@@ -1,115 +1,178 @@
-Return-Path: <linux-kernel+bounces-812390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 918FFB53787
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:21:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB9DB5379D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50EA63A8229
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C4C418836BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ADF34A332;
-	Thu, 11 Sep 2025 15:21:45 +0000 (UTC)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D38E33769B;
+	Thu, 11 Sep 2025 15:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MSYgkinh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACED3431F1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A183D76;
+	Thu, 11 Sep 2025 15:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757604105; cv=none; b=CDWC+eZDV9e3flwQ3ZXyOHBCoeAp0owMFcD8/cPcAiuvYNBf93aYoQFOsRY4Bm4cvaKmB5hH658EoJPFP4G8oKnz7qPYC+M2li1AWR11xvrlmwslQpYFK47bsbpf6CT1gzsIyJQoaqZKEDPcXbaMkbjEbs0cfb2BDqbeyhBNko0=
+	t=1757604150; cv=none; b=miJmSmRmdSTbHNIgP9vs2dBnRmTZ2Y5oBgk1dvlh9iOS17zx4XsUCBqYJCwhHhi0LXR198TfCLHmhQKFdjVCWVjNSXMMXQvL/vc6o6nL/OcOptZxtzkRWAwc6SWVLVNnJlRF4YKPRXW20teQZSSZM1+xF66IhG/Ti9HACdc5Re8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757604105; c=relaxed/simple;
-	bh=oC4vmluiwrX18cIeVqBz0JWNRurMmcePlH97Y2tSYjM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C57aXPPKkGR5xkETvgD1CK5DdtnKPcUamyHX7qGMAYLliwewiPh+Nty00OLk7ZgsGm7eOKvWioIeIblATwob1YOl1sTYSNa1RpDizFmoPUFDqzUPK+OUgID/pIcBo4aqK/Qb/fphBzMNj1y5sPck0XpzQYgofRcGbYDMkMLg3Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-544ad727e87so570370e0c.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:21:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757604102; x=1758208902;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5zw8eBQvDUCVhODh2n6UuXo9fuHt2pQGWUMRk5klLYM=;
-        b=HxeDdU2leQcVUkuYzvhAOLIw4Ja1SweEDsh6tjPB/KCNGUJcgvIp1wHOWKTWUM8HKH
-         MutOUUYQ1S92BT8L+UiFCKTvyLpHLy3hwE8fzUe47a8hyJ37jglQ2JdIj1ivg0ettCHx
-         5RAdUwEgl3r7pFrS0m8dT0I6w414DxARiSMjpMN2jqgPAKQZnnVx6L6odE+BGQLL5GUE
-         1RuvVOdK5Eyl3NuX0aNZUME8XueaC3LXW1U9mhbEanRqI93UWiS8D2XwzVg2ylBgO/8a
-         6EgfXKsxkgqFElrw3HKZv7u8uWbH0LsuF3TG6e898vgEl8c5GNXPD0CzaA8BKUEVP8xq
-         zYpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmTG7VVpepOkSBBYku1R76V3ZCLnYb+eMgv+gjxkSz6DbWuT5xEtPkBoHzWS9xC+NaUOQ26d4n+K/ebJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxo3WJUm9F535Q0JP+W//M9mNi1ssFWpuN6M6N5kTvjV4Zj0uYh
-	1HGzwvL76Ta0WJhuS5cb+jQl2yaDl+nDvHNpv0d0kVYtAM67QjnzZERWXXnyHiSI
-X-Gm-Gg: ASbGncu9ZQjUjuf4VBDnB1E/5Cl4/IhLJmtpDpQUaZEmeNFJFvguvA+5L4Fptnv/2EF
-	t2HwCF8ZQWVLyPXkIbgRpHL2bJTYKY7f6gY1+iKysp7f/DgTUewpUPOAMgAtVTv9GpvIicV8XNE
-	VcdtpwirUj7YXFvmDVJGDu+PyO7wFCvpZg/IVnJEsv7dzE0U1SRS+t/eRCGR9q0tc9fCK/WzzXG
-	vqnvnPmr791qxEURXW2a2KJyEVOyzND9CkFpcwm4KlCzvZub8hoeZmvA9SAKwK4VQ/LFxV4GTqF
-	uP51Tr3yFXkKHp/gwTaJhHA6G4u0cnyGrseIszFKHDAewz9YIZN+Z+Ots2o+QhaRRwYg2dL409D
-	0y1o0yR01ibSMN0tRM7xvaA6enz2tj1RXkqSgMiT6CsNyAupy6Hs42VDu82iEXHvb
-X-Google-Smtp-Source: AGHT+IFJQW45G6VZzCIvAu/0AcNaWBcplTJVFUovaPMEeJAdmMjnJBS8bHHLvKmaxSK2zBTps+bSAQ==
-X-Received: by 2002:a05:6102:1612:b0:521:d81:6dc2 with SMTP id ada2fe7eead31-53d2490eb0bmr6933122137.33.1757604102064;
-        Thu, 11 Sep 2025 08:21:42 -0700 (PDT)
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-55370649fe7sm372023137.7.2025.09.11.08.21.41
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 08:21:41 -0700 (PDT)
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-544af5b745cso552080e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:21:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWT9kDlKI/TVuWt2qHqPVx2cGmJtob5KBJBkkVj50wt+sdsFntThrApr49woYGmK2tdLxtU3dJQ04IjZuc=@vger.kernel.org
-X-Received: by 2002:a05:6102:14a8:b0:529:bfd2:382a with SMTP id
- ada2fe7eead31-53d2490d25emr7502207137.32.1757604100881; Thu, 11 Sep 2025
- 08:21:40 -0700 (PDT)
+	s=arc-20240116; t=1757604150; c=relaxed/simple;
+	bh=9ANPCayp/6AVvTnSZ16aUQ6wUqmjzSzIMaezeBu+G/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmG+mwzu1+JV4nJiCISHTZtk6LuQy36fXB2HWeb5Tx1PnTSi2UmQcV9P/14Uj8zbwWC6T6E91u/aWFhBIk4eBVh+hw3gy3bxuJJdO5zKXa1jlD2BfoArZk9EeVFvsz2h9cFuZbIVWWt52+sQ3E8avcx1mvc0f0NJDu51g1GrEzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MSYgkinh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54B68C4CEF0;
+	Thu, 11 Sep 2025 15:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757604150;
+	bh=9ANPCayp/6AVvTnSZ16aUQ6wUqmjzSzIMaezeBu+G/g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MSYgkinh0gRSGkEGz5xc0r1m2bUsSNbqN6icKHW2IEYCC43zT+40wghBE71VtZV27
+	 r8audT2mP+p/6TFd472uOjrrok+vn1YczMO87oW0tqrvrL9gEaysJImirDa68ZtbIw
+	 eCgeWDK+5rnhpvuOffBHFgPUBeizw2/boIbc9EA8laHupMWXE+EeeLzVn36Cj4bgmL
+	 kj95ip718dmRvlBJKgFv1SODHSB4IGvZnqc++2h9wzkDSrhPoyqp0SpQeuNZRGRJVW
+	 QkNYscyfPvUylJf7+UwH4juY7aA9mKAAwJWWOqpuY101f/pFworZ8IdbIuAybdSabm
+	 2mAEXgoJll7OQ==
+Date: Thu, 11 Sep 2025 16:22:24 +0100
+From: Will Deacon <will@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
+	ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v7 6/6] arm64: futex: support futex with FEAT_LSUI
+Message-ID: <aMLpMBWtHDI9sPHK@willie-the-truck>
+References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+ <20250816151929.197589-7-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904100435.4033858-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250904100435.4033858-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Sep 2025 17:21:29 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW+YXwMCbQy8g88s8hQ+zzV8Vqr2iaX98J5d+RR_q4QiA@mail.gmail.com>
-X-Gm-Features: AS18NWDe3BfDNkISbgAn9TPJsLdnq75CKg4tLUlECWyOdSKnu33jwgTzPbJMnms
-Message-ID: <CAMuHMdW+YXwMCbQy8g88s8hQ+zzV8Vqr2iaX98J5d+RR_q4QiA@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: rzt2h-n2h-evk: Enable USB2.0 support
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816151929.197589-7-yeoreum.yun@arm.com>
 
-On Thu, 4 Sept 2025 at 12:04, Prabhakar <prabhakar.csengg@gmail.com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Enable USB2.0 support on RZ/T2H and RZ/N2H EVKs.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Sat, Aug 16, 2025 at 04:19:29PM +0100, Yeoreum Yun wrote:
+> Current futex atomic operations are implemented with ll/sc instructions
+> and clearing PSTATE.PAN.
+> 
+> Since Armv9.6, FEAT_LSUI supplies not only load/store instructions but
+> also atomic operation for user memory access in kernel it doesn't need
+> to clear PSTATE.PAN bit anymore.
+> 
+> With theses instructions some of futex atomic operations don't need to
+> be implmented with ldxr/stlxr pair instead can be implmented with
+> one atomic operation supplied by FEAT_LSUI.
+> 
+> However, some of futex atomic operations still need to use ll/sc way
+> via ldtxr/stltxr supplied by FEAT_LSUI since there is no correspondant
+> atomic instruction or doesn't support word size operation.
+> (i.e) eor, cas{mb}t
+> 
+> But It's good to work without clearing PSTATE.PAN bit.
+> 
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 > ---
-> v1->v2:
-> - Reflowed comments to adhere to 80 char width.
-> - Updated comment about simultaneously using USB host and function interfaces.
+>  arch/arm64/include/asm/futex.h | 130 ++++++++++++++++++++++++++++++++-
+>  1 file changed, 129 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/futex.h b/arch/arm64/include/asm/futex.h
+> index 22a6301a9f3d..ece35ca9b5d9 100644
+> --- a/arch/arm64/include/asm/futex.h
+> +++ b/arch/arm64/include/asm/futex.h
+> @@ -9,6 +9,8 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/stringify.h>
+> 
+> +#include <asm/alternative.h>
+> +#include <asm/alternative-macros.h>
+>  #include <asm/errno.h>
+> 
+>  #define LLSC_MAX_LOOPS	128 /* What's the largest number you can think of? */
+> @@ -115,11 +117,137 @@ __llsc_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
+>  	return ret;
+>  }
+> 
+> +#ifdef CONFIG_AS_HAS_LSUI
+> +
+> +#define __LSUI_PREAMBLE	".arch_extension lsui\n"
+> +
+> +#define LSUI_FUTEX_ATOMIC_OP(op, asm_op, mb)				\
+> +static __always_inline int						\
+> +__lsui_futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)	\
+> +{									\
+> +	int ret = 0;							\
+> +	int oldval;							\
+> +									\
+> +	uaccess_ttbr0_enable();						\
+> +	asm volatile("// __lsui_futex_atomic_" #op "\n"			\
+> +	__LSUI_PREAMBLE							\
+> +"1:	" #asm_op #mb "	%w3, %w2, %1\n"					\
+> +"2:\n"									\
+> +	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)				\
+> +	: "+r" (ret), "+Q" (*uaddr), "=r" (oldval)			\
+> +	: "r" (oparg)							\
+> +	: "memory");							\
+> +	uaccess_ttbr0_disable();					\
+> +									\
+> +	if (!ret)							\
+> +		*oval = oldval;						\
+> +									\
+> +	return ret;							\
+> +}
+> +
+> +LSUI_FUTEX_ATOMIC_OP(add, ldtadd, al)
+> +LSUI_FUTEX_ATOMIC_OP(or, ldtset, al)
+> +LSUI_FUTEX_ATOMIC_OP(andnot, ldtclr, al)
+> +LSUI_FUTEX_ATOMIC_OP(set, swpt, al)
+> +
+> +static __always_inline int
+> +__lsui_futex_atomic_and(int oparg, u32 __user *uaddr, int *oval)
+> +{
+> +	return __lsui_futex_atomic_andnot(~oparg, uaddr, oval);
+> +}
+> +
+> +static __always_inline int
+> +__lsui_futex_atomic_eor(int oparg, u32 __user *uaddr, int *oval)
+> +{
+> +	unsigned int loops = LLSC_MAX_LOOPS;
+> +	int ret, oldval, tmp;
+> +
+> +	uaccess_ttbr0_enable();
+> +	/*
+> +	 * there are no ldteor/stteor instructions...
+> +	 */
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.18.
+*sigh*
 
-Gr{oetje,eeting}s,
+Were these new instructions not added with futex in mind?
 
-                        Geert
+I wonder whether CAS would be better than exclusives for xor...
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +static __always_inline int
+> +__lsui_futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
+> +{
+> +	int ret = 0;
+> +	unsigned int loops = LLSC_MAX_LOOPS;
+> +	u32 val, tmp;
+> +
+> +	uaccess_ttbr0_enable();
+> +	/*
+> +	 * cas{al}t doesn't support word size...
+> +	 */
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+What about just aligning down and doing a 64-bit cas in that case?
+
+Will
 
