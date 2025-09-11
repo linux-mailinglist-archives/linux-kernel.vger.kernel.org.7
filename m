@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-812828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A0FB53D32
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:39:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D19B53D34
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 914987A9EED
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:38:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA5C58839C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773C62C2361;
-	Thu, 11 Sep 2025 20:39:35 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2AAE2C3257;
+	Thu, 11 Sep 2025 20:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AftvDV8J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8533A274B2E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 20:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5074622759C;
+	Thu, 11 Sep 2025 20:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757623175; cv=none; b=Z1CyUXAOS+UJS1ilIDYzBcii2/aXKrG8exg1qmsc+dXoz+c/HxTWLEwEvjQHOiTvDZ7mGR0FwRT2NPSmDe5h9eAwNaOsjTXQWL+JVjWTq2TkoikvCRiev1iv4S4brM7n9oWflb2eOB3+/RHBupD4kPc/UlsysnJ63u8FupLNdHs=
+	t=1757623208; cv=none; b=cPkyFt7oRuB0NkoPWQ8aV8fMqobe0DxdV/qWsjHBkEYBsGpoYau4+aHEHFrWdLnsCQ1zcB3Fq59IoyYXAVJPhgmd2T3vfqniGtlSwIoPnXEKJYQtAquoeReZaQmIEKjzsRqXHv0BiqAYs/pPkfySKc2kfIfCi3L2GjNfgKdJKIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757623175; c=relaxed/simple;
-	bh=sE7Xhd4nymptzNrbw8FwvycuTvZ9DppJQbty0Pc23PE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CM4+ysyM9WhwLwVSbynf+W1Z1R1q8PdpTQoxHfcfpZVb7KGBRrazM+96mWDqW5zUrMcIaWXi9PUf1z2SleDGfRqZW+dXF+MDjCjzJkRMdHweNlLoRHlSXLAn6uIMLC4z0F7gdxTZtLIoDdl+wTiIaw+mWt0T687cgseRCuRyj1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-888acb964c8so282084539f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:39:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757623171; x=1758227971;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5jJzln9Oxv++8k8GF8gqWoPMM+xkj0dtehYwHya0GB4=;
-        b=oqrId7CQb6JbXPNtUfIfLNuZGWY/vOyqbxA/O9gGb5KUiOuKBxGpAeRSTdVaBVIS10
-         UXlfp8SFcTsF/y0gMUHX5zxjHI+/JQp3SCE0V3LkCc0fHiIVXXdGfWfAB4yaQUJ6C+QY
-         d0AxX2dkGthGJ+fIRp/GAyk5aADDDk2HlG7IcbFXS9Pd8mODjzTPnML7W8XtlgeAmMAN
-         v2wUWGo2KygCOJyhCeNmcFwnrxtsXzpqnezIQVB8wakkF7WG3zGnDNQbc7EO80/dqN3B
-         J1TOhjJ8Qp/ttjnxY0fge04WvHg65/euJnsdycB1PQ0EbiSPAbQSCZZZs1hSzp/I83J1
-         LFSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIdpSLMyay4ZTGW8oFotjntTjpdb0+3qcjxE8kTeqDc1Q3o6K12jRlQ/lbvztJ09/roIc28dqwYpZabQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzs7RiSJXP0l0qDzNysVCvKamuJDBrn4CWyePs1OQMqDzHXQul
-	oOXhAgqEXKr0M9qtzhs+LBcfCGItssDS9FLFX/udKm2mcsr3VSVrn3VVNpGPtpTA8yL5CU+LPA/
-	kA/+/q+U4Xe1ej3VsBhcrpnj2vJjZHLOPn6qjpMHk8ykyAh7temkRfuv/RqY=
-X-Google-Smtp-Source: AGHT+IEKo2i6gsqDbr7f9ef/ZJegwOu6Gj24s140BtY1OYu2xELtUBOFNc9xaY32a8rWUzDw0ng4jgtQUocBmXi78ZBwSUD05pvY
+	s=arc-20240116; t=1757623208; c=relaxed/simple;
+	bh=8hnQ06uJnhREH5akTgfN6vsYLtIKYGhKoV9nBO8LIzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rh1KVfxYs7WKvfgWUNIwWHBQ87g9oStGwNmi2yROVDU8NzdRFosB0F6vqoyN3qCTuAgXA63qS4dpZPZzi9f1ktogb9gUNjEHmH4790A1UynxIQhW40QB9b3HiJtkUUJ/9dyg5KEGKO7IcG2+dm7cgL1vylxA+/T/ibpz1UWFgOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AftvDV8J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A68BDC4CEF0;
+	Thu, 11 Sep 2025 20:40:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757623207;
+	bh=8hnQ06uJnhREH5akTgfN6vsYLtIKYGhKoV9nBO8LIzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AftvDV8JrnN/pCxzs4ZYnz8PrF01oECxqlncRV1as21fsghKqbpIzgvRawFRTkC+a
+	 bYxye24rnIMCudF2SywiTfNYDAAceCCelN45DU6mwtKpvkFphI6oqEjwvFT8eBwUQb
+	 b8WDoaSOdeAkDE2ZztzDu0PBn3hIJ4lg9uVMYyedKiisAUDtlZI5bPNxa9PQdshRrT
+	 UDI0AwHsdhaGTvfSNGxCHE2e2ViWvmTVseXwmKQTambLGDEmBegnj7W9Zw5cDPdOL2
+	 nvxQr3ZUPGEoiTQC0mFPdayF3rSomp98t5dyGuOTP1jA319zMDqWX0BgXhgq6u5VJO
+	 pb9ZQFRontAXg==
+Date: Thu, 11 Sep 2025 10:40:06 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 13/14] sched: Add {DE,EN}QUEUE_LOCKED
+Message-ID: <aMMzpnyx__ZgZGRc@slm.duckdns.org>
+References: <20250910154409.446470175@infradead.org>
+ <20250910155809.800554594@infradead.org>
+ <aMItk3c5H6Z2CD4X@slm.duckdns.org>
+ <20250911094240.GW3289052@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4806:b0:421:3a23:7099 with SMTP id
- e9e14a558f8ab-4213a2373f9mr3572755ab.19.1757623171591; Thu, 11 Sep 2025
- 13:39:31 -0700 (PDT)
-Date: Thu, 11 Sep 2025 13:39:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c33383.050a0220.2ff435.024c.GAE@google.com>
-Subject: [syzbot] [jfs?] kernel BUG in lbmIODone (3)
-From: syzbot <syzbot+a5bcc0f04f7131679010@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911094240.GW3289052@noisy.programming.kicks-ass.net>
 
 Hello,
 
-syzbot found the following issue on:
+On Thu, Sep 11, 2025 at 11:42:40AM +0200, Peter Zijlstra wrote:
+...
+> I didn't immediately see how to do that. Doesn't that
+> list_for_each_entry_safe_reverse() rely on rq->lock to retain integrity?
 
-HEAD commit:    b320789d6883 Linux 6.17-rc4
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=13ea0642580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=39f8a155475bc42d
-dashboard link: https://syzkaller.appspot.com/bug?extid=a5bcc0f04f7131679010
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-userspace arch: arm64
+Ah, sorry, I was thinking it was iterating scx_tasks list. Yes, as
+implemented, it needs to hold rq lock throughout.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> Moreover, since the goal is to allow:
+> 
+>  __schedule()
+>    lock(rq->lock);
+>    next = pick_task() := pick_task_scx()
+>      lock(dsq->lock);
+>      p = some_dsq_task(dsq);
+>      task_unlink_from_dsq(p, dsq);
+>      set_task_cpu(p, cpu_of(rq));
+>      move_task_to_local_dsq(p, ...);
+>      return p;
+> 
+> without dropping rq->lock, by relying on dsq->lock to serialize things,
+> I don't see how we can retain the runnable list at all.
+>
+> And at this point, I'm not sure I understand ext well enough to know
+> what this bypass stuff does at all, let alone suggest means to
+> re architect this.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c497ec86c8e2/disk-b320789d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b1d08f5d7b1c/vmlinux-b320789d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4a27a997250a/Image-b320789d.gz.xz
+Bypass mode is enabled when the kernel side can't trust the BPF scheduling
+anymore and wants to fall back to dumb FIFO scheduling to guarantee forward
+progress (e.g. so that we can switch back to fair).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a5bcc0f04f7131679010@syzkaller.appspotmail.com
+It comes down to flipping scx_rq_bypassing() on, which makes scheduling
+paths bypass most BPF parts and fall back to FIFO behavior, and then making
+sure every thread is on FIFO behavior. The latter part is what the loop is
+doing. It scans all currently runnable tasks and dequeues and re-enqueues
+them. As scx_rq_bypass() is true at this point, if a task were queued on the
+BPF side, the cycling takes it out of the BPF side and puts it on the
+fallback FIFO queue.
 
-BUG at fs/jfs/jfs_logmgr.c:2303 assert(bp->l_flag & lbmRELEASE)
-------------[ cut here ]------------
-kernel BUG at fs/jfs/jfs_logmgr.c:2303!
-Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-Modules linked in:
-CPU: 0 UID: 0 PID: 15 Comm: ksoftirqd/0 Not tainted syzkaller #0 PREEMPT 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/30/2025
-pstate: 634000c5 (nZCv daIF +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : lbmIODone+0x1294/0x12e8 fs/jfs/jfs_logmgr.c:2303
-lr : lbmIODone+0x1294/0x12e8 fs/jfs/jfs_logmgr.c:2303
-sp : ffff800097c678d0
-x29: ffff800097c67960 x28: 1fffe00018c38ca1 x27: 0000000000000020
-x26: 1fffe0001a4f064f x25: dfff800000000000 x24: 0000000000000000
-x23: ffff0000c61c6508 x22: ffff0000d2783278 x21: 0000000000000000
-x20: 0000000000000020 x19: ffff0000c61c6500 x18: 1fffe00033797688
-x17: ffff80008f7de000 x16: ffff80008b00ff28 x15: 0000000000000001
-x14: 1ffff00012f8ce90 x13: 0000000000000000 x12: 0000000000000000
-x11: ffff700012f8ce91 x10: 0000000000ff0100 x9 : 4257e84271db6d00
-x8 : 4257e84271db6d00 x7 : ffff800080563d2c x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000000 x3 : ffff8000807de8f0
-x2 : 0000000000000001 x1 : 0000000100000101 x0 : 000000000000003f
-Call trace:
- lbmIODone+0x1294/0x12e8 fs/jfs/jfs_logmgr.c:2303 (P)
- bio_endio+0x858/0x894 block/bio.c:1651
- blk_update_request+0x474/0xba8 block/blk-mq.c:989
- blk_mq_end_request+0x54/0x88 block/blk-mq.c:1151
- lo_complete_rq+0x124/0x274 drivers/block/loop.c:314
- blk_complete_reqs block/blk-mq.c:1226 [inline]
- blk_done_softirq+0x11c/0x168 block/blk-mq.c:1231
- handle_softirqs+0x328/0xc88 kernel/softirq.c:579
- run_ksoftirqd+0x70/0xc0 kernel/softirq.c:968
- smpboot_thread_fn+0x4d8/0x9cc kernel/smpboot.c:160
- kthread+0x5fc/0x75c kernel/kthread.c:463
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:844
-Code: f004c2c3 911c0063 52811fe2 9793a804 (d4210000) 
----[ end trace 0000000000000000 ]---
+If we want to get rid of the locking requirement:
 
+- Walk scx_tasks list which is iterated with a cursor and allows dropping
+  locks while iterating. However, on some hardware, there are cases where
+  CPUs are extremely slowed down from BPF scheduler making bad decisions and
+  causing a lot of sync cacheline pingponging across e.g. NUMA nodes. As
+  scx_bypass() is what's supposed to extricate the system from this state,
+  walking all tasks while going through each's locking probably isn't going
+  to be great.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+- We can update ->runnable_list iteration to allow dropping rq lock e.g.
+  with a cursor based iteration. Maybe some code can be shared with
+  scx_tasks iteration. Cycling through locks still isn't going to be great
+  but here it's likely a lot fewer of them at least.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Neither option is great. Leave it as-is for now?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+tejun
 
