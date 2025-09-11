@@ -1,148 +1,274 @@
-Return-Path: <linux-kernel+bounces-812137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503F7B5337C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:19:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB0BB53386
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9255A06054
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:19:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A6DA85F14
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD76322DCA;
-	Thu, 11 Sep 2025 13:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710CB326D58;
+	Thu, 11 Sep 2025 13:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="c8jmXGwL"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Pm1mlMlL"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0111A322A3E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7000322A3E
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757596771; cv=none; b=F6hBW0XHlH6meUAR02f0rhWB416vKJ/J4fkCyvNX0TS68a7RFytmZBqMB96RH16PGHq45wDUaATU20jda0S4IIRx92+DlEAsCUzxJs+ucxFCzSPvrK37SMyezn+dkm2Pmy217uhBDLVhwO6AKDKmt6O+TYIWOI5bBKGbPJXF52I=
+	t=1757596786; cv=none; b=OHaet87z5ESgOw0qlglgE9gVWGtmr6WfDrVKQ7xMcZCzk7YDxkYaZlv53ZUM8vQXrfufBfIKUlw5sxDB8voieYNKr1+hLlz5zg73Rxn/OZ5MHIXPoJs5g/cHnzJceQRK+pRrWI+EWbWEzn8L5gKD1inFlSiypu3UHeTwUZ6TbDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757596771; c=relaxed/simple;
-	bh=0bqSOryJEQ/X3+/vSnEr3yI4I9N6P79OuHfoWbsAg2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DAeqQeTPXNtGEX+R4VvfK+BO9ASVkzI0hoVzGJhYQq70GhNQLBYOlRjXFgRlw1tmBBCNeHxYRtg0F+mY/L1UPVtCwqxxv7zTPLWxl92tCe5jTxEqDxkSehubM0n1Ai/u+A+mInWDVqslcWjgEXknyV3pQ1scNCPp9NspRoHv8Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=c8jmXGwL; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3e07ffffb87so414674f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:19:29 -0700 (PDT)
+	s=arc-20240116; t=1757596786; c=relaxed/simple;
+	bh=ePzqisO6Qaumrt2qktaPC5KlyCzzYBDYymDXyVRUeNs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AyNLHRGt3kREBaslqzTGO0mhetboDbPRLPtLyyLsvGH8RigkErJk2F47RNiDHhMbW1MrN+ZZ3e9O6dTGetqn/G15ObCZpdFwKYRKwkQXp1m3DL+Xaou2yEjP97uIzxrJl8gcoPznKATTZE009OSMR1Ygorc38Q5X/O6ZavPdTNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Pm1mlMlL; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3e751508f21so553968f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:19:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757596768; x=1758201568; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RoTjGjEf5o3PoFa4Kwu5lnAnxIVCW5Ws6ti5lef2kWA=;
-        b=c8jmXGwL0xzs8zb1abu5BzxzKey4ymBXTIgFJY6lILtF7HJoSnsCppAwVXMQzT1Rgf
-         q5h+RWO7Js5D5A00RsievlHEpipbAxWilWlz2EwZjwvlmNUzd4fTYgHfLZN1dirubq4T
-         s29hz5+7yMIWoFkZ1ODYKMTvXdzzxP5xZTwMCFEjl2Axguux2v/t/Xaql41wm9e7blvh
-         XyGIWXvWtmP1rHuc3eJ44TF7YT89LLPJy2l/BOiDdrcJBRtpsiDF5gQOLOgUNQ6q2lcT
-         HPTz57/oWzzwG1sAhtm6ZV5mMYVg0Vyk1yFu199Gkkc51wnrc5ZDvwsUI5lAbLruS8wJ
-         luow==
+        d=tuxon.dev; s=google; t=1757596781; x=1758201581; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y8u8fybT/8WnDYZHmGoTAq5zebxzVXyJlNWKbAi8sGg=;
+        b=Pm1mlMlLvtLgUfONiQFgDeyoXP/qjF9kPKgQb6v8/CrrRtxgGn27xzhY6Cg/Otm2mL
+         Edvwe8vQRoza/1L2soKv5A+5KFKyU/OrbzVi3sbHPGRctqYZej8ee02+auFmQOnsakYe
+         /SMfjvIeywRiGmar7CUpe6JMA5XYW9AMxhKvzVbNGIphFtW6Gd+AsaOArUPjI3VNhA/d
+         QWYX8N5aOHKW33QkDdqzY9OcPMTnkiyeCOnlC4VPlt04VybyZ5jHukBrtiP1FfqQapom
+         DioGbk/K/ewWJBspmLJV4f1iWBb73BL2Emb3CIFNMoRWRKwJsbVaXZngfRXCpqoJzif/
+         XjxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757596768; x=1758201568;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RoTjGjEf5o3PoFa4Kwu5lnAnxIVCW5Ws6ti5lef2kWA=;
-        b=ul8T59ua2yauZX0M25hkvxPgqQIaFCPZ+Mm7srYoMjrd/xgQhIS0sTPHSdfG8q2xzc
-         1Z/4jSSreuA6oZwZx3uU/gKX5/zlPITxt1EyBxZ3AVz//HRE95aZqBhvV5ItKvc4odIi
-         2jRZzJOHG1RIWgOokZFcJHojhyu4jtV/mGRnBSTnTH3U6+3P8Netgt2M/znD1JhMQ0xc
-         DKHcoZ7DXWrHK0wWWj8KD951VWKwecHA2gaWd7w/3p7G8Q3BnvOHFjoe6ZCxj9B/1gmR
-         +cx8P+cCn4S1I5kEm+jrvVyLFahuWWG8/UHToth13k0PVWXouFASoAVZPEAJ7hKKkVKu
-         PqGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbq/Z4xUspTvPu1zfz7IVm/mXMSN/jB5GgYcEFbkzWeVCRczyz+3+CWonNhteskSGlusQBxbOPpwgA6Bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5+1MzUKmxwX0uHhImRNlB9Rr0dP7FkupAz6g4bd9feN8C5+Qn
-	HwcWuN4lGjb/Away27+k34IUVz8+guUdVfOqbu0Z/T+HO7O1yxIJzz9Yn0bjmfkKpj4=
-X-Gm-Gg: ASbGncuQzqF6FnEBwwS8AU6dDdM2Utwy9nCSgp+uHlQ8JTK4xgpi4+eCb6W9PjlnIo6
-	vHb+BOdVNhaVy9pn4O7Fmwo6tD1SareAcCiddeWyKRGAs9Muxedx2v2Zsg3gki4rQJ1qFLYWhw+
-	1dAI/3ZFe5gnjBp+xG84xCrAAgsnQjU1C9uf+IoMvmzXH94cz22acwgqAnsT7mkyF04xjk2KJFm
-	7C8n0K4XvyiKcV2jOtQJKWEN+Br29gGN/PfXP7S0HrDDPvla4SMkez8RJWjcKwHku4fa2XcO5tJ
-	lAjSPJgxmnEt+SZFDji6urIlSmONYokmpTrnukOrNlCaS+ooEMRDgxdUFoxvM/2R6V6VrzjGoyn
-	Bt2CDcTRa6E/iNCmJ51tRATk=
-X-Google-Smtp-Source: AGHT+IH8nHuk3NSLqjFY2vj/PBH77XKaFOpHdcKlyadMrh/8ELLpleuBiAgM8Qj5GJ3//zqteimh3g==
-X-Received: by 2002:a05:6000:2886:b0:3e2:e079:ab32 with SMTP id ffacd0b85a97d-3e642309dc7mr17268671f8f.7.1757596767963;
-        Thu, 11 Sep 2025 06:19:27 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3e84:ca5d:e1de:73b8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607870c4sm2483656f8f.22.2025.09.11.06.19.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 06:19:26 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	kernel@oss.qualcomm.com,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	Monish Chunara <quic_mchunara@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
-	Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>,
-	Sushrut Shree Trivedi <quic_sushruts@quicinc.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>,
-	Mohd Ayaan Anwar <quic_mohdayaa@quicinc.com>,
-	Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-Subject: Re: (subset) [PATCH v4 00/14] arm64: dts: qcom: lemans-evk: Extend board support for additional peripherals
-Date: Thu, 11 Sep 2025 15:19:25 +0200
-Message-ID: <175759676089.37240.12221834042390731955.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250908-lemans-evk-bu-v4-0-5c319c696a7d@oss.qualcomm.com>
-References: <20250908-lemans-evk-bu-v4-0-5c319c696a7d@oss.qualcomm.com>
+        d=1e100.net; s=20230601; t=1757596781; x=1758201581;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y8u8fybT/8WnDYZHmGoTAq5zebxzVXyJlNWKbAi8sGg=;
+        b=equevocj2+Bux+2eSaOMcksSEOREJ7J9vQRcT1mOfSYfCJhjFRB6TaUssvlE5zydnr
+         sfxz6dkWUe8iTOURrhdRjCrzZGVoGWaeozMgeycTUff0j8gJMFcPGFSDVRZF/ULPmzs2
+         03El9sEnuT+gn5Ou+tId8HXIwPPlUa1a4FQXz2fC0rsrx21GwqRR5tGgac1+6pA0BncB
+         zTeGSvbq5szWS6oQALgmD5KYb/ZEMWl5cd1FBGai9RgvHpFXkOCFw6rgmn0gex4pvL0U
+         MUwS0II22ZDtfedE8oXjp2qFi64iCLBxosWqTEtgZ42wZEMYRfuSvoTDb+stR7+eBt4m
+         c2NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJoPAyWMMjrYqOUQTkPGEA2f+zY8wpIGbnrsoZUjlLDgaCCLnp4WCJh7O3MtvVeXy/FHs7AFeKdBTCu1o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDeZFJ1nN/4OrDvVI1WYnvGvesHmCpMOXLOaDp5aWQQG6ijR81
+	/47q2KnDp8AEKw9ngKbEOa8zIEdQeAwLCsDnrunOeT77VojdwsASDK9NnNtXIPbeq/A=
+X-Gm-Gg: ASbGncvPuIOPFJNy3JDue7RrB1j9gMgMavvYc4sYM6ekWo1271o6BXGduQfaM267y4D
+	qXI13FrzKnsHPOHMVLMheZTdq9qaApwMMOabGl8Se86oK1tud1OM7xxwvYsXAPo7jw/DPdx2j7w
+	xMxDJljrOFUmFo78V/g+hLD4Lh+9yRIxAbwEvnCDv+eyEs3a9yWI86+0CblYKAaj+5Iq6+bH+zS
+	rRegi7tA6IHgJWw9djLTbczOc7D1ecxkjVwAcPQPKQhbaiDpQC1zeMeL5mq/LPTNeUhZ3dkqLMs
+	8NJoq9RqwN0GIDhhAZFpMDshlZvcoEjwubLoGUY69BjNMpEyY+SsHgGZvpAAZev/WtJvKgOKj7A
+	EyZj+Zw/Is/ubwATM+c7noI8OI1IAKgA=
+X-Google-Smtp-Source: AGHT+IGS+e3rDa8fueFMFZrNNPBXI9wawcGCyt+UegFi2IhP29bW3Js2e9o7EOACRR+TFLON2p8asg==
+X-Received: by 2002:a05:6000:2681:b0:3e4:74dc:a3bb with SMTP id ffacd0b85a97d-3e64bde9298mr18368153f8f.40.1757596781068;
+        Thu, 11 Sep 2025 06:19:41 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.139])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0156d206sm27297545e9.5.2025.09.11.06.19.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 06:19:40 -0700 (PDT)
+Message-ID: <a44f590e-8c4d-498c-be7a-6c6fd6c43da8@tuxon.dev>
+Date: Thu, 11 Sep 2025 16:19:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Fix ISEL restore on resume
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+ linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+References: <20250908144250.1269294-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVVWTAvEMgv2NVg0-2f4Cs4oXp4yBM1tQYUUbMKH6EiGQ@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdVVWTAvEMgv2NVg0-2f4Cs4oXp4yBM1tQYUUbMKH6EiGQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hi, Geert,
 
-
-On Mon, 08 Sep 2025 13:49:50 +0530, Wasim Nazir wrote:
-> This series extend support for additional peripherals on the Qualcomm
-> Lemans EVK board to enhance overall hardware functionality.
+On 9/11/25 12:53, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> It includes:
->   - New peripherals like:
->     - I2C based devices like GPIO I/O expander and EEPROM.
->     - GPI (Generic Peripheral Interface) DMA controllers and QUPv3 controllers
->       for peripheral communication.
->     - PCIe HW with required regulators and PHYs.
->     - Remoteproc subsystems for supported DSPs.
->     - Iris video codec.
->     - First USB controller in device mode.
->     - SD card support on SDHC v5.
->     - Qca8081 2.5G Ethernet PHY.
->   - Audio change [1] to support capture and playback on I2S.
+> On Mon, 8 Sept 2025 at 16:42, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring ISEL in
+>> gpio_irq_{en,dis}able*()") dropped the configuration of ISEL from
+>> rzg2l_gpio_irq_enable()/rzg2l_gpio_irq_disable() and moved it to
+>> rzg2l_gpio_child_to_parent_hwirq()/rzg2l_gpio_irq_domain_free() to fix
+>> spurious IRQs.
+>>
+>> The resume code used rzg2l_gpio_irq_enable() (called from
+>> rzg2l_gpio_irq_restore()) to reconfigure the wakeup interrupts. Some
+>> drivers (e.g. Ethernet) may also reconfigure interrupts in their own code,
+>> eventually calling rzg2l_gpio_irq_enable(), when these are not wakeup
+>> interrupts.
+>>
+>> After commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring ISEL
+>> in gpio_irq_{en,dis}able*()"), ISEL was no longer configured properly after
+>> resume.
+>>
+>> Fix this by adding rzg2l_gpio_irq_endisable() back into
+>> rzg2l_gpio_irq_enable(), and by using its unlocked variant in
+>> rzg2l_gpio_irq_restore(). Having IRQs enable in rzg2l_gpio_irq_enable()
 > 
-> [...]
+> enabled
+> 
+>> should be safe with respect to spurious IRQs, as in the probe case IRQs are
+>> enabled anyway in rzg2l_gpio_child_to_parent_hwirq(). No spurious IRQs
+>> were detected on suspend/resume tests (executed on RZ/G3S).
+>>
+>> Fixes: 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring ISEL in gpio_irq_{en,dis}able*(")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+> I have to admit I don't fully understand what is going on...
 
-Applied, thanks!
+Sorry about that. Basically, ISEL is not properly configured as a result of
+removing rzg2l_gpio_irq_endisable() from rzg2l_gpio_irq_enable() which was
+previously called on interrupt reconfiguration path.
 
-[05/14] dt-bindings: eeprom: at24: Add compatible for Giantec GT24C256C
-        https://git.kernel.org/brgl/linux/c/c7ec58c39b0252e6635dde55e5c708132ab25cfc
+> 
+>> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+>> @@ -2428,7 +2428,7 @@ static int rzg2l_gpio_get_gpioint(unsigned int virq, struct rzg2l_pinctrl *pctrl
+>>  }
+>>
+>>  static void rzg2l_gpio_irq_endisable(struct rzg2l_pinctrl *pctrl,
+>> -                                    unsigned int hwirq, bool enable)
+>> +                                    unsigned int hwirq, bool enable, bool lock)
+>>  {
+>>         const struct pinctrl_pin_desc *pin_desc = &pctrl->desc.pins[hwirq];
+>>         u64 *pin_data = pin_desc->drv_data;
+>> @@ -2443,12 +2443,16 @@ static void rzg2l_gpio_irq_endisable(struct rzg2l_pinctrl *pctrl,
+>>                 addr += 4;
+>>         }
+>>
+>> -       spin_lock_irqsave(&pctrl->lock, flags);
+>> +       if (lock)
+>> +               spin_lock_irqsave(&pctrl->lock, flags);
+>> +
+>>         if (enable)
+>>                 writel(readl(addr) | BIT(bit * 8), addr);
+>>         else
+>>                 writel(readl(addr) & ~BIT(bit * 8), addr);
+>> -       spin_unlock_irqrestore(&pctrl->lock, flags);
+>> +
+>> +       if (lock)
+>> +               spin_unlock_irqrestore(&pctrl->lock, flags);
+>>  }
+> 
+> I am not so fond of these "if (lock) ..."-constructs, especially as
+> the function now takes two bool parameters, which is error-prone.
+> 
+> What about renaming rzg2l_gpio_irq_endisable() to
+> __rzg2l_gpio_irq_endisable(), and moving the locking to a wrapper
+> rzg2l_gpio_irq_endisable()?
 
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+That was my other option but, if I remember correctly, it generated
+duplicated code, thus I ended up with this.
+
+> 
+>     static void __rzg2l_gpio_irq_endisable(struct rzg2l_pinctrl *pctrl,
+>                                          unsigned int hwirq, bool enable)
+>     {
+>             /* old functionality without locking */
+>             ...
+>     }
+> 
+>     static void rzg2l_gpio_irq_endisable(struct rzg2l_pinctrl *pctrl,
+>                                         unsigned int hwirq, bool enable)
+>     {
+>             unsigned long flags;
+> 
+>             spin_lock_irqsave(&pctrl->lock, flags);
+>             __rzg2l_gpio_irq_endisable(pctrl, hwirq, enable);
+>             spin_unlock_irqrestore(&pctrl->lock, flags);
+>     }
+> 
+> Then no existing callers of rzg2l_gpio_irq_endisable() need to be
+> changed.
+> 
+>> @@ -2460,15 +2464,22 @@ static void rzg2l_gpio_irq_disable(struct irq_data *d)
+>>         gpiochip_disable_irq(gc, hwirq);
+>>  }
+>>
+>> -static void rzg2l_gpio_irq_enable(struct irq_data *d)
+>> +static void rzg2l_gpio_irq_enable_helper(struct irq_data *d, bool lock)
+> 
+> Here we can't do without the "lock" parameter, unless duplicating the
+> full body, so this is fine.  I'd rename it to __rzg2l_gpio_irq_enable(),
+> though.
+> 
+>>  {
+>>         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
+>> +       struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
+>>         unsigned int hwirq = irqd_to_hwirq(d);
+>>
+>>         gpiochip_enable_irq(gc, hwirq);
+>> +       rzg2l_gpio_irq_endisable(pctrl, hwirq, true, lock);
+> 
+> if (lock)
+>     rzg2l_gpio_irq_endisable(pctrl, hwirq, true);
+> else
+>     __rzg2l_gpio_irq_endisable(pctrl, hwirq, true);
+> 
+>>         irq_chip_enable_parent(d);
+>>  }
+>>
+>> +static void rzg2l_gpio_irq_enable(struct irq_data *d)
+>> +{
+>> +       rzg2l_gpio_irq_enable_helper(d, true);
+> 
+> __rzg2l_gpio_irq_enable(d, true);
+> 
+>> +}
+>> +
+>>  static int rzg2l_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>>  {
+>>         return irq_chip_set_type_parent(d, type);
+>> @@ -2617,7 +2628,7 @@ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
+>>                 spin_lock_irqsave(&pctrl->lock, flags);
+>>                 ret = rzg2l_gpio_irq_set_type(data, irqd_get_trigger_type(data));
+>>                 if (!ret && !irqd_irq_disabled(data))
+>> -                       rzg2l_gpio_irq_enable(data);
+>> +                       rzg2l_gpio_irq_enable_helper(data, false);
+> 
+> __rzg2l_gpio_irq_enable(data, false);
+> 
+> Before, the lock was taken again, while it was already held.
+> Didn't this cause a deadlock?
+
+The only locking issue I've seen around this code was fixed by commit
+a39741d38c04 ("pinctrl: renesas: rzg2l: Use
+spin_{lock,unlock}_irq{save,restore}"
+
+I'll use the approach proposed by you in the next version.
+
+Thank you for your review,
+Claudiu
+
+> 
+>>                 spin_unlock_irqrestore(&pctrl->lock, flags);
+>>
+>>                 if (ret)
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+
 
