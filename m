@@ -1,155 +1,310 @@
-Return-Path: <linux-kernel+bounces-811957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4639EB530E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:39:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0237FB53100
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:41:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7002A0791D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:39:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74DA21C8554D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1169B3203A4;
-	Thu, 11 Sep 2025 11:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648B8324B33;
+	Thu, 11 Sep 2025 11:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VZ6NWQJl"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="IDO2a+ws"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013040.outbound.protection.outlook.com [52.101.72.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C96320380
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:36:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757590610; cv=none; b=BI02ZpPejU+SBVpLbdF6uqg3eCSjzwD472JjO7CAak2Q0t4dby2UU/RHO0fKrKcAMFgreW5+sbxwC4scK2cEVnjK2r4Z7cJMNGp5xq7L8c5BGMnjHzBTvkzeoNuxHgfcVTV/XQM1Ou52i2eEVqWMCjHFl3ZP/rFl7zUDQ3Ae1JA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757590610; c=relaxed/simple;
-	bh=/rVSsz4zURSRH6cQYurBS9NzYyNvGJ8R8I2UkETrSDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ats6HVOrtYro0zjf+3iqckjsDHz7gmESIhOSLmiwo9jvWyQBl7Axuq8LB6oe2CK5/ot9+mXhCDmFEqBYUXYs9E776F9krSgKSK6U+T3zoAPHN++xqYxX4Tuvh1c7cj69RbUyd09RLYUL3nUTAOvFOyo2eNPR+GlYHr1468DWcvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VZ6NWQJl; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b523fb676efso506499a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 04:36:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757590608; x=1758195408; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/rVSsz4zURSRH6cQYurBS9NzYyNvGJ8R8I2UkETrSDI=;
-        b=VZ6NWQJlM3lS7Fk6lrtVcS6dLeXoqkS9dpJCcH3EKL4AEvDcfsT0XTFIrAWk9a1XGd
-         50mYu4L+9pPOGo0ORYIIB5eQuGFd7gu+fkMpHT49fBbTJm4pL5V0fLrQBrQt84vDp5+n
-         gJh2Pn2CqvBoavZ9M6gDWGJpEXz932x18yBOjiNUP7Ep2TOoWR518IG95NEHDIv0dqVH
-         IRukqx0f3nMgQz/rMVw1fVMTnThIhMsENtAMvinQj6pgCitKqcrxdexQW89BfMY+sncW
-         QfBzO6vG0dD3zMfmjDsWXNlohQvDccLu2YqqTdJgkfLCbW4McjuOBdy+UHMhM2uDJjOc
-         khSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757590608; x=1758195408;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/rVSsz4zURSRH6cQYurBS9NzYyNvGJ8R8I2UkETrSDI=;
-        b=Ysab2WEqU3nEzqqkK/1ncLzBpRR8ggvuktGgsrK0mqe9xJiicCfPSOEir3EkdU7LbZ
-         pwWwUdGRoVbiWSfRmwGnpb0JXWJ1doIJt2UtzFGGe0iuzcyeb65ukwPToJTRLCi/PVIK
-         Zbi6NATIObaSgFmCIHjS7G1Ze6zfEExWWycOQHmYiMgrP/aGYB+7c0dRGzkLWdbJMn4R
-         LXyn+3A6+DqT8y5C6dnSgcUq7POBNTwc0eVh4A5wb+amtgXs16iHXdc8h4HCDr9K8dSd
-         wZHIoBMOljDYA/l+U/hT1WelfV6Xw2hIYzP+XV7faNriaL/XiILEPPB19sUzkb8Mrhjd
-         c4ng==
-X-Gm-Message-State: AOJu0YySNu6qYKnL6lv3s87J5vrMKrQbAbJfTKm1ZmH2gGuoeRPDH4jh
-	6qkVY50BW2HLmfRsiL0+9epN5la2nPIABLS4eVK2Fw01IU8EkkS5L9Ik
-X-Gm-Gg: ASbGncvQHxLbIAWvjCe9yJ+yO6EEpy/to8k3W4S1lPcwaOLwjvWvPAUXZqUOOoEkOxW
-	bGcpexGIR7lqvmhzlKTvGGgn12BAIV58cCuw1BQ+wk6BZuSBEj+TtoYknpLyqw/0st+2/o+q3tU
-	ByOKa2qFtrvQt1P5c7nDXlRK2+e8s/YGwf0g0Hrwnmhj4XGD2uQHYap3FNZXUjikkqL9YyajQSn
-	mHtnp1Y1n8g2ZpOv8aLR/juDZyBfQoowTFKcA+8T1KcvcFnomoxq2LngwbBLW4iG2aEx4LVrNrH
-	sQQQkP8EbdRmK32/Mao1CMhL5MG55zrMe0okiJjgwOZon0jUDeKu58CUUcjSGeLU+AmGnsdd0Vc
-	6P5xDLHwz7OrgXEpL8xTAX1aGNg==
-X-Google-Smtp-Source: AGHT+IGODxcwXdfHAsRfp0VXOV718vy1zFbFo7MXwhCxvdkM6aonShv8X7Ss+ZzUqwEpBGF+WUBA0Q==
-X-Received: by 2002:a17:902:db01:b0:24d:e8f5:13b1 with SMTP id d9443c01a7336-25171bc0549mr238763465ad.40.1757590607913;
-        Thu, 11 Sep 2025 04:36:47 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36cc53adsm17096545ad.25.2025.09.11.04.36.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 04:36:46 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 2100341FA3A1; Thu, 11 Sep 2025 18:36:43 +0700 (WIB)
-Date: Thu, 11 Sep 2025 18:36:42 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux EFI <linux-efi@vger.kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Hugo Osvaldo Barrera <hugo@whynothugo.nl>
-Subject: Re: [PATCH] x86/Documentation: explain LINUX_EFI_INITRD_MEDIA_GUID
-Message-ID: <aMK0SnY9NMby4X_F@archie.me>
-References: <20250910015738.14848-2-bagasdotme@gmail.com>
- <CAMj1kXHCi1pr3XNzwe7b7EFBkPGjkppeNWNSvy4wU1VBHj9kfA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F6631CA65;
+	Thu, 11 Sep 2025 11:37:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757590661; cv=fail; b=pzMJmBEdDVDNfoHS1PWaK4H5zcdN7UyfIu6chxeCpKCN/H+WhpMfUJoMC5woRFp/RZiuyG7qLC/sLmzFnH7L47zX9QheAbBapwCZlMm9iXCu60+WFjnbF5WgY+Hs+d4ydNXzQy+A1cB2bKp2TT47KCqGMraVJi81ASPZTGrNBis=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757590661; c=relaxed/simple;
+	bh=PHD4GgqNM0oFPc7tnPePvVpAslVSI0cGiuBlMvAm6SU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=K5jJ/oIyhfsY3rm4+KEq7yuA2W5DSRKL1KcYGXNeo60CEclOA1DtruyewmhmEWrVL1g8twRPWOoQiL2SJcNT4NlTTc3GFCs1yYH8Btb9w/Hn0h3+VCzgnmwoOYq/pWyGjd0uZ2T/9cCcMKSFxrcNGQdb4c/J/waNU+BjYwvYBBo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=IDO2a+ws; arc=fail smtp.client-ip=52.101.72.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yyY74arM0U+o6QburdcqtN4sy4ul2/A3n/QLLZShkXnLrB5EUuTK5dtNmwpk7BmwDDqJWia1DRABrMEkV0CncId2dc5vLb/0E6v5+9kxVExUNLyb7294mJ1Id8rbamRk9+mbMsuSbrW9yHjPc4Vw8aPyFJyK+NHh/3e7shN9fo4WS+lsf43Yh2TP+hrGtxk1r0kBvU2zFjJL6oYqZrgtz3QZFSDAmseIWDdZUF3/OK0hVbyOmsFlNw95XoSD13gOCKraIQMldbN2lidjqIOHqkprE8u6hfqPq31d+xS/GLDOq57wwDmpsvQiDWfj1SOIo7ZmIRBCGK7QJNi0ThGMtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OOhpEuCCsNUzM9wWMw0XFDbqtdUXyM6vS4/g0OVDEt8=;
+ b=Ej7djl1i9Hd7pA3fRnr+O2kUFROCOMBv66nZmXDo520FBwwvcMvsVIOyw5PNCM9LPos/GtXgBf+P6OD+nCkS0bVIzb2ZgIMOjYdsxRmskxkea9DiDz+yxZ61waezPD701f5UMPkl3spYew7B9b/GI4H38qqwV2W+qDUSMLAUlym4JPVsp5RTAK3fURjZFMtECCLI0VlftYYLflTeK1Nigni7t0MzeK2drJEbzPTNHtPst07Qw2LzhpE3qxZeWzQXapeymmT6awQRQ1XLxTMfjAwM9KmCIIgWCVeB54+oH/I0ygDkNSigqZygoTt4hSP3UrDbhCPcYVnWhs0K3x9DYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OOhpEuCCsNUzM9wWMw0XFDbqtdUXyM6vS4/g0OVDEt8=;
+ b=IDO2a+wsQhzh7Fzmag7U4ufGm968daTu2cmipDCk8LdTEm19pttUEWrZGlJ48U+M1ChzK8QfPw8yHgvA3zfOrglHS7kKXLVcEQnRuGMRiGWbl1dA/rzk5P/19YnITwYlQP/LLY4GXH5a56h0twpdVBxUDABuaZXJZnR3Zv1+jn23C5U4sMSOiL+JvXrM050Ai42zU9tvU1du7iyXNxRk5A7FO6XHWM4en2uIrYmcVZs8oFD8y+p39wyRGIz1f2PqpNph8t8UFYPhSlvdd/yvLAZEyuX2B0ixbrWXM3RMhWOMT/6jF3aqx4ZWpwBadO5jP2u+GclfcP65H+Mw6TepUw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from GV1PR04MB9135.eurprd04.prod.outlook.com (2603:10a6:150:26::19)
+ by DB9PR04MB9961.eurprd04.prod.outlook.com (2603:10a6:10:4ee::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.14; Thu, 11 Sep
+ 2025 11:37:31 +0000
+Received: from GV1PR04MB9135.eurprd04.prod.outlook.com
+ ([fe80::b1f6:475e:de5d:8442]) by GV1PR04MB9135.eurprd04.prod.outlook.com
+ ([fe80::b1f6:475e:de5d:8442%5]) with mapi id 15.20.9115.010; Thu, 11 Sep 2025
+ 11:37:30 +0000
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: imx@lists.linux.dev,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Marek Vasut <marex@denx.de>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/9] Add support for i.MX94 DCIF
+Date: Thu, 11 Sep 2025 14:37:00 +0300
+Message-Id: <20250911-dcif-upstreaming-v5-0-a1e8dab8ae40@oss.nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset="utf-8"
+X-Change-ID: 20250911-dcif-upstreaming-3e16d89c3385
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AM0PR04CA0108.eurprd04.prod.outlook.com
+ (2603:10a6:208:be::49) To GV1PR04MB9135.eurprd04.prod.outlook.com
+ (2603:10a6:150:26::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/CycQuWEbUcN6Xks"
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXHCi1pr3XNzwe7b7EFBkPGjkppeNWNSvy4wU1VBHj9kfA@mail.gmail.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: GV1PR04MB9135:EE_|DB9PR04MB9961:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7afff23f-116a-41bf-88a0-08ddf1279753
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|366016|19092799006|376014|1800799024|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?TGFNVGRVT1d6ZjdZSUgrNU0rdm1yRVh4UExxWHpXZmw3QUF3RUdRSFl2Z0di?=
+ =?utf-8?B?NDlvY3FtZ0cxbVloUGxlVDFSTENycGpqanpuUElUNnZVanRlcWtUUFhVQUF3?=
+ =?utf-8?B?Mzd3bDA4SmtSNTl6Q3JGR3pwYW4xdDJPWTd6SEV0WWUxN1dTODhtejJuQXJt?=
+ =?utf-8?B?cG1ObXVuWFFCTXdWRzlSdDRZNUozeTgzOE9WbEV1cXVDc3Jsc3RKbkpTRWFm?=
+ =?utf-8?B?Zkt0N0dPLzlnaDBySTJWWm0ya1dOVXk3Uzk0c0VPVjdGVjZydE1YZDJrU09p?=
+ =?utf-8?B?NGg0aVZESmI5WGNZYWd4dWNMSWdBaXM3ZGFFYnd3ekJkQ3FXS2hVUmYzanpV?=
+ =?utf-8?B?Qit6bEhBblExd2JvenU0Y2JzMUNFaG42aHBxbzB4bjFScmovWjRVOGcyRDZX?=
+ =?utf-8?B?c09vNFBuWk4rTHA4bmJ3am5zL2RDWUEvT0VxQVdkNVJ1Zkwxd0tjTndQZkQy?=
+ =?utf-8?B?OGRIbmRHV1BnVWVIaERHOXloYlBHLy9UV20xWElWcUsyNlVYRkZXT1pWVU05?=
+ =?utf-8?B?dzFpNGNjZmpFS0kyS29CbTJ0Tit5Y1hveXFwQlZicjVaQTZSRzZoM09JYWsv?=
+ =?utf-8?B?K3RWbWVXQkEwNmE0cUhzcit3ZkVlOC9DYkpaRG04VFFnZndpcWQyS3NMZ1dM?=
+ =?utf-8?B?YWdpbnNEdEsxZFVVQlBlcDQ0NlM1SHVBQkNBL3hneHBFYTRjbkxmVFY4ZVov?=
+ =?utf-8?B?bVB0cHc5cGNpdjE4V3VhdmlML0ZQeVhrckZxSEVlQ0Q5UWdFTXplK3drUXhy?=
+ =?utf-8?B?UnptOG1PNVdlWDZwR2dXK0Y1a29sZ3NGN08rTmtBUmV1OXhSSmk3VHZXWDVa?=
+ =?utf-8?B?b0JtZ3k0ZWtSTUh6SHozdThjMWsrVVkvRzgybUJIZW1XT3dIclpHejhCNDhQ?=
+ =?utf-8?B?MVBYeHZMb1BuZHJ0b0w2ZlZjdERnRU1QZTFFWG04WUF5V09oVGhBWTlPSFE5?=
+ =?utf-8?B?RmRmb1F3ajdva3pMSXZjVGhKWmdZMzV3WVowK245SXlHRzlyemY2ODM2bkUw?=
+ =?utf-8?B?ME5yak45dU8vQWM0Q2Z3UFB6QUxMN2doWThqcWNsNEVCL3h0STNudDkwMWpW?=
+ =?utf-8?B?dWV4QjkyL0dJT05wcmxOMXpLbjgvaTZEdWdTdVR4YkZ6OGxEbFJrSnU1TXFR?=
+ =?utf-8?B?Z3pQbFQ2cGhCTGlLSjZJbHAvOHJBWU9BT0Z0U2pLanBNMEtIOWsyaFVJdExP?=
+ =?utf-8?B?cHpKcDhJaXcxVEcyUkUyZE5sOGNob0trM3ltTDc1ZkNDUmJPQU5QMGZpbWNq?=
+ =?utf-8?B?U1orMG9YVm5zc3EvSlRkVGg2cnM4WHBMenMvbDhQTTRPUW12SGhKVmZ5TjFJ?=
+ =?utf-8?B?STY0aksyTlRIVHVTZDlJdlRGTG1aeThmcUxOeWRFNE93a3RqY1IyQTBEL0pI?=
+ =?utf-8?B?cXhjY2RZOFlHRUFVSmlMN1V3eHFtb1V0bVMyQ2xkMTYyR0Y1OU0xNGpHbXN6?=
+ =?utf-8?B?TjFVWHlCcWpMa3BsdFBQeU4yUlNkVEM5VnJ4MVhUVHRBOWNYRUovUXl2Wkpy?=
+ =?utf-8?B?TVNwR0JoYyttcC9CczNRWm92NnlqSE13ajRwRW5rT2xza2xkbFhkWGNZOWE3?=
+ =?utf-8?B?bVNkWjA0ZHVqVjRBV1V1SThpR3pxbWV1cGZlMXZJMStJU09UbUpucUtrY1ZS?=
+ =?utf-8?B?WUVPaXNTV2ZCaEpFYktSb2Z2UDNRWi9xaEhpWk1MVFl6OHIrendSMXcrVURW?=
+ =?utf-8?B?aUUyVGUwUERaWnhXcTNuaDVzU1BUYVhmakxNQmZsQ1VGRC84NDdJZEhwT2Ex?=
+ =?utf-8?B?NDVqUHdmNE9ZWnU1aE9SU3VvOWdTSUJOMkZIRWtGWWpzSVNMREVEVWFFclVW?=
+ =?utf-8?B?WjcwQ1JBampBNVB0NENRZlg2SlNRTjJTbXZ2Qm1ybFIwQWFjcy9RdDR4S0Mw?=
+ =?utf-8?B?S0NTOXg1c2RqWWNVY1lZTGU1SGs1OFlaRjRVOWU5R0phY2ZZb3lpbTB3T2o4?=
+ =?utf-8?Q?T1uCP1q15VI=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9135.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(1800799024)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?aE5rNUJBNVBxOVBEZDlteldUS0s5TUM4T2ZOeVg1NEdyRTVhMlZuUnl5OXR4?=
+ =?utf-8?B?bGgveVVReTdOWkhNUkxLdEpFZjBVM1JDRFkzN2Q1RmhIV2ZwU1NoN1BVRmJy?=
+ =?utf-8?B?N2ZSNXY5OFpsdWE2MFlNbFlZWmJWQVZpVldjcjlhcXIxQ2FDalVUaXcyckxy?=
+ =?utf-8?B?dGVyNW1La0VvM01Zd1ZINjNlYmVkNEVrWjZxbTMzM1JZRHp5ZW5ESXY1djRy?=
+ =?utf-8?B?d2hkOFBFaUdvNjNmZDN1a2RFRDdwMFhRV010dFEzRjh3N1dROW1OSWx2dm1h?=
+ =?utf-8?B?SDhFYmhoMmVULzVXVmVZeGZnZVpObHFKYVdEY3VsZndITHJUZUkyK0Vaemhl?=
+ =?utf-8?B?K2tLaTZFR0lPU0RZL0xVT0tKWWV2b3ludkhxRkhvcnhpQzlZaWloV0QrU3Nz?=
+ =?utf-8?B?TmhIWDgxVlRHeFc1WjhxOXlLdGYxcGFEWVJLVUlrRzFWTklCRHZ3ekM5RVFU?=
+ =?utf-8?B?OEExaENkOFpTTlZNd09HVm1qdmpXRTF4NGhtTlhyWEttNk40M0dRWTZsSlpY?=
+ =?utf-8?B?ZkcrSGtPV3oxTTllODlNZ3FETVlUajV6cHhqNEhjOS90MmtaWElYb1JxcWpv?=
+ =?utf-8?B?ajVBQzdxNFJMUWV5b1o0Q0lBWG0yQUxERDBNKzRla1Bsc0lGWmRoVkJQMzZj?=
+ =?utf-8?B?cTBtejBVU0NTbmNBbGcxVmNtUzQ3MEZ1T0Z0WDZCWm9mR3l4dGxOTFFaVmNS?=
+ =?utf-8?B?cDhGbVdoTjZzTW9Lek1qMHdPYVI5Qmt2dEZ4aFg4b2w4dHd6Z05BUVJLaUs3?=
+ =?utf-8?B?eEh5L0xHTUQ3UFFvOGk1WG9VVXQwTTJaM0xHc01OMGErdzJ0YVVTN2JXY2wz?=
+ =?utf-8?B?U2V1YmlMRE5pN1J5MXlpUmhGbExlVVhmcUhYOU1oa080eFQrYmJYLzJXYUhI?=
+ =?utf-8?B?aUF4WGNHb1Z3RUdYaytBZC9lQzhGbTNNektaWU5oWldQV2NvekgzR0xTOFhn?=
+ =?utf-8?B?dHozUjdyWHhlSjBGdTNpUjZDK1pUU0g4aTlTeXAwV2tQbzVQdnVNMzBVMUdP?=
+ =?utf-8?B?Z0ZWMUxoSlh1STNGL2gwSWh0SDdDMlhvVU93alpwUUwzV1JuYU5BWm8xMnhx?=
+ =?utf-8?B?Q2d1TkJ6V3BSMmV2K0d4OUFiTEUzOS96RWlqMEdIOU1qd0w0SHVqQXdKbmxo?=
+ =?utf-8?B?RmtvMXdVS0Z3dEN3TXhrQzVBajRhSVVKMWVKamQrVUNkMGprVFlQWVpocFd5?=
+ =?utf-8?B?NWhoaHVaOFFOWG9NWFBqazZrYVJlUk9lcU9maElqZXdsMEluVTdvTmZncVdT?=
+ =?utf-8?B?UmE2SWxpNHVHSXNVNTQ5MEcrcTZ4RTJGcExBaVFURFR6dnZ3Q3YzMmRvdHFN?=
+ =?utf-8?B?WU9XWXNpQTdVOFNwWS8wNHVoNHlxRVRzd3ZIcGQwVGNydjZLLy9tYVlXVVM0?=
+ =?utf-8?B?ZXVjWGx2QXFxYVdNc3VhRERscDZYUjB6QURPaFJER1BITWg2TzZOMStwL2o3?=
+ =?utf-8?B?dlZyU0tKYWRWSUdrZThCaC9LUnZHVEYxSVB1ZDd2aCt2bU1QK2N3cGgxeEt3?=
+ =?utf-8?B?UzVOb0hDNlhjcURrZGdDN3hBMUdJaW1kdmhranhtS1NqdUZZeVFLZnZROE8y?=
+ =?utf-8?B?WEZEalBLeWM3L3VYZm1aUDdYMlRCSlJITCt5TGorekh6UWxMNTZiZjZiOUJn?=
+ =?utf-8?B?bGgwUis4cTdQdloxR1J1ZWcvUG9qQkt0aVVibDNsYjFXVWJ1Y1VKWDhqVmx0?=
+ =?utf-8?B?cTMvYXMvVHNDOGJYUFo2Z1c1TlVaZDQyRnNrOXNJY0ZxdSttbC9mVXQvL25I?=
+ =?utf-8?B?bEhDTU1VL21rQTZaQkhWRjFXalVENDc1VzZod3Q0bldnbUdaQlg4cUR3QWNx?=
+ =?utf-8?B?SkdLSC82WHZYYTVMTU1tV01uNVphVVpndld0SW9Xem9jWWRHT3daNGhUT2NX?=
+ =?utf-8?B?OHZNYklRSTFCUzF4U0xieDdibkwzUEsrZ05pR1hXb1p3Vi81Qk45Wk9zcUhI?=
+ =?utf-8?B?ZFQ1TThBenNJcU1FL1dRbDNoS3MrMDlVbkxRL0VFQVN3M2xXSFJwMEh5dFFJ?=
+ =?utf-8?B?MHlwT1kzRi9yQnhWWlNjUFZVRE9lV29ma2RWR0N6ZWpTUi84eXdkVjRrTFEx?=
+ =?utf-8?B?dlYzUnIzaGl3SW9mNEIrRXlEV3ZqcWRtQjJ2cEd4dVB1UjhWemN0RXgwQ3dn?=
+ =?utf-8?B?dG9KNDNtZzBYdU1rYmN5aEowak5nT1hkaXlvTDN3dU9vMFduS0gybSt1VkJT?=
+ =?utf-8?B?OHc9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7afff23f-116a-41bf-88a0-08ddf1279753
+X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9135.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 11:37:30.5765
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: i3dvn8xZmP/B6ZfR6hzNj4SiKsgIzKzegMo/XB5muiW2XdUc79RwNSWiJdT5CB6JOVbcXuo4hi1Qef7gsVIrpw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9961
 
+Hi,
 
---/CycQuWEbUcN6Xks
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch-set adds support for the i.MX94 Display Control Interface.
+It depends on Peng Fan's DTS patch [1] that was not yet merged. Also, it
+needs the BLK CTL changes [2] that I spinned off from v2 in a different
+patchset.
 
-On Thu, Sep 11, 2025 at 08:46:50AM +0200, Ard Biesheuvel wrote:
-> On Wed, 10 Sept 2025 at 03:58, Bagas Sanjaya <bagasdotme@gmail.com> wrote:
-> > +PE/COFF entry point
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > +
-> > +When compiled with ``CONFIG_EFI_STUB=3Dy``, the kernel can be executed=
- as a
-> > +regular PE/COFF binary. See Documentation/admin-guide/efi-stub.rst for
-> > +implementation details.
-> > +
-> > +The stub loader can request the initrd via a UEFI protocol. For this t=
-o work,
-> > +the firmware or bootloader needs to register a handle which implements=
- the
->=20
-> ... which carries implementations of the ``EFI_LOAD_FILE2`` protocol
-> and the device path protocol exposing the
-> ``LINUX_EFI_INITRD_MEDIA_GUID`` vendor media device path.
->=20
-> > +``EFI_LOAD_FILE2`` protocol with the ``LINUX_EFI_INITRD_MEDIA_GUID`` d=
-evice
-> > +path. In this case, a kernel booting via the EFI stub will use the ``L=
-oadFile``
-> > +function on the registered handle to obtain a reference to the initrd.
-> > +
->=20
-> ... will invoke LoadFile2::LoadFile() method on the registered
-> protocol to instruct the firmware to load the initrd into a memory
-> location chosen by the kernel/EFI stub.
+Also, included in the patch-set are a few extra patches that the DCIF
+driver depends on for functioning properly:
+ * 1/9 - 3/9 : add support for i.MX94 to fsl-ldb driver. It also
+               contains a patch (2/9) from Liu Ying that was already reviewed
+               and was part of another patch-set ([3]), but was never merged;
 
-Thanks for the wording suggestions!
+Thanks,
+Laurentiu
 
---=20
-An old man doll... just what I always wanted! - Clara
+[1] https://lkml.org/lkml/2025/7/7/84
+[2] https://www.spinics.net/lists/kernel/msg5791546.html
+[3] https://lkml.org/lkml/2024/11/14/262
 
---/CycQuWEbUcN6Xks
-Content-Type: application/pgp-signature; name=signature.asc
+---
+Changes in v5:
+- 4/9: Removed "bindings for" from the title, changed the port
+  definition and simplified the example;
+- 6/9: Fixed the way 'ldb' child node is declared: declare the
+  'ldb' child node out of if:then: block and set the property
+  to false for compatibles other than nxp,imx94-lvds-csr;
+- Link to v4: https://lore.kernel.org/r/20250903123332.2569241-1-laurentiu.palcu@oss.nxp.com
 
------BEGIN PGP SIGNATURE-----
+Changes in v4:
+- Addressed remaining DCIF driver comments from Frank;
+- Limit the 'ldb' child node only to CSRs compatible with 'nxp,imx94-lvds-csr'
+  in the binding file. Since LVDS CSRs are a minority, I chose to
+  use the if:then: construct instead of if:not:then:;
+- Remove the '#address-cells' and '#size-cells' from the ldb node, in
+  imx94.dtsi, as they're not needed;
+- Link to v3: https://lore.kernel.org/r/20250806150521.2174797-1-laurentiu.palcu@oss.nxp.com
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaMK0RgAKCRD2uYlJVVFO
-ozStAP9mQA9cCfHsaQldql/hMVFcwMOShKbDfTeC6DADNy+HuQEA8+ArAu2x9zYZ
-ON+dh6RUyGHdAxdwM2QwtIT8cv91UQI=
-=SYxy
------END PGP SIGNATURE-----
+Changes in v3:
+- Removed the BLK CTL patches and created a separate patch set [2] for them;
+- Collected r-b tags for 1/9, 2/9, 3/9 and 9/9;
+- Removed the DCIF QoS functionality until I find a better way to
+  implement it through syscon. QoS functionality will be added in
+  subsequent patches. Also, used devm_clk_bulk_get_all() and used
+  dev_err_probe() as suggested;
+- Addressed Frank's and Krzysztof's comments on the DCIF bindings;
+- Addressed Frank's comments on dtsi and dts files;
+- Added a new binding patch, 6/9, for adding 'ldb' optional property to
+  nxp,imx95-blk-ctl.yaml;
+- Link to v2: https://lore.kernel.org/r/20250716081519.3400158-1-laurentiu.palcu@oss.nxp.com
 
---/CycQuWEbUcN6Xks--
+Changes in v2:
+- reworked the BLK_CTL patch and split in 2 to make it easier for
+  review;
+- split the dts and dtsi patch in 2 separate ones;
+- addressed Frank's comments in DCIF driver;
+- addressed Rob's comments for the bindings files;
+- addressed a couple of checkpatch issues;
+- Link to v1: https://lore.kernel.org/r/20250709122332.2874632-1-laurentiu.palcu@oss.nxp.com
+
+---
+Laurentiu Palcu (7):
+      dt-bindings: display: fsl,ldb: Add i.MX94 LDB
+      drm/bridge: fsl-ldb: Add support for i.MX94
+      dt-bindings: display: imx: Add i.MX94 DCIF
+      dt-bindings: clock: nxp,imx95-blk-ctl: Add ldb child node
+      arm64: dts: imx943: Add display pipeline nodes
+      arm64: dts: imx943-evk: Add display support using IT6263
+      MAINTAINERS: Add entry for i.MX94 DCIF driver
+
+Liu Ying (1):
+      drm/bridge: fsl-ldb: Get the next non-panel bridge
+
+Sandor Yu (1):
+      drm/imx: Add support for i.MX94 DCIF
+
+ .../bindings/clock/nxp,imx95-blk-ctl.yaml          |  26 +
+ .../bindings/display/bridge/fsl,ldb.yaml           |   2 +
+ .../bindings/display/imx/nxp,imx94-dcif.yaml       |  82 +++
+ MAINTAINERS                                        |   9 +
+ arch/arm64/boot/dts/freescale/imx943-evk.dts       | 121 ++++
+ arch/arm64/boot/dts/freescale/imx943.dtsi          |  53 +-
+ drivers/gpu/drm/bridge/fsl-ldb.c                   |  47 +-
+ drivers/gpu/drm/imx/Kconfig                        |   1 +
+ drivers/gpu/drm/imx/Makefile                       |   1 +
+ drivers/gpu/drm/imx/dcif/Kconfig                   |  15 +
+ drivers/gpu/drm/imx/dcif/Makefile                  |   5 +
+ drivers/gpu/drm/imx/dcif/dcif-crc.c                | 211 +++++++
+ drivers/gpu/drm/imx/dcif/dcif-crc.h                |  52 ++
+ drivers/gpu/drm/imx/dcif/dcif-crtc.c               | 695 +++++++++++++++++++++
+ drivers/gpu/drm/imx/dcif/dcif-drv.c                | 226 +++++++
+ drivers/gpu/drm/imx/dcif/dcif-drv.h                |  86 +++
+ drivers/gpu/drm/imx/dcif/dcif-kms.c                | 100 +++
+ drivers/gpu/drm/imx/dcif/dcif-plane.c              | 269 ++++++++
+ drivers/gpu/drm/imx/dcif/dcif-reg.h                | 267 ++++++++
+ 19 files changed, 2246 insertions(+), 22 deletions(-)
+---
+base-commit: 0c73257677576a103139866657ffea304020ff74
+change-id: 20250911-dcif-upstreaming-3e16d89c3385
+prerequisite-patch-id: b2acaaf7e92a5c8e377e6b56f3a9ee7409f64b00
+prerequisite-message-id: 20250804131450.3918846-1-laurentiu.palcu@oss.nxp.com
+prerequisite-patch-id: 74ddb42797e7438bcfca4f3157a81b1164c65ea4
+prerequisite-patch-id: 087fb2ec68d73c4474cd5b850c299e38a2d58eaf
+
+Best regards,
+-- 
+Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
 
