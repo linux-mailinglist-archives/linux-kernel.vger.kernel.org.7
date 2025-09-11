@@ -1,192 +1,419 @@
-Return-Path: <linux-kernel+bounces-811145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932E3B524E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:09:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5026BB524ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 02:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 630CC7B1E61
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 522C51C81555
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 00:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED581426C;
-	Thu, 11 Sep 2025 00:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDBADDD2;
+	Thu, 11 Sep 2025 00:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="K+XVHThO"
-Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazolkn19011039.outbound.protection.outlook.com [52.103.68.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXP2Z3xH"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89CFD27E;
-	Thu, 11 Sep 2025 00:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.68.39
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757549385; cv=fail; b=MPOG2RIZtk/Rj+dtEHWa8MqziQXyK8NCy8Ymip3jbHB7mQJaDduhHFqZUROvl5MdHxYp3c23FyeI8qd8NuxH5ajcN8mbztXPqMFBUMHd6tYDm3JAAcNKsYl745PyyD/36TwhJxedZLUD0YxaF4G/pq3EuJ3iL9naclAhhKh6s9M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757549385; c=relaxed/simple;
-	bh=XrrHhLei3OJUzoWMVyHVDuDlUDjXcBulb1SqzuVx+H4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=E8mFk9zvZewZLBTAvHTvoipel5wYIoDOdfknwPM++PdGwDvFkQZzmN49ScEybdiTCPjO8Y4konBgWp8PMg+vPVPDJYUAP1dPEmETDLfAeZ5q2AujFqq472TbRDzj3aUC6jp/Cqo3ic7kQTOwys2x2U/yxOxYR2WqqOVaf0dC5yc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=K+XVHThO; arc=fail smtp.client-ip=52.103.68.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cYXNXngs00a7hyLVQv0ypSH15UgrLo0F5wUjKwp8QloV5OhSaStOzXRVxw2nPcZdGeDsksAOmd1MTM5ohf4g5Rf/TMjDnLyQ+U/TS/LcVLdynyYm+pa2qYlk5pdYnD5j19Gr/IxAJvxA3mmG/iQkUgFJPXeqPmCBxKyi5JNSSE6z/1Nl66xtSCBzCswtwK2y3L/rWuL2eeXrSYhdscD01kSZYP1qEre9IJhslbhPdYNmmg+x8MmJCyi7IIdMWUdx4i3VberHGOh+LgZC/Gvt/d/6cRI2v6SJAFeSdHp9jYmasCpDjKfX7sqExeNRflJZmsNyhavcnm5SD3uvRcMvdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DSJ/s0CYZpb+dbdzCs/LoHo73rxEM7snIfSigq7gH/c=;
- b=YWNn/10baYQe4Hxt4+y8E7fT9Afs1+PULzGY3Y5WsrJk4jves50HDjv1uJm1Q7Wue3ttfqNNZz8MWtpllvIqbI4qVb9PMsgvWDQ4otiZbEVPZc8y/l2HEbbo9qnoJZXxHWCLDZw8Zq1FICYPppnimrp1lXEX6rFBcLSrhSr+XDtX/XvYI9s06JKwpo1p3i1GST9M73zEIW8ak571t5+8H4JSVINe7NCeE4UxLpvalXOGI5KLlvHGmcAjgfbnasiiS8Gjva4oREIK60gC4dT8otD4mGwIXNnWp37n2bszu+fpf8C49Xhv2mhros7sCiC9DI55OsYGel6si8s8qVLq8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DSJ/s0CYZpb+dbdzCs/LoHo73rxEM7snIfSigq7gH/c=;
- b=K+XVHThOqvDyFkLQNt10MbB6k29sn50Iv8gd4T0kwOlAC8skC8GXYVByQTIv6VIfyMbGS96VZtK65U9KEC93MmQ6OrIthpR7gcO8tuVMIHuRs0oEkr5r7nldLcrWsIzdMG7G2+ccKLFnEhp3Eraq7Tsbx+SeSe3h3N3CYiLO70ZVyXf82WB7YYc6/0MDUikz5mMDJFgLoqZg9/dagmr2U0bh7CRgA1t8ChFvrXCQP25x71gZPN5ItxrcH8UvaFyGRZRBiH8DP/gx9nd6qTF04F97ojUII4fN2ShVWz6ZJYpUx6YaF+Nao8zAAz6VvbSXrRe1Io9I81a0PKXm2Oioiw==
-Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:16f::16) by PNZPR01MB4125.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:1a::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 00:09:32 +0000
-Received: from MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::5dff:3ee7:86ee:6e4b]) by MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::5dff:3ee7:86ee:6e4b%4]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 00:09:31 +0000
-Message-ID:
- <MAUPR01MB1107224119A8D402FEBE5E2D0FE09A@MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM>
-Date: Thu, 11 Sep 2025 08:09:24 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/7] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-To: Bjorn Helgaas <helgaas@kernel.org>, Chen Wang <unicornxw@gmail.com>
-Cc: kwilczynski@kernel.org, u.kleine-koenig@baylibre.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, arnd@arndb.de, bwawrzyn@cisco.com,
- bhelgaas@google.com, conor+dt@kernel.org, 18255117159@163.com,
- inochiama@gmail.com, kishon@kernel.org, krzk+dt@kernel.org,
- lpieralisi@kernel.org, mani@kernel.org, palmer@dabbelt.com,
- paul.walmsley@sifive.com, robh@kernel.org, s-vadapalli@ti.com,
- tglx@linutronix.de, thomas.richard@bootlin.com, sycamoremoon376@gmail.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org,
- sophgo@lists.linux.dev, rabenda.cn@gmail.com, chao.wei@sophgo.com,
- xiaoguang.xing@sophgo.com, fengchun.li@sophgo.com
-References: <20250910143453.GA1533730@bhelgaas>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250910143453.GA1533730@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0001.apcprd02.prod.outlook.com
- (2603:1096:3:17::13) To MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:16f::16)
-X-Microsoft-Original-Message-ID:
- <9885035a-6737-4126-b40b-4470b8f2d380@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DE223B0;
+	Thu, 11 Sep 2025 00:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757549490; cv=none; b=PVtwOJNdP9x3s5U17ThrTU5yUp7g/5PjrfjelVgbzcoCbJRI8K5gKKxOoKEl+njkN9Be9Sij+PyA0z2M/GKCG/CNKPBwakUNVkvK6PP44iN/Qx+1hwSrEV9+AV5LpaVa5JkPiMtU3VLARU/DRCOa167LRDuFv55dklt+LRU8CsQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757549490; c=relaxed/simple;
+	bh=7IZsjcVMn98TUCGCmrzXEkg78zYlAtjziIZcrjFxEPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iyTvlPD2dnhccpJHrpQq8LxQJwvqyz5Kmg9YQx2368g9l+yqcinjgVfnztno3/VXXgteSnHD3kltsApOEKXafginMFwam4pDF/w6MQEnKZqB9V4//UjYfRAam1++molAQerIreKGZw9MlVKEXt4zkRYfdAq8KyAof34N72ze1Lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RXP2Z3xH; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32da88701c7so129015a91.0;
+        Wed, 10 Sep 2025 17:11:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757549488; x=1758154288; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/DprGrl9e7Kz/gK4ZQarAvFpOQC1FXR4i36X1x0X3X4=;
+        b=RXP2Z3xH5ODRxNudEuClArjYgKApbY9BaOMhSkMC+cqU35Ox82It6URSrFKpTy9Lrr
+         lNHUOfbpKhG/VEm1+I2uX2YqsPl+Mpl5k/1AWsn9S+80jd13AY0dboub99NM1HVxQ5b+
+         7aMQGzbTjob4gnovSubKRDzVwBK4IK2iXeCgZHeHVGJgAXBLxkXzALCivCZF5ELqeiuG
+         ikjJkTERPcBPo6Nw4s0GWZH3FGjtUC0zk9zvtgO0yFtzG584p/RrK+iuKH0UQw/NYKeg
+         LP++TtVyx28w8ru+1mU6Wsb0KEVXnOMfG8yR/2c/LilzE2YuoNPX741lefCUy2VgQvta
+         Ug5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757549488; x=1758154288;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DprGrl9e7Kz/gK4ZQarAvFpOQC1FXR4i36X1x0X3X4=;
+        b=QDd2ExHSualJvFNlAVd/4fVP1GQhjT9LHCEt3ePJlD9tB/+bOtul3JkzhBUn8anAiS
+         HeG6Am01NYGUZBXIe/M783nuvmcHDeTGh1TUA6IsGikJfNCRbyGGPOQGrNIZF27KU/gM
+         fto61SnUt0KhsattcRDVWkaz6+rX7/RCAcbOuaJXSMelMYBx4kwaE3EHwjysCGOjA/DM
+         Xzj5NZ8/skSDuUaYmRd/tGFRCAXGBJcE5jKMVqxmK+5mfpUyEL4r+hJj06bmMVTv46fy
+         rfHosz/S2d95PW6fqnUd4PY+s8m1nFtRtHFslIYWrXuRvXKJEh31dAeGwXMXuRZVOtpT
+         TfQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmGh/iRzL+Wge41MrWllAuLOmJqsjNWXLyQZyxU0V+C/5rPEO3l7Y1fwlyCOmOi0KLj3W3+hDhT9Ld3KU=@vger.kernel.org, AJvYcCXKAmDyWmvwJAkXStYL7dHj33s4YsnxiluTkkYCe4tQBZKcI1Jl9i/cY3OcPUIadBxYUfm0FDVC0P5Ncw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyofVRb4OzZPyTyorpjdA8vQdrewjoBR6OrJGg0ErrhNYJkWrok
+	9vha2+00w0A5GcsxnDrV07moA/ay0/e9Yv/bcCVhspV53oA3nhJPHDWs
+X-Gm-Gg: ASbGncurbxDmhioNAAmLigANXOGuOeIAXlpR+0wwTUbju7JLMAHoDbzr1HjHHiKR3jB
+	gdWYuh0n46aF32OZyLYPiiyUF/C1ktSkE+32eLmn36LMumDAIZe5nxe8j/e2JiGmxXzskA8PX82
+	QhAHXiiGBOHnT4QI1ShaM9S17x9KNPcOH+mdOEtqDQDkr5Y279eynijlBUFUdNMim0GRtkMB51l
+	ZKBEU9bXeNkPOrvYi+ZpWYIfHkm6/fZmO8Gn1HkNHxPGJHGMGsjW51r3I7UsCKwZIqHr1kG5kCA
+	YeKMYFm44vg9hH5BLRDl2JUZACF7DEK4suUzZb9DCMC8Eliw8jGZqCRVJKpl65tfmMM8Ev/TOdA
+	vSGLHq+TYUu5C5LAE6jTjcGr+2naGVJK+KI6/undtwLMZiRk6gg==
+X-Google-Smtp-Source: AGHT+IGh6jj8tUAVO4xZEgg1cYXyd1dv7OFPe+9zkElp63vXFZLpgGfDXrx3xfdSlohQ5ds3u2EMGg==
+X-Received: by 2002:a17:90b:52c4:b0:32b:b26e:156f with SMTP id 98e67ed59e1d1-32d440d9ce7mr23339735a91.33.1757549487838;
+        Wed, 10 Sep 2025 17:11:27 -0700 (PDT)
+Received: from [10.229.36.175] ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd632692bsm437067a91.25.2025.09.10.17.11.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Sep 2025 17:11:27 -0700 (PDT)
+Message-ID: <e0941449-7a62-4bbb-8790-616f393f2cc8@gmail.com>
+Date: Wed, 10 Sep 2025 17:11:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MAUPR01MB11072:EE_|PNZPR01MB4125:EE_
-X-MS-Office365-Filtering-Correlation-Id: e497483c-f6e8-4d87-4881-08ddf0c77b53
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|8060799015|461199028|5072599009|19110799012|6090799003|23021999003|15080799012|52005399003|3412199025|40105399003|41105399003|440099028;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SS9KcGVHQm8wb1NVSUVXaElDTEVWY3ZGWUFMa2NsNGFyaW1Ka0tRbC9iTTBk?=
- =?utf-8?B?SExxSEFva2ZDOE1ycVBRMFR1N2dPMWRZZERMSVRXTzBXaitwc0dXeEtmUnha?=
- =?utf-8?B?aUd2bWh6Y0pzVytMb0tyVHdxNEo1TWxUM1Y3ZWVramJnNFVCc3FyTHpuUk1C?=
- =?utf-8?B?NUJEN3NUVGFGbjA4T0tQeHFxTW1Pb0p0M015QlQwdndpTGlza2pBc1cwZndM?=
- =?utf-8?B?OHRjSmVhZDlvdElrNytMOG04dmd3cDcxUGpOc3dJYytFWHFRQTRIV2xyK2JI?=
- =?utf-8?B?WXhBZTFUUFc3RWVBeWE0VmhWR3lDWWE5VVFWdGJtSzBEQ096SVFBVkNaRDZL?=
- =?utf-8?B?S3lsZEMyTXV6bW1ueEs5U2srN1NhRjhhZ2FEaUg4ZUx3Y3l5TG5kcmNSaGlH?=
- =?utf-8?B?VWJSQWo0WXpQeWZxWWlsQXE1QlYxdEkraVJtbmdDOEJnL0NLTnFhV1FocGUr?=
- =?utf-8?B?ZzFFSFUrNU15MklKeEY4VEhoUFVLZzRoNDA0N2U1dVNLd1p4dHFmYm13Wmdi?=
- =?utf-8?B?bmxialZwVGRob29vZGpWYjl6bGZ0MXZWT1Z1dUxHTXppR2RNNkNxS2xsVzZ3?=
- =?utf-8?B?UEhSVkNxTFEraUZyZjhkNlFOTzdkbDhWZlJkSkZxb05MR3Z5c3lWa3hnbEtU?=
- =?utf-8?B?ZFJKNmVyTnB3d0VrZW14MG0xWnhIdDJvU0lrQkxKNWh1Zk9HUStaUjZGQ0pU?=
- =?utf-8?B?QlRJTm5oV3paMDZOd09NcHN2U2hFTzZwYmgvQVpkRG9ZWi9XdndsRElpWkg3?=
- =?utf-8?B?YnhVN3pINDltNGhjbzlIbG9sKzRRY2oyM0w1OEh6UnFzVDdneGwvNVBYZmNR?=
- =?utf-8?B?ZU9Bc2VtVUQwdXBKNmpVdXZEWjc3TDRZdHdWOGl1YmxhNTl1TDd1emFUWTNz?=
- =?utf-8?B?UVJUdDg5cUNuNm03dnhJN3A5Um4rMEw1QWNwVjBmWXNBMHdJUUl1TmpmL2VU?=
- =?utf-8?B?NGtiT0t5WnU2TWlqd2NXWmIzR1NuWHNjMURCaWRiR0NMMHlHVVFiZERLbC8z?=
- =?utf-8?B?bk4vYVp3bTR1QTlkRUxtbC9jNTJxZE1nTjd6RGNOM2JocHpyaE9OMG1IeWVW?=
- =?utf-8?B?NFhQYWtNdDVnc0RSdWgxa08veGJ2TnYvRkREYjNkVFhjT2Y2YkdpSE1BSVo0?=
- =?utf-8?B?bUlicWtmc290dk1Odnp5MWsrSUJZbXVqdnlGVVhha01JUEVpYjdZSTJqaWUr?=
- =?utf-8?B?SjhxaHliNVlpYVdHQitmdE8vNmJmbWlWWDZzTHNzN3dFaVUrdmRyajFqMkdX?=
- =?utf-8?B?VlZjdzh2cFlMMWpRZFhhL0plbE5Tb29NTFlzRXN2QzNGLzZJTTM0enJ1R1p4?=
- =?utf-8?B?ZDRTeTVzM3FYenlOVTVRUTgrZC9XQnJkM0Fnc3J6cFRPNE1nR1M0Y3ozY1hU?=
- =?utf-8?B?VVN6bm54d0FBdUdXSVRmVUkzellDcENROERlaHNkaXVZVmx2UEhEclFmRGNN?=
- =?utf-8?B?UHloVVBSL0k3WDRvZXpyaUwzZFF2UytHaVFqN0M4Z3FpbzlZSWVrTUNyVUxZ?=
- =?utf-8?B?Sk9lV1djc2RyVXIyMTVHNFBoTVhXWFJ4UXpWWndvNVVQai9PdnNUQkpuelZM?=
- =?utf-8?B?WWx2YXJTNWd2aTVHS3puNldjRy9lWVlQWU4wZXg1djRFUVlOcDA2amxIbCs3?=
- =?utf-8?Q?LWLf3QPMx8Nq5vkpcZNHpUVJ0+RC3PdtrHjkri8LfMLs=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QmNQMmMvNXBFcGhKUUF1Nk9sWEVlZkVld1d3VnpBdGZmeFRTZkI2cTdUcEVR?=
- =?utf-8?B?N3RjUks5UklqYWplaUQwSlBJWENaYU5vRm5CU1lqTDVQbi83c0U3QTVLeVBY?=
- =?utf-8?B?T3RIRXI4Qk9BN1Q0SWlWOEVBMTZ0WnZhZ0w1WlRIdzFQRkFpeVIwYXVjZVcv?=
- =?utf-8?B?bytlUWVONzU2RjNKd1JDS2t3V2hWN2kydTI4Zkk4RVNHTHdEMCtEMFpsYzhp?=
- =?utf-8?B?QjJBY2lkTW8yTUo2RlArUjJPMzhtK3FtQXRVRXErajNSOEZtU09yT2ZOQW96?=
- =?utf-8?B?NGszMWMwa0VSUGVud25qWW5SUko5V0U1V0VBMjBkS1FkNUVTVFQ3WWRZUVNX?=
- =?utf-8?B?dVU3cEROZWNGZ29SODJ2OGNJb1k2bkQ5ZGV0SXpKbTlMY3dtRlV5Q09ETHhU?=
- =?utf-8?B?ZG9LQWhkeldjS0RxSDkyTjVVN3JjSUpvTEw5aVRtSlV0OHpoNWJDT3d1ajh1?=
- =?utf-8?B?N2dLQzBraEJzdHZmbTJ3dGxIWjIyVWdzSmt1N09SbEQrQ25ZSXJBa0lJLzR3?=
- =?utf-8?B?YlVrRUoyeGFpazFPQmhQRlVaRytFZUlpbStkSXhCRlRpYVpKOGVCczA2NGdQ?=
- =?utf-8?B?WnlpOHVQME5iMmt0MjNjamdJMVpZNkpuQ09obnFVenpwR0RmWjF5d3R4MFRs?=
- =?utf-8?B?QnZaUENJNTR0TDdCaGhQMEpzT04weGdDeDBkaXdFeTF1OWM0N1ZhaEVKaHZL?=
- =?utf-8?B?WUh2VDhaTlJCK1NHTTFrVTB6dXBaSnUzSlhpVjR1OU0wYTY3S1RVcjA1OUpM?=
- =?utf-8?B?VDFVR2FJbnR6L2xUenhHczdESVVqdjR4aGlaZW5MODQ2N01JLzJtbnNKUklS?=
- =?utf-8?B?UGYxL3FnR0tIMVFXZmZEOG5ia1hhb3UvSjJuU3A3MHJ2bWFSeDYvMXFYSGlj?=
- =?utf-8?B?aFJiUTBsUkxpUGorSGt4YWJjVm1CTzZ3MkN0d1NZVGNSMXVhSzhldHdmb0tT?=
- =?utf-8?B?R25YMG5DcW1oeTFNamFhMk9FL0F2QzM0R3N4TFZtV29LdlVrejdNcGRFdFl3?=
- =?utf-8?B?RkN6RUJWWlNhK1FMYzdrVzJrSytGRFVMSDNnZDVFcmgzRTBJdVZNelowZ2R3?=
- =?utf-8?B?NGt2TWpPdTRJUEdsZTQyWXJLck5HYXI4cHR6ZlB3TUhnTFdjWE1qblhTa0Ir?=
- =?utf-8?B?N1dIT3pjYTZ0eVRxTFIydS9hMFVaMHErOGN1QU1wVFY4Y21rRFZuV2pQT2R1?=
- =?utf-8?B?TmcxZFdERGNLMkNhNUNvS0tTWFAvdzdOQ3h2MFk2cm1rT3U2UUkxRFFxWTVD?=
- =?utf-8?B?QTAwOVM3aG1JN0oreHpvYmtJdEpBVEtBNlpEY0ZwYzhXdFZlejRWM1h2anU2?=
- =?utf-8?B?cFR3Zk9sb0hKYzRucC9YU09SRmZlMFYvZlo3aFdpVHBzSGdrL0c4QVhGVnln?=
- =?utf-8?B?SGNFU0UxdFM2WjJKcFFjNTY1dGN3WEhuaGZLZCtBclJIeG8wV2V1QVdxakhH?=
- =?utf-8?B?ZEQ1WnIxT0NHbWdvaTZsb0diZDA1TkFEb2Y1Tms4TmRiNmEyazNncU5UM3Mw?=
- =?utf-8?B?OGluYWN0RnpwL0NOeGRza0xFVlZocXQ5VG5IdTk2clZSRC9VMlZkczYzRkNK?=
- =?utf-8?B?Q1MzdUJmRTk2d0M3SHZHdStLUVpnSzAyMUhOVCthK3hEbjdYQ3JHeDdRYVl5?=
- =?utf-8?B?aFppNG5YNzlPbUtuZVpMTHEvL0xIUXdzZjBwRDRCSjJORFRRR3JTL1FjbDlH?=
- =?utf-8?B?aDBtakxPbTVCeGc3SU9HU1hFbGY1NUY4cGhUNGlnVlFhVThaSlc4cTdpNWFH?=
- =?utf-8?Q?ynFRqVQbMMIc4ouUxFOBewblGKOEof+5WCkneHe?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e497483c-f6e8-4d87-4881-08ddf0c77b53
-X-MS-Exchange-CrossTenant-AuthSource: MAUPR01MB11072.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 00:09:31.7972
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PNZPR01MB4125
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/15] gpio: brcmstb: use new generic GPIO chip API
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>, Yixun Lan <dlan@gentoo.org>,
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20250910-gpio-mmio-gpio-conv-part4-v2-0-f3d1a4c57124@linaro.org>
+ <20250910-gpio-mmio-gpio-conv-part4-v2-7-f3d1a4c57124@linaro.org>
+Content-Language: en-US
+From: Doug Berger <opendmb@gmail.com>
+In-Reply-To: <20250910-gpio-mmio-gpio-conv-part4-v2-7-f3d1a4c57124@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On 9/10/2025 10:34 PM, Bjorn Helgaas wrote:
-> On Wed, Sep 10, 2025 at 10:08:39AM +0800, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> Add support for PCIe controller in SG2042 SoC. The controller
->> uses the Cadence PCIe core programmed by pcie-cadence*.c. The
->> PCIe controller will work in host mode only, supporting data
->> rate(gen4) and lanes(x16 or x8).
-> Strictly speaking, "gen4" is a spec revision, not a data rate.
-> Include the GT/s rate instead or in addition.  We can fix this when
-> merging if there's no other reason to repost (I assume you mean 16
-> GT/s).  Will also add spaces before the open "(".
-
-Yes, I meant 16 GT/s.
-
-Please help fix this when merging together with dropping period at end 
-of subject for the [2/7], if no repost.
+On 9/10/2025 12:12 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Convert the driver to using the new generic GPIO chip interfaces from
+> linux/gpio/generic.h.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/gpio/gpio-brcmstb.c | 112 ++++++++++++++++++++++++--------------------
+>   1 file changed, 60 insertions(+), 52 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-brcmstb.c b/drivers/gpio/gpio-brcmstb.c
+> index e29a9589b3ccbd17d10f6671088dca3e76537927..be3ff916e134a674d3e1d334a7d431b7ad767a33 100644
+> --- a/drivers/gpio/gpio-brcmstb.c
+> +++ b/drivers/gpio/gpio-brcmstb.c
+> @@ -3,6 +3,7 @@
+>   
+>   #include <linux/bitops.h>
+>   #include <linux/gpio/driver.h>
+> +#include <linux/gpio/generic.h>
+>   #include <linux/of.h>
+>   #include <linux/module.h>
+>   #include <linux/irqdomain.h>
+> @@ -37,7 +38,7 @@ enum gio_reg_index {
+>   struct brcmstb_gpio_bank {
+>   	struct list_head node;
+>   	int id;
+> -	struct gpio_chip gc;
+> +	struct gpio_generic_chip chip;
+>   	struct brcmstb_gpio_priv *parent_priv;
+>   	u32 width;
+>   	u32 wake_active;
+> @@ -72,19 +73,18 @@ __brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
+>   {
+>   	void __iomem *reg_base = bank->parent_priv->reg_base;
+>   
+> -	return bank->gc.read_reg(reg_base + GIO_STAT(bank->id)) &
+> -	       bank->gc.read_reg(reg_base + GIO_MASK(bank->id));
+> +	return gpio_generic_read_reg(&bank->chip, reg_base + GIO_STAT(bank->id)) &
+> +	       gpio_generic_read_reg(&bank->chip, reg_base + GIO_MASK(bank->id));
+>   }
+>   
+>   static unsigned long
+>   brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
+>   {
+>   	unsigned long status;
+> -	unsigned long flags;
+>   
+> -	raw_spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
+> +	guard(gpio_generic_lock_irqsave)(&bank->chip);
+> +
+>   	status = __brcmstb_gpio_get_active_irqs(bank);
+> -	raw_spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
+>   
+>   	return status;
+>   }
+> @@ -92,26 +92,26 @@ brcmstb_gpio_get_active_irqs(struct brcmstb_gpio_bank *bank)
+>   static int brcmstb_gpio_hwirq_to_offset(irq_hw_number_t hwirq,
+>   					struct brcmstb_gpio_bank *bank)
+>   {
+> -	return hwirq - bank->gc.offset;
+> +	return hwirq - bank->chip.gc.offset;
+>   }
+>   
+>   static void brcmstb_gpio_set_imask(struct brcmstb_gpio_bank *bank,
+>   		unsigned int hwirq, bool enable)
+>   {
+> -	struct gpio_chip *gc = &bank->gc;
+>   	struct brcmstb_gpio_priv *priv = bank->parent_priv;
+>   	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(hwirq, bank));
+>   	u32 imask;
+> -	unsigned long flags;
+>   
+> -	raw_spin_lock_irqsave(&gc->bgpio_lock, flags);
+> -	imask = gc->read_reg(priv->reg_base + GIO_MASK(bank->id));
+> +	guard(gpio_generic_lock_irqsave)(&bank->chip);
+> +
+> +	imask = gpio_generic_read_reg(&bank->chip,
+> +				      priv->reg_base + GIO_MASK(bank->id));
+>   	if (enable)
+>   		imask |= mask;
+>   	else
+>   		imask &= ~mask;
+> -	gc->write_reg(priv->reg_base + GIO_MASK(bank->id), imask);
+> -	raw_spin_unlock_irqrestore(&gc->bgpio_lock, flags);
+> +	gpio_generic_write_reg(&bank->chip,
+> +			       priv->reg_base + GIO_MASK(bank->id), imask);
+>   }
+>   
+>   static int brcmstb_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
+> @@ -150,7 +150,8 @@ static void brcmstb_gpio_irq_ack(struct irq_data *d)
+>   	struct brcmstb_gpio_priv *priv = bank->parent_priv;
+>   	u32 mask = BIT(brcmstb_gpio_hwirq_to_offset(d->hwirq, bank));
+>   
+> -	gc->write_reg(priv->reg_base + GIO_STAT(bank->id), mask);
+> +	gpio_generic_write_reg(&bank->chip,
+> +			       priv->reg_base + GIO_STAT(bank->id), mask);
+>   }
+>   
+>   static int brcmstb_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+> @@ -162,7 +163,6 @@ static int brcmstb_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>   	u32 edge_insensitive, iedge_insensitive;
+>   	u32 edge_config, iedge_config;
+>   	u32 level, ilevel;
+> -	unsigned long flags;
+>   
+>   	switch (type) {
+>   	case IRQ_TYPE_LEVEL_LOW:
+> @@ -194,23 +194,25 @@ static int brcmstb_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+>   		return -EINVAL;
+>   	}
+>   
+> -	raw_spin_lock_irqsave(&bank->gc.bgpio_lock, flags);
+> +	guard(gpio_generic_lock_irqsave)(&bank->chip);
+>   
+> -	iedge_config = bank->gc.read_reg(priv->reg_base +
+> -			GIO_EC(bank->id)) & ~mask;
+> -	iedge_insensitive = bank->gc.read_reg(priv->reg_base +
+> -			GIO_EI(bank->id)) & ~mask;
+> -	ilevel = bank->gc.read_reg(priv->reg_base +
+> -			GIO_LEVEL(bank->id)) & ~mask;
+> +	iedge_config = gpio_generic_read_reg(&bank->chip,
+> +				priv->reg_base + GIO_EC(bank->id)) & ~mask;
+> +	iedge_insensitive = gpio_generic_read_reg(&bank->chip,
+> +				priv->reg_base + GIO_EI(bank->id)) & ~mask;
+> +	ilevel = gpio_generic_read_reg(&bank->chip,
+> +				priv->reg_base + GIO_LEVEL(bank->id)) & ~mask;
+>   
+> -	bank->gc.write_reg(priv->reg_base + GIO_EC(bank->id),
+> -			iedge_config | edge_config);
+> -	bank->gc.write_reg(priv->reg_base + GIO_EI(bank->id),
+> -			iedge_insensitive | edge_insensitive);
+> -	bank->gc.write_reg(priv->reg_base + GIO_LEVEL(bank->id),
+> -			ilevel | level);
+> +	gpio_generic_write_reg(&bank->chip,
+> +			       priv->reg_base + GIO_EC(bank->id),
+> +			       iedge_config | edge_config);
+> +	gpio_generic_write_reg(&bank->chip,
+> +			       priv->reg_base + GIO_EI(bank->id),
+> +			       iedge_insensitive | edge_insensitive);
+> +	gpio_generic_write_reg(&bank->chip,
+> +			       priv->reg_base + GIO_LEVEL(bank->id),
+> +			       ilevel | level);
+>   
+> -	raw_spin_unlock_irqrestore(&bank->gc.bgpio_lock, flags);
+>   	return 0;
+>   }
+>   
+> @@ -263,7 +265,7 @@ static void brcmstb_gpio_irq_bank_handler(struct brcmstb_gpio_bank *bank)
+>   {
+>   	struct brcmstb_gpio_priv *priv = bank->parent_priv;
+>   	struct irq_domain *domain = priv->irq_domain;
+> -	int hwbase = bank->gc.offset;
+> +	int hwbase = bank->chip.gc.offset;
+>   	unsigned long status;
+>   
+>   	while ((status = brcmstb_gpio_get_active_irqs(bank))) {
+> @@ -303,7 +305,7 @@ static struct brcmstb_gpio_bank *brcmstb_gpio_hwirq_to_bank(
+>   
+>   	/* banks are in descending order */
+>   	list_for_each_entry_reverse(bank, &priv->bank_list, node) {
+> -		i += bank->gc.ngpio;
+> +		i += bank->chip.gc.ngpio;
+>   		if (hwirq < i)
+>   			return bank;
+>   	}
+> @@ -332,7 +334,7 @@ static int brcmstb_gpio_irq_map(struct irq_domain *d, unsigned int irq,
+>   
+>   	dev_dbg(&pdev->dev, "Mapping irq %d for gpio line %d (bank %d)\n",
+>   		irq, (int)hwirq, bank->id);
+> -	ret = irq_set_chip_data(irq, &bank->gc);
+> +	ret = irq_set_chip_data(irq, &bank->chip.gc);
+>   	if (ret < 0)
+>   		return ret;
+>   	irq_set_lockdep_class(irq, &brcmstb_gpio_irq_lock_class,
+> @@ -394,7 +396,7 @@ static void brcmstb_gpio_remove(struct platform_device *pdev)
+>   	 * more important to actually perform all of the steps.
+>   	 */
+>   	list_for_each_entry(bank, &priv->bank_list, node)
+> -		gpiochip_remove(&bank->gc);
+> +		gpiochip_remove(&bank->chip.gc);
+>   }
+>   
+>   static int brcmstb_gpio_of_xlate(struct gpio_chip *gc,
+> @@ -412,7 +414,7 @@ static int brcmstb_gpio_of_xlate(struct gpio_chip *gc,
+>   	if (WARN_ON(gpiospec->args_count < gc->of_gpio_n_cells))
+>   		return -EINVAL;
+>   
+> -	offset = gpiospec->args[0] - bank->gc.offset;
+> +	offset = gpiospec->args[0] - bank->chip.gc.offset;
+>   	if (offset >= gc->ngpio || offset < 0)
+>   		return -EINVAL;
+>   
+> @@ -493,19 +495,17 @@ static int brcmstb_gpio_irq_setup(struct platform_device *pdev,
+>   static void brcmstb_gpio_bank_save(struct brcmstb_gpio_priv *priv,
+>   				   struct brcmstb_gpio_bank *bank)
+>   {
+> -	struct gpio_chip *gc = &bank->gc;
+>   	unsigned int i;
+>   
+>   	for (i = 0; i < GIO_REG_STAT; i++)
+> -		bank->saved_regs[i] = gc->read_reg(priv->reg_base +
+> -						   GIO_BANK_OFF(bank->id, i));
+> +		bank->saved_regs[i] = gpio_generic_read_reg(&bank->chip,
+> +					priv->reg_base + GIO_BANK_OFF(bank->id, i));
+>   }
+>   
+>   static void brcmstb_gpio_quiesce(struct device *dev, bool save)
+>   {
+>   	struct brcmstb_gpio_priv *priv = dev_get_drvdata(dev);
+>   	struct brcmstb_gpio_bank *bank;
+> -	struct gpio_chip *gc;
+>   	u32 imask;
+>   
+>   	/* disable non-wake interrupt */
+> @@ -513,8 +513,6 @@ static void brcmstb_gpio_quiesce(struct device *dev, bool save)
+>   		disable_irq(priv->parent_irq);
+>   
+>   	list_for_each_entry(bank, &priv->bank_list, node) {
+> -		gc = &bank->gc;
+> -
+>   		if (save)
+>   			brcmstb_gpio_bank_save(priv, bank);
+>   
+> @@ -523,8 +521,9 @@ static void brcmstb_gpio_quiesce(struct device *dev, bool save)
+>   			imask = bank->wake_active;
+>   		else
+>   			imask = 0;
+> -		gc->write_reg(priv->reg_base + GIO_MASK(bank->id),
+> -			       imask);
+> +		gpio_generic_write_reg(&bank->chip,
+> +				       priv->reg_base + GIO_MASK(bank->id),
+> +				       imask);
+>   	}
+>   }
+>   
+> @@ -538,12 +537,12 @@ static void brcmstb_gpio_shutdown(struct platform_device *pdev)
+>   static void brcmstb_gpio_bank_restore(struct brcmstb_gpio_priv *priv,
+>   				      struct brcmstb_gpio_bank *bank)
+>   {
+> -	struct gpio_chip *gc = &bank->gc;
+>   	unsigned int i;
+>   
+>   	for (i = 0; i < GIO_REG_STAT; i++)
+> -		gc->write_reg(priv->reg_base + GIO_BANK_OFF(bank->id, i),
+> -			      bank->saved_regs[i]);
+> +		gpio_generic_write_reg(&bank->chip,
+> +				       priv->reg_base + GIO_BANK_OFF(bank->id, i),
+> +				       bank->saved_regs[i]);
+>   }
+>   
+>   static int brcmstb_gpio_suspend(struct device *dev)
+> @@ -585,6 +584,7 @@ static const struct dev_pm_ops brcmstb_gpio_pm_ops = {
+>   
+>   static int brcmstb_gpio_probe(struct platform_device *pdev)
+>   {
+> +	struct gpio_generic_chip_config config;
+>   	struct device *dev = &pdev->dev;
+>   	struct device_node *np = dev->of_node;
+>   	void __iomem *reg_base;
+> @@ -665,17 +665,24 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+>   			bank->width = bank_width;
+>   		}
+>   
+> +		gc = &bank->chip.gc;
+> +
+>   		/*
+>   		 * Regs are 4 bytes wide, have data reg, no set/clear regs,
+>   		 * and direction bits have 0 = output and 1 = input
+>   		 */
+> -		gc = &bank->gc;
+> -		err = bgpio_init(gc, dev, 4,
+> -				reg_base + GIO_DATA(bank->id),
+> -				NULL, NULL, NULL,
+> -				reg_base + GIO_IODIR(bank->id), flags);
+> +
+> +		config = (struct gpio_generic_chip_config) {
+> +			.dev = dev,
+> +			.sz = 4,
+> +			.dat = reg_base + GIO_DATA(bank->id),
+> +			.dirin = reg_base + GIO_IODIR(bank->id),
+> +			.flags = flags,
+> +		};
+> +
+> +		err = gpio_generic_chip_init(&bank->chip, &config);
+>   		if (err) {
+> -			dev_err(dev, "bgpio_init() failed\n");
+> +			dev_err(dev, "failed to initialize generic GPIO chip\n");
+>   			goto fail;
+>   		}
+>   
+> @@ -700,7 +707,8 @@ static int brcmstb_gpio_probe(struct platform_device *pdev)
+>   		 * be retained from S5 cold boot
+>   		 */
+>   		need_wakeup_event |= !!__brcmstb_gpio_get_active_irqs(bank);
+> -		gc->write_reg(reg_base + GIO_MASK(bank->id), 0);
+> +		gpio_generic_write_reg(&bank->chip,
+> +				       reg_base + GIO_MASK(bank->id), 0);
+>   
+>   		err = gpiochip_add_data(gc, bank);
+>   		if (err) {
+> 
+I suppose I'm OK with all of this, but I'm just curious about the longer 
+term plans for the member accesses. Is there an intent to have helpers 
+for things like?:
+chip.gc.offset
+chip.gc.ngpio
 
 Thanks,
-
-Chen
-
-
+     Doug
 
