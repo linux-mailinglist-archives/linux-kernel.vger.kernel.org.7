@@ -1,60 +1,73 @@
-Return-Path: <linux-kernel+bounces-812635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1CEBB53AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502EDB53ABF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C979566AEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:49:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 944581C84A34
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A659D35A2B3;
-	Thu, 11 Sep 2025 17:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87777362985;
+	Thu, 11 Sep 2025 17:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EFvG700E"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bJN2yrJK"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA32362081
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6280841A8F;
+	Thu, 11 Sep 2025 17:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757612973; cv=none; b=K8C09bRlxzLM57+BPvRS9sjJ/0f8THbcjAbV/iHw8zY46vzQUkIVNGe1Rm2+SL7aew2kAoP8MAlW45P/zp4tcqxD9pCZyQv1ejzyuy9kGb84Nm8JU/b2dn5sV4HWupdUcpTOeUkc78VZ03/vzgSv2ky7J0pGHdFK7jFRLU4MeKY=
+	t=1757613147; cv=none; b=PzRSWdse6doLSbUYuYQp/lzDZCbcqXvg88xaoxqORasMRxZltDq5S7UvrscYDRJ28OV15BLZlYmv2cd0YPz/X6Raxq12eHR72Sp56up6A4KZ9v6/cuMsPTmOGtkTBWIRre2ew/eJx+YCPmKO9OQhYfLhDHaEZ20FUAAvbxxOypo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757612973; c=relaxed/simple;
-	bh=wlwojsA7LzX49/RHPo5R55BGPt7j0cpIigJ0mzMY7C8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LZujn3SVerCADxVX6MQcLVyGholgNgnvIpuNz6bxX5Wg3OwKzWa/EZ85CsEkvmxGX2aGYMIisCONzVzVTHMixsqV7KcqewUQy+/dzG90XRYArZL6VYohvualPNnF7LB2CDcqF8igSgRe9PC+Jk0qll7sbuWddQxJDgjdLW9s0sE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EFvG700E; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757612963;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=lMLhoZdhoWhFz7FF9+I0+eNAAPfeFR/F2M6sYRcTU34=;
-	b=EFvG700EnBtme1kNOJANhvuLWC3f0OpetSn862Is355HfA9hea3hPwqt59QYyxlVudrkeW
-	bBVB9+VD5Ob5ygn9WF/PuIGMFWHI/jsI6Pf9n0CBhHiTd6aFlZKDieq9yjVTD3woQAn/sB
-	QVpJqMPazmLDPG82/IY5h5Px87YuVhI=
-From: Matthew Schwartz <matthew.schwartz@linux.dev>
-To: chiahsuan.chung@amd.com,
-	alexander.deucher@amd.com,
-	harry.wentland@amd.com,
-	simona@ffwll.ch,
-	airlied@gmail.com,
-	sunpeng.li@amd.com
-Cc: amd-gfx@lists.freedesktop.org,
-	zaeem.mohamed@amd.com,
-	mario.limonciello@amd.com,
-	misyl@froggi.es,
-	linux-kernel@vger.kernel.org,
-	Matthew Schwartz <matthew.schwartz@linux.dev>
-Subject: [PATCH v2] drm/amd/display: Only restore backlight after amdgpu_dm_init or dm_resume
-Date: Thu, 11 Sep 2025 10:48:51 -0700
-Message-ID: <20250911174851.2767335-1-matthew.schwartz@linux.dev>
+	s=arc-20240116; t=1757613147; c=relaxed/simple;
+	bh=yiVzhP66FRxZjaT0DhCT6bNf9GogM28b2uxcetaShLE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hwWC7CYRBSz+fyAbFuwbgOuT4e5ijAbLzoaV3d2JzFKlxT/ce/pk3RbTS9ZrFiho4N3haLyQ0q0WrAsTT63k7n+MiI/rHw1K6vMSsxPvEaCggZXD0SbAnmgOQX+w6CRwd2S/YcL2BQfR7mEXyqrY1OmRFmqnSrqGLAVORyVJy6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bJN2yrJK; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BHBnab018888;
+	Thu, 11 Sep 2025 17:52:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=qUgCNSGgO46u8u1CFIfEJHqcT1J2v
+	v/TFx+uniOQs44=; b=bJN2yrJK5NM1TQWU1Vl7psuKSzgDFuTVNl14RRh9q0IOs
+	7Aukazw3JJcngMMM4F6+NTJOAIWe6zxyvtYr4j19SkIRrfExehIkqXQfWkx27TF3
+	VLIBDRlzd0akN/Tf03JCLXCBVmForxPDKvr8kz0ZQG6H4wVvpMK/nBDmleuOJfpS
+	qlhc9yV7FfxoRU+eYUYm5No+16UGfA9Wj5j4lKyBDJxxEcdWtl/hPC/DX1ec9QSC
+	FJni+SoAVA+833FwWSpo6JZaSqqtMMh/iv/cfIIF3gBYfgWksRmbk55ejpTIRKj4
+	6OPWknJFpmoWslQUNWoTBHrSzvTr8RlEBUHjtfu3A==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4922jgxtdj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Sep 2025 17:52:18 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58BHhopB032942;
+	Thu, 11 Sep 2025 17:52:17 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 490bddracw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Sep 2025 17:52:17 +0000
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 58BHqHCX031675;
+	Thu, 11 Sep 2025 17:52:17 GMT
+Received: from thromatk-ol10.osdevelopmeniad.oraclevcn.com (thromatk-ol10.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.254.168])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 490bddraaw-1;
+	Thu, 11 Sep 2025 17:52:17 +0000
+From: Tom Hromatka <tom.hromatka@oracle.com>
+To: tom.hromatka@oracle.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        bpf@vger.kernel.org
+Cc: kees@kernel.org, luto@amacapital.net, wad@chromium.org, corbet@lwn.net,
+        shuah@kernel.org, brauner@kernel.org
+Subject: [PATCH v2 0/1] seccomp: Add SECCOMP_CLONE_FILTER operation
+Date: Thu, 11 Sep 2025 17:50:32 +0000
+Message-ID: <20250911175215.147938-1-tom.hromatka@oracle.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,111 +75,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-11_02,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 mlxlogscore=822 malwarescore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
+ definitions=main-2509110159
+X-Proofpoint-ORIG-GUID: MM7ADpIb2R4unnZt9tAtArrh_GLDmXXs
+X-Authority-Analysis: v=2.4 cv=PLMP+eqC c=1 sm=1 tr=0 ts=68c30c52 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=yJojWOMRYYMA:10 a=54fhvZ_YZLLdI873iscA:9
+X-Proofpoint-GUID: MM7ADpIb2R4unnZt9tAtArrh_GLDmXXs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE2MiBTYWx0ZWRfX7itMZsPA++FU
+ BCXTTO/xnzNLuYuu9jMt/WYKFpGDZ+AMMMTVIUdxIQl7WEWUbBk0lbFfnFF3HlhoDZV2tvsnJPI
+ iDpO46qdRlWudvBNWbndwW/KBusIPjlpO76eMYbnSZVu8DjwvybhcsChW2ywcbanEbX04cAzW6T
+ otBrCB7ns096rtKUizmgDFLp1To9knWMcIaCIzX+O/fqPUcxa/FMzrte9I7nS8+75mnXpPcqo6b
+ 9dlT6VbICDebxmL5f8iE+vkWY6ijvvJK3Icb0e2z8anv8GJN+eV5ucX+SJRXGsuYYn0f1Dx3lI+
+ Uh+IazzU+7NuVGis5Okg1riS9Oc11JlQP7NP4KRLqzsWLaNmZqqKm1R7lLLw/pHkCimmk5v7lG+
+ Xqpfvvq5
 
-On clients that utilize AMD_PRIVATE_COLOR properties for HDR support,
-brightness sliders can include a hardware controlled portion and a
-gamma-based portion. This is the case on the Steam Deck OLED when using
-gamescope with Steam as a client.
+Add an operation, SECCOMP_CLONE_FILTER, that can copy the seccomp
+filters from another process to the current process.
 
-When a user sets a brightness level while HDR is active, the gamma-based
-portion and/or hardware portion are adjusted to achieve the desired
-brightness. However, when a modeset takes place while the gamma-based
-portion is in-use, restoring the hardware brightness level overrides the
-user's overall brightness level and results in a mismatch between what
-the slider reports and the display's current brightness.
+Changes from v1 to v2:
+* Fixed locking issues.  Thanks Al, Alexei, and Kees :)
+* Allow filters to be cloned if CAP_SYS_ADMIN or no new privs
+  is set
+  * I initially had only CAP_SYS_ADMIN, but I can't think of a
+    way no new privs is harmful here, so I added it. Thanks, Kees
+* Switch to passing in pidfd directly rather than a pointer to a
+  pidfd
+  * This more closely aligns with other pidfd syscalls
+* Fixed warning in the sample code reported by the test robot
+* Various cleanups and improvements in the selftest
 
-To avoid overriding gamma-based brightness, only restore HW backlight
-level after boot or resume. This ensures that the backlight level is
-set correctly after the DC layer resets it while avoiding interference
-with subsequent modesets.
+Note that I left in the restriction that the target process
+has no seccomp filters already loaded.  I could see this
+limitation being removed in a later patchset, but there are
+requests for this feature at present.
 
-Fixes: 7875afafba84 ("drm/amd/display: Fix brightness level not retained over reboot")
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/4551
-Signed-off-by: Matthew Schwartz <matthew.schwartz@linux.dev>
----
-v2: Drop set_backlight_level and use dm->restore_backlight in
-amdgpu_dm_commit_streams
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 12 ++++++++----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  7 +++++++
- 2 files changed, 15 insertions(+), 4 deletions(-)
+Finally, I re-ran the performance numbers and updated the patch
+with the latest numbers.  The locking changes significantly sped
+up the clone operation, and it's now ~1900x faster than the
+current method.
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 7808a647a306c..2a5fa85505e84 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -2037,6 +2037,8 @@ static int amdgpu_dm_init(struct amdgpu_device *adev)
- 
- 	dc_hardware_init(adev->dm.dc);
- 
-+	adev->dm.restore_backlight = true;
-+
- 	adev->dm.hpd_rx_offload_wq = hpd_rx_irq_create_workqueue(adev);
- 	if (!adev->dm.hpd_rx_offload_wq) {
- 		drm_err(adev_to_drm(adev), "failed to create hpd rx offload workqueue.\n");
-@@ -3407,6 +3409,7 @@ static int dm_resume(struct amdgpu_ip_block *ip_block)
- 		dc_set_power_state(dm->dc, DC_ACPI_CM_POWER_STATE_D0);
- 
- 		dc_resume(dm->dc);
-+		adev->dm.restore_backlight = true;
- 
- 		amdgpu_dm_irq_resume_early(adev);
- 
-@@ -9802,7 +9805,6 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
- 	bool mode_set_reset_required = false;
- 	u32 i;
- 	struct dc_commit_streams_params params = {dc_state->streams, dc_state->stream_count};
--	bool set_backlight_level = false;
- 
- 	/* Disable writeback */
- 	for_each_old_connector_in_state(state, connector, old_con_state, i) {
-@@ -9922,7 +9924,6 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
- 			acrtc->hw_mode = new_crtc_state->mode;
- 			crtc->hwmode = new_crtc_state->mode;
- 			mode_set_reset_required = true;
--			set_backlight_level = true;
- 		} else if (modereset_required(new_crtc_state)) {
- 			drm_dbg_atomic(dev,
- 				       "Atomic commit: RESET. crtc id %d:[%p]\n",
-@@ -9979,13 +9980,16 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
- 	 * to fix a flicker issue.
- 	 * It will cause the dm->actual_brightness is not the current panel brightness
- 	 * level. (the dm->brightness is the correct panel level)
--	 * So we set the backlight level with dm->brightness value after set mode
-+	 * So we set the backlight level with dm->brightness value after initial
-+	 * set mode. Use restore_backlight flag to avoid setting backlight level
-+	 * for every subsequent mode set.
- 	 */
--	if (set_backlight_level) {
-+	if (dm->restore_backlight) {
- 		for (i = 0; i < dm->num_of_edps; i++) {
- 			if (dm->backlight_dev[i])
- 				amdgpu_dm_backlight_set_level(dm, i, dm->brightness[i]);
- 		}
-+		dm->restore_backlight = false;
- 	}
- }
- 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-index b937da0a4e4a0..6aae51c1beb36 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h
-@@ -610,6 +610,13 @@ struct amdgpu_display_manager {
- 	 */
- 	u32 actual_brightness[AMDGPU_DM_MAX_NUM_EDP];
- 
-+	/**
-+	 * @restore_backlight:
-+	 *
-+	 * Flag to indicate whether to restore backlight after modeset.
-+	 */
-+	bool restore_backlight;
-+
- 	/**
- 	 * @aux_hpd_discon_quirk:
- 	 *
+Tom Hromatka (1):
+  seccomp: Add SECCOMP_CLONE_FILTER operation
+
+ .../userspace-api/seccomp_filter.rst          |  10 ++
+ include/uapi/linux/seccomp.h                  |   1 +
+ kernel/seccomp.c                              |  48 ++++++
+ samples/seccomp/.gitignore                    |   1 +
+ samples/seccomp/Makefile                      |   2 +-
+ samples/seccomp/clone-filter.c                | 150 ++++++++++++++++++
+ tools/include/uapi/linux/seccomp.h            |   1 +
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 114 +++++++++++++
+ 8 files changed, 326 insertions(+), 1 deletion(-)
+ create mode 100644 samples/seccomp/clone-filter.c
+
 -- 
-2.51.0
+2.47.3
 
 
