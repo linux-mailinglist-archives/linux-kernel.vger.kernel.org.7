@@ -1,107 +1,85 @@
-Return-Path: <linux-kernel+bounces-812232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51DFDB534CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C10C6B534D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3FD3BE062
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:04:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9702AA17FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E483316902;
-	Thu, 11 Sep 2025 14:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kahaefUb"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F78833471D;
+	Thu, 11 Sep 2025 14:04:08 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECF020FA9C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9771C2D130A;
+	Thu, 11 Sep 2025 14:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599433; cv=none; b=MS0mnAOVfzjywOo8c8M9+DhwO2t59L14/yTbpUNOXevJQAy72HUk91ebZZOceyGTylbiv80dTjJQpxM6T3zItLS4i6txPzvIHL0/G7gnRGIygYDkbSHC3T632ISrp/LGxLOZe7lABEoLt+1UyLg5MsPbReA5KyCfjfSb3APHzz4=
+	t=1757599447; cv=none; b=eGIVWe3DJBeFMltzm6buqewshur9Ufj77apxfa18G06Q0VASPrplozt5bs+IVuOWj5jtO88sl2MF/oT1HUIsu2razqG9HGhUHQJX6E5QzU/hK83ec1nn6ym7TgM5hdjcwOsqRZxwS2OqjxeF3q7ag9KkFJ/GR6NHeytGwbEA70Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599433; c=relaxed/simple;
-	bh=4H1jk3gHqMGs0J9A7fWYd+JIW+b92sOQU1SeP+0OrhY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aJ/fGPsYHCCpVTt1HnnJa/MfLK0DVAUGzlCz8JoY+2kgGPN3FejHAFTxcNmYdyLjhiDXKkfrOpzPqkARtFnRHKSAlyX4XnLzZ6y7/FAGKisXKJ0pj0tI02dtvJSRxSiGSykdKFM3aQ9yhcnm9sYtM1ITe2QF0uf7o3widdKZWsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kahaefUb; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id AA9C7C6B3BD;
-	Thu, 11 Sep 2025 14:03:33 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 876D460630;
-	Thu, 11 Sep 2025 14:03:49 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 40340102F2833;
-	Thu, 11 Sep 2025 16:03:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757599429; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=CDK2GVhKguRdAprpwq3TCBc/3qnYl+uGZ7pjzM5YAm0=;
-	b=kahaefUbv/GwS3Tf82x07gIbaokOyyoAL8ctxaE9NVsC1xGcEeT6p0af1damiTMWd/F8uk
-	rOSBSewqzHpSEnRVkrYge1mFKF+8t3vnJz+GK4tapukLMwrwtjpdC/yTzsyFUiDAuvyclB
-	9emKDQqt7QnDMJmYamryPcpZk1MilFgpilabDDWceTuEZoElYRb2bg9CXKUFfHVI2W8eMd
-	ndjbbiJT7MoVO18nOrjCeIrF/qW56ma7PjQRBm1R7EGiPx1SK6I0OvkhsZv2TjJmVNgAKI
-	sVEm4/tFcYTE/UvCiJ4jRyEEqgMxUIaCnZijx3YxL8+47pKQ7U65S7phKN9HHA==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Gabor Juhos <j4g8y7@gmail.com>
-Cc: Santhosh Kumar K <s-k6@ti.com>,  Richard Weinberger <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  stable@vger.kernel.org,  Daniel Golle
- <daniel@makrotopia.org>
-Subject: Re: [PATCH v2] mtd: core: always verify OOB offset in
- mtd_check_oob_ops()
-In-Reply-To: <a208824c-acf6-4a48-8fde-f9926a6e4db5@gmail.com> (Gabor Juhos's
-	message of "Thu, 11 Sep 2025 10:33:48 +0200")
-References: <20250901-mtd-validate-ooboffs-v2-1-c1df86a16743@gmail.com>
-	<175708415877.334139.11409801733118104229.b4-ty@bootlin.com>
-	<454e092d-5b75-4758-a0e9-dfbb7bf271d7@ti.com>
-	<87348tbeqg.fsf@bootlin.com>
-	<a208824c-acf6-4a48-8fde-f9926a6e4db5@gmail.com>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Thu, 11 Sep 2025 16:03:39 +0200
-Message-ID: <87frct9jd0.fsf@bootlin.com>
+	s=arc-20240116; t=1757599447; c=relaxed/simple;
+	bh=tqI20KcrF1915HcKwwUWQYY7UjVDMfBrvy90nCsN7l8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IPML1vYxqsk4HZoereNDILDJz+4g954/JBZBlsc93F/8C5r08Sx4mAWJuADAFDLDDIB5zkh0bPkPo4WDacy/34f2hU+2I/K1ZoGNndXmNADkhLE9jMOgV9ejjX8yfP7sZcPVVbkou7uL19YL+hCIFQnP02tdhrFxzcFJGNLDJPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id ADA5B1A0219;
+	Thu, 11 Sep 2025 14:04:02 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 91DA320024;
+	Thu, 11 Sep 2025 14:04:00 +0000 (UTC)
+Date: Thu, 11 Sep 2025 10:04:52 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Pu Lehui <pulehui@huaweicloud.com>, <oe-lkp@lists.linux.dev>,
+ <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <mhiramat@kernel.org>,
+ <mathieu.desnoyers@efficios.com>, <pulehui@huawei.com>
+Subject: Re: [PATCH] tracing: Fix missing errno when zero parser->idx in
+ trace_pid_write
+Message-ID: <20250911100452.15fb74d4@gandalf.local.home>
+In-Reply-To: <aMKHBwzgqHOhILUQ@xsang-OptiPlex-9020>
+References: <20250821071721.3609109-1-pulehui@huaweicloud.com>
+	<202509022339.ae20a8bb-lkp@intel.com>
+	<20250905150312.02bef848@gandalf.local.home>
+	<aMKHBwzgqHOhILUQ@xsang-OptiPlex-9020>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: majb6bh3sxp9qjj3i5jd65p8acnth5un
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 91DA320024
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+y1z96nmL7bBDJnNaMyrFZJFjb8YeQLbk=
+X-HE-Tag: 1757599440-802295
+X-HE-Meta: U2FsdGVkX19nT89Y4OfCtAhbVEPZISwHxBiWSohK2bdRoFHveLIWwXkAaYe2FgooIT+63m3dc1MNMUmJLpI+Q0FYtQTLfQn6s8KfaH9ffKT/96jfj5XEmMvSProRgxYExS/oLUrtJn9Zg/NmeBx537NgI8UcJs1C/UjmUL8XHeIasbDwn0eO2ocY55v/zH+hOEUMJmcRhROkSEowZNlSWKHoluwY3tMLc+zsWKQ2ZSQHvZpNtJV7Ba6+ONzEPJZV2VcOJMS4bfWNxzpHLNn1yZ/7eknAC7l/cI04t0HbeQSevRddWgfMo8Y7WX15gujlLSCc2kZHrV83LohL+mEYzFrARrwwTXu6adRqg09YpkRgCBmGAOyyNcRoKt1TS+3vBLkzxvTXskI=
 
-Hello,
+On Thu, 11 Sep 2025 16:23:35 +0800
+Oliver Sang <oliver.sang@intel.com> wrote:
 
->>>> Applied to mtd/next, thanks!
->>>> [1/1] mtd: core: always verify OOB offset in mtd_check_oob_ops()
->>>>        commit: bf7d0543b2602be5cb450d8ec5a8710787806f88
->>>
->>> I'm seeing a failure in SPI NOR flashes due to this patch:
->>> (Tested on AM62x SK with S28HS512T OSPI NOR flash)
->
-> Sorry for the inconvenience.
->
->> Gabor, can you check what happens with mtdblock?
->
-> The strange thing is that it works with (SPI) NAND flashes:
->
-> # cat /sys/class/mtd/mtd0/type
-> nand
-> # cat /sys/class/mtd/mtd0/oobavail
-> 0
-> #
-> # hexdump -n 2048 /dev/mtd0
+> > I have no idea where this "perf_test.sh" is supposed to come from, and why
+> > it doesn't exist :-p  
+> 
+> sorry for inconvenience. for this "perf_test.sh" issue, we pushed a fix
+> https://github.com/intel/lkp-tests/commit/3ab6496813796e537d277242d220c4571790a363
+> 
+> however, we found there are other issues which block reproducer to work out of
+> our cluster env that we can not resolve shortly.
+> 
+> but if you have any debug/fix patch, we'll be very glad to test/verify.
 
-This is not mtdblock, the report was using mtdblock, not mtd directly. I
-don't know if that actually makes a difference, but it is worth the try.
+Nope, I just gave up on trying to make it work.
 
-Santhosh, please send a revert for now.
-
-Thanks,
-Miqu=C3=A8l
+-- Steve
 
