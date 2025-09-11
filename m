@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-812771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAC3B53C6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD0CB53C71
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C675C1C28A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5177AC2461
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E8826CE0C;
-	Thu, 11 Sep 2025 19:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEF12E7196;
+	Thu, 11 Sep 2025 19:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NZ3aj/eM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XX9+cqLB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFBE1262FC2;
-	Thu, 11 Sep 2025 19:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659A125484D;
+	Thu, 11 Sep 2025 19:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757619438; cv=none; b=dw2am4dhC4Z8mz0Sk7EpSRR6wCZicHiN8d//XihIqKDTdNZ83hwPDhnGKtNOeqQyPE/4cTwlQ0L0/Ts2kpVm4OtpdybYPg3gAkJmBX7D6NuDgghMOoL4EpwaEoCf4GHKVesKVYuuY1HWAht1FLf0Wieliy+9h1lC2yJbTjlxMRQ=
+	t=1757619455; cv=none; b=CS0tkFlqTL3toFGF3eF9yUu7BpQDeSYSPQ2w8Doq36FPocPRJZEtgDgrIKum6HmbD7ej3pJJFAwmwf7ihevYFd0AiDq8emTrLUjGTwcmnx7cPlapWpK8uEQ433aKRgPMVGN0BAvdSG5qCmLY4ra2QENdgQKKwd6tkS2qf21op/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757619438; c=relaxed/simple;
-	bh=x2Qu5C2hbQGtbAzoIdLfE5JLrAJ8pM93bzb3A77h5gk=;
+	s=arc-20240116; t=1757619455; c=relaxed/simple;
+	bh=ZjwiPBAwKH7AwJgS56aj0Mt8Iz098FGr9ay8z757enQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cxzTHsipgGkQ+iMDVGMFe+ieqVm4y4qgfPeVCnilNWc1PPt8kzKFGtKYnR1hz3GG13mVRTWTYC9LSKOmq58gyeaL9/ScA1J4NNZkAjesmH7XgYw4K7cczn7sl8v9LTmRoD6fWHcu09uBiDtfMZHkDbvXU5oLq7rtoR091Rwa1fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NZ3aj/eM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F5AC4CEF0;
-	Thu, 11 Sep 2025 19:37:14 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LHI8x5PUY3Ueu3xx4laqR7frKpKzw48feJF/6klS4YdNFZ3ZBUV75OIOnpGt786EMEeRvF0BpksONJFStmbxyrAdXfkintuXVdHw4Pbdt+L1BgX1n0qMSQezXyTSgnhf0OQa8sg7Rg1kJNZBLZm4iAtguIXKHdpaxtjqGA7cfNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XX9+cqLB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB9BFC4CEF0;
+	Thu, 11 Sep 2025 19:37:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757619435;
-	bh=x2Qu5C2hbQGtbAzoIdLfE5JLrAJ8pM93bzb3A77h5gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NZ3aj/eMVswoEBZIVpD95WLChbBcFINuymkZhW2LEW2B0anN38Pqaa2gh60edzlZY
-	 dbyAGUZNCvpRfrD52GSz4hZHzX1yCDVPLdw2unuEfcKrYYXGBDDOid6he3A+jamubP
-	 HWsybObBfVx4M63pFtLjv/8PA17Cvre6KzYRO/yj6TJzIabpT9auPH4YFOSmkX9rlJ
-	 ifZUpaXs5UtTrEuwQ5zPeEaMbP4WqmHgYUWN1l42yVkt2sf33Lkx6QnojcvafEmzBl
-	 WZv3dpoTpVrJorV/lN74MH1l/n+T96ti+dFoVtl2mwUUFEjSJWHNNrgnk9rrxiDBfL
-	 xTRce0zMdb5hw==
-Date: Thu, 11 Sep 2025 14:37:12 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: qcm6490: Introduce the Particle
- Tachyon
-Message-ID: <ayke5rvko5osrromyvn4e4tvjujgdleefydcf7q5waru3prnwy@rchulogqfqki>
-References: <20250910-tachyon-v1-0-5090bfd133e0@oss.qualcomm.com>
- <20250910-tachyon-v1-3-5090bfd133e0@oss.qualcomm.com>
+	s=k20201202; t=1757619455;
+	bh=ZjwiPBAwKH7AwJgS56aj0Mt8Iz098FGr9ay8z757enQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=XX9+cqLBMr76wKln6+ZslUVmujA3hk2EFkLM9+udoW+Nt9ycVpkfbjsD1NFEsa9O8
+	 775YozyyYLaOJJ2O2pqOlM++90jAdKWW3jn9B+QDFRomkbBIqft6NjKtdT+Plvuz6R
+	 Jqv4Dy8jT/NekCr/qGaGRGP4AiGEuPFtGUGyXMdJZOxBxd+VhYNu6MMr7aJd1w40oj
+	 FN2OYSTtqARK6j+Lqb3SiGMkg7Z7cTrB8UaHdAWR6OaXbkGqAiQGsdXyBAt6uK4a4M
+	 hfbGqIjHby2BxBsE4kJBiY0/3mnCLpu0D+8JU0gtEOkIGKQ5yy0mU7Y3A1dq9NF8iO
+	 XMpk20L9ZGW/w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 65ECFCE0C15; Thu, 11 Sep 2025 12:37:33 -0700 (PDT)
+Date: Thu, 11 Sep 2025 12:37:33 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: "Kumar, Kaushlendra" <kaushlendra.kumar@intel.com>
+Cc: "dave@stgolabs.net" <dave@stgolabs.net>,
+	"josh@joshtriplett.org" <josh@joshtriplett.org>,
+	"frederic@kernel.org" <frederic@kernel.org>,
+	"neeraj.upadhyay@kernel.org" <neeraj.upadhyay@kernel.org>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
+Subject: Re: [PATCH] rcu/segcblist: Use WRITE_ONCE() for rclp->len decrement
+Message-ID: <f5d5811c-4908-45e8-9db7-c7cc00b45649@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250911051009.682429-1-kaushlendra.kumar@intel.com>
+ <d1cee525-84c4-41f8-8594-0643d532e3ff@paulmck-laptop>
+ <LV3PR11MB8768B531BD88260D26996285F509A@LV3PR11MB8768.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,18 +66,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250910-tachyon-v1-3-5090bfd133e0@oss.qualcomm.com>
+In-Reply-To: <LV3PR11MB8768B531BD88260D26996285F509A@LV3PR11MB8768.namprd11.prod.outlook.com>
 
-On Wed, Sep 10, 2025 at 06:05:39PM -0500, Bjorn Andersson wrote:
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-particle-tachyon.dts b/arch/arm64/boot/dts/qcom/qcm6490-particle-tachyon.dts
-[..]
-> +&gpu_zap_shader {
-> +	firmware-name = "qcom/qcom6490/particle/tachyon/a660_zap.mbn";
+On Thu, Sep 11, 2025 at 03:46:08PM +0000, Kumar, Kaushlendra wrote:
+> On Thu, Sep 11, 2025 at 10:40:09AM +0530, Paul E. McKenney wrote:
+> > On Thu, Sep 11, 2025 at 10:40:09AM +0530, Kaushlendra Kumar wrote:
+> > > The rclp->len field is accessed concurrently by multiple contexts in 
+> > > RCU operations. Using WRITE_ONCE() provides the necessary memory 
+> > > ordering guarantees.
+> > 
+> > Could you please be specific here?  What calls to rcu_cblist_dequeue() are such that hte ->qlen field can be concurrently accessed?
+> > 
+> > (Full disclosure: I don't see any, and KCSAN hasn't found any.  Of course, that does not necessarily mean that there is no concurrent access.
+> > But we need such concurrent access called out explicitly here, because it might well be that the concurrent access is itself the bug.)
+> > 
+> > 							Thanx, Paul
+> 
+> Hi Paul,
+> 
+> Thank you for the clarification. You are absolutely correct. After reviewing the 
+> code more carefully, I cannot identify specific concurrent access patterns for 
+> the rclp->len field during rcu_cblist_dequeue() operations.
+> 
+> The primary motivation for this patch was to maintain consistency with 
+> rcu_cblist_enqueue(), which uses WRITE_ONCE() for the rclp->len increment. 
+> 
+> I will modify the message accordingly and send a patch.
 
-The should be qcm6490, not qcom6490...
+Why exactly is a patch needed for this case?
 
-Same with a couple of the other firmware paths as well.
-
-Regards,
-Bjorn
+							Thanx, Paul
 
