@@ -1,101 +1,124 @@
-Return-Path: <linux-kernel+bounces-812777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4427B53C7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:46:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D312DB53C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EC855A027B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FBB61BC43A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9D32571D7;
-	Thu, 11 Sep 2025 19:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72DD261B71;
+	Thu, 11 Sep 2025 19:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUQGO6Yj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="CACiR/2O"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F721553A3;
-	Thu, 11 Sep 2025 19:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310FA2DC780;
+	Thu, 11 Sep 2025 19:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757619973; cv=none; b=lbGK6LzoUavvVUH1k0Tb8d2J9i7UdnenVoH6rWDC8CTAOXxhV0qh2hX80qgBK4IPcXSwi++7oWATRNMdRngntJZ4EdDbA8/psrZwcdFSgMIHE5iJKN6cpFJYkz3CGcy0s0meRNgvSZZeQzy2h6rTfvVBkdr9YBadUUeWoCDkgJo=
+	t=1757620080; cv=none; b=HnHmBVNQOMC4LUY0wk6qtDoOyZDVn/tuAygpI9u77/ofbIh6NMdMHlGzMTc6mirVpq5w1Tu+Ch5+i4JG7M/CAOpgJNtfGyQ2Y6+fK7HvFXF0nwzI6gv7BZPzbobsSREugo0WhPPhzh3xPyVB+ZgHvahZzyHf0CuzrIxs4wJ9DiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757619973; c=relaxed/simple;
-	bh=3VRUkWlxIjH7lJghzSxYxKoEqymH+umEOlZRHG/+qXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0m65AUt370BfaAC+W+Q2KyktcdXjPl2HvXEBdub5y+wHPWaLVaCFhHN+G/yFb8TWhq/MBJxm4DhmTXyZsHxdipOJ4SyozP0rUEPk9QFjSdVsxuKlqqA3EVm+A8UAaddVggYdt51gQ2sdhbvXUYkIBcpasa2DrHvSShohl4y4fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUQGO6Yj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4DBC4CEF0;
-	Thu, 11 Sep 2025 19:46:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757619972;
-	bh=3VRUkWlxIjH7lJghzSxYxKoEqymH+umEOlZRHG/+qXI=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=iUQGO6Yjc+BgT0WScz9sYoXvjUA0pcIS+f0pY5CHrhidb+7DRkVmRBj8ApcXqOmIN
-	 jzB4SeNLH12UHLz5H0nxkegKTf9EhrtggjjHxpbveDiMpHPlmv+6mQHrjfnhRreG7v
-	 1ZM+I8txQ5jR7CbSrMr8dYs6Jf2jsZx9K8ur59PM50Y6uPK1x9g6FIpU1M+bF18Cl3
-	 B+CWpKl+HKD7tWbfMVPaV1C0Fv65WkBoY8TlKbtaDqSzJMh7PyTw3fE2Z41SfZovle
-	 pR0s1xXOolpp2ADRvQ8cCSpPusryHRJlf3MHcuR5XVQfSRNCYWXRreSYzWIn9gXPWi
-	 2XTmG15uMv19g==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 38085CE0C15; Thu, 11 Sep 2025 12:46:11 -0700 (PDT)
-Date: Thu, 11 Sep 2025 12:46:11 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Cc: dave@stgolabs.net, josh@joshtriplett.org, frederic@kernel.org,
-	neeraj.upadhyay@kernel.org, rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Subject: Re: [PATCH] refperf: Set reader_tasks to NULL after kfree()
-Message-ID: <cf66d322-ff98-4f50-a27c-52fad11c40e9@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250911031811.681694-1-kaushlendra.kumar@intel.com>
+	s=arc-20240116; t=1757620080; c=relaxed/simple;
+	bh=eep2ZyyHKwsadbfskNNkjdITDV953pA8vh5UGir4adY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XYGUjImYowqXpNHjVFyz5Ntp1Ba09hio6n/H1JAIX0/2n3xbuo/BrQGfmr5vS3SM4vlb7lzQw3NpDWMzNdeqxI8MVmlQXJCl1niIjjbraV4VET+akMf2ohNrvm/h2yH+SN/oIkm+5ZWZrPSK+4Nas+9dFnERnTpktbFBXWSw8rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=CACiR/2O; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 3654140B01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1757620075; bh=VLix0HeEfh5QxyT/kSxDA1EzDXRWZ8h9TgrVv6Ps8Cw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=CACiR/2O1sqIa1d88W0ILwv97CJNrUHGohbq7Iv445VJrxvm6fkMfeVjVO4Hlu1YK
+	 hs1Gs5odos9/HegcPALWZCjpZT4XIje1O0tYKHSVZccO8rTRGUQgWnnxvbUabXW+qK
+	 VOSI6rMCb2oq2yfcI+WO1zNadsI9DQx5QFbIe5MqkZ1Q5/aLcuB61R7zLk7KA0sAMe
+	 QMxVnO2qzu9c8kwf141lnL8xoVbaR6HgRuuw38Mms6X3F4W6U1eVZb89MeavZTrJ1y
+	 ZVQAGn9v0/j/cUdVm++ucR64JJOkJyaL0+KD55Bj3FbeX+7pe97EkH0uIaVlXYJUu+
+	 dZhcQfHEndJVA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 3654140B01;
+	Thu, 11 Sep 2025 19:47:55 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Jani Nikula <jani.nikula@linux.intel.com>, Mauro Carvalho Chehab
+ <mchehab+huawei@kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
+ Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a
+ wrapper for sphinx-build
+In-Reply-To: <a1333c717bb5bcea7f7c616cbf8604fa259c3158@intel.com>
+References: <cover.1756969623.git.mchehab+huawei@kernel.org>
+ <e019f951190a732f9ac0b21bcda7e49af3bd5cbd.1756969623.git.mchehab+huawei@kernel.org>
+ <e13837a0ac46dffe39c600d11fdf33f538bdc9c3@intel.com>
+ <20250910145926.453f5441@foz.lan>
+ <45888ca6c88071c754784495b4ef69460ea67b4f@intel.com>
+ <fuv4p45tvjfdvwu2625s2l2kvcw64p4ohherlwyum3vmogmrfz@yb47nt66xgm6>
+ <87zfb1p0r3.fsf@trenco.lwn.net>
+ <a1333c717bb5bcea7f7c616cbf8604fa259c3158@intel.com>
+Date: Thu, 11 Sep 2025 13:47:54 -0600
+Message-ID: <87ldmkojo5.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911031811.681694-1-kaushlendra.kumar@intel.com>
+Content-Type: text/plain
 
-On Thu, Sep 11, 2025 at 08:48:11AM +0530, Kaushlendra Kumar wrote:
-> Set reader_tasks to NULL after kfree() in ref_scale_cleanup() to
-> improve debugging experience with kernel debugging tools. This
-> follows the common pattern of NULLing pointers after freeing to
-> avoid dangling pointer issues during debugging sessions.
-> 
-> Setting pointers to NULL after freeing helps debugging tools like
-> kdgb,drgn, and other kernel debuggers by providing clear indication
-> that the memory has been freed and the pointer is no longer valid.
-> 
-> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+Jani Nikula <jani.nikula@linux.intel.com> writes:
 
-Queued for further review and testing, thank you!
+> On Thu, 11 Sep 2025, Jonathan Corbet <corbet@lwn.net> wrote:
+>> A couple of times I have looked into using intersphinx, making each book
+>> into an actually separate book.  The thing I always run into is that
+>> doing a complete docs build, with working references, would require
+>> building everything twice.  This is probably worth another attempt one
+>> of these years...
+>
+> I think the main factor in that should be whether it makes sense from
+> overall documentation standpoint, not the technical details.
+>
+> Having several books might make sense. It might even be helpful in
+> organizing the documentation by audiences. But having the granularity of
+> SPHINXDIRS with that would be overkill. And there needs to be a book to
+> bring them together, and link to the other books, acting as the landing
+> page.
 
-							Thanx, Paul
+Well, I think that the number of existing directories needs to be
+reduced rather further.  I made progress in that direction by coalescing
+all the arch docs under Documentation/arch/.  I would like to do
+something similar with all the device-specific docs, creating
+Documentation/devices/.  Then we start to get to a reasonable number of
+books.
 
-> ---
->  kernel/rcu/refscale.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-> index 2bfa987f4ba9..47486dff43ca 100644
-> --- a/kernel/rcu/refscale.c
-> +++ b/kernel/rcu/refscale.c
-> @@ -1048,6 +1048,7 @@ ref_scale_cleanup(void)
->  					     reader_tasks[i].task);
->  	}
->  	kfree(reader_tasks);
-> +	reader_tasks = NULL;
->  
->  	torture_stop_kthread("main_task", main_task);
->  
-> -- 
-> 2.34.1
-> 
+> I believe it should be possible to generate the intersphinx inventory
+> without generating the full html or pdf documentation. So I don't think
+> it's actually two complete docs builds. It might speed things up to have
+> a number of independent documentation builds.
+
+That's a good point, I hadn't looked into that part.  The builder phase
+takes a lot of the time, if that could be cut out things would go
+faster. 
+
+> As to the working references, IIUC partial builds with SPHINXDIRS
+> doesn't get that part right if there are references outside of the
+> designated dirs, leading to warnings.
+
+That is true.  My point though is that, to get the references right with
+a *full* build, a two-pass approach is needed though, as you suggest,
+perhaps the first pass could be faster.
+
+Thanks,
+
+jon
 
