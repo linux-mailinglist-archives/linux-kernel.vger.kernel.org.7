@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-811326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB373B52788
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:25:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03236B5278E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1CD1BC71F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:26:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44CDF1BC74F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C534238C2A;
-	Thu, 11 Sep 2025 04:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC2C23E325;
+	Thu, 11 Sep 2025 04:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/zRrM5o"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8GjP8FT"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B17633F9;
-	Thu, 11 Sep 2025 04:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F86924A04A;
+	Thu, 11 Sep 2025 04:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757564735; cv=none; b=Pi+6MZ4A4f8BOf54HIc/LwpuSXZ3ZdUjMklnczBLRiq0Lv+s5LYfJWXwF55sOepuz03FoKsgpR0pFMR85jnrXZcXbdSjSztALpcOqUV4Gc4xBrBfbJcfjUjhMLVAu7hQti+DF+N/JEyATVyWfrDbGO3T1gJepmWa5zp72t7O4iI=
+	t=1757564740; cv=none; b=htaXQhTnKS69JJKrkN2GIhSQ9IjxUEF/ta00adSXjgk98MiRtNXdlsHBV3cfejw2/k9Da50YGm24n4tHt42UwFIyc2BYqXLADrRnVobVaoI8FyYtsuGlzwRGtoOEoapZOF83InMNVCcbRHH7mVOwUkHisOd4Zl80FmqW3WViDYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757564735; c=relaxed/simple;
-	bh=PCapEjPmI5m+nD84bxhh8bD0msN75z0bb/HI8QQDCj0=;
+	s=arc-20240116; t=1757564740; c=relaxed/simple;
+	bh=jZWB1p//ISIVh97qcAyBtmJJXK3oz2kT8G7DjODCOR8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=otKqr7dKceXLwLNdJ90Gkf7es8X0zHyQv4Fni+gRQpHbDqg5oZUiEXZUHtFYRONtmq7fk1vhWQydRQolrm00BpIbMZQN+RQm0/Qmh1vQmlcBI+JxyUUPHlklxDbP7wpJaUcdkxNkqTI5S468UgTlenoO3gcQzMQj9rf3O14FDvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/zRrM5o; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=byyydchr3hbiIEtBe4ineq3Bn+NBC92kVff5h/bMne6RhW4lJ8iLMydzt9ai0VmBzrENHN21dxyFDQ0rOHZE85mT2jv3YKcT2NitDFRcdTAQEA8q2z48uCfq/YeSk7gEUD5ew486akq72WiUInCmDyXcpF6Rr3XcV82DiQuRiFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y8GjP8FT; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24cdd95c422so1597835ad.0;
-        Wed, 10 Sep 2025 21:25:34 -0700 (PDT)
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-25221fa3c9bso11370565ad.0;
+        Wed, 10 Sep 2025 21:25:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757564734; x=1758169534; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757564738; x=1758169538; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sn0fDpbrxJOdsZ8BiLim0jUfus1eeCGt+uywtEWxVhg=;
-        b=W/zRrM5oUD0KGlSW/ig9oZPhsuHZ0fFEsC54x/dlpEm6nlHnbddv62XDJiGHn22oeb
-         hxEUpwlqD+g9pMIJ+3J74G1SXuIDSpaLr2h6aG25gP5H+xCcDTDttjr9Jbf1e+htNgxD
-         6jAmCEQqGu0ZrNeyuwGtYmBQzNOU7gTDMINDlIIcSQ+UfoWDARCyXu37WC1sLPq3SXDy
-         lB0thlxBKt0niZMN+ndexahi2SuFA1ZUQ+4swCQktG+IP+anLBmvgfP04G286WM0xPF9
-         zC6JHGqs9Lj6vO1xfynJMi1tUEphevwpUNwDGhoo/8Fr5EUjWyzl1G4lqlym+A1Hi3uW
-         r/vg==
+        bh=lU89Xc9Cv0xX/7xLo9LGEng1r4NnOlTOyfnu4zvH4C0=;
+        b=Y8GjP8FTgSjDRIc3nn5byfb3hojdO5klb0b3uhASwIl0/yE+v7/EHNd2wvosDC1UzZ
+         hO+nbCqNJLDeS0AUmOzlehlPH6dLDxzbIzf8RJLNO6J1oMmfX1MudQuwpPEOGTbmAAvw
+         2QTRftfNwfWGC8bqQgB2B0gc1lzUREilkEXxBLPoorUZC1HdNllMcFcrjUokX/oodg9+
+         9QE7/dSOtVaShqVS5Li+UfZSB/ftKct3mEygOxXh/TrneuuiKOO1az2nuFwu+Oi913EQ
+         BHFt+AWQsmKEXHs8EUqxAVojLs33bTb+G1gSg4gOb72LuqmDjvq+x1bsqF/jnhxEXOZq
+         gVGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757564734; x=1758169534;
+        d=1e100.net; s=20230601; t=1757564738; x=1758169538;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sn0fDpbrxJOdsZ8BiLim0jUfus1eeCGt+uywtEWxVhg=;
-        b=Ck/4rASc13bUlPMnbbXwA/qxHgcnsduFxFjjogWWu6bRM0TMSLA19xevgWi99zTg8w
-         +nt7oT44pAynVocZaSt1RLtgP7bdk+3kv50dd6khr0CKjjEIpt0vkhcA+xxE+7j4TTml
-         HPaHPgkPp32mPRG82881/4+3xIJIlVYnUXke0DmS62SBN4wjU6eH/O6hao+xJQxAeex1
-         aytfle7ACJlPhFQxD79avpk7O5jELj1QBMXMjbT5t0R0or+YNvldcD2XcT8xnb8vo9yn
-         68lp7qaaYx3TIWUAGZTyKWhmh/tP7y8jGw805PeeglV8STzpe5hhQ7mtBaiss28uWuOJ
-         uHbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtCKHIxqKoS0wlMIEQTN7XVp70xXZ3mztkMNM//aTO1X11JU74aFuee5QfqiyE6XDBJNnYpKS/lJc=@vger.kernel.org, AJvYcCXxXepJYwfvJWFDzvtakmtEzl8R0A8CswByhAeT0R9websDHkmuZkr9TGjP9zfKqhuQ2fKkXwQpS2fzmvrs67L5ge1q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwbmtd2Jno6XVArEm0Bsf+LZ49u17+VouxPna1AgYLJAdKXs/z
-	U5ocSCAhg/7QQPk3QUXIPJ3rkzdzQsb0C+rxJJXQ56NaSVxa0Rdfgox+
-X-Gm-Gg: ASbGnctHgXg43P2o6XQ0E3NJdpdTNxvHIkKZug0VlsePbxNGRqsjXUYdHDuJZ8LQ1IU
-	MfObVoF4+VCmZWv70n+9M0lSWuHGDdUTpnm53u5uQuFAjJBC6GrYHz5hUGwWj8Lg05kBF2mXVgU
-	jWp/9LbOK0jfl8IFYURAbDs8mHqt3wPKjcrNaYPWV/ZMEYFi+iTIOoes6D+UQwLhpxZ63xyGpIc
-	hOkhLZ6g/Q4YaMz6URrqTd35N1zdC6OE/UB/8o4ByEaYWaLvsqXBihmC7IuOeYS9ODe/CQ3hS6R
-	sZcGgbZwNSM0g1zA/ZU8K6RPeVWcW7N7uAcw9FoGxmK5LhHf5JyOLh4Twga8aIwrGRZQROAl4j7
-	7YHU4ol8p8tbMBZj2S2hiRdTE3pT+9TBnwMl1
-X-Google-Smtp-Source: AGHT+IGwA7u7kHvYy08QWn2RBRYK8+HxOZDkMhU7OlqshMYpfA+qxBXfNqX636KO5Oe1y7G8nlywYA==
-X-Received: by 2002:a17:903:3c63:b0:248:a26f:e25 with SMTP id d9443c01a7336-25174374ae2mr239240435ad.52.1757564733532;
-        Wed, 10 Sep 2025 21:25:33 -0700 (PDT)
+        bh=lU89Xc9Cv0xX/7xLo9LGEng1r4NnOlTOyfnu4zvH4C0=;
+        b=jwROwEF0FQXW/WKP7RhJqKONxyIiu0NrYVOYE0WBDB4sG5GmTkV6jEzqtxKG4t+V0+
+         npVpWu9SUkRjtnddMJxJGP/h4oTVRfiXv0CUGJCKXzYU18h8zN2vVOCG0YHdkmTr1aP6
+         9ZV3NU0jS5tGyqWCbZy9G3340VddU3r1KkrfQ2R7nhxRyGxaYigxmScKiy0zHjfrybtG
+         FgO/gZifsJd+rwxFizxEBfcAG0S7vO5bd5JVJw1j/gdnaWRFJm0r1YjLxUfBhWRFEv91
+         m06RE1kvIIuHZHGn2j4RpEXs+tprjpo0YyzkfX6OjTpkl5Q3NbxHx75NVS2TgqZcqgrT
+         ypaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFLvsE3FxlTutQf20+BnaqRxH8XE++2PyTgyFeg/R33XxPFpIP93orZMWSg0q2g42tHNPPzj8n0bo=@vger.kernel.org, AJvYcCW93YgXJm4lJWP/N0d6yL2opMHrGfMb0j23sceV9P1e9lvdC+/g2eBzudpRH2fXhzvnDk+JJvOHQS5KpEVCiy0MtQT4@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsTU7irtCaWCOMdQYOqoiO+Ff11XrWKI+Ml4y4/u1IKZwiY1bS
+	RmuhwNMAaUI9IDnnkjtP16/AjxxR2PqrPEwzMPE4LDMXscv9/H2SlY+O
+X-Gm-Gg: ASbGncuCVM5OWns8rEb6wyhHsGSIY9NGtBFIcQOTTlLRluwlAzTBccU2z1gp1p9GKGY
+	vd/e6A0MLMkhbC0ebVXG6IJjzeBzeNZ6zGOanIYbaGVajDzfmStMLBWz1GaCnILnA677X/vMnq6
+	BcyRLzfFMgeoOYQE2cXJl3IRv5RVn7WhJmzRY9hmbLOI81aLndT8HVq92IuzDdSrKxafw4y+Rfz
+	G4HQEjKDOC9NMI4zCIOW6UuxNp4LutdqaclImbn5j9gzZWIvWfC6wkb4wwrbTs2yT2CyNrMViKb
+	010/bxEWz+2x27dBghOLA5SFqilnHyqKAfFNqc/B3ELjKBbKoqcp+tjU6RMLZ2aJJomjqMTqS6c
+	3NZ6xJQnS2abFsOxXnDN6dTRjmw==
+X-Google-Smtp-Source: AGHT+IHbS9cB5BACUix80S5lFEGDN0c9HkDKYow+/+wRkyV1CA17KHmwOoLnPeMBuOiW9pBwUbDVfw==
+X-Received: by 2002:a17:903:2442:b0:231:d0da:5e1f with SMTP id d9443c01a7336-25bad5670b1mr20564335ad.21.1757564738271;
+        Wed, 10 Sep 2025 21:25:38 -0700 (PDT)
 Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3a84a80asm4215895ad.90.2025.09.10.21.25.32
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3a84a62esm4148865ad.66.2025.09.10.21.25.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Sep 2025 21:25:32 -0700 (PDT)
+        Wed, 10 Sep 2025 21:25:36 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id C0D3641F3D85; Thu, 11 Sep 2025 11:25:30 +0700 (WIB)
+	id D4B8141BEA9C; Thu, 11 Sep 2025 11:25:30 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -84,9 +84,9 @@ Cc: Steven Rostedt <rostedt@goodmis.org>,
 	Jonathan Corbet <corbet@lwn.net>,
 	Tom Zanussi <zanussi@kernel.org>,
 	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH 4/5] Documentation: trace: histogram-design: Wrap introductory note in note:: directive
-Date: Thu, 11 Sep 2025 11:25:26 +0700
-Message-ID: <20250911042527.22573-5-bagasdotme@gmail.com>
+Subject: [PATCH 5/5] Documentation: trace: histogram: Link to ftrace docs
+Date: Thu, 11 Sep 2025 11:25:27 +0700
+Message-ID: <20250911042527.22573-6-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20250911042527.22573-1-bagasdotme@gmail.com>
 References: <20250911042527.22573-1-bagasdotme@gmail.com>
@@ -96,42 +96,33 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1443; i=bagasdotme@gmail.com; h=from:subject; bh=PCapEjPmI5m+nD84bxhh8bD0msN75z0bb/HI8QQDCj0=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmH/C6U957+ZXJqVYJYRkpbnJn4rsl+s4QnTF+zt8H0j YjuM7XujlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEzk1TRGhjtvfDe+0T2tLy1e ZLs4fu2Ml02P9D/t3fXAx+/s5pgdoSqMDHeXm3/faywbtPTeMSfRJXOLi3w6DqozKSY838sUu97 7MC8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1030; i=bagasdotme@gmail.com; h=from:subject; bh=jZWB1p//ISIVh97qcAyBtmJJXK3oz2kT8G7DjODCOR8=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmH/C7wBhZHffl0yaDud05e5vp007M3c7Jd50XXHA+cM i+Hof9BRykLgxgXg6yYIsukRL6m07uMRC60r3WEmcPKBDKEgYtTACZy9xgjw+snTy3TOQ6+N2d+ eMW7LNTVITpmcWh2jVRNMM+9qZscdBkZ1rZc1M/2c7mxMjj1qq5rknjL02xxlSP3ZwfMObl07tx yRgA=
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Use Sphinx note:: directive for the introductory note at the beginning
-of docs, instead of aligned-text paragraph that renders as definition
-list.
+In brief "Extended error information" section, details on error
+condition is referred to ftrace docs. Add the link to it.
 
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/trace/histogram-design.rst | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ Documentation/trace/histogram.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/trace/histogram-design.rst b/Documentation/trace/histogram-design.rst
-index 4faff1669b77bd..ae71b5bf97c6c7 100644
---- a/Documentation/trace/histogram-design.rst
-+++ b/Documentation/trace/histogram-design.rst
-@@ -11,13 +11,14 @@ histograms work and how the individual pieces map to the data
- structures used to implement them in trace_events_hist.c and
- tracing_map.c.
+diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
+index d158dadaa42447..340bcb5099e7a4 100644
+--- a/Documentation/trace/histogram.rst
++++ b/Documentation/trace/histogram.rst
+@@ -209,8 +209,8 @@ Documentation written by Tom Zanussi
  
--Note: All the ftrace histogram command examples assume the working
--      directory is the ftrace /tracing directory. For example::
-+.. note::
-+   All the ftrace histogram command examples assume the working
-+   directory is the ftrace /tracing directory. For example::
+   For some error conditions encountered when invoking a hist trigger
+   command, extended error information is available via the
+-  tracing/error_log file.  See Error Conditions in
+-  :file:`Documentation/trace/ftrace.rst` for details.
++  tracing/error_log file.  See "Error conditions" section in
++  Documentation/trace/ftrace.rst for details.
  
- 	# cd /sys/kernel/tracing
- 
--Also, the histogram output displayed for those commands will be
--generally be truncated - only enough to make the point is displayed.
-+   Also, the histogram output displayed for those commands will be
-+   generally be truncated - only enough to make the point is displayed.
- 
- 'hist_debug' trace event files
- ==============================
+ 2.3. 'hist' trigger examples
+ ----------------------------
 -- 
 An old man doll... just what I always wanted! - Clara
 
