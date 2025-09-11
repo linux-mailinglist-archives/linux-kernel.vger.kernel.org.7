@@ -1,81 +1,73 @@
-Return-Path: <linux-kernel+bounces-812058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDCBB53256
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7B7CB53263
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:35:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6E8582768
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:33:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDF69A061F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0856320A09;
-	Thu, 11 Sep 2025 12:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75850321F29;
+	Thu, 11 Sep 2025 12:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fabs0CNi"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isn6120n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 070D02B9A4;
-	Thu, 11 Sep 2025 12:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD2B1DFDE;
+	Thu, 11 Sep 2025 12:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757593986; cv=none; b=kZ1eC8Z6doCs94fyaEnX6ZqhbYwr4Sn7uwPI+EDy0BMx+2KmidN8cpiiQFP6BlroXF2QERk5rnnipin0SPQsFZXM0Ot0LjtNR2bTst66ykzRkRigiXmNALKJzmaldsKXL6teJdo7xcS9IM+2JOW7TzXC5VdtWA1JKwRk5wMYvMI=
+	t=1757594011; cv=none; b=VmU0kOsuGu/PDNt5KhgD9Ou2b3X0/lrEhV2hsL+LVXk0czQ5QV64y+DzhJEAs4DIa1l8ocPDaXtBdEtZJ6yhC7mG9mMqkqsKOFo3N6XJgRlp5nu25mzfbFV6i621gX5vT65klV2XDHKHUd3hqfd1c/DYg0QLk6bH3TldvG9/Koo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757593986; c=relaxed/simple;
-	bh=y5fhpW+JuXczx2vezKEQsYz9XLWBvaZtlfoBUr9ir/4=;
+	s=arc-20240116; t=1757594011; c=relaxed/simple;
+	bh=P48xfB55szeLvDmSgHttsgXhs7aEst40wBJg3abuJE0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tGeLfmJRgS7V3G9LedaSvDlFEl5ez91b3FvE4CsEZm06W7+W+aFlPEyzeH6yebeO0bLuI5uQhXcR2AmPza3+o2eF6q0dcbapktvP9Dzg+HH6L7T2HFJn9OTVTUTpIg9pn0JOH16X5P2vXNB3YPsgxqnsermwQgePFOPgxPudFYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fabs0CNi; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BBrKsA008280;
-	Thu, 11 Sep 2025 12:33:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=y5fhpW+JuXczx2vezKEQsYz9XLWBva
-	ZtlfoBUr9ir/4=; b=Fabs0CNijxTV1qVzC4PIcuRwS1Ihk0qPNmNoBAtRLVR4E+
-	4RSIbLdOl9hHDA5Go8mAr149cLGPTUpUZ/I/vlN+2KyRAWsfnkYFbTBbM//bGCoE
-	uW7SXHQZBI2xRWuBe8PVFWOfEP7D4nez0fa+PXszr6WbmrYP1I5nU4WEJuMmRLaH
-	5keL7Djej0IR8CGRA092sDCWNQmhxglyv3uxDXUE5Prq0EolNVRftVZcixoPBVKJ
-	W69ks/ws4p9pWP0xHcUX4qlTo0iaHLCMmvY7ECzMEnNhISYGsy6WCT2eQGGHap0N
-	gE24OdKLIh3idMwjtgQiDoTB/d9QLz43b+Y+yHVg==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xyd9ejf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 12:33:02 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58BAGbqQ017227;
-	Thu, 11 Sep 2025 12:33:01 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmnk5k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Sep 2025 12:33:01 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58BCWvgU37749202
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 12:32:57 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 574462004E;
-	Thu, 11 Sep 2025 12:32:57 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2841620040;
-	Thu, 11 Sep 2025 12:32:57 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 11 Sep 2025 12:32:57 +0000 (GMT)
-Date: Thu, 11 Sep 2025 14:32:55 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: Sven Schnelle <svens@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: Re: [PATCH] s390/entry: Remove unused TIF flags
-Message-ID: <b70d881e-57f4-486c-a865-0cc01e024b69-agordeev@linux.ibm.com>
-References: <20250911092806.3262481-1-svens@linux.ibm.com>
- <27e149cc-ff11-4007-a0fe-5f7b0e8263c5-agordeev@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OuOjHsAqhzvdB5w6PYW5b523KVJMkxkfhVQbQivrgIud4ctvnNHFPDB51ZPUbLzgzxLlLezIQMOZJ+g0ga+sBDKxQjFldOJrKVoGyOehdJgm8rVo0cK7svHMj3+268y0OpTXpHggnu+6ReXuhvjXIEmt+7BPGCI/azrJnTcy9xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isn6120n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00F5C4CEF1;
+	Thu, 11 Sep 2025 12:33:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757594011;
+	bh=P48xfB55szeLvDmSgHttsgXhs7aEst40wBJg3abuJE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=isn6120n/iONjEJMNXwY7lFI2zOPw5/xk7OTh/lFNzKUSRm/jgtHzFJbQot6pTMbL
+	 e2x1bsQkpraqSg9CRYV92TbRM464masca2teDYVlQYhwv5kvqj63YxEbs3hVNUZTNl
+	 zTDO5gtsWusyG/5tHAbAUC2PAVfeRyzacSTdIFtD5jkf0WykK4gZ8mAz9pMriKZjuB
+	 NQ+W5dfvIXOn7TnY+hJh+rwcRPN7R+dlXkDSGD6bw6DWcanboho0QhwyX2wlpk5aSk
+	 OLCY9CB9zPQRdmVmRFai3qeZ9ZcOEwuBMFqa15dzQLVTeVVfS80y5+hg+3fnOpq5H7
+	 Vurewde39Myew==
+Date: Thu, 11 Sep 2025 13:33:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Fan Gong <gongfan1@huawei.com>
+Cc: Zhu Yikai <zhuyikai1@h-partners.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, linux-doc@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bjorn Helgaas <helgaas@kernel.org>, luosifu <luosifu@huawei.com>,
+	Xin Guo <guoxin09@huawei.com>,
+	Shen Chenyang <shenchenyang1@hisilicon.com>,
+	Zhou Shuai <zhoushuai28@huawei.com>, Wu Like <wulike1@huawei.com>,
+	Shi Jing <shijing34@huawei.com>,
+	Luo Yang <luoyang82@h-partners.com>,
+	Meny Yossefi <meny.yossefi@huawei.com>,
+	Gur Stavi <gur.stavi@huawei.com>, Lee Trager <lee@trager.us>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Suman Ghosh <sumang@marvell.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Joe Damato <jdamato@fastly.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH net-next v05 12/14] hinic3: Add port management
+Message-ID: <20250911123324.GJ30363@horms.kernel.org>
+References: <cover.1757401320.git.zhuyikai1@h-partners.com>
+ <9fa22ecd4b8dfe9ea613b0d81d2cabf7c233e7d2.1757401320.git.zhuyikai1@h-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,35 +76,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <27e149cc-ff11-4007-a0fe-5f7b0e8263c5-agordeev@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 0I3msJAhSbodChec0mhy-7PPsJVcxaPQ
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfXwXzlb0UcaZ/c
- i+ddkXJL1COwKu0ExsWwR98A7l9Z/rdYAyxMZT2UszGDo+Krp7Hy0ceCA0D/hz+U/47ZZtsTdci
- 9j/Fix9qbeY2NO5Lf1tIHST3ITvyqusOUbvFPCRtXA8lMRjThI8eDBkUz30qLi7RFSUSeiRqlkC
- 4E0nwD9qiWxghK2Ko9Hk7ZvAq9CLTLkMNkcQebZ18opiFaJSP45kgsmEV4KQ+sIAnUJFOjpZIlb
- 0ikcqXtyD3UZsFK64Ceh9f748ozKuml6BENwh85u0yIP4i/N5Gz/ISpQBa7egsTsLrg3ANAWfDp
- GfMoESFZ5+gqsAPz76UqdRlnPZ3IlAEbkKfLqW9LRgz6idaTVeHouT1HGXMqsS9S2a6vJ5Yp6a9
- HZMfDwVI
-X-Proofpoint-GUID: 0I3msJAhSbodChec0mhy-7PPsJVcxaPQ
-X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68c2c17e cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=fA-yT-I32pntzDk8QcsA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060235
+In-Reply-To: <9fa22ecd4b8dfe9ea613b0d81d2cabf7c233e7d2.1757401320.git.zhuyikai1@h-partners.com>
 
-On Thu, Sep 11, 2025 at 02:29:39PM +0200, Alexander Gordeev wrote:
-> Which branch this patch is against?
+On Tue, Sep 09, 2025 at 03:33:37PM +0800, Fan Gong wrote:
+> Add port management of enable/disable/query/flush function.
+> 
+> Co-developed-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Zhu Yikai <zhuyikai1@h-partners.com>
+> Signed-off-by: Fan Gong <gongfan1@huawei.com>
 
-Please, ignore.
-I guess, it would go via Thomas tree.
+...
 
-Thanks!
+> diff --git a/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c b/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
+> index 3d17ca5e7ba5..a07fa4bd71e7 100644
+> --- a/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
+> +++ b/drivers/net/ethernet/huawei/hinic3/hinic3_netdev_ops.c
+> @@ -326,6 +326,59 @@ static void hinic3_close_channel(struct net_device *netdev)
+>  	hinic3_free_qp_ctxts(nic_dev);
+>  }
+>  
+> +static int hinic3_vport_up(struct net_device *netdev)
+> +{
+> +	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
+> +	bool link_status_up;
+> +	u16 glb_func_id;
+> +	int err;
+> +
+> +	glb_func_id = hinic3_global_func_id(nic_dev->hwdev);
+> +	err = hinic3_set_vport_enable(nic_dev->hwdev, glb_func_id, true);
+> +	if (err) {
+> +		netdev_err(netdev, "Failed to enable vport\n");
+> +		goto err_flush_qps_res;
+> +	}
+> +
+> +	err = netif_set_real_num_queues(netdev, nic_dev->q_params.num_qps,
+> +					nic_dev->q_params.num_qps);
+> +	if (err) {
+> +		netdev_err(netdev, "Failed to set real number of queues\n");
+> +		goto err_flush_qps_res;
+> +	}
+> +	netif_tx_start_all_queues(netdev);
+> +
+> +	err = hinic3_get_link_status(nic_dev->hwdev, &link_status_up);
+> +	if (!err && link_status_up)
+> +		netif_carrier_on(netdev);
+> +
+> +	return 0;
+> +
+> +err_flush_qps_res:
+> +	hinic3_flush_qps_res(nic_dev->hwdev);
+> +	/* wait to guarantee that no packets will be sent to host */
+> +	msleep(100);
+
+I realise that Jakub's feedback on msleep() in his review of v3 was
+in a different code path. But I do wonder if there is a better way.
+
+> +
+> +	return err;
+> +}
+> +
+> +static void hinic3_vport_down(struct net_device *netdev)
+> +{
+> +	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
+> +	u16 glb_func_id;
+> +
+> +	netif_carrier_off(netdev);
+> +	netif_tx_disable(netdev);
+> +
+> +	glb_func_id = hinic3_global_func_id(nic_dev->hwdev);
+> +	hinic3_set_vport_enable(nic_dev->hwdev, glb_func_id, false);
+> +
+> +	hinic3_flush_txqs(netdev);
+> +	/* wait to guarantee that no packets will be sent to host */
+> +	msleep(100);
+
+Likewise, here.
+
+> +	hinic3_flush_qps_res(nic_dev->hwdev);
+> +}
+> +
+>  static int hinic3_open(struct net_device *netdev)
+>  {
+>  	struct hinic3_nic_dev *nic_dev = netdev_priv(netdev);
+
+...
 
