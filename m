@@ -1,93 +1,97 @@
-Return-Path: <linux-kernel+bounces-811493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 883EEB529ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:29:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AE6B529F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6BDC7A93E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8336858136E
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01A54274B2F;
-	Thu, 11 Sep 2025 07:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5905B26D4D4;
+	Thu, 11 Sep 2025 07:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="i2BTNQNq"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="zgp44XFw"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10A127467B;
-	Thu, 11 Sep 2025 07:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757575717; cv=fail; b=BRSE+DlG6PBzwz0wfTf7qo/bePjed+Tf8N4MR86NQav02kGrAT9PElTDjrWVmgs9nqzJK764FSfpJ/3InC0Q53wkNASsndOIcCEY7XWhheeUw6etG5f0eZ1hSkUFfOZxetjadUqreV1znQFG9DW0G2hUOhewqJpYHzOkSlEYEQY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757575717; c=relaxed/simple;
-	bh=JOtDIo4jVwkuRkQNSx+seuu/sRSVaWbHm44YQuSAHQc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=L+mf/6DA2fKo1usqma24as8nLQJdf7wsDRZhbD148EbQFTsY1UvKhZbAvv+SLqYes78HfOtZPjAICvcqtF/1Oza48No3s9KQgh79C5eeSscS42lSuB3rM1LKlYtNqHDSccGVJXQ7fnDIhe6l6x2E2JRb7RNCVLK+vBiI2ObXkyg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=i2BTNQNq; arc=fail smtp.client-ip=40.107.220.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E7HUTdq7KwIqxqKjlvwXsMHNwRj4JDU1md6X5eNcQqoHYs3WAuCCyHCk063Yt3AtOQCUYu4PU68U6GOXCss7X/QfA2H3sZrxbwlgJq7+wQt5JRFqgl8htAZciIk5lAR6YRjlSHm8EowUkIefuIt1pkHJBDSebWc0rrT+dGItWiDlrH+surELvgU7s93IX30ZUKuEhDSVAmrpAxPIMloVollvA2yjsEHLIQecu9NArubzVyV5h9jfW6TZbKIQKREFq6ffdkInwSmy5G8hCsLAbKqsMHK8PicQV2nVHWltKbZB5I+5W+Y/RttEb2wofcMhvNIyCTHLvY7Wuit219Ggmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2DN51fWwkZ0BzktN8t0oKatmLADdpIg1n5KeuTj1rmo=;
- b=GSC/B66ct+zi3Zp5bpP7bQ/rLffpYFtzvf12e5sd77ePdV15kzNcIa11hUzm1QmHI/lhZx+y/Hl3cUPo2t8ui3rJvdSMNluWbWMHq9XgElO+tUBgP5XB+cSkeEpew+NpTDLQTolvrpmkC4hcjg5yUMCMgFjlx9GJtTsRN4oAupGCnPczgrK9/XfkGRMinS802xjrZ/0aynwcXrOPbz5JHqJfF3KQwWhkpspsywL40Sj9DYDYyewnpd/fvm6VkzHbdzhh3uJyu1wtqTEUxOsL/FwWXxthk/8LHO7u9z+A7Gcd55zGbEhY/oIQum7wS3SjI9xyr8HC9oCAgUbq9vvHGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=lunn.ch smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2DN51fWwkZ0BzktN8t0oKatmLADdpIg1n5KeuTj1rmo=;
- b=i2BTNQNqXQpVk5qGW7JmiSFn7HkH5msioErGVoDcXpjlYIWYd4V0jYTXEZyuO82RnI/o8kyztmPzoi9KG6DQRMgs9spZEPsRfCsLDH3M6XVgSrNpzJkHhRX19xUvEleP9YQktzxGJahyPEK9gv34S63ku6kHWoHIfoYtVLZ1dt8=
-Received: from DM6PR04CA0023.namprd04.prod.outlook.com (2603:10b6:5:334::28)
- by CH3PR12MB8188.namprd12.prod.outlook.com (2603:10b6:610:120::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 07:28:31 +0000
-Received: from DS3PEPF000099DA.namprd04.prod.outlook.com
- (2603:10b6:5:334:cafe::14) by DM6PR04CA0023.outlook.office365.com
- (2603:10b6:5:334::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.16 via Frontend Transport; Thu,
- 11 Sep 2025 07:28:31 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS3PEPF000099DA.mail.protection.outlook.com (10.167.17.11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Thu, 11 Sep 2025 07:28:30 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Thu, 11 Sep
- 2025 00:28:30 -0700
-Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 11 Sep
- 2025 02:28:29 -0500
-Received: from xhdsuragupt40.xilinx.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 11 Sep 2025 00:28:25 -0700
-From: Suraj Gupta <suraj.gupta2@amd.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <michal.simek@amd.com>,
-	<sean.anderson@linux.dev>, <radhey.shyam.pandey@amd.com>, <horms@kernel.org>
-CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <harini.katakam@amd.com>
-Subject: [PATCH net-next 2/2] net: xilinx: axienet: Add inline comment for stats_lock mutex definition
-Date: Thu, 11 Sep 2025 12:58:15 +0530
-Message-ID: <20250911072815.3119843-3-suraj.gupta2@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250911072815.3119843-1-suraj.gupta2@amd.com>
-References: <20250911072815.3119843-1-suraj.gupta2@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521FC26C38D
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757575781; cv=none; b=T2DZ8ixbHeFkz0gPpAE4awMckCmyxDhyETTEAfPZ0uw5jFj+ImAgmimLPuO2lPt/Zl4Whx+9ywCoELnKuD+dYwyrR3teJ+0B5FqJhMOzSYsygT3QeeOIaHZdZde+ne1NJZLJkNLgBpPPEqImTno1mNp8PY9FtQ0ljYXAtpadikY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757575781; c=relaxed/simple;
+	bh=dzyPDAyBY3iE453hKGZWh2GhozhS+rLJS+JK8T73SRs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L/D1fnzEO+rmuGvcLvU0u5Dtnbskl5LUVi9OpBkDfEPWvFnDf9pl4ft7O8w/VReomI4IUvpVXakRaDYVq+Ct5X7j5DAEynDA2vcXSk5vvmB8+T8OqtI717sfdGYe3Zr/SbxK5MzncdbhBgsNtxVXS5jVi7svcKHooGwma8/MAfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=zgp44XFw; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-251ace3e7caso5134625ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:29:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1757575777; x=1758180577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D81Vt79I/BTOBBePW6+0X1oh6zDyKaYVMRC1TVaQyRM=;
+        b=zgp44XFwPbkb7o2cKpnE2r7Xs7lyjr3cY0QI3HrjgdAMbh33t/+5pXXQkW2WYVI5k4
+         gh9OK4ITqPQEKt272Qe5ZGfLR1PhrTkWsnMwPRx9vexHj3RpxsXU6/oWTg3QH12gPJd6
+         dq9lK3cBKwbcf2ypExkbHjSOxcRvzRuTcFPWLJZ21iUtqgYS22oPWVB9vl8UXiyVQInD
+         MlcHyJKYUXz7hr9V4wKVU3sRkvF6h8HgWlfPLLWFJb1OCPkYruVQNudDBIzLwkwNBAi6
+         9Oh57zk/RWXKrzNKhXLii6F4JOjfsMqdG9ETPmPx71gVAwGkHkmKGHAQHgzh2XUo+25j
+         ZJqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757575777; x=1758180577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D81Vt79I/BTOBBePW6+0X1oh6zDyKaYVMRC1TVaQyRM=;
+        b=BnRrOZ0apQueMII9HB8ly8bSgTzTbZzTxXi1uWNxBtCD/BkBjbktioaSD8BIpQ5PfQ
+         hrl+TkeBGBLexv9xvgxOz4Tg82fc2mR3y3pKu2yXsalwanEwmHRNAF7cmj8/d7j6roYW
+         Qb1Q1Gn8BnrKbz+UL19AakrsOLXuHl4+ou5TN1+R+cbfveIXVROPenBYs7Et1Bu6tyI+
+         EridWpkbpxRUwTDoIpCQQ3oEcVMjnaJpn2nqsq6f2lJ4QJN0r4gQvA705QKcxM88NoEw
+         qQYlJozGE9NXBvBfLx8m6alsNiu8SCMtw6EnvL5CJnlvaiMPIom1GHfGIogT9qSu1mrc
+         NgXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUNrAs75C2zsjdB+eG3Wgm5G9bMakpQOeIo5Z0WG/paQBryMv8aIqkNmvJQVdGPken7GIGy10wJY+NSG7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMjGLYJkAuPu0C8Hh0uJQqS/adRYLVFwjRzSO3V7CL8F6Y/q10
+	Yhrs2ksgKb2EG/P1vMonpd1MZ/NY/Ex5OVV2p/UZsxL2VGUXzaO/mXyptroZ0RS6DwE=
+X-Gm-Gg: ASbGncvu3xx/FA5eGmgYhLy0T+Qv5RIoU8UFIwMmlISV8Jx0KsCgGfJZwwKcGLwCO9H
+	U3UVxdw8MKr6JpEs7S5BhE6Yr9+P9yjFAanAk5Tz+AAmn44PfUS8/hZ1ZXUG0qtNQcde6txFpN2
+	7W9C9wJpD5cDvnQEzXKSh2TVdx5AHQ03t6QQvwnAXCyMNExzxvND05zh4YRb/HFu9rfEJorqRa2
+	e1gbS9RyNafdav7TLAGFlBbPOk3C4cFI4MpPW//QSrRD8A61DRoJG0mshx68JxT/HWIRU4qCJF7
+	vP4Wbvv1F1VMVqn/5f3ALGT+Uf91Ott0L3FYp6WOGQHX2cjHTTQEdVXZEATonQdkRGhsyiincUs
+	48s8H5BtLUNslYxKWxzrbt6k8a9og4r8Uu45vYP0Ki5BfZgslT2hkAKScAQ==
+X-Google-Smtp-Source: AGHT+IHO7xlf6/5dPDqWynFAANB+M0UuBkmme6pcsf85zd3+cmkflA/c+A0enwc+u10nZW1Fv/oP5w==
+X-Received: by 2002:a17:903:1111:b0:251:3d1c:81f4 with SMTP id d9443c01a7336-25173bbbab1mr288649825ad.54.1757575777526;
+        Thu, 11 Sep 2025 00:29:37 -0700 (PDT)
+Received: from wu-Pro-E500-G6-WS720T.. ([2001:288:7001:2703:7811:c085:c184:85be])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c37293ef1sm9838395ad.41.2025.09.11.00.29.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 00:29:36 -0700 (PDT)
+From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+To: kbusch@kernel.org,
+	axboe@kernel.dk,
+	hch@lst.de,
+	sagi@grimberg.me,
+	xiubli@redhat.com,
+	idryomov@gmail.com,
+	ebiggers@kernel.org,
+	tytso@mit.edu,
+	jaegeuk@kernel.org,
+	akpm@linux-foundation.org
+Cc: visitorckw@gmail.com,
+	home7438072@gmail.com,
+	409411716@gms.tku.edu.tw,
+	linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	ceph-devel@vger.kernel.org,
+	linux-fscrypt@vger.kernel.org
+Subject: [PATCH v2 0/5] lib/base64: add generic encoder/decoder, migrate users
+Date: Thu, 11 Sep 2025 15:29:25 +0800
+Message-Id: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,84 +99,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB05.amd.com: suraj.gupta2@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099DA:EE_|CH3PR12MB8188:EE_
-X-MS-Office365-Filtering-Correlation-Id: b5dcefda-9731-4675-050c-08ddf104cec9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|7416014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+M4yv1Mj+BU0Lnf4yR/ROsa0k3PXuRgaAd6kkMkDuF7W4zwNGiUkS8RS5lvt?=
- =?us-ascii?Q?5y81OM6LoTQ0hGIfmT9NDUQU05Km/y+IyvKKyIDVsgtLYHnEoprqHB6SryIb?=
- =?us-ascii?Q?EySse0xbnR7F3+VL1wPpPKZo0ekGkNoGP+Ic18QGC9rCLR4bv6GbIw1g8mlU?=
- =?us-ascii?Q?qXGXrxvjXfthxppqh4y+eBe+YNkzhFtWNg4S92Y0TS+C4Yn2Ji50j2PFu5m+?=
- =?us-ascii?Q?N9tEkTfpttbofFpo/+bJ/31pV4Yz5cLkdzQwejuqZpFS9lKih+XFBf1FP83t?=
- =?us-ascii?Q?lFzu4GBLfzBq4oyzOlZzUuacz4RFZKhtwcwYXQ3IwcyNeo2g62QuiNhtfEYf?=
- =?us-ascii?Q?3Z+DAT1fyS8PgcOh1VwtFsjmmaTDO5efRf7s/QLSsHczaINkzAqC5yTCwjGQ?=
- =?us-ascii?Q?F4YCF7Jq1wnzyzRzFpMKoZOtF8lJkXe4S4x+2Vf8YBHF8Uj3KRHrfZ/272r0?=
- =?us-ascii?Q?BPPZUNjP8/LqLIg7/1mfbi31HtbDGVabOLpd0IxEFcSQL0NTCTVwcGL0jKqg?=
- =?us-ascii?Q?4wumDmWgtgncrvJeBbdA0dcLO2N3A6XI7iUiTCL8WEnPfZySKkxzsAxaol/M?=
- =?us-ascii?Q?EtPQConV37UP8Z0pMbpnV+PPJ5GiQyAneLDshwCVnGC0VdGyuoO/0fWREx4A?=
- =?us-ascii?Q?ps+1gAgjm5O316MXyIPeLs8eIF1mFohaqaPyE2E74/LM0BXwhGW0/Za5B5ae?=
- =?us-ascii?Q?5FnNfyBrqFkRhg5XaByqBNCeiB2sD76Y54hORq+iajMBBFyLc555AKQbr9K0?=
- =?us-ascii?Q?BZ/cFHPYYSqLRyEAt5wjRYOcOiAvio7Ei4bVwD2iHS4MXJiE7C7/SS+bD1Uk?=
- =?us-ascii?Q?7GwAFwUydw65gO0vHRoDYc6veZDomabtZMqIeADsat74BI5adJAP7vz2dFse?=
- =?us-ascii?Q?AW9bnaKGT0JF7op0ztz/mY8tRVaRdGntY1pCEjMOhkhMrY+HexKGGePurK62?=
- =?us-ascii?Q?o9Z8n5Yvy39Pm2OBok08d472LIE5ANT0FOq5+XPKpg+4l9Hjm53EN3rKoeLF?=
- =?us-ascii?Q?Fb+Xw7ILZJzvX7dBB6frelMKMoxlly4bSN+Ked39yjlX1VAvVHlUuPOHpP8E?=
- =?us-ascii?Q?Yif3oEOEDzRZqvc9RTA8iVqc98d6nHn6F4mJ1i6GtNNUp7Dcjs9lIxsFmN+q?=
- =?us-ascii?Q?axfsS3EO1LnRprjiJUFk5QzlI0sIE9T7sws8isNqicib2/O4ifULCBwhY543?=
- =?us-ascii?Q?G/wfeFdFtL+crxuXglNA5ke4FS5MECeCpGlZtVXfGr+6wHqQxb65vBKGrYJg?=
- =?us-ascii?Q?QXnolJwej6ESTedI89Fj0FxXMSSmj3HPquGkryFr2aA2/zaUm/pN3qW5t4mR?=
- =?us-ascii?Q?zySMi2LJYCMihD8Eds0qYOQGCjI7hyvqv3Y0eI4m0/CryybDb1FO/7HjkUbx?=
- =?us-ascii?Q?EgFGj+7UsfftW4xXqAJt4zyi+7aSkdHg1WzNuYbmdI2rKsQj1GZh4Y/GjbK0?=
- =?us-ascii?Q?Q934ImKcKGeBnRIJywsjchAgXy/adYrgCBOoiAHR68jGBZei4FJsbKac/7jZ?=
- =?us-ascii?Q?05GsjaLA8ikxN7hQhu6yWYCkrvr/drxA0s+K?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(7416014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 07:28:30.7115
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5dcefda-9731-4675-050c-08ddf104cec9
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099DA.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8188
 
-Add inline comment to document the purpose of the stats_lock mutex in
-the axienet_local structure. This mutex protects the hw_stats_seqcount
-sequence counter used for hardware statistics synchronization.
+This series introduces a generic, customizable Base64 encoder/decoder to
+the kernel library, eliminating duplicated implementations and delivering
+significant performance improvements.
 
-Fixes checkpatch warning:
-CHECK: struct mutex definition without comment
+The new helpers support a caller-supplied 64-character table and optional
+'=' padding, covering existing variants such as base64url (fscrypt) and
+Ceph's custom alphabet. As part of this series, both fscrypt and Ceph are
+migrated to the generic helpers, removing their local routines while
+preserving their specific formats.
 
-Signed-off-by: Suraj Gupta <suraj.gupta2@amd.com>
+On the encoder side, the implementation operates on 3-byte input blocks
+mapped directly to 4 output symbols, avoiding bit-by-bit streaming. This
+reduces shifts, masks, and loop overhead, achieving up to ~2.7x speedup
+over previous implementations while remaining fully RFC 4648-compatible.
+
+On the decoder side, optimizations replace strchr()-based lookups with a
+direct mapping table. Together with stricter RFC 4648 validation, this
+yields a ~12-15x improvement in decode throughput.
+
+Overall, the series improves maintainability, correctness, and
+performance of Base64 handling across the kernel.
+
+Note:
+  - The included KUnit patch provides correctness and performance
+    comparison tests to help reviewers validate the improvements. All
+    tests pass locally on x86_64 (KTAP: pass:3 fail:0 skip:0). Benchmark
+    numbers are informational only and do not gate the tests.
+  - Updates nvme-auth call sites to the new API.
+
+Thanks,
+Guan-Chun Wu
+
 ---
- drivers/net/ethernet/xilinx/xilinx_axienet.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-index 5ff742103beb..99b9c27bbd60 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
-@@ -598,7 +598,7 @@ struct axienet_local {
- 
- 	u64 hw_stat_base[STAT_COUNT];
- 	u32 hw_last_counter[STAT_COUNT];
--	seqcount_mutex_t hw_stats_seqcount;
-+	seqcount_mutex_t hw_stats_seqcount; /* Lock for hardware statistics */
- 	struct mutex stats_lock;
- 	struct delayed_work stats_work;
- 	bool reset_in_progress;
+v1 -> v2:
+  - Add a KUnit test suite for lib/base64:
+      * correctness tests (multiple alphabets, with/without padding)
+      * simple microbenchmark for informational performance comparison
+  - Rework encoder/decoder:
+      * encoder: generalize to a caller-provided 64-character table and
+        optional '=' padding
+      * decoder: optimize and extend to generic tables
+  - fscrypt: migrate from local base64url helpers to generic lib/base64
+  - ceph: migrate from local base64 helpers to generic lib/base64
+
+---
+
+Guan-Chun Wu (4):
+  lib/base64: rework encoder/decoder with customizable support and
+    update nvme-auth
+  lib: add KUnit tests for base64 encoding/decoding
+  fscrypt: replace local base64url helpers with generic lib/base64
+    helpers
+  ceph: replace local base64 encode/decode with generic lib/base64
+    helpers
+
+Kuan-Wei Chiu (1):
+  lib/base64: Replace strchr() for better performance
+
+ drivers/nvme/common/auth.c |   7 +-
+ fs/ceph/crypto.c           |  53 +-------
+ fs/ceph/crypto.h           |   6 +-
+ fs/ceph/dir.c              |   5 +-
+ fs/ceph/inode.c            |   2 +-
+ fs/crypto/fname.c          |  86 +------------
+ include/linux/base64.h     |   4 +-
+ lib/Kconfig.debug          |  19 ++-
+ lib/base64.c               | 239 ++++++++++++++++++++++++++++++-------
+ lib/tests/Makefile         |   1 +
+ lib/tests/base64_kunit.c   | 230 +++++++++++++++++++++++++++++++++++
+ 11 files changed, 466 insertions(+), 186 deletions(-)
+ create mode 100644 lib/tests/base64_kunit.c
+
 -- 
-2.25.1
+2.34.1
 
 
