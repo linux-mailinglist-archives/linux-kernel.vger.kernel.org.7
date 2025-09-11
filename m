@@ -1,151 +1,124 @@
-Return-Path: <linux-kernel+bounces-811855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A610B52EAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:37:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E299FB52EA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E5FAA840F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:36:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8B316B2F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2C5530F812;
-	Thu, 11 Sep 2025 10:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A9E258CD9;
+	Thu, 11 Sep 2025 10:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sPbD/j+G"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="tj3JYN6Y"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE0C3112DB
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 516AC266EF1
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757586746; cv=none; b=rDZfzamPIKBsVdthuXWalReRNKkuHnvlB/GOcW9ZHbH2BGIRo3tbxoSPKEIqYMO20R99q05Oq7tdlIkkQqFI04eVykvCoYPTovUpiwW+leJdfhDbefUFIn1VMjckpavbVLGmdxvjLK91gmb0Qo/KxOhFCaCXKdewJMQetutFVZU=
+	t=1757586914; cv=none; b=Xl4hVNbfxra0KaUKkGvBU0deVV0rs/EWR41i9/ZLrBMaijde5Rhcny6/A4UJ2s5JeKY2/y5IBdBYEcPWVE9KX2LFPDJhbXUiUHvtBtsmHWsRWLL179IsRmxi0AogvZOLlJ8aH6tAlsXFCf1gL11RQdopyqQogqWoI5DIonddkYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757586746; c=relaxed/simple;
-	bh=AfzBOkfw/f+2HpXW9nRIV2Am+WTp1lRBGmzAonEDKng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=euPF2HfZqj5iaDSgv/vG7Wx65uXb+kZCbz9W/dq1mzpFLwzXwyYaCltNWeDKuGYUr8OX7PxRndUgqrDlZujvdzPisN8Ocu9sQCvKgASpPFyjXb1KBV+if+NVqzzDxQ0pcdFVEP59NmNWDl/Io7m+LGZYrlrqdlx6tylD+nHU+Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sPbD/j+G; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-ea3c9376d90so500413276.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:32:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757586743; x=1758191543; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4ZOsSgcttRMvxWFSgVRWx9LXQHTbGG8yJSj2/0idLs=;
-        b=sPbD/j+GrXua7SyQ7s/2a1wNSlaLGwJNK+AI6A65uVSFOMOcy/wfCBh86QkKIRo4p+
-         f4ONOMHKEVHSHl85WBJOkqmEegYJXNCkdaod5nkX0OxKQysCmO3HafpeUzZSLYrPDXDm
-         NE4YZwpghcd4+/1Q60oLxfYne/xgGnfCvWup/+ivYvg7ZI45HBlbHHSYmWxyLY2ARGBw
-         qZvnrCeEywXqGnCmG+EySkdSwhs0ZijdO3r/yQlAdHydtpq64/EKw0cnicAwLl04j/PC
-         ygeKv3MTvTyyktGHnUl6YfsAB3zjt6DZ2sBCrMbhlY4emPGSSnRIzyUrs4wON9ali+4v
-         LqIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757586743; x=1758191543;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c4ZOsSgcttRMvxWFSgVRWx9LXQHTbGG8yJSj2/0idLs=;
-        b=WrEfVwktbSgHnG0DcSy9AYe8lUB+rUMxmRkVagCJV57qv0Qn0XEGiFsyfXCwMCqjb1
-         Av0hNXf/BtZbWeGWDRa2eVlbUii3fAGZglwXt5K6uBCX+ukYWQXXTnKp06CUTDz/O8PC
-         GJP2uERNf24gTWoDYu6ukMzX1uHUa950CyMPCSjt+dhv4ELqu/BV8XiVrRNf/UsNyuxT
-         EuIrxenCZmNpeM3mmeclfyd4KW+EGA5GHUge701wNl/lA/KhMVQGFGChTHcTkl86qlxA
-         THdRn3jsh4iBUDuZsyg0NgZL/BVrCHDLbjZEGYj3S2T8TceAgFNBErSiaoNSZhsDq6rj
-         aBiA==
-X-Forwarded-Encrypted: i=1; AJvYcCX98U0+NFLAtYZ3AXgIKxdIZT0ljakVfCWdS/dV5PwLLOxlDTuOcLhdjsBtCMD5uDqmLSMSU/tXz/GKwUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi4pPbfLa9GjvZsy4lu7nrkOdgB5xCAj6im0YMKlnUXvfcCC5g
-	tygU9bs1kv2IszNYLHqlrfCSB6D69FlvLuIe8kXTS2JU14jFNbM3xMEBT9Iy06HsUbzjjhS93aS
-	xOZs8QF8I0zCdLepAyh1mO7ieamoI04TpIJW9QwIU2w==
-X-Gm-Gg: ASbGncssZIK5LSJZ/iCoPJsxB6jXUp9/XL8HbjvEpKmkuO3XF8QcB7EPDPFFe7NPnQN
-	KOrV4Y0jtztoMGjxNOg9/ZHjmeq2QKhhdPAjDRNUL90WElCSnK/6g2O7kmxhIRnLJv35asTe2xH
-	MOkI4uEV5d7Kzy1/jrthvk19Im3HDRKyRt+PODDH53ILU/cJB0M+YB/GeCuYaxMqcgiEDNveHL8
-	FYeRN4ChrSx6ri4VjU=
-X-Google-Smtp-Source: AGHT+IF6/FMvfkM2t/XH6c5AXnqivQugM2HMLBN1/u9XexbnBojnOfBcCiOm0kb7ITvQxJ9JRgM1J9hGYF+YRqPfZm4=
-X-Received: by 2002:a25:ab45:0:b0:e97:398:43a with SMTP id 3f1490d57ef6-ea3ca7088f6mr1978662276.19.1757586743140;
- Thu, 11 Sep 2025 03:32:23 -0700 (PDT)
+	s=arc-20240116; t=1757586914; c=relaxed/simple;
+	bh=hvOZY8Zm8Xu9d/QPkVVnky/0m0Z0DyGiA59b6hOBpMo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Tt+2vfa0kXhLJUtKRkh7SqqHO8/IHrgR75uHR5m/hg7Z9P9/i0ZuD/ZEJSuKHaZsv9Cw5iJpA4UkokTGVBJdto9qB4G1W1fVFYnZqf6Ic7bV1VDla7Bh8TofFIf7CiwRYJryh+I5BegEy2oQR5wlqlYeV8Ai/zbCLDahQLI1YOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=tj3JYN6Y; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=hvOZY8Zm8Xu9d/QPkVVnky/0m0Z0DyGiA59b6hOBpMo=;
+	t=1757586912; x=1758796512; b=tj3JYN6YHRH0MymbPL4Tz6dJN5222c4AsV4I9Zj6CPVZ14w
+	lmj2Dvx9Bm+FvuMAN9Z6jhImzxIfCGhf3fo+NqR6eG5KFjKfjh9Ebe6K7u9VFNojRvrzLs43y7h/n
+	tNazFQGZcZzllBNfjg5dD6ImbQizyHjZVA7O1HTvvdXMfsWGcKlDHTYQ7QOklLT3ui+nBUw7/leMD
+	DXA8THqViGl7eRh4VvDPh+b/b3f22bFKYc4sinGCSz6WqXy+pbxbuva6C4aSzbISQ18rrZVo+O5xm
+	Nck5eg/KpO/9U5bnVPKvCf3o2F81KMqg+fK/8Q5tEx0QkSVTpp3u1SWLefviNANA==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.2)
+	(envelope-from <benjamin@sipsolutions.net>)
+	id 1uwedr-0000000F6oE-1dg4;
+	Thu, 11 Sep 2025 12:35:03 +0200
+Message-ID: <263b95a673f92d1436ece3913b134f81eef3355d.camel@sipsolutions.net>
+Subject: Re: [PATCH v2 04/10] um: Turn signals_* into thread-local variables
+From: Benjamin Berg <benjamin@sipsolutions.net>
+To: Johannes Berg <johannes@sipsolutions.net>, Tiwei Bie
+ <tiwei.bie@linux.dev>
+Cc: richard@nod.at, anton.ivanov@cambridgegreys.com, arnd@arndb.de, 
+	linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	tiwei.btw@antgroup.com
+Date: Thu, 11 Sep 2025 12:35:02 +0200
+In-Reply-To: <b1a57068ec7578d20dcb3b28234e4ce7ec216657.camel@sipsolutions.net> (sfid-20250911_114423_984872_A9251D1F)
+References: 
+	<f402a7b5ddfe92a8fbbc1460102cac7b5a5864b5.camel@sipsolutions.net>
+			 <20250911043434.2897892-1-tiwei.bie@linux.dev>
+		 <3c4bc989c4f10609eab699b26e8331bc878c2a0a.camel@sipsolutions.net>
+	 <b1a57068ec7578d20dcb3b28234e4ce7ec216657.camel@sipsolutions.net>
+	 (sfid-20250911_114423_984872_A9251D1F)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909111130.132976-1-ulf.hansson@linaro.org>
- <20250909111130.132976-4-ulf.hansson@linaro.org> <CAMuHMdWB05sQpv0nKgU2NNn4=KAmNCpHhAnz3s15Gopu8FKVkQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdWB05sQpv0nKgU2NNn4=KAmNCpHhAnz3s15Gopu8FKVkQ@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 11 Sep 2025 12:31:47 +0200
-X-Gm-Features: Ac12FXx4q_7O4EKT7jwetBM883Ai-tYxqwF2ULDV_qJob3VYY3KUktShD0zBpHM
-Message-ID: <CAPDyKFrZ4hA0O3PRUJwwetQYsgAt50tPo_hL90epUx1T8kFDEQ@mail.gmail.com>
-Subject: Re: [PATCH 3/5] pmdomain: renesas: rcar-sysc: Don't keep unused PM
- domains powered-on
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	Saravana Kannan <saravanak@google.com>, linux-pm@vger.kernel.org, 
-	Stephen Boyd <sboyd@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Sebin Francis <sebin.francis@ti.com>, 
-	Diederik de Haas <didi.debian@cknow.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-malware-bazaar: not-scanned
 
-On Thu, 11 Sept 2025 at 11:02, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Ulf,
->
-> On Tue, 9 Sept 2025 at 13:11, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > The recent changes to genpd makes a genpd OF provider that is powered-on at
-> > initialization to stay powered-on, until the ->sync_state() callback is
-> > invoked for it.
-> >
-> > This may not happen at all, if we wait for a consumer device to be probed,
-> > leading to wasting energy. There are ways to enforce the ->sync_state()
-> > callback to be invoked, through sysfs or via the probe-defer-timeout, but
-> > none of them in its current form are a good fit for rcar-sysc PM domains.
-> >
-> > Let's therefore opt-out from this behaviour of genpd for now, by using the
-> > GENPD_FLAG_NO_STAY_ON.
-> >
-> > Link: https://lore.kernel.org/all/20250701114733.636510-1-ulf.hansson@linaro.org/
-> > Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
-> > Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->
-> > --- a/drivers/pmdomain/renesas/rcar-sysc.c
-> > +++ b/drivers/pmdomain/renesas/rcar-sysc.c
-> > @@ -241,6 +241,7 @@ static int __init rcar_sysc_pd_setup(struct rcar_sysc_pd *pd)
-> >                 }
-> >         }
-> >
-> > +       genpd->flags |= GENPD_FLAG_NO_STAY_ON;
->
-> So this applies to all PM Domains.  While this doesn't hurt, perhaps it
-> should not be set for always-on domains, and thus moved up, to become
-> an "else" branch in the "if/else if/..."-logic handling always-on
-> domains at the top of the function?
->
-> This applies to rar-gen4-sysc.c, too.
+On Thu, 2025-09-11 at 11:44 +0200, Johannes Berg wrote:
+> On Thu, 2025-09-11 at 09:37 +0200, Benjamin Berg wrote:
+> > Hi,
+> >=20
+> > On Thu, 2025-09-11 at 12:34 +0800, Tiwei Bie wrote:
+> > > On Wed, 10 Sep 2025 14:15:28 +0200, Johannes Berg wrote:
+> > > > On Sun, 2025-08-10 at 13:51 +0800, Tiwei Bie wrote:
+> > > > > From: Tiwei Bie <tiwei.btw@antgroup.com>
+> > > > >=20
+> > > > > Turn signals_enabled, signals_pending and signals_active into
+> > > > > thread-local variables. This enables us to control and track
+> > > > > signals independently on each CPU thread. This is a preparation
+> > > > > for adding SMP support.
+> > > >=20
+> > > > [...]
+> > > >=20
+> > > > > +static __thread int signals_enabled;
+> > > >=20
+> > > > How much glibc infrastructure does __thread rely on? More
+> > > > specifically:
+> > > > Some time ago we had a discussion about building UML as a nolibc
+> > > > binary,
+> > > > what would that mean for the __thread usage here?
+> > >=20
+> > > We would need to parse TLS data (PT_TLS) from the ELF file ourselves
+> > > and properly set up TLS when creating threads using clone().
+> >=20
+> > I guess right now we cannot use PER_CPU variables in these files.
+>=20
+> Maybe? The only thing would be to know which "CPU" we're executing on?
+> getpid() is async signal safe (i.e. you can call it), but there could be
+> better ways of doing this such as setting different signal handler
+> functions in different CPUs.
 
-You have a point, but currently this doesn't really matter. Genpd will
-not power-off always-on-domains no matter whether
-GENPD_FLAG_NO_STAY_ON is set or not.
+There are a number of ways to solve that problem.
 
-The whole purpose from my side was to restore the behaviour we had
-before, for the Reneas PM domains. I tend to think that it's better to
-apply the $subject patch as is - and leave improvements to be made on
-top.
+One way would be to use a signal stack and calculating it from the
+stack pointer. Though I am still considering that we should use the
+tasks stack as the signal stack, in which case we may need to track the
+CPU that a task is executing on.
 
-Thanks a lot for testing and reviewing!
+On 64bit, one could also use the FS/GS registers for per-CPU data. I
+believe the libc uses FS only on 64bit, so we could probably already
+use the GS register to for per-CPU data.
 
-[...]
+So, I am not really worried about this, we probably need a nice
+solution for per-CPU data anyway.
 
-Kind regards
-Uffe
+Benjamin
 
