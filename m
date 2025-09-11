@@ -1,88 +1,166 @@
-Return-Path: <linux-kernel+bounces-811988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6BEB5315F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:48:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB11B53150
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C98EBA847DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725701C86C80
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE0526FA54;
-	Thu, 11 Sep 2025 11:46:28 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53227269CF1;
+	Thu, 11 Sep 2025 11:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="E/lZMM0X"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B822C159A
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE61156230
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757591188; cv=none; b=iqqMQFdgxuTjqU+5I1z1e80+e3iO+XCTHhg1LxgwqI37F6g8Kl/TbmjUcJdIZJuDPDnYAYyVTrBMZMDZcaXYGwk2E7jrnVRMFbs+xH9af0o/d2yK4F2qlcOqorZuId0t8rLlURIZrL4aMeEcb4fWVSyKZwVh2B/fljN26epnEYo=
+	t=1757591203; cv=none; b=WlbJnx0cxB8yswEB5b1jBGz8MdkFSdSOF8KTcLEsEh+7nAUQxySj1Q5slRL9b9A2L2MJau1uuKCe0FKeFx9/GzuDIgKNM1HOrilm/XobLcQsENeWIw7g6iT58iUUCXqKwzl44Bmi9uN1rAAHW61kHd10/haRl5APZR/KCELCyyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757591188; c=relaxed/simple;
-	bh=BVvc6avrlAjX11VUYHd+lCNmi70xw2LgwgE1ts0rerg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eHs7dxHmyguV+Z5dyFKmDF+3NrUHeroj7o/0pHLHUaiVwcHz7bj7Eu/pLrG3gbQwmXoKv7vFyJYaSBJojBRgSenTXHk0+hwPaYxt++TnFGZ90Akivpt35CzC66ul/D1AHmq5+g0T0ZJrTapggevH9FGoXRIaVeIw0AuvfGdD+r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4cMwff2H4wz2VRbB;
-	Thu, 11 Sep 2025 19:43:06 +0800 (CST)
-Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9E7C01402CC;
-	Thu, 11 Sep 2025 19:46:23 +0800 (CST)
-Received: from huawei.com (10.50.165.33) by dggpemf500013.china.huawei.com
- (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
- 2025 19:46:22 +0800
-From: Jinqian Yang <yangjinqian1@huawei.com>
-To: <oliver.upton@linux.dev>, <yuzenghui@huawei.com>, <maz@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <kvmarm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <liuyonglong@huawei.com>,
-	<wangzhou1@hisilicon.com>, <yangjinqian1@huawei.com>
-Subject: [PATCH v3 2/2] KVM: arm64: selftests: Test writes to ID_AA64MMFR1_EL1.{HCX, TWED}
-Date: Thu, 11 Sep 2025 19:46:21 +0800
-Message-ID: <20250911114621.3724469-3-yangjinqian1@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250911114621.3724469-1-yangjinqian1@huawei.com>
-References: <20250911114621.3724469-1-yangjinqian1@huawei.com>
+	s=arc-20240116; t=1757591203; c=relaxed/simple;
+	bh=2/zhgZzgaPD/mTCFbdFXCf7nnj42YtDAgI1OOmlyW9s=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=QjRVaS/zVi0U5r725D7QkYVoy5RrVzDm/G9NZUjK+bVR8yP9VEezN0BWwkXRDIJYQQS7Nq4bNbBGIkhnXg1xHBAU/MYJVMn1Yqt1reE1bpqQdUkDboaEI+5pSoGGSoH9jxHJ6R0YP4xuFUQYyjylTShK3wwPpWrIzeuJio6/EAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=E/lZMM0X; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
- dggpemf500013.china.huawei.com (7.185.36.188)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757591197;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FI5As6jV6efRsnCduCOaP1Bb7ASgnjaj/hqMfvxY/84=;
+	b=E/lZMM0XRRFa1H9rqqCDJs6sjDmx8blI8absB/jr1mW/ERtKK3eDJSjn9Nw4qY/zHK7Mys
+	YVVS1vmHkowP93rzNkYXb5ItWe4b3qjbLYHCzqmKCb6cR0DI5/xJ57o/z8W3nY95p338rj
+	8Qj+K7Sv2WDL1Dh9osCH4AFopIM4rgk=
+Date: Thu, 11 Sep 2025 11:46:36 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Zqiang" <qiang.zhang@linux.dev>
+Message-ID: <1133458227af4b9a7a0cee284502a0643f1fad3f@linux.dev>
+Disposition-Notification-To: qiang.zhang@linux.dev
+X-Confirm-Reading-To: qiang.zhang@linux.dev
+TLS-Required: No
+Subject: Re: [PATCH v2] srcu/tiny: Remove preempt_disable/enable() in
+ srcu_gp_start_if_needed()
+To: paulmck@kernel.org
+Cc: "Joel Fernandes" <joelagnelf@nvidia.com>, frederic@kernel.org,
+ neeraj.upadhyay@kernel.org, boqun.feng@gmail.com, urezki@gmail.com,
+ rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <430d5714-4a00-4a75-b763-34918f8017c3@paulmck-laptop>
+References: <20250909133928.615218-1-qiang.zhang@linux.dev>
+ <4c7d977b-7d09-48e0-9a88-bae93fa5e401@paulmck-laptop>
+ <20250910143620.GA561834@joelbox2>
+ <e5e69dc3-ebd3-47ae-b193-bc4b2de36904@paulmck-laptop>
+ <70fa9fd07e4fe2b1b498109f3450804e731fd7ce@linux.dev>
+ <430d5714-4a00-4a75-b763-34918f8017c3@paulmck-laptop>
+X-Migadu-Flow: FLOW_OUT
 
-Assert that the EL2 features {HCX, TWED} of ID_AA64MMFR1_EL1 are writable
-from userspace. They are only allowed to be downgraded in userspace.
+>=20
+>=20On Thu, Sep 11, 2025 at 12:36:45AM +0000, Zqiang wrote:
+>=20
+>=20>=20
+>=20> On Wed, Sep 10, 2025 at 10:36:20AM -0400, Joel Fernandes wrote:
+> >=20=20
+>=20>  >=20
+>=20>  > [..]
+> >  > > kernel/rcu/srcutiny.c | 4 +---
+> >  > > 1 file changed, 1 insertion(+), 3 deletions(-)
+> >  > >=20
+>=20>  > > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+> >  > > index b52ec45698e8..b2da188133fc 100644
+> >  > > --- a/kernel/rcu/srcutiny.c
+> >  > > +++ b/kernel/rcu/srcutiny.c
+> >  > > @@ -181,10 +181,9 @@ static void srcu_gp_start_if_needed(struct =
+srcu_struct *ssp)
+> >  > > {
+> >  > > unsigned long cookie;
+> >  > >=20
+>=20>  > > - preempt_disable(); // Needed for PREEMPT_LAZY
+> >  > > + lockdep_assert_preemption_disabled();
+> >  >=20
+>=20>  > nit: Do we still want to keep the comment that the expectation o=
+f preemption
+> >  > being disabled is for the LAZY case?
+> >  >=20
+>=20>  Good point, and I do believe that we do. Zqiang, any reason not to
+> >  add this comment back in?
+> >=20=20
+>=20>  in rcu-tree, this commit:
+> >=20=20
+>=20>  (935147775c977 "EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=3Dn k=
+ernels")
+> >=20=20
+>=20>  make preempt disable needed for CONFIG_PREEMPT=3Dy or CONFIG_PREEM=
+PT_LAZY=3Dy
+> >  when the CONFIG_SMP=3Dn. do we need to replace "Needed for PREEMPT_L=
+AZY"
+> >  comments with "Needed for PREEMPT or PREEMPT_LAZY"?
+> >=20
+>=20Good point as well, thank you! And I need to decide whether I should
+> send that patch upstream. Its original purpose was to test PREEMPT_LAZY=
+=3Dy
+> better than could be tested with PREEMPT_LAZY.
+>=20
+>=20Thoughts?
 
-Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
----
- tools/testing/selftests/kvm/arm64/set_id_regs.c | 2 ++
- 1 file changed, 2 insertions(+)
+I will add "Needed for PREEMPT_LAZY" comments, if this commit (935147775c=
+977) is
+send to upstream, will update comments again in the future.
 
-diff --git a/tools/testing/selftests/kvm/arm64/set_id_regs.c b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-index d3bf9204409c..a889550d8aa4 100644
---- a/tools/testing/selftests/kvm/arm64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-@@ -165,7 +165,9 @@ static const struct reg_ftr_bits ftr_id_aa64mmfr0_el1[] = {
- static const struct reg_ftr_bits ftr_id_aa64mmfr1_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR1_EL1, TIDCP1, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR1_EL1, AFP, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR1_EL1, HCX, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR1_EL1, ETS, 0),
-+	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR1_EL1, TWED, 0),
- 	REG_FTR_BITS(FTR_HIGHER_SAFE, ID_AA64MMFR1_EL1, SpecSEI, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR1_EL1, PAN, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR1_EL1, LO, 0),
--- 
-2.33.0
+Thanks
+Zqiang
 
+>=20
+>=20 Thanx, Paul
+>=20
+>=20>=20
+>=20> Thanks
+> >  Zqiang
+> >=20=20
+>=20>=20=20
+>=20>=20=20
+>=20>  Thanx, Paul
+> >=20=20
+>=20>  >=20
+>=20>  > thanks,
+> >  >=20
+>=20>  > - Joel
+> >  >=20
+>=20>  >=20
+>=20>  > > cookie =3D get_state_synchronize_srcu(ssp);
+> >  > > if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
+> >  > > - preempt_enable();
+> >  > > return;
+> >  > > }
+> >  > > WRITE_ONCE(ssp->srcu_idx_max, cookie);
+> >  > > @@ -194,7 +193,6 @@ static void srcu_gp_start_if_needed(struct s=
+rcu_struct *ssp)
+> >  > > else if (list_empty(&ssp->srcu_work.entry))
+> >  > > list_add(&ssp->srcu_work.entry, &srcu_boot_list);
+> >  > > }
+> >  > > - preempt_enable();
+> >  > > }
+> >  > >=20
+>=20>  > > /*
+> >  > > --=20
+>=20>  > > 2.48.1
+> >  > >
+> >  >
+> >
+>
 
