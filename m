@@ -1,155 +1,324 @@
-Return-Path: <linux-kernel+bounces-812912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD73FB53E12
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:49:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757FFB53E17
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 23:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A6333A27DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:49:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61981188D0D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 21:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D538264619;
-	Thu, 11 Sep 2025 21:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BED42C029C;
+	Thu, 11 Sep 2025 21:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rInQ3PUw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpCuGA0s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0D61A01BF
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AD1221FC7;
+	Thu, 11 Sep 2025 21:50:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757627379; cv=none; b=IwN805nxQ0Hkrr/WhBqFMYv/OUGDB/p7rUFtVE4HoTYCxX8yxvGj7UT6+fDvMs+FLfjPf2/Tqoyqx2D+WWaNdvfZytjhHr7cSfzASJs83yVPQYUbDavTKwIUkpQHku0pp4IXVhuaWRJEpjLpdmnvZdQTmvrqVzvJvFELYdftVwc=
+	t=1757627450; cv=none; b=XyGgN4GEASnuIvT1gUeOAv5AEgMZb6mB20SsTSxr5GlPnDsO8iA5EKAkz1EEnUsGZ61WKgsG9oHGK5go8dBaIqxZUBYeAGnvaG1CLqkaSNba4wNGPSH64e9+d4zy3QqFRw3KGgxHgsm5ncPm01s4tCrBsJc6jMvgAiQJ+FIxSSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757627379; c=relaxed/simple;
-	bh=/D/Xv8E0JurW2W7IlCXL/95QDvRbH5Lset71vZtxHSI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cU1qEJr6woEJ3vJjZ7CUS8T/r0yRzIBEDkgU0uWk06+2xjHp50mPoX5XE0mJXn1qUfK/OAav3IJPmdPEhaVsFXmrCoXJy7RsXPx2UOWZKwHdI+c2TPbaeqR87zxx8JG6kuw7p3heHpCTaef4FhFYlCccs4eVdaFH0a28ROTCPlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rInQ3PUw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 296B5C4CEF9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:49:39 +0000 (UTC)
+	s=arc-20240116; t=1757627450; c=relaxed/simple;
+	bh=0xFWuWckeYn7i+UQkHAiDtVNRwOXcCZQjBQISDrUu28=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=inDqght26+hEWzAaTxqRyr0dMZAVswx0Zfmp/C9MYucQ5d4IRaW2XBK4uNKUqw3j5sNOhSc50W4XFR5GnZ2w5u3f1lk12Qc3QWC3Wb9kM0ALsevWHWM1sztsJdhCEb86yrVKIBBopUopdOiOXkupeQAdXCB/BmLDwhM2GyE2jQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpCuGA0s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97945C4CEF1;
+	Thu, 11 Sep 2025 21:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757627379;
-	bh=/D/Xv8E0JurW2W7IlCXL/95QDvRbH5Lset71vZtxHSI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rInQ3PUwyNXW+MgFZCEdsFSe5RegoBqq8Q6qEoq8k61QPzJRKf63vNMTQCuKMBitG
-	 F0mg8ELq4Oja195ce3oFwfJvRfRFnRxCZAv7RTP8ysvHIJYCeTH1eMNqjZ+cv5trUc
-	 6dF6ZlmQ0ymGMW1UBclfjabIUEe15nhHwmOZP2lhSHL5M8fCArOf2qbuKrNOM1MufF
-	 /9hOF/B1qi7sbmrTKoi2MxiBJNHSwvkTrvFWnbEgW/RPoJ2zSmMXnndkm1bKuask0s
-	 +W8hGtPoEoW5ThTZ9/sMmfk0QLc3fIsRxF/SDTgJzZY6blpTrHCoZ0eoIRnfJaFzk5
-	 dUyjMlflOyojQ==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-336ce4a894cso10298591fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:49:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUtNuBdgb+IOBrvSB1bXAmstb5B6uvGHToAYOvznpqd1DKNhyFV5HK04wAp2nimdPgD3KUOAwAYE6qJTGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQpoEkDR3osY0miOuoQmsjS2gccDP5EUIndJ966RBevf/rD4Dl
-	2K3/hbbnbf1YXRv/ldRXmRtPAlb6/grEiVoSMPcZ68d1/dzkfXyocU8FANSdWLtL0F/CBanR3tM
-	Ef6P+wD48PixlCl2wzDyiMAn/of7d9qU=
-X-Google-Smtp-Source: AGHT+IE3V4NFlUV4taKEaI0iS3Wl50Lejbr5Iyyr8M/K1/2ot2Sm01X0VuYU42N/fMoX4s5BFVR9Yy0W1TNqO3SxHS0=
-X-Received: by 2002:a05:651c:23c6:10b0:32a:77a3:877f with SMTP id
- 38308e7fff4ca-3513a13da61mr1372751fa.2.1757627377479; Thu, 11 Sep 2025
- 14:49:37 -0700 (PDT)
+	s=k20201202; t=1757627449;
+	bh=0xFWuWckeYn7i+UQkHAiDtVNRwOXcCZQjBQISDrUu28=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=bpCuGA0soSywcvGUOnM0DKH1nS9egRpSVYcRnBnj2p1mWJSuxIAgYbjRU0nkAiguR
+	 FCDtR9aiwhMZzliJ1PEvIRoEML+Atn4eppdgr+EOPsc9WaNTGQVFkGah67sGdvXxPX
+	 +DCDqiHRq0wJs0l1Kee0nIeGjKOVI5UxX7+0p593tomuUl4i03ckCQOvsHxt/2dxNJ
+	 QLnYbfLwxHBYr9cQlYQsokoiG/eiYx1z2WVO5JfsVhOI2kVVuDRs6Niu/++YiGNL7M
+	 OjAdUodsqIEoPuUPyzpkAZ3WLdj6OSFG1sVkrO+GevbBGcj56i/0eOLfXM2s+G+wIU
+	 EYpSuxIcfR9Lg==
+Date: Thu, 11 Sep 2025 16:50:48 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Devendra K Verma <devendra.verma@amd.com>
+Cc: bhelgaas@google.com, mani@kernel.org, vkoul@kernel.org,
+	dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, michal.simek@amd.com
+Subject: Re: [PATCH v1 1/2] dmaengine: dw-edma: Add AMD MDB Endpoint Support
+Message-ID: <20250911215048.GA1591374@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909080631.2867579-5-ardb+git@google.com> <20250909080631.2867579-7-ardb+git@google.com>
- <2abffe1f-e289-4261-97f0-cfc4cf674fd0@amd.com>
-In-Reply-To: <2abffe1f-e289-4261-97f0-cfc4cf674fd0@amd.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 11 Sep 2025 23:49:26 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEn1cJ7+K+sr1520S3z=7uB6_=xjA5+JF2Q50y_V6zRoA@mail.gmail.com>
-X-Gm-Features: Ac12FXwfIgv2RJat4n8-j6BBgE0ryYB3M8ScaHDiLO3hzqdYbPGBM_c1vsEYQUo
-Message-ID: <CAMj1kXEn1cJ7+K+sr1520S3z=7uB6_=xjA5+JF2Q50y_V6zRoA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/3] x86/efistub: Obtain SEV CC blob address from the stub
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911114451.15947-2-devendra.verma@amd.com>
 
-On Thu, 11 Sept 2025 at 23:27, Tom Lendacky <thomas.lendacky@amd.com> wrote:
->
-> On 9/9/25 03:06, Ard Biesheuvel wrote:
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > The x86 EFI stub no longer boots the core kernel via the traditional
-> > decompressor but jumps straight to it, avoiding all the page fault
-> > handling and other complexity that is entirely unnecessary when booting
-> > via EFI, which guarantees that all system memory is mapped 1:1.
-> >
-> > The SEV startup code in the core kernel expects the address of the CC
-> > blob configuration table in boot_params, so store it there when booting
-> > from EFI with SEV-SNP enabled. This removes the need to call
-> > sev_enable() from the EFI stub.
-> >
-> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > ---
-> >  drivers/firmware/efi/libstub/x86-stub.c | 21 +++++++++++++++-----
-> >  1 file changed, 16 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-> > index 0d05eac7c72b..c4ef645762ec 100644
-> > --- a/drivers/firmware/efi/libstub/x86-stub.c
-> > +++ b/drivers/firmware/efi/libstub/x86-stub.c
-> > @@ -681,17 +681,28 @@ static efi_status_t exit_boot(struct boot_params *boot_params, void *handle)
-> >       return EFI_SUCCESS;
-> >  }
-> >
-> > -static bool have_unsupported_snp_features(void)
-> > +static bool check_snp_features(struct boot_params *bp)
-> >  {
-> > +     u64 status = sev_get_status();
-> >       u64 unsupported;
-> >
-> > -     unsupported = snp_get_unsupported_features(sev_get_status());
-> > +     unsupported = snp_get_unsupported_features(status);
-> >       if (unsupported) {
-> >               efi_err("Unsupported SEV-SNP features detected: 0x%llx\n",
-> >                       unsupported);
-> > -             return true;
-> > +             return false;
-> >       }
-> > -     return false;
-> > +
-> > +     if (status & MSR_AMD64_SEV_SNP_ENABLED) {
-> > +             void *tbl = get_efi_config_table(EFI_CC_BLOB_GUID);
-> > +
-> > +             if (!tbl) {
-> > +                     efi_err("SEV-SNP is enabled but CC blob not found\n");
-> > +                     return false;
-> > +             }
-> > +             bp->cc_blob_address = (u32)(unsigned long)tbl;
->
-> I think we ran into bugs where the cc_blob_address was random data from a
-> boot loader when SNP wasn't active and that's why we always initialize it
-> to 0:
->
-> 4b1c74240757 ("x86/boot: Don't propagate uninitialized boot_params->cc_blob_address")
->
-> So we probably need the same statement that is at the beginning of the
-> decompressor sev_enable() at the very beginning of this function to ensure
-> cc_blob_address is set to zero:
->
->         /*
->          * bp->cc_blob_address should only be set by boot/compressed kernel.
->          * Initialize it to 0 to ensure that uninitialized values from
->          * buggy bootloaders aren't propagated.
->          */
->         if (bp)
->                 bp->cc_blob_address = 0;
->
+On Thu, Sep 11, 2025 at 05:14:50PM +0530, Devendra K Verma wrote:
+> AMD MDB PCIe endpoint support. For AMD specific support
+> added the following
+>   - AMD supported PCIe Device IDs and Vendor ID (Xilinx).
+>   - AMD MDB specific driver data
+>   - AMD MDB specific VSEC capability to retrieve the device DDR
+>     base address.
+> 
+> Signed-off-by: Devendra K Verma <devendra.verma@amd.com>
+> ---
+> Changes in v1:
+> Removed the pci device id from pci_ids.h file.
+> Added the vendor id macro as per the suggested method.
+> Changed the type of the newly added devmem_phys_off variable.
+> Added to logic to assign offsets for LL and data region blocks
+> in case more number of channels are enabled than given in
+> amd_mdb_data struct.
+> ---
+>  drivers/dma/dw-edma/dw-edma-pcie.c | 132 ++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 131 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/dw-edma/dw-edma-pcie.c b/drivers/dma/dw-edma/dw-edma-pcie.c
+> index 3371e0a7..48ecfce 100644
+> --- a/drivers/dma/dw-edma/dw-edma-pcie.c
+> +++ b/drivers/dma/dw-edma/dw-edma-pcie.c
+> @@ -23,6 +23,11 @@
+>  #define DW_PCIE_VSEC_DMA_WR_CH			GENMASK(9, 0)
+>  #define DW_PCIE_VSEC_DMA_RD_CH			GENMASK(25, 16)
+>  
+> +/* AMD MDB specific defines */
+> +#define DW_PCIE_XILINX_MDB_VSEC_ID		0x20
+> +#define PCI_DEVICE_ID_AMD_MDB_B054		0xb054
+> +#define DW_PCIE_AMD_MDB_INVALID_ADDR		(~0ULL)
+> +
+>  #define DW_BLOCK(a, b, c) \
+>  	{ \
+>  		.bar = a, \
+> @@ -50,6 +55,7 @@ struct dw_edma_pcie_data {
+>  	u8				irqs;
+>  	u16				wr_ch_cnt;
+>  	u16				rd_ch_cnt;
+> +	pci_bus_addr_t			devmem_phys_off;
 
-AIUI this was needed for bootloaders like SYSLINUX, which boot in
-pseudo-EFI mode, i.e., not via the EFI stub but with the EFI fields in
-struct boot_params populated. This means zeroing the field in the stub
-is not going to make a difference.
+Based on your previous response, I don't think pci_bus_addr_t is the
+right type.  IIUC devmem_phys_off is not an address that a PCIe
+analyzer would ever see in a TLP.  It sounds like it's the result of
+applying an iATU translation to a PCI bus address.
 
-It doesn't hurt either, so I can find a place to stick this, but I'm
-not convinced we still need this here. Note that GRUB no longer boots
-via the EFI handover protocol (and mainline GRUB never did), and so
-struct boot_params is typically allocated (and wiped) by the EFI stub
-and not taken from the bootloader.
+I'm not sure there's a special type for that, so u64 might be as good
+as anything.
+
+>  };
+>  
+>  static const struct dw_edma_pcie_data snps_edda_data = {
+> @@ -90,6 +96,89 @@ struct dw_edma_pcie_data {
+>  	.rd_ch_cnt			= 2,
+>  };
+>  
+> +static const struct dw_edma_pcie_data amd_mdb_data = {
+> +	/* MDB registers location */
+> +	.rg.bar				= BAR_0,
+> +	.rg.off				= 0x00001000,	/*  4 Kbytes */
+> +	.rg.sz				= 0x00002000,	/*  8 Kbytes */
+> +	/* MDB memory linked list location */
+> +	.ll_wr = {
+> +		/* Channel 0 - BAR 2, offset 0 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00000000, 0x00000800)
+> +		/* Channel 1 - BAR 2, offset 2 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00200000, 0x00000800)
+> +	},
+> +	.ll_rd = {
+> +		/* Channel 0 - BAR 2, offset 4 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00400000, 0x00000800)
+> +		/* Channel 1 - BAR 2, offset 6 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00600000, 0x00000800)
+> +	},
+> +	/* MDB memory data location */
+> +	.dt_wr = {
+> +		/* Channel 0 - BAR 2, offset 8 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00800000, 0x00000800)
+> +		/* Channel 1 - BAR 2, offset 9 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00900000, 0x00000800)
+> +	},
+> +	.dt_rd = {
+> +		/* Channel 0 - BAR 2, offset 10 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00a00000, 0x00000800)
+> +		/* Channel 1 - BAR 2, offset 11 Mbytes, size 2 Kbytes */
+> +		DW_BLOCK(BAR_2, 0x00b00000, 0x00000800)
+> +	},
+> +	/* Other */
+> +	.mf				= EDMA_MF_HDMA_NATIVE,
+> +	.irqs				= 1,
+> +	.wr_ch_cnt			= 2,
+> +	.rd_ch_cnt			= 2,
+> +};
+> +
+> +static void dw_edma_assign_chan_data(struct dw_edma_pcie_data *pdata,
+> +				     enum pci_barno bar)
+> +{
+> +	u16 i;
+> +	off_t off = 0, offsz = 0x200000;
+> +	size_t size = 0x800;
+> +	u16 wr_ch = pdata->wr_ch_cnt;
+> +	u16 rd_ch = pdata->rd_ch_cnt;
+> +
+> +	if (wr_ch <= 2 || rd_ch <= 2)
+> +		return;
+> +
+> +	/* Write channel LL region */
+> +	for (i = 0; i < wr_ch; i++) {
+> +		pdata->ll_wr[i].bar = bar;
+> +		pdata->ll_wr[i].off = off;
+> +		pdata->ll_wr[i].sz = size;
+> +		off += offsz + size;
+> +	}
+> +
+> +	/* Read channel LL region */
+> +	for (i = 0; i < rd_ch; i++) {
+> +		pdata->ll_rd[i].bar = bar;
+> +		pdata->ll_rd[i].off = off;
+> +		pdata->ll_rd[i].sz = size;
+> +		off += offsz + size;
+> +	}
+> +
+> +	/* Write channel data region */
+> +	for (i = 0; i < wr_ch; i++) {
+> +		pdata->dt_wr[i].bar = bar;
+> +		pdata->dt_wr[i].off = off;
+> +		pdata->dt_wr[i].sz = size;
+> +		off += offsz + size;
+> +	}
+> +
+> +	/* Read channel data region */
+> +	for (i = 0; i < rd_ch; i++) {
+> +		pdata->dt_rd[i].bar = bar;
+> +		pdata->dt_rd[i].off = off;
+> +		pdata->dt_rd[i].sz = size;
+> +		off += offsz + size;
+> +	}
+> +}
+> +
+>  static int dw_edma_pcie_irq_vector(struct device *dev, unsigned int nr)
+>  {
+>  	return pci_irq_vector(to_pci_dev(dev), nr);
+> @@ -121,7 +210,11 @@ static void dw_edma_pcie_get_vsec_dma_data(struct pci_dev *pdev,
+>  	u16 vsec;
+>  	u64 off;
+>  
+> -	vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_SYNOPSYS,
+> +	/*
+> +	 * Synopsys and AMD (Xilinx) use the same VSEC ID for the purpose
+> +	 * of map, channel counts, etc.
+> +	 */
+> +	vsec = pci_find_vsec_capability(pdev, pdev->vendor,
+>  					DW_PCIE_VSEC_DMA_ID);
+
+You must validate pdev->vendor first.  Passing pdev->vendor means this
+will find any VSEC with ID 0x6 on any device at all.  For example, you
+could find a VSEC with ID 0x6 on an Intel device where VSEC ID 0x6
+means something completely different.
+
+You have to know what the Vendor ID is before calling
+pci_find_vsec_capability() because otherwise you don't know what the
+VSEC ID means.
+
+The best way to do this would be to use a separate #define for each
+vendor to remove the assumption that each vendor uses the same ID:
+
+  #define DW_PCIE_SYNOPSYS_VSEC_DMA_ID 0x6
+  #define DW_PCIE_XILINX_VSEC_DMA_ID   0x6
+
+  vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_SYNOPSYS,
+                                  DW_PCIE_SYNOPSYS_VSEC_DMA_ID);
+  if (!vsec) {
+    vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_XILINX,
+                                    DW_PCIE_XILINX_VSEC_DMA_ID);
+    if (!vsec)
+      return;
+  }
+
+That way it's clear that this only applies to Synopsys devices and
+Xilinx devices, Synopsys and Xilinx implemented a VSEC with the same
+semantics, and it's just a coincidence that they assigned the same
+VSEC ID.
+
+>  	if (!vsec)
+>  		return;
+> @@ -155,6 +248,24 @@ static void dw_edma_pcie_get_vsec_dma_data(struct pci_dev *pdev,
+>  	off <<= 32;
+>  	off |= val;
+>  	pdata->rg.off = off;
+> +
+> +	/* AMD specific VSEC capability */
+> +	vsec = pci_find_vsec_capability(pdev, pdev->vendor,
+> +					DW_PCIE_XILINX_MDB_VSEC_ID);
+
+Same here.  This will find a VSEC with ID 0x20 on any device from any
+vendor at all.  But you only know what 0x20 means on Xilinx devices,
+so this should be:
+
+  vsec = pci_find_vsec_capability(pdev, PCI_VENDOR_ID_XILINX,
+                                  DW_PCIE_XILINX_MDB_VSEC_ID);
+
+> +	if (!vsec)
+> +		return;
+> +
+> +	pci_read_config_dword(pdev, vsec + PCI_VNDR_HEADER, &val);
+> +	if (PCI_VNDR_HEADER_ID(val) != 0x20 ||
+> +	    PCI_VNDR_HEADER_REV(val) != 0x1)
+> +		return;
+> +
+> +	pci_read_config_dword(pdev, vsec + 0xc, &val);
+> +	off = val;
+> +	pci_read_config_dword(pdev, vsec + 0x8, &val);
+> +	off <<= 32;
+> +	off |= val;
+> +	pdata->devmem_phys_off = off;
+>  }
+>  
+>  static int dw_edma_pcie_probe(struct pci_dev *pdev,
+> @@ -179,6 +290,7 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  	}
+>  
+>  	memcpy(vsec_data, pdata, sizeof(struct dw_edma_pcie_data));
+> +	vsec_data->devmem_phys_off = DW_PCIE_AMD_MDB_INVALID_ADDR;
+>  
+>  	/*
+>  	 * Tries to find if exists a PCIe Vendor-Specific Extended Capability
+> @@ -186,6 +298,22 @@ static int dw_edma_pcie_probe(struct pci_dev *pdev,
+>  	 */
+>  	dw_edma_pcie_get_vsec_dma_data(pdev, vsec_data);
+>  
+> +	if (pdev->vendor == PCI_VENDOR_ID_XILINX) {
+> +		/*
+> +		 * There is no valid address found for the LL memory
+> +		 * space on the device side.
+> +		 */
+> +		if (vsec_data->devmem_phys_off == DW_PCIE_AMD_MDB_INVALID_ADDR)
+> +			return -EINVAL;
+> +
+> +		/*
+> +		 * Configure the channel LL and data blocks if number of
+> +		 * channels enabled in VSEC capability are more than the
+> +		 * channels configured in amd_mdb_data.
+> +		 */
+> +		dw_edma_assign_chan_data(vsec_data, BAR_2);
+> +	}
+> +
+>  	/* Mapping PCI BAR regions */
+>  	mask = BIT(vsec_data->rg.bar);
+>  	for (i = 0; i < vsec_data->wr_ch_cnt; i++) {
+> @@ -367,6 +495,8 @@ static void dw_edma_pcie_remove(struct pci_dev *pdev)
+>  
+>  static const struct pci_device_id dw_edma_pcie_id_table[] = {
+>  	{ PCI_DEVICE_DATA(SYNOPSYS, EDDA, &snps_edda_data) },
+> +	{ PCI_VDEVICE(XILINX, PCI_DEVICE_ID_AMD_MDB_B054),
+> +	  (kernel_ulong_t)&amd_mdb_data },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(pci, dw_edma_pcie_id_table);
+> -- 
+> 1.8.3.1
+> 
 
