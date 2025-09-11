@@ -1,136 +1,132 @@
-Return-Path: <linux-kernel+bounces-812702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6B2B53BA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:37:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D67B53BA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B461566D84
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:37:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E134F3A5D0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3D92DC76C;
-	Thu, 11 Sep 2025 18:37:12 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267B02DC776;
+	Thu, 11 Sep 2025 18:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zE0atjZY"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF512DC762;
-	Thu, 11 Sep 2025 18:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5E12DC769
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757615832; cv=none; b=H/JCSY/2eJ5Sp7amdkzNmnSTXIbnQN1HBnx9jdU28PyAH3TMHuh6GmsRaFxHEBrJ7yKAutaHhUSzN4xFvVIK0kx9Lghd5HssuSRf4nk6HJuGZNiCchC73FvF1je8QlDlOuTlH7y3zVkMDr0kICRRraWLOE8sg2B+4cQI10N14gs=
+	t=1757615927; cv=none; b=luSvMMf6OxlHuOepnFV0UAZvAMuYYJ7gA5gKVlS5ydhm8UwUIWbV3L2oHRXK1rc7ed5jiUtcZ8fZmT1AFglcnuZJvbh72JFL3WlJA3bbVuRws3G5FJ6fe7OEtf1K0l6wtQEtgkijdp5zoqXGu+VTL/Or9ar0G9fUtVGqXA5axD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757615832; c=relaxed/simple;
-	bh=78PSPYBp7Vw4VXblfAAIJKtndDigwrJipsUQNflRbFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l5PUWLg6bNHl3OK0Zp6lGS7dSPEl8zQserhae+4IfMCVcPLWAueN7oPInoVhN5hCgGFOckyfhjo9fs7E0CMYhCdQSu9n78BDQ+1FZB2qO3zYiuEpaHO9P+VwKTPTBZV2nwf6f+f/4mr/9pUsfSmRXMF7S9lg7cy970imiD/eW70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id A2EBFB9CE0;
-	Thu, 11 Sep 2025 18:37:07 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id D590F20029;
-	Thu, 11 Sep 2025 18:37:05 +0000 (UTC)
-Date: Thu, 11 Sep 2025 14:37:58 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vladimir Riabchun <ferr.lambarginio@gmail.com>
-Cc: 20250911104138.2830f60b@gandalf.local.home,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- mark.rutland@arm.com, mhiramat@kernel.org
-Subject: Re: [PATCH] ftrace: Fix softlockup in ftrace_module_enable
-Message-ID: <20250911143758.06ef1230@gandalf.local.home>
-In-Reply-To: <aMMSCQAINWfiDA4L@vova-pc>
-References: <aMLPm__QGrQCwz1t@vova-pc>
-	<20250911104138.2830f60b@gandalf.local.home>
-	<aMMSCQAINWfiDA4L@vova-pc>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757615927; c=relaxed/simple;
+	bh=cyIuzam7bLo5cww7G8I2d/pYlJRYJ9PIWcnedS7TTIQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NULaVEj5zpjuXGam7hBa1zFxX/DaOTHGOv8R9RiDIQQdYtHcXkX6TTuNkPihvmqTQ7kifo8s31D72Vf/NCKbAaGQuIOzxrWQwrubTbvUJs/Onaj7iix7lciYq/cNdJR0i3wzU/EzYqEg2hft2QZNlmWEDsoUrkc2M1C4Of+BA2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zE0atjZY; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-afcb7ae31caso179384066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 11:38:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757615924; x=1758220724; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0CYEVlIhuAwsxdbPBZNCG41bzVEkVebpPHWLaYcA87E=;
+        b=zE0atjZYipn90WxGbLefXt1sY3f137lxUdNoSXyZvR7PxxKVq1V1+dFkwTtjdkWI8n
+         qXYaqVm9D4SrIodxMjUA+87exJqat0Vf912APScavIKFzfFxJRaVF+BcTtbAbGzoKFm0
+         uUnKlcnqhB+aX9b/qaVlvTJotbwKl7aP+ha0rf3ycbWNusinDA52gfU01BdCj3US6d/3
+         5qJ5qD9WRAPOC8D5TI91+Ri2AaBGjxe5suAtVu99mLvq6ZmGcCtH2UFjWQJrwf0yVQz+
+         KBY7qV9ClHW1Ir5VNwKknCGPDd1AaJtV9xyt0BUKa0BWzI6bB2uDRiZr3sPl1Wt1Y9re
+         akpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757615924; x=1758220724;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0CYEVlIhuAwsxdbPBZNCG41bzVEkVebpPHWLaYcA87E=;
+        b=FsCGC52VPVynXCECqLwAd/r5krhQ6OlSdLN+m2X532Rg28OTS0QHPLHDcntah9Mth0
+         YP0vuovilE5m4Fn8blrI34A3bap4W3e46SsNoOb+hskPKj/yQue9ht3KQ1tn8MTBGqif
+         IJ/W8i8pOZLJrtxeGWD2zmx/T3VzElXQZOQRuTj0NK2rGnyr5/IJI8nFPQRaxVJMkGD7
+         P68Y56IKf/DvT/Rn1oFczPliO/EfIwQWXngowu+QP83JMp3ggkJIxHHfnblT3dFcIOoF
+         kzzgVhmBd+guH7lIs0fVOJxiNaVu4FKu/bhMqvN3hBD0EE1FhiaXQszI9iZBDscGm8P/
+         bxkA==
+X-Forwarded-Encrypted: i=1; AJvYcCXicNH0VDs7g+UZeqk91FVI2vMm0WuwWpgURR4vU3Yea2TMWleAwuPz4YheDkc+KVIA/c0E2RDaAuz0dlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTJspm2ZKft+26uNRQUqR2BVCZfmGvISh6AJOZJ3xrW8E2IQ+c
+	Jt9kQLcdckGAchc+IXd7Ki7h2UjTZzw2Q0bYz5ViiLjtSwziR+ZY1a3bgKyZjhnMNWg=
+X-Gm-Gg: ASbGncvYZu3urjKMI1olhS00NZcnAsd4+iFmCDC4a/uPG21QSRzprXquio/xJKuCA3o
+	ITq0T/B6A1HMVc4WHZIBx0kp3z0k2elkEtNPBrgJFneY4dlvSHVc3XuhrlihLvmogUDsK2MY+T/
+	glm/ALBvUwT8ZFHTr8Gf4cpoqizGckRZiKbEtCSI61ZAqdvm5PTqYuq4icGN5NqIkLUpF9It34C
+	N/sAK8GdbGqDpcpQb3cdJx2cIc1aYHkvRzDCfdMjiClPBb1cchAMrY4Ahp3+jtcK2hG0qSIvHnd
+	KZN6kmov8ahXlLvUL0NzloMuAoxu7vPNx/mzJWRCuEJhPVgAY6qehTu2C/aUhHMeaS03KpVyXi0
+	Q/Zvu0COKo5gyATqOrlm4tiZf7bqKVSZ26A==
+X-Google-Smtp-Source: AGHT+IHuyID7DG1/KskiWhcy6TIsIYPl8tY5FAE3l8iO5JPheONXetmpMP+YXEkW+CxLttaXcg5qKA==
+X-Received: by 2002:a17:907:da4:b0:b04:2cc2:e49c with SMTP id a640c23a62f3a-b07c35bbcbbmr17109266b.19.1757615924030;
+        Thu, 11 Sep 2025 11:38:44 -0700 (PDT)
+Received: from [127.0.0.2] ([2a02:2454:ff21:41:725:1e09:bed1:27ea])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b31715fdsm183999166b.49.2025.09.11.11.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 11:38:43 -0700 (PDT)
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+Subject: [PATCH 0/4] arm64: dts: qcom: x1e80100: Add IRIS video codec
+Date: Thu, 11 Sep 2025 20:38:23 +0200
+Message-Id: <20250911-x1e-iris-dt-v1-0-63caf0fd202c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: D590F20029
-X-Stat-Signature: aumk7ryxc6e36gnf6qha7t834wxwtrxk
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1//mr01h/8HlkzE4HpKeuqeKk3kRoWaMiM=
-X-HE-Tag: 1757615825-527974
-X-HE-Meta: U2FsdGVkX19fp3y95D3lHfuz0cy8HtozpYuuHScxzdrsP9gCxnjN+9IpjFA7Qnb/UJeNAZpSgbzUPL0GuxW/vbNHDJUEby4UKP5q2p5g+3DUem99bBi0PC/NL+BLRu5jCiDSPJuN4U7JYjsJhlCIm/a9YG5ynWQTLmsZ8rJEhZ5J6uHtW2Hw3fESCPF6zOxCTTYnmbYurjnys+xBGdncosaGpFH370F59ezlSH5GLVfq1E85gzqsDPZTnv8DOgVbYS+blYyf5jPGY4Lwv6TD7umswWmHfjK5LQ1i9gKsHQl4kSawDMDFd0DxTTAHzAmas552Bjfh3hKeOFspyu2+d5LDrk5Gv1IP
+X-B4-Tracking: v=1; b=H4sIACAXw2gC/x2MQQqAIBAAvyJ7TljNDvaV6GC61V4sNEIQ/550n
+ IGZCpkSU4ZZVEj0cuYrdlCDAH+6eJDk0Bk06gktWllUV4mzDI+kDY01To3oHfTiTrRz+W/L2to
+ HgGADEl0AAAA=
+X-Change-ID: 20250909-x1e-iris-dt-eb0494a130ca
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>, 
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
 
-On Thu, 11 Sep 2025 20:16:41 +0200
-Vladimir Riabchun <ferr.lambarginio@gmail.com> wrote:
+Add the necessary definitions to enable the IRIS video codec for
+accelerated video decoding on the X1E CRD and Lenovo ThinkPad T14s. The
+additions are largely copied as-is from sm8550.dtsi with some minor changes
+necessary for X1E.
 
-> On Thu, Sep 11, 2025 at 10:41:38AM -0400, Steven Rostedt wrote:
-> > On Thu, 11 Sep 2025 15:33:15 +0200
-> > Vladimir Riabchun <ferr.lambarginio@gmail.com> wrote:
-> >   
-> > > A soft lockup was observed when loading amdgpu module,  
-> > 
-> > I'd like to see more about that soft lockup.  
-> Sure, here is a call trace:
+The PAS interface used to boot the IRIS firmware is not functional in EL2.
+The code to start it without using PAS exists already in the Venus driver,
+but was not ported over to IRIS yet. Discussions how to model the
+video-firmware IOMMU are still ongoing, so disable IRIS in x1-el2.dtso for
+now to avoid regressions when running in EL2.
 
-Thanks, because this helps out a lot in understanding this!
+Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+---
+Stephan Gerhold (4):
+      arm64: dts: qcom: x1e80100: Add IRIS video codec
+      arm64: dts: qcom: x1-el2: Disable IRIS for now
+      arm64: dts: qcom: x1e80100-crd: Enable IRIS video codec
+      arm64: dts: qcom: x1e78100-lenovo-thinkpad-t14s: Enable IRIS
 
+ arch/arm64/boot/dts/qcom/x1-el2.dtso               |  5 ++
+ .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dtsi    |  5 ++
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts          |  4 +
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 87 ++++++++++++++++++++++
+ 4 files changed, 101 insertions(+)
+---
+base-commit: 8f21d9da46702c4d6951ba60ca8a05f42870fe8f
+change-id: 20250909-x1e-iris-dt-eb0494a130ca
 
-> [  397.861521] [      C1]  <TASK>
-> [  397.861562] [      C1]  ? asm_sysvec_apic_timer_interrupt+0x1b/0x20
-> [  397.861663] [      C1]  ? find_kallsyms_symbol+0x1c5/0x350
-> [  397.861739] [      C1]  ? __asan_load4+0x35/0xd0
-> [  397.861806] [      C1]  find_kallsyms_symbol+0x1c5/0x350
-> [  397.861879] [      C1]  ? mod_hdcp_hdcp2_dp_transition+0x1140/0x1140 [amdgpu]
-> [  397.864007] [      C1]  ? __pfx_CalculatePrefetchSchedule.isra.0+0x10/0x10 [amdgpu]
-> [  397.868240] [      C1]  ? __pfx_dc_edid_parser_recv_cea_ack+0x10/0x10 [amdgpu]
-> [  397.872439] [      C1]  ? __pfx_dc_edid_parser_recv_cea_ack+0x10/0x10 [amdgpu]
-> [  397.876605] [      C1]  module_address_lookup+0x7f/0xd0
-> [  397.878686] [      C1]  ? __pfx_dc_edid_parser_recv_cea_ack+0x10/0x10 [amdgpu]
-> [  397.882809] [      C1]  kallsyms_lookup_buildid+0xf8/0x190
-> [  397.884811] [      C1]  kallsyms_lookup+0x14/0x30
-> [  397.886734] [      C1]  test_for_valid_rec+0xcf/0x160
-
-As you pointed out below, the test_for_valid_rec() looks to be the culprit.
-Most likely because of the kallsyms lookup it's doing. Which requires a
-search. It's binary, but still quite expensive when executed over 10
-thousand times.
-
-
-> > How big is the amdgpu driver? How many functions does it have?
-> > 
-> >  # grep amdgpu /sys/kernel/tracing/available_filter_functions | wc -l  
-> 14334 functions, hefty one.
-
-And why this is a problem.
-
-> > 
-> > And I'm guessing that this is only an issue when ftrace is enabled:
-> > 
-> > 		if (ftrace_start_up && cnt) {
-> > 			int failed = __ftrace_replace_code(rec, 1);
-> > 			if (failed) {
-> > 				ftrace_bug(failed, rec);
-> > 				goto out_loop;
-> > 			}
-> > 		}
-> > 
-> > As that could slow things down.  
-> Call trace shows that kernel got stuck in test_for_valid_rec. It calls
-> kallsyms_lookup, which then calls module_address_lookup,
-> bpf_address_lookup and ftrace_mod_address_lookup. All of these guys hold
-> RCU read lock or disable preemption and may consume some time (mostly
-> because of debug kernel checks, but still there shouldn't be a panic).
-
-Agreed. The kallsyms lookup is the problem
-> 
-> Probably it may worth moving cond_resched under within_module check, but
-> before test_for_valid_rec call.
-
-Hmm, do modules even have weak functions? If they don't then that test is
-useless.
-
--- Steve
+Best regards,
+-- 
+Stephan Gerhold <stephan.gerhold@linaro.org>
 
 
