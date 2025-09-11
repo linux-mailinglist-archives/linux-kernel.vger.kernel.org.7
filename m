@@ -1,78 +1,83 @@
-Return-Path: <linux-kernel+bounces-812834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0311AB53D45
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:47:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8421B53D60
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 22:57:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FB641C8034B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2B971B27F3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B032D24A0;
-	Thu, 11 Sep 2025 20:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3412D9796;
+	Thu, 11 Sep 2025 20:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="nDousAk5"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="cSQfZyXH"
+Received: from mx0a-002e3701.pphosted.com (mx0a-002e3701.pphosted.com [148.163.147.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2532DC775;
-	Thu, 11 Sep 2025 20:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993DF27A454;
+	Thu, 11 Sep 2025 20:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.147.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757623614; cv=none; b=F2LckAbINULk8prR9l/veNvnOZAl6HtF+PAY8otMW0ftfX3LvQzkKqe1TuLRK4KUnaDYps5NspmoypUKyadPFWi/Cgffc11I8IT9j8KO0PXZxl/m0OECSDummh2jz/zBnu/ocbV2h1IKfrAXuKCVboA+2ehRf/k9/4yPl5WkSvg=
+	t=1757624262; cv=none; b=qTC8KQlYOcz/J69+d4CQrRIXvdpZMqqFmTZVFk78xGIlNEvpvUi/c9tNBLG853xy+CO9uND3PcAIMhiDe/ncgFeAL9CXQWqNoj59lQV6E/i8jLS6V8hJmvK5kb8OYswbzaxZM6qjvHYnDsj0LrpmMOwdNs1U4wn2Z4oNefIBesk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757623614; c=relaxed/simple;
-	bh=1isUSRl5kbt6ekppmtJi/xrvSMndt1O8ZLVTprW8rA8=;
+	s=arc-20240116; t=1757624262; c=relaxed/simple;
+	bh=bSsPa9XEyW8z/su++j6tQWWmZoPbZWL/uldiO/VimDE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZgsGxhx3lO2CcVh+8eC/4zfzXT+3Vqsty1WnCsoG4Xefk1/BpGrAPN22YOCT91wPrflbFlx3f6e+P6b9oprvQRnkLftaTspU4fqJ5yVJ91Y1RkMknHy0NQWNVAcT5erBdeRcfcH0mTdfws17vP6EPX1sX9UDf2Gl0jZVo3SDfpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=nDousAk5; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=0YBafjYQdiIF2lXwZ2cx5VVofHoYSwzD6di7O2ITSYc=; b=nDousAk5HazAghqDWfgpvEpO5x
-	RLwZkEqcCOA+PvSA5gFNirWB3ViumIJgXrbbfEmzi7/SPhW0MmMX7bTy+Y0WTB4D00j+1KNl51XeQ
-	C4H0o/Le39tpc23S1YG9PhU5IQ7vi98pTtkOTYXFmpTsFaw+J4nKv+y6CBAFwbMMwq1JMZy62opvI
-	qNpTUR48Dzy0Zl8nL0Q7F4UB8VakYvcJDX4S6IT81bsjPS/qUtitEo2biOXLweEQln2OOJsy23ZHw
-	9fSMsh4+i4FM6Rj9PjI7vCk2RQI1eRiYZ0h8Bg+CyassYU5IFYVToE4cbeGnjTTO7S3D48JmyBT10
-	L1ZGQ4dw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:32794)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uwoBl-000000003aE-3osZ;
-	Thu, 11 Sep 2025 21:46:42 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uwoBg-000000002g5-04Xg;
-	Thu, 11 Sep 2025 21:46:36 +0100
-Date: Thu, 11 Sep 2025 21:46:35 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
- PM to avoid MDIO runtime PM wakeups
-Message-ID: <aMM1K_bkk4clt5WD@shell.armlinux.org.uk>
-References: <20250908112619.2900723-1-o.rempel@pengutronix.de>
- <CGME20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94@eucas1p2.samsung.com>
- <b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com>
- <aMLfGPIpWKwZszrY@shell.armlinux.org.uk>
- <20250911075513.1d90f8b0@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ld77nKsQP3eIAmXFVSo6G/iAwE7765ERfIFlrABO4kAB/uWn+jV5GMnQhyOse6JFYL8KXl62RSiwheuS35anfJ5yLP0ezlKOsyA1BZndOO+4c01kDgHC3rHCp3a35AIQG66SIvHKLN5fpka0HHFmlVMNVAwN2q7vT/41xen2nd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=cSQfZyXH; arc=none smtp.client-ip=148.163.147.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
+Received: from pps.filterd (m0150241.ppops.net [127.0.0.1])
+	by mx0a-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BFINgC007212;
+	Thu, 11 Sep 2025 20:56:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pps0720; bh=J0ID9F64YdLXnEJhVLSOMHkdqi
+	2X6q7O8dZhA/oVjxI=; b=cSQfZyXHw97+qAk5GLrVBgwewFdz885Cteb9qF6kZC
+	cl0B/IlTfIYZlYVAQL80a6ViC3RMb7LwXyVxWpyeUQW2ZjFRH89J7JwZPy7swLK8
+	bfJdi8MluU5znLPe19N6KRAHsTlRVjl9hc2fwjmchGWfXeicxabPj8CO4JJ95aRV
+	D+zFfqrdQw7/J2i1jmRyxhcTzHsKKP8MGvlaz9Bm3J2WYbe576VycumLp3m3y7wL
+	cmgGV0a94bE4YbFXaAsE3e48TESw/6B8qRdJ7MM59bacGyVJ3D/ggJqoVo67Ocpm
+	Hq8fo4AFsLG/i0MW3vGgTuCEWf3aENH+ykwjbcc2Wq1Q==
+Received: from p1lg14879.it.hpe.com ([16.230.97.200])
+	by mx0a-002e3701.pphosted.com (PPS) with ESMTPS id 493p9xfpef-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 20:56:34 +0000 (GMT)
+Received: from p1lg14886.dc01.its.hpecorp.net (unknown [10.119.18.237])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by p1lg14879.it.hpe.com (Postfix) with ESMTPS id 206FD132D3;
+	Thu, 11 Sep 2025 20:56:32 +0000 (UTC)
+Received: from HPE-5CG20646DK.localdomain (unknown [16.231.227.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by p1lg14886.dc01.its.hpecorp.net (Postfix) with ESMTPS id 708208118D1;
+	Thu, 11 Sep 2025 20:56:28 +0000 (UTC)
+Date: Thu, 11 Sep 2025 15:56:26 -0500
+From: Kyle Meyer <kyle.meyer@hpe.com>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+        corbet@lwn.net, linmiaohe@huawei.com, shuah@kernel.org,
+        Liam.Howlett@oracle.com, bp@alien8.de, hannes@cmpxchg.org,
+        jack@suse.cz, jane.chu@oracle.com, jiaqiyan@google.com,
+        joel.granados@kernel.org, laoar.shao@gmail.com,
+        lorenzo.stoakes@oracle.com, mclapinski@google.com, mhocko@suse.com,
+        nao.horiguchi@gmail.com, osalvador@suse.de, rafael.j.wysocki@intel.com,
+        rppt@kernel.org, russ.anderson@hpe.com, shawn.fan@intel.com,
+        surenb@google.com, vbabka@suse.cz, linux-acpi@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] mm/memory-failure: Disable soft offline for HugeTLB
+ pages by default
+Message-ID: <aMM3elPmG1MdUNrJ@hpe.com>
+References: <aMGkAI3zKlVsO0S2@hpe.com>
+ <749511a8-7c57-4f97-9e49-8ebe8befe9aa@redhat.com>
+ <aMMNVA9EXXHYvmKH@agluck-desk3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,38 +86,90 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250911075513.1d90f8b0@kernel.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <aMMNVA9EXXHYvmKH@agluck-desk3>
+X-Proofpoint-ORIG-GUID: Ethw6hHnLfczx3VAEZBXc-08gscPDyGN
+X-Proofpoint-GUID: Ethw6hHnLfczx3VAEZBXc-08gscPDyGN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDAyNiBTYWx0ZWRfXyI2+SdrKv+fr
+ J09MeyCR3Ioip+tv+DaUAAlfVfIk22LrAWmlkzH/QV5q4UAWPgfHNFOl4+ub//1Adee37pHPb4b
+ 764zMHo5pXXt1CcHaobNJvfMfwFmUUV/nH/D82/1aTPO6jutWA9MvX8an2UNfGrfTzL9DSk8XRW
+ WdZT5V1erw/xxDMTunGIMHe9T2MS+FKEBZCOwsxI4yn8gC3OcGhueHg0cu+lqePY9/N+YX888Hk
+ 3sUbWytd+nDRfz/JfHwjdEa8Usy/cqfyazlCUsltcgMUe3O7HboftW1ebSfQdBIJZ49UPQ+CDK2
+ gt4/eks53CHvrIBOELJSndItTN1QUeIx7bgqpZ1GHhLx5QsJwOy/K+Q1x9blJwm1hm8x2x3EJNQ
+ nmqPYiXa
+X-Authority-Analysis: v=2.4 cv=Ke/SsRYD c=1 sm=1 tr=0 ts=68c33782 cx=c_pps
+ a=5jkVtQsCUlC8zk5UhkBgHg==:117 a=5jkVtQsCUlC8zk5UhkBgHg==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=e0XSXhz86abGffj2R7MA:9
+ a=CjuIK1q_8ugA:10
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-11_03,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 priorityscore=1501 malwarescore=0 adultscore=0 clxscore=1015
+ phishscore=0 bulkscore=0 impostorscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509110026
 
-On Thu, Sep 11, 2025 at 07:55:13AM -0700, Jakub Kicinski wrote:
-> On Thu, 11 Sep 2025 15:39:20 +0100 Russell King (Oracle) wrote:
-> > I'm not surprised. I'm guessing phylib is using polled mode, and
-> > removing the suspend/resume handling likely means that it's at the
-> > mercy of the timings of the phylib state machine running (which is
-> > what is complaining here) vs the MDIO bus being available for use.
+On Thu, Sep 11, 2025 at 10:56:36AM -0700, Luck, Tony wrote:
+> On Thu, Sep 11, 2025 at 10:46:10AM +0200, David Hildenbrand wrote:
+> > On 10.09.25 18:15, Kyle Meyer wrote:
+> > > Soft offlining a HugeTLB page reduces the available HugeTLB page pool.
+> > > Since HugeTLB pages are preallocated, reducing the available HugeTLB
+> > > page pool can cause allocation failures.
+> > > 
+> > > /proc/sys/vm/enable_soft_offline provides a sysctl interface to
+> > > disable/enable soft offline:
+> > > 
+> > > 0 - Soft offline is disabled.
+> > > 1 - Soft offline is enabled.
+> > > 
+> > > The current sysctl interface does not distinguish between HugeTLB pages
+> > > and other page types.
+> > > 
+> > > Disable soft offline for HugeTLB pages by default (1) and extend the
+> > > sysctl interface to preserve existing behavior (2):
+> > > 
+> > > 0 - Soft offline is disabled.
+> > > 1 - Soft offline is enabled (excluding HugeTLB pages).
+> > > 2 - Soft offline is enabled (including HugeTLB pages).
+> > > 
+> > > Update documentation for the sysctl interface, reference the sysctl
+> > > interface in the sysfs ABI documentation, and update HugeTLB soft
+> > > offline selftests.
 > > 
-> > Given that this happens, I'm convinced that the original patch is
-> > the wrong approach. The driver needs the phylink suspend/resume
-> > calls to shutdown and restart phylib polling, and the resume call
-> > needs to be placed in such a location that the MDIO bus is already
-> > accessible.
+> > I'm sure you spotted that the documentation for
+> > "/sys/devices/system/memory/soft_offline_pag" resides under "testing".
 > 
-> We keep having issues with rtnl_lock taken from resume.
-> Honestly, I'm not sure anyone has found a good solution, yet.
-> Mostly people just don't implement runtime PM.
+> But that is only one of several places in the kernel that
+> feed into the page offline code.
 > 
-> If we were able to pass optional context to suspend/resume
-> we could implement conditional locking. We'd lose a lot of
-> self-respect but it'd make fixing such bugs easier..
+> This patch was motivated by the GHES path where BIOS indicates
+> a corrected error threshold was exceeded. There's also the
+> drivers/ras/cec.c path where Linux does it's own threshold
+> counting.
+> > 
+> > If your read about MADV_SOFT_OFFLINE in the man page it clearly says:
+> > 
+> > "This feature is intended for testing of memory error-handling code; it is
+> > available  only if the kernel was configured with CONFIG_MEMORY_FAILURE."
+> 
+> Agreed that this all depends on CONFIG_MEMORY_FAILURE ... so if any
+> part of the flow is compiled in when that is "=n" then some
+> changes are needed to fix that.
+> 
+> > 
+> > So I'm sorry to say: I miss why we should add all this complexity to make a
+> > feature used for testing soft-offlining work differently for hugetlb folios
+> > -- with a testing interface.
 
-Normal drivers have the option of separate callbacks for runtime PM
-vs system suspend/resume states. It seems USB doesn't, just munging
-everything into one pair of suspend and resume ops without any way
-of telling them apart. I suggest that is part of the problem here.
+I would also like to note that the current sysctl interface already affects
+testing interfaces. Please see the following commit:
 
-However, I'm not a USB expert, so...
+56374430c5dfc ("mm/memory-failure: userspace controls soft-offlining pages")
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+The sysctl interface should probably be mentioned in
+sysfs-memory-page-offline with or without this patch.
+
+Thanks,
+Kyle Meyer
 
