@@ -1,193 +1,287 @@
-Return-Path: <linux-kernel+bounces-811484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF248B529C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:22:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32603B529C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BF01B27E13
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:22:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D710C58025D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D7C26B942;
-	Thu, 11 Sep 2025 07:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B5826C386;
+	Thu, 11 Sep 2025 07:23:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BP0dghcv"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Obw30WnE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5FE1553A3
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4B226B0BE
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757575342; cv=none; b=YtcPR47WSEGg+pXKR6H0YmPln/hN6or4bM5FpfSSue3uGPxqq4+71SfKpMYczmOOJuShtY+Kx++uf1uP0u2KncRfGtkV40m72rv7xh14uq9Jq8/UUopPdXzVBRjcZ4yxV39CXTtEv/KRz7SuQw31aGMXqmrDs92+V9ss48qcaTA=
+	t=1757575397; cv=none; b=BPC64DhnfVURSocaHd2cO4gQ56p3dmNhe/zs+UsrsCGo7SV04/cpsTmCUqL2mTu67uzhADWZYoHnqqjBYwe7mfs/qUD1cVzNMDxSTcxcUwVhQ9GsGbwlT2ApYhBpTOiY/bHcE5JI/jpVftZk4kmK1ZQVZEDTlrFqpxTpjlfJh4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757575342; c=relaxed/simple;
-	bh=MLuilW7Tf9Dno/7YBATXESI/1zTrs/0ck7+Glf2DvQc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=Cf+n4OBuajpqlpMGNiwfBLc/qdr9mk1yGzQ2Pn0tokjG+1DJtWaIp5JjCNA6/9GKzumfYX6ZwUyYks+oZErPAH7tOY4EmGR1E9R35T1DwXUM6ZDVTiF56JTMiKWCk4LG7sMXDrOED5wq0XBPdIpTcvcm02El4VCqUMbkXK3yvyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BP0dghcv; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 906364E40C43;
-	Thu, 11 Sep 2025 07:22:18 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5C391606BB;
-	Thu, 11 Sep 2025 07:22:18 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 96128102F2882;
-	Thu, 11 Sep 2025 09:21:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757575334; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ymIxetTWocC2/T6DcUZLUqfBudVyTjFDiSDhCwPR4IA=;
-	b=BP0dghcvk2HqRbfKQS3O7ySBOrhO100W9n5AqVrR5PeKtATxfQw0Fg34/tSl45/GNCqkB5
-	4YDn3TU+esRYKH/S7xLXUPXNvWIRKopAHuqEnYhzTqOUVbkXD55NDWUtJs2pjGQaJesftt
-	4UyhJvGAks1d4dAvYXnQCbrr99n+3bCVBOl1UC9ecNzEoDjWRsI8lWbZQqgdjHlJEaAybm
-	wVUUwXjiHFuXkBHSHLPSqCRtPjtCqbF4BeojkAze1q8uA62pIfkwavllHdygrvVrct1wTr
-	rgMfHHXK5dOG9RdqE9rA5g4ojdhyInfMVW5tD3BRfmQ2KzRRrXlhsvcwN2UlPA==
+	s=arc-20240116; t=1757575397; c=relaxed/simple;
+	bh=CaWSZrgm1M8YqD1WcirOTRnj0ww0foEmKSgKyjrm5nU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dERZdAzBeaqLuq91B+eXuLBeql3cM7ih7cYt54RCIszu2eU11qpwBvBvBmmvKoj0pZRh87Cs1hcz7NMj4BZfOkA9VwOkJZxfpYjnsbRWtDuP82kbvbIPHsb28ZUSKqDYLN62mKo0lrb6y6UYlzMFYFyToBE2OhyAGHkjTxB2LC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Obw30WnE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757575395;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jvuTVWNZDyZ0h579CaXBpKTLbC1d5EjG/JgIw3vY0w8=;
+	b=Obw30WnEwafIrF2H9Qp7VZkArNKvV5qbGTVxPMd2ZGTFZd1gAq/hDJPoZqz5wDsrJ93cUg
+	ujNDhKP1U4fEhfcMpSJtg2686bHvU3DijDkW/nXoIoOQcBesviiI80T9zPrctyqHvtQx4l
+	l4pON/65rf1fWkn14KDK1I1MrVovgfI=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-625-_j9gDVGhOqqMnUc1xnhP2A-1; Thu,
+ 11 Sep 2025 03:23:09 -0400
+X-MC-Unique: _j9gDVGhOqqMnUc1xnhP2A-1
+X-Mimecast-MFC-AGG-ID: _j9gDVGhOqqMnUc1xnhP2A_1757575388
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC686180057C;
+	Thu, 11 Sep 2025 07:23:07 +0000 (UTC)
+Received: from p16v.luc.cera.cz (unknown [10.45.225.144])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9652F19560B1;
+	Thu, 11 Sep 2025 07:23:03 +0000 (UTC)
+From: Ivan Vecera <ivecera@redhat.com>
+To: netdev@vger.kernel.org
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Prathosh Satish <Prathosh.Satish@microchip.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next v2] dpll: zl3073x: Allow to use custom phase measure averaging factor
+Date: Thu, 11 Sep 2025 09:23:01 +0200
+Message-ID: <20250911072302.527024-1-ivecera@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 11 Sep 2025 09:21:34 +0200
-Message-Id: <DCPSFZLWJLG7.1B4NISSDKLWBQ@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v2 1/5] net: cadence: macb: Set upper 32bits of DMA ring
- buffer
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-rpi-kernel@lists.infradead.org>, "Broadcom internal kernel review
- list" <bcm-kernel-feedback-list@broadcom.com>, "Andrew Lunn"
- <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, "Paolo Abeni" <pabeni@redhat.com>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Florian Fainelli"
- <florian.fainelli@broadcom.com>, "Andrea della Porta"
- <andrea.porta@suse.com>, "Claudiu Beznea" <claudiu.beznea@tuxon.dev>, "Phil
- Elwell" <phil@raspberrypi.com>, "Jonathan Bell" <jonathan@raspberrypi.com>,
- "Dave Stevenson" <dave.stevenson@raspberrypi.com>,
- <stable@vger.kernel.org>, "Andrew Lunn" <andrew@lunn.ch>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Nicolas Ferre"
- <nicolas.ferre@microchip.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Stanimir Varbanov" <svarbanov@suse.de>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250822093440.53941-1-svarbanov@suse.de>
- <20250822093440.53941-2-svarbanov@suse.de>
- <20250825165310.64027275@kernel.org>
- <3bccf773-abd6-4ade-a1c5-99f2a773b723@microchip.com>
- <DCPA2BR78XM8.HWKZZ8WQF3S8@bootlin.com>
-In-Reply-To: <DCPA2BR78XM8.HWKZZ8WQF3S8@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed Sep 10, 2025 at 6:57 PM CEST, Th=C3=A9o Lebrun wrote:
-> Hello Nicolas, Jakub, Stanimir,
->
-> On Tue Aug 26, 2025 at 11:14 AM CEST, Nicolas Ferre wrote:
->> On 26/08/2025 at 01:53, Jakub Kicinski wrote:
->>> On Fri, 22 Aug 2025 12:34:36 +0300 Stanimir Varbanov wrote:
->>>> In case of rx queue reset and 64bit capable hardware, set the upper
->>>> 32bits of DMA ring buffer address.
->>>>
->>>> Cc: stable@vger.kernel.org # v4.6+
->>>> Fixes: 9ba723b081a2 ("net: macb: remove BUG_ON() and reset the queue t=
-o handle RX errors")
->>>> Credits-to: Phil Elwell <phil@raspberrypi.com>
->>>> Credits-to: Jonathan Bell <jonathan@raspberrypi.com>
->>>> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
->>>> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
->>>=20
->>>> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/et=
-hernet/cadence/macb_main.c
->>>> index ce95fad8cedd..36717e7e5811 100644
->>>> --- a/drivers/net/ethernet/cadence/macb_main.c
->>>> +++ b/drivers/net/ethernet/cadence/macb_main.c
->>>> @@ -1634,7 +1634,11 @@ static int macb_rx(struct macb_queue *queue, st=
-ruct napi_struct *napi,
->>>>                macb_writel(bp, NCR, ctrl & ~MACB_BIT(RE));
->>>>
->>>>                macb_init_rx_ring(queue);
->>>> -             queue_writel(queue, RBQP, queue->rx_ring_dma);
->>>> +             queue_writel(queue, RBQP, lower_32_bits(queue->rx_ring_d=
-ma));
->>>> +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
->>>> +             if (bp->hw_dma_cap & HW_DMA_CAP_64B)
->>>> +                     macb_writel(bp, RBQPH, upper_32_bits(queue->rx_r=
-ing_dma));
->>>> +#endif
->>>>
->>>>                macb_writel(bp, NCR, ctrl | MACB_BIT(RE));
->>>>
->>>=20
->>> Looks like a subset of Th=C3=A9o Lebrun's work:
->>> https://lore.kernel.org/all/20250820-macb-fixes-v4-0-23c399429164@bootl=
-in.com/
->>> let's wait for his patches to get merged instead?
->>
->> Yes, we can certainly wait. As RBOPH changes by Th=C3=A9o are key, they =
-will=20
->> probably remove the need for this fix altogether: but I count on you=20
->> Stanimir to monitor that (as I don't have a 64 bit capable platform at=
-=20
->> hand).
->
-> I when looking for where this patch came from.
-> Commit in the raspberrypi downstream kernel:
-> https://github.com/raspberrypi/linux/commit/e45c98decbb16e58a79c7ec6fbe43=
-74320e814f1
->
-> It is somewhat unreadable; the only part that seems related is the:
->
->> net: macb: Several patches for RP1
->> 64-bit RX fix
->
->  - Is there any MACB hardware (not GEM) that uses 64-bit DMA
->    descriptors? What platforms? RPi maybe?
->
->  - Assuming such a platform exists, the next question is why does
->    macb_rx() need to reinit RBQPH/0x04D4. It reinits RBQP/0x0018
->    because it is the buffer pointer and increments as buffers get used.
->
->    To reinit RBQPH would be for the case of the increment overflowing
->    into the upper 32-bits. Sounds like a reasonable fix (for a really
->    rare bug) if that hardware actually exists.
->
->    This wouldn't be needed on GEM because RBQPH is shared across queues.
->    So of course RBQPH would not increment with the buffer pointer.
->
-> If this patch is needed (does HW exist?), then my series doesn't address
-> it. I can take the patch in a potential V6 if you want. V5 got posted
-> today [0].
->
-> [0]: https://lore.kernel.org/lkml/20250910-macb-fixes-v5-0-f413a3601ce4@b=
-ootlin.com/
+The DPLL phase measurement block uses an exponential moving average,
+calculated using the following equation:
 
-Coming back after some sleep: my series does address this.
-It updates macb_alloc_consistent() so allocs look like:
+                       2^N - 1                1
+curr_avg = prev_avg * --------- + new_val * -----
+                         2^N                 2^N
 
-   size =3D bp->num_queues * macb_tx_ring_size_per_queue(bp);
-   tx =3D dma_alloc_coherent(dev, size, &tx_dma, GFP_KERNEL);
-   if (!tx || upper_32_bits(tx_dma) !=3D upper_32_bits(tx_dma + size - 1))
-      goto out_err;
+Where curr_avg is phase offset reported by the firmware to the driver,
+prev_avg is previous averaged value and new_val is currently measured
+value for particular reference.
 
-   // same for rx
+New measurements are taken approximately 40 Hz or at the frequency of
+the reference (whichever is lower).
 
-In the MACB (!GEM) case, bp->num_queues=3D1 so we will check that the
-start and end of the DMA descriptor ring buffer have the same upper
-32-bits.
+The driver currently uses the averaging factor N=2 which prioritizes
+a fast response time to track dynamic changes in the phase. But for
+applications requiring a very stable and precise reading of the average
+phase offset, and where rapid changes are not expected, a higher factor
+would be appropriate.
 
-That implies macb_rx() doesn't have to reinit RBQPH/0x04D4.
+Add devlink device parameter phase_offset_avg_factor to allow a user
+set tune the averaging factor via devlink interface.
 
-Thanks,
+Reviewed-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Tested-by: Prathosh Satish <Prathosh.Satish@microchip.com>
+Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+---
+v2:
+* optimized conversion between factor value and register value
+* more detailed parameter documentation
+---
+ Documentation/networking/devlink/zl3073x.rst | 17 ++++++
+ drivers/dpll/zl3073x/core.c                  |  6 +-
+ drivers/dpll/zl3073x/core.h                  |  8 ++-
+ drivers/dpll/zl3073x/devlink.c               | 61 ++++++++++++++++++++
+ 4 files changed, 89 insertions(+), 3 deletions(-)
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/Documentation/networking/devlink/zl3073x.rst b/Documentation/networking/devlink/zl3073x.rst
+index 4b6cfaf386433..1988721bdfa8b 100644
+--- a/Documentation/networking/devlink/zl3073x.rst
++++ b/Documentation/networking/devlink/zl3073x.rst
+@@ -20,6 +20,23 @@ Parameters
+      - driverinit
+      - Set the clock ID that is used by the driver for registering DPLL devices
+        and pins.
++   * - ``phase_offset_avg_factor``
++     - runtime
++     - Set the factor for the exponential moving average used for phase offset
++       reporting. The DPLL phase measurement block applies this value in the
++       following formula:
++
++       .. math::
++          curr\_avg = prev\_avg * \frac{2^N-1}{2^N} + new\_val * \frac{1}{2^N}
++
++       where `curr_avg` is the current phase offset, `prev_avg` is the previous
++       phase offset, and `new_val` is currently measured phase offset.
++
++       New measurements are taken approximately 40 Hz or at the frequency of
++       the reference, whichever is lower.
++
++       The default value of this parameter is 2, and the supported range of
++       values is <0, 15>, where a value 0 effectively disables averaging.
+ 
+ Info versions
+ =============
+diff --git a/drivers/dpll/zl3073x/core.c b/drivers/dpll/zl3073x/core.c
+index 7ebcfc5ec1f09..4f6395372f0eb 100644
+--- a/drivers/dpll/zl3073x/core.c
++++ b/drivers/dpll/zl3073x/core.c
+@@ -915,7 +915,8 @@ zl3073x_dev_phase_meas_setup(struct zl3073x_dev *zldev, int num_channels)
+ 
+ 	/* Setup phase measurement averaging factor */
+ 	dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
+-	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, 3);
++	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR,
++				     zldev->phase_avg_factor);
+ 
+ 	/* Enable DPLL measurement block */
+ 	dpll_meas_ctrl |= ZL_DPLL_MEAS_CTRL_EN;
+@@ -991,6 +992,9 @@ int zl3073x_dev_probe(struct zl3073x_dev *zldev,
+ 	 */
+ 	zldev->clock_id = get_random_u64();
+ 
++	/* Default phase offset averaging factor */
++	zldev->phase_avg_factor = 3;
++
+ 	/* Initialize mutex for operations where multiple reads, writes
+ 	 * and/or polls are required to be done atomically.
+ 	 */
+diff --git a/drivers/dpll/zl3073x/core.h b/drivers/dpll/zl3073x/core.h
+index 71af2c8001109..289d09fcc5c5a 100644
+--- a/drivers/dpll/zl3073x/core.h
++++ b/drivers/dpll/zl3073x/core.h
+@@ -67,19 +67,19 @@ struct zl3073x_synth {
+  * @dev: pointer to device
+  * @regmap: regmap to access device registers
+  * @multiop_lock: to serialize multiple register operations
+- * @clock_id: clock id of the device
+  * @ref: array of input references' invariants
+  * @out: array of outs' invariants
+  * @synth: array of synths' invariants
+  * @dplls: list of DPLLs
+  * @kworker: thread for periodic work
+  * @work: periodic work
++ * @clock_id: clock id of the device
++ * @phase_avg_factor: phase offset measurement averaging factor
+  */
+ struct zl3073x_dev {
+ 	struct device		*dev;
+ 	struct regmap		*regmap;
+ 	struct mutex		multiop_lock;
+-	u64			clock_id;
+ 
+ 	/* Invariants */
+ 	struct zl3073x_ref	ref[ZL3073X_NUM_REFS];
+@@ -92,6 +92,10 @@ struct zl3073x_dev {
+ 	/* Monitor */
+ 	struct kthread_worker		*kworker;
+ 	struct kthread_delayed_work	work;
++
++	/* Devlink parameters */
++	u64			clock_id;
++	u8			phase_avg_factor;
+ };
+ 
+ struct zl3073x_chip_info {
+diff --git a/drivers/dpll/zl3073x/devlink.c b/drivers/dpll/zl3073x/devlink.c
+index 7e7fe726ee37a..fe8333a2ea1ee 100644
+--- a/drivers/dpll/zl3073x/devlink.c
++++ b/drivers/dpll/zl3073x/devlink.c
+@@ -195,10 +195,71 @@ zl3073x_devlink_param_clock_id_validate(struct devlink *devlink, u32 id,
+ 	return 0;
+ }
+ 
++static int
++zl3073x_devlink_param_phase_avg_factor_get(struct devlink *devlink, u32 id,
++					   struct devlink_param_gset_ctx *ctx)
++{
++	struct zl3073x_dev *zldev = devlink_priv(devlink);
++
++	/* Convert the value to actual factor value */
++	ctx->val.vu8 = (zldev->phase_avg_factor - 1) & 0x0f;
++
++	return 0;
++}
++
++static int
++zl3073x_devlink_param_phase_avg_factor_set(struct devlink *devlink, u32 id,
++					   struct devlink_param_gset_ctx *ctx,
++					   struct netlink_ext_ack *extack)
++{
++	struct zl3073x_dev *zldev = devlink_priv(devlink);
++	u8 avg_factor, dpll_meas_ctrl;
++	int rc;
++
++	/* Read DPLL phase measurement control register */
++	rc = zl3073x_read_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, &dpll_meas_ctrl);
++	if (rc)
++		return rc;
++
++	/* Convert requested factor to register value */
++	avg_factor = (ctx->val.vu8 + 1) & 0x0f;
++
++	/* Update phase measurement control register */
++	dpll_meas_ctrl &= ~ZL_DPLL_MEAS_CTRL_AVG_FACTOR;
++	dpll_meas_ctrl |= FIELD_PREP(ZL_DPLL_MEAS_CTRL_AVG_FACTOR, avg_factor);
++	rc = zl3073x_write_u8(zldev, ZL_REG_DPLL_MEAS_CTRL, dpll_meas_ctrl);
++	if (rc)
++		return rc;
++
++	/* Save the new factor */
++	zldev->phase_avg_factor = avg_factor;
++
++	return 0;
++}
++
++static int
++zl3073x_devlink_param_phase_avg_factor_validate(struct devlink *devlink, u32 id,
++						union devlink_param_value val,
++						struct netlink_ext_ack *extack)
++{
++	return (val.vu8 < 16) ? 0 : -EINVAL;
++}
++
++enum zl3073x_dl_param_id {
++	ZL3073X_DEVLINK_PARAM_ID_BASE = DEVLINK_PARAM_GENERIC_ID_MAX,
++	ZL3073X_DEVLINK_PARAM_ID_PHASE_OFFSET_AVG_FACTOR,
++};
++
+ static const struct devlink_param zl3073x_devlink_params[] = {
+ 	DEVLINK_PARAM_GENERIC(CLOCK_ID, BIT(DEVLINK_PARAM_CMODE_DRIVERINIT),
+ 			      NULL, NULL,
+ 			      zl3073x_devlink_param_clock_id_validate),
++	DEVLINK_PARAM_DRIVER(ZL3073X_DEVLINK_PARAM_ID_PHASE_OFFSET_AVG_FACTOR,
++			     "phase_offset_avg_factor", DEVLINK_PARAM_TYPE_U8,
++			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
++			     zl3073x_devlink_param_phase_avg_factor_get,
++			     zl3073x_devlink_param_phase_avg_factor_set,
++			     zl3073x_devlink_param_phase_avg_factor_validate),
+ };
+ 
+ static void
+-- 
+2.49.1
 
 
