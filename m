@@ -1,138 +1,115 @@
-Return-Path: <linux-kernel+bounces-812388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC9BB53792
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:23:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 918FFB53787
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77DF45A12E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:21:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50EA63A8229
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 470EB34A322;
-	Thu, 11 Sep 2025 15:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pukxu3zH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ADF34A332;
+	Thu, 11 Sep 2025 15:21:45 +0000 (UTC)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260023D76;
-	Thu, 11 Sep 2025 15:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACED3431F1
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 15:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757604041; cv=none; b=eGZT0RlOfCJRMgljHiDsQza9bn96kijY4tx8iFLbnaXrNR4316f2U2pAMDcQyC46A0ALDdBodfozJiaF57+j1Z4j1B2qk7pvNqzVjSwEFGyGMIrejitrdEQreVjm76ihnMTnmKciR2RG0aZ1ta/o9B0EqL0vU5kUDDS9YGvCB1Q=
+	t=1757604105; cv=none; b=CDWC+eZDV9e3flwQ3ZXyOHBCoeAp0owMFcD8/cPcAiuvYNBf93aYoQFOsRY4Bm4cvaKmB5hH658EoJPFP4G8oKnz7qPYC+M2li1AWR11xvrlmwslQpYFK47bsbpf6CT1gzsIyJQoaqZKEDPcXbaMkbjEbs0cfb2BDqbeyhBNko0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757604041; c=relaxed/simple;
-	bh=HiqDHL2cMqFIKeoBOF9jYSt1hGTmD19GND/QjlAlYok=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TxC3qFyYz8WQgmPcadH48o16sQsz2tLNh9rhRfX8jOdlm/jYg8zoqWD2vpIL58iQ85S97eCvHzSds5c2UGlaGAwtj0iNWTg2a9wXLE5bVOYOtn7pp+HFZAZqD2vUMnBumH3F1NOTiUPrceaHKd/4AV4kwBHwdaEzD61Ytj6McsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pukxu3zH; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757604040; x=1789140040;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=HiqDHL2cMqFIKeoBOF9jYSt1hGTmD19GND/QjlAlYok=;
-  b=Pukxu3zHWjsQQlcrJgoIv3YQHYXeE/Kbn3Mo/opplx1GovTquTM/V4X5
-   bKAtq8bE4x2HRgdeGwHK58FfQDfaBrXAKti2q39NADCvONyIGNnrcHjCQ
-   CYYdYK3C9kStl+5Tc9fYxiFV0ynX0o9K3EKUrkJnUPzTytQyeiTDrOl/3
-   AFktmmGiWWZgJDLi5w7OWomwC53sI/bDk2utD8EYHdYj/XYI/7mvGMJIw
-   mpSvIFbbUAR19nTLqqep9DpD++mzuvvZYRo573gempGS7RjotYQ+HWvJD
-   znRGVpL81yjv3hQzjtmbUibppJgmNt0MuZJ0SBSt42SUog4rgwip+tRL0
-   Q==;
-X-CSE-ConnectionGUID: IsheSp0mRKSU0BPX2f5SeA==
-X-CSE-MsgGUID: 1KW72Z+DT4yjcSpdc1a2SQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="77396684"
-X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
-   d="scan'208";a="77396684"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 08:20:39 -0700
-X-CSE-ConnectionGUID: rhUrhgsvRLa8qnQw3ImDGw==
-X-CSE-MsgGUID: osw0e5ryTSSfmkIYfw+ORQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
-   d="scan'208";a="178031712"
-Received: from gabaabhi-mobl2.amr.corp.intel.com (HELO [10.125.111.4]) ([10.125.111.4])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 08:20:39 -0700
-Message-ID: <eacc2a0a-2215-4582-bf08-9c199cf23018@intel.com>
-Date: Thu, 11 Sep 2025 08:20:38 -0700
+	s=arc-20240116; t=1757604105; c=relaxed/simple;
+	bh=oC4vmluiwrX18cIeVqBz0JWNRurMmcePlH97Y2tSYjM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C57aXPPKkGR5xkETvgD1CK5DdtnKPcUamyHX7qGMAYLliwewiPh+Nty00OLk7ZgsGm7eOKvWioIeIblATwob1YOl1sTYSNa1RpDizFmoPUFDqzUPK+OUgID/pIcBo4aqK/Qb/fphBzMNj1y5sPck0XpzQYgofRcGbYDMkMLg3Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-544ad727e87so570370e0c.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:21:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757604102; x=1758208902;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5zw8eBQvDUCVhODh2n6UuXo9fuHt2pQGWUMRk5klLYM=;
+        b=HxeDdU2leQcVUkuYzvhAOLIw4Ja1SweEDsh6tjPB/KCNGUJcgvIp1wHOWKTWUM8HKH
+         MutOUUYQ1S92BT8L+UiFCKTvyLpHLy3hwE8fzUe47a8hyJ37jglQ2JdIj1ivg0ettCHx
+         5RAdUwEgl3r7pFrS0m8dT0I6w414DxARiSMjpMN2jqgPAKQZnnVx6L6odE+BGQLL5GUE
+         1RuvVOdK5Eyl3NuX0aNZUME8XueaC3LXW1U9mhbEanRqI93UWiS8D2XwzVg2ylBgO/8a
+         6EgfXKsxkgqFElrw3HKZv7u8uWbH0LsuF3TG6e898vgEl8c5GNXPD0CzaA8BKUEVP8xq
+         zYpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmTG7VVpepOkSBBYku1R76V3ZCLnYb+eMgv+gjxkSz6DbWuT5xEtPkBoHzWS9xC+NaUOQ26d4n+K/ebJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo3WJUm9F535Q0JP+W//M9mNi1ssFWpuN6M6N5kTvjV4Zj0uYh
+	1HGzwvL76Ta0WJhuS5cb+jQl2yaDl+nDvHNpv0d0kVYtAM67QjnzZERWXXnyHiSI
+X-Gm-Gg: ASbGncu9ZQjUjuf4VBDnB1E/5Cl4/IhLJmtpDpQUaZEmeNFJFvguvA+5L4Fptnv/2EF
+	t2HwCF8ZQWVLyPXkIbgRpHL2bJTYKY7f6gY1+iKysp7f/DgTUewpUPOAMgAtVTv9GpvIicV8XNE
+	VcdtpwirUj7YXFvmDVJGDu+PyO7wFCvpZg/IVnJEsv7dzE0U1SRS+t/eRCGR9q0tc9fCK/WzzXG
+	vqnvnPmr791qxEURXW2a2KJyEVOyzND9CkFpcwm4KlCzvZub8hoeZmvA9SAKwK4VQ/LFxV4GTqF
+	uP51Tr3yFXkKHp/gwTaJhHA6G4u0cnyGrseIszFKHDAewz9YIZN+Z+Ots2o+QhaRRwYg2dL409D
+	0y1o0yR01ibSMN0tRM7xvaA6enz2tj1RXkqSgMiT6CsNyAupy6Hs42VDu82iEXHvb
+X-Google-Smtp-Source: AGHT+IFJQW45G6VZzCIvAu/0AcNaWBcplTJVFUovaPMEeJAdmMjnJBS8bHHLvKmaxSK2zBTps+bSAQ==
+X-Received: by 2002:a05:6102:1612:b0:521:d81:6dc2 with SMTP id ada2fe7eead31-53d2490eb0bmr6933122137.33.1757604102064;
+        Thu, 11 Sep 2025 08:21:42 -0700 (PDT)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-55370649fe7sm372023137.7.2025.09.11.08.21.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 08:21:41 -0700 (PDT)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-544af5b745cso552080e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:21:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWT9kDlKI/TVuWt2qHqPVx2cGmJtob5KBJBkkVj50wt+sdsFntThrApr49woYGmK2tdLxtU3dJQ04IjZuc=@vger.kernel.org
+X-Received: by 2002:a05:6102:14a8:b0:529:bfd2:382a with SMTP id
+ ada2fe7eead31-53d2490d25emr7502207137.32.1757604100881; Thu, 11 Sep 2025
+ 08:21:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/5] x86/boot, KVM: Move VMXON/VMXOFF handling from
- KVM to CPU lifecycle
-To: Sean Christopherson <seanjc@google.com>, "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-pm@vger.kernel.org, pbonzini@redhat.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, rafael@kernel.org, pavel@kernel.org, brgerst@gmail.com,
- david.kaplan@amd.com, peterz@infradead.org, andrew.cooper3@citrix.com,
- kprateek.nayak@amd.com, arjan@linux.intel.com, chao.gao@intel.com,
- rick.p.edgecombe@intel.com, dan.j.williams@intel.com
-References: <20250909182828.1542362-1-xin@zytor.com>
- <aMLakCwFW1YEWFG4@google.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <aMLakCwFW1YEWFG4@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250904100435.4033858-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250904100435.4033858-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 11 Sep 2025 17:21:29 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW+YXwMCbQy8g88s8hQ+zzV8Vqr2iaX98J5d+RR_q4QiA@mail.gmail.com>
+X-Gm-Features: AS18NWDe3BfDNkISbgAn9TPJsLdnq75CKg4tLUlECWyOdSKnu33jwgTzPbJMnms
+Message-ID: <CAMuHMdW+YXwMCbQy8g88s8hQ+zzV8Vqr2iaX98J5d+RR_q4QiA@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: rzt2h-n2h-evk: Enable USB2.0 support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/11/25 07:20, Sean Christopherson wrote:
-> VPID and ASID allocation need to be managed system-wide, otherwise
-> running KVM alongside another hypervisor-like entity will result in
-> data corruption due to shared TLB state.
-What other hypervisor-like entities are out there?
+On Thu, 4 Sept 2025 at 12:04, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Enable USB2.0 support on RZ/T2H and RZ/N2H EVKs.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v1->v2:
+> - Reflowed comments to adhere to 80 char width.
+> - Updated comment about simultaneously using USB host and function interfaces.
 
-The TDX module needs (or will need) VMXON for some things that aren't
-strictly for virtualization. But what other entities are out there?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.18.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
