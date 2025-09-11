@@ -1,309 +1,222 @@
-Return-Path: <linux-kernel+bounces-812276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5357B5355B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:31:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C05B53567
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D56DAA39F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:31:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05D40173C1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB6E33CE98;
-	Thu, 11 Sep 2025 14:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198CE33CE9C;
+	Thu, 11 Sep 2025 14:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="d8E578KP"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fLqTDN2o"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2079.outbound.protection.outlook.com [40.107.212.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F28DF72;
-	Thu, 11 Sep 2025 14:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757601050; cv=none; b=S+0neyHkhAch/qgOqiQcNS16P0waXxcENO3AHsY0Xd6SdvwZmXY3Evvy+9+C45lc7dfKoAvxnh4tzXD7qwi9ewc8fqBcoHmWJYbKe9e3KWIErYVvLw5RcIEfRtzdcpsvyoT1F+piTTUVnOerPnBqS4d4EzZgeLOD3Tarh/AUXZ4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757601050; c=relaxed/simple;
-	bh=+huU836wZDjjaqzLBWYiHUYyOun/h+KtkKUh4oB0sao=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=ZWZoGJMtFN6Y6xgWF5t5RAW8hnakHYLLoPWN4S6goX1Oxei7cO0ev9h94iK6Y1SmPiglQg6y8qJNQWh9n5zvP9DLNdGfXpUJFfO5aV4nwHN+1cPub+FEpCsgLBqiTg4GGcQnMAQ7iEBVkSaQUrfmQfvur1wLCvvV/Z13MNQlY7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=d8E578KP; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AC5194A4;
-	Thu, 11 Sep 2025 16:29:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757600971;
-	bh=+huU836wZDjjaqzLBWYiHUYyOun/h+KtkKUh4oB0sao=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=d8E578KPzdT9qfI1vBkYrpkeRGXrj6cSwWuK5Iza02S1L1S2zz8gkf/HY7JaJVQfS
-	 wCdqqBsf6tzNosFMWdX9k8CLsFOnZO5R7eSfghRTHj0AMi+fbrIcWhUrDJ2a/aazBH
-	 OaHcfXuZzVUF8eOdtzNBBG8fVx+LtsdSCJu9i96s=
-Content-Type: text/plain; charset="utf-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308563203B4
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 14:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757601106; cv=fail; b=QaazwvaoOsE0n7f+nQ6I15cbos/8DHQ/QnRWaSxpI3BPK3Ft+PKYMia6AHfADAyQrcxRy4NjnQyDiEQ1oZH5HzIBkwXWfau+Ldq1teSoFYn80ajr12R6C1qiS/rdhvoZysz92vE6USse0dJkW9ZSeAlxcMRS5HoxSAnYyqzNZlg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757601106; c=relaxed/simple;
+	bh=TWBvncnkxokRqgEdYuhSY/46/LA8XDyYkooOawrFVpE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=PsqX5twrFjnivANTKKD8tIakAcOigMJceFSzmIrtkvWhdFyo4dyiy2zpECCyRTEFZFOcAJWzifmI1gKapREmFyd35UhWRPFfy50g8QwKpqnJGfWrB8CKyiUmviLupEWkMhQ66iH86ZeEZDZFVxBTbFds3IzdGG7RqSZcWXjXO5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fLqTDN2o; arc=fail smtp.client-ip=40.107.212.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sSB36nP5daFZyWtXprrLaj8a0uQ5GAy4ds5f86m5a9MetF7CzRJbOYMdyUIs4PT5Pajea5a3hKUUwP2wktsAxUp1LdEuNn8gTfTqvWPFrJfYmz5hn0dPFxvULroJY3bK7LmHVNcEWNxxec3BmuabKRpuoTQEDln9GCUvkTTCoSdyqACi045AzbpQemISM3fpTPajg0NqebF7RPQ9MkYbQjSMZhH7vd0INc9yhjEXh2ut+tzvWvDgliAXLjjQ27oS7v2XabriamNCMsxJsSzjSENL87t92Re/apVI/gqWFUPVekSijBW64zMAJoL2ncwXhfMuWgIP6Nlt2YidXdEHZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DbMVnIMIAR6VxhJtbbvVdKdzjVsHUmXghJlrFZiQJ60=;
+ b=hjYAuBdqFzlNgwsC5JAjq3pSDpbq4ovTQrX63qjAJXdPXm0jfu+k6Je5WcykMjrT4Dq0ZQcLOCaBOX92x4bYx70ej8wAflR+lfZnubg1eCJ3ofzlBiePwn2LxtBCcgSVIlhh63R8qFgDu97AtEJOsZe9IlvisYKkNpvzR2Wb4/jQLtXDCvl+dtz4vU/Z7tJ38cAOMvWGIQROc+4/TPgOcpqa+UbTewhhhVL49yIFuYryX20oCEHDRyceJNlR0bYRPpYXUgitMIsd3tOaGSfG9R1JH5jvBR89imWjf8nKNUsf249CSR/febJVWSku6K+KYs/tPYiZkg31MD9sqEUKCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DbMVnIMIAR6VxhJtbbvVdKdzjVsHUmXghJlrFZiQJ60=;
+ b=fLqTDN2ojmDwWZGYrOfrOJpldroBkZXnWMwAnxKpAzL/sGQrRJoi0aDoKqZDP3Fr/n9ni1cdfaQcQJ2I7Ds3xv+E5vWG+FBLDj0o+XmSd9oMGhOAg/bLNO/AAa4KvmJAwK0Dx/XHEw4rgT0BuEq0dTtZa81aVXjdvo1/OX1msO8=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by MW4PR12MB7481.namprd12.prod.outlook.com (2603:10b6:303:212::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
+ 2025 14:31:37 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 14:31:36 +0000
+Message-ID: <3227b440-5dbf-433d-8658-f37f9561554a@amd.com>
+Date: Thu, 11 Sep 2025 16:31:27 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: ttm: do not direct reclaim when allocating high
+ order pages
+To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>,
+ Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ kernel-dev@igalia.com, Sergey Senozhatsky <senozhatsky@chromium.org>
+References: <20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com>
+ <e79a134b-89de-4da1-b64b-b890227fce8a@amd.com>
+ <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
+ <262a176a-4c80-40de-96e0-c97f50c20fe6@mailbox.org>
+ <b7c57dc3-ed0e-402f-8a3c-f832357f8763@amd.com>
+ <c6cbaa8d-cb90-45d5-b3b6-279196f958ce@mailbox.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <c6cbaa8d-cb90-45d5-b3b6-279196f958ce@mailbox.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MN2PR05CA0031.namprd05.prod.outlook.com
+ (2603:10b6:208:c0::44) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250911-imx335_binning-v2-6-30a28df74df6@ideasonboard.com>
-References: <20250911-imx335_binning-v2-0-30a28df74df6@ideasonboard.com> <20250911-imx335_binning-v2-6-30a28df74df6@ideasonboard.com>
-Subject: Re: [PATCH v2 6/8] media: imx355: Use subdev active state
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Tommaso Merciai <tomm.merciai@gmail.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Thu, 11 Sep 2025 15:30:43 +0100
-Message-ID: <175760104354.935713.5466359754087343394@ping.linuxembedded.co.uk>
-User-Agent: alot/0.9.1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MW4PR12MB7481:EE_
+X-MS-Office365-Filtering-Correlation-Id: e47a5785-2cfe-4b98-94b9-08ddf13fe9cd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UDlZZFVSQlNLL2EwWkFlVjNXUkRMNlMwdTFIMllYd1c3a3V3TFh4ZUdKdS9V?=
+ =?utf-8?B?UzZSSGRpZ0NXYytJVG1pUzI0dzQ2blQ4emRXYWNaZTJib3VreEZFN2ZRQ2k4?=
+ =?utf-8?B?aGVLeEtMcFduK21HY3Exa3Q3em8vNDcyeEtQeGFnbk9taENSbTR5ajBvbzJR?=
+ =?utf-8?B?WG5UZ0ZQSlJGTDBjTGt3OTZqZG96enNyWWpCejQvN2NPSTJqOVdMZ2JjOWRI?=
+ =?utf-8?B?aERUTFFWNXVsV0p0cUErY29tdmJJYXM1a3pEY05QT1hNZjU3dzVITEFsQWtv?=
+ =?utf-8?B?NUtyaDA0STQwdkJxQ1FJcVhnY2NkL21kbndJS2EwemNzaExUbXZsVlhwM0NU?=
+ =?utf-8?B?TnIzUkVLV1M1c0ZEY1AwNzB3T205ci9qSlVWYnlrWVpmMGwrSEtXbTFra2NC?=
+ =?utf-8?B?NTNFY2JRWUtNWEtGaWo3MDRkZnVKWTZyTUNsYXd3RFJsZlI3YStvQk9wRCtL?=
+ =?utf-8?B?dllrR1JIek8vbGwrQ2c5UURKOFBwaGE0UUl2ZnhyOUtWY3FidlBwUk9sMlVW?=
+ =?utf-8?B?bUJ3UjdQTk8rSEJVcDRCak1tZHIvVDljZFN5V1RodlgzMy83NFArMW1sdlB2?=
+ =?utf-8?B?SGIwS2Y4T2lJek0yc1d5Mk9FTXZrMkZoRy9aSzlnQUxvcmw3bVdJbGI1enJ1?=
+ =?utf-8?B?YWEvYXBVdktEZlZJS0VTTWZCRE5ycVFtTjErMFRVUkpkckRlMnpIM0dUTkNo?=
+ =?utf-8?B?N1k4ZGFFdjVzVEM2em4vTmQrUWRjWlhhRSs5V3pqNlZMMjlGMDBEQUhrdFla?=
+ =?utf-8?B?T040VDgxaHNoZHR0S0JFdEV1dHcvWDFiZkFNZjJmWnU1YW1FbVQxNzY2ZXFn?=
+ =?utf-8?B?WmdJRlowTnkvUTBZYlpXK21EVFYrWnVNR0pFZmFhczdKbWY4QU1IVlVKTVRy?=
+ =?utf-8?B?aUY0ZFVmQW80Sm5Db3hWS2c0MmFGYVFyKzdrQXBFWkFFMDFFSFh1WnhDaFZn?=
+ =?utf-8?B?SXhQRTl6RVJWUGlndVM3WHlzRDBlbHY2YVdoMWs1ZGZOdHQzdWYxUHNwYmJR?=
+ =?utf-8?B?OGJQbmE2L0UwS3JIZ1RodDFyTTdRMDY2aFowQVdZam1qSE1iTmNGeFdpcXZB?=
+ =?utf-8?B?bkRHTHgzZkxibEZRTnhaYmhqZzBGWGNha0RSaCtPcUJEZHFBdUpwRmNETXJo?=
+ =?utf-8?B?NXNibUNXQUhkdGkxYjNPNVRwdmlBbUZ3elBpTDRmRHRSbllOeCtBY2cvaUlv?=
+ =?utf-8?B?S0FhczBWNjAydjk1M1JHYmZrSU9abWNuYjF0M1ZsQlFOMmNRQnNyWk5QNk1S?=
+ =?utf-8?B?MHpHdkxkazV0VGFxWXhlWHhYcGtEbGtjcTNtNmhEWWs3cTVUNTM3VkdqVjdy?=
+ =?utf-8?B?VkJXaUNwUEV1VmFkUThuNnNpNmxqS29nTXhhVlMwN0Ixc1ZIYXFOYTdhZzVC?=
+ =?utf-8?B?UUMwRHZXcmxmTVVCa29Fcm5xRXpqM0QvenBRVC9oWEtRZUprODhMMzJ2WjdB?=
+ =?utf-8?B?bW9RY0U2SkJvYkxib01QQkVRb3gxU3I3RkxNRThVanUzenA1M3Fhc0UvRW5w?=
+ =?utf-8?B?Zk1OejhXM0d3Q1p6S1pIYVJlV0dRVEhjN3hCc3Y5YUEvUmtVcDZLc0RoR0lZ?=
+ =?utf-8?B?MkltZ210WjNTMUpwZFVreFBJVkVUY2k3RUtDT0ErcXJxRzF0Ym9iTEdiSzN4?=
+ =?utf-8?B?UkRSY0l2TVpmY0g1a0tkRkVWUHRpQmlUOGJ6aXlPOXlaU1M5RURrOWVzTnFP?=
+ =?utf-8?B?RFRVOEdpdityRmVKZjQ4T0toV1ZTRCtESzFLeUtaNzdCb3FCcUN5RU9qQ2Vn?=
+ =?utf-8?B?L24yYU4zRVlQTHdTYlB6WFRyckRoMmh1cTBOWHJxYUY3dGdqck5XYnRyZlVo?=
+ =?utf-8?B?ZHlsWVF3cTJ3dGUxVlZDTnZ3SitXbFRUYTJOcFB6R2FTN3cwV29YRXl1ZGpa?=
+ =?utf-8?B?VzU5OENjelRZNmJhNVd4NU1tR3QzNm05UXZuNkg3TEU5a3NCRVdyWWNudVhU?=
+ =?utf-8?Q?SCtdf1j0UrY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UFd3dUtVWDdNTVdTM1FQSUxwZElVRmltTnpiTVdBSXhEUmRuN0VPYW9xbmd6?=
+ =?utf-8?B?TC81VlZORzlXdWRiQmdTMXFvZHhmT0N3Q2hiY295ZDU2aXMwRkxaNlFsb005?=
+ =?utf-8?B?eFpubWY3TGhDZGtzQVN0SXo1WTBWK3NyTkpseE5leGdMSWp0Tk03YlF6Rmk3?=
+ =?utf-8?B?aTFHVzBuNTJTNWkyNWFIWHNBb1g5WTF1cnVxSVU2a3VWbktQRERKcFRucTdn?=
+ =?utf-8?B?N1daQm54RnpvYTRxOVN0RGFzY0F2ZnBEMnM2Q1pCOEhoa1FtR0E3bUxhNGNn?=
+ =?utf-8?B?T1gvZHZDdnhva2wxZFVjbGI0Tk9kZmVTOTJ4SnhiZjhlQUNRQjBhVDFDcVl5?=
+ =?utf-8?B?MDc2ZkxCWUovRWZIUms5ZS9MRzlIY0Z5UEQ0NjJQYXhtQ0hDOTUzd29tQXNI?=
+ =?utf-8?B?SzcrN09rRnR3M25rVjZ3U29lMEZHcXpwamJ0cUNJaCszbTN4Tm0vSERibmgy?=
+ =?utf-8?B?VkNMWVYyUmtZalRGTnQvUlZlTUNCckdXb3lEZ3Q5ekoySjZqdWcvYkQ4dUFE?=
+ =?utf-8?B?SVlUTk9Ma1pLemhFWHg3QWFGekZwQ3p5UWg0c0JPVERIdmphQlNidUNoMkVZ?=
+ =?utf-8?B?REFXQmhwR1VkR3NMa1FicWFVTThyTXNibFM3czhZOTJxanZWUUFMMEo2SUps?=
+ =?utf-8?B?Ym9valI4bi9qUXhOL05waStySVhMVVlzWDY0NW1WQ3JFTkZSZDVFdjQxRUZB?=
+ =?utf-8?B?L1lzT29NbnFOYS9JZHIrOTRieVd2NkVIMW1WaVNudEVRNlRLQkRWSGV1MUlk?=
+ =?utf-8?B?b29tM0hBcHVUY3R0NmZuc0xwSDhmeUZkUUszaGFzU3VUYUkvUXg2QVFGVzNQ?=
+ =?utf-8?B?MERDNlNXN1RoMGxiVVdQV2c1ckU5Z0ZONnV3TWxMZUUwbGpucEcxSXAyRXd0?=
+ =?utf-8?B?QUw2VDFkWDZ2RUNoS3Q1ekxGSUgyb04zQ2pjZFhaYVVYazdXdmVzS1VHRjFQ?=
+ =?utf-8?B?R1VBcnNNRmgvTytsaURMYmdEYVNZYzVidjFkNUhJZCtBRFZnMVRyanBuQU9X?=
+ =?utf-8?B?dU9NSTZvNFhUb096VzBvamJwYm91YkZCYW02Q0dBVmV5b1ZKTXl5cVd0YUtS?=
+ =?utf-8?B?ODdoblgvbHlhUE4yVWRhK052WllXejdPS09RQ1lEb0VhV3BvclQ2d2tML25P?=
+ =?utf-8?B?dE14MTJjcU5FTFlZblZvOTRUelE3cFd5cC9aY2tqMk5HZ0htSEkvZGs3M2py?=
+ =?utf-8?B?QWlwMzNQWmdkVFR4QUc2U3crdG10Y2VDaDhTbEN3eUxaMlY0dWNvSUlXVS9k?=
+ =?utf-8?B?SzVwWVVEZWtxTjFVZU0wWEZsVC9Gb2FyVDgydnZ0eGpuQ0xXN3VkT1NkOEpK?=
+ =?utf-8?B?amtmeTRIVHJ1NUdEUkk0Vm8wWGlXT2ZnSnVUajJQOGlyWTd5bzdDSmpmbEVw?=
+ =?utf-8?B?WG5va3ZlUzJFZHRERC9zTWVhNENXYUM3SXB0SG9TYmQvWlZNYTJyYS9hVVIy?=
+ =?utf-8?B?eTZtOFlINnl1YVIzVndqL2taUUxSMkpPR3RxYVVsSklZWDQvRS9NWWN4dkRJ?=
+ =?utf-8?B?Vy9yUlM5TXlBUTJXbU5kNlVjSWtZa2ZwQStocE1tU3N3ZERubTlXWXh5b2dC?=
+ =?utf-8?B?YU5LMzFIZHJYdjJCZGJ1YVhseFJNSnoramFzbmY3TlYxZjQ4ZWxHeEdLMlRH?=
+ =?utf-8?B?a2NGcFVlSTZRYUgyK0J3RFBwNmx5TklWV29kK3BuMVh6TU42TUFNM0MyWXZ4?=
+ =?utf-8?B?aDFNMmMzSm1IUUZoeTIzMDR6YkpGTlVIUnVaMzNicHdSNTlpd2Fab3JKRzhE?=
+ =?utf-8?B?TjJQRjV3ak91TURrak5jcTF2elpIK2p1M3Y5Zm13QUZyVjdpMjYvVzROLy9B?=
+ =?utf-8?B?cTNkc0N3ZVR6cmlYVWpETEhlTGhlZVc2OG1RejVZVHhoSVJZVmp1ZUxJbGFa?=
+ =?utf-8?B?U1hONVp0WVlzSk1NTmt5TEd6VDV5cG1TOG9WMFpnZW5rTHpsQWRXYzUrVVpz?=
+ =?utf-8?B?QThyUTA0elQzd3VVV3oxTGlHRjhTOVlwTEFiZjYrUjlaV1p2RGkzL043NUdW?=
+ =?utf-8?B?N0t6OE5YV1A0TVl2TFpESmszeXc1emswREk5OXBrVGhibm1KLy9ESE03SWM2?=
+ =?utf-8?B?R0dDdGw0aEtWOTZ0NUVxT1lKdkxsSG10V05nUkJDYU1ZK0d4eDl6SCsveC80?=
+ =?utf-8?Q?sgczo+cclpoZTqgcEVlkorpzo?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e47a5785-2cfe-4b98-94b9-08ddf13fe9cd
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 14:31:36.7164
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cWC132J46WzzOpDFxA44zTz50aVrqXfRYQ0FeFf29pi+FOHbvmy8PjwcvC9g45xD
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7481
 
-Quoting Jai Luthra (2025-09-11 09:14:22)
-> Port the driver to use the subdev active state. This simplifies locking,
-> and makes it easier to support different crop sizes for binned modes, by
-> storing the crop rectangle inside the subdev state.
->=20
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/imx335.c | 79 ++++++++++++----------------------------=
-------
->  1 file changed, 21 insertions(+), 58 deletions(-)
->=20
-> diff --git a/drivers/media/i2c/imx335.c b/drivers/media/i2c/imx335.c
-> index 7631f41e6f1e65695fb76a66d9ac5a3588c69658..9b9bbe6473d545bc5618c0fe8=
-191df0b18037cd8 100644
-> --- a/drivers/media/i2c/imx335.c
-> +++ b/drivers/media/i2c/imx335.c
-> @@ -204,7 +204,6 @@ struct imx335_mode {
->   * @vblank: Vertical blanking in lines
->   * @lane_mode: Mode for number of connected data lanes
->   * @cur_mode: Pointer to current selected sensor mode
-> - * @mutex: Mutex for serializing sensor controls
->   * @link_freq_bitmap: Menu bitmap for link_freq_ctrl
->   * @cur_mbus_code: Currently selected media bus format code
->   */
-> @@ -231,7 +230,6 @@ struct imx335 {
->         u32 vblank;
->         u32 lane_mode;
->         const struct imx335_mode *cur_mode;
-> -       struct mutex mutex;
->         unsigned long link_freq_bitmap;
->         u32 cur_mbus_code;
->  };
-> @@ -766,36 +764,6 @@ static void imx335_fill_pad_format(struct imx335 *im=
-x335,
->         fmt->format.xfer_func =3D V4L2_XFER_FUNC_NONE;
->  }
-> =20
-> -/**
-> - * imx335_get_pad_format() - Get subdevice pad format
-> - * @sd: pointer to imx335 V4L2 sub-device structure
-> - * @sd_state: V4L2 sub-device configuration
-> - * @fmt: V4L2 sub-device format need to be set
-> - *
-> - * Return: 0 if successful, error code otherwise.
-> - */
-> -static int imx335_get_pad_format(struct v4l2_subdev *sd,
-> -                                struct v4l2_subdev_state *sd_state,
-> -                                struct v4l2_subdev_format *fmt)
-> -{
-> -       struct imx335 *imx335 =3D to_imx335(sd);
-> -
-> -       mutex_lock(&imx335->mutex);
-> -
-> -       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_TRY) {
-> -               struct v4l2_mbus_framefmt *framefmt;
-> -
-> -               framefmt =3D v4l2_subdev_state_get_format(sd_state, fmt->=
-pad);
-> -               fmt->format =3D *framefmt;
-> -       } else {
-> -               imx335_fill_pad_format(imx335, imx335->cur_mode, fmt);
-> -       }
-> -
-> -       mutex_unlock(&imx335->mutex);
-> -
-> -       return 0;
-> -}
-> -
->  /**
->   * imx335_set_pad_format() - Set subdevice pad format
->   * @sd: pointer to imx335 V4L2 sub-device structure
-> @@ -809,12 +777,12 @@ static int imx335_set_pad_format(struct v4l2_subdev=
- *sd,
->                                  struct v4l2_subdev_format *fmt)
->  {
->         struct imx335 *imx335 =3D to_imx335(sd);
-> +       struct v4l2_mbus_framefmt *format;
->         const struct imx335_mode *mode;
->         int i, ret =3D 0;
-> =20
-> -       mutex_lock(&imx335->mutex);
-> -
->         mode =3D &supported_mode;
-> +
->         for (i =3D 0; i < ARRAY_SIZE(imx335_mbus_codes); i++) {
->                 if (imx335_mbus_codes[i] =3D=3D fmt->format.code)
->                         imx335->cur_mbus_code =3D imx335_mbus_codes[i];
-> @@ -822,19 +790,15 @@ static int imx335_set_pad_format(struct v4l2_subdev=
- *sd,
-> =20
->         imx335_fill_pad_format(imx335, mode, fmt);
-> =20
-> -       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_TRY) {
-> -               struct v4l2_mbus_framefmt *framefmt;
-> +       format =3D v4l2_subdev_state_get_format(sd_state, fmt->pad);
-> +       *format =3D fmt->format;
-> =20
-> -               framefmt =3D v4l2_subdev_state_get_format(sd_state, fmt->=
-pad);
-> -               *framefmt =3D fmt->format;
-> -       } else {
+On 11.09.25 14:49, Michel Dänzer wrote:
+>>>> What we are seeing here is on a low memory (4GiB) single node system with
+>>>> an APU, that it will have lots of latencies trying to allocate memory by
+>>>> doing direct reclaim trying to allocate order-10 pages, which will fail and
+>>>> down it goes until it gets to order-4 or order-3. With this change, we
+>>>> don't see those latencies anymore and memory pressure goes down as well.
+>>> That reminds me of the scenario I described in the 00862edba135 ("drm/ttm: Use GFP_TRANSHUGE_LIGHT for allocating huge pages") commit log, where taking a filesystem backup could cause Firefox to freeze for on the order of a minute.
+>>>
+>>> Something like that can't just be ignored as "not a problem" for a potential 30% performance gain.
+>>
+>> Well using 2MiB is actually a must have for certain HW features and we have quite a lot of people pushing to always using them.
+> 
+> Latency can't just be ignored though. Interactive apps intermittently freezing because this code desperately tries to reclaim huge pages while the system is under memory pressure isn't acceptable.
 
-It's nice to drop that - and clean up the locking.
+Why should that not be acceptable?
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+The purpose of the fallback is to allow displaying messages like "Your system is low on memory, please close some application!" instead of triggering the OOM killer directly.
 
-> +       if (fmt->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
->                 ret =3D imx335_update_controls(imx335, mode);
->                 if (!ret)
->                         imx335->cur_mode =3D mode;
->         }
-> =20
-> -       mutex_unlock(&imx335->mutex);
-> -
->         return ret;
->  }
-> =20
-> @@ -854,12 +818,10 @@ static int imx335_init_state(struct v4l2_subdev *sd,
->         fmt.which =3D sd_state ? V4L2_SUBDEV_FORMAT_TRY : V4L2_SUBDEV_FOR=
-MAT_ACTIVE;
->         imx335_fill_pad_format(imx335, &supported_mode, &fmt);
-> =20
-> -       mutex_lock(&imx335->mutex);
->         __v4l2_ctrl_modify_range(imx335->link_freq_ctrl, 0,
->                                  __fls(imx335->link_freq_bitmap),
->                                  ~(imx335->link_freq_bitmap),
->                                  __ffs(imx335->link_freq_bitmap));
-> -       mutex_unlock(&imx335->mutex);
-> =20
->         return imx335_set_pad_format(sd, sd_state, &fmt);
->  }
-> @@ -1001,16 +963,17 @@ static void imx335_stop_streaming(struct imx335 *i=
-mx335)
->  static int imx335_set_stream(struct v4l2_subdev *sd, int enable)
->  {
->         struct imx335 *imx335 =3D to_imx335(sd);
-> +       struct v4l2_subdev_state *state;
->         int ret =3D 0;
-> =20
-> -       mutex_lock(&imx335->mutex);
-> +       state =3D v4l2_subdev_lock_and_get_active_state(sd);
-> =20
->         if (enable)
->                 ret =3D imx335_start_streaming(imx335);
->         else
->                 imx335_stop_streaming(imx335);
-> =20
-> -       mutex_unlock(&imx335->mutex);
-> +       v4l2_subdev_unlock_state(state);
-> =20
->         return ret;
->  }
-> @@ -1138,7 +1101,7 @@ static const struct v4l2_subdev_pad_ops imx335_pad_=
-ops =3D {
->         .enum_frame_size =3D imx335_enum_frame_size,
->         .get_selection =3D imx335_get_selection,
->         .set_selection =3D imx335_get_selection,
-> -       .get_fmt =3D imx335_get_pad_format,
-> +       .get_fmt =3D v4l2_subdev_get_fmt,
->         .set_fmt =3D imx335_set_pad_format,
->  };
-> =20
-> @@ -1233,9 +1196,6 @@ static int imx335_init_controls(struct imx335 *imx3=
-35)
->         if (ret)
->                 return ret;
-> =20
-> -       /* Serialize controls with sensor device */
-> -       ctrl_hdlr->lock =3D &imx335->mutex;
-> -
->         /* Initialize exposure and gain */
->         lpfr =3D mode->vblank + mode->height;
->         imx335->exp_ctrl =3D v4l2_ctrl_new_std(ctrl_hdlr,
-> @@ -1355,12 +1315,10 @@ static int imx335_probe(struct i2c_client *client)
->                 return ret;
->         }
-> =20
-> -       mutex_init(&imx335->mutex);
-> -
->         ret =3D imx335_power_on(imx335->dev);
->         if (ret) {
->                 dev_err(imx335->dev, "failed to power-on the sensor\n");
-> -               goto error_mutex_destroy;
-> +               return ret;
->         }
-> =20
->         /* Check module identity */
-> @@ -1393,11 +1351,18 @@ static int imx335_probe(struct i2c_client *client)
->                 goto error_handler_free;
->         }
-> =20
-> +       imx335->sd.state_lock =3D imx335->ctrl_handler.lock;
-> +       ret =3D v4l2_subdev_init_finalize(&imx335->sd);
-> +       if (ret < 0) {
-> +               dev_err(imx335->dev, "subdev init error\n");
-> +               goto error_media_entity;
-> +       }
-> +
->         ret =3D v4l2_async_register_subdev_sensor(&imx335->sd);
->         if (ret < 0) {
->                 dev_err(imx335->dev,
->                         "failed to register async subdev: %d\n", ret);
-> -               goto error_media_entity;
-> +               goto error_subdev_cleanup;
->         }
-> =20
->         pm_runtime_set_active(imx335->dev);
-> @@ -1406,14 +1371,14 @@ static int imx335_probe(struct i2c_client *client)
-> =20
->         return 0;
-> =20
-> +error_subdev_cleanup:
-> +       v4l2_subdev_cleanup(&imx335->sd);
->  error_media_entity:
->         media_entity_cleanup(&imx335->sd.entity);
->  error_handler_free:
->         v4l2_ctrl_handler_free(imx335->sd.ctrl_handler);
->  error_power_off:
->         imx335_power_off(imx335->dev);
-> -error_mutex_destroy:
-> -       mutex_destroy(&imx335->mutex);
-> =20
->         return ret;
->  }
-> @@ -1427,9 +1392,9 @@ static int imx335_probe(struct i2c_client *client)
->  static void imx335_remove(struct i2c_client *client)
->  {
->         struct v4l2_subdev *sd =3D i2c_get_clientdata(client);
-> -       struct imx335 *imx335 =3D to_imx335(sd);
-> =20
->         v4l2_async_unregister_subdev(sd);
-> +       v4l2_subdev_cleanup(sd);
->         media_entity_cleanup(&sd->entity);
->         v4l2_ctrl_handler_free(sd->ctrl_handler);
-> =20
-> @@ -1437,8 +1402,6 @@ static void imx335_remove(struct i2c_client *client)
->         if (!pm_runtime_status_suspended(&client->dev))
->                 imx335_power_off(&client->dev);
->         pm_runtime_set_suspended(&client->dev);
-> -
-> -       mutex_destroy(&imx335->mutex);
->  }
-> =20
->  static const struct dev_pm_ops imx335_pm_ops =3D {
->=20
-> --=20
-> 2.51.0
->
+In that situation latency is not really a priority any more, but rather functionality.
+
+> Maybe there could be some kind of mechanism which periodically scans BOs for sub-optimal page orders and tries migrating their storage to more optimal pages.
+
+Well the problem usually happens because automatic page de-fragmentation is turned off, we had quite a number of bug reports for that.
+
+So you are basically suggesting to implement something on the BO level which the system administrator has previously turned off on the page level.
+
+On the other hand in this particular case it could be that the system just doesn't has not enough memory for the particular use case.
+
+>> So that TTM still falls back to lower order allocations is just a compromise to not trigger the OOM killer.
+>>
+>> What we could do is to remove the fallback, but then Cascardos use case wouldn't be working any more at all.
+> 
+> Surely the issue is direct reclaim, not the fallback.
+
+I would rather say the issue is that fallback makes people think that direct reclaim isn't mandatory.
+
+Regards,
+Christian.
 
