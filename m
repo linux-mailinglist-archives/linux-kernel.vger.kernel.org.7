@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-812185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9792B5342A
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:45:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0106BB53433
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F00A3A448B
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A8D1C869BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1888D334388;
-	Thu, 11 Sep 2025 13:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC353375BD;
+	Thu, 11 Sep 2025 13:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRDIokHV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eHCBZkWZ"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584A332ED2D;
-	Thu, 11 Sep 2025 13:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DA23314B7
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757598217; cv=none; b=f4ewu9uEYOs8SU3iwNpW0Hs+LjrIFGLbm53/vH3EjatNvqXTWbh0vDE6M5SeZx4VWcC/Y6utB5Qlsi116l0oAPdtbg34Nxz8neqONbl/Yu7I1H5vlOLDBiIg21NAYV4b7onzEXGDXKDiZ0gluEfOo21Waj0WRPkhFQ1fZDcrkhs=
+	t=1757598261; cv=none; b=t4kntGQq4AVoRSoxMAvZMf/HrfcciiDF8j4TaqeE0Ely0epsvtztn2BhWcTbDov/hPSUwvdWcbIPdElaXh3xuVNt6fxYicNvIGe9/YYVgfyPXCI0ZO0HVEOllV2dOxGoqBrqrHSG/+1/8kbYrZDPiB/MYAgwB7HD6xARd0HtDYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757598217; c=relaxed/simple;
-	bh=0GXo4WsPXbb94gtbo4YsNCOo6bkT29Ut19/AJPbQdME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LKlhlkAfWqxQMN7yASXMMS+dOBuyjCaCw6dyHZo879m9ELssAYj+wCXeLEgWiJt8e/0sST2Zdt5Xu0tp5Oo86a4TrF8yb161Mt5675k6EnnC2zcOGRXN2bC2+kVezXOzx6H0yWSiG4qIzez/b8IhH4xvYUfLnOYJkh5nHvaj9JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRDIokHV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA47EC4CEFC;
-	Thu, 11 Sep 2025 13:43:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757598217;
-	bh=0GXo4WsPXbb94gtbo4YsNCOo6bkT29Ut19/AJPbQdME=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sRDIokHV+3NXgwH90Z3qR3vXPcPx8SCzRFPduK9JxA5R64wArH2pxjAsKkr6+syON
-	 BDXtAWWHZu7fVDQ9HCwFYquvzy4TOA6T/6dnZu+91j4Oko+FOLcNJmFqHIW+Y0wDQU
-	 Ip7GmOsTzEIzC3lDJRkP97e7ZQqgjK77qTjCay38ZpPp3K6aZPFe4kuGPyo0QOkKJ8
-	 cTW5QwzLNVs6bmInAxr1oJtgIXPMcWQvgOso2ugG3MyjSAYq7pZNMI/Dx8cYemxbPG
-	 V0D09r4LtpT9haGes1lSfBeqzylbVB8AE7NsKy+RAj3cAwL8d6jR0tPudKzgwIQYP8
-	 0DQzFxQRcEU0Q==
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-74381e2079fso769418a34.0;
-        Thu, 11 Sep 2025 06:43:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUa0bN1yco8b7+kApVVF3LRNr22/0l/6FNK0Ynj9j6bt049AuN874U9yHdV9IwPqYeHgDMv8sFYW0FG22k=@vger.kernel.org, AJvYcCUuT/MK8RKJ6JYspFqQGD0J+Nxrt0resH21FnuFEWSSppuBmJYmnQMC+BHMeV+f5/MsoxHSv5PTfmA=@vger.kernel.org, AJvYcCXFK378e3nPkJ989gT3ZZ0Em/2ZN3pXaNdJcmGdHf+dwOCfEz5n9Le8VUL0K6uPgSLmq2jpUUy7qk8Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/HIHHHeLkbBHvNQcykHqDi1fY1gKGvOK4DL/0NZDW8JzQp5u2
-	aQ4w/a2WJ2x1J6QcjxODSCtLYZoxj7l1XaFwPr4TMibPvkm8rE8aQVduVuNjRyub4fJxKBo81HC
-	rUECWaQ4iWlY+hkBZZ4K2BJwAOcxe3bM=
-X-Google-Smtp-Source: AGHT+IE6Ady68fU71PxUHEDevFaxfnLgB7dpVmhBz5UaanlQR3tYIFV8QpjfWjN8l418mkJ0TLtqkyf/qpZL17czUqo=
-X-Received: by 2002:a05:6830:6f85:b0:745:a336:7260 with SMTP id
- 46e09a7af769-74c66210137mr12873344a34.0.1757598216239; Thu, 11 Sep 2025
- 06:43:36 -0700 (PDT)
+	s=arc-20240116; t=1757598261; c=relaxed/simple;
+	bh=BgWTKfBKwv1gdZW9TeUwhiLjN7/KNn7CoOORzE/zT2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EXs6IVARfvAJcC1wjQzLgQVxXXvix9r8qEamu2NMz+YqsPRzvFFYeYjeSYz+bv2/4rz0ajQT+/1fkCxqfrInZ+v207KaiDP/BT/HRdbDtCRb35r3eoEZ1k8Y9lYWuXRFxr2t1DcFx8VprENkllPOrQ11q0TreDrTUQamihrSg20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eHCBZkWZ; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-61bd4a3f39cso173876eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:44:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757598258; x=1758203058; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eCstrsfwRbW6aW0tEip/c6cZxF8+5Njpu6/Zhcqq+6I=;
+        b=eHCBZkWZC6S/BDWWfP+SRYOjHnppsMldn6FOlmVYHtG8R9WXAESKXHlerXsSWJgZiC
+         zGG/3MC7O5SQ3te7i0ZXjMMV9t/BtDpT2I+Ru/ODm+O4IBmgXUFwurHwH8rlfLcm5maC
+         RlRpXWSG6mVt+keIJrKoktz2/ivvdf2l+tcmVxLSPsGZpUtE6cdIbmnAAWS4vonQ0I4c
+         31FiYIyYQTxzfGwnLaQE1XALZhTo/UX6J2Ht6/RZzGHH4W/K2jppAWto+ndxJkWnOXoN
+         tTj+6P74A7GI8yigDrHBc7zcCjHVErkrG54NCV12aLDFouSQ8F3COxisgYgOQsDpwiw/
+         Ckzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757598258; x=1758203058;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eCstrsfwRbW6aW0tEip/c6cZxF8+5Njpu6/Zhcqq+6I=;
+        b=oxW/EalIEULTgH096aI+53bA9pRc83u8n5iUcgWUT1PUx+aIF6cbPzghp9FygsdML8
+         oLE6P4e+qn0g6BUUF6nO+62o1F4uOLqb50lQHhhPeuBf1OMeXvapn/i2+9cLJuDKeu1t
+         B3cCNVasfOFpVO4l407UK6nbdXXEpiHXar6O10kcD5eWAI7qNbBTA/V8vfmBCUZdMdsg
+         J82ikf0v6oq8hOxNtBM5Si3cBl5FG8Llh+ZNcE4RAlAthNAJSqmEuYbMrKiFJHKEt/pr
+         t9fd0Jq32/ZX6IL4Aal1W1ws9P0X9gAEUA4a3t/lh4Q+eWmljagvElIpBuKV16OshgI2
+         3T5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVo9Wh21zs45D0qEqVk4ow5u1l4FoK2brF0LmIJyCHuffjO/Grdseuuyo6fSE/1tRgQSI27kU/vCjct1zQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD25T2zr5oQE2eO36EzZ5yKNmHz1D2PK+Q/HZ7Osuwe+3J3EK+
+	6m7+sJMw8eo9fFPm90rZncXkDzz5Dv4KHQB00Yp4Wp54j8gExGGpWJT4OIi3wPWpB7E=
+X-Gm-Gg: ASbGnctuROTUAd7CNb1imEk+jG1oq7FpSdJtrifANxrDGZjJdVlGRPePCe3hgNcK0LL
+	6bSNgiJTRufgVpzZ2JhnasCaMQ/3Hpkw0wN6jOB2ij6pQJ5UJCSJyRugBY8FOJIsNJ07TfXzrvI
+	26dMfGYiOyBxYiE6vKt3MYauDHxmmuMNDJMmjg5+28uoiVYg4VhDXvFNNuX5HB1sKpUzznbW2RV
+	9vI8unUI6coYofCpq5jY5Ap3GWgfd5z8wzovPLGTXZ6kTqr1NfEVHfAC3aZg6n2F8Q+fpjto4sF
+	w71qdxw+s8pTosJCnWWHz/JTOobN12RvhXg49Xz9X69PMphTFrs+b3o+zPlh6FeeQElSlqXqYrX
+	c14cWPuVN6x2CNCWxqcISO1xudQFNhuy2CPRqGLrUlQjjeYYjXiliDlAN22WupvZSIendK+XMkf
+	U=
+X-Google-Smtp-Source: AGHT+IEPP1d7GSlxoHGdnXD8SRk9+hawJ53fqwqLIpfGqR7eWm2LIzdvyvnCGJkNaVEwetQklDMy/g==
+X-Received: by 2002:a05:6870:a982:b0:321:8f88:a3c2 with SMTP id 586e51a60fabf-32262d776d6mr10097192fac.14.1757598257793;
+        Thu, 11 Sep 2025 06:44:17 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:d684:59db:8b2a:5451? ([2600:8803:e7e4:1d00:d684:59db:8b2a:5451])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524bd8359esm351076a34.32.2025.09.11.06.44.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 06:44:17 -0700 (PDT)
+Message-ID: <719e510e-1032-47cf-9a75-82c36de732f4@baylibre.com>
+Date: Thu, 11 Sep 2025 08:44:16 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <75e4ae507fa4faddd063a3a9e17d319ed84529b6.1757562971.git.lukas@wunner.de>
- <80980751-64db-4dc2-9516-03046e8b4b31@kernel.org>
-In-Reply-To: <80980751-64db-4dc2-9516-03046e8b4b31@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Sep 2025 15:43:25 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0idqEPUpA0uBb_PAaKe0KNqCt0xLskPThPwtsfh3eCdxg@mail.gmail.com>
-X-Gm-Features: Ac12FXw8YYdZ59nK2i-Qn8MLk67KRnR9Lix3xAU-CKM32UvuPaTrcYVd_fsr0jI
-Message-ID: <CAJZ5v0idqEPUpA0uBb_PAaKe0KNqCt0xLskPThPwtsfh3eCdxg@mail.gmail.com>
-Subject: Re: [PATCH] PCI/PM: Move ASUS EHCI workaround out of generic code
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Lukas Wunner <lukas@wunner.de>, Bjorn Helgaas <helgaas@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, linux-pci@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
-	Oleksij Rempel <o.rempel@pengutronix.de>, Timo Jyrinki <timo.jyrinki@iki.fi>, 
-	Ernst Persson <ernstp@gmail.com>, Steven Harms <sjharms@gmail.com>, James Ettle <james@ettle.org.uk>, 
-	Nick Coghlan <ncoghlan@gmail.com>, Weng Xuetian <wengxt@gmail.com>, 
-	Andrey Rahmatullin <wrar@wrar.name>, Boris Barbour <boris.barbour@ens.fr>, 
-	Vlastimil Zima <vlastimil.zima@gmail.com>, David Banks <amoebae@gmail.com>, 
-	Michal Jaegermann <michal@harddata.com>, Chris Moeller <kode54@gmail.com>, Daniel Fraga <fragabr@gmail.com>, 
-	Javier Marcet <jmarcet@gmail.com>, Pavel Pisa <pisa@cmp.felk.cvut.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/14] iio: accel: bma220: reset registers during init
+ stage
+To: Petre Rodan <petre.rodan@subdimension.ro>,
+ Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Nuno S?? <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
+ <20250910-bma220_improvements-v2-7-e23f4f2b9745@subdimension.ro>
+ <a10a2f6d-6cb7-4922-b505-dc6994f0415f@kernel.org> <aMLCWFatVkePTxCa@sunspire>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <aMLCWFatVkePTxCa@sunspire>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 3:34=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
-rg> wrote:
->
-> On 9/11/25 8:11 AM, Lukas Wunner wrote:
-> > In 2012, commit dbf0e4c7257f ("PCI: EHCI: fix crash during suspend on A=
-SUS
-> > computers") amended pci_pm_suspend_noirq() to work around a BIOS issue =
-by
-> > clearing the Command register if the suspended device is a USB EHCI hos=
-t
-> > controller.
-> >
-> > Commit 0b68c8e2c3af ("PCI: EHCI: Fix crash during hibernation on ASUS
-> > computers") subsequently amended pci_pm_poweroff_noirq() to do the same=
-.
-> >
-> > Two years later, commit 7d2a01b87f16 ("PCI: Add pci_fixup_suspend_late
-> > quirk pass") introduced the ability to execute arbitrary quirks
-> > specifically in pci_pm_suspend_noirq() and pci_pm_poweroff_noirq().
-> >
-> > This allows moving the ASUS workaround out of generic code and into a
-> > proper quirk to improve maintainability and readability.  Constrain to =
-x86
-> > since the ASUS BIOS doesn't seem to have been used on other arches.
-> >
-> > lspci output of affected EHCI host controllers reveals that the only bi=
-ts
-> > set in the Command register are Memory Space Enable and Bus Master Enab=
-le:
-> >    https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D658778
-> >
-> > The latter is cleared by:
-> >    hcd_pci_suspend()
-> >      suspend_common()
-> >        pci_disable_device()
-> >
-> > pci_disable_device() does not clear I/O and Memory Space Enable, althou=
-gh
-> > its name suggests otherwise.
->
-> That was my gut reaction as well.
->
-> > The kernel has never disabled these bits
-> > once they're enabled.  Doing so would avoid the need for the quirk, but=
- it
-> > is unclear what will break if this fundamental behavior is changed.
-> >
->
-> It's too late for this cycle to do so, but how would you feel about
-> making this change at the start of the next cycle so it had a whole
-> cycle to bake in linux-next and see if there is a problem in doing so?
+On 9/11/25 7:36 AM, Petre Rodan wrote:
+> 
 
-One cycle in linux-next may not be sufficient I'm afraid because
-linux-next is not tested on the majority of systems running Linux.
+...
 
-We'd probably learn about the breakage from distro vendors.
+> Just for my curiosity, do reviewers apply the patches one by one to (a branch of)
+> the tree itself or do they provide feedback directly based on the diffs?
+> 
 
-> If there is it could certainly be moved back to a quirk.
-
-Most likely, it would work on the majority of systems, but there would
-be a tail of systems where it would break.  That tail would then need
-to be quirked somehow and it may be worse than just one quirk we have
-today.
+I think most reviewers are like me and only are looking at the diff in the
+email. It would take too much time to apply every single patch I look at. So
+I only do that in very rare cases when I have a special interest in a patch.
 
