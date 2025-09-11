@@ -1,255 +1,170 @@
-Return-Path: <linux-kernel+bounces-812560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8869B539C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:59:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9198BB539C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:59:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAA6C189E504
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:59:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339BC17F053
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 16:59:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C50C35FC08;
-	Thu, 11 Sep 2025 16:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BBCE362060;
+	Thu, 11 Sep 2025 16:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1f12s7a2"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2080.outbound.protection.outlook.com [40.107.212.80])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmEsSBUe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102AF35AAC9
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 16:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757609950; cv=fail; b=r3LPunoc5UfSVBfIjWZeRWfrPhwe8BCc41ZEGwhtmH2NRvbGMo+rgetWeq7uC0TNKPi4aRsv5+v5cGAZf0qB8OC5U4HVbWo5T5bJOiH69Dn1uEukl5bPJk9cQEZEL5xqHzpwFxGlRn6vAVll0IvuZTjuTBbonbY6sbLVGin/fe8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757609950; c=relaxed/simple;
-	bh=F9ceNsT5572DAJE8YwULGSJfSPr2fffwwXZwfsUSGeg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=sHWKT1ER27LWQWUJSMndflaisgZCTWxBGPBxyGf1sdCVyFSrquenAm3/ywkXKnFyVM7SFC4C11nNSe8kGQCxXmx2j6xwqX3dagxoFKZV1QVmQyU8GzUBFKUGbJiyZkqHSPpIMvR22GlqCiIhhGMy1fiHUBix1PgR/Lp2by4TtkA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1f12s7a2; arc=fail smtp.client-ip=40.107.212.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fYvROgxPFbFKAjWvIQcPPJ+4pVZVuot+5CgwabcURxayQ+2Is8Kq65kbR/Q8OauWMyYQouI4tkBYj9NEp41SpNZVZy36C4nax3DG8/yY61NV68gQ8th1E5Ib0oYWIWBmf6UBWIm7EHBwgSlkq9gmcjQ6Y5cAOHA3X8PHz1cwlkqwhswk4+YkiVx5Q9EX3KsvrHcDqZY3mMSpxVLeZmUlAp3b75bJh1XlWASKWaPkDKGlASBnx9WIsOm+xQ4zBz2jtPh0TQnGzW9WMsVSlEvc5v1i/J4Q2B2ancgmCTrPqE7lsnQE0Eo+N7L7vG7BBzIOGmKmUUHG+Zc2rqTeLH9WjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+WwoWedi7r1PQtEgfh2WP+CxO8DT4wM5d579Ei74jJM=;
- b=JLn225oRQgK+RbCHq3QuIoSmzlNkMhONlsN983uGpr956aE69bThrtASsPY/LjGXJe8ZNhbhLTyjhv8xo1VMrsUqSutrLiL0ozQpEN7076PhRfsdun0Q/74DQkq7mxKLpFYBS6Tvo8jSBLlNguXMJeK5hKLFC6ivqIZi/T2TihSBCMUM1KzCUxSlNAngC3ggveIwqMrvDKAJiW8/bkMT4uK9Nbhvxn/Q/0Oxdi/7AbS6VduLsJ7+dvgGzaG0Hrhx371i1jacYltBNCuCbPqDj95aUn6iCVSTxX0q7dSQJCIku33/7qS+ZkpG109L36rkTXanK9ZfH2X9nXvmqzOoWA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+WwoWedi7r1PQtEgfh2WP+CxO8DT4wM5d579Ei74jJM=;
- b=1f12s7a2RlsU6doVRT9gjbe7V2ighDM3/vQHv6hg9N1HHrZKuRJsE8uL7hJ/2eQg3dLNLVOfOhDrDrdtCvoeIMn5aY7hOVfzXEk7NtOoU7nCL4RiDXjq5n0aIoHgiiM5Ld5rmsLwadOTl86i8JOXwy/AADiIHKI85ReVY+tRPI0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com (2603:10b6:8:9f::5) by
- DM4PR12MB7501.namprd12.prod.outlook.com (2603:10b6:8:113::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.22; Thu, 11 Sep 2025 16:59:05 +0000
-Received: from DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5]) by DS7PR12MB6048.namprd12.prod.outlook.com
- ([fe80::6318:26e5:357a:74a5%4]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 16:59:05 +0000
-Message-ID: <a9725264-8d8a-4970-a519-4ca415ce21ee@amd.com>
-Date: Thu, 11 Sep 2025 22:28:52 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] iommu/amd: Add support for hw_info for iommu
- capability query
-To: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, jgg@nvidia.com,
- nicolinc@nvidia.com
-Cc: linux-kernel@vger.kernel.org, robin.murphy@arm.com, will@kernel.org,
- joro@8bytes.org, kevin.tian@intel.com, jsnitsel@redhat.com,
- iommu@lists.linux.dev, santosh.shukla@amd.com, sairaj.arunkodilkar@amd.com,
- jon.grimm@amd.com, prashanthpra@google.com, wvw@google.com,
- wnliu@google.com, gptran@google.com, kpsingh@google.com
-References: <20250904193112.7418-1-suravee.suthikulpanit@amd.com>
-Content-Language: en-US
-From: Vasant Hegde <vasant.hegde@amd.com>
-In-Reply-To: <20250904193112.7418-1-suravee.suthikulpanit@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN4P287CA0092.INDP287.PROD.OUTLOOK.COM
- (2603:1096:c01:268::17) To DS7PR12MB6048.namprd12.prod.outlook.com
- (2603:10b6:8:9f::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4799235FC29;
+	Thu, 11 Sep 2025 16:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757609954; cv=none; b=IMw0Zo51rWMxDs8ICkRu/xVHmPq5PQBR56HofRkE5VmSy3clyRSkiTqmMNC/mliw76PGmO+ssfzDiJccJXQQmq8qPnEn4kQRLHTB9BOQE20pOmJrAH8mGTeUamQGC/AOfuEjVZoLWHI1n0Smnypq7aV6VWEQH2Gt3cALr1m0KHA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757609954; c=relaxed/simple;
+	bh=Xlc6koJ0vm41M4SAUwgaUOtl1XLT+vpjoBqnu6zMYUM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CZcORU9wxM6NW7Lhf7LR+11qUKZGHhcxu/z4u9HIb7UivLyb+w6ybda/V0WQ8g0WKKrdWe61vPZ8iBxVJK56TQt+y1F96pnU4zXf/z5UXaS0qWgwM8ujtrW8baDgLhnKx/DRDleX4EnJBP1L6aH1Yengc+FNW4OSS6fpZ+CcjUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmEsSBUe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E585FC4CEF5;
+	Thu, 11 Sep 2025 16:59:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757609954;
+	bh=Xlc6koJ0vm41M4SAUwgaUOtl1XLT+vpjoBqnu6zMYUM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZmEsSBUe46oKNFLs1zZshCDORSXi/vmIA/olocQ/bs1EL0jdPhHubpF9/o5rsmBiQ
+	 qcAMn0p6sYL3ASP57egXTeRsBLyv5tXq8CaQ63dmYuSRhmcO+8UfEhahaJ9iN20Zgn
+	 yY7EvHXs4XrNDI4p13gRncZLx/bGnHw/rmm/18FRpOWtlqUXQDELkz6Q5afLcl7UnE
+	 UfVHJyp5DHvPh3Rk26y+2UMb0zSFm6/gDRB7dh+MtqA/AehTkAGeqv1Kn16ztaHU6c
+	 b52mxvx24QaDyqGlYtp7W/lm/hg+3NLy0zxA1leuOfHbIB6rzuGqFDWNqWZPk3hENk
+	 xlB2sGAM2fLHg==
+Message-ID: <a1f55940-7115-4650-835c-2f1138c5eaa4@kernel.org>
+Date: Thu, 11 Sep 2025 18:59:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6048:EE_|DM4PR12MB7501:EE_
-X-MS-Office365-Filtering-Correlation-Id: 785105ee-3b1b-45ab-dbff-08ddf154840d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WEZYamplcmFpSW9XQkh0b09XN2FRTDVaMks3ZXRhTXhUYktnaVhSOWZGczM0?=
- =?utf-8?B?OWlDVG5qYzR0L1ltUWZUMk53RXRQcUgwL0NmVHNzTTdFVk15TmF3NW9uMFA3?=
- =?utf-8?B?Z3RCeXFnU3ZuczVYekhjbFBvajlDdE1rc0lPK0lreDlxeGpDeG5PVTNCRHhj?=
- =?utf-8?B?ZjJ1Rm9oemhrQzQxMk1CYUJJUXVNZ3had043cE9sSm0vLzIvbVNwNlhsWm5a?=
- =?utf-8?B?YWxrQ0VWMzdPUC9NR1NwSGpHWWZ2eHMyVmd6cjB5dG8yNHJ4Y3hhZHN1RHJL?=
- =?utf-8?B?bVZDWmRGRDVQOU1FY0VEampUOTBJaVlFY0dlRXBPNHNwV254TWF0SytEcW93?=
- =?utf-8?B?bU0wSGN1cjFveWRIVHpnZGtsZjcva0U1eXlYSmlVdlNTQnNaUWY5S0ZCaGVV?=
- =?utf-8?B?blpxUlhxWGxEWFVhQ2taWWFPNXViOEp3ajhEYTRNVG52eng5M2xlNjhTVnZx?=
- =?utf-8?B?RzFucDhTdTduMnh5VUtvejArTG1Kb3VvS1Y2VDEvUUl0NEdtSFJ5OVVndnFK?=
- =?utf-8?B?eml3L1pDNVVPTzlTVDNmNEZodlg0Z3krdTBiK2JrNzhHV3A4a0U5UHM4RkN2?=
- =?utf-8?B?N2Z1QlE0Q2VUUmlWZnpwdmhUNTQyTzl3RFZHaExqbldYNnM5OERjbWxnb1pN?=
- =?utf-8?B?SEQ0UkRtV0h4Y0ExYVJ3RXFIRVRWRUJ2T1dEQXpLMncyZlVDL1JoQ0dtQ3ZG?=
- =?utf-8?B?dHZ6TUhVa0wzd2hZSFVFQkxzUG9DRFBQRHNncVBXRitHWkxPR29IUEJMU0JR?=
- =?utf-8?B?RFBHZmhpZWwzSEtMWDlIREU3NE5rVFRiTVZ3RDdLbE1VdVN6SFlRR3RCUFZk?=
- =?utf-8?B?QUducWxxUkNRendjemJqUVVCVjg1emtNUEVxLzV1UUlJN0VpYi9vckN5eWVl?=
- =?utf-8?B?S0MwU0Y3OEg4clBjd1RkdHVSOHg2VEt6aTlpR0JuNndabGtMMVd3bnl0Nkpq?=
- =?utf-8?B?S0pLeDRFc2dnMnE2NThIZ3NpTzB2OCtCWVNhMTIyeHZrYnIzVlA0ZDBnL2pF?=
- =?utf-8?B?WXhNeUFyaVF5QkNYOUUySUEzRmNYOXRnYVJ1cDljb0lqcTJaZEk0ZUNUSGk5?=
- =?utf-8?B?SnBpbTBvRFJKaS9TWGJIVG92a0ExQU5vY0RYS0l0OHhZYTVRa0pRK1lMSHRZ?=
- =?utf-8?B?Z0dUYy95dHBvVm1JNHBBcFlIOVhOTjhiZ25HZ241WjhYdTZOSStRdzZTckdW?=
- =?utf-8?B?R29Jb3R6N3g4KzY3ZTAwRGwva0xEV2k0d2ZMczQ1SnNMTTBKbnFoallTQUwv?=
- =?utf-8?B?OW1lRWt2THFMZXU4dzlQd2wwSW1zLzViU0Q0VEE4T2JQUkIxTUhLd1JNcTNE?=
- =?utf-8?B?VDdaVnBMUmpmaXg1cmhYTWROMk4ya08wbG1kOHhQRkZYSWdvY0piV3FGUGdj?=
- =?utf-8?B?UFJvT1I4MmhBK09ZYy85UXB0N2JNcVh6Z05McVExaXNnb0FqZzFwY1gvTzBl?=
- =?utf-8?B?R1ExaEx6SWhudGErcGVJUDVpUCtDcWhJQVIvN1FDVFpDRDR4cEwrejdpVDJZ?=
- =?utf-8?B?Nk1Ea1JXZ0RIekRkRTlPQnB0REpMSGdBVWRpWDNsdzArN3JvbGhXL3c5VFZ6?=
- =?utf-8?B?TE5IV3d5TXlxd0xJbXQzdlhvUUM4UUhaYkQrVUlXdFlHdVcwcjY4Rjg2MWJt?=
- =?utf-8?B?RGMvZ0pPZjUzbTRGaHd2WkIvUWtzYU05eFdXNFdGamJSUzJmTGxxU0dHVWVG?=
- =?utf-8?B?dVNVRUJFVGc4bzNEWXVTcXZWTEVVdW9FaldaWnA0RG5tOHdZbDVhRk9ZRFdp?=
- =?utf-8?B?cEdIdTJScmU0NmJUQXpEdXN0cm1oSUdXbXFpY1lEbTNMaVBaeHdnelZEZzg0?=
- =?utf-8?B?UFJ6OGNRczkzUTBwb01WdW9RY09SeDBHbklwZUZqTm1Fa21yRjg5anJjOFE3?=
- =?utf-8?B?YnJTRm5UcVlqS2hheGUrZGZkb0lQVWVnaXBwSlZXa2NkWXBwZE9leFIydVFO?=
- =?utf-8?Q?/BElGAyL5WM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6048.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MC85ODY1dTdpczFrZ1p6V0J3YkZGYk5vQWx1eE4vQ0lrYWNWRUVhZVRodGNu?=
- =?utf-8?B?NjFOdXE3ZUZTMlVhQUMzQm5HaG1SRnJhUW9vZUxTNzM1R3N6dDZRTExlQ2Rm?=
- =?utf-8?B?N3JlUFFEeEpJb2kzMFgzaFpIZEhMMkU2bk0vajgvY0wwQ0FGRTVqc2g0elRX?=
- =?utf-8?B?dGo5OVYycTNqWFJQZEZIV1pkYVNFeTRoVmxKcWhuYk5ZcGFVd0F2dEJENmdT?=
- =?utf-8?B?bE5PQ0RKWnhhZEhlRjdVNUZGTkZRUTZ2SVh6R0F4SmtsUCtMQUdSbENRbjZr?=
- =?utf-8?B?M1V6WHltUjRweE1HVTRCdzk5OE1oN1pPRXRqS3VOdlBkK1d2WGE4NkR0Q3BX?=
- =?utf-8?B?YW1OelU4OExzM2VYU0VWL3ZTMUZ1USs2bjk0WWtLZXR6d2JSK2M4NGZiNUVR?=
- =?utf-8?B?M0RGbmVHSFlXRVM1M3B5M04xOU1SNHhUMWpxUFNNSnk5ZEFUclZ4Z2FUcGNL?=
- =?utf-8?B?MnB5OHZ3MW5QVWh3RlE4KzgybnZOSGJuY2xxVTRHVHZwa24wMzFSbUhLOHVX?=
- =?utf-8?B?YVlXaVB2RlFoVm9ibm1nUStYOUg0RGxXOXk2c09ybDlia3gzZ2l6aS9WeUNz?=
- =?utf-8?B?K2pWWEY1SFhIV1BqYWJFUEJUQnlOWGJ6L1lBUEwxNFVCVjZJME5WQXNBVlM1?=
- =?utf-8?B?RXVsTWxKMlUzeEM1TDJRVGw0TWlPYy9mcDVKNE9objRVVXNUZElDaEQ5bTN2?=
- =?utf-8?B?YXBrYzRsUE93VWZIdE4wYWZPemd5cFJwR1pGLzZOQjlwOXFuN2NLdlQ2OTJJ?=
- =?utf-8?B?MVZYbFRLbnVhRlNPZEhhNVY1aXQ0MFIvUTF6SEt0aUhuNGpTOVNaWEhNbzJz?=
- =?utf-8?B?MHUxQjlRditHaU9WelBxZ2hlM1ZUVlVkdVQzMmFobnBtK1h4TDVOMzBnQW5P?=
- =?utf-8?B?Vm82Y1lZZzZpMHVsVUoxWEhzelE5NVYvVXVIbllncmhLeGNqUm9hWUc0ODlV?=
- =?utf-8?B?OFZ5dnFQeXB3MDNkZDljcWtkanVpNzRYUmN5a0tWeTdxdmlpdkFFODhhYXRG?=
- =?utf-8?B?a2hvU29vamJCRjJCRUJ3MkZ2MGw0b0JJYzYxVmVNSUt1elJKQkRTU1ZnV2Uv?=
- =?utf-8?B?YzFmVmNtbVF1Q3F6ZDNtaWx3a1FCZEhEWFJTSEkzeDJiSStRZkEvcEVycjh6?=
- =?utf-8?B?bWxZYUJjdUZNM3hYVENBRW1seHoyTG1hMWVVbys0K3pWNklLS2JOVVBoVXpX?=
- =?utf-8?B?Z2lIVXNlYW44eURVRS9QamtYOUJ0dHdDWXZnOURKNDZIdFJ5N0VyUTNmZjFE?=
- =?utf-8?B?T2xEbHlHTngrZWJvQld0dkI4UmdTbDY2dE9DNjFHb3NPVVQyS3RyRXltU21o?=
- =?utf-8?B?ZWp5bjVia0VPRkJ1cmx2cWwybXZMRHV4a2p1R3pyMEVhbktjWHYxWDFMUHp3?=
- =?utf-8?B?UVdtRTB6TGhqN1VJN2x5YzlxWHA4RmlKekZhSjg0NVJ6WXBiQlVYUG1yT1Y3?=
- =?utf-8?B?QUczMklwQ1ZkSStabk03VkNUTGJnWlphQ3Y4cEJKRjREK2s3Q0svYVBvLytS?=
- =?utf-8?B?QThPME1tVms1QkFHbTdLVkpGYkIwV25YQWM2NjhNdzlkZEx5aHlZb29LU3E1?=
- =?utf-8?B?d1BTZU1CQ2FGaVpVUmVSR0JnaXdGMFUvNGlrM2w5ZXp0elV6YlhJdGFFcGVz?=
- =?utf-8?B?c2J6a2tTdWlBQW5TOU45U0lHcjVEQjBiUnc4MW03eC9ZQTIrakMyNHhtUmZR?=
- =?utf-8?B?amtueXNaS21ZNTRWbXRLenFIYXd6M0NoWEVVRVB1cWlKcVdoTFVUcXovVjZj?=
- =?utf-8?B?WnRLSjJsRUtqYUpaTU5CMTZkZnNmZDhVekFDd2pUczhaaTFVT2JKeGwxQXZs?=
- =?utf-8?B?ZnJKUVBRL29GRlJ6NVJ3UUM2Qy9YLzhsQ0hUMThhZHlPc0VEa2Q5bWtTQ3l5?=
- =?utf-8?B?YW90TDNPV0NhVjV5bHVYNXZQMmRERllEU0cwbHgyVTRNaHNVWEYvYVM1bUxM?=
- =?utf-8?B?WENYaGFVb0NYUFQyTExIQzBDd0p3MUcvQWJ5Q00yeW05enRMOXBBeVoyR3dY?=
- =?utf-8?B?bE5iR1VFK25MdStqK2dYTkthVGFTay80azRsOURFT0VSQUE5N3FYM3lzbnpX?=
- =?utf-8?B?WFBqQ0JMekhOM2N6SXZHTGJFWmMwRzZtMEtLOWhCcUh1WWwxbU9KaE91dFl2?=
- =?utf-8?Q?AimxZkCcJ4qDGpIF691X7kE5D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 785105ee-3b1b-45ab-dbff-08ddf154840d
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6048.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 16:59:05.5860
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XAFB5aQqpe3tqnZptroNockdidu1Bmaa5eQqaEA3ErU8nT7UTc1thzS3PZH8N375WMU/fOEe9dgExGQTDbYJdw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7501
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next] tools: ynl: rst: display attribute-set doc
+Content-Language: en-GB, fr-BE
+To: Donald Hunter <donald.hunter@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250910-net-next-ynl-attr-doc-rst-v1-1-0bbc77816174@kernel.org>
+ <m2v7lpuv2w.fsf@gmail.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <m2v7lpuv2w.fsf@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi Donald,
 
-
-On 9/5/2025 1:01 AM, Suravee Suthikulpanit wrote:
-> AMD IOMMU Extended Feature (EFR) and Extended Feature 2 (EFR2) registers
-> specify features supported by each IOMMU hardware instance.
-> The IOMMU driver checks each feature-specific bits before enabling
-> each feature at run time.
+On 11/09/2025 12:44, Donald Hunter wrote:
+> "Matthieu Baerts (NGI0)" <matttbe@kernel.org> writes:
 > 
-> For IOMMUFD, the hypervisor passes the raw value of amd_iommu_efr and
-> amd_iommu_efr2 to VMM via iommufd IOMMU_DEVICE_GET_HW_INFO ioctl.
+>> Some attribute-set have a documentation (doc:), but it was not displayed
+>> in the RST / HTML version. Such field can be found in ethtool, netdev,
+>> tcp_metrics and team YAML files.
+>>
+>> Only the 'name' and 'attributes' fields from an 'attribute-set' section
+>> were parsed. Now the content of the 'doc' field, if available, is added
+>> as a new paragraph before listing each attribute. This is similar to
+>> what is done when parsing the 'operations'.
 > 
-> Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> ---
+> This fix looks good, but exposes the same issue with the team
+> attribute-set in team.yaml.
 
-.../...
+Good catch! I forgot to check why the output was like that before
+sending this patch.
 
-> diff --git a/drivers/iommu/amd/iommufd.c b/drivers/iommu/amd/iommufd.c
-> new file mode 100644
-> index 000000000000..72eaaa923d04
-> --- /dev/null
-> +++ b/drivers/iommu/amd/iommufd.c
-> @@ -0,0 +1,31 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/iommu.h>
-> +
-> +#include "iommufd.h"
-> +#include "amd_iommu.h"
-> +#include "amd_iommu_types.h"
-> +
-> +void *amd_iommufd_hw_info(struct device *dev, u32 *length, u32 *type)
-> +{
-> +	struct iommu_hw_info_amd *hwinfo;
-> +
-> +	if (*type != IOMMU_HW_INFO_TYPE_DEFAULT &&
-> +	    *type != IOMMU_HW_INFO_TYPE_AMD)
-> +		return ERR_PTR(-EOPNOTSUPP);
-> +
-> +	hwinfo = kzalloc(sizeof(*hwinfo), GFP_KERNEL);
-> +	if (!hwinfo)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	*length = sizeof(*hwinfo);
-> +	*type = IOMMU_HW_INFO_TYPE_AMD;
-> +
-> +	hwinfo->efr = amd_iommu_efr;
-> +	hwinfo->efr2 = amd_iommu_efr2;
-> +
-> +	return hwinfo;
-> +}
-> diff --git a/drivers/iommu/amd/iommufd.h b/drivers/iommu/amd/iommufd.h
-> new file mode 100644
-> index 000000000000..8b726482778b
-> --- /dev/null
-> +++ b/drivers/iommu/amd/iommufd.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#ifndef AMD_IOMMUFD_H
-> +#define AMD_IOMMUFD_H
-> +
-> +#if IS_ENABLED(CONFIG_IOMMUFD)
+> The following patch is sufficient to generate output that sphinx doesn't
+> mangle:
+> 
+> diff --git a/Documentation/netlink/specs/team.yaml b/Documentation/netlink/specs/team.yaml
+> index cf02d47d12a4..fae40835386c 100644
+> --- a/Documentation/netlink/specs/team.yaml
+> +++ b/Documentation/netlink/specs/team.yaml
+> @@ -25,7 +25,7 @@ definitions:
+>  attribute-sets:
+>    -
+>      name: team
+> -    doc:
+> +    doc: |
+>        The team nested layout of get/set msg looks like
+>            [TEAM_ATTR_LIST_OPTION]
+>                [TEAM_ATTR_ITEM_OPTION]
+Yes, that's enough to avoid the mangled output in .rst and .html files.
 
-It should be `CONFIG_AMD_IOMMU_IOMMUFD`
+Do you plan to send this patch, or do you prefer if I send it? As part
+of another series or do you prefer a v2?
 
-Otherwise patch looks good to me.
+Note that a few .yaml files have the doc definition starting at the next
+line, but without this '|' at the end. It looks strange to me to have
+the string defined at the next line like that. I was thinking about
+sending patches containing modifications created by the following
+command, but I see that this way of writing the string value is valid in
+YAML.
 
-Reviewed-by: Vasant Hegde <vasant.hegde@amd.com>
+  $ git grep -l "doc:$" -- Documentation/netlink/specs | \
+        xargs sed -i 's/doc:$/doc: |/g'
 
--Vasant
+Except the one with "team", the other ones don't have their output
+mangled. So such modifications are probably not needed for the other ones.
 
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
