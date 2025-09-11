@@ -1,144 +1,159 @@
-Return-Path: <linux-kernel+bounces-812606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C57BB53A3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:19:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B7FCB53A42
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88F82189DCEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:19:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B21481085
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C663191BF;
-	Thu, 11 Sep 2025 17:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E302435AAA0;
+	Thu, 11 Sep 2025 17:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gzus+dHV"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZWnFDPBw"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7394522AE45
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB7F22AE45
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757611163; cv=none; b=H3k6WvBnuj+/dC47n9+pw+4g6CwKOJotJDNXmguDpBtFKRko22aXE1ErnOETWAKSIYk5XtpycW62TjaPxZDY8vsrWrQWM3NLNOejLMcK9oStxUKB7MLRhH4E9HuVFJzAmI7DMk9vhV/rFv7uIC6uv09OJ74vS3XV6Q+ey4yDa0E=
+	t=1757611282; cv=none; b=htzym7dz7KRz54rm2D6pyW8IJfUFdZ8jsEs80Ac+1MhppI5szALkhLXAYi6rxKNHUp064xJicZQeIQxI+3peWssCiXY5GIJp67arHtUwLiWfxs08H//M/hbax789keHTa6sp55VRhAzOTyJto5CzVJ1/eTflRJCu9C913thhDTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757611163; c=relaxed/simple;
-	bh=z2gtPUXB7/LXbkSd38vOHruaxUvSZAbiHNqziAkJ0rE=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=To7GxLJN1tJgFfmpelNpIp5vpsKEYj/CXzayHjCjqYaircnAaIQtSEohOTbPPU2tuIHEZunPgnR6Df1tbdNMzfG8lpHE710Hh95y1f4EmU+wl/aat8bQXVaECTBAkwzG4jow74FcgrxxymApJ5YSsqF2FNedifmaiCpc5E4y8Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gzus+dHV; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1757611282; c=relaxed/simple;
+	bh=7rIm9WjRZd9JuaOSROjUnRkylLjDgnwq4rskGRGEbUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7CK4w5KV6ZjJ0RarkxynmSIQRYXb/gShaP90ugp/ub8XtUW0m9QCoYmK5/PWcz7B150Dq1hgRKz6YEs8lCsqUhgaXB6MDbP8yMwLRYBPj7uqcNp0IH3k7BoA/ohG/GHzhamwTzTV8wEluVl6pguhNjqdQTPiWyD8xOWp1/r9Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZWnFDPBw; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45b9853e630so9184025e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:19:21 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24c7848519bso9374965ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 10:21:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757611160; x=1758215960; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757611279; x=1758216079; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rx9Yhlqw+0SU2LxMIy3CyY83e0mubLsvcInhwmm1OUM=;
-        b=Gzus+dHVUZ7CzdhhAqu332T7B440P0w5tVqzNV+YQ0/gIXowkEbiNfx45u43DEHPgs
-         Tt/efgXiuVW2oUlr0aAucdsQWBsHxb5747+QnVBLhkWPsd2Uu7LuZVMK9svAdQxjk+8m
-         e7YROrq03VTYa5//NQNVVlNx7jayjkF3LOxZjRU+1WcKTh+njA76ttpeRwesxerzqSba
-         ng9Y+1K29gWIZkazV4SICVqVjMjlQhIdOh2TCIdJiVdTv2wOGjDw4bxyeyefWahSJKXC
-         AeXQgHlQC8du4aMnBjHZc7ejKPC2wzh411oUw8zK7b3AOdycohdOEwgr4kwWxjjr7v7l
-         FRVg==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0vDDVkg+xa80N8UWuTp0DGWDueAKU9QzcFw4kQKYVzM=;
+        b=ZWnFDPBwYS86eEUZhxFrYsyI38juewS3wdLQZ4qRVZ0X+qxuxukB6/HdfBi2i81H4g
+         xw2/8PsL6F0jxPW+uM/PptU3djT92nrazAGI8rp+Yy32eHqbJoRnK0ezmSapEd5H79aC
+         IvW+G0WLrKd/3B6wUkdrmIWsBlRGnDCJ2mX8VFdMT9s3Nsk6v2/+DEhN9udmLb3Ap7Ib
+         5rxU94jUBbgrT36d6WR7+lfQHUpEBwyGFa+jX+aXzbnzueSJ+Rv5w8Kqe0+soyCHZJ5B
+         D0m10vaL9pbDNEaQoNeWoJS/fOSlL/abVWylxqo6X/+DdGXldMxRF2mrgu5CDgcd8lX7
+         irsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757611160; x=1758215960;
+        d=1e100.net; s=20230601; t=1757611279; x=1758216079;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rx9Yhlqw+0SU2LxMIy3CyY83e0mubLsvcInhwmm1OUM=;
-        b=PhzRJX17YdUGocSY6+BnCTkQMKo2U58W5ndCtPJM3iFmQX0E+bOL7pQmPjk+p0QC8h
-         MhwgF+qEdPpHdbkUX04UQvTskE6A3qEUeIqBw6bytXygVf0hE8eHVOHDqmzbU0n41w6x
-         EdmzfkquWMfnDsj0dmPsqIdhuWsVAnkBnmTBvtNyQjE6bCycRCLT9mCBXr5Q8b5Lpm5z
-         x3hdXREQOjgfMT6p+113vHeQRNWPRYyDgV7Tl3kCOV9seHyV5c/UIEov8p+Mi1wKrqDd
-         kBJIeCgBQz9Swyje1mgA5fnx8jATBbGT8UxFSmlfObeMp7sY0nbFTT3+yt6gGI5cUdQn
-         8rqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUgVAdoKFmuLXA4va8tRqQjjb/4mbd8H5wFh1jGa6NkKCORrhq69VNzx15gOi3zaaQvbh9cGZue3xww58k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSMoBjCHStMOV+d2KvB9Fnc4wHzn/LceMGuPCMzB7T1JrgVuWo
-	iEKpndiazTG2dHLT3WXZ7lSOLG2rlOxM7pGLgZwiqdrPssCrysvflp8H
-X-Gm-Gg: ASbGncuCpH/+O1jTJgvIg2Dc84BYmwNGtyiI6T/HpEeE/KS4aa830ReSyTsNdjFhYmK
-	cIsGlGGESRHQcNoLSk6J7ZZjUdPg/DMK/ZL4ArxaVhncQMzjbehrvjSQkBZTghTzLy++SIeXy0J
-	XDWb88D9qaCOjfSXx+/Ndjxa4G7+u91SzWCEtMJEZ2D/O+/kg6hIukX6iatcGUoviNAR0WvYjXF
-	wkgfLECLFOA2pzR/PX3b2Xt3APCXgOrw+Ryf1Q1J9VKLDCD/pBbA7IR1g+M6QUJu1zEZ4nwsaw6
-	P1XUsZ8yCBdeoP0Mk4xi2JslkN3dswNrXtV5zWfmQu6hMoRZSZkHCgklAIEAfxpcOY39VYY+uWe
-	xHURO7XRuIyqhWJmWxOvTH7W94wrP3rrQ0b0wX/Z+BYsF+RoAghiqXRxrWbVHiOIQDKF1kPnOWh
-	czQJsLyRDAjjDE6kLraUk=
-X-Google-Smtp-Source: AGHT+IEf2gXfdcNvdRzd70DEbnbwTZwMjmAbAlOFv57WQK8ZacZzewIz4tro1Hmj+L+IBaWx2B7KfQ==
-X-Received: by 2002:a05:6000:4211:b0:3e3:921b:65a2 with SMTP id ffacd0b85a97d-3e765a49430mr86583f8f.50.1757611159699;
-        Thu, 11 Sep 2025 10:19:19 -0700 (PDT)
-Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760786cddsm3307395f8f.14.2025.09.11.10.19.18
+        bh=0vDDVkg+xa80N8UWuTp0DGWDueAKU9QzcFw4kQKYVzM=;
+        b=QvgQtrHZjbYAAmLerbqc2oSjuFPIF1frmY70acWKaR3Nl2y5lT4hYVZkxMLQNBaMPr
+         0kes3EoJTeXXJ9QHfuuJqfYWzZGFgHgKs8gNHemF2b6w/fvnm0B8wA2UAHUczEoE6uxi
+         ViRJJ45RJvhuu2PKbkaJVGYRUcpx3aDcagrrMIT7WpozDPs4B7FRs+LV45E49h6nbjQ4
+         27SEbRYaBUNT21Gj6rZe9WPf+OVTn6ZRoLHREVrpbvwTdG5bEIEPzWh5e0gXxiSBX/4e
+         f1Vw7GPN8YGh1GR5Qv+XRFs0VKX/mejaaMYedwTXuT1pjPDradXNth4fUfvoIhvKxKeZ
+         vYLw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8EdjE4reKMIdzcT9MBmY0hX0djkU6CHVzTM8qrFU6hOmhGmRgStHFhTWoeYS6YDT9GagyTS9vaKZg9D0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydEqP6aRXfBV4rawnDlJxguGbQOs9ugY10Vw0l7XViUla1qKaR
+	CeqmX+Wwsq7YOTj13v+Z2Kuc77OWywvojA2M82yALJW8z5eMq6KQZX/5lUiWmg==
+X-Gm-Gg: ASbGncsCLLdISvjkyICfKkypBb+E0NU3SzGBNDoY2jN1Q0CVvYW1R0JC2gU/2jFeqEb
+	eT9xVmRwDK0NKptDqJ0/rPTsQiUMcMwXiImAvtRgLhvQh5hA6TOZ7Djj7dLZdPN87WLa7EgoW52
+	F/l358LkbAOg+/iTXMQvVrGbo+lvyCv4F64aaqYDRhMLkk5I6l2wKkz0J3gRtpdENhzen5ayHna
+	H/bIU+O1MEQjC6EbXhGEbpOQwOrDMDT+Q/ljXF/Tg7x93bL8yesNk//GfCr7OT2ehiIevilvw8k
+	MrX66gVc0/utRABfRQg6XQIFYmZC3clA2giRBPOpQKEq8ErHqdF1BuDMEv0W5iBiMHrIv4hfPfo
+	JjlhEczjOmcZqY/ME2gzfQV4+L+y4vcpGKDhGYC0VeVpUBk6AW66Klgjfz2jILYhi77aWaqE=
+X-Google-Smtp-Source: AGHT+IGt11v43/OCzei9AUr8sE+gCMZP1QzI5b16NaBk0bAYGF3TuTg1wi96fzB1ckkChCMxeDmnqw==
+X-Received: by 2002:a17:902:e78b:b0:24c:9a51:9a4b with SMTP id d9443c01a7336-25d25b8922cmr1844555ad.21.1757611278952;
+        Thu, 11 Sep 2025 10:21:18 -0700 (PDT)
+Received: from visitorckw-System-Product-Name ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36cc53a1sm24890605ad.2.2025.09.11.10.21.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 10:19:18 -0700 (PDT)
-Date: Thu, 11 Sep 2025 19:19:16 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Liao Yuanhong <liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] clk: tegra: Remove redundant semicolons
-Message-ID: <axjur75ks4ib6273l2xfcu3prrjnmxwro26ocrct2dgobw42wo@nan7vw4egkow>
-References: <20250813094003.552308-1-liaoyuanhong@vivo.com>
- <175761090509.3229177.9207716245913935287.b4-ty@nvidia.com>
+        Thu, 11 Sep 2025 10:21:18 -0700 (PDT)
+Date: Fri, 12 Sep 2025 01:21:16 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Nick Terrell <terrelln@fb.com>, David Sterba <dsterba@suse.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib/decompress: Use designated initializers for struct
+ compress_format
+Message-ID: <aMMFDOdQzmnPdfmU@visitorckw-System-Product-Name>
+References: <20250910232350.1308206-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hrth5zdfdtzr3exd"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <175761090509.3229177.9207716245913935287.b4-ty@nvidia.com>
+In-Reply-To: <20250910232350.1308206-2-thorsten.blum@linux.dev>
 
+On Thu, Sep 11, 2025 at 01:23:51AM +0200, Thorsten Blum wrote:
+> Switch 'compressed_formats[]' to the more modern and flexible designated
+> initializers. This improves readability and allows struct fields to be
+> reordered. Also use a more concise sentinel marker.
+> 
+> Remove the curly braces around the for loop while we're at it.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
---hrth5zdfdtzr3exd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] clk: tegra: Remove redundant semicolons
-MIME-Version: 1.0
+Reviewed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
 
-On Thu, Sep 11, 2025 at 07:15:32PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->=20
->=20
-> On Wed, 13 Aug 2025 17:40:03 +0800, Liao Yuanhong wrote:
-> > Remove unnecessary semicolons.
-> >=20
-> >=20
->=20
-> Applied, thanks!
->=20
-> [1/1] clk: tegra: Remove redundant semicolons
->       commit: 8ec061e72f15da80df10d4cf29777556992074e1
+Regards,
+Kuan-Wei
 
-Scratch that. Stephen already applied this.
-
-Thierry
-
---hrth5zdfdtzr3exd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjDBJQACgkQ3SOs138+
-s6Fnhw//aAmXHrNo8uDwH1S2CoJOmfSWtDC41SjGjRBp3u9JOSy+WFP6LFwj6G4S
-aVy8AnD9COKvtTc9q/Tjg7YkhnyPc7mVrmgp5dCj12rvLNHt6WXYJBplj/lEvwYy
-RnIjYvx4bnI72/nmjBrGrDV5xwX3cbYH1FpahksGXzwG/hd9C4CtbnTGgrkpqhB0
-PzBQO3/O1Cm0HkSHAvvtQfWUDQ1cBbRsSdXLsNrBH6dz8+s4VIhxyBt/AcIs/q95
-Sadv/LGYOcXGbjX163JwGtsCo4OcCcwunBLeoOU9ZuLoV1qfnUMyKiA8H2gsoKDA
-OOPeqHwfGTuVv6TOIQBFmUxpiUVlqibPC/gfKynhc+QpPeB8iqJi6+zIlkUgfk8u
-xNFQRKL7AejFz8fx+wn1u72O8WkAhlY3jNKzKcksj0pA9o8I6ujYVrl0lzXbRZI6
-WAvYHeTurejO4yYNKvHKG8XfF9SGGOiYjI21fXvAICWPhZv3yz3lHWq+qvtJnXqD
-qyyJau2ylyHS5xdijMZl9IC2dheTdd+nC+pQd55gezy1F+P8Cbubwak1XXN8lVbS
-xQjSpNlVpLS8BNXw6RhwoTdllK6OcRGnpeROzaTJ3p7RJwABCt5oOak25K/ssylc
-VP8wFE7EthPFDYORCcKOCwy/iBS8gtCKK3PU4/4ekNRiguvbq2A=
-=YMuX
------END PGP SIGNATURE-----
-
---hrth5zdfdtzr3exd--
+> ---
+>  lib/decompress.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/lib/decompress.c b/lib/decompress.c
+> index ab3fc90ffc64..7785471586c6 100644
+> --- a/lib/decompress.c
+> +++ b/lib/decompress.c
+> @@ -49,15 +49,15 @@ struct compress_format {
+>  };
+>  
+>  static const struct compress_format compressed_formats[] __initconst = {
+> -	{ {0x1f, 0x8b}, "gzip", gunzip },
+> -	{ {0x1f, 0x9e}, "gzip", gunzip },
+> -	{ {0x42, 0x5a}, "bzip2", bunzip2 },
+> -	{ {0x5d, 0x00}, "lzma", unlzma },
+> -	{ {0xfd, 0x37}, "xz", unxz },
+> -	{ {0x89, 0x4c}, "lzo", unlzo },
+> -	{ {0x02, 0x21}, "lz4", unlz4 },
+> -	{ {0x28, 0xb5}, "zstd", unzstd },
+> -	{ {0, 0}, NULL, NULL }
+> +	{ .magic = {0x1f, 0x8b}, .name = "gzip", .decompressor = gunzip },
+> +	{ .magic = {0x1f, 0x9e}, .name = "gzip", .decompressor = gunzip },
+> +	{ .magic = {0x42, 0x5a}, .name = "bzip2", .decompressor = bunzip2 },
+> +	{ .magic = {0x5d, 0x00}, .name = "lzma", .decompressor = unlzma },
+> +	{ .magic = {0xfd, 0x37}, .name = "xz", .decompressor = unxz },
+> +	{ .magic = {0x89, 0x4c}, .name = "lzo", .decompressor = unlzo },
+> +	{ .magic = {0x02, 0x21}, .name = "lz4", .decompressor = unlz4 },
+> +	{ .magic = {0x28, 0xb5}, .name = "zstd", .decompressor = unzstd },
+> +	{ /* sentinel */ }
+>  };
+>  
+>  decompress_fn __init decompress_method(const unsigned char *inbuf, long len,
+> @@ -73,11 +73,10 @@ decompress_fn __init decompress_method(const unsigned char *inbuf, long len,
+>  
+>  	pr_debug("Compressed data magic: %#.2x %#.2x\n", inbuf[0], inbuf[1]);
+>  
+> -	for (cf = compressed_formats; cf->name; cf++) {
+> +	for (cf = compressed_formats; cf->name; cf++)
+>  		if (!memcmp(inbuf, cf->magic, 2))
+>  			break;
+>  
+> -	}
+>  	if (name)
+>  		*name = cf->name;
+>  	return cf->decompressor;
+> -- 
+> 2.51.0
+> 
 
