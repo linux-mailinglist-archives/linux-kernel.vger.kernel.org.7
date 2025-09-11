@@ -1,94 +1,147 @@
-Return-Path: <linux-kernel+bounces-811736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E1DB52D35
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:27:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9ACDB52D39
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99606586ECF
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB4CA00618
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260562EA147;
-	Thu, 11 Sep 2025 09:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A3B2EA147;
+	Thu, 11 Sep 2025 09:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="XI5BQABJ"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ScSwbN5V"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245022264C7
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA191B87E8;
+	Thu, 11 Sep 2025 09:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757582833; cv=none; b=sKYkQQPcGEdT7mvd4WK2QgwYiJBKVRJ6pVki9zK2yoHwm2Sx1BqxKKvucCfMh8vOxo1b2yHGkhQdQ7lIyXOsfLYB2FBJd3Hn9++AEMqH1HsOKaIl82VxNv/iqQ2gMrRZRRq9v2EjcpWx/587e2X+Htz1hTsv9kAyVrG5t+j6OuY=
+	t=1757582903; cv=none; b=NKR2xv3es5tv0BDw53gUsXb/e4AQIjiYs17nZoK2HkaY/wc+4HrSdSHWztKVl/aDEI/u84voIzAhiwTyMsxJF+f5QBXqKkVPPGXUZe0aHy/BahuYHhJKhynos/+R0a1A7EymnWAoWxd8WPlDxFlWTPDJ1q3OUO6UT5TzK+c/LnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757582833; c=relaxed/simple;
-	bh=mPzZxZC7kXMonZ38EaSepnC8+jn1j3kAR3sV1zOkMr0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=k7N/BPCeE7fuT+yAKY0X57zNLubBLsagj47v37YpjzZz2o+0o6Tng9CS4xZYwu5GduEMs9G09s/Ms8kixrgTuLcBBxZSaykL/BZF7GvcnolCtBUGLprzEkLlocRrJiCX6gEpSBxZbljuzpObqA2oOwCaJRNDJh6cnMqzg/kpwlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=XI5BQABJ; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=MoWNn7DHA78iwugknyQ5tFhWQzWHhiXfaQ0zWgavsSM=;
-	t=1757582832; x=1758792432; b=XI5BQABJiFAlkLckQc10/KQII8segUyS1Ur0QPl50R3C61p
-	/92LN/oBXCNNlaxHou9gDxRil3EtEM9YwouTAmbFxXcc6JNC0MqvGl3b+OduXar5I4C/bvheLQzt/
-	+61TSr2QDZP2ORDpxCZHr3LTeeiKWonvG5tXynCtGUKI6sHNSSst3hXn5rI7YS/6DaTb44RcLfqP/
-	KCi0KTOL/m6/8o8OC+AmRPEfZPN3JA4Nf9xXHK+/sUECdj7322bqXFF+0sqnyIHAbvWyjWqXmPSw9
-	WYHYS1ImS6v3i69P3B7Lun8XCd2eUvEq9S7wRu05nTMEkVPOKtP68sm/GGvwuq5w==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1uwda5-0000000F0aa-27nQ;
-	Thu, 11 Sep 2025 11:27:06 +0200
-Message-ID: <78c8e39d9719a26c6e492e895b070794eb8218ea.camel@sipsolutions.net>
-Subject: Re: [PATCH v2 05/10] um: Determine sleep based on need_resched()
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Tiwei Bie <tiwei.bie@linux.dev>, richard@nod.at, 
-	anton.ivanov@cambridgegreys.com
-Cc: linux-um@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	benjamin@sipsolutions.net, arnd@arndb.de, tiwei.btw@antgroup.com
-Date: Thu, 11 Sep 2025 11:27:04 +0200
-In-Reply-To: <20250810055136.897712-6-tiwei.bie@linux.dev> (sfid-20250810_075306_773702_0F58F2CF)
-References: <20250810055136.897712-1-tiwei.bie@linux.dev>
-	 <20250810055136.897712-6-tiwei.bie@linux.dev>
-	 (sfid-20250810_075306_773702_0F58F2CF)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1757582903; c=relaxed/simple;
+	bh=7O8wP6YesOxxPGXF72XoQUQIVWCXf1NXL+JFB7E9gf8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qixV3yRdLtb7t9SkvEdLcgAlALPKqdLFD6wjwzMlYOF7ecC1PjeiMbkf9vTXlAk3S85xXz5u/Mag+cduyQoNkSqoeoWN7YQ1HNSc1G0F9no3xlShHS6lKGStpNAkOQHbxUgHmi83gO9dsEhWq0gFOd+wB0CVgpJchKO2Mm77CEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ScSwbN5V; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B7MOiO028317;
+	Thu, 11 Sep 2025 09:28:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=XqbZs9hf4mUfj4ECMbTUhoGBGdSmHUuLJrDP1bxxu
+	2w=; b=ScSwbN5VTAUnm2YOcI8EjmtIu6IugVleFPELT7GdADsJKy1836QeVEjJE
+	6JE1GIsqyMtPSQsQHhDEgSDgED4iHCE6avwjSlO+2fFGNZ6GZKV3th+Go1UdUNsx
+	6CI3wDjELgvkoxE3B8AJKGV+oontxUljXLjoCHyIvltdN62tXcBWQnzSgLGkKlLX
+	A2zUd5mmU5lxozrCquLrSrf/tTqqEqVhtgvDW8FZqhD3pPBY36JQLxKmyilXW3cU
+	eEGUFY4PS45VWNE4QGd3+ZKxcJjWIBSdXlQXmkDZvC1Wc9Zx4gL2UpOcyklUtXyh
+	SA/69Bli5alD6SMDC1kAeNhnRcc0Q==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmx3pw3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 09:28:18 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58B9D2mJ007912;
+	Thu, 11 Sep 2025 09:28:17 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109pw2wc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 11 Sep 2025 09:28:17 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58B9SCIT33161922
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 11 Sep 2025 09:28:12 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C9FB42004B;
+	Thu, 11 Sep 2025 09:28:12 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B9B7920040;
+	Thu, 11 Sep 2025 09:28:12 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 11 Sep 2025 09:28:12 +0000 (GMT)
+Received: by tuxmaker.boeblingen.de.ibm.com (Postfix, from userid 55390)
+	id 66890E03BC; Thu, 11 Sep 2025 11:28:12 +0200 (CEST)
+From: Sven Schnelle <svens@linux.ibm.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: [PATCH] s390/entry: Remove unused TIF flags
+Date: Thu, 11 Sep 2025 11:28:06 +0200
+Message-ID: <20250911092806.3262481-1-svens@linux.ibm.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: nEprxwTOVfEOWQ9MvyTq4uRpIPPFQuys
+X-Proofpoint-ORIG-GUID: nEprxwTOVfEOWQ9MvyTq4uRpIPPFQuys
+X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68c29632 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=acghSI3q7n8i0AATrVwA:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfX97o0IK0PZ6Uj
+ myTE/QqBteZ3EIqhM4H1r7PJEG+iE3q9iYTagABNOTcOMqQuoLPKuyD7cterD0iNqbaa4t8sWis
+ GqXaP/8IGahR5yviLpDUX6K2+eqPOtLhH350QZSbYDb9RLEyVjcjpLeNcxcAgMGNGtRNv2JNPTz
+ FaMdvjyRh9ZYJmW6bVzWAxUsOEETmFYK+8J1NAXtDEADLgm5urfpiJjwmT0Ea5vwHcHu1RrvStY
+ R729vsYgRtPcY6i8kCZ8aIgYjHPBA2V9cmgpwKjzZTN1JBPxUoWKNQOy2hr/Ef8m6VyrjA6opxq
+ lKOASVfuyvKVbYKlTOYiuda0UBSTwIojiU8+2C6//ExLq/ovy2LNBAJuW+LI0tkyDs9k4igPDDQ
+ OXW16Fw6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 clxscore=1011 suspectscore=0 spamscore=0 phishscore=0
+ bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
 
-On Sun, 2025-08-10 at 13:51 +0800, Tiwei Bie wrote:
->=20
->  void um_idle_sleep(void)
->  {
-> -	if (time_travel_mode !=3D TT_MODE_OFF)
-> +	if (time_travel_mode !=3D TT_MODE_OFF) {
->  		time_travel_sleep();
-> -	else
-> +	} else {
-> +		raw_local_irq_enable();
->  		os_idle_sleep();
-> +		raw_local_irq_disable();
-> +	}
+The conversion of s390 to generic entry missed to remove the
+TIF_SYSCALL*/TIF_SECCOMP flags. Remove them as they are unused now.
 
-This seems wrong, with it, lockdep gets really unhappy, and if I remove
-this change it seems to work OK?
+Fixes: 56e62a737028 ("s390: convert to generic entry")
+Signed-off-by: Sven Schnelle <svens@linux.ibm.com>
+---
+ arch/s390/include/asm/thread_info.h | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-I'll note that arch_cpu_idle() for x86 also doesn't change anything with
-interrupts.
+diff --git a/arch/s390/include/asm/thread_info.h b/arch/s390/include/asm/thread_info.h
+index fe6da066b123..7878e9bfbf07 100644
+--- a/arch/s390/include/asm/thread_info.h
++++ b/arch/s390/include/asm/thread_info.h
+@@ -74,12 +74,6 @@ void arch_setup_new_exec(void);
+ #define TIF_BLOCK_STEP		22	/* This task is block stepped */
+ #define TIF_UPROBE_SINGLESTEP	23	/* This task is uprobe single stepped */
+ 
+-/* These could move over to SYSCALL_WORK bits, no? */
+-#define TIF_SYSCALL_TRACE	24	/* syscall trace active */
+-#define TIF_SYSCALL_AUDIT	25	/* syscall auditing active */
+-#define TIF_SECCOMP		26	/* secure computing */
+-#define TIF_SYSCALL_TRACEPOINT	27	/* syscall tracepoint instrumentation */
+-
+ #define _TIF_ASCE_PRIMARY	BIT(TIF_ASCE_PRIMARY)
+ #define _TIF_GUARDED_STORAGE	BIT(TIF_GUARDED_STORAGE)
+ #define _TIF_ISOLATE_BP_GUEST	BIT(TIF_ISOLATE_BP_GUEST)
+@@ -88,9 +82,5 @@ void arch_setup_new_exec(void);
+ #define _TIF_SINGLE_STEP	BIT(TIF_SINGLE_STEP)
+ #define _TIF_BLOCK_STEP		BIT(TIF_BLOCK_STEP)
+ #define _TIF_UPROBE_SINGLESTEP	BIT(TIF_UPROBE_SINGLESTEP)
+-#define _TIF_SYSCALL_TRACE	BIT(TIF_SYSCALL_TRACE)
+-#define _TIF_SYSCALL_AUDIT	BIT(TIF_SYSCALL_AUDIT)
+-#define _TIF_SECCOMP		BIT(TIF_SECCOMP)
+-#define _TIF_SYSCALL_TRACEPOINT	BIT(TIF_SYSCALL_TRACEPOINT)
+ 
+ #endif /* _ASM_THREAD_INFO_H */
+-- 
+2.48.1
 
-Was there something else that required this change that I'm missing?
-
-johannes
 
