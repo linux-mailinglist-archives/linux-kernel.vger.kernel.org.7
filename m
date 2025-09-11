@@ -1,391 +1,264 @@
-Return-Path: <linux-kernel+bounces-811280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85762B526F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 05:19:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28097B526F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 05:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B46B3BB5BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:19:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DB7C7A2493
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:18:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61D7228CBC;
-	Thu, 11 Sep 2025 03:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4876226D16;
+	Thu, 11 Sep 2025 03:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="L6vYqPhb"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D8q7oZQ4"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2057.outbound.protection.outlook.com [40.107.237.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C285D22541C
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757560751; cv=none; b=SY4l4rZlquv6pa7W88XgihGUSAFLW5zPxfBSxouwShooVqaLTH0TGbZh68b+zwKPDNlDHRtKIgWEUzrFSI6Y8uBeU05VcNyAorIUbGsKIRdoJamvQJphV8w4hetXDp0/UMWVvmYYDRSxg/zmCGuE/QQQAXwBO929pgIYO299jOQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757560751; c=relaxed/simple;
-	bh=9HSJ4M3l8wxlkJRoKo/XxAvhBmmLkYJR9qfWXwkpZmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kSlWSwc/pCcFqzf46wZQIEMNAoo2pNLcduzg5N61PaZy3uoiIkVJki+Fd5CgDta/MqHoiNKr7lj4YoZNG4aw8iGLfDhdPmBytfxq+DXR7SD5lMkgMPRfranHIU80HeG21XJzL6GshHNpnyx4thhHTZmS9jHv/7dcrx93PkADZcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=L6vYqPhb; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58B2IVBt015051
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:19:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LMMz/beZCdvqVQXt7ljdBTCVb0kcIqN10eziEUpqZKc=; b=L6vYqPhbj1DwYMfV
-	oxvIRvTXnjvcVhM+OR3ScjO+gqbGmYKp37bx+jwl0L1wf90FIsL5r3yn7CRv3DBZ
-	WUv1zHvhwjrGSXULwESjDewtySwTSlO/p0Bk8gc8fbZu4BjlarHLZOWl/DC77iky
-	ghvAK/sLwmgWVhvybsJNH7PLh3bNDQOOBPi3XjuWja1umJpa4Od4EZUqEZ/Uqfqk
-	5c/FB6xR0PtQRrXeSL+wM7ZgkmAD8oR/9wYXmjrQdRITlmuUKt+hfL09bYQluZi3
-	AZrScIN1MnpCvY4CcpgaG6JisrrG1awIMB4ZvaXuajwfrruoXA9Wix6T4EaHSPDj
-	tNGGRQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490e4m5ys1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:19:08 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-24b4aa90c20so2678425ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:19:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757560748; x=1758165548;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LMMz/beZCdvqVQXt7ljdBTCVb0kcIqN10eziEUpqZKc=;
-        b=WvrquoR38LSKWvVZD016leF8ofKK+BzcbakkF9MSM6L9fUJUZs3SX6mJdHnwcoHAQf
-         1urUdz5MadAPAXMrtB1IYuZtqMCC3eKEfkr+LqLUiinIeiM0OJuW0QyNaRrWiI9Q9MEZ
-         dviKFzY5S09gngtkl5cLm7Y8zqNez2skOoQbUFhBaRuiR9s4cQ1T0C4hmgXceJh6ZH5Q
-         d8gIkAKpNL08a6JgZv5kQTv67+SbMgMbgSd/kuhCGtl+Dxw68wfHgEWllPXasjDrnd3M
-         RTf12Abqd2YXvYrMyD+ys0eZUpBirasasvXe+ArPGwcQW5yAYjgHMVMrNSJodIXTA7H2
-         2IfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzyHncLN2VxNMdbhX6TdIJC7oipJLWkazGzkCBjzoIeB04Ju8+yPCmCQA3dihLiQyBRHiqQRWLCRLqBt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3O7qYO20SjVGvm5zpAcZ5ESVWQYAvYUsTRTanZcIIzS/F8y3c
-	3VsXUZHg1NtmsxQscO7t+eRjxphtIqJu2jhma7m6RzZz2nFYK17OXD/dcMdYijqXFWpY3j4MrHl
-	cidKKawxEvebTYLmdAeKQlYSnzqBbENUhMbnsp/xg8DN3dC9o1vMPVQxy96FZjSrk7A==
-X-Gm-Gg: ASbGnctHkFE+G5+DVFtcIlZwE5MdRAP/+5w7gDmgZOl0vfl9TJXuz+n4YmTg9GpcrnK
-	ivr3AFsGl85D6ftBdkdN55yqihiHuWyTW5kvL5FN2/0GkY9GT6TBbjJLiZ3LmGCUS9bWFS46SD8
-	+uc5nmBWFue3doZfWtFz0+maSnL6FwRWK7LuJx4m2rll9Wcf45RglJA+PfNbZy93LlPD9uhMX28
-	Us3ARWuXCpIlFrhWKelKLNRPkAWM2xLvCD2nubmAaktl6nQkrON6PyjhdFIixPdGRBRS4E7fR51
-	RqbyLLkatAOGiFe8eu9GhzRmUcfxvdZCVainPW2m3ZVjgINVlGLheGNej2xoBAVBUTEbxnR0UsQ
-	cV6GJdiz8D+YOPVtDKLTCrhBTOwExfh2XeCE3ng==
-X-Received: by 2002:a17:902:ce06:b0:24e:e5c9:ed07 with SMTP id d9443c01a7336-2517311894dmr260007525ad.36.1757560747499;
-        Wed, 10 Sep 2025 20:19:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHZ6oFZGsoKEF6YNPd0EkmIus1YyTMDPHQIG1x59bSwD39p0/YQfyp9Xmnvg21I1G/sYxEahA==
-X-Received: by 2002:a17:902:ce06:b0:24e:e5c9:ed07 with SMTP id d9443c01a7336-2517311894dmr260006635ad.36.1757560746789;
-        Wed, 10 Sep 2025 20:19:06 -0700 (PDT)
-Received: from [192.168.0.74] (n1-41-240-65.bla22.nsw.optusnet.com.au. [1.41.240.65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3b304ce8sm2660265ad.128.2025.09.10.20.19.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Sep 2025 20:19:06 -0700 (PDT)
-Message-ID: <23fe069e-727f-4bc3-a526-9320090991ed@oss.qualcomm.com>
-Date: Thu, 11 Sep 2025 13:18:58 +1000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1681722541C
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757560786; cv=fail; b=MV1chVofJzCrfaQ0bwMFwPgfd5K2ivz7iivuKsu6VMS3sc1UpEgahMIJWLh0NknJ3wFnh0GgmVXOL2dR5mZxrujb1EMrRjSiCL9cCrSxTCxm8n+8QjVR0N7JbxGGhjSavj29HYQxV8ir0m3IIw3T/PPmo05uEogVwjLZHsC9kIM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757560786; c=relaxed/simple;
+	bh=WudZNnXwk1iU98g0E1dY3B/iARyAqJHTuL1AtlPCzEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hBVj94xUa8mySrXmuW0YFA2RiwDB3VnbXk2XK14Bh/8RLbMg53/yi1rEKcrEhxKCYbi0QOOzJgaX8rPzoMzMlvTpGrZKkgDNWngP9A80+wkY3gOmSmbxRFlILY2S9G+P6l/wM9C1bv0bYJo2+dS96/FOVQ3Q2SQG2ti2ZEx2Kck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D8q7oZQ4; arc=fail smtp.client-ip=40.107.237.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wt5Zq6V95rzhWCrM4tMnfEimkwREBQaWdH26xtb9GMG7DbOtfh/DeLAzBMkaGlXhOfRYp8k0phR77jYdco+kmQr+uWz6BNx7s12LNdiyHkz8AmvfYpqwhDXW/NSE41lF//nLmLnaw1TzOK7YyiNgILLl2lJCAO+vC1Gjs2UUTHL+FqSClzt6wIxvF3ihVViZcR/e/vvFHcB3145MjnBgZMKxat/e06VShGHdH3DGflc5o+BW+WCF4RDRfMaLevRCedgBg9OrbmGqyq0PtnozU4XNDP3nJuHRu33qbl3lMTeQNPNuoam08dkcS5ShNFV4RNmPbusIMpHOVeEyD7skFg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kpHj+MGARfj8blxvVka264X7OkIxIPNR/vshBaT6dHM=;
+ b=crqTjQEAuikAGB0v3bkOl3OpFkJE8YLopP20CQZ5SxeI98CK2Xq3S8okL18k1eeh8YdJWP5fyxF0EDM5P0z4jGmY3+OAadMgtasvRxxBJ2qxhMzDj8XPBETYQl340oMpzRRD46OFktK2RLA5QxRa/DhnzN7+L9o/XihSNcKSNDcEg3zFwpJuM26ay60XqM458dUmaqnj83yQpMPDlXhzbGxaqr6j7fwDrs17gu3y4LiBDGW/NYVlFq33Yc2wsDH9d98sDdaRJE1X2gAoBFT6E986EGxgCyX1LChGuix3OLAlxOmF+l62z8+97RYt3ZTgdR1luypYl2Z9T8IcY1OVWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kpHj+MGARfj8blxvVka264X7OkIxIPNR/vshBaT6dHM=;
+ b=D8q7oZQ4SFUZV7YLNXtmj0Zqk6z7YPNVjqqIhLMwwyfWTRX647MN9avQK08WlV2nPU6pChLp96ZCt0smYh4E9SgbrpkxCMg50CJvVhsJ2of9UIjRNJi+Ny14+I74WgqybydpHTSjfoJPhimUud6LUORBpivxcDO9upxGM/+GvX/RQom6GAEOC21K1uG5bNwTwfImmq+0kju+PD9CyIEwyTyUrqThMTgXwouUR0XD23y6jfluGNET8xjMzCNndSiIWk0D5KhYWM/VTyFU7M6jbcj0YWFFtMY9VQh7Bd+4CP1LLjrJGJHO57WmxSplmcpuXqGHgodH2Kk4P0nKucL61g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ PH8PR12MB7208.namprd12.prod.outlook.com (2603:10b6:510:224::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9094.22; Thu, 11 Sep 2025 03:19:42 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%6]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
+ 03:19:41 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Andrew Zaborowski <balrogg@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Miaohe Lin <linmiaohe@huawei.com>
+Subject: Re: [PATCH] mm: avoid poison consumption when splitting THP
+Date: Wed, 10 Sep 2025 23:19:39 -0400
+X-Mailer: MailMate (2.0r6272)
+Message-ID: <9CD4E5BC-185A-47E6-9A2C-1B5416DC57EE@nvidia.com>
+In-Reply-To: <20250911021401.734817-1-balrogg+code@gmail.com>
+References: <20250911021401.734817-1-balrogg+code@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MN2PR14CA0016.namprd14.prod.outlook.com
+ (2603:10b6:208:23e::21) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/11] Trusted Execution Environment (TEE) driver for
- Qualcomm TEE (QTEE)
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Jens Wiklander <jens.wiklander@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Apurupa Pattapu <quic_apurupa@quicinc.com>,
-        Kees Cook <kees@kernel.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-        linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Kuldeep Singh <quic_kuldsing@quicinc.com>,
-        Sumit Garg <sumit.garg@oss.qualcomm.com>
-References: <20250909-qcom-tee-using-tee-ss-without-mem-obj-v10-0-20b17855ef31@oss.qualcomm.com>
- <aMEINycp24DG6KXO@sumit-X1>
-Content-Language: en-US
-From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-In-Reply-To: <aMEINycp24DG6KXO@sumit-X1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzOCBTYWx0ZWRfX/PLJ81k4yrrp
- aGFd8ywipvAiv1hmVO21F8kPa+YR/urtmYqMoO1OUFHlmC4R3f4smNtIf/xNo4CVwSiJffkBj87
- kZG8pC3H+9+JxkzlAQQZ0PBGua7dEfuMSLnhSZuQ7kKa96pTj4BPUOClZjDOmwAeTXJp/4mCZ8s
- 2Eizs9SIlCRcNh7tEEPT4VpB7cRBOor5agGJqx10SNQv+9xtTa26cMMUwss/NP86fqVjeckbUnx
- SCBMrkiN9D9XEex3XduPLY58VmZl8WYELaYSdmGWwK/++I54eXsnzSZFdUNo71LT+2fhOeUTb4J
- hbp2ciUvaLHQmnxO9od46rzQKvoCP3t8Le8u6wna7OUKyw2sdB7rF04qMoW5H/2ZTAKxnzalUxN
- 4py20BLL
-X-Authority-Analysis: v=2.4 cv=J66q7BnS c=1 sm=1 tr=0 ts=68c23fac cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=hi51d+lTLNy/RbqRqnOomQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8
- a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=PQODIOjcjKhI4WzMhAgA:9
- a=D8jLBtTEXUNSpw3P:21 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: GEmL8-0LV66mY7EwEq3wsgnVozIs9rsj
-X-Proofpoint-ORIG-GUID: GEmL8-0LV66mY7EwEq3wsgnVozIs9rsj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-10_04,2025-09-10_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
- adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060038
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH8PR12MB7208:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07acde44-b81c-4251-949e-08ddf0e20c61
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cC9sSW0zTGZ3YjA4SFhLNTFEZkdUWFJoQ01pYStqZm8wcVBEQ0RJeno4TndU?=
+ =?utf-8?B?SVBOLzBIa2xWYVJTS1IxQXhIS3JKNDhtNWZnWTNrejBQVE81ZEtHTHhFRy9y?=
+ =?utf-8?B?cEtLRU1Za3RGM1lEVUlTMHFXeVFHVmdHOGpreVJ2cEN2Nk1xR09ZUFZkdE4r?=
+ =?utf-8?B?ckJzazcvOEZpZGVlWDk2ZVRHa1dMakcvNW1mRDk1UktGNWJlckVQQ29Eb0Zv?=
+ =?utf-8?B?bUpwMEIrSFBLWmQxQVNxN1JYNHgzYUsrczVleFFET01ydEN4UzBBUUJUUnFv?=
+ =?utf-8?B?SU9zNWdWRHVvSnhWSHJHQW9lWEtaZFBlK0ttOTh0RGpNeEJrMWFmTTFGc2ll?=
+ =?utf-8?B?U05pWE5BZlJpcjlPN1U1a1IvZVh4MVV4VFZiakJkZGZkVy9OY1ZVYkdRMUhi?=
+ =?utf-8?B?ek1NbWRGMXArNWxBTkdxWWJQaU1OMGlxYVBSNGtZbGNXVGpvUzBmVWlhQ3VZ?=
+ =?utf-8?B?Vm5RV1FUYnJTNFdLMHFybnFDMzRjOG9ScHVleXV1TkV2RUdIS2lhaDl5U0dl?=
+ =?utf-8?B?ODFLK0VjMU8wbzZPUlF2WEd5cUk1NnEvb25NdjYvd3VBVC9hZ1ZSalUxNXBq?=
+ =?utf-8?B?Q1hZOW5RcExtM3RRZG9GemhhTWtmL2I3QjdjUmNvWktTZjkvc3hZb1BRYTgz?=
+ =?utf-8?B?eSt2V0Y3MFJQY3NnQ3o0NVUzL0JNRW1SanplWmFMeWlOSTM4bjBubm9NM01a?=
+ =?utf-8?B?WjJtbXEwT0FNS3ZSaFVTTWQ5UzM2NUc1NTYyalBPU25uZkxtZFNoUExvazFY?=
+ =?utf-8?B?QTUzOERlNjBBWi9hcTUzUFBlTXF0UGZJS0hrRE5WelVsZmIxTlBnNm45VXdv?=
+ =?utf-8?B?OStJLzl5NlJDV24xU1B6Rk1xU1NMeVJ3bnpSY1drOGE0c2d5U0d1V0t3UHB6?=
+ =?utf-8?B?UzZ2Umc3YWhiRkJJeStZTjlEUnQxR3JLOVliWVVERFFnZHVPeGJJZG9Ma2k0?=
+ =?utf-8?B?Slp1a25Hem04RVNZWlJ0Uno4OHJyZm14N3UxZ1R1aHdSenRuTkVwNjBhRHVr?=
+ =?utf-8?B?aEZ5YVFvOERTRW51R1lrM3ZiaUdXd1U1d0g5cGxjY2FIUHBIVEZUSkNlcnpM?=
+ =?utf-8?B?Slpwc0FrMnVsQ04yeitOWGFPVzV6eU91MU8vVlNFRk05cmVwYTNZQlcwNllQ?=
+ =?utf-8?B?ZE05WGNTMmFUNEdhbk1aV3JXd0JJMThjaktGZmRaa3crNVY0ZUtwcUpWUlZ6?=
+ =?utf-8?B?Um54VzNsTXlQMjdmOXJDZFNIaHJOUUdncGZ2akg0Mm5SKzR1bEZ0WWdCeld2?=
+ =?utf-8?B?K3ljRWNDam5wUUw0VUI3OXJUR3p5dWZnMUVTM3hFWWdlNUxCT2pON3BtN3NJ?=
+ =?utf-8?B?bVZwSWxtVmptaERuOFd5N095RG03UStYVDcxcmpGWXRKc0NsZ2QwWlFMaVlm?=
+ =?utf-8?B?Z3Z5RXBlaGVka2NoUE55bzFFNHQzVXZTUHgwZHMwTFk4d2dYb2FmcGtMeCtU?=
+ =?utf-8?B?VDRtYUUzNVlMUmZHRTRLUnlVK3c4S1VDUjRDL3Nkck5PU2Q2eFdGcmZSQW1I?=
+ =?utf-8?B?dDRsYXAyNlN6YU5sZS9Pb3o3SzNMbEZ3c3UxbjBTak5CRG0yVUo2Q24veGZt?=
+ =?utf-8?B?VnZlRnp5TGk2Y1NCU3lFQldpT3dPaWxyaVRKUjZyUkhXTnFheHZzVGJielV2?=
+ =?utf-8?B?UXZmMktmZU81cFpPWTdvaXA0OTJuVWFKUkw2SzlDTk1yaEcxMjVjRXZCWGpl?=
+ =?utf-8?B?aHU2WFFuVGNjSDA0cWgxbUxCSDhqMnlYOTVoaDFtQUFlUlc3cHlYWFNTVGg1?=
+ =?utf-8?B?MzdJbjAyRUJNM1BlbGNmSHVibmVhc0o5T3h1Mk8wNVN1TFdCTHp5Y0xDSGpQ?=
+ =?utf-8?B?dFdmYnJPMmZUK3NwRWlQWlJERmhCSVlCaEVpWUtRUks5SE5OZkk4Q0dNZHhY?=
+ =?utf-8?B?Y2ExRTVHdEcvVVo0VVpqa05ydm9PdWtsV0RWbzVsQ3pLV0NwUk5nTk5ZbFV4?=
+ =?utf-8?Q?xsvQ8iRcmYU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dUp5T2EwNTB2MVVEOFNrRjM1Q0ZsOXUvRGFSVG1QY1F3SFJPcDNZRW5GZmlj?=
+ =?utf-8?B?QXB0YkJUc0RRRkVvL29RV3JsOTV6ckx6ZklkWVFEMnoyR3JqQTJNQlIzMU5w?=
+ =?utf-8?B?ZDNsRjVvYmJwYU83WFBZOGVqclVhbStPNUUxaUVUMCtkUFFDMy9GUTRIczNK?=
+ =?utf-8?B?TUNJTEV1QlpXVFJDby8zWWFTOTViZ1lhS1VHcGpLSDY3UWsvTkkwQ2RYOWlz?=
+ =?utf-8?B?OHNKc3kxbEhJVFRoTTlSaE5FNXlTY1VYTzFqaEk3SkdoZWlobC9ibkhyV1lJ?=
+ =?utf-8?B?L2pLNGtpZTlBdEhyMUdqb21nVnNkZWdBN21vMGhRZks0VEg1Yi9wK01oNzZi?=
+ =?utf-8?B?Rlh0QU5saWxSaklCSGxUSGp2dzhURnhWZ1ZsM2NFREk1TDFKTmlIMGFXRU1x?=
+ =?utf-8?B?dG9vSStoNCs0aER4YkltZ296eU5xRmErbkhiVUFMNHR1WE5IS1FyZEVvbUtM?=
+ =?utf-8?B?cDN3bkl6cWZyTEhESWpvTC9Da0JTT1dYSWRjK2l1a2lOK3FzV3ErZzY4ZkFT?=
+ =?utf-8?B?Y3dnVmI3SkRRQWU2N0pvdUs2U1lKU250SXQ0aHpMRWs5UU9ETGJFVXFHcWtN?=
+ =?utf-8?B?bFp3eThIUm1kWGk4Nm5HbmNWbE0weVF4SWdWNFduUGUzRGV0WGo0TWlHOUVs?=
+ =?utf-8?B?T0NLOC9wenlSMm5VTjkwNEFkTFZuWVloaWdVcFlaeGRqam1lQ0UrbmFJR2ox?=
+ =?utf-8?B?VmpQS2lpakJMNTUxRGwyeHZuSHhKS2NNWUZ2L0pVK1lUNCs4U0tMV0RiME1Z?=
+ =?utf-8?B?bUxSZDg4TW1iVHUydFdEV2J3cmhsdmlFaHFCaHdyclpWRUZPclArM1RDSlNu?=
+ =?utf-8?B?aEZFdGRwZk1uaXlXMWk1NDY1L2Y1a0NUaGNZYkFORzc1dDBlQkR4dFdVRlhG?=
+ =?utf-8?B?YWZBUzlibUpEeldGYTNES3pFN0hseWhvQmtrbTRMRVpiWnJSWWMwTGlvQmJK?=
+ =?utf-8?B?OU0xSkc5NWVkVVpvNWxsWktDQm1KWTZKMVY3Y2tWRlBsQ2VlUitGKzVBdktB?=
+ =?utf-8?B?cE1ydCtYQURqZXZ6MzJ4VFBVbThJRUwvTWdKMm9DU2Z2SjhuaWduUGRLdmFn?=
+ =?utf-8?B?a3RlNitFR2hjMU9UMXlPMFJJSUJqRzJUOHgxdXA2RThzZWxNd0sydmdVTEdK?=
+ =?utf-8?B?RWtBRWZSZDNUTEk2eEJFSGRJOGJVNXk3aHpWWndvUWhPa3ozSXFsaC91NWFS?=
+ =?utf-8?B?dmtkUDgxSndOYUNBOXZHbDBjcHg4WWpCTi9YWDBWZVYwV0Z3VS9ldlM2UERC?=
+ =?utf-8?B?Zk43dU1hUmlVNzRXdW9qQWRJYXNRZlFnMlZiVlozdnlsbE5KSU05aHNBRjNl?=
+ =?utf-8?B?Y3NZV01KSjVYZG1iVStoUHlxU3BMdlFMbnhBNi9FK3hhWkdrWUh1aUtTbVJP?=
+ =?utf-8?B?L1RkZGswQ0lTbUluOGxNdUg2WU1pUEg4WDcrcllWbTZZaHhLVUVzendGOC8y?=
+ =?utf-8?B?SE52TG02OHlNcy9XMElpWnpJV01tdEZiTFBpOWRYR0xTY0E5bHZuaXJyUXFH?=
+ =?utf-8?B?ZlhaSzZna2RjVGlwNkxOTFpqdytJcWV6Yk5QWUtISFB2Q1RvREIyRndUc0J6?=
+ =?utf-8?B?QTVVanhvdEtTcFBnd0x4Z1p2TmRXRVltdjhEUVd2Umk3QmdlWEl2a0xaMzJ6?=
+ =?utf-8?B?czR1SGZHWjVOa2ZCK1Z5bnlKK3lyOERsS29kcjFaYmdvMU1zNFJybjlvVG5Q?=
+ =?utf-8?B?d3VrYVlyem9NcC96K2k1OVN1Y1VwQzJJcVJtdk5vZHpMZGhRTlBEUEFUVjF4?=
+ =?utf-8?B?UVR3VnVKSFhsMnNOamlwNHBkSW4ydmVQS05DSXFJQnVlVHhIS0hEdURDWlZt?=
+ =?utf-8?B?c3hCcE9TTEdlWnlSMThUN0xLdXRlSitSWGtXM0dBQUR1d1gvSXVPZjZNRXVt?=
+ =?utf-8?B?MTZ3SGhMMFhyYXBUTXZaU3krYVRHMk4xZjFpUUQvcU1tNjNucnpQSmRDR2xO?=
+ =?utf-8?B?U09QcEtsVzNKREY3TkJaYXdUYVhDNjhMSVlJaG05aEcxSlc3cCtXOFF5ODlU?=
+ =?utf-8?B?NjFCcFhvdFJrR01TV21iZWxyS2hDWnFNdFBQVzJYdXF5TFprQTc1TkpOK3pr?=
+ =?utf-8?B?azJ5YXZKSHhFN2xEYjNVbkt1d3dWa3BjSDcySFBkYVl1U05oc2xEbXBTeXQv?=
+ =?utf-8?Q?7uT5Joc31MlIMAQ5iL4p3G+6k?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07acde44-b81c-4251-949e-08ddf0e20c61
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 03:19:41.9012
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: eYnDe6rpNueeXYIK7wA+cJm4Abg7dfXoJnl9Jfj/FV2rJWRuSKD1mHm7b3rSUR3i
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7208
 
-Hi Sumit,
+On 10 Sep 2025, at 22:14, Andrew Zaborowski wrote:
 
-On 9/10/2025 3:10 PM, Sumit Garg wrote:
-> Hi Amir,
-> 
-> On Tue, Sep 09, 2025 at 05:11:02PM -0700, Amirreza Zarrabi wrote:
->> This patch series introduces a Trusted Execution Environment (TEE)
->> driver for Qualcomm TEE (QTEE). QTEE enables Trusted Applications (TAs)
->> and services to run securely. It uses an object-based interface, where
->> each service is an object with sets of operations. Clients can invoke
->> these operations on objects, which can generate results, including other
->> objects. For example, an object can load a TA and return another object
->> that represents the loaded TA, allowing access to its services.
->>
->> Kernel and userspace services are also available to QTEE through a
->> similar approach. QTEE makes callback requests that are converted into
->> object invocations. These objects can represent services within the
->> kernel or userspace process.
->>
->> Note: This patch series focuses on QTEE objects and userspace services.
->>
->> Linux already provides a TEE subsystem, which is described in [1]. The
->> tee subsystem provides a generic ioctl interface, TEE_IOC_INVOKE, which
->> can be used by userspace to talk to a TEE backend driver. We extend the
->> Linux TEE subsystem to understand object parameters and an ioctl call so
->> client can invoke objects in QTEE:
->>
->>   - TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF_*
->>   - TEE_IOC_OBJECT_INVOKE
->>
->> The existing ioctl calls TEE_IOC_SUPPL_RECV and TEE_IOC_SUPPL_SEND are
->> used for invoking services in the userspace process by QTEE.
->>
->> The TEE backend driver uses the QTEE Transport Message to communicate
->> with QTEE. Interactions through the object INVOKE interface are
->> translated into QTEE messages. Likewise, object invocations from QTEE
->> for userspace objects are converted into SEND/RECV ioctl calls to
->> supplicants.
->>
->> The details of QTEE Transport Message to communicate with QTEE is
->> available in [PATCH 12/12] Documentation: tee: Add Qualcomm TEE driver.
->>
->> You can run basic tests with following steps:
->> git clone https://github.com/quic/quic-teec.git
->> cd quic-teec
->> mkdir build
->> cmake .. -DCMAKE_TOOLCHAIN_FILE=CMakeToolchain.txt -DBUILD_UNITTEST=ON
->>
->> https://github.com/quic/quic-teec/blob/main/README.md lists dependencies
->> needed to build the above.
->>
->> More comprehensive tests are availabe at
->> https://github.com/qualcomm/minkipc.
->>
->> root@qcom-armv8a:~# qtee_supplicant &
->> root@qcom-armv8a:~# qtee_supplicant: process entry PPID = 378
->> Total listener services to start = 4
->> Opening CRequestTABuffer_open
->> Path /data/
->> register_service ::Opening CRegisterTABufCBO_UID
->> Calling TAbufCBO Register
->> QTEE_SUPPLICANT RUNNING
->>  
->> root@qcom-armv8a:~# smcinvoke_client -c /data 1
->> Run callback obj test...
->> Load /data/tzecotestapp.mbn, size 52192, buf 0x1e44ba0.
->> System Time: 2024-02-27 17:26:31
->> PASSED - Callback tests with Buffer inputs.
->> PASSED - Callback tests with Remote and Callback object inputs.
->> PASSED - Callback tests with Memory Object inputs.
->> TEST PASSED!
->> root@qcom-armv8a:~#
->> root@qcom-armv8a:~# smcinvoke_client -m /data 1
->> Run memory obj test...
->> Load /data/tzecotestapp.mbn, size 52192, buf 0x26cafba0.
->> System Time: 2024-02-27 17:26:39
->> PASSED - Single Memory Object access Test.
->> PASSED - Two Memory Object access Test.
->> TEST PASSED!
->>
->> This series has been tested for QTEE object invocations, including
->> loading a TA, requesting services from the TA, memory sharing, and
->> handling callback requests to a supplicant.
->>
->> Tested platforms: sm8650-mtp, sm8550-qrd, sm8650-qrd, sm8650-hdk
->>
->> [1] https://www.kernel.org/doc/Documentation/tee.txt
->>
->> Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
->>
->> Changes in v10:
->> - Remove all loggings in qcom_scm_qtee_init().
->> - Reorder patches.
->> - Link to v9:
->>   https://lore.kernel.org/r/20250901-qcom-tee-using-tee-ss-without-mem-obj-v9-0-a2af23f132d5@oss.qualcomm.com
-> 
-> It's still not rebased on top of linux-next and have merge conflicts,
-> see my comments here [1].
-> 
-> [1] https://lore.kernel.org/all/aL_MCagNVIDXW0wp@sumit-X1/
-> 
-> -Sumit
+> Handling a memory failure pointing inside a huge page requires splitting
+> the page.  The splitting logic uses a mechanism, implemented in
+> migrate.c:try_to_map_unused_to_zeropage(), that inspects contents of
+> individual pages to find zero-filled pages.  The read access to the
+> contents may cause a new, synchronous exception like an x86 Machine
+> Check, delivered before the initial memory_failure() finishes, ending
+> in a crash.
+>
+> Luckily memory_failure() already sets the has_hwpoisoned flag on the
+> folio right before try_to_split_thp_page().  Don't enable the shared
+> zeropage mechanism (RMP_USE_SHARED_ZEROPAGE flag) down in
+> __split_unmapped_folio() when the original folio has has_hwpoisoned.
+>
+> Note: we're disabling a potentially useful feature, some of the
+> individual pages that aren't poisoned might be zero-filled.  One
+> argument for not trying to add a mechanism to maybe re-scan them later,
+> apart from code cost, is that the owning process is likely being
+> killed and the memory released.
 
-Thanks, I'll rebase.
+Sounds reasonable to me.
 
-As per Bjorn's request, I removed the logging messages entirely,
-as they seemed redundant. ;).
+>
+> Signed-off-by: Andrew Zaborowski <balrogg+code@gmail.com>
+> ---
+>  mm/huge_memory.c    | 3 ++-
+>  mm/memory-failure.c | 6 ++++--
+>  2 files changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 9c38a95e9f0..1568f0308b9 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -3588,6 +3588,7 @@ static int __folio_split(struct folio *folio, unsig=
+ned int new_order,
+>  		struct list_head *list, bool uniform_split)
+>  {
+>  	struct deferred_split *ds_queue =3D get_deferred_split_queue(folio);
+> +	bool has_hwpoisoned =3D folio_test_has_hwpoisoned(folio);
 
-Regards,
-Amir
+The state needs to be stored here because __split_unmapped_folio()
+clears the flag. Maybe add a comment here to prevent people
+from =E2=80=9Coptimizing=E2=80=9D it by calling folio_test_has_hwpoisoned(f=
+olio)
+in the code below.
 
-> 
->>
->> Changes in v9:
->> - Remove unnecessary logging in qcom_scm_probe().
->> - Replace the platform_device_alloc()/add() sequence with
->>   platform_device_register_data().
->> - Fixed sparse warning.
->> - Fixed documentation typo.
->> - Link to v8:
->>   https://lore.kernel.org/r/20250820-qcom-tee-using-tee-ss-without-mem-obj-v8-0-7066680f138a@oss.qualcomm.com
->>
->> Changes in v8:
->> - Check if arguments to qcom_scm_qtee_invoke_smc() and
->>   qcom_scm_qtee_callback_response() are NULL.
->> - Add CPU_BIG_ENDIAN as a dependency to Kconfig.
->> - Fixed kernel bot errors.
->> - Link to v7:
->>   https://lore.kernel.org/r/20250812-qcom-tee-using-tee-ss-without-mem-obj-v7-0-ce7a1a774803@oss.qualcomm.com
->>
->> Changes in v7:
->> - Updated copyrights.
->> - Updated Acked-by: tags.
->> - Fixed kernel bot errors.
->> - Link to v6:
->>   https://lore.kernel.org/r/20250713-qcom-tee-using-tee-ss-without-mem-obj-v6-0-697fb7d41c36@oss.qualcomm.com
->>
->> Changes in v6:
->> - Relocate QTEE version into the driver's main service structure.
->> - Simplfies qcomtee_objref_to_arg() and qcomtee_objref_from_arg().
->> - Enhanced the return logic of qcomtee_object_do_invoke_internal().
->> - Improve comments and remove redundant checks.
->> - Improve helpers in qcomtee_msh.h to use GENMASK() and FIELD_GET().
->> - updated Tested-by:, Acked-by:, and Reviewed-by: tags
->> - Link to v5:
->>   https://lore.kernel.org/r/20250526-qcom-tee-using-tee-ss-without-mem-obj-v5-0-024e3221b0b9@oss.qualcomm.com
->>
->> Changes in v5:
->> - Remove references to kernel services and public APIs.
->> - Support auto detection for failing devices (e.g., RB1, RB4).
->> - Add helpers for obtaining client environment and service objects.
->> - Query the QTEE version and print it.
->> - Move remaining static variables, including the object table, to struct
->>   qcomtee.
->> - Update TEE_MAX_ARG_SIZE to 4096.
->> - Add a dependancy to QCOM_TZMEM_MODE_SHMBRIDGE in Kconfig
->> - Reorganize code by removing release.c and qcom_scm.c.
->> - Add more error messages and improve comments.
->> - updated Tested-by:, Acked-by:, and Reviewed-by: tags
->> - Link to v4: https://lore.kernel.org/r/20250428-qcom-tee-using-tee-ss-without-mem-obj-v4-0-6a143640a6cb@oss.qualcomm.com
->>
->> Changes in v4:
->> - Move teedev_ctx_get/put and tee_device_get/put to tee_core.h.
->> - Rename object to id in struct tee_ioctl_object_invoke_arg.
->> - Replace spinlock with mutex for qtee_objects_idr.
->> - Move qcomtee_object_get to qcomtee_user/memobj_param_to_object.
->> - More code cleanup following the comments.
->> - Cleanup documentations.
->> - Update MAINTAINERS file.
->> - Link to v3: https://lore.kernel.org/r/20250327-qcom-tee-using-tee-ss-without-mem-obj-v3-0-7f457073282d@oss.qualcomm.com
->>
->> Changes in v3:
->> - Export shm_bridge create/delete APIs.
->> - Enable support for QTEE memory objects.
->> - Update the memory management code to use the TEE subsystem for all
->>   allocations using the pool.
->> - Move all driver states into the driver's main service struct.
->> - Add more documentations.
->> - Link to v2: https://lore.kernel.org/r/20250202-qcom-tee-using-tee-ss-without-mem-obj-v2-0-297eacd0d34f@quicinc.com
->>
->> Changes in v2:
->> - Clean up commit messages and comments.
->> - Use better names such as ubuf instead of membuf or QCOMTEE prefix
->>   instead of QCOM_TEE, or names that are more consistent with other
->>   TEE-backend drivers such as qcomtee_context_data instead of
->>   qcom_tee_context.
->> - Drop the DTS patch and instantiate the device from the scm driver.
->> - Use a single structure for all driver's internal states.
->> - Drop srcu primitives and use the existing mutex for synchronization
->>   between the supplicant and QTEE.
->> - Directly use tee_context to track the lifetime of qcomtee_context_data.
->> - Add close_context() to be called when the user closes the tee_context.
->> - Link to v1: https://lore.kernel.org/r/20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com
->>
->> Changes in v1:
->> - It is a complete rewrite to utilize the TEE subsystem.
->> - Link to RFC: https://lore.kernel.org/all/20240702-qcom-tee-object-and-ioctls-v1-0-633c3ddf57ee@quicinc.com
->>
->> ---
->> Amirreza Zarrabi (11):
->>       firmware: qcom: tzmem: export shm_bridge create/delete
->>       firmware: qcom: scm: add support for object invocation
->>       tee: allow a driver to allocate a tee_device without a pool
->>       tee: add close_context to TEE driver operation
->>       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_UBUF
->>       tee: add TEE_IOCTL_PARAM_ATTR_TYPE_OBJREF
->>       tee: increase TEE_MAX_ARG_SIZE to 4096
->>       tee: add Qualcomm TEE driver
->>       tee: qcom: add primordial object
->>       tee: qcom: enable TEE_IOC_SHM_ALLOC ioctl
->>       Documentation: tee: Add Qualcomm TEE driver
->>
->>  Documentation/tee/index.rst              |   1 +
->>  Documentation/tee/qtee.rst               |  96 ++++
->>  MAINTAINERS                              |   7 +
->>  drivers/firmware/qcom/qcom_scm.c         | 119 ++++
->>  drivers/firmware/qcom/qcom_scm.h         |   7 +
->>  drivers/firmware/qcom/qcom_tzmem.c       |  63 ++-
->>  drivers/tee/Kconfig                      |   1 +
->>  drivers/tee/Makefile                     |   1 +
->>  drivers/tee/qcomtee/Kconfig              |  12 +
->>  drivers/tee/qcomtee/Makefile             |   9 +
->>  drivers/tee/qcomtee/async.c              | 182 ++++++
->>  drivers/tee/qcomtee/call.c               | 820 +++++++++++++++++++++++++++
->>  drivers/tee/qcomtee/core.c               | 915 +++++++++++++++++++++++++++++++
->>  drivers/tee/qcomtee/mem_obj.c            | 169 ++++++
->>  drivers/tee/qcomtee/primordial_obj.c     | 113 ++++
->>  drivers/tee/qcomtee/qcomtee.h            | 185 +++++++
->>  drivers/tee/qcomtee/qcomtee_msg.h        | 304 ++++++++++
->>  drivers/tee/qcomtee/qcomtee_object.h     | 316 +++++++++++
->>  drivers/tee/qcomtee/shm.c                | 150 +++++
->>  drivers/tee/qcomtee/user_obj.c           | 692 +++++++++++++++++++++++
->>  drivers/tee/tee_core.c                   | 127 ++++-
->>  drivers/tee/tee_private.h                |   6 -
->>  include/linux/firmware/qcom/qcom_scm.h   |   6 +
->>  include/linux/firmware/qcom/qcom_tzmem.h |  15 +
->>  include/linux/tee_core.h                 |  54 +-
->>  include/linux/tee_drv.h                  |  12 +
->>  include/uapi/linux/tee.h                 |  56 +-
->>  27 files changed, 4410 insertions(+), 28 deletions(-)
->> ---
->> base-commit: 33bcf93b9a6b028758105680f8b538a31bc563cf
->> change-id: 20241202-qcom-tee-using-tee-ss-without-mem-obj-362c66340527
->>
->> Best regards,
->> -- 
->> Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
->>
+(I wanted to until I checked the definition of folio_test_has_hwpoisoned())
 
+>  	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
+>  	struct folio *end_folio =3D folio_next(folio);
+>  	bool is_anon =3D folio_test_anon(folio);
+> @@ -3858,7 +3859,7 @@ static int __folio_split(struct folio *folio, unsig=
+ned int new_order,
+>  	if (nr_shmem_dropped)
+>  		shmem_uncharge(mapping->host, nr_shmem_dropped);
+>
+> -	if (!ret && is_anon)
+> +	if (!ret && is_anon && !has_hwpoisoned)
+>  		remap_flags =3D RMP_USE_SHARED_ZEROPAGE;
+>  	remap_page(folio, 1 << order, remap_flags);
+>
+> diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> index fc30ca4804b..2d755493de9 100644
+> --- a/mm/memory-failure.c
+> +++ b/mm/memory-failure.c
+> @@ -2352,8 +2352,10 @@ int memory_failure(unsigned long pfn, int flags)
+>  		 * otherwise it may race with THP split.
+>  		 * And the flag can't be set in get_hwpoison_page() since
+>  		 * it is called by soft offline too and it is just called
+> -		 * for !MF_COUNT_INCREASED.  So here seems to be the best
+> -		 * place.
+> +		 * for !MF_COUNT_INCREASED.
+> +		 * It also tells __split_unmapped_folio() to not bother
+
+s/__split_unmapped_folio/__folio_split/, since remap_page() is
+called in __folio_split().
+
+> +		 * using the shared zeropage -- the all-zeros check would
+> +		 * consume the poison.  So here seems to be the best place.
+>  		 *
+>  		 * Don't need care about the above error handling paths for
+>  		 * get_hwpoison_page() since they handle either free page
+> --=20
+> 2.45.2
+
+Otherwise, Acked-by: Zi Yan <ziy@nvidia.com>
+
+Best Regards,
+Yan, Zi
 
