@@ -1,130 +1,148 @@
-Return-Path: <linux-kernel+bounces-811567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99FDB52AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:00:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86D45B52B02
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E7B584BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:00:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0F69584F5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAC12D73BF;
-	Thu, 11 Sep 2025 07:58:28 +0000 (UTC)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576CB2D238B;
+	Thu, 11 Sep 2025 07:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pc6lnnJ4"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471D727E05E;
-	Thu, 11 Sep 2025 07:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCBD2D0618;
+	Thu, 11 Sep 2025 07:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757577507; cv=none; b=t0oBbRlhI96g/NnBypkrUg8v5l9qq0N4G3iMGntAm7zeYV/YYZkP6XB2S0S+WcntEYg6TxtE0KS62a05n7LyF7wFHBJGW/EzvULzzL9JawCwnyMEQWMEAie8JQyaLwCk45qigaeiq/LRSgVhodcEEZCulknC2v/xmrLq4eAbGFY=
+	t=1757577578; cv=none; b=Q26jiNhNHoUW5yPp6iVck7yfqMcDzvGKpYEfjdzixmBZT0oXnkhhhkvaIsAG0x5L4WS4W96saLLhVVWiAHuqeGe+4k1bYnIufobBjxXs7U6VZDor6AOHXbFR1ilnuNbNQfxPuIzhId74WvcO7gHAB3bkiFFK3EXMGbzzWNqWg7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757577507; c=relaxed/simple;
-	bh=S7pxBOEXOOMswhbY/jMJLR+3QN2EKCRwsE9thJL3klQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gBXSieziraYOy8KHoW2AN279sgxoqE7zNoiqX9fUx3Ifb7zLB1Ebb6iBZ7LfNCC0GJ1ug6hAg+AYf/6uGkk26v3eGgCJzpLUGWCEveBbze1z12lgGYTMQup2H5AvPFykBooAOnmsvBJD7cwF9LQtMOk5jycXUdy6mHio83BFsyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1757577578; c=relaxed/simple;
+	bh=at6W0Sk6OHxTFRWnRkghHWR3Ehx4+dN0M2Zy5oaFRk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LrgthQo5ldLJk5sjgCBFdL643ZJ7acwkm/FxHvHA9IcOX+DQghEk75kFUpIPHp48kNDxVD9Tw+PBA5gi8zqTk9QtBWsoXiuLHjtJx2OhLnmXaOIB45w9BDfxdVLNHgFNadKPQTVwXnTPIVmKyL6lNsVRslh2KHKxjQg1Q9SEEiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pc6lnnJ4; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5449cfbc489so303786e0c.1;
-        Thu, 11 Sep 2025 00:58:25 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f7b6e4145so410030e87.1;
+        Thu, 11 Sep 2025 00:59:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757577575; x=1758182375; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U7er97Y3OYMOo2yGE9gkvezpwQR54iFaPqu7weYqFQw=;
+        b=Pc6lnnJ4JmzTbog6kPPztJH/Di+mCzzSKAiuRkvZ3Q+BS/Atz2tc0ujdL/D8HhujZm
+         IZsTppGZoppBRJzQ5PADeLbxZjfHMoQ+/BQdNuJnJlCNmd2Sd2Cd1kEX/7bY6YCBxTsa
+         IVBmAHWwKqHvMZJ/yEpQ+wISqUdtnuxu5kLkuacnTjxukdGY8KT7S7393Vh6qiLfUzJs
+         KCO/5XZ/4QrD2dpXsFqCOipy6Jzt/SSWsn6FpMfccJH5vgcrh2Eal0/qDzsIc6RYd1T8
+         ur13EtLHGLlrd/T/BJDsSD0cu+KopnGS+6T8Ux+/WTGWZrFwB/wtmick7GGoLfL1lyCE
+         krsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757577505; x=1758182305;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5XT8NMgj5vRzLdW9q9oYiImrawQNd8w2bYyEW9YcOx4=;
-        b=GSTfBVS3M3B/+RVU4eiXo6svz7K68VKZu3xw0tLByuseqlYtjfAqtFEQ71hu4QEX43
-         MZSj4mtzcpLF7rDekG39EjDfylSY1rrUQNV+6AD6D4/weT65+2VAd3wpD4aCiR6bssvi
-         MRCFAPiRylGc8w7ldkXwFO0q1N+DwDZlIiZ3oDkXfqhTXxyrIsbe6n/bDUgULhR9hNuv
-         XYprBeLeaJ48FndIHbKO1tFN633eJtpOkYYJXrGOTuPqQxOTVfC8vElbeQoXOEYx7yH6
-         pGADGrjnDELLIna32gDSFg/fo+euo1VRx4FZ+DAldF9Tva27K3sn2tiKVSGQDQyUMn70
-         wkqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMpfmAgUtWR6rxHxxO2m7xiBKhp0MwY/K6XtWz1KGJxLuK6f0EU8PxCC2XvR8k+puwFSjdYZGI3SdpoFM=@vger.kernel.org, AJvYcCWAjdEiitd7PO1cSfcjkXRI0idLKAbENU0tNebkwNFEMvhZ7WQ0h4zfC0DAst4JgIxHlmTcHg+wUxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzljRfMXoaq5pAtHWMFFDOImFU5m06sx0V4zq1V7VSSZwG1WQhb
-	ExYWSe7Z0TiJ7V0IV+WzVdMj1VXttkfKNb50JbeB58l507GXO6swuQa7nUpRQiKr
-X-Gm-Gg: ASbGncuWnkFWxbL/hskkCtFRNliZ/vE+dx4t2zj43477zW3M9N+2RaSNr/rZCF1YWP3
-	moSPE9S1gvMaERuujXrKujyS9Y9HDkePoWZFEA43FT8U2MFlLLm840i9j5zM+3wb7D1a21di01k
-	Ggp8A4ukeiREuF75F+X3cpKGzYuZCthQJI+cRf/BM0G5xSkzXfX/Hnuckt++FbYT4d/YjiVoeWO
-	M/CJMlyn1NrkrLWBw5zH9SK0G8baaKE1pdlEK0A1lPphbTiRSH+4lZVtNEmbccYW0GpgDFCvA2R
-	o9+b6iE9qRXGS4sSk6LS4BOIrbj1enlcDvokIPCYDX8fKwdYFN2axFdMRTlN3w1CXHdWQSujPdX
-	Kaq1n4lc7hxuFYT4IyTzqLk77g9qT8IYYR9XmyxcxCDOghGd/xQMEUerb1nJSgzi59jK/lt4=
-X-Google-Smtp-Source: AGHT+IGbHlzAvyl8Me1OSUNICuljl4EoRw0r82NaJbzUUWp7T5rL8gW1FYiSJLlroMtn++5n3ep4Pw==
-X-Received: by 2002:a05:6122:e011:20b0:539:237c:f95d with SMTP id 71dfb90a1353d-54a095db50amr831337e0c.0.1757577504995;
-        Thu, 11 Sep 2025 00:58:24 -0700 (PDT)
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8ccc96625b0sm140136241.6.2025.09.11.00.58.24
+        d=1e100.net; s=20230601; t=1757577575; x=1758182375;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=U7er97Y3OYMOo2yGE9gkvezpwQR54iFaPqu7weYqFQw=;
+        b=kl8Fx3bSAB8ZU4Jj3pYCX1mIUdrUNBJcEW3V5rp4LztJYY4IlKgIzal79WFWd/XZHF
+         Dog3UpM+UcBFL5+U7sg7tfGI78uCyffXbhyCZfgJtGBDFoc1MmbkeLZsvciRZfxSv5Cq
+         34397iRgx/tf+IwZIu4Mg8pIUYdExC+WRCbfkSbPyUe7ITKxlNtdq8M8OsEdBRzzdXXR
+         DlnmLHA31QdRFiQ5BTXxIJKgNrf2y1ta4tKsKCETeQ4DeeA6RTP/dFXp6f6kBVngB8lG
+         DnPGh3T8YeJS60lBQCXJUkDFVJB7kHt4Fa+QNAQSdWBkWJesTsm3wzmrjqq7GYQ3PR+j
+         G6CA==
+X-Forwarded-Encrypted: i=1; AJvYcCUb4XLky5rg/Rm9S40ju9Uyct3H8aoBkl1OtfeLiEooFsD9gGn6MO0KDfJf6JxMvwRAZZcc+z7MEBi6BrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDxDuzhhGUepcsbIwQOpIcwLiIM4ueQp2ctwIZaIV3AgBQQHYO
+	muqmY9tnIDIOWb7NQWs+jpaCh67KLjCU1SWNRGZ2hJYg241UCY+Am9H6
+X-Gm-Gg: ASbGncvi5pHPjEPFlXYQfKqZs64ln13xd+XgVPcpnzT+xPWV0aMMPHVCRa7eQ6zV0pF
+	Mp5vrgBN4O6+qpjGqQfW0vvuG9t9vjYKL6Af+A+NRo+/Q1Kn+aADtTOls6xcgWWtraYqdZG7Lgx
+	fR9RHy7AiYdvJAgMTEYiGWaAhZOvUu/r34b+2AF+trlo1gmIaqX95/SzlMdxpa3BlY3Aa5FRoJs
+	DpogSSOjfUA3+T15sgYuRzJ2uPb+zRsJ34ygo/3YcDtuYn2RXZ4cu8echU6cBQrPbbxTf0FFGi7
+	SzrqXXLE8Nnx7sZQaWcJHADaJUK/Al30OMbPU5Ajh7DOzUXfwBce3055wCd2inAJmFkAj5zJVS8
+	e3m54RKdcGGxWvdUQugUN5LMlMcdmMj+92JLG9wOXhBPMhGOsFSJQHYPqEhpb7aotW5AOPmZyyI
+	lhq5Vn/p1dqw==
+X-Google-Smtp-Source: AGHT+IEcRHX/jzK33oWfXHXRgPLTQYsSGVS5W8ACzX4aqsC9MRQ7GpT2EtFP5AMmXk4iQRXy9bWsZg==
+X-Received: by 2002:ac2:568c:0:b0:55b:8afb:e638 with SMTP id 2adb3069b0e04-562637cbf2amr6849841e87.28.1757577574652;
+        Thu, 11 Sep 2025 00:59:34 -0700 (PDT)
+Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e64dbbf7bsm241402e87.118.2025.09.11.00.59.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 00:58:24 -0700 (PDT)
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5369bb49213so750474137.0;
-        Thu, 11 Sep 2025 00:58:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWzNqt6H69H1WhT+a/H13fneXEve2k2Pr0hWf5sF4GLW5UxLiY56VtPXREWaFa7APkKL2FgRmlQT8c=@vger.kernel.org, AJvYcCXMrV5BE5+6D3ovw1hMhtqls6PZnQIo5FpRjbjSlf6CVUJhetMIQVfiMQ4SasWOS2qn72cs44xzdE4nWwA=@vger.kernel.org
-X-Received: by 2002:a05:6102:292c:b0:528:9956:6a3d with SMTP id
- ada2fe7eead31-5520c29c86amr932343137.12.1757577504247; Thu, 11 Sep 2025
- 00:58:24 -0700 (PDT)
+        Thu, 11 Sep 2025 00:59:34 -0700 (PDT)
+Message-ID: <3c7e9c24-5190-4ea6-a1de-472cf4c13742@gmail.com>
+Date: Thu, 11 Sep 2025 10:59:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909111130.132976-1-ulf.hansson@linaro.org> <20250909111130.132976-6-ulf.hansson@linaro.org>
-In-Reply-To: <20250909111130.132976-6-ulf.hansson@linaro.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Sep 2025 09:58:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXJ3D4DC4ukir-mon7_2unNpE_h9uw84yAdoZ6YmeFxWw@mail.gmail.com>
-X-Gm-Features: AS18NWD_t2plr89Vw2try1XwdiXtIzwJE15Ly8pSYFY5EGZZA-yJFymvbXisIAY
-Message-ID: <CAMuHMdXJ3D4DC4ukir-mon7_2unNpE_h9uw84yAdoZ6YmeFxWw@mail.gmail.com>
-Subject: Re: [PATCH 5/5] pmdomain: renesas: rmobile-sysc: Don't keep unused PM
- domains powered-on
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	Saravana Kannan <saravanak@google.com>, linux-pm@vger.kernel.org, 
-	Stephen Boyd <sboyd@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Sebastian Reichel <sebastian.reichel@collabora.com>, Sebin Francis <sebin.francis@ti.com>, 
-	Diederik de Haas <didi.debian@cknow.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Update the DMA Rust entry
+To: Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org,
+ rafael@kernel.org, daniel.almeida@collabora.com, robin.murphy@arm.com,
+ a.hindborg@kernel.org, ojeda@kernel.org
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250910094015.11551-1-dakr@kernel.org>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <20250910094015.11551-1-dakr@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, 9 Sept 2025 at 13:11, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> The recent changes to genpd makes a genpd OF provider that is powered-on at
-> initialization to stay powered-on, until the ->sync_state() callback is
-> invoked for it.
->
-> This may not happen at all, if we wait for a consumer device to be probed,
-> leading to wasting energy. There are ways to enforce the ->sync_state()
-> callback to be invoked, through sysfs or via the probe-defer-timeout, but
-> none of them in its current form are a good fit for rmobile-sysc PM
-> domains.
->
-> Let's therefore opt-out from this behaviour of genpd for now, by using the
-> GENPD_FLAG_NO_STAY_ON.
->
-> Link: https://lore.kernel.org/all/20250701114733.636510-1-ulf.hansson@linaro.org/
-> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
-> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-On SH-Mobile AG5 (kzm9g) and R-Mobile A1 (armadillo).
 
-Gr{oetje,eeting}s,
+On 10/09/2025 12:40, Danilo Krummrich wrote:
+> Update the DMA Rust maintainers entry in the following two aspects:
+> 
+>    (1) Change Abdiel's entry to 'Reviewer'.
+> 
+>    (2) Take patches through the driver-core tree.
+> 
+> Abdiel won't do any more maintainer work on the DMA (or scatterlist)
+> infrastructure, but he'd like to be kept in the loop, hence change is
+> entry to 'R:'.
+> 
+> Analogous to [1], the DMA (and scatterlist) helpers are closely coupled
+> with the core device infrastructure and the device lifecycle, hence take
+> patches through the driver-core tree by default.
+> 
+> Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> Link: https://lore.kernel.org/r/20250725202840.2251768-1-ojeda@kernel.org [1]
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> ---
+>   MAINTAINERS | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index fed6cd812d79..281149d9b821 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7239,15 +7239,15 @@ F:	include/linux/swiotlb.h
+>   F:	kernel/dma/
+>   
+>   DMA MAPPING HELPERS DEVICE DRIVER API [RUST]
+> -M:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+>   M:	Danilo Krummrich <dakr@kernel.org>
+> +R:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+>   R:	Daniel Almeida <daniel.almeida@collabora.com>
+>   R:	Robin Murphy <robin.murphy@arm.com>
+>   R:	Andreas Hindborg <a.hindborg@kernel.org>
+>   L:	rust-for-linux@vger.kernel.org
+>   S:	Supported
+>   W:	https://rust-for-linux.com
+> -T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
+> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-core.git
+>   F:	rust/helpers/dma.c
+>   F:	rust/kernel/dma.rs
+>   F:	samples/rust/rust_dma.rs
+> 
+> base-commit: 3c9ba2777d6c86025e1ba4186dc5cd930e40ec5f
 
-                        Geert
+Acked-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
