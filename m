@@ -1,160 +1,194 @@
-Return-Path: <linux-kernel+bounces-811539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E528EB52A75
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:49:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AAAB52A7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2D1C563C5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:49:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C77A57BC9F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE45F29BD80;
-	Thu, 11 Sep 2025 07:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FDF29BD80;
+	Thu, 11 Sep 2025 07:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X9m7gMgN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ovSMRW9J"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E0629B8E8;
-	Thu, 11 Sep 2025 07:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637BC26CE02
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757576936; cv=none; b=RZrmpwf2IolLEfayW7ZWQNie/A5ovFjjtHj/aDj0iGA9oG/TrZK9dTBl7N45GBjyXhUg1QM3UuiL2VmLnVFqvD8s3jjIIC120Cqu5VrtZslf46qpFP02mB+X/Rz5WJLh/MihJcoLQp/KU8UxW8zmJKPGK9uNV+pgyj5eCJa5DDs=
+	t=1757577018; cv=none; b=ppqZg75iCYFQWozYV9keibwAR/9zXyqjJzaJKLLn1xcfXbfvoW7+29yIJBXYEiGIgaAwN4GTc8SNrYZ90EJp02Fd1ULrLPZBhRH3S6EU6X3fpLC+fM48CcoHkIK2u77g54qCWQUzUfjRxDUVwrKUIOLM+IQA2BX1cyBKRPOvhgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757576936; c=relaxed/simple;
-	bh=GVFo1kkBKEsPHJOvbjim7jezaF6LjLLFPCd7At02oz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VbHimQRyXBLWoHr+GOHQM2lU6vvEykba3AqtzNn8KfIB6ZNS/nNtl7pdoj9eIaidhB6g5sWk3Y4SD/55BHGOdMEedfWV55W5FpGBDlsSt4UmL+K4mCFolIQj6S8cn+la0dQEp9bz9+q5594zLZQeRB8Bxzi92JkB7N+RmthBZHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X9m7gMgN; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757576935; x=1789112935;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=GVFo1kkBKEsPHJOvbjim7jezaF6LjLLFPCd7At02oz8=;
-  b=X9m7gMgNkx8liCnhyVV5lThNeLQ//2wjzLmXbRQBbMO4nUgGc2v3RVCb
-   ESsa1x5Go9PWeXUg6bQ4wD221hB0ZwY+NjI2Hef+SOQ54GoWlTvdsjcIv
-   0+oA8GZEvuoLq0+dYyEi6U1GKBJr6pCZnwTx8TY2MPD7IvoniEmHGOqME
-   KWHUY0K2drlkm/WR3H/J2vkns3BlT1hU5f2Wp78jCIoAiSIFr2bbBGLgp
-   N3FpHaNHmhIH1+S3Ty6IwL+mCHO7Ywu9gyPFiPYQ0vEpPzYBZ6RlEHOO6
-   Ms/XPUUQteBGwP3KS23uwsKckcw4l8ax6j7Yo8jJ2eZtO/KWynbegT1rJ
-   Q==;
-X-CSE-ConnectionGUID: IOgEOkyRRO67DAlpw9s+tg==
-X-CSE-MsgGUID: f+iqVX6PQMCtzfuBIbZPiA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59974622"
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="59974622"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:48:53 -0700
-X-CSE-ConnectionGUID: J9Nv+4YtTNSxO55M48ZoVQ==
-X-CSE-MsgGUID: 9MixVzbQQjW7yZnMLMRJYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="204612371"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:48:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1uwc2x-000000022PY-3Jay;
-	Thu, 11 Sep 2025 10:48:47 +0300
-Date: Thu, 11 Sep 2025 10:48:47 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Haixu Cui <quic_haixcui@quicinc.com>
-Cc: harald.mommer@oss.qualcomm.com, quic_msavaliy@quicinc.com,
-	broonie@kernel.org, virtio-dev@lists.linux.dev,
-	viresh.kumar@linaro.org, linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hdanton@sina.com,
-	qiang4.zhang@linux.intel.com, alex.bennee@linaro.org,
-	quic_ztu@quicinc.com, virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH v9 3/3] SPI: Add virtio SPI driver
-Message-ID: <aMJ-32RkzRuUQ_CP@smile.fi.intel.com>
-References: <20250828093451.2401448-1-quic_haixcui@quicinc.com>
- <20250828093451.2401448-4-quic_haixcui@quicinc.com>
- <aLWMZH3NTfM8qOUy@smile.fi.intel.com>
- <5dcabe90-c25b-4af5-b51f-5cda7113b5f4@quicinc.com>
- <aLgYLS6Lr5O2cIhK@smile.fi.intel.com>
- <b9e9b4e5-7004-471b-a067-b6bacda2a0ca@quicinc.com>
+	s=arc-20240116; t=1757577018; c=relaxed/simple;
+	bh=Cb6NPWAnj0ygLjUxD5zBKi6mIgeuA6YFs/mGlYMTqCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D3IkAkilJUYxrqPIcV9gKRM+mtY+IbbGFgatnEqHVZtGgHljjkDFdtiURQzjSc9EonnzNU/1SKlNI5zgtyPoClgaRkv0jjZBmITy5Vnj9EJ3HlZPP8t4kuc83ugFLgmRPYUxzsplNf62q+HKYNP4UvwYKDDpU5IUwOrBUO29Zmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ovSMRW9J; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-62189987b47so214875eaf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:50:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757577015; x=1758181815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tZ6E6bW5eiC9q7CDA3LI31bAgUOE0PZhjrPZI2/QSuQ=;
+        b=ovSMRW9JZgE3qU0vwOhwHOBOxiT2uvlqCS3WVsrSJS7nLlPfUqTucK4y3Zfj+dzVmC
+         GgZ+ZU1yPGTnXRZbSsM4J/OPUQQooCVuW/Vsgfvcv8zKDsfodAx7XehMMvqo/uSEu8YR
+         /yT9cXeMgESOa371HdcoWIwyhVqaJMN7XAUpSdaC+65cy5iSwUV/l30Du4tCxUaTflCy
+         CPaE4TOMoT7GqbCQx213GeiTUYdxzC7oVgvII/6rt0ekRiN5Ri1gdwnTcCJ5McgUqbb2
+         tZVo3mqwQ3LW2QdEA9mH5HiV6YXeLUiT47L4tf+ozbMPCJQhc6UYtaudzK30o1KM/S2X
+         T3fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757577015; x=1758181815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tZ6E6bW5eiC9q7CDA3LI31bAgUOE0PZhjrPZI2/QSuQ=;
+        b=eJnqZtBLoNnd8B+ylG+RsKZVhqyWy88zv8xb9qS6zAmBbVzcRuvFARDCYmEubc4XBv
+         OZwIQSRTXO/jC2s8TKRbg5gMLQjJ/QeG36AmVvggqrdGlZ0myzYCoFrw6CvUmjSPmoor
+         0xOoQMe4g5Bm7+JqXdzbCbbjkZvZjz4hkGMkq+mNkcvjK3yVbv1ug0mPSEjQAdcP9wBP
+         EblCnn4qacQi5SANmdsdmaHvUT/NTVC3mTJziCfqyykj2lTRdGtnTMxCmQuFEpzmBo5d
+         Fy6nPUe64u2fO3GKl+H0p31zxcV1KCL0QLDdsb1EsHDDPY7bUrRn/F2164GT3lM/VG2S
+         27yA==
+X-Forwarded-Encrypted: i=1; AJvYcCXbFdRUU7P6Lr2yZIENEhLaJ00sFW3drHtXH/0UXlUKOTq38TkhHUzegkzNYHG9i6becjZ1rCUYqfbLbkc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykYVZrpx1BnGs4Pnk9u63twopLuydIoaspzMNqknUw/Y1IUhc3
+	pjkMHmBYuzKHwB63SRr8wijB9ObGcH0Fl5z3eYrhp9eHLPbZ5SMeE+5Y8ZzeARfao+qtlKB2vSX
+	ECvOe/YbTpi4dnVRellwmeeg7yT5eO+jB89fRy7ZSYw==
+X-Gm-Gg: ASbGncsqdmJJfojNdHbcPdKA9osuXOHRB/jU2TONYLeHS+XZm5RR/lZBgmtpHkwCDmn
+	0JDaqejja5fbtk7LqDR3RBbzS53qWA4Zrlnhj1Lh01n0+Zg/Qr83cHqXhnS5GDTbncengSMojTR
+	zf/FRwaZFfpbfxVk9pb2i5AnpIeGXYWvqifI7UCqkKYFkP9ax7bjQaAHCod+eQX5LMoQLvD3gmA
+	PrlZsWI
+X-Google-Smtp-Source: AGHT+IHM+qomPa7mkwPaxbF4J0ZwMvmQZ4r3i08spiXwqRdColY0ofOiN+xC4zPpK9pKKDVK1an+zwdrKVe+3sc2KLA=
+X-Received: by 2002:a05:6820:1518:b0:620:ea78:ceb4 with SMTP id
+ 006d021491bc7-6217897a730mr7686244eaf.0.1757577015334; Thu, 11 Sep 2025
+ 00:50:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b9e9b4e5-7004-471b-a067-b6bacda2a0ca@quicinc.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20250813060339.2977604-1-jens.wiklander@linaro.org>
+ <20250813060339.2977604-3-jens.wiklander@linaro.org> <aJ1-YpgvGt4_6CFU@sumit-X1>
+ <CABdmKX2FPg+hO55qWndMajuWP0kZH=OWEh9v-d8aO6HQWyxJtQ@mail.gmail.com> <CAO_48GEqkf_Jm8kSTPEDZkZy-YmT56Zs1Jx9zCvzETPsCzrkEg@mail.gmail.com>
+In-Reply-To: <CAO_48GEqkf_Jm8kSTPEDZkZy-YmT56Zs1Jx9zCvzETPsCzrkEg@mail.gmail.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Thu, 11 Sep 2025 09:50:04 +0200
+X-Gm-Features: Ac12FXyvCWRnQD7Gsb8VWVWslCX8Upv9AarUZnTiiQT33HIlYHfy4GNTnaJlFIg
+Message-ID: <CAHUa44HHSKwiBYPMSY5hj6wyWc9-uvtQVx+JLx4M5yjD5AwyTg@mail.gmail.com>
+Subject: Re: [PATCH v11 2/9] dma-buf: dma-heap: export declared functions
+To: Sumit Semwal <sumit.semwal@linaro.org>
+Cc: "T.J. Mercier" <tjmercier@google.com>, Sumit Garg <sumit.garg@kernel.org>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org, 
+	op-tee@lists.trustedfirmware.org, linux-arm-kernel@lists.infradead.org, 
+	Olivier Masse <olivier.masse@nxp.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Yong Wu <yong.wu@mediatek.com>, Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
+	Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, azarrabi@qti.qualcomm.com, 
+	Simona Vetter <simona.vetter@ffwll.ch>, Daniel Stone <daniel@fooishbar.org>, 
+	Rouven Czerwinski <rouven.czerwinski@linaro.org>, robin.murphy@arm.com, 
+	Sumit Garg <sumit.garg@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 11:51:03AM +0800, Haixu Cui wrote:
-> On 9/3/2025 6:27 PM, Andy Shevchenko wrote:
-> > On Wed, Sep 03, 2025 at 05:04:46PM +0800, Haixu Cui wrote:
-> > > On 9/1/2025 8:07 PM, Andy Shevchenko wrote:
-> > > > On Thu, Aug 28, 2025 at 05:34:51PM +0800, Haixu Cui wrote:
-> > > > > This is the virtio SPI Linux kernel driver.
+Hi Sumit,
 
-...
+On Thu, Sep 11, 2025 at 9:15=E2=80=AFAM Sumit Semwal <sumit.semwal@linaro.o=
+rg> wrote:
+>
+> Hello Jens,
+>
+> On Fri, 15 Aug 2025 at 05:00, T.J. Mercier <tjmercier@google.com> wrote:
+> >
+> > On Wed, Aug 13, 2025 at 11:13=E2=80=AFPM Sumit Garg <sumit.garg@kernel.=
+org> wrote:
+> > >
+> > > On Wed, Aug 13, 2025 at 08:02:51AM +0200, Jens Wiklander wrote:
+> > > > Export the dma-buf heap functions to allow them to be used by the O=
+P-TEE
+> > > > driver. The OP-TEE driver wants to register and manage specific sec=
+ure
+> > > > DMA heaps with it.
+> Thank you for the series.
+>
+> Could you please use EXPORT_SYMBOL_GPL_NS instead of EXPORT_SYMBOL for th=
+ese?
 
-> > > > > +#include <linux/completion.h>
-> > > > > +#include <linux/interrupt.h>
-> > > > > +#include <linux/io.h>
-> > > > > +#include <linux/module.h>
-> > > > > +#include <linux/spi/spi.h>
-> > > > > +#include <linux/stddef.h>
-> > > > 
-> > > > A lot of headers are still missing. See below.
-> > > 
-> > > This driver compiles successfully, and I believe all required definitions
-> > > are resolved through indirect inclusion. For example, since I included
-> > > virtio.h, there is no need to explicitly include device.h, scatterlist.h or
-> > > types.h.
-> > > 
-> > > I avoided redundant #includes to keep the code clean and minimal.
-> > > 
-> > > If there are any essential headers I’ve overlooked, please feel free to
-> > > highlight them—I’ll gladly include them in the next revision.
-> > 
-> > The rationale is described on https://include-what-you-use.org/.
-> 
-> Thanks for your feedback and for pointing me to the iwyu guidelines.
-> 
-> I've experimented with the iwyu tool, and while for spi-virtio.c I noticed
-> that it recommends header that is not directly to the code - such as
-> vdso/cache.h - and occasionally suggests re-include header like
-> linux/spi/spi.h that is already present.
+Sure, what namespace do you want in the argument for
+EXPORT_SYMBOL_GPL_NS()? "DMA_BUF"?
 
-> iwyu is a power tool expecially in application-level development for C++
-> projects where header dependencies are more straightforward. However it
-> seems iwyu may not yet be fully suited for analyzing Linux kernel due to its
-> complexity and conditional inclusions.
+>
+> With that change, please feel free to use my
+> Acked-by: Sumit Semwal <sumit.semwal@linaro.org>
 
-I was not talking about the tool, yes, this tool is not ready for Linux kernel.
-Jonathan Cameron played with it to make it useful for the Linux kernel project,
-but it seems the work is stalled.
+Thanks,
+Jens
 
-> Additionally, I’ve verified that the driver compiles successfully with both
-> gcc and clang, which indicates that all required definitions are either
-> directly or indirectly resolved.
-
-The IWYU principle is against the includes that indirectly resolve types and
-APIs. The problem that some headers are included in others and that relation
-is guaranteed, but we do not have an official list of the guarantees, so this
-is a tribal knowledge.
-
-Basically the developer should know a bit more about the Linux kernel header
-organisation to fulfill IWYU. And this is currently problematic.
-
-> I appreciate your guidance and will continue to refine the patch with
-> clarity and maintainability in mind.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> > > >
+> > > > Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
+> > > > Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+> > > > ---
+> > > >  drivers/dma-buf/dma-heap.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >
+> > >
+> > > Can we get an ack from DMAbuf maintainers here? With that we should b=
+e
+> > > able to queue this patch-set for linux-next targetting the 6.18 merge
+> > > window.
+> > >
+> > > -Sumit
+> >
+> > Reviewed-by: T.J. Mercier <tjmercier@google.com>
+> >
+> > Sorry I haven't been able to participate much upstream lately.
+> > >
+> > > > diff --git a/drivers/dma-buf/dma-heap.c b/drivers/dma-buf/dma-heap.=
+c
+> > > > index 3cbe87d4a464..cdddf0e24dce 100644
+> > > > --- a/drivers/dma-buf/dma-heap.c
+> > > > +++ b/drivers/dma-buf/dma-heap.c
+> > > > @@ -202,6 +202,7 @@ void *dma_heap_get_drvdata(struct dma_heap *hea=
+p)
+> > > >  {
+> > > >       return heap->priv;
+> > > >  }
+> > > > +EXPORT_SYMBOL(dma_heap_get_drvdata);
+> > > >
+> > > >  /**
+> > > >   * dma_heap_get_name - get heap name
+> > > > @@ -214,6 +215,7 @@ const char *dma_heap_get_name(struct dma_heap *=
+heap)
+> > > >  {
+> > > >       return heap->name;
+> > > >  }
+> > > > +EXPORT_SYMBOL(dma_heap_get_name);
+> > > >
+> > > >  /**
+> > > >   * dma_heap_add - adds a heap to dmabuf heaps
+> > > > @@ -303,6 +305,7 @@ struct dma_heap *dma_heap_add(const struct dma_=
+heap_export_info *exp_info)
+> > > >       kfree(heap);
+> > > >       return err_ret;
+> > > >  }
+> > > > +EXPORT_SYMBOL(dma_heap_add);
+> > > >
+> > > >  static char *dma_heap_devnode(const struct device *dev, umode_t *m=
+ode)
+> > > >  {
+> > > > --
+> > > > 2.43.0
+> > > >
+>
+> Best,
+> Sumit.
 
