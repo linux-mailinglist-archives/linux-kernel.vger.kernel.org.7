@@ -1,326 +1,130 @@
-Return-Path: <linux-kernel+bounces-811565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E891CB52AF2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:59:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A99FDB52AFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C38F1C81EF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E7B584BE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1892D5932;
-	Thu, 11 Sep 2025 07:58:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="SqKonPDQ"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AAC12D73BF;
+	Thu, 11 Sep 2025 07:58:28 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621C72D373E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 07:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471D727E05E;
+	Thu, 11 Sep 2025 07:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757577496; cv=none; b=auYhUCueKwDDbtx1CTlmFkv17pQTWwqzLBpgLPyNQDQlN4jPyGZbem3oU452CwANzrZNy8h3ocZiSI/UrRAJDZ9tC8aA8QuihFvn6QpcEKU+waOM3DkyELfisX54WoLMNRK0uSGHdjflZiXotcEizVJGRLjV+/SXs/GDGuC1pMs=
+	t=1757577507; cv=none; b=t0oBbRlhI96g/NnBypkrUg8v5l9qq0N4G3iMGntAm7zeYV/YYZkP6XB2S0S+WcntEYg6TxtE0KS62a05n7LyF7wFHBJGW/EzvULzzL9JawCwnyMEQWMEAie8JQyaLwCk45qigaeiq/LRSgVhodcEEZCulknC2v/xmrLq4eAbGFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757577496; c=relaxed/simple;
-	bh=k5ahMUqdMdJulQ7MusieR6bipeU47j/JtPXFNQDqs2s=;
+	s=arc-20240116; t=1757577507; c=relaxed/simple;
+	bh=S7pxBOEXOOMswhbY/jMJLR+3QN2EKCRwsE9thJL3klQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UGPOAY/yJ53Z5h5H6RlIETTpKWY3LxEiVnvmFLRfFoTMEkoujN00zOCQiZyaFUh1sIOJgxSy3UmUXO2PDz4oUovGHeqgxgEKwRnReeLxtKr2nju7vvAUswVClRgjR4jnnNdFj5juqrWaU04dAjMTdpR564s0ToErUzdHfajPdB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=SqKonPDQ; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55ce508d4d6so438586e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 00:58:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757577492; x=1758182292; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9GreFsnaaeM4F+2voh3Z9EQbdTyQ1sQF/UoQy0TFeeU=;
-        b=SqKonPDQG46JIhHnqrePD4+aN44vIEkzw82kGvmsDjidhbpxALRw67xp6p/ScIUzB3
-         KE33sKUR5aQmVN1kZ/STlaEnYQaauYBwwtrM8c2kVqLLijfEvPcQaJxOD8YYcleyVjpn
-         j5ClQKDe+Ghd5mmqflgvPHJBCa/lymtBIop+APA2kVjImp8Jk99zTyf/nvC/sQKQbQTd
-         QCDHMZQTu2jDvgA1mwDxi5BaSnAuM0i/k9YzofZr0viKlKUlzXJvMSYzXO8ZCqqNuTCG
-         By0P9CEqqyJWfvZGC1+zPlFZN6+9sM7xCE2iylLW1K1vp9gNikSe9vNP7y+jOt1DcKvv
-         OzJA==
+	 To:Cc:Content-Type; b=gBXSieziraYOy8KHoW2AN279sgxoqE7zNoiqX9fUx3Ifb7zLB1Ebb6iBZ7LfNCC0GJ1ug6hAg+AYf/6uGkk26v3eGgCJzpLUGWCEveBbze1z12lgGYTMQup2H5AvPFykBooAOnmsvBJD7cwF9LQtMOk5jycXUdy6mHio83BFsyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5449cfbc489so303786e0c.1;
+        Thu, 11 Sep 2025 00:58:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757577492; x=1758182292;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9GreFsnaaeM4F+2voh3Z9EQbdTyQ1sQF/UoQy0TFeeU=;
-        b=Vu3MXUCBBWgVY/HULOXln6Koxa80/C116gtF7vrN4BOANC1cQOiNUtyQCHjkE9n5Ht
-         IHeQj/KxB/IkbElRtoWGvijK0jTe9ngby9QfKYSaDB8Tx7yMO2TDnVLOFKsBOPUIHJEk
-         Tyw5rKvRxnE0OYQBzMgYxZlOM5J2Q5PdO3ehZuUOSdyWUNA7V8y2onmx2NlJ45eUXMHO
-         30Pc9zlmj+Wycx7i8HBwCBbyUTn3IvivVNjV/MuDO/+TBKvKWQsm9rCXgEkChx7kxddU
-         oNZmMtLFkG3eIJETe0VTs4+h4GTedy4rS5KhEPrNyMbHuXQ+O4vJN2YE/QqCEECB3j6F
-         irjA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9/k6PCmToiWSySqi7j998b/jkqrHGEadhYSDtj/MI//BFy0yuR51gRRHScex+ru4WC1Wt2ehYqQcZWAA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSmQd+blb9VcEzfvDiEhNRG0W+dQWr9Kj6DtF1lVN4SbaIcNCL
-	GZRUY7gIIPs4uLn+pb4ouJqfAzPjsOt0QITaD8TO2qGzEHbTnjiREvGem9yxGlbQ8gp64gQx53n
-	2DaOH48sVu0Ap0KdikBFmmmXkNsDzWpyjb3pUM1XjOQ==
-X-Gm-Gg: ASbGncufdp0AukWSyn9Oz7+QlH5MDxgS6NMWy9zRgpjfQXTSa9o/9mSUeB3idouEwNp
-	1147ciRfoK56CcyRDP+tnjZdaXtElo2QHx0ctTTFq+FQaWctEqMmOqHrMD4FdYpZBRU8pyuy9wT
-	E30o8ClDgYCeWkXxkH0P7X1cVnUEJ+K19syyCHunoGs1pzw/knM2UZLlSibKFCd04/Qre6isBal
-	3Hx9LRnXTzSr7Ih5bucoT2hZ46L8GDWAmfgj4WCq0LhHDI1hA==
-X-Google-Smtp-Source: AGHT+IGgQPXJhEububGtvbDREjokdFRgGwQ7+DoVBOt9p2K1Y+stul+X10YQV8+eyAVrpHY8+Nm0/o9541URIeuNSZA=
-X-Received: by 2002:a05:6512:3b23:b0:55f:7c3a:1176 with SMTP id
- 2adb3069b0e04-56263007fcdmr5516725e87.55.1757577492077; Thu, 11 Sep 2025
- 00:58:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757577505; x=1758182305;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5XT8NMgj5vRzLdW9q9oYiImrawQNd8w2bYyEW9YcOx4=;
+        b=GSTfBVS3M3B/+RVU4eiXo6svz7K68VKZu3xw0tLByuseqlYtjfAqtFEQ71hu4QEX43
+         MZSj4mtzcpLF7rDekG39EjDfylSY1rrUQNV+6AD6D4/weT65+2VAd3wpD4aCiR6bssvi
+         MRCFAPiRylGc8w7ldkXwFO0q1N+DwDZlIiZ3oDkXfqhTXxyrIsbe6n/bDUgULhR9hNuv
+         XYprBeLeaJ48FndIHbKO1tFN633eJtpOkYYJXrGOTuPqQxOTVfC8vElbeQoXOEYx7yH6
+         pGADGrjnDELLIna32gDSFg/fo+euo1VRx4FZ+DAldF9Tva27K3sn2tiKVSGQDQyUMn70
+         wkqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMpfmAgUtWR6rxHxxO2m7xiBKhp0MwY/K6XtWz1KGJxLuK6f0EU8PxCC2XvR8k+puwFSjdYZGI3SdpoFM=@vger.kernel.org, AJvYcCWAjdEiitd7PO1cSfcjkXRI0idLKAbENU0tNebkwNFEMvhZ7WQ0h4zfC0DAst4JgIxHlmTcHg+wUxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzljRfMXoaq5pAtHWMFFDOImFU5m06sx0V4zq1V7VSSZwG1WQhb
+	ExYWSe7Z0TiJ7V0IV+WzVdMj1VXttkfKNb50JbeB58l507GXO6swuQa7nUpRQiKr
+X-Gm-Gg: ASbGncuWnkFWxbL/hskkCtFRNliZ/vE+dx4t2zj43477zW3M9N+2RaSNr/rZCF1YWP3
+	moSPE9S1gvMaERuujXrKujyS9Y9HDkePoWZFEA43FT8U2MFlLLm840i9j5zM+3wb7D1a21di01k
+	Ggp8A4ukeiREuF75F+X3cpKGzYuZCthQJI+cRf/BM0G5xSkzXfX/Hnuckt++FbYT4d/YjiVoeWO
+	M/CJMlyn1NrkrLWBw5zH9SK0G8baaKE1pdlEK0A1lPphbTiRSH+4lZVtNEmbccYW0GpgDFCvA2R
+	o9+b6iE9qRXGS4sSk6LS4BOIrbj1enlcDvokIPCYDX8fKwdYFN2axFdMRTlN3w1CXHdWQSujPdX
+	Kaq1n4lc7hxuFYT4IyTzqLk77g9qT8IYYR9XmyxcxCDOghGd/xQMEUerb1nJSgzi59jK/lt4=
+X-Google-Smtp-Source: AGHT+IGbHlzAvyl8Me1OSUNICuljl4EoRw0r82NaJbzUUWp7T5rL8gW1FYiSJLlroMtn++5n3ep4Pw==
+X-Received: by 2002:a05:6122:e011:20b0:539:237c:f95d with SMTP id 71dfb90a1353d-54a095db50amr831337e0c.0.1757577504995;
+        Thu, 11 Sep 2025 00:58:24 -0700 (PDT)
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com. [209.85.217.44])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-8ccc96625b0sm140136241.6.2025.09.11.00.58.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 00:58:24 -0700 (PDT)
+Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-5369bb49213so750474137.0;
+        Thu, 11 Sep 2025 00:58:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWzNqt6H69H1WhT+a/H13fneXEve2k2Pr0hWf5sF4GLW5UxLiY56VtPXREWaFa7APkKL2FgRmlQT8c=@vger.kernel.org, AJvYcCXMrV5BE5+6D3ovw1hMhtqls6PZnQIo5FpRjbjSlf6CVUJhetMIQVfiMQ4SasWOS2qn72cs44xzdE4nWwA=@vger.kernel.org
+X-Received: by 2002:a05:6102:292c:b0:528:9956:6a3d with SMTP id
+ ada2fe7eead31-5520c29c86amr932343137.12.1757577504247; Thu, 11 Sep 2025
+ 00:58:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-gpio-mmio-gpio-conv-part4-v2-0-f3d1a4c57124@linaro.org>
- <20250910-gpio-mmio-gpio-conv-part4-v2-11-f3d1a4c57124@linaro.org> <01a7cc78-fdae-4a1e-bf78-961e7ec214b2@sifive.com>
-In-Reply-To: <01a7cc78-fdae-4a1e-bf78-961e7ec214b2@sifive.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 11 Sep 2025 09:58:00 +0200
-X-Gm-Features: Ac12FXyXoGE4qN9kFjk5zZjGFtdcTiIkPbg-LiY7JH2VZtvP8BTrqAJA-TJekfs
-Message-ID: <CAMRc=MedZ3ub=7gacx_sW0C9f9Ra5XC94xgwLTt_7iq=Y4UFEA@mail.gmail.com>
-Subject: Re: [PATCH v2 11/15] gpio: sifive: use new generic GPIO chip API
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org, 
-	spacemit@lists.linux.dev, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Keguang Zhang <keguang.zhang@gmail.com>, Alban Bedel <albeu@free.fr>, Doug Berger <opendmb@gmail.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Yixun Lan <dlan@gentoo.org>, 
-	Andy Shevchenko <andy@kernel.org>
+References: <20250909111130.132976-1-ulf.hansson@linaro.org> <20250909111130.132976-6-ulf.hansson@linaro.org>
+In-Reply-To: <20250909111130.132976-6-ulf.hansson@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 11 Sep 2025 09:58:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXJ3D4DC4ukir-mon7_2unNpE_h9uw84yAdoZ6YmeFxWw@mail.gmail.com>
+X-Gm-Features: AS18NWD_t2plr89Vw2try1XwdiXtIzwJE15Ly8pSYFY5EGZZA-yJFymvbXisIAY
+Message-ID: <CAMuHMdXJ3D4DC4ukir-mon7_2unNpE_h9uw84yAdoZ6YmeFxWw@mail.gmail.com>
+Subject: Re: [PATCH 5/5] pmdomain: renesas: rmobile-sysc: Don't keep unused PM
+ domains powered-on
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	Saravana Kannan <saravanak@google.com>, linux-pm@vger.kernel.org, 
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Sebin Francis <sebin.francis@ti.com>, 
+	Diederik de Haas <didi.debian@cknow.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 2:37=E2=80=AFAM Samuel Holland
-<samuel.holland@sifive.com> wrote:
+On Tue, 9 Sept 2025 at 13:11, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> The recent changes to genpd makes a genpd OF provider that is powered-on at
+> initialization to stay powered-on, until the ->sync_state() callback is
+> invoked for it.
 >
-> Hi Bartosz,
+> This may not happen at all, if we wait for a consumer device to be probed,
+> leading to wasting energy. There are ways to enforce the ->sync_state()
+> callback to be invoked, through sysfs or via the probe-defer-timeout, but
+> none of them in its current form are a good fit for rmobile-sysc PM
+> domains.
 >
-> On 2025-09-10 2:12 AM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > Convert the driver to using the new generic GPIO chip interfaces from
-> > linux/gpio/generic.h.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >  drivers/gpio/gpio-sifive.c | 73 ++++++++++++++++++++++++--------------=
---------
-> >  1 file changed, 38 insertions(+), 35 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-sifive.c b/drivers/gpio/gpio-sifive.c
-> > index 98ef975c44d9a6c9238605cfd1d5820fd70a66ca..2ced87ffd3bbf219c118573=
-91eb4ea808adc0527 100644
-> > --- a/drivers/gpio/gpio-sifive.c
-> > +++ b/drivers/gpio/gpio-sifive.c
-> > @@ -7,6 +7,7 @@
-> >  #include <linux/device.h>
-> >  #include <linux/errno.h>
-> >  #include <linux/gpio/driver.h>
-> > +#include <linux/gpio/generic.h>
-> >  #include <linux/init.h>
-> >  #include <linux/platform_device.h>
-> >  #include <linux/property.h>
-> > @@ -32,7 +33,7 @@
-> >
-> >  struct sifive_gpio {
-> >       void __iomem            *base;
-> > -     struct gpio_chip        gc;
-> > +     struct gpio_generic_chip gen_gc;
-> >       struct regmap           *regs;
-> >       unsigned long           irq_state;
-> >       unsigned int            trigger[SIFIVE_GPIO_MAX];
-> > @@ -41,10 +42,10 @@ struct sifive_gpio {
-> >
-> >  static void sifive_gpio_set_ie(struct sifive_gpio *chip, unsigned int =
-offset)
-> >  {
-> > -     unsigned long flags;
-> >       unsigned int trigger;
-> >
-> > -     raw_spin_lock_irqsave(&chip->gc.bgpio_lock, flags);
-> > +     guard(gpio_generic_lock_irqsave)(&chip->gen_gc);
-> > +
-> >       trigger =3D (chip->irq_state & BIT(offset)) ? chip->trigger[offse=
-t] : 0;
-> >       regmap_update_bits(chip->regs, SIFIVE_GPIO_RISE_IE, BIT(offset),
-> >                          (trigger & IRQ_TYPE_EDGE_RISING) ? BIT(offset)=
- : 0);
-> > @@ -54,7 +55,6 @@ static void sifive_gpio_set_ie(struct sifive_gpio *ch=
-ip, unsigned int offset)
-> >                          (trigger & IRQ_TYPE_LEVEL_HIGH) ? BIT(offset) =
-: 0);
-> >       regmap_update_bits(chip->regs, SIFIVE_GPIO_LOW_IE, BIT(offset),
-> >                          (trigger & IRQ_TYPE_LEVEL_LOW) ? BIT(offset) :=
- 0);
-> > -     raw_spin_unlock_irqrestore(&chip->gc.bgpio_lock, flags);
-> >  }
-> >
-> >  static int sifive_gpio_irq_set_type(struct irq_data *d, unsigned int t=
-rigger)
-> > @@ -72,13 +72,12 @@ static int sifive_gpio_irq_set_type(struct irq_data=
- *d, unsigned int trigger)
-> >  }
-> >
-> >  static void sifive_gpio_irq_enable(struct irq_data *d)
-> > -{
-> > +     {
+> Let's therefore opt-out from this behaviour of genpd for now, by using the
+> GENPD_FLAG_NO_STAY_ON.
 >
-> This looks like an unintentional whitespace change.
->
+> Link: https://lore.kernel.org/all/20250701114733.636510-1-ulf.hansson@linaro.org/
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
+> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Ah, thanks, checkpatch did not spot it. I'll fix it when applying.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On SH-Mobile AG5 (kzm9g) and R-Mobile A1 (armadillo).
 
-> >       struct gpio_chip *gc =3D irq_data_get_irq_chip_data(d);
-> >       struct sifive_gpio *chip =3D gpiochip_get_data(gc);
-> >       irq_hw_number_t hwirq =3D irqd_to_hwirq(d);
-> >       int offset =3D hwirq % SIFIVE_GPIO_MAX;
-> >       u32 bit =3D BIT(offset);
-> > -     unsigned long flags;
-> >
-> >       gpiochip_enable_irq(gc, hwirq);
-> >       irq_chip_enable_parent(d);
-> > @@ -86,13 +85,13 @@ static void sifive_gpio_irq_enable(struct irq_data =
-*d)
-> >       /* Switch to input */
-> >       gc->direction_input(gc, offset);
-> >
-> > -     raw_spin_lock_irqsave(&gc->bgpio_lock, flags);
-> > -     /* Clear any sticky pending interrupts */
-> > -     regmap_write(chip->regs, SIFIVE_GPIO_RISE_IP, bit);
-> > -     regmap_write(chip->regs, SIFIVE_GPIO_FALL_IP, bit);
-> > -     regmap_write(chip->regs, SIFIVE_GPIO_HIGH_IP, bit);
-> > -     regmap_write(chip->regs, SIFIVE_GPIO_LOW_IP, bit);
-> > -     raw_spin_unlock_irqrestore(&gc->bgpio_lock, flags);
-> > +     scoped_guard(gpio_generic_lock_irqsave, &chip->gen_gc) {
-> > +             /* Clear any sticky pending interrupts */
-> > +             regmap_write(chip->regs, SIFIVE_GPIO_RISE_IP, bit);
-> > +             regmap_write(chip->regs, SIFIVE_GPIO_FALL_IP, bit);
-> > +             regmap_write(chip->regs, SIFIVE_GPIO_HIGH_IP, bit);
-> > +             regmap_write(chip->regs, SIFIVE_GPIO_LOW_IP, bit);
-> > +     }
->
-> This block (and the copy below) don't actually need any locking, since th=
-ese are
-> R/W1C bits. From the manual: "Once the interrupt is pending, it will rema=
-in set
-> until a 1 is written to the *_ip register at that bit." I can send this a=
-s a
-> follow-up improvement if you want to keep this limited to the API convers=
-ion.
->
+Gr{oetje,eeting}s,
 
-Sure, please do.
+                        Geert
 
-> So with the minor whitespace fix:
-> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
->
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks,
-Bart
-
-> Regards,
-> Samuel
->
-> >
-> >       /* Enable interrupts */
-> >       assign_bit(offset, &chip->irq_state, 1);
-> > @@ -118,15 +117,14 @@ static void sifive_gpio_irq_eoi(struct irq_data *=
-d)
-> >       struct sifive_gpio *chip =3D gpiochip_get_data(gc);
-> >       int offset =3D irqd_to_hwirq(d) % SIFIVE_GPIO_MAX;
-> >       u32 bit =3D BIT(offset);
-> > -     unsigned long flags;
-> >
-> > -     raw_spin_lock_irqsave(&gc->bgpio_lock, flags);
-> > -     /* Clear all pending interrupts */
-> > -     regmap_write(chip->regs, SIFIVE_GPIO_RISE_IP, bit);
-> > -     regmap_write(chip->regs, SIFIVE_GPIO_FALL_IP, bit);
-> > -     regmap_write(chip->regs, SIFIVE_GPIO_HIGH_IP, bit);
-> > -     regmap_write(chip->regs, SIFIVE_GPIO_LOW_IP, bit);
-> > -     raw_spin_unlock_irqrestore(&gc->bgpio_lock, flags);
-> > +     scoped_guard(gpio_generic_lock_irqsave, &chip->gen_gc) {
-> > +             /* Clear all pending interrupts */
-> > +             regmap_write(chip->regs, SIFIVE_GPIO_RISE_IP, bit);
-> > +             regmap_write(chip->regs, SIFIVE_GPIO_FALL_IP, bit);
-> > +             regmap_write(chip->regs, SIFIVE_GPIO_HIGH_IP, bit);
-> > +             regmap_write(chip->regs, SIFIVE_GPIO_LOW_IP, bit);
-> > +     }
-> >
-> >       irq_chip_eoi_parent(d);
-> >  }
-> > @@ -179,6 +177,7 @@ static const struct regmap_config sifive_gpio_regma=
-p_config =3D {
-> >
-> >  static int sifive_gpio_probe(struct platform_device *pdev)
-> >  {
-> > +     struct gpio_generic_chip_config config;
-> >       struct device *dev =3D &pdev->dev;
-> >       struct irq_domain *parent;
-> >       struct gpio_irq_chip *girq;
-> > @@ -217,13 +216,17 @@ static int sifive_gpio_probe(struct platform_devi=
-ce *pdev)
-> >        */
-> >       parent =3D irq_get_irq_data(chip->irq_number[0])->domain;
-> >
-> > -     ret =3D bgpio_init(&chip->gc, dev, 4,
-> > -                      chip->base + SIFIVE_GPIO_INPUT_VAL,
-> > -                      chip->base + SIFIVE_GPIO_OUTPUT_VAL,
-> > -                      NULL,
-> > -                      chip->base + SIFIVE_GPIO_OUTPUT_EN,
-> > -                      chip->base + SIFIVE_GPIO_INPUT_EN,
-> > -                      BGPIOF_READ_OUTPUT_REG_SET);
-> > +     config =3D (struct gpio_generic_chip_config) {
-> > +             .dev =3D dev,
-> > +             .sz =3D 4,
-> > +             .dat =3D chip->base + SIFIVE_GPIO_INPUT_VAL,
-> > +             .set =3D chip->base + SIFIVE_GPIO_OUTPUT_VAL,
-> > +             .dirout =3D chip->base + SIFIVE_GPIO_OUTPUT_EN,
-> > +             .dirin =3D chip->base + SIFIVE_GPIO_INPUT_EN,
-> > +             .flags =3D BGPIOF_READ_OUTPUT_REG_SET,
-> > +     };
-> > +
-> > +     ret =3D gpio_generic_chip_init(&chip->gen_gc, &config);
-> >       if (ret) {
-> >               dev_err(dev, "unable to init generic GPIO\n");
-> >               return ret;
-> > @@ -236,12 +239,12 @@ static int sifive_gpio_probe(struct platform_devi=
-ce *pdev)
-> >       regmap_write(chip->regs, SIFIVE_GPIO_LOW_IE, 0);
-> >       chip->irq_state =3D 0;
-> >
-> > -     chip->gc.base =3D -1;
-> > -     chip->gc.ngpio =3D ngpio;
-> > -     chip->gc.label =3D dev_name(dev);
-> > -     chip->gc.parent =3D dev;
-> > -     chip->gc.owner =3D THIS_MODULE;
-> > -     girq =3D &chip->gc.irq;
-> > +     chip->gen_gc.gc.base =3D -1;
-> > +     chip->gen_gc.gc.ngpio =3D ngpio;
-> > +     chip->gen_gc.gc.label =3D dev_name(dev);
-> > +     chip->gen_gc.gc.parent =3D dev;
-> > +     chip->gen_gc.gc.owner =3D THIS_MODULE;
-> > +     girq =3D &chip->gen_gc.gc.irq;
-> >       gpio_irq_chip_set_chip(girq, &sifive_gpio_irqchip);
-> >       girq->fwnode =3D dev_fwnode(dev);
-> >       girq->parent_domain =3D parent;
-> > @@ -249,7 +252,7 @@ static int sifive_gpio_probe(struct platform_device=
- *pdev)
-> >       girq->handler =3D handle_bad_irq;
-> >       girq->default_type =3D IRQ_TYPE_NONE;
-> >
-> > -     return gpiochip_add_data(&chip->gc, chip);
-> > +     return gpiochip_add_data(&chip->gen_gc.gc, chip);
-> >  }
-> >
-> >  static const struct of_device_id sifive_gpio_match[] =3D {
-> >
->
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
