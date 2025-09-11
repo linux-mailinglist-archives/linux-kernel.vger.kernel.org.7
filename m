@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-811644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75635B52C02
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4102FB52C06
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1988DA03007
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:42:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 025A9A030FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E1D2E54BF;
-	Thu, 11 Sep 2025 08:42:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E542E54BF;
+	Thu, 11 Sep 2025 08:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BG2qJ6Qj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XnUQwasN"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2808E2206A7;
-	Thu, 11 Sep 2025 08:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2F123372C
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757580134; cv=none; b=dSXmUyceUoXrdLMlVFYbHtqlyWZuBa/2meS824DMlcWgTQ53iyG3sRdUtBpvriFGPFIuKlpoRs9H3BSgLpVqz/OrmkI4Pe4n9NHLluHqHxpUh3sPC0ZFlC8WLnwDYF+g/45SD8njSMEd+q16Qt/KBK23C8814affFAcaEHExc2A=
+	t=1757580265; cv=none; b=Z17ohGKtOCilkBZK3kJNdCyi27o/RKdy0kHKUv8wC1Y3fIHoZxp3hSGwoDNcz6473ZVTA8FspiAIdx/+EGgNbSXMKByqWABI82yU4f6p+5v8qJZzP88M5CBoZ816Ixo8DwHvWUG3CXXZjDQSJK6W6IJviHlQChqeCu8kbX9p7fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757580134; c=relaxed/simple;
-	bh=Tb4mY4mFW4j6C2X7p0oCDZvBDicQe45QQXnOwRSNQ+w=;
+	s=arc-20240116; t=1757580265; c=relaxed/simple;
+	bh=1K49ZJm2cjVDd4VuqrRdstuQEPhQ6l2n2BOtJAelo0c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=deDaLQ7D/LkrR9TpB3rjiBVEc7R4ZyURLjjl/wM3J6m9nWfcgH6tM+4MwSHzFk/ArFJwxBnAELEyf9L175Ai0O7WeKEyrSkbt2jp+Lb5oQhd63TAn8KU8vuc0z5qObb0Qv3065ZGKLG52QiNH58wFsPeFDwq4fxGadZXZMHCGME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BG2qJ6Qj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1FACC4AF09;
-	Thu, 11 Sep 2025 08:42:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757580133;
-	bh=Tb4mY4mFW4j6C2X7p0oCDZvBDicQe45QQXnOwRSNQ+w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=BG2qJ6Qj3Zgd++kVqEIb9CEfgHmTEriGlx0wYjQMHmcDoD6Qtgg6ut9K+LQJY55PF
-	 qenM8/pC8YXiU0dg8P3PBKZO5rIvQpFYTJQL1bBFWQVjTqGHuav6Aj7DOVqwoO+j4J
-	 5uGvKWD8iVFfVKPuvN8P4k4gCW9vcIsTB0rh6I14wvfmUtValRWnCa12MfdqSOzVmT
-	 JGp0zoSzN5YqKDQ2tPgY00HkB82u1niAX5YaCuJCDlycd9roJP3EIzI6AWSdtUbmox
-	 ljZFCqKYhlj+RaYjg7I7VARqMttJNPNzUPD1u9dxERTsdY0DFRXl19/CCNyeg9t4Xi
-	 cjnJ9RuyPwfpw==
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so63647366b.3;
-        Thu, 11 Sep 2025 01:42:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUS12fO5x0pkTjQwi6VNK4Ft9+3pOTKmVq5sBRYp2ET0iQzixQ8lFeZRR2llPVXdAAb8hfl7tVYsVHa1Q==@vger.kernel.org, AJvYcCVfwlo4NAZmGBuuvRhLcznx6s3F/FLqWWqvXRNo5RE8POBuS880x7NcDQz4XUBKe7b2XL7ubY0jibWDplk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvt2wpS8ciMquhFsqKEVxd93yA5P1a2SJcGVLc4T14JZNe18ET
-	iNpKfjekR5OnL1Mgk6vBApfPedT8hIBtac+SlFbVnBEA9xcpkXKwbpdW3akyjBjijM+O7Jz6xes
-	ePUuBh79Qbf8GyBZybDmFZxXrrZ2tS20=
-X-Google-Smtp-Source: AGHT+IGCNRWZexHleebCSpfx1aSECkro4rJmPTtqtIk5TyiQEHbOwU5Kk+Tgn7aWOoS0ew5Z1CnEGtBPHPMKfsUUoFE=
-X-Received: by 2002:a17:907:1ca2:b0:aff:fe6:78f0 with SMTP id
- a640c23a62f3a-b04b16c47f5mr1929541466b.54.1757580132302; Thu, 11 Sep 2025
- 01:42:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZJCmRfXQnq9uxPXDBoqkwBpw1alH3n1hqJd2Pr9BscWyvUfR4A2JvYAM2gOwqcF1HV8nj9UJQyr5lB8+0+vLhh0e8p88m/pj4ds+jOkx1QOI/5Cw+/zr1t8v2+vfRHEWoYuIHRPRoHJSWp4Tl4mrv8+OQqL5/n2d0UfTEsdZzCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XnUQwasN; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-544bac3caf2so1198887e0c.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757580262; x=1758185062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RuBL8uqFp6SRqtjWGK32//PnPpBAxLJ8lgwayga7/Cw=;
+        b=XnUQwasNTu9+h4/n9MAE+OBV8h8PTAtVF3osot9KrsOdCstd94jvh4f78TWW6CMRy5
+         +m5sZaWyDaZrWUnGZVru2wMVzWUQUN2J1ffBTqpv67TwMR0OYHY2JUV81zGWfP0HhVZr
+         Q/vtkCI2tvEiADlalCunzLqT48G1FskLDKs/0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757580262; x=1758185062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RuBL8uqFp6SRqtjWGK32//PnPpBAxLJ8lgwayga7/Cw=;
+        b=hmKun7qbGPaPQDXAl4H7rP8SIDqVOvWmTINFbTf8y9GwSi0SRDSJNNUuTM2Qwd2U2P
+         mszFhsJXnSP9ABxlzPonb/KWyU5IjOmlLA67tArLN/gaUfdBY3yS9fFn1O7FVlHloZW9
+         TMxgJKf6LvaNfMvqMklGz0ZWDCQMOFPF6ntyzJRv6R1BFMISTDPUzoBygIG5XMc4E2fc
+         OcluwOfAOjtROp1mZSLPSM7QSTGNxLufy0h3FUG8anDZxGREKNxF4KlG2Mbo5u7OMMXi
+         IfaiE5ehteMBARexdFtnjwNwOPvPWUnCytA6bFXu0NvJ84UyC7klHl1CbYWCT8RoYX1B
+         L08A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVpg8pktcyPJ2Fl0GfKdCk49mdBQRpPf78AqtVqVhwCTT4yU5KpQMyysU0CODIvquP38lGc5ojcnbBp7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMi/lMSYU3LnpGqICC5L70X10oZB1mHt5sl/67q/jvnKZIzSCl
+	UVGk2hnA3tlJoO1ShfnoGdlBPqPwn3s9Gle/uW7hIxCqt6ivrSLK4VnToPqh1q/R/S3OynI31kP
+	jpCY=
+X-Gm-Gg: ASbGnctwOlonpaEpazGON4GfWeFNDlMOJ9Lb8KST79yJLLTm44ry+ACG7h9TitocJue
+	55+gHNKZaB0KVqc+X8rGOr6HThkk9mPbxUJlz+Wfh/AbcEyfP7OR6+I/e3myHI169S6aG14MjSt
+	+RDyVZElf+M3vqLm/mJ05udy7i9jExkoumRS/eA1c/ERceK4pO9uwo++n5Zkz5AdqbZVpfWfOfh
+	iiFw1bQVcTX4gSLsCrvEASxE00THRD5URQj9e0P9PxJ6/z8n7RUDU2QwLvQEjdAIEc5ER2AxSrj
+	/nZiNx6NOCdIoi5r7iDzb8x4NklVjYQBrSOzDufJnTPvq2oLJRP+Xm6lREx8NB4ZHsaSOKZ1VzX
+	2otDPVJ4v45HnyLRF/TFv+T+6shD9EOVaCRvssor2OAD9iUdCNBUbq10YnA==
+X-Google-Smtp-Source: AGHT+IFAa38i+qivgCKHAAy6W86HYjsE18w1YMOKbzS68NATvQHfQTemL3SKXG8fGQRgoa95rCp2BA==
+X-Received: by 2002:a67:e706:0:b0:530:f657:c2e with SMTP id ada2fe7eead31-55209704db1mr1112271137.13.1757580262598;
+        Thu, 11 Sep 2025 01:44:22 -0700 (PDT)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5536f7c6a99sm204920137.4.2025.09.11.01.44.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 01:44:21 -0700 (PDT)
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-8900fcc0330so1054371241.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:44:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU28zWgl0sFvnnxU6RBa5ZCDt9/qjD1KLH/s91RfuixYieXRQSnhBkqP8mDzUQOsLxU8xtbDdy7FEZhtsQ=@vger.kernel.org
+X-Received: by 2002:a05:6102:5086:b0:4e2:a235:24d1 with SMTP id
+ ada2fe7eead31-552065728bcmr950644137.4.1757580261120; Thu, 11 Sep 2025
+ 01:44:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911083546.649949-1-wangming01@loongson.cn>
-In-Reply-To: <20250911083546.649949-1-wangming01@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Thu, 11 Sep 2025 16:42:01 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4FtYpgrWnvTm0=2_kit5ETxyhJCXFoV=66NKgVbipPrA@mail.gmail.com>
-X-Gm-Features: AS18NWBB5OUFbWKCB0yhIXcdIShPf3lhsEnwkMqfw21SM-WpT2sYaBJihfEkMvE
-Message-ID: <CAAhV-H4FtYpgrWnvTm0=2_kit5ETxyhJCXFoV=66NKgVbipPrA@mail.gmail.com>
-Subject: Re: [PATCH v2] irqchip/loongson-pch-lpc: Use legacy domain for
- PCH-LPC IRQ controller
-To: Ming Wang <wangming01@loongson.cn>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250908044348.2402981-1-fshao@chromium.org> <20250910115508.0000785e@huawei.com>
+In-Reply-To: <20250910115508.0000785e@huawei.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Thu, 11 Sep 2025 16:43:45 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nhDRQFVBDydTq=fmC=jz8e941aPwzg+cY1ZQDqWppx+fQ@mail.gmail.com>
+X-Gm-Features: AS18NWDats_rTOk_H5DcYgtjHSlZm8cS5lY_RPdvAh5_wYx68w1LGLEaew8wQCg
+Message-ID: <CAC=S1nhDRQFVBDydTq=fmC=jz8e941aPwzg+cY1ZQDqWppx+fQ@mail.gmail.com>
+Subject: Re: [PATCH] remoteproc: mediatek: Use for_each_available_child_of_node_scoped()
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-remoteproc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 4:35=E2=80=AFPM Ming Wang <wangming01@loongson.cn> =
-wrote:
+On Wed, Sep 10, 2025 at 6:55=E2=80=AFPM Jonathan Cameron
+<jonathan.cameron@huawei.com> wrote:
 >
-> On certain Loongson platforms, drivers attempting to request a legacy
-> ISA IRQ directly via request_irq() (e.g., IRQ 4) may fail. The
-> virtual IRQ descriptor is not fully initialized and lacks a valid irqchip=
-.
+> On Mon,  8 Sep 2025 12:43:25 +0800
+> Fei Shao <fshao@chromium.org> wrote:
 >
-> This issue does not affect ACPI-enumerated devices described in DSDT,
-> as their interrupts are properly mapped via the GSI translation path.
-> This indicates the LPC irqdomain itself is functional but is not correctl=
-y
-> handling direct VIRQ-to-HWIRQ mappings.
+> > Use scoped for_each_available_child_of_node_scoped() to remove manual
+> > of_node_put() calls from early returns.
 >
-> The root cause is the use of irq_domain_create_linear(). This API sets
-> up a domain for dynamic, on-demand mapping, typically triggered by a GSI
-> request. It does not pre-populate the mappings for the legacy VIRQ range
-> (0-15). Consequently, if no ACPI device claims a specific GSI
-> (e.g., GSI 4), the corresponding VIRQ (e.g., VIRQ 4) is never mapped to
-> the LPC domain. A direct call to request_irq(4, ...) then fails because
-> the kernel cannot resolve this VIRQ to a hardware interrupt managed by
-> the LPC controller.
+> There aren't any early returns here.
 >
-> The PCH-LPC interrupt controller is an i8259-compatible legacy device
-> that requires a deterministic, static 1-to-1 mapping for IRQs 0-15 to
-> support legacy drivers.
+> This runs into some of the stuff that cleanup.h docs suggest we shouldn't
+> do which is combining gotos and __free() magic.
+> I think this case is actually fine despite that but in general worth
+> thinking about the code structure and whether that can be avoided.
 >
-> Fix this by replacing irq_domain_create_linear() with
-> irq_domain_create_legacy(). This API is specifically designed for such
-> controllers. It establishes the required static 1-to-1 VIRQ-to-HWIRQ
-> mapping for the entire legacy range (0-15) immediately upon domain
-> creation. This ensures that any VIRQ in this range is always resolvable,
-> making direct calls to request_irq() for legacy IRQs function correctly.
->
-> Signed-off-by: Ming Wang <wangming01@loongson.cn>
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+> One option would be to factor out the loop into another function then use
+> and error return from that to call the stuff under the init_free label.
+
+Fair point, I can send a v2 with that.
+
+Thanks,
+Fei
 
 >
-> ---
-> Changes in v2:
->   - Address review comments from Huacai Chen.
->   - Fix function call indentation style.
-> ---
->  drivers/irqchip/irq-loongson-pch-lpc.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/irqchip/irq-loongson-pch-lpc.c b/drivers/irqchip/irq=
--loongson-pch-lpc.c
-> index 2d4c3ec128b8..01fe4325ff84 100644
-> --- a/drivers/irqchip/irq-loongson-pch-lpc.c
-> +++ b/drivers/irqchip/irq-loongson-pch-lpc.c
-> @@ -200,8 +200,13 @@ int __init pch_lpc_acpi_init(struct irq_domain *pare=
-nt,
->                 goto iounmap_base;
->         }
->
-> -       priv->lpc_domain =3D irq_domain_create_linear(irq_handle, LPC_COU=
-NT,
-> -                                       &pch_lpc_domain_ops, priv);
-> +       /*
-> +        * The LPC interrupt controller is a legacy i8259-compatible devi=
-ce,
-> +        * which requires a static 1:1 mapping for IRQs 0-15.
-> +        * Use irq_domain_create_legacy() to establish this static mappin=
-g early.
-> +        */
-> +       priv->lpc_domain =3D irq_domain_create_legacy(irq_handle, LPC_COU=
-NT, 0, 0,
-> +                                                   &pch_lpc_domain_ops, =
-priv);
->         if (!priv->lpc_domain) {
->                 pr_err("Failed to create IRQ domain\n");
->                 goto free_irq_handle;
-> --
-> 2.43.0
+> Jonathan
 >
 
