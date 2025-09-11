@@ -1,165 +1,96 @@
-Return-Path: <linux-kernel+bounces-812169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7998BB533F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:40:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8023EB533E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:39:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FFA758753C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:40:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 283565873F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C910832ED28;
-	Thu, 11 Sep 2025 13:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF19332C316;
+	Thu, 11 Sep 2025 13:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b="Fk3d5f5c"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="h5q8MobS"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8713631B131;
-	Thu, 11 Sep 2025 13:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757597986; cv=pass; b=BS/UwxN/rGv4iy/M9bK7PaIC+VXoISyihRUyYNIUeU3XY3bDcvICS57/gq5TYmE23mdkdWDpQ8U4tCx2BDslFwlZ7RRFkB6P16r/IuJs2EI8CHFLLZjt5mrx8AD34mMovq5q/AA6Dl0FTDCSJIPrx25ZRq5FtyXGk3tudr3sECw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757597986; c=relaxed/simple;
-	bh=j8lpntQzzYMtk7wMPyC9pfzz7cSxvnQauwFcEWCrz+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PJHudjNn0ZVehifHiMEOA6R8YFRlzvXYTLFvtuiNy1cFHz061kS4Piu6WXFgy3vBMkyBMVE/+RjUwy5q0KmmIzvb2e9aSPvWgs7y3MMkZb9RljlbHp/52ruMX1Zck2RWcPrB3zA+aAkvh/XNF+x4VNidmJpnVk99QD5iy9Zvrn8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=ariel.dalessandro@collabora.com header.b=Fk3d5f5c; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757597924; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cW8WQVw54kCwOrp4Z6nOM5zB+0ttwfZp2WlQWstN3VR5HDOvUIUqj7OMd52M9joD6VV4KN+dfh1dQl0/5irEs3WahGrue0xzDie3hjaV5tdBCW5k0AttByOZuRIZk3wFOzjsTr7EerdMeKTQT6Q0jEdxIQCRmWwkyus6WmtY4rc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757597924; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=z0wfAw1RoyH3XxGnHu3OjGHYgzFrel7esRCkMh235Uo=; 
-	b=OeyfDXnfBQFt2RGO4gMm6yb7HyyWhJFSbXpukrZivXBHUSu4zZB8tX0p+rGZvOotIcQlOG+e+z+/2AUnulQ/1bXPqaS4dqL3N5WfURJHVehrqpu51EIbJ/iUuIEJYOINb4anVnFgKEZp2BKvmfJNvG1rj5/t+jyUxszFxqMpZ4w=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=ariel.dalessandro@collabora.com;
-	dmarc=pass header.from=<ariel.dalessandro@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757597924;
-	s=zohomail; d=collabora.com; i=ariel.dalessandro@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=z0wfAw1RoyH3XxGnHu3OjGHYgzFrel7esRCkMh235Uo=;
-	b=Fk3d5f5c7xQh1L26LGxVS1MYZeolPRgvuj4odZIpMebZ02Z5jpCxFefRidPAF1ey
-	NwGxrrIocLa0JWk6u1Dpzl1zGCrU4lt1loeAoSLF2sMV/6OmrnCFottPBZbgLe1Y1W+
-	P4w+y0nD1DpQDK/sWlie56qNQMIlY8RyUyzFaKLM=
-Received: by mx.zohomail.com with SMTPS id 175759792104776.9989768199938;
-	Thu, 11 Sep 2025 06:38:41 -0700 (PDT)
-Message-ID: <f4a18a08-516a-4a0b-a477-1e9f5269f1d8@collabora.com>
-Date: Thu, 11 Sep 2025 10:38:23 -0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55085184E;
+	Thu, 11 Sep 2025 13:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757597950; cv=none; b=sFxVaxM45FTZIVnDsdw3lPwE9ElC1xvP9SCsfP7bfBPSnBACgqBIs9khJEy7Yig4geuvHarnCjwVRPXqBAiG8w3jc4PQpNcWzh3OdHtnBjRa2y7JA2NWYPuH7B0hnjqof4BdN9JhfxqVt9DHu/j5TGhaWod4hDVuSMlWD50JROQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757597950; c=relaxed/simple;
+	bh=BhITpaOyCg0kiAA9rkgScH1CSG96+Xse8zf3imxO7KE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FWb6Wha7dL4zd6XnP+qSBtFEDVU88NA3fhg0znnr8v/IOjUT7ujG8Hc60NqwDh5BEQUEQGNL0yvt9mvrIyqqob93tpNNjo8u0o7PNhvuy2BfZWpzLLRUD3AaA03DES8nr8VrZkbFFjmUQf+3nE1jgS3EB3cabS/B7MIwqQe4NJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=h5q8MobS; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net DB0D940AE3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1757597937; bh=J3SqLsNgJyDKHvN19ZY09r8OGxhHJc/ev7e58fUl1ps=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=h5q8MobSvNmHXvKp4cbNgppohYxwSNVCGTNgObY5s0EOseMCRHBEL6x/CqCl2xnJ3
+	 H9foSNQCofcrslS5Vzb+syEDVAY2JnpfP7eB/kr7i02YNzESiyRSCvz6lTau4U4hDI
+	 HzxO5iKlWka4/zmOe5MEZcOTIFU2BNYq1JfcWnZ6sXAnhpTIlaDM+KMknU52LUTAPI
+	 AR08dybANkiZrAa9DHKo3xHpVjqn5Yc2mEItkPg/0nqwrh0SgRX3LfjWO9BiTij4rT
+	 fT5jKirElurji3iiwAq3Qe/oPBOccIn3IDgKSbwpjMYbA6sPql1fbpUTaHiuHu/QDF
+	 Je0LAmD9jnSnA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id DB0D940AE3;
+	Thu, 11 Sep 2025 13:38:56 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Jani Nikula
+ <jani.nikula@linux.intel.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Linux Doc Mailing
+ List <linux-doc@vger.kernel.org>, =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice
+ Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a
+ wrapper for sphinx-build
+In-Reply-To: <fuv4p45tvjfdvwu2625s2l2kvcw64p4ohherlwyum3vmogmrfz@yb47nt66xgm6>
+References: <cover.1756969623.git.mchehab+huawei@kernel.org>
+ <e019f951190a732f9ac0b21bcda7e49af3bd5cbd.1756969623.git.mchehab+huawei@kernel.org>
+ <e13837a0ac46dffe39c600d11fdf33f538bdc9c3@intel.com>
+ <20250910145926.453f5441@foz.lan>
+ <45888ca6c88071c754784495b4ef69460ea67b4f@intel.com>
+ <fuv4p45tvjfdvwu2625s2l2kvcw64p4ohherlwyum3vmogmrfz@yb47nt66xgm6>
+Date: Thu, 11 Sep 2025 07:38:56 -0600
+Message-ID: <87zfb1p0r3.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 01/14] media: dt-bindings: Convert MediaTek mt8173-mdp
- bindings to YAML
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
- andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, ck.hu@mediatek.com,
- conor+dt@kernel.org, davem@davemloft.net, dmitry.torokhov@gmail.com,
- edumazet@google.com, flora.fu@mediatek.com, houlong.wei@mediatek.com,
- jeesw@melfas.com, jmassot@collabora.com, kernel@collabora.com,
- krzk+dt@kernel.org, kuba@kernel.org,
- kyrie.wu@mediatek.corp-partner.google.com, lgirdwood@gmail.com,
- linus.walleij@linaro.org, louisalexis.eyraud@collabora.com,
- maarten.lankhorst@linux.intel.com, matthias.bgg@gmail.com,
- mchehab@kernel.org, minghsiu.tsai@mediatek.com, mripard@kernel.org,
- p.zabel@pengutronix.de, pabeni@redhat.com, robh@kernel.org,
- sean.wang@kernel.org, simona@ffwll.ch, support.opensource@diasemi.com,
- tiffany.lin@mediatek.com, tzimmermann@suse.de, yunfei.dong@mediatek.com,
- devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20250820171302.324142-1-ariel.dalessandro@collabora.com>
- <20250820171302.324142-2-ariel.dalessandro@collabora.com>
- <20250821-silky-slug-of-novelty-e4bb64@kuoka>
- <d286ec0b-c8dc-4103-9aa3-2f40e0ade4a3@collabora.com>
- <5421cfe7-dfe0-4bb8-8722-6f449cd365be@kernel.org>
-Content-Language: en-US
-From: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
-In-Reply-To: <5421cfe7-dfe0-4bb8-8722-6f449cd365be@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain
 
-Krzysztof,
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
-On 9/9/25 3:32 AM, Krzysztof Kozlowski wrote:
-> On 08/09/2025 19:52, Ariel D'Alessandro wrote:
->> Krzysztof,
->>
->> On 8/21/25 3:46 AM, Krzysztof Kozlowski wrote:
->>> On Wed, Aug 20, 2025 at 02:12:49PM -0300, Ariel D'Alessandro wrote:
+> On Thu, Sep 11, 2025 at 01:23:55PM +0300, Jani Nikula wrote:
+>> > 1. SPHINXDIRS. It needs a lot of magic to work, both before running
+>> >    sphinx-build and after (inside conf.py);
+>> 
+>> Makes you wonder if that's the right solution to the original
+>> problem. It was added as a kind of hack, and it stuck.
+>
+> The problem is, IMHO, due to the lack of flexibility of sphinx-build:
+> It should have a way on it to do partial documentation builds.
 
-[...]
+A couple of times I have looked into using intersphinx, making each book
+into an actually separate book.  The thing I always run into is that
+doing a complete docs build, with working references, would require
+building everything twice.  This is probably worth another attempt one
+of these years...
 
->>>> +          - enum:
->>>> +              - mediatek,mt8173-mdp-rdma
->>>> +              - mediatek,mt8173-mdp-rsz
->>>> +              - mediatek,mt8173-mdp-wdma
->>>> +              - mediatek,mt8173-mdp-wrot
->>>> +      - items:
->>>> +          - enum:
->>>> +              - mediatek,mt8173-mdp-rdma
->>>> +              - mediatek,mt8173-mdp-rsz
->>>> +              - mediatek,mt8173-mdp-wdma
->>>> +              - mediatek,mt8173-mdp-wrot
->>>> +          - const: mediatek,mt8173-mdp
->>>
->>> This makes no sense. How devices can be compatible and can not be
->>> compatible.
->>
->> According to the driver source code (and the previous txt mt8173-mdp
->> bindings), there must be a "controller node" with compatible
->> `mediatek,mt8173-mdp`. Then its sibling nodes (including itself) should
-> 
-> But you did not define "mediatek,mt8173-mdp" here, so what are you
-> talking about?
-> 
-> I talk here about "wrot" and others, I thought it is obvious from the
-> mistake in the schema.
-
-Ack.
-
-[...]
-
->>>> +
->>>> +  - if:
->>>> +      properties:
->>>> +        compatible:
->>>> +          contains:
->>>> +            const: mediatek,mt8173-mdp
->>>
->>> This makes no sense either.
->>
->> Same question above about compatibles.
-> 
-> How same question? Do you understand this code? It is nothing the same -
-> you have here contains!
-
-
-Ack. Will resubmit properly in v2.
-
-Thanks,
-
--- 
-Ariel D'Alessandro
-Software Engineer
-
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK 
-Registered in England & Wales, no. 5513718
-
+jon
 
