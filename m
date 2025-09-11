@@ -1,160 +1,175 @@
-Return-Path: <linux-kernel+bounces-812220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D47AB534AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:58:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE1AEB534B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7E33A940C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:58:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 797C21BC2805
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6350432F75F;
-	Thu, 11 Sep 2025 13:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBB7337684;
+	Thu, 11 Sep 2025 13:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CKKHGHUr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pwtPwLsW"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F7054763;
-	Thu, 11 Sep 2025 13:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D924335BC5
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757599126; cv=none; b=dYxstVMZNTZngKNs4muYqxSK9reEw0zjknkcbE1Qf+HZjaBANLAzWNo75jD5G3qZC6AmWb9z5NgqPqWAkYtEvZcCLC6SAIiRIxZ21IGfrauQpvip/PX5lSa+D1BP2Aktp4ZDwMfICYmq6cXi6G/QzAD/TfSdSDCqaVvZlk5QZmE=
+	t=1757599147; cv=none; b=TMfC35P3yl83ewIwEpz+iPXXJ+PWlBZ4dIdE7Jvg4xHdWTlRWKVntmx79fyd9aVuowShh3CM38aQ8JdVPQ5iTmodpfLm6GqUNVCo39oDHvGtpQEWouFBI1dmLz72p4fkC6nCpRoMZqkFwEv26gK+r0LHcEgF01K/aAHbCBdeCnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757599126; c=relaxed/simple;
-	bh=zUOI85Wk3s5W8+C/qhkRVlPvNB7zX3sTSR/t7JsqQdI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=je2YgllR3pSbDokzfQZFbUg9wQ9+IUsTDqNeNlGVWheylwmbUotXk3RYF0XNTZr7adgh1iM+7OBc97diHRUiN6b51kXVH6sOSmCgQa2W5ngKD4g2sZX8ACSNoEBwez6usVbEF8SwsXnjW0bI3J+xKl1/X26N2G+7MlrvZImkn7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CKKHGHUr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45FE3C4CEF0;
-	Thu, 11 Sep 2025 13:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757599126;
-	bh=zUOI85Wk3s5W8+C/qhkRVlPvNB7zX3sTSR/t7JsqQdI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CKKHGHUrRl5i1ljvmz9lsju3Bx+AQgCbS4WCooXwHI7VaohAX33ZN+ZSVk7Tlac3c
-	 CsnwDklUxZx3W6QT7PyEd5o9JVgLjJqJMaifdb/N02pAS1LR5724wsRnO0XA8dPAjj
-	 0YDo08jUqYbQap3ZfUpBL4MK1bCWaZPmzlNSVPTiwnBiRpXF8A16PhE95c+8j/zAl9
-	 6hFFflycJE3An18xeaQ4VBPQQ1xRXaOi4xjlHAvaoY1eHxLYiWZh7455zqMGQ40OME
-	 Lgm/WXYezcXViTP/Nc46yKqEbNu+5XcpaHycdGs07K6h6t5eDjnkZISTySl1yIJrzb
-	 32PJIEWlXuk/g==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-621b965a114so266009eaf.1;
-        Thu, 11 Sep 2025 06:58:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAbXD5q74B/ibykvP+MsKuFd7PNGleXzHgxp7/z4ie6evd5u2Pft5laiB3r3J+ZY6jxOG4uSqkL6E3zN4=@vger.kernel.org, AJvYcCXMJ7dQSrbn8abLeH0oE/adPZ2NpyTF6L6elJiP7Y5r99kXXAsyL7R+4iDpISobJWjsN0c8CUdGiGI=@vger.kernel.org, AJvYcCXdtt/f0MZM8p/iOTVEkndV/KBnOEW4SDspE5hZC/cjuUpU1CkuAOaHdNac6TZpf3xc5+joxHQSw6wH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL7ZYfP72oeRy8TQviGLGyxvN7mDYKtiJe3Q5nDqDzDPTv778n
-	sc9bvhGUPaOc/L+BTtsu21tEBiyp32oRAWuZjZAT8xAejh/8C+ea5RP82bY1gKw0I9xJQW0x3WU
-	4WpMS8CME3FGRKUDAxQ3FMz4WP+I12kI=
-X-Google-Smtp-Source: AGHT+IFR256VrR2uXDvTtVSQ4KENYiS/q+WF+wlT+K2JOF02yDIg0gDxY9vVsXuSyke4TCTcXPfQu04EX9C9awhl1dk=
-X-Received: by 2002:a05:6820:624:b0:621:7131:2e2b with SMTP id
- 006d021491bc7-62178a8b54amr9148386eaf.7.1757599125607; Thu, 11 Sep 2025
- 06:58:45 -0700 (PDT)
+	s=arc-20240116; t=1757599147; c=relaxed/simple;
+	bh=qY/6Z3LIv8VbCEzNVffBnUKWU/mQp4fwaBY5DM7L6GM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Je8kzD9hlj/FWN29OqcFH9dDyZ41x8CXwVArEb6BKGfg9b8XmotxwQnUIQV2KqwBKgg9ZppwegJonoSvZ+6Cxa3/AmvkfmDGH6yGKtwlf1Ow/5fqyZGz2TCfUxbWvM53IIjuWGgDbB8fQp2eYihYUC+/wII/VbKLh8rtyQJr3GE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pwtPwLsW; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id D95041A0DE4;
+	Thu, 11 Sep 2025 13:59:03 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id AE59260630;
+	Thu, 11 Sep 2025 13:59:03 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7015D102F27C2;
+	Thu, 11 Sep 2025 15:58:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757599143; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=q4NyUiSlwN/QIJ4/CiLt9yupjZEnKIdTbEP4BifWV0c=;
+	b=pwtPwLsW7c8kZgcztgq70QltwJ2lkPJLvjQsKAHgP6vnZ6EKc/HMivgYrKXENsXgXCfEfb
+	CvWadoWe0K+xNQfwH5e3tFhzs7pedXrpOr0I3UQwwlPcXT92ThYrknHZKSGWtW6vHtRzdw
+	UcQGDPr2v7wVhdONNCAAof/m94LcUAKhIbo+E5OY2/VFhJgZ/8ELGtDjc3wEQblFBUCh6W
+	3DA3MgWxp9y9rvmX5qEdMZvlNrlw8fiKh17qwMfUoZ+oUNBsil+yweleBpOeVXuC9Uq75r
+	2mPUEoesq5cJGkt6UKlaowsvpiRJiIGpNZc96CdTY41hY3eI50PwDXcwndcx+w==
+Date: Thu, 11 Sep 2025 15:58:42 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ayush Singh <ayush@beagleboard.org>, David Gibson
+ <david@gibson.dropbear.id.au>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, devicetree@vger.kernel.org, Rob
+ Herring <robh@kernel.org>, Jason Kridner <jkridner@gmail.com>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree-compiler@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Davis <afd@ti.com>
+Subject: Re: Device tree representation of (hotplug) connectors: discussion
+ at ELCE
+Message-ID: <20250911155842.796c47fa@bootlin.com>
+In-Reply-To: <CAMuHMdULiX83n5bLEipE1j99HyuyXCpAYS9qYu-8y_vmEyO_ag@mail.gmail.com>
+References: <20250902105710.00512c6d@booty>
+	<aLkiNdGIXsogC6Rr@zatzit>
+	<337281a8-77f9-4158-beef-ae0eda5000e4@beagleboard.org>
+	<aL5dNtzwiinq_geg@zatzit>
+	<20250908145155.4f130aec@bootlin.com>
+	<aL-2fmYsbexEtpNp@zatzit>
+	<20250909114126.219c57b8@bootlin.com>
+	<aMD_qYx4ZEASD9A1@zatzit>
+	<20250911104828.48ef2c0e@bootlin.com>
+	<CAMuHMdUUGoaetdsTEVx27TYQZ_khzyCn0wzi2+TibYcvkg1fXw@mail.gmail.com>
+	<20250911122333.2e25e208@bootlin.com>
+	<36a85af7-75b1-46db-8df8-e83372d33b93@beagleboard.org>
+	<20250911144506.51809eb3@bootlin.com>
+	<CAMuHMdULiX83n5bLEipE1j99HyuyXCpAYS9qYu-8y_vmEyO_ag@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu>
- <20250909161901.10733-1-ryanzhou54@gmail.com> <20250911013242.oxm2kwfaqvmybbhk@synopsys.com>
- <xbfvykzfi26pyaycd7efbqvmraxcu6zzgqjfxtk33wcsjsnnal@5e3g4pq5qcj3>
- <CAJZ5v0gT26VK-sHmgK_S4RjjO3Uc-ZmoAYos43S5yWh0zWc9DA@mail.gmail.com> <CAPwe5RP14woNEiux4e4xfL0W=53rogmcionLuvYt37aLz-i-nA@mail.gmail.com>
-In-Reply-To: <CAPwe5RP14woNEiux4e4xfL0W=53rogmcionLuvYt37aLz-i-nA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 11 Sep 2025 15:58:34 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g_0D7-68eM6ofv3naSipvXEF4pLMknjwGaA6kLm1FzMg@mail.gmail.com>
-X-Gm-Features: Ac12FXztfpoz0wfYIHdtahSgMF__AuYX2WX63LsezHHyUZxy1AASDifWg2WLTUU
-Message-ID: <CAJZ5v0g_0D7-68eM6ofv3naSipvXEF4pLMknjwGaA6kLm1FzMg@mail.gmail.com>
-Subject: Re: [PATCH v2] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-To: ryan zhou <ryanzhou54@gmail.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
-	"stern@rowland.harvard.edu" <stern@rowland.harvard.edu>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "royluo@google.com" <royluo@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Sep 11, 2025 at 3:57=E2=80=AFPM ryan zhou <ryanzhou54@gmail.com> wr=
-ote:
->
-> Rafael J. Wysocki <rafael@kernel.org> =E4=BA=8E2025=E5=B9=B49=E6=9C=8811=
-=E6=97=A5=E5=91=A8=E5=9B=9B 19:36=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Thu, Sep 11, 2025 at 12:58=E2=80=AFPM Xu Yang <xu.yang_2@nxp.com> wr=
-ote:
-> > >
-> > > Hi Ryan,
-> > >
-> > > On Thu, Sep 11, 2025 at 01:32:47AM +0000, Thinh Nguyen wrote:
-> > > > On Wed, Sep 10, 2025, Ryan Zhou wrote:
-> > > > > Issue description:During the wake-up sequence, if the system invo=
-kes
-> > > > >  dwc3->resume and detects that the parent device of dwc3 is in a
-> > > > > runtime suspend state, the system will generate an error: runtime=
- PM
-> > > > > trying to activate child device xxx.dwc3 but parent is not active=
-.
-> > > > >
-> > > > > Solution:At the dwc3->resume entry point, if the dwc3 controller
-> > > > > is detected in a suspended state, the function shall return
-> > > > > immediately without executing any further operations.
-> > > > >
-> > > > > Signed-off-by: Ryan Zhou <ryanzhou54@gmail.com>
-> > > > > ---
-> > > > >  drivers/usb/dwc3/core.c | 3 +++
-> > > > >  1 file changed, 3 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> > > > > index 370fc524a468..06a6f8a67129 100644
-> > > > > --- a/drivers/usb/dwc3/core.c
-> > > > > +++ b/drivers/usb/dwc3/core.c
-> > > > > @@ -2687,6 +2687,9 @@ int dwc3_pm_resume(struct dwc3 *dwc)
-> > > > >     struct device *dev =3D dwc->dev;
-> > > > >     int             ret =3D 0;
-> > > > >
-> > > > > +   if (pm_runtime_suspended(dev))
-> > > > > +           return ret;
-> > > > > +
-> > > >
-> > > > Is this a documented behavior where the device should remain runtim=
-e
-> > > > suspend on system resume? I feel that that this should be configura=
-ble
-> > > > by the user or defined the PM core. I don't think we should change
-> > > > default behavior here just to workaround the issue that we're facin=
-g.
-> > > >
-> > > > What if the user wants to keep the old behavior and resume up the d=
-evice
-> > > > on system resume?
-> > >
-> > > What about resume the device firstly if it's already runtime suspende=
-d when
-> > > call dwc3_pm_suspend(). Therefor, the old behavior can be kept and th=
-e issue
-> > > can be avoided.
-> > >
-> > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> > > index 370fc524a468..1b8dbb260017 100644
-> > > --- a/drivers/usb/dwc3/core.c
-> > > +++ b/drivers/usb/dwc3/core.c
-> > > @@ -2672,6 +2672,9 @@ int dwc3_pm_suspend(struct dwc3 *dwc)
-> > >         struct device *dev =3D dwc->dev;
-> > >         int             ret;
-> > >
-> > > +       if (pm_runtime_suspended(dev))
-> > > +               pm_runtime_resume(dev);
-> >
-> > You can just call pm_runtime_resume() here without the preliminary chec=
-k.
->
-> If the device is active before sleep, skip runtime_resume after wakeup
-> and just call dwc3->suspend.
+On Thu, 11 Sep 2025 15:08:33 +0200
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-But pm_runtime_resume() will not resume an active device, will it?
+> Hi Hervé,
+> 
+> On Thu, 11 Sept 2025 at 14:45, Herve Codina <herve.codina@bootlin.com> wrote:
+> > On Thu, 11 Sep 2025 17:45:17 +0530
+> > Ayush Singh <ayush@beagleboard.org> wrote:  
+> > > On 9/11/25 15:53, Herve Codina wrote:  
+> > > > On Thu, 11 Sep 2025 10:54:02 +0200
+> > > > Geert Uytterhoeven <geert@linux-m68k.org> wrote:  
+> > > >> On Thu, 11 Sept 2025 at 10:48, Herve Codina <herve.codina@bootlin.com> wrote:  
+> > > >>> The choice to map connA to the type 'foo' connector expected by the addon
+> > > >>> and the choice to map connB or connC to the type 'bar' connector expected by
+> > > >>> the addon can only be done at runtime and probably with the help of a driver
+> > > >>> that have the knowledge of the 3 connectors.
+> > > >>>
+> > > >>> I have the feeling that the choice of physical connectors to which the addon
+> > > >>> board is connected to is a human choice when the board is connected.  
+> > > >> All these choices and decisions apply to single-connector add-on boards, too.
+> > > >>  
+> > > > Yes, in our use case (me and Luca), each addon has an eeprom, wired exactly the
+> > > > same on all supported addon, which allows to known the exact addon. Also addon
+> > > > insertions and removals are detected using some gpios wired to the connector.
+> > > >
+> > > > Based on that our specific driver handling our specific connector perform the
+> > > > following operations on addon insertion detection:
+> > > >    - load a first addon DT to have access to the eeprom
+> > > >    - Read the eeprom to determine the addon type
+> > > >    - load the DT matching with the addon type
+> > > >
+> > > > This part is of course connector type specific. I mean having an eeprom with
+> > > > some encoded addon type values and hotplug detection with gpio is a part of
+> > > > the contract between the board and the addon (part of connector specification).  
+> > >
+> > > My usecase is a bit more complicated, since I am trying to model all the
+> > > available headers on BeagleBoard.org sbcs (particularly PocketBeagle 2
+> > > initially) as connectors. However, that still ends up being a single
+> > > connector which can have multiple addon-boards simultaneously instead of
+> > > the other way around.  
+> >
+> > In that case, a connector cannot have the state "free" or "used" handled
+> > globally by a core part.
+> >
+> > IMHO, each connector drivers should handle this kind of state if relevant.
+> > I mean, in case of "pmods" compatible driver having this state per PMOD
+> > connector could make sense whereas in "beagle-connector" it doesn't.  
+> 
+> It depends on whether the add-on board has stacking headers, or not ;-)
+> 
+> > Also, on my side, with my 2-step DT loading, the first loading should not
+> > consider the connector as 'used'.
+> >
+> > All of that is implied by the "contract" between the board and the addon.
+> > It is connector specific and so should be handled by the specific connector
+> > driver itself.  
+> 
+> Since stacking boards is a fairly common use case (beagle, rpi), perhaps
+> it makes sense to have a simple method to re-export / forward a connector?
+> The alternative would be to re-describe and re-export everything.
+
+You re-apply an addon DT on the same connector. You should see the exact same
+symbols without re-exporting anything.
+
+I think that you have to re-export stuff only if, on the addon board itself,
+you wire some pins from one connector to an other one.
+
+       +-----------------------------+
+       |        Addon board          |
+   +---------+                   +--------+
+   + conn A  +-------------------+ conn B +
+   +         +--,   +--------+   +--------+
+   +---------+   '--+ device |       |        
+       |            +--------+       |
+       +-----------------------------+
+
+Here the resource available at conn A directly wired to conn B should be
+re-exported in order to allow another addon connected to conn B to use this
+signal.
+
+Multiple addons with conn A connector stacked should see all symbols exported
+from the based board related to conn A.
+
+Best regards,
+Hervé
 
