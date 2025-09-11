@@ -1,161 +1,85 @@
-Return-Path: <linux-kernel+bounces-812674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72602B53B4F
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:21:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C376B53B54
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE9507B92D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:19:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BD7F7BA506
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECB4369331;
-	Thu, 11 Sep 2025 18:21:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F4136932A;
+	Thu, 11 Sep 2025 18:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CeHAljJD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMD01O56"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DA847F4A;
-	Thu, 11 Sep 2025 18:21:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC8224DD13
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757614861; cv=none; b=hi5SiViCo+uocWIe8skyc4I0SLMe0U/Kzgapni4iPGT5I1VxpynyIjd9+wurNYmcRC22XDqmCQQAn8qBHeKfFksU7UvT/Mb6BsJVmDtapNooGnfamcPhr2+JJrFj7CYA1cgzZDvJe5BQfITZAabDxf1lAoYOTgnFPXwaIKWfIYI=
+	t=1757615058; cv=none; b=si5UEqtc2uR3xJyazAYiKrNGSyAghH28CFyZeGnHU9A0DP8vQPNIkGlI/djBph3DLt3sl/NAYH72Q4AYzyCOVY0jrTOpcvdmu2V98Y0gKXEu51x6LDKU6b90E46eCtVE7VA9B7SpJvVnrb+rNYR3O3I1cO8DTN0YdZLzx/aq2tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757614861; c=relaxed/simple;
-	bh=o+sxduyxa8P2is/JjSQ9wBtUm8hKM5vkrOVW/URvt50=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FDIMopsdH+7tGt6hnZqEFtM0Wmkq0k5+v3AMcG5LPwxrp4MJrwnJHK7xRWg7CGrUtObZq6P1/+ao2Iko7v75d218j6VtztvYSH6vtacHBRQAC4wNT3xeNRsQoPCeOVgO8gZNAu10IsTTVieIMyeoYke7Rssw4BRv8iBXjucYwjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CeHAljJD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AAA6C4CEF0;
-	Thu, 11 Sep 2025 18:20:58 +0000 (UTC)
+	s=arc-20240116; t=1757615058; c=relaxed/simple;
+	bh=KGKsZ6Jdy+3V7bqBCI1fO91V9AiE67DdDKtogHTKR10=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KzGEVg+gSSxGN0KxO6D1imL3Hv1Cu99E5BXhs88mXfJf143Z+8LkdS2jD7LdLaBeKyuzjfz6NDknbd86z3rba34VdUgFy3EA6yJrMwr1p+euvx1lGhjnW8kqfzYJI+16qZ/ixImOTYpPjrTLdNnZfwhTW1sVISA505z/AVEYbnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMD01O56; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D93FBC4CEF0;
+	Thu, 11 Sep 2025 18:24:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757614860;
-	bh=o+sxduyxa8P2is/JjSQ9wBtUm8hKM5vkrOVW/URvt50=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CeHAljJDzJdup7w9zQX9/GNFkTzX6d6ORTJhqykt+uG10pc8rhwqpixStBAK6ISou
-	 9ofRSL0uKG0Ey1N33hqbnSyi8KtF5bgXi0bnndxi51NfUzKhN1OpofUEcehsnq+WHD
-	 Yhj9f8iZuSV1iicRNV3S11bcVEwdL7G4DLm4x1mTipYlWLDPeDdeHx5SYwsVjT8LVA
-	 RzDQYilJZ8eyw9XgCePXgw7pqpjsDNcjVSFdoRCRU8PNMq0HNWQZVhN/LCwthHbzXs
-	 9CMMnKcRX4V6y4qZ7fJO1vLw1w+UbkQ8/k4wOC8XVgOw0PlFam+ljNDWcFTlsKQlwC
-	 Egpsg2MIOFmew==
-Message-ID: <2833916c-f4e7-4fd3-9d16-f9b544922921@kernel.org>
-Date: Thu, 11 Sep 2025 13:20:55 -0500
+	s=k20201202; t=1757615056;
+	bh=KGKsZ6Jdy+3V7bqBCI1fO91V9AiE67DdDKtogHTKR10=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dMD01O5643228nVTISLl6oNk0ig/HqJ9ueeGKeMHtjtToRo1d8/+4ioBx35VX0CSM
+	 Vi4BgSkQ/VLfruag81haTEQIiJARsq5UAVANd7+YBz86QDcOc0fidiyuWMzCdumkHL
+	 WPyHJA6/WM0mzJJQKM5VSKhEd8Fco39Vo6sgdk8OdfWTyziUexxapRFeW+gFwAPjju
+	 sn+GAGdveKWfEKTtFoCMjmgRaHo9LczpsyUnbS7TJzou/JZ+RiFozywAfXBk4TZyCt
+	 Ug5Dv/erhfFcNi897erR6IF9V4nDPzk7p+ptUFm0hzDfxuxhxhCQ1/fhVcpjXM2FZO
+	 X/cpKAwdOkQBQ==
+From: Conor Dooley <conor@kernel.org>
+To: Conor Dooley <conor@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Samuel Holland <samuel.holland@sifive.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	linmin@eswincomputing.com,
+	Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cache: sifive_ccache: Optimize cache flushes
+Date: Thu, 11 Sep 2025 19:24:06 +0100
+Message-ID: <20250911-moonscape-bulk-cd1312329fa1@spud>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250909224131.276800-1-samuel.holland@sifive.com>
+References: <20250909224131.276800-1-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/PM: Move ASUS EHCI workaround out of generic code
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Bjorn Helgaas <helgaas@kernel.org>
-Cc: Lukas Wunner <lukas@wunner.de>, Alan Stern <stern@rowland.harvard.edu>,
- linux-pci@vger.kernel.org, linux-pm@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org, Oleksij Rempel <o.rempel@pengutronix.de>,
- Timo Jyrinki <timo.jyrinki@iki.fi>, Ernst Persson <ernstp@gmail.com>,
- Steven Harms <sjharms@gmail.com>, James Ettle <james@ettle.org.uk>,
- Nick Coghlan <ncoghlan@gmail.com>, Weng Xuetian <wengxt@gmail.com>,
- Andrey Rahmatullin <wrar@wrar.name>, Boris Barbour <boris.barbour@ens.fr>,
- Vlastimil Zima <vlastimil.zima@gmail.com>, David Banks <amoebae@gmail.com>,
- Michal Jaegermann <michal@harddata.com>, Chris Moeller <kode54@gmail.com>,
- Daniel Fraga <fragabr@gmail.com>, Javier Marcet <jmarcet@gmail.com>,
- Pavel Pisa <pisa@cmp.felk.cvut.cz>
-References: <75e4ae507fa4faddd063a3a9e17d319ed84529b6.1757562971.git.lukas@wunner.de>
- <80980751-64db-4dc2-9516-03046e8b4b31@kernel.org>
- <CAJZ5v0idqEPUpA0uBb_PAaKe0KNqCt0xLskPThPwtsfh3eCdxg@mail.gmail.com>
- <fd9629df-0718-4968-b22b-cad36d870f63@kernel.org>
- <CAJZ5v0hJHxVvyNdvDSZg=Pn9=xEqO79T4Ou9toc0Qofi777NcA@mail.gmail.com>
-Content-Language: en-US
-From: Mario Limonciello <superm1@kernel.org>
-In-Reply-To: <CAJZ5v0hJHxVvyNdvDSZg=Pn9=xEqO79T4Ou9toc0Qofi777NcA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=448; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=A9m2rI5/mArBo7YmC6ZAr5oLZmcnI7j3BQisSPiKdxE=; b=owGbwMvMwCVWscWwfUFT0iXG02pJDBmHhY8bXAg18jw3qTzx6M1uNaP9WmyiKzaYKb47tm3Sp Qm7VUMMOkpZGMS4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRvLeMDO89Vf9GqjDOfbj5 68sm2x+73C+W5RRvDL7mYcSxo74trIaR4dq8GRk7JC+0Tjpyawm3gMGW4Beis5foPpj1cmNYEXN 3Mx8A
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
 
-On 9/11/25 8:56 AM, Rafael J. Wysocki wrote:
-> On Thu, Sep 11, 2025 at 3:46 PM Mario Limonciello <superm1@kernel.org> wrote:
->>
->> On 9/11/25 8:43 AM, Rafael J. Wysocki wrote:
->>> On Thu, Sep 11, 2025 at 3:34 PM Mario Limonciello <superm1@kernel.org> wrote:
->>>>
->>>> On 9/11/25 8:11 AM, Lukas Wunner wrote:
->>>>> In 2012, commit dbf0e4c7257f ("PCI: EHCI: fix crash during suspend on ASUS
->>>>> computers") amended pci_pm_suspend_noirq() to work around a BIOS issue by
->>>>> clearing the Command register if the suspended device is a USB EHCI host
->>>>> controller.
->>>>>
->>>>> Commit 0b68c8e2c3af ("PCI: EHCI: Fix crash during hibernation on ASUS
->>>>> computers") subsequently amended pci_pm_poweroff_noirq() to do the same.
->>>>>
->>>>> Two years later, commit 7d2a01b87f16 ("PCI: Add pci_fixup_suspend_late
->>>>> quirk pass") introduced the ability to execute arbitrary quirks
->>>>> specifically in pci_pm_suspend_noirq() and pci_pm_poweroff_noirq().
->>>>>
->>>>> This allows moving the ASUS workaround out of generic code and into a
->>>>> proper quirk to improve maintainability and readability.  Constrain to x86
->>>>> since the ASUS BIOS doesn't seem to have been used on other arches.
->>>>>
->>>>> lspci output of affected EHCI host controllers reveals that the only bits
->>>>> set in the Command register are Memory Space Enable and Bus Master Enable:
->>>>>      https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=658778
->>>>>
->>>>> The latter is cleared by:
->>>>>      hcd_pci_suspend()
->>>>>        suspend_common()
->>>>>          pci_disable_device()
->>>>>
->>>>> pci_disable_device() does not clear I/O and Memory Space Enable, although
->>>>> its name suggests otherwise.
->>>>
->>>> That was my gut reaction as well.
->>>>
->>>>> The kernel has never disabled these bits
->>>>> once they're enabled.  Doing so would avoid the need for the quirk, but it
->>>>> is unclear what will break if this fundamental behavior is changed.
->>>>>
->>>>
->>>> It's too late for this cycle to do so, but how would you feel about
->>>> making this change at the start of the next cycle so it had a whole
->>>> cycle to bake in linux-next and see if there is a problem in doing so?
->>>
->>> One cycle in linux-next may not be sufficient I'm afraid because
->>> linux-next is not tested on the majority of systems running Linux.
->>>
->>> We'd probably learn about the breakage from distro vendors.
->>>
->>>> If there is it could certainly be moved back to a quirk.
->>>
->>> Most likely, it would work on the majority of systems, but there would
->>> be a tail of systems where it would break.  That tail would then need
->>> to be quirked somehow and it may be worse than just one quirk we have
->>> today.
->>
->> But is that a reason not to *try* and rid the tech debt?
->>
->> We could just all agree that *if* there is breakage we revert back to
->> the quirk just for EHCI.
-> 
-> Well, it's not that simple because how much time do you want to wait?
-> 
-> The distro installed on the system I'm using right now ships with a
-> 6.4-based kernel, so it potentially sees and may report breakage
-> introduced into the mainline 2 years ago.
-> 
-> Will you decide to go back to the EHCI quirk if breakage is reported 2
-> years after dropping it?
-> 
-> IMV, if a decision is made to change the pci_disable_device() behavior
-> in this respect, we'll need to stick to it unless the breakage is
-> common and overwhelming (which I don't really expect to be the case).
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks, I see your point.  We would only know soon if there was major 
-breakage from it and thus it is not an easy call that it was successful 
-or not.
+On Tue, 09 Sep 2025 15:41:27 -0700, Samuel Holland wrote:
+> Fence instructions are required only at the beginning and the end of
+> a flush operation, not separately for each cache line being flushed.
+> Speed up cache flushes by about 15% by removing the extra fences.
+> 
+> 
 
-Bjorn, what are your thoughts here?
+Applied to riscv-cache-for-next, thanks!
+
+[1/1] cache: sifive_ccache: Optimize cache flushes
+      https://git.kernel.org/conor/c/941327ca5ddd
+
+Thanks,
+Conor.
 
