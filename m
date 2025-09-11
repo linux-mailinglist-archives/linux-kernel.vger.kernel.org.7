@@ -1,215 +1,162 @@
-Return-Path: <linux-kernel+bounces-811561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61C5CB52AE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:59:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA23EB52AB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:56:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97A3417B982
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:58:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BFC07AC03B
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 07:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0A52D29C3;
-	Thu, 11 Sep 2025 07:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m9xynmmo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988F42BF01E;
+	Thu, 11 Sep 2025 07:56:17 +0000 (UTC)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460062C327D;
-	Thu, 11 Sep 2025 07:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4DF29E114;
+	Thu, 11 Sep 2025 07:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757577470; cv=none; b=tEMSN45Jip+kJsjYlipRJ+e3Kx+VLhpQLDYPfbmx7nECkoejihoAn4qrr3R02UpSGgSDXzwuD7qUg+8Ey9vwe/M1CBpNECUs0wSJzy6VsBBSAz7BbHx6oAsqIEmT/yPLmYrCTElMafvdHcKIWcqvlvuuCzinZGHYWmjR/gpNFgM=
+	t=1757577377; cv=none; b=YvPJ1YY5XKKeNtSH2T8XvnmPSpKCKL+K8dH412/vVT5gLam4L9B0s8mxOfz/1IO9MUX80NaFihqUp7OAClNzujjny06um/hpRlMPey/qINWUNOXhKWVO5xMOsApBqAukEYuel9KlGNzxqyYy/gsCYHcjNmRkN9ZcuvNjo18nChE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757577470; c=relaxed/simple;
-	bh=IAxgNbJGd3/oP9q1FLQX9YXGLqA1E1HjfwvAaKjpyHI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HyCXmD/yU5q2rmACYsc4BNNWWd4ezEcfUIFO+Dw+NvIt5FvGnj0kTFxAEW2xU77B4bT3prZPMqJJJvihS+yHHsMjmsQ0kJYfc6CDkaB0x4aap1uPCo8dA6QBlrrolkgKDBBanEXi4BcCbbcnW0y54gu9l1iFrHYqxxvOHSyv64E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m9xynmmo; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757577469; x=1789113469;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=IAxgNbJGd3/oP9q1FLQX9YXGLqA1E1HjfwvAaKjpyHI=;
-  b=m9xynmmo2eVQwaZ0VCOr89ZE4IWh6BwNwWvc6zXk3EfRp6ACnFqCf0WZ
-   I2tOYYvfcjk3XrIsFqfvA3M2i1GU84RjJxu/61IPmxGENT+cp7/seNupG
-   T7KslAdoryN5L/+O5NEjCgeQ6uOXjjqSGFYj87V1YJuR2XJzzMKfVqN+L
-   hu1Bu0XotZj4epG3yP4H+OsmDGBvh7Fdt99wnh7Ev+ka1bT7pDMvRcf2G
-   OiMsgKXOoWQ4xZjb8HE7gNmt3pvWL1FdsbQlgQpVrQ+cu3YUQIyM1X0S7
-   SaBSxvu1wKHOeT0eNUmWyk7WW+NOSFQZTAZkY7N72DmMxT+pniNokRPRh
-   Q==;
-X-CSE-ConnectionGUID: Xmk+WQxbS5yK/puVGEgc6Q==
-X-CSE-MsgGUID: 3mO7qcr8TC+4yjyXatrrog==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="70999287"
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="70999287"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:57:28 -0700
-X-CSE-ConnectionGUID: gmapQe/zSUKriqtkGuXbwg==
-X-CSE-MsgGUID: W5vBlPAvSlSbgBpu2YqvCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,256,1751266800"; 
-   d="scan'208";a="173186230"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.187])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 00:57:19 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: linux-pci@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	David Airlie <airlied@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: linux-doc@vger.kernel.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 05/11] PCI: Add pci_rebar_size_supported() helper
-Date: Thu, 11 Sep 2025 10:55:59 +0300
-Message-Id: <20250911075605.5277-6-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250911075605.5277-1-ilpo.jarvinen@linux.intel.com>
-References: <20250911075605.5277-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1757577377; c=relaxed/simple;
+	bh=dzgZxal19Vqp0wezraV67O5eYSRhr69yaYwwxgc5pl0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HHMzyWGi/WBMtm0mb9QVsI1Au977XWNSUYJpmgC956D13o5CCqsFe/fgZ9YQPMBgsJUSpTlIgPbAiIZz4ZBAaLtwnMOgNDjHJwYLB9ihvsH564dOZiqe1wdGQ7rCJ94mu0wOpZ7K2PDF/5K3s14EobMjGCJszNelqm9XhTxa1bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-5300b29615cso416052137.0;
+        Thu, 11 Sep 2025 00:56:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757577374; x=1758182174;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CXxtbIpMN7aU+UMtLOY1wQvwhq9wcmE2BRs0YRXR44o=;
+        b=C3cTQGYHTfLULxazPn0iTyMe0XwlHzJZwUSm0ddS3hWZdJHkNY6Xr97n/NRdvOTnvI
+         gR4uccLm7pwb72kPniR+pc1e/TF6wu5seP+/xocdu+Ftf0U4RmqbIdeBsIb++68Sn9qh
+         3C0Uk12+l4Rt6424Iaq7PkXllPpdnjGQJUbzIqQterBDQ73jr5aJp+rNKdtvi3c5hTcF
+         DB8+7QpVwgD+XwnCJDUPH4PcNQuIGr+u6NrnWkh65b3W8LbJz1K7rs4HqhWG07s+I/Ky
+         lk3cSjMGgWb3fA5yZv/lKjICZAVmodv2hUHruSWJMHFPnsUdzeL+XMMFM7VgrpPtXSWt
+         zdyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVJKLJVjuWyunD/nhpDuee2iFcesW1AccIsdMxyg6Ova2sNEWzLqBEg2BYBTSuG4iWnlH1GzADef8k=@vger.kernel.org, AJvYcCWWCBHEb4a3o+nn1xIe2FgEerRTanWri2+bR0PJ+SaGqMCT2vsrlQape3TP0z9U/RQW92uM3rCmkZ7eKiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfX3JvzcyhmU/F5UwHI1TzHxGJG+IeXJag0YAs/T2wlP5F7K7o
+	O2NVkGUOi2mIxCrDpgAu4588DwW4yMZjAuZc3ZfKY90ysOzwDq4k8waaDt/DKejl
+X-Gm-Gg: ASbGncv8s22dSm6zTmbsbUua6UM6FgbKb+Kwqz/UBt0QyiRGxJdNDFMV9rxGYR9wRTk
+	3RkTfnza4F7NUB0JYOQyYnRZSkLFV7pRcheSe9EipoX2xQ3SuJrksjXthSBw8hPKjfCSMgXeOr5
+	abcPFcUHq+gJ5Cs2thGdm+vWPG/l4nIVX4ojaUNM/zqhMwEH1a1FrhxIszmsp18WuyH7fqq4qQ2
+	LcXDFCB/g/qiG316Aw44mE0HglLFhv3qQSSYTZdxB1HPWHLzy0BYmK8I1C4dYW0XR8aSWM40dAR
+	N9kdd3mrILXR2olj38+Q+VENfnBr5DOeW3PvYr1f7f3Gm6h3zO9OQyE/aUXcToaX6klutqpgwnK
+	r3X4Qq+LcELNbyQHtX8RFvrYhE/KLhNKlkLFOflEuZZUFFbOWsjI5jwO8dRsjYQUUL5r3YMsIOP
+	4=
+X-Google-Smtp-Source: AGHT+IEmaBW3DOYVC19n0pTqKqiSR+C62o7t3ABJ5AdLJaE2v0Ak2+aWw06uoqXZtN+yAlW9wagjEg==
+X-Received: by 2002:a05:6102:809f:b0:4e4:5ed0:19b2 with SMTP id ada2fe7eead31-53d1c3d661dmr278035137.9.1757577373613;
+        Thu, 11 Sep 2025 00:56:13 -0700 (PDT)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5537062ca23sm189728137.6.2025.09.11.00.56.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 00:56:13 -0700 (PDT)
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-5464d3b50e3so162372e0c.1;
+        Thu, 11 Sep 2025 00:56:13 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXptPkb3CHtL0WHP07ljd1Zn6M54XROg7FKmkU/noyW5WjaMVn14i+Y4+6I8F3tIkpo8EBVDNGQL5M=@vger.kernel.org, AJvYcCXscNigPe9y2DCIagjgDcX7OEswZ7FjG9mtCVKxcOuvLvBBmpmEda2J4ofchWzZGGfoJw8MlOVWRllETIQ=@vger.kernel.org
+X-Received: by 2002:a05:6102:3a0e:b0:4fa:25a2:5804 with SMTP id
+ ada2fe7eead31-53d1c3d7886mr6590613137.10.1757577373049; Thu, 11 Sep 2025
+ 00:56:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250909111130.132976-1-ulf.hansson@linaro.org> <20250909111130.132976-2-ulf.hansson@linaro.org>
+In-Reply-To: <20250909111130.132976-2-ulf.hansson@linaro.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 11 Sep 2025 09:56:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUFXioe36r9mzNchHw3DGyEiVA-=ajTp333jowEsrxMNw@mail.gmail.com>
+X-Gm-Features: AS18NWAoOrpJbTee-4MheB9wiiHBjhuIG7cLb2hP-U4LE07BEhE1otcBQ_oHwLc
+Message-ID: <CAMuHMdUFXioe36r9mzNchHw3DGyEiVA-=ajTp333jowEsrxMNw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pmdomain: core: Restore behaviour for disabling
+ unused PM domains
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	Saravana Kannan <saravanak@google.com>, linux-pm@vger.kernel.org, 
+	Stephen Boyd <sboyd@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Sebastian Reichel <sebastian.reichel@collabora.com>, Sebin Francis <sebin.francis@ti.com>, 
+	Diederik de Haas <didi.debian@cknow.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
+	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Many callers of pci_rebar_get_possible_sizes() are interested in
-finding out if a particular BAR Size (PCIe r6.2 sec. 7.8.6.3) is
-supported by the particular BAR.
+Hi Ulf,
 
-Add pci_rebar_size_supported() into PCI core to make it easy for the
-drivers to determine if the BAR Size is supported or not.
+On Tue, 9 Sept 2025 at 13:11, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> Recent changes to genpd prevents those PM domains being powered-on during
+> initialization from being powered-off during the boot sequence. Based upon
+> whether CONFIG_PM_CONFIG_PM_GENERIC_DOMAINS_OF is set of not, genpd relies
+> on the sync_state mechanism or the genpd_power_off_unused() (which is a
+> late_initcall_sync), to understand when it's okay to allow these PM domains
+> to be powered-off.
+>
+> This new behaviour in genpd has lead to problems on different platforms.
+> Let's therefore restore the behavior of genpd_power_off_unused().
+> Moreover, let's introduce GENPD_FLAG_NO_STAY_ON, to allow genpd OF
+> providers to opt-out from the new behaviour.
+>
+> Link: https://lore.kernel.org/all/20250701114733.636510-1-ulf.hansson@linaro.org/
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Link: https://lore.kernel.org/all/20250902-rk3576-lockup-regression-v1-1-c4a0c9daeb00@collabora.com/
+> Reported-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> Fixes: 0e789b491ba0 ("pmdomain: core: Leave powered-on genpds on until sync_state")
+> Fixes: 13a4b7fb6260 ("pmdomain: core: Leave powered-on genpds on until late_initcall_sync")
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Use the new function in pci_resize_resource() and in
-pci_iov_vf_bar_set_size().
+Thanks for your patch!
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/iov.c   |  7 +------
- drivers/pci/rebar.c | 29 +++++++++++++++++++++++------
- include/linux/pci.h |  1 +
- 3 files changed, 25 insertions(+), 12 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
-index ac4375954c94..51844a9176a0 100644
---- a/drivers/pci/iov.c
-+++ b/drivers/pci/iov.c
-@@ -1334,7 +1334,6 @@ EXPORT_SYMBOL_GPL(pci_sriov_configure_simple);
-  */
- int pci_iov_vf_bar_set_size(struct pci_dev *dev, int resno, int size)
- {
--	u32 sizes;
- 	int ret;
- 
- 	if (!pci_resource_is_iov(resno))
-@@ -1343,11 +1342,7 @@ int pci_iov_vf_bar_set_size(struct pci_dev *dev, int resno, int size)
- 	if (pci_iov_is_memory_decoding_enabled(dev))
- 		return -EBUSY;
- 
--	sizes = pci_rebar_get_possible_sizes(dev, resno);
--	if (!sizes)
--		return -ENOTSUPP;
--
--	if (!(sizes & BIT(size)))
-+	if (!pci_rebar_size_supported(dev, resno, size))
- 		return -EINVAL;
- 
- 	ret = pci_rebar_set_size(dev, resno, size);
-diff --git a/drivers/pci/rebar.c b/drivers/pci/rebar.c
-index 64315dd8b6bb..735d9afd6ab1 100644
---- a/drivers/pci/rebar.c
-+++ b/drivers/pci/rebar.c
-@@ -3,6 +3,7 @@
-  * PCI Resizable BAR Extended Capability handling.
-  */
- 
-+#include <linux/bits.h>
- #include <linux/bitfield.h>
- #include <linux/errno.h>
- #include <linux/export.h>
-@@ -124,6 +125,27 @@ u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
- }
- EXPORT_SYMBOL(pci_rebar_get_possible_sizes);
- 
-+/**
-+ * pci_rebar_size_supported - check if size is supported for BAR
-+ * @pdev: PCI device
-+ * @bar: BAR to check
-+ * @size: size as defined in the PCIe spec (0=1MB, 31=128TB)
-+ *
-+ * Return: %true if @bar is resizable and @size is a supported, otherwise
-+ *	   %false.
-+ */
-+bool pci_rebar_size_supported(struct pci_dev *pdev, int bar, int size)
-+{
-+	u64 sizes;
-+
-+	sizes = pci_rebar_get_possible_sizes(pdev, bar);
-+	if (!sizes)
-+		return false;
-+
-+	return BIT(size) & sizes;
-+}
-+EXPORT_SYMBOL_GPL(pci_rebar_size_supported);
-+
- /**
-  * pci_rebar_get_current_size - get the current size of a Resizable BAR
-  * @pdev: PCI device
-@@ -231,7 +253,6 @@ int pci_resize_resource(struct pci_dev *dev, int resno, int size)
- 	struct resource *res = pci_resource_n(dev, resno);
- 	struct pci_host_bridge *host;
- 	int old, ret;
--	u32 sizes;
- 
- 	/* Check if we must preserve the firmware's resource assignment */
- 	host = pci_find_host_bridge(dev->bus);
-@@ -245,11 +266,7 @@ int pci_resize_resource(struct pci_dev *dev, int resno, int size)
- 	if (pci_resize_is_memory_decoding_enabled(dev, resno))
- 		return -EBUSY;
- 
--	sizes = pci_rebar_get_possible_sizes(dev, resno);
--	if (!sizes)
--		return -ENOTSUPP;
--
--	if (!(sizes & BIT(size)))
-+	if (!pci_rebar_size_supported(dev, resno, size))
- 		return -EINVAL;
- 
- 	old = pci_rebar_get_current_size(dev, resno);
-diff --git a/include/linux/pci.h b/include/linux/pci.h
-index 6f0c31290675..917c3b897739 100644
---- a/include/linux/pci.h
-+++ b/include/linux/pci.h
-@@ -1423,6 +1423,7 @@ void pci_release_resource(struct pci_dev *dev, int resno);
- int pci_rebar_bytes_to_size(u64 bytes);
- resource_size_t pci_rebar_size_to_bytes(int size);
- u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar);
-+bool pci_rebar_size_supported(struct pci_dev *pdev, int bar, int size);
- int __must_check pci_resize_resource(struct pci_dev *dev, int i, int size);
- 
- int pci_select_bars(struct pci_dev *dev, unsigned long flags);
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -115,6 +115,12 @@ struct dev_pm_domain_list {
+>   *                             genpd provider specific way, likely through a
+>   *                             parent device node. This flag makes genpd to
+>   *                             skip its internal support for this.
+> + *
+> + * GENPD_FLAG_NO_STAY_ON:      For genpd OF providers a powered-on PM domain at
+> + *                             initialization is prevented from being
+> + *                             powered-off until the ->sync_state() callback is
+> + *                             invoked. This flag informs genpd to allow a
+> + *                             power-off without waiting for ->sync_state().
+
+This also restores power-down of pmdomains after a failed device
+probe (due to a real issue, or just -EPROBE_DEFER), possibly
+interfering with other devices that are part of the same pmdomain(s)
+but haven't been probed yet. E.g. what if your serial console is
+part of the same pmdomain?  Probably the pmdomain(s) should not
+be powered down immediately, but only later, when either sync state
+or genpd_power_off_unused() kicks in.
+
+But this is a pre-existing issue, so not a blocked for this patch.
+
+>   */
+>  #define GENPD_FLAG_PM_CLK       (1U << 0)
+>  #define GENPD_FLAG_IRQ_SAFE     (1U << 1)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.39.5
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
