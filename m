@@ -1,178 +1,165 @@
-Return-Path: <linux-kernel+bounces-811679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DAB5B52C7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:01:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5893AB52C7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 11:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B492A1C81186
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF46A17C94D
 	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 09:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9A62E88B1;
-	Thu, 11 Sep 2025 09:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E088B2E7BC7;
+	Thu, 11 Sep 2025 09:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDeasZne"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="rlpEnzLg"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098042E6CA8;
-	Thu, 11 Sep 2025 09:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5039D2E7198
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 09:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757581268; cv=none; b=XoKMMo/XXSdvP2JXAlrb21QFnDW6iAjtnBe27zjOBS3r9GLD26pXjNu/HJtI1bcf05sxU9kEfQhhHGmLDzJTyjtJmCHBWgvNir+GkJ2VNXtyiu8Jjj8klOwNKQTEUKgJr4ELrH+3yePLUd/JFeZOcagn/Li2yU3NjjXTZAhlYMk=
+	t=1757581287; cv=none; b=Rr8UhY5W4UkOF3+SGsKAxbNOP+CFCVZUh9NflAo9nw50Q3gCcoHDvgUWI1zP9886tJgLo4WACYYD4LK3gUandUgADUGKUDyUN0iTW2Dck8B2z8gE5tIVdugZie6PIRCI0Xj2XaYCnfYUgUiz5RYknM0Xi0x5pNJhbo7Zqsl/TQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757581268; c=relaxed/simple;
-	bh=pNuKdyLfyUYn/bu1we4l5xlt7uUHJk0oo7gXbZsMMNI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aViUzZliWVUgwzW7+7PdGiRrgz9cfKdZdkqEbHtGXEJ6JZPJ1fyoioVPKY7dyFYrKgiz+HCyJS12a1Z0nPgvIGXCD+UbOq0Pgcr7j5WFCPufjNXtJWWnxnnE43cL0EyUeA8BP8wk7kpo1kd/lYkNJ9VYU2/xLadrgixTWhC4WGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDeasZne; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E701EC4CEF1;
-	Thu, 11 Sep 2025 09:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757581267;
-	bh=pNuKdyLfyUYn/bu1we4l5xlt7uUHJk0oo7gXbZsMMNI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rDeasZneKS1p3vaalewyHV/LvlnRzBuGKLoBgRN2ZKMYsHggGpTBAsTC3zH8PZuen
-	 Qb4ct0SLpt1K+TTsLlUZJBC5RGCBJO8VEfnDDw/3reXrpPcESrNKNudsTKEw5ymZ0t
-	 myJwztJA3bU/mhyWhagGzXGrJux53hMaEOex9zSawJExxT9fvmJ/aZFvyCncTmha+4
-	 Dv6wWBb/UctP/RjjZYI/rWYJXv7KtFzo8TigwS5YvZZfdAEBcoMB7lDdLKVujgVP6b
-	 k6+bXrmIW4kQflN05eB0dCFofMs3ZyKhdicfCnfcU6WBL/Np6i6z0YAlz7lrAyK6vp
-	 aRmj75i/dd3sQ==
-Message-ID: <b875f811-6371-4ff4-9cc2-a0a2c82a569c@kernel.org>
-Date: Thu, 11 Sep 2025 11:01:00 +0200
+	s=arc-20240116; t=1757581287; c=relaxed/simple;
+	bh=kGj/Gsr8u2gM4mxMjPtIbO3+TvAgVXR18R/TmL7kC8s=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=BTwJPoYT5Liui96THRaseSPf+qgnH6LitM5ZG2qkg2HSLJUNkkuR+gCpn1qqakpUsXjnwlnZik0QvYZlVSuKrlVjhEllaEBLE42yBAJWmuFe7BGFXc8aoAJVwkaZV3Q61bt/wqRJQb3IBodqFPBA7phBm9zXN2Io5EG1/5rJEoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=rlpEnzLg; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 3/4] leds: led-class: Add devicetree support to
- led_get()
-To: Lee Jones <lee@kernel.org>, Aleksandrs Vinarskis <alex@vinarskis.com>
-Cc: Pavel Machek <pavel@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Jingoo Han <jingoohan1@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
- Jacopo Mondi <jacopo@jmondi.org>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Daniel Thompson
- <danielt@kernel.org>, linux-leds@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, threeway@gmail.com,
- Andy Shevchenko <andy.shevchenko@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>
-References: <20250910-leds-v5-0-bb90a0f897d5@vinarskis.com>
- <20250910-leds-v5-3-bb90a0f897d5@vinarskis.com>
- <20250911081540.GD9224@google.com>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <20250911081540.GD9224@google.com>
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1757581282;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aOhuNvmVuf/GyxrRlHUdHw8fHEaK2f199bcbQPpCzOs=;
+	b=rlpEnzLgbl0QN8y8xa2LMDj5Y2jUGB5QT6TzfpFMua7/pQ9K5ZUksTmFKmviJ2HgGhk3Sk
+	GKHOOkMSjbhx6dPlbl/ysyHqnMS7AHg8C//n+ALK+Y7C6X0MiRXRZaj5ZvFC+cxfdMfOvd
+	XgvJgxOE+5byOlMBDpL9JIzOZy9CFSJLkfEeOjYRGrBjjfBaQOFvxrOv1HiCtLOVdogrmh
+	sGaiOUQ27WPhFHwR6FdrPWjMKi51T48Rkf6LBWRmG9x29+xtoDzT3oWzJ8QgmG5GLE7cs3
+	JQSjljsnrthR3wJTYYK/IDe/I8sJEZDo3bWtHqwXxxeC4qD/bLtJlJBEhGoyhg==
+Content-Type: multipart/signed;
+ boundary=50ff9f84bc944755ff7976bae1dce62405cf41bd88db2cec6a292aa3edfc;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Thu, 11 Sep 2025 11:01:14 +0200
+Message-Id: <DCPUKAWW5N0Z.AM3JS7S8FJ7A@cknow.org>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Christian Hewitt" <christianshewitt@gmail.com>, "Rob Herring"
+ <robh+dt@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, "Heiko Stuebner" <heiko@sntech.de>
+Cc: "Alex Bee" <knaerzche@gmail.com>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>,
+ <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] arm64: dts: rockchip: enable the Mali GPU on
+ RK3328 boards
+References: <20250906120810.1833016-1-christianshewitt@gmail.com>
+ <20250906120810.1833016-2-christianshewitt@gmail.com>
+In-Reply-To: <20250906120810.1833016-2-christianshewitt@gmail.com>
+X-Migadu-Flow: FLOW_OUT
+
+--50ff9f84bc944755ff7976bae1dce62405cf41bd88db2cec6a292aa3edfc
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi Lee,
+On Sat Sep 6, 2025 at 2:08 PM CEST, Christian Hewitt wrote:
+> From: Alex Bee <knaerzche@gmail.com>
+>
+> Add a gpu node to the rock64 board to enable the Mali GPU and
+> move the existing node from roc-pc to the shared roc dtsi to
+> enable it also for the roc-cc board.
+>
+> Signed-off-by: Alex Bee <knaerzche@gmail.com>
+> Signed-off-by: Christian Hewitt <christianshewitt@gmail.com>
 
-On 11-Sep-25 10:15 AM, Lee Jones wrote:
-> On Wed, 10 Sep 2025, Aleksandrs Vinarskis wrote:
-> 
->> From: Hans de Goede <hansg@kernel.org>
->>
->> Add 'name' argument to of_led_get() such that it can lookup LEDs in
->> devicetree by either name or index.
->>
->> And use this modified function to add devicetree support to the generic
->> (non devicetree specific) [devm_]led_get() function.
->>
->> This uses the standard devicetree pattern of adding a -names string array
->> to map names to the indexes for an array of resources.
->>
->> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
->> Reviewed-by: Lee Jones <lee@kernel.org>
-> 
-> Remind me why this can't go in through LED again?
+Now that the 'other' issue with power domains has been resolved, or at
+least localized, I feel (more) comfortable giving my
 
-I don't think anyone has discussed how to merge this yet.
+Tested-by: Diederik de Haas <didi.debian@cknow.org>  # Rock64
 
-I believe that the LED tree is the correct tree to merge this
-entire series through, once the DT bits have been reviewed.
+Cheers,
+  Diederik
 
-Regards,
+> ---
+> Changes since v2:
+> - No changes
+> Changes since v1:
+> - No changes
+>
+>  arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts | 4 ----
+>  arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi   | 4 ++++
+>  arch/arm64/boot/dts/rockchip/rk3328-rock64.dts | 4 ++++
+>  3 files changed, 8 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts b/arch/arm64/=
+boot/dts/rockchip/rk3328-roc-pc.dts
+> index 329d03172433..c0b7b98ff788 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328-roc-pc.dts
+> @@ -44,10 +44,6 @@ &codec {
+>  	mute-gpios =3D <&grf_gpio 0 GPIO_ACTIVE_LOW>;
+>  };
+> =20
+> -&gpu {
+> -	mali-supply =3D <&vdd_logic>;
+> -};
+> -
+>  &pinctrl {
+>  	ir {
+>  		ir_int: ir-int {
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi b/arch/arm64/bo=
+ot/dts/rockchip/rk3328-roc.dtsi
+> index b5bd5e7d5748..7eef6f7f108f 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328-roc.dtsi
+> @@ -160,6 +160,10 @@ &gmac2io {
+>  	status =3D "okay";
+>  };
+> =20
+> +&gpu {
+> +	mali-supply =3D <&vdd_logic>;
+> +};
+> +
+>  &hdmi {
+>  	status =3D "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/=
+boot/dts/rockchip/rk3328-rock64.dts
+> index 5367e5fa9232..592fd8ca21df 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+> @@ -152,6 +152,10 @@ &gmac2io {
+>  	status =3D "okay";
+>  };
+> =20
+> +&gpu {
+> +	mali-supply =3D <&vdd_logic>;
+> +};
+> +
+>  &hdmi {
+>  	avdd-0v9-supply =3D <&vdd_10>;
+>  	avdd-1v8-supply =3D <&vcc_18>;
 
-Hans
 
+--50ff9f84bc944755ff7976bae1dce62405cf41bd88db2cec6a292aa3edfc
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCaMKP4gAKCRDXblvOeH7b
+btAmAP4/fD3deQwUhDfEtz/l+iUwn6XJqEv0cEIsnG13lxcECgD/YbRdmoDzM10V
+t3np71DjmSrIwMLbLVp6fZJ4OKbV2Ao=
+=I02j
+-----END PGP SIGNATURE-----
 
->> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Hans de Goede <hansg@kernel.org>
->> Signed-off-by: Aleksandrs Vinarskis <alex@vinarskis.com>
->> ---
->>  drivers/leds/led-class.c | 17 +++++++++++++++--
->>  1 file changed, 15 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->> index 15633fbf3c166aa4f521774d245f6399a642bced..f3faf37f9a08ac762ed87b91cb3cab5faa8eacb0 100644
->> --- a/drivers/leds/led-class.c
->> +++ b/drivers/leds/led-class.c
->> @@ -252,15 +252,23 @@ static const struct class leds_class = {
->>   * of_led_get() - request a LED device via the LED framework
->>   * @np: device node to get the LED device from
->>   * @index: the index of the LED
->> + * @name: the name of the LED used to map it to its function, if present
->>   *
->>   * Returns the LED device parsed from the phandle specified in the "leds"
->>   * property of a device tree node or a negative error-code on failure.
->>   */
->> -static struct led_classdev *of_led_get(struct device_node *np, int index)
->> +static struct led_classdev *of_led_get(struct device_node *np, int index,
->> +				       const char *name)
->>  {
->>  	struct device *led_dev;
->>  	struct device_node *led_node;
->>  
->> +	/*
->> +	 * For named LEDs, first look up the name in the "led-names" property.
->> +	 * If it cannot be found, then of_parse_phandle() will propagate the error.
->> +	 */
->> +	if (name)
->> +		index = of_property_match_string(np, "led-names", name);
->>  	led_node = of_parse_phandle(np, "leds", index);
->>  	if (!led_node)
->>  		return ERR_PTR(-ENOENT);
->> @@ -324,7 +332,7 @@ struct led_classdev *__must_check devm_of_led_get(struct device *dev,
->>  	if (!dev)
->>  		return ERR_PTR(-EINVAL);
->>  
->> -	led = of_led_get(dev->of_node, index);
->> +	led = of_led_get(dev->of_node, index, NULL);
->>  	if (IS_ERR(led))
->>  		return led;
->>  
->> @@ -342,9 +350,14 @@ EXPORT_SYMBOL_GPL(devm_of_led_get);
->>  struct led_classdev *led_get(struct device *dev, char *con_id)
->>  {
->>  	struct led_lookup_data *lookup;
->> +	struct led_classdev *led_cdev;
->>  	const char *provider = NULL;
->>  	struct device *led_dev;
->>  
->> +	led_cdev = of_led_get(dev->of_node, -1, con_id);
->> +	if (!IS_ERR(led_cdev) || PTR_ERR(led_cdev) != -ENOENT)
->> +		return led_cdev;
->> +
->>  	mutex_lock(&leds_lookup_lock);
->>  	list_for_each_entry(lookup, &leds_lookup_list, list) {
->>  		if (!strcmp(lookup->dev_id, dev_name(dev)) &&
->>
->> -- 
->> 2.48.1
->>
->>
-> 
-
+--50ff9f84bc944755ff7976bae1dce62405cf41bd88db2cec6a292aa3edfc--
 
