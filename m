@@ -1,136 +1,159 @@
-Return-Path: <linux-kernel+bounces-811618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A676EB52B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:26:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46577B52B98
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:27:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5F71899F93
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:27:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED0333BDD72
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 08:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3542E03ED;
-	Thu, 11 Sep 2025 08:26:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1852E2E0402;
+	Thu, 11 Sep 2025 08:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Jldt/Gva"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZhHfrSZr"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3096E2DFF12
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704AF2E0924
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 08:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757579204; cv=none; b=VfZk7oKS+IczIMvMYIEHs7vWLHOWipNS0l3OIdn+mqShW0Ew7QW1z7sEUU/j314qhtN7bDbx54Otpe58AVtqjLdoUDcRoFow6BipnFl+ptb9x1HFQnMPUlSmKGFB/og9WhwoCUCfeGzp9zAXdxF80HpB7o5V4JOkaAhZfpYqmOc=
+	t=1757579213; cv=none; b=K7l9WgCbiOE585IJqfyYcD4yBVFi9OJ4bd0mA1lnaafU463doZHkwN+hIkZkwACnN8GlGfPn/oxRf5ZgwJVd5HbWjOcUyhAQlqfGf9SG7jcblvXb4gy0yZ9o68MIbQoOxpQG9wlnLBg3kbBsyyQe28TDij+IO9HUCRq4FiMiYAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757579204; c=relaxed/simple;
-	bh=7G0Gigbg3lf2yJzEbCtDBXBUZOCpEa9S5paz6bcYs70=;
+	s=arc-20240116; t=1757579213; c=relaxed/simple;
+	bh=DKTBpuEONVJR70U9ttKIpABJQPw9PwFQNxY5yDfots8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T+0ru9l4NiK9PROuHWfFULpMv3kNvDj3KDGCj4wQmcG3I/Nkik0QDKz2pEwzagD7FmhmUUTZtKcOva+87CMZxyoMD7nPtZCBX/+nme2x/GYn+012uuS0ORSM8Qhfx2siPZox7IPMvS8iCNIlQrnTLxLrbulJsTLjRlTd+wWgP7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Jldt/Gva; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cMrHy1Sj9z9sZK;
-	Thu, 11 Sep 2025 10:26:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1757579198;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=impNTtmimBVpMpk2A50bdGSwXBnav8MDAIfgL8/eWtk=;
-	b=Jldt/GvasF0DV+wmm9a3Ok4LtMDbdKNGmHtXARNqBIJeTHN6hd/iVYVXbxTk9dwleGVlIZ
-	GoBIl8DPCDgv5p8y6a9AvLOh1Anlfvte27rL9RtlXC/iwPiSMhMEEVUpLREsOMidsdyNkE
-	rKxP06KIMbma2xmS0fRDS6oP1K0SpMVfRoEk+nJ1FA8WCaXA7ONFL3yq8dIZo9VU0aHQs9
-	YpNlQZbdXJvZ+56ZJ+GeLyDJxCIDgFFhxYH1rAttfuYzRB1M1xnjPL02xT41/u8fZ6QLw7
-	gXlHYhJ92dwFlHZ4p91L6qm9FuKMnWslriKsR/HyWi9AU3xp7Xs47JVMfsZggA==
-Message-ID: <262a176a-4c80-40de-96e0-c97f50c20fe6@mailbox.org>
-Date: Thu, 11 Sep 2025 10:26:33 +0200
+	 In-Reply-To:Content-Type; b=ZTFR1r5KG4lWYMDcGsuRSwZ1eoMouIfDqqMaWw85VfEj51MDPPRAIWNxm6ubA95bmuCNChs/F7L0QmKRxCN774DtU8GFodzBb1EZ1f//MKbfgghUosMePnZVQ3aEIX9jaGxN075iqzZQ6nSpndO30va9aq6cvtpuMB+tOxHnMfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZhHfrSZr; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45dd513f4ecso2612825e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 01:26:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757579209; x=1758184009; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QmswRsDV85LAGSgZM1TnGtsRJLjTs07m6UjoRfbX1i8=;
+        b=ZhHfrSZrU9rxPAR/2seHDjO/jneCvPL/eItUmibDvM41muqCVCSGbnoamC9QNot1lv
+         30kxWfCZbjCE2LiFblOga0gDqVIf0c3NDenoEY6SXEiHSQP8+JcQAOKfy6jqqt48w/J9
+         qETttRW2H6LJBhQB7PLOeO7zMvNDTyK7mdDVaFFfMs/Xb7y47mi0pNhx/59+Eo2bcUxd
+         Wq5zalP8LAxhFvNf4elVCZUTw7hORTygV0GhCcqNJwYe4Ex83TVtKCKAlJ7ssOrIe2ob
+         iV6JaG24fIp8wyFpiW9ClHjeMQTIHRJ+lH3bjgn9rdcsq2Yyo6C+kZhPGNLbmh2P+jvb
+         BANQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757579209; x=1758184009;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QmswRsDV85LAGSgZM1TnGtsRJLjTs07m6UjoRfbX1i8=;
+        b=l0WmAVb3TdF7OF49ehm07jDe1po0DErRejRZNBDQUWP+uyhO+T+CGs3VoozOUS6/gk
+         GorOz6l1QzeMAIso7+mvYxjCsA+WlpI5Yy15bjpObRDT23CIBSAYHo8iMN+/tl6Aiqwa
+         YBWdpSrHKQyWoTfGq77MjUzligI/CuXMIIrqWzu9IjGUCO50g4vBCtlHUNLrdIF+VrYA
+         dMR+TBQuf8aqjL8DRW5wTdgTSHcR/a3QjjrSg6TVpOwbXXBY+K+ss9FLg68bkUXV0wxl
+         oViPgbXt5DohBdZ6AoJIYBOiNh2s+BW+t3qUGXx+gntV4tk4pMYQxPDYDQZw4/aAGd8s
+         DqzA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZQlVReQqAQnjzzEcCfjRYBCHHpI44JFWNhqHBxrdOCcWIW8QqCyKNEY5oex86yKIgJZCHmDbjdwPUDc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDwVHSMkJolAbvgMxbDszgPEfj6xsbDyIhaGps/OLbm3kh79aZ
+	d5elBdcZbjrfsESopGH0KCVowBELRPPGvGOXDy4uWR0vKdAO7LrgsRvYUhWKznoTVr8=
+X-Gm-Gg: ASbGnct1emBONqYbToFTP1e+CYDiAT45qvGzI22+jRmMWPVehNf8Qzu7j0L5vctKfaZ
+	eTZLv0yKErFuoUWRDiqk8TSc4o8r6gNygDlt91bI0I/eE71iiZmKr8/uXahyhBouGUc1HrCB6zX
+	+p/s8Q0OXuZRgvzztD6XF/OQHNrPMTCiCw8WGLfq/rqqmrd7fS4nxF3VtMGq4gu6Gg7ESV/CRSg
+	mBz4YBksST7REuXFGfVRTVm+WWgBSHxbcQ3CGv0OVX+2p9y2IQckBOlq+vlw7uGinU0n0f2pTGx
+	7TowY8nru4QmIo43N6cXOHYyzXaMFcrXvNitq4Gki5UlORqv4LLU9Yd9dRB3zh0bcYO/EGnnEtO
+	FqQaKx2cnH0qk4Kq0RhRLNSrDRc0=
+X-Google-Smtp-Source: AGHT+IE7R9n09fdDc3gxKWMG8ZdQt1MVhy5CILGt7inGxYTFXeK21MqYcM9OgweBeDIjjRUpvgvRaA==
+X-Received: by 2002:a05:600c:870f:b0:45b:8453:d7e with SMTP id 5b1f17b1804b1-45de072e865mr174352905e9.6.1757579208672;
+        Thu, 11 Sep 2025 01:26:48 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c3ce5sm13955765e9.16.2025.09.11.01.26.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 01:26:48 -0700 (PDT)
+Message-ID: <fc2ee38c-b163-4b7e-9ba2-c2b93d0fc691@linaro.org>
+Date: Thu, 11 Sep 2025 09:26:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] drm: ttm: do not direct reclaim when allocating high
- order pages
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Cc: Huang Rui <ray.huang@amd.com>, Matthew Auld <matthew.auld@intel.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- kernel-dev@igalia.com, Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20250910-ttm_pool_no_direct_reclaim-v1-1-53b0fa7f80fa@igalia.com>
- <e79a134b-89de-4da1-b64b-b890227fce8a@amd.com>
- <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
-From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
-Content-Language: en-CA
-In-Reply-To: <aMF0fe7CIVD-8zVo@quatroqueijos.cascardo.eti.br>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-ID: 5d904369927bf810511
-X-MBO-RS-META: 1b4dh5w49qn5wku16r8i3c8fbdzjok5y
-
-On 10.09.25 14:52, Thadeu Lima de Souza Cascardo wrote:
-> On Wed, Sep 10, 2025 at 02:11:58PM +0200, Christian König wrote:
->> On 10.09.25 13:59, Thadeu Lima de Souza Cascardo wrote:
->>> When the TTM pool tries to allocate new pages, it stats with max order. If
->>> there are no pages ready in the system, the page allocator will start
->>> reclaim. If direct reclaim fails, the allocator will reduce the order until
->>> it gets all the pages it wants with whatever order the allocator succeeds
->>> to reclaim.
->>>
->>> However, while the allocator is reclaiming, lower order pages might be
->>> available, which would work just fine for the pool allocator. Doing direct
->>> reclaim just introduces latency in allocating memory.
->>>
->>> The system should still start reclaiming in the background with kswapd, but
->>> the pool allocator should try to allocate a lower order page instead of
->>> directly reclaiming.
->>>
->>> If not even a order-1 page is available, the TTM pool allocator will
->>> eventually get to start allocating order-0 pages, at which point it should
->>> and will directly reclaim.
->>
->> Yeah that was discussed before quite a bit but at least for AMD GPUs that is absolutely not something we should do.
->>
->> The performance difference between using high and low order pages can be up to 30%. So the added extra latency is just vital for good performance.
->>
->> We could of course make that depend on the HW you use if it isn't necessary for some other GPU, but at least both NVidia and Intel seem to have pretty much the same HW restrictions.
->>
->> NVidia has been working on extending this to even use 1GiB pages to reduce the TLB overhead even further.
-> 
-> But if the system cannot reclaim or is working hard on reclaiming, it will
-> not allocate that page and the pool allocator will resort to lower order
-> pages anyway.
-> 
-> In case the system has pages available, it will use them. I think there is
-> a balance here and I find this one is reasonable. If the system is not
-> under pressure, it will allocate those higher order pages, as expected.
-> 
-> I can look into the behavior when the system might be fragmented, but I
-> still believe that the pool is offering such a protection by keeping those
-> higher order pages around. It is when the system is under memory presure
-> that we need to resort to lower order pages.
-> 
-> What we are seeing here is on a low memory (4GiB) single node system with
-> an APU, that it will have lots of latencies trying to allocate memory by
-> doing direct reclaim trying to allocate order-10 pages, which will fail and
-> down it goes until it gets to order-4 or order-3. With this change, we
-> don't see those latencies anymore and memory pressure goes down as well.
-That reminds me of the scenario I described in the 00862edba135 ("drm/ttm: Use GFP_TRANSHUGE_LIGHT for allocating huge pages") commit log, where taking a filesystem backup could cause Firefox to freeze for on the order of a minute.
-
-Something like that can't just be ignored as "not a problem" for a potential 30% performance gain.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] perf vendor events arm64 AmpereOne: Fix typos in
+ metrics' descriptions
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>
+References: <20250910195214.50814-1-ilkka@os.amperecomputing.com>
+ <20250910195214.50814-3-ilkka@os.amperecomputing.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20250910195214.50814-3-ilkka@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
--- 
-Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
-https://redhat.com             \               Libre software enthusiast
+
+On 10/09/2025 8:52 pm, Ilkka Koskinen wrote:
+> While fixing a typo in "l1d_cache_access_prefetches" in AmpereOneX,
+> a few other typos were found in metrics' descriptions too. While AmpereOne
+> doesn't have the metric, it did have the typos in the descriptions.
+> 
+> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> ---
+>   .../pmu-events/arch/arm64/ampere/ampereone/metrics.json   | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/pmu-events/arch/arm64/ampere/ampereone/metrics.json b/tools/perf/pmu-events/arch/arm64/ampere/ampereone/metrics.json
+> index afcdad58ef89..324104438e78 100644
+> --- a/tools/perf/pmu-events/arch/arm64/ampere/ampereone/metrics.json
+> +++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereone/metrics.json
+> @@ -113,7 +113,7 @@
+>       {
+>   	"MetricName": "load_store_spec_rate",
+>   	"MetricExpr": "((LDST_SPEC / INST_SPEC) * 100)",
+> -	"BriefDescription": "The rate of load or store instructions speculatively executed to overall instructions speclatively executed",
+> +	"BriefDescription": "The rate of load or store instructions speculatively executed to overall instructions speculatively executed",
+>           "MetricGroup": "Operation_Mix",
+>           "ScaleUnit": "1percent of operations"
+>       },
+> @@ -132,7 +132,7 @@
+>       {
+>   	"MetricName": "pc_write_spec_rate",
+>   	"MetricExpr": "((PC_WRITE_SPEC / INST_SPEC) * 100)",
+> -	"BriefDescription": "The rate of software change of the PC speculatively executed to overall instructions speclatively executed",
+> +	"BriefDescription": "The rate of software change of the PC speculatively executed to overall instructions speculatively executed",
+>           "MetricGroup": "Operation_Mix",
+>           "ScaleUnit": "1percent of operations"
+>       },
+> @@ -195,14 +195,14 @@
+>       {
+>   	"MetricName": "stall_frontend_cache_rate",
+>   	"MetricExpr": "((STALL_FRONTEND_CACHE / CPU_CYCLES) * 100)",
+> -	"BriefDescription": "Proportion of cycles stalled and no ops delivered from frontend and cache miss",
+> +	"BriefDescription": "Proportion of cycles stalled and no operations delivered from frontend and cache miss",
+>   	"MetricGroup": "Stall",
+>           "ScaleUnit": "1percent of cycles"
+>       },
+>       {
+>   	"MetricName": "stall_frontend_tlb_rate",
+>   	"MetricExpr": "((STALL_FRONTEND_TLB / CPU_CYCLES) * 100)",
+> -	"BriefDescription": "Proportion of cycles stalled and no ops delivered from frontend and TLB miss",
+> +	"BriefDescription": "Proportion of cycles stalled and no operations delivered from frontend and TLB miss",
+>   	"MetricGroup": "Stall",
+>           "ScaleUnit": "1percent of cycles"
+>       },
+
+Reviewed-by: James Clark <james.clark@linaro.org>
+
 
