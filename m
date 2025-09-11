@@ -1,91 +1,95 @@
-Return-Path: <linux-kernel+bounces-812570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5C8B539DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:03:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A69B539E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F34C1618BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:03:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72908561B3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F33C362079;
-	Thu, 11 Sep 2025 17:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDAE36299A;
+	Thu, 11 Sep 2025 17:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qhAFPYM2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YEoQNo6X";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Hy24iXSK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="andfp8yJ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MtT2CGXS";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="5GSiutm2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aRi7YGSd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UFU16EPg"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25F53629B1
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C346535FC18
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757610160; cv=none; b=hvTNKOJ3jz6yVOB4a8gcUh7v7Y/LygKph9AdYMR6f9R8vGcxxRpgXXotalxHOVxPoSl1MWnFbnjIBbP1piPHcWDcX9vGLr9phDgRlwQ9ELsbXs4hzkmhlfEpPM4/DVJ47JwBo76LrWu4L5MraB3ZUzN77IQg9pgGPAEfl3MtIjo=
+	t=1757610186; cv=none; b=S0Y+56bb1n5KcplrSAqxcLYUOzIOG2Nzz/OsGpsXjjZnHN/xBlbfdzzmTaAeCK4xIn7gO06HHzfKj4QCRlV1oI5iizlSLuOnaI+/IKlb471pcAJ1+EUPFHnyupwzSlLzJSQ0xpKnPgqtyqZh+xqN2CqSwEXOlcM9U3sfdGy9ka8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757610160; c=relaxed/simple;
-	bh=k1LVm34E/55m3o3mkYwJ73lx2gtgc6PL1tEsoCjq874=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qLL+XEQTC2WYBuXjVF65J7MGJ57JpKLK7HajjaaC47lDAWzMdLOF0qn37ydKCasGVHHqHlqsm8kBNE1EpY4eBo4HcXuSu6iHCfS7bSHW/ijJfMEIr9GzQYvPjGk52/udqYZwm/+2JkO9RSRs0S7d7K5iXW7M7CamQpFMmi4vYZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qhAFPYM2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YEoQNo6X; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Hy24iXSK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=andfp8yJ; arc=none smtp.client-ip=195.135.223.130
+	s=arc-20240116; t=1757610186; c=relaxed/simple;
+	bh=UkVCPyexZLuujdS/vq/QGfsjbUjvfJOcwBd5QuSG1Dc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=DU6x0upGHfIRLeDcVW/MvMzQ7QETRrlmUvXJu4W0JidNHUPkpixlpqhZZRRhIS7orq/0TB07vueHxZvp7X3ZZCJvSDpLfavFOD4EXqYAEyyTfrf9UnHBa4CYsILghexvVmJUiiQxh3tpcDTgDlsD3nie1wGFlacT7lD49myYHy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MtT2CGXS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=5GSiutm2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aRi7YGSd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UFU16EPg; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E965137BDA;
-	Thu, 11 Sep 2025 17:02:34 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 01DC47647E;
+	Thu, 11 Sep 2025 17:02:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
 	t=1757610156; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=g2ztmImEtHsUE0xBTiICNacQWE8dOeWq3duroo1FEbU=;
-	b=qhAFPYM2SnuLz20qxuhKWKZ0rLm5zhSjQgMRpilJI+3oELqXb1FAyR7L0l3WLUGAUQSJ4+
-	jXnhjifyAnjx9rhAS/iu1HyX38WAUfzzg3AE+X0JR9n7cGFFWQe9yZZ6EZ3Nin3A+Ygbfk
-	aG+noUgni1g9LTg08jrIRPCs7euWwjc=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gr2Y5vpWLhYmkFvvE0c3RnudTXKlGf10pEcNoBQE900=;
+	b=MtT2CGXS0oB0KE1fLvExDMMJMc8nuu5zAuU4GGnqGztTCwbkABvMuffinDIgF3zqj8kqta
+	3AoVsTSuueITNaVq5kqGMa8RRwt1OjPcs6aE6xFIhXq+MgCmlHgphheOCFJYxAWNNz8wjT
+	xDXwBHzNblv2tej3IzBsCL5X519G42g=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
 	s=susede2_ed25519; t=1757610156;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=g2ztmImEtHsUE0xBTiICNacQWE8dOeWq3duroo1FEbU=;
-	b=YEoQNo6XBUIz4+RdMmKvrzyvMg0Ot/SjXNdv9sLX72iURzS+kvgW7DFerUHcDTjlYA1GLJ
-	0nYtarkevwXrEDCg==
-Authentication-Results: smtp-out1.suse.de;
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gr2Y5vpWLhYmkFvvE0c3RnudTXKlGf10pEcNoBQE900=;
+	b=5GSiutm2fsIaxCzQ51sYTrzP2N+ePhhsgtlgzgUPNLJmkKs88ZBL9ckisMxvkdEji9kxQi
+	LfWroL+vWuICWTDw==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757610154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1757610155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=g2ztmImEtHsUE0xBTiICNacQWE8dOeWq3duroo1FEbU=;
-	b=Hy24iXSKWvbMWXb+T1YGLxlAStGu8Rm5K7MVyaFiGwojd/43zdw/ILB2JTNNHOADyln8Ec
-	wd0Hb5ovxnBTCREti1JqG6sSTSlQT9a5uE1BXCd7Gw/avBKtpG/09/BCd3js2Yfcxh0U14
-	s97zbHBto2elSbZ6sJX2BuYM4/NrHeM=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gr2Y5vpWLhYmkFvvE0c3RnudTXKlGf10pEcNoBQE900=;
+	b=aRi7YGSdI/ZSD8wGJzaYz9hrGpD8rTajcN2DOUK0xGb5fo8QZos5GWypcwB03LfqNih4Nk
+	UxMF/lPpfP5VSvTxm5UeO8tyhKqPVyn/czhyn7m2aUd9CMvCBve7Xff6tqqO/JAgHNSIza
+	sk+Ya7lBEqTc0aq5fupszNHOeaWR+PA=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757610154;
+	s=susede2_ed25519; t=1757610155;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=g2ztmImEtHsUE0xBTiICNacQWE8dOeWq3duroo1FEbU=;
-	b=andfp8yJ1dw0dwpnxFUOrF/FONl/dn5PBDVA5KT0szTfKqiaGJ4e1UX8xvU1aX0MF41lYF
-	rbqFzcDyaYXnbRDg==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gr2Y5vpWLhYmkFvvE0c3RnudTXKlGf10pEcNoBQE900=;
+	b=UFU16EPgWUxx9bfx8YzkL8UdxDIMNz6fYhEqJyLaiyW2gWddq6NlX7AuR/C0apIbYu7Ege
+	6QRvffcbojJh5lBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D07C613A56;
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E169F13ABA;
 	Thu, 11 Sep 2025 17:02:34 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qKVIMqoAw2gUJAAAD6G6ig
+	id mFfANqoAw2gUJAAAD6G6ig
 	(envelope-from <vbabka@suse.cz>); Thu, 11 Sep 2025 17:02:34 +0000
 From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH 0/6] slab: struct slab pointer validation improvements
-Date: Thu, 11 Sep 2025 19:02:33 +0200
-Message-Id: <20250911-slub-slab-validation-v1-0-8b67eb3b3dc5@suse.cz>
+Date: Thu, 11 Sep 2025 19:02:34 +0200
+Subject: [PATCH 1/6] slab: Remove dead code in free_consistency_checks()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,10 +98,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKkAw2gC/x2MQQqAIBAAvxJ7TtDIg30lOqy51YJYaEUQ/r2ly
- 8AcZl4olJkKDM0LmW4uvCcR0zYwb5hWUhzEodOd1c4YVeLlBejVjZEDnhIoTf1irfMaTQBJj0w
- LP/92nGr9AGqWyipmAAAA
-X-Change-ID: 20250911-slub-slab-validation-0e4f559b0a1d
+Message-Id: <20250911-slub-slab-validation-v1-1-8b67eb3b3dc5@suse.cz>
+References: <20250911-slub-slab-validation-v1-0-8b67eb3b3dc5@suse.cz>
+In-Reply-To: <20250911-slub-slab-validation-v1-0-8b67eb3b3dc5@suse.cz>
 To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc: Harry Yoo <harry.yoo@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
  David Rientjes <rientjes@google.com>, 
@@ -125,53 +128,41 @@ X-Spamd-Result: default: False [-4.30 / 50.00];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,oracle.com:email,suse.cz:email,suse.cz:mid]
 X-Spam-Flag: NO
 X-Spam-Score: -4.30
 
-This tries to combine the goals of the first 4 patches from Matthew's
-series [1] with points raised during review by Christoph and myself.
-Patch 4 from [1] is taken as patch 1 here. In other cases the struct
-slab pointer validation is better to move to a place where it can be
-performed before touching any of the struct slab fields, rather than
-removing it completely.
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-Further we wrap the validation in a function validate_slab_ptr() and
-make the impementation use struct page instead of struct folio to be
-compatible with the rest of the series [1]. With further changes towards
-memdesc the implementation can change accordingly, if it will still make
-sense.
+We already know that slab is a valid slab as that's checked by the
+caller.  In the future, we won't be able to get to a slab pointer
+from a non-slab page.
 
-The summary is that we validate pointers from the node partial list when
-allocating from it or when validation is triggered from sysfs.  When
-freeing, we always obtain the slab pointer in a way that the page type
-is tested in the process, so we don't need to validate.
-
-Based on:
-https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git/log/?h=slab/for-6.18/fixes
-
-[1] https://lore.kernel.org/all/20250910115507.1991829-1-willy@infradead.org/
-
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Reviewed-by: Harry Yoo <harry.yoo@oracle.com>
 Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 ---
-Matthew Wilcox (Oracle) (1):
-      slab: Remove dead code in free_consistency_checks()
+ mm/slub.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-Vlastimil Babka (5):
-      slab: wrap debug slab validation in validate_slab_ptr()
-      slab: move validate_slab_ptr() from check_slab() to its callers
-      slab: move validate_slab_ptr() from alloc_consistency_checks() to its caller
-      slab: validate slab before using it in alloc_single_from_partial()
-      slab: don't validate slab pointer in free_debug_processing()
+diff --git a/mm/slub.c b/mm/slub.c
+index 3062f56bf49882538ba5af407de9f69c451f2e29..56143bfd1ae319d384981c810a5ed84af00f4afa 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -1684,10 +1684,7 @@ static inline int free_consistency_checks(struct kmem_cache *s,
+ 		return 0;
+ 
+ 	if (unlikely(s != slab->slab_cache)) {
+-		if (!folio_test_slab(slab_folio(slab))) {
+-			slab_err(s, slab, "Attempt to free object(0x%p) outside of slab",
+-				 object);
+-		} else if (!slab->slab_cache) {
++		if (!slab->slab_cache) {
+ 			slab_err(NULL, slab, "No slab cache for object 0x%p",
+ 				 object);
+ 		} else {
 
- mm/slub.c | 61 +++++++++++++++++++++++++++++++++++++------------------------
- 1 file changed, 37 insertions(+), 24 deletions(-)
----
-base-commit: 41534d499e50e23571d6b9960498777d93f817ce
-change-id: 20250911-slub-slab-validation-0e4f559b0a1d
-
-Best regards,
 -- 
-Vlastimil Babka <vbabka@suse.cz>
+2.51.0
 
 
