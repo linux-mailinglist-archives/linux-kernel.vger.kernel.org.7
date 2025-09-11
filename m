@@ -1,103 +1,78 @@
-Return-Path: <linux-kernel+bounces-812656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A32F1B53B02
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:06:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DD1B53B05
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 20:07:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6681CC01D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84551AA332A
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 18:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5223C362985;
-	Thu, 11 Sep 2025 18:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA2136299D;
+	Thu, 11 Sep 2025 18:07:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A8HHD5GQ";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wV2bW2/9"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SOiFgN7w"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012069.outbound.protection.outlook.com [52.101.66.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0796B35A2AD;
-	Thu, 11 Sep 2025 18:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB0A35337E;
+	Thu, 11 Sep 2025 18:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757613959; cv=fail; b=I/3N3TbQ6ktmizirogBlTIvEdOdyFZnJcUgfa+WXpXpbtt+uYQxUf+cnmbvMMMEP0oiDMSG1aDXjjuCf4cy4i9F4/AjwPo3AKJ/lf8yWrkveBFMNOPDLmvrAaF+33l7zLI73b/GJFsgzbk2qX/PP8WaCbzK2q+N3Zc6Xh/UsLrA=
+	t=1757614026; cv=fail; b=aHlNUsF19+283Ljb0N89Rleb+puHKK/uIHu+ZRbCeJBhFCKsIsDRwoZWSb3p9PCHgxpoBPZdAawN//An+h8OFob2t+ajKn6qeRlE//x7MiSG51nxpNDXS6Neobqm8V+L2qcHPWoC30sFQEg5PTzz+Yer19BMFZ3fQBkNRUPGi1k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757613959; c=relaxed/simple;
-	bh=nTxDygqsiNDB0uWk7am+GBwFkUQ0lVX4p5bnGk6n9IM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=uNsEMcSxeTldksjKeqeapncTAzh1sACKHkfwNGXf5XA9/qRk30QcBrcsgBmzDyYJwTCTMkj/Q3ZpQB94iJ/Yp9YfBi93qNZB1648Jwc+/3ICj9pqQExLXZi30T+lHGyS0bePUW90BYz42LglsTVrGGif6UK0NOkBMKZ/62DXvlE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=A8HHD5GQ; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wV2bW2/9; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BHBf5J025907;
-	Thu, 11 Sep 2025 18:05:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=HIG3XhgYBP3QcNUCgGYbdmSzxtmNFGEP1SX69pa9Wzg=; b=
-	A8HHD5GQ33SzWC4jBJTJY/R7FW1o2xJgLbzQvgdGMg7RVkkxXQ3lUZ6u3KaZOWp+
-	A7rol291ZH2aGJ/k+pQsItJXAsuJGkOGcQQz4TtP41aVNarGmAtj2HuFT558+nsX
-	DFgYBF3EpI3eqQPTA9abFd4EKzDok4KbUj1o3l/z1WcRYU3yaFmeRE7nZiMhMW3+
-	vTzD3sYLHYJsDDfycVloNTSOC8RXJfQBsYBy+CreZMwgIZHBifnQbQVkC2smcedu
-	cG3P3broiW5vqDYw219LeAF0QmuqZ9Mmv5wd8J4QtWKPUadi969zs734/dOzuoLB
-	TfCAUw3tKxbXui7w1P4mlA==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 49226sxu9w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 18:05:46 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58BHB1b4002945;
-	Thu, 11 Sep 2025 18:05:46 GMT
-Received: from ph8pr06cu001.outbound.protection.outlook.com (mail-westus3azon11012040.outbound.protection.outlook.com [40.107.209.40])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bdkak5b-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 11 Sep 2025 18:05:46 +0000
+	s=arc-20240116; t=1757614026; c=relaxed/simple;
+	bh=euDh0uipkJxbkuCmH/tPIhS5D9G6q7UVK2OXuvdkoBI=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=C4D5Q3zx+1m0RkNGx0zHBxGnFX7sta2C+o989QgNVcxr/bf1w8w/vrneFRbjtuqSd7KDn/DYJeteqgH0HCwtqu4kt7JDu47KypXageHuOFxjpv5GaMWGeLXMcY9FqL/L4zMGSj9CA7PwgZ4J3eDE4JRubsj6DxeGJqZ8MZ6nPic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SOiFgN7w; arc=fail smtp.client-ip=52.101.66.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CI6MWXzmgxbSdIR2I1O85AHxWLcwuzOkgwoa0QFNGojT5vT1tiFuYUfTxrJxs5jQfDjIjhQs/bqV4lr8E7zMYNOwirXUl5ROgNf19Rwk/IAPXJiymmAIm58XL0U9AadsknoPEAeoHRZ/6bJqKriapy9bbDsT7TJ22HN9vMO8k/JAyhD1x2uxn+FHCGrj5xleY9VIBY1qvXnN3qvJOlMbnscMuJNaZigfEHfN59ePF4/3Bp97k/uce9e0vj/0jDkgNB/6qQtZa8M8snGh4LbNPR7AtE3iclkf1xifIpFDk4oJZ2VsJaV8Kx2g20TPgtQmtwQa30MZtXsdpbFUx3nI8g==
+ b=Vp8OmXMuSxUzAg0pT/T9p2W2DbjRsAerNMTlErsLmx5B7Bvjyqk03FFcubJ5fEm2E90p0hjru/39pCqvYULsfSl29L2dPFfdFXJvQlSfONw2SDCudGUX3lCHVeyBsCClNYuArjDNvGCcwsNsFgd7g10KE25gmDMZ6WtoYcKA4wzEeaWmhA5haFBMfpIB1Uc+kTbV6KdT0co2Cg1VQGb4f9uJpSOYdcQqP2+jYtzRX7ku8mCBaXfb6H5rxpPl1Bv3IJlmSwyjqLTVXCIBQd5aMp/jMlH+NoaAYvLrJB6tub6qkp5SKWt+OeXmxXdvrsVRVO/g8H/5swpxqn09mDL4iw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HIG3XhgYBP3QcNUCgGYbdmSzxtmNFGEP1SX69pa9Wzg=;
- b=UIvMuO0DWGrPLrcewRuxxEPJPEsjcahzTr/CcUntmBU7KkO1ihSX1jocR+5d4BDVhSE6wX2VhY2hF7fQSRLKtIyLsppasBd5cETcP/cLF/lAL16IhKw54XLdsXP/KxWNtKuoCGfadKkuhozvGmy0vAPrcdY6fftC3aBV37OBB+JEcAgl4o5i1mUs4ADy2JkHo7Gslj2PNfHpiNUhBWKQrJcgwVRsytdaNr3solav6Hc8ISiFUwAvBnnd8zC4TzClMC9rM+gd1A4hvPkR+X3V9Uumsqu7uCDftXLoIwjlfMlRb5lU4jNBUotGmdHO7XJYCTML1bKGyra6SXZ+ZZPCvQ==
+ bh=s3nF0Qm6W30bWSyPciiZ0ew94eZSaRnd966EmIWEoto=;
+ b=PAJNipEGr296GaWum4yVAIWhqWXhgv8J/5gEl26Cj0cDxr+XIogZLV4waT8IKEJOua7UEm8vXNROMkn9rVpvlfSSzKQbXBNq5jojCOJH6xxeA8/tN12sD3B2ay2MZBBRjXDq6qkaD00IDY4LiHIoHAyNzVLTLPu6GC+VHz3FV6sB/1rwAASg8407se2AVoAkPWghTyORkEjncHEppryfDf7oKuSMybD8agtG6SrLbhEreRzmbUVtlVZtM3gY4leqA/BtCoecbbgUzVC5Np7BJChYWtY6GMHigzv5JWqgrp/jamSq+o0UdyjS7K6VdVEVpOODEAK7yBUUyVN7//kUiw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HIG3XhgYBP3QcNUCgGYbdmSzxtmNFGEP1SX69pa9Wzg=;
- b=wV2bW2/9g1G7De8hktlmSqL9M/sYMKA9cOxwbgSjXfe7qHFuU/9hPREc3BFuI8lqRXFcz5QGh1LU4yNkMn5coPDKD2w0wx/Xyj+3Mg/evQwVjqMQtTraehVKHIpkWdbpkY7GigIiTD4vy25LCjSC79KP/iX9VNn/Uz9mSFw1Ams=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by SJ0PR10MB4510.namprd10.prod.outlook.com (2603:10b6:a03:2d6::22) with
+ bh=s3nF0Qm6W30bWSyPciiZ0ew94eZSaRnd966EmIWEoto=;
+ b=SOiFgN7wlelc3tCtsM1cHKJpSwI+D+LTjvQc7KLP7MijlbDKmAH/NkMOYGBodJbnygX0X9RYf5RlDvgw6nFiNVkdYuG3nY2q6SPFzGD6yAkhSF+dNYypzV3mtKXK7FI6Bba9U920XdzrzP8Q5fJ3mISEiD3YwGcQnZ2UTWHn/S2HbbqIbk2SpXybQN9LaN2peM66pj5PjMf0NOqkBe3wNxRDrD2+DQ3b2rype0R4R9X55ruZZWoAeBHElvk8eqUO9CDK3Gp7qJN+W1ldxxEVzQV3GGeji3ZkvqQ0lg3p9ZsSlOQKsBMZDKpkcbySaujR2+6MOzqvUE6fU+YeAE5W0g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com (2603:10a6:20b:4ff::22)
+ by AM0PR04MB7076.eurprd04.prod.outlook.com (2603:10a6:208:19a::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Thu, 11 Sep
- 2025 18:05:41 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::743a:3154:40da:cf90%3]) with mapi id 15.20.9094.021; Thu, 11 Sep 2025
- 18:05:41 +0000
-Message-ID: <73d6c14b-40f5-4546-9f87-a59595c51d77@oracle.com>
-Date: Thu, 11 Sep 2025 14:05:39 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] NFSD: Impl multiple extents in block/scsi layoutget
-To: Dai Ngo <Dai.Ngo@oracle.com>, Christoph Hellwig <hch@lst.de>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tom Talpey <tom@talpey.com>,
-        Sergey Bashirov <sergeybashirov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>, NeilBrown <neil@brown.name>,
-        Olga Kornievskaia <okorniev@redhat.com>
-References: <20250911160208.69086-1-sergeybashirov@gmail.com>
-Content-Language: en-US
-From: Chuck Lever <chuck.lever@oracle.com>
-In-Reply-To: <20250911160208.69086-1-sergeybashirov@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH2PR07CA0005.namprd07.prod.outlook.com
- (2603:10b6:610:20::18) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Thu, 11 Sep
+ 2025 18:06:56 +0000
+Received: from AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e]) by AS4PR04MB9621.eurprd04.prod.outlook.com
+ ([fe80::a84d:82bf:a9ff:171e%4]) with mapi id 15.20.9115.015; Thu, 11 Sep 2025
+ 18:06:56 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Robin van der Gracht <robin@protonic.nl>,
+	Andy Shevchenko <andy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: auxdisplay: change to unevaluatedProperties
+Date: Thu, 11 Sep 2025 14:06:41 -0400
+Message-Id: <20250911180641.1031346-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PH5P222CA0012.NAMP222.PROD.OUTLOOK.COM
+ (2603:10b6:510:34b::8) To DB9PR04MB9626.eurprd04.prod.outlook.com
+ (2603:10a6:10:309::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,437 +80,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|SJ0PR10MB4510:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9c9c4059-eda5-4efe-0bb4-08ddf15dd1bd
-X-LD-Processed: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b,ExtAddr
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9621:EE_|AM0PR04MB7076:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a6c4a2e-d1dc-4c21-7ab8-08ddf15dfe1c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|19092799006|38350700014;
 X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?Y1V2aGVuTWFzclB4RzRtaHRJQkxrWWRaTnBVRWhzSndrMXNJMmtyM2dEekZk?=
- =?utf-8?B?dURSWUQ2RUEwREsvM3RZY1hKN1dzZy9pYzJ0enQzZ0ZqbFk4WWlnZndRTFpl?=
- =?utf-8?B?VHFZMnBwWXROWDVmdHdmeXJaditRY1ZycVZrdERQMWUxdXFxbUpha1AwWElE?=
- =?utf-8?B?R1kzQVBMbjg4Qm5PNURwSjhHazMyYWo5bFFKbFZKaHE5ZWxFeWh4UGtwMVFy?=
- =?utf-8?B?aEpRZFh2UTUzWkQzdGlYRHVMNnUvR2Y1K2ErUUVpckhybHMwdHUzY3FkYm9U?=
- =?utf-8?B?UlhvM0pxSzlrODRYTlJ1RVpldjRxVlNTV2xlaTQ1aXhWaWhXYjg0Vm8wQmNy?=
- =?utf-8?B?YkdDTWxwOC9zblB1eTc2TlJ6UVFEVHJEdFZvaVJrcWdidXJXcmsyd1VxcjhU?=
- =?utf-8?B?MDZnOExuVUF4eUMwR1h2c1QyWkxDanRaMjIxa1YxeE1FcXlBMVdzdWFKWWFY?=
- =?utf-8?B?bGRYYm9kOEZxWU5jN2ZFZ29lWTR1MzU2Z2F1RmVCd1FpS3V6REhyVkF2SWkr?=
- =?utf-8?B?YjNhY0QwSGV6UXdjYWsrdGJOM3cyRzVTUTFIZzJ2YzRHYjJwWXU3enpIbkF6?=
- =?utf-8?B?QnZvRWlpSVd6V25qMnBFSEgrY2QwNG0yZ1BVUWpjblFwaHVrTTk2MWhmY0pm?=
- =?utf-8?B?MlA3ZTY5T3N3K2FaUWdibXJuUXNpK3h2TDk0SGFkaXJXOUl6bUZoZnFGVnI3?=
- =?utf-8?B?RGpvVC9ZakRnRUJCVExpU2xDczFQTGR4cXJJakZHSkJjS2VyYXVja1crV2Rs?=
- =?utf-8?B?U1VFQTd0eHFvYnovWG5ha2svdHFsY0JYd25QajVvVlBoUUYvNytvZWpTWXFH?=
- =?utf-8?B?NUhRUTYwLzAyWjE2Rk04RGFxdVFEbDZ0N3RXWTZsWCs1cE85TkRvSFl4cm5u?=
- =?utf-8?B?eG8rL1RIVEZEOVhwSFdWRU9DczRkUUFsWkFTTEEvbzg0YjRTZW5aUUo0VGN4?=
- =?utf-8?B?TlluVk92L1g1UUhETEdFWEVIaXF3M1BtQ2ZFYnQxR0V0WDh3aGYxUzV3NmJF?=
- =?utf-8?B?V2Q0MkNzZzhkcEJwaWx1YVNvdE5SQjZObW1kNWcvRVlub0Yycko5U3pqMkNC?=
- =?utf-8?B?VnpUSlM5RzBQUDM2QnB1VElVakJiTStoejd2TWg5ZWtMVG9FT1VmNFlSYU81?=
- =?utf-8?B?YnFlbFhqNncwUS84V3UyNjUrejY1QVhjVmM0bVU5ZXZDL0J2Q0tZaEdxNjZT?=
- =?utf-8?B?RHZPNnFNTERURFQ4di9XU3lKTXp0bWNEU3hWNG5tU2pDSk5uUzViREJteVFi?=
- =?utf-8?B?NlJ1aW9kaVhibFJOdlNsWWUrMEFFSXV1UW9POXM5VVNqV2dnK0ROb1lBKzV5?=
- =?utf-8?B?VWE0am5zVTd1d0xSaXAvVTBiSm9NUHA3UGhYekcwbmM3VVhuVUtXUUNOMVhr?=
- =?utf-8?B?cEhtLys3RlVPRS9oQ3A3dEhmVjJoeU9Jc201eGRyeUZjZW43R0NqbjdYUWhV?=
- =?utf-8?B?dzR2ZERIakZFQzdSWnQwdURRNzh1UEs4YWtJSDFqajRmV0tOQkVsejd2YzUy?=
- =?utf-8?B?ejZYOFpxYStwTFZkSEFjaWdESXdPZUdPeTRqcGdINWZGbnBBanI1RWdvK240?=
- =?utf-8?B?WDA5L29mN0tDYjdCajhyRU9LKzAyRnFCdnNZR1VaYkc2OWc1d1ptUmpmdTVw?=
- =?utf-8?B?ZlI5ZnZ2akZJdDlpQTQ5S1JHazdDdThVREgvQzF6YllBL1o5dWtqNVdkeXNm?=
- =?utf-8?B?NXhua2NSb3RxcThPU3ZxRnN2TW9xV1k2cFZoK28yK0tvL0l0RzhabW1lcHdv?=
- =?utf-8?B?OHhHcE4zYy9rVEQyL0JSVkVVN3FIRURpK1I4U0tCckw2ZDVnV2ZNcHM2YWxn?=
- =?utf-8?B?UlhIaHVRbHBDMDU5QUMwM0wzMjR0aVhRYmhWQ00zV1RhVmNROCtQZHdRQXc5?=
- =?utf-8?B?aVBKM2l5bndkWUNubG9vZzVPRGRiSXhOMGJNYjBMR01ERnFEV2tDeUt2Nmx3?=
- =?utf-8?Q?CYpGQSGEz1Y=3D?=
+	=?us-ascii?Q?K4eJRxABz0CDBBCE/JdyX7GS8+XmHu3QQ4S0osrLTj8bEAvrmi0n3wB0BQvZ?=
+ =?us-ascii?Q?aAV3SFGd8qFrM42BP/WU4Qg3v8Cyz2oQNI6AcfY4VzZ9BeIr9sFxGjTORQsr?=
+ =?us-ascii?Q?1oJcm4hlXAcdxU7k3/t49RtvDZVhg90d3u19/yjybetMdawiJ2hDdR1QqYmE?=
+ =?us-ascii?Q?hmB05wIKTIyRUjD4DlCcZH5NPPHmrw1QOJg3WnnmdjWpDyVA7NNUGfdL1hb9?=
+ =?us-ascii?Q?MxND58QGIzBTegoI9fBvUgZ1jnjti65fxYQLSjZlC/90kHKzx15jUC56QEFt?=
+ =?us-ascii?Q?JvAHHt/JL8D+tc/PLAwfpEpzh+6qJ3yFmbrP7lB1dgonYl6nId2lR2RUuQrn?=
+ =?us-ascii?Q?UC6RV3fjd0lEtX57fIqjAP2+fYfRdBkvPuJTmwPNOV1Tj9JxTdIGHkMScoi2?=
+ =?us-ascii?Q?eyCyz2TMvqqnnQ5kLhiHdePbHa381DrX6decAfnlLK26I4JNx1shWgUs8/5I?=
+ =?us-ascii?Q?pEYdJB9SNa9Lc2C1u8n/ig4TKGt6YtG83zZ4JlwdP9w8mR5KKAI5oPXm7v1I?=
+ =?us-ascii?Q?zfiFF2TFsC0gnxPSx0SQbGvGkq3XKEcOf/3ZMuNE9p0UbtT4TV1VL3WI6d5r?=
+ =?us-ascii?Q?r1UnzV+phY5ESTwmzAsoIH0VYhz5QoeBhks74tIj5N/y336hDVGrDnqyAThA?=
+ =?us-ascii?Q?4uRZMPIxHNcDAzRGNBw2IRgGfF1DxjtrCIEjXvh1ZroDNLkRIc0UY2v82zXa?=
+ =?us-ascii?Q?spDMbIWs9uirBJ8w7MC3UAkN5lErSe9ydTvZ05hkDtSfkn4uKMpT3q1sjnHR?=
+ =?us-ascii?Q?mpgq21BCBoT3VNiPb9/6U39GO92f7w18CZsvH15/jFzGsORb0z/r/l5me5Wr?=
+ =?us-ascii?Q?TdGMHaS54YVTF9fD6rUb+sLwwPH2siiYUy3M2ChFR9jS8tTqxCv66ydj7smF?=
+ =?us-ascii?Q?2tZR/siKTcg6EAjjAXte2FEDMEqdqe8QWLpc3/cIKJmzjYRdMudcy5okBaBK?=
+ =?us-ascii?Q?WwCfOPShSmFaCVE3VFrhBx8ZQ2sMFHipkEOeo+SK8SXRyvstmHrf2vJA7lRQ?=
+ =?us-ascii?Q?6FFvArIdC0tFFG9jddK7qF9cff6Mb4H3yrN29qM//9bQMcQNzAgSkqxLle0y?=
+ =?us-ascii?Q?2qXlFg5VrZDc/L2bVams7yCwwDaHUOqdqSpKsWtTXSWGjwHHtVwH0BvdelKb?=
+ =?us-ascii?Q?BrE07XWKLBy5vy+4pvoVTDHi0V+4s+yXLx9+UtdPebmomKRTr9Cy6Rs+xD77?=
+ =?us-ascii?Q?nGLi+YL75ILg6FOa+4MCv4ko8j5DZB9QU9Z8L29xCVGE9cEC/qI8rHGnJUYg?=
+ =?us-ascii?Q?OGSUtc0JeClcgYMCwz4QMVi7EX15hAsZsfjHYbVVR8+1TzLF5pkD+Q3NPMx2?=
+ =?us-ascii?Q?Oyg6FShzaVHRvP9j3yunPQ11dfhSmh214ESYz/op7EW2pHNwM6u9ldcyO/ks?=
+ =?us-ascii?Q?fzRnZ4VRJfRDvtGRjEhqrWULdfqpKRRaZZULY9f06GN9z0O49Oaqi3C88hR5?=
+ =?us-ascii?Q?yfAmldR7qq8=3D?=
 X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9621.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?aEo5VVpjWlVtNVc1M3dYazdYZWZaV2pmb0pUVFpKQ0ZNMitxeGtuVTNWMkdk?=
- =?utf-8?B?czZ5Q0tYcDEvYmNyUXBSNzJFWGtkRUc0Q3NRRy9tM1ByUHNCWk9ObkZKWkVQ?=
- =?utf-8?B?RS9UdlVpTGxRUUMwc1FmdGdZVFhVZjVPWDlsTytnRWR1ZVB2NkJiNVNIMUZn?=
- =?utf-8?B?eFdzaHQwUjBxN2l1QTdRYWRSa0hXY1Y0ejRFV0gxeWFieW14d2VUeVdaUDBX?=
- =?utf-8?B?ZkxwcythR0lSZk5yWEpwbUdacFJPQS9RckE2eE94SGVOU0JpeEZobWplWlhh?=
- =?utf-8?B?MlJXYTFrVjVkU3htTFpod3N4SmhVb2I2cElRa1M2bE8vQUZVOERpTmdtZHNw?=
- =?utf-8?B?U3JYNTQ0bXJpMVk5THltd0JEbk1XUHI0K0EyZzBPL3RJSnhENVJraXZyTzNl?=
- =?utf-8?B?c0ova0EyMGk0Y0wrdWh5TkJzRkgvT2FKQXh1a1lVak9XMXNpcStQVHpKNDVY?=
- =?utf-8?B?ai9FL1FyN0ZIYmhqRENSSVZHNnNyQngrYnBORkV6OGh3U2ZoTW5nMmtJZFls?=
- =?utf-8?B?eHozRURULzAzYUVKdnhBdms3RVZ4bDhDdWlCeFFENFFJektNbk1YMk1CdVho?=
- =?utf-8?B?ZGtORmUrYjRvanJxd3puZURPSTVtZnlmS2k1SDBkSnNlYlByUWNVczNmQmtr?=
- =?utf-8?B?WHExQW1JWHhiMjNOSWpDQjN0dmQyVTdXSjNrbHlBejd0MFU0U244VU1pV1p1?=
- =?utf-8?B?Y0diTkUzbmdRUUpqa0JHK2FVeEZHVnhrZDRLeEFuRkNidUVvNFdSZGpNMW1S?=
- =?utf-8?B?WmNrUVVHSkUzQVMxK25LYy9MRGpZQjFtemRmOGdrMHdCREcvOHpCRWkva2NU?=
- =?utf-8?B?VmVFazBGMndqQjJjWWp5SWU2K3dySklFc3pueHczTEhhOFQrVjRpbVAzaGdX?=
- =?utf-8?B?VGlQcVBtSndRWnYvZUU5Z0tVS0dQdWJ3WlNuTmYvdXhKa0MwLzd4QzE5TEQ1?=
- =?utf-8?B?aTVvaFdXT2k3Y3dRbHZ4emt2cUpkWElTNkJBbVVDc0R4SWJQUTYwRGh5T2lv?=
- =?utf-8?B?a3BFaXdmVjkzWmFFSVZ2QWpuejFWclA5K092YUo0T3JOUVM2c0hFdE1pZWNY?=
- =?utf-8?B?OHhsRllCVGtXa3B1Y3QxR1AwS2Y0aXZBeU5Jd1pzT2NGV0JpdlNlYXI1UW81?=
- =?utf-8?B?biszZEw2S3ZwWGdRejl5a0pic1pHVGZFR2kvODdsalZ0K3gyTzZiQUxXRXU0?=
- =?utf-8?B?U21pQ0RDU2traXcxR2NDZ3E2SVowanhJUEpBV3JENm9qOTNwOVZxSEtBdVBE?=
- =?utf-8?B?VndiejdJaUxvR2N1b1N1UHJnbWpWT3ZieE14YnZWeDZvbzV4d1oxa2RGQ3hs?=
- =?utf-8?B?elNwaTFzZkxCSjI2L2RBcXd5VmJIMDZpTlczWkI0Vm1qc1orYXFEZHRxK3BH?=
- =?utf-8?B?RWVTSkpFME9sVFdvQlcvNmFqQXFleWxWaHdva0ViSVY1OTI3RFVmdThrdS9j?=
- =?utf-8?B?ZWxQNEtnbjVOVS9NTm9yUzJuOUVLL21VY0JJTzZrSmZpWUVNU1FwNmhzcWZt?=
- =?utf-8?B?WjJ1T0ltT2N6RWgweUNBZ3lhWmpxNDA4eElWS05YM2hmcjhtbEJ2Mm9wS1Ru?=
- =?utf-8?B?N3d5anRFV3J1L3RkcDZsS2Vmejc1NmwwUUlncG1HdWR3V0VtWVdUK3EzTnZK?=
- =?utf-8?B?M1Q2NG1wR25CaDJNZDV1K0dPcm5RNG5BTVFVYWJmenBUcUJKcUJKald1Z21t?=
- =?utf-8?B?QVZMRWUyYkl5UGJubld0MWhONTh6SnR0dUhsV29QaEtDWW1tUWVTSkc5c3da?=
- =?utf-8?B?Y1dzMlpZOEI5aHB3WTg5aWtCMXBLYjB2Q3dkeHZOamxySHlidXJ3NGxDam5s?=
- =?utf-8?B?NjBQOXhHNmZHK3FscXZmckxvN1g1SitqUXptMFN3WkZCMmRYd0EwcDZSd1JX?=
- =?utf-8?B?ekhMNUhyMEtUSkVXTjRxNGR2ZVdSMCtYRFhiSmJaMWkwdjhzNU12OW1ocTJM?=
- =?utf-8?B?SDB5aEtHN0xMalAxVkVjeExYSzdhVC9YdHgzWUUzLzVqSnMyRDlMV1k4L0dn?=
- =?utf-8?B?YUZrNVJabURhdFZzN2pDb0E1ZXJ2a1ZIendUbis0WFRBWmw5c2x1WHU0ZTRN?=
- =?utf-8?B?cVd5aVNkT0dqOSttMGhIa01ZL0FRN2ZSTXJjQjBoTG9UOXRhZ3NHbjdTcFlC?=
- =?utf-8?Q?Qb32//hAZz7VstGfk1incvpNQ?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	FWVgz3uuyurnfOoAOtH8mrOKp5gMyvQwylw8KfWfcyF6Ts9/IJURIjwIi7TcAnEU6x2hbBKMCMzz0e9rkQynAcIPs8gadESvQnn78demwDutRH/jPkQLFpZFHH0i2xdg0ggTtWMRHQIbGaRiuJ/6t3EpUAbInBBsDLMU0x82uRB06CoLDFVMDuizb8OFYVI7FmismNIThqRZgpUsXkZDKd1hDk4juwEdPFGGyzxduskY33NnX7kWNNa2Q7M7MXxu76Mt/NICNmuDrifHYj7MvsojtA9DWtL0+v1tJAIaiyEWnV3pWyn7Xg7QAQ74W/dlx29nuKjKo/fcqlB5Lo7kIl4ePUNVBgzxB5/ndDu/y/VPerfR1hm6Bgsnk10hBPZSmZv9WLP7YpP48DkNVYO7dYbPJ0X77QKPM5LsfTK9akvA5nKrI35hJKy2NLTcfKKmGQBhmWTAxq9f1ajWUAK26GvaGZURiuT3gS5asDWD+U+gOa83fyoq1pzVLDVPlzVn08HTJKjzXnWrPLOLDlnQHRhjqgyRPMjsj7owyZQZYRJ3A0jDC6e3PMHoXSafhu3/K/8ds+GfZERRfeHA/yqqUFjZ+Izy7bqPzZt9jRBhM+E=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9c9c4059-eda5-4efe-0bb4-08ddf15dd1bd
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+	=?us-ascii?Q?+2nDd19I9NIbtBoX3jMKTwXRDBAKc6H6mvEhZdZtla4Af0DUFSOyGgrI2ZwV?=
+ =?us-ascii?Q?ziwJlM7KV9jDFXxWdx/j8o+uu8o7CCzsOZrFi2SslUmaKgmPTiDl+H5Y6lop?=
+ =?us-ascii?Q?pblycOWk8zzTNp1Kp3Kixn2jTTTyIR2KK3GJbulmOcZmV8aGlphGCRQtRbo0?=
+ =?us-ascii?Q?/XPOz0cOfMeXOLBhS/GtrlPanQA8tc4J0sthRdN1YQRQVJacHe558lFennoY?=
+ =?us-ascii?Q?e3NcZQtDM7o+KZ0v1FnjcSFpIO8GgphpxlNyIH91GzsQYYUGuqcIzaCsGPWD?=
+ =?us-ascii?Q?Kp3lmQN6SgVom6Lk+SrK4sF77AdODJAzJ1TY87WgJ+LtVLN4AzyZDU1O8mx/?=
+ =?us-ascii?Q?SsNw/MIP2c8MP0LRD9/KN1nsZ9KQk6CzCjFZ/O7poeWbMai/hCPj26LZ/RfC?=
+ =?us-ascii?Q?wFfJDfyZLDMUSBZjl2xwedaC3Xet4WNqJZPIpCzNXX5ZYdabVKA3JvEqNDG1?=
+ =?us-ascii?Q?HVh4JJuMjGQsvBTJyknowh17SxatNQw4YJlLar3xJQcSW2S2HJTUpf+cTEZc?=
+ =?us-ascii?Q?5XDxIqaaGpWJrDbJck5v4wTwt110kWonP3SzqjEc6TMy6h4PNQNJcU+N1JVA?=
+ =?us-ascii?Q?qlyinPBp7kvMUJCm7bdPjp8/cLQ19tfYPKGl+EH3mwwZQe4Llaycy0WEYfmV?=
+ =?us-ascii?Q?BFArKkDYI3E9Atg+rukqEuUnUt4hHrvglbw1BT6CVwq6UpuETNYz3vdy+/QP?=
+ =?us-ascii?Q?MmUfHwgZqnDUgKw1bkqcrYxPjkjtNqVt3PfuJtrCiM6Mjp4gw5GSL9mnMU6v?=
+ =?us-ascii?Q?dZJikzoeS9aiyZq/QnsY2699bOHjh7mUvH1wCm1ZuBExn1cjWjqzDoco5bv7?=
+ =?us-ascii?Q?R6cMM7q5+WsuStt6G14bEm6OjXIRE2gqGLg6JELsoy3z6JvaI/kJw44PYhar?=
+ =?us-ascii?Q?b5YTRTjbYZhSmcShnMhudRvIaH2whR7TOFO2FxP+nab1PWZcb8jaVCi86d6l?=
+ =?us-ascii?Q?O9aewFIqZPF3ASTs0z1rbpu+imSByIe/waMjxfxTtUl70UN6F3K/PyTraF/K?=
+ =?us-ascii?Q?thWjjV3klZwqDkXxIp0hASwCgm+mc97aM7AK4z4/+BW34D28NKwZFlfaG/66?=
+ =?us-ascii?Q?pOASSFOGTOnipwpyMHO36+arlcOOsKADaeFVn2LelKaRRC9Ci/NV8MftsZkc?=
+ =?us-ascii?Q?AVBtXKauXioRRXacrKASGufGOsw+/snFXTvUbyQFt5NjlDMbmkaurGTrBNMm?=
+ =?us-ascii?Q?M4v5tf2vJeHGbDTGNiP59dGM4Yk2k3YVp0WNtDisXoFr25EvuHBx59bl6DtQ?=
+ =?us-ascii?Q?hItaZ5ssg4tuY62wAWcn1WbQEa5ECP3y/RpE7cwT99Osauyevdhp40Xem7IZ?=
+ =?us-ascii?Q?0hHVL0CSpUp3mSnUe8j0gUQDmnEDqnTBYv9o/7M9/9G/dHYO2K7A1ebxHhta?=
+ =?us-ascii?Q?I0zmBbWX93X5oA+W6UVXaCS6XRaQr7UIm/d14VrH7eBkvFGhR250/CN4yBj1?=
+ =?us-ascii?Q?GrY+IAcDBEy0OSbQMy2inclFI20UomfGAT42X6p6KZFap3RoLDHoDrXGMqYo?=
+ =?us-ascii?Q?dP2qJusZD0vwCdfZF8XY3DnCahmO64wO5Mv4Dx8iXCDWf6ttixhOZ/xmeA8/?=
+ =?us-ascii?Q?wvQ1/OrgyXrw6MUGZBo=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a6c4a2e-d1dc-4c21-7ab8-08ddf15dfe1c
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 18:05:41.1213
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Sep 2025 18:06:56.1736
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UyeDPTiVPuilVGNZFuHAab0v33Ig8d6XakUiDV6wedoRfK+TKHnVeMfq/xp+ThR/zSMmlxNwtXQwnQY12tQxVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4510
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-11_03,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
- bulkscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509110162
-X-Authority-Analysis: v=2.4 cv=QeRmvtbv c=1 sm=1 tr=0 ts=68c30f7a b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=pGLkceISAAAA:8 a=A0VyqqTTL0eVeDRdB8YA:9
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:12084
-X-Proofpoint-ORIG-GUID: sUUvPBMrrYAK17O2lZIXD9VXDkgCSAEi
-X-Proofpoint-GUID: sUUvPBMrrYAK17O2lZIXD9VXDkgCSAEi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1OCBTYWx0ZWRfX6C2VDypEq7hX
- eWwxy0o9kGSjoMjFwdZR5kUY0zZlxzD5wzHiNC5yzkw5ssK5IBsEDq+GthkLTPwqYanXcO+Ew3W
- +RP264xolL2vjpT/m3Vvhs48MOGS3M4vgQrbw5hcLSSvHT3JQa96tCZKa4+aHeLM4qWxvUUaG4H
- pQBUtUFhBpTOZRqO8esS4BrRzbB0slTpUxtQYwb724wGMNkcR8Ptwb1dnGOP8GWF6wjQkrw1jHZ
- ieKox0Dd3xotdYyDMsGPp4b+p3GNlqam1gAMQvHwotsrjo0Jdn9KZiYtMKp3TTSfBJR03lcPKoo
- UeMg4ylcVdx69th1CaJI5Q1cxQES4JFOiT5+gwErnpuCmRIrA0IeVmaZUp5a8LmBjKke/1Mtk6Z
- N0ZH0SEkTomUd6kABEpbIedIn/hPpA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: Hes9ViocbYo7hEGeUL/nKI7X6BlXgNCOt0Nv0ABe8G2KoR7e8JhErYlZYpxLwPmH6RkPtawAEYD8rIIbRzqp7Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7076
 
-On 9/11/25 12:02 PM, Sergey Bashirov wrote:
-> This patch allows the pNFS server to respond with multiple extents
-> in a layoutget request. As a result, the number of layoutget requests
-> is significantly reduced for various file access patterns, including
-> random and parallel writes, avoiding unnecessary load to the server.
-> On the client side, this improves the performance of writing large
-> files and allows requesting layouts with minimum length greater than
-> PAGE_SIZE.
-> 
-> Signed-off-by: Sergey Bashirov <sergeybashirov@gmail.com>
-> ---
-> Checked with smatch, tested on pNFS block volume setup.
-> 
->  fs/nfsd/blocklayout.c    | 167 +++++++++++++++++++++++++++++----------
->  fs/nfsd/blocklayoutxdr.c |  36 ++++++---
->  fs/nfsd/blocklayoutxdr.h |   5 ++
->  3 files changed, 157 insertions(+), 51 deletions(-)
-> 
-> diff --git a/fs/nfsd/blocklayout.c b/fs/nfsd/blocklayout.c
-> index fde5539cf6a6..d53f3ec8823a 100644
-> --- a/fs/nfsd/blocklayout.c
-> +++ b/fs/nfsd/blocklayout.c
-> @@ -17,48 +17,39 @@
->  #define NFSDDBG_FACILITY	NFSDDBG_PNFS
->  
->  
-> +/**
-> + * nfsd4_block_map_extent - get extent that covers the start of segment
-> + * @inode: inode of the file requested by the client
-> + * @fhp: handle of the file requested by the client
-> + * @seg: layout subrange requested by the client
-> + * @minlength: layout min length requested by the client
-> + * @bex: output block extent structure
-> + *
-> + * Get an extent from the file system that starts at @seg->offset or below,
-> + * but may be shorter than @seg->length.
-> + *
-> + * Return values:
-> + *   %nfs_ok: Success, @bex is initialized and valid
-> + *   %nfserr_layoutunavailable: Failed to get extent for requested @seg
-> + *   OS errors converted to NFS errors
-> + */
->  static __be32
-> -nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
-> -		const struct svc_fh *fhp, struct nfsd4_layoutget *args)
-> +nfsd4_block_map_extent(struct inode *inode, const struct svc_fh *fhp,
-> +		const struct nfsd4_layout_seg *seg, u64 minlength,
-> +		struct pnfs_block_extent *bex)
->  {
-> -	struct nfsd4_layout_seg *seg = &args->lg_seg;
->  	struct super_block *sb = inode->i_sb;
-> -	u32 block_size = i_blocksize(inode);
-> -	struct pnfs_block_extent *bex;
->  	struct iomap iomap;
->  	u32 device_generation = 0;
->  	int error;
->  
-> -	if (locks_in_grace(SVC_NET(rqstp)))
-> -		return nfserr_grace;
-> -
-> -	if (seg->offset & (block_size - 1)) {
-> -		dprintk("pnfsd: I/O misaligned\n");
-> -		goto out_layoutunavailable;
-> -	}
-> -
-> -	/*
-> -	 * Some clients barf on non-zero block numbers for NONE or INVALID
-> -	 * layouts, so make sure to zero the whole structure.
-> -	 */
-> -	error = -ENOMEM;
-> -	bex = kzalloc(sizeof(*bex), GFP_KERNEL);
-> -	if (!bex)
-> -		goto out_error;
-> -	args->lg_content = bex;
-> -
->  	error = sb->s_export_op->map_blocks(inode, seg->offset, seg->length,
->  					    &iomap, seg->iomode != IOMODE_READ,
->  					    &device_generation);
->  	if (error) {
->  		if (error == -ENXIO)
-> -			goto out_layoutunavailable;
-> -		goto out_error;
-> -	}
-> -
-> -	if (iomap.length < args->lg_minlength) {
-> -		dprintk("pnfsd: extent smaller than minlength\n");
-> -		goto out_layoutunavailable;
-> +			return nfserr_layoutunavailable;
-> +		return nfserrno(error);
->  	}
->  
->  	switch (iomap.type) {
-> @@ -74,9 +65,9 @@ nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
->  			/*
->  			 * Crack monkey special case from section 2.3.1.
->  			 */
-> -			if (args->lg_minlength == 0) {
-> +			if (minlength == 0) {
->  				dprintk("pnfsd: no soup for you!\n");
-> -				goto out_layoutunavailable;
-> +				return nfserr_layoutunavailable;
->  			}
->  
->  			bex->es = PNFS_BLOCK_INVALID_DATA;
-> @@ -93,27 +84,119 @@ nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
->  	case IOMAP_DELALLOC:
->  	default:
->  		WARN(1, "pnfsd: filesystem returned %d extent\n", iomap.type);
-> -		goto out_layoutunavailable;
-> +		return nfserr_layoutunavailable;
->  	}
->  
->  	error = nfsd4_set_deviceid(&bex->vol_id, fhp, device_generation);
->  	if (error)
-> -		goto out_error;
-> +		return nfserrno(error);
-> +
->  	bex->foff = iomap.offset;
->  	bex->len = iomap.length;
-> +	return nfs_ok;
-> +}
->  
-> -	seg->offset = iomap.offset;
-> -	seg->length = iomap.length;
-> +/**
-> + * nfsd4_block_map_segment - get extent array for the requested layout
-> + * @inode: inode of the file requested by the client
-> + * @fhp: handle of the file requested by the client
-> + * @seg: layout range requested by the client
-> + * @minlength: layout min length requested by the client
-> + * @bl: output array of block extents
-> + *
-> + * Get an array of consecutive block extents that span the requested
-> + * layout range. The resulting range may be shorter than requested if
-> + * all preallocated block extents are used.
-> + *
-> + * Return values:
-> + *   %nfs_ok: Success, @bl initialized and valid
-> + *   %nfserr_layoutunavailable: Failed to get extents for requested @seg
-> + *   OS errors converted to NFS errors
-> + */
-> +static __be32
-> +nfsd4_block_map_segment(struct inode *inode, const struct svc_fh *fhp,
-> +		const struct nfsd4_layout_seg *seg, u64 minlength,
-> +		struct pnfs_block_layout *bl)
-> +{
-> +	struct nfsd4_layout_seg subseg = *seg;
-> +	u32 i;
-> +	__be32 nfserr;
->  
-> -	dprintk("GET: 0x%llx:0x%llx %d\n", bex->foff, bex->len, bex->es);
-> -	return 0;
-> +	for (i = 0; i < bl->nr_extents; i++) {
-> +		struct pnfs_block_extent *extent = bl->extents + i;
-> +		u64 extent_len;
-> +
-> +		nfserr = nfsd4_block_map_extent(inode, fhp, &subseg,
-> +				minlength, extent);
-> +		if (nfserr != nfs_ok)
-> +			return nfserr;
-> +
-> +		extent_len = extent->len - (subseg.offset - extent->foff);
-> +		if (extent_len >= subseg.length) {
-> +			bl->nr_extents = i + 1;
-> +			return nfs_ok;
-> +		}
-> +
-> +		subseg.offset = extent->foff + extent->len;
-> +		subseg.length -= extent_len;
-> +	}
-> +
-> +	return nfs_ok;
-> +}
-> +
-> +static __be32
-> +nfsd4_block_proc_layoutget(struct svc_rqst *rqstp, struct inode *inode,
-> +		const struct svc_fh *fhp, struct nfsd4_layoutget *args)
-> +{
-> +	struct nfsd4_layout_seg *seg = &args->lg_seg;
-> +	u64 seg_length;
-> +	struct pnfs_block_extent *first_bex, *last_bex;
-> +	struct pnfs_block_layout *bl;
-> +	u32 nr_extents_max = PAGE_SIZE / sizeof(bl->extents[0]) - 1;
-> +	u32 block_size = i_blocksize(inode);
-> +	__be32 nfserr;
-> +
-> +	if (locks_in_grace(SVC_NET(rqstp)))
-> +		return nfserr_grace;
-> +
-> +	nfserr = nfserr_layoutunavailable;
-> +	if (seg->offset & (block_size - 1)) {
-> +		dprintk("pnfsd: I/O misaligned\n");
-> +		goto out_error;
-> +	}
-> +
-> +	/*
-> +	 * Some clients barf on non-zero block numbers for NONE or INVALID
-> +	 * layouts, so make sure to zero the whole structure.
-> +	 */
-> +	nfserr = nfserrno(-ENOMEM);
-> +	bl = kzalloc(struct_size(bl, extents, nr_extents_max), GFP_KERNEL);
-> +	if (!bl)
-> +		goto out_error;
-> +	bl->nr_extents = nr_extents_max;
-> +	args->lg_content = bl;
-> +
-> +	nfserr = nfsd4_block_map_segment(inode, fhp, seg,
-> +			args->lg_minlength, bl);
-> +	if (nfserr != nfs_ok)
-> +		goto out_error;
-> +	first_bex = bl->extents;
-> +	last_bex = bl->extents + bl->nr_extents - 1;
-> +
-> +	nfserr = nfserr_layoutunavailable;
-> +	seg_length = last_bex->foff + last_bex->len - seg->offset;
-> +	if (seg_length < args->lg_minlength) {
-> +		dprintk("pnfsd: extent smaller than minlength\n");
-> +		goto out_error;
-> +	}
-> +
-> +	seg->offset = first_bex->foff;
-> +	seg->length = last_bex->foff - first_bex->foff + last_bex->len;
-> +	return nfs_ok;
->  
->  out_error:
->  	seg->length = 0;
-> -	return nfserrno(error);
-> -out_layoutunavailable:
-> -	seg->length = 0;
-> -	return nfserr_layoutunavailable;
-> +	return nfserr;
->  }
->  
->  static __be32
-> diff --git a/fs/nfsd/blocklayoutxdr.c b/fs/nfsd/blocklayoutxdr.c
-> index e50afe340737..68c112d47cee 100644
-> --- a/fs/nfsd/blocklayoutxdr.c
-> +++ b/fs/nfsd/blocklayoutxdr.c
-> @@ -14,12 +14,25 @@
->  #define NFSDDBG_FACILITY	NFSDDBG_PNFS
->  
->  
-> +/**
-> + * nfsd4_block_encode_layoutget - encode block/scsi layout extent array
-> + * @xdr: stream for data encoding
-> + * @lgp: layoutget content, actually an array of extents to encode
-> + *
-> + * This function encodes the opaque loc_body field in the layoutget response.
-> + * Since the pnfs_block_layout4 and pnfs_scsi_layout4 structures on the wire
-> + * are the same, this function is used by both layout drivers.
-> + *
-> + * Return values:
-> + *   %nfs_ok: Success, all extents encoded into @xdr
-> + *   %nfserr_toosmall: Not enough space in @xdr to encode all the data
-> + */
->  __be32
->  nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
->  		const struct nfsd4_layoutget *lgp)
->  {
-> -	const struct pnfs_block_extent *b = lgp->lg_content;
-> -	int len = sizeof(__be32) + 5 * sizeof(__be64) + sizeof(__be32);
-> +	const struct pnfs_block_layout *bl = lgp->lg_content;
-> +	u32 i, len = sizeof(__be32) + bl->nr_extents * PNFS_BLOCK_EXTENT_SIZE;
->  	__be32 *p;
->  
->  	p = xdr_reserve_space(xdr, sizeof(__be32) + len);
-> @@ -27,14 +40,19 @@ nfsd4_block_encode_layoutget(struct xdr_stream *xdr,
->  		return nfserr_toosmall;
->  
->  	*p++ = cpu_to_be32(len);
-> -	*p++ = cpu_to_be32(1);		/* we always return a single extent */
-> +	*p++ = cpu_to_be32(bl->nr_extents);
->  
-> -	p = svcxdr_encode_deviceid4(p, &b->vol_id);
-> -	p = xdr_encode_hyper(p, b->foff);
-> -	p = xdr_encode_hyper(p, b->len);
-> -	p = xdr_encode_hyper(p, b->soff);
-> -	*p++ = cpu_to_be32(b->es);
-> -	return 0;
-> +	for (i = 0; i < bl->nr_extents; i++) {
-> +		const struct pnfs_block_extent *bex = bl->extents + i;
-> +
-> +		p = svcxdr_encode_deviceid4(p, &bex->vol_id);
-> +		p = xdr_encode_hyper(p, bex->foff);
-> +		p = xdr_encode_hyper(p, bex->len);
-> +		p = xdr_encode_hyper(p, bex->soff);
-> +		*p++ = cpu_to_be32(bex->es);
-> +	}
-> +
-> +	return nfs_ok;
->  }
->  
->  static int
-> diff --git a/fs/nfsd/blocklayoutxdr.h b/fs/nfsd/blocklayoutxdr.h
-> index 7d25ef689671..54fe7f517a94 100644
-> --- a/fs/nfsd/blocklayoutxdr.h
-> +++ b/fs/nfsd/blocklayoutxdr.h
-> @@ -21,6 +21,11 @@ struct pnfs_block_range {
->  	u64				len;
->  };
->  
-> +struct pnfs_block_layout {
-> +	u32				nr_extents;
-> +	struct pnfs_block_extent	extents[] __counted_by(nr_extents);
-> +};
-> +
->  /*
->   * Random upper cap for the uuid length to avoid unbounded allocation.
->   * Not actually limited by the protocol.
+Change additionalProperties to unevaluatedProperties because it refs to
+/schemas/input/matrix-keymap.yaml.
 
-Dai, Christoph - please review and/or test.
+Fix below CHECK_DTBS warnings:
+arch/arm/boot/dts/nxp/imx/imx6dl-victgo.dtb: keypad@70 (holtek,ht16k33): 'keypad,num-columns', 'keypad,num-rows' do not match any of the regexes: '^pinctrl-[0-9]+$'
+        from schema $id: http://devicetree.org/schemas/auxdisplay/holtek,ht16k33.yaml#
 
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../devicetree/bindings/auxdisplay/holtek,ht16k33.yaml          | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+index b90eec2077b4b..fe1272e86467e 100644
+--- a/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
++++ b/Documentation/devicetree/bindings/auxdisplay/holtek,ht16k33.yaml
+@@ -66,7 +66,7 @@ then:
+   required:
+     - refresh-rate-hz
+ 
+-additionalProperties: false
++unevaluatedProperties: false
+ 
+ examples:
+   - |
 -- 
-Chuck Lever
+2.34.1
+
 
