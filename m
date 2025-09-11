@@ -1,96 +1,124 @@
-Return-Path: <linux-kernel+bounces-812579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86802B539E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:04:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7546B539EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 19:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46C32AA1A2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:04:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 808467B05CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 17:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8F636808D;
-	Thu, 11 Sep 2025 17:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF04735FC20;
+	Thu, 11 Sep 2025 17:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kvp7u1Rq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HChqNQwZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 261C03629BF;
-	Thu, 11 Sep 2025 17:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0009022AE45;
+	Thu, 11 Sep 2025 17:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757610250; cv=none; b=TobDBB4X3sDigCJTIY6BSm8nXyy9yEzO/XsyiW17DBQgTJScWLNGng5pcNKiXoM/QMfzzXqYRDKjOt4x1PMJAul2RcWuk2Wg9cFBORjHD6ZPuDOz+XxuFi9KlkHwZdvR9sY/fdrfKgsWnqAR5kVuBcLQY3F64EukN+LxEqVkW0I=
+	t=1757610357; cv=none; b=UEZmZRLzmZRX2AhAmXyWruUF/BVcsv2v4qNqP544gOr7XGTs+txP0xdPdrVhi+hgOFTIdGEw0c2JxGKyPyN96/DWIBl9gQidEZONO+qPbtu1pMFZ359UNXcQb11Cpt2z0qSt4StiZEqM4eWVa9f0fktq/CMTeHsBHJUi5gx4ex0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757610250; c=relaxed/simple;
-	bh=8N5mMv5fgjhOxzGZxcBurgKWa9BbFN4aElChqaQqGVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wl60VvgftciLGX1JdJjTq/AOcjSWARGSYSDMovukkpzJuHi7SyOWM6Lg1ivkFLLZ2EBUYB68ulYc0B+gRfZScOhDizM9KNpEbNM7CylZ9JrttMKavrI1JytEJZvT8+hvFJ6D4rFnsMys1UcZkAMECPmNnYoe8hD6fWAKYYQamwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kvp7u1Rq; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757610249; x=1789146249;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=8N5mMv5fgjhOxzGZxcBurgKWa9BbFN4aElChqaQqGVY=;
-  b=kvp7u1RqJluH09PbsXGIsB24rq7mJ91s/wlrzRh2zJMlqU2cuNUWMAf9
-   OrdKIxY2Vx/xEKgCqmJV17PaRLFvi74+PU9XwwSk9/na4JvMSPhxyLOlx
-   atcdAm7IW5VSYxFPHvBT2A9xFWkA8+6aMT4WlBfuz26yqQg+tWcyReDx/
-   vdA5EPJ9I/8VnjZx9KFMORaJDsXzLMCRxq09Ggr0PBcL1TtH5X2/GQZTU
-   JXoF8CU9SUvBX2NE/YmGebLuLt7U8EQNHvoXxMqQ5sDifW3CaEf/5BNE8
-   OjJiXU2ztArdpm/Ey3BqH97mGgaGKhgbzXKAkjzIuQQGvWmQw51eMlddT
-   Q==;
-X-CSE-ConnectionGUID: PcuEYZEuSfGYg0hYQcRjyw==
-X-CSE-MsgGUID: L6HlqJr1RyWtGZG+gMqCww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11549"; a="59648038"
-X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
-   d="scan'208";a="59648038"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 10:04:08 -0700
-X-CSE-ConnectionGUID: iJ5GcUU5Ss2brvz9na/HsQ==
-X-CSE-MsgGUID: yEmzrzcgTpOhZcWOpOmV6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,257,1751266800"; 
-   d="scan'208";a="173308384"
-Received: from unknown (HELO [10.125.180.152]) ([10.125.180.152])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 10:04:06 -0700
-Message-ID: <0387b08a-a8b0-4632-abfc-6b8189ded6b4@linux.intel.com>
-Date: Thu, 11 Sep 2025 10:04:04 -0700
+	s=arc-20240116; t=1757610357; c=relaxed/simple;
+	bh=UCP4l+ePO9V9JvXhGoSlqVr4Thxy4s2Q/7YityqrEJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b2hpvmyk4uWlJVnRIPxDXkDS9XysNFpAGfdwWTW8H0L7uW/Y/SbG+RUU1f++X69L7WnH5lrT6jrqhtBHTj+oanBrB5Q4Rv+UV3bGC4ImwziCE19awEORRCwQGeywYrZPGo+nvWjOVsUqNq7e8cVLbJ2G7lyrAuXfcDSqlP3S6q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HChqNQwZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 107ABC4CEF0;
+	Thu, 11 Sep 2025 17:05:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757610356;
+	bh=UCP4l+ePO9V9JvXhGoSlqVr4Thxy4s2Q/7YityqrEJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HChqNQwZ9j7MKmL3/36PZ3PF+wQSEDS45AodMPLBTZiuZeApR63p9u01CM04U3QJZ
+	 63H0h6ILGAEf01qKGgRMDDH9Xa2EFgWhS3q78tYO+roO/wE5cM2jMth9pSFC69gjhi
+	 aYy9Q7cBVQQleaCESL/E82QW9pWxpIwOUtkR0gt6+dhRMk3GnNC9nxBzOZY9nbmSyh
+	 KTSzvMxaT3LgAwH2iQ38N+rl1VIHJLy9qbnNCnM9fro0tpUdYQMVUTGNuJHWuTopjW
+	 9tAzIkXAZYlNvnwfjjqcIPRUG2de2dsINRKXxDbvom3rE43IBJfEb3f901EOD42sPt
+	 UJt/twgwLcRig==
+Date: Thu, 11 Sep 2025 22:35:50 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Palash Kambar <quic_pkambar@quicinc.com>
+Cc: James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_nitirawa@quicinc.com
+Subject: Re: [PATCH V2] ufs: ufs-qcom: disable lane clocks during phy hibern8
+Message-ID: <isafba2w6ddl2wqiescae6a5dab66ezuinuq7aaivriz3pnixt@j6ymwk3itcka>
+References: <20250909055149.2068737-1-quic_pkambar@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 0/5] x86/boot, KVM: Move VMXON/VMXOFF handling from
- KVM to CPU lifecycle
-To: Sean Christopherson <seanjc@google.com>, "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- linux-pm@vger.kernel.org, pbonzini@redhat.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, rafael@kernel.org, pavel@kernel.org, brgerst@gmail.com,
- david.kaplan@amd.com, peterz@infradead.org, andrew.cooper3@citrix.com,
- kprateek.nayak@amd.com, chao.gao@intel.com, rick.p.edgecombe@intel.com,
- dan.j.williams@intel.com
-References: <20250909182828.1542362-1-xin@zytor.com>
- <aMLakCwFW1YEWFG4@google.com>
-Content-Language: en-US
-From: Arjan van de Ven <arjan@linux.intel.com>
-In-Reply-To: <aMLakCwFW1YEWFG4@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250909055149.2068737-1-quic_pkambar@quicinc.com>
 
-Hi,
-> I also want to keep the code as a module, both to avoid doing VMXON unconditionally,
+On Tue, Sep 09, 2025 at 11:21:49AM GMT, Palash Kambar wrote:
+> Currently, the UFS lane clocks remain enabled even after the link
+> enters the Hibern8 state and are only disabled during runtime/system
+> suspend.This patch modifies the behavior to disable the lane clocks
+> during ufs_qcom_setup_clocks(), which is invoked shortly after the
+> link enters Hibern8 via gate work.
+> 
+> While hibern8_notify() offers immediate control, toggling clocks on
+> every transition isn't ideal due to varied contexts like clock scaling.
+> Since setup_clocks() manages PHY/controller resources and is invoked
+> soon after Hibern8 entry, it serves as a central and stable point
+> for clock gating.
+> 
+> Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
 
-can you expand on what the problem is with having VMXON unconditionally enabled?
-A lot of things are much simpler if it's on at cpu up, and turned off only at the
-down path (be it offline of kexec).. no refcounting, no locking, etc...
-so would be good to understand what the problem would be with having it always on
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
 
+- Mani
 
+> 
+> ---
+> changes from V1:
+> 1) Addressed Manivannan's comments and added detailed justification.
+> ---
+>  drivers/ufs/host/ufs-qcom.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index c0761ccc1381..83ad25ce053d 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -1092,6 +1092,13 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+>  	case PRE_CHANGE:
+>  		if (on) {
+>  			ufs_qcom_icc_update_bw(host);
+> +			if (ufs_qcom_is_link_hibern8(hba)) {
+> +				err = ufs_qcom_enable_lane_clks(host);
+> +				if (err) {
+> +					dev_err(hba->dev, "enable lane clks failed, ret=%d\n", err);
+> +					return err;
+> +				}
+> +			}
+>  		} else {
+>  			if (!ufs_qcom_is_link_active(hba)) {
+>  				/* disable device ref_clk */
+> @@ -1105,6 +1112,9 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+>  			if (ufshcd_is_hs_mode(&hba->pwr_info))
+>  				ufs_qcom_dev_ref_clk_ctrl(host, true);
+>  		} else {
+> +			if (ufs_qcom_is_link_hibern8(hba))
+> +				ufs_qcom_disable_lane_clks(host);
+> +
+>  			ufs_qcom_icc_set_bw(host, ufs_qcom_bw_table[MODE_MIN][0][0].mem_bw,
+>  					    ufs_qcom_bw_table[MODE_MIN][0][0].cfg_bw);
+>  		}
+> -- 
+> 2.34.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
