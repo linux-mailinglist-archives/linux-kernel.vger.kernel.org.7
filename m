@@ -1,274 +1,94 @@
-Return-Path: <linux-kernel+bounces-812138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB0BB53386
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:20:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71711B53388
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 15:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0A6DA85F14
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:20:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D264918981E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 13:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710CB326D58;
-	Thu, 11 Sep 2025 13:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B91A320CD9;
+	Thu, 11 Sep 2025 13:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Pm1mlMlL"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (1024-bit key) header.d=thingy.jp header.i=@thingy.jp header.b="igDt690k"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7000322A3E
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D36311594
+	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 13:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757596786; cv=none; b=OHaet87z5ESgOw0qlglgE9gVWGtmr6WfDrVKQ7xMcZCzk7YDxkYaZlv53ZUM8vQXrfufBfIKUlw5sxDB8voieYNKr1+hLlz5zg73Rxn/OZ5MHIXPoJs5g/cHnzJceQRK+pRrWI+EWbWEzn8L5gKD1inFlSiypu3UHeTwUZ6TbDg=
+	t=1757596828; cv=none; b=n2+FaFaFC4WfIwB3r4Gez7NgS00YTyQDZ8LadoHId7bH4HWd5SvbicaQy7rw9dA0a7vTfWRLRdLED8GrSpF4nXDqNA6vRe04f+KIQ5PuQx85oINvbWieWCJ8Pg/F6grnJ636Hv8ZseRXm9eqirpBozHJ59/wAdZkDe11uRuGeyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757596786; c=relaxed/simple;
-	bh=ePzqisO6Qaumrt2qktaPC5KlyCzzYBDYymDXyVRUeNs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AyNLHRGt3kREBaslqzTGO0mhetboDbPRLPtLyyLsvGH8RigkErJk2F47RNiDHhMbW1MrN+ZZ3e9O6dTGetqn/G15ObCZpdFwKYRKwkQXp1m3DL+Xaou2yEjP97uIzxrJl8gcoPznKATTZE009OSMR1Ygorc38Q5X/O6ZavPdTNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Pm1mlMlL; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3e751508f21so553968f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:19:42 -0700 (PDT)
+	s=arc-20240116; t=1757596828; c=relaxed/simple;
+	bh=O5VXtAOP/OmIhTsuzJDvPX+XiTm+lHL4PKa8YEVkr/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cy1AsPAT+Dl0xpnln81dFykdhhdD79cAC+57F8kIgT8e413zwI9ORUr+A4dxeorVR2g2CCSvk0TqeD8mrGLQGQ3cdHbDzuSGEkMYm3DHQcs6+yluHbgw1TOwmuTGbxvp07hc5wDgP+JVM8uvfVFhf0ZWBMdzn/M+nBDnx5uNmxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thingy.jp; spf=pass smtp.mailfrom=0x0f.com; dkim=pass (1024-bit key) header.d=thingy.jp header.i=@thingy.jp header.b=igDt690k; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thingy.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0x0f.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32dd4fa054bso606179a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 06:20:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757596781; x=1758201581; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y8u8fybT/8WnDYZHmGoTAq5zebxzVXyJlNWKbAi8sGg=;
-        b=Pm1mlMlLvtLgUfONiQFgDeyoXP/qjF9kPKgQb6v8/CrrRtxgGn27xzhY6Cg/Otm2mL
-         Edvwe8vQRoza/1L2soKv5A+5KFKyU/OrbzVi3sbHPGRctqYZej8ee02+auFmQOnsakYe
-         /SMfjvIeywRiGmar7CUpe6JMA5XYW9AMxhKvzVbNGIphFtW6Gd+AsaOArUPjI3VNhA/d
-         QWYX8N5aOHKW33QkDdqzY9OcPMTnkiyeCOnlC4VPlt04VybyZ5jHukBrtiP1FfqQapom
-         DioGbk/K/ewWJBspmLJV4f1iWBb73BL2Emb3CIFNMoRWRKwJsbVaXZngfRXCpqoJzif/
-         XjxQ==
+        d=thingy.jp; s=google; t=1757596826; x=1758201626; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=O5VXtAOP/OmIhTsuzJDvPX+XiTm+lHL4PKa8YEVkr/s=;
+        b=igDt690kF/o23uuWt9s3pSRwfzAOMeyiG2Dt9dDkmYpEFPS2hKWEK/6mDs8tYnG9Ii
+         3SvTnc8Wem4NflwGycWNz96PqdS4ePjQy7qQLNf0hDQt6nAhsNYT0fY62tbDoiPYb8Rq
+         WCPE6BGs8ldNs3Ad+U8qkdF4PBKJbnwRBgPgU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757596781; x=1758201581;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y8u8fybT/8WnDYZHmGoTAq5zebxzVXyJlNWKbAi8sGg=;
-        b=equevocj2+Bux+2eSaOMcksSEOREJ7J9vQRcT1mOfSYfCJhjFRB6TaUssvlE5zydnr
-         sfxz6dkWUe8iTOURrhdRjCrzZGVoGWaeozMgeycTUff0j8gJMFcPGFSDVRZF/ULPmzs2
-         03El9sEnuT+gn5Ou+tId8HXIwPPlUa1a4FQXz2fC0rsrx21GwqRR5tGgac1+6pA0BncB
-         zTeGSvbq5szWS6oQALgmD5KYb/ZEMWl5cd1FBGai9RgvHpFXkOCFw6rgmn0gex4pvL0U
-         MUwS0II22ZDtfedE8oXjp2qFi64iCLBxosWqTEtgZ42wZEMYRfuSvoTDb+stR7+eBt4m
-         c2NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJoPAyWMMjrYqOUQTkPGEA2f+zY8wpIGbnrsoZUjlLDgaCCLnp4WCJh7O3MtvVeXy/FHs7AFeKdBTCu1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDeZFJ1nN/4OrDvVI1WYnvGvesHmCpMOXLOaDp5aWQQG6ijR81
-	/47q2KnDp8AEKw9ngKbEOa8zIEdQeAwLCsDnrunOeT77VojdwsASDK9NnNtXIPbeq/A=
-X-Gm-Gg: ASbGncvPuIOPFJNy3JDue7RrB1j9gMgMavvYc4sYM6ekWo1271o6BXGduQfaM267y4D
-	qXI13FrzKnsHPOHMVLMheZTdq9qaApwMMOabGl8Se86oK1tud1OM7xxwvYsXAPo7jw/DPdx2j7w
-	xMxDJljrOFUmFo78V/g+hLD4Lh+9yRIxAbwEvnCDv+eyEs3a9yWI86+0CblYKAaj+5Iq6+bH+zS
-	rRegi7tA6IHgJWw9djLTbczOc7D1ecxkjVwAcPQPKQhbaiDpQC1zeMeL5mq/LPTNeUhZ3dkqLMs
-	8NJoq9RqwN0GIDhhAZFpMDshlZvcoEjwubLoGUY69BjNMpEyY+SsHgGZvpAAZev/WtJvKgOKj7A
-	EyZj+Zw/Is/ubwATM+c7noI8OI1IAKgA=
-X-Google-Smtp-Source: AGHT+IGS+e3rDa8fueFMFZrNNPBXI9wawcGCyt+UegFi2IhP29bW3Js2e9o7EOACRR+TFLON2p8asg==
-X-Received: by 2002:a05:6000:2681:b0:3e4:74dc:a3bb with SMTP id ffacd0b85a97d-3e64bde9298mr18368153f8f.40.1757596781068;
-        Thu, 11 Sep 2025 06:19:41 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.139])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0156d206sm27297545e9.5.2025.09.11.06.19.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 06:19:40 -0700 (PDT)
-Message-ID: <a44f590e-8c4d-498c-be7a-6c6fd6c43da8@tuxon.dev>
-Date: Thu, 11 Sep 2025 16:19:39 +0300
+        d=1e100.net; s=20230601; t=1757596826; x=1758201626;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O5VXtAOP/OmIhTsuzJDvPX+XiTm+lHL4PKa8YEVkr/s=;
+        b=MaPLkACYXbipMZyZjf3/BobW21zSdvlZlHuQqCvc2sKemJmrlnpsOvcY7M9DP0EYP8
+         nd0gCLw+eBM68vbNOHHMiC486FN0zlasQ4jXPE2HFV7lx+WWC82Txgwxv+IbAe1ZvR++
+         uMP47lDoJzfEErqTdyUrVBp7uPuDLypqUQ400nVWycRhJvoHFZC9P8vkDaaP0E1EPHo8
+         DLdt6Y021lreXQoMGNESlOWi9lV6b+At53R47Njsc9Jw+ZeJy3bXz8gwgFwSLr5aE+jJ
+         vXt7ecOGKl8YyR3/9A7H9XF0XSkbssVr8T8jxZd5Lpx29VIVaHpEl2euYQ6dnCnYdJMO
+         W4Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmIJb25H++a+nxSinqPNXtryG/Z9EwRbyCTQyXoosIztECFaCoGGrxSGIpNxvqzh7bKA/gB04cPBoOib4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRQfd9pnTkMnAlTEJx/nu40xWXZVXfCxEuwcYyqGaKFGTdId8+
+	rXs+4RaEkJvnPOVjXOWm80w5EL9fkrSDq63nxnyeEQpYjeuDHzVEvoScE0ReZXNF6uZArHkmdEP
+	1RC6jIaq5TNshNgEMVL2M8Q5HR//NxWKvgHBo71Frjw==
+X-Gm-Gg: ASbGnctbSQkwbR9ECmuz0yuYXlNabSLfFmXqdQQuUb7oiYvxIzuEFSg+a8QOBM+RT/c
+	fehZST42IqCyy6nuRmfJFe2p3hFn6zUP6vAogVVxjLF5FxuIZ4bCB3mkw/6ZfEZjjjLHcv/OeKT
+	9/DnpL+bieScnM4fIFbQDX2yASd9R/cDfb8qW5Mn9pT8ihsc3uYhow42zc8XMHAHGRuHdEuZh43
+	vFW1tyBUVuT9v/INUZn
+X-Google-Smtp-Source: AGHT+IHd5xyJNz01wwrpJhDl98T45ztJd8ELgxgaEy7iQhcAjFMhM3czPP8zaiJ5J9c40XxE1kOBKaWdJoKiiAcymxU=
+X-Received: by 2002:a17:90b:2e51:b0:32d:a37c:4e31 with SMTP id
+ 98e67ed59e1d1-32dd1ee82fbmr3766136a91.17.1757596826023; Thu, 11 Sep 2025
+ 06:20:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Fix ISEL restore on resume
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
- linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
-References: <20250908144250.1269294-1-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVVWTAvEMgv2NVg0-2f4Cs4oXp4yBM1tQYUUbMKH6EiGQ@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <CAMuHMdVVWTAvEMgv2NVg0-2f4Cs4oXp4yBM1tQYUUbMKH6EiGQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250907064349.3427600-1-daniel@thingy.jp> <20250909181322.04dc2fed@kernel.org>
+In-Reply-To: <20250909181322.04dc2fed@kernel.org>
+From: Daniel Palmer <daniel@thingy.jp>
+Date: Thu, 11 Sep 2025 22:20:11 +0900
+X-Gm-Features: Ac12FXxQ70xmDrhK5rD-Edf9LkLgt_jI1IVW96Rk2Cd3DVeZZ2SdNbJQT5z7MVc
+Message-ID: <CAFr9PXkYyyCQqHt_-75GM_uup3bSvxDgjDc0-O0t=j3UY_JN6g@mail.gmail.com>
+Subject: Re: [PATCH] eth: 8139too: Make 8139TOO_PIO depend on !NO_IOPORT_MAP
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
+	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Geert,
+Hi,
 
-On 9/11/25 12:53, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Mon, 8 Sept 2025 at 16:42, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring ISEL in
->> gpio_irq_{en,dis}able*()") dropped the configuration of ISEL from
->> rzg2l_gpio_irq_enable()/rzg2l_gpio_irq_disable() and moved it to
->> rzg2l_gpio_child_to_parent_hwirq()/rzg2l_gpio_irq_domain_free() to fix
->> spurious IRQs.
->>
->> The resume code used rzg2l_gpio_irq_enable() (called from
->> rzg2l_gpio_irq_restore()) to reconfigure the wakeup interrupts. Some
->> drivers (e.g. Ethernet) may also reconfigure interrupts in their own code,
->> eventually calling rzg2l_gpio_irq_enable(), when these are not wakeup
->> interrupts.
->>
->> After commit 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring ISEL
->> in gpio_irq_{en,dis}able*()"), ISEL was no longer configured properly after
->> resume.
->>
->> Fix this by adding rzg2l_gpio_irq_endisable() back into
->> rzg2l_gpio_irq_enable(), and by using its unlocked variant in
->> rzg2l_gpio_irq_restore(). Having IRQs enable in rzg2l_gpio_irq_enable()
-> 
-> enabled
-> 
->> should be safe with respect to spurious IRQs, as in the probe case IRQs are
->> enabled anyway in rzg2l_gpio_child_to_parent_hwirq(). No spurious IRQs
->> were detected on suspend/resume tests (executed on RZ/G3S).
->>
->> Fixes: 1d2da79708cb ("pinctrl: renesas: rzg2l: Avoid configuring ISEL in gpio_irq_{en,dis}able*(")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
-> I have to admit I don't fully understand what is going on...
+On Wed, 10 Sept 2025 at 10:13, Jakub Kicinski <kuba@kernel.org> wrote:
+> Any idea if this is a regression, or the driver would have never worked
+> on your platform / config?
 
-Sorry about that. Basically, ISEL is not properly configured as a result of
-removing rzg2l_gpio_irq_endisable() from rzg2l_gpio_irq_enable() which was
-previously called on interrupt reconfiguration path.
-
-> 
->> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
->> @@ -2428,7 +2428,7 @@ static int rzg2l_gpio_get_gpioint(unsigned int virq, struct rzg2l_pinctrl *pctrl
->>  }
->>
->>  static void rzg2l_gpio_irq_endisable(struct rzg2l_pinctrl *pctrl,
->> -                                    unsigned int hwirq, bool enable)
->> +                                    unsigned int hwirq, bool enable, bool lock)
->>  {
->>         const struct pinctrl_pin_desc *pin_desc = &pctrl->desc.pins[hwirq];
->>         u64 *pin_data = pin_desc->drv_data;
->> @@ -2443,12 +2443,16 @@ static void rzg2l_gpio_irq_endisable(struct rzg2l_pinctrl *pctrl,
->>                 addr += 4;
->>         }
->>
->> -       spin_lock_irqsave(&pctrl->lock, flags);
->> +       if (lock)
->> +               spin_lock_irqsave(&pctrl->lock, flags);
->> +
->>         if (enable)
->>                 writel(readl(addr) | BIT(bit * 8), addr);
->>         else
->>                 writel(readl(addr) & ~BIT(bit * 8), addr);
->> -       spin_unlock_irqrestore(&pctrl->lock, flags);
->> +
->> +       if (lock)
->> +               spin_unlock_irqrestore(&pctrl->lock, flags);
->>  }
-> 
-> I am not so fond of these "if (lock) ..."-constructs, especially as
-> the function now takes two bool parameters, which is error-prone.
-> 
-> What about renaming rzg2l_gpio_irq_endisable() to
-> __rzg2l_gpio_irq_endisable(), and moving the locking to a wrapper
-> rzg2l_gpio_irq_endisable()?
-
-That was my other option but, if I remember correctly, it generated
-duplicated code, thus I ended up with this.
-
-> 
->     static void __rzg2l_gpio_irq_endisable(struct rzg2l_pinctrl *pctrl,
->                                          unsigned int hwirq, bool enable)
->     {
->             /* old functionality without locking */
->             ...
->     }
-> 
->     static void rzg2l_gpio_irq_endisable(struct rzg2l_pinctrl *pctrl,
->                                         unsigned int hwirq, bool enable)
->     {
->             unsigned long flags;
-> 
->             spin_lock_irqsave(&pctrl->lock, flags);
->             __rzg2l_gpio_irq_endisable(pctrl, hwirq, enable);
->             spin_unlock_irqrestore(&pctrl->lock, flags);
->     }
-> 
-> Then no existing callers of rzg2l_gpio_irq_endisable() need to be
-> changed.
-> 
->> @@ -2460,15 +2464,22 @@ static void rzg2l_gpio_irq_disable(struct irq_data *d)
->>         gpiochip_disable_irq(gc, hwirq);
->>  }
->>
->> -static void rzg2l_gpio_irq_enable(struct irq_data *d)
->> +static void rzg2l_gpio_irq_enable_helper(struct irq_data *d, bool lock)
-> 
-> Here we can't do without the "lock" parameter, unless duplicating the
-> full body, so this is fine.  I'd rename it to __rzg2l_gpio_irq_enable(),
-> though.
-> 
->>  {
->>         struct gpio_chip *gc = irq_data_get_irq_chip_data(d);
->> +       struct rzg2l_pinctrl *pctrl = container_of(gc, struct rzg2l_pinctrl, gpio_chip);
->>         unsigned int hwirq = irqd_to_hwirq(d);
->>
->>         gpiochip_enable_irq(gc, hwirq);
->> +       rzg2l_gpio_irq_endisable(pctrl, hwirq, true, lock);
-> 
-> if (lock)
->     rzg2l_gpio_irq_endisable(pctrl, hwirq, true);
-> else
->     __rzg2l_gpio_irq_endisable(pctrl, hwirq, true);
-> 
->>         irq_chip_enable_parent(d);
->>  }
->>
->> +static void rzg2l_gpio_irq_enable(struct irq_data *d)
->> +{
->> +       rzg2l_gpio_irq_enable_helper(d, true);
-> 
-> __rzg2l_gpio_irq_enable(d, true);
-> 
->> +}
->> +
->>  static int rzg2l_gpio_irq_set_type(struct irq_data *d, unsigned int type)
->>  {
->>         return irq_chip_set_type_parent(d, type);
->> @@ -2617,7 +2628,7 @@ static void rzg2l_gpio_irq_restore(struct rzg2l_pinctrl *pctrl)
->>                 spin_lock_irqsave(&pctrl->lock, flags);
->>                 ret = rzg2l_gpio_irq_set_type(data, irqd_get_trigger_type(data));
->>                 if (!ret && !irqd_irq_disabled(data))
->> -                       rzg2l_gpio_irq_enable(data);
->> +                       rzg2l_gpio_irq_enable_helper(data, false);
-> 
-> __rzg2l_gpio_irq_enable(data, false);
-> 
-> Before, the lock was taken again, while it was already held.
-> Didn't this cause a deadlock?
-
-The only locking issue I've seen around this code was fixed by commit
-a39741d38c04 ("pinctrl: renesas: rzg2l: Use
-spin_{lock,unlock}_irq{save,restore}"
-
-I'll use the approach proposed by you in the next version.
-
-Thank you for your review,
-Claudiu
-
-> 
->>                 spin_unlock_irqrestore(&pctrl->lock, flags);
->>
->>                 if (ret)
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-
+I don't think this is a regression. I think the PIO mode would have
+never worked.
+Without that option the driver probes correctly.
 
