@@ -1,113 +1,162 @@
-Return-Path: <linux-kernel+bounces-812014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7418EB531B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A06ACB531B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F4AD7A3AB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5959A5682B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DC031DDAF;
-	Thu, 11 Sep 2025 12:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4D531D757;
+	Thu, 11 Sep 2025 12:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="psZsUwZt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nyp5/pkS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C870E3128D4;
-	Thu, 11 Sep 2025 12:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8ADF1A2387;
+	Thu, 11 Sep 2025 12:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757592296; cv=none; b=SPx5QsHjuIcfjuSrO739i0VkbHYTACJGPQ2rpbO4yOO/FxSUJXWCwQSyLxxIdbVLikN+eRJE8kFcecyJkB0xc44lVbtUYRbPyx3zXuQ1QkFE11CW4CDx2suBE6U+a0h/+BVDzSv5VNh1+Rotn5kIJRI8iH/C9BWuYdOLGF1vJQc=
+	t=1757592373; cv=none; b=t7cKsPCdfVpZcIFVyTVtO8RCTW/oC/4Q/DZ8J2CacKJROuxP3yFifBK6YgeKK7sW7TVe3IHzkwYnYXgCt/qv8u1kClgIU7fKfGLnohFw87FT8JPgEPnH7VCEAmSsGg7logEihGLajSd3l22AoGfSb9cABE781a8G8AIZsrfnc7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757592296; c=relaxed/simple;
-	bh=PfSG7J+D1YXvousTbGjSna3BrbXANzA+C2Uksj373fI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pYxHYmv79ovHTxpOU6U8rXaA66/E8KuUvTTmdMTo2BjsfdWott7BYB/Ziv/9IIcrU9bFPI9eO/CPanenqjbGG9TaMHbf69Z4YFxx2cOO00KgfHcqkapVtMAkVdquzLypx3UCcCqBTCHOANOXGGJaeIEyaUydLJzOyBVwzTSwkyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=psZsUwZt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C91C4CEF0;
-	Thu, 11 Sep 2025 12:04:55 +0000 (UTC)
+	s=arc-20240116; t=1757592373; c=relaxed/simple;
+	bh=OSJ2jcFpwfXRBQx9mfDbM5b/WgIMM0wznG9i3vTrIuY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TkWY/FLKLWOxRoZQyJ79yNhH9cEJLUoShtqmtSF5lrPGjaj2bLM25RvNFFGwdHsGl36qpXMJ8GH6jmVXb7JTs78VPlsfTm4U0T/Xqvc/93obchl/OsQBKXefxdwWqKKbkmwXpCOn7Z5YmuQ/SLQU1TtPoQZ4T1FVdufAWNKn1rI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nyp5/pkS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C273C4CEF0;
+	Thu, 11 Sep 2025 12:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757592296;
-	bh=PfSG7J+D1YXvousTbGjSna3BrbXANzA+C2Uksj373fI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=psZsUwZtyah2SCutNeT6o8/7OoRfHDDNXdZ3AJk3u1T4sfHQQJIO8PpovNfJYMsmU
-	 0SiopT3PTQRlVuebAYQGIOkXsb/gqSNEmFv5KS3bWHaPzV+gyVKolMNepRSB0R/YDa
-	 oiQDJboMN4GwDkCuQRHE1UpKGa00Wi78J0CsnteBdJb/CWRaLiPK/MZqLnsOxDtwsP
-	 OsbkR8xukRqU8h6bn4lm/EG1DnZwFhB05tN8PxSjKIuNO5ttOE9HGUTsJeYuhT5fTq
-	 xTgf3uNHpj/aHTfL7UzLHDHrHYBokbSO6txAOrnYug6OW9IbhQtCKt4eya8TUf4ER4
-	 7mWLhwZmxXUaw==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux ACPI <linux-acpi@vger.kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>
-Subject: [PATCH v2] cpufreq: ACPI: Use on_each_cpu_mask() in drv_write()
-Date: Thu, 11 Sep 2025 14:04:53 +0200
-Message-ID: <5044667.31r3eYUQgx@rafael.j.wysocki>
-Organization: Linux Kernel Development
+	s=k20201202; t=1757592373;
+	bh=OSJ2jcFpwfXRBQx9mfDbM5b/WgIMM0wznG9i3vTrIuY=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=nyp5/pkSEPU4nb/IushypKjW6jEAJhrBGduY6GreNHoH/wvjbG2NouOvyhNawBf8r
+	 L8OYf9AYhIwmAfkRImAGl+lYyqyFe18Gry13Egdrp0LA/MuGMkMb8dzglHAG2Yn0h6
+	 YAIE4ZHIfk+coYcRtrrD/mi/WHq74tN/IPwunfQFrQLV5HAWxe3sfDDf3UmWTnbgyl
+	 v4cYJehGLcjshyNrip+KAYoCftezRRpEFJOnt5hgQBRPDXZfJlyXxEoDlWlj8kacXR
+	 BWgJTfmjmg/RtcXzQxR4/OzVEPCvpzAJiGW1hB6Qo63aeGwU9x62F/5OZYEomwN5lF
+	 7nlAlxENJMwLA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id CCDFDCE0C39; Thu, 11 Sep 2025 05:06:11 -0700 (PDT)
+Date: Thu, 11 Sep 2025 05:06:11 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Zqiang <qiang.zhang@linux.dev>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, frederic@kernel.org,
+	neeraj.upadhyay@kernel.org, boqun.feng@gmail.com, urezki@gmail.com,
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] srcu/tiny: Remove preempt_disable/enable() in
+ srcu_gp_start_if_needed()
+Message-ID: <ab97f38c-2750-4cd7-a9a4-6c25fc1cc45d@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250909133928.615218-1-qiang.zhang@linux.dev>
+ <4c7d977b-7d09-48e0-9a88-bae93fa5e401@paulmck-laptop>
+ <20250910143620.GA561834@joelbox2>
+ <e5e69dc3-ebd3-47ae-b193-bc4b2de36904@paulmck-laptop>
+ <70fa9fd07e4fe2b1b498109f3450804e731fd7ce@linux.dev>
+ <430d5714-4a00-4a75-b763-34918f8017c3@paulmck-laptop>
+ <1133458227af4b9a7a0cee284502a0643f1fad3f@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1133458227af4b9a7a0cee284502a0643f1fad3f@linux.dev>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Sep 11, 2025 at 11:46:36AM +0000, Zqiang wrote:
+> > 
+> > On Thu, Sep 11, 2025 at 12:36:45AM +0000, Zqiang wrote:
+> > 
+> > > 
+> > > On Wed, Sep 10, 2025 at 10:36:20AM -0400, Joel Fernandes wrote:
+> > >  
+> > >  > 
+> > >  > [..]
+> > >  > > kernel/rcu/srcutiny.c | 4 +---
+> > >  > > 1 file changed, 1 insertion(+), 3 deletions(-)
+> > >  > > 
+> > >  > > diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+> > >  > > index b52ec45698e8..b2da188133fc 100644
+> > >  > > --- a/kernel/rcu/srcutiny.c
+> > >  > > +++ b/kernel/rcu/srcutiny.c
+> > >  > > @@ -181,10 +181,9 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
+> > >  > > {
+> > >  > > unsigned long cookie;
+> > >  > > 
+> > >  > > - preempt_disable(); // Needed for PREEMPT_LAZY
+> > >  > > + lockdep_assert_preemption_disabled();
+> > >  > 
+> > >  > nit: Do we still want to keep the comment that the expectation of preemption
+> > >  > being disabled is for the LAZY case?
+> > >  > 
+> > >  Good point, and I do believe that we do. Zqiang, any reason not to
+> > >  add this comment back in?
+> > >  
+> > >  in rcu-tree, this commit:
+> > >  
+> > >  (935147775c977 "EXP srcu: Enable Tiny SRCU On all CONFIG_SMP=n kernels")
+> > >  
+> > >  make preempt disable needed for CONFIG_PREEMPT=y or CONFIG_PREEMPT_LAZY=y
+> > >  when the CONFIG_SMP=n. do we need to replace "Needed for PREEMPT_LAZY"
+> > >  comments with "Needed for PREEMPT or PREEMPT_LAZY"?
+> > > 
+> > Good point as well, thank you! And I need to decide whether I should
+> > send that patch upstream. Its original purpose was to test PREEMPT_LAZY=y
+> > better than could be tested with PREEMPT_LAZY.
+> > 
+> > Thoughts?
+> 
+> I will add "Needed for PREEMPT_LAZY" comments, if this commit (935147775c977) is
+> send to upstream, will update comments again in the future.
 
-Make drv_write() call on_each_cpu_mask() instead of using an open-coded
-equivalent of the latter.
+That sounds good to me, thank you!
 
-Also remove a comment mentioning the smp_call_function_many() usage
-which is not particularly useful anyway.
+							Thanx, Paul
 
-No intentional functional impact.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>
----
-
-v1 -> v2:
-   * Drop a comment mentioning smp_call_function_many() usage (Mario)
-   * Update changelog
-
----
- drivers/cpufreq/acpi-cpufreq.c |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
---- a/drivers/cpufreq/acpi-cpufreq.c
-+++ b/drivers/cpufreq/acpi-cpufreq.c
-@@ -318,7 +318,6 @@ static u32 drv_read(struct acpi_cpufreq_
- 	return cmd.val;
- }
- 
--/* Called via smp_call_function_many(), on the target CPUs */
- static void do_drv_write(void *_cmd)
- {
- 	struct drv_cmd *cmd = _cmd;
-@@ -335,14 +334,8 @@ static void drv_write(struct acpi_cpufre
- 		.val = val,
- 		.func.write = data->cpu_freq_write,
- 	};
--	int this_cpu;
- 
--	this_cpu = get_cpu();
--	if (cpumask_test_cpu(this_cpu, mask))
--		do_drv_write(&cmd);
--
--	smp_call_function_many(mask, do_drv_write, &cmd, 1);
--	put_cpu();
-+	on_each_cpu_mask(mask, do_drv_write, &cmd, true);
- }
- 
- static u32 get_cur_val(const struct cpumask *mask, struct acpi_cpufreq_data *data)
-
-
-
+> Thanks
+> Zqiang
+> 
+> > 
+> >  Thanx, Paul
+> > 
+> > > 
+> > > Thanks
+> > >  Zqiang
+> > >  
+> > >  
+> > >  
+> > >  Thanx, Paul
+> > >  
+> > >  > 
+> > >  > thanks,
+> > >  > 
+> > >  > - Joel
+> > >  > 
+> > >  > 
+> > >  > > cookie = get_state_synchronize_srcu(ssp);
+> > >  > > if (ULONG_CMP_GE(READ_ONCE(ssp->srcu_idx_max), cookie)) {
+> > >  > > - preempt_enable();
+> > >  > > return;
+> > >  > > }
+> > >  > > WRITE_ONCE(ssp->srcu_idx_max, cookie);
+> > >  > > @@ -194,7 +193,6 @@ static void srcu_gp_start_if_needed(struct srcu_struct *ssp)
+> > >  > > else if (list_empty(&ssp->srcu_work.entry))
+> > >  > > list_add(&ssp->srcu_work.entry, &srcu_boot_list);
+> > >  > > }
+> > >  > > - preempt_enable();
+> > >  > > }
+> > >  > > 
+> > >  > > /*
+> > >  > > -- 
+> > >  > > 2.48.1
+> > >  > >
+> > >  >
+> > >
+> >
 
