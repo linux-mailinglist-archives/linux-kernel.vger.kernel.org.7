@@ -1,262 +1,133 @@
-Return-Path: <linux-kernel+bounces-811873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B26E3B52EF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:48:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA20B52EFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:52:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60F6D17DBFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:48:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A77B1BC7BE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 10:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F382D7DD4;
-	Thu, 11 Sep 2025 10:48:38 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E7643101C6;
+	Thu, 11 Sep 2025 10:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nALQ5mM8"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEAA1482F2;
-	Thu, 11 Sep 2025 10:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F863347D0;
+	Thu, 11 Sep 2025 10:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757587717; cv=none; b=p0FRcxOOuo+zNcN//0WRWr8CCgpJ3KLqWjTQrOUgDuY3LdJCkGGixYx2npgkg4vrUqGrHcGXSao0u8Vbkp+PXFh/mtBFlQOuOUI4p6BiD+q9G5ZvqZxgPq2IGpboJgCwES+8RtabkI7jfNtul0ONCk1vKIyix9r7G/NiFIKv7KY=
+	t=1757587921; cv=none; b=O4e45xYhDzCU9EUkyv70YZBFyjAVr/I0cZ3UOv4FW2m2+xk4I+UkMRWDBx2FgSP/IIL7wdHGZTT3/DidN/uDzweu07N/mceQG98lvZ4GMmlhilAyVpnYBhUenW3RCUnL4Lt3esoJFUhC1da8Rt5v8np6Tj76tYwNg0IvZ1Wj0vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757587717; c=relaxed/simple;
-	bh=DsixxijLlQvnubZxi4JzQTtHQTj0CSjUiFJ3c+Ght1M=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aHGQxNbJHWeP2gXY0I5fovlgSRBqP6sQaOgP7TmsTRGSkRa5/pwiW216Wpe2AZN8s7ofjEBzgZpsi1RNjIJCGl6X2GrsP3mjVsM6IGaaKyBD27l7VT9JU++QwHiytx0CI5Vv3v+kxzqa4eSh5AAaS95JxGN2cx9AotXZ7NQvZ/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cMvLq3F3rz6L5WM;
-	Thu, 11 Sep 2025 18:44:19 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id C88241402F5;
-	Thu, 11 Sep 2025 18:48:32 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 11 Sep
- 2025 12:48:31 +0200
-Date: Thu, 11 Sep 2025 11:48:30 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 01/29] ACPI / PPTT: Add a helper to fill a cpumask
- from a processor container
-Message-ID: <20250911114830.00002930@huawei.com>
-In-Reply-To: <20250911114337.0000487e@huawei.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-2-james.morse@arm.com>
-	<20250911114337.0000487e@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757587921; c=relaxed/simple;
+	bh=XDfnGzQvgAsoBlF/K94mzdMnT8O5TmQEWbVoEbnzsy0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=l9P5Xhm/0Blxf1RJooxiDn5K7ksYrC6hSQopu4atPPjT7snwYFu5rWzwR3x0MmkViApwi2UJJQxQqmTJUKsmzBsoGYbBe3WIpZz9wusOV69YR03QrAenRhiXW86lBGW1EnU5yzu0gjZ8iiuQKiol4xhGFqTma3srT/4G8mO0YPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nALQ5mM8; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-336cdca667aso4662561fa.0;
+        Thu, 11 Sep 2025 03:51:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757587918; x=1758192718; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0ixdR1P5S055FmVwQTh6Cai1jKWFGKTiPJeK5lzYK6I=;
+        b=nALQ5mM83NVCEyn4ACzXNXDxXIwmwYmOzWFDKr1MiRsM5qdVlblMXeBTCxOimDdu7J
+         sYCHa80S+9fqxMUJ9d5FwkhWfLmv1j26CsNhxEGnmlFw+P1jf+/lcjIZleMB8mnpzUVp
+         uIUbPKskBniKB+Iz7AULLLmCPivW0k9Hd4mqkwmLiAO+0Kfu9IHFz3wLq+gqY7pukwPe
+         LW9OaJr/4RivNDbqLKsFbeDk5USnZYz6dvO8HG7spYfdhuD8cXkuud2DZVrC3yPrljHd
+         jreD8xEcvQOO40v04Kdxau+lAQWef2l2DEBR7ZIP1kwIMnl0t2IOhlxlSF+TlxUit/ju
+         4AiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757587918; x=1758192718;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0ixdR1P5S055FmVwQTh6Cai1jKWFGKTiPJeK5lzYK6I=;
+        b=NvWmSNBpcHaLODuQngwLVdPdIpQrsXCLcRhG3fvzyaG6Znt7eds3ZvjJa4i9DD1T4f
+         CKBLGawQDd+P23gFogFh+ItfoxRzV8Bjo6yFrKKtxMqs2SCWyzDOkW6ADfDy4KQiZ1nP
+         a3mOjmoDaKeuLysfNit21b3pzSjqrujYTmidcEkU0MscDuNvcIREii5XQMYbUCMNO9hi
+         Eu+UUGHfE5vno7Uyi4S1j9XpXj3JbibHm++wvA4Dmd/kgvztpBFYzkUKGGYDA9vwBIx8
+         Jw1CWvz5BcKE6QKoQjmKkSVmWspUyNDpTzMQXwKmUMGIMg+Meb6FF+5vuixQhmOxOrep
+         k3NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4GBrEiGTPLSKADk4ggLQcA6lETscxVSVtAUUtrfZjYnVRr3F+uTtbJhn1t4zb8mKAXxdknCMK01g=@vger.kernel.org, AJvYcCX8YmzfGwqpW8SQLdLoTnz80mMrXH+nuXn5ksI33mow44mjChCBiIrv7t9P8v+kxi0ShxySZNpTLaoJMxYs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjn0VdXAaYMhdo6gDzWphjK2K6EeFJuCAYgZi7h+vpRw+H6x0+
+	mqzC2BF7turLFBkc7NP4IVAxoBWpJ3AIm2OLvIAqTMHRvmCiuUSL0016pftRkG5qZJXFPlSoCUy
+	atSxIOyD/qQ64ltnazrOPbjbyknTs36QgndYTazZr7g==
+X-Gm-Gg: ASbGncsbnV26AK1Xp8NuiL6lDyi6WzoGZbQRW/ys1+lnwe8b7JFYaV2nDha7npCdmiO
+	m1uR8Wd1XFOcmP0KZNKWsJflt76GBVlF/rX9fr4bN6JX0iUNaRB/DqKiCZVVvwlRv+C0wu/4tc6
+	8F2W7qHW8Oth/1GIr4AC9U6j8pNNae918GucuxH3/4+Kk/r1lUWRwPyj0wIGWBScPvUcp43v6sE
+	W8yJtOzf/9TRu/fYBw=
+X-Google-Smtp-Source: AGHT+IHwmeQF/QpdMejZQgqtbEtmtPGeG7MA6HXsyBPQloibGMLBag0P50QIFGu55kfsGA2ooOUfhh9nPeaYGHL3tzQ=
+X-Received: by 2002:a2e:bc08:0:b0:350:580c:dee6 with SMTP id
+ 38308e7fff4ca-350580ce6d8mr547721fa.37.1757587917540; Thu, 11 Sep 2025
+ 03:51:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500011.china.huawei.com (7.191.174.215) To
- frapeml500008.china.huawei.com (7.182.85.71)
+From: Ariel Silver <arielsilver77@gmail.com>
+Date: Thu, 11 Sep 2025 13:51:45 +0300
+X-Gm-Features: Ac12FXwhLXpMFLrgl-uHRsXdAD7Zedj745SedLjljUtczYbDYAGRw8CjHjbqB_k
+Message-ID: <CACKMdfmZo0520HqP_4tBDd5UVf8UY7r5CycjbGQu+8tcGge99g@mail.gmail.com>
+Subject: [PATCH v2] docs/bpf: clarify ret handling in LSM BPF programs
+To: bpf@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: kpsingh@kernel.org, mattbobrowski@google.com, ast@kernel.org, 
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, sdf@fomichev.me, haoluo@google.com, 
+	jolsa@kernel.org, corbet@lwn.net
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 11 Sep 2025 11:43:37 +0100
-Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
+v2: Fixed trailing whitespace (reported by checkpatch.pl)
 
-> On Wed, 10 Sep 2025 20:42:41 +0000
-> James Morse <james.morse@arm.com> wrote:
-> 
-> > The ACPI MPAM table uses the UID of a processor container specified in
-> > the PPTT to indicate the subset of CPUs and cache topology that can
-> > access each MPAM System Component (MSC).
-> > 
-> > This information is not directly useful to the kernel. The equivalent
-> > cpumask is needed instead.
-> > 
-> > Add a helper to find the processor container by its id, then walk
-> > the possible CPUs to fill a cpumask with the CPUs that have this
-> > processor container as a parent.
-> > 
-> > CC: Dave Martin <dave.martin@arm.com>
-> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Signed-off-by: James Morse <james.morse@arm.com>  
-> 
-> Hi James,
-> 
-> Sorry I missed v1.  Busy few weeks.
-> 
-> I think one resource leak plus a few suggested changes that
-> I'm not that bothered about.
-Ignore the resource leak. I didn't read acpi_get_pptt() properly.  No bug there.
+Docs currently suggest that all attached BPF LSM programs always run
+and that ret simply carries the previous return code. In reality,
+execution stops as soon as one program returns non-zero. This is
+because call_int_hook() breaks out of the loop when RC != 0, so later
+programs are not executed.
 
-So consider the comments below, but I'm fine with this as is.
+Signed-off-by: arielsilver77@gmail.com <arielsilver77@gmail.com>
+---
+ Documentation/bpf/prog_lsm.rst | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+diff --git a/Documentation/bpf/prog_lsm.rst b/Documentation/bpf/prog_lsm.rst
+index ad2be02f3..92bfb64c2 100644
+--- a/Documentation/bpf/prog_lsm.rst
++++ b/Documentation/bpf/prog_lsm.rst
+@@ -66,21 +66,17 @@ example:
 
-> 
-> Jonathan
-> 
-> 
-> > ---
-> > Changes since v1:
-> >  * Replaced commit message with wording from Dave.
-> >  * Fixed a stray plural.
-> >  * Moved further down in the file to make use of get_pptt() helper.
-> >  * Added a break to exit the loop early.
-> > 
-> > Changes since RFC:
-> >  * Removed leaf_flag local variable from acpi_pptt_get_cpus_from_container()
-> > 
-> > Changes since RFC:
-> >  * Dropped has_leaf_flag dodging of acpi_pptt_leaf_node()
-> >  * Added missing : in kernel-doc
-> >  * Made helper return void as this never actually returns an error.
-> > ---
-> >  drivers/acpi/pptt.c  | 83 ++++++++++++++++++++++++++++++++++++++++++++
-> >  include/linux/acpi.h |  3 ++
-> >  2 files changed, 86 insertions(+)
-> > 
-> > diff --git a/drivers/acpi/pptt.c b/drivers/acpi/pptt.c
-> > index 54676e3d82dd..1728545d90b2 100644
-> > --- a/drivers/acpi/pptt.c
-> > +++ b/drivers/acpi/pptt.c
-> > @@ -817,3 +817,86 @@ int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
-> >  	return find_acpi_cpu_topology_tag(cpu, PPTT_ABORT_PACKAGE,
-> >  					  ACPI_PPTT_ACPI_IDENTICAL);
-> >  }  
-> 
-> > +/**
-> > + * acpi_pptt_get_cpus_from_container() - Populate a cpumask with all CPUs in a
-> > + *                                       processor container
-> > + * @acpi_cpu_id:	The UID of the processor container.
-> > + * @cpus:		The resulting CPU mask.
-> > + *
-> > + * Find the specified Processor Container, and fill @cpus with all the cpus
-> > + * below it.
-> > + *
-> > + * Not all 'Processor' entries in the PPTT are either a CPU or a Processor
-> > + * Container, they may exist purely to describe a Private resource. CPUs
-> > + * have to be leaves, so a Processor Container is a non-leaf that has the
-> > + * 'ACPI Processor ID valid' flag set.
-> > + *
-> > + * Return: 0 for a complete walk, or an error if the mask is incomplete.
-> > + */
-> > +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus)
-> > +{
-> > +	struct acpi_pptt_processor *cpu_node;
-> > +	struct acpi_table_header *table_hdr;
-> > +	struct acpi_subtable_header *entry;
-> > +	unsigned long table_end;
-> > +	u32 proc_sz;
-> > +
-> > +	cpumask_clear(cpus);
-> > +
-> > +	table_hdr = acpi_get_pptt();  
-> 
-> This calls acpi_get_table() so you need to put it again or every call
-> to this leaks a reference count.  I messed around with DEFINE_FREE() for this
-> but it doesn't fit that well as the underlying call doesn't return the table.
-> This one does though so you could do a pptt specific one.  
-> 
-> Or just acpi_put_table(table_hdr); at exit path from this function.
-> 
-> 
-> > +	if (!table_hdr)
-> > +		return;
-> > +
-> > +	table_end = (unsigned long)table_hdr + table_hdr->length;
-> > +	entry = ACPI_ADD_PTR(struct acpi_subtable_header, table_hdr,
-> > +			     sizeof(struct acpi_table_pptt));  
-> Hmm. Not related to this patch but I have no idea why acpi_get_pptt()
-> doesn't return a struct acpi_table_pptt as if it did this would be a simple
-> + 1 and not require those who only sometimes deal with ACPI code to go
-> check what that macro actually does!
-> 
-> 
-> > +	proc_sz = sizeof(struct acpi_pptt_processor);  
-> Maybe sizeof (*cpu_node) is more helpful to reader.
-> Also shorter so you could do
-> 	while ((unsigned long)entry + sizeof(*cpu_node) <= table_end)
-> 
-> > +	while ((unsigned long)entry + proc_sz <= table_end) {
-> > +		cpu_node = (struct acpi_pptt_processor *)entry;  
-> 
-> For me, assigning this before checking the type is inelegant.
-> but the nesting does get deep without it so I guess this is ok maybe, though
-> I wonder if better reorganized to combine a different bunch of conditions.
-> I think this is functionally identival.
-> 
-> 		if (entry->type == ACPI_PTT_TYPE_PROCESSOR) {
-> 			struct acpi_pptt_processor *cpu_node = 
-> 				(struct acpi_pptt_processor *)entry;
-> 			if ((cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) &&
-> 			    (!acpi_pptt_leaf_node(table_hdr, cpu_node) &&
-> 			    (cpu_node->acpi_processor_id == acpi_cpu_id)) {
-> 				acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
-> 				break;
-> 		
-> 			}
-> 		}
-> 		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
-> 				     entry->length);
-> 
-> More generally I wonder if it is worth adding a for_each_acpi_pptt_entry() macro.
-> There is some precedence in drivers acpi such as for_each_nhlt_endpoint()
-> 
-> That's probably material for another day though unless you think it brings
-> enough benefits to do it here.
-> 
-> 
-> > +		if (entry->type == ACPI_PPTT_TYPE_PROCESSOR &&
-> > +		    cpu_node->flags & ACPI_PPTT_ACPI_PROCESSOR_ID_VALID) {
-> > +			if (!acpi_pptt_leaf_node(table_hdr, cpu_node)) {
-> > +				if (cpu_node->acpi_processor_id == acpi_cpu_id) {
-> > +					acpi_pptt_get_child_cpus(table_hdr, cpu_node, cpus);
-> > +					break;
-> > +				}
-> > +			}
-> > +		}
-> > +		entry = ACPI_ADD_PTR(struct acpi_subtable_header, entry,
-> > +				     entry->length);
-> > +	}
-> > +}
-> > diff --git a/include/linux/acpi.h b/include/linux/acpi.h
-> > index 1c5bb1e887cd..f97a9ff678cc 100644
-> > --- a/include/linux/acpi.h
-> > +++ b/include/linux/acpi.h
-> > @@ -1541,6 +1541,7 @@ int find_acpi_cpu_topology(unsigned int cpu, int level);
-> >  int find_acpi_cpu_topology_cluster(unsigned int cpu);
-> >  int find_acpi_cpu_topology_package(unsigned int cpu);
-> >  int find_acpi_cpu_topology_hetero_id(unsigned int cpu);
-> > +void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id, cpumask_t *cpus);
-> >  #else
-> >  static inline int acpi_pptt_cpu_is_thread(unsigned int cpu)
-> >  {
-> > @@ -1562,6 +1563,8 @@ static inline int find_acpi_cpu_topology_hetero_id(unsigned int cpu)
-> >  {
-> >  	return -EINVAL;
-> >  }
-> > +static inline void acpi_pptt_get_cpus_from_container(u32 acpi_cpu_id,
-> > +						     cpumask_t *cpus) { }
-> >  #endif
-> >  
-> >  void acpi_arch_init(void);  
-> 
+    SEC("lsm/file_mprotect")
+    int BPF_PROG(mprotect_audit, struct vm_area_struct *vma,
+-            unsigned long reqprot, unsigned long prot, int ret)
++            unsigned long reqprot, unsigned long prot)
+    {
+-       /* ret is the return value from the previous BPF program
+-        * or 0 if it's the first hook.
+-        */
+-       if (ret != 0)
+-           return ret;
+-
+        int is_heap;
 
+        is_heap = (vma->vm_start >= vma->vm_mm->start_brk &&
+               vma->vm_end <= vma->vm_mm->brk);
+
+        /* Return an -EPERM or write information to the perf events buffer
+-        * for auditing
++        * for auditing.
++        * Returning a non-zero value will stop the chain of
++        * LSM BPF programs attached to the same hook.
+         */
+        if (is_heap)
+            return -EPERM;
+-- 
+2.50.1
 
