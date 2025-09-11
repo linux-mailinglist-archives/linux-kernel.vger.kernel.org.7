@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-811321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-811322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34432B52770
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 05:57:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9CEB52774
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 06:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10CD465F56
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 03:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E859F6833D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 04:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6811E221FC7;
-	Thu, 11 Sep 2025 03:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CB622F772;
+	Thu, 11 Sep 2025 04:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QjQyHZ4c"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b="T+c3U+WP"
+Received: from mta22.hihonor.com (mta22.hihonor.com [81.70.192.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E17329F20
-	for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 03:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140288479;
+	Thu, 11 Sep 2025 04:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757563024; cv=none; b=Oa2h2BpefFT1LVow2Yg+cB33/cyLRw96q60PyRdKwl9rCF7xsacw1phLH4FdLxgxR721nbAf6dPDTjpkHPBA/G5pdFzu93lBLM/U/ti6pw0dQh4xqwsFnX1YRIWoxKhFSXnwYDKpJEBuCNUiIGJ/i2mV3LpHljSHOVUnSnzygbE=
+	t=1757563579; cv=none; b=Z6KKeZLYvmIUFaLqeyLqSD1JrcB98UtCV4Uu9U5slQNG6EbNfEjcrh56UXIOlfO7XndDq+EQF6rzdDL5DeydyKfrqahx+1YsxGzLw60+Qnqn297UGn48NUaHh34Leu0PLu3JX2Ff8W3eRvq/pMHAz2rLT4YNx/hf9Swt0oavET4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757563024; c=relaxed/simple;
-	bh=Ejf0TercgLfyTzzpuk+kw4YdzKq+khN21Og4i4uVnok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TnYR6o1f71p9ReHxvLCtKWlctDPrMkGOIkpP2FT4zIOUxLwfWEAKiYSrfhWMur58mXBFT/Ox1gMg+a1I7TfoO6mcfg+4e6Y/UgJZ+bwgqiSmlLHxY4fJEkiX2iuGDofq7vdAEqJsv/FLIt2knYzMRuiIahNQ0NZzzX23h3KjTQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QjQyHZ4c; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-408c236c500so95855ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 10 Sep 2025 20:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757563022; x=1758167822; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IlmnBtCw23cZtEA4nvpZGoSW/X3Mps3sfK77rUgy40w=;
-        b=QjQyHZ4cS9DE6aR0DO2M7e3vdCUf7lRKjJiDc1hk2gsGfbvRSsRgrFLkLzPvOe1toO
-         CZBQ581Jpyz0naRJvO0TX23SqkLqFPxjgmJg9tTAcD7ryCMNtMpWZleaHc19c2tGyxnw
-         wrA5FHdVqwouZOfRR6YXp2lGLYP9QP3cQRkwRPojxuGCOPGVeU1135YfBU6q/V9EVOXe
-         MYcestABNwRU5Is9tfk/dFApNfLr8a/sL30fNDuPYiebXtAvp4wi9jAK5CfFid10Q7Ov
-         H4CoSVAUsFCEcxVlWIxwaLyRSzZJHwjhIGcIVYM5XJDeTwX4vX5LJC7dFsaughVBLs2b
-         PB2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757563022; x=1758167822;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IlmnBtCw23cZtEA4nvpZGoSW/X3Mps3sfK77rUgy40w=;
-        b=QisFm+YGmRiS6HtPyqPq/PGOhgKRLl5ZifFPvx25X4v/KLD8pB9iw0w165890yQpEW
-         0/gfyixPZKTdy18ta2mkJx5+3K6D8wuXd+HrTzskNSRnVZqR8//dAHHNBfcpxAXf0qdo
-         2Mn/jwiuWGL423uj3C/laZ7s8Apnjh7tQR8A58Wxrp4V8u8CYl08v4Ux3E26/eMNdLbJ
-         VeUWxALUDrofnPN5K6vJO9KEC3iNf4uIBkJwox53VXv14bwYBDAcxlBCKiE5tnm1eUvp
-         p2cpjzin/U8Vc37SziTUcBdW7/AWgaLOfvsEUS4hDQlflTgMtWxRSrj9PT9wxrYIw0Tf
-         MVpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVGGNoBpaQ9RuiMj5sux+WVrEHl4lixjD5N2MWoy6eXHkMM5WoT9OTC2DpsFbQT0X0yMLsnlDiRIC/JSGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbcpFOH7Khb9SJ47IUIFZg9Bstp32s09OdA1PN0dIrfJ8tRQlm
-	PtPiPiBRo9prk5DLUnbyDwyGYSHaH+G8L/12dbU/5R7XNR2Cn8TOklOEJLIvHobNrbzWRuDO2h3
-	6XQfYrAfH3BRLjTR6tCheZ3me39NBgVKWDYLTbFBQ
-X-Gm-Gg: ASbGncto0mkKovTSjKQdCyxU4A+tNlab8qHYmibqN1DROy1JbVM/kBVTZilp4qMAwH2
-	3Gmv9qYL2LHCZdRrn4EweTuEkGH8z38pNb0gxMh4Oe5pEVTl6DLbwO9ccverm2C37WkQ5YdqRIO
-	s3E5PXKafqMa7yDRU3m9lEyIi5AAe5Mv9yXJD8NE+mnylH0XUl7i+V/07WMVCx/+0SOp6c/3SAT
-	29KurKBPnHq8yJRsbktnnjPQjVe3t1mBqTazrMF9fSnR8s/Q+JWnPYGHpsnzbgNLhCTIhkkyoES
-	mA==
-X-Google-Smtp-Source: AGHT+IGQX2l2vipOnPDWBuc3xRv8CDDx2d+OGnf33T+SOHNLMmGLor6hmQNyx64traYD5kfhGGtGg4mKEnranUf7eww=
-X-Received: by 2002:a05:6e02:12e8:b0:3eb:ee3c:b9a8 with SMTP id
- e9e14a558f8ab-417105406ccmr9999785ab.15.1757563022013; Wed, 10 Sep 2025
- 20:57:02 -0700 (PDT)
+	s=arc-20240116; t=1757563579; c=relaxed/simple;
+	bh=XD1QSSFfVHOr4OTEEmvGiDD54M5WcW1c3PzamhsKJ98=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QPhzKImVBbNohDXqqKG6xqw+7+Bxl1rmRjAP3QIuyRNWpSppznw1zsfXvR0bZvtxPrX36lGv4RzerHMG8OHtNBg7SYciq4V/CtFqd7uuc490JMHQzALBgkMwqfBBVe7y1gPAizDT6EvwY4Pvhr4ZASOR9V3/rY9WW/XiuS60Ccs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; dkim=pass (1024-bit key) header.d=honor.com header.i=@honor.com header.b=T+c3U+WP; arc=none smtp.client-ip=81.70.192.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+dkim-signature: v=1; a=rsa-sha256; d=honor.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=To:From;
+	bh=L+ZiXp1IFzinH43Jn6HBGwbQndfUjUiqfZdlX6XJIdo=;
+	b=T+c3U+WPfvefnsNsJJ30wBpxcsv2kbWCzFHmObn6AGfSdiSSo+VttGO6OwIfJralUoLj3+q4r
+	XmJf+7xJEjt2Ar4kAZ9pJfcfHDORNqjRWgvpJxbf0BooCMeJv7gzACG+HrCj+qHQyEYUbOahAI3
+	psxF0XBvtHkBbxPpkzhVcZw=
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4cMkW81DtKzYl1NY;
+	Thu, 11 Sep 2025 12:05:56 +0800 (CST)
+Received: from a018.hihonor.com (10.68.17.250) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
+ 2025 12:06:13 +0800
+Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
+ (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 11 Sep
+ 2025 12:06:13 +0800
+From: zhongjinji <zhongjinji@honor.com>
+To: <mhocko@suse.com>
+CC: <akpm@linux-foundation.org>, <feng.han@honor.com>, <lenb@kernel.org>,
+	<liam.howlett@oracle.com>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-pm@vger.kernel.org>, <liulu.liu@honor.com>,
+	<lorenzo.stoakes@oracle.com>, <pavel@kernel.org>, <rafael@kernel.org>,
+	<rientjes@google.com>, <shakeel.butt@linux.dev>, <surenb@google.com>,
+	<tglx@linutronix.de>, <zhongjinji@honor.com>
+Subject: Re: [PATCH v9 2/2] mm/oom_kill: The OOM reaper traverses the VMA maple tree in reverse order
+Date: Thu, 11 Sep 2025 12:06:09 +0800
+Message-ID: <20250911040609.6126-1-zhongjinji@honor.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <aMGXsenuvA682-Dc@tiehlicka>
+References: <aMGXsenuvA682-Dc@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801034004.3314737-1-guanyulin@google.com>
- <20250801034004.3314737-3-guanyulin@google.com> <2025081326-guileless-lego-ec59@gregkh>
- <CAOuDEK3KZHgY7Z2mBOuEhuUn8eLfjS5BPcx3kaMqVYLUhOavWA@mail.gmail.com> <2025090650-decal-canary-8e34@gregkh>
-In-Reply-To: <2025090650-decal-canary-8e34@gregkh>
-From: Guan-Yu Lin <guanyulin@google.com>
-Date: Thu, 11 Sep 2025 11:56:00 +0800
-X-Gm-Features: Ac12FXzQCb6O8FRNPDRHFWgRpNAlC18idJU2T9zFMkMxqDe165A-toqWNXNlXXI
-Message-ID: <CAOuDEK3UR6ksPSfq02CvBcqcG+1G43UdofNp6ZmpZm0PSB77oA@mail.gmail.com>
-Subject: Re: [PATCH v15 2/4] usb: offload: add apis for offload usage tracking
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: mathias.nyman@intel.com, hannelotta@gmail.com, zijun.hu@oss.qualcomm.com, 
-	xu.yang_2@nxp.com, stern@rowland.harvard.edu, 
-	andriy.shevchenko@linux.intel.com, ben@decadent.org.uk, 
-	quic_wcheng@quicinc.com, krzysztof.kozlowski@linaro.org, 
-	dh10.jung@samsung.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: w012.hihonor.com (10.68.27.189) To a018.hihonor.com
+ (10.68.17.250)
 
-On Sat, Sep 6, 2025 at 9:13=E2=80=AFPM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
->
-> On Tue, Aug 26, 2025 at 11:59:00AM +0800, Guan-Yu Lin wrote:
-> > On Wed, Aug 13, 2025 at 10:50=E2=80=AFPM Greg KH <gregkh@linuxfoundatio=
-n.org> wrote:
-> > >
-> > > On Fri, Aug 01, 2025 at 03:39:31AM +0000, Guan-Yu Lin wrote:
-> > > > +
-> > > > +config USB_OFFLOAD
-> > > > +     bool "Enable USB offload feature"
-> > >
-> > > I'm confused, we already have a "USB offload feature" that went into =
-the
-> > > last kernel release, why do we need a separate config option for this=
- as
-> > > well?  Shouldn't this code only get built if the drivers that need it
-> > > select it automatically?  Forcing distros to configure this isn't
-> > > generally a good idea if at all possible.
-> > >
-> >
-> > Based on the discussion in v13, a new, separate USB configuration
-> > option is required to avoid core USB functions being enabled or
-> > disabled via an xhci-specific option. The USB offload feature involves
-> > a sideband entity that can access xhci resources, which, from the USB
-> > driver's viewpoint, means USB transfers are offloaded to this other
-> > entity. Therefore, the name "USB_OFFLOAD" was chosen to reflect this
-> > functionality.
->
-> Again, you are increasing the number of config options here, which does
-> not make sense.  Why would anyone only want a subset, and not just the
-> whole thing?
->
-> Yes, USB_OFFLOAD only works today on xhci, and that's fine, so let's
-> just keep it that way.
->
-> > > > +     depends on USB
-> > > > +     depends on USB_XHCI_SIDEBAND_SUSPEND
-> > >
-> > > Especially because all "desktops" do not want this code selected, so
-> > > having it in all distros feels like a waste to me.
-> > >
-> > > thanks,
-> > >
-> > > greg k-h
-> >
-> > For the config keywords, we could automatically select USB_OFFLOAD
-> > once USB_XHCI_SIDEBAND_SUSPEND is selected to reduce configuration
-> > efforts.
->
-> select is a nightmare to maintain and understand.  Please just reduce
-> configuration efforts by not adding new options at all :)
->
-> thanks,
->
-> greg k-h
+> On Wed 10-09-25 22:37:26, zhongjinji wrote:
+> > Although the oom_reaper is delayed and it gives the oom victim chance to
+> > clean up its address space this might take a while especially for
+> > processes with a large address space footprint. In those cases
+> > oom_reaper might start racing with the dying task and compete for shared
+> > resources - e.g. page table lock contention has been observed.
+> > 
+> > Reduce those races by reaping the oom victim from the other end of the
+> > address space.
+> > 
+> > It is also a significant improvement for process_mrelease(). When a process
+> > is killed, process_mrelease is used to reap the killed process and often
+> > runs concurrently with the dying task. The test data shows that after
+> > applying the patch, lock contention is greatly reduced during the procedure
+> > of reaping the killed process.
+> > 
+> > The test is based on arm64.
+> > 
+> > Without the patch:
+> > |--99.57%-- oom_reaper
+> > |    |--0.28%-- [hit in function]
+> > |    |--73.58%-- unmap_page_range
+> > |    |    |--8.67%-- [hit in function]
+> > |    |    |--41.59%-- __pte_offset_map_lock
+> > |    |    |--29.47%-- folio_remove_rmap_ptes
+> > |    |    |--16.11%-- tlb_flush_mmu
+> > |    |    |--1.66%-- folio_mark_accessed
+> > |    |    |--0.74%-- free_swap_and_cache_nr
+> > |    |    |--0.69%-- __tlb_remove_folio_pages
+> > |    |--19.94%-- tlb_finish_mmu
+> > |    |--3.21%-- folio_remove_rmap_ptes
+> > |    |--1.16%-- __tlb_remove_folio_pages
+> > |    |--1.16%-- folio_mark_accessed
+> > |    |--0.36%-- __pte_offset_map_lock
+> > 
+> > With the patch:
+> > |--99.53%-- oom_reaper
+> > |    |--55.77%-- unmap_page_range
+> > |    |    |--20.49%-- [hit in function]
+> > |    |    |--58.30%-- folio_remove_rmap_ptes
+> > |    |    |--11.48%-- tlb_flush_mmu
+> > |    |    |--3.33%-- folio_mark_accessed
+> > |    |    |--2.65%-- __tlb_remove_folio_pages
+> > |    |    |--1.37%-- _raw_spin_lock
+> > |    |    |--0.68%-- __mod_lruvec_page_state
+> > |    |    |--0.51%-- __pte_offset_map_lock
+> > |    |--32.21%-- tlb_finish_mmu
+> > |    |--6.93%-- folio_remove_rmap_ptes
+> > |    |--1.90%-- __tlb_remove_folio_pages
+> > |    |--1.55%-- folio_mark_accessed
+> > |    |--0.69%-- __pte_offset_map_lock
+> 
+> I do not object to the patch but this profile is not telling much really
+> as already pointed out in prior versions as we do not know the base
+> those percentages are from. It would be really much more helpful to
+> measure the elapse time for the oom_repaer and exit_mmap to see those
+> gains.
 
-Thanks for the suggestions. I'll use only USB_XHCI_SIDEBAND_SUSPEND to
-control all the features, including the core USB functions.
-
-Regards,
-Guan-Yu
+I got it. I will reference the perf report like this [1] in the changelog.
+link : https://lore.kernel.org/all/20250908121503.20960-1-zhongjinji@honor.com/ [1]
 
