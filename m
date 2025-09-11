@@ -1,172 +1,118 @@
-Return-Path: <linux-kernel+bounces-812064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C897B5326D
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:37:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658AFB53274
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 14:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A4C166FEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:36:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8323A70B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 11 Sep 2025 12:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B3532253A;
-	Thu, 11 Sep 2025 12:36:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CABD322549;
+	Thu, 11 Sep 2025 12:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="s1/ILfAQ"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="InVXk5tU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ED1E23CEF9;
-	Thu, 11 Sep 2025 12:36:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BEB31D362;
+	Thu, 11 Sep 2025 12:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757594209; cv=none; b=DbeprVBItCIKVbCMmNhbxzGFMOcPUBLthiefTZRPoEhKQTBKEX6Mcm4G4PnbAFMtRlLxTOjFDCyXWM1I+qd0s7kSa/7bjeJH1LBhbgOXlzjkl6Nrk7XOOgdxOjnJXxaeaw3IVkxzd7HVFDWvctUk/735nC/8l7bCD9v5fHW2tuU=
+	t=1757594323; cv=none; b=tP+8iu9aO+qJC250SJHFWMXaWH+ItI7VOpqiPMAIwaf7+Yb3CTecr47ZtxeHYzkaHiBts4J1ZZ6OLuqKRALS2p3GB8vQzakPOjVznh2n5PnU5rms32m18D7g84kD76FnQrZSJuLAsacCp0S95UqTIgosw7M8MUhzdANuuVcaDQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757594209; c=relaxed/simple;
-	bh=QkQdBI8anUDvfOf9RgkkrxdhKfPTw8O5oRJZTgWZeG8=;
+	s=arc-20240116; t=1757594323; c=relaxed/simple;
+	bh=3hbK9wf2+mxCowDDtmc5Ops79VGnUo1EqG4EIVO6VFc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r1JIFhpc6Q8zlrE1Aw87rNiY9o0u9uzRJhekNSVj6W4JS43qK7EiBMY/Y3L8sOJMegbFfGAUsG5m8EQa79fkWCMpaSsyqx6d6QXpE0ZIMZee5PHgwCr7i8j52Pm172EL4AZ8fZj7m6AC4sJLOxf5CUCu1YS8r6VlM5GAjMgmg9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=s1/ILfAQ; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from sunspire (unknown [IPv6:2a02:2f0e:3e0c:5b00:e2d5:5eff:fed9:f1c4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id 18889173BE2;
-	Thu, 11 Sep 2025 15:36:43 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1757594203;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6gEyFK0DSqrZL6C1lK+mBxeLuPQap3TA12mpV61nNXA=;
-	b=s1/ILfAQuLX1I6zZS9VzGx6qDFb0T2qEOhGnwDJb2nC14h6TafGjhBeXuOEq/lcjppdy3d
-	jpg2eWccIogbvJbu2ccUNa8ZVUCU/0RyhHzYknVV30q/sI2Vt8tvAEIPR8B+LJTnaKVPhz
-	9fZHJIml0QkKtp467TlxL3S5277cy0NX0ReYa55gVX1jp8/JbYaZiQe02sBtlpvU8VHFzo
-	Nsu7imStmQB32cd6JZA8gzs0WmJAri82OMDVXnzFQe0JfGvykXNLyIuvQGa+kVmV7cZ4HK
-	LYhgqBYzme5pE+6H7sTJgRQt46I13oaaaIqv9V/HB4GVcqIytqZGDLJr9EOiHQ==
-Date: Thu, 11 Sep 2025 15:36:40 +0300
-From: Petre Rodan <petre.rodan@subdimension.ro>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno S?? <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 07/14] iio: accel: bma220: reset registers during init
- stage
-Message-ID: <aMLCWFatVkePTxCa@sunspire>
-References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
- <20250910-bma220_improvements-v2-7-e23f4f2b9745@subdimension.ro>
- <a10a2f6d-6cb7-4922-b505-dc6994f0415f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbcXh1506DpziVPa54VCbv54juFZNeX32myGSh2//UTNuwwoRs7d7Ms+UWU+GgSfgCKGoDigqeYsuY3C4IVqAwPhUYtY1pgafCzRk8rwop0HaDEbOtXbtf5FcryvnmVbbiEqwa5p4R5BhUfRofnCFcWaewuKz3lr5iIQnJARFUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=InVXk5tU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Uez8W5u/gbkeD8LK5BeMMMrUWwpOmn67Ekut9N1X2AY=; b=InVXk5tUMol00XxMVVnl/6yzM+
+	h+7kLVi6/C8v+326tvaYONoPE86kKtqpzbQvFncjVfuBY4j6VD83r53GV/3uejNBCAn6738Vmh0Mn
+	FigGoq77bYScFtze/coslyp3C1pBjMLDBqRKszZ+tfthYJtzP3FRmYsPKSvI1MvoIEA0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uwgZL-0084p5-TM; Thu, 11 Sep 2025 14:38:31 +0200
+Date: Thu, 11 Sep 2025 14:38:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jonas Rebmann <jre@pengutronix.de>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: phy: micrel: Update Kconfig help text
+Message-ID: <74a34c78-fed8-4438-9a9e-027d4a4762a7@lunn.ch>
+References: <20250911-micrel-kconfig-v2-1-e8f295059050@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="NNBeZRJGrv3j1F1i"
-Content-Disposition: inline
-In-Reply-To: <a10a2f6d-6cb7-4922-b505-dc6994f0415f@kernel.org>
-
-
---NNBeZRJGrv3j1F1i
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250911-micrel-kconfig-v2-1-e8f295059050@pengutronix.de>
 
+On Thu, Sep 11, 2025 at 10:29:03AM +0200, Jonas Rebmann wrote:
+> This driver by now supports 17 different Microchip (formerly known as
+> Micrel) chips: KSZ9021, KSZ9031, KSZ9131, KSZ8001, KS8737, KSZ8021,
+> KSZ8031, KSZ8041, KSZ8051, KSZ8061, KSZ8081, KSZ8873MLL, KSZ886X,
+> KSZ9477, LAN8814, LAN8804 and LAN8841.
+> 
+> Support for the VSC8201 was removed in commit 51f932c4870f ("micrel phy
+> driver - updated(1)")
+> 
+> Update the help text to reflect that, list families instead of models to
+> ease future maintenance.
+> 
+> Signed-off-by: Jonas Rebmann <jre@pengutronix.de>
+> ---
+> Changes in v2:
+> - Don't capitalize "micrel" in commit message (Thanks, Jakub)
+> - Name chip families with the common xxx-placeholders (Thanks, Jakub)
+> - Be a bit more specific as to which families
+> - Link to v1: https://lore.kernel.org/r/20250909-micrel-kconfig-v1-1-22d04bb90052@pengutronix.de
+> ---
+>  drivers/net/phy/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
+> index a7fb1d7cae94..e543eef36d98 100644
+> --- a/drivers/net/phy/Kconfig
+> +++ b/drivers/net/phy/Kconfig
+> @@ -298,7 +298,7 @@ config MICREL_PHY
+>  	depends on PTP_1588_CLOCK_OPTIONAL
+>  	select PHY_PACKAGE
+>  	help
+> -	  Supports the KSZ9021, VSC8201, KS8001 PHYs.
+> +	  Supports the KSZ8xxx, KSZ9xxx, and LAN88xx families of Micrel/Microchip PHYs.
 
-Hi Krzysztof,
+Much better, thanks.
 
-On Thu, Sep 11, 2025 at 09:35:52AM +0200, Krzysztof Kozlowski wrote:
-> On 10/09/2025 09:57, Petre Rodan wrote:
-> > Bring all configuration registers to default values during device probe=
-().
-> >=20
-> > Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
-> > ---
-> >  drivers/iio/accel/bma220_core.c | 71 ++++++++++++++++++++++++++++-----=
---------
-> >  1 file changed, 49 insertions(+), 22 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/accel/bma220_core.c b/drivers/iio/accel/bma220=
-_core.c
-> > index b6f1374a9cca52966c1055113710061a7284cf5a..322df516c90a7c645eeca57=
-9cae9803eb31caad1 100644
-> > --- a/drivers/iio/accel/bma220_core.c
-> > -static int bma220_init(struct spi_device *spi)
-> > +static int bma220_reset(struct spi_device *spi, bool up)
-> >  {
-> > -	int ret;
-> > -	static const char * const regulator_names[] =3D { "vddd", "vddio", "v=
-dda" };
-> > +	int i, ret;
-> > =20
-> > -	ret =3D devm_regulator_bulk_get_enable(&spi->dev,
->=20
->=20
-> You just added this code in patch 6. Don't add code which immediately
-> you remove. I understand you re-add this later, so basically it is a
-> move, but such patch diff is still confusing.
+> Best regards,
+> --  
+> Jonas Rebmann <jre@pengutronix.de>
 
-sorry, but this is an artefact of 'git diff' I don't think I have no contro=
-l of.
+It is a bit unusual to see a signature, git send-email, or b4 send
+would not do that. But patch(1) should be able to figure this out.
 
-the bma220_reset() function was added to bma220_core.c with this patch and =
-the
-diff process merged lines from this new function with lines from bma220_ini=
-t()
-causing the apparent removal of the lines added in the previous patch.
-if you look a few lines below your cut, the bma220_init() function contains=
- the
-code:
+For future reference, the Subject line should have the tree inside the
+[].
 
-+static int bma220_init(struct spi_device *spi)
-+{
-+	int ret;
-+	static const char * const regulator_names[] =3D { "vddd", "vddio", "vdda"=
- };
-+
-+	ret =3D devm_regulator_bulk_get_enable(&spi->dev,
-+					     ARRAY_SIZE(regulator_names),
-+					     regulator_names);
-+	if (ret)
-+		return dev_err_probe(&spi->dev, ret, "Failed to get regulators\n");
-[..]
+https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
 
-Just for my curiosity, do reviewers apply the patches one by one to (a bran=
-ch of)
-the tree itself or do they provide feedback directly based on the diffs?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-best regards,
-peter
+    Andrew
 
---NNBeZRJGrv3j1F1i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE2Ap/wXYVGTXsPl+pzyaZmYROfzAFAmjCwlgACgkQzyaZmYRO
-fzBX3Q//bhgiqNrozUCco7QKapysnP4QMmkVJoHXuwQTjOCQlIbzO2yh3AV9RAJ+
-Fb23RjjRJcjVn5OpWnRY5pYiQAXwccNi0E6rZPozAJaGpX+I1sNqHxmfPJqh49GF
-YlZImOdM9rrYOdYyv2xUR3WfdxDCCCsfOu3R1Gj6X7oGm2X/JoA3wQ25+QUQ869X
-lCbW4I4qSWoXE7XlIUw6iVNGrllT8hmThKCZnqLCk/vshf46iBG8XfWGsjIjAuGb
-3T7tm0mqQjpoU+5VKf4rPMM7Pidze6kSYGNfJtNG2ASCY/3DL3N34L3Av7fpD2ce
-CtxWpHnpfYP4F5XmtOgYnZjj96UGI74QuaKNIFrfhBquvMtixkzxt2zVVgkesBvy
-8qH0AB/+a6CYb7S/aniZG8/BYtT22gpnKFPtAFq7zKM3JcFWygMr2HYRZCwniB2Q
-A4xJwf5444UOMPiO5U/hwGn+oqS+otR3YcFmSzYjmxz9TdTVaK4Ur+DAHhLnWa7/
-RWr5y5d05AcUJ9gy1Ardc0yItofdbFNSARIcxPjsWI9aZiT0HUQG805ilxiGf0Oz
-o8mXmMo+p8G0nEJauw0RhfkLepRQbQddWEKTynfw4EEL5kD102MMEqo+tKj5bDYz
-xImuNYWpK9RrQQPIb5XiuowtQBMwbSZ+eh2AllxnzbI+EBBll9A=
-=B4BN
------END PGP SIGNATURE-----
-
---NNBeZRJGrv3j1F1i--
 
