@@ -1,102 +1,184 @@
-Return-Path: <linux-kernel+bounces-814856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 145C1B559C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:54:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5AEFB559C6
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39CA67AE31F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A62A03B86
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3102737E3;
-	Fri, 12 Sep 2025 22:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F460284681;
+	Fri, 12 Sep 2025 22:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i0b0MUqy"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="le6rxRkY"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C0A24BCF5
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A07264619
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757717675; cv=none; b=LnAJtYFO7eHG4t6sRwItxMYYDdT7aZAKRkQ9r/nSlP1flANEaZIMnnoqSvU3zueOrYbMbjGqc0DrjuK72+kHgZ2MQrVVOw4du3W/X6b7y96wR3Q6DjkDtMq8u+kk/+arvv8M1a1FgQ1iF9SdgpYqADGuk2kNtbPhbMv6bAQM90g=
+	t=1757717727; cv=none; b=BMSB8vVHcS19eBi9TGTpMCFM1LzAIPmhW/oAgFTiJgEJJL9EW5JKQYFPsSgEnVVAE7mDa/Jo9GFxaIWt9/0sn9Wo783q5sZATckLgabPw73qouVZ3EX6htUODASnXtPuljBmjALj6tPG3Lz7x06tb5W50lflbEwtLvAAXrW4vfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757717675; c=relaxed/simple;
-	bh=5pRl92lFFcJVoQ5T6b46d1Pycmga4qyIv/qDSkFICYs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WkAuFpv7w/7budKZYrFI4UTm/xyeH183Vs78isjLZ1o4O3gaqpeJ+sLKIIPIdkIo7kbv/W8eRFSvDHg70kO/C4Olc38kcSYRBy9e9Yyolb6K2TzwWF1B1IsO/Ivnev1SzOg1TipoBVYqbrii/rV3c0MRwX3G9wV9iKh/f4reQOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i0b0MUqy; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4f87c691a7so3941864a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:54:33 -0700 (PDT)
+	s=arc-20240116; t=1757717727; c=relaxed/simple;
+	bh=L9Ix8GUAXAZWYXV2ZEQHnHNqbdKz5TayVfN6Teb85ss=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ra4crGjqDZJQbSU0XkVIs/j5CZ94IgZ3lnrVk/toUjlvL1SqDOg7R55hGCQ+eOoQwlwJ0wT8PuAMiPL0rygCbBKzEZyKRFjzDn66lxTToGYhdSX7CerDyxPiO87AMFndKkpVCi2Znoa/rheEhdSdiz7uPoEZcAKVdeM2kfIY8EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=le6rxRkY; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e4b5aee522so1459264f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:55:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757717673; x=1758322473; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ODZNIHI7uoRaNxkDo0YGY9uj33hSnvyle/cQ5/e3oCw=;
-        b=i0b0MUqyPMieyxDuCMoIVQjeQU6G20oI7W+vVRfurr9mQphdQ3FSGidQSlxmxhZxnd
-         2zicuETC5a3D0k7UrTvOk3QG6kKvlr9OZBjvJinYlZOyXRDF3FjY127aMkOg8nHBVVcr
-         7MmkG7SBsXvNaj43Nlm7MZWi09lIGM2NgEHxjD9v58ZCyj1xoNiDC/SSCz+I5LSaHAR9
-         /q6jt0K+1910P0o/b0Us6wbj7dzycei6yQV6N41+ndgUYZN4BWDmq3ox+KB1tj2/JdUn
-         N555FbhBYjYw95ArLG8UoKV9/upeB9hPgDJrbaKhdom9iHLs6ytJCr23F/1IK1zQW2x6
-         DPIw==
+        d=gmail.com; s=20230601; t=1757717723; x=1758322523; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bQQq41SVVRbn6631nZmi56Z4Of+AjJI4UHPGihR3J2Q=;
+        b=le6rxRkYFJCluBSRJ5bFdNxLycE62jaB7IC6Y+ZNBZ3hCHwxODhDl+vMJGRbQTkLf2
+         jtUPMkQmuzlyjB3Xc0TJeKvvL3dQZPXlEsreZCDRVXDNSepa4/CCscwzQgpiAmG5znH6
+         zlmE/AhRlOMPCkTsRq+GfPvKBFtVFuZyrK34NfjDaTa9yGcBhKWnGQq9OtiPi1Ah3Z9O
+         w6k7ZZcP06YHQ875NaAATBhbIwivqDa5b2ECvv/+jbviX2qHUQavfbWZxIqXrjDu4QBo
+         MbMThUUZ6Q3FHxpzO5rLfWsU81BjeeSFJnAMBKBLlcVgkvzamYPVKGsXvBWliPbGagn5
+         tuWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757717673; x=1758322473;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ODZNIHI7uoRaNxkDo0YGY9uj33hSnvyle/cQ5/e3oCw=;
-        b=Dxzc2oXMoopKFBIVkhzT6n+gxTBQYkNde6sc5hTUQ7yd6TQMwN9TdBMDA7xP+bvzQN
-         Zirq6sRo611OCoX0GNAIWIhDXQYdS8rxw8IP8+WRSTcSgnsdS8Q0NonqpFwEV2DJVZNY
-         f49Cx+nRnWiwSEBrygxwd0JeqbY9MYdQFpR9SjUuz71/wuX8gGPvdda91H/M04GJ973b
-         nJ42n3wJhYc+FD+Ey8H9VM0Qh2iHL5+yeYCNuWDFuzF2ovqmnYVGKxGAWCmBmTsBwmTh
-         Ron1pNQwwt52IdU/+lh0abvTUpIIvaOv0dIk09I2Mpl3j7EgQoXHdefKZHy8hkUtY481
-         Ysgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJGoe7mDsWL+f1FC3RArXtDwCmFVoKdWvyvGRvWem+siIo3HXRhyPLc4mC8nuex0eL1DI25fm4eI4//Lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9bTv5jnDStlcxvTzbL9FtWe8lSNkOTs0Zkwi+YwT7ivJ8EC8x
-	jfyO79wQDZakLZgPolJ9PnM+W2QxGzmg7vT1RbHmZY153xjbPqU33jAfKkzQ+uT5NoilMYRGwhj
-	5ylyAoQ==
-X-Google-Smtp-Source: AGHT+IHNmsWXPLbWtTbgZq+sqARZVuvxx3wm1gpdTbkFR7qbec5YVVe7yKE0dmaJGA2oM/FpsMiuJmqv86I=
-X-Received: from pjbqb3.prod.google.com ([2002:a17:90b:2803:b0:32b:8eda:24e8])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:99a1:b0:240:104c:8e14
- with SMTP id adf61e73a8af0-2602be4f2f5mr5564984637.38.1757717673116; Fri, 12
- Sep 2025 15:54:33 -0700 (PDT)
-Date: Fri, 12 Sep 2025 15:54:31 -0700
-In-Reply-To: <20250908201750.98824-1-john.allen@amd.com>
+        d=1e100.net; s=20230601; t=1757717723; x=1758322523;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bQQq41SVVRbn6631nZmi56Z4Of+AjJI4UHPGihR3J2Q=;
+        b=MbLMGGzMv/xbRiBH2wuM0uVQE/v45zngrImAMq08UGjTJuWjsG+S4n8XeiI3jHH1pY
+         2Ce6cKNNaE1zaC51EL5B0yGkalkqOBqiOlsDEwOiMkGxVLnOjVBQvcRHgIc5GHsZanYt
+         2yClJMQKBsctA4IJ0dMdH3Pr0LwqCcHvNfLy0IaQHW6NdlHM6RIvEO6o9qbO5LVzdrLB
+         yoO9HcktuC3qTMZJzVKz75vIY6eqNxP5cCbrC2lWHyoAqfC7+z3kQJGhCMrIYNOvjRZC
+         AGxPL/RtYMLDBdzGKcjIwEhP7q+VxufTQsQ4eCL5LdVYe1D0bZjtH7cGMCQ/ozguqjgl
+         U6rA==
+X-Forwarded-Encrypted: i=1; AJvYcCWA/v4Bp3yHxzcTbaySHwKmAeutrOd5pDdTnj8qNJBnTf5x+NhlnoR5/HCkWlnqXrmuulPmSaYHB9M+NLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/FvuP2ilRl6JCrrchOQHfUHq0dW8IW5gmhxA4fN4RjKnaUilC
+	2dDU78LVu1LGwvmB7zCn1SVYGblPBx6UOL3IJ9yZS773cyzA/1cUdDLV
+X-Gm-Gg: ASbGncu+qWtTIdko2GQKF8N7XJkNSnvmifeG43vIPT0DKvYDuXIuuBuMQo4/rKpkZLp
+	smmMarrMVtRj+o/qZAJ9FJvdtnVlnHnOrm8+89yUyApyktWShBK3zybIH7hdTWb459aCnbBfUvv
+	2ZfpFlmdiWd3yF2McAvqhlJAnD+UKcFLNThAg2j7iNPxMYfLgKjvtSiaDG+kBOP0c4C5bvs0O/g
+	tElNoWNlHPmZb8lINg4ZA3k1GJsNeYF5jIf8N2Nn2nBUXUAV/XvKvaLiqenrosvqi+3VRdOPVx9
+	Ud4dCKRpviKJjmsPrYo+EC0tCue1CrF13de+iMGB0AiPXM5C+R7YaJ/hyweRAcamaTAPYIQtvMS
+	ddnBAIheR1w3twrc1f98HzMsCcf00C9OTlkcMHvTj5b+kB6bpHAL5+Ow4Z4vXd2T+B2/4GF8Ew/
+	gg/vdf/g==
+X-Google-Smtp-Source: AGHT+IHIf0xPTQSq2SGK+xjb3mFSGDk7HN3L2nA4JQ5Js7XJrtXXtnD62hWKhZUN18BtSlP72hjvRw==
+X-Received: by 2002:a05:6000:420f:b0:3e5:955d:a81b with SMTP id ffacd0b85a97d-3e7659c4248mr4152680f8f.34.1757717722835;
+        Fri, 12 Sep 2025 15:55:22 -0700 (PDT)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e01578272sm84954695e9.9.2025.09.12.15.55.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 15:55:22 -0700 (PDT)
+Date: Fri, 12 Sep 2025 23:54:56 +0100
+From: David Laight <david.laight.linux@gmail.com>
+To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
+ ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
+ jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+ sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
+Subject: Re: [PATCH v2 1/5] lib/base64: Replace strchr() for better
+ performance
+Message-ID: <20250912235456.6ba2c789@pumpkin>
+In-Reply-To: <20250911073204.574742-1-409411716@gms.tku.edu.tw>
+References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
+	<20250911073204.574742-1-409411716@gms.tku.edu.tw>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250908201750.98824-1-john.allen@amd.com>
-Message-ID: <aMSkp7e7IryG2ZAj@google.com>
-Subject: Re: [PATCH v4 0/5] Enable Shadow Stack Virtualization for SVM
-From: Sean Christopherson <seanjc@google.com>
-To: John Allen <john.allen@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	pbonzini@redhat.com, dave.hansen@intel.com, rick.p.edgecombe@intel.com, 
-	mlevitsk@redhat.com, weijiang.yang@intel.com, chao.gao@intel.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com, 
-	tglx@linutronix.de, thomas.lendacky@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Sep 08, 2025, John Allen wrote:
-> This series adds support for shadow stack in SVM guests
-                  ^
-                  |
-                some
+On Thu, 11 Sep 2025 15:32:04 +0800
+Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
 
-I mean, who cares about nested, right?
+> From: Kuan-Wei Chiu <visitorckw@gmail.com>
+> 
+> The base64 decoder previously relied on strchr() to locate each
+> character in the base64 table. In the worst case, this requires
+> scanning all 64 entries, and even with bitwise tricks or word-sized
+> comparisons, still needs up to 8 checks.
+> 
+> Introduce a small helper function that maps input characters directly
+> to their position in the base64 table. This reduces the maximum number
+> of comparisons to 5, improving decoding efficiency while keeping the
+> logic straightforward.
+> 
+> Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
+> over 1000 runs, tested with KUnit):
+> 
+> Decode:
+>  - 64B input: avg ~1530ns -> ~126ns (~12x faster)
+>  - 1KB input: avg ~27726ns -> ~2003ns (~14x faster)
+> 
+> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
+> ---
+>  lib/base64.c | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/lib/base64.c b/lib/base64.c
+> index b736a7a43..9416bded2 100644
+> --- a/lib/base64.c
+> +++ b/lib/base64.c
+> @@ -18,6 +18,21 @@
+>  static const char base64_table[65] =
+>  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+>  
+> +static inline const char *find_chr(const char *base64_table, char ch)
+> +{
+> +	if ('A' <= ch && ch <= 'Z')
+> +		return base64_table + ch - 'A';
+> +	if ('a' <= ch && ch <= 'z')
+> +		return base64_table + 26 + ch - 'a';
+> +	if ('0' <= ch && ch <= '9')
+> +		return base64_table + 26 * 2 + ch - '0';
+> +	if (ch == base64_table[26 * 2 + 10])
+> +		return base64_table + 26 * 2 + 10;
+> +	if (ch == base64_table[26 * 2 + 10 + 1])
+> +		return base64_table + 26 * 2 + 10 + 1;
+> +	return NULL;
+> +}
 
-Sorry for being snippy, but I am more than a bit peeved that we're effectively
-on revision 6 of this series, and apparently no one has thought to do even basic
-tested of nested SVM.  And I'm even more grumpy that writing tests continues to
-be low priority in general, which is especially concerning for such a large,
-complex feature.
+That's still going to be really horrible with random data.
+You'll get a lot of mispredicted branch penalties.
+I think they are about 20 clocks each on my Zen-5.
+A 256 byte lookup table might be better.
+However if you assume ascii then 'ch' can be split 3:5 bits and
+the top three used to determine the valid values for the low bits
+(probably using shifts of constants rather than actual arrays).
+So apart from the outlying '+' and '/' (and IIRC there is a variant
+that uses different characters) which can be picked up in the error
+path; it ought to be possible to code with no conditionals at all.
 
-Adding support for nested was easy enough (famous last words), but I really wish
-I could get back the ~hour I spent figuring out what was missing...
+To late at night to write (and test) an implementation.
+
+	David
+
+
+
+
+> +
+>  /**
+>   * base64_encode() - base64-encode some binary data
+>   * @src: the binary data to encode
+> @@ -78,7 +93,7 @@ int base64_decode(const char *src, int srclen, u8 *dst)
+>  	u8 *bp = dst;
+>  
+>  	for (i = 0; i < srclen; i++) {
+> -		const char *p = strchr(base64_table, src[i]);
+> +		const char *p = find_chr(base64_table, src[i]);
+>  
+>  		if (src[i] == '=') {
+>  			ac = (ac << 6);
+
 
