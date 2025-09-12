@@ -1,185 +1,215 @@
-Return-Path: <linux-kernel+bounces-813881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EB8B54C25
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:02:11 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A231AB54C2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7A535A2723
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:00:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 88B3E4E2AF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90318301476;
-	Fri, 12 Sep 2025 11:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42753019C1;
+	Fri, 12 Sep 2025 11:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="caipe07O"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DdI/5owh"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26000314A8D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDDD305E18;
+	Fri, 12 Sep 2025 11:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678082; cv=none; b=U1lMqXHOP591VGeCYKLOwzAEWxyOIbiUdk5owOtSvakVdy/zHiBAQ7ZDbs4vihioFfsudJ1NdNy+AfKCQ55YYKHFZGQ73KXRRS7UoYvD+7pRuRyRKAtVyy4llHMs5WWCzSsgvxcSEXwATdQ/mV/z34rUiovvBWeNANYgNtZEP9s=
+	t=1757678116; cv=none; b=coWteZQsJzGYnH/2Eza7XWyp7+i9ZHUmsP6481qDTB9NiErxlGHk40c1bDfLO7186ily1h626zpbrbB9X35hMbYfweCa8iKrgI0s1cJhBgNBPjqTyq2HMPvBBUu8q7MbbYV4us/cJTlG21ji/QNQeRpDY+6SMfbxvIpHBZCtec8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678082; c=relaxed/simple;
-	bh=ZK8/4aNLllz7uk+iaLyWsRe0awdZ9X8BIaYRhatobqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eqasRoCuA1XrkHLBoPmBdHdXrPz7RwFNnKH3sdRS7mnLd2tbkgBC7dhcrIWjjxOhzyuG1IxNampJ1Iy05UAGauxrZhjhdntFiVJICC/GS09eX4umUS8auZH2WdwXmjYnWBm96JFFSAmkAyggsmRasK+C3sxACr2jxNWA/y2yODM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=caipe07O; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fGZU019756
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:54:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CL+lI9VYcTxc1ylzMUGhgewY3tUhb2X7dvXH5IYD2tM=; b=caipe07OT38c4Ooj
-	i5GS6gjRDKPJxngB9qSRS3lGHGBzaJ23DY1OTTMbT9bFx42LgXJB1JMNi50SDOXX
-	CYaUzwoqLP6lDS91llXVumAo+FErbCJnBbN81ZdvAYdvP0AAQY7u/PwnCXh6YYq2
-	5zTjWuIP9tm9erikfJ2KkwjRRGCGYe4Kb8DDwy0M/DwY1qZNg+1NujGaHY57X94D
-	PW9oukioENMcRLyAm0X4EXawsB+GZNqRKLfBojab1Wy/LTBYcI0rHX5PWXp8g8Zv
-	CdhJNLcL0IsSP2ds/+7iSiRHYRtuFK7Ax80KpGgUPo3j5Pq95ANq5TAj+hHoInr1
-	ZiK/tQ==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491t387xx8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:54:40 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b521f77d978so364145a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:54:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757678079; x=1758282879;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CL+lI9VYcTxc1ylzMUGhgewY3tUhb2X7dvXH5IYD2tM=;
-        b=eec4RJTZM9SAZCTigO87QFKbNa755jqY/LrIQWIAQ9TH2Mns00h5T4F11OUvceV7Co
-         TJ/54WCjg3Ug9Q98fxOibQ2kazzF7dsSV4WvySG7hVjfZm5e/77DGdurS7D+BdzPz7tE
-         xq2TEdVPC5cc/Cli/5pH7LC/532VtHcdrNu7NnHqMaWddmORSSkiEkedPSi12mZAn0fW
-         YY5XQO4srizS0BVpn32RKZim9cmO/8DmjRIlPHwvgOK+e1AEO9xZNJnbL3qy3gYYMZ+w
-         qyZr0GblH14AZCv7XcazegFehp6/XaD9FZDvTsB4/dm5e+oV1Rc0f2MI+AOyWltTdL13
-         KuJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXhKKT+jFKv5fhKS98wlqriA1FwRIe3jW+2vOHgnBuabOVX82dK9NM9WYOcFLRgWeL+uSo8aRR9TMzO1Cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBiIw5CAdbv5WBQ1cRYR/ftALa14/cYcDm5u0elil4zuXm8xe4
-	ZC4SXNG/UfJUvT9dHjckRVZ3OnSNfoBwT5JBM4371r+ReDE1+354/pspgAsUAODahXxLClY+WCm
-	2GOv75NtTYi0rhT/yID1c7t0XErMymUhaWL9Vuc6sZRNRTnfLW6ySRh2s61rxY2KaUjc=
-X-Gm-Gg: ASbGncv8fB6d9fANf23whikM3cRHeedXNr8ObQnFsuQLrVzxhJwbzgr/xLwlP452QSO
-	QW2Z0t9g4fRLLFLCNQ6GcwoxymEnbOGYGb5/K5pYIFLz/OCH8nnpAeJ2GhFGmZM9gFha2VeynDP
-	HPfFaObWZfGu7/csKA/SzlBS7e4fo65I8ZvxWBtOcvmooJ6+sMbXdWXIlN0E55vTIHYTX1f+MpQ
-	/l5Tn3+odO6GUCwt5F1PF/1HEkCrAPXtVHR4T0JBrEfmdyN4pzeowRG1yoF4VNcg0zwj1bE0NJA
-	mS1DqcIQ4ZBFQuUPrc1dcSMH5vkoo57KJgLQ9g2L11h+AdKXIWQmdVNDvWBEc2kIZS5kPSZeZZR
-	TY1Rxea6jBEmjv1bLibM8rTV8MXU1aQ==
-X-Received: by 2002:a05:6a00:181e:b0:755:2c5d:482c with SMTP id d2e1a72fcca58-776121ec346mr1687412b3a.4.1757678079350;
-        Fri, 12 Sep 2025 04:54:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBzCCMI7c4SuCgUNoxpx0ryUhDrHgck7Ry4SOIXMr3U9+ASTVocgB9v5TDYgVMzzCnDhSBlA==
-X-Received: by 2002:a05:6a00:181e:b0:755:2c5d:482c with SMTP id d2e1a72fcca58-776121ec346mr1687392b3a.4.1757678078920;
-        Fri, 12 Sep 2025 04:54:38 -0700 (PDT)
-Received: from [10.133.33.174] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607a46b7asm5251168b3a.22.2025.09.12.04.54.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 04:54:38 -0700 (PDT)
-Message-ID: <d3743c52-4e84-4729-9f64-af856419d504@oss.qualcomm.com>
-Date: Fri, 12 Sep 2025 19:54:31 +0800
+	s=arc-20240116; t=1757678116; c=relaxed/simple;
+	bh=OiQ8SyM9G4y6zAiNJBkbk8M1wMKgM7E09VklZ/S/SWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c502bzDq+KQKBsKOK/gAgIhi7sXMQbhKFn3rOMKoGpW6naT64CJIIHB1yknV9zlRY+AWkdYVNjS7skaohSFezen8M5VO/YCJxJ+gaa+vys45kmIsdqvJFqCoxKRKiOjXTTK52oYn6ZIfhlCA3dMf0pXPCxUkIokFA4X2JOScOdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DdI/5owh; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oDG8dtRhhrV2tNzEwtCOQFio9vNLrGfgxupBP89t1G0=; b=DdI/5owhkl0FndydRJYM35RfUn
+	jPclTmuaFOH51f56kgqhyCHfnx5e5l2EsJfiqzxZLCStS1i9a4DPsfl0qCflW0Y3aS35AurZFYjxc
+	KlG2K04iYLMbE/pQH9Tmk2NvjLj4qvCxbBJqAbPR06dctiQP+iPIugq39jh7jdC1HD3yD3npnRn7Q
+	k1ptanAQnk6zK5Hu7FJPbL0gOjL4In4aKaNCQ1ZNEQkYg0a1VN3Z6Zq4jJWc9YqtuCYMvpnOdnTec
+	p0LNxdgdUwnjG34M/424rwyROB+rvXV0lrJefcubIAOxb/9FNR4ZnHIk8vBzKRd6yJd1metn62opr
+	yHehfYvw==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ux2Mn-00000006M9J-1ikE;
+	Fri, 12 Sep 2025 11:55:01 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EA81A300579; Fri, 12 Sep 2025 13:54:59 +0200 (CEST)
+Date: Fri, 12 Sep 2025 13:54:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
+ __task_rq_lock()
+Message-ID: <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
+References: <20250910154409.446470175@infradead.org>
+ <20250910155809.684653538@infradead.org>
+ <aMNnLenCytO_KEKg@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: display/msm: dp-controller: Add SM6150
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar
- <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com
-References: <20250912-add-dp-controller-support-for-sm6150-v1-0-02b34b7b719d@oss.qualcomm.com>
- <20250912-add-dp-controller-support-for-sm6150-v1-1-02b34b7b719d@oss.qualcomm.com>
- <sx64y6vfov4yag46erckpbl7avwmqlsqt3siebckn76m6jqxjh@f5lueyih6n3q>
-From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-In-Reply-To: <sx64y6vfov4yag46erckpbl7avwmqlsqt3siebckn76m6jqxjh@f5lueyih6n3q>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: hwtzv_M1XQUvvq0yQUBLKF-bifurTitG
-X-Proofpoint-GUID: hwtzv_M1XQUvvq0yQUBLKF-bifurTitG
-X-Authority-Analysis: v=2.4 cv=NdLm13D4 c=1 sm=1 tr=0 ts=68c40a00 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=1DKY8yufIZSdyzbmga8A:9
- a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDA2NiBTYWx0ZWRfX0bRujqdbL2Ke
- zSFEwrhXG4F6GWzv7ijUPnrhbgy5ARLpsJ8wwZAEd54S/X9EaNm4zHEQcnjrnfJpZVaylSO3Tt8
- wY0QoDWVF0cWUWS9He8wGcrcA5zM3hrVm99a/NFon70aOv6maM/DiStU2AKkVBX4EO70dPcwfrR
- ZtBOANzaIb3K23JVKC3YY7xAwrfd6xh98/wesK9fn8n1siyKJtv7ORh+iHpqJZjypbn7dLQwG26
- NVM5/4lm8sTI+7NAtAUv2tRsTeS11ToTCHcL0GTdvXUTAQzRkZIqWn0dL6QJeu3x66hfPonqVrx
- xCJkyzcRvo66CXOE4aAb1bB6PivGZWg542KZtJvGi269tl3mPaHzpZ+kVvtsIR1T5ZftNwmTMGV
- zA+I67Dt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 bulkscore=0 adultscore=0 suspectscore=0 phishscore=0
- clxscore=1015 impostorscore=0 spamscore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMNnLenCytO_KEKg@slm.duckdns.org>
+
+On Thu, Sep 11, 2025 at 02:19:57PM -1000, Tejun Heo wrote:
+> Hello,
+> 
+> On Wed, Sep 10, 2025 at 05:44:21PM +0200, Peter Zijlstra wrote:
+> > @@ -703,17 +703,24 @@ void double_rq_lock(struct rq *rq1, stru
+> >  struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
+> >  	__acquires(rq->lock)
+> >  {
+> > +	raw_spinlock_t *slock;
+> >  	struct rq *rq;
+> >  
+> >  	lockdep_assert_held(&p->pi_lock);
+> >  
+> >  	for (;;) {
+> >  		rq = task_rq(p);
+> > +		slock = p->srq_lock;
+> >  		raw_spin_rq_lock(rq);
+> > -		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
+> > +		if (slock)
+> > +			raw_spin_lock(slock);
+> > +		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p) &&
+> > +			   (!slock || p->srq_lock == slock))) {
+> >  			rq_pin_lock(rq, rf);
+> >  			return rq;
+> >  		}
+
+Yeah, I think that needs to change a little. Perhaps something like:
+
+	slock2 = p->srq_lock;
+	if (... && (!slock2 || slock2 == slock))
+
+> With the !slock condition, the following scenario is possible:
+> 
+>   __task_rq_lock()
+>      slock = p->srq_lock; /* NULL */
+>                                                 dispatch_enqueue()
+>                                                   p->srq_lock = &dsq->lock;
+>                                                 enqueue finishes
+>      raw_spin_rq_lock(rq);
+>      rq is the same, $slock is NULL, return
+>   do something assuming p is locked down        p gets dispatched to another rq
+> 
+> I'm unclear on when p->srq_lock would be safe to set and clear, so the goal
+> is that whoever does [__]task_rq_lock() ends up waiting on the dsq lock that
+> the task is queued on, and if we can exclude other sched operations that
+> way, we don't have to hold source rq lock when moving the task to another rq
+> for execution, right?
+
+Indeed. If !p->srq_lock then task_rq(p)->lock must be sufficient.
+
+So for enqueue, which sets p->srq_lock, this must be done while holding
+task_rq(p)->lock.
+
+So the above example should be serialized on task_rq(p)->lock, since
+__task_rq_lock() holds it, enqueue cannot happen. Conversely, if enqueue
+holds task_rq(p)->lock, then __task_rq_lock() will have to wait for
+that, and then observe the newly set p->srq_lock and cycle to take that.
+
+> In the last patch, it's set on dispatch_enqueue() and cleared when the task
+> leaves the DSQ. Let's consider a simple scenario where a task gets enqueued,
+> gets put on a non-local DSQ and then dispatched to a local DSQ, Assuming
+> everything works out and we don't have to lock the source rq for migration,
+> we'd be depending on task_rq_lock() reliably hitting p->srq_lock to avoid
+> races, but I'm not sure how this would work. Let's say p is currently
+> associated with CPU1 on a non-local DSQ w/ p->srq_lock set to its source
+> DSQ.
+> 
+>   pick_task_ext() on CPU0               task property change on CPU1
+>     locks the DSQ
+>     picks p      
+>     task_unlink_from_dsq()              task_rq_lock();
+>       p->srq_lock = NULL;                 lock rq on CPU1
+>     p is moved to local DSQ               sees p->src_lock == NULL
+>                                           return
+>   p starts running
+>   anything can happen
+>                                         proceed with property change
+
+Hmm, the thinking was that if !p->srq_lock then task_rq(p)->lock should
+be sufficient.
+
+We must do set_task_cpu(0) before task_unlink_from_dsq() (and I got this
+order wrong in yesterday's email).
+
+  pick_task_ext() on CPU0		
+    lock DSQ
+    pick p
+    set_task_cpu(0)			task_rq_lock()
+    task_unlink_from_dsq()		  if !p->srq_lock, then task_rq(p) == 0
+      p->srq_lock = NULL;
+    p is moved to local DSQ
+
+Perhaps the p->srq_lock store should be store-release, so that the cpu
+store is before.
+
+Then if we observe p->srq_lock, we'll serialize against DSQ and all is
+well, if we observe !p->srq_lock then we must also observe task_rq(p) ==
+0 and then we'll serialize on rq->lock.
 
 
-On 9/12/2025 7:46 PM, Dmitry Baryshkov wrote:
-> On Fri, Sep 12, 2025 at 07:39:16PM +0800, Xiangxu Yin wrote:
->> Add DisplayPort controller for Qualcomm SM6150 SoC.
->> SM6150 shares the same configuration as SM8350, its hardware capabilities
->> differ about HBR3. Explicitly listing it ensures clarity and avoids
->> potential issues if SM8350 support evolves in the future.
-> The controller is exactly the same as the one present on SM8150. HBR3 is
-> a property of the PHY.
+Now let me see if there isn't an ABA issue here, consider:
 
+pre: task_cpu(p) != 2, p->srq_lock = NULL
 
-Ok, will update commit msg.
+  CPU0				CPU1				CPU2
 
+  __task_rq_lock()		enqueue_task_scx() 		pick_task_scx()
 
->
->> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
->> ---
->>  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->> index aeb4e4f36044a0ff1e78ad47b867e232b21df509..2bebc182ffe348fd37c215a6bf0becea11e5ac15 100644
->> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
->> @@ -46,6 +46,7 @@ properties:
->>        - items:
->>            - enum:
->>                - qcom,sar2130p-dp
->> +              - qcom,sm6150-dp
->>                - qcom,sm7150-dp
->>                - qcom,sm8150-dp
->>                - qcom,sm8250-dp
->> @@ -261,6 +262,7 @@ allOf:
->>              enum:
->>                - qcom,sc8180x-dp
->>                - qcom,sdm845-dp
->> +              - qcom,sm6150-dp
->>                - qcom,sm8350-dp
->>                - qcom,sm8650-dp
->>      then:
->>
->> -- 
->> 2.34.1
->>
+				rq = task_rq(p);
+				LOCK rq->lock
+  rq = task_rq(p)
+  LOCK rq->lock
+    .. waits
+				LOCK dsq->lock
+				enqueue on dsq
+				p->srq_lock = &dsq->lock	
+				UNLOCK dsq->lock
+								LOCK dsq->lock
+								pick p
+				UNLOCK rq->lock
+								set_task_cpu(2)
+								task_unlink_from_dsq()
+								  p->srq_lock = NULL;
+								UNLOCK dsq->lock
+    .. resumes
+ 
+At this point our CPU0's __task_rq_lock():
+
+  - if it observes p->srq_lock, it will cycle taking that, only to then
+    find out p->srq_lock is no longer set, but then it must also see
+    task_rq() has changed, so the next cycle will block on CPU2's
+    rq->lock.
+
+  - if it observes !p->srq_lock, then it cannot be the initial NULL,
+    since the initial task_rq(p)->lock ordering prohibits this. So it
+    must be the second NULL, which then also mandates we see the CPU
+    change and we'll cycle to take CPU2's rq->lock.
+
+That is, I _think_ we're okay :-)
+
 
