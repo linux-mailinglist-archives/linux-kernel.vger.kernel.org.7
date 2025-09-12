@@ -1,947 +1,201 @@
-Return-Path: <linux-kernel+bounces-813727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D753B549FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:37:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09532B549F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E331FAA5916
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C8C9461230
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A630E2EB873;
-	Fri, 12 Sep 2025 10:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CCB2EA467;
+	Fri, 12 Sep 2025 10:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EDtMxzez"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PRXaSTge"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F4F2EC09B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8295219992C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757673415; cv=none; b=r86m1m6uplYatBBO0MBwTZQaQwJoBo6dGV9qeVT3TV4jQjZKtcklysUgGxt/oI9ZGfWqzlng4amChIIo5CFPp4nGAHFeuQ8u55veUMP8sDWM7HtboBlna95C4QbybQ+jO/8Ptj2gUDePRxGRtJv2v5hLnlhWhhD/oFMspzpIpj0=
+	t=1757673407; cv=none; b=aGQ5T4DhTv4k1+y3B6gdhamJNPCh1rjW2HVl9F0jmkms2vl/QW4Cb6368eK87AZ4xv1yJJh1lNt5hnL7aBkRPMTLdlaNwOEMsxfto75VQmEQpM7xJnbNWGTvTE95CQ2dJ6QXgyUD4pTCSDPd1jpSj1LRRgCsozrBDOT8NNYb2EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757673415; c=relaxed/simple;
-	bh=7jxWqacBZ6AAuPHsfSDGdY3Qm64387CVaLCv9LSLkiY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uQZ9j4Km9aTZbotEp5j8j+uusJm/gwfNCLSar9XI30AlOudXkU4oSd2SRMVhwdwFeC1OObuGc2PxnJprrZsBbv25pSXK6kLJtEfHEKj4Ki6Vw9XlT9qTfdWWsr4/8h4m/h+nrmPsBfXXFQbSKsaa8aYyRcSI7cCA/6dX1SQptHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EDtMxzez; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1757673407; c=relaxed/simple;
+	bh=nJ3+l5v55fpLJ9xg3lY7KIMVNF6NVqMD4GX1L9S7lTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JUVNGC2bxbRmMMhLJTCQs1PJZVP0x6RMxLVPSpoxFd9Ie870cxWlqsbYSCIZ0QRWqJAeOB963vV/dP6pHkJxfU2jqSGEwgRxCegPLBNOzX7of/uj3NFQgrB/iXYc1siMl+HhexAAMYVikUGTun7gP3gR+uoRFeLfNI11xolOm88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PRXaSTge; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fHIK017701
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:36:52 GMT
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fNfX023361
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:36:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=uOjR35eLHkEN3KiQ06akGbY/xV3LkM6yhTd
-	OwIGj+uU=; b=EDtMxzez6HJxbnBolPqcM5OiAmg4mjUizheIaUI7lRMoeuzPH6V
-	NC7U8tTlx9qNG6jCNVrJBuijbUBSX8gTcwZwZCd7u9yQDSo8mluf0NSG5bgINdjL
-	FgDR217uusgVg0mtBI9Kr5wwTWvf2RHaGj0zZOzWcinUN+tj8hZdjs6vmRldKT6A
-	OnfToVYTsmzgB4MrvdUbSqOCAlUL5S9qZ/wDhnAIkj9+EQl7q4Jbt4zuMrAB0Gui
-	hGuDTc806Y1x1eqpLnwKjsA6CuAFDMHvuUa3cqG+rjMnKVymp1F+WPeY3UBhBb47
-	/G0dMd+o07qDaJg71VOLKEkwkLbQFKv4J+g==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8u8w7-1
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kuHENK0DYgi7JlXzy3OZov0FtKUnSjJcORNhHeAJWYU=; b=PRXaSTgetmg7zo0w
+	8p3lbwOJ6d1M9WnZe5isUSyBKGnV4OhtM8zPP/FpHxml5tOvmt3B7qVE8jx9FxTu
+	yyhuwKmp2dAW4/MBgOPuCax387Ou86SPB43fMN9Eva1YdUn82fopsZOLJsm9/iVI
+	AzJdj06Nr62QF3zOmG06y8KSKA0dMSG6zidkRBTY0JpHQOtQ89WUY+xe+xpqc27w
+	dLv8fpjJOeXTsImOjEKhLqKqzlSY4kipXpLdk42+pkq9WTt5dWhC7YG8iucSHMP2
+	mJ5qlUDmCEVzu1ojjyY1YgQO7LBk9C8Qouoi0UG4hSs7MtznxgDcDqPDbP4blvx2
+	iEPk7Q==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491vc2f9bh-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:36:52 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-724ee8d2a33so31221396d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:36:52 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:36:45 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-81621e5b962so44603185a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:36:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757673411; x=1758278211;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uOjR35eLHkEN3KiQ06akGbY/xV3LkM6yhTdOwIGj+uU=;
-        b=vn7akF4TzU4vwySvFSyDyc5mdKiDkyZ6vNMdbhXzO3hJbu/frXuL2oI7pPAxC0K/8l
-         H2QPTX3ASVjMBxEhJufDS9vUYv32wMY98HKRyOilNT5sEm+c0pBp3UiWffOt4i6IMlaa
-         DRXW3Fg1aREEBCg7sQjQgp3EgCVSzdeOK24ybikrVbo4dH+FQbGDavjLQHWZ2cnah/57
-         iK0p3h2eJkTsvFJ3Pr58Kes0D6ujhACA5f1BgPvpe8fZDzMAyw8jHhS+eI0FCdQwq9WY
-         jK6Njfok2ymcllIeb3R4PseqW0y4kMQfAirCx1PdBeVo8dyv9ClIeGdBzwa7RndMdRTP
-         pA4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUxmMFmCmFJ+vP0u7GSH8K34vhK8rbIocdNPmNOmj41dY/sjdWxXFOp9FQGo/mGmfb68xJgHmsIQ5exrHo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJCmrzsvA1KrEKYYJFb698dJ8hKBczdmsjViz4F2Xnh5gf3Dv9
-	64KVplzuhQX//9FB8faANjAqVk1nK4lRRZTVUeuOMDrjJRSUcYhw4oYERGbxMiftObEmVssAe3y
-	k6EFyCdXholYFDx3f4b6uG13Up1sn0GGzKNYitiiFFlOBtyRq6oBGrjviqmksC7ROlm8=
-X-Gm-Gg: ASbGncu6SguRLB3o6NgbsHK3H4/g5OfaUqyWjeQgN3ZOQf1ByJ1irdTNTI7+/kjtWgg
-	clCPL452nh9cIPH3uhJC/aYUdnXuePZ7fjtWlKlaD0p7jSLsCpv5E3wPSxH91dm9DAi8ATA0+6/
-	IBL5Bmqa0sV8njvHbWdtLz3JMVIj29gAh7QxyGTSSGXxoEtYj5VOBvjj3pF0hr6Ohp8BULYN06W
-	0RZcj00a0HQxRRDjEFkrK4C3BV4tyOOdmyeCZwFhDekkMeVg8Ip8kSFU3K9t1HwWnKUKlzbLG05
-	ymvz9iutI004O577fjR+N7jl/MlgAB51jntswnQTbQE1aSX2YYbqh2f5ZjRybFW9Cv9tMLNFRtz
-	3SYQxUVmpbmXplWKSMg9Z24anggc=
-X-Received: by 2002:a05:6214:2a88:b0:742:e50f:22a4 with SMTP id 6a1803df08f44-767be102dacmr32063666d6.27.1757673410845;
-        Fri, 12 Sep 2025 03:36:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHlSis7zZ/dAB4816mlxmTTZAYMl/jbWGbbKXmhIZtTNzjXW2f5KP4XygRK1m8mgtb3cgJBYg==
-X-Received: by 2002:a05:6214:2a88:b0:742:e50f:22a4 with SMTP id 6a1803df08f44-767be102dacmr32063206d6.27.1757673410077;
-        Fri, 12 Sep 2025 03:36:50 -0700 (PDT)
-Received: from WENMLIU-LAB01.qualcomm.com (Global_NAT1_IAD_FW.qualcomm.com. [129.46.232.65])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-763bdd36447sm25174956d6.46.2025.09.12.03.36.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 03:36:49 -0700 (PDT)
-From: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
-To: rfoss@kernel.org, todor.too@gmail.com, bryan.odonoghue@linaro.org,
-        vladimir.zapolskiy@linaro.org, mchehab@kernel.org
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
-Subject: [PATCH v3] media: qcom: camss: Add support for regulator init_load_uA in CSIPHY
-Date: Fri, 12 Sep 2025 18:36:31 +0800
-Message-Id: <20250912103631.1184-1-wenmeng.liu@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1757673404; x=1758278204;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kuHENK0DYgi7JlXzy3OZov0FtKUnSjJcORNhHeAJWYU=;
+        b=IzPFFuUktiemAe6n+ZQ5oIMKSxYxae4+gyxeu3+7D/WB/WaMRAlgxZmIRap/hKD5hN
+         t4nK0fM+tXomJwD6ljR76dijxyohOYZ9RqyqP5cBGeJayJu1GGMuolC7oCbPH5hPt5fB
+         PHRE2uAI8mGqcBOzvwpanXqsxS2LRGCqquFIZ1r8qvlZZjaIq/uV0hlPpy1IAQb+b+0E
+         dRu/ofJvzdY/ZZnYM21UfqFrrD9TF5Lu+kkYCdUDk9AYrdzrU9NcigfQel/E8OZJuZcs
+         fqg6qv4e5d4fw98vDJuCTbjupQD9Xk7VrHARFCwprEFNfF0RLOLy7oXF0hKe/I+6fnIz
+         MluQ==
+X-Gm-Message-State: AOJu0YztizvzUmEDGruHTLna/esY7P1/mdxBvxpa0s9nvtIp0cTj4ArU
+	2xBEwk3QBiA+VbDf4d6TrwgokYbGJm4ECzkHiurXacUzhifJ7esnW3PVbkUL0hMJeA8FYA4Qrvy
+	46m/9vWCf+SBualHCa06aqZa+mI4Hao6q9LBOqV4GTCaYnUtVeB3QlPzYAz7KV6Bggbk=
+X-Gm-Gg: ASbGncuAmLcymIvZXx3z4M38kaVOyD1Sxcjs4CRHDuOtpfhr73R41+FcwBBL+7o0vt7
+	6sJxvKewSV+NowVRfWDL1czp6ezsRxzua0JWPaL51KkrrkCoKcApzaw4g1BVwwPUudSpY2q+DUQ
+	mRg+A8rkEBVpKuMLtIoqI1yaCoFiOgV4XZUt3Y9on3B3sQSc7mvJEUMiVqsSMh/ML09fGa1/hoF
+	te0Xv9Tt9MV3juILWCO20fZ5Rch887yG2PGb7TQdGmsK07drivjNfVoBpV7CDuPHpu/i4ub5cX6
+	mgkybxATuovXr52IfOyV0n9qs9PYVWSIlRCb/QzldwD0ivOD+2Jr8FHSY/0BldwdAd7glG70Zkt
+	P543sWziq0Q+D3Faqh+sI1Q==
+X-Received: by 2002:a05:622a:901a:b0:4b5:fc2a:f37a with SMTP id d75a77b69052e-4b7888cc278mr1140961cf.3.1757673404434;
+        Fri, 12 Sep 2025 03:36:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGU7PAoPRCNJz37EaX6IxNCBg6Jtsm+8T8pgUt1a0L7KS8lH3skeL6+I/GUlg9QPEybmuu4Fw==
+X-Received: by 2002:a05:622a:901a:b0:4b5:fc2a:f37a with SMTP id d75a77b69052e-4b7888cc278mr1140821cf.3.1757673404019;
+        Fri, 12 Sep 2025 03:36:44 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32dd88fsm343748266b.51.2025.09.12.03.36.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 03:36:43 -0700 (PDT)
+Message-ID: <fa6f147f-c4fd-4267-82e3-139129caccbe@oss.qualcomm.com>
+Date: Fri, 12 Sep 2025 12:36:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX58TBJfihWmDp
- lWSJg/GxVDUXD36DggP62ThySxhBlDrlMiJzw68DbHCUKo2L9RrRsNS1dpN4T1AQ4pYos2mahEu
- ne2qRVvt/j7LJiBLy+I/NG83uxgQNQoiyYJX1a33swo09dPqNTc/e87Nd3HKyXnX2zW7u80ktGj
- 7ZUv7PjR7kcZqw045n/AQJQGPaNW5jtR7EMzv+HfQwrwvMTtCpsx75Q8RcM3iqDiriqdfdCAWok
- 6K6IXSSDx5MZv3AJ9eOi+kke561nCxDP9VEkGLeImm4n+UJx0cKpmPL+b9riHw+xJKr0UtaYzM0
- G769ci97++MwywVSAEWt7Td5uoKs8ym0KYCgAauLak0GWN2ghTU3LFijAWC4u/z0xLBX4LTrp9L
- gL3b0hfC
-X-Proofpoint-ORIG-GUID: I9C2PixWQOWljxN9tjlaP3MsE0SFcpfJ
-X-Proofpoint-GUID: I9C2PixWQOWljxN9tjlaP3MsE0SFcpfJ
-X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68c3f7c4 cx=c_pps
- a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=C3Dk8TwHQYyIj7nOf9RCJw==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8
- a=-9CAIrFtjw9YHLUclIIA:9 a=pJ04lnu7RYOZP9TFuWaZ:22 a=TjNXssC_j7lpFel5tvFf:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arch: arm64: dts: qcom: sdm845-starqltechn: fix
+ max77705 interrupts
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+        Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+References: <20250909-starqltechn-correct_max77705_nodes-v2-0-e4174d374074@gmail.com>
+ <20250909-starqltechn-correct_max77705_nodes-v2-3-e4174d374074@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250909-starqltechn-correct_max77705_nodes-v2-3-e4174d374074@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=FN4bx/os c=1 sm=1 tr=0 ts=68c3f7bd cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=5anC7vb6YJh9jDJep64A:9
+ a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-ORIG-GUID: rBtqjRLzSOYTA1SP97bADILpbh7eaKI8
+X-Proofpoint-GUID: rBtqjRLzSOYTA1SP97bADILpbh7eaKI8
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDA5NCBTYWx0ZWRfXyW5fhsfWuK4a
+ rzNLwi+RVvyo4NBTv6DrDb0dK5P9F2yx1PDA5WJV4RUgUBK29MJ1767LNFisuOnT3Bbumuw9NJ4
+ TtcRLT6zY4knNwJgyVnVUPiEQwr2cdcQlyfj0DS8g7jphzGdiXgH2YA2HHSqfk+zVqfq5aLYI7c
+ kXVKd5L4WVyhx9o/xopnx/WLbNlpJKTqlmJ++DBMVb0NWaWuvghEisqRC233lKIC4gR7pS5BMsg
+ yaL1DJQjIStDZnic4exg7We8vj3GxvqPzPRjZrDfuU4xvWufcKVuFdcU8ABX8DB/TxWz+LicpON
+ W/uXsIRUwXNBWkuYicG8mtu8+9vSHGGf7pUKo1EJAZNw9cTL0mxLldLmO71THbE0+VIHfyZBqWh
+ E0DDfOXG
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-12_03,2025-09-11_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
- phishscore=0 adultscore=0 clxscore=1011 impostorscore=0
+ spamscore=0 priorityscore=1501 clxscore=1015 phishscore=0 adultscore=0
+ bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080094
 
-Some Qualcomm regulators are configured with initial mode as
-HPM (High Power Mode), which may lead to higher power consumption.
-To reduce power usage, it's preferable to set the initial mode
-to LPM (Low Power Mode).
+On 9/9/25 9:22 PM, Dzmitry Sankouski wrote:
+> Since max77705 has a register, which indicates interrupt source, it acts
+> as an interrupt controller.
+> 
+> Use max77705 as an interrupt controller for charger and fuelgauge
+> subdevices.
 
-To ensure the regulator can switch from LPM to HPM when needed,
-this patch adds current load configuration for CAMSS CSIPHY.
-This allows the regulator framework to scale the mode dynamically
-based on the load requirement.
+"""
+Direct MAX77705's subdevices to use the IC's internal interrupt
+controller, instead of listening to every interrupt fired by the
+chip towards the host device.
+"""
 
-The current default value for current is uninitialized or random.
-To address this, initial current values are added for the
-following platforms:
-MSM8916, MSM8953, MSM8996, QCM2290, SDM670, SM8250, SC7280, SM8550
-QCS8300, SA8775P and X1E80100.
+Fixes: 7a88a931d095 ("arm64: dts: qcom: sdm845-starqltechn: add max77705 PMIC")
 
-For SDM660, SDM845, SC8280XP the value is set to 0,
-indicating that no default current value is configured,
-the other values are derived from the power grid.
-
-Signed-off-by: Wenmeng Liu <wenmeng.liu@oss.qualcomm.com>
-
----
-Changes in v3:
-- Use devm_regulator_bulk_get_const instead of devm_regulator_bulk_get.
-- Set the default current value to 0.
-- Refactor the code to minimize data copying, and support more platform-specific values.
-- Link to v2: https://lore.kernel.org/all/20250729-camss_csiphy_current-v2-1-da3c72a2055c@quicinc.com/
-
-Changes in v2:
-- Change the source of the current value from DTS to CAMSS resource
-- Link to v1: https://lore.kernel.org/all/20250620040736.3032667-1-quic_wenmliu@quicinc.com/
----
- .../media/platform/qcom/camss/camss-csid.c    |  18 +-
- .../media/platform/qcom/camss/camss-csiphy.c  |  19 +-
- drivers/media/platform/qcom/camss/camss.c     | 290 ++++++++++++++----
- drivers/media/platform/qcom/camss/camss.h     |   2 +-
- 4 files changed, 235 insertions(+), 94 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index 5284b5857368..ed1820488c98 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -1187,24 +1187,12 @@ int msm_csid_subdev_init(struct camss *camss, struct csid_device *csid,
- 
- 	/* Regulator */
- 	for (i = 0; i < ARRAY_SIZE(res->regulators); i++) {
--		if (res->regulators[i])
-+		if (res->regulators[i].supply)
- 			csid->num_supplies++;
- 	}
- 
--	if (csid->num_supplies) {
--		csid->supplies = devm_kmalloc_array(camss->dev,
--						    csid->num_supplies,
--						    sizeof(*csid->supplies),
--						    GFP_KERNEL);
--		if (!csid->supplies)
--			return -ENOMEM;
--	}
--
--	for (i = 0; i < csid->num_supplies; i++)
--		csid->supplies[i].supply = res->regulators[i];
--
--	ret = devm_regulator_bulk_get(camss->dev, csid->num_supplies,
--				      csid->supplies);
-+	ret = devm_regulator_bulk_get_const(camss->dev, csid->num_supplies,
-+					    res->regulators, &csid->supplies);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/media/platform/qcom/camss/camss-csiphy.c
-index 2de97f58f9ae..390427c163de 100644
---- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-+++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-@@ -694,24 +694,13 @@ int msm_csiphy_subdev_init(struct camss *camss,
- 
- 	/* CSIPHY supplies */
- 	for (i = 0; i < ARRAY_SIZE(res->regulators); i++) {
--		if (res->regulators[i])
-+		if (res->regulators[i].supply)
- 			csiphy->num_supplies++;
- 	}
- 
--	if (csiphy->num_supplies) {
--		csiphy->supplies = devm_kmalloc_array(camss->dev,
--						      csiphy->num_supplies,
--						      sizeof(*csiphy->supplies),
--						      GFP_KERNEL);
--		if (!csiphy->supplies)
--			return -ENOMEM;
--	}
--
--	for (i = 0; i < csiphy->num_supplies; i++)
--		csiphy->supplies[i].supply = res->regulators[i];
--
--	ret = devm_regulator_bulk_get(camss->dev, csiphy->num_supplies,
--				      csiphy->supplies);
-+	if (csiphy->num_supplies > 0)
-+		ret = devm_regulator_bulk_get_const(camss->dev, csiphy->num_supplies,
-+						    res->regulators, &csiphy->supplies);
- 	return ret;
- }
- 
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 2fbcd0e343aa..43e4bc5a91be 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -73,7 +73,9 @@ static const struct camss_subdev_resources csiphy_res_8x16[] = {
- static const struct camss_subdev_resources csid_res_8x16[] = {
- 	/* CSID0 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 40000 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
- 			   "csi0", "csi0_phy", "csi0_pix", "csi0_rdi" },
- 		.clock_rate = { { 0 },
-@@ -95,7 +97,9 @@ static const struct camss_subdev_resources csid_res_8x16[] = {
- 
- 	/* CSID1 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 40000 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
- 			   "csi1", "csi1_phy", "csi1_pix", "csi1_rdi" },
- 		.clock_rate = { { 0 },
-@@ -157,7 +161,9 @@ static const struct camss_subdev_resources vfe_res_8x16[] = {
- static const struct camss_subdev_resources csid_res_8x53[] = {
- 	/* CSID0 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 9900 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
- 			   "csi0", "csi0_phy", "csi0_pix", "csi0_rdi" },
- 		.clock_rate = { { 0 },
-@@ -180,7 +186,9 @@ static const struct camss_subdev_resources csid_res_8x53[] = {
- 
- 	/* CSID1 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 9900 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
- 			   "csi1", "csi1_phy", "csi1_pix", "csi1_rdi" },
- 		.clock_rate = { { 0 },
-@@ -203,7 +211,9 @@ static const struct camss_subdev_resources csid_res_8x53[] = {
- 
- 	/* CSID2 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 9900 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi2_ahb", "ahb",
- 			   "csi2", "csi2_phy", "csi2_pix", "csi2_rdi" },
- 		.clock_rate = { { 0 },
-@@ -364,7 +374,9 @@ static const struct camss_subdev_resources csiphy_res_8x96[] = {
- static const struct camss_subdev_resources csid_res_8x96[] = {
- 	/* CSID0 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 80160 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
- 			   "csi0", "csi0_phy", "csi0_pix", "csi0_rdi" },
- 		.clock_rate = { { 0 },
-@@ -386,7 +398,9 @@ static const struct camss_subdev_resources csid_res_8x96[] = {
- 
- 	/* CSID1 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 80160 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
- 			   "csi1", "csi1_phy", "csi1_pix", "csi1_rdi" },
- 		.clock_rate = { { 0 },
-@@ -408,7 +422,9 @@ static const struct camss_subdev_resources csid_res_8x96[] = {
- 
- 	/* CSID2 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 80160 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi2_ahb", "ahb",
- 			   "csi2", "csi2_phy", "csi2_pix", "csi2_rdi" },
- 		.clock_rate = { { 0 },
-@@ -430,7 +446,9 @@ static const struct camss_subdev_resources csid_res_8x96[] = {
- 
- 	/* CSID3 */
- 	{
--		.regulators = { "vdda" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 80160 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi3_ahb", "ahb",
- 			   "csi3", "csi3_phy", "csi3_pix", "csi3_rdi" },
- 		.clock_rate = { { 0 },
-@@ -518,7 +536,10 @@ static const struct camss_subdev_resources vfe_res_8x96[] = {
- static const struct camss_subdev_resources csiphy_res_2290[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdd-csiphy-1p2", "vdd-csiphy-1p8" },
-+		.regulators = {
-+			{ .supply = "vdd-csiphy-1p2", .init_load_uA = 26700 },
-+			{ .supply = "vdd-csiphy-1p8", .init_load_uA = 2600 }
-+		},
- 		.clock = { "top_ahb", "ahb", "csiphy0", "csiphy0_timer" },
- 		.clock_rate = { { 0 },
- 				{ 0 },
-@@ -535,7 +556,10 @@ static const struct camss_subdev_resources csiphy_res_2290[] = {
- 
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdd-csiphy-1p2", "vdd-csiphy-1p8" },
-+		.regulators = {
-+			{ .supply = "vdd-csiphy-1p2", .init_load_uA = 26700 },
-+			{ .supply = "vdd-csiphy-1p8", .init_load_uA = 2600 }
-+		},
- 		.clock = { "top_ahb", "ahb", "csiphy1", "csiphy1_timer" },
- 		.clock_rate = { { 0 },
- 				{ 0 },
-@@ -711,7 +735,10 @@ static const struct camss_subdev_resources csiphy_res_660[] = {
- static const struct camss_subdev_resources csid_res_660[] = {
- 	/* CSID0 */
- 	{
--		.regulators = { "vdda", "vdd_sec" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 0 },
-+			{ .supply = "vdd_sec", .init_load_uA = 0 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
- 			   "csi0", "csi0_phy", "csi0_pix", "csi0_rdi",
- 			   "cphy_csid0" },
-@@ -736,7 +763,10 @@ static const struct camss_subdev_resources csid_res_660[] = {
- 
- 	/* CSID1 */
- 	{
--		.regulators = { "vdda", "vdd_sec" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 0 },
-+			{ .supply = "vdd_sec", .init_load_uA = 0 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
- 			   "csi1", "csi1_phy", "csi1_pix", "csi1_rdi",
- 			   "cphy_csid1" },
-@@ -761,7 +791,10 @@ static const struct camss_subdev_resources csid_res_660[] = {
- 
- 	/* CSID2 */
- 	{
--		.regulators = { "vdda", "vdd_sec" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 0 },
-+			{ .supply = "vdd_sec", .init_load_uA = 0 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi2_ahb", "ahb",
- 			   "csi2", "csi2_phy", "csi2_pix", "csi2_rdi",
- 			   "cphy_csid2" },
-@@ -786,7 +819,10 @@ static const struct camss_subdev_resources csid_res_660[] = {
- 
- 	/* CSID3 */
- 	{
--		.regulators = { "vdda", "vdd_sec" },
-+		.regulators = {
-+			{ .supply = "vdda", .init_load_uA = 0 },
-+			{ .supply = "vdd_sec", .init_load_uA = 0 }
-+		},
- 		.clock = { "top_ahb", "ispif_ahb", "csi3_ahb", "ahb",
- 			   "csi3", "csi3_phy", "csi3_pix", "csi3_rdi",
- 			   "cphy_csid3" },
-@@ -883,7 +919,10 @@ static const struct camss_subdev_resources vfe_res_660[] = {
- static const struct camss_subdev_resources csiphy_res_670[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 42800 },
-+			{ .supply = "vdda-pll", .init_load_uA = 13900 }
-+		},
- 		.clock = { "soc_ahb", "cpas_ahb",
- 			   "csiphy0", "csiphy0_timer" },
- 		.clock_rate = { { 0 },
-@@ -901,7 +940,10 @@ static const struct camss_subdev_resources csiphy_res_670[] = {
- 
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 42800 },
-+			{ .supply = "vdda-pll", .init_load_uA = 13900 }
-+		},
- 		.clock = { "soc_ahb", "cpas_ahb",
- 			   "csiphy1", "csiphy1_timer" },
- 		.clock_rate = { { 0 },
-@@ -919,7 +961,10 @@ static const struct camss_subdev_resources csiphy_res_670[] = {
- 
- 	/* CSIPHY2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 42800 },
-+			{ .supply = "vdda-pll", .init_load_uA = 13900 }
-+		},
- 		.clock = { "soc_ahb", "cpas_ahb",
- 			   "csiphy2", "csiphy2_timer" },
- 		.clock_rate = { { 0 },
-@@ -1159,7 +1204,10 @@ static const struct camss_subdev_resources csiphy_res_845[] = {
- static const struct camss_subdev_resources csid_res_845[] = {
- 	/* CSID0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "cpas_ahb", "cphy_rx_src", "slow_ahb_src",
- 				"soc_ahb", "vfe0", "vfe0_src",
- 				"vfe0_cphy_rx", "csi0",
-@@ -1184,7 +1232,10 @@ static const struct camss_subdev_resources csid_res_845[] = {
- 
- 	/* CSID1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "cpas_ahb", "cphy_rx_src", "slow_ahb_src",
- 				"soc_ahb", "vfe1", "vfe1_src",
- 				"vfe1_cphy_rx", "csi1",
-@@ -1209,7 +1260,10 @@ static const struct camss_subdev_resources csid_res_845[] = {
- 
- 	/* CSID2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "cpas_ahb", "cphy_rx_src", "slow_ahb_src",
- 				"soc_ahb", "vfe_lite", "vfe_lite_src",
- 				"vfe_lite_cphy_rx", "csi2",
-@@ -1321,7 +1375,10 @@ static const struct camss_subdev_resources vfe_res_845[] = {
- static const struct camss_subdev_resources csiphy_res_8250[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 17500 },
-+			{ .supply = "vdda-pll", .init_load_uA = 10000 }
-+		},
- 		.clock = { "csiphy0", "csiphy0_timer" },
- 		.clock_rate = { { 400000000 },
- 				{ 300000000 } },
-@@ -1335,7 +1392,10 @@ static const struct camss_subdev_resources csiphy_res_8250[] = {
- 	},
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 17500 },
-+			{ .supply = "vdda-pll", .init_load_uA = 10000 }
-+		},
- 		.clock = { "csiphy1", "csiphy1_timer" },
- 		.clock_rate = { { 400000000 },
- 				{ 300000000 } },
-@@ -1349,7 +1409,10 @@ static const struct camss_subdev_resources csiphy_res_8250[] = {
- 	},
- 	/* CSIPHY2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 17500 },
-+			{ .supply = "vdda-pll", .init_load_uA = 10000 }
-+		},
- 		.clock = { "csiphy2", "csiphy2_timer" },
- 		.clock_rate = { { 400000000 },
- 				{ 300000000 } },
-@@ -1363,7 +1426,10 @@ static const struct camss_subdev_resources csiphy_res_8250[] = {
- 	},
- 	/* CSIPHY3 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 17500 },
-+			{ .supply = "vdda-pll", .init_load_uA = 10000 }
-+		},
- 		.clock = { "csiphy3", "csiphy3_timer" },
- 		.clock_rate = { { 400000000 },
- 				{ 300000000 } },
-@@ -1377,7 +1443,10 @@ static const struct camss_subdev_resources csiphy_res_8250[] = {
- 	},
- 	/* CSIPHY4 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 17500 },
-+			{ .supply = "vdda-pll", .init_load_uA = 10000 }
-+		},
- 		.clock = { "csiphy4", "csiphy4_timer" },
- 		.clock_rate = { { 400000000 },
- 				{ 300000000 } },
-@@ -1391,7 +1460,10 @@ static const struct camss_subdev_resources csiphy_res_8250[] = {
- 	},
- 	/* CSIPHY5 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 17500 },
-+			{ .supply = "vdda-pll", .init_load_uA = 10000 }
-+		},
- 		.clock = { "csiphy5", "csiphy5_timer" },
- 		.clock_rate = { { 400000000 },
- 				{ 300000000 } },
-@@ -1605,7 +1677,10 @@ static const struct resources_icc icc_res_sm8250[] = {
- static const struct camss_subdev_resources csiphy_res_7280[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 16100 },
-+			{ .supply = "vdda-pll", .init_load_uA = 9000 }
-+		},
- 
- 		.clock = { "csiphy0", "csiphy0_timer" },
- 		.clock_rate = { { 300000000, 400000000 },
-@@ -1620,7 +1695,10 @@ static const struct camss_subdev_resources csiphy_res_7280[] = {
- 	},
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 16100 },
-+			{ .supply = "vdda-pll", .init_load_uA = 9000 }
-+		},
- 
- 		.clock = { "csiphy1", "csiphy1_timer" },
- 		.clock_rate = { { 300000000, 400000000 },
-@@ -1635,7 +1713,10 @@ static const struct camss_subdev_resources csiphy_res_7280[] = {
- 	},
- 	/* CSIPHY2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 16100 },
-+			{ .supply = "vdda-pll", .init_load_uA = 9000 }
-+		},
- 
- 		.clock = { "csiphy2", "csiphy2_timer" },
- 		.clock_rate = { { 300000000, 400000000 },
-@@ -1650,7 +1731,10 @@ static const struct camss_subdev_resources csiphy_res_7280[] = {
- 	},
- 	/* CSIPHY3 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 16100 },
-+			{ .supply = "vdda-pll", .init_load_uA = 9000 }
-+		},
- 
- 		.clock = { "csiphy3", "csiphy3_timer" },
- 		.clock_rate = { { 300000000, 400000000 },
-@@ -1665,7 +1749,10 @@ static const struct camss_subdev_resources csiphy_res_7280[] = {
- 	},
- 	/* CSIPHY4 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 16100 },
-+			{ .supply = "vdda-pll", .init_load_uA = 9000 }
-+		},
- 
- 		.clock = { "csiphy4", "csiphy4_timer" },
- 		.clock_rate = { { 300000000, 400000000 },
-@@ -1978,7 +2065,10 @@ static const struct camss_subdev_resources csiphy_res_sc8280xp[] = {
- static const struct camss_subdev_resources csid_res_sc8280xp[] = {
- 	/* CSID0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "vfe0_csid", "vfe0_cphy_rx", "vfe0", "vfe0_axi" },
- 		.clock_rate = { { 400000000, 480000000, 600000000 },
- 				{ 0 },
-@@ -1994,7 +2084,10 @@ static const struct camss_subdev_resources csid_res_sc8280xp[] = {
- 	},
- 	/* CSID1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "vfe1_csid", "vfe1_cphy_rx", "vfe1", "vfe1_axi" },
- 		.clock_rate = { { 400000000, 480000000, 600000000 },
- 				{ 0 },
-@@ -2010,7 +2103,10 @@ static const struct camss_subdev_resources csid_res_sc8280xp[] = {
- 	},
- 	/* CSID2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "vfe2_csid", "vfe2_cphy_rx", "vfe2", "vfe2_axi" },
- 		.clock_rate = { { 400000000, 480000000, 600000000 },
- 				{ 0 },
-@@ -2026,7 +2122,10 @@ static const struct camss_subdev_resources csid_res_sc8280xp[] = {
- 	},
- 	/* CSID3 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "vfe3_csid", "vfe3_cphy_rx", "vfe3", "vfe3_axi" },
- 		.clock_rate = { { 400000000, 480000000, 600000000 },
- 				{ 0 },
-@@ -2042,7 +2141,10 @@ static const struct camss_subdev_resources csid_res_sc8280xp[] = {
- 	},
- 	/* CSID_LITE0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "vfe_lite0_csid", "vfe_lite0_cphy_rx", "vfe_lite0" },
- 		.clock_rate = { { 400000000, 480000000, 600000000 },
- 				{ 0 },
-@@ -2058,7 +2160,10 @@ static const struct camss_subdev_resources csid_res_sc8280xp[] = {
- 	},
- 	/* CSID_LITE1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "vfe_lite1_csid", "vfe_lite1_cphy_rx", "vfe_lite1" },
- 		.clock_rate = { { 400000000, 480000000, 600000000 },
- 				{ 0 },
-@@ -2074,7 +2179,10 @@ static const struct camss_subdev_resources csid_res_sc8280xp[] = {
- 	},
- 	/* CSID_LITE2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "vfe_lite2_csid", "vfe_lite2_cphy_rx", "vfe_lite2" },
- 		.clock_rate = { { 400000000, 480000000, 600000000 },
- 				{ 0 },
-@@ -2090,7 +2198,10 @@ static const struct camss_subdev_resources csid_res_sc8280xp[] = {
- 	},
- 	/* CSID_LITE3 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 0 },
-+			{ .supply = "vdda-pll", .init_load_uA = 0 }
-+		},
- 		.clock = { "vfe_lite3_csid", "vfe_lite3_cphy_rx", "vfe_lite3" },
- 		.clock_rate = { { 400000000, 480000000, 600000000 },
- 				{ 0 },
-@@ -2291,7 +2402,10 @@ static const struct resources_icc icc_res_sc8280xp[] = {
- static const struct camss_subdev_resources csiphy_res_8550[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 32200 },
-+			{ .supply = "vdda-pll", .init_load_uA = 18000 }
-+		},
- 		.clock = { "csiphy0", "csiphy0_timer" },
- 		.clock_rate = { { 400000000, 480000000 },
- 				{ 400000000 } },
-@@ -2305,7 +2419,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
- 	},
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 32200 },
-+			{ .supply = "vdda-pll", .init_load_uA = 18000 }
-+		},
- 		.clock = { "csiphy1", "csiphy1_timer" },
- 		.clock_rate = { { 400000000, 480000000 },
- 				{ 400000000 } },
-@@ -2319,7 +2436,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
- 	},
- 	/* CSIPHY2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 32200 },
-+			{ .supply = "vdda-pll", .init_load_uA = 18000 }
-+		},
- 		.clock = { "csiphy2", "csiphy2_timer" },
- 		.clock_rate = { { 400000000, 480000000 },
- 				{ 400000000 } },
-@@ -2333,7 +2453,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
- 	},
- 	/* CSIPHY3 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 32200 },
-+			{ .supply = "vdda-pll", .init_load_uA = 18000 }
-+		},
- 		.clock = { "csiphy3", "csiphy3_timer" },
- 		.clock_rate = { { 400000000, 480000000 },
- 				{ 400000000 } },
-@@ -2347,7 +2470,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
- 	},
- 	/* CSIPHY4 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 37900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 18600 }
-+		},
- 		.clock = { "csiphy4", "csiphy4_timer" },
- 		.clock_rate = { { 400000000, 480000000 },
- 				{ 400000000 } },
-@@ -2361,7 +2487,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
- 	},
- 	/* CSIPHY5 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 32200 },
-+			{ .supply = "vdda-pll", .init_load_uA = 18000 }
-+		},
- 		.clock = { "csiphy5", "csiphy5_timer" },
- 		.clock_rate = { { 400000000, 480000000 },
- 				{ 400000000 } },
-@@ -2375,7 +2504,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
- 	},
- 	/* CSIPHY6 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 37900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 18600 }
-+		},
- 		.clock = { "csiphy6", "csiphy6_timer" },
- 		.clock_rate = { { 400000000, 480000000 },
- 				{ 400000000 } },
-@@ -2389,7 +2521,10 @@ static const struct camss_subdev_resources csiphy_res_8550[] = {
- 	},
- 	/* CSIPHY7 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 32200 },
-+			{ .supply = "vdda-pll", .init_load_uA = 18000 }
-+		},
- 		.clock = { "csiphy7", "csiphy7_timer" },
- 		.clock_rate = { { 400000000, 480000000 },
- 				{ 400000000 } },
-@@ -2620,7 +2755,10 @@ static const struct resources_icc icc_res_sm8550[] = {
- static const struct camss_subdev_resources csiphy_res_8300[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 15900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 8900 }
-+		},
- 
- 		.clock = { "csiphy_rx", "csiphy0", "csiphy0_timer" },
- 		.clock_rate = {
-@@ -2638,7 +2776,10 @@ static const struct camss_subdev_resources csiphy_res_8300[] = {
- 	},
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 15900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 8900 }
-+		},
- 
- 		.clock = { "csiphy_rx", "csiphy1", "csiphy1_timer" },
- 		.clock_rate = {
-@@ -2656,7 +2797,10 @@ static const struct camss_subdev_resources csiphy_res_8300[] = {
- 	},
- 	/* CSIPHY2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 15900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 8900 }
-+		},
- 
- 		.clock = { "csiphy_rx", "csiphy2", "csiphy2_timer" },
- 		.clock_rate = {
-@@ -2677,7 +2821,10 @@ static const struct camss_subdev_resources csiphy_res_8300[] = {
- static const struct camss_subdev_resources csiphy_res_8775p[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 15900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 8900 }
-+		},
- 		.clock = { "csiphy_rx", "csiphy0", "csiphy0_timer"},
- 		.clock_rate = {
- 			{ 400000000 },
-@@ -2694,7 +2841,10 @@ static const struct camss_subdev_resources csiphy_res_8775p[] = {
- 	},
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 15900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 8900 }
-+		},
- 		.clock = { "csiphy_rx", "csiphy1", "csiphy1_timer"},
- 		.clock_rate = {
- 			{ 400000000 },
-@@ -2711,7 +2861,10 @@ static const struct camss_subdev_resources csiphy_res_8775p[] = {
- 	},
- 	/* CSIPHY2 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 15900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 8900 }
-+		},
- 		.clock = { "csiphy_rx", "csiphy2", "csiphy2_timer"},
- 		.clock_rate = {
- 			{ 400000000 },
-@@ -2728,7 +2881,10 @@ static const struct camss_subdev_resources csiphy_res_8775p[] = {
- 	},
- 	/* CSIPHY3 */
- 	{
--		.regulators = { "vdda-phy", "vdda-pll" },
-+		.regulators = {
-+			{ .supply = "vdda-phy", .init_load_uA = 15900 },
-+			{ .supply = "vdda-pll", .init_load_uA = 8900 }
-+		},
- 		.clock = { "csiphy_rx", "csiphy3", "csiphy3_timer"},
- 		.clock_rate = {
- 			{ 400000000 },
-@@ -3081,8 +3237,10 @@ static const struct resources_icc icc_res_sa8775p[] = {
- static const struct camss_subdev_resources csiphy_res_x1e80100[] = {
- 	/* CSIPHY0 */
- 	{
--		.regulators = { "vdd-csiphy-0p8",
--				"vdd-csiphy-1p2" },
-+		.regulators = {
-+			{ .supply = "vdd-csiphy-0p8", .init_load_uA = 105000 },
-+			{ .supply = "vdd-csiphy-1p2", .init_load_uA = 58900 }
-+		},
- 		.clock = { "csiphy0", "csiphy0_timer" },
- 		.clock_rate = { { 300000000, 400000000, 480000000 },
- 				{ 266666667, 400000000 } },
-@@ -3096,8 +3254,10 @@ static const struct camss_subdev_resources csiphy_res_x1e80100[] = {
- 	},
- 	/* CSIPHY1 */
- 	{
--		.regulators = { "vdd-csiphy-0p8",
--				"vdd-csiphy-1p2" },
-+		.regulators = {
-+			{ .supply = "vdd-csiphy-0p8", .init_load_uA = 105000 },
-+			{ .supply = "vdd-csiphy-1p2", .init_load_uA = 58900 }
-+		},
- 		.clock = { "csiphy1", "csiphy1_timer" },
- 		.clock_rate = { { 300000000, 400000000, 480000000 },
- 				{ 266666667, 400000000 } },
-@@ -3111,8 +3271,10 @@ static const struct camss_subdev_resources csiphy_res_x1e80100[] = {
- 	},
- 	/* CSIPHY2 */
- 	{
--		.regulators = { "vdd-csiphy-0p8",
--				"vdd-csiphy-1p2" },
-+		.regulators = {
-+			{ .supply = "vdd-csiphy-0p8", .init_load_uA = 105000 },
-+			{ .supply = "vdd-csiphy-1p2", .init_load_uA = 58900 }
-+		},
- 		.clock = { "csiphy2", "csiphy2_timer" },
- 		.clock_rate = { { 300000000, 400000000, 480000000 },
- 				{ 266666667, 400000000 } },
-@@ -3126,8 +3288,10 @@ static const struct camss_subdev_resources csiphy_res_x1e80100[] = {
- 	},
- 	/* CSIPHY4 */
- 	{
--		.regulators = { "vdd-csiphy-0p8",
--				"vdd-csiphy-1p2" },
-+		.regulators = {
-+			{ .supply = "vdd-csiphy-0p8", .init_load_uA = 105000 },
-+			{ .supply = "vdd-csiphy-1p2", .init_load_uA = 58900 }
-+		},
- 		.clock = { "csiphy4", "csiphy4_timer" },
- 		.clock_rate = { { 300000000, 400000000, 480000000 },
- 				{ 266666667, 400000000 } },
-diff --git a/drivers/media/platform/qcom/camss/camss.h b/drivers/media/platform/qcom/camss/camss.h
-index a70fbc78ccc3..3d5095158338 100644
---- a/drivers/media/platform/qcom/camss/camss.h
-+++ b/drivers/media/platform/qcom/camss/camss.h
-@@ -43,7 +43,7 @@
- #define CAMSS_RES_MAX 17
- 
- struct camss_subdev_resources {
--	char *regulators[CAMSS_RES_MAX];
-+	struct regulator_bulk_data regulators[CAMSS_RES_MAX];
- 	char *clock[CAMSS_RES_MAX];
- 	char *clock_for_reset[CAMSS_RES_MAX];
- 	u32 clock_rate[CAMSS_RES_MAX][CAMSS_RES_MAX];
--- 
-2.34.1
-
+Konrad> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+> ---
+> Changes for v2:
+> - fix commit msg header prefix to 'arm64: dts: qcom: sdm845-starqltechn:'
+> - remove binding header for interrupt numbers
+> - make interrupt-cells 1, because irq trigger type is not used
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
+> index 8a1e4c76914c..597e25d27d76 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
+> @@ -584,13 +584,15 @@ &uart9 {
+>  &i2c14 {
+>  	status = "okay";
+>  
+> -	pmic@66 {
+> +	max77705: pmic@66 {
+>  		compatible = "maxim,max77705";
+>  		reg = <0x66>;
+>  		interrupt-parent = <&pm8998_gpios>;
+>  		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-controller;
+>  		pinctrl-0 = <&pmic_int_default>;
+>  		pinctrl-names = "default";
+> +		#interrupt-cells = <1>;
+>  
+>  		leds {
+>  			compatible = "maxim,max77705-rgb";
+> @@ -629,8 +631,8 @@ max77705_charger: charger@69 {
+>  		reg = <0x69>;
+>  		compatible = "maxim,max77705-charger";
+>  		monitored-battery = <&battery>;
+> -		interrupt-parent = <&pm8998_gpios>;
+> -		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-parent = <&max77705>;
+> +		interrupts = <0>;
+>  	};
+>  
+>  	fuel-gauge@36 {
+> @@ -638,8 +640,8 @@ fuel-gauge@36 {
+>  		compatible = "maxim,max77705-battery";
+>  		power-supplies = <&max77705_charger>;
+>  		maxim,rsns-microohm = <5000>;
+> -		interrupt-parent = <&pm8998_gpios>;
+> -		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-parent = <&max77705>;
+> +		interrupts = <2>;
+>  	};
+>  };
+>  
+> 
 
