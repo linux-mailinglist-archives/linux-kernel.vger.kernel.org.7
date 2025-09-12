@@ -1,62 +1,68 @@
-Return-Path: <linux-kernel+bounces-814189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7D6B55087
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08AF7B55091
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:13:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E5E87B72F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:10:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4014717E2A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273D631283C;
-	Fri, 12 Sep 2025 14:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB307313538;
+	Fri, 12 Sep 2025 14:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mGU8apuL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NVBzqUt4"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75F0D311C30;
-	Fri, 12 Sep 2025 14:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DDE530F800;
+	Fri, 12 Sep 2025 14:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686308; cv=none; b=AZ8NjKJHzl9FTxSAeyJZdvKjJQNsqDwp1ekznh5iXwG3GxMMtkFsNE1rYYuAfr4a3Oia9eJYCw6vgrkH7O8H3ogMh3hF44tAs5e0eUM7hiVk8K7d91WZChPzc8BKaZjD8T5cWaLF/wD7qSQWqZJPAZUhqZX9S4j2s3fsvGSpv2o=
+	t=1757686332; cv=none; b=sg58sjid7xCOcAot+yr6G7AtG1QKwkEteJqUJj4pKV4Ve3wDyTVLZnulc1PtVeD3Wy6tXOyVAqDe2smnevq74i3E31bTVvaH0i7SDbV21SEzPUc4D6FjKO+JVNGkfJmgLD6PGnw7bLFEcMOnPJdHTYReZDB3F3GCLk0gRFxIQ78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686308; c=relaxed/simple;
-	bh=M13/y5r8QuZwx9IiU2y9TDTdSu8nXSThqvTuodKXRvQ=;
+	s=arc-20240116; t=1757686332; c=relaxed/simple;
+	bh=S2W16AqL/yJVfSvd6onR+MyfPBJxRwx2+yqvvAEySnk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOPXHpBniLFdUavxPlOMDnfVzbcLbgQEDmvKkRFaITu8vW52MFT79250CAwch1gzbnaGDtNijWGH023x5L010FWhzdQk0KAEOQ+reR+THlsz8SdGp0ws/3KAz+Hsaxf015GGAm+DC6NoSwQZyT8XXCSSngM6L34IcTcT0Jd3xrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mGU8apuL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 307CBC4CEF9;
-	Fri, 12 Sep 2025 14:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757686308;
-	bh=M13/y5r8QuZwx9IiU2y9TDTdSu8nXSThqvTuodKXRvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mGU8apuL0dtG/oidnABZntsB+3pl9RA1vgif1ZGLAq75aSF2Brfd3ICqRu3BE8d/c
-	 N0CG24vEtOOldJr43XjFG9sE7BATPxDDVt9xnA88fGTx5IeAiO4Pc2n9uk45+Bp3hk
-	 tUvAkoinOJJvwZ0uQWfLJ4EK6tW3cIVljS8RKGo+Ps2zvsNYm+A1qEshlA7fnx2zcC
-	 u/RLtPv9jyNQLOH6He+zEMu6qkuuz2yt8zsjdrhB99Ab4eDg0dmshfvPgTPSrhoaEf
-	 V2URoXTV8QAg6qNIE8hTWb84dNdmIDh5K1ROLCbTzgiLMRM0+WBHwqjZdehhI14+CC
-	 Ld/xKKQalwslg==
-Date: Fri, 12 Sep 2025 15:11:43 +0100
-From: Simon Horman <horms@kernel.org>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gal Pressman <gal@nvidia.com>,
-	Parav Pandit <parav@nvidia.com>, Shay Drory <shayd@nvidia.com>
-Subject: Re: [PATCH net-next 1/4] net/mlx5: Refactor devcom to use match
- attributes
-Message-ID: <20250912141143.GF30363@horms.kernel.org>
-References: <1757572267-601785-1-git-send-email-tariqt@nvidia.com>
- <1757572267-601785-2-git-send-email-tariqt@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WgqiRh5PTlyXvMM/l/KK44N3LURDYIOv+jPLJqhQRM4ZK7JZJjGjC+HTWz1ulShiKZ7ZRXdntcDSM5UgWtKDNA3sTzZqmdi7eHvycWTA9eD137Kc29TETayclu1AnMFo7DVh51gworc4ROxA4IVo2HW5qkYeeNmX7p6bi8+jbVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NVBzqUt4; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8oQI0JKp33i40J2KNP9dwR222zQEHIkhUDjyNzOj4GU=; b=NVBzqUt4DD2XB6D9rUubsPPfsk
+	MwFDlvLG3jDu7t0jC3+BL6Y9/khMnd0KBTmlRUGlSNOgQDz7ayLtgzERg/e8r9I+y9D2RQdhtIjlv
+	ofBNsE1LRc5Hr4sVaIUwL0MJmm12XqYowbvxl2i6A0bRYAIvRhe9oUlfkn8i7ePu0XIhwSRasa/rW
+	TAUyNVbKcH+IemikdjlEBY/XhRb5ZGJiMN+4Lb1tCu3kmUka1OjE8DnaX9NPIqyKPv9yUzsUzSMg2
+	T7rWk4hIrtb4j8hN1fwob677X6IxJddxIiWeI47jh6emtKVtoVG+/fX/eLClxVBrYC8yDyB8f+mhK
+	92uPs3zQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ux4VK-00000006NKm-20cB;
+	Fri, 12 Sep 2025 14:11:58 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id EB2823002EB; Fri, 12 Sep 2025 16:11:56 +0200 (CEST)
+Date: Fri, 12 Sep 2025 16:11:56 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
+ __task_rq_lock()
+Message-ID: <20250912141156.GE1386988@noisy.programming.kicks-ass.net>
+References: <20250910154409.446470175@infradead.org>
+ <20250910155809.684653538@infradead.org>
+ <aMNnLenCytO_KEKg@slm.duckdns.org>
+ <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,22 +71,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1757572267-601785-2-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
 
-On Thu, Sep 11, 2025 at 09:31:04AM +0300, Tariq Toukan wrote:
-> From: Shay Drory <shayd@nvidia.com>
+On Fri, Sep 12, 2025 at 01:54:59PM +0200, Peter Zijlstra wrote:
+> On Thu, Sep 11, 2025 at 02:19:57PM -1000, Tejun Heo wrote:
+> > Hello,
+> > 
+> > On Wed, Sep 10, 2025 at 05:44:21PM +0200, Peter Zijlstra wrote:
+> > > @@ -703,17 +703,24 @@ void double_rq_lock(struct rq *rq1, stru
+> > >  struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
+> > >  	__acquires(rq->lock)
+> > >  {
+> > > +	raw_spinlock_t *slock;
+> > >  	struct rq *rq;
+> > >  
+> > >  	lockdep_assert_held(&p->pi_lock);
+> > >  
+> > >  	for (;;) {
+> > >  		rq = task_rq(p);
+> > > +		slock = p->srq_lock;
+> > >  		raw_spin_rq_lock(rq);
+> > > -		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
+> > > +		if (slock)
+> > > +			raw_spin_lock(slock);
+> > > +		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p) &&
+> > > +			   (!slock || p->srq_lock == slock))) {
+> > >  			rq_pin_lock(rq, rf);
+> > >  			return rq;
+> > >  		}
 > 
-> Refactor the devcom interface to use a match attribute structure instead
-> of passing raw keys. This change lays the groundwork for extending devcom
-> matching logic with additional fields like net namespace, improving its
-> flexibility and robustness.
+> Yeah, I think that needs to change a little. Perhaps something like:
 > 
-> No functional changes.
-> 
-> Signed-off-by: Shay Drory <shayd@nvidia.com>
-> Reviewed-by: Mark Bloch <mbloch@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> 	slock2 = p->srq_lock;
+> 	if (... && (!slock2 || slock2 == slock))
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+I'm being stupid, all that wants is: && (p->srq_lock == slock). If there
+is a mis-match, unlock and re-try.
 
