@@ -1,175 +1,164 @@
-Return-Path: <linux-kernel+bounces-813465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075D0B545D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:46:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5878EB545D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5867E17D64A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 051F316D98C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71711F4C9F;
-	Fri, 12 Sep 2025 08:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EDA1DFD8F;
+	Fri, 12 Sep 2025 08:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0WQMvCm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="muBTD1ha";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ld9ZQCjh"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39F6F2DC793;
-	Fri, 12 Sep 2025 08:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D53C2DC793;
+	Fri, 12 Sep 2025 08:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757666804; cv=none; b=Bi6DIv45xJviRN9+UQk+UuT90Tzh9TAqN/49xG2zBk833RVanovrYk2RqQkvZcgEFycbdXJforf+7OQBMgeauz/djFxIDpUiHxEnW19i8AJoE7XYH26/J8iG73GGNygoO2wPyjo0nuNxSQjM0wj7ejLzbYxdHe20Bi+gHztCQXc=
+	t=1757666877; cv=none; b=LCUuJR7s41Q5iYpJuAJE+4UXxJJCFnnT4zZZU5uPMhdMj68S6ETgfLoGAtD4FPs+Opbs/RlRCDclPOM0YD/E6ebeCmBeUZDxMyxT89azrGVcBLR7l8LxkkTsVaWMmsZ1HhCdpY5n1ICRLvFEBhCLN5sCFFtvDMtjy1fWkmSENjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757666804; c=relaxed/simple;
-	bh=tB552EcC3dT+MWtH2KGQtr52pu/sx5gcFpmjxx+Sm2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cyXalNKuPQGFFwvaMHkFAxrq/gSb+r/MqClDFmzStqRz9TrjUq+Dw3ZlnzgfEGBFxHA4kma8RAu3CC+0n9y10/ezqqHQkfiTj0hzeCpzI3NdEOBnXBNXpTjIQ0aHWWH4+jlgAvmp3JkJhIWFyhwaw97c+Vcs5/BaM2UtemEKMH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0WQMvCm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4461C4CEF4;
-	Fri, 12 Sep 2025 08:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757666803;
-	bh=tB552EcC3dT+MWtH2KGQtr52pu/sx5gcFpmjxx+Sm2M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=K0WQMvCmANFvkTj4XCidgSwyBgHSFZMr6PxortgBnNgxEajQhARfbs7pFywd+44+H
-	 6D5jOdQPAKfSz6evhaWfXZpvx/ay635697622aaQCsVLaCTXYkgJbZgyQhDqrAKU5g
-	 RRcoCVPcdukPjuaNmjjCRoh2X4s8JneiWfXN790heh+aASbNlZ7RFCeWolf0poIpMJ
-	 vbCyALIZBKxy8+h/vcSINDa8HgoTRIuH4OaJfmvoLfzMh7kSy+gqp1RO41cUA2Tnk4
-	 Ls26qG4mLIe66taBB7AvF0muBhT8407ceOPM2GDIM/qhklV5d5p9wFsRsieKqdeM7l
-	 9HE2CTTitdQwQ==
-Date: Fri, 12 Sep 2025 10:46:39 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/19] tools/docs: sphinx-build-wrapper: add support
- to run inside venv
-Message-ID: <20250912104639.4781b638@foz.lan>
-In-Reply-To: <b76575eab805884ee5227ae6f1aded505df4ec56@intel.com>
-References: <cover.1756969623.git.mchehab+huawei@kernel.org>
-	<2158cc4cf1f9bcf4c191f8031c1fb717cb989f7f.1756969623.git.mchehab+huawei@kernel.org>
-	<b76575eab805884ee5227ae6f1aded505df4ec56@intel.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757666877; c=relaxed/simple;
+	bh=eo9w2VnFL3j83P+C9TJyZoTFiiG3GBq2PqaLoXMCu5I=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=t8kuDg0KiLdFaQhdxt3qi/nGW6ED+T8DzW+9M0bUcoKNtcEnPEowZEpHsbit9+JP0+1pfK8d7JAlibEs0YRlruvqHvgjj7ORf0a3uI+K4FG7EP+tPW9lVxi0Ut3V4wTcu8IE1y0Gph6XBvUyt1NZN+uHZgwe1m/A9eDX9C5ZP7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=muBTD1ha; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ld9ZQCjh; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 000ED7A03A6;
+	Fri, 12 Sep 2025 04:47:51 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 12 Sep 2025 04:47:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757666871;
+	 x=1757753271; bh=iDgdGFvPVafirg3SrUddyH198xBsq9KMfs20+2Svn60=; b=
+	muBTD1hahwMhNUaNwK28ttQNJbGdOcpgk6DxpsXQuab3tUaCykcETQQ5BaTXYDy7
+	E9zldZ18KRRV5Trd5JuUMl7enoeCSu+CjcqWSj8XlkufJrgQBoINxK+DeA7CU7bO
+	6y3ycJQxDHTvLETyZHiTJ9qrnFg+qq2I/Bc8N2G5zuayXfU3C3d6a7IFH6FWysX5
+	uVcIGGz+efaLyi4oo0N2SmZtP+OrNv1N37JQ1R3rxaCe2PaEUCz62OH4jBZvk6Q7
+	/GebSd6FCn82pS8vcJ7mwIud92ijjJmodC4MVcq4anAsvpOvu+1+xBI6LcKIdggB
+	yK9hA5XuLvkIKwpP5anuFQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757666871; x=
+	1757753271; bh=iDgdGFvPVafirg3SrUddyH198xBsq9KMfs20+2Svn60=; b=l
+	d9ZQCjhDRSNCac5T3Cmzqo9+troRqzUTGrdApG113OykShJ62UjytxwYMYel1md0
+	PHSUIspMFewbRjW3xIRnydTgFc0yhzfSGFU8CGgLWwmTys5U6xUKBtEgoU2jpk9Y
+	/p8FjyRq8uGnfM/1Y7ObZkRHFWefFCNhnjMwDChvlPNJi8eoMmJ/v4kAsi5IV9uh
+	WtU+tb06T2RLHma1GCrkYz8oVldJBHRwx5h1PaLY5vxeuG9N0u66gpBufSRnpF4i
+	wXVStOXcM+dsr368fmtpVhYfVSLTzsgRABtzvriNz2dSwLnuhCXMwki5VKF/Hqah
+	3nKJZQC04u/gazWF/z2vA==
+X-ME-Sender: <xms:Nt7DaHa3ACbyA-SqO1QiGQNN8fy6tdb47GQva02MkTxViI1x7FjZHg>
+    <xme:Nt7DaGY94I89-xyE1XDoa5FTfhUrVYMu2Xw_q3DdVpq3tQ7G6Nhf5a9pWTjKeeUM2
+    vO_R5XII579Y4EsCVk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvkeeiudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthhhinhhordguvghlrhgvghhnohestg
+    holhhlrggsohhrrgdrtghomhdprhgtphhtthhopegsvghnrdgthhhurghnghesghgvnhgv
+    shihshhlohhgihgtrdgtohhmrdhtfidprhgtphhtthhopehvihgtthhorhdrshhhihhhse
+    hgvghnvghshihslhhoghhitgdrtghomhdrthifpdhrtghpthhtohepughlrghnsehgvghn
+    thhoohdrohhrghdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrh
+    drsggvpdhrtghpthhtoheprggurhhirghnrdhhuhhnthgvrhesihhnthgvlhdrtghomhdp
+    rhgtphhtthhopehmihhkkhhordhrrghpvghliheslhhinhgrrhhordhorhhgpdhrtghpth
+    htohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepiihh
+    ohhusghinhgsihhnsehlohhonhhgshhonhdrtghn
+X-ME-Proxy: <xmx:Nt7DaB3eG7KUd06J5zP01Lig6qQhuR6NizMonnppkI5_iRX1ykURSA>
+    <xmx:Nt7DaCKrEWHNDDdAQmsP0HG7WHsRMpSWHQ1WiABlL_3hIwiewm2Hpg>
+    <xmx:Nt7DaG21SIEHcSKeL8_NFEcBxcdh5OHUFbmWbuAwA_emY66vbLtqKw>
+    <xmx:Nt7DaGkQX58TeH2VOoyAX-BUESZ6QRT9mlNeKPIn5gbbN_uFaGD0XA>
+    <xmx:N97DaJT_xaVpi35cYxUeQpT3OZhuMkWKHgWCGA9wFX1Hz8ak32lrHEmr>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2093A700065; Fri, 12 Sep 2025 04:47:50 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-ThreadId: Ab0invGq7VjZ
+Date: Fri, 12 Sep 2025 10:47:29 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Mikko Rapeli" <mikko.rapeli@linaro.org>,
+ "Ulf Hansson" <ulf.hansson@linaro.org>
+Cc: "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, "Adrian Hunter" <adrian.hunter@intel.com>,
+ "Victor Shih" <victor.shih@genesyslogic.com.tw>,
+ "Ben Chuang" <ben.chuang@genesyslogic.com.tw>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Yixun Lan" <dlan@gentoo.org>, "Binbin Zhou" <zhoubinbin@loongson.cn>
+Message-Id: <acbc46c8-30df-47bb-9d3d-91ba477f6029@app.fastmail.com>
+In-Reply-To: <1813054.X513TT2pbd@diego>
+References: <20250911144313.2774171-1-mikko.rapeli@linaro.org>
+ <CAPDyKFqLag_WkxqOCebvBCJy4TzZEqt-rFD_Z30sajUxgSpcaA@mail.gmail.com>
+ <1813054.X513TT2pbd@diego>
+Subject: Re: [PATCH] mmc: dw_mmc-rockchip: add dependency to ROCKCHIP_PM_DOMAINS
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Em Wed, 10 Sep 2025 13:51:40 +0300
-Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+On Thu, Sep 11, 2025, at 18:05, Heiko St=C3=BCbner wrote:
+>
+> Am Donnerstag, 11. September 2025, 17:03:14 Mitteleurop=C3=A4ische=20
+> Sommerzeit schrieb Ulf Hansson:
+>> On Thu, 11 Sept 2025 at 16:43, Mikko Rapeli <mikko.rapeli@linaro.org>=
+ wrote:
+>> > @@ -866,7 +866,7 @@ config MMC_DW_PCI
+>> >
+>> >  config MMC_DW_ROCKCHIP
+>> >         tristate "Rockchip specific extensions for Synopsys DW Memo=
+ry Card Interface"
+>> > -       depends on MMC_DW && ARCH_ROCKCHIP
+>> > +       depends on MMC_DW && ARCH_ROCKCHIP && ROCKCHIP_PM_DOMAINS
 
-> On Thu, 04 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > Sometimes, it is desired to run Sphinx from a virtual environment.
-> > Add a command line parameter to automatically build Sphinx from
-> > such environment.  
-> 
-> Why?
+The hard dependencies are usually only for compile-time requirements.
 
-In my case, to be able to test build with different Sphinx versions.
-On some distros, only venv works.
+Ideally this should go the other way and use
 
-> If you want Sphinx from a virtual environment, you enter the
-> environment, and run the regular build, with sphinx-build from the PATH
-> that points at the venv.
+      depends on (ARCH_ROCKCHIP || COMPILE_TEST)
 
-when you do that, ./scripts/spdxcheck.py breaks, affecting checkpatch.
+after you check that this actually builds on x86 with COMPILE_TEST
+enabled, as there may be other compile-time dependencies.
+=20
+>> Rather than "depends on", I think a "select" is better to be added
+>> from the platform's Kconfig. Probably drivers/soc/rockchip/Kconfig is
+>> where to put this.
+>>=20
+>> Assuming that ROCKCHIP_PM_DOMAINS is a critical piece for most
+>> Rockchip platforms to work.
+>
+> I'd think
+> - arch/arm64/Kconfig.platforms
+> - arch/arm/mach-rockchip/Kconfig
+> would be the correct positions.
+>
+> And as Ulf suggested, this should be a "select"
 
-> 
-> We don't do this kind of extra magic for any other tools, I honestly
-> don't understand why we'd do this for Sphinx. This just adds complexity
-> for no good reason.
+I think in this case a 'default ARCH_ROCKCHIP' in the
+ROCKCHIP_PM_DOMAINS definition is sufficient to have it
+normally enabled, and still allows someone to try turning
+it into a loadable module later, which would be a requirement
+e.g. for Android GKI.
 
-> >
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  tools/docs/sphinx-build-wrapper | 30 +++++++++++++++++++++++++++---
-> >  1 file changed, 27 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/tools/docs/sphinx-build-wrapper b/tools/docs/sphinx-build-wrapper
-> > index ea9f8e17b0bc..cf7b30bc40ff 100755
-> > --- a/tools/docs/sphinx-build-wrapper
-> > +++ b/tools/docs/sphinx-build-wrapper
-> > @@ -63,6 +63,7 @@ from jobserver import JobserverExec         # pylint: disable=C0413,C0411,E0401
-> >  #
-> >  #  Some constants
-> >  #
-> > +VENV_DEFAULT = "sphinx_latest"
-> >  MIN_PYTHON_VERSION = PythonVersion("3.7").version
-> >  PAPER = ["", "a4", "letter"]
-> >  
-> > @@ -119,8 +120,9 @@ class SphinxBuilder:
-> >  
-> >          return path
-> >  
-> > -    def __init__(self, builddir, verbose=False, n_jobs=None):
-> > +    def __init__(self, builddir, venv=None, verbose=False, n_jobs=None):
-> >          """Initialize internal variables"""
-> > +        self.venv = venv
-> >          self.verbose = None
-> >  
-> >          #
-> > @@ -195,6 +197,21 @@ class SphinxBuilder:
-> >  
-> >          self.env = os.environ.copy()
-> >  
-> > +        #
-> > +        # If venv command line argument is specified, run Sphinx from venv
-> > +        #
-> > +        if venv:
-> > +            bin_dir = os.path.join(venv, "bin")
-> > +            if not os.path.isfile(os.path.join(bin_dir, "activate")):
-> > +                sys.exit(f"Venv {venv} not found.")
-> > +
-> > +            # "activate" virtual env
-> > +            self.env["PATH"] = bin_dir + ":" + self.env["PATH"]
-> > +            self.env["VIRTUAL_ENV"] = venv
-> > +            if "PYTHONHOME" in self.env:
-> > +                del self.env["PYTHONHOME"]
-> > +            print(f"Setting venv to {venv}")
-> > +
-> >      def run_sphinx(self, sphinx_build, build_args, *args, **pwargs):
-> >          """
-> >          Executes sphinx-build using current python3 command and setting
-> > @@ -209,7 +226,10 @@ class SphinxBuilder:
-> >  
-> >              cmd = []
-> >  
-> > -            cmd.append(sys.executable)
-> > +            if self.venv:
-> > +                cmd.append("python")
-> > +            else:
-> > +                cmd.append(sys.executable)
-> >  
-> >              cmd.append(sphinx_build)
-> >  
-> > @@ -533,11 +553,15 @@ def main():
-> >      parser.add_argument('-j', '--jobs', type=jobs_type,
-> >                          help="Sets number of jobs to use with sphinx-build")
-> >  
-> > +    parser.add_argument("-V", "--venv", nargs='?', const=f'{VENV_DEFAULT}',
-> > +                        default=None,
-> > +                        help=f'If used, run Sphinx from a venv dir (default dir: {VENV_DEFAULT})')
-> > +
-> >      args = parser.parse_args()
-> >  
-> >      PythonVersion.check_python(MIN_PYTHON_VERSION)
-> >  
-> > -    builder = SphinxBuilder(builddir=args.builddir,
-> > +    builder = SphinxBuilder(builddir=args.builddir, venv=args.venv,
-> >                              verbose=args.verbose, n_jobs=args.jobs)
-> >  
-> >      builder.build(args.target, sphinxdirs=args.sphinxdirs, conf=args.conf,  
-> 
-
-
-
-Thanks,
-Mauro
+    Arnd
 
