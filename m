@@ -1,432 +1,139 @@
-Return-Path: <linux-kernel+bounces-814288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD96B551F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA9F5B551F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 306E37B8E81
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:39:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A577C3BAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2393115B8;
-	Fri, 12 Sep 2025 14:40:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061F53101BF;
-	Fri, 12 Sep 2025 14:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72E330AABC;
+	Fri, 12 Sep 2025 14:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rf7xNEVD"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F685303CAC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757688052; cv=none; b=WdIAQ/vTwAnKNiyf7/z5v4RE2NmmJ2OoPs4k/5Ej5Z8qMWgwAMg7WQz5M3yrXqhvAtDbJwfubaB5V+/D4/QXtk/VdNJEQfz0H5S3ZnX5PsDD+meWhSJ7DnNjft6mx5RjNralQFiVuLG15MC5aEmwAAPfe1iY6ioiETV9eVjhnU8=
+	t=1757688047; cv=none; b=hK/DMT0+rTnvYd5FA5e2IqnvsB4ATsuaamVtIFBuDoMRxxVs3LzD2sqbrpNeIKdSommQKn21CVoilonVbTNBwBPpz5CplIJI9FYfET6bzv1WcoI9Nz4KJtmQcwlFkc1Qp6VXvJFg2/X+T4sXP86/CjPE0dkNoru6RUjI5jmszxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757688052; c=relaxed/simple;
-	bh=I4eox496C7TyAM2nK02Fq1X3ENvtNmXcNg9fnjHEYvg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gsO2uIUcLudGvcovMWjpfcTa47tbuJvUh54/7TLLmMDXEEy+nCFkKHOq8qUAf850Tpna0nnSPYOl0vAs8tm6QQ7Ykqp3iPRp1h1EbMJtUYtaQH9VDddXPqU6cFi/f/X3mjEOVOGZ3I+4RQVodreAyob7GUz5is/U+vuKWIKHyBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E357716A3;
-	Fri, 12 Sep 2025 07:40:39 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6CDF3F66E;
-	Fri, 12 Sep 2025 07:40:42 -0700 (PDT)
-Message-ID: <487a736c-27c8-427c-97d5-31fd2d97e919@arm.com>
-Date: Fri, 12 Sep 2025 15:40:41 +0100
+	s=arc-20240116; t=1757688047; c=relaxed/simple;
+	bh=PLrT3E4vLyawWAJV2Fqj90fo/GvZfp4GcPpYDpUoTYo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=IkEP31QnFm+V4QZ/pisxinc5v+st+aWSGxcvevqPm3u76o9mhnwyklXba4yVqbg373CnCFrlpOKGM8oqUCxuJvfx1tsI1zPLdeQPSe+x7YJ2jdRydSKsEmHCR2ixm1PdIiA/aobiJuDZsa+7zFdwQAHQkg9o5+1mYFnEeMoQMTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rf7xNEVD; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32da5dbbe9fso1665112a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:40:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757688045; x=1758292845; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=59zg1D8+KwOnNl/fjkRq6toKtV2ueC+RV0v1lysDQMQ=;
+        b=rf7xNEVDZSfgLHPCj3SQgvKsZlFwI7Lyd+C/tCe+IV4XH0zGpQbIaC6xI0KPXDSlT0
+         4tgCW4qNclLT9socm1/EC1LMwMW/6tXjAiy/bU+RvA5Yq+ru7E9TUd26mR9nIPlku/9N
+         0E8qrxAg+EI/2ZS7FOMiWB0nkxaAi4KTtXh3swIMxgpDmZrVMs7fJaai6nCxJpVwOr7Z
+         pkyvUdwrIhfbUaZVuk6rLX8peCzcKRKVmh95JwBEBWPtxxAFSxORQzwonoGeXEKDoag4
+         NPix/Ku6rpHr4oOqA/+eSqao8TW+EZHMQbb/9wH9nMn+Bt64J37oRL+HmpIpeCZ7OBmr
+         xkhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757688045; x=1758292845;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=59zg1D8+KwOnNl/fjkRq6toKtV2ueC+RV0v1lysDQMQ=;
+        b=EFNV7bmTRLFGCL5e6Ql3HOpKaEiSedDWhyjgo2eDShUdI2RVSNuNyzit+NV6VTxfjG
+         FsQGIiaWkOB3JIkY3E31JibRn0t0tFyv4pFxVdDFsIckkIJuhfNKjPS0m26qLC7Z29G+
+         8Let1FFm/kvaVCPVQaffQLXlA707rQVuecaqlG37xJSd0yM3aOrInRL5goHF+B0d394x
+         fwP+R4sGTgIYvk84NWquGB/Q95X1aTS7DwwJoBSCP49KifuH6HgjoXaNLyCYFTxVM6Lu
+         iX++bVKfiBOLldEhRWfteJ19HJ+eBfJayvmVXJ6hZcepXsWYvuB39fLWg6UJuWJ84dtx
+         cq9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcZPoDxAHlUlL4yIoumI9c7PgHn6ZRi3kuo0NVgHQSS3uLN69UW2XnQIksxqfyNGvgErmdiZx0oBf/H6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5YTBiBgpgnzu6FQmFtfkHDrsUzQleNjncXP6gCfe01sSW72RU
+	4a39JPSYvPDdkslfSPzvvsRi5cnDJY5sdGn59frkV02moqpLhQq9IrUvoEgbGQdDLAmZI0vsUFW
+	EfSsLCw==
+X-Google-Smtp-Source: AGHT+IEaiqSj724DOUxStmGO7Ji4bYvAv9UvNmfDki7gx80WNU5Huc/OdEyN3ByTZ6TxjpxNYEARSJDlZ+U=
+X-Received: from pjl15.prod.google.com ([2002:a17:90b:2f8f:b0:329:7040:8862])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1f90:b0:32b:58d4:e9d0
+ with SMTP id 98e67ed59e1d1-32de4f85988mr3580752a91.23.1757688044838; Fri, 12
+ Sep 2025 07:40:44 -0700 (PDT)
+Date: Fri, 12 Sep 2025 07:40:43 -0700
+In-Reply-To: <20250912141132.GA85606@k08j02272.eu95sqa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 18/29] arm_mpam: Register and enable IRQs
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-19-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250910204309.20751-19-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <c10fb477105231e62da28f12c94c5452fa1eff74.1757662000.git.houwenlong.hwl@antgroup.com>
+ <aMPbNBofTCFGTCs6@intel.com> <20250912093822.GA10794@k08j02272.eu95sqa> <20250912141132.GA85606@k08j02272.eu95sqa>
+Message-ID: <aMQw67a7Ku7wXTXO@google.com>
+Subject: Re: [PATCH] KVM: x86: Remove outdated comments and code in kvm_on_user_return()
+From: Sean Christopherson <seanjc@google.com>
+To: Hou Wenlong <houwenlong.hwl@antgroup.com>
+Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi James,
-
-On 9/10/25 21:42, James Morse wrote:
-> Register and enable error IRQs. All the MPAM error interrupts indicate a
-> software bug, e.g. out of range partid. If the error interrupt is ever
-> signalled, attempt to disable MPAM.
+On Fri, Sep 12, 2025, Hou Wenlong wrote:
+> On Fri, Sep 12, 2025 at 05:38:22PM +0800, Hou Wenlong wrote:
+> > On Fri, Sep 12, 2025 at 04:35:00PM +0800, Chao Gao wrote:
+> > > On Fri, Sep 12, 2025 at 03:35:29PM +0800, Hou Wenlong wrote:
+> > > >The commit a377ac1cd9d7b ("x86/entry: Move user return notifier out of
+> > > >loop") moved fire_user_return_notifiers() into the section with
+> > > >interrupts disabled, so the callback kvm_on_user_return() cannot be
+> > > >interrupted by kvm_arch_disable_virtualization_cpu() now. Therefore,
+> > > >remove the outdated comments and local_irq_save()/local_irq_restore()
+> > > >code in kvm_on_user_return().
+> > > >
+> > > >Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+> > > >---
+> > > > arch/x86/kvm/x86.c | 16 +++++-----------
+> > > > 1 file changed, 5 insertions(+), 11 deletions(-)
+> > > >
+> > > >diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > >index 33fba801b205..10afbacb1851 100644
+> > > >--- a/arch/x86/kvm/x86.c
+> > > >+++ b/arch/x86/kvm/x86.c
+> > > >@@ -568,18 +568,12 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
+> > > > 	struct kvm_user_return_msrs *msrs
+> > > > 		= container_of(urn, struct kvm_user_return_msrs, urn);
+> > > > 	struct kvm_user_return_msr_values *values;
+> > > >-	unsigned long flags;
+> > > >
+> > > >-	/*
+> > > >-	 * Disabling irqs at this point since the following code could be
+> > > >-	 * interrupted and executed through kvm_arch_disable_virtualization_cpu()
+> > > >-	 */
+> > > >-	local_irq_save(flags);
+> > > >-	if (msrs->registered) {
+> > > >-		msrs->registered = false;
+> > > >-		user_return_notifier_unregister(urn);
+> > > >-	}
+> > > >-	local_irq_restore(flags);
+> > > >+	lockdep_assert_irqs_disabled();
+> > > 
+> > > kvm_offline_cpu() may call into this function. But I am not sure if interrupts
+> > > are disabled in that path.
+> > >
+> > Thanks for pointing that out. I see that interrupts are enabled in the
+> > callback during the CPU offline test. I'll remove the
+> > lockdep_assert_irqs_disabled() here.
+> >
 > 
-> Only the irq handler accesses the ESR register, so no locking is needed.
-> The work to disable MPAM after an error needs to happen at process
-> context as it takes mutex. It also unregisters the interrupts, meaning
-> it can't be done from the threaded part of a threaded interrupt.
-> Instead, mpam_disable() gets scheduled.
-> 
-> Enabling the IRQs in the MSC may involve cross calling to a CPU that
-> can access the MSC.
-> 
-> Once the IRQ is requested, the mpam_disable() path can be called
-> asynchronously, which will walk structures sized by max_partid. Ensure
-> this size is fixed before the interrupt is requested.
-> 
-> CC: Rohit Mathew <rohit.mathew@arm.com>
-> Tested-by: Rohit Mathew <rohit.mathew@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Changes since v1:
->  * Made mpam_unregister_irqs() safe to race with itself.
->  * Removed threaded interrupts.
->  * Schedule mpam_disable() from cpuhp callback in the case of an error.
->  * Added mpam_disable_reason.
->  * Use alloc_percpu()
-> 
-> Changes since RFC:
->  * Use guard marco when walking srcu list.
->  * Use INTEN macro for enabling interrupts.
->  * Move partid_max_published up earlier in mpam_enable_once().
-> ---
->  drivers/resctrl/mpam_devices.c  | 277 +++++++++++++++++++++++++++++++-
->  drivers/resctrl/mpam_internal.h |  10 ++
->  2 files changed, 284 insertions(+), 3 deletions(-)
-> 
+> Upon a second look, can we just disable interrupts in kvm_cpu_offline()?
+> The other paths that call kvm_disable_virtualization_cpu() are all in an
+> interrupt-disabled state, although it seems that
+> kvm_disable_virtualization_cpu() cannot be reentered.
 
->  
-> +static int __setup_ppi(struct mpam_msc *msc)
-> +{
-> +	int cpu;
-> +	struct device *dev = &msc->pdev->dev;
-> +
-> +	msc->error_dev_id = alloc_percpu(struct mpam_msc *);
-> +	if (!msc->error_dev_id)
-> +		return -ENOMEM;
-> +
-> +	for_each_cpu(cpu, &msc->accessibility) {
-> +		struct mpam_msc *empty = *per_cpu_ptr(msc->error_dev_id, cpu);
-> +
-> +		if (empty) {
-
-I'm confused about how this if conditioned can be satisfied. Isn't the
-alloc clearing msc->error_dev_id for each cpu and then it's only getting
-set for each cpu later in the iteration.
-
-> +			dev_err_once(dev, "MSC shares PPI with %s!\n",
-> +				     dev_name(&empty->pdev->dev));
-> +			return -EBUSY;
-> +		}
-> +		*per_cpu_ptr(msc->error_dev_id, cpu) = msc;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int mpam_msc_setup_error_irq(struct mpam_msc *msc)
-> +{
-> +	int irq;
-> +
-> +	irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +	if (irq <= 0)
-> +		return 0;
-> +
-> +	/* Allocate and initialise the percpu device pointer for PPI */
-> +	if (irq_is_percpu(irq))
-> +		return __setup_ppi(msc);
-> +
-> +	/* sanity check: shared interrupts can be routed anywhere? */
-> +	if (!cpumask_equal(&msc->accessibility, cpu_possible_mask)) {
-> +		pr_err_once("msc:%u is a private resource with a shared error interrupt",
-> +			    msc->id);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  /*
->   * An MSC can control traffic from a set of CPUs, but may only be accessible
->   * from a (hopefully wider) set of CPUs. The common reason for this is power
-> @@ -1060,6 +1143,10 @@ static int mpam_msc_drv_probe(struct platform_device *pdev)
->  			break;
->  		}
->  
-> +		err = mpam_msc_setup_error_irq(msc);
-> +		if (err)
-> +			break;
-> +
->  		if (device_property_read_u32(&pdev->dev, "pcc-channel",
->  					     &msc->pcc_subspace_id))
->  			msc->iface = MPAM_IFACE_MMIO;
-> @@ -1318,11 +1405,172 @@ static void mpam_enable_merge_features(struct list_head *all_classes_list)
->  	}
->  }
->  
-> +static char *mpam_errcode_names[16] = {
-> +	[0] = "No error",
-> +	[1] = "PARTID_SEL_Range",
-> +	[2] = "Req_PARTID_Range",
-> +	[3] = "MSMONCFG_ID_RANGE",
-> +	[4] = "Req_PMG_Range",
-> +	[5] = "Monitor_Range",
-> +	[6] = "intPARTID_Range",
-> +	[7] = "Unexpected_INTERNAL",
-> +	[8] = "Undefined_RIS_PART_SEL",
-> +	[9] = "RIS_No_Control",
-> +	[10] = "Undefined_RIS_MON_SEL",
-> +	[11] = "RIS_No_Monitor",
-> +	[12 ... 15] = "Reserved"
-> +};
-> +
-> +static int mpam_enable_msc_ecr(void *_msc)
-> +{
-> +	struct mpam_msc *msc = _msc;
-> +
-> +	__mpam_write_reg(msc, MPAMF_ECR, MPAMF_ECR_INTEN);
-> +
-> +	return 0;
-> +}
-> +
-> +/* This can run in mpam_disable(), and the interrupt handler on the same CPU */
-> +static int mpam_disable_msc_ecr(void *_msc)
-> +{
-> +	struct mpam_msc *msc = _msc;
-> +
-> +	__mpam_write_reg(msc, MPAMF_ECR, 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static irqreturn_t __mpam_irq_handler(int irq, struct mpam_msc *msc)
-> +{
-> +	u64 reg;
-> +	u16 partid;
-> +	u8 errcode, pmg, ris;
-> +
-> +	if (WARN_ON_ONCE(!msc) ||
-> +	    WARN_ON_ONCE(!cpumask_test_cpu(smp_processor_id(),
-> +					   &msc->accessibility)))
-> +		return IRQ_NONE;
-> +
-> +	reg = mpam_msc_read_esr(msc);
-> +
-> +	errcode = FIELD_GET(MPAMF_ESR_ERRCODE, reg);
-> +	if (!errcode)
-> +		return IRQ_NONE;
-> +
-> +	/* Clear level triggered irq */
-> +	mpam_msc_zero_esr(msc);
-> +
-> +	partid = FIELD_GET(MPAMF_ESR_PARTID_MON, reg);
-> +	pmg = FIELD_GET(MPAMF_ESR_PMG, reg);
-> +	ris = FIELD_GET(MPAMF_ESR_RIS, reg);
-> +
-> +	pr_err_ratelimited("error irq from msc:%u '%s', partid:%u, pmg: %u, ris: %u\n",
-> +			   msc->id, mpam_errcode_names[errcode], partid, pmg,
-> +			   ris);
-> +
-> +	/* Disable this interrupt. */
-> +	mpam_disable_msc_ecr(msc);
-> +
-> +	/*
-> +	 * Schedule the teardown work. Don't use a threaded IRQ as we can't
-> +	 * unregister the interrupt from the threaded part of the handler.
-> +	 */
-> +	mpam_disable_reason = "hardware error interrupt";
-> +	schedule_work(&mpam_broken_work);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +static irqreturn_t mpam_ppi_handler(int irq, void *dev_id)
-> +{
-> +	struct mpam_msc *msc = *(struct mpam_msc **)dev_id;
-> +
-> +	return __mpam_irq_handler(irq, msc);
-> +}
-> +
-> +static irqreturn_t mpam_spi_handler(int irq, void *dev_id)
-> +{
-> +	struct mpam_msc *msc = dev_id;
-> +
-> +	return __mpam_irq_handler(irq, msc);
-> +}
-> +
-> +static int mpam_register_irqs(void)
-> +{
-> +	int err, irq;
-> +	struct mpam_msc *msc;
-> +
-> +	lockdep_assert_cpus_held();
-> +
-> +	guard(srcu)(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, all_msc_list,
-> +				 srcu_read_lock_held(&mpam_srcu)) {
-> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +		if (irq <= 0)
-> +			continue;
-> +
-> +		/* The MPAM spec says the interrupt can be SPI, PPI or LPI */
-> +		/* We anticipate sharing the interrupt with other MSCs */
-> +		if (irq_is_percpu(irq)) {
-> +			err = request_percpu_irq(irq, &mpam_ppi_handler,
-> +						 "mpam:msc:error",
-> +						 msc->error_dev_id);
-> +			if (err)
-> +				return err;
-> +
-> +			msc->reenable_error_ppi = irq;
-> +			smp_call_function_many(&msc->accessibility,
-> +					       &_enable_percpu_irq, &irq,
-> +					       true);
-> +		} else {
-> +			err = devm_request_irq(&msc->pdev->dev,irq,
-> +					       &mpam_spi_handler, IRQF_SHARED,
-> +					       "mpam:msc:error", msc);
-> +			if (err)
-> +				return err;
-> +		}
-> +
-> +		set_bit(MPAM_ERROR_IRQ_REQUESTED, &msc->error_irq_flags);
-> +		mpam_touch_msc(msc, mpam_enable_msc_ecr, msc);
-> +		set_bit(MPAM_ERROR_IRQ_HW_ENABLED, &msc->error_irq_flags);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void mpam_unregister_irqs(void)
-> +{
-> +	int irq, idx;
-> +	struct mpam_msc *msc;
-> +
-> +	cpus_read_lock();
-> +	/* take the lock as free_irq() can sleep */
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, all_msc_list,
-> +				 srcu_read_lock_held(&mpam_srcu)) {
-> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +		if (irq <= 0)
-> +			continue;
-> +
-> +		if (test_and_clear_bit(MPAM_ERROR_IRQ_HW_ENABLED, &msc->error_irq_flags))
-> +			mpam_touch_msc(msc, mpam_disable_msc_ecr, msc);
-> +
-> +		if (test_and_clear_bit(MPAM_ERROR_IRQ_REQUESTED, &msc->error_irq_flags)) {
-> +			if (irq_is_percpu(irq)) {
-> +				msc->reenable_error_ppi = 0;
-> +				free_percpu_irq(irq, msc->error_dev_id);
-> +			} else {
-> +				devm_free_irq(&msc->pdev->dev, irq, msc);
-> +			}
-> +		}
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +	cpus_read_unlock();
-> +}
-> +
->  static void mpam_enable_once(void)
->  {
-> -	mutex_lock(&mpam_list_lock);
-> -	mpam_enable_merge_features(&mpam_classes);
-> -	mutex_unlock(&mpam_list_lock);
-> +	int err;
->  
->  	/*
->  	 * Once the cpuhp callbacks have been changed, mpam_partid_max can no
-> @@ -1332,6 +1580,27 @@ static void mpam_enable_once(void)
->  	partid_max_published = true;
->  	spin_unlock(&partid_max_lock);
->  
-> +	/*
-> +	 * If all the MSC have been probed, enabling the IRQs happens next.
-> +	 * That involves cross-calling to a CPU that can reach the MSC, and
-> +	 * the locks must be taken in this order:
-> +	 */
-> +	cpus_read_lock();
-> +	mutex_lock(&mpam_list_lock);
-> +	mpam_enable_merge_features(&mpam_classes);
-> +
-> +	err = mpam_register_irqs();
-> +	if (err)
-> +		pr_warn("Failed to register irqs: %d\n", err);
-> +
-> +	mutex_unlock(&mpam_list_lock);
-> +	cpus_read_unlock();
-> +
-> +	if (err) {
-> +		schedule_work(&mpam_broken_work);
-> +		return;
-> +	}
-> +
->  	mpam_register_cpuhp_callbacks(mpam_cpu_online, mpam_cpu_offline);
->  
->  	printk(KERN_INFO "MPAM enabled with %u PARTIDs and %u PMGs\n",
-> @@ -1397,6 +1666,8 @@ void mpam_disable(struct work_struct *ignored)
->  	}
->  	mutex_unlock(&mpam_cpuhp_state_lock);
->  
-> +	mpam_unregister_irqs();
-> +
->  	idx = srcu_read_lock(&mpam_srcu);
->  	list_for_each_entry_srcu(class, &mpam_classes, classes_list,
->  				 srcu_read_lock_held(&mpam_srcu))
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index 6e047fbd3512..f04a9ef189cf 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -32,6 +32,10 @@ struct mpam_garbage {
->  	struct platform_device	*pdev;
->  };
->  
-> +/* Bit positions for error_irq_flags */
-> +#define	MPAM_ERROR_IRQ_REQUESTED  0
-> +#define	MPAM_ERROR_IRQ_HW_ENABLED 1
-> +
->  struct mpam_msc {
->  	/* member of mpam_all_msc */
->  	struct list_head        all_msc_list;
-> @@ -46,6 +50,11 @@ struct mpam_msc {
->  	struct pcc_mbox_chan	*pcc_chan;
->  	u32			nrdy_usec;
->  	cpumask_t		accessibility;
-> +	bool			has_extd_esr;
-> +
-> +	int				reenable_error_ppi;
-> +	struct mpam_msc * __percpu	*error_dev_id;
-> +
->  	atomic_t		online_refs;
->  
->  	/*
-> @@ -54,6 +63,7 @@ struct mpam_msc {
->  	 */
->  	struct mutex		probe_lock;
->  	bool			probed;
-> +	unsigned long		error_irq_flags;
->  	u16			partid_max;
->  	u8			pmg_max;
->  	unsigned long		ris_idxs;
-
-
-Thanks,
-
-Ben
-
+Why do we care?  I.e. what is the motivation for changing this code?  I'm hesitant
+to touch this code without good reason given its fragility and subtlety.
 
