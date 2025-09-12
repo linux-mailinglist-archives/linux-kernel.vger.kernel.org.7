@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-814670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01268B55720
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:54:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9159DB55721
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43713567A03
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:54:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0B0D7C70BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2D32C08DB;
-	Fri, 12 Sep 2025 19:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E532C11CB;
+	Fri, 12 Sep 2025 19:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GJoqqZmO"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kbDd/84n"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E4E2BF00D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:53:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A77223316
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757706838; cv=none; b=dOwYQt5Nh6N9kfMSz/GbtThm1W/+gbMu69BvsiGiIgLIegzXGVhnp6ScjIBZxRs7u9oJJsrDPT0E2rCHydFpF9Orp4ZhOFdwJ5TVEWJ4gcSXY8n7RHWkWpB2CYUTlJt54RZ4aPqFRf7NbTWXuFWseiCsy0zOtXRisHsCQZy/lZ8=
+	t=1757706839; cv=none; b=Jq5/zBEU2b+T63VWWeRoG03wyuCMKYljID18ysnGbWkg4Xbf3utsUA+ilE01MwYNCKZIrJfZRUpidd2gQC0z/JbNyPr72mQSeINPCWdm8HtwS8Nb8d6X0jYB4G82YwZ1soXhSXN/ZzQKZ4sbdEowX00ioV3EYNglnWoLiq7Ql2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757706838; c=relaxed/simple;
-	bh=lhd5AYLmKg8v4K7bBXuozBSRlAkojKZ1+DM9PPiC2jU=;
+	s=arc-20240116; t=1757706839; c=relaxed/simple;
+	bh=/Cagp1ejGJLtDHkq62m/CGsX+fy3cFxlMkW0wgB3n0M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SI96+cvJfe9GHFKzXfV2h/6i6dxjc8AeCt4XH48wq3rdujJD5DBpF3AWZrcQsh0aqcBcu8jYFiafzevuVB8JT0EVomX2Chy3JvfBLzUB4noO6HXn3zeBq0vb2Wce+CxVlcfF+6kwOpI1n8cW4owjPLbx5a7AVkMbyf3VTX7cv9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GJoqqZmO; arc=none smtp.client-ip=209.85.128.50
+	 MIME-Version; b=FxSe3ynlUYSb1H3C2O8TJaKYXOQ6KdlYzQhF5mw+Ytg63JaoRenp+DSafZC4l7F3NhfuMJgG0GWouXYmOGLrMrQZeiB8dUKBCSvw7S8fNjgLZVtZaPu7L7ryna7ln35hSLO52yv2wS7wj1uuQLGobkmgWzFKx43QkK2cSTTq0KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kbDd/84n; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45b9a856dc2so15375775e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:53:55 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3e76766a172so929175f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:53:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757706834; x=1758311634; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757706836; x=1758311636; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AdhvlJqUr3WoGW1dbO0ZFsF3L6hbFYftz4yhGQrniP4=;
-        b=GJoqqZmOY7G/4cLlS6yOMlnXof76O2fBigIFhHu2/SXCvFBo/2TJhAkZyIM/E0Alne
-         QKgveCCwl9p2lEU+uSADoKujeHBN+awNfdBRu8Lua713K6IElfLgEnlVLyYkIdwOlQpr
-         gUu3l4YnccAOt2DkJo52vXBNlnDC7ZwGbsDZ0Zmve0485U0XRd/FwlQFpZpiNKQJN7bH
-         5tk2K85F0Ra1lVzXNSUDMnpp6P80gQJaS+sPIQovMdlNtJsL73jVr4Hu+NgOcgkqh355
-         8zqgIaWZqc4xEd9HRbBYTdgk6R13takIchQmC2JiouHrH47D8jWmezi5XWb/1lnKnTnB
-         UkoA==
+        bh=1tBjQATVO5xgZ/yr5nMn7Qw/eeQsWnjOzogH+eIF8tM=;
+        b=kbDd/84nAUyiUCf7ebIch5zkxHCn1zGhzMDolcCdDpYazKtrQpGjm2lo7EWQBeDhhU
+         sxEGuJrob7SwNVkxEYd+duUZjx0+wWelpSv23B9b20Jc/Uo6FJ+Zkf37cmb/6vhRh0t6
+         PkvAHqNp8TxfM5aHMFZkTGp3Q0MnVilKgKVfZzwqRyKhkdCi14H3nrmTwWu8u4qi2rpT
+         PCtKDhneg0Sx6W0xtuc8reWm6yqclPU4UNVXOv5RMPYFgg42Qg4j+0fevcyTG44KMKd3
+         kbpjAYj9U+VphQPIGziyy6Fy9uVNJU7DSygulJdYZQkFQN2RC5OYqUnl+HSNdIzsjX1/
+         Fspg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757706834; x=1758311634;
+        d=1e100.net; s=20230601; t=1757706836; x=1758311636;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AdhvlJqUr3WoGW1dbO0ZFsF3L6hbFYftz4yhGQrniP4=;
-        b=pACSjaAtLunv2sIBqPx7ZKNxatKUtDRxofnwF1ZPERXSjUxHFsNlQvL5uWPhIbXO8U
-         WImPO+z9F0mFKOi+3KHSVMhewSRVzxjd4Xo6JjiPwPX5vqo/GL4UkjcH9sVJy3kwLkuF
-         ONkMctEo6AA43Nnrhw3y8a6jlijui97AGd7Ds3kHox+ZJggskvawuddEz8d1YFGvhbW3
-         htvIb0xiS39+OsaWLThrws/O/4rpsPqguW1NY8QC7+lxe1h1W6I6400LUrs3iHRSBGfN
-         X7/lJ0WsCSat1gF2AoYaXCatJhVIdmVdCjWAwnWwdqcM2tloV96PXhkpTEdBoVzez6z7
-         D6iw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7uDGnZJILvqyYgm1cUZjHHnipx2ueIjjpcGkJ4Q6BIb3fpLC0TRUK0qNgCnGo/nFjYR5SRAJugBLWM0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB9CeFoyu9FRtrenk7E5V0N6OQpZ8P12uccrN9JTH2AF3bRWtO
-	Qv75Tua4FvD+88+9BZ812CLy7gLLZKsfZwEqvIrBuzz/tzVXKOUoj44s
-X-Gm-Gg: ASbGncslg+kFhfauhVQhOT3SJ1ib8bcjnlJW3CyQKyVcgW5uwq1wGsa/Cmz0AqHsQ+r
-	34x7sRuB3bLgdHhvABGSzQM0e4IpTnzgiibpr330PK9NRTwKjNWVWT/ZEcm+IEb9aWdmTBoDQ1q
-	nYg82zgBc7aEbMDYvpK1ugU/sAXdGpZBqUxwzI7RsN++dACguwGqxrHv7+EWmVkonQvlRBKhfUa
-	9PHNTeF7cQLFsTsT8++ya0ksCSk8Qcd22EJCPSkWZyuNNCw8GsQbCDd2To5tZKbVBeDsA42oDyt
-	HfuSgIw8NHO37eWQz6fGKlPVFyUgPoRSBII8SbvXbrVW5ZUq9jy1dQHcoz8tWONyShz09WG2PJg
-	Wy6Yz4pAifZfOk/H91O0O9BUogeteEsyeTApxp+WoV0AdfQm+n0BxGP43nGjDeA==
-X-Google-Smtp-Source: AGHT+IFqrA3KZsShkhOTFLrSGP4/PH2y/guZeiY2IMih0gP0HYC7djwhcyI0ThOjanigZ0fIM1AgtA==
-X-Received: by 2002:a05:600c:4454:b0:45d:cfee:7058 with SMTP id 5b1f17b1804b1-45f211e5f98mr44613895e9.22.1757706834189;
-        Fri, 12 Sep 2025 12:53:54 -0700 (PDT)
+        bh=1tBjQATVO5xgZ/yr5nMn7Qw/eeQsWnjOzogH+eIF8tM=;
+        b=CBirfbQgnvsHHln5JC0KdXrghBJ1q4cKaiLQaCdFhWOOAjCAyqLP0laCAbafhA80JP
+         eTYjtotSL/GgbKHra98xLr0LPq3qngn/H4g+WIG05sM/IInWeLp8Am/zqcYAKEgnOGrm
+         1dBQvtMIkH3iXVXdpKbuxEm4KeopjMMsYmVhns0U/FZWGHF78ATT4i53iYZhKvk2ITst
+         EEvrlRmk5pOQWWuQojj7LK0pKw6aYwU5y8yY7yhiSDe4iINV8+o8sSWBAPBhr5HX+kTE
+         Kn8WaV79BqVB0o5e8sGQcR/5GJNiFcPMnlLoAu3/9RdUA3JiiHlV6znzumwKOym4ngBF
+         2Zfg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1N/aMGJ1vvFPMwuO1byjoM6ipvIdQbgbH4qE0xqbcuxlAP8jKmKqtEiqtbChwVOmOA+zMzn6vKzl7+4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpdWq6LgxHYZgpJFX2X7jz7xgJvtI1Sxco9cMk+4STLNCiOuf9
+	Do7r9XAZx11morTZ/qZk3uyODcRJcu7kVs9tIJ5JJ531ewsMW9+aas0y
+X-Gm-Gg: ASbGncsEDwaUDt1BkQYYb/Je857brvFIaaOJ8d7rk9MyC2BMcjgKsLbNNzPQupzeaDg
+	/pSCi5ms0ob3UEnLMsVypWIWUTg6ABgdPpsmfXfYhtNjWk/03fMKPCAJhg2z9bBxGS24gmH+OrM
+	M5U5XyldPBYebKTB4p2KM2PyVf5n2keMTWu+53nd/KDia/gxiIp3nZQqdn4KI48wakYEBFZ2tqC
+	MwGk7cc3pc3RZZhRFxqvB24qwa2wF16hS3QT9WaXDSWbIgiGtpJrEXYXlmWaOfJQJxxI0s0Sjb/
+	P3USphDH3bs2uihTAv622GAL9f90HuT1Zi6iiSB6cJLwQt+DQ1f3WL97xhpGwGeWOube+MB0grj
+	cDVweoPd2thWrd7Da8FPmMknpqo3Zj5duGPxLnAuu8U3iHMlgzKAteGmNnBxUF/RJrSWvl7rm
+X-Google-Smtp-Source: AGHT+IGcBKOgx53Jm65PzbAADPlQfjhpj7kfAQIi9dZIUIhMC1gDPjWogKL7/mHKeareCdzLDUBraw==
+X-Received: by 2002:a05:6000:2c04:b0:3d7:cd09:ae1e with SMTP id ffacd0b85a97d-3e7657975f2mr4308727f8f.17.1757706835502;
+        Fri, 12 Sep 2025 12:53:55 -0700 (PDT)
 Received: from yanesskka.. (node-188-187-35-212.domolink.tula.net. [212.35.187.188])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017bfd14sm74650375e9.21.2025.09.12.12.53.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017bfd14sm74650375e9.21.2025.09.12.12.53.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 12:53:53 -0700 (PDT)
+        Fri, 12 Sep 2025 12:53:55 -0700 (PDT)
 From: Yana Bashlykova <yana2bsh@gmail.com>
 To: "David S. Miller" <davem@davemloft.net>
 Cc: Yana Bashlykova <yana2bsh@gmail.com>,
@@ -81,9 +81,9 @@ Cc: Yana Bashlykova <yana2bsh@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	lvc-project@linuxtesting.org
-Subject: [PATCH 6.1 01/15] genetlink: add sysfs test module for Generic Netlink
-Date: Fri, 12 Sep 2025 22:53:24 +0300
-Message-Id: <20250912195339.20635-2-yana2bsh@gmail.com>
+Subject: [PATCH 6.1 02/15] genetlink: add TEST_GENL family for netlink testing
+Date: Fri, 12 Sep 2025 22:53:25 +0300
+Message-Id: <20250912195339.20635-3-yana2bsh@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250912195339.20635-1-yana2bsh@gmail.com>
 References: <20250912195339.20635-1-yana2bsh@gmail.com>
@@ -95,364 +95,493 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a test module that creates sysfs interfaces for Generic Netlink testing:
-- /sys/kernel/genl_test with value/message/info attributes
-- /sys/kernel/parallel_genl with message attribute
-- /sys/kernel/third_genl with message attribute
-
-Implements basic read/write operations with proper error handling and cleanup.
-Will be used as foundation for netlink testing infrastructure.
+Implement basic Generic Netlink family with:
+- 4 commands (ECHO, SET/GET_VALUE, NO_ATTRS)
+- 1 small command (genl_small_ops)
+- Multicast group support
+- Attribute validation
+- Mutex-protected operations
+- Error handling with netlink_ext_ack
 
 Signed-off-by: Yana Bashlykova <yana2bsh@gmail.com>
 ---
- drivers/net/Kconfig                           |   2 +
- drivers/net/Makefile                          |   2 +
- drivers/net/genetlink/Kconfig                 |   8 +
- drivers/net/genetlink/Makefile                |   3 +
- .../net-pf-16-proto-16-family-PARALLEL_GENL.c | 288 ++++++++++++++++++
- 5 files changed, 303 insertions(+)
- create mode 100644 drivers/net/genetlink/Kconfig
- create mode 100644 drivers/net/genetlink/Makefile
- create mode 100644 drivers/net/genetlink/net-pf-16-proto-16-family-PARALLEL_GENL.c
+ .../net-pf-16-proto-16-family-PARALLEL_GENL.c | 438 +++++++++++++++++-
+ 1 file changed, 431 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index 9e63b8c43f3e..2f5f74185da5 100644
---- a/drivers/net/Kconfig
-+++ b/drivers/net/Kconfig
-@@ -631,4 +631,6 @@ config NETDEV_LEGACY_INIT
- 	  Drivers that call netdev_boot_setup_check() should select this
- 	  symbol, everything else no longer needs it.
- 
-+source "drivers/net/genetlink/Kconfig"
-+
- endif # NETDEVICES
-diff --git a/drivers/net/Makefile b/drivers/net/Makefile
-index 6ce076462dbf..934dff748416 100644
---- a/drivers/net/Makefile
-+++ b/drivers/net/Makefile
-@@ -89,3 +89,5 @@ thunderbolt-net-y += thunderbolt.o
- obj-$(CONFIG_USB4_NET) += thunderbolt-net.o
- obj-$(CONFIG_NETDEVSIM) += netdevsim/
- obj-$(CONFIG_NET_FAILOVER) += net_failover.o
-+
-+obj-$(CONFIG_NETLINK_TEST) += genetlink/
-diff --git a/drivers/net/genetlink/Kconfig b/drivers/net/genetlink/Kconfig
-new file mode 100644
-index 000000000000..e1fd8da50488
---- /dev/null
-+++ b/drivers/net/genetlink/Kconfig
-@@ -0,0 +1,8 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+config NETLINK_TEST
-+    tristate "Test module for netlink communication"
-+    depends on NET
-+    help
-+      This module provides testing interface for netlink communication.
-+      Used by selftests in tools/testing/selftests/net/.
-diff --git a/drivers/net/genetlink/Makefile b/drivers/net/genetlink/Makefile
-new file mode 100644
-index 000000000000..0336eac4cc28
---- /dev/null
-+++ b/drivers/net/genetlink/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-$(CONFIG_NETLINK_TEST) += net-pf-16-proto-16-family-PARALLEL_GENL.o
 diff --git a/drivers/net/genetlink/net-pf-16-proto-16-family-PARALLEL_GENL.c b/drivers/net/genetlink/net-pf-16-proto-16-family-PARALLEL_GENL.c
-new file mode 100644
-index 000000000000..c50c0daae392
---- /dev/null
+index c50c0daae392..69bcad98babc 100644
+--- a/drivers/net/genetlink/net-pf-16-proto-16-family-PARALLEL_GENL.c
 +++ b/drivers/net/genetlink/net-pf-16-proto-16-family-PARALLEL_GENL.c
-@@ -0,0 +1,288 @@
-+// SPDX-License-Identifier: GPL-2.0
+@@ -71,17 +71,16 @@ static ssize_t show_genl_test_message(struct kobject *kobj,
+ 
+ static ssize_t store_genl_test_message(struct kobject *kobj,
+ 				       struct kobj_attribute *attr,
+-				       const char *buf, size_t count)
++					   const char *buf, size_t count)
+ {
+-	size_t len = min(count, sizeof(sysfs_data.genl_test_message) - 1);
++		size_t len = min(count, sizeof(sysfs_data.genl_test_message) - 1);
+ 
+-	strncpy(sysfs_data.genl_test_message, buf, len);
+-	sysfs_data.genl_test_message[len] = '\0';
+-	return count;
++		strncpy(sysfs_data.genl_test_message, buf, len);
++		sysfs_data.genl_test_message[len] = '\0';
++		return count;
+ }
+ 
+-static ssize_t show_genl_test_value(struct kobject *kobj,
+-				    struct kobj_attribute *attr, char *buf)
++static ssize_t show_genl_test_value(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+ {
+ 	return sprintf(buf, "%d", sysfs_data.genl_test_value);
+ }
+@@ -146,6 +145,424 @@ static struct kobj_attribute my_attr_str_parallel_genl =
+ static struct kobj_attribute my_attr_str_third_genl =
+ 	__ATTR(message, 0664, show_third_genl_message, store_third_genl_message);
+ 
++static DEFINE_MUTEX(genl_mutex);
 +
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/printk.h>
-+#include <linux/kobject.h>
-+#include <linux/if_arp.h>
-+#include <linux/sysfs.h>
-+#include <linux/string.h>
-+#include <linux/device.h>
-+#include <linux/netlink.h>
-+#include <linux/skbuff.h>
-+#include <linux/fs.h>
-+#include <linux/err.h>
-+#include <linux/slab.h>
-+#include <net/sock.h>
-+#include <linux/kstrtox.h>
-+#include <linux/etherdevice.h>
-+#include <net/genetlink.h>
-+#include <net/rtnetlink.h>
-+#include <linux/notifier.h>
-+#include <linux/mutex.h>
++#define MY_GENL_FAMILY_NAME "TEST_GENL"
++#define MY_GENL_VERSION 1
 +
-+MODULE_LICENSE("GPL");
++#define PATH_GENL_TEST_NUM "/sys/kernel/genl_test/value"
++#define PATH_GENL_TEST_MES "/sys/kernel/genl_test/message"
++#define PATH_GENL_TEST_DEV "/sys/kernel/genl_test/some_info"
 +
-+static struct kobject *kobj_genl_test;
-+static struct device *dev_genl_test;
-+static struct kobject *kobj_parallel_genl;
-+static struct kobject *kobj_third_genl;
-+
-+#define MAX_DATA_LEN 256
-+
-+struct {
-+	char genl_test_message[MAX_DATA_LEN];
-+	char genl_test_info[MAX_DATA_LEN];
-+	u32 genl_test_value;
-+	char parallel_genl_message[MAX_DATA_LEN];
-+	char third_genl_message[MAX_DATA_LEN];
-+}
-+
-+sysfs_data = {
-+	.genl_test_message = "default",
-+	.genl_test_info = "default",
-+	.genl_test_value = -20,
-+	.parallel_genl_message = "default",
-+	.third_genl_message = "default",
++// TEST_GENL
++enum {
++	MY_GENL_ATTR_UNSPEC,
++	MY_GENL_ATTR_DATA,
++	MY_GENL_ATTR_VALUE,
++	MY_GENL_ATTR_PATH,
++	MY_GENL_ATTR_NESTED,
++	__MY_GENL_ATTR_MAX,
 +};
 +
-+static ssize_t show_genl_test_info(struct device *dev,
-+				   struct device_attribute *attr, char *buf)
++#define MY_GENL_ATTR_MAX (__MY_GENL_ATTR_MAX - 1)
++
++enum {
++	MY_GENL_CMD_UNSPEC,
++	MY_GENL_CMD_ECHO,
++	MY_GENL_CMD_SET_VALUE,
++	MY_GENL_CMD_GET_VALUE,
++	MY_GENL_CMD_EVENT,
++	MY_GENL_CMD_NO_ATTRS,
++	__MY_GENL_CMD_MAX,
++};
++
++#define MY_GENL_CMD_MAX (__MY_GENL_CMD_MAX - 1)
++
++enum {
++	MY_GENL_SMALL_CMD_GET,
++	MY_GENL_SMALL_CMD_ERROR,
++	__MY_GENL_SMALL_CMD_MAX,
++};
++
++#define MY_GENL_SMALL_CMD_MAX (__MY_GENL_SMALL_CMD_MAX - 1)
++
++static const struct nla_policy my_genl_policy[MY_GENL_ATTR_MAX + 1] = {
++	[MY_GENL_ATTR_UNSPEC] = { .type = NLA_UNSPEC },
++	[MY_GENL_ATTR_DATA] = { .type = NLA_STRING },
++	[MY_GENL_ATTR_VALUE] = { .type = NLA_U32,
++				 .validation_type = NLA_VALIDATE_RANGE,
++				 .min = 0,
++				 .max = 100 },
++	[MY_GENL_ATTR_PATH] = { .type = NLA_STRING },
++	[MY_GENL_ATTR_NESTED] = { .type = NLA_NESTED },
++};
++
++/* netlink families */
++static struct genl_family my_genl_family;
++
++enum my_multicast_groups {
++	MY_MCGRP_GENL,
++};
++
++static const struct genl_multicast_group genl_mcgrps[] = {
++	[MY_MCGRP_GENL] = { .name = "MY_MCGRP_GENL", },
++};
++
++static int my_genl_pre_doit(const struct genl_ops *ops, struct sk_buff *skb,
++			    struct genl_info *info)
 +{
-+	return sysfs_emit(buf, "%s\n", sysfs_data.genl_test_info);
++	mutex_lock(&genl_mutex);
++	return 0;
 +}
 +
-+static ssize_t store_genl_test_info(struct device *dev,
-+				    struct device_attribute *attr,
-+				    const char *buf, size_t count)
++static void my_genl_post_doit(const struct genl_ops *ops, struct sk_buff *skb,
++			      struct genl_info *info)
 +{
-+	snprintf(sysfs_data.genl_test_info, sizeof(sysfs_data.genl_test_info),
-+		 "%.*s", (int)min(count, sizeof(sysfs_data.genl_test_info) - 1),
-+		 buf);
-+	return count;
++	mutex_unlock(&genl_mutex);
 +}
 +
-+static ssize_t show_genl_test_message(struct kobject *kobj,
-+				      struct kobj_attribute *attr, char *buf)
++static void my_genl_mcast_msg(struct sk_buff *mcast_skb, struct genl_info *info)
 +{
-+	return sprintf(buf, "%s", sysfs_data.genl_test_message);
++	if (info) {
++		genl_notify(&my_genl_family, mcast_skb, info, MY_MCGRP_GENL,
++			    GFP_KERNEL);
++	} else {
++		genlmsg_multicast(&my_genl_family, mcast_skb, 0, MY_MCGRP_GENL,
++				  GFP_KERNEL);
++	}
 +}
 +
-+static ssize_t store_genl_test_message(struct kobject *kobj,
-+				       struct kobj_attribute *attr,
-+				       const char *buf, size_t count)
++// Functions for Generic Netlink TEST_GENL family
++static int my_genl_echo(struct sk_buff *skb, struct genl_info *info)
 +{
-+	size_t len = min(count, sizeof(sysfs_data.genl_test_message) - 1);
-+
-+	strncpy(sysfs_data.genl_test_message, buf, len);
-+	sysfs_data.genl_test_message[len] = '\0';
-+	return count;
-+}
-+
-+static ssize_t show_genl_test_value(struct kobject *kobj,
-+				    struct kobj_attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "%d", sysfs_data.genl_test_value);
-+}
-+
-+static ssize_t store_genl_test_value(struct kobject *kobj,
-+				     struct kobj_attribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	int rt;
-+
-+	rt = kstrtouint(buf, 0, &sysfs_data.genl_test_value);
-+	return count;
-+}
-+
-+static ssize_t show_parallel_genl_message(struct kobject *kobj,
-+					  struct kobj_attribute *attr,
-+					  char *buf)
-+{
-+	return sprintf(buf, "%s", sysfs_data.parallel_genl_message);
-+}
-+
-+static ssize_t store_parallel_genl_message(struct kobject *kobj,
-+					   struct kobj_attribute *attr,
-+					   const char *buf, size_t count)
-+{
-+	size_t len = min(count, sizeof(sysfs_data.parallel_genl_message) - 1);
-+
-+	strncpy(sysfs_data.parallel_genl_message, buf, len);
-+	sysfs_data.parallel_genl_message[len] = '\0';
-+	return count;
-+}
-+
-+static ssize_t show_third_genl_message(struct kobject *kobj,
-+				       struct kobj_attribute *attr, char *buf)
-+{
-+	return sprintf(buf, "%s", sysfs_data.third_genl_message);
-+}
-+
-+static ssize_t store_third_genl_message(struct kobject *kobj,
-+					struct kobj_attribute *attr,
-+					const char *buf, size_t count)
-+{
-+	size_t len = min(count, sizeof(sysfs_data.third_genl_message) - 1);
-+
-+	strncpy(sysfs_data.third_genl_message, buf, len);
-+	sysfs_data.third_genl_message[len] = '\0';
-+	return count;
-+}
-+
-+static struct device_attribute dev_attr_info_genl_test =
-+	__ATTR(some_info, 0664, show_genl_test_info, store_genl_test_info);
-+
-+static struct kobj_attribute my_attr_str_genl_test =
-+	__ATTR(message, 0664, show_genl_test_message, store_genl_test_message);
-+
-+static struct kobj_attribute my_attr_u32_genl_test =
-+	__ATTR(value, 0664, show_genl_test_value, store_genl_test_value);
-+
-+static struct kobj_attribute my_attr_str_parallel_genl =
-+	__ATTR(message, 0664, show_parallel_genl_message, store_parallel_genl_message);
-+
-+static struct kobj_attribute my_attr_str_third_genl =
-+	__ATTR(message, 0664, show_third_genl_message, store_third_genl_message);
-+
-+static int __init init_sysfs_third_genl(void)
-+{
++	struct sk_buff *msg;
++	void *data;
 +	int ret;
++	char *str;
 +
-+	kobj_third_genl = kobject_create_and_add("third_genl", kernel_kobj);
++	if (info->nlhdr->nlmsg_flags & NLM_F_ECHO) {
++		msg = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
++		if (!msg)
++			return -ENOMEM;
 +
-+	if (!kobj_third_genl) {
-+		pr_err("%s: Failed to create kobject\n", __func__);
++		data = genlmsg_put_reply(msg, info, &my_genl_family, 0,
++					 MY_GENL_CMD_ECHO);
++		if (!data)
++			goto error;
++
++		str = "Hello to mcast groups!";
++
++		strcpy(sysfs_data.genl_test_message, str);
++
++		ret = nla_put_string(msg, MY_GENL_ATTR_DATA, str);
++		if (ret < 0)
++			goto error;
++
++		genlmsg_end(msg, data);
++
++		my_genl_mcast_msg(msg, info);
++	}
++
++	return 0;
++
++error:
++	nlmsg_free(msg);
++	return -EMSGSIZE;
++}
++
++static int my_genl_set_value(struct sk_buff *skb, struct genl_info *info)
++{
++	struct sk_buff *msg;
++	void *msg_head;
++	struct nlattr *na_path;
++	struct nlattr *na_value;
++	char *sysfs_path;
++	u32 new_value;
++	int err;
++	int code;
++	struct netlink_ext_ack *extack;
++	struct nlattr *attr;
++	struct nlmsghdr *nlh;
++	char cookie[NETLINK_MAX_COOKIE_LEN];
++
++	if (!info->attrs[MY_GENL_ATTR_VALUE]) {
++		pr_info("%s: Missing MY_GENL_ATTR_VALUE\n", __func__);
++		return -EINVAL;
++	}
++
++	na_value = info->attrs[MY_GENL_ATTR_VALUE];
++	new_value = nla_get_u32(na_value);
++
++	if (new_value != 0 && new_value != 1) {
++		pr_err("%s: New value is incorrect\n", __func__);
++		goto error;
++	}
++
++	na_path = info->attrs[MY_GENL_ATTR_PATH];
++	if (!na_path) {
++		pr_info("%s: Missing MY_GENL_ATTR_PATH\n", __func__);
++		return -EINVAL;
++	}
++	sysfs_path = nla_data(na_path);
++
++	sysfs_data.genl_test_value = new_value;
++
++	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
++
++	msg_head = genlmsg_put(msg, info->snd_portid, info->snd_seq,
++			       &my_genl_family, 0, MY_GENL_CMD_SET_VALUE);
++	if (!msg_head) {
++		nlmsg_free(msg);
 +		return -ENOMEM;
 +	}
 +
-+	ret = sysfs_create_file(kobj_third_genl, &my_attr_str_third_genl.attr);
-+	if (ret) {
-+		pr_err("%s: Failed to create sysfs file\n", __func__);
-+		goto err_sysfs;
++	if (nla_put_u32(msg, MY_GENL_ATTR_VALUE, new_value)) {
++		genlmsg_cancel(msg, msg_head);
++		nlmsg_free(msg);
++		return -EMSGSIZE;
++	}
++
++	genlmsg_end(msg, msg_head);
++
++	err = netlink_unicast(skb->sk, msg, info->snd_portid, 0);
++	if (err < 0) {
++		pr_err("%s: Error in netlink_unicast, err=%d\n", __func__, err);
++		nlmsg_free(msg);
++		return err;
 +	}
 +
 +	return 0;
 +
-+err_sysfs:
-+	kobject_put(kobj_third_genl);
-+	return ret;
++error:
++	// sending error ACK
++	code = -EINVAL;
++
++	extack = kmalloc(sizeof(*extack), GFP_KERNEL);
++	if (!extack)
++		return -ENOMEM;
++
++	strcpy(cookie, "000001");
++	extack->_msg = "Incorrect value from userspace";
++	extack->bad_attr = na_value;
++	extack->policy = my_genl_policy;
++	extack->cookie_len = strlen(cookie);
++	extack->miss_type = MY_GENL_ATTR_VALUE;
++	extack->miss_nest = attr;
++
++	nlh = nlmsg_hdr(skb);
++	netlink_ack(skb, nlh, code, extack);
++	pr_info("%s: Message with TLV was sent\n", __func__);
++	return -EINVAL;
 +}
 +
-+static int __init init_sysfs_parallel_genl(void)
++static int my_genl_get_value(struct sk_buff *skb, struct genl_info *info)
 +{
-+	int ret;
++	struct sk_buff *msg;
++	void *msg_head;
++	struct nlattr *na_path;
++	char *sysfs_path;
++	u32 value;
++	int err;
++	int code;
 +
-+	kobj_parallel_genl =
-+		kobject_create_and_add("parallel_genl", kernel_kobj);
++	msg = genlmsg_new(NLMSG_GOODSIZE, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
 +
-+	if (!kobj_parallel_genl) {
-+		pr_err("%s: Failed to create kobject\n", __func__);
++	msg_head = genlmsg_put(msg, info->snd_portid, info->snd_seq,
++			       &my_genl_family, 0, MY_GENL_CMD_GET_VALUE);
++	if (!msg_head) {
++		nlmsg_free(msg);
 +		return -ENOMEM;
 +	}
 +
-+	ret = sysfs_create_file(kobj_parallel_genl,
-+				&my_attr_str_parallel_genl.attr);
-+	if (ret) {
-+		pr_err("%s: Failed to create sysfs file\n", __func__);
-+		goto err_sysfs;
++	if (!info->attrs[MY_GENL_ATTR_PATH]) {
++		nlmsg_free(msg);
++		return -EINVAL;
++	}
++	genl_unlock();
++	na_path = info->attrs[MY_GENL_ATTR_PATH];
++	sysfs_path = nla_data(na_path);
++	genl_lock();
++
++	if (strcmp(sysfs_path, PATH_GENL_TEST_NUM) != 0) {
++		pr_err("%s: Incorrect path: %s\n", __func__, sysfs_path);
++		goto error;
++	}
++
++	value = sysfs_data.genl_test_value;
++
++	if (nla_put_u32(msg, MY_GENL_ATTR_VALUE, value)) {
++		genlmsg_cancel(msg, msg_head);
++		nlmsg_free(msg);
++		return -EMSGSIZE;
++	}
++
++	genlmsg_end(msg, msg_head);
++
++	if (info) {
++		err = genlmsg_reply(msg, info);
++		if (err != 0) {
++			pr_err("%s: Error in genlmsg_reply, err=%d\n", __func__, err);
++			nlmsg_free(msg);
++			return err;
++		}
 +	}
 +
 +	return 0;
 +
-+err_sysfs:
-+	kobject_put(kobj_parallel_genl);
-+	return ret;
++error:
++	code = -EINVAL;
++	netlink_set_err(skb->sk, 0, MY_MCGRP_GENL, code);
++	return -EINVAL;
 +}
 +
-+static int __init init_sysfs_genl_test(void)
++static int my_genl_no_attrs(struct sk_buff *skb, struct genl_info *info)
 +{
++	struct sk_buff *msg;
++	void *msg_head;
 +	int ret;
++	char *str;
 +
-+	kobj_genl_test = kobject_create_and_add("genl_test", kernel_kobj);
-+	dev_genl_test = kobj_to_dev(kobj_genl_test);
-+
-+	if (!kobj_genl_test) {
-+		pr_err("%s: Failed to create kobject\n", __func__);
++	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
++	if (!msg)
 +		return -ENOMEM;
++
++	msg_head = genlmsg_put_reply(msg, info, &my_genl_family, 0,
++				     info->genlhdr->cmd);
++	if (!msg_head)
++		goto error;
++
++	str = "Reply from GENL_TEST family function with no attrs";
++
++	strcpy(sysfs_data.genl_test_message, str);
++
++	if (nla_put_string(msg, MY_GENL_ATTR_DATA, str)) {
++		pr_err("%s: Error with putting value to MY_GENL_ATTR_DATA\n", __func__);
++		goto error;
 +	}
 +
-+	ret = sysfs_create_file(kobj_genl_test, &my_attr_u32_genl_test.attr);
-+	if (ret) {
-+		pr_err("%s: Failed to create sysfs file 1\n", __func__);
-+		goto err_sysfs;
-+	}
++	genlmsg_end(msg, msg_head);
++	return genlmsg_reply(msg, info);
 +
-+	ret = sysfs_create_file(kobj_genl_test, &my_attr_str_genl_test.attr);
-+	if (ret) {
-+		pr_err("%s: Failed to create sysfs file 2\n", __func__);
-+		goto err_sysfs_2;
-+	}
-+
-+	ret = device_create_file(dev_genl_test, &dev_attr_info_genl_test);
-+	if (ret) {
-+		pr_err("%s: Failed to create device file\n", __func__);
-+		goto err_device;
-+	};
-+
-+	return 0;
-+
-+err_device:
-+	sysfs_remove_file(kobj_genl_test, &my_attr_str_genl_test.attr);
-+err_sysfs_2:
-+	sysfs_remove_file(kobj_genl_test, &my_attr_u32_genl_test.attr);
-+err_sysfs:
-+	kobject_put(kobj_genl_test);
++error:
++	ret = -EMSGSIZE;
++	nlmsg_free(msg);
 +	return ret;
 +}
 +
-+static int __init module_netlink_init(void)
++// Generic Netlink operations for TEST_GENL family
++static const struct genl_ops my_genl_ops[] = {
++	{
++		.cmd = MY_GENL_CMD_ECHO,
++		.flags = 0,
++		.policy = my_genl_policy,
++		.doit = my_genl_echo,
++		.dumpit = NULL,
++	},
++	{
++		.cmd = MY_GENL_CMD_SET_VALUE,
++		.policy = my_genl_policy,
++		.doit = my_genl_set_value,
++		.flags = GENL_ADMIN_PERM,
++	},
++	{
++		.cmd = MY_GENL_CMD_GET_VALUE,
++		.flags = 0,
++		.policy = my_genl_policy,
++		.doit = my_genl_get_value,
++		.dumpit = NULL,
++	},
++	{
++		.cmd = MY_GENL_CMD_NO_ATTRS,
++		.flags = 0,
++		.policy = NULL,
++		.doit = my_genl_no_attrs,
++		.dumpit = NULL,
++	},
++};
++
++static int my_genl_small_cmd_get(struct sk_buff *skb, struct genl_info *info)
 +{
++	struct sk_buff *msg;
++	void *reply;
 +	int ret;
++	char *str;
 +
-+	ret = init_sysfs_genl_test();
-+	if (ret)
-+		goto err_sysfs;
++	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
++	if (!msg)
++		return -ENOMEM;
 +
-+	ret = init_sysfs_parallel_genl();
-+	if (ret)
-+		goto err_sysfs;
++	reply = genlmsg_put_reply(msg, info, &my_genl_family, 0,
++				  info->genlhdr->cmd);
++	if (!reply)
++		goto error;
 +
-+	ret = init_sysfs_third_genl();
-+	if (ret)
-+		goto err_sysfs;
++	str = "IT'S ME from kernel";
 +
-+	return 0;
++	strcpy(sysfs_data.genl_test_message, str);
 +
-+err_sysfs:
-+	sysfs_remove_file(kobj_genl_test, &my_attr_u32_genl_test.attr);
-+	sysfs_remove_file(kobj_genl_test, &my_attr_str_genl_test.attr);
-+	device_remove_file(dev_genl_test, &dev_attr_info_genl_test);
-+	kobject_put(kobj_genl_test);
++	if (nla_put_string(msg, MY_GENL_ATTR_DATA, str)) {
++		nlmsg_free(msg);
++		pr_err("%s: Error with putting value to MY_GENL_ATTR_DATA\n", __func__);
++		return -EMSGSIZE;
++	}
 +
-+	sysfs_remove_file(kobj_parallel_genl, &my_attr_str_parallel_genl.attr);
-+	kobject_put(kobj_parallel_genl);
++	genlmsg_end(msg, reply);
++	return genlmsg_reply(msg, info);
 +
-+	sysfs_remove_file(kobj_third_genl, &my_attr_str_third_genl.attr);
-+	kobject_put(kobj_third_genl);
++error:
++	ret = -EMSGSIZE;
++	nlmsg_free(msg);
 +	return ret;
 +}
 +
-+static void __exit module_netlink_exit(void)
++static const struct genl_small_ops my_genl_small_ops[] = {
++	{
++		.cmd = MY_GENL_SMALL_CMD_GET,
++		.doit = my_genl_small_cmd_get,
++	},
++};
++
++// genl_family struct for TEST_GENL family
++static struct genl_family my_genl_family = {
++	.hdrsize = 0,
++	.name = MY_GENL_FAMILY_NAME,
++	.version = MY_GENL_VERSION,
++	.maxattr = MY_GENL_ATTR_MAX,
++	.netnsok = true,
++	.pre_doit = my_genl_pre_doit,
++	.post_doit = my_genl_post_doit,
++	.ops = my_genl_ops,
++	.n_ops = ARRAY_SIZE(my_genl_ops),
++	.small_ops = my_genl_small_ops,
++	.n_small_ops = ARRAY_SIZE(my_genl_small_ops),
++	.policy = my_genl_policy,
++	.mcgrps = genl_mcgrps,
++	.n_mcgrps = ARRAY_SIZE(genl_mcgrps),
++};
++
++static int __init init_netlink(void)
 +{
-+	sysfs_remove_file(kobj_genl_test, &my_attr_u32_genl_test.attr);
-+	sysfs_remove_file(kobj_genl_test, &my_attr_str_genl_test.attr);
-+	device_remove_file(dev_genl_test, &dev_attr_info_genl_test);
-+	kobject_put(kobj_genl_test);
++	int rc;
 +
-+	sysfs_remove_file(kobj_parallel_genl, &my_attr_str_parallel_genl.attr);
-+	kobject_put(kobj_parallel_genl);
++	pr_info("%s: My module. Initializing Netlink\n", __func__);
 +
-+	sysfs_remove_file(kobj_third_genl, &my_attr_str_third_genl.attr);
-+	kobject_put(kobj_third_genl);
-+	pr_info("%s: Module is exited\n", __func__);
++	rc = genl_register_family(&my_genl_family);
++	if (rc) {
++		pr_err("%s: Failed to register Generic Netlink family\n", __func__);
++		goto failure_1;
++	}
++
++	return 0;
++
++failure_1:
++	pr_debug("%s: My module. Error occurred in %s\n", __func__, __func__);
++	return rc;
 +}
 +
-+module_init(module_netlink_init);
-+module_exit(module_netlink_exit);
+ static int __init init_sysfs_third_genl(void)
+ {
+ 	int ret;
+@@ -253,6 +670,11 @@ static int __init module_netlink_init(void)
+ 	if (ret)
+ 		goto err_sysfs;
+ 
++	ret = init_netlink();
++	if (ret)
++		goto err_sysfs;
++	pr_info("%s: New families are registered\n", __func__);
++
+ 	return 0;
+ 
+ err_sysfs:
+@@ -271,6 +693,8 @@ static int __init module_netlink_init(void)
+ 
+ static void __exit module_netlink_exit(void)
+ {
++	genl_unregister_family(&my_genl_family);
++
+ 	sysfs_remove_file(kobj_genl_test, &my_attr_u32_genl_test.attr);
+ 	sysfs_remove_file(kobj_genl_test, &my_attr_str_genl_test.attr);
+ 	device_remove_file(dev_genl_test, &dev_attr_info_genl_test);
 -- 
 2.34.1
 
