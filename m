@@ -1,147 +1,146 @@
-Return-Path: <linux-kernel+bounces-814272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4652B551CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:37:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8AFB551D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 642D7BA163A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 132CE5A036C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33F0320A04;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F6A320398;
 	Fri, 12 Sep 2025 14:32:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E81D9Xs6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="k18nEKxc"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f27FcqYp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B1253148BB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565C2311974;
 	Fri, 12 Sep 2025 14:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687519; cv=none; b=HdvGaz3VGcUwwuWgoaeNpG1dsiWmFEk79ocGCAp5n1BEUvBur8zscWFQXdRdl45rgkx6Nxcvqxiuksn8V/OoHiopLtm/7RLIw/aDyPISiQ/qmOwUvuqtDDBYljT1HYBIE5P5anGvPcZYk45TCXEKjhLvCS0lqCI78owvM/jFdAs=
+	t=1757687519; cv=none; b=GoK6aN7N0xUVsG1cmMfs2tNjzXsew5gOZsGiOq3N49IGaiCjgOpKu45OZdpZ47+oA/500XU+eVbL44IfUgguSoBeV3guAFVb5ETgoI0rMnFaJaSNF5MGyo4tgxvubhQKkOcmdTYWUfgNsESEuvhLEcTdbWGw6LZ4uw9wPX7Z46c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757687519; c=relaxed/simple;
-	bh=fpazFccOmbXGuWUXFS4kbPhns9qBLv/2/3RBg0fWiGI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Sjiz3uqw5NyFjT6tZv3jI2l9AnIoWdZA5XNCbnlcBuDlqLkUSvub3n22AQ0A5CkagntY/og/4pVwK7pC6+D9T96YQ8envdEBICEnUR14izUh7NGH4OglEf25SCof2CrmpoqPzXrHNNKDjKNoMF9KiOHZuQJtci3idZ/SRKUquuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E81D9Xs6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=k18nEKxc; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757687516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YT6lK9VThWO2VoDv4flXldsg/lGV+uGD6AwCarpxbiA=;
-	b=E81D9Xs6MJnJtYyDYfeabzgtnhu+RMcm8DE0KDo9tBNGZp5iHi5LpNIKp0XivU7YySkQPF
-	3Md77jcnpzz2ktnuPXzcJxrAsxF6mzIwMzq7/PMk3PMS0uY1VFv6HJUHzlvcOd0psd09oj
-	lr4x7RI8MBh48uDdfptw5f7lPiPscrmKDn/W2DZzIusTWwLgeTdBSJHYQmbsjBlwJhi06l
-	CNp7Q2g4VO2A7sLlPAqoAtMvL5C6Gt6Kaeoy9lpdeu6E+g8ks9dmzGVzKaDHfGV321BAMk
-	YanvmSBztaAu0jwyA+z8jrWMqaobVb6idrFkdqn44z+qeEiReWNuqTlDk+yrIg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757687516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YT6lK9VThWO2VoDv4flXldsg/lGV+uGD6AwCarpxbiA=;
-	b=k18nEKxcmY8iz/IYvo6R2LzsHnXZHqJa2ovPB8+4Z6Spdcm0Z6KyI4tDXGNnAuA/riu/pc
-	1ypcbeflQ7j/hkDQ==
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Hannes Reinecke <hare@suse.de>, Daniel Wagner <wagi@kernel.org>, Jens
- Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, Christoph
- Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, "Michael S.
- Tsirkin" <mst@redhat.com>, Aaron Tomlin <atomlin@atomlin.com>, "Martin K.
- Petersen" <martin.petersen@oracle.com>, Costa Shulyupin
- <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Valentin
- Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei
- <ming.lei@redhat.com>, Frederic Weisbecker <frederic@kernel.org>, Mel
- Gorman <mgorman@suse.de>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
- megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org,
- storagedev@microchip.com, virtualization@lists.linux.dev,
- GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when
- isolcpus=io_queue is enabled
-In-Reply-To: <bc5ebdea-7091-4999-a021-ec2a65573aa0@flourine.local>
-References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
- <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
- <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
- <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
- <87ms72u3at.ffs@tglx>
- <bc5ebdea-7091-4999-a021-ec2a65573aa0@flourine.local>
-Date: Fri, 12 Sep 2025 16:31:55 +0200
-Message-ID: <87cy7vrbc4.ffs@tglx>
+	bh=pkUfGkCmaT3RWgdS9J7jfl3CH8SCGQ7t0IFRJROM9Xo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Z7wx9REIdrNHT4TU91pvlpn66m4xAXYSWUsxYMCNhsry4IKv0DnKQ+NSyihMOWtEK4VrPOUqXmMh+ZlDcvqm+gTyTkMoPaVoSndM8NCk+SGo85Ma+R7gF9HVEmVj5fiB9kQxWsw5vDXVPjutYOFP8fQFnBoat7ulrS1/rhubvSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f27FcqYp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38065C4CEF5;
+	Fri, 12 Sep 2025 14:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757687518;
+	bh=pkUfGkCmaT3RWgdS9J7jfl3CH8SCGQ7t0IFRJROM9Xo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=f27FcqYpUt0PLnZfEphVydhQ/iaYIgawdxJxq/bZM6JLqzU5obg3zr18Pv5Fj+OKy
+	 u6aMgxB7gxM1F6Ixbm/LVJQf0b2FTna6AfMoRvpUbdn+Ezv5vPI2X8c+JzGU4B2rVz
+	 FxFazTvj6lFHsNp5s6XvRJKay/pH8AQcy/zmKatCmg26BuWbOLV6q9LEXFcVqk2uGD
+	 1/VHy9ppha/dEJkqNH6O6oqgDrsyVrghoRYAlwEr/ahFsU0ExGF69BbzM92IBLstgW
+	 xfQIj+sIvkSimqvSLFpflL89Su2DRW31q2jTOM2IH0ELgfpsOsAPBQygCjgHiZtdEf
+	 OzRoqJfaEqXww==
+Date: Fri, 12 Sep 2025 16:31:55 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: kernel test robot <lkp@intel.com>
+cc: Jeongjun Park <aha310510@gmail.com>, llvm@lists.linux.dev, 
+    oe-kbuild-all@lists.linux.dev, Benjamin Tissoires <bentiss@kernel.org>, 
+    linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [PATCH] HID: steelseries: Fix STEELSERIES_SRWS1 handling in
+ steelseries_remove() (was [linux-next:master 1042/7110] drivers/hid/hid-steelseries.c:599:1:
+ warning: unused label 'srws1_remove')
+In-Reply-To: <202509090334.76D4qGtW-lkp@intel.com>
+Message-ID: <r1np627r-0734-23o1-s9sr-7pnqq0qn577o@xreary.bet>
+References: <202509090334.76D4qGtW-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, Sep 12 2025 at 10:32, Daniel Wagner wrote:
-> On Wed, Sep 10, 2025 at 10:20:26AM +0200, Thomas Gleixner wrote:
->> > The cpu_online_mask might change over time, it's not a static bitmap.
->> > Thus it's necessary to update the blk_hk_online_mask. Doing some sort of
->> > caching is certainly possible. Given that we have plenty of cpumask
->> > logic operation in the cpu_group_evenly code path later, I am not so
->> > sure this really makes a huge difference.
->> 
->> Sure,  but none of this is serialized against CPU hotplug operations. So
->> the resulting mask, which is handed into the spreading code can be
->> concurrently modified. IOW it's not as const as the code claims.
->
-> Thanks for explaining.
->
-> In group_cpu_evenly:
->
-> 	/*
-> 	 * Make a local cache of 'cpu_present_mask', so the two stages
-> 	 * spread can observe consistent 'cpu_present_mask' without holding
-> 	 * cpu hotplug lock, then we can reduce deadlock risk with cpu
-> 	 * hotplug code.
-> 	 *
-> 	 * Here CPU hotplug may happen when reading `cpu_present_mask`, and
-> 	 * we can live with the case because it only affects that hotplug
-> 	 * CPU is handled in the 1st or 2nd stage, and either way is correct
-> 	 * from API user viewpoint since 2-stage spread is sort of
-> 	 * optimization.
-> 	 */
-> 	cpumask_copy(npresmsk, data_race(cpu_present_mask));
+On Tue, 9 Sep 2025, kernel test robot wrote:
 
-The present mask is very different from the online mask. The present
-mask only changes on physical hotplug when:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+> head:   3e8e5822146bc396d2a7e5fbb7be13271665522a
+> commit: a84eeacbf9325fd7f604b80f246aaba157730cd5 [1042/7110] HID: steelseries: refactor probe() and remove()
+> config: um-randconfig-002-20250908 (https://download.01.org/0day-ci/archive/20250909/202509090334.76D4qGtW-lkp@intel.com/config)
+> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 7fb1dc08d2f025aad5777bb779dfac1197e9ef87)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250909/202509090334.76D4qGtW-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202509090334.76D4qGtW-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    In file included from drivers/hid/hid-steelseries.c:13:
+>    In file included from include/linux/hid.h:29:
+>    In file included from include/linux/hid_bpf.h:6:
+>    In file included from include/linux/bpf.h:31:
+>    In file included from include/linux/memcontrol.h:13:
+>    In file included from include/linux/cgroup.h:27:
+>    In file included from include/linux/kernel_stat.h:8:
+>    In file included from include/linux/interrupt.h:11:
+>    In file included from include/linux/hardirq.h:11:
+>    In file included from arch/um/include/asm/hardirq.h:5:
+>    In file included from include/asm-generic/hardirq.h:17:
+>    In file included from include/linux/irq.h:20:
+>    In file included from include/linux/io.h:12:
+>    In file included from arch/um/include/asm/io.h:24:
+>    include/asm-generic/io.h:1175:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+>     1175 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+>          |                                                   ~~~~~~~~~~ ^
+> >> drivers/hid/hid-steelseries.c:599:1: warning: unused label 'srws1_remove' [-Wunused-label]
+>      599 | srws1_remove:
+>          | ^~~~~~~~~~~~~
+>    2 warnings generated.
 
-     - a offline CPU is removed from the present set of CPUs
+[ adding CCs ]
 
-     - a offline CPU is added to it.
 
-In neither case the CPU can be involved in any operation related to the
-actual offline/online operations.
 
-Also contrary to your approach, this code takes the possibility of
-a concurrently changing mask into account by taking a racy snapshot,
-which is immutable for the following operation.
+From: Jiri Kosina <jkosina@suse.com>
+Subject: [PATCH] HID: steelseries: Fix STEELSERIES_SRWS1 handling in steelseries_remove()
 
-What you are doing with that static mask, makes it a target of
-concurrent modification, which is obviously a recipe for subtle bugs.
+srws1_remove label can be only reached only if LEDS subsystem is enabled. 
+To avoid putting horryfing ifdef second time around the label, just 
+perform the cleanup and exit immediately directly.
 
->   Turns out the two stage spread just needs consistent 'cpu_present_mask',
->   and remove the CPU hotplug lock by storing it into one local cache.  This
->   way doesn't change correctness, because all CPUs are still covered.
->
-> This sounds like I should do something similar with cpu_online_mask.
+Fixes: a84eeacbf9325 ("HID: steelseries: refactor probe() and remove()")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202509090334.76D4qGtW-lkp@intel.com/
+Signed-off-by: Jiri Kosina <jkosina@suse.com>
+---
+ drivers/hid/hid-steelseries.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Indeed.
+diff --git a/drivers/hid/hid-steelseries.c b/drivers/hid/hid-steelseries.c
+index 8af98d67959e..f98435631aa1 100644
+--- a/drivers/hid/hid-steelseries.c
++++ b/drivers/hid/hid-steelseries.c
+@@ -582,7 +582,7 @@ static void steelseries_remove(struct hid_device *hdev)
+ 	if (hdev->product == USB_DEVICE_ID_STEELSERIES_SRWS1) {
+ #if IS_BUILTIN(CONFIG_LEDS_CLASS) || \
+     (IS_MODULE(CONFIG_LEDS_CLASS) && IS_MODULE(CONFIG_HID_STEELSERIES))
+-		goto srws1_remove;
++		hid_hw_stop(hdev);
+ #endif
+ 		return;
+ 	}
+@@ -596,7 +596,6 @@ static void steelseries_remove(struct hid_device *hdev)
+ 	cancel_delayed_work_sync(&sd->battery_work);
+ 
+ 	hid_hw_close(hdev);
+-srws1_remove:
+ 	hid_hw_stop(hdev);
+ }
+ 
 
-Thanks,
-
-        tglx
+-- 
+Jiri Kosina
+SUSE Labs
 
 
