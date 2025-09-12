@@ -1,118 +1,134 @@
-Return-Path: <linux-kernel+bounces-813833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381F4B54B43
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:42:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D17B54B4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85A171895AE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:42:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84765189A3DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AED421A457;
-	Fri, 12 Sep 2025 11:42:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4814441C62;
-	Fri, 12 Sep 2025 11:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D1B30146E;
+	Fri, 12 Sep 2025 11:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0TCwjyZx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6877641C62;
+	Fri, 12 Sep 2025 11:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757677347; cv=none; b=Y/Hqk13XmhDMQ4UP/nIQ8ez6nywySYGxGKArysbChPboftM6Iw7vGVX9hRA7owFXu8oSzclg37Yk4i9CAs8fxdotU1CKCZ/ssjZWP4GlyTSx/MxHK/jVYCP5bVKibj27WVS7gXxwPFA1YO0zXTZ3NlEaU1AUG/5ySaki696vENA=
+	t=1757677406; cv=none; b=LqxhO0/hEm2CBiuRf2QSIZfrs1QADxDxXNs9KqooStFKWzUl2txum2r9uL7PH641ezl3Esgj3pwuJJxDmhf76yaZtrZ7qhFpmGAiJcCSdYL/1vH8W6OpWOjkfwr0zG6W3yCq3Lhh689Iuq9HvGW84gxLsOqDSmcQ6bxHUIFsLpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757677347; c=relaxed/simple;
-	bh=Nce4M5Uob+uKbWUiwuuOIZjfNSwB8qg0u6HvK4qFifM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=odrBX4JOW2JmBHtbMbbinmGkd3Q8g0ypiVu4xk1rHcqnqYibxDAOFgko3BNPYXQ0XOr7eFlda3twZQ0O6dJmCqZZK+Y33I4CdmJI9TD1FeMVYD6zLwQwXAdT/xwfFSjn8gedVr/szgATz/vGjkZ+OdQlH+pe3YaaJGfLL4CCC8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 41EA516A3;
-	Fri, 12 Sep 2025 04:42:16 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 133E53F63F;
-	Fri, 12 Sep 2025 04:42:19 -0700 (PDT)
-Message-ID: <9fa1b584-130b-45b0-9dba-8e046e643bf0@arm.com>
-Date: Fri, 12 Sep 2025 12:42:18 +0100
+	s=arc-20240116; t=1757677406; c=relaxed/simple;
+	bh=vQZw18LyMNiHBfayqqKazzYbl6hyR7y4CM3GzrQTcKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RyT9RI2j6qOlTnaYw0KIyVEqiCQewLMLd/nvCUsYpul/nevb3VCawDMMznzTt3QXW27xUIh4k04hjXrPzAaaw8HDSnnQ6fKvlkpQgzxNMzYIEVkbBae5QY+dpEWx5Gx7uILyul80jYkayGann837FbrbbgrtfJUJam7XhYXjr6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0TCwjyZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2916DC4CEF1;
+	Fri, 12 Sep 2025 11:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757677405;
+	bh=vQZw18LyMNiHBfayqqKazzYbl6hyR7y4CM3GzrQTcKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0TCwjyZxwiSPrLtFZN+IyniMywN3vL/LlOWbuAxsnEsOVAbzmqup0WIsjoDHMFsp4
+	 CZHsmzwRAvDxfPp9R9I5o3dTd0LaONRXa7YSjy5cAsJmZrkkOk9zpdlsnFkevQaLH4
+	 NT9opWe3xXbfYZRU1UCBvRT6dZZUiedrQxIwCvto=
+Date: Fri, 12 Sep 2025 13:43:22 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Mukesh R <mrathor@linux.microsoft.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
+	linux-arch@vger.kernel.org, virtualization@lists.linux.dev,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jikos@kernel.org, bentiss@kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	dmitry.torokhov@gmail.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, bhelgaas@google.com,
+	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+	deller@gmx.de, arnd@arndb.de, sgarzare@redhat.com, horms@kernel.org
+Subject: Re: [PATCH v1 2/2] Drivers: hv: Make CONFIG_HYPERV bool
+Message-ID: <2025091253-overwrite-carol-b197@gregkh>
+References: <20250906010952.2145389-1-mrathor@linux.microsoft.com>
+ <20250906010952.2145389-3-mrathor@linux.microsoft.com>
+ <2025090621-rumble-cost-2c0d@gregkh>
+ <d7d7b23f-eaea-2dbc-9c9d-4bee082f6fe7@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 17/29] arm_mpam: Extend reset logic to allow devices to
- be reset any time
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-18-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250910204309.20751-18-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7d7b23f-eaea-2dbc-9c9d-4bee082f6fe7@linux.microsoft.com>
 
-Hi James,
-
-On 9/10/25 21:42, James Morse wrote:
-> cpuhp callbacks aren't the only time the MSC configuration may need to
-> be reset. Resctrl has an API call to reset a class.
-> If an MPAM error interrupt arrives it indicates the driver has
-> misprogrammed an MSC. The safest thing to do is reset all the MSCs
-> and disable MPAM.
+On Mon, Sep 08, 2025 at 02:01:34PM -0700, Mukesh R wrote:
+> On 9/6/25 04:36, Greg KH wrote:
+> > On Fri, Sep 05, 2025 at 06:09:52PM -0700, Mukesh Rathor wrote:
+> >> With CONFIG_HYPERV and CONFIG_HYPERV_VMBUS separated, change CONFIG_HYPERV
+> >> to bool from tristate. CONFIG_HYPERV now becomes the core Hyper-V
+> >> hypervisor support, such as hypercalls, clocks/timers, Confidential
+> >> Computing setup, PCI passthru, etc. that doesn't involve VMBus or VMBus
+> >> devices.
+> > 
+> > But why are you making it so that this can not be a module anymore?  You
+> > are now forcing ALL Linux distro users to always have this code in their
+> > system, despite not ever using the feature.  That feels like a waste to
+> > me.
+> > 
+> > What is preventing this from staying as a module?  Why must you always
+> > have this code loaded at all times for everyone?
 > 
-> Add a helper to reset RIS via their class. Call this from mpam_disable(),
-> which can be scheduled from the error interrupt handler.
+> This is currently not a module. I assume it was at the beginning. In
+> drivers/Makefile today:
 > 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Changes since v1:
->  * more complete use of _srcu helpers.
->  * Use guard macro for srcu.
->  * Dropped a might_sleep() - something else will bark.
-> ---
->  drivers/resctrl/mpam_devices.c | 56 ++++++++++++++++++++++++++++++++--
->  1 file changed, 54 insertions(+), 2 deletions(-)
+> obj-$(subst m,y,$(CONFIG_HYPERV))       += hv/
 > 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index e7faf453b5d7..a9d3c4b09976 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -842,8 +842,6 @@ static int mpam_reset_ris(void *arg)
->  	u16 partid, partid_max;
->  	struct mpam_msc_ris *ris = arg;
->  
-> -	mpam_assert_srcu_read_lock_held();
-> -
+> 
+> More context: CONFIG_HYPERV doesn't really reflect one module. It is
+> both for kernel built in code and building of stuff in drivers/hv.
+> 
+> drivers/hv then builds 4 modules:
+> 
+> obj-$(CONFIG_HYPERV)            += hv_vmbus.o
+> obj-$(CONFIG_HYPERV_UTILS)      += hv_utils.o
+> obj-$(CONFIG_HYPERV_BALLOON)    += hv_balloon.o
+> obj-$(CONFIG_MSHV_ROOT)         += mshv_root.o
+> 
+> Notice vmbus is using CONFIG_HYPERV because there is no 
+> CONFIG_HYPERV_VMBUS. We are trying to fix that here.
 
-Remove where it is introduced. There is already one in
-mpam_reset_ris_partid() at that time.
+This series does not apply to my tree:
 
->  	if (ris->in_reset_state)
->  		return 0;
+checking file drivers/gpu/drm/Kconfig
+checking file drivers/hid/Kconfig
+checking file drivers/hv/Kconfig
+Hunk #2 FAILED at 82.
+1 out of 2 hunks FAILED
+checking file drivers/hv/Makefile
+checking file drivers/input/serio/Kconfig
+checking file drivers/net/hyperv/Kconfig
+checking file drivers/pci/Kconfig
+checking file drivers/scsi/Kconfig
+checking file drivers/uio/Kconfig
+checking file drivers/video/fbdev/Kconfig
+checking file include/asm-generic/mshyperv.h
+Hunk #1 succeeded at 162 with fuzz 2 (offset -3 lines).
+Hunk #2 succeeded at 198 (offset -3 lines).
+Hunk #3 succeeded at 215 (offset -3 lines).
+checking file net/vmw_vsock/Kconfig
 
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+What was it made against?
 
-Thanks,
+thanks,
 
-Ben
-
+greg k-h
 
