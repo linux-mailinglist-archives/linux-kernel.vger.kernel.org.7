@@ -1,105 +1,207 @@
-Return-Path: <linux-kernel+bounces-814146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FFBB54FE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:44:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6264B54FF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FC351D60BAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:45:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E2F160B7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:46:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F34530DED0;
-	Fri, 12 Sep 2025 13:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8388F4A;
+	Fri, 12 Sep 2025 13:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="TNMp5hEV"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="o2vmvq9B"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0018E1F872D;
-	Fri, 12 Sep 2025 13:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69682F4A;
+	Fri, 12 Sep 2025 13:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684682; cv=none; b=EGcunhKLtLTRmjYLgUIsNOc4xL/rIgD1lEdokpehyeacYzyvikE7J4+5HiMK6ONbE0NfF0JmPOiO6dE8Ox0HQF4+nmC7narHlLV86rHFSseXBtwwEb2OfkLhiwhB94VkJLt8cWUafZfMP6piMJ7nslpe3bUZ0VkWBgPCiRQlUTw=
+	t=1757684774; cv=none; b=QL8ZCUZbRAgGslNjyjhITNjrqRkFQ7l18KqcO5wSt0wsiUNadupN5MxOD5i7MuuNvX3qEnOO4mnTNCh7lxAvUJ06iSgi91ux8lbHVDUUjHyLcZwPzrlObiZtkwkE5y4IHwOnUtxLY4R7OmVhqKKf3A+WRWSf8cjdkIFpn6DlVX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684682; c=relaxed/simple;
-	bh=Z0AoKpkc0fJA3nJvzIAGtyg7Egr+rKkvpFqJ7nwmzNg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=TxhBEj7lkBP7Z87WLuyHqR+hvOuCQJc83eeBx0ykaRdZzuI3V0MQOAHazSuQR+QZ5gK/AYXlIsyZEtYkb4HNoZxr7AJGbIEjCl0Tgp5Hk6Pq5mQvu8rpHtsr2TE6zhx7WnhHxNSlQz+3cpCGmS+ltYuFshFRbC/cwT4aYE+7Hsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=TNMp5hEV reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=fn0AcCThmky4/tdg5r/iJhWkSOOpbV6urVsfWz/qpxA=; b=T
-	NMp5hEVLrzPlrjV/VzSN9Afm3adXlZhQdSrIReWBXdvyDq+2SEXVAHsvPVfExTJW
-	EGgwxQ3BIs3b1I3bnFX463qFs81RciZXnQuwxj9J1JyF1MkYvowR3KYF6gmexZI4
-	32jCFHqqp1r8lfl82Mco9fh2/M5p6lWf6o/W8zilKo=
-Received: from 00107082$163.com ( [111.35.190.173] ) by
- ajax-webmail-wmsvr-40-130 (Coremail) ; Fri, 12 Sep 2025 21:44:21 +0800
- (CST)
-Date: Fri, 12 Sep 2025 21:44:21 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Johannes Berg" <johannes@sipsolutions.net>
-Cc: miriam.rachel.korenblit@intel.com, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: IWL Error Log Dump since 6.17.0-rc5
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <285c7cd9935d5c245ad478c5692faa927bcda245.camel@sipsolutions.net>
-References: <20250909165811.10729-1-00107082@163.com>
- <487c99e0.6ed4.19932979ca5.Coremail.00107082@163.com>
- <285c7cd9935d5c245ad478c5692faa927bcda245.camel@sipsolutions.net>
-X-NTES-SC: AL_Qu2eBfqTu04t5ySeYOkXn0oTju85XMCzuv8j3YJeN500mCXz2Cw8U1F4PFfV+fqkMhGjigm+VyZp4fxdephZYaytbZEat5SyfEZd582A9JWa
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1757684774; c=relaxed/simple;
+	bh=KUZhuLl+Gs4KnXYvf8nk0Gm29ZFsC3pl6FDSSD5gB98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0C0lgJrC3WQ8jLowhg0cr55DuvRIbhMrcZMNIrFWMb+tE38ZzPe3wBbIg8u8dPb7w0MdMlBpVuG+dbpUdic1sg/niCZLDR+QwZjlfqIoHf/OxrgwilmSaZJ5P3mak6DSILB5GnLizhjXqWN36imPzvnysBa571cHHWNTqIwWk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=o2vmvq9B; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 9F13E50A;
+	Fri, 12 Sep 2025 15:44:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757684693;
+	bh=KUZhuLl+Gs4KnXYvf8nk0Gm29ZFsC3pl6FDSSD5gB98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=o2vmvq9B9Sh2jNlTCk30dCk5o8iLos/J2ktMMMv3P/OAfJLmrx40Vs3TI8xxvomd5
+	 UKF5xT2g+nCFcwhfGjcZV3wEQUt0hUp/ggeoH/giS4iVYiOOPkjWyoneVXZhgkfxnR
+	 gvJ2F3LCs3CVVnuxvAhhYSkduIJbFhxv269XkBE4=
+Date: Fri, 12 Sep 2025 16:45:40 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, brgl@bgdev.pl
+Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
+Message-ID: <20250912134540.GE31682@pendragon.ideasonboard.com>
+References: <20250912081718.3827390-1-tzungbi@kernel.org>
+ <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
+ <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
+ <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
+ <20250912132656.GC31682@pendragon.ideasonboard.com>
+ <2025091209-curfew-safari-f6e0@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <35b1fd7b.aa06.1993e2b7ce5.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:gigvCgDXf3u2I8RoyuEBAA--.18346W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxnGqmjD9J7QQAADsU
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025091209-curfew-safari-f6e0@gregkh>
 
-CkF0IDIwMjUtMDktMTAgMTY6MzE6MzMsICJKb2hhbm5lcyBCZXJnIiA8am9oYW5uZXNAc2lwc29s
-dXRpb25zLm5ldD4gd3JvdGU6Cj5PbiBXZWQsIDIwMjUtMDktMTAgYXQgMTU6NDcgKzA4MDAsIERh
-dmlkIFdhbmcgd3JvdGU6Cj4+IEhpLCAKPj4gCj4+IEkgdGhpbmsgdGhvc2UgZXJyb3IgZHVtcCBp
-cyBpbnRyb2R1Y2VkIGJ5IGNvbW1pdCA1ODZlM2NiMzNiYTY4OTAwNTRiOTVhYTBhZGUwYTE2NTg5
-MGVmYWJkKCJ3aWZpOiBpd2x3aWZpOiBmaXggYnl0ZSBjb3VudCB0YWJsZSBmb3Igb2xkIGRldmlj
-ZXMiKQo+PiAKPj4gTXkgd2lyZWxlc3MgcGNpZSBjYXJkIGhhcyBkZXZpY2VfZmFtaWx5IDE1IHdo
-aWNoIGlzIGxlc3MgdGhhbiBJV0xfREVWSUNFX0ZBTUlMWV85MDAwLCBhbmQgdGhlIGNoYW5nZXMg
-aW4gdGhlIGNvbW1pdCBoYXZlIGNoYW5nZWQgdGhlIGJlaGF2aW9yIGZvciBteSBkZXZpY2VzLgo+
-PiAKPj4gLSAgICAgICBpZiAodHJhbnMtPm1hY19jZmctPmRldmljZV9mYW1pbHkgPCBJV0xfREVW
-SUNFX0ZBTUlMWV9BWDIxMCkKPj4gKyAgICAgICBpZiAodHJhbnMtPm1hY19jZmctPmRldmljZV9m
-YW1pbHkgPj0gSVdMX0RFVklDRV9GQU1JTFlfOTAwMCAmJgo+PiArICAgICAgICAgICB0cmFucy0+
-bWFjX2NmZy0+ZGV2aWNlX2ZhbWlseSA8IElXTF9ERVZJQ0VfRkFNSUxZX0FYMjEwKQo+PiAgICAg
-ICAgICAgICAgICAgbGVuID0gRElWX1JPVU5EX1VQKGxlbiwgNCk7Cj4KPkkgdGhpbmsgSSBqdXN0
-IGdvdCBjb25mdXNlZCwgYW5kIHRoYXQgOTAwMCBzaG91bGQgYmUgNzAwMC4gUHJlc3VtYWJseQo+
-dGhhdCdkIHdvcmsgZm9yIHlvdSwgSSdsbCBzZW5kIGEgcGF0Y2guCj4KPmpvaGFubmVzCgoKSGks
-IAoKTXkgc3lzdGVtIGhhcyBiZWVuIHJ1biBmb3IgZGF5cyBhbmQgbm8gSVdMIGVycm9yIGR1bXBz
-ICYgcmVzZXQgaGFwcGVuZWQuCkkgdGhpbmsgSSBjYW4gY29uZmlybSB0aGF0IG15IHdpcmVsZXNz
-IGNhcmQgbmVlZHMgdGhlIGxlbmd0aCBhZGp1c3RtZW50LgoKU29tZSBpbmZvcm1hdGlvbiBhYm91
-dCBteSBjYXJkczoKClsgICAgNS4wNjcyNjVdIGl3bHdpZmkgMDAwMDoyMTowMC4wOiBlbmFibGlu
-ZyBkZXZpY2UgKDAwMDAgLT4gMDAwMikKWyAgICA1LjA2ODc5OF0gaXdsd2lmaSAwMDAwOjIxOjAw
-LjA6IERldGVjdGVkIGNyZi1pZCAweDAsIGNudi1pZCAweDAgd2ZwbSBpZCAweDAKWyAgICA1LjA2
-ODgwOV0gaXdsd2lmaSAwMDAwOjIxOjAwLjA6IFBDSSBkZXYgMDhiMS9jMDcwLCByZXY9MHgxNDQs
-IHJmaWQ9MHhkNTU1NTVkNQpbICAgIDUuMDY4ODEzXSBpd2x3aWZpIDAwMDA6MjE6MDAuMDogZGV2
-aWNlIGZhbWlseTogMTUgIDwtLSAKWyAgICA1LjA2ODgxNl0gaXdsd2lmaSAwMDAwOjIxOjAwLjA6
-IERldGVjdGVkIEludGVsKFIpIER1YWwgQmFuZCBXaXJlbGVzcyBBQyA3MjYwClsgICAgNS4wNzU1
-OTNdIGl3bHdpZmkgMDAwMDoyMTowMC4wOiBsb2FkZWQgZmlybXdhcmUgdmVyc2lvbiAxNy5iZmI1
-ODUzOC4wIDcyNjAtMTcudWNvZGUgb3BfbW9kZSBpd2xtdm0KCiQgbHNwY2kKLi4uCjIxOjAwLjAg
-TmV0d29yayBjb250cm9sbGVyOiBJbnRlbCBDb3Jwb3JhdGlvbiBXaXJlbGVzcyA3MjYwIChyZXYg
-YmIpCi4uLgoKCk15IGRldmljZSBtYXRjaCB0aGUgY29uZmlnIGluIGRyaXZlcnMvbmV0L3dpcmVs
-ZXNzL2ludGVsL2l3bHdpZmkvcGNpZS9kcnYuYzoKCjI2MyAgICAgICAgIHtJV0xfUENJX0RFVklD
-RSgweDA4QjEsIDB4QzA3MCwgaXdsNzAwMF9tYWNfY2ZnKX0sCgppd2w3MDAwX21hY19jZmcgaXMg
-ZGVmaW5lZCBhczoKCiA4OCBjb25zdCBzdHJ1Y3QgaXdsX21hY19jZmcgaXdsNzAwMF9tYWNfY2Zn
-ID0geyAKIDg5ICAgICAgICAgLmRldmljZV9mYW1pbHkgPSBJV0xfREVWSUNFX0ZBTUlMWV83MDAw
-LCAKIDkwICAgICAgICAgLmJhc2UgPSAmaXdsNzAwMF9iYXNlLAogOTEgfTsKCkFuZCBpbmRlZWQs
-IGl0IGlzIElXTF9ERVZJQ0VfRkFNSUxZXzcwMDAKCkZZSQpEYXZpZA==
+On Fri, Sep 12, 2025 at 03:39:45PM +0200, Greg KH wrote:
+> On Fri, Sep 12, 2025 at 04:26:56PM +0300, Laurent Pinchart wrote:
+> > On Fri, Sep 12, 2025 at 08:49:30PM +0800, Tzung-Bi Shih wrote:
+> > > On Fri, Sep 12, 2025 at 11:24:10AM +0200, Bartosz Golaszewski wrote:
+> > > > On Fri, 12 Sept 2025 at 11:09, Krzysztof Kozlowski wrote:
+> > > > > On 12/09/2025 10:17, Tzung-Bi Shih wrote:
+> > > > > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > > > Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > > > > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > > >
+> > > > > Thanks for the work. Just a note, please start using b4, so above Cc
+> > > > > will be propagated to all patches. Folks above received only the cover
+> > > > > letter...
+> > > 
+> > > Thank you for bringing this to my attention.  I wasn't aware of that and
+> > > will ensure this is handled correctly in the future.
+> > > 
+> > > > Thanks to Krzysztof for making me aware of this. Could you please Cc
+> > > > my brgl@bgdev.pl address on the next iteration.
+> > > 
+> > > Sure, will do.
+> > > 
+> > > > I haven't looked into the details yet but the small size of the first
+> > > > patch strikes me as odd. The similar changes I did for GPIO were quite
+> > > > big and they were designed just for a single sub-system.
+> > > > 
+> > > > During the talk you reference, after I suggested a library like this,
+> > > > Greg KH can be heard saying: do this for two big subsystems so that
+> > > > you're sure it's a generic solution. Here you're only using it in a
+> > > > single driver which makes me wonder if we can actually use it to
+> > > > improve bigger offenders, like for example I2C, or even replace the
+> > > > custom, SRCU-based solution in GPIO we have now. Have you considered
+> > > > at least doing a PoC in a wider kernel framework?
+> > > 
+> > > Yes, I'm happy to take this on.
+> > > 
+> > > To help me get started, could you please point me to some relevant code
+> > > locations?  Also, could you let me know if any specific physical devices
+> > > will be needed for testing?
+> > 
+> > One interesting test would be to move the logic to the cdev layer. The
+> > use-after-free problem isn't specific to one type of character device,
+> > and so shouldn't require a fix in every driver instantiating a cdev
+> > directly (or indirectly). See [1] for a previous attempt to handle this
+> > at the V4L2 level and [2] for an attempt to handle it at the cdev level.
+> > 
+> > In [1], two new functions named video_device_enter() and
+> > video_device_exit() flag the beginning and end of protected code
+> > sections. The equivalent in [2] is the manual get/put of cdev->qactive,
+> > and if I understand things correctly, your series creates a REVOCABLE()
+> > macro to do the same. I'm sure we'll bikesheed about names at some
+> > point, but for the time being, what I'd like to see if this being done
+> > in fs/char_dev.c to cover all entry points from userspace at the cdev
+> > level.
+> > 
+> > We then have video_device_unplug() in [1], which I think is more or less
+> > the equivalent of revocable_provider_free(). I don't think we'll be able
+> > to hide this completely from drivers, at least not in all cases. We
+> > should however design the API to make it easy for drivers, likely with
+> > subsystem-specific wrappers.
+> > 
+> > What I have in mind is roughly the following:
+> > 
+> > 1. Protect all access to the cdev from userspace with enter/exit calls
+> >    that flag if a call is in progress. This can be done with explicit
+> >    function calls, or with a scope guard as in your series.
+> > 
+> > 2. At .remove() time, start by flagging that the device is being
+> >    removed. That has to be an explicit call from drivers I believe,
+> >    likely using subsystem-specific wrappers to simplify things.
+> > 
+> > 3. Once the device is marked as being removed, all enter() calls should
+> >    fail at the cdev level.
+> > 
+> > 4. In .remove(), proceed to perform driver-specific operations that will
+> >    stop the device and wake up any userspace task blocked on a syscall
+> >    protected by enter()/remove(). This isn't needed for
+> >    drivers/subsystems that don't provide any blocking API, but is
+> >    required otherwise.
+> > 
+> > 5. Unregister, still in .remove(), the cdev (likely through
+> >    subsystem-specific APIs in most cases). This should block until all
+> >    protected sections have exited.
+> > 
+> > 6. The cdev is now unregistered, can't be opened anymore, and any
+> >    new syscall on any opened file handle will return an error. The
+> >    driver's .remove() function can proceed to free data, there won't be
+> >    any UAF caused by userspace.
+> > 
+> > [1] implemented this fairly naively with flags and spinlocks. An
+> > RCU-based implementation is probably more efficient, even if I don't
+> > know how performance-sensitive all this is.
+> > 
+> > Does this align with your design, and do you think you could give a try
+> > at pushing revocable resource handling to the cdev level ?
+> > 
+> > On a separate note, I'm not sure "revocable" is the right name here. I
+> > believe a revocable resource API is needed, and well-named, for
+> > in-kernel consumers (e.g. drivers consuming a GPIO or clock). For the
+> > userspace syscalls racing with .remove(), I don't think we're dealing
+> > with "revocable resources". Now, if a "revocable resources" API were to
+> > support the in-kernel users, and be usable as a building block to fix
+> > the cdev issue, I would have nothing against it, but the "revocable"
+> > name should be internal in that case, used in the cdev layer only, and
+> > not exposed to drivers (or even subsystem helpers that should wrap cdev
+> > functions instead).
+> 
+> I think the name makes sense as it matches up with how things are
+> working (the backend structure is "revoked"), but naming is tough :)
+> 
+> I have no objection moving this to the cdev api, BUT given that 'struct
+> cdev' is embedded everywhere, I don't think it's going to be a simple
+> task, but rather have to be done one-driver-at-a-time like the patch in
+> this series does it.
+
+For the .remove() code paths, yes, I expect driver changes. We need
+subsystem-level helpers that will make those easy and hide the
+complexity. For the code paths from userspace into the drivers through
+cdev file operations, there should be no driver change required.
+
+> And that's fine, we have "interns" that we can set loose on this type of
+> code conversions, I think we just need to wrap the access to the cdev
+> with this api, which will take a bit of rewriting in many drivers.
+> 
+> Anyway, just my thought, if someone else can see how this could drop
+> into the core cdev code without any changes needed, that would be great,
+> but I don't see it at the moment.  cdev is just too "raw" for that.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
