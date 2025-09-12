@@ -1,89 +1,88 @@
-Return-Path: <linux-kernel+bounces-813166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73D4B54174
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:08:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7355CB54178
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47261C82C97
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:08:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29ADF3B77E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B10D27467E;
-	Fri, 12 Sep 2025 04:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83F627A10D;
+	Fri, 12 Sep 2025 04:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TqMrXJvD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FYuVIyN9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2411D26D4F8
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD487274B42
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:07:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757650074; cv=none; b=uV9NQRe/WZj57r8MWRViitsv43cVBKlUvfK5Rw91tUzji8ZAhAVNlpK+bXQVT/zRKgIbtCk7/71M0znoFAPUyfzWagtzMhlfEYTQVX0QObdG+i+xL0RDkSbf/Sm2rBMXFpu+cBL1zhiaOaO59l16PLx8z5LCEBlEexXqijCObVE=
+	t=1757650077; cv=none; b=E2EKoDSvPviO5waoQC8OtLQWwd1Un6qXWsNvxiNCPt73BBXXAYwOtzhomYjKfbwxK1uxG/xzDQOH8fMSU+OAxxNH3fXQ9xlJJdpDXk9OUqvv4HDxP7Qr68COFJymWyrbZJNA7+SFVIQFTFVKZuHFh01XVkIYL3qTVmT0izmFJhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757650074; c=relaxed/simple;
-	bh=PlNtUBn1m92e6j1roGLFXzYvk2/0ghYLEgBgH8NcnDA=;
+	s=arc-20240116; t=1757650077; c=relaxed/simple;
+	bh=/X/slCEZNUYsN1/1Kb6qKCBb1SuAXT+Ssp2opHduLeg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PSFfmuQjG3DHXg8MCHgNitsNYTJP+WLjFVceTVHpU6FrcJ9NSB7I0qN87yImy1YG0WFa7qso7sW+ykJmj7Au6Q4h3wK0ifzBZglwLjB/SfkiEH04UMhT0qCvaggImc/FiXzFd370zVR12D/3zgwuUvR7BPWoKP93p8TGxfSyCS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TqMrXJvD; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=P/RSZW7l9oreJbq12SGPeeUOHT5DBT4a77PcSZ28Xb90i9F/RqZl20BHKAr199iMJ8Kso7Csk1DVizB4rIcWQWFz3hPRdysOD5/lc67JZQFKyw1Kt8GbLb05WwD1F0EO4x31f+qSMVMxonJERYcb3As0oYXnUPVFaPe83iLqHhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FYuVIyN9; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BK8WO3031134
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:07:52 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BN7dgV001974
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:07:54 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0cy7zuNmWldsjxlDI+hNSLQe922ofh0kNWkW6uU0Hx8=; b=TqMrXJvDnndTHE8V
-	cdwpRbB7NMB0Uza1PdVqtA1sHoldiQ07zAcyYHo3s7661dkj8pj1MPfX+eDE79oj
-	tsvYh/G0xeJJnhUxmHuCLO4hzWvP8BgITilhMfSL5Q/23TfwqWXKjZngNcSnYsCH
-	azw2ZMTjSeDkWvbef0COzDWFwVFYpBTPumj5KpxRetgAGkBGsu+Fsgh1pNp6BwLZ
-	yo8jLYDSOMR5VSMPnQnKDWhhd64PgQIdlduHN6P1KyBgdR9jv7XBH012MgKg/X+w
-	90f6jtIBkn+JwuF/KEs8/JbZ/NefXQvm1XNbs2I4wCPYfM6akRUAZW1TRIZJ4zZw
-	szBOpA==
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490dqg9x36-1
+	lfnro9xo+EarbMqRFrPWzRQwLLoVHW/MmAqB1i9xt2Q=; b=FYuVIyN9LxO0HPVr
+	FF/PVjLSBPx/xLkNVpjnuaPe07t9YWPJlgurg3dhB/PWDSvUeHrRQ08tGgvFheEc
+	2Mw8M59tmY5Wrt22BQz145yyzvonXtZ9IThrV1Wp84MyPx+Hhks35GUj18p5hKE6
+	ESDW3XASUzOw+c3R+YISHxne4afM/O/BFZxh5lPfroGBysqkBDWH0bxObBcqxjXb
+	TCPH+M0OCblPNgRL0cQjdPfghhZLbHGGRQIyQ8rWTU0DSx+jTYbSlPivL3YAcFP9
+	r5vbTqRkOFahLlU9Aas53rdCq3U/b/49nBJ2yspMqsSEwtYbVfbHnxP/jkwI0WJX
+	vZzmOw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493ydv2ayn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:07:52 +0000 (GMT)
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-b4d3ab49a66so2080119a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:07:52 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:07:54 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-25c1dba8d26so20500755ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:07:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757650071; x=1758254871;
+        d=1e100.net; s=20230601; t=1757650073; x=1758254873;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0cy7zuNmWldsjxlDI+hNSLQe922ofh0kNWkW6uU0Hx8=;
-        b=GSUZ/pY6HgMq1qc39QpwZuZpHsMqKOgdNAmQKidrNYRyjEBoX0jWuLKmi1ef0nrCYV
-         a9hbyBcNbWtLpLCH0E3ugkI2WV/NXKI82hujsETOSnxWSwGVcuBjOvQg6ILkTMz2Wgfg
-         xiJq6uB/0ZBEluKWkfl3tieRvakqxnp1Zb4hTIo6YJqq3BclaQ9TwrLIPKqfPJ1vQUHB
-         OnXbGdZp2RGwjaI0cvGM+EWlC3/QJKjOnIO/y5KGE1503zUd0C8nOcRw4DxGRtacIHfz
-         kqBJ5rD+uFsxziZM1BnMMWxY0VXXeEKd526x6zpbZfAvnI0eZ/ks09Kl7+6LeoHcYhAS
-         Lusg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3DzW6MEnQPDyhW1S1cu5L49+OCuAJWTMw85DRJ/SS+WLb3bmpcQ/nS4NGwp9fT/b1n3YKlq9WetUfDsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzETKrujxfNV6w7S7lhJMejBPvc0TgteTLod3q33zrGq7mTuNrp
-	h7JR97ygwl3h5Xx+VKCudp7MgL+X+A4We5VjbR3AtgSXFSMd3SDYpWj+i+DPv3xf4qMEp5wsuYL
-	BPeQarO356U9Yrt/diESYBy9z8fFO31uwfhCgvKUNUHoUo1O/YiPllU765GmdrZgYOQ==
-X-Gm-Gg: ASbGncvivjCPyek/iXXhqgH46YaOd28AAEWzctVA8ZmFz2zooPE4ShxX/cw5vsebFb9
-	S/MLts+p0F25GBx5ezGJOAj/KDv6LFtJOvSM8NJVnR+cg1FI//8tzzbJzcu1qAvRvk4tYCDVRZd
-	gLdkEMK4F0jhSDgvcN4/h1A2xn6coepYkqgFWuEo7p9HLb2NXgRY1Rugiv1Ko9TgiBhLimq6hMC
-	jVi3aOFxPeEyJT3SqAmIR5tBGmovLMEF8YSSM+e3rgVfsRFEPpmV8mJ+KcjdvXYyQUNLew+s6My
-	Pq1LodZ1cEkxYts1omaNV0pSkpZi2xbsLikuRjoQP3v1cPwOa2yAa6wLQ2PPwLhEFa/dwyY2b7l
-	6C7CkjhXfYfTTurn8fzZxtyQ=
-X-Received: by 2002:a17:903:2ecf:b0:24f:5447:2197 with SMTP id d9443c01a7336-25d2587d2c9mr17317685ad.14.1757650071308;
-        Thu, 11 Sep 2025 21:07:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFoqJc1O/uAlEAxgaKcABrHUnAHQ+NKSR7AY913bzR8AUunHyu+K06+VfdNdepa7qcmVz579A==
-X-Received: by 2002:a17:903:2ecf:b0:24f:5447:2197 with SMTP id d9443c01a7336-25d2587d2c9mr17317345ad.14.1757650070858;
-        Thu, 11 Sep 2025 21:07:50 -0700 (PDT)
+        bh=lfnro9xo+EarbMqRFrPWzRQwLLoVHW/MmAqB1i9xt2Q=;
+        b=IPzVj2+7q88NesUD5V8kIR4wAeubRTPys/Te094XVv1ZjrmglGCbvl5VzJHLNkMi2H
+         OXh8WjAd4IeD63GCAJsJZFB7L+DfQV2SN2/xAkSSljui9VNG8yED5NYtpjIN6EPWtJFQ
+         7CdWJED24mgnr5Efo1VzVB0sNZDIq9SU8Q2HMc4BlNhAcb1LA+lfL+fdj7wR4JZWJ8Dy
+         EJsFBFWbAgzBtFn5vuKK8ZoTCvviI27tullZV+372JjuLN0Z9vVz+NquqcXtj+t6Pnrj
+         CNuRAYhrMfzwOpNLu2GvD3zPKEEAl86b0uhVkVG6M0Yqdw3Syw2dvxdjnhGAwBb9SUyu
+         EE4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUymtBisYttR4eD7N5ThlILaDJQZZ+u2Hq2v/y8UcPokslFjc63hHHlivprO2UGcnv1rwrCeGB9wrgQPoM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY2FGVEbLP4iomjsfPaVKPFmiGg4BnltReAIMlcfyzGDWExay9
+	909ZB+bQoq8Wvzgf9M3YnrxDilKxxBXyTv1naDc+JgXqKuPpL32pEICxKcxP12zKnc7yDF9HbNM
+	ekptim2naf2eo/iad0/bHQivWPFBLEHFZawuLo2T7vWyQtf0gKNkBw98/nc2GD5JPKA==
+X-Gm-Gg: ASbGnctZvTIm20Y68nFeHGRC3M7XUpUUy6W0/g7Ctw9rCDZPR7bl3y38iDwIsD5p8M8
+	z17pE+1UHqH6Sr9l0PvcDMPUCumCuqjAl9j2o/HweGrWSG/Wzar9LeYlzw10g0kdmqQUGl61SnD
+	q5X/pBVBAsb5eGmlvjdKsJGHlqyxxQd43QG+JTYLBgmKeUAdEBfI0XptWNA/QcJfDjavVzXuoR9
+	uYXL6OO+4QIS6P4Rje/JjZ9cBEP8/5XvLXL1//8DsihQpfcgqmM+2Pl+6ghwSdrKE7SQbjzY3Rd
+	WgJeQSgqls/0IsMG2MX00KoYyIq1aKQULYs0yoOJaVF5y8pVnLOVXK4uMpxqVTZW2DkiXqjs5BG
+	XugiS8URD94FZyo3iBMbO9Zo=
+X-Received: by 2002:a17:902:c40e:b0:24c:6125:390a with SMTP id d9443c01a7336-25d24cabfd1mr17981755ad.10.1757650073165;
+        Thu, 11 Sep 2025 21:07:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFl/+2oD/khgoZCP95v8DA4L2JWQuWzLUvjXrGV4KLAA76uANju1HQAGD2sJ7tUbjdjPVS3fA==
+X-Received: by 2002:a17:902:c40e:b0:24c:6125:390a with SMTP id d9443c01a7336-25d24cabfd1mr17981335ad.10.1757650072600;
+        Thu, 11 Sep 2025 21:07:52 -0700 (PDT)
 Received: from hu-azarrabi-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ad5e168fsm690960a12.13.2025.09.11.21.07.49
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54ad5e168fsm690960a12.13.2025.09.11.21.07.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 21:07:50 -0700 (PDT)
+        Thu, 11 Sep 2025 21:07:51 -0700 (PDT)
 From: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
-Date: Thu, 11 Sep 2025 21:07:42 -0700
-Subject: [PATCH v12 03/11] tee: allow a driver to allocate a tee_device
- without a pool
+Date: Thu, 11 Sep 2025 21:07:43 -0700
+Subject: [PATCH v12 04/11] tee: add close_context to TEE driver operation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +91,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-3-17f07a942b8d@oss.qualcomm.com>
+Message-Id: <20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-4-17f07a942b8d@oss.qualcomm.com>
 References: <20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-0-17f07a942b8d@oss.qualcomm.com>
 In-Reply-To: <20250911-qcom-tee-using-tee-ss-without-mem-obj-v12-0-17f07a942b8d@oss.qualcomm.com>
 To: Jens Wiklander <jens.wiklander@linaro.org>,
@@ -110,54 +109,203 @@ Cc: Harshal Dev <quic_hdev@quicinc.com>, linux-arm-msm@vger.kernel.org,
         linux-hardening@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linaro-mm-sig@lists.linaro.org, linux-doc@vger.kernel.org,
         Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>,
-        Sumit Garg <sumit.garg@oss.qualcomm.com>
+        Sumit Garg <sumit.garg@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.13.0
-X-Proofpoint-ORIG-GUID: -c-4M2ChTA3g7JkqHv37RHANGC4Vdjul
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzNSBTYWx0ZWRfXygsjZgKomz7+
- NGmFirO6ncG4rW62bGeltuFJHLwfGNZSUW8eAUs7DwddW/gEo5a9We30yYVH4ACmsBYpRJQhFl3
- 3/yOM6Ce5ELXR7X2VeNnQ48ppOAK5T20J2jI6D0mh7v4qeASup+dhTkGWD9cyuYM9gJDXgTw1Yr
- NeZdDJ8oQCMorIjskgUp4JYo/FHFcp4JW9nREN0eOLSuRUomNQkuf5lz7A8iRsixgfKIkfwH/RZ
- zZVLtUOr6I/Qkj5z1JbHb0w05w5tvVZv0nMcZyY2v4CC/E44lKl+qXrLjoWzqznZL0mgE0Q6laI
- Xq5ukrtn8zyLgGeYLO2Gpn6qo90uQsxAdbKIz5qDb8B2Xkqqjwf+c6xlsdMVBzuY4/cSQzRCFua
- p6JyqgUr
-X-Proofpoint-GUID: -c-4M2ChTA3g7JkqHv37RHANGC4Vdjul
-X-Authority-Analysis: v=2.4 cv=N8UpF39B c=1 sm=1 tr=0 ts=68c39c98 cx=c_pps
- a=oF/VQ+ItUULfLr/lQ2/icg==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=1atmPuGhRQHGwWkYLZIA:9
- a=QEXdDO2ut3YA:10 a=3WC7DwWrALyhR5TkjVHa:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDEyMCBTYWx0ZWRfX0AO7h+/qiD+W
+ J/ua5qLTHMapxWdlbR0FQQKjgP/aCAMDxlYdraCNANxsaezP+DhiuE/j5uqeoP0tOY/tGCf8Xkp
+ Jg9wXl+b/p/kCoq0/QwNTvU8Vjkk196gi8/mb6pjeoPQpRKPYrOdNqhW6lzsiHqK7uEfLFeytYt
+ fc9XIGD/Ec4x8KMesS5sk0IXJsvvY00rZGzix2gOhnTtlUBN91KbS6CmyvInEEeBsHupXGah3Su
+ vAB8t+LQKR5vMOYd/4GKSosjgecNhnlmDrrBjaMCo1+YhMxaNqsEmm+5ej1OFLCiGZE9ZY7CkDl
+ IHJmM8lLgX0Cdw8xSU39npBaUo7R516lkDt6H8AEcnKTFcrjxZSp6pFV/odd+oAjyhWzYbEv3Ul
+ vScedaNR
+X-Proofpoint-GUID: B4aVJX6FDwlQ8vJ8xW2CdSSXq5_AHxVR
+X-Proofpoint-ORIG-GUID: B4aVJX6FDwlQ8vJ8xW2CdSSXq5_AHxVR
+X-Authority-Analysis: v=2.4 cv=LoaSymdc c=1 sm=1 tr=0 ts=68c39c9a cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=KKAkSRfTAAAA:8
+ a=COk6AnOGAAAA:8 a=0l_YNDiMcOfTHwIteTYA:9 a=QEXdDO2ut3YA:10
+ a=324X-CrmTo6CU4MGRt3R:22 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-12_01,2025-09-11_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 spamscore=0 malwarescore=0 clxscore=1015 bulkscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ adultscore=0 spamscore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ malwarescore=0 phishscore=0 priorityscore=1501 bulkscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060035
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509110120
 
-A TEE driver doesn't always need to provide a pool if it doesn't
-support memory sharing ioctls and can allocate memory for TEE
-messages in another way. Although this is mentioned in the
-documentation for tee_device_alloc(), it is not handled correctly.
+The tee_context can be used to manage TEE user resources, including
+those allocated by the driver for the TEE on behalf of the user.
+The release() callback is invoked only when all resources, such as
+tee_shm, are released and there are no references to the tee_context.
+
+When a user closes the device file, the driver should notify the
+TEE to release any resources it may hold and drop the context
+references. To achieve this, a close_context() callback is
+introduced to initiate resource release in the TEE driver when
+the device file is closed.
+
+Relocate teedev_ctx_get, teedev_ctx_put, tee_device_get, and
+tee_device_get functions to tee_core.h to make them accessible
+outside the TEE subsystem.
 
 Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+Tested-by: Harshal Dev <quic_hdev@quicinc.com>
 Signed-off-by: Amirreza Zarrabi <amirreza.zarrabi@oss.qualcomm.com>
 ---
- drivers/tee/tee_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tee/tee_core.c    |  7 +++++++
+ drivers/tee/tee_private.h |  6 ------
+ include/linux/tee_core.h  | 50 +++++++++++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 55 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-index 807317d7b3c5..9fa042d80622 100644
+index 9fa042d80622..f8534a00c56c 100644
 --- a/drivers/tee/tee_core.c
 +++ b/drivers/tee/tee_core.c
-@@ -926,7 +926,7 @@ struct tee_device *tee_device_alloc(const struct tee_desc *teedesc,
+@@ -79,6 +79,7 @@ void teedev_ctx_get(struct tee_context *ctx)
  
- 	if (!teedesc || !teedesc->name || !teedesc->ops ||
- 	    !teedesc->ops->get_version || !teedesc->ops->open ||
--	    !teedesc->ops->release || !pool)
-+	    !teedesc->ops->release)
- 		return ERR_PTR(-EINVAL);
+ 	kref_get(&ctx->refcount);
+ }
++EXPORT_SYMBOL_GPL(teedev_ctx_get);
  
- 	teedev = kzalloc(sizeof(*teedev), GFP_KERNEL);
+ static void teedev_ctx_release(struct kref *ref)
+ {
+@@ -96,11 +97,15 @@ void teedev_ctx_put(struct tee_context *ctx)
+ 
+ 	kref_put(&ctx->refcount, teedev_ctx_release);
+ }
++EXPORT_SYMBOL_GPL(teedev_ctx_put);
+ 
+ void teedev_close_context(struct tee_context *ctx)
+ {
+ 	struct tee_device *teedev = ctx->teedev;
+ 
++	if (teedev->desc->ops->close_context)
++		teedev->desc->ops->close_context(ctx);
++
+ 	teedev_ctx_put(ctx);
+ 	tee_device_put(teedev);
+ }
+@@ -1075,6 +1080,7 @@ void tee_device_put(struct tee_device *teedev)
+ 	}
+ 	mutex_unlock(&teedev->mutex);
+ }
++EXPORT_SYMBOL_GPL(tee_device_put);
+ 
+ bool tee_device_get(struct tee_device *teedev)
+ {
+@@ -1087,6 +1093,7 @@ bool tee_device_get(struct tee_device *teedev)
+ 	mutex_unlock(&teedev->mutex);
+ 	return true;
+ }
++EXPORT_SYMBOL_GPL(tee_device_get);
+ 
+ /**
+  * tee_device_unregister() - Removes a TEE device
+diff --git a/drivers/tee/tee_private.h b/drivers/tee/tee_private.h
+index a9b5e4a6a8f7..6bde688bfcb1 100644
+--- a/drivers/tee/tee_private.h
++++ b/drivers/tee/tee_private.h
+@@ -23,12 +23,6 @@ struct tee_shm_dmabuf_ref {
+ 
+ int tee_shm_get_fd(struct tee_shm *shm);
+ 
+-bool tee_device_get(struct tee_device *teedev);
+-void tee_device_put(struct tee_device *teedev);
+-
+-void teedev_ctx_get(struct tee_context *ctx);
+-void teedev_ctx_put(struct tee_context *ctx);
+-
+ struct tee_shm *tee_shm_alloc_user_buf(struct tee_context *ctx, size_t size);
+ struct tee_shm *tee_shm_register_user_buf(struct tee_context *ctx,
+ 					  unsigned long addr, size_t length);
+diff --git a/include/linux/tee_core.h b/include/linux/tee_core.h
+index 7b0c1da2ca6c..456a940d4710 100644
+--- a/include/linux/tee_core.h
++++ b/include/linux/tee_core.h
+@@ -76,8 +76,9 @@ struct tee_device {
+ /**
+  * struct tee_driver_ops - driver operations vtable
+  * @get_version:	returns version of driver
+- * @open:		called when the device file is opened
+- * @release:		release this open file
++ * @open:		called for a context when the device file is opened
++ * @close_context:	called when the device file is closed
++ * @release:		called to release the context
+  * @open_session:	open a new session
+  * @close_session:	close a session
+  * @system_session:	declare session as a system session
+@@ -87,11 +88,17 @@ struct tee_device {
+  * @supp_send:		called for supplicant to send a response
+  * @shm_register:	register shared memory buffer in TEE
+  * @shm_unregister:	unregister shared memory buffer in TEE
++ *
++ * The context given to @open might last longer than the device file if it is
++ * tied to other resources in the TEE driver. @close_context is called when the
++ * client closes the device file, even if there are existing references to the
++ * context. The TEE driver can use @close_context to start cleaning up.
+  */
+ struct tee_driver_ops {
+ 	void (*get_version)(struct tee_device *teedev,
+ 			    struct tee_ioctl_version_data *vers);
+ 	int (*open)(struct tee_context *ctx);
++	void (*close_context)(struct tee_context *ctx);
+ 	void (*release)(struct tee_context *ctx);
+ 	int (*open_session)(struct tee_context *ctx,
+ 			    struct tee_ioctl_open_session_arg *arg,
+@@ -200,6 +207,24 @@ int tee_device_register_dma_heap(struct tee_device *teedev,
+ 				 struct tee_protmem_pool *pool);
+ void tee_device_put_all_dma_heaps(struct tee_device *teedev);
+ 
++/**
++ * tee_device_get() - Increment the user count for a tee_device
++ * @teedev: Pointer to the tee_device
++ *
++ * If tee_device_unregister() has been called and the final user of @teedev
++ * has already released the device, this function will fail to prevent new users
++ * from accessing the device during the unregistration process.
++ *
++ * Returns: true if @teedev remains valid, otherwise false
++ */
++bool tee_device_get(struct tee_device *teedev);
++
++/**
++ * tee_device_put() - Decrease the user count for a tee_device
++ * @teedev: pointer to the tee_device
++ */
++void tee_device_put(struct tee_device *teedev);
++
+ /**
+  * tee_device_set_dev_groups() - Set device attribute groups
+  * @teedev:	Device to register
+@@ -374,4 +399,25 @@ struct tee_context *teedev_open(struct tee_device *teedev);
+  */
+ void teedev_close_context(struct tee_context *ctx);
+ 
++/**
++ * teedev_ctx_get() - Increment the reference count of a context
++ * @ctx: Pointer to the context
++ *
++ * This function increases the refcount of the context, which is tied to
++ * resources shared by the same tee_device. During the unregistration process,
++ * the context may remain valid even after tee_device_unregister() has returned.
++ *
++ * Users should ensure that the context's refcount is properly decreased before
++ * calling tee_device_put(), typically within the context's release() function.
++ * Alternatively, users can call tee_device_get() and teedev_ctx_get() together
++ * and release them simultaneously (see shm_alloc_helper()).
++ */
++void teedev_ctx_get(struct tee_context *ctx);
++
++/**
++ * teedev_ctx_put() - Decrease reference count on a context
++ * @ctx: pointer to the context
++ */
++void teedev_ctx_put(struct tee_context *ctx);
++
+ #endif /*__TEE_CORE_H*/
 
 -- 
 2.34.1
