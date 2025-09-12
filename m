@@ -1,98 +1,88 @@
-Return-Path: <linux-kernel+bounces-814647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E20B556E0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:25:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE63B556E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52AC7A04AB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B63E817FACE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1B1321F3A;
-	Fri, 12 Sep 2025 19:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED97D32BF38;
+	Fri, 12 Sep 2025 19:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b="2qS1EDqy";
-	dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b="b1gwa/++"
-Received: from mx0a-003cac01.pphosted.com (mx0a-003cac01.pphosted.com [205.220.161.93])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="R7TYLoIg"
+Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020086.outbound.protection.outlook.com [52.101.191.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1536F23F412
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.161.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499072C21E7;
+	Fri, 12 Sep 2025 19:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.86
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757705148; cv=fail; b=LE1t2PbggSYKZqKSmS7Ug+97ax24nH39UcVwLT70tKBbNyvxl3jPvCZFYN1GoouzmloPLlU2a5nYjkGS2pWHGibwZ4puPCJMTz9I2gFbwDHzM0HTLKSw+yTvO83PBE0lv8f/tCLJ+useXQH/2OyzddGDzj+Aymju7sAhm7dinZ4=
+	t=1757705193; cv=fail; b=Zi31ItJWjs75unVLRQIE4SjS6hYGmUPdUmmENF+7cijlOdQM8WIVgbNG598WbrdX6ReDJX7nhmrrlgdsW8BgDeybOTAatydpe9x93nKcnEH4afTjt/vN4Cj3KeYGuFarcCPYprr4OCj5qbbp0vpSoENptDpTbGsFg0y/cm/lBgk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757705148; c=relaxed/simple;
-	bh=oI7PJo6a+vML0KFO/eZGUThyDpBXPndxW+RtaFlqYm8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=lbMuDWRA1MI0X8pC9wAEc30wBG1Jtv8cVi8JFyi2Q1ii9xKv5ohHd6ImRd8KuSXX2YGT2rxhXRv8oqtadQZZd6lnyhO9ZYEZ7qMnyqKBKT5IivfHE3cdYiMtv4VL6Svwt6KOnb4TP7TBSBIrPYknrH8XmCzgUj7cbOxeKW2+7L0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com; spf=pass smtp.mailfrom=keysight.com; dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b=2qS1EDqy; dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b=b1gwa/++; arc=fail smtp.client-ip=205.220.161.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=keysight.com
-Received: from pps.filterd (m0187213.ppops.net [127.0.0.1])
-	by mx0b-003cac01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58CJGCxs022483;
-	Fri, 12 Sep 2025 12:25:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=ppfeb2020; bh=
-	6zTM/B0kNdlePWa+XW9hEUBx/zCfQwspIQo61wg5jBU=; b=2qS1EDqydfE3LEdy
-	6Gd/oI+IP86SB9shfDNsIhQopdxbaSE3acnvUKvf/PQcfx+qUUAHsbUi6a2W4Dfu
-	8QM9u7WO/yr9LUVB3vO+qEF27hNqiMXTQrLUmkBxR85K/joI+7WjRfg5yn0cAuVE
-	ZOwTNT9ztbj7jebzBMjfqbyE487JgIElm2gOuWy0mneS5HvaztFIOgrbFwlPgfCI
-	G+89Ok97dtR6XB7/r+jhK9ZXMq0mnxbESvjYqUEBS/DYj5z5JGXg7zEvsbcNc8KS
-	OTqxbbnd70WbV+YKr1Gq1AA+5cOtsPrEvbBNgwiY3yRybjJydnrWfMUmRm83ZOnF
-	QvRUMA==
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2048.outbound.protection.outlook.com [40.107.220.48])
-	by mx0b-003cac01.pphosted.com (PPS) with ESMTPS id 4937hrpvxc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:25:17 -0700 (PDT)
+	s=arc-20240116; t=1757705193; c=relaxed/simple;
+	bh=qMG7Tf9xAL0puGhB1CSqrHh9q4ufCRPmkccFyfuFU2Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NqepSe/sZPk7hb+vvjLnma6eCe/4hOY8ViI6mkdN1wKSEBQLGhxcf9EJgYz7ro1Ou+tJLtjnexRCdUcSE5UzSQfDnz0XGRc3XHDlbxPXYFab4Vbyu/cavzQQ5lPAgu7oOsOqDX0sfSxtkCe0yzNNrf5A1OMigtFPPnHCt8H8FcA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=R7TYLoIg; arc=fail smtp.client-ip=52.101.191.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OSOPNZKQ+eH9DkgSYqOLovRGognRVcc3H3UJShZdIJ7KQYLvQKwa8XH1Cp5Ptfv0zerPZZziSDWwggPl7u6p8uBpVTcJNAQWNEFF2kiFoi6x8wMhpjyLjBlKukEOklvXBOFsWK+n9q8jmGPeZUJxzGijpu+51zbLlizeTROEnKmwHmtjsc1avMZZ/fdmPPSIaiRFUBvViFESRrRz20yqYh7I+Ef3cB6JjzRJJeR1HoZLUZ9sP4pEdDnD4i7Ehig/fj6QbcwtoKHpcjSqBWXUwEP1zb3UNSfMEPjoIaxdBkWlx9zn2yZWnEzmIlStGjW4nEsOEvqjRUGPi6sZ66ICSg==
+ b=j+vNmO/BzKU/hjbOfcWxrk3spA2PnPalYWvXHFyxCIUMhHKp4WvMVOksxKhT14cA0roG1JULeY4fuaW0tAdPFwozgztGTszN0+/keKAg7DNwzhme6p+rPJHG1kOiLvasywi4q46SaNTL2rsLOUeFTl+8bV1Ldvu/s6UL1+kDZHswuq8iqOgj491UIWMG0p0CK6aoCcpJNDMXoux389+bs0vbIdmYOYt5lxHKqh2zR3C0ezw3s9otdv3V0XFTSKBgWjyq9PEb7aLEl1Q5Rz2yVoK1A0L2OfF3uGRf8a1S2BMZ0VqntBBkJd3JlSmdEwlGZtC1WF6HUdrmUSAHrkTrjw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6zTM/B0kNdlePWa+XW9hEUBx/zCfQwspIQo61wg5jBU=;
- b=XjAa0FShtKMgn0ydgLfAsTmdJSXAbs3WfqyY2ptdxkuResPDdi5Qe30iPc+gDUs0SVp84qIRM9H0/oZAAQNoS+TxCOTXW0dLWKQD6papNGMNZ6rP+3vKRqCnfgGMAR0faNECVrFMVwxk3agzLV2H7xsojBPDugt4Nrb02OP0G4R5dZWzVAKAcPvUistxzYyMgfkrQptoU5umbUcksslPSEHbItSsZyjZ9qDN5LNjRan68z4cbKc+rFP2l8+n2mawfUv26SWWybiIdcZ70BukPWVz0DUUfHanfQiEAwi8OwUf5tKMxNPUeQ5AeCpSD7t+1hYoQ4RpQFz2Kfv6No0D+Q==
+ bh=//jAj85F9+TM7j4sBNol0ENBn1EkVIqIPxn9FxZ34z4=;
+ b=mThiLa62F3Zb1MRefSXXV8DPwJLU0bxv09Oh/QQ5Mff6622kMFZRwSc40TcDH7TRWbGtMtLbPVL1P2g+vNvckZGVJuYFEWquWjc+c6S1XukjqYsxxNKfJ9JjeJ4bwgNBqczx6TsdYX27jcfbqAJmIcSrslWjIAo6KHhaVR3GTerpWub51hDrtw7i6iEN45NJaxNQuPY2AgmZcWPlcz2WBPiyyERclZNyLKrvaM2apTvqwUMRI4vhQXubuYzWU+Os04oK/TIbmNOSQTxRoFrGm5LRMM3OkLGMPZHiV346LNKmggt3zk72ZODCK1l8rALgwn2laHGuq2XvAKZXuxB0YA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=keysight.com; dmarc=pass action=none header.from=keysight.com;
- dkim=pass header.d=keysight.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com;
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6zTM/B0kNdlePWa+XW9hEUBx/zCfQwspIQo61wg5jBU=;
- b=b1gwa/++4nm3KcxUSVEFe7olorOMxOB8AaaM/9FVkmYTt5Vd4k39qxm+LlVd28J4HKx9k572CjYjjpzDzzSETp3iPLWCyKC0W432rOgeUUY7iJq4XOopV2Oi6PnG5eIFMhrJftj4BiBbz9tkvVzJaBpcyfU1mWza0pL4QhvCSfE=
-Received: from PH7PR17MB6130.namprd17.prod.outlook.com (2603:10b6:510:1f5::17)
- by DM4PR17MB6939.namprd17.prod.outlook.com (2603:10b6:8:181::11) with
+ bh=//jAj85F9+TM7j4sBNol0ENBn1EkVIqIPxn9FxZ34z4=;
+ b=R7TYLoIgHaGsvpngnQzUmFbVVuX+NKE7ACngE0/2iltWAcdKY9kjKUkSfmzP3RdonglqiIH77U0iiwhfUKhYo/mDcvn7MK2VZDFqndyKCYxQ2SnyiR9wwGmCSwg2nVfJLGuzybBOo3qDzbElE3m0YMvY3ZJFASE8L/atGQd+pVDQViM3nArqEUgi0atU3/BJhqrAexCmlt/609Q475A93BoFkpFNwGdub8Lwgftq9YKBS0mBlqrbwOigrfKpEBjyr4bVxzS1URo9akoFlaHSI6U9ezJjbrB8ATYGG9yGtBYEkpCaq6L/m7troHmOy1OgJqZmSc1/hqQCHDdBcpn6fg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:a0::18)
+ by YQBPR01MB10479.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:82::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 19:25:15 +0000
-Received: from PH7PR17MB6130.namprd17.prod.outlook.com
- ([fe80::54bb:3a4f:5f80:a51e]) by PH7PR17MB6130.namprd17.prod.outlook.com
- ([fe80::54bb:3a4f:5f80:a51e%5]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 19:25:15 +0000
-From: John Ripple <john.ripple@keysight.com>
-To: john.ripple@keysight.com
-Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-        andrzej.hajda@intel.com, blake.vermeer@keysight.com,
-        dianders@chromium.org, dri-devel@lists.freedesktop.org,
-        jernej.skrabec@gmail.com, jonas@kwiboo.se,
-        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-        matt_laubhan@keysight.com, mripard@kernel.org,
-        neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch,
-        tzimmermann@suse.de
-Subject: [PATCH V4] drm/bridge: ti-sn65dsi86: Add support for DisplayPort mode  with HPD
-Date: Fri, 12 Sep 2025 13:24:57 -0600
-Message-ID: <20250912192457.2067602-1-john.ripple@keysight.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250910183353.2045339-1-john.ripple@keysight.com>
-References: <20250910183353.2045339-1-john.ripple@keysight.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CY5PR15CA0227.namprd15.prod.outlook.com
- (2603:10b6:930:88::25) To PH7PR17MB6130.namprd17.prod.outlook.com
- (2603:10b6:510:1f5::17)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Fri, 12 Sep
+ 2025 19:26:24 +0000
+Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::5ebf:cd84:eeab:fe31]) by YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::5ebf:cd84:eeab:fe31%4]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 19:26:24 +0000
+Message-ID: <a65dfd2c-b435-4d83-89d0-abc8002db7c7@efficios.com>
+Date: Fri, 12 Sep 2025 15:26:22 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch 00/12] rseq: Implement time slice extension mechanism
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zilstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+ Florian Weimer <fweimer@redhat.com>, "carlos@redhat.com"
+ <carlos@redhat.com>, libc-coord@lists.openwall.com
+References: <20250908225709.144709889@linutronix.de>
+ <159c984d-37fc-4b63-acf3-d0409c9b57cd@efficios.com> <87plbwrbef.ffs@tglx>
+ <3d16490f-e4d3-4e91-af17-62018e789da9@efficios.com> <87a52zr5sv.ffs@tglx>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <87a52zr5sv.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0121.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:5::24) To YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:a0::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,328 +90,362 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR17MB6130:EE_|DM4PR17MB6939:EE_
-X-MS-Office365-Filtering-Correlation-Id: b31189ae-d3ed-4d9f-acac-08ddf23219b4
+X-MS-TrafficTypeDiagnostic: YT3PR01MB9171:EE_|YQBPR01MB10479:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9cb62314-24cb-4fa3-5543-08ddf23242ca
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?d06ZAw7WAZczG6xj6Zo2opfL0Bxpe8A/brQ1fL2GpIb6yuNHQJUq3b+HcLDZ?=
- =?us-ascii?Q?1II1arw6carBE8t29+5tMFUuozU068jhBjjv7e7HEAqnAT/+Bdg6FzmO32F6?=
- =?us-ascii?Q?ukJrup1nxjFMjAVLzTQisIx2v9EjqrowAPuQY88RMJG25t1fvVAFu9eLZB/9?=
- =?us-ascii?Q?fKsQbDXiZQFnvERIkoUz87usXvjoM4hhxL6RqAELhD9zcj1hxXfOMtvNHV1h?=
- =?us-ascii?Q?EF3Cd/TGmicsVCfCF3sKA94FM6WaudY630eLnQpbCsHEOJ0ypqhvcFGDWKK0?=
- =?us-ascii?Q?I1lnI3Fts2wc2M4RsKHJp7vh3MWPWjmeE0+9U4fYGa0Kk0mkk814uHPMmT+J?=
- =?us-ascii?Q?LIYO4KwfIElon5/pXd5TQi/60z5n6e+n7IC3JibxUYNpiBCeClgUEKAJs/HB?=
- =?us-ascii?Q?aU7tYXfkAND0bj4s9LOHbaCP8iw/SJ2gp/Vm7Bemm+jxEj1VsyIEkBzd+B9D?=
- =?us-ascii?Q?CD5matJM+RZa9IZPH1cXZcmAgk8r5bW4bLSYTSZvc+Ge3Rw3QxYyunfIKV5u?=
- =?us-ascii?Q?aTd5Nzjfmc0HSuXqdxc1Xa+K3pmg/hL5tV1o35prc46YxS7uNqcNQ/65nbc2?=
- =?us-ascii?Q?5uUoUbV+dbeySFLs9/qho7jiXRuq3Iygagk+27/T2LTA1GueFz+ozepfBzOq?=
- =?us-ascii?Q?8U7B46vNNaZx1MnzOuGDq9Advp5GS5zbcFKiEBh0MEpGef8h6zttX20k3thz?=
- =?us-ascii?Q?My73OqdawwWZiqtkc1FnjQGc1OTsWXLEdtsbrK3+iy/VmT3h8GcT+5MVK2Gl?=
- =?us-ascii?Q?gUJjs7RzMp7dSw+OgMbT1Yj6TWypKHZXrj4L3KKOWqb9NRJyOScfw1uNiiEN?=
- =?us-ascii?Q?b+k5Ibt9365Y91qvXRkirQjbd9NH+N61+bdzINr+HFZRdMxaJEZcanjVxNDF?=
- =?us-ascii?Q?IeiVZpUpUOHRaGoTC81VxUD68R/vhHnkATgarZ9sg7DoYpqltSAn0G/PAEwi?=
- =?us-ascii?Q?nGlv9sAk8fSH/514idW6vNA4aORRgZBThtjKBOPNiPV6hiowlzwZCOBMC3QG?=
- =?us-ascii?Q?3xIfeKH6fW+I7G7TooiCbUhqFrRtv2oYMCEErqQ4A8yQ9lE5pWnfvDa1SqUf?=
- =?us-ascii?Q?8FGD+BT6gvrvkTfp/o4OaTHWFAw0BDjZHRNk9IDedMP0SeZPC5Zj7RNiUOGJ?=
- =?us-ascii?Q?onQzYxJMmk5LsyyeoQ/HplzjGf5Yb13G3naW7V5D2ib2en9j7m2Kqb6Zq6Sz?=
- =?us-ascii?Q?5XB4+AzCCon9+tucHuSy3QULw0VYHPjICEHHChtLvFZI2bAih+s7+NIJCZGf?=
- =?us-ascii?Q?9JWg3W1jZfy/YFAlsqF6c9mS6iFDoJC0OsrRksH6ZGUMakt/jseRM+DcstsD?=
- =?us-ascii?Q?cZW33rwIL85KPA95SKc+A8d8O2XR4rFuL1mMQyXcfD/DZLWEook/FSmS7QiG?=
- =?us-ascii?Q?bD653cAcFeI7XwojXXbb8KJ32+UnJFB2tlCZSx964+sA4BAP27uooiJ8YvX8?=
- =?us-ascii?Q?+ZgL0OlilMc=3D?=
+	=?utf-8?B?cWNwOFA1NlNIb2F3a2RnWGl1Sm9TLzdlSmJIY0doNmpqa0c2Kzg0L1BYL1ly?=
+ =?utf-8?B?OFVxNXNvM3daY1RqcDAwSW1HbEVPOWpTcWUwL1QxOUV2TFVQYWFmT2JCTjVl?=
+ =?utf-8?B?b2lMSWtWWm9GcWFmdml0YnFXT2pFdHhuRStYbFNUaFJlV3RxTjhHMjZ2WnN6?=
+ =?utf-8?B?QzIvVXR0Ykc3MHpsV1lqV1AwZmM3YnJOREc3OHpWM3F4M2NrNy9aaTc2WTZK?=
+ =?utf-8?B?U2dRSnQ2amx0R2NZaGdUUEgydmp2WXM0WUhtMFh3NkpBVjYrZjZyTUR3dk8z?=
+ =?utf-8?B?S3h1bGdNaGIrbk1tbVAydENZT3Z3ZWFpRzUxK2pPd2xHSER4dkdRc0xlNTJF?=
+ =?utf-8?B?Ukw1ZmhoYzlwWGE1OUlkMTZmSStrTWdpaEpnU2JiRkdFb2xYZHdPS0NtYW5Q?=
+ =?utf-8?B?OWQwb3g4MTY0TkxGamdIM3I0d251bllMRzJYRml5Nk8wclJHdHB4U3JDT1E0?=
+ =?utf-8?B?eDFONytZa1NwamtjNG1Cd3FPY2YvYWlEd3NzelBJemp6aHIrN0JpV3FtWGJF?=
+ =?utf-8?B?cE5UN1hXUE42eGVtZUZnMVNEeXdlcFNobENldEZ6OGh4WlJjb0NrZXcrc3dN?=
+ =?utf-8?B?SXEyeTJkdzRBcFlLcFdJYWJVRDZwVW1QOGwvYU9mUVQ5RVJIU3JWV0lBSEhs?=
+ =?utf-8?B?U1J2VllCUXZudTlFYXVMdjRGWi84UjZtZmoyZXU3ckNYa3Ayb2ErRGhFYWNG?=
+ =?utf-8?B?Sm1Kb1E3emw5bTFIbXJycjlJVEtlaEk4UHRJZWtnTVFHdVl1YUc0V1hhaSt0?=
+ =?utf-8?B?elQzK1JUakV2Mkg4aWJXd2NhMVZveDZiK2NsU0liSWUwTU8rY0U2eTE3MFpZ?=
+ =?utf-8?B?VmJkalluRHh3UDdXOHhzVkU1eHF3NmxUMFI2NHBwclRLTDdlSm5iZnZxeG5y?=
+ =?utf-8?B?RUVoTjJ4SGlIbHE1akJCZ1U0R3BRWjVtSEFZL3VUek1hS3hCY015YlRnbG9S?=
+ =?utf-8?B?YWpOZi9DVWFRbThWVkRiQ1cxYXNNTG11RktLWUxJRGx1TWJuUmE0YVNsa3Jr?=
+ =?utf-8?B?WHdpYW1ZMkpzN0ROUXNHaUlvOXVVY0g1Y25aR1hnYk5IbmJqeVFKdGxTVkgv?=
+ =?utf-8?B?V0x1ekx3dWRHcm1lZ01ZT2RqSGFQSDRLREg3RDIvY3FiQTFwTHFSdlBaSjVP?=
+ =?utf-8?B?UCtnTDN0b0orVzc4aWc3Q2szaE1UVXlwNkpGMW5qNlpuaHh4bzZrWTVGVjl4?=
+ =?utf-8?B?a2I5T1daS2g0SFhvVTd0eWlHaHFYNjQ1Z1EyS3dRRzA2Mm5tOEdDS1EwenhQ?=
+ =?utf-8?B?U2kwcEpxUnV4OEdZaDB1RzFwRXFhVEM3OEdSTy9nZDQ1czY0cUcyREFDaUhZ?=
+ =?utf-8?B?QWJDcXdIOVNLV2Faemh6elhFS0dCT3k4M3JFSDlSR0tpU3hlaTh3c2xFWDY1?=
+ =?utf-8?B?RXdMZ0d4N1pBbm9LRHEvblNsdUFyQ3JFNXNFSlAxZStqZ2hXS3lnQmc2RU5i?=
+ =?utf-8?B?eUJhNzlCMkRUNSt6REZQQldjbmNnN0NnU3lRVkVucTZNRDhxLzNEb1BLazhD?=
+ =?utf-8?B?UCszVHVUbjBSTHBvUUVpYS9ZTkdXc3BHTkJJWFo4QVJlWWJuMXNkYU5FckNj?=
+ =?utf-8?B?eTJvVjBoVFdXYkZJUTRTWjJ6bGpianRraUJDN215Y2VXczB3VXQ0TUJoVjly?=
+ =?utf-8?B?MXpFUE1vZHEwb3FlMkM1WU44Y2RGYUdJb0JUbUx5Ukw3TEtSdFh3OVloTGJh?=
+ =?utf-8?B?ckV3Q1hMWDMvSGdSYkhlM2E4TXVFaGZ5Y1FDWis5UWVuRE1DTXlHOEh1SUlB?=
+ =?utf-8?B?aDhRMUl0Ylg3aGFhNjd2d01FeWJ1d1dvNy9LcDNSUXZ5cGpFN3k2Z04wd091?=
+ =?utf-8?Q?/Mb1NehRkwFY4r+fBCcV/VO1NhNU9SoWEIjWM=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR17MB6130.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rL0zfIdlrjB5GDpuWWLtN1pmJtEJ5dkgSQN3adQ+N6ETmYTl5SCuf/HU9Rnc?=
- =?us-ascii?Q?ZvwoKFBSCiQ07Vh1ba8xes87mAqlwmXrv0H2MXHnib/oH8ciFtoEAzXQ+cmQ?=
- =?us-ascii?Q?Kib2VUZDQ3Pfsy0lgsOnauRlvRK5fX6ra0w6THck1Gzn6PIZNl+FwHJ4n6Fu?=
- =?us-ascii?Q?aG3QnfjxlM2ogK3jW528wh7+5YFiLgoiO9lgyDE4E6z7qOGS/tyuSQBXJYYj?=
- =?us-ascii?Q?HpeiUUGE5K7qRHL8xMlVbuqsxLxLirlQRZt4Dret/jPwdc03zdb4n4nkJN4I?=
- =?us-ascii?Q?6O+JQpgRjNiolB3B3Uv66+of/tU4Mo4EC+f/gSFnBlL+wB2a/TCgihGUTk6o?=
- =?us-ascii?Q?tpBA4e/PywYVe7V9lq4EOnzd6eeSEP/hWBKy8I0LFV5S8xYhLKLnn+s7B+7C?=
- =?us-ascii?Q?vIhedWzl0jgMLrcHP4UADAQcY5opEqEqrSYG5ePBQ3RDYoNBMZuL+HvX6v9m?=
- =?us-ascii?Q?umdmeQW8+4VE1tjKZf9wJ3tASXeMe+jRtjzbQswtrzEuevMzo/6DbNayO6ll?=
- =?us-ascii?Q?JP3YXCmIRZdXNf58rJfox1pol50efhqTLfDB5ntZr9DEKsz4DZWVJtS/6KXf?=
- =?us-ascii?Q?wsY22OnDvOqLp9dHpgpP6AxhyZsjqObgeUHDWtHLQMFV0CHQ1OMBCeJoK9/q?=
- =?us-ascii?Q?c2RaXQyhDW1Gr0T348eKgE/9ss8NYVaeS5bhltUbTROfyiE0gmD0kOsXCckt?=
- =?us-ascii?Q?Y5EbJmc3Q3uGz7qKEQPi6Uhv+WxPZki4r1QQ4O8i9ESPr2VSgS5XQx7ErDqt?=
- =?us-ascii?Q?tIrYn31LbdQiyKG7gN5qQSKZ/yoDQ/aJ53ln9+kUDCOiVtT9ToQiQaPjmTdv?=
- =?us-ascii?Q?/d0TxUwo9KGFX16afz7xKbiN2KM0RO1dp2KOLryCaCzCYM+ypdfVB/dXndur?=
- =?us-ascii?Q?k9Osrbx4y6xkQlHKUx+3BghuZ/4N5U3/Y+VzLDEy3wAcpdQ1s3BPfSh+9+Qc?=
- =?us-ascii?Q?NOmtuLcURH+2JSY/TF4ooVBwXYcgXcF+QfVwqiHnU0LI14ePTnzWsAb4okUf?=
- =?us-ascii?Q?IBXwaZZ5K/HAfXg4yrPoT7xIIuW5in0/m8SHmcfT+IAmmZQkHu4ia7jAM/FL?=
- =?us-ascii?Q?/1koQfsrMrYbN+hHt87S4JqYPWakvpSfcMKr+G3MF8ggU1IaoI9x4NyZQ6dw?=
- =?us-ascii?Q?imEswU/PPSFDd5BkaySsrdVRx2C4lxZrAkPf3ndl6I0/mPZUxN3qjolarTdY?=
- =?us-ascii?Q?f06V0C7tyYuyAoTxI286j1crHXLcEozGR/Jo/yZ8YDjCaXrq6P3hQU05tYCc?=
- =?us-ascii?Q?OWbLOYGBIa2zbqRN+6hgbOfWaQ+M1LjM4pFj7jAhAKU4K3GLIk883lQrXhvw?=
- =?us-ascii?Q?Bl1u7QPDf6SBs5oHeNC0xqwmH77ipnLmmBQecqFKuPcBXc/MLLmlfVDNdNrq?=
- =?us-ascii?Q?fgm8ZuSKjHjLxqhctNGZjSPrxdMn6tzeF3kH1AqJW4ukUrrSUYbnWIkkGCkh?=
- =?us-ascii?Q?EYfdzmvqo9/KgHoXWOQOlFTa6utxkZgd9OSikacZzjZsmkCt5Pb5yvRCm6Eo?=
- =?us-ascii?Q?rClO8pGEJftF1onBxnKK6mmkeONNIxe0LcIHVk5tG6TDioQrfzQ3bVzPo6DN?=
- =?us-ascii?Q?IJctnnugx9sSy8ScRd47xSEo3aTsyiEbtSvR0UfgmP8WYId4h2efAFVlkfV8?=
- =?us-ascii?Q?9A=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	U7+oxlcdohWqyFlZeXOjFUIYz40Tp/5OWK7uigOyw2Wdv7w4wf4ZzMQSOcw7NUtym9HAFUO9PQPhSkvw30eOlX7f6La4OsB4KgZnZBZ+ZOQsf+Sz5LZu8TSKI5HA3Ud3S7qpinP/rcOfD6PT4i6NxBgW5sptBo9/aWU/OCYIpVR8rPCfLT/J44mzx+gh3Jlw4u7BEsJhsTPD0TscoMY/XoljIg/6XodlIBnJZxvuGC+vJfwCvDQMq9esztrRqL54weJ+RKrU6GWNQGZURizDQBvc9ztz+z8waLLxpkEubvJy7jZdrTXKBs3GzAmgAIsXA3q3WhhO5DFcuok0xjDJHpA4ykQ+/sYTb5J8jirvO0SyAgbyTHusE4HEj53jW6f/CNUuE+0GnVD91ADWYy0cRRhKvcEF0CVwzBpxbRRTCwzVJpKz56CBSf0fYtTCMbgrY6zclBm4mzCNwzrQitU2lXYoYbdXK2OnoDB4h31W5pLLxS2xUGa7kx/frVTVINg4syaDHyIpB8nPXrbCYLMJEkoXy2EpIgksU4E4cfYCKgkAVPOwBVmKi8UCV+dFTuPvHiqUzQKYzQ3BqEyZ+ptph7PbSrmqhtbEn1ewecpeGaH7pw5KeqHJInnlW2rmEx7r
-X-OriginatorOrg: keysight.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b31189ae-d3ed-4d9f-acac-08ddf23219b4
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR17MB6130.namprd17.prod.outlook.com
+	=?utf-8?B?dGovdFpmMlZvZG1sbTBGcjFjNlBaUUhjQ1NaTFpEUTc3OURSeHlCRTMvVXZP?=
+ =?utf-8?B?bXlOYzEvbm5EZ3FVM2c3SXA0NWR2TVZQMzRHTzNCNGo2NDg5NFFkWmJjOUp2?=
+ =?utf-8?B?QW1Da1RyU0xiQmxhb1NWd2JIQ01mSjlHZEhXazYzdFFTZVNlc25OMEhxSCt5?=
+ =?utf-8?B?Yjh4TUZPMlB0UVVSd2F6S3o3NTUwZS9uOENvNEcyTFZQT0pyUE5Cd3NXeFph?=
+ =?utf-8?B?elVqRkdJVTd2d3htazhRWEFXYUovNk8yNjN4aWo3OWhtcVE3VC9HRFlnR2ti?=
+ =?utf-8?B?Qk9xTENSdXVJMU50YmZ4M29sZU9PTkJQWkNWblFKUGF0SFo5VEJlOVZmdjdW?=
+ =?utf-8?B?QWthMXhiL0VpcFJIb01hL295WTZFQUFuc3hEZldwdzN4OHdsUlhOQVd1UmtL?=
+ =?utf-8?B?Zml6bUo4V2E2RHNTOXZHS001dXRWR0NHTWtRNnF6RCszajlXVzlIeTdUSjBM?=
+ =?utf-8?B?SU1NdVloY1JNWCtnVW1SYkhZbTRUeW1qaWJYaEF2NS8wTkVVNEVwVGZSSytD?=
+ =?utf-8?B?NjFhZkpGU09DNWhqK1VjMktDZVBGNFdjV3FWU003WlpHNWVSTlN5OWRCenoz?=
+ =?utf-8?B?T0E4T21FbUlHQTFGelpleGM2bk95ZXJVMnFFUlREVVA3cjROYnNWUUFlcWJj?=
+ =?utf-8?B?ZDVPS3llbVVmWjlKVGZHcEJHaS9CeEQ3U0VjMGVFaGZwbHg0Yk9yTmFIOEpR?=
+ =?utf-8?B?WjlmM0taNnA0dDhpRG1jc3pmV29mTnBGRFVkRTc3VzMrNEdQZTg2bUYya3pi?=
+ =?utf-8?B?V3ljY1ZGWkRnS2czR0pkSnZIQ2wrc2xFWHVydDhETWlRa1FQcHA2WmVicDEw?=
+ =?utf-8?B?Y0tRM3JLSEJXaGcrVE9KbmdGK2xwTnFvS3NkV3hFblNkQUc4N1haQVR0MkNQ?=
+ =?utf-8?B?ZmE5U1llMFdzeGk2QnpIVm1DbVVOMm9vWXRQMjBQVzJNVStlb3hQdThESFdz?=
+ =?utf-8?B?L0Z4TnVFWFBXVSs3ZkRLTXQzSWQ3SHBsSE40VWNRMlZhQjRwazltY1QwTlNp?=
+ =?utf-8?B?cjEwYitkV1ZoYzYybVp2K0x3VENmb09YaHpGTVI3ZXNWMXZxMlRlaXJkMWlR?=
+ =?utf-8?B?a3hscmdRc2hycVhrdjhRMlEwN21aUDZ3YjhlZ1E1TzBpWU5LR2krSDc4SnI2?=
+ =?utf-8?B?VWJYbGp0eHlOYkR6SXNIa05LQzl6aGszazVtZTJGRFFmOXBMRk9McHk0WEdj?=
+ =?utf-8?B?ZDI4SDZpYXRvZ1pjbjdtQWtZVHpsWHJDM0FvN0Q4bkxVSWp6Um1mOThIK3NR?=
+ =?utf-8?B?NWJyL3pOcGJidWNtYkM5RUwvZ25Hc2FrSk1JV1diRzkvaEJZT3dmdE52Nnp0?=
+ =?utf-8?B?dG9NU3QxdzFaRUlCdHNxaVNpenJQVGpoZ3NPRVBCSEZtbEJsUEJWWGxMSG5G?=
+ =?utf-8?B?OTB6bURid0YrNnBUVkxVL1N5YW1nbHltZ08xakkzck1KZk1KcnI1RytHL2Fa?=
+ =?utf-8?B?YkZwUFdOVllQZDdLTmJBNnBCMG9Yd3NRLzJDT2hubWM3T1JJajUwRXVXY0Rq?=
+ =?utf-8?B?SzVNdGlLYjh1SElYVjhLSkM4cHo4L2lMQWVyWHVMeGlkRkJHMTlXd2ZlRWE3?=
+ =?utf-8?B?aGJjY1BFaE5hWjg2VWJPVk1mbDEyQXV0ZmF4QkVxK0o5WWZSd25hYm5FcnFM?=
+ =?utf-8?B?QVp1M1lweGVXZVg1NnlBb2FNVVNoM05FWE5rVTRGQ0pXWHBjTTJtbXduQWFC?=
+ =?utf-8?B?QkxwaVNDenRZM09UNnJHR0dRT3RlTEVOdmlRYmwrMFErV2pJYktGd1kxdEs5?=
+ =?utf-8?B?UUxNKzRraHgyZVBtY0N4Q3hTcVF1aGtKSnNCb3I0NFFNQ1lNdFg4ZEhiSk1P?=
+ =?utf-8?B?emxLeDgwTTJpUWZERjNEWm5VcGppa053Mk9Mcno2MC9vUExTajRnT1gxVUM5?=
+ =?utf-8?B?NlE1WnNISW9DOVZNQWpBVis0S0xBcnNxK01oTC9BOU9EdnN1Sys0SzU1UTcy?=
+ =?utf-8?B?Y0RWL25icnNNVlJXSEVqU0lrd29zbXJkNjVFcGNLbDhISVhKTVdVWk0xVEtR?=
+ =?utf-8?B?QjFOSjg5SGFYN3RqdDFqcXIxemhwZkVoRWVDczZ0QktCUUNWQ0VCWHIrTlIv?=
+ =?utf-8?B?RnYwWHF4VHBoVGhjT2M4M2hsSUs5dmFwS0JDdzFRN3gyTU9xdjFkcHZZTk1t?=
+ =?utf-8?B?S3lkOTRpWmoyR004M09tVXcxNm5lY3NCenpYWDNkNjdkak94WVVUV0FPTCtJ?=
+ =?utf-8?Q?jk+cSMvg0w6bDUNZGh4OaiM=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cb62314-24cb-4fa3-5543-08ddf23242ca
+X-MS-Exchange-CrossTenant-AuthSource: YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 19:25:15.1640
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 19:26:24.1814
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 63545f27-3232-4d74-a44d-cdd457063402
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oDn1Ls3GnEyNbX5ppmTF84VZWr9LWoCKhv2lmk3fhnJWqwfJSe5W0TNXfxHryfGUjZrq+7vqOAr3YkraTQiQiIHv2/Y16mPHvYT4QuwwPS4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR17MB6939
-X-Authority-Analysis: v=2.4 cv=UKDdHDfy c=1 sm=1 tr=0 ts=68c4739d cx=c_pps
- a=TZoYUOSjQ4LR4/tQgtptEw==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10 a=vu2TTH8h0NUA:10 a=F6MVbVVLAAAA:8
- a=NYnuEPRvgIRkhLNBil4A:9 a=6mxfPxaA-CAxv1z-Kq-J:22
-X-Proofpoint-ORIG-GUID: 1U5AiWIsD35BnfwgklD7x4lVt1Ae8fgV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEwMDA5NCBTYWx0ZWRfX6Z7mH/oSV7Ku
- 1cfXNaapyhGVruJtwG96bsNknqh/hsoIJhIbL/I5b7TZvcA9EFe9v1AArd+dFt4KNUjsrXLDo1+
- CTqhrQVJrNX73/fWBdyym2Q4lYMYB/iGqpW/A9I0E0tqVfvrQur+CmZfx6JmJsybm/dhlBITs9I
- BVf7LPnv1Yi4t+hqru2rqREuL9HZ4eHl1SazQlaKDSJeoa0tklDKzCI9EGrLAAPz3uqRRfLABZK
- 9sftE+s10tZd3YRvF4MZhmRDWYfZNteDe6qWGn0VAJrALbE0aFEdKXAWvwUK7e2GWhV/jzgl1Nb
- BmJ4iOI/lEscw8tvDgbF6QnDPKmeNZa0cb1vpp6pxtUGZHS8H291noGfq2MxEjLwkU1fZxniFWN
- 4UkG25Oy
-X-Proofpoint-GUID: 1U5AiWIsD35BnfwgklD7x4lVt1Ae8fgV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_07,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 adultscore=0 clxscore=1015 phishscore=0
- impostorscore=0 suspectscore=0 bulkscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509100094
+X-MS-Exchange-CrossTenant-UserPrincipalName: oT23yMQKYPdvip/oEpqXpAGfD8V3XnpmTIWWue09dTRixZU7qfINVThiLEqAW1Ay6uha1NUJBSKm6+cL5AVrd9gK+OQV3ori4wPkn6/NPWw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR01MB10479
 
-Add support for DisplayPort to the bridge, which entails the following:
-- Get and use an interrupt for HPD;
-- Properly clear all status bits in the interrupt handler;
+[ For those just CC'd on this thread, the discussion is about time slice
+   extension for userspace critical sections. We are specifically
+   discussing the kernel ABI we plan to expose to userspace. ]
 
-Signed-off-by: John Ripple <john.ripple@keysight.com>
----
-V1 -> V2: Cleaned up coding style and addressed review comments
-V2 -> V3:
-- Removed unused HPD IRQs
-- Added mutex around HPD enable/disable and IRQ handler.
-- Cleaned up error handling and variable declarations
-- Only enable IRQs if the i2c client has an IRQ
-- Moved IRQ_EN to ti_sn65dsi86_resume()
-- Created ti_sn65dsi86_read_u8() helper function
-V3 -> V4:
-- Formatting
-- Allow device tree to set interrupt type.
-- Use hpd_mutex over less code.
----
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 110 ++++++++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+On 2025-09-12 12:31, Thomas Gleixner wrote:
+> On Fri, Sep 12 2025 at 08:33, Mathieu Desnoyers wrote:
+>> On 2025-09-11 16:18, Thomas Gleixner wrote:
+>>> It receives SIGSEGV because that means that it did not follow the rules
+>>> and stuck an arbitrary syscall into the critical section.
+>>
+>> Not following the rules could also be done by just looping for a long
+>> time in userspace within or after the critical section, in which case
+>> the timer should catch it.
+> 
+> It's pretty much impossible to tell for the kernel without more
+> overhead, whether that's actually a violation of the rules or not.
+> 
+> The operation after the grant can be interrupted (without resulting in
+> scheduling), which is out of control of the task which got the extension
+> granted.
+> 
+> The timer is there to ensure that there is an upper bound to the grant
+> independent of the actual reason.
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index ae0d08e5e960..166920b2fcc7 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -106,10 +106,21 @@
- #define SN_PWM_EN_INV_REG			0xA5
- #define  SN_PWM_INV_MASK			BIT(0)
- #define  SN_PWM_EN_MASK				BIT(1)
-+
-+#define SN_IRQ_EN_REG				0xE0
-+#define  IRQ_EN					BIT(0)
-+
-+#define SN_IRQ_EVENTS_EN_REG			0xE6
-+#define  HPD_INSERTION_EN			BIT(1)
-+#define  HPD_REMOVAL_EN				BIT(2)
-+
- #define SN_AUX_CMD_STATUS_REG			0xF4
- #define  AUX_IRQ_STATUS_AUX_RPLY_TOUT		BIT(3)
- #define  AUX_IRQ_STATUS_AUX_SHORT		BIT(5)
- #define  AUX_IRQ_STATUS_NAT_I2C_FAIL		BIT(6)
-+#define SN_IRQ_STATUS_REG			0xF5
-+#define  HPD_REMOVAL_STATUS			BIT(2)
-+#define  HPD_INSERTION_STATUS			BIT(1)
- 
- #define MIN_DSI_CLK_FREQ_MHZ	40
- 
-@@ -153,6 +164,8 @@
-  * @ln_polrs:     Value for the 4-bit LN_POLRS field of SN_ENH_FRAME_REG.
-  * @comms_enabled: If true then communication over the aux channel is enabled.
-  * @comms_mutex:   Protects modification of comms_enabled.
-+ * @hpd_enabled:   If true then HPD events are enabled.
-+ * @hpd_mutex:     Protects modification of hpd_enabled.
-  *
-  * @gchip:        If we expose our GPIOs, this is used.
-  * @gchip_output: A cache of whether we've set GPIOs to output.  This
-@@ -190,7 +203,9 @@ struct ti_sn65dsi86 {
- 	u8				ln_assign;
- 	u8				ln_polrs;
- 	bool				comms_enabled;
-+	bool				hpd_enabled;
- 	struct mutex			comms_mutex;
-+	struct mutex			hpd_mutex;
- 
- #if defined(CONFIG_OF_GPIO)
- 	struct gpio_chip		gchip;
-@@ -221,6 +236,23 @@ static const struct regmap_config ti_sn65dsi86_regmap_config = {
- 	.max_register = 0xFF,
- };
- 
-+static int ti_sn65dsi86_read_u8(struct ti_sn65dsi86 *pdata, unsigned int reg,
-+				u8 *val)
-+{
-+	int ret;
-+	unsigned int reg_val;
-+
-+	ret = regmap_read(pdata->regmap, reg, &reg_val);
-+	if (ret) {
-+		dev_err(pdata->dev, "fail to read raw reg %#x: %d\n",
-+			reg, ret);
-+		return ret;
-+	}
-+	*val = (u8)reg_val;
-+
-+	return 0;
-+}
-+
- static int __maybe_unused ti_sn65dsi86_read_u16(struct ti_sn65dsi86 *pdata,
- 						unsigned int reg, u16 *val)
- {
-@@ -379,6 +411,7 @@ static void ti_sn65dsi86_disable_comms(struct ti_sn65dsi86 *pdata)
- static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
- {
- 	struct ti_sn65dsi86 *pdata = dev_get_drvdata(dev);
-+	const struct i2c_client *client = to_i2c_client(pdata->dev);
- 	int ret;
- 
- 	ret = regulator_bulk_enable(SN_REGULATOR_SUPPLY_NUM, pdata->supplies);
-@@ -413,6 +446,13 @@ static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
- 	if (pdata->refclk)
- 		ti_sn65dsi86_enable_comms(pdata, NULL);
- 
-+	if (client->irq) {
-+		ret = regmap_update_bits(pdata->regmap, SN_IRQ_EN_REG, IRQ_EN,
-+					 IRQ_EN);
-+		if (ret)
-+			pr_err("Failed to enable IRQ events: %d\n", ret);
-+	}
-+
- 	return ret;
- }
- 
-@@ -1211,6 +1251,8 @@ static void ti_sn65dsi86_debugfs_init(struct drm_bridge *bridge, struct dentry *
- static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
- {
- 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
-+	const struct i2c_client *client = to_i2c_client(pdata->dev);
-+	int ret;
- 
- 	/*
- 	 * Device needs to be powered on before reading the HPD state
-@@ -1219,11 +1261,33 @@ static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
- 	 */
- 
- 	pm_runtime_get_sync(pdata->dev);
-+
-+	if (client->irq) {
-+		/* Enable HPD events. */
-+		ret = regmap_set_bits(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
-+				      HPD_REMOVAL_EN | HPD_INSERTION_EN);
-+		if (ret)
-+			pr_err("Failed to enable HPD events: %d\n", ret);
-+	}
-+	mutex_lock(&pdata->hpd_mutex);
-+	pdata->hpd_enabled = true;
-+	mutex_unlock(&pdata->hpd_mutex);
- }
- 
- static void ti_sn_bridge_hpd_disable(struct drm_bridge *bridge)
- {
- 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
-+	const struct i2c_client *client = to_i2c_client(pdata->dev);
-+
-+	if (client->irq) {
-+		/* Disable HPD events. */
-+		regmap_write(pdata->regmap, SN_IRQ_EVENTS_EN_REG, 0);
-+		regmap_update_bits(pdata->regmap, SN_IRQ_EN_REG, IRQ_EN, 0);
-+	}
-+
-+	mutex_lock(&pdata->hpd_mutex);
-+	pdata->hpd_enabled = false;
-+	mutex_unlock(&pdata->hpd_mutex);
- 
- 	pm_runtime_put_autosuspend(pdata->dev);
- }
-@@ -1309,6 +1373,38 @@ static int ti_sn_bridge_parse_dsi_host(struct ti_sn65dsi86 *pdata)
- 	return 0;
- }
- 
-+static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
-+{
-+	struct ti_sn65dsi86 *pdata = private;
-+	struct drm_device *dev = pdata->bridge.dev;
-+	u8 status;
-+	int ret;
-+	bool hpd_event = false;
-+
-+	ret = ti_sn65dsi86_read_u8(pdata, SN_IRQ_STATUS_REG, &status);
-+	if (ret)
-+		pr_err("Failed to read IRQ status: %d\n", ret);
-+	else
-+		hpd_event = status & (HPD_REMOVAL_STATUS | HPD_INSERTION_STATUS);
-+
-+	if (status) {
-+		pr_debug("(SN_IRQ_STATUS_REG = %#x)\n", status);
-+		ret = regmap_write(pdata->regmap, SN_IRQ_STATUS_REG, status);
-+		if (ret)
-+			pr_err("Failed to clear IRQ status: %d\n", ret);
-+	} else {
-+		return IRQ_NONE;
-+	}
-+
-+	/* Only send the HPD event if we are bound with a device. */
-+	mutex_lock(&pdata->hpd_mutex);
-+	if (pdata->hpd_enabled && hpd_event)
-+		drm_kms_helper_hotplug_event(dev);
-+	mutex_unlock(&pdata->hpd_mutex);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int ti_sn_bridge_probe(struct auxiliary_device *adev,
- 			      const struct auxiliary_device_id *id)
- {
-@@ -1931,6 +2027,8 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
- 	dev_set_drvdata(dev, pdata);
- 	pdata->dev = dev;
- 
-+	mutex_init(&pdata->hpd_mutex);
-+
- 	mutex_init(&pdata->comms_mutex);
- 
- 	pdata->regmap = devm_regmap_init_i2c(client,
-@@ -1971,6 +2069,18 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
- 	if (strncmp(id_buf, "68ISD   ", ARRAY_SIZE(id_buf)))
- 		return dev_err_probe(dev, -EOPNOTSUPP, "unsupported device id\n");
- 
-+	if (client->irq) {
-+		ret = devm_request_threaded_irq(pdata->dev, client->irq, NULL,
-+						ti_sn_bridge_interrupt,
-+						IRQF_ONESHOT,
-+						dev_name(pdata->dev), pdata);
-+
-+		if (ret) {
-+			return dev_err_probe(dev, ret,
-+					     "failed to request interrupt\n");
-+		}
-+	}
-+
- 	/*
- 	 * Break ourselves up into a collection of aux devices. The only real
- 	 * motiviation here is to solve the chicken-and-egg problem of probe
+If the worse side-effect of this feature is that the slice extension
+is not granted when users misbehave, IMHO this would increase the
+likelihood of adoption compared to failure modes that end up killing the
+offending processes.
+
+> 
+> Going through a different syscall is an obvious deviation from the rule.
+
+AFAIU, the grant is cleared when a signal handler is delivered, which
+makes it OK for signals to issue system calls even if they are nested
+on top of a granted extension critical section.
+
+> 
+> As far I understood the earlier discussions, scheduler folks want to
+> enforce that because of PREEMPT_NONE semantics, where a randomly chosen
+> syscall might not result in an immediate reschedule because the work,
+> which needs to be done takes arbitrary time to complete.
+> 
+> Though that's arguably not much different from
+> 
+>         syscall()
+>                  -> tick -> NEED_RESCHED
+>          do_tons_of_work();
+>         exit_to_user()
+>            schedule();
+> 
+> except that in the slice extension case, the latency increases by the
+> slice extension time.
+> 
+> If we allow arbitrary syscalls to terminate the grant, then we need to
+> stick an immediate schedule() into the syscall entry work function. We'd
+> still need the separate yield() syscall to provide a side effect free
+> way of termination.
+> 
+> I have no strong opinions either way. Peter?
+
+If it happens to not be too bothersome to allow arbitrary system calls
+to act as implicit rseq_slice_yield() rather than result in a
+segmentation fault, I think it would make this feature more widely
+adopted.
+
+Another scenario I have in mind is a userspace critical section that
+would typically benefit from slice extension, but seldomly requires
+to issue a system call. In C and higher level languages, that could be
+very much outside of the user control, such as accessing a
+global-dynamic TLS variable located within a global-dynamic shared
+object, which can trigger memory allocation under the hood on first
+access.
+
+Handling syscall within granted extension by killing the process
+will likely reserve this feature to the niche use-cases.
+
+> 
+>>>> rseq->slice_request = true;  /* WRITE_ONCE() */
+>>>> barrier();
+>>>> critical_section();
+>>>> barrier();
+>>>> rseq->slice_request = false; /* WRITE_ONCE() */
+>>>> if (rseq->slice_grant)       /* READ_ONCE() */
+>>>>      rseq_slice_yield();
+>>>
+>>> That should work as it's strictly CPU local. Good point, now that you
+>>> said it it's obvious :)
+>>>
+>>> Let me rework it accordingly.
+>>
+>> I have two questions wrt ABI here:
+>>
+>> 1) Do we expect the slice requests to be done from C and higher level
+>>      languages or only from assembly ?
+> 
+> It doesn't matter as long as the ordering is guaranteed.
+
+OK, so I understand that you intend to target higher level languages
+as well, which makes my second point (nesting) relevant.
+
+> 
+>> 2) Slice requests are a good fit for locking. Locking typically
+>>      has nesting ability.
+>>
+>>      We should consider making the slice request ABI a 8-bit
+>>      or 16-bit nesting counter to allow nesting of its users.
+> 
+> Making request a counter requires to keep request set when the
+> extension is granted. So the states would be:
+> 
+>       request    granted
+>       0          0               Neutral
+>       >0         0               Requested
+>       >=0        1               Granted
+
+Yes.
+
+> 
+> That should work.
+> 
+> Though I'm not really convinced that unconditionally embeddeding it into
+> random locking primitives is the right thing to do.
+
+Me neither. I wonder what would be a good approach to integrate this
+with locking APIs. Here are a few ideas, some worse than others:
+
+- Extend pthread_mutexattr_t to set whether the mutex should be
+   slice-extended. Downside: if a mutex has some long and some
+   short critical sections, it's really a one-size fits all decision
+   for all critical sections for that mutex.
+
+- Extend the pthread_mutex_lock/trylock with new APIs to allow
+   specifying whether slice-extension is needed for the upcoming critical
+   section.
+
+- Just let the pthread_mutex_lock caller explicitly request the
+   slice extension *after* grabbing the lock. Downside: this opens
+   a window of a few instructions where preemption can happen
+   and slice extension would have been useful. Should we care ?
+
+> 
+> The extension makes only sense, when the actual critical section is
+> small and likely to complete within the extension time, which is usually
+> only true for highly optimized code and not for general usage, where the
+> lock held section is arbitrary long and might even result in syscalls
+> even if the critical section itself does not have an obvious explicit
+> syscall embedded:
+> 
+>       lock(a)
+>          lock(b) <- Contention results in syscall
+
+Nested locking is another scenario where _typically_ we'd want the
+slice extension for the outer lock if it is expected to be a short
+critical section, and sometimes hit futex while the extension is granted
+and clear the grant if this happens without killing the process.
+
+> 
+> Same applies for library functions within a critical section.
+
+Yes.
+
+> 
+> That then immediately conflicts with the yield mechanism rules, because
+> the extension could have been granted _before_ the syscall happens, so
+> we'd have remove that restriction too.
+
+Yes.
+
+> 
+> That said, we can make the ABI a counter and split the slice control
+> word into two u16. So the decision function would be:
+> 
+>       get_usr(ctrl);
+>       if (!ctrl.request)
+>       	return;
+>       ....
+>       ctrl.granted = 1;
+>       put_usr(ctrl);
+> 
+> Along with documentation why this should only be used nested when you
+> know what you are doing.
+
+Yes.
+
+This would turn the end of critical section into a
+decrement-and-test-for-zero. It's only when the request counter
+decrements back to zero that userspace should handle the granted
+flag and yield.
+
+> 
+>> 3) Slice requests are also a good fit for rseq critical sections.
+>>      Of course someone could explicitly increment/decrement the
+>>      slice request counter before/after the rseq critical sections, but
+>>      I think we could do better there and integrate this directly within
+>>      the struct rseq_cs as a new critical section flag. Basically, a
+>>      critical section with this new RSEQ_CS_SLICE_REQUEST flag (or
+>>      better name) set within its descriptor flags would behave as if
+>>      the slice request counter is non-zero when preempted without
+>>      requiring any extra instruction on the fast path. The only
+>>      added overhead would be a check of the rseq->slice_grant flag
+>>      when exiting the critical section to conditionally issue
+>>      rseq_slice_yield().
+> 
+> Plus checking first whether rseq->slice.request is actually zero,
+> i.e. whether the rseq critical section was the outermost one. If not,
+> you cannot invoke the yield even if granted is true, right?
+
+Right.
+
+> 
+> But mixing state spaces is not really a good idea at all. Let's not go
+> there.
+
+I agree, let's keep this (3) for later if there is a strong use-case
+justifying the complexity.
+
+What is important for right now though is to figure out the behavior
+with respect to an ongoing rseq critical section when a time slice
+extension is granted: is the rseq critical section aborted or does
+it keep going on return to userspace ?
+
+> 
+> Also you'd make checking of rseq_cs unconditional, which means extra
+> work in the grant decision function as it would then have to do:
+> 
+>           if (!usr->slice.ctrl.request) {
+>              if (!usr->rseq_cs)
+>                 return;
+>              if (!valid_ptr(usr->rseq_cs))
+>                 goto die;
+>              if (!within(regs->ip, usr->rseq_cs.start_ip, usr->rseq_cs.offset))
+>                 return;
+>              if (!(use->rseq_cs.flags & REQUEST))
+>                 return;
+>           }
+> 
+> IOW, we'd copy half of the rseq cs handling into that code.
+> 
+> Can we please keep it independent and simple?
+
+Of course.
+
+So in summary, here is my current understanding:
+
+- It would be good to support nested slice-extension requests,
+
+- It would be preferable to allow arbitrary system calls to
+   cancel an ongoing slice-extension grant rather than kill the
+   process if we want the slice-extension feature to be useful
+   outside of niche use-cases.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+
+> 
+> Thanks,
+> 
+>          tglx
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
