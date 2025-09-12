@@ -1,134 +1,203 @@
-Return-Path: <linux-kernel+bounces-813638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3EABB54893
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:00:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 947F4B54896
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81A9B1700D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52901B23121
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A23428D8DA;
-	Fri, 12 Sep 2025 10:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA77296BB5;
+	Fri, 12 Sep 2025 10:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J/i/tQva"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pUgP7nkk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A72286893
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01DC1F5851;
+	Fri, 12 Sep 2025 10:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757671229; cv=none; b=Fy2CJ/NO+iNzYsS0K2fD7u2zdKC+A7+JWyPYzuCaOBXQJs1AymdIZqwYo/+KYutNdBmYjdMdkUC5efwfJgRcEdqieLQqrK1Qv8RgjpeQVjF/3ZlxqTNKClBSIrIS/xR05OEPzP0y2kod0uX9iHlfJSvzQ/yjmCsPBh87ImjzJpE=
+	t=1757671305; cv=none; b=FQQ5a4Yg+cSBA3cG7xYhPS4RsW4F3XIaB32EdSP09Qh/4jHqwJWA6p0gPHob98BuMdQlpttiRxJPSh0vvpJnMhMkZtDzgJdDvSCxdwQIn0TpxLp8sE5frLv/m//xkinq3nu1vtvy1GfF6pmOdSr34QRvDNDpW93gqGQdGqXqQ7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757671229; c=relaxed/simple;
-	bh=S/x/ppCYsVKnPqW5lJ3vPbClxwzvq+hWg15z5y1V1lI=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=G+MW225OG1+g2CF8q+r7URwn2Fd7mkJRnRP4scIDRGJ7uKnpC0uHS2JfbiJxSEOwFME1ssbiBtn8feYsH9COsUUnsxTAH0DGwFPPTJZXdWRa2CZWTxwZWLEpSHsgX54IaLzRjkSpPA6B5mvdyg5YQz008ezcwbo6gRSq1YyOVVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gprocida.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=J/i/tQva; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gprocida.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45cb6d8f42bso19881585e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:00:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757671226; x=1758276026; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lwTohfVuh5PCFcdhMILG+0i9bjyVI3+AI7hJz72zYt4=;
-        b=J/i/tQvamjKLeyiOch0xq77ssiKWCSZaHXE/d/FaghHnry3LQG0zrY/F/HpymfcDzu
-         dMowwCPESycQ/9LIYZiWmznAO9Ah5+o0R9MTG3jEH5ck07lXdCRvNA1AAlCYfYVGZi2v
-         CJN+VkqJeWHzJysjcs8ckTCHIIxUAZ/0gaAolWYqkiP38Ud0ahpHaPmmmE5avTjBl9Tr
-         g+oLFxC2s14XUksw027IVso4spXvu7M1bKeDSiYDElXPBnpd1woD+2FzcQfMuTS8olcH
-         pXDNmKHFY6/tyZIYngpYI9nOOGsqRDMJzuy62su5ZL3Cn/pAW+qqSCQ3rXpu8sCV07hl
-         E9cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757671226; x=1758276026;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lwTohfVuh5PCFcdhMILG+0i9bjyVI3+AI7hJz72zYt4=;
-        b=iYhrKcd/O9trtjJKm02JraFr8M2ENbRo7YV5K6+DaG6I2OM2QI9RGdp29NPsnhIcq5
-         7y4CHQVW+N1zdkrJ3DN607RhC61bTe9aV7YGaQRjhv8ahzTdS99J59JtLyBZeieFYvsA
-         pWRiVhjXsvCOKNDbb9GZD453trMQibvOSIWRMRCOgz9uRSpaRCnfH5Xlf1aELstZic5K
-         tkueuDc2OM+8mAJoBnxcjMJart4+INwXEUl4dTmDrO4jrfAfvvsueIsK6cMl9MJYHehM
-         2zD75lRSpNWLVdf5O40mGrTEsD8VaiFUhp4AQ1HsVdTX/ZlqJV1zFrOuWkB/BefRpPje
-         YfnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWV9pZlaoOttKeDqvNbvPBSmYqfZ3JDpCgfeHfa5btAjiH/eC7+oE+ozcWUgsDhfsEu7u+H6DeNBoZjXnA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwphuNYu+x/xiAfzYKnRmBnwp7+HrO8xPYh3a9MBGiT+ADQ48nQ
-	q6NlkoAOGsdf8+VxMfNuy8B26okTbF3BZ5TYaFWBl9XcQ9UW25reKYlgVfvMzG4Bs7xl3VvkOa4
-	W2vsB8MTazLReXw==
-X-Google-Smtp-Source: AGHT+IH1ZphgVBskCHC7cnBOzxeNR0ANeresyUwpGGhDl92WBxqq9bOPNP8hkuW2FGkocQtamiJF3VTVIKItpw==
-X-Received: from wmth22.prod.google.com ([2002:a05:600c:8b76:b0:45c:b62f:ca0d])
- (user=gprocida job=prod-delivery.src-stubby-dispatcher) by
- 2002:a7b:c8c3:0:b0:45b:b05a:aeeb with SMTP id 5b1f17b1804b1-45f211ffa3bmr17986815e9.28.1757671226243;
- Fri, 12 Sep 2025 03:00:26 -0700 (PDT)
-Date: Fri, 12 Sep 2025 11:00:15 +0100
+	s=arc-20240116; t=1757671305; c=relaxed/simple;
+	bh=SqhgbQ9AuAFKV54UmYB1i+nBhJGNv6JopjorByt9v0g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DmbClmNmWVG5uxQ6CpQ6psxBGXpb5DuUgj+6DTYs1WuG1A35T9Z/nJDW3p4FWsGT4SdXkf3mM2Sw8HgqY9ebXTFQ+UeEkQlPvNPEJ9WeTT/nGcsEKVvDxfSXJfSzjwK2sKFUEtLnSTX+0yTnkOieWrY0rycqzd7gSLkcdtMI04c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pUgP7nkk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB2B7C4CEF1;
+	Fri, 12 Sep 2025 10:01:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757671304;
+	bh=SqhgbQ9AuAFKV54UmYB1i+nBhJGNv6JopjorByt9v0g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pUgP7nkkn60IqRGitZ6hPdhy+6tiHO0hqS8054QcNjFWRiVYq1bq5f3JL6iDmQnXM
+	 +ExFU9MrXvWuQKwPtrhQMa7HGmUIVdZGXmDH1PIcol4LMP5+ykcxEghMjMkNHi0bM0
+	 /vFqr6l+OyMZbRG7a9p2mIjRYiPyUPj0kU58dNdOv+OYDUQadeUS/3gRt2F3KF+Eef
+	 OO22T2oBCL5WoA9QRHojGl7kL2CdAoCRMKpZk+jUJwjy63zUpjA4/8YqhK4/bRuNtm
+	 76FswcJhdarbHqNhxRTwfPp89cPlaMsAE+r6/QmaC4PSlGL2s2ml0xNNHEiSxVpN+M
+	 jNh3ckZ/pUPjQ==
+Date: Fri, 12 Sep 2025 15:31:39 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vivek.Pernamitta@quicinc.com
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
+Subject: Re: [PATCH v2] bus: mhi: host: Add uevent support in MHI driver
+Message-ID: <25ikgu4ynqzmtl452b67aayp6jayybzxphz5vj4w4huphrcqb5@2ouj6dvyasqp>
+References: <20250912-b4-uevent_vdev_next-20250911-v2-1-89440407bf7e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250912100015.1267643-1-gprocida@google.com>
-Subject: [PATCH] system certificates: specify byte alignment
-From: Giuliano Procida <gprocida@google.com>
-To: dhowells@redhat.com, dwmw2@infradead.org
-Cc: gregkh@linuxfoundation.org, keyrings@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Giuliano Procida <gprocida@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250912-b4-uevent_vdev_next-20250911-v2-1-89440407bf7e@quicinc.com>
 
-The .align macro is architecture dependent. On arm64 it behaves as
-.p2align. The various alignments in this file are all bytes.
+On Fri, Sep 12, 2025 at 10:29:16AM GMT, Vivek.Pernamitta@quicinc.com wrote:
+> From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> 
+> Notify the MHI device's Execution Environment (EE) state via uevent,
+> enabling applications to receive real-time updates and take appropriate
+> actions based on the current state of MHI.
+> 
+> Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+> ---
+> Notify the MHI device's Execution Environment (EE) state via uevent,
+> enabling applications to receive real-time updates and take appropriate
+> actions based on the current state.
+> 
+> Signed-off-by: 
 
-So use the .balign macro to avoid unnecessary padding due to
-over-alignment.
+Duplicate?
 
-Signed-off-by: Giuliano Procida <gprocida@google.com>
----
- certs/system_certificates.S | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> ---
+> Usage:
+> 
+> Enabling 16 virtual fucntions for SRIOV device QDU100 once device reached
+> mission mode from systemd service file
+> 
+> SUBSYSTEM=="mhi", ENV{EXEC_ENV}=="MISSION MODE", SUBSYSTEMS=="pci", ATTRS{device}=="0x0601",ATTR{../sriov_numvfs}="16"
+> ---
+> 
+> ---
+> Changes in v2:
+> - Fix memory leak in uevent notifier.
+> - Link to v1: https://lore.kernel.org/r/20250822-uevent_vdev_next-20250821-v1-1-9ed3a8162194@quicinc.com
+> ---
+> 
+> ---
+>  drivers/bus/mhi/host/internal.h |  1 +
+>  drivers/bus/mhi/host/main.c     |  1 +
+>  drivers/bus/mhi/host/pm.c       | 29 +++++++++++++++++++++++++++++
+>  3 files changed, 31 insertions(+)
+> 
+> diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
+> index 034be33565b78eff9bdefd93faa4f3ce93825bad..d455f0bf00133775fa23882a727782275640e43b 100644
+> --- a/drivers/bus/mhi/host/internal.h
+> +++ b/drivers/bus/mhi/host/internal.h
+> @@ -403,6 +403,7 @@ int mhi_process_data_event_ring(struct mhi_controller *mhi_cntrl,
+>  				struct mhi_event *mhi_event, u32 event_quota);
+>  int mhi_process_ctrl_ev_ring(struct mhi_controller *mhi_cntrl,
+>  			     struct mhi_event *mhi_event, u32 event_quota);
+> +void mhi_uevent_notify(struct mhi_controller *mhi_cntrl, enum mhi_ee_type ee);
+>  
+>  /* ISR handlers */
+>  irqreturn_t mhi_irq_handler(int irq_number, void *dev);
+> diff --git a/drivers/bus/mhi/host/main.c b/drivers/bus/mhi/host/main.c
+> index 52bef663e182de157e50f64c1764a52545c70865..8615512743199a59a58c3756d9cc3407079cee7e 100644
+> --- a/drivers/bus/mhi/host/main.c
+> +++ b/drivers/bus/mhi/host/main.c
+> @@ -512,6 +512,7 @@ irqreturn_t mhi_intvec_threaded_handler(int irq_number, void *priv)
+>  		if (mhi_cntrl->rddm_image && mhi_is_active(mhi_cntrl)) {
+>  			mhi_cntrl->status_cb(mhi_cntrl, MHI_CB_EE_RDDM);
+>  			mhi_cntrl->ee = ee;
+> +			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+>  			wake_up_all(&mhi_cntrl->state_event);
+>  		}
+>  		break;
+> diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
+> index 33d92bf2fc3ed48db5f7fe80e4f0ef9fe2d2f2ab..331f65921a979adce60a32fb62e2c9b712f21c87 100644
+> --- a/drivers/bus/mhi/host/pm.c
+> +++ b/drivers/bus/mhi/host/pm.c
+> @@ -418,6 +418,7 @@ static int mhi_pm_mission_mode_transition(struct mhi_controller *mhi_cntrl)
+>  	device_for_each_child(&mhi_cntrl->mhi_dev->dev, &current_ee,
+>  			      mhi_destroy_device);
+>  	mhi_cntrl->status_cb(mhi_cntrl, MHI_CB_EE_MISSION_MODE);
+> +	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+>  
+>  	/* Force MHI to be in M0 state before continuing */
+>  	ret = __mhi_device_get_sync(mhi_cntrl);
+> @@ -631,6 +632,8 @@ static void mhi_pm_sys_error_transition(struct mhi_controller *mhi_cntrl)
+>  	/* Wake up threads waiting for state transition */
+>  	wake_up_all(&mhi_cntrl->state_event);
+>  
+> +	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+> +
+>  	if (MHI_REG_ACCESS_VALID(prev_state)) {
+>  		/*
+>  		 * If the device is in PBL or SBL, it will only respond to
+> @@ -829,6 +832,8 @@ void mhi_pm_st_worker(struct work_struct *work)
+>  			mhi_create_devices(mhi_cntrl);
+>  			if (mhi_cntrl->fbc_download)
+>  				mhi_download_amss_image(mhi_cntrl);
+> +
+> +			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+>  			break;
+>  		case DEV_ST_TRANSITION_MISSION_MODE:
+>  			mhi_pm_mission_mode_transition(mhi_cntrl);
+> @@ -838,6 +843,7 @@ void mhi_pm_st_worker(struct work_struct *work)
+>  			mhi_cntrl->ee = MHI_EE_FP;
+>  			write_unlock_irq(&mhi_cntrl->pm_lock);
+>  			mhi_create_devices(mhi_cntrl);
+> +			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+>  			break;
+>  		case DEV_ST_TRANSITION_READY:
+>  			mhi_ready_state_transition(mhi_cntrl);
+> @@ -1240,6 +1246,8 @@ static void __mhi_power_down(struct mhi_controller *mhi_cntrl, bool graceful,
+>  	write_unlock_irq(&mhi_cntrl->pm_lock);
+>  	mutex_unlock(&mhi_cntrl->pm_mutex);
+>  
+> +	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+> +
+>  	if (destroy_device)
+>  		mhi_queue_state_transition(mhi_cntrl,
+>  					   DEV_ST_TRANSITION_DISABLE_DESTROY_DEVICE);
+> @@ -1338,3 +1346,24 @@ void mhi_device_put(struct mhi_device *mhi_dev)
+>  	read_unlock_bh(&mhi_cntrl->pm_lock);
+>  }
+>  EXPORT_SYMBOL_GPL(mhi_device_put);
+> +
+> +void mhi_uevent_notify(struct mhi_controller *mhi_cntrl, enum mhi_ee_type ee)
+> +{
+> +	struct device *dev = &mhi_cntrl->mhi_dev->dev;
+> +	char *buf[2];
+> +	int ret;
+> +
+> +	buf[0] = kasprintf(GFP_KERNEL, "EXEC_ENV=%s", TO_MHI_EXEC_STR(ee));
+> +	buf[1] = NULL;
+> +
+> +	if (!buf[0]) {
+> +		dev_dbg(dev, "Failed to allocate memory for uevent");
+> +		return;
+> +	}
+> +
+> +	ret = kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, buf);
+> +	if (ret)
+> +		dev_err(dev, "Failed to send %s uevent\n", TO_MHI_EXEC_STR(ee));
+> +
+> +	 kfree(buf[0]);
 
-diff --git a/certs/system_certificates.S b/certs/system_certificates.S
-index 003e25d4a17e..ea6984b427c9 100644
---- a/certs/system_certificates.S
-+++ b/certs/system_certificates.S
-@@ -4,7 +4,7 @@
- 
- 	__INITRODATA
- 
--	.align 8
-+	.balign 8
- 	.globl system_certificate_list
- system_certificate_list:
- __cert_list_start:
-@@ -20,14 +20,14 @@ __cert_list_end:
- system_extra_cert:
- 	.fill CONFIG_SYSTEM_EXTRA_CERTIFICATE_SIZE, 1, 0
- 
--	.align 4
-+	.balign 4
- 	.globl system_extra_cert_used
- system_extra_cert_used:
- 	.int 0
- 
- #endif /* CONFIG_SYSTEM_EXTRA_CERTIFICATE */
- 
--	.align 8
-+	.balign 8
- 	.globl system_certificate_list_size
- system_certificate_list_size:
- #ifdef CONFIG_64BIT
-@@ -36,7 +36,7 @@ system_certificate_list_size:
- 	.long __cert_list_end - __cert_list_start
- #endif
- 
--	.align 8
-+	.balign 8
- 	.globl module_cert_size
- module_cert_size:
- #ifdef CONFIG_64BIT
+Weird indentation. I'll fix it and also drop the redundant debug log while
+applying.
+
+- Mani
+
 -- 
-2.51.0.384.g4c02a37b29-goog
-
+மணிவண்ணன் சதாசிவம்
 
