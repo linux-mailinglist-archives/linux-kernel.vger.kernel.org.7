@@ -1,152 +1,154 @@
-Return-Path: <linux-kernel+bounces-814558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D4BB5558E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:42:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F12ECB55590
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:45:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDECEAE2ADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:42:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1623AE2B37
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB06B326D57;
-	Fri, 12 Sep 2025 17:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F70D324B35;
+	Fri, 12 Sep 2025 17:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abWVJLlu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="ClQV0HTI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="im51tb+C"
+Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358C63081BD;
-	Fri, 12 Sep 2025 17:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 583D8324B22
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757698944; cv=none; b=XO2tYKnAoZXDSCzblyunj06NbB/jhMOUgHVoHmZiul2TB729Id8MuzGHg+i3TlohALSXd5gvc8EMBnT3UCHZNfhDH71nefgwTR1szkzxuPoykA8mbh1WCweTXVolrp2oT8sVHZ285ZorIkxV540tcFSOnc3IVkj/s8STMy/dLUQ=
+	t=1757699091; cv=none; b=hzWB6uVmE99r6JM4uSBLHPyMTVELJFtgEEWTnjZcArvSpewvO88VjM7ydtesnHOIUsAGR6BDJ37Wozz05NJCCkjY7UIkKpx57+/pP77KvV52NgcgNaiYWXOji1pSeaQop461ZrRzMkpxaalLzPQZ+N7haQ5X40SkLGqdlCsMs5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757698944; c=relaxed/simple;
-	bh=0cY7VeaySFBSAW5INmThb2nsUazkylOBbySNCBPZKbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VX1vx7p1ohl8fRf0dFBZKMdLxTHBGhxQMjKyoyn/vvgOmwmK/no2RqGsP82+yVll1UKNvV3k41OxnXS4ErqEMJPOzi1t6wy2yVQuQw+DXGn5mIGkPwBbgzU4QZYX4VkAIG7YpJekkvSMZNdSXMEZguushY9mrYKK0bQOnlfNR08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abWVJLlu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0A1EC4CEF1;
-	Fri, 12 Sep 2025 17:42:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757698943;
-	bh=0cY7VeaySFBSAW5INmThb2nsUazkylOBbySNCBPZKbw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=abWVJLluulo3Sk63YTyecs8iH4LIt/zrLRDB5tD2tBXVS1+CDaUuymgYv4H8Iu2e+
-	 jqp+YeWn1u/W9HmZ8uuv3y+CeFyk2O8TGJ+Q1Uz88EcyWG5DGBHxLGWWeBp2EDVrxY
-	 mdJJ+6gRj//jEbPpWz00DlDDCcsb6MN4Fyt7GfrpCHJtypipvNSDiKpzuAfqY86TIZ
-	 BI0dORgLOvQQqqqdBGljofFyaejshKgxVvD1V2Vugw4QPD4jTneT5tCofs7ToFh3Kb
-	 qfrXIZm63eXPsPHhExHGzb3CNeBzdBWgeP5Ese5GCL+oRQ47ciyXLcDwvXEYN2NZxh
-	 AZEZ88lGdszVw==
-From: Benno Lossin <lossin@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Benno Lossin <lossin@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Tamir Duberstein <tamird@gmail.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Fiona Behrens <me@kloenk.dev>,
-	Christian Schrefl <chrisi.schrefl@gmail.com>,
-	Alban Kurti <kurti@invicto.ai>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [GIT PULL] Rust pin-init for v6.18
-Date: Fri, 12 Sep 2025 19:41:46 +0200
-Message-ID: <20250912174148.373530-1-lossin@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1757699091; c=relaxed/simple;
+	bh=9uzYh+n2Ll+EZEmlcCMqOmvBB6teSdCPbHnDLm3/rk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NS3ft126m1HzXW+woFsApR2umkHbppTq/hIPHrHq8y0mjUzJoiAEdzfyA80r0HROR7oL4Us6qmA2UyYKJqT6BCpTGsKnT/Jf8m2W744tEWq2S9ysKt/laWmQied2vE8xvuDf+S7uOE6MO0BJ9CKqwk5ijqIYTqY4liazWaW0CK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=ClQV0HTI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=im51tb+C; arc=none smtp.client-ip=202.12.124.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id B77937A014C;
+	Fri, 12 Sep 2025 13:44:46 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Fri, 12 Sep 2025 13:44:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1757699086; x=
+	1757785486; bh=UbXOseeNnaP83dMYePU0k6b7ZDIfNAE/7Jdsl7Ac4sk=; b=C
+	lQV0HTId9nSrky+AZyRVP6KYEATXi3LI2X3MH1EKxhekzxJptQPKhSRwtr0nFi0D
+	qEqgqtXj9mKLK1L+i0QAajauX/Ee0j/OQeVlnnIuoU/D/g9iR27vQOkBnUVceFBq
+	/fW5nZCXO/yEL7wCN1jNkkQUkiChOyUgqgE8Man/Pj49Y9wkX8Mn/uy9pumaHknp
+	GGtLlzoEcfR0XZ/4cQAiO0HMxC5IQQzkvcrgL8THEFXpfS0g7u9+VYb3vNxMOopv
+	zpLK8opf+6sAS7H58t97ncAqDZyyIn97GBjNjFE2X96H4+1nxhoEHXYb+Ia8ssyt
+	lJXJ3CyGFn5IudSqqQVrA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1757699086; x=1757785486; bh=UbXOseeNnaP83dMYePU0k6b7ZDIfNAE/7Jd
+	sl7Ac4sk=; b=im51tb+Cxc9Wf3P9QHBTtqrLu4rPtozC6R2oFl+yniN2rBzHA1N
+	sERVMcZv6I+ZvcgjX3uo3M2RxUZKvck4epBQ1ESR8jLG98+0hmZe8kMnO9iGp+gj
+	VrQlEthRCh2jQ9vzDZCYp10JbwFjB2p4G6lescKIMpMy45VFSa+gptcc+58g3Cvv
+	5WAcgLAR/AYqgv3+PIlR4kKLJp+uON8BWBvm8AymfEiFGNA2txXh1mfyvYMPmf2s
+	jYRW3t2y6vLDEdxSlqi+HyehpCIPUC74lkiFJxzv9rB2qEqb4zOwPCzO1MhtqBe8
+	rKuc+chegJ9jJ9A/vmXvpbG/NteWp3JXaGQ==
+X-ME-Sender: <xms:DVzEaDlSoyTdClnPKHNq_iKBQHeosJ1uFtNg-5H8GgHyp4xlIJ_v8A>
+    <xme:DVzEaCt4stj4bo245syo5toimrJAm8oWqoe8zTcuPqMz2Uk4dKk0o_mYjPzxXE9Ig
+    PiY6OCeX3dQwa4OSP8>
+X-ME-Received: <xmr:DVzEaCfdcx_95HunODtaZRKSeQ5hWu94jJE370DO-LEmJGSDj5nJQ4eKSH7IjA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleeikecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
+    hhhuthhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtf
+    frrghtthgvrhhnpeejheeufeduvdfgjeekiedvjedvgeejgfefieetveffhfdtvddtledu
+    hfeffeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepvdeg
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgusehrvgguhhgrthdrtg
+    homhdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhg
+    pdhrtghpthhtoheplhhorhgvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpd
+    hrtghpthhtohepiihihiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsggrohhlihhn
+    rdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlihgrmh
+    drhhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepnhhprggthhgvsehr
+    vgguhhgrthdrtghomhdprhgtphhtthhopehrhigrnhdrrhhosggvrhhtshesrghrmhdrtg
+    homhdprhgtphhtthhopeguvghvrdhjrghinhesrghrmhdrtghomh
+X-ME-Proxy: <xmx:DVzEaEaGwv2OwHz4xSZo8qNskgJ435vmbHuXJZd7RhbxWdL6yuCjEA>
+    <xmx:DVzEaK0hR0wItz6tDK741-KZNaADkjRugK7IrzvSaJVnWvPQiOOEaQ>
+    <xmx:DVzEaNrq98OX_y_swKPEMos7hZTf3KQfNq3T8PcOoMjxt0PQPJdNIA>
+    <xmx:DVzEaLwJKRMt6gJyMlHTa0s3AK9A3JfBYscahY6m9rRIJdNZYIxEvg>
+    <xmx:DlzEaB45ZF3zCnnB4Ev4Y8vQA_MjYTBHMcj6KSUxfR1hVLJJ5LCXBqO3>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 12 Sep 2025 13:44:45 -0400 (EDT)
+Date: Fri, 12 Sep 2025 18:44:43 +0100
+From: Kiryl Shutsemau <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, 
+	Barry Song <baohua@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/khugepaged: Do not fail collapse_pte_mapped_thp() on
+ SCAN_PMD_NULL
+Message-ID: <5n3vzdmdmeyicqf5dji2vo5hsfupigq7nl44cog7vwm6nchtqo@so5mvct4fwhn>
+References: <xhan2av3fyl7qpsl4bhjtds2zeegrl57ehtc5grtkua3c3v3nz@vain5s6gpycl>
+ <36bf71ea-f6aa-42fa-9fa2-53d00f351777@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36bf71ea-f6aa-42fa-9fa2-53d00f351777@redhat.com>
 
-Hi Danilo,
+On Fri, Sep 12, 2025 at 07:13:48PM +0200, David Hildenbrand wrote:
+> On 12.09.25 18:58, Kiryl Shutsemau wrote:
+> > From: Kiryl Shutsemau <kas@kernel.org>
+> > 
+> > MADV_COLLAPSE on a file mapping behaves inconsistently depending on if
+> > PMD page table is installed or not.
+> > 
+> > Consider following example:
+> > 
+> > 	p = mmap(NULL, 2UL << 20, PROT_READ | PROT_WRITE,
+> > 		 MAP_SHARED, fd, 0);
+> > 	err = madvise(p, 2UL << 20, MADV_COLLAPSE);
+> > 
+> > fd is a populated tmpfs file.
+> > 
+> > The result depends on the address that the kernel returns on mmap().
+> > If it is located in an existing PMD table, the madvise() will succeed.
+> > However, if the table does not exist, it will fail with -EINVAL.
+> > 
+> > This occurs because find_pmd_or_thp_or_none() returns SCAN_PMD_NULL when
+> > a page table is missing, which causes collapse_pte_mapped_thp() to fail.
+> > 
+> > SCAN_PMD_NULL and SCAN_PMD_NONE should be treated the same in
+> > collapse_pte_mapped_thp(): install the PMD leaf entry and allocate page
+> > tables as needed.
+> > 
+> > Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+> > ---
+> 
+> Makes sense to me.
+> 
+> Is this something we want a Fixes: or even Cc: stable for?
 
-As discussed with Miguel, I'm sending my PR to you this time.
+I am not sure if it is stable@ matter.
 
-The code changes themselves aren't that big, but functionality-wise
-there are three important ones: pin-projections, code blocks and access
-to previously initialized fields. More syntax changes will be on the way
-for v6.19 and I hope I'll be a bit earlier in that cycle :)
+I believe it is there from the start:
 
-The commits have been in linux-next for one day.
+Fixes: 7d8faaf15545 ("mm/madvise: introduce MADV_COLLAPSE sync hugepage collapse")
 
-I have a conflict with your devres fix that's in -rc3, the resolution in
-linux-next looks good.
-
-Please pull for v6.18 -- thanks!
-
----
-Cheers,
-Benno
-
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
-
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  https://github.com/Rust-for-Linux/linux.git tags/pin-init-v6.18
-
-for you to fetch changes up to 42415d163e5df6db799c7de6262d707e402c2c7e:
-
-  rust: pin-init: add references to previously initialized fields (2025-09-11 23:30:02 +0200)
-
-----------------------------------------------------------------
-pin-init changes for v6.18
-
-Changed:
-
-- `#[pin_data]` now generates a `*Projection` struct similar to the
-  `pin-project` crate.
-
-- Add initializer code blocks to `[try_][pin_]init!` macros: make
-  initializer macros accept any number of `_: {/* arbitrary code */},` &
-  make them run the code at that point.
-
-- Make the `[try_][pin_]init!` macros expose initialized fields via a
-  `let` binding as `&mut T` or `Pin<&mut T>` for later fields.
-
-Upstream dev news:
-
-- Released v0.0.10 before the changes included in this tag.
-
-- Inform users of the impending rename from `pinned-init` to `pin-init`
-  (in the kernel the rename already happened).
-
-- More CI improvements.
-
-----------------------------------------------------------------
-Benno Lossin (6):
-      rust: pin-init: examples: error: use `Error` in `fn main()`
-      rust: pin-init: README: add information banner on the rename to `pin-init`
-      rust: pin-init: rename `project` -> `project_this` in doctest
-      rust: pin-init: add pin projections to `#[pin_data]`
-      rust: pin-init: add code blocks to `[try_][pin_]init!` macros
-      rust: pin-init: add references to previously initialized fields
-
- rust/kernel/devres.rs           |   6 +-
- rust/kernel/workqueue.rs        |   9 +-
- rust/pin-init/README.md         |  12 ++
- rust/pin-init/examples/error.rs |   4 +-
- rust/pin-init/src/lib.rs        |   4 +-
- rust/pin-init/src/macros.rs     | 239 ++++++++++++++++++++++++++++++++++------
- samples/rust/rust_driver_pci.rs |   2 +-
- 7 files changed, 227 insertions(+), 49 deletions(-)
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
