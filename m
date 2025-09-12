@@ -1,98 +1,96 @@
-Return-Path: <linux-kernel+bounces-814620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C8FB5568B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:48:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189E9B5568C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB5301D619B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:48:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB86567598
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB733314AC;
-	Fri, 12 Sep 2025 18:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AC3334363;
+	Fri, 12 Sep 2025 18:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N+t+UR+D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaLUncVo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CF172613;
-	Fri, 12 Sep 2025 18:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F8D31AF2A;
+	Fri, 12 Sep 2025 18:48:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757702885; cv=none; b=gkigWwXLwkIUSGCMSuolit2GF+1POP0m8/XPNlbwtKpDiQ8dCSyDBoX1+INq4KeMK6LGMeHdsX0tcIMNxbKQB05pgfjNVXTwsfonz5ysgP3QbVC/ZIa0Z8p4/m8KqkjBMPemkwZUalRJ8r/S3lDk7HH3bUG77bkHFVhqL/8VmA8=
+	t=1757702935; cv=none; b=hOKTmTaAOKnShectwoueuoDoDLH6Zp5YUFLLLNIrP7w/UefyC1GpnRO22VH4fikugBTRhLx4zHNJDoIaCtWSsVr91i3D9t4zoSgeckw/FxBYKymRQFtqVPfUGCsHMwVWKbXntA8rlLpPeDugEiX8AYagln84gdtUsxUw/ZZjMNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757702885; c=relaxed/simple;
-	bh=TF01d6JbBn3mSJtfnI0NvV2969+tVdaRFTz0N3Bel8Q=;
+	s=arc-20240116; t=1757702935; c=relaxed/simple;
+	bh=cJb5BBmk8fPdZjmmUJ5jkr99ebhj43GK6sqw2ZJDZsU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kXM50KrH95KbtmKta3PLmENQ1pY5FrvAumrMmY5i6TFNNZGdwn77s5YuufqIK7R2QQk4sXIBhrhsNjAb7KWrEn69MDaQd8spIGW/NXRMtOrnPG23S7fl+sRcNci6hd3q4Zg1Qz2P/jYWTeqvvaDU8iR+o9m5307kJowmP9RProc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N+t+UR+D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40969C4CEF1;
-	Fri, 12 Sep 2025 18:48:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuX0pzIcOiBwwCFaVZEOLel9lMJtqvLe/tG+SKB7bg1MWP9Bwo1nRuLKZzjX5ZCkujO+03hGXw+83rJwAkTUwURQsu3JeDOs4euBWq6YBTqqSM4738eeqNP1H5+gz1CZkXod+8mKuLcEKAYI/WxDwUggbdCJUWP+e/l7ZNIK28U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaLUncVo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C7BC4CEF1;
+	Fri, 12 Sep 2025 18:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757702885;
-	bh=TF01d6JbBn3mSJtfnI0NvV2969+tVdaRFTz0N3Bel8Q=;
+	s=k20201202; t=1757702935;
+	bh=cJb5BBmk8fPdZjmmUJ5jkr99ebhj43GK6sqw2ZJDZsU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N+t+UR+Dccu0XRqNfIh4sY7nzLNeE95dgylO+aNAkRZT5QR0IovaGLty4n1mUr3F8
-	 ShSIf4mlJPxxBcsPP0wDYV0opS+Rp39D1ZOpLIOEtt9D3ODxwzwLfVX7ao0WUENCva
-	 /7tpu3wCETlqCYtd3O4K7SWjwKJ9Ker0akJd/hTdpFLDqmYZwP9tftcOK/cOABruxl
-	 ZpmDY7nMQi5i3e6hQaxc69df4abBEhsViH7+817XA2ITBFKJ2+da27r0Kq7YSGnIOk
-	 Npw1XPocB8ikFNtPHILyFVp9HfXr2PQbY5Pbyi09iQnOAcaNc4j2W6xX6JdS4u/5ia
-	 OhYDa8tAvPVOQ==
-Date: Fri, 12 Sep 2025 19:48:01 +0100
-From: Simon Horman <horms@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, netdev@vger.kernel.org,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] rxrpc: Fix untrusted unsigned subtract
-Message-ID: <20250912184801.GD224143@horms.kernel.org>
-References: <2039268.1757631977@warthog.procyon.org.uk>
+	b=OaLUncVogwHc/amdcfamYUw/8mWSGIB3nlIjMy6SsMgaqCKQkKeF1ZDJRB8Y3J1VD
+	 O9amPck2JIkQRD2+VmKKoYmEUzKRTTte8IiZQs/zCrccuIJun0xxGCmlqp6c52z/GB
+	 CwKlvbX2B407S6yErr5r30PUcNsyBcm6O2uQpnimOMARIirGSt3OU/bmIrcd8lM5Ct
+	 U5wX+NhmC7UiPeZ6cHdudvHRilxX4FmT7TzLAonm8o81KVvO9j8gc2H7Eopk0k95mU
+	 0f/S7iG3nqXZPEwLg4IL7UHvVGm3/w7HU7xC6kk7Y1o7/Wlx8+cjR62nBXz0w3grNu
+	 MTSCWoa2Rrdgw==
+Date: Fri, 12 Sep 2025 15:48:52 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Andi Kleen <ak@linux.intel.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/3] Improve event groups for topdown, add X event
+ modifier
+Message-ID: <aMRrFDBDKFSyA2VO@x1>
+References: <20250825211204.2784695-1-irogers@google.com>
+ <3f481d00-2c9f-45a5-807b-037930903b1c@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <2039268.1757631977@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3f481d00-2c9f-45a5-807b-037930903b1c@linux.intel.com>
 
-On Fri, Sep 12, 2025 at 12:06:17AM +0100, David Howells wrote:
-> Fix the following Smatch Smatch static checker warning:
+On Tue, Aug 26, 2025 at 10:30:10AM +0800, Mi, Dapeng wrote:
+> On 8/26/2025 5:12 AM, Ian Rogers wrote:
+> > Ian Rogers (3):
+> >   perf evsel: Give warning for broken Intel topdown event grouping
+> >   perf stat: Don't skip failing group events
+> >   perf parse-events: Add 'X' modifier to exclude an event from being
+> >     regrouped
+ 
+> The whole patch-set looks good to me.
+ 
+> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+ 
+> Tested the patches on Intel Sapphire Rapids and Panther Lake, all results
+> are expected.
+ 
+> Tested-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-nit: Smatch Smatch -> Smatch
+Thanks, applied to perf-tools-next,
 
-> 
->    net/rxrpc/rxgk_app.c:65 rxgk_yfs_decode_ticket()
->    warn: untrusted unsigned subtract. 'ticket_len - 10 * 4'
-> 
-> by prechecking the length of what we're trying to extract in two places in
-> the token and decoding for a response packet.
-> 
-> Also use sizeof() on the struct we're extracting rather specifying the size
-> numerically to be consistent with the other related statements.
-> 
-> Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)")
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lists.infradead.org/pipermail/linux-afs/2025-September/010135.html
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Marc Dionne <marc.dionne@auristor.com>
-> cc: Jakub Kicinski <kuba@kernel.org>
-> cc: "David S. Miller" <davem@davemloft.net>
-> cc: Eric Dumazet <edumazet@google.com>
-> cc: Paolo Abeni <pabeni@redhat.com>
-> cc: Simon Horman <horms@kernel.org>
-> cc: linux-afs@lists.infradead.org
-> cc: netdev@vger.kernel.org
-> ---
->  net/rxrpc/rxgk_app.c |   19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
-
-Reviewed-by: Simon Horman <horms@kernel.org>
-
+- Arnaldo
 
