@@ -1,91 +1,144 @@
-Return-Path: <linux-kernel+bounces-813048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FEC3B5401B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:01:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092B6B5401C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3691675F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:01:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B101C868CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8351FBCA7;
-	Fri, 12 Sep 2025 02:00:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966191957FC;
+	Fri, 12 Sep 2025 02:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SZ7/z2/z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GXAJZND2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E3214A4F9;
-	Fri, 12 Sep 2025 02:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B1A78F2E;
+	Fri, 12 Sep 2025 02:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757642434; cv=none; b=Obje/X+wkZbWyS/gr8KAWRiuxAjO1RNtEPUf/XSM0DqgS8b2JGb6kXXX5mOWFt8+EoG3OdgYgOdOnSvTU1Sh8ySBBrkJrVu9D8XssOBItU3TuDq1hpwbOg0Tx0bvfUlWi5i/nH82RguXSHFRo568B3cbYYTsR5vUtDQalJDq0vQ=
+	t=1757642526; cv=none; b=CyyVwA6yNvb0NNPDGexCvZDml+fRkjy0+CY5cjoZA3vbq9i4+OlXxOPLHaJDXHHS0kTbcxNwZ4oFyeXK5DIjSnsIRvDeuWAPKmPyYPhCIYaaptNg1wn6uDLd09gDnmX5DF/W419+8cSqeKpFC6EQzK9pHyfLHwyg6XR5Ed1QX1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757642434; c=relaxed/simple;
-	bh=lQHo9yakV1KI7t69pyyUhbVWNVWueTyKjGkrp5ga3RU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=lORVOBtEWxAfbAFm1x5Re+2XYi8rw3X5hzBIV2PXOm/Fzx1R0CAJopiG+tdXEW0cb7KbFM9zfqm4tX1IFOUqt7qHekWZRzwf+VJZOzHUakHZMNd3LCnXm3g6I40NN/ciFPtEByZKymh2jCCMOYNISy3hDid9TXOMkHRNQx2LEFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SZ7/z2/z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E83C4CEF0;
-	Fri, 12 Sep 2025 02:00:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757642434;
-	bh=lQHo9yakV1KI7t69pyyUhbVWNVWueTyKjGkrp5ga3RU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=SZ7/z2/zkyFRBkp+Z7zfy8l5/SJcgtjwNLqRfRFV/JGkJT89tKcduedVwSjmNZYaz
-	 DmU70W2I71bXzzYfhTgOzV3m1lIDSMhS2/tQ960SDXztrjBxrlrrFerWm16yLpnKEI
-	 qDUhBqhtbzLj+gdQCUfGXVwM58WeOAWnPlvusVlAVxysu93QcZ3H0k5xVoBiyjIAgb
-	 DgnLjrBeL0l0gVS056jnv5svqlcFwB+J0+uisgeFFmUGGi/3QGZMJyspK5GUUTFq3X
-	 xQiUJr7L30YkQT2hCHJH4xOxpqQEn/wBzmNDwxZJIBoJVij0KOoK2pzfFFEo/DO8Nu
-	 2vzI5Cq1MaCKw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D0D383BF69;
-	Fri, 12 Sep 2025 02:00:38 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757642526; c=relaxed/simple;
+	bh=ofHx56BppN7uG4nMoIOUkT9YW2WwswxmiLHeRFONwG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=p+btDAlBf/ebEzyHK7eqsFFlqSYvkobNe/Ctpl++1orU/jpwJBxXuXOGYmZ6izz34+NEoWaMCHJnixvWDv4+DG+ZzkzrQxAdOkQvbkxgSqxIm/RNhasxp32AiKrnXvcPws2n+2DmI14s2vubH1IvgiDg0awdfN4OMDDtRQv6hAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GXAJZND2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1757642520;
+	bh=Z6CwyDe+rDUXNJFHQE/lWblQ0fLT8qQmbmGhKk4M4Rk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=GXAJZND2vcIqgv2fWvefMWl2zMRFl+CN51fozERMQCMmJHIrdgGpqI2FljsXeAHJ3
+	 Zn/CTyg2BinP2zp4A+CemHyjvyk3dImeBKYbh+2c+ZIPx8uH9uwybgfopWhppMw0dV
+	 89qhuPWh8kThH2DH8TLWK6W9Hd7dntH9PIT+OZJz4B1MCRYe+WYV2sfSj/Mb1TRAUl
+	 oBkRKZdLtEFOz+Z5nvFc6z2MhHHi8FRFMwG456T/gFCusNe/9MNvxHK1pzOqXiqxpI
+	 cPdMDIo+mE/MS+E7rE3h8sRWVbOJVP+EsdCjzJioz6cRdgCu+aeOAmmTwtPIfwxwlu
+	 NqXTbsE9rLdXw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cNHjg4wffz4w9Q;
+	Fri, 12 Sep 2025 12:01:59 +1000 (AEST)
+Date: Fri, 12 Sep 2025 12:01:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>,
+ Greg KH <greg@kroah.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drm-rust tree with the
+ driver-core.current tree
+Message-ID: <20250912120159.1d6518cc@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] eth: 8139too: Make 8139TOO_PIO depend on !NO_IOPORT_MAP
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175764243699.2373516.15007912984676092023.git-patchwork-notify@kernel.org>
-Date: Fri, 12 Sep 2025 02:00:36 +0000
-References: <20250907064349.3427600-1-daniel@thingy.jp>
-In-Reply-To: <20250907064349.3427600-1-daniel@thingy.jp>
-To: Daniel Palmer <daniel@thingy.jp>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; boundary="Sig_/=7zD693h/Iauq0ScLjN9yaz";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello:
+--Sig_/=7zD693h/Iauq0ScLjN9yaz
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Hi all,
 
-On Sun,  7 Sep 2025 15:43:49 +0900 you wrote:
-> When 8139too is probing and 8139TOO_PIO=y it will call pci_iomap_range()
-> and from there __pci_ioport_map() for the PCI IO space.
-> If HAS_IOPORT_MAP=n and NO_GENERIC_PCI_IOPORT_MAP=n, like it is on my
-> m68k config, __pci_ioport_map() becomes NULL, pci_iomap_range() will
-> always fail and the driver will complain it couldn't map the PIO space
-> and return an error.
-> 
-> [...]
+Today's linux-next merge of the drm-rust tree got a conflict in:
 
-Here is the summary with links:
-  - eth: 8139too: Make 8139TOO_PIO depend on !NO_IOPORT_MAP
-    https://git.kernel.org/netdev/net-next/c/43adad382e1f
+  MAINTAINERS
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+between commit:
 
+  f6d2900f2806 ("MAINTAINERS: Update the DMA Rust entry")
 
+from the driver-core.current tree and commit:
+
+  c58466b85b16 ("MAINTAINERS: rust: dma: add scatterlist files")
+
+from the drm-rust tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc MAINTAINERS
+index 5bcaa26029f2,8a11e6c5dd80..000000000000
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@@ -7263,18 -7251,20 +7276,20 @@@ F:	include/linux/dma-mapping.
+  F:	include/linux/swiotlb.h
+  F:	kernel/dma/
+ =20
+- DMA MAPPING HELPERS DEVICE DRIVER API [RUST]
++ DMA MAPPING & SCATTERLIST API [RUST]
+ -M:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+  M:	Danilo Krummrich <dakr@kernel.org>
+ +R:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
+  R:	Daniel Almeida <daniel.almeida@collabora.com>
+  R:	Robin Murphy <robin.murphy@arm.com>
+  R:	Andreas Hindborg <a.hindborg@kernel.org>
+  L:	rust-for-linux@vger.kernel.org
+  S:	Supported
+  W:	https://rust-for-linux.com
+ -T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
+ +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-c=
+ore.git
+  F:	rust/helpers/dma.c
++ F:	rust/helpers/scatterlist.c
+  F:	rust/kernel/dma.rs
++ F:	rust/kernel/scatterlist.rs
+  F:	samples/rust/rust_dma.rs
+ =20
+  DMA-BUF HEAPS FRAMEWORK
+
+--Sig_/=7zD693h/Iauq0ScLjN9yaz
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmjDfxcACgkQAVBC80lX
+0GypTgf+Ld8DInPsDsOfnv2DIzx5uJa5979Lqg5pKOqfBakHom+Viwl41pQKmJRQ
+gR0zvQNpTyUW4rNBUABVQROjP6mpwazh/rP5bPbGq/MEXIv/o3TvnRM9yflfKpdF
+afHNsb8MlBzw8g+I609i+q1e4c4r+R8cLuco99ad+9a4D8H8tL9w8OPZdFNepx/n
+ZmNVC3wVcuCOkHv43hkFbM6qt5pbzIu0cyTsrrLTVjMml4QVvfNH32uR4EQialWZ
+w5t+HSDoDlxal9B5ub/bSpeUjZUEfSgNNExiJqzf0u1aeW7lmPEs8qfotRx4fSgQ
+S8+ok3kQnPGqOUIwr8AWJk0+e6Zy9g==
+=mXO7
+-----END PGP SIGNATURE-----
+
+--Sig_/=7zD693h/Iauq0ScLjN9yaz--
 
