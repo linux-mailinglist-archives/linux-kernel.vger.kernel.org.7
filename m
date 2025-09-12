@@ -1,138 +1,103 @@
-Return-Path: <linux-kernel+bounces-814540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DB0B5554F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:04:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D468EB55551
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 681354E2EE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A46AC436E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1827329F26;
-	Fri, 12 Sep 2025 17:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE79322DAC;
+	Fri, 12 Sep 2025 17:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="K+lA6hZo"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiHOQnR6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5821A324B3B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C31258ED9;
+	Fri, 12 Sep 2025 17:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757696660; cv=none; b=BB9uuhMFGX00sQly/LWmoC6PCeeRj3ibdAu2O+aD8zsdphfQaoH0rlcDnh4xyiwUqKfNeMK+SZoQ4nRAsgQyP1+febESzIQqV4Gqza0Pdlf/fwqzYtTmPB3SA6TSe2mnGAgbiQDgnavF0iHdV7Vf5l4MNA4idq0Awpf7zGxAfcA=
+	t=1757696684; cv=none; b=RnVBvp3MmI4OYEmUnUWVS/Z+X5PTx2DgSdtzZOlu03BWEJ3anhO7LX1y3QVFrD+INvLRJUD2a8O0wKjiU1DAQKoVNkOd8bsEoNFovHDc8y5taKl37nvwKpxqQMiUA/l9mQQvtq9/pYQPwY7KQq1/MWckBCNbtHfbe4EImtjXboo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757696660; c=relaxed/simple;
-	bh=NTVQLmxkeT6zaBWqWrh3MzMF5kVQNlli4aOM22XOisQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sEJt1GVeOZ04MsIkqPJX+G2q94o0Kp5RQczN/7njOIMqfz4sKq1r/jpykbUMUBOqt7ejrmkujoEHFK1+X+x6W7CozMA+4a3oI/VmAfprU4VIOto0YHLDtUROknJtPde423ejrypnH9240s7xml8VAJnFI00DsjeFrmG4+2jIn5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=K+lA6hZo; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id BD0644E40C77;
-	Fri, 12 Sep 2025 17:04:16 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 9498D60638;
-	Fri, 12 Sep 2025 17:04:16 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E88AE102F295C;
-	Fri, 12 Sep 2025 19:04:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757696655; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=FEZ1jJCZv48VMdKDRQ5LuktGboUwlVW2TP9ATDwpDto=;
-	b=K+lA6hZomSNp04H6VpspZHYqW2Do8s+o3GORlSlA20Ybs6R73nI+/+kren6RYxgXB9qp1R
-	mw5/RxIt+tvg4uy4N5M3nTYRoeF8neTRNTkBdZQ4AVTEH+5YQSx1fiSPKAyCJ5hQovoD4o
-	tNgzUoezVM6edlF0rf5aWw9LLUhWRJl4ecs6uMYizXvePc/9cH6SFKqbtR1LRUjBvRYnID
-	cPR5er+66zR0eupKHcUK6q+V1eZtsHfZivsN19NRaHoQULzLeEsFFIR8ffIV3Nk/2QBVHi
-	sjgkeg8w8TywstN66mdkcPxUV0TZ7saV3pwZbcC5WuZLiVxQ8jdovv5xaJVmOA==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 12 Sep 2025 19:03:43 +0200
-Subject: [PATCH v8 3/3] drm/bridge: adapt drm_bridge_add/remove() docs,
- mention the lingering list
+	s=arc-20240116; t=1757696684; c=relaxed/simple;
+	bh=o/2riuH6Vl3CWoq2pt1e4/nCTOT1wbTb7SSUZSgH3Ig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=riVNpRRQP2DFKefrCgM8NAX5CdQPWLtp9XfBWcecp1MQPFDPx2BvZQgwFuFiQDNgoWVaDAtQorOAaEeFFvSGWiZPMrPnrOGpV0eFUHWkd449g99S98LQQymC36s21ZuGpg0/H5aRDVOg1uAatLCdTt3EMhRTFTCCXaVmi3xdaoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uiHOQnR6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C772C4CEF1;
+	Fri, 12 Sep 2025 17:04:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757696684;
+	bh=o/2riuH6Vl3CWoq2pt1e4/nCTOT1wbTb7SSUZSgH3Ig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uiHOQnR6jtwNSiM7Zgds4T97jwn0xtaOY0I9LZbHyMiOIHh1hJmzPUsrkoiZeTxia
+	 UFwpINRFCpk+Ssgo9toZtf6Fdcn6sgDHaiUPp3Bsr9wR2UrLzbEI2zWSfGiGJqlESy
+	 piJZqYUzM0CQXuvRN57AOUFvIQvxGgbzAZeauZ/dM7zR2uZH91PI3K4pLFHJuQz8b2
+	 QjR3TC73StyV+07d1eP6cuiJoDZifFJOolBnwstZQAJ0MfXBq26x5qFXBgfhtH0ZuJ
+	 7Rnv8fBMk2U+xhyJ3ulhbMngGGHULv15GVEKAT4MmOhvOEEGpopbkn0+TrP/SPsHET
+	 pOCklBmRHASOA==
+Date: Fri, 12 Sep 2025 19:04:39 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+	Roderick Colenbrander <thunderbird2k@gmail.com>, Roderick Colenbrander <roderick.colenbrander@sony.com>, 
+	Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/11] HID: playstation: Add support for audio jack
+ handling on DualSense
+Message-ID: <4yeyp7a2vn67qeclcn3kbzdaxltg4roct3wjvt4fsarjseuidf@zxzt6nftohtl>
+References: <74d4675d-d6f5-41ed-b715-f62fb569df5d@collabora.com>
+ <CAEc3jaAFV_PXdFAX9th4-hhKNAhBKdVCNP+Qf8nH=g8FwoCabQ@mail.gmail.com>
+ <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
+ <CAEc3jaD8tUNW6hkPHDp=iGmdwD5m3uKg0vNtyZr-u1mmPSAkVQ@mail.gmail.com>
+ <ab1c06b1-9b79-426a-a43b-cf5a89688770@collabora.com>
+ <CAEc3jaDsX8OSVskO6-Rsvn12BbV2-8ZjhV+tPaRpu9Nai3czEg@mail.gmail.com>
+ <8f7242f0-c217-47e4-ad88-fc1481ca936f@collabora.com>
+ <c6a16e71-e431-47dd-a3d1-6a79fd7e4a37@collabora.com>
+ <r8qr0nrn-0n5r-6r96-7p26-q22ns73484np@xreary.bet>
+ <s3tus6usbokl5hpwlbzbxfqdqwnyxqqnjiwhzdbd5obvfxavvf@cwopa6fpjctb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250912-drm-bridge-debugfs-removed-v8-3-5c33d87ccb55@bootlin.com>
-References: <20250912-drm-bridge-debugfs-removed-v8-0-5c33d87ccb55@bootlin.com>
-In-Reply-To: <20250912-drm-bridge-debugfs-removed-v8-0-5c33d87ccb55@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <s3tus6usbokl5hpwlbzbxfqdqwnyxqqnjiwhzdbd5obvfxavvf@cwopa6fpjctb>
 
-The role of drm_bridge_add/remove() is more complex now after having added
-the lingering list. Update the kdoc accordingly.
+On Sep 12 2025, Benjamin Tissoires wrote:
+> On Sep 12 2025, Jiri Kosina wrote:
+> > On Wed, 27 Aug 2025, Cristian Ciocaltea wrote:
+> > 
+> > > It's been over a month now since this was kind of blocked without any clear
+> > > reason, and by the end of next week I'll be on leave, which means we're
+> > > close to missing the merge window once again.
+> > > 
+> > > Considering the counterpart quirk in the generic USB audio driver has been
+> > > already merged since v6.17, I kindly ask for your support in getting this
+> > > into v6.18.
+> > 
+> > Roderick, do you have any word on this, please?
+> 
+> If this can help moving forward:
+> Patches 1-9 are:
+> Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
+> and can be merged right away
 
-Also stop mentioning the global list(s) in the first line of the docs: the
-most important thing to mention here is that bridges are registered and
-deregistered, lists are just the type of container used to implement such
-(de)registration.
+Also, to add a little bit more of confidence, I've just ran the
+test_sony.py regression tests on the full series and no regressions have
+been detected. (those will be run anyway after the series is accepted)
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+It would be nice to have new tests for this feature but I'm not sure
+it'll be easy to add given that we are talking about new interaction
+with other parts of the kernel.
 
----
 
-Changes in v8:
-- extracted to an ad-hoc patch from the v7 patch "drm/bridge: add list of
-  removed refcounted bridges"
----
- drivers/gpu/drm/drm_bridge.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index fccc42017fd4df6ecfb596325df2dc4d17566f39..9a3db8f5adc8a4d1265679335d7b05d0705194b7 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -296,10 +296,13 @@ void *__devm_drm_bridge_alloc(struct device *dev, size_t size, size_t offset,
- EXPORT_SYMBOL(__devm_drm_bridge_alloc);
- 
- /**
-- * drm_bridge_add - add the given bridge to the global bridge list
-+ * drm_bridge_add - register a bridge
-  *
-  * @bridge: bridge control structure
-  *
-+ * Add the given bridge to the global list of bridges, where they can be
-+ * found by users via of_drm_find_bridge().
-+ *
-  * The bridge to be added must have been allocated by
-  * devm_drm_bridge_alloc().
-  */
-@@ -360,9 +363,14 @@ int devm_drm_bridge_add(struct device *dev, struct drm_bridge *bridge)
- EXPORT_SYMBOL(devm_drm_bridge_add);
- 
- /**
-- * drm_bridge_remove - remove the given bridge from the global bridge list
-+ * drm_bridge_remove - unregister a bridge
-  *
-  * @bridge: bridge control structure
-+ *
-+ * Remove the given bridge from the global list of registered bridges, so
-+ * it won't be found by users via of_drm_find_bridge(), and add it to the
-+ * lingering bridge list, to keep track of it until its allocated memory is
-+ * eventually freed.
-  */
- void drm_bridge_remove(struct drm_bridge *bridge)
- {
-
--- 
-2.51.0
-
+Cheers,
+Benjamin
 
