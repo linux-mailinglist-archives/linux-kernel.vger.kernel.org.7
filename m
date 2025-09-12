@@ -1,121 +1,135 @@
-Return-Path: <linux-kernel+bounces-814213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A9D1B550DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:20:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55047B55127
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36ECB1CC1F5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573B55A7864
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6FE3101BF;
-	Fri, 12 Sep 2025 14:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qifY4tvr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C45D3148CB;
+	Fri, 12 Sep 2025 14:21:34 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5AF430F7F1;
-	Fri, 12 Sep 2025 14:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A531A058;
+	Fri, 12 Sep 2025 14:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686797; cv=none; b=tfKBMEixho3dQGhS7XDsLi/VZuRMkhDHAIoLMmgQCcj61L8HiVSi1vNNarnJf5/hL9meBfaJpX+zceEbeWdGHBI44tW1q4vADzSRgPrmx2O/lUuYgdY9xJcwFTQdJRqjp9qlukftK2lk/kQeYqZifONa33Ct+9TGZSv3ZlVOPRg=
+	t=1757686894; cv=none; b=TuNasoTZ36y5GL3OSaiMNhOPYAv+fu5rlRJLdSbfQH2TbNi1CdDv3J80hJBdTAj5XMQESwkeah24LIed2p+Nlwt6sPiT7IZZpcLkCa3Fq4AXGs0+okGFTB/tIMl6V/8kF8muiuyQNLLbcTV2RCmhxngdIRl24OZl/KR/NfUmHZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686797; c=relaxed/simple;
-	bh=QUXMDuE3Ma8vzkfL39l7mfcOIc9ESGxGFxKoLdVbTlI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JTmff/ZtevJunoI3OWS5AeWHPrFcysk7cz8P87pyibpBaAP3fiOYVI/BDLYwG5etzGSmgOSuk7WbOzYKyAbKAMa/RHphe5bLK+Wl4uP64H4+jqtgyCAIjY1TK61oLFBLZDEIAGpsrsA1Glk40lyMIcSI36XabL3vW3Pj2wIW/Qw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qifY4tvr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E5C9C4CEF1;
-	Fri, 12 Sep 2025 14:19:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757686797;
-	bh=QUXMDuE3Ma8vzkfL39l7mfcOIc9ESGxGFxKoLdVbTlI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qifY4tvrygTbEUbLIGH9VKd+sDejOP9hpbjxum/qvmX3uToUvzPp70EeOvzboI6vF
-	 9QZ9ZpbFLCV8wZ1zcaWvhFV9IdXwpUytbw4/1GDhVgv8h7K44wl+W6wCQEV5Ar8v7m
-	 tCzWz7iaNyBIHENrafq83PdfD87AxpM4olJy7VQM=
-Date: Fri, 12 Sep 2025 16:19:53 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Tzung-Bi Shih <tzungbi@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
-Message-ID: <2025091220-private-verse-d979@gregkh>
-References: <20250912081718.3827390-1-tzungbi@kernel.org>
- <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
- <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
- <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
- <20250912132656.GC31682@pendragon.ideasonboard.com>
- <2025091209-curfew-safari-f6e0@gregkh>
- <CAMRc=MfdoB50o=3Q2p94o+f7S2Bzr=TAtWWQcDrC5Wf3Q5nqAA@mail.gmail.com>
- <20250912135916.GF31682@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1757686894; c=relaxed/simple;
+	bh=qXqoxJcbp+qncwtNqhJPGBaUzokhKiJrHtbDDy4M3JM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uWlFgqCZ6WRGPRDw8FGzTrIuMq+YWYMwHAlkzfLcWqQVwa3rW0inq5976nNCrWh5t3OOXUQ8l86ttjVuMwrbmavxBDIr0xzyzV4ASeycbfSnJuq/UTxFxfhPRedgMw9e7Wo8bcUN1+WCBLh7TUeiGaYMtlU+Mbu2VF8snGt1m/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNc3r34N7z6M53c;
+	Fri, 12 Sep 2025 22:18:48 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id DCED51404D8;
+	Fri, 12 Sep 2025 22:21:29 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
+ 2025 16:21:28 +0200
+Date: Fri, 12 Sep 2025 15:21:27 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+CC: Andy Shevchenko <andy.shevchenko@gmail.com>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, David Lechner <dlechner@baylibre.com>,
+	<jic23@kernel.org>, <nuno.sa@analog.com>, <andy@kernel.org>,
+	<robh@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
+	<linux-iio@vger.kernel.org>, <s32@nxp.com>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <chester62515@gmail.com>, <mbrugger@suse.com>,
+	<ghennadi.procopciuc@oss.nxp.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+Message-ID: <20250912152127.000039fe@huawei.com>
+In-Reply-To: <5e279cf72409504861c80bb4d2e4e5f6bc59d94c.camel@gmail.com>
+References: <20250910155759.75380-1-daniel.lezcano@linaro.org>
+	<20250910155759.75380-3-daniel.lezcano@linaro.org>
+	<d53b22d1-35d6-4fb8-ae56-3ba4953b64af@baylibre.com>
+	<ea57a466-97b3-49d4-8d1c-142fd49a0da2@linaro.org>
+	<CAHp75Vc8u2N2AHWtnPRmRXWKN3u8Qi=yvx5afbFh4NLNb8-y9A@mail.gmail.com>
+	<5e279cf72409504861c80bb4d2e4e5f6bc59d94c.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250912135916.GF31682@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Sep 12, 2025 at 04:59:16PM +0300, Laurent Pinchart wrote:
-> On Fri, Sep 12, 2025 at 03:46:27PM +0200, Bartosz Golaszewski wrote:
-> > On Fri, Sep 12, 2025 at 3:39 PM Greg Kroah-Hartman wrote:
-> > >
-> > > I have no objection moving this to the cdev api, BUT given that 'struct
-> > > cdev' is embedded everywhere, I don't think it's going to be a simple
-> > > task, but rather have to be done one-driver-at-a-time like the patch in
-> > > this series does it.
-> > 
-> > I don't think cdev is the right place for this as user-space keeping a
-> > reference to a file-descriptor whose "backend" disappeared is not the
-> > only possible problem. We can easily create a use-case of a USB I2C
-> > expander being used by some in-kernel consumer and then unplugged.
-> > This has nothing to do with the character device. I believe the
-> > sub-system level is the right place for this and every driver
-> > subsystem would have to integrate it separately, taking its various
-> > quirks into account.
-> 
-> That's why I mentioned in-kernel users previously. Drivers routinely
-> acquire resources provided by other drivers, and having a way to revoke
-> those is needed.
-> 
-> It is a different but related problem compared to userspace racing with
-> .remove(). Could we solve both using the same backend concepts ?
-> Perhaps, time will tell, and if that works nicely, great. But we still
-> have lots of drivers exposing character devices to userspace (usually
-> through a subsystem-specific API, drivers that create a cdev manually
-> are the minority). That problem is in my opinion more urgent than
-> handling the removal of in-kernel resources, because it's more common,
-> and is easily triggerable by userspace. The good news is that it should
-> also be simpler to solve, we should be able to address the enter/exit
-> part entirely in cdev, and limit the changes to drivers in .remove() to
-> the strict minimum.
-> 
-> What I'd like to see is if the proposed implementation of revocable
-> resources can be used as a building block to fix the cdev issue. If it
-> ca, great, let's solve it then. If it can't, that's still fine, it will
-> still be useful for in-kernel resources, even if we need a different
-> implementation for cdev.
+On Fri, 12 Sep 2025 09:19:43 +0100
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Patch 5/5 in this series does just this for a specific use of a cdev in
-the driver.  Is that what you are looking for?
+> On Fri, 2025-09-12 at 08:38 +0300, Andy Shevchenko wrote:
+> > On Fri, Sep 12, 2025 at 2:03=E2=80=AFAM Daniel Lezcano
+> > <daniel.lezcano@linaro.org> wrote: =20
+> > > On 11/09/2025 22:10, David Lechner wrote: =20
+> > > > On 9/10/25 10:57 AM, Daniel Lezcano wrote: =20
+> >=20
+> > [ ... ]
+> >  =20
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 /* iio_push_to_buffers_with_timestamp should not be called
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 * with dma_samples as parameter. The samples will be
+> > > > > smashed
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 * if timestamp is enabled.
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 */ =20
+> >=20
+> > /*
+> > =C2=A0* Btw, comment style for multi-line
+> > =C2=A0* comments is wrong for this subsystem.
+> > =C2=A0* Use this as an example, Also, refer to
+> > =C2=A0* the function as func(), i.e. mind the parentheses.
+> > =C2=A0*/
+> >  =20
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 timestamp =3D iio_get_time_ns(indio_dev);
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 ret =3D iio_push_to_buffers_with_timestamp(indio_dev,
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 info->buffer,
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 timestamp); =20
+> > > >=20
+> > > > Is it OK to call this with spinlock held? It looks like it can call
+> > > > devm_krealloc() which may sleep. =20
+> > >=20
+> > > It should be ok, devm_krealloc is in the code path of
+> > > iio_push_to_buffers_with_ts_unaligned(), not in
+> > > iio_push_to_buffers_with_timestamp() =20
+> >=20
+> > This is a good observation, can we document this in the respective
+> > kernel-doc:s please? Also add might_sleep().might_sleep_if() in the
+> > appropriate functions. =20
+>=20
+> That's a good idea!
 
-thanks,
+Agreed. I'd forgotten that hidden allocation was there in the unaligned()
+variant.  A might_sleep() seems wise.
 
-greg k-h
+>=20
+> - Nuno S=C3=A1
+
 
