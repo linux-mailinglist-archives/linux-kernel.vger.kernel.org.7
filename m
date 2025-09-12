@@ -1,131 +1,99 @@
-Return-Path: <linux-kernel+bounces-813004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FA0B53F84
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:39:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ACF4B53F87
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C2D31C87860
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:39:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48F2A1CC1F98
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39591DA55;
-	Fri, 12 Sep 2025 00:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB6A1DA55;
+	Fri, 12 Sep 2025 00:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IlRtv3zL"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LYYY9GLX"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF964C6E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98CE2DC775
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757637546; cv=none; b=nrvEyDTO1fv+ayqYvub29m8KmSei3ls1i7RNo+Jb9uXEA41tc0Jr/+O7OQOEuJmY4/HcQVdtjioG3u98wjCtFVJbCoPbkvh57tzyAlk+Ex9XgDABVSBm0742p+K+Or4Hfg2P/Vu4WC5J1p7BOjoA4s5ctvLtdbJYIkPXd5cv6Ic=
+	t=1757637925; cv=none; b=C9/TtG7oPAU/17z99yDD0oXq0PY0R9oKZTH3+NlDN7H59jAwdPq9CMFn4jOoOYOIgaBBWV/TIxoq5vIwsLtvHOwd/4vO135/KHu5D1XRn5FIwUMMaCN1BFmVuljlPmn1mCs9T1SJy3uJb5/pMg0+DX+gER/xmT0AYi9D79cDnyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757637546; c=relaxed/simple;
-	bh=2VWetjtrxig8JtjKnKwnv3PUIASCuozn6yIHaW6gzMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1k5J6Te/2kLX8xOCjCRZLV+RaxuUIGTUsFSqNjH5G140eRChreSexrOZy8O538MjZBZmE9F8wJIreTTKVCV9L/PLjku/+I3xtaTWk6Zy0lHfuO6Me/bRiTSizxe/S3SwQYXa6NnXAzW1T+JeEsquJXHEyiZgmHVKLMelfriY3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IlRtv3zL; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-32bb1132c11so1848418a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1757637544; x=1758242344; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pygF7jfRzgyoJR+RbnAP81gGP/4eRj7+xtnD/Gk+w+8=;
-        b=IlRtv3zL5X+vFy69DRsWKa/CG2EAq4W6LgBYA8nRLduco7PW/3Cu66Q+54JbvnoncE
-         zDbgIR48JD0akO9MuVc7EFpQOKqpRDJmqyCqFKdD4VgfLgQ7hyuphrjVGc5x5BdhqzJ5
-         MMT2tnOkyd60oJu7XsuaIK3HQpb1pENRZ1he0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757637544; x=1758242344;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pygF7jfRzgyoJR+RbnAP81gGP/4eRj7+xtnD/Gk+w+8=;
-        b=rTUXh5ye2mse64vFUQgSpXfmxZpwnGN7YPzQO0oU3Leh0hohHGog+fyREEbo9K9U29
-         XyhlFm9Ymyk5yMo5Yu7GjfZOxg/zc7i0XeFArqstpv+1u3jpapTMn1rDReYvFCcQ82KI
-         XHc8jB6eQ2WqttRA7wzWPbNaORC6icKjwxhn7pkPet9jfFxGSow+wkF4lD9JNuumK0J4
-         GiKNZTsm7Ysp6RxT9NitnWlrb4WT9U3VjYArXyVfRsFysArHrHW0K6P8ZiRiKej31TMG
-         zyykrMgKfyBcUbh6OXT1nxsobiE6MrfvT+X1xQphKa/G49X/TXuLk5n0DCIIG3Qkm8tP
-         4LIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxjesAqgh+9zbndGIANshmXyco+SGzIQZwF/2TsHPoP+9va8YqFuzHhMCZ97OAL8cQrOT2YpDxNyDdXVM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPHf+Xsflb7dL1rqHJ8AC15NbYBwF52aXMq25RFPn6kXzHwrWO
-	biQD6B6EONa3tY2h8ZwqHFzXYblgWn0GjtachnmvLTeeH+3BdaZr7AOfpSdIJup21g==
-X-Gm-Gg: ASbGncuHADRtd7SAtqpi7zTt2apE7VT3cVa68BA6G9Wmbv6kOnx+KsuVhSvE9uz/ARe
-	eCZUq1cyMgDODwSdgQ50SRfz/UFmzze9YRpxl4JV5AJnzSmRo9Rb7AG9xAuycibAB/8lgcAli0h
-	2A3IRjowsTnEjxMxafLpGVMWWtmztyOPVzuckFPMzu89prnkqPg0xaxAuAlYaN5Yrhztc8ZmtT0
-	DQ+8K2dBce7WTx05TY7FHk+Ehtg11q7Rx/3XwySNs/V/dRrnGQ5nYaeU5ZAcu9nbZQGAWm/HWZQ
-	qym30N1U0SrVaTtsrree5vkUNbsM/hMlR7pW274UfUMvyqEvoqJCFfWluPqlzECunH/sRVUBWIY
-	J4coBmLUinbbEMXHwP1X38MfsIw==
-X-Google-Smtp-Source: AGHT+IHzT3QQNVRvVSz0tE7xG6V0WgOvZURC67BN1xRkbpT5lpSEH+gWhcZm+P+aIDdhInHKfnPrvA==
-X-Received: by 2002:a17:90b:582c:b0:32c:7693:1138 with SMTP id 98e67ed59e1d1-32dd1dd8939mr4799954a91.14.1757637544012;
-        Thu, 11 Sep 2025 17:39:04 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:d93f:86ed:f2c4:218c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760793b5fasm3501595b3a.16.2025.09.11.17.39.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 17:39:03 -0700 (PDT)
-Date: Fri, 12 Sep 2025 09:38:58 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter <cl@gentwo.org>, 
-	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, maple-tree@lists.infradead.org
-Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching
- kfree_rcu() operations
-Message-ID: <iycnfietmsgggxcdjuqngjuzbuygsxfpvkcz2fwm4frdxin42u@pxhmqcgejnov>
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
- <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
+	s=arc-20240116; t=1757637925; c=relaxed/simple;
+	bh=N2KvqxgWUs/wg+MafUANSGwGiGCJSSdGkR7hHBbj0pU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Q8Ue8SBtmJexdoHs2Fz+61tUyw8Y4Dnc06lzeDsPyUTM3WjZyXyeV0dcc6M2cfa0oN3J58ynHLtyI0FRO+4WAYfyD7acEpZuMIMi3bMqOz0SbBTWUR8fqJawZp2KmlysD8vH+61vK3zVnz8/JdydfU7j5c272sdF5xet34TU6Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LYYY9GLX; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757637920;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jq5/1lU7TdxI8VO7geJyzqTN6wUTtUvTydZaERif2Xw=;
+	b=LYYY9GLX5ATmIJlxmSEyP+zTgQk56leFjskNTLkoZ9ssAQlPQzEx7om2kO5FcIwwEFGk8s
+	cKoXUz9odmJp9Zr2ZXyJjY4QJW1S0BP/k5CRRVCFr6thWG66t7Q6T7f+9LjfYQqcK5MzGb
+	Qh3bo77aptae6xXLK1nT7pG7DiPLwEw=
+From: Tiwei Bie <tiwei.bie@linux.dev>
+To: johannes@sipsolutions.net
+Cc: richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	benjamin@sipsolutions.net,
+	arnd@arndb.de,
+	linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tiwei.btw@antgroup.com,
+	tiwei.bie@linux.dev
+Subject: Re: [PATCH v2 08/10] um: Add initial SMP support
+Date: Fri, 12 Sep 2025 08:45:01 +0800
+Message-Id: <20250912004501.2565976-1-tiwei.bie@linux.dev>
+In-Reply-To: <03cb4661a6135a641c5a3779f2cb424356b8e345.camel@sipsolutions.net>
+References: <03cb4661a6135a641c5a3779f2cb424356b8e345.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Vlastimil,
+On Thu, 11 Sep 2025 11:32:56 +0200, Johannes Berg wrote:
+> On Sun, 2025-08-10 at 13:51 +0800, Tiwei Bie wrote:
+> > From: Tiwei Bie <tiwei.btw@antgroup.com>
+> > 
+> > Add initial symmetric multi-processing (SMP) support to UML. With
+> > this support enabled, users can tell UML to start multiple virtual
+> > processors, each represented as a separate host thread.
+> > 
+> > In UML, kthreads and normal threads (when running in kernel mode)
+> > can be scheduled and executed simultaneously on different virtual
+> > processors. However, the userspace code of normal threads still
+> > runs within their respective single-threaded stubs.
+> > 
+> > That is, SMP support is currently available both within the kernel
+> > and across different processes, but still remains limited within
+> > threads of the same process in userspace.
+> 
+> Another thing that isn't covered is anything relating to interrupt
+> affinity, I guess? Is that automatically not working, or will it look
+> like you can change things but that not do anything?
+> 
+> I don't think it's important now (though eventually I would actually
+> like to have it for our simulations), but was just thinking about it.
 
-On (25/09/10 10:01), Vlastimil Babka wrote:
-[..]
-> +
-> +	if (rcu_free)
-> +		call_rcu(&rcu_free->rcu_head, rcu_free_sheaf_nobarn);
-> +}
-> +
-> +
-> +/* needed for kvfree_rcu_barrier() */
-> +void flush_all_rcu_sheaves()
-> +{
+Currently, our irq_chips haven't implemented the irq_set_affinity
+method, so setting IRQ affinity is not supported at the moment, e.g.,
+attempting to set affinity through /proc/irq/IRQ#/smp_affinity will
+fail with EPERM. And yeah, we should support it eventually. :)
 
-mm/slub.c:3960:27: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
- 3960 | void flush_all_rcu_sheaves()
-      |                           ^
-      |                            void
-
----
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 11ad4173e2f2..a1eae71a0f8c 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -3955,9 +3955,8 @@ static void flush_rcu_sheaf(struct work_struct *w)
- 		call_rcu(&rcu_free->rcu_head, rcu_free_sheaf_nobarn);
- }
- 
--
- /* needed for kvfree_rcu_barrier() */
--void flush_all_rcu_sheaves()
-+void flush_all_rcu_sheaves(void)
- {
- 	struct slub_percpu_sheaves *pcs;
- 	struct slub_flush_work *sfw;
+Regards,
+Tiwei
 
