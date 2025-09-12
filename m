@@ -1,123 +1,79 @@
-Return-Path: <linux-kernel+bounces-813651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 375D8B548D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:09:38 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B130B548D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823EDAA516B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:09:19 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 14D064E026D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724502E0413;
-	Fri, 12 Sep 2025 10:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A292DFA32;
+	Fri, 12 Sep 2025 10:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ILF+4k1l"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hwGq0ebk"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B18123C513;
-	Fri, 12 Sep 2025 10:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7411114
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757671745; cv=none; b=VRIalcQpI5d3VcKhj2W5NNhmKKNiqyPjNVu0ItzeDSPTcV2ypSCE6r0C3aIMWbtjZMUw7zDfdwyk2yWaivpV8USBMQCCY+/ljQmtv2n6Wzi19jOGTgLhfa+TlWEcRUF1VJtR11WogStOxJh5ZW3fa3ZqsOY3klKGr4RcpUn8rck=
+	t=1757671801; cv=none; b=XgayZPjs8McSBCHQbp2GIrmB+6pl5BDqMdr1nQSdzurCIxokJRJ+H9RzKrcpofT/bq5Pko4yxc4f3+96WAETiqucPj9WSQrT3QvN0pcyn8mI8BwEkzyCAO4pEi+xIr/eejgS17NyG3m+w5iWbjXS7ojhz1oGAa3Sl2Cw5n+bfqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757671745; c=relaxed/simple;
-	bh=oOGKu5RrTwNZiSl9cE7/ZL75AiB/oPFcQZTrU6IP0Hk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fJ+P3DpBvoT/iN/8f7fLwPS2uDz4YHYO3Gp0t7SJLhqX+jp7+6LnyavAQZ5DIYpGZSK3OPZw59fP/lftVZZEphrGAVXphdiBlOussWA9f06L6uwCRJ7ReyLQeBiGUPOX6/onHNB2t5s6fjZHMW6Nj4VTcbWbUeoXNmobvayM9Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ILF+4k1l; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oy
-	u7BW8V2JIsKMsTCJkb2DN0ZU7uiiP0XMLRvwlY21I=; b=ILF+4k1lDZDqEx5DaI
-	CBihxPkyeXdYsrzVmRf7O4ZBH+MbdlwOS7QyMzheQVkMN/Yiq3nsC4PjZdJQ7eL3
-	9NeuSu5/w4f3skWidxsvXanfwbiJOwl27t0xhKpECjwaTlCbtQaN/+k+pE1pFlDs
-	rhKRyA0ewyh8bA/fCMvqKNGjs=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp5 (Coremail) with SMTP id QCgvCgDHcr8d8cNoME_RCg--.64198S2;
-	Fri, 12 Sep 2025 18:08:31 +0800 (CST)
-From: Slark Xiao <slark_xiao@163.com>
-To: mani@kernel.org
-Cc: mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: [PATCH] bus: mhi: host: Update session id for each suspend and resume
-Date: Fri, 12 Sep 2025 18:08:27 +0800
-Message-Id: <20250912100827.294443-1-slark_xiao@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1757671801; c=relaxed/simple;
+	bh=p/25+iTnLf2/5ri1w9iLBubRClgO3AP4oUzybDOKHc0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=VIbSsm1quyiLHeFEHQ1a67Jxiynvzsq8YnraH71+GokDvKZr9usQswgU3+yjLnGoYYF7Xxj0ZkrJKJL8h8rr2Bk7/kYcHsYmhgX85taNtuDuFjWlmTaiJUmRJFViaw9r+kNSnCfBT0M2DY59zVob48mjFYSY/Z/VZQVtVnYqGB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hwGq0ebk; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757671797;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p/25+iTnLf2/5ri1w9iLBubRClgO3AP4oUzybDOKHc0=;
+	b=hwGq0ebk3CVNFcN2BcdyG7Fa1F0iCYTbTIvnZ5McIZ1jFAI35f2GtUrK1Sb7uRH3g+G1fD
+	0JELGOI63B16qvvcSqLxjvkDX1w4w9TyMufglQg3K7XOmKx1HAwVgZob4124rJ8PaaDBPX
+	GXMlKfkn94rb0TyhlfXvF0Zv6P2lmrY=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:QCgvCgDHcr8d8cNoME_RCg--.64198S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7CFyDZFW8XF1UXrW8Cw1xXwb_yoW8tr17pF
-	s0grW3Wr4Fq3y7Cr1xta4xZrW5KwsavFWkGF9rKw1a9anIyFyvkF1kKFyrX39IkryDGa1F
-	kr4UX3yDGa1qyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piw0ekUUUUU=
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiJQfGZGjD8NIHzQAAsD
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] s390/hypfs_sprp: Replace kzalloc() + copy_from_user()
+ with memdup_user()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <20250912095620.10147A01-hca@linux.ibm.com>
+Date: Fri, 12 Sep 2025 12:09:43 +0200
+Cc: Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ linux-s390@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <D56B6A09-8633-402D-A942-1C24AE465AC8@linux.dev>
+References: <20250911214539.1483234-2-thorsten.blum@linux.dev>
+ <20250912095620.10147A01-hca@linux.ibm.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Qualcomm module side, there is a UART print as below:
-session id: 0x355fe689 state:2
-session id: 0x1f478e42 state:5
-The session id reads from register BHI_IMGTXDB(0x218), and the
-state indicates the D3 or D0 state.
+On 12. Sep 2025, at 11:56, Heiko Carstens wrote:
+> This is not an improvement and also incorrect, since kfree() may now
+> be called with an error pointer.
 
-In Windows side, MHI driver would update this session id for each
-suspend/resume progress. We benefit from this mechanism since it
-could help sync each suspend and resume progress between host and
-device, especially for some suspend issue which needs to take
-hundreds or thousands cycle. We can easy to figure out which
-suspend cycle get a problem and what's happened at that time for
-both host and device because they have same id.
+Unless I'm missing something, kfree() works just fine with error
+pointers. See linux/slab.h:
 
-But in Linux side, this session id value would always be 0x0.
-So we add it for potential debug usage.
-
-Signed-off-by: Slark Xiao <slark_xiao@163.com>
----
- drivers/bus/mhi/host/pm.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
-index 33d92bf2fc3e..a6573f687363 100644
---- a/drivers/bus/mhi/host/pm.c
-+++ b/drivers/bus/mhi/host/pm.c
-@@ -864,6 +864,13 @@ int mhi_pm_suspend(struct mhi_controller *mhi_cntrl)
- 	struct device *dev = &mhi_cntrl->mhi_dev->dev;
- 	enum mhi_pm_state new_state;
- 	int ret;
-+	void __iomem *base = mhi_cntrl->bhi;
-+	u32 session_id;
-+
-+	session_id = MHI_RANDOM_U32_NONZERO(BHI_TXDB_SEQNUM_BMSK);
-+	dev_dbg(dev, "Starting enter suspend, session id: 0x%x\n",
-+		session_id);
-+	mhi_write_reg(mhi_cntrl, base, BHI_IMGTXDB, session_id);
- 
- 	if (mhi_cntrl->pm_state == MHI_PM_DISABLE)
- 		return -EINVAL;
-@@ -952,6 +959,14 @@ static int __mhi_pm_resume(struct mhi_controller *mhi_cntrl, bool force)
- 	struct device *dev = &mhi_cntrl->mhi_dev->dev;
- 	enum mhi_pm_state cur_state;
- 	int ret;
-+	void __iomem *base = mhi_cntrl->bhi;
-+	u32 session_id;
-+
-+	session_id = MHI_RANDOM_U32_NONZERO(BHI_TXDB_SEQNUM_BMSK);
-+	dev_dbg(dev, "Starting enter resume, session id: 0x%x\n",
-+		session_id);
-+
-+	mhi_write_reg(mhi_cntrl, base, BHI_IMGTXDB, session_id);
- 
- 	dev_dbg(dev, "Entered with PM state: %s, MHI state: %s\n",
- 		to_mhi_pm_state_str(mhi_cntrl->pm_state),
--- 
-2.25.1
+DEFINE_FREE(kfree, void *, if (!IS_ERR_OR_NULL(_T)) kfree(_T))
 
 
