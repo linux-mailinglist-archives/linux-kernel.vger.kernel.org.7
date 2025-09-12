@@ -1,175 +1,142 @@
-Return-Path: <linux-kernel+bounces-814363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 731CEB552EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:15:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BEB1B552AE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355BF5C345D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:15:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B959AA089AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F1232CF79;
-	Fri, 12 Sep 2025 15:11:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VjAiS8Xg"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB595317708
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2724E2264CD;
+	Fri, 12 Sep 2025 15:09:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE0428373;
+	Fri, 12 Sep 2025 15:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689876; cv=none; b=ZTEdqZLYW3ibibKQATkteG9uyS8Jt2fItG03A9FSaTe9MJ7DHSXntGef47NF9rbwblyYb3qp3gTwVga/Kqf+Y14YMs5FMWf5JnmyHbm/gk7SJdVxnpNZHqnsXdgsLRFW98E8Ib2WCrTzQByQMRUU1MZp15s/4BfRNk4KOzrbzyQ=
+	t=1757689745; cv=none; b=KoG2FGPh9n4TZ0oK3/gkl4BxI/evb3O28y2Mqu5HzUaxrxFVbs7piA5Vwg1+tYqkMNLo0hL0mdK/Z5E+In9zo3Tx2rEC4XYSAvukhyOAtMbJ5vXLrcGzG6Ht5UbXsNkdmFXHvBNaR6dfCVteOOtfNS48niqR7cfXhXKwsADL3Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689876; c=relaxed/simple;
-	bh=SaxLNwPjG7byVt6l+p6cg0if9w4/pkHze4tv4MutSeU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BhP4pnZIdgwam4gNKqP2TgDbZN5ikt2q0bLqGDVpsIF+rbwHx1d3nc/qjXOfP4KG6N1xYZREOinHaGy1H+VRrKi8//d6ZQD5j7Ai+HKoSy2G1NHReZ+g6sne/8knLStm51YOlhqZmf6UTmyDCrFg4Eq4kCrImmxEGWyfm5kSlKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VjAiS8Xg; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-724b9ba77d5so20276277b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757689873; x=1758294673; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CNs2h9oqVJ2U55pyNU2xzrbkzs9MTq1sjEL+cOU6gkc=;
-        b=VjAiS8XgtXdzKrUmMwBmLiNbs2EgyM6GmNxbpZai9EZhieVl9fu/1Lp4nbNLwhvzQP
-         8wpPed/SEK5/wi4s35QCMhrNkKEf10JMs8CtILbmBESRW3ZP/etDBFt96wyMychc1chG
-         LcNRs6mLqth8+U9L6omrCfSmW8im4VbBEmJ6MMRLry8tpYVlbhRWTxEq7LPyjHELgiw5
-         QRzsqRBxeqV3e8otKZ9yXyOD3u8wAynvR1NKs5e84W5emwdpMIGepeUzlrRa/PmIBtR1
-         ExuSg/Tt3vScbYc6rEbzRSa8Mh4Me1W17/K4p7HAaaILzo0WrdPPG/tKMKEF6/rhqLCx
-         SX9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757689873; x=1758294673;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CNs2h9oqVJ2U55pyNU2xzrbkzs9MTq1sjEL+cOU6gkc=;
-        b=fsaYmBOutJdoTKCbdPlXIoysNECFqyst0EeGhAsI2e1YxaNwznrqd/bzzqn7MvaccM
-         Qk+OqIzIzENr1k/Hb+HG/2IfgyiE4AiE4DIEFrcfFO8HKS/pcqckv1c1s/VdPKMKR9of
-         95EDh+56TTauPpNunYwHXd3FomcmLGwQlVilj0J6W/A/KzSX2/oLavFYZvQLZ+xfrOAi
-         hH9QraugrTraNULjpLr5lld/5mqgpl0q23gKjRW9ImGjdrWeUCu+BsRu2lGwNCrm0zKm
-         T5Xw7oh3bmRK3f2ss+2pBWCaSVRGlGydpxE0ctYD5/ypQOGqPZX1mXdqci06g4pzTBGN
-         MQjA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgCJdhN6YbVFh+99kINLZahiFkBTQ621szfH2OwZwJkZrZvLMPkCMbb0OZgHWPMIFCadwR372f/KYkN5Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI2vYc8ZQJ1RSpXpPzoU1shpyH9UI+I1XmcqtqcWLhGMYbMRYz
-	NEOj6B9xgpzbWvdd2NdopsKIjon5brwECv5N0TG5WitxRkgJsNX3nN7sMT+jBkzTuaA=
-X-Gm-Gg: ASbGncsq3V88PZybT2WStHqQ5RUglsAN/L5BnJf0X9lMl4ANasp5gDKH+gfD2DkDJ3W
-	5bkZwU8rlTcBnkLrnVWMrdfRwyD+p29klo0Y9eUSbAAgbVO1mQlyESwiJsE5xvKDl40tM6mgB92
-	t9/UyPEPHlO/lqw4D8+8r8sUUMOvX4qqbxt4XuFGn6MR66MH2KxsdkCi3r+BTLuJMzOwhWPFxGr
-	N7/8W1gCxu51WXSzTFS13vtyKZ+UB9M4rPNUvoZiayH//LhvDMaNgywsE1yCBQTlARz0FiZdowR
-	D8eQCzhtTxg5pYglE1wh55A7OUWxZ9lwBEOvRavi7EBtl7rIn4H7i37hAbW3zgSo9tss+7JnNsn
-	N+iDplYUVJ8aluGRMbpwvM5N4BzeOm/4TkA==
-X-Google-Smtp-Source: AGHT+IEpiP8vlE6JAkelU9ryV0aqgK+NNUoCmR9E9pT/XsbUls6aw+6SDhLPMx2e7d1wIx+kCxhExw==
-X-Received: by 2002:a05:690c:4a0a:b0:71c:1754:2696 with SMTP id 00721157ae682-730659ba7ecmr33141997b3.36.1757689872581;
-        Fri, 12 Sep 2025 08:11:12 -0700 (PDT)
-Received: from eugen-station.. ([145.224.119.89])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-624841586c1sm1302244d50.6.2025.09.12.08.11.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 08:11:12 -0700 (PDT)
-From: Eugen Hristev <eugen.hristev@linaro.org>
-To: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	tglx@linutronix.de,
-	andersson@kernel.org,
-	pmladek@suse.com,
-	rdunlap@infradead.org,
-	corbet@lwn.net,
-	david@redhat.com,
-	mhocko@suse.com
-Cc: tudor.ambarus@linaro.org,
-	mukesh.ojha@oss.qualcomm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org,
-	jonechou@google.com,
-	rostedt@goodmis.org,
-	linux-doc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [RFC][PATCH v3 16/16] dt-bindings: Add Google Kinfo
-Date: Fri, 12 Sep 2025 18:08:55 +0300
-Message-ID: <20250912150855.2901211-17-eugen.hristev@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250912150855.2901211-1-eugen.hristev@linaro.org>
-References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
+	s=arc-20240116; t=1757689745; c=relaxed/simple;
+	bh=Sf3Dy8uUFZpug9JpadlwWUw65olplxRVsQughTo54IQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IvzJp0R0N7W02M4sl7ghWni91ZKGwSg/iV7/flNiY0GfiDPPgufXZVrqOBJEuxzjOq4ya+V326PsHKiMN2kiYPS4WTq8/HZEYWEE7lb+W6FHR51wmfiKKiByTadnq3c9DW4Cl8/CbjtTsIiCb0yrf+AfRPPE3ktUqHwPdOR1MEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B8FD12FC;
+	Fri, 12 Sep 2025 08:08:55 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE3143F694;
+	Fri, 12 Sep 2025 08:08:58 -0700 (PDT)
+Message-ID: <842edca0-11c7-43ac-ba4b-ab40678034e2@arm.com>
+Date: Fri, 12 Sep 2025 16:08:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 23/29] arm_mpam: Add mpam_msmon_read() to read monitor
+ value
+From: Ben Horgan <ben.horgan@arm.com>
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-24-james.morse@arm.com>
+ <1344b395-66aa-4714-b1fc-9c970c0fd0bf@arm.com>
+Content-Language: en-US
+In-Reply-To: <1344b395-66aa-4714-b1fc-9c970c0fd0bf@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add documentation for Google Kinfo kmemdump backend driver.
+Hi James,
 
-Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
----
- .../bindings/misc/google,kinfo.yaml           | 36 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/misc/google,kinfo.yaml
+On 9/11/25 16:46, Ben Horgan wrote:
+> Hi James,
+> 
+> On 9/10/25 21:43, James Morse wrote:
+>> Reading a monitor involves configuring what you want to monitor, and
+>> reading the value. Components made up of multiple MSC may need values
+>> from each MSC. MSCs may take time to configure, returning 'not ready'.
+>> The maximum 'not ready' time should have been provided by firmware.
+>>
+>> Add mpam_msmon_read() to hide all this. If (one of) the MSC returns
+>> not ready, then wait the full timeout value before trying again.
+>>
+>> CC: Shanker Donthineni <sdonthineni@nvidia.com>
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> ---
+>> Changes since v1:
+>>  * Added XCL support.
+>>  * Merged FLT/CTL constants.
+>>  * a spelling mistake in a comment.
+>>  * moved structrues around.
+>> ---
+>>  drivers/resctrl/mpam_devices.c  | 226 ++++++++++++++++++++++++++++++++
+>>  drivers/resctrl/mpam_internal.h |  19 +++
+>>  2 files changed, 245 insertions(+)
+>>
+>> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+>> index cf190f896de1..1543c33c5d6a 100644
+>> --- a/drivers/resctrl/mpam_devices.c
+>> +++ b/drivers/resctrl/mpam_devices.c
+>> +
+>> +static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
+>> +				   u32 *flt_val)
+>> +{
+>> +	struct mon_cfg *ctx = m->ctx;
+>> +
+>> +	/*
+>> +	 * For CSU counters its implementation-defined what happens when not
+>> +	 * filtering by partid.
+>> +	 */
+>> +	*ctl_val |= MSMON_CFG_x_CTL_MATCH_PARTID;
+>> +
+>> +	*flt_val = FIELD_PREP(MSMON_CFG_x_FLT_PARTID, ctx->partid);
+>> +	if (m->ctx->match_pmg) {
+>> +		*ctl_val |= MSMON_CFG_x_CTL_MATCH_PMG;
+>> +		*flt_val |= FIELD_PREP(MSMON_CFG_x_FLT_PMG, ctx->pmg);
+>> +	}
+>> +
+>> +	switch (m->type) {
+>> +	case mpam_feat_msmon_csu:
+>> +		*ctl_val = MSMON_CFG_CSU_CTL_TYPE_CSU;
+>> +
+>> +		if (mpam_has_feature(mpam_feat_msmon_csu_xcl, &m->ris->props))
+>> +			*flt_val |= FIELD_PREP(MSMON_CFG_CSU_FLT_XCL,
+>> +					       ctx->csu_exclude_clean);
+>> +
+>> +		break;
+>> +	case mpam_feat_msmon_mbwu:
+>> +		*ctl_val = MSMON_CFG_MBWU_CTL_TYPE_MBWU;
 
-diff --git a/Documentation/devicetree/bindings/misc/google,kinfo.yaml b/Documentation/devicetree/bindings/misc/google,kinfo.yaml
-new file mode 100644
-index 000000000000..b1e4fac43586
---- /dev/null
-+++ b/Documentation/devicetree/bindings/misc/google,kinfo.yaml
-@@ -0,0 +1,36 @@
-+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/misc/google,kinfo.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Google Pixel Kinfo debug driver
-+
-+maintainers:
-+  - Eugen Hristev <eugen.hristev@linaro.org>
-+
-+description:
-+  The Google Pixel Kinfo debug driver uses a supplied reserved memory area
-+  to save debugging information on the running kernel.
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: google,kinfo
-+
-+  memory-region:
-+    maxItems: 1
-+    description: Reference to the reserved-memory for the data
-+
-+required:
-+  - compatible
-+  - memory-region
-+
-+additionalProperties: true
-+
-+examples:
-+  - |
-+    debug-kinfo {
-+        compatible = "google,debug-kinfo";
-+        memory-region = <&debug_kinfo_reserved>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 65d9e5db46a9..6a846c51db04 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13821,6 +13821,7 @@ F:	mm/kmemdump/kmemdump_coreimage.c
- KMEMDUMP KINFO BACKEND DRIVER
- M:	Eugen Hristev <eugen.hristev@linaro.org>
- S:	Maintained
-+F:	Documentation/devicetree/bindings/misc/google,kinfo.yaml
- F:	mm/kmemdump/kinfo.c
- 
- KMEMDUMP QCOM MINIDUMP BACKEND DRIVER
--- 
-2.43.0
+As you mentioned offline, this zeroes the other bits in *ctl_val.
+
+
+Thanks,
+
+Ben
 
 
