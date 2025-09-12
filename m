@@ -1,67 +1,101 @@
-Return-Path: <linux-kernel+bounces-813640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34267B54898
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:02:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2677BB5489A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C23A8565967
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:02:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D49FB3ABD45
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E3A296BDD;
-	Fri, 12 Sep 2025 10:02:02 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10D91A83F9;
-	Fri, 12 Sep 2025 10:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D1C2DF130;
+	Fri, 12 Sep 2025 10:02:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13122DE6F2;
+	Fri, 12 Sep 2025 10:02:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757671322; cv=none; b=SWG/5pimt7KQlyKrvNhSqGdd6nDUMRD3JK2Ryu+FE73yfhg1XFswHRMfWtcnWBvaUXnjCj/bMIS9XBhCxhOmgyWGZ6i+5P1f0qAziVmcP/SZyFMKXJajyMYWxGyYqt9Er+J0jhTiupW+mJFtzxaGejNfzvJuSgSW8BBJxgbfEho=
+	t=1757671349; cv=none; b=d6Ecjfo0KMCLZHjtxbZlFZelgpqNdSly8iCpiupsyXZ8S7Gb5CygkCBTeC4ayfXzgNR/LvB/MkpriWGxZsuB3/mUIuLV0JyXmFrAc5aHSblwMBtoJGtWQt0DME0TBLPueZF5Uza8bXq2EeE9lw3ECRkoRBF6FI1nIBFjYb1PYHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757671322; c=relaxed/simple;
-	bh=4niIPuTIZuVkg7maz85SEQmzt/Rp0LX7kum9m8Q7cT8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=l9b/Cya/9FbvGLAIX1F6p19fILtivHaAwBZbGA+KH9oh8N+EpKhoH2zqXSn/3gz8LVIO2/G68LWs+V2jqBh1u4br31SR0pTv6AO6aVf0Fisd2yIeHxNXBHqY7YQXMigFcgkHj/EMk2ojz6IYYfGtw1FlsvsJGrEf7I5KX0jcjCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1B9BC4CEF4;
-	Fri, 12 Sep 2025 10:01:58 +0000 (UTC)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
-To: Manivannan Sadhasivam <mani@kernel.org>, Vivek.Pernamitta@quicinc.com
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Vivek Pernamitta <quic_vpernami@quicinc.com>
-In-Reply-To: <20250912-b4-uevent_vdev_next-20250911-v2-1-89440407bf7e@quicinc.com>
-References: <20250912-b4-uevent_vdev_next-20250911-v2-1-89440407bf7e@quicinc.com>
-Subject: Re: [PATCH v2] bus: mhi: host: Add uevent support in MHI driver
-Message-Id: <175767131849.17338.9848616263930655388.b4-ty@oss.qualcomm.com>
-Date: Fri, 12 Sep 2025 15:31:58 +0530
+	s=arc-20240116; t=1757671349; c=relaxed/simple;
+	bh=9fd4moaFirXIgIXD/PREJNEJShmx3iq+ajpwK/yIZeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LBH8oZ69FhEDz41Q4/g9B3LPqdiv2Ew++2glhBUj4eVwvDOU1kzQyB7WSRGYuKsWxGpM1tnatgC8A1MMlgol8dhuAlyTHOPdD2rOEiWIntOypqzJFx+v1lyLBgulujFZN8R+Ysd1pnqOvH53GOrfGrbYkioUsAhBKXUB8H7PdCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A59116A3;
+	Fri, 12 Sep 2025 03:02:18 -0700 (PDT)
+Received: from donnerap (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FED53F66E;
+	Fri, 12 Sep 2025 03:02:25 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:02:22 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: "J. =?UTF-8?B?TmV1c2Now6RmZXI=?= via B4 Relay"
+ <devnull+j.ne.posteo.net@kernel.org>
+Cc: j.ne@posteo.net, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Initial Amediatech X96Q support based on Allwinner
+ H313
+Message-ID: <20250912110222.5e4153ec@donnerap>
+In-Reply-To: <20250912-x96q-v1-0-8471daaf39db@posteo.net>
+References: <20250912-x96q-v1-0-8471daaf39db@posteo.net>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, 12 Sep 2025 01:52:08 +0200
+J. Neusch=C3=A4fer via B4 Relay <devnull+j.ne.posteo.net@kernel.org> wrote:
 
-On Fri, 12 Sep 2025 10:29:16 +0530, Vivek.Pernamitta@quicinc.com wrote:
-> Notify the MHI device's Execution Environment (EE) state via uevent,
-> enabling applications to receive real-time updates and take appropriate
-> actions based on the current state of MHI.
-> 
-> 
+Hi,
 
-Applied, thanks!
+> This patchset adds an initial devicetree for the X96Q set-top box.
+> WiFi, Ethernet, and HDMI depend on drivers that are currently not
+> available in mainline Linux, and I didn't enable them in the devicetree.
+> The builtin infrared receiver produces IRQs when a nearby remote sends
+> events, but I have not checked whether the events are decoded correctly.
 
-[1/1] bus: mhi: host: Add uevent support in MHI driver
-      commit: f7fda4b0bd9ca6be97658bd187ac49c6cdcc0010
+You can either do a simple "cat /dev/input/event<x>", then check whether
+keypresses generate (unreadable) output, or you use the "evtest" tool to
+decode some information:
+https://cgit.freedesktop.org/evtest/
 
-Best regards,
--- 
-Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+But I guess if you see interrupts consistent with remote keypresses, it's
+a good enough indication it should work.
+
+Cheers,
+Andre
+
+>=20
+> Signed-off-by: J. Neusch=C3=A4fer <j.ne@posteo.net>
+> ---
+> J. Neusch=C3=A4fer (2):
+>       dt-bindings: arm: sunxi: Add Amediatech X96Q
+>       arm64: dts: allwinner: h313: Add Amediatech X96Q
+>=20
+>  Documentation/devicetree/bindings/arm/sunxi.yaml   |   5 +
+>  arch/arm64/boot/dts/allwinner/Makefile             |   1 +
+>  arch/arm64/boot/dts/allwinner/sun50i-h313-x96q.dts | 235 +++++++++++++++=
+++++++
+>  3 files changed, 241 insertions(+)
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250911-x96q-57e63380804e
+>=20
+> Best regards,
 
 
