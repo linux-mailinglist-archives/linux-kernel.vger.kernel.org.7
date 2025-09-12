@@ -1,163 +1,219 @@
-Return-Path: <linux-kernel+bounces-813277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA7AB5430B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:38:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C84BB54310
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF3E3174C15
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:38:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30082176227
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418C0284884;
-	Fri, 12 Sep 2025 06:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81C87287268;
+	Fri, 12 Sep 2025 06:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MkOArNCD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="QkfToYcc"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E69E265CDD;
-	Fri, 12 Sep 2025 06:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7357D28489B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757659079; cv=none; b=dho6nQ6RIRzLi/fuyDb4gjt4P1/VkZbyuVhG42qy8gF+14G9TFcOOyFnpXnLi9G11h/ojKavUOnNYPdEDZEflHmHeH6JUb8A/IqkFqJuIcOHAhmHxUqJI/8neqJmAo+bXqJbQc0lAM3K3bIa6IZYP9ZAj6A9ibtFR644ARXwWmI=
+	t=1757659082; cv=none; b=jikd1MCUti0Vss6oDMYfse/YKlWv9lgWwTAgdbCxmm6MMHulfqijwakjlCR/vUQiE+uivJCcOAwcywhOwiCIMOvJi4FCgJTHCbIKmfIGNIhfcOrqWzgijigD0Iimhd4ExZqMhXExgcKlt7Qv069yvYeC/5vNm9dPuC7MLqbCd9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757659079; c=relaxed/simple;
-	bh=FoKfA+Ido5KJFJFtC9Cz3p8xOCs463YOvLfdHV84F2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z+48Mp4K9++NqjnOh3znRQlXaWjrAU29ln0/bRGZ2cVOt5VIa1ofjOr/IM0qdblCPoalRk7aJfA+l2ZBKJk5Xyj05qaVPm1ljRri9fWBCgbRJAzn6vvvYG750OoCiOmxo0/JcM80H6mu27DcrQrc/SRM8uD9Ar0Q85Pdrfd8aKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MkOArNCD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 647BDC4CEF4;
-	Fri, 12 Sep 2025 06:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757659079;
-	bh=FoKfA+Ido5KJFJFtC9Cz3p8xOCs463YOvLfdHV84F2k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MkOArNCDNfzMto9SJgAlT1LbW6DrUzhR2Og1Vjjfeu4YpaG4uOkCA0ELSDBCDOGyn
-	 wlzWq24sAELOx8iUeu0ez1jPuKjprH+fVF9lwvegPO149q27ItPoKlXoo12JE2Dqca
-	 oRm5/dkfdXUSHiJCYIp8MnZFRiVrigz6eXotiwSc0zbv9A35MoKHQJO4yN/xpGoa0Y
-	 JUGo0J2O0g550qO/X0dqEG1Ug5RASlGHkasJt7ZHntSl4mQ7hrcWkQYaIM3r/ul4Yg
-	 kIppaAN8Hg8RtTppWTA8vMlguYABqMXtBL5DJQQvmcgMTfmOVLuEz/eFmTmeJhpXdh
-	 Of5GMaKRdneJQ==
-Message-ID: <6feb419e-ee3d-4573-8820-19c70acdb426@kernel.org>
-Date: Fri, 12 Sep 2025 08:37:53 +0200
+	s=arc-20240116; t=1757659082; c=relaxed/simple;
+	bh=epVwvlOvxHSIsmHW/NK0wpZGEnx1bOQUdmWZ1GXJE3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cvo2sTEXxfDuXe/Gg0hunegY9areNh0BTdrbxjxPdhlb1SyNs4wPV5PAuZjMGBC1QSxZJ3AgNZ7FGZdMOL9zRL5aP8Cgl5pJrKyj7zAaToOdxMErvhiGjXAq3bf62dd07sq9NP8yYl2/cHOql9WmsfYy/z2Fpne6mkTnYpKHaAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=QkfToYcc; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-77269d19280so1484071b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1757659080; x=1758263880; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WHuTi6TQfgFAtMCkxSDV0wAwRzh2olOxA10o4YRtx2Y=;
+        b=QkfToYccXf69UvNrnI9srarYlMO8RkkPsxZKlV2TJg3llEi/hzXaeSDUsCuPP+9b2F
+         R3pUAdwQKLolRI4SXIAKeCFEkvL2j1hSlb5AaEhCE3NzvKdhikal4etqRPI0KNxOs4j/
+         ZlFpEUfmQC2E5b4PIQKyY/FVaIPINmhRdZjkzemnwrzVNouEJh4mPUIDz7IUsWPQP6KA
+         Yvlqj8YacQBkjM9zR2nmNPjZRP2s02dvsMnrj1+bUL48etnIafpdy9Jb733kQ4GXNpiS
+         35PFlqoF0WheBnltoYMF52RUmMyBO2iMf3uSV/agVbdYy5qRKP3lkhKDgFmkgXRQ83fs
+         Gvsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757659080; x=1758263880;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WHuTi6TQfgFAtMCkxSDV0wAwRzh2olOxA10o4YRtx2Y=;
+        b=oSULAXRPQWpM0pqGfMAJXAL4zcxNI7S07VTb2bHFjb1MsmdfwXScuyvAZv8fKCk9pZ
+         NUVwmG4ftRqdCj8PK6mmUxE11vhwMSgJEfRWeqM14UHhLx8I3RtryHi23q+ojefhP0FU
+         /dwogK5RDJlVsI2SKfLF5Aro47+ZNt8tYpfj2ZHVgMUuWSCu8C7pfRSXleIVhFURL+sN
+         xUVS+XwdmqkEGCfDiSKwnsGcuqPNMr7qfmRreeIX/HUafRnX4niAHwdwPGyV+7XwKtS/
+         yR4TM8ZqheO/KmqDrbFstfjcXyRnTHp+Y7PHP5YsNg46t7RkudRgZtqIGR8v5/eJrsZ9
+         eD1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW0m6IUvKmSSqHrbO6w9+dFnPXMMHYI9HNj2klIX7nt00DlfxCH5zRjy4XsUgK6bRVN1OmRSsVXKYu5uBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiR0CjE2Crwqfbr/te+dBAk2yHr33CvYNlXxZcgiFHwb1CVXFs
+	g92Im3zQm8NUcadagcAG+KeZ3IrXKYjnup76YkGvtZiHt5PF8gZyb9k+UNAK+K3SJLw=
+X-Gm-Gg: ASbGncvD4EFE5+HpvJ/SL2R0cURky4yywJLXuUBPPr7uZIt8ytsNMDpl0ubqXnWqcI6
+	KAkUUgXzMJtUZ9FB4XqY4AEifvQl4kQ7G920HiByMlFy3ZQzFPrHq999iKceiTCSus+EGh0l+sP
+	K2Vbe/5TlL4VmxKmbzUkm9EUfzZlYdx7KHVieUXvYtYX55ugQMFv+r/yrb/yk8i0dKoZ3zGMtF/
+	Mz7Ihh2+o7doH0Le0to5rNcjm/3pknhyHuIeHTG/DsqqgmRXwymrGUAq9bqZcd17J5iRE6Zz73z
+	eXVqxEdc+ZsG7tUT4I1gqn0FXlqNzMMDRXpzpXN5qUa6dhkGblWx0iNFhcexebJ6tklHbK2kwG6
+	yIsx9V4NX8GLEKRL9mGo/xze3J0udI4KomLmxf2Q8GN4sK+ezm1VQz9Y=
+X-Google-Smtp-Source: AGHT+IH14YJIU/pCQLxK6heygYQ8+5SPefXRMNU94Q5Y9SS8UUy1273yVEMkFePKwHp+1d4YOuXzeg==
+X-Received: by 2002:a05:6a00:138f:b0:76e:885a:c338 with SMTP id d2e1a72fcca58-7761219fbc4mr2061714b3a.30.1757659079662;
+        Thu, 11 Sep 2025 23:37:59 -0700 (PDT)
+Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:9e14:1074:637d:9ff6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607c54a71sm4279534b3a.102.2025.09.11.23.37.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 23:37:58 -0700 (PDT)
+Date: Fri, 12 Sep 2025 14:37:54 +0800
+From: FIRST_NAME LAST_NAME <409411716@gms.tku.edu.tw>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
+	hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
+	jaegeuk@kernel.org, kbusch@kernel.org,
+	linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-nvme@lists.infradead.org, sagi@grimberg.me, tytso@mit.edu,
+	visitorckw@gmail.com, xiubli@redhat.com
+Subject: Re: [PATCH v2 2/5] lib/base64: rework encoder/decoder with
+ customizable support and update nvme-auth
+Message-ID: <aMO/woLrAN7bn9Fd@wu-Pro-E500-G6-WS720T>
+References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
+ <20250911074159.656943-1-409411716@gms.tku.edu.tw>
+ <20250911182742.GC1376@sol>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 1/3] dt-bindings: i2c: aspeed: support for
- AST2600-i2cv2
-To: Jeremy Kerr <jk@ozlabs.org>, Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: "robh@kernel.org" <robh@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- Mo Elbadry <elbadrym@google.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "joel@jms.id.au" <joel@jms.id.au>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <20250224055936.1804279-1-ryan_chen@aspeedtech.com>
- <OS8PR06MB7541C3B70B15F45F4824772BF2D92@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <994cb954-f3c4-4a44-800e-9303787c1be9@kernel.org>
- <SI6PR06MB753542037E1D6BBF5CE8D2E7F2A42@SI6PR06MB7535.apcprd06.prod.outlook.com>
- <4523caea-3406-4de0-9ab5-424fb7a0a474@kernel.org>
- <SI6PR06MB7535BAD19B51A381171A0E64F2A42@SI6PR06MB7535.apcprd06.prod.outlook.com>
- <8e8aa069-af9f-453f-9bd0-e3dc2eab59ab@kernel.org>
- <OS8PR06MB7541FD8691B43EA33BDC1D22F2A72@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <99053328-a117-493e-b5f3-00902669c8e7@kernel.org>
- <44ef5c93448a3625fcfd003b47a516e8ba795b62.camel@ozlabs.org>
- <f9fc4b59-bdcd-4983-b7c2-0fec94e62176@kernel.org>
- <52943e49aaea7bb6def5bc51dfd57392b6ae66e4.camel@ozlabs.org>
- <OS8PR06MB7541BD362CE9FC0AA3CFC46CF209A@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <3fdee5330d91b5d18a69a311e4df6de874973ced.camel@ozlabs.org>
- <ecefaed7ed0fe83442021c0bfee0a49111269aad.camel@ozlabs.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ecefaed7ed0fe83442021c0bfee0a49111269aad.camel@ozlabs.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250911182742.GC1376@sol>
 
-On 11/09/2025 11:03, Jeremy Kerr wrote:
-> Hi all,
+On Thu, Sep 11, 2025 at 11:27:42AM -0700, Eric Biggers wrote:
+> On Thu, Sep 11, 2025 at 03:41:59PM +0800, Guan-Chun Wu wrote:
+> > Rework base64_encode() and base64_decode() with extended interfaces
+> > that support custom 64-character tables and optional '=' padding.
+> > This makes them flexible enough to cover both standard RFC4648 Base64
+> > and non-standard variants such as base64url.
 > 
-> After a bit of a chat with Ryan, some updates on this:
+> RFC4648 specifies both base64 and base64url.
+>
+
+Got it, I'll update the commit message in the next version.
+
+> > The encoder is redesigned to process input in 3-byte blocks, each
+> > mapped directly into 4 output symbols. Base64 naturally encodes
+> > 24 bits of input as four 6-bit values, so operating on aligned
+> > 3-byte chunks matches the algorithm's structure. This block-based
+> > approach eliminates the need for bit-by-bit streaming, reduces shifts,
+> > masks, and loop iterations, and removes data-dependent branches from
+> > the main loop.
 > 
->> The question was more: it sounds like you're switching between
->> *fundamentally different* hardware units with the mux switch - not just
->> a different register interface for the same peripheral hardware. Is that
->> the case?
+> There already weren't any data-dependent branches in the encoder.
 > 
-> Turns out: no. The controller core is the same, but what gets muxed
-> in/out is more of a compatibility interface. This provides an
-> ast2500-like register set to the ast2600 i2c peripheral.
 
+Got it, I'll update the commit message in the next version.
 
-If you had two separate bindings, how would you represent it in DTS? Two
-device nodes, right? That's confusing, because there is only one device.
+> > The decoder replaces strchr()-based lookups with direct table-indexed
+> > mapping. It processes input in 4-character groups and supports both
+> > padded and non-padded forms. Validation has been strengthened: illegal
+> > characters and misplaced '=' padding now cause errors, preventing
+> > silent data corruption.
+> 
+> The decoder already detected invalid inputs.
+> 
 
-If the device can present or change its programming interface, it is
-still that device, so still one binding for it. And that device driver
-will handle both (or one) programming models.
+You're right, the decoder already rejected invalid inputs.
+What has been strengthened in the new version is the padding handling 
+(length must be a multiple of 4, and = only allowed in the last two positions).
 
-I remember now the problem we talk about, but I don't get what exactly
-you want to solve/discuss. Anyway any discussion should be about newest
-patch, not something from February, so if you still have concerns please
-raise them at v18 (or whichever version is now).
+> > While this is a mechanical update following the lib/base64 rework,
+> > nvme-auth also benefits from the performance improvements in the new
+> > encoder/decoder, achieving faster encode/decode without altering the
+> > output format.
+> > 
+> > The reworked encoder and decoder unify Base64 handling across the kernel
+> > with higher performance, stricter correctness, and flexibility to support
+> > subsystem-specific variants.
+> 
+> Which part is more strictly correct?
+> 
+
+The stricter correctness here refers to the decoder — specifically the padding
+checks (length must be a multiple of 4, and = only allowed in the last two positions).
+
+> > diff --git a/lib/base64.c b/lib/base64.c
+> > index 9416bded2..b2bd5dab5 100644
+> > --- a/lib/base64.c
+> > +++ b/lib/base64.c
+> > @@ -15,104 +15,236 @@
+> >  #include <linux/string.h>
+> >  #include <linux/base64.h>
+> >  
+> > -static const char base64_table[65] =
+> > -	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+> > +#define BASE64_6BIT_MASK      0x3f /* Mask to extract lowest 6 bits */
+> > +#define BASE64_BITS_PER_BYTE  8
+> > +#define BASE64_CHUNK_BITS     6
+> > +
+> > +/* Output-char-indexed shifts: for output chars 0,1,2,3 respectively */
+> > +#define BASE64_SHIFT_OUT0	(BASE64_CHUNK_BITS * 3) /* 18 */
+> > +#define BASE64_SHIFT_OUT1	(BASE64_CHUNK_BITS * 2) /* 12 */
+> > +#define BASE64_SHIFT_OUT2	(BASE64_CHUNK_BITS * 1) /* 6  */
+> > +/* OUT3 uses 0 shift and just masks with BASE64_6BIT_MASK */
+> > +
+> > +/* For extracting bytes from the 24-bit value (decode main loop) */
+> > +#define BASE64_SHIFT_BYTE0        (BASE64_BITS_PER_BYTE * 2) /* 16 */
+> > +#define BASE64_SHIFT_BYTE1        (BASE64_BITS_PER_BYTE * 1) /* 8  */
+> > +
+> > +/* Tail (no padding) shifts to extract bytes */
+> > +#define BASE64_TAIL2_BYTE0_SHIFT  ((BASE64_CHUNK_BITS * 2) - BASE64_BITS_PER_BYTE)       /* 4  */
+> > +#define BASE64_TAIL3_BYTE0_SHIFT  ((BASE64_CHUNK_BITS * 3) - BASE64_BITS_PER_BYTE)       /* 10 */
+> > +#define BASE64_TAIL3_BYTE1_SHIFT  ((BASE64_CHUNK_BITS * 3) - (BASE64_BITS_PER_BYTE * 2)) /* 2  */
+> > +
+> > +/* Extra: masks for leftover validation (no padding) */
+> > +#define BASE64_MASK(n) ({        \
+> > +	unsigned int __n = (n);  \
+> > +	__n ? ((1U << __n) - 1U) : 0U; \
+> > +})
+> > +#define BASE64_TAIL2_UNUSED_BITS  (BASE64_CHUNK_BITS * 2 - BASE64_BITS_PER_BYTE)     /* 4 */
+> > +#define BASE64_TAIL3_UNUSED_BITS  (BASE64_CHUNK_BITS * 3 - BASE64_BITS_PER_BYTE * 2) /* 2 */
+> 
+> These #defines make the code unnecessarily hard to read.  Most of them
+> should just be replaced with the integer literals.
+> 
+
+Got it, thanks for the feedback. I'll simplify this in the next version.
+
+> >   * This implementation hasn't been optimized for performance.
+> 
+> But the commit message claims performance improvements.
+> 
+
+That was my mistake — I forgot to update this part of the comment.
+I’ll fix it in the next version.
+
+> >   *
+> >   * Return: the length of the resulting decoded binary data in bytes,
+> >   *	   or -1 if the string isn't a valid base64 string.
+> 
+> base64 => Base64, since multiple variants are supported now.  Refer to
+> the terminology used by RFC4686.  Base64 is the general term, and
+> "base64" and "base64url" specific variants of Base64.
+> 
+> - Eric
+
+Ok, I'll update the comments to use Base64.
 
 Best regards,
-Krzysztof
+Guan-chun
 
