@@ -1,145 +1,96 @@
-Return-Path: <linux-kernel+bounces-813826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A39B54B29
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:38:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C484B54B2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6775A580F26
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:38:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9341189E240
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619B22E6CAB;
-	Fri, 12 Sep 2025 11:37:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D878301011;
+	Fri, 12 Sep 2025 11:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNZc0lIl"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oUKpR1tU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1D5D3019C0
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCD83009D5
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757677031; cv=none; b=aBVwa5Fvk2un3RnZH4b4hucwjKqLJYe3FD2gLG4392yWYiofX03T7tg3XbjGqh3daJWxvLal4ojz7LGs3qEveK3ZmJ11ApGr4EyQlRr3G4qjfggOlDFw6tQyZ41UAk1VcyvfcMdn97AmmUBsZ+r0f9VnkUAIZioOet4+1jMwR5o=
+	t=1757677119; cv=none; b=n4gvQA2WMMtDDqcEC5nEGMeRaU2ECcwUBSrZFueaJ54bIhwYqcp6FW0btn6lafcJII5IyQr8uq2ffvZ74YIC4ZXtSnrgZMUBmaxyDt1LkNYwdlg3CEMQStOy9Hmv1rzutwrGtOXC7CUjwtQ+p8KOPQrBxgYs1/ZGEOk/dFOAplE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757677031; c=relaxed/simple;
-	bh=RPBQwPNuYyYtQUtZ2JZFYIKb6yx1lRSpbGv4ihtUNa0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=t1YvxzxhLIWEiW0ghTX+wO7kdlysRZZyBsGUdtjbzGeEruVAwvmLSCfBob42c+N/mblWXv3R0JErjy0jvogAhi+dPSvi4OYW5zYTsfMLEdjA1AagOLR6iv4tXWb6W1Dkq6Sw0wU+gQbeaOjz06f2Dv904bGg1a5XW2Wf7icFfDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNZc0lIl; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45de56a042dso11387455e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757677028; x=1758281828; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uMQMHx+8Y9PVtHu5Fhv1ceibqlTqO0/BLpLsbyBHbrQ=;
-        b=dNZc0lIllrgzrl/koJZ3gnUYm4WNFWsApiuxLYYfV2NDLCdbK4DsMepr8hGsiTwCBn
-         oAaGHw6qUg0gG/KI85tu9BoyAd/ZstP7uD8zmbhbRdDk3fVNoOxmFTy+CYWTglRPzJnp
-         YDLzGnUy11Om5BNMyhQEYshNfQRkvRvFlEexg7C+mUKFxtItgiZjNQKHLZMlMv6eLXup
-         wmbAlHrFIz02MmTzTnqDKVJkh8BleAuf8zc26NWGn7wPBRjfzySsY+AyJMVqciaKgjQ+
-         /amRt8ZupW8p5/W+zRmF8oBcLKRF1+MhBxUOHc37rnJ8esqERnhST70d8/6v8r+s+VYp
-         OcKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757677028; x=1758281828;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uMQMHx+8Y9PVtHu5Fhv1ceibqlTqO0/BLpLsbyBHbrQ=;
-        b=SD6iGKNEsOaJK9SH/PQjL6WmDJQbpI362dR1VLJRL6+6NwWcvze1HjwSLYYRi0ihwK
-         JidxeuLMXtEJOjyjS8dizUOkzMieSpVeZiyyM+y252bIVyP9pTXybveNyEP8/vW7H9/U
-         3W0LUpRVrBEuS7WHUCZOn5r6S9QD6H6TdKdz8uCuOLjctNzY33W2d57Y5YrwCxGjHOB3
-         rt3Td7r1K9M+do6HGx61GaieyEdpV4glXUPnQUZXQhcXt1/w68UDScjhDGXxNlk72KSG
-         qE1jtmipVTVFSuTJDGiUZFmDm8HXefgFIXk8oSPCgfRF2p2iKJqTeTFxVKkypxmYHtyd
-         d7Tw==
-X-Gm-Message-State: AOJu0Yy5w9ciz9TCv0OWsrBOvTC44nIfH/h/8xClSqIGxodQPowYMu99
-	PTJnKaTimK9dUyrFdvthJTbDFe6l645NR/Dwz8MsE79uHruRPl4WEW4P3owMhQ==
-X-Gm-Gg: ASbGnctut+Gnhozn2usbE7xKfnUXZFgtYh0a7hS9BMrnWFoISz7Z5jHWkXVnXBQ7b5D
-	/Fv/oFi8jwWj05w3hl0/rfEg8chCygvyo+9hTuIcj0hy3RXGbEm7T26cBmxNRWNJqtvj0HLl1bE
-	qYIYSjQbCIQQBJ7VWuqCtf9y4PlnbVyNvthabRrmYe5Sve4dl/r7tm7ERqXwFWGAgYg8KfI/dsE
-	HWfknkCCQvbr3i4jQHFbBjXMY9IrEfkq82BL+SrQNp4CGJigozk00Q5LT7YyAncetglwXXnTuaF
-	6e7ABehq4ENasOBQR/ZLQtu38/+EqHCKMqvoc6g77wXCSVf0d3iR2jCmWXv9ahTMSP/OddF0KCD
-	YatvYMTIGvjbz4qrW/2NRw6Q=
-X-Google-Smtp-Source: AGHT+IGejfUQRDplMR239pOYC0dAntQXwDDPfhYxh2LOkKsXpFqY6rB9nrWYDd+W28ipozk9KPoPJw==
-X-Received: by 2002:a05:600c:4e4b:b0:459:db7b:988e with SMTP id 5b1f17b1804b1-45f211d5753mr25454785e9.13.1757677027899;
-        Fri, 12 Sep 2025 04:37:07 -0700 (PDT)
-Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e037c3ce5sm59287545e9.16.2025.09.12.04.37.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 04:37:07 -0700 (PDT)
-From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-Date: Fri, 12 Sep 2025 13:36:12 +0200
-Subject: [PATCH v2 5/5] dt-bindings: clock: st: flexgen: remove deprecated
- compatibles
+	s=arc-20240116; t=1757677119; c=relaxed/simple;
+	bh=8PyfkQTDVSsnzHJWTxQrHFvYpwiIn3uDM+R1DlmCSUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uvUs4Gn1P6FzlEoqZAfXBGAPvthn8RYNqwXbT1cTmZ8GfL1ONC7UoIKFHbbWwK8j3A6IFjRIN9lUf8vB0KkTfkWpWHfoclGjTq+R+N2KNCmOfWVZjEy0iergKjrKW3XGyxJu6vaW+Wxez+rR2fHEAKSGrlDdbA/dVjwsmS/nUFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oUKpR1tU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC895C4CEF4;
+	Fri, 12 Sep 2025 11:38:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757677119;
+	bh=8PyfkQTDVSsnzHJWTxQrHFvYpwiIn3uDM+R1DlmCSUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oUKpR1tUzMiKd7ImmOi1jFbTnKmyFtmJOOGJUwzcUoaNvyj5+zNYYi/OzwcE1JIP+
+	 DbMNyQzkVLlB+ONI6jowETpptdOcisfIScB1VZZzlo9qUvFbMZuMq6xrPowYPk2yhg
+	 GbOzF2aWgLuSaCNxJin8p4KK8DZrTgXBmJ4K/b7I=
+Date: Fri, 12 Sep 2025 13:38:36 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Charles Han <hanchunchao@inspur.com>
+Cc: arnd@arndb.de, naveenkrishna.chatradhi@amd.com, akshay.gupta@amd.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] misc: amd-sbi: Add NULL check in create_misc_rmi_device
+Message-ID: <2025091212-dole-multitask-ee06@gregkh>
+References: <20250912101451.1928-1-hanchunchao@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250912-master-v2-5-2c0b1b891c20@gmail.com>
-References: <20250912-master-v2-0-2c0b1b891c20@gmail.com>
-In-Reply-To: <20250912-master-v2-0-2c0b1b891c20@gmail.com>
-To: Patrice Chotard <patrice.chotard@foss.st.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1176; i=rgallaispou@gmail.com;
- h=from:subject:message-id; bh=RPBQwPNuYyYtQUtZ2JZFYIKb6yx1lRSpbGv4ihtUNa0=;
- b=owEBbQKS/ZANAwAKAechimjUEsK1AcsmYgBoxAXb6s+ndbTRQTQkT6UJVWKMYLPxxzYY/K27j
- OhxLLATMzKJAjMEAAEKAB0WIQQgmXv2E+fvbV/9ui/nIYpo1BLCtQUCaMQF2wAKCRDnIYpo1BLC
- tTAbEACsW8Im2GJnyd/A9nW2OVWa8v21L3beKtkkrcLZsvVewjBorACl5+Q1BKgUbkdPtOmAZX0
- +vaB0XO1cTHWSXY/qBF0B/Ld1sJhebFPhX5RweGvcmpuW/vStC9N/KRFejRzHwU10Cfaj7AXcrR
- F2sdu1Lv1e3VC6Zxp1sct77rAsQQKhGJyUUn+n8D2auTQoy05RB2Kv8qC2FnsI98XzI9V7a8cgX
- UfHpmJ4U0czwQnaASE86LGQKYYEb5Ue38wlq9gUXFwn24q6UbSfFUq7Xm3E/AUtMD4xHtkMcjt0
- uJbMojvibnzFYpmAz7ZB25Giqkp06Js1WW9AP0RNEH1lKvNBrCUymMEihmPEKYOJGfIHc2KxCNN
- 2rZ5bUcG80xGYLIUuWZUotY/ocEbPGjH/bDI1h73K1QF9JxnW5oDGCNo4NSuUdP4lgoTYpXjzLo
- SpDh88lX76avVtTC4w9iMnlN+XcDWFqQGjYc+gh7HxkKTJAA+AkHtJd7wVKX42e5KeyUo0auQCt
- VuxwNEdOyP7Ggui6l/QLl27SaiLEx/Qb+O10OAXfdEz7tQ3Tdx7fqL2umGBF6q315EnePvPfFw2
- m7YD2UwpCbvcbtuLx4qA4nrCVTFqSJnVtYZ1tt8jRkICBgyusKv71wesSyVF+cfkxZOH3gTek5I
- GvveP8+RJR+TfIg==
-X-Developer-Key: i=rgallaispou@gmail.com; a=openpgp;
- fpr=20997BF613E7EF6D5FFDBA2FE7218A68D412C2B5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912101451.1928-1-hanchunchao@inspur.com>
 
-st/stih407-clock.dtsi file has been removed in commit 65322c1daf51
-("clk: st: flexgen: remove unused compatible").  This file has three
-compatibles which are now dangling.  Remove them from documentation.
+On Fri, Sep 12, 2025 at 06:14:51PM +0800, Charles Han wrote:
+> Add check for the return value of devm_kmemdup() to prevent
+> potential null pointer dereference.
+> 
+> Fixes: 35ac2034db72 ("misc: amd-sbi: Add support for AMD_SBI IOCTL")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> ---
+>  drivers/misc/amd-sbi/rmi-core.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/misc/amd-sbi/rmi-core.c b/drivers/misc/amd-sbi/rmi-core.c
+> index 3dec2fc00124..50b8e9e02833 100644
+> --- a/drivers/misc/amd-sbi/rmi-core.c
+> +++ b/drivers/misc/amd-sbi/rmi-core.c
+> @@ -471,6 +471,9 @@ int create_misc_rmi_device(struct sbrmi_data *data,
+>  							 GFP_KERNEL,
+>  							 "sbrmi-%x",
+>  							 data->dev_static_addr);
+> +	if (!data->sbrmi_misc_dev.name)
+> +		return -ENOMEM;
+> +
+>  	data->sbrmi_misc_dev.minor	= MISC_DYNAMIC_MINOR;
+>  	data->sbrmi_misc_dev.fops	= &sbrmi_fops;
+>  	data->sbrmi_misc_dev.parent	= dev;
+> @@ -478,6 +481,9 @@ int create_misc_rmi_device(struct sbrmi_data *data,
+>  							 GFP_KERNEL,
+>  							 "sbrmi-%x",
+>  							 data->dev_static_addr);
+> +	if (!data->sbrmi_misc_dev.nodename)
+> +		return -ENOMEM;
+> +
 
-Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
----
- Documentation/devicetree/bindings/clock/st/st,flexgen.txt | 3 ---
- 1 file changed, 3 deletions(-)
+Why not just make this a single if statement?  And this really can't
+ever fail in real life :)
 
-diff --git a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-index c918075405babb99a8f930f4a4430f57269417af..a9d1c19f30a3366c2ec86b6fe84e412b4b41ea56 100644
---- a/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-+++ b/Documentation/devicetree/bindings/clock/st/st,flexgen.txt
-@@ -64,12 +64,9 @@ Required properties:
-   audio use case)
-   "st,flexgen-video", "st,flexgen" (enable clock propagation on parent
- 					and activate synchronous mode)
--  "st,flexgen-stih407-a0"
-   "st,flexgen-stih410-a0"
--  "st,flexgen-stih407-c0"
-   "st,flexgen-stih410-c0"
-   "st,flexgen-stih418-c0"
--  "st,flexgen-stih407-d0"
-   "st,flexgen-stih410-d0"
-   "st,flexgen-stih407-d2"
-   "st,flexgen-stih418-d2"
+thanks,
 
--- 
-2.51.0
-
+greg k-h
 
