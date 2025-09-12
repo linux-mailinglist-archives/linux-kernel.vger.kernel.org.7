@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-814474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FA5B55483
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:13:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D86DB55489
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8585B17D276
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:13:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F227188D816
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D673164A3;
-	Fri, 12 Sep 2025 16:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE6E31A045;
+	Fri, 12 Sep 2025 16:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="epZf1NZ6"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dkh6JTCW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461BD30EF64
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9A6311C03
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757693595; cv=none; b=g4OeAg/aLzPeML+weEvSgkmtNzM6vSk/GywJkC2KSjV5xpiLnc7Z/FkqlkdVXNRKPcyipuT9GLW88Bm/GCrJxL0E7l5ZYAemPPIF/XKeiFUSXhw4O/1kGN8duLiGsINGKidrE7W8duwiRIsu74nYuLhW9t1Yf7bMNZa2/2PFCdQ=
+	t=1757693718; cv=none; b=L4JxqcR6pcFDBzybIhfd9/B6RzFecbjXN8OT5CEzQKDLwVMxxkAY0+XjetMRvKwIl1fD4Ys3cArGsIDIAdbeM9sHdX1IxgVW061rJNkyNlJweHz1GUBHGVFqHImhdpm2RYDri4GFOCsOPmBGO4Y+GMUM/SJzTo3+KL57xqt8gO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757693595; c=relaxed/simple;
-	bh=Xil4/2xxZ6Lqpjd9roZ0GUYzcYPP/3GYiIuqJGcGGYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNc3gdJYPVIbhmTf/OLsE5jNOhQSv1QwVlXsa1j7fxgA7nO6yRsxWRokRK71U5QKRP3oh79Xspm15qv4NNSLE6wWZD5lsWYshfhsLfrfpob7VSy4olRmrVRZws5lz9DaZ8UDLhABXQlki7S7R4rfu5hULszYOCB5DdOHoLfFRO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=epZf1NZ6; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 12 Sep 2025 09:13:04 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757693590;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L8EycLHCQ1ab18SBt2ew+m+Nf9Rse51xt4sZeCcpwKU=;
-	b=epZf1NZ6MtODr26KHOCJ6w57aBjFtc8qnGUh/M8xLbRAVFGsAQYr9wPTqrQE3aOknly5pD
-	77fmvTRZSQ6pLHiBa/WcLzC7ELXFsbWSBYfL/56Cbv1CPJOm1GZKSkbAGOJ3HB5atJFG5a
-	+rlNMSY1+2LO3q4yoEhtJSa16Fzi0uw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, david@redhat.com, 
-	mhocko@kernel.org, zhengqi.arch@bytedance.com, lorenzo.stoakes@oracle.com, 
-	hughd@google.com, willy@infradead.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: vmscan: remove folio_test_private() check in
- pageout()
-Message-ID: <qe56xt2natnxnkht7wgknsb5nqjhinaaajomvvvgnfpwry2jih@hsj2w5zqj6wv>
-References: <cover.1757648598.git.baolin.wang@linux.alibaba.com>
- <b8c0fe71982aa1cafafd59d8e71064efaac16007.1757648598.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1757693718; c=relaxed/simple;
+	bh=UB5nB1zKXO3i6ZNdX3YVoESq8WNCHQer6cAJqxmAYis=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G+VajjG6XO2oQJJXJKdT1lBfFWah4CWX8ojF9XqEBRdUtauzxrWZvkmAg64N6/pVUPuEbia8da3LHvB/6BN0qLoylLKC4+aJuMpPa62795WZHp5bUhnNZxLmdBbqcH7lV4p+Wgg0avDCyHiU44bHZ50HDlVX/Bga+fhaYCREV/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dkh6JTCW; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757693717; x=1789229717;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UB5nB1zKXO3i6ZNdX3YVoESq8WNCHQer6cAJqxmAYis=;
+  b=dkh6JTCWrKXtp3CI0lEbCXLgE6LGgTwt978E+YkaGO/22bgfBR0PZKX8
+   DzXhz6WZNnvG9wkq9y/eDIEGZZhuyIq4hGc7fyFq6i6UONTb9pZ0BXtoD
+   Nm79R6pt+AP0AbRX//W2EcPmDnylwjDL4Y2IQfSeRtnnR356cOhtq1xNS
+   qmIkz95kSs5ANCPI+6t49/Dy5FqzEeLm3NqRQoN9b0rGDYZ765jG+ZbxG
+   TY7NJ5EUfRihaMrI+S7mBinEGd/OuCNY7gJQR5ALuxWLfl67RXDQnszDH
+   DeRI5G68SKfVKrgirFL8VDsXZzR5B6iy0Fz5xM3Csf0l5muGCKCjt1fE0
+   g==;
+X-CSE-ConnectionGUID: X400umUeTkGaN2wPbdkUeg==
+X-CSE-MsgGUID: gRWoqJUmR4Sx6xE2YWo/JQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="63863149"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="63863149"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 09:15:17 -0700
+X-CSE-ConnectionGUID: 1JvXhgfWQcSmIo7AAkNhrg==
+X-CSE-MsgGUID: 4Nocg7h1SceunjpoFYvEgw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
+   d="scan'208";a="179176630"
+Received: from baandr0id001.iind.intel.com ([10.66.253.151])
+  by orviesa005.jf.intel.com with ESMTP; 12 Sep 2025 09:15:14 -0700
+From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org,
+	Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+Subject: [PATCH] sched/deadline: Set cp->elements to NULL after kfree() in cpudl_init()
+Date: Fri, 12 Sep 2025 21:43:38 +0530
+Message-Id: <20250912161338.1079085-1-kaushlendra.kumar@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b8c0fe71982aa1cafafd59d8e71064efaac16007.1757648598.git.baolin.wang@linux.alibaba.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 11:45:07AM +0800, Baolin Wang wrote:
-> Currently, we no longer attempt to write back filesystem folios in pageout(),
-> and only tmpfs/shmem folios and anonymous swapcache folios can be written back.
-> Moreover, tmpfs/shmem and swapcache folios do not use the PG_private flag,
-> which means no fs-private private data is used. Therefore, we can remove the
-> redundant folio_test_private() checks and related buffer_head release logic.
-> 
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
->  mm/vmscan.c | 16 +---------------
->  1 file changed, 1 insertion(+), 15 deletions(-)
-> 
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index f1fc36729ddd..8056fccb9cc4 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -697,22 +697,8 @@ static pageout_t pageout(struct folio *folio, struct address_space *mapping,
->  	 * swap_backing_dev_info is bust: it doesn't reflect the
->  	 * congestion state of the swapdevs.  Easy to fix, if needed.
->  	 */
-> -	if (!is_page_cache_freeable(folio))
-> +	if (!is_page_cache_freeable(folio) || !mapping)
->  		return PAGE_KEEP;
-> -	if (!mapping) {
-> -		/*
-> -		 * Some data journaling orphaned folios can have
-> -		 * folio->mapping == NULL while being dirty with clean buffers.
-> -		 */
+Set cp->elements to NULL after kfree() in the error path of cpudl_init()
+to prevent potential use-after-free issues. This ensures that the pointer
+is properly invalidated when memory allocation fails for cp->free_cpus,
+making the code more robust against accidental access to freed memory.
 
-Can this case not happen anymore and try_to_free_buffers is not needed?
+Setting pointers to NULL after freeing helps debugging tools like kdgb,
+drgn, and other kernel debuggers by providing clear indication that the
+memory has been freed and the pointer is no longer valid.
 
-> -		if (folio_test_private(folio)) {
-> -			if (try_to_free_buffers(folio)) {
-> -				folio_clear_dirty(folio);
-> -				pr_info("%s: orphaned folio\n", __func__);
-> -				return PAGE_CLEAN;
-> -			}
-> -		}
-> -		return PAGE_KEEP;
-> -	}
->  
->  	if (!shmem_mapping(mapping) && !folio_test_anon(folio))
->  		return PAGE_ACTIVATE;
-> -- 
-> 2.43.7
-> 
+Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+---
+ kernel/sched/cpudeadline.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/kernel/sched/cpudeadline.c b/kernel/sched/cpudeadline.c
+index cdd740b3f774..0f7127b3a05c 100644
+--- a/kernel/sched/cpudeadline.c
++++ b/kernel/sched/cpudeadline.c
+@@ -276,6 +276,7 @@ int cpudl_init(struct cpudl *cp)
+ 
+ 	if (!zalloc_cpumask_var(&cp->free_cpus, GFP_KERNEL)) {
+ 		kfree(cp->elements);
++		cp->elements = NULL;
+ 		return -ENOMEM;
+ 	}
+ 
+-- 
+2.34.1
+
 
