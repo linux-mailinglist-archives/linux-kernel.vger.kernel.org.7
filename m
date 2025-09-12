@@ -1,254 +1,87 @@
-Return-Path: <linux-kernel+bounces-814018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFECB54E4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:44:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694B3B54E4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 986BE48008B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:44:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BC7917D387
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D734A302755;
-	Fri, 12 Sep 2025 12:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GnDuceut"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A023043B6;
+	Fri, 12 Sep 2025 12:45:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0E42FD7BB
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2A53043AC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681083; cv=none; b=iTM16XLnoxdkP7uW0/tPNI1x6Kt/polEhL9XdPeLGVrSxobKriD44+osKcFrLGxnrmBhFZyqJtNj/uWrpLXx5xz6vOoHwtyj7neuobtN6R+dR9P3iYTAoCNUsob0ASMvekMD7NmXcexjz76HTpY/dUAtPOa8HBMILwEFSl2fUxU=
+	t=1757681105; cv=none; b=uq58Rz7W5Mzh/WBIoKHLyzQar6nQNRCs7tajD6KKxlSbNAiCWggYrBKbUG6PzqxopZAV+zLXKsGaz4QueBSV3uhL8zth+LjAn0X5/EZ76c0uPEV3Myaoi4l1h3tr8KpaMRR4zSvjeI3dXmBQUfCc5M0hXLzNf7rzrF3HDZPSWnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681083; c=relaxed/simple;
-	bh=NXr6761UnhNuatR0gAI5tVaJNfUBA797kNPb6NrQOPk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mXA/C0ZneQiSPhY5oiZAWxSQIwZP60WDswE3mRXEIPpaR1Gj76lZI2kmswJcJRpvpBhV1KJoAIb7hUFMnsjNM5OkC0yik6XnAqBn7inLe0gp7meZBizXScXOhWDU2gaKiCZajjcHUNKONtaWggkoEOu3Lupt3oHSKNETCy5ejuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GnDuceut; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 6F554C8EC48;
-	Fri, 12 Sep 2025 12:44:22 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 614D760638;
-	Fri, 12 Sep 2025 12:44:38 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C0B03102F29BF;
-	Fri, 12 Sep 2025 14:44:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757681077; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=2b6HqIAwNVuz6HRHHTPZk9huV16GAiHxG1lpPMSNBlI=;
-	b=GnDuceutqH80p8LWOeAakA2FLIXSNBXHGWu/zEJp6N6tBXCPD/mv94P/sjigfLv1q4Qwh+
-	ZfqvlXpf3D3MsBxq1ed6GOWBN6zUG0aUvyIi4hUTxONP7ztiDddSsq2bE+K/XX6kLbJyuI
-	cBxe+S/bpNpLgGRZl9ZyejtrH24TXRiEFroO+4GIp/EE9LfviWCRcQs2Vi2E6IflEvc75k
-	/YCrPXzGcfJCmjtrCs3PLU1q+Bk4GP/zW7QlHQy+zMTNOviHdIqWbMvvBNa3SBTYejBQPa
-	Hc74fvQjOMsmOK7MqS7C5wPvtU+j7qJQQCrM3NcKLHI0HaWqu5Wncf5/dFIihg==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: arm: marvell: Convert
- marvell,armada-370-xp boards to DT schema
-In-Reply-To: <20250805232502.2827725-1-robh@kernel.org>
-References: <20250805232502.2827725-1-robh@kernel.org>
-Date: Fri, 12 Sep 2025 14:44:25 +0200
-Message-ID: <87wm63on6e.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1757681105; c=relaxed/simple;
+	bh=JimslxkBKmmSEsuh/VcjPWuhBFHjsfcA2xRBvSAvMKM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=fCdT49pvHm7aiiB7PEa5jNFE7iojgD7Hy1WNCKYoyMlGKqV0nW5XsPSrSBKBiyb1kx4gUCgH4/4pJHCFhhrRixDe5n3Q7nAIm2ySqKPQ9RHn7q76hZNIMvXdlJyV6F9Q+D2mIBHNux9LiymqWSJoj9ecrAPkQzrWZ56kMsjmsR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-88d4b38d080so178066439f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:45:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757681102; x=1758285902;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pUrx3XWpP03Ww2BOg/pvDh4VxWrXnW0Uew+pT+21gr0=;
+        b=Ovn91a9WWAU28wUPF74uSHUfn75Y74LRbT0XebAKb5WWmoVwv6j/ZlEUf/nvvCN35w
+         H3dUg6yq3GFZp1o9pBGs0pCJJH4keWoewLxyiV9oMNfNrFDGi1xE7zQZbJjuIomWQXsj
+         Rw3Gou5vARbLJZzSigioA8sA7gMQkNKldeqBtgGdDMUK2z4q8SqHVZkEJPk0vykh+/fK
+         6cM0VSaa0dpeniQmgvMJgiX9/AD2YjrdN2BzXtCtbOuePVb/l7zkAghJT+13hhUW2Iuw
+         95AOiRweZbd7vj9c8Vegsi90u1BGq5UEpNq2QQuz+jXlVnl7YgR6o3SxUgs/kKHIa7Oa
+         TfBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIS7IhEPFRyUh/lTfq2Ed8y8z0ksVktQNjFniakNkj/rbwNbrkcPrDHudCjxpwMcHpSRFEb4HhdqGFoO0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGJ8YDWAT5eHG0ni18SYy+OkxcZ2QGiAx46G0lAcM6eVphbqyu
+	77vpE4E2hW5KfciQvsYTuS49odiApbvjbgO/I4Lmq9cQ9zeEA+h+kVE8xsYI+dfzhR8Uuz1k+g1
+	joNUtqlNRmiX2eisCGP80ug2xGRM86Hn/e7LoLaeaJWuWQP+VobwwYPfu2M4=
+X-Google-Smtp-Source: AGHT+IFy74u0vgNe8xFdnewZ+FrsrZg+QqBpRXwV2Tziucsou/XRONDuVT1xfSYwVqDyRvM6o4I+d2inbWz8rF5I8Yab5EH98fxT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: TLSv1.3
+X-Received: by 2002:a05:6e02:2285:b0:41d:1dbf:26ad with SMTP id
+ e9e14a558f8ab-4209d40fe87mr40390105ab.1.1757681102581; Fri, 12 Sep 2025
+ 05:45:02 -0700 (PDT)
+Date: Fri, 12 Sep 2025 05:45:02 -0700
+In-Reply-To: <20250912093042.6843-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c415ce.050a0220.2ff435.035b.GAE@google.com>
+Subject: Re: [syzbot] [net?] BUG: corrupted list in flow_block_cb_setup_simple
+From: syzbot <syzbot+5a66db916cdde0dbcc1c@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-"Rob Herring (Arm)" <robh@kernel.org> writes:
+Hello,
 
-> Convert Marvell Armada 370/XP based boards to DT schema format.
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+5a66db916cdde0dbcc1c@syzkaller.appspotmail.com
+Tested-by: syzbot+5a66db916cdde0dbcc1c@syzkaller.appspotmail.com
 
-Acked-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Tested on:
 
-Thanks,
+commit:         320475fb Merge tag 'mtd/fixes-for-6.17-rc6' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1236eb12580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a66db916cdde0dbcc1c
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=148cb362580000
 
-Gregory
-
-> ---
->  .../bindings/arm/marvell/98dx3236.txt         | 23 ------
->  .../bindings/arm/marvell/armada-370-xp.txt    | 24 ------
->  .../arm/marvell/marvell,armada-370-xp.yaml    | 78 +++++++++++++++++++
->  3 files changed, 78 insertions(+), 47 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/marvell/98dx323=
-6.txt
->  delete mode 100644 Documentation/devicetree/bindings/arm/marvell/armada-=
-370-xp.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/marvell/marvell=
-,armada-370-xp.yaml
->
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt b=
-/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
-> deleted file mode 100644
-> index 64e8c73fc5ab..000000000000
-> --- a/Documentation/devicetree/bindings/arm/marvell/98dx3236.txt
-> +++ /dev/null
-> @@ -1,23 +0,0 @@
-> -Marvell 98DX3236, 98DX3336 and 98DX4251 Platforms Device Tree Bindings
-> -----------------------------------------------------------------------
-> -
-> -Boards with a SoC of the Marvell 98DX3236, 98DX3336 and 98DX4251 families
-> -shall have the following property:
-> -
-> -Required root node property:
-> -
-> -compatible: must contain "marvell,armadaxp-98dx3236"
-> -
-> -In addition, boards using the Marvell 98DX3336 SoC shall have the
-> -following property:
-> -
-> -Required root node property:
-> -
-> -compatible: must contain "marvell,armadaxp-98dx3336"
-> -
-> -In addition, boards using the Marvell 98DX4251 SoC shall have the
-> -following property:
-> -
-> -Required root node property:
-> -
-> -compatible: must contain "marvell,armadaxp-98dx4251"
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/armada-370-xp.=
-txt b/Documentation/devicetree/bindings/arm/marvell/armada-370-xp.txt
-> deleted file mode 100644
-> index c6ed90ea6e17..000000000000
-> --- a/Documentation/devicetree/bindings/arm/marvell/armada-370-xp.txt
-> +++ /dev/null
-> @@ -1,24 +0,0 @@
-> -Marvell Armada 370 and Armada XP Platforms Device Tree Bindings
-> ----------------------------------------------------------------
-> -
-> -Boards with a SoC of the Marvell Armada 370 and Armada XP families
-> -shall have the following property:
-> -
-> -Required root node property:
-> -
-> -compatible: must contain "marvell,armada-370-xp"
-> -
-> -In addition, boards using the Marvell Armada 370 SoC shall have the
-> -following property:
-> -
-> -Required root node property:
-> -
-> -compatible: must contain "marvell,armada370"
-> -
-> -In addition, boards using the Marvell Armada XP SoC shall have the
-> -following property:
-> -
-> -Required root node property:
-> -
-> -compatible: must contain "marvell,armadaxp"
-> -
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/marvell,armada=
--370-xp.yaml b/Documentation/devicetree/bindings/arm/marvell/marvell,armada=
--370-xp.yaml
-> new file mode 100644
-> index 000000000000..e65eadfbd097
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/marvell/marvell,armada-370-xp=
-.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +---
-> +$id: http://devicetree.org/schemas/arm/marvell/marvell,armada-370-xp.yam=
-l#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Marvell Armada 370 and Armada XP platforms
-> +
-> +maintainers:
-> +  - Andrew Lunn <andrew@lunn.ch>
-> +  - Gregory Clement <gregory.clement@bootlin.com>
-> +
-> +properties:
-> +  $nodename:
-> +    const: '/'
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - ctera,c200-v2
-> +              - dlink,dns327l
-> +              - globalscale,mirabox
-> +              - netgear,readynas-102
-> +              - netgear,readynas-104
-> +              - marvell,a370-db
-> +              - marvell,a370-rd
-> +              - seagate,dart-2
-> +              - seagate,dart-4
-> +              - seagate,cumulus-max
-> +              - seagate,cumulus
-> +              - synology,ds213j
-> +          - const: marvell,armada370
-> +          - const: marvell,armada-370-xp
-> +
-> +      - items:
-> +          - enum:
-> +              - mikrotik,crs305-1g-4s
-> +              - mikrotik,crs326-24g-2s
-> +              - mikrotik,crs328-4c-20s-4s
-> +          - const: marvell,armadaxp-98dx3236
-> +          - const: marvell,armada-370-xp
-> +
-> +      - items:
-> +          - const: marvell,db-xc3-24g4xg
-> +          - const: marvell,armadaxp-98dx3336
-> +          - const: marvell,armada-370-xp
-> +
-> +      - items:
-> +          - const: marvell,db-dxbc2
-> +          - const: marvell,armadaxp-98dx4251
-> +          - const: marvell,armada-370-xp
-> +
-> +      - items:
-> +          - enum:
-> +              - lenovo,ix4-300d
-> +              - linksys,mamba
-> +              - marvell,rd-axpwifiap
-> +              - netgear,readynas-2120
-> +              - synology,ds414
-> +          - const: marvell,armadaxp-mv78230
-> +          - const: marvell,armadaxp
-> +          - const: marvell,armada-370-xp
-> +
-> +      - items:
-> +          - const: plathome,openblocks-ax3-4
-> +          - const: marvell,armadaxp-mv78260
-> +          - const: marvell,armadaxp
-> +          - const: marvell,armada-370-xp
-> +
-> +      - items:
-> +          - enum:
-> +              - marvell,axp-db
-> +              - marvell,axp-gp
-> +              - marvell,axp-matrix
-> +          - const: marvell,armadaxp-mv78460
-> +          - const: marvell,armadaxp
-> +          - const: marvell,armada-370-xp
-> +
-> +additionalProperties: true
-> --=20
-> 2.47.2
->
-
---=20
-Gr=C3=A9gory CLEMENT, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Note: testing is done by a robot and is best-effort only.
 
