@@ -1,90 +1,119 @@
-Return-Path: <linux-kernel+bounces-813452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D23B545A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:37:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 637CAB545F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844CBAA442A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:36:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBE313BFBAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71422258EF9;
-	Fri, 12 Sep 2025 08:36:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93ECC19E97A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18A425D202;
+	Fri, 12 Sep 2025 08:50:41 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466E017BA1
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757666167; cv=none; b=Y13+v+wK2JUBTCUahFMmUPE2PSH6tDlYuFD8PHh6hXGeYTyzR5qxmDTpxNHs+OszCAQZRwstiEdh5A8xP8oEqfpAaLzk7/Z6oBqQnhKciqiGYEnnWogPO3UYi4o6Xz3eZqnq7qannHhk1uOlA/hVIsoJgnOr17bLu5qv17xxrME=
+	t=1757667041; cv=none; b=HBbo8Wem6wwM76T8NSI2hLvrpKaH+vAmvm7cg5CVNiiMiyv2/IHmF9ZOYaiP1FzKoU3JAX0OsoVhFgBx9ejevytisgEPO6uS4cu+uMrzA00ZqoAzed/TfpAn959NGkDnj2yqnJEItdotC/6Kjv+2nJ/2vCIM1XIaJcbgf49OsZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757666167; c=relaxed/simple;
-	bh=hf1myjBL27ixgUL0+xsZtytvAp0tQARBjVpHHf2BLI0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=odoFfDZjE9P0EHvQygZDxtLRhjNj/nqX9NKDLdXYmggY8jcQQ7bUYues1Se+MhMlGMn5ZREmnRKKh5xFzFKEPFcPxlnyF9zLo/o/jph2WtyGRlDbl7Jrc7Lq08IzrCeGWpMVN97Hw6Q0nvD+5t9EjYSztX2k3sGfthnwDPXY0oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-404746a9c67so20974595ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:36:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757666165; x=1758270965;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qFpwX3P23yXZ5u16UsWzVG4Vnx911dGgY+qOSp2Rt9U=;
-        b=SOzG78uGnsaXuFm1Ca/QhMYoYSdqOvAJHWGNOMa5ecNJAp/oniUQduQOK1jbk4/rS6
-         WNAUecIddhM9JATeh0O0Jcw32IMhJF/1Vo08Q3kTsJtjP7mq/gsO2HuSL5A1QPgCOAEd
-         kSA0Xae5Wj5rSM2QICTm/fF621E08c3DMtdzZAeQS4bnOmZHOUf8TCSQwO9FUkwfSvWe
-         aXuHoIt9dZZaa9DZAflgHFnVYMCKqJ0QH0qPdRSbxZ4F/vG7/5yNd9hbH4bagvKRxJg5
-         fUnpcQqbkwEqtch/mmbQNwKToBUNixCame3kT+AIPkyj5V1An5xNUw8fRWwd1CQp1Oh3
-         m5ng==
-X-Forwarded-Encrypted: i=1; AJvYcCV3jvOyGCjnwKEOgrGs0TrGfci6Itfw6BrjOTsVy1buPYvxMDp4Q8U9uysM0QQc/Flga00HAj00KebGvOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHMO8ym4kcAzhvF6L+abNcFz7YN62Npw00UV3IOC/s4FAQl4JE
-	oaGU0wuwFmSED5tv7FobJx69yDdYv/ZChb5nrozkiUXFeKN6pgdRKyHpyX0UF45XmbzZi/70DYw
-	oMl2STXjMks4KzIevRYQRkVyOlVXBMsDJdOPsqLZ2tI2Z7oBUY2esPZP1Xs8=
-X-Google-Smtp-Source: AGHT+IGnFwRxifRkzpg4hX+roMSv3nwjRJEcGnKs4SBdKscOSduXYwxul8efGVSMicRlvDgh3WB4yE/jqNv++OxUMPARcZTWwQlL
+	s=arc-20240116; t=1757667041; c=relaxed/simple;
+	bh=5vI3e5CRVNaH9YfMQbqIK6M5whINX0HsBG3gpHpgdQU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bMdOFC23eLOZdnPExGa0P1EI6OMaMPUQ/P4x4g2tadGqCBdDea77GXdhDCF83QYRqjRHcaK8UikcZsSZSjo60KOSlVEQgwwED9dN9+iwrpKF1bYfexGZTJOAGVHIYEFB5LHuEc+NxfnIEPtZO7/FWgLqRw9myh9TN/CoQjCZjDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cNSV810Hnz9sjH;
+	Fri, 12 Sep 2025 10:37:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id dJsHGcZ--gTw; Fri, 12 Sep 2025 10:37:36 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cNSV80JmJz9sjD;
+	Fri, 12 Sep 2025 10:37:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id EA7988B7A7;
+	Fri, 12 Sep 2025 10:37:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id WbMpPa6hMifm; Fri, 12 Sep 2025 10:37:35 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B0EF98B764;
+	Fri, 12 Sep 2025 10:37:35 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] powerpc/32: Fix unpaired stwcx. on interrupt exit
+Date: Fri, 12 Sep 2025 10:37:34 +0200
+Message-ID: <6040b5dbcf5cdaa1cd919fcf0790f12974ea6e5a.1757666244.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19cf:b0:412:fa25:dd54 with SMTP id
- e9e14a558f8ab-4209e36cf49mr38832055ab.14.1757666164819; Fri, 12 Sep 2025
- 01:36:04 -0700 (PDT)
-Date: Fri, 12 Sep 2025 01:36:04 -0700
-In-Reply-To: <20250912083359.6809-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c3db74.050a0220.3c6139.049d.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757666254; l=1672; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=5vI3e5CRVNaH9YfMQbqIK6M5whINX0HsBG3gpHpgdQU=; b=3HUtWsJBTeDbibwPdJ+3dy4s3u4+rRHfi40L3ROeVYjn4DCFzLT+fuMd9GQJOPMQI2Z2zJv9x WmDkcA8GXr7A0KnhVg1qliOBwOZ7lBUUSEBBZA5Gt1eNPpoFDVaMahj
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Commit b96bae3ae2cb ("powerpc/32: Replace ASM exception exit by C
+exception exit from ppc64") erroneouly copied to powerpc/32 the logic
+from powerpc/64 based on feature CPU_FTR_STCX_CHECKS_ADDRESS which is
+always 0 on powerpc/32.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Re-instate the logic implemented by commit b64f87c16f3c ("[POWERPC]
+Avoid unpaired stwcx. on some processors") which is based on
+CPU_FTR_NEED_PAIRED_STWCX feature.
 
-failed to apply patch:
-checking file drivers/infiniband/core/device.c
-checking file mm/slub.c
-Hunk #1 FAILED at 3957.
-1 out of 1 hunk FAILED
+Fixes: b96bae3ae2cb ("powerpc/32: Replace ASM exception exit by C exception exit from ppc64")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+v2: Fixed the commit message (Wrong patch reference in the beginning)
+---
+ arch/powerpc/kernel/entry_32.S | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-
-
-Tested on:
-
-commit:         590b221e Add linux-next specific files for 20250912
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17bfe934580000
+diff --git a/arch/powerpc/kernel/entry_32.S b/arch/powerpc/kernel/entry_32.S
+index 61ffd2989e7b..16f8ee6cb2cd 100644
+--- a/arch/powerpc/kernel/entry_32.S
++++ b/arch/powerpc/kernel/entry_32.S
+@@ -275,10 +275,9 @@ interrupt_return:
+ 	mtspr	SPRN_SRR1,r12
+ 
+ BEGIN_FTR_SECTION
++	lwarx   r0,0,r1
++END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
+ 	stwcx.	r0,0,r1		/* to clear the reservation */
+-FTR_SECTION_ELSE
+-	lwarx	r0,0,r1
+-ALT_FTR_SECTION_END_IFCLR(CPU_FTR_STCX_CHECKS_ADDRESS)
+ 
+ 	lwz	r3,_CCR(r1)
+ 	lwz	r4,_LINK(r1)
+@@ -319,10 +318,9 @@ ALT_FTR_SECTION_END_IFCLR(CPU_FTR_STCX_CHECKS_ADDRESS)
+ 	mtspr	SPRN_SRR1,r12
+ 
+ BEGIN_FTR_SECTION
++	lwarx   r0,0,r1
++END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
+ 	stwcx.	r0,0,r1		/* to clear the reservation */
+-FTR_SECTION_ELSE
+-	lwarx	r0,0,r1
+-ALT_FTR_SECTION_END_IFCLR(CPU_FTR_STCX_CHECKS_ADDRESS)
+ 
+ 	lwz	r3,_LINK(r1)
+ 	lwz	r4,_CTR(r1)
+-- 
+2.49.0
 
 
