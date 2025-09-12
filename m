@@ -1,131 +1,198 @@
-Return-Path: <linux-kernel+bounces-814709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E34B55795
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:27:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7534B5578D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED721CC3DDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:27:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 653CA5A712B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FB12D0C60;
-	Fri, 12 Sep 2025 20:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA162D0278;
+	Fri, 12 Sep 2025 20:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armadeus.com header.i=@armadeus.com header.b="i/yNa6K0"
-Received: from 20.mo550.mail-out.ovh.net (20.mo550.mail-out.ovh.net [188.165.45.168])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="dpFzoYMZ"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D6B22097
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:27:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.45.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953982BF016
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:21:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757708847; cv=none; b=j+ctYDIcf/WnEjrNqYWjAUkW4Y5DT7w4sGPgeB0p74ifb/RNiolLbwouNSMR8gdj+gVZpOjzZ2bVnsoQ0epUUuC7u+Qfv2DNIeZTrmE2LrTbB/KJqy1iKs7e/D9g4nstClibWLqhuz+wvmvOmRf8yos7wOMMbG0pVgmSeMrqK34=
+	t=1757708468; cv=none; b=VboLUQVlG+nPXRQlcf+WLTenYMrctGz/sy5MFh11sgZUKS2w62hVGLWcynLc+R2oLzu0EO/1wZFXPwxZDo+AlCRLSDn6AY4xmyTin52iHXt5jG9zyhX0c6sE1b8ketM8JB5JizcqBKbex4oc3pzajyZj/rSkRplOvDMcouXgaNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757708847; c=relaxed/simple;
-	bh=g9s4aBgq9mUA/MaM7/N6IjRsE8phQz3zLoYU9BI7XB4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nhBuzBfimp2pbu1TRARfeisLLhHelq5irMim+VMMhwCO4/yvbjjBRpxpcQWKoiDfvcrOU6M2glR1EU30r24J0AbjVNbcCQmV6RqCvXvu1338uWA73+A9oGUmnhDLu1dxxhA57LbU7lVBWWj36rk8U+RdAtSaRp7Cpl8aaatOgqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com; spf=pass smtp.mailfrom=armadeus.com; dkim=pass (2048-bit key) header.d=armadeus.com header.i=@armadeus.com header.b=i/yNa6K0; arc=none smtp.client-ip=188.165.45.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armadeus.com
-Received: from director10.ghost.mail-out.ovh.net (unknown [10.110.58.249])
-	by mo550.mail-out.ovh.net (Postfix) with ESMTP id 4cNm3X6DTxz5xbx
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:19:04 +0000 (UTC)
-Received: from ghost-submission-5b5ff79f4f-8lnd4 (unknown [10.110.188.251])
-	by director10.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 2D59FC15C2;
-	Fri, 12 Sep 2025 20:19:04 +0000 (UTC)
-Received: from armadeus.com ([37.59.142.112])
-	by ghost-submission-5b5ff79f4f-8lnd4 with ESMTPSA
-	id LoviOjeAxGilAw4AMdo/aw
-	(envelope-from <sebastien.szymanski@armadeus.com>); Fri, 12 Sep 2025 20:19:04 +0000
-Authentication-Results:garm.ovh; auth=pass (GARM-112S006d9550b98-7ae0-4798-a2a1-6fec4990740f,
-                    24C0CD233B02D59DA4C9EFE158FBDB7975D525F0) smtp.auth=sebastien.szymanski@armadeus.com
-X-OVh-ClientIp:86.243.209.203
-From: =?utf-8?q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
-Date: Fri, 12 Sep 2025 22:18:50 +0200
-Subject: [PATCH] gpiolib: acpi: initialize acpi_gpio_info struct
+	s=arc-20240116; t=1757708468; c=relaxed/simple;
+	bh=ha5sACqI+T93S9hNt+6tg8vEBhnD3jRHwOofYElvPzs=;
+	h=Message-ID:Date:MIME-Version:Subject:From:References:To:Cc:
+	 In-Reply-To:Content-Type; b=IhzTpoKL9W+XDqNKvdcNUfHJ5werZE2boim9o1riqj1BKC4nm7Nyu8ZHgaGbTbGfi2wt6RTQ6HeswJG2GhHsjKAizrE0NHY567SykTo7JDtoij2+2u9qD0IZQ6hgUPPvd2SIbvIJv2anJllxb9uRXRMX1piZILiMUYwJOSiy1QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=dpFzoYMZ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58CI0uat014022
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:21:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	uh8HWFGgvQRh4YRN3fk73qzhec8r9FEUaHUe0C5PvU0=; b=dpFzoYMZG1v/fuZZ
+	2RiOHciNexepsOY2/E+q6hirgSIhID69Ou8BV9gf506j3uZg5Eyg1aOZTn3HJATt
+	izsRV0N8KIa63NihYzi/wdKIsjrvo3Q9Mstv6cveN0mG9y+W5uIkQAuk5nZ7SffF
+	SCpZcWhk1ehi5VrtLFFghTgdwVZiKX9kSYL7uICiT22ybmcz6YAkKtxsSRmAe46V
+	WsgpfZhH7ssf6RKCR/Cv3ITFT9Djgj10pxJzXJdkSQCZfcpynUiSJu1TjunZY4Tn
+	gHQFfBhtAm14Oyd3GlqhuFqV543caaNYYs6ltXn6svrV/nHakTrpOIqeRsCGuK+w
+	BSNxYw==
+Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com [209.85.210.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493qphxhg3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:21:04 +0000 (GMT)
+Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-7761dd1c845so469095b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:21:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757708463; x=1758313263;
+        h=content-transfer-encoding:in-reply-to:cc:to:content-language
+         :references:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uh8HWFGgvQRh4YRN3fk73qzhec8r9FEUaHUe0C5PvU0=;
+        b=kQDIFOqmU75XqELhNfLSi7p2SOSevGg/AMv8p7VhHiEsGnvS24zJd8EuxK+4rzuxjs
+         JdFZrmp23Qp1d5DROGYqAf678kBA7ZTgVp6qLmTMQkKZzemZ/qi42nxVkaDI53i3QbyA
+         QUFIZ5BnhzbRN/no7WNhGj/SSZZO0ooVW/tzLSiJGZs53xFM0LFiwU9ZtarJHafTKiOD
+         U9giFtaPzb37eTN72iTjpFtfaKRaZDW6oZ2YcElMhi+5i3Kfqva/ZAx7tqrOYgLQuF71
+         5ZdfwXaQztADAmqUzZRim2T7lZGjUPn73sNppn5P/vRIB6GTLVVmooZQgAXhXERnRK1Q
+         URDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBTUKh2kI+KZHVNwvwWI1zcIUavZ2qzcTsGsI5CgHRY4zkAnPcXSwa6Xtvv2a5ZuzrgoxpYFHwcgLcIJQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK3AseVI5kRYjvmommi9YiDG+AVnfBhXNCFEe1dk5eAUuhjsqj
+	y6sCGoA9zrZxlUzEVVyRUgUZ3VaxAiXGdVmf79sXKXh1kh5/7yEYACvnXgVu71teYy7eontC8eZ
+	9sqCQf9hZwiMKyCo2tInea9XavDnWcXyrSY0qMXBZeU1tPEqTfBRMS8WxeW7pLUgPXhE=
+X-Gm-Gg: ASbGncsbvus7nznwxjse24LmZvYDOBtCGOBhtWRoEILSsXgTCzCnpatd4TIoz9dyY9P
+	CfXNH9zDNqjRSPc89tBm7whjBPXWUXIu/B2sSht42ghMI/R8G1SzpY2jZm83DocoFKbg5EVpT3n
+	6b3Kou/3cWUpPGh99UCpnPNjkpOlAt36XxUtlIgfXE1ACJYZiQ5pOHgY3GQeh+Oc1ofREDqMMH8
+	rJVvA7//gSxX+50S4Ld/xKG6m8n7dHiElnvb1YpgAGeGcZSysXGAOZweH2BJqcBVXu9yXe/78IP
+	78IolygOo/7f4+dgMLTGxu6+VFy0+05r6Vs0LbVpSnhil9y4DhSggIoRINnM4kg3vY8Rlo9/yDT
+	lrpkpcsl+JJPzl2F1hY1Zbww=
+X-Received: by 2002:a05:6a00:181e:b0:772:48c5:c75a with SMTP id d2e1a72fcca58-77612091649mr5033554b3a.13.1757708463017;
+        Fri, 12 Sep 2025 13:21:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFy9rA89rMg5iy1ZfZgFDowhXAj7A+YF9TJ6xmj3kp84CbPWPd2rihyHVZcOIc16agMz/VevA==
+X-Received: by 2002:a05:6a00:181e:b0:772:48c5:c75a with SMTP id d2e1a72fcca58-77612091649mr5033517b3a.13.1757708462327;
+        Fri, 12 Sep 2025 13:21:02 -0700 (PDT)
+Received: from [10.110.61.161] (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607a46eedsm6317156b3a.30.2025.09.12.13.21.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 13:21:02 -0700 (PDT)
+Message-ID: <86bbc54c-3fc9-4c6d-9f93-b684634121bb@oss.qualcomm.com>
+Date: Fri, 12 Sep 2025 13:21:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250912-gpiolib-acpi-fix-v1-1-1a41acbffadf@armadeus.com>
-X-B4-Tracking: v=1; b=H4sIACmAxGgC/x2MUQqAIBAFrxL73YJKUXaV6KPsZQtRohBBePekz
- xmYeSkhChIN1UsRtyS5zgK6rsjt8+nBshYmo0yrrDbsg1yHLDy7ILzJwx3QWINlbdFTyUJE0f9
- ynHL+AObJw7RiAAAA
-X-Change-ID: 20250912-gpiolib-acpi-fix-7ee492ebd5e8
-To: Mika Westerberg <westeri@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
- linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
-X-Mailer: b4 0.14.2
-X-Ovh-Tracer-Id: 9239134636664548198
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleellecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthekredtredtjeenucfhrhhomhepuforsggrshhtihgvnhcuufiihihmrghnshhkihcuoehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomheqnecuggftrfgrthhtvghrnhepleelgeetueelieekffeiveekvddukefgfeetvedtgedvjedtgedvheehkeeuleetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpkeeirddvgeefrddvtdelrddvtdefpdefjedrheelrddugedvrdduuddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheehtdgmpdhmohguvgepshhmthhpohhuth
-DKIM-Signature: a=rsa-sha256; bh=p8MdL3xIorxozybFE1L91018QY5I/1ptU7GUsykpYEE=;
- c=relaxed/relaxed; d=armadeus.com; h=From; s=ovhmo103079-selector1;
- t=1757708344; v=1;
- b=i/yNa6K0lMjZqi+wijFic2vsqkF2gxMVzZxSAwTGjghyf8NUs3NVmAznCr9v3dNSfU5+63yp
- APiYmO2HTAaYrbd0JWjGeRkh4hu/o/jA8I6nJX0LqDvNq/F8CTQBd6MBsCfK57THcQ7bSTKc4z1
- D6hydl1YdpZMQHWHwVzHiBSXSmy/YQqek9sCub1QjlZoN9kP0HC0jJRri4vszDQVg6hZ9D/sDb2
- Z3chzBacKjv36GASfqsKokTU0TLE3h9uP5Tt8yjDmCwZazazdsvNHFUCX5WOJ6usIkdnJtGN/J2
- E7v8q8irfevLf3fIPuuqmWyWrbc0Wx8HV/DBgOmJJdJ3w==
+User-Agent: Mozilla Thunderbird
+Subject: [RFC] PatchWise: Unified Static Analysis for Kernel Development
+From: David Gantman <david.gantman@oss.qualcomm.com>
+References: <3aa87758-1899-4f7c-aa17-2330e656a467@oss.qualcomm.com>
+Content-Language: en-US
+To: workflows@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+In-Reply-To: <3aa87758-1899-4f7c-aa17-2330e656a467@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=aPDwqa9m c=1 sm=1 tr=0 ts=68c480b0 cx=c_pps
+ a=m5Vt/hrsBiPMCU0y4gIsQw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=NEAV23lmAAAA:8 a=_2PzejVuNbwBRFFAgkYA:9
+ a=QEXdDO2ut3YA:10 a=IoOABgeZipijB_acs4fv:22
+X-Proofpoint-GUID: vPzCYpTXIQEa76rOvXm2sF0gDG3iHApb
+X-Proofpoint-ORIG-GUID: vPzCYpTXIQEa76rOvXm2sF0gDG3iHApb
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDA0MCBTYWx0ZWRfXzTYlqzReo9qo
+ R62oEgHzj/0gW3KaTU8NNFbsVOK/v/hiwewQ86/76ZrrsB9hYokibf4bT7FtpFkYxCrthc2GN2U
+ v+zO7B4NJcngKGQzDW+uREReZ0GKH0sQE57AgqKXSKBeCBM3b8WPdX6YfdIUn1aHYwA2Zrq9fLw
+ wz5QPW4i7NanC/oKZVP/ioXyqME3+8+2I7m+lHuJomXo7uZqz8/iCQgLBZUeEdzKphQ6u5i78xV
+ x8hhFkzjOjIypcb+Gxvsr/defml0n95hcL8Yq0L1SrVJI4iaUYB7i3BaM4AhjRXhkSHSvS05CAQ
+ qOmirF4yFA7RlvjxX+G4lhUwoGeBiXag7ccifpyWwh/4Nj5vu0BPKBo3ZrOEcDlediRi39zCVzM
+ sILLS0eZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_07,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1011 spamscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509110040
 
-Since commit 7c010d463372 ("gpiolib: acpi: Make sure we fill struct
-acpi_gpio_info"), uninitialized acpi_gpio_info struct are passed to
-__acpi_find_gpio() and later in the call stack info->quirks is used in
-acpi_populate_gpio_lookup. This breaks the i2c_hid_cpi driver:
+Kernel developers and maintainers often need to manually run
+multiple static analysis tools (checkpatch, coccicheck, sparse,
+dt_binding_check, dtbs_check, etc.) and create custom scripts to
+consolidate results. This leads to:
 
-[   58.122916] i2c_hid_acpi i2c-UNIW0001:00: HID over i2c has not been provided an Int IRQ
-[   58.123097] i2c_hid_acpi i2c-UNIW0001:00: probe with driver i2c_hid_acpi failed with error -22
+- Inconsistent testing environments across different developers
+- Time spent writing and maintaining custom integration scripts
+- Missed issues due to incomplete tool coverage
+- Difficulty in reproducing analysis results
 
-Fix this by initializing the acpi_gpio_info pass to __acpi_find_gpio()
+I'd like to introduce PatchWise, a tool designed to address this
+fragmentation and manual orchestration of static analysis tools. I'm
+seeking feedback from the community on this approach and suggestions for
+how it could better serve kernel developers and maintainers.
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220388
-Fixes: 7c010d463372 ("gpiolib: acpi: Make sure we fill struct acpi_gpio_info")
-Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
----
- drivers/gpio/gpiolib-acpi-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Key features (All Optional and Configurable):
+- Unified interface for checkpatch, coccicheck, sparse,
+dt_binding_check, dtbs_check
+- Docker-based execution for consistent, reproducible environments
+- Simple installation and usage: `$ pip install patchwise` then `$
+patchwise` in your kernel tree root
+- Allows selective review execution (e.g., `$ patchwise --reviews
+checkpatch sparse`)
+- Supports both individual commits and commit ranges
 
-diff --git a/drivers/gpio/gpiolib-acpi-core.c b/drivers/gpio/gpiolib-acpi-core.c
-index 12b24a717e43f17621c054bfc4e9c2e287236d8c..d11bcaf1ae88421e5e5a11a2ba94983f437c413a 100644
---- a/drivers/gpio/gpiolib-acpi-core.c
-+++ b/drivers/gpio/gpiolib-acpi-core.c
-@@ -942,7 +942,7 @@ struct gpio_desc *acpi_find_gpio(struct fwnode_handle *fwnode,
- {
- 	struct acpi_device *adev = to_acpi_device_node(fwnode);
- 	bool can_fallback = acpi_can_fallback_to_crs(adev, con_id);
--	struct acpi_gpio_info info;
-+	struct acpi_gpio_info info = {};
- 	struct gpio_desc *desc;
- 
- 	desc = __acpi_find_gpio(fwnode, con_id, idx, can_fallback, &info);
-@@ -992,7 +992,7 @@ int acpi_dev_gpio_irq_wake_get_by(struct acpi_device *adev, const char *con_id,
- 	int ret;
- 
- 	for (i = 0, idx = 0; idx <= index; i++) {
--		struct acpi_gpio_info info;
-+		struct acpi_gpio_info info = {};
- 		struct gpio_desc *desc;
- 
- 		/* Ignore -EPROBE_DEFER, it only matters if idx matches */
+Optional AI-Powered Review Features:
+PatchWise also includes optional AI-based code review capabilities that
+aim to overcome a key limitation in automated patch review: limited
+context. When enabled, the tool uses Language Server Protocol (LSP)
+integration with clangd to:
 
----
-base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
-change-id: 20250912-gpiolib-acpi-fix-7ee492ebd5e8
+- Generate compile_commands.json for accurate code understanding
+- Fetch relevant function definitions, struct declarations, and related code
+- Provide context-aware feedback rather than superficial pattern matching
+- Support multiple LLM providers (OpenAI, etc.)
 
-Best regards,
--- 
-Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+Important note: All features including AI code review can be selectively
+enabled and disabled based on user preference.
 
+Technical Architecture:
+- Python 3.10+ with pip installation
+- Docker-based isolation for tool execution
+- LSP integration for deep AI code understanding
+- YAML-based configuration
+- Rich logging and debugging support
+
+Source code and current status: https://github.com/qualcomm/PatchWise
+
+Upcoming improvements include patch series support and Docker-based
+dependency management for each tool. Open tasks and planned features are
+documented in the GitHub issues for visibility and collaboration/
+
+Feedback Requested:
+- Tool Integration: Are there other static analysis tools you'd
+like to see supported?
+- Workflow Integration: How could PatchWise better fit into your
+existing development and review workflows?
+- Output Format: What formats would be most useful for your use
+cases?
+- AI Features: For those interested, how else can AI code review and
+commit text analysis be improved?
+
+Try it out:
+$ pip install patchwise
+$ cd /path/to/your/kernel/tree
+$ patchwise  # Analyzes HEAD commit with all available tools
+$ patchwise --reviews checkpatch sparse  # Runs only specific tools
+
+The goal is to eliminate the need for custom scripts to consolidate
+kernel test tools, while offering optional advanced features for those
+who want them.
+
+Thanks,
+David
 
