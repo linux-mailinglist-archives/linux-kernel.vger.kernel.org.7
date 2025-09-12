@@ -1,137 +1,120 @@
-Return-Path: <linux-kernel+bounces-813586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0A4B547E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:36:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4AC1B547F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C14B588095
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6251889908
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:37:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9972227B505;
-	Fri, 12 Sep 2025 09:34:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3Mh+sVl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84B3257827
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3F62836A6;
+	Fri, 12 Sep 2025 09:35:42 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [207.46.229.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C1D27280F;
+	Fri, 12 Sep 2025 09:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.46.229.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757669693; cv=none; b=UENMn0EL5VmNlgt0aa9kB7dGOjzgRXnJXf56njBHb6Hzao5A4IAMBndOhgWNCObApUSNpFi7mFnjkNRdfeLvepNJcxo3lIfzU74yagLkr0RwStZ0GCFba8QREKaLVq3fBH1tfX3lXyN6HykCFJnLHblBRYXY271mvUHOYEh2DEo=
+	t=1757669742; cv=none; b=mceI9YHR3fT71lyprm2ZELgT74rWJo46HBZI7HTIi6YD8pLIhsZAlxB6CeOs58aDUDX2yU1YbRadUXK6agOGGheIasSegvkZUwOz40/NkHCXz0QS97SRglAn2OzeJ50JY9AhPUfYPrj5Gqb171imttXuGNLytGVtA0Nj1AsC0Ig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757669693; c=relaxed/simple;
-	bh=2JUPNpHR8uZPua/Ocf4A06g0+dUaWRIP5CAQgui2uU8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=odD10b5oEq21mSxFU87c0QYRttiMst+iKK2jh+HjYm2ekaeATHaYhEQTHyJ8Y2kBce/NlYULsUpG4fLSwTzs6+PmChjxwbCT+qoepg1nO8nWdVJN9Dk/TQkxFkJf6hLT2vFWq/aeD9J27ttc/YtbD5ZTiXAsFEgwP0Ey/trTFkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s3Mh+sVl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B237C4CEFB
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:34:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757669693;
-	bh=2JUPNpHR8uZPua/Ocf4A06g0+dUaWRIP5CAQgui2uU8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=s3Mh+sVlkgLGQrH+lPbYQ09MvdIBlTdR+rMF9Wrx6jK6UxYvbdXgZ6u1lMRVhjFwv
-	 2FY+8o6iPUCkFx2WCz9cFaVazRh7ZSiSwHHWIvTjQFHiU14junGEFC7V/Ds5SIRWch
-	 HEkZcaRjWsgr7NB0E04uayOdsSPf9oi/S6SQE+qiRIAkBqdQDaR61hNWdS7IZ5RdHB
-	 Se6ENjwHLi7E4mauSM38udRuR0hbcdGjcT1HAOmgdGkpxFjtrTpUXDgKccwWQUV04k
-	 bcddY6fA+CEz0XdabsvbJg8sghYPhufW+t3XaUVo0e4SP8qXl79VkpYej13/mXzT5o
-	 rfyhwGWRbrDpA==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-6219b29ed57so553689eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:34:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVoeIOCG3+JKk2W3ur/3UmQQdSODBxN7ajhrmZ9gRhJAapaxqRpLgRt/7XBOlrPuKuMcWo2x93lZ1AOvls=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn7cvUY1ifwAWf9CmBrJfxPyiBXW8pbckBWCKwXXSNuFv3D+5n
-	U0dldkkYq57aNC6A182QNmMMoY9dVcS+wo4zS1G8DNI1hAwT8tr9D4zE4DFU0JkviPOB2Z2EcIl
-	rwsphm0j5+UdvgaLcXIpXb0zXIn2wQ1g=
-X-Google-Smtp-Source: AGHT+IFJCL8fGugOwFnOZNvSlCpm6fvhe7cWHPzDCTKcJ/HFS1TOwSuPgcN7ZtQnaux0hwAXztuqBp5tIWpM+XoM2Vw=
-X-Received: by 2002:a05:6820:516:b0:61e:16d0:9ea2 with SMTP id
- 006d021491bc7-621bf8e25d0mr1041426eaf.3.1757669692525; Fri, 12 Sep 2025
- 02:34:52 -0700 (PDT)
+	s=arc-20240116; t=1757669742; c=relaxed/simple;
+	bh=xYeK3h6MGi3CXQpHgY6UYQw/twkgBe+IwSqxaTRTghw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rU+GeaPnZ5ihGl1Hd7ggtk6rQfixkzFM4GnnuFYKX9OQEuLQtTdtDdbkhR+wg3YlOenBhtdGjrHtm02sMPCRPJJn/v3XkA5MlRhi07yzwF5eq1j406cLourwozeseFiJRsorf43a7lHnRr/WdYVNw0SPWINIy8YX5/OiN5Kj85w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=207.46.229.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005154LT.eswin.cn (unknown [10.12.96.103])
+	by app2 (Coremail) with SMTP id TQJkCgAHppQ+6cNoQsjOAA--.23710S2;
+	Fri, 12 Sep 2025 17:34:57 +0800 (CST)
+From: hehuan1@eswincomputing.com
+To: ulf.hansson@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jszhang@kernel.org,
+	adrian.hunter@intel.com,
+	p.zabel@pengutronix.de,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	xuxiang@eswincomputing.com,
+	luyulin@eswincomputing.com,
+	dongxuyang@eswincomputing.com,
+	zhangsenchuan@eswincomputing.com,
+	weishangjuan@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	caohang@eswincomputing.com,
+	hehuan1@eswincomputing.com
+Subject: [PATCH v2 0/2] Add support for Eswin EIC7700 SD/eMMC controller
+Date: Fri, 12 Sep 2025 17:34:50 +0800
+Message-ID: <20250912093451.125-1-hehuan1@eswincomputing.com>
+X-Mailer: git-send-email 2.49.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <75e4ae507fa4faddd063a3a9e17d319ed84529b6.1757562971.git.lukas@wunner.de>
- <80980751-64db-4dc2-9516-03046e8b4b31@kernel.org> <aMPLDLYpeVXO1y6R@wunner.de>
-In-Reply-To: <aMPLDLYpeVXO1y6R@wunner.de>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 12 Sep 2025 11:34:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iNdLp_=GPg2AQ+r06tSdpZ1HQJMu=bBTNOyyic1no1EQ@mail.gmail.com>
-X-Gm-Features: Ac12FXyZwVzqjs38BOWP1vmQYL8jZ0etA9hnTOl9TdhUXRr3ObXHBhu4JU6OIKk
-Message-ID: <CAJZ5v0iNdLp_=GPg2AQ+r06tSdpZ1HQJMu=bBTNOyyic1no1EQ@mail.gmail.com>
-Subject: Re: [PATCH] PCI/PM: Move ASUS EHCI workaround out of generic code
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Mario Limonciello <superm1@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, linux-pci@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org, 
-	Oleksij Rempel <o.rempel@pengutronix.de>, Timo Jyrinki <timo.jyrinki@gmail.com>, 
-	Ernst Persson <ernstp@gmail.com>, Steven Harms <sjharms@gmail.com>, James Ettle <james@ettle.org.uk>, 
-	Nick Coghlan <ncoghlan@gmail.com>, Weng Xuetian <wengxt@gmail.com>, 
-	Andrey Rahmatullin <wrar@wrar.name>, Boris Barbour <boris.barbour@ens.fr>, 
-	Vlastimil Zima <vlastimil.zima@gmail.com>, David Banks <amoebae@gmail.com>, 
-	Chris Moeller <kode54@gmail.com>, Daniel Fraga <fragabr@gmail.com>, Javier Marcet <jmarcet@gmail.com>, 
-	Pavel Pisa <pisa@cmp.felk.cvut.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgAHppQ+6cNoQsjOAA--.23710S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF45Jr1xurWDXrWkuF17Jrb_yoW8Xr4xpF
+	W5KryfGrs8CryxZFs3G34v9a4fXw4xWry5Kr43J3W8X3yDZF1jqrWIka4YqFW3Jr4xXws8
+	Z3y0gF1fCa1Yv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r4a6rW5MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr4
+	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
+	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
+	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRkwIhUUUUU=
+X-CM-SenderInfo: 5khk3tzqr6v25zlqu0xpsx3x1qjou0bp/
 
-On Fri, Sep 12, 2025 at 9:26=E2=80=AFAM Lukas Wunner <lukas@wunner.de> wrot=
-e:
->
-> On Thu, Sep 11, 2025 at 08:34:56AM -0500, Mario Limonciello wrote:
-> > On 9/11/25 8:11 AM, Lukas Wunner wrote:
-> > > pci_disable_device() does not clear I/O and Memory Space Enable, alth=
-ough
-> > > its name suggests otherwise.  The kernel has never disabled these bit=
-s
-> > > once they're enabled.  Doing so would avoid the need for the quirk, b=
-ut it
-> > > is unclear what will break if this fundamental behavior is changed.
-> >
-> > It's too late for this cycle to do so, but how would you feel about mak=
-ing
-> > this change at the start of the next cycle so it had a whole cycle to b=
-ake
-> > in linux-next and see if there is a problem in doing so?
->
-> I can look into it.
->
-> The change could be justified as a security enhancement to prevent
-> unauthorized traffic between devices through peer-to-peer transactions.
->
-> pci_disable_device() was introduced with v2.4.3.5 in 2002:
-> https://git.kernel.org/tglx/history/c/9102e0eb3e9e
->
-> I suspect back in the day, clearing Bus Master Enable seemed sufficient
-> because the only concern was to prevent DMA (and by extension MSIs)
-> from broken devices.  Attacks *between* devices were probably not
-> considered realistic.
->
-> ACS is meant to prevent such attacks, but is an optional capability
-> and might be configured incorrectly.  A zero trust, defense in depth
-> approach as is common today requires not leaving doors open without need.
->
-> If the kernel would clear Memory Space Enable, a malicious device could
-> not re-enable it on its own because "propagation of Configuration Request=
-s
-> from Downstream to Upstream as well as peer-to-peer are not supported"
-> (PCIe r7.0 sec 7.3.3).
->
-> It seemed too risky to make such a sweeping change only to get rid of
-> the EHCI quirk.  The present patch is meant as a low-risk refactoring,
-> but we can consider clearing IO + Memory Space Enable as a long-term
-> solution.
+From: Huan He <hehuan1@eswincomputing.com>
 
-Yes, we can.
+Updates:
 
-Obviously, the additional reason for doing it, which appears to be
-more significant than avoiding the EHCI quirk alone, can be regarded
-as sufficient justification IMV.
+  Changes in v2:
+  - Delete the previous separate driver and yaml binding file
+  - Update snps,dwcmshc-sdhci.yaml to add support for Eswin EIC7700
+    - Add the new compautible string: "eswin,eic7700-dwcmshc"
+    - Add new properties: clock-output-names, '#clock-cells',
+      drive-impedance-ohm, eswin,hsp-sp-csr and eswin,syscrg-csr
+    - Add customized reset-names for EIC7700 platform
+  - Update sdhci-of-dwcmshc.c to add support for Eswin EIC7700
+    - Add a new struct eic7700_priv to hold Eswin-specific data,
+      including clock phases, register mappings, and drive
+      impedance configuration
+    - Implement EIC7700-specific sdhci_ops
+      - set_clock: support core clock configuration with phase delay
+      - reset: add PHY reset and configuration
+      - set_uhs_signaling: support HS400 DLL lock
+      - platform_execute_tuning: implement delay line tuning and phase
+        code adjustment
+    - Add initialization routine (eic7700_init)
+    - Integrate the new platform data and ops into the driver's match table
+
+  - Link to v1: https://lore.kernel.org/all/20250516091259.774-1-dongxuyang@eswincomputing.com/
+
+Huan He (2):
+  dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin EIC7700
+  mmc: sdhci-of-dwcmshc: Add support for Eswin EIC7700
+
+ .../bindings/mmc/snps,dwcmshc-sdhci.yaml      |  81 +-
+ drivers/mmc/host/sdhci-of-dwcmshc.c           | 770 ++++++++++++++++++
+ 2 files changed, 845 insertions(+), 6 deletions(-)
+
+-- 
+2.25.1
+
 
