@@ -1,189 +1,207 @@
-Return-Path: <linux-kernel+bounces-813717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 326B5B549E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:31:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B29A1B549DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB44AC0BA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:31:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DC14AA7BCE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1A32EB849;
-	Fri, 12 Sep 2025 10:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FDDB2EA499;
+	Fri, 12 Sep 2025 10:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jT0WwhhK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="k1vyC6rj"
-Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Ez1cDXbS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315AD2D2390;
-	Fri, 12 Sep 2025 10:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C537A41
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757673095; cv=none; b=cavJFh/W7zL03nbBoU4MncQ698wzSIeQ3HtpbMzLBytEPVjEEHRWCON8SUsts2T3pEoO+dFKbjD6kCK5mr9fkFpGMxHnDOPiqAUVJ8z+pMDkkGsgqB808DUZwM2IHU8rscAuZwIFKoMwEL0m9iW3vUocmn6KvWhH+NDex0fAWtI=
+	t=1757673078; cv=none; b=NfoB5lvJj1M6793L2s2LTU5gmreLp2cK8bkt4RNw5ya6BsAau0i3KO+tpIR/1gEmXnnkSjJBmkz7KKWhv10TR9x7s10oC6fL1vO7/SfT/sUbizikSc9y7oreewjpQ+oG8vHZYt5cDI/4/DmSsXPDN4lI9zA9qmKUomkb6NI+8UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757673095; c=relaxed/simple;
-	bh=pu0gdKrhxEyl//CR0XUZT7QWZKUbgxfCqjXP3s6wHA4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=UR9kUMGQ1+sZoGjtC8G5f5tLUfWptLuCb0WAMEfkGXtNam8iLKohlNvE6I3cWGVaGcvdcnbiynk7Vl9Mb7s60koqcAIyQaiaMbSaJPBWDWuOW8qVBb79Q1Yb+2Y0VXbxUQxdqhlHamSlma9t2DQVRIKjpQ72+5aDb9AN6SX1lpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jT0WwhhK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=k1vyC6rj; arc=none smtp.client-ip=202.12.124.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id AED0D1D003A5;
-	Fri, 12 Sep 2025 06:31:32 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 12 Sep 2025 06:31:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757673092;
-	 x=1757759492; bh=ZnTz2gc51WJkMzlk/mlrEsU7FqUmmq3NOjbYK7bSYp4=; b=
-	jT0WwhhKNltNjX6oy1wi2+oKiJaYylL7esPneJwhFB9N0maSA8KhckfKJ6NnZQXz
-	bYSKUzEJ1WD8GBoOttQ4k4McWa7PUuOpoj8s0jC70raXwNw+Joio585FI3WnZjbl
-	x3pSTwt/PxqKxJ9lJ31N1oKIcXKJBT4zXz+pCyvFVjV9Kraw9dayg9sb9jRwV+Nw
-	ZCwIvDwoMDizk5Oy4w5Fq4PGMoCfY9L/WG+9W9or8bVbia9mvqlXoeo2P0NR+JgN
-	5c355lhHhH91mQkZARqOAP1UqOJCYuCPS9yuex3K/8pU9ahBPN8OBiub5LCVDUWa
-	qZJfE07pcyZBzcIZ+mGBAQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757673092; x=
-	1757759492; bh=ZnTz2gc51WJkMzlk/mlrEsU7FqUmmq3NOjbYK7bSYp4=; b=k
-	1vyC6rj2xmNIeSXoxg3bvnTWj9wX83aGkU2Em5DF79HTuHrMRkI/xWw7759LQ+5B
-	bkcvjmV9Qcxb5zeuIlTgRw5J7nFj1ieCipA/jEvNGwd6HN40RiueQR16QHBzDb8h
-	VtUVL9bF9ugklG9UPWPwK1OXzf1y5zcSOVT/aIDSE7/tpO+qIxlm036IloNQ38vX
-	GYO835wCXejsuEjw7jRJxt+JFUijm5OA7IcHo9Ic5uxJrBm8P5nGWjGtURshGLI/
-	Jm0wr8SJkFo/frJJBMF0lfIbNHl9FUpWia57G4LZzDDKNpmKp6M9YMb4iODMRpV9
-	KmdcZMWP9FzP3F+KYOnRg==
-X-ME-Sender: <xms:g_bDaJkb4BCSIXaN20hGGvDbpq_uYHUfXJVkDOB_mVGTfxamBLbrCg>
-    <xme:g_bDaE1SOe8uQM2xOpAvalLtJNFp4-tFiBJJg00LzpboZKgRb_HiWpnQAMxIFtxov
-    Y9ewlkME-ye5_zj9pk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvkeekudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopedvledpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheptghhvghsthgvrhdrrgdruhhnrghlsegrrhhinhgtledrtghomhdprh
-    gtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupdhr
-    tghpthhtoheprghnughrvggrshesghgrihhslhgvrhdrtghomhdprhgtphhtthhopehgvg
-    gvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheprghlvgigrghn
-    uggvrhdrshhvvghrughlihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepshgvrhhgih
-    hordhprghrrggtuhgvlhhlohhssehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhurhgv
-    nhgssehgohhoghhlvgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrg
-    gurdhorhhgpdhrtghpthhtohepihhrrgdrfigvihhnhiesihhnthgvlhdrtghomh
-X-ME-Proxy: <xmx:g_bDaFXJUTCPg8Gg2uXGQ5RgMU0uaHD5VVXSZgwboz-q7ftAYqBd_A>
-    <xmx:g_bDaH89g0FuTDFfLJztpjIor2KN7O4LrVLiR6mLfjS9st6ed4KczQ>
-    <xmx:g_bDaKpKyJokmXH4ARM6vTbfA_Kk9jW9MQRMrRlbx2LKjFb1x4w1Wg>
-    <xmx:g_bDaLcx1abt47vng-9Brf4PakpSJA5ATOGTsoYy2HXs2gu4PoxW_w>
-    <xmx:hPbDaDl4p91INzeg69byU-AorUJTlq5vFDDCdsqCRc1puYq7VFqbSjGD>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9ED19700065; Fri, 12 Sep 2025 06:31:31 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757673078; c=relaxed/simple;
+	bh=ru1yGOyd5Y3Fq7JTiCyy2tLRgTdN7eeDCsE0W0qKNIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=koX2umM+0CmM4Lu3ubCHykO2L7dGSzw8GMfxRduX+RRWaJFvutVrX8xse8aSA5QliKDA5Dj0r7LcKwzkLW5StspkNVZbWQwQ32/mdJ66ei1qbD8BeTF0KWWz1V0wzoL7WTsZBo5oSXQ/9sgYsiTn+JS+LaAAPkp0sk+mo7VNaCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Ez1cDXbS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fKrK014033
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:31:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=QYQVjSVGI7fSyP5NPLcxC0Gn
+	NWMprT3G/Z6o5y804gQ=; b=Ez1cDXbSvnGemg8472pZ8bhDQSW/4Ft8Q83R/893
+	2LMiB8BhNhqVTzcLqTFOdPPzOGEBduIjUcmertrhXjUEwFazZ8uDN72wdBV17WVQ
+	N1IP3xd4EzB6oLWkiiA0uY9D3WlGRnKQhXnOmECOHgeQFIT9qcKZ5aoBLm3xiFcK
+	D+d1nyaUn8T/SNIOoVZO6Dv7YJUi2wuXu+p8yn5Ui7LmKx7tNTArTDBp0+OfU3kj
+	emw5YhBiJ+Oo3Kqik7N5C5FR1Nvb/HHQFGiG2jJRmnOVbC5aTQJNh/VPpp7fJ2K5
+	3WK/a16Y6uK50vMN5E1UFSsc/z6PliVOMaryGGIDqb4UDA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493qphvwfm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:31:15 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b5fbf0388eso25100221cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:31:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757673075; x=1758277875;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QYQVjSVGI7fSyP5NPLcxC0GnNWMprT3G/Z6o5y804gQ=;
+        b=kc8bZf2Wu7XZ1JeubKVMp1I5vf1s4+2rzrxDPNVBOhm+whutuOJTAQJCSPZo4n96Oh
+         165g5HBMHqPBG6BLFdr+Ym4MgHXT6cH4vTJhoyKgcJIyr+UGayoSnC7jFCGgASf0bfnW
+         xuOe1JOvwhdm1IqreN0foQ4k1f8OGInxuR0hrI6CnNRL4jiLIxkhRS/Sr8PULQpcCe7N
+         uG7kUOx0D/OiCn093YpHYFGeenX3GVt59csCQZ6Ie2UPDydsiFpJClxL+YWWigHn5osd
+         fB0dIpZx/6M05p2hQe/hbXsnoswJatAOS+FvDZw9VRpNID2kpgD7NKPh2BDb4NazDKdF
+         cjiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYcS9xLKT1LW36bOXzxPFql+PoTT9Cjgpd3SAsTLgizDdc73mBUkW5DdXmvdQ5gIMnrHBgwxBWCOpVf/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv9NOYAR4GO3lG8nuHSQa8Xrg6yw28n87zBp7uZruL6t4zdHvs
+	1p6WeyF+hR1z7RQ3ykwo8IMLLXRO6YLlMfd041700jqDbc/q5xpyiZzPCw0GW4jAavUKrxUqgt7
+	8NmzJNFFfedhtnichpET3gbHMYy9iW2ImuUOgMrv7YBCZYxvuZNG/6a2vTjmnzMB19DQ=
+X-Gm-Gg: ASbGncuTg+PkNeVHmXfCCYCWzoDKIrFT/qopa25uSmSVG5yzD525eFVyek963yz8w5C
+	rehRMmy7YyfXNdUuld5J9tqqSFDlYRsWw2qGgKWu07GWMSlm0Z8UCpMwTptjtIwaqv2RWgldikc
+	C0EVSOYTbek/jFZO0Thc+n+V6GSDTprUS1ONDJexTmzx2aZeIiDBgrZay2+NY/jYBfB8fuXV+kd
+	pvKYiwn9P9GGJgmRNyygmKgudTi6pCVZt8FO5lT0a2ukBY7ursieFnV2SQu3AKrC1Tae5Y3aArL
+	0UCmgSk/NhE/o1gOhGXJ4Dc9LtVRo8PlhdmYva32zovd6LivfYF8DVfzvjvVMa8w6CEZXSpk13A
+	qLNzUfyzSzZj1tW2Uguuj/6E7eqigDy/SGc+X7nzXLc5YC9EUAiZL
+X-Received: by 2002:a05:622a:11:b0:4b4:9773:5866 with SMTP id d75a77b69052e-4b77d0c8726mr25974391cf.65.1757673074740;
+        Fri, 12 Sep 2025 03:31:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlmYG3GvVCPpgbJA4niCY20ubvFQsgSIGszF/TZGTRPQ9P7ipXCexaQtPdOTizRtrNWqVY8g==
+X-Received: by 2002:a05:622a:11:b0:4b4:9773:5866 with SMTP id d75a77b69052e-4b77d0c8726mr25973891cf.65.1757673074110;
+        Fri, 12 Sep 2025 03:31:14 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e65a3464bsm1032362e87.139.2025.09.12.03.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 03:31:13 -0700 (PDT)
+Date: Fri, 12 Sep 2025 13:31:11 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+        li.liu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v4 10/13] phy: qcom: qmp-usbc: Add DP PHY ops for USB/DP
+ switchable Type-C PHYs
+Message-ID: <buob3axokndjfuwvv5j5zee4e66tf7t4ficz6fend5yadw4j6e@czus6n6zfor7>
+References: <20250911-add-displayport-support-for-qcs615-platform-v4-0-2702bdda14ed@oss.qualcomm.com>
+ <20250911-add-displayport-support-for-qcs615-platform-v4-10-2702bdda14ed@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AmcCJOTBQ5ho
-Date: Fri, 12 Sep 2025 12:30:59 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Richard Weinberger" <richard@nod.at>, "Dave Hansen" <dave@sr71.net>
-Cc: ksummit <ksummit@lists.linux.dev>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
- linux-mips <linux-mips@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
- imx <imx@lists.linux.dev>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Lucas Stach" <l.stach@pengutronix.de>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Ankur Arora" <ankur.a.arora@oracle.com>,
- "David Hildenbrand" <david@redhat.com>,
- "Mike Rapoport" <rppt@kernel.org>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>,
- "Suren Baghdasaryan" <surenb@google.com>,
- "Ira Weiny" <ira.weiny@intel.com>, "Nishanth Menon" <nm@ti.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "Chester A. Unal" <chester.a.unal@arinc9.com>,
- "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
- "Andreas Larsson" <andreas@gaisler.com>
-Message-Id: <4fcd272f-81e3-4729-922b-588ad144e39b@app.fastmail.com>
-In-Reply-To: <640041197.22387.1757536385810.JavaMail.zimbra@nod.at>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <497308537.21756.1757513073548.JavaMail.zimbra@nod.at>
- <dec53524-97ee-4e56-8795-c7549c295fac@sr71.net>
- <640041197.22387.1757536385810.JavaMail.zimbra@nod.at>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911-add-displayport-support-for-qcs615-platform-v4-10-2702bdda14ed@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=aPDwqa9m c=1 sm=1 tr=0 ts=68c3f673 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=tOlg4r5JIpINhLxCU78A:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: 8ibATIgog3g2trHu5hPhAoK_HleRRP_c
+X-Proofpoint-ORIG-GUID: 8ibATIgog3g2trHu5hPhAoK_HleRRP_c
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDA0MCBTYWx0ZWRfXyysFiWq4HzLg
+ MDAwLvc4HabaP5eYgGnhd8Sya9E/x12qujB2D1M7+N3unMENXF8bU9hVbaSUKDEolm/XDwQLfRi
+ nBiF5w/zC6s287vL/tpTu6zzkzCcpOzSE57ZFuIgzx7okWQwL0ScYWCpOAqNnaiNQl6Dv7PhaAS
+ euc7fQittoDPHl4AmWcfMVeE8tlGpgaTk/MwUr/2xUeemLiKQzU4Jj2j7I+bbEQdrBl6kL0tsI/
+ +ELb/g9UYYNLfV4rZGoTkPK/NI9JXbXkRrPLbQ86GAzP607BaOZ5kEzi2ZdwErWCq6a9IHk9Lf2
+ k6/PPJUkuFW/m9LGWc7sQ5mkIEufLMNA1oA0UMyRZYVXfFh6r8umTeXNsgfQdBzFDC7CxnTrlTB
+ EA0eTDLS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_03,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509110040
 
-On Wed, Sep 10, 2025, at 22:33, Richard Weinberger wrote:
-> ----- Urspr=C3=BCngliche Mail -----
->> Von: "Dave Hansen" <dave@sr71.net>
->>> Even with a new memory split, which could utilize most of the
->>> available memory, I expect there to be issues with various
->>> applications and FPGA device drivers.
+On Thu, Sep 11, 2025 at 10:55:07PM +0800, Xiangxu Yin wrote:
+> Define qmp_usbc_dp_phy_ops struct to support DP mode on USB/DP
+> switchable PHYs.
+> 
+> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 192 ++++++++++++++++++++++++++++++-
+>  1 file changed, 191 insertions(+), 1 deletion(-)
+> 
+> @@ -1669,6 +1832,23 @@ static int qmp_usbc_parse_tcsr(struct qmp_usbc *qmp)
+>  	return 0;
+>  }
+>  
+> +static struct phy *qmp_usbc_phy_xlate(struct device *dev, const struct of_phandle_args *args)
+> +{
+> +	struct qmp_usbc *qmp = dev_get_drvdata(dev);
+> +
+> +	if (args->args_count == 0)
+> +		return qmp->usb_phy;
+> +
+> +	switch (args->args[0]) {
+> +	case QMP_USB43DP_USB3_PHY:
+> +		return qmp->usb_phy;
+> +	case QMP_USB43DP_DP_PHY:
+> +		return qmp->dp_phy;
 
-I also remember driver problems on older Marvell NAS systems, which
-we never fully figured out, my best guess in retrospect is that these
-had devices with DMA address restrictions, and if lowmem is small
-enough it would always work, but any lowmem allocation above the
-hardware DMA address limit would cause data corruption.
+return qmp->dp_phy ?: ERR_PTR(-ENODEV);
 
-A similar restriction exists on Raspberry Pi, which can run
-both 32-bit and 64-bit kernels. The workaround in this case is
-a combination of:
+We are not expected to return NULL here (and dp_phy can be NULL).
 
-- correctly representing the DMA limits in the devicetree, using
-  the 'dma-ranges' property.
-- enabling SWIOTLB (which is not enabled by default on 32-bit
-  Arm without LPAE).
-- Using GFP_DMA or dma_alloc_noncoherent() allocations for
-  streaming buffers if possible, to avoid extra bounces
+> +	}
+> +
+> +	return ERR_PTR(-EINVAL);
+> +}
+> +
+>  static int qmp_usbc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -1743,9 +1923,19 @@ static int qmp_usbc_probe(struct platform_device *pdev)
+>  
+>  	phy_set_drvdata(qmp->usb_phy, qmp);
+>  
+> +	if (qmp->dp_serdes != 0) {
+> +		qmp->dp_phy = devm_phy_create(dev, np, &qmp_usbc_dp_phy_ops);
+> +		if (IS_ERR(qmp->dp_phy)) {
+> +			ret = PTR_ERR(qmp->dp_phy);
+> +			dev_err(dev, "failed to create PHY: %d\n", ret);
+> +			goto err_node_put;
+> +		}
+> +		phy_set_drvdata(qmp->dp_phy, qmp);
+> +	}
+> +
+>  	of_node_put(np);
+>  
+> -	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +	phy_provider = devm_of_phy_provider_register(dev, qmp_usbc_phy_xlate);
+>  
+>  	return PTR_ERR_OR_ZERO(phy_provider);
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
-(documenting this here, in case someone tries out VMSPLIT_2G
-and runs into a similar bug on other hardware, I expect there
-may be a few more of these, though most hardware should be fine)
-
->> I'd be really curious what the _actual_ issues would be with a
->> non-standard split. There are a lot of "maybe" problems and solutions
->> here, but it's hard to move forward without known practical problems =
-to
->> tackle.
->>=20
->> Has anybody run into actual end user visible problems when using one =
-of
->> weirdo PAGE_OFFSET configs?
->
-> In the past I saw that programs such as the Java Runtime (JRE) ran into
-> address space limitations due to a 2G/2G split on embedded systems.
-> Reverting to a 3G/1G split fixed the problems.
-
-Right, that makes sense, given the tricks they likely play on the
-virtual address space. Are the 2GB devices you maintain using a JRE,
-or was this on other embedded hardware? How common is Java still in
-this type of workload?
-
-Another type of software that I've seen mentioned struggling with
-VMSPLIT_2G is web browsers, but I don't know if that is a similar
-problem with a V8/spidermonkey JIT managing its own address space,
-or more about general bloat exceeding 2GB of user addresses.
-
-      Arnd
+-- 
+With best wishes
+Dmitry
 
