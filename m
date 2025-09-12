@@ -1,135 +1,78 @@
-Return-Path: <linux-kernel+bounces-814223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55047B55127
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:24:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A70CEB55134
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 573B55A7864
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:23:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C7141D645F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C45D3148CB;
-	Fri, 12 Sep 2025 14:21:34 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1A6315789;
+	Fri, 12 Sep 2025 14:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhBcIKTV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8A531A058;
-	Fri, 12 Sep 2025 14:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2215131E0EE;
+	Fri, 12 Sep 2025 14:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686894; cv=none; b=TuNasoTZ36y5GL3OSaiMNhOPYAv+fu5rlRJLdSbfQH2TbNi1CdDv3J80hJBdTAj5XMQESwkeah24LIed2p+Nlwt6sPiT7IZZpcLkCa3Fq4AXGs0+okGFTB/tIMl6V/8kF8muiuyQNLLbcTV2RCmhxngdIRl24OZl/KR/NfUmHZQ=
+	t=1757686920; cv=none; b=bxFj2D5BuYXHMYQRgTZ0ycqHDIjQVeiC0G5E6BfReVf9ldqUBaYIY1Z7s7rGH96dFTDpdqkozxJCULzjmtR2Twpxa5BHl+n12iGdikdxEy78t0EAUEONwlEm7lgb7anMahErhPWg3SfZ215a3AFN+BlNXE/WYrYyQq7rPZWh2RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686894; c=relaxed/simple;
-	bh=qXqoxJcbp+qncwtNqhJPGBaUzokhKiJrHtbDDy4M3JM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uWlFgqCZ6WRGPRDw8FGzTrIuMq+YWYMwHAlkzfLcWqQVwa3rW0inq5976nNCrWh5t3OOXUQ8l86ttjVuMwrbmavxBDIr0xzyzV4ASeycbfSnJuq/UTxFxfhPRedgMw9e7Wo8bcUN1+WCBLh7TUeiGaYMtlU+Mbu2VF8snGt1m/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNc3r34N7z6M53c;
-	Fri, 12 Sep 2025 22:18:48 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id DCED51404D8;
-	Fri, 12 Sep 2025 22:21:29 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
- 2025 16:21:28 +0200
-Date: Fri, 12 Sep 2025 15:21:27 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-CC: Andy Shevchenko <andy.shevchenko@gmail.com>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, David Lechner <dlechner@baylibre.com>,
-	<jic23@kernel.org>, <nuno.sa@analog.com>, <andy@kernel.org>,
-	<robh@kernel.org>, <conor+dt@kernel.org>, <krzk+dt@kernel.org>,
-	<linux-iio@vger.kernel.org>, <s32@nxp.com>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <chester62515@gmail.com>, <mbrugger@suse.com>,
-	<ghennadi.procopciuc@oss.nxp.com>
-Subject: Re: [PATCH v2 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-Message-ID: <20250912152127.000039fe@huawei.com>
-In-Reply-To: <5e279cf72409504861c80bb4d2e4e5f6bc59d94c.camel@gmail.com>
-References: <20250910155759.75380-1-daniel.lezcano@linaro.org>
-	<20250910155759.75380-3-daniel.lezcano@linaro.org>
-	<d53b22d1-35d6-4fb8-ae56-3ba4953b64af@baylibre.com>
-	<ea57a466-97b3-49d4-8d1c-142fd49a0da2@linaro.org>
-	<CAHp75Vc8u2N2AHWtnPRmRXWKN3u8Qi=yvx5afbFh4NLNb8-y9A@mail.gmail.com>
-	<5e279cf72409504861c80bb4d2e4e5f6bc59d94c.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757686920; c=relaxed/simple;
+	bh=ffQAmgCN15kQvgKVgV0zYGnJ6qyHjS3Gm+IMCvZZ1Zo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=eVA8BYnLQY197yxEyTUqp8lDjRFHTfY5NE4zGwFTUUakZj69xrB5iF/FJJY3Hz969Kz4c9ALoaDZyrd15beT+YItBk8gZAEa6+lpJ7DuKNFqea/hiGIMikvRQ9mdTm4JHcYfn8uKCyGSGK+3sXZPr4czvSpE7dHtDAboEW6ylww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UhBcIKTV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E411BC4CEF1;
+	Fri, 12 Sep 2025 14:21:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757686919;
+	bh=ffQAmgCN15kQvgKVgV0zYGnJ6qyHjS3Gm+IMCvZZ1Zo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=UhBcIKTV7lysZ7goFRVC+T0uoj1GD92aQLGLRgh+jkjq4Lu2eFN/cOhJp3Zl7PTDj
+	 1NCoa+uFN1Vic4KpkfshboomiTGW4OGTfWHnG5dxzthoUa7etdwT3nl7WKm3QJ+Trg
+	 hiWeWB47QCj8dR7XjUoL7sLIr6LufEUN8avY8F9CnVmbaFXcgQ08iWY2AfkMisdxE4
+	 GGIZiJC5YXKiB4U+U7hJROIe3JL73CCVMZ3O+jrEyOl+hTHQ5u76AD/liwJf5VAf5G
+	 qehX1ErXg57pdE4GbpVZ8cqnLVP00ovZakxPtGDge9u9v32sBBS2b/A2qlEcTI4tJ8
+	 PwPXbIcrp+KwQ==
+Date: Fri, 12 Sep 2025 16:21:56 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: stepeos <stevepeter.oswald@gmail.com>
+cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: LOFREE: Fix back/forward buttons for
+In-Reply-To: <20250831095348.93453-1-onegearmode@gmail.com>
+Message-ID: <7406r1oo-o69n-rq07-qqq9-sp52p70po32q@xreary.bet>
+References: <20250831095348.93453-1-onegearmode@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=US-ASCII
 
-On Fri, 12 Sep 2025 09:19:43 +0100
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+On Sun, 31 Aug 2025, stepeos wrote:
 
-> On Fri, 2025-09-12 at 08:38 +0300, Andy Shevchenko wrote:
-> > On Fri, Sep 12, 2025 at 2:03=E2=80=AFAM Daniel Lezcano
-> > <daniel.lezcano@linaro.org> wrote: =20
-> > > On 11/09/2025 22:10, David Lechner wrote: =20
-> > > > On 9/10/25 10:57 AM, Daniel Lezcano wrote: =20
-> >=20
-> > [ ... ]
-> >  =20
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 /* iio_push_to_buffers_with_timestamp should not be called
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 * with dma_samples as parameter. The samples will be
-> > > > > smashed
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 * if timestamp is enabled.
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 */ =20
-> >=20
-> > /*
-> > =C2=A0* Btw, comment style for multi-line
-> > =C2=A0* comments is wrong for this subsystem.
-> > =C2=A0* Use this as an example, Also, refer to
-> > =C2=A0* the function as func(), i.e. mind the parentheses.
-> > =C2=A0*/
-> >  =20
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 timestamp =3D iio_get_time_ns(indio_dev);
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 ret =3D iio_push_to_buffers_with_timestamp(indio_dev,
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 info->buffer,
-> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 timestamp); =20
-> > > >=20
-> > > > Is it OK to call this with spinlock held? It looks like it can call
-> > > > devm_krealloc() which may sleep. =20
-> > >=20
-> > > It should be ok, devm_krealloc is in the code path of
-> > > iio_push_to_buffers_with_ts_unaligned(), not in
-> > > iio_push_to_buffers_with_timestamp() =20
-> >=20
-> > This is a good observation, can we document this in the respective
-> > kernel-doc:s please? Also add might_sleep().might_sleep_if() in the
-> > appropriate functions. =20
->=20
-> That's a good idea!
+> From: Steve Oswald <stevepeter.oswald@gmail.com>
 
-Agreed. I'd forgotten that hidden allocation was there in the unaligned()
-variant.  A might_sleep() seems wise.
+Changelog and signoff need to go here, otherwise I can't apply the patch.
 
->=20
-> - Nuno S=C3=A1
+> ---
+>  drivers/hid/hid-ids.h    |  3 ++
+>  drivers/hid/hid-lofree.c | 96 ++++++++++++++++++++++++++++++++++++++++
+
+You are adding a new driver, but neither Makefile nor Kconfig entry for 
+it, which is suspicious at least :)
+
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
 
 
