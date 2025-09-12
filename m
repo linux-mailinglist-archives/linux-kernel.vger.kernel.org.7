@@ -1,107 +1,180 @@
-Return-Path: <linux-kernel+bounces-813068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542CBB54060
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:30:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66BE9B54064
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE851C86CCC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:31:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 148AA5A38BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89ABB1D5146;
-	Fri, 12 Sep 2025 02:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988601E5B72;
+	Fri, 12 Sep 2025 02:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jp183D52"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLD5W5Fm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E268E41C62
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED194E555;
+	Fri, 12 Sep 2025 02:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757644245; cv=none; b=FYxrGhKzGciAA6BrCwTx7vyjB6xJzDO+9XESzHLTA6qNVrOBdyRDBDQqIhA7xSrLsVoI9j4ZIA3LzdCsz3Nx1VXbwVN2sKJxdIDI/+4XtEHVYCXuRpuyaaWe1Bgebw8+I1Hb71wpW6swwmU4PsA0E41QquyXxkyY7OmQ83+lkHU=
+	t=1757644483; cv=none; b=hZbc4wywf/6YhKdPXs5LXKY6l65NtvrmV1UXDEy6uV9B3CF24ImS7AJ3lCz90zX/W5yCcoEiXQm/1cit6uQaiZO3ISC2VIiFMDaZndNlBrK5WtqgzJwvjsWuX/6fgXqG8IPjBSO0q353eaZwWCtLcCAda/rQCzSE9g1FGQNk/qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757644245; c=relaxed/simple;
-	bh=C+wNWmDXpY+mqph3f3/pewOaqICR6pNRFqoYooFy4qU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=afJhRWQDHKjf2KD51I8l+93Tn31alJoMeEg9mbWEXLbErx61XC7ezVFPpnw5CkIUQhQ+Uw0VmBV4hQEO/bQP9+iAvq6WZEwGz8KLLR6Yz1BB8/GdSDh9bWSLWD0+hsvy42YAOebPTy+kHuaCbcTx5wMr3GwFES6L+Sv8OU4XGb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jp183D52; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2157C4CEF0;
-	Fri, 12 Sep 2025 02:30:41 +0000 (UTC)
+	s=arc-20240116; t=1757644483; c=relaxed/simple;
+	bh=SwPQNn5pPNWxmJTZxjxdWn5osFkcEVxEdmvE11iK9Ec=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PEwe5EdILiatCOJg7ihVXRpNKB3UNv7tsNYVHNDwLCUk6hHO7B8ryCaoUU/743mVmRQ/qOZOTKS5G3/V+y1Kf1yPHlm3tTCF8eZrpHbV4vfWq8yb2M7GVCrvH3szgrTp9/7NIC7QWGLUcKWbT9Es1rF4OH5cRbuKRvZoUuon18s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLD5W5Fm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A954EC4CEF0;
+	Fri, 12 Sep 2025 02:34:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757644244;
-	bh=C+wNWmDXpY+mqph3f3/pewOaqICR6pNRFqoYooFy4qU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Jp183D52hb3Fg+eQA/Q8cKVt3Zg2IoKO3k4ZEUZxBn8ebXAEnjksfbJDvv+sbemb1
-	 XvN4Wpwq1VMzvtVZOT6Jr2EwBbnZXlbGrq3JIfTmA7GbmEt926mjTmzVHjo6io6LyS
-	 BlaREY9jqUwC7VCizg0hWHLcQZbgFC1+UOTBOvASEgU7xBrkSYXCk5Z6eJifojiSsp
-	 49enosMPW7zilJWOSpaBT6R0x5rpOeW6Jnpj7ewpPDrEs8XeC08kxZeXi0vZps1fhA
-	 AlzTLpC5Ak4XhOj3U/F2WejEeem99OtctI8bwkpy6xLcLtH8KjjkSg6K6P85vHmWtA
-	 ub+0ukBXndACQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to update map->m_next_extent correctly in f2fs_map_blocks()
-Date: Fri, 12 Sep 2025 10:30:27 +0800
-Message-ID: <20250912023027.2526939-1-chao@kernel.org>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+	s=k20201202; t=1757644482;
+	bh=SwPQNn5pPNWxmJTZxjxdWn5osFkcEVxEdmvE11iK9Ec=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JLD5W5FmJe2oTeOwZVwNNu8IssffS8Y/ZonRTku80JiMh/bTIm85ulNdHoPD0j9dm
+	 l43OedQc9YNONXHc6Fw7pIuGc67etpd3FgYcuF/wH0PUq7IVFIdHY6Ojd/tKZmW7Dy
+	 xUEEpQnEKo+s+/9wtQpj7nB4OZVUzxhnA++m3L6VZYrTNqlYTUbqTfbA7V3H33+pw0
+	 W0TpwgI7EFha0lwXcYcSFb9UirLrAPwuaWijj9lNTTWER5bJ6+QMp2L83vf8Woi9/T
+	 BAAObKXsDtt5UxgAX1dhpOaeap+J4Z6T4vCisE4bgSxbAzw1nbPtXo+b9rJHX03gmI
+	 +kIhF+vqjBHyw==
+Date: Thu, 11 Sep 2025 19:34:40 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Kory Maincent
+ <kory.maincent@bootlin.com>, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Nishanth Menon <nm@ti.com>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
+ linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk
+ <roan@protonic.nl>
+Subject: Re: [PATCH net-next v5 2/5] ethtool: netlink: add
+ ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
+Message-ID: <20250911193440.1db7c6b4@kernel.org>
+In-Reply-To: <20250908124610.2937939-3-o.rempel@pengutronix.de>
+References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
+	<20250908124610.2937939-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-mkfs.f2fs -O extra_attr,compression /dev/vdb -f
-mount /dev/vdb /mnt/f2fs -o mode=lfs,noextent_cache
-cd /mnt/f2fs
-f2fs_io write 1 0 1024 rand dsync testfile
-xfs_io testfile -c "fsync"
-f2fs_io write 1 0 512 rand dsync testfile
-xfs_io testfile -c "fsync"
-cd /
-umount /mnt/f2fs
-mount /dev/vdb /mnt/f2fs
-f2fs_io precache_extents /mnt/f2fs/testfile
-umount /mnt/f2fs
+On Mon,  8 Sep 2025 14:46:07 +0200 Oleksij Rempel wrote:
+> diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
+> index 969477f50d84..d69dd3fb534b 100644
+> --- a/Documentation/netlink/specs/ethtool.yaml
+> +++ b/Documentation/netlink/specs/ethtool.yaml
+> @@ -1899,6 +1899,79 @@ attribute-sets:
+>          type: uint
+>          enum: pse-event
+>          doc: List of events reported by the PSE controller
+> +  -
+> +    name: mse-config
+> +    attr-cnt-name: --ethtool-a-mse-config-cnt
+> +    attributes:
+> +      -
+> +        name: unspec
+> +        type: unused
+> +        value: 0
 
-         f2fs_io-760     [028] .....   407.418603: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 0, len = 512, blkaddr = 1055744, c_len = 0
-         f2fs_io-760     [028] .....   407.418613: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 513, len = 351, blkaddr = 17921, c_len = 0
-         f2fs_io-760     [028] .....   407.418770: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 864, len = 160, blkaddr = 18272, c_len = 0
+Are you actually using this somewhere?
+It's good to not use attr ID 0 in case we encounter an uninitialized
+attr, but there's no need to define a name for it, usually.
+Just skip the entry 0 if you don't need then name.
 
-During precache_extents, there is off-by-one issue, we should update
-map->m_next_extent to pgofs rather than pgofs + 1, if last blkaddr is
-valid and not contiguous to previous extent.
+> +      -
+> +        name: max-average-mse
+> +        type: u32
+> +      -
+> +        name: max-peak-mse
+> +        type: u32
+> +      -
+> +        name: refresh-rate-ps
+> +        type: u64
+> +      -
+> +        name: num-symbols
+> +        type: u64
 
-Fixes: c4020b2da4c9 ("f2fs: support F2FS_IOC_PRECACHE_EXTENTS")
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/data.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+type: uint for all these?
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index c4d80bffb559..35408f8c3d1c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1788,8 +1788,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
- 				start_pgofs, map->m_pblk + ofs,
- 				map->m_len - ofs);
- 		}
--		if (map->m_next_extent)
--			*map->m_next_extent = pgofs + 1;
-+		if (map->m_next_extent) {
-+			*map->m_next_extent = pgofs;
-+			if (!__is_valid_data_blkaddr(blkaddr))
-+				*map->m_next_extent += 1;
-+		}
- 	}
- 	f2fs_put_dnode(&dn);
- unlock_out:
--- 
-2.49.0
+> +      -
+> +        name: supported-caps
+> +        type: nest
+> +        nested-attributes: bitset
+> +      -
+> +        name: pad
+> +        type: pad
 
+you shouldn't need it if you use uint
+
+> +  -
+> +    name: mse-snapshot
+> +    attr-cnt-name: --ethtool-a-mse-snapshot-cnt
+> +    attributes:
+> +      -
+> +        name: unspec
+> +        type: unused
+> +        value: 0
+> +      -
+> +        name: channel
+> +        type: u32
+> +        enum: phy-mse-channel
+> +      -
+> +        name: average-mse
+> +        type: u32
+> +      -
+> +        name: peak-mse
+> +        type: u32
+> +      -
+> +        name: worst-peak-mse
+> +        type: u32
+> +  -
+> +    name: mse
+> +    attr-cnt-name: --ethtool-a-mse-cnt
+> +    attributes:
+> +      -
+> +        name: unspec
+> +        type: unused
+> +        value: 0
+> +      -
+> +        name: header
+> +        type: nest
+> +        nested-attributes: header
+> +      -
+> +        name: channel
+> +        type: u32
+
+Please annotate attrs which carry enums and flags with
+
+	enum: $name
+
+> +        enum: phy-mse-channel
+> +      -
+> +        name: config
+> +        type: nest
+> +        nested-attributes: mse-config
+
+config sounds like something we'd be able to change
+Looks like this is more of a capability struct?
+
+> +      -
+> +        name: snapshot
+> +        type: nest
+> +        multi-attr: true
+> +        nested-attributes: mse-snapshot
+
+This multi-attr feels un-netlinky to me.
+You define an enum for IDs which are then carried inside
+snapshot.channel. In netlink IDs should be used as attribute types.
+Why not add an entry here for all snapshot types?
 
