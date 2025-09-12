@@ -1,152 +1,195 @@
-Return-Path: <linux-kernel+bounces-814044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256FAB54E8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:55:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0086CB54E89
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300721894561
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 268CB3A64FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E95307481;
-	Fri, 12 Sep 2025 12:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDAB93093DF;
+	Fri, 12 Sep 2025 12:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="KbhEfAN8"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="p29CIcnU"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E761C2F39CD;
-	Fri, 12 Sep 2025 12:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9573093CE;
+	Fri, 12 Sep 2025 12:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681724; cv=none; b=PjZMCAQNseO2N6oFpw+QGBnes/GceExYrs0wtS8e5SA7OTGVeP/k6hDlDmKHpGwN/ERy69QTXUmV0eVv2i72V7f/6DEy+NqQm23YPgt1RVk3spxAuUIiYdJ0uptf1pdMrRsfpyDIyvAI9fMfXh+SZeNNNuioBIuBv/XkevwHLs4=
+	t=1757681609; cv=none; b=KAH5cO4/w6a9bUvMlhjJ3JVu3h/dQwqoIGVlhcCBNcQnxCJ2n2nFTTLTdZKkYwlFMy9dVHT43t/SCO1jzft8zfRNvb/I/H5c8jX+CTCNc7y5mypDSVMWvSaswvMXR3IuLOhWFCDPaBLLSnm9Hei00pSz4J7gq062dlGJDl5yvBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681724; c=relaxed/simple;
-	bh=4piJL2JD7w/UByN+p8A0BTsfcXslKwY/3YwqSauegn0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=STiPM5iY1WrowupaBE8dilowJ+b3wuCr0uyLddMgtOTMXSKlVLUa0Ql5GCw84YshI3LXh2vQiGcREf2x/Nj/2/Lt6o8kLYQd1uuu1+D+lLbbBfa6sQ6ZUO6HV9QCXYfSCT6cfWnIPo3FVi+KZcWk9v6uZJbQWb7/M6EHexYzCWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=KbhEfAN8; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=6scNEiCwQDhpiTGreKSN8tOQ3odhAtWxi6tg8cuj+Pk=; b=KbhEfAN88WcM4pD441bT2l6Pa1
-	23flmmlVtXb4d/OfaU+RBRGolmVniBWbCzoiGQUwB5r3WhnnaMr8RYY+D3naKECyvQhkVw817d2iy
-	JSzir0qe4MxEkeVAUGhaTAt5ATR9/yj01IeY7UQGzzHX29VdwRSXJ1qS51q44OO2dEmuyO/RMFIOy
-	waB+6mwaoGhA/I0K7eh4Dw4Wd3YKU6LgKyjy4h6JWHzJQfn2wi/kWbtv8moGnEuqdKeCCprlJ7D/7
-	3hGFjLBh/my8YIFhU8TvsiQJJLAviSSF9zAlwQcLAN6Z93n4TdFBSz2cBSd+WWkWJTN6v7JsU8EXx
-	KV5iBH5w==;
-Received: from [122.175.9.182] (port=50898 helo=cypher.couthit.local)
-	by server.couthit.com with esmtpa (Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1ux3J7-000000025Qs-1rx5;
-	Fri, 12 Sep 2025 08:55:17 -0400
-From: Parvathi Pudi <parvathi@couthit.com>
-To: danishanwar@ti.com,
-	rogerq@kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	ssantosh@kernel.org,
-	richardcochran@gmail.com,
-	m-malladi@ti.com,
-	s.hauer@pengutronix.de,
-	afd@ti.com,
-	jacob.e.keller@intel.com,
-	kory.maincent@bootlin.com,
-	johan@kernel.org,
-	alok.a.tiwari@oracle.com,
-	m-karicheri2@ti.com,
-	s-anna@ti.com,
-	horms@kernel.org,
-	glaroque@baylibre.com,
-	saikrishnag@marvell.com,
-	diogo.ivo@siemens.com,
-	javier.carrasco.cruz@gmail.com,
-	basharath@couthit.com,
-	parvathi@couthit.com,
-	pmohan@couthit.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	vadim.fedorenko@linux.dev,
-	bastien.curutchet@bootlin.com,
-	pratheesh@ti.com,
-	prajith@ti.com,
-	vigneshr@ti.com,
-	praneeth@ti.com,
-	srk@ti.com,
-	rogerq@ti.com,
-	krishna@couthit.com,
-	mohan@couthit.com
-Subject: [PATCH net-next v16 6/6] MAINTAINERS: Add entries for ICSSM Ethernet driver
-Date: Fri, 12 Sep 2025 18:23:01 +0530
-Message-ID: <20250912125421.530286-7-parvathi@couthit.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250912104741.528721-1-parvathi@couthit.com>
-References: <20250912104741.528721-1-parvathi@couthit.com>
+	s=arc-20240116; t=1757681609; c=relaxed/simple;
+	bh=5HpXZaEUOJ+8dkBCgMsUTF5lN67gIppE+6goHOwMv6A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gxkOvT+Z+G+OJWcRsZLF3Bv2pWjyfOZ/SQahjL8TCrjR+HfWUH2cmPKG/ICPGbk9H1+FJFfxMEy6ZAiDkzJiU2c/MXfLDH7P4G2qprlFTLoytkffNb+uW643oojFaibEySq9Z1abNsoq2ydNCHltaxTMeDjM++tA70TFMw6iduI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=p29CIcnU; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 94EFE1A0DD2;
+	Fri, 12 Sep 2025 12:53:19 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 6825A60638;
+	Fri, 12 Sep 2025 12:53:19 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3F26E102F28D5;
+	Fri, 12 Sep 2025 14:53:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757681598; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=KSiuCe8hqpM4azza8GgBa0O2HK79U9r5itgP3WoTyzc=;
+	b=p29CIcnUXSxrA721IxRLRg8czzKSoTpaBUUhs69MpgvId/e3N19cYYS1Tg0LkRtWuguUWE
+	71K7MJyLKHdEXUlBsB8AzcvygiMBWLHztSwb61usctXULqksEZQWhZCw9NCxtnZb7/0ICZ
+	+nKDV0cojtyKohHBnyEOONprH4wL1m0KifKq73vOxPJuMiCCx+dF3+eo9C0KNuVdbkTx6m
+	3lz9YDE2q3li/2Mysyqk+O+kIzv+JvRSQOm6SRvQNyQu5tcUP+y9OpwWuvekOKoQH+wIG6
+	oY3PBsrvW16Wu4i6THctduVQ7trnN6X/LZJPhdwzyXOYEmJFwD4ulMYcTCdfJQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Frank Wunderlich <frank-w@public-files.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, Josua Mayer
+ <josua@solid-run.com>
+Subject: Re: [PATCH] arm64: dts: marvell: cn913x-solidrun: fix sata ports
+ status
+In-Reply-To: <20250911-cn913x-sr-fix-sata-v1-1-9e72238d0988@solid-run.com>
+References: <20250911-cn913x-sr-fix-sata-v1-1-9e72238d0988@solid-run.com>
+Date: Fri, 12 Sep 2025 14:53:03 +0200
+Message-ID: <87tt17oms0.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
-X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-Add an entry to MAINTAINERS file for the ICSSM Ethernet driver with
-appropriate maintainer information and mailing list.
+Josua Mayer <josua@solid-run.com> writes:
 
-Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
----
- MAINTAINERS | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> Commit "arm64: dts: marvell: only enable complete sata nodes" changed
+> armada-cp11x.dtsi disabling all sata ports status by default.
+>
+> The author missed some dts which relied on the dtsi enabling all ports,
+> and just disabled unused ones instead.
+>
+> Update dts for SolidRun cn913x based boards to enable the available
+> ports, rather than disabling the unvavailable one.
+>
+> Further according to dt bindings the serdes phys are to be specified in
+> the port node, not the controller node.
+> Move those phys properties accordingly in clearfog base/pro/solidwan.
+>
+> Fixes: 30023876aef4 ("arm64: dts: marvell: only enable complete sata node=
+s")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c930a961435e..47bc35743f22 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -25319,6 +25319,18 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/net/ti,icss*.yaml
- F:	drivers/net/ethernet/ti/icssg/*
- 
-+TI ICSSM ETHERNET DRIVER (ICSSM)
-+M:	MD Danish Anwar <danishanwar@ti.com>
-+M:	Parvathi Pudi <parvathi@couthit.com>
-+R:	Roger Quadros <rogerq@kernel.org>
-+R:	Mohan Reddy Putluru <pmohan@couthit.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/net/ti,icssm*.yaml
-+F:	Documentation/devicetree/bindings/net/ti,pruss-ecap.yaml
-+F:	drivers/net/ethernet/ti/icssm/*
-+
- TI J721E CSI2RX DRIVER
- M:	Jai Luthra <jai.luthra@linux.dev>
- L:	linux-media@vger.kernel.org
--- 
-2.43.0
+Applied on mvebu/fixes
 
+Thanks,
+
+Gregory
+
+
+> ---
+>  arch/arm64/boot/dts/marvell/cn9130-cf.dtsi         | 7 ++++---
+>  arch/arm64/boot/dts/marvell/cn9131-cf-solidwan.dts | 6 ++++--
+>  arch/arm64/boot/dts/marvell/cn9132-clearfog.dts    | 6 ++----
+>  3 files changed, 10 insertions(+), 9 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/cn9130-cf.dtsi b/arch/arm64/boot=
+/dts/marvell/cn9130-cf.dtsi
+> index ad0ab34b66028c53b8a18b3e8ee0c0aec869759f..bd42bfbe408bbe2a4d58dbd40=
+204bcfb3c126312 100644
+> --- a/arch/arm64/boot/dts/marvell/cn9130-cf.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/cn9130-cf.dtsi
+> @@ -152,11 +152,12 @@ expander0_pins: cp0-expander0-pins {
+>=20=20
+>  /* SRDS #0 - SATA on M.2 connector */
+>  &cp0_sata0 {
+> -	phys =3D <&cp0_comphy0 1>;
+>  	status =3D "okay";
+>=20=20
+> -	/* only port 1 is available */
+> -	/delete-node/ sata-port@0;
+> +	sata-port@1 {
+> +		phys =3D <&cp0_comphy0 1>;
+> +		status =3D "okay";
+> +	};
+>  };
+>=20=20
+>  /* microSD */
+> diff --git a/arch/arm64/boot/dts/marvell/cn9131-cf-solidwan.dts b/arch/ar=
+m64/boot/dts/marvell/cn9131-cf-solidwan.dts
+> index 47234d0858dd2195bb1485f25768ad3c757b7ac2..338853d3b179bb5cb742e975b=
+b830fdb9d62d4cc 100644
+> --- a/arch/arm64/boot/dts/marvell/cn9131-cf-solidwan.dts
+> +++ b/arch/arm64/boot/dts/marvell/cn9131-cf-solidwan.dts
+> @@ -563,11 +563,13 @@ &cp1_rtc {
+>=20=20
+>  /* SRDS #1 - SATA on M.2 (J44) */
+>  &cp1_sata0 {
+> -	phys =3D <&cp1_comphy1 0>;
+>  	status =3D "okay";
+>=20=20
+>  	/* only port 0 is available */
+> -	/delete-node/ sata-port@1;
+> +	sata-port@0 {
+> +		phys =3D <&cp1_comphy1 0>;
+> +		status =3D "okay";
+> +	};
+>  };
+>=20=20
+>  &cp1_syscon0 {
+> diff --git a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts b/arch/arm64=
+/boot/dts/marvell/cn9132-clearfog.dts
+> index 0f53745a6fa0d8cbd3ab9cdc28a972ed748c275f..115c55d73786e2b9265e1caa4=
+c62ee26f498fb41 100644
+> --- a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
+> +++ b/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
+> @@ -512,10 +512,9 @@ &cp1_sata0 {
+>  	status =3D "okay";
+>=20=20
+>  	/* only port 1 is available */
+> -	/delete-node/ sata-port@0;
+> -
+>  	sata-port@1 {
+>  		phys =3D <&cp1_comphy3 1>;
+> +		status =3D "okay";
+>  	};
+>  };
+>=20=20
+> @@ -631,9 +630,8 @@ &cp2_sata0 {
+>  	status =3D "okay";
+>=20=20
+>  	/* only port 1 is available */
+> -	/delete-node/ sata-port@0;
+> -
+>  	sata-port@1 {
+> +		status =3D "okay";
+>  		phys =3D <&cp2_comphy3 1>;
+>  	};
+>  };
+>
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250911-cn913x-sr-fix-sata-5c737ebdb97f
+>
+> Best regards,
+> --=20
+> Josua Mayer <josua@solid-run.com>
+>
+>
+
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
