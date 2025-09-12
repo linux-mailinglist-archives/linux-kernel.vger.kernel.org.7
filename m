@@ -1,224 +1,137 @@
-Return-Path: <linux-kernel+bounces-813039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319DAB53FFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:53:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB474B54007
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B4E48716B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:53:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2191A18967FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B98515747D;
-	Fri, 12 Sep 2025 01:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoCnrmp5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BE221348
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C7918FC86;
+	Fri, 12 Sep 2025 01:55:43 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEC621348;
+	Fri, 12 Sep 2025 01:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757641981; cv=none; b=uaU471rpCoXgaqOjy35b9HENnFwbPu95Oh5TYT2HEw1NyqGztadKrryaVTWXWROY7G5I5CG89qfa8XOcVhip5IK8qn/9l4U+geb/XTC+W/oDOIkqUrvoe+bFEcv5Q8+jrJVrfzvk55rRhcxBYbB+gK2oAl+xmtX7ytVbV+Roz8Q=
+	t=1757642143; cv=none; b=uvywxxAZGJ7W+ZtePvtUhbYtKRbKI1c4kVidvUSRvXG45GTETWjA2lehPiioJSkAYMde4sPSYDU3ZjesTjFv1sFh0ZbdKZ+iTt9RTLStFOZUQzmpx0R2u8XppIGd5y87e6ksBZbdcBkttH+mo+oI0xU7jE7LxDVsOeHcf/mxf9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757641981; c=relaxed/simple;
-	bh=99G4qv/3CdgX9Nxeg7q0yDGVl4TQ9oN85oPNSBy8taM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=soCMHAFuPPk8piQfQnVKX2rI3YGV05fv4/sdt0eoyrJ7XXx1OqmEY1EQSXFty9RmOImQcdVo3m4aVfWUowzuKQyfhi+KzTAbKl5/RNsxUzdMaobqRNSQpLrCP8+Mv9Fz/aQL5q4MHrRldNMz/PwjaOPi7NtQy0MrLjyTI1UKDUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoCnrmp5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0286C4CEF0;
-	Fri, 12 Sep 2025 01:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757641981;
-	bh=99G4qv/3CdgX9Nxeg7q0yDGVl4TQ9oN85oPNSBy8taM=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=MoCnrmp5C9fofctJy9vANtmUS5nWhjRqVihHfHZmxd9SunHBQtUkEYqfVdi7i2U0W
-	 v1oFDKpn2wuxMJxuRdkhFvXE6iI5oolCRpCMnJacjUJBGfmONOvJ6rHtlFjy2HpDez
-	 JezhZoQHCNSuoF8+uIUwUbMgxUexhxPS62Yxoih4cv0XMubC1EH8OBS704fGeFApTX
-	 U3WqxjMeyjZ2moIBFerGBefsrUMZewhehuxzinKfvty8YgHlgqHg/6P3u7gD7/g6fK
-	 k74qTOKV1sm2GIUOZmGWayEh/eokQ8V1xHN5okV9Ztd8YbqX762B0t0vbt5xmYdbYR
-	 AisuqobkzpCEw==
-Message-ID: <c83ac24b-9997-4f2e-9e51-00c29909ad85@kernel.org>
-Date: Fri, 12 Sep 2025 09:52:57 +0800
+	s=arc-20240116; t=1757642143; c=relaxed/simple;
+	bh=H9ZSg1qLNmfgG5da1MuBDMB+tIbmes91f5CtXTRbkPw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=szvvEQJQd7bdAovlV8n5nYsNd+7UpPg11wgooYeI+oWqO+83zTudm2+fDioli/Pn1/Vjj7PWvo9ahibwqlhdStydFaYZa93NsMyvWPIxzgGTI94F3R2jxsc6gYwveBIUnxiUDzZsnpKO+wO3XS6Y6kUEucK/A8m6h5nzJ9ULZYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [111.9.175.10])
+	by gateway (Coremail) with SMTP id _____8BxmdGYfcNoMnYJAA--.20448S3;
+	Fri, 12 Sep 2025 09:55:36 +0800 (CST)
+Received: from [10.136.12.26] (unknown [111.9.175.10])
+	by front1 (Coremail) with SMTP id qMiowJAxE+SUfcNok06PAA--.64547S3;
+	Fri, 12 Sep 2025 09:55:35 +0800 (CST)
+Subject: Re: [PATCH v1 2/2] LoongArch: Return 0 for user tasks in
+ arch_stack_walk_reliable()
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Huacai Chen
+ <chenhuacai@kernel.org>, Xi Zhang <zhangxi@kylinos.cn>,
+ live-patching@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250909113106.22992-1-yangtiezhu@loongson.cn>
+ <20250909113106.22992-3-yangtiezhu@loongson.cn>
+ <5e45a1a9-4ac3-56ee-1415-0b2128b4ed9a@loongson.cn>
+ <c3431ce4-0026-3a05-fa50-281cd34aba4e@loongson.cn>
+From: Jinyang He <hejinyang@loongson.cn>
+Message-ID: <26036193-f570-3a17-e6d3-45ad70704198@loongson.cn>
+Date: Fri, 12 Sep 2025 09:55:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Chao Yu <chao@kernel.org>
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix wrong extent_info data for
- precache extents
-To: wangzijie <wangzijie1@honor.com>, linux-f2fs-devel@lists.sourceforge.net
-Cc: chao@kernel.org, feng.han@honor.com, jaegeuk@kernel.org,
- linux-kernel@vger.kernel.org
-References: <228203f5-d3bf-46fb-b990-3de2eb2ff3e8@kernel.org>
- <20250911090745.2940557-1-wangzijie1@honor.com>
-Content-Language: en-US
-In-Reply-To: <20250911090745.2940557-1-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <c3431ce4-0026-3a05-fa50-281cd34aba4e@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowJAxE+SUfcNok06PAA--.64547S3
+X-CM-SenderInfo: pkhmx0p1dqwqxorr0wxvrqhubq/
+X-Coremail-Antispam: 1Uk129KBj93XoW7Zr1ktw47Gw1rurWUWr4ftFc_yoW5JFW3pr
+	ykJ3ZxKrWUJr18tr1UWr1DXFyUJr4kAw1DGr1rJF1UJF1UXr1Ygr4jg3Wj9rsxAr4kJw13
+	Ar1Yqrykua17JacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUU9Eb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2
+	x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1Y6r17
+	McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7
+	I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
+	JwCFI7km07C267AKxVWUXVWUAwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14
+	v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY
+	67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2
+	IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_
+	Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8hiSPUUUUU==
 
-On 9/11/2025 5:07 PM, wangzijie wrote:
->> On 9/10/25 21:58, wangzijie wrote:
->>> When the data layout is like this:
->>> dnode1:                     dnode2:
->>> [0]      A                  [0]    NEW_ADDR
->>> [1]      A+1                [1]    0x0
->>> ...                         ....
->>> [1016]   A+1016
->>> [1017]   B (B!=A+1017)      [1017] 0x0
->>>
->>> We can build this kind of layout by following steps(with i_extra_isize:36):
->>> ./f2fs_io write 1 0 1881 rand dsync testfile
->>> ./f2fs_io write 1 1881 1 rand buffered testfile
->>> ./f2fs_io fallocate 0 7708672 4096 testfile
->>>
->>> And when we map first data block in dnode2, we will get wrong extent_info data:
->>> map->m_len = 1
->>> ofs = start_pgofs - map->m_lblk = 1882 - 1881 = 1
->>>
->>> ei.fofs = start_pgofs = 1882
->>> ei.len = map->m_len - ofs = 1 - 1 = 0
->>>
->>> Fix it by skipping updating this kind of extent info.
->>>
->>> Signed-off-by: wangzijie <wangzijie1@honor.com>
->>> ---
->>>   fs/f2fs/data.c | 3 +++
->>>   1 file changed, 3 insertions(+)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index 7961e0ddf..b8bb71852 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -1649,6 +1649,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
->>>   
->>>   		switch (flag) {
->>>   		case F2FS_GET_BLOCK_PRECACHE:
->>> +			if (__is_valid_data_blkaddr(map->m_pblk) &&
->>> +				start_pgofs - map->m_lblk == map->m_len)
->>> +				map->m_flags &= ~F2FS_MAP_MAPPED;
->>
->> It looks we missed to reset value for map variable in f2fs_precache_extents(),
->> what do you think of this?
->>
->> ---
->>   fs/f2fs/file.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 1aae4361d0a8..2b14151d4130 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -3599,7 +3599,7 @@ static int f2fs_ioc_io_prio(struct file *filp, unsigned long arg)
->>   int f2fs_precache_extents(struct inode *inode)
->>   {
->>   	struct f2fs_inode_info *fi = F2FS_I(inode);
->> -	struct f2fs_map_blocks map;
->> +	struct f2fs_map_blocks map = { 0 };
->>   	pgoff_t m_next_extent;
->>   	loff_t end;
->>   	int err;
->> @@ -3617,6 +3617,8 @@ int f2fs_precache_extents(struct inode *inode)
->>
->>   	while (map.m_lblk < end) {
->>   		map.m_len = end - map.m_lblk;
->> +		map.m_pblk = 0;
->> +		map.m_flags = 0;
->>
->>   		f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
->>   		err = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_PRECACHE);
->> -- 
->> 2.49.0
->>
->> Thanks,
->>
->>>   			goto sync_out;
->>>   		case F2FS_GET_BLOCK_BMAP:
->>>   			map->m_pblk = 0;
-> 
-> 
-> We have already reset m_flags (map->m_flags = 0) in f2fs_map_blocks().
+On 2025-09-11 19:49, Tiezhu Yang wrote:
 
-Zijie:
-
-Oops, that's right, thanks for correcting me.
-
-> 
-> I think that this bug is caused by we missed to reset m_flags when we
-> goto next_dnode in below case：
-> 
-> Data layout is something like this:
-> dnode1:                     dnode2:
-> [0]      A                  [0]    NEW_ADDR
-> [1]      A+1                [1]    0x0
+> On 2025/9/10 上午9:11, Jinyang He wrote:
+>> On 2025-09-09 19:31, Tiezhu Yang wrote:
+>>
+>>> When testing the kernel live patching with "modprobe livepatch-sample",
+>>> there is a timeout over 15 seconds from "starting patching transition"
+>>> to "patching complete", dmesg shows "unreliable stack" for user tasks
+>>> in debug mode. When executing "rmmod livepatch-sample", there exists
+>>> the similar issue.
+>
 > ...
-> [1016]   A+1016
-> [1017]   B (B!=A+1017)      [1017] 0x0
-> 
-> we map the last block(valid blkaddr) in dnode1:
-> map->m_flags |= F2FS_MAP_MAPPED;
-> map->m_pblk = blkaddr(valid blkaddr);
-> map->m_len = 1;
-> then we goto next_dnode, meet the first block in dnode2(hole), goto sync_out:
-> map->m_flags & F2FS_MAP_MAPPED == true, and we make wrong blkaddr/len for extent_info.
+>
+>>> @@ -57,9 +62,14 @@ int 
+>>> arch_stack_walk_reliable(stack_trace_consume_fn consume_entry,
+>>>       }
+>>>       regs->regs[1] = 0;
+>>>       regs->regs[22] = 0;
+>>> +    regs->csr_prmd = task->thread.csr_prmd;
+>>>       for (unwind_start(&state, task, regs);
+>>>            !unwind_done(&state) && !unwind_error(&state); 
+>>> unwind_next_frame(&state)) {
+>>> +        /* Success path for user tasks */
+>>> +        if (user_mode(regs))
+>>> +            return 0;
+>>> +
+>>>           addr = unwind_get_return_address(&state);
+>>>           /*
+>> Hi, Tiezhu,
+>>
+>> We update stack info by get_stack_info when meet ORC_TYPE_REGS in
+>> unwind_next_frame. And in arch_stack_walk(_reliable), we always
+>> do unwind_done before unwind_next_frame. So is there anything
+>> error in get_stack_info which causing regs is user_mode while
+>> stack is not STACK_TYPE_UNKNOWN?
+>
+> When testing the kernel live patching, the error code path in
+> unwind_next_frame() is:
+>
+>   switch (orc->fp_reg) {
+>           case ORC_REG_PREV_SP:
+>                   p = (unsigned long *)(state->sp + orc->fp_offset);
+>                   if (!stack_access_ok(state, (unsigned long)p, 
+> sizeof(unsigned long)))
+>                           goto err;
+>
+> for this case, get_stack_info() does not return 0 due to in_task_stack()
+> is not true, then goto error, state->stack_info.type = STACK_TYPE_UNKNOWN
+> and state->error = true. In arch_stack_walk_reliable(), the loop will be
+> break and it returns -EINVAL, thus causing unreliable stack.
+The stop position of a complete stack backtrace on LoongArch should be
+the top of the task stack or until the address is_entry_func.
+Otherwise, it is not a complete stack backtrace, and thus I think it
+is an "unreliable stack".
+I'm curious about what the ORC info at this PC.
 
-So, can you please add above explanation into commit message? that
-should be helpful for understanding the problem more clearly.
-
-Please take a look at this case w/ your patch:
-
-mkfs.f2fs -O extra_attr,compression /dev/vdb -f
-mount /dev/vdb /mnt/f2fs -o mode=lfs
-cd /mnt/f2fs
-f2fs_io write 1 0 1883 rand dsync testfile
-f2fs_io fallocate 0 7712768 4096 testfile
-f2fs_io write 1 1881 1 rand buffered testfile
-xfs_io testfile -c "fsync"
-cd /
-umount /mnt/f2fs
-mount /dev/vdb /mnt/f2fs
-f2fs_io precache_extents /mnt/f2fs/testfile
-umount /mnt/f2fs
-
-          f2fs_io-733     [010] .....    78.134136: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 1882, len = 0, blkaddr = 17410, c_len = 0
-
-I suspect we need this?
-
-@@ -1784,7 +1781,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
-         }
-
-         if (flag == F2FS_GET_BLOCK_PRECACHE) {
--               if (map->m_flags & F2FS_MAP_MAPPED) {
-+               if ((map->m_flags & F2FS_MAP_MAPPED) &&
-+                       (map->m_len - ofs)) {
-                         unsigned int ofs = start_pgofs - map->m_lblk;
-
-                         f2fs_update_read_extent_cache_range(&dn,
-
-BTW, I find another bug, if one blkaddr is adjcent to previous extent,
-but and it is valid, we need to set m_next_extent to pgofs rather than
-pgofs + 1.
-
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index cbf8841642c7..ac88ed68059c 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1789,8 +1789,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
-                                 start_pgofs, map->m_pblk + ofs,
-                                 map->m_len - ofs);
-                 }
--               if (map->m_next_extent)
--                       *map->m_next_extent = pgofs + 1;
-+               if (map->m_next_extent) {
-+                       *map->m_next_extent = pgofs;
-+                       if (!__is_valid_data_blkaddr(blkaddr))
-+                               *map->m_next_extent += 1;
-+               }
-         }
-         f2fs_put_dnode(&dn);
 
