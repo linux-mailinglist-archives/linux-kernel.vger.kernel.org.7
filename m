@@ -1,50 +1,62 @@
-Return-Path: <linux-kernel+bounces-814652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E6CB556F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:35:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1CEBB556F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5ED7567E78
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A0BAC2AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B126E2BD587;
-	Fri, 12 Sep 2025 19:35:50 +0000 (UTC)
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397BE33436A;
+	Fri, 12 Sep 2025 19:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlHMvKmW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9F42820CE;
-	Fri, 12 Sep 2025 19:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AEA327A2E;
+	Fri, 12 Sep 2025 19:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757705750; cv=none; b=ZPrJl/5suzOaqJrbZAfKFyw9K1eOxw4YndBUQSwoNY4HfFnvQdlOZjcbf5gAfud+31vY1B8TkpnjL6f0DSxEBKhff0kts+kUpGlytagS7DasI1CujVf36vysoe88WUbASCMnBdwnUIf8Rzx8lKQZMhjeymmICSv3Xytd4FOpW5k=
+	t=1757705752; cv=none; b=OR+bq7ySjhxWKNzsim27RPZ+xYdvbVe5pj3FpIuD13idyoBmfGbZhX0SamBtE8NVNzwiRZDcf8FKVbSbpeUaet2VEQolXKRgDEFTva+6CcY4kzFHgDphsQn9Tp3eTpDdNJwppB+RVS1FVonNdRFf2jz1wQIYvEE3W9E8h+OVICY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757705750; c=relaxed/simple;
-	bh=SjJ0VcWCjt0u1EFNc4qhH5k6zxfmE8RxTEhGLkBCWz8=;
+	s=arc-20240116; t=1757705752; c=relaxed/simple;
+	bh=EuFoan44y9MtixCT5U0TLvDIdjhgkppaMVmj//N0gIE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IDA3HdQXuGY2L/bNlPYo8P4KJg33S99yCJ/li19nHMAT7O5GH9/QTc7k0hjE1bZ7Q8eoC25njXCT3TI1uuvqdg+yXXvjJofnk/7uwxqLp4DDj9DV+MDnbPTp2UCF1NAz3Qm+cNnrBZhOvSy81I5YLG0fUtHnIIEXL4hX8PbC0cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 42D4FB2A; Fri, 12 Sep 2025 14:35:45 -0500 (CDT)
-Date: Fri, 12 Sep 2025 14:35:45 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgoettsche@seltendoof.de>,
-	linux-kernel@vger.kernel.org,
-	Christian =?iso-8859-1?Q?G=F6ttsche?= <cgzones@googlemail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH] pid: use ns_capable_noaudit() when determining net
- sysctl  permissions
-Message-ID: <aMR2EfsdxmIXIgTW@mail.hallyn.com>
-References: <20250910192605.16431-1-cgoettsche@seltendoof.de>
- <23663be0b8dc2a435bcc46a3d52e9e19@paul-moore.com>
- <aMNVoSM7PauOrCPF@mail.hallyn.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBCSEKA0fVdXU1xE4naycKRef46kf1PfYCIcVPjMqTIMzgL5/JO70a1xB+AfzNNwAW68Devuf3wWd93mHI6mlYtVe8D8sqxLZH+EjYMkJiaIQLfIsScg3t6hK2JzzFTzN0ReDvZhvWJtwFjcwIX7mhrfGbmxvwf4kLclh7O/Zr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlHMvKmW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA3CC4CEF1;
+	Fri, 12 Sep 2025 19:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757705752;
+	bh=EuFoan44y9MtixCT5U0TLvDIdjhgkppaMVmj//N0gIE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RlHMvKmWxpBv6h+cFyw/9EEJlBNsJkahcd3bvPMc/P2PzeVOjiQrnk1W05TfKjNsb
+	 krBRBgl/6ppA1Ec/zw0quRTvAWXiBDov2FFWoA/ac2VYXE+QfSc2NDW1Dp6hTezPTg
+	 1TehB+LHSuHsBkYq5OTN2HJ/CtAW485PEBBdIuIPt0QKR4l8ig5McR09NHe5JAK2AA
+	 e6RCyOdBdJWPKjBH3gBiqtwaWM6mHU6nzXFIX9fjYunHZLHPEncrjdUPOr/MvNbuTA
+	 WZaXVx3XIGZv/DF+jhP5DqS+jBNnvAK79f/cT47vCBBvleG+eYHu+yUa+K6O6JA8wu
+	 CeBELC4tmmIoA==
+Date: Fri, 12 Sep 2025 16:35:49 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: Re: [PATCH RESEND] perf: Completely remove possibility to override
+ MAX_NR_CPUS
+Message-ID: <aMR2FZWyXekLEK0-@x1>
+References: <b205802edbb6fcc78822f558dff7104e64b29864.1755510867.git.christophe.leroy@csgroup.eu>
+ <7ded6ce4-1fcb-4e2d-94ab-5c330de6aea0@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,46 +66,31 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMNVoSM7PauOrCPF@mail.hallyn.com>
+In-Reply-To: <7ded6ce4-1fcb-4e2d-94ab-5c330de6aea0@csgroup.eu>
 
-On Thu, Sep 11, 2025 at 06:05:05PM -0500, Serge E. Hallyn wrote:
-> On Thu, Sep 11, 2025 at 04:46:20PM -0400, Paul Moore wrote:
-> > On Sep 10, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
-> > > 
-> > > The capability check should not be audited since it is only being used
-> > > to determine the inode permissions. A failed check does not indicate a
-> > > violation of security policy but, when an LSM is enabled, a denial audit
-> > > message was being generated.
-> > > 
-> > > The denial audit message can either lead to the capability being
-> > > unnecessarily allowed in a security policy, or being silenced potentially
-> > > masking a legitimate capability check at a later point in time.
-> > > 
-> > > Similar to commit d6169b0206db ("net: Use ns_capable_noaudit() when
-> > > determining net sysctl permissions")
-> > > 
-> > > Fixes: 7863dcc72d0f ("pid: allow pid_max to be set per pid namespace")
-> > > CC: Christian Brauner <brauner@kernel.org>
-> > > CC: linux-security-module@vger.kernel.org
-> > > CC: selinux@vger.kernel.org
-> > > Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> > > ---
-> > >  kernel/pid.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, Sep 12, 2025 at 10:32:56AM +0200, Christophe Leroy wrote:
+> Le 18/08/2025 à 11:57, Christophe Leroy a écrit :
+> > Commit 21b8732eb447 ("perf tools: Allow overriding MAX_NR_CPUS at
+> > compile time") added the capability to override MAX_NR_CPUS. At
+> > that time it was necessary to reduce the huge amount of RAM used
+> > by static stats variables.
 > > 
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > But this has been unnecessary since commit 6a1e2c5c2673 ("perf stat:
+> > Remove a set of shadow stats static variables"), and
+> > commit e8399d34d568 ("libperf cpumap: Hide/reduce scope of
+> > MAX_NR_CPUS") broke the build in that case because it failed to
+> > add the guard around the new definition of MAX_NR_CPUS.
+> > 
+> > So cleanup things and remove guards completely to officialise it
+> > is not necessary anymore to override MAX_NR_CPUS.
+> > 
+> > Link: https://lore.kernel.org/all/8c8553387ebf904a9e5a93eaf643cb01164d9fb3.1736188471.git.christophe.leroy@csgroup.eu/
+> > Fixes: e8399d34d568 ("libperf cpumap: Hide/reduce scope of MAX_NR_CPUS")
+> > Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 > 
-> Thanks.
-> 
-> Acked-by: Serge Hallyn <serge@hallyn.com>
-> 
-> I'll queue this up in the capability tree, unless Christian wanted
-> it in his.
-> 
-> -serge
+> Gentle ping
 
-I've included this in git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git#caps-next
+Thanks, applied to perf-tools-next,
 
-thanks,
--serge
+- Arnaldo
 
