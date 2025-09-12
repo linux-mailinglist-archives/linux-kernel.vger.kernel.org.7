@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-813608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52EE8B54833
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:45:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C6FB54836
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 155CD17DD03
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CBAB3AB2E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:46:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DFC284B4F;
-	Fri, 12 Sep 2025 09:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8022A283FC4;
+	Fri, 12 Sep 2025 09:46:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4sVxw6Wz"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KVsCRTZr"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF917241663
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA021241663
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757670333; cv=none; b=BZ0IEfp33/8om5uAd3Fbnmwby9FiExzv/bEF8T6JiAjH2fj/80HxKkoCMGaddK9Ixc+NQs+9M6EUBuL0FsCv8WGWSZ98PXyKhlwU0nZQUCm+4QxCTS27mIBNCt/yddjQM1PF4G1fqXwesyxt/sdDqvJjGwZ2AdgawhrOKisz8D4=
+	t=1757670400; cv=none; b=Adb1drhH0hn99TKsqNXCWHzAiQykJYI5+Ns+dovX+RQD3Iqa0GRHRNzgOkiwHAPyQuqeg2M3yM9QsZgSlPvukTCeT3E5LNciaFHlLxyQMGpBt+4k4xcg2nyQzAIqzXgmBmOZPVJ+IC9MQu6BoWVmQtAvbWABREqCZkvpprNoIiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757670333; c=relaxed/simple;
-	bh=Mw1tvDfrEkD0vqRhNIGrI/cTTOsCCyJetHroo+JH5ik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uoQjnUsdh05rnbJpAiM0DRgq4cI8ihck+cfMjzg6ZMv01ndL434LjrwoCXyayRyR2ZXxLPzKS4yA7LeASPbn3rFKXkLBceL/SfXvr/Cf9fsVabblbv+LjxC7mP1CK8i4/rlRiILe3TXhdlN6fR/+A2cCDXfJ9kfJ+Xlg8nosbiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4sVxw6Wz; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3e7622483beso892001f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757670330; x=1758275130; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mw1tvDfrEkD0vqRhNIGrI/cTTOsCCyJetHroo+JH5ik=;
-        b=4sVxw6WznNHYAWEB9WZQku8Pski1E/qXfN7LzbCEutRvOOyiNS1d5iA9WTf1Y+h5mN
-         SEYg/m7irnh40Nn/4tW3LbMYkKk+Y1dabeSyv+0mvmaPs6S2fd40rrUjeTZF/LIND0zG
-         EdyfoPBpdA+43bePs0+m5zPZtTxi49D+XZOLyGh7qp+u9cMVGYs6dBFhYAqScT4ogfU7
-         76Nm1KQnJoz1Y9rvMWQCMjR+aXmSOmdqeBerH5LgDuECX5GMHHMyTPUzsXVFSVrbU2su
-         +tLOwmjvi+r5mDFEosPACukgTFGL6TQQkMgoxibP5UVZgzRF5IlmBwpbcL9/y3qLlfc4
-         q/4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757670330; x=1758275130;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mw1tvDfrEkD0vqRhNIGrI/cTTOsCCyJetHroo+JH5ik=;
-        b=PVx8Mh91zHeuMfuf2XV+4D57mdHPgY+8mZz46eZjWSMwTbtMz3gtkvE+4s1q9xEYy3
-         SdMV2jh6FMhwh8UceW6f+M+GA+1s9bX3Ypmw91S8s/ScCqpGa7gxLaCeFSwjnVkkcVDo
-         sX5MMZBNrj5cr61K79KsW52UAJ4Wqlg4rbGwgH+06RHf2aOtP1pdW3f9r7s2JHfu1Xrv
-         yCRHLP+RdQRQ3tfxV+fooJNBjDK55COk7TFF+tPwLmr26spJDZiZ+3bNHYsQAPFoMQOj
-         1FwhUBU43NeAnQvnahXGz1I6G3sJ242PK/9BSleHBjxc3TcgQN9tcoxnMsqo2hhWvYFq
-         AayA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3vY7nNn2sxcLuuVD08fF4yJotLe4JeZbkGRXcjV/W2chjBvLceh8N4XW7uoq6OVAaCIf7z2VIHRbW1xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxasIYMMVSmmcG6ggrTp32CVO6mgvdLrOfQQioaGCjmpQP8mFbq
-	KhgRDb7lEfFMdaUh/M8fz9Qpn14cfAcAZH5UJec7mw+Xe3/fRstr2qfI/nVaoz6NuPNBQDVACIp
-	IqzBYDgT0TFvrux7YqZMvkGfMTaVTDA+D0KALiJLI
-X-Gm-Gg: ASbGncsVuVtGLkK6H0IIV5aI37OP5Jl+msmwWBi3B1r3dEQ1vEm0J+ya3XmwKTPw/3w
-	zzk/kRRmCh87jdPNiWuZ7DMUP7V6dwy2KVWLaBQhpDPZUapsjIcnnhUh4kMcIeXVrZ9YXHz5yAn
-	ezQpY1GhQn5WZq8FdMZ4bPiVhP48uVNpSOxUSSdpmpdeFN/i8ECZLd0Ed7n51Ir2JEo9LPRob4B
-	NBx4iVPxjdjsP6S2pE1ylTDIApyoNHOGeqB3ofsGziNxrDYvz94VKt14GH3r57atcLVL1xQ27H1
-	OhpXkdKl
-X-Google-Smtp-Source: AGHT+IH8Wx7aYDSjWGUDy5HYTHvs5te6PAR8YoJQwM/9F63oaFGwqOu/DLW2n7FD5zTPDogqXwQoXh14w7BRpqq3blQ=
-X-Received: by 2002:a05:6000:238a:b0:3d4:f7ae:bebb with SMTP id
- ffacd0b85a97d-3e7658c0f60mr2359259f8f.26.1757670329961; Fri, 12 Sep 2025
- 02:45:29 -0700 (PDT)
+	s=arc-20240116; t=1757670400; c=relaxed/simple;
+	bh=18QaPivvpbs2RaLR7+Z/JhsNBMB5R07jQG+uioWLDOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KWLLSezb+qvpuLPZs1EMJmL5ppwmL+6bAQkPNrL5uEodxVVNwrmdAWaNWV/PrDXALhTf2WUsnVhTF2vPAbUEFnhgYpwnamCOYwVYSaRLkmvJCVFo3uAvrhJfxrORQIes3R0PgCziBkNuhcS3LNQntnrT3FpEqtrzB0s+6/Mdzj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KVsCRTZr; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 12 Sep 2025 15:15:53 +0530
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757670386;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CPvY+gIRUaJ+o9UNC3uUVIC0hJMldSHBR8LX4cHih0E=;
+	b=KVsCRTZrlnSyPsyGQMO779a1MA4KGRhnD+OvLd1VbduWW0NDixm3xmmkySBbpxNp8mZs5Q
+	ljsottBjGTW0VLIGwpP4F0eUGjlhf2ERKbHoIa2RRUpKBYaQpt9V+8vrUrKbAVCepB57zv
+	5SiBxKJ2nFev/feDOWKSByp8TXrb4Fw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jai Luthra <jai.luthra@linux.dev>
+To: Rishikesh Donadkar <r-donadkar@ti.com>
+Cc: laurent.pinchart@ideasonboard.com, mripard@kernel.org, 
+	y-abhilashchandra@ti.com, devarsht@ti.com, s-jain1@ti.com, vigneshr@ti.com, 
+	mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, p.zabel@pengutronix.de, 
+	conor+dt@kernel.org, sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl, 
+	tomi.valkeinen@ideasonboard.com, jai.luthra@ideasonboard.com, changhuang.liang@starfivetech.com, 
+	jack.zhu@starfivetech.com, sjoerd@collabora.com, hverkuil+cisco@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 00/16] media: cadence,ti: CSI2RX Multistream Support
+Message-ID: <u6mfrp4ybddvuwgwtjefzp4mjzcdu46er7sdtznqmgtm445b3i@rowfoegkl7h4>
+X-PGP-Key: http://jailuthra.in/files/public-key.asc
+References: <20250911102832.1583440-1-r-donadkar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911213157.GA1039411@joelbox2> <aMNo7qRCp_yprUAW@my-computer>
- <20250912025343.GA1376629@joelbox2> <4940aa5a-18d0-4bcd-9125-80f5a9920627@gmail.com>
- <CANiq72kZgZdU4Dut3rmcWT-cujyJaP_99ekis_XdfQ-7LmgZ5Q@mail.gmail.com>
-In-Reply-To: <CANiq72kZgZdU4Dut3rmcWT-cujyJaP_99ekis_XdfQ-7LmgZ5Q@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 12 Sep 2025 11:45:16 +0200
-X-Gm-Features: AS18NWBwf40JnAm6-b2l4TvNLfRabNDc0CxhktLrtMoAJ2-o4_5NAjP0nqdJ4vk
-Message-ID: <CAH5fLgiP2DRcGy04YdsWS9+N1=_CCNEtAGrCn31vUHjnDLW9xw@mail.gmail.com>
-Subject: Re: Printing with overflow checks can cause modpost errors
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Andrew Ballance <andrewjballance@gmail.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	John Hubbard <jhubbard@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
-	Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ew6pgjt7iz3rcyuq"
+Content-Disposition: inline
+In-Reply-To: <20250911102832.1583440-1-r-donadkar@ti.com>
+X-Migadu-Flow: FLOW_OUT
+
+
+--ew6pgjt7iz3rcyuq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v7 00/16] media: cadence,ti: CSI2RX Multistream Support
+MIME-Version: 1.0
 
-On Fri, Sep 12, 2025 at 10:28=E2=80=AFAM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Fri, Sep 12, 2025 at 6:08=E2=80=AFAM Andrew Ballance
-> <andrewjballance@gmail.com> wrote:
-> >
-> > The pointer passed is const so rustc should assume that the c side does
-> > not change offset, but looks like rustc does not do that.
->
-> That is not possible -- a const pointer does not guarantee the value
-> will not be changed.
+On Thu, 11 Sep 2025 15:58:16 +0530, Rishikesh Donadkar wrote:
+> This series adds multi-stream support and PM support for Cadence CSI2RX
+> and TI CSI2RX SHIM drivers.
+>=20
+> PM patches are picked from:
+> https://lore.kernel.org/all/20250902-ti_csi_pm-v2-0-59a3be199940@ideasonb=
+oard.com/
+>=20
+> PATCH 01 :    Remove word size alignment restriction on frame width
+> PATCH 02-07:  Support multiple DMA contexts/video nodes in TI CSI2RX
+> PATCH 08-09:  Use get_frame_desc to propagate virtual channel
+>               information across Cadence and TI CSI-RX subdevs
+> PATCH 10-11:  Use new multi-stream APIs across the drivers to support
+>               multiplexed cameras from sources like UB960 (FPDLink)
+> PATCH 12:     Optimize stream on by submitting all queued buffers to DMA
+> PATCH 13:     Change the drain architecture to support multi-stream and
+>               implement completion barriers for last drain.
+> PATCH 14-16:  Runtime PM and System PM support for CSI-RX.
+>=20
+> [...]
 
-I believe this code is using an immutable reference and not just a
-pointer, so it would be UB to use it to write to `offset`, and so it
-would be valid to assume it has not changed. But I think that in most
-scenarios, Rust only optimizes using that information when the
-reference appears as a function argument, which is not the case here.
+Applied, thanks!
 
-Alice
+[01/16] media: ti: j721e-csi2rx: Remove word size alignment on frame width
+        commit: 1c9700339fa03322b93250f4c5230cfe56699da8
+[02/16] dt-bindings: media: ti,j721e-csi2rx-shim: Support 32 dma chans
+        commit: e68618974943c3c890e74129828aeb5446c881e0
+[03/16] media: ti: j721e-csi2rx: separate out device and context
+        commit: dd777697ea891159c8945f1b10507d4505e9bfd5
+[04/16] media: ti: j721e-csi2rx: prepare SHIM code for multiple contexts
+        commit: 3774446f009438fbc16f16ffab2f66b2f16ce083
+[05/16] media: ti: j721e-csi2rx: allocate DMA channel based on context index
+        commit: 17cfe31a25598f520d8fdcb58a6f9d260a15d018
+[06/16] media: ti: j721e-csi2rx: add a subdev for the core device
+        commit: 9b52e6fc0ab094734fe5700681ad37c76a25efae
+[07/16] media: ti: j721e-csi2rx: get number of contexts from device tree
+        commit: 267acec4a9fed35a3b56644a44a3cbb7f41ee8ed
+[08/16] media: cadence: csi2rx: add get_frame_desc wrapper
+        commit: ff0230dcd5b7400f2f0bfff4b54d6edeb728d48e
+[09/16] media: ti: j721e-csi2rx: add support for processing virtual channels
+        commit: b54a9e4352a6fc404a547bc654755fdfc7f78fec
+[10/16] media: cadence: csi2rx: add multistream support
+        commit: 8137d27fe3417c163b901085b917acbeeaa768b6
+[11/16] media: ti: j721e-csi2rx: add multistream support
+        commit: ce08035f3c477445f97f8c9a9a8c91e143ed4232
+[12/16] media: ti: j721e-csi2rx: Submit all available buffers
+        commit: a511f813d4018fd3d2d552b017e8882777b22926
+[13/16] media: ti: j721e-csi2rx: Change the drain architecture for multistr=
+eam
+        commit: e420b12e79f2fb8079cc35cee2e7c80fcbfa78ec
+[14/16] media: cadence: csi2rx: Support runtime PM
+        commit: d900df7c657609c125ca92a4b70add5cf05449f6
+[15/16] media: ti: j721e-csi2rx: Support runtime suspend
+        commit: f65a312b06ff948e3a7d480fd0cd7272aac6990a
+[16/16] media: ti: j721e-csi2rx: Support system suspend using pm_notifier
+        commit: c694e74c651e79838e817a8c6644dc72cf80540d
+
+Best regards,
+--=20
+Jai Luthra <jai.luthra@linux.dev>
+
+
+--ew6pgjt7iz3rcyuq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEETeDYGOXVdejUWq/FQ96R+SSacUUFAmjD69EACgkQQ96R+SSa
+cUXNBRAAmGdTeAzuB7vI2iaLVrfGlaYKh4pOJHUGiYMxKVvBuum8tfwV2tATW9jm
+o+E2uUW4CnXgfn61H43i1PNAt7swKLL2IDcXzhaTP1yOAOlGotf4h1HyeQMLQQF4
+UCSwWId/VA/DkcEMSnrSxnOAcuI+nSBd2fkZm1lUes3hz3LDSyB1/lr8khPkK3W2
+GIaeeebUOfbgrnmkSpZaU+5WfgxmV0+8mteg0+m6jruH+KOjfAGQ0TE60Y+se/IX
+pR9z46OJhRze3mp9zXdN0wqvEYssrxlRlvKhY2j1ejn5wAvKmdrSu5vW+hEYWwFn
+P5m+7GSQfV1wspmSn/VRLgvfY+stcWjyNbdX/Y9TaZCt8+i14w/O1VyodwWVGz6x
+H68KWWE9nOd7ia60ZJj1kY6RQUi7BAzqBhlTR9Al+xL+lc3kdKS95kytq1qOBHM2
+x68U70Nb//mn+k7FPaz9rMDHRPSe4B8XlgVuSYpabrmM6h9R8HXAg1UtKJQTACki
+Yv+0Rw9u9hlZucU2S6nv2oCSoyucvCK6QwULU3pWSbwEDd1Ip8cpCnWqB2UbLsiL
+xStNxi+w4NW19DuTDcfExX2TiPIul0F1aex+eoEBfSCIZk9dGYE8i4dA/gla1+Hv
+K4FHTbjlStEUAJRItqtZPJOvWTRQC+1WfaErITC1lUUUfOMn0OA=
+=p7RI
+-----END PGP SIGNATURE-----
+
+--ew6pgjt7iz3rcyuq--
 
