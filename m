@@ -1,168 +1,460 @@
-Return-Path: <linux-kernel+bounces-813368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9A28B5443B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:54:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A989B54447
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:56:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B29C480B5B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:54:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A00917556B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E712D374B;
-	Fri, 12 Sep 2025 07:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70FC2D3ECD;
+	Fri, 12 Sep 2025 07:56:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bGfyYAos"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZI6pejUY"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6DF2D0C73
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A06F2D24BE
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757663659; cv=none; b=Hz4DUoIH4cb4Brow4/Z4yX1mldfW2z8rSmNDk5yVxqjTLFqM1oPqMdm9ZP+PCxq6afSPqrUD9x2rGJf4adc7zCb+1mswXs0nmdmBANb7qJ3F/S5SMwZwI5KZjQEAuj5WE5OpOEK4ZldWXatFmS1uCunVzpE8GSE8aC/AqUZkLXs=
+	t=1757663800; cv=none; b=iG9bblMW4hsNEUugtXad4X82on4XmLmWOuVazbzoPmxKfzrO+/Kz/o8XpntgEYSaqCuhkEfxsvEk9fGK6JsXTEBO01MtiDaCCWFnwUbV0ZcLcFiv+weDk5I0g2CpzsJmqKiTHgC2bGVqCE42ilKaUwZjtI2ipjKwdHEpdijOpGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757663659; c=relaxed/simple;
-	bh=Grp0/nTBNIMSIhr2eHNF+OmOjlfnZ2Vkm28fXfqGvyo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MLMMkg+F3mDiUP6OXoK0vqNRWyZso3NI/Zo7qWnc8t5Xzq+4pS2I/5XgV5jdBZ6vXFukaA5nDjGeh2NDLTvSB5mVMbPsO6K6NhvoupY1FzmvdFBTqjbxRuwUYPyryA34fWrlRQB9fD6/WgmjU32UXAfnHpzxYOMPQeYuuw7JJAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bGfyYAos; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-ea0297e9cd4so1009309276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:54:17 -0700 (PDT)
+	s=arc-20240116; t=1757663800; c=relaxed/simple;
+	bh=yff1lEb0Hj/8LtQ5aT80YHOzSw96NDSLlsPx2olpFxo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Z81Q07HiMOerF8S/1+7wQ8lw09yQQosZS/4ftiq3FTK1xxtT3TmfKXTvZqQ3zULHbfwmuIvExCPpr7jZNMvfuyfIehf2gmVo31frfRDplyinmXYlCQjNK9/DdiGTt1Bmukwj4+YyhsCgEibQcIQt2k+NHxa2Uu0kX+nrPmMOaxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZI6pejUY; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45dec026c78so15611015e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:56:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757663657; x=1758268457; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xjuRsqHdcU4j53GUFw1Pl7XbbCPvtJQh1ErB89K8XOs=;
-        b=bGfyYAosidmRXUr6mqZ+JemixQn2TQpPiv7MqE5H/RjUZ9OUFkrP+kOCc1s+ewj4Rh
-         6FYqbCnUbBoPxPui916uA+zEVxwIZC1Vwp2kkAqudkQWdrk+bfj3O5zQaNEnb7nh1Vki
-         SPrJ2/y6otHLdljQD/V234GOOqoz3PIkYw7kqocJgcUlIdwDPEXVEFugXwCeqCejyyc0
-         dn1lwDwkFAE0gcs04WZN18aJLi8lbmhqB23ViDDl7WqfV7GQITPIabtB8uO8CKq3iLHp
-         u1JCqfuIjQrELre9/RtDpUFjYiXoiOMNl6+a9qwN3ZSu9iBxs/Kgw0RuzDXCTUiHpc3c
-         5TSA==
+        d=tuxon.dev; s=google; t=1757663795; x=1758268595; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EhTtKCHI6YyAxkelI6PQJ30LTFgikUoSCN8YWHn9tsM=;
+        b=ZI6pejUY1JWlQqVoUEuXighU8vLaOgX8qcRxhVMfV/9byG/DeLdsZAg/TnuMm9o0Ud
+         7dIpVZA81jp08gix+RZ8nwwi15TrwCTi3IGaEf0zRXKWRMFynasWRvWX1PuV8T8WaXv0
+         yBjc6O22soUadvCXp3X8Kdm6Q1Uw5ylY0dcbTVasEbATRhKz74aRxZfcyBwqaNYC88GW
+         08mNsJIU+Z7MnWgrmaOcYYXM1ASPPRAp8zNmqzb8htmtbKZfU4tALg6ihH6bUEu/SVJQ
+         kxZEuWT5LiRF8iaWwmrN75LDlpRuURrwGdjzyW8F09p0YWCpyzqVCGov46KnoLD590TK
+         LEqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757663657; x=1758268457;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xjuRsqHdcU4j53GUFw1Pl7XbbCPvtJQh1ErB89K8XOs=;
-        b=U0aR5Hmv6zRet432GhyiOynU0Mg9SZVWO5WjB3pRgVxUM0a+b5dkjzzRX50HW3/gWJ
-         dicArAMzmlmLAsCd86lMnZ5ZcEb70nNSkaKj1ueONXjppVXe1Nymj1D44oRYZvv26tAa
-         EXeMpo8htlvwdBbqtlou9dyqMZxVYUn7M08owpMorjtUovgNDQDiK1NqPFlyYjeoIx5Z
-         IMpL7YHivjcBTLgYqvgA9vIq4V1CHNdPEiwnWQGsoCdtqKeNhU102x9PFpBMC2Q/gjbd
-         I3Qyo/UPDU8JqFWkVy4B1IzI6lEUIDnzN5NuMRUWY6LXeTK7ITuBKHoFFyg7WhDk6apv
-         fF/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUD82LHBOYuC4LTTCViXrUAP6ebzpXCZvg4LPnZzCPln3jnMX2Np2x4lkt2ojJZN1mIezTuTJsJL2edj1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnQcwbg1l8OBywjU66RbaEowUnR2Kf61HazMDza04rwDaACMyl
-	KVHN9N31moLJyDjep+rGzrJImtphY28+Wfy6T5V+ARPiYEkVLhRr5RTD84F32H6VJ40u9Tpj67/
-	Ml/a2FmzuazvuN7FLWj/sXJ14E5yUCSY=
-X-Gm-Gg: ASbGncua20wAZc3wgwPRyAsmyAkSHLcrHEPAoQCSPZLyNkhrF4Sm686cg11FQAAEqgC
-	yBzKIMSdi7uX2qIYUsygj2FKqLTSDjlwphGHNh8o4bWi1xSPEwF20gMXj922QJno1/9k+eUjRaL
-	7FWlmSH3iWQi5KT5FfcyhduIsM1PV/sZiTnfmcr9bZP53jv5cafgmdBGvMEsVMN3hANT5ajgu3s
-	0JK30MoSJVXSj/WVg==
-X-Google-Smtp-Source: AGHT+IE8+unssytBQ1SOk4XKYFDJkZtS2RYqGocxJxS92x7Kboc0Jmlrk5uoaHdUbNrabaNoKudlBW69K1l0SKFQeSI=
-X-Received: by 2002:a25:b318:0:b0:e96:edb1:83e1 with SMTP id
- 3f1490d57ef6-ea3d9a53003mr1176835276.30.1757663657050; Fri, 12 Sep 2025
- 00:54:17 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757663795; x=1758268595;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EhTtKCHI6YyAxkelI6PQJ30LTFgikUoSCN8YWHn9tsM=;
+        b=KUV4f1Isi5fnASGv23BA8o1K3IRciqBNpaewAW/8ojS4QAVAhmJkjKZVeIUWM9xibI
+         A3fS3P3xFIpzT3Vcq2VtCKvhjuJUrxRYhgjeY/aQYLwLpsiDi2FGUYnHb2YiLGGMZBOZ
+         mcHiy03WDO5Q80F4oUO+0v5UeV9HM106b5ihq6z76rbljeeGU/9+FXPiClc8pN0FiHrG
+         ts3NFe+A5WE/UquD506Oa/DP0hrHZd/kf3ryLKJDQaXsN4qNk0otRFEQV44KLz1wF1+Y
+         ZdbYDU6jasB1/R57o0sWdDi41f7z5jG+LDW8ULc+ClEXcxJY/hAt5gnvLL599h+zY4DA
+         Sfyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEoOMdqKi6ghn8+gozh9ISmxEhQp2qqlILv4wyYX7T87o0/wOXpadhM7Tiq6h+SvOD+jAsl+QaBIQ/IT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5Hn9kBUCY6uZ9bUNkhdf7+OXBsd4SWsc99w8HXuCI8F7pLBHp
+	+UjF4lDmqZCeMcFHmjUNeFZe9BXsFMWRfE0Itpp3Ao9VYYqyK0yEIjLvyEPCS2u9zoA=
+X-Gm-Gg: ASbGncutkAG0LvlRf5m0ZxJg3MR+4vOOgE5qjl0iB/1W3C7CyM1gwN/G4RSKPNRCXRN
+	Lt5JSAlWxNvT1XuayhD4bh284+eJ19ZWwQcx2ncjZjadfBsnpw+3h9kswyIcYlv9CHiRkVV5VsG
+	KkQQGfrujXHUpmCZVszsO/5HXaFQ7JlOs2wPDXz4TpPPb2GPw1a6zEMa2D7i252g7G8ECCxmIte
+	8C4EdRxuz5MKbr5B3IQgtPTYQfpHWGGmIr3YOHEzvvfC6hNn+DwbzDpsOMpcxB8K7IQOjr/WaAT
+	7eJIE5o/erwmJsotClbSMhEbmMGKZuL7D9ghr0lwAHmItD1WcqZAk78A/k/ospCk324+MIDSARV
+	vIGBi4UDLq2UnJ2p7RHdLXVqq3SMFhPE=
+X-Google-Smtp-Source: AGHT+IHvNFr+9BDB3c+dmlnBPiGPWWjRi8nyodPX84HW7Y/gePqXoEb3c14Vq+L9E5uMCyyhj67MPA==
+X-Received: by 2002:a05:600c:1c0c:b0:456:f1e:205c with SMTP id 5b1f17b1804b1-45f241b4ff2mr8152005e9.4.1757663795282;
+        Fri, 12 Sep 2025 00:56:35 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607d7bb1sm5540656f8f.50.2025.09.12.00.56.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 00:56:34 -0700 (PDT)
+Message-ID: <79ac9ba2-9928-4dfc-a9a1-a0af7704efc7@tuxon.dev>
+Date: Fri, 12 Sep 2025 10:56:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909-st7920-v2-0-409f4890fb5f@gmail.com> <20250909-st7920-v2-2-409f4890fb5f@gmail.com>
- <20250910-ant-of-angelic-vastness-b5caa5@kuoka>
-In-Reply-To: <20250910-ant-of-angelic-vastness-b5caa5@kuoka>
-From: Iker Pedrosa <ikerpedrosam@gmail.com>
-Date: Fri, 12 Sep 2025 09:54:06 +0200
-X-Gm-Features: Ac12FXy9_6cG2MPPRC87qxo9hknhSzyQbNu-GNhShhmF__u_g4RQSIAwjbhmZUU
-Message-ID: <CABdCQ=NKrXMqt+7Pj1oL2_6isi6w2q3bJLRrS8LFxLixNu+d9A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: display: sitronix,st7920: Add DT schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Javier Martinez Canillas <javierm@redhat.com>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Subject: Re: [PATCH 2/4] ARM: at91: PM: implement selection of LPM
+To: Ryan.Wanner@microchip.com, sre@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com, linux@armlinux.org.uk
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1757519351.git.Ryan.Wanner@microchip.com>
+ <e72d9af1326cf44888059270263afde875ccc994.1757519351.git.Ryan.Wanner@microchip.com>
+Content-Language: en-US
+In-Reply-To: <e72d9af1326cf44888059270263afde875ccc994.1757519351.git.Ryan.Wanner@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-El mi=C3=A9, 10 sept 2025 a las 13:35, Krzysztof Kozlowski
-(<krzk@kernel.org>) escribi=C3=B3:
->
-> On Tue, Sep 09, 2025 at 06:52:44PM +0200, Iker Pedrosa wrote:
-> > Add binding for Sitronix ST7920 display.
-> >
-> > Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
-> > ---
-> >  .../bindings/display/sitronix,st7920.yaml          | 52 ++++++++++++++=
-++++++++
-> >  1 file changed, 52 insertions(+)
-> >
->
-> Please organize the patch documenting compatible (DT bindings) before the=
-ir user.
-> See also: https://elixir.bootlin.com/linux/v6.14-rc6/source/Documentation=
-/devicetree/bindings/submitting-patches.rst#L46
->
-> ...
->
-> > +  reg:
-> > +    description: The chip-select number for the device on the SPI bus.
->
-> Drop description, obvious/redundant.
->
-> > +    maxItems: 1
-> > +
-> > +  spi-max-frequency:
-> > +    maximum: 600000
-> > +
->
-> I don't see how my comment about supply was addressed. You never
-> responded, nothing explained in the changelog, nothing explained in the
-> commit msg.
+Hi, Ryan,
 
-Sorry, I forgot to answer.
+On 9/10/25 19:20, Ryan.Wanner@microchip.com wrote:
+> From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
-No supplies are needed. There's an optional contrast for the display,
-but this isn't strictly needed.
+Actually, this was developed while I was with Microchip. I think this still
+belongs to Microchip, so I would use the old email address.
 
->
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - spi-max-frequency
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    // Example: ST7920 connected to an SPI bus
->
-> Drop comment.
->
-> > +    #include <dt-bindings/gpio/gpio.h>
-> > +
-> > +    spi {
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        display@0 {
-> > +            compatible =3D "sitronix,st7920";
-> > +            reg =3D <0>;
-> > +            spi-max-frequency =3D <600000>;
-> > +            spi-cs-high;
-> > +        };
-> > +    };
-> >
-> > --
-> > 2.51.0
-> >
+> 
+> The LPM shutdown controller output could signal the transition to PM
+> state for different devices connected on board. On different boards
+> LPM could be connected to different devices (e.g. on SAMA7G5-EK REV4
+> the LPM is connected to on main crystal oscillator, KSZ8081 PHY and
+> to MCP16502 PMIC). Toggling LPM on BSR PM mode is done unconditionally
+> and it helps PMIC to transition to a power saving mode. Toggling LPM
+> on ULP0 and ULP1 should be done conditionally based on user defined
+> wakeup sources, available wakeup source for PM mode and connections to
+> SHDWC's LPM pin. On ULP0 any device could act as wakeup sources. On ULP1
+> only some of the on SoC controllers could act as wakeup sources. For this
+> the architecture specific PM code parses board specific LPM devices,
+> check them against possible wakeup source (in case of ULP1) and tells
+> assembly code to act properly on SHDWC's LPM pin.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+> [ryan.wanner@microchip.com: Fixed conflicts when applying.]
+> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+> ---
+>   arch/arm/mach-at91/pm.c              | 98 +++++++++++++++++++++++++++-
+>   arch/arm/mach-at91/pm.h              |  1 +
+>   arch/arm/mach-at91/pm_data-offsets.c |  1 +
+>   arch/arm/mach-at91/pm_suspend.S      | 50 ++++++++++++--
+>   4 files changed, 141 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm/mach-at91/pm.c b/arch/arm/mach-at91/pm.c
+> index 35058b99069c..29348d6c852b 100644
+> --- a/arch/arm/mach-at91/pm.c
+> +++ b/arch/arm/mach-at91/pm.c
+> @@ -116,6 +116,7 @@ struct at91_pm_quirks {
+>    * @config_shdwc_ws: wakeup sources configuration function for SHDWC
+>    * @config_pmc_ws: wakeup srouces configuration function for PMC
+>    * @ws_ids: wakup sources of_device_id array
+> + * @shdwc_np: pointer to shdwc node
+>    * @bu: backup unit mapped data (for backup mode)
+>    * @quirks: PM quirks
+>    * @data: PM data to be used on last phase of suspend
+> @@ -126,6 +127,7 @@ struct at91_soc_pm {
+>   	int (*config_shdwc_ws)(void __iomem *shdwc, u32 *mode, u32 *polarity);
+>   	int (*config_pmc_ws)(void __iomem *pmc, u32 mode, u32 polarity);
+>   	const struct of_device_id *ws_ids;
+> +	struct device_node *shdwc_np;
+>   	struct at91_pm_bu *bu;
+>   	struct at91_pm_quirks quirks;
+>   	struct at91_pm_data data;
+> @@ -243,6 +245,84 @@ static const struct of_device_id sam9x7_ws_ids[] = {
+>   	{ /* sentinel */ }
+>   };
+>   
+> +static int at91_pm_device_in_list(const struct platform_device *pdev,
+> +				  const struct of_device_id *ids)
+
+I think would be better to make it return bool
+
+> +{
+> +	struct platform_device *local_pdev;
+> +	const struct of_device_id *match;
+> +	struct device_node *np;
+> +	int in_list = 0;
+> +
+> +	for_each_matching_node_and_match(np, ids, &match) {
+> +		local_pdev = of_find_device_by_node(np);
+> +		if (!local_pdev)
+> +			continue;
+> +
+> +		if (pdev == local_pdev)
+> +			in_list = 1;
+> +
+> +		put_device(&local_pdev->dev);
+> +		if (in_list)
+> +			return in_list;
+> +	}
+
+And simplify this a bit as:
+
+static bool at91_pm_device_in_list(const struct platform_device *pdev,
+				  const struct of_device_id *ids)
+{
+	struct platform_device *local_pdev;
+	const struct of_device_id *match;
+	struct device_node *np;
+
+	for_each_matching_node_and_match(np, ids, &match) {
+		local_pdev = of_find_device_by_node(np);
+		if (!local_pdev)
+			continue;
+
+		put_device(&local_pdev->dev);
+		if (pdev == local_pdev)
+			return true;
+	}
+
+	return false;
+}
+
+
+> +
+> +	return in_list;
+> +}
+> +
+> +static int at91_pm_prepare_lpm(unsigned int pm_mode)
+> +{
+> +	struct platform_device *pdev;
+> +	int ndevices, i, ret;
+> +	struct of_phandle_args lpmspec;
+> +
+> +	if ((pm_mode != AT91_PM_ULP0 && pm_mode != AT91_PM_ULP1) ||
+> +	    !soc_pm.shdwc_np)
+> +		return 0;
+> +
+> +	ndevices = of_count_phandle_with_args(soc_pm.shdwc_np,
+> +					      "microchip,lpm-connection", 0);
+> +	if (ndevices < 0)
+> +		return 0;
+> +
+> +	soc_pm.data.lpm = 1;
+> +	for (i = 0; i < ndevices; i++) {
+> +		ret = of_parse_phandle_with_args(soc_pm.shdwc_np,
+> +						 "microchip,lpm-connection",
+> +						 NULL, i, &lpmspec);
+> +		if (ret < 0) {
+> +			if (ret == -ENOENT) {
+> +				continue;
+> +			} else {
+> +				soc_pm.data.lpm = 0;
+> +				return ret;
+> +			}
+> +		}
+> +
+> +		pdev = of_find_device_by_node(lpmspec.np);
+
+From the documentation of of_parse_phandle_with_args() this code would have
+to call of_node_put(lpmspec.np);
+
+Here would be the place to do it.
+
+> +		if (!pdev)
+> +			continue;
+> +
+> +		if (device_may_wakeup(&pdev->dev)) {
+> +			if (pm_mode == AT91_PM_ULP1) {
+> +				/*
+> +				 * ULP1 wake-up sources are limited. Ignore it if not
+> +				 * in soc_pm.ws_ids.
+> +				 */
+> +				if (at91_pm_device_in_list(pdev, soc_pm.ws_ids))
+> +					soc_pm.data.lpm = 0;
+> +			} else {
+> +				soc_pm.data.lpm = 0;
+> +			}
+> +		}
+> +
+> +		put_device(&pdev->dev);
+> +		if (!soc_pm.data.lpm)
+> +			break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>   static int at91_pm_config_ws(unsigned int pm_mode, bool set)
+>   {
+>   	const struct wakeup_source_info *wsi;
+> @@ -481,10 +561,17 @@ static int at91_pm_begin(suspend_state_t state)
+>   		soc_pm.data.mode = -1;
+>   	}
+>   
+> -	ret = at91_pm_config_ws(soc_pm.data.mode, true);
+> +	ret = at91_pm_prepare_lpm(soc_pm.data.mode);
+>   	if (ret)
+>   		return ret;
+>   
+> +	ret = at91_pm_config_ws(soc_pm.data.mode, true);
+> +	if (ret) {
+> +		/* Revert LPM if any. */
+> +		soc_pm.data.lpm = 0;
+> +		return ret;
+> +	}
+> +
+>   	if (soc_pm.data.mode == AT91_PM_BACKUP)
+>   		soc_pm.bu->suspended = 1;
+>   	else if (soc_pm.bu)
+> @@ -1266,7 +1353,11 @@ static void __init at91_pm_modes_init(const u32 *maps, int len)
+>   			AT91_PM_REPLACE_MODES(maps, SHDWC);
+>   		} else {
+>   			soc_pm.data.shdwc = of_iomap(np, 0);
+> -			of_node_put(np);
+> +			/*
+> +			 * np is used further on suspend/resume path so we skip the
+> +			 * of_node_put(np) here.
+> +			 */
+> +			soc_pm.shdwc_np = np;
+>   		}
+>   	}
+>   
+> @@ -1669,7 +1760,8 @@ void __init sama7_pm_init(void)
+>   		AT91_PM_STANDBY, AT91_PM_ULP0, AT91_PM_ULP1, AT91_PM_BACKUP,
+>   	};
+>   	static const u32 iomaps[] __initconst = {
+> -		[AT91_PM_ULP0]		= AT91_PM_IOMAP(SFRBU),
+> +		[AT91_PM_ULP0]		= AT91_PM_IOMAP(SFRBU) |
+> +					  AT91_PM_IOMAP(SHDWC),
+>   		[AT91_PM_ULP1]		= AT91_PM_IOMAP(SFRBU) |
+>   					  AT91_PM_IOMAP(SHDWC) |
+>   					  AT91_PM_IOMAP(ETHC),
+> diff --git a/arch/arm/mach-at91/pm.h b/arch/arm/mach-at91/pm.h
+> index 50c3a425d140..5707ff6ff444 100644
+> --- a/arch/arm/mach-at91/pm.h
+> +++ b/arch/arm/mach-at91/pm.h
+> @@ -40,6 +40,7 @@ struct at91_pm_data {
+>   	unsigned int pmc_mckr_offset;
+>   	unsigned int pmc_version;
+>   	unsigned int pmc_mcks;
+> +	unsigned int lpm;
+>   };
+>   #endif
+>   
+> diff --git a/arch/arm/mach-at91/pm_data-offsets.c b/arch/arm/mach-at91/pm_data-offsets.c
+> index 0ca5da66dc26..fb9651abdfdf 100644
+> --- a/arch/arm/mach-at91/pm_data-offsets.c
+> +++ b/arch/arm/mach-at91/pm_data-offsets.c
+> @@ -20,6 +20,7 @@ int main(void)
+>   						 pmc_version));
+>   	DEFINE(PM_DATA_PMC_MCKS,	offsetof(struct at91_pm_data,
+>   						 pmc_mcks));
+> +	DEFINE(PM_DATA_LPM,		offsetof(struct at91_pm_data, lpm));
+>   
+>   	return 0;
+>   }
+> diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
+> index aad53ec9e957..198236bdbbb3 100644
+> --- a/arch/arm/mach-at91/pm_suspend.S
+> +++ b/arch/arm/mach-at91/pm_suspend.S
+> @@ -110,9 +110,30 @@ lp_done_\ena:
+>   #endif
+>   	.endm
+>   
+> -	.macro at91_backup_set_lpm reg
+> +/*
+> + * Set LPM
+> + * @ena: 0 - disable LPM
+> + *	 1 - enable LPM
+> + *
+> + * Side effects: overwrites r7, r8, r9
+> + */
+> +	.macro at91_set_lpm ena
+>   #ifdef CONFIG_SOC_SAMA7
+> -	orr	\reg, \reg, #0x200000
+> +	ldr	r7, .lpm
+> +	cmp	r7, #1
+> +	bne	21f
+> +	ldr	r7, .shdwc
+> +	cmp	r7, #0
+> +	beq	21f
+> +	mov	r8, #0xA5000000
+> +	add	r8, #0x200000
+> +	mov	r9, #\ena
+> +	cmp	r9, #1
+> +	beq	20f
+> +	add	r8, #0x200000
+> +20:
+> +	str	r8, [r7]
+> +21:
+>   #endif
+>   	.endm
+>   
+> @@ -502,7 +523,7 @@ sr_dis_exit:
+>   	ldr	tmp1, [pmc, #AT91_PMC_SR]
+>   	str	tmp1, .saved_osc_status
+>   	tst	tmp1, #AT91_PMC_MOSCRCS
+> -	bne	1f
+> +	bne	7f
+>   
+>   	/* Turn off RC oscillator */
+>   	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+> @@ -516,6 +537,9 @@ sr_dis_exit:
+>   	tst	tmp1, #AT91_PMC_MOSCRCS
+>   	bne	2b
+>   
+> +	/* Enable LPM. */
+> +7:	at91_set_lpm 1
+> +
+>   	/* Wait for interrupt */
+>   1:	at91_cpu_idle
+>   
+> @@ -533,8 +557,10 @@ sr_dis_exit:
+>   	wait_mckrdy tmp3
+>   	b	6f
+>   
+> -5:	/* Restore RC oscillator state */
+> -	ldr	tmp1, .saved_osc_status
+> +5:	at91_set_lpm 0
+> +
+> +	/* Restore RC oscillator state */
+> +8:	ldr	tmp1, .saved_osc_status
+
+"8:" in front of the line could be dropped
+
+Thank you,
+Claudiu
+
+>   	tst	tmp1, #AT91_PMC_MOSCRCS
+>   	beq	4f
+>   
+> @@ -611,6 +637,9 @@ sr_dis_exit:
+>   
+>   	wait_mckrdy tmp3
+>   
+> +	/* Enable LPM */
+> +	at91_set_lpm 1
+> +
+>   	/* Enter the ULP1 mode by set WAITMODE bit in CKGR_MOR */
+>   	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+>   	orr	tmp1, tmp1, #AT91_PMC_WAITMODE
+> @@ -624,6 +653,9 @@ sr_dis_exit:
+>   
+>   	wait_mckrdy tmp3
+>   
+> +	/* Disable LPM. */
+> +	at91_set_lpm 0
+> +
+>   	/* Enable the crystal oscillator */
+>   	ldr	tmp1, [pmc, #AT91_CKGR_MOR]
+>   	orr	tmp1, tmp1, #AT91_PMC_MOSCEN
+> @@ -1083,7 +1115,9 @@ ulp_exit:
+>   	ldr	r0, .shdwc
+>   	mov	tmp1, #0xA5000000
+>   	add	tmp1, tmp1, #0x1
+> -	at91_backup_set_lpm tmp1
+> +#ifdef CONFIG_SOC_SAMA7
+> +	orr	tmp1, tmp1, #0x200000
+> +#endif
+>   	str	tmp1, [r0, #0]
+>   .endm
+>   
+> @@ -1117,6 +1151,8 @@ ENTRY(at91_pm_suspend_in_sram)
+>   #ifdef CONFIG_SOC_SAMA7
+>   	ldr	tmp1, [r0, #PM_DATA_PMC_MCKS]
+>   	str	tmp1, .mcks
+> +	ldr	tmp1, [r0, #PM_DATA_LPM]
+> +	str	tmp1, .lpm
+>   #endif
+>   
+>   	/*
+> @@ -1208,6 +1244,8 @@ ENDPROC(at91_pm_suspend_in_sram)
+>   #ifdef CONFIG_SOC_SAMA7
+>   .mcks:
+>   	.word 0
+> +.lpm:
+> +	.word 0
+>   #endif
+>   .saved_mckr:
+>   	.word 0
+
 
