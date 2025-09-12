@@ -1,155 +1,128 @@
-Return-Path: <linux-kernel+bounces-814574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602E7B555C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:59:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D032BB555CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E0315C44B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE6F1CC3C3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BFE329F31;
-	Fri, 12 Sep 2025 17:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B308329F31;
+	Fri, 12 Sep 2025 18:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ge59Wiow"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xw+CDHx9"
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC70424BCF5;
-	Fri, 12 Sep 2025 17:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59E7A31C570
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 18:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757699954; cv=none; b=M9JUaIchhSnDvBfojxj7kZkH5la0CsRnnT/5eew7wLIy5um7YPuL+Haf3An2fMKRDcFOFhb0QYuCHwkFMONgQeC4tn5jckIprxZr3CntoZDGobkOehMXX8qh+MasNwj6Gt6Lz3nMuyMM/atHm2PDsqKSFpgIG5o/iIqvlNH51vw=
+	t=1757700335; cv=none; b=aSmuwwpiqCuNgC7xztvZcWV9UlAV1NYF1i6LU6txD5rcQZE0updR+XUGk6KIajMhoaAdjBjdbvz9ew0qcdQI3X1xA/SZDMW0wwfAkrWy3OcJpQeVVdDPfV2QuN0OnkMSBnc3InnFtj6RZmvvGmvyf0G2wRyfiPLnyoJ6lprYLrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757699954; c=relaxed/simple;
-	bh=NAZECHrYbl8mxswXcbpWQ0UVEYqlvkhivcyRhkS4tyo=;
+	s=arc-20240116; t=1757700335; c=relaxed/simple;
+	bh=N/wqAgrO/zhmnFI1nBfWgzHwsyg/LF9jTsJtR4dZsQg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brmQuz0VrpoH/tFauPd0TBhpYlY+NNXCIcqTvN1eqzh5xQu4XTps6zdlP9SQb++SNaKJGMm1Wg4NzNJTj5LrRdrfJWIpS/+s4cznwRlZZ0lzqMakIFx4v350e+JHo7K38TfmeRX+UrVT78SSNU7yesPOe3qilfFQNMlSX7zDVT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ge59Wiow; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951C1C4CEF1;
-	Fri, 12 Sep 2025 17:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757699953;
-	bh=NAZECHrYbl8mxswXcbpWQ0UVEYqlvkhivcyRhkS4tyo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ge59Wiowz9H3gLLSBo+dahVii80E4/vECJFWZRQtbtJuN3j362S/DYM+Ud0xxogdZ
-	 ioX3k4fSM4b4azMmh0t5h3FGFQqSfZoa4lN5bokDbvlL0c0ZBU1fLzG+iQ30SasfjF
-	 SFvYpABBc/aam/TRXxq9hTzO9kDkHnFSDWf5Ydq9mU8yJLsmIUo0XxwOjouN8p6XYh
-	 3dfjmZhHG1iECE2MxRKFaHwu1n86HehG1gQ3GRSYoZEW+ZMrHclf04H7w9F67fX97P
-	 lNJNZYd2A5ugopVoAcoT2QzVg/XQOU+xa7Y0TG8U8sPnxJAwc28nQIUHjsLYBTYIVO
-	 7VILswe79csvw==
-Date: Fri, 12 Sep 2025 18:59:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Han Gao <rabenda.cn@gmail.com>
-Cc: devicetree@vger.kernel.org, Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Han Gao <gaohan@iscas.ac.cn>
-Subject: Re: [PATCH 3/3] riscv: dts: thead: add zfh for th1520
-Message-ID: <20250912-verdict-croon-81ac20e5b621@spud>
-References: <20250911184528.1512543-1-rabenda.cn@gmail.com>
- <20250911184528.1512543-4-rabenda.cn@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WoVIa6rW/DD07A7lG4oZ45TSIfixCezGH4wr8kZOJAEwMy/iaUtt2rAXaO4F1UqW+ub43xdQsNzYCwPeAQ9VQcvUHB+sSPe+1FjEqD9/CmJ2Q5sqLyJUbC3eah/nVPbZsM1SIjDvWIKaqP4LgzbYsrnr7VdKUCBMk9ZYlNxifRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xw+CDHx9; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-417661eccb2so20174385ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757700333; x=1758305133; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jcFeJ72WbA74ff5cvPiISFqof9IGfX60h7xEGQwxob0=;
+        b=xw+CDHx9lfX/c9sPgkJ8vT2/2jJBIOgxTKLQzE4uLHCr2+MUa91gFgUY5x+8z/KrwI
+         596uQ9w0zBj48zHff6+o0dLqpYaIZzj6B08w7sToYgGWWRCHnA6ZmB/7FLeZcq0TsXMN
+         Wkl4M2XQeJFmf4SGF08o3blV0AxBWTn+kYK8MhSziCwJLXfWg7rqC/PcTERSWh5OVneB
+         C+8MjbbMUPjJpwX7uQHIhTnWxWaaJZeIvHcXLOl3CYSQqMuu0XjIhnx3FbmYQM3slDw0
+         oQ4IKm6f+aa3c8lWSO6YdmjK43pIOxbo9W38as7kK4Dw5Y3Xc3AIYDRnDvuOBHlwSwLc
+         VzzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757700333; x=1758305133;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jcFeJ72WbA74ff5cvPiISFqof9IGfX60h7xEGQwxob0=;
+        b=EXyxtAhs1uLtmEKKoIZdJmUW5OD8I6RflNzVlrb+6KFE7Vt6s3qs8Ci63J/a7Ggxb3
+         ddxITfJqeEx3t9jlRoZfu3dzKFwGU08kWXcUaYpwVKo6iIpsz8c7jkXcq7Pay5rGfADx
+         SBwrn3qv9gu327K3xs6ZqUA/JjQ0PvONoZNERjNLV0OVZ4ZajoV41o4N4Q9abk1H91sM
+         7RWRVFHJ3rJPwoAQACF+5ilhwWgbsRZ/otUvPRM+Z7g91awyXpjUo8vnQh6T1KceOhcI
+         yE8bztdON9HIP7vbfUg3BXa63ybjM4nVQRFj1kmD6JONB3ZhIFnHo3gs9xt7flu0Mk7X
+         fT4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWWoqUiZemIJnOpUflLPkmk62UTUs6FvJXscV6d0AYELopuHIdMvB2zqlpQMeiHePQd2NKP8qN+T+tL76c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7hn+Tvwx5cN1hizj8MVlCjEtzEJ1W0pg9JXJnRf130mQAH90A
+	J4UVnbSmCYqBHV3THJyL7qsK1Yrc/b3aQYG/x8qQ/rX2d8kGBwG/fQM3h0j2KOEv2A==
+X-Gm-Gg: ASbGncuXo5a7MrlYdXnk5uuJlRQ+aBjXUARmc/127qx9VVCnFXpF9eG6atr2ufzdytD
+	l/wpJJXzLd/lXsuk+l4d3Yc/8mJJ5m29jegmaJtN6J/Dy7vsuLmsbwOpx1eM73zIjSV4zL2Dw9V
+	nevyhHdb5cRwwzs0gSGD9fcG764Y3SnhnRiwYijl5DI4sWv10BMqhLQ7P78lbSTCS0193mm0vyC
+	KJdTuUhwBufxv41TIEnoHPtIcoQW6sOaBnZsy+hQXnDnCcWHQTrHkESXhE4zWfTOQz4BcLvgg4d
+	xxVwuJKID5S0bYfLwnl9WqgYV9jBS5bUXFuzYtIQveANFgDy096vv/GdvcEMFA1KOMRd2TDnq+6
+	Uzt1/vgwS272zj1McymIkwzuy8406nxQxqdY8dAQjceSHznNnWDyykvVP9QatE1qkMcHYSUcCbg
+	==
+X-Google-Smtp-Source: AGHT+IGJCURFvMxoZWZd20cUZQaAwt7BOfCiB9UePZcFNpGBu6mZoPeVrn4XW3nB4SQJl2xpLBtXNA==
+X-Received: by 2002:a05:6e02:e11:b0:421:bb6:fc6a with SMTP id e9e14a558f8ab-4210bc6491cmr47318185ab.2.1757700333029;
+        Fri, 12 Sep 2025 11:05:33 -0700 (PDT)
+Received: from google.com (2.82.29.34.bc.googleusercontent.com. [34.29.82.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-511f3067bb9sm1854661173.39.2025.09.12.11.05.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 11:05:32 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:05:28 -0700
+From: Justin Stitt <justinstitt@google.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-hardening@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] initramfs: Replace strcpy() with strscpy() in find_link()
+Message-ID: <mv6ck735oa4ix7emkjtgt3cwrbhyizina4tady26nzx6otbvi2@ngewjjf6ahdf>
+References: <20250912064724.1485947-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="b5pIc3q2NffjnH9i"
-Content-Disposition: inline
-In-Reply-To: <20250911184528.1512543-4-rabenda.cn@gmail.com>
-
-
---b5pIc3q2NffjnH9i
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250912064724.1485947-1-thorsten.blum@linux.dev>
 
-On Fri, Sep 12, 2025 at 02:45:28AM +0800, Han Gao wrote:
-> th1520 support Zfh ISA extension [1].
->=20
-> Link: https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1737721=
-869472/%E7%8E%84%E9%93%81C910%E4%B8%8EC920R1S6%E7%94%A8%E6%88%B7%E6%89%8B%E=
-5%86%8C%28xrvm%29_20250124.pdf [1]
+Hi,
 
-Could you please cite the section that this is detailed in?
+On Fri, Sep 12, 2025 at 08:47:24AM +0200, Thorsten Blum wrote:
+> strcpy() is deprecated; use strscpy() instead.
+> 
+> Link: https://github.com/KSPP/linux/issues/88
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
->=20
-> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
-> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
+Reviewed-by: Justin Stitt <justinstitt@google.com>
+
 > ---
->  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/=
-thead/th1520.dtsi
-> index 7f07688aa964..2075bb969c2f 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -26,7 +26,7 @@ c910_0: cpu@0 {
->  			riscv,isa-base =3D "rv64i";
->  			riscv,isa-extensions =3D "i", "m", "a", "f", "d", "c",
->  					       "ziccrse", "zicntr", "zicsr",
-> -					       "zifencei", "zihpm",
-> +					       "zifencei", "zihpm", "zfh",
->  					       "xtheadvector";
->  			thead,vlenb =3D <16>;
->  			reg =3D <0>;
-> @@ -53,7 +53,7 @@ c910_1: cpu@1 {
->  			riscv,isa-base =3D "rv64i";
->  			riscv,isa-extensions =3D "i", "m", "a", "f", "d", "c",
->  					       "ziccrse", "zicntr", "zicsr",
-> -					       "zifencei", "zihpm",
-> +					       "zifencei", "zihpm", "zfh",
->  					       "xtheadvector";
->  			thead,vlenb =3D <16>;
->  			reg =3D <1>;
-> @@ -80,7 +80,7 @@ c910_2: cpu@2 {
->  			riscv,isa-base =3D "rv64i";
->  			riscv,isa-extensions =3D "i", "m", "a", "f", "d", "c",
->  					       "ziccrse", "zicntr", "zicsr",
-> -					       "zifencei", "zihpm",
-> +					       "zifencei", "zihpm", "zfh",
->  					       "xtheadvector";
->  			thead,vlenb =3D <16>;
->  			reg =3D <2>;
-> @@ -107,7 +107,7 @@ c910_3: cpu@3 {
->  			riscv,isa-base =3D "rv64i";
->  			riscv,isa-extensions =3D "i", "m", "a", "f", "d", "c",
->  					       "ziccrse", "zicntr", "zicsr",
-> -					       "zifencei", "zihpm",
-> +					       "zifencei", "zihpm", "zfh",
->  					       "xtheadvector";
->  			thead,vlenb =3D <16>;
->  			reg =3D <3>;
-> --=20
-> 2.47.3
->=20
->=20
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>  init/initramfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/init/initramfs.c b/init/initramfs.c
+> index 097673b97784..6745e3fbc7ab 100644
+> --- a/init/initramfs.c
+> +++ b/init/initramfs.c
+> @@ -108,7 +108,7 @@ static char __init *find_link(int major, int minor, int ino,
+>  	q->minor = minor;
+>  	q->ino = ino;
+>  	q->mode = mode;
+> -	strcpy(q->name, name);
+> +	strscpy(q->name, name);
+>  	q->next = NULL;
+>  	*p = q;
+>  	hardlink_seen = true;
+> -- 
+> 2.51.0
+> 
+>
 
---b5pIc3q2NffjnH9i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMRfbAAKCRB4tDGHoIJi
-0gr1AQDn94lY15gXhvjAqX086W8aphAAVGa73ZrLqmyznyWS9QD/a6zFwVSlSV+C
-TDWMts0ppc63CwGlT0Ixd1N2hyU89AI=
-=Vc25
------END PGP SIGNATURE-----
-
---b5pIc3q2NffjnH9i--
+Thanks
+Justin
 
