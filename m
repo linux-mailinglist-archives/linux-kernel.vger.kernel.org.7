@@ -1,180 +1,251 @@
-Return-Path: <linux-kernel+bounces-814309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B7EB55231
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:49:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E674BB5523E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C749B7BF078
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:47:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE15A045F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1110830F927;
-	Fri, 12 Sep 2025 14:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C84D191493;
+	Fri, 12 Sep 2025 14:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="NhVLix94"
-Received: from fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com [18.197.217.180])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BknV3wzz"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011038.outbound.protection.outlook.com [40.107.130.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3EF30E84B;
-	Fri, 12 Sep 2025 14:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.197.217.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757688532; cv=none; b=VSWADoB+iGRkyaEbLvNFtYsny2YW2akzagYzaOVwWiqDdmkPVKZk2ev5SOvdCvQCwNhnSRkssADk4CDikSDA1sx+jdfOEqvWWVQFOsGKK9UWRjrU8bKc/DW4vy3E3Vb64Lo/adS+WdNQj1fvtLEZi166ygi5YwJxArlf6cDTn4M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757688532; c=relaxed/simple;
-	bh=ILOwdw+8/X9P9sqh/TGoh+Yj8hhDU7UscYwopqzb1Dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mUdbJVNwlGDCtOV4XeLtEgO0vUdgYQ98H8ZrKCzNEmoV1vRxM/PC+Jvf1PjmTvoFuVt4Ls+e+r1qIGR64Mzkub2yW4dUwLE9IaXX15kZPzNrgC4P97i1HV/xE5mfPWwlkkZ10r1miu7WnI0nEk0nv7ccmtP6tH8/teZBsL+xrK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=NhVLix94; arc=none smtp.client-ip=18.197.217.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1757688530; x=1789224530;
-  h=message-id:date:mime-version:reply-to:subject:to:cc:
-   references:from:in-reply-to:content-transfer-encoding;
-  bh=Rmxb9oICTSLggNhSJyI8b5ZCsmMUPRCvEQnPT27T0yA=;
-  b=NhVLix94cF6uofPhYk+vj2r3GWZWAXBjebkmvnHpC0pEYHyQpS7IGUfD
-   DOttZwk9BcT/pLU+pu9ZJv/WIiOp/drggv7WzZCUm0qRjD4wXDMAgFwgt
-   vNP6LuNcdTiFQsjapSni5COmGEyWRCfWq/RyO1L4e8lj8U2eBjMpBut4H
-   cKP1Q5oXP9azBnQFqFF7Jlqkaoce2Ex+G3wrAcSNCXynIqAHTzu4dZaan
-   wtRINJEwEuyEX2Y1BP1Ly10Y2RhTlB7izepHcwrCzaVnhXefljkaHxBNt
-   GoWgHl48R/d/BSL9DyDcu6NoKsZAVtGAodGR42vyRWHj698siJ6qVNz3v
-   w==;
-X-CSE-ConnectionGUID: psJj/C1kRGmHQMaRmCeG8g==
-X-CSE-MsgGUID: Yi2MyhueTGy18U9Y/ecwdg==
-X-IronPort-AV: E=Sophos;i="6.18,259,1751241600"; 
-   d="scan'208";a="2028649"
-Received: from ip-10-6-11-83.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.11.83])
-  by internal-fra-out-006.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 14:48:38 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [54.240.197.233:6406]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.1.26:2525] with esmtp (Farcaster)
- id 1f70f2ba-cad2-4689-94e8-60b6da797a6a; Fri, 12 Sep 2025 14:48:37 +0000 (UTC)
-X-Farcaster-Flow-ID: 1f70f2ba-cad2-4689-94e8-60b6da797a6a
-Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.50) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 12 Sep 2025 14:48:37 +0000
-Received: from [192.168.23.20] (10.106.83.17) by EX19D022EUC002.ant.amazon.com
- (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Fri, 12 Sep 2025
- 14:48:36 +0000
-Message-ID: <bc26eaf1-9f01-4a65-87a6-1f73fcd00663@amazon.com>
-Date: Fri, 12 Sep 2025 15:48:35 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A4319D065;
+	Fri, 12 Sep 2025 14:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757688585; cv=fail; b=DJ4bxVwJK01N0jyB+RdR4C1pzcmCgSVPLALyc1q9PUMidkpMgQtg7miH+62aICakVeTch976U783ZVv5x/wbSZ9Z+ovDNMDe7S3cPZfMNmoiitW/3/mjEUNEMwngokhvKTuu4Jv3SV+vo9mi8GRwCE+YTRUwhBwpStl6ksPgnNk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757688585; c=relaxed/simple;
+	bh=/XyZROd7/NuAKnos8/eHhqHIbRi/k2hpmikaHBlEI9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iGKvcaePheXHRDW8MGapYRirEzUmFQBGBH0o84nVAxypuuJNhCLU4y3OB/ZaTrIOk7Q1sPpbSuT2j0uKhuXDaMaErPBfTndQ5NQxXsNTZ5HoftgxKFV8H1xD28uJ5dBPWGMvZZLszrGnTWu/BPoFDv8/Md+9LkICoCOfEJLb58w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BknV3wzz; arc=fail smtp.client-ip=40.107.130.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aDg9LgfiuAUbu0bd1WvJrCwu1VI6c/aM38NpMup9HtoH2AuZjMYRdhN9Y08a6NTfa8i9Lxcfnrmj0mLFXxHqDRH/0wIk510h6OtSaG5FiAhEcuCSWJwZUomKmVyLil3P+wm8kl7HCGEyzFgL8mSeWVGEWFc0NXCSHrCFFZZf6Pubps1TLkQevUuKoZTYuXiEvKkkpwLAQCIhRVHzF3zoulRmektsB0RXruGDmb3vOqnNvZRuBteYyhd2CPKW+Rs+amL7ef7gnopZbinHYLCCEEhTbgPjq9JKDA8+f8O0jiBh4a3t7BbSS9ttnN7q8c4USUBeXU1fnFi3e/mlBuUGew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jVnJENHKbgQ1J0mueH4vHl2j195vVwZ/hWwP5jD0u3o=;
+ b=Be7WxZ0vLJ9w8wtwdPuI1el2GpBh3yDfxwtkh62K8S2ieKBJeCv7x8mOwyuWJ0AGEx+YNHWDfE2nCr0TuZ2ezljBn1N4dz/uSkOaRx+LxO1UWpsxiPprdAq5LYulzfVlsNzfN61bNDejVdYfiGFEwyumgtEekBurYXP7Waf0JIiegY+CxZmdS3z66MqeUVx67LKMsm9taHYm9aDuesIAFJSzcFOvDtHX8WAXbFMCW+lCv3YG3msL6L5uB8oBOyxQ2/ObalFkzxBHc4KqOFcKm/oaLMd/8aGmJMCZ8JIS683BeO2DFjXQUhd0FoGVWnDSYBuaOxEz7IPWsIWG5feyqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jVnJENHKbgQ1J0mueH4vHl2j195vVwZ/hWwP5jD0u3o=;
+ b=BknV3wzzphHK5mndb84tKdLEtd97x2zemzayqJd5JeyDwmOniNdRgZ9oEQkRCRuGctsOqS7OQl//71y42zpHkjivdb2b3HjVEWqoNr17eE3ocIKkP+V92D4ncReDbkoDMDY+/70xlhbZTiLcojCVgfXiQ2qQHlh7vBxtp+D33zyONWajoKT3j+CmiT8BwNvl2uT7TmCgLTG/Nvb6CwBcBWteER4ci2+GWU8Buz2fOY89pT8cTgcaSkgiBI0zyJux0LW4hnSUALd9vU4BKdgcRp4yL5N6RLXP8GncQTnyv8hoXUADJ/Fx2QCMEXOYTuZkM/2r9MSvfy4ic6xFBkGzNg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by AS8PR04MB8834.eurprd04.prod.outlook.com (2603:10a6:20b:42d::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Fri, 12 Sep
+ 2025 14:49:35 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9115.015; Fri, 12 Sep 2025
+ 14:49:35 +0000
+Date: Fri, 12 Sep 2025 10:49:28 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/10] dmaengine: imx-sdma: make use of
+ devm_add_action_or_reset to unregiser the dma_device
+Message-ID: <aMQy+Ocs+UWq7WoR@lizhi-Precision-Tower-5810>
+References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
+ <20250911-v6-16-topic-sdma-v2-8-d315f56343b5@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911-v6-16-topic-sdma-v2-8-d315f56343b5@pengutronix.de>
+X-ClientProxiedBy: BYAPR08CA0066.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::43) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: <kalyazin@amazon.com>
-Subject: Re: [PATCH v5 1/2] KVM: guest_memfd: add generic population via write
-To: David Hildenbrand <david@redhat.com>, James Houghton
-	<jthoughton@google.com>, "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-CC: "pbonzini@redhat.com" <pbonzini@redhat.com>, "shuah@kernel.org"
-	<shuah@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"michael.day@amd.com" <michael.day@amd.com>, "Roy, Patrick"
-	<roypat@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>, "Manwaring,
- Derek" <derekmn@amazon.com>, "Cali, Marco" <xmarcalx@amazon.co.uk>
-References: <20250902111951.58315-1-kalyazin@amazon.com>
- <20250902111951.58315-2-kalyazin@amazon.com>
- <CADrL8HV8+dh4xPv6Da5CR+CwGJwg5uHyNmiVmHhWFJSwy8ChRw@mail.gmail.com>
- <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com>
- <8e55ba3a-e7ae-422a-9c79-11aa0e17eae9@redhat.com>
-Content-Language: en-US
-From: Nikita Kalyazin <kalyazin@amazon.com>
-Autocrypt: addr=kalyazin@amazon.com; keydata=
- xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
- JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
- BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
- IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
- CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
- ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
- ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
- i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
-In-Reply-To: <8e55ba3a-e7ae-422a-9c79-11aa0e17eae9@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D010EUC001.ant.amazon.com (10.252.51.232) To
- EX19D022EUC002.ant.amazon.com (10.252.51.137)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS8PR04MB8834:EE_
+X-MS-Office365-Filtering-Correlation-Id: 06a07812-d7f9-4434-c6fe-08ddf20b9778
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|19092799006|376014|366016|52116014|7416014|7053199007|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?McWfViZUsKCpXW1J7RAIIyATO+TDXFygmpLEWU1YcO9PbNjlMOEpJwFNFPc1?=
+ =?us-ascii?Q?ZUJkb92BWMr8SZNfhLhFpM2wU7nHMty6HLTFDNBOiTFbgWsyvPJ10TJqRG4S?=
+ =?us-ascii?Q?fccXp+dXWROjjMW+rIkixdEUzkKOC1jS8jHf6ZMPu9X4r3m38N5RBQO21qFi?=
+ =?us-ascii?Q?A+GOq5fmV+x5rmaKQEcrHmn5ZiXMXXjKhw6CD6w/9ADD3DLG73K7SoTyH08q?=
+ =?us-ascii?Q?VmHTNUur5ZOuPUeY5S1thaT7fMkLaJqB66YdHp78GX3nFjcQjkHgwG+8eDms?=
+ =?us-ascii?Q?f68/IO1mXseBlazrnJBwAFUotWvj4YSX1gxWFeH7Km/ur14hc2HVKRRH9q64?=
+ =?us-ascii?Q?hp15oZPpPQL9faaDyWWr56j8UFWd3zItoIqar42OMNx51tl9Oy3FnfqYS07I?=
+ =?us-ascii?Q?28pamAutYVJEFcT7Sb138j/jNpaKFczYyzoJM9rH9VIT95awg/MYaAOBTWJF?=
+ =?us-ascii?Q?LU+FrREGQ+S0+c4tozOvab75u6yYzbBxHYeC0ihecAOz9euUIqU0tU/PEbsC?=
+ =?us-ascii?Q?fJrT9m2q/MPuSVmtNIuOOXHlBoTeXh/4QtQJnIHFo+3uBSSldf0YF/u0KBZX?=
+ =?us-ascii?Q?X7AHrHBYjLdWeNANDCcKbhbAgLs+dx0/xuawjfsiXadxVkErtV9Pt7qWpldH?=
+ =?us-ascii?Q?chqANSIC9/6YWk/w+KcQ/RGNrhIGSXYglnlDS6wnXSpP696kr0+Sgwdy+c29?=
+ =?us-ascii?Q?zs8lwQmUmnCRXlpaDuqRxT29Vx9llKRiJk5lTkezO4upWw6Xw5BMHDKJGauk?=
+ =?us-ascii?Q?P6RnSy03d/wXNvyMcZSbTR0A5iWxaUq7nJqrRo+sxGSos1LYcbPc9xVQqUpM?=
+ =?us-ascii?Q?jlETlXj16j+Ic2N1C3iMWH2ZCJBKS+fMxEMbjjLskQPf3fbrWEDTp0tUmfnS?=
+ =?us-ascii?Q?+dhDO+Dl4eSlbv4CICKqd3VxncD/mont5KY99FmG1nEQoKaOkYmFczc6ZKo5?=
+ =?us-ascii?Q?YakGg5wWc5VmqrZNGcA0AhmSO2flR368Cxb07uUqOCTv/PdDhgzY0SBLaoBl?=
+ =?us-ascii?Q?EnjoxxvwwQm5Z+DVW4m5spVRNePqRnJmdnONFl82gETkRrGB1SjbtxmNmEOl?=
+ =?us-ascii?Q?A4WAZo5b3zg6oosHOFcQhSqv2bcCMQPUSTnLJn5HtgZWE6ATajop9wizL/Cm?=
+ =?us-ascii?Q?nIVDmB99y6z3qtAJpBF4XA+WcMKu/iHM1PHnEdEwxu8aCipxnYwPTjHK7XQs?=
+ =?us-ascii?Q?TY3qDBuWGas3wUyKljivP5VyQNVVoxNtU/PUCCAkz5KuIkqv001COmBEthDx?=
+ =?us-ascii?Q?EFES1JmvqR/PFRuGUrKuXv/l/SRzwEF09m73DpqI8NIOcJTf/kLJWZ4trB1k?=
+ =?us-ascii?Q?WDf/1wKOBx4sBdCOUA6T1w9msyftD6VcZGD5NWKNSOHacJUYLYFbuNd2RFUx?=
+ =?us-ascii?Q?vpg2UGd+GxYYx2NOvY/3SOPd6/sDLZvCvsMrZ6yqIxyuR+e7LkjESyLeJ8o6?=
+ =?us-ascii?Q?DOGDKDoXRuuYqDaxxFnhSntDGN4wrQc7xcTLQnijbJaMLVWanAFxCQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(376014)(366016)(52116014)(7416014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BuLlMQ33N5UsZEzzU1/Z8x2AbvXrCDgqWhjPBiy+ak1c4dmmS6cAulcKYjhU?=
+ =?us-ascii?Q?vtfDou4s5fQORvOMIcmBRGIU9Ap5kesY0oSRxp1xoURWhUoSPH4Jmp4WAZYu?=
+ =?us-ascii?Q?v50Opvm8n4MP3R8EmGbeIBEPWc6E7A2awKog7mRDU7b/JBy9MDa/OP6cdqVO?=
+ =?us-ascii?Q?1DM6cCvY9uqL0b3ys82v1u6DWOuveUNmER/gRL57Hs29wESPNkW5gdSlLezm?=
+ =?us-ascii?Q?XqWCsVQueyRX8YGYxR4IfLKh88FqMQc4jZQpg+kxVIs+BBMag6hmz6TUlIk3?=
+ =?us-ascii?Q?P0H6Psm1novqTLHnrFrCSgccydILGkLd82pTPZJqopoxRUuR2RZzBT87JenZ?=
+ =?us-ascii?Q?FliLOp4aaG7AmBTIsZ0kONNEVr/wChXOSQ3kOlyd6lAQeGniiatrpiU0NEaI?=
+ =?us-ascii?Q?KSW63lJNNcN2Q3Givdo42tse47gC9sSD3yuViaCkbLsm31F/aHE1w812pDqc?=
+ =?us-ascii?Q?YdSrPcU+ePKttWzeiP3Y4DXIdbrnT808WroY5tG6MUAKRCOEdmNhQBx5ULp3?=
+ =?us-ascii?Q?coOctm0YRvOYQUHfP1u70h2EGmW7XzxnICHkcV5bcXncwugJ80QMX0O2SSmm?=
+ =?us-ascii?Q?NlUvtboSa1RFuWDwHirMaPjNvDBjjTBK/F/UCki5t7quttLQ5tg4cyAbSf0g?=
+ =?us-ascii?Q?yTQjWQo42JwmZJRwOzebPqqr223rQKQ4VvQlDeXXRsR3VcjBsMnS6vRo4ePZ?=
+ =?us-ascii?Q?qRSLL/tQr0zYygz9zrYkAgRCx12YEAKL7++lb2RQVn0GKUKJYdW2FauLDfqL?=
+ =?us-ascii?Q?6VDnoWyNCTydEmY3VgMuPskDCDau3ojOHT4WAQb3p1Q9Lx9ayJF006NNB07Z?=
+ =?us-ascii?Q?MJvFnt78pIi2AycsvklnRurBiV0ttH135SgeGu8rLP/ewwiqzWxalk/jQ5xw?=
+ =?us-ascii?Q?uhPpP0urUnuN6TwB35sMC0qWhe1MHTgmK46ACpP3Qxz5GcwBY7PJ5zMEQfuQ?=
+ =?us-ascii?Q?DBpZLzqqnmnf+Ia1316L5srGLrW61BFrz2t3vTznfkheiosnAtpHp5hFvme7?=
+ =?us-ascii?Q?7VdsHDZ5JnS6qeFcqnXRWbDpAMrAIv574ihEdC7AMt2eYoenm30vN8/3DLdT?=
+ =?us-ascii?Q?h0EIjJ/ygeVKo1oVS52ehOtWzlfUzLQ02AROwmTB3OJHPL+ZgfJxQcSgvq8W?=
+ =?us-ascii?Q?72U3VnObS0DFNJ51YiOYuQ9bISWRkiObQZx6LoPQvmXcu12g4LzPWW6DWmS3?=
+ =?us-ascii?Q?XCzcCOPDTAiwMKWV9Rvy2+Ih3Uph9OeI1R3P9bUUBmxadPV8xdMdOs3AKxTl?=
+ =?us-ascii?Q?TTYSB7b7F3S+ROqw311YSzbdC4aYNMa8akdoSfnWaAflzLrf5opMS+lFYekS?=
+ =?us-ascii?Q?XOfc1oLWdDXd9vf3Q0ZEkkQwzHI4P0kjROwO5IyfLRqAXjbpUoZTAJsG6jZK?=
+ =?us-ascii?Q?+yTCaXEJl+29LtdJ8DwBaAhURr6gs3Gp+V+Il2jmXBbLFfXqa9qKesgW/cM+?=
+ =?us-ascii?Q?Mk+4ASCs6s1B0dmyYVEBW15QayC1dAqy6ivLU6591Q9tPet+vbBRrShk6Ftx?=
+ =?us-ascii?Q?eQEPn5dZD2m0ktsH+JoffneuHR+EvzXhZlO+X/dfBsJmLYmXHM0bKBLIKcLQ?=
+ =?us-ascii?Q?JtAdnQSeUn4SRZgQsEEC/2hnMIA5EEZF/UtNgAfO?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 06a07812-d7f9-4434-c6fe-08ddf20b9778
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 14:49:35.7174
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PVcuIPeNDzVMUM7UCaZeQZcG9RHPXN7CkrjfiYeNdoJpitJic/PZMc00JR3urd5pCN1eSHa6GfHO+/n9nyQDYw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8834
 
+On Thu, Sep 11, 2025 at 11:56:49PM +0200, Marco Felsch wrote:
+> Make use of the devm_add_action_or_reset() to register a custom devm_
+> release hook. This is required to turn off the IRQs before calling
+> dma_async_device_unregister().
+>
+> Furthermore it removes the last goto error handling within probe() and
+> trims the remove().
+>
+> Make use of disable_irq() and let the devm-irq do the job to free the
+> IRQ, because the only purpose of using devm_free_irq() was to disable
+> the IRQ before calling dma_async_device_unregister().
+>
+> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+> ---
+>  drivers/dma/imx-sdma.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index d39589c20c4b2a26d0239feb86cce8d5a0f5acdd..d6d0d4300f540268a3ab4a6b14af685f7b93275a 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -2264,6 +2264,14 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
+>  				     ofdma->of_node);
+>  }
+>
+> +static void sdma_dma_device_unregister_action(void *data)
+> +{
+> +	struct sdma_engine *sdma = data;
+> +
+> +	disable_irq(sdma->irq);
 
+May not related this cleanup patch, I am just curious why not mask sdma irq
+request.
 
-On 12/09/2025 14:36, David Hildenbrand wrote:
-> On 11.09.25 12:15, Nikita Kalyazin wrote:
->>
->>
->> On 10/09/2025 22:23, James Houghton wrote:
->>> On Tue, Sep 2, 2025 at 4:20 AM Kalyazin, Nikita 
->>> <kalyazin@amazon.co.uk> wrote:
->>>>
->>>> From: Nikita Kalyazin <kalyazin@amazon.com>
->>>
->>> Hi Nikita,
->>
->> Hi James,
->>
->> Thanks for the review!
->>
->>
->>>>
->>>> write syscall populates guest_memfd with user-supplied data in a 
->>>> generic
->>>> way, ie no vendor-specific preparation is performed.  This is supposed
->>>> to be used in non-CoCo setups where guest memory is not
->>>> hardware-encrypted.
->>>
->>> What's meant to happen if we do use this for CoCo VMs? I would expect
->>> write() to fail, but I don't see why it would (seems like we need/want
->>> a check that we aren't write()ing to private memory).
->>
->> I am not so sure that write() should fail even in CoCo VMs if we access
->> not-yet-prepared pages.  My understanding was that the CoCoisation of
->> the memory occurs during "preparation".  But I may be wrong here.
-> 
-> But how do you handle that a page is actually inaccessible and should
-> not be touched?
-> 
-> IOW, with CXL you could crash the host.
-> 
-> There is likely some state check missing, or it should be restricted to
-> VM types.
+> +	dma_async_device_unregister(&sdma->dma_device);
+> +}
+> +
+>  static int sdma_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -2388,10 +2396,16 @@ static int sdma_probe(struct platform_device *pdev)
+>  		return ret;
+>  	}
+>
+> +	ret = devm_add_action_or_reset(dev, sdma_dma_device_unregister_action, sdma);
+> +	if (ret) {
+> +		dev_err(dev, "Unable to register release hook\n");
+> +		return ret;
+> +	}
 
-Sorry, I'm missing the link between VM types and CXL.  How are they related?
+why not use dev_err_probe() her?
 
-My thinking was it is a regular (accessible) page until it is "prepared" 
-by the CoCo hardware, which is currently tracked by the up-to-date flag, 
-so it is safe to assume that until it is "prepared", it is accessible 
-because it was allocated by filemap_grab_folio() -> 
-filemap_alloc_folio() and hasn't been taken over by the CoCo hardware. 
-What scenario can you see where it doesn't apply as of now?
+> +
+>  	ret = of_dma_controller_register(np, sdma_xlate, sdma);
+>  	if (ret) {
+>  		dev_err(dev, "failed to register controller\n");
+> -		goto err_register;
+> +		return ret;
 
-I am aware of an attempt to remove preparation tracking from 
-guest_memfd, but it is still at an RFC stage AFAIK [1].
+the same here.
 
-> 
-> Do we know how this would interact with the direct-map removal?
-
-I'm using folio_test_uptodate() to determine if the page has been 
-removed from the direct map as kvm_gmem_mark_prepared() is what 
-currently removes the page from the direct map and marks it as 
-up-to-date.  [2] is a Firecracker feature branch where the two work in 
-combination.
-
-[1]: https://lore.kernel.org/kvm/20250715225523.yzmrwghbhi56tqux@amd.com
-[2]: 
-https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
-
-> 
-> -- 
-> Cheers
-> 
-> David / dhildenb
-> 
-
+Frank
+>  	}
+>
+>  	/*
+> @@ -2410,11 +2424,6 @@ static int sdma_probe(struct platform_device *pdev)
+>  	}
+>
+>  	return 0;
+> -
+> -err_register:
+> -	dma_async_device_unregister(&sdma->dma_device);
+> -
+> -	return ret;
+>  }
+>
+>  static void sdma_remove(struct platform_device *pdev)
+> @@ -2423,8 +2432,6 @@ static void sdma_remove(struct platform_device *pdev)
+>  	int i;
+>
+>  	of_dma_controller_free(sdma->dev->of_node);
+> -	devm_free_irq(&pdev->dev, sdma->irq, sdma);
+> -	dma_async_device_unregister(&sdma->dma_device);
+>  	/* Kill the tasklet */
+>  	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
+>  		struct sdma_channel *sdmac = &sdma->channel[i];
+>
+> --
+> 2.47.3
+>
 
