@@ -1,115 +1,106 @@
-Return-Path: <linux-kernel+bounces-813399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89773B544D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:14:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F28BB5480F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83F96585D6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:14:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DFE71CC4F19
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398C32DEA78;
-	Fri, 12 Sep 2025 08:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3122765EA;
+	Fri, 12 Sep 2025 09:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S+MPOBou"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L3GZr48l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44EF2D59E9;
-	Fri, 12 Sep 2025 08:12:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FBC274B23
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757664728; cv=none; b=LuRzTenz+YLPMnH79jLuv/AfOufFW0zYLG5yU8OOyUSgc4KdE33ZREzQJs3xNUSjidqdz5V+ySd8mSC1Ns/j5ktkozpC/d41Ec7SakY/SblEycXKyBguv8fjyNtXtXgrMzE7H4KMVyJuig/j3Iw64fXqj+HctPhqHQh5p2SUCag=
+	t=1757669931; cv=none; b=g4pJt+5SOsQaHlMY12z6KF+LIz5Ron1f5DFcyl52GGQ19Fpt0c84JPfuPNZSusI79bzHt98uwSTkKMx/9lt8M3ODkyAIjr82ssZ9CkbsCrJ3hpzA639So1kob92vVBZv45R2/vWcprx+cEVT4Eh/tdNk8p7pjuOst2bn8YIcU+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757664728; c=relaxed/simple;
-	bh=eWR3vaX15OYYOq96vK9zNVE0Car4mWmBLZ+FSu8GRD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XqtVBC70aQDgSNaWECVVtXZtAwOgRJRF9BWL6Wk76DQ7MMJ0FX0nsECtSX3vWWA95j5iGDtIAAOyjeOf7hDrCz3E7dW1HanJ6n1QkCrqPX7xcpP/Ovi6Ty1CawlTUd+xCPe19pxlnM4gzor9J1xNhiYeNtP7MjPtBB7aVPbNamA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S+MPOBou; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757664725;
-	bh=eWR3vaX15OYYOq96vK9zNVE0Car4mWmBLZ+FSu8GRD8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S+MPOBouXjh2kEqeq27ZiA0yzeUPQ9i45uteJlppl8S943xiCtHrTqzxBkIQoMmXF
-	 aJUMkXghcWX8a+cb1UfJtIlSMOQNFl8LWm6vi2eDDA2EkNnnVMXjU6hnwpIDhEM1MR
-	 hmxx9CNSXQAXiHoJcmS7qG6L6gyy8QS3S4us+FfTHTCM0eYM5q9t4IhweCFf5tie+0
-	 jw+3VPbWoQf+SCU9koDGrLL3vphgqvmA2rmvR0hBT1GjDMaR+PU5evzHUCWd3imhjm
-	 X+6Z/dJ8L0ELwkO/x9y1DnafowMz484TjHqY8HGS9O3fAhISKOaCH8dhhpA40LAuOp
-	 r/WJ2ML9lvQNQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id C410F17E1389;
-	Fri, 12 Sep 2025 10:12:03 +0200 (CEST)
-Message-ID: <1963f06f-ae2e-414e-a218-01da0322723d@collabora.com>
-Date: Fri, 12 Sep 2025 10:12:03 +0200
+	s=arc-20240116; t=1757669931; c=relaxed/simple;
+	bh=C2C7RcRgI+D6tUKplepFjuIGNKR+l3pPP2sgq1FegGs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bNEDmDUn+vECLsX41Fse3WAMuVCtPVgS9Gf5Z0zeDRrGhVsSNGISN6AOFdl8klVEBtr1B5hH71Z68Zz7gI2xHuaaFH87Imto4pSUN1ptALe70ZcDxfBpDHrQOvdiOW53LmD5Gx8fqumsVzxl6ku3Mu9azVgOtbcCrQ1c/5POH+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L3GZr48l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A87B1C4CEF1;
+	Fri, 12 Sep 2025 09:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757669930;
+	bh=C2C7RcRgI+D6tUKplepFjuIGNKR+l3pPP2sgq1FegGs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=L3GZr48lQ48DqpOQds2/ux8pi30yfFwp6lMWAKNU33jL0GOujdt4zW+qs1tu2yB2O
+	 TJDufuG8i1SDQPae5lPD7tvKrIWBbn20JyZxcyNkBj+4hfbr4Rr0Dsq1AjYj6rTvg3
+	 b5AF6aupMKeZe7jvhdz2qZSubqtORlb18uC893UeIAtg7mKYi039/ywcbHCsBiwBBk
+	 yPvmN6EfBmrXOrDL/ET/zC/d1/kolJW+Zvk8VJXcAqVa55x5St416xpgh2Kycfnve0
+	 hishI/KsPfRcfEBoHR8QRPWLHLo1NVJk739O8lh3ZZOAJPg1/vXre3VwRHHo9HpF9a
+	 /FL2qx+PYnzLw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v2] f2fs: fix to update map->m_next_extent correctly in f2fs_map_blocks()
+Date: Fri, 12 Sep 2025 16:12:50 +0800
+Message-Id: <20250912081250.44383-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/12] dt-bindings: pinctrl: mt65xx: Allow
- gpio-line-names
-To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>, airlied@gmail.com,
- amergnat@baylibre.com, andrew+netdev@lunn.ch, andrew-ct.chen@mediatek.com,
- broonie@kernel.org, chunkuang.hu@kernel.org, conor+dt@kernel.org,
- davem@davemloft.net, dmitry.torokhov@gmail.com, edumazet@google.com,
- flora.fu@mediatek.com, heiko@sntech.de, houlong.wei@mediatek.com,
- jeesw@melfas.com, kernel@collabora.com, krzk+dt@kernel.org, kuba@kernel.org,
- lgirdwood@gmail.com, linus.walleij@linaro.org,
- louisalexis.eyraud@collabora.com, luiz.dentz@gmail.com,
- maarten.lankhorst@linux.intel.com, marcel@holtmann.org,
- matthias.bgg@gmail.com, mchehab@kernel.org, minghsiu.tsai@mediatek.com,
- mripard@kernel.org, p.zabel@pengutronix.de, pabeni@redhat.com,
- robh@kernel.org, sean.wang@kernel.org, simona@ffwll.ch,
- support.opensource@diasemi.com, tiffany.lin@mediatek.com,
- tzimmermann@suse.de, yunfei.dong@mediatek.com
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-arm-kernel@lists.infradead.org, linux-bluetooth@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-sound@vger.kernel.org, netdev@vger.kernel.org
-References: <20250911151001.108744-1-ariel.dalessandro@collabora.com>
- <20250911151001.108744-9-ariel.dalessandro@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250911151001.108744-9-ariel.dalessandro@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 11/09/25 17:09, Ariel D'Alessandro ha scritto:
-> Current, the DT bindings for MediaTek's MT65xx Pin controller is missing
-> the gpio-line-names property, add it to the associated schema.
-> 
-> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Script to reproduce:
+mkfs.f2fs -O extra_attr,compression /dev/vdb -f
+mount /dev/vdb /mnt/f2fs -o mode=lfs,noextent_cache
+cd /mnt/f2fs
+f2fs_io write 1 0 1024 rand dsync testfile
+xfs_io testfile -c "fsync"
+f2fs_io write 1 0 512 rand dsync testfile
+xfs_io testfile -c "fsync"
+cd /
+umount /mnt/f2fs
+mount /dev/vdb /mnt/f2fs
+f2fs_io precache_extents /mnt/f2fs/testfile
+umount /mnt/f2fs
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Tracepoint output:
+f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 0, len = 512, blkaddr = 1055744, c_len = 0
+f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 513, len = 351, blkaddr = 17921, c_len = 0
+f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 864, len = 160, blkaddr = 18272, c_len = 0
 
-> ---
->   .../devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml    | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> index b9680b896f12f..aa71398cf522f 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt65xx-pinctrl.yaml
-> @@ -43,6 +43,8 @@ properties:
->         the amount of cells must be specified as 2. See the below mentioned gpio
->         binding representation for description of particular cells.
->   
-> +  gpio-line-names: true
-> +
->     mediatek,pctl-regmap:
->       $ref: /schemas/types.yaml#/definitions/phandle-array
->       items:
+During precache_extents, there is off-by-one issue, we should update
+map->m_next_extent to pgofs rather than pgofs + 1, if last blkaddr is
+valid and not contiguous to previous extent.
+
+Fixes: c4020b2da4c9 ("f2fs: support F2FS_IOC_PRECACHE_EXTENTS")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v2:
+- clean up codes
+ fs/f2fs/data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6bb03add93fe..d747850e765f 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1782,7 +1782,7 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+ 				map->m_len - ofs);
+ 		}
+ 		if (map->m_next_extent)
+-			*map->m_next_extent = pgofs + 1;
++			*map->m_next_extent = is_hole ? pgofs + 1 : pgofs;
+ 	}
+ 	f2fs_put_dnode(&dn);
+ unlock_out:
+-- 
+2.40.1
 
 
