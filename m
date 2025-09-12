@@ -1,118 +1,138 @@
-Return-Path: <linux-kernel+bounces-814268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704E1B551D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:38:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0979AB551CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3EFE18877B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6AD162BF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9805E30103C;
-	Fri, 12 Sep 2025 14:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSULSN5f"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848A93191CE;
+	Fri, 12 Sep 2025 14:30:04 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D908528E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D39B2DC796;
+	Fri, 12 Sep 2025 14:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687459; cv=none; b=Tnz9JdXlzM7mPUaTP68NErdjxrN/Rwuu7SzVYkufv+pVznghLd6mfsDw/lUKDnJQFJXt4BrkF9OOQNAJIKeXEcwyzmA0P8NMmP7nQKOq5C0Qz70211DJxWi3CoInN1hYJZ2QQNI/W0323J2blILs8JU75bf2XmUISKVdYv4UBjw=
+	t=1757687404; cv=none; b=Hv0csuwA8JQQicHCsjffiDPYMz/WZLdj6gM95xADqRHm0XiFLqbpT1KcRTBS/JwEkXU4KzJmtQ+1WuUn/oL3c2r4s/PNlI6Bohs2SKPwbEQT5fcdLj3jDbozf3PnUVrnT9LhdrvUkGfzjzRN107nCn8h5CeFqZ7cDLk8huwSKLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687459; c=relaxed/simple;
-	bh=wucKZjXUVtRxrGoS9CppvLYgJwFvEG8gqGPWzlZGBag=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lXvNf8f6mD4ezl7WjywRTzqnqprFbOk9BFKhJQxqPbnhKlW7k4nHObqkJCkHdawu0sY766b2YPKQSMRD63t+awJ/Cm/ki7DH981hydd40fVZFb0CWaTrdV1jXl62waXtvH0kfPtfaJ1MgcwKwcrC/iINwdiVFVfN7gH4YFop/O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PSULSN5f; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-336b0b3d753so19278111fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:30:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757687456; x=1758292256; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/qUTD8uROnoCtAqaX/Ri9iIJ3aP0OlkHXH5AZacDoiM=;
-        b=PSULSN5fQEZrzG3AEkIAZty38UMeDyZyA9dltEdJUV9lEDSj7xa824HwTQsKe5OLFn
-         nDx8hdbTlIIIwYmvI4rnoSExWtFmq3XXfEIq6N5MBC/fWRU8l8039iQWnh+lbZueo83P
-         n2QqZEUqqZI8szY2OwwnaPHDloRAzE3tRiphOt8C9w+1KVlwn5CCy4EkwIHqnQ9KgzLl
-         5/rdWmZPeLWdYIK8eS6CRKfWjsZ1mtPFdAv0y9O5aT+VsT5GtJ1vS8VBb+4dHXyXJPU9
-         VEtpiSdWEkFWpcIE8XTR+AgYjoF/Hmfb2E7iwNbZPkfdaimnTHBSWmccAfwLBUAuZFD2
-         0ijw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757687456; x=1758292256;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/qUTD8uROnoCtAqaX/Ri9iIJ3aP0OlkHXH5AZacDoiM=;
-        b=SG1/d1EUv1hNNJf4mPaPeajMZtnh5hzvwjIx2CqGqXgxgT7Rx4DNKL7FNoxkTb+Flw
-         8JL5ZJRlr+T2+8YmwnZQVi8HIIi6LAekmE1Sstt/bHgnyzgP8kyeyUDxgk9dNXCD/DVp
-         LbpMFIA/ogERSaqkL9XHiOTgzZWSUJwG44/P/q5OoggRmhp1TjbEVuETk/BUOW1N6ets
-         m1vMhf0eCDSYP/k/FE4WMYzDJlfB/vQHPNkMf6SgIF6k8dUCEjNjVNxvmjZ3YUgU6XPE
-         ZV5EdH7Gzg8A8+euTenPh22qwDohE1T5z5zADZoeZ4wo3N69Wi+Hlwvlmxfn0NuhpcrI
-         bktw==
-X-Gm-Message-State: AOJu0Yw2GPpcaa9SH5Vs9caafYeq/OBGOixGbGb7YRFaifJ6pWrLvTr9
-	Q9unAtX1zW8LLj6NHAvbijjlBU4OlA5F7SAZ859nUbxm/sT+wfdO4TyfXF7fL7ilnPg=
-X-Gm-Gg: ASbGnct1U3X8ScVH+1ZOB5imlMVAWftWhIm/rt/ngdN2CLSDsFTb25u+OsPQ3FQtmXw
-	rrnrkNacoA/6jUX3+KVpL0HNIJWrF9Lq6gCKHXyg1B7tpsWCmRIkgv9AmrKiYGcpSHw7eZJZryR
-	p/Dns9xRzx7qsZhJb4kqGWXBv134Zp5+L78rhi8xbb4GJe/w/q6dBpi6QEBg1tFxA0DfUxCXu5D
-	wHr4qMhpwhkRT8cJIQgbsqrUecQpP63/ah39RrYJ+Btb5X8oEjeVlOQWDLsDBTjwJzxWD3laK6q
-	Eq3T8LSMU663lYH+sg/a3kM7pRHtW9bIor3uUoLRpWBbCUaI5bk17E5gGU2UvaBfoL2c2v9N7j+
-	/NkuojHtCS3oqu5uP6y8nA2QnDn8xYiLPUDV3+Cr/O3PDGVzfmEURe/28P7O8eJABwg==
-X-Google-Smtp-Source: AGHT+IEVbatrp/SxHPXDJ7XzOlydV9X5r4NdpCXVehaL+u52W8sQ2+DoFuN3K9k4u9FvHmP6U/Ibmg==
-X-Received: by 2002:a2e:bea6:0:b0:335:4d0e:9493 with SMTP id 38308e7fff4ca-3513fc380f1mr9860391fa.28.1757687455991;
-        Fri, 12 Sep 2025 07:30:55 -0700 (PDT)
-Received: from nuoska (87-100-249-247.bb.dnainternet.fi. [87.100.249.247])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1c6ca914sm8495711fa.67.2025.09.12.07.30.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 07:30:55 -0700 (PDT)
-From: Mikko Rapeli <mikko.rapeli@linaro.org>
-To: Russell King <linux@armlinux.org.uk>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	Mikko Rapeli <mikko.rapeli@linaro.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 4/4] ARM: rockchip: remove REGULATOR conditional to PM
-Date: Fri, 12 Sep 2025 17:30:36 +0300
-Message-ID: <20250912143036.2844523-1-mikko.rapeli@linaro.org>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1757687404; c=relaxed/simple;
+	bh=PzXy3J+sljkaF9/qM0Z9jTDMC2pKfDUjU75OFzOan50=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cOavYElzssKsLxd+tX6keL3bzDcyVToKvDEYXl+XT4801X4mH1QSa+Gb3e5HnLJ8Kxxa5SM4GYWM7U2z804Bq52G4lbtVgpCd8MHPQpRBB4zOaaV6U3Wc67wUyeMCYFS0S7a7WKAKz3RKtxQ2QMQNwxSzjP718Xg8LJlXJu5OTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id 04AB014085C;
+	Fri, 12 Sep 2025 14:29:58 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id C2E6520027;
+	Fri, 12 Sep 2025 14:29:55 +0000 (UTC)
+Date: Fri, 12 Sep 2025 10:30:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Xiang Gao <gxxa03070307@gmail.com>
+Cc: mhiramat@kernel.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ mathieu.desnoyers@efficios.com, andrii@kernel.org, mingo@kernel.org,
+ oleg@redhat.com, akpm@linux-foundation.org, gmonaco@redhat.com,
+ ricardo.neri-calderon@linux.intel.com, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
+Subject: Re: [PATCH v2 1/1] tracing/sched: add 'next_policy' to
+ trace_sched_switch
+Message-ID: <20250912103050.5bf82967@gandalf.local.home>
+In-Reply-To: <c2894f9b0c5116eeffdc19947529aef5c5d1db4c.1756212396.git.gaoxiang17@xiaomi.com>
+References: <cover.1756212396.git.gaoxiang17@xiaomi.com>
+	<c2894f9b0c5116eeffdc19947529aef5c5d1db4c.1756212396.git.gaoxiang17@xiaomi.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout04
+X-Rspamd-Queue-Id: C2E6520027
+X-Stat-Signature: 95jo8ccmhhjmhg39hwgka5nywg7ob9ps
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/HcNQwkKSYWfiQu92jxe3bnbMF4m9VtHY=
+X-HE-Tag: 1757687395-783471
+X-HE-Meta: U2FsdGVkX1/n5zk81QSwQrrD/DdxaLvSp913YGxMVAbDHQyrPaTXrYwCJTLkx89nalPdTY/TInEq8ueaLYxpCY2HLSbBCsk0FZZmHd8nNHEzip38/Fr7akMADa3WaqFX39Vz87OnVnjjTcJp9AB+wL8Zlq+VCKQEobghfZ7GSdoy4KSS0d6GqBV1p50mKYZPtOyKyGibv+XMJczW39GnX0JZlO4VxzUyW9cpn30w1Yvg0SsmyyF/aw7VBXQO0NMtuN+shWOVD/JyvUDP/qaMhRZOUAAeQmChnZWZ65/THR2BPvhx1vSR2yIe1ptmOHFf9MDaJCMfKvJ0Bs9MxHkFNKysPEE/1rVY/oP/zJ9xSmfKvFf+hyYQD1nOqEW1HdPTbEI6vKmbK9eXAUqkOyP67CwePYNWaQkO
 
-PM is explicitly enabled in lines just below so
-REGULATOR can be too.
+On Tue, 26 Aug 2025 20:48:54 +0800
+Xiang Gao <gxxa03070307@gmail.com> wrote:
 
-Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
----
- arch/arm/mach-rockchip/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> From: gaoxiang17 <gaoxiang17@xiaomi.com>
+> 
+> Sometimes, when analyzing some real-time process issues, it is necessary to know the sched policy.
+> 
+> Show up in the trace as:
+> 
+> 	 72.267374: sched_switch: prev_comm=grep prev_pid=67 prev_prio=19 prev_state=S ==> next_comm=cat next_pid=66 next_prio=120 next_policy=normal
+> 	 72.267594: sched_switch: prev_comm=cat prev_pid=66 prev_prio=120 prev_state=R+ ==> next_comm=grep next_pid=67 next_prio=19 next_policy=RR
+> 	562.192567: sched_switch: prev_comm=grep prev_pid=85 prev_prio=19 prev_state=S ==> next_comm=cat next_pid=84 next_prio=120 next_policy=normal
+> 	562.192944: sched_switch: prev_comm=cat prev_pid=84 prev_prio=120 prev_state=R+ ==> next_comm=grep next_pid=85 next_prio=19 next_policy=FIFO
+> 
 
-diff --git a/arch/arm/mach-rockchip/Kconfig b/arch/arm/mach-rockchip/Kconfig
-index b7855cc665e94..c90193dd39283 100644
---- a/arch/arm/mach-rockchip/Kconfig
-+++ b/arch/arm/mach-rockchip/Kconfig
-@@ -13,7 +13,7 @@ config ARCH_ROCKCHIP
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select DW_APB_TIMER_OF
--	select REGULATOR if PM
-+	select REGULATOR
- 	select ROCKCHIP_TIMER
- 	select ARM_GLOBAL_TIMER
- 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
--- 
-2.34.1
+Peter,
+
+Are you OK with extending the sched switch tracepoint?
+
+-- Steve
+
+> Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
+> ---
+>  include/trace/events/sched.h | 15 +++++++++++++--
+>  1 file changed, 13 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
+> index 7b2645b50e78..00336211aca6 100644
+> --- a/include/trace/events/sched.h
+> +++ b/include/trace/events/sched.h
+> @@ -234,6 +234,7 @@ TRACE_EVENT(sched_switch,
+>  		__array(	char,	next_comm,	TASK_COMM_LEN	)
+>  		__field(	pid_t,	next_pid			)
+>  		__field(	int,	next_prio			)
+> +		__field(	unsigned int,	next_policy	)
+>  	),
+>  
+>  	TP_fast_assign(
+> @@ -244,10 +245,11 @@ TRACE_EVENT(sched_switch,
+>  		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
+>  		__entry->next_pid	= next->pid;
+>  		__entry->next_prio	= next->prio;
+> +		__entry->next_policy	= next->policy;
+>  		/* XXX SCHED_DEADLINE */
+>  	),
+>  
+> -	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
+> +	TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d next_policy=%s",
+>  		__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
+>  
+>  		(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
+> @@ -263,7 +265,16 @@ TRACE_EVENT(sched_switch,
+>  		  "R",
+>  
+>  		__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
+> -		__entry->next_comm, __entry->next_pid, __entry->next_prio)
+> +		__entry->next_comm, __entry->next_pid, __entry->next_prio,
+> +		__print_symbolic(__entry->next_policy,
+> +				{ SCHED_NORMAL,         "normal" },
+> +				{ SCHED_FIFO,           "FIFO" },
+> +				{ SCHED_RR,             "RR" },
+> +				{ SCHED_BATCH,          "batch" },
+> +				{ SCHED_IDLE,           "idle" },
+> +				{ SCHED_DEADLINE,       "deadline" },
+> +				{ SCHED_EXT,            "sched_ext"})
+> +	)
+>  );
+>  
+>  /*
 
 
