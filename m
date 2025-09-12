@@ -1,60 +1,81 @@
-Return-Path: <linux-kernel+bounces-814031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D28B54E69
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:50:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 282EDB54E6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 151903B2812
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:50:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83931BC7CBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BB0305940;
-	Fri, 12 Sep 2025 12:49:26 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D369C30AAC9;
+	Fri, 12 Sep 2025 12:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pHbXIaEb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD071E32B7;
-	Fri, 12 Sep 2025 12:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FD330AAC6
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681365; cv=none; b=raomfLpv05G3IT04vndn72hTzOhLZFuu6+AkTHeYLJkFW1YEpgV1XhHyH2NBtQg4H1X2qtrVjWlCtJILhXSIO3AiRO6n7d0bNi9SzjyiC4Nd62UliOb0rwjaJRP8NnnKxF2F71LzQKZoPvSuMp3bJJt/ay2Wtyqd0HVASC9hWdM=
+	t=1757681385; cv=none; b=Gp9Ll7xg6Gy0wjJKdDZtQywDTVOcYUQpxTQDXsjwq0rl4+XZc66KCj3exHIdVTDVJR6IhK9VOyarhd2hjNy2r0Hq5pCQdX+VpVzh3ZNtdGYocKYQk6voAu0ERon0/zXVBcw40s7GrFP9IgLqwZjhljnsOhNQe9PTE80K+3I7HF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681365; c=relaxed/simple;
-	bh=oi151mNxHUuVdrfzLR78YFpChdK2PjgzYFmvMQ2UUb4=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=LQgKEvBBwIUFColDlcEFcHGYJRXA2vMRj1KBc/67qh+/JNTDgGhvRTD6VqpDwR6g0KEiaY05c5/ntQtNv/l4ix3cQZ2XBJI/Pumy71EbsjAhk4ehW5T3CUFj84QiUHkgAZnMIEN2jvruvUjNHHJCoyxJtqrZJ9wMqbSBEN5W2n4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: e208d14a8fd611f0b29709d653e92f7d-20250912
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:7ff57fff-cbca-4fd2-bf5e-2daefe46416d,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:5,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:7dcd282119355a477bc719e660f0dc54,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:1,File:2,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-UUID: e208d14a8fd611f0b29709d653e92f7d-20250912
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangheng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1646010829; Fri, 12 Sep 2025 20:49:12 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 719C2E009009;
-	Fri, 12 Sep 2025 20:49:12 +0800 (CST)
-X-ns-mid: postfix-68C416C8-1693817
-Received: from [172.25.120.76] (unknown [172.25.120.76])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 2B69FE009008;
-	Fri, 12 Sep 2025 20:49:08 +0800 (CST)
-Content-Type: multipart/mixed; boundary="------------SLPeU6QBqpLSmPmWisb5FvmK"
-Message-ID: <c8f3d402-e0ec-4767-b925-d7764aec3d93@kylinos.cn>
-Date: Fri, 12 Sep 2025 20:49:07 +0800
+	s=arc-20240116; t=1757681385; c=relaxed/simple;
+	bh=HXfG8pPm3va569/MMGareUf3EW0S6MwFKBfzSoPiHpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B4ACur1WwSZJzYPWeTeKWJV+gya/RMfjy6Ypk+MQb189V67MvCxckZ3hnIz1PpLjCkYvafEVPgnOKSNLBj+gfZal2ILjeaiSDCLJxZEEyngFyCkKezi2WHCBE43S1MVC39oEjpAwzRss7wHrCfYoO96jzKfCZaGIw2GVPTT/hWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pHbXIaEb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C4sldS032411;
+	Fri, 12 Sep 2025 12:49:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=mXtTa8
+	6GhlKRdPoROiYtUj1KQibUwRJjlk6Jfn53Nrc=; b=pHbXIaEbobmxE3bXiTMoFL
+	suDDN1HEz4jW5GOaXhVF2dGPikI3+rMoc32TRUx9uwiNqRxXM09vY48x3mnAyyy8
+	Rf8O9Qk2A5bNAtW/N0DM8QmaP7GB/lcykT9uZoT3k+8VLWM1Scezf3KKuFZqtZ97
+	U17EUUPzPtOPNpS2b+dhn934zuRxHWQjcmYajS7Nb/j7x1koO/YuGTAuF5yc7xn3
+	OZiX6BhNKwscXTxFcyEC7qRTP4NNVPw8t/au3UHRBEaRk3ZdZBJXSphca54+gacw
+	QVXj9g5bhjzveBXTqnXNoHpItyqJspTQ6KvRMBYDx0SnETJgTw34jo9YNoD/yXmw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukeykfw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:49:28 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CCcePs001236;
+	Fri, 12 Sep 2025 12:49:27 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukeykfs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:49:27 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CA3ASd007944;
+	Fri, 12 Sep 2025 12:49:26 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109q30fu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:49:26 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CCnM1145351234
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Sep 2025 12:49:22 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A47D520043;
+	Fri, 12 Sep 2025 12:49:22 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 21F5620040;
+	Fri, 12 Sep 2025 12:49:14 +0000 (GMT)
+Received: from [9.61.95.215] (unknown [9.61.95.215])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 12 Sep 2025 12:49:13 +0000 (GMT)
+Message-ID: <52f5b23b-a1a6-4a24-93d0-c712a27ba00f@linux.ibm.com>
+Date: Fri, 12 Sep 2025 18:19:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,109 +83,259 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [regression] 1a8953f4f774 ("HID: Add IGNORE quirk for
- SMARTLINKTECHNOLOGY") causes issue with ID 4c4a:4155 Jieli Technology USB
- Composite Device
-To: Salvatore Bonaccorso <carnil@debian.org>, Jiri Kosina <jkosina@suse.com>,
- Staffan Melin <staffan.melin@oscillator.se>
-Cc: Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
- stable@vger.kernel.org, 1114557@bugs.debian.org
-References: <aL2gYJaXoB6p_oyM@eldamar.lan>
-From: zhangheng <zhangheng@kylinos.cn>
-In-Reply-To: <aL2gYJaXoB6p_oyM@eldamar.lan>
-
-This is a multi-part message in MIME format.
---------------SLPeU6QBqpLSmPmWisb5FvmK
+Subject: Re: [RFC PATCH v3 07/10] sched/core: Push current task from paravirt
+ CPU
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: vschneid@redhat.com, iii@linux.ibm.com, huschle@linux.ibm.com,
+        rostedt@goodmis.org, dietmar.eggemann@arm.com, vineeth@bitbyteword.org,
+        jgross@suse.com, pbonzini@redhat.com, seanjc@google.com,
+        mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
+        maddy@linux.ibm.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org
+References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
+ <20250910174210.1969750-8-sshegde@linux.ibm.com>
+ <7227822a-0b4a-47cc-af7f-190f6d3b3e07@amd.com>
+ <1617b0fb-273a-4d86-8247-c67968c07b3b@linux.ibm.com>
+ <5493a681-4438-4854-9cf4-c1e71ad2dbed@amd.com>
+ <36042e33-772d-4c4e-ba6d-8461c8f6e29b@linux.ibm.com>
+ <2e97c804-c67a-4c92-94c9-d47a6648439c@amd.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <2e97c804-c67a-4c92-94c9-d47a6648439c@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX1tBvb+1fr2UP
+ ZwKNHslQpXBkwXHTQz/isweyNxieHtooQBIt+HdWBW2zilsVdV13z6MSX8lGE0qPdV83u6QKFtF
+ lmvVtZLgtUf3ToX3j6AqkPw8LSQcgYxNQauVfbimtfvdWg0cAmiLEfT6qYEYV1eYSd+jYgLqcQ7
+ KAxiycdBHCXj5g9WKYKDcOr/LwUvftT9tfPzOL/jd3Yb64KuxmlxqXhdr51ky+AmKdch8Qh5S9H
+ Ku9j8NQLUpAd2+hgl3MDT2r/BnTiZvHlB7jc81dRtozH4TUptHCL0WUwETfsjvJaXZa+gPzca4j
+ CT+mNwSF+D2wAAXiWgc5dZpgZ1eCokitz1q5jnwjp1K3bdEtNI0fjHeYPMzNoqgCc3VmOaBvLZo
+ JG4BBr9b
+X-Proofpoint-ORIG-GUID: _Z_ewn5No7AKUJRlqpv6ZF3urhPweW-W
+X-Proofpoint-GUID: KmmnzaS-HQOVD0K6rSRWdIZYYLpqOPqZ
+X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68c416d8 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
+ a=99mz2OWCW_9eoqye4tUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
 
-I am currently working on resolving this issue by limiting the original=20
-patch
-
-based on the information in the device descriptor to avoid affecting=20
-your device,
-
-You can try this patch and look forward to your reply.
 
 
-=E5=9C=A8 2025/9/7 23:10, Salvatore Bonaccorso =E5=86=99=E9=81=93:
-> Hi Zhang, hi Jiri,
->
-> In Debian Staffan Melin reported that after an update containing the
-> commit 1a8953f4f774 ("HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY"),
-> the input device with same idVendor and idProduct, the Jieli
-> Technology USB Composite Device, does not get recognized anymore.
->
-> The full Debian report is at: https://bugs.debian.org/1114557
->
-> The issue is not specific to the 6.12.y series and confirmed in 6.16.3
-> as well.
->
-> Staffan Melin did bisect the kernels between 6.12.38 (which was still
-> working) and 6.1.41 (which was not), confirming by bisection that the
-> offending commit is
->
-> 1a8953f4f774 ("HID: Add IGNORE quirk for SMARTLINKTECHNOLOGY")
->
-> #regzbot introduced: 1a8953f4f774
-> #regzbot monitor: https://bugs.debian.org/1114557
->
-> So it looks that the quirk applied is unfortunately affecting
-> negatively as well Staffan Melin case.
->
-> Can you have a look?
->
-> Regards,
-> Salvatore
---------------SLPeU6QBqpLSmPmWisb5FvmK
-Content-Type: text/plain; charset=UTF-8;
- name="0001-HID-quirks-Add-device-descriptor-for-4c4a-4155.patch"
-Content-Disposition: attachment;
- filename*0="0001-HID-quirks-Add-device-descriptor-for-4c4a-4155.patch"
-Content-Transfer-Encoding: base64
+On 9/12/25 2:18 PM, K Prateek Nayak wrote:
+> Hello Shrikanth,
+> 
+> On 9/12/2025 10:52 AM, Shrikanth Hegde wrote:
+>>
+>>
+>> On 9/11/25 10:36 PM, K Prateek Nayak wrote:
+>>> Hello Shrikanth,
+>>>
+>>> On 9/11/2025 10:22 PM, Shrikanth Hegde wrote:
+>>>>>> +    if (is_cpu_paravirt(cpu))
+>>>>>> +        push_current_from_paravirt_cpu(rq);
+>>>>>
+>>>>> Does this mean paravirt CPU is capable of handling an interrupt but may
+>>>>> not be continuously available to run a task?
+>>>>
+>>>> When i run hackbench which involves fair bit of IRQ stuff, it moves out.
+>>>>
+>>>> For example,
+>>>>
+>>>> echo 600-710 > /sys/devices/system/cpu/paravirt
+>>>>
+>>>> 11:31:54 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+>>>> 11:31:57 AM  598    2.04    0.00   77.55    0.00   18.37    0.00    1.02    0.00    0.00    1.02
+>>>> 11:31:57 AM  599    1.01    0.00   79.80    0.00   17.17    0.00    1.01    0.00    0.00    1.01
+>>>> 11:31:57 AM  600    0.00    0.00    0.00    0.00    0.00    0.00    0.99    0.00    0.00   99.01
+>>>> 11:31:57 AM  601    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+>>>> 11:31:57 AM  602    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
+>>>>
+>>>>
+>>>> There could some workloads which doesn't move irq's out, for which needs irqbalance change.
+>>>> Looking into it.
+>>>>
+>>>>    Or is the VMM expected to set
+>>>>> the CPU on the paravirt mask and give the vCPU sufficient time to move the
+>>>>> task before yanking it away from the pCPU?
+>>>>>
+>>>>
+>>>> If the vCPU is running something, it is going to run at some point on pCPU.
+>>>> hypervisor will give the cycles to this vCPU by preempting some other vCPU.
+>>>>
+>>>> It is that using this infra, there is should be nothing on that paravirt vCPU.
+>>>> That way collectively VMM gets only limited request for pCPU which it can satify
+>>>> without vCPU preemption.
+>>>
+>>> Ack! Just wanted to understand the usage.
+>>>
+>>> P.S. I remember discussions during last LPC where we could communicate
+>>> this unavailability via CPU capacity. Was that problematic for some
+>>> reason? Sorry if I didn't follow this discussion earlier.
+>>>
+>>
+>> Thanks for that questions. Gives a opportunity to retrospect.
+>>
+>> Yes. That's where we started. but that has a lot of implementation challenges.
+>> Still an option though.
+>>
+>> History upto current state:
+>>
+>> 1. At LPC24 presented the problem statement, and why existing approaches such as hotplug,
+>>     cpuset cgroup or taskset are not viable solution. Hotplug would have come handy if the cost was low.
+>>     The overhead of sched domain rebuild and serial nature of hotplug makes it not viable option.
+>>     One of the possible approach was CPU Capacity.
+> 
+> Ack. Is creating an isolated partition on the fly too expensive too?
+> I don't think creation of that partition is serialized and it should
+> achieve a similar result with a single sched-domain rebuild and I'm
+> hoping VMM doesn't change the paravirt mask at an alarming rate.
+> 
 
-RnJvbSA5ZmI0ZmQzODczZTU2OTM2NDdlNTE3Yzc5NjAzODNjNDUyM2NkMDkzIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBaaGFuZyBIZW5nIDx6aGFuZ2hlbmdAa3lsaW5vcy5j
-bj4KRGF0ZTogRnJpLCAxMiBTZXAgMjAyNSAyMDozODoxOCArMDgwMApTdWJqZWN0OiBbUEFU
-Q0hdIEhJRDogcXVpcmtzOiBBZGQgZGV2aWNlIGRlc2NyaXB0b3IgZm9yIDRjNGE6NDE1NQoK
-VHdvIFVTQiBkZXZpY2VzIHVzZSB0aGUgc2FtZSBJRC4gVG8gYXZvaWQgYWZmZWN0aW5nIGZ1
-bmN0aW9uYWxpdHksCmRldmljZSBkZXNjcmlwdG9ycyBhcmUgYWRkZWQgdG8gZGlzdGluZ3Vp
-c2ggYmV0d2VlbiB0aGVtCgpTaWduZWQtb2ZmLWJ5OiBaaGFuZyBIZW5nIDx6aGFuZ2hlbmdA
-a3lsaW5vcy5jbj4KLS0tCiBkcml2ZXJzL2hpZC9oaWQtcXVpcmtzLmMgfCAxNyArKysrKysr
-KysrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKyksIDEgZGVsZXRp
-b24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2hpZC9oaWQtcXVpcmtzLmMgYi9kcml2ZXJz
-L2hpZC9oaWQtcXVpcmtzLmMKaW5kZXggZmZkMDM0NTY2ZTJlLi5kMzlhOGU1M2VhMzYgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvaGlkL2hpZC1xdWlya3MuYworKysgYi9kcml2ZXJzL2hpZC9o
-aWQtcXVpcmtzLmMKQEAgLTkxMyw2ICs5MTMsMTcgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBo
-aWRfZGV2aWNlX2lkIGhpZF9pZ25vcmVfbGlzdFtdID0gewogI2VuZGlmCiAJeyBISURfVVNC
-X0RFVklDRShVU0JfVkVORE9SX0lEX1lFQUxJTkssIFVTQl9ERVZJQ0VfSURfWUVBTElOS19Q
-MUtfUDRLX0IySykgfSwKIAl7IEhJRF9VU0JfREVWSUNFKFVTQl9WRU5ET1JfSURfUVVBTlRB
-LCBVU0JfREVWSUNFX0lEX1FVQU5UQV9IUF81TVBfQ0FNRVJBXzU0NzMpIH0sCisJeyB9Cit9
-OworLyoKKyAqIGhpZF9pZ25vcmVfbWljIC0gTWljcm9waG9uZSBkZXZpY2VzIGRvIG5vdCBy
-ZXF1aXJlIEhJRCBjb3JlIHByb2Nlc3NpbmcKKyAqCisgKiBOb3cgdGhlcmUgYXJlIHR3byBV
-U0IgZGV2aWNlcyB1c2luZyB0aGUgc2FtZSBJRCwgb25lIGlzIHRoZSBtaWNyb3Bob25lIGFu
-ZCB0aGUgb3RoZXIKKyAqIGlzIHRoZSB0b3VjaCBzY3JlZW4uIFRoZSB0b3VjaCBzY3JlZW4g
-cmVxdWlyZXMgaGlkIGNvcmUgcHJvY2Vzc2luZywgYnV0IHRoZQorICogbWljcm9waG9uZSBk
-b2VzIG5vdC4gVGhlIHR3byBoYXZlIGRpZmZlcmVudCBiY2RJRHMsIHdoaWNoIHdpbGwgYmUg
-dXNlZCB0bworICogZGlzdGluZ3Vpc2ggdGhlbSBpbiB0aGUgZnV0dXJlCisgKi8KK3N0YXRp
-YyBjb25zdCBzdHJ1Y3QgaGlkX2RldmljZV9pZCBoaWRfaWdub3JlX21pY1tdID0gewogCXsg
-SElEX1VTQl9ERVZJQ0UoVVNCX1ZFTkRPUl9JRF9TTUFSVExJTktURUNITk9MT0dZLCBVU0Jf
-REVWSUNFX0lEX1NNQVJUTElOS1RFQ0hOT0xPR1lfNDE1NSkgfSwKIAl7IH0KIH07CkBAIC0x
-MDY4LDYgKzEwNzksOSBAQCBib29sIGhpZF9pZ25vcmUoc3RydWN0IGhpZF9kZXZpY2UgKmhk
-ZXYpCiAJICAgIGhkZXYtPnF1aXJrcyAmIEhJRF9RVUlSS19JR05PUkVfTU9VU0UpCiAJCXJl
-dHVybiB0cnVlOwogCisJaWYoaGlkX21hdGNoX2lkKGhkZXYsIGhpZF9pZ25vcmVfbWljKSAm
-JiAoaGRldi0+dmVyc2lvbiA+IDEuMSkpCisJCXJldHVybiB0cnVlOworCiAJcmV0dXJuICEh
-aGlkX21hdGNoX2lkKGhkZXYsIGhpZF9pZ25vcmVfbGlzdCk7CiB9CiBFWFBPUlRfU1lNQk9M
-X0dQTChoaWRfaWdub3JlKTsKQEAgLTEyNjYsNyArMTI4MCw4IEBAIHN0YXRpYyB1bnNpZ25l
-ZCBsb25nIGhpZF9nZXRzX3NxdWlyayhjb25zdCBzdHJ1Y3QgaGlkX2RldmljZSAqaGRldikK
-IAljb25zdCBzdHJ1Y3QgaGlkX2RldmljZV9pZCAqYmxfZW50cnk7CiAJdW5zaWduZWQgbG9u
-ZyBxdWlya3MgPSBoZGV2LT5pbml0aWFsX3F1aXJrczsKIAotCWlmIChoaWRfbWF0Y2hfaWQo
-aGRldiwgaGlkX2lnbm9yZV9saXN0KSkKKwlpZiAoaGlkX21hdGNoX2lkKGhkZXYsIGhpZF9p
-Z25vcmVfbGlzdCkgfHwKKwkgICAoaGlkX21hdGNoX2lkKGhkZXYsIGhpZF9pZ25vcmVfbWlj
-KSAmJiAoaGRldi0+dmVyc2lvbiA+IDEuMSkpKQogCQlxdWlya3MgfD0gSElEX1FVSVJLX0lH
-Tk9SRTsKIAogCWlmIChoaWRfbWF0Y2hfaWQoaGRldiwgaGlkX21vdXNlX2lnbm9yZV9saXN0
-KSkKLS0gCjIuNDcuMQoK
+That is a good idea too.
 
---------------SLPeU6QBqpLSmPmWisb5FvmK--
+Main issue is with when workload does taskset.
+
+For example,
+taskset -c 650-700 stress-ng --cpu=100 -t 10
+echo isolated > cpuset.cpus.partition
+echo 600-710 > cpuset.cpus.exclusive
+
+Tasks move out and is cpu affinity is reset to all cpus. Similar to hotplug.
+But both hotplug and write to exclusive are triggered by user, and hence user
+is aware of it.
+
+I don't think it is good idea to reset users cpu affinity without an action from them.
+
+Looking at code of
+      cpuset_write_resmask
+      update_exclusive_cpumask
+    - update_parent_effective_cpumask
+       + 6.16% cpuset_update_tasks_cpumask
+            set_cpus_allowed_ptr
+            __set_cpus_allowed_ptr
+            affine_move_task
+
+affine_move_task -> would call migration_cpu_stop -> Moves one task at a time
+
+If you see we do the same/similar thing in paravirt infra, but we don't touch/reset task's cpu affinity.
+Affined tasks continue to run if it is affined to only paravirt CPUs. If there is any one one
+non paravirt CPU in its cpus_ptr it will move there.
+
+> P.S. Some stupid benchmarking on a 256CPU machine:
+> 
+>      mkdir /sys/fs/cgroup/isol/
+>      echo isolated >  /sys/fs/cgroup/isol/cpuset.cpus.partition
+> 
+>      time for i in {1..1000}; do \
+>      echo "8-15" > /sys/fs/cgroup/isol/cpuset.cpus.exclusive; \
+>      echo "16-23" > /sys/fs/cgroup/isol/cpuset.cpus.exclusive; \
+>      done
+> 
+>      real    2m50.016s
+>      user    0m0.198s
+>      sys     1m47.708s
+> 
+> So that is about (170sec / 2000) ~ 85ms per cpuset operation.
+
+That cost would be okay. VMM isn't expected to change at very high rate.
+
+> Definitely more expensive than setting the paravirt but compare that to:
+> 
+>      for i in {8..15}; do echo 0 > /sys/devices/system/cpu/cpu$i/online; done; \
+>      for i in {8..15}; do echo 1 > /sys/devices/system/cpu/cpu$i/online; done; \
+>      for i in {16..23}; do echo 0 > /sys/devices/system/cpu/cpu$i/online; done; \
+>      for i in {16..23}; do echo 1 > /sys/devices/system/cpu/cpu$i/online; done;'
+> 
+>      real    0m5.046s
+>      user    0m0.014s
+>      sys     0m0.110s
+> 
+> Definitely less expensive than a full hotplug.
+
+This happens mainly due to the synchronize_rcu there.
+
+> 
+>>
+>> 1. Issues with CPU Capacity approach:
+>>     a. Need to make group_misfit_task as the highest priority. That alone will break big.LITTLE
+>>        since it relies on group misfit and group_overload should have higher priority there.
+>>     b. At high concurrency tasks still moved those CPUs with CAPACITY=1.
+>>     c. A lot of scheduler stats would need to be aware of change in CAPACITY specially load balance/wakeup.
+> 
+> Ack. Thinking out loud: Can capacity go to 0 via H/W pressure interface?
+> Maybe we can toggle the "sched_asym_cpucapacity" static branch without
+> actually having SD_ASYM_CAPACITY in these special case to enable
+> asym_fits_cpu() steer away from these 0 capacity CPUs.
+
+bigger concern is around that group_misfit_task IMO.
+
+> 
+>>     d. in update_group_misfit - need to set the misfit load based on capacity. the current code sets to 0,
+>>        because of task_fits_cpu stuff
+>>     e. More challenges in RT.
+>>
+>> That's when Tobias had introduced a new group type called group_parked.
+>> https://lore.kernel.org/all/20241204112149.25872-2-huschle@linux.ibm.com/
+>>    It has relatively cleaner implementation compared to CPU CAPACITY.
+>>
+>> It had a few disadvantages too:
+>> 1. It use to take around 8-10 seconds for tasks to move out of those CPUs. That was the main
+>>     concern.
+>> 2. Needs a few stats based changes in update_sg_lb_stats. might be tricky in all scenarios.
+>>
+>> That's when we were exploring how the tasks move out when the cpu goes offline. It happens quite fast too.
+>> So tried a similar mechanism and this is where we are right now.
+> 
+> I agree push is great from that perspective.
+> 
+
+Yes. It is same at the moment.
+
+>>
+>>> [..snip..]
+>>>>>> +    local_irq_save(flags);
+>>>>>> +    preempt_disable();
+>>>>>
+>>>>> Disabling IRQs implies preemption is disabled.
+>>>>>
+>>>>
+>>>> Most of the places stop_one_cpu_nowait called with preemption & irq disabled.
+>>>> stopper runs at the next possible opportunity.
+>>>
+>>> But is there any reason to do both local_irq_save() and
+>>> preempt_disable()? include/linux/preempt.h defines preemptible() as:
+>>>
+>>>       #define preemptible()   (preempt_count() == 0 && !irqs_disabled())
+>>>
+>>> so disabling IRQs should be sufficient right or am I missing something?
+>>>
+>>
+>> f0498d2a54e79 (Peter Zijlstra) "sched: Fix stop_one_cpu_nowait() vs hotplug"
+>> could be the answer you are looking for.
+> 
+> I think in all the cases covered by that commit, "task_rq_unlock(...)" would
+> have enabled interrupts which required that specified pattern but here we
+> have preempt_disable() within a local_irq_save() section which might not be
+> necessary.
+> 
+>>
+>>>>
+>>>> stop_one_cpu_nowait
+>>>>    ->queues the task into stopper list
+>>>>       -> wake_up_process(stopper)
+>>>>          -> set need_resched
+>>>>            -> stopper runs as early as possible.
+>>>>           
+>>
+> 
+
 
