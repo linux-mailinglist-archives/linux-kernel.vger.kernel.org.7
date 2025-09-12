@@ -1,143 +1,120 @@
-Return-Path: <linux-kernel+bounces-813512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24129B54685
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:09:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A68E9B54686
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:10:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86C7B7A9C63
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:07:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B61587A62F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974B1276054;
-	Fri, 12 Sep 2025 09:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3552227602A;
+	Fri, 12 Sep 2025 09:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jh3MYpH5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w3uATJim"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90A82DC79E;
-	Fri, 12 Sep 2025 09:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32562749F1
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757668163; cv=none; b=Y82/hQ/Av29uYj2n2CjQ9L9u/q7TRRl7oJJV+/6VViOgUVVirwa8ULKA5+8atLz0z7ImlNYuSCkGPAsaCpuiRu3TFYICurj9TNaGTaBKBerpzz2X9WQVpggEHQ2i8pCszAndOMtSRCRscuNtNMh9EmL+LR/2wFjjxE67cSXpCpw=
+	t=1757668206; cv=none; b=iarJMY57OLK2yqYDbhTVPVsLaIbKsRqNvHEUE4R+9kVCOARqGELGhyxtfWiuqKYz0eziT9e+n6tjcHsonjysrLdb4CUqGCYdKhKg/oftrVq4EQ2TY3DqrbxoBcPd5Nd9cp/2upmSOPpM2U/yHwUitb+YRfARF5noT0jW69w6L3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757668163; c=relaxed/simple;
-	bh=BZn300McnYIr9hlAzy92FI95myhALTcpe3y/w65pRgs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uMGgoZIIOytveEZAjHKoId0XGQHHyiM0rdg632/m4GzJDrdVz5E84c+jIDbFig/fTq07wexuAewKDsTYCA3lfWOqkpmL11mKKuWAApvYJrI5nKY6hoMvAzWDLt5WsyKaH9cFQftw92rInMkctavEHKHoxV/atX0Kvey6wBGGG6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jh3MYpH5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 212A1C4CEF1;
-	Fri, 12 Sep 2025 09:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757668161;
-	bh=BZn300McnYIr9hlAzy92FI95myhALTcpe3y/w65pRgs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Jh3MYpH5tn1Z/bweKxSNVjRA1l3ZoWx1h47aYfjY0X+9BoP8BIcMmsObUV02ccT0U
-	 ck55kYIGc+qi1fNtlqJVW07tRDyWrj6OUrmsRwQUsHCo22H//fbEfbzM3AGHdk0i9V
-	 /xsFNCuyW593TF/8NSSg58v8zdSmjRnOXJNQYFpNYEsdvZ1YWoDP5HZLphNCp8aCyM
-	 drWUPX9Zi8v3yYBrQ0c2yLgEvLGsFHePMsKq0jaYDC53ht13yGMX8w062DhEN4LgBq
-	 S+vNDO8w0FscM1S1+NKPLCte4HwhWOllPaSY1U/fbsNNpHFsAmey72ShuS0zO0lZQo
-	 yPuZNckBjcftA==
-Message-ID: <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
-Date: Fri, 12 Sep 2025 11:09:16 +0200
+	s=arc-20240116; t=1757668206; c=relaxed/simple;
+	bh=8DqyAWrPHCSlw0Pa6kOyFtqUOYpuExdLnT0akgB7Nrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=N2x1YLXpUczJ8nzoFR8JgxuX8FUS0uPytV1Xe6npHHTSXfNSGEODhm9cK2FsyUK4ga3l0TR6qL0AHcZEQtBkr0F/7H2/ENTYrUmts9Lnt+ETQCxJyukM8ZcWPHnw/i5VGBsJ6jrxn1ESE1COER4vRkIacpW/hf/Hr0k16AUdO0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w3uATJim; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b04ba3de760so219599266b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:10:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757668203; x=1758273003; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gdfBB7kobN4wJK8/RorJexdvYFnM7nbQB2ZHPDHvDh8=;
+        b=w3uATJimS1Gd7FEoNV2zjKqAbexUTcYYa5+JE7/jxr9gpRdjZ9wDMO5PgDxKwOdb7A
+         zQDusXwDss0Ly+i7HSIwv+g56eqkYL8kAkpBD2MORnbS/DLF9C6/F9cDsRuMOojLMg5s
+         xVmHKxUBKsMPpFwDFTIP9rQCcV2b66/SmMiR3Ki1HgkAnrh+nT3DrlLokNRgFRBbTcvS
+         a5150XVGvw2GjaDefgcmMYI23915pkzDdKoqEyLw9wh5AiPjeXNrCtWJdX5NtpagpwZE
+         6c5j06jiMWYMSzhRmsNUi/nt804zTLfretpWrd0iyQxb4drAIvIfkkNzcsg6UkC/OlpU
+         lb/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757668203; x=1758273003;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gdfBB7kobN4wJK8/RorJexdvYFnM7nbQB2ZHPDHvDh8=;
+        b=ilwScVF1PUt57IztlHwDeQrx0Mx4B94x+UY6gR0SPwbTqz4AOpUjEk+JcO3DrAWwT5
+         lIwtK5eIYLAbeQzmi7l/yVMWm2ig541rXioO/5DpYi7dEaJaA86UTwjJXlhqsyJYT3Xr
+         /XO84reGSv10i1BZQqdBBUs5Hf2048sKllNtTYgnwhtbNZgs0DxwKvxmWpsbjAVYk963
+         qdYqzUz66SxE4WFG19y77gzLmpopwweBNfDHu797G8Y1bdn9HB8XJ6Jqws0rqr5Jrx9f
+         Mqhp5lSDuHoQKTMye8kUwdn3sXNZeFI8DTHLE71zao7vPd8FGZUjtseF1H3NjG5hGOhM
+         C8xw==
+X-Gm-Message-State: AOJu0YyFsVc/Sc3NLt0PPX7BSjELi17Pnq8e5El/RFJujuJluER9F9zY
+	LFxJAynFH+JqZVTLdOZVepDTHOxCxz07luyTDyzHdf48yajuWo2wGif2lZHm9QoIFa0HP8s9fJ8
+	RNgXfWrQ=
+X-Gm-Gg: ASbGnct06e+60KGv7BKuXsofZHpoqRIKnLyhazJCbnlWSEswMjSH4peeajDkqrLWaAJ
+	PWBkky1wDpJwgPSxosnDTNNau17mUW4B/EDWU8AwZfzBOrYMvFTvv5iIx050YL/DPzRosVkQtAD
+	M6YjFCsPq5NppjVDid3WeGkQQyKo+wB/p+fSKQCbDiYUA2YX8IU46TRifQRGJ23aaxQvarbssLR
+	jZOTMhKAoEQeO2ky3pOTKY2V5tIzBMHSLKhaa+CyhuAIWOCbf0VuAg+R68zcNNCe7AnifgkEwFJ
+	xE0EhyeovJ527fbnevNKsxyB+AThtkmMa/ee90Ak2LYAlrYhEExf0t+sSdAmb5Lr4RPg7EfIHDw
+	qAwiTcuy6I3p2q1g/bas27n/dmxfG91FlkBCwk2182r+CD4QyJRryNFvISCWF02sYTwcoRRm5to
+	4=
+X-Google-Smtp-Source: AGHT+IFuuHFceMoZ2ipUeSDV0l2sTDEKnIKxUvMqoFX9PBY3aeszRH7ix8zGbjWkfgqomp+Bhqsb2A==
+X-Received: by 2002:a17:907:e885:b0:b07:c909:ceb0 with SMTP id a640c23a62f3a-b07c909d374mr116578966b.32.1757668203078;
+        Fri, 12 Sep 2025 02:10:03 -0700 (PDT)
+Received: from rayden (h-37-123-177-177.A175.priv.bahnhof.se. [37.123.177.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07c6110c27sm125678266b.66.2025.09.12.02.10.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 02:10:02 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:10:00 +0200
+From: Jens Wiklander <jens.wiklander@linaro.org>
+To: arm@kernel.org, soc@kernel.org
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	op-tee@lists.trustedfirmware.org
+Subject: [GIT PULL] TEE improve sysfs for 6.18
+Message-ID: <20250912091000.GA1441709@rayden>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
-To: Tzung-Bi Shih <tzungbi@kernel.org>, Benson Leung <bleung@chromium.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
- linux-kselftest@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20250912081718.3827390-1-tzungbi@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250912081718.3827390-1-tzungbi@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On 12/09/2025 10:17, Tzung-Bi Shih wrote:
-> This is a follow-up series of [1].  It tries to fix a possible UAF in the
-> fops of cros_ec_chardev after the underlying protocol device has gone by
-> using revocable.
-> 
-> The 1st patch introduces the revocable which is an implementation of ideas
-> from the talk [2].
-> 
-> The 2nd and 3rd patches add test cases for revocable in Kunit and selftest.
-> 
-> The 4th patch converts existing protocol devices to resource providers
-> of cros_ec_device.
-> 
-> The 5th patch converts cros_ec_chardev to a resource consumer of
-> cros_ec_device to fix the UAF.
-> 
-> [1] https://lore.kernel.org/chrome-platform/20250721044456.2736300-6-tzungbi@kernel.org/
-> [2] https://lpc.events/event/17/contributions/1627/
-> 
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Hello arm-soc maintainers,
 
-Thanks for the work. Just a note, please start using b4, so above Cc
-will be propagated to all patches. Folks above received only the cover
-letter...
+Please pull this small patch for the TEE sysbsystem. It updates to use
+sysfs_emit() instead of scnprintf() for buffers passed to userspace.
 
-Best regards,
-Krzysztof
+Thanks,
+Jens
 
+The following changes since commit 038d61fd642278bab63ee8ef722c50d10ab01e8f:
+
+  Linux 6.16 (2025-07-27 14:26:38 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jenswi/linux-tee.git tags/tee-improve-sysfs-for-v6.18
+
+for you to fetch changes up to 1faa0d62a19bb8a4b9022b603472e7127974cb55:
+
+  drivers: tee: improve sysfs interface by using sysfs_emit() (2025-08-04 11:05:23 +0200)
+
+----------------------------------------------------------------
+Use sysfs_emit() for sysfs buffers to userspace
+
+----------------------------------------------------------------
+Akhilesh Patil (1):
+      drivers: tee: improve sysfs interface by using sysfs_emit()
+
+ drivers/tee/optee/core.c | 2 +-
+ drivers/tee/tee_core.c   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
