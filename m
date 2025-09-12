@@ -1,119 +1,312 @@
-Return-Path: <linux-kernel+bounces-813189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB39FB541C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:51:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9916AB541C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D944E7B8080
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:49:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BF62465282
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF54226F2A8;
-	Fri, 12 Sep 2025 04:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBE8B270EAB;
+	Fri, 12 Sep 2025 04:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iQJP+BT4"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="UKxvgSri"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2081.outbound.protection.outlook.com [40.107.95.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15FE2620FC
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:51:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757652679; cv=none; b=lfH/g4Ojs/JtnIa6VqrEq0NJeA2v0hboyGKbJmqIfUJ7Nm8Qw90LfBeZAaOXgdbN/pxqyLEL2TAIQYMYnRsKq21ecpBNPjPFSLrNGOlCnDdbRcUIyr6iMqqljF6vJThpVm+cjQJi3IC3ANgNEc2MEYrJRNH2v+N/ocxWux/4SYk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757652679; c=relaxed/simple;
-	bh=rlC6PlUTqNti3QT38c9nCMwO/b/NfFkTbVXEp0LGsdE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dw5jIjVooxs5FMzOo4AbtZriXcVs8qjOil+REXoX1CIR1UEyUy8gllmGYKGTShrhklAg23uThuQQPjGnL/wQDr8MFIYP4iWV/SZfukCRTrrYi+z8jKfAgJZhsK8YHTaXrSmA9Of8bvVbFgSKGWGG/27EkaYh9a833fG68+CnDo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iQJP+BT4; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b043a33b060so217963466b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757652676; x=1758257476; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rlC6PlUTqNti3QT38c9nCMwO/b/NfFkTbVXEp0LGsdE=;
-        b=iQJP+BT4JDTuFYGLe2C9ETUww/mDWcDdm/dD6BU79s32+7wuapeSnekkT5A4Q5mMh2
-         9t017CRhFfYGAh50j3Bo5HGlI8mYlKe9l2d3LNgxVf7IkRYc4tX3HsplrAvAlqkPgON6
-         roveD03FAQuU9RKstXKNj9J8UwNz3dW9A6zjHAys61z+c6X2AbR83ceJKiQITSpawLUe
-         UoBC0aocKuGyz/kvmArKlVgwqFoTXyrmLnhimW0jKaT25YRRHcRWLHmKcubnMEnkbizv
-         aI0GcDZZI6vUHpaYyCr7spjL/a/i7BmGIhTMtKzI4v/AdXICXIetxnT675k5DqRnNq1p
-         eCKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757652676; x=1758257476;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rlC6PlUTqNti3QT38c9nCMwO/b/NfFkTbVXEp0LGsdE=;
-        b=PrWkDkrhlI9uQB1M7lnoehMuS2zp4g6Djm3KiLpjv9ZVy5FVFmcceGRICID8bn8uoP
-         G+Vp97BS1HlmBmTRF8LLOHBAYoBhh51DnfpxdGrGQHgehQVt2y96AIdVUmL6kN2phIVA
-         6asfS505Pe5Keayuqx/YO6Fnk3czuqknnUMB3Qc7TUl2VpqdwnAgLct4GkFqcxEViPxo
-         RQPZ6BOsgsK5WtMLioto0K6g/5UwF6eDEwcqE0o8L/WxCE3LetpR9gIZzyHEqU2BLnWk
-         tCuffY8eODfufT4guUtQpcwwxZGOR3vS4VUmfL00K2Gs/UCeut6242NZLJc2Xs2/T5F5
-         qXQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8F4neVrDWoSw81sQX1qqvglmGyscmfcRP4NFaULdGOkKhiNR8rIf70dROeX37WktQzidi7/vuyCG7XRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY3lLhUA8Ymq4KUtFoPqXXTl8qEBcWaGUAjXQayeh0NUSKnoxw
-	/K8qUMC0ow/0GA1vtBRlxgRFs44ZLtQDGx7z7aEwXgWXwEkiP9keTxV0yg/Setw94eRJd2fKZ3d
-	t0y4dtHDqPiJHUHKAaj4ImmmJPZG1uok=
-X-Gm-Gg: ASbGncu+LzqhHJBNP0TTq1U7pr1yaaL3T/oJi/TK5Oy1ZJBIJ1Whd01KAen5gSlcAZv
-	pfPLKrEPFHniHmor4ILq+S18ilGk7wKg43nu6noAUV5tCTzA2zJ/ZA4Y3OBiVHzXgtdEilNBWqR
-	05V0ljP2+NQ7rJ7/VP73t9F0LIbJaNgpnmhCwMcp1KWFwzoXNXavWY8SxSlA65wX7gRsQYeBLMG
-	KvMTVE=
-X-Google-Smtp-Source: AGHT+IEgUmSC5kaO6kuCJj+eNxyTqCvM9aMgvLzfRI2xIXUT0aF83rS4s8nOYOwFNdVSWxdA5AcO9dn+Ynq1WJm1iEA=
-X-Received: by 2002:a17:907:9693:b0:afe:c1bd:b6d6 with SMTP id
- a640c23a62f3a-b07c353e733mr137553566b.5.1757652675933; Thu, 11 Sep 2025
- 21:51:15 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0597725A321
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757652726; cv=fail; b=BbcHXbYuNxBDmqueDVqCdHEchLzeqI6Eaoao8YSO+iH75hAzZU6WY4uBruhChLcH8EugGCdAG4rWekFWfU9vVhVDov4DY4skGuc+pKhr7nb9Tl0HnAPKtlGbuBoD1zGLRoavjPZsPHfTBml8koobTBkahE+zrJxfAABta1s8nxQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757652726; c=relaxed/simple;
+	bh=ZhG7PMhpyO2oHlIw5u7JlJXnqsXyPbzmqp/w97vhwZk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ME/ry2LP7YolyYtYS5cokBsVYFq9Px247dtnr/owBPLOSYZx/FsFLYH66f0ZYdXkrgWQF/OTbzY1YUDVHbEbCTQAhi2f+AyNhNZ4i8332yndUceqrSa56gHH6YvTczAoMu5fFY50kieYi4ZFV137TQHyjTxznud5J3szRB65WcI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=UKxvgSri; arc=fail smtp.client-ip=40.107.95.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ElfrGhaif51p12KHjEtQdpDU8nImTyxG00SxcGa4L0Nbk+X+9zlw7qoaY1aH+LzP6AAZ+gY6TAil6ZowDePL5sPWV1Qmp5j8eLBYEls6Dh750wtJnohGrXMK0lJclII4LfOHTs+PmsBzvSeEsTMAfHCem2V51+ADkJkeouOxlzWfNr4vGh5dosHlpjtrNw/89JH5qcLRG8plBpvCWVB27d/h3x5HSvb1V6sAbdyRRKTWgjrngScTeJIuwFpi7XTYZJKv/ZqBtmdVyyQ5M5ezCReBfV1ObKIzlqCbfhYKHoFcrsygKE5hkOSNn+2nqF45NQXJMynrX6nDBYPiZN3CZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=kHHj7p1C/Pn1UK0TIwEiLsFgxXHhF8omns9htI3hjsg=;
+ b=MqmZdoa5sl6na3fs6GbKn+exO1QwTHD0HA/MEDpAdrliBRPQ3CZRD9kFYzpGLWWrgvNRCiM2Urfe3hdwkeJa09tprdadhHUb5Moj9vb8QyK2Iy0SESxud29dYSys1nH07kd8zWVAiFnnoVY+NELh01lzzHYwiHWirlNU5S5jVe6ZXhEJ3cYN+OTDlLnXMTaQoIqoWl9Ic4GXb7eIk3/XXwQbBiqbqoSviQWeQl8GTA872OoupDpKbnwYl3vwMlIBRBAM9vL/Al2UmxSm1iG/3tJcDrkUg2NPblWs6H2mZs1biT59je0qfY9Y8MdM3lnBSAuxqtNWEJqVgM67AzknRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=kHHj7p1C/Pn1UK0TIwEiLsFgxXHhF8omns9htI3hjsg=;
+ b=UKxvgSrie8ITih8sJqvLnMyf9Oms+FwOHvayb+mSCjoXpQYx4KmYumIYSpe7riqV4AAcYHRkVdbOSJp6EgCNKDTmEc72onx1rO/DT7DFnQDioJhm1O/mcrVF20baH10ZOf38wNuFo3KA58Al6y08i8uay2ReceE0quRKsCBhXehYGMw3qePg156zERrBJVshDWwIn7rdtHqYWO9ADimTWIXWtDBkz9A52srQJ10w95v/EmLcQNnw/76GEPUeErXxsuqdBRyA0mWzsglLeAHVv5birfJWstAzt8fSZZuydRelhV7Iszgi4+wYwJj4U8o8QzjrfZmoA8XwHDUWJAgn0A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
+ by SN7PR12MB6791.namprd12.prod.outlook.com (2603:10b6:806:268::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
+ 2025 04:52:01 +0000
+Received: from PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
+ ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 04:52:01 +0000
+Message-ID: <c2d563b2-da9e-4e3b-989a-97f7eb828d6a@nvidia.com>
+Date: Fri, 12 Sep 2025 14:51:53 +1000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v5 03/15] mm/rmap: extend rmap and migration support
+ device-private entries
+To: SeongJae Park <sj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ dri-devel@lists.freedesktop.org, Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250912015910.59404-1-sj@kernel.org>
+Content-Language: en-US
+From: Balbir Singh <balbirs@nvidia.com>
+In-Reply-To: <20250912015910.59404-1-sj@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0057.namprd03.prod.outlook.com
+ (2603:10b6:a03:33e::32) To PH8PR12MB7277.namprd12.prod.outlook.com
+ (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
-In-Reply-To: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 12 Sep 2025 07:50:39 +0300
-X-Gm-Features: Ac12FXylwjz_ZI_utuE9R2j7ogLYGeMVukWRZhDy75FP68KNOm2EIVd88U_p4II
-Message-ID: <CAHp75VdtVPzVxSLH=i+Hpze=mkTBvW_PVnhy-OT6xX47pGZdSg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/6] iio: adc: ad7124: add filter support
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|SN7PR12MB6791:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1daa207e-92cd-46aa-682d-08ddf1b81c92
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S1RuNkYwbkJvYmtUNTA4ZmFqU0R0TVBBYS91OUVxS1RYampIWVl5aTk1UDl4?=
+ =?utf-8?B?WGUxeUo2dE1BL21qZ2ZrelhQd3R5Rk5FZzIzUGkwT0VObEpER0ZxOUdPdURO?=
+ =?utf-8?B?N3R5ODBDQlYzWlV4S2hVZE4xa1JqRXBOK1Y2bHRjd25QSTVWa003ZUNWSkgw?=
+ =?utf-8?B?R2twa2Jid0V4L28ybXBySWI5bWtuVlROT3FwS055aE0zUkRCOHVvL0llUk1R?=
+ =?utf-8?B?Qi8ydkxHaEJ3YU0wNWxCTmpSYXg1Q0MrTGk4disyZldDK3BRWTlSaGRpdSta?=
+ =?utf-8?B?clY4dnlQTEQyVTk4enkrWlRQMmxNUmlPYmJ6V1lhaXBCVVNNZVVjbTh1VGpD?=
+ =?utf-8?B?QndZWWMvZkxzTWVoTnY3bGNzSkhwendzcHdrRysyRmNkRG9xMDUyZU1WZVZ2?=
+ =?utf-8?B?YWplbmtyQzBORi9CQUE1VGpocUFzSHpaRjl0UlNCc0ZNY3N6OFJja25ENWlD?=
+ =?utf-8?B?UHloWmEzaS90a1VXRk85dGFzemJqOHMxTkNzZHdyYWE0SW9mM1Q4eldjazMw?=
+ =?utf-8?B?WXVWWTZFOHpxV3NNSU5GVktQUVRQSjBwVDJRbnVVSERXQ3FPM2FmUGgxOFdC?=
+ =?utf-8?B?UWZUT3FZcTNPWUtpOElPb0pjR09Xem5UY0pZWFNDVjIwWk03OHJsODgyN3Nz?=
+ =?utf-8?B?R2sxRHEyMWxOWklWZzRxdkZORmxTYWRzQVBPR0N4L1hDQXhHejBXZ0pNZ0Fw?=
+ =?utf-8?B?K1MzM0JuMVhqV0pJMm9qYlVJRys5bFMvY1IrRnFaWHRMeVVWWHlDK3hJaGtG?=
+ =?utf-8?B?Zko5cHA3b284UnlIWUFhQzFFMXkzTUg3VVFROEtidGtZSVg0S096Nk8ydVhG?=
+ =?utf-8?B?MFlFTnJDS1VuelpVcjRPVHkxYlJDeEphamZwQzVDYTVrNm5VSXVjRGJxa1ZR?=
+ =?utf-8?B?TW1KcGI3QWdLOE9xSy9iZ1lHYU03MjV4QitNQ1lvdzF5aVo2UnE3U0U3NkhJ?=
+ =?utf-8?B?azYxK0VqQ3Vub3NPTW45U0J6QkhIY1BodXB3elo5cGZrdnB1Mmo0UzZ1TWdG?=
+ =?utf-8?B?RTBiVkE5OVRacEZqOVBnWjMydDRkc0NycWdHVzN1Q3VKT29EVWhTZ3hVRG5j?=
+ =?utf-8?B?QUsxeEhlNk5IYkNzTExWK0hNMEJFSVg0WEtvZGt3U0s3M2VtR1A1OG5rd09S?=
+ =?utf-8?B?dkkzekh3VUFuZWdYZWFZV0FrQ2xnNHRQa3AvNTBNSkxVY1lxVmdFN04zRmpj?=
+ =?utf-8?B?RTZxbjl0b1ZFM05DeElXZ3pheVhOd3VvanJzbnNqNG1yQU1DRUg1Sm9RQkxY?=
+ =?utf-8?B?emR6RUx6cEpjWWVEcXp6ZTFaVnFvOWJPRzRCa1E5dlkxZ0VRWFhzUU1hWGhI?=
+ =?utf-8?B?Y1ZpY2tLV3VhTThCTW1EeWFZcjVuRExEYnhRQW5xMnJ6Ym5MTVlNWE1MdFl1?=
+ =?utf-8?B?NGx1akV6UndIRk0rS0JWVzFUbEJQMDRRLzg4VWtSOWVLSGYyL21jUitBUno2?=
+ =?utf-8?B?UktndWI4T2JIRTBPNlAzOHhKT3FvcmFxa2h0TS9oTTFiZE52Z0lMZjhmOHNL?=
+ =?utf-8?B?WVM3cHhmMCtVRWtkbmpkMkM0MGpJdUo3RUJ1bFdGRit2VnZSVDR1NGdwUFdR?=
+ =?utf-8?B?b2FRbWhRdHhncWFreWt2ZllGc3ZDN3RJZVdQRk0xeHpWbzBUaDdMZ0Jwcys5?=
+ =?utf-8?B?ZWR5SHZDT2drZmVhaERVc0hYYzhJSUF6N1crZGNqNDJvTjI5R0JrTDRweVZU?=
+ =?utf-8?B?elBNM0F6Q1YrT2Y5V3BjOFpsSnQreWQ1ZldLZTl5WFVKV0tYY0IxTGpuRUd2?=
+ =?utf-8?B?RDJ1VHRzN2NaYlEraVNTT3Bvd1M4MFhuZXdlR09NcUh3VG1xdkpldDBCcEFk?=
+ =?utf-8?B?OFNRWEFMY0dOdElUNjZHQWRLVE5PRjZad25NdldoWk5CdmVUVVNWWGV3U2s4?=
+ =?utf-8?B?TWlPQ0NteFd1WFlsYTdlSVhlU2NRY2NteXpGZG0wZjZwZFE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?cDg5aTBETjNCcTFIa2NEY3BYeUpWVlhBOGJmNzZ2RkRpVFpKNk8xaWc2Wnpt?=
+ =?utf-8?B?em5QK0RzVkJOQ1YycWViVVRrVDEwSnRyNGVOY3Bob1pCSGFYSzNjRWpqZlYr?=
+ =?utf-8?B?WTN0dGI3QnU3TmRyVk5IUTFZWjBFTnBkcHFVVDZ2cFRIWk42ZmtES0ljaUY2?=
+ =?utf-8?B?YnZNMTFYRktYMHBIWkh4ellKTUF3Q3k3cDVCL3dsTTBxdDR0eEhMb0U4VS9z?=
+ =?utf-8?B?UTZOTnJKNTErT09RaWNvRFpJVncyWmhWSW1HUEZpTUZSNXdPczhxWFlCQWhS?=
+ =?utf-8?B?NndLczVwUnBuRk1kYUV1UGNoU042LzZjTStGQ0NNQ21BMmNhck9QZTVMOXVT?=
+ =?utf-8?B?Tndvemx1c2JCWHhQU2w5cHRMcE54SHM1WmdXSnAvZHI5ZHVIT0FpRi9MUlNx?=
+ =?utf-8?B?T0VVME44QnVaUWtjNFQ0Y1JrdDRRalNaOTFNSlIyZTdUMDlVeUtzSDFNeWpZ?=
+ =?utf-8?B?TGZEU3ZsZDhrc0RGRkRpdzJpaUU2VTVwWGtKWHp0Y1NaazBRTWl3UDE1M1ls?=
+ =?utf-8?B?Q0JqZjZWaVN0aE1SWEppV2pkdmdBek9DSm5TZXJ3V3JLYXI0blJnZWt4eE8y?=
+ =?utf-8?B?WHFCTnkyckhLRjMyU2d6c2FkWHpOL2ptYU9HbVRQczkyU2RzOVJ2ampBWExy?=
+ =?utf-8?B?QWdCUVB6eW8yeFlyMk03RjBvK1h6Y21rYVRHUllrSXliOWFJaCttZ0RidzYz?=
+ =?utf-8?B?SlkvVWR2Tzd2ZFZIdzQwMEZsQU9wcFNjc2VaeXhBQS9BWThYYUk5eUdEc1Rh?=
+ =?utf-8?B?TnJPcDZJYVFZRXJwVGxUT3NBMTE0VkNCcnRPd2YrV0Rwb09GQnhaSVpyRlls?=
+ =?utf-8?B?K3FrUDBLMy9qWHN1RnNSaEQ5MFgxRWh0WGROc2VjZFZ0TTZLL3NYM3dHc2tX?=
+ =?utf-8?B?SFlFSFFoTCtpZGxQbXVKY2pmNVVScEV4Q0ZNdGxIOWkrUmY4VUp6dDlwdHR0?=
+ =?utf-8?B?T25FVHNNNFZBZ0h3b0ZhVmFiek9FZk5QemJqK3cwa3BUN1J1Wm1QRHdHZXdl?=
+ =?utf-8?B?N1VHdElSWjZ1L2dDRGE0dnE1OVc2eC9ibFE3OWVueWloTlJSNXU1bXRERmdi?=
+ =?utf-8?B?cC85d0xwaHFrRVpUTnkvZTh2b1k0OU8xQVlJUTl1QlRTdVdwYU9tK0RNNndV?=
+ =?utf-8?B?QXNnZWEyZEwwQWlrWFNEOVBTekp0VHFMTGgvdjZxWGVaenVEZGNaZE0xSDBM?=
+ =?utf-8?B?RFBpam9VaFpWY0F0RkVWZjJtczlOWmJRTlRNN2plT04xRTh4QmZDZ0dHMUJO?=
+ =?utf-8?B?aXhVVkZMVGIxTDVDb1NjK2x0eXB5cWI4eU9pS2VJV1lleXVqTzY1REgxZkJU?=
+ =?utf-8?B?a1hZYXBnR1dZcVRodCtzdmpKOFl2OE9MRXpKd0xwOGdWY3E5cTVjNlBHZml6?=
+ =?utf-8?B?aFc1TGZMZFJXZ2ZQQXJROVB5Ti9aMW5yOEtPQzhTWi9vZktqc3gyNjVpNk5o?=
+ =?utf-8?B?bVN5dDJJbWJzMGc3OHNXaXZJVzh1OEpKbVg5eXZiaUVSRTZRWVdGbUNBbEJ6?=
+ =?utf-8?B?UmlWYm5qNzQxaHdPS0dVWE8vdzdpQ2oraXFncUgvOHRvOUZac1FVd1NNSVZR?=
+ =?utf-8?B?MlVZOW02NXVtbnViRHRxQjJPMkh5NWZpRXd3VUk5U29Ba2FkUWJWS0Q2aFVP?=
+ =?utf-8?B?aC9oMWJiekhuTW92V1RlNXJVQzcvN25ndnB1ZU40VkRjSmZCZnVMWUNhak5S?=
+ =?utf-8?B?a2pXY1lsV0NJNXRIYkRnVDBBRnFYSXNNVFMxVWdtN3BjanlwNzBra2VrbjJ5?=
+ =?utf-8?B?ZzlRWDFOWFJNbVJXcTVRaVlKMCtXRm5YS1FxS2U5TWJibTNXdkZJaWpGRlI4?=
+ =?utf-8?B?WUNKUWNiN1VPWVdDbEtENktMNWdGRFoxRzBnTURhTEkzY21DSVQzcmwzMjJz?=
+ =?utf-8?B?aHo1ZDRqT25SV1JrbkhQSVpuUTdtMTN4NStULzQzRjZxcjdWM09OalZRWHhs?=
+ =?utf-8?B?MU40bmdwbmFOS0hYaGp6d0Vmb3BaSEQ3RGppM1E2WGhidHViY2RCQ2JFQ3Fo?=
+ =?utf-8?B?cFplZnVMZWIrR3J6dTNCUzJiQlA2Zk9GejRQZXQxM2liMTQ3aVl0d2J4MnE5?=
+ =?utf-8?B?bmtCUXk3Y3VaMnRsd1oxSTljS2lrUHY0WDlocVdISXFCSWYzOHJZRWY5aG9U?=
+ =?utf-8?B?TnllejVHWVRmR2ZHcWpxSHEyLzRzVWlaU0FLMnAzOUxIS2gxc2NUOWJGT2Ux?=
+ =?utf-8?Q?p2OGVOl7USMojQwakUXIZ7OvpsqIZ/a+XDP4ee+Yi0Q6?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1daa207e-92cd-46aa-682d-08ddf1b81c92
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 04:52:01.3193
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KUuSbUvfgpkbqu8dvUhqFa1yo2H1HLc6S6EGHg3PB6jWviUVEkF4uzVI9kMGti1QROaxGCdk6KHkRx7+3P59ww==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6791
 
-On Fri, Sep 12, 2025 at 12:42=E2=80=AFAM David Lechner <dlechner@baylibre.c=
-om> wrote:
->
-> The AD7124 family of chips supports a number of different filter modes.
-> This series eventually gets around to adding support for selecting the
-> filter mode at runtime after first doing some cleanups to the existing
-> code.
->
-> The first 3 patches are just updating things to use newer APIs.
->
-> The 4th patch is addressing a shortcoming in the driver where the
-> sampling_frequency attributes were being limited to an integer value.
->
-> The 5th patch is the one that finally adds support for filter_type
-> and filter_type_available attributes.
->
-> And the last patch documents one new filter_type that was used that we
-> haven't seen before.
->
-> This applies on top of "[PATCH v4] iio: adc: ad7124: fix sample rate for
-> multi-channel use"
+On 9/12/25 11:59, SeongJae Park wrote:
+> On Mon,  8 Sep 2025 10:04:36 +1000 Balbir Singh <balbirs@nvidia.com> wrote:
+> 
+>> Add device-private THP support to reverse mapping infrastructure,
+>> enabling proper handling during migration and walk operations.
+>>
+>> The key changes are:
+>> - add_migration_pmd()/remove_migration_pmd(): Handle device-private
+>>   entries during folio migration and splitting
+>> - page_vma_mapped_walk(): Recognize device-private THP entries during
+>>   VMA traversal operations
+>>
+>> This change supports folio splitting and migration operations on
+>> device-private entries.
+>>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: David Hildenbrand <david@redhat.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>> Cc: Rakie Kim <rakie.kim@sk.com>
+>> Cc: Byungchul Park <byungchul@sk.com>
+>> Cc: Gregory Price <gourry@gourry.net>
+>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>> Cc: Alistair Popple <apopple@nvidia.com>
+>> Cc: Oscar Salvador <osalvador@suse.de>
+>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> Cc: Nico Pache <npache@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: Barry Song <baohua@kernel.org>
+>> Cc: Lyude Paul <lyude@redhat.com>
+>> Cc: Danilo Krummrich <dakr@kernel.org>
+>> Cc: David Airlie <airlied@gmail.com>
+>> Cc: Simona Vetter <simona@ffwll.ch>
+>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>> Cc: Matthew Brost <matthew.brost@intel.com>
+>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>
+>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>> ---
+>>  mm/damon/ops-common.c | 20 +++++++++++++++++---
+>>  mm/huge_memory.c      | 16 +++++++++++++++-
+>>  mm/page_idle.c        |  5 +++--
+>>  mm/page_vma_mapped.c  | 12 ++++++++++--
+>>  mm/rmap.c             | 19 ++++++++++++++++---
+>>  5 files changed, 61 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
+>> index 998c5180a603..eda4de553611 100644
+>> --- a/mm/damon/ops-common.c
+>> +++ b/mm/damon/ops-common.c
+>> @@ -75,12 +75,24 @@ void damon_ptep_mkold(pte_t *pte, struct vm_area_struct *vma, unsigned long addr
+>>  void damon_pmdp_mkold(pmd_t *pmd, struct vm_area_struct *vma, unsigned long addr)
+>>  {
+>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> -	struct folio *folio = damon_get_folio(pmd_pfn(pmdp_get(pmd)));
+>> +	pmd_t pmdval = pmdp_get(pmd);
+>> +	struct folio *folio;
+>> +	bool young = false;
+>> +	unsigned long pfn;
+>> +
+>> +	if (likely(pmd_present(pmdval)))
+>> +		pfn = pmd_pfn(pmdval);
+>> +	else
+>> +		pfn = swp_offset_pfn(pmd_to_swp_entry(pmdval));
+>>  
+>> +	folio = damon_get_folio(pfn);
+>>  	if (!folio)
+>>  		return;
+>>  
+>> -	if (pmdp_clear_young_notify(vma, addr, pmd))
+>> +	if (likely(pmd_present(pmdval)))
+>> +		young |= pmdp_clear_young_notify(vma, addr, pmd);
+>> +	young |= mmu_notifier_clear_young(vma->vm_mm, addr, addr + PAGE_SIZE);
+>> +	if (young)
+>>  		folio_set_young(folio);
+>>  
+>>  	folio_set_idle(folio);
+>> @@ -203,7 +215,9 @@ static bool damon_folio_young_one(struct folio *folio,
+>>  				mmu_notifier_test_young(vma->vm_mm, addr);
+>>  		} else {
+>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> -			*accessed = pmd_young(pmdp_get(pvmw.pmd)) ||
+>> +			pmd_t pmd = pmdp_get(pvmw.pmd);
+>> +
+>> +			*accessed = (pmd_present(pmd) && pmd_young(pmd)) ||
+>>  				!folio_test_idle(folio) ||
+>>  				mmu_notifier_test_young(vma->vm_mm, addr);
+> 
+> Could you please elaborate more about why the above change is needed on the
+> commit message?
+> 
+> For example, I found below from v3 of this patch series:
+> 
+>     pmd_pfn() does not work well with zone device entries, use
+>     pfn_pmd_entry_to_swap() for checking and comparison as for zone device
+>     entries.
+> 
+> Adding that kind of elaboration on the commit message would be helpful.
+> 
+> Also, seems the DAMON part change is not really required to be made together
+> with other changes.  If I'm not wrong, could you make DAMON part change as a
+> separate commit?
+> 
+> The code looks good to me.
+> 
+> Reviewed-by: SeongJae Park <sj@kernel.org>
+> 
+> 
 
-For non-commented patches
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+Thanks SJ!
 
---=20
-With Best Regards,
-Andy Shevchenko
+v3 had a separate flag during page vma mapped walk, so the walkers had to opt-in
+with a flag, I removed that after David's review feedback
+
+This change is required because we now support large folios in device private
+and hence the DAMON changes are included in this patch
+
+Balbir
 
