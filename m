@@ -1,119 +1,82 @@
-Return-Path: <linux-kernel+bounces-813736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98174B54A1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:42:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D4BB54A1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 596714818C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:42:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7620AC204A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAB72EB878;
-	Fri, 12 Sep 2025 10:42:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB3E2472B5;
-	Fri, 12 Sep 2025 10:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16A582EBBAC;
+	Fri, 12 Sep 2025 10:42:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00582472B5;
+	Fri, 12 Sep 2025 10:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757673732; cv=none; b=nNYqd8hQZTALljxqnVDlWJPhwp/svQWmqyQy8EN5lyjpTQN2hb8oIEJj51zbwF3+j22awQsOrm4cLSBRvdfdvYE04E855t5s+wAWK2VkdeDu1zbC8S698YxMJRAGxKVRBJCObiL6yiXnwr/dnKpI5Eh9B12PjY2QUYa1DVhB9aE=
+	t=1757673765; cv=none; b=Vf4SLw3hJg2ewanx2jFCF2eRjti/y1H8PSu8+PVVl938640YAs2SLTH6UvEfpDo071+XzDldyOgd/WhF/BMW3uJiDNnG0xre9XUwhZtTqPD7/8GDMhqM6tG0FUxE7GsmhGkWIoZy80pz5kFeREmilmqFVWmwHg3eabLfskv8ZrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757673732; c=relaxed/simple;
-	bh=otd6QxpT8qFQVUNAzfILUI02V9sOlrSc4wYVCCapfTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D8FMeeYnYrmwEn6qfRUFXrTnlbhTQF47mc+7jOVzksTyYBdqZcAVUatN4eFz76q3XOxE1vlggchF8UAKa4diYqvOH76OCUdYt643UHW5s+wBJzGwQT/Zj18WtPoiBadRR9GXcq/ukNvmfr7I2mIe0oNdjLSerkfRDTSPInJue1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 437FA1515;
-	Fri, 12 Sep 2025 03:42:02 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 505263F66E;
-	Fri, 12 Sep 2025 03:42:05 -0700 (PDT)
-Message-ID: <13347819-c83d-446b-856e-d7fd8ec742ea@arm.com>
-Date: Fri, 12 Sep 2025 11:42:03 +0100
+	s=arc-20240116; t=1757673765; c=relaxed/simple;
+	bh=5VW5LhoeR1Q8KAH5Bdn7r5QUaHqPGmnXoJvqlv2BjWM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Ys/OEe6D4OghOOpdKJhe9I0Gbp9ZZVMutFV4Ow52CJvV/WYDBxPVQJ1AM41RMZ7WKVVLg62rRjsGhgpQbniYAkbNKkwS23+zZty16/Gs4EdxffiU1Ni3AzdyPU1FfwPJg0gk28gLIi3jKbc5DM9gVjq403EM7dlvf6TN99rtU+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ABC7C4CEF1;
+	Fri, 12 Sep 2025 10:42:41 +0000 (UTC)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+To: Manivannan Sadhasivam <mani@kernel.org>, Alex Elder <elder@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Sumit Kumar <sumit.kumar@oss.qualcomm.com>
+Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, quic_krichai@quicinc.com, 
+ quic_akhvin@quicinc.com, quic_skananth@quicinc.com, 
+ quic_vbadigan@quicinc.com, stable@vger.kernel.org, 
+ Akhil Vinod <akhil.vinod@oss.qualcomm.com>
+In-Reply-To: <20250910-final_chained-v3-1-ec77c9d88ace@oss.qualcomm.com>
+References: <20250910-final_chained-v3-1-ec77c9d88ace@oss.qualcomm.com>
+Subject: Re: [PATCH v3] bus: mhi: ep: Fix chained transfer handling in read
+ path
+Message-Id: <175767376186.19386.3016025814511034609.b4-ty@oss.qualcomm.com>
+Date: Fri, 12 Sep 2025 16:12:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 10/29] arm_mpam: Add cpuhp callbacks to probe MSC
- hardware
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>, Lecopzer Chen <lecopzerc@nvidia.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-11-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250910204309.20751-11-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi James,
 
-On 9/10/25 21:42, James Morse wrote:
-> Because an MSC can only by accessed from the CPUs in its cpu-affinity
-> set we need to be running on one of those CPUs to probe the MSC
-> hardware.
+On Wed, 10 Sep 2025 18:11:09 +0530, Sumit Kumar wrote:
+> The mhi_ep_read_channel function incorrectly assumes the End of Transfer
+> (EOT) bit is received with the doorbell in chained transactions, causing
+> it to advance mhi_chan->rd_offset beyond wr_offset during host-to-device
+> transfers when EOT has not yet arrived, leading to access of unmapped host
+> memory that causes IOMMU faults and processing of stale TREs.
 > 
-> Do this work in the cpuhp callback. Probing the hardware will only
-> happen before MPAM is enabled, walk all the MSCs and probe those we can
-> reach that haven't already been probed as each CPU's online call is made.
+> Modify the loop condition to ensure mhi_queue is not empty, allowing the
+> function to process only valid TREs up to the current write pointer to
+> prevent premature reads and ensure safe traversal of chained TREs.
+> Remove buf_left from the while loop condition to avoid exiting prematurely
+> before reading the ring completely, and remove write_offset since it will
+> always be zero because the new cache buffer is allocated every time.
 > 
-> This adds the low-level MSC register accessors.
-> 
-> Once all MSCs reported by the firmware have been probed from a CPU in
-> their respective cpu-affinity set, the probe-time cpuhp callbacks are
-> replaced.  The replacement callbacks will ultimately need to handle
-> save/restore of the runtime MSC state across power transitions, but for
-> now there is nothing to do in them: so do nothing.
-> 
-> The architecture's context switch code will be enabled by a static-key,
-> this can be set by mpam_enable(), but must be done from process context,
-> not a cpuhp callback because both take the cpuhp lock.
-> Whenever a new MSC has been probed, the mpam_enable() work is scheduled
-> to test if all the MSCs have been probed. If probing fails, mpam_disable()
-> is scheduled to unregister the cpuhp callbacks and free memory.
-> 
-> CC: Lecopzer Chen <lecopzerc@nvidia.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Changes since v1:
->  * Removed register bounds check. If the firmware tables are wrong the
->    resulting translation fault should be enough to debug this.
->  * Removed '&' in front of a function pointer.
->  * Pulled mpam_disable() into this patch.
->  * Disable mpam when probing fails to avoid extra work on broken platforms.
->  * Added mpam_disbale_reason as there are now two non-debug reasons for this
->    to happen.
+> [...]
 
-Looks good to me.
+Applied, thanks!
 
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+[1/1] bus: mhi: ep: Fix chained transfer handling in read path
+      commit: f5225a34bd8f9f64eec37f6ae1461289aaa3eb86
 
-Thanks,
-
-Ben
+Best regards,
+-- 
+Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
 
 
