@@ -1,305 +1,272 @@
-Return-Path: <linux-kernel+bounces-813565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049DAB5478C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:31:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 629E0B54AE1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:22:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2009B560D02
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:30:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E0E1C84C65
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286F0283FDD;
-	Fri, 12 Sep 2025 09:25:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931B03009E8;
+	Fri, 12 Sep 2025 11:22:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JKBaJ4dP"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAvDopTq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196B5283144
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96A8277037;
+	Fri, 12 Sep 2025 11:22:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757669113; cv=none; b=J+5+ibW+ZSb2Xjub0iVh+NAquVFL0FPd/84OphXlhehWLdqltGBkRVQ/wuDuPwaKzWW8/hLByUJSecH7K/B/BwTcrAbC04YzR0qJxt6Imn+jyzK0tn9uui80oxeHPrhml4kYWXqex+F8rkNtM801+c/OfbxcL53q19qW4ZeUtSk=
+	t=1757676124; cv=none; b=Yr4NSO1kZOt+NNyqGyyUzgo7dHeccCLfwXgdz8P8ptGWxaXgiYUBDvw1cEPif079VrWD3O0qdIyWeliRvszuDZKZ+op8J5zwc17B4PrY+imZsQcZx85822gDeUIbnWf/k8EI+Tgugl/uw6a1HCqDdF3DXusFVarwg9CFjtX5rq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757669113; c=relaxed/simple;
-	bh=JkqcJNCNrP/NBrvMF2SCmQxB/OaERHTNSgGlQSqDjMM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uym/EFdI4NmrDpWKd6QTRdi6bcJmESZ5rEY/ZRQ9DqOFa3d+vJbVwY5Ci7Jecmq5tUFqfAcyze4mb7Ilzt860XcitEN7DO3FfgFV15YoBihq5vBBwC9Lgs5IcpOXjAcGCUas1xHT6PafF0IhipO2Bwon0nfntsBbvhARDSvbT2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JKBaJ4dP; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-62ee22c8940so644901a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:25:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757669108; x=1758273908; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PSCNKaGQ0TXo9yOTAb9N6YviqsEUR693AcIHTThc0/g=;
-        b=JKBaJ4dPLWvRdae6n0fA1aOQgzKmWjXeZpaCoX7+6o8qo4cvOOX1BWjMHJCoFKrTkF
-         rQa8BfUvA04r+YszQyXEhRnAfMVBJet0zagygFFdl7BaGOb0UG2nuYi5IouOP9P3ASbQ
-         6yw8U6ZZmserLw5IncSZAohZ2/L15FauzXYizoqmWIkvq2NUsN3jbhyemjE5IQeCN1QQ
-         g9EkUg5dv4MO6BJOJd965P7FdMvd66QM18sJf2wBOrrqPQtj+eKxTAguGMASsfFXN92x
-         5KSUWDDuigRJsnTl6On19dv5MIB7g60Be8Z7FfkmFH+4oRHlbRf78eBMBTKLIjQfymP5
-         oHzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757669108; x=1758273908;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PSCNKaGQ0TXo9yOTAb9N6YviqsEUR693AcIHTThc0/g=;
-        b=CRipo+sCLWp11Inaj9vigayZnk/uz+aDTnRRjUInF5900rM8aRM4gV33+zmngw0l9T
-         IX/qxCFB9kUt7AGZcPMgqt7NLGHWI6SqFeqmqpv6kRKnWUt4dPlyFrf/bARz1j9JFBLq
-         9g2ktqsBTdA2ByucYuLf3VnXB9LuIqndwKlZnsrALd+xeEZ8N2tffgOkaR7az3sIVO+q
-         Xq5uhGihsRWqqTFAgNTPno/vMSkYXvLOSFpUIThfdcfQW71LqkWsMwb0F9wGHrCukTYF
-         w2u9oPIduhUwmwh1Ay8tYsil+AdGuMMXQMxU9ppldqjkAtH7gZdw/Nt5BRPsMeqZkuQ0
-         apwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWd8Y3Li4JxMcyjeo034gixCMJ1Iekt+sPZaiNj5xbuom7VtXkhO3XjxQqPLE0uo4JxjCsHaz8bsPTQdnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysH0BFs8SZleCGpVg4PhTFp3qG0SsrcGdFzy2Kr7xozdqZgEq2
-	x2RjDLXekHqOw5lR5PgNRAK9GnWeDCj17x8tQ4Z3syrf6gkBj5ovX6dX3D5jRhVQK3Y=
-X-Gm-Gg: ASbGnctGzRuedtBCCsB6MQLoWUjSlCsakjhA+Z2sB0jvRmpNYtQ8R/4uUZ4bmhhH4r2
-	Vui88X9opNy4DNmyNEuZk4PRAEmkM5+2AT3Y/w1M4is7H/Soe5Lu5zrOhvyc+KA+/c4ElfwFEWC
-	dmmsPiWqjvON2VU4FcYyrVbzDIHjV4OLghQor59peQmfiaA/RVLuqJfNylLEhBt4dRakhlCZuOv
-	qiqdZiyb8N/GV665pNefBIlc8EzqgHS5RjnYJsJspse+UngCLWC7qVlxzS0zqx9eXUkgY2g5T9u
-	eZ3iD/7sDD0Y7qLaQXxDIv2AdVb/OH5P5GpC3Wv5eB4F2JbkneWdxrdVGBFzYF/RfMyzi7aSGQ3
-	Rajjulz7IgGL5Yb9ENzbJflCehg==
-X-Google-Smtp-Source: AGHT+IGmH28eR224mv6k+mP1uIMnq977Y7n1QQRwBYcwaoIBDdm+NNMF/7KE1WGvsBG+g8xzOxo/6A==
-X-Received: by 2002:a17:906:dc90:b0:b04:a831:4b8a with SMTP id a640c23a62f3a-b07c3869f66mr201431466b.53.1757669108229;
-        Fri, 12 Sep 2025 02:25:08 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32dd408sm326866966b.59.2025.09.12.02.25.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 02:25:07 -0700 (PDT)
-Date: Fri, 12 Sep 2025 11:25:06 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
-	linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v2 0/2] printk_ringbuffer: don't needlessly wrap data
- blocks around
-Message-ID: <aMPm8ter0KYBpyoW@pathway.suse.cz>
-References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
- <aMLrGCQSyC8odlFZ@pathway.suse.cz>
- <aMLxt5k5U1vpmaQ3@pathway.suse.cz>
- <84bjnhx91r.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1757676124; c=relaxed/simple;
+	bh=3PimEMBH0i74GFm0gTka/GsTCwaQkN7ujfGR5v/cKu8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Uisef0R/RdA64oP9BX3iOhPWLaf9dbMwr90mJGvyAeGsTJ1PU2RaRDBFNlxPmdQ6zxTUw1gbdg8P8ftexKPf++jvEXK8Ph8uNpzDQtHNbKIkprXRHjUZvn2Xs3gHEm2EvtAGdA6KScCaugHvt/gwjKSTcKKrFP+uwp5jWkruIo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aAvDopTq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0E90C4CEF1;
+	Fri, 12 Sep 2025 11:22:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757676124;
+	bh=3PimEMBH0i74GFm0gTka/GsTCwaQkN7ujfGR5v/cKu8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=aAvDopTqm6lPjisv+xS/BNjZPnJnp1zgCGyS2DVh873f4+Rqk6yPLl5B63vovcGxD
+	 hTZ88VISSi7k07ldOanuYgvGntxSJAXh7Kct8VSSRkyjk5C2f07zyleU9ewPCq5+dE
+	 0NEuIXHXam53+epJ06z6ajhEs1KZciHK4hrBv807a+kracbeCoD1MqtPbPQUNzJT7a
+	 5JV5uvtOKp7+V7g6R5/rl3cQyhci0C/eqk+RZ7pgf0eLMKbT9f642PtHECJ2bvL0Gm
+	 X0DUO9jNB71/WLMIdmlelV/LQhfuvD+ITUbKfs3KIb16U2U2x0FSq9kAJq1pxsoHjU
+	 qnnuckbiSwsdw==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH v16 0/6] KVM: arm64: Provide guest support for GCS
+Date: Fri, 12 Sep 2025 10:25:26 +0100
+Message-Id: <20250912-arm64-gcs-v16-0-6435e5ec37db@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84bjnhx91r.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAbnw2gC/23TS27cMAwG4KsEXtcFSb276j2KLPSgZow2M4EdG
+ A2CuXupFJ2RocIrC/4kkfz9MW28LrxN354+ppX3ZVuuF3lB++Vpyud4OfG8FFmYCEiBPHNcX6y
+ eT3mbWSHGBMU7CpN8n+LGc1rjJZ+beHt5bauvK9fl9+cRP57l/bxsb9f1/fPEHdvq370d2m7vH
+ WeYUzXW1aBSivb7T14v/OvrdT1NbZudOkq6pyS0ZMpYtM7EaaCqowp7qoTmUmqowUMJfqD6QT2
+ 4nmqh1ucalVwZbBio6ShRT43QwBU9lmIV6YHaO0WA0FMr1Hk2pnCMupSBugfF46lOKAFm7VUqz
+ pmB+n9UAx0Gv/vWplA5O2ed4jrQ8KCWTE+DUKhWaW1D8hUGivCwHg7TQWg9DoEpFcIA42QRO3w
+ sF1uiNCaPQTvOaawXqceHNmPLlCapWLBWNo74HiotMzpeu6WKiJLz8q8w84h1jw/9wpYrI4GCX
+ CwE+k/N92AZuTYccEuWYaV0ieiTPybrdrv9AUWNBEYABAAA
+X-Change-ID: 20230303-arm64-gcs-e311ab0d8729
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+X-Mailer: b4 0.15-dev-56183
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8619; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=3PimEMBH0i74GFm0gTka/GsTCwaQkN7ujfGR5v/cKu8=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoxAJUc0pQvdhVzNQSe3Cv9baj9KDsshAOojnY1
+ j3A/310o1+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaMQCVAAKCRAk1otyXVSH
+ 0G8CB/sEPG43HXV6YJaoun+K78dtU+i2OjxzZ1hOlxZ2P+pNHXQtHdWOU2PGD1D34trjaTarWcg
+ xKkQgtaih9ePPSHHAYfOMrW6+cjFHfLgUNnF60vs5/u06h0A2DXqIV2ii9QLk5L/aKdp4Ma18RY
+ TUdvJ+0otTz9O1Rr1M7cQgi3xH5IX0g0soy1KOAQWRkCvXsEaaTcTwsd275UNL+pEBqcsbvfql5
+ fJs8ZvDKaRF3mL+QvCG3JgAxOVG6ErVSxYk86p0zbWgdukcxqJUraLAIbyylEjp7j5JPOPhJJZp
+ h57gLmgXifWSuefMyv9pZV44YYMtvBSP9O/n41YJiZh9Mvku
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Thu 2025-09-11 18:18:32, John Ogness wrote:
-> On 2025-09-11, Petr Mladek <pmladek@suse.com> wrote:
-> > diff --git a/kernel/printk/printk_ringbuffer_kunit_test.c b/kernel/printk/printk_ringbuffer_kunit_test.c
-> > index 2282348e869a..241f7ef49ac6 100644
-> > --- a/kernel/printk/printk_ringbuffer_kunit_test.c
-> > +++ b/kernel/printk/printk_ringbuffer_kunit_test.c
-> > @@ -56,7 +56,7 @@ struct prbtest_rbdata {
-> >  	char text[] __counted_by(size);
-> >  };
-> >  
-> > -#define MAX_RBDATA_TEXT_SIZE 0x80
-> > +#define MAX_RBDATA_TEXT_SIZE (0x256 - sizeof(struct prbtest_rbdata))
-> 
-> I guess this should be:
-> 
-> #define MAX_RBDATA_TEXT_SIZE (256  - sizeof(struct prbtest_rbdata))
+The arm64 Guarded Control Stack (GCS) feature provides support for
+hardware protected stacks of return addresses, intended to provide
+hardening against return oriented programming (ROP) attacks and to make
+it easier to gather call stacks for applications such as profiling.
 
-Great catch!
+When GCS is active a secondary stack called the Guarded Control Stack is
+maintained, protected with a memory attribute which means that it can
+only be written with specific GCS operations.  The current GCS pointer
+can not be directly written to by userspace.  When a BL is executed the
+value stored in LR is also pushed onto the GCS, and when a RET is
+executed the top of the GCS is popped and compared to LR with a fault
+being raised if the values do not match.  GCS operations may only be
+performed on GCS pages, a data abort is generated if they are not.
 
-But the KUnit test fails even with this change, see below. And I am
-not surprised. The test should work even with larger-than-allowed
-messages. prbtest_writer() should skip then because prb_reserve()
-should fail.
+The combination of hardware enforcement and lack of extra instructions
+in the function entry and exit paths should result in something which
+has less overhead and is more difficult to attack than a purely software
+implementation like clang's shadow stacks.
 
-Here is test result with:
+This series implements support for managing GCS for KVM guests.
 
-#define MAX_RBDATA_TEXT_SIZE (256 - sizeof(struct prbtest_rbdata))
-#define MAX_PRB_RECORD_SIZE (sizeof(struct prbtest_rbdata) + MAX_RBDATA_TEXT_SIZE)
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v16:
+- Rebase onto v6.17-rc3.
+- Also expose the feature to nested guests.
+- Implement emulation of EXLOCK when returning from nested guests.
+- Rename enter_exception_gcs() to compute_exlock().
+- Move all ID_AA64PFR1_EL1 handling to the final kernel patch.
+- Drop unneeded forwarding of GCS exceptions.
+- Commit and cover message updates.
+- Link to v15: https://lore.kernel.org/r/20250820-arm64-gcs-v15-0-5e334da18b84@kernel.org
 
-DEFINE_PRINTKRB(test_rb, 4, 4);
+Changes in v15:
+- Rebase onto v6.17-rc1.
+- Link to v14: https://lore.kernel.org/r/20241005-arm64-gcs-v14-0-59060cd6092b@kernel.org
 
-and with this patchset reverted, aka, sources from
-printk/linux.git, branch for-next:
+Changes in v14:
+- Rebase onto arm64/for-next/gcs which includes all the non-KVM support.
+- Manage the fine grained traps for GCS instructions.
+- Manage PSTATE.EXLOCK when delivering exceptions to KVM guests.
+- Link to v13: https://lore.kernel.org/r/20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org
 
-[  229.020133] printk_ringbuffer_kunit_test: module verification failed: signature and/or required key missing - tainting kernel
-[  229.029453] KTAP version 1
-[  229.029793] 1..1
-[  229.030461]     KTAP version 1
-[  229.030771]     # Subtest: printk-ringbuffer
-[  229.031111]     # module: printk_ringbuffer_kunit_test
-[  229.031142]     1..1
-[  229.032371]     # test_readerwriter: running for 10000 ms
-[  229.034348]     # test_readerwriter: start thread 001 (writer)
-[  229.034721]     # test_readerwriter: start thread 002 (writer)
-[  229.035398]     # test_readerwriter: start thread 003 (writer)
-[  229.035697]     # test_readerwriter: start thread 004 (writer)
-[  229.038006]     # test_readerwriter: start thread 005 (writer)
-[  229.041965]     # test_readerwriter: start thread 006 (writer)
-[  229.042244]     # test_readerwriter: start thread 007 (writer)
-[  229.042559]     # test_readerwriter: start thread 008 (writer)
-[  229.042748]     # test_readerwriter: start thread 009 (writer)
-[  229.042996]     # test_readerwriter: start thread 010 (writer)
-[  229.043288]     # test_readerwriter: starting test
-[  229.043299]     # test_readerwriter: start thread 011 (writer)
-[  229.043370]     # test_readerwriter: start reader
-[  229.043574]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=15 size=1111638594 text=
-[  239.133686]     # test_readerwriter: end reader: read=14 seq=24
-[  239.134417]     # test_readerwriter: completed test
-[  239.136019]     # test_readerwriter: end thread 011: wrote=10466402
-[  239.136856]     # test_readerwriter: end thread 010: wrote=10461343
-[  239.137825]     # test_readerwriter: end thread 009: wrote=13686189
-[  239.138478]     # test_readerwriter: end thread 008: wrote=10475551
-[  239.139106]     # test_readerwriter: end thread 007: wrote=13652622
-[  239.139765]     # test_readerwriter: end thread 006: wrote=10473282
-[  239.140376]     # test_readerwriter: end thread 005: wrote=10444451
-[  239.140989]     # test_readerwriter: end thread 004: wrote=10466857
-[  239.141652]     # test_readerwriter: end thread 003: wrote=13733553
-[  239.142243]     # test_readerwriter: end thread 002: wrote=13710538
-[  239.142859]     # test_readerwriter: end thread 001: wrote=13738411
-[  239.143738]     # test_readerwriter.speed: slow
-[  239.143771]     not ok 1 test_readerwriter
-[  239.144161] not ok 1 printk-ringbuffer
+Changes in v13:
+- Rebase onto v6.12-rc1.
+- Allocate VM_HIGH_ARCH_6 since protection keys used all the existing
+  bits.
+- Implement mm_release() and free transparently allocated GCSs there.
+- Use bit 32 of AT_HWCAP for GCS due to AT_HWCAP2 being filled.
+- Since we now only set GCSCRE0_EL1 on change ensure that it is
+  initialised with GCSPR_EL0 accessible to EL0.
+- Fix OOM handling on thread copy.
+- Link to v12: https://lore.kernel.org/r/20240829-arm64-gcs-v12-0-42fec947436a@kernel.org
 
-It is well reproducible. It always fails after reading few records.
-Here are results from few other runs:
+Changes in v12:
+- Clarify and simplify the signal handling code so we work with the
+  register state.
+- When checking for write aborts to shadow stack pages ensure the fault
+  is a data abort.
+- Depend on !UPROBES.
+- Comment cleanups.
+- Link to v11: https://lore.kernel.org/r/20240822-arm64-gcs-v11-0-41b81947ecb5@kernel.org
 
-[ 1617.607865]     KTAP version 1
-[ 1617.608377]     # Subtest: printk-ringbuffer
-[ 1617.608891]     # module: printk_ringbuffer_kunit_test
-[ 1617.609041]     1..1
-[ 1617.613633]     # test_readerwriter: running for 10000 ms
-[ 1617.614796]     # test_readerwriter: start thread 001 (writer)
-[ 1617.615562]     # test_readerwriter: start thread 002 (writer)
-[ 1617.616399]     # test_readerwriter: start thread 003 (writer)
-[ 1617.617911]     # test_readerwriter: start thread 004 (writer)
-[ 1617.618763]     # test_readerwriter: start thread 005 (writer)
-[ 1617.619067]     # test_readerwriter: start thread 006 (writer)
-[ 1617.619368]     # test_readerwriter: start thread 007 (writer)
-[ 1617.619650]     # test_readerwriter: start thread 008 (writer)
-[ 1617.619921]     # test_readerwriter: start thread 009 (writer)
-[ 1617.620211]     # test_readerwriter: start thread 010 (writer)
-[ 1617.620462]     # test_readerwriter: starting test
-[ 1617.623169]     # test_readerwriter: start thread 011 (writer)
-[ 1617.623175]     # test_readerwriter: start reader
-[ 1617.624508]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=9 size=1111638594 text=
-[ 1617.626400]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=13 size=1111638594 text=
-[ 1617.628225]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=17 size=1111638594 text=
-[ 1627.681624]     # test_readerwriter: end reader: read=14 seq=17
-[ 1627.682370]     # test_readerwriter: completed test
-[ 1627.683960]     # test_readerwriter: end thread 011: wrote=10452656
-[ 1627.684779]     # test_readerwriter: end thread 010: wrote=13707777
-[ 1627.685412]     # test_readerwriter: end thread 009: wrote=10480695
-[ 1627.686274]     # test_readerwriter: end thread 008: wrote=10470822
-[ 1627.687081]     # test_readerwriter: end thread 007: wrote=13697351
-[ 1627.687716]     # test_readerwriter: end thread 006: wrote=10464543
-[ 1627.688317]     # test_readerwriter: end thread 005: wrote=10488791
-[ 1627.688919]     # test_readerwriter: end thread 004: wrote=10488529
-[ 1627.689492]     # test_readerwriter: end thread 003: wrote=13738659
-[ 1627.690321]     # test_readerwriter: end thread 002: wrote=13718856
-[ 1627.690915]     # test_readerwriter: end thread 001: wrote=13675859
-[ 1627.691694]     # test_readerwriter.speed: slow
-[ 1627.691753]     not ok 1 test_readerwriter
-[ 1627.692512] not ok 1 printk-ringbuffer
+Changes in v11:
+- Remove the dependency on the addition of clone3() support for shadow
+  stacks, rebasing onto v6.11-rc3.
+- Make ID_AA64PFR1_EL1.GCS writeable in KVM.
+- Hide GCS registers when GCS is not enabled for KVM guests.
+- Require HCRX_EL2.GCSEn if booting at EL1.
+- Require that GCSCR_EL1 and GCSCRE0_EL1 be initialised regardless of
+  if we boot at EL2 or EL1.
+- Remove some stray use of bit 63 in signal cap tokens.
+- Warn if we see a GCS with VM_SHARED.
+- Remove rdundant check for VM_WRITE in fault handling.
+- Cleanups and clarifications in the ABI document.
+- Clean up and improve documentation of some sync placement.
+- Only set the EL0 GCS mode if it's actually changed.
+- Various minor fixes and tweaks.
+- Link to v10: https://lore.kernel.org/r/20240801-arm64-gcs-v10-0-699e2bd2190b@kernel.org
 
+Changes in v10:
+- Fix issues with THP.
+- Tighten up requirements for initialising GCSCR*.
+- Only generate GCS signal frames for threads using GCS.
+- Only context switch EL1 GCS registers if S1PIE is enabled.
+- Move context switch of GCSCRE0_EL1 to EL0 context switch.
+- Make GCS registers unconditionally visible to userspace.
+- Use FHU infrastructure.
+- Don't change writability of ID_AA64PFR1_EL1 for KVM.
+- Remove unused arguments from alloc_gcs().
+- Typo fixes.
+- Link to v9: https://lore.kernel.org/r/20240625-arm64-gcs-v9-0-0f634469b8f0@kernel.org
 
-[ 1627.693708]     KTAP version 1
-[ 1627.694046]     # Subtest: printk-ringbuffer
-[ 1627.694385]     # module: printk_ringbuffer_kunit_test
-[ 1627.694410]     1..1
-[ 1627.695698]     # test_readerwriter: running for 10000 ms
-[ 1627.698351]     # test_readerwriter: start thread 001 (writer)
-[ 1627.698935]     # test_readerwriter: start thread 002 (writer)
-[ 1627.699341]     # test_readerwriter: start thread 003 (writer)
-[ 1627.699657]     # test_readerwriter: start thread 004 (writer)
-[ 1627.699891]     # test_readerwriter: start thread 005 (writer)
-[ 1627.700111]     # test_readerwriter: start thread 006 (writer)
-[ 1627.700337]     # test_readerwriter: start thread 007 (writer)
-[ 1627.700620]     # test_readerwriter: start thread 008 (writer)
-[ 1627.700885]     # test_readerwriter: start thread 009 (writer)
-[ 1627.701134]     # test_readerwriter: start thread 010 (writer)
-[ 1627.701371]     # test_readerwriter: starting test
-[ 1627.701374]     # test_readerwriter: start thread 011 (writer)
-[ 1627.705369]     # test_readerwriter: start reader
-[ 1627.706115]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=16 size=1111638594 text=
-[ 1627.707966]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=20 size=1111638594 text=
-[ 1627.710886]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=24 size=16962 text=
-[ 1637.917622]     # test_readerwriter: end reader: read=14 seq=27
-[ 1637.918372]     # test_readerwriter: completed test
-[ 1637.919848]     # test_readerwriter: end thread 011: wrote=10559459
-[ 1637.920670]     # test_readerwriter: end thread 010: wrote=13811125
-[ 1637.921309]     # test_readerwriter: end thread 009: wrote=10572663
-[ 1637.922176]     # test_readerwriter: end thread 008: wrote=10570916
-[ 1637.922818]     # test_readerwriter: end thread 007: wrote=13832304
-[ 1637.923456]     # test_readerwriter: end thread 006: wrote=10571421
-[ 1637.924082]     # test_readerwriter: end thread 005: wrote=10579437
-[ 1637.924703]     # test_readerwriter: end thread 004: wrote=13861481
-[ 1637.925318]     # test_readerwriter: end thread 003: wrote=10590865
-[ 1637.925977]     # test_readerwriter: end thread 002: wrote=13852926
-[ 1637.926570]     # test_readerwriter: end thread 001: wrote=13845110
-[ 1637.927172]     # test_readerwriter.speed: slow
-[ 1637.927202]     not ok 1 test_readerwriter
-[ 1637.927611] not ok 1 printk-ringbuffer
+Changes in v9:
+- Rebase onto v6.10-rc3.
+- Restructure and clarify memory management fault handling.
+- Fix up basic-gcs for the latest clone3() changes.
+- Convert to newly merged KVM ID register based feature configuration.
+- Fixes for NV traps.
+- Link to v8: https://lore.kernel.org/r/20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org
 
+Changes in v8:
+- Invalidate signal cap token on stack when consuming.
+- Typo and other trivial fixes.
+- Don't try to use process_vm_write() on GCS, it intentionally does not
+  work.
+- Fix leak of thread GCSs.
+- Rebase onto latest clone3() series.
+- Link to v7: https://lore.kernel.org/r/20231122-arm64-gcs-v7-0-201c483bd775@kernel.org
 
+Changes in v7:
+- Rebase onto v6.7-rc2 via the clone3() patch series.
+- Change the token used to cap the stack during signal handling to be
+  compatible with GCSPOPM.
+- Fix flags for new page types.
+- Fold in support for clone3().
+- Replace copy_to_user_gcs() with put_user_gcs().
+- Link to v6: https://lore.kernel.org/r/20231009-arm64-gcs-v6-0-78e55deaa4dd@kernel.org
 
-[ 1658.412099]     KTAP version 1
-[ 1658.412409]     # Subtest: printk-ringbuffer
-[ 1658.412784]     # module: printk_ringbuffer_kunit_test
-[ 1658.412813]     1..1
-[ 1658.416372]     # test_readerwriter: running for 10000 ms
-[ 1658.417927]     # test_readerwriter: start thread 001 (writer)
-[ 1658.418309]     # test_readerwriter: start thread 002 (writer)
-[ 1658.418785]     # test_readerwriter: start thread 003 (writer)
-[ 1658.418996]     # test_readerwriter: start thread 004 (writer)
-[ 1658.419262]     # test_readerwriter: start thread 005 (writer)
-[ 1658.419531]     # test_readerwriter: start thread 006 (writer)
-[ 1658.419758]     # test_readerwriter: start thread 007 (writer)
-[ 1658.420028]     # test_readerwriter: start thread 008 (writer)
-[ 1658.420239]     # test_readerwriter: start thread 009 (writer)
-[ 1658.420516]     # test_readerwriter: start thread 010 (writer)
-[ 1658.420737]     # test_readerwriter: starting test
-[ 1658.420739]     # test_readerwriter: start thread 011 (writer)
-[ 1658.420791]     # test_readerwriter: start reader
-[ 1658.420879]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=8 size=217 text=DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\x10\xa2\xff\xff\xff\xff#\x8b^M\xa4\xff\xff\xff\xff\xb3\x8a\xb5A
-[ 1658.421015]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=9 size=217 text=DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD\x10\xa2\xff\xff\xff\xff#\x8b^M\xa4\xff\xff\xff\xff\xb3\x8a\xb5A
-[ 1658.421152]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=10 size=1145324612 text=
-[ 1658.431961]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
-               BAD RECORD: seq=18 size=1145324612 text=
-[ 1668.637609]     # test_readerwriter: end reader: read=13 seq=20
-[ 1668.638384]     # test_readerwriter: completed test
-[ 1668.639464]     # test_readerwriter: end thread 011: wrote=13482649
-[ 1668.640116]     # test_readerwriter: end thread 010: wrote=10354440
-[ 1668.640934]     # test_readerwriter: end thread 009: wrote=10388436
-[ 1668.642245]     # test_readerwriter: end thread 008: wrote=13621613
-[ 1668.642886]     # test_readerwriter: end thread 007: wrote=10072648
-[ 1668.643536]     # test_readerwriter: end thread 006: wrote=13582778
-[ 1668.644171]     # test_readerwriter: end thread 005: wrote=10397092
-[ 1668.644792]     # test_readerwriter: end thread 004: wrote=13499818
-[ 1668.645415]     # test_readerwriter: end thread 003: wrote=10362779
-[ 1668.646319]     # test_readerwriter: end thread 002: wrote=10348508
-[ 1668.646924]     # test_readerwriter: end thread 001: wrote=13616849
-[ 1668.647584]     # test_readerwriter.speed: slow
-[ 1668.647618]     not ok 1 test_readerwriter
-[ 1668.648311] not ok 1 printk-ringbuffer
+Changes in v6:
+- Rebase onto v6.6-rc3.
+- Add some more gcsb_dsync() barriers following spec clarifications.
+- Due to ongoing discussion around clone()/clone3() I've not updated
+  anything there, the behaviour is the same as on previous versions.
+- Link to v5: https://lore.kernel.org/r/20230822-arm64-gcs-v5-0-9ef181dd6324@kernel.org
 
+Changes in v5:
+- Don't map any permissions for user GCSs, we always use EL0 accessors
+  or use a separate mapping of the page.
+- Reduce the standard size of the GCS to RLIMIT_STACK/2.
+- Enforce a PAGE_SIZE alignment requirement on map_shadow_stack().
+- Clarifications and fixes to documentation.
+- More tests.
+- Link to v4: https://lore.kernel.org/r/20230807-arm64-gcs-v4-0-68cfa37f9069@kernel.org
 
-Best Regards,
-Petr
+Changes in v4:
+- Implement flags for map_shadow_stack() allowing the cap and end of
+  stack marker to be enabled independently or not at all.
+- Relax size and alignment requirements for map_shadow_stack().
+- Add more blurb explaining the advantages of hardware enforcement.
+- Link to v3: https://lore.kernel.org/r/20230731-arm64-gcs-v3-0-cddf9f980d98@kernel.org
+
+Changes in v3:
+- Rebase onto v6.5-rc4.
+- Add a GCS barrier on context switch.
+- Add a GCS stress test.
+- Link to v2: https://lore.kernel.org/r/20230724-arm64-gcs-v2-0-dc2c1d44c2eb@kernel.org
+
+Changes in v2:
+- Rebase onto v6.5-rc3.
+- Rework prctl() interface to allow each bit to be locked independently.
+- map_shadow_stack() now places the cap token based on the size
+  requested by the caller not the actual space allocated.
+- Mode changes other than enable via ptrace are now supported.
+- Expand test coverage.
+- Various smaller fixes and adjustments.
+- Link to v1: https://lore.kernel.org/r/20230716-arm64-gcs-v1-0-bf567f93bba6@kernel.org
+
+---
+Mark Brown (6):
+      arm64/gcs: Ensure FGTs for EL1 GCS instructions are disabled
+      KVM: arm64: Manage GCS access and registers for guests
+      KVM: arm64: Set PSTATE.EXLOCK when entering an exception
+      KVM: arm64: Validate GCS exception lock when emulating ERET
+      KVM: arm64: Allow GCS to be enabled for guests
+      KVM: selftests: arm64: Add GCS registers to get-reg-list
+
+ arch/arm64/include/asm/el2_setup.h               |  5 +++
+ arch/arm64/include/asm/kvm_emulate.h             |  3 ++
+ arch/arm64/include/asm/kvm_host.h                | 14 +++++++++
+ arch/arm64/include/asm/vncr_mapping.h            |  2 ++
+ arch/arm64/include/uapi/asm/ptrace.h             |  1 +
+ arch/arm64/kvm/emulate-nested.c                  | 40 +++++++++++++++++++++++-
+ arch/arm64/kvm/hyp/exception.c                   | 37 ++++++++++++++++++++++
+ arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h       | 31 ++++++++++++++++++
+ arch/arm64/kvm/hyp/vhe/sysreg-sr.c               | 10 ++++++
+ arch/arm64/kvm/nested.c                          |  7 +++--
+ arch/arm64/kvm/sys_regs.c                        | 32 +++++++++++++++++--
+ tools/testing/selftests/kvm/arm64/get-reg-list.c | 12 +++++++
+ 12 files changed, 188 insertions(+), 6 deletions(-)
+---
+base-commit: 1b237f190eb3d36f52dffe07a40b5eb210280e00
+change-id: 20230303-arm64-gcs-e311ab0d8729
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
+
 
