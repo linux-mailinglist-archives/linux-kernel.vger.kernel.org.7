@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-813481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33C98B54610
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:56:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EC8B54615
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:56:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6AACAA5B4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:56:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C30BAA580D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA5426E708;
-	Fri, 12 Sep 2025 08:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5336F270EBF;
+	Fri, 12 Sep 2025 08:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IveBiTgu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jetTKFEE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B511853
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1777A25B69F
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757667358; cv=none; b=eVy9JKlwdGQz8XqX0WIua58L7sy4w5cUYXxf2vybxOFe6nwTz5vQ7BOSFttjRUji92v1lk5f0QfE/C2ce5CKmBYIbj7fp9hGq41JQV8oT/9KvhcRt636INR+fFLmc/8W9DHHyBOUnde2NGs4XdxzHbi7mYb6jLHe/Gbl5HzUFVY=
+	t=1757667371; cv=none; b=NgJjrlMMOOsmBMORFFzgRcOqQn3DcDQNP+pusVFGC1Sd/bpRAH7dOrVS68k3eHeoiiGh8Btc5j/6P5nTZl0l11vAqeb3xIGhRM58kQlDkH+fsYoMxQsqWdVXsOetrCsdjz24YpU5QbEDC2IKTHMfQAUtqs/r6VHFTcYCc39uS8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757667358; c=relaxed/simple;
-	bh=d3ohSVyJyux+cigmtzOw8uxF+aWAcNz6BlH9SE0RsNc=;
+	s=arc-20240116; t=1757667371; c=relaxed/simple;
+	bh=Hw+jWTOnPa5ZB05R1aBQnEOz4XeAn49O3zb5xmvLtoo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MEHmtGDJL1j5MXt1cWhe2FicU5BUqooo2V7VW6BKeCcHMnCgKpVjx9xBgaxd1AuzJVaBBq+ELF9kVR2dnN3jqWDP9l+AfvA97uwFFpVFFhSTU/fY+f0bXNithIEgrX+4dukK/LEg1hvOXzxpF5NwYYhMRf0edb/WWDK0b8xW9Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IveBiTgu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757667356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yhSXL+2pa9oDbDGRuQ4gQlpl18vQ+30/sPKc3K6z7Uo=;
-	b=IveBiTgu6K6wb46I3mtmTdpkQZdEaqeL7kwT/a8yxdSlKW8E78iZo7pxHlYZUQtPHxFiux
-	ab9FzjtoPCb2eSDilf1UonpvzWM9HIJYBUUXLpll/e4fZlMu3/EBp+6NQjhHgc7kmlbz7v
-	K1OjrPcQbN3bxuuhO2kLH+8V/cZFQEk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-orWgfqsjNr-S5kfSwYB20Q-1; Fri, 12 Sep 2025 04:55:54 -0400
-X-MC-Unique: orWgfqsjNr-S5kfSwYB20Q-1
-X-Mimecast-MFC-AGG-ID: orWgfqsjNr-S5kfSwYB20Q_1757667353
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45dd9a66c3fso5732245e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:55:54 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=UsG/ckEXPiff/hGsbikYZq0bwu5xg5ieAw2jN+2duF/On7P2yzTy7aUzs8/EqJi8np3ImDiEF44SUmXlbq0F3FW5jF9FQAse6o/GzOUr3OURyKuaEPY2oui+Zv0LZA1Fn4IMd6K8Oj3CBV4Z5Oow1GMeTq3UJm+cBAqWK77vziA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jetTKFEE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C7eM3Q008188
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:56:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mLpUpRSzu5WwkQPIakVTd9F3SFHqAib21JyOWgJz3GI=; b=jetTKFEED/iGK08x
+	OLCF6Rzc9gEuXc4ylMAmmBtykxKYpjnWjlh/lnkWDCfoS2rF7ohT1pcDdp3D+ER6
+	z3N+48f8srtAfXlTAcASHvBH4HTpJ9BcuS2NvbKpC/NVkiS4xHIXxyFKBbxSitut
+	FoSkI0XDOiUhrUf5LPy80pb38a7koPIWMFvEwrqgzfEuJYqyMctzsgUUV15ez/NS
+	jM/JdilFD0vuqOvcCUPdMDQP+OuIAn5QQtr9vUt7ZrJ0hJxJ9MwoN3kSjMxdxIqw
+	fNMr4xw+zluF3R35fNtjjCfQ7fqCglbMbPiMUm78G98+j2uwnBOTibGyvR1MexKV
+	3DFXjA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490aapu5q2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:56:08 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b5f92a6936so5307331cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:56:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757667353; x=1758272153;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yhSXL+2pa9oDbDGRuQ4gQlpl18vQ+30/sPKc3K6z7Uo=;
-        b=bDwljUjb/v5prc+PBR7RDwC+UeU4Y3C3Mj/BoQKushF/j8wyGyrse1wUyBQx3bqIZQ
-         GW7WUEXnAAs72JSMDRHhOPlPvS1datfaI3xJQ+39lCMgNMsrATJpfMMod1XuULfsLaBB
-         9OTE6Q2QSGDuUuhh3Gqi1oN+NBeEiGrXxomU9LQQflcQVqKveJtyQ7WT1PlFk26LGnp4
-         E+bAVmWmUmLFph2SJmb5lOJ5re0DwEJ8CmrtFBE1SYXKfPnmdA25lOHP/x+cs2mk2Y7y
-         jht4/M4HYCpHDe9oeh/5qbTtwU/nuUOdLrcWPbGQeaLh1jOoF8WrhbPy9PBFsWUJShzH
-         dGJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWRFy7b634wuaDyZgBSvqnGKCywAnqeCqobRXLN1WXKMeU7FpdI9Kdn/luTnOKvmG/ldYcutuEmr9ER8Ic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfvifSuEdAIL+ZapArNWRle49Msu/w7KiNF+1/eIwnrmLLM4Tl
-	8ww3xgO7VQiYVqDgiDbRMg0Ss15g6It7tb2yyY8X393S4yzZB3RUuoWgiEvRqadLWgR5vyq19MO
-	at14G/+0VDAh7qaTgAi3QtqzUyMKyHCZh3jSvW1owkqKyKf3+6vg3IwrmJXuWlbZdWw==
-X-Gm-Gg: ASbGnctrzDKeU1/n0+QPZCQyf92hO1uGdLoQyxDgqNa8WiNGbhpcGvlJSCpkoZ9A38S
-	FDFCh3ZnOqi31pNEhAF1ipzdt+GTO8n5Ivz0y2BmTGESitx6Wl/ZfshKrZ56Eok+MFAmnbSjm5J
-	kBOgLn7b36F+BqCo/pWwldxTrGLTKquVcGggDHt486u3rOO+WhR1bri11mjFk2XRLPADEAYn1j3
-	5UpvLX0OCYxmdxAdkw2D5Wt81FANweCyevb10pJd61am66Oog+EYstf3TRs3G3tZgFERtZu5xkD
-	C53GTQAgBcrTBDGyMtoqpiIuIcmYc1Q1Qmor6Ng2+mVpCCziM1LGbKQYgF2UXJcBBO+BDVMqvta
-	H6u7hjeJZbsMbnEW4zu0KkYrkmm7wBGukbvI/yKe6WmSJ3mvyYTq8TZ8aRzL3rqMbTJM=
-X-Received: by 2002:a05:600c:228f:b0:45b:6743:2242 with SMTP id 5b1f17b1804b1-45f211f86c5mr15325605e9.22.1757667353210;
-        Fri, 12 Sep 2025 01:55:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGWDKbJzbJR4/u84XZSgPwx14/k9hN3sfQaLT2TQm5sKZh16Dp+Cgzni1IYyZJBI43U7rR/8A==
-X-Received: by 2002:a05:600c:228f:b0:45b:6743:2242 with SMTP id 5b1f17b1804b1-45f211f86c5mr15325425e9.22.1757667352826;
-        Fri, 12 Sep 2025 01:55:52 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c3ce5sm54255495e9.16.2025.09.12.01.55.50
+        d=1e100.net; s=20230601; t=1757667368; x=1758272168;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mLpUpRSzu5WwkQPIakVTd9F3SFHqAib21JyOWgJz3GI=;
+        b=UOwU2wgTX+0lcNsddOQnMsdugfE1oHsMPCx41j3weMalx4rJInTk8mlAWl1SkRgaIu
+         75p861+ASsJ7j62EiI7Bfl7gxDGVd0fSZ+a3zMsns7RQ2LGmDQnSyCb+WNxIXtpXQil6
+         CTXOumhOCZmq7+Oz+GhDpRigQ4aA1rtyhK/8KDGJ9LcqfaEjQNlBY4k4lbq3+3ml4I74
+         xEKofa08DK/fFlkgVdGsJ/2a3pSGHH7bUsZOJNmTA80gmMW6cOdVaADwYT4kQQPLtT/O
+         ldMnP5YgjQ5l58ngNgEvZXjUpMWId5x++Nr0f6laH44PfGFMGYtKe7NWpNxEDti6IaF+
+         dgFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0CnYbNXGe/h1dUYDTz72AAmmWqe26CbkLLZgpcsPk+4w6sN10K9SnTsFkb2gR7eOepNlbCZEbifvgLrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3IOhyTtBjfqbu10teaoFdZgMHJEtvFxfgMtPiz8b59VADsjdv
+	l0N42Pp6NJCpHwaj7NTG6p+zfrZVKwXDcGSVdCd1VMRirru+cxDx+cP0Yz/F0cblnufIrtRAxYs
+	RBSR+3dF/VG1CM1Z3QEUCBG4xOZbc7cKeYuuxDWjNDopvsHhMTyVEHHGFwadV8vNvxig=
+X-Gm-Gg: ASbGncu6p3yWLTe6BP5PNfNr7ejykFPfbEhk54zf3dN4xWjhypESLHoIiorv8kr2AFU
+	GTVrO3I0/lrx9tgeCVYhA3nyIECeCcLBr/RBmqGozPqPStZwD03unqKGjfvwejbHUZByLiASgKW
+	QrSon8gl6CpnbBi2YVYvpFrQ+RIxAXD5a9G/3lMT+95EWM2zAoHkYqwX+5XnchUm9KEhEzEoM+h
+	Isg6jQ3PCYRgKRvrXTvOxYXw9qG5yMZ+Gst5Z0CwNeEAkFupGJvlP0PYA2JDlbdHGgTpDlxGe6W
+	hMfIaWmJYfjh4mjzsN7uQdRITJBFl/1CML2nYQH3EV3UIsXL7tuoIEECf9zLvnFTvjGzIcVpxwx
+	QnPUwH0uSNKze/FgcO0+NNQ==
+X-Received: by 2002:a05:6214:224c:b0:70d:da58:446a with SMTP id 6a1803df08f44-767ba2773f5mr18025526d6.2.1757667367962;
+        Fri, 12 Sep 2025 01:56:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmyfereoE1eQ0kPbehRY6j+qV0N12MtpHVBAp6lLccgcRMNmVw9DpRMAkIZbmd5hcu6cTwQw==
+X-Received: by 2002:a05:6214:224c:b0:70d:da58:446a with SMTP id 6a1803df08f44-767ba2773f5mr18025376d6.2.1757667367299;
+        Fri, 12 Sep 2025 01:56:07 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62eed9aec1asm54813a12.3.2025.09.12.01.56.05
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 01:55:52 -0700 (PDT)
-Message-ID: <a17ab4e3-627a-4989-a5a5-d430eadabb86@redhat.com>
-Date: Fri, 12 Sep 2025 10:55:50 +0200
+        Fri, 12 Sep 2025 01:56:06 -0700 (PDT)
+Message-ID: <56b5bacc-7214-41aa-b969-4f622afcd9f9@oss.qualcomm.com>
+Date: Fri, 12 Sep 2025 10:56:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,109 +89,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-To: Kevin Brodsky <kevin.brodsky@arm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
- Mark Rutland <Mark.Rutland@arm.com>
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908073931.4159362-3-kevin.brodsky@arm.com>
- <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
- <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
- <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
- <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
- <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
- <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
- <29383ee2-d6d6-4435-9052-d75a263a5c45@redhat.com>
- <9de08024-adfc-421b-8799-62653468cf63@arm.com>
- <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
- <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
- <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
- <15d01c8b-5475-442e-9df5-ca37b0d5dc04@arm.com>
- <7953a735-6129-4d22-be65-ce736630d539@redhat.com>
- <781a6450-1c0b-4603-91cf-49f16cd78c28@arm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH RFC 0/2] arm64: dts: qcom: qcs6490: Introduce Radxa Dragon
+ Q6A
+To: Xilin Wu <sophon@radxa.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+        Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+References: <20250912-radxa-dragon-q6a-v1-0-8ccdbf9cd19b@radxa.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <781a6450-1c0b-4603-91cf-49f16cd78c28@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250912-radxa-dragon-q6a-v1-0-8ccdbf9cd19b@radxa.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=eMETjGp1 c=1 sm=1 tr=0 ts=68c3e028 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=ksxQWNrZAAAA:8 a=-GE0gMS6kJAlqz36ZuEA:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22 a=l7WU34MJF0Z5EO9KEJC3:22
+X-Proofpoint-GUID: hmnLu-LTPLRH0BI6ChRPOqvE18e7cKUD
+X-Proofpoint-ORIG-GUID: hmnLu-LTPLRH0BI6ChRPOqvE18e7cKUD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAwMCBTYWx0ZWRfXxm/9/bj4p52e
+ EC6Oj6Ut0X8RmcOOwb/eDeqDvpiZSyC+su5oXKlBessev0XO67Hq0dEqaYbufcGmpTa/sn7vKCD
+ 6+sFYnkhhznMEh2t2uyG+t4mL0XSto/pXIWmyuTmaBstsD5kXVSo8kwXKd5/nG/FikJ9RK9EajN
+ z5BgQnBy+BpaDC8TafuSWVt44d9NsSEUkZ4rcLoGcjxbLdpwUqsq+27JWViMelB3fupQstF/SPW
+ 1wssH4gRHrByqMJtmCcAOX88/yuubHPIfZ5rOfXUU/XcnxYItkKCRKV7GKproMkrE5PnEOTJhOE
+ hl9xWr/0YGrEvtNN35VeQv7ZpNksSgJ0kQJAX6xfD30gpi483VL4Qly7M22Vrv4+jMD0kweZhOQ
+ vkmKD14H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_03,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 clxscore=1015 adultscore=0
+ bulkscore=0 phishscore=0 spamscore=0 suspectscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060000
 
+On 9/12/25 10:03 AM, Xilin Wu wrote:
+> Radxa Dragon Q6A (https://docs.radxa.com/en/dragon/q6a) is a single board
+> computer, based on the Qualcomm QCS6490 platform.
+> 
+> The board ships with a modified version of the Qualcomm Linux boot
+> firmware, which is stored on the onboard SPI NOR flash. This allows
+> booting standard EFI-based bootloaders from SD/eMMC/USB/UFS/NVMe. It
+> supports replaceable UFS 3.1/eMMC modules for easy user upgrades.
+> 
+> The board schematic is available at [1].
+> 
+> Features enabled and working:
+> 
+> - USB-A 3.0 port (depends on [2])
+> - Three USB-A 2.0 ports
+> - RTL8111K Ethernet connected to PCIe0
+> - UFS 3.1 module (depends on [3])
+> - eMMC module
+> - SD card
+> - M.2 M-Key 2230 PCIe 3.0 x2
+> - HDMI 2.0 port including audio (depends on [2])
+> - Configurable I2C/SPI/UART from 40-Pin GPIO (depends on [4])
+> - Headphone jack
+> - Onboard thermal sensors
+> - QSPI controller for updating boot firmware
+> - ADSP remoteproc (Type-C and charging features disabled in firmware)
+> - CDSP remoteproc (for AI applications using QNN)
+> - Venus video encode and decode accelerator
 
-> I also wondered about that. I think the safest is to make them
-> respectively arch_leave() and arch_enter() - the flushing entailed by
-> arch_leave() might not be required, but it is safer. Additionally,
-> powerpc/sparc disable preemption while in lazy_mmu, so it seems like a
-> good idea to re-enable it while paused (by calling arch_leave()).
+You have a number of features that depend on several other series, and
+as Krzysztof pointed out this is difficult to merge/review.. Could you
+please create a "linux-next/master-ready" version of this series and
+separate the changes for which the dependencies are unmet, putting them
+at the end? This way we can take at least some of your diff.
 
-Great, looking forward to seeing this all getting cleaned up and done 
-properly for good.
+If you still want review on them, you can also send them as [PATCH DNM]
+or so
 
--- 
-Cheers
-
-David / dhildenb
-
+Konrad
 
