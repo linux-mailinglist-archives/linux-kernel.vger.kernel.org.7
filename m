@@ -1,174 +1,241 @@
-Return-Path: <linux-kernel+bounces-813432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B629DB54556
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:28:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C8EB54555
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2129D7A12BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB833B62F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F062D7DD2;
-	Fri, 12 Sep 2025 08:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCD82D77F6;
+	Fri, 12 Sep 2025 08:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CO+5DClr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4QQCTls"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0412D7DCC
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E252C2DC780;
+	Fri, 12 Sep 2025 08:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757665641; cv=none; b=c+aCAelBb7vAEY71peb1ZZQSSw8gyupdWwAxccv0mPiLst3JfAv1MGXRVmKrRCT4oWuF9/8gSbDWJkFdl+5Tm43/+PKgvlh7BTsDAmvOFj/3U4wgK2YtoiN8GImkwkTfsIFbGzDk4HonknCXscNvaP+V7guuN+SaQjAzNxtQEz4=
+	t=1757665662; cv=none; b=SpzHSuWqXaPDEjnAemhQEfQGuBtZ2RlyCAdmteta6I2K8zGgNXpgIkRrFhSJ59OoOpF19QhPaMm2vHyI7UGx9gYgqVwFMQGlpcQ+WNDJpEur8rfsRCYXLAflrLNcYNlb1HDoW9EHoM1v0UTzjVuLq1NrdHbLPgJULwLn6ispjJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757665641; c=relaxed/simple;
-	bh=cdktJ5hQga6TJBt/8XcxZ813/Z5QetZ2cirJ3rE9jpo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lyOymlk4OKv7VXzX3zjFmIiJdQtgkVmKot9ugKnQYIFvu0CE3UoYBwYwbqJSl+dl9KmSPALDMXVejeiEek+8Tq/MiGmxuYU2oUE5toGCjHBIeq1NPoOKez8GEl7w+Tgj80TwpH/g7DuF5sKdUpjHIkrhJLpq7y/bSAWaSRrHYUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CO+5DClr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757665637;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t7o7vby/KR5wn11gpagftAl16EWhc4sdyEwdRY+lx+0=;
-	b=CO+5DClrJ9h3BTTVDmXdLQPtSqkyonU0h67fMQrecQVcN1Q4J7znfRje4z43dCX5hLRI0M
-	s9jujp0g6VKawL1I5dNSh3vhKxbaBJmz5z5H8qzRr2WdyY0fcHY1JiEyFIiWUwZHZdQ5kr
-	lC99QWAsnUaFoW5vhWmEFXGPBMBkFyI=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-wQjGMYgIOXWPrFAm0QbnYw-1; Fri,
- 12 Sep 2025 04:27:14 -0400
-X-MC-Unique: wQjGMYgIOXWPrFAm0QbnYw-1
-X-Mimecast-MFC-AGG-ID: wQjGMYgIOXWPrFAm0QbnYw_1757665633
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 267A71955D62;
-	Fri, 12 Sep 2025 08:27:13 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.167])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 14D93180035E;
-	Fri, 12 Sep 2025 08:27:07 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	eperezma@redhat.com
-Cc: jonah.palmer@oracle.com,
-	kuba@kernel.org,
-	jon@nutanix.com,
-	kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH net 2/2] vhost-net: correctly flush batched packet before enabling notification
-Date: Fri, 12 Sep 2025 16:26:58 +0800
-Message-ID: <20250912082658.2262-2-jasowang@redhat.com>
-In-Reply-To: <20250912082658.2262-1-jasowang@redhat.com>
-References: <20250912082658.2262-1-jasowang@redhat.com>
+	s=arc-20240116; t=1757665662; c=relaxed/simple;
+	bh=6xxzzd/ernId8OPpo0sEQcfNMw1jhcfLCa6q7kv32EU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JiJT0yhbJ61UWMK32e/d0rogI8uLsI0Jpwc4yUrQ5IU40D0wRcQ9VanggiqkZYmEb8NfwDEwYuPnY0ztkUU6paqRI1qOW4pdOGdRz5boZp3uPTsMRAntEydSNXGIfpLTYbMH23TSrObIzzJ/KuVvqutDbvmQjelD5ax/lBtXsyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4QQCTls; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB056C4CEF4;
+	Fri, 12 Sep 2025 08:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757665661;
+	bh=6xxzzd/ernId8OPpo0sEQcfNMw1jhcfLCa6q7kv32EU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A4QQCTls3hEVEbvxLogVWLsmPwqUlMAuTpTowWWWXM/+qphMfQKBOABU+yM5dMtWj
+	 ae84y6BbOT/fovVXR+wZlIPtLKXys/5Jhqb5DHlw13M69uyAZroR0mrIZ6n0iarwIl
+	 +t2ixIcdZy6kDp5rBgjXoCJDdTRgh6ifdEhruEA7uh2536m5HYeIhGb5dW4Mqg/eTP
+	 qO7sqZCBXwBv/0KIzwufRxRpyDncba3zabmcbwlc8yca8UmcDNOFSYyEQ55u58wbTt
+	 Pavc5brh/OnI0vsO/0+quZs+20Ydj1FxAs/5gFTcSofITixZF+zHsrW+r3WimXMm1a
+	 HENDyOFg6iDzg==
+Date: Fri, 12 Sep 2025 13:57:34 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: manivannan.sadhasivam@oss.qualcomm.com, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Saravana Kannan <saravanak@google.com>, 
+	linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v2 5/5] PCI: qcom: Allow pwrctrl core to toggle PERST#
+ for new DT binding
+Message-ID: <r7cpjk2jun3h4xnfncqldeyfov4ad3bpq5kcfcxcx3eyg6g2hj@rcajqn7snemy>
+References: <20250903-pci-pwrctrl-perst-v2-5-2d461ed0e061@oss.qualcomm.com>
+ <20250908193428.GA1437972@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20250908193428.GA1437972@bhelgaas>
 
-Commit 8c2e6b26ffe2 ("vhost/net: Defer TX queue re-enable until after
-sendmsg") tries to defer the notification enabling by moving the logic
-out of the loop after the vhost_tx_batch() when nothing new is
-spotted. This will bring side effects as the new logic would be reused
-for several other error conditions.
+On Mon, Sep 08, 2025 at 02:34:28PM GMT, Bjorn Helgaas wrote:
+> On Wed, Sep 03, 2025 at 12:43:27PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> > If the platform is using the new DT binding, let the pwrctrl core toggle
+> > PERST# for the device. This is achieved by populating the
+> > 'pci_host_bridge::toggle_perst' callback with qcom_pcie_toggle_perst().
+> 
+> Can we say something here about how to identify a "new DT binding"?
+> I assume there is a DT property or something that makes it "new"?
 
-One example is the IOTLB: when there's an IOTLB miss, get_tx_bufs()
-might return -EAGAIN and exit the loop and see there's still available
-buffers, so it will queue the tx work again until userspace feed the
-IOTLB entry correctly. This will slowdown the tx processing and may
-trigger the TX watchdog in the guest.
+This is taken care now.
 
-Fixing this by stick the notificaiton enabling logic inside the loop
-when nothing new is spotted and flush the batched before.
+> 
+> > qcom_pcie_toggle_perst() will find the PERST# GPIO descriptor associated
+> > with the supplied 'device_node' and toggles PERST#. If PERST# is not found
+> > in the supplied node, the function will look for PERST# in the parent node
+> > as a fallback. This is needed since PERST# won't be available in the
+> > endpoint node as per the DT binding.
+> > 
+> > Note that the driver still asserts PERST# during the controller
+> > initialization as it is needed as per the hardware documentation. Apart
+> > from that, the driver wouldn't touch PERST# for the new binding.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom.c | 89 +++++++++++++++++++++++++++++-----
+> >  1 file changed, 78 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > index 78355d12f10d263a0bb052e24c1e2d5e8f68603d..3c5c65d7d97cac186e1b671f80ba7296ad226d68 100644
+> > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > @@ -276,6 +276,7 @@ struct qcom_pcie_port {
+> >  struct qcom_pcie_perst {
+> >  	struct list_head list;
+> >  	struct gpio_desc *desc;
+> > +	struct device_node *np;
+> >  };
+> >  
+> >  struct qcom_pcie {
+> > @@ -298,11 +299,50 @@ struct qcom_pcie {
+> >  
+> >  #define to_qcom_pcie(x)		dev_get_drvdata((x)->dev)
+> >  
+> > -static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+> > +static struct gpio_desc *qcom_find_perst(struct qcom_pcie *pcie, struct device_node *np)
+> > +{
+> > +	struct qcom_pcie_perst *perst;
+> > +
+> > +	list_for_each_entry(perst, &pcie->perst, list) {
+> > +		if (np == perst->np)
+> > +			return perst->desc;
+> > +	}
+> > +
+> > +	return NULL;
+> > +}
+> > +
+> > +static void qcom_toggle_perst_per_device(struct qcom_pcie *pcie,
+> > +					 struct device_node *np, bool assert)
+> > +{
+> > +	int val = assert ? 1 : 0;
+> > +	struct gpio_desc *perst;
+> > +
+> > +	perst = qcom_find_perst(pcie, np);
+> > +	if (perst)
+> > +		goto toggle_perst;
+> > +
+> > +	/*
+> > +	 * If PERST# is not available in the current node, try the parent. This
+> > +	 * fallback is needed if the current node belongs to an endpoint or
+> > +	 * switch upstream port.
+> > +	 */
+> > +	if (np->parent)
+> > +		perst = qcom_find_perst(pcie, np->parent);
+> 
+> Ugh.  I think we need to fix the data structures here before we go
+> much farther.  We should be able to search for PERST# once at probe of
+> the Qcom controller.  Hopefully we don't need lists of things.
+> 
+> See https://lore.kernel.org/r/20250908183325.GA1450728@bhelgaas.
+> 
 
-Reported-by: Jon Kohler <jon@nutanix.com>
-Cc: stable@vger.kernel.org
-Fixes: 8c2e6b26ffe2 ("vhost/net: Defer TX queue re-enable until after sendmsg")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/net.c | 33 +++++++++++++--------------------
- 1 file changed, 13 insertions(+), 20 deletions(-)
+I've added a patch to fix in the next version of this series.
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 16e39f3ab956..3611b7537932 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -765,11 +765,11 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 	int err;
- 	int sent_pkts = 0;
- 	bool sock_can_batch = (sock->sk->sk_sndbuf == INT_MAX);
--	bool busyloop_intr;
- 	bool in_order = vhost_has_feature(vq, VIRTIO_F_IN_ORDER);
- 
- 	do {
--		busyloop_intr = false;
-+		bool busyloop_intr = false;
-+
- 		if (nvq->done_idx == VHOST_NET_BATCH)
- 			vhost_tx_batch(net, nvq, sock, &msg);
- 
-@@ -780,10 +780,18 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 			break;
- 		/* Nothing new?  Wait for eventfd to tell us they refilled. */
- 		if (head == vq->num) {
--			/* Kicks are disabled at this point, break loop and
--			 * process any remaining batched packets. Queue will
--			 * be re-enabled afterwards.
-+			/* Flush batched packets before enabling
-+			 * virqtueue notification to reduce
-+			 * unnecssary virtqueue kicks.
- 			 */
-+			vhost_tx_batch(net, nvq, sock, &msg);
-+			if (unlikely(busyloop_intr)) {
-+				vhost_poll_queue(&vq->poll);
-+			} else if (unlikely(vhost_enable_notify(&net->dev,
-+								vq))) {
-+				vhost_disable_notify(&net->dev, vq);
-+				continue;
-+			}
- 			break;
- 		}
- 
-@@ -839,22 +847,7 @@ static void handle_tx_copy(struct vhost_net *net, struct socket *sock)
- 		++nvq->done_idx;
- 	} while (likely(!vhost_exceeds_weight(vq, ++sent_pkts, total_len)));
- 
--	/* Kicks are still disabled, dispatch any remaining batched msgs. */
- 	vhost_tx_batch(net, nvq, sock, &msg);
--
--	if (unlikely(busyloop_intr))
--		/* If interrupted while doing busy polling, requeue the
--		 * handler to be fair handle_rx as well as other tasks
--		 * waiting on cpu.
--		 */
--		vhost_poll_queue(&vq->poll);
--	else
--		/* All of our work has been completed; however, before
--		 * leaving the TX handler, do one last check for work,
--		 * and requeue handler if necessary. If there is no work,
--		 * queue will be reenabled.
--		 */
--		vhost_net_busy_poll_try_queue(net, vq);
- }
- 
- static void handle_tx_zerocopy(struct vhost_net *net, struct socket *sock)
+> > +toggle_perst:
+> > +	/* gpiod* APIs handle NULL gpio_desc gracefully. So no need to check. */
+> > +	gpiod_set_value_cansleep(perst, val);
+> > +}
+> > +
+> > +static void qcom_perst_reset(struct qcom_pcie *pcie, struct device_node *np,
+> > +			      bool assert)
+> >  {
+> >  	struct qcom_pcie_perst *perst;
+> >  	int val = assert ? 1 : 0;
+> >  
+> > +	if (np)
+> > +		return qcom_toggle_perst_per_device(pcie, np, assert);
+> > +
+> >  	if (list_empty(&pcie->perst))
+> >  		gpiod_set_value_cansleep(pcie->reset, val);
+> >  
+> > @@ -310,22 +350,34 @@ static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+> >  		gpiod_set_value_cansleep(perst->desc, val);
+> >  }
+> >  
+> > -static void qcom_ep_reset_assert(struct qcom_pcie *pcie)
+> > +static void qcom_ep_reset_assert(struct qcom_pcie *pcie, struct device_node *np)
+> >  {
+> > -	qcom_perst_assert(pcie, true);
+> > +	qcom_perst_reset(pcie, np, true);
+> >  	usleep_range(PERST_DELAY_US, PERST_DELAY_US + 500);
+> >  }
+> >  
+> > -static void qcom_ep_reset_deassert(struct qcom_pcie *pcie)
+> > +static void qcom_ep_reset_deassert(struct qcom_pcie *pcie,
+> > +				   struct device_node *np)
+> >  {
+> >  	struct dw_pcie_rp *pp = &pcie->pci->pp;
+> >  
+> >  	msleep(PCIE_T_PVPERL_MS);
+> > -	qcom_perst_assert(pcie, false);
+> > +	qcom_perst_reset(pcie, np, false);
+> >  	if (!pp->use_linkup_irq)
+> >  		msleep(PCIE_RESET_CONFIG_WAIT_MS);
+> >  }
+> >  
+> > +static void qcom_pcie_toggle_perst(struct pci_host_bridge *bridge,
+> > +				    struct device_node *np, bool assert)
+> > +{
+> > +	struct qcom_pcie *pcie = dev_get_drvdata(bridge->dev.parent);
+> > +
+> > +	if (assert)
+> > +		qcom_ep_reset_assert(pcie, np);
+> > +	else
+> > +		qcom_ep_reset_deassert(pcie, np);
+> > +}
+> > +
+> >  static int qcom_pcie_start_link(struct dw_pcie *pci)
+> >  {
+> >  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> > @@ -1320,7 +1372,7 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+> >  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
+> >  	int ret;
+> >  
+> > -	qcom_ep_reset_assert(pcie);
+> > +	qcom_ep_reset_assert(pcie, NULL);
+> >  
+> >  	ret = pcie->cfg->ops->init(pcie);
+> >  	if (ret)
+> > @@ -1336,7 +1388,13 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+> >  			goto err_disable_phy;
+> >  	}
+> >  
+> > -	qcom_ep_reset_deassert(pcie);
+> > +	/*
+> > +	 * Only deassert PERST# for all devices here if legacy binding is used.
+> > +	 * For the new binding, pwrctrl driver is expected to toggle PERST# for
+> > +	 * individual devices.
+> 
+> Can we replace "new binding" with something explicit?  In a few
+> months, "new binding" won't mean anything.
+> 
+
+So I've introduced a new flag, qcom_pcie::legacy_binding, which gets set if the
+driver uses qcom_pcie_parse_legacy_binding(). Based on this flag, PERST# will be
+deasserted in this driver.
+
+And I've removed references to 'new binding' term.
+
+- Mani
+
 -- 
-2.34.1
-
+மணிவண்ணன் சதாசிவம்
 
