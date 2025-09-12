@@ -1,229 +1,607 @@
-Return-Path: <linux-kernel+bounces-813193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB699B541CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:00:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C236AB54292
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C04C4E06AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:00:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE26A043BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D7227146B;
-	Fri, 12 Sep 2025 05:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD6D27FB2A;
+	Fri, 12 Sep 2025 06:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="DRLXSpvf"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11010026.outbound.protection.outlook.com [52.101.84.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NmuvXn+b"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2449238D54;
-	Fri, 12 Sep 2025 05:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.84.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757653205; cv=fail; b=qclkTXaaTUq4UdTiKVFIfsPNjgUmnd0GufyMLyQ5diWsrnNhYRjEcNS/YUh7WWv6d4WjoKDyQR6Phc6JQ+pe208BrH15XjWncop/HOQAfy251OGlk6xvGblDD818M4QJCcaaj9ga6OW9+ic+Ay+DkWvYXDY0pcgjtlbumdAAhy8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757653205; c=relaxed/simple;
-	bh=vFAuyJaLoNKhPGFl2vGV132nibwONe/8Bg1H2I3QLAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UGcFiWrANc6gI+fZ5VdmtO8YNvN5VNxhYFuIWITeyPz+Pa37tAcjIRHLyUY+F7wjQEpa1dxofP973XAZklOYTLwq8oq8CNwE15uEvJrBP9NCzS7NXqkMA4c+i2tTgLzWXLwKiBTAxcv9N9n017+PGgXNdyu5GUWuMWHIZ3sG394=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=DRLXSpvf; arc=fail smtp.client-ip=52.101.84.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZqkCnrO+T7njEFNEmdyzOgekWaAZSxH2UPgJeQupkr+FCFt0m9yusxCqkDjc4973z+I7ESinDJvLqX0FqpvfJmcC3Ojyt805B1Vy/Gm35gaUrfnS8OTi980tnH57K6aF7XKKDe5Hu+XteW/FdbhAKye3J0fsxKzNDri1l4Hk66tf08I1wIgyl7fk4ENljpwTUMUau4MSyrB4US+9v0mu9hkvqLFiot4v4ncEKmVZvh0dPc+4ZMFsaZWpTR4DPrzM2CXPytPluYlW6AGShIw2TzEcmO0yV8yPWnoaX4AZ9h1moGk6T/zoG8Ej0zsJ8xLEz2hOyzmqfyluwGZC4zWujA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JfWjbX9muQ/QfiOVxmiYUgB+1ry+Ix4xk7wSPOIA/0Y=;
- b=Db9xQ1LzIrw1XwUKYbrMfMrtrEC73VcmH4t8ZUDTrnLQaqUaWFwivVHzkO2YfaFVsllKdP+IvddrSY/ohsK7MR796FBd/HJNWQrs5V7tZdF8VIhbfhwnp0Evhd+XmvcoBR4Q6TFJMiD5ud5xDG4oo7GojAOZ7mgDRzAOJHtmUvYtKmCmCb6JKVC29rn2vJC4JTT3tTA0dcvohfXf2Urkm6eAP07uqsCBkLUB2fnPjAsi/Tg9FqwOMLhGqwuOUmdI1+NDr74BPePG7l38dY1u51zKFpTd7IVONYUMNXL+EBmDE1dSaIld+0tuv+tpI1thR7UpQ19ekHg4GdQs89Qxsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JfWjbX9muQ/QfiOVxmiYUgB+1ry+Ix4xk7wSPOIA/0Y=;
- b=DRLXSpvfmOMCT4Z0mJWHQyWoufrGIw/A/OpHQ00uYXWrwJDMYKiSPuNEGuxXUO+k42Kjd3mg8UrV7DdnmN2pizh4gPi9mOng5b2PNS+5tS/Owl4f+6g4ELCKvYRyRgOjn8yycLsQox4QHkzX7DPVzZRPoePnWJjiqvI/O15SwHuz5F4PxEiNQSHOhpjNYZ/Sq6je3jVIeksehx9DXkzeC9HJQdk/0vE4UBATSsV3zgj0r6ynrQdch4aYMv0HF9TMGFETn0mQ0DdALOZvOWInNyQldcUk38lBn8EPvhXGLnTOnVOfFAZzmQ73VuVU663rSdTyYU/i/ponejhNY3K6+Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by AM0PR04MB7075.eurprd04.prod.outlook.com (2603:10a6:208:19e::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.15; Fri, 12 Sep
- 2025 05:00:00 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.9115.010; Fri, 12 Sep 2025
- 05:00:00 +0000
-Date: Fri, 12 Sep 2025 14:11:20 +0800
-From: Peng Fan <peng.fan@oss.nxp.com>
-To: Peng Fan <peng.fan@nxp.com>, Frank Li <frank.li@nxp.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Frank Li <frank.li@nxp.com>, Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Hiago De Franco <hiago.franco@toradex.com>,
-	"linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 6/6] remoteproc: imx_rproc: Clean up after ops
- introduction
-Message-ID: <20250912061120.GA27864@nxa18884-linux.ap.freescale.net>
-References: <20250910-imx-rproc-cleanup-v2-0-10386685b8a9@nxp.com>
- <20250910-imx-rproc-cleanup-v2-6-10386685b8a9@nxp.com>
- <aMGe/gwmFqjoFszg@lizhi-Precision-Tower-5810>
- <PAXPR04MB8459CABA152B6C1C122B35F28809A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459CABA152B6C1C122B35F28809A@PAXPR04MB8459.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-ClientProxiedBy: SI1PR02CA0054.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::13) To PAXPR04MB8459.eurprd04.prod.outlook.com
- (2603:10a6:102:1da::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65FC27B4E5
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757657504; cv=none; b=ne0EaMbZ7NU2Bqq5fGVzGjWyxGQTetYgTqo7f8zzF1mA+kkxtoQE/y6u7xdBYLS+xoh899rbQPfn+4rGj6lcjMqrI8rgQaJyGrpEykZOr4GO5qeLh3xiK0atGqPVwqi42vRAINYYDOZ4NrwZh2K0dq5Sly/+d7nRKBXQsvv27ks=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757657504; c=relaxed/simple;
+	bh=ZIuD/K0mC2hCJ+h1GRcZ0lPzsrHn6vNdLhLGGJiBpRQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TmAfJvYrEH9QO2XNmLD8ZhToI8oN2xi//SAwtPz7R500WtSY82yuSI5yb/DbXiWKAH/iVPLr9IEbBwCZfKH5A5PqQsVGK8ZlLkDg2WEEWGybXQDAgJZMGs2RMQQrso7cjVweQau9SGfmZ198BhVwBH3cwOWct3fNIYx/sXk7JxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NmuvXn+b; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-55f753ec672so1682209e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:11:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1757657499; x=1758262299; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HKYudIijENW+VMmwSnd2PJitIDDNaGWd5kb9W4eMWQY=;
+        b=NmuvXn+bKjSUniEFuZWJ/Szhwn3mMLiddIAcBUxDrOP34zM7vdCa0IONOZE10Du0sn
+         RuNgXxwn6qhZEfefUowC/nHRaAvR2W5yVgZmEdyKW1Cmu4yIo0dhzinxyJIoBYH3rxPC
+         lbRXRbSA4dx/cbPOE0wInd+JjOpB5Oc37aGpY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757657499; x=1758262299;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HKYudIijENW+VMmwSnd2PJitIDDNaGWd5kb9W4eMWQY=;
+        b=vo8qvVOfGvQOrwkV/AtjIzWZmSUPGAXzJvBRS8cfMonJcj04g1x3R4JyB4kxnwoGqO
+         v+1UaXkHLBg9XbGIdGLZbIMMqGPTcXA9l8EB8uuqxNh5Lzdly0wnBWUjzy1if5y6UJgH
+         0JuoI14OOJDwpn/3Camh55joHDoWz9T+6Rlv5csbbPrf3nFpJp6c3Lz7i5zcgzm3gWKM
+         fTsJkNr+bdqp+n1B9UeCWESpBLThVxMxdvIokbiM6GVjkiLXN/35uBv1mQv8Xie3HIOo
+         flTivuEgslIp6RwZlRdBjnWTE6vGwVReRG2Wv5ljf94kyNxnx5IuIT7N1H8NI/VGUcP5
+         KMNg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgBJeHvOE6N28Rxt2vioZr8aujsH0wcqg1jRTOXbuNVPRthSvceNIwiUF8CD2CCMrBbc/OwOT8lnat2K8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGHTQDWgdZhAvMw7dll3Ov99l2+cPWGPb69x2DQie+cQCiFFYb
+	hqgh6+VjIpLmXoS/9eaKMWR76MriIUXy11+hZ5sXuYLkr2FyS4waZy51z1aeW2vVnVbQ/LQbad6
+	CgG1RsQh9qIu3pE7bIhwr2FTjvKyH/dX7WtipsGsQ
+X-Gm-Gg: ASbGncvtt4XdBp/zeswWdZy0CfWpWeX3c6nxzVInZBhbZn85Zx2xmlVKMIxkcitxy5N
+	k5mZrmPk/gtb6b3PHQcHan25aQZcUpyC2/e6g7QVCuja6QHSZv4Hao0jGoGQ7xffdi5MUoFzHLF
+	BUR0dU87mLQMaaeMzmM4tcaezPCIjdT5pXF4rIGfeB6y4+7bT+mVDNYfFkvlsJ4LLzPrZyxC2AW
+	Gj/lb39mAtTkR/4nTUI5YG/KkWfeRdUgXyS/JewinhTye/2xzUgvwBodng=
+X-Google-Smtp-Source: AGHT+IG2moNOTSNLMoYHSoezIdxvmt8mTwP2cW6PATUD8B2f4ncGPk2S6PByDaHbdJhsioRt6+Ijpui3ztENA96ZLRs=
+X-Received: by 2002:a05:6512:6419:b0:55f:63ef:b2b7 with SMTP id
+ 2adb3069b0e04-57051b66347mr569576e87.56.1757657498890; Thu, 11 Sep 2025
+ 23:11:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8459:EE_|AM0PR04MB7075:EE_
-X-MS-Office365-Filtering-Correlation-Id: d04c8031-d88b-4525-d7ec-08ddf1b93a0d
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|19092799006|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+X2/OpNUdrJ2t5EVyAx2d42MXMH0Gp5y0qiaKrF9EzieB7gjVI8h8ePqMDGN?=
- =?us-ascii?Q?GhUWD4hrszP1qzpu79/2trokcLM5MQVxxtbTzB2dgSK+nnJ/LX0iRCLUGGLA?=
- =?us-ascii?Q?OlEf1RJ+8DtXGqDaNB4H1RqhpRnMd3B1cBNB0LBC71oyJe4Q4p9X6ctFJ/eq?=
- =?us-ascii?Q?1Auk48HUiMfJ6/p2Zbd367A5dH3RcOlZeAMM6tJw5vAE7yG6Tx71oVyy9hel?=
- =?us-ascii?Q?R/c3RhKnLIxwUH2pZb86aDA4nINThozSmpsSmllrrdRoIpRgJYf9DpAIAAY4?=
- =?us-ascii?Q?6kfgOjiEWlmHDapcTQbQxWIZPxG2p1ExWcvLJpZ5tI/zSVPpX4kCqfYVFswv?=
- =?us-ascii?Q?3QN0wxy7r9u9D7lUQHiaM/tyLo0eZqnPU1XmKVE24/q7k37pFTpcx8HrSujs?=
- =?us-ascii?Q?11lTFZCpQpddxqoqjcWXYkgjLQKGpY57+NqH8aagdK2uYv36kQv7vj9rco8Y?=
- =?us-ascii?Q?uinz/Foz2XsfZ8TmaVDscIX/KjNwuymHBDaTjwKNxK5sVlwAXHPD87Apf4nM?=
- =?us-ascii?Q?Ydqy+J8hJmnONu3QvxT3aiBsr896h682WziSmVqZPBWQmJrYpXGCnWUPQ6aW?=
- =?us-ascii?Q?h7djQXP5z26Rb16U8+PXZjCBMrbH6haDSqJv01J8iVXqLVObFNqAOuUxhJk5?=
- =?us-ascii?Q?naFL70LfVi847hPNqb7Rxhdiw4ie4N/xzCFQQxo67C1wckvFmJ1ReBoCYkfc?=
- =?us-ascii?Q?7gNvp6TaZ6VkippfjHnAONZTlshAd9q5t5O/jqSLCxrHpxcnrtAU/HG2hlg4?=
- =?us-ascii?Q?eg8HxxvGegDkAwzedP3J5XmIdngNTgQ8nP+BhXcc/G2eSvHvK8S1owiWts/A?=
- =?us-ascii?Q?3KLIlY0qrU3643YQXDakyBGKRv+mz40Vy7RQpnVW2QWoZpHlfGKnJ2I7nHhd?=
- =?us-ascii?Q?eCjMVhh2tuBtcsfy/CR0JCL4mH3YddDOh8j2+SQQiSUJq8jR/7OSbyzgVVbF?=
- =?us-ascii?Q?cAuMAah3J6FTjioWohb3yqKKm656BtySX6XOZUbNq12lE0dDlTQIWRVt1zmZ?=
- =?us-ascii?Q?ANIAf9H6iXIG+6sBYuB0RiwvMDfM88VhUl8JYsxqadyPYQluz49q4DaIxtid?=
- =?us-ascii?Q?whEn4R+WUJLHDqp13KUL0IwJQkE+uDVgbbJ+ZxJMTXNZJ6qq5CW2WD5KKWV8?=
- =?us-ascii?Q?EBWKhpd1ZCbABOMci9k5zK7OamTAXKZqvZKJ+sFLWvts4DBiQbC6Z7zRoWe5?=
- =?us-ascii?Q?bB/I5+VwSMQDkUR+F37U2UDlJP9BsiMrIiusHitKNkcT+Cq5K+e739th9ZYC?=
- =?us-ascii?Q?TMZ6Y/h40iHZzfrXbopJP4/jXGFfelMjdgEh5W08N2PC+DIkB91lfq8bdaPE?=
- =?us-ascii?Q?r6hvlipq+053snIvraHHnGkTJr8sIF6lCyVeLQlQFhyZrQXcjMzkadF377lc?=
- =?us-ascii?Q?ZvhLAtPrKteMJaD4N2siFJVgUktubQBKArTx29mzMZUM72+1m3ulKp4r1CX/?=
- =?us-ascii?Q?uwFRS2glNLwK0S6sep/nQ4QkNQZQEImae1tKGnADTqRqm6Hb6A6AkQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(19092799006)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?EOBWlCg1FZm3R18lRVlHlkurE8D4BzVujyuBnkjSD6lz40EK1+hS7YE/r4xe?=
- =?us-ascii?Q?8mT9dqgdOVlMwWst41sksFxb4CdNkF+xSOaSikc5/6ryV7hyolJjWSjTZY/A?=
- =?us-ascii?Q?KZNFnbFzwVl9eX6bCPRJ138kguoBY4JKBCl1FXw1CSpQb/d4hagjK/Vm5srk?=
- =?us-ascii?Q?oOG5OS3ix6uSs9o7gRzTfNUqP167XD29nyKwVYp3D4xzZQaD3qzgSk70IzJF?=
- =?us-ascii?Q?ODgMVUmfBr4q3tLJ9ih+YhnsQFG14dfqHB3ArGRvqA/sSL7v7/T2/gLxDAOw?=
- =?us-ascii?Q?HpvsGVR1ZiswN+VyZCQLFPAFqG8B/S3JmUnHc4OsEbNg4r2uyQ8SABI4fU2i?=
- =?us-ascii?Q?fEWWSaayqizdh+/kdizY6EKqfqJ8DHkdm2YdVCCr8c5xbWmXAZOaeR2ii9oP?=
- =?us-ascii?Q?j72jzwFkthoQkKcFJwLt06bcjEzYpl2+mYpVLMru2DsE7pjMQet4oUv8am/e?=
- =?us-ascii?Q?JcljiDvq0TNK2mMenpf6m/zs7LnMFWALokDAlYVxM5MdNtCQ2+Lr+4JdyorA?=
- =?us-ascii?Q?T0O+XsRemVsnpO+GHEKiwi/lnCJxI+kr6SHxjnjzKX2XrM7X+f4FWanH26Kc?=
- =?us-ascii?Q?0AAdEbGB1YrnRAEyMkUUvQKvknxhvI3WOwwL/5ZQifTLfj8SIRKahZhKkQII?=
- =?us-ascii?Q?kpC/FaaYec2Hjk4LOUQ6R4rWo7wgj+C78NW25+LiAQJEEm3qOPN32YrtRJnw?=
- =?us-ascii?Q?RZX3/CMTfxSW+ccc/6lClHqgdiCWkfL5RIVZd/s1H9mOxDB7k9qUW11mmEZV?=
- =?us-ascii?Q?Y6emgQeiuwuMqHcu012EGtZzJrWX95iVSh4e7gbnOBnqv5PV2QxDBjaLlY3Z?=
- =?us-ascii?Q?XJT//HfQUkhLLFYR7sLIkGdJmK1SNGLjS60W2RSJuXUIXczvx+AoNjmJqVkV?=
- =?us-ascii?Q?X7k2RwWE1d8Orvd9vTCXKDrU0SxMQB2SDWKNOqm54Fc1ENMKejA3vxip2FS4?=
- =?us-ascii?Q?u8xt75pOVi9HHez3ehItV2Y17yxtDQXImU7py4bCDukuaSKBSoPlCBELqOM0?=
- =?us-ascii?Q?PJEsUiMN8kUMUWsDxFB2OP6WZgbuNHjM/QXhqxTE7XIt+l5MetoEPH8e4p+R?=
- =?us-ascii?Q?y7OAWJlLMm3uRN/7+i/8M9YYfUMqQ2HJ5T06L8RghzKMMxF82xyVHrxTT0GI?=
- =?us-ascii?Q?O4hdG8MMCPLS+Bw65DZM1tnt8j4D+Bpf6AxfYzZOUZtSMd+hyktG5mr6GPrZ?=
- =?us-ascii?Q?+VkHLYs+2C57gxi4A+DVLvRxyPYkIAE1M4caMLbN5psbcw77NdD8l8T7gHgb?=
- =?us-ascii?Q?n6MFPyMFgQTbwNxTkkTAGGeU+qzsZqrfX0M90SOrPAKY1sIbnjUBfim8TvaO?=
- =?us-ascii?Q?AnHoIkkzwMO6vn2jVU2JYO107Wh67WeGsw88PbZ5lSLsRiRYPWK0wz3bwv7T?=
- =?us-ascii?Q?aj6UlmwrKDgOQtHLSIH5YsH6uHjnnhJ0pDJuJWBotp6b5oZLB99A0KNzraVR?=
- =?us-ascii?Q?JO5cj8Glublx6E0bekQx2LhiG7s0M8gZTocGFCAkjaLMSr+zWdOqcUfsPpxG?=
- =?us-ascii?Q?oK6GkcUntUHqwvlJuUmSjegujF9KeLdB/smJ1uuY3nrKk0oy68RDL86Mwvef?=
- =?us-ascii?Q?u+R3J+mU9Lkkbwg+Y2tWXouDy0LOuTq7PnDXabuT?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d04c8031-d88b-4525-d7ec-08ddf1b93a0d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 05:00:00.4179
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aMxLsvLGaDK9ASdAkc6FclpifleYDJhFnakevF90e6/RkjIiOWV6Nf40N4XYqJxL69C7kRlYyPa68onDQbTKVw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7075
+References: <20250905-mt8196-gpufreq-v1-0-7b6c2d6be221@collabora.com>
+ <20250905-mt8196-gpufreq-v1-5-7b6c2d6be221@collabora.com> <CAPaKu7RUx6KHyvdvrfX3u-7Lk=Wa3nmTh6-tD3CbReNAwNtgoQ@mail.gmail.com>
+In-Reply-To: <CAPaKu7RUx6KHyvdvrfX3u-7Lk=Wa3nmTh6-tD3CbReNAwNtgoQ@mail.gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Fri, 12 Sep 2025 14:11:27 +0800
+X-Gm-Features: Ac12FXz_fKfj9ay6hXOlPeYpx84IZIRd8Qfoc321fUVYG1RN3T6Cj8aJ2DNKpp0
+Message-ID: <CAGXv+5HF8uHw_sur+6DQPDf4QTh2eD1HRn1oZ4wwqGfZjYCx0Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 05/10] mailbox: add MediaTek GPUEB IPI mailbox
+To: Chia-I Wu <olvaffe@gmail.com>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 11, 2025 at 01:13:59AM +0000, Peng Fan wrote:
->Hi Frank,
->> 
->> Can you remove 'method' in data struct also?
+On Fri, Sep 12, 2025 at 12:48=E2=80=AFPM Chia-I Wu <olvaffe@gmail.com> wrot=
+e:
 >
->The method is used in other places and other purpose, imx_rproc_detach
->imx_rproc_put_scu, imx_rproc_remove, it is also referred 
->imx_dsp_rproc.c.
+> On Fri, Sep 5, 2025 at 3:24=E2=80=AFAM Nicolas Frattaroli
+> <nicolas.frattaroli@collabora.com> wrote:
+> >
+> > The MT8196 SoC uses an embedded MCU to control frequencies and power of
+> > the GPU. This controller is referred to as "GPUEB".
+> >
+> > It communicates to the application processor, among other ways, through
+> > a mailbox.
+> >
+> > The mailbox exposes one interrupt, which appears to only be fired when =
+a
+> > response is received, rather than a transaction is completed. For us,
+> > this means we unfortunately need to poll for txdone.
+> >
+> > The mailbox also requires the EB clock to be on when touching any of th=
+e
+> > mailbox registers.
+> >
+> > Add a simple driver for it based on the common mailbox framework.
+> >
+> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > ---
+> >  drivers/mailbox/Kconfig             |  10 ++
+> >  drivers/mailbox/Makefile            |   2 +
+> >  drivers/mailbox/mtk-gpueb-mailbox.c | 330 ++++++++++++++++++++++++++++=
+++++++++
+> >  3 files changed, 342 insertions(+)
+> >
+> > diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> > index 02432d4a5ccd46a16156a09c7f277fb03e4013f5..2016defda1fabb5c0fcc807=
+8f84a52d4e4e00167 100644
+> > --- a/drivers/mailbox/Kconfig
+> > +++ b/drivers/mailbox/Kconfig
+> > @@ -294,6 +294,16 @@ config MTK_CMDQ_MBOX
+> >           critical time limitation, such as updating display configurat=
+ion
+> >           during the vblank.
+> >
+> > +config MTK_GPUEB_MBOX
+> > +       tristate "MediaTek GPUEB Mailbox Support"
+> > +       depends on ARCH_MEDIATEK || COMPILE_TEST
+> > +       help
+> > +         The MediaTek GPUEB mailbox is used to communicate with the em=
+bedded
+> > +         controller in charge of GPU frequency and power management on=
+ some
+> > +         MediaTek SoCs, such as the MT8196.
+> > +         Say Y or m here if you want to support the MT8196 SoC in your=
+ kernel
+> > +         build.
+> > +
+> >  config ZYNQMP_IPI_MBOX
+> >         tristate "Xilinx ZynqMP IPI Mailbox"
+> >         depends on ARCH_ZYNQMP && OF
+> > diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
+> > index 98a68f838486eed117d24296138bf59fda3f92e4..564d06e71313e6d1972e4a6=
+036e1e78c8c7ec450 100644
+> > --- a/drivers/mailbox/Makefile
+> > +++ b/drivers/mailbox/Makefile
+> > @@ -63,6 +63,8 @@ obj-$(CONFIG_MTK_ADSP_MBOX)   +=3D mtk-adsp-mailbox.o
+> >
+> >  obj-$(CONFIG_MTK_CMDQ_MBOX)    +=3D mtk-cmdq-mailbox.o
+> >
+> > +obj-$(CONFIG_MTK_GPUEB_MBOX)   +=3D mtk-gpueb-mailbox.o
+> > +
+> >  obj-$(CONFIG_ZYNQMP_IPI_MBOX)  +=3D zynqmp-ipi-mailbox.o
+> >
+> >  obj-$(CONFIG_SUN6I_MSGBOX)     +=3D sun6i-msgbox.o
+> > diff --git a/drivers/mailbox/mtk-gpueb-mailbox.c b/drivers/mailbox/mtk-=
+gpueb-mailbox.c
+> > new file mode 100644
+> > index 0000000000000000000000000000000000000000..0236fb358136e434a09a21e=
+f293fe949ced94123
+> > --- /dev/null
+> > +++ b/drivers/mailbox/mtk-gpueb-mailbox.c
+> > @@ -0,0 +1,330 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * MediaTek GPUEB mailbox driver for SoCs such as the MT8196
+> > + *
+> > + * Copyright (C) 2025, Collabora Ltd.
+> > + *
+> > + * Developers harmed in the making of this driver:
+> > + *  - Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > + */
+> > +
+> > +#include <linux/atomic.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/device.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/io.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/mailbox_controller.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#define MBOX_CTL_TX_STS 0x0000
+> > +#define MBOX_CTL_IRQ_SET 0x0004
+> > +#define MBOX_CTL_IRQ_CLR 0x0074
+> > +#define MBOX_CTL_RX_STS 0x0078
+> > +
+> > +#define MBOX_FULL BIT(0) /* i.e. we've received data */
+> > +#define MBOX_CLOGGED BIT(1) /* i.e. the channel is shutdown */
+> > +
+> > +struct mtk_gpueb_mbox {
+> > +       struct device *dev;
+> > +       struct clk *clk;
+> > +       void __iomem *mbox_mmio;
+> > +       void __iomem *mbox_ctl;
+> > +       void **rx_buf;
+> > +       atomic_t *rx_status;
+> > +       struct mbox_controller mbox;
+> > +       unsigned int *chn;
+> > +       int irq;
+> > +       const struct mtk_gpueb_mbox_variant *v;
+> > +};
+> > +
+> > +struct mtk_gpueb_mbox_ch {
+> > +       const char *name;
+> > +       const int num;
+> > +       const unsigned int tx_offset;
+> > +       const unsigned int tx_len;
+> > +       const unsigned int rx_offset;
+> > +       const unsigned int rx_len;
+> > +       const bool no_response;
+> > +};
+> > +
+> > +struct mtk_gpueb_mbox_variant {
+> > +       unsigned int num_channels;
+> > +       const struct mtk_gpueb_mbox_ch channels[] __counted_by(num_chan=
+nels);
+> > +};
+> > +
+> > +/**
+> > + * mtk_gpueb_mbox_read_rx - read RX buffer from MMIO into ebm's RX buf=
+fer
+> > + * @ebm: pointer to &struct mtk_gpueb_mbox instance
+> > + * @channel: number of channel to read
+> > + */
+> > +static void mtk_gpueb_mbox_read_rx(struct mtk_gpueb_mbox *ebm,
+> > +                                  unsigned int channel)
+> > +{
+> > +       const struct mtk_gpueb_mbox_ch *ch;
+> > +
+> > +       ch =3D &ebm->v->channels[channel];
+> > +
+> > +       memcpy_fromio(ebm->rx_buf[channel], ebm->mbox_mmio + ch->rx_off=
+set,
+> > +                     ch->rx_len);
+> > +
+> > +}
+> > +
+> > +static irqreturn_t mtk_gpueb_mbox_isr(int irq, void *data)
+> > +{
+> > +       struct mtk_gpueb_mbox *ebm =3D data;
+> > +       u32 rx_handled =3D 0;
+> > +       u32 rx_sts;
+> > +       int i;
+> > +
+> > +       rx_sts =3D readl(ebm->mbox_ctl + MBOX_CTL_RX_STS);
+> > +
+> > +       for (i =3D 0; i < ebm->v->num_channels; i++) {
+> > +               if (rx_sts & BIT(i)) {
+> > +                       if (!atomic_cmpxchg(&ebm->rx_status[i], 0,
+> > +                                           MBOX_FULL | MBOX_CLOGGED))
+> > +                               rx_handled |=3D BIT(i);
+> > +               }
+> > +       }
+> We can loop over bits that are set in rx_sts, if we expect that only a
+> few bits are set most of the time.
 >
->Could we keep it for now?
+> > +
+> > +       writel(rx_handled, ebm->mbox_ctl + MBOX_CTL_IRQ_CLR);
 
-The method could not be removed from the data structure, because it is also
-used in imx_dsp_rproc.c.
+With the VCP, clearing the interrupt flag doubles as an ack to the
+coprocessor. I hope that's not the case here.
 
-I have a few more patches to do further cleanup, but that would make
-the patchset a bit larger. I would like to see Mathieu's view.
-
-Mathieu,
-
-Do you expect me to add more patches in V3 to cleanup other parts or
-we could keep the patchset size as it is, with further cleanup in
-a standalone new patchset?
-
-Thanks,
-Peng.
-
-
+> > +
+> > +       if (!(rx_sts ^ rx_handled))
+> "rx_sts =3D=3D rx_handled" should be more direct.
+> > +               return IRQ_WAKE_THREAD;
+> > +
+> > +       dev_warn_ratelimited(ebm->dev, "spurious interrupts on 0x%04X\n=
+",
+> > +                            rx_sts ^ rx_handled);
+> > +       return IRQ_NONE;
+> It seems a bit too punishing when there are spurious interrupts. I
+> wonder if we should warn, but return IRQ_WAKE_THREAD as long as
+> rx_handled !=3D 0.
 >
->Thanks,
->Peng.
+> Also, if another interrupt can fire before mtk_gpueb_mbox_thread runs,
+> that's data dropping rather than spurious interrupts.
+
++1
+
+Either the channel is free and a message can be sent over, or some
+message was received but hasn't been processed yet. Acking the
+reception without processing the message invites data losses and/or
+uncertain latency if you queue messages within the kernel driver.
+
+> > +}
+> > +
+> > +static irqreturn_t mtk_gpueb_mbox_thread(int irq, void *data)
+> > +{
+> > +       struct mtk_gpueb_mbox *ebm =3D data;
+> > +       irqreturn_t ret =3D IRQ_NONE;
+> > +       int status;
+> > +       int i;
+> > +
+> > +       for (i =3D 0; i < ebm->v->num_channels; i++) {
+> > +               status =3D atomic_cmpxchg(&ebm->rx_status[i],
+> > +                                       MBOX_FULL | MBOX_CLOGGED, MBOX_=
+FULL);
+> > +               if (status =3D=3D (MBOX_FULL | MBOX_CLOGGED)) {
+> We could also save rx_handled from mtk_gpueb_mbox_isr and loop over
+> bits that are set.  If we do that, ebm->rx_status[i] is guaranteed to
+> be MBOX_FULL | MBOX_CLOGGED.
 >
->> 
->> Frank
->> > -	case IMX_RPROC_NONE:
->> > +	/*
->> > +	 * To i.MX{7,8} ULP, Linux is under control of RTOS, no need
->> > +	 * dcfg->ops or dcfg->ops->detect_mode, it is state
->> RPROC_DETACHED.
->> > +	 */
->> > +	if (!dcfg->ops || !dcfg->ops->detect_mode) {
->> >  		priv->rproc->state = RPROC_DETACHED;
->> >  		return 0;
->> > -	default:
->> > -		break;
->> >  	}
->> >
->> > -	return 0;
->> > +	return dcfg->ops->detect_mode(priv->rproc);
->> >  }
->> >
->> >  static int imx_rproc_clk_enable(struct imx_rproc *priv)
->> >
->> > --
->> > 2.37.1
->> >
+> > +                       mtk_gpueb_mbox_read_rx(ebm, i);
+
+This needs to be done _before_ you ack the interrupt. Once you ack the
+channel interrupt, presumably it is free for the other side to send
+again.
+
+> > +                       mbox_chan_received_data(&ebm->mbox.chans[i],
+> > +                                               ebm->rx_buf[i]);
+> It looks like we read the data and pass it on to the client
+> immediately. Does each channel need its own rx_buf?
+
+AFAICT rx_buf is already split by channel?
+
+And if the client has to defer processing, it should make a copy.
+
+> > +                       /* FIXME: When does MBOX_FULL get cleared? Here=
+? */
+> > +                       atomic_set(&ebm->rx_status[i], 0);
+> > +                       ret =3D IRQ_HANDLED;
+> > +               }
+> > +       }
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static int mtk_gpueb_mbox_send_data(struct mbox_chan *chan, void *data=
+)
+> > +{
+> > +       struct mtk_gpueb_mbox *ebm =3D dev_get_drvdata(chan->mbox->dev)=
+;
+> > +       unsigned int *num =3D chan->con_priv;
+> > +       int i;
+> > +       u32 *values =3D data;
+> > +
+> > +       if (*num >=3D ebm->v->num_channels)
+> > +               return -ECHRNG;
+> Can this ever happen? (I am not familiar with the mbox subsystem)
+
+AFAIK it can't. The client has to first request the channel. The provider
+should check and error out then.
+
+> > +
+> > +       if (!ebm->v->channels[*num].no_response &&
+> > +           atomic_read(&ebm->rx_status[*num]))
+> > +               return -EBUSY;
+> When no_response is true, rx_status is 0. We probably don't need to
+> check no_response.
+>
+> > +
+> > +       writel(BIT(*num), ebm->mbox_ctl + MBOX_CTL_IRQ_CLR);
+> > +
+> > +       /*
+> > +        * We don't want any fancy nonsense, just write the 32-bit valu=
+es in
+> > +        * order. memcpy_toio/__iowrite32_copy don't work here, because=
+ fancy.
+> > +        */
+> > +       for (i =3D 0; i < ebm->v->channels[*num].tx_len; i +=3D 4) {
+> > +               writel(values[i / 4],
+> > +                      ebm->mbox_mmio + ebm->v->channels[*num].tx_offse=
+t + i);
+> > +       }
+> > +
+> > +       writel(BIT(*num), ebm->mbox_ctl + MBOX_CTL_IRQ_SET);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static int mtk_gpueb_mbox_startup(struct mbox_chan *chan)
+> > +{
+> > +       struct mtk_gpueb_mbox *ebm =3D dev_get_drvdata(chan->mbox->dev)=
+;
+> > +       unsigned int *num =3D chan->con_priv;
+> > +
+> > +       if (*num >=3D ebm->v->num_channels)
+> > +               return -ECHRNG;
+> > +
+> > +       atomic_set(&ebm->rx_status[*num], 0);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void mtk_gpueb_mbox_shutdown(struct mbox_chan *chan)
+> > +{
+> > +       struct mtk_gpueb_mbox *ebm =3D dev_get_drvdata(chan->mbox->dev)=
+;
+> > +       unsigned int *num =3D chan->con_priv;
+> > +
+> > +       atomic_set(&ebm->rx_status[*num], MBOX_CLOGGED);
+> > +}
+> > +
+> > +static bool mtk_gpueb_mbox_last_tx_done(struct mbox_chan *chan)
+> > +{
+> > +       struct mtk_gpueb_mbox *ebm =3D dev_get_drvdata(chan->mbox->dev)=
+;
+> > +       unsigned int *num =3D chan->con_priv;
+> > +
+> > +       return !(readl(ebm->mbox_ctl + MBOX_CTL_TX_STS) & BIT(*num));
+> > +}
+> > +
+> > +const struct mbox_chan_ops mtk_gpueb_mbox_ops =3D {
+> > +       .send_data =3D mtk_gpueb_mbox_send_data,
+> > +       .startup =3D mtk_gpueb_mbox_startup,
+> > +       .shutdown =3D mtk_gpueb_mbox_shutdown,
+> > +       .last_tx_done =3D mtk_gpueb_mbox_last_tx_done,
+> > +};
+> > +
+> > +static struct mbox_chan *
+> > +mtk_gpueb_mbox_of_xlate(struct mbox_controller *mbox,
+> > +                       const struct of_phandle_args *sp)
+> > +{
+> > +       struct mtk_gpueb_mbox *ebm =3D dev_get_drvdata(mbox->dev);
+> > +
+> > +       if (!sp->args_count)
+> > +               return ERR_PTR(-EINVAL);
+> > +
+> > +       if (sp->args[0] >=3D ebm->v->num_channels)
+> > +               return ERR_PTR(-ECHRNG);
+> > +
+> > +       return &mbox->chans[sp->args[0]];
+> > +}
+> > +
+> > +static int mtk_gpueb_mbox_probe(struct platform_device *pdev)
+> > +{
+> > +       struct mtk_gpueb_mbox *ebm;
+> > +       unsigned int rx_buf_sz;
+> > +       void *buf;
+> > +       unsigned int i;
+> > +       int ret;
+> > +
+> > +       ebm =3D devm_kzalloc(&pdev->dev, sizeof(*ebm), GFP_KERNEL);
+> > +       if (!ebm)
+> > +               return -ENOMEM;
+> > +
+> > +       ebm->dev =3D &pdev->dev;
+> > +       ebm->v =3D of_device_get_match_data(ebm->dev);
+> > +
+> > +       dev_set_drvdata(ebm->dev, ebm);
+> > +
+> > +       ebm->clk =3D devm_clk_get_enabled(ebm->dev, NULL);
+> > +       if (IS_ERR(ebm->clk))
+> > +               return dev_err_probe(ebm->dev, PTR_ERR(ebm->clk),
+> > +                                    "Failed to get 'eb' clock\n");
+> > +
+> > +       ebm->mbox_mmio =3D devm_platform_ioremap_resource_byname(pdev, =
+"mbox");
+> > +       if (IS_ERR(ebm->mbox_mmio))
+> > +               return dev_err_probe(ebm->dev, PTR_ERR(ebm->mbox_mmio),
+> > +                                    "Couldn't map mailbox registers\n"=
+);
+> > +
+> > +       ebm->mbox_ctl =3D devm_platform_ioremap_resource_byname(pdev, "=
+mbox_ctl");
+> > +       if (IS_ERR(ebm->mbox_ctl))
+> > +               return dev_err_probe(
+> > +                       ebm->dev, PTR_ERR(ebm->mbox_ctl),
+> > +                       "Couldn't map mailbox control registers\n");
+> > +
+> > +       rx_buf_sz =3D (ebm->v->channels[ebm->v->num_channels - 1].rx_of=
+fset +
+> > +                    ebm->v->channels[ebm->v->num_channels - 1].rx_len)=
+;
+> rx is after tx in mmio. The first half of the space is wasted.
+>
+> We follow mtk_gpueb_mbox_read_rx by mbox_chan_received_data. It seems
+> we only need max of rx_len's.
+>
+> > +
+> > +       buf =3D devm_kzalloc(ebm->dev, rx_buf_sz, GFP_KERNEL);
+> > +       if (!buf)
+> > +               return -ENOMEM;
+> > +
+> > +       ebm->rx_buf =3D devm_kmalloc_array(ebm->dev, ebm->v->num_channe=
+ls,
+> > +                                        sizeof(*ebm->rx_buf), GFP_KERN=
+EL);
+> > +       if (!ebm->rx_buf)
+> > +               return -ENOMEM;
+> > +
+> > +       ebm->mbox.chans =3D devm_kcalloc(ebm->dev, ebm->v->num_channels=
+,
+> > +                                      sizeof(struct mbox_chan), GFP_KE=
+RNEL);
+> > +       if (!ebm->mbox.chans)
+> > +               return -ENOMEM;
+> > +
+> > +       ebm->rx_status =3D devm_kcalloc(ebm->dev, ebm->v->num_channels,
+> > +                                     sizeof(atomic_t), GFP_KERNEL);
+> > +       if (!ebm->rx_status)
+> > +               return -ENOMEM;
+> > +
+> > +       ebm->chn =3D devm_kcalloc(ebm->dev, ebm->v->num_channels,
+> > +                               sizeof(*ebm->chn), GFP_KERNEL);
+> > +
+> > +       for (i =3D 0; i < ebm->v->num_channels; i++) {
+> > +               ebm->rx_buf[i] =3D buf + ebm->v->channels[i].rx_offset;
+> > +               spin_lock_init(&ebm->mbox.chans[i].lock);
+> > +               /* the things you do to avoid explicit casting void* */
+> I actually prefer an inline helper that casts chan->con_priv to the
+> channel number. Another option is "chan - ebm->mox.chans".
+> > +               ebm->chn[i] =3D i;
+> > +               ebm->mbox.chans[i].con_priv =3D &ebm->chn[i];
+> > +               atomic_set(&ebm->rx_status[i], MBOX_CLOGGED);
+> > +       }
+> > +
+> > +       ebm->mbox.dev =3D ebm->dev;
+> > +       ebm->mbox.num_chans =3D ebm->v->num_channels;
+> > +       ebm->mbox.txdone_poll =3D true;
+> > +       ebm->mbox.txpoll_period =3D 0; /* minimum hrtimer interval */
+> > +       ebm->mbox.of_xlate =3D mtk_gpueb_mbox_of_xlate;
+> > +       ebm->mbox.ops =3D &mtk_gpueb_mbox_ops;
+> > +
+> > +       ebm->irq =3D platform_get_irq(pdev, 0);
+> > +       if (ebm->irq < 0)
+> > +               return ebm->irq;
+> > +
+> > +       ret =3D devm_request_threaded_irq(ebm->dev, ebm->irq, mtk_gpueb=
+_mbox_isr,
+> > +                                       mtk_gpueb_mbox_thread, 0, NULL,=
+ ebm);
+> > +       if (ret)
+> > +               return dev_err_probe(ebm->dev, ret, "failed to request =
+IRQ\n");
+> > +
+> > +       ret =3D devm_mbox_controller_register(ebm->dev, &ebm->mbox);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static const struct mtk_gpueb_mbox_variant mtk_gpueb_mbox_mt8196 =3D {
+> > +       .num_channels =3D 12,
+> > +       .channels =3D {
+> > +               { "fast_dvfs_event", 0, 0x0000, 16, 0x00e0, 16, false }=
+,
+> > +               { "gpufreq",         1, 0x0010, 32, 0x00f0, 32, false }=
+,
+> > +               { "sleep",           2, 0x0030, 12, 0x0110,  4, true  }=
+,
+> > +               { "timer",           3, 0x003c, 24, 0x0114,  4, false }=
+,
+> > +               { "fhctl",           4, 0x0054, 36, 0x0118,  4, false }=
+,
+> > +               { "ccf",             5, 0x0078, 16, 0x011c, 16, false }=
+,
+> > +               { "gpumpu",          6, 0x0088, 24, 0x012c,  4, false }=
+,
+> > +               { "fast_dvfs",       7, 0x00a0, 24, 0x0130, 24, false }=
+,
+> > +               { "ipir_c_met",      8, 0x00b8,  4, 0x0148, 16, false }=
+,
+> > +               { "ipis_c_met",      9, 0x00bc, 16, 0x0158,  4, false }=
+,
+> > +               { "brisket",        10, 0x00cc, 16, 0x015c, 16, false }=
+,
+> > +               { "ppb",            11, 0x00dc,  4, 0x016c,  4, false }=
+,
+> > +       },
+> > +};
+> > +
+> > +static const struct of_device_id mtk_gpueb_mbox_of_ids[] =3D {
+> > +       { .compatible =3D "mediatek,mt8196-gpueb-mbox",
+> > +         .data =3D &mtk_gpueb_mbox_mt8196 },
+> > +       { /* Sentinel */ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, mtk_gpueb_mbox_of_ids);
+> > +
+> > +static struct platform_driver mtk_gpueb_mbox_drv =3D {
+> > +       .probe =3D mtk_gpueb_mbox_probe,
+> > +       .driver =3D {
+> > +               .name =3D "mtk-gpueb-mbox",
+> > +               .of_match_table =3D mtk_gpueb_mbox_of_ids,
+> > +       }
+> > +};
+> > +module_platform_driver(mtk_gpueb_mbox_drv);
+> > +
+> > +MODULE_AUTHOR("Nicolas Frattaroli <nicolas.frattaroli@collabora.com>")=
+;
+> > +MODULE_DESCRIPTION("MediaTek GPUEB mailbox driver for SoCs such as the=
+ MT8196");
+> > +MODULE_LICENSE("GPL");
+> >
+> > --
+> > 2.51.0
+> >
 
