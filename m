@@ -1,93 +1,364 @@
-Return-Path: <linux-kernel+bounces-813903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E415B54CCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:12:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49CBCB54CCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:12:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4931C5A3CE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F6D3B51B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F1A303A3D;
-	Fri, 12 Sep 2025 11:57:29 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16548302776;
+	Fri, 12 Sep 2025 11:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wlzrzEMQ"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D10930274A;
-	Fri, 12 Sep 2025 11:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7485301018
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678249; cv=none; b=ROlCKV5tjhNrkjIVH1nu8y8HoYjLluRJ2PKqlFbg5SdBqQLC8rCMkt07QhvOroqv74Q9wURjKS6Ig/3FHwTo8MqEI07xtmq95AS6euOOO4xJvSSdVi/yEYXMaz9E5GlSBtIXHwiaDlfoGUu3smKjQVzihL8RGauq+4wnEHGEX8M=
+	t=1757678360; cv=none; b=fm2qh9oBe84nZARlMPiJu7o6eE8V+ct8wOJz2ENbO9vskPNd0qpJFRE9FryjoD3vCDctNFdmhTMLrr8BVK5itgm43dE1xt9aGfxZsysfmamg/Ae0My5WRalVvvDuEJ9zgAgPeQ7UK6bj2IMaR0yWmYAG4Yivgdule11Am8fMMic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678249; c=relaxed/simple;
-	bh=jxwn4iF8hNWaAU6J9N2S0KXwUK3vQgiVZmCMjYcCq+Q=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pbMnLW28bwBwU7ZPj+lRZ7j6L+1hcsvklbjI5xDA7MwOnGk+/B7YYtwGe8RGxRlJtxGNTsNns7wze0yXvmz1G6oUW9XmaksB02O5unA+F8HC7PijUGaHHhCYHQGRj8sDZZpe4eB1n1/t4DRPKWf45/fQYt6j8wJLOcHSTOpXIsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNXqm16PBz6L5Ch;
-	Fri, 12 Sep 2025 19:53:08 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D648C1402A4;
-	Fri, 12 Sep 2025 19:57:24 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
- 2025 13:57:23 +0200
-Date: Fri, 12 Sep 2025 12:57:22 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, Ben Horgan <ben.horgan@arm.com>
-Subject: Re: [PATCH v2 16/29] arm_mpam: Add a helper to touch an MSC from
- any CPU
-Message-ID: <20250912125722.0000373e@huawei.com>
-In-Reply-To: <20250910204309.20751-17-james.morse@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-17-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757678360; c=relaxed/simple;
+	bh=8/a/qJABGQQsO7MWth/gWIdU5R1QGpf9oLF4k9j7v3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O+HCkttC9lJh0ZHnlTt2whjDwpWMBFOrRBsge6CRotXxL4WXhmRBn5JSIoeKodazrgrlp4sIH9ibFR+sWexYqeOf5KGO9yxwh8Z4NTXrn/ySeVlulW5RX08y6C3QBYMYCaLvKZ/du5zplGJlCk6ExEsRLDdstUs3jvwtTGLNnyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wlzrzEMQ; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f6186cc17so1552600e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:59:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757678354; x=1758283154; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lg7qWRUKABPmJe9YUV85wwqlEXsnIyAFDE3XX1No4O4=;
+        b=wlzrzEMQNu6ErC/7l/p84M6LxoXED0PH473liusmpqhVyBDBYUfvFd8lskx9wwz5op
+         CwMeXSjcBVlABWh6A3ek/oFYCtIk2y28CMXwPtTNrpuXfa3kz3nWk8ZOyo6EtyGSZv7P
+         g1Y+1fh8LdAP7PDLi9tMkZGkvZ7CVcTI5tgkzTlAB/OA8zwnadl6p2IDnOrVERk0X0EC
+         3uvaOT8TKviuDZ+njDtoGzhZDaWVS8xpGjYfw/uFTHnvnUEru4FLaZR8Fyksr6JzUnth
+         Vg9mztynBQHCPcHTXh7Sz2Gebfy4XBlUWzFumQYozSIcGoUSZ+2h/OXjylI2Ee3nTvye
+         y2aA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757678354; x=1758283154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lg7qWRUKABPmJe9YUV85wwqlEXsnIyAFDE3XX1No4O4=;
+        b=R/Ex7w01CL5/AMz4EwP7OlQ9btmYKN2P7bEY+cwJ9vqUxgCDh6vi5Kz5mR4SWgi98d
+         F15Aicf5gkkqvvMdksRsZyU4jgezC+UAHSBaukl0xfXNLkYHT+3VdqH+flmEgGNz4VdQ
+         OGqvvNvWK/DFO2ikpyDKyES3XqMfcrQ7fvD6Lc97TdPpbKS9u8oMvkjBqM/MX1QA5zNa
+         s70R2Eb2c75GUExhKsJM4Wfq4VoYsO41eKlQhy/2/eZBfTvx8wOnRsXQDTkhI/bzTtcC
+         H+qBnoxuo+E1lgaLPbaDyB2kEw/0lOCBu7zUFw5gnZScxCpwhjB0HezzA18CjO8rP2zP
+         gMtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyQR6cLewEfEqyyAbqF1JAxkg9GseOfJ+ZgUCcbU+avRjftNfGxiH4LKk1cJfhyg2vwvPi3nZZtVpwdlQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXqll5HM9xBGstGbKFoigIakOxuL1LWKi6XTr8AObd9AOSwl3o
+	iYAmZgFqC41sLe2m+hV8TkwfHtYzlQPTmzYdcJlcpTvyHI7uHkxccMUXxYoMvmiBqAdCLNxGzfG
+	kNe1V4zGICG52YXgZyeyXmtrxpCaRrry3MMrMTWbomw==
+X-Gm-Gg: ASbGncvWfsj2pwmrC5soy/aKlqcH9i/IMw8cF4xU/VnhefHm309Vq+PATCkU89vhI4O
+	oxPpG3H+gfzqvlCgtcVHjflQb4ZoCv/vmK3j0gIERrVN2mf6Fxhe/IfH516eOVCT/OomTtSA+b1
+	d5j8SGfDFcvmEpYC652fws2gEXhYV0n0Y36x2xxaSmF3BtE+himDAxjXKH6ukmE3tQV/qNuaJ2O
+	uiwyuc=
+X-Google-Smtp-Source: AGHT+IGeZRJRiB/LmqkbexVvmZJ7WX/3/khEzl2E2teMJl+0sV9Tw4l6WBQajDk3wJg2rzu7bsPpdTU3lciwtrFDvjM=
+X-Received: by 2002:a05:6512:234b:b0:55f:3faa:7c02 with SMTP id
+ 2adb3069b0e04-5704e7223e3mr905200e87.40.1757678353719; Fri, 12 Sep 2025
+ 04:59:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250912060650.2180691-1-gary.yang@cixtech.com> <20250912060650.2180691-2-gary.yang@cixtech.com>
+In-Reply-To: <20250912060650.2180691-2-gary.yang@cixtech.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 12 Sep 2025 13:59:00 +0200
+X-Gm-Features: Ac12FXxgQqTM_v6IlK5tuOK400vNP5lgdVRrVI1BjBu-zlzI4VXvJPt0wi-IxX4
+Message-ID: <CACRpkdYgTjerG5mks_+3sjhKKYtCsFY=1NWhgw_YEuib7gZm3g@mail.gmail.com>
+Subject: Re: [v2 1/3] pinctrl: cix: Add pin-controller support for sky1
+To: Gary Yang <gary.yang@cixtech.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	cix-kernel-upstream@cixtech.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 10 Sep 2025 20:42:56 +0000
-James Morse <james.morse@arm.com> wrote:
+Hi Gary,
 
-> Resetting RIS entries from the cpuhp callback is easy as the
-> callback occurs on the correct CPU. This won't be true for any other
-> caller that wants to reset or configure an MSC.
-> 
-> Add a helper that schedules the provided function if necessary.
-> 
-> Callers should take the cpuhp lock to prevent the cpuhp callbacks from
-> changing the MSC state.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-> Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+thanks for your patch!
+
+On Fri, Sep 12, 2025 at 8:06=E2=80=AFAM Gary Yang <gary.yang@cixtech.com> w=
+rote:
+
+> Add the pin-controller driver for Sky1 platform
+>
+
+Add some more description of the pin control on the SoC here please.
+
+> Signed-off-by: Gary Yang <gary.yang@cixtech.com>
+(...)
+
+Config structure in Kconfig looks good!
+
+> +++ b/drivers/pinctrl/cix/pinctrl-sky1-base.c
+> @@ -0,0 +1,581 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +//
+> +// Author: Jerry Zhu <Jerry.Zhu@cixtech.com>
+> +
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_address.h>
+> +#include <linux/pinctrl/machine.h>
+> +#include <linux/pinctrl/pinconf.h>
+> +#include <linux/pinctrl/pinconf-generic.h>
+> +#include <linux/pinctrl/pinctrl.h>
+> +#include <linux/pinctrl/pinmux.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/seq_file.h>
+> +#include <linux/slab.h>
+> +
+> +#include "../core.h"
+> +#include "../pinconf.h"
+> +#include "../pinctrl-utils.h"
+> +#include "../pinmux.h"
+> +#include "pinctrl-sky1.h"
+> +
+> +#define SKY1_PIN_SIZE          (0x4)
+> +#define SKY1_MUX_MASK          (0x180)
+
+For masks do this:
+
+#include <linux/bits.h>
+
+#define SKY1_MUX_MASK GENMASK(8, 7)
+
+GENMASK generates a bitmask from bit 7 to 8, 0x180.
+
+If its a 32bit register you can use GENMASK_U32() to be
+even clearer, etc.
+
+> +#define SKY1_MUX_SHIFT         (0x7)
+> +#define SKY1_PULLCONF_MASK     (0x60)
+
+Same idea here.
+
+> +#define SKY1_PULLUP_SHIFT      (0x6)
+> +#define SKY1_PULLDN_SHIFT      (0x5)
+
+I would probably do this:
+
+#include <linus/bits.h>
+
+#define SKY1_PULLDN BIT(5)
+#define SKY1_PULLUP BIT(6)
+
+Using simple bit references to define what each bit
+is for.
+
+> +#define SKY1_DS_MASK           (0x0f)
+
+Use GENMASK()
+
+> +#define CIX_GET_PIN_NO(x) ((x) >> 8)
+> +#define CIX_GET_PIN_FUNC(x) ((x) & 0xf)
+
+Maybe define 8 and 0xf as shifts?
+
+> +static const struct sky1_function_desc *sky1_pctrl_find_function_by_pin(
+> +               struct sky1_pinctrl *spctl, u32 pin_num, u32 fnum)
+> +{
+> +       const struct sky1_pin_desc *pin =3D spctl->info->pins + pin_num;
+> +       const struct sky1_function_desc *func =3D pin->functions;
+> +
+> +       while (func && func->name) {
+> +               if (func->muxval =3D=3D fnum)
+> +                       return func;
+> +               func++;
+> +       }
+
+Using a NULL func->name to terminate the array looks a bit dangerous.
+
+What about adding:
+
+> +struct sky1_function_desc {
+> +       unsigned char muxval;
+> +       const char *name;
+
+const char * const *functions;
+size_t nfuncs;
+
+> +};
+
+Then you can use nfuncs to iterate over the array of
+function names, and define a macro like this:
+
+#define SKY_PINFUNCTION(_muxval, _functions, _nfunctions)   \
+(struct sky1_function_desc) {                                  \
+                .muxval =3D (muxval),                        \
+                .functions =3D (_functions),                    \
+                .nfuncs =3D (_nfunctions),                  \
+        }
+
+And then this:
+
++static const struct sky1_pin_desc sky1_pinctrl_s5_pads[] =3D {
+> +       {
+> +               .pin =3D PINCTRL_PIN(0, "GPIO1"),
+> +               .functions =3D {
+> +                       [0] =3D {0, "GPIO1"},
+> +               },
+> +       },
+> +       {
+> +               .pin =3D PINCTRL_PIN(1, "GPIO2"),
+> +               .functions =3D {
+> +                       [0] =3D {0, "GPIO2"},
+> +               },
+
+> +       },
+
+becomes
+
+static const struct sky1_pin_desc sky1_pinctrl_s5_pads[] =3D {
+    SKY_PINFUNCTION(PINCTRL_PIN(0, "GPIO1"),  "GPIO1", 1),
+    SKY_PINFUNCTION(PINCTRL_PIN(1, "GPIO2"),  "GPIO2", 1),
+
+I don't know about using the PINCTRL_PIN() macro here though,
+can't you just put in 0, 1...?
+
+Anyway I think you get the idea.
+
+> +static bool sky1_pctrl_is_function_valid(struct sky1_pinctrl *spctl,
+> +               u32 pin_num, u32 fnum)
+> +{
+> +       int i;
+> +
+> +       for (i =3D 0; i < spctl->info->npins; i++) {
+> +               const struct sky1_pin_desc *pin =3D spctl->info->pins + i=
+;
+> +
+> +               if (pin->pin.number =3D=3D pin_num) {
+> +                       const struct sky1_function_desc *func =3D
+> +                                       pin->functions;
+> +
+> +                       while (func && func->name) {
+
+So here you could just for (i =3D 0; i++; i < func->nfuncs)
+
+(etc everywhere)
+
+> +static int sky1_pctrl_dt_node_to_map_func(struct sky1_pinctrl *spctl,
+> +               u32 pin, u32 fnum, struct sky1_pinctrl_group *grp,
+> +               struct pinctrl_map **map, unsigned int *reserved_maps,
+> +               unsigned int *num_maps)
+> +{
+> +       bool ret;
+> +
+> +       if (*num_maps =3D=3D *reserved_maps)
+> +               return -ENOSPC;
+> +
+> +       (*map)[*num_maps].type =3D PIN_MAP_TYPE_MUX_GROUP;
+> +       (*map)[*num_maps].data.mux.group =3D grp->name;
+> +
+> +       ret =3D sky1_pctrl_is_function_valid(spctl, pin, fnum);
+> +       if (!ret) {
+> +               dev_err(spctl->dev, "invalid function %d on pin %d .\n",
+> +                               fnum, pin);
+> +               return -EINVAL;
+> +       }
+> +
+> +       (*map)[*num_maps].data.mux.function =3D sky1_gpio_functions[fnum]=
+;
+> +       (*num_maps)++;
+> +
+> +       return 0;
+> +}
+> +
+> +static struct sky1_pinctrl_group *
+> +sky1_pctrl_find_group_by_pin(struct sky1_pinctrl *spctl, u32 pin)
+> +{
+> +       int i;
+> +
+> +       for (i =3D 0; i < spctl->info->npins; i++) {
+> +               struct sky1_pinctrl_group *grp =3D
+> +                       (struct sky1_pinctrl_group *)spctl->groups + i;
+> +
+> +               if (grp->pin =3D=3D pin)
+> +                       return grp;
+> +       }
+> +
+> +       return NULL;
+> +}
+
+And this:
+
+> +struct sky1_pinctrl_group {
+> +       const char *name;
+> +       unsigned long config;
+> +       unsigned int pin;
+> +};
+
+it's a bit conceptually weird.
+
+Usually a pin can be member of many groups.
+
+The only time this works is when the pin controller is of the type
+where every pin is placed in a single group with only that pin in it.
+
+And that seems to be the case, because:
+
+> +static int sky1_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
+> +{
+> +       struct sky1_pinctrl *spctl =3D pinctrl_dev_get_drvdata(pctldev);
+> +
+> +       return spctl->info->npins;
+> +}
+
+If this is the implied pattern for this driver, write as a comment to
+the above function that this pin controller place all pins into a
+single group with one pin and that this is why this works.
+
+The normal (as can be seen from the pin control documentation
+https://docs.kernel.org/driver-api/pin-control.html )
+is to group pins, so e.g.
+
+uart0_rx_tx_grp =3D { pin1, pin2 };
+i2c0_sda_scl_grp =3D { pin1, pin2 };
+
+Then this is combined with functions such as uart0 and i2c0:
+
+function, group
+("uart0", uart0_rx_tx_grp)
+("i2c0", i2c0_sda_scl_grp)
+
+Here you see the two pins are used for uart in the first case
+and for i2c in the second case, it's the same pins, but members
+of two different groups, and these groups are then used with
+a function.
+
+The possible functions for a group are then defined somewhere
+so these settings can be applied.
+
+Maybe this pattern is something you have in your driver
+because the code was copied from some other driver
+which use one group per pin, it's not certain that this is the
+best layout for the cix SoC so look it over!
+
+The pinconf part of the driver looks very good to me.
+
+Look over these things, and keep posting updates!
+
+Yours,
+Linus Walleij
 
