@@ -1,107 +1,68 @@
-Return-Path: <linux-kernel+bounces-814464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BBAB5546C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:06:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D3FB55482
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58DEAAA7CC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25D4AC1552
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0026B3164DC;
-	Fri, 12 Sep 2025 16:06:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279B138FA3;
-	Fri, 12 Sep 2025 16:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943233168E4;
+	Fri, 12 Sep 2025 16:13:02 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345A1314A94;
+	Fri, 12 Sep 2025 16:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757693187; cv=none; b=iUOjBKebCRtJTGRNXndkDuBDhuleiWyjCgr70NwFQ6LzT59j6vKDrw7WvCyX85TqfQJFC7vtm4uV/zoB07XL5cXFLfLExrPbjjQaz8kUwmcYuEY0APOeiCjckGggaw2hnh/idLhB89ESbWbRM0nLH6jMqTp0ksQ1yR8lGZ7takU=
+	t=1757693582; cv=none; b=aq60U6/F0QqpakguSmPdhGJN034NxGrvu29T/RJddQeMAJCW2tDUBx19EXp565WdJ/mnyaelWrqA6p1bCGkW+lPfg77bPOxxGD7yALakBs21GzSqB8K2WlJtvfdNrOADDxRbCP3RbHwdoFX6YffwKjf4xPj22PE+iEv1j3wPc/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757693187; c=relaxed/simple;
-	bh=KiVbFQLdHz8BS0bRrUCob+/HD9EfIXeRXBadlosIlbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hxlNoUN8641o2owIhioQhsPuqQYbCn7ruEifogmmSDan435CDKyghT7uk042Y4ToyyaRFJOk9oujqeQXUtfQL6dXccaIl7o1tZ8ObIy1aNr6wY62mfeAwd7ynONmx6U4x5MWXTlJrIb7ZafnIjbxu3YDUW1IC6cu9mra3H9bed4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E28B31515;
-	Fri, 12 Sep 2025 09:06:16 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DEF83F66E;
-	Fri, 12 Sep 2025 09:06:19 -0700 (PDT)
-Message-ID: <848050b3-65d7-4caf-b093-7145eb782a7c@arm.com>
-Date: Fri, 12 Sep 2025 17:06:18 +0100
+	s=arc-20240116; t=1757693582; c=relaxed/simple;
+	bh=4lhlLjm3Y1Bq0U2EnCek+tbyEVEygRa5NMrGKRfBY/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBO6X7eD8NOGHCCUyl6VeWfyLgi9D0be9SdrRThVLJSFcRyLTZNN/lCJ2SAfYo6iYCkdvS3MEHl+/2vlXriQqJF+9VoQRxOsWBhkd6S6pJq4vfuzZUVlhnM2JOc/1o63QdeQy0SHPFPkRomKeKP8Jp8syQMgP0IJEs+Ay2nBDFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8BDC4CEF1;
+	Fri, 12 Sep 2025 16:12:59 +0000 (UTC)
+Date: Fri, 12 Sep 2025 17:12:56 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: will@kernel.org, broonie@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
+	ardb@kernel.org, scott@os.amperecomputing.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND v7 1/6] arm64: cpufeature: add FEAT_LSUI
+Message-ID: <aMRGiF9Ez18tc4u9@arm.com>
+References: <20250816151929.197589-1-yeoreum.yun@arm.com>
+ <20250816151929.197589-2-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 28/29] arm_mpam: Add kunit test for bitmap reset
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-29-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250910204309.20751-29-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250816151929.197589-2-yeoreum.yun@arm.com>
 
-Hi James,
-
-On 9/10/25 21:43, James Morse wrote:
-> The bitmap reset code has been a source of bugs. Add a unit test.
+On Sat, Aug 16, 2025 at 04:19:24PM +0100, Yeoreum Yun wrote:
+> Since Armv9.6, FEAT_LSUI supplies load/store instructions
+> for privileged level to access user memory without clearing PSTATE.PAN bit.
 > 
-> This currently has to be built in, as the rest of the driver is
-> builtin.
-> 
-> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
->  drivers/resctrl/Kconfig             | 10 +++++
->  drivers/resctrl/mpam_devices.c      |  4 ++
->  drivers/resctrl/test_mpam_devices.c | 68 +++++++++++++++++++++++++++++
->  3 files changed, 82 insertions(+)
->  create mode 100644 drivers/resctrl/test_mpam_devices.c
-> 
-> diff --git a/drivers/resctrl/Kconfig b/drivers/resctrl/Kconfig
-> index c30532a3a3a4..ef59b3057d5d 100644
-> --- a/drivers/resctrl/Kconfig
-> +++ b/drivers/resctrl/Kconfig
-> @@ -5,10 +5,20 @@ menuconfig ARM64_MPAM_DRIVER
->  	  MPAM driver for System IP, e,g. caches and memory controllers.
->  
->  if ARM64_MPAM_DRIVER
-> +
+> Add LSUI feature so that the unprevilieged load/store instructions
+> could be used when kernel accesses user memory without clearing PSTATE.PAN bit.
 
-Nit: add the empty line in an earlier patch
+These two paragraphs are pretty much saying the same thing. Just replace
+the second with something like "Add CPU feature detection for
+FEAT_LSUI". No need to explain the PSTATE.PAN again.
 
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
 
-Thanks,
-
-Ben
-
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
