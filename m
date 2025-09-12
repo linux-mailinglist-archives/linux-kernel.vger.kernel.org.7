@@ -1,145 +1,247 @@
-Return-Path: <linux-kernel+bounces-813418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 483C0B5451A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E75B54513
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DCE618997D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C688546248A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6662D7803;
-	Fri, 12 Sep 2025 08:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD4522D3EDA;
+	Fri, 12 Sep 2025 08:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YoAdT8CJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dm8QqmQw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FC12D739C;
-	Fri, 12 Sep 2025 08:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757665208; cv=none; b=EN2VkutKcaxxTaDEoWUd1pfT4aaGRzSgPVCIjs1UHV411eWGze1PlFfuI0PR1BNt1O39A4eL/IDUsWDUcqVEDoK8b/Klgc6AcHS8AB6dQ29SyjdL1aSNjJCgk5q4/8yVoiBY69jd7q7Y0X+Sielfl4qi+rkB5c4kAk5F+YVcV4w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757665208; c=relaxed/simple;
-	bh=OOusLVxnKHKzYYpqIszKMcMpYFoufzRxkmlgmDbuoAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RIl/z+PTsAoK11LpN2Fbr1CKXLGKIR4GbKS5EZ93sIpgOvs7+nZySzJR5VFeMMuR/XoRu+X6wPJdQ3+k5CHXVrkmSqy3YNx7682ZXhwyTLtE9kBcWsVxQSUNpsSozeytQqPP40lUsqOZMq+vMw4zqTWPR/RDzGMf0qDxOlVsR9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YoAdT8CJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53489C4CEF4;
-	Fri, 12 Sep 2025 08:20:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757665208;
-	bh=OOusLVxnKHKzYYpqIszKMcMpYFoufzRxkmlgmDbuoAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YoAdT8CJrYPBnrdP51NjrTWIRu+cXQR39oCZb/t/2jvT1bIJM9VXgbYW0tSIkbYrL
-	 NVMqDCnH8Dj8VBDVUAgtyQTvh/3MoRpno+6fCQoZSAox46ONzWRZJp1ktv5Lp5bhzi
-	 r9+106OXqgmFfl4iT7miTolwEFwmk1NdK/6Cdi2nBGnzY98SjgBObq8DEg7wHqVRms
-	 7AhZQLM74buaIeh3rrJVvSHBVOu3bHROqsVjaM45tLQQ8qPm3HTbOPAXBwytOq7FnC
-	 ofuKpTvPGQmC535taTMphjBBwAhRG1wg8Y14FaNzd9xz43E+4693r1aCn97d5Bj/T5
-	 ZXJ9rbbMWyWoQ==
-Date: Fri, 12 Sep 2025 10:19:57 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 27/32] nsfs: support file handles
-Message-ID: <20250912-wirsing-karibus-7f6a98621dd1@brauner>
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-27-4dd56e7359d8@kernel.org>
- <CAOQ4uxgtQQa-jzsnTBxgUTPzgtCiAaH8X6ffMqd+1Y5Jjy0dmQ@mail.gmail.com>
- <20250911-werken-raubzug-64735473739c@brauner>
- <CAOQ4uxgMgzOjz4E-4kJFJAz3Dpd=Q6vXoGrhz9F0=mb=4XKZqA@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721EC2D47EE
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757665203; cv=fail; b=XDld/FRfMmuBYES1GPXeej6ALRe6GVVtgxBD1HvTYXjJ2MbIyvyQiI4slzSOGurUcRI65mx91qbh3nu5x58ySFWaDKemmclT+6wRo2k6OllWMcJ4ZTuckZJOGLW8oJSpDdwkTWeS37Cq31PuYEgQrpVGtWTmjhCXiYzbMBfjqV8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757665203; c=relaxed/simple;
+	bh=ZAx4wjD19U/zKhuwfFZQFy3qzjOlBFMHvVskI0k3bvE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XQvxAt7PfnK3tvapt71FVBbMIRT0Wlu0E5hL8gsXdyf2z95yt2J54kw/0SNd2kHkysr7DJvG9K011PaZ+j5S0W9yJK+G+aGORg2OpmvLtyDOjHmSBjV/L9SNiEibBzzSJ7iphKp+YUc4u51X+2LKTVWlTy9G+gqBaGq1FLzb5QM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dm8QqmQw; arc=fail smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757665202; x=1789201202;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=ZAx4wjD19U/zKhuwfFZQFy3qzjOlBFMHvVskI0k3bvE=;
+  b=Dm8QqmQwUrKbAceT9zAJhceL8bvSFlqBnESwXUAd28BxuNclR0S4mH22
+   Ij0aM9d+qyVRsI2iEXnTzME3wibRz7zg5sIbqQN3utlMfFN1HOqkK5oFW
+   c12R4uRUGS16qJ5KVp+qqdshZ3VpGiJgtsKhv3vW5ydr6rzp6e/hXy0te
+   rrvEBtcOFa2VhSzYHuXcx1C37wSObtRhptp3LIpmevdtVrUvk8NHaNkVg
+   w1+ZYnZ/LtHwQCuSUULwF4Obx8PcOyJ7AJmDsH21F06Wp9zbkW1ShjvLR
+   iDIkMSuiB8IqrAvnNJLwdbLdJ/4waytX+HU/NGcELp1+iYskJaL7Rd1NW
+   A==;
+X-CSE-ConnectionGUID: Y2kLmKnYTcOYdai+qOM1fA==
+X-CSE-MsgGUID: 3lPzyzllQyiHXUUchGhIKg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11550"; a="77617967"
+X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
+   d="scan'208";a="77617967"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 01:20:01 -0700
+X-CSE-ConnectionGUID: 5eVvt5teTGyZT+74GLRrBg==
+X-CSE-MsgGUID: zsBcVoJ5SJeaSEUuhx6z4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
+   d="scan'208";a="173457883"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 01:20:00 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 12 Sep 2025 01:20:00 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17 via Frontend Transport; Fri, 12 Sep 2025 01:20:00 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (40.107.93.40) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Fri, 12 Sep 2025 01:19:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=C88A4NinrmJpKx8ZuDr5qBn62qI2oAglAelIq+wXNo9Kfc3P8E0OeolvPaObKmz9Nk9rwmJbR7BDnEsNgUyS3jUlkpOq2s1dxbxE5ZIT36z7STPpckA5pPDqN3AzCXossfN+NWxegv82/qyAZv/Bi6rfrmjHKCgi6AzIFFUWHTgP/XBnIbi9Mbsb7slJ5cs9wyTp0T7j789Abi1Og9R3hm6tdJSzPeB75a07X4Mlch2nKr+LWmG2JIGZTh64HxRmuJ2E96tV7bgWDKCJhQ4KyBO160mByRoy0H99T0WiCwHp84ftDLUi5zaJFDJLgL/2xnb4hWD0dDDW46Rl0ckk/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HOE0Buwl+gprMw4w3T74dkK5GuNmIXKiiR5umHHC/Ns=;
+ b=bdA9EfnDQtNxrNpgsX7yKfjbjd7vMPE4+Un3svB03eMEtCh8NYBTu8LTOMdXIX/tyox5agmMgn7XZJyIcxekTcldEt2MH1Zrbdaqc1YXWb7UyOkb44CFSJvWOD49Jbx+q8biYtOUGx4XIW+2ZYnnzSbdZmabYDWpgs3V3FLLPA82pOePbYM/fasyhje2f6LXhXLPtwcA5IjOFOA1cnw1nCcqcG+d7HyBSUvpa5u/9s1CAyPZM2iBK/4BmHxsOMK3O56PVXxI6yl+7LdfU+Ha39D/6irJ97sAnTv01ExJwJXH3F+x5d1Pq9d+42FxQU6eBvglzHpExll0WKUB/lD37w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5271.namprd11.prod.outlook.com (2603:10b6:208:31a::21)
+ by BL4PR11MB8870.namprd11.prod.outlook.com (2603:10b6:208:5a8::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
+ 2025 08:19:57 +0000
+Received: from BL1PR11MB5271.namprd11.prod.outlook.com
+ ([fe80::5616:a124:479a:5f2a]) by BL1PR11MB5271.namprd11.prod.outlook.com
+ ([fe80::5616:a124:479a:5f2a%3]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 08:19:57 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
+ Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
+ Gunthorpe" <jgg@nvidia.com>, Jann Horn <jannh@google.com>, Vasant Hegde
+	<vasant.hegde@amd.com>, "Hansen, Dave" <dave.hansen@intel.com>, "Alistair
+ Popple" <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
+	Uladzislau Rezki <urezki@gmail.com>, Jean-Philippe Brucker
+	<jean-philippe@linaro.org>, Andy Lutomirski <luto@kernel.org>, "Lai, Yi1"
+	<yi1.lai@intel.com>
+CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, "security@kernel.org"
+	<security@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
+Subject: RE: [PATCH v4 7/8] mm: Hook up Kconfig options for async page table
+ freeing
+Thread-Topic: [PATCH v4 7/8] mm: Hook up Kconfig options for async page table
+ freeing
+Thread-Index: AQHcHil0hxscIG1OlEG+8vxJrhaD8bSPPxbw
+Date: Fri, 12 Sep 2025 08:19:57 +0000
+Message-ID: <BL1PR11MB527130DBD1D596894EF709BE8C08A@BL1PR11MB5271.namprd11.prod.outlook.com>
+References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
+ <20250905055103.3821518-8-baolu.lu@linux.intel.com>
+In-Reply-To: <20250905055103.3821518-8-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5271:EE_|BL4PR11MB8870:EE_
+x-ms-office365-filtering-correlation-id: 96975d1d-7702-4b00-694d-08ddf1d528e0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|921020|38070700021;
+x-microsoft-antispam-message-info: =?us-ascii?Q?PlbLNKM4pF92pfBrzWWL2rbQ3l4I02cAONnz9s//iGx6SbIXxpSReTqquguM?=
+ =?us-ascii?Q?IA7n3IJsUeNTn7T/kasAVhsF8APIRsUBGdDT3gxfR8so81LMGpbtKU9YkfMd?=
+ =?us-ascii?Q?n8sb+a7UwMezIETxv6o2KpkNHmohWLjGTbEwm1wadW+jDy00k3AL+HtcGI9R?=
+ =?us-ascii?Q?ws8JtZQjZ9my75DJvKe8EwxTVd34sxY6iw7NWtHpBpHVrcYxHlSih0jew4DF?=
+ =?us-ascii?Q?eXdIJ5qiGNdqBip9QwMS/imzL3wJdW7ufkn/a/Kua6bf8DsehzkCSdNNOh7x?=
+ =?us-ascii?Q?gbKeOnj/EygphJ7XLB+Qe0FO2Agn4MvdbYsqz3im7UyB2rkQ2nHGjcx0o4N+?=
+ =?us-ascii?Q?nDQlhPgQYT80XRxS+R0Gj7i/Kyg8qgYDksPGC6zJeiztJVNKYy4XL7BdbGrA?=
+ =?us-ascii?Q?W7z+CBASohNXVTEt4Y9YQEKSkrEwMnbBP8rrgiYv4rd0KT9wlhM4OmL5Q5Zy?=
+ =?us-ascii?Q?TMIjo/HgXPNn0YN8TVyClzPn7U0FyiZhcrcetD3HJdaIA37gmaASO/whdkEH?=
+ =?us-ascii?Q?NBTvu1vnLi95Ofw+TV1q7/qCewr3p33CdxLw+NS/QQIRq+rQHF7qQrHGQY5Z?=
+ =?us-ascii?Q?QyNktNvCOTb4xJUrac2Qb4vprHKMz92bD+Z8EOSY/0ZEpyg87uNaorWpYxKY?=
+ =?us-ascii?Q?TSN+fR64TV786S9fqclZ3e+qbDr3X5+zruXOrz50vn0pZwUBO/ykiUUmctEz?=
+ =?us-ascii?Q?PbOE0tSblo1+oUGXW0GDKa8mgMxIQ63twTYIx92DSqb2RZwKOhvVEglx7+Eo?=
+ =?us-ascii?Q?QoqnJFalQxGLq1EQB1BJQqtKbPt2s67ElELreSu7QBGvLbkehDtZkv9OcpEt?=
+ =?us-ascii?Q?WnG0WfPeUlj76AdCSVshACBkVLwe2InZhFv5pKGd/075miI9I9RKTAT5YaZq?=
+ =?us-ascii?Q?DezAx1NvdbIK4318LbJ6dhN2oK+G1H5Xj6JguK64d3OCkLWYpRTzYVoonw/H?=
+ =?us-ascii?Q?kY5swkuOGSa6rmuLsYypVPE5TlxppOTql3g6bbF5t+3Mc+vYCEpTYZ1Eovg4?=
+ =?us-ascii?Q?oc9TPLHhwZQ3drdyMA22Zkrn2EWX6e2TWCC1jOrw/O1ABUmwDWfThB+rKB0J?=
+ =?us-ascii?Q?G+AkgnK+ljK06xDtU8FfRugaNrX/m2PlX+8dsqit0Mh3GGDPoonJ4Eqs2qob?=
+ =?us-ascii?Q?5K1VWLz8ivnq1pW6D//mv4OeziNzbUZD5JzQ45pa5RWczEdmYNli4WtIn5Mh?=
+ =?us-ascii?Q?6GZ6eRSWKnq/LvOiKzMlbqqUh/87FDMaMv8eS+c4HoAE5iFVAn7ec+LUWVFR?=
+ =?us-ascii?Q?DI3vd3vxZysEXygfezyl7w9oSK7jFBGcdBd892dP+TA8AmAsLUxOygPLZC6i?=
+ =?us-ascii?Q?8KctYySM/vdNVZvSC6rEXxGn+lEPYRG11ecXYB0HrVhttZNi2viEZGGgYPWE?=
+ =?us-ascii?Q?01jJFssoyplNrJrZWp2mGXXDAMwdq2Y84hzmVmkQ/bU12MbScKPUrzVybREI?=
+ =?us-ascii?Q?fAQKedK29SoRdiI81RO5Xw01quvb2bL1ME49umZTES9Ac/TOfcKglSFKRjsU?=
+ =?us-ascii?Q?DdL4XSPh7gUa7Xo=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5271.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(921020)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Dz3xiCHjgKrMZHxKq7BnCp3cjXBnxAmt0ZFre9l9bSV0AXer3zWWj/+s2NbR?=
+ =?us-ascii?Q?xiQQj8dvoF7S8bAlMn6EEZ6SjELP4cDbadzkLu6jjVcUcFW1M7x486/NWKjR?=
+ =?us-ascii?Q?Zrdu9klZWR++w4TUNEAIkzFhGDMdNePP3FKdYfipaaSVHR759OthfVAxf3LR?=
+ =?us-ascii?Q?A711IyTtvX4J6Y6lCgv7i5DT2UfsjR0JFA89BHd5t3oYOURmzJXOyBMRVMtr?=
+ =?us-ascii?Q?uZCVYqQkQeU/WQ9auFJoF79SR7WZzAPrCHpXUURDOE74VTeLWDnHMjNDcBqT?=
+ =?us-ascii?Q?/MSMNHdEKDnFB8IZs/d2VvFVvB7XtGxAnAqAZpyFLvZz4troKHWuK3bOdMBS?=
+ =?us-ascii?Q?sr+4OQuHI3vLGFET/wkbW8HgV2/jM5GWt03D6NjyIJbXILP2ZpitMqTQ/rS0?=
+ =?us-ascii?Q?rO1QvXqDqRGZ/lUtMaDPvbA0kcNE+q8vaf0TYRBRU6NY021vzosI2ArIKkC4?=
+ =?us-ascii?Q?H0LWM8gWoj3pRWbag/aTo0VwnSRYh3mX3qBjGKH2Kf1eK8UprRDVIMTGEsa8?=
+ =?us-ascii?Q?ed8LV8F6AfydQnXuXvD2M2vAU8XsAdXJ9Cigip8Wn7BmCjIjhKEL6Neulbln?=
+ =?us-ascii?Q?GJn5XKPv2jdY8D5yZc+YQVyLItHyRzUWKbpQVhVKwFz1LW2bhYBOf14WHACz?=
+ =?us-ascii?Q?TO6xqFLPm6EUR9g42vvnfJyePthdZUI6ggN0eeodFi564vNprOdhUqO148df?=
+ =?us-ascii?Q?C4+P9Bo37NTvELSjN1vaAkyWOa+NjDviygDHGeJt/Z60jeC+uOHs3Me8exWL?=
+ =?us-ascii?Q?IJJEop2bwTLFuxXk8sZKzEWirrtOD0GscItCw74txG/gpDJPVjUliUZKXuKl?=
+ =?us-ascii?Q?Z8QUg+BDYEP1lP8kvL62fdG1fcXSMESvSG2kvQvhgHeOJG3ictMdET9BGUsD?=
+ =?us-ascii?Q?lmUSsPpauJUNc6aQI50RRKc90Sbtuf7Tj2F9+jWtk4UGpWiBxY1lpouBgq8V?=
+ =?us-ascii?Q?EvyF8ewBDbBVv45E22xiw1UDt0jD3TDT5EMLvAK5jN7Cj+G55qozio+CZEeV?=
+ =?us-ascii?Q?K8KZ8OeTP1eSxWeF52wnjVgRk5/xa8We0L6+eGzG+uXL+u5rvasWUUieQuW4?=
+ =?us-ascii?Q?M57PgETM1BCcvFiRStO5YI20LQ++l53e7tj5HqXvGUc/ThpnbLqhtB5sqOrt?=
+ =?us-ascii?Q?USseayQ/qR7cGpz6w85UlDWGGD+1POIZD9/vo/s5cqD/CZAtabh9Zsyzsblz?=
+ =?us-ascii?Q?xjrTaL7OUAoWcoOJpFoMESEaRxsTyCLKI2mesZjTNN6rTnlPA7qh9l/kYG/w?=
+ =?us-ascii?Q?yKJGqWT119aJhSqPaOfvN9DTdKpTWzsM1EA8yw7H7fsCx+y7kvTs05WJI3fv?=
+ =?us-ascii?Q?ymXOCqD+mztNv+q6Kj9+I9w8gfFqDsdoYPdCAuuEKL6edOE5LoAy7aiVrkHe?=
+ =?us-ascii?Q?rT7ru9fb0fowS//lOSvhxRPah5d2Wpv9rHE8q9MoOaaUhjBPJvB5pc5m7d5f?=
+ =?us-ascii?Q?8D0KDIXwoHYW1JDk+UxDWIIFXhjldIscEAsUj4KgGmG5x5St49CoY10jPF58?=
+ =?us-ascii?Q?tvFH+Wyd4DFs1akmMD5IHPeCwdRtn/VAsZfLB257hTj+gs4/r+UBHut0nwjZ?=
+ =?us-ascii?Q?wkmE4uuFgQ5h3HbrnjunX5QNsGBP1yAaLc6z1hXA?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgMgzOjz4E-4kJFJAz3Dpd=Q6vXoGrhz9F0=mb=4XKZqA@mail.gmail.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5271.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96975d1d-7702-4b00-694d-08ddf1d528e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2025 08:19:57.1993
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zrmTAxmckWgPzH9FM/j6K7p4CRx4/MfFmIIan6BIQ+llhYTVglzic1eWu55bJVQ1+Hor+6tf5riqpgAst+k/EQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR11MB8870
+X-OriginatorOrg: intel.com
 
-On Thu, Sep 11, 2025 at 01:36:28PM +0200, Amir Goldstein wrote:
-> On Thu, Sep 11, 2025 at 11:31 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Wed, Sep 10, 2025 at 07:21:22PM +0200, Amir Goldstein wrote:
-> > > On Wed, Sep 10, 2025 at 4:39 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > A while ago we added support for file handles to pidfs so pidfds can be
-> > > > encoded and decoded as file handles. Userspace has adopted this quickly
-> > > > and it's proven very useful.
-> > >
-> > > > Pidfd file handles are exhaustive meaning
-> > > > they don't require a handle on another pidfd to pass to
-> > > > open_by_handle_at() so it can derive the filesystem to decode in.
-> > > >
-> > > > Implement the exhaustive file handles for namespaces as well.
-> > >
-> > > I think you decide to split the "exhaustive" part to another patch,
-> > > so better drop this paragraph?
-> >
-> > Yes, good point. I've dont that.
-> >
-> > > I am missing an explanation about the permissions for
-> > > opening these file handles.
-> > >
-> > > My understanding of the code is that the opener needs to meet one of
-> > > the conditions:
-> > > 1. user has CAP_SYS_ADMIN in the userns owning the opened namespace
-> > > 2. current task is in the opened namespace
-> >
-> > Yes.
-> >
-> > >
-> > > But I do not fully understand the rationale behind the 2nd condition,
-> > > that is, when is it useful?
-> >
-> > A caller is always able to open a file descriptor to it's own set of
-> > namespaces. File handles will behave the same way.
-> >
-> 
-> I understand why it's safe, and I do not object to it at all,
-> I just feel that I do not fully understand the use case of how ns file handles
-> are expected to be used.
-> A process can always open /proc/self/ns/mnt
-> What's the use case where a process may need to open its own ns by handle?
-> 
-> I will explain. For CAP_SYS_ADMIN I can see why keeping handles that
-> do not keep an elevated refcount of ns object could be useful in the same
-> way that an NFS client keeps file handles without keeping the file object alive.
-> 
-> But if you do not have CAP_SYS_ADMIN and can only open your own ns
-> by handle, what is the application that could make use of this?
-> and what's the benefit of such application keeping a file handle instead of
-> ns fd?
+> From: Lu Baolu <baolu.lu@linux.intel.com>
+> Sent: Friday, September 5, 2025 1:51 PM
+>=20
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+>=20
+> The CONFIG_ASYNC_PGTABLE_FREE option controls whether an architecture
+> requires asynchronous page table freeing. On x86, this is selected if
+> IOMMU_SVA is enabled, because both Intel and AMD IOMMU architectures
+> could potentially cache kernel page table entries in their paging
+> structure cache, regardless of the permission.
+>=20
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  arch/x86/Kconfig | 1 +
+>  mm/Kconfig       | 3 +++
+>  2 files changed, 4 insertions(+)
+>=20
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 58d890fe2100..1b2326d81681 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -281,6 +281,7 @@ config X86
+>  	select HAVE_PCI
+>  	select HAVE_PERF_REGS
+>  	select HAVE_PERF_USER_STACK_DUMP
+> +	select ASYNC_PGTABLE_FREE		if IOMMU_SVA
+>  	select MMU_GATHER_RCU_TABLE_FREE
+>  	select MMU_GATHER_MERGE_VMAS
+>  	select HAVE_POSIX_CPU_TIMERS_TASK_WORK
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index e443fe8cd6cf..1576409cec03 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -920,6 +920,9 @@ config PAGE_MAPCOUNT
+>  config PGTABLE_HAS_HUGE_LEAVES
+>  	def_bool TRANSPARENT_HUGEPAGE || HUGETLB_PAGE
+>=20
+> +config ASYNC_PGTABLE_FREE
+> +	def_bool n
+> +
 
-A process is not always able to open /proc/self/ns/. That requires
-procfs to be mounted and for /proc/self/ or /proc/self/ns/ to not be
-overmounted. However, they can derive a namespace fd from their own
-pidfd. And that also always works if it's their own namespace.
+be more accurate as ASYNC_KERN_PGTABLE_FREE? not a strong
+opinion but doing so avoids giving one the impression that it's
+a generic async mechanism for all pgtable pages.
 
-There's no need to introduce unnecessary behavioral differences between
-/proc/self/ns/, pidfd-derived namespace fs, and file-handle-derived
-namespace fds. That's just going to be confusing.
-
-The other thing is that there are legitimate use-case for encoding your
-own namespace. For example, you might store file handles to your set of
-namespaces in a file on-disk so you can verify when you get rexeced that
-they're still valid and so on. This is akin to the pidfd use-case.
-
-Or just plainly for namespace comparison reasons where you keep a file
-handle to your own namespaces and can then easily check against others.
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
