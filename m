@@ -1,96 +1,184 @@
-Return-Path: <linux-kernel+bounces-814621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189E9B5568C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:49:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D847B5568E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:50:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB86567598
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:49:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32F695675BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:50:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AC3334363;
-	Fri, 12 Sep 2025 18:48:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DF5334391;
+	Fri, 12 Sep 2025 18:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OaLUncVo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="UA9KyE9a"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F8D31AF2A;
-	Fri, 12 Sep 2025 18:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757702935; cv=none; b=hOKTmTaAOKnShectwoueuoDoDLH6Zp5YUFLLLNIrP7w/UefyC1GpnRO22VH4fikugBTRhLx4zHNJDoIaCtWSsVr91i3D9t4zoSgeckw/FxBYKymRQFtqVPfUGCsHMwVWKbXntA8rlLpPeDugEiX8AYagln84gdtUsxUw/ZZjMNk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757702935; c=relaxed/simple;
-	bh=cJb5BBmk8fPdZjmmUJ5jkr99ebhj43GK6sqw2ZJDZsU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tuX0pzIcOiBwwCFaVZEOLel9lMJtqvLe/tG+SKB7bg1MWP9Bwo1nRuLKZzjX5ZCkujO+03hGXw+83rJwAkTUwURQsu3JeDOs4euBWq6YBTqqSM4738eeqNP1H5+gz1CZkXod+8mKuLcEKAYI/WxDwUggbdCJUWP+e/l7ZNIK28U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OaLUncVo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6C7BC4CEF1;
-	Fri, 12 Sep 2025 18:48:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757702935;
-	bh=cJb5BBmk8fPdZjmmUJ5jkr99ebhj43GK6sqw2ZJDZsU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OaLUncVogwHc/amdcfamYUw/8mWSGIB3nlIjMy6SsMgaqCKQkKeF1ZDJRB8Y3J1VD
-	 O9amPck2JIkQRD2+VmKKoYmEUzKRTTte8IiZQs/zCrccuIJun0xxGCmlqp6c52z/GB
-	 CwKlvbX2B407S6yErr5r30PUcNsyBcm6O2uQpnimOMARIirGSt3OU/bmIrcd8lM5Ct
-	 U5wX+NhmC7UiPeZ6cHdudvHRilxX4FmT7TzLAonm8o81KVvO9j8gc2H7Eopk0k95mU
-	 0f/S7iG3nqXZPEwLg4IL7UHvVGm3/w7HU7xC6kk7Y1o7/Wlx8+cjR62nBXz0w3grNu
-	 MTSCWoa2Rrdgw==
-Date: Fri, 12 Sep 2025 15:48:52 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Thomas Falcon <thomas.falcon@intel.com>,
-	Andi Kleen <ak@linux.intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/3] Improve event groups for topdown, add X event
- modifier
-Message-ID: <aMRrFDBDKFSyA2VO@x1>
-References: <20250825211204.2784695-1-irogers@google.com>
- <3f481d00-2c9f-45a5-807b-037930903b1c@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CF33009F0;
+	Fri, 12 Sep 2025 18:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757703020; cv=pass; b=GodYoEJ0VUIFq9dMbEku2k3Pse2ohhpm0cH5Jsi1biUeaMQU9YuoNKBMs0PDGn+5f1wTwTvSGuDKNpSSE8GskE4aDpwdYlgmagWy5GyUeY8+aFwo9FFuPqUN9QtjMv8vLpbjAWzRzH1BG0pqLV4W41FyCK5WtoYoRyxKYNxWTqQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757703020; c=relaxed/simple;
+	bh=Mq/MwHte4D8oQ0P2TVknVYp5j+E6PaE5kcQ+dMOwkrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M464eHeaqkWxmlO7Rqs7mHRdYkchp5VLHZzsYExXoqRK1vp10tEVHTvO0rM87og2pYqWxwuK8hkOtXhRDhmYqSyR+BZs3+9XX56ZOlHS/5kX9X1szXClMAaDK86ytVbQz8uSk81c8aWpwApr0iZ8yk3AxWN67cu07fp3lv3+RRw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=UA9KyE9a; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757702987; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MMStU+3hRtzkLorSu8cvhj4yj9QKVpW2KU9+rsL9jBT5Moof9YaOUbirSYeUkrghwp/a1hkQLMuTeonRBEN8NBKAGE49gePu8sZCHHfA4XCbnAEryr0NfjpLRoTVekNkGRH1m/LD5p6nnpZ1E8tYDvgSHl4h5FhVoemmVsFA96c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757702987; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Jgluz1VB/1G/DYBTfp7Su1oyZjWlvzq3TKFpkBLruI4=; 
+	b=EYCCAVE8Ab3G8NQ426QKbnwxGKRv15FuBpSAWhzZLkuuNqhsiQiKzXitaK57+GL5tWdsIv+AOhloG/OWpyknYxowmsk8duOTrqYSmxX9VoagJ/bnqesTMUA6Y1oWa0s3bGEg4iso4ST76BlrcOvqP8mgCgiXkcdve4NIVBjahr0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757702987;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=Jgluz1VB/1G/DYBTfp7Su1oyZjWlvzq3TKFpkBLruI4=;
+	b=UA9KyE9azmnLUmH9Qs86R/QKJcGr7uEhTtfLYk93StOiilKYy63S+sO12DWsWm6P
+	Ftc6S5o0hrpM1vB51UgiByP+yAaxIBHbIkTqCjQDgmC8b2U5J/M0ushryPcwzrrB+Vz
+	Ks8rmtfLWnMlVtLsw3+M79+fRHMkXDaooFTRhJWg=
+Received: by mx.zohomail.com with SMTPS id 1757702984518937.115502131544;
+	Fri, 12 Sep 2025 11:49:44 -0700 (PDT)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+ Saravana Kannan <saravanak@google.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, linux-pm@vger.kernel.org,
+ Stephen Boyd <sboyd@kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Sebin Francis <sebin.francis@ti.com>,
+ Diederik de Haas <didi.debian@cknow.org>,
+ Bjorn Andersson <andersson@kernel.org>, Abel Vesa <abel.vesa@linaro.org>,
+ Peng Fan <peng.fan@oss.nxp.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Johan Hovold <johan@kernel.org>, Maulik Shah <maulik.shah@oss.qualcomm.com>,
+ Michal Simek <michal.simek@amd.com>, Konrad Dybcio <konradybcio@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH 0/5] pmdomain: Restore behaviour for disabling unused PM domains
+Date: Fri, 12 Sep 2025 20:49:37 +0200
+Message-ID: <3919643.KlZ2vcFHjT@workhorse>
+In-Reply-To:
+ <CAGETcx9W5MXyHA2r1kDh9=WJiQWLF1xdPaSCH=jXYeAHqQW60w@mail.gmail.com>
+References:
+ <20250909111130.132976-1-ulf.hansson@linaro.org>
+ <CAGETcx9W5MXyHA2r1kDh9=WJiQWLF1xdPaSCH=jXYeAHqQW60w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3f481d00-2c9f-45a5-807b-037930903b1c@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Aug 26, 2025 at 10:30:10AM +0800, Mi, Dapeng wrote:
-> On 8/26/2025 5:12 AM, Ian Rogers wrote:
-> > Ian Rogers (3):
-> >   perf evsel: Give warning for broken Intel topdown event grouping
-> >   perf stat: Don't skip failing group events
-> >   perf parse-events: Add 'X' modifier to exclude an event from being
-> >     regrouped
- 
-> The whole patch-set looks good to me.
- 
-> Reviewed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
- 
-> Tested the patches on Intel Sapphire Rapids and Panther Lake, all results
-> are expected.
- 
-> Tested-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+On Friday, 12 September 2025 20:36:35 Central European Summer Time Saravana=
+ Kannan wrote:
+> On Tue, Sep 9, 2025 at 4:11=E2=80=AFAM Ulf Hansson <ulf.hansson@linaro.or=
+g> wrote:
+> >
+> > Recent changes to genpd prevents those PM domains being powered-on duri=
+ng
+> > initialization from being powered-off during the boot sequence. Based u=
+pon
+> > whether CONFIG_PM_CONFIG_PM_GENERIC_DOMAINS_OF is set of not, genpd rel=
+ies
+> > on the sync_state mechanism or the genpd_power_off_unused() (which is a
+> > late_initcall_sync), to understand when it's okay to allow these PM dom=
+ains
+> > to be powered-off.
+> >
+> > This new behaviour in genpd has lead to problems on different platforms=
+ [1].
+> >
+> > In this series, I am therefore suggesting to restore the behavior of
+> > genpd_power_off_unused() along with introducing a new genpd config flag,
+> > GENPD_FLAG_NO_STAY_ON, to allow genpd OF providers to opt-out from the =
+new
+> > behaviour.
+> >
+> > Kind regards
+> > Ulf Hansson
+> >
+> > [1]
+> > https://lore.kernel.org/all/20250701114733.636510-1-ulf.hansson@linaro.=
+org/
+> > https://lore.kernel.org/all/20250902-rk3576-lockup-regression-v1-1-c4a0=
+c9daeb00@collabora.com/
+>=20
+> I'm surprised this is happening. The default behavior of sync_state()
+> is to never turn off a power domain until all the consumers have
+> probed.
+>=20
+> Is there a consumer that's not captured correctly? If so, can we add them?
 
-Thanks, applied to perf-tools-next,
+Yes, and unfortunately, not trivially so, no. In Rockchip's case, the
+regulators supplying a certain power domain cannot be acquired at
+pmdomain probe time, as the regulators themselves are sometimes
+SPI or I2C regulators that depend on powerdomains to be up.
 
-- Arnaldo
+So we only acquire them when the power domain is enabled, which does
+not happen for unused PDs. Acquiring them during PD disable also
+wouldn't work, as the genpd idle check may run after the regulator
+idle check.
+
+>=20
+> Also, there are already sync_state related kernel configs, command
+> line options and sysfs files that should allow people to power off
+> devices (at different levels of granularity) even if its consumers
+> haven't probed.
+
+This series is a stop-gap solution to get us through v6.17, so that
+problematic drivers like Rockchip pmdomains can be rearchitectured
+to declare their dependency in some way that is not racey. This
+will be somewhat non-trivial, hence the current solution for now.
+
+>=20
+> Thanks,
+> Saravana
+>=20
+
+Kind regards,
+Nicolas Frattaroli
+
+> >
+> > Ulf Hansson (5):
+> >   pmdomain: core: Restore behaviour for disabling unused PM domains
+> >   pmdomain: rockchip: Fix regulator dependency with
+> >     GENPD_FLAG_NO_STAY_ON
+> >   pmdomain: renesas: rcar-sysc: Don't keep unused PM domains powered-on
+> >   pmdomain: renesas: rcar-gen4-sysc: Don't keep unused PM domains
+> >     powered-on
+> >   pmdomain: renesas: rmobile-sysc: Don't keep unused PM domains
+> >     powered-on
+> >
+> >  drivers/pmdomain/core.c                   | 20 ++++++++++++++------
+> >  drivers/pmdomain/renesas/rcar-gen4-sysc.c |  1 +
+> >  drivers/pmdomain/renesas/rcar-sysc.c      |  1 +
+> >  drivers/pmdomain/renesas/rmobile-sysc.c   |  3 ++-
+> >  drivers/pmdomain/rockchip/pm-domains.c    |  2 +-
+> >  include/linux/pm_domain.h                 |  7 +++++++
+> >  6 files changed, 26 insertions(+), 8 deletions(-)
+> >
+> > --
+> > 2.43.0
+> >
+>=20
+
+
+
+
 
