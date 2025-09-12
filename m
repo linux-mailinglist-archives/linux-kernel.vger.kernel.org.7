@@ -1,240 +1,442 @@
-Return-Path: <linux-kernel+bounces-813779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CB4B54A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:03:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30882B54A8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41C81C2370D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:04:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF3B47AD83A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AC22E6CD9;
-	Fri, 12 Sep 2025 11:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159B12EB5A5;
+	Fri, 12 Sep 2025 11:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="e8U+S3TE";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="e8U+S3TE"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013015.outbound.protection.outlook.com [40.107.162.15])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="IusaH2IO"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA942DC78D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.15
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757675025; cv=fail; b=svc52sauVTbK6fShFdrhf17Q3UIAZMiPr/qBQqJQQppQWgB/GUuH8WwH3D9iPVdJI1j49hErGB1bq8EV4CocA/BxtWwFVmvPoWoZj0advZmALCe6jN7ei4ZAFygLesvW/UoEZRcJKxP0U5z7ZZMzPpJpCLGXElD90rot9Hxn06Q=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757675025; c=relaxed/simple;
-	bh=ocYzZ3snhV0eDmgS6fVX2V/f+HEotsQWE+ixdkqvNik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=shI/DJXyU/StUrULlv6y4NN50ZISvwo4acaLtCwL0olDxFAiUDF8oCNjCWSEIFxcr8n+a3jmwr6RvgbBFomfgqCHlM1L6C/XPkCcBS3PwNVZAoktUmV52ApwgO4PM9o4vcq1qHnjS0TKgzkQeieyg4AgGJJ1Hop0aAQVRidiVLU=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=e8U+S3TE; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=e8U+S3TE; arc=fail smtp.client-ip=40.107.162.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=T0TMYJUyj9YgV2go5idmBUNyFnqSnQYH8ttoQn5zQRHDcS9pogMnQbamv60aTuT0OGZ+x+nJfSlyC0rWq+jY7nYMfkO7rpfxOkxcWCQH8Z6Kq7YzoXR3ETeWS0xeJB45y/4dxbNlcrN+d85/33Jk3Y/mH1gAkRj9uR2rLfhLr4juPCciJID6r9h1kVqXFSXS1qslqpXOleRtqoQMWYcy7jLmacSUfg2X5q0fbBDmbfQWX/RVbS4ANEvgEzRp4tINKj8fyhJHRI3BydTpI7Xqu55Ed3ZRiXkSOvp7Xuw9VPyHfM26GuIqQk9GtvWPtB4CHkjdh9MyRlWkM/3Sf8qvSw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ocYzZ3snhV0eDmgS6fVX2V/f+HEotsQWE+ixdkqvNik=;
- b=bn1m65SRVD6fDQ5AeLqcL6gye8pQ/haGq6N5u+HVyN6lc38jNSBfrFwLgQj1pE1HPPr5uVUQ4nY62YTq4Pt7kuKHWcSecTySBjbLNZnE9vq+DIMlBRVs4CMsPYdOXH6Luml2D24b+3FOj78T5nR/ukQr/BLj+3lPk6/5ShiygtzuIowH4qKPhI7d5BT+kw1efej0ZgeBIL1z7jo4Qlw/NEIuS/SsCMvy/3VwJ9EpeCR0AGiwENaLGq7dsh91uicpSJg5hgaBQgab8/I74/7InLfD1d9AxqjR3KxAoM5CVW43oLhfjnuWVhHrHV+3hSlW/6ok3EQfKkg9slwTF8GAPg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=linux.dev smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ocYzZ3snhV0eDmgS6fVX2V/f+HEotsQWE+ixdkqvNik=;
- b=e8U+S3TEzyXmaFYA7vS0hiAuohYBXQdvr8ZZwPezzGbhwMLdBUYueRHNW5czr5raDhmPN0p8RXHEka0XHvZaxqKjhbEMvN6Mk3Ab9LhLVtfTIWgtPBYoLxFZ+imRPdCx06iQOZZBQOMyl6GfT15jK476iS8WMBuveTaPMRLHzjc=
-Received: from AM0PR02CA0186.eurprd02.prod.outlook.com (2603:10a6:20b:28e::23)
- by PAVPR08MB10332.eurprd08.prod.outlook.com (2603:10a6:102:327::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 11:03:39 +0000
-Received: from AM3PEPF00009B9F.eurprd04.prod.outlook.com
- (2603:10a6:20b:28e:cafe::b4) by AM0PR02CA0186.outlook.office365.com
- (2603:10a6:20b:28e::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.17 via Frontend Transport; Fri,
- 12 Sep 2025 11:03:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM3PEPF00009B9F.mail.protection.outlook.com (10.167.16.24) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.13
- via Frontend Transport; Fri, 12 Sep 2025 11:03:38 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bdWjOh1Iu/+SHQ/wqiEO3woAfGZrI6a5fiPoYzXhXcx/TkMHvUS2JLGxQshGI7ccmU9nhv6OQ92w1eF69Jx2mmNdMuR6BtY5zXmRveKPPz/3EVVhqbCTP2cjqrkGz6En3s5VLZl6m/Nn9rpU9iPiHRehcSSCTbNrAOzUKw3g1b4YdAPVgQ91IfKBRWSvaIJaqdR++m9HqvLRl6LxcclTpa9J1bn8O6zXt1dZiP9oepmtreccnwe962K7A7kMKZd3L1126q6iuLgYrZCWecnCTMe+ZepwbyKqrfVhDn6wrqdin68uVgFzNo4uOzXjLQ7mWE5ggtJOoGTasuB4WqO32w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ocYzZ3snhV0eDmgS6fVX2V/f+HEotsQWE+ixdkqvNik=;
- b=WFUdzPpepXvcdfPYTUyEhRUvxNCg0kgzjFaWjiiY4OzWr90NyPKuq0ZnEPe4yXNHFXr0cXz4o2UkOrUJUTgY9OC4exGktZWWGgfMH1CdIwQ+8LweO18WMxNxAgqpA3YFzZvxt1UeNAr3IFYqkvwFIcv5bT3Bl8USBCsFDZ+WK9UmJkqUegCxFVOGWBNiheoax7dcumMCs7vC2R6vKt9iUL0keAO92jyzBqfJEbOH88AY8JpUk8ppExlqZQwFbIPAbg48LULQNbllNE4cWFJ6YJtq+WUKZY4XJUDO/xojEQQXrQhJ4LCzMx52s/8P4GVEOyzNuqHstaQYUopvxfrJcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ocYzZ3snhV0eDmgS6fVX2V/f+HEotsQWE+ixdkqvNik=;
- b=e8U+S3TEzyXmaFYA7vS0hiAuohYBXQdvr8ZZwPezzGbhwMLdBUYueRHNW5czr5raDhmPN0p8RXHEka0XHvZaxqKjhbEMvN6Mk3Ab9LhLVtfTIWgtPBYoLxFZ+imRPdCx06iQOZZBQOMyl6GfT15jK476iS8WMBuveTaPMRLHzjc=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by AS2PR08MB9547.eurprd08.prod.outlook.com
- (2603:10a6:20b:60c::13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 11:03:05 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 11:03:04 +0000
-Date: Fri, 12 Sep 2025 12:03:01 +0100
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Sean Anderson <sean.anderson@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	Linu Cherian <lcherian@marvell.com>,
-	James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] coresight: Fix possible deadlock in coresight_panic_cb
-Message-ID: <aMP95WqHyIQq8TcS@e129823.arm.com>
-References: <20250911153315.3607119-1-sean.anderson@linux.dev>
- <20250912093534.GF12516@e132581.arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912093534.GF12516@e132581.arm.com>
-X-ClientProxiedBy: LO2P265CA0012.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:62::24) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316D42F3C2C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757674989; cv=none; b=baq95z5uHGTZlsoGnkaKP1wESS6u5ywbi2fg0TsAqhuoeTKJ/pg3tUK6P/5Lswas7VqJYncBjvGMEOekz5TxQ5ID/F1GPOmkjePokEAQl4k6nkRu7pJoDKPC0woOl5XupZ1C5/M9KWwo1+g1s4r/W1AvpYP6EAgX1VEjXkCmSIg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757674989; c=relaxed/simple;
+	bh=1+anfkiApVuDaO7voidPyMmc7m3N0lttl8Dhf2NBjEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUHVmBZ9OsXOyDF5tLn/nAoZBn0Oo2byESaaKyM+Tbhlq6H4Efb9GFCnmxUVxazFr0ZYHQqLosemfQQECwCPNtb5iB3KVkjy4m/73CsDeSO6bmZ5GJuDxSvcSjjGFyX01hA+3Dh92rDPHGY7D5TMbhVppPQyL6wkvJnFvCsRAcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=IusaH2IO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fOZU012845
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:03:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=K5xk2wocuhm+OEjl+Wk3AU/O
+	83r6hM0+sIAcri2O0k0=; b=IusaH2IOEkhzgRsVax80ahN/YgrUMaTV5BUKnJxH
+	uG13ZhNvTRdg0S90YXLeJIhUrkdvfJeEoCS91QAeU8EDQp0jaizbKegIH+lVhTyO
+	lXubd2mONqn737XuzyaIFdYRd1xDbIHbCI++LnGYA0TUovaBP17WQmHtjL0Id+oD
+	zXi3ZyBZ5R0oldvvh3B8popt/1IQqZYn+zsH0sh6v/zWSgXopGjWYcP0lE5sUxGr
+	nMuhARMX8AB4gautIGod98EVmegtu1flTE+MHTxERiB+ytIlzuJrnUWfztXKptkJ
+	qSA8RQP5oQBOj32fjZ2J7+kRWzRJJ7qFJm45iajOywUQcQ==
+Received: from mail-vk1-f197.google.com (mail-vk1-f197.google.com [209.85.221.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490dqgb448-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:03:07 +0000 (GMT)
+Received: by mail-vk1-f197.google.com with SMTP id 71dfb90a1353d-544b0f007b0so2107107e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:03:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757674986; x=1758279786;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K5xk2wocuhm+OEjl+Wk3AU/O83r6hM0+sIAcri2O0k0=;
+        b=noTicqXGeCcC9foJiVQqGwX0v8gKO3txZE6J1wfA1W0+ahFG8NSdOf3L3GaQcpo8UY
+         D3Afkh/QINyVmsofjuz+CllW72T0ew//xRV40RLAO4LNxkcgWHCz52P77/EnCBCWXTiF
+         H75z8Pg7qteHXpFKRLrPkxFYhSR0UvZSSSI3HiV+BIWpBW7xznXx4RGESyZzjRODXu4F
+         /zQLgyQ/9vQdIhIntk5vAE3rT0U5QiR+qjgBJ8wJUPP7ckhRynFJejHNeTt8/2WsNlRb
+         68Rw4fWA8Gzg5pQqa1kZmczNPmSzoYsA6eGoAC2l+EYKSakA82a+TykbQ1IuVoXA9IsT
+         TV4w==
+X-Forwarded-Encrypted: i=1; AJvYcCW+jM0Zm+RTFZ5Oah7euVQYAhhgIkP1BNa2GmjFGtW1g/FmuFldjFNc3nkKy/aan8NDcrByV4xoaGToIHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN/DXcNbpkP0g5TqgzHTMSIz7vGr2y+kivyZnGfQIzu5ap+fEY
+	UKqbS43cc1JSlfTvNvdLl9v88IdmrqcnfNM9fiuZ0MZF7Ti303m3BYUTv22ebA9YEk8r8y+mTEo
+	D8Eks1hSnP3QNNGzSTuR7UjM8Q7VS8qg75QZXxa29+QHngbaBd82gd8LoRRagrpd5qgI=
+X-Gm-Gg: ASbGncvD7sebF2ZPAncX7gh+XcJvLW9zLLOSZgl9ODJDWoGtXRi53kmFxRLEuue7ewp
+	FmjirWim85BHa31ae5lERr5QZHiEBphPWW7cLJCk2GXjJPPCs8U3G0Ts7fe4L/8FzuGaU41O1oT
+	ZO4Q+AE3qNTiYZ0d2wrXNq69+xx/Be+XtA4Tx2wORt+rMhpM8Ci6ZCFZ+1NDFWGxn/8bzrQ9qE1
+	sG2KLt3zcUIzgdT64RTS8KAdGkQdmqraRDkH8rn0VCmeoCPROe4wrbRikdl5MCWKX5+Ek3cdctz
+	y57QzAteIhN/ARF1NCPeVVdByULw9fNyLqy2pVaFunaC2zrftzLK7NfcbKC7kEZAGPOYerlYLFi
+	NIGvH/W0/dynYdU4SEneXAUHo7lUOpaTc492vuU1RRVvDEi4VCQ4S
+X-Received: by 2002:a05:6122:ca5:b0:545:ed72:fdf6 with SMTP id 71dfb90a1353d-54a16b0c776mr793988e0c.1.1757674985636;
+        Fri, 12 Sep 2025 04:03:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFY+hFG2eRH+htHQnWNG4+2ohkmUmO6Ti7ktBKQw2UjOpEo4hmAg+qQ2vk8mxbn3Ni7HU30eQ==
+X-Received: by 2002:a05:6122:ca5:b0:545:ed72:fdf6 with SMTP id 71dfb90a1353d-54a16b0c776mr793903e0c.1.1757674985011;
+        Fri, 12 Sep 2025 04:03:05 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1b39dccfsm7552991fa.54.2025.09.12.04.03.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 04:03:04 -0700 (PDT)
+Date: Fri, 12 Sep 2025 14:03:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+        simona@ffwll.ch, jingoohan1@gmail.com, inki.dae@samsung.com,
+        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
+        alim.akhtar@samsung.com, hjc@rock-chips.com, heiko@sntech.de,
+        andy.yan@rock-chips.com, dianders@chromium.org,
+        m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 10/17] drm/bridge: analogix_dp: Apply
+ drm_bridge_connector helper
+Message-ID: <tsgfxlkxty653crmzmwsr7p6slf27pxf6n6to5p7zvi6wsl444@525tz5uhbj44>
+References: <20250912085846.7349-1-damon.ding@rock-chips.com>
+ <20250912085846.7349-11-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|AS2PR08MB9547:EE_|AM3PEPF00009B9F:EE_|PAVPR08MB10332:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0f3792fa-758c-4d8a-1a91-08ddf1ec06e2
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?Mx3eFUV7KZKPGtLrpFeUtIecIubFwUhBz6p/pM7XFgKbifmz+1tKghaYSLK9?=
- =?us-ascii?Q?bCqO3zyjYHGyEksWQa2i5sNwRAV169tn3qYmG4rBcnx3J2OW+GRHzoAUaPB+?=
- =?us-ascii?Q?hfvcfQ8Hes6SfN23NgHv97PE3KhcxI2Rt/H8WUnApNqJtwja+DJl0ZDTw1mG?=
- =?us-ascii?Q?pUmEZBlYeJzS52l++qC7UBjJuRWnhncdc4Uqubn+rnemgh6VF5cX4po04EG1?=
- =?us-ascii?Q?9zjhl/dY9oLtuaqRY8OphSxb/wsaum7+3AKKH/Ff1yPrD2sDONImfp/MNV/H?=
- =?us-ascii?Q?mKoG7nZWuSUlK6tqg8mpbvZiZz3L4zl0YxX1MXMMVB49vx7p2LULb531mim/?=
- =?us-ascii?Q?gYFyf4lD7Gp+90p+tjwRK9CQZgkNxHWHSF1lfCW2q5HYy/WAujDyyT7W2xoR?=
- =?us-ascii?Q?Pg3zm4TbRwpfi5vY5GWD9ohL9nrQ0YJIf97oETNbKxdDr90ExTUhsALH939C?=
- =?us-ascii?Q?KBeYkFl2jcJWZ/QedKzk+iC7xHu33ITFodwIDmduNZCEMG0hj1JYVtbAOQhB?=
- =?us-ascii?Q?HtR4dwsIa7lImzSm5v4bDd9JQQ1W1ETJDFyqc3KP5ELdCcrR0MFnghkTKWFm?=
- =?us-ascii?Q?+rT9cQNDGLELgYQQMi6EraB8b3oPKIKWCFKdj4TmWJWlFgdlNvozbqI5MGdb?=
- =?us-ascii?Q?u3pY5+mLcY2HmjvHqIPYbxk2DriPX6c6nVR0drLsyP3vHRkHBGcf8xpFCPud?=
- =?us-ascii?Q?repm62EFD0FB7oGrz35FynNIu0iIaZWzC0nxhTNCDTqWMPNbkidcoTvf+8/5?=
- =?us-ascii?Q?3eaX3hQT4e6rWo6+tbX5bozXV+Y1hBCPzSni0jRuGoVqCieGxrxzGw6txYrj?=
- =?us-ascii?Q?iQzGg83/X7n9AvkrPo0quQQe19P21CtwTtpyFoLZeckJmK+ly65BFrHj8yqR?=
- =?us-ascii?Q?Dv3hZeTNxAh7MfsOTMQHePcMUsah9MOu+H6syYkDbjymyhsMCEvwB/mOahJV?=
- =?us-ascii?Q?0FIkTQB/0/fZJ0hTQMP2q5zz7orbufNdqWwD4Zsatzo0wST05H42oqkPALT5?=
- =?us-ascii?Q?dD6nIiVKKADdDizAd9KKAU4wq0G3gnR0QFynkWqdQJe0nON/COmGV2cRyhvW?=
- =?us-ascii?Q?FHWJatbZ3aXtHuzCjqDtVfNnLIs/tzuUC1oxTgllDSh0Ta2CSbGD/iI9gImv?=
- =?us-ascii?Q?MYlO4Zgi2wFO8G+MBiH0S+cHt/hUI550EBzwAbd8pg6CMpp/fu6g9mAk+olS?=
- =?us-ascii?Q?VhHue9KZU7dNowp0lSeNqRja4D6y+vmLtcPtaCHCfmfKUUojczbXS1Db1Upx?=
- =?us-ascii?Q?S2pjElRk9Mqv4hGARLCFvVhuvRIINZ2YfnrDlmnNOrlPlbeYWvG54dKNkLio?=
- =?us-ascii?Q?vOJWZz6o0hgrehLK33/gi1m1sWZQTb9jiVZQ+IOwa9AFlxPuDO6UaedxtwaV?=
- =?us-ascii?Q?nKh2/Jxqlx45dG1k23D5aKZxbg3csg3+NyF7ww8fJlW6/aq349yJfQmtL2jr?=
- =?us-ascii?Q?IezEE4n4t9E=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB9547
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM3PEPF00009B9F.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	deb6f23a-a3c4-4b48-96cb-08ddf1ebf291
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|1800799024|35042699022|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O9J+0PnjmTlCBpwvZj0B+dcx9sjKO6uvKCFX1QgbSt7oLCdVkMSZZnVH1wQP?=
- =?us-ascii?Q?UAdAtUTiQ64VfHI88kR+RaHk+XY3MKgJp2MdYc5rnhbiW8om7kaQtuvqJYcN?=
- =?us-ascii?Q?ox99ZEwcAvv6yMZz0CS6J8cDbqnq5Q7+UvRsL3W/ryoKZTQ1pZb8VOLnVXbL?=
- =?us-ascii?Q?jPC8H/Wg5xgx+MXFdhbwvmA1EKRSAjREWmimoCjAF2UW2GdNTaQISYevzfua?=
- =?us-ascii?Q?XNuO8jtsLuVPvgDAbmCB9CoLddT0VEJnQQtwDbT/oj2XFZiMn7+xA7x/pXII?=
- =?us-ascii?Q?XsOAy2XP8wM0e3lZ78gc8ukahtCMMrOycYJs/QqoCWAi8xQPzVUQF/dAKvE1?=
- =?us-ascii?Q?dcqDofVjKqt2h9MJy62uWAA980fcLH5NnRoMKoKdWLs0c5OQdedkthK2Kf8/?=
- =?us-ascii?Q?yQp2yyIhcpB9hRlMTycZKNcIL7l9+QUfrKsp0iV+PpJzhV7sqT3g1vpqsXgw?=
- =?us-ascii?Q?m+BHoPdY169QgOOkC7CocTm0/Dw/8sZ3+9YqFp9KTLqxpFUi3HHbsEArPO+/?=
- =?us-ascii?Q?BpDDwjVeXYc5KfmTkcm4jy34sn6ks7JtmjULA6nbbdShbAHKknOUlheSWj2v?=
- =?us-ascii?Q?pS5aw4t4hkDH40ndFWq3BzNWi/sCAktAdFTiYPSbbU4M5dFyhy1p4If4NCp+?=
- =?us-ascii?Q?uSV25KhAZ8KKUdJuEsSPq4MDD9d84rufRZIn4QXf9H1KgVCZMVxc5CHXbIbU?=
- =?us-ascii?Q?W3M30K6P/f+qjMduMu5ZkwcnURy/IHaR0/dR+NUfK/kFZrkXj0cRiT3rNVxp?=
- =?us-ascii?Q?sNwGnQFbaXmeXfq7G2hTwufcxWZB9mQU8zloHKKc020oUKOlqbSOxZDKUSCV?=
- =?us-ascii?Q?jlQtKdEPM6A7sUvDyPW50z/jEOsuXtoYKSS5m0ThHf3bX8MP1pnfAAwj9xCQ?=
- =?us-ascii?Q?aqZLnkBQK2NnU+LFYAyhuAIBa8Tp2R7CZFOKYXwSnp/gR5uk3fQK9rTxqmMk?=
- =?us-ascii?Q?tFEjkAx6FupQ0F833/j7m1uRW6w3f7VEIqGCPLYp6VTLwFOJFKZi/mM2Hbus?=
- =?us-ascii?Q?uJ/D6pwxa0f7a5QosKgDYt67kgCKutmlzCuS6WrTBmBkwPWyzJ6jlN4qgvRy?=
- =?us-ascii?Q?zJ5rP5qphgj6idwJKCK2tXyYlAucW4dYT4fqDKUMZDZU9STUG6l6MlihRiTH?=
- =?us-ascii?Q?KFwM0RCTx5lFtN9O2Y2LmjVSNNf+8Xban5y432SVuIjV7FxkcGHuJ93Kyan3?=
- =?us-ascii?Q?ORFwmp51ellJjf5Xjl1Ham1HzgaqZ6Xt7vnf5M1fC8UuT7fGbP/WekzdLYSR?=
- =?us-ascii?Q?/SlXSDmwatIAnTPxuJ2EFHbL4OEPo/PemR/hB9W6mqtwVGBIuNiaH8fWLZnZ?=
- =?us-ascii?Q?Wlsi1p/G4VKV72LhmbRkdjtRKrhFR/EP0RmywCtdC9L9om1tWkHJcnXTrI2Q?=
- =?us-ascii?Q?46CbgAtAyr4k2IVPai/XhrKGBfeHNuXMkV7kDmO+WiORHFKnuBqeN5lQM9Wu?=
- =?us-ascii?Q?Qt1CeIzf9Zgc7eyds0YJ4raTget1eGXfU3MMekWuHKrTCddVQdES34rUmddJ?=
- =?us-ascii?Q?H1M0sPubhwu4M5+p2xTFM4s31gYHVRO7rans?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(1800799024)(35042699022)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 11:03:38.5540
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0f3792fa-758c-4d8a-1a91-08ddf1ec06e2
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF00009B9F.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR08MB10332
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912085846.7349-11-damon.ding@rock-chips.com>
+X-Proofpoint-ORIG-GUID: eOJDL80LE_F1q5vlWir11YiriceAhfFX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzNSBTYWx0ZWRfXzwxqEYoLnwiO
+ nS//RL/1IF/pQveSGYjCfOc1RqPFOWtwumOr14EXJuehL/MjP6YPAhqmTCCMRVjyCf9rLWQ0zSs
+ 1fMYvKkPN4Q/Lfyf+6oHw23TN6xttS25UA0sWOX+jCvjR+zTgSJExr+G0JOTjYhQpP/YQ82Umks
+ PiDB9sXW4LdFr7lGxKmkfX9EfQkTM9hymV7tfkJtnTZHM+yxBHIMkaYMJwq8AIexwL/m1FERszY
+ w4/MbfGXxvoNdstr8o1KrSx23P7Wj2sthnNcnjEtVTMzwmBE+dAAtqRnmn+Mrbx32sQHWb0/H11
+ 4M5zYBuIkFR8gONqLJFpeWQ83RBLqtOcnUX5CNjT2TqcY7coIGifZ/EDswwLJJIuEhj4NYBfxJ3
+ 1V/5QNpV
+X-Proofpoint-GUID: eOJDL80LE_F1q5vlWir11YiriceAhfFX
+X-Authority-Analysis: v=2.4 cv=N8UpF39B c=1 sm=1 tr=0 ts=68c3fdeb cx=c_pps
+ a=JIY1xp/sjQ9K5JH4t62bdg==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=ybcoBtwhkJE93Z-z0mUA:9 a=CjuIK1q_8ugA:10
+ a=tNoRWFLymzeba-QzToBc:22 a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060035
 
-Hi,
+On Fri, Sep 12, 2025 at 04:58:39PM +0800, Damon Ding wrote:
+> Apply drm_bridge_connector helper for Analogix DP driver.
+> 
+> The following changes have been made:
+> - Apply drm_bridge_connector helper to get rid of &drm_connector_funcs
+>   and &drm_connector_helper_funcs.
+> - Remove unnecessary parameter struct drm_connector* for callback
+>   &analogix_dp_plat_data.attach.
+> - Remove &analogix_dp_device.connector.
+> - Convert analogix_dp_atomic_check()/analogix_dp_detect() to
+>   &drm_bridge_funcs.atomic_check()/&drm_bridge_funcs.detect().
+> - Split analogix_dp_get_modes() into &drm_bridge_funcs.get_modes() and
+>   &drm_bridge_funcs.edid_read().
+> 
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> 
+> ------
+> 
+> Changes in v2:
+> - For &drm_bridge.ops, remove DRM_BRIDGE_OP_HPD and add
+>   DRM_BRIDGE_OP_EDID.
+> - Add analogix_dp_bridge_edid_read().
+> - Move &analogix_dp_plat_data.skip_connector deletion to the previous
+>   patches.
+> 
+> Changes in v3:
+> - Rebase with the new devm_drm_bridge_alloc() related commit
+>   48f05c3b4b70 ("drm/bridge: analogix_dp: Use devm_drm_bridge_alloc()
+>   API").
+> - Expand the commit message.
+> - Call drm_bridge_get_modes() in analogix_dp_bridge_get_modes() if the
+>   bridge is available.
+> - Remove unnecessary parameter struct drm_connector* for callback
+>   &analogix_dp_plat_data.attach.
+> - In order to decouple the connector driver and the bridge driver, move
+>   the bridge connector initilization to the Rockchip and Exynos sides.
+> 
+> Changes in v4:
+> - Expand analogix_dp_bridge_detect() parameters to &drm_bridge and
+>   &drm_connector.
+> - Rename the &analogix_dp_plat_data.bridge to
+>   &analogix_dp_plat_data.next_bridge.
+> 
+> Changes in v5:
+> - Set the flag fo drm_bridge_attach() to DRM_BRIDGE_ATTACH_NO_CONNECTOR
+>   for next bridge attachment of Exynos side.
+> - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
+>   the downstream device is a panel, a bridge or neither.
+> - Remove the calls to &analogix_dp_plat_data.get_modes().
+> ---
+>  .../drm/bridge/analogix/analogix_dp_core.c    | 151 ++++++++----------
+>  .../drm/bridge/analogix/analogix_dp_core.h    |   1 -
+>  drivers/gpu/drm/exynos/exynos_dp.c            |  25 +--
+>  .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  11 +-
+>  include/drm/bridge/analogix_dp.h              |   3 +-
+>  5 files changed, 95 insertions(+), 96 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> index 9bf91d7595d6..156114170c4d 100644
+> --- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> +++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
+> @@ -856,44 +856,38 @@ static int analogix_dp_disable_psr(struct analogix_dp_device *dp)
+>  	return analogix_dp_send_psr_spd(dp, &psr_vsc, true);
+>  }
+>  
+> -static int analogix_dp_get_modes(struct drm_connector *connector)
+> +static int analogix_dp_bridge_get_modes(struct drm_bridge *bridge, struct drm_connector *connector)
+>  {
+> -	struct analogix_dp_device *dp = to_dp(connector);
+> -	const struct drm_edid *drm_edid;
+> +	struct analogix_dp_device *dp = to_dp(bridge);
+>  	int num_modes = 0;
+>  
+> -	if (dp->plat_data->panel) {
+> +	if (dp->plat_data->panel)
+>  		num_modes += drm_panel_get_modes(dp->plat_data->panel, connector);
+> -	} else {
+> -		drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
+>  
+> -		drm_edid_connector_update(&dp->connector, drm_edid);
+> -
+> -		if (drm_edid) {
+> -			num_modes += drm_edid_connector_add_modes(&dp->connector);
+> -			drm_edid_free(drm_edid);
+> -		}
+> -	}
+> +	if (dp->plat_data->next_bridge)
+> +		num_modes += drm_bridge_get_modes(dp->plat_data->next_bridge, connector);
 
-> Hi Sean,
->
-> On Thu, Sep 11, 2025 at 11:33:15AM -0400, Sean Anderson wrote:
-> > coresight_panic_cb is called with interrupts disabled during panics.
-> > However, bus_for_each_dev calls bus_to_subsys which takes
-> > bus_kset->list_lock without disabling IRQs. This will cause a deadlock
-> > if a panic occurs while one of the other coresight functions that uses
-> > bus_for_each_dev is running.
->
-> The decription is a bit misleading. Even when IRQ is disabled, if an
-> exception happens, a CPU still can be trapped for handling kernel panic.
->
-> > Maintain a separate list of coresight devices to access during a panic.
->
-> Rather than maintaining a separate list and introducing a new spinlock,
-> I would argue if we can simply register panic notifier in TMC ETR and
-> ETF drviers (see tmc_panic_sync_etr() and tmc_panic_sync_etf()).
->
-> If there is no dependency between CoreSight modules in panic sync flow,
-> it is not necessary to maintain list (and lock) for these modules.
+This will be already handled by drm_bridge_connector, it will use the
+last bridge in chain which implements OP_EDID or OP_MODES (with OP_EDID
+having higher priority).
 
-+1 for this.
-and using the spinlock in the panic_cb doesn't work on PREEMPT_RT side.
+>  
+>  	return num_modes;
+>  }
+>  
+> -static struct drm_encoder *
+> -analogix_dp_best_encoder(struct drm_connector *connector)
+> +static const struct drm_edid *analogix_dp_bridge_edid_read(struct drm_bridge *bridge,
+> +							   struct drm_connector *connector)
+>  {
+> -	struct analogix_dp_device *dp = to_dp(connector);
+> +	struct analogix_dp_device *dp = to_dp(bridge);
+> +	const struct drm_edid *drm_edid = NULL;
+>  
+> -	return dp->encoder;
+> -}
+> +	drm_edid = drm_edid_read_ddc(connector, &dp->aux.ddc);
 
-Thanks.
+return drm_edid_read_ddc(...);
 
---
-Sincerely,
-Yeoreum Yun
+>  
+> +	return drm_edid;
+> +}
+>  
+> -static int analogix_dp_atomic_check(struct drm_connector *connector,
+> -				    struct drm_atomic_state *state)
+> +static int analogix_dp_bridge_atomic_check(struct drm_bridge *bridge,
+> +					   struct drm_bridge_state *bridge_state,
+> +					   struct drm_crtc_state *crtc_state,
+> +					   struct drm_connector_state *conn_state)
+>  {
+> -	struct analogix_dp_device *dp = to_dp(connector);
+> -	struct drm_display_info *di = &connector->display_info;
+> -	struct drm_connector_state *conn_state;
+> -	struct drm_crtc_state *crtc_state;
+> +	struct analogix_dp_device *dp = to_dp(bridge);
+> +	struct drm_display_info *di = &conn_state->connector->display_info;
+>  	u32 mask = DRM_COLOR_FORMAT_YCBCR444 | DRM_COLOR_FORMAT_YCBCR422;
+>  
+>  	if (is_rockchip(dp->plat_data->dev_type)) {
+> @@ -905,35 +899,18 @@ static int analogix_dp_atomic_check(struct drm_connector *connector,
+>  		}
+>  	}
+>  
+> -	conn_state = drm_atomic_get_new_connector_state(state, connector);
+> -	if (WARN_ON(!conn_state))
+> -		return -ENODEV;
+> -
+>  	conn_state->self_refresh_aware = true;
+>  
+> -	if (!conn_state->crtc)
+> -		return 0;
+> -
+> -	crtc_state = drm_atomic_get_new_crtc_state(state, conn_state->crtc);
+> -	if (!crtc_state)
+> -		return 0;
+> -
+>  	if (crtc_state->self_refresh_active && !dp->psr_supported)
+>  		return -EINVAL;
+>  
+>  	return 0;
+>  }
+>  
+> -static const struct drm_connector_helper_funcs analogix_dp_connector_helper_funcs = {
+> -	.get_modes = analogix_dp_get_modes,
+> -	.best_encoder = analogix_dp_best_encoder,
+> -	.atomic_check = analogix_dp_atomic_check,
+> -};
+> -
+>  static enum drm_connector_status
+> -analogix_dp_detect(struct drm_connector *connector, bool force)
+> +analogix_dp_bridge_detect(struct drm_bridge *bridge, struct drm_connector *connector)
+>  {
+> -	struct analogix_dp_device *dp = to_dp(connector);
+> +	struct analogix_dp_device *dp = to_dp(bridge);
+>  	enum drm_connector_status status = connector_status_disconnected;
+>  
+>  	if (dp->plat_data->panel)
+> @@ -945,21 +922,11 @@ analogix_dp_detect(struct drm_connector *connector, bool force)
+>  	return status;
+>  }
+>  
+> -static const struct drm_connector_funcs analogix_dp_connector_funcs = {
+> -	.fill_modes = drm_helper_probe_single_connector_modes,
+> -	.detect = analogix_dp_detect,
+> -	.destroy = drm_connector_cleanup,
+> -	.reset = drm_atomic_helper_connector_reset,
+> -	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+> -	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> -};
+> -
+>  static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
+>  				     struct drm_encoder *encoder,
+>  				     enum drm_bridge_attach_flags flags)
+>  {
+>  	struct analogix_dp_device *dp = to_dp(bridge);
+> -	struct drm_connector *connector = NULL;
+>  	int ret = 0;
+>  
+>  	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
+> @@ -967,31 +934,8 @@ static int analogix_dp_bridge_attach(struct drm_bridge *bridge,
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (!dp->plat_data->next_bridge) {
+> -		connector = &dp->connector;
+> -		connector->polled = DRM_CONNECTOR_POLL_HPD;
+> -
+> -		ret = drm_connector_init(dp->drm_dev, connector,
+> -					 &analogix_dp_connector_funcs,
+> -					 DRM_MODE_CONNECTOR_eDP);
+> -		if (ret) {
+> -			DRM_ERROR("Failed to initialize connector with drm\n");
+> -			return ret;
+> -		}
+> -
+> -		drm_connector_helper_add(connector,
+> -					 &analogix_dp_connector_helper_funcs);
+> -		drm_connector_attach_encoder(connector, encoder);
+> -	}
+> -
+> -	/*
+> -	 * NOTE: the connector registration is implemented in analogix
+> -	 * platform driver, that to say connector would be exist after
+> -	 * plat_data->attch return, that's why we record the connector
+> -	 * point after plat attached.
+> -	 */
+>  	if (dp->plat_data->attach) {
+> -		ret = dp->plat_data->attach(dp->plat_data, bridge, connector);
+> +		ret = dp->plat_data->attach(dp->plat_data, bridge);
+>  		if (ret) {
+>  			DRM_ERROR("Failed at platform attach func\n");
+>  			return ret;
+> @@ -1095,14 +1039,21 @@ static int analogix_dp_set_bridge(struct analogix_dp_device *dp)
+>  }
+>  
+>  static void analogix_dp_bridge_mode_set(struct drm_bridge *bridge,
+> +					struct drm_atomic_state *state,
+>  					const struct drm_display_mode *mode)
+>  {
+>  	struct analogix_dp_device *dp = to_dp(bridge);
+> -	struct drm_display_info *display_info = &dp->connector.display_info;
+>  	struct video_info *video = &dp->video_info;
+>  	struct device_node *dp_node = dp->dev->of_node;
+> +	struct drm_connector *connector;
+> +	struct drm_display_info *display_info;
+>  	int vic;
+>  
+> +	connector = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
+> +	if (!connector)
+> +		return;
+> +	display_info = &connector->display_info;
+> +
+>  	/* Input video interlaces & hsync pol & vsync pol */
+>  	video->interlaced = !!(mode->flags & DRM_MODE_FLAG_INTERLACE);
+>  	video->v_sync_polarity = !!(mode->flags & DRM_MODE_FLAG_NVSYNC);
+> @@ -1186,7 +1137,7 @@ static void analogix_dp_bridge_atomic_enable(struct drm_bridge *bridge,
+>  	new_crtc_state = drm_atomic_get_new_crtc_state(old_state, crtc);
+>  	if (!new_crtc_state)
+>  		return;
+> -	analogix_dp_bridge_mode_set(bridge, &new_crtc_state->adjusted_mode);
+> +	analogix_dp_bridge_mode_set(bridge, old_state, &new_crtc_state->adjusted_mode);
+>  
+>  	old_crtc_state = drm_atomic_get_old_crtc_state(old_state, crtc);
+>  	/* Not a full enable, just disable PSR and continue */
+> @@ -1302,7 +1253,11 @@ static const struct drm_bridge_funcs analogix_dp_bridge_funcs = {
+>  	.atomic_enable = analogix_dp_bridge_atomic_enable,
+>  	.atomic_disable = analogix_dp_bridge_atomic_disable,
+>  	.atomic_post_disable = analogix_dp_bridge_atomic_post_disable,
+> +	.atomic_check = analogix_dp_bridge_atomic_check,
+>  	.attach = analogix_dp_bridge_attach,
+> +	.get_modes = analogix_dp_bridge_get_modes,
+> +	.edid_read = analogix_dp_bridge_edid_read,
+> +	.detect = analogix_dp_bridge_detect,
+>  };
+>  
+>  static int analogix_dp_dt_parse_pdata(struct analogix_dp_device *dp)
+> @@ -1532,6 +1487,7 @@ EXPORT_SYMBOL_GPL(analogix_dp_resume);
+>  
+>  int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+>  {
+> +	struct drm_bridge *bridge = &dp->bridge;
+>  	int ret;
+>  
+>  	dp->drm_dev = drm_dev;
+> @@ -1545,7 +1501,23 @@ int analogix_dp_bind(struct analogix_dp_device *dp, struct drm_device *drm_dev)
+>  		return ret;
+>  	}
+>  
+> -	ret = drm_bridge_attach(dp->encoder, &dp->bridge, NULL, 0);
+> +	if (dp->plat_data->panel)
+> +		/* If the next is a panel, the EDID parsing is checked by the panel driver */
+> +		bridge->ops = DRM_BRIDGE_OP_MODES | DRM_BRIDGE_OP_DETECT;
+> +	else if (dp->plat_data->next_bridge)
+> +		/* If the next is a bridge, the supported operations depend on the next bridge */
+> +		bridge->ops = 0;
+
+And what if the next bridge is dp_connector without a separate HPD pin?
+
+> +	else
+> +		/* In DP mode, the EDID parsing and HPD detection should be supported */
+> +		bridge->ops = DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_DETECT;
+> +
+> +	bridge->of_node = dp->dev->of_node;
+> +	bridge->type = DRM_MODE_CONNECTOR_eDP;
+> +	ret = devm_drm_bridge_add(dp->dev, &dp->bridge);
+> +	if (ret)
+> +		goto err_unregister_aux;
+> +
+> +	ret = drm_bridge_attach(dp->encoder, bridge, NULL, 0);
+>  	if (ret) {
+>  		DRM_ERROR("failed to create bridge (%d)\n", ret);
+>  		goto err_unregister_aux;
+
+-- 
+With best wishes
+Dmitry
 
