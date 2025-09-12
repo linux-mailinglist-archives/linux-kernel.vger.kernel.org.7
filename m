@@ -1,181 +1,192 @@
-Return-Path: <linux-kernel+bounces-814919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EB34B55A67
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:37:43 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC51B55A65
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C4D5C5938
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:37:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 292854E1522
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF3D296BDD;
-	Fri, 12 Sep 2025 23:36:10 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF92286408;
+	Fri, 12 Sep 2025 23:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bsdio.com header.i=@bsdio.com header.b="NxKfWVKQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RvKv6szh"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4209128489D;
-	Fri, 12 Sep 2025 23:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CF9270EBF;
+	Fri, 12 Sep 2025 23:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757720170; cv=none; b=h/H47QwYl0jsejsXu+pEW6EAXnw72476d47+rLbCf/6n3F95MA89vMNsQNF2iV866xmF8CooBu4KREyv+P1JPnpXHhIm2cnA/gdFBK/2m7+7tixPFoOH1TviMH3iWSUGtcTFBFjDgCite8Ff9lTVeFaI6ST7KZga/nSSQAtSm14=
+	t=1757720229; cv=none; b=FjU/LR/wKw2RupbsioDH9PpmxIf1/9rdHFzXR5yVbdTMtDTPA/PqMWEQxx0Dvgr3ZImtftVI8pFA22fI+wEQOrKWIw8IlDwXxx9h+cvK59nxoXwXc4beHlGxnBigCn4pXhn9Xus75VzF1l9TM08EvVd7CLMqNvAIpX029L72P28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757720170; c=relaxed/simple;
-	bh=6uGhFrL17N+32Nuc6ZMq/+AyTyb52dRPz7G0SdniNKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u6Xmv8QgH70DY5lfy8mw/OfMF3SfWw/YeCdCn/oIz1jIroCRZnosc6cAlsfygTYt7VVvLNMK+U47/8ao+T5RrKP+ICPOyqK9JfFvsQ7XT+BrZyddJGdsu4Hn8Hsxb5HnXBra7InAgNNvFn5gJ94z5zNfhpbBK+mp41QVg/qgjeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:186b:e316:24ee:afec])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id ADF9741666;
-	Fri, 12 Sep 2025 23:36:05 +0000 (UTC)
-Authentication-Results: Plesk;
-	spf=pass (sender IP is 2a02:8084:255b:aa00:186b:e316:24ee:afec) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
-Received-SPF: pass (Plesk: connection is authenticated)
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-To: alexei.starovoitov@gmail.com,
-	yonghong.song@linux.dev,
-	song@kernel.org
-Cc: andrii@kernel.org,
-	ast@kernel.org,
-	bpf@vger.kernel.org,
-	daniel@iogearbox.net,
-	eddyz87@gmail.com,
-	haoluo@google.com,
-	john.fastabend@gmail.com,
-	jolsa@kernel.org,
-	kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	sdf@fomichev.me,
-	syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	contact@arnaud-lcm.com
-Subject: [PATCH bpf-next v9 3/3] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Date: Sat, 13 Sep 2025 00:35:58 +0100
-Message-ID: <20250912233558.75076-1-contact@arnaud-lcm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250912233509.74996-1-contact@arnaud-lcm.com>
-References: <20250912233509.74996-1-contact@arnaud-lcm.com>
+	s=arc-20240116; t=1757720229; c=relaxed/simple;
+	bh=UpNCpUB25TCiVfx1g+tZY5qvRbCbukbCF1ca8RYNruU=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:References:
+	 In-Reply-To:Content-Type; b=W5lMV4QMLexq3JBgX0TQh/jL/696GpMABOcZ9va/cV2RWD36BAStZg+RJ5UZgDG5J2CIBVVrhR4sC1MrqVF4RccKNWYMxiPL907oV/TjWK1mYCc/m7do01s5HRQBWjk7716mAgxqTHy+JaFslf/AhltAp0MMLik552mSshvPfCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdio.com; spf=fail smtp.mailfrom=bsdio.com; dkim=pass (2048-bit key) header.d=bsdio.com header.i=@bsdio.com header.b=NxKfWVKQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RvKv6szh; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bsdio.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=bsdio.com
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id B74147A0183;
+	Fri, 12 Sep 2025 19:37:05 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Fri, 12 Sep 2025 19:37:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsdio.com; h=cc
+	:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1757720225;
+	 x=1757806625; bh=40KXg9kUsO5+HICeEL0Iq0HUslxsWdLGZ0xsN27NPfo=; b=
+	NxKfWVKQ4CZWI0LoscpaJX6WEp/yA+hcrArsFRjvTb1Yh/ZSoPIpBPtL4KYOU00M
+	38QVUlT/7a7YMf72tkR097ADhnPbtOkw7DyOZLLwbX6BIOoe7MHHzZb0d/X/gWpi
+	S15rmczJcIaW+7HGY1U/CvmRG0ZkpjEGiaRRzoUzy/9wL5O6W+NwTRXa/OB1CCQC
+	UDb9uoxAQ49XZKMUyLFcx46B0ZUBrSUvtucWYguKS2k03kerl3p4XI68kJqP82Mt
+	0iqgS9PHrmUTnkK33tWqpJCNcKTuLUVQg3NlHKmFxxOHGhpPWzM4eVhjReRaHb/s
+	ZuiSR3iiG/Awpps8xfCiew==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757720225; x=1757806625; bh=4
+	0KXg9kUsO5+HICeEL0Iq0HUslxsWdLGZ0xsN27NPfo=; b=RvKv6szhC/uAWRcFF
+	qLZYBUM/JzLSb/NJYPC5xOdDg7UZlCXmlT2+ZNqZ4NVFI1AvHGAWvpLCH6+NqGQq
+	Q5X5XBnHGImJG3vOGOqi/bH/dWFOMFXZWX2Mz3PhdQ1c4mTaMc/hNZs6lEko+qbS
+	OhxxZgnexJMz+KhEH5PbXt77zd1SXVHcr+QZTazEJ66/BoIL0hkpOp2VIbno6vdV
+	pJhFKOxSkgkKtXBPo7oBpPSwRQuQhrIJgdl7W5CqMLjviXfTDZDWEpQ+9OYY2KLO
+	1B7VrxXtq+vjmU3KrAEZPpObI2UOVepofCwCekRdnZjinhuQhNerjqOGnWD/Kx9h
+	cv1JQ==
+X-ME-Sender: <xms:oK7EaJWYWiIWWi1ubcmf9R1QkKK68HTnHhD5xmKA-HllO9gwbUeDDA>
+    <xme:oK7EaIzwz7QQSi2KUGDzwg6g-Ms4dVfQZuAutLIULmlkMhRdn1C3jNkFKENjVGeBA
+    L8Z2w30mXE5sERHVt0>
+X-ME-Received: <xmr:oK7EaIGe6LRlxraxQZL_KowjeX4CU3Ow2Li3_S0w6HcCogDyvmROIHmuIwEtufnWy_I>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeftdeflecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefkffggfgfhuffvfhgjtgfgsehtkeertddtvdejnecuhfhrohhmpeftvggsvggttggr
+    ucevrhgrnhcuoehrvggsvggttggrsegsshguihhordgtohhmqeenucggtffrrghtthgvrh
+    hnpeevheehieegvddujeeiudffffdtheeifefhteetledvveehudffiefghfevieejueen
+    ucffohhmrghinheplhhinhgrrhhordhorhhgpdguvghvihgtvghtrhgvvgdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrvggsvggt
+    tggrsegsshguihhordgtohhmpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopehr
+    ohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehjohgvlhesjhhmshdrihgurdgruhdprhgtphhtthhopegrnhgurhgvfiestg
+    houggvtghonhhsthhruhgtthdrtghomhdrrghupdhrtghpthhtohepuggvvhhitggvthhr
+    vggvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmh
+    dqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqrghsphgvvggusehlihhsthhsrdhoiihlrggsshdrohhrgh
+X-ME-Proxy: <xmx:oK7EaFucsMrYmPiOzaLV5Joh5nyfmWetEsObfDVTDsCDNRVmkAStbA>
+    <xmx:oK7EaACSPjqS8GeqrVllmbcDFFjpsygEjTtdZhehqkGveIAHoavnnw>
+    <xmx:oK7EaIDAWuJJarms6BbMKlVyAvbbtnCb9TsGiS1g4d4rTqiGhfBQvw>
+    <xmx:oK7EaCrIlYqTfavDdVcugJ8lwrNDX45sk83lJljnJRFozs5xjrL9JA>
+    <xmx:oa7EaJ8VYrSyWOWQR9gC9FDzBO0j_Ikl6dLEyIEqBwFOqz6jMAvU686L>
+Feedback-ID: i5b994698:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 12 Sep 2025 19:37:03 -0400 (EDT)
+Message-ID: <04b0799e-b0a3-4dbc-98f3-239869c79305@bsdio.com>
+Date: Fri, 12 Sep 2025 17:37:02 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Rebecca Cran <rebecca@bsdio.com>
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: add device tree for ASRock Rack
+ ALTRAD8 BMC
+To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250911051009.4044609-1-rebecca@bsdio.com>
+ <20250911051009.4044609-3-rebecca@bsdio.com>
+ <1e4c65c6-4745-45e2-9e20-9d2e69ae2ea4@kernel.org>
+Content-Language: en-US
+In-Reply-To: <1e4c65c6-4745-45e2-9e20-9d2e69ae2ea4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175772016664.3971.581423742891501353@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
 
-Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-when copying stack trace data. The issue occurs when the perf trace
- contains more stack entries than the stack map bucket can hold,
- leading to an out-of-bounds write in the bucket's data array.
+On 9/11/25 00:29, Krzysztof Kozlowski wrote:
+> Never tested.
+>
+> It does not look like you tested the DTS against bindings. Please run
+> `make dtbs_check W=1` (see
+> Documentation/devicetree/bindings/writing-schema.rst or
+> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+> for instructions).
 
-Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-Fixes: ee2a098851bf ("bpf: Adjust BPF stack helper functions to accommodate skip > 0")
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
-Acked-by: Song Liu <song@kernel.org>
-Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
----
-Changes in v2:
- - Fixed max_depth names across get stack id
 
-Changes in v4:
- - Removed unnecessary empty line in __bpf_get_stackid
+Am I doing something wrong, or are a certain number of validation issues 
+expected?
 
-Changes in v6:
- - Added back trace_len computation in __bpf_get_stackid
+For example, I'm seeing these - most of which are from aspeed-g5.dtsi, 
+not my dts file:
 
-Changes in v7:
- - Removed usefull trace->nr assignation in bpf_get_stackid_pe
- - Added restoration of trace->nr for both kernel and user traces
-   in bpf_get_stackid_pe
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+/ahb/apb/memory-controller@1e6e0000: failed to match any schema with 
+compatible: ['aspeed,ast2500-sdram-edac']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+/ahb/apb/syscon@1e6e2000/p2a-control@2c: failed to match any schema with 
+compatible: ['aspeed,ast2500-p2a-ctrl']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+/ahb/apb/display@1e6e6000: failed to match any schema with compatible: 
+['aspeed,ast2500-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+/ahb/apb/timer@1e782000: failed to match any schema with compatible: 
+['aspeed,ast2400-timer']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+/ahb/apb/pwm-tacho-controller@1e786000: failed to match any schema with 
+compatible: ['aspeed,ast2500-pwm-tacho']
+/home/bcran/src/linux/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+fan@0: aspeed,fan-tach-ch: b'\x00\x08' is not of type 'object', 
+'integer', 'array', 'boolean', 'null'
+     from schema $id: http://devicetree.org/schemas/dt-core.yaml#
 
-Changes in v9:
- - Fixed variable declarations in bpf_get_stackid_pe
- - Added the missing truncate of trace_nr in __bpf_getstackid
+...
 
-Link to v8: https://lore.kernel.org/all/20250905134833.26791-1-contact@arnaud-lcm.com/
----
----
- kernel/bpf/stackmap.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+/home/bcran/src/linux/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+lpc@1e789000 (aspeed,ast2500-lpc-v2): reg-io-width: 4 is not of type 
+'object'
+     from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+/home/bcran/src/linux/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+lpc@1e789000 (aspeed,ast2500-lpc-v2): lpc-snoop@90: 'clocks' does not 
+match any of the regexes: '^pinctrl-[0-9]+$'
+     from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+/home/bcran/src/linux/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+kcs@24 (aspeed,ast2500-kcs-bmc-v2): 'clocks' does not match any of the 
+regexes: '^pinctrl-[0-9]+$'
+     from schema $id: 
+http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index 9a86b5acac10..ac5ec3253ce6 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -251,8 +251,8 @@ static long __bpf_get_stackid(struct bpf_map *map,
- {
- 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
- 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
-+	u32 hash, id, trace_nr, trace_len, i, max_storable;
- 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
--	u32 hash, id, trace_nr, trace_len, i;
- 	bool user = flags & BPF_F_USER_STACK;
- 	u64 *ips;
- 	bool hash_matches;
-@@ -261,7 +261,9 @@ static long __bpf_get_stackid(struct bpf_map *map,
- 		/* skipping more than usable stack trace */
- 		return -EFAULT;
- 
-+	max_storable = map->value_size / stack_map_data_size(map);
- 	trace_nr = trace->nr - skip;
-+	trace_nr = min_t(u32, trace_nr, max_storable);
- 	trace_len = trace_nr * sizeof(u64);
- 	ips = trace->ip + skip;
- 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
-@@ -369,6 +371,7 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- {
- 	struct perf_event *event = ctx->event;
- 	struct perf_callchain_entry *trace;
-+	u32 elem_size, max_depth;
- 	bool kernel, user;
- 	__u64 nr_kernel;
- 	int ret;
-@@ -390,15 +393,16 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 		return -EFAULT;
- 
- 	nr_kernel = count_kernel_ip(trace);
-+	elem_size = stack_map_data_size(map);
-+	__u64 nr = trace->nr; /* save original */
- 
- 	if (kernel) {
--		__u64 nr = trace->nr;
--
- 		trace->nr = nr_kernel;
-+		max_depth =
-+			stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-+		trace->nr = min_t(u32, nr_kernel, max_depth);
- 		ret = __bpf_get_stackid(map, trace, flags);
- 
--		/* restore nr */
--		trace->nr = nr;
- 	} else { /* user */
- 		u64 skip = flags & BPF_F_SKIP_FIELD_MASK;
- 
-@@ -407,8 +411,15 @@ BPF_CALL_3(bpf_get_stackid_pe, struct bpf_perf_event_data_kern *, ctx,
- 			return -EFAULT;
- 
- 		flags = (flags & ~BPF_F_SKIP_FIELD_MASK) | skip;
-+		max_depth =
-+			stack_map_calculate_max_depth(map->value_size, elem_size, flags);
-+		trace->nr = min_t(u32, trace->nr, max_depth);
- 		ret = __bpf_get_stackid(map, trace, flags);
- 	}
-+
-+	/* restore nr */
-+	trace->nr = nr;
-+
- 	return ret;
- }
- 
+...
+
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+/ahb/apb/lpc@1e789000/lhc@a0: failed to match any schema with 
+compatible: ['aspeed,ast2500-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+/ahb/apb/lpc@1e789000/ibt@140: failed to match any schema with 
+compatible: ['aspeed,ast2500-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+/ahb/apb/bus@1e78a000/i2c@100/power-supply@3c: failed to match any 
+schema with compatible: ['pmbus']
+/home/bcran/src/linux/arch/arm/boot/dts/aspeed/aspeed-bmc-asrock-altrad8.dtb: 
+gpio@1c (nxp,pca9557): '#address-cells', '#size-cells', 'gpio@0', 
+'gpio@1', 'gpio@2', 'gpio@3', 'gpio@4', 'gpio@5', 'gpio@6', 'gpio@7' do 
+not match any of the regexes: '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$', 
+'^pinctrl-[0-9]+$'
+     from schema $id: http://devicetree.org/schemas/gpio/gpio-pca95xx.yaml#
+
+
 -- 
-2.43.0
+Rebecca Cran
 
 
