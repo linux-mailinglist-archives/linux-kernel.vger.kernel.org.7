@@ -1,81 +1,133 @@
-Return-Path: <linux-kernel+bounces-814143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BE6B54FDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:42:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84EB6B54FE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A72B5A6707
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:42:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FD4AA36A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859EA3043DE;
-	Fri, 12 Sep 2025 13:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8737F30DED0;
+	Fri, 12 Sep 2025 13:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xG5w1Vt/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YjbhuPTw"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D594530DED0;
-	Fri, 12 Sep 2025 13:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967333081CB;
+	Fri, 12 Sep 2025 13:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684526; cv=none; b=SpQB5NVJv8IB/ZsPS4PfcOIZOBQ5DSWx0CiVIpB2w5hSCW0vA367TOLSVTSsuB0UhT6QkulvX9hq4B9jtKFKYBP2AG23XaNUrIeHRz5+V/uOzqT/7hrfy9sxDDHSIDpw64fLL5uqyQsRCfJ/CmBLYwynhFdBES+OXJid52HzZ90=
+	t=1757684627; cv=none; b=Tea+R/RDwPLIi5c9uR4hvWtDmaD6F++PHCgeUSalpHJ2//PXmYdUE8a4ZxHf78YHlqnY9IFIrywm1r+S6KMi0Cp80HdCPoxo2iTbBMunvxz2+WyQQO+CodtQfJhEFH5y7lJtbfIaogWMiZS/vKlKdIv9NIe5yt2JaG2ZtX/A6N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684526; c=relaxed/simple;
-	bh=U3uobCozwnx9lizz7F34LM6MEhZG08cfp1FJAGkl8iw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBP58D0Se6AN1zX/zi/6oo+SJtk9EdAQrtjE866xhFix2pB5TXkSYo4EbL+2GKQMewm5+JWAY5xwBIjdaGHiVANvWftI+kSjldlnKgobOuf2VRtRLgHAor39YNKDSoDzJTW8Mmv0OfSYSgm8LMZsJLSeI9ucJ5tw+vePLSfb+7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xG5w1Vt/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7E26C4CEF1;
-	Fri, 12 Sep 2025 13:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757684526;
-	bh=U3uobCozwnx9lizz7F34LM6MEhZG08cfp1FJAGkl8iw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=xG5w1Vt/GJO/gYqey6tkPgbjcIM20+TXU2ps3C8R+lyK538s5yT/9RtejXlPs+JyD
-	 M7dk0LBWhlEEkGMfs2Bwgncsc99/r7ip+tt3MD3Wp0XkW1tDqxdRe3mDSbiosSOsOt
-	 2h0RyPLlHd9I1sFdvhoJR7j4m4ipLoNY0RqnKyXQ=
-Date: Fri, 12 Sep 2025 15:42:03 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Eliav Farber <farbere@amazon.com>
-Cc: luc.vanoostenryck@gmail.com, rostedt@goodmis.org, mingo@redhat.com,
-	natechancellor@gmail.com, ndesaulniers@google.com,
-	keescook@chromium.org, sashal@kernel.org, akpm@linux-foundation.org,
-	ojeda@kernel.org, elver@google.com, kbusch@kernel.org,
-	sj@kernel.org, bvanassche@acm.org, leon@kernel.org, jgg@ziepe.ca,
-	linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
-	clang-built-linux@googlegroups.com, stable@vger.kernel.org,
-	jonnyc@amazon.com
-Subject: Re: [PATCH 0/4 5.10.y] overflow: Allow mixed type arguments in
- overflow macros
-Message-ID: <2025091237-frugally-ultra-b3a5@gregkh>
-References: <20250912125606.13262-1-farbere@amazon.com>
+	s=arc-20240116; t=1757684627; c=relaxed/simple;
+	bh=h8LGSKFYytZOKZNIpX3Qyr6W0nr55f+r5REsFZrcd0A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OFEww4e+xbIThxf7dLG3v21MvmRru8+5z50I1RU87x5aOJR+kYPd1W3aSkLnkMN8hk1u/GK142hvAcMH1uFYGFFlrnG/KOivzdyYDmUFN14WtO6sEIjXxF8D5ngmsd0jlZ/do79d2tphE+LfONn2DVTEJXlgpgZTo/Pt4SJZ4vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YjbhuPTw; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757684620; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=JEFJ+1KMaBT9yMuJVI/v+rlWqZb3XjQ/Sg99JRs7BGc=;
+	b=YjbhuPTwCdsqFtzQSQLOPBY/x2AYiQ8HkEWTnzySASardwquXj9cK6YxRsTv81lfJt0W4ryR1gqa3bP1gJZVbtw2Qmgnm4nZ+PqQ7HjOK845hFq6zSycVO4r/qtwKwcL8ep7T6cJK8bt3yEBkGAW1YvDKbbfHzzQhfJrQmyN/jA=
+Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WnrFL5n_1757684616 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 12 Sep 2025 21:43:38 +0800
+From: fangyu.yu@linux.alibaba.com
+To: anup@brainfault.org,
+	atish.patra@linux.dev,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	pbonzini@redhat.com,
+	graf@amazon.com,
+	jiangyifei@huawei.com
+Cc: guoren@kernel.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Subject: [PATCH] RISC-V: KVM: Fix guest page fault within HLV* instructions
+Date: Fri, 12 Sep 2025 21:43:32 +0800
+Message-Id: <20250912134332.22053-1-fangyu.yu@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912125606.13262-1-farbere@amazon.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 12:56:01PM +0000, Eliav Farber wrote:
-> This series backports four commits to bring include/linux/overflow.h in
-> line with v5.15.193:
->  - 2541be80b1a2 ("overflow: Correct check_shl_overflow() comment")
->  - 564e84663d25 ("compiler.h: drop fallback overflow checkers")
->  - 1d1ac8244c22 ("overflow: Allow mixed type arguments")
->  - f96cfe3e05b0 ("tracing: Define the is_signed_type() macro once")
+From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
 
-You forgot to sign-off on these backports :(
+When executing HLV* instructions at the HS mode, a guest page fault
+may occur when a g-stage page table migration between triggering the
+virtual instruction exception and executing the HLV* instruction.
 
-Other than that, they look good to me, thanks!  Can you resend with that
-added?
+This may be a corner case, and one simpler way to handle this is to
+re-execute the instruction where the virtual  instruction exception
+occurred, and the guest page fault will be automatically handled.
 
-thanks,
+Fixes: 9f7013265112 ("RISC-V: KVM: Handle MMIO exits for VCPU")
+Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+---
+ arch/riscv/kvm/vcpu_insn.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
-greg k-h
+diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
+index 97dec18e6989..a8b93aa4d8ec 100644
+--- a/arch/riscv/kvm/vcpu_insn.c
++++ b/arch/riscv/kvm/vcpu_insn.c
+@@ -448,7 +448,12 @@ int kvm_riscv_vcpu_virtual_insn(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 			insn = kvm_riscv_vcpu_unpriv_read(vcpu, true,
+ 							  ct->sepc,
+ 							  &utrap);
+-			if (utrap.scause) {
++			switch (utrap.scause) {
++			case 0:
++				break;
++			case EXC_LOAD_GUEST_PAGE_FAULT:
++				return KVM_INSN_CONTINUE_SAME_SEPC;
++			default:
+ 				utrap.sepc = ct->sepc;
+ 				kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+ 				return 1;
+@@ -503,7 +508,12 @@ int kvm_riscv_vcpu_mmio_load(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 		 */
+ 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
+ 						  &utrap);
+-		if (utrap.scause) {
++		switch (utrap.scause) {
++		case 0:
++			break;
++		case EXC_LOAD_GUEST_PAGE_FAULT:
++			return KVM_INSN_CONTINUE_SAME_SEPC;
++		default:
+ 			/* Redirect trap if we failed to read instruction */
+ 			utrap.sepc = ct->sepc;
+ 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+@@ -629,7 +639,12 @@ int kvm_riscv_vcpu_mmio_store(struct kvm_vcpu *vcpu, struct kvm_run *run,
+ 		 */
+ 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
+ 						  &utrap);
+-		if (utrap.scause) {
++		switch (utrap.scause) {
++		case 0:
++			break;
++		case EXC_LOAD_GUEST_PAGE_FAULT:
++			return KVM_INSN_CONTINUE_SAME_SEPC;
++		default:
+ 			/* Redirect trap if we failed to read instruction */
+ 			utrap.sepc = ct->sepc;
+ 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+-- 
+2.49.0
+
 
