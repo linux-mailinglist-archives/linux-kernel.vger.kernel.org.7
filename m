@@ -1,94 +1,139 @@
-Return-Path: <linux-kernel+bounces-813682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F583B54952
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:19:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5CBB5494F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9A5E1CC3777
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:19:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18486481D8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA152EBB90;
-	Fri, 12 Sep 2025 10:15:10 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D0827EC7C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC352E2644;
+	Fri, 12 Sep 2025 10:15:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DF6D2E62B3;
+	Fri, 12 Sep 2025 10:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757672109; cv=none; b=MlKh4pb9QM3ObjK2/Ye5Cj1u19CG2K0i0H5BFx52lWGWKgzSZ0tcc7U74xTqiLqY4De66G9XZPoXYffgwRjgtr68PMrxZjivEUblHSuRUnlrDsQhjHVs8T+QkQsEc4yVv4UM2puwUwwSsFkZwgikBGDzTaLLQ+KRsMGQzmYzsCA=
+	t=1757672108; cv=none; b=rd9jVICMbv8zKruKb3eox50ghbMJ9Ps4HSOPeE+/3rmR21DTWJVEYpv0YiUsr+xUHdT1xjYmXRr0m54EENRID2X0pWEVjeO8X/SijH35z2uc1qMDoAl1QkbMZ89L1OgrSkMlvWoTI1f8JMEZQL+YvQpMrDzN0y4mrdMULjCYQn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757672109; c=relaxed/simple;
-	bh=Wqc4PSuQxVxondoZXB1b6xHH5GpS8US7xvzX3T6eTjQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WvwKXx1cMsb3aPu9rtXlD3j2ZCNodMZIU3Tbyw2xazejhvR2TEwaEB7jCHDmRLRUwJLuWv9Lo+C6oZb1fCDwlp6FrLamXtFSRS0XvK/KWkq+Bs48SALiSwCiwGwX2bGMCmoUxAmKdJolFiW4al2HskSUYPEr46QaUNtIf1wVHqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201610.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202509121814533872;
-        Fri, 12 Sep 2025 18:14:53 +0800
-Received: from locahost.localdomain.com (10.94.9.215) by
- jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
- 15.1.2507.57; Fri, 12 Sep 2025 18:14:54 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>,
-	<naveenkrishna.chatradhi@amd.com>, <akshay.gupta@amd.com>
-CC: <linux-kernel@vger.kernel.org>, Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] misc: amd-sbi: Add NULL check in create_misc_rmi_device
-Date: Fri, 12 Sep 2025 18:14:51 +0800
-Message-ID: <20250912101451.1928-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757672108; c=relaxed/simple;
+	bh=F6uU4Bkpe4tSQ27Lw7rgOCdqDM9bV/yN2roBcAa9G4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FcWuioO2zmoxxQJrb2eQdwKEnhyoXKvKCgRpUkKan1HMTkn+YEqsIZkQmax65qUMVHdl1dW+hVCzwLJwQ/EBcDvUtzLg9GoRzYEQ8TWo8nK0IwPmoEeiCj4Nw1VQhKs6SXZIGbtS6shKMB6pbLu0R2I3wDsKR5eEwV1T6zrwk/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7973916A3;
+	Fri, 12 Sep 2025 03:14:57 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 563A93F66E;
+	Fri, 12 Sep 2025 03:15:01 -0700 (PDT)
+Message-ID: <3a93f4f3-cafc-40f5-b405-d42d5f5c9525@arm.com>
+Date: Fri, 12 Sep 2025 11:14:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 20259121814536597104dcdccf3c6ad174a6980de98bc
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/29] arm64: kconfig: Add Kconfig entry for MPAM
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-6-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250910204309.20751-6-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add check for the return value of devm_kmemdup() to prevent
-potential null pointer dereference.
+Hi James,
 
-Fixes: 35ac2034db72 ("misc: amd-sbi: Add support for AMD_SBI IOCTL")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/misc/amd-sbi/rmi-core.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+On 9/10/25 21:42, James Morse wrote:
+> The bulk of the MPAM driver lives outside the arch code because it
+> largely manages MMIO devices that generate interrupts. The driver
+> needs a Kconfig symbol to enable it. As MPAM is only found on arm64
+> platforms, the arm64 tree is the most natural home for the Kconfig
+> option.
+> 
+> This Kconfig option will later be used by the arch code to enable
+> or disable the MPAM context-switch code, and to register properties
+> of CPUs with the MPAM driver.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> CC: Dave Martin <dave.martin@arm.com>
+> ---
+> Changes since v1:
+>  * Help text rewritten by Dave.
+> ---
+>  arch/arm64/Kconfig | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index e9bbfacc35a6..4be8a13505bf 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -2060,6 +2060,29 @@ config ARM64_TLB_RANGE
+>  	  ARMv8.4-TLBI provides TLBI invalidation instruction that apply to a
+>  	  range of input addresses.
+>  
+> +config ARM64_MPAM
+> +	bool "Enable support for MPAM"
+> +	help
+> +	  Memory System Resource Partitioning and Monitoring (MPAM) is an
+> +	  optional extension to the Arm architecture that allows each
+> +	  transaction issued to the memory system to be labelled with a
+> +	  Partition identifier (PARTID) and Performance Monitoring Group
+> +	  identifier (PMG).
+> +
+> +	  Memory system components, such as the caches, can be configured with
+> +	  policies to control how much of various physical resources (such as
+> +	  memory bandwidth or cache memory) the transactions labelled with each
+> +	  PARTID can consume.  Depending on the capabilities of the hardware,
+> +	  the PARTID and PMG can also be used as filtering criteria to measure
+> +	  the memory system resource consumption of different parts of a
+> +	  workload.
+> +
+> +	  Use of this extension requires CPU support, support in the
+> +	  Memory System Components (MSC), and a description from firmware
+> +	  of where the MSCs are in the address space.
+> +
+> +	  MPAM is exposed to user-space via the resctrl pseudo filesystem.
+> +
+>  endmenu # "ARMv8.4 architectural features"
+>  
+>  menu "ARMv8.5 architectural features"
 
-diff --git a/drivers/misc/amd-sbi/rmi-core.c b/drivers/misc/amd-sbi/rmi-core.c
-index 3dec2fc00124..50b8e9e02833 100644
---- a/drivers/misc/amd-sbi/rmi-core.c
-+++ b/drivers/misc/amd-sbi/rmi-core.c
-@@ -471,6 +471,9 @@ int create_misc_rmi_device(struct sbrmi_data *data,
- 							 GFP_KERNEL,
- 							 "sbrmi-%x",
- 							 data->dev_static_addr);
-+	if (!data->sbrmi_misc_dev.name)
-+		return -ENOMEM;
-+
- 	data->sbrmi_misc_dev.minor	= MISC_DYNAMIC_MINOR;
- 	data->sbrmi_misc_dev.fops	= &sbrmi_fops;
- 	data->sbrmi_misc_dev.parent	= dev;
-@@ -478,6 +481,9 @@ int create_misc_rmi_device(struct sbrmi_data *data,
- 							 GFP_KERNEL,
- 							 "sbrmi-%x",
- 							 data->dev_static_addr);
-+	if (!data->sbrmi_misc_dev.nodename)
-+		return -ENOMEM;
-+
- 	data->sbrmi_misc_dev.mode	= 0600;
- 
- 	return misc_register(&data->sbrmi_misc_dev);
--- 
-2.43.0
+Seems good to me. I guess we can consider separately whether we want
+this to be default or not.
+
+Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+
+Thanks,
+
+Ben
 
 
