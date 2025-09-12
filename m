@@ -1,62 +1,47 @@
-Return-Path: <linux-kernel+bounces-814481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE66B55498
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:23:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB85B55496
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51DC189D60D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:23:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0CB3ABA2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD1D31A57E;
-	Fri, 12 Sep 2025 16:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECD831A57E;
+	Fri, 12 Sep 2025 16:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="n25SYblR"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e5uF35DG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E463168FC;
-	Fri, 12 Sep 2025 16:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0463168FC;
+	Fri, 12 Sep 2025 16:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757694180; cv=none; b=kdpD3EuiQWRZB6kR/RO38eZ4+dKTsNTVbVUI8dCFSUmlHsZBEASdIM0kapYFj24gNQsH3ALsJbzP3wI00y8eGV+uoa/YW9jv30iaThipHC99eYSKULChpz1EskXx5GTqPN6EQyQfx5/zEo6aOJ9C+TU8zOkhXvLdOC2ExemnZUw=
+	t=1757694173; cv=none; b=dZlquQ4oS35kjoLayhrolPsBOxwGhkG74yxHSLyMm+oXwUrh72S8KTnWKxgw54QX8lErT8iBQmFIzzlq17+Dd9MXnT3y+/0ymwj5nRHvVn28L70wriubiFIbKB0DmRBZaI5kYI/yurLYZ6lLEUgQIXz8TrIcSt7/IioFcnDL5qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757694180; c=relaxed/simple;
-	bh=SMfCbfW/NmvBvuJmBRFQ226xjb/zCRx2xmPZCITywQg=;
+	s=arc-20240116; t=1757694173; c=relaxed/simple;
+	bh=6Tpu8MUm9Rx0ofTfEF8gpl0zbKPgVsQzRa8bbj3Hlm0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S3ifs36BJUoM8BwafJnUsK/NriCpOGzDZCgp9Igj6PBsyj+VyuT2M4Q23xnOXWncXhpNIWC61RH3A5HMgRj8DgVIqtwn/aj/bxanMgPs6I+P2/fsThCsPuQvqmVw0LSmXLaKgtl4AUDhXnKe4pWgtMcRqjiMKiGVOLY8f+zv9Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=n25SYblR; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cNfq5350szm0yVK;
-	Fri, 12 Sep 2025 16:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1757694173; x=1760286174; bh=AIYfdrXaDOZdsSxth4jnHlQ3
-	5RQUiPJixCSQ7UpF92Y=; b=n25SYblRk43XetWmKUfDLmHs26np+FtcBwPSErZH
-	crJkdk9Imy65U4tBTzBfAnbmlMhE0e3jB2sr8BE/enfWes3gfLx4yr5rtQwzRBPJ
-	M7tVyCz9HtQYkb3LauxSJYFJM/DwRBWOtfOumkxFfXkTWe8A05rk3YbuiTtpVMfw
-	bsxhVe6p7+k05x+BQuML74lkL+diJRUr2FzHKDKHYTUD1F2qQLrc+pKp2c6diq9x
-	N5pmN/Dh3uTMyUr7c9Wkjd3ItDK6DARm4dGe1O7jE9VhMw2DRCtKxTR+n0vmpABp
-	yZGRJnjUkyBKf16Pcw04hk2qxlX3SbgTGy+r6BOLEyI/9Q==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Poa3d1JfvX6k; Fri, 12 Sep 2025 16:22:53 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cNfpj67DCzm174x;
-	Fri, 12 Sep 2025 16:22:37 +0000 (UTC)
-Message-ID: <4b970683-bc36-4dc2-a404-e1440da83ae7@acm.org>
-Date: Fri, 12 Sep 2025 09:22:35 -0700
+	 In-Reply-To:Content-Type; b=NPRhkqYAFpnBUwaDverIHJouJo1Y/g5KVFDgP3SrOEOLKWrlD3yXiikXCdKZo1iyFlMYm42Y9O8t3r/aggh1x/ZsP6QwJFAARhIsIIh1V+SJbg/ih0fi1dY8QEnp1zupQwdapLYBzNTY+zKM9OJT5C/fWFdPCLM5TcXuDywWYqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e5uF35DG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC871C4CEF4;
+	Fri, 12 Sep 2025 16:22:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757694173;
+	bh=6Tpu8MUm9Rx0ofTfEF8gpl0zbKPgVsQzRa8bbj3Hlm0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e5uF35DGoCVbKYcyzGemD4NAmW6kUrLlwhUkC0sEsVkZRCJRSlMDCPL5FdEWHeiUH
+	 /eBacKWXeLfYdTQZBZVQt3/Mbv7v6YANHR5qRkg8wzzsxS9XZACHy+/ezVfUxu2gLO
+	 EjXtCXYAYfaq/zGZoArz5gaSKXwBPgF14jMGzJXRp94c2bxfX2DHzDRjJZjeNZozZ7
+	 IVtl1b2p9JpdGxveNRa6jbZF5Hu/ihVC5Yv1Xz9emwtxXs+sOHw/tIrK+h3ausrCni
+	 9hT/bl1pRRB51AhJVGH9OjfkaYvKBRhzHAbKwiThK6WjFFp9VPNZadlmUGElJJOPuV
+	 zION3Kfq2IHMQ==
+Message-ID: <1dc06657-e136-45c2-8012-9199194bfc9b@kernel.org>
+Date: Fri, 12 Sep 2025 18:22:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,108 +49,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: ufs: core: Fix data race in CPU latency PM QoS
- request handling
-To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: peter.wang@mediatek.com, tanghuan@vivo.com, liu.song13@zte.com.cn,
- quic_nguyenb@quicinc.com, viro@zeniv.linux.org.uk, huobean@gmail.com,
- adrian.hunter@intel.com, can.guo@oss.qualcomm.com, ebiggers@kernel.org,
- neil.armstrong@linaro.org, angelogioacchino.delregno@collabora.com,
- quic_narepall@quicinc.com, quic_mnaresh@quicinc.com,
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- nitin.rawat@oss.qualcomm.com, ziqi.chen@oss.qualcomm.com
-References: <20250902074829.657343-1-zhongqiu.han@oss.qualcomm.com>
+Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Tzung-Bi Shih <tzungbi@kernel.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Benson Leung <bleung@chromium.org>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Shuah Khan <shuah@kernel.org>, Dawid Niedzwiecki <dawidn@google.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ chrome-platform@lists.linux.dev, linux-kselftest@vger.kernel.org,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Dan Williams <dan.j.williams@intel.com>
+References: <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
+ <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
+ <20250912132656.GC31682@pendragon.ideasonboard.com>
+ <2025091209-curfew-safari-f6e0@gregkh>
+ <CAMRc=MfdoB50o=3Q2p94o+f7S2Bzr=TAtWWQcDrC5Wf3Q5nqAA@mail.gmail.com>
+ <20250912135916.GF31682@pendragon.ideasonboard.com>
+ <2025091220-private-verse-d979@gregkh>
+ <20250912142646.GI31682@pendragon.ideasonboard.com>
+ <2025091237-cortex-carnage-5c34@gregkh>
+ <CAMRc=Mf76m51VKktGc2K1uT4eacDqhsroRxG2RgtRyhQrhx0WA@mail.gmail.com>
+ <20250912145416.GL31682@pendragon.ideasonboard.com>
+From: Danilo Krummrich <dakr@kernel.org>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250902074829.657343-1-zhongqiu.han@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20250912145416.GL31682@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 9/2/25 12:48 AM, Zhongqiu Han wrote:
-> -	return sysfs_emit(buf, "%d\n", hba->pm_qos_enabled);
-> +	return sysfs_emit(buf, "%d\n", READ_ONCE(hba->pm_qos_enabled));
+On 9/12/25 4:54 PM, Laurent Pinchart wrote:
+> On Fri, Sep 12, 2025 at 04:44:56PM +0200, Bartosz Golaszewski wrote:
+>> On Fri, Sep 12, 2025 at 4:40 PM Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org> wrote:
+>>> Either way, I think this patch series stands on its own, it doesn't
+>>> require cdev to implement it, drivers can use it to wrap a cdev if they
+>>> want to.  We have other structures that want to do this type of thing
+>>> today as is proof with the rust implementation for the devm api.
+>>
+>> Yeah, I'm not against this going upstream. If more development is
+>> needed for this to be usable in other parts of the kernel, that can be
+>> done gradually. Literally no subsystem ever was perfect on day 1.
+> 
+> To be clear, I'm not against the API being merged for the use cases that
+> would benefit from it, but I don't want to see drivers using it to
+> protect from the cdev/unregistration race.
 
-Using READ_ONCE() here is inconsistent since none of the modifications
-of hba->pm_qos_enabled use WRITE_ONCE(). Protecting hba->pm_qos_enabled
-modifications with a mutex is not sufficient since the above read of
-hba->pm_qos_enabled is not protected by the same mutex.
+I mean, revocable is really a synchronization primitive in the end that
+"revokes" access to some resource in a race free way.
 
-Has it been considered to leave out the READ_ONCE() from the above code
-and instead to add the following above the sysfs_emit() call?
+So, technically, it probably belongs into lib/.
 
-guard(mutex)(&hba->pm_qos_mutex);
+I think the reason it ended up in drivers/base/ is that one common use case is
+to revoke a device resource from a driver when the device is unbound from this
+driver; or in other words devres is an obvious user.
 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 926650412eaa..98b9ce583386 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -1047,14 +1047,19 @@ EXPORT_SYMBOL_GPL(ufshcd_is_hba_active);
->    */
->   void ufshcd_pm_qos_init(struct ufs_hba *hba)
->   {
-> +	mutex_lock(&hba->pm_qos_mutex);
->   
-> -	if (hba->pm_qos_enabled)
-> +	if (hba->pm_qos_enabled) {
-> +		mutex_unlock(&hba->pm_qos_mutex);
->   		return;
-> +	}
->   
->   	cpu_latency_qos_add_request(&hba->pm_qos_req, PM_QOS_DEFAULT_VALUE);
->   
->   	if (cpu_latency_qos_request_active(&hba->pm_qos_req))
->   		hba->pm_qos_enabled = true;
-> +
-> +	mutex_unlock(&hba->pm_qos_mutex);
->   }
+So, I think that any other API (cdev, devres, etc.) should  be built on top of it.
 
-Please make the above code easier to review by using
-guard(mutex)(&hba->pm_qos_mutex) instead of explicit mutex_lock() and
-mutex_unlock() calls.
-
-> @@ -1063,11 +1068,16 @@ void ufshcd_pm_qos_init(struct ufs_hba *hba)
->    */
->   void ufshcd_pm_qos_exit(struct ufs_hba *hba)
->   {
-> -	if (!hba->pm_qos_enabled)
-> +	mutex_lock(&hba->pm_qos_mutex);
-> +
-> +	if (!hba->pm_qos_enabled) {
-> +		mutex_unlock(&hba->pm_qos_mutex);
->   		return;
-> +	}
->   
->   	cpu_latency_qos_remove_request(&hba->pm_qos_req);
->   	hba->pm_qos_enabled = false;
-> +	mutex_unlock(&hba->pm_qos_mutex);
->   }
-
-Same comment here: please make the above code easier to review by using
-guard(mutex)(&hba->pm_qos_mutex) instead of explicit mutex_lock() and
-mutex_unlock() calls.
-
-> @@ -1077,10 +1087,15 @@ void ufshcd_pm_qos_exit(struct ufs_hba *hba)
->    */
->   static void ufshcd_pm_qos_update(struct ufs_hba *hba, bool on)
->   {
-> -	if (!hba->pm_qos_enabled)
-> +	mutex_lock(&hba->pm_qos_mutex);
-> +
-> +	if (!hba->pm_qos_enabled) {
-> +		mutex_unlock(&hba->pm_qos_mutex);
->   		return;
-> +	}
->   
->   	cpu_latency_qos_update_request(&hba->pm_qos_req, on ? 0 : PM_QOS_DEFAULT_VALUE);
-> +	mutex_unlock(&hba->pm_qos_mutex);
->   }
-
-Also in the above code, please use the guard()() macro instead of
-explicit mutex_lock() and mutex_unlock() calls.
-
-Thanks,
-
-Bart.
+This is also what we do in Rust, Revocable is just a common synchronization
+primitive and the (only) user it has is currently Devres building on top of it.
 
