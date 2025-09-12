@@ -1,382 +1,252 @@
-Return-Path: <linux-kernel+bounces-814570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F379B555B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:56:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15102B555B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 761B14E18EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A57D5C1D55
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684C532A816;
-	Fri, 12 Sep 2025 17:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDBD32A81D;
+	Fri, 12 Sep 2025 17:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="YP7MCHxt"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ePRJ6cJT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70983329F1F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C771A32A829
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757699807; cv=none; b=YOCcpxQNNEvhkJECKccDwkpAZOLrE/ErO2xWtqOBE1XxOWJEZuyG8eTqOEWWPD77kD1qrbPReBYdtWUnPkLJPAHfIC3QFsEYbuIzxgTTbdvZPSj2nw8F/37w4yhMe4aiY3k295QXJn9g7FbeBs8tDj4IS5+6HGO9plwS+YEywRs=
+	t=1757699817; cv=none; b=l4C54aIsWlJ27JEk/CoXMcyVRxDy2bnAnnrzSlTzcCHPUxwYHNRDrvHmSbQK/fO3OFWBtG3esY/kiOUOwfuTaGcSvqiFqeCbzPS3cGK6npVSsSCb88x+Pmz6nyusG/8+0zdd+857nOa2k9cFYVuwFUqR6L3S4I5Js6a0EOLe0ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757699807; c=relaxed/simple;
-	bh=2qpBmQ6Y/YLJGxVmpppaLAaPntBnERSHtn9ISE7GTxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aYpOPmsDF8ss6OfpOFhet9J0Tqrkh7aKJOq7EPomUAE253B3PzuDhOKrz002/O1P5ceHuaZ6cbuMqNLI8k07edWM1QCwpzUk3Z/UW+nLUZ/6oI+Y/lotwQ8aIrApN6u+58O5l9mUQP071sJxkwyaeHjz8jf7DlkULQpRAwKBghQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=YP7MCHxt; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-248f2da72edso3472875ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1757699804; x=1758304604; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hxVuZzFkMjgyUqLxWsknwrPPaVV1iqBOeboDVtrRimE=;
-        b=YP7MCHxtNdZ7R2hRdekjL6lRcC46AboOxCN/txcvDwHItiovCDXPH0q5t7LsnMmtzh
-         E1UG9poG/L2z9pd/nBhYqEv6w7FFJLlwOZWTDI0uMKla2e5s9qP+y7vUrEc4ownJdrIg
-         bNAh8AWwg3dnka8U4AMg/cuVxCIQ8aDJxIMgmwm4JOif+9dSZWRZMrpXn12eNM6kP7NC
-         a8kQ+41GPh90CGVvmbZ0YQvrM3n7hF9w5htJEQgHoShImeNo/wSMUVAspzBNFfUfKOLY
-         eTdADdVgcM4UYHgv0OUH65zXc9qqHjr4AkbDApXjAT18xg2z+kpcmBqgpGgRcAW2pdU9
-         V7kw==
+	s=arc-20240116; t=1757699817; c=relaxed/simple;
+	bh=t6JYHFn6xtQi0eO3tcMpphFu+Moxe/d2WklRNG+P690=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H+p5rPYzYIQ5o7OzMX0u5a6P0nGfHWfmNk3LCw0SbqWC3KDZC6m2o/Cl+2HB4cq4DFyQbuLxq9XCl6TJ6w1vJKz7wqAFaubltjaxkGvKlQfukUSIpOjpaqU+DsCo7rQPOqqtCF7RrwPLT6a5pamDyjazSkfMJWQhxyhFTC5hhVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ePRJ6cJT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757699813;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=1WFUlnErlcGz3KGoSgWtaZOcBftKtTBkFfUxb/98m8k=;
+	b=ePRJ6cJTFH9jJgpERY4Lbs5/2dMORkVOGFlX1RvK8t1D/tDZzzZ8SeBi2/2oY7qbqFIeWi
+	py3wCxDNtuCBLY7SmadOyCLOBOEA9QwWfxm4l8XLFGvbTV0jMyfS/GLXKwtshNXhwY2Ufv
+	XxnQgfguJUZPWWbmHVnSGa9p+ERfHYQ=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-576-F8kdMQYvMR6XbUzCu8TpRw-1; Fri, 12 Sep 2025 13:56:52 -0400
+X-MC-Unique: F8kdMQYvMR6XbUzCu8TpRw-1
+X-Mimecast-MFC-AGG-ID: F8kdMQYvMR6XbUzCu8TpRw_1757699811
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45dd9a66cfbso19084155e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:56:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757699804; x=1758304604;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hxVuZzFkMjgyUqLxWsknwrPPaVV1iqBOeboDVtrRimE=;
-        b=s9yJsOYM70uMDY2UC12noHWUxmMRo9ZWDzTPInKfxzA0ewo06F6joIg6XZSXvOU+oK
-         Sqo/5GDUzGINyTKwP1+H6wLdbuupuRZWuEyIpLAfhMkn7ySz/pFzxx56+xBmAcEJb6mE
-         09lO2UnHZFajJcxGywenxmlTPTlWLBcDZFjoOSNhap3gXveNpziy7PankEpvQcSJ4fUn
-         TDc3tOSVXIFmXxOODtD2tTNpWqnmkGnrAFHrv2rG+eJcZTRhUNvijMaMwxEG5J42ZQJv
-         kaoxqCAQlFZfw+bYds484kYV2epOqyMRZ0bJ8pvza9QnA5AVsRfo9EQmCcV/RiCp+pjB
-         5uog==
-X-Forwarded-Encrypted: i=1; AJvYcCV4mUvYZ40GR+/rOMzTMJZzLWX/L08cC8PVR0cfOz1bzdJQLxVAX1jqFuMPAST1/SNrmtXpnI/CGUFAfsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzm8Nr6YSqXEEXUOyTaWd8Z03QMUGuhW1qakqSxTbnWyU17MVOD
-	e40HNMfH+ClVs2wt+NIHoCQAoj4gxsgA/wQ4cepziMv683P3q6DGE7BBw+BnSIJSJsnHE2ujbGw
-	MshEFnju5/C0p4ojyPXxKhx6VWdo9emgBe0/ddVjbYw==
-X-Gm-Gg: ASbGncsX7I62n6iczGvt/hZH5PuUQXJtru9KjrEdaGCNk1w+lUnzhte8NDApKBpbkHY
-	0X98mvdm7PHUj24Y5jF6tZ3BRbyow7Kmv5JNxAZckwkCJ0ASib4lkDYEi44fcGvNN076GL6U+NE
-	AzG106Ov+OyXtXqvHLRn3q4Y37/Ro4sLuUcfWYPDoH9P0fi9rjh4ry9LVVo5fQhFUdJOs13A3X+
-	P4T60yF+asqEu1D6B4HYm9gLBAsTTp2/OYBL+Fb
-X-Google-Smtp-Source: AGHT+IFUJDBU2DERIneFwVu8OQOfXHWry8fF9euvfc9rp0cH3Vvmx1l6fb7UueGLUXXhw6ujj64hiihHDJQtAG568LQ=
-X-Received: by 2002:a17:903:110e:b0:257:3283:b859 with SMTP id
- d9443c01a7336-25d2782cb52mr23652285ad.9.1757699803543; Fri, 12 Sep 2025
- 10:56:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757699811; x=1758304611;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1WFUlnErlcGz3KGoSgWtaZOcBftKtTBkFfUxb/98m8k=;
+        b=jmwN9/NomtURP8JlolSwPzygSq1svVKxa0KrhIUoXnk3hmwPEThS51HNsGDB9hZAQi
+         s+vt2Nx/3PMPiZwM4yyhwNmYnCBjEvt9TagK7ImGTFTVPsrKr2vy3B/xN+2tLLM1PRJ6
+         BCsn7e97L18tg7wc8zhQ+3/lPuwvvKzHDb+enqg7thomtc5k6qqdGq3wXMEAIFcxsM0w
+         gNJpx5qXcXRZAJWAK6MnomdNJCg2Xu39nwF5WRbyv3so6hxT5QqgDSrp+xdrUJgmebYr
+         byZNFfhVBse4yqfdsLDB88XSMtxdp7t80SJrDDuyQlX6c9kZCLbR4pYTWzFxcYJWrE51
+         mEqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyfdn4tJS/ZxDvT3jhdsLqeqZXMDp1PL1vOLIaEwozg2CCWJnQZ4s0X8sgStN0O3G5rWxnQotkDhADrkA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynZedt2dS+NOJzV3IH7U5zrt19LyA+m9iGqEE2HZr+yHWkTHBX
+	m11LQ6juRMUqVZOFrop4w71JPGPp86VhDIeao9IIgV1mqKT/jGXvzW4u2F9N7qI6fwJt3ORCBUl
+	f44sbv0OcRsqz4P0zdRf2JGlYwhkNbiItg9k9Rg2xVgwJsFDeB8xENQ+xzzGeUt263w==
+X-Gm-Gg: ASbGncsOq4eDYHIWDKr7gaTlb0MguaTOj2nHY36DHndAOZrHGUzgLj1Knt7EdsQFkHX
+	ssQYSmXRxftDLncx630LDX5IDAsA6/SwpjPSG/boV67qf7/ndNXXGwfUEB23QU8p6lNetGlEESc
+	hoi6U1l/dDw5y2WLAu6B0Zq5S2Ft2l+vRDelbWI5vfs+hStIHycDibhkWFIECl+ocLjvqrICC3m
+	M64j0kYN0nSDj6jyYupLc9UUT/2s0q8lr/8Y+yJWFUvWv1TSVBKmYScFHqi/6KcfGTB09TG+7Nj
+	mFEZix5IyaPolQ8r0ZdAn/QnWrHbcBKH4ILic7EmSt9Yja+ffTt/djULwewymUjUjo6/MyDDma4
+	ccT3Xlo17sPWsGp6yq9LQwTI7sm8zpI4cKVGIjzHZNN3Ak9vrUd3OCWSyEJZmvZPtpIE=
+X-Received: by 2002:a5d:64e6:0:b0:3cd:6cd:8c2 with SMTP id ffacd0b85a97d-3e765a22c28mr4163067f8f.60.1757699811032;
+        Fri, 12 Sep 2025 10:56:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFbQWWosXseBmiCDWHjZ+i8QCGCkijiPXS7J5DPAO7lPWNkZhPahOhzNwRV6nh+EFTyxM8bbQ==
+X-Received: by 2002:a5d:64e6:0:b0:3cd:6cd:8c2 with SMTP id ffacd0b85a97d-3e765a22c28mr4163028f8f.60.1757699810512;
+        Fri, 12 Sep 2025 10:56:50 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7c778f764sm1719041f8f.57.2025.09.12.10.56.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 10:56:49 -0700 (PDT)
+Message-ID: <3f11cb3a-7f48-4fb8-a700-228fee3e4627@redhat.com>
+Date: Fri, 12 Sep 2025 19:56:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250822125555.8620-1-sidong.yang@furiosa.ai> <20250822125555.8620-3-sidong.yang@furiosa.ai>
- <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
- <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local> <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
- <aLxFAamglufhUvq0@sidongui-MacBookPro.local> <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
- <aMA8_MuU0V-_ja5O@sidongui-MacBookPro.local> <CADUfDZppdnM2QAeX37OmZsXqd7sO7KvyLnNPUYOgLpWMb+FpoQ@mail.gmail.com>
- <aMRNSBHDM4nkewHO@sidongui-MacBookPro.local>
-In-Reply-To: <aMRNSBHDM4nkewHO@sidongui-MacBookPro.local>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 12 Sep 2025 10:56:31 -0700
-X-Gm-Features: Ac12FXyhk2Yvgk3UuF5OSZLQra6cpOxXuL73wLdKxtNoHcnsBECPFSzyeU9KYM0
-Message-ID: <CADUfDZrHse9nDxfd0UDkxOEmVRg-b=KDEUZ9Hz08eojXJvgtng@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
- io_uring_cmd_prep() to avoid UB
-To: Sidong Yang <sidong.yang@furiosa.ai>
-Cc: Jens Axboe <axboe@kernel.dk>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/16] mm: add vma_desc_size(), vma_desc_pages()
+ helpers
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Matthew Wilcox <willy@infradead.org>,
+ Guo Ren <guoren@kernel.org>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, "David S . Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Nicolas Pitre <nico@fluxnic.net>, Muchun Song <muchun.song@linux.dev>,
+ Oscar Salvador <osalvador@suse.de>,
+ Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+ Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+ Dave Young <dyoung@redhat.com>, Tony Luck <tony.luck@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>,
+ Dave Martin <Dave.Martin@arm.com>, James Morse <james.morse@arm.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Hugh Dickins <hughd@google.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Uladzislau Rezki <urezki@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov <andreyknvl@gmail.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-csky@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+ sparclinux@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-mm@kvack.org, ntfs3@lists.linux.dev,
+ kexec@lists.infradead.org, kasan-dev@googlegroups.com,
+ Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.1757534913.git.lorenzo.stoakes@oracle.com>
+ <5ac75e5ac627c06e62401dfda8c908eadac8dfec.1757534913.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <5ac75e5ac627c06e62401dfda8c908eadac8dfec.1757534913.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 12, 2025 at 9:42=E2=80=AFAM Sidong Yang <sidong.yang@furiosa.ai=
-> wrote:
->
-> On Tue, Sep 09, 2025 at 09:32:37AM -0700, Caleb Sander Mateos wrote:
-> > On Tue, Sep 9, 2025 at 7:43=E2=80=AFAM Sidong Yang <sidong.yang@furiosa=
-.ai> wrote:
-> > >
-> > > On Mon, Sep 08, 2025 at 12:45:58PM -0700, Caleb Sander Mateos wrote:
-> > > > On Sat, Sep 6, 2025 at 7:28=E2=80=AFAM Sidong Yang <sidong.yang@fur=
-iosa.ai> wrote:
-> > > > >
-> > > > > On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wro=
-te:
-> > > > > > On Tue, Sep 2, 2025 at 3:23=E2=80=AFAM Sidong Yang <sidong.yang=
-@furiosa.ai> wrote:
-> > > > > > >
-> > > > > > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos=
- wrote:
-> > > > > > > > On Fri, Aug 22, 2025 at 5:56=E2=80=AFAM Sidong Yang <sidong=
-.yang@furiosa.ai> wrote:
-> > > > > > > > >
-> > > > > > > > > The pdu field in io_uring_cmd may contain stale data when=
- a request
-> > > > > > > > > object is recycled from the slab cache. Accessing uniniti=
-alized or
-> > > > > > > > > garbage memory can lead to undefined behavior in users of=
- the pdu.
-> > > > > > > > >
-> > > > > > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep=
-() so that
-> > > > > > > > > each command starts from a well-defined state. This avoid=
-s exposing
-> > > > > > > > > uninitialized memory and prevents potential misinterpreta=
-tion of data
-> > > > > > > > > from previous requests.
-> > > > > > > > >
-> > > > > > > > > No functional change is intended other than guaranteeing =
-that pdu is
-> > > > > > > > > always zero-initialized before use.
-> > > > > > > > >
-> > > > > > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> > > > > > > > > ---
-> > > > > > > > >  io_uring/uring_cmd.c | 1 +
-> > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > >
-> > > > > > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
-> > > > > > > > > index 053bac89b6c0..2492525d4e43 100644
-> > > > > > > > > --- a/io_uring/uring_cmd.c
-> > > > > > > > > +++ b/io_uring/uring_cmd.c
-> > > > > > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb=
- *req, const struct io_uring_sqe *sqe)
-> > > > > > > > >         if (!ac)
-> > > > > > > > >                 return -ENOMEM;
-> > > > > > > > >         ioucmd->sqe =3D sqe;
-> > > > > > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
-> > > > > > > >
-> > > > > > > > Adding this overhead to every existing uring_cmd() implemen=
-tation is
-> > > > > > > > unfortunate. Could we instead track the initialized/uniniti=
-alized
-> > > > > > > > state by using different types on the Rust side? The io_uri=
-ng_cmd
-> > > > > > > > could start as an IoUringCmd, where the PDU field is MaybeU=
-ninit,
-> > > > > > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that gua=
-rantees the
-> > > > > > > > PDU has been initialized.
-> > > > > > >
-> > > > > > > I've found a flag IORING_URING_CMD_REISSUE that we could init=
-ialize
-> > > > > > > the pdu. In uring_cmd callback, we can fill zero when it's no=
-t reissued.
-> > > > > > > But I don't know that we could call T::default() in miscdevic=
-e. If we
-> > > > > > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T=
->.
-> > > > > > >
-> > > > > > > How about assign a byte in pdu for checking initialized? In u=
-ring_cmd(),
-> > > > > > > We could set a byte flag that it's not initialized. And we co=
-uld return
-> > > > > > > error that it's not initialized in read_pdu().
-> > > > > >
-> > > > > > Could we do the zero-initialization (or T::default()) in
-> > > > > > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE f=
-lag
-> > > > > > isn't set (i.e. on the initial issue)? That way, we avoid any
-> > > > > > performance penalty for the existing C uring_cmd() implementati=
-ons.
-> > > > > > I'm not quite sure what you mean by "assign a byte in pdu for c=
-hecking
-> > > > > > initialized".
-> > > > >
-> > > > > Sure, we could fill zero when it's the first time uring_cmd calle=
-d with
-> > > > > checking the flag. I would remove this commit for next version. I=
- also
-> > > > > suggests that we would provide the method that read_pdu() and wri=
-te_pdu().
-> > > > > In read_pdu() I want to check write_pdu() is called before. So al=
-ong the
-> > > > > 20 bytes for pdu, maybe we could use a bytes for the flag that pd=
-u is
-> > > > > initialized?
-> > > >
-> > > > Not sure what you mean about "20 bytes for pdu".
-> > > > It seems like it would be preferable to enforce that write_pdu() ha=
-s
-> > > > been called before read_pdu() using the Rust type system instead of=
- a
-> > > > runtime check. I was thinking a signature like fn write_pdu(cmd:
-> > > > IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
-> > > > reason that wouldn't work and a runtime check would be necessary?
-> > >
-> > > I didn't think about make write_pdu() to return IoUringCmdPdu<T> befo=
-re.
-> > > I think it's good way to pdu is safe without adding a new generic par=
-am for
-> > > MiscDevice. write_pdu() would return IoUringCmdPdu<T> and it could ca=
-ll
-> > > IoUringCmdPdu<T>::pdu(&mut self) -> &mut T safely maybe.
-> >
-> > Yes, that's what I was thinking.
->
-> Good, I'll change api in this way. Thanks!
->
-> >
-> > >
-> > > >
-> > > > >
-> > > > > But maybe I would introduce a new struct that has Pin<&mut IoUrin=
-gCmd> and
-> > > > > issue_flags. How about some additional field for pdu is initializ=
-ed like below?
-> > > > >
-> > > > > struct IoUringCmdArgs {
-> > > > >   ioucmd: Pin<&mut IoUringCmd>,
-> > > > >   issue_flags: u32,
-> > > > >   pdu_initialized: bool,
-> > > > > }
-> > > >
-> > > > One other thing I realized is that issue_flags should come from the
-> > > > *current* context rather than the context the uring_cmd() callback =
-was
-> > > > called in. For example, if io_uring_cmd_done() is called from task
-> > > > work context, issue_flags should match the issue_flags passed to th=
-e
-> > > > io_uring_cmd_tw_t callback, not the issue_flags originally passed t=
-o
-> > > > the uring_cmd() callback. So it probably makes more sense to decoup=
-le
-> > > > issue_flags from the (owned) IoUringCmd. I think you could pass it =
-by
-> > > > reference (&IssueFlags) or with a phantom reference lifetime
-> > > > (IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
-> > > > ensure it can't be used after those callbacks have returned.
-> > >
-> > > I have had no idea about task work context. I agree with you that
-> > > it would be better to separate issue_flags from IoUringCmd. So,
-> > > IoUringCmdArgs would have a only field Pin<&mut IoUringCmd>?
-> >
-> > "Task work" is a mechanism io_uring uses to queue work to run on the
-> > thread that submitted an io_uring operation. It's basically a
-> > per-thread atomic queue of callbacks that the thread will process
-> > whenever it returns from the kernel to userspace (after a syscall or
-> > an interrupt). This is the context where asynchronous uring_cmd
-> > completions are generally processed (see
-> > io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy()). I
-> > can't speak to the history of why io_uring uses task work, but my
-> > guess would be that it provides a safe context to acquire the
-> > io_ring_ctx uring_lock mutex (e.g. nvme_uring_cmd_end_io() can be
-> > called from an interrupt handler, so it's not allowed to take a
-> > mutex). Processing all the task work at once also provides natural
-> > opportunities for batching.
->
-> Thanks, I've checked io_uring_cmd_complete_in_task() that it receives
-> callback that has issue_flags different with io_uring_cmd(). I'll try to =
-add
-> a api that wrapping io_uring_cmd_complete_in_task() for next version.
->
-> >
-> > Yes, we probably don't need to bundle anything else with the
-> > IoUringCmd after all. As I mentioned earlier, I don't think Pin<&mut
-> > IoUringCmd> will work for uring_cmds that complete asynchronously, as
-> > they will need to outlive the uring_cmd() call. So uring_cmd() needs
-> > to transfer ownership of the struct io_uring_cmd.
->
-> I can't think that how to take ownership of struct io_uring_cmd. The
-> struct allocated with io_alloc_req() and should be freed with io_free_req=
-().
-> If taking ownership means having pointer of struct io_uring_cmd, I think
-> it's no difference with current version. Also could it be called with
-> mem::forget() if it has ownership?
+On 10.09.25 22:21, Lorenzo Stoakes wrote:
+> It's useful to be able to determine the size of a VMA descriptor range used
+> on f_op->mmap_prepare, expressed both in bytes and pages, so add helpers
+> for both and update code that could make use of it to do so.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>   fs/ntfs3/file.c    |  2 +-
+>   include/linux/mm.h | 10 ++++++++++
+>   mm/secretmem.c     |  2 +-
+>   3 files changed, 12 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+> index c1ece707b195..86eb88f62714 100644
+> --- a/fs/ntfs3/file.c
+> +++ b/fs/ntfs3/file.c
+> @@ -304,7 +304,7 @@ static int ntfs_file_mmap_prepare(struct vm_area_desc *desc)
+>   
+>   	if (rw) {
+>   		u64 to = min_t(loff_t, i_size_read(inode),
+> -			       from + desc->end - desc->start);
+> +			       from + vma_desc_size(desc));
+>   
+>   		if (is_sparsed(ni)) {
+>   			/* Allocate clusters for rw map. */
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 892fe5dbf9de..0b97589aec6d 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -3572,6 +3572,16 @@ static inline unsigned long vma_pages(const struct vm_area_struct *vma)
+>   	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
+>   }
+>   
+> +static inline unsigned long vma_desc_size(struct vm_area_desc *desc)
+> +{
+> +	return desc->end - desc->start;
+> +}
+> +
+> +static inline unsigned long vma_desc_pages(struct vm_area_desc *desc)
+> +{
+> +	return vma_desc_size(desc) >> PAGE_SHIFT;
+> +}
 
-I don't mean ownership of the io_uring_cmd allocation; that's the
-responsibility of the io_uring layer. But once the io_uring_cmd is
-handed to the uring_cmd() implementation, it belongs to that layer
-until it completes the command back to io_uring. Maybe a better way to
-describe it would be as ownership of the "executing io_uring_cmd". The
-problem with Pin<&mut IoUringCmd> is that it is a borrowed reference
-to the io_uring_cmd, so it can't outlive the uring_cmd() callback.
-Yes, it's possible to leak the io_uring_cmd by never calling
-io_uring_cmd_done() to return it to the io_uring layer.
+Should parameters in both functions be const * ?
 
-I would imagine something like this:
+> +
+>   /* Look up the first VMA which exactly match the interval vm_start ... vm_end */
+>   static inline struct vm_area_struct *find_exact_vma(struct mm_struct *mm,
+>   				unsigned long vm_start, unsigned long vm_end)
+> diff --git a/mm/secretmem.c b/mm/secretmem.c
+> index 60137305bc20..62066ddb1e9c 100644
+> --- a/mm/secretmem.c
+> +++ b/mm/secretmem.c
+> @@ -120,7 +120,7 @@ static int secretmem_release(struct inode *inode, struct file *file)
+>   
+>   static int secretmem_mmap_prepare(struct vm_area_desc *desc)
+>   {
+> -	const unsigned long len = desc->end - desc->start;
+> +	const unsigned long len = vma_desc_size(desc);
+>   
+>   	if ((desc->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
+>   		return -EINVAL;
 
-#[derive(Clone, Copy)]
-struct IssueFlags<'a>(c_uint, PhantomData<&'a ()>);
+Acked-by: David Hildenbrand <david@redhat.com>
 
-// Indicates ownership of the io_uring_cmd between uring_cmd() and
-io_uring_cmd_done()
-struct IoUringCmd(NonNull<bindings::io_uring_cmd>);
+-- 
+Cheers
 
-impl IoUringCmd {
-        // ...
+David / dhildenb
 
-        fn done(self, ret: i32, res2: u64, issue_flags: IssueFlags<'_>) {
-                let cmd =3D self.0.as_ptr();
-                let issue_flags =3D issue_flags.0;
-                unsafe {
-                        bindings::io_uring_cmd_done(cmd, ret, res2, issue_f=
-lags)
-                }
-        }
-}
-
-// Can choose whether to complete the command synchronously or asynchronous=
-ly.
-// If take_async() is called, IoUringCmd::done() needs to be called to
-complete the command.
-// If take_async() isn't called, the command is completed synchronously
-// with the return value from MiscDevice::uring_cmd().
-struct UringCmdInput<'a>(&mut Option<NonNull<bindings::io_uring_cmd>>);
-
-impl UringCmdInput<'_> {
-        fn take_async(self) -> IoUringCmd {
-                IoUringCmd(self.0.take().unwrap())
-        }
-}
-
-trait MiscDevice {
-        // ...
-
-        fn uring_cmd(
-                _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-                _cmd: UringCmdInput<'_>,
-                _ issue_flags: IssueFlags <'_>,
-        ) -> Result<i32> {
-                build_error!(VTABLE_DEFAULT_ERROR)
-        }
-}
-
-impl<T: MiscDevice> MiscdeviceVTable<T> {
-        // ...
-
-        unsafe extern "C" fn uring_cmd(
-                ioucmd: *mut bindings::io_uring_cmd,
-                issue_flags: c_uint,
-        ) -> c_int {
-                let raw_file =3D unsafe { (*ioucmd).file };
-                let private =3D unsafe { (*raw_file).private_data }.cast();
-                let device =3D unsafe { <T::Ptr as
-ForeignOwnable>::borrow(private) };
-                let mut ioucmd =3D Some(NonNull::new(ioucmd).unwrap());
-                let issue_flags =3D IssueFlags(issue_flags, PhantomData);
-                let ret =3D T::uring_cmd(device, UringCmdInput(&mut
-ioucmd), issue_flags);
-                // -EIOCBQUEUED indicates ownership of io_uring_cmd
-has been taken
-                if iou_cmd.is_none() {
-                        return -bindings::EIOCBQUEUED;
-                }
-
-                let ret =3D from_result(|| ret);
-                if ret =3D=3D -bindings::EIOCBQUEUED {
-                        -bindings::EINVAL
-                } else {
-                        ret
-                }
-        }
-}
-
-Best,
-Caleb
 
