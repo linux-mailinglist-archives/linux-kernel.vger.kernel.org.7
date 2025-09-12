@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-814053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA04B54EA9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:58:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E9AB54EB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25FA91C2051A
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D609B7C3653
 	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEA0309DAF;
-	Fri, 12 Sep 2025 12:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABEC33093DD;
+	Fri, 12 Sep 2025 12:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HxtNRvlX"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eBVMVMl3"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D678305E0D;
-	Fri, 12 Sep 2025 12:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C021C3019BD
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681857; cv=none; b=EVUigbBu4/ir1/851qRFM+5HQQu7gvdWRi8xxtxYIVDs3RnIqVIHinDTOgVT7TXN3Ys98fylyMMXiPZD62ZwHO/REYii9GW690BLAPNUZaexrk6OlbShL0grVrkg7IBXrDfd5Ex0MiJoOj5hCGRReiRgzX7J/GvfGj2U4Xmz6+k=
+	t=1757681915; cv=none; b=fZSqSzm716dCJ6oqEqMddcjkzG71Kp+0Y7mTh8BDNuBp+5ApbFUvJPVTCldPaGc/uavzdBpYGCi5XRp5xwxVataUnY57yABhh23HCf9ewnN7UOTgmR8pUv5F8hCBywk725jRhELLUww3SaD0V67GiL859U7zH0NfC72JbLGcUe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681857; c=relaxed/simple;
-	bh=doZrhra+WoKnWL3GeWYIh7XwtgJmI0AYgvJj95PavT0=;
+	s=arc-20240116; t=1757681915; c=relaxed/simple;
+	bh=Fxo6h2hIYFDxxN+TWuPg1+6lQ5e9DJwrub3Zjgow4aI=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pdUtl+qnEnGbmNqRP9lP46VlQ9+2XHznGBYE/N6Vx2rYvVfy0+nw6sRilrkhwsbIfbCRZNTadb2Nd0qDajd6nUFvarItOpySy22jwUp7b0lHrbM0wjv9J4Xohes7kZziSLwnbBJIYeUCD7+jBmgFgJ08oLPDsKb/S3Ps8/lfbm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HxtNRvlX; arc=none smtp.client-ip=185.246.84.56
+	 MIME-Version:Content-Type; b=RjXmsdSJ2UHPBPE7C3WZES4Jxu522cMECCtJMMuDZ3CzQen0V8HYFSR8A9Wa4zc9orUn8GP/8AIjd0enduMnNaPQvG1QwYTqqkzDjbaC/2nAU54kgtU87K3xlDn+rjn59UD4zwUdDU7NIzYFST91trvGHUTLbT/WoSrKLE13Eqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eBVMVMl3; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 3AC6B1A09F3;
-	Fri, 12 Sep 2025 12:57:34 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 4003AC8EC49;
+	Fri, 12 Sep 2025 12:58:15 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 0127260638;
-	Fri, 12 Sep 2025 12:57:34 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 422FC102F2A70;
-	Fri, 12 Sep 2025 14:57:29 +0200 (CEST)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 3CA4760638;
+	Fri, 12 Sep 2025 12:58:31 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8FBB5102F29CD;
+	Fri, 12 Sep 2025 14:58:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757681852; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1757681910; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=AKTqAHrzTqK2etFjJsAwB8b24D1cRMcQiVtfJ6wvNcQ=;
-	b=HxtNRvlXl7AgpEYwX4jV3sGSiMtCIrbcAJTzAaXRgI3+WvwtmJsxO65WY788GJnNyEYEsw
-	uez+I/TI+as1jTGZhed28C/VnvTrMr63d5RWvmwRcQwbs5MLhNSFmab/LAyM4bfJ7gDD4j
-	MPCdipnIWXWqhitAMHSjYDsaVuIxOZ/UMEjD63X2yUuxoO9yRqUGon+86cJ+2lqRIPZL4b
-	9C1E5nf7cg0pO/qQzEr+NYNYCpg8EthAZ/eqYuiJh+gzvPIiiKVndlTyf4bUnWsDa1xTZB
-	mjGf+MVTvdZharqWHgGztfa7cRPlMNzPjd4QFTia43/1HKImzdjhPF5oehP+cg==
+	bh=6fGibqKE+FAjIZ49uwUJtvQhXhXO0YneIbfrt6lUIe0=;
+	b=eBVMVMl3UH5oHD9LuDgoIy2GiDvmkt/hXSeYR5TRsDwcSzzQIqeZ7fa8W/16Tk0D3A9pZB
+	bkcbZuJfu3QuDFrz8h8PMjzVj67dLPXkyThpVFKVEcX+l1uJWHTelo65UGi9wMrGSf99Cs
+	+0MSUngd9EtG5VlsD3o3aX9pQfPyjWut46To8mYVBoBh/QULATE2gUhufdteISsIb3kFjS
+	XsHIz5UINFa1OrS44PmCUEpA5wzK5vNn8uV+9wCu7heCTqBCLfWBlok6raJIQ06HHfKcrN
+	0kdgReYhf9PjTBQgEbaM5t3N2ZlJbBvVJ5YWt+5VoxPydJIAOTVV59AwUsF5iQ==
 From: Gregory CLEMENT <gregory.clement@bootlin.com>
 To: Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
  Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Rob Herring
@@ -55,13 +55,13 @@ To: Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Josua Mayer <josua@solid-run.com>,
  stable@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] arm64: dts: marvell: cn9132-clearfog: disable
- eMMC high-speed modes
-In-Reply-To: <20250911-cn913x-sr-fix-sata-v2-2-0d79319105f8@solid-run.com>
+Subject: Re: [PATCH v2 3/4] arm64: dts: marvell: cn9132-clearfog: fix
+ multi-lane pci x2 and x4 ports
+In-Reply-To: <20250911-cn913x-sr-fix-sata-v2-3-0d79319105f8@solid-run.com>
 References: <20250911-cn913x-sr-fix-sata-v2-0-0d79319105f8@solid-run.com>
- <20250911-cn913x-sr-fix-sata-v2-2-0d79319105f8@solid-run.com>
-Date: Fri, 12 Sep 2025 14:57:28 +0200
-Message-ID: <87ldmjomkn.fsf@BLaptop.bootlin.com>
+ <20250911-cn913x-sr-fix-sata-v2-3-0d79319105f8@solid-run.com>
+Date: Fri, 12 Sep 2025 14:58:29 +0200
+Message-ID: <87ikhnomiy.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,13 +74,20 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 Josua Mayer <josua@solid-run.com> writes:
 
-> Similar to MacchiatoBIN the high-speed modes are unstable on the CN9132
-> CEX-7 module, leading to failed transactions under normal use.
+> The mvebu-comphy driver does not currently know how to pass correct
+> lane-count to ATF while configuring the serdes lanes.
 >
-> Disable all high-speed modes including UHS.
+> This causes the system to hard reset during reconfiguration, if a pci
+> card is present and has established a link during bootloader.
 >
-> Additionally add no-sdio and non-removable properties as appropriate for
-> eMMC.
+> Remove the comphy handles from the respective pci nodes to avoid runtime
+> reconfiguration, relying solely on bootloader configuration - while
+> avoiding the hard reset.
+>
+> When bootloader has configured the lanes correctly, the pci ports are
+> functional under Linux.
+>
+> This issue may be addressed in the comphy driver at a future point.
 >
 > Fixes: e9ff907f4076 ("arm64: dts: add description for solidrun cn9132 cex=
 7 module and clearfog board")
@@ -94,27 +101,44 @@ Thanks,
 Gregory
 
 > ---
->  arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
+>  arch/arm64/boot/dts/marvell/cn9132-clearfog.dts | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
 >
-> diff --git a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi b/arch/arm64=
-/boot/dts/marvell/cn9132-sr-cex7.dtsi
-> index afc041c1c448c3e49e1c35d817e91e75db6cfad6..bb2bb47fd77c12f1461b5b9f6=
-ef5567a32cc0153 100644
-> --- a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
-> @@ -137,6 +137,14 @@ &ap_sdhci0 {
->  	pinctrl-0 =3D <&ap_mmc0_pins>;
->  	pinctrl-names =3D "default";
->  	vqmmc-supply =3D <&v_1_8>;
+> diff --git a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts b/arch/arm64=
+/boot/dts/marvell/cn9132-clearfog.dts
+> index 115c55d73786e2b9265e1caa4c62ee26f498fb41..6f237d3542b9102695f8a4845=
+7f43340da994a2c 100644
+> --- a/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
+> +++ b/arch/arm64/boot/dts/marvell/cn9132-clearfog.dts
+> @@ -413,7 +413,13 @@ fixed-link {
+>  /* SRDS #0,#1,#2,#3 - PCIe */
+>  &cp0_pcie0 {
+>  	num-lanes =3D <4>;
+> -	phys =3D <&cp0_comphy0 0>, <&cp0_comphy1 0>, <&cp0_comphy2 0>, <&cp0_co=
+mphy3 0>;
 > +	/*
-> +	 * Not stable in HS modes - phy needs "more calibration", so disable
-> +	 * UHS (by preventing voltage switch), SDR104, SDR50 and DDR50 modes.
+> +	 * The mvebu-comphy driver does not currently know how to pass correct
+> +	 * lane-count to ATF while configuring the serdes lanes.
+> +	 * Rely on bootloader configuration only.
+> +	 *
+> +	 * phys =3D <&cp0_comphy0 0>, <&cp0_comphy1 0>, <&cp0_comphy2 0>, <&cp0=
+_comphy3 0>;
 > +	 */
-> +	no-1-8-v;
-> +	no-sd;
-> +	no-sdio;
-> +	non-removable;
+>  	status =3D "okay";
+>  };
+>=20=20
+> @@ -475,7 +481,13 @@ &cp1_eth0 {
+>  /* SRDS #0,#1 - PCIe */
+>  &cp1_pcie0 {
+>  	num-lanes =3D <2>;
+> -	phys =3D <&cp1_comphy0 0>, <&cp1_comphy1 0>;
+> +	/*
+> +	 * The mvebu-comphy driver does not currently know how to pass correct
+> +	 * lane-count to ATF while configuring the serdes lanes.
+> +	 * Rely on bootloader configuration only.
+> +	 *
+> +	 * phys =3D <&cp1_comphy0 0>, <&cp1_comphy1 0>;
+> +	 */
 >  	status =3D "okay";
 >  };
 >=20=20
