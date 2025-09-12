@@ -1,223 +1,756 @@
-Return-Path: <linux-kernel+bounces-813296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F3CB5433E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:49:40 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE84DB54348
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FCCCA08A0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:49:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B41B74E16C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CEDB2BDC16;
-	Fri, 12 Sep 2025 06:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E4A288C20;
+	Fri, 12 Sep 2025 06:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGkd3b8O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UKJrOrdG"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8221C28726D;
-	Fri, 12 Sep 2025 06:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 503AD287259
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757659751; cv=none; b=nPTkC2Biuw6qPgWAkrJhv/SRPc2U/GnPfv1sK4No3yS+gaYCURsWhffDLtmyOFVU1MXL/pwXCEmQxcn1aIyekuZISorcleCcI7X2Oe1IFB1zbbXXrgYQaV6w5DEbTM5Tz17bjZf+TnhVCbOYvhiMZ9y9vXilYm7R74rf8+4gDro=
+	t=1757659864; cv=none; b=kzrcni5ropfQ09KEgtvvjZ9W+yG1BLmwd6ktEePYpI1ZhGYNec/DcXyDLFBei9dC1iEinODxLSVi37fjDrErKt5cofl9CH/ufN2TWkO4unSEOk5tGTt+SfTDQsRNYf6gpxR+ypc9aTRJd6qK4xDoMpeOws4jNKXhRL7kXpFXDwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757659751; c=relaxed/simple;
-	bh=niQWF1wkWxTNHpw5prHOgNovhde76RsAWKwkEaCR3sQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QBI5kjR4BA+CabCTq1Y2wzynIj6TR2kKeOUh3vDO4pCs6+K/TgYouOMpjqlnXNY57cZojbl3z5XgiTKIjXLvgMJp4PKY86p3gyl6SQJUyZuq2btcd2RF7DFM4q9jngyWL/OQAYjsiBnbF5QoLysJvEKu0hZUyls6ri2H4HMtr9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGkd3b8O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2A72CC4CEFA;
-	Fri, 12 Sep 2025 06:49:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757659751;
-	bh=niQWF1wkWxTNHpw5prHOgNovhde76RsAWKwkEaCR3sQ=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=VGkd3b8OeSmmUozbt5+QZx5XpeZ9MMm9PduNKTbJzBE7xCkTzUtIsjW1Nb2vvSjKZ
-	 DFFIC32LAcRUot6dnSxwmUYT0nTKydvtgzqfl3cooG5IpF4+FsF2FJgk94txy9Bx3b
-	 4tx3QQUFf8YayUxnTleCIfR6m7obC3lnxBZP9xagPs0wvUBYNFQUbx8UcXUuVMSrKO
-	 +JJ5Du6jJmcI9dwayym0rUHD6Zf9/tb29nDCWq1isTg7jOVfcNp/08v7NhBg2KXdbq
-	 h7jbMAyaFSAmukEk2orx6jwIkmWY3GzHbFmENdVXCR388lIzUcww1jbDrt+kGI6Y+S
-	 7as0y5+rfe4JQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED4ACAC595;
-	Fri, 12 Sep 2025 06:49:11 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Fri, 12 Sep 2025 14:49:00 +0800
-Subject: [PATCH v2 3/3] ALSA: doc: add docs about device_device_quirk_flags
- in snd-usb-audio
+	s=arc-20240116; t=1757659864; c=relaxed/simple;
+	bh=dZ1TPbCtsGda2jVYQ2SBu326/nbDO6ySla47g/cS6rk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l4pCPBV6DN37YgGwHx5CQGE7axPF9T3wJGe2s0wL9nj+nrN2bto5aHxul5oHPUbfoWR9Ny7BjhaJcS30wwAALV60RJvPYSjIAZWg0YkLQbKB5Msmb1LG2xxuoLE+PRXJbAlpuB2bUJJxt/SEsaiSE8EE8VukygtEm/5F40zFbts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UKJrOrdG; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76e4fc419a9so1389976b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757659861; x=1758264661; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GNGJb45hL/pdjUCLbyKUslPYbeFme5iVchmkooKtgU0=;
+        b=UKJrOrdG+S7uINtdXGRnFcpFkvj5WErNU0VZ4O7WAq8b7MpVXb/ZTOZpwLVbovVoHd
+         paEKpzv9C5g5FortaLca5mMY+FGvc8VvSfYXwci8jMz1XvPx+RaRQyxmUyGR6QJ3qKoB
+         LnqH/Z/aV0ynM0jkvOM+p0C2B0cOf93x3IdttiSch2XryiuxtyoGnB6BLr/QiE4hXML8
+         zds6Kwzu0FcyA9651KJU8W+rBq/J+P9Ym53sTFo+AQPJ9zDOpMMYjjqS4QinA1XtWEPG
+         erSHOQNcCv6bEALZH8svzzbVJwc+kAMvb+G9otJR30/WwOalfFCzxZjVk7pjle5E08zW
+         FPNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757659861; x=1758264661;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GNGJb45hL/pdjUCLbyKUslPYbeFme5iVchmkooKtgU0=;
+        b=V7+9vm3ekl8szXjvmt2UzGl/Gs5TZEQNHU4D7wVdPOuS04Jn1kmyKltWJWbPpttC2K
+         Xg+j2vnfI40X0AQgpEeb+cPlXaLb2Fox7RPEMzM8cEGvE28G0RcBAapHFS87Qe77rsde
+         TISJ8OeF+X9cEfWZWpYaiKdxQ1/wbo99LQ/6oR35b169YEQ4sz3AsS13C13eGJ1RrSyj
+         YviSpE6YERtn53ikBDSeeMY9Z7mW9OQUSQ6j0NOBuSlb9GjHlknh+iSlC+fVrtt2zzZA
+         y74BG/fsyu2CVbwIJriAlBKd8sQXdOtV6rqbzIGMIires5DJCR58wmelsv4VnTApugeM
+         vgCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo0g7UP1Fmh+eTZj/Z5UisL733uvm8o14DU5hUQvRYhj8w0FRORFZ6g2tRJXPR2EOPwvSz+0zJpkjiAw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZjmqbo/SfKGK0/9/mXhYD4ct+6kvK5eiTeEiXJzhfcBHzJUoX
+	d15ce+9anfsXymjCwCEf6FTJMxqPDd3kufdfDw4zusT8t/01uJ/ryWLT
+X-Gm-Gg: ASbGncsF43QbqVSwMf0r3qbndmqT47hghTTxpb/BJlQFJ8RYsguLEKXE17zqTIdDaht
+	oPoN916MZ0l3qhOoTULZRRPebuUjbTKPvPVe2sQJYa89ldzmfSHJTdC6zZrLEdFz/mFqj96L2lP
+	mbWfBfQ8yRdT2fwI2etoPzIxAsO4DlIOW17yG30G4qOMx1Gn1wuWZkL3TZ6Iq3bqaIvTpL3QRDq
+	2YL8wsNCWr6KLJCBBFPbpVevQ6L5F3nS6V2W2f0wjI6hdrGSI8p/IWzBGDNXRFnuDle6mjvBrgm
+	MVA08FKyE4GU0JuR32mK4IL4O5vknFqPYWueomn6a58wrb5F9HekMkWNm8Y3aZNpaezqbWF9JM3
+	wTbgaBn+sMqrCxq6sZAifnKYvE1C7lfvlWO76u7+b8EZmpIlRtw==
+X-Google-Smtp-Source: AGHT+IGCiqKalyWNCSVmUXfqUY84xooMc3L0OzjiKG8CtYJx5OOn5CI4jMuPlVFHVJUuAgSbM8yoUA==
+X-Received: by 2002:a05:6a00:982:b0:76b:d869:43fd with SMTP id d2e1a72fcca58-7761216815amr2556342b3a.18.1757659860532;
+        Thu, 11 Sep 2025 23:51:00 -0700 (PDT)
+Received: from pengdl-pc.mioffice.cn ([43.224.245.249])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7761277ea42sm1817624b3a.77.2025.09.11.23.50.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 23:50:59 -0700 (PDT)
+From: pengdonglin <dolinux.peng@gmail.com>
+To: tj@kernel.org,
+	tony.luck@intel.com,
+	jani.nikula@linux.intel.com,
+	ap420073@gmail.com,
+	jv@jvosburgh.net,
+	freude@linux.ibm.com,
+	bcrl@kvack.org,
+	trondmy@kernel.org,
+	longman@redhat.com,
+	kees@kernel.org
+Cc: bigeasy@linutronix.de,
+	linux-kernel@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev,
+	linux-nfs@vger.kernel.org,
+	linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	linux-acpi@vger.kernel.org,
+	linux-s390@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	pengdonglin <dolinux.peng@gmail.com>,
+	pengdonglin <pengdonglin@xiaomi.com>
+Subject: [PATCH] rcu: Remove redundant rcu_read_lock/unlock() in spin_lock critical sections
+Date: Fri, 12 Sep 2025 14:50:50 +0800
+Message-Id: <20250912065050.460718-1-dolinux.peng@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250912-sound-v2-3-01ea3d279f4b@uniontech.com>
-References: <20250912-sound-v2-0-01ea3d279f4b@uniontech.com>
-In-Reply-To: <20250912-sound-v2-0-01ea3d279f4b@uniontech.com>
-To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-sound@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- Mingcong Bai <jeffbai@aosc.io>, Kexy Biscuit <kexybiscuit@aosc.io>, 
- Nie Cheng <niecheng1@uniontech.com>, Zhan Jun <zhanjun@uniontech.com>, 
- Feng Yuan <fengyuan@uniontech.com>, qaqland <anguoli@uniontech.com>, 
- kernel@uniontech.com, Cryolitia PukNgae <cryolitia@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757659749; l=7115;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=s/0dZ04dkumVF/ET0AfUgOb4GzZPo7Sb5MusAYIlxoQ=;
- b=MzHSOU9T94yHiBeBcOyihqZ8o2FViu1+bHrllNTq/IVFuryeOQEIR1P9Axf6Tb+3H2KUZM8IE
- Rli8GvTTN2uD5E3OLkngF0LIFxxbIa/EwtajnfFJMOWSP6fzgWr1nzy
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+Content-Transfer-Encoding: 8bit
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+From: pengdonglin <pengdonglin@xiaomi.com>
 
-Just briefly described about the new option.
+When CONFIG_PREEMPT_RT is disabled, spin_lock*() operations implicitly
+disable preemption, which provides RCU read-side protection. When
+CONFIG_PREEMPT_RT is enabled, spin_lock*() implementations internally
+manage RCU read-side critical sections.
 
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
+Thus, explicit rcu_read_lock()/rcu_read_unlock() calls within spin_lock*()
+critical sections are redundant in both configurations. This patch removes
+these unnecessary operations, simplifying the locking semantics while
+maintaining correct RCU protection.
+
+Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
+Signed-off-by: pengdonglin <dolinux.peng@gmail.com>
 ---
- Documentation/sound/alsa-configuration.rst | 105 ++++++++++++++++++++---------
- 1 file changed, 73 insertions(+), 32 deletions(-)
+ drivers/acpi/apei/ghes.c                        | 2 --
+ drivers/gpu/drm/i915/gt/intel_ring_submission.c | 2 --
+ drivers/net/amt.c                               | 6 ------
+ drivers/net/bonding/bond_3ad.c                  | 2 --
+ drivers/net/wireless/ath/ath9k/xmit.c           | 2 --
+ drivers/s390/crypto/pkey_base.c                 | 3 ---
+ fs/aio.c                                        | 2 --
+ fs/nfs/callback_proc.c                          | 2 --
+ fs/nfs/nfs4state.c                              | 2 --
+ fs/nfs/pnfs.c                                   | 9 ---------
+ fs/nfs/pnfs_dev.c                               | 4 ----
+ ipc/msg.c                                       | 1 -
+ ipc/sem.c                                       | 1 -
+ ipc/shm.c                                       | 1 -
+ ipc/util.c                                      | 2 --
+ kernel/cgroup/cgroup.c                          | 2 --
+ kernel/cgroup/cpuset.c                          | 6 ------
+ kernel/cgroup/debug.c                           | 4 ----
+ net/mac80211/cfg.c                              | 2 --
+ net/mac80211/debugfs.c                          | 2 --
+ net/mac80211/debugfs_netdev.c                   | 2 --
+ net/mac80211/debugfs_sta.c                      | 2 --
+ net/mac80211/sta_info.c                         | 2 --
+ net/ncsi/ncsi-manage.c                          | 2 --
+ security/yama/yama_lsm.c                        | 4 ----
+ 25 files changed, 69 deletions(-)
 
-diff --git a/Documentation/sound/alsa-configuration.rst b/Documentation/sound/alsa-configuration.rst
-index a2fb8ed251dd0294e7a62209ca15d5c32c6adfae..060dfbd4197d3134f20d3d86300d97b14071eee9 100644
---- a/Documentation/sound/alsa-configuration.rst
-+++ b/Documentation/sound/alsa-configuration.rst
-@@ -2296,40 +2296,81 @@ skip_validation
-     The option is used to ignore the validation errors with the hexdump
-     of the unit descriptor instead of a driver probe error, so that we
-     can check its details.
-+device_device_quirk_flags
-+    The option povides a refined and flexible control for applying quirk
-+    flags.  It allows to specify the quirk flags for each device, and could
-+    be modified dynamically via sysfs.
-+    The option accepts a string in the format of ``VID1:PID1:FLAGS1;VID2:PID2:
-+    FLAGS2;...``, where ``VIDx`` and ``PIDx`` specify the device, and
-+    ``FLAGSx`` specify the flags to be applied.  ``VIDx`` and ``PIDx`` are
-+    4-digit hexadecimal numbers, and could be specified as ``*`` to match any
-+    value.  ``FLAGSx`` could be a set of flags given by name, separated by
-+    comma, or a hexadecimal number representing the bit flags.  The available
-+    flag names are listed above.  An exclamation mark could be prefixed to a
-+    flag name to negate the flag. For example,
-+    ``1234:abcd:mixer_playback_min_mute,!ignore_ctl_error;*:*:0x01;``
-+    applies the ``mixer_playback_min_mute`` flag and clears the
-+    ``ignore_ctl_error`` flag for the device 1234:abcd, and applies
-+    the ``skip_sample_rate`` flag for all devices.
- quirk_flags
-     Contains the bit flags for various device specific workarounds.
-     Applied to the corresponding card index.
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index a0d54993edb3..97ee19f2cae0 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -1207,12 +1207,10 @@ static int ghes_notify_hed(struct notifier_block *this, unsigned long event,
+ 	int ret = NOTIFY_DONE;
  
--        * bit 0: Skip reading sample rate for devices
--        * bit 1: Create Media Controller API entries
--        * bit 2: Allow alignment on audio sub-slot at transfer
--        * bit 3: Add length specifier to transfers
--        * bit 4: Start playback stream at first in implement feedback mode
--        * bit 5: Skip clock selector setup
--        * bit 6: Ignore errors from clock source search
--        * bit 7: Indicates ITF-USB DSD based DACs
--        * bit 8: Add a delay of 20ms at each control message handling
--        * bit 9: Add a delay of 1-2ms at each control message handling
--        * bit 10: Add a delay of 5-6ms at each control message handling
--        * bit 11: Add a delay of 50ms at each interface setup
--        * bit 12: Perform sample rate validations at probe
--        * bit 13: Disable runtime PM autosuspend
--        * bit 14: Ignore errors for mixer access
--        * bit 15: Support generic DSD raw U32_BE format
--        * bit 16: Set up the interface at first like UAC1
--        * bit 17: Apply the generic implicit feedback sync mode
--        * bit 18: Don't apply implicit feedback sync mode
--        * bit 19: Don't closed interface during setting sample rate
--        * bit 20: Force an interface reset whenever stopping & restarting
--          a stream
--        * bit 21: Do not set PCM rate (frequency) when only one rate is
--          available for the given endpoint.
--        * bit 22: Set the fixed resolution 16 for Mic Capture Volume
--        * bit 23: Set the fixed resolution 384 for Mic Capture Volume
--        * bit 24: Set minimum volume control value as mute for devices
--          where the lowest playback value represents muted state instead
--          of minimum audible volume
--        * bit 25: Be similar to bit 24 but for capture streams
-+        * bit 0: ``get_sample_rate``
-+          Skip reading sample rate for devices
-+        * bit 1: ``share_media_device``
-+          Create Media Controller API entries
-+        * bit 2: ``align_transfer``
-+          Allow alignment on audio sub-slot at transfer
-+        * bit 3: ``tx_length``
-+          Add length specifier to transfers
-+        * bit 4: ``playback_first``
-+          Start playback stream at first in implement feedback mode
-+        * bit 5: ``skip_clock_selector``
-+          Skip clock selector setup
-+        * bit 6: ``ignore_clock_source``
-+          Ignore errors from clock source search
-+        * bit 7: ``itf_usb_dsd_dac``
-+          Indicates ITF-USB DSD based DACs
-+        * bit 8: ``ctl_msg_delay``
-+          Add a delay of 20ms at each control message handling
-+        * bit 9: ``ctl_msg_delay_1m``
-+          Add a delay of 1-2ms at each control message handling
-+        * bit 10: ``ctl_msg_delay_5m``
-+          Add a delay of 5-6ms at each control message handling
-+        * bit 11: ``iface_delay``
-+          Add a delay of 50ms at each interface setup
-+        * bit 12: ``validate_rates``
-+          Perform sample rate validations at probe
-+        * bit 13: ``disable_autosuspend``
-+          Disable runtime PM autosuspend
-+        * bit 14: ``ignore_ctl_error``
-+          Ignore errors for mixer access
-+        * bit 15: ``dsd_raw``
-+          Support generic DSD raw U32_BE format
-+        * bit 16: ``set_iface_first``
-+          Set up the interface at first like UAC1
-+        * bit 17: ``generic_implicit_fb``
-+          Apply the generic implicit feedback sync mode
-+        * bit 18: ``skip_implicit_fb``
-+          Don't apply implicit feedback sync mode
-+        * bit 19: ``iface_skip_close``
-+          Don't closed interface during setting sample rate
-+        * bit 20: ``force_iface_reset``
-+          Force an interface reset whenever stopping & restarting a stream
-+        * bit 21: ``fixed_rate``
-+          Do not set PCM rate (frequency) when only one rate is available
-+          for the given endpoint
-+        * bit 22: ``mic_res_16``
-+          Set the fixed resolution 16 for Mic Capture Volume
-+        * bit 23: ``mic_res_384``
-+          Set the fixed resolution 384 for Mic Capture Volume
-+        * bit 24: ``mixer_playback_min_mute``
-+          Set minimum volume control value as mute for devices where the
-+          lowest playback value represents muted state instead of minimum
-+          audible volume
-+        * bit 25: ``mixer_capture_min_mute``
-+          Be similar to bit 24 but for capture streams
+ 	spin_lock_irqsave(&ghes_notify_lock_irq, flags);
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(ghes, &ghes_hed, list) {
+ 		if (!ghes_proc(ghes))
+ 			ret = NOTIFY_OK;
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock_irqrestore(&ghes_notify_lock_irq, flags);
  
- This module supports multiple devices, autoprobe and hotplugging.
+ 	return ret;
+diff --git a/drivers/gpu/drm/i915/gt/intel_ring_submission.c b/drivers/gpu/drm/i915/gt/intel_ring_submission.c
+index 2a6d79abf25b..bf73166a1337 100644
+--- a/drivers/gpu/drm/i915/gt/intel_ring_submission.c
++++ b/drivers/gpu/drm/i915/gt/intel_ring_submission.c
+@@ -392,14 +392,12 @@ static void reset_rewind(struct intel_engine_cs *engine, bool stalled)
  
-@@ -2344,8 +2385,8 @@ report it to the upstream.
- NB: ``quirk_alias`` option is provided only for testing / development.
- If you want to have a proper support, contact to upstream for
- adding the matching quirk in the driver code statically.
--Ditto for ``quirk_flags``.  If a device is known to require specific
--workarounds, please report to the upstream.
-+Ditto for ``quirk_flags`` and ``device_device_quirk_flags``.  If a device
-+is known to require specific workarounds, please report to the upstream.
+ 	rq = NULL;
+ 	spin_lock_irqsave(&engine->sched_engine->lock, flags);
+-	rcu_read_lock();
+ 	list_for_each_entry(pos, &engine->sched_engine->requests, sched.link) {
+ 		if (!__i915_request_is_complete(pos)) {
+ 			rq = pos;
+ 			break;
+ 		}
+ 	}
+-	rcu_read_unlock();
  
- Module snd-usb-caiaq
- --------------------
-
+ 	/*
+ 	 * The guilty request will get skipped on a hung engine.
+diff --git a/drivers/net/amt.c b/drivers/net/amt.c
+index ed86537b2f61..e7cce735ce7b 100644
+--- a/drivers/net/amt.c
++++ b/drivers/net/amt.c
+@@ -295,7 +295,6 @@ static void amt_source_work(struct work_struct *work)
+ 
+ 	tunnel = gnode->tunnel_list;
+ 	spin_lock_bh(&tunnel->lock);
+-	rcu_read_lock();
+ 	if (gnode->filter_mode == MCAST_INCLUDE) {
+ 		amt_destroy_source(snode);
+ 		if (!gnode->nr_sources)
+@@ -306,7 +305,6 @@ static void amt_source_work(struct work_struct *work)
+ 		 */
+ 		snode->status = AMT_SOURCE_STATUS_D_FWD;
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&tunnel->lock);
+ }
+ 
+@@ -1327,11 +1325,9 @@ static void amt_clear_groups(struct amt_tunnel_list *tunnel)
+ 	int i;
+ 
+ 	spin_lock_bh(&tunnel->lock);
+-	rcu_read_lock();
+ 	for (i = 0; i < amt->hash_buckets; i++)
+ 		hlist_for_each_entry_safe(gnode, t, &tunnel->groups[i], node)
+ 			amt_del_group(amt, gnode);
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&tunnel->lock);
+ }
+ 
+@@ -1343,11 +1339,9 @@ static void amt_tunnel_expire(struct work_struct *work)
+ 	struct amt_dev *amt = tunnel->amt;
+ 
+ 	spin_lock_bh(&amt->lock);
+-	rcu_read_lock();
+ 	list_del_rcu(&tunnel->list);
+ 	amt->nr_tunnels--;
+ 	amt_clear_groups(tunnel);
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&amt->lock);
+ 	kfree_rcu(tunnel, rcu);
+ }
+diff --git a/drivers/net/bonding/bond_3ad.c b/drivers/net/bonding/bond_3ad.c
+index 4edc8e6b6b64..c53ea73f103a 100644
+--- a/drivers/net/bonding/bond_3ad.c
++++ b/drivers/net/bonding/bond_3ad.c
+@@ -2485,7 +2485,6 @@ void bond_3ad_state_machine_handler(struct work_struct *work)
+ 	 * concurrently due to incoming LACPDU as well.
+ 	 */
+ 	spin_lock_bh(&bond->mode_lock);
+-	rcu_read_lock();
+ 
+ 	/* check if there are any slaves */
+ 	if (!bond_has_slaves(bond))
+@@ -2537,7 +2536,6 @@ void bond_3ad_state_machine_handler(struct work_struct *work)
+ 			break;
+ 		}
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&bond->mode_lock);
+ 
+ 	if (update_slave_arr)
+diff --git a/drivers/net/wireless/ath/ath9k/xmit.c b/drivers/net/wireless/ath/ath9k/xmit.c
+index 0ac9212e42f7..4a0f465aa2fe 100644
+--- a/drivers/net/wireless/ath/ath9k/xmit.c
++++ b/drivers/net/wireless/ath/ath9k/xmit.c
+@@ -1993,7 +1993,6 @@ void ath_txq_schedule(struct ath_softc *sc, struct ath_txq *txq)
+ 
+ 	ieee80211_txq_schedule_start(hw, txq->mac80211_qnum);
+ 	spin_lock_bh(&sc->chan_lock);
+-	rcu_read_lock();
+ 
+ 	if (sc->cur_chan->stopped)
+ 		goto out;
+@@ -2011,7 +2010,6 @@ void ath_txq_schedule(struct ath_softc *sc, struct ath_txq *txq)
+ 	}
+ 
+ out:
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&sc->chan_lock);
+ 	ieee80211_txq_schedule_end(hw, txq->mac80211_qnum);
+ }
+diff --git a/drivers/s390/crypto/pkey_base.c b/drivers/s390/crypto/pkey_base.c
+index b15741461a63..4c4a9feecccc 100644
+--- a/drivers/s390/crypto/pkey_base.c
++++ b/drivers/s390/crypto/pkey_base.c
+@@ -48,16 +48,13 @@ int pkey_handler_register(struct pkey_handler *handler)
+ 
+ 	spin_lock(&handler_list_write_lock);
+ 
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(h, &handler_list, list) {
+ 		if (h == handler) {
+-			rcu_read_unlock();
+ 			spin_unlock(&handler_list_write_lock);
+ 			module_put(handler->module);
+ 			return -EEXIST;
+ 		}
+ 	}
+-	rcu_read_unlock();
+ 
+ 	list_add_rcu(&handler->list, &handler_list);
+ 	spin_unlock(&handler_list_write_lock);
+diff --git a/fs/aio.c b/fs/aio.c
+index 7fc7b6221312..9c47f09df19e 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -359,7 +359,6 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
+ 	int i, res = -EINVAL;
+ 
+ 	spin_lock(&mm->ioctx_lock);
+-	rcu_read_lock();
+ 	table = rcu_dereference(mm->ioctx_table);
+ 	if (!table)
+ 		goto out_unlock;
+@@ -378,7 +377,6 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
+ 	}
+ 
+ out_unlock:
+-	rcu_read_unlock();
+ 	spin_unlock(&mm->ioctx_lock);
+ 	return res;
+ }
+diff --git a/fs/nfs/callback_proc.c b/fs/nfs/callback_proc.c
+index 8397c43358bd..16144db39335 100644
+--- a/fs/nfs/callback_proc.c
++++ b/fs/nfs/callback_proc.c
+@@ -721,7 +721,6 @@ __be32 nfs4_callback_offload(void *data, void *dummy,
+ 		return cpu_to_be32(NFS4ERR_DELAY);
+ 
+ 	spin_lock(&cps->clp->cl_lock);
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(server, &cps->clp->cl_superblocks,
+ 				client_link) {
+ 		list_for_each_entry(tmp_copy, &server->ss_copies, copies) {
+@@ -736,7 +735,6 @@ __be32 nfs4_callback_offload(void *data, void *dummy,
+ 		}
+ 	}
+ out:
+-	rcu_read_unlock();
+ 	if (!found) {
+ 		memcpy(&copy->stateid, &args->coa_stateid, NFS4_STATEID_SIZE);
+ 		nfs4_copy_cb_args(copy, args);
+diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
+index 7612e977e80b..598229fc07ed 100644
+--- a/fs/nfs/nfs4state.c
++++ b/fs/nfs/nfs4state.c
+@@ -241,13 +241,11 @@ const struct cred *nfs4_get_renew_cred(struct nfs_client *clp)
+ 		goto out;
+ 
+ 	spin_lock(&clp->cl_lock);
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
+ 		cred = nfs4_get_renew_cred_server_locked(server);
+ 		if (cred != NULL)
+ 			break;
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock(&clp->cl_lock);
+ 
+ out:
+diff --git a/fs/nfs/pnfs.c b/fs/nfs/pnfs.c
+index a3135b5af7ee..c9399452bcfd 100644
+--- a/fs/nfs/pnfs.c
++++ b/fs/nfs/pnfs.c
+@@ -862,16 +862,13 @@ pnfs_layout_bulk_destroy_byserver_locked(struct nfs_client *clp,
+ 			if (pnfs_layout_add_bulk_destroy_list(inode,
+ 						layout_list))
+ 				continue;
+-			rcu_read_unlock();
+ 			spin_unlock(&clp->cl_lock);
+ 			iput(inode);
+ 		} else {
+-			rcu_read_unlock();
+ 			spin_unlock(&clp->cl_lock);
+ 		}
+ 		nfs_sb_deactive(server->super);
+ 		spin_lock(&clp->cl_lock);
+-		rcu_read_lock();
+ 		return -EAGAIN;
+ 	}
+ 	return 0;
+@@ -922,7 +919,6 @@ int pnfs_layout_destroy_byfsid(struct nfs_client *clp, struct nfs_fsid *fsid,
+ 	LIST_HEAD(layout_list);
+ 
+ 	spin_lock(&clp->cl_lock);
+-	rcu_read_lock();
+ restart:
+ 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
+ 		if (memcmp(&server->fsid, fsid, sizeof(*fsid)) != 0)
+@@ -932,7 +928,6 @@ int pnfs_layout_destroy_byfsid(struct nfs_client *clp, struct nfs_fsid *fsid,
+ 				&layout_list) != 0)
+ 			goto restart;
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock(&clp->cl_lock);
+ 
+ 	return pnfs_layout_free_bulk_destroy_list(&layout_list, mode);
+@@ -944,14 +939,12 @@ static void pnfs_layout_build_destroy_list_byclient(struct nfs_client *clp,
+ 	struct nfs_server *server;
+ 
+ 	spin_lock(&clp->cl_lock);
+-	rcu_read_lock();
+ restart:
+ 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
+ 		if (pnfs_layout_bulk_destroy_byserver_locked(clp, server,
+ 							     list) != 0)
+ 			goto restart;
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock(&clp->cl_lock);
+ }
+ 
+@@ -990,7 +983,6 @@ static void pnfs_layout_build_recover_list_byclient(struct nfs_client *clp,
+ 	struct nfs_server *server;
+ 
+ 	spin_lock(&clp->cl_lock);
+-	rcu_read_lock();
+ restart:
+ 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
+ 		if (!(server->caps & NFS_CAP_REBOOT_LAYOUTRETURN))
+@@ -999,7 +991,6 @@ static void pnfs_layout_build_recover_list_byclient(struct nfs_client *clp,
+ 							     list) != 0)
+ 			goto restart;
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock(&clp->cl_lock);
+ }
+ 
+diff --git a/fs/nfs/pnfs_dev.c b/fs/nfs/pnfs_dev.c
+index bf0f2d67e96c..d19752ec1a95 100644
+--- a/fs/nfs/pnfs_dev.c
++++ b/fs/nfs/pnfs_dev.c
+@@ -231,9 +231,7 @@ nfs4_delete_deviceid(const struct pnfs_layoutdriver_type *ld,
+ 	struct nfs4_deviceid_node *d;
+ 
+ 	spin_lock(&nfs4_deviceid_lock);
+-	rcu_read_lock();
+ 	d = _lookup_deviceid(ld, clp, id, nfs4_deviceid_hash(id));
+-	rcu_read_unlock();
+ 	if (!d) {
+ 		spin_unlock(&nfs4_deviceid_lock);
+ 		return;
+@@ -331,14 +329,12 @@ _deviceid_purge_client(const struct nfs_client *clp, long hash)
+ 	HLIST_HEAD(tmp);
+ 
+ 	spin_lock(&nfs4_deviceid_lock);
+-	rcu_read_lock();
+ 	hlist_for_each_entry_rcu(d, &nfs4_deviceid_cache[hash], node)
+ 		if (d->nfs_client == clp && atomic_read(&d->ref)) {
+ 			hlist_del_init_rcu(&d->node);
+ 			hlist_add_head(&d->tmpnode, &tmp);
+ 			clear_bit(NFS_DEVICEID_NOCACHE, &d->flags);
+ 		}
+-	rcu_read_unlock();
+ 	spin_unlock(&nfs4_deviceid_lock);
+ 
+ 	if (hlist_empty(&tmp))
+diff --git a/ipc/msg.c b/ipc/msg.c
+index ee6af4fe52bf..1e579b57023f 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -179,7 +179,6 @@ static int newque(struct ipc_namespace *ns, struct ipc_params *params)
+ 	}
+ 
+ 	ipc_unlock_object(&msq->q_perm);
+-	rcu_read_unlock();
+ 
+ 	return msq->q_perm.id;
+ }
+diff --git a/ipc/sem.c b/ipc/sem.c
+index a39cdc7bf88f..38ad57b2b558 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -579,7 +579,6 @@ static int newary(struct ipc_namespace *ns, struct ipc_params *params)
+ 	ns->used_sems += nsems;
+ 
+ 	sem_unlock(sma, -1);
+-	rcu_read_unlock();
+ 
+ 	return sma->sem_perm.id;
+ }
+diff --git a/ipc/shm.c b/ipc/shm.c
+index a9310b6dbbc3..61fae1b6a18e 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -795,7 +795,6 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
+ 	error = shp->shm_perm.id;
+ 
+ 	ipc_unlock_object(&shp->shm_perm);
+-	rcu_read_unlock();
+ 	return error;
+ 
+ no_id:
+diff --git a/ipc/util.c b/ipc/util.c
+index cae60f11d9c2..1be691b5dcad 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -293,7 +293,6 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	idr_preload(GFP_KERNEL);
+ 
+ 	spin_lock_init(&new->lock);
+-	rcu_read_lock();
+ 	spin_lock(&new->lock);
+ 
+ 	current_euid_egid(&euid, &egid);
+@@ -316,7 +315,6 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	if (idx < 0) {
+ 		new->deleted = true;
+ 		spin_unlock(&new->lock);
+-		rcu_read_unlock();
+ 		return idx;
+ 	}
+ 
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 312c6a8b55bb..db9e00a559df 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -2944,14 +2944,12 @@ int cgroup_attach_task(struct cgroup *dst_cgrp, struct task_struct *leader,
+ 
+ 	/* look up all src csets */
+ 	spin_lock_irq(&css_set_lock);
+-	rcu_read_lock();
+ 	task = leader;
+ 	do {
+ 		cgroup_migrate_add_src(task_css_set(task), dst_cgrp, &mgctx);
+ 		if (!threadgroup)
+ 			break;
+ 	} while_each_thread(leader, task);
+-	rcu_read_unlock();
+ 	spin_unlock_irq(&css_set_lock);
+ 
+ 	/* prepare dst csets and commit */
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 27adb04df675..9b7e8e8e9411 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -4073,7 +4073,6 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
+ 	struct cpuset *cs;
+ 
+ 	spin_lock_irqsave(&callback_lock, flags);
+-	rcu_read_lock();
+ 
+ 	cs = task_cs(tsk);
+ 	if (cs != &top_cpuset)
+@@ -4095,7 +4094,6 @@ void cpuset_cpus_allowed(struct task_struct *tsk, struct cpumask *pmask)
+ 			cpumask_copy(pmask, possible_mask);
+ 	}
+ 
+-	rcu_read_unlock();
+ 	spin_unlock_irqrestore(&callback_lock, flags);
+ }
+ 
+@@ -4168,9 +4166,7 @@ nodemask_t cpuset_mems_allowed(struct task_struct *tsk)
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&callback_lock, flags);
+-	rcu_read_lock();
+ 	guarantee_online_mems(task_cs(tsk), &mask);
+-	rcu_read_unlock();
+ 	spin_unlock_irqrestore(&callback_lock, flags);
+ 
+ 	return mask;
+@@ -4265,10 +4261,8 @@ bool cpuset_current_node_allowed(int node, gfp_t gfp_mask)
+ 	/* Not hardwall and node outside mems_allowed: scan up cpusets */
+ 	spin_lock_irqsave(&callback_lock, flags);
+ 
+-	rcu_read_lock();
+ 	cs = nearest_hardwall_ancestor(task_cs(current));
+ 	allowed = node_isset(node, cs->mems_allowed);
+-	rcu_read_unlock();
+ 
+ 	spin_unlock_irqrestore(&callback_lock, flags);
+ 	return allowed;
+diff --git a/kernel/cgroup/debug.c b/kernel/cgroup/debug.c
+index 80aa3f027ac3..81ea38dd6f9d 100644
+--- a/kernel/cgroup/debug.c
++++ b/kernel/cgroup/debug.c
+@@ -49,7 +49,6 @@ static int current_css_set_read(struct seq_file *seq, void *v)
+ 		return -ENODEV;
+ 
+ 	spin_lock_irq(&css_set_lock);
+-	rcu_read_lock();
+ 	cset = task_css_set(current);
+ 	refcnt = refcount_read(&cset->refcount);
+ 	seq_printf(seq, "css_set %pK %d", cset, refcnt);
+@@ -67,7 +66,6 @@ static int current_css_set_read(struct seq_file *seq, void *v)
+ 		seq_printf(seq, "%2d: %-4s\t- %p[%d]\n", ss->id, ss->name,
+ 			  css, css->id);
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock_irq(&css_set_lock);
+ 	cgroup_kn_unlock(of->kn);
+ 	return 0;
+@@ -95,7 +93,6 @@ static int current_css_set_cg_links_read(struct seq_file *seq, void *v)
+ 		return -ENOMEM;
+ 
+ 	spin_lock_irq(&css_set_lock);
+-	rcu_read_lock();
+ 	cset = task_css_set(current);
+ 	list_for_each_entry(link, &cset->cgrp_links, cgrp_link) {
+ 		struct cgroup *c = link->cgrp;
+@@ -104,7 +101,6 @@ static int current_css_set_cg_links_read(struct seq_file *seq, void *v)
+ 		seq_printf(seq, "Root %d group %s\n",
+ 			   c->root->hierarchy_id, name_buf);
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock_irq(&css_set_lock);
+ 	kfree(name_buf);
+ 	return 0;
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 2ed07fa121ab..4fe50d4c461d 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -4825,7 +4825,6 @@ static int ieee80211_get_txq_stats(struct wiphy *wiphy,
+ 	int ret = 0;
+ 
+ 	spin_lock_bh(&local->fq.lock);
+-	rcu_read_lock();
+ 
+ 	if (wdev) {
+ 		sdata = IEEE80211_WDEV_TO_SUB_IF(wdev);
+@@ -4851,7 +4850,6 @@ static int ieee80211_get_txq_stats(struct wiphy *wiphy,
+ 	}
+ 
+ out:
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&local->fq.lock);
+ 
+ 	return ret;
+diff --git a/net/mac80211/debugfs.c b/net/mac80211/debugfs.c
+index e8b78ec682da..82099f4cedbe 100644
+--- a/net/mac80211/debugfs.c
++++ b/net/mac80211/debugfs.c
+@@ -82,7 +82,6 @@ static ssize_t aqm_read(struct file *file,
+ 	int len = 0;
+ 
+ 	spin_lock_bh(&local->fq.lock);
+-	rcu_read_lock();
+ 
+ 	len = scnprintf(buf, sizeof(buf),
+ 			"access name value\n"
+@@ -105,7 +104,6 @@ static ssize_t aqm_read(struct file *file,
+ 			fq->limit,
+ 			fq->quantum);
+ 
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&local->fq.lock);
+ 
+ 	return simple_read_from_buffer(user_buf, count, ppos,
+diff --git a/net/mac80211/debugfs_netdev.c b/net/mac80211/debugfs_netdev.c
+index 1dac78271045..30a5a978a678 100644
+--- a/net/mac80211/debugfs_netdev.c
++++ b/net/mac80211/debugfs_netdev.c
+@@ -625,7 +625,6 @@ static ssize_t ieee80211_if_fmt_aqm(
+ 	txqi = to_txq_info(sdata->vif.txq);
+ 
+ 	spin_lock_bh(&local->fq.lock);
+-	rcu_read_lock();
+ 
+ 	len = scnprintf(buf,
+ 			buflen,
+@@ -642,7 +641,6 @@ static ssize_t ieee80211_if_fmt_aqm(
+ 			txqi->tin.tx_bytes,
+ 			txqi->tin.tx_packets);
+ 
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&local->fq.lock);
+ 
+ 	return len;
+diff --git a/net/mac80211/debugfs_sta.c b/net/mac80211/debugfs_sta.c
+index 49061bd4151b..ef75255d47d5 100644
+--- a/net/mac80211/debugfs_sta.c
++++ b/net/mac80211/debugfs_sta.c
+@@ -148,7 +148,6 @@ static ssize_t sta_aqm_read(struct file *file, char __user *userbuf,
+ 		return -ENOMEM;
+ 
+ 	spin_lock_bh(&local->fq.lock);
+-	rcu_read_lock();
+ 
+ 	p += scnprintf(p,
+ 		       bufsz + buf - p,
+@@ -178,7 +177,6 @@ static ssize_t sta_aqm_read(struct file *file, char __user *userbuf,
+ 			       test_bit(IEEE80211_TXQ_DIRTY, &txqi->flags) ? " DIRTY" : "");
+ 	}
+ 
+-	rcu_read_unlock();
+ 	spin_unlock_bh(&local->fq.lock);
+ 
+ 	rv = simple_read_from_buffer(userbuf, count, ppos, buf, p - buf);
+diff --git a/net/mac80211/sta_info.c b/net/mac80211/sta_info.c
+index 8c550aab9bdc..663318a75d7f 100644
+--- a/net/mac80211/sta_info.c
++++ b/net/mac80211/sta_info.c
+@@ -2637,13 +2637,11 @@ static void sta_set_tidstats(struct sta_info *sta,
+ 
+ 	if (link_id < 0 && tid < IEEE80211_NUM_TIDS) {
+ 		spin_lock_bh(&local->fq.lock);
+-		rcu_read_lock();
+ 
+ 		tidstats->filled |= BIT(NL80211_TID_STATS_TXQ_STATS);
+ 		ieee80211_fill_txq_stats(&tidstats->txq_stats,
+ 					 to_txq_info(sta->sta.txq[tid]));
+ 
+-		rcu_read_unlock();
+ 		spin_unlock_bh(&local->fq.lock);
+ 	}
+ }
+diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+index 446e4e3b9553..6e36cd64a31e 100644
+--- a/net/ncsi/ncsi-manage.c
++++ b/net/ncsi/ncsi-manage.c
+@@ -650,7 +650,6 @@ static int set_one_vid(struct ncsi_dev_priv *ndp, struct ncsi_channel *nc,
+ 
+ 	spin_lock_irqsave(&nc->lock, flags);
+ 
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(vlan, &ndp->vlan_vids, list) {
+ 		vid = vlan->vid;
+ 		for (i = 0; i < ncf->n_vids; i++)
+@@ -661,7 +660,6 @@ static int set_one_vid(struct ncsi_dev_priv *ndp, struct ncsi_channel *nc,
+ 		if (vid)
+ 			break;
+ 	}
+-	rcu_read_unlock();
+ 
+ 	if (!vid) {
+ 		/* No VLAN ID is not set */
+diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+index 3d064dd4e03f..60d38deb181b 100644
+--- a/security/yama/yama_lsm.c
++++ b/security/yama/yama_lsm.c
+@@ -117,14 +117,12 @@ static void yama_relation_cleanup(struct work_struct *work)
+ 	struct ptrace_relation *relation;
+ 
+ 	spin_lock(&ptracer_relations_lock);
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(relation, &ptracer_relations, node) {
+ 		if (relation->invalid) {
+ 			list_del_rcu(&relation->node);
+ 			kfree_rcu(relation, rcu);
+ 		}
+ 	}
+-	rcu_read_unlock();
+ 	spin_unlock(&ptracer_relations_lock);
+ }
+ 
+@@ -152,7 +150,6 @@ static int yama_ptracer_add(struct task_struct *tracer,
+ 	added->invalid = false;
+ 
+ 	spin_lock(&ptracer_relations_lock);
+-	rcu_read_lock();
+ 	list_for_each_entry_rcu(relation, &ptracer_relations, node) {
+ 		if (relation->invalid)
+ 			continue;
+@@ -166,7 +163,6 @@ static int yama_ptracer_add(struct task_struct *tracer,
+ 	list_add_rcu(&added->node, &ptracer_relations);
+ 
+ out:
+-	rcu_read_unlock();
+ 	spin_unlock(&ptracer_relations_lock);
+ 	return 0;
+ }
 -- 
-2.51.0
-
+2.34.1
 
 
