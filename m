@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-814016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A90D9B54E4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:44:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7E0B54E46
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8254F188E898
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:41:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D2B1562435
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C7B15E5D4;
-	Fri, 12 Sep 2025 12:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F63302755;
+	Fri, 12 Sep 2025 12:42:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L3x7sOxX"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CYa0B9SA"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69983009FF
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB9E2FD1D8
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:42:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757680864; cv=none; b=rJB9R0Hd+0nQpz4JAe5rvja960tnteLJRRfEdBZ3IL/AMuaOHOyYRq1fveNcQ3D+ZaAATItWBQpESnSRoq5XtX+o9rvh4t1dC7OrmyGMGh8uYBiko7RuPJx9y7jEE1keMIlnEbrbcVizG1t8tOZOAub926wp4yQaJfP7rhhzsIk=
+	t=1757680966; cv=none; b=YDZOxCbHSXsyMM1b+FyHYFSjHwwcN7ON4iZeWGvhn2QcTXqNoi2qO2q9ZfXOwXjqZhf4ammD0S4LZUbPBnvXA6vjfU2lOZrsRfFMbz5mSAmxuUjpUZpKikpJRSqBATIi0Jv1ZidF4cJiNJtTUj8FBnxp8UW6MTxgsuUXrUm/GO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757680864; c=relaxed/simple;
-	bh=ZuPCHfzOUjwarcCMNzSbd9aAXdQC5BImadz8rAVlzPw=;
+	s=arc-20240116; t=1757680966; c=relaxed/simple;
+	bh=Sbr9UcuBSA1fnqSKyTmP6EE6X8W00T3WjaDqgVB3kyc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LhNRmWIE1nc8ZS0myu/6G0ZrsoMMr4dEetMB7J+dY5wRjM1M+KkLMSeU2fOQRQaJKls9ZjkORBz3c7xaPkI3TZ177nxXQKQGHhUZxWqJqOkFiklkhLGTYlJuOSw8viC1J2S0y62bD+Wrb+yCSILAQhpuC7UMQqULGGD0Cz9ncdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L3x7sOxX; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=VGe0liQviblKIll53AVdbCzlw/kuksHWmppQ3xyusl9w9znHL4u4SS77oKJ0BMhzNGl8xLaxw8qnIZIGwexhdXdyYk7OIQF1ID1lie9ReF5Kyn9RKjcp0bydiOToXYTBavR7Pva8OGvZBrc2/3snjbjEbvRDF7k5wBhWSfu0zjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CYa0B9SA; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757680861;
+	s=mimecast20190719; t=1757680963;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iMoIwx8Fq7mQjvBVlaYyQNpQMDf4JO+RcpWFZz45CMg=;
-	b=L3x7sOxXeoX4Ez1i9TUHu1NQVTocckaO6l3LdUWbess1psN78SxuRICFrMLvk1MX4LvsCj
-	5VDT6L1/v9sALGwup8sMcrcyvzGqckgtKN4cHQXHnojVgogbuRySCGdNhRKIb+hVdE60G2
-	N2uFfrfl4cS0q1j1FEomBc1Hc/LSs9Q=
+	bh=G68/Vcl30gBKrC2/x62wn4zQW5Fw8/QtQkhUplaCLsc=;
+	b=CYa0B9SAJEf+q/mdrEbhQENhNCuSLZpzSAr8wclrz/p01KaKhs7vgVszIhrRYFrXMocb3M
+	hwHw+uMVIV0ghKaE5O1JjNalaGMidM5JCbOKPM8RVEHpUuV2WtxlZZib8Z+qFktQEY5w4v
+	7TYrYnPXAhyNnnJgvVMVL5w1jikbOOM=
 Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
  [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-508-zQ96ExxaOaCS_yizlo_QrA-1; Fri, 12 Sep 2025 08:41:00 -0400
-X-MC-Unique: zQ96ExxaOaCS_yizlo_QrA-1
-X-Mimecast-MFC-AGG-ID: zQ96ExxaOaCS_yizlo_QrA_1757680859
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45deddf34b9so17325725e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:41:00 -0700 (PDT)
+ us-mta-636-migpf3kGNme8wAoK8TrtNw-1; Fri, 12 Sep 2025 08:42:42 -0400
+X-MC-Unique: migpf3kGNme8wAoK8TrtNw-1
+X-Mimecast-MFC-AGG-ID: migpf3kGNme8wAoK8TrtNw_1757680961
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45dd62a0dd2so8817495e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:42:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757680859; x=1758285659;
+        d=1e100.net; s=20230601; t=1757680961; x=1758285761;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=iMoIwx8Fq7mQjvBVlaYyQNpQMDf4JO+RcpWFZz45CMg=;
-        b=Q5ZQmPhTIeokCQO1KHColkrMqvBQ5pkuUfmMWbSM5GtskDjVtoFx5v1xgrMUyBYUyn
-         QK9DCqZ+lgEJ9pUG+JMyXKnN0/uUVzDdjmBPIla+qAUfSo03Lam5NLN0fhOnzn1J/IS8
-         jVI+JEIsUtzaOisRzct7VWYomt40zSkM07v4mX1Fu513oVdQenvQNAZ1Mf450Dy7IeA6
-         HpUT03uSZ5AGZ6NLEcAGV05K5llKr2PU2tI0YIw+hmF0ob/GZCviBBOIXgT721Fow9XW
-         yi2OXPXENibbo0soMhcOmNYZc0o+t3faK+Bf9iV8HQbf8p1lryRzmmBS3lgx1spa45qw
-         J+Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCUwJYYmffCBBX8MtHTqYhnUKCWTgsXJHy7kUGPILv6Kjqknny3DDSQ71s/UKeF4dxGHaliTiJMpjwEHZdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyflIuYeQIvB6DLWSnkIKja9pjUqfbd2+JjsyVcTX3nI4XP/Hed
-	Y3eWdMdZ5aKs+mpvDcFjdv/X9cOQvwhGBWsM1LDRBWCz53m2Rwb50cjdiLWoAb1TVyG0UCCFbPB
-	EzIqLoshNqCgCfhfaqjT1qn4dilLRZAmClAI/DA/xN9Bq8+TIMwGR4tatg5xRP2S9KQ==
-X-Gm-Gg: ASbGnculkdNRs9Y6CJLm5e9inky5rV7QoJpv2DqdRG4Op+QhK4a5imSU5W0bAmkhOjP
-	BlLWhefaFMa/5LHMnIyw1ZvGKr5H/2RBJ06gDtCeR5SdzDmgCzK1xss7bPTYLe86bE3U4A85WFB
-	VUapTVZ4OtgQvRVa143vgm0kVFnsSv0EmDaFNBSJObpuPkH8Bx+VWnimbPAOr0gWufeFHqiPXqO
-	9gJcSYctsAW8m2wwylIsSK3JBHbbnqIhhYOgD/YJACeJ+29H9Vejn22f+miRFuK5x+1SS+lYuCV
-	4ncboOxql6+4dYdg6R/S+0W3bl3Bds2q/g6w1ulh7p/XlTAD/M2mJC+cwF+pz61N2Y9JSBuVBAq
-	c+qM0mMI7YpxvAmT4LHm6fqfkw8zb8EM3R/bYJjEYINpgkRqmSxUyLA87feqkKpwz8NY=
-X-Received: by 2002:a05:600c:1daa:b0:459:d577:bd24 with SMTP id 5b1f17b1804b1-45ed647a10cmr35609995e9.7.1757680858996;
-        Fri, 12 Sep 2025 05:40:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEVEThTm8r9XP8uPlz9qkFfWXl+PlwCvx30XVhJYO0zMEAs87UYsFy+ktNpyiVcKL2vVNFxRw==
-X-Received: by 2002:a05:600c:1daa:b0:459:d577:bd24 with SMTP id 5b1f17b1804b1-45ed647a10cmr35609685e9.7.1757680858542;
-        Fri, 12 Sep 2025 05:40:58 -0700 (PDT)
+        bh=G68/Vcl30gBKrC2/x62wn4zQW5Fw8/QtQkhUplaCLsc=;
+        b=JVuiJOYQBtQ72Ya+p302hmoeeXfDfONn89+/o2j6eBXQOAIfSiDC1FCvIyBL2+1B+k
+         o5IzMxzpgXz4LNUyeJgr8fLZ68qQ+ukiHFSXCx9nPW3XhFTEviB354XXKcVOp7DQtO21
+         R9IeVjTkK0MlyhuQr+aEXUweMYzUzWKbA6hJ999DJkzu7RV/rdjUvuUxrqxnbuMP9yPS
+         uk7Hbs2f46PxbJmZi5G6RaIm5sO80+g2febmsXO8JOmu1cmMsBc4cDpdjtDVM5ed+5v4
+         XYbT4RvK/VVlPQYrT/dq51B8J5mI5ImY3j36FuRu07VegDrSJ98b371ovHCs9zIJBUxD
+         oDXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKVDcKzUxm9qWLGOdqxbWOD+rYzAf2mnn3U2F2QXJsWpPXFfJ8h2ZUut2RRq7/jBO0UTj/CwZ0PhrBcQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO7CdHlTZHhPZe8xHn0YPZkr1lBP4doVTrQ9mW0H8n9znBR/fw
+	U0C+9YqAMD01MknsoI+YIFNfRSnLbuP6jJje0MhVlqqUlUoTxQStks3o8PIk0w4jAhV95/f5m1W
+	bLa6ohh2N6uA4xBo2fsKsmiPQZqXP6Fdynp3MO1xImlqzaXJWBFIUMllmpq+HcZp/CA==
+X-Gm-Gg: ASbGncuDGZ3Y0yqOOkuaVMjaHFrqqbp1KOIaq++NS8HEjuQOci6QhYHSudmD5m5rQVq
+	LT/jI0mz2XwYcP5MhiUVxNAdrd/yff1kVKYzawl31ULDek+Wp1xh1wTHFmI0p6mZdTUBiQRl8/V
+	IT+aM3hz4m0Ej+93HZFcLUp8lVReXxMJZxxISN3eHcvGnx6VmFp8rgnuYwdoRs1La6L+FQjzOSC
+	1q+z+A/IniogxNsa1a64fP8hm9Tk9auM8CYjNHYAsLd6bGmYxpYYbpmCdnpoajciQdD7xzoEDgD
+	+621lPp4qe3HDNP/0q0+zryRCX8vbQ7luFuLNxoXcb3rIQ3L7VSExOxxtEkSxKw0khDRy4stjJv
+	9UC3wA3OvW1R+/e2Km6tM5t8pI0z5oJNCRdzYQZL8a21CwacKnsRfLk9GL7gf76laHDQ=
+X-Received: by 2002:a05:600c:3328:b0:45d:e728:ce6 with SMTP id 5b1f17b1804b1-45dfd7e75a1mr44551965e9.18.1757680960984;
+        Fri, 12 Sep 2025 05:42:40 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8FYlxUSGpt9qV5IWzAmbChJ51bMVMip/23iOY5R9qJCjX4HDDSwisLFfp9Dft+/PJESOvyQ==
+X-Received: by 2002:a05:600c:3328:b0:45d:e728:ce6 with SMTP id 5b1f17b1804b1-45dfd7e75a1mr44551765e9.18.1757680960540;
+        Fri, 12 Sep 2025 05:42:40 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0372ae57sm60050545e9.8.2025.09.12.05.40.56
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017b3137sm66439175e9.19.2025.09.12.05.42.39
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 05:40:58 -0700 (PDT)
-Message-ID: <74d1f275-23c3-4fd8-b665-503c7fc87df0@redhat.com>
-Date: Fri, 12 Sep 2025 14:40:55 +0200
+        Fri, 12 Sep 2025 05:42:40 -0700 (PDT)
+Message-ID: <302d47a7-4f20-4c74-ad3e-b8574970bce5@redhat.com>
+Date: Fri, 12 Sep 2025 14:42:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,40 +89,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-To: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
- Mark Rutland <Mark.Rutland@arm.com>
-References: <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
- <29383ee2-d6d6-4435-9052-d75a263a5c45@redhat.com>
- <9de08024-adfc-421b-8799-62653468cf63@arm.com>
- <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
- <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
- <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
- <15d01c8b-5475-442e-9df5-ca37b0d5dc04@arm.com>
- <7953a735-6129-4d22-be65-ce736630d539@redhat.com>
- <781a6450-1c0b-4603-91cf-49f16cd78c28@arm.com>
- <a17ab4e3-627a-4989-a5a5-d430eadabb86@redhat.com>
- <9ed5441f-cc03-472a-adc6-b9d3ad525664-agordeev@linux.ibm.com>
+Subject: Re: [PATCH v3 3/3] selftests/mm: fix va_high_addr_switch.sh failure
+ on x86_64
+To: Chunyu Hu <chuhu@redhat.com>, akpm@linux-foundation.org,
+ shuah@kernel.org, linux-mm@kvack.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com
+References: <20250912013711.3002969-1-chuhu@redhat.com>
+ <20250912013711.3002969-2-chuhu@redhat.com>
+ <20250912013711.3002969-3-chuhu@redhat.com>
+ <20250912013711.3002969-4-chuhu@redhat.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -169,35 +146,77 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <9ed5441f-cc03-472a-adc6-b9d3ad525664-agordeev@linux.ibm.com>
+In-Reply-To: <20250912013711.3002969-4-chuhu@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12.09.25 14:37, Alexander Gordeev wrote:
-> On Fri, Sep 12, 2025 at 10:55:50AM +0200, David Hildenbrand wrote:
+On 12.09.25 03:37, Chunyu Hu wrote:
+> The test will fail as below on x86_64 with cpu la57 support (will skip if
+> no la57 support). Note, the test requries nr_hugepages to be set first.
 > 
-> Hi David, Kevin,
+>    # running bash ./va_high_addr_switch.sh
+>    # -------------------------------------
+>    # mmap(addr_switch_hint - pagesize, pagesize): 0x7f55b60fa000 - OK
+>    # mmap(addr_switch_hint - pagesize, (2 * pagesize)): 0x7f55b60f9000 - OK
+>    # mmap(addr_switch_hint, pagesize): 0x800000000000 - OK
+>    # mmap(addr_switch_hint, 2 * pagesize, MAP_FIXED): 0x800000000000 - OK
+>    # mmap(NULL): 0x7f55b60f9000 - OK
+>    # mmap(low_addr): 0x40000000 - OK
+>    # mmap(high_addr): 0x1000000000000 - OK
+>    # mmap(high_addr) again: 0xffff55b6136000 - OK
+>    # mmap(high_addr, MAP_FIXED): 0x1000000000000 - OK
+>    # mmap(-1): 0xffff55b6134000 - OK
+>    # mmap(-1) again: 0xffff55b6132000 - OK
+>    # mmap(addr_switch_hint - pagesize, pagesize): 0x7f55b60fa000 - OK
+>    # mmap(addr_switch_hint - pagesize, 2 * pagesize): 0x7f55b60f9000 - OK
+>    # mmap(addr_switch_hint - pagesize/2 , 2 * pagesize): 0x7f55b60f7000 - OK
+>    # mmap(addr_switch_hint, pagesize): 0x800000000000 - OK
+>    # mmap(addr_switch_hint, 2 * pagesize, MAP_FIXED): 0x800000000000 - OK
+>    # mmap(NULL, MAP_HUGETLB): 0x7f55b5c00000 - OK
+>    # mmap(low_addr, MAP_HUGETLB): 0x40000000 - OK
+>    # mmap(high_addr, MAP_HUGETLB): 0x1000000000000 - OK
+>    # mmap(high_addr, MAP_HUGETLB) again: 0xffff55b5e00000 - OK
+>    # mmap(high_addr, MAP_FIXED | MAP_HUGETLB): 0x1000000000000 - OK
+>    # mmap(-1, MAP_HUGETLB): 0x7f55b5c00000 - OK
+>    # mmap(-1, MAP_HUGETLB) again: 0x7f55b5a00000 - OK
+>    # mmap(addr_switch_hint - pagesize, 2*hugepagesize, MAP_HUGETLB): 0x800000000000 - FAILED
+>    # mmap(addr_switch_hint , 2*hugepagesize, MAP_FIXED | MAP_HUGETLB): 0x800000000000 - OK
+>    # [FAIL]
 > 
->> Great, looking forward to seeing this all getting cleaned up and done
->> properly for good.
+> addr_switch_hint is defined as DFEFAULT_MAP_WINDOW in the failed test (for
+> x86_64, DFEFAULT_MAP_WINDOW is defined as (1UL<<47) - pagesize) in 64 bit.
 > 
-> I am currently working on lazy mmu for s390 and this nesting
-> initiative kind of interferres. Well, in fact it looks like
-> it does not, but I am bit lost in last couple of iterations ;)
+> Before commit cc92882ee218 ("mm: drop hugetlb_get_unmapped_area{_*}
+> functions"), for x86_64 hugetlb_get_unmapped_area() is handled in arch code
+> arch/x86/mm/hugetlbpage.c and addr is checked with map_address_hint_valid()
+> after align with 'addr &= huge_page_mask(h)' which is a round down way, and
+> it will fail the check because the addr is within the DEFAULT_MAP_WINDOW but
+> (addr + len) is above the DFEFAULT_MAP_WINDOW. So it wil go through the
+> hugetlb_get_unmmaped_area_top_down() to find an area within the
+> DFEFAULT_MAP_WINDOW.
 > 
-> The prerequisite for s390 would be something like the change
-> below. With that change I can store the context in a per-cpu
-> structure and use it later in arch-specific ptep_* primitives.
+> After commit cc92882ee218 ("mm: drop hugetlb_get_unmapped_area{_*}
+> functions").  The addr hint for hugetlb_get_unmmaped_area() will be rounded
+> up and aligned to hugepage size with ALIGN() for all arches.  And after the
+> align, the addr will be above the default MAP_DEFAULT_WINDOW, and the
+> map_addresshint_valid() check will pass because both aligned addr (addr0)
+> and (addr + len) are above the DEFAULT_MAP_WINDOW, and the aligned hint
+> address (0x800000000000) is returned as an suitable gap is found there,
+> in arch_get_unmapped_area_topdown().
 > 
-> Moreover, with a further (experimental) rework we could use
-> a custom kasan sanitizer to spot false directly compiled
-> PTE accesses, as opposed to set_pte()/ptep_get() accessors.
+> To still cover the case that addr is within the DEFAULT_MAP_WINDOW, and
+> addr + len is above the DFEFAULT_MAP_WINDOW, change to choose the last
+> hugepage aligned address within the DEFAULT_MAP_WINDOW as the hint addr,
+> and the addr + len (2 hugepages) will be one hugepage above the
+> DEFAULT_MAP_WINDOW.  An aligned address won't be affected by the page
+> round up or round down from kernel, so it's determistic.
 > 
-> I am not quite sure see whether this could be derailed by
-> the new lazy mmu API. At least I do not immediately see any
-> obvious problem. But may be you do?
+> Fixes: cc92882ee218 ("mm: drop hugetlb_get_unmapped_area{_*} functions")
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Chunyu Hu <chuhu@redhat.com>
+> ---
 
-It would just be passing more context down to the architecture, right?
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers
