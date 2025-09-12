@@ -1,97 +1,91 @@
-Return-Path: <linux-kernel+bounces-813158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DBF1B5414E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:58:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C02FB5414B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC25170DE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:57:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E431AA0B82
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249822727FA;
-	Fri, 12 Sep 2025 03:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006C826B95B;
+	Fri, 12 Sep 2025 03:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LX0Sr5GC"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TF7xVJPl"
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE73B26E6E2;
-	Fri, 12 Sep 2025 03:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF113398B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757649420; cv=none; b=PHiiTF3UEO/rQJSLWP1gSM2M+fiMRj0WFczppsKnEOnzjDqsFHKbt0Y0ccbaqaxVl2Rgj28CdnnyPqqgY0IYA0ZFuO0IMO/nu00zGGdr6vIVpLh1dHDlbhFG6heTm6pNjhzzx8UxMhWCtq12myEb0uxIYxTIMbhAVFDOqype4qA=
+	t=1757649414; cv=none; b=pBKey56VLo6McAp4chKe5p0h0F/EeB4I68StKxqm0XgqD9ZGzXBZjPEswPr4cE4+7DdgRUO6KVmXdJeKjlnYOOnVGkbcaKWmvuQ1Hg9jbmyjzSLRyyOjbh+xfSlKHULWjQuvc35fbzYOUQ/XvxRjL7lZOqePYPDS6VXszJdJchA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757649420; c=relaxed/simple;
-	bh=ZbrmobRaTPjafpy6SyOGVwCIKw1DRN30UH3X6lZ4kN4=;
+	s=arc-20240116; t=1757649414; c=relaxed/simple;
+	bh=5lhh0x+oSCtKy78BQ7SPZwtdIG85NmhLf67+BBHezk0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rDwTuA+ojo0TMFSXhJh8tgJvNWFOY9T2IKUZYToccikWN7PJLlyUVxs48E5jTQ//2LOUFjkHf8BRClFTz18fkUYPV5j7a/jQd1AMJlr2pwwMySPPC973Wwb4iyecscfM6nnE4Qws1FlLPNfe8ZTL81t39vd/TUpLIwXqyDwfdCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LX0Sr5GC; arc=none smtp.client-ip=148.163.156.1
+	 MIME-Version:Content-Type; b=oN5XJzJ/9JGxPWZN28XrrhGFja6vtc9z43D/POc2Q23eIPFcncVuoAqBa7QV7j7iT4lUTJ1CRwLXxJsKBHoezMSYWm2yIAAcmhjJwlGYWYO/vG9y4bXfejPPd0HTYlq0YwT6/lKuDG0LoImDCcgLl6dtyFdLv8dKCCb92v7K81k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TF7xVJPl; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BMC9vx020534;
-	Fri, 12 Sep 2025 03:56:26 GMT
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BKDKol028671;
+	Fri, 12 Sep 2025 03:56:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=PrHogM
-	U41dlBVB//0xF9JvxaxOCwljW7x6kJLn9nQ3g=; b=LX0Sr5GCZbMVn/g+LauJIY
-	qL6OwuSBv7xy68rFOqL6BX2anRbsl8ixWcqZzLcHgXyyq5OicCeghLiYAhGIl1I5
-	Y/OlJcGZyf1BTKBGSsPeGVEQ8g2BF63NsMObLR+YmPfchdJ6HV5cKxclzU1YxOmF
-	UQpY9inLGM15XuQbIoUVLhcceF0gYh7rBxdE6OTofNLlatA+yzR0tMbziKFLeV3X
-	e05Y0P5NJBkOxyQDnYhNvS9f8Z68YI0M98sqxS8qq7qG/dbWv69ao9U6loRrEZUH
-	g8q7FzgcfVMw81Woj8KGC7fYnOTruhZheRxL7RPQnCIYPjaEKpAiL1is4Trxe2Ng
+	:message-id:mime-version:references:subject:to; s=pp1; bh=vrrVEH
+	8tAjFNV3upvm/jC7WnGRQXBkPj0N1pG029RZU=; b=TF7xVJPl8gH9vJ4D5E7RZy
+	+J4SUEnmPOFZtFMKGTNZ8ZmCGa7Hg5Hqk1kngguLOYw5bwDGx/Q4jZnuENgs1avX
+	QR9nw5fbdJu9g0Ksw4QwKMAnvdjbazZZHQ2cIGQje893Eru1T2DiOpfshB2fg03G
+	vRgTerj+HPAf9uZVndcnTJbuBNuFe6TJpACRyDNjEVu9E3wRd4ijVAzlZ94kl51B
+	kJdoh/fRqmnj377NwpaqFqOn8cvi6EfRnl0qc4SuAeMTkPvtwuwe58F4O2jmQkXS
+	MSKxIaK40C7apzvHjjQVQB/YYN7ckL8PH0mUQPCJ6qVGeJuoixxZRsbGlHtA/IVg
 	==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmx9013-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xyddtqj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 03:56:26 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58C3t4vJ023762;
-	Fri, 12 Sep 2025 03:56:25 GMT
+	Fri, 12 Sep 2025 03:56:27 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58C3uRaF019098;
+	Fri, 12 Sep 2025 03:56:27 GMT
 Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmx900x-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xyddtqf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 03:56:25 +0000 (GMT)
+	Fri, 12 Sep 2025 03:56:27 +0000 (GMT)
 Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58C1ifaZ007895;
-	Fri, 12 Sep 2025 03:56:24 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109q11e4-1
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58C1LvD8007912;
+	Fri, 12 Sep 2025 03:56:25 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109q11e7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 03:56:24 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58C3uKn456230360
+	Fri, 12 Sep 2025 03:56:25 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58C3uN4H39649644
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 03:56:20 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B8FA2004B;
-	Fri, 12 Sep 2025 03:56:20 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BEBF520040;
-	Fri, 12 Sep 2025 03:56:13 +0000 (GMT)
+	Fri, 12 Sep 2025 03:56:24 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C9BA52004B;
+	Fri, 12 Sep 2025 03:56:23 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A0C0A2004D;
+	Fri, 12 Sep 2025 03:56:21 +0000 (GMT)
 Received: from li-c439904c-24ed-11b2-a85c-b284a6847472.in.ibm.com (unknown [9.98.111.108])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 12 Sep 2025 03:56:13 +0000 (GMT)
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 12 Sep 2025 03:56:21 +0000 (GMT)
 From: Madhavan Srinivasan <maddy@linux.ibm.com>
-To: bpf@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Saket Kumar Bhaskar <skb99@linux.ibm.com>
-Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, venkat88@linux.ibm.com,
-        andrii@kernel.org, eddyz87@gmail.com, mykolal@fb.com, ast@kernel.org,
-        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
-        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
-        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
-        christophe.leroy@csgroup.eu, naveen@kernel.org, mpe@ellerman.id.au,
-        npiggin@gmail.com, memxor@gmail.com, iii@linux.ibm.com,
-        shuah@kernel.org
-Subject: Re: [PATCH bpf-next v3 0/4] powerpc64/bpf: Add support for bpf arena and arena atomics
-Date: Fri, 12 Sep 2025 09:26:12 +0530
-Message-ID: <175764920910.610338.6618492148160203933.b4-ty@linux.ibm.com>
+To: Geoff Levand <geoff@infradead.org>, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/ps3: Use str_write_read() in ps3stor_read_write_sectors()
+Date: Fri, 12 Sep 2025 09:26:20 +0530
+Message-ID: <175764920912.610338.11006366512834680585.b4-ty@linux.ibm.com>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250904100835.1100423-1-skb99@linux.ibm.com>
-References: <20250904100835.1100423-1-skb99@linux.ibm.com>
+In-Reply-To: <20250819165829.714344-2-thorsten.blum@linux.dev>
+References: <20250819165829.714344-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,48 +95,42 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: RZT36PBqIzol4GxpIGDrRZZfvntecn7l
-X-Proofpoint-ORIG-GUID: CCQzVuEKXN62e_0pPcEIHssxkogmdAnM
-X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68c399ea cx=c_pps
+X-Proofpoint-ORIG-GUID: CcvW4kbXSzDPVuoHyqqRjJzI-R7--lWL
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX+rpKQNEpkmw5
+ Ttpvx5SDDmADyJooRUJVENpesLoFBJ5qlozqjJevfSKge+xVFsM/r9RzomJuqt+JVqXYY0CnNkQ
+ eTXIrQVzvs6sr5b2aiyuJPKsHMe9Z/5ZlrLHYvuCQNhWfOtxy/cD25qWbQd+RCIBi6zJlTtCosw
+ hJtptjlBjbqi79IJFAonx7E3v9IyNG1YkVQwUgZtRoDmBJEiXtldTLWcEX5A6keob6PtVvd6fm/
+ JRbfBoOBZTRS6FedbAnfjdqssVeAbfv276TmwkDgvHPlV8b0WYaNuwp+yXrLinkvMriyd580/Lv
+ JArGlnSRfNBrbVF+APeRcPC7QV+27Twynb89tHxefquGnNVhfRb7AeEkczx93A9oDQXFxPstkFC
+ tfG8RwtL
+X-Proofpoint-GUID: -ZSTadxp-uBK_BYyzehJEhm3LmdZs_0V
+X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68c399eb cx=c_pps
  a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=PIuWED_YQay8gXFd4KMA:9
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=CSAOVHq4OqcpjwAznNoA:9
  a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfXxCDChkiMf+hS
- OMWFchcLm2q4tXL4Yzv9pYOwuZJxO/WnLI4dHsPxfmnA9Mb9SU/jBdfHnQJxcTZRGaYDlxMt0w1
- fx0mkII9CB7aGcJRL0JQZkGKd9Jqx6ZXlWjjNfdGgyYDF1DAwZgMIwadryP3D8LGcrz+cUJy2Np
- 4qhHx4nwvE22E/l8vrzjofrlce4jfIiJcOr1TlMwdvldfOfJg+A4umyT3lbjLvXWkdqF0NerwkE
- HLmKUV+67QzYHQhORLdzrnGWhft3l84uevjHaLYxCfNCw2uYXFyEOmu7qogOIFtRU+DwxX2h1kH
- IHK2WRuoZeKq3mUKdmcAxrtptkmTB+yPXTJZFIUDC/gF7ueJZL9CrywrUjlp5FgTVWPTLh5eC0J
- 7W4RXILw
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-09-12_01,2025-09-11_02,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1011 suspectscore=0 spamscore=0 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1011
+ impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060235
 
-On Thu, 04 Sep 2025 15:38:31 +0530, Saket Kumar Bhaskar wrote:
-> This patch series introduces support for the PROBE_MEM32,
-> bpf_addr_space_cast and PROBE_ATOMIC instructions in the powerpc BPF JIT,
-> facilitating the implementation of BPF arena and arena atomics.
+On Tue, 19 Aug 2025 18:58:29 +0200, Thorsten Blum wrote:
+> Remove hard-coded strings by using the str_write_read() helper function
+> and silence the following Coccinelle/coccicheck warning reported by
+> string_choices.cocci:
 > 
-> All selftests related to bpf_arena, bpf_arena_atomic(except
-> load_acquire/store_release) enablement are passing:
+>   opportunity for str_write_read(write)
+> 
 > 
 > [...]
 
 Applied to powerpc/next.
 
-[1/4] powerpc64/bpf: Implement PROBE_MEM32 pseudo instructions
-      https://git.kernel.org/powerpc/c/47c7f3b7038787ee42cb9ed69825e6790dba9410
-[2/4] powerpc64/bpf: Implement bpf_addr_space_cast instruction
-      https://git.kernel.org/powerpc/c/a2485d06cad3741303b9414e44f9b6d76d3713f2
-[3/4] powerpc64/bpf: Introduce bpf_jit_emit_atomic_ops() to emit atomic instructions
-      https://git.kernel.org/powerpc/c/45ed2e8b0591eb6211d79f436f76c3af31e626af
-[4/4] powerpc64/bpf: Implement PROBE_ATOMIC instructions
-      https://git.kernel.org/powerpc/c/0c1da35b0188dd565cec907a16cb5d1bd425e0e4
+[1/1] powerpc/ps3: Use str_write_read() in ps3stor_read_write_sectors()
+      https://git.kernel.org/powerpc/c/6dc5d0770dc99d6bf9b786fa3c8fc04be2091648
 
 Thanks
 
