@@ -1,178 +1,133 @@
-Return-Path: <linux-kernel+bounces-814662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A748B5570D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:44:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B93B55706
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8530BA00EF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:44:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E792AA005D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C9682BEC42;
-	Fri, 12 Sep 2025 19:44:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488C331E10D;
+	Fri, 12 Sep 2025 19:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RifUejSv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4jTGG7cr"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEF5335BBF;
-	Fri, 12 Sep 2025 19:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285222BE7A0
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757706239; cv=none; b=i7dSC/LTJoveFFw/czbkIxODVCKc838biSSoXxRlaW/VqcV3d/9yDervF8O0A9xM5NCIP2AB/aBBYOdL0tLtyLscsVhEKyL5N94ULju5tyDV7q4FdRqHX9FS0SmLviCmYHobcOBWJo1+MOhb8agyW6Ne19h4t8t+tqJtj88GPuo=
+	t=1757706097; cv=none; b=kS3NR9FwvL0CihXQDaBrwXstKCpCEnfOHNPsRqfRYW09ffsqdbSw1vkOM4mOptTz4YjV2Lyd0oViUkc2KIu9d+uTQL4STIr1h2s0s3si2WkMSZGL9EZ2kFAEyyo8lyBCZEFsZOq8JyjyLoWYjbbHg5p3GTPOMv1NBlW0XCgWUzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757706239; c=relaxed/simple;
-	bh=Twdx3/SnajCQAPtUtUGLkJDR+nHetYXoHKGVxK5EVUE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RkzSLmzjWPXQNfQBUc3m+v2/gIMW8tkeW/tAoBp1KOTzVJEIZgJ6BASjCgnBzPiBYI08oh/ksxN993Xo92Yxsvi+6q0agoXKmheD4ZYnjacvDd9mSkBV1DKYUVs+m+EWAQ53jk+3ONxaTruEcqk+nv8gtNwAjZxkT29uw5ws/LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RifUejSv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61B36C4CEF4;
-	Fri, 12 Sep 2025 19:43:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757706239;
-	bh=Twdx3/SnajCQAPtUtUGLkJDR+nHetYXoHKGVxK5EVUE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RifUejSvDMF59+gxD94rO/B7pM3YbYjZgOgzrphApQm1JclTWUqSeXlM8r7kWOYYo
-	 5U2yu0vMCowtmh8QYh6jlxe/D+WDJh31ecu1lRpX0zf6mI1iaKhLMS+pmnICW2v2fj
-	 NAwXJVt/Cs/OiT6VdxmguwVQ4rkzWFM1Uw2q7O3HnjSCRqbMSED3nA9zTwCnlt2RLF
-	 STto2Yp9KBT8f5lplCqA+WAjA3vD9T9DKpnD0wPr97sBAfcM68ofs5tPI3fE6Jb3MK
-	 WClf8KHj3kToJGv8EU79BPctcSwnAqpzkmuOLH8xBgNTN6BAftzURvx1+JqpKGJhNf
-	 Z5//qg5U7eFNQ==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject:
- [PATCH v1 2/4] ACPI: property: Add code comments explaining what is going on
-Date: Fri, 12 Sep 2025 21:40:58 +0200
-Message-ID: <2243680.irdbgypaU6@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <5046661.31r3eYUQgx@rafael.j.wysocki>
-References: <5046661.31r3eYUQgx@rafael.j.wysocki>
+	s=arc-20240116; t=1757706097; c=relaxed/simple;
+	bh=iM2MQBIk1Q/STF9xiEDF7k36NWkR2MjnD2gJk1fRtX4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Qe3IrjzywsGcxF+CrDWoZQ9EmmA7ioPqob7pUBJPWw5YeZGa2o6hqvv0SDdQEjZb125qX2TjZC1CVZ5nMVhhV02A77s7m2Q8nsc5ICsdZyoH4znyu2CpbkBLLbq6goynlxEIlvEF759HKCcMZf5MZ+1cjah+H17NoM6t2SLwM4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4jTGG7cr; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32dd9275606so1780202a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:41:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757706095; x=1758310895; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hwAmkdSsh2ald981eddTLE3mG7L8NIno0Q78eoK7RXU=;
+        b=4jTGG7crT1Kt263fE2BI+Kb+Mk6nju+iHWV1PleBpPMgt10uJds61bxwiFIllI5mAE
+         H5ADg2dTYX7pyGj4GzykP15bhZOC2w/w6BaFbK0+XPEaNrXsZfEPmdBcMa3BfwB1T90T
+         KPAFmsQJI3IphVy8jqdmAL8oBH5uHqLlRY2PyOH5kQfUpfjm+z5KjcyZShhHR3v0QsOV
+         V0q8POK5y/1APvaZNHOO8FbMERMM98+N4dhvnxCUUT2V+8Roq6eOSSi/sXCuJH5M257C
+         9j/8cfImStTUylrGB8j8J6ZhdW67szuvUjqV/7IBNwuPLGczRX4IuzH4E4fe/6psy9eM
+         U+Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757706095; x=1758310895;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hwAmkdSsh2ald981eddTLE3mG7L8NIno0Q78eoK7RXU=;
+        b=SL9MOa1HcgPtlpduU6XP4kUorZnyQCSDuUr5O5NkxK3HjlTOFQ8/qeo+c5MKAhNpp5
+         qMYaqKgtwEL7ic3DJ8OikodXeFKtJES19w4O46wGbyuOGW4KnFZ6SRKF70+V9yS7INJx
+         ZdsypbdJWZqTc7PtIbo+ApeXQV+nk0QF+Xy9M4bFKBV0Se0TfokJ6dM3bgeekXwpxbUJ
+         fjkaBb13MllFkbwknUXWarCx9/raM2lc7f353g7mQdEiMMbae/9c/xb+tI2hu5EiXISL
+         nFcd3BC+kMaGJPg+RFVSOnYGBujbLHXRaQnsH9O+b/e+Vdyn9mrCGxX0Ur9EUO9erFW3
+         9QEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtK0rlpQahZM7482O3hYYaPPxl883ykhWNkscin/vn0zDE3dH6R9flvaUcBNEZ74u3FW1+jqr+hEpD2KM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/1523bfMPhw/WQY3h1wFDtZggIBcvtY6Iva71qgur+3VVSPAB
+	Hy1dUnZuumOTdZoa5TR+THcW/0euNLZh7GJUo55qR2ktyQTvjllXEbBBT1KUZ6seJnvxKoRwbbg
+	V+J9Geg==
+X-Google-Smtp-Source: AGHT+IFiAMu5uVuzupQ7fFp8LqWmeFtF+a93+PGygZxvosK5j5W4JE041u2MXOQW8S14Rc2WgZFhshg2SkU=
+X-Received: from pjx12.prod.google.com ([2002:a17:90b:568c:b0:329:ccdd:e725])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b:b0:32b:d8ae:46f9
+ with SMTP id 98e67ed59e1d1-32de4fb245emr4244466a91.35.1757706095375; Fri, 12
+ Sep 2025 12:41:35 -0700 (PDT)
+Date: Fri, 12 Sep 2025 12:41:33 -0700
+In-Reply-To: <df357d87-3b4b-41a4-acdf-31289590b233@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <cover.1757543774.git.ashish.kalra@amd.com> <c6d2fbe31bd9e2638eaefaabe6d0ffc55f5886bd.1757543774.git.ashish.kalra@amd.com>
+ <aMRnnNVYBrasJnZF@google.com> <df357d87-3b4b-41a4-acdf-31289590b233@amd.com>
+Message-ID: <aMR3bRYEoR0eI6x7@google.com>
+Subject: Re: [PATCH v4 1/3] x86/sev: Add new dump_rmp parameter to
+ snp_leak_pages() API
+From: Sean Christopherson <seanjc@google.com>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Ashish Kalra <Ashish.Kalra@amd.com>, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	pbonzini@redhat.com, herbert@gondor.apana.org.au, nikunj@amd.com, 
+	davem@davemloft.net, aik@amd.com, ardb@kernel.org, john.allen@amd.com, 
+	michael.roth@amd.com, Neeraj.Upadhyay@amd.com, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Sep 12, 2025, Tom Lendacky wrote:
+> On 9/12/25 13:34, Sean Christopherson wrote:
+> > But the below build failures show that they aren't dead code, which mea=
+ns that
+> > kernels with CONFIG_KVM_AMD_SEV=3Dn will silently (until something expl=
+odes) do the
+> > wrong thing, because the stubs are hiding the missing dependencies.
+> >=20
+> > arch/x86/boot/startup/sev-shared.c: In function =E2=80=98pvalidate_4k_p=
+age=E2=80=99:
+> > arch/x86/boot/startup/sev-shared.c:820:17: error: implicit declaration =
+of function =E2=80=98sev_evict_cache=E2=80=99 [-Wimplicit-function-declarat=
+ion]
+> >   820 |                 sev_evict_cache((void *)vaddr, 1);
+>=20
+> Yeah, this one is on me. sev_evict_cache() is guest code and should be
+> under the CONFIG_AMD_MEM_ENCRYPT #ifdef.
+>=20
+> >       |                 ^~~~~~~~~~~~~~~
+> >   AR      arch/x86/realmode/built-in.a
+> > arch/x86/coco/sev/core.c: In function =E2=80=98pvalidate_pages=E2=80=99=
+:
+> > arch/x86/coco/sev/core.c:386:25: error: implicit declaration of functio=
+n =E2=80=98sev_evict_cache=E2=80=99 [-Wimplicit-function-declaration]
+> >   386 |                         sev_evict_cache(pfn_to_kaddr(e->gfn), e=
+->pagesize ? 512 : 1);
+> >       |                         ^~~~~~~~~~~~~~~
+> > arch/x86/mm/mem_encrypt.c: In function =E2=80=98mem_encrypt_setup_arch=
+=E2=80=99:
+> > arch/x86/mm/mem_encrypt.c:112:17: error: implicit declaration of functi=
+on =E2=80=98snp_fixup_e820_tables=E2=80=99 [-Wimplicit-function-declaration=
+]
+> >   112 |                 snp_fixup_e820_tables();
+>=20
+> This function is only meant to be used if we're going to run SEV guests,
+> so being guarded by CONFIG_KVM_AMD_SEV was on purpose. I'm just not sure
+> why the stub didn't get used...  or did you remove them?
 
-In some places in the ACPI device properties handling code, it is
-unclear why the code is what it is.  Some assumptions are not documented
-and some pieces of code are based on experience that is not mentioned
-anywhere.
-
-Add code comments explaining these things.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/acpi/property.c |   51 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 49 insertions(+), 2 deletions(-)
-
---- a/drivers/acpi/property.c
-+++ b/drivers/acpi/property.c
-@@ -108,7 +108,18 @@ static bool acpi_nondev_subnode_extract(
- 	if (handle)
- 		acpi_get_parent(handle, &scope);
- 
-+	/*
-+	 * Extract properties from the _DSD-equivalent package pointed to by
-+	 * desc and use scope (if not NULL) for the completion of relative
-+	 * pathname segments.
-+	 *
-+	 * The extracted properties will be held in the new data node dn.
-+	 */
- 	result = acpi_extract_properties(scope, desc, &dn->data);
-+	/*
-+	 * Look for subnodes in the _DSD-equivalent package pointed to by desc
-+	 * and create child nodes of dn if there are any.
-+	 */
- 	if (acpi_enumerate_nondev_subnodes(scope, desc, &dn->data, &dn->fwnode))
- 		result = true;
- 
-@@ -153,6 +164,12 @@ static bool acpi_nondev_subnode_ok(acpi_
- 	acpi_handle handle;
- 	acpi_status status;
- 
-+	/*
-+	 * If the scope is unknown, the _DSD-equivalent package being parsed
-+	 * was embedded in an outer _DSD-equivalent package as a result of
-+	 * direct evaluation of an object pointed to by a reference.  In that
-+	 * case, using a pathname as the target object pointer is invalid.
-+	 */
- 	if (!scope)
- 		return false;
- 
-@@ -172,6 +189,10 @@ static bool acpi_add_nondev_subnodes(acp
- 	bool ret = false;
- 	int i;
- 
-+	/*
-+	 * Every element in the links package is expected to represent a link
-+	 * to a non-device node in a tree containing device-specific data.
-+	 */
- 	for (i = 0; i < links->package.count; i++) {
- 		union acpi_object *link, *desc;
- 		acpi_handle handle;
-@@ -182,22 +203,48 @@ static bool acpi_add_nondev_subnodes(acp
- 		if (link->package.count != 2)
- 			continue;
- 
--		/* The first one must be a string. */
-+		/* The first one (the key) must be a string. */
- 		if (link->package.elements[0].type != ACPI_TYPE_STRING)
- 			continue;
- 
--		/* The second one may be a string, a reference or a package. */
-+		/*
-+		 * The second one (the target) may be a string, a reference or
-+		 * a package.
-+		 */
- 		switch (link->package.elements[1].type) {
- 		case ACPI_TYPE_STRING:
-+			/*
-+			 * The string is expected to be a full pathname or a
-+			 * pathname segment relative to the given scope.  That
-+			 * pathname is expected to point to an object returning
-+			 * a package that contains _DSD-equivalent information.
-+			 */
- 			result = acpi_nondev_subnode_ok(scope, link, list,
- 							 parent);
- 			break;
- 		case ACPI_TYPE_LOCAL_REFERENCE:
-+			/*
-+			 * The reference is expected to point to an object
-+			 * returning a package that contains _DSD-equivalent
-+			 * information.
-+			 */
- 			handle = link->package.elements[1].reference.handle;
- 			result = acpi_nondev_subnode_data_ok(handle, link, list,
- 							     parent);
- 			break;
- 		case ACPI_TYPE_PACKAGE:
-+			/*
-+			 * This happens when the target package is embedded
-+			 * within the links package as a result of direct
-+			 * evaluation of an object pointed to by a reference.
-+			 *
-+			 * The target package is expected to contain _DSD-
-+			 * equivalent information, but the scope in which it
-+			 * is located in the original AML is unknown.  Thus
-+			 * it cannot contain pathname segments represented as
-+			 * strings because there is no way to build full
-+			 * pathnames out of them.
-+			 */
- 			desc = &link->package.elements[1];
- 			result = acpi_nondev_subnode_extract(desc, NULL, link,
- 							     list, parent);
-
-
-
+I removed all the stubs to see what would break (I was expecting nothing si=
+nce
+all of KVM's accesses are gated by CONFIG_KVM_AMD_SEV).
 
