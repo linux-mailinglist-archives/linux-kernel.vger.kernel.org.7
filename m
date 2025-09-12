@@ -1,133 +1,445 @@
-Return-Path: <linux-kernel+bounces-813457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5F8B545B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:41:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A40B545B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF164AA2D93
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5079AA4D59
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1999718A6AD;
-	Fri, 12 Sep 2025 08:41:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1A42D73AB;
+	Fri, 12 Sep 2025 08:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ocFZuqaV"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hQB7FqmP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA6F2D6E43
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7D62D24AA;
+	Fri, 12 Sep 2025 08:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757666502; cv=none; b=M7tHySnum4fFrvBITd6k4h28UCbyzuAsbeBnmlLRJUhH0UrytQNHDfuWlV8ulS6JCYe4OQveBCeCbEqUITL2S4AXbesDJCI1ZJ2wbHGTw48nUsuYjMX0facMaAUveIFicDwBxMTGZAGTDWef95ypfxxDmoDKGxS2XLpQdKBnlrg=
+	t=1757666503; cv=none; b=obkjLli9EinZMWx+EeyEbIF+Iml/MOieabf5mftDKruhtd9gPI3m4c0stiWsT1yFci7ZE0F9Q4iKwzNbHpBuNo5KI1Kdws7gaQMVeP3MvDLGj8vq3bd6CJDwYdaG0U6k1g1G2cRO/i6OOw6aIu6vVuPiqtmDD1A3pDkgp5zwjak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757666502; c=relaxed/simple;
-	bh=j8WiM1AwcmR4UKZ24HXYJnllvBCh9jUhE7SQfdx0nG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FTMNIuIypA96ZJJAgrjjnF3gFCU1jD2s5QEdIEoiHWcyoXkcoQ1uFbbOviOgp6UezzTbe1kPNRO79HkmlIforvvBPipsicrtOWubSdqyhfOerpE2ps6v1mBu03YWRs0gtRSvBurW0wBENRPi4T1nZdNdJW3hL0TePEs0jTn4y9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ocFZuqaV; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5679dbcf9d8so1412122e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757666499; x=1758271299; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zi9mhYSrg+uoSn4FWmIZqdjd0t9zWFL1Q75akd3T2yM=;
-        b=ocFZuqaVuwx3CVQKWQlJc8PMRi6+FZtfuDsu+irA033g+kqDpI1bFxPi8Rp7QQKnRe
-         9fsYpedxzehIyuLl+Cv1hTDLQq9+fZAAxXEloJrp3Ms0gMIKrpiQlRUmkiL9t2j8uc4o
-         epE57ExvvH33JU3XAkyjEfcbU8iFOVml8ClCKlHU1jEkL1iNiG3pYq8uXOLSNVdcZ8J/
-         x2z/Nuclrznfo93BSd1Am3Uhqq2RwZRvfRGY2oO54lNkQbzQpEtoNoAsAttFE0GGbahA
-         AIgl1tdCIg/SYd8u0xCIUSFTFBdiaaxmVKCidLfEQvhW/fiAiAiFVYr35RMNuXTgFmqd
-         vKYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757666499; x=1758271299;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zi9mhYSrg+uoSn4FWmIZqdjd0t9zWFL1Q75akd3T2yM=;
-        b=RC+5Cky54OylwTTR0C63dqm/P3KXXuDnrV9Lmgkc6k4lSQXZt/BhqIENTAuAwVwknT
-         2WpPTJsjgNpEvtDuIPHEkXmoJy/EU9RnO46Hq+cMy5KKYIB30Eguq6FStXjJ3lSqsVY1
-         +Bj7qyMF6/10L0rHoeaP0ImVOQ4u6mlV/Gzo5HfpgZezpaaf69nyBNCijmleQ9fzYFak
-         VxIdJ8caf9U9ttww3s5aOAkuN3+ncgnfDCb3xFHobPT0Jw16VsoypnYeXOTXJ+DHbJVU
-         TTO+NAyvSTSTHOej6flbN75VVoVLXDCg/v3yRQr3XtDllDRFUGbKUW3mThn6dPkUwxlm
-         Ym+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVh5+W3Y/ddip071w0Bcqp5q3jv+3NzLpAEzDwT5pcyE3szNGxSpKTP4vsqz+/YkbcuRjQdTL3l6QH9FJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDbh1hXMaa0UTncOZr3E/Y+Fp7BLC2mlyL5lc/BN9rGdq7E+2b
-	q4JWwbw/hWbxBMuvT5RCW3Aw4n6r6NCcvEX5laSEZ94gR0qUX/s4UZvZZuEiKi7S8M8=
-X-Gm-Gg: ASbGncs8Lj4fPL0By9h/IeEJdYshGZnyM9JdNDTdgqmmQU27rGg/9nTAEe9h4X9gNAs
-	vMsfkxLtxJPfWmSp78JzaEcAs4q85q1f0XH+vjcW/N715pW9RwRV99CDAgEFSUf/rIRCHzM3HTz
-	WAcy4AZ+Wxo9M3etFITFdkJk+XBvel6rNJXl7GL/apt9nnktpSPcJTHfinYjPsusWlg8mjPO0Wo
-	4rmtEPDpwHTOc4O22Gj8X8xw0PIhpHR1JISLJ6I+HVKh6lV61UxXeynTYz+CpbAyu63Ts6NHLZi
-	oqLQZoH5DfBFiJ0KSGZDu1alVaazvWPawxLkma4lEqZSpy+C1SF2ImBMuKvDwMOVS8DiVpppq2o
-	un8MgJSsJlcJmU2rYu3YyK31DVXXniMtOu7mYP2IGCPTEm5Nlor+l9T0N5z87oZmlbw==
-X-Google-Smtp-Source: AGHT+IFx7Iz5XF+xrNLJkCkiosSOnrJ09CXvrdjTO4FZGsUjEDPPR94YYqvJ/Qo7O7hEYIQNGxSzOA==
-X-Received: by 2002:a05:6512:3599:b0:569:a257:acca with SMTP id 2adb3069b0e04-5704f1ce7f2mr581298e87.32.1757666498725;
-        Fri, 12 Sep 2025 01:41:38 -0700 (PDT)
-Received: from nuoska (87-100-249-247.bb.dnainternet.fi. [87.100.249.247])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e63c63f6csm989050e87.86.2025.09.12.01.41.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 01:41:38 -0700 (PDT)
-From: Mikko Rapeli <mikko.rapeli@linaro.org>
-To: linux-mmc@vger.kernel.org
-Cc: ulf.hansson@linaro.org,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	linux-kernel@vger.kernel.org,
-	adrian.hunter@intel.com,
-	victor.shih@genesyslogic.com.tw,
-	ben.chuang@genesyslogic.com.tw,
-	geert+renesas@glider.be,
-	angelogioacchino.delregno@collabora.com,
-	dlan@gentoo.org,
-	arnd@arndb.de,
-	zhoubinbin@loongson.cn,
-	Mikko Rapeli <mikko.rapeli@linaro.org>
-Subject: [PATCH v2 2/2] ARM: rockchip: select ROCKCHIP_PM_DOMAINS
-Date: Fri, 12 Sep 2025 11:41:12 +0300
-Message-ID: <20250912084112.2795848-2-mikko.rapeli@linaro.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250912084112.2795848-1-mikko.rapeli@linaro.org>
-References: <20250912084112.2795848-1-mikko.rapeli@linaro.org>
+	s=arc-20240116; t=1757666503; c=relaxed/simple;
+	bh=s5L8KoQhFU2ZA3F7R+EwAJEVzdr9sPoSaPCLEf7lhGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MfD7os0I9ahn9Kmw3BKrVBtFJ7wRunhNRoZTfCkmIgFSTyXurogSWdSJJExMIu8EMjmx13/XsLHPRwdry+0sy63sT5ekoqhHvhhqo02IJXnC6gy9L92VuZMIvSj2QSv3mT7Ci20K7UJrpnh6hA47RgCY2JXSnnKbX4kjEQojUOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hQB7FqmP; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757666500; x=1789202500;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=s5L8KoQhFU2ZA3F7R+EwAJEVzdr9sPoSaPCLEf7lhGk=;
+  b=hQB7FqmPMhuHUGGbhEYs0/+FNK/NDBx25CE9+C4rg6I2KmIGveSUCyS3
+   dXMbkvmRd6AYCa4RcX3TijAoOCZbCWjI3ZAMwAmYOapUnfFZeUzp59bS/
+   fvTwyL98rn4dfiLzLmY62BKyNM6sCFLpPJY1qNMlFJvsEUfw4n2zjXOUa
+   zqaSq+yOvUo2xQggpSAloQujm+egzaTAAG5LMhsHGaxAb111jh+MVmEb0
+   ysjeQ7l/fjUyeDHLZC5pQ6wepi/+442CEXjdgdTddyl97O5gcoouD9JVm
+   GgchqWPOJW0QJFsOi6AuethRTLJKgfDBnzgFm1Bhd4uyvSbLa6d23uYPJ
+   Q==;
+X-CSE-ConnectionGUID: o7x5RBJTSRWN4/rqtHDlzQ==
+X-CSE-MsgGUID: N+X2FXp+TZyde2IToSnijQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11550"; a="71383688"
+X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
+   d="scan'208";a="71383688"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 01:41:39 -0700
+X-CSE-ConnectionGUID: j6s540COTtGz3/1djA5P9A==
+X-CSE-MsgGUID: zAsxY1E6RuKF6m59R8TUcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
+   d="scan'208";a="173825302"
+Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 12 Sep 2025 01:41:35 -0700
+Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uwzLY-0000vY-24;
+	Fri, 12 Sep 2025 08:41:32 +0000
+Date: Fri, 12 Sep 2025 16:41:14 +0800
+From: kernel test robot <lkp@intel.com>
+To: Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>,
+	rust-for-linux@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, daniel@sedlak.dev,
+	dirk.behme@de.bosch.com, felipe_life@live.com, tamird@gmail.com,
+	dakr@kernel.org, tmgross@umich.edu, aliceryhl@google.com,
+	a.hindborg@kernel.org, lossin@kernel.org, bjorn3_gh@protonmail.com,
+	gary@garyguo.net, boqun.feng@gmail.com, alex.gaynor@gmail.com,
+	ojeda@kernel.org,
+	Onur =?iso-8859-1?Q?=D6zkan?= <work@onurozkan.dev>
+Subject: Re: [PATCH v2 1/1] rust: refactor to_result to return the original
+ value
+Message-ID: <202509121607.yxpZ3HBS-lkp@intel.com>
+References: <20250909170013.16025-2-work@onurozkan.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909170013.16025-2-work@onurozkan.dev>
 
-According to Heiko Stuebner <heiko@sntech.de> all SoCs
-since 2012 have power domain support in HW and
-ROCKCHIP_PM_DOMAINS should always be enabled.
+Hi Onur,
 
-Suggested-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
----
- arch/arm/mach-rockchip/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+kernel test robot noticed the following build errors:
 
-v2: added "select" for ROCKCHIP_PM_DOMAINS also on arm
-    mach-rockchip as suggested by Heiko
+[auto build test ERROR on broonie-regulator/for-next]
+[cannot apply to driver-core/driver-core-testing driver-core/driver-core-next driver-core/driver-core-linus rafael-pm/linux-next rafael-pm/bleeding-edge rust/alloc-next rust/rust-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus akpm-mm/mm-everything pci/next pci/for-linus rust/rust-block-next linus/master v6.17-rc5 next-20250912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-v1: https://lore.kernel.org/linux-mmc/20250911144313.2774171-1-mikko.rapeli@linaro.org/
+url:    https://github.com/intel-lab-lkp/linux/commits/Onur-zkan/rust-refactor-to_result-to-return-the-original-value/20250910-010803
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+patch link:    https://lore.kernel.org/r/20250909170013.16025-2-work%40onurozkan.dev
+patch subject: [PATCH v2 1/1] rust: refactor to_result to return the original value
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250912/202509121607.yxpZ3HBS-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250912/202509121607.yxpZ3HBS-lkp@intel.com/reproduce)
 
-diff --git a/arch/arm/mach-rockchip/Kconfig b/arch/arm/mach-rockchip/Kconfig
-index b7855cc665e94..37f1cf38a010b 100644
---- a/arch/arm/mach-rockchip/Kconfig
-+++ b/arch/arm/mach-rockchip/Kconfig
-@@ -14,6 +14,7 @@ config ARCH_ROCKCHIP
- 	select HAVE_ARM_TWD if SMP
- 	select DW_APB_TIMER_OF
- 	select REGULATOR if PM
-+	select ROCKCHIP_PM_DOMAINS
- 	select ROCKCHIP_TIMER
- 	select ARM_GLOBAL_TIMER
- 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509121607.yxpZ3HBS-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/configfs.rs:181:17
+   |
+>> 179 |             crate::error::to_result(
+   |             ----------------------- required by a bound introduced by this call
+   180 |                 // SAFETY: We initialized `this.subsystem` according to C API contract above.
+   181 |                 unsafe { bindings::configfs_register_subsystem(this.subsystem.get()) },
+   |                 ^^^^^^^^^-----------------------------------------------------------^^
+   |                 |        |
+   |                 |        this tail expression is of type `i32`
+   |                 the trait `From<()>` is not implemented for `i32`
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy/reg.rs:122:19
+   |
+   122 |           to_result(unsafe {
+   |  _________---------_^
+   | |         |
+   | |         required by a bound introduced by this call
+   123 | |             bindings::mdiobus_write((*phydev).mdio.bus, (*phydev).mdio.addr, self.0.into(), val)
+   | |             ------------------------------------------------------------------------------------ this tail expression is of type `i32`
+   124 | |         })
+   | |_________^ the trait `From<()>` is not implemented for `i32`
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy/reg.rs:211:19
+   |
+   211 |           to_result(unsafe {
+   |  _________---------_^
+   | |         |
+   | |         required by a bound introduced by this call
+   212 | |             bindings::phy_write_mmd(phydev, self.devad.0.into(), self.regnum.into(), val)
+   | |             ----------------------------------------------------------------------------- this tail expression is of type `i32`
+   213 | |         })
+   | |_________^ the trait `From<()>` is not implemented for `i32`
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy.rs:219:19
+   |
+   219 |         to_result(unsafe { bindings::genphy_soft_reset(phydev) })
+   |         --------- ^^^^^^^^^-----------------------------------^^
+   |         |         |        |
+   |         |         |        this tail expression is of type `i32`
+   |         |         the trait `From<()>` is not implemented for `i32`
+   |         required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy.rs:227:19
+   |
+   227 |         to_result(unsafe { bindings::phy_init_hw(phydev) })
+   |         --------- ^^^^^^^^^-----------------------------^^
+   |         |         |        |
+   |         |         |        this tail expression is of type `i32`
+   |         |         the trait `From<()>` is not implemented for `i32`
+   |         required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy.rs:235:19
+   |
+   235 |         to_result(unsafe { bindings::_phy_start_aneg(phydev) })
+   |         --------- ^^^^^^^^^---------------------------------^^
+   |         |         |        |
+   |         |         |        this tail expression is of type `i32`
+   |         |         the trait `From<()>` is not implemented for `i32`
+   |         required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy.rs:243:19
+   |
+   243 |         to_result(unsafe { bindings::genphy_resume(phydev) })
+   |         --------- ^^^^^^^^^-------------------------------^^
+   |         |         |        |
+   |         |         |        this tail expression is of type `i32`
+   |         |         the trait `From<()>` is not implemented for `i32`
+   |         required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy.rs:251:19
+   |
+   251 |         to_result(unsafe { bindings::genphy_suspend(phydev) })
+   |         --------- ^^^^^^^^^--------------------------------^^
+   |         |         |        |
+   |         |         |        this tail expression is of type `i32`
+   |         |         the trait `From<()>` is not implemented for `i32`
+   |         required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy.rs:264:19
+   |
+   264 |         to_result(unsafe { bindings::genphy_update_link(phydev) })
+   |         --------- ^^^^^^^^^------------------------------------^^
+   |         |         |        |
+   |         |         |        this tail expression is of type `i32`
+   |         |         the trait `From<()>` is not implemented for `i32`
+   |         required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy.rs:272:19
+   |
+   272 |         to_result(unsafe { bindings::genphy_read_lpa(phydev) })
+   |         --------- ^^^^^^^^^---------------------------------^^
+   |         |         |        |
+   |         |         |        this tail expression is of type `i32`
+   |         |         the trait `From<()>` is not implemented for `i32`
+   |         required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+--
+>> error[E0277]: the trait bound `i32: From<()>` is not satisfied
+   --> rust/kernel/net/phy.rs:280:19
+   |
+   280 |         to_result(unsafe { bindings::genphy_read_abilities(phydev) })
+   |         --------- ^^^^^^^^^---------------------------------------^^
+   |         |         |        |
+   |         |         |        this tail expression is of type `i32`
+   |         |         the trait `From<()>` is not implemented for `i32`
+   |         required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `From<T>`:
+   `i32` implements `From<CpuId>`
+   `i32` implements `From<bool>`
+   `i32` implements `From<i16>`
+   `i32` implements `From<i8>`
+   `i32` implements `From<u16>`
+   `i32` implements `From<u8>`
+   = note: required for `()` to implement `Into<i32>`
+   = note: required for `i32` to implement `TryFrom<()>`
+   = note: required for `()` to implement `TryInto<i32>`
+   note: required by a bound in `error::to_result`
+   --> rust/kernel/error.rs:382:15
+   |
+   380 | pub fn to_result<T>(code: T) -> Result<T>
+   |        --------- required by a bound in this function
+   381 | where
+   382 |     T: Copy + TryInto<i32>,
+   |               ^^^^^^^^^^^^ required by this bound in `to_result`
+..
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
