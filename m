@@ -1,62 +1,89 @@
-Return-Path: <linux-kernel+bounces-814145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84EB6B54FE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:43:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C11EBB54FE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FD4AA36A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:43:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83D96171003
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8737F30DED0;
-	Fri, 12 Sep 2025 13:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E0730EF66;
+	Fri, 12 Sep 2025 13:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="YjbhuPTw"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gptMPdrq"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967333081CB;
-	Fri, 12 Sep 2025 13:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCF82FD1C3
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684627; cv=none; b=Tea+R/RDwPLIi5c9uR4hvWtDmaD6F++PHCgeUSalpHJ2//PXmYdUE8a4ZxHf78YHlqnY9IFIrywm1r+S6KMi0Cp80HdCPoxo2iTbBMunvxz2+WyQQO+CodtQfJhEFH5y7lJtbfIaogWMiZS/vKlKdIv9NIe5yt2JaG2ZtX/A6N4=
+	t=1757684702; cv=none; b=rLgldLh3j8tlklC7umCs8zSLdVRSwINFbJSb5a9qddx2wM0bdectz1Cnlqf3qGQ63MFqAAC1lnESCUPzzkz+O6RoeoJIIm1+PsuMhK7hHKqvmYam7ulvCFRuMclwft8qdwcrIxo1QbvuTi74m2KJpYun5lQHa3UFGmtW9W+AePM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684627; c=relaxed/simple;
-	bh=h8LGSKFYytZOKZNIpX3Qyr6W0nr55f+r5REsFZrcd0A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OFEww4e+xbIThxf7dLG3v21MvmRru8+5z50I1RU87x5aOJR+kYPd1W3aSkLnkMN8hk1u/GK142hvAcMH1uFYGFFlrnG/KOivzdyYDmUFN14WtO6sEIjXxF8D5ngmsd0jlZ/do79d2tphE+LfONn2DVTEJXlgpgZTo/Pt4SJZ4vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=YjbhuPTw; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757684620; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=JEFJ+1KMaBT9yMuJVI/v+rlWqZb3XjQ/Sg99JRs7BGc=;
-	b=YjbhuPTwCdsqFtzQSQLOPBY/x2AYiQ8HkEWTnzySASardwquXj9cK6YxRsTv81lfJt0W4ryR1gqa3bP1gJZVbtw2Qmgnm4nZ+PqQ7HjOK845hFq6zSycVO4r/qtwKwcL8ep7T6cJK8bt3yEBkGAW1YvDKbbfHzzQhfJrQmyN/jA=
-Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WnrFL5n_1757684616 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Sep 2025 21:43:38 +0800
-From: fangyu.yu@linux.alibaba.com
-To: anup@brainfault.org,
-	atish.patra@linux.dev,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	pbonzini@redhat.com,
-	graf@amazon.com,
-	jiangyifei@huawei.com
-Cc: guoren@kernel.org,
-	kvm@vger.kernel.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Fangyu Yu <fangyu.yu@linux.alibaba.com>
-Subject: [PATCH] RISC-V: KVM: Fix guest page fault within HLV* instructions
-Date: Fri, 12 Sep 2025 21:43:32 +0800
-Message-Id: <20250912134332.22053-1-fangyu.yu@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1757684702; c=relaxed/simple;
+	bh=cb10gITMfGHe68tF0kEqwVbIdWaJh28KK65pw1iBgj0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b8yqIirzonwCab0XRdwWJ2elJsxhkquV+ghr9RYOMK0cuj/YzncoC+A233TirixehKGVJwDP8GkB4AsEBwTOT3sTUjg8542RxSR1GcdhmQFTq/IH2CUvriuU/AmdLYKe9KM9HLpVzYcrfAsRYP6BE/aoiuut0hbiQBNes+ERQpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gptMPdrq; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77264a94031so1504431b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:45:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757684700; x=1758289500; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZDQVS0oN98gtOxGh4UkJ37N+aDlWZS/uJKzs0i7u/6M=;
+        b=gptMPdrqPWvMz6Z29QR3S4YqHEBOTP33R293/TNCqYRiYcceOHCtmyIMYJ6Emn2vh4
+         UyEzO3y/ArXy1RcnaVtASg/rfRsL+83JeDia5wqLHL0NGs1ObkgviJCzseapPT6K74nA
+         9gUisMdcOTxzJiGLsjBkpTIaGDGVKshH1A/KvSmKd9Wu138ThBqG4et0YnrKlZXLYeXK
+         ahk0fejL3ImgUitvock38xSUoTNQ/vyHNzuIcE+ThmWJUGmPRJKJzkkrPGvGo9m5u4Ym
+         9bkNoQtbts3a24m1KYm9eS5wNwcIpLagu3kQaP+KqDU2+84MtvHkyzTStAsDHXnXoHK+
+         f6Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757684700; x=1758289500;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZDQVS0oN98gtOxGh4UkJ37N+aDlWZS/uJKzs0i7u/6M=;
+        b=He7vm4lMfBc4as6be9PsyUoT57CTbCYcWZhAWpLzcpa7cLseAAWmsq5d3EzyQ0tKsK
+         4QX/LlzOh4O09CzFtxwiglww1tsdKXOYdlwvUQ6pTNKvxDplEylwkqKxjoggmMGNi8rG
+         4e81oSVHCG6Dhwsc/tvEH2JvmYQP03y19rMsVfiBj5WEqHVCxzbzy3tfM/hzghKg7Cy9
+         KJdJQc9Tb1Qm1+9a6mMb0j00yWpbRyPwF4BqzQbvFuMSDXll6UMY6N2Y8C/k7VlleqUm
+         bDVpiKFaBw5QR63yWSIc3Wd0MhgoCAJUP4og224OUnjtfxdeRjYaxrfeXCZZ/kIIZNUv
+         08qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ5j2uY/txa43HMx2W6lR6XI+AlZYM+cG78ITIPRhfALZmL6Z+8qHUomt+3FP9W9I6PtUkXeC+02Yth2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl/yy0FfdA3t9XurjuFyXczAjAcHBYhQLJPwpYAV/yd193Gdmr
+	H8SKBJwyoGCBy9zXygbKx0nQ+zuNhm+DWal9B6Si38A8zTcTiDNEm143
+X-Gm-Gg: ASbGnctaRxl97hqLrEC6tL3jXBGS7cnQNNKoPtULaP/ff0zN8sTFdII1TDdp959ynPz
+	pjYmCPl+9gdDQJVDKqpTawaJUZrJM3rH8CJoeR5rt+q/zhnqGJeJbpqKtHUCu+Itdg4JSH+/4yM
+	s9bToigcVTIx6p/FvOT1QefSS98zQ/rVWxw3GXqu41STDMuYVbufgdA9Pwj8iVqVlt73g/vQL7Q
+	ZL/WYAleGCQOgSJMbwqhomR+MNCvYuQXK5OP8yaBKOkTmuU1KILImYEaxJD9fIcALJQ6Sw0MIUz
+	Cxl0sx++x3AnFevvRskgjZDDYSqp1MPWS5aMcBSS/v8hbFqxxVliyNUOLEqX7QwmVDHojGUoSbn
+	vREDTh1eCdZJjO3iqbFx9Zj2uoGo=
+X-Google-Smtp-Source: AGHT+IEI/yWZoWRDsD/sO/L7HND76jgnTXIrLo1qA2nfeIPD2quPMlWWHT6V0FurKrHF0qLWQEp8eA==
+X-Received: by 2002:a05:6a00:21cb:b0:771:fbc3:f151 with SMTP id d2e1a72fcca58-77612163666mr4136197b3a.15.1757684700373;
+        Fri, 12 Sep 2025 06:45:00 -0700 (PDT)
+Received: from vostro ([117.36.116.175])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77613e4308csm2641444b3a.73.2025.09.12.06.44.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 06:44:59 -0700 (PDT)
+From: Luc Ma <onion0709@gmail.com>
+To: dri-devel@lists.freedesktop.org
+Cc: onion0709@gmail.com,
+	Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Stanner <phasta@kernel.org>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/sched: struct member doc fix
+Date: Fri, 12 Sep 2025 21:44:05 +0800
+Message-ID: <20250912134406.221443-1-onion0709@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,69 +92,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+The mentioned function has been renamed since commit 180fc134d712
+("drm/scheduler: Rename cleanup functions v2."), so let it refer to
+the current one.
 
-When executing HLV* instructions at the HS mode, a guest page fault
-may occur when a g-stage page table migration between triggering the
-virtual instruction exception and executing the HLV* instruction.
-
-This may be a corner case, and one simpler way to handle this is to
-re-execute the instruction where the virtual  instruction exception
-occurred, and the guest page fault will be automatically handled.
-
-Fixes: 9f7013265112 ("RISC-V: KVM: Handle MMIO exits for VCPU")
-Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+Signed-off-by: Luc Ma <onion0709@gmail.com>
 ---
- arch/riscv/kvm/vcpu_insn.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+ include/drm/gpu_scheduler.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
-index 97dec18e6989..a8b93aa4d8ec 100644
---- a/arch/riscv/kvm/vcpu_insn.c
-+++ b/arch/riscv/kvm/vcpu_insn.c
-@@ -448,7 +448,12 @@ int kvm_riscv_vcpu_virtual_insn(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 			insn = kvm_riscv_vcpu_unpriv_read(vcpu, true,
- 							  ct->sepc,
- 							  &utrap);
--			if (utrap.scause) {
-+			switch (utrap.scause) {
-+			case 0:
-+				break;
-+			case EXC_LOAD_GUEST_PAGE_FAULT:
-+				return KVM_INSN_CONTINUE_SAME_SEPC;
-+			default:
- 				utrap.sepc = ct->sepc;
- 				kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
- 				return 1;
-@@ -503,7 +508,12 @@ int kvm_riscv_vcpu_mmio_load(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 		 */
- 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
- 						  &utrap);
--		if (utrap.scause) {
-+		switch (utrap.scause) {
-+		case 0:
-+			break;
-+		case EXC_LOAD_GUEST_PAGE_FAULT:
-+			return KVM_INSN_CONTINUE_SAME_SEPC;
-+		default:
- 			/* Redirect trap if we failed to read instruction */
- 			utrap.sepc = ct->sepc;
- 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
-@@ -629,7 +639,12 @@ int kvm_riscv_vcpu_mmio_store(struct kvm_vcpu *vcpu, struct kvm_run *run,
- 		 */
- 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
- 						  &utrap);
--		if (utrap.scause) {
-+		switch (utrap.scause) {
-+		case 0:
-+			break;
-+		case EXC_LOAD_GUEST_PAGE_FAULT:
-+			return KVM_INSN_CONTINUE_SAME_SEPC;
-+		default:
- 			/* Redirect trap if we failed to read instruction */
- 			utrap.sepc = ct->sepc;
- 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+index 323a505e6e6a..6c4d0563e3d7 100644
+--- a/include/drm/gpu_scheduler.h
++++ b/include/drm/gpu_scheduler.h
+@@ -546,7 +546,7 @@ struct drm_sched_backend_ops {
+  * @num_rqs: Number of run-queues. This is at most DRM_SCHED_PRIORITY_COUNT,
+  *           as there's usually one run-queue per priority, but could be less.
+  * @sched_rq: An allocated array of run-queues of size @num_rqs;
+- * @job_scheduled: once @drm_sched_entity_do_release is called the scheduler
++ * @job_scheduled: once @drm_sched_entity_flush is called the scheduler
+  *                 waits on this wait queue until all the scheduled jobs are
+  *                 finished.
+  * @job_id_count: used to assign unique id to the each job.
 -- 
-2.49.0
+2.51.0
 
 
