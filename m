@@ -1,163 +1,124 @@
-Return-Path: <linux-kernel+bounces-814277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE253B551ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:40:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB28B551D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:38:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F80587A40
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:37:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE1E8BA1625
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66996313E39;
-	Fri, 12 Sep 2025 14:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51495315D59;
+	Fri, 12 Sep 2025 14:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvDvHAON"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P4ohENhj"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2D3313535
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11A5313535
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687734; cv=none; b=ZUoBSHvyTDQZwGoPDztjK7O3+Wn9FlPfmT6iITrorotqBAge6dKu5Cbj4DlebhB7HeEqswJIrkLxcnffMHbUKxCaQ5O1NJunHsy0LhjFxwVCSsxdbuoyx0EOAMa/3HAYVOjhXa2/c+ZeRWJoafIOiplT4QiEPMzVwzjJzfgL72o=
+	t=1757687761; cv=none; b=ieC6qwSKIZiix7X+cZOEfT2jQDNLp8YsN69rUJbsckft2GEHrqdtkIHB8ZEDEuiffEn4kmnLobwMx2QnwCC6hBFS8jCpnIix1s9b34rG06cNxiiO9GC8hdRVBkhO3ysJa2yhRpaPyaZglM0KofNyrCuFrnSMcwIvt8Vre31yKrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687734; c=relaxed/simple;
-	bh=ZS7rP4uNGEsC6E4oWHILrKqyLsgRXKFtB76mAodhYY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tHBvL1NwdpViEEVzEIC7uF0LAcrLT2IZyfgYpwPc2kY0ycHlN7na/fBxebvmWudAsuZljSlOwc+RDid7hlD4BmOAYUAPa503rQYBGyqedulmuEbKaACbe2YukmCMslsLXVDcLV/+ffRxH3nvSfMHP1AJBgTlkrzSVh3HkCXEdpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvDvHAON; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D93C4CEFC;
-	Fri, 12 Sep 2025 14:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757687734;
-	bh=ZS7rP4uNGEsC6E4oWHILrKqyLsgRXKFtB76mAodhYY8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bvDvHAON2qhhpTtNm4cLZ/qjALTvAXwPoELKCBLQ9osYbWLqELlI9L/W5guiu9ysT
-	 Bzu+pALpNnx7Gpx540xIDpm70XTlKzsMhsEcWS5iczEGni5LxIc4Q4Mwc5xFTTN1BY
-	 JR9gkD4IRHT1Tr/Wcvnv2TEgnx7DKTvcIoT+IwsypT2ODztwGBSly5SyP8qjjP5dA4
-	 RZeVgpjgkgGCG0iZpitwdR96YqEP5DXLwI/zkoG7jbRj6MQJaXE/EXRONJzX1qKacm
-	 8KCIK0Tf4RTbv5usJNMHAt+PFnQPXZl9NSR1mNHP5rQDjktKVLteOhSBXSFlekWOMC
-	 9QXE+259h65ug==
-Received: from phl-compute-08.internal (phl-compute-08.internal [10.202.2.48])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D1459F40067;
-	Fri, 12 Sep 2025 10:35:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Fri, 12 Sep 2025 10:35:31 -0400
-X-ME-Sender: <xms:sy_EaIOFVP8TFbUVTr3M1hLM62MVAOKgDByS_aczWYuKrY66etkvQA>
-    <xme:sy_EaMw-CYop6ykTCd7xbwny6NtaPItW2sfRBJsD2AqEeyBakCiyiq9sSD4I2ZrZ8
-    0EOX8rSQyNgOwk0O90>
-X-ME-Received: <xmr:sy_EaNEE_dt9BsbRhcSnetlFx8viyIF2X-cR9O_4RQejA7BzgjEZNxGcPjXMeg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleeftdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
-    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
-    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
-    grmhgvpdhnsggprhgtphhtthhopeelkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepnhhprggthhgvsehrvg
-    guhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdp
-    rhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqthhrrggtvgdqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepiihihiesnhhvihguihgrrdgtohhmpdhrtghpthhtohep
-    sggrohhlihhnrdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtth
-    hopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:sy_EaAmxvA8o9_BHxY-OQnobzIiZhPsKsPuNtnqReZ5bOGcvwh474g>
-    <xmx:sy_EaKp3BAE6_gjy-zS7AYs7Bj7CZV5N_FJtGJNQVJ9t5qw1AikzVA>
-    <xmx:sy_EaDLqBIhr9fE2udYB0c4LPnib3YjCh9yEomGSqm0hV0dg8fzlNQ>
-    <xmx:sy_EaAVLrTry_swTdUTik2eWBdy0SXF2Of3dstHY8M8jzbt4H_u2oQ>
-    <xmx:sy_EaIpOoTWlPsROLlgNbu1iSSSKPIivBreFLf3igkQmOpWorIzzL6ol>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Sep 2025 10:35:30 -0400 (EDT)
-Date: Fri, 12 Sep 2025 15:35:28 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, 	ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
- 	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
- corbet@lwn.net, 	rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, 	akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- 	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, 	vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- 	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- 	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, 	jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, 	zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- 	rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- 	lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
- 	pfalcato@suse.de
-Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
-Message-ID: <rapl4xr55zv2nq3jh5ulk4wvfyxa2kmbnnb4uram6q43y4cbwn@dv5m52ocyqne>
-References: <20250912032810.197475-1-npache@redhat.com>
- <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
- <43f42d9d-f814-4b54-91a6-3073f7c7cedf@redhat.com>
- <ab8c2e03-53fb-402c-a674-c2c6ab11f54e@redhat.com>
+	s=arc-20240116; t=1757687761; c=relaxed/simple;
+	bh=w0HNyCJgCIKMXof21vkl4pN3VquJKbWAGsmHF0hWEh4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=kPGyk7ZbBB6u7J5tublokHXkj+aTYvG1rdFuNI5dO+AvjyzAFV4lmzLUrE+iW7HTUdkD+Q3yWbvU8Oi9TaOgmMYKevVSOLsAdcnHrWJDV4vDKeweTKqKNMlH3T8F3Epn8iO6q3hVepy70yaMSTMsOQ7WuFpi/8SZJP3QAp2xAX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P4ohENhj; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45de1084868so10301355e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:35:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757687758; x=1758292558; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rux3uIEwt0djKEKrlDMK9wf/Q+VyRMin5568hbjdQuQ=;
+        b=P4ohENhj3OBByqOOeEbxfgzwL3xwxDLKHz6Zdhpph2yJo1NZ+pXODd6pPD/pyHhUYY
+         JFqwan1TIT6J4jpigXj/Kq24/REFy0L+ndyPRJ4WckOH3t2WHHiunNBdD02gBySAtp4i
+         tap7eoewKLh91qorDe/SWh8D6CKWxhLNaJTiYrdVL6d9zm679o2puGUlgOnAOgGtsBat
+         +kGgRk7CEin6ZKhkho8Rl9PEmmmZizfVbprJ68pvfQGL0k+ZfcVTUBBy01svq5BIV/Ch
+         7I64G4DYVcs6RiM3QGOQPMqAXW45C0Vwu9PYzNrxr+jrWbBwyREfYHWjPHqmHuy+46K/
+         yMqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757687758; x=1758292558;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rux3uIEwt0djKEKrlDMK9wf/Q+VyRMin5568hbjdQuQ=;
+        b=Sn4hg2erGIz6lpiYd+/2keeOxjkabKIHN2wZtBK1Hcaz5mkgZ7nyYSeeLbK85J+GOV
+         sAy19aQQlDrkzx8QAvdPMA57Wx/rBxsQ7eB/zchQvs53+aU884ZCSFsOja+xGIAhtJb3
+         jVXpJlvCGO06oA9h3mFHMKOFuYp7ggb59uI0wIS+29Q+3rqamGmZDamaQUTDPdjSNcGm
+         XbtBv9RxzS81o3l0cjqmF7Uid0N50NS7ELJB0lpk9I55PglQwVHXyNSKuxKD2gpTz2sY
+         X3EihEI3IAHSXsUNiicAJVbpJ/kq7vUuLRQj9Ef6zI+92Bg15YwCmUNQ7co9AuUt9tU+
+         X/JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXUIfcVYFa/9JCgSngUVTFgbyt7OJrz99U3qzp3yWoxqqe4gSCfGwolTmdjElEz0ZxaXojGp7K+iCAz6rs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKcgEsViZ0FyPzpCRrYROcrez/NnRlgVGNrALlwuFQDGkqXmpO
+	Mha5kVSScm610g8Rt1hriq21lJ7pa0S8DKk1AfntnFqrw6N9tbYMEqh/F+9dQRQ4f4nYxaT45+t
+	3+TM4
+X-Gm-Gg: ASbGncuEpLQtU75kG2j65Vdolb7w90rjtXU57pqJcASfo/ZlScQHY0SVt8Urb7rlBDs
+	8xUMb9TdLmTkZqH1FrjRxOAWv3KYFBVj7JGX7ZeRgQSQ0Wquy8FxUUrVfJzqaTmLcgm77+S3B7X
+	yEz+rOPBkDIP8OtSiPGrAdnzfyMAYA2xUJm1sHMQ234OPpnE3BENv6VjxGUFwj5y3cdXEaNv+BQ
+	DRYIuIxrogxtcwFYDtYPHehk3gwTo2iOKJxkgx1/A7TOxsbUjmXZxIZmm9PTI+GkN+NSLKVgOzw
+	54s/mmb1TzrBAe81Z/Q38yx2Jm8vhk9ZKfy35WWK5z2aFPOSRcfwj0exB0CCUhs4ssyibexUk2p
+	2upP+p7Q/5SicF/7WYuyCaPUW21XpgHB9BA==
+X-Google-Smtp-Source: AGHT+IH67tRYiTRZR0HlitAXkPqySgTj0c7ALy1itAhNYgQLFYvaB09Ls5bZvLW8qeoaRRjgwtFi6g==
+X-Received: by 2002:a05:6000:2408:b0:3b8:d360:336f with SMTP id ffacd0b85a97d-3e7658c1c6emr3279136f8f.28.1757687757628;
+        Fri, 12 Sep 2025 07:35:57 -0700 (PDT)
+Received: from hackbox.lan ([86.121.170.194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607ccf9esm6659591f8f.40.2025.09.12.07.35.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 07:35:56 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+Cc: frank.li@nxp.com, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250804131450.3918846-1-laurentiu.palcu@oss.nxp.com>
+References: <20250804131450.3918846-1-laurentiu.palcu@oss.nxp.com>
+Subject: Re: [PATCH v2 0/2] clk: imx95-blk-ctl: Fix runtime PM issues
+Message-Id: <175768775587.453341.7630569911585966967.b4-ty@linaro.org>
+Date: Fri, 12 Sep 2025 17:35:55 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ab8c2e03-53fb-402c-a674-c2c6ab11f54e@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-dedf8
 
-On Fri, Sep 12, 2025 at 04:28:09PM +0200, David Hildenbrand wrote:
-> On 12.09.25 15:47, David Hildenbrand wrote:
-> > On 12.09.25 14:19, Kiryl Shutsemau wrote:
-> > > On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
-> > > > The following series provides khugepaged with the capability to collapse
-> > > > anonymous memory regions to mTHPs.
-> > > > 
-> > > > To achieve this we generalize the khugepaged functions to no longer depend
-> > > > on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
-> > > > pages that are occupied (!none/zero). After the PMD scan is done, we do
-> > > > binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
-> > > > range. The restriction on max_ptes_none is removed during the scan, to make
-> > > > sure we account for the whole PMD range. When no mTHP size is enabled, the
-> > > > legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
-> > > > by the attempted collapse order to determine how full a mTHP must be to be
-> > > > eligible for the collapse to occur. If a mTHP collapse is attempted, but
-> > > > contains swapped out, or shared pages, we don't perform the collapse. It is
-> > > > now also possible to collapse to mTHPs without requiring the PMD THP size
-> > > > to be enabled.
-> > > > 
-> > > > When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
-> > > > 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
-> > > > mTHP collapses to prevent collapse "creep" behavior. This prevents
-> > > > constantly promoting mTHPs to the next available size, which would occur
-> > > > because a collapse introduces more non-zero pages that would satisfy the
-> > > > promotion condition on subsequent scans.
-> > > 
-> > > Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
-> > > all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
-> > 
-> > BTW, I thought further about this and I agree: if we count zero-filled
-> > pages towards none_or_zero one we can avoid the "creep" problem.
-> > 
-> > The scanning-for-zero part is rather nasty, though.
+
+On Mon, 04 Aug 2025 16:14:48 +0300, Laurentiu Palcu wrote:
+> These 2 patches belonged to a larger patch-set I sent a couple of weeks
+> ago([1]) but I decided to break that set into smaller sets, where
+> possible, as they will be easier to respin, to address any issues, and
+> will probably be merged faster than the other one.
 > 
-> Aaand, thinking again from the other direction, this would mean that just
-> because pages became zero after some time that we would no longer collapse
-> because none_or_zero would then be higher. Hm ....
+> Also, I addressed all the reviewers' comments received previously for
+> these patches.
 > 
-> How I hate all of this so very very much :)
+> [...]
 
-This is not new. Shrinker has the same problem: it cannot distinguish
-between hot 4k that happened to be zero from the 4k that is there just
-because of we faulted in 2M a time.
+Applied, thanks!
 
+[1/2] clk: imx95-blk-ctl: Save platform data in imx95_blk_ctl structure
+      commit: aa1735d72bc085c4d107fb2017c597f83bb9490c
+[2/2] clk: imx95-blk-ctl: Save/restore registers when RPM routines are called
+      commit: 14be8b7b6cbc0a072c749e46e28d66e0ea6d0857
+
+Best regards,
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Abel Vesa <abel.vesa@linaro.org>
+
 
