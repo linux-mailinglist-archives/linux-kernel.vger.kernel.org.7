@@ -1,146 +1,132 @@
-Return-Path: <linux-kernel+bounces-813430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766A9B54545
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:27:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991D6B54548
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD1911CC28FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:27:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5443F463098
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A772D6E55;
-	Fri, 12 Sep 2025 08:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F3A2D77FA;
+	Fri, 12 Sep 2025 08:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH1KklRb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JFk9eran"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A3A82D5C8E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F552D6E58
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757665628; cv=none; b=epZZNYep0jOz7mfPtuoneeERn22X2b5Z8gLL1UvnPrR+cz5u3D7YD/frmAH4xNC8oGVnwSA1iAv+BDPKAjiVzAVb4QLQx8AFkyqDiRpwSpre+6IHw16uKEQODFbqzpyOjdD9tPU2vj2t3EjhaV0C0D5uOQP5giFyP22/Drz8gCk=
+	t=1757665637; cv=none; b=NCTROxkVWpXcn1ZASZ9gRLh1Ggn8HpMb3HGE6FpYMT1sx7VeAdI6rR49syZIx2GHhZJJ9O9fqJ05rJKMQtyREY9CMhkBMPAVqTJsKnlFHeVjdVE+t6VjQyR+/jhzUB/hxHwXAYscImvc6l6wIEfy83qZuPgb/4CWtvuKY99ZRkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757665628; c=relaxed/simple;
-	bh=vmYhHr3q3KlDaf1jjw8O49vpD71igLrPL/Z/RvcOSik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FQSZIEs/V0wpuMz4+Ioz7uIbBQE/NlF8OKfKWJnboGO8KManwxpBbo1k9ppCsOZaFIFZrL/RjcWRYogopqHGckcGTT907pyGvMA4mGNKqcmzaYe8KWB6F9/QF/wEw1j+2ZmTpQOKDh9vZUomi+bDPPQn3Hy52oHReIEZz1C5w8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH1KklRb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43501C4CEF7
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:27:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757665628;
-	bh=vmYhHr3q3KlDaf1jjw8O49vpD71igLrPL/Z/RvcOSik=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FH1KklRbeumazHItY5LFdZRFTQ8Ko9kGvo309YpkNsa30JCAQirTDOMdNvjsKH69U
-	 H9lxHp0mk8C4RBwmq+TKjySQJ6A7GriNVWu3YOuvlemD3ohL5AxaQfXtU5wgf1iP9p
-	 MeAR3nnraRoz+PWMNq8Cw1PCkJ2CiZ6uUwpUezs7vi5HXEj6wHMSDZ6RFc/9U2kHLz
-	 LjeQVhnaIG/glHFHec1ty5JE2CGL/zO+RcWBoW13tgcA+Uu34YmHMpm7cOJNy2W2DM
-	 ml/+ADxLAcHYVwGV8hKzHPaM9wWl1Kx2GM5T3yHYdhbfT5c9NBLnsGScMUt/hv5i89
-	 0bSSZFvAeRYIA==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-3523422a785so1850241fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:27:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9VJigf/YAg0iwNXB5eRgUQm/2hWInpx/TVmLrxQKg9fUrt6HS7uhRLRXqr4UCWp9+YCBfDM1W3h8wU8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz2m1H2GQZWxpQLFXtCjMV74/BTThscNCfVSn7fXRg3Lnya36Z
-	Cx74RMnvL81EirAZHNOmCxcyr0EP/NobxEIwlywEjnP5WFd8TNqWt1ofSAm7RzWaGclMBGB8af9
-	WeEDIrnUElhwCNI26hCsM7gORWSvEgV8=
-X-Google-Smtp-Source: AGHT+IFRWugTNgVxU/a0iPWbG7b8RZqvGzW6FpuqsYV/Y5JfUfyL6ISaYO96aaWDvLCXdsIFfDRBp3BoWVt6ldgQT6E=
-X-Received: by 2002:a05:651c:25d4:10b0:30b:d156:9e7e with SMTP id
- 38308e7fff4ca-3513882aed6mr4137051fa.2.1757665626633; Fri, 12 Sep 2025
- 01:27:06 -0700 (PDT)
+	s=arc-20240116; t=1757665637; c=relaxed/simple;
+	bh=OhkrDdrpf9K9Y/Vcut/XZzSkCyLD31va3Wprom2uduE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZhUrh/C+2j2hui18G5aGG264X4OjXbUSvxg6OXyf3Es/YPYQnkOtMCgm9xcMbom9Qbqp7Th2gtFmBqt/H2KC/BiTCptJi5kUG9JPZb40bL3KAEe+5YesLVINe0yHQxWbwU4FbtO1BiVpSsqkgjVAkp/WgKwQs2eI64z80tl4qLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JFk9eran; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757665634;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FHPTlBuTNvdrb4eYoAaIH5z9IayKPbhwWYepGjVwam4=;
+	b=JFk9eranXFKlT0hD0iO8DVxpLM5SnAINV0HbdjimT9fvqXWDJn16JrXdI3vFLe1QkqbeQn
+	TXr9mSlk7obJ4gux0jAKPAit9mLDxprWY7dnmVhGmYyQCtq4DG6ZTQAOiHhcXW0fUHMrWe
+	bcYGlHRMqjvJXbM/3TL+3gVwlMaqjFw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-398-RJeBKFiIMPSsbgahKilthg-1; Fri,
+ 12 Sep 2025 04:27:08 -0400
+X-MC-Unique: RJeBKFiIMPSsbgahKilthg-1
+X-Mimecast-MFC-AGG-ID: RJeBKFiIMPSsbgahKilthg_1757665627
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 54EC1195FD30;
+	Fri, 12 Sep 2025 08:27:07 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.112.167])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B990118004D8;
+	Fri, 12 Sep 2025 08:27:01 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	eperezma@redhat.com
+Cc: jonah.palmer@oracle.com,
+	kuba@kernel.org,
+	jon@nutanix.com,
+	kvm@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH net 1/2] vhost-net: unbreak busy polling
+Date: Fri, 12 Sep 2025 16:26:57 +0800
+Message-ID: <20250912082658.2262-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909080631.2867579-5-ardb+git@google.com> <20250909080631.2867579-8-ardb+git@google.com>
- <802166ae-9420-41f6-95ed-6570ef660369@amd.com> <CAMj1kXGmgXRA=hO5P1bcTU1ya-RypU_y3_kahO632U5iPT7vaQ@mail.gmail.com>
-In-Reply-To: <CAMj1kXGmgXRA=hO5P1bcTU1ya-RypU_y3_kahO632U5iPT7vaQ@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 12 Sep 2025 10:26:54 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHqhWpb2OZy+1N8-oPa2Kk0d56NS6tYH46Z92ui3h5wMQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwAiWHkpOi6w-Ey855BsBfn61EtF93631McYXTqt0F-a6Avc93MjIpSCx8
-Message-ID: <CAMj1kXHqhWpb2OZy+1N8-oPa2Kk0d56NS6tYH46Z92ui3h5wMQ@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] x86/efistub: Don't bother enabling SEV in the EFI stub
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Fri, 12 Sept 2025 at 09:29, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Thu, 11 Sept 2025 at 23:53, Tom Lendacky <thomas.lendacky@amd.com> wrote:
-> >
-> > On 9/9/25 03:06, Ard Biesheuvel wrote:
-> > > From: Ard Biesheuvel <ardb@kernel.org>
-> > >
-> > > One of the last things the EFI stub does before handing over to the core
-> > > kernel when booting as a SEV guest is enabling SEV, even though this is
-> > > mostly redundant: one of the first things the core kernel does is
-> > > calling sme_enable(), after setting up the early GDT and IDT but before
-> > > even setting up the kernel page tables. sme_enable() performs the same
-> > > SEV-SNP initialization that the decompressor performs in sev_enable().
-> > >
-> > > So let's just drop this call to sev_enable(), and rely on the core
-> > > kernel to initiaize SEV correctly.
-> > >
-> > > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-> > > ---
-> > >  arch/x86/include/asm/sev.h              | 2 --
-> > >  drivers/firmware/efi/libstub/x86-stub.c | 6 ------
-> > >  2 files changed, 8 deletions(-)
-> > >
-> > > diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> > > index d7be1ff3f7e0..b017e1dab705 100644
-> > > --- a/arch/x86/include/asm/sev.h
-> > > +++ b/arch/x86/include/asm/sev.h
-> > > @@ -462,7 +462,6 @@ static __always_inline void sev_es_nmi_complete(void)
-> > >               __sev_es_nmi_complete();
-> > >  }
-> > >  extern int __init sev_es_efi_map_ghcbs_cas(pgd_t *pgd);
-> > > -extern void sev_enable(struct boot_params *bp);
-> > >
-> > >  /*
-> > >   * RMPADJUST modifies the RMP permissions of a page of a lesser-
-> > > @@ -588,7 +587,6 @@ static inline void sev_es_ist_exit(void) { }
-> > >  static inline int sev_es_setup_ap_jump_table(struct real_mode_header *rmh) { return 0; }
-> > >  static inline void sev_es_nmi_complete(void) { }
-> > >  static inline int sev_es_efi_map_ghcbs_cas(pgd_t *pgd) { return 0; }
-> > > -static inline void sev_enable(struct boot_params *bp) { }
-> > >  static inline int pvalidate(unsigned long vaddr, bool rmp_psize, bool validate) { return 0; }
-> > >  static inline int rmpadjust(unsigned long vaddr, bool rmp_psize, unsigned long attrs) { return 0; }
-> > >  static inline void setup_ghcb(void) { }
-> > > diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-> > > index c4ef645762ec..354bc3901193 100644
-> > > --- a/drivers/firmware/efi/libstub/x86-stub.c
-> > > +++ b/drivers/firmware/efi/libstub/x86-stub.c
-> > > @@ -938,12 +938,6 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
-> > >               goto fail;
-> > >       }
-> > >
-> > > -     /*
-> > > -      * Call the SEV init code while still running with the firmware's
-> > > -      * GDT/IDT, so #VC exceptions will be handled by EFI.
-> > > -      */
-> > > -     sev_enable(boot_params);
-> >
-> > I think we lose the check for GHCB_HV_FT_SNP_MULTI_VMPL by doing this. It
-> > might need move into svsm_setup_ca() now.
-> >
->
-> Currently, this check only occurs inside sev_enable(), and so it
-> happens too late to have an impact, given that the core kernel will
-> set up all of this state from scratch right away.
->
+Commit 67a873df0c41 ("vhost: basic in order support") pass the number
+of used elem to vhost_net_rx_peek_head_len() to make sure it can
+signal the used correctly before trying to do busy polling. But it
+forgets to clear the count, this would cause the count run out of sync
+with handle_rx() and break the busy polling.
 
-Hmm, I only just spotted that this check only happens in the legacy
-decompressor.
+Fixing this by passing the pointer of the count and clearing it after
+the signaling the used.
 
-I think it makes sense for this check to live in svsm_setup_ca(), but
-what is your take on the need to perform this check when accepting
-memory from the stub using the CA address obtained from the firmware?
-(i.e., way before sev_enable() is called)
+Cc: stable@vger.kernel.org
+Fixes: 67a873df0c41 ("vhost: basic in order support")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/vhost/net.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index c6508fe0d5c8..16e39f3ab956 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1014,7 +1014,7 @@ static int peek_head_len(struct vhost_net_virtqueue *rvq, struct sock *sk)
+ }
+ 
+ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
+-				      bool *busyloop_intr, unsigned int count)
++				      bool *busyloop_intr, unsigned int *count)
+ {
+ 	struct vhost_net_virtqueue *rnvq = &net->vqs[VHOST_NET_VQ_RX];
+ 	struct vhost_net_virtqueue *tnvq = &net->vqs[VHOST_NET_VQ_TX];
+@@ -1024,7 +1024,8 @@ static int vhost_net_rx_peek_head_len(struct vhost_net *net, struct sock *sk,
+ 
+ 	if (!len && rvq->busyloop_timeout) {
+ 		/* Flush batched heads first */
+-		vhost_net_signal_used(rnvq, count);
++		vhost_net_signal_used(rnvq, *count);
++		*count = 0;
+ 		/* Both tx vq and rx socket were polled here */
+ 		vhost_net_busy_poll(net, rvq, tvq, busyloop_intr, true);
+ 
+@@ -1180,7 +1181,7 @@ static void handle_rx(struct vhost_net *net)
+ 
+ 	do {
+ 		sock_len = vhost_net_rx_peek_head_len(net, sock->sk,
+-						      &busyloop_intr, count);
++						      &busyloop_intr, &count);
+ 		if (!sock_len)
+ 			break;
+ 		sock_len += sock_hlen;
+-- 
+2.34.1
+
 
