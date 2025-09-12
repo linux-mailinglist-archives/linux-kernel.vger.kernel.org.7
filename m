@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-814161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEBCB55017
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27454B5501A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 759695647E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D844C179D05
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94E14305973;
-	Fri, 12 Sep 2025 13:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28B230DEDA;
+	Fri, 12 Sep 2025 13:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5HLOVTR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b="sa6MSrf6"
+Received: from pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com (pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com [52.34.181.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E758D3002DE;
-	Fri, 12 Sep 2025 13:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E4F14EC62
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.34.181.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757685258; cv=none; b=fjTghRFAVTnSBCZkugb5fVmUhJQT5lMxGEdnW2KUQ18Yhpj9FdP4eKyoZnVaQZG0r39V6Tgz9htp6re1k+AS8Esks+fCAlxD94TqFGGYQVCet0HLScO8GCmMlJ5hxUruYbW+V+L6PjDFpz/+5+PCLvlZggKg51u9Aq6GYdBlznI=
+	t=1757685302; cv=none; b=TV/aWkaptvHd7QiazAyizcccxzh7g3bkYpdMlzUeg4xDNazj+8tKfEGiNGYy3CNN7uOCKqHMhQaFw9CZdfOOwEmTQaY8sI/rABy152Xv/YhsYsPFi3CRfvjIGbBZhUXtZtLgXx+Egbwi6cCsmVEpTNbyP2AbD18Rm+EgKsEoryY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757685258; c=relaxed/simple;
-	bh=HIAwmhCNeSypW5N4gjF2EVFOTx2Y1RaxzUCFu5jMQBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVhNxjaWd4ddlQ/1W5YDFlDVgsMqJtMf1535F9tAevbYkN25vv8m4mbO11x1eKR5tLC4d32Oei3WkC+MFR0VlopmO+WqkS/hR6nF798+lHgThjOhu2xUkxA/LwRnKVtWhQpEZ2KRC0dKTPx+9PSxjuxNcGLicpq79PfbNLXXjac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5HLOVTR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B506C4CEF1;
-	Fri, 12 Sep 2025 13:54:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757685257;
-	bh=HIAwmhCNeSypW5N4gjF2EVFOTx2Y1RaxzUCFu5jMQBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d5HLOVTRn8pvc+pKJoK4+1B+mArFCpTnmR6tbLA7cUSDW726oWDdKaGQbYsR/cLNU
-	 cI/PSFWIBpPpf+eU5vognCEBeEdsyiAp13aPfzJpyE3nFKYAdZVlvSUTwxgNwMWiS8
-	 l7aehyrP7Sezh4COKYXi2MGFUE1NIRRWf3JNrEmtPH7jDogV8Uk47L/YhAxVcM3c+u
-	 CtSEGBLgfVPKJJdbA5LEN/kIoAoVd7Is5NqKARbYhrBM6qxZfggSXrCcElxTjbSpMR
-	 C0vQ7X0/32IWXF7+qgyQcIsX6uLDWzdmETRmiZl8DtpwuX+5mpD1FTe6F5JFkZxcOS
-	 5sXX9B9Id3YOg==
-Date: Fri, 12 Sep 2025 14:54:11 +0100
-From: Will Deacon <will@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v4 15/28] iommu/arm-smmu-v3: Load the driver later in KVM
- mode
-Message-ID: <aMQmA9cLaeYWG5_C@willie-the-truck>
-References: <20250819215156.2494305-1-smostafa@google.com>
- <20250819215156.2494305-16-smostafa@google.com>
+	s=arc-20240116; t=1757685302; c=relaxed/simple;
+	bh=BfXHVYB4E7rZReFJ1D/SFGvpBVucWgNW19iT4trRXJQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tzatz8JPHfMDFhw8SkAOjSR4Uv2GAZrMKYXmenZfmUqJmsLEyixc5NO7Yl6/MXLDeZymzPn1N3ILBj4d3OLomAUdVPVCMYLqx7A/RK43Zoqm3m73IEFRqKtJFhAjjNKnrEkEEOUE23xBu05iYprY+a6cqj4FBAMopGr2JCA24q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (2048-bit key) header.d=amazon.de header.i=@amazon.de header.b=sa6MSrf6; arc=none smtp.client-ip=52.34.181.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazoncorp2;
+  t=1757685300; x=1789221300;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=BfXHVYB4E7rZReFJ1D/SFGvpBVucWgNW19iT4trRXJQ=;
+  b=sa6MSrf65lme64jjEgnpg7rJPaqW09IyVo4nz7H7wQqh/UcMHuEEYDFk
+   0NtZ2CqAd3n2WLBFRlxmFgepz88EKHCcg9+ILnivLH7F0N2lMcmZM/xij
+   7uSZMhsVvKEcBswOHtfpmQgRObVukD7nOs11yc7iZQ506SBb8JTTd9nTc
+   4QW8270i53ouehv5WyTsGiT37gGqLWERK5R91pNM97znIruQmoJE5QmuZ
+   PPudPpbh1dxYKlat+51rw26pllRSeYc2L5vJaNWsGDt/SfGn0BhLMyiFm
+   KNIQdQb96Kz2hE5Y1Kw8eHKyeqDd19Ka1m4uv6Zo1EHKxkl+uqWVEmyLS
+   A==;
+X-CSE-ConnectionGUID: 6yKoZLNvTaCBFw5Ks/mIHA==
+X-CSE-MsgGUID: tcwdF41DQf2Sb9uosIc/Jw==
+X-IronPort-AV: E=Sophos;i="6.18,259,1751241600"; 
+   d="scan'208";a="2904342"
+Received: from ip-10-5-9-48.us-west-2.compute.internal (HELO smtpout.naws.us-west-2.prod.farcaster.email.amazon.dev) ([10.5.9.48])
+  by internal-pdx-out-007.esa.us-west-2.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 13:54:58 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.38.20:34317]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.27.200:2525] with esmtp (Farcaster)
+ id 5f3a8b00-0010-4fb6-b6d0-bca8230ba671; Fri, 12 Sep 2025 13:54:57 +0000 (UTC)
+X-Farcaster-Flow-ID: 5f3a8b00-0010-4fb6-b6d0-bca8230ba671
+Received: from EX19D001UWA001.ant.amazon.com (10.13.138.214) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
+ Fri, 12 Sep 2025 13:54:40 +0000
+Received: from dev-dsk-simonlie-1b-d602a7e1.eu-west-1.amazon.com
+ (10.13.232.104) by EX19D001UWA001.ant.amazon.com (10.13.138.214) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20; Fri, 12 Sep 2025
+ 13:54:37 +0000
+From: Simon Liebold <simonlie@amazon.de>
+To: Dave Hansen <dave.hansen@intel.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	<x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Lorenzo Stoakes
+	<lorenzo.stoakes@oracle.com>, Helge Deller <deller@gmx.de>, "Liam R. Howlett"
+	<Liam.Howlett@Oracle.com>, Simon Liebold <lieboldsimonpaul@gmail.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/mm: lower MAP_32BIT begin to reduce heap collisions
+Date: Fri, 12 Sep 2025 13:54:36 +0000
+Message-ID: <h6liptt17wzc3.fsf@dev-dsk-simonlie-1b-d602a7e1.eu-west-1.amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250819215156.2494305-16-smostafa@google.com>
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D041UWB003.ant.amazon.com (10.13.139.176) To
+ EX19D001UWA001.ant.amazon.com (10.13.138.214)
 
-On Tue, Aug 19, 2025 at 09:51:43PM +0000, Mostafa Saleh wrote:
-> While in KVM mode, the driver must be loaded after the hypervisor
-> initializes.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 25 ++++++++++++++++-----
->  1 file changed, 19 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index 10ca07c6dbe9..a04730b5fe41 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -4576,12 +4576,6 @@ static const struct of_device_id arm_smmu_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
->  
-> -static void arm_smmu_driver_unregister(struct platform_driver *drv)
-> -{
-> -	arm_smmu_sva_notifier_synchronize();
-> -	platform_driver_unregister(drv);
-> -}
-> -
->  static struct platform_driver arm_smmu_driver = {
->  	.driver	= {
->  		.name			= "arm-smmu-v3",
-> @@ -4592,8 +4586,27 @@ static struct platform_driver arm_smmu_driver = {
->  	.remove = arm_smmu_device_remove,
->  	.shutdown = arm_smmu_device_shutdown,
->  };
-> +
-> +#ifndef CONFIG_ARM_SMMU_V3_PKVM
-> +static void arm_smmu_driver_unregister(struct platform_driver *drv)
-> +{
-> +	arm_smmu_sva_notifier_synchronize();
-> +	platform_driver_unregister(drv);
-> +}
-> +
->  module_driver(arm_smmu_driver, platform_driver_register,
->  	      arm_smmu_driver_unregister);
-> +#else
-> +/*
-> + * Must be done after the hypervisor initializes at module_init()
-> + * No need for unregister as this is a built in driver.
-> + */
-> +static int arm_smmu_driver_register(void)
-> +{
-> +	return platform_driver_register(&arm_smmu_driver);
-> +}
-> +device_initcall_sync(arm_smmu_driver_register);
-> +#endif /* !CONFIG_ARM_SMMU_V3_PKVM */
 
-I think this is a bit grotty as we now have to reason about different
-initialisation ordering based on CONFIG_ARM_SMMU_V3_PKVM. Could we
-instead return -EPROBE_DEFER if the driver tries to probe before the
-hypervisor is up?
 
-Will
+
+
+Amazon Web Services Development Center Germany GmbH
+Tamara-Danz-Str. 13
+10243 Berlin
+Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
+Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
+Sitz: Berlin
+Ust-ID: DE 365 538 597
+
 
