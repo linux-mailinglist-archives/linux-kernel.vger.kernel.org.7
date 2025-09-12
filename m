@@ -1,206 +1,142 @@
-Return-Path: <linux-kernel+bounces-814461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 917C2B55464
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:04:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62897B5546D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 467281657A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:04:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0642BAA8164
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C7B30C621;
-	Fri, 12 Sep 2025 16:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A221DE3AC;
+	Fri, 12 Sep 2025 16:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PPAOPSna"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="c+gzG1O/"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB06423C8D5
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:04:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F154D28DC4
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757693063; cv=none; b=PR6B5RDuawAcSVHTmtwlUCWJTyaLi5JO5RBgWMpJO69xf49z8p3IM457MXSEIJCRTg4I0ewzcvu+SC0OOMLRyyr+9utS860+zFp4NlZH8Ud2HHvmVLTbQPjkFX1AZVXrmRz3mQYGeoE1lWVxvho2eXX/M43OlCd69b4Fgk6l4cU=
+	t=1757693214; cv=none; b=nJlKcRvX3f3E+5Pg5ZeVPvqzkybIHldpQ/IwuftVMosiwnloeRCkYQWO/WcWro88KkE39+VPHhZWJdDXji40kPFIhvV49G/82kh9CzYzZAxo+eOo5P1o7koid/yYQ+rqppOL+yoxY6ExDmfSN4dZ2FAwEC+dsa/rPVqHcrP0Myc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757693063; c=relaxed/simple;
-	bh=ofAxTBiqSJevq7WBibHDkBzcQFgGL2Zf4CkX37YCvUk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lCH9cN5pEPPhHi9sj9YXDBmW2GFydRl3hlix3+41YzVieL8FooYUpZEK+/mRsC6xLQTwEEuM3b9Ym0HLx0u2aZj3HOqDWzGDnQ4j7VtIcLJ770ZtRjbdb74NtH5bpRWh6n0nzGFXaMGqa3pqyWI2saVtViI3qgniFKpOo/bFdHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PPAOPSna; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757693060;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hG5/AZKn+Ejtcke6z1a0vOF9JLYUSlcjriPhjMOOTD8=;
-	b=PPAOPSna/Vphay5ATaQYfO2jSWMemDzwZjKoOiF6GvFeAyE+AlwDHqDPaPeLGGMo+s0bYq
-	FCPGUuI68xz03KZuWS/nkn9GCh5moa2gJjcE8r8/fa6zjg1KD0urcMlymMgpBJ3UpABIYW
-	Ic9iMn2ZLJO44UK+fQzc4w6coB2vUN0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-66-W-EyL0OeMIOyghogFqX70A-1; Fri, 12 Sep 2025 12:04:19 -0400
-X-MC-Unique: W-EyL0OeMIOyghogFqX70A-1
-X-Mimecast-MFC-AGG-ID: W-EyL0OeMIOyghogFqX70A_1757693058
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3e751508f3aso1469905f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:04:19 -0700 (PDT)
+	s=arc-20240116; t=1757693214; c=relaxed/simple;
+	bh=VpNE595yCdSeatal7vCh4ifyEZdobn2WH1Bf/R8GOS0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NGUeJRVVxmfE08Utx7PSYtMfffrlYIO9IYmtcNAC+9nKfLy2onT28zQRtMG/5T1rBnfmzlGq4tNlHdvwVULpLLwCa/PWaAhlTFVrEcuWReLzVuhO7JbPk7AGKzT99lLIfEgduNw6gBERDftp6Vy8TmAqizeZUXbpA1aw5d2gN8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=c+gzG1O/; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-746d3b0d926so840201a34.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:06:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757693211; x=1758298011; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gPGBKA/NKS+g70XoYGArtCKJfE8klIJC7bmaO8UeETE=;
+        b=c+gzG1O/ROdSEvKKFSAlZ3VBKP+jUSoze7qmeYWjeqqttywKtGHPe8hpVUr4rDDmqJ
+         r5ylW5k+sUQsmWQhQJtk3VXX5TWrv894ixTXeCnIELhGVgm8udfWEfxfsIVmuLxkOhmH
+         JulyMzHmRcg0h/9LoHCB1OdfnRbSilBB0hUqdQlJjqj3Xrc/zRKdDStWlrfmZvGKyO/B
+         R1jni0kmaM+oXim1CC7nyMnLqhI6UDNgduG+2ZC8cv6fom7TcR1iFQh/BPuVXrnaJ8B8
+         WeoqQmzZVkL1ugkQ6xnHGl1lSwfte7jiIdyEZtWWlVpgx0RNhr+98wxF4StTKnaEL03k
+         5bHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757693058; x=1758297858;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757693211; x=1758298011;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hG5/AZKn+Ejtcke6z1a0vOF9JLYUSlcjriPhjMOOTD8=;
-        b=fdkLhRYKBj6frHkiHu5c1bezxGG95DNQHbDt+RiBinYwsdIEYm/5Manw8Gns2F87oC
-         e0rIZAhLdHMgkdeI+Wz+l7tLLb+OVR+UxGp4wIdodQsy3CMTP3yEgIu3A6PyjJpHJr1S
-         PUb2+bmQZBGBlg8ltZHMzlqf89arWB3jpfhHOJgiNOmp8rfqvJ9ot0DcVHebZPvhV3id
-         yIKQa1C4mVEcMkfgswa6jqBM8aXhNQZK3tR9JD+Ayky1R3BQZkPnZt7XVfiHVEp9WOXA
-         RW79Xm6nYK/T3jTTTDD25by74F0pexr/zkGPLsJOr4zVnx8Ar/d7/2oiSRlrVUAYXikn
-         eLfA==
-X-Forwarded-Encrypted: i=1; AJvYcCX20bahA9WJl8kEiiDt5dQfW4zIJ2Q+jOdJpcSoYOTCqczJyhAcQV1va5PH42LwFXNhw7S1b9KRzsRj5I4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaW60Vwl7dDHEnHdD3pFVtvjviB1WEXFC8oLNGMc9RgNYEbhwo
-	3WCgJ1rG+R5o+jQ8Hoag2DGJBW7+vVpcBATiPlo/mOaPi/FXZcqrcqaAxH8s5GN1lF/ynF3q34N
-	GtSmrTBB9aiO69H0DtGnDxOQbw4kD/nkkRdnAme/JV4TamvDiPf06+ecjrEY89IdQlQ==
-X-Gm-Gg: ASbGncvDKwFKjolYhiyxb6xahPW94A2LGZbv6FjaH/JXk93PqyeWRZsiEwQ1sp8Xf9s
-	N35UiSY6sjq+BmdrxQxdcsSItOz2bisJaTYiaBbeK6FMLakZh39bLfjWOUnsYYkmnt0pdg+3G/B
-	1O0DAoOS3yQDM760feFxM1nUtwoLfpK7YvTS+CnEhmV8w2w4FfexAyJKgVeGqIsO/1ctqVCoRWv
-	ygC0b9eJ0ooSgN+eESLDqrKO+7J8gVU+3vKmFM71yxAv1MYrADod/46cry92nlNbIuKw3mFD4VH
-	+Yad9r+TwqUcrHjZ9k/2K90QEuvjHMV5IcxGQSpYkGczA2TjMNzABAd0p79s6VEN9+muqLwWPaN
-	XDy2l6ONzMP5BAGL+RwxuXAgUESXhZbVh36E9M3EWkNs9IKdEZEFkokxIPpQdj8L+O4s=
-X-Received: by 2002:a5d:588a:0:b0:3e2:b2f0:6e48 with SMTP id ffacd0b85a97d-3e7657830c7mr3389205f8f.1.1757693058038;
-        Fri, 12 Sep 2025 09:04:18 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmTJGEBJ8Yi7y/CDniv/Cb2vtmWE7VSCvpdTGEnByD3ykpr0oRoFqb+KeFU7uief7Vv0aunw==
-X-Received: by 2002:a5d:588a:0:b0:3e2:b2f0:6e48 with SMTP id ffacd0b85a97d-3e7657830c7mr3389149f8f.1.1757693057182;
-        Fri, 12 Sep 2025 09:04:17 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7d9844d24sm1148099f8f.46.2025.09.12.09.04.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 09:04:16 -0700 (PDT)
-Message-ID: <5617a501-3f46-423e-b3da-98efcd63d7c7@redhat.com>
-Date: Fri, 12 Sep 2025 18:04:15 +0200
+        bh=gPGBKA/NKS+g70XoYGArtCKJfE8klIJC7bmaO8UeETE=;
+        b=OTsZhr1HWkKug1ZPpQQ5vussCLnVkTi6VMzlpLOFR8rBHX8Qr+Xa2ZjNCqkVyMPp89
+         SJA67trSXCHQoq1fSk1Lh7v1302FHDPjLxXXxTeP+7UeEAGVlbevW2yxoe4jjkoQBFm4
+         AZ4m9cLAeF6E3Heke2tBjRxDrN7GzFNxIaIu8SuIwgeXU6rgQUwP718zbwwitIfQ3rVe
+         STNaHx2qNU2rqHByM/dta0RSpSY4Zb7tsbx7K0uImruuB7U5zbc7MrZBbr8f/RJqyrim
+         uJb6QCxlY86W/qcirA9heaVqThw12kUgp/j/QpCdi5bXkkOtxxGzggmmUMsFQyoan4of
+         beaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUviiCUb8t9TGNomiGUYsdF1q6c8O4mJ/LjLodbHV+n619d/J7JHIODXGR2IExzpbjPHYmPPRSOdefTebs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmoiYycnwStaivqkh0U3P0+LovkIOMJLGgVrnFwzG2F+28mdq0
+	ugtsxYL04Ou9apu9JV6uMSDCPlXVN3e+7Kxrd8rCwC7oi6A1YB+B63EKXvYshZlvZchz/IKdXDT
+	bPtTzxHQ=
+X-Gm-Gg: ASbGncv7SqVviPBB5qOcvAL6O/ucymc/JX/jg3D+8UE8uxl1ziWBc/r1kupSqfcPhrI
+	lOfzlcoikx40Z67zeY4ttaE7CoIUtRrSDHBP5E/1U68FJTc1z6Xt6PKMAXPebnk8SRXz/T0ADE4
+	9N4RNjI6VueWeCJ/uRw0uPj4TSEVNpCB7dabCdbXcWsfswYZw2/+HZWOvsvWVv6+tV//GVTH0/B
+	DdxRmP56BC/ZR08O1WAr6BttwpVCtENnEkqh9wKorAP6SrD0ipT7iDuu7uPBf4I435ycd62+Dd7
+	vbKv5Mb8RHtVGq4tZQSOdIuPOJY5vjS7Zw3gioQhaPArHGj3upCGEKLb1J8lgpeeVmkyCRNFPOs
+	hilIy0UCl9bLQrn3jXFmMmjAVBcNQ8E4AvmVypxNE2IT0uqQ19w==
+X-Google-Smtp-Source: AGHT+IHMKnNk6AgBVrbblYvZ3wRj4uIOwWUYQEE27u/iIG0IIr4sc/5n0JqYHN/eN+TTu/8FNu3MoA==
+X-Received: by 2002:a05:6830:6383:b0:746:d640:71c5 with SMTP id 46e09a7af769-75352995a82mr1898298a34.7.1757693211033;
+        Fri, 12 Sep 2025 09:06:51 -0700 (PDT)
+Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524b8a39ecsm1073863a34.23.2025.09.12.09.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 09:06:49 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Subject: [PATCH 0/7] iio: buffer: document calling context when pushing to
+ buffers
+Date: Fri, 12 Sep 2025 11:05:51 -0500
+Message-Id: <20250912-iio-doc-push-to-buffers-context-v1-0-c4aad013d96e@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/15] mm, swap: always lock and check the swap cache
- folio before use
-To: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
- Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
- Kemeng Shi <shikemeng@huaweicloud.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Johannes Weiner <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-References: <20250910160833.3464-1-ryncsn@gmail.com>
- <20250910160833.3464-6-ryncsn@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20250910160833.3464-6-ryncsn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAN9ExGgC/x3NQQqEMAxA0atI1gZqZWCcq4gLbZMxm0aaKoJ4d
+ 4vLt/n/AqMsZPBrLsh0iImmiq5tIKxz+hNKrAbv/McNnUcRxagBt91WLIrLzkzZMGgqdBaM3Id
+ 5+DK5yFArWyaW8z2M030/Xe4MbXEAAAA=
+X-Change-ID: 20250912-iio-doc-push-to-buffers-context-df3ca98fe0df
+To: Jonathan Cameron <jic23@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Andy Shevchenko <andy.shevchenko@gmail.com>, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1412; i=dlechner@baylibre.com;
+ h=from:subject:message-id; bh=VpNE595yCdSeatal7vCh4ifyEZdobn2WH1Bf/R8GOS0=;
+ b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoxETiJRnWesgQhq94bDBDw0lFSGqBHLEHARRj2
+ gdUHJjGRfOJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMRE4gAKCRDCzCAB/wGP
+ wP0sB/0b45i7n+GtQb5HuF3Fd4odXQ0tWeBAL+/aTZCZZfNThLkyKLZqsjuH4R3nTmzgUZNvTct
+ lBClt66K1MsBjzHus+BDG5DHGamhBQCIF+o31npix6V96Wb9b5WJMxZPUi1oB6IBYuJ059LuOUd
+ camjkk0gEc1vriQBuZvA7q/3wI0dkN39FjELVpTIH31muI0wRZ+pWaxras9aiAD1TkHZBD64S5W
+ PP3Ph1P21XKK/VnfkCDoZqbxABmjyg26n2dK2pUzlFNhkqKf6PTa77s39Va2Ev+yyf0WIBPpsv/
+ QyY0k2QYoNimev1ppSPx5k+FEfRyaFlAEmqSOIfs50g021zd
+X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
+ fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
 
-On 10.09.25 18:08, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
-> 
-> Swap cache lookup only increases the reference count of the returned
-> folio. That's not enough to ensure a folio is stable in the swap
-> cache, so the folio could be removed from the swap cache at any
-> time. The caller should always lock and check the folio before using it.
-> 
-> We have just documented this in kerneldoc, now introduce a helper for swap
-> cache folio verification with proper sanity checks.
-> 
-> Also, sanitize a few current users to use this convention and the new
-> helper for easier debugging. They were not having observable problems
-> yet, only trivial issues like wasted CPU cycles on swapoff or
-> reclaiming. They would fail in some other way, but it is still better to
-> always follow this convention to make things robust and make later
-> commits easier to do.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> ---
+It came up in a recent discussion [1] that we need to be careful about
+the calling context for various iio_push_to_buffer*() functions. Here is
+a series that adds some documentation in a number of places to make this
+a bit more visible.
 
-[...]
+[1]: https://lore.kernel.org/linux-iio/CAHp75Vc8u2N2AHWtnPRmRXWKN3u8Qi=yvx5afbFh4NLNb8-y9A@mail.gmail.com/
 
-> index 4baebd8b48f4..f1a4d381d719 100644
-> --- a/mm/swapfile.c
-> +++ b/mm/swapfile.c
-> @@ -240,14 +240,12 @@ static int __try_to_reclaim_swap(struct swap_info_struct *si,
->   	 * Offset could point to the middle of a large folio, or folio
->   	 * may no longer point to the expected offset before it's locked.
->   	 */
-> -	if (offset < swp_offset(folio->swap) ||
-> -	    offset >= swp_offset(folio->swap) + nr_pages) {
-> +	if (!folio_matches_swap_entry(folio, entry)) {
->   		folio_unlock(folio);
->   		folio_put(folio);
->   		goto again;
->   	}
->   	offset = swp_offset(folio->swap);
-> -
+---
+David Lechner (7):
+      iio: buffer: document iio_push_to_buffers_with_ts_unaligned() may sleep
+      iio: buffer: iio_push_to_buffers_with_ts_unaligned() might_sleep()
+      iio: buffer: document iio_push_to_buffers_with_ts()
+      iio: buffer: deprecated iio_push_to_buffers_with_timestamp()
+      iio: buffer: document iio_push_to_buffers() calling context
+      iio: buffer: document store_to() callback may be called in any context
+      iio: buffer: document that buffer callback must be context safe
 
-Nit: unrelated change.
+ drivers/iio/buffer/industrialio-buffer-cb.c |  1 +
+ drivers/iio/industrialio-buffer.c           |  8 ++++++++
+ include/linux/iio/buffer.h                  | 22 +++++++++++++++++-----
+ include/linux/iio/buffer_impl.h             |  3 ++-
+ include/linux/iio/consumer.h                |  3 ++-
+ 5 files changed, 30 insertions(+), 7 deletions(-)
+---
+base-commit: b8902d55155cec7bd743dc1129e0b32e70b1751f
+change-id: 20250912-iio-doc-push-to-buffers-context-df3ca98fe0df
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
+Best regards,
 -- 
-Cheers
-
-David / dhildenb
+David Lechner <dlechner@baylibre.com>
 
 
