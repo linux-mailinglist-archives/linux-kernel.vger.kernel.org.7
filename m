@@ -1,174 +1,188 @@
-Return-Path: <linux-kernel+bounces-814422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DFF5B553F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:42:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7203B553F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA61AE4080
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:42:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911AF1D64C3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18213164CA;
-	Fri, 12 Sep 2025 15:41:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A11C3176EF;
+	Fri, 12 Sep 2025 15:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LETEawqk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="loqlrzm7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C16631E10A;
-	Fri, 12 Sep 2025 15:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC03231353D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757691679; cv=none; b=avxYPmEoy5oyOuASGNOIxE0hr/uDQP5ie8DuU8GzK8GWpoY3Gq5Tp3EASoEug3Bu6KFZRZ2fmM2eomzHVI/jN2gRLnNK/2el/2WLnqM3FXWnwnSYAgzvSo7lqAzoF1m6ki9KlLyI3dI8Vsf/aZTgX7r0C3rZXcdSnKdQjH25uOQ=
+	t=1757691717; cv=none; b=NtPVMFx9Bm//VeYcZk2CRAjwzu3uKegybCmtR98QQlkG3NKJ1eG+kl2M7LBWH1VRt/2In7tvAAmhwc2EcX50BhH7tM1z1yFgpDcOHqybIW8RaSHdRIN4MwyROqMN9uX4JKfzJZo7cDrfVE+N6P3D8ncG/iMsXZzo8ZC9rdQ/i7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757691679; c=relaxed/simple;
-	bh=Pnh9rQTYsWlWtV4pH/2q/GaxI6G4+CAlVzB4h1vWAoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kYCBp+HLUOX16wccRHmRtZCInbpItGYQXa98F2LB7D2U+MUipP+lfF96EvXFUoLYJMchBO8Jfj1ugSRg+axCtubSi3mn7JnT5SVpoMY+F/Tdqv3QXlj4hsbPaVgLY3ZXr9tdQkGD7GKNp2GKCPH0x9TORvqmu2Oz5H49AxQ6RXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LETEawqk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F098BC4CEFA;
-	Fri, 12 Sep 2025 15:41:15 +0000 (UTC)
+	s=arc-20240116; t=1757691717; c=relaxed/simple;
+	bh=xaNxOz8PpRoJsBiwNzq6np5qaZr6fMf29QZLIfRMA9c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ATsZVaT11k2vam5nagSWYB3r3NmYfVzsMyi11JSbHgGxRTWKxoEMRlNQjipDtJsQMuYyKmWX8/jeH4mIolhNGjToGNDlGtveJQjoeVdZhI4MvNOIpEUpvjIdTdmitw+mqnnAvTS1ukKjzEiBJ95XPNuHlOXbard/EVbGIcfngMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=loqlrzm7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47A85C4CEF4
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:41:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757691678;
-	bh=Pnh9rQTYsWlWtV4pH/2q/GaxI6G4+CAlVzB4h1vWAoE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LETEawqks87rrqCiHQ5/U14DkW7DlUVM93h+Ie4U9Dl4p6mYpnwLE4ZqR5AO8AEBn
-	 dR1WStbWV5V9l9qK3zmkbGLb6UBjJD5O6u+2h3j89D+ciFYRl+Th3glaQUrcx30MQw
-	 Tkld+qm5o/EUk3ytI2gfN9O6rIoZULo/ETcpvpu7hO+ViRz3K4/5KAM3ORxWD/wrNh
-	 VzvfFXGaRR4rBbOfklPvWEhXKsa2ZRqkYDUG5ukgbSZLfkFDcT7jaZpgTkfZdjy/v2
-	 MyF/zZDRovmWQ2/Xn5K5R1uoRrwa3V94yrMqFNfGUqtK21Ok88HhXPDWZ0om90q6el
-	 7+N1NeEgpSZYQ==
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 3D2FDF40066;
-	Fri, 12 Sep 2025 11:41:15 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-11.internal (MEProxy); Fri, 12 Sep 2025 11:41:15 -0400
-X-ME-Sender: <xms:Gz_EaOsbf31G_UXVkIOUtD0npSfMH0xLF6dHFR3WGNEPXd02pGS-Dw>
-    <xme:Gz_EaBS5LF0vrQqGE-T4tzVT3yWzra1_wjtlfYaSiXICuy4mBnNp-WAsEjzl-yl5s
-    DX6ch17wM9xjkcoCGY>
-X-ME-Received: <xmr:Gz_EaHnFVMwlGSqkETfEvMPfhx6t1OtXoxkXRZpuyjZpu79YwQupf9WCWtUBKw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleeggecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
-    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
-    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
-    grmhgvpdhnsggprhgtphhtthhopeelkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepnhhprggthhgvsehrvg
-    guhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhmmheskhhvrggtkhdrohhrghdp
-    rhgtphhtthhopehlihhnuhigqdguohgtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqthhrrggtvgdqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepiihihiesnhhvihguihgrrdgtohhmpdhrtghpthhtohep
-    sggrohhlihhnrdifrghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtth
-    hopehlohhrvghniihordhsthhorghkvghssehorhgrtghlvgdrtghomh
-X-ME-Proxy: <xmx:Gz_EaJGoEIfYRYdOJMLO3p1Ayi-LNhwkTjZnkBk9hX6EIQqfnae1mw>
-    <xmx:Gz_EaJIMiWEI0LTXh-qd-YU5gzmFymkxr1ZbO2n2SuyFlUmXlbd3sg>
-    <xmx:Gz_EaPrAIDTKpJT5sMkEYfN_hCgQIRB427TL9pAeEEF5Ez2_39i48w>
-    <xmx:Gz_EaC1u3_UGXrJyTRYAy_bFxc7y2Pox7uFkM5OKfmrYyCh0oq-h0g>
-    <xmx:Gz_EaJI2cA6z4MM-kX4yh72tx0H_aTTuhQrmm4VTq_ozAg3kuAhZzXv0>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Sep 2025 11:41:14 -0400 (EDT)
-Date: Fri, 12 Sep 2025 16:41:11 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, 	ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
- 	Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
- corbet@lwn.net, 	rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, 	akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- 	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, 	vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- 	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- 	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, 	jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, 	zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- 	rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- 	lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
- 	pfalcato@suse.de
-Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
-Message-ID: <7ri4u7uxsv6elyohqiq2w5oxv4yhk2tyniwglfxtiueiyofb3n@l4exlmlf5ty4>
-References: <20250912032810.197475-1-npache@redhat.com>
- <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
- <43f42d9d-f814-4b54-91a6-3073f7c7cedf@redhat.com>
- <ab8c2e03-53fb-402c-a674-c2c6ab11f54e@redhat.com>
- <rapl4xr55zv2nq3jh5ulk4wvfyxa2kmbnnb4uram6q43y4cbwn@dv5m52ocyqne>
- <80c50bf4-27b1-483c-9977-2519369c2630@redhat.com>
+	s=k20201202; t=1757691717;
+	bh=xaNxOz8PpRoJsBiwNzq6np5qaZr6fMf29QZLIfRMA9c=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=loqlrzm7mhX5VLGM1I/V23bIss4NMjxivIM1Pe/KetcE+ZNIGKeM229Am1/KQpKq1
+	 +ojvwHnukCi0xNeVNhm8VQzwGy8GV+B5p5uykCzzerOs3JeLGxcu6guGhYP78k86aD
+	 FV0sADN9IAMcIYiah6K6/k8CKMTf27P2fDxjxZfHnfq7+gOPbDCccTfN0UEiHc4wMA
+	 KWsveaGtIK/MDczqNqCBMKWuKkwvNJXWIMINpMgAcunBd/767UQpOJQh1CWWn35VV2
+	 Ov0yV7eynJZ2JFKSjq0SAubtVBUw3a/vnBeCaObpXdzNJEcW/ForOkyoeR29k1viIk
+	 sXFE9Bo6T6dFA==
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-74595f3852cso1446900a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:41:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUYqFD29wTcOpVF/NiE57BU7TlbOwqrTvLe6rUSG3mwuR1yqW1eQBDI2SWRZJaR7N2Eg1/YDw8OEc/ZGn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwELSmIENNkRAcqB2GvTlMEztKbSH9a96R8yNeu3To0rq28Khla
+	nSr5lNM687zS/r2bKW+joe0dwr6AG2f2eg9nIy9gD5wXCX8q4N2uG76e5jvr3s3PO4cV8jic6pU
+	myawmEsAsoS9XmvbSedhjYOIH4kyx1+Q=
+X-Google-Smtp-Source: AGHT+IFao+0n9VhP1TgaekmXW8hMhWul3FdzoJr8ELpCN+EfQ8mjGZKwxryOG5D/jOAgrq6i8xh9ivqZmhUG7wth9yo=
+X-Received: by 2002:a05:6830:6381:b0:745:a41d:22c8 with SMTP id
+ 46e09a7af769-7535307ff40mr1572194a34.1.1757691716611; Fri, 12 Sep 2025
+ 08:41:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80c50bf4-27b1-483c-9977-2519369c2630@redhat.com>
+References: <20250912143911.445452-1-treapking@chromium.org>
+In-Reply-To: <20250912143911.445452-1-treapking@chromium.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 12 Sep 2025 17:41:45 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iPCt6O4QcFC1BDVtH-zP7g53ngiR3fsd9DNQjejkqj8A@mail.gmail.com>
+X-Gm-Features: Ac12FXy6DLpkm-g9FjMyqzHl2A9nDoRhhBdeTn1C5Wed2hiV1oEyDtx_hnUtxNw
+Message-ID: <CAJZ5v0iPCt6O4QcFC1BDVtH-zP7g53ngiR3fsd9DNQjejkqj8A@mail.gmail.com>
+Subject: Re: [PATCH v3] PM: sleep: Don't wait for SYNC_STATE_ONLY device links
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Danilo Krummrich <dakr@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, linux-kernel@vger.kernel.org, 
+	Chen-Yu Tsai <wenst@chromium.org>, Hsin-Te Yuan <yuanhsinte@chromium.org>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 04:56:47PM +0200, David Hildenbrand wrote:
-> On 12.09.25 16:35, Kiryl Shutsemau wrote:
-> > On Fri, Sep 12, 2025 at 04:28:09PM +0200, David Hildenbrand wrote:
-> > > On 12.09.25 15:47, David Hildenbrand wrote:
-> > > > On 12.09.25 14:19, Kiryl Shutsemau wrote:
-> > > > > On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
-> > > > > > The following series provides khugepaged with the capability to collapse
-> > > > > > anonymous memory regions to mTHPs.
-> > > > > > 
-> > > > > > To achieve this we generalize the khugepaged functions to no longer depend
-> > > > > > on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
-> > > > > > pages that are occupied (!none/zero). After the PMD scan is done, we do
-> > > > > > binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
-> > > > > > range. The restriction on max_ptes_none is removed during the scan, to make
-> > > > > > sure we account for the whole PMD range. When no mTHP size is enabled, the
-> > > > > > legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
-> > > > > > by the attempted collapse order to determine how full a mTHP must be to be
-> > > > > > eligible for the collapse to occur. If a mTHP collapse is attempted, but
-> > > > > > contains swapped out, or shared pages, we don't perform the collapse. It is
-> > > > > > now also possible to collapse to mTHPs without requiring the PMD THP size
-> > > > > > to be enabled.
-> > > > > > 
-> > > > > > When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
-> > > > > > 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
-> > > > > > mTHP collapses to prevent collapse "creep" behavior. This prevents
-> > > > > > constantly promoting mTHPs to the next available size, which would occur
-> > > > > > because a collapse introduces more non-zero pages that would satisfy the
-> > > > > > promotion condition on subsequent scans.
-> > > > > 
-> > > > > Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
-> > > > > all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
-> > > > 
-> > > > BTW, I thought further about this and I agree: if we count zero-filled
-> > > > pages towards none_or_zero one we can avoid the "creep" problem.
-> > > > 
-> > > > The scanning-for-zero part is rather nasty, though.
-> > > 
-> > > Aaand, thinking again from the other direction, this would mean that just
-> > > because pages became zero after some time that we would no longer collapse
-> > > because none_or_zero would then be higher. Hm ....
-> > > 
-> > > How I hate all of this so very very much :)
-> > 
-> > This is not new. Shrinker has the same problem: it cannot distinguish
-> > between hot 4k that happened to be zero from the 4k that is there just
-> > because of we faulted in 2M a time.
-> 
-> Right. And so far that problem is isolated to the shrinker.
-> 
-> To me so far "none_or_zero" really meant "will I consume more memory when
-> collapsing". That's not true for zero-filled pages, obviously.
+On Fri, Sep 12, 2025 at 4:48=E2=80=AFPM Pin-yen Lin <treapking@chromium.org=
+> wrote:
+>
+> Device links with DL_FLAG_SYNC_STATE_ONLY should not affect suspend
+> and resume, and functions like device_reorder_to_tail() and
+> device_link_add() doesn't try to reorder the consumers with such flag.
+>
+> However, dpm_wait_for_consumers() and dpm_wait_for_suppliers() doesn't
+> check this flag before triggering dpm_wait, leading to potential hang
+> during suspend/resume.
+>
+> This can be reproduced on MT8186 Corsola Chromebook with devicetree like:
+>
+> usb-a-connector {
+>         compatible =3D "usb-a-connector";
+>         port {
+>                 usb_a_con: endpoint {
+>                         remote-endpoint =3D <&usb_hs>;
+>                 };
+>         };
+> };
+>
+> usb_host {
+>         compatible =3D "mediatek,mt8186-xhci", "mediatek,mtk-xhci";
+>         port {
+>                 usb_hs: endpoint {
+>                         remote-endpoint =3D <&usb_a_con>;
+>                 };
+>         };
+> };
+>
+> In this case, the two nodes form a cycle and a SYNC_STATE_ONLY devlink
+> between usb_host (supplier) and usb-a-connector (consumer) is created.
+>
+> Export device_link_flag_is_sync_state_only() and use it to check this in
+> dpm_wait_for_consumers() and dpm_wait_for_suppliers() to fix this.
+>
+> Fixes: 05ef983e0d65a ("driver core: Add device link support for SYNC_STAT=
+E_ONLY flag")
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> ---
+>
+> Changes in v3:
+> - Squash to one patch and fix the export approach
+>
+> Changes in v2:
+> - Update commit message
+> - Use device_link_flag_is_sync_state_only()
+>
+>  drivers/base/base.h       | 1 +
+>  drivers/base/core.c       | 2 +-
+>  drivers/base/power/main.c | 6 ++++--
+>  3 files changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/base/base.h b/drivers/base/base.h
+> index 123031a757d9..80415b140ce7 100644
+> --- a/drivers/base/base.h
+> +++ b/drivers/base/base.h
+> @@ -248,6 +248,7 @@ void device_links_driver_cleanup(struct device *dev);
+>  void device_links_no_driver(struct device *dev);
+>  bool device_links_busy(struct device *dev);
+>  void device_links_unbind_consumers(struct device *dev);
+> +bool device_link_flag_is_sync_state_only(u32 flags);
+>  void fw_devlink_drivers_done(void);
+>  void fw_devlink_probing_done(void);
+>
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index d22d6b23e758..741aa0571fc7 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -287,7 +287,7 @@ static bool device_is_ancestor(struct device *dev, st=
+ruct device *target)
+>  #define DL_MARKER_FLAGS                (DL_FLAG_INFERRED | \
+>                                  DL_FLAG_CYCLE | \
+>                                  DL_FLAG_MANAGED)
+> -static inline bool device_link_flag_is_sync_state_only(u32 flags)
+> +inline bool device_link_flag_is_sync_state_only(u32 flags)
 
-Well, KSM can reclaim these zero-filled memory until we collapse it.
+We generally don't use inline without static.  Let the compiler decide
+what to do with it.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+>  {
+>         return (flags & ~DL_MARKER_FLAGS) =3D=3D DL_FLAG_SYNC_STATE_ONLY;
+>  }
+> diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
+> index 2ea6e05e6ec9..73a1916170ae 100644
+> --- a/drivers/base/power/main.c
+> +++ b/drivers/base/power/main.c
+> @@ -282,7 +282,8 @@ static void dpm_wait_for_suppliers(struct device *dev=
+, bool async)
+>          * walking.
+>          */
+>         list_for_each_entry_rcu_locked(link, &dev->links.suppliers, c_nod=
+e)
+> -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> +                   !device_link_flag_is_sync_state_only(link->flags))
+>                         dpm_wait(link->supplier, async);
+>
+>         device_links_read_unlock(idx);
+> @@ -339,7 +340,8 @@ static void dpm_wait_for_consumers(struct device *dev=
+, bool async)
+>          * unregistration).
+>          */
+>         list_for_each_entry_rcu_locked(link, &dev->links.consumers, s_nod=
+e)
+> -               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT)
+> +               if (READ_ONCE(link->status) !=3D DL_STATE_DORMANT &&
+> +                   !device_link_flag_is_sync_state_only(link->flags))
+>                         dpm_wait(link->consumer, async);
+>
+>         device_links_read_unlock(idx);
+> --
 
