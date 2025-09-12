@@ -1,159 +1,206 @@
-Return-Path: <linux-kernel+bounces-813078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22299B5407E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:38:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8E5B54069
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B08F6A04D11
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:38:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D603A846F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A341D54E2;
-	Fri, 12 Sep 2025 02:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AD51F2371;
+	Fri, 12 Sep 2025 02:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fSHbuZHW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRNW4smC"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C321D5146
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE7A156661
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:35:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757644681; cv=none; b=u4DVo6t433Ng0p8d3iaeLkyL4u9etmGFuTYbtPuyeOrxYCYsGAN5QoouN6KZKFx0Id1w2PASS0AhqqgAJcMwpAIvqJyLEwyZ5y0kWBKa4I0CQCreiJ+zsu8p3E+49jlDZ3hxbznWNc7dmE63MR4nM/mams021pjfq+1Cpb4Qa/U=
+	t=1757644545; cv=none; b=g9L7ueriZ0qMbClPKBwXymGF6415nNUS8jqa1SSpxKP3UlXGjwbB0at6HqjZ4DU72KLfQ38HTM3yoyxABZ0577ELhpWLqtKsacPmypdcqkdd5m9YvVOqLHSo0d0y7rsntPlL3oNMKvJrhg11/jDEsjHD7xpJSEc6SrjkRA6jY7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757644681; c=relaxed/simple;
-	bh=s5wQXk3xcxlg5JVEy33+/yU0i4Bvd7nsTV60XP0MDAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KwKWlgQFiaV2r4O/raMvfUBxoImj56r0WpTdBaxbWv3xtUfURJXwy3FdfQWb9UnRGc56sO0w/Ah4aYzfRDVZr5OP/8W/Lb5Z0ItsOCm2V5sGKF5enDd7eR7RJG1XEZGcWqU0mdWHXLfBvFdH78N31h6y9AWs6HH4oLIqFYxYLgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fSHbuZHW; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757644679; x=1789180679;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=s5wQXk3xcxlg5JVEy33+/yU0i4Bvd7nsTV60XP0MDAc=;
-  b=fSHbuZHWZPTd0+ZHDmSxibOeRzIRPTBkkK5xX6vxFjb1DzKoqDdAFWZ7
-   B3qI05pFbpnwRMZMEPvpr/wzdgy9RnY35FWKJke3ZiiTXB6UJvJDc1JQB
-   jqV58cB7tEORmmjxdeOI9EjSIGc0CX2e06miwbfoc6YlVqFP90TMMSvIQ
-   /3x1Yd7gGnrXksqGOMZ08DfOaIsMq/LetqeoZ3FkIDiR1ocRawK7uC9LW
-   41w2CzBkPdeP3H6nU6PFdpXyRRZWxD0/yEihz8jxGZZ6io7QbUh/nOf2F
-   Dt7HXb/tGpjpNjfnudV/VmZd+rLxDcA4ygyWAf+FX3EMCktUP/S+T6H2H
-   w==;
-X-CSE-ConnectionGUID: Jdnq+0xDRku+mO5XZAxCyg==
-X-CSE-MsgGUID: Zjwxc1exR+OO9oqkFSbqVg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11550"; a="47557659"
-X-IronPort-AV: E=Sophos;i="6.18,258,1751266800"; 
-   d="scan'208";a="47557659"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 19:37:59 -0700
-X-CSE-ConnectionGUID: YluQkVDsRYuJ476nqehz5Q==
-X-CSE-MsgGUID: /x1QXRLqTCambOYh8RnIPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,258,1751266800"; 
-   d="scan'208";a="211007182"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 19:37:54 -0700
-Message-ID: <e82c300e-9d68-4270-a4ea-10bea20b1169@linux.intel.com>
-Date: Fri, 12 Sep 2025 10:35:12 +0800
+	s=arc-20240116; t=1757644545; c=relaxed/simple;
+	bh=ne/AJ08EINCLHq1YL8QOv01wvisw6A7Ct54Qvu1CzBE=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FS0VKLQw4E7oBPaATvmI9Gj1MdCv0ilWQgNbUZS7BrNMe9i43iJwVEjr1ZowfxCHsOoI5E3kXBtaB23Cm2J2w2TcV1J5XVoZw1vH9sMp+wimCKi38ZddzPOeEk30iQjG2/tV1q0qgZiiz7cAi7Ed6h3cFpWj3HIVnDcPtf7RRF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRNW4smC; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-74381e2079fso1511602a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 19:35:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757644543; x=1758249343; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0XFM07Z5n/PQZ1U15JfmMTCdL390KHJnWHFIuZFK96s=;
+        b=mRNW4smCIN18Aar/uf+ApBp7CgTwGDU/VmpytkYxLux4yNKAEV96XBfM17rI7W3FfI
+         tb1Y6Qc8WEH6XWAb5VnLYnBZhZ6AoKpa25FkQX7OSPNUTXooOYoaegTIrhq0nykQR7HI
+         hIjJSgLDY+dLhEo6htcfE7lFwrJQALrkAebfC2bVaEgnwBSM1u/KXYmDbk4wNOrqiCe/
+         STNOJQ7GOC0ldoqfHZ5kvbeBA8SsB5Bpudw8CFvqzJ0+0GgV/SUNrPFnVIZGk3I79kO4
+         0AtRVFa4SOfHnSpmGVYLgWjZGvTwoyPlcZ+Mm5K0bP2isPN+TLY6YtTMHuZOU/UF/03H
+         dpbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757644543; x=1758249343;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0XFM07Z5n/PQZ1U15JfmMTCdL390KHJnWHFIuZFK96s=;
+        b=u3hghkbtOQ/iLkVOZIMehzYhMs8BFfDgWZXOXVB9rfvw7u2XepSqFUSrUDCYE/vvDF
+         NvVl8oPnj5hgXTKO29R9t7gdQKyf8ATTnobgfrY2SOq6dq1ve9I+9x6C39dHuPBRxXKl
+         ocpnxDZEeqTxkX+Zwd8PMngsjei2fwDUXICzAz8+oKFFIKl9h//cnzhJnug29jzLwj4f
+         C1TVwJZqF3Pm0CwJl1yDX6qFkMcY5FORs7NM6yaCSshbsl3t3Gj/c278sngDzjF64mdx
+         1HghE/nrHE33/aTMxC2Wi1V0IHezmyWudfal5TWhtCB9q7lPOmrYFocpSW7Sz+KGtp47
+         rqkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSkQuvD98+VHFH1EZGyDWMUZV/JRaN2QYJuIt5GYUwRWa2zJRoEAvFHh9Bx9YiKr3vCPjlTdn/Xnwscxc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmNcoO7Gie9nHqi/7btUUIbqAtC34doGuoKqHhv/MQ2EORbKs1
+	Vp7sD7YNejpr2Pjrp7gnbhNYQOR3DaR19ImoD2ncyz+Z2V40yF2n/0hl
+X-Gm-Gg: ASbGncv8yT1OJQ6A6MWCLL0bADIa21LVTEg7O3s55EKKplOZDtjioYuJUD2DtLre6RO
+	iM0cveoBMazSzBhiZBncdmtKCCrGoFObs0kjCaNiZemOE8lD2xKhgn1xuU1oRImYUKYK0VTU1og
+	SgGWIWeX/mYtml7w6bSUUbsTMLsd1ySImhVbVayJ8dsFixyL4DWCKx+Jm2Xir4bciW2UpCISPAN
+	wnXjgYLmJ6vCBjzCeirSpMQPyJGcOe55yevN1Ol7Y7Ab7jTnyutUQCHAyNXUaMEYMyU6z1zxyf+
+	5obnmhVOA+WOs1ZZ1Uo6QAMSteUwa7ewh5KCJ9JWdFvqcx3py8waxY3VgOxNIXyqMtBidXQhIB3
+	ahEJR6Gimnd5Q2v1dMRMUQaZ6YpJwn40L
+X-Google-Smtp-Source: AGHT+IHQMNFCh86X7WUtfRMJW33oGIfkq7JFshCaD1qyzjsyBvpS3iS1S6F89Dx5xJzPUg1mM6pJVA==
+X-Received: by 2002:a05:6830:67d5:b0:744:f0db:a199 with SMTP id 46e09a7af769-75355abff0emr852539a34.29.1757644542764;
+        Thu, 11 Sep 2025 19:35:42 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524be797e6sm739170a34.29.2025.09.11.19.35.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 19:35:41 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: kwilczynski@kernel.org,
+	u.kleine-koenig@baylibre.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	arnd@arndb.de,
+	bwawrzyn@cisco.com,
+	bhelgaas@google.com,
+	unicorn_wang@outlook.com,
+	conor+dt@kernel.org,
+	18255117159@163.com,
+	inochiama@gmail.com,
+	kishon@kernel.org,
+	krzk+dt@kernel.org,
+	lpieralisi@kernel.org,
+	mani@kernel.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	s-vadapalli@ti.com,
+	tglx@linutronix.de,
+	thomas.richard@bootlin.com,
+	sycamoremoon376@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	rabenda.cn@gmail.com,
+	chao.wei@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	fengchun.li@sophgo.com,
+	jeffbai@aosc.io
+Subject: [PATCH v3 1/7] dt-bindings: pci: Add Sophgo SG2042 PCIe host
+Date: Fri, 12 Sep 2025 10:35:32 +0800
+Message-Id: <2755f145755b6096247c26852b63671a6fea4dbf.1757643388.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1757643388.git.unicorn_wang@outlook.com>
+References: <cover.1757643388.git.unicorn_wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] intel/vt-d: Send Page Request Drain only if supported
-To: Joel Granados <joel.granados@kernel.org>,
- David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20250909-jag-pds-v1-1-ad8cba0e494e@kernel.org>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20250909-jag-pds-v1-1-ad8cba0e494e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/9/25 16:58, Joel Granados wrote:
-> The intel_iommu_drain_pasid_prq function sends QI_OPT_WAIT_DRAIN to
-> hardware without verifying Page Request Drain Support (PDS). According
-> to VT-d specification section 6.5.2.8, PRQ drain functionality should
-> only be used when PDS (bit 42) is set in the extended capability
-> register. Add ecap_pds() check to conditionally use QI_OPT_WAIT_DRAIN
-> based on hardware capability.
-> 
-> Signed-off-by: Joel Granados<joel.granados@kernel.org>
-> ---
->   drivers/iommu/intel/prq.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
-> index 52570e42a14c05b7492957909568805dc9c7b6ef..f89916de31a3439866f059f5400e45fb362a6a7d 100644
-> --- a/drivers/iommu/intel/prq.c
-> +++ b/drivers/iommu/intel/prq.c
-> @@ -119,7 +119,7 @@ void intel_iommu_drain_pasid_prq(struct device *dev, u32 pasid)
->   	}
->   qi_retry:
->   	reinit_completion(&iommu->prq_complete);
-> -	qi_submit_sync(iommu, desc, 3, QI_OPT_WAIT_DRAIN);
-> +	qi_submit_sync(iommu, desc, 3, ecap_pds(iommu->ecap) ? QI_OPT_WAIT_DRAIN : 0);
+From: Chen Wang <unicorn_wang@outlook.com>
 
-I'm afraid that draining page requests and responses won't work as
-expected without the PDS capability. We should perhaps fail to enable
-IOPF if the PDS capability isn't supported.
+Add binding for Sophgo SG2042 PCIe host controller.
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 9c3ab9d9f69a..ca6a6eaea62c 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3983,6 +3983,10 @@ int intel_iommu_enable_iopf(struct device *dev)
-         if (!info->pri_enabled)
-                 return -ENODEV;
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ .../bindings/pci/sophgo,sg2042-pcie-host.yaml | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
 
-+       /* PDS is required to drain page requests and responses. */
-+       if (!ecap_pds(iommu->ecap))
-+               return -ENODEV;
+diff --git a/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml b/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+new file mode 100644
+index 000000000000..f8b7ca57fff1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/sophgo,sg2042-pcie-host.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-         /* pri_enabled is protected by the group mutex. */
-         iommu_group_mutex_assert(dev);
-         if (info->iopf_refcount) {
++title: Sophgo SG2042 PCIe Host (Cadence PCIe Wrapper)
++
++description:
++  Sophgo SG2042 PCIe host controller is based on the Cadence PCIe core.
++
++maintainers:
++  - Chen Wang <unicorn_wang@outlook.com>
++
++properties:
++  compatible:
++    const: sophgo,sg2042-pcie-host
++
++  reg:
++    maxItems: 2
++
++  reg-names:
++    items:
++      - const: reg
++      - const: cfg
++
++  vendor-id:
++    const: 0x1f1c
++
++  device-id:
++    const: 0x2042
++
++  msi-parent: true
++
++allOf:
++  - $ref: cdns-pcie-host.yaml#
++
++required:
++  - compatible
++  - reg
++  - reg-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    pcie@62000000 {
++      compatible = "sophgo,sg2042-pcie-host";
++      device_type = "pci";
++      reg = <0x62000000  0x00800000>,
++            <0x48000000  0x00001000>;
++      reg-names = "reg", "cfg";
++      #address-cells = <3>;
++      #size-cells = <2>;
++      ranges = <0x81000000 0 0x00000000 0xde000000 0 0x00010000>,
++               <0x82000000 0 0xd0400000 0xd0400000 0 0x0d000000>;
++      bus-range = <0x00 0xff>;
++      vendor-id = <0x1f1c>;
++      device-id = <0x2042>;
++      cdns,no-bar-match-nbits = <48>;
++      msi-parent = <&msi>;
++    };
+-- 
+2.34.1
 
-At the same time, qi_submit_sync() should not set PD bit in the wait
-descriptor as the spec Section 6.5.2.9 "Invalidation Wait Descriptor"
-states:
-
-  Page-request Drain (PD): Remapping hardware implementations reporting
-  Page-request draining as not supported (PDS = 0 in ECAP_REG) treats
-  this field as reserved.
-
-therefore,
-
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index ec975c73cfe6..e38af2274032 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -1427,7 +1427,7 @@ int qi_submit_sync(struct intel_iommu *iommu, 
-struct qi_desc *desc,
-
-         wait_desc.qw0 = QI_IWD_STATUS_DATA(QI_DONE) |
-                         QI_IWD_STATUS_WRITE | QI_IWD_TYPE;
--       if (options & QI_OPT_WAIT_DRAIN)
-+       if ((options & QI_OPT_WAIT_DRAIN) && 
-!WARN_ON_ONCE(!ecap_pds(iommu->ecap)))
-                 wait_desc.qw0 |= QI_IWD_PRQ_DRAIN;
-         wait_desc.qw1 = virt_to_phys(&qi->desc_status[wait_index]);
-         wait_desc.qw2 = 0;
-
-?
-
->   	if (readl(iommu->reg + DMAR_PRS_REG) & DMA_PRS_PRO) {
->   		wait_for_completion(&iommu->prq_complete);
->   		goto qi_retry;
-
-Thanks,
-baolu
 
