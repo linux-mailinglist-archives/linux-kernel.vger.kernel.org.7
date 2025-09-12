@@ -1,524 +1,145 @@
-Return-Path: <linux-kernel+bounces-813332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23DA4B543B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:21:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FB3B543BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:22:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DDCD16774A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:21:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B715C683866
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 482F32BF010;
-	Fri, 12 Sep 2025 07:21:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF902C08C0;
+	Fri, 12 Sep 2025 07:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b="SLbrUu2e"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="flO1iKZ1"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DF02BF016
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831982BE62D;
+	Fri, 12 Sep 2025 07:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757661684; cv=none; b=XbbOBmtYNVcc5jjo2TJtg8a/jYGxnLbn4DP0WZVFgzpZXT85bFT07frk0egIiGmFQPPzR27SRlt/d0FVBPjuFvUV6i+wc7WWolvodcQbQx7mz3AGIVN0SyHvv/m8dngNlsYmElrUzNwj50HidRq3jN/fFTQX0MKxuy45feTgEd4=
+	t=1757661737; cv=none; b=KyLAZqv7/iLCB5X7lcPFDzyXtHQ4zhlNDHdO4JAWG/9jPPllWSBuB8+bFYtT9Yfl7EMSccPAKzs0AdpQYNkRRe6UZO7eaUIo4x9DnJJjxJ8np0eF2lLovGroA+J7T7WN9346EtwTssCCQDAnWrNJ7+NixhUv3yEZmTIT0bUhby8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757661684; c=relaxed/simple;
-	bh=RmEPEet/m6iV/s+8sMKLZiTG5PEHUzB94BN81w+YVIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4exUP9Dx9zxLvE+Wv5Cvip0eboL9/UbmShmBSo51kG9Zmli2vwOlhgooKSfw245ljZ3BLKB//JQ/SvKtrU0n8r9xDidV4d+yvKorFddgzavvSRB45Gv7WI7O/Ek3wVuZbuCy6QGtA0CQPouwpB/vjqTknA9+lcrQ+fSUkE3IdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw; spf=pass smtp.mailfrom=gms.tku.edu.tw; dkim=pass (2048-bit key) header.d=gms-tku-edu-tw.20230601.gappssmtp.com header.i=@gms-tku-edu-tw.20230601.gappssmtp.com header.b=SLbrUu2e; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gms.tku.edu.tw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gms.tku.edu.tw
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-76e4f2e4c40so1421360b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:21:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gms-tku-edu-tw.20230601.gappssmtp.com; s=20230601; t=1757661681; x=1758266481; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=M5oZoXTOHvumKEWamUzwLcembrDPdLNg+mCO4LLU1jc=;
-        b=SLbrUu2eGLylKQH5fEk4M0NDJSbEauA5iUc0OcbsCCura4A8nK/V1hEncbV/BfrNxD
-         I5hg9LwsvK982lzUV8oqfAhILuc4u7SyTv0rd6ejKhjIY5ALlXMhKHnUYmzToVEt99hY
-         eTcUspNGBmOCItDDdz9Kbl4pPRTer7bAJPyP7g8YRVFlDZhWofCqh9KF5HwKeW7JiNft
-         f2oGKBcN1R8GlxNgkb9kOgvwJdQnQKOPUUutIZbzHhLzSx3dbB2W5Iro2Ji3y+9BcdXE
-         QKJ5J+xge+MZAMc6uA5nQp3nClAYNn8PWiA7HtoUrAHcBXDYrUSYnYh1RXxego8CDesM
-         1vWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757661681; x=1758266481;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5oZoXTOHvumKEWamUzwLcembrDPdLNg+mCO4LLU1jc=;
-        b=QES35iMJYMx0zKn/VZbPkxdUVRRTX8yZD0skTR9OY5Vs12nB5CSdwjd1dF/kAjSDVQ
-         3GQZkWqobYfpxOJ6YFoixZwVt08SlMpFFxIs8mTiwV1z+EbNTtJ4Nm/zQzomFuWKMS5q
-         4r9p20CqUS3X8WaBoa9P7BYEVD376/OWoPYIIlBo93tsMUxe/jc08SEW6pCrwDC1FP12
-         3Mxmfn+0mTOy5xl27mkiTQtnqRtvYBL79f3ok0g+PYZhank8QefqVh+SjblDIge1bHqP
-         IjtDrXtoJ5RCXPofkQ23/IKYlCapBCST6V5SkhJYUbDU6bPvHudm96bKwA8DUGeHz11z
-         XDjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAhARcq2ITZrXRTtYSv+9IUgMfoi4z2QDkUT7UUkpnAmWihA6ENZ6LLLxxODec75GWf0MqsNDV5JZawa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhBlPmjutofClPzUZMgyHmgGo9BSpnQcLDZGM1n+Usj/4rmiAF
-	wZr/98WM1PjrmQfRIwhmnXzqu7UoAc40C+wsrq/es8tqWsTgVCZmSkOnCPpkljZu34A=
-X-Gm-Gg: ASbGnctQ+DiX+kuOniYZtJpL3RRe+K0LDFhUf87/n2tB/iRBzfw2fjmiZWTeASvJSU8
-	CI35RWc2fqyv253TiKoFkQXxkZfj6AEcc8yrz77WNhB8KsaPWmWq27ZEWWW69y4WURxdpwoIZ4c
-	BUWjdIKYDjiHhUwQvsqhiPSpz9VvZKlNUb+mgSe5geq9qnl5B86biScL4hZV9ezLaqz0sNNCHu6
-	Jrbg3GpgFU1gHJNuh6IUf6t5j8oyPgD28LHh4iXPB32vW0T982u8+iG2ZOBWCq6E7XDAsFSbGEC
-	W5585oUoCFkqEgVvMjKROs6mVzyoUMZyhH8M9jwd3qNuQOMmPsUBOPh4j0i/2AHPCy4igeXbRxd
-	9aR5aOpfGvd+fuDsmrciA1Y98dt0mvw3ciUqUZzPgI0rLpXKSEelL/PE=
-X-Google-Smtp-Source: AGHT+IFeT099eWd52YzInRLYsyaUbbVCss4FV1M4mP31uAaRbmNE0jQGdKQvp6lvOgW2spcu35USBQ==
-X-Received: by 2002:a05:6a00:1a0a:b0:776:153d:1d87 with SMTP id d2e1a72fcca58-776153d1e9fmr1411848b3a.3.1757661680901;
-        Fri, 12 Sep 2025 00:21:20 -0700 (PDT)
-Received: from wu-Pro-E500-G6-WS720T ([2001:288:7001:2703:9e14:1074:637d:9ff6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7760793b4d0sm4358514b3a.2.2025.09.12.00.21.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 00:21:20 -0700 (PDT)
-Date: Fri, 12 Sep 2025 15:21:15 +0800
-From: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
-	ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com,
-	idryomov@gmail.com, jaegeuk@kernel.org, kbusch@kernel.org,
-	linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, sagi@grimberg.me, tytso@mit.edu,
-	visitorckw@gmail.com, xiubli@redhat.com
-Subject: Re: [PATCH v2 2/5] lib/base64: rework encoder/decoder with
- customizable support and update nvme-auth
-Message-ID: <aMPJ60LCfK2wPlo6@wu-Pro-E500-G6-WS720T>
-References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
- <20250911074159.656943-1-409411716@gms.tku.edu.tw>
- <CADUfDZpSjONx+KcATaH+JELbQy+1fq0JVvh9tNjDgABs4rhjbA@mail.gmail.com>
+	s=arc-20240116; t=1757661737; c=relaxed/simple;
+	bh=7N8j92UF1rmeEeMIiK9A/lZjg3S0qoHyuNm6kSJjeD4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ZoHC3JpdbxIP8NKm49QlFA+fb2pVBo3weCsCznAK/FReBb6MLctLcGEuRu2a8HB5qhcjqmb0cEVyXdgZ94NlWpcxWpZ3+OnL/nlzudYoZEOf7F/WKTWy1jR3ArBZdIdYrKYHYHcwHI+4B6WCC3OCrhPbNUae/8zc/dFrY9w4HOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=flO1iKZ1; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BMBPqt026821;
+	Fri, 12 Sep 2025 07:22:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=7N8j92
+	UF1rmeEeMIiK9A/lZjg3S0qoHyuNm6kSJjeD4=; b=flO1iKZ1NObM3bAjoluDKi
+	r840Bk0ASzcAGEyhoQiQHLlJ7Ft+jP6aEFN8ygl67RTR6/t2+z387deHtexSTIrG
+	y/Hhzc6YRvWV395ksfKkcaue2N2tqw/m8G33vI2vKFdOTG2Q8n8Ts3+jFvtaPLK0
+	brrwPNPabfFAiEN7n7t8Aa0ViG0NCK52r39Jt+ucrv4R2JiD5fJu5cjB6CiM/fqE
+	ziaMFpl4lzQ7RVu23tMxb3BiK1XRsEUDZJ1JPDA280yeISqu/aA5E9MyOi4Y2c8Z
+	IoNQNxGtkf1aK83jjVqQtucDtTaov3f1ihN780KJ6T6RLh8hxxmecr3G146BylAQ
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bct8pm1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 07:22:04 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58C5BHBf011457;
+	Fri, 12 Sep 2025 07:22:03 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9ut181-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 07:22:03 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58C7M2cM29754062
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Sep 2025 07:22:02 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AC9435805D;
+	Fri, 12 Sep 2025 07:22:02 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5EA2A58059;
+	Fri, 12 Sep 2025 07:21:58 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.61.244.60])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 12 Sep 2025 07:21:58 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADUfDZpSjONx+KcATaH+JELbQy+1fq0JVvh9tNjDgABs4rhjbA@mail.gmail.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [linux-next20250911]Kernel OOPs while running generic/256 on Pmem
+ device
+From: Venkat <venkat88@linux.ibm.com>
+In-Reply-To: <aMPIwdleUCUMFPh2@infradead.org>
+Date: Fri, 12 Sep 2025 12:51:44 +0530
+Cc: linux-fsdevel@vger.kernel.org, riteshh@linux.ibm.com,
+        ojaswin@linux.ibm.com, linux-xfs@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        linux-mm@vger.kernel.org, cgroups@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <96AA28C4-24DD-4638-B944-CC2E2E7FC4C0@linux.ibm.com>
+References: <8957c526-d05c-4c0d-bfed-0eb6e6d2476c@linux.ibm.com>
+ <aMPIwdleUCUMFPh2@infradead.org>
+To: Christoph Hellwig <hch@infradead.org>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX694bk+5dV0QP
+ vwkrmWpJdqg0KMSFaHJMTLh0yb6j5fa0y1iPDNVi4pdil47n+vvxxr4pLL3ub/OdAaQj1q8Esnz
+ vPvFbCZk0F35dt0vp/JvFz8GNb4vgPCQUrc2FIDO/3nd8dFS6bm4+qJeyNWVze+9W+lO8DKaGw5
+ jyfUiC+o6z7bke/wjJyQZSLiXz9DnmO9SHDxKCLNc/Il7HOwAzIL36Lr5h+uGafQsLsS5AHXftK
+ wD2K8JqZWwHbs1esDqsRI5/KdAkXg00ohc2JCYIudWZM2fBctB78NvGFPtbRADdyfcXRxahP8Wu
+ 9fCoJg8hQnfCpGtfJqsLYVHeT9UKw9sxKwDYdCa8oaSxRruSx1Gf/aovLAUBWLK8b4B7vN/ddgr
+ hzJNLVW7
+X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c3ca1c cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=JfrnYn6hAAAA:8 a=wOK_BrywWAtTNq7yZiUA:9
+ a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
+X-Proofpoint-GUID: 62UQL51jW9jaTqixgBdQ7gy0k8zYkkMo
+X-Proofpoint-ORIG-GUID: 62UQL51jW9jaTqixgBdQ7gy0k8zYkkMo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_02,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
 
-Hi Caleb,
 
-On Thu, Sep 11, 2025 at 08:59:26AM -0700, Caleb Sander Mateos wrote:
-> On Thu, Sep 11, 2025 at 12:43 AM Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-> >
-> > Rework base64_encode() and base64_decode() with extended interfaces
-> > that support custom 64-character tables and optional '=' padding.
-> > This makes them flexible enough to cover both standard RFC4648 Base64
-> > and non-standard variants such as base64url.
-> >
-> > The encoder is redesigned to process input in 3-byte blocks, each
-> > mapped directly into 4 output symbols. Base64 naturally encodes
-> > 24 bits of input as four 6-bit values, so operating on aligned
-> > 3-byte chunks matches the algorithm's structure. This block-based
-> > approach eliminates the need for bit-by-bit streaming, reduces shifts,
-> > masks, and loop iterations, and removes data-dependent branches from
-> > the main loop. Only the final 1 or 2 leftover bytes are handled
-> > separately according to the standard rules. As a result, the encoder
-> > achieves ~2.8x speedup for small inputs (64B) and up to ~2.6x
-> > speedup for larger inputs (1KB), while remaining fully RFC4648-compliant.
-> >
-> > The decoder replaces strchr()-based lookups with direct table-indexed
-> > mapping. It processes input in 4-character groups and supports both
-> > padded and non-padded forms. Validation has been strengthened: illegal
-> > characters and misplaced '=' padding now cause errors, preventing
-> > silent data corruption.
-> >
-> > These changes improve decoding performance by ~12-15x.
-> >
-> > Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
-> > over 1000 runs, tested with KUnit):
-> >
-> > Encode:
-> >  - 64B input: avg ~90ns -> ~32ns  (~2.8x faster)
-> >  - 1KB input: avg ~1332ns -> ~510ns  (~2.6x faster)
-> >
-> > Decode:
-> >  - 64B input: avg ~1530ns -> ~122ns   (~12.5x faster)
-> >  - 1KB input: avg ~27726ns -> ~1859ns (~15x faster)
-> >
-> > Update nvme-auth to use the reworked base64_encode() and base64_decode()
-> > interfaces, which now require explicit padding and table parameters.
-> > A static base64_table is defined to preserve RFC4648 standard encoding
-> > with padding enabled, ensuring functional behavior remains unchanged.
-> >
-> > While this is a mechanical update following the lib/base64 rework,
-> > nvme-auth also benefits from the performance improvements in the new
-> > encoder/decoder, achieving faster encode/decode without altering the
-> > output format.
-> >
-> > The reworked encoder and decoder unify Base64 handling across the kernel
-> > with higher performance, stricter correctness, and flexibility to support
-> > subsystem-specific variants.
-> >
-> > Co-developed-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > Co-developed-by: Yu-Sheng Huang <home7438072@gmail.com>
-> > Signed-off-by: Yu-Sheng Huang <home7438072@gmail.com>
-> > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > ---
-> >  drivers/nvme/common/auth.c |   7 +-
-> >  include/linux/base64.h     |   4 +-
-> >  lib/base64.c               | 238 ++++++++++++++++++++++++++++---------
-> >  3 files changed, 192 insertions(+), 57 deletions(-)
-> >
-> > diff --git a/drivers/nvme/common/auth.c b/drivers/nvme/common/auth.c
-> > index 91e273b89..4d57694f8 100644
-> > --- a/drivers/nvme/common/auth.c
-> > +++ b/drivers/nvme/common/auth.c
-> > @@ -161,6 +161,9 @@ u32 nvme_auth_key_struct_size(u32 key_len)
-> >  }
-> >  EXPORT_SYMBOL_GPL(nvme_auth_key_struct_size);
-> >
-> > +static const char base64_table[65] =
-> > +       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-> > +
-> >  struct nvme_dhchap_key *nvme_auth_extract_key(unsigned char *secret,
-> >                                               u8 key_hash)
-> >  {
-> > @@ -178,7 +181,7 @@ struct nvme_dhchap_key *nvme_auth_extract_key(unsigned char *secret,
-> >         if (!key)
-> >                 return ERR_PTR(-ENOMEM);
-> >
-> > -       key_len = base64_decode(secret, allocated_len, key->key);
-> > +       key_len = base64_decode(secret, allocated_len, key->key, true, base64_table);
-> >         if (key_len < 0) {
-> >                 pr_debug("base64 key decoding error %d\n",
-> >                          key_len);
-> > @@ -663,7 +666,7 @@ int nvme_auth_generate_digest(u8 hmac_id, u8 *psk, size_t psk_len,
-> >         if (ret)
-> >                 goto out_free_digest;
-> >
-> > -       ret = base64_encode(digest, digest_len, enc);
-> > +       ret = base64_encode(digest, digest_len, enc, true, base64_table);
-> >         if (ret < hmac_len) {
-> >                 ret = -ENOKEY;
-> >                 goto out_free_digest;
-> > diff --git a/include/linux/base64.h b/include/linux/base64.h
-> > index 660d4cb1e..22351323d 100644
-> > --- a/include/linux/base64.h
-> > +++ b/include/linux/base64.h
-> > @@ -10,7 +10,7 @@
-> >
-> >  #define BASE64_CHARS(nbytes)   DIV_ROUND_UP((nbytes) * 4, 3)
-> >
-> > -int base64_encode(const u8 *src, int len, char *dst);
-> > -int base64_decode(const char *src, int len, u8 *dst);
-> > +int base64_encode(const u8 *src, int len, char *dst, bool padding, const char *table);
-> > +int base64_decode(const char *src, int len, u8 *dst, bool padding, const char *table);
-> >
-> >  #endif /* _LINUX_BASE64_H */
-> > diff --git a/lib/base64.c b/lib/base64.c
-> > index 9416bded2..b2bd5dab5 100644
-> > --- a/lib/base64.c
-> > +++ b/lib/base64.c
-> > @@ -15,104 +15,236 @@
-> >  #include <linux/string.h>
-> >  #include <linux/base64.h>
-> >
-> > -static const char base64_table[65] =
-> > -       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-> > +#define BASE64_6BIT_MASK      0x3f /* Mask to extract lowest 6 bits */
-> > +#define BASE64_BITS_PER_BYTE  8
-> > +#define BASE64_CHUNK_BITS     6
-> > +
-> > +/* Output-char-indexed shifts: for output chars 0,1,2,3 respectively */
-> > +#define BASE64_SHIFT_OUT0      (BASE64_CHUNK_BITS * 3) /* 18 */
-> > +#define BASE64_SHIFT_OUT1      (BASE64_CHUNK_BITS * 2) /* 12 */
-> > +#define BASE64_SHIFT_OUT2      (BASE64_CHUNK_BITS * 1) /* 6  */
-> > +/* OUT3 uses 0 shift and just masks with BASE64_6BIT_MASK */
-> > +
-> > +/* For extracting bytes from the 24-bit value (decode main loop) */
-> > +#define BASE64_SHIFT_BYTE0        (BASE64_BITS_PER_BYTE * 2) /* 16 */
-> > +#define BASE64_SHIFT_BYTE1        (BASE64_BITS_PER_BYTE * 1) /* 8  */
-> > +
-> > +/* Tail (no padding) shifts to extract bytes */
-> > +#define BASE64_TAIL2_BYTE0_SHIFT  ((BASE64_CHUNK_BITS * 2) - BASE64_BITS_PER_BYTE)       /* 4  */
-> > +#define BASE64_TAIL3_BYTE0_SHIFT  ((BASE64_CHUNK_BITS * 3) - BASE64_BITS_PER_BYTE)       /* 10 */
-> > +#define BASE64_TAIL3_BYTE1_SHIFT  ((BASE64_CHUNK_BITS * 3) - (BASE64_BITS_PER_BYTE * 2)) /* 2  */
-> > +
-> > +/* Extra: masks for leftover validation (no padding) */
-> > +#define BASE64_MASK(n) ({        \
-> > +       unsigned int __n = (n);  \
-> > +       __n ? ((1U << __n) - 1U) : 0U; \
-> > +})
-> > +#define BASE64_TAIL2_UNUSED_BITS  (BASE64_CHUNK_BITS * 2 - BASE64_BITS_PER_BYTE)     /* 4 */
-> > +#define BASE64_TAIL3_UNUSED_BITS  (BASE64_CHUNK_BITS * 3 - BASE64_BITS_PER_BYTE * 2) /* 2 */
-> >
-> >  static inline const char *find_chr(const char *base64_table, char ch)
-> >  {
-> >         if ('A' <= ch && ch <= 'Z')
-> > -               return base64_table + ch - 'A';
-> > +               return base64_table + (ch - 'A');
-> >         if ('a' <= ch && ch <= 'z')
-> > -               return base64_table + 26 + ch - 'a';
-> > +               return base64_table + 26 + (ch - 'a');
-> >         if ('0' <= ch && ch <= '9')
-> > -               return base64_table + 26 * 2 + ch - '0';
-> > -       if (ch == base64_table[26 * 2 + 10])
-> > -               return base64_table + 26 * 2 + 10;
-> > -       if (ch == base64_table[26 * 2 + 10 + 1])
-> > -               return base64_table + 26 * 2 + 10 + 1;
-> > +               return base64_table + 52 + (ch - '0');
-> > +       if (ch == base64_table[62])
-> > +               return &base64_table[62];
-> > +       if (ch == base64_table[63])
-> > +               return &base64_table[63];
-> 
-> All the changes in this function look cosmetic. Could you fold them
-> into the patch that introduced the function to avoid touching the
-> lines multiple times?
-> 
-> Best,
-> Caleb
-> 
 
-You're right, these are just cosmetic changes. I'll fold them into the original patch.
+> On 12 Sep 2025, at 12:46=E2=80=AFPM, Christoph Hellwig =
+<hch@infradead.org> wrote:
+>=20
+> On Fri, Sep 12, 2025 at 10:51:18AM +0530, Venkat Rao Bagalkote wrote:
+>> Greetings!!!
+>>=20
+>>=20
+>> IBM CI has reported a kernel crash, while running generic/256 test =
+case on
+>> pmem device from xfstests suite on linux-next20250911 kernel.
+>=20
+> Given that this in memcg code you probably want to send this to =
+linux-mm
+> and the cgroups list.
 
-Best regards,
-Guan-chun
+Thanks for advice.
 
-> >         return NULL;
-> >  }
-> >
-> >  /**
-> > - * base64_encode() - base64-encode some binary data
-> > + * base64_encode() - base64-encode with custom table and optional padding
-> >   * @src: the binary data to encode
-> >   * @srclen: the length of @src in bytes
-> > - * @dst: (output) the base64-encoded string.  Not NUL-terminated.
-> > + * @dst: (output) the base64-encoded string. Not NUL-terminated.
-> > + * @padding: whether to append '=' characters so output length is a multiple of 4
-> > + * @table: 64-character encoding table to use (e.g. standard or URL-safe variant)
-> >   *
-> > - * Encodes data using base64 encoding, i.e. the "Base 64 Encoding" specified
-> > - * by RFC 4648, including the  '='-padding.
-> > + * Encodes data using the given 64-character @table. If @padding is true,
-> > + * the output is padded with '=' as described in RFC 4648; otherwise padding
-> > + * is omitted. This allows generation of both standard and non-standard
-> > + * Base64 variants (e.g. URL-safe encoding).
-> >   *
-> >   * Return: the length of the resulting base64-encoded string in bytes.
-> >   */
-> > -int base64_encode(const u8 *src, int srclen, char *dst)
-> > +int base64_encode(const u8 *src, int srclen, char *dst, bool padding, const char *table)
-> >  {
-> >         u32 ac = 0;
-> > -       int bits = 0;
-> > -       int i;
-> >         char *cp = dst;
-> >
-> > -       for (i = 0; i < srclen; i++) {
-> > -               ac = (ac << 8) | src[i];
-> > -               bits += 8;
-> > -               do {
-> > -                       bits -= 6;
-> > -                       *cp++ = base64_table[(ac >> bits) & 0x3f];
-> > -               } while (bits >= 6);
-> > -       }
-> > -       if (bits) {
-> > -               *cp++ = base64_table[(ac << (6 - bits)) & 0x3f];
-> > -               bits -= 6;
-> > +       while (srclen >= 3) {
-> > +               ac = ((u32)src[0] << (BASE64_BITS_PER_BYTE * 2)) |
-> > +                        ((u32)src[1] << (BASE64_BITS_PER_BYTE)) |
-> > +                        (u32)src[2];
-> > +
-> > +               *cp++ = table[ac >> BASE64_SHIFT_OUT0];
-> > +               *cp++ = table[(ac >> BASE64_SHIFT_OUT1) & BASE64_6BIT_MASK];
-> > +               *cp++ = table[(ac >> BASE64_SHIFT_OUT2) & BASE64_6BIT_MASK];
-> > +               *cp++ = table[ac & BASE64_6BIT_MASK];
-> > +
-> > +               src += 3;
-> > +               srclen -= 3;
-> >         }
-> > -       while (bits < 0) {
-> > -               *cp++ = '=';
-> > -               bits += 2;
-> > +
-> > +       switch (srclen) {
-> > +       case 2:
-> > +               ac = ((u32)src[0] << (BASE64_BITS_PER_BYTE * 2)) |
-> > +                    ((u32)src[1] << (BASE64_BITS_PER_BYTE));
-> > +
-> > +               *cp++ = table[ac >> BASE64_SHIFT_OUT0];
-> > +               *cp++ = table[(ac >> BASE64_SHIFT_OUT1) & BASE64_6BIT_MASK];
-> > +               *cp++ = table[(ac >> BASE64_SHIFT_OUT2) & BASE64_6BIT_MASK];
-> > +               if (padding)
-> > +                       *cp++ = '=';
-> > +               break;
-> > +       case 1:
-> > +               ac = ((u32)src[0] << (BASE64_BITS_PER_BYTE * 2));
-> > +               *cp++ = table[ac >> BASE64_SHIFT_OUT0];
-> > +               *cp++ = table[(ac >> BASE64_SHIFT_OUT1) & BASE64_6BIT_MASK];
-> > +               if (padding) {
-> > +                       *cp++ = '=';
-> > +                       *cp++ = '=';
-> > +               }
-> > +               break;
-> >         }
-> >         return cp - dst;
-> >  }
-> >  EXPORT_SYMBOL_GPL(base64_encode);
-> >
-> >  /**
-> > - * base64_decode() - base64-decode a string
-> > + * base64_decode() - base64-decode with custom table and optional padding
-> >   * @src: the string to decode.  Doesn't need to be NUL-terminated.
-> >   * @srclen: the length of @src in bytes
-> >   * @dst: (output) the decoded binary data
-> > + * @padding: when true, accept and handle '=' padding as per RFC 4648;
-> > + *           when false, '=' is treated as invalid
-> > + * @table: 64-character encoding table to use (e.g. standard or URL-safe variant)
-> >   *
-> > - * Decodes a string using base64 encoding, i.e. the "Base 64 Encoding"
-> > - * specified by RFC 4648, including the  '='-padding.
-> > + * Decodes a string using the given 64-character @table. If @padding is true,
-> > + * '=' padding is accepted as described in RFC 4648; otherwise '=' is
-> > + * treated as an error. This allows decoding of both standard and
-> > + * non-standard Base64 variants (e.g. URL-safe decoding).
-> >   *
-> >   * This implementation hasn't been optimized for performance.
-> >   *
-> >   * Return: the length of the resulting decoded binary data in bytes,
-> >   *        or -1 if the string isn't a valid base64 string.
-> >   */
-> > -int base64_decode(const char *src, int srclen, u8 *dst)
-> > +static inline int base64_decode_table(char ch, const char *table)
-> > +{
-> > +       if (ch == '\0')
-> > +               return -1;
-> > +       const char *p = find_chr(table, ch);
-> > +
-> > +       return p ? (p - table) : -1;
-> > +}
-> > +
-> > +static inline int decode_base64_block(const char *src, const char *table,
-> > +                                     int *input1, int *input2,
-> > +                                     int *input3, int *input4,
-> > +                                     bool padding)
-> > +{
-> > +       *input1 = base64_decode_table(src[0], table);
-> > +       *input2 = base64_decode_table(src[1], table);
-> > +       *input3 = base64_decode_table(src[2], table);
-> > +       *input4 = base64_decode_table(src[3], table);
-> > +
-> > +       /* Return error if any base64 character is invalid */
-> > +       if (*input1 < 0 || *input2 < 0 || (!padding && (*input3 < 0 || *input4 < 0)))
-> > +               return -1;
-> > +
-> > +       /* Handle padding */
-> > +       if (padding) {
-> > +               if (*input3 < 0 && *input4 >= 0)
-> > +                       return -1;
-> > +               if (*input3 < 0 && src[2] != '=')
-> > +                       return -1;
-> > +               if (*input4 < 0 && src[3] != '=')
-> > +                       return -1;
-> > +       }
-> > +       return 0;
-> > +}
-> > +
-> > +int base64_decode(const char *src, int srclen, u8 *dst, bool padding, const char *table)
-> >  {
-> > -       u32 ac = 0;
-> > -       int bits = 0;
-> > -       int i;
-> >         u8 *bp = dst;
-> > +       int input1, input2, input3, input4;
-> > +       u32 val;
-> >
-> > -       for (i = 0; i < srclen; i++) {
-> > -               const char *p = find_chr(base64_table, src[i]);
-> > +       if (srclen == 0)
-> > +               return 0;
-> >
-> > -               if (src[i] == '=') {
-> > -                       ac = (ac << 6);
-> > -                       bits += 6;
-> > -                       if (bits >= 8)
-> > -                               bits -= 8;
-> > -                       continue;
-> > +       /* Validate the input length for padding */
-> > +       if (padding && (srclen & 0x03) != 0)
-> > +               return -1;
-> > +
-> > +       while (srclen >= 4) {
-> > +               /* Decode the next 4 characters */
-> > +               if (decode_base64_block(src, table, &input1, &input2, &input3,
-> > +                                       &input4, padding) < 0)
-> > +                       return -1;
-> > +               if (padding && srclen > 4) {
-> > +                       if (input3 < 0 || input4 < 0)
-> > +                               return -1;
-> >                 }
-> > -               if (p == NULL || src[i] == 0)
-> > +               val = ((u32)input1 << BASE64_SHIFT_OUT0) |
-> > +                     ((u32)input2 << BASE64_SHIFT_OUT1) |
-> > +                     ((u32)((input3 < 0) ? 0 : input3) << BASE64_SHIFT_OUT2) |
-> > +                     (u32)((input4 < 0) ? 0 : input4);
-> > +
-> > +               *bp++ = (u8)(val >> BASE64_SHIFT_BYTE0);
-> > +
-> > +               if (input3 >= 0)
-> > +                       *bp++ = (u8)(val >> BASE64_SHIFT_BYTE1);
-> > +               if (input4 >= 0)
-> > +                       *bp++ = (u8)val;
-> > +
-> > +               src += 4;
-> > +               srclen -= 4;
-> > +       }
-> > +
-> > +       /* Handle leftover characters when padding is not used */
-> > +       if (!padding && srclen > 0) {
-> > +               switch (srclen) {
-> > +               case 2:
-> > +                       input1 = base64_decode_table(src[0], table);
-> > +                       input2 = base64_decode_table(src[1], table);
-> > +                       if (input1 < 0 || input2 < 0)
-> > +                               return -1;
-> > +
-> > +                       val = ((u32)input1 << BASE64_CHUNK_BITS) | (u32)input2; /* 12 bits */
-> > +                       if (val & BASE64_MASK(BASE64_TAIL2_UNUSED_BITS))
-> > +                               return -1; /* low 4 bits must be zero */
-> > +
-> > +                       *bp++ = (u8)(val >> BASE64_TAIL2_BYTE0_SHIFT);
-> > +                       break;
-> > +               case 3:
-> > +                       input1 = base64_decode_table(src[0], table);
-> > +                       input2 = base64_decode_table(src[1], table);
-> > +                       input3 = base64_decode_table(src[2], table);
-> > +                       if (input1 < 0 || input2 < 0 || input3 < 0)
-> > +                               return -1;
-> > +
-> > +                       val = ((u32)input1 << (BASE64_CHUNK_BITS * 2)) |
-> > +                             ((u32)input2 << BASE64_CHUNK_BITS) |
-> > +                             (u32)input3; /* 18 bits */
-> > +
-> > +                       if (val & BASE64_MASK(BASE64_TAIL3_UNUSED_BITS))
-> > +                               return -1; /* low 2 bits must be zero */
-> > +
-> > +                       *bp++ = (u8)(val >> BASE64_TAIL3_BYTE0_SHIFT);
-> > +                       *bp++ = (u8)((val >> BASE64_TAIL3_BYTE1_SHIFT) & 0xFF);
-> > +                       break;
-> > +               default:
-> >                         return -1;
-> > -               ac = (ac << 6) | (p - base64_table);
-> > -               bits += 6;
-> > -               if (bits >= 8) {
-> > -                       bits -= 8;
-> > -                       *bp++ = (u8)(ac >> bits);
-> >                 }
-> >         }
-> > -       if (ac & ((1 << bits) - 1))
-> > -               return -1;
-> > +
-> >         return bp - dst;
-> >  }
-> >  EXPORT_SYMBOL_GPL(base64_decode);
-> > --
-> > 2.34.1
-> >
-> >
+Adding mm and croups mailing list.
+
+Regards,
+Venkat.
+
+
+
 
