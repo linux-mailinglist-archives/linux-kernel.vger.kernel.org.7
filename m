@@ -1,207 +1,174 @@
-Return-Path: <linux-kernel+bounces-814150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6264B54FF2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:46:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC624B54FEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11E2F160B7D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 525D417EA97
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8388F4A;
-	Fri, 12 Sep 2025 13:46:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6108914EC62;
+	Fri, 12 Sep 2025 13:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="o2vmvq9B"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="LL2IB630"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69682F4A;
-	Fri, 12 Sep 2025 13:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF17B1F948
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684774; cv=none; b=QL8ZCUZbRAgGslNjyjhITNjrqRkFQ7l18KqcO5wSt0wsiUNadupN5MxOD5i7MuuNvX3qEnOO4mnTNCh7lxAvUJ06iSgi91ux8lbHVDUUjHyLcZwPzrlObiZtkwkE5y4IHwOnUtxLY4R7OmVhqKKf3A+WRWSf8cjdkIFpn6DlVX0=
+	t=1757684757; cv=none; b=IHVmz+5KIKLK0wFtXu0BU48yv6xJJZTITgUAI62tiuM2ASuQGptzDbf8L9Ummhq1tGRyqK/ioCvxf/40LvRKt9vZW8RMR1unCV8dR0Mc8LD072qitJAAA0m8vMOKk95wssv2PMrPRIRIubbeUk9a7ZqwCqcEwuVWEzlmfez+6x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684774; c=relaxed/simple;
-	bh=KUZhuLl+Gs4KnXYvf8nk0Gm29ZFsC3pl6FDSSD5gB98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T0C0lgJrC3WQ8jLowhg0cr55DuvRIbhMrcZMNIrFWMb+tE38ZzPe3wBbIg8u8dPb7w0MdMlBpVuG+dbpUdic1sg/niCZLDR+QwZjlfqIoHf/OxrgwilmSaZJ5P3mak6DSILB5GnLizhjXqWN36imPzvnysBa571cHHWNTqIwWk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=o2vmvq9B; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 9F13E50A;
-	Fri, 12 Sep 2025 15:44:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1757684693;
-	bh=KUZhuLl+Gs4KnXYvf8nk0Gm29ZFsC3pl6FDSSD5gB98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o2vmvq9B9Sh2jNlTCk30dCk5o8iLos/J2ktMMMv3P/OAfJLmrx40Vs3TI8xxvomd5
-	 UKF5xT2g+nCFcwhfGjcZV3wEQUt0hUp/ggeoH/giS4iVYiOOPkjWyoneVXZhgkfxnR
-	 gvJ2F3LCs3CVVnuxvAhhYSkduIJbFhxv269XkBE4=
-Date: Fri, 12 Sep 2025 16:45:40 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, brgl@bgdev.pl
-Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
-Message-ID: <20250912134540.GE31682@pendragon.ideasonboard.com>
-References: <20250912081718.3827390-1-tzungbi@kernel.org>
- <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
- <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
- <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
- <20250912132656.GC31682@pendragon.ideasonboard.com>
- <2025091209-curfew-safari-f6e0@gregkh>
+	s=arc-20240116; t=1757684757; c=relaxed/simple;
+	bh=eZ/3k8S1FsU7ViCaeVzf+yLWQczlSilj3ntqWZdSbS4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uPT9+/HIH9tYRZZsMB3LhjQVZSyl9FgPG2sgi44XimnsO9nKkOtvK8+OPR409FWjSH5q+EJj2nhhbKKxxbPU6oDgCnz245QQTGtKXdNZsHjo2pKikNIRAGTzw0ip+X7BFXgusLrlZo4WokBmNvGrfWZYm+RcL6q1o2UMFA1YvCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=LL2IB630; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b07d5e67a95so37781666b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1757684754; x=1758289554; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bEDg70Jj7YKjT08by451j1eysJp3oufT9qTjoaWDXNc=;
+        b=LL2IB630We+CcGmz/4ip+YdvQYC7ZEhje5LLh7aIkWTJLl1ZRTDlJ1J5cK7nUlSQ+p
+         JFMcRJiKW/WVnu148MKr+8QLdgNRWeX0jd4b1IsUw2hl8QGvOn+jTNZ6lbKDJyW0zrwK
+         dMadsOqI/ZJ7t+gA8GVQh9Y46ROrIumpwUskPOAhWn80eOb1i1GJL53Zl1dzLkM1OJ/S
+         hVazPivgCmRlNOtBplI9OITuh6OQvkGhWxI4qtxWOQ4hac4g5zFbns5bdMEAhy1y6LsQ
+         1NkgEcPCmva2aD2LiZKFy/rU5nYNEdMjSrkRT1VyqVb8iyc0ZdEZGFuUuFSr4Fc08pJ2
+         cw3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757684754; x=1758289554;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bEDg70Jj7YKjT08by451j1eysJp3oufT9qTjoaWDXNc=;
+        b=h2WTkhSYB6/exmka9GfGwMrnTw/sexnpaOlNtj5vAMiCpw/2WDTOlMG+0IeVDcUDaP
+         8++gdzjsuxsY6cTKk3cMQQ/OXShoUMqin5Z5RQ8oBtJk+lvZn2Dj+gB3SzPFCmKBumKU
+         QV7sHi1lJRopgc8lrBahh1+WVO1h1rYKdc23128iWE5zvY0KVs5rW5qYboj5fbDh9STB
+         KupmbHZHInUpT1fJX4NNW5aSpZ5ROLQ/Av4Jr93wnO6EQagYWo40ytgzkxaWgyyVZRnN
+         RJqN8RQte0CUA+BWA0/hAzZSjlNnCva/Mlt9yvpteDHRK0YEJ24g14PWgtOJVvys5pln
+         Y64A==
+X-Forwarded-Encrypted: i=1; AJvYcCXCaRbchtTD8fueUJxBEnAiKcTlicMEZ4yCKooHHASBw/4ouFwhItWPky22pZrhDQYtcIeMG6djnDWUF6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0t4NtwPZjhrbIe/EGShpAf2s+wAHFn7URFxN1K8TGLj+qtzN/
+	ftKtrzLxxzMLc/gNWLfuy5YpmQYNkDxh7wnvycetsV8d5bW1gu/J1KhgDv++I2tgeIw=
+X-Gm-Gg: ASbGncvSHew9trSp930asSBrAw9UyEKOAFBqzl7GANisq9haTtwTbPyvQrhk8zBFH75
+	u31ZpQeiDRYLxYCRqlvI4PVpZnu8nCGKHbUMavpuj0bTBcD1Y7BfJJoRgc2mOlQGgGKWHIw8u9/
+	ib9cTlFkgSGAkKpxx9jRVBcHjNezd9S3CJigyVeu5CMBPHPKBQasTaoIPYW1eYD/bt/kJW/UGuB
+	H/UtzhwIjUKKIYfV5cp/TJb4aMnhpHHcS3GJhAUZMrtPFL1qut5y+BEYiOhgc42QWhlcEMOqU92
+	WOAxr10j5zxBxLgaU5TQrlVcI92p5tKCcy+WCFRUR4sTm6pawqxrSFe36BpVXiYD8FTc8cDKtTe
+	ByiPeI7hTP3KGiJZUyDuaUQpOFNFJlQyqltvSQwbSMQ==
+X-Google-Smtp-Source: AGHT+IEsCimxO1uS8fXVfh+sRS/G5aXdz/QiPj+EdzJelEbwTklRPu2BA2r4RlFn2GW1OHK5h/DRUA==
+X-Received: by 2002:a17:907:d64a:b0:b04:6f77:9cff with SMTP id a640c23a62f3a-b07c2597b06mr320087566b.27.1757684753981;
+        Fri, 12 Sep 2025 06:45:53 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.153])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b3129199sm370798366b.36.2025.09.12.06.45.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 06:45:53 -0700 (PDT)
+Message-ID: <9af52f53-1060-4311-85bd-e0539baf0a4b@tuxon.dev>
+Date: Fri, 12 Sep 2025 16:45:51 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2025091209-curfew-safari-f6e0@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/6] dt-bindings: PCI: renesas,r9a08g045s33-pcie: Add
+ documentation for the PCIe IP on Renesas RZ/G3S
+To: Krzysztof Kozlowski <krzk@kernel.org>, bhelgaas@google.com,
+ lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, p.zabel@pengutronix.de
+Cc: linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250912122444.3870284-2-claudiu.beznea.uj@bp.renesas.com>
+ <d40011bb-8e03-402e-b343-7331d51e2427@kernel.org>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <d40011bb-8e03-402e-b343-7331d51e2427@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 12, 2025 at 03:39:45PM +0200, Greg KH wrote:
-> On Fri, Sep 12, 2025 at 04:26:56PM +0300, Laurent Pinchart wrote:
-> > On Fri, Sep 12, 2025 at 08:49:30PM +0800, Tzung-Bi Shih wrote:
-> > > On Fri, Sep 12, 2025 at 11:24:10AM +0200, Bartosz Golaszewski wrote:
-> > > > On Fri, 12 Sept 2025 at 11:09, Krzysztof Kozlowski wrote:
-> > > > > On 12/09/2025 10:17, Tzung-Bi Shih wrote:
-> > > > > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > > > Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > > > > > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > > > >
-> > > > > Thanks for the work. Just a note, please start using b4, so above Cc
-> > > > > will be propagated to all patches. Folks above received only the cover
-> > > > > letter...
-> > > 
-> > > Thank you for bringing this to my attention.  I wasn't aware of that and
-> > > will ensure this is handled correctly in the future.
-> > > 
-> > > > Thanks to Krzysztof for making me aware of this. Could you please Cc
-> > > > my brgl@bgdev.pl address on the next iteration.
-> > > 
-> > > Sure, will do.
-> > > 
-> > > > I haven't looked into the details yet but the small size of the first
-> > > > patch strikes me as odd. The similar changes I did for GPIO were quite
-> > > > big and they were designed just for a single sub-system.
-> > > > 
-> > > > During the talk you reference, after I suggested a library like this,
-> > > > Greg KH can be heard saying: do this for two big subsystems so that
-> > > > you're sure it's a generic solution. Here you're only using it in a
-> > > > single driver which makes me wonder if we can actually use it to
-> > > > improve bigger offenders, like for example I2C, or even replace the
-> > > > custom, SRCU-based solution in GPIO we have now. Have you considered
-> > > > at least doing a PoC in a wider kernel framework?
-> > > 
-> > > Yes, I'm happy to take this on.
-> > > 
-> > > To help me get started, could you please point me to some relevant code
-> > > locations?  Also, could you let me know if any specific physical devices
-> > > will be needed for testing?
-> > 
-> > One interesting test would be to move the logic to the cdev layer. The
-> > use-after-free problem isn't specific to one type of character device,
-> > and so shouldn't require a fix in every driver instantiating a cdev
-> > directly (or indirectly). See [1] for a previous attempt to handle this
-> > at the V4L2 level and [2] for an attempt to handle it at the cdev level.
-> > 
-> > In [1], two new functions named video_device_enter() and
-> > video_device_exit() flag the beginning and end of protected code
-> > sections. The equivalent in [2] is the manual get/put of cdev->qactive,
-> > and if I understand things correctly, your series creates a REVOCABLE()
-> > macro to do the same. I'm sure we'll bikesheed about names at some
-> > point, but for the time being, what I'd like to see if this being done
-> > in fs/char_dev.c to cover all entry points from userspace at the cdev
-> > level.
-> > 
-> > We then have video_device_unplug() in [1], which I think is more or less
-> > the equivalent of revocable_provider_free(). I don't think we'll be able
-> > to hide this completely from drivers, at least not in all cases. We
-> > should however design the API to make it easy for drivers, likely with
-> > subsystem-specific wrappers.
-> > 
-> > What I have in mind is roughly the following:
-> > 
-> > 1. Protect all access to the cdev from userspace with enter/exit calls
-> >    that flag if a call is in progress. This can be done with explicit
-> >    function calls, or with a scope guard as in your series.
-> > 
-> > 2. At .remove() time, start by flagging that the device is being
-> >    removed. That has to be an explicit call from drivers I believe,
-> >    likely using subsystem-specific wrappers to simplify things.
-> > 
-> > 3. Once the device is marked as being removed, all enter() calls should
-> >    fail at the cdev level.
-> > 
-> > 4. In .remove(), proceed to perform driver-specific operations that will
-> >    stop the device and wake up any userspace task blocked on a syscall
-> >    protected by enter()/remove(). This isn't needed for
-> >    drivers/subsystems that don't provide any blocking API, but is
-> >    required otherwise.
-> > 
-> > 5. Unregister, still in .remove(), the cdev (likely through
-> >    subsystem-specific APIs in most cases). This should block until all
-> >    protected sections have exited.
-> > 
-> > 6. The cdev is now unregistered, can't be opened anymore, and any
-> >    new syscall on any opened file handle will return an error. The
-> >    driver's .remove() function can proceed to free data, there won't be
-> >    any UAF caused by userspace.
-> > 
-> > [1] implemented this fairly naively with flags and spinlocks. An
-> > RCU-based implementation is probably more efficient, even if I don't
-> > know how performance-sensitive all this is.
-> > 
-> > Does this align with your design, and do you think you could give a try
-> > at pushing revocable resource handling to the cdev level ?
-> > 
-> > On a separate note, I'm not sure "revocable" is the right name here. I
-> > believe a revocable resource API is needed, and well-named, for
-> > in-kernel consumers (e.g. drivers consuming a GPIO or clock). For the
-> > userspace syscalls racing with .remove(), I don't think we're dealing
-> > with "revocable resources". Now, if a "revocable resources" API were to
-> > support the in-kernel users, and be usable as a building block to fix
-> > the cdev issue, I would have nothing against it, but the "revocable"
-> > name should be internal in that case, used in the cdev layer only, and
-> > not exposed to drivers (or even subsystem helpers that should wrap cdev
-> > functions instead).
+
+
+On 9/12/25 16:41, Krzysztof Kozlowski wrote:
+> On 12/09/2025 14:24, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The PCIe IP available on the Renesas RZ/G3S complies with the PCI Express
+>> Base Specification 4.0. It is designed for root complex applications and
+>> features a single-lane (x1) implementation. Add documentation for it.
+>>
+>> Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > 
-> I think the name makes sense as it matches up with how things are
-> working (the backend structure is "revoked"), but naming is tough :)
+> You cannot really test bindings in that meaning and build tools don't
+> count as testing, just like building C code is not testing, running
+> sparse is not testing, checking with coccinelle is not testing.
 > 
-> I have no objection moving this to the cdev api, BUT given that 'struct
-> cdev' is embedded everywhere, I don't think it's going to be a simple
-> task, but rather have to be done one-driver-at-a-time like the patch in
-> this series does it.
+> And it cannot be tested even in the meaning of building, because:
 
-For the .remove() code paths, yes, I expect driver changes. We need
-subsystem-level helpers that will make those easy and hide the
-complexity. For the code paths from userspace into the drivers through
-cdev file operations, there should be no driver change required.
+That tag was picked by b4. I'll drop it next time. Same for the defconfig
+patch.
 
-> And that's fine, we have "interns" that we can set loose on this type of
-> code conversions, I think we just need to wrap the access to the cdev
-> with this api, which will take a bit of rewriting in many drivers.
 > 
-> Anyway, just my thought, if someone else can see how this could drop
-> into the core cdev code without any changes needed, that would be great,
-> but I don't see it at the moment.  cdev is just too "raw" for that.
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+> 
+> 
+> ...
+> 
+>> +            interrupt-controller;
+>> +            interrupt-map-mask = <0 0 0 7>;
+>> +            interrupt-map = <0 0 0 1 &pcie 0 0 0 0>, /* INTA */
+>> +                            <0 0 0 2 &pcie 0 0 0 1>, /* INTB */
+>> +                            <0 0 0 3 &pcie 0 0 0 2>, /* INTC */
+>> +                            <0 0 0 4 &pcie 0 0 0 3>; /* INTD */
+>> +            clocks = <&cpg CPG_MOD R9A08G045_PCI_ACLK>,
+>> +                     <&cpg CPG_MOD R9A08G045_PCI_CLKL1PM>;
+>> +            clock-names = "aclk", "pm";
+>> +            resets = <&cpg R9A08G045_PCI_ARESETN>,
+>> +                     <&cpg R9A08G045_PCI_RST_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_GP_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_PS_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_RSM_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_CFG_B>,
+>> +                     <&cpg R9A08G045_PCI_RST_LOAD_B>;
+>> +            reset-names = "aresetn", "rst_b", "rst_gp_b", "rst_ps_b",
+>> +                          "rst_rsm_b", "rst_cfg_b", "rst_load_b";
+>> +            power-domains = <&cpg>;
+>> +            device_type = "pci";
+>> +            #address-cells = <3>;
+>> +            #size-cells = <2>;
+>> +            max-link-speed = <2>;
+>> +            renesas,sysc = <&sysc>;
+>> +            status = "disabled";
+> 
+> ...you disabled the example.
+> 
+> I don't understand what happened here - why this got now disabled.
+> 
+> Code was correct before, but you made so many changes including this one.
 
--- 
-Regards,
+I reordered the properties in the device tree to follow almost the same
+pattern as other already existing nodes in the SoC dtsi and copied that one
+here as example. I missed to enable the example.
 
-Laurent Pinchart
+Thank you for your review,
+Claudiu
+
+> 
+> Best regards,
+> Krzysztof
+
 
