@@ -1,85 +1,119 @@
-Return-Path: <linux-kernel+bounces-812993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13AF0B53F6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B75B53F6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1E07A016AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:08:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6361D3B1D88
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3E69475;
-	Fri, 12 Sep 2025 00:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863632DC784;
+	Fri, 12 Sep 2025 00:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdzM3Uj8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMpIx4Ig"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758E628FD;
-	Fri, 12 Sep 2025 00:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3995A41
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757635697; cv=none; b=WEqSEEVbquMUFRtiWl3+Mg8RJ/M0yosIT8d0ETiq51sj7ytulWJobIZ1ETehNQ9wQJ/FB5Zt3vum/AjrowhV59XibaBdBd6XyXAKF23IInm/JFMmvPw/4B6olCxqtAen9lWqLAtNeKCGV7FZmueIW6mUJwn2jX49MQBkcifQb3w=
+	t=1757635847; cv=none; b=BOUN4wqvrazZSrXF1A0fLhl23DGLsfn5789W2/0e1AVKNuhiaRREYxkBU/Sc8etPmXFJB59aOp8yfbWfFklpuIJyS2PT1qVM8jazmNm0PPx99N5FdeVzQ6lf0pMObatF/7rlcdXOUKfq58dzjin9j7ZDicEbWxvdQcE/VmVIgYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757635697; c=relaxed/simple;
-	bh=eUOaiPDTUW/I66NUIlaJw0tipGEEnNadqFZWZAPJ/BQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qECgK+OzHfO63Xp758WQZpDpXPNcH0NSdNz0Xc5m4P2j2Ko3z9c65ved9iO8LlXvG7sl/Ouw5XyVhYqMxXiJQ/nv4XUr34V6/65U6KT/I6zh0oE6MVKCY6frqZpLOiLoUfTKbQj/g8qkWBRJULN3uMGimFBJbEjk3rhVeKAjSIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdzM3Uj8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF226C4CEF0;
-	Fri, 12 Sep 2025 00:08:16 +0000 (UTC)
+	s=arc-20240116; t=1757635847; c=relaxed/simple;
+	bh=As0st2mk2L0Hyv308eIrHbtQh5TjekLWLPV+ifYiL5s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V9PTypFnFMMNN+lOiKGFZrTylG4aaKCwSbrSBw2HDKbXR/gtgwI1MUDE6Tq7WUJzio95IJATqcqZhxSKZNiws+iKoqox1gb97gUiJ1425BcB7TGJSMXz+drL0XjqcOlbFJC7RJI1Kxbug7kT1MagNO8O3Mz3+HkrXZqVx8D0/KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMpIx4Ig; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87780C4CEFE
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:10:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757635697;
-	bh=eUOaiPDTUW/I66NUIlaJw0tipGEEnNadqFZWZAPJ/BQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EdzM3Uj82zSkHDH04VYoPsJosCFAlfTt3PLCiDQIizKM10wo0/h92Z2Mayxcn4yhJ
-	 jZZM1TwTKSxxV9qv7fbAXnimVRDSJX10gUKRvVQ8wa2F+hkD2j79kagZyF2AtfDZr9
-	 R48snxTtnRHigJq6w5RkkbrRukI/Tgbp1TiqWaciaqE3xvkskkklOkm3xf5Ou3GOas
-	 O6p9u0kiwxhLArgKTGTv/nlm8TkXBdZsHkFMktWxqr3dipm2U5k4A1f5bdOIRIlTPZ
-	 icp8P9CVHAgqIROreoG+liwnrmaPEI5LiSTdVTagYBN9STaFvRl0jgvIV5QmoiXNtr
-	 0jXPa0f/deu9A==
-Date: Thu, 11 Sep 2025 17:08:15 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yeounsu Moon <yyyynoom@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dlink: count dropped packets on skb
- allocation failure
-Message-ID: <20250911170815.006b3a31@kernel.org>
-In-Reply-To: <20250910054836.6599-2-yyyynoom@gmail.com>
-References: <20250910054836.6599-2-yyyynoom@gmail.com>
+	s=k20201202; t=1757635846;
+	bh=As0st2mk2L0Hyv308eIrHbtQh5TjekLWLPV+ifYiL5s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qMpIx4IgtVLlsi6LiDk9WM4G5NIXqk2vJMlQcYqfNyIG0UhdfRyvChYLEJqj5snxz
+	 bj3B/Q3dTu6d2YvnXim26H63nFoGrtEM/v9se8CDOs+Hy9pBdd2tFXz1OD6/bVcLVS
+	 WNhcKqH1ifK6Bpw4omCXCt7SiuA2uUwlJUnvDn1bpZXXZM9eXJSMR2pM28+Im41D6p
+	 XHOGIcdrMSb4yG7mmuQ7wORO2ehoA3OKIXQVaqlECxI6EfjdAQ9x2T8vKfIcYGftjE
+	 Dpm4GWqaKbbHcreuu5dx3YCeDplTMzTkWpG3wgVIOUggX7s81pzqkDmCrld/jWxhNb
+	 XCiyGWaNOoCUA==
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b07ba1c3df4so153001166b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:10:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUW2Hm70s3wUHiy5K21+W7BOHWAUdsh3OeD6GkKfemwqmQGbPCbRsl43sL74sZB5K5+uya+/5DJX8+I47Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR9idK0OdvvzRYUeOZmp33pfmjvEcXBqEcrvT6QxLfZXVTifY0
+	/EzFdKd53cY6DlPj+OKe9SgN73UI+pNJWkn03hHmy2RzsYNusk3obKsgfR+2LwwcK+XeANS7T0h
+	W2K4O2IRcPub+xcvQUlGlLete/Opd2uk=
+X-Google-Smtp-Source: AGHT+IGlZB9ve92AUsjeuNU1Q5ZaXqNU8y7VQEYnPyGvDio1YpPC6YK436PmiT1NHNvhnGHWryG+F5/8KZPOgJm7JoQ=
+X-Received: by 2002:a17:906:478b:b0:b04:5435:901b with SMTP id
+ a640c23a62f3a-b07c3a77fcfmr91410466b.62.1757635845021; Thu, 11 Sep 2025
+ 17:10:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250905084059.26959-1-ot_zhangchao.zhang@mediatek.com>
+ <20250905084059.26959-2-ot_zhangchao.zhang@mediatek.com> <a7589659-0352-4d47-a3cf-f2433cc512ec@kernel.org>
+ <CAGp9Lzrp-cfn_GiLrHCU629wEAxWy=egOMrRh6thYbymu+QXjA@mail.gmail.com> <0760036f-db69-487c-94b9-a6e405dee0e8@kernel.org>
+In-Reply-To: <0760036f-db69-487c-94b9-a6e405dee0e8@kernel.org>
+From: Sean Wang <sean.wang@kernel.org>
+Date: Thu, 11 Sep 2025 19:10:33 -0500
+X-Gmail-Original-Message-ID: <CAGp9Lzqk-mXiNq2iSrTk-Ed40_2j3GSuLMJcWoE1_iy7yY9-qw@mail.gmail.com>
+X-Gm-Features: Ac12FXz8IhbvaLWT27HxTo9duYFHYYWRiZ_PiuVbsnFzUeOWnt4swjEH76TSLOQ
+Message-ID: <CAGp9Lzqk-mXiNq2iSrTk-Ed40_2j3GSuLMJcWoE1_iy7yY9-qw@mail.gmail.com>
+Subject: Re: [PATCH v7 1/1] Bluetooth: mediatek: add gpio pin to reset bt
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>, 
+	Deren Wu <deren.Wu@mediatek.com>, Chris Lu <chris.lu@mediatek.com>, 
+	Hao Qin <Hao.qin@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	linux-mediatek <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 10 Sep 2025 14:48:37 +0900 Yeounsu Moon wrote:
-> Track dropped packet statistics when skb allocation fails
-> in the receive path.
+On Thu, Sep 11, 2025 at 1:07=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 11/09/2025 01:29, Sean Wang wrote:
+> > Hi Krzysztof,
+> >
+> > Sorry again for the confusion. I believe Zhangchao is still new to the
+> > upstream process, and we=E2=80=99ll work together to improve this. Sinc=
+e this
+> > series has become a bit hard to follow, would you agree that it might
+> > be better for us to restart with a clean patch that addresses the
+> > review comments? A clean version would make it easier for reviewers to
+> > focus on the current issues without being distracted by earlier
+> > mistakes.
+>
+> No. If you cannot send v7 of patchset as real patchset, sending again v1
+> won't change anything.
+>
+> For seven versions contributor did not bother to respond to feedback and
+> did not care to read submitting patches how this process looks like.
+>
+> Effect is this totally broken v7.
+>
+> This patch introduces undocumented ABI which kernel tools, if used, also
+> point out.
+>
+> Best regards,
+> Krzysztof
 
-I'm not sure that failing to allocate a buffer results in dropping
-one packet in this driver. The statistics have specific meaning, if
-you're just trying to use dropped to mean "buffer allocation failures"
-that's not allowed. If I'm misreading the code please explain in more
-detail in the commit message and repost.
+Hi Krzysztof,
 
-> diff --git a/drivers/net/ethernet/dlink/dl2k.c b/drivers/net/ethernet/dlink/dl2k.c
-> index 6bbf6e5584e5..47d9eef2e725 100644
-> --- a/drivers/net/ethernet/dlink/dl2k.c
-> +++ b/drivers/net/ethernet/dlink/dl2k.c
-> @@ -1009,6 +1009,7 @@ receive_packet (struct net_device *dev)
->  			skb = netdev_alloc_skb_ip_align(dev, np->rx_buf_sz);
->  			if (skb == NULL) {
->  				np->rx_ring[entry].fraginfo = 0;
-> +				dev->stats.rx_dropped++;
->  				printk (KERN_INFO
->  					"%s: receive_packet: "
->  					"Unable to re-allocate Rx skbuff.#%d\n",
+Thanks for the feedback and for spending time reviewing this driver.
+We=E2=80=99ll continue with v8 instead of restarting from v1, and hope it w=
+ill
+be improved to meet the requirements.
+
+                          Sean
 
