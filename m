@@ -1,141 +1,181 @@
-Return-Path: <linux-kernel+bounces-813562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A4A4B5478F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:31:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9183B54781
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:30:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B41188D472
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F66461FA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A4028643D;
-	Fri, 12 Sep 2025 09:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA63A2D7D2F;
+	Fri, 12 Sep 2025 09:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dqoyVcPX"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EGyzpvQi"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DE027D771
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBE028643C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757669065; cv=none; b=hQBoS+cuiDCmmlrEfwfknixLVPKN/nAzAMurZdUU5zTOuK4Zvqn+hJNkNaOq6tJTfQ3CCRt6Ac++IRgwccLNhgD4kOat/mkj2PSzGcgMVPK/xMXt/amv6J3xY01S/0sX4OFPHKMFmEayK8VT7rTKTkeSooJOAEHXL/YaIbeyTbw=
+	t=1757669059; cv=none; b=IKvzkcNs+o/M0MTkOZYyg/3lyyaj9AuuhQOar0XWIZ+u0Cjdtb2tH0RwS4nqsBc2nLjLFpepiGwu8GSQQko0uXulwQA1bppDNCzoXF8qShP/Vo2JUvIF0s0BQf4D86KB6zWUviwPw3BDQYf6wPwSCHeQ5IiAirDTXJWNA0WS+CA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757669065; c=relaxed/simple;
-	bh=zZ3EdgDqG32koRVEzkCdU26BudT4DPvEmFEKbPHfTpc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qtki0XVTmhU+oL7vBcNfNHEcH/D/+r//UnV5F/STYN0n3UdzadlSyzLadPqmQa5BFlrUX8xjIUq92c9xs1lQeaFcr2k5ztyxl84t5ft50EBrnB5pgrzkMhyfeN3tJUmFpXkgp5ZRTh/PdKNwEIhrYUJW8GYZwI04jsyg3mX/iBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dqoyVcPX; arc=none smtp.client-ip=209.85.218.46
+	s=arc-20240116; t=1757669059; c=relaxed/simple;
+	bh=tRJzunUVe2K3c4/6UwQXO9iXv15BUdIvNnjbOzjw+oI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kWgi4k5fB9A21xCWqKN3aeNY0PImTGGekNaC5G0V5kSv9mo8xAdXrdrXJqZ5FnKZD3x4mhXK8iQp1rs+kvkTA+D/llGTTxjYVCAMccM6IJRWiyEXHlMSZvfys/iKZIzLwXrZe2QUGz3ReZTwAbfUEPVIBrn+dvAEFFJ9/Z59ciA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EGyzpvQi; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b046f6fb230so322738666b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:24:24 -0700 (PDT)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45a1b0ce15fso2971135e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:24:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757669062; x=1758273862; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ejOVXapMEGWfb71MDH1k0hVwflqRG+5TP6RxYPYRsR4=;
-        b=dqoyVcPXoTN93DExdiwxhhzwT6Vm/NElVLwtQ7IAwdx9yWDS2gwil6GCHlM3ZPaDRB
-         XS/Muo/J9WUP8B6EmhQgf24Fn6+D3wmfJZqr1mcvThPJDqKXR7ZCVmqJ5gNsIbjAf71G
-         p0WdPEgHsFd4WvVnxx1p5XG7XwuR5b3DfPeK/8IxAsgmaUpAqX4efcgzA4IfhzH5tMxt
-         xl9E6bJ1gtz46KSWGnm5GPPZxrTcSEZCBqCLbd2xxMgQmieI4HFDfr0ALK6CNThyftbv
-         UDm6DQ76I7oQmbn3ogZfsWlawpdRyaCW4y69Dw/llPfT+BNBXrmS9clG6Y/NZNpu74dM
-         9kPA==
+        d=linaro.org; s=google; t=1757669054; x=1758273854; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FOviwQVOZASYbKzQVeCxPKzOJy49KCwq9xAVTlkhfD0=;
+        b=EGyzpvQimNSq5Y1cIanyFi8HtrkHB3RIIv/OLb60Hxn5mQJ/vWrcBnNlyb6bwNuBHD
+         0M0Ehv4XplEqS7Xme5MKZi0KqN++B3PeGereHGeXL8Dd1HzQN5UclJM9UxXrzqXD7IpS
+         QVSEqVa+yt4lh5G5YM2R/BmJ1+n7qKSJpNEj/O/zg5ZyMqXMMD2y76MFmv1Iwq3gBHPg
+         8kG1bSVrSRJ4H2sDbbT7rdumzuo1uvsKRKDvccOKvjXYAaS5dnj0tYFMYxUq66RJXGzS
+         OsnryTDUIt8Wnnq+HfHOlGdPZCRABn+9BHUxIkHin4yo40jzuArUd0y+qJZNIC3k3V1U
+         44hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757669062; x=1758273862;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757669054; x=1758273854;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ejOVXapMEGWfb71MDH1k0hVwflqRG+5TP6RxYPYRsR4=;
-        b=SnCJQVJX74ef5AvxrN2To+3fdF0WkAJqy1TTYSHJqP73YD4YmIgtzfETeLbYVsk6aR
-         MUzJyNx6ugsu20wCce4Kj29bVFmY4kssYPnNhczTIA4/0j8JBPDj113kZtQSd72aKjKQ
-         t30kICak03kMUFj2WmttWcxfmECUcbIL/afbcwW9sh4QoUxPv/al+KzaHtny2PdfbQPZ
-         NMW6JjBuMLFo5sgO9wN7qVybI3fGm3x3QiFdL4zWsyZmEmI/bUILmg0/okywMTxOTQru
-         oUN/T+8jQX7jdlN89I5nOtKyj76WsiLg+rkA6NU0cJcGqs0KocfZ5d0BRTPCpJkVljx6
-         mxFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpa1yApl7ySrIDAb/oUjPdTXBY4QZ/MyF2r3OpQ6jxAnG1KOtsgNVq1vDKD4S0HZbic/bTdi63UllI0ZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLyioDnD/MmQkJX0zd/nPSVX+unKmJF5iIMKCgs7RFa5IJFTGF
-	4G4fYbhkqVRY1e1J98WvK36hmYJhNycdgLdIONbsgtVODZXulQJ4DRdxUOSu9Cv4CWP6CBErmh1
-	DqdPu9gzqjTeg4jsN9Z+QzKE/7Ba6ISFVZdAlmAl1BQ==
-X-Gm-Gg: ASbGncuRltLSH15ivlvVXwFiQSYoV0BU0tpljbNm12nHhS616Qd7Rfuj/66+D0j1zMN
-	9k0uuSmUkiB9SXj3hSrHAIPAa8WQgyBESBTqvyv850GVXSWDi7A1WJWUs8VK5wQx31vbzyZoTZv
-	ae+7hsFLxmvn8eQctgJ1i4l5ouIfbZfcK2EaaG6lUgfjDaSEkpTfWYT0AXTVeW9fITMQsb3jLwR
-	lUlSUwjVmHt4IGMON6DoQW0wFb9Yc8hMT+hCRqJuyfTfsUr
-X-Google-Smtp-Source: AGHT+IEG7d2O5fuiKOqLaxk4wNWtHu8A08plk+DQOGkfs2DJxQxya6tEWqjjc+qZvluiPc70wIKTosdznqW6MDbVNpE=
-X-Received: by 2002:a17:907:96a4:b0:b04:25e6:2dc2 with SMTP id
- a640c23a62f3a-b07c254393cmr229565966b.22.1757669062471; Fri, 12 Sep 2025
- 02:24:22 -0700 (PDT)
+        bh=FOviwQVOZASYbKzQVeCxPKzOJy49KCwq9xAVTlkhfD0=;
+        b=MOT33adC9Bi3MeLyBHhJqtALo577F7pO1o3iyjRdgweeelNvKEqc1lqU5bFRXjNbXh
+         /B0NYdKvWkahl6pqegNYxCcA/egZGZjmMUKnPLe2TTPOmL85AEtbR4uj3ba2WJPnBpol
+         NhwRBAYJBcIXVd8mE/mEyZ6ZzFRlwGEZGfeyCnDlUV7vC5PMH25I7zghc/FwRTwlT/E3
+         9UP0NDgaX56KKcpaz+g/N0RDhFlT6LMDYcEchYEZWQXfxEPPdJFmZuJas9qqoZmZVhc3
+         BeNRIfS2J3L6NWWc3AycPWlcDkQmo7uS34/qYZgrFTxhBQL/NF0DKAiGozzuo+Rd0MAo
+         OYDA==
+X-Forwarded-Encrypted: i=1; AJvYcCVV+NIqG6Ew2Oun7lY82VrxwSdfJiEouKJzp2jcPi8Q3JsM1QG0eqqLdSTQGNUttGfmmZ/7pM9JdpDmy/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBmNO2PTywQhgxMxmnfxtNQ8/4jorHNTclBY5R9gO6KVzPePfT
+	/a5oMsNhkTTI/DvLJmFKtRVPfpy/9wEd1lkN/6ue8a1H2YVXohTD/MpLcu9Cxm9byP7J9qiCvT3
+	nQFcQ
+X-Gm-Gg: ASbGncuuvB0rIjbatrqLwpmCWYFSqZaUMdtPwMxr+baqTE0f6H3KhjecT0yxfkL8U9l
+	UZeY93nZKMgD+t45xdzl4hubWvcMf+NsXep8FS+kqIg+5vpXmDTZaNQLIdCq8kNoqcVppmZN9iJ
+	a6bVRrpS5Mj18bG6Vn431CyqPcd+Z2QXFgM51cgmd705FxYPuHtcA4YkI0q4CbGi/fRSdOOnB+H
+	TZy5XOtpSxDk0+0DtgDlrS+O+m6w4BtnQxNoaCTmmGnu8XsNmt2ajiKAk5Lwb2FYVNXMAngg6db
+	JKmD1b+G2chLjV7NhoFUShfrvNnzUOQ+869WazZfVF98a0uTNFis2nbaeC5h8h33cZC//lt+aZ9
+	/3nP4loqpR19wFPFvMoRfLniouJKCdLJh8PUhDqpQx4WY
+X-Google-Smtp-Source: AGHT+IF2RKjPHU5PyyMu6nXLRqroWat3tSIrw2IuPNtUNZFe81YtcX1shc8aVwj2VyT1I6rhWLSpow==
+X-Received: by 2002:a05:600c:4691:b0:459:dfa8:b866 with SMTP id 5b1f17b1804b1-45f214afb6dmr12047775e9.2.1757669053738;
+        Fri, 12 Sep 2025 02:24:13 -0700 (PDT)
+Received: from kuoka.. ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e015ad780sm29696035e9.10.2025.09.12.02.24.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 02:24:13 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] gpio: of: Simplify printks with pOF format
+Date: Fri, 12 Sep 2025 11:24:10 +0200
+Message-ID: <20250912092409.162426-2-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912081718.3827390-1-tzungbi@kernel.org> <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
-In-Reply-To: <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Fri, 12 Sep 2025 11:24:10 +0200
-X-Gm-Features: Ac12FXwlBWZ3wqZGCB6PrzXYD4LYlvvCAzsc1bzxtVBUhf_RXrToQWQG2Wcs3jw
-Message-ID: <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
-To: Krzysztof Kozlowski <krzk@kernel.org>, Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Benson Leung <bleung@chromium.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Shuah Khan <shuah@kernel.org>, Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	linux-kselftest@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2855; i=krzysztof.kozlowski@linaro.org;
+ h=from:subject; bh=tRJzunUVe2K3c4/6UwQXO9iXv15BUdIvNnjbOzjw+oI=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBow+a5cIPMku6YiL8z9OgIg+yldDDyqIzmeH9cC
+ GJ+vyRmeBSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaMPmuQAKCRDBN2bmhouD
+ 15oLD/9Vd4aatYqHVI+A/qBGNkv0k7CR9r+TT0RPFwYSBCvP/OVRLaG3QpPCl+5s5USMX3amPK3
+ lBzwZ7bOBJYBoC02q0GV1evQJUO9qvoErzm6jLlKs1F//UJEjZef4iVu/y1YV6ah6A4GTVfPEfm
+ ORLtAIqksjmI7bQ6tiWUW+z4UXROAzbf9w3TCsNKXI+ARdwv/3AczExXtVSrTd53ky4oooHGL4Q
+ otjZe74jWZjYJ6S8eKxzkLUuEP5c8Xd3k7gU+w8XswafssszqNnSOXPgtDcMwuSQVABxphMQVR+
+ DLO5urLYI2SuxAWlN9r4IkRRQjMJoodWYzQLrqoLNn8B20G1aLSPzENyQmOjOn/DEgJFaJ+qS9F
+ WtWdx6QxGWGKRhTG70CbnHegjfkNPp+ldZEbOqx02c4y8PoYq6csaPHXzMZ0Q1oKscVTQ6BKq7D
+ 41gXOU6MhBEVCM9DxCMy0VgWaHoZsefybUvwYdHdacAs1jNmuRessEgWdII/UjGJkj6IT4TYseE
+ v0k8K9Z1QQRXfIYLF1F739Ar2WX2vZBSMJYpTONdgYArCknQsQMxDfWXpx0eh3uQFQGrhRIKL4n
+ ObcMi4UiCpsOqKoXWJ+aI6Um1eZ2OW/m/J7zB/2zjLNzztDCA1SRwgXJb+tZLe2NvGtAqCcSg46 kG75Q69AXQns6gg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp; fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-On Fri, 12 Sept 2025 at 11:09, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 12/09/2025 10:17, Tzung-Bi Shih wrote:
-> > This is a follow-up series of [1].  It tries to fix a possible UAF in the
-> > fops of cros_ec_chardev after the underlying protocol device has gone by
-> > using revocable.
-> >
-> > The 1st patch introduces the revocable which is an implementation of ideas
-> > from the talk [2].
-> >
-> > The 2nd and 3rd patches add test cases for revocable in Kunit and selftest.
-> >
-> > The 4th patch converts existing protocol devices to resource providers
-> > of cros_ec_device.
-> >
-> > The 5th patch converts cros_ec_chardev to a resource consumer of
-> > cros_ec_device to fix the UAF.
-> >
-> > [1] https://lore.kernel.org/chrome-platform/20250721044456.2736300-6-tzungbi@kernel.org/
-> > [2] https://lpc.events/event/17/contributions/1627/
-> >
-> > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
->
-> Thanks for the work. Just a note, please start using b4, so above Cc
-> will be propagated to all patches. Folks above received only the cover
-> letter...
->
+Print full device node name with %pOF format, so the code will be a bit
+simpler.  Code already uses pOF in other places, so this also unifies
+with the rest.
 
-Thanks to Krzysztof for making me aware of this. Could you please Cc
-my brgl@bgdev.pl address on the next iteration.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ drivers/gpio/gpiolib-of.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-I haven't looked into the details yet but the small size of the first
-patch strikes me as odd. The similar changes I did for GPIO were quite
-big and they were designed just for a single sub-system.
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 37ab78243fab..bf17658623b9 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -160,14 +160,12 @@ static void of_gpio_quirk_polarity(const struct device_node *np,
+ {
+ 	if (active_high) {
+ 		if (*flags & OF_GPIO_ACTIVE_LOW) {
+-			pr_warn("%s GPIO handle specifies active low - ignored\n",
+-				of_node_full_name(np));
++			pr_warn("%pOF GPIO handle specifies active low - ignored\n", np);
+ 			*flags &= ~OF_GPIO_ACTIVE_LOW;
+ 		}
+ 	} else {
+ 		if (!(*flags & OF_GPIO_ACTIVE_LOW))
+-			pr_info("%s enforce active low on GPIO handle\n",
+-				of_node_full_name(np));
++			pr_info("%pOF enforce active low on GPIO handle\n", np);
+ 		*flags |= OF_GPIO_ACTIVE_LOW;
+ 	}
+ }
+@@ -347,8 +345,8 @@ static void of_gpio_flags_quirks(const struct device_node *np,
+ 	    of_device_is_compatible(np, "reg-fixed-voltage") &&
+ 	    of_property_read_bool(np, "gpio-open-drain")) {
+ 		*flags |= (OF_GPIO_SINGLE_ENDED | OF_GPIO_OPEN_DRAIN);
+-		pr_info("%s uses legacy open drain flag - update the DTS if you can\n",
+-			of_node_full_name(np));
++		pr_info("%pOF uses legacy open drain flag - update the DTS if you can\n",
++			np);
+ 	}
+ 
+ 	/*
+@@ -625,8 +623,8 @@ static struct gpio_desc *of_find_gpio_rename(struct device_node *np,
+ 		legacy_id = gpios[i].legacy_id ?: gpios[i].con_id;
+ 		desc = of_get_named_gpiod_flags(np, legacy_id, idx, of_flags);
+ 		if (!gpiod_not_found(desc)) {
+-			pr_info("%s uses legacy gpio name '%s' instead of '%s-gpios'\n",
+-				of_node_full_name(np), legacy_id, con_id);
++			pr_info("%pOF uses legacy gpio name '%s' instead of '%s-gpios'\n",
++				np, legacy_id, con_id);
+ 			return desc;
+ 		}
+ 	}
+@@ -660,8 +658,8 @@ static struct gpio_desc *of_find_mt2701_gpio(struct device_node *np,
+ 
+ 	desc = of_get_named_gpiod_flags(np, legacy_id, 0, of_flags);
+ 	if (!gpiod_not_found(desc))
+-		pr_info("%s is using legacy gpio name '%s' instead of '%s-gpios'\n",
+-			of_node_full_name(np), legacy_id, con_id);
++		pr_info("%pOF is using legacy gpio name '%s' instead of '%s-gpios'\n",
++			np, legacy_id, con_id);
+ 
+ 	return desc;
+ }
+@@ -687,7 +685,7 @@ static struct gpio_desc *of_find_trigger_gpio(struct device_node *np,
+ 
+ 	desc = of_get_named_gpiod_flags(np, con_id, idx, of_flags);
+ 	if (!gpiod_not_found(desc))
+-		pr_debug("%s is used as a trigger\n", of_node_full_name(np));
++		pr_debug("%pOF is used as a trigger\n", np);
+ 
+ 	return desc;
+ }
+-- 
+2.48.1
 
-During the talk you reference, after I suggested a library like this,
-Greg KH can be heard saying: do this for two big subsystems so that
-you're sure it's a generic solution. Here you're only using it in a
-single driver which makes me wonder if we can actually use it to
-improve bigger offenders, like for example I2C, or even replace the
-custom, SRCU-based solution in GPIO we have now. Have you considered
-at least doing a PoC in a wider kernel framework?
-
-Just my two cents.
-
-Bartosz
 
