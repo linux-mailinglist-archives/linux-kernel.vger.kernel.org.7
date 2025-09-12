@@ -1,214 +1,207 @@
-Return-Path: <linux-kernel+bounces-814759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17CEFB55850
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCDFB55856
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C145B3B30A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8115C30EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC6B7264F9F;
-	Fri, 12 Sep 2025 21:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E762925F7A7;
+	Fri, 12 Sep 2025 21:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q6TF3bGU"
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q5P37S8D"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 911D521E097
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A293822256B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:27:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757712206; cv=none; b=BP9L/x7JFhx/mN3iwey3jhcF0J5wGKRqkgiTGWwmSoOnf9UkQmKkfVVzQEJcLdMaNamH2RCAuH53AyxnU9TzX3jf8zPSm85P4wBI8yTp5yPTJYMzN/VrX8aHyeh6zmtsqAK/RAdXZEDR6nzetRf3KA1Arvq8E7ECPKU5ZNuGJz0=
+	t=1757712441; cv=none; b=SO47RoqtDFWOsK/plNlM5atppmIwGmven8JtOS/QR/IFvpdVc17Eg0A9lD111LSutdyluR8JDInvRe9yd10/mwEOFTLd4drvaVEju0dmkieu7eFZUbn43ovBR/Kr0vjfTRBTzU+9saV2O+wVy3huJPqykB2bZ2sYa5RHWxWVztA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757712206; c=relaxed/simple;
-	bh=2Dy+AFZSBBqREYyrzTNCKYakhdJ/6yZjpcuiom9UX0A=;
+	s=arc-20240116; t=1757712441; c=relaxed/simple;
+	bh=eIu1Qi+KLg7MjIF/lKyRFYPROFh40t7hDxlDmFVmdMM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FtTiEr/42c0TFcUDUd1MLGGXgpWKx7xAlWHaxeXd3mvR8my+0of5NQdLuztPgld0ArRZAfZ95xE81qQxxE7u5LO4Clu1p28XsBzJLnYXpuqCmAEMUwgu7nPzNac2vpB3Q99QIhMYYDz8z89CWyNzwgn3oImYkg37VLCLyTjBZUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q6TF3bGU; arc=none smtp.client-ip=74.125.224.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6296f6ce5ddso464281d50.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:23:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=ZFX6L2kaLjISdCkkhZaUgBbkoRQHVFatuY19rGDESBXeBT9XDgPmyFuCTicBhZBL+47u7Ahcid8hEyOxwkaA3gTzbachbUDHlkqtDPXfBMNlC2t9CyPyxgpTVsZJrsw6CNj6/eVan7z77oXpXvkmCJWL+w7xSDyCjdfBmAf9gUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q5P37S8D; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24c7848519bso22209105ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:27:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757712203; x=1758317003; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1757712434; x=1758317234; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RS6dsPYFszHuSjK7qI4StyWMs+p9b5Aa8Uii6eXeOJk=;
-        b=Q6TF3bGUAtqvwBRQYp8pCDo4ggzPcRCcV5Hc1uKhmbynjdiSpZzw7XoU1r7xVuwHzh
-         79C0v+bL7B9WhfmWPl0CJUXyMOmEnWXUnpFaDBh7Ft2i+byh/sWqKsnGyXZcco8TxM6J
-         89QqCSbBBFkyrvW3eumEbr/FuOK4J1K6r7i1r4odwIXNO7Gf0FXHmhJFG91fawRT5DV3
-         k7E/n8cBIvtxfG6atrtx2lSww1wCHYjYVMsJq7nPxFVMKW78owW19FR7V0NxzQ9TySRI
-         D49diUT1p3CCYLFJOFGkQbJ1B4XaiAXg6uz1OBROrEEqdKoXY6bZ4XNsGd829lwShhI6
-         M0Qg==
+        bh=IUw0RSeecD2zLIJbgNY9ciVUY1nz8HUWc231yjxf71A=;
+        b=Q5P37S8D5Dp4YbMS5YzFQDRhWUdCK59iQDSPgXbT3Wrs1o6jt9psu1AEGhPdU+bPTp
+         N2/+XMLBUlmPMrXlL2u2gp0WDQDhUHUz9ilOJ+ZDaAK3VLS7jotaBDp+GlP8n07VqGdP
+         vyL/qYA1nIUouOO/Q4k3T90+Og54Atjm1UAu8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757712203; x=1758317003;
+        d=1e100.net; s=20230601; t=1757712434; x=1758317234;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RS6dsPYFszHuSjK7qI4StyWMs+p9b5Aa8Uii6eXeOJk=;
-        b=TSNNYBQZWaCAis2T+a3HvxHoaWIBOqDAwFwR2WqcD99vbmF4NF1B1t6d6zTKy7kHJY
-         qbHNNOASGg6MeALbWDqgB3ptr76WzboupU8M71pG9oUK0//TRaiaQzX2QCIpRT8nTEP9
-         NOtfRBHkiMpmPluGBZy7Szu19B62KP5/qi5bxT/a6TPMYihsoOwm0Ck3hxg3IWeUTqrf
-         FscHrnZPF90SJb6SWAVeFZ2shsVJ7qvBd9+TclvMUTobRbOZ9a5ebdsusUcEVpUxTQDL
-         NUbblkaXkWo4enJUia2wZyuqDkM0IoPXOcmEPbNKcejQ4ssFnOhwDHFYQ9BIhgZMQo8z
-         rgVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXi7ePFhfVX39Al28REtNoTN0iesooTsxQq8v6ZwYF/GTHTwEQP11d5BmybntHWhTbycF+pJ+zl/ogemYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgy9RY0x3JBWcu4b2HfIx+cfG3DracOzE0j+2pfvUSPDzl3urp
-	zGxiI5VR/JGrylnHvelQgOzeafhhJW+YMKwEgxXsNjpmsKAhCHYh/wQtKAkNXtUDe0gQzdu0FCj
-	NG6N5ZHcLsv2Z7/E2b+RH3atHo+qlIls=
-X-Gm-Gg: ASbGncvwoizadisY39QCxX6XiiEwgfgMxI5k046Y1zCxp7EgB7Fdw9Hnlz//IX98a4S
-	9cm/TiL9ZQ2hmj0bonvFkyHoUP4vmcp9KnUgEK92ojwb2g+0QcRUzfxj5TaBV9xz79ww9S+AziP
-	ikgbykdGbijEHSElFas/2iQDJsbS2WybQPmIahD9UDHZMDXh+fQeQ+3/zcSQ3BXTVlwih9L00ti
-	QJuGKVel2ur8WT8zNAPpwM+0U3c1qf9SBQDj0pbtBVFV4VOzWytbF1u66IXiEym3nc3tpgOVMwz
-	ESdmL7Y=
-X-Google-Smtp-Source: AGHT+IF7mDTFFlP90HyM2PZ2wkzJy8r0oa/XBSPUCOPlO84anhWl4cv9qCVo9H3l//gvGB0W4EvLmw5CX6m3/WXwn74=
-X-Received: by 2002:a53:d6c8:0:b0:5f3:317c:cba3 with SMTP id
- 956f58d0204a3-627235eb229mr3125344d50.36.1757712203491; Fri, 12 Sep 2025
- 14:23:23 -0700 (PDT)
+        bh=IUw0RSeecD2zLIJbgNY9ciVUY1nz8HUWc231yjxf71A=;
+        b=L8ActCILjl4SEgweqs0dxseXYEXPQtLVg1I8spJFSucSpd8NWWkeDB9/a69mMM0QBj
+         fHNqPvpoa0e6cQ7kw9088eaTEV/lCPTJj/1JnvTePkQJTwYpCNivb1KQNHtNeYmFx4bM
+         U9RKY/Xl0AYwEbzIp2IHgYlj/V285X4ViDpW5Xe5nah3Fa6yLztOzMI+FSXLVl5bF/U+
+         pfMVQ0s/+Ir3B8Rnxoi+k8b0zVjRYdEJTCxynWdRbOjol4ewj6vTsonMKDv0iaxkxBw5
+         Fx3uv4wf6++nTqvOevAQBTh7fLgm6QPIEp9PQ705WasaghGHmGxt01sW7a8W+ct4urHd
+         T+1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUxyDOyA+01JHVf8jHiSxQgoeeu4fI9uHaD96jCU0LMUo8GhD1GPyiU1unHbRkYiqc69ZCvpthCaW1Qve8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyed3/i0yhx7zvhf3XiDAymMuxAOrOjIA72RVW6s4qcI2MgusCC
+	a5GZLohBpp08olqwsxcSkQ/aaVpweG36u5XwpfHkzXMtcu98SlKyCxn8DQ1hDvT47angXHMrkMH
+	Jx/s=
+X-Gm-Gg: ASbGncsKUHbWvSzbsjOUV9piu40yQ1nZNzSDE/nyzIRitJHralpDPewDJB9AjMLa8Km
+	+ZY/084lGsP8eHkIm/fZnhSa8Il6b/3a50UVZGS/hpr/MlmwlVzpHDHt1D0u+GS/BuoorLZDtwW
+	aAz7DoSBGGcZWa2/H1MRTcQStXLQZDRzm3zoTDxtsuh4cjWLzBzqXIwjdSoxwM0kKssVdMoKLoF
+	wBGhV8RB9kJkrVnOgs5D0bKmc8a8ohVLf2AC4GdFk01Ncw6F70QLjzGyM9ArhahesRBMMDofUTm
+	g7B/lZxMxGdnkrM2KkIi8jMf0+iMLogHxcIZXD/Cql5djQ4OczQB1kWs7esv+hj/fL5rA066OP4
+	cIfaPOvYTdhQWJ3epyIuXl1vb11l3dK+8G7yRZ9tHBoshENUf714vtDbbXciYnh8RwQ==
+X-Google-Smtp-Source: AGHT+IEHT1NMmoY4pU7WHB6OvM7tblCqhkM2QmZQiiKMEbpHEaOpRn1Gxai7EWytNncyjzMh1NHamQ==
+X-Received: by 2002:a17:902:ea0d:b0:24c:f15c:a692 with SMTP id d9443c01a7336-25d27c21b85mr55380835ad.42.1757712434554;
+        Fri, 12 Sep 2025 14:27:14 -0700 (PDT)
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com. [209.85.210.179])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3b304ce8sm59626215ad.128.2025.09.12.14.27.12
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 14:27:13 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7725fb32e1bso2431005b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:27:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWqse0T/i2hZtpQqiQ7Ez9ZjqCYLyzVa3+aa72nOxhZEBjsGsUF726a1LZYmsyjZbETR+Kuk6ZMEfom2z0=@vger.kernel.org
+X-Received: by 2002:a05:6a20:3c8e:b0:243:a525:7701 with SMTP id
+ adf61e73a8af0-2602c71d56amr5497919637.60.1757712432247; Fri, 12 Sep 2025
+ 14:27:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912-mt8196-gpufreq-v2-0-779a8a3729d9@collabora.com> <20250912-mt8196-gpufreq-v2-1-779a8a3729d9@collabora.com>
-In-Reply-To: <20250912-mt8196-gpufreq-v2-1-779a8a3729d9@collabora.com>
-From: Chia-I Wu <olvaffe@gmail.com>
-Date: Fri, 12 Sep 2025 14:23:12 -0700
-X-Gm-Features: AS18NWAF1_rOqs1uHHRFV3uK_QeI_BESdlTq94oWPQCIUjh-7p1xsAHQtKCd0Gw
-Message-ID: <CAPaKu7SnopwdGpzZYNQ0GaQmHzL7ES7ZD5sOPPBUMiznXiA+8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 01/10] dt-bindings: gpu: mali-valhall-csf: add
- mediatek,mt8196-mali variant
-To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Chen-Yu Tsai <wenst@chromium.org>, kernel@collabora.com, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org
+References: <20250912192457.2067602-1-john.ripple@keysight.com> <20250912210805.2910936-1-john.ripple@keysight.com>
+In-Reply-To: <20250912210805.2910936-1-john.ripple@keysight.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 12 Sep 2025 14:27:00 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WVuCNMcPKZjaefAvLXi4Lxxw01HQQc+mEBX1nk8ot-WQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwx2NSAgRWKlv3w_UTmvEXFowVCuHvSB09H2KBQpce9XrDYtw6c8t5JqHc
+Message-ID: <CAD=FV=WVuCNMcPKZjaefAvLXi4Lxxw01HQQc+mEBX1nk8ot-WQ@mail.gmail.com>
+Subject: Re: [PATCH V5] drm/bridge: ti-sn65dsi86: Add support for DisplayPort
+ mode with HPD
+To: John Ripple <john.ripple@keysight.com>
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com, 
+	andrzej.hajda@intel.com, blake.vermeer@keysight.com, 
+	dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se, 
+	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
+	matt_laubhan@keysight.com, mripard@kernel.org, neil.armstrong@linaro.org, 
+	rfoss@kernel.org, simona@ffwll.ch, tzimmermann@suse.de
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 11:38=E2=80=AFAM Nicolas Frattaroli
-<nicolas.frattaroli@collabora.com> wrote:
+Hi,
+
+On Fri, Sep 12, 2025 at 2:08=E2=80=AFPM John Ripple <john.ripple@keysight.c=
+om> wrote:
 >
-> The Mali-based GPU on the MediaTek MT8196 SoC uses a separate MCU to
-> control the power and frequency of the GPU.
+> @@ -413,6 +446,13 @@ static int __maybe_unused ti_sn65dsi86_resume(struct=
+ device *dev)
+>         if (pdata->refclk)
+>                 ti_sn65dsi86_enable_comms(pdata, NULL);
 >
-> It lets us omit the OPP tables from the device tree, as those can now be
-> enumerated at runtime from the MCU.
+> +       if (client->irq) {
+> +               ret =3D regmap_update_bits(pdata->regmap, SN_IRQ_EN_REG, =
+IRQ_EN,
+> +                                        IRQ_EN);
+> +               if (ret)
+> +                       pr_err("Failed to enable IRQ events: %d\n", ret);
+
+Shoot, I should have noticed it before. Sorry! :(
+
+Probably most of the "pr_" calls in your patch should be "dev_" calls.
+"struct ti_sn65dsi86" should have a dev pointer in it. That's probably
+worth spinning the patch. It's really close now, though!
+
+
+> @@ -1309,6 +1372,41 @@ static int ti_sn_bridge_parse_dsi_host(struct ti_s=
+n65dsi86 *pdata)
+>         return 0;
+>  }
 >
-> Add the mediatek,mt8196-mali compatible, and a performance-domains
-> property which points to the MCU's device tree node in this case. It's
-> required on mt8196 devices.
->
-> Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> ---
->  .../bindings/gpu/arm,mali-valhall-csf.yaml         | 32 ++++++++++++++++=
-+++++-
->  1 file changed, 31 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.y=
-aml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> index a5b4e00217587c5d1f889094e2fff7b76e6148eb..163b4457f7f25dcdd509c5585=
-58a73694521c96d 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
-> @@ -19,6 +19,7 @@ properties:
->        - items:
->            - enum:
->                - rockchip,rk3588-mali
-> +              - mediatek,mt8196-mali
->            - const: arm,mali-valhall-csf   # Mali Valhall GPU model/revis=
-ion is fully discoverable
->
->    reg:
-> @@ -53,6 +54,9 @@ properties:
->    opp-table:
->      type: object
->
-> +  performance-domains:
-> +    maxItems: 1
+> +static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
+> +{
+> +       struct ti_sn65dsi86 *pdata =3D private;
+> +       struct drm_device *dev =3D pdata->bridge.dev;
+> +       u8 status;
+> +       int ret;
+> +       bool hpd_event;
 > +
->    power-domains:
->      minItems: 1
->      maxItems: 5
-> @@ -91,7 +95,6 @@ required:
->    - interrupts
->    - interrupt-names
->    - clocks
-> -  - mali-supply
->
->  additionalProperties: false
->
-> @@ -105,9 +108,24 @@ allOf:
->        properties:
->          clocks:
->            minItems: 3
-> +        performance-domains: false
->          power-domains:
->            maxItems: 1
->          power-domain-names: false
-> +      required:
-> +        - mali-supply
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: mediatek,mt8196-mali
-> +    then:
-> +      properties:
-> +        mali-supply: false
-> +        sram-supply: false
-> +        operating-points-v2: false
-> +      required:
-> +        - performance-domains
->
->  examples:
->    - |
-> @@ -143,5 +161,17 @@ examples:
->              };
->          };
->      };
-> +  - |
-> +    gpu@48000000 {
-> +        compatible =3D "mediatek,mt8196-mali", "arm,mali-valhall-csf";
-> +        reg =3D <0x48000000 0x480000>;
-> +        clocks =3D <&mfgpll 0>;
-This seems to be an input to the performance domain, not to the gpu.
-The rule says
+> +       ret =3D ti_sn65dsi86_read_u8(pdata, SN_IRQ_STATUS_REG, &status);
+> +       if (ret) {
+> +               pr_err("Failed to read IRQ status: %d\n", ret);
+> +               return IRQ_NONE;
+> +       }
+> +
+> +       hpd_event =3D status & (HPD_REMOVAL_STATUS | HPD_INSERTION_STATUS=
+);
+> +
+> +       if (!status)
+> +               return IRQ_NONE;
 
-  clocks:
-    minItems: 1
-  power-domains:
-    minItems: 1
+It wouldn't have been worth spinning just for this, but if we're
+spinning anyway I'd probably put the "if (!status)" check down below
+right before you grab the mutex, just to keep all the HPD processing
+together.
 
-but neither is needed on mt8196. Should we set both to 0 (and update
-panthor to treat core clock as optional)?
 
-> +        clock-names =3D "core";
-> +        interrupts =3D <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH 0>,
-> +                     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH 0>;
-> +        interrupt-names =3D "job", "mmu", "gpu";
-> +        performance-domains =3D <&gpufreq>;
-> +    };
+> @@ -1931,6 +2029,8 @@ static int ti_sn65dsi86_probe(struct i2c_client *cl=
+ient)
+>         dev_set_drvdata(dev, pdata);
+>         pdata->dev =3D dev;
 >
->  ...
+> +       mutex_init(&pdata->hpd_mutex);
+> +
+>         mutex_init(&pdata->comms_mutex);
+
+Again, it wouldn't be worth spinning on its own, but if you happened
+to want to get rid of the blank line between the two I wouldn't
+object. ;-)
+
+
+> @@ -1971,6 +2071,18 @@ static int ti_sn65dsi86_probe(struct i2c_client *c=
+lient)
+>         if (strncmp(id_buf, "68ISD   ", ARRAY_SIZE(id_buf)))
+>                 return dev_err_probe(dev, -EOPNOTSUPP, "unsupported devic=
+e id\n");
 >
-> --
-> 2.51.0
->
+> +       if (client->irq) {
+> +               ret =3D devm_request_threaded_irq(pdata->dev, client->irq=
+, NULL,
+> +                                               ti_sn_bridge_interrupt,
+> +                                               IRQF_ONESHOT,
+> +                                               dev_name(pdata->dev), pda=
+ta);
+> +
+> +               if (ret) {
+> +                       return dev_err_probe(dev, ret,
+> +                                            "failed to request interrupt=
+\n");
+> +               }
+
+Another tiny nitpick if you happen to want to fix up when you're
+spinning. Officially the above "if" statement probably shouldn't have
+braces. I think checkpatch won't yell since it's kinda two lines, but
+it's really just one statement... You could even make it one line
+since the 80-column rule has been relaxed a bit in the last few
+years...
+
+
+Sorry, I should have noticed the "pr_" stuff on the last review. Sorry
+for making you spin again. Hopefully the last one? I think the patch
+looks a lot nicer now FWIW! :-)
+
+-Doug
 
