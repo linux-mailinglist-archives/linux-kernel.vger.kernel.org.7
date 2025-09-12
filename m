@@ -1,201 +1,118 @@
-Return-Path: <linux-kernel+bounces-814058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B854AB54EBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:05:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B04A6B54EBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56156580343
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:05:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16EAE1C835E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D257309DBD;
-	Fri, 12 Sep 2025 13:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48862305077;
+	Fri, 12 Sep 2025 13:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYmYXTzS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jX8c+to4"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C4A2DC787;
-	Fri, 12 Sep 2025 13:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EE22DC787
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757682331; cv=none; b=Bbe7MImljA1Hkz/KIfNN6ku0dJTI6d+ggw84/8LG3goeGapylPBH9rBqwDVf3aURjqK2prRVU0evg8yurmOAp/rcqex8l+JHD1+6VZp7pXyTGHZF+JpMLy5Hl8j9taCz0yosCwMwqoAy/qe8UO3Kco1pd9kMVXGRdgmOTN0gVCk=
+	t=1757682380; cv=none; b=F5wogjKQf7n9nb5bjJ0NXGWE57M2z3/tVg2jXWUMzsOPg9chEkIQPdZsUUmoacZKyrXkurFKW2kjwyqrawPMyZvvISqUez/UYqGSSPqAexvq9S63JKmxJu9vqpOvjQprbt8oY55bNleoR28zydhme1DJec1hR0jkl5JcS8uawos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757682331; c=relaxed/simple;
-	bh=Oj2YhsrlW7/LL2/+FfpL2MDbCW0BhZLRp8bVjxYH3/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sG0Yha6Kx84OCUdLYCI46WvOpphwmhBiZVq1Ea/jzdrjmtSPETGxCVhc1CcbeVs7VZ+upjlrcacLDKAOrCkWHqNs5Rz5xcByvqCCp4P6FYN7asab6p97/SMj/Yi0dRgjuYLBRfcq4VHD0RmqfCKCaH+7xx4s9Yai26Gb+USyIPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYmYXTzS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBCDCC4CEF1;
-	Fri, 12 Sep 2025 13:05:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757682330;
-	bh=Oj2YhsrlW7/LL2/+FfpL2MDbCW0BhZLRp8bVjxYH3/4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QYmYXTzSvoub6ckp1xdpKOdLcSDR/MGN65tzs+mhcDVodcTVq4E0vyN83ehL+5jls
-	 ebOPq+YIRNK8+3qzlOYuHLUMUE+GawtStVvB5HdnTpuQ22W3MW2B3mlKxzDAmBWwy/
-	 1FJAe1Jve27dbaPIBLnrFnxL4ldNsXO/YOdz53BsBfUhceap1kcbGF0zR9X/iooRK+
-	 e5Mj+ZyPjWuKjpM2TzrFWsYtkyBB2VmsSyqjsyY7px1/Q+AJtZLXNMxbk9q6I4rFdP
-	 l33tP7e8dZb7kcc/eFpbFvF9LROABe07SVyr9fIGYJVmEqG2ZSn9gxJocjwm9l2l4T
-	 4mMRrYuK/Xpcw==
-Message-ID: <73c95643-e1eb-461c-b547-931642ec633a@kernel.org>
-Date: Fri, 12 Sep 2025 15:05:25 +0200
+	s=arc-20240116; t=1757682380; c=relaxed/simple;
+	bh=vk699rVhodheWPWoL0W1GwqpoAL90lDdPjyBrXCBHN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KxN6qAxFOVsJo3hAwnWSVTnLk5PaxC6sMKLjgImCQiC4nRpG0M0SaSsOBuW4hNMGWgknteLtbdMbVh1nD578dG/pB9+bYqO71EwKi4TaoYOgWuFH/d2daq4en29rU6kHxVf2FFW9g5pDY8bCtHl+n2mHEvi3XSczeoFmrDORjos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jX8c+to4; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77280e7bde3so281149b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:06:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757682378; x=1758287178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ckr1nOupG/FHOX87n/x1D8vzmImJQCNO14BvHg2YgKk=;
+        b=jX8c+to4GbSMMwxtcSe7lBC58RBqz1jndQPlZrKQetfaW8moNLTac4Aj7bzKrhMSd9
+         HdK0tmwqTkEaxx3MwyUQbkIJLSKJmrVZwO97QYO08oepYrbZnbZlWmjCMnWfpSN1E7Ut
+         4/P9RChZsA0TIvbcqG+Mmwl0A/wOb+9SofvTmfpD7wTPhVEKcaQItpl82cKhG9HwZ/za
+         QGeRucqz+Kkx2QImGe56jL7rcSrfKxNP7rrVFii19P1txLeRoQMZyyoxV7TwfcfMxzsr
+         sEC2dcheJC7M63KOK/AF7xrXAUza+GAqZ+Ydi4w5bFW7dWRHksV68H69/YLw1aVVWSUM
+         2xCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757682378; x=1758287178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ckr1nOupG/FHOX87n/x1D8vzmImJQCNO14BvHg2YgKk=;
+        b=CwHflgXNYXN3fLdIay0A8WKXZCb5T5+0XzgKYSMfZUQY6BO6UBgj9Ywb/nbn01rSmX
+         azt9IfNWLBX5qnkf/RDgH0VI2PXfA1XeztjQC0ghvbjoMREn5dZBfsYZc9VgaW6cu3zO
+         CW7aojXm6Uh984X6pLIk8oX+bCbooxMwxKnN0vZjDzhfStbLWa3iPJB9CvjHpiAcWc9s
+         S8xNMtmwT5u4i/B6h2OMnAsO+QXMg0vGMhKsGzH0K31TTu1ULNylvnYnsSSzl421hidh
+         4Igh3eRSp/idWl8ANyVCTI4TWHSbGEKUWvOOSYUoEmpg9P95JHsHJglusQ+g4sOnaxda
+         ZvLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXoAqy6XMK0AGBqXG+2cnkHSeditCuhAg0fQhIOg0cvSXt4wMwMZMqVSQ5rSyz0aF7BJIfVKvToXACSWGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT1F0IVgzI7Jx61bM8ekwiym4wdublIh9H4TtxEVg4FZSVTTdu
+	+V+kXtLGtj93IPglnObunvKcKJ0j8f2c7Tdwre/f2csGlXysrDo2STHmkfswT2RsDPH9L5TGlx5
+	ntNh7tM3y12EF7uQSaGrhL7I0SdM4+NuupA==
+X-Gm-Gg: ASbGncu16ITcLArAoLj5Bsf5GmFGrrSzpoT9Vlp/uXDMIqfWQsIMRsauxR7t64kLMoG
+	KUb4YDyQH3I2yYfWrlg873P0yG7eC5A+aK4cbKs81IfhSRp83YDmH9JrQl0zFg7o6L0wP6c+9k2
+	6ucr2VefSX43rbsRsR7hz5GRUwxe65dbupdnWMEFe9ESOudJnYph/pIA1LxSONkTclt3v6tPbfB
+	IlbZS8cKZsO3/yjDQ==
+X-Google-Smtp-Source: AGHT+IGTTvtC1IuLrcY8b4AvWUeugef+D6CmgxiovRG+v0ayfpqmLzCTs+HKBKHE/plPyLUKu92jZlW/yTLM+LNCrgY=
+X-Received: by 2002:a17:90b:3b84:b0:32b:bc5c:85b2 with SMTP id
+ 98e67ed59e1d1-32de4e69e6emr2013081a91.2.1757682378471; Fri, 12 Sep 2025
+ 06:06:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next] tools: ynl: rst: display attribute-set doc
-Content-Language: en-GB, fr-BE
-To: Donald Hunter <donald.hunter@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Jakub Kicinski <kuba@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- linux-doc@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250910-net-next-ynl-attr-doc-rst-v1-1-0bbc77816174@kernel.org>
- <m2v7lpuv2w.fsf@gmail.com> <a1f55940-7115-4650-835c-2f1138c5eaa4@kernel.org>
- <m2ecscudyf.fsf@gmail.com>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <m2ecscudyf.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250909151146.760450-2-thorsten.blum@linux.dev>
+ <CADnq5_MFDZdJg3XFFw9+tWB=_LP47PwE3HXgPK=sryOx+_0wGQ@mail.gmail.com> <FED6FFD1-2C51-45F4-BF34-76484C415C83@linux.dev>
+In-Reply-To: <FED6FFD1-2C51-45F4-BF34-76484C415C83@linux.dev>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Fri, 12 Sep 2025 09:06:07 -0400
+X-Gm-Features: Ac12FXwJwCDZ_BVgzYuq56yoU1VX5uqBys40Ob0J7ZAD0NdiVqJ_P3OSul7PJJI
+Message-ID: <CADnq5_NXCEFH6V_m0nvEqHU6tOhjUZ-ExSRb93Hi=7qxDAo6Vg@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdkfd: Replace kmalloc + copy_from_user with memdup_user
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/09/2025 13:07, Donald Hunter wrote:
-> Matthieu Baerts <matttbe@kernel.org> writes:
-> 
->> Hi Donald,
->>
->> On 11/09/2025 12:44, Donald Hunter wrote:
->>> "Matthieu Baerts (NGI0)" <matttbe@kernel.org> writes:
->>>
->>>> Some attribute-set have a documentation (doc:), but it was not displayed
->>>> in the RST / HTML version. Such field can be found in ethtool, netdev,
->>>> tcp_metrics and team YAML files.
->>>>
->>>> Only the 'name' and 'attributes' fields from an 'attribute-set' section
->>>> were parsed. Now the content of the 'doc' field, if available, is added
->>>> as a new paragraph before listing each attribute. This is similar to
->>>> what is done when parsing the 'operations'.
->>>
->>> This fix looks good, but exposes the same issue with the team
->>> attribute-set in team.yaml.
->>
->> Good catch! I forgot to check why the output was like that before
->> sending this patch.
->>
->>> The following patch is sufficient to generate output that sphinx doesn't
->>> mangle:
->>>
->>> diff --git a/Documentation/netlink/specs/team.yaml b/Documentation/netlink/specs/team.yaml
->>> index cf02d47d12a4..fae40835386c 100644
->>> --- a/Documentation/netlink/specs/team.yaml
->>> +++ b/Documentation/netlink/specs/team.yaml
->>> @@ -25,7 +25,7 @@ definitions:
->>>  attribute-sets:
->>>    -
->>>      name: team
->>> -    doc:
->>> +    doc: |
->>>        The team nested layout of get/set msg looks like
->>>            [TEAM_ATTR_LIST_OPTION]
->>>                [TEAM_ATTR_ITEM_OPTION]
->> Yes, that's enough to avoid the mangled output in .rst and .html files.
->>
->> Do you plan to send this patch, or do you prefer if I send it? As part
->> of another series or do you prefer a v2?
-> 
-> Could you add it to a v2 please.
+On Fri, Sep 12, 2025 at 8:48=E2=80=AFAM Thorsten Blum <thorsten.blum@linux.=
+dev> wrote:
+>
+> Hi Alex,
+>
+> On 9. Sep 2025, at 17:35, Alex Deucher wrote:
+> > Applied.  Thanks!
+> >
+> > On Tue, Sep 9, 2025 at 11:29=E2=80=AFAM Thorsten Blum <thorsten.blum@li=
+nux.dev> wrote:
+> >>
+> >> Replace kmalloc() followed by copy_from_user() with memdup_user() to
+> >> improve and simplify kfd_criu_restore_queue().
+> >>
+> >> No functional changes intended.
+> >>
+> >> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> >> ---
+>
+> I just learned that calling kfree() on an error pointer doesn't work, so
+> this patch should probably be reverted/not applied.
 
-Sure, will do!
+Thanks for the heads up.
 
->> Note that a few .yaml files have the doc definition starting at the next
->> line, but without this '|' at the end. It looks strange to me to have
->> the string defined at the next line like that. I was thinking about
->> sending patches containing modifications created by the following
->> command, but I see that this way of writing the string value is valid in
->> YAML.
->>
->>   $ git grep -l "doc:$" -- Documentation/netlink/specs | \
->>         xargs sed -i 's/doc:$/doc: |/g'
->>
->> Except the one with "team", the other ones don't have their output
->> mangled. So such modifications are probably not needed for the other ones.
-> 
-> Yeah, those doc: entries look weird to me too. Not sure it's worth
-> fixing them up, given that they are valid. Also worth noting that the
-> two formats that we should encourage are
-> 
->   doc: >-
->     Multi line text that will get folded and
->     stripped, i.e. internal newlines and trailing
->     newlines will be removed.
-> 
->   doc: |
->     Multi line text that will be handled literally
->     and clipped, i.e. internal newlines and trailing
->     newline are preserved but additional trailing
->     newlines get removed.
-> 
-> So if we were to fix up the doc:$ occurrences, then I'd suggest using
-> doc: >-
-
-Good point!
-
-If these entries look weird to you too, I will add one patch adding
-'>-', at least to push people to "properly" declare future scalar strings.
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+Alex
 
