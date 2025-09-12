@@ -1,193 +1,172 @@
-Return-Path: <linux-kernel+bounces-814746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C330B55817
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:10:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 676F7B5581A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37147C6C32
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:10:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 272B93AFBF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C1D32ED36;
-	Fri, 12 Sep 2025 21:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0BE32ED41;
+	Fri, 12 Sep 2025 21:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GI4t6+q5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Hg+efwLE"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EXz/FrYD"
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F038627280C;
-	Fri, 12 Sep 2025 21:09:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1938532ED2D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757711394; cv=none; b=hwLvYcvmp9Lu0EhZ+rP0NeiHMNqoMPcq+l5xm29cnzwTBR6rYT2ieq0YYobA3cIxfETOMTly7U2GKpdG04ukcr7get2Gm7g1XFFNj0ZYCbo/5YM/FnZacRleBG9yZ+AM/yNWuWqw8XzFHzmYBGuduwTeS7xDogQoLKUSqqFL2Js=
+	t=1757711412; cv=none; b=IDIRiIQzcUVqN4ntssd1rq6RRkMrKmj79AQgqadLE9ROpAC2qDluwmCdfw7HCjgKONoOqFsR++Y3EBVe7+ZwWf2ee61v1bqVB+JvOYyh0g+l0ylFKVu9IZd7zWxEmERrpyTfVOK5TmkV7eG662v8tKfjSJldcJjE0T2H1klDass=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757711394; c=relaxed/simple;
-	bh=e7oq3c2bmJNjTLNH0WCmh3oqHoeflOXUxfd9Pnphqm8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Wjlqgy/RxUiW8j/BMkZIDOajFJl/zhU9mq4Xxh1CmRqb8YGjgnWdUV1ga9bDXrl2JstZFIbCd0mQeh5h7mSJnMNUiccVpv4nzmXTPLmTVTQERk0+2rem4lKeKQY63tmkzZSGQ5GlVea3x3UXjQnmOp6oUQEf3vutd7c8bLdYSGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GI4t6+q5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Hg+efwLE; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 128BF7A01CD;
-	Fri, 12 Sep 2025 17:09:50 -0400 (EDT)
-Received: from phl-imap-17 ([10.202.2.105])
-  by phl-compute-05.internal (MEProxy); Fri, 12 Sep 2025 17:09:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757711389;
-	 x=1757797789; bh=CLqRBKVf5IvTh800HM+2y42LrS7XFT+UlQoEp2IAPso=; b=
-	GI4t6+q5kXjCO6cruisFBrxlfYspQdyR2nSwyVUifQzM7VEMrmYCNyjAVYjNhTgm
-	WqCqX8kZdK2deNSwLTBVJ3N8pSl0NhU5c9HH2kyD2VdFMzafqFVFH9hpDeIJNrzj
-	g4Qa7RVKOklHp6T9//Fk2QqJOmtlyMcvCzaPH7vzB72i03nMdNbtRdOZjHzQ4h/L
-	ftry70985VVJ0JC8deKiZyhzurfBwKKn5fmc5YLwZO9NW0AWFO9cbhr6Oa1pnc8X
-	IbeXUCwwcUmmLw1JIdKGv7tJjqaUU7L6MH1vAFkSQFJ8ZQ5CrDw16pFxmTMYZ3b4
-	iRfechyn/kmAf/3LIGcGLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757711389; x=
-	1757797789; bh=CLqRBKVf5IvTh800HM+2y42LrS7XFT+UlQoEp2IAPso=; b=H
-	g+efwLEojmMZRq8iZwYjjIYprH/XYxRGz4gmpycxwdhPe1s8+YfTor2bbGv0c0B2
-	RLsa8YQz2KykS1Kzwhrjk5vc4sNyX55mlyEc/YPCTF+a+h5XGA1P5EP0qMtntlaW
-	glaOlh/Kn+XcHwMTpuhR2UrjWZGj35jBvgxWwqm5OAUbjTj6+VnIzZ7ANky9E3Wz
-	IpurPFx3x7zuk4nsRKyP70Og/99u4DsemcafNS5R+S7aIEm+gzBBWkmSBQ6mFI6Z
-	sZlMDN5oUpNr0X2A2oOZa95CyTZTboiXtWUjzqMltgruej+lvRP5fnsTfi9FdrWx
-	iwGev+FnsPgCi2tPWVfjQ==
-X-ME-Sender: <xms:GozEaJ7WVeaEI1J4FNYCAeFSe1bMurC67OT_BB0Jbhk6PWXzJbvBLQ>
-    <xme:GozEaG5x_FaTJVZFNRf7pkhjUFbOGrPCkzZW9DKjVtpsq9dK8yfY--QfEjU7m0KIT
-    _ceh86DRDz2N8UZEKI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeftddtlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpeevhfelgeefleefgedttefhgfffieejkefghfeghffhheelieeivdduteevhedvgeen
-    ucffohhmrghinheplhifnhdrnhgvthenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthho
-    peefvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghhvghsthgvrhdrrgdruh
-    hnrghlsegrrhhinhgtledrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghl
-    lhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghhrhhishhtohhphhgvrd
-    hlvghrohihsegtshhgrhhouhhprdgvuhdprhgtphhtthhopegrnhgurhgvrghssehgrghi
-    shhlvghrrdgtohhmpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvg
-    hrrdgsvgdprhgtphhtthhopegrlhgvgigrnhguvghrrdhsvhgvrhgulhhinhesghhmrghi
-    lhdrtghomhdprhgtphhtthhopehsvghrghhiohdrphgrrhgrtghuvghllhhoshesghhmrg
-    hilhdrtghomhdprhgtphhtthhopehsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghp
-    thhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrgh
-X-ME-Proxy: <xmx:GozEaDU9e-ltO4GjQuBQZhofb5Kj9EDyPaq1nCnmbW-klx59mcvMXA>
-    <xmx:GozEaKDK4yJBaHtkl_LHlcH0jkKXOLdoeoxqmFBWV2JzvB84rcbpfw>
-    <xmx:GozEaCC2WD64DUi7GSydM1X-85yv-7hi6n4v8g8ii_kFrgTh92XlXw>
-    <xmx:GozEaJphW--h3lZUWi9M-TVTnM42xRnish8dD4tvsnrWGtNkHbKeKA>
-    <xmx:HYzEaKn6J5RHAuH4Qzhj_HsWd61NA-XKIndTEYj5XMySXeVQsv1vmoqt>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id AFA80C40077; Fri, 12 Sep 2025 17:09:46 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757711412; c=relaxed/simple;
+	bh=tNcYr5ziqs6D8Tk6SiXuOUEiirhboBKH4zEUjW3nj/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ro0zRhcFlFEFiBZxrPXLKmdoZmMFDGIG76xw8F9RLfpJvvCmyaAHxRRDJmQtoMJlM7T5BWCSsKV0yQtud6Xto7N6zgr+UJL4b/e322f89fdKJNOSZLSNsiH9zCyko6CaF+NH+OrrlWynkLLAnAeeKB7B+SjYkcmdV6m+0FnXIPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EXz/FrYD; arc=none smtp.client-ip=95.215.58.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8c93b586-1ebd-44c1-87d6-bcbb8030f795@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757711398;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v7SST8umNfuQI1uj5w85mwFvKzhhH3zx+XI2NwpkpMs=;
+	b=EXz/FrYD+KUVjFXdQDMRdidl/sSKPAfYFlPGoTsOsxXoyx66KHRYyhVkbpCatQ1G0+Xckg
+	+0VEO/8KF17Aka1OPF5zg0jc84I4Jol6aMAQFRA6xa7j2s6PDA/5eTSdO1RVA7SsD5/7OC
+	0bMMD8V6Elf1RgNC4tmvEl5voS0kQ2E=
+Date: Fri, 12 Sep 2025 14:09:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: AneuvEk2E7Kg
-Date: Fri, 12 Sep 2025 23:09:22 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nicolas Ferre" <nicolas.ferre@microchip.com>, ksummit@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
- linux-mm@kvack.org, imx@lists.linux.dev,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Richard Weinberger" <richard@nod.at>,
- "Lucas Stach" <l.stach@pengutronix.de>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "Ankur Arora" <ankur.a.arora@oracle.com>,
- "David Hildenbrand" <david@redhat.com>,
- "Mike Rapoport" <rppt@kernel.org>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
- "Matthew Wilcox" <willy@infradead.org>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Vlastimil Babka" <vbabka@suse.cz>,
- "Suren Baghdasaryan" <surenb@google.com>,
- "Ira Weiny" <ira.weiny@intel.com>, "Nishanth Menon" <nm@ti.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "Chester A. Unal" <chester.a.unal@arinc9.com>,
- "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
- "Andreas Larsson" <andreas@gaisler.com>,
- "Mihai.Sain" <Mihai.Sain@microchip.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Claudiu Beznea" <claudiu.beznea@tuxon.dev>
-Message-Id: <1d58fc51-b921-4669-b6e2-f9a71d1eda58@app.fastmail.com>
-In-Reply-To: <f931da29-5f10-494a-acc0-309bd805d41a@microchip.com>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <f931da29-5f10-494a-acc0-309bd805d41a@microchip.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCHv3 perf/core 0/6] uprobe,bpf: Allow to change app registers
+ from uprobe registers
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+ Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+ John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>
+References: <20250909123857.315599-1-jolsa@kernel.org>
+ <CAEf4Bzb4ErWn=2SajBcyJxqGEYy0DXmtWuXKLskPGLG-Y9POFA@mail.gmail.com>
+ <7f591ac9-d3e0-4404-987c-40eceaf51fbb@linux.dev> <aMSIr1oItIfWQd5R@krava>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ihor Solodrai <ihor.solodrai@linux.dev>
+In-Reply-To: <aMSIr1oItIfWQd5R@krava>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 12, 2025, at 18:49, Nicolas Ferre wrote:
-> Arnd,
->
-> On 09/09/2025 at 23:23, Arnd Bergmann wrote:
->> I'm still collecting information about which of the remaining highmem
->> users plan to keep updating their kernels and for what reason.
->
-> We have 1GB of memory on our latest Cortex-A7 SAMA7D65 evaluation boards 
-> [1] (full production announced beg. 2025). The wide range of DDR types 
-> supported make some of these types interesting to use at such density.
-> Both our Cortex-A7 SoCs don't have IOMMU; core and DMAs can address the 
-> full range of the 32 bit address space, so we're quite 
-> standard/simplistic in this area. We use CMA with large chunks as our 
-> camera or display interfaces address "modern-ish" resolutions (~1080p).
->
-> We use CONFIG_HIGHMEM and activated it for simplicity, conformance to 
-> usual user-space workloads and planned to add it to our sama7_defconfig 
-> [2]. I understand that we might reconsider this "by default" choice and 
-> move to one of the solutions you highlighted in your message, lwn.net 
-> article or recent talk at ELC-E.
+On 9/12/25 1:55 PM, Jiri Olsa wrote:
+> On Fri, Sep 12, 2025 at 01:28:55PM -0700, Ihor Solodrai wrote:
+>> On 9/9/25 9:41 AM, Andrii Nakryiko wrote:
+>>> On Tue, Sep 9, 2025 at 8:39 AM Jiri Olsa <jolsa@kernel.org> wrote:
+>>>>
+>>>> hi,
+>>>> we recently had several requests for tetragon to be able to change
+>>>> user application function return value or divert its execution through
+>>>> instruction pointer change.
+>>>>
+>>>> This patchset adds support for uprobe program to change app's registers
+>>>> including instruction pointer.
+>>>>
+>>>> v3 changes:
+>>>> - deny attach of kprobe,multi with kprobe_write_ctx set [Alexei]
+>>>> - added more tests for denied kprobe attachment
+>>>>
+>>>> thanks,
+>>>> jirka
+>>>>
+>>>>
+>>>> ---
+>>>> Jiri Olsa (6):
+>>>>         bpf: Allow uprobe program to change context registers
+>>>>         uprobe: Do not emulate/sstep original instruction when ip is changed
+>>>>         selftests/bpf: Add uprobe context registers changes test
+>>>>         selftests/bpf: Add uprobe context ip register change test
+>>>>         selftests/bpf: Add kprobe write ctx attach test
+>>>>         selftests/bpf: Add kprobe multi write ctx attach test
+>>>>
+>>>
+>>> For the series:
+>>>
+>>> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+>>>
+>>> Question is which tree will this go through? Most changes are in BPF,
+>>> so probably bpf-next, right?
+>>
+>> Hi Jiri.
+>>
+>> This series does not apply to current bpf-next, see below.
+>>
+>> Could you please respin it with bpf-next tag?
+>> E.g. "[PATCH v4 bpf-next 0/6] ..."
+>>
+> 
+> hi,
+> the uprobe change it needs to be on top of the optimized uprobes (tip/perf/core)
+> but the bpf selftests patches could be applied on bpf-next/master and disabled
+> in CI until tip/perf/core changes are merged in?
 
-Hi Nicolas,
+Currently the series isn't even picked up by CI properly because it
+doesn't apply. It's not that the tests are failing.
 
-Thanks for your summary! I think with 1GB, you'll be mostly on the safe
-side in general. I would definitely recommend using VMSPLIT_3G_OPT
-as the default in the long run and turn off highmem on those.
+If there is a dependency on external (to bpf-next) commit, we could
+add it as a temporary CI patch or just wait for it to be merged in.
 
-My expectation is that VMSPLIT_3G_OPT may uncover application bugs, but
-those should be fixed anyway, while using highmem is safer but makes
-everything slightly worse through the added runtime overhead and
-increased fragmentation risk. The 1GB case has caused additional bugs
-because it has a very small highmem area on CONFIG_VMSPLIT_3G and
-that can make it run out of highmem first. 
+But if you can make this series applicable to bpf-next without
+tip/perf/core changes, you can do that and add relevant tests to
+`tools/testing/selftests/bpf/DENYLIST`. It's important to not forget
+to remove them later though.
 
-> Of course we plan to maintain these boards and keep updating our kernel 
-> "offer" once a year for those associated SoCs (with maintaining 
-> upstream, as usual). As you said, being ARMv7, we're quite confident for 
-> now.
->
-> As you mentioned, we've recently released one ARMv5te arm926ejs-based 
-> soc: the SAM9x75 family. But we don't have the intention to use too big 
-> memory sizes on them, even if they do address large screens, with LVDS 
-> and MIPI or modern camera interfaces...
->
-> I don't have too much info about our customer's use cases as they are 
-> very, very diverse, but don't hesitate to reach out to me if you have 
-> questions about a particular combination of use.
-> Thanks for your regular update on these topics.
+> 
+> thanks,
+> jirka
+> 
+> 
+>> Thanks!
+>>
+>> $ git log -1 --oneline
+>> a578b54a8ad2 (HEAD -> master, origin/master, origin/HEAD,
+>> kernel-patches/bpf-next) Merge branch
+>> 'bpf-report-arena-faults-to-bpf-streams'
+>> $ b4 am 20250909123857.315599-1-jolsa@kernel.org
+>> [...]
+>> $ git am ./v3_20250909_jolsa_uprobe_bpf_allow_to_change_app_registers_from_uprobe_registers.mbx
+>> Applying: bpf: Allow uprobe program to change context registers
+>> Applying: uprobe: Do not emulate/sstep original instruction when ip is
+>> changed
+>> error: patch failed: kernel/events/uprobes.c:2768
+>> error: kernel/events/uprobes.c: patch does not apply
+>> Patch failed at 0002 uprobe: Do not emulate/sstep original instruction when
+>> ip is changed
+>> [...]
+>>
+>>>
+>>>>    include/linux/bpf.h                                        |   1 +
+>>>>    kernel/events/core.c                                       |   4 +++
+>>>>    kernel/events/uprobes.c                                    |   7 +++++
+>>>>    kernel/trace/bpf_trace.c                                   |   7 +++--
+>>>>    tools/testing/selftests/bpf/prog_tests/attach_probe.c      |  28 +++++++++++++++++
+>>>>    tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c |  27 ++++++++++++++++
+>>>>    tools/testing/selftests/bpf/prog_tests/uprobe.c            | 156 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>>>>    tools/testing/selftests/bpf/progs/kprobe_write_ctx.c       |  22 +++++++++++++
+>>>>    tools/testing/selftests/bpf/progs/test_uprobe.c            |  38 +++++++++++++++++++++++
+>>>>    9 files changed, 287 insertions(+), 3 deletions(-)
+>>>>    create mode 100644 tools/testing/selftests/bpf/progs/kprobe_write_ctx.c
+>>
 
-I'm curious about the AT91RM9200 part, which I think is the oldest 
-SoC with Linux support that is still advertised as "in production".
-I understand that Microchip hardly ever discontinues parts, and there is
-clearly no need to stop supporting it as long as you maintain the SAM9
-family, but I wonder how many users are still buying this part or
-running the latest kernel on it. 
-
-    Arnd
 
