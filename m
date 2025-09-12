@@ -1,180 +1,170 @@
-Return-Path: <linux-kernel+bounces-813835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05F9B54B57
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:46:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEE60B54B6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6736C488630
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C3091BC35FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 727F1301003;
-	Fri, 12 Sep 2025 11:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A3D302CC1;
+	Fri, 12 Sep 2025 11:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FLd+2XvC"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7O3OL3V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BB12957C2
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6287301015;
+	Fri, 12 Sep 2025 11:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757677573; cv=none; b=oFNNW0pLugAoFs/RTe3Pt7qEfTU+a5KUKLJS+OpeAIpD99YIjkm75qE2HqlTVD/wrf4BqTN7q7erPXWnzRelf72cuPqtF1eUzvHBWg4IsvCCEj8O/Jn1UP9U5DUmy9E3QDS7AzSaDnzNXXSCFYKJeDy0Hc3RLqK+mJpeB0mnLNQ=
+	t=1757677594; cv=none; b=UcPfgDT0mG45nTqswD6AxF/rwBACLr5BPGJgWHFwnN33XrLv3tTCDDJ5mDqM43xgiE5BHr6uJ+UwZbxJ6uu4w+tkQt7NBUpfsvXko34rIXeXdc4HsHrJM6trM+ho1UuuCt++iMu90R38t4QfblZITzkCcy1AlBm77vOA3Mna+LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757677573; c=relaxed/simple;
-	bh=9f7Rt8ZJ2W2atidLryZjEWAbi3srUdougeJJ164aCR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mna+EUwwf9/ySks33lVmxyQfWOHXTf68i3gsfQcmh3hAbD1igwKNNhw9pDlevStOWct0IEUUl6w/Qf3LqZYiWDePxstN7PplBvhdjzzWT7M4xeXAbSj9WZO+F/hX2uxAjUqfRZ++PsePulnEVhUZuM+udqZ1tifKy2sE1x5y0Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FLd+2XvC; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fEJd001284
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:46:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=9R/kPch3W5Cml6FifUegM7lF
-	XoROZHqulO4RRRDKQxA=; b=FLd+2XvCvSN+zewfv4IgufacPZN8XrDTtIGPVMb6
-	L+NKOG2DDaKsU3DaTzamqqlGdcZnuEAUkMVzfkttkTIo0o5gEsCm1fv6hiP3xvWh
-	W2ViqQ1sNFI6A+wtPdDEaj1oC6rVZrmfDJYWLr02dhmqiNuIO6inWeIi9pH74azs
-	eFDUpEEAuTJWBfY6R4iO6IKbwPUpILpPOoN5s+/7kh4LvPfiCF15IZFTrPdGmYjZ
-	XSWzcLL5Qp+XNlwjOmQhtJfPVaQrQlPbNN7RJ104Z8gAQjTnOq1MYmqK/TwFpp/Z
-	lJjDAN1B20YuM6UkW+B2CcHfaJyKKS3C2UEOtQfZt4iQTQ==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493f6h6gw6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:46:11 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4b60d5eca3aso46937111cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:46:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757677569; x=1758282369;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9R/kPch3W5Cml6FifUegM7lFXoROZHqulO4RRRDKQxA=;
-        b=gTMOzhxtUFHSygezmaEWKepwYt+2+1Ky7afPqMfAZxs1XQOLurVOyeE4imvjp/1ByO
-         qx35FBY0t7Dz2W31csqVV3uJsOkEr6a+Ho77BCzP1d0RaiHIw+BYrcJkPMMKF1pdJzhd
-         Sp6rx25fIbZOfVK9dqYHswFyYfu15Q0J4Ao2W8l/5TWy0faukXjgTV2thMaat69P2OSU
-         hGx5YQXIvKF5MO5E5z2PKtq/wUaU4ATioLyPRON9VfCuDNkhzOFjB1H8FG9N6IhfBmIc
-         7sObGtrevuEqHGokhAFnXSmIMk5Ms90bTWQ4/oDgQ76avHomxxZS+o1zOGRqRHWNXjJJ
-         fYFg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+RWnetS0NFDizIvbSjff8B7wJE7dj7ShCzbYs+9EEYyjfRLQ2Wvz/r825RjNG57k9lO+aexoKpQ3Fx7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyODn7qj9/kvrXbyFWh27YIhbXnioT7iZTE/McxvFCoNhTiUTKr
-	JP3moToupoEhby7RkLqrBmri9BNNUtdt3TvGkfZcSsVjKemW3xlXhrKYjb8bmlS8LJcHlxPq1pp
-	Zr05Txj/UAvWPKFNBuEHFsqugi8e/FI0DMqaF+3TACWgtccmXCdz1GsJARJWx9lxbrPw=
-X-Gm-Gg: ASbGnctRzvKByBikmTaQDSj8ZbLQNlpgR4V16n89TNWQcZ2GSXyisVC8neVF8Anqqbw
-	FQMuI2hRj3eUP7kvYAjzIwoFcsaO3CKnoAIwGI9nN76JIYpqBRedsKm7K2USWp+297Fgxi8Kz5F
-	Zf9IazuJMr9wkCgWuj2K6UX+zgOLPNQclt5WgPR26XMLvNY8JQMOc/QaHGlNRQOCJpfIII2H0W4
-	+jwXZTj5YWlauzs+abuVw8oPc509X7QVeGUOjQGecey+VGS074RZFG1IXXFx7Jla/g6nOmACWTS
-	Eeb9qC+4cjeF+wjh2j9fEeJhyzcxPd1s0kqdbkHRnSxWSbR2EhJ11muRuVeb+N2OADcG8ps2vC/
-	XKSKaTHAmkWudGlvOMV35isfXJBHyBKIdGDENGXd97bn6wYWit9OE
-X-Received: by 2002:a05:622a:3cd:b0:4b5:e606:dc14 with SMTP id d75a77b69052e-4b77d17bbe0mr26549811cf.72.1757677569069;
-        Fri, 12 Sep 2025 04:46:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdVs3SKgOxiIfzvO/EkGuSuQowx0IqMmkOv8Q4BBfV0cg+8bLLR4jRDO1o8cJV0pjYZeiqPg==
-X-Received: by 2002:a05:622a:3cd:b0:4b5:e606:dc14 with SMTP id d75a77b69052e-4b77d17bbe0mr26549321cf.72.1757677568463;
-        Fri, 12 Sep 2025 04:46:08 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e63c63d43sm1104326e87.91.2025.09.12.04.46.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 04:46:07 -0700 (PDT)
-Date: Fri, 12 Sep 2025 14:46:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
-        li.liu@oss.qualcomm.com
-Subject: Re: [PATCH 1/2] dt-bindings: display/msm: dp-controller: Add SM6150
-Message-ID: <sx64y6vfov4yag46erckpbl7avwmqlsqt3siebckn76m6jqxjh@f5lueyih6n3q>
-References: <20250912-add-dp-controller-support-for-sm6150-v1-0-02b34b7b719d@oss.qualcomm.com>
- <20250912-add-dp-controller-support-for-sm6150-v1-1-02b34b7b719d@oss.qualcomm.com>
+	s=arc-20240116; t=1757677594; c=relaxed/simple;
+	bh=ajsDjNRm0K7ntGPXQIC7TJ0zHzWLZyEObLeHZQzcXQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r/yFgWyTDva0uaXLLMYZOE+6XIhmlY55fHQVQtcZsKAZ1GhHaoXIkaB80dMG+BwEL0kzOF6t/3tBD/4xNTAK6Wh4BiXw7xBgnzJILA7cfeOGfJgyw5X4hZjBCwSC6g/t6mi3e4oLrwTf/HU6E2RGhsrAfq3YOTMvuhZnDJ4kvIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7O3OL3V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D0F8C4CEF9;
+	Fri, 12 Sep 2025 11:46:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757677594;
+	bh=ajsDjNRm0K7ntGPXQIC7TJ0zHzWLZyEObLeHZQzcXQ4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Y7O3OL3VjW/em3TnrVnwa4aQRbe/NQdmkzqSBcDPIZUsmCajH+P9uuhP/ygHC1b9b
+	 3dY3ewGYY+po0T/92pEfeUfNnWERiivzppyPI5zqUCk2hth4TuYT21mOz708zsYa7j
+	 aZhMwm0j92BoUYa46NGffpxaoOvgqa4lUab+kqoZ1MfcCECn6W0PhJkFVjt+BpNJtF
+	 AAjQvOXgNhHePbgzID90g1HtiL83D6Iym3rr+n/8oZXTJiIYTHZHm64zwDW2Sv8KM1
+	 Lff3M6uFxHkU1DW+czzi30yWwcGctQixDqh3U8FQ5hz1RgQWSxAQkI9NIMMhrfKzos
+	 3JreTEaErOTdA==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ux2Ea-00000008Rru-1yXa;
+	Fri, 12 Sep 2025 13:46:32 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v5 00/18] Split sphinx call logic from docs Makefile
+Date: Fri, 12 Sep 2025 13:46:07 +0200
+Message-ID: <cover.1757677427.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912-add-dp-controller-support-for-sm6150-v1-1-02b34b7b719d@oss.qualcomm.com>
-X-Proofpoint-ORIG-GUID: tE-80X3v-9HxKFylUI9dL1YiSo5xgSlb
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEwMDE3NyBTYWx0ZWRfX7oFoAGFdQole
- KpbRtn7qWD0YfbWnVRUqbTjLhdfKMxPlAAS1UCukO9vpbD8ArbYX77XjVUzD4/+Q6rcZWvnV6iG
- ioXvBeJUKQDprmplFaQV2TAn239pQEJLrGNOlx4Pj1XvJMSqXTnmkZf3BumBWxx32Mr0XE+kNcp
- YiEXYQ0Lhqe3u5qqe2/MQObfYmhv2HKKKN8O69+N/MLO/8BF29mg2RVriKzsgwmYnAWtcVHLMlx
- DMZdaE6lf+yknzurQcdI5sZJBGHOphePzg/kCOGsV7r/4EdQlzY4dl9EekdIfdCcfajYNVSmpQU
- W5iKbIazNjt1sfyDOrntLBAmBe71frOWf278aXFYUq4Q1k/yNadPnO7UNCv3LFJTEKdaOOjw5U3
- UUMYf3Tn
-X-Authority-Analysis: v=2.4 cv=WPB/XmsR c=1 sm=1 tr=0 ts=68c40803 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=EjQU334iH38qswJM8_UA:9 a=CjuIK1q_8ugA:10
- a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-GUID: tE-80X3v-9HxKFylUI9dL1YiSo5xgSlb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 spamscore=0 clxscore=1015 priorityscore=1501 adultscore=0
- bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509100177
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Fri, Sep 12, 2025 at 07:39:16PM +0800, Xiangxu Yin wrote:
-> Add DisplayPort controller for Qualcomm SM6150 SoC.
-> SM6150 shares the same configuration as SM8350, its hardware capabilities
-> differ about HBR3. Explicitly listing it ensures clarity and avoids
-> potential issues if SM8350 support evolves in the future.
+Hi Jon,
 
-The controller is exactly the same as the one present on SM8150. HBR3 is
-a property of the PHY.
+This series does a major cleanup at docs Makefile by moving the
+actual doc build logic to a helper script (scripts/sphinx-build-wrapper).
 
-> 
-> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> index aeb4e4f36044a0ff1e78ad47b867e232b21df509..2bebc182ffe348fd37c215a6bf0becea11e5ac15 100644
-> --- a/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/dp-controller.yaml
-> @@ -46,6 +46,7 @@ properties:
->        - items:
->            - enum:
->                - qcom,sar2130p-dp
-> +              - qcom,sm6150-dp
->                - qcom,sm7150-dp
->                - qcom,sm8150-dp
->                - qcom,sm8250-dp
-> @@ -261,6 +262,7 @@ allOf:
->              enum:
->                - qcom,sc8180x-dp
->                - qcom,sdm845-dp
-> +              - qcom,sm6150-dp
->                - qcom,sm8350-dp
->                - qcom,sm8650-dp
->      then:
-> 
-> -- 
-> 2.34.1
-> 
+Such script was written in a way that it can be called either
+directly or via a makefile. When running via makefile, it will
+use GNU jobserver to ensure that, when sphinx-build is
+called, the number of jobs will match at most what it is
+specified by the "-j" parameter.
+
+The first 3 patches do a cleanup at scripts/jobserver-exec
+and moves the actual code to a library. Such library is used
+by both the jobserver-exec command line and by sphinx-build-wrappper.
+
+The change also gets rid of parallel-wrapper.sh, whose
+functions are now part of the wrapper code.
+
+---
+
+v5:
+- merged comments with the script;
+- placed n_jobs on a separate function;
+- nitpick: dropped a for loop used instead of list append.
+
+v4:
+- updated references for sphinx-pre-install after its rename;
+- added some extra patches to add more options to python_version,
+  allowing it to bail out and suggest alternatives;
+- added a patch at the end to explicitly break doc builds when
+  python3 points to python3.6 or older.
+
+v3:
+- rebased on the top of docs-next;
+- added two patches to build man files that were on a separate
+  patch series.
+
+v2:
+- there's no generic exception handler anymore;
+- it moves sphinx-pre-install to tools/docs;
+- the logic which ensures a minimal Python version got moved
+  to a library, which is now used by both pre-install and wrapper;
+- The first wrapper (05/13) doesn't contain comments (except for
+  shebang and SPDX). The goal is to help showing the size increase
+  when moving from Makefile to Python. Some file increase is
+  unavoidable, as Makefile is more compact: no includes, multple
+  statements per line, no argparse, etc;
+- The second patch adds docstrings and comments. It has almost
+  the same size of the code itself;
+- I moved the venv logic to a third wrapper patch;
+- I fixed an issue at the paraller build logic;
+- There are no generic except blocks anymore.
+
+Mauro Carvalho Chehab (18):
+  scripts/jobserver-exec: move the code to a class
+  scripts/jobserver-exec: move its class to the lib directory
+  scripts/jobserver-exec: add a help message
+  scripts: sphinx-pre-install: move it to tools/docs
+  tools/docs: python_version: move version check from sphinx-pre-install
+  tools/docs: python_version: drop a debug print
+  tools/docs: python_version: allow check for alternatives and bail out
+  tools/docs: sphinx-build-wrapper: add a wrapper for sphinx-build
+  tools/docs: sphinx-build-wrapper: add support to run inside venv
+  docs: parallel-wrapper.sh: remove script
+  docs: Makefile: document latex/PDF PAPER= parameter
+  tools/docs: sphinx-build-wrapper: add an argument for LaTeX
+    interactive mode
+  tools/docs,scripts: sphinx-*: prevent sphinx-build crashes
+  tools/docs: sphinx-build-wrapper: allow building PDF files in parallel
+  docs: add support to build manpages from kerneldoc output
+  tools: kernel-doc: add a see also section at man pages
+  scripts: kdoc_parser.py: warn about Python version only once
+  tools/docs: sphinx-* break documentation bulds on openSUSE
+
+ Documentation/Makefile                        | 136 +---
+ Documentation/doc-guide/kernel-doc.rst        |  29 +-
+ Documentation/doc-guide/sphinx.rst            |   4 +-
+ Documentation/sphinx/kerneldoc-preamble.sty   |   2 +-
+ Documentation/sphinx/parallel-wrapper.sh      |  33 -
+ .../translations/it_IT/doc-guide/sphinx.rst   |   4 +-
+ .../translations/zh_CN/doc-guide/sphinx.rst   |   4 +-
+ Documentation/translations/zh_CN/how-to.rst   |   2 +-
+ MAINTAINERS                                   |   3 +-
+ Makefile                                      |   2 +-
+ scripts/jobserver-exec                        |  88 +-
+ scripts/lib/jobserver.py                      | 149 ++++
+ scripts/lib/kdoc/kdoc_files.py                |   5 +-
+ scripts/lib/kdoc/kdoc_output.py               |  84 +-
+ scripts/lib/kdoc/kdoc_parser.py               |   7 +-
+ scripts/split-man.pl                          |  28 -
+ tools/docs/lib/python_version.py              | 178 ++++
+ tools/docs/sphinx-build-wrapper               | 770 ++++++++++++++++++
+ {scripts => tools/docs}/sphinx-pre-install    | 135 +--
+ 19 files changed, 1296 insertions(+), 367 deletions(-)
+ delete mode 100644 Documentation/sphinx/parallel-wrapper.sh
+ create mode 100755 scripts/lib/jobserver.py
+ delete mode 100755 scripts/split-man.pl
+ create mode 100644 tools/docs/lib/python_version.py
+ create mode 100755 tools/docs/sphinx-build-wrapper
+ rename {scripts => tools/docs}/sphinx-pre-install (93%)
 
 -- 
-With best wishes
-Dmitry
+2.51.0
+
 
