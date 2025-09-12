@@ -1,102 +1,203 @@
-Return-Path: <linux-kernel+bounces-813767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6FFB54A75
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:57:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A148FB54A77
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 755693BDFAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:57:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A921D604EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9B82FD1DA;
-	Fri, 12 Sep 2025 10:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A532FD1DA;
+	Fri, 12 Sep 2025 10:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="tVRFgT3w"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="X/l9f1PK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08501EA7DD;
-	Fri, 12 Sep 2025 10:57:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757674640; cv=none; b=p7bGDBCcN5dqrmH5SlLd+6/3DrZe2BE56RFR+5tf3BlsC845njByi0wXtGPy8AbpUNUzlLFCgOGyDNCqGyCfWSca3zXnGRlgHCZnxjVMf5Lk4n4Z7DOxkgjBWeTV0wAtNGA082ypzmZeoNVrKrDiQUUI60128ixRvrO7rV9U6xo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757674640; c=relaxed/simple;
-	bh=CMxrwtZy/ej5tje20LY39IhUva5QLPmlbeCy5NB1eG0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=fx5xkThRguaFz60AGQrGuw1Hyb/qd1NKSnt0Jy1tHC+PwJSVcoA8cMNhAhJw3NWOqBEdx2C9np8J8KcquOYaedeJITsxAIfrXfvxJ5Wr8ip/4qSyLWey/VolMVFX9v7VGNkRbtUNE3ODSMXBCUC2OiQIURN/HENg2hIGPmZi9V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=tVRFgT3w; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1757674635;
-	bh=CMxrwtZy/ej5tje20LY39IhUva5QLPmlbeCy5NB1eG0=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=tVRFgT3wPYBUhvz+I5yGaaOIRcr0LyGbSRTT2P1N9PeCVOaLBduiBTQGUXLiGCvIA
-	 zjABJUVEI1WNKBNoAf92rvRgtrqlqM5MDvIT5QMBjKl1KtTmeph63lke6b+5ZITH0l
-	 GojC3Twv02/3b4xlee55++ebmE0Jb051+Wm5gbbU=
-Date: Fri, 12 Sep 2025 12:57:12 +0200 (GMT+02:00)
-From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Shuah Khan <shuah@kernel.org>
-Message-ID: <5e4d9943-3a8d-4281-9007-f49bfc66dc6d@weissschuh.net>
-In-Reply-To: <965c8d7e-c5f2-4bd8-ab7c-c3116632f015@sirena.org.uk>
-References: <CA+G9fYv77X+kKz2YT6xw7=9UrrotTbQ6fgNac7oohOg8BgGvtw@mail.gmail.com> <1e331ebb-3315-4cbe-b194-ccbeeaded4da@t-8ch.de> <965c8d7e-c5f2-4bd8-ab7c-c3116632f015@sirena.org.uk>
-Subject: Re: next-20250909: selftests/arm64/gcs/basic-gcs.c:390:30: error:
- use of undeclared identifier 'HWCAP_GCS'
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42E21EA7DD
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757674702; cv=pass; b=aEJfQaTxvo3qImYLo09dulM7xos3e7/fsvMlX+yzt06FFzXA3ftXiM25vNEvhCInFJGOEVhD9CwG06nUMwK8QNSVpKdl6Wfggmn7UWVMB67xo3srHxiWJLZbG3pQjLJyXrs5V2nATWcnaoxehqn5Q401MnlH4MsWecX/LJgYaXc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757674702; c=relaxed/simple;
+	bh=YJXNxaD1HGGLt8C4Puu51R+170zhHAXGYexuWxkY9pQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kKqw22Dcv86y6DrpqXva6TojYDj/PDkwKxJtUA++KPcjGZbLWf+1UqyySdCkSF84GeKTqh9yv5SJb5kYEsxBhNyaA/kHOUHWQ1mU6VgEtiVeRkAb9UyWQ1ci1Hp+YxhTvH5PxQO8rZN0zRzlmU4a0obftosXPasfP75nICFR4BA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=X/l9f1PK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1757674676; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=APlkudR0qjLm3XSz5iV/udOwNM0Siv+Wa+lYUjBN0XJDmqzgkIARb3x98conwd4lp/vlx6Chc1TtiuUI+U3ixJ/wDI/fHMrRNbtWbOUwtSxYLXneif8r6OZKk16jYDhCquuH3E3KxlWcLeRpm/e8LC8UGKdSgMJROQLs3zKnD9w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1757674676; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=qAdSIjUeiPovhOZ5oeAA6F0k6FxawUDv7nW9BDoqdPs=; 
+	b=NW7FA+m/8rNcJ7Whq8jMVqSDaL+zANznArtBPhTNrV3R0aT22USlWtO77emw2trTNyfE7816PUszJ88UqawC7fUqeyau9CAx7nPBMmmrPgFspG/ABCT/OeNIu8B31D9Nen72AAFHO8sLVIsuohACT549VSG8nXrwaTuB970E874=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757674676;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=qAdSIjUeiPovhOZ5oeAA6F0k6FxawUDv7nW9BDoqdPs=;
+	b=X/l9f1PKricjPo2coUdGbAprbK6vA1Ivu27kO6aluCoMKzZ8J+oUUNpD4OSc6on5
+	ohXcnLuDs+mV0/8bNoAXFxd1uk9iQpoJ4yB4xneiLZMToT3Xmc6w9s1gB6b8OheeX9P
+	WuxJPkqPDHm3/3jmE+T6H0sGZJlaQ+6y355i4xak=
+Received: by mx.zohomail.com with SMTPS id 1757674674844468.5742493556746;
+	Fri, 12 Sep 2025 03:57:54 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:57:51 +0100
+From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
+To: Steven Price <steven.price@arm.com>
+Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kernel@collabora.com, 
+	Rob Herring <robh@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH v2 2/4] drm/panfrost: Introduce JM contexts for manging
+ job resources
+Message-ID: <sucdvuv4upf24srwf4ki5z2zubpu3m5rkz2k4opzgcdtc5yovw@jm3dslwedctc>
+References: <20250904001054.147465-1-adrian.larumbe@collabora.com>
+ <20250904001054.147465-3-adrian.larumbe@collabora.com>
+ <99a903b8-4b51-408d-b620-4166a11e3ad1@arm.com>
+ <20250910175213.542fdb4b@fedora>
+ <bba00626-f9aa-4525-8568-2616adac7563@arm.com>
+ <20250910185058.5239ada4@fedora>
+ <aec81419-a827-43bc-a157-75df059c2bd5@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <5e4d9943-3a8d-4281-9007-f49bfc66dc6d@weissschuh.net>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aec81419-a827-43bc-a157-75df059c2bd5@arm.com>
 
-Sep 12, 2025 12:49:58 Mark Brown <broonie@kernel.org>:
-
-> On Fri, Sep 12, 2025 at 08:30:08AM +0200, Thomas Wei=C3=9Fschuh wrote:
->> On 2025-09-12 00:48:47+0530, Naresh Kamboju wrote:
+On 11.09.2025 10:30, Steven Price wrote:
+> On 10/09/2025 17:50, Boris Brezillon wrote:
+> > On Wed, 10 Sep 2025 16:56:43 +0100
+> > Steven Price <steven.price@arm.com> wrote:
+> >
+> >> On 10/09/2025 16:52, Boris Brezillon wrote:
+> >>> On Wed, 10 Sep 2025 16:42:32 +0100
+> >>> Steven Price <steven.price@arm.com> wrote:
+> >>>
+> >>>>> +int panfrost_jm_ctx_create(struct drm_file *file,
+> >>>>> +			   struct drm_panfrost_jm_ctx_create *args)
+> >>>>> +{
+> >>>>> +	struct panfrost_file_priv *priv = file->driver_priv;
+> >>>>> +	struct panfrost_device *pfdev = priv->pfdev;
+> >>>>> +	enum drm_sched_priority sched_prio;
+> >>>>> +	struct panfrost_jm_ctx *jm_ctx;
+> >>>>> +
+> >>>>> +	int ret;
+> >>>>> +
+> >>>>> +	jm_ctx = kzalloc(sizeof(*jm_ctx), GFP_KERNEL);
+> >>>>> +	if (!jm_ctx)
+> >>>>> +		return -ENOMEM;
+> >>>>> +
+> >>>>> +	kref_init(&jm_ctx->refcnt);
+> >>>>> +
+> >>>>> +	/* Same priority for all JS within a single context */
+> >>>>> +	jm_ctx->config = JS_CONFIG_THREAD_PRI(args->priority);
+> >>>>> +
+> >>>>> +	ret = jm_ctx_prio_to_drm_sched_prio(file, args->priority, &sched_prio);
+> >>>>> +	if (ret)
+> >>>>> +		goto err_put_jm_ctx;
+> >>>>> +
+> >>>>> +	for (u32 i = 0; i < NUM_JOB_SLOTS - 1; i++) {
+> >>>>> +		struct drm_gpu_scheduler *sched = &pfdev->js->queue[i].sched;
+> >>>>> +		struct panfrost_js_ctx *js_ctx = &jm_ctx->slots[i];
+> >>>>> +
+> >>>>> +		ret = drm_sched_entity_init(&js_ctx->sched_entity, sched_prio,
+> >>>>> +					    &sched, 1, NULL);
+> >>>>> +		if (ret)
+> >>>>> +			goto err_put_jm_ctx;
+> >>>>> +
+> >>>>> +		js_ctx->enabled = true;
+> >>>>> +	}
+> >>>>> +
+> >>>>> +	ret = xa_alloc(&priv->jm_ctxs, &args->handle, jm_ctx,
+> >>>>> +		       XA_LIMIT(0, MAX_JM_CTX_PER_FILE), GFP_KERNEL);
+> >>>>> +	if (ret)
+> >>>>> +		goto err_put_jm_ctx;
+> >>>>
+> >>>> On error here we just jump down and call panfrost_jm_ctx_put() which
+> >>>> will free jm_ctx but won't destroy any of the drm_sched_entities. There
+> >>>> seems to be something a bit off with the lifetime management here.
+> >>>>
+> >>>> Should panfrost_jm_ctx_release() be responsible for tearing down the
+> >>>> context, and panfrost_jm_ctx_destroy() be nothing more than dropping the
+> >>>> reference?
+> >>>
+> >>> The idea was to kill/cancel any pending jobs as soon as userspace
+> >>> releases the context, like we were doing previously when the FD was
+> >>> closed. If we defer this ctx teardown to the release() function, we're
+> >>> basically waiting for all jobs to complete, which:
+> >>>
+> >>> 1. doesn't encourage userspace to have proper control over the contexts
+> >>>    lifetime
+> >>> 2. might use GPU/mem resources to execute jobs no one cares about
+> >>>    anymore
+> >>
+> >> Ah, good point - yes killing the jobs in panfrost_jm_ctx_destroy() makes
+> >> sense. But we still need to ensure the clean-up happens in the other
+> >> paths ;)
+> >>
+> >> So panfrost_jm_ctx_destroy() should keep the killing jobs part, butthe
+> >> drm scheduler entity cleanup should be moved.
+> >
+> > The thing is, we need to call drm_sched_entity_fini() if we want all
+> > pending jobs that were not queued to the HW yet to be cancelled
+> > (_fini() calls _flush() + _kill()). This has to happen before we cancel
+> > the jobs at the JM level, otherwise drm_sched might pass us new jobs
+> > while we're trying to get rid of the currently running ones. Once we've
+> > done that, there's basically nothing left to defer, except the kfree().
 >
->> index c99a6b39ac14..816b497634d6 100644
->> --- a/tools/testing/selftests/arm64/gcs/gcs-util.h
->> +++ b/tools/testing/selftests/arm64/gcs/gcs-util.h
->> @@ -26,6 +26,10 @@ struct user_gcs {
->> };
->> #endif
->>
->> +#ifndef HWCAP_GCS
->> +#define HWCAP_GCS (1UL << 32)
->> +#endif
->> +
+> Ok, I guess that makes sense.
 >
-> We're doing that for glibc using tests because there's some unfortunate
-> interaction between including the relevant kernel header and glibc's
-> headers (I forget the details) which means that including the kernel
-> header directly conflicts with something glibc is doing.=C2=A0 For nolibc=
- I
-> would expect us to using the kernel's hwcap definitions?
+> In which case panfrost_jm_ctx_create() just needs fixing to fully tear
+> down the context in the event the xa_alloc() fails. Although that makes
+> me wonder whether the reference counting on the JM context really
+> achieves anything. Are we ever expecting the context to live past the
+> panfrost_jm_ctx_destroy() call?
 
-nolibc doesn't even have its own asm/hwcap.h (or any asm/ header for that m=
-atter).
-So a kernel header has to be used,
-maybe an old one is pulled from somewhere?
+We still need reference counting, otherwise there would be a racy window between
+the submission and context destruction ioctls, in which a context that has just
+been released is still owned by a newly created job leading to UAF.
 
-(I won't have access to a development machine today anymore)
+> Indeed is it even possible to have any in-flight jobs after
+> drm_sched_entity_destroy() has returned?
 
-Thomas
+My understanding of drm_sched_entity_destroy() is that, after it returns,
+no jobs can be in-flight any more and the entity is rendered unusable by
+any new jobs. This can lead to the unpleasant situation in which a thread
+tries to submit a new job and gets a context reference right before another
+thread takes precedence and destroys it, causing the scheduler entities to
+be unusable.
+
+Then drm_sched_job_init() would contain a reference to an invalid entity,
+which further down the line would cause drm_sched_entity_push_job() to report
+a DRM_ERROR warning that te entity is stopped, which should never happen,
+because drm_sched_entity_push_job() must always suceed.
+
+> Once all the sched entities have been destroyed there doesn't really
+> seem to be anything left in struct panfrost_jm_ctx.
+
+We've thought of a new approach whereby a context would be flagged as destroyed
+inside panfrost_jm_ctx_destroy(), destruction of scheduler entities done at context
+release time and then cancelling new jobs that had been queued after context
+destruction in the .run_job scheduler function if they notice the context
+is so flagged.
+
+> Thanks,
+> Steve
+
+Cheers,
+Adrian Larumbe
 
