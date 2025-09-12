@@ -1,94 +1,99 @@
-Return-Path: <linux-kernel+bounces-814339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3300FB5529B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:03:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0321DB5529F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1DFA3A70A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:03:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D91D18878E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA646212B0A;
-	Fri, 12 Sep 2025 15:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA712144C7;
+	Fri, 12 Sep 2025 15:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EwLfVH7J"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YDhVXGJR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142B320E6
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:03:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97598212B0A
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689411; cv=none; b=Ga/lJjgtIpOnAzvpJn0PE3OGwUYr5FSUfdk+LMJmO/VKtvljQKhpNUZjWq402g4QULbEg3Tz2D5ecGMyY+Gr8tQVi6Y5LBJqCBBsPTaGNuHW+HDleuGiyLTvDWq+HtBIPCMH0L7AqH5+9+eaII9DynFEYcYAdO1ikbPDUtyeRnw=
+	t=1757689439; cv=none; b=OSb1XE8GF0pzAzkFH6pgVem2ZD2jN/mGpgnTRGsJohK2GN9sv9/yaLJJZ+rWLIkNT+0JC04EKKuR0YK+lPLiLeGcZUzToW/2bwXJ+/ZcxN/0wd9nLgJWA+Yic4bujlF5Ef9qEMBSYkUxERT4nOkI1moK8YCm89F4Ms6hWyATr8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689411; c=relaxed/simple;
-	bh=/Ylbt4Hgov7SuNxJ3P9gKkIyD2OkbW71YkYFjNuHbKI=;
+	s=arc-20240116; t=1757689439; c=relaxed/simple;
+	bh=DS83X1AnvvzLm+bCai80VK+iKHbBFz40tJWSVtqRlZs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxIzz3BRjytQzdOk3DLUgThHRQlyVtsyvui0tgrzIzpqjr/ucy7sSpkvG4eGgKnvuD34fAWxhj/wWqoZmNqHPEX8Z7PMWeOtHMMu59XFh65B2CJ4R8i7jfRLST5Yq35VBDMwUhMKivc5HwAj/BTCKL3A04yBi6u8k1bUNcShXN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EwLfVH7J; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-45dec1ae562so19074085e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:03:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757689406; x=1758294206; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zq1J637xCjsK3a1jRXJ0Uurp60mNSuIOaSzaWarRAoI=;
-        b=EwLfVH7J+J8hr24JMcZA2kzQaCH/e7LLYopDBif5z/sb0XSRkgIdI56oiDxdAC+SQG
-         Zl1zBf07JZeEdpsYezwczlXoWKeTK2mxWupVFkQTgPiALi21pXwI3nNgQynIqHVgxzoT
-         6WNShO1iJ9uQ+9mjyFJxtVZ/ge/sEciuy7rDqUOKfDnBCNLJly4LOb11LUP+WdcccfSd
-         WNSgJ+rTsYsdaxIQ2G3Jk2j3ymaILOW3FZA2Qq89Ff0VlKdT1VG2FCmqiLbUhKI5bxTn
-         nrMAhO5+KNitiSkelgUMX0fMvE7QKTBUPeIdVZTcscWsvm6Tg6Ih0Ye0Rz/kTyEpkkuy
-         r2Jg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=c6UfSehgFq/Y4yGG4Cw7pFTarmJ9eDYZATPHbuDabgUK9pr/IqV9N+bqhOPBacUJQBaSKWqbUksPjOC2aCnHQrawhiBNA9CyhtM0BFCjkUTWi7u/TM5Krn9qQNglKLmaDhejHtBeyu9DRvIOP0apOzBWLHT0hWpJz5V9dZ+zg+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YDhVXGJR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757689436;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ql70NaELGKTagorgJIq5i9FlqS1h8VPOM70ZysXf1/A=;
+	b=YDhVXGJRhQnZwr9pyEWVgvwTAL6+ahv13P9ZBnXBnRZ8ro8UhT4OTlsmK0MfyK4F4xD4wk
+	NSa3aqksSZyySByDgDBpSptbVcddv1lmWn7cL78v/EgeF2gpHCC7pNDmoP19d8iaKkTfnf
+	cIL82V7Zyb2/85X8mXePrfdZMYcMr4s=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-QSkSQ06MNTOXLaSI3CHzUQ-1; Fri, 12 Sep 2025 11:03:55 -0400
+X-MC-Unique: QSkSQ06MNTOXLaSI3CHzUQ-1
+X-Mimecast-MFC-AGG-ID: QSkSQ06MNTOXLaSI3CHzUQ_1757689435
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-727551d15c4so41672947b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:03:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757689406; x=1758294206;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zq1J637xCjsK3a1jRXJ0Uurp60mNSuIOaSzaWarRAoI=;
-        b=ImyW+1jgiNwHGwlKc8JzpV60mhxl9qg3+uBzJLsKkJQkRVrSG7IeMZ2B5yW0VRY2bj
-         /FGb8h03bnxXXTGjAxoaW4NcFjrAXzT19rOVpEHpA/vl79Vy28X2XjIyNNeTBSr0asA+
-         NktsXpmzLSszgvysBVossM+NElb+3sJb3qNBB162mNrEulfkL20Blyds+HG0qGSoKuMJ
-         Mtio+nVAp+WMhb4bkeCNlwNAk+mVqw4Ih9n3RUhyCvapYwdywElfmQvCFNtm05hjSf4e
-         wbdgq7OYieAmZNJ9VqZYWYiu1DKAKLi4tRSi3xqP1fnkSu9ltLvRE8pBUW7kl5wO+8DK
-         bdDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZk8JrtW/nc4YcubGenammpKKcsE4nU5OLq1iGasVhQfRtC5h8N3iYeHr6eZ23bXI5IN65RspC9pj1UWI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB01Q1f5IIcZyfnecmbxWj1tDqAD4rkdlXRhZR6pXzDFqOnlqw
-	OInrlIhadoepffRsV0PXInxoCYCla+5G4UdMwiDgW9I9dmueSwIu8SzREJPVMM99jEs=
-X-Gm-Gg: ASbGncuYSwMSQGj5vMOGmMGYDPr5eRRj0xF7RNnM+DnOZYj6WLz65/gAyLPiWDAm5fa
-	njk0mTbg0qh4BHO8/5WJ2mYE1H+OzdPpuQ3cAnYO1y3gtOOTkwFd230HyrJTNkaVkQ6dntjwmKg
-	a9PMB2qL5lPahgp4OUotLr/RdtALfmQ3yiJ48b0KnLVLS3UDOSZsWPP66uydebs7XXMbfbdseMb
-	KAe7b+klAPJwAsRjMdzx7Czu/4+ZzVTCYkF2Uk1bN32c7QGAME8kCCLOCC+i+1mXSIfCrqF1Wsm
-	rEV8LZUYem9j2uJ4mx2hosV1pvqN4lmxJgHUAU48IYrzrGFCkxkf7apsjEYbPAXSEfMXBr+ZYK4
-	1sF3OmNjg5fUPwr9KqpHfPyDR1lc=
-X-Google-Smtp-Source: AGHT+IGJXVmJrfU4VspkXVUL2QLcSNv5Pv+0FQFjRdVM0w+zljPzezrhfzIQOaENjXatzp2p/nhztQ==
-X-Received: by 2002:a05:600c:3ba9:b0:45d:d9d1:80a3 with SMTP id 5b1f17b1804b1-45f21225cd7mr33416595e9.37.1757689406190;
-        Fri, 12 Sep 2025 08:03:26 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45e015784c3sm72663525e9.10.2025.09.12.08.03.25
+        d=1e100.net; s=20230601; t=1757689435; x=1758294235;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ql70NaELGKTagorgJIq5i9FlqS1h8VPOM70ZysXf1/A=;
+        b=necA+cak8836zWPm8BbfngH33m387OPmSOCxCfjo7t6p33v1wbnA6IXlNPBGSDyOrG
+         CKFb92h72z38Th6bmckTreEyA+RRCah/jVwT0rzo0ejgj72ju+wHepXqZURe6pt98KJp
+         zoc7hLbWi5x+UCASc9fmH60SbPv1MYndQyL27yQtzcAM9viZLUt35yDKXB8yPg/We5UQ
+         hwa1eCfKMmfCWrdrMXlXCz0TQyygUU7aaHfi/2qmbgP+DbQbM4CC+FGmllYrseiiYLzV
+         kZVIcHg+ZF/rSoz74u37KZwtsbwYyCseQf0Ea7r+R0D5W3egg62mqeCJK7PkVluOnL5S
+         NshA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkjFFSs6+xOGyFCpS2Pb+sdD33+KUk1J4SZN90vxS7f48sO7vTXIYJ8FpbpCZj9ZGRaKbQfRwshY6BPDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwACL9aO03D2So3QVFISUfsdpd710V2hnKMYx87Gr3nk/gB8R/B
+	CAAKyTrQfelH6Q98t2HQJ/A7R1ixhAyNFktmYQnHHDS1xxdiNfzeyXWJdZOax80r9u3nJZe2Faf
+	IBfWNc0ey1yFIbid60jt6ryvUQ5r7hC0NM0L2ZtKMA6ZULPgBhNNml8ObFnD0Llma6A==
+X-Gm-Gg: ASbGncsXei5RotTpkfKWU9G/tW2tCXFwDTuTgOZ8OAgCyoSSHIGuLuAligBnUUg2/qI
+	wyHcsT1xZp5PfLr1KQmw74qm7R4DHkVXDdrguIGBBGnC6A+bSDjOZS4GoouqUvCJrEYsuAlPUha
+	QvtUtK2jQ771UvQGRf3nypjZ0DFRG3Ij31iNqD2qbRhXsux6UbgkrViByqAwqH7rV3FyYAUx0/u
+	57v5q5oYYn2Cmdx2GHEhXg/IkEm63FpCJLXu1M6sg0Y3VZ7zw7SOkBnNaOcVow5zUVkU2xEBgr4
+	JaFgJrH0vaUwh1GMMoES1V2sogPjQJMBOIJvfLwq5QPh64TDGsm1HAonP5Z7qt89qQaObBUW27L
+	5jECM7W0uOFPXjX62r1H8mRPJdoO05g==
+X-Received: by 2002:a53:d30b:0:b0:5f3:317e:409c with SMTP id 956f58d0204a3-6232f8cb7ebmr4945689d50.0.1757689434722;
+        Fri, 12 Sep 2025 08:03:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFAX6xF2fAzdjMOvplSdvZGKXrlcHOORL6WIZPj+3wYjGbwX4wiucOJhgAsE3V0lTTyfzcHDw==
+X-Received: by 2002:a53:d30b:0:b0:5f3:317e:409c with SMTP id 956f58d0204a3-6232f8cb7ebmr4945647d50.0.1757689434009;
+        Fri, 12 Sep 2025 08:03:54 -0700 (PDT)
+Received: from redhat.com (c-73-183-52-120.hsd1.pa.comcast.net. [73.183.52.120])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-820c88db181sm287951485a.4.2025.09.12.08.03.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 08:03:25 -0700 (PDT)
-Date: Fri, 12 Sep 2025 18:03:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shawn Guo <shawnguo@kernel.org>
-Cc: Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
+        Fri, 12 Sep 2025 08:03:53 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:03:50 -0400
+From: Brian Masney <bmasney@redhat.com>
+To: Raphael Gallais-Pou <rgallaispou@gmail.com>
+Cc: Patrice Chotard <patrice.chotard@foss.st.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4] arm64: dts: s32g: Add device tree information for the
- OCOTP driver
-Message-ID: <6ea7fede9642dad10a6270a07e052f7a726f9bd6.1757689031.git.dan.carpenter@linaro.org>
-References: <cover.1757689031.git.dan.carpenter@linaro.org>
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 4/5] clk: st: flexgen: remove unused compatible
+Message-ID: <aMQ2VveE3hIgmOBI@redhat.com>
+References: <20250912-master-v2-0-2c0b1b891c20@gmail.com>
+ <20250912-master-v2-4-2c0b1b891c20@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,62 +102,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1757689031.git.dan.carpenter@linaro.org>
+In-Reply-To: <20250912-master-v2-4-2c0b1b891c20@gmail.com>
+User-Agent: Mutt/2.2.14 (2025-02-20)
 
-Add the device tree information for the S32G On Chip One-Time
-Programmable Controller (OCOTP) chip.
+On Fri, Sep 12, 2025 at 01:36:11PM +0200, Raphael Gallais-Pou wrote:
+> Following B2120 boards removal in commit dee546e1adef ("ARM: sti: drop
+> B2120 board support"), several compatibles are left unused.  Remove
+> them.
+> 
+> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-The other patches in this patch set were applied but this one needed to
-be rebased.
-
-v4: rebase on imx/dt64
-v3: Add the device tree entry in the correct location based on
-    the 0x400a4000 address.
-v2: change "ocotp: ocotp@400a4000 {" to "ocotp: nvmem@400a4000 {"
-
- arch/arm64/boot/dts/freescale/s32g2.dtsi | 7 +++++++
- arch/arm64/boot/dts/freescale/s32g3.dtsi | 7 +++++++
- 2 files changed, 14 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-index 3ff3b2ff09be..d167624d1f0c 100644
---- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
-@@ -325,6 +325,13 @@ usdhc0-200mhz-grp4 {
- 			};
- 		};
- 
-+		ocotp: nvmem@400a4000 {
-+			compatible = "nxp,s32g2-ocotp";
-+			reg = <0x400a4000 0x400>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+		};
-+
- 		swt0: watchdog@40100000 {
- 			compatible = "nxp,s32g2-swt";
- 			reg = <0x40100000 0x1000>;
-diff --git a/arch/arm64/boot/dts/freescale/s32g3.dtsi b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-index 6292ae99883a..be3a582ebc1b 100644
---- a/arch/arm64/boot/dts/freescale/s32g3.dtsi
-+++ b/arch/arm64/boot/dts/freescale/s32g3.dtsi
-@@ -383,6 +383,13 @@ usdhc0-200mhz-grp4 {
- 			};
- 		};
- 
-+		ocotp: nvmem@400a4000 {
-+			compatible = "nxp,s32g3-ocotp", "nxp,s32g2-ocotp";
-+			reg = <0x400a4000 0x400>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+		};
-+
- 		swt0: watchdog@40100000 {
- 			compatible = "nxp,s32g3-swt", "nxp,s32g2-swt";
- 			reg = <0x40100000 0x1000>;
--- 
-2.51.0
+Reviewed-by: Brian Masney <bmasney@redhat.com>
 
 
