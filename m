@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-814208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F005B550CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:19:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF85B550C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:19:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B07B61C819C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7C01C80EB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CC52FDC4E;
-	Fri, 12 Sep 2025 14:19:07 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8162DF13B;
+	Fri, 12 Sep 2025 14:18:54 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C567819E97F;
-	Fri, 12 Sep 2025 14:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33B01F16B;
+	Fri, 12 Sep 2025 14:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686746; cv=none; b=VObv7E71AS6zQ7vkTIUZ5Y/ApT0KGWF3cfJNmP7X4gFc56Xud2znYxJjruzdS2hch3dUpeR5sWmP+VD6Ab93PFrqTuodZrMeSVCe3Lfr67BvApu/wuadBeg+oPTgUkGkv2frRO1TM98vmjRpaw1eApn4muA1Ex/6cswohC0XQSQ=
+	t=1757686734; cv=none; b=R6J3EPirs0Kia2G68Hx0NHhwBNccCci0SwML1WMaxZNCY95NGy/sYmMjmRtix3zkPXJr8PdcnitasdhYljnqXk3YJMzxhRoJr64aypEdUb8vENgDj1eZ1RhKRU2tMQW5oPnlDi8FTKbAcUd/njdkFd5fi3DAGeN6uN4LUtdjcXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686746; c=relaxed/simple;
-	bh=6RetG6d9arvqGjc45Er4QYjKNn7jAA1o1cdB/iDSH3M=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tMUCkarzuABCMZRedXmvT2mT8FROe07M8123O60M99fxskmVMcKSbmMqq66O0Ur/Q/GS0dxyLVYAdmCrz2kLs/vzDfUuRh+EBlMDROQBhG9f1Q1q21xRLy6WSP7SGWhUqECLQMqJ2r/TXyTnMXMI8aitX3htSWmnM2YWMpq3uPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 58CEIiUn050764;
-	Fri, 12 Sep 2025 23:18:44 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 58CEIiov050760
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 12 Sep 2025 23:18:44 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <a471c731-e6ae-408d-b8b8-94f3045b2966@I-love.SAKURA.ne.jp>
-Date: Fri, 12 Sep 2025 23:18:44 +0900
+	s=arc-20240116; t=1757686734; c=relaxed/simple;
+	bh=F6GrmkoCEAOXZtxxQSAaFKv2Epo0dqUdTMBqm9EYMh4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JpKeST9tpDqkYrrcJi/ivTMoT9JGLDjT9jBxGExXp7d8OYhOJKgHVfOAwsv9XCwJxW14w+M1ja69iPyaLlLihgUUMdkK4CtXqbyWL4aQy2boUimlHiERjO/hgzmH8qB5UVqiz+oZug9vSJcxWQ47t/ogl6iVwVXIE9HePPbhUxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNc2M35Nxz6GDFg;
+	Fri, 12 Sep 2025 22:17:31 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA4241401F4;
+	Fri, 12 Sep 2025 22:18:49 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
+ 2025 16:18:49 +0200
+Date: Fri, 12 Sep 2025 15:18:48 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+CC: Jonathan Cameron <jic23@kernel.org>, <dlechner@baylibre.com>,
+	<nuno.sa@analog.com>, <andy@kernel.org>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <krzk+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+	<s32@nxp.com>, <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<chester62515@gmail.com>, <mbrugger@suse.com>,
+	<ghennadi.procopciuc@oss.nxp.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+Message-ID: <20250912151848.0000470e@huawei.com>
+In-Reply-To: <b4d2ad54-54d5-4c26-be49-b6ac671683d2@linaro.org>
+References: <20250910155759.75380-1-daniel.lezcano@linaro.org>
+	<20250910155759.75380-3-daniel.lezcano@linaro.org>
+	<20250910183212.6640e662@jic23-huawei>
+	<b4d2ad54-54d5-4c26-be49-b6ac671683d2@linaro.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH (REPOST)] jfs: Verify inode mode when loading from disk
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Christian Brauner <brauner@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Dave Kleikamp <shaggy@kernel.org>,
-        jfs-discussion@lists.sourceforge.net
-References: <1cd51309-096d-497f-8c5e-b0c9cca102fc@I-love.SAKURA.ne.jp>
- <dce0adb2-a592-44d8-b208-d939415b8d54@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <dce0adb2-a592-44d8-b208-d939415b8d54@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav302.rs.sakura.ne.jp
-X-Virus-Status: clean
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-The inode mode loaded from corrupted disk can be invalid. Do like what
-commit 0a9e74051313 ("isofs: Verify inode mode when loading from disk")
-does.
+On Thu, 11 Sep 2025 14:55:00 +0200
+Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
 
-Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-This fix is similar to fixes for other filesystems, but got no response.
-Do we have to wait for Ack from Dave Kleikamp for another month?
+> Hi Jonathan,
+> 
+> thanks for the review
+> 
+> On 10/09/2025 19:32, Jonathan Cameron wrote:
+> > On Wed, 10 Sep 2025 17:57:56 +0200
+> > Daniel Lezcano <daniel.lezcano@linaro.org> wrote:  
+> 
+> [ ... ]
+> 
+> >> +/* Main Configuration Register */
+> >> +#define REG_ADC_MCR(__base)		((__base) + 0x00)  
+> > 
+> > I'm not really convinced these macros help over just having
+> > readl(info->regs + NXP_SADC_MCR_REG);  
+> 
+> That is really a matter of taste :)
+> 
+> I used to create this format in order to stick the macros with the 
+> debugfs register code which is not part of these changes. There is a 
+> similar format in drivers/clocksource/timer-nxp-stm.c or 
+> driver/thermal/mediatek/lvts.c IMHO is less prone to error than base + 
+> REG all around the code.
+> 
+> Do you want me to convert all the macros to info->__base + MACRO ?
 
- fs/jfs/inode.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+I'm not that fussed if there is other code for related devices using this
+style.  To me it adds little benefit but it doesn't hurt that much either!
 
-diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
-index fcedeb514e14..21f3d029da7d 100644
---- a/fs/jfs/inode.c
-+++ b/fs/jfs/inode.c
-@@ -59,9 +59,15 @@ struct inode *jfs_iget(struct super_block *sb, unsigned long ino)
- 			 */
- 			inode->i_link[inode->i_size] = '\0';
- 		}
--	} else {
-+	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
-+		   S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
- 		inode->i_op = &jfs_file_inode_operations;
- 		init_special_inode(inode, inode->i_mode, inode->i_rdev);
-+	} else {
-+		printk(KERN_DEBUG "JFS: Invalid file type 0%04o for inode %lu.\n",
-+		       inode->i_mode, inode->i_ino);
-+		iget_failed(inode);
-+		return ERR_PTR(-EIO);
- 	}
- 	unlock_new_inode(inode);
- 	return inode;
--- 
-2.51.0
+> 
+> [ ... ]
+> 
+> >> +static const struct iio_chan_spec nxp_sar_adc_iio_channels[] = {
+> >> +	ADC_CHAN(0, IIO_VOLTAGE),
+> >> +	ADC_CHAN(1, IIO_VOLTAGE),
+> >> +	ADC_CHAN(2, IIO_VOLTAGE),
+> >> +	ADC_CHAN(3, IIO_VOLTAGE),
+> >> +	ADC_CHAN(4, IIO_VOLTAGE),
+> >> +	ADC_CHAN(5, IIO_VOLTAGE),
+> >> +	ADC_CHAN(6, IIO_VOLTAGE),
+> >> +	ADC_CHAN(7, IIO_VOLTAGE),
+> >> +	IIO_CHAN_SOFT_TIMESTAMP(32),  
+> > 
+> > Whilst we only insist on monotonic numbering, putting it all the way down
+> > at 32 seems excessive. Why not 8?  Perhaps a comment if this is to avoid
+> > moving it for some future feature.  
+> 
+> The ADC has 8 channels for external acquisition however others channels 
+> 8->31 are described as reserved. They may evolve in the future to more 
+> channels. That is probably the reason why 32 is used here.
+
+Add a comment on that so we don't forget the reasoning.
+
+Thanks,
+
+Jonathan
+
+
 
 
