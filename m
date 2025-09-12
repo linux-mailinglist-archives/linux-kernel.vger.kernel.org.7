@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-812999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF948B53F7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9EFBB53F7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:20:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA0B61B264E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:18:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55D61BC670C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E48C1474CC;
-	Fri, 12 Sep 2025 00:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8716208AD;
+	Fri, 12 Sep 2025 00:19:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4KBt6D2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HsC0OTMU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D947281ACA;
-	Fri, 12 Sep 2025 00:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2DE2DC779;
+	Fri, 12 Sep 2025 00:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757636272; cv=none; b=WycDuhYNjSDLLZI/tGK7ZAb1+6RnxJHKBgNQYNkMnAxsT0jj0H3L6EJ2TiV62VGzFc6VkrFHRdwa+VcpKkRUUjabb63IUSlrvq3to31/qCJU48Ito7KA8Nuc0I4vvIsVLv4cDGqxCIaVvUZyMexDOLnxLcQT+O5KSVLJAemH/pk=
+	t=1757636399; cv=none; b=B649SPUZum4FRSGeW/lIft9NOt+84Mh2zVHeJ0vWRs+VW9Uc3e1Ev2FVN7gIUXMym+YuK02/DjQi5mbJjT63aK+uz+M/DTFeIB8ns2cFLfekMB7fH5c4Wl5Le8Si7uQou2ko95LUWn3qcp8Z/7j9MAIoENj8pBVKuqV5lczM16o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757636272; c=relaxed/simple;
-	bh=DNAaszBerFJ+PyZv9j52FnEQJyyHkVAX4kFYN/3vj9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C7BvFBXZxy0uG3eG/NbhzRrkJQY7Nj/wGyYQlVSHb+rKo9ks6e4td4oCCZwr3UMF2TjoTFJTFk9WxKr5rDxZ//fR3XQKugoNljNmrysd3uBWakVfIjCuqML8IU03clMkMGnGOUZqdVd2dm5aTL+rJFLp8SqokxvsEhdVj7+eAok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4KBt6D2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 807CEC4CEF0;
-	Fri, 12 Sep 2025 00:17:50 +0000 (UTC)
+	s=arc-20240116; t=1757636399; c=relaxed/simple;
+	bh=u4FEke0ydQjSjz04Ux4SWmVQR4jg0KE0VTpOSi+ssD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PbvlJQdLWlCXTS1CeEQzLSqcZyCegDmbouWG3Nwksvn9qIhW0YjpVSjf3zou4IpB6FGraY8SlGi6pypuZgqrEfGQhHWPso/rvo//ufl+zqV9ybR4GcwYRCU67WBcWxKlKqk+r2CUPZzRANu16BLNXJjNV0Rjuj8esRQniXsq6T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HsC0OTMU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 886ACC4CEF1;
+	Fri, 12 Sep 2025 00:19:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757636271;
-	bh=DNAaszBerFJ+PyZv9j52FnEQJyyHkVAX4kFYN/3vj9o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=G4KBt6D2JPbMJgwp3sNI6ccIVbdSjkL4rqzADWILEBwpladiBPBM2PKGrKiPDeI+k
-	 S4Maz1Z+hf/p47I9lDd2PQJp/ocuS+us0npUghSfHz4VjEfONaFirvLb9C5+XVxxuk
-	 qj+c/wdHMFFv2xk/9bObiwqy1OMMiqsnLUbHQv7O1+VVRNEP2TbCwIbWkVgRqz35gg
-	 1ruL+m8gSStj7xOJu2rNZZu31rvWgSybZdIYwV+N/fbM9C8E6IYKau4hRy6Im/cvoW
-	 o/N6CnjZeaG6ykndaIiGJG+1lLC6RzZXNIkMW25UYyVp3tFNP4EeCnBnkJCBaYAGly
-	 5dLEbRypBerLg==
-Date: Thu, 11 Sep 2025 17:17:49 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: =?UTF-8?B?xYF1a2Fzeg==?= Majewski <lukasz.majewski@mailbox.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
- <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Richard Cochran
- <richardcochran@gmail.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Stefan Wahren
- <wahrenst@gmx.net>, Simon Horman <horms@kernel.org>, Vladimir Oltean
- <vladimir.oltean@nxp.com>
-Subject: Re: [net-next v19 4/7] net: mtip: Add net_device_ops functions to
- the L2 switch driver
-Message-ID: <20250911171749.02e9fd99@kernel.org>
-In-Reply-To: <20250911235547.477460e4@wsk>
-References: <20250824220736.1760482-1-lukasz.majewski@mailbox.org>
-	<20250824220736.1760482-5-lukasz.majewski@mailbox.org>
-	<20250827082512.438fd68a@kernel.org>
-	<20250907183854.06771a13@wsk>
-	<20250908180535.4a6490bf@kernel.org>
-	<20250910231552.13a5d963@wsk>
-	<20250910172251.072a8d36@kernel.org>
-	<20250911235547.477460e4@wsk>
+	s=k20201202; t=1757636398;
+	bh=u4FEke0ydQjSjz04Ux4SWmVQR4jg0KE0VTpOSi+ssD0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HsC0OTMURwcxesMWGxQASvYxOqIKgehJjgEEOYkpa+XBdgRfw/dfPson1rWXNyIZn
+	 4s5EscgTXyHeN0t96mPwzYjAal4hfbE/6oI999bI3IYBik2w/szkIUqwAWOVuRke4L
+	 OoOnpsYSK147PPi/eWfUdGcf8EshR7f9q6HbDoQLZicBkX/yxQSEpUUnErPsYksDik
+	 cDapOxAKhDprpQuFGwdzLuWosiBKvyMS8KypwWZaw4ShVM2LHXfqoPRwQ3jgRjE14+
+	 wstBCQbnlJ0QcLPWgZL07spAE/+/qPuP5LWlGctLjMm9PuMKTRt7HDLxOk4aD45NX+
+	 E7rJu14dPDp/w==
+Date: Thu, 11 Sep 2025 14:19:57 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
+ __task_rq_lock()
+Message-ID: <aMNnLenCytO_KEKg@slm.duckdns.org>
+References: <20250910154409.446470175@infradead.org>
+ <20250910155809.684653538@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910155809.684653538@infradead.org>
 
-On Thu, 11 Sep 2025 23:55:47 +0200 =C5=81ukasz Majewski wrote:
-> > > Ok. No adjustments needed then. Good :)   =20
-> >=20
-> > No, you were talking about build_skb() which is Rx.
-> > This is the patch that adds Tx. Tx is wrong. =20
->=20
-> The same approach is taken in fec_main.c (@ fec_enet_txq_submit_skb()
-> function).
+Hello,
 
-FWIW I'm 99% sure we were once investigating a bug in FEC related to
-modifying timestamped packets, leading to crashes. Maybe there is more.
+On Wed, Sep 10, 2025 at 05:44:21PM +0200, Peter Zijlstra wrote:
+> @@ -703,17 +703,24 @@ void double_rq_lock(struct rq *rq1, stru
+>  struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
+>  	__acquires(rq->lock)
+>  {
+> +	raw_spinlock_t *slock;
+>  	struct rq *rq;
+>  
+>  	lockdep_assert_held(&p->pi_lock);
+>  
+>  	for (;;) {
+>  		rq = task_rq(p);
+> +		slock = p->srq_lock;
+>  		raw_spin_rq_lock(rq);
+> -		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
+> +		if (slock)
+> +			raw_spin_lock(slock);
+> +		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p) &&
+> +			   (!slock || p->srq_lock == slock))) {
+>  			rq_pin_lock(rq, rf);
+>  			return rq;
+>  		}
 
-> > > could be replaced just with mtip_switch_tx(napi->dev);
-> > > as TX via napi->dev shall be forward to both ports if required.
-> > >=20
-> > > I will check if this can be done in such a way.   =20
-> >=20
-> > Not napi->dev. You have to attribute sent packets to the right netdev. =
-=20
->=20
-> And then we do have some issue to solve. To be more specific -
-> fec_main.c to avoid starvation just from fec_enet_rx_napi() calls
-> fec_enet_tx() with only one net device (which it supports).
->=20
-> I wanted to mimic such behaviour with L2 switch driver (at
-> mtip_rx_napi()), but then the question - which network device (from
-> available two) shall be assigned?
->=20
-> The net device passed to mtip_switch_tx() is only relevant for
-> "housekeeping/statistical data" as in fact we just provide another
-> descriptor to the HW to be sent.
->=20
-> Maybe I shall extract the net device pointer from the skb structure?
+With the !slock condition, the following scenario is possible:
 
-Exactly :)
+  __task_rq_lock()
+     slock = p->srq_lock; /* NULL */
+                                                dispatch_enqueue()
+                                                  p->srq_lock = &dsq->lock;
+                                                enqueue finishes
+     raw_spin_rq_lock(rq);
+     rq is the same, $slock is NULL, return
+  do something assuming p is locked down        p gets dispatched to another rq
 
-> > > You mean a separate SW queues for each devices? This is not
-> > > supported in the MTIP L2 switch driver. Maybe such high level SW
-> > > queues management is available in the upper layers?   =20
-> >=20
-> > Not possible, each netdev has it's own private qdisc tree. =20
->=20
-> Please correct me if I'm wrong, but aren't packets from those queues
-> end up with calling ->ndo_start_xmit() function?
+I'm unclear on when p->srq_lock would be safe to set and clear, so the goal
+is that whoever does [__]task_rq_lock() ends up waiting on the dsq lock that
+the task is queued on, and if we can exclude other sched operations that
+way, we don't have to hold source rq lock when moving the task to another rq
+for execution, right?
 
-Right. I think I'm lost, why does this matter?
+In the last patch, it's set on dispatch_enqueue() and cleared when the task
+leaves the DSQ. Let's consider a simple scenario where a task gets enqueued,
+gets put on a non-local DSQ and then dispatched to a local DSQ, Assuming
+everything works out and we don't have to lock the source rq for migration,
+we'd be depending on task_rq_lock() reliably hitting p->srq_lock to avoid
+races, but I'm not sure how this would work. Let's say p is currently
+associated with CPU1 on a non-local DSQ w/ p->srq_lock set to its source
+DSQ.
 
-> > I think I explained this enough times. Next version is v20.
-> > If it's not significantly better than this one, I'm going to have=20
-> > to ask you to stop posting this driver. =20
->=20
-> I don't know how to reply to this comment, really.=20
->=20
-> I've spent many hours of my spare time to upstream this driver.
-> I'm just disappointed (and maybe I will not say more because of high
-> level of my frustration).
+  pick_task_ext() on CPU0               task property change on CPU1
+    locks the DSQ
+    picks p      
+    task_unlink_from_dsq()              task_rq_lock();
+      p->srq_lock = NULL;                 lock rq on CPU1
+    p is moved to local DSQ               sees p->src_lock == NULL
+                                          return
+  p starts running
+  anything can happen
+                                        proceed with property change
 
-I believe mlxsw has fewer DMA queues than ports. But TBH I'm not sure
-how they handle the congestion. In your case since you only have two
-ports (at most) I think you can trivially just always stop and start
-both.
+What am I missing?
+
+Thanks.
+
+-- 
+tejun
 
