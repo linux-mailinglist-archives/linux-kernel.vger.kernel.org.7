@@ -1,215 +1,149 @@
-Return-Path: <linux-kernel+bounces-813887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A231AB54C2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:02:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81A0B54C94
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:09:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 88B3E4E2AF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B80BF3A5DEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42753019C1;
-	Fri, 12 Sep 2025 11:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DdI/5owh"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DE9334376;
+	Fri, 12 Sep 2025 11:55:43 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDDD305E18;
-	Fri, 12 Sep 2025 11:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CB9337694;
+	Fri, 12 Sep 2025 11:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678116; cv=none; b=coWteZQsJzGYnH/2Eza7XWyp7+i9ZHUmsP6481qDTB9NiErxlGHk40c1bDfLO7186ily1h626zpbrbB9X35hMbYfweCa8iKrgI0s1cJhBgNBPjqTyq2HMPvBBUu8q7MbbYV4us/cJTlG21ji/QNQeRpDY+6SMfbxvIpHBZCtec8=
+	t=1757678142; cv=none; b=Y1U+nthHOu/GzG/T5S9BOEpsV6ZzIOLFAJ5RweYdUBOb60e3UuJJrU1zvKWe344ND7mvqfxZ8G7Sq19PEHreD0kYd4fZCtI4yY2AESNLniwKCz2/ed13jaEZk/Luh6U74rTo1u8M7M75e2mjkxJJX9hIHfDrwnpEfjpKhMWUtD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678116; c=relaxed/simple;
-	bh=OiQ8SyM9G4y6zAiNJBkbk8M1wMKgM7E09VklZ/S/SWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c502bzDq+KQKBsKOK/gAgIhi7sXMQbhKFn3rOMKoGpW6naT64CJIIHB1yknV9zlRY+AWkdYVNjS7skaohSFezen8M5VO/YCJxJ+gaa+vys45kmIsdqvJFqCoxKRKiOjXTTK52oYn6ZIfhlCA3dMf0pXPCxUkIokFA4X2JOScOdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DdI/5owh; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oDG8dtRhhrV2tNzEwtCOQFio9vNLrGfgxupBP89t1G0=; b=DdI/5owhkl0FndydRJYM35RfUn
-	jPclTmuaFOH51f56kgqhyCHfnx5e5l2EsJfiqzxZLCStS1i9a4DPsfl0qCflW0Y3aS35AurZFYjxc
-	KlG2K04iYLMbE/pQH9Tmk2NvjLj4qvCxbBJqAbPR06dctiQP+iPIugq39jh7jdC1HD3yD3npnRn7Q
-	k1ptanAQnk6zK5Hu7FJPbL0gOjL4In4aKaNCQ1ZNEQkYg0a1VN3Z6Zq4jJWc9YqtuCYMvpnOdnTec
-	p0LNxdgdUwnjG34M/424rwyROB+rvXV0lrJefcubIAOxb/9FNR4ZnHIk8vBzKRd6yJd1metn62opr
-	yHehfYvw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ux2Mn-00000006M9J-1ikE;
-	Fri, 12 Sep 2025 11:55:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id EA81A300579; Fri, 12 Sep 2025 13:54:59 +0200 (CEST)
-Date: Fri, 12 Sep 2025 13:54:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 12/14] sched: Add shared runqueue locking to
- __task_rq_lock()
-Message-ID: <20250912115459.GZ3289052@noisy.programming.kicks-ass.net>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.684653538@infradead.org>
- <aMNnLenCytO_KEKg@slm.duckdns.org>
+	s=arc-20240116; t=1757678142; c=relaxed/simple;
+	bh=a9xjflvIj1GvX/AYeSv78nJnUVdvj5cwSlEFF++3IBk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b/na20nYqD3C54uKo44bI+iksZigwz362TuWidj9o9BPKV6/5KafJnoHK7HlM3pKHRh2eUTiobDdtFmY31E5eaGYkz+PK9alNif5WbHXIWcmfVPhm538qG5hI9h2CCuO9KdFJEPcO7nChDQsjxO70lrHNkJJePpDSl1QAcLA820=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNXqX6c7Xz6M4Wk;
+	Fri, 12 Sep 2025 19:52:56 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4330814037D;
+	Fri, 12 Sep 2025 19:55:38 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
+ 2025 13:55:37 +0200
+Date: Fri, 12 Sep 2025 12:55:35 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2 15/29] arm_mpam: Reset MSC controls from cpu hp
+ callbacks
+Message-ID: <20250912125535.0000151c@huawei.com>
+In-Reply-To: <20250910204309.20751-16-james.morse@arm.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+	<20250910204309.20751-16-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMNnLenCytO_KEKg@slm.duckdns.org>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Sep 11, 2025 at 02:19:57PM -1000, Tejun Heo wrote:
-> Hello,
+On Wed, 10 Sep 2025 20:42:55 +0000
+James Morse <james.morse@arm.com> wrote:
+
+> When a CPU comes online, it may bring a newly accessible MSC with
+> it. Only the default partid has its value reset by hardware, and
+> even then the MSC might not have been reset since its config was
+> previously dirtyied. e.g. Kexec.
 > 
-> On Wed, Sep 10, 2025 at 05:44:21PM +0200, Peter Zijlstra wrote:
-> > @@ -703,17 +703,24 @@ void double_rq_lock(struct rq *rq1, stru
-> >  struct rq *__task_rq_lock(struct task_struct *p, struct rq_flags *rf)
-> >  	__acquires(rq->lock)
-> >  {
-> > +	raw_spinlock_t *slock;
-> >  	struct rq *rq;
-> >  
-> >  	lockdep_assert_held(&p->pi_lock);
-> >  
-> >  	for (;;) {
-> >  		rq = task_rq(p);
-> > +		slock = p->srq_lock;
-> >  		raw_spin_rq_lock(rq);
-> > -		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p))) {
-> > +		if (slock)
-> > +			raw_spin_lock(slock);
-> > +		if (likely(rq == task_rq(p) && !task_on_rq_migrating(p) &&
-> > +			   (!slock || p->srq_lock == slock))) {
-> >  			rq_pin_lock(rq, rf);
-> >  			return rq;
-> >  		}
-
-Yeah, I think that needs to change a little. Perhaps something like:
-
-	slock2 = p->srq_lock;
-	if (... && (!slock2 || slock2 == slock))
-
-> With the !slock condition, the following scenario is possible:
+> Any in-use partid must have its configuration restored, or reset.
+> In-use partids may be held in caches and evicted later.
 > 
->   __task_rq_lock()
->      slock = p->srq_lock; /* NULL */
->                                                 dispatch_enqueue()
->                                                   p->srq_lock = &dsq->lock;
->                                                 enqueue finishes
->      raw_spin_rq_lock(rq);
->      rq is the same, $slock is NULL, return
->   do something assuming p is locked down        p gets dispatched to another rq
+> MSC are also reset when CPUs are taken offline to cover cases where
+> firmware doesn't reset the MSC over reboot using UEFI, or kexec
+> where there is no firmware involvement.
 > 
-> I'm unclear on when p->srq_lock would be safe to set and clear, so the goal
-> is that whoever does [__]task_rq_lock() ends up waiting on the dsq lock that
-> the task is queued on, and if we can exclude other sched operations that
-> way, we don't have to hold source rq lock when moving the task to another rq
-> for execution, right?
-
-Indeed. If !p->srq_lock then task_rq(p)->lock must be sufficient.
-
-So for enqueue, which sets p->srq_lock, this must be done while holding
-task_rq(p)->lock.
-
-So the above example should be serialized on task_rq(p)->lock, since
-__task_rq_lock() holds it, enqueue cannot happen. Conversely, if enqueue
-holds task_rq(p)->lock, then __task_rq_lock() will have to wait for
-that, and then observe the newly set p->srq_lock and cycle to take that.
-
-> In the last patch, it's set on dispatch_enqueue() and cleared when the task
-> leaves the DSQ. Let's consider a simple scenario where a task gets enqueued,
-> gets put on a non-local DSQ and then dispatched to a local DSQ, Assuming
-> everything works out and we don't have to lock the source rq for migration,
-> we'd be depending on task_rq_lock() reliably hitting p->srq_lock to avoid
-> races, but I'm not sure how this would work. Let's say p is currently
-> associated with CPU1 on a non-local DSQ w/ p->srq_lock set to its source
-> DSQ.
+> If the configuration for a RIS has not been touched since it was
+> brought online, it does not need resetting again.
 > 
->   pick_task_ext() on CPU0               task property change on CPU1
->     locks the DSQ
->     picks p      
->     task_unlink_from_dsq()              task_rq_lock();
->       p->srq_lock = NULL;                 lock rq on CPU1
->     p is moved to local DSQ               sees p->src_lock == NULL
->                                           return
->   p starts running
->   anything can happen
->                                         proceed with property change
+> To reset, write the maximum values for all discovered controls.
+> 
+> CC: Rohit Mathew <Rohit.Mathew@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+Just one trivial passing comment from me.
 
-Hmm, the thinking was that if !p->srq_lock then task_rq(p)->lock should
-be sufficient.
+Jonathan
 
-We must do set_task_cpu(0) before task_unlink_from_dsq() (and I got this
-order wrong in yesterday's email).
+> ---
+> Changes since RFC:
+>  * Last bitmap write will always be non-zero.
+>  * Dropped READ_ONCE() - teh value can no longer change.
+>  * Write 0 to proporitional stride, remove the bwa_fract variable.
+>  * Removed nested srcu lock, the assert should cover it.
+> ---
+>  drivers/resctrl/mpam_devices.c  | 117 ++++++++++++++++++++++++++++++++
+>  drivers/resctrl/mpam_internal.h |   8 +++
+>  2 files changed, 125 insertions(+)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index cd8e95fa5fd6..0353313cf284 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
 
-  pick_task_ext() on CPU0		
-    lock DSQ
-    pick p
-    set_task_cpu(0)			task_rq_lock()
-    task_unlink_from_dsq()		  if !p->srq_lock, then task_rq(p) == 0
-      p->srq_lock = NULL;
-    p is moved to local DSQ
+>  
+> @@ -818,6 +921,20 @@ static int mpam_discovery_cpu_online(unsigned int cpu)
+>  
+>  static int mpam_cpu_offline(unsigned int cpu)
+>  {
+> +	int idx;
+> +	struct mpam_msc *msc;
+> +
+> +	idx = srcu_read_lock(&mpam_srcu);
 
-Perhaps the p->srq_lock store should be store-release, so that the cpu
-store is before.
+Might be worth using
+guard(srcu)(&mpam_srcu);
+here but only real advantage it bring is in hiding the local idx variable
+away.  
 
-Then if we observe p->srq_lock, we'll serialize against DSQ and all is
-well, if we observe !p->srq_lock then we must also observe task_rq(p) ==
-0 and then we'll serialize on rq->lock.
+> +	list_for_each_entry_srcu(msc, &mpam_all_msc, all_msc_list,
+> +				 srcu_read_lock_held(&mpam_srcu)) {
+> +		if (!cpumask_test_cpu(cpu, &msc->accessibility))
+> +			continue;
+> +
+> +		if (atomic_dec_and_test(&msc->online_refs))
+> +			mpam_reset_msc(msc, false);
+> +	}
+> +	srcu_read_unlock(&mpam_srcu, idx);
+> +
+>  	return 0;
+>  }
 
-
-Now let me see if there isn't an ABA issue here, consider:
-
-pre: task_cpu(p) != 2, p->srq_lock = NULL
-
-  CPU0				CPU1				CPU2
-
-  __task_rq_lock()		enqueue_task_scx() 		pick_task_scx()
-
-				rq = task_rq(p);
-				LOCK rq->lock
-  rq = task_rq(p)
-  LOCK rq->lock
-    .. waits
-				LOCK dsq->lock
-				enqueue on dsq
-				p->srq_lock = &dsq->lock	
-				UNLOCK dsq->lock
-								LOCK dsq->lock
-								pick p
-				UNLOCK rq->lock
-								set_task_cpu(2)
-								task_unlink_from_dsq()
-								  p->srq_lock = NULL;
-								UNLOCK dsq->lock
-    .. resumes
- 
-At this point our CPU0's __task_rq_lock():
-
-  - if it observes p->srq_lock, it will cycle taking that, only to then
-    find out p->srq_lock is no longer set, but then it must also see
-    task_rq() has changed, so the next cycle will block on CPU2's
-    rq->lock.
-
-  - if it observes !p->srq_lock, then it cannot be the initial NULL,
-    since the initial task_rq(p)->lock ordering prohibits this. So it
-    must be the second NULL, which then also mandates we see the CPU
-    change and we'll cycle to take CPU2's rq->lock.
-
-That is, I _think_ we're okay :-)
 
 
