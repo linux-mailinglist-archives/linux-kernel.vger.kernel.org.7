@@ -1,127 +1,146 @@
-Return-Path: <linux-kernel+bounces-814712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1554DB5579C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:28:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C372B557A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C984D3BD1A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D68FDAC3D0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8F02D24BE;
-	Fri, 12 Sep 2025 20:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595112D3EE5;
+	Fri, 12 Sep 2025 20:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wx+/QIu+"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D/xPblQf"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0F854758
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74712D0621
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757708921; cv=none; b=i1AWMhIt2pfA5FY8XlkKTFhl+Glifl7CI8MzV9M9XczEzS3AuRPlRz7lT7fzMsXox50IKTt6wiKVS91af94Npz6GrLrYABQrWyBeI/IfRVW6GeTWAxNOUTzdt7hLby+lN74L2PGMoZWnQsSsY2/n+DBLLg2PoJG4Qo7XTWlc/To=
+	t=1757708962; cv=none; b=Dp4FASVj9S+sG7EBGfV2Uw0XqUJuTIYARB6JdlzWlSodtfbRQCG2VkVlLorlQjwIGA9wjwNIHVrvkwZNgc2f2/yvOoMwsaOj6a+hjnfAIITYawK2B0fexIG5i48BnvID2nTONexXBnzpQjXDHTasbgDgTEPsNCeNblTdqlt+pA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757708921; c=relaxed/simple;
-	bh=5CRQ1Wk/o0j/G2nHEl90c33QVDlowgMy5EcywRApncQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t+33BaxmZ6V9DIjTctk/VsL29JX77Dni5BjnTF578JtbElzgOjox71sVzpV/AXJAVfyxn+Bl/nBUlLaXB0O0C+DTzPXGDA1f1msyofPC2/zrOHS8KzChWSE8ILgJeu2/Q5q/ACRQn4JlA5JkFERIDeha576yFJfR1OB6xVPIOa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wx+/QIu+; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61ed6eeaff9so484a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:28:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757708918; x=1758313718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EkdPl3mJf0N7aHo7vS0NETAJN5x+QRdYgue6V4hYEyk=;
-        b=Wx+/QIu+CfvykWXlvHaQoQtm09bFs+WO0BguULsjBr2JXkHX33ONwrs2p5vmGGrpIr
-         lRgGSyyGoneGLYsih6Odzv4B/NBkKGUvdM5/EPPQlN0pWBOapKW5Nzx6sVIjx5CUOOdx
-         CzrO33HNbCid7JX/hmVb/O3JHzFXtehT3IfM6AjQLLtnS8HpWL4s77Z8WE1aSqS8kB0M
-         zY02ZG/wrAt1bjrWXeejxRtc45y1ZNVN9MXmdbML3PH/xAKTdWPbIl4/4GoIMmdKZbiJ
-         aTR9ZLZlQ1OoUWgXBBkWJ5GpkMalJe6QjEX6uEz6qd0XcRGBJtNYTYaidDZeOp7XXW7b
-         eJ7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757708918; x=1758313718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EkdPl3mJf0N7aHo7vS0NETAJN5x+QRdYgue6V4hYEyk=;
-        b=PmYmGoxhPoMVDrJZ3ZqRqen++gyHXeEFn3u2Cjw7qCPBvZTlQCgTNPz1wVmW8lxlLF
-         1B1xeVzRa00URJUK8NqohQyb9XCaQ6mHA83eg8RQp2ORW5M944QTVQXJ7bzF02HTmAD2
-         cH7LJG0iFW3WACKpxuxBcpvQmZGZHw2Ll9LV8HKNVIUk4sDdw+tn0Jxob/sremmZvbrr
-         FFo+WXt93d6cyA+95sWl9hXcQWp3gLauNAGiC1zZQSTgj3ySIuPapPz2cH97TmbzVxzX
-         b7J1c+N0gGoYdaJo1qpqBkoqi4wwqiK5GPh7Cz4MLWT/avSSVFgLUdA64bibwxpAFg9l
-         Ak1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVasAcuxsFvn87TJUJTlQh7bEM+SU1h1+zRlK0z94X37YNnMU2N4T4v1qAEv6ZY0xo9DxUOttlC7GtPqsE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWNShN9JERJORruIijrfPjRSt5yx8w/mrJQpIa3EDZM9ncfdfs
-	5oRDzI0OMbEVwulPr+JiHT2DUYu9UMAPWsO5ToZi4OIIHcWoz3f4HTadPkl/JyQWQe9FjqaA1/p
-	/++JUz32lCRWw4YTX2dFZiSI8vyvnQph6o0FbuoZx
-X-Gm-Gg: ASbGncsF7MKwHRrSfoUu6wam1wC712GV3DuD70jQ2ShXTVIR4MgZNtZYQuJUiMqctYZ
-	7fpFYTKIrKAEYn6077yPAN/ow5/fPNhRxA7B2JZTL5madgjeWcldw+N8b36D3LJNI+p4nwBeknc
-	NVawli7tiO1S1JKpqvkhE+fvszOrrG7qA4H3YidATlEptbyDyIbgF9hH9VQ7SFSZSCiEcvuyYNM
-	kX9Aor7yqDEAsSgJtTYzGxA
-X-Google-Smtp-Source: AGHT+IEkvcIOSJdOnsWjngaZgia/B6ZJv/NV1qfDBSsgIsWPExuX3vienXVzLgwf4WmDv+gESSlL6lMpOoK3PXd9VFg=
-X-Received: by 2002:a50:9991:0:b0:61c:b5f0:7ddb with SMTP id
- 4fb4d7f45d1cf-62f03e263b7mr3303a12.6.1757708918218; Fri, 12 Sep 2025 13:28:38
- -0700 (PDT)
+	s=arc-20240116; t=1757708962; c=relaxed/simple;
+	bh=CQSOU4KL00u8OV+8r4IhIf0vi+CEPGM0Nhi//XT63Yk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FOE3GRzhGnTgKOlX96nJNdvU2Jrc3BG0Qm7qwLQzM4hskCOzHcSed89Guxme1rqIql7V3JCs8vZbdWvcfYYoqtnzm1o1v4pmhOH9WE/vhzvCCYKfWYum+QRp7d2WZBLultGQp9uShZLdqr1YR1LIp8vKyRphPGXQSOzrksf+I7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D/xPblQf; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7f591ac9-d3e0-4404-987c-40eceaf51fbb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757708943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u+gBOvo8OmvEt95Yti7QbgbFG8TM5E2PZ/ZvdEq9MnA=;
+	b=D/xPblQfNNhgfqJE7DlAGb0gleV7x5OawFi5FATZtIVfVPoharw7ndWDbC2rfIGFXXUx14
+	N58SZwUJXAvT+qCDcqA3FE+tj31zplmd0VKDWGrd95hEy4PtW5eNyZJExLI+R//BkmVLO1
+	2t8cUqBrERzex7ltrNApX9vNMlB6AQw=
+Date: Fri, 12 Sep 2025 13:28:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815123349.729017-1-mlevitsk@redhat.com> <20240815123349.729017-2-mlevitsk@redhat.com>
- <Zr_JX1z8xWNAxHmz@google.com> <fa69866979cdb8ad445d0dffe98d6158288af339.camel@redhat.com>
- <0d41afa70bd97d399f71cf8be80854f13fe7286c.camel@redhat.com>
- <ZsYQE3GsvcvoeJ0B@google.com> <8a88f4e6208803c52eba946313804f682dadc5ee.camel@redhat.com>
- <ZsiVy5Z3q-7NmNab@google.com>
-In-Reply-To: <ZsiVy5Z3q-7NmNab@google.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Fri, 12 Sep 2025 13:28:26 -0700
-X-Gm-Features: AS18NWAcs9kOE63nWWnvE8--wogUnl2l6qpewdFnnoJGLyvlOpE75iYZG3HMwn0
-Message-ID: <CALMp9eR91k0t9kSzpvM=-=yePGYmLHggjfvvhmD-qaxBCnRn+Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] KVM: x86: relax canonical check for some x86
- architectural msrs
-To: Sean Christopherson <seanjc@google.com>
-Cc: mlevitsk@redhat.com, kvm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
-	x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCHv3 perf/core 0/6] uprobe,bpf: Allow to change app registers
+ from uprobe registers
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Andrii Nakryiko <andrii@kernel.org>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, x86@kernel.org,
+ Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+ John Fastabend <john.fastabend@gmail.com>, Hao Luo <haoluo@google.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>
+References: <20250909123857.315599-1-jolsa@kernel.org>
+ <CAEf4Bzb4ErWn=2SajBcyJxqGEYy0DXmtWuXKLskPGLG-Y9POFA@mail.gmail.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ihor Solodrai <ihor.solodrai@linux.dev>
+In-Reply-To: <CAEf4Bzb4ErWn=2SajBcyJxqGEYy0DXmtWuXKLskPGLG-Y9POFA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 23, 2024 at 6:59=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
-> Heh, and for MPX, the SDM kinda sorta confirms that LA57 is ignored, thou=
-gh I
-> doubt the author of this section intended their words to be taken this wa=
-y :-)
->
->   WRMSR to BNDCFGS will #GP if any of the reserved bits of BNDCFGS is not=
- zero or
->   if the base address of the bound directory is not canonical. XRSTOR of =
-BNDCFGU
->   ignores the reserved bits and does not fault if any is non-zero; simila=
-rly, it
->   ignores the upper bits of the base address of the bound directory and s=
-ign-extends
->   the highest implemented bit of the linear address to guarantee the cano=
-nicality
->   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
-^^^^^^^^
->   of this address.
+On 9/9/25 9:41 AM, Andrii Nakryiko wrote:
+> On Tue, Sep 9, 2025 at 8:39 AM Jiri Olsa <jolsa@kernel.org> wrote:
+>>
+>> hi,
+>> we recently had several requests for tetragon to be able to change
+>> user application function return value or divert its execution through
+>> instruction pointer change.
+>>
+>> This patchset adds support for uprobe program to change app's registers
+>> including instruction pointer.
+>>
+>> v3 changes:
+>> - deny attach of kprobe,multi with kprobe_write_ctx set [Alexei]
+>> - added more tests for denied kprobe attachment
+>>
+>> thanks,
+>> jirka
+>>
+>>
+>> ---
+>> Jiri Olsa (6):
+>>        bpf: Allow uprobe program to change context registers
+>>        uprobe: Do not emulate/sstep original instruction when ip is changed
+>>        selftests/bpf: Add uprobe context registers changes test
+>>        selftests/bpf: Add uprobe context ip register change test
+>>        selftests/bpf: Add kprobe write ctx attach test
+>>        selftests/bpf: Add kprobe multi write ctx attach test
+>>
+> 
+> For the series:
+> 
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> 
+> Question is which tree will this go through? Most changes are in BPF,
+> so probably bpf-next, right?
 
-I don't believe there was ever a CPU that supported both MPX and LA57. :)
+Hi Jiri.
 
-Late to the party, as usual, but my interest was piqued by the failure
-of KVM_SET_NESTED_STATE prior to v6.13 if L1 had CR4.LA57 set, L2 did
-not, and the VMCS12.HOST_GSBASE had a kernel address > 48 bits wide.
-The canonicalization checks for the *host* state in the VMCS were done
-using the guest's CR4.LA57.
+This series does not apply to current bpf-next, see below.
 
-Shouldn't this series have been cc'd to stable?
+Could you please respin it with bpf-next tag?
+E.g. "[PATCH v4 bpf-next 0/6] ..."
+
+Thanks!
+
+$ git log -1 --oneline
+a578b54a8ad2 (HEAD -> master, origin/master, origin/HEAD, 
+kernel-patches/bpf-next) Merge branch 
+'bpf-report-arena-faults-to-bpf-streams'
+$ b4 am 20250909123857.315599-1-jolsa@kernel.org
+[...]
+$ git am 
+./v3_20250909_jolsa_uprobe_bpf_allow_to_change_app_registers_from_uprobe_registers.mbx
+Applying: bpf: Allow uprobe program to change context registers
+Applying: uprobe: Do not emulate/sstep original instruction when ip is 
+changed
+error: patch failed: kernel/events/uprobes.c:2768
+error: kernel/events/uprobes.c: patch does not apply
+Patch failed at 0002 uprobe: Do not emulate/sstep original instruction 
+when ip is changed
+[...]
+
+> 
+>>   include/linux/bpf.h                                        |   1 +
+>>   kernel/events/core.c                                       |   4 +++
+>>   kernel/events/uprobes.c                                    |   7 +++++
+>>   kernel/trace/bpf_trace.c                                   |   7 +++--
+>>   tools/testing/selftests/bpf/prog_tests/attach_probe.c      |  28 +++++++++++++++++
+>>   tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c |  27 ++++++++++++++++
+>>   tools/testing/selftests/bpf/prog_tests/uprobe.c            | 156 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+>>   tools/testing/selftests/bpf/progs/kprobe_write_ctx.c       |  22 +++++++++++++
+>>   tools/testing/selftests/bpf/progs/test_uprobe.c            |  38 +++++++++++++++++++++++
+>>   9 files changed, 287 insertions(+), 3 deletions(-)
+>>   create mode 100644 tools/testing/selftests/bpf/progs/kprobe_write_ctx.c
+
 
