@@ -1,341 +1,108 @@
-Return-Path: <linux-kernel+bounces-814033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 282EDB54E6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:51:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E43ADB54E6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83931BC7CBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:51:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 193BBBA0B7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D369C30AAC9;
-	Fri, 12 Sep 2025 12:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39193309DAF;
+	Fri, 12 Sep 2025 12:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pHbXIaEb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0z/kSoo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01FD330AAC6
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84283305E09;
+	Fri, 12 Sep 2025 12:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681385; cv=none; b=Gp9Ll7xg6Gy0wjJKdDZtQywDTVOcYUQpxTQDXsjwq0rl4+XZc66KCj3exHIdVTDVJR6IhK9VOyarhd2hjNy2r0Hq5pCQdX+VpVzh3ZNtdGYocKYQk6voAu0ERon0/zXVBcw40s7GrFP9IgLqwZjhljnsOhNQe9PTE80K+3I7HF4=
+	t=1757681376; cv=none; b=qWGJwjgnQdJ41SJT9ysZr5Ic47wuH1cxfarKcWmnGUnzzWxkArTsaH1JB0YgRU3GjekzbZ3uVFSMm+VLmvbURoLt/poE+6C+Db1/AU5jqYIBzsVUBylXuUzPIVoxY82YxCSZlXOhoPtzDUDLjWbMVXRG/hXfUKFkN9WYNO/5Trg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681385; c=relaxed/simple;
-	bh=HXfG8pPm3va569/MMGareUf3EW0S6MwFKBfzSoPiHpQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B4ACur1WwSZJzYPWeTeKWJV+gya/RMfjy6Ypk+MQb189V67MvCxckZ3hnIz1PpLjCkYvafEVPgnOKSNLBj+gfZal2ILjeaiSDCLJxZEEyngFyCkKezi2WHCBE43S1MVC39oEjpAwzRss7wHrCfYoO96jzKfCZaGIw2GVPTT/hWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pHbXIaEb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C4sldS032411;
-	Fri, 12 Sep 2025 12:49:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=mXtTa8
-	6GhlKRdPoROiYtUj1KQibUwRJjlk6Jfn53Nrc=; b=pHbXIaEbobmxE3bXiTMoFL
-	suDDN1HEz4jW5GOaXhVF2dGPikI3+rMoc32TRUx9uwiNqRxXM09vY48x3mnAyyy8
-	Rf8O9Qk2A5bNAtW/N0DM8QmaP7GB/lcykT9uZoT3k+8VLWM1Scezf3KKuFZqtZ97
-	U17EUUPzPtOPNpS2b+dhn934zuRxHWQjcmYajS7Nb/j7x1koO/YuGTAuF5yc7xn3
-	OZiX6BhNKwscXTxFcyEC7qRTP4NNVPw8t/au3UHRBEaRk3ZdZBJXSphca54+gacw
-	QVXj9g5bhjzveBXTqnXNoHpItyqJspTQ6KvRMBYDx0SnETJgTw34jo9YNoD/yXmw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukeykfw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:49:28 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CCcePs001236;
-	Fri, 12 Sep 2025 12:49:27 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490ukeykfs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:49:27 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CA3ASd007944;
-	Fri, 12 Sep 2025 12:49:26 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109q30fu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:49:26 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CCnM1145351234
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 12:49:22 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A47D520043;
-	Fri, 12 Sep 2025 12:49:22 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 21F5620040;
-	Fri, 12 Sep 2025 12:49:14 +0000 (GMT)
-Received: from [9.61.95.215] (unknown [9.61.95.215])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 12 Sep 2025 12:49:13 +0000 (GMT)
-Message-ID: <52f5b23b-a1a6-4a24-93d0-c712a27ba00f@linux.ibm.com>
-Date: Fri, 12 Sep 2025 18:19:12 +0530
+	s=arc-20240116; t=1757681376; c=relaxed/simple;
+	bh=cJOJH3yU/kwSOFEWL3cknqHk3CDHphTlrhQNFHKX2TQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDOeZJATOtQa6ya52T+yiHJX1gNyyIzqobMCUkIM37fRL0+52yNT7m6DRxoOYhoQcuP36VoNnhUo/7LGpS884L/wEn4DE4/W/79f+Ki5MrWH9XMu92EMVkWXMrJoJWgq3PqmBQkbPSCQmOrBi2dqDcytAm4gGho2bshN+Ywf9Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V0z/kSoo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB3FAC4CEF1;
+	Fri, 12 Sep 2025 12:49:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757681375;
+	bh=cJOJH3yU/kwSOFEWL3cknqHk3CDHphTlrhQNFHKX2TQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V0z/kSooxMApXq2NR67i6CL/A5Mf8HOrK0a2IkGC5YoU1uouX+LEnpoZnf8dKPuoR
+	 oZFaizNtY+yIa/IElaW7FFd+v0Q4mnd3MFXQsED/WA41t05OtpTD9Y/cmO0PRpWgov
+	 OC5ZNQEgfyvKL7yVPc6OjAbenW6IusZ3KVhyDgIxa8aYAuCcDnXH7U7cS7lCnszegu
+	 sIXuN6n6XxxoNdYFqhvC7z723wrdtVJlV8gVC3PqfytoL+AatKrH9DhngrZgHJtUQz
+	 yLlEKCwT2n2B4b32+72FsWoVQ2KruW7f/01kVtW0QOzdZOcfC3ubl66AUQkqMmjHtP
+	 hTpLKb1LZNKuw==
+Date: Fri, 12 Sep 2025 20:49:30 +0800
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, brgl@bgdev.pl
+Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
+Message-ID: <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
+References: <20250912081718.3827390-1-tzungbi@kernel.org>
+ <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
+ <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 07/10] sched/core: Push current task from paravirt
- CPU
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: vschneid@redhat.com, iii@linux.ibm.com, huschle@linux.ibm.com,
-        rostedt@goodmis.org, dietmar.eggemann@arm.com, vineeth@bitbyteword.org,
-        jgross@suse.com, pbonzini@redhat.com, seanjc@google.com,
-        mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
-        maddy@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org
-References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
- <20250910174210.1969750-8-sshegde@linux.ibm.com>
- <7227822a-0b4a-47cc-af7f-190f6d3b3e07@amd.com>
- <1617b0fb-273a-4d86-8247-c67968c07b3b@linux.ibm.com>
- <5493a681-4438-4854-9cf4-c1e71ad2dbed@amd.com>
- <36042e33-772d-4c4e-ba6d-8461c8f6e29b@linux.ibm.com>
- <2e97c804-c67a-4c92-94c9-d47a6648439c@amd.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <2e97c804-c67a-4c92-94c9-d47a6648439c@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDE5NSBTYWx0ZWRfX1tBvb+1fr2UP
- ZwKNHslQpXBkwXHTQz/isweyNxieHtooQBIt+HdWBW2zilsVdV13z6MSX8lGE0qPdV83u6QKFtF
- lmvVtZLgtUf3ToX3j6AqkPw8LSQcgYxNQauVfbimtfvdWg0cAmiLEfT6qYEYV1eYSd+jYgLqcQ7
- KAxiycdBHCXj5g9WKYKDcOr/LwUvftT9tfPzOL/jd3Yb64KuxmlxqXhdr51ky+AmKdch8Qh5S9H
- Ku9j8NQLUpAd2+hgl3MDT2r/BnTiZvHlB7jc81dRtozH4TUptHCL0WUwETfsjvJaXZa+gPzca4j
- CT+mNwSF+D2wAAXiWgc5dZpgZ1eCokitz1q5jnwjp1K3bdEtNI0fjHeYPMzNoqgCc3VmOaBvLZo
- JG4BBr9b
-X-Proofpoint-ORIG-GUID: _Z_ewn5No7AKUJRlqpv6ZF3urhPweW-W
-X-Proofpoint-GUID: KmmnzaS-HQOVD0K6rSRWdIZYYLpqOPqZ
-X-Authority-Analysis: v=2.4 cv=StCQ6OO0 c=1 sm=1 tr=0 ts=68c416d8 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=99mz2OWCW_9eoqye4tUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 bulkscore=0 clxscore=1015 adultscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060195
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
 
+On Fri, Sep 12, 2025 at 11:24:10AM +0200, Bartosz Golaszewski wrote:
+> On Fri, 12 Sept 2025 at 11:09, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > On 12/09/2025 10:17, Tzung-Bi Shih wrote:
+> > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> >
+> > Thanks for the work. Just a note, please start using b4, so above Cc
+> > will be propagated to all patches. Folks above received only the cover
+> > letter...
 
+Thank you for bringing this to my attention.  I wasn't aware of that and
+will ensure this is handled correctly in the future.
 
-On 9/12/25 2:18 PM, K Prateek Nayak wrote:
-> Hello Shrikanth,
+> Thanks to Krzysztof for making me aware of this. Could you please Cc
+> my brgl@bgdev.pl address on the next iteration.
+
+Sure, will do.
+
+> I haven't looked into the details yet but the small size of the first
+> patch strikes me as odd. The similar changes I did for GPIO were quite
+> big and they were designed just for a single sub-system.
 > 
-> On 9/12/2025 10:52 AM, Shrikanth Hegde wrote:
->>
->>
->> On 9/11/25 10:36 PM, K Prateek Nayak wrote:
->>> Hello Shrikanth,
->>>
->>> On 9/11/2025 10:22 PM, Shrikanth Hegde wrote:
->>>>>> +    if (is_cpu_paravirt(cpu))
->>>>>> +        push_current_from_paravirt_cpu(rq);
->>>>>
->>>>> Does this mean paravirt CPU is capable of handling an interrupt but may
->>>>> not be continuously available to run a task?
->>>>
->>>> When i run hackbench which involves fair bit of IRQ stuff, it moves out.
->>>>
->>>> For example,
->>>>
->>>> echo 600-710 > /sys/devices/system/cpu/paravirt
->>>>
->>>> 11:31:54 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->>>> 11:31:57 AM  598    2.04    0.00   77.55    0.00   18.37    0.00    1.02    0.00    0.00    1.02
->>>> 11:31:57 AM  599    1.01    0.00   79.80    0.00   17.17    0.00    1.01    0.00    0.00    1.01
->>>> 11:31:57 AM  600    0.00    0.00    0.00    0.00    0.00    0.00    0.99    0.00    0.00   99.01
->>>> 11:31:57 AM  601    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
->>>> 11:31:57 AM  602    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
->>>>
->>>>
->>>> There could some workloads which doesn't move irq's out, for which needs irqbalance change.
->>>> Looking into it.
->>>>
->>>>    Or is the VMM expected to set
->>>>> the CPU on the paravirt mask and give the vCPU sufficient time to move the
->>>>> task before yanking it away from the pCPU?
->>>>>
->>>>
->>>> If the vCPU is running something, it is going to run at some point on pCPU.
->>>> hypervisor will give the cycles to this vCPU by preempting some other vCPU.
->>>>
->>>> It is that using this infra, there is should be nothing on that paravirt vCPU.
->>>> That way collectively VMM gets only limited request for pCPU which it can satify
->>>> without vCPU preemption.
->>>
->>> Ack! Just wanted to understand the usage.
->>>
->>> P.S. I remember discussions during last LPC where we could communicate
->>> this unavailability via CPU capacity. Was that problematic for some
->>> reason? Sorry if I didn't follow this discussion earlier.
->>>
->>
->> Thanks for that questions. Gives a opportunity to retrospect.
->>
->> Yes. That's where we started. but that has a lot of implementation challenges.
->> Still an option though.
->>
->> History upto current state:
->>
->> 1. At LPC24 presented the problem statement, and why existing approaches such as hotplug,
->>     cpuset cgroup or taskset are not viable solution. Hotplug would have come handy if the cost was low.
->>     The overhead of sched domain rebuild and serial nature of hotplug makes it not viable option.
->>     One of the possible approach was CPU Capacity.
-> 
-> Ack. Is creating an isolated partition on the fly too expensive too?
-> I don't think creation of that partition is serialized and it should
-> achieve a similar result with a single sched-domain rebuild and I'm
-> hoping VMM doesn't change the paravirt mask at an alarming rate.
-> 
+> During the talk you reference, after I suggested a library like this,
+> Greg KH can be heard saying: do this for two big subsystems so that
+> you're sure it's a generic solution. Here you're only using it in a
+> single driver which makes me wonder if we can actually use it to
+> improve bigger offenders, like for example I2C, or even replace the
+> custom, SRCU-based solution in GPIO we have now. Have you considered
+> at least doing a PoC in a wider kernel framework?
 
-That is a good idea too.
+Yes, I'm happy to take this on.
 
-Main issue is with when workload does taskset.
-
-For example,
-taskset -c 650-700 stress-ng --cpu=100 -t 10
-echo isolated > cpuset.cpus.partition
-echo 600-710 > cpuset.cpus.exclusive
-
-Tasks move out and is cpu affinity is reset to all cpus. Similar to hotplug.
-But both hotplug and write to exclusive are triggered by user, and hence user
-is aware of it.
-
-I don't think it is good idea to reset users cpu affinity without an action from them.
-
-Looking at code of
-      cpuset_write_resmask
-      update_exclusive_cpumask
-    - update_parent_effective_cpumask
-       + 6.16% cpuset_update_tasks_cpumask
-            set_cpus_allowed_ptr
-            __set_cpus_allowed_ptr
-            affine_move_task
-
-affine_move_task -> would call migration_cpu_stop -> Moves one task at a time
-
-If you see we do the same/similar thing in paravirt infra, but we don't touch/reset task's cpu affinity.
-Affined tasks continue to run if it is affined to only paravirt CPUs. If there is any one one
-non paravirt CPU in its cpus_ptr it will move there.
-
-> P.S. Some stupid benchmarking on a 256CPU machine:
-> 
->      mkdir /sys/fs/cgroup/isol/
->      echo isolated >  /sys/fs/cgroup/isol/cpuset.cpus.partition
-> 
->      time for i in {1..1000}; do \
->      echo "8-15" > /sys/fs/cgroup/isol/cpuset.cpus.exclusive; \
->      echo "16-23" > /sys/fs/cgroup/isol/cpuset.cpus.exclusive; \
->      done
-> 
->      real    2m50.016s
->      user    0m0.198s
->      sys     1m47.708s
-> 
-> So that is about (170sec / 2000) ~ 85ms per cpuset operation.
-
-That cost would be okay. VMM isn't expected to change at very high rate.
-
-> Definitely more expensive than setting the paravirt but compare that to:
-> 
->      for i in {8..15}; do echo 0 > /sys/devices/system/cpu/cpu$i/online; done; \
->      for i in {8..15}; do echo 1 > /sys/devices/system/cpu/cpu$i/online; done; \
->      for i in {16..23}; do echo 0 > /sys/devices/system/cpu/cpu$i/online; done; \
->      for i in {16..23}; do echo 1 > /sys/devices/system/cpu/cpu$i/online; done;'
-> 
->      real    0m5.046s
->      user    0m0.014s
->      sys     0m0.110s
-> 
-> Definitely less expensive than a full hotplug.
-
-This happens mainly due to the synchronize_rcu there.
-
-> 
->>
->> 1. Issues with CPU Capacity approach:
->>     a. Need to make group_misfit_task as the highest priority. That alone will break big.LITTLE
->>        since it relies on group misfit and group_overload should have higher priority there.
->>     b. At high concurrency tasks still moved those CPUs with CAPACITY=1.
->>     c. A lot of scheduler stats would need to be aware of change in CAPACITY specially load balance/wakeup.
-> 
-> Ack. Thinking out loud: Can capacity go to 0 via H/W pressure interface?
-> Maybe we can toggle the "sched_asym_cpucapacity" static branch without
-> actually having SD_ASYM_CAPACITY in these special case to enable
-> asym_fits_cpu() steer away from these 0 capacity CPUs.
-
-bigger concern is around that group_misfit_task IMO.
-
-> 
->>     d. in update_group_misfit - need to set the misfit load based on capacity. the current code sets to 0,
->>        because of task_fits_cpu stuff
->>     e. More challenges in RT.
->>
->> That's when Tobias had introduced a new group type called group_parked.
->> https://lore.kernel.org/all/20241204112149.25872-2-huschle@linux.ibm.com/
->>    It has relatively cleaner implementation compared to CPU CAPACITY.
->>
->> It had a few disadvantages too:
->> 1. It use to take around 8-10 seconds for tasks to move out of those CPUs. That was the main
->>     concern.
->> 2. Needs a few stats based changes in update_sg_lb_stats. might be tricky in all scenarios.
->>
->> That's when we were exploring how the tasks move out when the cpu goes offline. It happens quite fast too.
->> So tried a similar mechanism and this is where we are right now.
-> 
-> I agree push is great from that perspective.
-> 
-
-Yes. It is same at the moment.
-
->>
->>> [..snip..]
->>>>>> +    local_irq_save(flags);
->>>>>> +    preempt_disable();
->>>>>
->>>>> Disabling IRQs implies preemption is disabled.
->>>>>
->>>>
->>>> Most of the places stop_one_cpu_nowait called with preemption & irq disabled.
->>>> stopper runs at the next possible opportunity.
->>>
->>> But is there any reason to do both local_irq_save() and
->>> preempt_disable()? include/linux/preempt.h defines preemptible() as:
->>>
->>>       #define preemptible()   (preempt_count() == 0 && !irqs_disabled())
->>>
->>> so disabling IRQs should be sufficient right or am I missing something?
->>>
->>
->> f0498d2a54e79 (Peter Zijlstra) "sched: Fix stop_one_cpu_nowait() vs hotplug"
->> could be the answer you are looking for.
-> 
-> I think in all the cases covered by that commit, "task_rq_unlock(...)" would
-> have enabled interrupts which required that specified pattern but here we
-> have preempt_disable() within a local_irq_save() section which might not be
-> necessary.
-> 
->>
->>>>
->>>> stop_one_cpu_nowait
->>>>    ->queues the task into stopper list
->>>>       -> wake_up_process(stopper)
->>>>          -> set need_resched
->>>>            -> stopper runs as early as possible.
->>>>           
->>
-> 
-
+To help me get started, could you please point me to some relevant code
+locations?  Also, could you let me know if any specific physical devices
+will be needed for testing?
 
