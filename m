@@ -1,191 +1,250 @@
-Return-Path: <linux-kernel+bounces-813191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC12B541CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:59:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B674B541CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA02C7B2044
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C619CA08A89
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5A3B2701D9;
-	Fri, 12 Sep 2025 04:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD5627146B;
+	Fri, 12 Sep 2025 04:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gIAl9QbS"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2059.outbound.protection.outlook.com [40.107.92.59])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hJBAeGZK"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954203FFD;
-	Fri, 12 Sep 2025 04:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757653149; cv=fail; b=ZxBFoTeKXbqPPItCISh30Hg5PvQET11c8JRbutSgrbNwkD6KgrlSmm6p19Gb994krmQUOjcZyhMffQ2ZlWlmAplN1SRo0mi9arB6EhDHWbumDS6+O/p1gS+UtVjFNouB7f4kv/vTtMcPuHCSQsGwap3kZc4dO/yEWKPJy1Lq2E8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757653149; c=relaxed/simple;
-	bh=Hi7P72a7lvBPyerzRB+Az1gW4hCv+lhh88DNS8PgnDc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=rgrrnvaZd2H/HbXwumrwCl38TYamy1CBVmWGLo7+jL3AbhdfqeJOz6gVVZGa/Dh+VcXWnncf5R/cHK/NHPHPBJAEbszCTnzSxRuNjOFAb+7Vi9o+9GiXjppzVHUVwMn2QZZ+WXOFltfAYES4I4x7sqHPK/118ro0UM61XBqdLPE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gIAl9QbS; arc=fail smtp.client-ip=40.107.92.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rMPDY0SvxE+l+cutwpdaZOYVOMU5OiEAcy49TYahu3laDysxwg+18SShi3g3gBxgttTHpvODgKOiRDKjUnLLkjJYWzmheD/26/HzuEh+P3SssR9ZPu1fPOnVSWff72cWWJWgzQFpLlbtyCyltVdjtlPUTtV+b9C2I79suNsGDRaTpI2YKgfQbU9YNhZpzMgTxyFgs7anwbWzCXkp1jd1rnalnuDueixF+aqLsMRtSsferGqhDR+b2G3spmqvLxtRUnXAhwxkFqn2gaD+f6h4qxEpEqchO9kbaeFy05+w7N0vGtm91bN1WvY8aDKJyIAu4+bIIGT43/SeFtOhoSFYBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=P97A2lkxaQQAfq/um/Vkpum2CZ9wsjWMBAc9p+5UANQ=;
- b=xlcje5IxPvG0x44APHB8brv9zhh+O9dTD+odjd0TcIZXJcKyRluDZZhIz/0oJAq7cX1uQS5Fep5YwCeuiZj/NpyQBx+xvrGDW8nrICen4DUEDbbWm8KF1/3L+7jY6OWwedmgzC6aRbteK72dC1v+6A+QnkMqMkMgnS+oOONFypJizxM4CNfiEHFkoyCz3E37VDXClf2EG8AQBnHlcQUJTSOpbUiUUKtK71D/pO+nMTHlKV8HJZfHCkCWBgoyxsgpALovwbJDM0WGWWtelcKhqwo/GtsBuOw4+g1Y/ImG/MILF0JHpgZ43cAi+Yne+j78Ct7409qwGA+ID6By6Zkz4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=P97A2lkxaQQAfq/um/Vkpum2CZ9wsjWMBAc9p+5UANQ=;
- b=gIAl9QbSD02tImtpSOAPdxKi1OYimsjA6TICdVK0DrmATZJgGLkklIJOhgyjz2XCWOlqPF/JgQxX56jz9AKBdI3BJEDizV+tvh3B1rxmFXM4XIgKnb1ikJ6svTJgp6fvoyVWV4gfsv1725hbeS/kFfgPj0SGpsngcK1nCalLfr5upaf823c0PVI3HAdfYlWhqfpS2s75b7Oz4r/vPbrGMDw2bIrf1bFdj+DoBIH2zF9PWaIpjOo38axpT+scwm8REtj+1NaDH05b1+WoNupqXByuxLykIYLlBiMjWXE+lrc5CLFwI4qEUFDRWDHj1a9zR5dchV9vAfoGkWvkxBY8PA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by CH3PR12MB7595.namprd12.prod.outlook.com (2603:10b6:610:14c::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 04:59:02 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 04:59:02 +0000
-Message-ID: <2f0f8adf-03ef-49db-9e78-9a565154cb2d@nvidia.com>
-Date: Fri, 12 Sep 2025 14:58:58 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the mm-unstable tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250912141232.17bd512f@canb.auug.org.au>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <20250912141232.17bd512f@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY5PR03CA0015.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::25) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FD426E6F8;
+	Fri, 12 Sep 2025 04:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757653172; cv=none; b=RnuNxEE0JIunjheWPM0fENc7W5Fhxw3rvRPOq+QzGBup51/4iC4m/lMOwU8Ys3E0q0/BWEPBIZi0R/qaaOswXBOxGEv2LHBCkz/R7vpWak0QA0Q6y85BM1noana264v8z01HYSdd0xgPaPgrQXKKCoUcyLVSTQ6u90fASgs2cj0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757653172; c=relaxed/simple;
+	bh=FPPXx4oKeL6xXNEmPIiMjrOeK5jDq2/+RU0cL0Biv68=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=sjOvdpaHMkXed/itECeXkhf1DYHECzZothQhqkSI0MrEJD7i1Sc8V/kyYShmInBmIV+oLD1N3GNynLMryCfpFhK0yFICqBA3n0usuRX2qtTO1lYlU9jcRdOVSzkyGUrIM++bZnbDfkMMeee2Oq59pGtIfIKqxR6C7z/MZUxlvtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hJBAeGZK; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BISGAw005414;
+	Fri, 12 Sep 2025 04:59:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=JLnejCdExVOYmb0qAPX3oA
+	WJ0nT3oW0K6+1SV8d0LsU=; b=hJBAeGZKszIYJyRtrfxyLvysVc4C1OdfTwKzD+
+	kTyGlS0IlX7No6EByzyjN1umbPN+s5SnQ5LviIC4AGlr4TtAd0NMiMlMY4Y0Hj5l
+	kNoLoEZuUkzN6SY1zU+W4soHt2PAfNt+7Ps48aNUOsf+M0q91V63ZeBdCpyNKxEH
+	kdYj6hfY1rqePT8rvyrz46WYsa3LEYscIL7J/TVV0OI2im3K/w8apCuDBEIclcBd
+	Cx9d/AYrbmz3nLV2l/AwUnc7cZ+KWXhywhJ1Vm5pkDEfO3LRlP2UaGxZDCCCTfuh
+	HH0xWsyAxLWXkblwv7ooZd2DgXutwvQD4KQKjXv7j1kQ5wyw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 491vc2ebhu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 04:59:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58C4xPOB016858
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 04:59:25 GMT
+Received: from hu-vpernami-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.24; Thu, 11 Sep 2025 21:59:23 -0700
+From: Vivek.Pernamitta@quicinc.com
+Date: Fri, 12 Sep 2025 10:29:16 +0530
+Subject: [PATCH v2] bus: mhi: host: Add uevent support in MHI driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|CH3PR12MB7595:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb4fba00-1629-4d3d-deb4-08ddf1b9176d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|10070799003|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?T1dMZEovRjl3Y1ZOS0pRUGJaSlR3c01UV2FjazVxdHNFdmd0aHhBdHhKeENw?=
- =?utf-8?B?Z3FrL2l5MG5CaWkvZFNKbU5MVWlSZnUrR3VDcGFoQmN3MlpOK1BXTTVHa2xh?=
- =?utf-8?B?eVJBTHZ5WWY3a2VJeENSVkRoYzdEaHRzUmJiajBHckJaV0Z4L2JNME1uMzZZ?=
- =?utf-8?B?WXZ3eUhnQktscXhWVWQ5MWIyR3B3TEwyMUJJZm02MTZyREpTcXNhNnpOY1Ax?=
- =?utf-8?B?eU5XYjZJUkJQSzhWMldYVWlacEJSVzZYUEI4VURkYXJ1cy9hVzNtay9pRUlx?=
- =?utf-8?B?K2ZadUtCTGl4VnNDYXpRQkJBd0tsaXd2RGNnK1BZZGFIL0syS01sNmpqckdS?=
- =?utf-8?B?cWxkSHdtZTNvUlVFNm0xbWVESjR1aFNxMU9EZ0hyS2ZqYTNFMVVNdHc4WHhQ?=
- =?utf-8?B?cTN1WkhWVmJNUUZFOHF5SXNvRzhDVlFBRlhKNWZJeTErMzlVTXFXOEZhUmcv?=
- =?utf-8?B?YWw4d25RSGo4b0VyTjRuMDVKdWpzS2NvQnpyb0kxM1I0N1kxby93WFNobkRV?=
- =?utf-8?B?Y1NxWE9XVUtJdlo3bmtuUzhwbXkzNGtOL0xrVlBzZHRpdkM5ZTZQRlJhd1JT?=
- =?utf-8?B?NHd3ZXVqbnYzT1JGdG9uQTJRQzh3VGV1MVZtZ3pTdWhqNnQ5V3cyOVo2NFlV?=
- =?utf-8?B?bktvZGprYUlxaDZQenNqYkRqZ0hJbElsdkNSTnVxNlFMWTBUOEpWa1VyN2h3?=
- =?utf-8?B?YmczSGxWNHZnN0VBOTNuSmJFdnlyczdMUmhGcGZ2MGNzZWRqSDRwbDJNY0NG?=
- =?utf-8?B?d2xCNXBKMXNoWTkyYmREZTZpQ01qUDF4dXVMa0dFM1NNOTFSNm56aXc0Q1lr?=
- =?utf-8?B?MXA2U2RCV1BEb0c5T21BSVNyRllERll0ZjloOFlGZ090TEhodDBzc2F4Wktm?=
- =?utf-8?B?QjhPdDdUdm5IdlRYeXNzUVpUTk5nc2M1Z1h4eCtvVUdoeitCMW9GalRqOTk0?=
- =?utf-8?B?dlUvQ0h3ZTZJMEpiTWlvcTZwcEtXZ0IyRlQzazFzbUlNQzBVcjJ4L0UwTytM?=
- =?utf-8?B?WHlJUHFQaUFRUXovcGtuTGk4YXlwaWZjd0dOUDBqL1BwUjZSemhpbjgyTGFn?=
- =?utf-8?B?cEtYZVdPUVRZZHJnQzlWdEdCQTZ2Z2xKSmF4b3VYLzErc2ROWXRlTSt1dGJB?=
- =?utf-8?B?SlpYZnllcGtSZ1lxSWNGVzgwSnpDMmhWaHVkQkFGZ0JyTlV0d21JSTFLTXRn?=
- =?utf-8?B?d0Y0L2xhL0JaSU1pYmZidDZJYml6bjNyeGxLMyt5NkJNMU9pWjlpWW5lSk9w?=
- =?utf-8?B?NUlib284dU11RmVPR0oybXJZOFJoYklSeTVJM2dweExhQTdyZk4zbFVQWDYz?=
- =?utf-8?B?ZDZDaTFkaWRPSHdmWE1hYnhjZ1l1VW9jdlk5UFJiRUczR1NkM3FzdVpUaEI5?=
- =?utf-8?B?T1ExaG1lM1JMN0V2VGo0R0pPK0NJVGRsVFdWYlk1ZHNCVVA1SGJUdFV0K0dS?=
- =?utf-8?B?S1FyaEpJRmlTMUQ3c0RCdVhGTVBpWmFkdXVEdy9KbnBsRzRnazJ1UEJIRlZs?=
- =?utf-8?B?aVJUQ0lsSnoyYkcrenVDUURxYlpzaGpyRG9lNTVkdU5HNTU3RStrMnlCWXV6?=
- =?utf-8?B?eTBlcHNQSm9UYUNDeFlFL1lpU0UvZzNzcFJLRTVYMklRYjFncWZ3S1dTWEky?=
- =?utf-8?B?dzNPcmp1d3lvTlRidzBIREhIQWpiZHRDRVd1UEdJV2lhTnBWaVFILzVRZVo4?=
- =?utf-8?B?alpwYjd2YzNzd1paNlUrUHY0R0lFZG5kMGVUWjc5azVTNjJYd05tM0lZeldQ?=
- =?utf-8?B?SVVWMm5UMmFPYXBSUjVXUUg5VkNMY1J1OXNVWERJakErN2xrYzZtWE8wNXVm?=
- =?utf-8?B?MGRtV2pTSHB6ZUJXYjJqYzRuT0pzOHBVRDMxT0VEYnhjUUZvTEIzS0dhY0pr?=
- =?utf-8?B?bjB5dERKcTJlOGZtSit5V3JCdm41UFBneCtRRDRQK2I3QXFWZUY1eG9UL0tY?=
- =?utf-8?Q?YDbOsqnmRSg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OVdZcUVxUjJCbDJnSUxjQXlieVJOOE0zc01zUEtTT205czZXQ2RlZ1NZdjBJ?=
- =?utf-8?B?Mm5nSUtNbHVjdnpJUVBUdE1heGthRnBnbTAyNDVDWmN2QmQyS25mMURRbGRs?=
- =?utf-8?B?YVlxaE9zSFlPRjZmeUs0SDFiM2tkSVBTK1BMTzdMb2hXaUVIVkdIbkVLVlZV?=
- =?utf-8?B?bms4SU80WHg3Mm5ZVzNLQ1NCdWVLQThQN2FoOUlUdnhJdWo2U25uWGZkOS9O?=
- =?utf-8?B?Uk5NVEpXTUJteTdFc0pPY29kUkVIbjBZVFVMRVB0SEhZRjVwVzkvZDk1eit5?=
- =?utf-8?B?SzRuMFkrUGpVS2ZJdVlvVm1DY1FBOGVZS3NPczFicFVrV3lYdEZpcVhHTm8r?=
- =?utf-8?B?WXlLejVlc2N1aGtoYWlSQWpPYnpDT1E0SElwV1pWRjNQbG5LR0d6MndSc3Jz?=
- =?utf-8?B?dUcxUCtwdTkzMDRkaVYvYUd2N3Z6RGxlRDFFMUtOMUZKVUVDd0Nyeklkbk1j?=
- =?utf-8?B?VVBrb0RjN0N5T2Y5YzNkcE5xZEFNVHEySTJXeWRxZW83NTlZYWVDNEl0Kzli?=
- =?utf-8?B?Z2wwYXlIanYzeWlVVmdTSTQvYUVuWEJYanc1TkxCZTltQlVJcDB3WFFpVlpR?=
- =?utf-8?B?UVgxUmdKQVVpTWgweTdoUFh4dm9TNlNSV1ppeTVOTWZ0a3V4NlpBS3ViZlpJ?=
- =?utf-8?B?RHZwdVpyRWhGMHdPTkZYRU9jMytOVVBtL2lUSzExZk10cmRjMVNsd0lNakt1?=
- =?utf-8?B?TjhwekI0SmczU014cGFDSFEyWWZDMDh1RUNoVDFsQ1ZGdEZ5cHBwcGU3MitD?=
- =?utf-8?B?MndlTWZpNk44M2FteXlTOVJlSlR6V1VmNGZVSGRISno3YXA1ZENKS0hHN3F1?=
- =?utf-8?B?dXgxQnFoM2Ftczd3QlRjTFlnQkVUU29hNC9NRE1CK29sbDNsekNwTlJIMER4?=
- =?utf-8?B?b3lTTDVsOEV4YlIwT092S0xyb3BxalNOSWFQaWk2STUxUWFvRWY0SDVRK0p1?=
- =?utf-8?B?QUt3T3JjYm1kNGhxbFRnaFFJVlNUYlFpVExrQytiQ1ZvNHNieVFNV3N4bEE5?=
- =?utf-8?B?LzZLS1pZS3lXS0hNby9UcE1walkyZFE5RytlK1Jjd1ZjM2txU3g5b09vUnNB?=
- =?utf-8?B?WnNac1NaTXlwYVR6UENMTEovSlZVbTQyaXgvcFg4UC9hc2dXSXdzQnRleDBz?=
- =?utf-8?B?b3JBVHh4SERoOG5YcnJ3K1UwaFN1QmNKVXZuYVk3cEZnTzEvSUhJSjkvUzB0?=
- =?utf-8?B?SXpsQnYyYlJTM3YzSWJrMnRLUEFMWlU2Tml2eG8xUHBHVzFKRWVWUWVCWm12?=
- =?utf-8?B?eU1tV05jc0VZUndqNXFGVk1JalVXdU4xT05ncS9KcTF1cWJQNTFoczhzc1Nz?=
- =?utf-8?B?c0xydVRHdFhONllERUxiNkY2YmtMZGU5RzJGVnpyWXdxVzZzV21EamxKZGV2?=
- =?utf-8?B?QXRqaE5OQUVXb09DSlN1cVFMNnFHVWFtM2t2ZXJnNTZDZ1UzbGdPSjVzOTVy?=
- =?utf-8?B?K1V5R0pIcWl5QWhhTTZlYTZ0eTV1aWRhMHAxbkNwLzRTRi8wZ2JROHBQdWFY?=
- =?utf-8?B?clJxcU5RMGJ5ZTU5U3U5ZzVkWmcwQXdHcHl6SHRHSnJMUGlwU1o2dlF6WkZY?=
- =?utf-8?B?NEtFUk0yWkl5ZXZyUFZxRU9QOVpTSTd4a2l6bzZvMUlRR2p4QnRpOFhpNWMv?=
- =?utf-8?B?ZEp2eVBNbmxObEZnaG5rRjVmdVJyejlmRW9QcTh5UTZHS1hTaCtXS2xrNGhN?=
- =?utf-8?B?QTlyWWVKcVY2bDdPYXZBeWJ0NGxZa0lZTDhsZGVuWFRBaGs5YlhUMHZESWZx?=
- =?utf-8?B?R0d0YXQwcHhmVjM0OGRsNUhRME1PT2FSODBOeloyRXhyL3BqeVhUbDZHdEw4?=
- =?utf-8?B?ZHdzZlRCdVFtS2ZUNzBGTWxpSHdPTDRkMzZ4RkduWWl0ZEdQWlI3KzRURDRj?=
- =?utf-8?B?Mk5vUWpkbkxva0l6SWt0RHIxQjdIbFdLYUE3amNWSFh2WldjU0lvcE94Ylpt?=
- =?utf-8?B?WTYrczhwYXV6VG50WFQ3NE5odzRoSHBHYjB1cUdHa0dsSStnSjNoYlgxRHo2?=
- =?utf-8?B?ZkQ5c0JPSmVrZEVpRmJ2T0ovblUvVXBMbmE2NTdQS3ZpS2NYalRLdjViR0Fv?=
- =?utf-8?B?aWZjZ1NTT0Y0Y2NOZnVmL3JsWXA2Qlo5VnAzbVhBajBvZ3VNNkpheWluREkx?=
- =?utf-8?B?R1loeEdtS0F4RlZQdU4yUHRrd2YweGc5WlUyNGdUNVJyZENabEkzUjhlYnNt?=
- =?utf-8?Q?YTe+euGyIiiFj70YEjGXke/8Ia85kxTKXx8k/sfuZBCF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb4fba00-1629-4d3d-deb4-08ddf1b9176d
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 04:59:02.2262
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 24G1D6Ce6lESGKIeUtX6sotY+X251jdTtum6QI0rSttEsYvwTbSJIxd0yqeHmjBo+oMiv49R2jYpzDBNcQGk8Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7595
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250912-b4-uevent_vdev_next-20250911-v2-1-89440407bf7e@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAKOow2gC/y3MQQqDMBBG4avIrDuQRAPqVaRINX90NlESGwTx7
+ obS5ceDd1FCFCTqq4sisiTZQoF5VTSvn7CAxRWTUcaqThueGv4iIxxjdshjwHnwP2r2c6NRt14
+ 7O1FZ7BFezt9+eN/3Az9TZ9NuAAAA
+X-Change-ID: 20250912-b4-uevent_vdev_next-20250911-fc41e38f1d5b
+To: Manivannan Sadhasivam <mani@kernel.org>
+CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vivek Pernamitta <quic_vpernami@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757653163; l=5209;
+ i=<quic_vpernami@quicinc.com>; s=20241114; h=from:subject:message-id;
+ bh=DCzpWkP0qu12EL3jXqAK9eCwxc03vN89IQvdZDkzsoA=;
+ b=brxsS4hbjsb+1LqBCxS371rE5RiU0lD9fcSyeR80dE+3xpN9YTo3zYBJeeCLsb0IICwxFkZ1Q
+ qRtzUDEDKHVAS4PozIhl9HAIEiy80g/zp8LBNhk6u2BxlZX4PZKnBId
+X-Developer-Key: i=<quic_vpernami@quicinc.com>; a=ed25519;
+ pk=HDwn8xReb8K52LA6/CJc6S9Zik8gDCZ5LO4Cypff71Y=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=FN4bx/os c=1 sm=1 tr=0 ts=68c3a8af cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=O6tHu9usdxQueJh1WOwA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: l6SMdmvlZ1RvRUAxJOaEekJrH05VxSSA
+X-Proofpoint-GUID: l6SMdmvlZ1RvRUAxJOaEekJrH05VxSSA
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDA5NCBTYWx0ZWRfX1KWFOW0sz0zx
+ CHwYPD0cmg7EitF5U8Lz2ToGgV+eJ8FKs00unYcR0aZqL/kCwm00HB2h32UcgqFlJASsXHzCWX/
+ 1ucTz7a68Xg+d3nK8chIkV6NxFGVptzEOiqkhoLKkEZy/L7Y1toR2HRAF/mlXZCQ9SX8d9uU9Lg
+ QinrDqFLf2Zyx172o231R+YwAwpCaegPw2ZQIO4djAQrwtxTUCAlOc/hZSkwgHr5YMnSn5I5MZZ
+ /Yk03XX7ANDfFju6ybXpUJBAutvtrJCwhEzcjYNEtljHve6LGrS20cs3yhftv7JQbIEtf4QXMGG
+ fpsw5RzJTYx/gJS/fB+6jtgzvA+YItxufyAUnw+GDZVhyVm6iS3PvTZ9Wa04aLt7UDq4+6CryyO
+ zX5bf3Lr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_01,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 clxscore=1015 phishscore=0 adultscore=0
+ bulkscore=0 impostorscore=0 malwarescore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509080094
 
-On 9/12/25 14:12, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the mm-unstable tree, today's linux-next build (htmldocs)
-> produced this warning:
-> 
-> WARNING: mm/migrate_device.c:792 function parameter 'page' not described in 'migrate_vma_insert_huge_pmd_page'
-> 
-> Introduced by commit
-> 
->   9a5e80c43c9e ("mm/migrate_device: implement THP migration of zone device pages")
-> 
+From: Vivek Pernamitta <quic_vpernami@quicinc.com>
 
-Thanks, the parameter is incorrectly described as folio, will fix
+Notify the MHI device's Execution Environment (EE) state via uevent,
+enabling applications to receive real-time updates and take appropriate
+actions based on the current state of MHI.
 
-Balbir
+Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
+---
+Notify the MHI device's Execution Environment (EE) state via uevent,
+enabling applications to receive real-time updates and take appropriate
+actions based on the current state.
+
+Signed-off-by: 
+---
+Usage:
+
+Enabling 16 virtual fucntions for SRIOV device QDU100 once device reached
+mission mode from systemd service file
+
+SUBSYSTEM=="mhi", ENV{EXEC_ENV}=="MISSION MODE", SUBSYSTEMS=="pci", ATTRS{device}=="0x0601",ATTR{../sriov_numvfs}="16"
+---
+
+---
+Changes in v2:
+- Fix memory leak in uevent notifier.
+- Link to v1: https://lore.kernel.org/r/20250822-uevent_vdev_next-20250821-v1-1-9ed3a8162194@quicinc.com
+---
+
+---
+ drivers/bus/mhi/host/internal.h |  1 +
+ drivers/bus/mhi/host/main.c     |  1 +
+ drivers/bus/mhi/host/pm.c       | 29 +++++++++++++++++++++++++++++
+ 3 files changed, 31 insertions(+)
+
+diff --git a/drivers/bus/mhi/host/internal.h b/drivers/bus/mhi/host/internal.h
+index 034be33565b78eff9bdefd93faa4f3ce93825bad..d455f0bf00133775fa23882a727782275640e43b 100644
+--- a/drivers/bus/mhi/host/internal.h
++++ b/drivers/bus/mhi/host/internal.h
+@@ -403,6 +403,7 @@ int mhi_process_data_event_ring(struct mhi_controller *mhi_cntrl,
+ 				struct mhi_event *mhi_event, u32 event_quota);
+ int mhi_process_ctrl_ev_ring(struct mhi_controller *mhi_cntrl,
+ 			     struct mhi_event *mhi_event, u32 event_quota);
++void mhi_uevent_notify(struct mhi_controller *mhi_cntrl, enum mhi_ee_type ee);
+ 
+ /* ISR handlers */
+ irqreturn_t mhi_irq_handler(int irq_number, void *dev);
+diff --git a/drivers/bus/mhi/host/main.c b/drivers/bus/mhi/host/main.c
+index 52bef663e182de157e50f64c1764a52545c70865..8615512743199a59a58c3756d9cc3407079cee7e 100644
+--- a/drivers/bus/mhi/host/main.c
++++ b/drivers/bus/mhi/host/main.c
+@@ -512,6 +512,7 @@ irqreturn_t mhi_intvec_threaded_handler(int irq_number, void *priv)
+ 		if (mhi_cntrl->rddm_image && mhi_is_active(mhi_cntrl)) {
+ 			mhi_cntrl->status_cb(mhi_cntrl, MHI_CB_EE_RDDM);
+ 			mhi_cntrl->ee = ee;
++			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+ 			wake_up_all(&mhi_cntrl->state_event);
+ 		}
+ 		break;
+diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
+index 33d92bf2fc3ed48db5f7fe80e4f0ef9fe2d2f2ab..331f65921a979adce60a32fb62e2c9b712f21c87 100644
+--- a/drivers/bus/mhi/host/pm.c
++++ b/drivers/bus/mhi/host/pm.c
+@@ -418,6 +418,7 @@ static int mhi_pm_mission_mode_transition(struct mhi_controller *mhi_cntrl)
+ 	device_for_each_child(&mhi_cntrl->mhi_dev->dev, &current_ee,
+ 			      mhi_destroy_device);
+ 	mhi_cntrl->status_cb(mhi_cntrl, MHI_CB_EE_MISSION_MODE);
++	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+ 
+ 	/* Force MHI to be in M0 state before continuing */
+ 	ret = __mhi_device_get_sync(mhi_cntrl);
+@@ -631,6 +632,8 @@ static void mhi_pm_sys_error_transition(struct mhi_controller *mhi_cntrl)
+ 	/* Wake up threads waiting for state transition */
+ 	wake_up_all(&mhi_cntrl->state_event);
+ 
++	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
++
+ 	if (MHI_REG_ACCESS_VALID(prev_state)) {
+ 		/*
+ 		 * If the device is in PBL or SBL, it will only respond to
+@@ -829,6 +832,8 @@ void mhi_pm_st_worker(struct work_struct *work)
+ 			mhi_create_devices(mhi_cntrl);
+ 			if (mhi_cntrl->fbc_download)
+ 				mhi_download_amss_image(mhi_cntrl);
++
++			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+ 			break;
+ 		case DEV_ST_TRANSITION_MISSION_MODE:
+ 			mhi_pm_mission_mode_transition(mhi_cntrl);
+@@ -838,6 +843,7 @@ void mhi_pm_st_worker(struct work_struct *work)
+ 			mhi_cntrl->ee = MHI_EE_FP;
+ 			write_unlock_irq(&mhi_cntrl->pm_lock);
+ 			mhi_create_devices(mhi_cntrl);
++			mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
+ 			break;
+ 		case DEV_ST_TRANSITION_READY:
+ 			mhi_ready_state_transition(mhi_cntrl);
+@@ -1240,6 +1246,8 @@ static void __mhi_power_down(struct mhi_controller *mhi_cntrl, bool graceful,
+ 	write_unlock_irq(&mhi_cntrl->pm_lock);
+ 	mutex_unlock(&mhi_cntrl->pm_mutex);
+ 
++	mhi_uevent_notify(mhi_cntrl, mhi_cntrl->ee);
++
+ 	if (destroy_device)
+ 		mhi_queue_state_transition(mhi_cntrl,
+ 					   DEV_ST_TRANSITION_DISABLE_DESTROY_DEVICE);
+@@ -1338,3 +1346,24 @@ void mhi_device_put(struct mhi_device *mhi_dev)
+ 	read_unlock_bh(&mhi_cntrl->pm_lock);
+ }
+ EXPORT_SYMBOL_GPL(mhi_device_put);
++
++void mhi_uevent_notify(struct mhi_controller *mhi_cntrl, enum mhi_ee_type ee)
++{
++	struct device *dev = &mhi_cntrl->mhi_dev->dev;
++	char *buf[2];
++	int ret;
++
++	buf[0] = kasprintf(GFP_KERNEL, "EXEC_ENV=%s", TO_MHI_EXEC_STR(ee));
++	buf[1] = NULL;
++
++	if (!buf[0]) {
++		dev_dbg(dev, "Failed to allocate memory for uevent");
++		return;
++	}
++
++	ret = kobject_uevent_env(&dev->kobj, KOBJ_CHANGE, buf);
++	if (ret)
++		dev_err(dev, "Failed to send %s uevent\n", TO_MHI_EXEC_STR(ee));
++
++	 kfree(buf[0]);
++}
+
+---
+base-commit: 8f21d9da46702c4d6951ba60ca8a05f42870fe8f
+change-id: 20250912-b4-uevent_vdev_next-20250911-fc41e38f1d5b
+
+Best regards,
+-- 
+Vivek Pernamitta <<quic_vpernami@quicinc.com>>
+
 
