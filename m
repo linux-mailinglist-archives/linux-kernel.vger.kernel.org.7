@@ -1,103 +1,107 @@
-Return-Path: <linux-kernel+bounces-814650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D40FB556E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:27:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698D3B556F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D095B1D640C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:28:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5C637B0B86
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4F132CF6C;
-	Fri, 12 Sep 2025 19:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611A529B783;
+	Fri, 12 Sep 2025 19:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oV1luJhK"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kmJM52sF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C34321F3A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B253A136347;
+	Fri, 12 Sep 2025 19:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757705262; cv=none; b=L5Y1NZmxrgBCzRDgy/TZosTCJDjlyGtub2RuarVAL9+zfYgRH9KEvGXB9cc0LgPT6GQv25rcdGxW5aUAjA1W8gbhu3qLqxbuMsv4ncgZT6PUepGzO5m2DnUvBvruYiFvHMvdKITI8lwzu5ryNSJ8pUGXlmICqwYk+rRg1hzVDa8=
+	t=1757705719; cv=none; b=cqdWptMkpBc3E41AnvNoo8oI4Dznx0AtapshYseqCvFRdM2LD1poAdi270b+/aSACjOpZqB61UWlqC7sYn4Wv0JdXpSz/9KVpRKDkBKQoNETHbKEs2AHbV/H6eHIM8qX3hbTUyrU8KYRQ3DClVBJZevML384dgnwmcNmG+054O0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757705262; c=relaxed/simple;
-	bh=0/PSKF2to2OaJnAdRMMBgx1N67O2wxoTS8DRkJ0j+PU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NzBQ2LljLEJobB/6kNFsdkvSaJvz4Z+qLbGfAHbB4NAQA6L7UniurdR5BukBf0iUMPBCMEeeOCxIVTT0Nc2XPI2Pn0blPP7uLTF2APNKF9w9LzhO9CufZDIkuUydTGteS0u5FYHSSKDOHiO/9xvaNuzmMG1NxtUcJCxpxUSNAlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oV1luJhK; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <df0d8ea8-9a4f-4de9-8bbc-ba54e19cedbf@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757705257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=shPyU1wloMgDISSN93FeuBHz7Metwmsu/VH9NlbZVaY=;
-	b=oV1luJhKBvfVaz6bo/u96BOU0BShALi8KGp7Y+1muWEOLypYOj9dW+1QmoQvu5xB1miLCE
-	UgHTJcRbD5e5kiDCLLTJFjXzKZSznx1QLP7joie1hcYIte9lGJc4dnC7xMQv3GtD9GPokY
-	i4gwQ72GfZHQUWgV9a7CPaU+Kk5uTQY=
-Date: Fri, 12 Sep 2025 12:27:33 -0700
+	s=arc-20240116; t=1757705719; c=relaxed/simple;
+	bh=WsK/WJ4J8Byf5IkWEudUlpY48s4oWhzX8ky10objrAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gx//GnXwKtnjjLuZWe9EAd1FzXXvW+xvx+nnHVSdnPXJm6MPK5i6XwQpYDMhVVD6411ghprEylRgj4BIw3xliwfFDXN7WXFS0lv21hsBRZEODAdMom42B8mITvQNalKh2VAk7PbdEW5zZuzSBFv21kIwV7Ivr4h7YMqfjJkLDwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kmJM52sF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F07A5C4CEF1;
+	Fri, 12 Sep 2025 19:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757705719;
+	bh=WsK/WJ4J8Byf5IkWEudUlpY48s4oWhzX8ky10objrAY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kmJM52sFm4DP0TtRK7zJ2IDuzl3mkOETcMpK/kkXRZ51GiZbeDnneFx1oWBJLDlXV
+	 7+DaU3wkKuN27XoSifL4NmX7Uis4XFE1NDj4C9eNsthzvnJ7C+WZ4v2UWkHcPH/78u
+	 NvWccpoLULtnINcVycKDax5HqjeJsp2/g8m/ZbslhYu6HDYaPn4a57Yp98r7qTnwfY
+	 Exfl+bN6IWSS2m6eXpUiJgcIMGkQ+/InPSuSkV0elkLSutkOu/qSyuC7kc5+iB/O8u
+	 12AdMsGVWTa30trIQdBIHZ7etqzlbFi4wOc2VHpdQ83sbjjBGVsgEo/c65hWrIVJGp
+	 STNCtFKuU7H5Q==
+Date: Fri, 12 Sep 2025 12:35:18 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Donald Hunter
+ <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
+ linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/3] netlink: specs: team: avoid mangling
+ multilines doc
+Message-ID: <20250912123518.7c51313b@kernel.org>
+In-Reply-To: <20250912-net-next-ynl-attr-doc-rst-v2-2-c44d36a99992@kernel.org>
+References: <20250912-net-next-ynl-attr-doc-rst-v2-0-c44d36a99992@kernel.org>
+	<20250912-net-next-ynl-attr-doc-rst-v2-2-c44d36a99992@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-next] RDMA/cm: Rate limit destroy CM ID timeout error
- message
-To: =?UTF-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
- Sean Hefty <shefty@nvidia.com>, Vlad Dumitrescu <vdumitrescu@nvidia.com>,
- Or Har-Toov <ohartoov@nvidia.com>, Jacob Moroni <jmoroni@google.com>,
- Manjunath Patil <manjunath.b.patil@oracle.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250912100525.531102-1-haakon.bugge@oracle.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "yanjun.zhu" <yanjun.zhu@linux.dev>
-In-Reply-To: <20250912100525.531102-1-haakon.bugge@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 9/12/25 3:05 AM, HÃ¥kon Bugge wrote:
-> When the destroy CM ID timeout kicks in, you typically get a storm of
-> them which creates a log flooding. Hence, change pr_err() to
-> pr_err_ratelimited() in cm_destroy_id_wait_timeout().
+On Fri, 12 Sep 2025 15:23:00 +0200 Matthieu Baerts (NGI0) wrote:
+> By default, strings defined in YAML at the next line are folded:
+> newlines are replaced by spaces. Here, the newlines are there for a
+> reason, and should be kept in the output.
 > 
-> Fixes: 96d9cbe2f2ff ("RDMA/cm: add timeout to cm_destroy_id wait")
-> Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+> This can be fixed by adding the '|' symbol to use the "literal" style.
+> This issue was introduced by commit 387724cbf415 ("Documentation:
+> netlink: add a YAML spec for team"), but visible in the doc only since
+> the parent commit.
+> 
+> Suggested-by: Donald Hunter <donald.hunter@gmail.com>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 > ---
->   drivers/infiniband/core/cm.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>  Documentation/netlink/specs/team.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/infiniband/core/cm.c b/drivers/infiniband/core/cm.c
-> index 92678e438ff4d..01bede8ba1055 100644
-> --- a/drivers/infiniband/core/cm.c
-> +++ b/drivers/infiniband/core/cm.c
-> @@ -1049,8 +1049,8 @@ static noinline void cm_destroy_id_wait_timeout(struct ib_cm_id *cm_id,
->   	struct cm_id_private *cm_id_priv;
->   
->   	cm_id_priv = container_of(cm_id, struct cm_id_private, id);
-> -	pr_err("%s: cm_id=%p timed out. state %d -> %d, refcnt=%d\n", __func__,
-> -	       cm_id, old_state, cm_id->state, refcount_read(&cm_id_priv->refcount));
-> +	pr_err_ratelimited("%s: cm_id=%p timed out. state %d -> %d, refcnt=%d\n", __func__,
-> +			   cm_id, old_state, cm_id->state, refcount_read(&cm_id_priv->refcount));
+> diff --git a/Documentation/netlink/specs/team.yaml b/Documentation/netlink/specs/team.yaml
+> index cf02d47d12a458aaa7d45875a0a54af0093d80a8..fae40835386c82e934f205219cc5796e284999f1 100644
+> --- a/Documentation/netlink/specs/team.yaml
+> +++ b/Documentation/netlink/specs/team.yaml
+> @@ -25,7 +25,7 @@ definitions:
+>  attribute-sets:
+>    -
+>      name: team
+> -    doc:
+> +    doc: |
+>        The team nested layout of get/set msg looks like
+>            [TEAM_ATTR_LIST_OPTION]
+>                [TEAM_ATTR_ITEM_OPTION]
+> 
 
-When many CMs time out, this pr_err can generate excessive noise. Using 
-the _ratelimited variant will help alleviate the problem.
+htmldoc is not super happy :(
 
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+Documentation/netlink/specs/team.yaml:21: WARNING: Definition list ends without a blank line; unexpected unindent.
+Documentation/netlink/specs/team.yaml:21: WARNING: Definition list ends without a blank line; unexpected unindent.
 
-Zhu Yanjun
-
->   }
->   
->   static void cm_destroy_id(struct ib_cm_id *cm_id, int err)
-
+Shooting from the hip -- maybe throwing :: at the end of the first line
+will make ReST treat the attrs as a block?
+-- 
+pw-bot: cr
 
