@@ -1,118 +1,190 @@
-Return-Path: <linux-kernel+bounces-813757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE3AB54A5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:51:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56814B54A61
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A3FA7B1420
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:49:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 472D75880B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C94F2FD7CF;
-	Fri, 12 Sep 2025 10:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E0C2FE574;
+	Fri, 12 Sep 2025 10:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6HgQC33"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hNJyfojN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KExZYwIt";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hNJyfojN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KExZYwIt"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B94B7405A;
-	Fri, 12 Sep 2025 10:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBF92FD1B8
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757674196; cv=none; b=YoNsDyH1y8eBfhaZ1YORoM6yJfl/r2WdhFChJsTDV8038TlQUAxtz2BuMy62/bn0b3jAeo6OtouNX3mkRCajX/PKNyuIrPv7DhqI2t61pIFKEP2tYANb/1HzhM8ll4kA5/ipQf1cCtIBsYIinJ1KPtrKFQSghdjVQEqBaH9njgE=
+	t=1757674234; cv=none; b=RyuYZeB16spHYnoRZp054ypHLZFmkGP5fB9jXMQpAZ9FcS2FEm9l3K1ePCE6m2BqfSycS0ZPuxtIluODQAZnUU5/E+3ik1Br+MrWI6fiTMYAyfTKlk4S6w5diy18Ja9FXF+HPHQMjIpAgqS9tYVZA8vj3iz/7RMH21nhGIBpYaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757674196; c=relaxed/simple;
-	bh=iXfdxi7NTU+LyAxuFNWMuc0/Yz4Vt7OLdRQgeuCuM5o=;
+	s=arc-20240116; t=1757674234; c=relaxed/simple;
+	bh=YStn0Wir+doDuXHO/1o+5BXfU8keY9vtxvZuC05N6wI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FpKlUl5X2vHO76oe08ja1xusIF8PANw3EuZsOOJZ657umaGBLs4XEcaXPzRH5UcU94cUkIiv2AQRt/A5E0uGLmWaO/tyFA0ak+QqDvaDASz/hHYNCF6R6V5SpWP4nH/VvLtotDrHZ+aup3QmBdLySSjhtTsSdlqhUVVgCLYjeAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6HgQC33; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A02B9C4CEF1;
-	Fri, 12 Sep 2025 10:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757674196;
-	bh=iXfdxi7NTU+LyAxuFNWMuc0/Yz4Vt7OLdRQgeuCuM5o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G6HgQC33/g0o1mTr2TIiMT6vdS/Pq//5mMwW64MX6iHJlwTcIXmbHkFGVJlu01GDm
-	 b4qXgljYTLIMDhZsMggj5tUNVtwJ0qoPOXFhhm+T9DsAU8CcETxwWRIS+WreqnXQCr
-	 /mqHOtZqX4imM4LfGuEyi4Omdx6sbCI2gCxbYOWeSK3hDnPe7pIQKFwX4V7e0zKgP1
-	 UbnEqrdG0rN4HSsO/pFUYWgFprl7Ytma8VTpvNuxSg4iVB8r4L9SOgjCIfzkwF60jA
-	 4Em1eHMujCZjh6EHy6HKuuyR+ZcnCtKupHSSVgRdRYJ/PoVJeF4uW/IcWS3vBwlTq+
-	 DiIGnXHL0NCXA==
-Date: Fri, 12 Sep 2025 11:49:50 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: next-20250909: selftests/arm64/gcs/basic-gcs.c:390:30: error:
- use of undeclared identifier 'HWCAP_GCS'
-Message-ID: <965c8d7e-c5f2-4bd8-ab7c-c3116632f015@sirena.org.uk>
-References: <CA+G9fYv77X+kKz2YT6xw7=9UrrotTbQ6fgNac7oohOg8BgGvtw@mail.gmail.com>
- <1e331ebb-3315-4cbe-b194-ccbeeaded4da@t-8ch.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fvXqLB5px3V8vqSLahHD8S5u+t0NagTX/Fn24Xnuawszep7YlMQJgBzBQsh2QO/iE2kEtzqumE9uUk2sC129CHIEP81EYaWZu0MajsgpbzYYuruxQk+WiK2s1hZdCcG8M/RZfB5+6Ut8r+w1HngDix8y6UsZOPkyKJgtw5N8QvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hNJyfojN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KExZYwIt; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hNJyfojN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KExZYwIt; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4D2C95D557;
+	Fri, 12 Sep 2025 10:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757674230; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EwgQshy229J95WlSypc5DlbRhNhUQbr2g887V/Qu+xQ=;
+	b=hNJyfojN2AIfTqIJedtzAFG44obuLXysOtGoBUkVapogebS9MWZ2a8oKDixwMu4Amuw9LA
+	sPz0ERBhYcKIEQOiJvLKQ6lUSJDTMFbH9YJUaDnHAz9QAT4eIXCEPjUdmKDv4hYeQ6mKcl
+	qdlhi1QSPZgXgPCmM71rwpijQjJsRtI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757674230;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EwgQshy229J95WlSypc5DlbRhNhUQbr2g887V/Qu+xQ=;
+	b=KExZYwItLkm/RN9CnsDL0awjEWhXWFOCworVncRLaFXpK0Ry8fhu3dYVtzOOalzlvqh2Lo
+	2EbQ6XuaqyDgFcAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1757674230; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EwgQshy229J95WlSypc5DlbRhNhUQbr2g887V/Qu+xQ=;
+	b=hNJyfojN2AIfTqIJedtzAFG44obuLXysOtGoBUkVapogebS9MWZ2a8oKDixwMu4Amuw9LA
+	sPz0ERBhYcKIEQOiJvLKQ6lUSJDTMFbH9YJUaDnHAz9QAT4eIXCEPjUdmKDv4hYeQ6mKcl
+	qdlhi1QSPZgXgPCmM71rwpijQjJsRtI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1757674230;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EwgQshy229J95WlSypc5DlbRhNhUQbr2g887V/Qu+xQ=;
+	b=KExZYwItLkm/RN9CnsDL0awjEWhXWFOCworVncRLaFXpK0Ry8fhu3dYVtzOOalzlvqh2Lo
+	2EbQ6XuaqyDgFcAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 42BB713869;
+	Fri, 12 Sep 2025 10:50:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fbVEEPb6w2jfWwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 12 Sep 2025 10:50:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 543DBA098E; Fri, 12 Sep 2025 12:50:25 +0200 (CEST)
+Date: Fri, 12 Sep 2025 12:50:25 +0200
+From: Jan Kara <jack@suse.cz>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] initrd: Use str_plural() in rd_load_image()
+Message-ID: <wq74que2nuy3gv623ddjptknqqyumae4uyvhvc7fhk6evin4sp@fyefkea25njh>
+References: <20250912074651.1487588-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mSJ2Vs6vpLoMhbcO"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e331ebb-3315-4cbe-b194-ccbeeaded4da@t-8ch.de>
-X-Cookie: Your domestic life may be harmonious.
+In-Reply-To: <20250912074651.1487588-2-thorsten.blum@linux.dev>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
+On Fri 12-09-25 09:46:52, Thorsten Blum wrote:
+> Add the local variable 'nr_disks' and replace the manual ternary "s"
+> pluralization with the standardized str_plural() helper function.
+> 
+> Use pr_notice() instead of printk(KERN_NOTICE) to silence a checkpatch
+> warning.
+> 
+> No functional changes intended.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
---mSJ2Vs6vpLoMhbcO
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks good. Feel free to add:
 
-On Fri, Sep 12, 2025 at 08:30:08AM +0200, Thomas Wei=DFschuh wrote:
-> On 2025-09-12 00:48:47+0530, Naresh Kamboju wrote:
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-> index c99a6b39ac14..816b497634d6 100644
-> --- a/tools/testing/selftests/arm64/gcs/gcs-util.h
-> +++ b/tools/testing/selftests/arm64/gcs/gcs-util.h
-> @@ -26,6 +26,10 @@ struct user_gcs {
->  };
->  #endif
->=20
-> +#ifndef HWCAP_GCS
-> +#define HWCAP_GCS (1UL << 32)
-> +#endif
-> +
+								Honza
 
-We're doing that for glibc using tests because there's some unfortunate
-interaction between including the relevant kernel header and glibc's
-headers (I forget the details) which means that including the kernel
-header directly conflicts with something glibc is doing.  For nolibc I
-would expect us to using the kernel's hwcap definitions?
-
---mSJ2Vs6vpLoMhbcO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjD+s4ACgkQJNaLcl1U
-h9Bt6Qf/XdB1JDZOdU6heyTp+JQNrJnashNYRH4Aes6zoMxSkpZXP6KwEVScZ33e
-mWNgJ1qzjIKi2qhUvTekSbjjhORaUnZm66B5hJtRjAaeYCMd4zLsYoZmawMLWH5T
-k8MhocrSVmo3wEqT+ng0zRP0EqmYWDMXXgEurrqyV4BD8x+RI7FW/wNamai1MJpR
-QqzhPmHaVmd8Y2IG6r58wUY45CbkUVMj5jvgcFOmUQZacaqmf1SUJqYLT9HkDvxD
-JTe57vBvdczjwbucCAzVuNd3jP0unRe65VryUr3sheZEfKWhN6tt1ZzGsRIAIFps
-M2x66/eYmn1/M1/5G4T21mA5E+fpLg==
-=b3j+
------END PGP SIGNATURE-----
-
---mSJ2Vs6vpLoMhbcO--
+> ---
+>  init/do_mounts_rd.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+> index ac021ae6e6fa..b8fccc7ffb7d 100644
+> --- a/init/do_mounts_rd.c
+> +++ b/init/do_mounts_rd.c
+> @@ -7,6 +7,7 @@
+>  #include <uapi/linux/cramfs_fs.h>
+>  #include <linux/initrd.h>
+>  #include <linux/string.h>
+> +#include <linux/string_choices.h>
+>  #include <linux/slab.h>
+>  
+>  #include "do_mounts.h"
+> @@ -186,7 +187,7 @@ static unsigned long nr_blocks(struct file *file)
+>  int __init rd_load_image(char *from)
+>  {
+>  	int res = 0;
+> -	unsigned long rd_blocks, devblocks;
+> +	unsigned long rd_blocks, devblocks, nr_disks;
+>  	int nblocks, i;
+>  	char *buf = NULL;
+>  	unsigned short rotate = 0;
+> @@ -244,8 +245,9 @@ int __init rd_load_image(char *from)
+>  		goto done;
+>  	}
+>  
+> -	printk(KERN_NOTICE "RAMDISK: Loading %dKiB [%ld disk%s] into ram disk... ",
+> -		nblocks, ((nblocks-1)/devblocks)+1, nblocks>devblocks ? "s" : "");
+> +	nr_disks = (nblocks - 1) / devblocks + 1;
+> +	pr_notice("RAMDISK: Loading %dKiB [%ld disk%s] into ram disk... ",
+> +		  nblocks, nr_disks, str_plural(nr_disks));
+>  	for (i = 0; i < nblocks; i++) {
+>  		if (i && (i % devblocks == 0)) {
+>  			pr_cont("done disk #1.\n");
+> -- 
+> 2.51.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
