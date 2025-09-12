@@ -1,113 +1,275 @@
-Return-Path: <linux-kernel+bounces-814003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2205B54E1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:38:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634A5B54E1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648344651DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AD0B466125
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2870E309DC1;
-	Fri, 12 Sep 2025 12:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C653081A9;
+	Fri, 12 Sep 2025 12:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b="boIpsGXg"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="LKelg/W7"
+Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020118.outbound.protection.outlook.com [52.101.191.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD21B2E8B90;
-	Fri, 12 Sep 2025 12:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF1D3009F8;
+	Fri, 12 Sep 2025 12:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.118
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757680424; cv=pass; b=GBCSoq7eP+ZDMrYneeoGSlglhEQerU3MQ9dNPHVYrJSfHhZXfsZ9u753vDl6uKqeiEEkFLEwW8AJ3/3ZIXlcs2lmrBC6ws8zSBPXP4OHXqzFLAkvNrFurhUisNS1TOJ2XC4w+OMa4viHjUXMdd+ikLPSwYvZVydZQGwUpXDdzjs=
+	t=1757680433; cv=fail; b=UQVmrx0lfYaLd7UPeSRRl3rrdlqXpHimyVFQbySsrpgCR3RPTkNAtDXipodeaqyyuGu6/kXAl/eayTRcjPNmGwPY0ckwg+/iik85XuGeJwleF3eds9w2bIFgbD4kBtujqrofN3wUZwwBjyYjgHtpzsG0/lE1OT7AHBxflSrOEHg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757680424; c=relaxed/simple;
-	bh=gI2KfzM2aq/K9OsV2HIY4vUHjQHbykZZH3svP1jSZJ4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J+lD3FR+TGR85Jl0SrBkr796xCiexOnoR8HqRDzH0jJ15W6cxhxvoN66BKB5uPlqdkeAGO6EeM8raRAAbJGH9Pz9690UK809FAZehi9DR+6AgJ694GBurcX52K1/82XQudd5I87oygRtiN1QupuzSC5xp821oYB29Lly2aA1xBE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=benjamin.gaignard@collabora.com header.b=boIpsGXg; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757680393; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=d9lx73cJ+3kbqYZ8pdZisBn1TYdH/TuEI9qHtLZVc0HiotwsWQwMUsygScWa/QCSnQDxrDWQdgrowkEpvxEVaPRwtGqoGt90P7eFUTt0rBxR43B8tFk0DCP02yq0s7o3S/xFBsV5yAQF0Cvj0KV6LCtV3pp487ju/iQaIqFu9uw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757680393; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6MSZWnj1jgR4thBvdLu3JU3z1ibbPCoj24oKf6RqCjE=; 
-	b=CZLu6l3WO3PVuVjT/emEIylG9WJMo1+3F5CVysgk2x0zUx4eg4yvgKaZ3Szj1/W1vw2HUB92pdwaWEAQh70huS3eG3J7Gtade47mBZhzAHyZhBZ9neuWrOXSd1E+y7GEy4J+eNf+FJ4nXlF0kizicGGXFdegPR8vkp8z83ePE9o=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=benjamin.gaignard@collabora.com;
-	dmarc=pass header.from=<benjamin.gaignard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757680392;
-	s=zohomail; d=collabora.com; i=benjamin.gaignard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=6MSZWnj1jgR4thBvdLu3JU3z1ibbPCoj24oKf6RqCjE=;
-	b=boIpsGXg6Oa36fHp704E35jAK+/U3XDz+CH4pbWZVUmBTzTFmmki+CCbcz/VW4Go
-	/n3BtmkKJ5ZK9idA/tLZt43qcGWqzTZNVdpT6bplhRwhDf8RfCLubg5clkZEM7d8ie7
-	eMXFLXVoWMeae2oo/2RUAV7YmGRWqFr1y97mOI+g=
-Received: by mx.zohomail.com with SMTPS id 1757680390786230.58638870729078;
-	Fri, 12 Sep 2025 05:33:10 -0700 (PDT)
-Message-ID: <f009ff62-abbe-4305-91ca-9cc762ca4fb1@collabora.com>
-Date: Fri, 12 Sep 2025 14:33:06 +0200
+	s=arc-20240116; t=1757680433; c=relaxed/simple;
+	bh=LCDY4qkzg6jiNxNB+xnnudGtjLuHdDLtiO6JHhK8IDY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sH0GAZCDq8pOcUscbwD9ZCRE6SPt4aG+TKr5Yix1d4fU9aPbZazTtBV5qRMDGeZ7ZYkfZUGRCmmEpxRQEAZxpqbigA+D6s1pA3Ul/JUNqqVJfQLMojES0ZYx5ixPve4jSCKB2vTXzEwlqZEvOGjsBiM0cIwKV+jiMsPne/XMvhc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=LKelg/W7; arc=fail smtp.client-ip=52.101.191.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=HRuxpI09Xl1CHE4YFjT3hUh41u4wUGxV/RDO+BS7X2DJ9N21FSkMAnsDsh/21jBkoC2C11HuTmKjqbrzxemc/N6R6NGVy6VIv9cumoM/+bgdxjWqVJVshEiVJ8SkQn7pJlkbcsoX+UWl6wxMw8ESEGrEUa3R44CbSGCAF2sfRBFKfJktdI0nHrl7VFPuQXPDAecmtE9iLstj0GlHcU04qgt73Qc9W0EZOPruB48vnYH5NV07wLCfgDsyFJguK9uScIarty4TvaCIjdY/ysPo28Lxwq1a7Lcr4kAgRMRHgXCqOuo8LbWuPBRebuEkJ2NJwa/pcG4/mnPaRcou5Qjwnw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=K0UHjURg8CRuXIVotXNeQxJB3TFuDcgWasAzbp0Qti0=;
+ b=hpD9QiB6YHXv3TPcNP24qBGlUlIWF8mevmipgMQNk23hejylXDKpJZEGlfcSixoAmsY0eI6MJDeucMuCLu7yC0aGKN5NM9wbtTFQh5vCxXF7LTqABxGj1m8elf7YmiX7ld43hZOxHgaiu6CuOoUMnzMGeA/Ou0zFoyUuMOp0n+dNa2xw30s06hjhl1UpNk6yLrA87xIh5OQANMVjs+CX+yNCxqioJHP/ca01tq36WLZfo1dEDfkvDj3d2MOX1XShUB3cI2uk8Yvaptl3gdQfMLSeHwfTJ+T7y2H8EjpPavc9baeu/irqvh0lnDNWVwzog5fW0socPYT6Q0fD+EM9LA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K0UHjURg8CRuXIVotXNeQxJB3TFuDcgWasAzbp0Qti0=;
+ b=LKelg/W7pnpVY3fwnGLVT1I0N5FjuWajM+2qsd1VP9gqqHhgr9TGjyjcXNORuBMgKaWyYEcEN3ZLWgSuT1vgHHaQTsqsRAEIrB19ydRrn7WryFKMKZspM0+pCfSE5HZaNckP2VLeiOgBO4YFx6m8f8K3QXQwLJ8hCX9nMizk1may2p6TrQKq9WeK1BmdxzDuAkxBLNTYGZJeOXON6SPh5sNIl9d5MStFnWTsFCVSoN6ORE1Za3a3GWhxC+D78RVxqqrdlJUzaxPM5Y1KlSazgBlUcY+TtAysQAbUjEoJce1KRESe+jj2XYzpCiIvPWeM180gWsyj8RUAC28l+NtUVw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:a0::18)
+ by YT3PR01MB9201.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:7e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
+ 2025 12:33:44 +0000
+Received: from YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::5ebf:cd84:eeab:fe31]) by YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::5ebf:cd84:eeab:fe31%4]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 12:33:44 +0000
+Message-ID: <3d16490f-e4d3-4e91-af17-62018e789da9@efficios.com>
+Date: Fri, 12 Sep 2025 08:33:42 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [patch 00/12] rseq: Implement time slice extension mechanism
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+Cc: Peter Zilstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prakash Sangappa <prakash.sangappa@oracle.com>,
+ Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+References: <20250908225709.144709889@linutronix.de>
+ <159c984d-37fc-4b63-acf3-d0409c9b57cd@efficios.com> <87plbwrbef.ffs@tglx>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <87plbwrbef.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBP288CA0009.CANP288.PROD.OUTLOOK.COM
+ (2603:10b6:c01:6a::7) To YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:a0::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/7] iommu: Add verisilicon IOMMU driver
-To: =?UTF-8?B?SsO2cmcgUsO2ZGVs?= <joro@8bytes.org>
-Cc: robin.murphy@arm.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, nicolas.dufresne@collabora.com,
- jgg@ziepe.ca, p.zabel@pengutronix.de, mchehab@kernel.org,
- iommu@lists.linux.dev, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com,
- linux-media@vger.kernel.org
-References: <20250911155720.180465-1-benjamin.gaignard@collabora.com>
- <20250911155720.180465-4-benjamin.gaignard@collabora.com>
- <vrngq76nnms3jyl5hnxqnkimjc6kil66o6fdyqn5vm3fpovmja@cfynipjw7ktp>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <vrngq76nnms3jyl5hnxqnkimjc6kil66o6fdyqn5vm3fpovmja@cfynipjw7ktp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT3PR01MB9171:EE_|YT3PR01MB9201:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0f38c15d-b682-4fa5-bce5-08ddf1f89cdd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L0JMcVdIY0tVWHVxZEdYeFVOME9XMDNrbEd5NUNFR0RuVkx4NWY5b01ocnhU?=
+ =?utf-8?B?WStFaEhHd1czZnF4WCtKSXJSQUovN3dFYWJOVWNob3dRM2NGck14SGpVZko4?=
+ =?utf-8?B?N1hkWkNVOUt4UGV5RUhCN2dSMlIwVXphcklDZHVlcFpwQ3VVbGt5eW9XY3g0?=
+ =?utf-8?B?emhUMzFJaytscDJBYkIvbXMzajZmdkN0L0xwRlhOalNZeWV1Rk9xZVNNR0cz?=
+ =?utf-8?B?RW1jdGFGVG5xeHpTSko2VkpmR20xZ2psejZ5RFBBS3lWdUZ3eXh4UThQUVR0?=
+ =?utf-8?B?QW1ZYnk4L2t0QVhjNC82Q1E1L3BWaDdTTE5iSzhuQXJnMWl5VVR2cXVDeFhs?=
+ =?utf-8?B?ejJOZGdDd0RtTTU4S29WRFhydHczOGxseGc4VlhMOCtOT2pJSnZjRzRiTHhE?=
+ =?utf-8?B?MWZpVkJiYWdEenNDc2hDRE5UZ3kySG91SElCRzJRREFnOXBGU3JqREl5QmI5?=
+ =?utf-8?B?QVhSWXNwS21ySU9DREcwcGJheUlVcURTQTQ1UkVYQWMxU0xEUmMzOUczaFJD?=
+ =?utf-8?B?aTJJNUJGWlBhdU1TMlZoNktkSU9BdXVOMTh0L0dOTTFlTnBETnBGQWJUM0xY?=
+ =?utf-8?B?ZlRsbzBYVFZ6SFYySjc5b0pPSTJlSEJUcUJGSWU2eUd1WGZOYjRnOW5CSi9L?=
+ =?utf-8?B?WkVyYmNUTTdBRzdLVUFucUpZMDZrUXRxYXdUU0o2U1VDSTM2dFVXU3N0R2xG?=
+ =?utf-8?B?S2JsWDhBM1hTY0tneXFkL0o2QU1ZSVlPZjFIUFBINHRVUUp4Y3g5NllhNHZ5?=
+ =?utf-8?B?V1RPVlhGZ0NtVUJlL0pxVGpHaHMvRGxZSkNaMlFOSDYvZ0hYZ3dNaGxZZm1V?=
+ =?utf-8?B?RGhqRUQvSm5UbDVRb09HdWl4TVZjU2MrOU1US0Q3NmRodEFWRExqK25uSTZT?=
+ =?utf-8?B?dWZDZG9TU3VYYmw0OGp0K09uNGpqSWRVbmJUc0xvc0RlVGl1SURKYjM0MEZ3?=
+ =?utf-8?B?RjcxYUE2RzN6TjhMRHZQVGpaQ2xURVg4MFBlYlJ6dkx0aXRiYXFoSFBZQ0R0?=
+ =?utf-8?B?cjd0ZUJraWtaTSthdXl0dkVIeEw5RHo1VXJQSlBCOTE2US9KdTdnOTcyYk9D?=
+ =?utf-8?B?SjgxS3lYZENxUWdYa3NLWFFQcW9Id0lhcDRqZDY2MklId2FyZmFNZU0rS21S?=
+ =?utf-8?B?eTNMVlAyQ1F0QmR0eVFuS1JOdDdyQ1VTV3hyWUM2Zm5tcTlFUlg2REVVSldk?=
+ =?utf-8?B?U0JNVDhWT3Z0dWtuTnMyWER0dWE2ZTFadXpMc0tKV3ByQW9QcWVjZjV2TUdj?=
+ =?utf-8?B?V0oveDZJSVo1ZnJiZGxWaENHL3loM3owTWkvZVl6cXVvVFFGRDVTOTdONEZX?=
+ =?utf-8?B?dk56cUR1Mk5iZmRYT3V3ZnN6TFdvWk9GaDR2QUlCQk5DR2VjaFZ5TU00c2xh?=
+ =?utf-8?B?TTdtN0xWRTQ2MFdWUnFoZzhDMUQ0NEFIaTBLVEw0MUttdHp5dW9yQnNaRUs1?=
+ =?utf-8?B?WjgzRjM5Q2dpbjc0aGo3ZHhQLzQ0QzZKUGoxTDFPOGhYcVJoY0FhNm9IVUZ3?=
+ =?utf-8?B?RnhaR0gyS1BLZzI3Mjl1aGsrZGhBSCs1M1phVGRVUnh0WGNhVlNROC9KRXRW?=
+ =?utf-8?B?L1BxOEZzOEwrWWc0SG5aRGs2alFuSnhGenI3Ti9rVVg1cmlkamZsMTVLTGVS?=
+ =?utf-8?B?TG5wS1VqL25GUzk4Nk1McGFtSUxiREUvd2tsb2dHUHYxSWZpcXJiYWNmMHow?=
+ =?utf-8?B?eW9qRGtta1U5aGZUNmhyamg0dnRDOFBscGRVUFVMQWhPWERMZ014ZFF5Qm1X?=
+ =?utf-8?B?ZkkzaTlTOENUMlIrZmlDazNLRnNxY1hOUC9qcjJUMXFjZGhWQ240bXoyLzlQ?=
+ =?utf-8?Q?pWMfBwsoWJJkdFyOLFa63+pK/6uFCxu36Ew+o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UkNROTZMT2lNNjhGWTZ0ZkpVcWxIUDJLTW1MU0tNUUxLakZqcmFXZy9xZ1o0?=
+ =?utf-8?B?MWxZSFNXc0tndEM0MVQ0dGlORUlySEY2UzRqVXI2WWdjR0huU3lTTEl1cTU5?=
+ =?utf-8?B?SGxlUkk5OVlnTGFhcXBxaXBaL3ZtOExYeXI1M2EyeDJOeldUM1hqMlRtUkRz?=
+ =?utf-8?B?d3N4OUs1cC94VmpwRitvQlloSEVpbXFTWExmd1MrYy9maVJMRjVuWThhWlpy?=
+ =?utf-8?B?eW9KbmtISjdhZWNDQVh3R1NxRTN5OUtYbGlUTzh4RkNpSmdGay9LY1N1VDBR?=
+ =?utf-8?B?ZTgzajk1ZUQ1anEzYmlVMHQ3Q0dudUFVWlAwZktrRUtxbXE2YWdXcTFPTk9V?=
+ =?utf-8?B?WHBKa2Z1aFAvc2hkV0xaQitDRHBHQkxaWVI5ak9HZlRmS2tKVGJPaE9veE80?=
+ =?utf-8?B?L3BlMVBDL0FyWGxvVUJPb3FGNWpTTTFpaGRQaXZCajBkMC9mVkxYaHRlSmdV?=
+ =?utf-8?B?aVNsN2FZM1pCR1JsdEVpaStKaTZzMk9YaFQyT3dHbGtkeldaNWJwTWNoOC9r?=
+ =?utf-8?B?cVV4aWw1K2IzN1lzeC9BNlB1eXc0TThueFNwQmh0eVpvcEgvbDJiM1BKcWpH?=
+ =?utf-8?B?ZWFvUkZLT3I1ckVwNmUwdzZNcUtLY1hBcEhINmdzcENuaHkybjl2cy9kWEtr?=
+ =?utf-8?B?SlI3M2dyQ0Z5ZkVRcmcxK2pUN0FUUkhtNjB6SXFZQXRlYWZTa0JDWFlKUFBZ?=
+ =?utf-8?B?c3ZOUG9ZZ3ZQenZvOEo3Smw2NjN5YWprT2tuMzl1dFNYY1J0eWVhcHRZdUJH?=
+ =?utf-8?B?WUtWaGo1SmVwWXFYUFpJTERrYzVVM1hrUjhoU255SENrZ2Y4OWQranpaWG1h?=
+ =?utf-8?B?UEVwMVVFSzRsNXFMZkFJYnZXbVc0Y1UycW9kUDF3c0tIaW5BMEplaVZ1YWZk?=
+ =?utf-8?B?SEMvQkZFazV5dzlUM3A0MjcwdXhPdHdtNERnODIxOFVzbkxTM0w0emhvOVB5?=
+ =?utf-8?B?bmtpeCtVL1d3UnpWSWxYcVk2K09WamNiY1RDbjZrTGg0blBMclZ4RDQ3Rytt?=
+ =?utf-8?B?NDBDSXZOY3VadUE4VisvbFJiQnNVVm5lT1dZK2lhTUVob1h5K2sxbDZiNUk1?=
+ =?utf-8?B?Z01jZk5zak8vaFFjdHFHelBLdi9SdGdDemtyUTB2WEZPNTZwK09ZUUJOenE0?=
+ =?utf-8?B?SWxtd1lCM2x6M3g3UDZEU0RjdnZHSTB3aFd1cEdRZ0tMWTRGMUR2RStRSGU3?=
+ =?utf-8?B?NTMrd2VUZzdHOTBpcGxqWTAvVmhKN3FtSzYvVW5FeU42USt5RGVKZTVxVmZG?=
+ =?utf-8?B?Wk92aTlIQ1NVcjhDS3kwNkYrVXRnVFpPWXEwd0Y0UzdUN3BYeCt6ckd2Tjgw?=
+ =?utf-8?B?d1RYNStXTklzdSszOGxEYjRHWExhcGNxd2xTanU1QklDSGlRdFBsNW8yakNL?=
+ =?utf-8?B?c1hnNDd3blJhNzZZL0c5ZFVLZHFYTzFXcVF4NWtTbUZHZURXZ2hYNzhWVjla?=
+ =?utf-8?B?VFIwQ3ExV1pETmt0dGVoUVdWeWR2SmZLN2ZRT05ucHIyekpYcG5sUjJ5Zk9z?=
+ =?utf-8?B?ZDFCSFBsbjBhZVhWOTJHdTRXVm5zZDBHNXVLVXRwOTM5Z0Z5alQwdnQxdEh6?=
+ =?utf-8?B?R2QwRXBmcUJKbmZsMm11YXk4ZS9NQTFKeGpnbWZUakQ2MksrQVF5NTB5ZHI4?=
+ =?utf-8?B?RngxUXhBcTVlc3NUV0doT21vdTAvb2psckhKM2Q2eFJyY2lVL3E3SS9mRXZ2?=
+ =?utf-8?B?dmF2R2llQVh6RkFlTHQvaUdlTG93R2ZhTlhaSWhxM21wdVdaS2lMWGNzYUh6?=
+ =?utf-8?B?d2hLL1ZsS3VCY2dMQThaUnZZVGpZcExoaWpUOVJzVlorUGp4cnh5Y2V0R0Nx?=
+ =?utf-8?B?TXB6YWttQWFVb0pDMCtXLzA2Z0xhRFp4YUdpb3hMV0UxakVhZjVRTzYwVjdF?=
+ =?utf-8?B?aDY2K0t1RWcvZi9hZkNjQ1YxUUdCbUYyTXdBQkpkSmJIeUtYRTZnbFFxNDhR?=
+ =?utf-8?B?MSt2K0ZhNVZaVXNVMkpSWTM0VGhGSCtsaFo3Y21GdmxJb2dzd21wV2pnNFl2?=
+ =?utf-8?B?T0ZCeXJVTXgrSEpFWmF2MktzbHNtcUZKQmthTnNYc2x5T0d1cU9VdCs5aC9s?=
+ =?utf-8?B?Ris0RTNEUTZCYmNjcHhkc0NmV2FDeWxvQmVhYjAxem44Zm1TaFMwTjRUQy9q?=
+ =?utf-8?B?ellXREc5WkM5ZHhOdjBIVG5xYUovTTYzTURYT1djQnExYjZJaTZlbjBWbnQ3?=
+ =?utf-8?Q?xEPevyFtWHizk4XwQDb0B9M=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f38c15d-b682-4fa5-bce5-08ddf1f89cdd
+X-MS-Exchange-CrossTenant-AuthSource: YT3PR01MB9171.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 12:33:44.3981
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: n6+C2UhCawFKuuX6poA27xmchoUYXRCvcl7qHj87loT2PI9aTS64BquPN4IbFpamsDNraKnfKLJxX/oza50F5hdRlXgMRF7OOLD18Ei1pfc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT3PR01MB9201
 
+On 2025-09-11 16:18, Thomas Gleixner wrote:
+> On Thu, Sep 11 2025 at 11:27, Mathieu Desnoyers wrote:
+>> On 2025-09-08 18:59, Thomas Gleixner wrote:
+[...]
+>> Does it "have" to ? What is the consequence of misbehaving ?
+> 
+> It receives SIGSEGV because that means that it did not follow the rules
+> and stuck an arbitrary syscall into the critical section.
 
-Le 12/09/2025 à 13:47, Jörg Rödel a écrit :
-> On Thu, Sep 11, 2025 at 05:57:13PM +0200, Benjamin Gaignard wrote:
->> The Verisilicon IOMMU hardware block can be found in combination
->> with Verisilicon hardware video codecs (encoders or decoders) on
->> different SoCs.
->> Enable it will allow us to use non contiguous memory allocators
->> for Verisilicon video codecs.
+Not following the rules could also be done by just looping for a long
+time in userspace within or after the critical section, in which case
+the timer should catch it.
+
+> 
+>> I wonder if we could achieve this without the cpu-local atomic, and
+>> just rely on simple relaxed-atomic or volatile loads/stores and compiler
+>> barriers in userspace. Let's say we have:
 >>
->> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->> ---
->>   drivers/iommu/Kconfig     |  11 +
->>   drivers/iommu/Makefile    |   1 +
->>   drivers/iommu/vsi-iommu.c | 808 ++++++++++++++++++++++++++++++++++++++
->>   include/linux/vsi-iommu.h |  21 +
->>   4 files changed, 841 insertions(+)
->>   create mode 100644 drivers/iommu/vsi-iommu.c
->>   create mode 100644 include/linux/vsi-iommu.h
-> This will not go in before Will Deacons comment about code duplication with the
-> Rockchip driver is addressed.
+>> union {
+>> 	u16 slice_ctrl;
+>> 	struct {
+>> 		u8 rseq->slice_request;
+>> 		u8 rseq->slice_grant;
+> 
+> Interesting way to define a struct member :)
 
-It isn't the same hardware block, not from the same IP vendor and the bits set aren't the same.
-pm_runtime, clock, spin_lock aren't managed differently.
-The common point is they both use 2-level page table.
+This goes with the usual warning "this code has never even been
+remotely close to a compiler, so handle with care" ;-)
 
-VSI iommu need an additional function to restore iommu context before decoding
-each frame, rockchip doesn't need it.
+> 
+>> 	};
+>> };
+>>
+>> With userspace doing:
+>>
+>> rseq->slice_request = true;  /* WRITE_ONCE() */
+>> barrier();
+>> critical_section();
+>> barrier();
+>> rseq->slice_request = false; /* WRITE_ONCE() */
+>> if (rseq->slice_grant)       /* READ_ONCE() */
+>>     rseq_slice_yield();
+> 
+> That should work as it's strictly CPU local. Good point, now that you
+> said it it's obvious :)
+> 
+> Let me rework it accordingly.
 
-Regards,
-Benjamin
+I have two questions wrt ABI here:
 
->
-> 	Joerg
+1) Do we expect the slice requests to be done from C and higher level
+    languages or only from assembly ?
+
+2) Slice requests are a good fit for locking. Locking typically
+    has nesting ability.
+
+    We should consider making the slice request ABI a 8-bit
+    or 16-bit nesting counter to allow nesting of its users.
+
+3) Slice requests are also a good fit for rseq critical sections.
+    Of course someone could explicitly increment/decrement the
+    slice request counter before/after the rseq critical sections, but
+    I think we could do better there and integrate this directly within
+    the struct rseq_cs as a new critical section flag. Basically, a
+    critical section with this new RSEQ_CS_SLICE_REQUEST flag (or
+    better name) set within its descriptor flags would behave as if
+    the slice request counter is non-zero when preempted without
+    requiring any extra instruction on the fast path. The only
+    added overhead would be a check of the rseq->slice_grant flag
+    when exiting the critical section to conditionally issue
+    rseq_slice_yield().
+
+    This point (3) is an optimization that could come as a future step
+    if the overhead of incrementing the slice_request proves to be a
+    bottleneck for rseq critical sections.
+
+> 
+>> In the kernel interrupt return path, if the kernel observes
+>> "rseq->slice_request" set and "rseq->slice_grant" cleared,
+>> it grants the extension and sets "rseq->slice_grant".
+> 
+> They can't be both set. If they are then user space fiddled with the
+> bits.
+
+Ah, yes, that's true if the kernel clears the slice_request when setting
+the slice_grant.
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
