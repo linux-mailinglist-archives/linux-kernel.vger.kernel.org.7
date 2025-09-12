@@ -1,161 +1,197 @@
-Return-Path: <linux-kernel+bounces-813704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC13B549B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:26:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94B8B549C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:27:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D337F188B23B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 751ED580B1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE1B2E1749;
-	Fri, 12 Sep 2025 10:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBC42E5B2D;
+	Fri, 12 Sep 2025 10:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IzRr+9zy"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RE/4tV7Y"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805341E520A;
-	Fri, 12 Sep 2025 10:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905012E11B7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757672770; cv=none; b=T3dRWnrtkG3AHzDdUEV0krHLOgPVb4r2qLk22vbGLfmWgM/OwG8ogC70WC74BEeO8hla1DqZ0RKxEaeyWIbx6+LtawDMq06jJ+440WZ7weHiFKgs7mboyMWmGE1APWRnsNUnxMrFGXOvEAULbVV/UXhZ99udafDltMDThSuL9jc=
+	t=1757672823; cv=none; b=riO18qPFfh14aHSsKMQP4QuTpY/leKSOhDrEDaQKyxWNrtZZXZUis3e/NybL2hQsf2km2kQz93tG5pySqef1va71QDNZ9AQkfU7qsQ14R2/S/Dx0B87KB1mhiVSoIVgE4ifBy0u073BjdBell5+BeQoMqHcXTDa932Dbk7T/mDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757672770; c=relaxed/simple;
-	bh=W89h20ehPRBjbNNYvA9Le0XF7Wt/5CXIH67sItbuKdE=;
+	s=arc-20240116; t=1757672823; c=relaxed/simple;
+	bh=a/aXEMGb2BQDbPqE+kiC0jbKGYkUHUoAmyib1xRnP7E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCUbMvMTlQxttVA2YqBC8gRN7wLlyZojDanSQ2IA2pZvsO31kpwXUCReKQ68TaOwCdnQ2WP4Vk4FQROZTRdj+7VYb53k0Jhmib5/dt9DIWAH2isosl6A11MIMfUg07+b7qWfh2nhhwmkjKZU3RlSmAQSRmRtn5QhnO67ZsARy0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IzRr+9zy; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C5XC48009648;
-	Fri, 12 Sep 2025 10:26:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=uq06KN
-	h2BBSkZYbEP58EjBxA0XmjXGhnNwnm+E/Owwc=; b=IzRr+9zyVdCc17w+PtobXn
-	pXOq9znMsJUMjNVHi9Ykvmw6yJdAOQZIqDF9JPue99o2DsK1jYmklcA5ZKAISV3T
-	zTynRjihb0Uz+MwNWAnelFIwY279ghxR6vM7s3KMQ+SeabVQ5E5Co05dz+WyaOUS
-	DzjvA+cgTHMObz0aaJ6BQM0YGypfMNGwBD/GO6r8NIhlvzMttAfDhWQaKiS0Zzom
-	NC0EIo0u8OES7S+4kJWkVBh9IDkdQE+uP+YEU41iUrmw+ITcanbY0+PRi2EwuUzr
-	gLgBzTUq3MF9qInU8enknfoFB9vG8XrZXNwbf9QdG7KhPvJ3UiGJj68Ry0vuqcyw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xydfn9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 10:26:02 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CAMZRs021195;
-	Fri, 12 Sep 2025 10:26:01 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490xydfn9j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 10:26:01 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9LYPv020499;
-	Fri, 12 Sep 2025 10:26:00 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp1ak25-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 10:26:00 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CAPuRs45023642
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 10:25:56 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B11DC20065;
-	Fri, 12 Sep 2025 10:25:56 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3384C2005A;
-	Fri, 12 Sep 2025 10:25:56 +0000 (GMT)
-Received: from osiris (unknown [9.111.34.207])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 12 Sep 2025 10:25:56 +0000 (GMT)
-Date: Fri, 12 Sep 2025 12:25:54 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Juergen Christ <jchrist@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Sven Schnelle <svens@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>
-Subject: Re: [PATCH 1/3] Compiler Attributes: Add __assume macro
-Message-ID: <20250912102554.10147Bf8-hca@linux.ibm.com>
-References: <20250910151216.646600-1-hca@linux.ibm.com>
- <20250910151216.646600-2-hca@linux.ibm.com>
- <CANiq72=Zhcrk-cvXX+75mQzqUUwQznkZmLTCoEn0XNs62meUtQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NUfq/BzylSJqeMix9/a4XSjmm3N1WtAdgLmhgPs/dFT+tJ5T8gP89SU2Ot76r9Vfg3CbzCNds7NZSw9ke94IMJSoCUFtpjaupwXsO0LTh4vGX109bAJnZeoRBCiv30rC8M91AugPSC3ENBnQG3IfpXOC8rj9/YFAfftobXBimPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RE/4tV7Y; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso12249595e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:27:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757672820; x=1758277620; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VEszHJ67kocets8ry4iAcIkKEULLubcUd+fSnC0UnKU=;
+        b=RE/4tV7Y4LN1WirJdE64Tp/ROSNGu6T/IPF8AWszaNqFeUgZ4g9RRu3L7R0vMVrSLC
+         b7STZLa6vCwgdwWH+PHLS43tYUH2ZDlw8aGtXfrIytZqmSZtVQLO6kzKs8wGfaKm0H8M
+         PelDnxWJMlXosRGSXMStlKlYViy8YK/aTQxQr6iioGid3HseYrmuQfNGXjISFeriBXwq
+         p1m8ciQPoGUfeDJElUI7TbEbQ/pTyu+ICiWk29phNLUfr9ErSc664eoZAtGjdxrZgQex
+         xWAnr0E3ExmtnGeVo5exREB6d1uQLFxlv9KgrwrWcNqgH1iUDapR25WsZESydkT9uQma
+         e7tQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757672820; x=1758277620;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VEszHJ67kocets8ry4iAcIkKEULLubcUd+fSnC0UnKU=;
+        b=fugrW95xtTvmJDYJXcRO3IIlFhx+Gf63G43oaJL/OS77NnnIW7BuePkibXw6yC5oYZ
+         Jaq7KXLp9vvq/gudefCIFCWWKDk7IDMRp1vH+fii5LSPyiN3Ou/EGK3stZSyl5GcWW8D
+         Z9ptwuIxMW7NcgD5N+vmC47yyEeZ9P5bnAvACQkDFNBH+3gipOVzK8zZDF66yCHac1Fq
+         hEVyxqZoXsltE3MwEJnnDz/1mpU8J/ZoXEUSgs4YknUONq8/3HznYhzxUkUVaRJ+4TVD
+         d7+SA65wkTFYQZDGz8T8w2fOgUS5e/1eBgrqa696tJ01A7iRCflu1HUULwYBbXGhWUQc
+         T+Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCWTH5Wk9kr8KiGvdsxbCT823gCfrs75eOCRxV4mizhE2Gd+o+PHLEB8UGGIjEVy9lcN0u2mLoYogMGXdgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOIoWQFzcqroYYhK390nBs4N5IY2y9roVx8xzGtiEHIIyHDJL9
+	c7NhatDLOshwE644hvA889ztcKWhmjKWbh4L7G9uEMycTIvVefCuL5gu
+X-Gm-Gg: ASbGncui4aJNuxMTUdF6bp70AizE5snedqWBd2M9oGjGk48TuCo7MAnAwfpn5dID8aE
+	XRMSlu7sD4vP+3PgUh0TFjaPH9SlMQBIIOxNFZtCwxbKnXRnimHrTgDxrZkFjEIcFXs7ycSHRXW
+	zHnTn/XFeJAbYU4lCzXM/F74BPiQek5U8v06+70+zA2i+z8GSO5g0JcijRPJ3Q1g5ulisyW+e42
+	NHZD+Ajycg0lUvmG/1gaFCsbOAXK/BkcaNXK5Y5EBUCUweyuFMGSPx/+o09/vBVwyj/PfIgFMfk
+	8hmyNM16varNs4cXW9oriKVO8lCChJT1heuQtbPnJuvxDAc+KobBf+PsbSMiR+1KqKW9yrpEEv/
+	M0a6SHAYnrg0fZPNh3a4NYSUqib1DPEu2Ee/OTobX41ImlfLCMZjzg7cItGoc1O4W+HK4foqgJK
+	AVkDb2ZLfpnjslNU4XVq4=
+X-Google-Smtp-Source: AGHT+IEbyHndbn+wwznPnv5dSbk1PDx0bdvxUnNmyX0t9tVPgFtH6+RjNOs4QbIfK49oM38shQc3wQ==
+X-Received: by 2002:a05:600c:354e:b0:45d:dbf4:8882 with SMTP id 5b1f17b1804b1-45f215641afmr19183295e9.28.1757672819578;
+        Fri, 12 Sep 2025 03:26:59 -0700 (PDT)
+Received: from orome (p200300e41f1c4d00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f1c:4d00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd415sm6002552f8f.30.2025.09.12.03.26.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 03:26:58 -0700 (PDT)
+Date: Fri, 12 Sep 2025 12:26:56 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Svyatoslav Ryhel <clamor95@gmail.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <treding@nvidia.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+Message-ID: <amc5e3sffmwqguivwch6b5vtmlgu5dlwxm7bsrn6nd3rllbvxg@koqmavn6uuy5>
+References: <20250828055104.8073-1-clamor95@gmail.com>
+ <tdknls7jieu4ple3qhmdqntllmctks2auxhxzynwjjmgl3hnx2@nubqlzpgohwf>
+ <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="77pu5semdcfvsxfi"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72=Zhcrk-cvXX+75mQzqUUwQznkZmLTCoEn0XNs62meUtQ@mail.gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: h2EjhHvLwW2H2KtseXpnqOSph9QsBuEE
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDIzNSBTYWx0ZWRfX3zNIMlxidym9
- zxrL9OeFmmj9Z199bGatG874nsxEWg3KL0Q1DKWFmTNdHU8rhyLbjd2Y0SMr+pkF/m3Qm64QXSx
- aS9OnOi8CGb8yqAWkWieaaEFj28NnDCXDk4GTlctCLRQen99XHfGfjMVdOVB6+JlyORYsztWot4
- eFLzyNZ97EnxeC766cFXAINV1KwRKFIs8Np0BTjc8BkgvQvG2F8129f12+hZpT+BNLDzBFhILr+
- RgaPbDOpAzPoEy/52L55fgPjpJvOLumgqh60JCqMYXdu+OtniU7foj+cqWNPCtM4DvUR0xKFYcv
- yCfcwcSP0fSBVzIpny/gfqjkN7O4Vq/Ii9clhCDkZU0v+W0eX684a4vfHbLj0oKjxGgU1waLGOa
- 8cBEEu+m
-X-Proofpoint-GUID: WBocjeFnz5nq3-g-lGn17-oBRJDtDHVy
-X-Authority-Analysis: v=2.4 cv=F59XdrhN c=1 sm=1 tr=0 ts=68c3f53a cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=PUJLaZJu5X_K6ovvMFYA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_03,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 clxscore=1015
- impostorscore=0 bulkscore=0 adultscore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060235
+In-Reply-To: <da8aa4c5-4aa0-42f6-acb6-55d37cc29774@linaro.org>
 
-On Thu, Sep 11, 2025 at 08:59:29PM +0200, Miguel Ojeda wrote:
-> On Wed, Sep 10, 2025 at 5:12 PM Heiko Carstens <hca@linux.ibm.com> wrote:
-> >
-> > + * Beware: Code which makes use of __assume must be written as if the compiler
-> > + * ignores the hint. Otherwise this may lead to subtle bugs if code is compiled
-> > + * with compilers which do not support the attribute.
-> 
-> I am not sure I understand this "Beware:" comment: is it referring to
-> evaluation side-effects? If so, the GCC docs say it is not evaluated.
-> The real danger is triggering UB with it, but that is different, i.e.
-> one needs to be really, really sure the expression is true.
 
-No, I was referring to the original build error where the missing "& 127" lead
-to a warning / build error. So what I was trying to say: if you have a
-construct like:
+--77pu5semdcfvsxfi
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 0/6] thermal: tegra: add SOCTHERM support for Tegra114
+MIME-Version: 1.0
 
-	...
-	return a & 127;
+On Thu, Sep 11, 2025 at 08:56:12PM +0200, Daniel Lezcano wrote:
+> On 11/09/2025 18:27, Thierry Reding wrote:
+> > On Thu, Aug 28, 2025 at 08:50:58AM +0300, Svyatoslav Ryhel wrote:
+> > > SOCTHERM is thermal sensor and thermal throttling controller found in=
+ Tegra
+> > > SoC starting from Tegra114. Existing Tegra124 setup is mostly compati=
+ble
+> > > with Tegra114 and needs only a few slight adjustmets of fuse calibrat=
+ion
+> > > process.
+> > >=20
+> > > ---
+> > > Changes in v2:
+> > > - no changes, resend.
+> > >=20
+> > > Changes in v3:
+> > > - expanded desciption of "thermal: tegra: soctherm-fuse: parametrize
+> > >    configuration further" commit
+> > > - changes title of "thermal: tegra: soctherm-fuse: parametrize
+> > >    configuration further" to "thermal: tegra: soctherm-fuse: prepare
+> > >    calibration for Tegra114 support"
+> > > - Tegra11x > Tegra114 and Tegra12x > Tegra124
+> > > - ft and cp shift bits dropped
+> > > - clarified tegra114 precision
+> > > - lower_precision > use_lower_precision
+> > > - nominal calibration ft and cp hardcoded into SoC specific structures
+> > > - added tegra114-soctherm header into dt-bindings
+> > >=20
+> > > Changes in v4:
+> > > - fixed Tegra124/132/210 cp mask
+> > > - dropped TEGRA114_SOCTHERM_SENSOR_NUM from header
+> > > - TEGRA_SOCTHERM_THROT_LEVEL_ made SoC specific
+> > > - adjusted soctherm node and inclusions in tegra114.dtsi
+> > > - dropped use_lower_presision and nominal_calib_cp options
+> > >=20
+> > > Changes in v5:
+> > > - fixed CPU and GPU hotspot offset values
+> > > - added static_assert()s to assert the TEGRA114_* and TEGRA124_*
+> > >    counterparts are equal
+> > > ---
+> > >=20
+> > > Svyatoslav Ryhel (6):
+> > >    soc: tegra: fuse: add Tegra114 nvmem cells and fuse lookups
+> > >    dt-bindings: thermal: Document Tegra114 SOCTHERM Thermal Management
+> > >      System
+> > >    thermal: tegra: soctherm-fuse: prepare calibration for Tegra114
+> > >      support
+> > >    dt-bindings: thermal: add Tegra114 soctherm header
+> > >    thermal: tegra: add Tegra114 specific SOCTHERM driver
+> > >    ARM: tegra: Add SOCTHERM support on Tegra114
+> >=20
+> > Hi Daniel,
+> >=20
+> > there's a build-time dependency on patch 4 in both patches 5 and 6. Do
+> > you want to pick up patches 2-5 from this series and I pick up patch 1
+> > and hold off on applying patch 6 until after the merge window? We could
+> > also do a shared branch, but it may not be worth the extra hassle.
+>=20
+> I can take the patches 2-5. Regarding a shared branch or wait for the next
+> version, I would prefer the latter
 
-and then make this:
+Alright, let's do it that way. I've picked up patch 1. If you take
+patches 2-5 now I'll pick up patch 6 once v6.18-rc1 has released.
 
-	...
-	__assume(a < 64);
-	return a & 127;
+Thanks,
+Thierry
 
-then it is not possible to leave the "& 127" part away, since __assume() is
-optional. But thinking about this again, I guess the comment is misleading,
-like also your reply proved.
+--77pu5semdcfvsxfi
+Content-Type: application/pgp-signature; name="signature.asc"
 
-This is not about subtle bugs, but just an optimization that is not being
-done, which may or may not lead to compile time warnings for the particular
-case I was trying to improve; but the code would be correct in any case, as
-long as __assume() is used correctly.
+-----BEGIN PGP SIGNATURE-----
 
-I'll rephrase the comment, and split / reorder patches differently so it is
-(hopefully) more obvious what I try to achieve: allow for micro-optimizations
-of inline assembly outputs.
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmjD9XAACgkQ3SOs138+
+s6Gb2w/9FzFuO93dIq8o6wF8l7bzhiJ1Xadi6emh4ye9NQ/Xzu9S1KPszf+WaJYl
+WQPyLCxBFvFb3BuARreuZbgnbM37jEW2N+JZbpbOE7Mq8cfXUPJ0xcR3hO7a6YiY
+R9xDYSVAvFpAAxPlUU07wYRswWpQHRUk2kiFO8goc0m17/kd2nbiwhdYVzRg3wrJ
+YC2ZX9m/3l7TmsVd29NfEdKV4nW5FRH2v3aSi+IScXwjObd0oHo4ygrruccMbCPk
+RSRSXCqvEpol7cpx7kY+jCJTQ5h7lLrewycb1P8Dwxvz89ER9mtk+F5kwJiACGgN
+G3OeAaN9H9z/yuidIrgczHu1k1NezHBE3e9pytu7XHBlvC44Is/hOeGn3Wr+KBux
+as8CB/cfKSAnIn6SaXCbgxfHqQrBlO+FvTWWpN/6HYz+KRQQD42pz7AdhOMeAuCG
+Q+9sExxgd5M8BHZIdLpHvTalHbseuZm3kQdMJgfqCQdwGXgM6rCBaq2XN9loILdk
+6F/JNKe5ktkTT6DGtmDjXGfHKWrVa6oQ0F5MXo63EDHUwdPZVPBj3BQfAtRBbMjo
+mJQmDcOwACPS7wnW9wuDyJdPdllXRajiRIwt1j4nrYms7kVnOoikJf81msUwRucc
+ze5Fz4UK2uARv4qMX0qNDms6am7uL9DG+kWRaIFWUeERiSOmbDo=
+=ilf2
+-----END PGP SIGNATURE-----
+
+--77pu5semdcfvsxfi--
 
