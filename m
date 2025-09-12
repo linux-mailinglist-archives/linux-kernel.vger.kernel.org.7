@@ -1,108 +1,164 @@
-Return-Path: <linux-kernel+bounces-813958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24428B54D93
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:28:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E092B54D88
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:27:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BBF61C254E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:23:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A64A04EA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41361301031;
-	Fri, 12 Sep 2025 12:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wXzvEr3p"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32ECE2475CB;
+	Fri, 12 Sep 2025 12:22:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65C027AC44
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B842749E0;
+	Fri, 12 Sep 2025 12:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757679698; cv=none; b=cjG7Zu5GBCG0eKhdBqVy3blEY4FjOamGwPX63ZG0B6cB2zzjwsaWMPCnSdhwJ/0XVWB7xILOcwvq3QuVcjZhnneSDvdEra3J7T3rEjWEKJj86ZFJP9sB/5qVF9V4lXqADYpw39WuRL0MHsXnA9u+pjNbtQdwZ0g4cJWrSB4Idbk=
+	t=1757679757; cv=none; b=Eui+JsVeb8jFHb777Y7MTX43L4U1HGr/0HvHbOXOFzwQByEMtoR01+7RdF4muOT3Uz21czqRn1a3WJfebzjR2kpRnGUnq//0pVMG12ZpqEWOBSJew+rGCCobeHJEi/ija4ohlV9ECAiXSn2zcGIhU65qK740V0P1vQDIwkmMRrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757679698; c=relaxed/simple;
-	bh=yht0MzjKwXPqfzMkTMQkKpkg4jWPJryjUJrJkqlBlvA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iK1fTStdjEchB66n0FR0knz9un7nIGbBAepHOed+vMehvYYJcWWAh2/UgEYMBjT4QFZEkG1fvWGGRtS3iCdVVuF4EO0yeCUOOn+SUdfJU5jaPNwlKjwHf2dAR5y7I430/LQZsYJ1m6uHSsu/ebuJMQk8mJFNY5h4MXE7qJ5dk5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wXzvEr3p; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-336e16f4729so14681231fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:21:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757679695; x=1758284495; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yht0MzjKwXPqfzMkTMQkKpkg4jWPJryjUJrJkqlBlvA=;
-        b=wXzvEr3pmT4Sl4/LCAiyiwjpJqkBr85EdnP+liQFUnK/A0L8tYY+RGAQmasqtUsFMl
-         eIEk/4tVwUxGX7JpNfl3JHVivDlbzh/simb9gu64Xn7ztuzuu9cr9LRLNf2wVzXOC9VO
-         c84baqU6+a9RUIT2i0hA49E+qEHy+3/JEZBm61IoB6qF5c+S4qp4rkcNZKG0AtJO3jqI
-         GI/DXTXrglEbki2f0n9RNlCU/oCu62PU2qFONhhSOF+lExrISRRT3Enwv+CXkFIEMbg1
-         qINqs5l56sp7LMoi5B4ElF9+bO9d1OMtzcgRZVAJFaPMnaM182oWecQeTZdVJ6niftCX
-         Zhgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757679695; x=1758284495;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yht0MzjKwXPqfzMkTMQkKpkg4jWPJryjUJrJkqlBlvA=;
-        b=xBxIzOFP4RvBaqjgNmHyBnMytMijpoFlbtOiNDuI/NwEHV+TXwgyWEpLIilovQld/M
-         dSpQchvUxKrX4pqYd1vNeOZZ02NSxAIeBZUZgsVs/V5PWYa/wW18ZEcbspZIXCnVegsI
-         jmrhSOYd9/3hHzoFTYU2wBPsqpWiuDRs9jlzjdZWBvRTC200HS1cbzivdqgxR8nkRLTU
-         U9GacBjYgt4eyPSmMy3YeKFAyfquqfLoXXNtmT8P5ggqesQZPpeyBsggzKmt/Yl9tuU4
-         /GoHMjZIXnMbgyjQRvegG1KNhahJTIMcaXkyS0pSg0pO49RRkfIqoH2DOMejWqKXeurS
-         D7Aw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9TKO93q9ORMCPHgmwIe0knyDmN8GqSgEMEaT0K2afYabhIUTbH7HOTSjtMH6uPFTDUNfaWXYO3IsGlGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPzzAfeHcakuEMYl6+vB+km/KEUArG0qdTZvwi0YDNSln0yO1h
-	6Ae0lM4F7Zpj/DYkiQMK2mum4STtK0rUq3/QFiBGpyMyFGEReuLA4c63jP+KUTzEobo0W+0rGvD
-	AHI/GOQwbY3dUvGwQix4VxnzgarhE2TtGdEUsPr4JGg==
-X-Gm-Gg: ASbGncsIddT4TjK5NPkrj6C+mTcHFLKzxnfNq4d5/bYdfzreQkT7utDOAglTHtuEIMH
-	CJSUQULOtctijf/NPRSocn34hqbn7Ak18hCDqlZERNnEvnP4zT6w4bB/e73ED5WBih4o/tRyH5b
-	Fxe8xsfHo49K/vkBPFWhiJ/Eua0zUjGqKR7eYZ9DLEJORQvOuk0nXoUwVOwPHRTsYY6KxXmliyF
-	B6TuIY=
-X-Google-Smtp-Source: AGHT+IGIryVwwWle5BuCNtAg9SWHOa9Fynk/RUJtYWpT4Bd8pqtmMPa6Br277pH3nUbppV/EZnHRiOtwLb2ws10wbU8=
-X-Received: by 2002:a2e:a9a4:0:b0:336:cce2:fa5d with SMTP id
- 38308e7fff4ca-3513a8ee15dmr9949001fa.11.1757679694596; Fri, 12 Sep 2025
- 05:21:34 -0700 (PDT)
+	s=arc-20240116; t=1757679757; c=relaxed/simple;
+	bh=mRRtzhHa3/oVhUpszk0hMMthfzQIOsVey2IFkTKlWtE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LehNeyLOfhlrvH+QX8yLHITzVPqig80ILl3L3a+AsOfZvkdGyarqf7oST/bvribHxOXmqiwiijq9koPN2MAhHmgsJvX6usJUztmHnCPrvuePSxxMjEhnHhGtsaJfrRyQ3VB2SkoQM7QvvufUOtsFlBtkmTRvjgYRtV9Wt+UQOtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNYQb0Bswz6M4YB;
+	Fri, 12 Sep 2025 20:19:51 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5D6491402EF;
+	Fri, 12 Sep 2025 20:22:32 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
+ 2025 14:22:31 +0200
+Date: Fri, 12 Sep 2025 13:22:29 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2 20/29] arm_mpam: Allow configuration to be applied
+ and restored during cpu online
+Message-ID: <20250912132229.000044c7@huawei.com>
+In-Reply-To: <20250910204309.20751-21-james.morse@arm.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+	<20250910204309.20751-21-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912092351.162307-2-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20250912092351.162307-2-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 12 Sep 2025 14:21:23 +0200
-X-Gm-Features: Ac12FXyVfQQZrEJmw9O1A4dKUe7GIFb_xvJhZW4e_4RrQjwp91fxqMFdqNnM--Q
-Message-ID: <CACRpkdY8-j0aCoz+akWHOX6WQ7nNLMbN50A=_7cgNPSUBuQb-Q@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: Simplify printks with pOF format
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Orson Zhai <orsonzhai@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chunyan Zhang <zhang.lyra@gmail.com>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Sep 12, 2025 at 11:24=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Wed, 10 Sep 2025 20:43:00 +0000
+James Morse <james.morse@arm.com> wrote:
 
-> Print full device node name with %pOF format, so the code will be a bit
-> simpler.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> When CPUs come online the MSC's original configuration should be restored.
+> 
+> Add struct mpam_config to hold the configuration. This has a bitmap of
+> features that were modified. Once the maximum partid is known, allocate
+> a configuration array for each component, and reprogram each RIS
+> configuration from this.
+> 
+> CC: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
+Trivial comments
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
-Patch applied.
+> +
+> +static void mpam_init_reset_cfg(struct mpam_config *reset_cfg)
+> +{
+> +	memset(reset_cfg, 0, sizeof(*reset_cfg));
 
-For the follow-up remark, I think it's an improvement with the
-full path, this is better.
+Might as well do the following and skip the memset.
 
-Yours,
-Linus Walleij
+	*reset_cfg = (struct mpam_config) {
+		.features = ~0,
+		.cpbm = ~0,
+		.mbw_pbm = ~0,
+		.mbw_max = MPAM...
+		.reset_cpbm = true,
+		.reset_mbw_pbm = true,
+	};
+> +
+> +	reset_cfg->features = ~0;
+> +	reset_cfg->cpbm = ~0;
+> +	reset_cfg->mbw_pbm = ~0;
+> +	reset_cfg->mbw_max = MPAMCFG_MBW_MAX_MAX;
+> +
+> +	reset_cfg->reset_cpbm = true;
+> +	reset_cfg->reset_mbw_pbm = true;
+> +}
+
+> +static int mpam_allocate_config(void)
+> +{
+> +	int err = 0;
+
+Always set before use. Maybe push down so it is in tighter scope and
+can declare and initialize to final value in one line.
+
+> +	struct mpam_class *class;
+> +	struct mpam_component *comp;
+> +
+> +	lockdep_assert_held(&mpam_list_lock);
+> +
+> +	list_for_each_entry(class, &mpam_classes, classes_list) {
+> +		list_for_each_entry(comp, &class->components, class_list) {
+> +			err = __allocate_component_cfg(comp);
+> +			if (err)
+> +				return err;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
+
+> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
+> index b69fa9199cb4..17570d9aae9b 100644
+> --- a/drivers/resctrl/mpam_internal.h
+> +++ b/drivers/resctrl/mpam_internal.h
+> @@ -169,11 +169,7 @@ struct mpam_props {
+>  	u16			num_mbwu_mon;
+>  };
+>  
+> -static inline bool mpam_has_feature(enum mpam_device_features feat,
+> -				    struct mpam_props *props)
+> -{
+> -	return (1 << feat) & props->features;
+> -}
+> +#define mpam_has_feature(_feat, x)	((1 << (_feat)) & (x)->features)
+
+If this is worth doing push it back to original introduction.
+I'm not sure it is necessary.
+
+Jonathan
+
+
+
 
