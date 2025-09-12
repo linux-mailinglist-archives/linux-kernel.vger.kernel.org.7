@@ -1,103 +1,150 @@
-Return-Path: <linux-kernel+bounces-814657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49884B556FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:38:44 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EF9B5570F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:44:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595ECAC02D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:38:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 622A54E0315
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F6332CF6C;
-	Fri, 12 Sep 2025 19:38:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CFD338F38;
+	Fri, 12 Sep 2025 19:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oIMNpUsC"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpxyXg7/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC57C28725A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3981E32B7;
+	Fri, 12 Sep 2025 19:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757705894; cv=none; b=agIOvpLw84/vVHB1ZN1KpP7DFuoGt7p0VuJjx3WDwOMX7q89I6/TZidehhNkJxXx/nKCIkI1I30BIz4ija7wxMepr1OyZ2HslKeq70YRaUgAvwTfqW1wa29NMTgaFMflQsuKSWrUbnU3QbwWm3D9Xzu4+CU4dniwsRuLbfvwm90=
+	t=1757706244; cv=none; b=KC6meQxOtUhbbSL0S9XvAstDuty/xrLRfrIoZSKC7DiZQa/72iMtAnGVDHyIihNyW/Ty1rJqb8PodbtfSz06qC/Rt/4R6XdTk3TiAKKH2h0g6MFdTzrD6Iy8X4soeVKg1JsAOp/YXDwlikEUKDi5nLOpkZXEwLXPLprCsVQqXsk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757705894; c=relaxed/simple;
-	bh=kVdVoE4gybFTANwmPEdaeati0u3esKOiokiwd3mxlRI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CdIfHTTs54m7amIAQ+HoQ/8p0UjK+q4Q5M8Z6KVm75xr5uN9mN6o2DueVbkI1I+pGAnCmC3yyQk1aCDLUPPWbDdARjAdMGB2UpKM7W1VDoDBZnDr/t+galwV30qh8hQUbNto/isFN7uj6ymNbKmutMyHyH7+wGeaIPYLDZrQlB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oIMNpUsC; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6f3b9149-2a2d-4532-b38f-946b98e72000@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757705889;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vX5FNfh32HsPx94JItMdCOB+Unc0XHjjtrYR8Ey18iY=;
-	b=oIMNpUsCfpeP+kxppfx25DKocOWjO4sb0uvbGFmLKlcjXViKRfGGN+3S4gr3W3RAFffmX7
-	P7c8jKJ5A5AzZDHSAQCWM9Uv0KSQnCDIcGKZ5v/cJKWMD4Shuuz4wDWg+HBDeJwT5dp0fd
-	xGN/d7YquKZfbC5iNORdRvVAI+F2mkQ=
-Date: Fri, 12 Sep 2025 12:38:05 -0700
+	s=arc-20240116; t=1757706244; c=relaxed/simple;
+	bh=2ENTkAsq63/G6GtjipV7GBKQnRfquf0TZf+Ow+SQi1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aV03LrcV/VQaieYLCeNW+e15NlPIg+VAPHkOztPw/48THZOoxpwNW0M5JRs8g23qHfp7PklFXtRAFt7afmpmh6s9kdlKt136QXJWPZfamHjhVxQRFvJcdmS5e+6r1D9IRsxRXUPhUQf/BG7AGqIKDVYqZ9eMPkzRg4wS77oPPlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FpxyXg7/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6610C4CEF4;
+	Fri, 12 Sep 2025 19:44:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757706242;
+	bh=2ENTkAsq63/G6GtjipV7GBKQnRfquf0TZf+Ow+SQi1I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FpxyXg7/h2jewjg7E5MtForeStrYBXGuSQnwRiPQEfdpdTqHMQAsuSW1QZETTjWtS
+	 yS7a78y1VeRFnRS7VKSN75og2w1pUWG739UZS3+RdDXcReRYFNdH8Z2/clG1/xIrQs
+	 6JfJy/Y6iFLDioA99CZ2jZFkYdxcXy0hZ0wGM6w7wGXMfhOWBNHttza3YhVuxQyMTH
+	 AsaE+WHA0F8Vn3tzR6iteYwcxe36z7m7dAGlh3FPGA6DSVYg4p3NG6i+z8fuTfNVAn
+	 /wHebQmj837CLqzUAWtuMRQpyN76s+lbCfaM9euGcqRnfLximOo/KzyXU40sFfM2xu
+	 UiXG/5x9mxGDQ==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject:
+ [PATCH v1 1/4] ACPI: property: Fix buffer properties extraction for subnodes
+Date: Fri, 12 Sep 2025 21:39:52 +0200
+Message-ID: <5017964.GXAFRqVoOG@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <5046661.31r3eYUQgx@rafael.j.wysocki>
+References: <5046661.31r3eYUQgx@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>,
- edwards@nvidia.com, hdanton@sina.com, jgg@ziepe.ca, leon@kernel.org,
- leonro@nvidia.com, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <68c3a49a.a70a0220.3543fc.0031.GAE@google.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "yanjun.zhu" <yanjun.zhu@linux.dev>
-In-Reply-To: <68c3a49a.a70a0220.3543fc.0031.GAE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/11/25 9:42 PM, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit a92fbeac7e94a420b55570c10fe1b90e64da4025
-> Author: Leon Romanovsky <leonro@nvidia.com>
-> Date:   Tue May 28 12:52:51 2024 +0000
-> 
->      RDMA/cache: Release GID table even if leak is detected
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Maybe this commit just detects ref leaks and reports ref leak.
-Even though this commit is reverted, this ref leak still occurs.
+The ACPI handle passed to acpi_extract_properties() as the first
+argument represents the ACPI namespace scope in which to look for
+objects returning buffers associated with buffer properties.
 
-The root cause is not in this commit.
+For _DSD objects located immediately under ACPI devices, this handle is
+the same as the handle of the device object holding the _DSD, but for
+data-only subnodes it is not so.
 
-"
-GID entry ref leak for dev syz1 index 2 ref=615
-"
+First of all, data-only subnodes are represented by objects that
+cannot hold other objects in their scopes (like control methods).
+Therefore a data-only subnode handle cannot be used for completing
+relative pathname segments, so the current code in
+in acpi_nondev_subnode_extract() passing a data-only subnode handle
+to acpi_extract_properties() is invalid.
 
-Ref leaks in dev syz1.
+Moreover, a data-only subnode of device A may be represented by an
+object located in the scope of device B (which kind of makes sense,
+for instance, if A is a B's child).  In that case, the scope in
+question would be the one of device B.  In other words, the scope
+mentioned above is the same as the scope used for subnode object
+lookup in acpi_nondev_subnode_extract().
 
-Zhu Yanjun
+Accordingly, rearrange that function to use the same scope for the
+extraction of properties and subnode object lookup.
 
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13fc9642580000
-> start commit:   5f540c4aade9 Add linux-next specific files for 20250910
-> git tree:       linux-next
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10029642580000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17fc9642580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b52362580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b41642580000
-> 
-> Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
-> Fixes: a92fbeac7e94 ("RDMA/cache: Release GID table even if leak is detected")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Fixes: 103e10c69c61 ("ACPI: property: Add support for parsing buffer property UUID")
+Cc: 6.0+ <stable@vger.kernel.org> # 6.0+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/property.c |   30 +++++++++++-------------------
+ 1 file changed, 11 insertions(+), 19 deletions(-)
+
+--- a/drivers/acpi/property.c
++++ b/drivers/acpi/property.c
+@@ -83,6 +83,7 @@ static bool acpi_nondev_subnode_extract(
+ 					struct fwnode_handle *parent)
+ {
+ 	struct acpi_data_node *dn;
++	acpi_handle scope = NULL;
+ 	bool result;
+ 
+ 	if (acpi_graph_ignore_port(handle))
+@@ -98,27 +99,18 @@ static bool acpi_nondev_subnode_extract(
+ 	INIT_LIST_HEAD(&dn->data.properties);
+ 	INIT_LIST_HEAD(&dn->data.subnodes);
+ 
+-	result = acpi_extract_properties(handle, desc, &dn->data);
++	/*
++	 * The scope for the completion of relative pathname segments and
++	 * subnode object lookup is the one of the namespace node (device)
++	 * containing the object that has returned the package.  That is, it's
++	 * the scope of that object's parent device.
++	 */
++	if (handle)
++		acpi_get_parent(handle, &scope);
+ 
+-	if (handle) {
+-		acpi_handle scope;
+-		acpi_status status;
+-
+-		/*
+-		 * The scope for the subnode object lookup is the one of the
+-		 * namespace node (device) containing the object that has
+-		 * returned the package.  That is, it's the scope of that
+-		 * object's parent.
+-		 */
+-		status = acpi_get_parent(handle, &scope);
+-		if (ACPI_SUCCESS(status)
+-		    && acpi_enumerate_nondev_subnodes(scope, desc, &dn->data,
+-						      &dn->fwnode))
+-			result = true;
+-	} else if (acpi_enumerate_nondev_subnodes(NULL, desc, &dn->data,
+-						  &dn->fwnode)) {
++	result = acpi_extract_properties(scope, desc, &dn->data);
++	if (acpi_enumerate_nondev_subnodes(scope, desc, &dn->data, &dn->fwnode))
+ 		result = true;
+-	}
+ 
+ 	if (result) {
+ 		dn->handle = handle;
+
+
 
 
