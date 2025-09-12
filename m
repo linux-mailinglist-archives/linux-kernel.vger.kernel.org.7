@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-814234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24173B5515F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6E8B55167
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:28:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662C65C01D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:26:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A0C5188E4EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:26:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9DA321456;
-	Fri, 12 Sep 2025 14:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A2A321F46;
+	Fri, 12 Sep 2025 14:23:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIVYY700"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kMMBGAiN"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4229231A544
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79343321F40
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686988; cv=none; b=JrecuLhmuybKXZcNXbV3b9b4chcF8drOlZXCasNIRjZx9RXkgzYHqu/UMkcgZ2LHVk8GAdrdxifRidXiyqiUZsc/J4PI2BOhsd5asDDQFqtUmalalLAZQpXV3LW5prBw4McU07KHb3MQmkzdPQ0+W5d8zktFXOMRLAZUVwx0onY=
+	t=1757686991; cv=none; b=Mi5EkejaAd2i3mvsTTwwBQ8HjB9VGUMG/mpkgLeLLQJlufqT4nrnscouSjsFAfExT4jG3yQBD7pB7f4WrLVg6FTaXo53zRAH2XCQ6raHWKq9Pfr5/gTNYUbupgzZnXl+iMF0pSdajSx4Zr4rLmIwznPd3iLiXOuCGx5qSgtUnLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686988; c=relaxed/simple;
-	bh=o0lA08GVazKzewGuezaxd9TEVrOola7Ut4wOWEH6hrE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZE4XsV8Pcb5fUZIrtiJZ2niz6UElMfnfXP5brEf3zRv5VcHwH+WSChGDj63qE4TB/VWfjhGu3HTEO8BfEqZ7C82+gQoZic1A/NHFls+SFqW8jn4PoQwnotFlz0utxAlDaZqZLMGuEIM4r7nWEvA4yxGIKzYFzFby6EBJQnKcfJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XIVYY700; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1757686991; c=relaxed/simple;
+	bh=/SxMVDTkZvMbBsZ1m84K+ZCGY5O9Fq7p3OG5ytCeDD4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=U1JvdU3nRgMtbuOC/YmRif+ncTKg+eA72t3dJL0Dw/ksVuD2bBCJor0qeeohZiv4+pU5kegnnBToElhrDWLpRuxBS5qSHVDe2yBgaZnkMUGBZFtnMvUs/xhBpst/fr0A2Q6Szyg11Scsv/xGYcucn8sf+sIQC7+nX4W2ofpEbX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kMMBGAiN; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5688ac2f39dso2275698e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:23:05 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-3515a0bca13so8874841fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:23:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757686984; x=1758291784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yHJV3+N8pLzUbLZyCHNtm3fHXHEjlBUmkhDKwaFLWw=;
-        b=XIVYY700/6NVJ9wp6jgNlGPkTo7jJ+MD1HXqxyLqDIxikL8HBnuwdc0T8Oy03bzfAz
-         gSUSSsZz13wrYrZ36j3yRtrOZ8QchE+W0H0ssHWnmT/koU1JwAikEAj17LOEA+kLtsM7
-         6n6nzzpaJR1EgLc2x7RV/pagtRk0tQ6NZDXGSG9t/HNvvcQX4Tl1YoislZJoIuWVSIFQ
-         FHBazSm+miN5JoVnihjV1jOQUgZnscWkej6TA6vzFwGzprWoeQW2+4t7GLRyjYuEtsW2
-         8CLolvJcGVMu4xDgf1VO7yC5474jKd6k8SiAfY1hZVSSIi/YMPRj8/WHTN1SluwNSzwY
-         tICw==
+        d=linaro.org; s=google; t=1757686988; x=1758291788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IKVoiH7XLcNaedQxfza9YTAwsoIt9Wu8Ls74q3lR27g=;
+        b=kMMBGAiNrR92Q3EFGYmLTQZbs7aIBoTk5U4pKpsf0n7cgJYI0k6CFXUru6mEsM4iSo
+         sxm3KzS1HVow31GFrvVed14VJLf3VjzApEFk1cyKgurlpYp9f26xApIG1VdlIJKQgGBF
+         0NnlgI4wrwVS/SpfRF0Ajw7cu8lb+gFK7Liu26AqtcDHB1886c0IxHUZcXHRkzQjnCyl
+         H3EGAqjNysFT7i2eOaHYdp4eGTtwpZ4nDj8CM9liUIpVxM7KVKTaLYDAZAXHNSJQk+Gd
+         NK7poB0yVU7tKzoIJX2vyXkVXZLuwgqnWHKpgzCq1iIZYuJ85XB1R4Oa57PDYPILFBC7
+         Jvhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757686984; x=1758291784;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/yHJV3+N8pLzUbLZyCHNtm3fHXHEjlBUmkhDKwaFLWw=;
-        b=J9SXQhdGoan8bH3gX5CLTbKGA/0X2BqObSbgO7iklEaaJkoWmdv+EUVtdjxiRCrGw2
-         QYruq1ZL30Jr3/DnNFcCs5ZhUZeGJaYE0vftOLvIge0GggpEgHFXZpTaqwua+2dy/ZIb
-         mVoBipffQLb6yLcos8I32v+aADfziPzIZqBppvRZwQXyO59FhLDW6YkXW5LH8VK/kWSI
-         Le+XM4xvSpijqlb10k3JSY5gEqxLcfl3Ass7thMJteIPtVc5Pe4pHmb5IawEGaI+JrAp
-         WMEUl+ZadUJElxyS8Kn2ueQDTAVLIL4MB8aLkasRmj4huGF+E6Y9VGNsba4AXp2AHfe2
-         4V1w==
-X-Forwarded-Encrypted: i=1; AJvYcCXQGSh8IFbZWXDJiQiDvGguDQtg0yHJtPsbmvb0Oi9mEAHAufvkEcXnz3yf+Xc+5W4Dmu2cbPyo/AnZFqA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrQhRDKEb0+3ccMFX0t1azryLi8rnyMniF/q4bS2M++S3nhfUH
-	ws8r1w98fOEKe383k5YtJ0CSDJ7fW3jiQIZ2maSFZh4plOWRfo3HXI8A0gUI4nY1xeA=
-X-Gm-Gg: ASbGncuZuQQPA15qEhmWmLx2Vi4vKvl83WwvATvn6RmH2yH+FRpfJxIZywH/YJ4CfiJ
-	eOWFE//LgloLZP56Gqd5BJ3PmR74HGBy4DuCRbbuaXbHnzzWaPGyhngAsGSa6lhNN43Nn0Y3hgM
-	kdZF9qc5Ho11KVRxc2vCBBtnt3OXS/vWjKV/RaGleXnlrFuKHh7FqQkwszWfW8blkbYOHPVWLN/
-	pnukpodrc8dwabkQTGMbd/9IcU1q/chX6Dj/U7Ejju1cp1/1a4a9wHVVvCVwFhMXmWHFpqRxeuv
-	P4dgE/VhxNkInqUP5xCbk0RgNpxHGIGPxbK7ryWABE664MJiS1H09s5JZTrvSwMJds9x5k+u6xc
-	VYcf75jooFZngG24lVQflHqFz1BmyRz/nKQBA+ruGq5IL/XuvGe5tKahW+b5WdTWSRQ==
-X-Google-Smtp-Source: AGHT+IENzXPjTBozBO5xqGVD7LsBdowwRnBvhEvWrUb7bwzjPSa5sZKgtmjZFq+52KQWVjRkxyVY0g==
-X-Received: by 2002:a05:6512:3f18:b0:55f:4495:51a with SMTP id 2adb3069b0e04-5704f99aed3mr1005515e87.52.1757686984214;
-        Fri, 12 Sep 2025 07:23:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757686988; x=1758291788;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IKVoiH7XLcNaedQxfza9YTAwsoIt9Wu8Ls74q3lR27g=;
+        b=V2Kt3YiUhhp/u7jQd6lno3m5exMGAcIqY+Wh94qxhOK/upP9cACBfjOSPYMIKwJC2q
+         8yh9ut8ezL3gIV0MMhvYYT47Pq9cv2hQvcnKR7PWAeQVDOwvT72DAZvefsQkL4xapw+l
+         RD0VrY6QW3C95A/RwQn+qg7XdfO19xxh81zGci84xGC+0zTQBP8PTA4IyTLDoH3D3jXU
+         DbXLThfbqy5SzERh2z46ml6rXie1INqwuWoe6r49Ef/kXDsVqbwzhr9tE+kdhB+//FG2
+         wXbt9F1JzIdL5UJah2j0/4aR3E6A/yhpkSIslLvyAdPAixttS53CDkUA07vFzJQG+pX5
+         hTpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJHqX9ibEvoCLShDIi7kHQxGuAr0T0tS9J0rtRxWcvlOTc3d9E5rdObR8JB3D/1Nh7eO/QehhvxzdjED0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvSeYPsjnHrkicHCyRU+UXj3a3ZwueCVHUJLCczpiYTQhywz1F
+	X/YCCi2b5FacPepSAd7hMhyrSyQxNRp0aZJeUu7tMWMxgeTfRdtrPIHqaZuRdkIhQkA=
+X-Gm-Gg: ASbGncvBq6ldzTAjzFLrXEjAjZ7lTc8WDDG59bhcSGi8MjPKFhimIx/TuOo3DRxd0E1
+	40gBN8kUTmyGWVxjAY9etwEluRt/9SQh85teYkFYJ7De+gRd5zOWANEtW7EeyaQJtVw/ij7d0TM
+	hokibuyJsB6i/BimQdURZCwXIuUa8nqHMEI0zFYD5c6bvm0MuDH5RxhRFyHhGZeHu/rBgUEf/ro
+	EdcELhGhhFygU85u9tg7q2JK15NtAnDqAATyYWkNg4eZTLjrSE0+iHKxaoIBIBT+CyIGFl+skNJ
+	eT48I5S6REWDgjb1IRG3txsMNBJzNhwwNu/MdUAZS0lx2MBQ5vcsSu5Fy6ek3RIYqkG/rNlW9cJ
+	D8rHB+0KD0eRATki5nhCppu23KXHZV+wBAmbsZK+ra31Dr3jvW8WAST88D2ktpsBNzw==
+X-Google-Smtp-Source: AGHT+IGA5WNSRbR+gOyEJy/6pRky35EYUnzZIoTI1ClROTD2m3J00lQr61eUAQlXoeKlOouLRMbJQw==
+X-Received: by 2002:a05:6512:2529:b0:560:83e2:1dce with SMTP id 2adb3069b0e04-5705be233bamr880120e87.6.1757686987511;
+        Fri, 12 Sep 2025 07:23:07 -0700 (PDT)
 Received: from nuoska (87-100-249-247.bb.dnainternet.fi. [87.100.249.247])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a5df5f74sm164981e87.54.2025.09.12.07.23.03
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a5df5f74sm164981e87.54.2025.09.12.07.23.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 07:23:03 -0700 (PDT)
+        Fri, 12 Sep 2025 07:23:07 -0700 (PDT)
 From: Mikko Rapeli <mikko.rapeli@linaro.org>
 To: linux-mmc@vger.kernel.org
 Cc: ulf.hansson@linaro.org,
@@ -84,10 +86,12 @@ Cc: ulf.hansson@linaro.org,
 	arnd@arndb.de,
 	zhoubinbin@loongson.cn,
 	Mikko Rapeli <mikko.rapeli@linaro.org>
-Subject: [PATCH v3 0/4] enable ROCKCHIP_PM_DOMAINS
-Date: Fri, 12 Sep 2025 17:22:49 +0300
-Message-ID: <20250912142253.2843018-1-mikko.rapeli@linaro.org>
+Subject: [PATCH v3 1/4] pmdomain: rockchip: enable ROCKCHIP_PM_DOMAINS with ARCH_ROCKCHIP
+Date: Fri, 12 Sep 2025 17:22:50 +0300
+Message-ID: <20250912142253.2843018-2-mikko.rapeli@linaro.org>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250912142253.2843018-1-mikko.rapeli@linaro.org>
+References: <20250912142253.2843018-1-mikko.rapeli@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,35 +101,105 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+On rk3399 based rockpi4b, mounting rootfs from mmc fails unless
+ROCKCHIP_PM_DOMAINS is enabled. Accoriding to
+Heiko Stübner <heiko@sntech.de> all SoCs since 2012 have power
+domains so the support should be enabled by default
+on both arm and arm64.
 
-MMC_DW_ROCKCHIP needs ROCKCHIP_PM_DOMAINS before MMC is detected
-on Rockchip rk3399 rockpi4b and similar devices. Make this dependency
-more visible, or the default with ARCH_ROCKCHIP if possible.
+Failing boot without CONFIG_ROCKCHIP_PM_DOMAINS=y:
 
-v3: use "default ARCH_ROCKCHIP" in ROCKCHIP_PM_DOMAINS as suggested
-    by Arnd Bergmann <arnd@arndb.de>, enable more MMC drivers for
-    COMPILE_TEST and remove MMC_LOONGSON2 which doesn't link,
-    remove PM dependency as suggested by
-    Geert Uytterhoeven <geert@linux-m68k.org>
+https://ledge.validation.linaro.org/scheduler/job/119268
 
-v2: changed from "depend on" in MMC driver to "select" as default
-    on ARCH_ROCKCHIP as suggested by Ulf and Heiko
-    https://marc.info/?i=20250912084112.2795848-1-mikko.rapeli%20()%20linaro%20!%20org
+/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
+/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
+/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
+/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
+/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
+/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
+dw-apb-uart ff1a0000.serial: forbid DMA for kernel console
+root '/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e' doesn't exist or does not contain a /dev.
+rk_gmac-dwmac fe300000.ethernet: deferred probe timeout, ignoring dependency
+rk_gmac-dwmac fe300000.ethernet: probe with driver rk_gmac-dwmac failed with error -110
+rk_iommu ff650800.iommu: deferred probe timeout, ignoring dependency
+rk_iommu ff650800.iommu: probe with driver rk_iommu failed with error -110
+dwmmc_rockchip fe320000.mmc: deferred probe timeout, ignoring dependency
+rockchip-typec-phy ff7c0000.phy: deferred probe timeout, ignoring dependency
+dwmmc_rockchip fe320000.mmc: probe with driver dwmmc_rockchip failed with error -110
+rockchip-typec-phy ff7c0000.phy: probe with driver rockchip-typec-phy failed with error -110
+rockchip-typec-phy ff800000.phy: deferred probe timeout, ignoring dependency
+rockchip-typec-phy ff800000.phy: probe with driver rockchip-typec-phy failed with error -110
+rk_iommu ff660480.iommu: deferred probe timeout, ignoring dependency
+rk_iommu ff660480.iommu: probe with driver rk_iommu failed with error -110
+rk_iommu ff8f3f00.iommu: deferred probe timeout, ignoring dependency
+rk_iommu ff8f3f00.iommu: probe with driver rk_iommu failed with error -110
+rk_iommu ff903f00.iommu: deferred probe timeout, ignoring dependency
+rk_iommu ff903f00.iommu: probe with driver rk_iommu failed with error -110
+rk_iommu ff914000.iommu: deferred probe timeout, ignoring dependency
+rk_iommu ff914000.iommu: probe with driver rk_iommu failed with error -110
+rk_iommu ff924000.iommu: deferred probe timeout, ignoring dependency
+rk_iommu ff924000.iommu: probe with driver rk_iommu failed with error -110
+platform fe800000.usb: deferred probe pending: platform: wait for supplier /phy@ff7c0000/usb3-port
+sdhci-arasan fe330000.mmc: deferred probe timeout, ignoring dependency
+platform fe900000.usb: deferred probe pending: platform: wait for supplier /phy@ff800000/usb3-port
+sdhci-arasan fe330000.mmc: probe with driver sdhci-arasan failed with error -110
+platform ff1d0000.spi: deferred probe pending: (reason unknown)
+platform hdmi-sound: deferred probe pending: asoc-simple-card: parse error
 
-v1: https://lore.kernel.org/linux-mmc/20250911144313.2774171-1-mikko.rapeli@linaro.org/
+Working boot with CONFIG_ROCKCHIP_PM_DOMAINS=y:
 
-Mikko Rapeli (4):
-  pmdomain: rockchip: enable ROCKCHIP_PM_DOMAINS with ARCH_ROCKCHIP
-  mmc: add COMPILE_TEST to multiple drivers
-  mmc: remove COMPILE_TEST from MMC_LOONGSON2
-  ARM: rockchip: remove REGULATOR conditional to PM
+https://ledge.validation.linaro.org/scheduler/job/119272
 
- arch/arm/mach-rockchip/Kconfig    |  2 +-
- drivers/mmc/host/Kconfig          | 10 +++++-----
- drivers/pmdomain/rockchip/Kconfig |  1 +
- 3 files changed, 7 insertions(+), 6 deletions(-)
+dwmmc_rockchip fe320000.mmc: IDMAC supports 32-bit address mode.
+dwmmc_rockchip fe320000.mmc: Using internal DMA controller.
+dwmmc_rockchip fe320000.mmc: Version ID is 270a
+dwmmc_rockchip fe320000.mmc: DW MMC controller at irq 45,32 bit host data width,256 deep fifo
+dwmmc_rockchip fe320000.mmc: Got CD GPIO
+ff1a0000.serial: ttyS2 at MMIO 0xff1a0000 (irq = 44, base_baud = 1500000) is a 16550A
+printk: legacy console [ttyS2] enabled
+mmc_host mmc1: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
+dw_wdt ff848000.watchdog: No valid TOPs array specified
+mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 50000000Hz, actual 50000000HZ div = 0)
+mmc0: CQHCI version 5.10
+rk_gmac-dwmac fe300000.ethernet: IRQ eth_wake_irq not found
+mmc1: new high speed SDHC card at address aaaa
+fan53555-regulator 0-0040: FAN53555 Option[8] Rev[1] Detected!
+fan53555-regulator 0-0041: FAN53555 Option[8] Rev[1] Detected!
+rk_gmac-dwmac fe300000.ethernet: IRQ eth_lpi not found
+mmcblk1: mmc1:aaaa SC16G 14.8 GiB
+rk_gmac-dwmac fe300000.ethernet: IRQ sfty not found
+GPT:Primary header thinks Alt. header is not at the end of the disk.
+rk_gmac-dwmac fe300000.ethernet: Deprecated MDIO bus assumption used
+GPT:1978417 != 31116287
+rk_gmac-dwmac fe300000.ethernet: PTP uses main clock
+GPT:Alternate GPT header not at the end of the disk.
+rk_gmac-dwmac fe300000.ethernet: clock input or output? (input).
+GPT:1978417 != 31116287
+rk_gmac-dwmac fe300000.ethernet: TX delay(0x28).
+GPT: Use GNU Parted to correct GPT errors.
+rk_gmac-dwmac fe300000.ethernet: RX delay(0x11).
+ mmcblk1: p1 p2 p3 p4 p5 p6 p7 p8
 
+Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+Suggested-by: Heiko Stübner <heiko@sntech.de>
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+---
+ drivers/pmdomain/rockchip/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pmdomain/rockchip/Kconfig b/drivers/pmdomain/rockchip/Kconfig
+index 218d43186e5b9..17f2e6fe86b6f 100644
+--- a/drivers/pmdomain/rockchip/Kconfig
++++ b/drivers/pmdomain/rockchip/Kconfig
+@@ -3,6 +3,7 @@ if ARCH_ROCKCHIP || COMPILE_TEST
+ 
+ config ROCKCHIP_PM_DOMAINS
+ 	bool "Rockchip generic power domain"
++	default ARCH_ROCKCHIP
+ 	depends on PM
+ 	depends on HAVE_ARM_SMCCC_DISCOVERY
+ 	depends on REGULATOR
 -- 
 2.34.1
 
