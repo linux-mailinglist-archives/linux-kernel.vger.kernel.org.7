@@ -1,119 +1,145 @@
-Return-Path: <linux-kernel+bounces-813337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923A7B543D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:26:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41D1AB543CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72A6668445D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:26:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF00683F84
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFED2C15AE;
-	Fri, 12 Sep 2025 07:26:26 +0000 (UTC)
-Received: from bmailout2.hostsharing.net (bmailout2.hostsharing.net [83.223.78.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED742C08CC;
+	Fri, 12 Sep 2025 07:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaIt/vNG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE45728726D;
-	Fri, 12 Sep 2025 07:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.78.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09C72BF016;
+	Fri, 12 Sep 2025 07:26:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757661986; cv=none; b=jNvib9zfEp+bRRqAkukdWIsviaRLUm8YHRkvwDSD6357MLfjDB4qLdz7RH26Aztjmk+Dm+pa3BAbxylOGtCJhT/D6+rrkXywr8+rVrWSgnbfKS0gedFEPqwXl+xnbZC7W+lLW5i6psDhRtK9+gsS3b+CxJzL3EJT58DqsBiLk+E=
+	t=1757661979; cv=none; b=pJObp+icySlMi/yJ/SjrzIJRK2T68b1ySd8pRFkWCz59POfPtmeklrwcKKf1HZPbEtfgjF2kv6V7CbNqg/DuaPDIxOiGBC6zpsU2txxk3iHGvZ6Uro9QCpE9q1JRWlF+kKFNHRtDfxOavvZVSm1PJD4rdUaaBcWzI6b1wxjJvTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757661986; c=relaxed/simple;
-	bh=8nuinajrhFNvduXuneZuWtF6AEKEMnItNe5WjWRWBOk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OCyW9oHkV1/sphGRWg7eMM2cxblhQjSfnPlSnCuS5gk9K8//bvhzlWqiPa6PvdfhUc9uBoGq2Xq/jvd58Dun1WgOD/IEnHzuI2YxxSFMFEyAF1pzDrZEIpj4gUKjE79ABG3S8hw3PCGqNya48W7dKj32FikGfv/LSg+Pk+r8kVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.78.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout2.hostsharing.net (Postfix) with ESMTPS id 1D864201D1B8;
-	Fri, 12 Sep 2025 09:26:04 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 08C831F4A8; Fri, 12 Sep 2025 09:26:04 +0200 (CEST)
-Date: Fri, 12 Sep 2025 09:26:04 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Alan Stern <stern@rowland.harvard.edu>, linux-pci@vger.kernel.org,
-	linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Timo Jyrinki <timo.jyrinki@gmail.com>,
-	Ernst Persson <ernstp@gmail.com>, Steven Harms <sjharms@gmail.com>,
-	James Ettle <james@ettle.org.uk>, Nick Coghlan <ncoghlan@gmail.com>,
-	Weng Xuetian <wengxt@gmail.com>,
-	Andrey Rahmatullin <wrar@wrar.name>,
-	Boris Barbour <boris.barbour@ens.fr>,
-	Vlastimil Zima <vlastimil.zima@gmail.com>,
-	David Banks <amoebae@gmail.com>, Chris Moeller <kode54@gmail.com>,
-	Daniel Fraga <fragabr@gmail.com>, Javier Marcet <jmarcet@gmail.com>,
-	Pavel Pisa <pisa@cmp.felk.cvut.cz>
-Subject: Re: [PATCH] PCI/PM: Move ASUS EHCI workaround out of generic code
-Message-ID: <aMPLDLYpeVXO1y6R@wunner.de>
-References: <75e4ae507fa4faddd063a3a9e17d319ed84529b6.1757562971.git.lukas@wunner.de>
- <80980751-64db-4dc2-9516-03046e8b4b31@kernel.org>
+	s=arc-20240116; t=1757661979; c=relaxed/simple;
+	bh=VnE1w+fAO4s1dCAkCqZL0H1AztE0vPgCLhgwJC3Z6bs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LTLgiZHM1xG6RkhFOkS3InEePDltlk8xZlDFRcLiaL8eZniBdvzi8cQycZKLjHsjpHXi05ecObgf4/34+rR03KW48IfhgAg9N6JjJAQQKsiCkaurc01aqUCuNEoH82bquhj5ZUHe9bLGb1zeORaRu+xJhcH/fNT0OSW36MJR1I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaIt/vNG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5E5C4CEF4;
+	Fri, 12 Sep 2025 07:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757661979;
+	bh=VnE1w+fAO4s1dCAkCqZL0H1AztE0vPgCLhgwJC3Z6bs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gaIt/vNGziqV0951DS9uklbUIxhEH7Oh/cecEfDoKPGw4l74GHLZVc9SbKjqQVSWe
+	 hv4Kww9BkD0yO+uLdbn0cLAqpKuMgTiKfbN9kJh0l0RQNnx1hTgiDAhIpzIeNjdiVK
+	 NHV2Z3dCi5okaO4j5AgTw9utEFhACLpjwdqKRWS5F3Q4FwGRBl80HG2a4NB2KrsF81
+	 +q1NUPyHnDeN3UQFMOsXawDCy25/rUGKOtWVNH8KNPKnxjNx0vSy7m6niL/gwgTz2/
+	 Gmfg6FPNaGY8dAT1B5oxBe5MvKfTlorqDrxbvWhGLhI4GMDnjqfie4Uq7Xw73mD6ea
+	 DQBjyNIN8NeEg==
+Message-ID: <2d41c617-b7c7-43ae-aa90-7368e960e8a5@kernel.org>
+Date: Fri, 12 Sep 2025 09:26:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80980751-64db-4dc2-9516-03046e8b4b31@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: qcom: sdm845-shift-axolotl: Fix typo of
+ compatible
+To: Tamura Dai <kirinode0@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <38c24430-16ce-4d9a-8641-3340cc9364cf@kernel.org>
+ <20250912070145.54312-1-kirinode0@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250912070145.54312-1-kirinode0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 08:34:56AM -0500, Mario Limonciello wrote:
-> On 9/11/25 8:11 AM, Lukas Wunner wrote:
-> > pci_disable_device() does not clear I/O and Memory Space Enable, although
-> > its name suggests otherwise.  The kernel has never disabled these bits
-> > once they're enabled.  Doing so would avoid the need for the quirk, but it
-> > is unclear what will break if this fundamental behavior is changed.
+On 12/09/2025 09:01, Tamura Dai wrote:
+> The bug is a typo in the compatible string for the touchscreen node.
+> According to Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml,
+> the correct compatible is "focaltech,ft8719", but the device tree used
+> "focaltech,fts8719".
 > 
-> It's too late for this cycle to do so, but how would you feel about making
-> this change at the start of the next cycle so it had a whole cycle to bake
-> in linux-next and see if there is a problem in doing so?
+> Fixes: 45882459159de (arm64: dts: qcom: sdm845: add device tree for SHIFT6mq)
 
-I can look into it.
 
-The change could be justified as a security enhancement to prevent
-unauthorized traffic between devices through peer-to-peer transactions.
+Missing quotes.
+[alias]
+	sf = show --pretty='Fixes: %h (\"%s\")'
 
-pci_disable_device() was introduced with v2.4.3.5 in 2002:
-https://git.kernel.org/tglx/history/c/9102e0eb3e9e
+and then just `git sf commit`
 
-I suspect back in the day, clearing Bus Master Enable seemed sufficient
-because the only concern was to prevent DMA (and by extension MSIs)
-from broken devices.  Attacks *between* devices were probably not
-considered realistic.
+Please run scripts/checkpatch.pl on the patches and fix reported
+warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
+patches and (probably) fix more warnings. Some warnings can be ignored,
+especially from --strict run, but the code here looks like it needs a
+fix. Feel free to get in touch if the warning is not clear.
 
-ACS is meant to prevent such attacks, but is an optional capability
-and might be configured incorrectly.  A zero trust, defense in depth
-approach as is common today requires not leaving doors open without need.
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets. See also:
+https://elixir.bootlin.com/linux/v6.16-rc2/source/Documentation/process/submitting-patches.rst#L830
 
-If the kernel would clear Memory Space Enable, a malicious device could
-not re-enable it on its own because "propagation of Configuration Requests
-from Downstream to Upstream as well as peer-to-peer are not supported"
-(PCIe r7.0 sec 7.3.3).
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Tamura Dai <kirinode0@gmail.com>
 
-It seemed too risky to make such a sweeping change only to get rid of
-the EHCI quirk.  The present patch is meant as a low-risk refactoring,
-but we can consider clearing IO + Memory Space Enable as a long-term
-solution.  I've cc'ed all the people who reported issues with ASUS
-machines back in 2012 in the hope that some of them still have the
-(now 13 years old) hardware to test the patch.  They might also be
-able to test whether the long-term change doesn't regress anything.
+With quotes fixed:
 
-Thanks,
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Lukas
+Best regards,
+Krzysztof
 
