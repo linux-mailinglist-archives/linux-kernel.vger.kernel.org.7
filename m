@@ -1,190 +1,173 @@
-Return-Path: <linux-kernel+bounces-814222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3F6FB5511F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:24:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9612EB550CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4EBD5A247F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C3E1586AD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8291F2E172D;
-	Fri, 12 Sep 2025 14:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F67308F24;
+	Fri, 12 Sep 2025 14:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/JIYmXP"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4F/j9KvO"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96831313E16
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7F013BC0C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686892; cv=none; b=r7OHF9PUVYhQTK17zZYp6+Mte7ZHluL9BWe1TmP1QsELqx6ZlVuAMiUtAFjIwiIEOdwUc55raMiF/Hh/lVcbBIepwWUB0k4RkHyQkYGKAmkoh2602THxsAR4FHVq5cIIvIEYGtsUgBjgFD/8wv01GTQ4SwEV90OIcaUiXD2uVEg=
+	t=1757686755; cv=none; b=ER+unKTApdJfS6utIEBBEwJbgMYpqK8vuj+31UYd9nWmAFi8zOaiVYWXUxU5HkDgFU4dca6uMYzKxh7JOMzKFpp147F1E9Gi2kxPSnYuNM/1Nj7XPkihGJtZdIK/nPxNs1IEJgIWSQIpB/wdayQ38nxyFnyAbzOOLEY5fOSiCsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686892; c=relaxed/simple;
-	bh=Y+vesMFUWtZsFpRaYxFfsKUFrGm7KkfUA64s8bpSzls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OyfVtkwciCX3mViGezJ4DAT3V5+10Dv8C8oR5jw8kCZagSwpLDo4D4xK2OyPqXt1UkaUkLMPBlK7WP4Q9wJTl7ikhmUcevGTnXzKUQRIAtwYmxCZsqcH1TTY+MJ0UB/j2Px0ryGmDERPj7cYDagt752+efTNUmNam21QBtjuOa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/JIYmXP; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so17730895e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:21:30 -0700 (PDT)
+	s=arc-20240116; t=1757686755; c=relaxed/simple;
+	bh=DvXpHvEJ0p4DqJ3NRYzOqsD/rTFzc/TriCC2S5OkytU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ccGAVaDvswWbvmH0pFQq8AvvEZe4A4tKqy8AXGeFTOd8y7gl3LEHD5i+glw6DcM62t6/YdNYRZmtkW+wy1aF4q9RIlWy2pt6Wlo7wtiz5pWxwHCJ5KLeJpdyNWHuAuRHdWy5S6HV9yscGZDXgIgzmcWslnEdXxVisCfatHuSfbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4F/j9KvO; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b5f7fe502dso10587871cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:19:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757686889; x=1758291689; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=m6s4DjcKlA2pZ7v6EsAu/6cLi/c1+O59CbRYF+E3qZc=;
-        b=C/JIYmXPpaaP+KkFDwbo3TmhwxAwXRY6ILmQL5fOgXeHH9OsfynVY4Vctt1yr/pUQs
-         eMB3Taxoa3vHEFcboS1cinDBNXhu4JVYlSGGTWSSmeJ835bslmA02ZS/zJMmDOuprRLj
-         E/1bXDbGm0OuEhAgXoccfGAon5iMXxXGBWqdhvgSyBfiNI+ccYg0xV6WGE7abmfxKfXY
-         F5wU1rZRUs1ZLGUE9z2vAtlQPSB5z9N5xkI8YlKFJa66AC9cVAxMuzfCSe5c2JLfxhhP
-         iHpFAk4JFZ/rOxELSXHfG90MORgxsCOU2je9JrXbDaD4P4CTsu5FPJZs4SLEZ8LnQtTV
-         +xYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757686889; x=1758291689;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1757686752; x=1758291552; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=m6s4DjcKlA2pZ7v6EsAu/6cLi/c1+O59CbRYF+E3qZc=;
-        b=cRFAcQWsO75BIrTsamfIlwZ1NYP+r2bae3wLEIBJ+ZzYXaD1gEjUzkNZ4RODP92pSZ
-         T3rIwClSDmf/ecP/c+jIdxdswn10c2mGUJSK3hHGyp4vtMp4+vLhd43fLqODW110IZzb
-         ErknFgWrAr8HdeDhwWC5Iu9Nasvhoym7puVCDJsC1r/ksGv0q4sL+N5kjWwlH64lCNaD
-         4fv+SNbQXAE6n/+RSi1KQf5HmIrbhOVsMfSusEuN8P3i86AGSawhFhp+YH9cSbYaZeFn
-         u+TtZtVZG1ZJuQAMHvZivZXnTzaXu0NF7NivQSCwv6F8Xn3gv13eCwTe6GNmvnvtha9r
-         BSGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUU8MV+TmlP8og4kExtwJOIQHv4387Kj0D/T+VtFTCgTclRDAuSI+T0sj2sffxhhMihuMW6ExAZNOKvxbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGS160g6wE95RxkyxunR1aJJmZIXncg9PLVrz81R4+RFlHZhMe
-	NAVfMvUhrDl71bwYdz/ON8L/Dr/F8Dnj9Wj6X5JAwFGSkcF4pIaGT0DB
-X-Gm-Gg: ASbGncsXmOg66YGAvgwHusZ9rwvNIZvQhvUfwyco2SNb7LhK5446JZzeScNjYkFklF5
-	Z9ZINAHMbNYsjX7bYr/UCmt/A5UEGol4k5MKPxvLYyrjFgqtsrDHWBvDoQU80XE41vjEaBRaUAC
-	QJa91SK/ZaojipHiTLW33CcKe4LcfN1+RUIMWsIix7f+CHKXoEsXvTMVCopP6QWDA4jht4gYxQG
-	AdOyXt1ifN1aLiqzSKf7zmqT+4peINQZ4d/RpKfrG1/F6hn7f/Du+MIFegvrNTxJwHjPp9CTTW7
-	MaIJBAiLsjlLvRqjhgjG9jXICk/WeB4kkSwHajTF34fy0tD5zo6/PmcUEN9BxrTd5hVssoqlDqx
-	sNLEPtN942JXgLLvfBXikD/KxFqulp2M=
-X-Google-Smtp-Source: AGHT+IF9qckBbO1/MUfpNiCtEF6z09eaYzKoz6jvuBpXQ6fGTJDkBa8yQ4C1wqtVjU1kYwNtwHUpjg==
-X-Received: by 2002:a05:600c:3146:b0:45d:dc6c:9e30 with SMTP id 5b1f17b1804b1-45f21293373mr35435585e9.14.1757686888870;
-        Fri, 12 Sep 2025 07:21:28 -0700 (PDT)
-Received: from [192.168.2.177] ([91.116.220.47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e015784c3sm71413955e9.10.2025.09.12.07.21.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 07:21:27 -0700 (PDT)
-Message-ID: <6f60e909-b267-4140-8384-6e06e9a199fb@gmail.com>
-Date: Fri, 12 Sep 2025 16:18:51 +0200
+        bh=xM4cXfsx0W9pxO9c+zmvYxuG+N7LbG4mrlPiJQK3K1k=;
+        b=4F/j9KvObruqgk5ctkQMQVKi7gLB+hbPHyMgFy9h3XG1SQAflCoILEbmC/Ki0+fDH+
+         zJw1zVJ4O7eMgsK5IX8hXDebwHVIDsz+zUJ7KBYcoGbf5819J9xCeWFE1Xikr+ckQ5Wo
+         S9jG2U3YzYQF3lsBWsUytI5sn+lXW5Ss+2A3V4YnKv3SgeobrkfnZVB8udkQAUGzV/Vm
+         0+Kwf/JhO5eHjiwQPZLI/QJcpWl3K87L+fbk9LUgRUfXZOEFctfBVMnq3TZUsI+uikxo
+         5IomjaA0LmnSDc3AFUenkA6+WlBJNBdXx3BRJtLY4IYLB+CnMqEHjgpWAmfMICh5C8CI
+         xkzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757686752; x=1758291552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xM4cXfsx0W9pxO9c+zmvYxuG+N7LbG4mrlPiJQK3K1k=;
+        b=i6c1oZOovqw9IAXdsozr0ieoiQJQxq9I+Ny+Bavvgj262zSEAepw8sOuuJ3B25fuTp
+         /xCbFQ0y9yMMG4oGgnJV30OhvToaHJ0/DkQDa3OsjTBAgq9i8dEsHHYfZLmCmWcbkmvO
+         dPfPixTNImCfT1dfkW9clOkocPkVT8zZxvrBk8Juu/GPDQCmbx6RUAHrfPX3CckT973I
+         XrYZVHqjLP4YvhwYNbDwEqKVKdOXlj8nSqrvihobLpOSu29BWTw37/Id9+ctFr91o2md
+         8RH3e65TSjFEEK9P/K1qyBp9vaU1hJ0iO+QFWFBRwtIA6XcipxELyjO0F5STADi0C6PC
+         rdow==
+X-Forwarded-Encrypted: i=1; AJvYcCVWFhqH2DlAOrff//Mt4woigbagkBhkb8/DRlo7nsRjzTVbrBtD7OsYJVrNUZJ3FQd7O3cWoPdInLoK3Bc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2dONG/VU5e/FY5OsmbugmvEffQmOkB2n03uESQn5W1gMTrfDt
+	axEHPd5dGXe4Nk4UCoOB//wW/LQSBbzTlaf3yVfS7nxNMOR56QX5hWVodeJF6gobL+dkSCUgcKb
+	KjdJKhTwlsapMVfFhDSyKDViIIMWLYGS6lnFGZ1d45JHQBDVvDJe1SHJdZps=
+X-Gm-Gg: ASbGncsH6WGHJTkgon+yLZw8l84bqPkoZjytejdhbkPKjj/MdMP2fEFZXhhsbBiNMy9
+	wDxsY5LMHIPxTrjWPJUV9QEIP6Uo/YI62eQtuy/j1JPDxusU4zPMua7khO5dZpDUtzXytzTUqP1
+	iR+qNczb9C42OKsh2OxMLHNLoCDrl1tOEhj1t6D3QXhQqQ8RkAfyJHSo49tHWUMzxykOnbOSFgC
+	T839DWw4gI=
+X-Google-Smtp-Source: AGHT+IFYWvGPQuJv08IxnOCKGvIZjk+nEyO34AR84OPul9f5Gq0QsOn48fw0yQSKP7mN7sS9gmiA8aACo9ZpUI51beU=
+X-Received: by 2002:ac8:7d88:0:b0:4b3:4c51:642e with SMTP id
+ d75a77b69052e-4b77cfdbc50mr28052461cf.3.1757686751387; Fri, 12 Sep 2025
+ 07:19:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 31/38] arm64: dts: mediatek: mt8183-pumpkin: Add power
- supply for CCI
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-mediatek@lists.infradead.org, robh@kernel.org
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org,
- conor+dt@kernel.org, chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
- airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
- mchehab@kernel.org, chunfeng.yun@mediatek.com, vkoul@kernel.org,
- kishon@kernel.org, sean.wang@kernel.org, linus.walleij@linaro.org,
- lgirdwood@gmail.com, broonie@kernel.org, andersson@kernel.org,
- mathieu.poirier@linaro.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
- atenart@kernel.org, jitao.shi@mediatek.com, ck.hu@mediatek.com,
- houlong.wei@mediatek.com, kyrie.wu@mediatek.corp-partner.google.com,
- andy.teng@mediatek.com, tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com,
- shane.chien@mediatek.com, olivia.wen@mediatek.com, granquet@baylibre.com,
- eugen.hristev@linaro.org, arnd@arndb.de, sam.shih@mediatek.com,
- jieyy.yang@mediatek.com, frank-w@public-files.de, mwalle@kernel.org,
- fparent@baylibre.com, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-sound@vger.kernel.org
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
- <20250724083914.61351-32-angelogioacchino.delregno@collabora.com>
-Content-Language: en-US, ca-ES, es-ES
-From: Matthias Brugger <matthias.bgg@gmail.com>
-Autocrypt: addr=matthias.bgg@gmail.com; keydata=
- xsFNBFP1zgUBEAC21D6hk7//0kOmsUrE3eZ55kjc9DmFPKIz6l4NggqwQjBNRHIMh04BbCMY
- fL3eT7ZsYV5nur7zctmJ+vbszoOASXUpfq8M+S5hU2w7sBaVk5rpH9yW8CUWz2+ZpQXPJcFa
- OhLZuSKB1F5JcvLbETRjNzNU7B3TdS2+zkgQQdEyt7Ij2HXGLJ2w+yG2GuR9/iyCJRf10Okq
- gTh//XESJZ8S6KlOWbLXRE+yfkKDXQx2Jr1XuVvM3zPqH5FMg8reRVFsQ+vI0b+OlyekT/Xe
- 0Hwvqkev95GG6x7yseJwI+2ydDH6M5O7fPKFW5mzAdDE2g/K9B4e2tYK6/rA7Fq4cqiAw1+u
- EgO44+eFgv082xtBez5WNkGn18vtw0LW3ESmKh19u6kEGoi0WZwslCNaGFrS4M7OH+aOJeqK
- fx5dIv2CEbxc6xnHY7dwkcHikTA4QdbdFeUSuj4YhIZ+0QlDVtS1QEXyvZbZky7ur9rHkZvP
- ZqlUsLJ2nOqsmahMTIQ8Mgx9SLEShWqD4kOF4zNfPJsgEMB49KbS2o9jxbGB+JKupjNddfxZ
- HlH1KF8QwCMZEYaTNogrVazuEJzx6JdRpR3sFda/0x5qjTadwIW6Cl9tkqe2h391dOGX1eOA
- 1ntn9O/39KqSrWNGvm+1raHK+Ev1yPtn0Wxn+0oy1tl67TxUjQARAQABzSlNYXR0aGlhcyBC
- cnVnZ2VyIDxtYXR0aGlhcy5iZ2dAZ21haWwuY29tPsLBkgQTAQIAPAIbAwYLCQgHAwIGFQgC
- CQoLBBYCAwECHgECF4AWIQTmuZIYwPLDJRwsOhfZFAuyVhMC8QUCWt3scQIZAQAKCRDZFAuy
- VhMC8WzRD/4onkC+gCxG+dvui5SXCJ7bGLCu0xVtiGC673Kz5Aq3heITsERHBV0BqqctOEBy
- ZozQQe2Hindu9lasOmwfH8+vfTK+2teCgWesoE3g3XKbrOCB4RSrQmXGC3JYx6rcvMlLV/Ch
- YMRR3qv04BOchnjkGtvm9aZWH52/6XfChyh7XYndTe5F2bqeTjt+kF/ql+xMc4E6pniqIfkv
- c0wsH4CkBHqoZl9w5e/b9MspTqsU9NszTEOFhy7p2CYw6JEa/vmzR6YDzGs8AihieIXDOfpT
- DUr0YUlDrwDSrlm/2MjNIPTmSGHH94ScOqu/XmGW/0q1iar/Yr0leomUOeeEzCqQtunqShtE
- 4Mn2uEixFL+9jiVtMjujr6mphznwpEqObPCZ3IcWqOFEz77rSL+oqFiEA03A2WBDlMm++Sve
- 9jpkJBLosJRhAYmQ6ey6MFO6Krylw1LXcq5z1XQQavtFRgZoruHZ3XlhT5wcfLJtAqrtfCe0
- aQ0kJW+4zj9/So0uxJDAtGuOpDYnmK26dgFN0tAhVuNInEVhtErtLJHeJzFKJzNyQ4GlCaLw
- jKcwWcqDJcrx9R7LsCu4l2XpKiyxY6fO4O8DnSleVll9NPfAZFZvf8AIy3EQ8BokUsiuUYHz
- wUo6pclk55PZRaAsHDX/fNr24uC6Eh5oNQ+v4Pax/gtyyc7BTQRd1TlIARAAm78mTny44Hwd
- IYNK4ZQH6U5pxcJtU45LLBmSr4DK/7er9chpvJ5pgzCGuI25ceNTEg5FChYcgfNMKqwCAekk
- V9Iegzi6UK448W1eOp8QeQDS6sHpLSOe8np6/zvmUvhiLokk7tZBhGz+Xs5qQmJPXcag7AMi
- fuEcf88ZSpChmUB3WflJV2DpxF3sSon5Ew2i53umXLqdRIJEw1Zs2puDJaMqwP3wIyMdrfdI
- H1ZBBJDIWV/53P52mKtYQ0Khje+/AolpKl96opi6o9VLGeqkpeqrKM2cb1bjo5Zmn4lXl6Nv
- JRH/ZT68zBtOKUtwhSlOB2bE8IDonQZCOYo2w0opiAgyfpbij8uiI7siBE6bWx2fQpsmi4Jr
- ZBmhDT6n/uYleGW0DRcZmE2UjeekPWUumN13jaVZuhThV65SnhU05chZT8vU1nATAwirMVeX
- geZGLwxhscduk3nNb5VSsV95EM/KOtilrH69ZL6Xrnw88f6xaaGPdVyUigBTWc/fcWuw1+nk
- GJDNqjfSvB7ie114R08Q28aYt8LCJRXYM1WuYloTcIhRSXUohGgHmh7usl469/Ra5CFaMhT3
- yCVciuHdZh3u+x+O1sRcOhaFW3BkxKEy+ntxw8J7ZzhgFOgi2HGkOGgM9R03A6ywc0sPwbgk
- gF7HCLirshP2U/qxWy3C8DkAEQEAAcLBdgQYAQgAIBYhBOa5khjA8sMlHCw6F9kUC7JWEwLx
- BQJd1TlIAhsMAAoJENkUC7JWEwLxtdcP/jHJ9vI8adFi1HQoWUKCQbZdZ5ZJHayFKIzU9kZE
- /FHzzzMDZYFgcCTs2kmUVyGloStXpZ0WtdCMMB31jBoQe5x9LtICHEip0irNXm80WsyPCEHU
- 3wx91QkOmDJftm6T8+F3lqhlc3CwJGpoPY7AVlevzXNJfATZR0+Yh9NhON5Ww4AjsZntqQKx
- E8rrieLRd+he57ZdRKtRRNGKZOS4wetNhodjfnjhr4Z25BAssD5q+x4uaO8ofGxTjOdrSnRh
- vhzPCgmP7BKRUZA0wNvFxjboIw8rbTiOFGb1Ebrzuqrrr3WFuK4C1YAF4CyXUBL6Z1Lto//i
- 44ziQUK9diAgfE/8GhXP0JlMwRUBlXNtErJgItR/XAuFwfO6BOI43P19YwEsuyQq+rubW2Wv
- rWY2Bj2dXDAKUxS4TuLUf2v/b9Rct36ljzbNxeEWt+Yq4IOY6QHnE+w4xVAkfwjT+Vup8sCp
- +zFJv9fVUpo/bjePOL4PMP1y+PYrp4PmPmRwoklBpy1ep8m8XURv46fGUHUEIsTwPWs2Q87k
- 7vjYyrcyAOarX2X5pvMQvpAMADGf2Z3wrCsDdG25w2HztweUNd9QEprtJG8GNNzMOD4cQ82T
- a7eGvPWPeXauWJDLVR9jHtWT9Ot3BQgmApLxACvwvD1a69jaFKov28SPHxUCQ9Y1Y/Ct
-In-Reply-To: <20250724083914.61351-32-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250911053310.15966-2-yyyynoom@gmail.com>
+In-Reply-To: <20250911053310.15966-2-yyyynoom@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 12 Sep 2025 07:19:00 -0700
+X-Gm-Features: Ac12FXw7adrTtTEamjUd1dARgNXXs2vtOQ7AFK8Dk6Xa4BQJI1VYpFDvt0r4s3I
+Message-ID: <CANn89iLUTs4oKK30g8AjYhreM2Krwt5sAwzsO=xU--G7myt6WQ@mail.gmail.com>
+Subject: Re: [PATCH net] net: natsemi: fix `rx_dropped` double accounting on
+ `netif_rx()` failure
+To: Yeounsu Moon <yyyynoom@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Sep 10, 2025 at 10:35=E2=80=AFPM Yeounsu Moon <yyyynoom@gmail.com> =
+wrote:
+>
+> `netif_rx()` already increments `rx_dropped` core stat when it fails.
+> The driver was also updating `ndev->stats.rx_dropped` in the same path.
+> Since both are reported together via `ip -s -s` command, this resulted
+> in drops being counted twice in user-visible stats.
+>
+> Keep the driver update on `skb_put()` failure, but skip it after
+> `netif_rx()` errors.
+>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+
+I do not think this Fixes: is correct.
+
+I think core networking got this accounting in netif_rx() in 2010
+
+commit caf586e5f23c (" net: add a core netdev->rx_dropped counter")
 
 
-
-On 24/07/2025 10:39, AngeloGioacchino Del Regno wrote:
-> Add a power supply for the Cache Coherent Interconnect node as it
-> is required to perform CPU DVFS because both are scaling together.
-> 
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-Applied, thanks
-
+> Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
 > ---
->   arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-> index dbdee604edab..d5fcb010e1ac 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
-> @@ -482,6 +482,10 @@ &mfg {
->   	domain-supply = <&mt6358_vgpu_reg>;
->   };
->   
-> +&cci {
-> +	proc-supply = <&mt6358_vproc12_reg>;
-> +};
-> +
->   &cpu0 {
->   	proc-supply = <&mt6358_vproc12_reg>;
->   };
+>  drivers/net/ethernet/natsemi/ns83820.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/etherne=
+t/natsemi/ns83820.c
+> index 56d5464222d9..cdbf82affa7b 100644
+> --- a/drivers/net/ethernet/natsemi/ns83820.c
+> +++ b/drivers/net/ethernet/natsemi/ns83820.c
+> @@ -820,7 +820,7 @@ static void rx_irq(struct net_device *ndev)
+>         struct ns83820 *dev =3D PRIV(ndev);
+>         struct rx_info *info =3D &dev->rx_info;
+>         unsigned next_rx;
+> -       int rx_rc, len;
+> +       int len;
+>         u32 cmdsts;
+>         __le32 *desc;
+>         unsigned long flags;
+> @@ -881,8 +881,10 @@ static void rx_irq(struct net_device *ndev)
+>                 if (likely(CMDSTS_OK & cmdsts)) {
+>  #endif
+>                         skb_put(skb, len);
+> -                       if (unlikely(!skb))
 
+I doubt this driver is used.
+
+Notice that this test  about skb being NULL or not happens after
+skb_put(skb, len)
+which would have crashed anyway if skb was NULL.
+
+
+> +                       if (unlikely(!skb)) {
+> +                               ndev->stats.rx_dropped++;
+>                                 goto netdev_mangle_me_harder_failed;
+> +                       }
+>                         if (cmdsts & CMDSTS_DEST_MULTI)
+>                                 ndev->stats.multicast++;
+>                         ndev->stats.rx_packets++;
+> @@ -901,15 +903,12 @@ static void rx_irq(struct net_device *ndev)
+>                                 __vlan_hwaccel_put_tag(skb, htons(ETH_P_I=
+PV6), tag);
+>                         }
+>  #endif
+> -                       rx_rc =3D netif_rx(skb);
+> -                       if (NET_RX_DROP =3D=3D rx_rc) {
+> -netdev_mangle_me_harder_failed:
+> -                               ndev->stats.rx_dropped++;
+> -                       }
+> +                       netif_rx(skb);
+>                 } else {
+>                         dev_kfree_skb_irq(skb);
+>                 }
+>
+> +netdev_mangle_me_harder_failed:
+>                 nr++;
+>                 next_rx =3D info->next_rx;
+>                 desc =3D info->descs + (DESC_SIZE * next_rx);
+> --
+> 2.51.0
+>
 
