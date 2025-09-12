@@ -1,202 +1,105 @@
-Return-Path: <linux-kernel+bounces-814335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29AD4B55290
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:00:32 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF56EB55291
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A8D51764FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:00:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8504B4E3417
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF81111A8;
-	Fri, 12 Sep 2025 15:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="IgC1FXen"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687691DEFE9;
-	Fri, 12 Sep 2025 15:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC9884D02;
+	Fri, 12 Sep 2025 15:00:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70F828373;
+	Fri, 12 Sep 2025 15:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689220; cv=none; b=lauakUCWj9Q73j6WNBHUMQejaV/Ujz74/RbSmCcun28xON6aPlSc476Xe2fsMXGijmt7EfF6/pPFHBzQLKr7qDE3w5TC+8HruMjBgb6k7EVJi1b1+tm36AtHot1RwaFxOvql7ZPpsmVVkSyUudJWNjn10qNi7zAxftBnAz60HiE=
+	t=1757689238; cv=none; b=EgOfid13kMnbqKoMD/7h/7sc/+UrWr/PonTw0MgrGyf3z9odzfo+V/MI7l+I2zD5ncbgSXnRphquFPi5br5PucOI8gwI/SsEZpuHJcBczJIOmTmHFfZcfavPqLb3aXpwtsjphSSiHX5hLxKSYvwlXR4DL5CnZV1DkWwEOTnnmF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689220; c=relaxed/simple;
-	bh=8WXsj4Rt4wdU5XyvqVm2vpBIseC8WqDgLjS/hEAuaRo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V+l2EFaNyQdETR2X9QawBsJrdLdWS1wMiHJ9Udm6DqA8NqShRhJEtTFWmZqtf3tfYqjsvlomNBqd3QwackVwBwAY5/7Oa8QAYgeygHNun3ZDGUv0YA+YNO52N16nvxPcDIS516iCS8J7UNzjdvouwtfk1fChI0J1TMTiEY6+0g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=IgC1FXen; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=PdI0ZWf/Ipj149RcGeqPm4YhKLc1nj1TVl70cM05bzI=; b=IgC1FXenlRjXGCF0I129O/VN4W
-	Fnj8u2hYi65nae9Uwz6TAtXwS6mQG7KN0qh275rwLOczD5zxmiz8hgjeRR1x8fZ0MIAe1Dgr0vDrG
-	NP8ncgyNIHvRvYMJ+oGATQgM8a8pdOYlJIAReR9z7OdwZ/3nz+xTtmKuIziBV/r6LBsexPXyeBgnr
-	Jj3wcdmjDtdasHEHigggrKA3H0xEixy6ng4ggA4/Qci7GDkR+k9QMAmsbV7tgOsafHYSmaf6KE0p+
-	4tLxK/VsXuIMr2g0ZXSVP68YnnJkIiePDkr2NQpRmK9hlHRoCmicrLU3FJVyfU62YMrWHcRhZCUSU
-	7hjWszIg==;
-Received: from i53875a48.versanet.de ([83.135.90.72] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1ux5Fz-00031I-Mv; Fri, 12 Sep 2025 17:00:11 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: linux-mmc@vger.kernel.org, Mikko Rapeli <mikko.rapeli@linaro.org>
-Cc: ulf.hansson@linaro.org, linux-kernel@vger.kernel.org,
- adrian.hunter@intel.com, victor.shih@genesyslogic.com.tw,
- ben.chuang@genesyslogic.com.tw, geert+renesas@glider.be,
- angelogioacchino.delregno@collabora.com, dlan@gentoo.org, arnd@arndb.de,
- zhoubinbin@loongson.cn, Mikko Rapeli <mikko.rapeli@linaro.org>
-Subject:
- Re: [PATCH v3 1/4] pmdomain: rockchip: enable ROCKCHIP_PM_DOMAINS with
- ARCH_ROCKCHIP
-Date: Fri, 12 Sep 2025 17:00:10 +0200
-Message-ID: <9157586.VV5PYv0bhD@diego>
-In-Reply-To: <20250912142253.2843018-2-mikko.rapeli@linaro.org>
-References:
- <20250912142253.2843018-1-mikko.rapeli@linaro.org>
- <20250912142253.2843018-2-mikko.rapeli@linaro.org>
+	s=arc-20240116; t=1757689238; c=relaxed/simple;
+	bh=QYX6DEPnALv8VrhjqMcHzjidP6B9lzW1oyW/6+vMXPU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UoRn98GPhG++Eg4Fvg5Vba0EDBuQUpEMwrYo+WhaSDD9ZYOHOakIPLUG/BQySBJPP94qrFZ3RNR7tPDhFENtKlZNSMDK2atWqPnTl1iHIO2GKR208/mxpYBqjI5sKliIzj4ZfY0mcIESStTXIuYxTwN3WFGT88pbW8al/KUZVKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01E5C16A3;
+	Fri, 12 Sep 2025 08:00:28 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B01D03F694;
+	Fri, 12 Sep 2025 08:00:31 -0700 (PDT)
+Message-ID: <5eb4b7f0-37eb-47c9-a955-ed9db17fa1e5@arm.com>
+Date: Fri, 12 Sep 2025 16:00:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 20/29] arm_mpam: Allow configuration to be applied and
+ restored during cpu online
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-21-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250910204309.20751-21-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Freitag, 12. September 2025, 16:22:50 Mitteleurop=C3=A4ische Sommerzeit =
-schrieb Mikko Rapeli:
-> On rk3399 based rockpi4b, mounting rootfs from mmc fails unless
-> ROCKCHIP_PM_DOMAINS is enabled. Accoriding to
-> Heiko St=C3=BCbner <heiko@sntech.de> all SoCs since 2012 have power
-> domains so the support should be enabled by default
-> on both arm and arm64.
->=20
-> Failing boot without CONFIG_ROCKCHIP_PM_DOMAINS=3Dy:
->=20
-> https://ledge.validation.linaro.org/scheduler/job/119268
->=20
-> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
-blockdev
-> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
-blockdev
-> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
-blockdev
-> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
-blockdev
-> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
-blockdev
-> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
-blockdev
-> dw-apb-uart ff1a0000.serial: forbid DMA for kernel console
-> root '/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e' doesn't=
- exist or does not contain a /dev.
-> rk_gmac-dwmac fe300000.ethernet: deferred probe timeout, ignoring depende=
-ncy
-> rk_gmac-dwmac fe300000.ethernet: probe with driver rk_gmac-dwmac failed w=
-ith error -110
-> rk_iommu ff650800.iommu: deferred probe timeout, ignoring dependency
-> rk_iommu ff650800.iommu: probe with driver rk_iommu failed with error -110
-> dwmmc_rockchip fe320000.mmc: deferred probe timeout, ignoring dependency
-> rockchip-typec-phy ff7c0000.phy: deferred probe timeout, ignoring depende=
-ncy
-> dwmmc_rockchip fe320000.mmc: probe with driver dwmmc_rockchip failed with=
- error -110
-> rockchip-typec-phy ff7c0000.phy: probe with driver rockchip-typec-phy fai=
-led with error -110
-> rockchip-typec-phy ff800000.phy: deferred probe timeout, ignoring depende=
-ncy
-> rockchip-typec-phy ff800000.phy: probe with driver rockchip-typec-phy fai=
-led with error -110
-> rk_iommu ff660480.iommu: deferred probe timeout, ignoring dependency
-> rk_iommu ff660480.iommu: probe with driver rk_iommu failed with error -110
-> rk_iommu ff8f3f00.iommu: deferred probe timeout, ignoring dependency
-> rk_iommu ff8f3f00.iommu: probe with driver rk_iommu failed with error -110
-> rk_iommu ff903f00.iommu: deferred probe timeout, ignoring dependency
-> rk_iommu ff903f00.iommu: probe with driver rk_iommu failed with error -110
-> rk_iommu ff914000.iommu: deferred probe timeout, ignoring dependency
-> rk_iommu ff914000.iommu: probe with driver rk_iommu failed with error -110
-> rk_iommu ff924000.iommu: deferred probe timeout, ignoring dependency
-> rk_iommu ff924000.iommu: probe with driver rk_iommu failed with error -110
-> platform fe800000.usb: deferred probe pending: platform: wait for supplie=
-r /phy@ff7c0000/usb3-port
-> sdhci-arasan fe330000.mmc: deferred probe timeout, ignoring dependency
-> platform fe900000.usb: deferred probe pending: platform: wait for supplie=
-r /phy@ff800000/usb3-port
-> sdhci-arasan fe330000.mmc: probe with driver sdhci-arasan failed with err=
-or -110
-> platform ff1d0000.spi: deferred probe pending: (reason unknown)
-> platform hdmi-sound: deferred probe pending: asoc-simple-card: parse error
->=20
-> Working boot with CONFIG_ROCKCHIP_PM_DOMAINS=3Dy:
->=20
-> https://ledge.validation.linaro.org/scheduler/job/119272
->=20
-> dwmmc_rockchip fe320000.mmc: IDMAC supports 32-bit address mode.
-> dwmmc_rockchip fe320000.mmc: Using internal DMA controller.
-> dwmmc_rockchip fe320000.mmc: Version ID is 270a
-> dwmmc_rockchip fe320000.mmc: DW MMC controller at irq 45,32 bit host data=
- width,256 deep fifo
-> dwmmc_rockchip fe320000.mmc: Got CD GPIO
-> ff1a0000.serial: ttyS2 at MMIO 0xff1a0000 (irq =3D 44, base_baud =3D 1500=
-000) is a 16550A
-> printk: legacy console [ttyS2] enabled
-> mmc_host mmc1: Bus speed (slot 0) =3D 400000Hz (slot req 400000Hz, actual=
- 400000HZ div =3D 0)
-> dw_wdt ff848000.watchdog: No valid TOPs array specified
-> mmc_host mmc1: Bus speed (slot 0) =3D 50000000Hz (slot req 50000000Hz, ac=
-tual 50000000HZ div =3D 0)
-> mmc0: CQHCI version 5.10
-> rk_gmac-dwmac fe300000.ethernet: IRQ eth_wake_irq not found
-> mmc1: new high speed SDHC card at address aaaa
-> fan53555-regulator 0-0040: FAN53555 Option[8] Rev[1] Detected!
-> fan53555-regulator 0-0041: FAN53555 Option[8] Rev[1] Detected!
-> rk_gmac-dwmac fe300000.ethernet: IRQ eth_lpi not found
-> mmcblk1: mmc1:aaaa SC16G 14.8 GiB
-> rk_gmac-dwmac fe300000.ethernet: IRQ sfty not found
-> GPT:Primary header thinks Alt. header is not at the end of the disk.
-> rk_gmac-dwmac fe300000.ethernet: Deprecated MDIO bus assumption used
-> GPT:1978417 !=3D 31116287
-> rk_gmac-dwmac fe300000.ethernet: PTP uses main clock
-> GPT:Alternate GPT header not at the end of the disk.
-> rk_gmac-dwmac fe300000.ethernet: clock input or output? (input).
-> GPT:1978417 !=3D 31116287
-> rk_gmac-dwmac fe300000.ethernet: TX delay(0x28).
-> GPT: Use GNU Parted to correct GPT errors.
-> rk_gmac-dwmac fe300000.ethernet: RX delay(0x11).
->  mmcblk1: p1 p2 p3 p4 p5 p6 p7 p8
->=20
-> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Suggested-by: Heiko St=C3=BCbner <heiko@sntech.de>
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+Hi James,
+
+On 9/10/25 21:43, James Morse wrote:
+> When CPUs come online the MSC's original configuration should be restored.
+> 
+> Add struct mpam_config to hold the configuration. This has a bitmap of
+> features that were modified. Once the maximum partid is known, allocate
+> a configuration array for each component, and reprogram each RIS
+> configuration from this.
+> 
+> CC: Dave Martin <Dave.Martin@arm.com>
+> Signed-off-by: James Morse <james.morse@arm.com>
 > ---
->  drivers/pmdomain/rockchip/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/pmdomain/rockchip/Kconfig b/drivers/pmdomain/rockchi=
-p/Kconfig
-> index 218d43186e5b9..17f2e6fe86b6f 100644
-> --- a/drivers/pmdomain/rockchip/Kconfig
-> +++ b/drivers/pmdomain/rockchip/Kconfig
-> @@ -3,6 +3,7 @@ if ARCH_ROCKCHIP || COMPILE_TEST
-> =20
->  config ROCKCHIP_PM_DOMAINS
->  	bool "Rockchip generic power domain"
-> +	default ARCH_ROCKCHIP
->  	depends on PM
->  	depends on HAVE_ARM_SMCCC_DISCOVERY
->  	depends on REGULATOR
->=20
+> Changes since v1:
+>  * Switched entry_rcu to srcu versions.
+> 
+> Changes since RFC:
+>  * Added a comment about the ordering around max_partid.
+>  * Allocate configurations after interrupts are registered to reduce churn.
+>  * Added mpam_assert_partid_sizes_fixed();
+>  * Make reset use an all-ones instead of zero config.
+> ---
+>  drivers/resctrl/mpam_devices.c  | 269 +++++++++++++++++++++++++++++---
+>  drivers/resctrl/mpam_internal.h |  29 +++-
+>  2 files changed, 271 insertions(+), 27 deletions(-)
+> 
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+Thanks,
 
-
-
+Ben
 
 
