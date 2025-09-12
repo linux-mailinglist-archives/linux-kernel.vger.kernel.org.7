@@ -1,377 +1,267 @@
-Return-Path: <linux-kernel+bounces-813216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 235C9B5420E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:29:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78475B5420D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C21A35805BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:29:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9808C1B21DD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA427284898;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8A0284669;
 	Fri, 12 Sep 2025 05:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AuvnMtbo"
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lh4m5648"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60CB27F160
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A95227B4E5
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757654921; cv=none; b=G0HEgNIpHxogOIFAW9IERDhLJvAR26swp+SzZ4flx87H9/mlEBT2Ji+HAbvzdzYCDykOxjQHBKgnhTvxE2dGf8/HqRw+fooZuFwezDc8IGpgjXQDztI5q7N7/iwNzb8nQkmyZm7+iY0GC9iBRWZLYFdXfP41lnMkf09LdWWeEQs=
+	t=1757654921; cv=none; b=LK4Gc9lUwFtzJB+HIw6iqRnA09D+IMvfg5gQwWC+TiFKOdbwaP42z7+ggw933coS6glpHi2siiYn8RTKsoRuLgSjeR8wwU3fYGYbPIkNEae2AyZ5G2fjrWOQ3JZc4Gji/AKU9yh1phzdz/FLbEzFOvFAqU/cHruYtfBN07i/m4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757654921; c=relaxed/simple;
-	bh=iXk5LtD8VQud/p8QuIvkPtAyIAC7E2tqnLsWZY8OouY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Njc9JtmIWryIjzquxAblwNb86g/UZ9aBiOlDE7WJQHuZUnso7ZSTcVdS5wFsVKTSi7dd4XzJJCmODtbt7onXXA3y66E82KmhlkEo8OPA+HQ4vB81mSPze72PS6u5tgqgSfEvZZICbQSfHTH2WF9yXvk51Nlf0fgun8P+OVo14Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AuvnMtbo; arc=none smtp.client-ip=74.125.224.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-6071dbcf3fcso394363d50.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:28:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757654918; x=1758259718; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TBxJ9bgU3ETsPO/br9jSR8/72uyQYfX4epNE3oPxRwc=;
-        b=AuvnMtbovYW8BgT/4UfNtvBEEaYvYkdVZABqAlA726TUWkCeMlmXW6UMit0S2d7Pfi
-         YbJfLRX5uU3zXeK5vUr9uz1hj76TNplY6UqXlK5eEkaSkg649iLyFFry9jee72RBwqXO
-         9FU7IA6B11ZlVvmqM0IAlOaLh7qPu1ukV/RQI1Yi/9uF+gRviP4yF8EsffsfOHJn16N3
-         VRngVjqCRBF2cdZzJft1ynrhzvlWK/U/SGjyFi2efkVisvB9tjm0FAY5JsGDJGg8Snto
-         bF17tXBkLjkQrCOhZwzmFKplaEMTIWC9CwJsXrTWRX4dEW/evub3U+AsUSt0g8TEBLN9
-         i4Qg==
+	bh=9Cpnoq/DypleHwmgQtKUTSqWF1gCIJKoqqTjacvAgwA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y93STOrahRroaiA6lxSk3AyQIeRWhCh5AJryrJLcxoRXeWloAGaFBgUuiz5W/DzPF7D/YvzD9roEhjADiMDr0qgG4BaLTMLmWweOOvCXujO7AKAWXxVxBGn74KdOxzrnXkzKRTXIBj+fmkyhO6PTcfCrc7S1f/Hlm9zTbVzp39o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lh4m5648; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757654918;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aJ9I3kFrAfuzRn5zG3IfhkcbkFVirVLdOlMEX4ozb3Q=;
+	b=Lh4m5648XNvKQlKdjYrL00gkPUvQtUC9sn5PelqqyzIvEr0gAoKedpxlJ8rkqkFiWtG+Qr
+	3XQV9BnpwY9iMQyvTTqlCjX6e7fAmcsEWnCmK33u3kFsAv3In+KVQJ4yjnCkOfy8Nan0GV
+	jqHCtZbwkPsEWsyedxHdOo1wTAloAq8=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-44-InuAyUlPOJaAt8nA3-n5nA-1; Fri, 12 Sep 2025 01:28:36 -0400
+X-MC-Unique: InuAyUlPOJaAt8nA3-n5nA-1
+X-Mimecast-MFC-AGG-ID: InuAyUlPOJaAt8nA3-n5nA_1757654915
+Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-336de0ff5d6so7618131fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:28:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757654918; x=1758259718;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TBxJ9bgU3ETsPO/br9jSR8/72uyQYfX4epNE3oPxRwc=;
-        b=tjqgC2/MUTn0rTqffba0POIIXcMxADgf31adQ+LO+R0jGzDK9qTI6CjDgOypqINe75
-         pjNegOGIjxjHJlUtsYXoGaRCpi0/5j20eh6C6YUMWDGUQ19AlZFewN/BTdM8tYZW4gm/
-         xZZOWs0/nTjzYE1oyEeaxCmSEpZaraRwKxVr91iAW3WL43aZ4SyUt/yQyLcGn2UtCryr
-         XZvlw1dUagJYxbsGIShnNxw16IBaERUhkV8yj9Rff+rbVLtdDGwrmGU46mKUMK/z3X/k
-         /LmL/Psk/+hoMu/TwAwzBverqd2+Vr/iykrAnp7baEdTdtJTAHMEAfmDC3JWOtx6BUVZ
-         GHpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlNdVN6dz+Fd6ikmp+3EYLddntG4dNK/MbzN6keQW89xt/Q5wTykAZsNlvsHvuqVAVaIQOr92WEyVsc5g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxdH0QG45cQGT5UYrXYfhloWAvPBURqqFWir9LgutmLGUVCFDa
-	tZ6KnHy8mbmBd0Jd1ufzQVx76sM4dyLOYsJW37B1+IAkgFsH4UXw1Teu
-X-Gm-Gg: ASbGncuXAuTZmMtCz+OcAgTnHSC7Jkt+dM4lyHWzwZwZC1WmaHVVWn8OE7r8aGzQ9AD
-	+t90EVTGXxBmWK22wSoiBJmjEN10T5AeuaqUeBKRFDRGmdR/xfKXOwwFn6aRkXuhM/2d2IbjdbT
-	8cDlzH6eeAyR3d4j0Y9XN2eWHx1o5zeBW5+hwhZm9QPD66SeMI4pUroGo/4+Y0oExlfZ/E5if/C
-	A1KjTShHHyt1Ma7M/YgZykavvBud4mbE+N5tz66yLd8+5wIKzhvlJgkcLgQttzjyJJ16LL+xhvY
-	0wy8USpVxcg/olIgIFz19nUTidInfz3iNlELT7kGoZ0vMeGBZgA/VA4oeRUSQ4TUh/KkT1ocs0l
-	wn+LbywlsTbye6G4+4Qrj6Vhy4hggPHFF1/VygXhPmHA=
-X-Google-Smtp-Source: AGHT+IEvNdoERnjqUX3gWMOkOVdUpABgLqadOZKxTupu5VHNH+oEciO0ODN2lDoQyjjHn43fJYnwgg==
-X-Received: by 2002:a05:690c:a96:b0:726:697b:9e1f with SMTP id 00721157ae682-73065abe03amr15986057b3.54.1757654918519;
-        Thu, 11 Sep 2025 22:28:38 -0700 (PDT)
-Received: from localhost ([2a03:2880:25ff:73::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-72f76238482sm8652877b3.12.2025.09.11.22.28.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 22:28:37 -0700 (PDT)
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-Date: Thu, 11 Sep 2025 22:28:17 -0700
-Subject: [PATCH net-next v2 3/3] net: ethtool: prevent user from breaking
- devmem single-binding rule
+        d=1e100.net; s=20230601; t=1757654915; x=1758259715;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aJ9I3kFrAfuzRn5zG3IfhkcbkFVirVLdOlMEX4ozb3Q=;
+        b=IBHADQWlYj9kFYA3f3rfdtksjK32p4c+Di2Edtm+tqMP8eWshY8xWTpmgY8GwViQx/
+         f5JAnWkxApUavFZtvja04U46X4+XdpKGIFLkmsJ4cvhVoe/WSdgEsG1EYHvHYSwhpSPx
+         mMDtXgtZFh+jYABk6D1DopHJbI4aH5q9ab2257pBWgY+RQuZNls+g6XDE4nffTYWClIr
+         X1oP9Fngp5HjSZaWADa8t28zoVkZt5/ws6gL+EQUYX73nMDUNjHR8H6OT+WgWBS8crGi
+         9iaklpbD8lr+sWjMQOxuASa0M/nKVwYvzU+8QUHamQ+vwBkt3idbPnIHo/8f0QNShRCJ
+         kTMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVsuV/XoJ+gjoZJ129QDA0mu+8Mq7rDJRxkqgzIPjtBkCYEBye7xfOTnBkmW/34+K6cW566nCWRilGILfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXmAbFVBsh6wtEkHEdqmxErCaqCj5231OFcBm0lZTcMHHG6h7f
+	NGyIuqvKLmz68MZSmBPW/ql0XDOLuISVmxNs8qf8t6QJhBq93llhjVoRsn47SdB9daUrQIF4g3B
+	UGgh9YhmvzbaGslA7jtixto5IQy52CgyF9bfAfoNbQXv93jxoaFX5eiXHyNl+rLa1
+X-Gm-Gg: ASbGnctWfaTNmR+hUFr5VKhYRbYp0uYsN7mqH9xLJCVustJ/deGIKXiXRxiU+NJC7G9
+	dckL1EaH23d3LaJS3w97y+xayzVPuAVIHGLVNjfBfF0rU6MMPyzxO38hapgXxKmw1tDx9WQ3RrX
+	WuX4x7ckp4XSUB8YezCTSusNad3XZbuG9sBBoPF7WS45D7zHffkPtNxPZyDALcmXvJh/rO2Tlut
+	fNIt61fvA0XyfToB0ve3Cno2ZYAVxwBIpFLTlV53JfknW1yK5OcxW4EFSDDf1bUKaof6YUvoUAW
+	xDJAfWIUqFyrTVKvMXRNSiyQBAc/ycM8Y2mnn0s/rRjFzJ4JRVd7Zon2gbv0kiAsM/Dvg/woNAB
+	2VjSY4JIDMk8EelHUq51sBFY0mhalgltmDyJf+NXCC7iVvMUtKk1K
+X-Received: by 2002:a2e:be91:0:b0:351:b11d:e630 with SMTP id 38308e7fff4ca-351b11ded0amr3280491fa.11.1757654914804;
+        Thu, 11 Sep 2025 22:28:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHpGJ8fEYHY6vVQRRiNssGfCLT3ZkT3GfJOpIxVKWucfTurAjgfRecqT3PfQJdvJQYHVWNvWA==
+X-Received: by 2002:a2e:be91:0:b0:351:b11d:e630 with SMTP id 38308e7fff4ca-351b11ded0amr3280201fa.11.1757654914261;
+        Thu, 11 Sep 2025 22:28:34 -0700 (PDT)
+Received: from ?IPV6:2001:999:408:6576:1142:7350:b6c5:671e? (n4ctkw60s7hbahed3xa-1.v6.elisa-mobile.fi. [2001:999:408:6576:1142:7350:b6c5:671e])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f15a591fasm6136911fa.9.2025.09.11.22.28.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Sep 2025 22:28:33 -0700 (PDT)
+Message-ID: <4cc2ba18-e7de-448f-aaee-043ed68dc6e3@redhat.com>
+Date: Fri, 12 Sep 2025 08:28:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-3-c80d735bd453@meta.com>
-References: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com>
-In-Reply-To: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com>
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Kuniyuki Iwashima <kuniyu@google.com>, 
- Willem de Bruijn <willemb@google.com>, Neal Cardwell <ncardwell@google.com>, 
- David Ahern <dsahern@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Stanislav Fomichev <sdf@fomichev.me>, Mina Almasry <almasrymina@google.com>, 
- Bobby Eshleman <bobbyeshleman@meta.com>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v5 06/15] mm/migrate_device: implement THP migration of zone
+ device pages
+To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
+ Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+ Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
+ Ying Huang <ying.huang@linux.alibaba.com>,
+ Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
+ Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
+ Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
+ Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>
+References: <20250908000448.180088-1-balbirs@nvidia.com>
+ <20250908000448.180088-7-balbirs@nvidia.com>
+ <d35eea42-ed32-481f-9dcf-704d22eb8706@redhat.com>
+ <49039b9d-4c42-480f-a219-daf0958be28e@nvidia.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
+In-Reply-To: <49039b9d-4c42-480f-a219-daf0958be28e@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Bobby Eshleman <bobbyeshleman@meta.com>
+On 9/12/25 08:04, Balbir Singh wrote:
 
-Prevent the user from breaking devmem's single-binding rule by rejecting
-ethtool TCP/IP requests to modify or delete rules that will redirect a
-devmem socket to a queue with a different dmabuf binding. This is done
-in a "best effort" approach because not all steering rule types are
-validated.
+> On 9/11/25 21:52, Mika Penttilä wrote:
+>> sending again for the v5 thread..
+>>
+>> On 9/8/25 03:04, Balbir Singh wrote:
+>>
+>>> MIGRATE_VMA_SELECT_COMPOUND will be used to select THP pages during
+>>> migrate_vma_setup() and MIGRATE_PFN_COMPOUND will make migrating
+>>> device pages as compound pages during device pfn migration.
+>>>
+>>> migrate_device code paths go through the collect, setup
+>>> and finalize phases of migration.
+>>>
+>>> The entries in src and dst arrays passed to these functions still
+>>> remain at a PAGE_SIZE granularity. When a compound page is passed,
+>>> the first entry has the PFN along with MIGRATE_PFN_COMPOUND
+>>> and other flags set (MIGRATE_PFN_MIGRATE, MIGRATE_PFN_VALID), the
+>>> remaining entries (HPAGE_PMD_NR - 1) are filled with 0's. This
+>>> representation allows for the compound page to be split into smaller
+>>> page sizes.
+>>>
+>>> migrate_vma_collect_hole(), migrate_vma_collect_pmd() are now THP
+>>> page aware. Two new helper functions migrate_vma_collect_huge_pmd()
+>>> and migrate_vma_insert_huge_pmd_page() have been added.
+>>>
+>>> migrate_vma_collect_huge_pmd() can collect THP pages, but if for
+>>> some reason this fails, there is fallback support to split the folio
+>>> and migrate it.
+>>>
+>>> migrate_vma_insert_huge_pmd_page() closely follows the logic of
+>>> migrate_vma_insert_page()
+>>>
+>>> Support for splitting pages as needed for migration will follow in
+>>> later patches in this series.
+>>>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Cc: David Hildenbrand <david@redhat.com>
+>>> Cc: Zi Yan <ziy@nvidia.com>
+>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
+>>> Cc: Rakie Kim <rakie.kim@sk.com>
+>>> Cc: Byungchul Park <byungchul@sk.com>
+>>> Cc: Gregory Price <gourry@gourry.net>
+>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
+>>> Cc: Alistair Popple <apopple@nvidia.com>
+>>> Cc: Oscar Salvador <osalvador@suse.de>
+>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>>> Cc: Nico Pache <npache@redhat.com>
+>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>> Cc: Dev Jain <dev.jain@arm.com>
+>>> Cc: Barry Song <baohua@kernel.org>
+>>> Cc: Lyude Paul <lyude@redhat.com>
+>>> Cc: Danilo Krummrich <dakr@kernel.org>
+>>> Cc: David Airlie <airlied@gmail.com>
+>>> Cc: Simona Vetter <simona@ffwll.ch>
+>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
+>>> Cc: Mika Penttilä <mpenttil@redhat.com>
+>>> Cc: Matthew Brost <matthew.brost@intel.com>
+>>> Cc: Francois Dugast <francois.dugast@intel.com>
+>>>
+>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+>>> ---
+>>>  include/linux/migrate.h |   2 +
+>>>  mm/migrate_device.c     | 456 ++++++++++++++++++++++++++++++++++------
+>>>  2 files changed, 395 insertions(+), 63 deletions(-)
+>>>
+>>> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+>>> index 1f0ac122c3bf..41b4cc05a450 100644
+>>> --- a/include/linux/migrate.h
+>>> +++ b/include/linux/migrate.h
+>>> @@ -125,6 +125,7 @@ static inline int migrate_misplaced_folio(struct folio *folio, int node)
+>>>  #define MIGRATE_PFN_VALID	(1UL << 0)
+>>>  #define MIGRATE_PFN_MIGRATE	(1UL << 1)
+>>>  #define MIGRATE_PFN_WRITE	(1UL << 3)
+>>> +#define MIGRATE_PFN_COMPOUND	(1UL << 4)
+>>>  #define MIGRATE_PFN_SHIFT	6
+>>>  
+>>>  static inline struct page *migrate_pfn_to_page(unsigned long mpfn)
+>>> @@ -143,6 +144,7 @@ enum migrate_vma_direction {
+>>>  	MIGRATE_VMA_SELECT_SYSTEM = 1 << 0,
+>>>  	MIGRATE_VMA_SELECT_DEVICE_PRIVATE = 1 << 1,
+>>>  	MIGRATE_VMA_SELECT_DEVICE_COHERENT = 1 << 2,
+>>> +	MIGRATE_VMA_SELECT_COMPOUND = 1 << 3,
+>>>  };
+>>>  
+>>>  struct migrate_vma {
+>>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+>>> index f45ef182287d..1dfcf4799ea5 100644
+>>> --- a/mm/migrate_device.c
+>>> +++ b/mm/migrate_device.c
+>>> @@ -14,6 +14,7 @@
+>>>  #include <linux/pagewalk.h>
+>>>  #include <linux/rmap.h>
+>>>  #include <linux/swapops.h>
+>>> +#include <linux/pgalloc.h>
+>>>  #include <asm/tlbflush.h>
+>>>  #include "internal.h"
+>>>  
+>>> @@ -44,6 +45,23 @@ static int migrate_vma_collect_hole(unsigned long start,
+>>>  	if (!vma_is_anonymous(walk->vma))
+>>>  		return migrate_vma_collect_skip(start, end, walk);
+>>>  
+>>> +	if (thp_migration_supported() &&
+>>> +		(migrate->flags & MIGRATE_VMA_SELECT_COMPOUND) &&
+>>> +		(IS_ALIGNED(start, HPAGE_PMD_SIZE) &&
+>>> +		 IS_ALIGNED(end, HPAGE_PMD_SIZE))) {
+>>> +		migrate->src[migrate->npages] = MIGRATE_PFN_MIGRATE |
+>>> +						MIGRATE_PFN_COMPOUND;
+>>> +		migrate->dst[migrate->npages] = 0;
+>>> +		migrate->npages++;
+>>> +		migrate->cpages++;
+>>> +
+>>> +		/*
+>>> +		 * Collect the remaining entries as holes, in case we
+>>> +		 * need to split later
+>>> +		 */
+>>> +		return migrate_vma_collect_skip(start + PAGE_SIZE, end, walk);
+>>> +	}
+>>> +
+>> seems you have to split_huge_pmd() for the huge zero page here in case
+>> of !thp_migration_supported() afaics
+>>
+> Not really, if pfn is 0, we do a vm_insert_page (please see if (!page) line 1107) and
+> folio  handling in migrate_vma_finalize line 1284
 
-If an ethtool_rxnfc flow steering rule evaluates true for:
+Ok actually seems it is handled by migrate_vma_insert_page() which does
 
-1) matching a devmem socket's ip addr
-2) selecting a queue with a different dmabuf binding
-3) is TCP/IP (v4 or v6)
+        if (!pmd_none(*pmdp)) {
+                if (pmd_trans_huge(*pmdp)) {
+                        if (!is_huge_zero_pmd(*pmdp))
+                                goto abort;
+                        folio_get(pmd_folio(*pmdp));
+                        split_huge_pmd(vma, pmdp, addr);   <----- here
+                } else if (pmd_leaf(*pmdp))
+                        goto abort;
+        }
 
-... then reject the ethtool_rxnfc request with -EBUSY to indicate a
-devmem socket is using the current rules that steer it to its dmabuf
-binding.
 
-Non-TCP/IP rules are completely ignored, and if they do match a devmem
-flow then they can still break devmem sockets. For example, bytes 0 and
-1 of L2 headers, etc... it is still unknown to me if these are possible
-to evaluate at the time of the ethtool call, and so are left to future
-work (or never, if not possible).
-
-FLOW_RSS rules which guide flows to an RSS context are also not
-evaluated yet. This seems feasible, but the correct path towards
-retrieving the RSS context and scanning the queues for dmabuf bindings
-seems unclear and maybe overkill (re-use parts of ethtool_get_rxnfc?).
-
-Signed-off-by: Bobby Eshleman <bobbyeshleman@meta.com>
----
- include/net/sock.h  |   1 +
- net/ethtool/ioctl.c | 144 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- net/ipv4/tcp.c      |   9 ++++
- net/ipv4/tcp_ipv4.c |   6 +++
- 4 files changed, 160 insertions(+)
-
-diff --git a/include/net/sock.h b/include/net/sock.h
-index 304aad494764..73a1ff59dcde 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -579,6 +579,7 @@ struct sock {
- 		struct net_devmem_dmabuf_binding	*binding;
- 		atomic_t				*urefs;
- 	} sk_user_frags;
-+	struct list_head	sk_devmem_list;
- 
- #if IS_ENABLED(CONFIG_PROVE_LOCKING) && IS_ENABLED(CONFIG_MODULES)
- 	struct module		*sk_owner;
-diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index 0b2a4d0573b3..99676ac9bbaa 100644
---- a/net/ethtool/ioctl.c
-+++ b/net/ethtool/ioctl.c
-@@ -29,11 +29,16 @@
- #include <linux/utsname.h>
- #include <net/devlink.h>
- #include <net/ipv6.h>
-+#include <net/netdev_rx_queue.h>
- #include <net/xdp_sock_drv.h>
- #include <net/flow_offload.h>
- #include <net/netdev_lock.h>
- #include <linux/ethtool_netlink.h>
- #include "common.h"
-+#include "../core/devmem.h"
-+
-+extern struct list_head devmem_sockets_list;
-+extern spinlock_t devmem_sockets_lock;
- 
- /* State held across locks and calls for commands which have devlink fallback */
- struct ethtool_devlink_compat {
-@@ -1169,6 +1174,142 @@ ethtool_get_rxfh_fields(struct net_device *dev, u32 cmd, void __user *useraddr)
- 	return ethtool_rxnfc_copy_to_user(useraddr, &info, info_size, NULL);
- }
- 
-+static bool
-+__ethtool_rx_flow_spec_breaks_devmem_sk(struct ethtool_rx_flow_spec *fs,
-+					struct net_device *dev,
-+					struct sock *sk)
-+{
-+	struct in6_addr saddr6, smask6, daddr6, dmask6;
-+	struct sockaddr_storage saddr, daddr;
-+	struct sockaddr_in6 *src6, *dst6;
-+	struct sockaddr_in *src4, *dst4;
-+	struct netdev_rx_queue *rxq;
-+	__u32 flow_type;
-+
-+	if (dev != __sk_dst_get(sk)->dev)
-+		return false;
-+
-+	src6 = (struct sockaddr_in6 *)&saddr;
-+	dst6 = (struct sockaddr_in6 *)&daddr;
-+	src4 = (struct sockaddr_in *)&saddr;
-+	dst4 = (struct sockaddr_in *)&daddr;
-+
-+	if (sk->sk_family == AF_INET6) {
-+		src6->sin6_port = inet_sk(sk)->inet_sport;
-+		src6->sin6_addr = inet6_sk(sk)->saddr;
-+		dst6->sin6_port = inet_sk(sk)->inet_dport;
-+		dst6->sin6_addr = sk->sk_v6_daddr;
-+	} else {
-+		src4->sin_port = inet_sk(sk)->inet_sport;
-+		src4->sin_addr.s_addr = inet_sk(sk)->inet_saddr;
-+		dst4->sin_port = inet_sk(sk)->inet_dport;
-+		dst4->sin_addr.s_addr = inet_sk(sk)->inet_daddr;
-+	}
-+
-+	flow_type = fs->flow_type & ~(FLOW_EXT | FLOW_MAC_EXT | FLOW_RSS);
-+
-+	rxq = __netif_get_rx_queue(dev, fs->ring_cookie);
-+	if (!rxq)
-+		return false;
-+
-+	/* If the requested binding and the sk binding is equal then we know
-+	 * this rule can't redirect to a different binding.
-+	 */
-+	if (rxq->mp_params.mp_priv == sk->sk_user_frags.binding)
-+		return false;
-+
-+	/* Reject rules that redirect RX devmem sockets to a queue with a
-+	 * different dmabuf binding. Because these sockets are on the RX side
-+	 * (registered in the recvmsg() path), we compare the opposite
-+	 * endpoints: the socket source with the rule destination, and the
-+	 * socket destination with the rule source.
-+	 *
-+	 * Only perform checks on the simplest rules to check, that is, IP/TCP
-+	 * rules. Flow hash options are not verified, so may still break TCP
-+	 * devmem flows in theory (VLAN tag, bytes 0 and 1 of L4 header,
-+	 * etc...). The author of this function was simply not sure how
-+	 * to validate these at the time of the ethtool call.
-+	 */
-+	switch (flow_type) {
-+	case IPV4_USER_FLOW: {
-+		const struct ethtool_usrip4_spec *v4_usr_spec, *v4_usr_m_spec;
-+
-+		v4_usr_spec = &fs->h_u.usr_ip4_spec;
-+		v4_usr_m_spec = &fs->m_u.usr_ip4_spec;
-+
-+		if (((v4_usr_spec->ip4src ^ dst4->sin_addr.s_addr) & v4_usr_m_spec->ip4src) ||
-+		    (v4_usr_spec->ip4dst ^ src4->sin_addr.s_addr) & v4_usr_m_spec->ip4dst) {
-+			return true;
-+		}
-+
-+		return false;
-+	}
-+	case TCP_V4_FLOW: {
-+		const struct ethtool_tcpip4_spec *v4_spec, *v4_m_spec;
-+
-+		v4_spec = &fs->h_u.tcp_ip4_spec;
-+		v4_m_spec = &fs->m_u.tcp_ip4_spec;
-+
-+		if (((v4_spec->ip4src ^ dst4->sin_addr.s_addr) & v4_m_spec->ip4src) ||
-+		    ((v4_spec->ip4dst ^ src4->sin_addr.s_addr) & v4_m_spec->ip4dst))
-+			return true;
-+
-+		return false;
-+	}
-+	case IPV6_USER_FLOW: {
-+		const struct ethtool_usrip6_spec *v6_usr_spec, *v6_usr_m_spec;
-+
-+		v6_usr_spec = &fs->h_u.usr_ip6_spec;
-+		v6_usr_m_spec = &fs->m_u.usr_ip6_spec;
-+
-+		memcpy(&daddr6, v6_usr_spec->ip6dst, sizeof(daddr6));
-+		memcpy(&dmask6, v6_usr_m_spec->ip6dst, sizeof(dmask6));
-+		memcpy(&saddr6, v6_usr_spec->ip6src, sizeof(saddr6));
-+		memcpy(&smask6, v6_usr_m_spec->ip6src, sizeof(smask6));
-+
-+		return !ipv6_masked_addr_cmp(&saddr6, &smask6, &dst6->sin6_addr) &&
-+		       !ipv6_masked_addr_cmp(&daddr6, &dmask6, &src6->sin6_addr);
-+	}
-+	case TCP_V6_FLOW: {
-+		const struct ethtool_tcpip6_spec *v6_spec, *v6_m_spec;
-+
-+		v6_spec = &fs->h_u.tcp_ip6_spec;
-+		v6_m_spec = &fs->m_u.tcp_ip6_spec;
-+
-+		memcpy(&daddr6, v6_spec->ip6dst, sizeof(daddr6));
-+		memcpy(&dmask6, v6_m_spec->ip6dst, sizeof(dmask6));
-+		memcpy(&saddr6, v6_spec->ip6src, sizeof(saddr6));
-+		memcpy(&smask6, v6_m_spec->ip6src, sizeof(smask6));
-+
-+		return !ipv6_masked_addr_cmp(&daddr6, &dmask6, &src6->sin6_addr) &&
-+		       !ipv6_masked_addr_cmp(&saddr6, &smask6, &dst6->sin6_addr);
-+	}
-+	default:
-+		return false;
-+	}
-+}
-+
-+static bool
-+ethtool_rx_flow_spec_breaks_devmem_sk(struct ethtool_rx_flow_spec *fs,
-+				      struct net_device *dev)
-+{
-+	struct sock *sk;
-+	bool ret;
-+
-+	ret = false;
-+
-+	spin_lock_bh(&devmem_sockets_lock);
-+	list_for_each_entry(sk, &devmem_sockets_list, sk_devmem_list) {
-+		if (__ethtool_rx_flow_spec_breaks_devmem_sk(fs, dev, sk)) {
-+			ret = true;
-+			break;
-+		}
-+	}
-+	spin_unlock_bh(&devmem_sockets_lock);
-+
-+	return ret;
-+}
-+
- static noinline_for_stack int ethtool_set_rxnfc(struct net_device *dev,
- 						u32 cmd, void __user *useraddr)
- {
-@@ -1197,6 +1338,9 @@ static noinline_for_stack int ethtool_set_rxnfc(struct net_device *dev,
- 			return -EINVAL;
- 	}
- 
-+	if (ethtool_rx_flow_spec_breaks_devmem_sk(&info.fs, dev))
-+		return -EBUSY;
-+
- 	rc = ops->set_rxnfc(dev, &info);
- 	if (rc)
- 		return rc;
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 438b8132ed89..3f57e658ea80 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -311,6 +311,12 @@ DEFINE_STATIC_KEY_FALSE(tcp_have_smc);
- EXPORT_SYMBOL(tcp_have_smc);
- #endif
- 
-+struct list_head devmem_sockets_list;
-+EXPORT_SYMBOL_GPL(devmem_sockets_list);
-+
-+DEFINE_SPINLOCK(devmem_sockets_lock);
-+EXPORT_SYMBOL_GPL(devmem_sockets_lock);
-+
- /*
-  * Current number of TCP sockets.
-  */
-@@ -5229,4 +5235,7 @@ void __init tcp_init(void)
- 	BUG_ON(tcp_register_congestion_control(&tcp_reno) != 0);
- 	tcp_tsq_work_init();
- 	mptcp_init();
-+
-+	spin_lock_init(&devmem_sockets_lock);
-+	INIT_LIST_HEAD(&devmem_sockets_list);
- }
-diff --git a/net/ipv4/tcp_ipv4.c b/net/ipv4/tcp_ipv4.c
-index 68ebf96d06f8..a3213c97aed9 100644
---- a/net/ipv4/tcp_ipv4.c
-+++ b/net/ipv4/tcp_ipv4.c
-@@ -92,6 +92,9 @@
- 
- #include <trace/events/tcp.h>
- 
-+extern struct list_head devmem_sockets_list;
-+extern spinlock_t devmem_sockets_lock;
-+
- #ifdef CONFIG_TCP_MD5SIG
- static int tcp_v4_md5_hash_hdr(char *md5_hash, const struct tcp_md5sig_key *key,
- 			       __be32 daddr, __be32 saddr, const struct tcphdr *th);
-@@ -2559,6 +2562,9 @@ static void tcp_release_user_frags(struct sock *sk)
- 	sk->sk_user_frags.binding = NULL;
- 	kvfree(sk->sk_user_frags.urefs);
- 	sk->sk_user_frags.urefs = NULL;
-+	spin_lock_bh(&devmem_sockets_lock);
-+	list_del(&sk->sk_devmem_list);
-+	spin_unlock_bh(&devmem_sockets_lock);
- #endif
- }
- 
-
--- 
-2.47.3
+>
+> Thanks,
+> Balbir
+>
+--Mika
 
 
