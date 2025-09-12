@@ -1,186 +1,181 @@
-Return-Path: <linux-kernel+bounces-813403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9C8B544E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:15:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65958B544EA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 209A1585E81
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA1B3AD6FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A972D3EF6;
-	Fri, 12 Sep 2025 08:14:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10C82D4B7A;
+	Fri, 12 Sep 2025 08:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B26DaC/p"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALMiutHz"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D042D8773
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BAE32652B2
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757664859; cv=none; b=RJHcuM4zS5NYNhNN9yB7xhvwQqObR41/Sh/zA87uURWOuLTWdJj0FMa4OzTprNHUsjFxDQrfLbMt+gqBUzl02biwf9GnrvXAdEGZLfBMUh8jW7FgTQRjmJ0y3TLetDRaMmTbPR3c+aC1OXFZdqoeU1u5UcwQYIoLX48kJITc67U=
+	t=1757664945; cv=none; b=XS7CU/oZbOAxk6+yEZxauIfPDWnwPiqqRqYzJyo/b3r9DlGNOaLveQNvs512tIrXtLmxuX/DHYoaBSbyrSl2xCB43V1NhEN3nBZd3mzmG79urqioGpAIkAqU4A+26HP9m0gCPDsgokq3/wsLA+YKVf2LCHGh9iyMud5gbQpExPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757664859; c=relaxed/simple;
-	bh=azMsw9UcYYDqC9B7k/Y8GO+xdiR80U6koOLcPLTzvp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pk+g1hfIvg2TSuu5y+Z4/wcjyin5B38bSGHR9wlgnEy3eKs6H7XHol6ZSNesbHFRxk0fbuvKK+EiztX8rVUFEvmvTZn3fPx2keM4inuHSDrAx/XibZO/YnBNtDScoTEgCtK2eh3D8XeeKHQYoIMW5el9NX0EZvG81rMUma9yI4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B26DaC/p; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757664856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GLQ9zpwy/op/MmGGkXMW1QcaWAZBupI3LsVE45/b150=;
-	b=B26DaC/pbVr3Rag/TnikgRTdRtW7qw9tI/7HNj6wkkbOsH4KpqLlkbTJrSvPtuVCdArWHW
-	2oFbYClnrGzC0V4HG6qzR52Toh2traTHhVRbiErIEMSOAFc/hvGeb7tgkjzDi/xJ1RHXjU
-	vX2P1UkpWuSYwjHlP5zp4pX7MlzEgRQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177-H3d8U1SdOzmkE2o_0enmZg-1; Fri, 12 Sep 2025 04:14:15 -0400
-X-MC-Unique: H3d8U1SdOzmkE2o_0enmZg-1
-X-Mimecast-MFC-AGG-ID: H3d8U1SdOzmkE2o_0enmZg_1757664854
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45ceeae0513so8975555e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:14:15 -0700 (PDT)
+	s=arc-20240116; t=1757664945; c=relaxed/simple;
+	bh=x6auaUtLkJOEoqmzTVyoxHafeP+WDnwCjdDW23ooG7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CDVPV/Z9FkSB0wUrt+qPnPEbwLrxnFbX7MCKjV9Kzcqdc15aGinHOKaul3zPz1FqWRCuZKgdzwIGHdAymjIc23UrWUHG9R8gEGAbNJNAm8ArDTzYhXx4Anveiylzav8pIL1vUjqWuSZ5Hi32cj/pcb0ldFEKHW9UnFgfzeN0vko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALMiutHz; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24b21006804so18525685ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:15:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757664944; x=1758269744; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b2EuFHC5+5B8ohKz2yz145rUlrp5xKfqVTKvvn+wKTM=;
+        b=ALMiutHz7JsBiTGqgQyeZscQpxU4dusSXLlyzt5UxlsWFzxLAuOkHAMGKkBL81BnBk
+         N21n6BjkxYLh0fKkCc9cpv16e++jnADpb7GmBnNORfNFU2XrP/3pZBSZvYrcYZswY5ZL
+         7VR1SguAzdvNYbH8C8nSFSpb2gnhJ8x2XeiaVD7ftDS5a2VkijMmkMm4DCnNnADleBPg
+         KjXkSBDzP3ZdMRQHng8o+yhM3E9kW6YS1xcHjGrBnXs0gSEoSjnPbw8sOh8Wm2tHQDVH
+         JH2BYYWPwXvZvoSOuoibsV3V9POo3jQkrr0n+N7FXDRF2fFEbDVJOVSI0t4WQgDXTsOt
+         Cytw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757664854; x=1758269654;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1757664944; x=1758269744;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GLQ9zpwy/op/MmGGkXMW1QcaWAZBupI3LsVE45/b150=;
-        b=YHmYYGJOMW2gcVjS8ppJMuM7xNF41uB+3vPRmrc+ZoVnWWgalC4foiQJUFW31vrKss
-         eXZv3vAPbhfW2Vvvi8vM7TwnmkkM1fIqC+lu4OoE11W/AK5fRTVd8v0p7XuRjton3gh7
-         5Gpypgb8MGpbjr5mpFfWEl6IaQIDXdDBkvplfPmiXS+2BnQcEi26/6woswdCFE/Kg9iu
-         Yj99NCXRuWt11bnv024fdr3Nk0nDWFdu54U63sK8ySf2GOCa0fe0pogCbsCbdcET/7jE
-         pSdSECy3Xx1X3oonlILvELlBifKpRLGHpmj9qREUIcaOYvnSJ23OeaBP/K0ZdFVidzUl
-         umGw==
-X-Gm-Message-State: AOJu0YxC8fntqc0p+lZDInojM5n9nvE5LCZdZnWTz9NzMrZgM3zqMTRC
-	riePjFpRnSFHaa1T4zb+pmLYtYmzY2VUCUGWTViHV5q+M+qYmFfne4YlcOXDkUrlZqnzW9OdEu0
-	7+gX4jUca4CRySvZAaQ18tSzi0o9LbUeBYRwhjime1inWtiFsh5axglCpQcTj46heoNMR5zbdxP
-	MGKiQ=
-X-Gm-Gg: ASbGnct0OWAyPzx7i+1EUWWUTH896amNcUMLX5xrXyKKso3PZwb2vsw8lvhxlXukZ48
-	byzLrz8/D6qjvCzRjGEJ0DkDNxgMiWklRn8qUXjmZEfNTvG6/CF/jM/CNu4B7Gwg8/iNLNB4VMx
-	X2lpYL9JpNNYfhhpZK/0w04z2DrhRTTb6ZgwEqQHDCuNSMHT/p4eiwC3ucmen5nZodiw+FSm/j2
-	ifd/QfhGkmc5zB36OUJ6T0G4rMeLenkNoh8DQF9v5fo9JbawNUTOOc4HbJdals4l58AzQxRfjsX
-	+yoHXNKRZpbC8BfGnCXFeyzwc+ulUQvuCrglKX8Plw2i7nnNbv7nEnd8H761K4ancvAaWsg=
-X-Received: by 2002:a05:600c:34d4:b0:45b:81ad:336 with SMTP id 5b1f17b1804b1-45f211dad50mr30324715e9.16.1757664853566;
-        Fri, 12 Sep 2025 01:14:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IESJFvAeYhdkW4KAMfuQIYjrYum5mTZiCkwxPFGIeV9u9GC9mwwnJ96IkXOGNe4ZRIqcwxMmw==
-X-Received: by 2002:a05:600c:34d4:b0:45b:81ad:336 with SMTP id 5b1f17b1804b1-45f211dad50mr30324275e9.16.1757664853119;
-        Fri, 12 Sep 2025 01:14:13 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0157619fsm56152315e9.7.2025.09.12.01.14.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 01:14:12 -0700 (PDT)
-Date: Fri, 12 Sep 2025 10:14:09 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
-	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
-	kernel-team@android.com, Luca Abeni <luca.abeni@santannapisa.it>,
-	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
-	yurand2000@gmail.com
-Subject: Re: [RESEND][PATCH v21 0/6] Donor Migration for Proxy Execution (v21)
-Message-ID: <aMPWUYTMMrtUeZqn@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250904002201.971268-1-jstultz@google.com>
- <aMLVuZbkMEQzXPqR@jlelli-thinkpadt14gen4.remote.csb>
- <CANDhNCqx1cGRH=H5ze5LWdjTzA40Ajf5pmjrxj==oh_FcTd2oA@mail.gmail.com>
+        bh=b2EuFHC5+5B8ohKz2yz145rUlrp5xKfqVTKvvn+wKTM=;
+        b=YpgwLWyhVB3fEkqaLuUxuIkL7crNG79PP+/O/RjJS3FrScXMjBSVBCc8M7sut9bcod
+         XzUYzZbz6PJ5JDXtZHuNwcodfLdbdd3JVBZ3v/ufm1C0gcc3eZ2/5YipOYZ+zJq8ZqqL
+         K12ym2yw4byCyze/ucDp573str264hUIJMS+qUcHaLA1gHYJ05jtbVPfyz3tOcs4aBL4
+         585WHTgwmk+QWCgYwVo9ac/btXwGHGYaqHDWlx5ZG/GSMGgW+qj7FXVEnC/eubEfFCdC
+         BFERYrC8lDMn8edA9evSajEWlVH5XL4YHVfhE+Oi7O6Q0D4gkzxNhNnHsWIsQ08OxfBq
+         Bxxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqAACGruCF8RRfVgC5PKfJv6Cl+txqup0X1dk28ps4wrTU3SsQhelE0PGCJVKmAM/RdF7NrVwt5H0hFAU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp/1xgALmhvxodGL51ikL3Z1tFt9p+AEB1W8Fg7ImmMNCeFZ/y
+	tLjtU1CnQmfBxTe7Gm9/KTPpHBoqdXD2ygxZuornNGsvaBwq/bbOAcAW
+X-Gm-Gg: ASbGncu4vfcAmNzTLrYOlYIFwCo107F49+IGm/RLVBlTeB7SmrYc1XXc5yKBjPvK0sx
+	Zh/CRjrS8OQaI/A+OYjZTWYjWkkPZcsDWPrhvSFiOv2yTlt08M6kysS2lssK6Jz3oyKrJmJfewm
+	ZjupV4C0hwDHtC0d1GuwxnrpwxBzvVW61j4u3ILr2228i7WdIhJR6FmMS4gGhgSTlzkhitrKgvb
+	0HAyibDWbvNc/U9qaL+iHpMsJu6F+/V77c8rCJk0xeA4K64u6Sdks0vSv0fCeoQTtFlOKSo37cB
+	xuDt4rtSC3Bmr/xiOe078/TMWw/cncQ+ki+U0Sy2Zs8zWkHYG89ZxeNLMRq6sK8fFEtGDxxGyOF
+	moYwJ4HMR/4QZl6SPoQ==
+X-Google-Smtp-Source: AGHT+IEbBMlmn4X7zEmlKlP8C6ibHYXtACBPItjKVzlA2dNacKH531krqQgn4mB7LrrpYHonZsrfZg==
+X-Received: by 2002:a17:902:f707:b0:25e:78db:4a0d with SMTP id d9443c01a7336-25e78db4d35mr3480525ad.36.1757664943639;
+        Fri, 12 Sep 2025 01:15:43 -0700 (PDT)
+Received: from [127.0.0.1] ([2403:2c80:6::3079])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c36cc580csm41503445ad.10.2025.09.12.01.15.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 01:15:43 -0700 (PDT)
+Message-ID: <8c047b5f-f4c2-4795-8ceb-a556ac6647b2@gmail.com>
+Date: Fri, 12 Sep 2025 16:15:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/19] mm/ksw: Introduce real-time Kernel Stack Watch
+ debugging tool
+Content-Language: en-CA
+To: Alexander Potapenko <glider@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mike Rapoport <rppt@kernel.org>,
+ "Naveen N . Rao" <naveen@kernel.org>,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com,
+ "David S. Miller" <davem@davemloft.net>, Steven Rostedt
+ <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250910052335.1151048-1-wangjinchao600@gmail.com>
+ <aMO07xMDpDdDc1zm@mdev>
+ <CAG_fn=V5LUhQQeCo9cNBKX1ys3OivB49TuSeWoPN-MPT=YTG6g@mail.gmail.com>
+From: Jinchao Wang <wangjinchao600@gmail.com>
+In-Reply-To: <CAG_fn=V5LUhQQeCo9cNBKX1ys3OivB49TuSeWoPN-MPT=YTG6g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCqx1cGRH=H5ze5LWdjTzA40Ajf5pmjrxj==oh_FcTd2oA@mail.gmail.com>
 
-On 11/09/25 16:21, John Stultz wrote:
-> On Thu, Sep 11, 2025 at 6:59 AM Juri Lelli <juri.lelli@redhat.com> wrote:
-> > On 04/09/25 00:21, John Stultz wrote:
-> > > I’d really appreciate any feedback or review thoughts on the
-> > > full series as well.
-> >
-> > I current have the following on top of your complete series
-> >
-> > https://github.com/jlelli/linux/commits/experimental/eval-mbwi/
-> > https://github.com/jlelli/linux experimental/eval-mbwi
-> >
-> > of which
-> >
-> > https://github.com/jlelli/linux/commit/9d4bbb1aca624e76e5b34938d848dc9a418c6146
-> >
-> > introduces the testing (M-BWI is Multiprocessor Bandwidth Inheritance)
-> > infra and the rest some additional tracepoints (based on Gabriele's
-> > patch) to get more DEADLINE info out of tests (in conjuction with
-> > sched_tp [1]).
-> >
-> > Nothing bit to report just yet, mainly spent time getting this working.
+On 9/12/25 14:41, Alexander Potapenko wrote:
+> On Fri, Sep 12, 2025 at 7:51 AM Jinchao Wang <wangjinchao600@gmail.com> wrote:
+>>
+>> FYI: The current patchset contains lockdep issues due to the kprobe handler
+>> running in NMI context. Please do not spend time reviewing this version.
+>> Thanks.
+>> --
+>> Jinchao
 > 
-> Very cool to see! I'll have to pull those and take a look at it!
+> Hi Jinchao,
 > 
-> And I'm of course very interested to hear if you find anything with
-> the proxy set that I need to revise.
+> In the next version, could you please elaborate more on the user
+> workflow of this tool?
+> It occurs to me that in order to detect the corruption the user has to
+> know precisely in which function the corruption is happening, which is
+> usually the hardest part.
 > 
-> > One thing I noticed thouh (and probably forgot from previous
-> > discussions) is that spin_on_owner might be 'confusing' from an
-> > RT/DEADLINE perspective as it deviates from what one expects from the
-> > ideal theoretical world (as tasks don't immediately block and
-> > potentially donate). Not sure what to do about it. Maybe special case it
-> > for RT/DEADLINE, but just started playing with it.
-> 
-> Can you refresh me a bit on why blocking to donate is preferred? If
-> the lock owner is running, there's not much that blocking to donate
-> would help with. Does this concern not apply to the current mutex
-> logic without proxy?  With proxy-exec, I'm trying to preserve the
-> existing mutex behavior of spin_on_owner, with the main tweak is just
-> the lock handoff to the current donor when we are proxying, otherwise
-> the intent is it should be the same.
 
-Yeah, I think we want to preserve that behavior for non-RT mutexes for
-throughput, but for RT I fear we might risk priority inversion if tasks
-spin (for a bit) before blocking. My understanding is that with PI
-enabled futexes (apart from some initial tries to get the lock with
-atomic ops) we then call into __rt_mutex_start_proxy_lock() which
-enqueues the blocked tasks onto the pi chain (so that PI rules are
-respected etc.). Guess maybe we could end-up reintroducing this behavior
-when we eventually kill rt-mutexes, so don't worry to much about it yet
-I think, just something to keep in mind. :)
+Hi Alexander,
 
-> Now, I do recognize that rt_mutexes and mutexes do have different lock
-> handoff requirements for RT tasks (needs to strictly go to the highest
-> priority waiter, and we can't let a lower priority task steal it),
-> which is why I've not yet enabled proxy-exec on rt_mutexes.
+Thank you for the question. I agree with your observation about the
+challenge of detecting stack corruption.
 
-Right. I will probably hack something in to test the DEADLINE scenarios,
-but again don't worry about it.
+Stack corruption debugging typically involves three steps:
+  1. Detect the corruption
+  2. Find the root cause
+  3. Fix the issue
 
-Thanks,
-Juri
+Your question addresses step 1, which is indeed a challenging
+part. Currently, we have several approaches for detection:
 
+- Compile with CONFIG_STACKPROTECTOR_STRONG to add stack canaries
+   and trigger __stack_chk_fail() on corruption
+- Manual detection when local variables are unexpectedly modified
+   (though this is quite difficult in practice)
+
+However, KStackWatch is specifically designed for step 2 rather than
+step 1. Let me illustrate with a complex scenario:
+
+In one actual case, the corruption path was:
+- A calls B (the buggy function) through N1 call levels
+- B stores its stack variable L1's address in P (through a global
+   variable or queue or list...)
+- C (the victim) called by A through N2 levels, unexpectedly has a
+   canary or local variable L2 with the overlapping address with L1
+- D uses P in a separate task (N3 call levels deep), which modifies
+   the value of L1, and L2 is corrupted
+- C finds the corruption
+
+The only clue might be identifying function D first, which then leads
+us to B through P.
+
+Key advantages of KStackWatch:
+  - Lightweight overhead that doesn't reduce reproduction probability
+  - Real-time capability to identify corruption exactly when it happens
+  - Precise location tracking of where corruptions occur
+
+KStackWatch helps identify function D directly, bypassing the complex
+call chains (N1, N2, N3) and intermediate functions. Once we locate D,
+we can trace back through the corruption path and resolve the issue.
+
+Does this clarify the tool's intended workflow?
+
+-- 
+Jinchao
 
