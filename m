@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-814236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAE5B5516E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:28:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F4BB55170
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:28:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3D5116EBF3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6F921D65119
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF471322A38;
-	Fri, 12 Sep 2025 14:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36564324B06;
+	Fri, 12 Sep 2025 14:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XQT5V/7H"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HOafQr+8"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF0A32252C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62C3322763
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686993; cv=none; b=ZZ0XYdrNmkzvptIDAw6QvBTf7aLZSbwqhy805PQmc0Z7iUd2HjSUOSaj22hzQ4l6GllD8eXjcxYvt+H3La2yPVXGjzBEQEqVQAZfDYn3psv2GZ4dEesbffYxtpjhWc7ACWFWoZMTu8VJHAVNMr/yOQWBFuD/tFwvsPPwCDKaZkI=
+	t=1757686994; cv=none; b=Qc9fpSGamN1S9WQTa1gomGrN0mO3rSni5YpW1jkX2iby3+RVOMbPYwBT7OpEql5PD1J3n6unm1B4G+F/Z/m++vdL+9yQsdtJx7Gx1pcM47wKB7ScLDefYi1RCEpWxizqm3DIjfvqQtZ16YC981h9/4mz1XywUo6HEAG70UfUKfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686993; c=relaxed/simple;
-	bh=ePUrNeYcfbWDzNUMEcIA1fjUkpMsdOycpku5PEFxqG8=;
+	s=arc-20240116; t=1757686994; c=relaxed/simple;
+	bh=QFBxOpXKFdUsBBboSwrFkX85dFPDXK3RGBPvIvbMZv8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gRIvscj5rNVvc27IF5wSdH+tEAWrGkGBekPOgfaHt0m12fRHXkzelwMTVQwnqWI0nZrxUTzErW7vCRq3KAnduaGnCc3Jv/BG4iBAYmf/e4N95SeYIbIWPe7xaxBmmNkjTm1YGqjMTXFhI6fGosAETf7nA5uaDeEvW91rryLXGq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XQT5V/7H; arc=none smtp.client-ip=209.85.167.43
+	 MIME-Version; b=DEiCLTTcZGfmp+D4WykLQLXg3yv6Ni1usYq+VfKbpJj/YE3n4zqgHrow99fzivdIG95eim1HBhCkFNoyE75eX0adZuQDvoRbBlE6WM6p1dTfhoF07AK9E/bXBFWeNP3VwQE2GxmAtcgerFq8hZB/EqD5Aqg6CotirxnTKZclhss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HOafQr+8; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-56088927dcbso2443398e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:23:10 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5607c2f1598so2230984e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:23:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757686989; x=1758291789; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757686991; x=1758291791; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f2zyUFMODPm+3x9f3cYjxzBFh42dmd7tVFDAg+JdNrU=;
-        b=XQT5V/7HV9vZqdo7rWHRvt6emMp4tziXeHz2CLwPOTZUW+5g06MlU+pYt7RzcYp9XH
-         k/tD2hGhOD83urfO2KDbJSwuMxw5kg2ggR8vlWSJIusuOYVMW4DMWFXVWETwefvGQul3
-         ltO9d0OMPg8q78gOJQr/Bp81Tc+H0osp7wtmmwumGNJBHdXnuqF8kUKXyamGfjxm2Pe6
-         qqnARygAA/3IwoHh6grmw87NNPWdvkNbfYY0gztxOzqNEY9ZxzkYvidcjt0COgdz9yCH
-         h1aycf8lkCLMvB65Z+GQfCCFRJ0D7ZJaCpgM8ulyZtMP45NDlrGDRfa5KGcDpHev8tfH
-         QlQg==
+        bh=HUiyOZ4i6Z7SnqGnRt6/7sGsiUAMT9ZWi+zfYj8DH6g=;
+        b=HOafQr+8UQoklMpK2qsZ+SqaxqZXtjtXq/NmyE0AqWTV3Bu8FlsVFLd8BVneOxhh0q
+         k/zzE+vBT/OeThiM/eYBjOhLp2Kd7QXPpiqwo8pNZdMde0Y5mwvm5znlY7k06wZ4tDtO
+         WMkA9M2Fnok0VIeifmtu9d5ZOCaQGmhYA7E/+/hNNXC1jJ72HT6ugmniY+k4hDORayl/
+         mLxQYwNeWqARtBoEuC+lxensJRW5H+rst7zpMK6k/5svXbNTx522j/ulw4K5HG8da6aR
+         71dJH5An0wmAX6dCwteOpltVgT0xbHrXh8y80TyA2f6NNHXIO3cYyg4BilwkoLsTk/1+
+         N7DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757686989; x=1758291789;
+        d=1e100.net; s=20230601; t=1757686991; x=1758291791;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=f2zyUFMODPm+3x9f3cYjxzBFh42dmd7tVFDAg+JdNrU=;
-        b=YML4VXTaMikYG1M+5zvOOjCXgMFaWC9qhs9MN2sj9IR4NciReP4/3r5lRpLlwfsjR9
-         g4ghuTHyN1kfvgi+QCth6XkseY8/IiD4eaEJimFivcx69Xw4B01/67lSiAKCZb7CDhBj
-         OlmvUGhzHnc6E7m1QJicZjlot0R1zBQu22RVJCuWS0qqdZORYfWXzh7CNIh6XsiUu9QB
-         SVOfjzfVC7uMTGedtr0bcHiDExtrE3whjCpFRn6DWSaBntN0Fu8nHRdZzmt6ZbIpo3Ns
-         QGre5yd1Az3zYuQJdRwjxkc3gp6xiN11AGUzzTZHtIOtSZinVeLgoR82CYs/7HqAj9ng
-         K1JA==
-X-Forwarded-Encrypted: i=1; AJvYcCXN0ZCDeZ1TUYz9qn2oT8n+RgvMajhGt6cksiRguWWcq1fyQLB4ZrLE8Q1hlH1vUxtaDdI31ZhhegMa8cI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMWng4CCehIyJRQ9uNWzHvco+7SN53tWmx0ICkZqB2qWb5y+gJ
-	i6btfD7/Q2NxdXx+A0FCWrfb7LoUm5CpbC24r3U3N0HDx3xJvVOAWCqVT3lrC65wHZU=
-X-Gm-Gg: ASbGncvjmrPhObL2KSxDrtrzWZj+UiztLHbU/GX744SDBPD8wwtLHgcawZsxiENqjgH
-	R3L6W1euQTLX+erhn6xpO9sooxTna/bNESHRPP1lpUywO13V5Gu68X6byhhNNSUUGJjCEqe455E
-	Y7Lw/eUEWBk1Ik2xJizHkIcd3LD+0t+HVGXzcrTzvYmLP3nogLut211q0xi+M/9SjT2fYYGN2C5
-	CitjRxGtVwiAZZwwW/QXWySn5Zi5WuKGBszL7ESTfuLQTbemHX6tPGU1f/4qstS+jpJ1m8uDCe+
-	PvRjd3qTlgvrHbMPkv/E8a8ihgd+pS2LvKgBBwMlgjHJFnQ0DyrxAM5YaFWdUcKwyxh+TTcKc3r
-	SSV1iynJ+QIyY+u1IAQFlzCGNTQCvrISLX1gvnNjQ0pGrdhtAT8v/hiLTrbZKpjcoUg==
-X-Google-Smtp-Source: AGHT+IHFUaseLNHfzoJaHm+RoOJjn9rz/mii36hbT1zgl7fAKkz+PFk0Q0oVaDOWjWsa7SP4UDw72Q==
-X-Received: by 2002:ac2:4e98:0:b0:55f:4c1d:47f3 with SMTP id 2adb3069b0e04-5704f1cecd3mr887911e87.28.1757686988971;
-        Fri, 12 Sep 2025 07:23:08 -0700 (PDT)
+        bh=HUiyOZ4i6Z7SnqGnRt6/7sGsiUAMT9ZWi+zfYj8DH6g=;
+        b=EwSoPRMMIluiM3bw77jLjGZpNCKbXv1kIJU8kBtShK7g7iP8TIF+UkfMI5p15/L2oY
+         mJ1ZarA1rEEXTQFD93cuLPzwWsygVaPKJG1mx6ZrHgbvC4RLlKIyzB/smO0WtpmSF73z
+         Kdpzvkbm55/nb23vVPsrv3lvsbIHEPq8KypaRiOfFKadY35o35+tBiZxrr1qPsHOsaNG
+         Nb16qkJdiKtG20XDDLcO5j5ZvTLGARQ9SJkWSh02c0NkbyqFMEewRC1g28dhESxIfBsV
+         m0l4pIUOGjGsuHgApX+4NDflwkgKCDUR6sA1tYnDUKjoZJ8n971hE9bJGKHTnyORFmg1
+         qNyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZReO73oue7XR/UusNXF4GJ7cacaBWKkttUtHeCQs+GY3OCwgLEu4/Y1BnCsVvTU7qFOlozv/CUsjVJ4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfKqnxHSLRL0i9EvVzIPEJPKehSxKpJ1OJuLuLDdIvSFPnYDa+
+	WbLfFpLNurEFH5IWU0KfLo3qz5GCwLoksnyVc2cHthFRFQb0nsEQHWwvMUbUDIOOYsI=
+X-Gm-Gg: ASbGncs00NDzk+dtENHt5SqvmG1dw+rDQwpn97Buc9Y72z2hEKePgE/vMqhjeixZJTR
+	fKbU3f1ZvoH7GF4XsnbzdyniWZgkIPyuO62ig/21nrRC/C2y3aXoGhTBLRyKtKF9h89UKzrUQYS
+	6F1mtN1VH3It3foVfs5Dndbenq2Q1QW/nhq36i0CU0D/EcUpOhSfOSIFgEYA3uzGtR5IeCG2cFt
+	ke+T7VFdd8oStYxtQLR2+Hr7TF0/X6Tus01k8UFtLcbtNFGmkYqxsRCrcvzKpHxUTkN5jUHDVFF
+	3mJnnht/ORtGzDwW12SoMszYrCVM07R5AL1VsbFUGMahIQ40bLaodJ/eFD++j61t2hDew328bkf
+	fDVpQUgKtKcHTCWdBN562V7vK4E1b/xuhq1Mp0aYjGKUWLhEtJ+U6qu91aThum01vcQ==
+X-Google-Smtp-Source: AGHT+IGdxKLtOe0+gsm8bwgR1GeYx44jfxsOGHDZU3t9lKwYxQzb6vqr4Xr/Ni+j2w631ApUy2bsKA==
+X-Received: by 2002:a05:6512:712:b0:55f:6fb4:e084 with SMTP id 2adb3069b0e04-57050fe4cbemr812199e87.50.1757686990958;
+        Fri, 12 Sep 2025 07:23:10 -0700 (PDT)
 Received: from nuoska (87-100-249-247.bb.dnainternet.fi. [87.100.249.247])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a5df5f74sm164981e87.54.2025.09.12.07.23.08
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a5df5f74sm164981e87.54.2025.09.12.07.23.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 07:23:08 -0700 (PDT)
+        Fri, 12 Sep 2025 07:23:10 -0700 (PDT)
 From: Mikko Rapeli <mikko.rapeli@linaro.org>
 To: linux-mmc@vger.kernel.org
 Cc: ulf.hansson@linaro.org,
@@ -86,9 +86,9 @@ Cc: ulf.hansson@linaro.org,
 	arnd@arndb.de,
 	zhoubinbin@loongson.cn,
 	Mikko Rapeli <mikko.rapeli@linaro.org>
-Subject: [PATCH v3 2/4] mmc: add COMPILE_TEST to multiple drivers
-Date: Fri, 12 Sep 2025 17:22:51 +0300
-Message-ID: <20250912142253.2843018-3-mikko.rapeli@linaro.org>
+Subject: [PATCH v3 3/4] mmc: remove COMPILE_TEST from MMC_LOONGSON2
+Date: Fri, 12 Sep 2025 17:22:52 +0300
+Message-ID: <20250912142253.2843018-4-mikko.rapeli@linaro.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250912142253.2843018-1-mikko.rapeli@linaro.org>
 References: <20250912142253.2843018-1-mikko.rapeli@linaro.org>
@@ -100,54 +100,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-These compile on x86_64 with =y and =m.
+It fails to link due to undeclared dependency
+to regmap which is not enabled for COMPILE_TEST:
 
-Cc: Arnd Bergmann <arnd@arndb.de>
+ERROR: modpost: "__devm_regmap_init_mmio_clk"
+[drivers/mmc/host/loongson2-mmc.ko] undefined!
+
 Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
 ---
- drivers/mmc/host/Kconfig | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/mmc/host/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 7232de1c06887..2db46291ae442 100644
+index 2db46291ae442..e2d9a7cf9f855 100644
 --- a/drivers/mmc/host/Kconfig
 +++ b/drivers/mmc/host/Kconfig
-@@ -56,7 +56,7 @@ config MMC_STM32_SDMMC
+@@ -1113,7 +1113,7 @@ config MMC_OWL
  
- config MMC_PXA
- 	tristate "Intel PXA25x/26x/27x Multimedia Card Interface support"
--	depends on ARCH_PXA
-+	depends on ARCH_PXA || COMPILE_TEST
+ config MMC_LOONGSON2
+ 	tristate "Loongson-2K SD/SDIO/eMMC Host Interface support"
+-	depends on LOONGARCH || COMPILE_TEST
++	depends on LOONGARCH
+ 	depends on HAS_DMA
  	help
- 	  This selects the Intel(R) PXA(R) Multimedia card Interface.
- 	  If you have a PXA(R) platform with a Multimedia Card slot,
-@@ -608,7 +608,7 @@ config MMC_SDHCI_MSM
- 
- config MMC_MXC
- 	tristate "Freescale i.MX21/27/31 or MPC512x Multimedia Card support"
--	depends on ARCH_MXC || PPC_MPC512x
-+	depends on ARCH_MXC || PPC_MPC512x || COMPILE_TEST
- 	help
- 	  This selects the Freescale i.MX21, i.MX27, i.MX31 or MPC512x
- 	  Multimedia Card Interface. If you have an i.MX or MPC512x platform
-@@ -866,7 +866,7 @@ config MMC_DW_PCI
- 
- config MMC_DW_ROCKCHIP
- 	tristate "Rockchip specific extensions for Synopsys DW Memory Card Interface"
--	depends on MMC_DW && ARCH_ROCKCHIP
-+	depends on MMC_DW && ( ARCH_ROCKCHIP  || COMPILE_TEST )
- 	select MMC_DW_PLTFM
- 	help
- 	  This selects support for Rockchip SoC specific extensions to the
-@@ -948,7 +948,7 @@ config MMC_USHC
- 
- config MMC_WMT
- 	tristate "Wondermedia SD/MMC Host Controller support"
--	depends on ARCH_VT8500
-+	depends on ARCH_VT8500 || COMPILE_TEST
- 	default y
- 	help
- 	  This selects support for the SD/MMC Host Controller on
+ 	  This selects support for the SD/SDIO/eMMC Host Controller on
 -- 
 2.34.1
 
