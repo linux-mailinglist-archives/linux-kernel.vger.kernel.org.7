@@ -1,128 +1,197 @@
-Return-Path: <linux-kernel+bounces-813015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4C2DB53F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:07:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A55B53FAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 628117BBD23
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA6C487B97
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C8A50276;
-	Fri, 12 Sep 2025 01:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLrXaBU9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A257261E;
+	Fri, 12 Sep 2025 01:11:17 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D312AE66;
-	Fri, 12 Sep 2025 01:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEDE168BD;
+	Fri, 12 Sep 2025 01:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757639249; cv=none; b=h+2h9ytysy3Gs7fDDs34IJx7e1pLmMAjNwGYby4IKAEOE3zxlsZVods5/dPreSFeMh71c46SwMuk7eT05eabb7Q8hkRszmHZYQDvRBN0kBB+yUWsHW8ofIswMPvheaMttc664C+P0shynl+/HLnKldOLQQ/DiYubVHrQ7/alh6o=
+	t=1757639477; cv=none; b=CejFA6Drgu6Mxzu3m1oPNyA4dk0yJi4V9dOgLkNMITOh4YIogK+QyGeG5ko07x7E7T9CS52nvRf1pt+TA6nz3AIvuWaBYSwzsXjfQopeGNGqTyN3YD5qxGc+FSPeO7I9zEaxSX+rOdQFO9JOYVHKUHfRt8mGGzkQUk32EBT6faA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757639249; c=relaxed/simple;
-	bh=PXuMJATVT4V0Y16Ka+lqtvBlfX81tB2vy3KhW0U7yNw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=rFy91xpFZ7NefJiOToOQq3B0STEChovQll3jGUJiaEVf0/qeaR+O2Wv4RPry0giKnDkp3JhiptzVg2AKF3E4uIZgYvhGI621e6+/ZGR+oZ4keX6AD/M728si8DtDJadhJ2nC5OtC0rYfD3KewOAR8rJcJSBssCaJMfHgGhuBhD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLrXaBU9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA00C4CEF0;
-	Fri, 12 Sep 2025 01:07:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757639247;
-	bh=PXuMJATVT4V0Y16Ka+lqtvBlfX81tB2vy3KhW0U7yNw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dLrXaBU9sm6JjTx7yMnrAWHzGggmPl9ChW3HUUfCJfPQ1RupdUGBZupZevzvrNAnj
-	 qqWKh9IbNcZOots0tCo95xxx38IqCC5RLsHH+wgRArii+KRrvzl9hivVoGr0Qp7Mdj
-	 e6JIb3kknNcn8VC1kJf3GL6WzF9Zu/3FatptpsAQjwFcfw6BasZKVrhcMcCRTXgsKs
-	 bj0uLjCJNYkas6NBhgR6Sup+5dN6l79ufOCpZ+TcaeYVhLsRtLmLFz4uAF6rYYP3VB
-	 mBwt859ZmB4c1FCaydz731HnFwNvP3RJpzinCL6N042yJBgpiazhbYOpwywUejcy5V
-	 f6EcX6h9WVWdQ==
-Date: Fri, 12 Sep 2025 10:07:23 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Linus Torvalds
- <torvalds@linux-foundation.org>, linux-mm@kvack.org, Kees Cook
- <keescook@chromium.org>, Aleksa Sarai <cyphar@cyphar.com>, Al Viro
- <viro@ZenIV.linux.org.uk>
-Subject: Re: [PATCH] uaccess: Comment that copy to/from inatomic requires
- page fault disabled
-Message-Id: <20250912100723.4fce2b29c4d77f3a89c0b636@kernel.org>
-In-Reply-To: <20250910161820.247f526a@gandalf.local.home>
-References: <20250910161820.247f526a@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757639477; c=relaxed/simple;
+	bh=vV9IcXnxbwOyZ8l1SQmnYpbR2lc+Z9Ae+far9EGwBBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NqXYUC//auVqiNTJ+EdqDDSh7G0uQLFSZHAHTP9NuG59S9QuuLqXfWKmj89hNsgo2wqqw3EEgAOB8pS77Z0GKKhbvd0ydKCWe5kC9CD5q4GBgR1tbc2Tu1cNR+vZxNlXMgf7v3Y4pnZPouWHsf+EaCPPyE6Y9hGr55rhdvU3MGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 5c0e01c08f7511f0b29709d653e92f7d-20250912
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:d7750f67-295c-450f-86ba-968d43d9bad1,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:ef6f51f2fe3759adf93d1299e6ece788,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5c0e01c08f7511f0b29709d653e92f7d-20250912
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <zhangzihuan@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1210366386; Fri, 12 Sep 2025 09:11:06 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 7E747E009007;
+	Fri, 12 Sep 2025 09:11:06 +0800 (CST)
+X-ns-mid: postfix-68C3732A-41695370
+Received: from [172.25.120.24] (unknown [172.25.120.24])
+	by mail.kylinos.cn (NSMail) with ESMTPA id 8C08CE009007;
+	Fri, 12 Sep 2025 09:11:05 +0800 (CST)
+Message-ID: <365c42f5-56a1-4a2c-9244-7943c3600fa2@kylinos.cn>
+Date: Fri, 12 Sep 2025 09:11:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Wed, 10 Sep 2025 16:18:20 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> The functions __copy_from_user_inatomic() and __copy_to_user_inatomic()
-> both require that either the user space memory is pinned, or that page
-> faults are disabled when they are called. If page faults are not disabled,
-> and the memory is not present, the fault handling of reading or writing to
-> that memory may cause the kernel to schedule. That would be bad in an
-> atomic context.
-> 
-> Link: https://lore.kernel.org/all/20250819105152.2766363-1-luogengkun@huaweicloud.com/
-> 
-
-Looks good to me.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thanks,
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ACPI: video: Fix missing backlight node creation on
+To: Hans de Goede <hansg@kernel.org>
+Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mario.limonciello@amd.com, rafael@kernel.org,
+ stable@vger.kernel.org
+References: <de4b5ec6-1e42-44b8-b5d3-5a452d7401ef@kernel.org>
+ <20250911074543.106620-1-zhangzihuan@kylinos.cn>
+ <ae7b139f-dc25-413d-bfc3-3be187ab3a73@kernel.org>
+From: Zihuan Zhang <zhangzihuan@kylinos.cn>
+In-Reply-To: <ae7b139f-dc25-413d-bfc3-3be187ab3a73@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  include/linux/uaccess.h | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-> index 1beb5b395d81..add99fa9b656 100644
-> --- a/include/linux/uaccess.h
-> +++ b/include/linux/uaccess.h
-> @@ -86,6 +86,12 @@
->   * as usual) and both source and destination can trigger faults.
->   */
->  
-> +/*
-> + * __copy_from_user_inatomic() is safe to use in an atomic context but
-> + * the user space memory must either be pinned in memory, or page faults
-> + * must be disabled, otherwise the page fault handling may cause the function
-> + * to schedule.
-> + */
->  static __always_inline __must_check unsigned long
->  __copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
->  {
-> @@ -124,7 +130,8 @@ __copy_from_user(void *to, const void __user *from, unsigned long n)
->   * Copy data from kernel space to user space.  Caller must check
->   * the specified block with access_ok() before calling this function.
->   * The caller should also make sure he pins the user space address
-> - * so that we don't result in page fault and sleep.
-> + * or call page_fault_disable() so that we don't result in a page fault
-> + * and sleep.
->   */
->  static __always_inline __must_check unsigned long
->  __copy_to_user_inatomic(void __user *to, const void *from, unsigned long n)
-> -- 
-> 2.50.1
-> 
-> 
+=E5=9C=A8 2025/9/11 18:38, Hans de Goede =E5=86=99=E9=81=93:
+> Hi Zihuan,
+>
+> On 11-Sep-25 9:45 AM,  Zhang wrote:
+>
+> ...
+>
+>>>   So as you say the issue is that you have no native GPU driver calli=
+ng
+>>>   acpi_video_register_backlight().
+>> I'm very happy that you got it.
+>>
+>>> First of all I assume that there is some sort of builtin GPU on these
+>>> Lenovo and Inspur machines with Zhaoxin CPUs. Even if the GPU driver
+>>> is not in the mainline kernel then I assume there is some out of tree
+>>> driver. Can that driver not call acpi_video_register_backlight() ?
+>> We are currently working with Zhaoxin on this matter, and we expect to=
+ have some results in a few days.
+>> I will keep you updated once we have progress.
+> Ok.
+>
+> ...
+>
+>> Thanks a lot for your patch and for looking into this issue.
+> You're welcome.
+>
+>> At the moment, we are still confirming with Zhaoxin whether this behav=
+ior is consistent across all their platforms,
+>> so we are not sure if the special handling should always apply.
+>>
+>> Also, on kernel 5.4 these machines seem to work fine without requiring=
+ a native GPU driver, while on 6.6+ the backlight node is missing.
+>> Could you please clarify what design change or intention caused this b=
+ehavioral difference between 5.4 and newer kernels?
+> The main problem is that on x86 laptops there are too much different
+> ways to control the backlight:
+>
+> enum acpi_backlight_type {
+>          acpi_backlight_undef =3D -1,
+>          acpi_backlight_none =3D 0,
+>          acpi_backlight_video,
+>          acpi_backlight_vendor,
+>          acpi_backlight_native,
+>          acpi_backlight_nvidia_wmi_ec,
+>          acpi_backlight_apple_gmux,
+>          acpi_backlight_dell_uart,
+> };
+>
+> With video, vendor and native all 3 being quite normal to have
+> around on a single laptop.
+>
+> A long time ago the kernel just used to register all
+> backlight handlers for which there seemed to be support,
+> so "ls /sys/class/backlight" would e.g. output:
+>
+> acpi_video0
+> intel_backlight
+> dell_laptop
+>
+> And then userspace would pick one to use, typically
+> checking for different backlight types (raw/platform/firmware)
+> in descending order of preference and picking the first
+> backlight interface matching the highest preference type.
+>
+> But even though multiple types may be advertised by
+> the firmware, they do not necessarily actually work.
+>
+> So the simple userspace pick based on preferred type
+> solution did not work on all laptop models and
+> drivers/acpi/video_detect.c starting growing heuristics
+> + quirks to let the kernel pick one and hide the others.
+>
+> At first for acpi_video# backlights they would get
+> registered and then later if a native backlight
+> (e.g. intel_backlight) showed up and the heuristics /
+> quirks set that should be preferred then the
+> acpi_video# backlight would be unregistered again.
+>
+> But this is racy (and ugly) and caused issues for userspace
+> trying to open the already unregistered backlight.
+>
+> So the code was changed to delay registering the
+> acpi_video backlights till after the GPU driver has
+> loaded so that it is known if native backlight
+> control is supported or not.
+>
+> Long story short: The design goal is to only
+> register 1 backlight handler, so that userspace
+> does not has to guess and to only register this
+> once and not do a register + unregister dance
+> of a potentially unwanted acpi_video backlight.
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thank you for the very detailed explanation!
+
+One concern, however, is that the current approach seems to assume the=20
+presence of a GPU driver, which may not always be the case. Would it be=20
+possible to consider a more generic fallback?
+
+
+For example, if no GPU driver is available, we could still register the=20
+acpi_video backlight node.
+
+ =C2=A0This way we can at least ensure that a backlight device is exposed=
+ to=20
+userspace instead of leaving the system without any backlight control=20
+interface.
+
+Do you think such a fallback could be a reasonable option?
+
+Thanks again for your insights!
+
+
+> Regards,
+>
+> Hans
+>
+>
+>
 
