@@ -1,213 +1,260 @@
-Return-Path: <linux-kernel+bounces-813389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FA1B54472
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:05:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5CEB54474
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B51ED7B606A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:04:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4D818885DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A09825C821;
-	Fri, 12 Sep 2025 08:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806982D4800;
+	Fri, 12 Sep 2025 08:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PuacFyTT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xi6LesXp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCF92D3EDA
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757664303; cv=fail; b=YSt4yK3uskk7V7NzIw4eN+2kE2NcaedknPOkxhXcdQe0aKRlYXKL3KJRzr/TIUBhvVguOU9o4ux/0TNCZxxvbd1NPYP1izdd+1nVKSD6t0NWdYovfsDadJtw6VtXcjkGk3FmRmvtkpTekTKDS8nNYJvsFHveypIwT1DjYiOLdcM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757664303; c=relaxed/simple;
-	bh=BRB1yOUnqzPMDAjScIe7D5odTM1V+E0tnMaQ163tTlg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kZ51pByubjNQEG9NyZE3CzqCocBlMpTo2pWWoB8cza2c7F5hyEv6jAdqDV/Ox3hoSfGrd4ba9hXwXUYhAypeCqOka5ntKvWuhioNJC/DYIga+LQ6F3Sd8ausdJIwKi42qwNX51ZgT7i2TTmBUPZvqCIsyqUL2A3/UwgzR3K8jUc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PuacFyTT; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757664302; x=1789200302;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=BRB1yOUnqzPMDAjScIe7D5odTM1V+E0tnMaQ163tTlg=;
-  b=PuacFyTTM3OcwdmpEN+qgdoBSs+b0A0wc/0FS6Eo0fogpb+FWenwibIF
-   npGcaLtpm3GpXQa+mHFbPDxZCf8YxlmJCDZShj4ftOu+xPmKwaLwoLAo7
-   mJuHcYbthyQMEZGV839walDthFs5vA/IaLHLEXfmoWqyRYQJzEP+GzHaM
-   U9yXKNg0/8PFTL+cLtRS2rPj3FmWFs5LeuX00F/T6wy0uKst8/NWwT1aL
-   vvQejGay10IoJZa9tQCk4lL5DoIIxHtsGakRiCOeem40ieKl0EFP8PKYH
-   GTNGCm1WGpPvax/FbKWjg59tOV/mj553CP2nDeKopjbVcP/dQzv22omgB
-   Q==;
-X-CSE-ConnectionGUID: KcGK+dYFSs2HoVxKEnn/pA==
-X-CSE-MsgGUID: 4U18t/45Tim/xkKPWL2Okg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11550"; a="60081322"
-X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
-   d="scan'208";a="60081322"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 01:05:01 -0700
-X-CSE-ConnectionGUID: b9i2zNESQWKrBlUU+aUiAg==
-X-CSE-MsgGUID: 5t94B5ynTxefbdAv2sNOJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
-   d="scan'208";a="177943598"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 01:04:59 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 12 Sep 2025 01:05:00 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 12 Sep 2025 01:05:00 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.75)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 12 Sep 2025 01:05:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SWRkGpJffz7hFmt+oRyo1Z7MVzdazwKqzQNGAnTZv5gQp3GofSYMh4amETd2NmSvHyagpS3xbQTzTllZhrWEUcwlkuCZuz4hfas+OUAlyKenrRgqUZyN7hjjyEcAu72KZfTl70laGbIBn1TPUisvE7Wc1vqid5UTWFvUe3JA42J8ePMSk5xBKGJTS3gEZ5be6C3TDhuAOSyZ/S/o5nnjOxelfGbZwqausrs3UP+T0kTWD1yCTwF5LDE+RAjUgJDJjO6oUIOVl5/mOnL3WWjxcBZBmPc/AYxPr3ZikHFSgjSUV1eB9oVJFjWo/HydQO06EdGzTmOEH3P7nK1O/O1NKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BRB1yOUnqzPMDAjScIe7D5odTM1V+E0tnMaQ163tTlg=;
- b=ny6sq45043YjcpLueaF51HZtHrhCpwcEfMfbbDVCXzTJsJ2ArbJtUqZYzWuWompKyWgNE9DUGU11OEvuWs+a7TSMNgFr2mCRP6mdniUM87ffwkn7O4ixjOQFefD5Ohy+ME1JjQ7GeBBj2M5I7NBSetXn/nAEuQmtWW0TBhnYd4cAcHoOltMwVPb9d1k2/OG+vWF7g4L4KMlT9uqmSNKKA+4FJeNHxzWJFHrTM6P0UXHzRU/3QAWQw779zjhCIX5ZB3Cxw3XkhiWSeQw2642nmer2ObfYY82HKuZRPbAeQpvTvw252MGaFNPF2NoZGq5iRLqta9GMLT3d/MAmaNpYXw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5271.namprd11.prod.outlook.com (2603:10b6:208:31a::21)
- by MW4PR11MB8268.namprd11.prod.outlook.com (2603:10b6:303:1ef::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Fri, 12 Sep
- 2025 08:04:57 +0000
-Received: from BL1PR11MB5271.namprd11.prod.outlook.com
- ([fe80::5616:a124:479a:5f2a]) by BL1PR11MB5271.namprd11.prod.outlook.com
- ([fe80::5616:a124:479a:5f2a%3]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 08:04:57 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
- Gunthorpe" <jgg@nvidia.com>, Jann Horn <jannh@google.com>, Vasant Hegde
-	<vasant.hegde@amd.com>, "Hansen, Dave" <dave.hansen@intel.com>, "Alistair
- Popple" <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>, Jean-Philippe Brucker
-	<jean-philippe@linaro.org>, Andy Lutomirski <luto@kernel.org>, "Lai, Yi1"
-	<yi1.lai@intel.com>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, "security@kernel.org"
-	<security@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
-Subject: RE: [PATCH v4 4/8] mm: Introduce pure page table freeing function
-Thread-Topic: [PATCH v4 4/8] mm: Introduce pure page table freeing function
-Thread-Index: AQHcHiluyltNj4vuKEahrhRhkIxffrSPO0bQ
-Date: Fri, 12 Sep 2025 08:04:57 +0000
-Message-ID: <BL1PR11MB52711F2AB685638DE999369D8C08A@BL1PR11MB5271.namprd11.prod.outlook.com>
-References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
- <20250905055103.3821518-5-baolu.lu@linux.intel.com>
-In-Reply-To: <20250905055103.3821518-5-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5271:EE_|MW4PR11MB8268:EE_
-x-ms-office365-filtering-correlation-id: 2684a9d2-2ccc-43b3-9e3c-08ddf1d310be
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|38070700021;
-x-microsoft-antispam-message-info: =?us-ascii?Q?enZSsT9BdytXyhRObERSE2BmDr61T+vNaGAOcdtiODuMd0BoLDHA/CWZDG+C?=
- =?us-ascii?Q?2x21MVOnjAox8ZzW856cCLJdjLl6YXijhqrEr27tMXuJoQ4AW65/whxCaF+t?=
- =?us-ascii?Q?Ed7SiSH++pnPB5ahfQPt1oqf8p8TQPKebJzyDf+iITz2I1Db+lxLUoZzWKtz?=
- =?us-ascii?Q?aUacFaVHfPvTVh9wWS+mrqiBxufTAg8KD8Xp3qgqSzGLZkfxxPD2jDykW41E?=
- =?us-ascii?Q?45DkFap5ZcPQEXUA9h631BCkkoAh4cEyY2GP/VedJwfcP5i17Vuiv42GQq2c?=
- =?us-ascii?Q?CvwuOYnGy8S2LiJr5EN7Zfh9xvfLYwkXmafuOkOjGPtecyAvstsp8jQOnUs6?=
- =?us-ascii?Q?ppgu9WO4sWQFLQwL2ulMh++S4/WgDSCSLl9hZ3+cnorStwgj5E9ue/duzkFJ?=
- =?us-ascii?Q?1Mcgr2fafL1rHQ9d6UsunPLQgjJs0G57USZ8T9waXzEvp90hqxNCD6mdsFpf?=
- =?us-ascii?Q?HCYpmmOeTvBH1qXlIFA8D/4kdOit0BjIa49iAJ4NMWl+9AN41o/uXLartSmp?=
- =?us-ascii?Q?xiW9QTcATfEFiopZ80qMF5zzzafrD3hJg16y40gKKrHJZlZyYzUiVee9jk2U?=
- =?us-ascii?Q?2dtfCuxVIvz5EWf04/Dr4vEzBU6jV7VFFK2rvJFBk37ql4tkJiKr4fzb/jNi?=
- =?us-ascii?Q?rQ37kps+WSCMSTHRs7yx7ENjH/5JZSBdSZbKzM7ZzEVCFHWTCEhZtN72qroV?=
- =?us-ascii?Q?kjWel23Dc/pKYmp4BlBTtGevK7DfbKRalncbP+TTSYzirqX1DwCGLbOQGbDE?=
- =?us-ascii?Q?Itbe1T2/p7Z4803kBxYhkh+ZQw6QLOxBaqEPPlXYom4HSrWhKQMCHmkiD3vz?=
- =?us-ascii?Q?kfnhETeBRSP6hS/l15CWC3UxGha8JynvJZUS4lR4VNiksY0qx2trX9+3M7bb?=
- =?us-ascii?Q?3FjML0DSYe/eFDWxZH14v+uUnyb4M5DqoYuWu5vGzUawU+74Pelwwqe1GqiO?=
- =?us-ascii?Q?wsOSS042NUb7cJWEbu43VT4Xy1TY4MwLjRmbhd3e0sSGcJ2rJ2kBgikB7kQ4?=
- =?us-ascii?Q?HFkCZ+LYYNbHyacC5f0SHLuRwjOkD5QQu6bU/4eOiuLDL+TRTp63Zf9uIh05?=
- =?us-ascii?Q?1FLi9gAmFbonRPl+CGP5wVPWYIaDAMzMP8JZOXyK7KJS6LO8xPzi/K1iBmpp?=
- =?us-ascii?Q?hosQiECwYxsb5FrClS0hac+zNkyMR6Nif0WOjG+/JVPgucP3+xd8rpxerH3/?=
- =?us-ascii?Q?mi2YkYlm4Y9aQjAOapSW0H1QiPbIMqn+Z//IaUKPYsoi8cwxU2ThjUGLUF7/?=
- =?us-ascii?Q?JGXx0ORFq87Sw4Sfgm2zK2AbiXZUBocJgjRx+HvQ7Torbo9Nrb6KpjFEViB7?=
- =?us-ascii?Q?74a0uniDOLTBoTwBfjBxf5QAwlIRb2JkzlBmvGIzTye7aSb+MsZtu9kgNkf2?=
- =?us-ascii?Q?pKfH6NhQB7EVtGVqAL4cAeoqNXQjW9bmdqAyXi/JExJ0Vv+odaL8RdCRBzir?=
- =?us-ascii?Q?wj3uGpW+gCWDEsrkZa1cVcqitX+PnKdeEXBUNM6MpglSTMlpMjR22NA9YwFj?=
- =?us-ascii?Q?UmUIvKrms032g34=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5271.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?/T2+N+uwv6CJXlNYlMWjUtSbJ+iwOhsV3YmwFXXTOo3j31rj7ewbWPo4usET?=
- =?us-ascii?Q?Rf5dJDIyDWmiqCWBB/s440Hvik55hJGXx8AuH3GVkDPdkXWs0vmVRZG4fNEM?=
- =?us-ascii?Q?dndaf6zmshGnosudJbCRzZQA4fB7HGN9rFXFmkdMN8wIRZXnev5Ti+wYeBkY?=
- =?us-ascii?Q?tBUYMIHiwVJj9v5Fbj/r19jFEFyT09jw1jAcUIaVOylqUgMSDmnBIBVcLbi/?=
- =?us-ascii?Q?fmBZTEs1MFNP/5jqYpaHLREZrQi4dMjRTtlHUKuwIFqHNhH6855XW88AZyvu?=
- =?us-ascii?Q?yHgjLPGHZV7EYh6k8HhoPXRL0RBvmNQ6jAZkjQMKJCfjOKuj3WOnGtNgz6VU?=
- =?us-ascii?Q?bvOYNBm6z6eE+PL+jHSGisDC+kb59O78XuDfnziL7nXPiaK6pqbSET4o342Q?=
- =?us-ascii?Q?N6ORYrNKAHXqR1pltzefUWHXnPIjLpSjH4CalhoHfnZ40jIFlIqkjcMtKIh6?=
- =?us-ascii?Q?w7+UrxIGgyOIfQh+9N6taBzxi3lnpILKxj/1kVjp0D9251tsjTQ8DyEVabRm?=
- =?us-ascii?Q?4ZeFheF5SrXmxwL9a8vIafIVlI+KVf4B2xL6+zZE8zFho9leGRlWNwKOlrXw?=
- =?us-ascii?Q?qQdVo1t4RuygcqJjCkZ7Yi0kVFx/wZRPFj808xJOELqoxr2PR0e+NFNNNPgQ?=
- =?us-ascii?Q?gmgvF0+myVQuMlfpHQmV1/cg1Dajt/vjoHhtd7uMHMYTabY9o2ED+r+kcWEv?=
- =?us-ascii?Q?Bbm9s31Q2JpnrMu31xjkN4rl717RF7j37Jm4LZeNfJcm3m5Vgq3BYI5wLUqd?=
- =?us-ascii?Q?9RvlVOSWJPGeVZH23LQcLRfFvyn41j5g0V/T144ufR1YtupM75NBvg2KDz4G?=
- =?us-ascii?Q?/rFgH7B5Tz177jqhwVPIn/i/k6NNe1YAKSrKdvRUiOvlaOi/VBM33M72hdJ+?=
- =?us-ascii?Q?ABsHw1aFYnOtoiND/c64wumaSwhiHri5nQreD81E1E5LQ/6yIyvymcw6GkHK?=
- =?us-ascii?Q?VL3fCE1qUOOx8z7Pho4Bu0GxX24leXF53eA0bSn//7Mic7go7NxBUgmvCDx0?=
- =?us-ascii?Q?6xm9BX6rQPYsmM8xEW0rLZFKZmURZYJr35aF6kuM07uSj9TmQY0ZBWlNLUGG?=
- =?us-ascii?Q?+c/0Cz1maxIkJg1wqnm8Md96Y0TV4ArG9KIv11Sm6nbmYkzERq8FanlgTNLN?=
- =?us-ascii?Q?Bd99UkbbnhyWVsEFpsEnR77xme6qBH37us3Uu7acrqAPSlOTnEqNlmUfNx3h?=
- =?us-ascii?Q?y6aH+Q1RztuMobbDzHsUEKINKsYUPnG4uKnBGcbO3ftH++rcfCL+zm9YZIi+?=
- =?us-ascii?Q?Am/SyClkJT7YkNcdzJNC3dysjwWFUbMhtOGEo+EMcAIi/Es/HylB0BvzYgWu?=
- =?us-ascii?Q?F6Pd/fib40YCNVahYH9QXMqKQZwe1CdEaAh/ILAbkBv4rFQcu8WL/nafOuT5?=
- =?us-ascii?Q?JnPSqieHr8R8mX8AsFb5R35HJRu5dEq1Lhwp6VDvhhLojvfxFYm3KsSNskw9?=
- =?us-ascii?Q?iixqKt4F/kgQxJQBrFckvmIhbFJYK2lHH1fDozD+bOork5LdJO/z+87j2eLZ?=
- =?us-ascii?Q?rPIambqRijdcygVskHFSI3zdeJ4X+3oB7Hn7VWa23obt5/wib4zkWhwFNOon?=
- =?us-ascii?Q?HM9oLL066VIPL4fpt9s38o4cF1zmsMyfLsAbB3NG?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76C62E401;
+	Fri, 12 Sep 2025 08:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757664411; cv=none; b=Xzy/zHuPqd/QJ8LWxUX30kKWgoekceARj8nz6So+5CYPL8KPTzrK9CMCaPqPPoKXA5k9EVu1UcdetAXxQYFNf46RCaa4ZvpdSaYFX6T7AWNBsWQzOZHReqrC4Ha5iYx7y8izbAgtcAg9qcUieTtzEYFwkzydCkQPs1fL28Wjg8g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757664411; c=relaxed/simple;
+	bh=JIDNigBEQ26LMxGdb3Stg7SADUM2py3C9JqZNK5PaBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z2W0UFqo+a5ztUXNhRqH3Q3iVRF96mSii7sTuwIu9SnE7liEEq+/zAzXoRGUDagPkHHhFA8xVbHdn+kF7Kf6frWa2W5BdUJ4daiTwaGApsSeBWTWadKyzPk9wGu70HHvEIfgZLYPhernEI/Nkcfp4prxJqRjiHAEgpBNngsnuak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xi6LesXp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 061DEC4CEF5;
+	Fri, 12 Sep 2025 08:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757664411;
+	bh=JIDNigBEQ26LMxGdb3Stg7SADUM2py3C9JqZNK5PaBM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Xi6LesXpM5el8fvLzaOJ/6hXe8hKRX727RutnRMh+D5yeUkpSfHrWY3NlCZ10qHKj
+	 9OJpk08TH9Cq5TmKLQthA1Ntm+s0J1lIyMOc5S/iiZrXQ2gVXRkorZ2H5PCfswHWQf
+	 oEr20N5QU1MnJwHzI553WVNyow9NMueYI+9OewiwCR+xV6UuILGkuIf9iDQzmZ0C2d
+	 A/HGRK6nBKFSqkgIBykCSzIHNv5gurGb3xRkmsr6WfafvYU8rgDokziBwhrYlQGszf
+	 8BvoRfv54yuwiz+nm0J4iLAs3iWMieKEMWh2gLD/+QE/4yGk9RueqOY0U65s1weRPs
+	 6clf7PV+Rk1Og==
+Date: Fri, 12 Sep 2025 10:06:45 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice Ryhl
+ <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
+ <gary@garyguo.net>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a
+ wrapper for sphinx-build
+Message-ID: <20250912100645.15c79351@foz.lan>
+In-Reply-To: <87ldmkojo5.fsf@trenco.lwn.net>
+References: <cover.1756969623.git.mchehab+huawei@kernel.org>
+	<e019f951190a732f9ac0b21bcda7e49af3bd5cbd.1756969623.git.mchehab+huawei@kernel.org>
+	<e13837a0ac46dffe39c600d11fdf33f538bdc9c3@intel.com>
+	<20250910145926.453f5441@foz.lan>
+	<45888ca6c88071c754784495b4ef69460ea67b4f@intel.com>
+	<fuv4p45tvjfdvwu2625s2l2kvcw64p4ohherlwyum3vmogmrfz@yb47nt66xgm6>
+	<87zfb1p0r3.fsf@trenco.lwn.net>
+	<a1333c717bb5bcea7f7c616cbf8604fa259c3158@intel.com>
+	<87ldmkojo5.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5271.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2684a9d2-2ccc-43b3-9e3c-08ddf1d310be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2025 08:04:57.7455
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: e4dBtLuiDoGmHoY2o3y6ydFlR6GrJ1GTNv7YenIovDPItsdpCn8MtDGTGF5hcltflQZWo69kBhoiyW9oYfckfQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB8268
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> From: Lu Baolu <baolu.lu@linux.intel.com>
-> Sent: Friday, September 5, 2025 1:51 PM
->=20
-> From: Dave Hansen <dave.hansen@linux.intel.com>
->=20
-> The pages used for ptdescs are currently freed back to the allocator
-> in a single location. They will shortly be freed from a second
-> location.
->=20
-> Create a simple helper that just frees them back to the allocator.
->=20
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Em Thu, 11 Sep 2025 13:47:54 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Jani Nikula <jani.nikula@linux.intel.com> writes:
+>=20
+> > On Thu, 11 Sep 2025, Jonathan Corbet <corbet@lwn.net> wrote: =20
+> >> A couple of times I have looked into using intersphinx, making each bo=
+ok
+> >> into an actually separate book.  The thing I always run into is that
+> >> doing a complete docs build, with working references, would require
+> >> building everything twice.  This is probably worth another attempt one
+> >> of these years... =20
+
+There are a couple of different usecase scenarios for building docs.
+
+1) The first and most important one is to produce book(s) for people
+   to use. This is usually done by some automation, and the result is
+   placed on places like:
+	- https://docs.kernel.org/
+
+   and on subsystem-specific places like:
+	- https://linuxtv.org/downloads/v4l-dvb-apis-new/
+
+for scenario (1), taking twice the time to build is not an issue, as
+nobody will be sitting on a chair waiting for the build to finish.
+
+On such scenario, SPHINXDIRS is important on subsystem-specific docs.
+For instance, on media, we use SPHINXDIRS to pick parts of 3 different
+books:
+
+	- Documentation/admin-guide/media/
+	- Documentation/driver-api/media/
+	- Documentation/userspace-api/media/
+
+What media automation does, once per day, is:
+
+	# Non-essencial parts of index.rst dropped
+	cat <<END >Documentation/media/index.rst
+	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+	Linux Kernel Media Documentation
+	=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+
+	.. toctree::
+
+	        admin-guide/index
+        	driver-api/index
+	        userspace-api/index
+	END
+
+	rsync -uAXEHlaSx -W --inplace --delete Documentation/admin-guide/media/ Do=
+cumentation/media/admin-guide
+	rsync -uAXEHlaSx -W --inplace --delete Documentation/driver-api/media/ Doc=
+umentation/media/driver-api
+	rsync -uAXEHlaSx -W --inplace --delete Documentation/userspace-api/media/ =
+Documentation/media/userspace-api
+
+	make SPHINXDIRS=3D'media' CSS=3D'$CSS' DOCS_THEME=3D'$DOCS_THEME' htmldocs
+	make SPHINXDIRS=3D'media' pdfdocs
+	make SPHINXDIRS=3D'media' epubdocs
+
+2) CI tests. Here, taking more time usually is not a problem, except
+   when CI is used before pushing stuff, and the developer has to wait
+   it to finish before pushing.
+
+For scenario (2), a build time increase is problematic, as, if it now
+takes twice the time, a change like that will require twice the
+resources for the build with may increase costs.
+
+3) developers who touched docs. They want a way to quickly build and
+   verify the output for their changes.
+
+Here, any time increase is problematic, and SPHINXDIRS play an important=20
+hole by allowing them to build only the touched documents.
+
+For instance, when I was developing Netlink yaml plugin, I had to use
+dozens of times:
+
+	make SPINXDRS=3DDocumentation/netlink/specs/ htmldocs
+
+If I had to build the entire documentation every time, the development
+time would increase from days to weeks.
+
+Looking on those three scenarios, the only one where intersphinx is
+useful is (1).
+
+=46rom my PoV, we should support intersphinx, but this should be optional.
+Also, one has to point from where intersphinx will point unsolved
+symbols. So, we would need something like:
+
+	make SPHINXREFMAP=3Dintersphinx_mapping.py htmldocs
+
+where intersphinx_mapping.py would be a file containing intersphinx
+configuration. We would add a default map at Documentation/, while
+letting it to be overridden if some subsystem has different requirements
+or is using a different CSS tamplate or not using alabaster.
+
+> > I think the main factor in that should be whether it makes sense from
+> > overall documentation standpoint, not the technical details.
+
+Agreed.
+
+> > Having several books might make sense. It might even be helpful in
+> > organizing the documentation by audiences. But having the granularity of
+> > SPHINXDIRS with that would be overkill.=20
+
+On the contrary. SPHINXDIRS granuarity is very important for scenario (3).
+
+> > And there needs to be a book to
+> > bring them together, and link to the other books, acting as the landing
+> > page. =20
+>=20
+> Well, I think that the number of existing directories needs to be
+> reduced rather further.  I made progress in that direction by coalescing
+> all the arch docs under Documentation/arch/.  I would like to do
+> something similar with all the device-specific docs, creating
+> Documentation/devices/.  Then we start to get to a reasonable number of
+> books.
+
+I don't think reducing the number of books should be the goal, but,
+instead, to have them with a clear and coherent organization with focus
+on the audience that will be actually using them.
+
+After reorg, we may have less books. That's fine. But it is also fine
+if we end with more books.
+
+I lost the battle years ago, but I still believe that, at least for
+some subsystems like media, i2c, DRM, security and others, a=20
+subsystem-specific book could be better. After all, the audience for
+such subsystems is very specialized.
+
+> > I believe it should be possible to generate the intersphinx inventory
+> > without generating the full html or pdf documentation. So I don't think
+> > it's actually two complete docs builds. It might speed things up to have
+> > a number of independent documentation builds. =20
+>=20
+> That's a good point, I hadn't looked into that part.  The builder phase
+> takes a lot of the time, if that could be cut out things would go
+> faster.=20
+
+Indeed, but we need to double check if .doctree cache expiration will
+happen the right way for all books affected by a partial build.
+
+During this merge window, I sent a RFC patch in the middle of a comment
+with a conf.py logic to detect Sphinx cache expiration. I remember I
+added a comment asking if we should upstream it or not, but, as nobody
+answered, I ended forgetting about it.
+
+If we're willing to experiment with that, I recommend looking on such
+patch and add a variant of it, enabled via V=3D1 or via some debug
+parameter.
+
+The goal would be to check if a change on a file will ensure that all
+books using it will have cache expiration and be rebuilt.
+
+> > As to the working references, IIUC partial builds with SPHINXDIRS
+> > doesn't get that part right if there are references outside of the
+> > designated dirs, leading to warnings. =20
+>=20
+> That is true.  My point though is that, to get the references right with
+> a *full* build, a two-pass approach is needed though, as you suggest,
+> perhaps the first pass could be faster.
+
+How fast? during development time, SPHINXDIRS means a couple of seconds:
+
+	$ make clean; time make SPHINXDIRS=3D"peci" htmldocs
+	...
+	real    0m1,373s
+	user    0m1,348s
+
+Even more complex builds, even when picking more than one book, like this:
+
+	$ make clean; time make SPHINXDIRS=3D"driver-api/media/ userspace-api/medi=
+a/" htmldocs
+	...
+	real    0m11,801s
+	user    0m31,381s
+	sys     0m6,880s
+
+it still fits at the seconds range. Can interphinx first pass have a
+similar build time?
+
+Thanks,
+Mauro
 
