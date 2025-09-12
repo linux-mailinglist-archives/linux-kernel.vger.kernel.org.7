@@ -1,103 +1,155 @@
-Return-Path: <linux-kernel+bounces-813477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA900B545FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA84B54606
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 304977A5BBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D2FC1CC419B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EBE264F9F;
-	Fri, 12 Sep 2025 08:52:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E8F267B89;
+	Fri, 12 Sep 2025 08:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sxb6bHH9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7087F17BA1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF8128FD;
+	Fri, 12 Sep 2025 08:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757667121; cv=none; b=QFAUo+ihMb/5eDx2ZXdytHflAb+2N5W70M536vSEgWjvVcxnKOmXaH0p8r+frOcT2w99UASNZ/SA7zdcz7TNi2cgD/YMYUvpRhnSvIZuM4y6C4tBi3mxy2+kku8CmT3YJC/kUKCMNv/Bq9HQsjzPIgD8ueXOeKkmd29C641/u0Q=
+	t=1757667240; cv=none; b=eVhH4DBh+j/Vvi9T9BoI/Lob1dgxXV5SVuevDsEbjn2E1VNF6hYJpQy5v3mjagfycpk0JojNTcBEu9v/tJZ7KsxNJkcKeKpb9N7dfXFu4ATVXodZxZd++OM4qc4pvCnRrIVBWO9vZzbw293MRbuBuIR8p+0/64Mkdig3VvxX1HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757667121; c=relaxed/simple;
-	bh=ktE1kTyDrk5JmPj+cCcWpFNgeuUkaMmiOQWH3Q77gWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fiNRGD5zVWB1LOTK+LT6psSpPd3RfrDSg5SHjvakkVvuu4lJ2CojVJHLEHEAR/cd/dxi1Or5q0VCSP+c8BwMh+HG1E4rgunJo+62RkK7wD1NHF4jRafDq0jAXAOAj5bQnv9qd8MIdQM96mRho+Xo/IlsqbQGIceAAz0IoeglieM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uwzVc-00034e-Qp; Fri, 12 Sep 2025 10:51:56 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uwzVc-000u66-0n;
-	Fri, 12 Sep 2025 10:51:56 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1uwzVc-002xOr-0R;
-	Fri, 12 Sep 2025 10:51:56 +0200
-Date: Fri, 12 Sep 2025 10:51:56 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Fabio Estevam <festevam@gmail.com>, Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Matthias Kaehlcke <mka@chromium.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	kernel@pengutronix.de, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 4/5] dt-bindings: usb: microchip,usb2514: add
- vbus-supply example
-Message-ID: <20250912085156.h4hhye5vc2rbntyl@pengutronix.de>
-References: <20250911-v6-16-topic-usb-onboard-dev-v4-0-1af288125d74@pengutronix.de>
- <20250911-v6-16-topic-usb-onboard-dev-v4-4-1af288125d74@pengutronix.de>
- <175763620958.1187267.14091957840948870392.robh@kernel.org>
+	s=arc-20240116; t=1757667240; c=relaxed/simple;
+	bh=1xnH1HCOVekvdTi6weI1GPY+iBGGQOUPvvD6hHKLibI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j7t68570/UZaNcRMUFw/sj35t72Kvg/ZeZHG9pqegjNQnzowNeNFgRvXzRUzOisw05V/k2eyObeUtj4CplPNJOBCqMKRh2OaJhoItwPzghqNAUAegFCQGofjT0CsqlgcLQw0/PxRX3d31NDwLuhDvtuzAmeLRtaMf/0Jtx+nmc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sxb6bHH9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96890C4CEF1;
+	Fri, 12 Sep 2025 08:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757667239;
+	bh=1xnH1HCOVekvdTi6weI1GPY+iBGGQOUPvvD6hHKLibI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Sxb6bHH9UxqiBnvL+6SeLM4ubHQz2fuf/WZzQKqSIdkAwp+5ynEzQXmME5EH64E4a
+	 yPtO6+unzN3xykEvJfFdzbOBGffsYK+vBjyZU0wtffUOFQCKmiO+jRZghdLszBZ10j
+	 5bN6EapOjyz8iZVqKNSYvdjwTE/ty9ExAAosHR0WBn6C7vQ1cKbL6sXNwes4qgdWWZ
+	 7JWO/ilhQZFSPJe0tAOroZL714pJAva3ZmUCV10rNHOMUk2r9uk9p6pUN4XkXY9wBG
+	 gK4HU5dbg1RxyUzMhmWeP2NOYcRlLRmPj/IaO+5w8mi27onOHBnvoFwH0y1DtlVXu5
+	 f2tTKiOC9/3Yg==
+Message-ID: <0b703f90-fd42-41c4-86ec-bbeb71553127@kernel.org>
+Date: Fri, 12 Sep 2025 10:53:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175763620958.1187267.14091957840948870392.robh@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 0/2] arm64: dts: qcom: qcs6490: Introduce Radxa Dragon
+ Q6A
+To: Xilin Wu <sophon@radxa.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
+ Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+References: <20250912-radxa-dragon-q6a-v1-0-8ccdbf9cd19b@radxa.com>
+ <1ae48740-1788-4304-be86-455251a02ce3@kernel.org>
+ <A671BED7100C2766+849829a3-7da0-4d9d-817e-f8ce78daa56b@radxa.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <A671BED7100C2766+849829a3-7da0-4d9d-817e-f8ce78daa56b@radxa.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 25-09-11, Rob Herring (Arm) wrote:
+On 12/09/2025 10:25, Xilin Wu wrote:
+> On 2025/9/12 16:12:54, Krzysztof Kozlowski wrote:
+>> On 12/09/2025 10:03, Xilin Wu wrote:
+>>> base-commit: 51095600e8c19d53729a7fbd273abc4435a25e9b
+>>> change-id: 20250912-radxa-dragon-q6a-eedcdeaf3e66
+>>> prerequisite-message-id: <20250902164900.21685-1-quic_rdwivedi@quicinc.com>
+>>> prerequisite-patch-id: 257564b609217fda19c9f3424fcd9f6e2ce3ef3c
+>>> prerequisite-patch-id: a8f21781f3bff140260100b74041752000c06000
+>>> prerequisite-patch-id: b46127e2433ede17cc5e1a012f58041c6ef97b13
+>>> prerequisite-patch-id: e8978c5a30373c3ff312b2c8720f586c389f18f8
+>>> prerequisite-message-id: <20250911043256.3523057-1-viken.dadhaniya@oss.qualcomm.com>
+>>> prerequisite-patch-id: c7a057030b78afbbb231280de3765294c006c6f8
+>>> prerequisite-patch-id: 56011305aa35e4c64fc7d63950764807cb81cc4d
+>>> prerequisite-patch-id: c3d3b313ac6abe4ec10fd820b6a9bbc63fdbdb82
+>>> prerequisite-patch-id: 63ee94d0ccd40f60a98b0004d627ad2e7b440d25
+>>> prerequisite-patch-id: 392e8f1902571e5035d5af72e40dc474b5f1b274
+>>> prerequisite-patch-id: e38fba722bdabc02ba09d2dc51df7010dbe28168
+>>> prerequisite-patch-id: a3ca5dba8def5769ffb4b95df2963da60a736f96
+>>> prerequisite-patch-id: 4c0fe8d677d73aaf1b5b842e072246d84729d1c4
+>> So the RFC is because it cannot be yet merged? Please always add such
+>> note in the cover letter.
+>>
+>> Also, are you sure these are real dependencies? Like REALLY real
+>> dependencies?
 > 
-> On Thu, 11 Sep 2025 22:22:45 +0200, Marco Felsch wrote:
-> > Add an usb hub vbus-supply example to make it easier for users to
-> > understand the binding, after the usb-device.yaml gained the support for
-> > it.
-> > 
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >  Documentation/devicetree/bindings/usb/microchip,usb2514.yaml | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/microchip,usb2514.example.dtb: ethernet@2 (usbb95,772b): 'vbus-supply' does not match any of the regexes: '^pinctrl-[0-9]+$'
-> 	from schema $id: http://devicetree.org/schemas/net/asix,ax88178.yaml#
+> Well, I think these are indeed dependencies. The dtb does build without 
+> them, but dtbs_check will fail. The board will also malfunction or 
 
-Well this is just an example on how to use it, we can drop this patch of
-course.
 
-Regards,
-  Marco
+That's not a dependency.
+
+> simple crash on boot without the DT and driver changes.
+
+Neither is this.
+
+
+> 
+> 
+
+
+Best regards,
+Krzysztof
 
