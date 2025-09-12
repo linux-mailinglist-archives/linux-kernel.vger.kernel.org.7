@@ -1,113 +1,169 @@
-Return-Path: <linux-kernel+bounces-813937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0990B54D4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:22:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FDF4B54AF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C7EE5C0B4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7616F3AF6AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14770324B21;
-	Fri, 12 Sep 2025 12:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64772FFDD6;
+	Fri, 12 Sep 2025 11:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aK17vNLO"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LveBUbH5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A6B304982
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D80A257845
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678934; cv=none; b=YyAZb0xo99EyQ8V2bmp3EmEgHk4woxIlrSS6MhFN2U6QE1PZgXMcAXfPT6RR2tfSfVQKqgXs1sioouH+DeD5sQs/w3eexVXREFutUDHGIepklQ5mgC0KTL3DJi5bNwA9MQkjjyGipEhQ/Y0OabOYDI8IrspQsv7nv9HoNKf72r4=
+	t=1757676311; cv=none; b=eI/d31atcpILXsMPCZ7YgopCzScl5+7CfZ/wS0Q0vvTtPiRTfKyXFzsrlfJx7gq5w7WBBLM7yldA+Je5XDXQR3j5iwVR1pk/v6l8J0httRAv9ggyzJnZUQ46ygLFsgkK1Ce/enqwdSQDIYV0EAnsIOthEL1rtTv480yLsJqWElU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678934; c=relaxed/simple;
-	bh=PqPZ8RULX7eu8BAG8aFIfDKASv+ULLACp+JE+crY35g=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=ZW9cBZDVZTcQ2ZbvhrohsQn75NHgZOFXFDrfytUNHpszNLHReTbJGe3HDl4iFG/ex/b2+EVom+1EUF8D6ak4KGgCk6xR1i3NEOzIq85akcgFaJKdFduI8l6kartRaE1aqtsqEwCCetzIX7NMaJHUliLsDnNLkewHaySmJOaQ7ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aK17vNLO; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45cb6428c46so21828825e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:08:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757678931; x=1758283731; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PqPZ8RULX7eu8BAG8aFIfDKASv+ULLACp+JE+crY35g=;
-        b=aK17vNLO3FWypqeHtCtGViEf/AACbNqqr1aobsHvHd70tNvEJLvNVO6V9ib/6dbtW9
-         1659OC0X7WwHLO5I+fSBPAbTEXQQll20pooTXhDWqeg6CTeciB5Jl7IHpfO+ia0Lsn3h
-         JIxDGDQK9DeAKy1KtuJRNEGWoxx8TEd8WoLuOPTPizgOkjaPv8lv4mnm01nxDxTDIpT1
-         5sST5WznhYi0MC8G62+4+q9LY9lrrHN+EeY8logmrQc2OqKf0CIThPtFgyEq/jMb2nI/
-         NJHekOwMkqhHYWhcrJA15oKuJqQjfE1EvJsJeWqyAJbm5h3Rhyvalzxhe3rScog7qybV
-         UHjQ==
+	s=arc-20240116; t=1757676311; c=relaxed/simple;
+	bh=7+c1HJZGrsHI5KgOslaLRZvi3jiJ76oQSD51OaNEqug=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzHmdmFvJCmxcH4Nncpmh6nKdpFvzo5eOeLtLxm6LRy8yyRYOMpNHMrkMHrNUXeinzf6MFyeXLN01miEQd7r9V/aCS+U8tagDBrOYOWnZUiuNQrnCUn32MLtzMAUOScG2lTr0IpKFfyBzJ/kG6v/GkckJrvtoIF2rjR4OAzBFN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LveBUbH5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fGBW017694
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:25:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=L/KO/8ARjOPSDYaWONlEfU/h
+	96fvcT5jnTcbxDheBto=; b=LveBUbH5+IKoDERn3kFHQVSoFlOGA9aorkBY/HWO
+	R5EL/IvDmc70MUV3aHLzEuhud1sqlDxJ4NZbl2FuERCj8gzqIQAu8JsMxTnqWGuz
+	sYcg6uggPDMyMbhLlhwFZ3BDs6M78dW/WsBLET6Inb9puclecuiqjYoNYdYCSRK6
+	yXNBQpM76/7ntmPWiu1sg7WeIF0nUG9YjOWXar/DXywryufl4eAS/6YXWaTWr2ec
+	MuQT4gpOMmYWUok7/NiNRrx1ZAiDWRrs+KsdlsO/YcPW7xhY87psQphr9yANTN+o
+	3DFfdeIlMbiLCe5MF/bpVAb757j/hbtQmT0DgOHKouPl9w==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8uhp9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:25:08 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-728f554de59so48296686d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:25:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757678931; x=1758283731;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PqPZ8RULX7eu8BAG8aFIfDKASv+ULLACp+JE+crY35g=;
-        b=VwZYEmzXuNKdOae8UG4D4vKxG46o4oAqqPCafg3OqGRA7P3PXB+giHzdeTxi6GmRx/
-         LtN/QV1Kbm8+TbRFQkxLtlP/audslwNrUtzAXYNITKwWtDKl2Z4qILSvJEwTpXawtag7
-         saRGINg060vXT2mUoypatI9XrjzA6hHUUjZGcOG9PhmmO8itw3VVWwqPNFXD82N6IAlh
-         nj6IdH/SlOKxFn8/CZh+oXWocyRssilmiRJPvEbFa2u3tK6dKIOl/W2hZwtksJbkd0lw
-         bZzspffpNs8bPVKfTJM5G/yEJzZ3boNYkQx7vnU1ioaUfh5K2Xi8fzuDJxvlwoQXsLjR
-         VG8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWZmlBc2LowIGCk3AhPW4jNO7qXZRUY8Wgk808LOJSxwIVzfUJzHtJ6gagQAgwYYtym0nB0LDE7sh/KDwA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhkhvMezecGbxFix6FobgQWrPYtDngtVh5qYwsUilEWZQ/fKWZ
-	M0ChCrsCPV9WVfFyA2mcDDprexoHJTLXVKi2PVfBwpj5QSBw1VT1jX5Lk7d3tg==
-X-Gm-Gg: ASbGnctpSa8miWFOzsDpa82p60jxU5qS38Q77tNQihY493vbR1V1mjoijo8Rvszmzdw
-	utCFchMExzn0Or8U4H6vC+VAFTs8w7gHiWgl0tRwoLPl+ke8LnfpSCuZkbgjy/rvXBgAed/IioE
-	KtTwbcjE+m967qS35OiB7pRSkCsKe3zCfiNAS0egXY/G8LYI9i1sHpb+6XmhKKktKsPGlEyBi57
-	sh53/fIIE8qa+ouSJpFXgt00B4P81DGgsH/7s66jXSYVIaC8yprQ+DrN9L0yhR+MFFp53ITIcfp
-	o3fPH8MBpC5D9umjtCuBCUV1hEjx9Gt3hfNtKir/OUFeRoCiXDvgXVJIIZg9VbOb88YQ6SdxbOK
-	4Tb6K/8FQbOfs1XKiMnBnKC6d9ABGCPaumEia6RygYeax
-X-Google-Smtp-Source: AGHT+IFcON1v4F5KgBV9t7GPfhbJioy7Wd6FGUuDsb9CuUxnRc9simG96y0fBd2RO2HzmYnS97o6Tw==
-X-Received: by 2002:a7b:c84d:0:b0:45d:da7c:b36 with SMTP id 5b1f17b1804b1-45f211f67camr17284045e9.19.1757678930584;
-        Fri, 12 Sep 2025 05:08:50 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:18f9:fa9:c12a:ac60])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037d7595sm59573645e9.24.2025.09.12.05.08.49
+        d=1e100.net; s=20230601; t=1757676308; x=1758281108;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L/KO/8ARjOPSDYaWONlEfU/h96fvcT5jnTcbxDheBto=;
+        b=VuO9T6UrSDKihLYxaT3l+IKayu6+hlFTiuB7tfZu+6gQ0VR2QZxUq8Rpu9m9lTjWil
+         ktfV5YDlTXTaMs3CQQ0FMwy1h3JL6mdR9wJWpykr0gIInzqiWTJj+I3KcijvgdCXcxtf
+         z/D0kUkn7sMKWXPA7vSlpusCfXwTZPYYiW895MQylVAoFVPFFgaobLvepIMlfX8H4q7s
+         ZHeV+m6mrsxnolUICA1gUYrD1uWB6X3R+678DSu4ouRhD9a4+C/5wt8IkJVEqg5jJhrt
+         pSXC6opkPRTunrxsDFn4XLJw5mPk+exOemu5cIYI9npkzz6M3mrL1HMUbX922z40P2ki
+         iEJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0nxseJOHFUoURv8G9/9gUgLsZ+R+TyaP/IxTeDAYEr5F60AaHZo04g0olGudVdW5/wHngX0Hjn0QzSoc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7WzhXPj1c5NDDLxnLUoIGl6GIjrRJhPq0NLqB1Qy5OSt7pFAy
+	wJL+e1vC4RLQjuJ8buWPmM2E0RiSOJHPkLVPWt75U1OILvSKv+Nhsvtr3kLXh3C5WXA0f+ow3ba
+	cAd1zZ9JSxDDbWV8H1hLgscIIAzfRqXU2jxkSPlZcD9wNyioCjCQX1254EKPtouVqotM=
+X-Gm-Gg: ASbGnctPPPB+MJvUNWVTD2CQo7gVcicE6DqXwxv8MTn+REWXALr25PMRDnm1JeneVe2
+	3Y33f32Q5zwHr6VJjNYHk+bEVfCb0MRlFCG2mZMaw1zVdCyVBrzH3BWY9Cpt778Fg2OddwBSfau
+	5Om+WM+a+v4Vm6VjPnML11alh5vLRgNHm2+kyYyvCxLr8P5MBVoajKISNiUkfSC8OjoxwU8jZOV
+	/TAa05ICfjcuaP/Ab6sIyGVXnO35g6hx7FNylBTRnS+RDgjur0leQnTX6RBIk44o0IERPqeDcrB
+	HU68HqSB0h4iXiAFgyCnZByX9zr5/oEeckIgjmyLS/sAZA6E1mi89g1QPJazwIagoWSYJbmLd8+
+	+EGRCzrjOluswv6djTkc4Afpilbw4YfD3Pdmt4BL7K+0WpO5YpG89
+X-Received: by 2002:a05:6214:1c09:b0:727:e45a:562c with SMTP id 6a1803df08f44-767c5fc1237mr36407426d6.45.1757676307444;
+        Fri, 12 Sep 2025 04:25:07 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBvOKZjxSrcCAvaaBqR3mwSYec8GgXHcFcEBSSwTJG6nn1Xn5NwUdFapU5ndqxPzynNLhv7A==
+X-Received: by 2002:a05:6214:1c09:b0:727:e45a:562c with SMTP id 6a1803df08f44-767c5fc1237mr36406556d6.45.1757676306608;
+        Fri, 12 Sep 2025 04:25:06 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e65754ab0sm1059810e87.132.2025.09.12.04.25.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 05:08:50 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
- Horman <horms@kernel.org>,  Jacob Keller <jacob.e.keller@intel.com>,
-  Sabrina Dubroca <sd@queasysnail.net>,  wireguard@lists.zx2c4.com,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 06/13] tools: ynl-gen: deduplicate
- fixed_header handling
-In-Reply-To: <20250911200508.79341-7-ast@fiberby.net>
-Date: Fri, 12 Sep 2025 12:24:32 +0100
-Message-ID: <m25xdnvrpr.fsf@gmail.com>
-References: <20250911200508.79341-1-ast@fiberby.net>
-	<20250911200508.79341-7-ast@fiberby.net>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        Fri, 12 Sep 2025 04:25:05 -0700 (PDT)
+Date: Fri, 12 Sep 2025 14:25:03 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Yongbang Shi <shiyongbang@huawei.com>
+Cc: xinliang.liu@linaro.org, tiantao6@hisilicon.com,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
+        kong.kongxinwei@hisilicon.com, liangjian010@huawei.com,
+        chenjianmin@huawei.com, fengsheng5@huawei.com, libaihan@huawei.com,
+        shenjian15@huawei.com, shaojijie@huawei.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 drm-dp 02/11] drm/hisilicon/hibmc: fix dp
+ probabilistical detect errors after HPD irq
+Message-ID: <3sywcmtd4uksow6exaav6smx4wwrlp7mur6mcrpw3qklvbr3kn@dqypx4fmnhrw>
+References: <20250813094238.3722345-1-shiyongbang@huawei.com>
+ <20250813094238.3722345-3-shiyongbang@huawei.com>
+ <aayi7zjrmru2ancexrqmcutams6ohde3nrkhqacixwp45dsk4v@7ig6hqzahdxf>
+ <1dd93bb7-4f67-4b9b-8b6a-d7c5c77cf807@huawei.com>
+ <ce47v3y77uc4dunlwyvmfe6j7d7mza4zfrbvu5dz67t66jdlop@vqgv47saj37i>
+ <8bbfd02f-138d-420c-b456-10d0c913f46e@huawei.com>
+ <cdmtfluxqes3bv3t7suctbajp4jmpih6fhegkbf7mxvy4umzrd@rtpupear4el2>
+ <13b3f4d9-c8b4-445f-8f9e-a57a1fa2bbb5@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13b3f4d9-c8b4-445f-8f9e-a57a1fa2bbb5@huawei.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX1IuCTjM96gM6
+ BrGCyFWp+q7u0ggKFhywmGC5BHTZvMK9ba/LAXj5U8hpvO26WKsCA2q+lO1r7WbLPscuQ4SEA8q
+ m5kxktrQZoBmaDnEBujoDMzBQhCJKvgfOCFWVGEK5cz+RsEKpe/GfiXoXDsaqd4xhtYxADR1URS
+ acdxlJ2d5gUiL30srbREO7HlkI4uB3Wq+SjN686eqOPyUwSP6xwr7seAxDvJMmNLsgfLNbAhYv4
+ /AR/WLZwsPq1Q3bJXZLqAXM3rwxlheH3TPB03qdLqIr99q74EqyqeVFUh7lyIKAKdK4WjA8V7ni
+ bBlFJndFN/6WsU0lqd4F5LK2bF15EG2CQivSXvHKtBOK4e5bq8TWwhp+fJbM0dzpQUU6RCSpHoJ
+ ysnJPFiY
+X-Proofpoint-ORIG-GUID: EyDRmobP_JNbUd11BYJQgWC1GLFEGFHl
+X-Proofpoint-GUID: EyDRmobP_JNbUd11BYJQgWC1GLFEGFHl
+X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68c40314 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=i0EeH86SAAAA:8 a=74nAKEOhdCrmlouCdhMA:9 a=CjuIK1q_8ugA:10
+ a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
+ phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
 
-Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
+On Fri, Sep 12, 2025 at 09:23:05AM +0800, Yongbang Shi wrote:
+> 
+> > On Thu, Sep 11, 2025 at 05:32:40PM +0800, Yongbang Shi wrote:
+> > > > On Thu, Aug 14, 2025 at 08:19:41PM +0800, Yongbang Shi wrote:
+> > > > > > On Wed, Aug 13, 2025 at 05:42:29PM +0800, Yongbang Shi wrote:
+> > > > > > > From: Baihan Li <libaihan@huawei.com>
+> > > > > > > 
+> > > > > > > The debouncing when HPD pulled out still remains sometimes, 200ms still can
+> > > > > > > not ensure helper_detect() is correct. So add a flag to hold the sink
+> > > > > > > status, and changed detect_ctx() functions by using flag to check status.
+> > > > > > THis doesn't explain what is wrong with
+> > > > > > drm_connector_helper_detect_from_ddc(). In the end, this function
+> > > > > > doesn't use the HPD pin.
+> > > > > I'm sorry about the misunderstanding.
+> > > > > The issue is that after plugging or unplugging the monitor, the driver takes no action sometimes
+> > > > > even though an interrupt is triggered. The root cause is that drm_connector_helper_detect_from_ddc()
+> > > > > still returns connected status when the monitor is unplugged.
+> > > > > And I will fix the way in the end.
+> > > > Can you perform a normal DP detection: read DPCD and check that there is
+> > > > a DPRX attached and that it's either non-branch device or it has one or
+> > > > more sinks?
+> > > I'm very sorry that I didn't get the last sentence's asking before.
+> > > It's a non-branch device. We just connect a DP monitor.
+> > Somebody might connect a different configuration than the one that you
+> > are using.
+> 
+> Okay, I can add the check drm_dp_is_branch() in the DP's detect_ctx() to
+> intercept branch devices, is that good?
 
-> Fixed headers are handled nearly identical in print_dump(),
-> print_req() and put_req_nested(), generalize them and use a
-> common function to generate them.
->
-> This only causes cosmetic changes to tc_netem_attrs_put() in
-> tc-user.c.
->
-> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
+My suggestion is to implement DP detection in the way it's done by other
+DP drivers.
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+-- 
+With best wishes
+Dmitry
 
