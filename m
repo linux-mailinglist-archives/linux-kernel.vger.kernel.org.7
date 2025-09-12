@@ -1,127 +1,157 @@
-Return-Path: <linux-kernel+bounces-813002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29C5DB53F80
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:28:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D7FB53F82
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:31:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB5733B06F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:28:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0E791713FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74136282E1;
-	Fri, 12 Sep 2025 00:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66E717555;
+	Fri, 12 Sep 2025 00:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3UC5jYU"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="hpNzexgm"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD23F9E8
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD8F1114
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757636878; cv=none; b=PHUD203E3UZxsFijlK50XwWyyK7E3Bosy5PxPh2aDONQrNxTtmrwjl/OoF6ZXRWpE7GjqbqBMSxke+Zj6K991gVreDMHnRD3Zk7zwS47nJWxyl9iWSJWQMDZHzctoS9ym6onDN+hybfS1WhcUdIZITS5KNxhOJWnDcOxAddhsxU=
+	t=1757637088; cv=none; b=mcJgcrGONwZIG+FWzjXHLEq+ohparZlsLdCbXac/e3DUpc+LqV2drxiFSZ/NESfS8E8YyAcl8SorbVMmBueYboO0OPkKBYonGF0ZnTWfuTakF/YBlLwLG5kUeHEavTu/dDtiqXr3Gg5CJ61+lSvN4vzDxOVMUQxtCIXjFemOfKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757636878; c=relaxed/simple;
-	bh=biGpY1eDM9VEF5ItVBBgOSL/52vvAvXvOEFZPEEHIq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tv/xYYFkdsuSanNvUBSlS82hbznSdI1GU6LYJIUbToo4smYmhL23FyO+u978pIxH7plpagseeQ4xbqst7ZzjY//sRcIH8IwjyczPs3v2A+8+FhYj0Wa6Relw8xcr5WPqocKRQZZ2XqrSRT5joI60IN523BngCpdSJTBHL/SJpds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j3UC5jYU; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-32be6bc21c7so934855fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:27:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757636876; x=1758241676; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Idsk6hlADPjxBpEO0KSCdleD5LRDgT/uF9HpZTys4jQ=;
-        b=j3UC5jYUdHfeNohaGMNn/SduZyxoh4f8t7yXc219z2Ff0WTTyi3f/GHyQ15tT/cB9g
-         GzvZhEtypryoDp7dmR4JrN12KHm4T6ZGcQn0zVzLjNTlmCTS8xx3C7bwwm9zsyiYtUwK
-         t4AOtWTStABSxWv6NbiVpbrd1YZem9fACKmh3gBLVoKiv3l/dQqIekTIPOWHJ+fsmSFF
-         GNcl54harqZfZpejwMvkdUb1YUNCBGCWJSC5cORYuIHaopfK5nTGIZv/lXIARtKPV4rU
-         lHaYwwVfvW8QNLyWISj9/Pe9xef42hU/m4k7FSatL+ipibHuFP1rnBpye5mVbMjLxk89
-         muSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757636876; x=1758241676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Idsk6hlADPjxBpEO0KSCdleD5LRDgT/uF9HpZTys4jQ=;
-        b=lF1OpexWdDWJanmgF8YoA0wQZIZr7SE64DlCoHyIwmlRTl7lXCbHWcrsPPh2G6xSFO
-         rrcKGcj22WEbNmJHp+HLMwXGZGLSnBEouyiLBt+cnGT/BOEAfdh1s1VjHYuZokG/6ftt
-         pjoWtdO/FEAOWEbB5h+m3judDdnjEBQ3LbpawSvdnyDp5SdZFzF9s8Eps0dmands1a9L
-         cw6LPP/j9zIlOy/NHma9y77cRE+Fc6ypFpljuXJHpJBtDIxGn3CcNzggdG4Kwc5EbPZO
-         d2YywTWxQMemEmYnCRNeeMM0JTpVWwBE7XAvzOqEkUrpCKDIMU+tBsaeTB1FntYPuX6Y
-         OqqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuqpsaBl5uQ1YMJZAxhGN5viGELnSw44pQwSCA9SDTIM33DD1c6rSjHG6vtboLr07Z127HGkH2O7OWXzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/ukJKaw6qAIPhYDZtKKhN9RzKc3P+ONCFLsTLwytm6/HrQx12
-	ibDZyLNK2xjYUrBiYUvB465RG96ISbXT2zJbyJFRDCNxoI54KvHz/0WpJZ0rnA==
-X-Gm-Gg: ASbGncvMZDHC482ftDwovIL2n5/DJcnxINk59OPoI/d4+kNGY1e5uaeIVCzHxQ3fPsz
-	DHyiXDurlvR9AHHP+eFUg/IvPlW8cc0hEv+7D04Phpwy/IgAjNZiaKoR/+/1T+MNtEzKDavDvia
-	tZQ9QMUxWKUBbvIyvI52yg/FSxLdRW1Y63W2U5IH3xjs92xCfs4glXXryawS+kjM61/7JjcfM9i
-	NuMPydIUgHggwOuYuulRKFBU5/er8B0n2Jk8soWBK3lodgcApxqBbIZI0jtRTFerU2HKYhR65P7
-	JZlTBIk+VtOyCXuhYm3oNc5OoEcW/vJUw25MbBaLojkMlBTObic35Cxr68dejPYHjOH2ARb/h0/
-	jSjbw7Jx1KDwQm8XR+HZelunIl90I7FeBRm1zWvbenX7zJF0d48+zOg4FGChe2pxBnSDk
-X-Google-Smtp-Source: AGHT+IHrcApczyV0/Z9+I9D8KVdIGapYTwq8V/eMviOsp0VNX+SfApS6oDK1nQsIgH7gykwtKQXrCQ==
-X-Received: by 2002:a05:6870:7d86:b0:314:b6a6:688a with SMTP id 586e51a60fabf-32e57801ecbmr424170fac.42.1757636876325;
-        Thu, 11 Sep 2025 17:27:56 -0700 (PDT)
-Received: from my-computer (c-73-136-245-43.hsd1.tx.comcast.net. [73.136.245.43])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-32d32d56557sm796602fac.1.2025.09.11.17.27.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 17:27:55 -0700 (PDT)
-Date: Thu, 11 Sep 2025 19:27:26 -0500
-From: Andrew Ballance <andrewjballance@gmail.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	John Hubbard <jhubbard@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: Printing with overflow checks can cause modpost errors
-Message-ID: <aMNo7qRCp_yprUAW@my-computer>
-References: <20250911213157.GA1039411@joelbox2>
+	s=arc-20240116; t=1757637088; c=relaxed/simple;
+	bh=V9v+l2yWhLRNr/5hshvuc6mxKVdciHSRpWmqgued1Og=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Y9/9Q4FrjUyyQGVDCJ/xcsVWacnUbMnj+0pX6yBHUqMUbUOMj1SEPgTuTUJ09rBJA5yJsyLB8KOKq1TY+BPSZ0Du8I9VwBXDdQAmSWc/Iw6ZcDcXbkoemWeUi5c+SOHt9DRSt4iNyJbTf8jldjL6JtcOU9vXjkp8wTjlS303qiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=hpNzexgm; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757637074;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EZxU73zTx/9g+dWjgY/xVOQON0jaT8APRpXiMYNVZyc=;
+	b=hpNzexgmJhu8VyBysEyHt3YLiXdHNjA6/43xJrjFF8XDfRdNDiA2za4rG6vaCf9mrodWZ1
+	Rsb69FTkg9bMCXFpWE0BoJ1zXFLXrGYoKGHtF9zqYP7wp1wsNW9pLMG5AFpDIRfS95o7Cd
+	HxvnJBa910jt61gODQpFumI47JnXbsI=
+From: Tiwei Bie <tiwei.bie@linux.dev>
+To: benjamin@sipsolutions.net
+Cc: richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net,
+	arnd@arndb.de,
+	linux-um@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	tiwei.btw@antgroup.com,
+	tiwei.bie@linux.dev
+Subject: Re: [PATCH v2 04/10] um: Turn signals_* into thread-local variables
+Date: Fri, 12 Sep 2025 08:30:54 +0800
+Message-Id: <20250912003054.2564842-1-tiwei.bie@linux.dev>
+In-Reply-To: <75ba2109fcdfb8a1629fdf5f6b4e58694b975c9f.camel@sipsolutions.net>
+References: <75ba2109fcdfb8a1629fdf5f6b4e58694b975c9f.camel@sipsolutions.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911213157.GA1039411@joelbox2>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Sep 11, 2025 at 05:31:57PM -0400, Joel Fernandes wrote:
-> Hello,
-> Recently some of have been running into modpost errors more frequently. Ahead
-> of Kangrejos, I am trying to study them, the one I looked at today is truly
-> weird, below are more details.
-> 
-> I narrowed it down to the print statement and specifically the FFI call to
-> printk bindings. This was first reported by Timur Tabi on CC. 
-> 
-> With CONFIG_RUST_OVERFLOW_CHECKS=y and CONFIG_RUST_BUILD_ASSERT_ALLOW=y, the
-> following patch when applied to nova-core will fail to build with following
-> errors. The question is why does the overflow checking fail since the
-> arithmetic is valid, and why only during printing (and say not during the
-> call to write32).
-> 
->   MODPOST Module.symvers
-> ERROR: modpost: "rust_build_error" [drivers/gpu/nova-core/nova_core.ko] undefined!
-> make[2]: *** [scripts/Makefile.modpost:147: Module.symvers] Error 1
-> make[1]: *** [/home/joelaf/repo/linux-nova-rm-call/Makefile:1961: modpost] Error 2
-> make: *** [Makefile:248: __sub-make] Error 2
-> 
-> Any comments or thoughts?
-> 
+Hi,
 
-Io::write32 tries to do a bounds check at compile time and if it cannot
-be done it causes a build error. it looks like because a pointer to
-offset is passed across a ffi boundary, rustc makes no assumptions about
-the value of offset. so it cannot do the bounds check at compile time
-and causes a build error.
+On Thu, 11 Sep 2025 10:06:53 +0200, Benjamin Berg wrote:
+> On Thu, 2025-09-11 at 09:37 +0200, Benjamin Berg wrote:
+> > On Thu, 2025-09-11 at 12:34 +0800, Tiwei Bie wrote:
+> > > On Wed, 10 Sep 2025 14:15:28 +0200, Johannes Berg wrote:
+> > > > On Sun, 2025-08-10 at 13:51 +0800, Tiwei Bie wrote:
+> > > > > From: Tiwei Bie <tiwei.btw@antgroup.com>
+> > > > > 
+> > > > > Turn signals_enabled, signals_pending and signals_active into
+> > > > > thread-local variables. This enables us to control and track
+> > > > > signals independently on each CPU thread. This is a preparation
+> > > > > for adding SMP support.
+> > > > 
+> > > > [...]
+> > > > 
+> > > > > +static __thread int signals_enabled;
+> > > > 
+> > > > How much glibc infrastructure does __thread rely on? More
+> > > > specifically:
+> > > > Some time ago we had a discussion about building UML as a nolibc
+> > > > binary,
+> > > > what would that mean for the __thread usage here?
+> > > 
+> > > We would need to parse TLS data (PT_TLS) from the ELF file
+> > > ourselves
+> > > and properly set up TLS when creating threads using clone().
+> > 
+> > I guess right now we cannot use PER_CPU variables in these files.
+> > However, my expectation that this is possible when using nolibc, and
+> > then it should be simple enough to replace the __thread.
 
-Best regards,
-Andrew Ballance
+Good idea!
+
+> 
+> That said, I do believe that the allocations from the libc itself are
+> problematic. A lot of the mappings from UML are there already (i.e. the
+> physical memory is mapped). However, I believe the vmalloc area for
+> example is not guarded.
+> 
+> So when pthread allocates the thread specific memory (stack, TLS, ...),
+> we really do not know where this will be mapped into the address space.
+> If it happens to be in an area that UML wants to use later, then UML
+> could map e.g. vmalloc data over it.
+> 
+> Now, it could be that (currently) the addresses picked by pthread (or
+> the host kernel) do not actually clash with anything. However, I do not
+> think there is any guarantee for that.
+
+Indeed. The mmap from libc (pthread, shared libs, ...) can potentially
+conflict with UML. The reason it has been working on x86_64 so far might
+be that we did this in linux_main():
+
+	task_size = task_size & PGDIR_MASK;
+
+The current layout is:
+
+shared libs and pthreads are located at 7ffxxxxxxxxx
+TASK_SIZE                             = 7f8000000000
+VMALLOC_END                           = 7f7fffffe000 (which is TASK_SIZE-2*PAGE_SIZE)
+
+However, on i386, the risk of conflicts looks much higher:
+
+TASK_SIZE   = ffc00000
+VMALLOC_END = ffbfe000
+
+......
+f7c00000-f7c20000 r--p 00000000 08:01 9114                               /usr/lib32/libc.so.6
+f7c20000-f7d9e000 r-xp 00020000 08:01 9114                               /usr/lib32/libc.so.6
+f7d9e000-f7e23000 r--p 0019e000 08:01 9114                               /usr/lib32/libc.so.6
+f7e23000-f7e24000 ---p 00223000 08:01 9114                               /usr/lib32/libc.so.6
+f7e24000-f7e26000 r--p 00223000 08:01 9114                               /usr/lib32/libc.so.6
+f7e26000-f7e27000 rw-p 00225000 08:01 9114                               /usr/lib32/libc.so.6
+f7e27000-f7e31000 rw-p 00000000 00:00 0 
+f7fbe000-f7fc0000 rw-p 00000000 00:00 0 
+f7fc0000-f7fc4000 r--p 00000000 00:00 0                                  [vvar]
+f7fc4000-f7fc6000 r-xp 00000000 00:00 0                                  [vdso]
+f7fc6000-f7fc7000 r--p 00000000 08:01 9107                               /usr/lib32/ld-linux.so.2
+f7fc7000-f7fec000 r-xp 00001000 08:01 9107                               /usr/lib32/ld-linux.so.2
+f7fec000-f7ffb000 r--p 00026000 08:01 9107                               /usr/lib32/ld-linux.so.2
+f7ffb000-f7ffd000 r--p 00034000 08:01 9107                               /usr/lib32/ld-linux.so.2
+f7ffd000-f7ffe000 rw-p 00036000 08:01 9107                               /usr/lib32/ld-linux.so.2
+fffdd000-ffffe000 rw-p 00000000 00:00 0                                  [stack]
+
+Ideally, we could completely eliminate the dependency on libc. Before that,
+perhaps we could reserve a region of address space for UML with mmap(PROT_NONE).
+
+Regards,
+Tiwei
 
