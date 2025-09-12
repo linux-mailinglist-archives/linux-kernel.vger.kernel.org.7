@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-813776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED151B54A8A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:02:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D53DBB54A8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E80E11C21983
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 033471BC15AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53082E6CA7;
-	Fri, 12 Sep 2025 11:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C099265CC9;
+	Fri, 12 Sep 2025 11:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uNt/o3Pp"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2070.outbound.protection.outlook.com [40.107.93.70])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="H+zTXapG"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2052.outbound.protection.outlook.com [40.107.94.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58002DC778;
-	Fri, 12 Sep 2025 11:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FAA2F3C2C;
+	Fri, 12 Sep 2025 11:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.52
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757674955; cv=fail; b=TacAlyY3sjxYiDgXCzy2aH8ByZLF2T1WdNXyzVWxH70F34Kfy53/rtjsNsDAJ8eIeLA/VDTdKc8UWEoSYLVXY3pARMxjPXqFTkwgJaOgYg6GnO4pzusbNkCbCvh9XkaC5rvHGe1dPxaCCAsGDYWOmtYR4HPywC6fMTLKv2lNDz4=
+	t=1757674959; cv=fail; b=bp1DKxpLjat5E4KqYQPyYqPJkiAJ++XKdngzii4V8w8XUgsSZFAFxVZ13TITShu+OQwb2Wth5Wg+b3IkVY1M5gIEKHF+mFXGCO7+ZggAoq4euX5kAA2Qtkmk2kjkev/86ktYE56Fs10zmwTknRbLIfzLHmhKTC+DsTirgIoM6/M=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757674955; c=relaxed/simple;
-	bh=tH6+HIjC0oI/bMJMJSYe9cdUTuZ/qTSFMCmT581TCCc=;
+	s=arc-20240116; t=1757674959; c=relaxed/simple;
+	bh=MeIiQkT0NamzCXh0n6Dce7lhDHHseWMOzAysKZFrnI0=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WZVyVz3QYCoA0wsegqHdyWHIMHK4wbRh01N2unkBSHLjoK2DRQsZYY3Ggj/lx/HB3kMlN0Lfk1gOBRjyKFb4aRhIbfsbNVsu0cw/lHuNbvqFVU1XsjYrAthGKYXK74e8nMwKgK8z5yc3CD0iYk6X16YXgiE4cJNQ2rGJOiIRsLM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uNt/o3Pp; arc=fail smtp.client-ip=40.107.93.70
+	 Content-Type:MIME-Version; b=RsBz9vkhPx5mn2Yk/qtNTyxysc4fjJ25WX45crYeiFRqzioPAtDgwj47c+1fg81+c1UVORF+lcYX2FmEXSJpu83w+O7gL8WTmCbLrwvtZz3vqXvSYbCanXCrakjMGhDHTKMVO5iUhNNsi9foqpAD2+SsXzwikWGl4TNtqYEe72Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=H+zTXapG; arc=fail smtp.client-ip=40.107.94.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=g9Npmqf84m3NljmUwlAuZ9E/mGJyix1bby/nJyRI6dh8xVPQDakFn56tLtEeJIXrAnjKooTxv70QT8jgDfL0/RcWvHfWH/cT9hFCTajAqVSUHMOJDFvSdy1QQlsIa4LFUH3ajII8Ls+vPJHnbagfLe+6fz8IOC/UPSckUYbeVHrg0xs8B8Ms1tFkndA9CXWlJjUHiO1IXknfZcnnp1yAlVxi9F4yjcYkvSxHsS9Y1mcHsJCCqy96hr3goZJkgPLGaJ3X3/iAwY0QBHkZ1sONtVBi4H28rFYr1aOvXR/eaE/AvyLZDLxsG2FUd0fa+joN+q8Cn0uisqjFNJsc9rShTQ==
+ b=rTPvKpE6NqGIxvJJRbd985NfNvgk6DaMkHHydnVWS6SlpQrFRsEOdMuTvr+X8kdG0bSJ76qStnzIn+RYTSBCcXJ2xATKXAgS83cLxKDyuvPPiWySMzuFvlP2k3VKjLlEG335YO7UVwX2Ua1aUb+GMjtuSBm9s2vvzHHe5wRnnTNi23DHL3Dmh51/MG4JssO5PftxW2H4c/ZGDrCa8BTz50AsUhbhMqpqPo/WrgtpPTajoc7uZwwPCI0RAQP2IZnKsGuQoqqxke+NefZKBy7OGhLzR+mjHl886QaBhdooYWVNDhDo2Xg3rSbfdJ3H9LbwflP4Qlgf9y/3ZieHFPFPGQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TDUTAsvETg2c38LLcbw9mPZUA8Z524WXPaR4agWpAwc=;
- b=Yl4ZX3JCOPUTkt5dY/PFwBWPciY4GqBjw4ntawzUYB89oGawimhAIbWvjodKgFXeuR2/y375GDzdWjOze61P9FLtdIUzpejkIFIOOvyFgKsP5/NvMZBVjSuzxxwtwOoNxJKCzpxQkRMn8yFVvc5WraxuJoQ6PQCi7rMwbp01s74J6cld09TmNbp7agl6tljre58C8nHH3SXsChRT1YrHJa9isyCfUFHSakp6EqYNKHLaHi7EJPzbOV/wlmiHmq2H9MmZjivf2bXOBLUoHqiM1ud/sUM/u7KkPId2VDp0/uHOg0PPzTqYjRYYQsddYXWs3BUQq367SUyFTqJq6wFoaw==
+ bh=qEv42D+oRsUW7F66caI4+WYxekgre3MZ7qD4NB+Z3us=;
+ b=mjFbmj/WUZYkzfcpNAJ6g3UyJOs5selYFgmNRkHfpV+FCB2Cn5AsR2a977CS1/tnAg5Fr5eEvYKjRGkpUdcJ9CaAl5OwsBTfRZu8+ndknq1afWPT2bGSCY43ilpm6uNmVAr9Vv5GvfU0xWS2sQaZr0cWxDzeooTiyv9+qV8NYJWr63l/qzAvBGYC2vy0ABYY6FZPfMtS2tUXYyzJWGM8mms7v6f4bI6YJd8Qi+VEGw/vL5x60ZIdClvaOCmEHW/EXIadm2ao/3gUqNC7ON/04YOfgw2TUjnOBdwO8um5y0eCd5X3gV/xlWfxvqNnUXLKQs4N+0abpJrXRG2ygB5uxA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
  header.d=amd.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TDUTAsvETg2c38LLcbw9mPZUA8Z524WXPaR4agWpAwc=;
- b=uNt/o3Ppr60HTgswq4PM89LUF7qCklM567DiQyVvGT5H0gBWzqmi4ayFrz+luQEvwXzfXn4um7l6/7ywEuiZj8kfynA6wXydEZN/7zq8GKZ7tq2FWiyXr19PzpQlphWXGo7gLXi3V9N9JKDmo262hVWa3ZhQ8ke/bL68Ut/oes8=
+ bh=qEv42D+oRsUW7F66caI4+WYxekgre3MZ7qD4NB+Z3us=;
+ b=H+zTXapGH2MCvnUYJIiQ9mcCew2nFRTCYa2tYmuVL/quppyzI3Pcu/vJv7ZhMCUsq3Z43/v1pf+K9io0mP9Me1dJM7f2ooBT+jRp2+LNBQ7+7RJ8WO30ZebErKcQ9OAMREXhZXTspPlzvpdaXx52KsQvHAQmJ4A4rgO/lJxH5ZQ=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=amd.com;
 Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
  by DS7PR12MB6118.namprd12.prod.outlook.com (2603:10b6:8:9a::5) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9094.22; Fri, 12 Sep 2025 11:02:29 +0000
+ 15.20.9094.22; Fri, 12 Sep 2025 11:02:36 +0000
 Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
  ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
  ([fe80::7f35:efe7:5e82:5e30%4]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 11:02:29 +0000
-Message-ID: <985955d7-bc77-4483-86e1-0e3382e1f4b5@amd.com>
-Date: Fri, 12 Sep 2025 13:02:16 +0200
+ 11:02:36 +0000
+Message-ID: <29bd0b43-b5a4-4182-961f-a3613acf47d1@amd.com>
+Date: Fri, 12 Sep 2025 13:02:27 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: versal-net: Describe L1/L2/L3/LLC caches
+Subject: Re: [PATCH 0/4] arm64: zynqmp: Minor DT changes
 To: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
  git@xilinx.com
 Cc: Conor Dooley <conor+dt@kernel.org>,
@@ -65,7 +65,7 @@ Cc: Conor Dooley <conor+dt@kernel.org>,
  "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
  <devicetree@vger.kernel.org>,
  "moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-References: <f740bf2d0af1e7e50d76196ec050c0fdbeceb049.1757338426.git.michal.simek@amd.com>
+References: <cover.1756799774.git.michal.simek@amd.com>
 Content-Language: en-US
 From: Michal Simek <michal.simek@amd.com>
 Autocrypt: addr=michal.simek@amd.com; keydata=
@@ -112,7 +112,7 @@ Autocrypt: addr=michal.simek@amd.com; keydata=
  otYa9+7v0j0WOBTJaj16LFxdSRq/jZ1y/EIHs3Ysd85mUWXOB8xZ6h+WEMzqAvOt02oWJVbr
  ZLqxG/3ScDXZEUJ6EDJVoLAK50zMk87ece2+4GWGOKfFsiDfh7fnEMXQcykxuowBYUD0tMd2
  mpwx1d8=
-In-Reply-To: <f740bf2d0af1e7e50d76196ec050c0fdbeceb049.1757338426.git.michal.simek@amd.com>
+In-Reply-To: <cover.1756799774.git.michal.simek@amd.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: VI1P195CA0054.EURP195.PROD.OUTLOOK.COM
@@ -126,646 +126,127 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|DS7PR12MB6118:EE_
-X-MS-Office365-Filtering-Correlation-Id: 09627442-bf30-4908-058e-08ddf1ebdda3
+X-MS-Office365-Filtering-Correlation-Id: 2a7e8e10-f53e-467d-d6b2-08ddf1ebe18a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TW5tZ0xEbFFzWlFwaDhBV0ZVRCtsNjd2T3o5WTZvQmoxODBZZmRIK1Fxb3pM?=
- =?utf-8?B?V2xsa0trY2w1RzRiQ21tZWt3UVJpTzNZaUY3OVJRYlBaT0wydFJ0eWp0YWlV?=
- =?utf-8?B?VVFoOUlnNTlUU1E1eUUyYlFSaVVkeExRNWl4Z2xsYXZLdUszb1JlTTlkRlFx?=
- =?utf-8?B?cDlodWVTU2NPOWZtNjAwYU5WWk9PUUNSUEtyMlE1UUR1am5UZ1JsN3AxbXpu?=
- =?utf-8?B?OXdZbmRlcVU4bVdNUSs2V0doaEFSd3ArQnpRbmQ5SFptTS9LK2NwOTJHc3Y4?=
- =?utf-8?B?UFp1emMxUzZsUHprcDh3U1lENzNKdmVNaUdTc05wNXYzbnFGUTlZcVdFZnRt?=
- =?utf-8?B?YlU4dnJncW8vMFJ0L2VNSDVPZTg5cEdKT3k5Tkp5QjRSUWpNL1hWR0lNKzhD?=
- =?utf-8?B?K1VqYlM2a210ZklrTmtWYVB1Yjg1Q2F3dG9Pdk9ydXhyUzdHUlFhdkpIclBi?=
- =?utf-8?B?VVVBK0EzVnZGUFN4VnUraEpJcWxQWmJ4ZFJlT0ErRjlSZ29CZ3h1ODNhZ2sy?=
- =?utf-8?B?a1NQNzJTcndBTWd3empzb3psS0djZ3pRYzEyekhyRDg2VU1hQ2dkTlluOXR1?=
- =?utf-8?B?M2V2eTZYaHJ0eXkwa0VFN1JrYVQ3cGM5bGZYMzVETnpIUHZiZFhTN1FBZnJF?=
- =?utf-8?B?UlVlei9iRHBiQ1ZKaDZzVnowRzRwRzBhR1MrZExac2VkTVlYL1dPeHk1cGpU?=
- =?utf-8?B?NllUOS9JdngrQzdQTHNrVHRIbTJMTU9BS29zQjBOd3lrcnFjenVieEFvSlZ2?=
- =?utf-8?B?cFQ3OXZVaW5yUWhSRnFKc3lFUkhwWTRuSkZyaEVkdHVqRDlQQ24zWGs4R0xp?=
- =?utf-8?B?UG5PSlhNblB1aXB1SzJueEF5VFRvQ05QWkJTbExGaTJSODBvZFJQT2taNTJN?=
- =?utf-8?B?dWNLb2I1clJPK2Joa0NPSzJ0eUVrMkh4MGpSRDNlUzU3eUFOenJ6dmwvVW9k?=
- =?utf-8?B?SlVXRkNhTEN6QUVhd0Z4b2QxTDE1eHBNOXhIeitpVmhDTTdPNUJ4SGFZNDc3?=
- =?utf-8?B?T0VuVmNEdWxqc1F3V2pxc3V1SXlvWVAwZTAxajhNNFJxVTB2eSsxaHdJWm9u?=
- =?utf-8?B?eFowZDJOamdvV1Z2SWZmUEtTaHJqVFFyUjJMOHF5U1JEcm1BUytva01KaFZY?=
- =?utf-8?B?cEhrbVhvMHpCeG91K0RWMCtBdWtZSlI3aFJhYUxZTjV1TGZjS09hUXM4L053?=
- =?utf-8?B?VzZXZnFiT3YvRGt0cTArUUt1MGEzcEFldUFNWk9BTUZISWRpZC9COE5BL05S?=
- =?utf-8?B?UFVZcm0zdXdFektVK2NXSndxN0l6QnRRTzRaQkxveUtFZ2UzQncyYkpOZ0c4?=
- =?utf-8?B?Z21rYWdDR0plS3Rwc005VS85bi9vbkpPbUdlRlJDdTNTMlNBdVQwR2RVWTM0?=
- =?utf-8?B?ZHMxUXZ4V0h3VVBlUzVnbzJSWDJOY2hGb0ZWbjgvZ3VJcWhZeUlSQVRtTGxv?=
- =?utf-8?B?K1RGSnRQUWEvVFNlM3M2a0NrWTM3SnNIQjNWVVA4aGR6cW95ekQraHBoNzgw?=
- =?utf-8?B?dWk2MEhZbTBJWm5aZ1J4V2MvQ3VtbEhYYXB4UG1RR21oYmFSQ3g3TDZtT0hQ?=
- =?utf-8?B?SGxtalZMYnNpaEFaOFBUVEZwUC8vZmNSUWF0amVnY3FOc3FXOFFKKzF6UDlS?=
- =?utf-8?B?SkpLUjZ2dm42VS9hZFhhVHF3WWtpaER4REhDMTVqYjFoU1Rmc1hzcmhZWWNQ?=
- =?utf-8?B?VGRGMVA5aFArcVRPSlJ6cjNpYjkzWVpqNzYxZSs2aElHUVBCR09CN2xQNFFB?=
- =?utf-8?B?WUZlWWs2Qll3dytaMGlvUHlGcGpWdHp5MWtuVTNwak92dE1UVVRvOFhqYksy?=
- =?utf-8?Q?h8e82Dj7PWfiMFkk77dEAZ6TjZb6lH4lzVnoQ=3D?=
+	=?utf-8?B?SU5qcG0rQVBUR1hBTlNnS28xaEl6ZjFLck9MR3JtbW0zbG9QaklEcnpMeGQv?=
+ =?utf-8?B?K2tpWXlyRURERitnRHMzbWRCZmF0dDJ6WnZxZTBkajFlNWJRdk8zcmpIaXVr?=
+ =?utf-8?B?MFQ2TXEyUkpCSUxpQms3eVhvS0pFSlpSUkZpU3Q0MmtzVjNWMmk0SldyL3lU?=
+ =?utf-8?B?aW5mREI2dnk5Sk9DamtieC9XUzBTL05CaGJKT25mMU02SUl5SHdOUDJJYzcx?=
+ =?utf-8?B?dXJvZEd5K3ZiMm5rRDZ6ZzFlMG54N3dYVWlHNlVpN1QvRVNRUEhZSEszOHJH?=
+ =?utf-8?B?WWg4ZVFJUWNSbmRMYWc0SjdxeU5CSCtkbG43d1E1YkVnazJBVm5Tc0FGQVBm?=
+ =?utf-8?B?RXZ2OTZyY3ZiVENTQ3lQbG5YSVh4R25XNEtSODVmdUFZYS9zZm9kT0xGKzlJ?=
+ =?utf-8?B?TlZUb3I4bkUyZi9NS1ZIUHJPd2cwanA0YjhEVjgrSUNDU3lkZjQvTE9YMVZu?=
+ =?utf-8?B?SERMS0N3WFkrbXlaZm02aTY4cmpidE8zNkRSOThrdDdOOWc0YXQ1OWFSdk9o?=
+ =?utf-8?B?VTV1UFhRbVY3UEpkRTA0bUtOeDBTcUhuOE9Ld1RYL3liOCtaa1AwVi9tZGIr?=
+ =?utf-8?B?LysrVmVTMmRnc1llTW8weGVVMC81OTFDUDBmUnZYN0paWmt4MUZLNXV3T3p1?=
+ =?utf-8?B?R1R0cUdaVnNvcU9ZK1hBMjBTUnpOSnQ4bmlBOUc2dkFGemYrbWZGcG9acGxm?=
+ =?utf-8?B?SXR5SDZBSXhHTE1MWFRDZ1FHUFlUNHpYZWYvTFNEY3E2VjdhVzMzOVRXOVJ1?=
+ =?utf-8?B?OFJiL0dFS3BCTWJTQ0dNQ2VydzdMUnUvSkVyZ3pwNlNtV1B6WHVVNmIwa1B2?=
+ =?utf-8?B?S1lNYmVFM0dlQXAra1FQZGtvMUFFR2d2ejhkYjM2SUtvN040aHBTcTczakxJ?=
+ =?utf-8?B?QWh6Um5ySDZWZG8xYnMvMmY5Rmo3a1FqV3BvM0R1RUxHKytFemV6bjI1bDlo?=
+ =?utf-8?B?Sm1leTgxYnFVTWJIb08wTHJ4TnJaL1h4LzdjTkZ6VTl4ZU45ZzlQblZVWUFH?=
+ =?utf-8?B?YncrTElmaW1RN2kyb01MZS9EbHdNWmJVRHlFTzRiaWJRdXVsZGpHT3dvNnFx?=
+ =?utf-8?B?YW40cld5N2thTnY2VHBCSjhOTXhyelZ1cjZ5clF5dWVhdWwrT0xRRDJQemZw?=
+ =?utf-8?B?YkZsUHFxdkpqU0xDQzhmSGttaG1JUUpTL3M2QjR0eHRLU09qMXF1Q2dpblFi?=
+ =?utf-8?B?SWNXWUk2bWtWUXhGM1NvZzF5RGN0SmtRZ2oyMFhtdk5GTUNXbG9nWFMrS2hv?=
+ =?utf-8?B?Z05RNEp2dFpHWE5JbmJuc3VEWHFJZXAzSnludXNYZERrYzlUT3JpQlJQOGtk?=
+ =?utf-8?B?MW5qbG5YZStoaWo4Q2F4M00za1BUY2h4VUlnTEFURzhwcThMeWhlbmE1Y0pl?=
+ =?utf-8?B?Y1hyaUJXbTJ3QmdKZTFnV0xRbVhnVVc2VHVsb0lIVGtUZ09pTDRYcEtVMXJM?=
+ =?utf-8?B?Z3NwWGdHakVReGhHMFd1OHVOT1UzYXB5M2kyaEUweTZEVUZRRkJQOVNGNW9Q?=
+ =?utf-8?B?Y3Z6NWwrTWN0N1dRSGRWdDlvQVU3ckk1TWhtamZwekV5VHhLRlRFT1ZaY0U3?=
+ =?utf-8?B?WDhYTWtUQTdKRjd0MThYYUdHMThhVDZzc0J2VnMrbXRTdkVLTWZESVUwQ1BC?=
+ =?utf-8?B?Y1g1RWhONEpFdm9MZk1RdEdZaWh4ZTZTTGlSS29kOEptQ0lEd0x1WncrdnVx?=
+ =?utf-8?B?Uml2SmltV01keTJRcHh4TnVoeVlQT3NOSEhoa3lxSTZLdHBCTEJzV2VIbjdv?=
+ =?utf-8?B?V1BVb0NDNXNYbHVIVlRCYVJ0NDhod3BjYTZRcFlBa0diSHBXYkxJU3BxbTE5?=
+ =?utf-8?B?OHpFRGI5U3VLd1ZYYzVrS1hxa282b3BsOExNczZyZERIc25hVjUxc2FEQlhS?=
+ =?utf-8?B?OE5nL3RZMWFvMGVJSHZTNHRhWi90L1JUZEF0aWRzKzIxeGJKWWhIcTBLVXFi?=
+ =?utf-8?Q?HxsYV8pOnYM=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OTRTYSt1RzAwK1gwSE1qUTJOdmd6M2tDRGZRREFicXZUTzhTTFpTenEyZU16?=
- =?utf-8?B?dEp3cllBR2loSU1DVDZFT3lEUnpyblpDbXgyOW5OWG9GbVpqWUdWVWlVQS9n?=
- =?utf-8?B?dW8wSTQ1MVFmaFVadThYclJNd3JBQ2d4L01BdUpBemt2MlFFTHZsemFickhi?=
- =?utf-8?B?MGxXS2dJbC9Cb2VwSG55Z01aVGFCQ3ZOb3JoaWhZV2Y4bXE4UU4wQm82ZXJj?=
- =?utf-8?B?NzhjeXJEQVJaNk5IRFczRWk3WFBOM1JXYjMzU1I4OEs1YUVncFdRMnNvUkRF?=
- =?utf-8?B?cVJlUldCbklrd1R0QnFFNW8yRWhYY3RyaFcrd2NZMUI2bFNpMDZ3WHVCUXht?=
- =?utf-8?B?OG93Y2dDNW1tT2V0b3FMbldPU3FaeHk4ZjhKS1hoTytjV2lHZExJZzdYNlJU?=
- =?utf-8?B?R3B5akh2ZUx1YVFlM3lKbXZGaEozcGFUcVlvTHJCTDZDVVhEOVN5NGtKcXF2?=
- =?utf-8?B?RHhMa0h5dUI0YzBncUIzZjNvMEI4aGFTc2dTVWdySEppYTRsWTYyWnJJZ2J0?=
- =?utf-8?B?ZkhkalZmT3VsaDBtMHUwOHBJQlJWY1NIaEJYZU5iQUNsUGdqTUhld1ZONVR2?=
- =?utf-8?B?ZVdUZTM3THdJa3pvMUNKMWh5R0xIS3FDTmQ4SEJnN2V1enFlZSs2cW5XK1A3?=
- =?utf-8?B?Qy9NVDAwd0F5Y2JvSUFGcjZCMmFUV1R0ZnlUaFk2aUZiSVNLWnBnSUFheUpF?=
- =?utf-8?B?TG1lUS9oT0lqQzhQWDB1Y0ZaSU8wR25lY2pqUUdkTU1VTVpUZW5BcElia1pE?=
- =?utf-8?B?TmhTOTgwRXl4dndBdnVGeExrV0pVNm0wZnpzQ2x4aWFyOGNWMWQ0NGlhT1I1?=
- =?utf-8?B?YkgzSjk0R01BRWg4MEgra28yR1NrTS9rRWVxSEdpWEhqUmw5YThIamYxbUFF?=
- =?utf-8?B?V0xTWnUzbzZDQVhMbytaZVMrUDBna0t2QmhlVkxwTUw1TU56eWF6S3c0MEdq?=
- =?utf-8?B?clJud3BmeHhOZkV0ZXRta0haSnhHQ1pHeEtVcU1LT09ObWFqM0M2SWYrMW5U?=
- =?utf-8?B?YWhZVCtJM3RBYkZ0Zk5JQ3daVFY2VnpBMVVoQ3VnNjVjQStreWNFWUNRMHUx?=
- =?utf-8?B?UWFnY01adGMzQzNSY0VURVkzWU5TQmgzcUJSNHczcWwweEgxc01FcVd0cnBV?=
- =?utf-8?B?SC9FQk5NN09uQSs2a0RUUFJUTC9xT0o4V3ZpbXRNSUh1TmIwQ0Z5b2NMY1E4?=
- =?utf-8?B?TDBRaG1DMXRXTnI3VzkvcmJFRDdUN1ZvUVdpSm9HbmZyZDBSaFlVMkJVV2JZ?=
- =?utf-8?B?WWZsK0h1aThZN1A5b2U1RUZucnY3NkRtU1dzdERNRHNpTmlQeENUbjVndFBX?=
- =?utf-8?B?eFZxMHNCa2pIWElwYjYzYmhJdnJBUHJQaFZlR25zU29taXY4S2FZbXVsdUwx?=
- =?utf-8?B?dXpzcGVxYUFqNGRqbGdoSnczNUpSTWtubjRVWDRqeS9yUkQ0cXd6NythalZm?=
- =?utf-8?B?NEJnN1JDZzlDYkY0bE94VXhUdzQxbnhIUWVSUkZHSDVtTVlhUnJidHdvUWZU?=
- =?utf-8?B?V2RKVnBFeTRScHMycGcvbVNpSk1VN2tLaVR3bjZvNkViMUwwYjlXT2diWWVD?=
- =?utf-8?B?Y1NDLzBoTmhtL2NEd3prbkNRV2REdXJTYmJlaXNHMU9pN2M4WWxVWHMxOTNF?=
- =?utf-8?B?S2dZR2FOWkhaN3Q5ZENMZDZWN3lSSW4wRldwZE1GTGJ3TE9Jc0xhUndoSjNZ?=
- =?utf-8?B?R29uR1RtK2loWEpxSlNVaHBUQ2J1T0prOUdXNzkwb1NQcDdnNjhSQlh1VEFu?=
- =?utf-8?B?R1Q5NTdWMVJ0Vk5DdWZhalFRTkJqd1pNQ2F5RGJuYzluNFJML3lnRzdJZlFs?=
- =?utf-8?B?anJxWk1HS0dKZklQRmVBT2JvZ3lSZGtEYStUVys0S0J2Sm5BaUd6YXkrQWJJ?=
- =?utf-8?B?N3pNeFZlbDZpOU5iVENPY1VCdkQyb2hCM09sN29nOXlmWU44SEhnd1BUZ2hF?=
- =?utf-8?B?djArL1RqeDZENmRQbWhlVEhmTnV1OFJPbzQvQ1ZkQ1hiZ1dqd0lXQnVReS9q?=
- =?utf-8?B?RnJSSUlCamluSWF3UWNKbmdtNlZFK1FqL3Nibi9Xam04UlBtVnhFNFdWVVg1?=
- =?utf-8?B?TmExaWdieHF4YkduRkU2T1o5aXhVelFyODRGck9ZMEpUL3I4bXcvYXloMk0y?=
- =?utf-8?Q?VKPZKDg5w8plTrsi+eh7cOxRV?=
+	=?utf-8?B?TkpJOC9jTkxmbk11elZQL05JajFnRklVckdZVXlvTlVYZUErR2dHRFdBZER4?=
+ =?utf-8?B?cmNpSW9PMGdidlRsakZpRHo4OGgwN3N3Q2JjckNsKzJUeXpRTjhubkQ5LzF1?=
+ =?utf-8?B?bjcxMDFMMWlNaEV3ei9GVHFEQzdSM05PazJJSkZ1emtRZFNZTlJDVXRNTFhl?=
+ =?utf-8?B?cUNsYWwvRG5nWmNBWUVwNG9zZStVa3lJUUpOZ3BFMS91RHM0MGZLbU8xejg1?=
+ =?utf-8?B?YnhGSnNaZHIxengxQStmanMxN3lvakJKWWE2alN3S0xCWUVaOHdIZmRQdXRJ?=
+ =?utf-8?B?UVJrczhqZzZMVElwdWF4eFdKeVpXWndNQ1ZmUE9xdzZYVUZQaWhuYzVldUNN?=
+ =?utf-8?B?NzZUM21qcExUU0JHM0FORDV6aE1FNkRkdkRScmkrcTFCL2J2cFdRcG15MDBF?=
+ =?utf-8?B?OXlMc3VjR0Z2dG5ZT1M0Z25ZMjJ1cTJSMVZsbXpPL1pkRHpQZTJEYWs0NW5J?=
+ =?utf-8?B?cXc2YldicXlUcEpJVDFhaFNpbmk0c25lUkhNamxlanFObzZhQjhKMmYxdHVK?=
+ =?utf-8?B?UHRNYmVmOUdDZjhTZDh6TWxFamV2RUVGbGM5b1VFdndCMWpITTQ5ZklBc0Vx?=
+ =?utf-8?B?WEc3TEova0R5anEwcHZ0OHBidFgxOU1EY0VDaXlyNE5zSnMwbVNOWi93NDN2?=
+ =?utf-8?B?bzBwM1ZKNkZ6YmdQcnRzQmdDd25TMjErdlBkQXhUUmZwSjhjNURLdHo5ejdV?=
+ =?utf-8?B?QlZFNDhjaUZvWVlVSmpjR2kyTGZuMnp2elBQTml0ODhEMzYvRG9IU2JSZU11?=
+ =?utf-8?B?djZSRUxHS0JHbGhYVHQwWjZWUGlLNldOd0RaU1Bwb0F3MUVnZWxIVkZyRzRE?=
+ =?utf-8?B?S3h0dmJaa3J4TWdzTGZsR0d4VmJRa3BITm1UL2pwbng5QXh6Unh6S3VESTM1?=
+ =?utf-8?B?bWpTMUFubDNkMEsvQmFYR2U2UHJnb2dxMk1LUnNIV3BHSkJnb1EweWRJS3Ru?=
+ =?utf-8?B?eXFrNzJHWVlKazFsb1N0Zm5QcEx6YzZ2TzhERkNtYkZiUkVJYkhqdS9TcXlR?=
+ =?utf-8?B?K2YrWS9yMWppWFF4Ykpla2VjaEI3UmYvZDdsVnJtcUd4MmhJeDRXcVZidGdY?=
+ =?utf-8?B?RHJjbkQ2V1NYV3RZaUhMVUE1RnJFbnA2L0lNOWFaRjZQTWFtWkQyMEM4alEr?=
+ =?utf-8?B?NnZ3c0tyVGJlY0lrdmtvRituS3VYQ3BNd3RnckVHaHlza2NxV0ZzU0k2SXZI?=
+ =?utf-8?B?cWp1OXkzM3lCNnJ3N256a3ZmN1BwZSt1R013NE5LU0NkdVhMV3BXVnE2dXZ4?=
+ =?utf-8?B?N2pWTWlLMXUxYjlFYnZXWWJJTC8rVnRkMmh0ZkVUNVJvZnlpVE5kTXQ0Wk5O?=
+ =?utf-8?B?VXhZOXo2RTBxSU5ZK0p6Y1ZoZE5RSEVRbW52azZpdVpRUUdUaTJDaGsrWExW?=
+ =?utf-8?B?eTh6MzZCQWM2bThrckxVb0JqZnpiNGhubzRXWnB3cnRpelE0OFl2V0NVTjk1?=
+ =?utf-8?B?dVd0VVpjQnNkZzN2M0FLWkIzM1RXQnMzVld2MW9pLzJxeHZwcStkcWpqSTc4?=
+ =?utf-8?B?Y1ZmSk9EME80ZmEycWtyb3pGUzRyOUhaUUpxVy81cjFVYWVhaW5TWW9SRHpE?=
+ =?utf-8?B?cEVQT2IwUWltUGdUL3VKZWNVbXN4ZmU3aW0zN0c3Tk1MT01pcVFMQmN1UmpL?=
+ =?utf-8?B?Ry8xRUs0Z3lPSTJkNG12RGhCRmhZNXl6OEM4RzRNeHpUWGhHS0o4dzIzcmU3?=
+ =?utf-8?B?RDN4aXYzOWtwMW1YQ2VkVjJZaVhYVlB0VzVPb3JONnN2ME15NVBmclAwQTdL?=
+ =?utf-8?B?dkZZQVRERjVxSzkrM3Y0OHRFc25pclpCaXRBcmdTMElUUDZDMHlrdTRmb0pW?=
+ =?utf-8?B?TW1GU1AvMEg3WlJMMHpPUTBmaW05a3BwSEhKWWJtZzhxMUVTUU5ycStVcDF4?=
+ =?utf-8?B?MWlTYkdUMFRlZTlpTG8vVlkrUXkvWS9EUmgrdUpsRWN0RTlmRncvSkhubGpo?=
+ =?utf-8?B?bHhvMTFVWFE5Q1NaVXdXZlErVGNHcnZ6VEZEcG90N1pDY2xRWmRGSkFRdmwv?=
+ =?utf-8?B?QVhhVXpMMDVtZERCZUloZHdQM0ZmUndNWmh1T2FEbGNzZ0xvYlRYOUhybzZK?=
+ =?utf-8?B?a0JyUm91WWhqT0lqamNhTzlKSFowMHBRT3FqMURBMGhWNVRxV0ZPYjQ4M2dF?=
+ =?utf-8?Q?6VqOCWs4g8Mpq91rfwINSdXQ3?=
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09627442-bf30-4908-058e-08ddf1ebdda3
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a7e8e10-f53e-467d-d6b2-08ddf1ebe18a
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 11:02:29.7525
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 11:02:36.2686
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tT3fRWvvEEghM2ge8Indv3hWFkyd2nSwL8/NJDovxzpEXcym8V+sF7Ro35HTZmnV
+X-MS-Exchange-CrossTenant-UserPrincipalName: ijhnVK5BTGKh3rS+f1xpG3UoWKYeYtV/VTbiISIoAAO831GyQaf2qKYB0+A+l3M1
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6118
 
 
 
-On 9/8/25 15:33, Michal Simek wrote:
-> Add missing cache layout description.
+On 9/2/25 09:56, Michal Simek wrote:
+> Hi,
 > 
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> ---
+> sending some small amount of patches to get in sync with U-Boot DTs
+> to be able to switch U-Boot to OF_UPSTREAM.
+> The next step is going to be to add missing boards to Linux.
 > 
-> Changes in v2:
-> - Also describe L1 caches
-> - Add L1 to subject too
+> Thanks,
+> Michal
 > 
-> v1:
-> https://lore.kernel.org/r/f2ee23526349a0674149c969a2176c906e529402.1756825388.git.michal.simek@amd.com
 > 
->> lscpu --cache
-> NAME ONE-SIZE ALL-SIZE WAYS TYPE        LEVEL SETS PHY-LINE COHERENCY-SIZE
-> L1d       64K       1M    4 Data            1  256                      64
-> L1i       64K       1M    4 Instruction     1  256                      64
-> L2       512K       8M    8 Unified         2 1024                      64
-> L3         2M       8M   16 Unified         3 2048                      64
-> L4        16M      16M      Unified         4
+> Michal Simek (2):
+>    arm64: zynqmp: Describe ethernet controllers via aliases on SOM
+>    arm64: zynqmp: Enable DP in kr260/kv260 revA
 > 
-> ---
->   arch/arm64/boot/dts/xilinx/versal-net.dtsi | 408 +++++++++++++++++++++
->   1 file changed, 408 insertions(+)
+> Quanyang Wang (1):
+>    arm64: zynqmp: Disable coresight by default
 > 
-> diff --git a/arch/arm64/boot/dts/xilinx/versal-net.dtsi b/arch/arm64/boot/dts/xilinx/versal-net.dtsi
-> index c037a7819967..412af9a394aa 100644
-> --- a/arch/arm64/boot/dts/xilinx/versal-net.dtsi
-> +++ b/arch/arm64/boot/dts/xilinx/versal-net.dtsi
-> @@ -104,6 +104,28 @@ cpu0: cpu@0 {
->   			reg = <0>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_00>;
-> +			l2_00: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_0>;
-> +			};
->   		};
->   		cpu100: cpu@100 {
->   			compatible = "arm,cortex-a78";
-> @@ -112,6 +134,28 @@ cpu100: cpu@100 {
->   			reg = <0x100>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_01>;
-> +			l2_01: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_0>;
-> +			};
->   		};
->   		cpu200: cpu@200 {
->   			compatible = "arm,cortex-a78";
-> @@ -120,6 +164,28 @@ cpu200: cpu@200 {
->   			reg = <0x200>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_02>;
-> +			l2_02: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_0>;
-> +			};
->   		};
->   		cpu300: cpu@300 {
->   			compatible = "arm,cortex-a78";
-> @@ -128,6 +194,28 @@ cpu300: cpu@300 {
->   			reg = <0x300>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_03>;
-> +			l2_03: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_0>;
-> +			};
->   		};
->   		cpu10000: cpu@10000 {
->   			compatible = "arm,cortex-a78";
-> @@ -136,6 +224,28 @@ cpu10000: cpu@10000 {
->   			reg = <0x10000>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_10>;
-> +			l2_10: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_1>;
-> +			};
->   		};
->   		cpu10100: cpu@10100 {
->   			compatible = "arm,cortex-a78";
-> @@ -144,6 +254,28 @@ cpu10100: cpu@10100 {
->   			reg = <0x10100>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_11>;
-> +			l2_11: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_1>;
-> +			};
->   		};
->   		cpu10200: cpu@10200 {
->   			compatible = "arm,cortex-a78";
-> @@ -152,6 +284,28 @@ cpu10200: cpu@10200 {
->   			reg = <0x10200>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_12>;
-> +			l2_12: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_1>;
-> +			};
->   		};
->   		cpu10300: cpu@10300 {
->   			compatible = "arm,cortex-a78";
-> @@ -160,6 +314,28 @@ cpu10300: cpu@10300 {
->   			reg = <0x10300>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_13>;
-> +			l2_13: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_1>;
-> +			};
->   		};
->   		cpu20000: cpu@20000 {
->   			compatible = "arm,cortex-a78";
-> @@ -168,6 +344,28 @@ cpu20000: cpu@20000 {
->   			reg = <0x20000>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_20>;
-> +			l2_20: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_2>;
-> +			};
->   		};
->   		cpu20100: cpu@20100 {
->   			compatible = "arm,cortex-a78";
-> @@ -176,6 +374,28 @@ cpu20100: cpu@20100 {
->   			reg = <0x20100>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_21>;
-> +			l2_21: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_2>;
-> +			};
->   		};
->   		cpu20200: cpu@20200 {
->   			compatible = "arm,cortex-a78";
-> @@ -184,6 +404,28 @@ cpu20200: cpu@20200 {
->   			reg = <0x20200>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_22>;
-> +			l2_22: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_2>;
-> +			};
->   		};
->   		cpu20300: cpu@20300 {
->   			compatible = "arm,cortex-a78";
-> @@ -192,6 +434,28 @@ cpu20300: cpu@20300 {
->   			reg = <0x20300>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_23>;
-> +			l2_23: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_2>;
-> +			};
->   		};
->   		cpu30000: cpu@30000 {
->   			compatible = "arm,cortex-a78";
-> @@ -200,6 +464,28 @@ cpu30000: cpu@30000 {
->   			reg = <0x30000>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_30>;
-> +			l2_30: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_3>;
-> +			};
->   		};
->   		cpu30100: cpu@30100 {
->   			compatible = "arm,cortex-a78";
-> @@ -208,6 +494,28 @@ cpu30100: cpu@30100 {
->   			reg = <0x30100>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_31>;
-> +			l2_31: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_3>;
-> +			};
->   		};
->   		cpu30200: cpu@30200 {
->   			compatible = "arm,cortex-a78";
-> @@ -216,6 +524,28 @@ cpu30200: cpu@30200 {
->   			reg = <0x30200>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_32>;
-> +			l2_32: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_3>;
-> +			};
->   		};
->   		cpu30300: cpu@30300 {
->   			compatible = "arm,cortex-a78";
-> @@ -224,7 +554,85 @@ cpu30300: cpu@30300 {
->   			reg = <0x30300>;
->   			operating-points-v2 = <&cpu_opp_table>;
->   			cpu-idle-states = <&CPU_SLEEP_0>;
-> +			d-cache-size = <0x10000>; /* 64kB */
-> +			d-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			d-cache-sets = <256>;
-> +			i-cache-size = <0x10000>; /* 64kB */
-> +			i-cache-line-size = <64>;
-> +			/* 4 ways set associativity */
-> +			/* cache_size / (line_size / associativity) */
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2_33>;
-> +			l2_33: l2-cache {
-> +				compatible = "cache";
-> +				cache-level = <2>;
-> +				cache-size = <0x80000>; /* 512kB */
-> +				cache-line-size = <64>;
-> +				/* 8 ways set associativity */
-> +				/* cache_size / (line_size/associativity) */
-> +				cache-sets = <1024>;
-> +				cache-unified;
-> +				next-level-cache = <&l3_3>;
-> +			};
-> +		};
-> +
-> +		l3_0: l3-0-cache { /* cluster private */
-> +			compatible = "cache";
-> +			cache-level = <3>;
-> +			cache-size = <0x200000>; /* 2MB */
-> +			cache-line-size = <64>;
-> +			/* 16 ways set associativity */
-> +			/* cache_size / (line_size/associativity) */
-> +			cache-sets = <2048>;
-> +			cache-unified;
-> +			next-level-cache = <&llc>;
-> +		};
-> +
-> +		l3_1: l3-1-cache { /* cluster private */
-> +			compatible = "cache";
-> +			cache-level = <3>;
-> +			cache-size = <0x200000>; /* 2MB */
-> +			cache-line-size = <64>;
-> +			/* 16 ways set associativity */
-> +			/* cache_size / (line_size/associativity) */
-> +			cache-sets = <2048>;
-> +			cache-unified;
-> +			next-level-cache = <&llc>;
-> +		};
-> +
-> +		l3_2: l3-2-cache { /* cluster private */
-> +			compatible = "cache";
-> +			cache-level = <3>;
-> +			cache-size = <0x200000>; /* 2MB */
-> +			cache-line-size = <64>;
-> +			/* 16 ways set associativity */
-> +			/* cache_size / (line_size/associativity) */
-> +			cache-sets = <2048>;
-> +			cache-unified;
-> +			next-level-cache = <&llc>;
-> +		};
-> +
-> +		l3_3: l3-3-cache { /* cluster private */
-> +			compatible = "cache";
-> +			cache-level = <3>;
-> +			cache-size = <0x200000>; /* 2MB */
-> +			cache-line-size = <64>;
-> +			/* 16 ways set associativity */
-> +			/* cache_size / (line_size/associativity) */
-> +			cache-sets = <2048>;
-> +			cache-unified;
-> +			next-level-cache = <&llc>;
-> +		};
-> +
-> +		llc: l4-cache { /* LLC inside CMN */
-> +			compatible = "cache";
-> +			cache-level = <4>;
-> +			cache-size = <0x1000000>; /* 16MB */
-> +			cache-unified;
->   		};
-> +
->   		idle-states {
->   			entry-method = "psci";
->   
+> Radhey Shyam Pandey (1):
+>    arm64: zynqmp: Revert usb node drive strength and slew rate for zcu106
+> 
+>   .../boot/dts/xilinx/zynqmp-sck-kr-g-revA.dtso | 17 +++++++++++++++
+>   .../boot/dts/xilinx/zynqmp-sck-kr-g-revB.dtso |  5 +++++
+>   .../boot/dts/xilinx/zynqmp-sck-kv-g-revA.dtso | 21 +++++++++++++++++++
+>   .../boot/dts/xilinx/zynqmp-sck-kv-g-revB.dtso |  4 ++++
+>   .../boot/dts/xilinx/zynqmp-zcu106-revA.dts    |  4 ++--
+>   arch/arm64/boot/dts/xilinx/zynqmp.dtsi        |  4 ++++
+>   6 files changed, 53 insertions(+), 2 deletions(-)
+> 
 
 Applied.
 M
