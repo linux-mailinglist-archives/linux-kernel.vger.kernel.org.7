@@ -1,240 +1,203 @@
-Return-Path: <linux-kernel+bounces-813206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E664B541FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:23:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACD63B541F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C47104E1328
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:23:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC99E1C85090
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21789270EC1;
-	Fri, 12 Sep 2025 05:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SWXTiFxX"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AB4274FDB;
+	Fri, 12 Sep 2025 05:22:43 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3456274B44
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854B6270EC1;
+	Fri, 12 Sep 2025 05:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757654565; cv=none; b=pJNl2sBt8HkFXlGZ1qhpiUpzqbgLSUJ0BptLr9R4g5CQ8EyNRdrjyywv8cF7FsNDR57/qWGKnspHsYIBaS1U8v0unBw8S05smi/gBvfYmeRfwA1nOxj5Duj92CD+6E3B+COPkcPIHaBONwxnldcxL/z2uasmsYBHrwNVMIrtseQ=
+	t=1757654563; cv=none; b=Pe9S8ImczcWAhUIkdwDgfasqxSqQOieQSsq65fc27TiAD9PB4xtRJoUlgul4yB5VKCqFQpPWMPmjM0OEUSXGlDhoAz7syL/767MoJ36KJcpobsANoz0p8oibhZ+jacNmOzQCZ6CJDzAxada6Oxad0tbLZAAXDMKaWjSw6pvipuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757654565; c=relaxed/simple;
-	bh=RAxMT9qAykd1Rum+aqDkUXs13SOxAbf/PyQDlBYWw8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ImWmVm8Lv+bTw2tpthdvGvJ4HLpdToBfZQLj+rro3ipIal15BABjvaz3YSPE4VwwllhxaAMN5GHtbPeqpXOWuL82MOFL0WFJ66dJRRdmJ1it6lB9L6zQ6U+SkLnwsY5sCVUugt/tize45E6/vR0EQvf0KHoeBxjMcYmsGVEmOoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SWXTiFxX; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BKLvVP018756;
-	Fri, 12 Sep 2025 05:22:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=PSuSp9
-	gFNTxiODTV6dcLDDWsJAUJ2FoQ3hQrSOaUA5A=; b=SWXTiFxXNWOamFDyj89VCj
-	8D4Gp/T+0zsDrhMSAvym9YzOLhUey0H9u8T7xAd4ofyKYnYrknQb/Rbd+9lEY/vx
-	DxNM42lMoExYoHgkHKU55KdRlY9JLz3GLKnNpGbxmr0oVjnjXdGzOZNZ3Nq8fcFS
-	B4CxFiN5U07oJU1wezecYl5cVVEQybpTWPUVElz9QgJA6wAw5qyaQSFgZCrFYaKT
-	aQUTELMveEvp2jsmrMj9QA+sPLYL9HnbfzAisO1aA0eIat6AmEEEz0EvQ/Igcpnk
-	aJ70V+iE7rvEw57vqjl02TxBOeVJ6lKOIeHns14f8w3bZKCZA769j8jybVHz+jNg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmx9cgh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 05:22:17 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58C5LthZ030812;
-	Fri, 12 Sep 2025 05:22:16 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmx9cge-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 05:22:16 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58C0b9Fv020465;
-	Fri, 12 Sep 2025 05:22:15 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 490yp19fvt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 05:22:15 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58C5MBG834800104
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 05:22:11 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E31E2004E;
-	Fri, 12 Sep 2025 05:22:11 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7DFFD20040;
-	Fri, 12 Sep 2025 05:22:02 +0000 (GMT)
-Received: from [9.61.95.215] (unknown [9.61.95.215])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 12 Sep 2025 05:22:02 +0000 (GMT)
-Message-ID: <36042e33-772d-4c4e-ba6d-8461c8f6e29b@linux.ibm.com>
-Date: Fri, 12 Sep 2025 10:52:00 +0530
+	s=arc-20240116; t=1757654563; c=relaxed/simple;
+	bh=7IHLWl/YcezoOgUb+evh2xve1eONz6S1JxbRCRlbaYI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TeJAW36y6kYiqwNukR0c1ktMVFHFc3jI18s4HFVj3MNl1LnL+aArcHtFTtsseklv1kuNBK6pxSv6EsZwva6AVbVVOtzoQPoxqzeaz0SQMBvoZ3qj9arMbqcrb/oQ/c0i/dyxxXoj9qf/6a34dZ+C56LuQrIelYKMnGS1y8CSBd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 12 Sep
+ 2025 13:22:31 +0800
+Received: from twmbx02.aspeed.com (192.168.10.13) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
+ Transport; Fri, 12 Sep 2025 13:22:31 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: ryan_chen <ryan_chen@aspeedtech.com>, Michael Turquette
+	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
+	<andrew@codeconstruct.com.au>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	<linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Mo Elbadry <elbadrym@google.com>, "Rom
+ Lemarchand" <romlem@google.com>, William Kennington <wak@google.com>, "Yuxiao
+ Zhang" <yuxiaozhang@google.com>, <wthai@nvidia.com>, <leohu@nvidia.com>,
+	<dkodihalli@nvidia.com>, <spuranik@nvidia.com>
+Subject: [PATCH v13 0/3] Add support for AST2700 clk driver
+Date: Fri, 12 Sep 2025 13:22:28 +0800
+Message-ID: <20250912052231.1944937-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 07/10] sched/core: Push current task from paravirt
- CPU
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: vschneid@redhat.com, iii@linux.ibm.com, huschle@linux.ibm.com,
-        rostedt@goodmis.org, dietmar.eggemann@arm.com, vineeth@bitbyteword.org,
-        jgross@suse.com, pbonzini@redhat.com, seanjc@google.com,
-        mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, tglx@linutronix.de, yury.norov@gmail.com,
-        maddy@linux.ibm.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, gregkh@linuxfoundation.org
-References: <20250910174210.1969750-1-sshegde@linux.ibm.com>
- <20250910174210.1969750-8-sshegde@linux.ibm.com>
- <7227822a-0b4a-47cc-af7f-190f6d3b3e07@amd.com>
- <1617b0fb-273a-4d86-8247-c67968c07b3b@linux.ibm.com>
- <5493a681-4438-4854-9cf4-c1e71ad2dbed@amd.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <5493a681-4438-4854-9cf4-c1e71ad2dbed@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: n-ZocXSi8m0y8ap2kiJ0D1CK5Gtj1qc4
-X-Proofpoint-ORIG-GUID: FM1G5HVCM9c_ywMYga2YZs-cfqyFgGT8
-X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68c3ae09 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=qsZGKYFnRep_aCdFJpgA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfX40MtRhpfZEqS
- YDeYgXKtm0J9Bt8S5pC4TXwNvadk6QvDr1L79d131e2hdvWhZhfLdxrgDmJK5DKLbFTlOG2k+Y0
- 5qGZ/I8e2c2Nc/w3n45yx5ABC8sQrQtPFqq7IunIEwekmrOIXRO1oyx1rThEoLuATWR4rrHBFJ/
- HfwH6uNgjIjdtkcSb+fs8WxhZ8uyU5t92B5L8SwEkYpDpCyQEsvM4Pp0z64L9rJn6U07Sef4qR6
- q/Cnfcf4d1GEwYLURpmbHUnyZ9GCxqdbvmKeqCDgrsLUZa7O+NxkRUQCZIhDWgtXkB4SGbf6jBd
- Nkb2yijRCeiOCrIH1lAc+CfgNrU6NEyH9LeEp0YBTupLeM8fBrSrd7y/TDWcT20Z38H31QXS9Im
- AboiCWEC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_01,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 suspectscore=0 spamscore=0 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
+Content-Type: text/plain
 
+This patch series is add clk driver for AST2700.
 
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
 
-On 9/11/25 10:36 PM, K Prateek Nayak wrote:
-> Hello Shrikanth,
-> 
-> On 9/11/2025 10:22 PM, Shrikanth Hegde wrote:
->>>> +    if (is_cpu_paravirt(cpu))
->>>> +        push_current_from_paravirt_cpu(rq);
->>>
->>> Does this mean paravirt CPU is capable of handling an interrupt but may
->>> not be continuously available to run a task?
->>
->> When i run hackbench which involves fair bit of IRQ stuff, it moves out.
->>
->> For example,
->>
->> echo 600-710 > /sys/devices/system/cpu/paravirt
->>
->> 11:31:54 AM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
->> 11:31:57 AM  598    2.04    0.00   77.55    0.00   18.37    0.00    1.02    0.00    0.00    1.02
->> 11:31:57 AM  599    1.01    0.00   79.80    0.00   17.17    0.00    1.01    0.00    0.00    1.01
->> 11:31:57 AM  600    0.00    0.00    0.00    0.00    0.00    0.00    0.99    0.00    0.00   99.01
->> 11:31:57 AM  601    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
->> 11:31:57 AM  602    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00  100.00
->>
->>
->> There could some workloads which doesn't move irq's out, for which needs irqbalance change.
->> Looking into it.
->>
->>   Or is the VMM expected to set
->>> the CPU on the paravirt mask and give the vCPU sufficient time to move the
->>> task before yanking it away from the pCPU?
->>>
->>
->> If the vCPU is running something, it is going to run at some point on pCPU.
->> hypervisor will give the cycles to this vCPU by preempting some other vCPU.
->>
->> It is that using this infra, there is should be nothing on that paravirt vCPU.
->> That way collectively VMM gets only limited request for pCPU which it can satify
->> without vCPU preemption.
-> 
-> Ack! Just wanted to understand the usage.
-> 
-> P.S. I remember discussions during last LPC where we could communicate
-> this unavailability via CPU capacity. Was that problematic for some
-> reason? Sorry if I didn't follow this discussion earlier.
-> 
+v13:
+- clk-ast2700.c
+ - remove unnecessary ().
+ - refine ast2700_soc1_configure_i3c_clk to be easy readable.
 
-Thanks for that questions. Gives a opportunity to retrospect.
+v12:
+-fix mistakes commit message Acked-by:Krzysztof Kozlowski
+<krzysztof.kozloski@linaro.org> to Acked-by: Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org>
 
-Yes. That's where we started. but that has a lot of implementation challenges.
-Still an option though.
+v11:
+-update patch(1/3) commit message subject prefix dt-binding: to dt-bindings:
 
-History upto current state:
+v10:
+-aspeed,ast2700-scu.h:
+-add SOC0_CLK_AHBMUX, SOC0_CLK_MPHYSRC, SOC0_CLK_U2PHY_REFCLKSRC,
+ SOC1_CLK_I3C.
+-clk-ast2700.c
+-add #include <linux/auxiliary_bus.h>
+-remove #include <soc/aspeed/reset-aspeed.h>
+-use devm_auxiliary_device_create replace aspeed_reset_controller_register
+-reset-aspeed.c:
+-remove aspeed_reset_unregister_adev, aspeed_reset_adev_release,
+ aspeed_reset_controller_register.
+-compatible name change reset_aspeed.reset0/1 -> clk_ast2700.reset0/1
+-remove reset-aspeed.h
 
-1. At LPC24 presented the problem statement, and why existing approaches such as hotplug,
-    cpuset cgroup or taskset are not viable solution. Hotplug would have come handy if the cost was low.
-    The overhead of sched domain rebuild and serial nature of hotplug makes it not viable option.
-    One of the possible approach was CPU Capacity.
+v9:
+-aspeed,ast2700-scu.h: no change.
+add more clear commit description.
+-clk-ast2700.c:
+add inlcude bitfield.h
+remove redundant clk_parent_data soc0_mpll_div8/soc0_ahb/uart13clk/
+uart14clk/uart15clk/uart16clk/soc1_ahb/d_clk_sels
 
-1. Issues with CPU Capacity approach:
-    a. Need to make group_misfit_task as the highest priority. That alone will break big.LITTLE
-       since it relies on group misfit and group_overload should have higher priority there.
-    b. At high concurrency tasks still moved those CPUs with CAPACITY=1.
-    c. A lot of scheduler stats would need to be aware of change in CAPACITY specially load balance/wakeup.
-    d. in update_group_misfit - need to set the misfit load based on capacity. the current code sets to 0,
-       because of task_fits_cpu stuff
-    e. More challenges in RT.
+v8:
+-aspeed,ast2700-scu.h: remove no use soc0 clock, add new clock
+-clk-ast2700.c: remove include <linux/auxiliary_bus.h>,
+include <linux/clk-provider.h>, include <linux/of_address.h>
+-clk-ast2700.c: add include <linux/mod_devicetable.h>
+-clk-ast2700.c: modify include <soc/aspeed/reset-aspeed.h> order before
+dt-bindings
+-clk-ast2700.c: modify define to be tabbed out space
+-clk-ast2700.c: add union struct for each clk type
+	union {
+		struct ast2700_clk_fixed_factor_data factor;
+		struct ast2700_clk_fixed_rate_data rate;
+		struct ast2700_clk_gate_data gate;
+		struct ast2700_clk_div_data div;
+		struct ast2700_clk_pll_data pll;
+		struct ast2700_clk_mux_data mux;
+	} data;
+-clk-ast2700.c: modify clk_data = device_get_match_data(dev);
+-clk-ast2700.c: modify builtin_platform_driver_probe to 
+arch_initcall(clk_ast2700_init)
+-clk-ast2700.c: ast2700_clk_hw_register_hpll explain: scu010[4:2],
+scu010[4:2] = 010, hpll force 1.8Ghz
+scu010[4:2] = 011, hpll force 1.7Ghz
+scu010[4:2] = 110, hpll force 1.2Ghz
+scu010[4:2] = 111, hpll force 800Mhz
+others depend on hpll parameter register setting.
 
-That's when Tobias had introduced a new group type called group_parked.
-https://lore.kernel.org/all/20241204112149.25872-2-huschle@linux.ibm.com/
-   
-It has relatively cleaner implementation compared to CPU CAPACITY.
+v7:
+-reset-aspeed.h: fix declare static inline aspeed_reset_controller_register
+if the function is not used.
 
-It had a few disadvantages too:
-1. It use to take around 8-10 seconds for tasks to move out of those CPUs. That was the main
-    concern.
-2. Needs a few stats based changes in update_sg_lb_stats. might be tricky in all scenarios.
+v6:
+-patch-2: add reset-aspeed.h
+-reset-aspeed: add include cleanup.h for guard()
+-reset-aspeed: change ids name clk_aspeed to reset_aspeed
+-reset-aspeed: move aspeed_reset_controller_register,
+aspeed_reset_adev_release, aspeed_reset_unregister_adev from clk-ast2700.c
+-reset-aspeed: drop base check, since it check in clk-ast2700.c
+-clk-ast2700: sync each gate name from *clk to *clk-gate name.
+-clk-ast2700: add CLK_GATE_ASPEED to diff clk_hw_register_gate and
+ast2700_clk_hw_register_gate.
 
-That's when we were exploring how the tasks move out when the cpu goes offline. It happens quite fast too.
-So tried a similar mechanism and this is where we are right now.
+v5:
+-patch-2 Kconfig: add select AUXILIARY_BUS
+-reset-aspeed: #define to_aspeed_reset(p) turn into static inline function.
+-reset-aspeed: modify spin_lock_irqsave to guard(spinlock_irqsave)
+-reset-aspeed: remove unnecessary parentheses.
+-clk-ast2700: use <linux/units.h> and refrain from define clk
 
-> [..snip..]
->>>> +    local_irq_save(flags);
->>>> +    preempt_disable();
->>>
->>> Disabling IRQs implies preemption is disabled.
->>>
->>
->> Most of the places stop_one_cpu_nowait called with preemption & irq disabled.
->> stopper runs at the next possible opportunity.
-> 
-> But is there any reason to do both local_irq_save() and
-> preempt_disable()? include/linux/preempt.h defines preemptible() as:
->
->      #define preemptible()   (preempt_count() == 0 && !irqs_disabled())
-> 
-> so disabling IRQs should be sufficient right or am I missing something?
-> 
+v4:
+-yaml: keep size-cells=<1>.
+-merge clk,reset dt binding header with yaml the same patch.
+-rename clk,reset dt binding header to aspeed,ast2700-scu.h
+-reset-aspeed: update tables tabs sapces to consistent spaces.
+-reset-aspeed: remove no use dev_set_drvdata.
+-clk-ast2700: modify reset_name to const int scu in struct clk_data.
+-clk-ast2700: use scu number in clk_data generate reset_name for reset
+ driver register.
+-clk-ast2700: fix pll number mix up scu0,scu1.
+-clk-ast2700: update dt-binding clock include file.
 
-f0498d2a54e79 (Peter Zijlstra) "sched: Fix stop_one_cpu_nowait() vs hotplug"
-could be the answer you are looking for.
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
 
->>
->> stop_one_cpu_nowait
->>   ->queues the task into stopper list
->>      -> wake_up_process(stopper)
->>         -> set need_resched
->>           -> stopper runs as early as possible.
->>          
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (3):
+  dt-bindings: clock: ast2700: modify soc0/1 clock define
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver
+
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1139 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  253 ++++
+ .../dt-bindings/clock/aspeed,ast2700-scu.h    |    4 +
+ 7 files changed, 1413 insertions(+)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
+
+-- 
+2.34.1
 
 
