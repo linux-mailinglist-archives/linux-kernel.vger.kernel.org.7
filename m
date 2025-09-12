@@ -1,230 +1,211 @@
-Return-Path: <linux-kernel+bounces-814844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222FDB55947
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:34:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48176B5594B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D16B4AA5372
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:34:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD25D7A6256
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1F524A04D;
-	Fri, 12 Sep 2025 22:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359E5253B71;
+	Fri, 12 Sep 2025 22:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yQvoDpDf"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu/SOl5u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B3C22333B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:34:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5831E5219;
+	Fri, 12 Sep 2025 22:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757716485; cv=none; b=QD4QAULrohHaB3pp/c+K3LPo0Bnu8TtX2P4wtQXH8xgnJ7u2I9u5hDiq/JaW4Lz8dm6O7l2tLaZsoG8x01HoPqbxzdbCBAcNAbkkckn1cc5ZkYoJH8VRNPDELBwAAgC1AlPHNkM65EnNtXism2wBRwoSKU1KMyQzqIjFoaDYcy8=
+	t=1757716555; cv=none; b=Zc/V1Ce0MwzG84ZaptRNzmOScFLonjnwMqV5PjjmcX6xKrsF0nWEpY6t3Xo1ot1FW9RyD50zPImmPFB8i92cG1LaMj11irpLAB78fsj2S2kr6hNQs8OePQFsyX3uXYEbsYboUYhCAhZuFKOAu1NjV6ZxXzgtCEy+M7AanoASsaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757716485; c=relaxed/simple;
-	bh=+BDgsMX06Ju/kfaG0zZzie2LOuabqWLb2H21wc6L6XY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i2UFTKsrAAUAo8vCD39mrVYG1/p67h0eVpccMm/ltXWaEYGtSjjdwY0fRZUcazMRxWK8JkjGD8dGgLoeuyz1eRCqqCNEIwCfC5dTxjZuOwVvkI27mTz+Ab2GsJ8c6p38r8ZXwBWBGZ4B7CcL0aVxOvsjXp/1prH7pgsulsASM9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yQvoDpDf; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e96e1c82b01so1474616276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:34:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757716483; x=1758321283; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d3zugougNjwzeyQ8N92kEFKnLBurBuSSiIdQ2OlaO4k=;
-        b=yQvoDpDf5691pshA6v5+mZ05cq+ehXVKCqiMTQ2zx3M456Yc9G/WcnoB1o5kquiCKL
-         2kvMbuLktV5wnnz0wUmEbRP2uaCmYjrRl+MTb4sgJU7KACrTsWxela1Sw4IcJx9crCLs
-         SN/UiOzy6NR9dJI67TVDjLCRQB/dXnnNgYkTjfnzp8El78RMB37w8Ig98YQKbTrWjX4l
-         h4wM5Knr7Zqu1F3oHgWf5PJtT4iaegjeH/0ia2RZ/d43CpDeo1Ocnpj0I3WL563ZEixM
-         uMcbz/RAZLt4Hjmhoz7VYfitEnl0sg55kD0s5P8KFKe0WAOZl6qXz4SrSzY30/xTa+r2
-         Z2Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757716483; x=1758321283;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d3zugougNjwzeyQ8N92kEFKnLBurBuSSiIdQ2OlaO4k=;
-        b=n6uHz4Bc8jR8Fuqg/gfjR+UIOFfHALkCOEt8X9ore9Zlt0X1mPwEsGiVI5rLmawrb8
-         pOMp74Snbtw5iFXqxu/t73aH4f+AuBfboBJvXlxziIvMZfIEe9VQ4FjsChBbELdSdmvI
-         bleq/0ddgHqLNuLrWPmeMYYTHt7BEAhC6FLX396N2Roz8s0BrKfsdnvhkmF+KuVMVqag
-         f5UZNuSzLn1QG/R9vC/5HDV2NK0fiJyvZA31hmitnMKJqc5k5nc5DMpcqYJ/Hn0zTCd5
-         ZNWY+n/SCUJH89Jscpl/YO41Na7wSVMmwbNtUrxBX4LR3wqm/AY9ZH0zZutaVhiivKjf
-         ibCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVSCeiO2sG3G08edggg1h+5LsIxmisibknDfYs8vyyKw0q/hOTJ4Y2n9fznvp2bOvr5K201uPHLuF0/U2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+6YRqa72fb/Pxuer1gmDYG0tHLORf/euA8sQe9n0PdNkAhGB0
-	15lmp93kmNUymk+weM9XuINzAbVyr8N+IiUZhWhTMilQA/dahQZ+S6JibkQrqP6FK5TZVC0u+KA
-	v/CjUI3m2pffz5GaqID2QuY+kDP9sGSQbplYqN2uT
-X-Gm-Gg: ASbGnct2zR+7j26Out/VafUPVPA0Gy48ro1jUghdUP22OJ1GwfH/NlrReKs8KQ+lDxm
-	vMdZCeYynd70xjuw6Neb9d8WhdCk7/qn6+tMagwilqt0kpEbt8V823FKPubktcubyYwb8SYZoWv
-	TBI4U2Z7oECyRLfuAv6mlagIq76pNFASLanOvnGb8Y1uad5mBzW0FTc2JRDC3wM3g/CoegFtXjy
-	xrh2hEGD47fUnBLB6GccBecCMGzi0OjEyX/DlE5M4tx
-X-Google-Smtp-Source: AGHT+IH6Vti9lvQ8aUaABheCs9G3Hl3xVoC4+hQSx4/7LM8FjjVWBkZYCg/y4dcsvWJRkUBy/Nx2M5I2c/6Y8yIpI0U=
-X-Received: by 2002:a05:690e:88:b0:62b:8ae5:3fb0 with SMTP id
- 956f58d0204a3-62b8ae5402amr414384d50.0.1757716482689; Fri, 12 Sep 2025
- 15:34:42 -0700 (PDT)
+	s=arc-20240116; t=1757716555; c=relaxed/simple;
+	bh=2CnoRP2z2CLiNDktcdk7xPf8rU6fPu5yFoEfsAQ+Ojs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H+Vk/umPUjm2ERGtaz6WJv3H+bWiQlcWxFE8JRLA0/K1CJrtXfroh59463/IzYbuUAwdSAKIcI9/6w56CFx24g+Vxc6AxatVRlOwUMabk37IqBaY3PetaceZMRgo1lh1rkPrbJxlt10oevAO3PumXej2vN3m0z240FwTzKVNvoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu/SOl5u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB511C4CEF1;
+	Fri, 12 Sep 2025 22:35:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757716555;
+	bh=2CnoRP2z2CLiNDktcdk7xPf8rU6fPu5yFoEfsAQ+Ojs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hu/SOl5u4tRtqyhIOiqYNA6XR+OljawU94WoV3xl2KyKukaDgM3hrqX1oeitvy3fe
+	 xl5QuU3ysL1uJUsjgCMz1KBdUHW7TrgQc5lE1NRoP7oqzXuicalQzfseXQPZZVv1AW
+	 64r5Me63yOJf0e2v9qKH4UHZoXbB9O3QrAOun2q1UvEElh09kY7ryfg8mPjtdplex0
+	 Qqy6SZ/6x6jTUcsJzY0SPPCenlwjeCZc+ypWUuk8gpDl0ejgeOwhjvVkxqHpbvraua
+	 4EQ6RnAnqNrFmjxjPeF8OAaTvof5TB4h8WptdYxIlSygut+PuL7dgiOheOYXmRnVyG
+	 ZANYc3XlgMgaA==
+Date: Fri, 12 Sep 2025 17:35:54 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Senna Tschudin <peter.senna@gmail.com>,
+	Ian Ray <ian.ray@ge.com>,
+	Martyn Welch <martyn.welch@collabora.co.uk>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: display: bridge: convert
+ megachips-stdpxxxx-ge-b850v3-fw.txt to yaml
+Message-ID: <20250912223554.GA1536924-robh@kernel.org>
+References: <20250912181419.1114695-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250902111951.58315-1-kalyazin@amazon.com> <20250902111951.58315-2-kalyazin@amazon.com>
- <CADrL8HV8+dh4xPv6Da5CR+CwGJwg5uHyNmiVmHhWFJSwy8ChRw@mail.gmail.com> <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com>
-In-Reply-To: <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com>
-From: James Houghton <jthoughton@google.com>
-Date: Fri, 12 Sep 2025 15:34:06 -0700
-X-Gm-Features: AS18NWAw_XyCFedOeHxZhcAGyjfZOKpYwjL4OIfOUrwy6K1ggYgW8JlV5rraAH0
-Message-ID: <CADrL8HUObfEd80sr783dB3dPWGSX7H5=0HCp9OjiL6D_Sp+2Ww@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] KVM: guest_memfd: add generic population via write
-To: kalyazin@amazon.com
-Cc: "Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"shuah@kernel.org" <shuah@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "michael.day@amd.com" <michael.day@amd.com>, 
-	"david@redhat.com" <david@redhat.com>, "Roy, Patrick" <roypat@amazon.co.uk>, 
-	"Thomson, Jack" <jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>, 
-	"Cali, Marco" <xmarcalx@amazon.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912181419.1114695-1-Frank.Li@nxp.com>
 
-On Thu, Sep 11, 2025 at 3:15=E2=80=AFAM Nikita Kalyazin <kalyazin@amazon.co=
-m> wrote:
->
->
->
-> On 10/09/2025 22:23, James Houghton wrote:
-> > On Tue, Sep 2, 2025 at 4:20=E2=80=AFAM Kalyazin, Nikita <kalyazin@amazo=
-n.co.uk> wrote:
-> >>
-> >> From: Nikita Kalyazin <kalyazin@amazon.com>
-> >
-> > Hi Nikita,
->
-> Hi James,
->
-> Thanks for the review!
+On Fri, Sep 12, 2025 at 02:14:18PM -0400, Frank Li wrote:
+> Convert megachips-stdpxxxx-ge-b850v3-fw.txt to yaml format.
+> 
+> Additional changes:
+> - Only keep one example.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../megachips,stdp2690-ge-b850v3-fw.yaml      | 105 ++++++++++++++++++
+>  .../megachips-stdpxxxx-ge-b850v3-fw.txt       |  91 ---------------
+>  2 files changed, 105 insertions(+), 91 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml b/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
+> new file mode 100644
+> index 0000000000000..6b5cfc41f7414
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
+> @@ -0,0 +1,105 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: GE B850v3 video bridge
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +description: |
+> +   STDP4028-ge-b850v3-fw bridges (LVDS-DP)
+> +   STDP2690-ge-b850v3-fw bridges (DP-DP++)
+> +
+> +   The video processing pipeline on the second output on the GE B850v3:
+> +
+> +   Host -> LVDS|--(STDP4028)--|DP -> DP|--(STDP2690)--|DP++ -> Video output
+> +
+> +   Each bridge has a dedicated flash containing firmware for supporting the custom
+> +   design. The result is that, in this design, neither the STDP4028 nor the
+> +   STDP2690 behave as the stock bridges would. The compatible strings include the
+> +   suffix "-ge-b850v3-fw" to make it clear that the driver is for the bridges with
+> +   the firmware specific for the GE B850v3.
+> +
+> +   The hardware do not provide control over the video processing pipeline, as the
+> +   two bridges behaves as a single one. The only interfaces exposed by the
+> +   hardware are EDID, HPD, and interrupts.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - megachips,stdp4028-ge-b850v3-fw
+> +      - megachips,stdp2690-ge-b850v3-fw
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
 
-:) I hope it's actually helpful.
+Need to state this is the input port.
 
->
->
-> >>
-> >> write syscall populates guest_memfd with user-supplied data in a gener=
-ic
-> >> way, ie no vendor-specific preparation is performed.  This is supposed
-> >> to be used in non-CoCo setups where guest memory is not
-> >> hardware-encrypted.
-> >
-> > What's meant to happen if we do use this for CoCo VMs? I would expect
-> > write() to fail, but I don't see why it would (seems like we need/want
-> > a check that we aren't write()ing to private memory).
->
-> I am not so sure that write() should fail even in CoCo VMs if we access
-> not-yet-prepared pages.  My understanding was that the CoCoisation of
-> the memory occurs during "preparation".  But I may be wrong here.
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
 
-This sounds fine to me, but could you update the changelog with what
-the behavior is for CoCo VMs and why we don't allow writing to the
-same pages/regions twice? Something like:
+And this is the output.
 
-"Although write() is only meant to be used for non-CoCo VMs, it is
-valid for CoCo VMs as well: the written contents will be encrypted
-(when the page is prepared). Because the contents may be encrypted, it
-is nonsensical to write() again, so write()ing to prepared pages is
-disallowed (even if the no memory encryption occurs). Furthermore, in
-the near future, page preparation will also result in pages being
-removed from the direct map, so there will be no direct map through
-which to perform the second write()."
+Aren't both required as well?
 
-(This is all provided that it's actually okay to write() content that
-will be encrypted... I don't know why that would be improper, but I'm
-not exactly an expert here.)
-
-> >> @@ -390,6 +392,63 @@ void kvm_gmem_init(struct module *module)
-> >>          kvm_gmem_fops.owner =3D module;
-> >>   }
-> >>
-> >> +static int kvm_kmem_gmem_write_begin(const struct kiocb *kiocb,
-> >> +                                    struct address_space *mapping,
-> >> +                                    loff_t pos, unsigned int len,
-> >> +                                    struct folio **foliop,
-> >> +                                    void **fsdata)
-> >> +{
-> >> +       struct file *file =3D kiocb->ki_filp;
-> >> +       pgoff_t index =3D pos >> PAGE_SHIFT;
-> >> +       struct folio *folio;
-> >> +
-> >> +       if (!PAGE_ALIGNED(pos) || len !=3D PAGE_SIZE)
-> >> +               return -EINVAL;
-> >
-> > Requiring pos to be page-aligned seems like a strange restriction, and
-> > requiring len to be exactly PAGE_SIZE just seems wrong. I don't see
-> > any reason why the below logic can't be made to work with an
-> > unrestricted pos and len (in other words, I don't see how guest_memfd
-> > is special vs other filesystems in this regard).
->
-> I don't have a real reason to apply those restrictions.  Happy to remove
-> them, thanks.
-
-Thanks! Presumably you'll make it so that any unaligned segments will
-be left as zeroes; please describe this in the changelog as well. :)
-
-> >> +
-> >> +       if (pos + len > i_size_read(file_inode(file)))
-> >> +               return -EINVAL;
-> >> +
-> >> +       folio =3D kvm_gmem_get_folio(file_inode(file), index);
-> >> +       if (IS_ERR(folio))
-> >> +               return -EFAULT;
-> >> +
-> >> +       if (WARN_ON_ONCE(folio_test_large(folio))) {
-> >> +               folio_unlock(folio);
-> >> +               folio_put(folio);
-> >> +               return -EFAULT;
-> >> +       }
-> >> +
-> >> +       if (folio_test_uptodate(folio)) {
-> >> +               folio_unlock(folio);
-> >> +               folio_put(folio);
-> >> +               return -ENOSPC;
-> >
-> > Does it actually matter for the folio not to be uptodate? It seems
-> > unnecessarily restrictive not to be able to overwrite data if we're
-> > saying that this is only usable for unencrypted memory anyway.
->
-> In the context of direct map removal [1] it does actually because when
-> we mark a folio as prepared, we remove it from the direct map making it
-> inaccessible to the way write() performs the copy.  It does not matter
-> if direct map removal isn't enabled though.  Do you think it should be
-> conditional?
-
-Oh, good point. It's simpler (both to implement and to describe) to
-disallow a second write() call in all cases (no matter if the direct
-map for the page has been removed or if the contents have been
-encrypted), so I'm all for leaving it unconditional like you have now.
-Thanks!
-
->
-> [1]: https://lore.kernel.org/kvm/20250828093902.2719-1-roypat@amazon.co.u=
-k
->
-> >
-> > Is ENOSPC really the right errno for this? (Maybe -EFAULT?)
->
-> I don't have a strong opinion here.  My reasoning was if the folio is
-> already "sealed" by the direct map removal, then it is no longer a part
-> of the "writable space", so -ENOSPC makes sense.  Maybe this intuition
-> only works for me so I'm happy to change to -EFAULT if it looks less
-> confusing.
-
-Oh actually.... how about EEXIST? That feels like the most natural.
-But also no strong opinion here.
-
-Thanks for all the clarification, Nikita. :)
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - ports
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: megachips,stdp4028-ge-b850v3-fw
+> +    then:
+> +      required:
+> +        - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        bridge@73 {
+> +            compatible = "megachips,stdp4028-ge-b850v3-fw";
+> +            reg = <0x73>;
+> +            interrupt-parent = <&gpio2>;
+> +            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                port@0 {
+> +                    reg = <0>;
+> +
+> +                    endpoint {
+> +                        remote-endpoint = <&lvds0_out>;
+> +                    };
+> +
+> +                };
+> +
+> +                port@1 {
+> +                    reg = <1>;
+> +
+> +                    endpoint {
+> +                        remote-endpoint = <&stdp2690_in>;
+> +                    };
+> +               };
+> +            };
+> +        };
+> +    };
+> +
 
