@@ -1,164 +1,110 @@
-Return-Path: <linux-kernel+bounces-813466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5878EB545D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD24B545D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 051F316D98C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B19AA5D4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EDA1DFD8F;
-	Fri, 12 Sep 2025 08:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="muBTD1ha";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ld9ZQCjh"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122F7261B93;
+	Fri, 12 Sep 2025 08:48:38 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D53C2DC793;
-	Fri, 12 Sep 2025 08:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11BE25F994
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757666877; cv=none; b=LCUuJR7s41Q5iYpJuAJE+4UXxJJCFnnT4zZZU5uPMhdMj68S6ETgfLoGAtD4FPs+Opbs/RlRCDclPOM0YD/E6ebeCmBeUZDxMyxT89azrGVcBLR7l8LxkkTsVaWMmsZ1HhCdpY5n1ICRLvFEBhCLN5sCFFtvDMtjy1fWkmSENjg=
+	t=1757666917; cv=none; b=JLEhZ5QRcC/prHv2A1yrMpPDV4ZQbt9CD0yg8Qnrcdh8CkP29Teha/G2IlKFpZlbrRDUwCREKnR5EE7BSUQH2VY0/bLBKsEFzGkzSLu86euuAudZH1QE3u82iv+nLDxcU+mxKclqGSD6Z3FD6Guxh3HP/OghcYDo4j1s37uqnxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757666877; c=relaxed/simple;
-	bh=eo9w2VnFL3j83P+C9TJyZoTFiiG3GBq2PqaLoXMCu5I=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=t8kuDg0KiLdFaQhdxt3qi/nGW6ED+T8DzW+9M0bUcoKNtcEnPEowZEpHsbit9+JP0+1pfK8d7JAlibEs0YRlruvqHvgjj7ORf0a3uI+K4FG7EP+tPW9lVxi0Ut3V4wTcu8IE1y0Gph6XBvUyt1NZN+uHZgwe1m/A9eDX9C5ZP7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=muBTD1ha; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ld9ZQCjh; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 000ED7A03A6;
-	Fri, 12 Sep 2025 04:47:51 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 12 Sep 2025 04:47:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757666871;
-	 x=1757753271; bh=iDgdGFvPVafirg3SrUddyH198xBsq9KMfs20+2Svn60=; b=
-	muBTD1hahwMhNUaNwK28ttQNJbGdOcpgk6DxpsXQuab3tUaCykcETQQ5BaTXYDy7
-	E9zldZ18KRRV5Trd5JuUMl7enoeCSu+CjcqWSj8XlkufJrgQBoINxK+DeA7CU7bO
-	6y3ycJQxDHTvLETyZHiTJ9qrnFg+qq2I/Bc8N2G5zuayXfU3C3d6a7IFH6FWysX5
-	uVcIGGz+efaLyi4oo0N2SmZtP+OrNv1N37JQ1R3rxaCe2PaEUCz62OH4jBZvk6Q7
-	/GebSd6FCn82pS8vcJ7mwIud92ijjJmodC4MVcq4anAsvpOvu+1+xBI6LcKIdggB
-	yK9hA5XuLvkIKwpP5anuFQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757666871; x=
-	1757753271; bh=iDgdGFvPVafirg3SrUddyH198xBsq9KMfs20+2Svn60=; b=l
-	d9ZQCjhDRSNCac5T3Cmzqo9+troRqzUTGrdApG113OykShJ62UjytxwYMYel1md0
-	PHSUIspMFewbRjW3xIRnydTgFc0yhzfSGFU8CGgLWwmTys5U6xUKBtEgoU2jpk9Y
-	/p8FjyRq8uGnfM/1Y7ObZkRHFWefFCNhnjMwDChvlPNJi8eoMmJ/v4kAsi5IV9uh
-	WtU+tb06T2RLHma1GCrkYz8oVldJBHRwx5h1PaLY5vxeuG9N0u66gpBufSRnpF4i
-	wXVStOXcM+dsr368fmtpVhYfVSLTzsgRABtzvriNz2dSwLnuhCXMwki5VKF/Hqah
-	3nKJZQC04u/gazWF/z2vA==
-X-ME-Sender: <xms:Nt7DaHa3ACbyA-SqO1QiGQNN8fy6tdb47GQva02MkTxViI1x7FjZHg>
-    <xme:Nt7DaGY94I89-xyE1XDoa5FTfhUrVYMu2Xw_q3DdVpq3tQ7G6Nhf5a9pWTjKeeUM2
-    vO_R5XII579Y4EsCVk>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvkeeiudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthhhinhhordguvghlrhgvghhnohestg
-    holhhlrggsohhrrgdrtghomhdprhgtphhtthhopegsvghnrdgthhhurghnghesghgvnhgv
-    shihshhlohhgihgtrdgtohhmrdhtfidprhgtphhtthhopehvihgtthhorhdrshhhihhhse
-    hgvghnvghshihslhhoghhitgdrtghomhdrthifpdhrtghpthhtohepughlrghnsehgvghn
-    thhoohdrohhrghdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrh
-    drsggvpdhrtghpthhtoheprggurhhirghnrdhhuhhnthgvrhesihhnthgvlhdrtghomhdp
-    rhgtphhtthhopehmihhkkhhordhrrghpvghliheslhhinhgrrhhordhorhhgpdhrtghpth
-    htohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepiihh
-    ohhusghinhgsihhnsehlohhonhhgshhonhdrtghn
-X-ME-Proxy: <xmx:Nt7DaB3eG7KUd06J5zP01Lig6qQhuR6NizMonnppkI5_iRX1ykURSA>
-    <xmx:Nt7DaCKrEWHNDDdAQmsP0HG7WHsRMpSWHQ1WiABlL_3hIwiewm2Hpg>
-    <xmx:Nt7DaG21SIEHcSKeL8_NFEcBxcdh5OHUFbmWbuAwA_emY66vbLtqKw>
-    <xmx:Nt7DaGkQX58TeH2VOoyAX-BUESZ6QRT9mlNeKPIn5gbbN_uFaGD0XA>
-    <xmx:N97DaJT_xaVpi35cYxUeQpT3OZhuMkWKHgWCGA9wFX1Hz8ak32lrHEmr>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2093A700065; Fri, 12 Sep 2025 04:47:50 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757666917; c=relaxed/simple;
+	bh=ac7H1NgflG1n6K7kgvvFu1xSxbx+PQbFL9LHTN8IDTk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OXSlk7YK1o1GXoeZbYG3SNCjw0FH2sZPF6HdhlShfNBvPn8AArN1uhbyEsffs+sEilqN2I5mYngC9U4T0fF0mKqG2/fYkGbtgGsghLMak8rbVvftPXj0fat0iiE55X/mDxfr6m46z9LXRuTES38yocLNKSv7+CTopNdC3KgExZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwzRy-0002c5-Ds; Fri, 12 Sep 2025 10:48:10 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwzRx-000u5j-3A;
+	Fri, 12 Sep 2025 10:48:09 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1uwzRx-002xL0-2o;
+	Fri, 12 Sep 2025 10:48:09 +0200
+Date: Fri, 12 Sep 2025 10:48:09 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Peng Fan <peng.fan@oss.nxp.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/10] dmaengine: imx-sdma: fix spba-bus handling for
+ i.MX8M
+Message-ID: <20250912084809.e6atdywisk4ywlr6@pengutronix.de>
+References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
+ <20250911-v6-16-topic-sdma-v2-2-d315f56343b5@pengutronix.de>
+ <20250912030223.GB5808@nxa18884-linux.ap.freescale.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ab0invGq7VjZ
-Date: Fri, 12 Sep 2025 10:47:29 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Mikko Rapeli" <mikko.rapeli@linaro.org>,
- "Ulf Hansson" <ulf.hansson@linaro.org>
-Cc: "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
- linux-kernel@vger.kernel.org, "Adrian Hunter" <adrian.hunter@intel.com>,
- "Victor Shih" <victor.shih@genesyslogic.com.tw>,
- "Ben Chuang" <ben.chuang@genesyslogic.com.tw>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Yixun Lan" <dlan@gentoo.org>, "Binbin Zhou" <zhoubinbin@loongson.cn>
-Message-Id: <acbc46c8-30df-47bb-9d3d-91ba477f6029@app.fastmail.com>
-In-Reply-To: <1813054.X513TT2pbd@diego>
-References: <20250911144313.2774171-1-mikko.rapeli@linaro.org>
- <CAPDyKFqLag_WkxqOCebvBCJy4TzZEqt-rFD_Z30sajUxgSpcaA@mail.gmail.com>
- <1813054.X513TT2pbd@diego>
-Subject: Re: [PATCH] mmc: dw_mmc-rockchip: add dependency to ROCKCHIP_PM_DOMAINS
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912030223.GB5808@nxa18884-linux.ap.freescale.net>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Sep 11, 2025, at 18:05, Heiko St=C3=BCbner wrote:
->
-> Am Donnerstag, 11. September 2025, 17:03:14 Mitteleurop=C3=A4ische=20
-> Sommerzeit schrieb Ulf Hansson:
->> On Thu, 11 Sept 2025 at 16:43, Mikko Rapeli <mikko.rapeli@linaro.org>=
- wrote:
->> > @@ -866,7 +866,7 @@ config MMC_DW_PCI
->> >
->> >  config MMC_DW_ROCKCHIP
->> >         tristate "Rockchip specific extensions for Synopsys DW Memo=
-ry Card Interface"
->> > -       depends on MMC_DW && ARCH_ROCKCHIP
->> > +       depends on MMC_DW && ARCH_ROCKCHIP && ROCKCHIP_PM_DOMAINS
+Hi Peng,
 
-The hard dependencies are usually only for compile-time requirements.
+On 25-09-12, Peng Fan wrote:
+> Hi Marco,
+> 
+> On Thu, Sep 11, 2025 at 11:56:43PM +0200, Marco Felsch wrote:
+> >Starting with i.MX8M* devices there are multiple spba-busses so we can't
+> >just search the whole DT for the first spba-bus match and take it.
+> >Instead we need to check for each device to which bus it belongs and
+> >setup the spba_{start,end}_addr accordingly per sdma_channel.
+> 
+> Could you please explain a bit why it is per sdma_channel, not per sdma_engine?
 
-Ideally this should go the other way and use
+Well first, the sdma-slave/user defines which SPBA bus is used.
+Furthermore not all users have to be part of the same SPBA bus or be
+part of a SPBA bus at all. E.g. the i.mx8mm.dtsi sdma1 engine is used
+by uart4 (not part of a SPBA bus) and uart1/2/3 (part of the
+spba-bus@30800000).
 
-      depends on (ARCH_ROCKCHIP || COMPILE_TEST)
+I know that the use-case: "The SDMA engine can serve for multiple users
+which are not part of the same SPBA bus" is not yet used but having the
+code in place makes the driver more future proof.
 
-after you check that this actually builds on x86 with COMPILE_TEST
-enabled, as there may be other compile-time dependencies.
-=20
->> Rather than "depends on", I think a "select" is better to be added
->> from the platform's Kconfig. Probably drivers/soc/rockchip/Kconfig is
->> where to put this.
->>=20
->> Assuming that ROCKCHIP_PM_DOMAINS is a critical piece for most
->> Rockchip platforms to work.
->
-> I'd think
-> - arch/arm64/Kconfig.platforms
-> - arch/arm/mach-rockchip/Kconfig
-> would be the correct positions.
->
-> And as Ulf suggested, this should be a "select"
+Therefore I think having the SPBA addresses per user is correct.
 
-I think in this case a 'default ARCH_ROCKCHIP' in the
-ROCKCHIP_PM_DOMAINS definition is sufficient to have it
-normally enabled, and still allows someone to try turning
-it into a loadable module later, which would be a requirement
-e.g. for Android GKI.
+Regards,
+  Marco
 
-    Arnd
+> As I understand, all the channels belong to a sdma engine should use same
+> spba_{start,end}_addr.
+> 
+> Thanks,
+> Peng
+> 
 
