@@ -1,103 +1,74 @@
-Return-Path: <linux-kernel+bounces-814688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20578B55755
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:06:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF0BB55762
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FFF01C26065
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:06:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42835C2D10
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2B92BF00D;
-	Fri, 12 Sep 2025 20:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P2a8Lcrf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7887633CE82;
+	Fri, 12 Sep 2025 20:06:44 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879F618FC97;
-	Fri, 12 Sep 2025 20:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73A63376A6
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757707581; cv=none; b=PeIFIkv9QkIfVXg4jwKx4+EjivKxfaxQJC9wl2SIsg2MNff/0xBclaKLc51rvPCxI015S7XLQ3ChPNGmb+Y+MGL/s4nyx2QgN7gFeAlf5XdoHlQeD815yTYDhHB5BtWTjzolo+26r1BKMyDonI9IiHM62Y8AQmzq2h1VcMAqPJQ=
+	t=1757707604; cv=none; b=TX/khCZ81TjKGyZ6ODLNoKUgMCRJXfQL/gQ1sgE84Ngsf7bU6Y41ExYYjkKwUdcG4Dr07HQDRFX2w/Y8IWpK6Nc6lKg3LKJPwX3X/pWgjynnA3EojO8tF1YJ2P1QnxJPAwgp2KRwwcetCIBQ+Bblps1Xxiw8zqEJrZTK+Ox2X4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757707581; c=relaxed/simple;
-	bh=IuBHjL73ZskqapjpJTBNcNowJv/7joUhld3OQUr1nNw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dnMG9mslYLEvn8bHU1+A26uh8SZ0X+OlYkvthAKfmbUIyM2rdHgzHY0oDMvzMlpt66sLKRqk4E65+6HjiRLx39IwZGR94g+DySs+DaFeP/Yqtzb37yH/hPgUbwC2jpHn9CuFfF6wMFDL/lnun24fxbVxp8rolu82IgLycPTgNh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P2a8Lcrf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD35EC4CEF1;
-	Fri, 12 Sep 2025 20:06:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757707579;
-	bh=IuBHjL73ZskqapjpJTBNcNowJv/7joUhld3OQUr1nNw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P2a8LcrfRhvD7f9VZDhCWEEIzaQNPoKm+MFmD1lOFPZxZHCP1763r3GEmz534dbGl
-	 L9BwNSxsx4wtPPTPEKKj9jfMpeY0a/UzsyR0/xd5Bw/1W6fAQxUeHWCgnCYNRv9cn7
-	 79Lbj6uKb+83j6fVT9JwsBZpWiev6TSy3rRTbBBEd5s4VmPA8tovFs4VRSUEFtzJzn
-	 +rbtEA8oU980vubUz2JifrpYZJYXJ0Q3voFpzulNkPclPrgr/qfXxqweMZ5lkGLgE6
-	 Iq80+uwxQdcY1LQWmjeiaYgzfQoCG38HqArOMF8r23XUmi6bFm1Jf05ryVORPseSNl
-	 dDSa/tJzOSs5g==
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-To: Linux ACPI <linux-acpi@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- "Dumbre, Saket" <saket.dumbre@intel.com>
-Subject:
- [PATCH v1 16/16] ACPICA: acpidump: fix return values in
- ap_is_valid_checksum()
-Date: Fri, 12 Sep 2025 22:06:08 +0200
-Message-ID: <15565189.tv2OnDr8pf@rafael.j.wysocki>
-Organization: Linux Kernel Development
-In-Reply-To: <2021361.PYKUYFuaPT@rafael.j.wysocki>
-References: <2021361.PYKUYFuaPT@rafael.j.wysocki>
+	s=arc-20240116; t=1757707604; c=relaxed/simple;
+	bh=Vn8kTjaiavDdyc8/wlZpxrXePEbx3gjEURKJpd8Gq8k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Zmpj/Khh3QDAp1aCIv6YUeQ+XaM2ZaG6f1fOyQafsxeolHXID/lpqgh5QA8hIXxh81rtgsA/ewLP73sbzcJ+uWCSK467nishWDAK7cv29oFEUHlA+aCEW4+GEbefTDrTJhoAo7jCEkipRy6uhBhIrfuO5V9gXtAaaOGoLm37Tgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88ad82b713cso282451439f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:06:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757707602; x=1758312402;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vn8kTjaiavDdyc8/wlZpxrXePEbx3gjEURKJpd8Gq8k=;
+        b=bX472xsCrvhe9oWDeAe2/VfM1ekXWS4hSds62WiYGl1RRcySSPUxH+3yLaYSqmBicD
+         SobsPMZooHETikyjLmxXFa/ihKNlr4wTd8kuwI0HaUDDhGbV024MirjbitZkwHHq1lOq
+         4Okt/WJBdYUUu8P2S20hjyDsAUKEBDg0W+3OqMDejFvzhfCAsXCzfZH/pUFNYPzgiZGg
+         uRcDiR/zEd0HVFdS9C6LNX8FpdDORzEDqvGFcvxC6cEqHu9sqXnAzEsUY+7BELsODrqm
+         yaN5kPkxTxJqsYk0tEow7pjb7O6/tLXLPF3B9cETFPUK8jdBVzwJyGc5x61ipb+2yLxo
+         2qvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVtkf96fiP9K72G5wh87VxKwKAkNUED/mxjs650PvF7v1ZegPw4Q7ABgBM9mYnW4CHde3GF9L87EqyLU58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuAI+d/V7qQbC8Za6Xz9EWAFEuHoU26Kco1WRm5F6yI40nd0cx
+	ZFk+Lw8KAz/lrJyPovzX86YMWzcYs7R0x+iLcrefbLL2RnSzrMo35PPu4UNNucNIkn/utWHVTga
+	5/N4P3N0uYcMOHANkyVIqbTKuTB9UoCDbrztz5VrzfeMPcpt6NYBba1bBJW8=
+X-Google-Smtp-Source: AGHT+IGe5Wk6YE6UlNdFqd1Peh9ol2Z7QyziL+R5YMsiyKksyEdkEC/iOf5DflIECn9de1E0ih1QrfYz6E27vJIpGnypxkPrxWrv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+X-Received: by 2002:a05:6e02:4807:b0:422:1893:3b70 with SMTP id
+ e9e14a558f8ab-42218933f43mr39727645ab.9.1757707601773; Fri, 12 Sep 2025
+ 13:06:41 -0700 (PDT)
+Date: Fri, 12 Sep 2025 13:06:41 -0700
+In-Reply-To: <CAKX1i=DvuPZ4LUPxn8W5d2-5t86xEJ_T2J3PFxZZoxL=99QzJQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c47d51.050a0220.2ff435.0361.GAE@google.com>
+Subject: Re: KMSAN: uninit-value in __run_timer_base (2)
+From: syzbot <syzbot+7d660d9b8bd5efc7ee6e@syzkaller.appspotmail.com>
+To: rodgepritesh@gmail.com
+Cc: rodgepritesh@gmail.com, syzkaller-bugs@googlegroups.com, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-From: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
+> #syz test
 
-The function ap_is_valid_checksum() has a boolean name suggesting it
-should return TRUE/FALSE, but incorrectly returns AE_OK on success and
-has no explicit return on failure, leading to undefined behavior.
-
-Fix by returning proper values:
- - FALSE when checksum validation fails
- - TRUE when checksum validation succeeds
-
-Link: https://github.com/acpica/acpica/commit/479ba862
-Signed-off-by: Kaushlendra Kumar <kaushlendra.kumar@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- tools/power/acpi/tools/acpidump/apdump.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/tools/power/acpi/tools/acpidump/apdump.c b/tools/power/acpi/tools/acpidump/apdump.c
-index bf30143efbdc..7a6223aa703c 100644
---- a/tools/power/acpi/tools/acpidump/apdump.c
-+++ b/tools/power/acpi/tools/acpidump/apdump.c
-@@ -86,9 +86,10 @@ u8 ap_is_valid_checksum(struct acpi_table_header *table)
- 	if (ACPI_FAILURE(status)) {
- 		fprintf(stderr, "%4.4s: Warning: wrong checksum in table\n",
- 			table->signature);
-+		return (FALSE);
- 	}
- 
--	return (AE_OK);
-+	return (TRUE);
- }
- 
- /******************************************************************************
--- 
-2.51.0
-
-
-
+This crash does not have a reproducer. I cannot test it.
 
 
