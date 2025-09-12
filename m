@@ -1,241 +1,313 @@
-Return-Path: <linux-kernel+bounces-813180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06DD7B541AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 827AAB541B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3A51C8585F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:23:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35E185A6481
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863EF26980B;
-	Fri, 12 Sep 2025 04:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E601259CA0;
+	Fri, 12 Sep 2025 04:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLjheuTd"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqLKHKkM"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E063D544
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C3D79CD
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757651002; cv=none; b=SkJ2DmwVq18Nf6BjC6624FCqgfFrkVBGZude4gwo8PsbLd0Zu9Np02vnD1eNkPkd+aIi+y41ZuZ3LdLd0lDvsk6HNenxeDu4/4vovKyIgaAogUGJnIH+FexBi/Hltm8xtN7ofk+0rTBOBe+JPr5QsKmbIa7epnYW+fVRr/YnQC8=
+	t=1757651107; cv=none; b=Dqb2If/Jo0/Ldgs0oTrvH0lfvI83Nr1mmvezwLBi2r1o2vVYNamVnhyRXopbQOm5lul/cHiHdP9BV/YQO1fhLoqZugiOMnzcJy9DI0hGkCAxin7kCp89qeLgPG6GvUTjR5iH6b9DFQyIz2g6LpTHmrCqO5pU2bqCSMsEqOU6zfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757651002; c=relaxed/simple;
-	bh=zZkkZ9jtVN9zl8MOUiaRZ/AhuJkVluKe+HXlB+7F8d0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EY4m5ErQZpr7GV7utzeCB5f5T25UO3N9mRdHcz9m0Gy9lbz8M/52jSg15FvLr3fsqj3HoE7e9oB+aVV2dxDPfju1kIkiREZfYRfY5Q6XPXPAwXfOzVCGm4CdnEsw2S79CNdYnGsrL8vvk54QHfb3FEdnAbJ+Gx1Szy5ubhG9kTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLjheuTd; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1757651107; c=relaxed/simple;
+	bh=MJ+OEqw3W4T5IAGM29vemB7Sj1MEMNdfpUxr8ROwG4M=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=he3BqzJQMLiVFlwe7mUdhGlVthH6UmVst1cds2UtHbPX79UJ351pXH1DvkzIlPxKMLt0QYj6+0ZGXJ6I5zWHcPlzlbb94QBNCFjZ1EeU3zZ7Azjk4HPF2QYZl1vkcQaP6aBTax6VdP298oaRyYz9+8LK9g98sosMsIYtwOrdAmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KqLKHKkM; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2570bf605b1so14012375ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:23:20 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b04770a25f2so197588166b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757651000; x=1758255800; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6PvSPHugeaR1Sq9Pxzgn3oZJDYqC50hx/s/XnB6afU=;
-        b=kLjheuTdORupPVxkhvb9zLIAdStvRNEUQ0+F5iExvln4+HPQAKvRk2lxM0o9YObx8Y
-         KGdLZNUp4wDRv0uYR9iqnFmGDZdKbElcgFq8UhJwwc397Wby7tUvyxp/rtX838/dplWm
-         KvMrvJgP440JAgPHkkpiPwA4TAw3L36x4mIq/E7fUD/Q05fivqo3MCUsvF1gzomIuDfg
-         7WX+vy+IPlpib2PVkxiReBW73MIWZPPIwFU4X/emqvIFz8hBvgRLHCL/Xknh8nQmFK6x
-         B29sdgS807XDysODEjsDlopUSbfHgjcRpCRzi8Z4NhUj1b68noDKr81lDAmCYHLZK5HY
-         wEuw==
+        d=gmail.com; s=20230601; t=1757651104; x=1758255904; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eTpfDhKZKGj4qUCT1cR1rKoQBELJN9ms9wYW6BhTZYw=;
+        b=KqLKHKkMPqCKRKfPr1o2JaiQz7jrC7IKLdyou+rvaoB+kwOwVH/J1T1ftO5Omu3Is0
+         g29trTw/Yu1nk8hFLzjCudbzVeYhM4cBGZgweagBSwLh0wHRc0hRiCM+/zLryDifPbms
+         BKjq0n4aMEQwN0TpFg57Rk2qRS1cw85zzruUmvxJA2DE2EYRAUu9RMFrkU7m2BxOhzA2
+         MqSDA5E5URz8SirsQpvpHiEkXXFOI6BHiLIgda4THAGulYY8U0jplZf6EAX61PUKS1n/
+         KeldzvQE7oulSutzJL/X6PVpnu393KM66Rt9BtzOBJOq81OhzDw1ti/u+gQnCzZRLPOm
+         OoMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757651000; x=1758255800;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1757651104; x=1758255904;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=N6PvSPHugeaR1Sq9Pxzgn3oZJDYqC50hx/s/XnB6afU=;
-        b=iHE2MBw59PHEg57bs9wLqInkIR1DA05IevQbTkrOQzieVmV95uZT6OhX8JGGr2I5Ax
-         +zhqI4KNfbozBvVNGO4QlHf+2urF4CtAbbUONb3by4lbA2Yz42wqHagHPG5QfK6D1Xci
-         iHx3EOGEKPcvzGGzBMX7i4ckg4n3mmyWrcD1AGbZPPDa7TFY9CP9qBlbVrC+oRxqhnRp
-         CVoB45jmSEfgxi2aRaN3QoOHbmIl8JgJ2xltimBsL3DTHzDrG47iYJ2I65nOX5yEiY53
-         +oFdY/NMj6cOMQoU+awMTlQT2iAc3052jOrhYnsmpXwm2dg8T/0+MVCU2JxQW9vwHXmj
-         Mt9w==
-X-Gm-Message-State: AOJu0YyQhOgOb4g/XKaH5/R2SWrK+jj2mMZ4cJBDoevVYe3eq27Yjsp9
-	m+8SW073Xt/spSFmdLxb2zJvXto7YMdrhB1fNNm7OSm4GpOat3ikTpCX
-X-Gm-Gg: ASbGncvypnRdB57lRWFIQMsoKivpVvmNmlHn21AGaBzw72N3YRDepKS1P/LtNeI13G/
-	trD67Q1mzzDjanHb5FxIwodgBInK84vXTK0G1HXYRj0FOX+SWfnbiNJdaLON+62A8nNyvaU3qea
-	mzWoLvHJC8kCq5WKKH5Pi1E4TITwoHkuaW9AyijsfC55QkP/Aq/Lv5ABU69eyQJFv9WWHOQ6iLo
-	JsH72ZD+ug06MXrl4kZicgs+B9ggMUel+0R1beDlOFHBCIhBwecPLvNxq9Esuh6FFQXEdW/Ufzr
-	fLhnmZ/ZKUP2Cvh3s9fBfW3+B/t7j0NA8OgIMULEp8V/N8rVK3dWXesmyiG7vVc1HB5/ms3owX3
-	4b/wwH6Oxo1KFJ6mg3OD+tmVlgIHbrUYSB32K
-X-Google-Smtp-Source: AGHT+IGSxOJrm+Mvz9B8cJ0ttlzyEuGc0X0ipj/MPkzlUoUdDejseGoH8X0VU1oZg8lHeiFEhrUVdA==
-X-Received: by 2002:a17:903:b90:b0:246:4de6:5cc0 with SMTP id d9443c01a7336-25d27c16684mr16832255ad.53.1757651000208;
-        Thu, 11 Sep 2025 21:23:20 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3a84a5ecsm35469935ad.92.2025.09.11.21.23.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 21:23:19 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id C2DF541FA3A4; Fri, 12 Sep 2025 11:23:17 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Networking <netdev@vger.kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Michael Grzeschik <m.grzeschik@pengutronix.de>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH RESEND net-next] Documentation: ARCnet: Update obsolete contact info
-Date: Fri, 12 Sep 2025 11:22:52 +0700
-Message-ID: <20250912042252.19901-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        bh=eTpfDhKZKGj4qUCT1cR1rKoQBELJN9ms9wYW6BhTZYw=;
+        b=CYPbQG539Y8fvzPgALhK/+VKijQz30jwuKs9t0P+JWUxkWMvwpr9SAEowN1ctWyiDg
+         dOlqONOn6yQUBpzU9mK1rLDTMM2ElENyRnuT+C64VKxV1q5q/YVgU353L5Wy1E5HSung
+         dkO9r2wLtR92W5fBIdT2y/WAq4OVrRDrx6GORCfbaeabYw9CWcF1T+6nUik4pbGA4n+F
+         NOoVLvHN3ur+c83m7fG/z0svKQbSrZDG65VoTzEr55fF/uWDVsJybVcfy0WXo2mBHlSp
+         UC64I7M/lNATkuzGgNJufW4m4aEhrtTzit+474xvklYuSoQWEyIyKt0rdNRs1r13CMFw
+         h2vw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtCuJL4kaSlb2+yPobMHFiPlKo2BiGUE9XqHaYEL9z5x8m+hTnF+aMNItUjPXqFZwtXkiUjyGTLhcimLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL5bfdUTgWAIjlAKk2bxrs9w7WGfTHOpE7v7kwcvcOPt45l9+o
+	+mgL7Knx8oe3QLdu32h6QpQv7JZybNlPk9FhlMqDkrHc29SBW5mzEwS/nBve/Rp520MKLTrmOrv
+	7DmEF5yM9yqMncA6uQslbOgkpmGM+0Y+4Hp0X
+X-Gm-Gg: ASbGncuWq3lpxXAgWEFigg+iUPcIhTJ46IOqhtjXnFNYTpbtYNIq04b/eKfAp2XFhRK
+	43SFf+77DLQOdTnTDPQa6sXw3rC4lL5xfEZYLp0ACU22mFC/EOs1XlIuqMzKpIezImq1+JaeVPr
+	3ugimWkYclvVQdLestkU+VIVY7bDx6M+SxVW6C6B9UkTfRZd+RsmCFPsbjWaEezZgM32qgiU+VY
+	hZoOBI5d6MkzPZ+
+X-Google-Smtp-Source: AGHT+IEXSRmeO+SUrxw7GBflD78Eg9mdvfufxQ0v5uU+9KneT3xXzPsYzNp4K9z7+TbLn+gMKd+63JZZo3o6I4PAFY8=
+X-Received: by 2002:a17:907:d28:b0:afe:93e2:3984 with SMTP id
+ a640c23a62f3a-b07c354e9a9mr140643366b.8.1757651103880; Thu, 11 Sep 2025
+ 21:25:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5408; i=bagasdotme@gmail.com; h=from:subject; bh=zZkkZ9jtVN9zl8MOUiaRZ/AhuJkVluKe+HXlB+7F8d0=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDBmHFwhqrrrmfmWSwK7CGq1sIeei0qrrpR2c+3ZzL796e 1LmjkUHOkpZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRj8oM/6ut9syU85nFFzDf 2eLpqR1NDnf/ClXvXMTtuTT9k7FwzGRGhh02qpaL+4IVw6aeZflkLjc599Snac/bti+fV+Jx0nu PLhcA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+From: Dave Airlie <airlied@gmail.com>
+Date: Fri, 12 Sep 2025 14:24:52 +1000
+X-Gm-Features: AS18NWBUzsEWSObkvBAOENiHkso8qf9n9rBTgoeb2zFWGbzoXcbQBC4RuM1QR04
+Message-ID: <CAPM=9tw1QOZSBq+QhAbpyc9UvY7KYTfA+K=JQyo+_u+nBcTdGw@mail.gmail.com>
+Subject: [git pull] drm fixes for 6.17-rc6
+To: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ARCnet docs states that inquiries on the subsystem should be emailed to
-Avery Pennarun <apenwarr@worldvisions.ca>, for whom has been in CREDITS
-since the beginning of kernel git history and the subsystem is now
-maintained by Michael Grzeschik since c38f6ac74c9980 ("MAINTAINERS: add
-arcnet and take maintainership"). In addition, there used to be a
-dedicated ARCnet mailing list but its archive at epistolary.org has been
-shut down. ARCnet discussion nowadays take place in netdev list.
+Hi Linus,
 
-Update contact information.
+Weekly pull fixes for drm, mostly amdgpu and xe, with a revert for
+nouveau and some maintainers updates, and misc bits, doesn't seem too
+out of the normal.
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/networking/arcnet-hardware.rst | 13 +++---
- Documentation/networking/arcnet.rst          | 48 +++++---------------
- 2 files changed, 17 insertions(+), 44 deletions(-)
+Regards,
+Dave.
 
-diff --git a/Documentation/networking/arcnet-hardware.rst b/Documentation/networking/arcnet-hardware.rst
-index 3bf7f99cd7bbf0..1e4484d880fe67 100644
---- a/Documentation/networking/arcnet-hardware.rst
-+++ b/Documentation/networking/arcnet-hardware.rst
-@@ -4,6 +4,8 @@
- ARCnet Hardware
- ===============
- 
-+:Author: Avery Pennarun <apenwarr@worldvisions.ca>
-+
- .. note::
- 
-    1) This file is a supplement to arcnet.txt.  Please read that for general
-@@ -13,9 +15,9 @@ ARCnet Hardware
- 
- Because so many people (myself included) seem to have obtained ARCnet cards
- without manuals, this file contains a quick introduction to ARCnet hardware,
--some cabling tips, and a listing of all jumper settings I can find. Please
--e-mail apenwarr@worldvisions.ca with any settings for your particular card,
--or any other information you have!
-+some cabling tips, and a listing of all jumper settings I can find. If you
-+have any settings for your particular card, and/or any other information you
-+have, do not hesistate to :ref:`email to netdev <arcnet-netdev>`.
- 
- 
- Introduction to ARCnet
-@@ -3226,9 +3228,6 @@ Settings for IRQ Selection (Lower Jumper Line)
- Other Cards
- ===========
- 
--I have no information on other models of ARCnet cards at the moment.  Please
--send any and all info to:
--
--	apenwarr@worldvisions.ca
-+I have no information on other models of ARCnet cards at the moment.
- 
- Thanks.
-diff --git a/Documentation/networking/arcnet.rst b/Documentation/networking/arcnet.rst
-index 82fce606c0f0bc..cd43a18ad1494b 100644
---- a/Documentation/networking/arcnet.rst
-+++ b/Documentation/networking/arcnet.rst
-@@ -4,6 +4,8 @@
- ARCnet
- ======
- 
-+:Author: Avery Pennarun <apenwarr@worldvisions.ca>
-+
- .. note::
- 
-    See also arcnet-hardware.txt in this directory for jumper-setting
-@@ -30,18 +32,7 @@ Come on, be a sport!  Send me a success report!
- 
- (hey, that was even better than my original poem... this is getting bad!)
- 
--
--.. warning::
--
--   If you don't e-mail me about your success/failure soon, I may be forced to
--   start SINGING.  And we don't want that, do we?
--
--   (You know, it might be argued that I'm pushing this point a little too much.
--   If you think so, why not flame me in a quick little e-mail?  Please also
--   include the type of card(s) you're using, software, size of network, and
--   whether it's working or not.)
--
--   My e-mail address is: apenwarr@worldvisions.ca
-+----
- 
- These are the ARCnet drivers for Linux.
- 
-@@ -59,23 +50,14 @@ ARCnet 2.10 ALPHA, Tomasz's all-new-and-improved RFC1051 support has been
- included and seems to be working fine!
- 
- 
-+.. _arcnet-netdev:
-+
- Where do I discuss these drivers?
- ---------------------------------
- 
--Tomasz has been so kind as to set up a new and improved mailing list.
--Subscribe by sending a message with the BODY "subscribe linux-arcnet YOUR
--REAL NAME" to listserv@tichy.ch.uj.edu.pl.  Then, to submit messages to the
--list, mail to linux-arcnet@tichy.ch.uj.edu.pl.
--
--There are archives of the mailing list at:
--
--	http://epistolary.org/mailman/listinfo.cgi/arcnet
--
--The people on linux-net@vger.kernel.org (now defunct, replaced by
--netdev@vger.kernel.org) have also been known to be very helpful, especially
--when we're talking about ALPHA Linux kernels that may or may not work right
--in the first place.
--
-+ARCnet discussions take place on netdev. Simply send your email to
-+netdev@vger.kernel.org and make sure to Cc: maintainer listed in
-+"ARCNET NETWORK LAYER" heading of Documentation/process/maintainers.rst.
- 
- Other Drivers and Info
- ----------------------
-@@ -523,17 +505,9 @@ can set up your network then:
- It works: what now?
- -------------------
- 
--Send mail describing your setup, preferably including driver version, kernel
--version, ARCnet card model, CPU type, number of systems on your network, and
--list of software in use to me at the following address:
--
--	apenwarr@worldvisions.ca
--
--I do send (sometimes automated) replies to all messages I receive.  My email
--can be weird (and also usually gets forwarded all over the place along the
--way to me), so if you don't get a reply within a reasonable time, please
--resend.
--
-+Send mail following :ref:`arcnet-netdev`. Describe your setup, preferably
-+including driver version, kernel version, ARCnet card model, CPU type, number
-+of systems on your network, and list of software in use.
- 
- It doesn't work: what now?
- --------------------------
+drm-fixes-2025-09-12:
+drm fixes for 6.17-rc6
 
-base-commit: 2f186dd5585c3afb415df80e52f71af16c9d3655
--- 
-An old man doll... just what I always wanted! - Clara
+MAINTAINERS:
+- add rust tree to MAINTAINERS
+- fix X entries for nova/nouveau
 
+nova:
+- depend on 64-bit
+
+i915:
+- Fix size for for_each_set_bit() in abox iteration
+
+xe:
+- Don't touch survivability_mode on fini
+- Fixes around eviction and suspend
+- Extend Wa_13011645652 to PTL-H, WCL
+
+amdgpu:
+- PSP 11.x fix
+- DPCD quirk handing fix
+- DCN 3.5 PG fix
+- Audio suspend fix
+- OEM i2c clean up fix
+- Module unload memory leak fix
+- DC delay fix
+- ISP firmware fix
+- VCN fixes
+
+amdkfd:
+- P2P topology fix
+- APU mem limit calculation fix
+
+mediatek:
+- fix potential OF node use-after-free
+
+panthor:
+- out-of-bounds check
+
+nouveau:
+- revert waitqueue removal for sched teardown
+The following changes since commit 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c=
+:
+
+  Linux 6.17-rc5 (2025-09-07 14:22:57 -0700)
+
+are available in the Git repository at:
+
+  https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-09-12
+
+for you to fetch changes up to 9a3f210737e958c3f45a4ce0d7f1ff330af3965f:
+
+  Merge tag 'drm-xe-fixes-2025-09-11' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+(2025-09-12 09:44:07 +1000)
+
+----------------------------------------------------------------
+drm fixes for 6.17-rc6
+
+MAINTAINERS:
+- add rust tree to MAINTAINERS
+- fix X entries for nova/nouveau
+
+nova:
+- depend on 64-bit
+
+i915:
+- Fix size for for_each_set_bit() in abox iteration
+
+xe:
+- Don't touch survivability_mode on fini
+- Fixes around eviction and suspend
+- Extend Wa_13011645652 to PTL-H, WCL
+
+amdgpu:
+- PSP 11.x fix
+- DPCD quirk handing fix
+- DCN 3.5 PG fix
+- Audio suspend fix
+- OEM i2c clean up fix
+- Module unload memory leak fix
+- DC delay fix
+- ISP firmware fix
+- VCN fixes
+
+amdkfd:
+- P2P topology fix
+- APU mem limit calculation fix
+
+mediatek:
+- fix potential OF node use-after-free
+
+panthor:
+- out-of-bounds check
+
+nouveau:
+- revert waitqueue removal for sched teardown
+
+----------------------------------------------------------------
+Alex Deucher (2):
+      drm/amdgpu: fix a memory leak in fence cleanup when unloading
+      drm/amd/display: use udelay rather than fsleep
+
+Chia-I Wu (1):
+      drm/panthor: validate group queue count
+
+Danilo Krummrich (3):
+      gpu: nova-core: depend on CONFIG_64BIT
+      MAINTAINERS: Add drm-rust tree for Rust DRM drivers and infrastructur=
+e
+      MAINTAINERS: drm-misc: fix X: entries for nova/nouveau
+
+Dave Airlie (6):
+      Merge tag 'drm-rust-fixes-2025-09-05' of
+https://gitlab.freedesktop.org/drm/rust/kernel into drm-fixes
+      Merge tag 'drm-intel-fixes-2025-09-10' of
+https://gitlab.freedesktop.org/drm/i915/kernel into drm-fixes
+      Merge tag 'amd-drm-fixes-6.17-2025-09-10' of
+https://gitlab.freedesktop.org/agd5f/linux into drm-fixes
+      Merge tag 'mediatek-drm-fixes-20250910' of
+https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux
+into drm-fixes
+      Merge tag 'drm-misc-fixes-2025-09-11' of
+https://gitlab.freedesktop.org/drm/misc/kernel into drm-fixes
+      Merge tag 'drm-xe-fixes-2025-09-11' of
+https://gitlab.freedesktop.org/drm/xe/kernel into drm-fixes
+
+David Rosca (2):
+      drm/amdgpu/vcn4: Fix IB parsing with multiple engine info packages
+      drm/amdgpu/vcn: Allow limiting ctx to instance 0 for AV1 at any time
+
+Eric Huang (1):
+      drm/amdkfd: fix p2p links bug in topology
+
+Fangzhi Zuo (1):
+      drm/amd/display: Disable DPCD Probe Quirk
+
+Geoffrey McRae (1):
+      drm/amd/display: remove oem i2c adapter on finish
+
+Jani Nikula (1):
+      drm/i915/power: fix size for for_each_set_bit() in abox iteration
+
+Johan Hovold (2):
+      drm/mediatek: fix potential OF node use-after-free
+      drm/mediatek: clean up driver data initialisation
+
+Julia Filipchuk (1):
+      drm/xe: Extend Wa_13011645652 to PTL-H, WCL
+
+Lijo Lazar (1):
+      drm/amdgpu: Wait for bootloader after PSPv11 reset
+
+Mario Limonciello (AMD) (1):
+      drm/amd/display: Drop dm_prepare_suspend() and dm_complete()
+
+Michal Wajdeczko (1):
+      drm/xe/configfs: Don't touch survivability_mode on fini
+
+Ovidiu Bunea (1):
+      drm/amd/display: Correct sequences and delays for DCN35 PG & RCG
+
+Philipp Stanner (1):
+      Revert "drm/nouveau: Remove waitque for sched teardown"
+
+Pratap Nirujogi (1):
+      drm/amd/amdgpu: Declare isp firmware binary file
+
+Thomas Hellstr=C3=B6m (3):
+      drm/xe: Attempt to bring bos back to VRAM after eviction
+      drm/xe: Allow the pm notifier to continue on failure
+      drm/xe: Block exec and rebind worker while evicting for suspend
+/ hibernate
+
+Yifan Zhang (1):
+      amd/amdkfd: correct mem limit calculation for small APUs
+
+ MAINTAINERS                                        |  13 ++-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c   |  44 +++++---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c           |   2 -
+ drivers/gpu/drm/amd/amdgpu/isp_v4_1_1.c            |   2 +
+ drivers/gpu/drm/amd/amdgpu/psp_v11_0.c             |  19 +---
+ drivers/gpu/drm/amd/amdgpu/vcn_v3_0.c              |  12 ++-
+ drivers/gpu/drm/amd/amdgpu/vcn_v4_0.c              |  60 +++++------
+ drivers/gpu/drm/amd/amdkfd/kfd_topology.c          |   3 +-
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c  |  34 +++---
+ .../amd/display/amdgpu_dm/amdgpu_dm_mst_types.c    |   1 +
+ drivers/gpu/drm/amd/display/dc/dc.h                |   1 +
+ .../gpu/drm/amd/display/dc/dccg/dcn35/dcn35_dccg.c |  74 ++++++-------
+ .../drm/amd/display/dc/hwss/dcn20/dcn20_hwseq.c    |   2 +-
+ .../drm/amd/display/dc/hwss/dcn35/dcn35_hwseq.c    | 115 ++++-------------=
+----
+ .../gpu/drm/amd/display/dc/hwss/dcn35/dcn35_init.c |   3 -
+ .../drm/amd/display/dc/hwss/dcn351/dcn351_init.c   |   3 -
+ drivers/gpu/drm/amd/display/dc/inc/hw/pg_cntl.h    |   1 +
+ .../drm/amd/display/dc/pg/dcn35/dcn35_pg_cntl.c    |  78 +++++++++-----
+ drivers/gpu/drm/i915/display/intel_display_power.c |   6 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c             |  23 ++---
+ drivers/gpu/drm/nouveau/nouveau_fence.c            |  15 ---
+ drivers/gpu/drm/nouveau/nouveau_fence.h            |   1 -
+ drivers/gpu/drm/nouveau/nouveau_sched.c            |  35 +++----
+ drivers/gpu/drm/nouveau/nouveau_sched.h            |   9 +-
+ drivers/gpu/drm/nouveau/nouveau_uvmm.c             |   8 +-
+ drivers/gpu/drm/panthor/panthor_drv.c              |   2 +-
+ drivers/gpu/drm/xe/tests/xe_bo.c                   |   2 +-
+ drivers/gpu/drm/xe/tests/xe_dma_buf.c              |  10 +-
+ drivers/gpu/drm/xe/xe_bo.c                         |  16 ++-
+ drivers/gpu/drm/xe/xe_bo.h                         |   2 +-
+ drivers/gpu/drm/xe/xe_device_types.h               |   6 ++
+ drivers/gpu/drm/xe/xe_dma_buf.c                    |   2 +-
+ drivers/gpu/drm/xe/xe_exec.c                       |   9 ++
+ drivers/gpu/drm/xe/xe_pm.c                         |  42 ++++++--
+ drivers/gpu/drm/xe/xe_survivability_mode.c         |   3 +-
+ drivers/gpu/drm/xe/xe_vm.c                         |  42 +++++++-
+ drivers/gpu/drm/xe/xe_vm.h                         |   2 +
+ drivers/gpu/drm/xe/xe_vm_types.h                   |   5 +
+ drivers/gpu/drm/xe/xe_wa_oob.rules                 |   3 +-
+ drivers/gpu/nova-core/Kconfig                      |   1 +
+ 40 files changed, 364 insertions(+), 347 deletions(-)
 
