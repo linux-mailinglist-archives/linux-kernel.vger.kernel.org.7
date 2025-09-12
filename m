@@ -1,172 +1,124 @@
-Return-Path: <linux-kernel+bounces-814128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84343B54F9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:33:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3DD8B54F9C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380773BE827
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496F31CC7B34
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791163043BE;
-	Fri, 12 Sep 2025 13:33:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC273019BD;
+	Fri, 12 Sep 2025 13:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RTBiYciQ"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56CD3009F0;
-	Fri, 12 Sep 2025 13:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59F12DC791
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757683989; cv=none; b=RuVPIoJ4HD6cwv2wDrb2i9HwVTnAJG3hFkl2vZVfinEknn4BY8Gz8JCCcLgJEyQycKGLyRS/8tUmD3QlUvFsy96e7v3+a1puaOGd09jW49L4j3VCPq1rghwQTtaadvoZ+li3sAMrtkhxIGJpqHw2Tb6mKDsBamhJNT3l7oAAKbw=
+	t=1757684084; cv=none; b=d4howwKx0rgbIjVJKw4+Btj53aZ9Fu1QIzHZbt7N3ki3kPerFdlj+Vjf7Db0TEtsMlJARMvo5smCtoGvb+xoXLUmGIGCFKi17OChmxHKRntYH2KEwKYzsYN2SG5sPuJMwT/FMm1/5WIpp3ax08O/k6YR7JgtixuQY6q6xecWFpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757683989; c=relaxed/simple;
-	bh=sxp25xjSdH/ZYXWhXeQ7XndzgmAEKuWwNLWUueViX7o=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BuDSsqGfMjsSfSEQwjmlm3KyW8RN5YsvofCBya53rBuufF6rj6T6PpGDCT+kXTRo4Y4S97B3SEIeIMlml/Bw29WBJm7cLPCDuD90lUqFhjZ6sUT7EtLIt1D6G0uDqU9yBsAZ2srKuz6/8XGnwCADljUZiLiJ3ARHAjlIdqqnyYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNZzz1n8zz6M53H;
-	Fri, 12 Sep 2025 21:30:23 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id A7F4A1404FE;
-	Fri, 12 Sep 2025 21:33:04 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
- 2025 15:33:03 +0200
-Date: Fri, 12 Sep 2025 14:33:02 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 27/29] arm_mpam: Add helper to reset saved mbwu state
-Message-ID: <20250912143302.00004d0e@huawei.com>
-In-Reply-To: <20250910204309.20751-28-james.morse@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-28-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757684084; c=relaxed/simple;
+	bh=LNKzymsgb/6Iwg40XhzmFUiClYs9OYnQ0dLnby/t7ic=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FvsC2vYHLl1DB7sqAk89O5WPwZP+SffxL7XCHcd/HDDK4eU8eR56feNuZrAEUG7Nk0bbMgR5kK8p1vT1kCY+G4OkYwnT9oVSjY/Z8+pWfVt62bhUA1taenH7Kw6jtt+Jt6Yprv+W0rNlVIlc6I7XE2B9bV7IlSXoQTjHXf+55jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RTBiYciQ; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-ea0297e9cd4so1195107276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757684081; x=1758288881; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tJ/K8q1HzdoHIMtTKXskdUrRNYCvrta7LlIcSp9TUsU=;
+        b=RTBiYciQO3DsPhCq6bNle2T1xdIkKrALnQdabNbJ4hnl/BUqxrMQPRhoaVCotzHg7L
+         F1YytPuJm6NHIGC8+je3LkGxDxAiZCQlB0BOc/eLxz+LJztP1B/cwgd1R2JGuCMG1+eY
+         obiTq02l3MfolLpY6gumvqcSe5mqywMWHY3ywWiCkEMm0Epq3wiqDarFCwl4mhdNMy7n
+         AoAwvwtVikEvwJ9Lglc4M5PjqtKsM5qHWw0I06q1+c0DUvWOuL+9iEUj7d3+VvNRcYam
+         Ot0ffcJWh14kr0/naEVpaWensuzPYfJXcxrJr6y+WCvEY0kk/34fDk+p9p36RElTBT5a
+         N8pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757684081; x=1758288881;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tJ/K8q1HzdoHIMtTKXskdUrRNYCvrta7LlIcSp9TUsU=;
+        b=rIwuh3867DtF5wQVYuAVXFSMDUjv5BL8wBpG4V0F59hMkb8VHZlaCOQCRI1d1S+HGd
+         QfQgw+rKK8lwu7zFSw1/gjuEfcwN+Pqc0oxpmq2lzU72y5UOBWrFl73lE178I1VntTQZ
+         9yd8U6UY8ibHhd31nlGnllqC0Au+MMqIvH1JQUK6Q/chseVnT3MIcQp2vMI3SAGD+Voh
+         kbzJZNQQicTsxlIRebhycFmwiW3HfOwdpknNNVNtEKYOabJqbU0vvdFgdVdtENvzVFLe
+         BCxxGBAf4Xbp1DKJwnnygBvRwth2FC4thccLCuXW7TOZ32JHeWSDyTD+FDAbus9cvfx3
+         +iug==
+X-Forwarded-Encrypted: i=1; AJvYcCWcw6Dn0uqr4iMQHbS5LfsZP+L2Xf5rO2OVQR6tOqKWBuF6ey3s6kWdjTaT3fqXEqJaYbpwpGN0XYPMxjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3g8adGc5nWd6hkqbMu6mnKbgoEnUGmekjyqPW0i9Pf/Qi0KPD
+	kvUNueBcSz8RzLn2JqBbcd4fObB/hujxtDWl76McBtX34/LqVSpgS1yDTV7SQ2APwmInA7junF7
+	2+M/d3t+lQeHNcrPnq9AkqQguS4l8/7q5lxHIXxxl6Q==
+X-Gm-Gg: ASbGncuonZYB0s/bVRn7iGWjJDWpwPT0qdyCUgL5oLFAd4lek7IuCiOEhSGvZ+rrIWz
+	I2EunHYHF/tQ8GX7hsxniqcVHf66aDlnUcWz6ryv0RoUoOLrVoXH34SXv4tDJmnABOwMf1oyq/D
+	tSsmU3q7WtgkXb1uEIVDK5IvTfP8wp82vMPh0v6etjCbDLsg7DTP66neYENtS1l6gIb1hLEyB3o
+	eY6ltdH5RoEDl9nCMM=
+X-Google-Smtp-Source: AGHT+IFU/1m7pdVKE0NcSMn+u8VXuWyV25MtsVbS6YuHqP6NuVR7mVq1wHW3//d0OvD3Ag7uQcwmsaBXlaeICB6KF/w=
+X-Received: by 2002:a05:6902:330c:b0:e96:c4f2:1f40 with SMTP id
+ 3f1490d57ef6-ea3d9af39e7mr2133916276.46.1757684080633; Fri, 12 Sep 2025
+ 06:34:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250826075812.82305-2-fourier.thomas@gmail.com>
+In-Reply-To: <20250826075812.82305-2-fourier.thomas@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 12 Sep 2025 15:34:04 +0200
+X-Gm-Features: AS18NWD70Za98HPo5BqoaFdKJPpqyjBZynLCy_vXOulb13mtCddOduOwnUrku8c
+Message-ID: <CAPDyKFq=3RANVUpZEJMTLH2YewJN=_mV-kM7DBb4-hhHPFv4oA@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mvsdio: Fix dma_unmap_sg() nents value
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: Nicolas Pitre <nico@fluxnic.net>, Ingo Molnar <mingo@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Binbin Zhou <zhoubinbin@loongson.cn>, 
+	Linus Walleij <linus.walleij@linaro.org>, Pierre Ossman <drzeus@drzeus.cx>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 10 Sep 2025 20:43:07 +0000
-James Morse <james.morse@arm.com> wrote:
+On Tue, 26 Aug 2025 at 09:59, Thomas Fourier <fourier.thomas@gmail.com> wrote:
+>
+> The dma_unmap_sg() functions should be called with the same nents as the
+> dma_map_sg(), not the value the map function returned.
+>
+> Fixes: 236caa7cc351 ("mmc: SDIO driver for Marvell SoCs")
+> Signed-off-by: Thomas Fourier <fourier.thomas@gmail.com>
 
-> resctrl expects to reset the bandwidth counters when the filesystem
-> is mounted.
-> 
-> To allow this, add a helper that clears the saved mbwu state. Instead
-> of cross calling to each CPU that can access the component MSC to
-> write to the counter, set a flag that causes it to be zero'd on the
-> the next read. This is easily done by forcing a configuration update.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-Minor comments inline.
+Applied for fixes and by adding a stable tag, thanks!
 
-Jonathan
+Kind regards
+Uffe
 
-> @@ -1245,6 +1257,37 @@ int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg *ctx,
->  	return err;
->  }
->  
-> +void mpam_msmon_reset_mbwu(struct mpam_component *comp, struct mon_cfg *ctx)
-> +{
-> +	int idx;
-> +	struct mpam_msc *msc;
-> +	struct mpam_vmsc *vmsc;
-> +	struct mpam_msc_ris *ris;
-> +
-> +	if (!mpam_is_enabled())
-> +		return;
-> +
-> +	idx = srcu_read_lock(&mpam_srcu);
 
-Maybe guard() though it doesn't add that much here.
-
-> +	list_for_each_entry_rcu(vmsc, &comp->vmsc, comp_list) {
-
-Reason not to use _srcu variants?
-
-> +		if (!mpam_has_feature(mpam_feat_msmon_mbwu, &vmsc->props))
-> +			continue;
-> +
-> +		msc = vmsc->msc;
-> +		list_for_each_entry_rcu(ris, &vmsc->ris, vmsc_list) {
-> +			if (!mpam_has_feature(mpam_feat_msmon_mbwu, &ris->props))
-> +				continue;
-> +
-> +			if (WARN_ON_ONCE(!mpam_mon_sel_lock(msc)))
-> +				continue;
-> +
-> +			ris->mbwu_state[ctx->mon].correction = 0;
-> +			ris->mbwu_state[ctx->mon].reset_on_next_read = true;
-> +			mpam_mon_sel_unlock(msc);
-> +		}
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +}
-> +
->  static void mpam_reset_msc_bitmap(struct mpam_msc *msc, u16 reg, u16 wd)
->  {
->  	u32 num_words, msb;
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index c190826dfbda..7cbcafe8294a 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -223,10 +223,12 @@ struct mon_cfg {
->  
->  /*
->   * Changes to enabled and cfg are protected by the msc->lock.
-> - * Changes to prev_val and correction are protected by the msc's mon_sel_lock.
-> + * Changes to reset_on_next_read, prev_val and correction are protected by the
-> + * msc's mon_sel_lock.
-Getting close to the point where a list of one per line would reduce churn.
-If you anticipate adding more to this in future I'd definitely consider it.
-e.g.
- * msc's mon_sel_lcok protects:
- * - reset_on_next_read
- * - prev_val
- * - correction
- */
->   */
->  struct msmon_mbwu_state {
->  	bool		enabled;
-> +	bool		reset_on_next_read;
->  	struct mon_cfg	cfg;
->  
->  	/* The value last read from the hardware. Used to detect overflow. */
-> @@ -393,6 +395,7 @@ int mpam_apply_config(struct mpam_component *comp, u16 partid,
->  
->  int mpam_msmon_read(struct mpam_component *comp, struct mon_cfg *ctx,
->  		    enum mpam_device_features, u64 *val);
-> +void mpam_msmon_reset_mbwu(struct mpam_component *comp, struct mon_cfg *ctx);
->  
->  int mpam_get_cpumask_from_cache_id(unsigned long cache_id, u32 cache_level,
->  				   cpumask_t *affinity);
-
+> ---
+>  drivers/mmc/host/mvsdio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/mmc/host/mvsdio.c b/drivers/mmc/host/mvsdio.c
+> index a9e6277789ba..79df2fa89a3f 100644
+> --- a/drivers/mmc/host/mvsdio.c
+> +++ b/drivers/mmc/host/mvsdio.c
+> @@ -292,7 +292,7 @@ static u32 mvsd_finish_data(struct mvsd_host *host, struct mmc_data *data,
+>                 host->pio_ptr = NULL;
+>                 host->pio_size = 0;
+>         } else {
+> -               dma_unmap_sg(mmc_dev(host->mmc), data->sg, host->sg_frags,
+> +               dma_unmap_sg(mmc_dev(host->mmc), data->sg, data->sg_len,
+>                              mmc_get_dma_dir(data));
+>         }
+>
+> --
+> 2.43.0
+>
 
