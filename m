@@ -1,184 +1,178 @@
-Return-Path: <linux-kernel+bounces-814858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5AEFB559C6
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:55:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3573EB559C2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4A62A03B86
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:55:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC155C2E15
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F460284681;
-	Fri, 12 Sep 2025 22:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6901A27281C;
+	Fri, 12 Sep 2025 22:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="le6rxRkY"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q1UqL8sr"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A07264619
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC05025F7A9
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757717727; cv=none; b=BMSB8vVHcS19eBi9TGTpMCFM1LzAIPmhW/oAgFTiJgEJJL9EW5JKQYFPsSgEnVVAE7mDa/Jo9GFxaIWt9/0sn9Wo783q5sZATckLgabPw73qouVZ3EX6htUODASnXtPuljBmjALj6tPG3Lz7x06tb5W50lflbEwtLvAAXrW4vfc=
+	t=1757717725; cv=none; b=iVkte5IKXOhtcBw36vrQNkwmyATEQQjk39GZT3rW23FmNk4TQ7CNGswxn02IUsj1k5amCkr9ChsGtR1LctY+FE9Zeq4BNtGOjDBNy1plaIthm7coPEBBZnAnKCE09cW+i8wrMNgFBsAFbC20q3go7Y56xvRO4NPHmzxy23e/Hes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757717727; c=relaxed/simple;
-	bh=L9Ix8GUAXAZWYXV2ZEQHnHNqbdKz5TayVfN6Teb85ss=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ra4crGjqDZJQbSU0XkVIs/j5CZ94IgZ3lnrVk/toUjlvL1SqDOg7R55hGCQ+eOoQwlwJ0wT8PuAMiPL0rygCbBKzEZyKRFjzDn66lxTToGYhdSX7CerDyxPiO87AMFndKkpVCi2Znoa/rheEhdSdiz7uPoEZcAKVdeM2kfIY8EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=le6rxRkY; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3e4b5aee522so1459264f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757717723; x=1758322523; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bQQq41SVVRbn6631nZmi56Z4Of+AjJI4UHPGihR3J2Q=;
-        b=le6rxRkYFJCluBSRJ5bFdNxLycE62jaB7IC6Y+ZNBZ3hCHwxODhDl+vMJGRbQTkLf2
-         jtUPMkQmuzlyjB3Xc0TJeKvvL3dQZPXlEsreZCDRVXDNSepa4/CCscwzQgpiAmG5znH6
-         zlmE/AhRlOMPCkTsRq+GfPvKBFtVFuZyrK34NfjDaTa9yGcBhKWnGQq9OtiPi1Ah3Z9O
-         w6k7ZZcP06YHQ875NaAATBhbIwivqDa5b2ECvv/+jbviX2qHUQavfbWZxIqXrjDu4QBo
-         MbMThUUZ6Q3FHxpzO5rLfWsU81BjeeSFJnAMBKBLlcVgkvzamYPVKGsXvBWliPbGagn5
-         tuWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757717723; x=1758322523;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bQQq41SVVRbn6631nZmi56Z4Of+AjJI4UHPGihR3J2Q=;
-        b=MbLMGGzMv/xbRiBH2wuM0uVQE/v45zngrImAMq08UGjTJuWjsG+S4n8XeiI3jHH1pY
-         2Ce6cKNNaE1zaC51EL5B0yGkalkqOBqiOlsDEwOiMkGxVLnOjVBQvcRHgIc5GHsZanYt
-         2yClJMQKBsctA4IJ0dMdH3Pr0LwqCcHvNfLy0IaQHW6NdlHM6RIvEO6o9qbO5LVzdrLB
-         yoO9HcktuC3qTMZJzVKz75vIY6eqNxP5cCbrC2lWHyoAqfC7+z3kQJGhCMrIYNOvjRZC
-         AGxPL/RtYMLDBdzGKcjIwEhP7q+VxufTQsQ4eCL5LdVYe1D0bZjtH7cGMCQ/ozguqjgl
-         U6rA==
-X-Forwarded-Encrypted: i=1; AJvYcCWA/v4Bp3yHxzcTbaySHwKmAeutrOd5pDdTnj8qNJBnTf5x+NhlnoR5/HCkWlnqXrmuulPmSaYHB9M+NLY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/FvuP2ilRl6JCrrchOQHfUHq0dW8IW5gmhxA4fN4RjKnaUilC
-	2dDU78LVu1LGwvmB7zCn1SVYGblPBx6UOL3IJ9yZS773cyzA/1cUdDLV
-X-Gm-Gg: ASbGncu+qWtTIdko2GQKF8N7XJkNSnvmifeG43vIPT0DKvYDuXIuuBuMQo4/rKpkZLp
-	smmMarrMVtRj+o/qZAJ9FJvdtnVlnHnOrm8+89yUyApyktWShBK3zybIH7hdTWb459aCnbBfUvv
-	2ZfpFlmdiWd3yF2McAvqhlJAnD+UKcFLNThAg2j7iNPxMYfLgKjvtSiaDG+kBOP0c4C5bvs0O/g
-	tElNoWNlHPmZb8lINg4ZA3k1GJsNeYF5jIf8N2Nn2nBUXUAV/XvKvaLiqenrosvqi+3VRdOPVx9
-	Ud4dCKRpviKJjmsPrYo+EC0tCue1CrF13de+iMGB0AiPXM5C+R7YaJ/hyweRAcamaTAPYIQtvMS
-	ddnBAIheR1w3twrc1f98HzMsCcf00C9OTlkcMHvTj5b+kB6bpHAL5+Ow4Z4vXd2T+B2/4GF8Ew/
-	gg/vdf/g==
-X-Google-Smtp-Source: AGHT+IHIf0xPTQSq2SGK+xjb3mFSGDk7HN3L2nA4JQ5Js7XJrtXXtnD62hWKhZUN18BtSlP72hjvRw==
-X-Received: by 2002:a05:6000:420f:b0:3e5:955d:a81b with SMTP id ffacd0b85a97d-3e7659c4248mr4152680f8f.34.1757717722835;
-        Fri, 12 Sep 2025 15:55:22 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e01578272sm84954695e9.9.2025.09.12.15.55.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 15:55:22 -0700 (PDT)
-Date: Fri, 12 Sep 2025 23:54:56 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Cc: akpm@linux-foundation.org, axboe@kernel.dk, ceph-devel@vger.kernel.org,
- ebiggers@kernel.org, hch@lst.de, home7438072@gmail.com, idryomov@gmail.com,
- jaegeuk@kernel.org, kbusch@kernel.org, linux-fscrypt@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
- sagi@grimberg.me, tytso@mit.edu, visitorckw@gmail.com, xiubli@redhat.com
-Subject: Re: [PATCH v2 1/5] lib/base64: Replace strchr() for better
- performance
-Message-ID: <20250912235456.6ba2c789@pumpkin>
-In-Reply-To: <20250911073204.574742-1-409411716@gms.tku.edu.tw>
-References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
-	<20250911073204.574742-1-409411716@gms.tku.edu.tw>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1757717725; c=relaxed/simple;
+	bh=Q2sUHFIOorZfsz85uahNX9/PsDeSkb1RNGOg1UBbjto=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
+	 In-Reply-To:Content-Type; b=tw/70XmAnv4q/Bw5JEtBkaHoTdP83P0A8sPsNxnqwsVg2EXLVeXM/qlNAI+mYiZMqgr8TKt13cgud3o0NtbsQjMKVEKv2OrlBuekiB+fJlTOSJvly8duRmwM4H2+yK+673cXIKWiBgQ4tBRk6ofp8IYNEIikZwwgYoZLFR4IIfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q1UqL8sr; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e7fc9584-3b69-4cbb-ab45-efb1dc37efdb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757717719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0jqhWxjNOmgHrhvCRjQLK/k0iEoywnR3FWANReeq9Yo=;
+	b=q1UqL8sr3NoiBVM0UPmAUa8k1UMepIWYjSgYwohHo/rkVS3LyGlG/LjDXzAvy54uc9nZIs
+	IYuvAuao3ZOWjcUaaLS/RMOAdrxQJPsA9u5R4+azOd+WfV+rPOXowGSKGjV52H+j7W1Ceh
+	ZpICsBfjaLgOg4okEVEvlPjabs1rWwU=
+Date: Fri, 12 Sep 2025 15:55:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
+To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>,
+ edwards@nvidia.com, hdanton@sina.com, jgg@ziepe.ca, leon@kernel.org,
+ leonro@nvidia.com, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <68c3a49a.a70a0220.3543fc.0031.GAE@google.com>
+ <6f3b9149-2a2d-4532-b38f-946b98e72000@linux.dev>
+ <691d3ecd-7960-46bb-b41e-be223e320d33@linux.dev>
+ <122fe058-a02e-41a7-b012-4d38262055ac@linux.dev>
+Content-Language: en-US
+In-Reply-To: <122fe058-a02e-41a7-b012-4d38262055ac@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 11 Sep 2025 15:32:04 +0800
-Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
 
-> From: Kuan-Wei Chiu <visitorckw@gmail.com>
+
+On 9/12/25 3:33 PM, Yanjun.Zhu wrote:
 > 
-> The base64 decoder previously relied on strchr() to locate each
-> character in the base64 table. In the worst case, this requires
-> scanning all 64 entries, and even with bitwise tricks or word-sized
-> comparisons, still needs up to 8 checks.
 > 
-> Introduce a small helper function that maps input characters directly
-> to their position in the base64 table. This reduces the maximum number
-> of comparisons to 5, improving decoding efficiency while keeping the
-> logic straightforward.
+> On 9/12/25 1:01 PM, Yanjun.Zhu wrote:
+>>
+>>
+>> On 9/12/25 12:38 PM, yanjun.zhu wrote:
+>>> On 9/11/25 9:42 PM, syzbot wrote:
+>>>> syzbot has bisected this issue to:
+>>>>
+>>>> commit a92fbeac7e94a420b55570c10fe1b90e64da4025
+>>>> Author: Leon Romanovsky <leonro@nvidia.com>
+>>>> Date:   Tue May 28 12:52:51 2024 +0000
+>>>>
+>>>>      RDMA/cache: Release GID table even if leak is detected
+>>>
+>>> Maybe this commit just detects ref leaks and reports ref leak.
+>>> Even though this commit is reverted, this ref leak still occurs.
+>>>
+>>> The root cause is not in this commit.
+>>>
+>>> "
+>>> GID entry ref leak for dev syz1 index 2 ref=615
+>>> "
+>>>
+>>> Ref leaks in dev syz1.
+>> In this link: https://syzkaller.appspot.com/x/log.txt?x=157dab12580000
+>>
+>> "
+>> [  184.209420][ T6164] infiniband syz1: set active
+>> [  184.215960][ T6164] infiniband syz1: added syz_tun
+>> [  184.222514][ T6001] veth0_macvtap: entered promiscuous mode
+>> [  184.231935][   T42] wlan0: Created IBSS using preconfigured BSSID 
+>> 50:50:50:50:50:50
+>> [  184.239777][   T42] wlan0: Creating new IBSS network, BSSID 
+>> 50:50:50:50:50:50
+>> [  184.256962][ T6001] veth1_macvtap: entered promiscuous mode
+>> [  184.276479][ T6164] syz1: rxe_create_cq: returned err = -12 < -- 
+>> rxe_create_cq failed, the test should not continue.
+>>
+>> [  184.288430][ T6008] veth0_vlan: entered promiscuous mode
+>> "
+>>
+>> err = -12, is -ENOMEM.
 > 
-> Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
-> over 1000 runs, tested with KUnit):
+> "
+> [  139.009314][ T6730] infiniband syz1: added syz_tun
+> [  139.015974][ T6730] rdma_rxe: vmalloc_user failed, buf_size: 131456, 
+> num_slots: 1024, elem_size: 128
+> [  139.016142][ T6730] syz1: rxe_cq_from_init: unable to create cq
+> "
+
+The above logs are in the link: 
+https://syzkaller.appspot.com/x/log.txt?x=144a9934580000
+
+Please check it.
+
+Zhu Yanjun
+
 > 
-> Decode:
->  - 64B input: avg ~1530ns -> ~126ns (~12x faster)
->  - 1KB input: avg ~27726ns -> ~2003ns (~14x faster)
+>  From the above logs, vmalloc_user() fails when trying to allocate 
+> 131,456 bytes of memory.
 > 
-> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> ---
->  lib/base64.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
+> Is there a specific limit on vmalloc allocations in this test case?
 > 
-> diff --git a/lib/base64.c b/lib/base64.c
-> index b736a7a43..9416bded2 100644
-> --- a/lib/base64.c
-> +++ b/lib/base64.c
-> @@ -18,6 +18,21 @@
->  static const char base64_table[65] =
->  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
->  
-> +static inline const char *find_chr(const char *base64_table, char ch)
-> +{
-> +	if ('A' <= ch && ch <= 'Z')
-> +		return base64_table + ch - 'A';
-> +	if ('a' <= ch && ch <= 'z')
-> +		return base64_table + 26 + ch - 'a';
-> +	if ('0' <= ch && ch <= '9')
-> +		return base64_table + 26 * 2 + ch - '0';
-> +	if (ch == base64_table[26 * 2 + 10])
-> +		return base64_table + 26 * 2 + 10;
-> +	if (ch == base64_table[26 * 2 + 10 + 1])
-> +		return base64_table + 26 * 2 + 10 + 1;
-> +	return NULL;
-> +}
-
-That's still going to be really horrible with random data.
-You'll get a lot of mispredicted branch penalties.
-I think they are about 20 clocks each on my Zen-5.
-A 256 byte lookup table might be better.
-However if you assume ascii then 'ch' can be split 3:5 bits and
-the top three used to determine the valid values for the low bits
-(probably using shifts of constants rather than actual arrays).
-So apart from the outlying '+' and '/' (and IIRC there is a variant
-that uses different characters) which can be picked up in the error
-path; it ought to be possible to code with no conditionals at all.
-
-To late at night to write (and test) an implementation.
-
-	David
-
-
-
-
-> +
->  /**
->   * base64_encode() - base64-encode some binary data
->   * @src: the binary data to encode
-> @@ -78,7 +93,7 @@ int base64_decode(const char *src, int srclen, u8 *dst)
->  	u8 *bp = dst;
->  
->  	for (i = 0; i < srclen; i++) {
-> -		const char *p = strchr(base64_table, src[i]);
-> +		const char *p = find_chr(base64_table, src[i]);
->  
->  		if (src[i] == '=') {
->  			ac = (ac << 6);
+> Also, what is the size of memory available on this machine? (Hardware 
+> name: Google Google Compute Engine/Google Compute Engine, BIOS Google 
+> 08/18/2025)
+> 
+> Thanks,
+> Zhu Yanjun
+> 
+>>
+>> It means that memory allocation fails.
+>>
+>> Zhu Yanjun
+>>
+>>>
+>>> Zhu Yanjun
+>>>
+>>>>
+>>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt? 
+>>>> x=13fc9642580000
+>>>> start commit:   5f540c4aade9 Add linux-next specific files for 20250910
+>>>> git tree:       linux-next
+>>>> final oops:     https://syzkaller.appspot.com/x/report.txt? 
+>>>> x=10029642580000
+>>>> console output: https://syzkaller.appspot.com/x/log.txt? 
+>>>> x=17fc9642580000
+>>>> kernel config:  https://syzkaller.appspot.com/x/.config? 
+>>>> x=5ed48faa2cb8510d
+>>>> dashboard link: https://syzkaller.appspot.com/bug? 
+>>>> extid=b0da83a6c0e2e2bddbd4
+>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz? 
+>>>> x=15b52362580000
+>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c? 
+>>>> x=16b41642580000
+>>>>
+>>>> Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+>>>> Fixes: a92fbeac7e94 ("RDMA/cache: Release GID table even if leak is 
+>>>> detected")
+>>>>
+>>>> For information about bisection process see: https://goo.gl/ 
+>>>> tpsmEJ#bisection
+>>>
+>>
+> 
 
 
