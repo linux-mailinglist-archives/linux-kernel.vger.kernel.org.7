@@ -1,246 +1,111 @@
-Return-Path: <linux-kernel+bounces-814747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E844CB5581C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:10:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0402FB55822
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40CB97B39C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:08:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58A7A1C2109E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A2232F770;
-	Fri, 12 Sep 2025 21:10:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F23334363;
+	Fri, 12 Sep 2025 21:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FajGy1lF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zKdZd0GQ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08BF27280C;
-	Fri, 12 Sep 2025 21:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8AA628489B;
+	Fri, 12 Sep 2025 21:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757711411; cv=none; b=M7NbLrJl+rvguoL0fnkN7pgUIQRgtBdOMceBmStcKVgBO2VF2NbfO9IuuabNywYtKYj7ddKTxKI17/HCZfjCpaPe0eWSuFFEsgE4IYG5y6NV+k7FUdQuI1tScURLVyASfvjQasMFVJv8LmzWiFL5YpGQ+j5+sWRcuEYtBHvOg5s=
+	t=1757711490; cv=none; b=Zyf6Zwmwr1a0yhU2D9K456v+82K+8z6SUcNyDFxV3uLB+7mFrnsByLGSPQpO1NM0D40i1RI2Udcsv5RTZ5RZJGwIklE+3LKdUr1/9GZHHDEjyknjIFBuYMHHbC3HZjAL4zmpeSu6QTVnyGqnGwcKaoHmYVwP+WVXXUYS6dB0+yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757711411; c=relaxed/simple;
-	bh=RdVRenqde6tKtbAWWyAHuu47t4tBwDWB8bWLsQadw+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jR2j6kAri16joEgIzp4G27BWFFmngiXQRc1DDkaE17KoBzVzAYqDTwQvxWtIJwsBawa8peYKRnwfOMYsedhLZd9fE1tFG5jY3BLB3ma9Xluq5R4XNNx3ako7L+6nRXrThADcDRa16313VY7/H5TLS5ZBtMtPXD97YtgiAuDliP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FajGy1lF; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757711410; x=1789247410;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=RdVRenqde6tKtbAWWyAHuu47t4tBwDWB8bWLsQadw+A=;
-  b=FajGy1lFGMke6s9cUm3qPuxUS628dZCFORj7qmZm77vBQyU5y5nGmrc5
-   rJV9icTep93aP8ImGOGf43qGOH8c2s6c497HxMx+LI8Yi5jmhV7pywf6j
-   VqSTY9VMnSYip76EoO0pAoIzHRSqvaGBbV28dDbdjRcRymt9znVGqDZWh
-   zwEK6Mb5lu/WmJYPD9PoBEbBdggZX6q+au6t0weNnr4vBpvl1dmekt8Ln
-   chhojH31HXv+hs8f4Zr9vLLxnlC+1T8+8djCK8tbKCstAYYLvGcWjHhQT
-   19v/5iwyGQ/2dNLpLlEsPjx8PJ5Axea6KX5yh5WwWdd5Z8N0mNzRhwucG
-   Q==;
-X-CSE-ConnectionGUID: +r4SjhH7RQC79LGrUzWoag==
-X-CSE-MsgGUID: XwjKfN2ASnKt7LcuHcwCsg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="60208941"
-X-IronPort-AV: E=Sophos;i="6.18,260,1751266800"; 
-   d="scan'208";a="60208941"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 14:10:09 -0700
-X-CSE-ConnectionGUID: v9s3Ryi6R1e2zHl4p9shSA==
-X-CSE-MsgGUID: DtftzBUjRC+xjnGEJdAhVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,260,1751266800"; 
-   d="scan'208";a="179251799"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.111.66]) ([10.125.111.66])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 14:10:09 -0700
-Message-ID: <3d44af04-f7d6-4625-b07d-40173bc95c35@intel.com>
-Date: Fri, 12 Sep 2025 14:10:06 -0700
+	s=arc-20240116; t=1757711490; c=relaxed/simple;
+	bh=D/Cyd1SWByXhnXhlXz5eUp4WAyTJXeELIf5f2DNwVQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSxRtD46pwCJJJ7U8sCV1fg+OTE/VsweIx70gheOtGjvu/0Pp6BifV+EzFM266YAgHNIzXH+P2ORDSliB5He9ixszPo7+jwuiXsctj/bJizwKNj3PUM5S8nUQ0d98wqTfH25ViLQckqJ4Lx3mCLan+Xsh8vN4yHkcaZ53NN7t0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zKdZd0GQ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=QBCLCLlywXx8YW7RXuqLyrr43UeZ+UsFUs7lNnZijXg=; b=zKdZd0GQBLbpnow2hX0mg4RLTq
+	IgzOfcH2SoMMqohYhoOP+iTYzRufSCKI0yoRY30bhcZFvebxzYUMIMRYf0lxbN68kbmIb3/lqh8kC
+	dUIwc8WCtQdH+K4F0ooyAVxJZBLfuNczJhEKI5WpqwFGevsxAh5FnJFIzzCyEiADL5qY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uxB2h-008G1n-Rx; Fri, 12 Sep 2025 23:10:51 +0200
+Date: Fri, 12 Sep 2025 23:10:51 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Vivian Wang <uwu@dram.page>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Junhui Liu <junhui.liu@pigmoral.tech>,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Subject: Re: [PATCH net-next v11 2/5] net: spacemit: Add K1 Ethernet MAC
+Message-ID: <1f2887e4-2644-48a4-8171-98bd310d190f@lunn.ch>
+References: <20250912-net-k1-emac-v11-0-aa3e84f8043b@iscas.ac.cn>
+ <20250912-net-k1-emac-v11-2-aa3e84f8043b@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 06/11] cxl/region: Separate region parameter setup and
- region construction
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-7-rrichter@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250912144514.526441-7-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-net-k1-emac-v11-2-aa3e84f8043b@iscas.ac.cn>
 
-
-
-On 9/12/25 7:45 AM, Robert Richter wrote:
-> To construct a region, the region parameters such as address range and
-> interleaving config need to be determined. This is done while
-> constructing the region by inspecting the endpoint decoder
-> configuration. The endpoint decoder is passed as a function argument.
-> 
-> With address translation the endpoint decoder data is no longer
-> sufficient to extract the region parameters as some of the information
-> is obtained using other methods such as using firmware calls.
-> 
-> In a first step, separate code to determine and setup the region
-> parameters from the region construction. Temporarily store all the
-> data to create the region in the new struct cxl_region_context. Add a
-> new function setup_region_parameters() to fill that struct and later
-> use it to construct the region. This simplifies the extension of the
-> function to support other methods needed, esp. to support address
-> translation.
-> 
-> Patch is a prerequisite to implement address translation.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> ---
->  drivers/cxl/core/region.c | 50 +++++++++++++++++++++++++++++----------
->  1 file changed, 38 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 106692f1e310..57697504410b 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3414,6 +3414,26 @@ static int match_region_by_range(struct device *dev, const void *data)
->  	return 0;
->  }
->  
-> +struct cxl_region_context {
-> +	struct cxl_endpoint_decoder *cxled;
-> +	struct cxl_memdev *cxlmd;
-> +	struct range hpa_range;
-> +	int interleave_ways;
-> +	int interleave_granularity;
-> +};
-> +
-> +static int setup_region_params(struct cxl_endpoint_decoder *cxled,
-> +			       struct cxl_region_context *ctx)
+> +static u32 emac_rd(struct emac_priv *priv, u32 reg)
 > +{
-> +	ctx->cxled = cxled;
-> +	ctx->cxlmd = cxled_to_memdev(cxled);
-> +	ctx->hpa_range = cxled->cxld.hpa_range;
-> +	ctx->interleave_ways = cxled->cxld.interleave_ways;
-> +	ctx->interleave_granularity = cxled->cxld.interleave_granularity;
-
-You can init like this:
-
-	*ctx = (struct cxl_region_context) {
-		.cxled = cxled,
-		.cxlmd = cxled_to_memdev(cxled),
-		.hpa_range = cxled->cxld.hpa_range,
-		.interleave_ways = cxled->cxld.interleave_ways,
-		.interleave_granularity = cxled->cxld.interleave_granularity,
-	};
-
-
-> +
-> +	return 0;
-
-Can probably make this function void if no expected errors and only assignments.
-
-DJ
-
+> +	return readl(priv->iobase + reg);
 > +}
-> +
->  static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
->  					    struct resource *res)
->  {
-> @@ -3453,11 +3473,12 @@ static int cxl_extended_linear_cache_resize(struct cxl_region *cxlr,
->  }
->  
->  static int __construct_region(struct cxl_region *cxlr,
-> -			      struct cxl_endpoint_decoder *cxled)
-> +			      struct cxl_region_context *ctx)
->  {
-> +	struct cxl_endpoint_decoder *cxled = ctx->cxled;
->  	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
-> -	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> -	struct range *range = &cxled->cxld.hpa_range;
-> +	struct cxl_memdev *cxlmd = ctx->cxlmd;
-> +	struct range *range = &ctx->hpa_range;
->  	struct cxl_region_params *p;
->  	struct resource *res;
->  	int rc;
-> @@ -3506,8 +3527,8 @@ static int __construct_region(struct cxl_region *cxlr,
->  	}
->  
->  	p->res = res;
-> -	p->interleave_ways = cxled->cxld.interleave_ways;
-> -	p->interleave_granularity = cxled->cxld.interleave_granularity;
-> +	p->interleave_ways = ctx->interleave_ways;
-> +	p->interleave_granularity = ctx->interleave_granularity;
->  	p->state = CXL_CONFIG_INTERLEAVE_ACTIVE;
->  
->  	rc = sysfs_update_group(&cxlr->dev.kobj, get_cxl_region_target_group());
-> @@ -3527,9 +3548,10 @@ static int __construct_region(struct cxl_region *cxlr,
->  
->  /* Establish an empty region covering the given HPA range */
->  static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
-> -					   struct cxl_endpoint_decoder *cxled)
-> +					   struct cxl_region_context *ctx)
->  {
-> -	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> +	struct cxl_endpoint_decoder *cxled = ctx->cxled;
-> +	struct cxl_memdev *cxlmd = ctx->cxlmd;
->  	struct cxl_port *port = cxlrd_to_port(cxlrd);
->  	struct cxl_dev_state *cxlds = cxlmd->cxlds;
->  	int rc, part = READ_ONCE(cxled->part);
-> @@ -3548,7 +3570,7 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->  		return cxlr;
->  	}
->  
-> -	rc = __construct_region(cxlr, cxled);
-> +	rc = __construct_region(cxlr, ctx);
->  	if (rc) {
->  		devm_release_action(port->uport_dev, unregister_region, cxlr);
->  		return ERR_PTR(rc);
-> @@ -3572,13 +3594,17 @@ cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *range)
->  
->  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
->  {
-> -	struct range *range = &cxled->cxld.hpa_range;
-> +	struct cxl_region_context ctx;
->  	struct cxl_region_params *p;
->  	bool attach = false;
->  	int rc;
->  
-> +	rc = setup_region_params(cxled, &ctx);
-> +	if (rc)
-> +		return rc;
-> +
->  	struct cxl_root_decoder *cxlrd __free(put_cxl_root_decoder) =
-> -		cxl_find_root_decoder(cxled, range);
-> +		cxl_find_root_decoder(cxled, &ctx.hpa_range);
->  	if (!cxlrd)
->  		return -ENXIO;
->  
-> @@ -3589,9 +3615,9 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
->  	 */
->  	mutex_lock(&cxlrd->range_lock);
->  	struct cxl_region *cxlr __free(put_cxl_region) =
-> -		cxl_find_region_by_range(cxlrd, range);
-> +		cxl_find_region_by_range(cxlrd, &ctx.hpa_range);
->  	if (!cxlr)
-> -		cxlr = construct_region(cxlrd, cxled);
-> +		cxlr = construct_region(cxlrd, &ctx);
->  	mutex_unlock(&cxlrd->range_lock);
->  
->  	rc = PTR_ERR_OR_ZERO(cxlr);
 
+> +static int emac_mii_read(struct mii_bus *bus, int phy_addr, int regnum)
+> +{
+> +	struct emac_priv *priv = bus->priv;
+> +	u32 cmd = 0, val;
+> +	int ret;
+> +
+> +	cmd |= FIELD_PREP(MREGBIT_PHY_ADDRESS, phy_addr);
+> +	cmd |= FIELD_PREP(MREGBIT_REGISTER_ADDRESS, regnum);
+> +	cmd |= MREGBIT_START_MDIO_TRANS | MREGBIT_MDIO_READ_WRITE;
+> +
+> +	emac_wr(priv, MAC_MDIO_DATA, 0x0);
+> +	emac_wr(priv, MAC_MDIO_CONTROL, cmd);
+> +
+> +	ret = readl_poll_timeout(priv->iobase + MAC_MDIO_CONTROL, val,
+> +				 !(val & MREGBIT_START_MDIO_TRANS), 100, 10000);
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = emac_rd(priv, MAC_MDIO_DATA);
+> +	return val;
+
+emac_rd() returns a u32. Is it guaranteed by the hardware that the
+upper word is 0? Maybe this needs to be masked?
+
+	Andrew
 
