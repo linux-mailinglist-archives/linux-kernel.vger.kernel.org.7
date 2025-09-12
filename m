@@ -1,133 +1,132 @@
-Return-Path: <linux-kernel+bounces-814659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B93B55706
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:41:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B22B4B5570B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E792AA005D8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BBC47BB049
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488C331E10D;
-	Fri, 12 Sep 2025 19:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D35633436A;
+	Fri, 12 Sep 2025 19:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4jTGG7cr"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPAlQieN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285222BE7A0
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1988327A2E;
+	Fri, 12 Sep 2025 19:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757706097; cv=none; b=kS3NR9FwvL0CihXQDaBrwXstKCpCEnfOHNPsRqfRYW09ffsqdbSw1vkOM4mOptTz4YjV2Lyd0oViUkc2KIu9d+uTQL4STIr1h2s0s3si2WkMSZGL9EZ2kFAEyyo8lyBCZEFsZOq8JyjyLoWYjbbHg5p3GTPOMv1NBlW0XCgWUzQ=
+	t=1757706236; cv=none; b=LEplV7jhQCc2C3wEsPu+TYVUaT8VNdBwuWU64slWuSGZPWeX5LbQJbInrfiVh8HuHkSL49RgEB+1Yqxht/vhFLseBx2FBu+gy1BSXtLsi8KVs2U9vgEbIJcr+RTYP6SD0jubQBi+RIR18wcd/8VO8QbxYQQ58z4onzfo5nfYGzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757706097; c=relaxed/simple;
-	bh=iM2MQBIk1Q/STF9xiEDF7k36NWkR2MjnD2gJk1fRtX4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Qe3IrjzywsGcxF+CrDWoZQ9EmmA7ioPqob7pUBJPWw5YeZGa2o6hqvv0SDdQEjZb125qX2TjZC1CVZ5nMVhhV02A77s7m2Q8nsc5ICsdZyoH4znyu2CpbkBLLbq6goynlxEIlvEF759HKCcMZf5MZ+1cjah+H17NoM6t2SLwM4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4jTGG7cr; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32dd9275606so1780202a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:41:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757706095; x=1758310895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hwAmkdSsh2ald981eddTLE3mG7L8NIno0Q78eoK7RXU=;
-        b=4jTGG7crT1Kt263fE2BI+Kb+Mk6nju+iHWV1PleBpPMgt10uJds61bxwiFIllI5mAE
-         H5ADg2dTYX7pyGj4GzykP15bhZOC2w/w6BaFbK0+XPEaNrXsZfEPmdBcMa3BfwB1T90T
-         KPAFmsQJI3IphVy8jqdmAL8oBH5uHqLlRY2PyOH5kQfUpfjm+z5KjcyZShhHR3v0QsOV
-         V0q8POK5y/1APvaZNHOO8FbMERMM98+N4dhvnxCUUT2V+8Roq6eOSSi/sXCuJH5M257C
-         9j/8cfImStTUylrGB8j8J6ZhdW67szuvUjqV/7IBNwuPLGczRX4IuzH4E4fe/6psy9eM
-         U+Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757706095; x=1758310895;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hwAmkdSsh2ald981eddTLE3mG7L8NIno0Q78eoK7RXU=;
-        b=SL9MOa1HcgPtlpduU6XP4kUorZnyQCSDuUr5O5NkxK3HjlTOFQ8/qeo+c5MKAhNpp5
-         qMYaqKgtwEL7ic3DJ8OikodXeFKtJES19w4O46wGbyuOGW4KnFZ6SRKF70+V9yS7INJx
-         ZdsypbdJWZqTc7PtIbo+ApeXQV+nk0QF+Xy9M4bFKBV0Se0TfokJ6dM3bgeekXwpxbUJ
-         fjkaBb13MllFkbwknUXWarCx9/raM2lc7f353g7mQdEiMMbae/9c/xb+tI2hu5EiXISL
-         nFcd3BC+kMaGJPg+RFVSOnYGBujbLHXRaQnsH9O+b/e+Vdyn9mrCGxX0Ur9EUO9erFW3
-         9QEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtK0rlpQahZM7482O3hYYaPPxl883ykhWNkscin/vn0zDE3dH6R9flvaUcBNEZ74u3FW1+jqr+hEpD2KM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/1523bfMPhw/WQY3h1wFDtZggIBcvtY6Iva71qgur+3VVSPAB
-	Hy1dUnZuumOTdZoa5TR+THcW/0euNLZh7GJUo55qR2ktyQTvjllXEbBBT1KUZ6seJnvxKoRwbbg
-	V+J9Geg==
-X-Google-Smtp-Source: AGHT+IFiAMu5uVuzupQ7fFp8LqWmeFtF+a93+PGygZxvosK5j5W4JE041u2MXOQW8S14Rc2WgZFhshg2SkU=
-X-Received: from pjx12.prod.google.com ([2002:a17:90b:568c:b0:329:ccdd:e725])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4b:b0:32b:d8ae:46f9
- with SMTP id 98e67ed59e1d1-32de4fb245emr4244466a91.35.1757706095375; Fri, 12
- Sep 2025 12:41:35 -0700 (PDT)
-Date: Fri, 12 Sep 2025 12:41:33 -0700
-In-Reply-To: <df357d87-3b4b-41a4-acdf-31289590b233@amd.com>
+	s=arc-20240116; t=1757706236; c=relaxed/simple;
+	bh=wYP2/RHa5oRDrnM6dzMcTKRuYwJA2aMW68L266yjqf0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Q7H+D6zls6X63SEp6vRX87ISAXveWbXbMA4gbhRd5hJQ/XNcewdzLQMB8txDXuvAEUqM2VNmezo8CCGolblodhklPVF7IIjUIfUOT0k6u01Q7Yt9OX4lMTVCwiSoPwEThTgkQe/ZDVR9cAWDUONji4XI8z0/eZbZWKE1DrW85s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPAlQieN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2653AC4CEF1;
+	Fri, 12 Sep 2025 19:43:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757706236;
+	bh=wYP2/RHa5oRDrnM6dzMcTKRuYwJA2aMW68L266yjqf0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CPAlQieNOL5Duemph/YE7itZbpwr9qgV859bisKW51SiCyI+bf2gJgEE0MiRYDOzG
+	 muX2IKLhYJI570IpinfAAVNR7Rb6Xoz4LY+XprX8KhgNhXxJhtXd2gqOWCoYAucLdK
+	 hfAfcqsT68S/h9MW+W916gUXec45oN7g5m3nNgQuZihb1K2c9Yjt9lCbONaKyO3qIU
+	 NsEXQIOM8PmBX1RWSU+uD7xdK1Q9AVGeJ81OzKufQSEAQXypL8+ylbTbM4n38djfqu
+	 xPDrEKPKWasYx813bZVpDQ9WxZTRqP8IdicoLfbNfUk/G8xYEq0hNoEsncBmii89H7
+	 sSE6QkSl5wZgQ==
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+To: Linux ACPI <linux-acpi@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject:
+ [PATCH v1 3/4] ACPI: property: Do not pass NULL handles to acpi_attach_data()
+Date: Fri, 12 Sep 2025 21:42:55 +0200
+Message-ID: <3014880.e9J7NaK4W3@rafael.j.wysocki>
+Organization: Linux Kernel Development
+In-Reply-To: <5046661.31r3eYUQgx@rafael.j.wysocki>
+References: <5046661.31r3eYUQgx@rafael.j.wysocki>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1757543774.git.ashish.kalra@amd.com> <c6d2fbe31bd9e2638eaefaabe6d0ffc55f5886bd.1757543774.git.ashish.kalra@amd.com>
- <aMRnnNVYBrasJnZF@google.com> <df357d87-3b4b-41a4-acdf-31289590b233@amd.com>
-Message-ID: <aMR3bRYEoR0eI6x7@google.com>
-Subject: Re: [PATCH v4 1/3] x86/sev: Add new dump_rmp parameter to
- snp_leak_pages() API
-From: Sean Christopherson <seanjc@google.com>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Ashish Kalra <Ashish.Kalra@amd.com>, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	pbonzini@redhat.com, herbert@gondor.apana.org.au, nikunj@amd.com, 
-	davem@davemloft.net, aik@amd.com, ardb@kernel.org, john.allen@amd.com, 
-	michael.roth@amd.com, Neeraj.Upadhyay@amd.com, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 12, 2025, Tom Lendacky wrote:
-> On 9/12/25 13:34, Sean Christopherson wrote:
-> > But the below build failures show that they aren't dead code, which mea=
-ns that
-> > kernels with CONFIG_KVM_AMD_SEV=3Dn will silently (until something expl=
-odes) do the
-> > wrong thing, because the stubs are hiding the missing dependencies.
-> >=20
-> > arch/x86/boot/startup/sev-shared.c: In function =E2=80=98pvalidate_4k_p=
-age=E2=80=99:
-> > arch/x86/boot/startup/sev-shared.c:820:17: error: implicit declaration =
-of function =E2=80=98sev_evict_cache=E2=80=99 [-Wimplicit-function-declarat=
-ion]
-> >   820 |                 sev_evict_cache((void *)vaddr, 1);
->=20
-> Yeah, this one is on me. sev_evict_cache() is guest code and should be
-> under the CONFIG_AMD_MEM_ENCRYPT #ifdef.
->=20
-> >       |                 ^~~~~~~~~~~~~~~
-> >   AR      arch/x86/realmode/built-in.a
-> > arch/x86/coco/sev/core.c: In function =E2=80=98pvalidate_pages=E2=80=99=
-:
-> > arch/x86/coco/sev/core.c:386:25: error: implicit declaration of functio=
-n =E2=80=98sev_evict_cache=E2=80=99 [-Wimplicit-function-declaration]
-> >   386 |                         sev_evict_cache(pfn_to_kaddr(e->gfn), e=
-->pagesize ? 512 : 1);
-> >       |                         ^~~~~~~~~~~~~~~
-> > arch/x86/mm/mem_encrypt.c: In function =E2=80=98mem_encrypt_setup_arch=
-=E2=80=99:
-> > arch/x86/mm/mem_encrypt.c:112:17: error: implicit declaration of functi=
-on =E2=80=98snp_fixup_e820_tables=E2=80=99 [-Wimplicit-function-declaration=
-]
-> >   112 |                 snp_fixup_e820_tables();
->=20
-> This function is only meant to be used if we're going to run SEV guests,
-> so being guarded by CONFIG_KVM_AMD_SEV was on purpose. I'm just not sure
-> why the stub didn't get used...  or did you remove them?
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I removed all the stubs to see what would break (I was expecting nothing si=
-nce
-all of KVM's accesses are gated by CONFIG_KVM_AMD_SEV).
+In certain circumstances, the ACPI handle of a data-only node may be
+NULL, in which case it does not make sense to attempt to attach that
+node to an ACPI namespace object, so update the code to avoid attempts
+to do so.
+
+This prevents confusing and unuseful error messages from being printed.
+
+Also document the fact that the ACPI handle of a data-only node may be
+NULL, and when that happens, in a code comment.
+
+In addition, make acpi_add_nondev_subnodes() print a diagnostic message
+for each data-only node with an unknown ACPI namespace scope.
+
+Fixes: 1d52f10917a7 ("ACPI: property: Tie data nodes to acpi handles")
+Cc: 6.0+ <stable@vger.kernel.org> # 6.0+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/acpi/property.c |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+--- a/drivers/acpi/property.c
++++ b/drivers/acpi/property.c
+@@ -124,6 +124,10 @@ static bool acpi_nondev_subnode_extract(
+ 		result = true;
+ 
+ 	if (result) {
++		/*
++		 * This will be NULL if the desc package is embedded in an outer
++		 * _DSD-equivalent package and its scope cannot be determined.
++		 */
+ 		dn->handle = handle;
+ 		dn->data.pointer = desc;
+ 		list_add_tail(&dn->sibling, list);
+@@ -245,6 +249,8 @@ static bool acpi_add_nondev_subnodes(acp
+ 			 * strings because there is no way to build full
+ 			 * pathnames out of them.
+ 			 */
++			acpi_handle_info(scope, "Unknown namespace scope of node %s\n",
++					 link->package.elements[0].string.pointer);
+ 			desc = &link->package.elements[1];
+ 			result = acpi_nondev_subnode_extract(desc, NULL, link,
+ 							     list, parent);
+@@ -408,6 +414,9 @@ static void acpi_untie_nondev_subnodes(s
+ 	struct acpi_data_node *dn;
+ 
+ 	list_for_each_entry(dn, &data->subnodes, sibling) {
++		if (!dn->handle)
++			continue;
++
+ 		acpi_detach_data(dn->handle, acpi_nondev_subnode_tag);
+ 
+ 		acpi_untie_nondev_subnodes(&dn->data);
+@@ -422,6 +431,9 @@ static bool acpi_tie_nondev_subnodes(str
+ 		acpi_status status;
+ 		bool ret;
+ 
++		if (!dn->handle)
++			continue;
++
+ 		status = acpi_attach_data(dn->handle, acpi_nondev_subnode_tag, dn);
+ 		if (ACPI_FAILURE(status) && status != AE_ALREADY_EXISTS) {
+ 			acpi_handle_err(dn->handle, "Can't tag data node\n");
+
+
+
 
