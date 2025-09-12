@@ -1,367 +1,189 @@
-Return-Path: <linux-kernel+bounces-813554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB69B54776
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:29:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AAFDB54795
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9267F1CC6163
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:29:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BBC3BB1D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8B92C3257;
-	Fri, 12 Sep 2025 09:21:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC192D2382;
+	Fri, 12 Sep 2025 09:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mKc9St9q"
-Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="psmAV4uh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C412C08CA
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E7A2D0627
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757668911; cv=none; b=d1HvAoMU+UX/eIT6vD0c9he8v5DpaqP6Qz2CvIFKhQo3L6U61rwAK0/46JvhasgzkGj4/s+PWx14ZO8f2JIJ83ihPPsg1a+TpmF9I6pli/FjntEcio5Uy+7NlRYh0e1rZAKvi6id3V//2tHeuX+BzPDfWjj/eNV8f0HRLcSe41s=
+	t=1757668922; cv=none; b=DNYE7fEBPWyrzRYZ2HgQBAkrJUJjGGAOQUI+slyhgUqBnpIUGSt31PbHxbPIXgDK7j+rtUjosm6qXhjqg4tCNEcuyR8z+iaKuezf1/Rf+f5a0yI5Zv0F9lbYkc+jTDzr7COEDlFcXWdFrixZ4YnWyZ/0FpJpNq48t1usVzmLSeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757668911; c=relaxed/simple;
-	bh=4ja9oQCqcRHmgjRUTjFsiDAGirB++R/PpaGwVbfLLOM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EUCh6wU67j5bGtD24CyTjO4wPJ2qwLOndkNC4cgwgCvMLHLOiHPTyWIkcicaYaruSWjtyrIw7pPxHGuTfsCTF+tsGqq+fXWseSHW0eb0TKXH+ew6GeVkcf/KjgvsROdX9xh+R1v+2OUifTvGZim4/w7A3/PhCxvBlfpb1WKShM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mKc9St9q; arc=none smtp.client-ip=209.85.210.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-74c7d98935eso750890a34.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:21:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757668908; x=1758273708; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WUZ7obya3Sr5RFpCVfRbeOTL3de87o7Xbr0uUEJlIJc=;
-        b=mKc9St9qwoI0LTaHPUCOiDjRQkWvN0F2by1bN8b6mD4YlPzGBeu1OeluJ8fhHrskHR
-         NxvDhs+CDarY41wgTgqSU38vFHQxf8789xXqIDaBaEheZUyXTet+N+aGiVPtLkASfPns
-         FzpLTDoWhMAW5EooV2J33kDn02MXkEvG+LrZ3oUxiRsaW12Cw3E+O6hJ7AHBuiNzChQf
-         MBNa90+kcXW4qRmxpGVUcon7IK4Gsvpf3hM4tGlpZtE4zgwyzD/PBQr+IZGMCBkdkRUJ
-         oGVUyhfLeputYxCrAv17LtItPZ/s1Qt2BB9mL9hi49CIi5WOV7WZVaB5C3vbQYgAVHjo
-         zJ1w==
+	s=arc-20240116; t=1757668922; c=relaxed/simple;
+	bh=A1c0vcXgcruE0vFqM/raPLs69yF0uaISuMGxTvyDAyE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MweB8Bm0y2Iqyrau+EecDM7HUXF343m0dSlahsBxEKNLO3Ol1fss1gsg/jmYLCU8L3lA3XGlfZIgdHUm2VLv8oNSoBx6nfWDvzoHVKa9ANRCCxtieNXo0AUkit/bxqYg37UUNTu+9KX0VBjfjCf4QF/rXSLzJJZODJ+h13MUuOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=psmAV4uh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C7dFPf026350
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:22:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	211TaafuVdmwmFpTWX2T7r+JSbXlFt0Mtw+hMPa5lqU=; b=psmAV4uhJDui1mD2
+	TpCjvU8MQQJRkxDuw3yqKkng4nptAa5x/7xUSHj6EX1X6oUbpT8FF28zsrmre7yu
+	6p/Fp2rav/iYRUYCqDi++eNdmU0cYLSY3LSWJ+tX3FS0MmKDSL8p4IePtThsrg/z
+	Ac7+4k4XpROaSNMzt9ybKtn3X8B783KyfS5kAUKtMZPEDpMpPdotPDoiRuFREgPa
+	pg9//ykOut1X5Rjq7PwNqZFRjrYipChc66NfW+GoX/UZm+8We35j13Jt+hH62Gtl
+	F6u0m5V5mD8j29L+7+62Pb1B5wvt2owSxXuoK0JQQiSo9icMMzJ7VUQ0QyT0iZD5
+	YEREwA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj12xkd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:21:59 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4b77ed74e90so847091cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:21:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757668908; x=1758273708;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WUZ7obya3Sr5RFpCVfRbeOTL3de87o7Xbr0uUEJlIJc=;
-        b=wRPxX92/XP7no8roTqBeo80Uc0DnpQAR+0KqTIfTdim4Ntpx0zuADfBIhTRYT7o/TY
-         /EOOrGjzqqx+lCTGEArj3BvLwuEf0bG5XDhrjyB0Y5pNTkChvV3j1MwmWZ2Lk2jZw60m
-         q6gXCWsX6whSkLJcXEHNlYJPrH2OwzoNpRzsltASTwEc53zu+3RKoXLEdWxZJEOhVxb5
-         TOWmRICUcZohwzc8Yfc1rGI9qlu0cFgdhYJqD2AGQ6Ft19/O6iHrFzGlgCMXWQdEvuja
-         Gi0OXJMtfKRNjvQV6mipd38xY1tDm7J3Nffvu25FzaqOHUOdbgGip3pgMKfZ1pQ5qydP
-         WaGA==
-X-Forwarded-Encrypted: i=1; AJvYcCXA7CipdH/PcJ/gDAUnGVEeGmZGDhVcdPaTRJivjKsenU9bvnbT2Af4dSQ7IKU81bpctoZg3ryfQLz4ng4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB0bqGkhJqUPyxvrm7NQ1fbQel7nRd/Q5ZtHpYe3lJwmZ6NDtx
-	yj3ANdFsy86j5deQQ5rJp/rTxnvLv9zcaGfPAumT8yWT1Gu/B2stKDQT6PHLfModXzau6azFeCA
-	vpsRrdX2T/TVmVGRx6JJceYDqBrST8aY=
-X-Gm-Gg: ASbGncuRWbyCT+5jFC2XhnwAevdHlVTRIPLOqLtEEQKN00Qf4CZSjDAqhrMqk73TaTl
-	NttIKIJAOYsV25naHjZ2X6eftkg+3s90T4ckEaUaYlRl4vRjy81xeby4Zmrs2foUis4MtquOZXg
-	Bj5eblFRURN/25Ak/QShGVRFHsbG8skVpDKuOZfwvGfhqNMKwl3S/QtvOiRT9tgkIks+qog9yMt
-	fOxIg==
-X-Google-Smtp-Source: AGHT+IHKdOD0sav1pzLGsvexIHlR11xBcySbkJsNI1i4E1d/USdK7pecHfX7/WogNjy7HJPcnksQEcW2rH2s9qtPrgk=
-X-Received: by 2002:a05:6871:204:b0:31d:8a1e:78ce with SMTP id
- 586e51a60fabf-32e554a2f38mr945748fac.16.1757668908198; Fri, 12 Sep 2025
- 02:21:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757668919; x=1758273719;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=211TaafuVdmwmFpTWX2T7r+JSbXlFt0Mtw+hMPa5lqU=;
+        b=JJfmm/VX6SCI5ReNei/u/odN2WEJworqC8rLvediAEyPhuqqC0nbj9q14jsDFAhHVp
+         6GUxS0QKczre9zhX+zLITzgXMZd9BxAyWAJ7lcb1g+MAea+J4YLY5J3Vy8ICH6qY1NL5
+         0Jerq7oeqdKkNvy6xxxTU6BzEhh3oecXDO0gVnXYOvfM86llVnGC44gGhcyQ2sujNN+b
+         LsX/7T2YI7qt2HSaEIvZwbmFSIVyyKOzU+F76WBVUoSd8tXpu7DN/QU0wAo04Z4hDcD1
+         wUOvgTW24r82OIV8M96atvCAbVrAZVcoasZ+DWU9MKLmN+LbO0rrgyd2KS8CC2YSX61u
+         HuKw==
+X-Forwarded-Encrypted: i=1; AJvYcCU1A3r7Zb+or2WrCHls+7z3ng8wQIqr6O6CUVVeMdkBnCDzE+6MfvZJMG5Zm9sWpDAwGPkwvkQvUEcsuKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrO2t4MV4lfwUwVm1pdEdNCHu4onEGWD3rBeByntQOxPSbGPv1
+	wGyrJyqC/q+i/EZDtsQWusAhPD8s/BTBwN5oAu55MqB3hj6/RnqMbCadaq/IgIJAAEtJ1Whg04o
+	zmy5zFPTJmlpyb7xDzSVuTboGpxUs0DBVDqvOkPKFnbef7XvFFysu9kGZi5sdO7WyuMQ=
+X-Gm-Gg: ASbGncsGh34M2/qAjEpSI0fl3jR5+hsoM0k5xN1LpEdFeCBwuc2KiRAMmnpcQ3D6m6b
+	sQ2+7REpf3YnlVhpk+UQ4P1G+43Sg9goHrXJfiCWFvzIU7UfDnAXfwDQ/wEfc2tAdh6flzfhepU
+	bIYCHg/IWjOTqKv/0ugaEMbaPRzqkpBbaa5mVWpALh/7UYbdBQFDDkVVP4wgAWZH7w2BZ2MVy1K
+	c1qVAEoMr8byjqv2He7Zc/0Axla9XJbir9WseG73Lcj/bL7B722da5fKaHOcmQpS3FCO4hN01Vc
+	PyJFijBhenv52KVP5R7uIor1i9nIevsp3Zn/zdd5J3fIAJcB4bW9YJUOhHm8wxZmHGG9H36HoTS
+	MPbDwpqyWoBKwpvIhls85wA==
+X-Received: by 2002:a05:622a:91:b0:4b5:a0fb:599e with SMTP id d75a77b69052e-4b77cfcdec6mr20253761cf.2.1757668919071;
+        Fri, 12 Sep 2025 02:21:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHt3j5cbbw2xXdC7Iuoclxovs03WKjCh8mVblR4EhINwYFg0atoGoM3n750wMhgvxAjL7lHSQ==
+X-Received: by 2002:a05:622a:91:b0:4b5:a0fb:599e with SMTP id d75a77b69052e-4b77cfcdec6mr20253621cf.2.1757668918594;
+        Fri, 12 Sep 2025 02:21:58 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32f2098sm337290866b.74.2025.09.12.02.21.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 02:21:58 -0700 (PDT)
+Message-ID: <d293a11b-155d-45d3-bafc-00c2f90e8c43@oss.qualcomm.com>
+Date: Fri, 12 Sep 2025 11:21:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
- <20250911095602.1130290-2-zhangchunyan@iscas.ac.cn> <9bcaf3ec-c0a1-4ca5-87aa-f84e297d1e42@redhat.com>
- <CAAfSe-sAru+FuhVWRa+i5_sj6m4318pLFrgP0Gsd0DVWzjE-hg@mail.gmail.com> <04d2d781-fd5e-4778-b042-d4dbeb8c5d49@redhat.com>
-In-Reply-To: <04d2d781-fd5e-4778-b042-d4dbeb8c5d49@redhat.com>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Fri, 12 Sep 2025 17:21:11 +0800
-X-Gm-Features: Ac12FXyFflHnf_JBI4i9hH9jqdgSKY4ieN6Zsx6mGzkigco15IPWhOrDoEo2gdw
-Message-ID: <CAAfSe-tQgmBm=RS2gCi7VaRW1XZhS_sJ9rHbvqJ0w=KwTf+m3g@mail.gmail.com>
-Subject: Re: [PATCH v11 1/5] mm: softdirty: Add pgtable_soft_dirty_supported()
-To: David Hildenbrand <david@redhat.com>
-Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/10] dt-bindings: clock: Add required
+ "interconnect-cells" property
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        Devi Priya <quic_devipriy@quicinc.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+        quic_suruchia@quicinc.com
+References: <20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com>
+ <20250909-qcom_ipq5424_nsscc-v5-2-332c49a8512b@quicinc.com>
+ <20250912-nocturnal-horse-of-acumen-5b2cbd@kuoka>
+ <b7487ab1-1abd-40ca-8392-fdf63fddaafc@oss.qualcomm.com>
+ <2951b362-c3c1-4608-8534-4d25b089f927@oss.qualcomm.com>
+ <52714c33-5bd7-4ca5-bf1d-c89318c77746@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <52714c33-5bd7-4ca5-bf1d-c89318c77746@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: DLymn_abBx67_VxgWI395Fbr9Pm7ko9Y
+X-Proofpoint-GUID: DLymn_abBx67_VxgWI395Fbr9Pm7ko9Y
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfX1YU4RQndvdVB
+ D1g/w2owDFN5PZFymir6dgd9pHiAfZna7XLfu/jjQD99+KCeyh9thsZz8cLbeALbK3KJL2m/zpd
+ BJHlG2aHKRKG5neVH8GTz8Z8QrGTvfC5Yjf+RNtxEAU4FRC5Ob16iilEr1W+0ww34Q+U4HXtFGE
+ hbCCVgwT4qk1UeJU3AH6WzT1N24g3TnDwtWjzxGNWn0ayue5wLEgPJMaWdE2IKsMcyFMa3TlyIp
+ jb0j5XfUucZRQ4dp9YAqyxllncas0t905JWFKzx/ckB54xoiKPLT8PkJUCJn+vcY8bmnxmzz/J2
+ nXbnP3hct7QUvIXG2YygPSJZpnFY4HQ22dqa65Z7KrZXWurIDTnd980Zf7BFCFc2aI0M1EuUBEM
+ Jzgo9bcU
+X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c3e638 cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=UDPjpuflI1CVcGcpNKsA:9
+ a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_03,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509060024
 
-On Fri, 12 Sept 2025 at 16:41, David Hildenbrand <david@redhat.com> wrote:
->
-> [...]
->
-> >>> +/*
-> >>> + * We should remove the VM_SOFTDIRTY flag if the soft-dirty bit is
-> >>> + * unavailable on which the kernel is running, even if the architecture
-> >>> + * provides the resource and soft-dirty is compiled in.
-> >>> + */
-> >>> +#ifdef CONFIG_MEM_SOFT_DIRTY
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>> +             mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
-> >>> +#endif
-> >>
-> >> You can now drop the ifdef.
-> >
-> > Ok, you mean define VM_SOFTDIRTY 0x08000000 no matter if
-> > MEM_SOFT_DIRTY is compiled in, right?
-> >
-> > Then I need memcpy() to set mnemonics[ilog2(VM_SOFTDIRTY)] here.
->
-> The whole hunk will not be required when we make sure VM_SOFTDIRTY never
-> gets set, correct?
+On 9/12/25 11:17 AM, Krzysztof Kozlowski wrote:
+> On 12/09/2025 11:13, Konrad Dybcio wrote:
+>> On 9/12/25 11:13 AM, Konrad Dybcio wrote:
+>>> On 9/12/25 9:04 AM, Krzysztof Kozlowski wrote:
+>>>> On Tue, Sep 09, 2025 at 09:39:11PM +0800, Luo Jie wrote:
+>>>>> The Networking Subsystem (NSS) clock controller acts as both a clock
+>>>>> provider and an interconnect provider. The #interconnect-cells property
+>>>>> is mandatory in the Device Tree Source (DTS) to ensure that client
+>>>>> drivers, such as the PPE driver, can correctly acquire ICC clocks from
+>>>>> the NSS ICC provider.
+>>>>>
+>>>>> Although this property is already present in the NSS CC node of the DTS
+>>>>> for CMN PLL for IPQ9574 SoC which is currently supported, it was previously
+>>>>> omitted from the list of required properties in the bindings documentation.
+>>>>> Adding this as a required property is not expected to break the ABI for
+>>>>> currently supported SoC.
+>>>>>
+>>>>> Marking #interconnect-cells as required to comply with Device Tree (DT)
+>>>>> binding requirements for interconnect providers.
+>>>>
+>>>> DT bindings do not require interconnect-cells, so that's not a correct
+>>>> reason. Drop them from required properties.
+>>>
+>>> "Mark #interconnect-cells as required to allow consuming the provided
+>>> interconnect endpoints"?
+>>
+>> "which are in turn necessary for the SoC to function"
+> 
+> If this never worked and code was buggy, never booted, was sent
+> incomplete and in junk state, then sure. Say like that. :)
+> 
+> But I have a feeling code was working okayish...
 
-Oh no, this hunk code does not set vmflag.
-The mnemonics[ilog2(VM_SOFTDIRTY)] is for show_smap_vma_flags(),
-something like below:
-# cat /proc/1/smaps
-5555605c7000-555560680000 r-xp 00000000 fe:00 19
-  /bin/busybox
-...
-VmFlags: rd ex mr mw me sd
+If Linux is unaware of resources, it can't turn them off/on, so it was
+only working courtesy of the previous boot stages messing with them.
 
-'sd' is for soft-dirty
-
-I think this is still needed, right?
-
->
-> >
-> >>
-> >> But, I wonder if could we instead just stop setting the flag. Then we don't
-> >> have to worry about any VM_SOFTDIRTY checks.
-> >>
-> >> Something like the following
-> >>
-> >> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> >> index 892fe5dbf9de0..8b8bf63a32ef7 100644
-> >> --- a/include/linux/mm.h
-> >> +++ b/include/linux/mm.h
-> >> @@ -783,6 +783,7 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
-> >>    static inline void vm_flags_init(struct vm_area_struct *vma,
-> >>                                   vm_flags_t flags)
-> >>    {
-> >> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-> >>          ACCESS_PRIVATE(vma, __vm_flags) = flags;
-> >>    }
-> >>
-> >> @@ -801,6 +802,7 @@ static inline void vm_flags_reset(struct vm_area_struct *vma,
-> >>    static inline void vm_flags_reset_once(struct vm_area_struct *vma,
-> >>                                         vm_flags_t flags)
-> >>    {
-> >> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-> >>          vma_assert_write_locked(vma);
-> >>          WRITE_ONCE(ACCESS_PRIVATE(vma, __vm_flags), flags);
-> >>    }
-> >> @@ -808,6 +810,7 @@ static inline void vm_flags_reset_once(struct vm_area_struct *vma,
-> >>    static inline void vm_flags_set(struct vm_area_struct *vma,
-> >>                                  vm_flags_t flags)
-> >>    {
-> >> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
-> >>          vma_start_write(vma);
-> >>          ACCESS_PRIVATE(vma, __vm_flags) |= flags;
-> >>    }
-> >> diff --git a/mm/mmap.c b/mm/mmap.c
-> >> index 5fd3b80fda1d5..40cb3fbf9a247 100644
-> >> --- a/mm/mmap.c
-> >> +++ b/mm/mmap.c
-> >> @@ -1451,8 +1451,10 @@ static struct vm_area_struct *__install_special_mapping(
-> >>                  return ERR_PTR(-ENOMEM);
-> >>
-> >>          vma_set_range(vma, addr, addr + len, 0);
-> >> -       vm_flags_init(vma, (vm_flags | mm->def_flags |
-> >> -                     VM_DONTEXPAND | VM_SOFTDIRTY) & ~VM_LOCKED_MASK);
-> >> +       vm_flags |= mm->def_flags | VM_DONTEXPAND;
-> >
-> > Why use '|=' rather than not directly setting vm_flags which is an
-> > uninitialized variable?
->
-> vm_flags is passed in by the caller?
->
-
-Then the original code seems wrong.
-
-> But just to clarify: this code was just a quick hack, adjust it as you need.
-
-Got it.
-
->
-> [...]
->
-> >>>
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>> +             return;
-> >>> +
-> >>>        if (pmd_present(pmd)) {
-> >>>                /* See comment in change_huge_pmd() */
-> >>>                old = pmdp_invalidate(vma, addr, pmdp);
-> >>
-> >> That would all be handled with the above never-set-VM_SOFTDIRTY.
->
-> I meant that there is no need to add the pgtable_soft_dirty_supported()
-> check.
-
-Ok I will take a look.
-
->
-> >
-> > Sorry I'm not sure I understand here, you mean no longer need #ifdef
-> > CONFIG_MEM_SOFT_DIRTY for these function definitions, right?
->
-> Likely we could drop them. VM_SOFTDIRTY will never be set so the code
-> will not be invoked.
-
-The relationship of VM_SOFTDIRTY and clear_soft_dirty_pmd() is not
-very direct from the first sight, let me take a further look.
-
->
-> And for architectures where VM_SOFTDIRTY is never even possible
-> (!CONFIG_MEM_SOFT_DIRTY) we keep it as 0.
-
-Ok.
-
->
-> That way, the compiler can even optimize out all of that code because
->
-> "vma->vm_flags & VM_SOFTDIRTY" -> "vma->vm_flags & 0"
->
-> will never be true.
->
-> >
-> >>
-> >>> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> >>> index 4c035637eeb7..2a3578a4ae4c 100644
-> >>> --- a/include/linux/pgtable.h
-> >>> +++ b/include/linux/pgtable.h
-> >>> @@ -1537,6 +1537,18 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
-> >>>    #define arch_start_context_switch(prev)     do {} while (0)
-> >>>    #endif
-> >>>
-> >>> +/*
-> >>> + * Some platforms can customize the PTE soft-dirty bit making it unavailable
-> >>> + * even if the architecture provides the resource.
-> >>> + * Adding this API allows architectures to add their own checks for the
-> >>> + * devices on which the kernel is running.
-> >>> + * Note: When overiding it, please make sure the CONFIG_MEM_SOFT_DIRTY
-> >>> + * is part of this macro.
-> >>> + */
-> >>> +#ifndef pgtable_soft_dirty_supported
-> >>> +#define pgtable_soft_dirty_supported()       IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
-> >>> +#endif
-> >>> +
-> >>>    #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
-> >>>    #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
-> >>>    static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
-> >>> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> >>> index 830107b6dd08..b32ce2b0b998 100644
-> >>> --- a/mm/debug_vm_pgtable.c
-> >>> +++ b/mm/debug_vm_pgtable.c
-> >>> @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>>                return;
-> >>>
-> >>>        pr_debug("Validating PTE soft dirty\n");
-> >>> @@ -702,7 +702,7 @@ static void __init pte_swap_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pte_t pte;
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>>                return;
-> >>>
-> >>>        pr_debug("Validating PTE swap soft dirty\n");
-> >>> @@ -718,7 +718,7 @@ static void __init pmd_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pmd_t pmd;
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>>                return;
-> >>>
-> >>>        if (!has_transparent_hugepage())
-> >>> @@ -734,8 +734,8 @@ static void __init pmd_swap_soft_dirty_tests(struct pgtable_debug_args *args)
-> >>>    {
-> >>>        pmd_t pmd;
-> >>>
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) ||
-> >>> -             !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
-> >>> +     if (!pgtable_soft_dirty_supported() ||
-> >>> +         !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
-> >>>                return;
-> >>>
-> >>>        if (!has_transparent_hugepage())
-> >>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> >>> index 9c38a95e9f09..218d430a2ec6 100644
-> >>> --- a/mm/huge_memory.c
-> >>> +++ b/mm/huge_memory.c
-> >>> @@ -2271,12 +2271,13 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
-> >>>
-> >>>    static pmd_t move_soft_dirty_pmd(pmd_t pmd)
-> >>>    {
-> >>> -#ifdef CONFIG_MEM_SOFT_DIRTY
-> >>> -     if (unlikely(is_pmd_migration_entry(pmd)))
-> >>> -             pmd = pmd_swp_mksoft_dirty(pmd);
-> >>> -     else if (pmd_present(pmd))
-> >>> -             pmd = pmd_mksoft_dirty(pmd);
-> >>> -#endif
-> >>> +     if (pgtable_soft_dirty_supported()) {
-> >>> +             if (unlikely(is_pmd_migration_entry(pmd)))
-> >>> +                     pmd = pmd_swp_mksoft_dirty(pmd);
-> >>> +             else if (pmd_present(pmd))
-> >>> +                     pmd = pmd_mksoft_dirty(pmd);
-> >>> +     }
-> >>> +
-> >>
-> >> Wondering, should simply the arch take care of that and we can just clal
-> >> pmd_swp_mksoft_dirty / pmd_mksoft_dirty?
-> >
->
-> I think we have that already in include/linux/pgtable.h:
->
-> We have stubs that just don't do anything.
->
-> For riscv support you would handle runtime-enablement in these helpers.
->
-> >
-> >>
-> >>>        return pmd;
-> >>>    }
-> >>>
-> >>> diff --git a/mm/internal.h b/mm/internal.h
-> >>> index 45b725c3dc03..c6ca62f8ecf3 100644
-> >>> --- a/mm/internal.h
-> >>> +++ b/mm/internal.h
-> >>> @@ -1538,7 +1538,7 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
-> >>>         * VM_SOFTDIRTY is defined as 0x0, then !(vm_flags & VM_SOFTDIRTY)
-> >>>         * will be constantly true.
-> >>>         */
-> >>> -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-> >>> +     if (!pgtable_soft_dirty_supported())
-> >>>                return false;
-> >>>
-> >>
-> >> That should be handled with the above never-set-VM_SOFTDIRTY.
-> >
-> > We don't need to check if (!pgtable_soft_dirty_supported()) if I
-> > understand correctly.
-> Hm, let me think about that. No, I think this has to stay as the comment
-> says, so this case here is special.
-
-I will cook a new version and then we can discuss further based on the
-new patch.
-
-Thanks for your review,
-Chunyan
+Konrad
 
