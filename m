@@ -1,201 +1,173 @@
-Return-Path: <linux-kernel+bounces-813514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A0EB5468E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:12:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE65B54694
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76D463A9CA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:12:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80545620C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97671274FD1;
-	Fri, 12 Sep 2025 09:12:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81D5277CBF;
+	Fri, 12 Sep 2025 09:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aploMs7w"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BKeLjFtb"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12A127587C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84DE2DC79E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757668344; cv=none; b=mk7268Ry+YBeG+dWuz4xEajFQ1uFoOzMCbI2JmckYL8sX0RNisHwv2UI7cCl4OJ5g0JV9tbskWvMATQONgZNI91BMJbYsBFyQ0kpyJimZflhHAkgNf3Y7EwVT+PDyhUQMZ6VWhJsbpjo1tJCCnniiI4xLGHTDovEIZG4aCNe4C0=
+	t=1757668407; cv=none; b=shlzRg9YZHiLsP+2aL4u179Nlb6K0sU4/egCQS2rHSq+/4GLmqGFA8qrW6h5G4E30euN6zK1jyZd2Inr1cfyiZuEGurTPZe2IHMtFEMlZLm6J0hmGkUZNMzgnLqjI5luUYcz4Y2RmMHS2PxBirNXFJ3PjH5MpD9TOwWAhLwbKNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757668344; c=relaxed/simple;
-	bh=ioIOH2p5Blrv6vNOqNmSCymoSvN1zmkkAsnVeBc1SMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FO3PUiGAIFdfPzxEx3TyIpJVDAP9BjgDwnav4G7Uu5qQxzKK+Fa07gZHJ67hbAb7Y89T2VzhYy4OMeRtmLGDqPxYQKPTCtU25FupqjC9xJOSs9GUosydG04pf0Q3JfPXIA7p7WBq8nOGwm2SajaXrIswHvJAf2r3C1C5UC5PqQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aploMs7w; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b0785be64f5so460912966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:12:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757668341; x=1758273141; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ioIOH2p5Blrv6vNOqNmSCymoSvN1zmkkAsnVeBc1SMY=;
-        b=aploMs7whY/LgaXCAuOUQbkHlH9PozV3z9HFoHHh4tp/dJFhM6pt21fAvHgYgjlN8M
-         rmpVcHSueNagemUBdQowpA6BdoN7gqqaLplS1v3ScHX+yKhTwev5VBs4Bed/9bkH4dLN
-         4rfLLpcIvHJONxgYVXSLM7qEor3rn+MmXCTKDCzXypEm5HHBP38sGD0OFUOjAm326bQ+
-         1r2w7gh4g7621FkXF6rJzjHEIMZg4g13DDPyWgPK4mWuR3T6PMXO71Jvdha7GKG/r6lh
-         avbJhFNvPx4G+gPZm0XJKYAQwKp/BQENGe5DK6uHxVZst/QOlcM6CwamdS6qIfXycNC8
-         TKgw==
+	s=arc-20240116; t=1757668407; c=relaxed/simple;
+	bh=Rds/Qy6B10X8PbjBsAn4at189CR6n8GputyaSbIHvLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TbYc+IMt2+1cvNM60vXMengNA7uLWdWRSVWX+OyPaRbfy1r1+y5YbAZBVToEx8NBztHyt0sD5CzOo6RcXppnN/HHifPQ7wPp1HkDB6KoxHoDR9OHyFxcgwZ6PzPUsrIooeXT9npvHrKiLAzQG/bhIgVPGOg7rift4anGEwzgwJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BKeLjFtb; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C7Uhxa027351
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:13:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	MDiPEDL++Yv4djZtWlpbz56GxaADR2O4WCwvyOpamYU=; b=BKeLjFtbduWu7Ive
+	CbrRzBEaoBA1le6BT4DOqVACa8hsMxH9wluEwDjN9Ly9hefgGvqHBCnIAaG92Pbv
+	ynWdyWss2Lb4K4dFfNk6lBGIA2q08QjPBbY7oqG2jJFMhRYqvB6/14MVSiVbOzIj
+	YJCpAOZD59dMc26aS4cnR+X/p9WtoMw1TWPO6GAU3mLYd1iEGYCX0pDp2eVzdR2X
+	WSHZaJkzXmtvh6dzFjYkZffQpgWxSVWzUnOzskDcFwrVIFNDACr9xgidnfVEJAma
+	WYi5L2CdKJDhn7ysnaMC1qY8lCXwsvNB59bNfAj1bhRO+EOVBAI02NRbA9RPjjnd
+	uxLnWA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493f6h5y64-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:13:24 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4b5f92a6936so5347211cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:13:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757668341; x=1758273141;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ioIOH2p5Blrv6vNOqNmSCymoSvN1zmkkAsnVeBc1SMY=;
-        b=tOlSPwYhPOcVBCBWrKDNlzW/0xL4caSi+t25x5H23hFUM6DJgsomyLKEqRpjLrhcPc
-         G866FKUCeAF+VOJECkhoHgIykE/RqAaj2zSKIKnxnBs266WDDq3kutTUCuU4I4i52DVD
-         yFuSHuEF+nRVALsvx5ecFzEy7bkMW5c0+c3iNXkUTrFGPyccvQVHYBULjUnsfQUxgFGe
-         9TEEHbLT/aFTs8i2rqM0PdiEOXcjZBcKPygT6KqPI/Tbm597MjZh1QU9Fr8OUfnL7Yi5
-         IxNjxpiy9nv38VPTHCG5/E3Tu+6MyW7OON1+SmMV2vnh1rO2rcGieOs7gPXNH4rmHMjX
-         CkoA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8ogZstjy5XSwZlQw68qLHydPUT6iaTPCV92QaHQ6PnVAWU0fN7CIayy8jVNe+iThYyFHTTYFMtVjevLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBOoWBMtvkmdXm8Mhg9N6PcA4yARIAgMQb5SrI8OZx679wQ/Ua
-	0DaSVtYYdkZRyCx9S4wl47VuykvWweNPdrTEVmgj8h2i0mAEgex3lTPby0YbigM+VhHIwMt7aTV
-	hB4plYvh/VDw3XKnCfI7q2/zdaMR0tFc=
-X-Gm-Gg: ASbGncsH9ftB5pSRDm8dxx4R4jx0ZAEBRUaQRaf5TNN+X7YB8RQbqrXmVnL5QmzQyRY
-	AjzZajyNwC7la8cj7bu1HJnvta27435/b9km0xdpjgHZ4OrD7uRqpiSGHm2IJiM0wbMbI3NpBvm
-	K+Bd7hzDRz+AmMza99KvHaFnNCtF7l8SMtWG0uH0j6ai11ZAYHupV1k2IIbE1CCV0dVItUVhptP
-	qGLuCc=
-X-Google-Smtp-Source: AGHT+IECQ2FSxCpELdyt8w8+Ta17OX81olY1L21qGnLXRiiNiAsbzwmD/JJZPTQJsBBXBb5BWfCf5Q2bF6gDjvOJbJk=
-X-Received: by 2002:a17:907:3e9f:b0:b04:3402:391c with SMTP id
- a640c23a62f3a-b07a68bddd8mr590036766b.24.1757668340932; Fri, 12 Sep 2025
- 02:12:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757668404; x=1758273204;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MDiPEDL++Yv4djZtWlpbz56GxaADR2O4WCwvyOpamYU=;
+        b=dogLDAbWq7fqcOesPUmDJXk+tWMRxXjBmTZXcvfufHGPkWzp7q5aBBJ56fdaN9hAWS
+         DkRiOl2cLc9Xku2F9cjhUTBK6/XFi2nY77MT7oqORWU5sahBJhe5XYtpbojrUbkkxgNT
+         xslhGO/GBtDJg4C6RWJeAquXcjWMkcm2CVWP/WBPUDdN56nV3HxeryesqnLbR6LXdYdj
+         pExzn8TcHMe83Hc6MeudIUV17Rj+aJRZBG2K2m67JU2YJPcA2BoNbnje3TE3xxx7cNHj
+         jVKyy+6PD9dv04YDISsflafSpLSK6PEQ5NOKlJ3v16XO6tcnhUM9YuHGbqEYCTq0PtQz
+         +DOg==
+X-Forwarded-Encrypted: i=1; AJvYcCU2FGZz/JXVwhsojhmRL5Eu9zC0333eeDVMozrnK5OHiElEL+e6f5KvSr3R8G32FJBxb7wkzTd/rbN6kEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr9wky86ly3fA7Ej9aNgImyKxOwez4HOtoxWpyHgjk2oWFGhOH
+	/+8A5O4/vFhRGN5bMZwYz4diD6DWGByoKBKX3TbYW3GDiY3EnupEzK56h+4COpGTZn7i96uMsc1
+	lB2kkj1xxm72l7oPch3W0LYoWOkGLj5yip0pNf3cSXT2zHsoSCXvCcZIy55AnMTYj1No=
+X-Gm-Gg: ASbGnct3lmlM38ce9FA8Aglk0cscP9D/poIs8o/btMoGdtqOWAriNjgpKwH4VWc/VKk
+	7kEqSVy0gE3u4DJgGeTAklxvXdXWvA5rFagLBdL0wkrom+SqGe1JUQNA7lProcvHSJDYeSjs6ZC
+	FUbMNCNduLHCxpEp+qC3tiwsAQ4fQfCOBtEPw9OvfJ9ga/px8mF9IAl4XzHfCkN+sfy8P6TX4Od
+	Uxe9d1Ja//3zuxMOqC+mreVUGqICGtaNU0fe31Np2UNXe6QDbKTT9Xzh3lX3TKIVreu8ujP9DYL
+	HqF3JrOEnW2CKQNGQeXvy8CNgHYwG5LT6Ul0Hdwa5N3n1tnsTHfZ5OQvQVyFLN6N2psdDauv+7T
+	ksG0akrurUg+o8Y20ZT+XKQ==
+X-Received: by 2002:a05:622a:60f:b0:4b7:7be4:177f with SMTP id d75a77b69052e-4b77d117d96mr18898381cf.9.1757668403435;
+        Fri, 12 Sep 2025 02:13:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFLYpKy55N9vEYWMRWrsZVRaWYcZIKuUasFnYD9vP/tGHxW/XvgJ003K96eFQ0cx+Ci2827tA==
+X-Received: by 2002:a05:622a:60f:b0:4b7:7be4:177f with SMTP id d75a77b69052e-4b77d117d96mr18898091cf.9.1757668402925;
+        Fri, 12 Sep 2025 02:13:22 -0700 (PDT)
+Received: from [192.168.149.223] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07c28f190fsm159416366b.39.2025.09.12.02.13.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 02:13:22 -0700 (PDT)
+Message-ID: <b7487ab1-1abd-40ca-8392-fdf63fddaafc@oss.qualcomm.com>
+Date: Fri, 12 Sep 2025 11:13:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910-work-namespace-v1-0-4dd56e7359d8@kernel.org>
- <20250910-work-namespace-v1-27-4dd56e7359d8@kernel.org> <CAOQ4uxgtQQa-jzsnTBxgUTPzgtCiAaH8X6ffMqd+1Y5Jjy0dmQ@mail.gmail.com>
- <20250911-werken-raubzug-64735473739c@brauner> <CAOQ4uxgMgzOjz4E-4kJFJAz3Dpd=Q6vXoGrhz9F0=mb=4XKZqA@mail.gmail.com>
- <20250912-wirsing-karibus-7f6a98621dd1@brauner>
-In-Reply-To: <20250912-wirsing-karibus-7f6a98621dd1@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 12 Sep 2025 11:12:09 +0200
-X-Gm-Features: Ac12FXzXlVrWyNxThzcVLm8bWdnJouio3PTW50wsmgaWY6Ne9FaEF2yc3iNy4og
-Message-ID: <CAOQ4uxgGpdQ42d-QRuHbvdrvZWrS9qz9=A2GRa2Bq-sMcK6w4w@mail.gmail.com>
-Subject: Re: [PATCH 27/32] nsfs: support file handles
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, Mike Yuan <me@yhndnzj.com>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	Lennart Poettering <mzxreary@0pointer.de>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/10] dt-bindings: clock: Add required
+ "interconnect-cells" property
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Anusha Rao <quic_anusha@quicinc.com>,
+        Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        Devi Priya <quic_devipriy@quicinc.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+        quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+        quic_suruchia@quicinc.com
+References: <20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com>
+ <20250909-qcom_ipq5424_nsscc-v5-2-332c49a8512b@quicinc.com>
+ <20250912-nocturnal-horse-of-acumen-5b2cbd@kuoka>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250912-nocturnal-horse-of-acumen-5b2cbd@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: zWEcM-b2jXe8a_1IjQwFZG_Xfj52MhZl
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEwMDE3NyBTYWx0ZWRfX07Uoh2q+35To
+ mGo1sk0B2/Dww1ZMcsH0jyCmEx6cedWLLRbVMkDH6kzZNXmEroaP8WzG8nZVdvdvxTbYgPMALWJ
+ Tl0DxzjmcgQLQrYbLT/4jES6c3vHj4Kdg/x2/kctk2Ft/lChbK+7Y/i1bdEpPCAd9/ST/Fp3BN9
+ Y/2ahmYPxKOekB45kx90mniLAC+gGAsOFHcJy1TWmaTvnIEcEOkmPOJ0hneJZmfglvmLJYTDspJ
+ tZx/mFOkA4LRA8OXiVb+8sDHZpLFCQg54XVjdD/4AxjdM7lVI0Sh4ilfWEG9wYBntdmY2kWphKc
+ mL+/mfKQFkhCnsxg1MEwFCn44IXMdajdsEEHz6CELVRDY08QzvYCsXXQgz/JCxKf4OwnECO+JT1
+ oqYnqPkl
+X-Authority-Analysis: v=2.4 cv=WPB/XmsR c=1 sm=1 tr=0 ts=68c3e435 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=Q-zjNaZJJLQrxVh-NlMA:9
+ a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-GUID: zWEcM-b2jXe8a_1IjQwFZG_Xfj52MhZl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_03,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 spamscore=0 clxscore=1015 priorityscore=1501 adultscore=0
+ bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509100177
 
-On Fri, Sep 12, 2025 at 10:20=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Thu, Sep 11, 2025 at 01:36:28PM +0200, Amir Goldstein wrote:
-> > On Thu, Sep 11, 2025 at 11:31=E2=80=AFAM Christian Brauner <brauner@ker=
-nel.org> wrote:
-> > >
-> > > On Wed, Sep 10, 2025 at 07:21:22PM +0200, Amir Goldstein wrote:
-> > > > On Wed, Sep 10, 2025 at 4:39=E2=80=AFPM Christian Brauner <brauner@=
-kernel.org> wrote:
-> > > > >
-> > > > > A while ago we added support for file handles to pidfs so pidfds =
-can be
-> > > > > encoded and decoded as file handles. Userspace has adopted this q=
-uickly
-> > > > > and it's proven very useful.
-> > > >
-> > > > > Pidfd file handles are exhaustive meaning
-> > > > > they don't require a handle on another pidfd to pass to
-> > > > > open_by_handle_at() so it can derive the filesystem to decode in.
-> > > > >
-> > > > > Implement the exhaustive file handles for namespaces as well.
-> > > >
-> > > > I think you decide to split the "exhaustive" part to another patch,
-> > > > so better drop this paragraph?
-> > >
-> > > Yes, good point. I've dont that.
-> > >
-> > > > I am missing an explanation about the permissions for
-> > > > opening these file handles.
-> > > >
-> > > > My understanding of the code is that the opener needs to meet one o=
-f
-> > > > the conditions:
-> > > > 1. user has CAP_SYS_ADMIN in the userns owning the opened namespace
-> > > > 2. current task is in the opened namespace
-> > >
-> > > Yes.
-> > >
-> > > >
-> > > > But I do not fully understand the rationale behind the 2nd conditio=
-n,
-> > > > that is, when is it useful?
-> > >
-> > > A caller is always able to open a file descriptor to it's own set of
-> > > namespaces. File handles will behave the same way.
-> > >
-> >
-> > I understand why it's safe, and I do not object to it at all,
-> > I just feel that I do not fully understand the use case of how ns file =
-handles
-> > are expected to be used.
-> > A process can always open /proc/self/ns/mnt
-> > What's the use case where a process may need to open its own ns by hand=
-le?
-> >
-> > I will explain. For CAP_SYS_ADMIN I can see why keeping handles that
-> > do not keep an elevated refcount of ns object could be useful in the sa=
-me
-> > way that an NFS client keeps file handles without keeping the file obje=
-ct alive.
-> >
-> > But if you do not have CAP_SYS_ADMIN and can only open your own ns
-> > by handle, what is the application that could make use of this?
-> > and what's the benefit of such application keeping a file handle instea=
-d of
-> > ns fd?
->
-> A process is not always able to open /proc/self/ns/. That requires
-> procfs to be mounted and for /proc/self/ or /proc/self/ns/ to not be
-> overmounted. However, they can derive a namespace fd from their own
-> pidfd. And that also always works if it's their own namespace.
->
-> There's no need to introduce unnecessary behavioral differences between
-> /proc/self/ns/, pidfd-derived namespace fs, and file-handle-derived
-> namespace fds. That's just going to be confusing.
->
-> The other thing is that there are legitimate use-case for encoding your
-> own namespace. For example, you might store file handles to your set of
-> namespaces in a file on-disk so you can verify when you get rexeced that
-> they're still valid and so on. This is akin to the pidfd use-case.
->
-> Or just plainly for namespace comparison reasons where you keep a file
-> handle to your own namespaces and can then easily check against others.
+On 9/12/25 9:04 AM, Krzysztof Kozlowski wrote:
+> On Tue, Sep 09, 2025 at 09:39:11PM +0800, Luo Jie wrote:
+>> The Networking Subsystem (NSS) clock controller acts as both a clock
+>> provider and an interconnect provider. The #interconnect-cells property
+>> is mandatory in the Device Tree Source (DTS) to ensure that client
+>> drivers, such as the PPE driver, can correctly acquire ICC clocks from
+>> the NSS ICC provider.
+>>
+>> Although this property is already present in the NSS CC node of the DTS
+>> for CMN PLL for IPQ9574 SoC which is currently supported, it was previously
+>> omitted from the list of required properties in the bindings documentation.
+>> Adding this as a required property is not expected to break the ABI for
+>> currently supported SoC.
+>>
+>> Marking #interconnect-cells as required to comply with Device Tree (DT)
+>> binding requirements for interconnect providers.
+> 
+> DT bindings do not require interconnect-cells, so that's not a correct
+> reason. Drop them from required properties.
 
-OK. As I said no objections I was just curious about this use case.
+"Mark #interconnect-cells as required to allow consuming the provided
+interconnect endpoints"?
 
-FWIW, comparing current ns to a stored file handle does not really require
-permission to open_by_handle_at(). name_to_handle_at() the current ns
-and binary compare to the stored file handle should be a viable option.
-
-This was exactly the reason for introducing AT_HANDLE_FID, so that fanotify
-unprivileged watcher with no permission to open_by_handle_at() could compar=
-e
-an fid reported in an event with another fid they obtained earlier with
-name_to_handle_at() and kept in a map.
-
-Thanks for the explanation!
-Amir.
+Konrad
 
