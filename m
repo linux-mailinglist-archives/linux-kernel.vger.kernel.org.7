@@ -1,119 +1,92 @@
-Return-Path: <linux-kernel+bounces-812995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B75B53F6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:10:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37C7FB53F70
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6361D3B1D88
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D648616FA14
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863632DC784;
-	Fri, 12 Sep 2025 00:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C4FA932;
+	Fri, 12 Sep 2025 00:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qMpIx4Ig"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g84ZqIXI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3995A41
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843132AD13;
+	Fri, 12 Sep 2025 00:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757635847; cv=none; b=BOUN4wqvrazZSrXF1A0fLhl23DGLsfn5789W2/0e1AVKNuhiaRREYxkBU/Sc8etPmXFJB59aOp8yfbWfFklpuIJyS2PT1qVM8jazmNm0PPx99N5FdeVzQ6lf0pMObatF/7rlcdXOUKfq58dzjin9j7ZDicEbWxvdQcE/VmVIgYo=
+	t=1757635890; cv=none; b=iy6I3i1aYFzhDs9KLruIYiZDv0mlgmg8i508vCHxI0WHG6OqfMdfCn8YNAgpLtMz/Vp4lks5zfe4mFwl+DsMwTuXYtjILXZYqzBOWkekdq/nImOCo/1ZOeB5k1YFQGkXBSmtAJ8Ifa1ZxlFT9+QtNOzr9Lg/KZ8bBqla8Fh4yHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757635847; c=relaxed/simple;
-	bh=As0st2mk2L0Hyv308eIrHbtQh5TjekLWLPV+ifYiL5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V9PTypFnFMMNN+lOiKGFZrTylG4aaKCwSbrSBw2HDKbXR/gtgwI1MUDE6Tq7WUJzio95IJATqcqZhxSKZNiws+iKoqox1gb97gUiJ1425BcB7TGJSMXz+drL0XjqcOlbFJC7RJI1Kxbug7kT1MagNO8O3Mz3+HkrXZqVx8D0/KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qMpIx4Ig; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87780C4CEFE
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:10:46 +0000 (UTC)
+	s=arc-20240116; t=1757635890; c=relaxed/simple;
+	bh=kMSq6f7BZjti9F7DmtATF2p14qNOOcc1t/6T4gwRn/4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KZBKfxtI9teAoVGKBo420nzpMlyqw0FOW2oXleW2fgp5lASskaU5+sLlFd9+0IQkT/x4LDy9vbHlj/r+1oV1G7bw0GmuCfy61iZWVDKnRQdcKtYn4ZiUBOKjMgh9/3unxYOcfC5o2xauJ3g/YQjBJIzmzRFa069q9Cvb6A4OHS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g84ZqIXI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88A07C4CEF0;
+	Fri, 12 Sep 2025 00:11:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757635846;
-	bh=As0st2mk2L0Hyv308eIrHbtQh5TjekLWLPV+ifYiL5s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qMpIx4IgtVLlsi6LiDk9WM4G5NIXqk2vJMlQcYqfNyIG0UhdfRyvChYLEJqj5snxz
-	 bj3B/Q3dTu6d2YvnXim26H63nFoGrtEM/v9se8CDOs+Hy9pBdd2tFXz1OD6/bVcLVS
-	 WNhcKqH1ifK6Bpw4omCXCt7SiuA2uUwlJUnvDn1bpZXXZM9eXJSMR2pM28+Im41D6p
-	 XHOGIcdrMSb4yG7mmuQ7wORO2ehoA3OKIXQVaqlECxI6EfjdAQ9x2T8vKfIcYGftjE
-	 Dpm4GWqaKbbHcreuu5dx3YCeDplTMzTkWpG3wgVIOUggX7s81pzqkDmCrld/jWxhNb
-	 XCiyGWaNOoCUA==
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b07ba1c3df4so153001166b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:10:46 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUW2Hm70s3wUHiy5K21+W7BOHWAUdsh3OeD6GkKfemwqmQGbPCbRsl43sL74sZB5K5+uya+/5DJX8+I47Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR9idK0OdvvzRYUeOZmp33pfmjvEcXBqEcrvT6QxLfZXVTifY0
-	/EzFdKd53cY6DlPj+OKe9SgN73UI+pNJWkn03hHmy2RzsYNusk3obKsgfR+2LwwcK+XeANS7T0h
-	W2K4O2IRcPub+xcvQUlGlLete/Opd2uk=
-X-Google-Smtp-Source: AGHT+IGlZB9ve92AUsjeuNU1Q5ZaXqNU8y7VQEYnPyGvDio1YpPC6YK436PmiT1NHNvhnGHWryG+F5/8KZPOgJm7JoQ=
-X-Received: by 2002:a17:906:478b:b0:b04:5435:901b with SMTP id
- a640c23a62f3a-b07c3a77fcfmr91410466b.62.1757635845021; Thu, 11 Sep 2025
- 17:10:45 -0700 (PDT)
+	s=k20201202; t=1757635890;
+	bh=kMSq6f7BZjti9F7DmtATF2p14qNOOcc1t/6T4gwRn/4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=g84ZqIXIZfENDA5soIt+2NaCJegz3+0URbc+aM1Yo8uN7sBn/9RvaDjYL9uzNBLnx
+	 nz+aXLKwTa8tfXfMhmjbtpw++Lga0s114XeJhENk0U9/xz7NHcsig1/Y4XGMwz9qR0
+	 8k2DIvBA4wEmWM0xdVA7XMwEeH+bG6GBSXTPNxo3vAV5j/8NwERPew+n/qnNtfRyep
+	 otTgVIet0JWK+Wpuu5wosY3h/7uXpLK36EgYjC2OqTTQto6fBuzI9aO7FcgUqjhyAx
+	 jRzhnaJ8ue9LZdp6GUkCW/NxvBnxuEjNDtM0xIgoaoZ/QfE/YYnzJ01za+75xdeafG
+	 PVsfp7a483Pzw==
+Date: Thu, 11 Sep 2025 17:11:28 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jianbo Liu <jianbol@nvidia.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Saeed Mahameed
+ <saeedm@nvidia.com>, "Leon Romanovsky" <leon@kernel.org>, Mark Bloch
+ <mbloch@nvidia.com>, <netdev@vger.kernel.org>,
+ <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gal Pressman
+ <gal@nvidia.com>
+Subject: Re: [PATCH net 2/3] net/mlx5e: Prevent entering switchdev mode with
+ inconsistent netns
+Message-ID: <20250911171128.42d0b935@kernel.org>
+In-Reply-To: <5fa69070-59e8-4eba-877e-f0728088fd48@nvidia.com>
+References: <1757326026-536849-1-git-send-email-tariqt@nvidia.com>
+	<1757326026-536849-3-git-send-email-tariqt@nvidia.com>
+	<20250909182319.6bfa8511@kernel.org>
+	<05a83eb7-7fb1-46ae-b7ba-bd366446b5f5@nvidia.com>
+	<20250910174842.6c82fb0c@kernel.org>
+	<5fa69070-59e8-4eba-877e-f0728088fd48@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250905084059.26959-1-ot_zhangchao.zhang@mediatek.com>
- <20250905084059.26959-2-ot_zhangchao.zhang@mediatek.com> <a7589659-0352-4d47-a3cf-f2433cc512ec@kernel.org>
- <CAGp9Lzrp-cfn_GiLrHCU629wEAxWy=egOMrRh6thYbymu+QXjA@mail.gmail.com> <0760036f-db69-487c-94b9-a6e405dee0e8@kernel.org>
-In-Reply-To: <0760036f-db69-487c-94b9-a6e405dee0e8@kernel.org>
-From: Sean Wang <sean.wang@kernel.org>
-Date: Thu, 11 Sep 2025 19:10:33 -0500
-X-Gmail-Original-Message-ID: <CAGp9Lzqk-mXiNq2iSrTk-Ed40_2j3GSuLMJcWoE1_iy7yY9-qw@mail.gmail.com>
-X-Gm-Features: Ac12FXz8IhbvaLWT27HxTo9duYFHYYWRiZ_PiuVbsnFzUeOWnt4swjEH76TSLOQ
-Message-ID: <CAGp9Lzqk-mXiNq2iSrTk-Ed40_2j3GSuLMJcWoE1_iy7yY9-qw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/1] Bluetooth: mediatek: add gpio pin to reset bt
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Zhangchao Zhang <ot_zhangchao.zhang@mediatek.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Jiande Lu <jiande.lu@mediatek.com>, 
-	Deren Wu <deren.Wu@mediatek.com>, Chris Lu <chris.lu@mediatek.com>, 
-	Hao Qin <Hao.qin@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
-	linux-mediatek <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 1:07=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 11/09/2025 01:29, Sean Wang wrote:
-> > Hi Krzysztof,
-> >
-> > Sorry again for the confusion. I believe Zhangchao is still new to the
-> > upstream process, and we=E2=80=99ll work together to improve this. Sinc=
-e this
-> > series has become a bit hard to follow, would you agree that it might
-> > be better for us to restart with a clean patch that addresses the
-> > review comments? A clean version would make it easier for reviewers to
-> > focus on the current issues without being distracted by earlier
-> > mistakes.
->
-> No. If you cannot send v7 of patchset as real patchset, sending again v1
-> won't change anything.
->
-> For seven versions contributor did not bother to respond to feedback and
-> did not care to read submitting patches how this process looks like.
->
-> Effect is this totally broken v7.
->
-> This patch introduces undocumented ABI which kernel tools, if used, also
-> point out.
->
-> Best regards,
-> Krzysztof
+On Thu, 11 Sep 2025 15:48:24 +0800 Jianbo Liu wrote:
+> >> There is a requirement from customer who wants to manage openvswitch in
+> >> a container. But he can't complete the steps (changing eswitch and
+> >> configuring OVS) in the container if the netns are different.  
+> > 
+> > You're preventing a configuration which you think is "bad" (for a
+> > reason unknown). How is _rejecting_ a config enabling you to fulfill
+> > some "customer requirement" which sounds like having all interfaces
+> > in a separate ns?
+> 
+> My apologies, I wasn't clear. The problem is specific to the OVS control 
+> plane. ovs-vsctl cannot manage the switch if the PF uplink and VF 
+> representors are in different namespaces. When the PF is in a container 
+> while the devlink instance is bound to the host, enabling switchdev 
+> creates this exact split: the PF uplink stays in the container, while 
+> the VF representors are created on the host.
 
-Hi Krzysztof,
-
-Thanks for the feedback and for spending time reviewing this driver.
-We=E2=80=99ll continue with v8 instead of restarting from v1, and hope it w=
-ill
-be improved to meet the requirements.
-
-                          Sean
+So you're saying the user can mess up the configuration in a way that'd
+prevent them from using OVS. No strong objection to the patch (assuming
+commit message is improved), but I don't see how this is a fix.
 
