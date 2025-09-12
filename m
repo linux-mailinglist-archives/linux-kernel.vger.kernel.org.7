@@ -1,375 +1,158 @@
-Return-Path: <linux-kernel+bounces-813260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8B0B542D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:24:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF69B542CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6F8BAA036F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8923AA0318
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAF8285C98;
-	Fri, 12 Sep 2025 06:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FE9281503;
+	Fri, 12 Sep 2025 06:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eAE+Tka1"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHUJhIsS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49CBF1DF270;
-	Fri, 12 Sep 2025 06:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5622D280317
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757658253; cv=none; b=H0+PHEwYINLiKKum9v+AA1r+J0X4tb7AHMobiLRcx7a7FTlngCvwFUU1CUILg39fnIAQ2kel2Ofn9hf+nbpq6zJWrl2prO2PV3MevEhwOoNgjvuu8dkaOnubvwa6tN0kQ9+RlWw6Wufkmv1UnDrtBHVNQO/lLWU5Bdk735qS6LI=
+	t=1757658249; cv=none; b=bD3zUKNDVmuYT8VCdXdJeUf3JMwnhQwAThtsN9hfqP5S/eBTxJzeFJnEKxnTpylKIjRTeEBJcs4Ggieh0leSWDzcgAz5E5GVZ1IcvIvJb1ulYMmUCs7jyZMCwcnFPYnpRPW8S8UOZUURbLneysEYn1qUn477AJpYG5DjhssGjTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757658253; c=relaxed/simple;
-	bh=7ifweptQB82L2fvWYkjraRwW321Ua213iGlPWa7zjsk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Subject:Cc:From:
-	 References:In-Reply-To; b=LWmFyZIBuZhoZ/VmZJoyAg+kr2T2OhCxAHNwe8+dDXc6ZXUsft7o4ioS5MhdM9humAoLdddSENuuN8vkyqFwyLpo+FbR2HKmhQtqzS2FJ5jNpywJBqP/SNYt7+DLKhye7tPaqwz0De4vXuHhhzYrd5Dtv0y5c/VYp8opjQDmHFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eAE+Tka1; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 665D5C8EC43;
-	Fri, 12 Sep 2025 06:23:51 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 46F0360638;
-	Fri, 12 Sep 2025 06:24:07 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 03705102F29D8;
-	Fri, 12 Sep 2025 08:23:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757658246; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=5owq+y5TmSlW6EKLN0YJ4cOpLUP+7KPBn1QVcPQ/Stk=;
-	b=eAE+Tka1pUnbJaGLXfPStw22RvgK+i0hE2uVw8hJmvOMgHK6PyfcfvBoDZTSwBM0NePU0J
-	ExVmezdkjPIst+QZFPuYArE+X4rRcXwjtkGIxMHXy5FY45dzGr3Wa9QFGzx80cwGQ3IQlY
-	hMY4y+Zyd3CDUlW2o2crO8dDTZGnucoTCtRSvf4WWmxfN2PWSu0YDQvthgHxy+PzvCxBD9
-	04n/wTMnnuuGvnxi554ibnlKZI79PtMwYh7wMS6TdkTAb2+Su94bcyaIpKakPZk2vgi6R/
-	nyUMJ9Z9iHi/9t42mkdlNvz7duzjwC3hsHeghArI2edfVrkQhAANYyBCCUr00g==
+	s=arc-20240116; t=1757658249; c=relaxed/simple;
+	bh=BbI7bAROK0qj+lYCnI21QEqfQVZklJVYZkiWvfRJQh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ih8zlxr/B2SU+ZOaV50V6cbe3AauffGOp+4Ebn70I/X680nwynZQy2uzNByZHVknZPt99ptD5JBO6c31XAlBn6sn1UWhGR2KK4rzxCr0pG2LfYo6/5eZjfAJ7SjhuafgZkXNvTleb9XWKtBsy2mQ285jbaYC08LgN5H5WzU5j0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHUJhIsS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7832C4CEF5;
+	Fri, 12 Sep 2025 06:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757658249;
+	bh=BbI7bAROK0qj+lYCnI21QEqfQVZklJVYZkiWvfRJQh8=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=OHUJhIsSpt3TjGac319c2yI73exMhK9vPqkmKaqiwu6xw8scjjdYoEhYcO5RL282f
+	 n9iJkV+lB8k1G7vrFifem+lZx1Hwsn7do6U+UqrTSq2V1uoh+QEKfA99Mm4J2w1tpp
+	 kPhTOOP9ReyiJTsPE0xFK3Nh529UtwJX7UgfOKHJyk+zVZgBTTfqIrQX2KgUA4YURT
+	 yeWHYpBhOhiU80xkZvLUOMRyQgpB007y8mcNUhM0gH99IAh7W9oiJqKV51QMlGFcRt
+	 1ckH68HNKYM2Mg99RLq0x0VcZeyNTftjeF0stq2kjIztBj7Pr3i5hINIh/7ZykCQ82
+	 U+CHMw5b7wtkQ==
+Message-ID: <ef8479be-8bac-42c5-bac6-5a5841959b45@kernel.org>
+Date: Fri, 12 Sep 2025 08:24:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 12 Sep 2025 08:23:48 +0200
-Message-Id: <DCQLUB80GU6Y.18U540Q0R3YFP@bootlin.com>
-To: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v14 04/10] pwm: max7360: Add MAX7360 PWM support
-Cc: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250824-mdb-max7360-support-v14-0-435cfda2b1ea@bootlin.com>
- <20250824-mdb-max7360-support-v14-4-435cfda2b1ea@bootlin.com>
-In-Reply-To: <20250824-mdb-max7360-support-v14-4-435cfda2b1ea@bootlin.com>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Commit Links [was: Linux 6.17-rc5]
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAHk-=wh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K0dJHVg@mail.gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <CAHk-=wh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K0dJHVg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun Aug 24, 2025 at 1:57 PM CEST, Mathieu Dubois-Briand wrote:
-> From: Kamel Bouhara <kamel.bouhara@bootlin.com>
->
-> Add driver for Maxim Integrated MAX7360 PWM controller, supporting up to
-> 8 independent PWM outputs.
->
-> Signed-off-by: Kamel Bouhara <kamel.bouhara@bootlin.com>
-> Co-developed-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com=
->
-> Signed-off-by: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/pwm/Kconfig       |  10 +++
->  drivers/pwm/Makefile      |   1 +
->  drivers/pwm/pwm-max7360.c | 209 ++++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 220 insertions(+)
->
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index f00ce973dddf..f2b1ce47de7f 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -432,6 +432,16 @@ config PWM_LPSS_PLATFORM
->  	  To compile this driver as a module, choose M here: the module
->  	  will be called pwm-lpss-platform.
-> =20
-> +config PWM_MAX7360
-> +	tristate "MAX7360 PWMs"
-> +	depends on MFD_MAX7360
-> +	help
-> +	  PWM driver for Maxim Integrated MAX7360 multifunction device, with
-> +	  support for up to 8 PWM outputs.
-> +
-> +	  To compile this driver as a module, choose M here: the module
-> +	  will be called pwm-max7360.
-> +
->  config PWM_MC33XS2410
->  	tristate "MC33XS2410 PWM support"
->  	depends on OF
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index ff4f47e5fb7a..dfa8b4966ee1 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -38,6 +38,7 @@ obj-$(CONFIG_PWM_LPC32XX)	+=3D pwm-lpc32xx.o
->  obj-$(CONFIG_PWM_LPSS)		+=3D pwm-lpss.o
->  obj-$(CONFIG_PWM_LPSS_PCI)	+=3D pwm-lpss-pci.o
->  obj-$(CONFIG_PWM_LPSS_PLATFORM)	+=3D pwm-lpss-platform.o
-> +obj-$(CONFIG_PWM_MAX7360)	+=3D pwm-max7360.o
->  obj-$(CONFIG_PWM_MC33XS2410)	+=3D pwm-mc33xs2410.o
->  obj-$(CONFIG_PWM_MEDIATEK)	+=3D pwm-mediatek.o
->  obj-$(CONFIG_PWM_MESON)		+=3D pwm-meson.o
-> diff --git a/drivers/pwm/pwm-max7360.c b/drivers/pwm/pwm-max7360.c
-> new file mode 100644
-> index 000000000000..ebf93a7aee5b
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-max7360.c
-> @@ -0,0 +1,209 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright 2025 Bootlin
-> + *
-> + * Author: Kamel BOUHARA <kamel.bouhara@bootlin.com>
-> + * Author: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-> + *
-> + * PWM functionality of the MAX7360 multi-function device.
-> + * https://www.analog.com/media/en/technical-documentation/data-sheets/M=
-AX7360.pdf
-> + *
-> + * Limitations:
-> + * - Only supports normal polarity.
-> + * - The period is fixed to 2 ms.
-> + * - Only the duty cycle can be changed, new values are applied at the b=
-eginning
-> + *   of the next cycle.
-> + * - When disabled, the output is put in Hi-Z immediately.
-> + */
-> +#include <linux/bits.h>
-> +#include <linux/dev_printk.h>
-> +#include <linux/err.h>
-> +#include <linux/math64.h>
-> +#include <linux/mfd/max7360.h>
-> +#include <linux/minmax.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/regmap.h>
-> +#include <linux/time.h>
-> +#include <linux/types.h>
-> +
-> +#define MAX7360_NUM_PWMS			8
-> +#define MAX7360_PWM_MAX				255
-> +#define MAX7360_PWM_STEPS			256
-> +#define MAX7360_PWM_PERIOD_NS			(2 * NSEC_PER_MSEC)
-> +
-> +struct max7360_pwm_waveform {
-> +	u8 duty_steps;
-> +	bool enabled;
-> +};
-> +
-> +static int max7360_pwm_request(struct pwm_chip *chip, struct pwm_device =
-*pwm)
-> +{
-> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
-> +
-> +	/*
-> +	 * Make sure we use the individual PWM configuration register and not
-> +	 * the global one.
-> +	 * We never need to use the global one, so there is no need to revert
-> +	 * that in the .free() callback.
-> +	 */
-> +	return regmap_write_bits(regmap, MAX7360_REG_PWMCFG(pwm->hwpwm),
-> +				 MAX7360_PORT_CFG_COMMON_PWM, 0);
-> +}
-> +
-> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
-> +					   struct pwm_device *pwm,
-> +					   const struct pwm_waveform *wf,
-> +					   void *_wfhw)
-> +{
-> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
-> +	u64 duty_steps;
-> +
-> +	/*
-> +	 * Ignore user provided values for period_length_ns and duty_offset_ns:
-> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset of =
-0.
-> +	 * Values from 0 to 254 as duty_steps will provide duty cycles of 0/256
-> +	 * to 254/256, while value 255 will provide a duty cycle of 100%.
-> +	 */
-> +	if (wf->duty_length_ns >=3D MAX7360_PWM_PERIOD_NS) {
-> +		duty_steps =3D MAX7360_PWM_MAX;
-> +	} else {
-> +		duty_steps =3D (u32)wf->duty_length_ns * MAX7360_PWM_STEPS / MAX7360_P=
-WM_PERIOD_NS;
-> +		if (duty_steps =3D=3D MAX7360_PWM_MAX)
-> +			duty_steps =3D MAX7360_PWM_MAX - 1;
-> +	}
-> +
-> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX, duty_steps);
-> +	wfhw->enabled =3D !!wf->period_length_ns;
-> +
-> +	if (wf->period_length_ns && wf->period_length_ns < MAX7360_PWM_PERIOD_N=
-S)
-> +		return 1;
-> +	else
-> +		return 0;
-> +}
-> +
-> +static int max7360_pwm_round_waveform_fromhw(struct pwm_chip *chip, stru=
-ct pwm_device *pwm,
-> +					     const void *_wfhw, struct pwm_waveform *wf)
-> +{
-> +	const struct max7360_pwm_waveform *wfhw =3D _wfhw;
-> +
-> +	wf->period_length_ns =3D wfhw->enabled ? MAX7360_PWM_PERIOD_NS : 0;
-> +	wf->duty_offset_ns =3D 0;
-> +
-> +	if (wfhw->enabled) {
-> +		if (wfhw->duty_steps =3D=3D MAX7360_PWM_MAX)
-> +			wf->duty_length_ns =3D MAX7360_PWM_PERIOD_NS;
-> +		else
-> +			wf->duty_length_ns =3D DIV_ROUND_UP(wfhw->duty_steps * MAX7360_PWM_PE=
-RIOD_NS,
-> +							  MAX7360_PWM_STEPS);
-> +	} else {
-> +		wf->duty_length_ns =3D 0;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int max7360_pwm_write_waveform(struct pwm_chip *chip,
-> +				      struct pwm_device *pwm,
-> +				      const void *_wfhw)
-> +{
-> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
-> +	const struct max7360_pwm_waveform *wfhw =3D _wfhw;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	if (wfhw->enabled) {
-> +		ret =3D regmap_write(regmap, MAX7360_REG_PWM(pwm->hwpwm), wfhw->duty_s=
-teps);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	val =3D wfhw->enabled ? BIT(pwm->hwpwm) : 0;
-> +	return regmap_write_bits(regmap, MAX7360_REG_GPIOCTRL, BIT(pwm->hwpwm),=
- val);
-> +}
-> +
-> +static int max7360_pwm_read_waveform(struct pwm_chip *chip,
-> +				     struct pwm_device *pwm,
-> +				     void *_wfhw)
-> +{
-> +	struct regmap *regmap =3D pwmchip_get_drvdata(chip);
-> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret =3D regmap_read(regmap, MAX7360_REG_GPIOCTRL, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (val & BIT(pwm->hwpwm)) {
-> +		wfhw->enabled =3D true;
-> +		ret =3D regmap_read(regmap, MAX7360_REG_PWM(pwm->hwpwm), &val);
-> +		if (ret)
-> +			return ret;
-> +
-> +		wfhw->duty_steps =3D val;
-> +	} else {
-> +		wfhw->enabled =3D false;
-> +		wfhw->duty_steps =3D 0;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct pwm_ops max7360_pwm_ops =3D {
-> +	.request =3D max7360_pwm_request,
-> +	.round_waveform_tohw =3D max7360_pwm_round_waveform_tohw,
-> +	.round_waveform_fromhw =3D max7360_pwm_round_waveform_fromhw,
-> +	.read_waveform =3D max7360_pwm_read_waveform,
-> +	.write_waveform =3D max7360_pwm_write_waveform,
-> +};
-> +
-> +static int max7360_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct pwm_chip *chip;
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	regmap =3D dev_get_regmap(dev->parent, NULL);
-> +	if (!regmap)
-> +		return dev_err_probe(dev, -ENODEV, "Could not get parent regmap\n");
-> +
-> +	/*
-> +	 * This MFD sub-device does not have any associated device tree node:
-> +	 * properties are stored in the device node of the parent (MFD) device
-> +	 * and this same node is used in phandles of client devices.
-> +	 * Reuse this device tree node here, as otherwise the PWM subsystem
-> +	 * would be confused by this topology.
-> +	 */
-> +	device_set_of_node_from_dev(dev, dev->parent);
-> +
-> +	chip =3D devm_pwmchip_alloc(dev, MAX7360_NUM_PWMS, 0);
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +	chip->ops =3D &max7360_pwm_ops;
-> +
-> +	pwmchip_set_drvdata(chip, regmap);
-> +
-> +	ret =3D devm_pwmchip_add(dev, chip);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to add PWM chip\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver max7360_pwm_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "max7360-pwm",
-> +		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
-> +	},
-> +	.probe =3D max7360_pwm_probe,
-> +};
-> +module_platform_driver(max7360_pwm_driver);
-> +
-> +MODULE_DESCRIPTION("MAX7360 PWM driver");
-> +MODULE_AUTHOR("Kamel BOUHARA <kamel.bouhara@bootlin.com>");
-> +MODULE_AUTHOR("Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>=
-");
-> +MODULE_LICENSE("GPL");
+On 08. 09. 25, 0:25, Linus Torvalds wrote:
+> So please: don't add useless information to commits in general, but in
+> _particular_ don't add "Link:" tags that only point back to the
+> original submission email. Yes, we have tooling that does it
+> automatically, but tooling should not be used to increase the human
+> burden. Tooling should _help_, not hurt.
 
+I disagree. In a bug-reporter role, I use these Links pointing to the 
+patches every time. So unless there is a way (I did not find one), they 
+are very useful.
 
-Hi Uwe,
+My use case is (mostly) dig out the thread/patch (grep Link, and b4 or 
+https://lore.kernel.org/all -> raw) and reply to it as it causes some issue.
 
-Any thought about this new version? I believe I fixed all the points we
-have been discussing previously.
+In a backporter role, I use the Links to look at the thread to see the 
+_whole_ patchset instead of guess work from the linear commit log.
 
-Thanks,
-Mathieu
+> Make the links be something *useful*. Make them point to the report
+> for the bug that was the cause of the commit. Make them point to the
+> discussion that explains the impetus for the commit. But do *not*
+> mindlessly just use tooling to create a link that doesn't add anything
+> that isn't already right there in the commit.
+> 
+> I realize that people think the link makes the commit look more "real"
+> or whatever. And I've heard people claim that discussion happens later
+> in the thread that the link points to. Neither of those are actually
+> true. When bugs happen, people don't go to the original emailed patch
+> to talk about them. Much of the time the reporter can't even tell
+> which patch caused it - and if they did bisect it, we already have the
+> information - there's no value add in going back to the original
+> emailed patch.
+> 
+> So if a link doesn't have any extra relevant information in it, just
+> don't add it at all in some misguided hope that tomorrow it will be
+> useful.
+> 
+> Make "Link:" tags be something to celebrate, not something to curse
+> because they are worthless and waste peoples time.
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+OK, can we have Submitted-at: or something for the above which you could 
+completely ignore?
+
+Actually we have Closes:. So should you look at Closes instead and 
+ignore Link? Like for example in 92bac7d4de9c0.
+
+I know, there is no standardization and different people use Links for 
+different purpose, so perhaps we unify/document all those and drop Link 
+completely? (Ie. having Closes, Submitted-at or such?)
+
+thanks,
+-- 
+js
+suse labs
 
 
