@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-814359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05F6BB552E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:14:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 728F7B552EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD331D623C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:15:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D486BA2044
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:13:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D13326D7E;
-	Fri, 12 Sep 2025 15:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1FE32A3D1;
+	Fri, 12 Sep 2025 15:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dj9E4H+n"
-Received: from mail-yx1-f50.google.com (mail-yx1-f50.google.com [74.125.224.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RkLKDK64"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A69C326D53
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90356327A22
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689857; cv=none; b=UGUESxNNWskH0IXz9Rb1AGeVa9bY0q70/np39I27qOptgLTtYJA0q2fi/dwLKEc3VL8mEuj/Siriw3wFqn9tWjOwh6Unv8ZWRofh7T/10y1Nzu94G/IN7kSPZIzL5muhcS2UdLBYfNd2WjxjKAibUEb5b9AcDzAyk7/+Gl0TrzY=
+	t=1757689861; cv=none; b=rfUREESM/uWsaSEUIa0p05ijclwdRM+L8Aen/fxYGBKobDKWeAhvzOmAVZEhOTTam83qX+2ukNa7jKSiO0rLq0d5H95DFqUhF80vpdzD2xILtjCfm7b0cSEqWfo+TMbvVQquqzb9VqJesqTG3mlVzd/DvNx6Y8kmcgtUZCWTMvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689857; c=relaxed/simple;
-	bh=mqm9C4r9CGB+Ni8ye2QxHYk0tRre6qbdyx5buxGNNkE=;
+	s=arc-20240116; t=1757689861; c=relaxed/simple;
+	bh=y6R7JHolSByTQrZMijPqGMycDGbxs6NH+B+6pGvmKpA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZzLy/JkTbfMd8FwTCzmu6jH9lqoRxTGuhFojDUflByW7AnXA5vEjfjFGTh/HBJU+/n5Bs7HoUPGL/DalpI3IPM5euk9LIyOs17K+C0/XD0N5AVLV5HlCl3KgfXZgO87xiUn2wrmgAayT9TqQT3cfc7Dqhu6qJVqA/K3QnA2eeZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dj9E4H+n; arc=none smtp.client-ip=74.125.224.50
+	 MIME-Version; b=ZDwW9U9YR5cJOElFV7q8wNgbKgOh5zjaR8mxW315TXISqtOi2owKvK4GBo9e1HfHDid9bis+6HcItwhFRmdV+As8dpkdbJoEDOh3eEmKBsl/SnUqskCq6yr/wGXWHejtpqOpmkGTTvVYHmSurj58OOHa1U4D5poiyTy23CyJZIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RkLKDK64; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yx1-f50.google.com with SMTP id 956f58d0204a3-606b375eeb3so1037026d50.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:10:53 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-ea3dbcc5525so628497276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:10:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757689853; x=1758294653; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757689858; x=1758294658; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zRFg2hFdscTgaOHG8cpymzmUrui3DhwhCxVktuuhhLc=;
-        b=dj9E4H+no8XAqg107yE5TNeSG+7gi0ZtZiDlPOcflDzIR1+cD5ThGatjldRUsxTtat
-         qsTWvqAmnIlhuZw9RPmraQ/Cx7iBIxhdmSzYgJDAK5QVJahT98MGfzNykqnXeV/b31+9
-         h++zS/gU6SKeXjg5brrSfGSsvl1PaX+WJOrgrn8EacU2DucpbwozB5FHqgr0oZaRg3YK
-         AocMhhxbwq8kDTnqLAe9jjRnLeQOqyfCF78yohY6/ZFBNMsiuzkhc9T96c+JCUdo7AOy
-         VeAReLqohOjy1pW/qm2jDi36GgHfKnCwMgknOhCynzopGAPvqRB2ptx64+g1t3TdET1E
-         mwZw==
+        bh=iQyd/J78t59e431BzK+r1hLIHKrEAjBfy36U2OzrJzo=;
+        b=RkLKDK648r9G39cYNUgxAOkTYXEi2/89mqteQ158UtaweCw6CikKqdSLRll8g0cHql
+         qRxTuJrsWD0ihRSERDZuXzora7vcp8ATffCF4huACVPct1VvjVWD2nq/KK0PEWriuuLE
+         V6RC44iPBH1NihSdKirV+JOfyCZ1lTWHtGH0frmoCOX96W1rNDHhysfntO28vlTE38B7
+         MdPsuoE0+HqHemQ6VXwnwNc7fBPzUNDAwfWLAquFf2P8I1G/dowEFb/dmQwCyMpk7AcG
+         vX13zFnYKk7wUjiGbHMIAQtDvjn0nkWJl9Vyj5D7EYO1n1UyJBw/7tLB2hZ9RB3Fpt4Y
+         SWqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757689853; x=1758294653;
+        d=1e100.net; s=20230601; t=1757689858; x=1758294658;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zRFg2hFdscTgaOHG8cpymzmUrui3DhwhCxVktuuhhLc=;
-        b=tq5WRpF2eClMxyotqdYvo+4UjUcPy3H859OjtqczJbq9SM+ANhhhWCiZKX+QfuThr8
-         oPAbWukkMIVjdG9eM0Wh8uktKWwPfL7Aqcr9fgTmt1W+n+m1NvUOTZGK36L8oVDucc0C
-         0Mr/1UE97zn+x+KDeuYHtjEpH9jRx67p7RZPxmkaGiijQwr9Vb6RK3c63D/wxQ3NKPKX
-         9TQad/0SNIFbF3jsOxT9VL5GxvDK/UdjLiD9zz7lqmt+3ImY806Kmw7WOAhq3j4tTHJ9
-         0rqlAnFwLE7XsqBoyFMlOMzM1/YfkvXJT+An8S3iEukMoMgAiY87cYicdIRCGY2UNRoN
-         bC3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVFrXGAcRd/mbE/041IDnu5XY+NjFZf5T02SgH6Zn54C+ztO21IolV7PLOl8e4sCrctfoGNEH4WjefqAqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIcpWci6/3BdXyCar0/lcsb06vgMLnk9XlsT1aufOG2LvAjFUk
-	zNJKttbMFLCpw5qiQS816jfPwHTazgRFEHtnCcr7TbsYiPH2+sFlsi/7f1T84SYsibg=
-X-Gm-Gg: ASbGncvKyoi3JsYlBRa62aQKqH6ppOk+dVpDklbfhFqPjx9IPUmpWimnnQVaX35k4Ub
-	ymZAASBAHVf1fABfxaNSwMrgJh/JlijC5j89RunhzE0ddaK/QTuLrjrplSc1AkW4HmttI6QwF5L
-	4JYf0h5lsZMrDZsk6QUblIQglMj3uq8wG2BwAp1dhEc0nSTYFB6rqhFJWzBxf9shjEYLSUhW/xE
-	KR/Z9wpfXP/CHHq7lQxKgLyVoYUK5jriPUkVnZ+lrHPom6au8B1irwrPQOO1Bs/BQCO5NFo1SvH
-	EW3GjxpWQrjnGDYKNb3xAYxCE0lUdh9A7D/aK+aG1bukMdjGpBlgNuCh16xw+LC6jZuKCKPICt4
-	BOz7oruyFy5LhNhfTwXVxXmSHIPfWKWcO/Q==
-X-Google-Smtp-Source: AGHT+IGA3TFT+vemEd/ubQxEEhLwHcx7hg7Tn+5tAGBp/Y4gBcPvEFcB1itw15g/ByzT4/+eDheVvA==
-X-Received: by 2002:a53:84c7:0:b0:626:d26c:cca3 with SMTP id 956f58d0204a3-62714ee78ffmr2387133d50.0.1757689852988;
-        Fri, 12 Sep 2025 08:10:52 -0700 (PDT)
+        bh=iQyd/J78t59e431BzK+r1hLIHKrEAjBfy36U2OzrJzo=;
+        b=WOQOfsuBydQiVYIZNNF6vB8O9e+/EoXzW6Kez4NLzBXkBL78HKia1Cvtu5V2nLalBp
+         qkuYblyhuH7qqNmw4NAMZK6j6zkX7zxijibAraASuhFbRFJYSwPhfJcIYQvAHSzsIg44
+         myLoI1j5bwnc5DSK9aaQUMWa90dP5cGSb0yGNu6sSHb/RLaADZ3m3djp+AZPJX6M5KQU
+         6bVV6vyrHikdeq1b6PV5mqk0QQmNHfx3Xft9xr2GkJ6ry4iXbpmo/l5ZQOtliuvFqFiX
+         wiTt0ft5rF+kHGi/ihXXJqQvqBIAvHxLMx3R+VWHTEKwxJgUIzXz9XocSaXlFcia8EIW
+         HjtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlyKHuAp5KIt7fGw1DuEfmqwZg1IgQqWA/Fk4CLUF0/Uby4qfcZm9EWDJ1bIsIErK+7wqs2mqw8IySngM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdgh8h9KBcU/wRXvqiGDOlLXYIji3LHbPMWe0kiaQByuTWM9H1
+	xP8glhmb87A5831X3hs7hQtKZrEh3rNSOWkBqc+jzHuCNbQ0ZMKyRIeg83S93SZnwc0=
+X-Gm-Gg: ASbGncukVUpRQaofKQGJGsHBtEeA0ok+3GRIODFDQ7tVaXsyI8Jga/l7zhzr784N6jA
+	e4iyMo1sWjEesnZErL30Q6yVcEfU8SM21y8NCnxpblK9ezad3hy2Gyb5aLgPXuvtAMdgT0gwNtZ
+	6HiEedK1vfK9Np62IDM38W1gEsB070RSgtWGR4Na7R+zslWxUa0+AJdvOZtwmF0koVY6vbw4fFz
+	KbdZAPACV7izDWH8GwMdm8Ep1vqbIOdB5tCn8BB6yb0c00YDjzhwHJ1xXRaNBurAUsb5zvFrWj3
+	/lyQd0YrLoROwHHLPm6Ho2wvdLlN+jLbFUSUn2PLeNl78BlH/71TlCjnuuP8XFulaQcp61PANvN
+	/tDYtfr5qQTFigxKJghWvK+ulFE/5F0C1bQ==
+X-Google-Smtp-Source: AGHT+IHiWq2tZ0Zh+6RCMZ5n4YEMDF8GDIlS1UolWn0dcdm4mJQCk7ANF/Eeoayp4tEVnT1oJJ4YdQ==
+X-Received: by 2002:a05:690c:6089:b0:723:9ba7:7f9e with SMTP id 00721157ae682-73064cfc375mr30364727b3.25.1757689858316;
+        Fri, 12 Sep 2025 08:10:58 -0700 (PDT)
 Received: from eugen-station.. ([145.224.119.89])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-624841586c1sm1302244d50.6.2025.09.12.08.10.47
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-624841586c1sm1302244d50.6.2025.09.12.08.10.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 08:10:52 -0700 (PDT)
+        Fri, 12 Sep 2025 08:10:58 -0700 (PDT)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -92,9 +92,9 @@ Cc: tudor.ambarus@linaro.org,
 	linux-doc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [RFC][PATCH v3 12/16] printk: Register information into Kmemdump
-Date: Fri, 12 Sep 2025 18:08:51 +0300
-Message-ID: <20250912150855.2901211-13-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH v3 13/16] sched: Add sched_get_runqueues_area
+Date: Fri, 12 Sep 2025 18:08:52 +0300
+Message-ID: <20250912150855.2901211-14-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250912150855.2901211-1-eugen.hristev@linaro.org>
 References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
@@ -106,106 +106,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Kmemdump requires the prb, data, descriptors and info.
-Add it inside the log_buf_vmcoreinfo_setup()
-
-In the case when the log buffer is dynamically replaced by a runtime
-allocated version, call kmemdump to register the data but call unregister
-to remove the old registered data first.
+Add simple function to get the runqueues area and size for dumping
+purpose.
 
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 ---
- kernel/printk/printk.c | 47 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ kernel/sched/core.c  | 15 +++++++++++++++
+ kernel/sched/sched.h |  2 ++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 5aee9ffb16b9..f75489fd82df 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -49,6 +49,7 @@
- #include <linux/sched/debug.h>
- #include <linux/sched/task_stack.h>
- #include <linux/panic.h>
-+#include <linux/kmemdump.h>
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 9af28286e61a..a054dd1fda68 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -120,6 +120,21 @@ EXPORT_TRACEPOINT_SYMBOL_GPL(sched_compute_energy_tp);
  
- #include <linux/uaccess.h>
- #include <asm/sections.h>
-@@ -964,6 +965,43 @@ const struct file_operations kmsg_fops = {
- };
+ DEFINE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
  
- #ifdef CONFIG_VMCORE_INFO
-+static void log_buf_vmcoreinfo_kmemdump_update(void *data, size_t data_size,
-+					       void *descs, size_t descs_size,
-+					       void *infos, size_t infos_size)
++/**
++ * sched_get_runqueues_area() - obtain runqueues area for dumping
++ * @start: pointer to the start of the area, to be filled in
++ * @size: size of the area, to be filled in
++ *
++ * The obtained area is only to be used for dumping purpose
++ *
++ * Return: none
++ */
++void sched_get_runqueues_area(void **start, size_t *size)
 +{
-+	kmemdump_unregister(KMEMDUMP_ID_COREIMAGE_prb_data);
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_prb_data,
-+			     (void *)data, data_size);
-+
-+	kmemdump_unregister(KMEMDUMP_ID_COREIMAGE_prb_descs);
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_prb_descs,
-+			     (void *)descs, descs_size);
-+
-+	kmemdump_unregister(KMEMDUMP_ID_COREIMAGE_prb_infos);
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_prb_infos,
-+			     (void *)infos, infos_size);
++	*start = &runqueues;
++	*size = sizeof(runqueues);
 +}
 +
-+static void log_buf_vmcoreinfo_kmemdump(void)
-+{
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_prb,
-+			     (void *)&prb, sizeof(prb));
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_prb_descs,
-+			     (void *)&_printk_rb_static_descs,
-+			     sizeof(_printk_rb_static_descs));
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_prb_infos,
-+			     (void *)&_printk_rb_static_infos,
-+			     sizeof(_printk_rb_static_infos));
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_prb_data,
-+			     (void *)&__log_buf, __LOG_BUF_LEN);
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_printk_rb_static,
-+			     (void *)&printk_rb_static,
-+			     sizeof(printk_rb_static));
-+	kmemdump_register_id(KMEMDUMP_ID_COREIMAGE_printk_rb_dynamic,
-+			     (void *)&printk_rb_dynamic,
-+			     sizeof(printk_rb_dynamic));
-+}
+ #ifdef CONFIG_SCHED_PROXY_EXEC
+ DEFINE_STATIC_KEY_TRUE(__sched_proxy_exec);
+ static int __init setup_proxy_exec(char *str)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b5367c514c14..3b9cedb1fbeb 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -1330,6 +1330,8 @@ DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
+ #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
+ #define raw_rq()		raw_cpu_ptr(&runqueues)
+ 
++void sched_get_runqueues_area(void **start, size_t *size);
 +
- /*
-  * This appends the listed symbols to /proc/vmcore
-  *
-@@ -1029,6 +1067,8 @@ void log_buf_vmcoreinfo_setup(void)
- 
- 	VMCOREINFO_STRUCT_SIZE(latched_seq);
- 	VMCOREINFO_OFFSET(latched_seq, val);
-+
-+	log_buf_vmcoreinfo_kmemdump();
- }
- #endif
- 
-@@ -1214,6 +1254,11 @@ void __init setup_log_buf(int early)
- 		 new_descs, ilog2(new_descs_count),
- 		 new_infos);
- 
-+#ifdef CONFIG_VMCORE_INFO
-+	log_buf_vmcoreinfo_kmemdump_update(new_log_buf, new_log_buf_len,
-+					   new_descs, new_descs_size,
-+					   new_infos, new_infos_size);
-+#endif
- 	local_irq_save(flags);
- 
- 	log_buf_len = new_log_buf_len;
-@@ -1257,8 +1302,10 @@ void __init setup_log_buf(int early)
- 	return;
- 
- err_free_descs:
-+	kmemdump_unregister(KMEMDUMP_ID_COREIMAGE_prb_descs);
- 	memblock_free(new_descs, new_descs_size);
- err_free_log_buf:
-+	kmemdump_unregister(KMEMDUMP_ID_COREIMAGE_prb_data);
- 	memblock_free(new_log_buf, new_log_buf_len);
- out:
- 	print_log_buf_usage_stats();
+ #ifdef CONFIG_SCHED_PROXY_EXEC
+ static inline void rq_set_donor(struct rq *rq, struct task_struct *t)
+ {
 -- 
 2.43.0
 
