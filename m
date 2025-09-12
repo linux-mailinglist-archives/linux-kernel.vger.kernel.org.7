@@ -1,164 +1,152 @@
-Return-Path: <linux-kernel+bounces-813959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E092B54D88
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:27:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF8CB54D8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:27:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A64A04EA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:22:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B8FF171B73
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32ECE2475CB;
-	Fri, 12 Sep 2025 12:22:38 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 136782FD7D9;
+	Fri, 12 Sep 2025 12:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aFsXhQzJ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B842749E0;
-	Fri, 12 Sep 2025 12:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D452427B4F5;
+	Fri, 12 Sep 2025 12:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757679757; cv=none; b=Eui+JsVeb8jFHb777Y7MTX43L4U1HGr/0HvHbOXOFzwQByEMtoR01+7RdF4muOT3Uz21czqRn1a3WJfebzjR2kpRnGUnq//0pVMG12ZpqEWOBSJew+rGCCobeHJEi/ija4ohlV9ECAiXSn2zcGIhU65qK740V0P1vQDIwkmMRrw=
+	t=1757679794; cv=none; b=jsHc5PL7aVw6pEMAMZ9dLFnzCDakUYDwQMN+t+7O63HVghf46gpon+4nsgGBMpbacuzMHhYKNLn7Iiht3guKVa0287x8OdUTA3MfNlHqToFqAd2e/ILYn/OirXmdE5HsnGBGAK7J/hEBxfHx1litQm8kXjz4tZwLVL+4io613jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757679757; c=relaxed/simple;
-	bh=mRRtzhHa3/oVhUpszk0hMMthfzQIOsVey2IFkTKlWtE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LehNeyLOfhlrvH+QX8yLHITzVPqig80ILl3L3a+AsOfZvkdGyarqf7oST/bvribHxOXmqiwiijq9koPN2MAhHmgsJvX6usJUztmHnCPrvuePSxxMjEhnHhGtsaJfrRyQ3VB2SkoQM7QvvufUOtsFlBtkmTRvjgYRtV9Wt+UQOtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNYQb0Bswz6M4YB;
-	Fri, 12 Sep 2025 20:19:51 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D6491402EF;
-	Fri, 12 Sep 2025 20:22:32 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
- 2025 14:22:31 +0200
-Date: Fri, 12 Sep 2025 13:22:29 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 20/29] arm_mpam: Allow configuration to be applied
- and restored during cpu online
-Message-ID: <20250912132229.000044c7@huawei.com>
-In-Reply-To: <20250910204309.20751-21-james.morse@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-21-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757679794; c=relaxed/simple;
+	bh=bH4NRMgWnPXPHJ94kL2TjjMeV3PNPXB41VeHrC20Y5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bV6ytQlmH9ygZFj6WdGwt+u6z8CcWQjmpMMpPxpmdph0MmXXkR1+IQHdC/nDUCLpYi49O3Pmj/02JTWpeumYsUqRpZRUo0/usBnFhbX6m+CqBsBTqPmij7HrRC8TvuibicxuxLGp1ihii0+kqahQcgkwEtnZItvzgxKERRegaPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aFsXhQzJ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C6F43A027074;
+	Fri, 12 Sep 2025 12:23:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:sender:subject:to; s=pp1;
+	 bh=9ux8ILTUeDcvga5jYs95DD4PIL2aOHphcYBxHMQbne0=; b=aFsXhQzJduxW
+	OVtpT7SZwurzdlwzOIRkUaz9Mf744udZxtuT6WajNpQVfJyZjIDfDqKdCb3UGyMR
+	Sp8fNnsCP+Uo/LG+yF4TUw7ggFYrndS4TYv6sFaq0WJkJYhKH2rzdmqh4PzNbqeE
+	G7Kp48I4uxsJPbbaPFbfCKoGCLP7EEyOewYFLsW4mwxkjz6Rov4ErmFrx74u31Uq
+	0oMHaN8P8aCFiPGjzmMN1vY67bKmhyuHUoWvuo5W5Q7s0VmjGkcbPbbk1MQtcDVt
+	6rjIdlLmXROnBeJO9jRh03F4mGv0rkhF76iEVpTJkZlR7fNgYH3o06dzEhJnKZwW
+	I1VGalTh1A==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bcta2gr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:23:08 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CB0oSV017163;
+	Fri, 12 Sep 2025 12:23:07 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4911gmtq2w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:23:07 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CCN0fb52363584
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Sep 2025 12:23:01 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DE6E42004D;
+	Fri, 12 Sep 2025 12:23:00 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CDAF32004B;
+	Fri, 12 Sep 2025 12:23:00 +0000 (GMT)
+Received: from p1gen4-pw042f0m (unknown [9.152.212.78])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 12 Sep 2025 12:23:00 +0000 (GMT)
+Received: from bblock by p1gen4-pw042f0m with local (Exim 4.98.2)
+	(envelope-from <bblock@linux.ibm.com>)
+	id 1ux2ns-00000002uha-2OLi;
+	Fri, 12 Sep 2025 14:23:00 +0200
+Date: Fri, 12 Sep 2025 14:23:00 +0200
+From: Benjamin Block <bblock@linux.ibm.com>
+To: Farhan Ali <alifm@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        alex.williamson@redhat.com, helgaas@kernel.org, schnelle@linux.ibm.com,
+        mjrosato@linux.ibm.com
+Subject: Re: [PATCH v3 03/10] PCI: Allow per function PCI slots
+Message-ID: <20250912122300.GA15517@p1gen4-pw042f0m.boeblingen.de.ibm.com>
+References: <20250911183307.1910-1-alifm@linux.ibm.com>
+ <20250911183307.1910-4-alifm@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250911183307.1910-4-alifm@linux.ibm.com>
+Sender: Benjamin Block <bblock@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX3TNJOphnH2il
+ jrBpLiBmr1DdZdMx+mcIweDwmZ+wZdH6httyq+5D/gQ0h+M4iYAllWqZ0VskJIBZ1dRB4vPei5u
+ 8wFkfpqRKy6YbwxQ+mt4mMGfAaTTT2fmFmN1MtJy+Af2GwwVdJSqb5C2mZ0LDJSaffXSlYyJTHV
+ md6zyVH0ByfJBeeHJ/idmWgRjeoz7EWm7ym+2znVp4zKbXqNIZFapj4Ot9eAWeppAoqwjMjyFFy
+ bQ+oXp5sbVtXB29EKHV/X7pZqnQcTkFkuZb+BWSa9qgy/F2dHzvbrOsJvRt6tSTXQMaMLylRBC5
+ fLOW5J8MBSum64BqZa6k4TcDd+p8cdPi4Y9ImSNZZ8KM8srvKNjrTJ8vDnDt6PiHvg3vV3XFCkx
+ l4mn4fhW
+X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c410ac cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=8nJEP1OIZ-IA:10 a=yJojWOMRYYMA:10 a=VnNF1IyMAAAA:8 a=TjuGVM56yl0YPUG8lfgA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+X-Proofpoint-GUID: AUWlo5yUzZA2zKTw0JinpgK5xuJm9dp7
+X-Proofpoint-ORIG-GUID: AUWlo5yUzZA2zKTw0JinpgK5xuJm9dp7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
 
-On Wed, 10 Sep 2025 20:43:00 +0000
-James Morse <james.morse@arm.com> wrote:
-
-> When CPUs come online the MSC's original configuration should be restored.
+On Thu, Sep 11, 2025 at 11:33:00AM -0700, Farhan Ali wrote:
+> On s390 systems, which use a machine level hypervisor, PCI devices are
+> always accessed through a form of PCI pass-through which fundamentally
+> operates on a per PCI function granularity. This is also reflected in the
+> s390 PCI hotplug driver which creates hotplug slots for individual PCI
+> functions. Its reset_slot() function, which is a wrapper for
+> zpci_hot_reset_device(), thus also resets individual functions.
 > 
-> Add struct mpam_config to hold the configuration. This has a bitmap of
-> features that were modified. Once the maximum partid is known, allocate
-> a configuration array for each component, and reprogram each RIS
-> configuration from this.
+> Currently, the kernel's PCI_SLOT() macro assigns the same pci_slot object
+> to multifunction devices. This approach worked fine on s390 systems that
+> only exposed virtual functions as individual PCI domains to the operating
+> system.  Since commit 44510d6fa0c0 ("s390/pci: Handling multifunctions")
+> s390 supports exposing the topology of multifunction PCI devices by
+> grouping them in a shared PCI domain. When attempting to reset a function
+> through the hotplug driver, the shared slot assignment causes the wrong
+> function to be reset instead of the intended one. It also leaks memory as
+> we do create a pci_slot object for the function, but don't correctly free
+> it in pci_slot_release().
 > 
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-Trivial comments
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Add a flag for struct pci_slot to allow per function PCI slots for
+> functions managed through a hypervisor, which exposes individual PCI
+> functions while retaining the topology.
+> 
+> Fixes: 44510d6fa0c0 ("s390/pci: Handling multifunctions")
 
-> +
-> +static void mpam_init_reset_cfg(struct mpam_config *reset_cfg)
-> +{
-> +	memset(reset_cfg, 0, sizeof(*reset_cfg));
+Stable tag?
+Reseting the wrong PCI function sounds bad enough.
 
-Might as well do the following and skip the memset.
-
-	*reset_cfg = (struct mpam_config) {
-		.features = ~0,
-		.cpbm = ~0,
-		.mbw_pbm = ~0,
-		.mbw_max = MPAM...
-		.reset_cpbm = true,
-		.reset_mbw_pbm = true,
-	};
-> +
-> +	reset_cfg->features = ~0;
-> +	reset_cfg->cpbm = ~0;
-> +	reset_cfg->mbw_pbm = ~0;
-> +	reset_cfg->mbw_max = MPAMCFG_MBW_MAX_MAX;
-> +
-> +	reset_cfg->reset_cpbm = true;
-> +	reset_cfg->reset_mbw_pbm = true;
-> +}
-
-> +static int mpam_allocate_config(void)
-> +{
-> +	int err = 0;
-
-Always set before use. Maybe push down so it is in tighter scope and
-can declare and initialize to final value in one line.
-
-> +	struct mpam_class *class;
-> +	struct mpam_component *comp;
-> +
-> +	lockdep_assert_held(&mpam_list_lock);
-> +
-> +	list_for_each_entry(class, &mpam_classes, classes_list) {
-> +		list_for_each_entry(comp, &class->components, class_list) {
-> +			err = __allocate_component_cfg(comp);
-> +			if (err)
-> +				return err;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
-
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index b69fa9199cb4..17570d9aae9b 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -169,11 +169,7 @@ struct mpam_props {
->  	u16			num_mbwu_mon;
->  };
->  
-> -static inline bool mpam_has_feature(enum mpam_device_features feat,
-> -				    struct mpam_props *props)
-> -{
-> -	return (1 << feat) & props->features;
-> -}
-> +#define mpam_has_feature(_feat, x)	((1 << (_feat)) & (x)->features)
-
-If this is worth doing push it back to original introduction.
-I'm not sure it is necessary.
-
-Jonathan
-
-
-
+-- 
+Best Regards, Benjamin Block        /        Linux on IBM Z Kernel Development
+IBM Deutschland Research & Development GmbH    /   https://www.ibm.com/privacy
+Vors. Aufs.-R.: Wolfgang Wendt         /        Geschäftsführung: David Faller
+Sitz der Ges.: Böblingen     /    Registergericht: AmtsG Stuttgart, HRB 243294
 
