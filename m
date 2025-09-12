@@ -1,116 +1,157 @@
-Return-Path: <linux-kernel+bounces-813941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACAF1B54D17
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:18:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D74B54CED
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7746B7B22A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:16:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4A303B18CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D0630505B;
-	Fri, 12 Sep 2025 12:09:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C24D30C635;
+	Fri, 12 Sep 2025 12:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fm5p63t2"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b="gfHV1WBQ"
+Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8075D309DDB
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:08:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03233302145;
+	Fri, 12 Sep 2025 12:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.205.243
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678940; cv=none; b=i2FDNQ4xWba7iwEuVNeKaMq5z2rD81T+pzTNzlgQ1Opi4sbWrIj9pqUbhfgLV3jIfwHS6rpbsvd41EeYPa59hoWllVPGk45V6dUYTTpx3Jwl24dJQ5SMLxLLDjJXBx5ExxEknMvesA4Gn7iwnCauOwb2aGOi9avlhAC55uEopR8=
+	t=1757678644; cv=none; b=FlOu0jJSh7xB87vo/M2SunCSqiFV8bqtdu83klrP2SOs4ZrvwFDatRgVm02WM0oVby6at42iyUi17DIgqB9J4KJdJ20BSIgo7yXGWWCgWogE4uSuzPSCHQro/dZ+dhprXNwigRWDBMOF9JHUys8ftOfJ3NTakeRk07qKLzdHZEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678940; c=relaxed/simple;
-	bh=ZsDPHM1ssWGkUCApaTOQGhUhKwRqfUFyjo5Rw+9gVd0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=SSyQO7JkFXj35diOgN7hX2MOikP2F1Wv/klRZECjeHbYJejVg39JTEyTdQDOjkGDDwWp41CkndougOaBDL64sGxToQdbZTk51tbCQSvQo6VkYeWQuLHcOxF8XaEleb8dyy0MW5MJWq86+gkADz1pXdVYUglGdbbt0P5rhZ5XHq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fm5p63t2; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45de287cc11so16067785e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:08:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757678937; x=1758283737; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AuxBhXYIf5asuisWxd1fF0vikMlauZb1ySpXLM4BDYU=;
-        b=Fm5p63t2PJ4ezHqOdrc9AaEaiCNRZdhPRzWPS3ZN8o90x0YV9a+ASscXHBVI4aB19+
-         cwKXlD7MuvcuWBG9CW0Q4GO+3LxBbhnDkM5h6lOXJ9YUkJe9SFkHLdO/d8RYbWCIYLra
-         1iJPNmq3wQfc4KI7mLUeYbODfmXfTiJ4NnqI4a0pdtISllwA4V1zHJsneiNLBUuugICl
-         KSWsjZNDyBPU9EPofr8Wyll3tFROnMy7MBedLAS0LiuSV6245z0MwAz0xXdHLtT172gK
-         dKeOWGdFImuvjxlCDdYwLFBzI9Ad614hY+m0RNqvbjbeqS4lxoyvp4uBIIK4BVz+WV6j
-         gpMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757678937; x=1758283737;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AuxBhXYIf5asuisWxd1fF0vikMlauZb1ySpXLM4BDYU=;
-        b=D025AzIKd8mqJPCNmunOuA2A3PmiWjQskQneXa+3YlSORthyEdCho0QQYVIt2oE/4H
-         XVUff4Y7x+5INI/T4JRrV9yi0zx92F1ae7VGTLFxGrmNT0HZp1Wta5/9h/rnwa26xae7
-         /woshsq6iJZqLLkwqn85MOtLuNYwGjpzzt0f591Y3E/PkRkOqoRgZDhqKXTGzrPdiRfl
-         2/irBfGm1Yj9wmOjYt60NgRqe/LiahK2Eu3iUtHCHKZW2emJTczoeBBvth/e7cEEBr7J
-         JvFSoaiBIkWf98RHtHYzCxllJlTxHEr/8YjHS4rv/Rf4Vx/4cnkbiz3nugiXxhKtaQXZ
-         3EZg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8Gqz9P3Pf2/0nuBhgwjugpFHYQdML5LbfbrcuC/UHoXipJvg0JuViPVd3pUVx5GQq67BnFpbNvXmuWLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywzd4fE98HL6q1sMUyiU5c4nHqaZJuv9yH+bzgc1kDblxIrXGrY
-	bkMCHswKyp6z81Fl/WGRjbE30lMDBLRhxT51agquGQmLdS1SqPkwKtUZXWDOwg==
-X-Gm-Gg: ASbGncuWFheBenOLHRp6H/BfoU9jsqEhALVMrhQ1Yqsmul4giBaBX8JJ/hPQ9q9Vtom
-	KDotJuWv2u9yEmkL8EHvkvewcprDlnuPPAs4ReEZEsoAYFwH5rbzl7oEViyqEo7PPZGwcbSKTXB
-	CStBgP/6AWJg2LCWMsy7bIo6JdToho0UqUOBv3wLpmvayJnKiMmFpr+4jotXhj93NL/sK/nHB0V
-	fK4ryPMq3bl+np2qTti/kGKZGbpOd5T5hON56NqJ3G7NggDzw9AUKa1rQh+j3MEouURH14FWKtt
-	MqGsrIac/EXtbxbOqUdWj9CS8e4f/3Y/dSckxhsV0biT53uCHK1XTa7TVK6BVY/aF5SWmIQMgdT
-	9+z6+kcI5dNolYRDMRDXG391/g/lMPhBy5g==
-X-Google-Smtp-Source: AGHT+IHXNEYZ8zt4iDcGj+Ej24DzoTie67SzfFJOypYfKefxWkzvz2zcFJy+fpJUKaaXWFGXQhh7ow==
-X-Received: by 2002:a5d:64e6:0:b0:3d3:6525:e320 with SMTP id ffacd0b85a97d-3e765a23893mr2442300f8f.29.1757678936577;
-        Fri, 12 Sep 2025 05:08:56 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:18f9:fa9:c12a:ac60])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7d369ea3bsm616186f8f.0.2025.09.12.05.08.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 05:08:56 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
- Horman <horms@kernel.org>,  Jacob Keller <jacob.e.keller@intel.com>,
-  Sabrina Dubroca <sd@queasysnail.net>,  wireguard@lists.zx2c4.com,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 12/13] tools: ynl: decode hex input
-In-Reply-To: <20250911200508.79341-13-ast@fiberby.net>
-Date: Fri, 12 Sep 2025 13:01:48 +0100
-Message-ID: <m2o6rfubf7.fsf@gmail.com>
-References: <20250911200508.79341-1-ast@fiberby.net>
-	<20250911200508.79341-13-ast@fiberby.net>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1757678644; c=relaxed/simple;
+	bh=Vl0rIhp9sKRA8jG8SKikvBPaeIGGXcTgtzw0C36iPxg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B0rnwAUUqQfrFsNflPsDpCWBXSPJ/+/vTOltym3innZODQPM0QzUOJhGnRJ8I5w49DqISqJ2wC1IFNxY/P9NlS7vkIhjfExSOqr68urVtm6OW42qJftv3q82G40qyhU9vaCmIQA7oE2zy8c5QkVNTyXKy/JvI5/IV9U1xhYxhyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=gfHV1WBQ; arc=none smtp.client-ip=93.188.205.243
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
+	s=mail; t=1757678631;
+	bh=Vl0rIhp9sKRA8jG8SKikvBPaeIGGXcTgtzw0C36iPxg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gfHV1WBQahPia/jamv6MnG3iWzPa6LuhUIkTFVPMREL3VneFzZFl0tFb3R970jXOR
+	 QmBDnaH84AsYY1McHqq5n3cvaEFz0atmLh5NlPsJsdufxG1Z60cKspEbEJAxEGhZru
+	 sIMoBmN7DkpYAXdXqKfawljDZdSiDK432fzKx46Hz2DOg4LWWRZARPVp83TAzvGX9d
+	 oF1jq8yggZUxxTeagWK/dOL3j1ZWWW1Cumrc7gr/mU2QBwYYDMN1lBOJQ7NCQ6ctoC
+	 1oVDXW4524v5LxLbd6qDan9E9JtamR794apUI/Diq9ycCjRG8H74KMceea4VzSXlO0
+	 EdCC7Jx/Zu+jg==
+Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
+	by mail-gw02.astralinux.ru (Postfix) with ESMTP id DC9F31FA00;
+	Fri, 12 Sep 2025 15:03:51 +0300 (MSK)
+Received: from new-mail.astralinux.ru (unknown [10.177.185.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
+	Fri, 12 Sep 2025 15:03:50 +0300 (MSK)
+Received: from rbta-msk-lt-169874.astralinux.site (unknown [10.198.57.215])
+	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4cNY3S5GmNz2xBx;
+	Fri, 12 Sep 2025 15:03:16 +0300 (MSK)
+From: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>
+To: stable@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Francois Dugast <francois.dugast@intel.com>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org,
+	Louis Chauvet <louis.chauvet@bootlin.com>
+Subject: [PATCH v2 6.12 1/3] drm/managed: Add DRM-managed alloc_ordered_workqueue
+Date: Fri, 12 Sep 2025 15:01:59 +0300
+Message-Id: <20250912120202.240305-1-mdmitrichenko@astralinux.ru>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-KSMG-AntiPhishing: NotDetected, bases: 2025/09/12 10:31:00
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Envelope-From: mdmitrichenko@astralinux.ru
+X-KSMG-AntiSpam-Info: LuaCore: 66 0.3.66 fc5dda3b6b70d34b3701db39319eece2aeb510fb, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, astralinux.ru:7.1.1;patchwork.freedesktop.org:7.1.1;new-mail.astralinux.ru:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiSpam-Lua-Profiles: 196220 [Sep 12 2025]
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Version: 6.1.1.11
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/09/12 09:49:00 #27811571
+X-KSMG-AntiVirus-Status: NotDetected, skipped
+X-KSMG-LinksScanning: NotDetected, bases: 2025/09/12 11:18:00
+X-KSMG-Message-Action: skipped
+X-KSMG-Rule-ID: 1
 
-Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
+From: Louis Chauvet <louis.chauvet@bootlin.com>
 
-> This patch adds support for decoding hex input, so
-> that binary attributes can be read through --json.
->
-> Example (using future wireguard.yaml):
->  $ sudo ./tools/net/ynl/pyynl/cli.py --family wireguard \
->    --do set-device --json '{"ifindex":3,
->      "private-key":"2a ae 6c 35 c9 4f cf <... to 32 bytes>"}'
->
-> In order to somewhat mirror what is done in _formatted_string(),
-> then for non-binary attributes attempt to convert it to an int.
->
-> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
+commit c367b772e6d89d8c7b560c7df7e3803ce6b8bcea upstream.
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+Add drmm_alloc_ordered_workqueue(), a helper that provides managed ordered
+workqueue cleanup. The workqueue will be destroyed with the final
+reference of the DRM device.
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/20250116-google-vkms-managed-v9-3-3e4ae1bd05a0@bootlin.com
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+Signed-off-by: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>
+---
+ drivers/gpu/drm/drm_managed.c |  8 ++++++++
+ include/drm/drm_managed.h     | 12 ++++++++++++
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/gpu/drm/drm_managed.c b/drivers/gpu/drm/drm_managed.c
+index 79ce86a5bd67..cc4c463daae7 100644
+--- a/drivers/gpu/drm/drm_managed.c
++++ b/drivers/gpu/drm/drm_managed.c
+@@ -310,3 +310,11 @@ void __drmm_mutex_release(struct drm_device *dev, void *res)
+ 	mutex_destroy(lock);
+ }
+ EXPORT_SYMBOL(__drmm_mutex_release);
++
++void __drmm_workqueue_release(struct drm_device *device, void *res)
++{
++	struct workqueue_struct *wq = res;
++
++	destroy_workqueue(wq);
++}
++EXPORT_SYMBOL(__drmm_workqueue_release);
+diff --git a/include/drm/drm_managed.h b/include/drm/drm_managed.h
+index f547b09ca023..53017cc609ac 100644
+--- a/include/drm/drm_managed.h
++++ b/include/drm/drm_managed.h
+@@ -127,4 +127,16 @@ void __drmm_mutex_release(struct drm_device *dev, void *res);
+ 	drmm_add_action_or_reset(dev, __drmm_mutex_release, lock);	     \
+ })									     \
+ 
++void __drmm_workqueue_release(struct drm_device *device, void *wq);
++
++#define drmm_alloc_ordered_workqueue(dev, fmt, flags, args...)					\
++	({											\
++		struct workqueue_struct *wq = alloc_ordered_workqueue(fmt, flags, ##args);	\
++		wq ? ({										\
++			int ret = drmm_add_action_or_reset(dev, __drmm_workqueue_release, wq);	\
++			ret ? ERR_PTR(ret) : wq;						\
++		}) :										\
++			wq;									\
++	})
++
+ #endif
+-- 
+2.39.2
+
 
