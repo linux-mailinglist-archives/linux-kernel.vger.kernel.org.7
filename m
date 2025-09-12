@@ -1,113 +1,111 @@
-Return-Path: <linux-kernel+bounces-813437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E224B54564
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:29:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2023AB54569
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:30:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A80846590D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:29:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4AA03BA26E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:30:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D122D77E0;
-	Fri, 12 Sep 2025 08:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18EA26F293;
+	Fri, 12 Sep 2025 08:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="heMrIWKO"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kxGSdJrG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24B32D63E2;
-	Fri, 12 Sep 2025 08:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67DD1853;
+	Fri, 12 Sep 2025 08:30:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757665700; cv=none; b=dwSJSfZfUPmH5+Z8w/bQZYIE6PGg6YyuI7u/IaNIQnBn+UHSpcqZ4K793YM9+5ROgsJTy1M8783VDq1NxiWM5wqm+YNx4of2LOPM0qHeHPRuw93ynXEfBaYQJwP55RzxUcjaRCvx69vCOgSbM1yDUDNBpGp3MvxOrMFNEKgJjLk=
+	t=1757665849; cv=none; b=OUlXBlhFpYoe+5ReFNBqqmio0CDnqYdrDVp0LdILtoP92g76R+01tqPdE51pb5VOgsC2rlG2MWXYtlQKaiXHRpH3V7h/5prDU3/M5qShRXAJqS4TZKkfcGcz8x3KfC78lWG0qmXzKwEOXz0auxwnibSk4dFJv41iDiURURQCdDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757665700; c=relaxed/simple;
-	bh=n1EW4vy65nSPoafSwWSgXqad37bTolvO1cf0oGnHTWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kxNbQJF2wDwtSxuWVUAseb7lnVwWHLSOrFbWdCMB/6DqO0U7IeA6GkUTF1dmA3XEufPtSjzRQ8WQr3e6wstBG47pWP8A2cWs7fAG+MsOleaPtzf4MljDSvE+Awelm24UIhYfQwRZiHkEiDAVzn1yOSInzm/stqN3Vx0YNAdB9E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=heMrIWKO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 512A3C4CEF4;
-	Fri, 12 Sep 2025 08:28:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757665698;
-	bh=n1EW4vy65nSPoafSwWSgXqad37bTolvO1cf0oGnHTWA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=heMrIWKOSv80U/xz5fRNyHaY47UB3AKqXNR30TWBXKEuwFKKAihGB2Ts+rpO5w5Sv
-	 SZolg0L0DOBn9xMMvDTsH+jfmQcn7ju81LlqMHVjQ68zo88sBz+vVDEUGKs4PAy8zs
-	 JZiCbWaKIG1G4cCgexplVHiGWJAbcoANp4oiZ8c8XYe5B/N4UbN9+mIWf525PkgVj1
-	 SFfE1WFslqHwslAkooJ8EpdkYgoN+mJKNBTbNJPPvBWUfkEfEB0uAkP+ESJYUfbvaC
-	 XBUIjzFQcM639J5X/faL1nA5e27Czb9VArnJycIbjAUbK5FqcwNX9F+ltChMSjTTJx
-	 Kqg3QiEnGDVsQ==
-Date: Fri, 12 Sep 2025 10:28:13 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Jani Nikula <jani.nikula@linux.intel.com>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, Alice Ryhl
- <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo
- <gary@garyguo.net>, Trevor Gross <tmgross@umich.edu>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v4 08/19] tools/docs: sphinx-build-wrapper: add a
- wrapper for sphinx-build
-Message-ID: <20250912102813.6ea711ca@foz.lan>
-In-Reply-To: <87zfb1p0r3.fsf@trenco.lwn.net>
-References: <cover.1756969623.git.mchehab+huawei@kernel.org>
-	<e019f951190a732f9ac0b21bcda7e49af3bd5cbd.1756969623.git.mchehab+huawei@kernel.org>
-	<e13837a0ac46dffe39c600d11fdf33f538bdc9c3@intel.com>
-	<20250910145926.453f5441@foz.lan>
-	<45888ca6c88071c754784495b4ef69460ea67b4f@intel.com>
-	<fuv4p45tvjfdvwu2625s2l2kvcw64p4ohherlwyum3vmogmrfz@yb47nt66xgm6>
-	<87zfb1p0r3.fsf@trenco.lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1757665849; c=relaxed/simple;
+	bh=FucC4P8o0TptMas7mclBnXxe9nJiaVXXt/ty4BSyTfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYLCUCEB8wzsOhrJthBRzlxKqAlSZNEx8ftk8lYRNCzJiDWmAGtUAk5/UCng3+HnbfG3mRfrDGKb8dzNHuVlebsdhkJoMvfnbIW1It/Y7OvrRJLokgTMsMDhUnMn0AAlirMuHTlAu+eXguXH6JU+s24kbZTYdBJD5kHL/cnlHek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kxGSdJrG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05329C4CEF4;
+	Fri, 12 Sep 2025 08:30:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757665848;
+	bh=FucC4P8o0TptMas7mclBnXxe9nJiaVXXt/ty4BSyTfo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kxGSdJrGUQH8urbf/HkbGg2OKldY5UAPUcZaiZ7ObeDY1TSmirM7e+vD4FJJPnjtK
+	 6OJLnDvEZiGY43xLUJnm/28EVZntxigHA3/GFaUGWUCdH4Vy/tTYgJcH9DpwMKfzCZ
+	 Q05Q2T5N8bsLXRVjxlnGZvNvbiJhF+vmuBZk82oc=
+Date: Fri, 12 Sep 2025 10:30:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Tzung-Bi Shih <tzungbi@kernel.org>
+Cc: Benson Leung <bleung@chromium.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
+Message-ID: <2025091224-blaming-untapped-6883@gregkh>
+References: <20250912081718.3827390-1-tzungbi@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912081718.3827390-1-tzungbi@kernel.org>
 
-Em Thu, 11 Sep 2025 07:38:56 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
-
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+On Fri, Sep 12, 2025 at 08:17:12AM +0000, Tzung-Bi Shih wrote:
+> This is a follow-up series of [1].  It tries to fix a possible UAF in the
+> fops of cros_ec_chardev after the underlying protocol device has gone by
+> using revocable.
 > 
-> > On Thu, Sep 11, 2025 at 01:23:55PM +0300, Jani Nikula wrote:  
-> >> > 1. SPHINXDIRS. It needs a lot of magic to work, both before running
-> >> >    sphinx-build and after (inside conf.py);  
-> >> 
-> >> Makes you wonder if that's the right solution to the original
-> >> problem. It was added as a kind of hack, and it stuck.  
-> >
-> > The problem is, IMHO, due to the lack of flexibility of sphinx-build:
-> > It should have a way on it to do partial documentation builds.  
+> The 1st patch introduces the revocable which is an implementation of ideas
+> from the talk [2].
 > 
-> A couple of times I have looked into using intersphinx, making each book
-> into an actually separate book.  The thing I always run into is that
-> doing a complete docs build, with working references, would require
-> building everything twice.  This is probably worth another attempt one
-> of these years...
+> The 2nd and 3rd patches add test cases for revocable in Kunit and selftest.
+> 
+> The 4th patch converts existing protocol devices to resource providers
+> of cros_ec_device.
+> 
+> The 5th patch converts cros_ec_chardev to a resource consumer of
+> cros_ec_device to fix the UAF.
+> 
+> [1] https://lore.kernel.org/chrome-platform/20250721044456.2736300-6-tzungbi@kernel.org/
+> [2] https://lpc.events/event/17/contributions/1627/
+> 
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-The big advantage of intersphinx is for PDF and LaTeX output, as
-this is the only way to have cross-references there.
+This is, frankly, wonderful work.  Thanks so much for doing this, it's
+what many of us have been wanting to see for a very long time but none
+of us got around to actually doing it.
 
-It is also good for subsystem-specific books (or "sub-"books) like:
+And it has tests!  And documentation!  Couldn't ask for more.
 
-	- Documentation/admin-guide/media/
-	- Documentation/driver-api/media/
-	- Documentation/userspace-api/media/
+We can bikeshed about the REVOCABLE() macro name, but frankly, you wrote
+it, you get to pick it :)
 
-Right now, we create a single book with all those tree, but I would
-prefer to build each of them as separate units, as they are for separated
-audiences, but only if cross-references will be solved in a way that
-html and pdf docs will point to the other books stored at linuxtv.org.
+Laurent, Bartosz, Wolfram, any objection to this series?  I think this
+addresses the issues that all of you have been raising for years with
+our access of pointers that have different lifecycles from other
+structures (i.e. struct cdev from struct device).
 
-For html, this won't be any different, in practice, from what we have,
-but for PDF and ePub, this would mean smaller books.
+Also, Danilo, if you get the chance, can you give this a review as well?
+At first glance it looks good to me, but as you wrote the Rust
+implementation of this feature, a second pair of eyes would be great to
+have if you have the time.
 
-Thanks,
-Mauro
+thanks,
+
+greg k-h
 
