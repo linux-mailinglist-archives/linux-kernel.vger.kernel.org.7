@@ -1,96 +1,74 @@
-Return-Path: <linux-kernel+bounces-814665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3E2B55715
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:45:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BEBB55714
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A5921889F4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:45:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C0C3A9976
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F08D340DB3;
-	Fri, 12 Sep 2025 19:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26DB239E81;
+	Fri, 12 Sep 2025 19:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TE3ObtTw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HGxLGgRj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856D6340DA7
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0309D4C81;
+	Fri, 12 Sep 2025 19:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757706252; cv=none; b=iC8IhO0cbbMEjQNlSl1IuXfHE9xrI3D9yyREmegcMfp4/A4AlPw7WmxLsZkEbMqBCfXct1GkkboQcmSxdQZbpYBRE2RinY2+0Bf4JdMZ+3Gd7F1AVH/QgO6wpBWtkkLPchkhfsThsLZSZfiC8aAhTs6OtvZnRyY9HROQB5YZDjw=
+	t=1757706324; cv=none; b=BpowPIzBy4PvHr200MSAnfhkzca5H20Zrk+DwYiOtVhRB2+ZF9FX4XD5bGyLQajYpmqWDTUZzAlRhN1QUe5s6Gxj0Jye8kN6LvCzdYQJpRxZWgSsU0+F9Ffa80a6Lb3nq1RAGIeDLSuafIqfZesWTumsNqRsU3Yuifph/SoEHFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757706252; c=relaxed/simple;
-	bh=HTZCF9HHG7KGOIM3FLP7xYTC1Qk53AwpjkHArOdAA3Q=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=OeD6UdFDgIkV9i2chhhDdG/CO4VGUv9KNNuUZSTOluoLIimuLKsCK9c3CU+YToQG+qjEU4O2h6BRQwqZFvCljJJp0PRayUAwOMovoNkMd1nf2kn0Imqi3ayE/DWwPN98c3/7+rsVpYViyfU9JEU3dPu7HjVZaletDvhnZ+RZRw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TE3ObtTw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757706249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AaqkOSjrTGuOFyhvGeW1jhkYe7CZaWO5SQO66fJCWMU=;
-	b=TE3ObtTwbTrtp87kUX9/Y8pjb5lZB7pIacuI9cCZ2dQVI0hLF4vLTTRbVD46+AvqVmAnVt
-	+OHvZ37NXatadhu10h6GyhxTFAEPZA4TZTRWS9ll9iQCpIgl0BoiDXSFotQQ/x0Ii5xuPK
-	8MjDfc+d/PJ/iKrS2FVTc9G+GJjKVpI=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-D7tUWhg2PymFxzuIgBflHA-1; Fri,
- 12 Sep 2025 15:44:04 -0400
-X-MC-Unique: D7tUWhg2PymFxzuIgBflHA-1
-X-Mimecast-MFC-AGG-ID: D7tUWhg2PymFxzuIgBflHA_1757706242
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 582DB1800284;
-	Fri, 12 Sep 2025 19:44:02 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.6])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 42BAE1800452;
-	Fri, 12 Sep 2025 19:43:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250912184801.GD224143@horms.kernel.org>
-References: <20250912184801.GD224143@horms.kernel.org> <2039268.1757631977@warthog.procyon.org.uk>
-To: Simon Horman <horms@kernel.org>
-Cc: dhowells@redhat.com, Dan Carpenter <dan.carpenter@linaro.org>,
-    netdev@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-    Jakub Kicinski <kuba@kernel.org>,
-    "David
- S. Miller" <davem@davemloft.net>,
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] rxrpc: Fix untrusted unsigned subtract
+	s=arc-20240116; t=1757706324; c=relaxed/simple;
+	bh=eRmlEgZBdwAVe3h7/GUPU9Q+gTO65mCT/B7HM+C5/r0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fryko6bKElKZZ0Xtil7Us2PzxI/Ytu6PuEP/l9YU4VBGsT2MMNODsvuip/5sEciIifeGosa2YYtK3Amynat6MbEJupabE3exBTxFtbSGLxJY301384arMifUJ3kOsjst5G5vrEe2udZhIopbN/uDf6sghcZdykDeTG/mnpxMZ7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HGxLGgRj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25D1AC4CEF1;
+	Fri, 12 Sep 2025 19:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757706323;
+	bh=eRmlEgZBdwAVe3h7/GUPU9Q+gTO65mCT/B7HM+C5/r0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HGxLGgRjMDweOQcz1o9SLsb4xdM047FEMoHGsd+9t1EJPz8DcZllP6Dh7GIEhwELe
+	 QUHRQ6RFNj72LgTkzPlBJWmmyO14IZNKvFmpCqgnOs5R25eBkYuqwE48olpdeOvHhp
+	 8Z14wHaxuxIQKh65NJNPSakqY6xeLxOlQIRrKlQ9uTpUOnLI2cQUQ/IWX0CYU1Lyh2
+	 vMhw65Etr9I402cbjwoiLi4y5OTmLvnH6WpKVIRmrruaygrm7gN6WZKSTFhXz7/jIf
+	 ESWkov3bh4QNU/MQsWxio8zGGCPzkQAC97XVNHBNjZL2U5Kj/wUAwzVpc66O/tUe8e
+	 gqTN/pJXedUVw==
+Date: Fri, 12 Sep 2025 16:45:20 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Howard Chu <howardchu95@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf trace: Add --max-summary option
+Message-ID: <aMR4UIY94UhoJUMl@x1>
+References: <20250821003220.1051711-1-namhyung@kernel.org>
+ <CAH0uvoj7s3V7qby7BxQ9Eby4G562MMsFtbonLJ2L3SF1N7CDng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2331699.1757706238.1@warthog.procyon.org.uk>
-Date: Fri, 12 Sep 2025 20:43:58 +0100
-Message-ID: <2331700.1757706238@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH0uvoj7s3V7qby7BxQ9Eby4G562MMsFtbonLJ2L3SF1N7CDng@mail.gmail.com>
 
-Simon Horman <horms@kernel.org> wrote:
+On Fri, Aug 22, 2025 at 10:19:26PM -0700, Howard Chu wrote:
+> On Wed, Aug 20, 2025 at 5:32 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> Reviewed-by: Howard Chu <howardchu95@gmail.com>
 
-> > Fix the following Smatch Smatch static checker warning:
-> 
-> nit: Smatch Smatch -> Smatch
+Thanks, applied to perf-tools-next,
 
-Yeah.  Can that be fixed up at time of application?
-
-David
-
+- Arnaldo
 
