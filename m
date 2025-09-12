@@ -1,186 +1,154 @@
-Return-Path: <linux-kernel+bounces-813915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468C0B54CDF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:14:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 490E1B54CDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03851884703
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:11:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530613A6357
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653EB30E0E4;
-	Fri, 12 Sep 2025 12:04:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b="XoAxeWzT"
-Received: from mail-gw02.astralinux.ru (mail-gw02.astralinux.ru [93.188.205.243])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94E83064A6;
+	Fri, 12 Sep 2025 12:02:26 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC743074AC;
-	Fri, 12 Sep 2025 12:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.188.205.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B224C30648A;
+	Fri, 12 Sep 2025 12:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678655; cv=none; b=bc+QFX/QrWpdIQqU4ix3tCvMuoNI1u7Abb53F2IkTh+cupI/iizSFbmoRKzXJRdoDEX9sfvTM6Zp2vYiyw7lfY6ve7pIpIsRi2dJApOcprsqYG+1ZfxH/oDHSp+fCp66UHHC1GDioLqRJUV7343sgAIuPKlBY/YlxU2q8c6dC6o=
+	t=1757678546; cv=none; b=oOsVj54PmYFB7DvYu1aA9/nxmrCXsNh/aDYHz82dyRIpY0pi55RwYT+zcq0LbNWC6eVUhgsx73v3FmwJomuknYOAL5/JJw2xzzZOPnRH4Py39mVoV9i4BwFIFZ78AYRGJTn3qZ/GZC2rb9l4dhsTdOxlsUQQA16OEoVuDTdF3pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678655; c=relaxed/simple;
-	bh=2KXka414fCOALlXKBNLhsY7WlMq13LlLKLbzudZG4YY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I1FGJkUxoSIxvz803QM9cb6F8F8S++Rq02/JWi+IMq34ubQiIpCZs6yQLc1OsxaZH6tJ37nvUb76VaVtbOG+i9xvGj9XnkyTmU+nihU6ZUq3V979Jl3Wbujp8GBkVKhHSPbm13YCMBvCMNvDMZoAfh8MIVam8LOEr4XKwwTMPTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; dkim=pass (2048-bit key) header.d=astralinux.ru header.i=@astralinux.ru header.b=XoAxeWzT; arc=none smtp.client-ip=93.188.205.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=astralinux.ru;
-	s=mail; t=1757678651;
-	bh=2KXka414fCOALlXKBNLhsY7WlMq13LlLKLbzudZG4YY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XoAxeWzTyG7Fb4pSfurGCFfrQ13WWrJip9p79kBrYizQGDaTITvKoSi2csSV4RHWU
-	 g7Rr3E22WsqDOtDBvVA5ZY7rHLeruKv0a7EWNEU2JJMABOjI6ztICpXXuLLer1nCvr
-	 M0lJvNJhebt090fXVRrQVPTKnCcTHVwWg4mv7h8pVRfG5aMjQOccv5j8+K4VF8f08c
-	 5S15s7qpRjFVgQ5reAV1XA9CHSMG5EIb+QBQR1KeEBUve+by63lOh7SGDwufu2eVqc
-	 pi/qekhPKRxhGj3xcRLH/ownpoX6adQxVtsqD0moD+vtdI1kNQ85zSMEb+VgpsghBl
-	 C/ok8gI7ZVkCA==
-Received: from gca-msk-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw02.astralinux.ru (Postfix) with ESMTP id 5294A1FA00;
-	Fri, 12 Sep 2025 15:04:11 +0300 (MSK)
-Received: from new-mail.astralinux.ru (unknown [10.177.185.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw02.astralinux.ru (Postfix) with ESMTPS;
-	Fri, 12 Sep 2025 15:04:10 +0300 (MSK)
-Received: from rbta-msk-lt-169874.astralinux.site (unknown [10.198.57.215])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4cNY4R041sz2xDf;
-	Fri, 12 Sep 2025 15:04:06 +0300 (MSK)
-From: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Francois Dugast <francois.dugast@intel.com>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Shuicheng Lin <shuicheng.lin@intel.com>
-Subject: [PATCH v2 6.12 3/3] drm/xe/hw_engine_group: Avoid call kfree() for drmm_kzalloc()
-Date: Fri, 12 Sep 2025 15:02:01 +0300
-Message-Id: <20250912120202.240305-3-mdmitrichenko@astralinux.ru>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250912120202.240305-1-mdmitrichenko@astralinux.ru>
-References: <20250912120202.240305-1-mdmitrichenko@astralinux.ru>
+	s=arc-20240116; t=1757678546; c=relaxed/simple;
+	bh=hH3outgkrKdulZ1sBiYLYLbGs1Lo0Esa/yBQm/pG/Ng=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RRGZZXD/2IUTmjLIVYyeT8C0Ru8JDdgqjUfHQ2vr8CjfF16bxjWNmHioGmrDAVqG5ZdOcyTVan33MNAj3ULyXxMJVMai9G68hP4hJQs1mnM+V9K+IAi2hVQjCjTU2CVbbtEheO+a83mV/18Ylmn3FczcDC+7qwg/rfYROMi2vHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNXzG0LBnz6M4b8;
+	Fri, 12 Sep 2025 19:59:38 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 61A8214038F;
+	Fri, 12 Sep 2025 20:02:19 +0800 (CST)
+Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
+ 2025 14:02:18 +0200
+Date: Fri, 12 Sep 2025 13:02:16 +0100
+From: Jonathan Cameron <jonathan.cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
+ Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
+	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
+	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
+ Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH v2 17/29] arm_mpam: Extend reset logic to allow devices
+ to be reset any time
+Message-ID: <20250912130216.00006d92@huawei.com>
+In-Reply-To: <20250910204309.20751-18-james.morse@arm.com>
+References: <20250910204309.20751-1-james.morse@arm.com>
+	<20250910204309.20751-18-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/09/12 10:31:00
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: mdmitrichenko@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 66 0.3.66 fc5dda3b6b70d34b3701db39319eece2aeb510fb, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, {Tracking_spam_in_reply_from_match_msgid}, astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;127.0.0.199:7.1.2;lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 196220 [Sep 12 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/09/12 09:49:00 #27811571
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/09/12 11:18:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-From: Shuicheng Lin <shuicheng.lin@intel.com>
+On Wed, 10 Sep 2025 20:42:57 +0000
+James Morse <james.morse@arm.com> wrote:
 
-commit 4846856c3a4afa882b6d1b842ed2fad6f3781f4d upstream.
+> cpuhp callbacks aren't the only time the MSC configuration may need to
+> be reset. Resctrl has an API call to reset a class.
+> If an MPAM error interrupt arrives it indicates the driver has
+> misprogrammed an MSC. The safest thing to do is reset all the MSCs
+> and disable MPAM.
+> 
+> Add a helper to reset RIS via their class. Call this from mpam_disable(),
+> which can be scheduled from the error interrupt handler.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+> Changes since v1:
+>  * more complete use of _srcu helpers.
+>  * Use guard macro for srcu.
 
-Memory allocated with drmm_kzalloc() should not be freed using
-kfree(), as it is managed by the DRM subsystem. The memory will
-be automatically freed when the associated drm_device is released.
-These 3 group pointers are allocated using drmm_kzalloc() in
-hw_engine_group_alloc(), so they don't require manual deallocation.
+I'm not seeing a strong reason for doing this for the case here and not
+for cases in earlier patches like in mpam_cpu_online()  I'm a fan of using
+these broadly in a given code base, so would guard(srcu) in those earlier patches
+as well.
 
-Fixes: 67979060740f ("drm/xe/hw_engine_group: Fix potential leak")
-Signed-off-by: Shuicheng Lin <shuicheng.lin@intel.com>
-Reviewed-by: Matthew Brost <matthew.brost@intel.com>
-Signed-off-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Link: https://lore.kernel.org/r/20250724193854.1124510-2-shuicheng.lin@intel.com
-(cherry picked from commit f98de826b418885a21ece67f0f5b921ae759b7bf)
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Mikhail Dmitrichenko <mdmitrichenko@astralinux.ru>
----
-v2: upstream commit 67979060740f7f978c8cb580ccea6c91154150f9 was
-included in PATCH v2 2/3 because it also doesn't present in 6.12 
-and commit 4846856c3a4afa882b6d1b842ed2fad6f3781f4d fixes
-issue from 67979060740f7f978c8cb580ccea6c91154150f9. Upstream
-commit c367b772e6d89d8c7b560c7df7e3803ce6b8bcea was included
-in PATCH v2 1/3 because changes from 
-67979060740f7f978c8cb580ccea6c91154150f9 require __drmm_workqueue_release.
- drivers/gpu/drm/xe/xe_hw_engine_group.c | 28 ++++++-------------------
- 1 file changed, 6 insertions(+), 22 deletions(-)
+Anyhow, one other trivial thing inline that you can ignore or not as you wish.
 
-diff --git a/drivers/gpu/drm/xe/xe_hw_engine_group.c b/drivers/gpu/drm/xe/xe_hw_engine_group.c
-index 9ace3993caee..eef3a6479bfd 100644
---- a/drivers/gpu/drm/xe/xe_hw_engine_group.c
-+++ b/drivers/gpu/drm/xe/xe_hw_engine_group.c
-@@ -75,25 +75,18 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
- 	enum xe_hw_engine_id id;
- 	struct xe_hw_engine_group *group_rcs_ccs, *group_bcs, *group_vcs_vecs;
- 	struct xe_device *xe = gt_to_xe(gt);
--	int err;
- 
- 	group_rcs_ccs = hw_engine_group_alloc(xe);
--	if (IS_ERR(group_rcs_ccs)) {
--		err = PTR_ERR(group_rcs_ccs);
--		goto err_group_rcs_ccs;
--	}
-+	if (IS_ERR(group_rcs_ccs))
-+		return PTR_ERR(group_rcs_ccs);
- 
- 	group_bcs = hw_engine_group_alloc(xe);
--	if (IS_ERR(group_bcs)) {
--		err = PTR_ERR(group_bcs);
--		goto err_group_bcs;
--	}
-+	if (IS_ERR(group_bcs))
-+		return PTR_ERR(group_bcs);
- 
- 	group_vcs_vecs = hw_engine_group_alloc(xe);
--	if (IS_ERR(group_vcs_vecs)) {
--		err = PTR_ERR(group_vcs_vecs);
--		goto err_group_vcs_vecs;
--	}
-+	if (IS_ERR(group_vcs_vecs))
-+		return PTR_ERR(group_vcs_vecs);
- 
- 	for_each_hw_engine(hwe, gt, id) {
- 		switch (hwe->class) {
-@@ -116,15 +109,6 @@ int xe_hw_engine_setup_groups(struct xe_gt *gt)
- 	}
- 
- 	return 0;
--
--err_group_vcs_vecs:
--	kfree(group_vcs_vecs);
--err_group_bcs:
--	kfree(group_bcs);
--err_group_rcs_ccs:
--	kfree(group_rcs_ccs);
--
--	return err;
- }
- 
- /**
--- 
-2.39.2
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+
+>  * Dropped a might_sleep() - something else will bark.
+> ---
+>  drivers/resctrl/mpam_devices.c | 56 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 54 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
+> index e7faf453b5d7..a9d3c4b09976 100644
+> --- a/drivers/resctrl/mpam_devices.c
+> +++ b/drivers/resctrl/mpam_devices.c
+> @@ -842,8 +842,6 @@ static int mpam_reset_ris(void *arg)
+>  	u16 partid, partid_max;
+>  	struct mpam_msc_ris *ris = arg;
+>  
+> -	mpam_assert_srcu_read_lock_held();
+> -
+>  	if (ris->in_reset_state)
+>  		return 0;
+>  
+> @@ -1340,8 +1338,56 @@ static void mpam_enable_once(void)
+>  	       mpam_partid_max + 1, mpam_pmg_max + 1);
+>  }
+>  
+> +static void mpam_reset_component_locked(struct mpam_component *comp)
+> +{
+> +	struct mpam_msc *msc;
+> +	struct mpam_vmsc *vmsc;
+> +	struct mpam_msc_ris *ris;
+> +
+> +	lockdep_assert_cpus_held();
+> +
+> +	guard(srcu)(&mpam_srcu);
+> +	list_for_each_entry_srcu(vmsc, &comp->vmsc, comp_list,
+> +				 srcu_read_lock_held(&mpam_srcu)) {
+> +		msc = vmsc->msc;
+
+Might be worth reducing scope of msc and ris
+
+> +
+> +		list_for_each_entry_srcu(ris, &vmsc->ris, vmsc_list,
+> +					 srcu_read_lock_held(&mpam_srcu)) {
+> +			if (!ris->in_reset_state)
+> +				mpam_touch_msc(msc, mpam_reset_ris, ris);
+> +			ris->in_reset_state = true;
+> +		}
+> +	}
+> +}
+
 
 
