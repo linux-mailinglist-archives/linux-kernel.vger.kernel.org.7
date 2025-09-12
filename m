@@ -1,113 +1,124 @@
-Return-Path: <linux-kernel+bounces-814792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0950DB558D0
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:04:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21593B558D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE599179FEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:04:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811FA1B25518
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240C4283FF0;
-	Fri, 12 Sep 2025 22:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D121C27280C;
+	Fri, 12 Sep 2025 22:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Joz2Dj7x"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="U/TSqtgk"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3138F4C81
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A304259CBB
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757714654; cv=none; b=iKBw6epwI1/+gHgSnyIKxrRWIKYhh2aJALN0ZaJSsdlhu0y3zi58TQs7fMN+GcAW1+tzMeCrQsR7RrRpvMlo+BPoghHZHpp8sFMIeuQmu72pv3L9NX1O0byLbA17JsAkTJGJ5bqU2dmWHh0te6HUpz6Sjf4u4IRb3g20bX45eXw=
+	t=1757714873; cv=none; b=ZqH7tRh+KCHBbXrRzJ7vZueCK5s3k+jGPVcatejEyG9QMXFcIFhreFYtJy9fZl2qMhaYs/Wj4dhkh9CZ90nKkc6RfPaQkBwxbcaH40LnB2vOM707J4Nl8JDxR2GS2PPNAGG+m1pc+HCyxuNjp7I6JRDFc5ytqlrTKaKddaWzfdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757714654; c=relaxed/simple;
-	bh=1k4h6sSYZLPEb1T1GQD57kAM3wQMLuiOfTd5z9kKNAU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MhCUueGFzH5i/XC9pPDmHVMIpwFP0rtKITEUVkrD5Ji68iG4WdHckWZCRXa+vFpk9SROA0FEoCnKfGha6NfEfjEpVZKlVR+SxS4/S2tXh/Q+6YN6bAO4HJR5uAn1XgPDvhRTAFlpIN/Lf7w6uN97ET7RhLWnijCuaRi4Yqd9pcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Joz2Dj7x; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-329e0a8337bso3431596a91.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:04:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757714651; x=1758319451; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JOnXqCTneQzY1nlQxY8LD3yfTLcbdMGUV0lpGUO6Hn4=;
-        b=Joz2Dj7xuWOLFb12MFvfYFLVP0Qd6z8LnQRFxfLlo+/nvld+oMDlK5itnJHTgH6EM3
-         C4b/OPcJHZAXQmVe9xQ8KGjdOl3CgDN+//ZNXpTzJaiCx7mLNdVbEMGHoxzdUQ8ErlGw
-         VzN2Jt9SOSJDAy/r1LVK/QRYObHS0zEqb4H2W8f2kLsjO0Q8u1gGLpE+mOaayHI+CSRg
-         mGkRB9/J/qjr1huOeh9Z96Myn2wZPw1m13zu0XzLXRfeKoltHEgzrNASdgIKR0/OGEU2
-         5jTv+No08a1ZWsZ9mct0xx3VMTV9cmgxQJ5TZtrTscMctCQLUOEtny6+hgLh8C0/jnlY
-         MZ/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757714651; x=1758319451;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JOnXqCTneQzY1nlQxY8LD3yfTLcbdMGUV0lpGUO6Hn4=;
-        b=bmiAYefMGyfames0uioSe9YHsiONyvmY59nAB1rR7KG6LErroHKQQkp+76cnsMgAX+
-         ZztckVyDpcmh20xldO43YwVsIdtwu62gjG+41tzyBmxwJc9/EBZHgddYcrrUuIVkUFWx
-         wwcCn2NfuvvBmND2+/+xq7HQmZ8Xk9kkGJdYt64M4fEmV/c5aSNR7MCEoGtJCvryx0IL
-         7ungk+IVYkZA0vRTcM+WhW2ABVOTV43gdaoimsFOyRStZW6LaoJILlJL3/dQTcXQIVN0
-         tm2EVHtEjA6an96+gMGBeywP6dUKcFj5MBHQQOB3nMELFsehQMURXvqmP4PVJRJoUGf+
-         MCUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsIwwnvjYzLBFlW5RCNSBmwwQ5yk4ZuZppS3jKEFFKK008Ga0w/aZdmiNE3dl1yXiz59cxDzTs456vunE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0RmbubqTm0c5UzOdSk0DMzEpQ5mWjQ1yIYPTxck1BPnCxP5D2
-	R10zhNtWV6VEc/kDFG8gXVVPnSLrrzEf7154Ck0VdglYKRtWZeuJ4fHiuY7jnqkOykr1yVOB7Fo
-	6GA/Tcw==
-X-Google-Smtp-Source: AGHT+IHaZW4YTkAwLQ+mFC02kVapk34S7ndyYyK/6P4OrjB6MmeThbeRPbd4boVT3o71WQ0UAr704qqNMzw=
-X-Received: from pjbqd7.prod.google.com ([2002:a17:90b:3cc7:b0:32b:9872:3300])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d2c7:b0:32d:dd0e:d319
- with SMTP id 98e67ed59e1d1-32de4fb3bf8mr4359183a91.32.1757714651232; Fri, 12
- Sep 2025 15:04:11 -0700 (PDT)
-Date: Fri, 12 Sep 2025 15:04:09 -0700
-In-Reply-To: <20250909093953.202028-15-chao.gao@intel.com>
+	s=arc-20240116; t=1757714873; c=relaxed/simple;
+	bh=+yph0vA7hH7D2dOH8dcz8OTQ5zI8ZyZYi0J1x57wbuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RSFGa977XX/WAjTvhjtixhVG4gbq2hpZ/1g+S001jZjRGLwR52emz16cuLD8PR+DkIAW1zuW7Ph31yxMhlsdpWavzGsj9CjZ4F03+LGf3eM7v+xyCJFQXXUZ0Or3nzCSiWk1VQYwgGjOd+Ho0SR/i/WS3+ZI8XAMkjVdwTeFRzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=U/TSqtgk; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=XtZM
+	38dcKGfPDowHADfBNhN+yZMd/DBKAr/Q56lBQhU=; b=U/TSqtgky9mRHKpLYuTy
+	UfXd7XedJP9Hk+5/2IqTWU+ncNGhELZK0Vc0RXbSYaIz7Hw6VMZAT5JoyMYY6z4g
+	WzMES95KXJxGoQ7e6ctjM2JN/2k4u/gVXKL/EPXHHKnINEvdgPhLK+f+fB3cHt9L
+	BpsliJIKV+ndVoI8YPP2/7JNqgTQ5aLQNm6R5gAL99+5MFMbIChu6laV+I2f8W3m
+	RpmupwmKLyH5mtQ8NSf2xEebzmoGbDEbi8by9Z1l1UyIN+iGY8UbAOXQISM6qt8c
+	5VvYJPYCkQGivyZtg4DnvEdmEwmxNTAeKfuH6DGfDaXfeL6rCKUkNLis+l/AE6hJ
+	Eg==
+Received: (qmail 1499859 invoked from network); 13 Sep 2025 00:07:43 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:07:43 +0200
+X-UD-Smtp-Session: l3s3148p1@dRQG4qE+rtYgAQnoAHJ8AC93OVDMgFWg
+Date: Sat, 13 Sep 2025 00:07:42 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Janne Grunau <j@jannau.net>
+Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hector Martin <marcan@marcan.st>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Mark Kettenis <kettenis@openbsd.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sasha Finkelstein <fnkl.kernel@gmail.com>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org,
+	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
+	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 10/37] dt-bindings: i2c: apple,i2c: Add apple,t6020-i2c
+ compatible
+Message-ID: <aMSZrp3pbS2CeBOE@shikoro>
+References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
+ <20250828-dt-apple-t6020-v1-10-507ba4c4b98e@jannau.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250909093953.202028-1-chao.gao@intel.com> <20250909093953.202028-15-chao.gao@intel.com>
-Message-ID: <aMSY2e2vNe1D-hHj@google.com>
-Subject: Re: [PATCH v14 14/22] KVM: VMX: Set host constant supervisor states
- to VMCS fields
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, john.allen@amd.com, 
-	mingo@kernel.org, mingo@redhat.com, minipli@grsecurity.net, 
-	mlevitsk@redhat.com, namhyung@kernel.org, pbonzini@redhat.com, 
-	prsampat@amd.com, rick.p.edgecombe@intel.com, shuah@kernel.org, 
-	tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com, 
-	xiaoyao.li@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250828-dt-apple-t6020-v1-10-507ba4c4b98e@jannau.net>
 
-On Tue, Sep 09, 2025, Chao Gao wrote:
->  void set_cr4_guest_host_mask(struct vcpu_vmx *vmx)
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 79861b7ad44d..d67aef261638 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9890,6 +9890,18 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
->  		return -EIO;
->  	}
->  
-> +	if (boot_cpu_has(X86_FEATURE_SHSTK)) {
+On Thu, Aug 28, 2025 at 04:01:29PM +0200, Janne Grunau wrote:
+> After discussion with the devicetree maintainers we agreed to not extend
+> lists with the generic compatible "apple,i2c" anymore [1]. Use
+> "apple,t8103-i2c" as fallback compatible as it is the SoC the driver
+> and bindings were written for.
+> 
+> This block is compatible with t8103, so just add the new per-SoC
+> compatible using apple,t8103-i2c as base.
+> 
+> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
+> 
+> Signed-off-by: Janne Grunau <j@jannau.net>
+> Acked-by: Andi Shyti <andi.shyti@kernel.org>
 
-This needs to check for "|| IBT"
+Applied to for-next, thanks!
 
-> +		rdmsrq(MSR_IA32_S_CET, kvm_host.s_cet);
-> +		/*
-> +		 * Linux doesn't yet support supervisor shadow stacks (SSS), so
-> +		 * KVM doesn't save/restore the associated MSRs, i.e. KVM may
-> +		 * clobber the host values.  Yell and refuse to load if SSS is
-> +		 * unexpectedly enabled, e.g. to avoid crashing the host.
-> +		 */
-> +		if (WARN_ON_ONCE(kvm_host.s_cet & CET_SHSTK_EN))
-> +			return -EIO;
-> +	}
 
