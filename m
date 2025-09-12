@@ -1,239 +1,300 @@
-Return-Path: <linux-kernel+bounces-814414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6A3B553D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:39:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8306FB553D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C208B5C2758
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:39:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7DC1B2284F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:40:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904A8313533;
-	Fri, 12 Sep 2025 15:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XPtRqWx8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E80F31353A;
+	Fri, 12 Sep 2025 15:39:31 +0000 (UTC)
+Received: from lgeamrelo03.lge.com (lgeamrelo03.lge.com [156.147.51.102])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E491031283E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03B42253FD
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.147.51.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757691556; cv=none; b=emI2lYiKdGnU+41RE075RFXo538/n0/s9OQJPS/BJY5MBtg2ROeo+8Pg8GQM3iB//kOftPiPXwFUxj77VecCDO8I2UOeFcGhUni1pKkOr8n/yJpY336RLBgL3yYbfqXSU4j9QhE6jdWh4La94bo6miUmY2W2ozltAlpzJXivfqc=
+	t=1757691570; cv=none; b=dI0pGjCVAy4f1HOYWaU4DpRYqw/OsI7kI3X2Nv99NapQkWPIWG1Gpuc5r5S2pSmqRWlv07blJsWDUxX4lZ2JJyrAzw1m8yBuxXJAuLKBP8M2ZcuurTs92+7bkXQ4nFWPY8Jlg+gXKbRtM2PugWBZjRABdPFO9zJvA+6lyiv7BfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757691556; c=relaxed/simple;
-	bh=GRXHdoeXgs2rRRY6tyhSrt4hGOweA6vNgajT9/12Zek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MfaDree1zBOy4Pri99IHEpwPNXgN7iPBqELpgOPmzR249bbJsKSLayM39NEY5Ck+xcuOulbnqGq0xcZ9UNuey65wsn7ECRyobDgbfUUpGJxBX5mgw+FdKAnnNP5+hJDp9uVBoy6fFUMxRlJQwJSYdb/JgXqo5ZG+asw8n1K3K50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XPtRqWx8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757691553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2pXtBqfp2bEFBqLzvF+btY6ON3Qyio7xhH4wSuKco70=;
-	b=XPtRqWx8H5JnYl+NW3HknulchBddcW1hhOm/Ww7YMwH6aG9QnVNwlgRYzV2htv+ooBsQhF
-	75/XmGR0SVCyXhMwM9QZIz+U8fdn/DptvQ6JMDVoXK3m90WXiYALtrvZGW4hLDa4JZ+EqM
-	7oSW+lAT9v3Xg2uTIXSrjMq6jJkmcM8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-145-FEcnJ7cIPvaV2ZurE4O5Dg-1; Fri, 12 Sep 2025 11:39:12 -0400
-X-MC-Unique: FEcnJ7cIPvaV2ZurE4O5Dg-1
-X-Mimecast-MFC-AGG-ID: FEcnJ7cIPvaV2ZurE4O5Dg_1757691551
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45de27bf706so10227445e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:39:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757691551; x=1758296351;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2pXtBqfp2bEFBqLzvF+btY6ON3Qyio7xhH4wSuKco70=;
-        b=XY+tPZikma6MK3cvet/Nm2b639NyXRcQLqyM9F8Xu5LfqpNr+eMtYegIhnGcmNIFhV
-         wypTxAmOJ428aOA9Re+SXldMYySGHDKu24ZJDzJ3D6u1gumtgnX47X+SdJmBYEKCop8Z
-         xGb1IR1cG7u1qvVzB9s7HcAcjcj4e4HnZrvBrOkJ/5p6T3miFvYGm8f8ZHm5/9zlMoAn
-         FgJ7CQjviwfiDWLCJ5nnYF7h4Oq+Qp5sL7YUchv92yjD17fzTQhPP9iMANVSHPYbefBR
-         GYs9vqOCNtoswzrReKvEF1QmKWsyZHoAauawganivu4upgZTKH5MvKKJbC6J339WRCI9
-         YwVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAIpl4jMwei6gLYCuqP8j388T/QllZVkJLW6VK0i751jVTn73XLAzf+BdZeEMuA5JMKKhJdYwz8MeHV64=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxoDPPB75RSIzz2kpxyK2dbEXw75MO4Y08CBfAyYgDDeUfWb/M
-	f+lrzZKOn4Paikmokxy8KpxZd9IJ7PGrwtQf89x76o+KxpyS/2lFQnIzm7KrDUNnBXzytbgt2Ea
-	6A+VCc0AiODAMKBWpcqZ0EBOaccevJKshw00kmGioXpqTAqIATe51oK2S3am9ABWrkQ==
-X-Gm-Gg: ASbGncu82FMlDwNFIz+MaYIJ0aqA/0Fw6nN2MQ6E+ZVjhUzDDFj60UxqCtj8N8Ks6KO
-	FgsYS+gJuKnMAZ3Gr4a7I6Wpn2YezXqpbOfrUGx94C4jKK7crK5aa3KrgZlyCMTZUAsdcEHNFa6
-	0S4Q4XDSdeCzhm7mkv5wXxIxLXQnW2J7s2jGvdwzFhhafmCx9XChG7iXbfCutbgwz17W340T4XD
-	77pMnAWyadGUOnJkBt0r6jxBOUWo5oSndEcfpfLJKB+TkUrZ5lg6ydBn+J5eHd5pOF+VlF0VdVP
-	nZbc/qF/loQRbN1bpYdo+3VaEkenV/xQLv9++5vbpLGbfKvmjXPwwMEXfZglXu5LbuYNbGbI94w
-	pW0t9xvEC6/uElYwuklkCvOq0p+nAIOsTefUkaTb5TcJd9tKM1rH8sAGblfnjm9UUWLI=
-X-Received: by 2002:a05:600c:1991:b0:45d:d522:5b2c with SMTP id 5b1f17b1804b1-45f2120717dmr33990965e9.34.1757691551021;
-        Fri, 12 Sep 2025 08:39:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGu0gMuqkCIPX52SGtePGrKmTkbOBkfc+AQ06Rj5/vieuYX7W284rbFR/kLNgC2eQweLIIqGw==
-X-Received: by 2002:a05:600c:1991:b0:45d:d522:5b2c with SMTP id 5b1f17b1804b1-45f2120717dmr33990575e9.34.1757691550592;
-        Fri, 12 Sep 2025 08:39:10 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e01984a62sm37029785e9.4.2025.09.12.08.39.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 08:39:10 -0700 (PDT)
-Message-ID: <55b727fc-8fd3-4e03-8143-1ed6dcab2781@redhat.com>
-Date: Fri, 12 Sep 2025 17:39:08 +0200
+	s=arc-20240116; t=1757691570; c=relaxed/simple;
+	bh=QlYpP7d3l6pQnMel5vWkFjSrhSuXbfiulSpKqcZMvJA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V59/391rKlWutAk812GT9i2gwqSp/9LNdwDaCtOPiX7TnoL1m1sOmIm7EBdDKiaL2Ww9fUarOjqFxyZnA2LrTad+9AVVwR2PP2Jzr/nAndF/DAiqqOzJeVFWa9rn0W6ASbUVid5KRlNhA/qzekrQfVZ5sPLYr1g9hte+g5GPmjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com; spf=pass smtp.mailfrom=lge.com; arc=none smtp.client-ip=156.147.51.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lge.com
+Received: from unknown (HELO yjaykim-PowerEdge-T330) (10.177.112.156)
+	by 156.147.51.102 with ESMTP; 13 Sep 2025 00:39:19 +0900
+X-Original-SENDERIP: 10.177.112.156
+X-Original-MAILFROM: youngjun.park@lge.com
+Date: Sat, 13 Sep 2025 00:39:19 +0900
+From: YoungJun Park <youngjun.park@lge.com>
+To: Chris Li <chrisl@kernel.org>
+Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, shikemeng@huaweicloud.com,
+	kasong@tencent.com, nphamcs@gmail.com, bhe@redhat.com,
+	baohua@kernel.org, cgroups@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, gunho.lee@lge.com,
+	iamjoonsoo.kim@lge.com, taejoon.song@lge.com,
+	Matthew Wilcox <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Kairui Song <ryncsn@gmail.com>, Wei Xu <weixugc@google.com>
+Subject: Re: [PATCH 1/4] mm/swap, memcg: Introduce infrastructure for
+ cgroup-based swap priority
+Message-ID: <aMQ+pzsINPPE8EQ6@yjaykim-PowerEdge-T330>
+References: <aLJ4fEWo7V9Xsz15@yjaykim-PowerEdge-T330>
+ <CACePvbW_Q6O2ppMG35gwj7OHCdbjja3qUCF1T7GFsm9VDr2e_g@mail.gmail.com>
+ <aLRTyWJN60WEu/3q@yjaykim-PowerEdge-T330>
+ <CACePvbVu7-s1BbXDD4Xk+vBk7my0hef5MBkecg1Vs6CBHMAm3g@mail.gmail.com>
+ <aLXEkRAGmTlTGeQO@yjaykim-PowerEdge-T330>
+ <CACePvbXAXbxqRi3_OoiSJKVs0dzuC-021AVaTkE3XOSx7FWvXQ@mail.gmail.com>
+ <aLqDkpGr4psGFOcF@yjaykim-PowerEdge-T330>
+ <CAF8kJuPuOWUEMg6C9AnAA-mddgHRjuMVqURrbk6bUHxAmEvgFQ@mail.gmail.com>
+ <aL3Dav4RLvtLliYC@yjaykim-PowerEdge-T330>
+ <CAF8kJuPnaJi=aKFwEknoh-eNgUPoje29EiKApmaWur+GqBGc0g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] KVM: guest_memfd: add generic population via write
-To: kalyazin@amazon.com, James Houghton <jthoughton@google.com>,
- "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "shuah@kernel.org" <shuah@kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "michael.day@amd.com" <michael.day@amd.com>,
- "Roy, Patrick" <roypat@amazon.co.uk>, "Thomson, Jack"
- <jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>,
- "Cali, Marco" <xmarcalx@amazon.co.uk>
-References: <20250902111951.58315-1-kalyazin@amazon.com>
- <20250902111951.58315-2-kalyazin@amazon.com>
- <CADrL8HV8+dh4xPv6Da5CR+CwGJwg5uHyNmiVmHhWFJSwy8ChRw@mail.gmail.com>
- <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com>
- <8e55ba3a-e7ae-422a-9c79-11aa0e17eae9@redhat.com>
- <bc26eaf1-9f01-4a65-87a6-1f73fcd00663@amazon.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <bc26eaf1-9f01-4a65-87a6-1f73fcd00663@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF8kJuPnaJi=aKFwEknoh-eNgUPoje29EiKApmaWur+GqBGc0g@mail.gmail.com>
 
-On 12.09.25 16:48, Nikita Kalyazin wrote:
-> 
-> 
-> On 12/09/2025 14:36, David Hildenbrand wrote:
->> On 11.09.25 12:15, Nikita Kalyazin wrote:
->>>
->>>
->>> On 10/09/2025 22:23, James Houghton wrote:
->>>> On Tue, Sep 2, 2025 at 4:20 AM Kalyazin, Nikita
->>>> <kalyazin@amazon.co.uk> wrote:
->>>>>
->>>>> From: Nikita Kalyazin <kalyazin@amazon.com>
->>>>
->>>> Hi Nikita,
->>>
->>> Hi James,
->>>
->>> Thanks for the review!
->>>
->>>
->>>>>
->>>>> write syscall populates guest_memfd with user-supplied data in a
->>>>> generic
->>>>> way, ie no vendor-specific preparation is performed.  This is supposed
->>>>> to be used in non-CoCo setups where guest memory is not
->>>>> hardware-encrypted.
->>>>
->>>> What's meant to happen if we do use this for CoCo VMs? I would expect
->>>> write() to fail, but I don't see why it would (seems like we need/want
->>>> a check that we aren't write()ing to private memory).
->>>
->>> I am not so sure that write() should fail even in CoCo VMs if we access
->>> not-yet-prepared pages.  My understanding was that the CoCoisation of
->>> the memory occurs during "preparation".  But I may be wrong here.
->>
->> But how do you handle that a page is actually inaccessible and should
->> not be touched?
->>
->> IOW, with CXL you could crash the host.
->>
->> There is likely some state check missing, or it should be restricted to
->> VM types.
-> 
-> Sorry, I'm missing the link between VM types and CXL.  How are they related?
+Hello Chris Li :D
 
-I think what you explain below clarifies it.
+> On Sun, Sep 7, 2025 at 10:40 AM YoungJun Park <youngjun.park@lge.com> wrote:
+> >
+> > Hi, Chris Li
+> >
+> > Thank you for your thoughtful and quick feedback.
+> >
+> > > > If you remove the
+> > > > swap tier. the range of that tier merges to the neighbour tier.  That
+> > > > way you don't need to worry about the swap file already having an
+> > > > entry in this tier you swap out.
+> > >
+> > > Should the configured mask simply be left as-is,
+> > > even if (a) the same key is later reintroduced with a different order (e.g.,
+> > > first → third), or (b) a merge causes the cgroup to use a lower tier it did not
+> >
+> > Let me clarify my concern with a concrete example.
+> > Suppose:
+> > 1. SSD → tier "A" (31–40), HDD → "B" (21–30), HDD2 → "C" (10–20), HDD3 → "D" (0–9)
+> > 2. A cgroup uses tier "A"
+> > 3. SSD is swapped off → tier "A" becomes a hole
+>
+> There is just no swap device in A. A still (31-40).
 
-> 
-> My thinking was it is a regular (accessible) page until it is "prepared"
-> by the CoCo hardware, which is currently tracked by the up-to-date flag,
-> so it is safe to assume that until it is "prepared", it is accessible
-> because it was allocated by filemap_grab_folio() ->
-> filemap_alloc_folio() and hasn't been taken over by the CoCo hardware.
-> What scenario can you see where it doesn't apply as of now?
+I implicitly meant that A would be removed. After step 3  SSD is swapped off, 
+tier A would be REMOVED via the interface.
 
-Thanks for clarifying, see below.
+>
+> > 4. Tier "D" is removed
+> > 5. Tier "A" is reassigned to range (0–9)
+> > 6. Then a cgroup configured with "A" cannot actually use "A" (0~9)
+>
+> That would require each cgroup to hold a reference count of A.
+> So A can't be re-assign while having a cgroup using A. in 5.
 
-> 
-> I am aware of an attempt to remove preparation tracking from
-> guest_memfd, but it is still at an RFC stage AFAIK [1].
-> 
->>
->> Do we know how this would interact with the direct-map removal?
-> 
-> I'm using folio_test_uptodate() to determine if the page has been
-> removed from the direct map as kvm_gmem_mark_prepared() is what
-> currently removes the page from the direct map and marks it as
-> up-to-date.  [2] is a Firecracker feature branch where the two work in
-> combination.
+Yes, exactly.
+I also think cgroups should hold references.
+If we only rely on swap devices for references, complexity decreases, but 
+the issue I mentioned could still occur.
 
-Ah, okay. Yes, I recalled [1] that we wanted to change these semantics 
-to be "uptodate: was zeroed", and that preparation handling would be 
-essentially handled by the arch backend.
+> > 7. Later a new tier "E" is added and assigned (31–40)
+> > 8. A cgroup now configured with "E" refers to the same numeric range (31–40),
+> >    but the meaning has changed compared to when it used "A".
+>
+> I consider the user reassigning the same tier name with different
+> ranges is a user error. They want to shoot themself in the foot, we
+> can't stop them. Maybe we shouldn't even try to stop them. It does not
+> make sense to complicate things just to prevent users from doing
+> nonsense things. It has no additional complexity cost, sure.
 
--- 
-Cheers
+I also disagree with reassigning the same name.
 
-David / dhildenb
+Assuming no cgroup tier references exist, I was referring to a situation where 
+"A" is removed and then reassigned.
+In that case, the cgroup that originally specified "A" would be unable to 
+reference its intended tier range.
+If we align on holding cgroup references, the concern I raised would be 
+cleanly resolved.
 
+>
+> >
+> > This feels unintuitive. I would prefer invalidating the mask if the referenced
+> > tier is removed, so stale references don't silently point to a different tier.
+>
+> If there is a life cycle of the invalidation? Forever does not seem to
+> be good either. It will prevent user reuse the tier range even there
+> is no cgroup referencing that before.
+>
+> If you want this kind of invalidation, I suggest just make a reference
+> count on the "A", each cgroup that references "A" holds a reference
+> count. It will be tricky to reference count the default on case
+> though, basically every tier is reference counted.
+
+Yes, I agree!
+
+> > > I talked to Wei about swap tiers a bit. Add him to the CC as well. He
+> > > made me realize that we need two level things in the cgroup
+> > > "swap.tiers".
+> > > ...
+> > > For the operation, each tier will need two bits, including the
+> > > default. One bit select this timer off, one bit select this tier on.
+> > > e.g. we have 16 tiers including the default, then all 16 tiers take up 32 bits.
+> >
+> > My understanding is:
+> >
+> > Per tier (2-bit state)
+> > - `+` → always on (bit 10)
+> > - `-` → always off (bit 01)
+> > - missing → inherit from parent (bit 00)
+> > - `11` is invalid
+>
+> Right.
+>
+> >
+> > Default tier
+> > - `+` means inherit parent as the base
+> > - `-` means start from zero (ignore parent)
+> > - missing means (this is the part I want to confirm) nothing?
+>
+> + means override default to "on" for all, allow every tier. (starting
+> for every tier)
+> - means override default to "off" for all. disallow every tier.
+> (starting from zero)
+
+Ack.
+So for the missing case, is it "nothing"? 
+Isn't it that we inherit from the parent and then incrementally add or 
+remove from there?
+
+> > So in my view "default" is an **inheritance control knob**, whereas in your
+> > explanation "default" is also a **special tier** with its own 2-bit state.
+> > Is that the right reading?
+>
+> It is a knob to override all. Yes it is a special tier wild cast. If
+> the tier was not mentioned using +tier_name or -tier_name, the tier
+> uses the default on/off value. If a tier has more than one on/off
+> operation, the last write wins (closer to the leaf node cgroup) wins.
+>
+> Therefore, if the cgroup has default override was set, there is no
+> need to lookup the parent any more, it overrides every tier already.
+> That provides a way for the child cgroup to overwrite all parent swap
+> tiers selection.
+>
+> >
+> > If my understanding is correct, I'm also happy to adopt the interface format
+> > you proposed.
+> >
+> > Over the weekend I kept thinking about it, and your proposal looks like a
+> > more flexible interface. It also has clear similarities to how cgroup
+> > controllers are added, so the format seems acceptable to me.
+>
+> It is more flexible and I have a simple way to perform the parent
+> lookup on/off evaluation with short cuts. I send that out in the other
+> email.
+
+Ack. Thank you once again for the detailed pseudo-code proposal.
+
+> > I have one remaining concern about cgroup semantics.
+> > The inheritance and resource model we're discussing seems to diverge
+> > somewhat from existing cgroup v2 conventions. Since we've aligned that
+> > this effectively acts as QoS control, it also makes me wonder whether we
+> > should proactively propose a doc update to the "Resource Distribution
+> > Models" section so the concept is explicitly covered. This may be me
+> > being overcautious, so I'd appreciate your view.
+>
+> More documents is better. Yes it diverges from the existing V2
+> convention as the parent contains the child. QoS is a policy, it is
+> relative indpendent of parents, unlike the containing relationship.
+
+Yes, I'll think about this more and share if I have something clearer to 
+discuss.
+
+> > > Wei also raises one very important point. Because zswap is not tight
+> > > to a swap device. We might want a predefined tier bit to describe
+> > > zswap. e.g. the first tier bit is always given to zswap and the tier
+> > > name is always zswap, the priority range can be assigned from
+> > > mm/swap/tiers interface.
+> >
+> > Ack. Reserving a predefined tier bit for zswap makes sense.
+> >
+> > As a passing thought (not a strong proposal): a few common tiers (e.g., zswap,
+> > ssd, hdd, remote) could be predefined and non-removable, with users inserting
+> > custom ranges between or apart from them. For example, if an SSD tier is
+> > predefined, `swapon` for SSD devices could be limited to that tier—this would
+> > align with grouping by service speed and nudge users toward sensible configs.
+>
+> Then we will need to assign a fixed default range for them thus might
+> make this more complex when people actually define their own tiers.
+> I think the kernel should avoid making any default scheme on the user
+> space swap tiers. Just like the software that manages the cgroup
+> controls it.
+>
+> There are other complications. e.g. I have priority 3: first SSD drive
+> 1, then priority 2: HDD, then priority 1: SSD driver 2.
+> Pre-configured SSD tier will not be able to describe this, the first
+> and third drive in the list is SSD. It create conflict in ordering. I
+> think it is best to avoid defining any customer definable tier.
+
+Ack. Thank you for your thoughts.
+
+> > > > * **Tier specification**
+> > > >   - Priority >= 0 range is divided into intervals, each identified by a
+> > > >     tier name. The full 0+ range must be covered.
+> > >
+> > > Not necessarily true if we allow removal of the tier and generate
+> > > holes removed range as we discussed above. Unless I understand the
+> > > previous hole idea incorrectly.
+> >
+> > Ack. I prefer allowing holes, so we don't need to enforce covering the full
+> > range simply.
+> > (I had considered usage making full-range coverage coexist with holes,
+> > but on reflection that doesn't seem necessary. complicated)
+>
+> Ack.
+
+I'm reconsidering this part.
+
+Previously, I thought about holes because we weren't holding cgroup's tier
+references.
+If there's no swap device but a cgroup references a tier, and we remove 
+that tier and let it merge, it would be very confusing for the cgroup 
+holding the reference. They implicitly uses other tier's the swap devices
+(That's why I proposed cgroup mask invalidation + holes.)
+
+If cgroups hold tier references, suppose a specific assigned middle tier 
+disappears.
+Then, merging this tier seems more natural.
+Since no swap device or cgroup is using the disappearing tier, merging 
+the tier's priority itself shouldn't be problematic.
+From the perspective of the tier being merged into, since there are no 
+swap devices in the merging tier, it won't end up using unintended swap 
+devices, so it shouldn't be an issue.
+
+So I'm thinking maybe we should go back to full range coverage + tier 
+merge.
+
+>
+> Great.
+>
+> More agreement now.
+
+Yes, we seem to agree on most things.
+Thank you again for the review!
+
+Best Regards
+Youngjun Park
 
