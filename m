@@ -1,405 +1,257 @@
-Return-Path: <linux-kernel+bounces-813578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FF5B547C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:34:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B278B547B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E811D1CC079E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C67A7587D0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C666283FC4;
-	Fri, 12 Sep 2025 09:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116C13C0C;
+	Fri, 12 Sep 2025 09:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nhvsm+K0";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="W0Erf1Oj"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3eg1vy7g"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2087.outbound.protection.outlook.com [40.107.220.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1521114
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17F98280A2F;
+	Fri, 12 Sep 2025 09:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.87
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757669500; cv=fail; b=Mb4Wa64lmbTZngVB2FAOYuPykJM9rYczN/3zfKx74XqhoXW6Bg/g5BSMmKg3AAb3y2WC+dAZXfCwZBLHcbShQiWIRNjRyawRM3YqEPMZbN1bpZx1KTUpMXtzO/Ch5A8apSpEoQy0y5/eJcEJeM/19nkuEdojsL1gFXtsWIsOQWs=
+	t=1757669476; cv=fail; b=FvoMScrSjkbxN/HkfD8nKWcu5Ikgrf34qcCsllDcpE/p0Taj3q6Tu38oSGwoyXdQIdLPblgDxvwJDUjxVeUn+ZlNtZkfwHwobMdJswTEyLSY5ep+TWgio00jSH7Q9X8scpV5XyWbi/sXQsSOFJCXUmVe20U0bli3/JJZorOM9wc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757669500; c=relaxed/simple;
-	bh=qO9aLG4TNyzCnnlu7L4yoQLfOztdNCHIgrXA7uPKi1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DcZob2rQRMExrzEHD/9MSvtRemlqDHsVJNKuKAKDLEdPuLoeWX/vqtIZZUooF3hn1UKA0YERzKp0S+hy5/D8XWq7fiqNXGJURlJqWH60NTNqwQZHRgTRHx2T3gU9B2Mcr6DKGOCdy5kdklV0l3XToMPgB9VENBKviytYjRDlo1c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nhvsm+K0; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=W0Erf1Oj; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C1uQoD016809;
-	Fri, 12 Sep 2025 09:31:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=tsGkyFWLuPaEGsmQtTalMpeuNWauV8vcMB1uLFVZ8xo=; b=
-	nhvsm+K08jH/bEwfMwii/2KovbXmNZZdizdMKKxYFGuagpUlQV6HJFIsKuVnNEBF
-	wg+6VBuBMXu42XkhTT8UxDeMmSD/hajilM8ypZvcbwTEsQd1bdYv/TCQAUYZZHsy
-	E3ONhEhFJGt2MmMRyezMmXNExAe/0+0z4pmgcscKJlS3fWNz11dZFdfYcRz/rtPZ
-	Wjnw+ZDTA0hAMsKTCmyr4zytnpJVXu1yoaOBFSnITXpw+Pe+SzGDhgGdZg5o5gpX
-	gN2/I13EG6YrKv+7GLJJSJkPg3G/dmtLvhL+meq3HlZz5RJ9ubqdhnY/VTvKTTwl
-	+3ChMVOfZBG12E8XSHMmFg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4922967xmb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 09:31:03 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 58C8K7jC002755;
-	Fri, 12 Sep 2025 09:31:01 GMT
-Received: from ph0pr06cu001.outbound.protection.outlook.com (mail-westus3azon11011026.outbound.protection.outlook.com [40.107.208.26])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 490bdm5q9p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 09:31:01 +0000
+	s=arc-20240116; t=1757669476; c=relaxed/simple;
+	bh=0FpPAc4nlNYLsJCyoTfIC0vvvBZCK162Q6e+h+0V6/A=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=o/iblxTRNBj2ERPrwIGK6/3ahf41zvsTV1P5SC/Z7mnWHciBrPDh5Sl6jEaO8MfXRN+zitmvStdwQieVMISRojIBuFvsVkItCkJa7LxqOVbsVZqjH7X1yFXEySwWuv73gCqdg6QnCBSVQ2c2CFwwz7xBcZMfTXjGsVG791JaCdE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3eg1vy7g; arc=fail smtp.client-ip=40.107.220.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K3j2uxxPMxmWd4IH0GmIpqW0VYGa7RiJM0y0j+MYWzCo/J8xUrvaO6/duJdieUnFIrlFTgUzcIMtg40Ff8s6/C1ng4t61AXKpTnArC2vPZQkpwEkEbP3aE+AxdOwzC/Zk3VyS2IEMJHknNj08Svx9p1hEbUqLKPng/Woz4wmaJ8yoxThSraVieeJcparLJsqWl5wv2HQ0uA+S2mXXXSt6ieRWVJvsTuINtWHrYOtFNR7XnDytWEdS1jVrnTQzrq3gTzr/YNfRfwcNCAB/KXVdAUr4QqA2rGNePve2rqxGpjBKBsA/8uSFIb1ilTk2Z5HKJdvTfsrg0PdSTcwsIwCcQ==
+ b=IsZsqDvpJNkzXrwqdcd5PNk5LRi9bPNK7S4ZXSGBh7zh8NayfTNSptup1HGiLyAYNaY0QVqBSnk80mBn1YnBc9iNu2KRC/uBGZqP87eypcByrS5n+mTWsUx2P5fU8g2b+YD6Igqkqm4RAfZNzsc7j9eUv2LJkTbc7Z5PLMRlU99Htz7HeoOSgn4vXclZ2p7tXmcJHoPWyuDKGRWJZ7bblxMHdx+8hZQBTQEnBysYXnkLcXwSzBbh5EkHtzBSx6WcrEmxta4uJmiK8rE5vGNuIAPresznJ8HHKGhyUxNYue/qqAr68pIVrXA0k4jFLPeDCwz10ZACF7uFhyQPBlC9Cg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tsGkyFWLuPaEGsmQtTalMpeuNWauV8vcMB1uLFVZ8xo=;
- b=mEQuC3lzEbJkbH4H17LgkP2yh/3RM2iYkSkeOKSwHvPKQQ9PkYd4lf0RYMp9z+vthDCJ/vE7nMyyfMXm2/T3eM1HFIL4y8nH2z5+pAoiKLR6g6FAkvcL2iXFfUBoIY1PswgHhgDjz4JpFb3Tmy9EhdwwjyPfv6blo/+fogwufwk1MU2iNuO0MF1MbFA+URZqiPI3cyAVmyh8G0k85s0fNb/dIaMUk2Yxcu+YKzPwraZYa9BMCprOmAViju7XUV0qF3e3/3x5C+HIVigM14wwe4IunYaMmaiHEz0CwOYiy14X0bRSyv4HEso8DemLk3/BTX/JyYPPysuKdQ3wWMSIAw==
+ bh=lBTCxCwEm+mJ0u3HwuZ3tuxjH6x+GBopy2Go8MCBCXc=;
+ b=p3dUKzzlFBN7MpmwQvojQC3P3o4y2OlRqIWMdfNL3wB1+r7KTnVD2mXGP52NWSpNXc9hgjTh3wKEhRTMeUzzN3r61PIZCKLCElmw7t7CudcPCaOEW0tD5AJCTF1rX44USi++JwatjXZH0IeWO/9hJGX1IPzIdTR/gzKy7Af5nrwpr42W/g6+vWvr51c9FWjdh8FTQoT2GL1uDQ2lwH4vC1/d6l7MJMSXE8N34E25sU4nspVFoMlCWONLmGZ/ryLidKOGvyQQI9qdJiVQSGf8HyUKJy9stS75rXcalrAXdFpYRmfuVcgHBJjcK5K/LQJjjQZOg+6R+PszivjoDr1nOw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tsGkyFWLuPaEGsmQtTalMpeuNWauV8vcMB1uLFVZ8xo=;
- b=W0Erf1OjOP2kSBANd+xkgA7PZULMGWcD/LhJVZFx4g5EI7HxFivUjHQv1e+vW5V8BTkIg/a8ivtYxjCaAwqfoEAHM8odJLTPIGoqWeWAtRO+nRyaey4w86qO/RnRNMMHwyNF3hYor4XhdhdgOmjn2dBCSAd0H9U4F46Qprw11MY=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by BN0PR10MB5126.namprd10.prod.outlook.com (2603:10b6:408:129::8) with
+ bh=lBTCxCwEm+mJ0u3HwuZ3tuxjH6x+GBopy2Go8MCBCXc=;
+ b=3eg1vy7g73uouvRQS39hGHVt1oxmAAWMft7DRlb+ogsA/576hyHWaRPtOLHn8Zt2UvlC25pOwoBn64eWP1vBJwBBQOvSLdyzA5bwSJZX/I/iDEReMbnCkXExSMdoWR6iMjn35mqkh3gPP4sKK4dsQUsQxfAkTIgTTMZys15Ctbc=
+Received: from SA1PR12MB8120.namprd12.prod.outlook.com (2603:10b6:806:331::16)
+ by IA0PPF80FB91A80.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bd5) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Fri, 12 Sep
- 2025 09:30:58 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 09:30:58 +0000
-Date: Fri, 12 Sep 2025 10:30:56 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
-        Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
-        Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
-        Kemeng Shi <shikemeng@huaweicloud.com>,
-        Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Ying Huang <ying.huang@linux.alibaba.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Hildenbrand <david@redhat.com>,
-        Yosry Ahmed <yosryahmed@google.com>, Zi Yan <ziy@nvidia.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 11/15] mm, swap: use the swap table for the swap cache
- and switch API
-Message-ID: <d5f84730-c7c0-4059-a5b7-061a9eaebc5c@lucifer.local>
-References: <20250910160833.3464-1-ryncsn@gmail.com>
- <20250910160833.3464-12-ryncsn@gmail.com>
- <CABzRoyZc1zHHy5eFaO5hRY=bM36xsk3COd=r18KahmrP11tpSw@mail.gmail.com>
- <CABzRoyaAA3D0nfkQcBMjZ7crUckJXXpGmYfmq6ojQC+BQUigFw@mail.gmail.com>
- <CAMgjq7CtYpe4sEYaw2carqGskvchV9Z+1yn2Wa3nMP2VguV_eQ@mail.gmail.com>
- <223c560b-0234-4203-a11d-661656317808@linux.dev>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <223c560b-0234-4203-a11d-661656317808@linux.dev>
-X-ClientProxiedBy: LO2P123CA0083.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:138::16) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ 2025 09:31:10 +0000
+Received: from SA1PR12MB8120.namprd12.prod.outlook.com
+ ([fe80::a160:b30e:1d9c:eaea]) by SA1PR12MB8120.namprd12.prod.outlook.com
+ ([fe80::a160:b30e:1d9c:eaea%7]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 09:31:10 +0000
+From: "Verma, Devendra" <Devendra.Verma@amd.com>
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: "bhelgaas@google.com" <bhelgaas@google.com>, "mani@kernel.org"
+	<mani@kernel.org>, "vkoul@kernel.org" <vkoul@kernel.org>,
+	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Simek,
+ Michal" <michal.simek@amd.com>
+Subject: RE: [PATCH 2/2] dmaengine: dw-edma: Add non-LL mode
+Thread-Topic: [PATCH 2/2] dmaengine: dw-edma: Add non-LL mode
+Thread-Index: AQHcHpgus9635/jJ7UqyWh/j4Mmvg7SMBtGwgAC0f4CAANbYYIAA6ioAgADQFNA=
+Date: Fri, 12 Sep 2025 09:31:10 +0000
+Message-ID:
+ <SA1PR12MB81204E8706B7EB7AB662573C9508A@SA1PR12MB8120.namprd12.prod.outlook.com>
+References:
+ <SA1PR12MB812027AB20BEE7C28F30A5FE9509A@SA1PR12MB8120.namprd12.prod.outlook.com>
+ <20250911204340.GA1584422@bhelgaas>
+In-Reply-To: <20250911204340.GA1584422@bhelgaas>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-09-12T09:08:24.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR12MB8120:EE_|IA0PPF80FB91A80:EE_
+x-ms-office365-filtering-correlation-id: f8d8a476-1151-4344-a597-08ddf1df1bed
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?DODf3mpwnboKTZRuXGM2vY4hvBKTYZ29MG61doTItHapKHM6pzT3VrWvbS2W?=
+ =?us-ascii?Q?yoROWZkatnYUbIRYaAQktIHLuG2EIXvhYsn3TPYbrDdW/jGve7F0xQG9BY/h?=
+ =?us-ascii?Q?Q0rzKRfhT//mhisymfiWz0PFWy9CVOTTgvIdx58mmtKlSQ4scoQqE9crFkJU?=
+ =?us-ascii?Q?bD1QoOojcdbVUaLZbTjJYj7W4gfdJxBwl3+F7dc1NVwJx7fKWJ367JGQRsqI?=
+ =?us-ascii?Q?djtitvzzeizuuDrE/qDCgMvgAVQ40tcCdOXLaX19WZQ0GVjK22oTUxZ2VoTe?=
+ =?us-ascii?Q?lqLo+UuB3HxZMJXxD7A1r9USkCy8qBviQBeM1NHbvTp2ep4/DmymRKqOe174?=
+ =?us-ascii?Q?URY2g2rG/UAmZu5FBh9lEWIV7JNrGoi+93hzrgkPA3vC83aIumbedHk60tmj?=
+ =?us-ascii?Q?gXxU0MePLrhDRlmRQycaFD/4zBkupD4Cxgu1bmacEhcWj3r2EQW2NHuzgZCT?=
+ =?us-ascii?Q?O0tg9jreYRiaMqtnshcoV6DxsMILkfo8qeqWf676uiRYqIyKsIiajGZxmp14?=
+ =?us-ascii?Q?sQ/ge9iHJS8rlF7TuNcDdcwbhdZKqwGkutZnfEd/8ipuZ8VvjIXBDIObExDi?=
+ =?us-ascii?Q?1em81ppAaASfnmFSSc9nBylmYFt9numsQ0EfdEflaEEwE0AfzZyUmjxNJVOH?=
+ =?us-ascii?Q?sagLtkAm39YFT5nQp891ECfWZEN/FacttGlMrQtJFrLT8PjdSafAhHNt+QAf?=
+ =?us-ascii?Q?I0ofi8PcZNuS0TAKaBmntSTWI/o21T8pEJoQ0AfDfwPP13PNYdMupH/AyjHc?=
+ =?us-ascii?Q?30JMjSQYGhgOo79XsqQCDUjh7PaqvBV3V4Rr2aQe2ylmt8PachkZgkgK3O+T?=
+ =?us-ascii?Q?gq7b9/ucFcm3SVtUenY4azwBcjnA1VNfuEV6nuaIQuxsFuAUVpfjGOrJiUkk?=
+ =?us-ascii?Q?87pdjHfM9Sq5aEIwNHebOCsD4ditfEwx0fhvF/wsl1YOKGNefTQgsKHp8s8a?=
+ =?us-ascii?Q?GJnh6cwF6yy9zM+zxbo+YhDqD7/P1h14//L/+WtRdCBnrdD6Co8PZl389yej?=
+ =?us-ascii?Q?UWJzq+j+naOf0EgM/U+X5JGx0ij4J0m3w5ZOl5giFWravQuVM/OhaUFB45lw?=
+ =?us-ascii?Q?3qP95V+CN1BpCC7skMXKf36kMVkNpjJl3zrNJSDaCNWAxZHE/tJrcJGdZkuJ?=
+ =?us-ascii?Q?o22eU+QAUC3iB0iwzbj5YKupNGhUgbCVuFJZEHMAFLScM6SkMWM9N1RpPlsz?=
+ =?us-ascii?Q?G0Ofd29TS4zvBRvsjtVTbDloEC9LTTuQ00bWdaIK7VfFvyJt869PtrVgAkvk?=
+ =?us-ascii?Q?I7zXrdnDY/5OQo8xmvoug/KNZPuxkCj0se3rE8639dsPISyre0ElRxlokhh1?=
+ =?us-ascii?Q?SWrhwgfkswOzFSHnSChb80jdgYMGiFhBHWn470lJCV2XAV+Hfw+xGtI32i0B?=
+ =?us-ascii?Q?21AhCV6hg7WMgcPBVbUzPlR9pB0wVI6IfDHxai8YgsChxvEZMJc15Ve+qfCT?=
+ =?us-ascii?Q?2Z81HSsQ775nkT0C2m43lZEnrPot7fja5p4XyJssW6AzzCplP1K9bw=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB8120.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?LJnII6JPDMEO9gczlNaJbgEyaEBbgWJ+9oHRuS6S8dzLelLLtCRWd0KNXh1t?=
+ =?us-ascii?Q?PmKT6Zm5f373Ul47gxgmMqWFXHu3ZYqvo6Yn+E4k4TwXRnHKgl7IF9CICBGA?=
+ =?us-ascii?Q?O8zg7KUI1E7ShTrfqxJ0mwXfi0zNwNONdG3b3xWA5Gur6fIXnxRxabULOwf5?=
+ =?us-ascii?Q?2XjtyA931NxhXyCZcBuQxP+OP4ErZYg8wEgxiGaJwf3nIqGBPMXF2tfPcRs5?=
+ =?us-ascii?Q?w0ZBljf6QE74OK2Rz5dXkTcEanuiNZoIVQVQkse3oMA3jTXf8P/Sk2Ls0ukY?=
+ =?us-ascii?Q?JkFQYX/m9gLGpOh9sXevC58IdiGK23fldxpiDX0w6E19hOTRJQOUW+mlIyG5?=
+ =?us-ascii?Q?fw2u6zeWx3G0exhudqwdL29E9jOdwfQqH1UqtpGoP0yG/2lNPuXWFGQwL8kg?=
+ =?us-ascii?Q?GWHQishFdMvhWxAMFY7hYqr5wQizoo7XLVfaoJklyWofNyIEk4uR9S+KxkZW?=
+ =?us-ascii?Q?USuaeolcpdWBBXKUHOgkL/bVRBJH8wPQxJTSm4Izrbz9TeaI4EAC2F4bg9GG?=
+ =?us-ascii?Q?XrpyyeX8nzDvmxSHa5AKp0Q3EPSea2fGwt+pwVGSMdiLRkKdCCQhBe440d+2?=
+ =?us-ascii?Q?MRrsCZZglC6KIx3Ujfv8gWhodqlYC24nfY8yvBwSpI/zy/hVRv+tsZWeu8BN?=
+ =?us-ascii?Q?cRyapgB9U4sKW1wky9N9h4SlD73j3inOttLqpneL+EWKAH1D22SAxF65Jx05?=
+ =?us-ascii?Q?AVXC+2436m+jKycL4CTGPIDfL0hLZPq6jChF+TR3lBNjJZRKFHPQi7SfsJ70?=
+ =?us-ascii?Q?s6qv+kjQT6mS1FpT6E8rsnlv0ZLhNkNuK8nwNNql71Z0ja3Jq7nwzVvEyHO1?=
+ =?us-ascii?Q?P0MeQBYqjIFx/ckbBOkLz4tzgSIvN/cR0wbuPvi5FJ5UJRo5AMa77UXLJdmh?=
+ =?us-ascii?Q?bWVKLpG6FatJb3AFYUF1cZA8NGplW4Y8PDBZzyqfzkESY0pEJghfO/e2EvYP?=
+ =?us-ascii?Q?1ujcPTKw3bdDn6hkeBg/SD3Vug64vxPDJQXQW8JXvFPafiyMMQAv5dpyC7rX?=
+ =?us-ascii?Q?BC6RcXBDPSDskclVgU6eNUi5PvNanq41d+A1EDovGyw/8sUM/W9qcOo92P5p?=
+ =?us-ascii?Q?3akgSuizikXn8WQhSvIVBKPw4240eJ2tXTGLQNXjpyH53WzzUKLa+z7IlARE?=
+ =?us-ascii?Q?m9zVhYvEFfhbhUBxttz2/uDchn13vvo3M6D8bMNPbwfwLVF0DMjpNeZq5Z8O?=
+ =?us-ascii?Q?qWOFvesHOfrMSJ0l7FEF1xRNuW7whBGjaDzjpljbCkqO6aP6yZ/A1MTSgnt3?=
+ =?us-ascii?Q?zIRWrEWKk+M7THReW1f2ZUvmMNPd+Nv23tF0RTVNnfWoBkz6Wg2g96abffmv?=
+ =?us-ascii?Q?9YFWOUopUQHrQkITCOOfcSuoCGgW5G6TJxCrO4EQmjN7e2ASErpYz2zi4iWP?=
+ =?us-ascii?Q?rFjvx4Qnnt/eR2PFFPiH/25YvVB5Z7yJz0p6dWGk2Q39ZSzlwYcgrgN83pcP?=
+ =?us-ascii?Q?kumtO89APQB51O+8sZFyTrYq9qA0GLN5EkTYnURjpYdYmigmvI+U5iMz0y/O?=
+ =?us-ascii?Q?uJ9q5PsGy7uX6/TyccbnW3ZAusYrNGmSF0ynmLvtLr4fh7j6+ZWaMoF58gTf?=
+ =?us-ascii?Q?2FLr6eUTyEzcoV01C50=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|BN0PR10MB5126:EE_
-X-MS-Office365-Filtering-Correlation-Id: 638c310f-f8df-4eb7-3286-08ddf1df14a0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K0wxUjVObXlpMUkwMThIM1h6SjFKb1ordXh6cmxPenFZZjBwaTh1N1FLREFt?=
- =?utf-8?B?d2pqWXJyRzRkcFJjS3o0eGFON05aTXJjRG1vVnRiOWxBcmZqZFFRd014MFIr?=
- =?utf-8?B?MXRRTUVXeE5KQjN1YjdZbnVnM25IcjVkY2ovKzYrc2dGWE9vZzZNc3ZWSEJO?=
- =?utf-8?B?OXBhUVJudTRYUnNxbGFnMVhNVmJ0eEtSTms3ZGp1clJYRC9CWUNydGpheXNV?=
- =?utf-8?B?N0p3Qk9UNm9hTExBZXdTK09obWRVL29zSjhsQVZJV2NpYXZrcStQYjlaNlVG?=
- =?utf-8?B?QVJjU2tqSHVhOXg4YnU3a2k5cTVxVFU5aEZSVUk2N3drOWpmb1FtR2FXTUNH?=
- =?utf-8?B?MHBNV3NocUlGU1NQQmFnelhNSzVVdUdxV2NEZUJFVVZJTHcybUhuUk15bG9F?=
- =?utf-8?B?dDlDNjU0RXRlcndkdDhRYSs2S0llU1FnUGI1WUZnRzlIMGR6ODdFMm5CUXUw?=
- =?utf-8?B?VVJ5TFRLOVN3dk9xQkNPbm1ZMWprd040VmllZFc3WXhLTi9RN0VBaDV6M0tx?=
- =?utf-8?B?anAwWlNKK3pzckxCK0JNcmk2Z1hrNjJkODRkSDVLWGFTN0tjWFRVZXNOYzNB?=
- =?utf-8?B?N2VjY1A2bWkvQlZYMkE4eDFhTXNoV3BQcTkyK1pWcGw3SkkxUE0wSXFRMGRH?=
- =?utf-8?B?dk4wdjFCZU05bjE1U0hZSVAwNnIrejI2alRobmU2NjE2cUU5TWdYMVRRcUVQ?=
- =?utf-8?B?aVB6S01SZVB4bFBaaDVQOXVMV1ViVzlSY3RVaFBQdFZqbTZsM3kxakZiZkJM?=
- =?utf-8?B?YW5jWVE1YmJIdlM4NU9OSE4yRXFzMkNxWUtpNTlkRHFVSjQ0WTJDbjBIZUNM?=
- =?utf-8?B?TG9nbDA4NjJDQS84cG5penFXS3B6QVRwd1NRNG1Tb3Zza1ZRbXBOcjVXczFp?=
- =?utf-8?B?WmRYTm1BamtVdEhaMDN2NmV1cUFzaWkwLzBwRE5QWkJqRUZrRmxxaS8vSjNO?=
- =?utf-8?B?d3hkMWJudmdjb2NOS2ZCeVlieXZ5SFoxVEVBM3RlakhNeUFrV1I2MlpITHNC?=
- =?utf-8?B?enhPOXA3R1RlNndUM1VXc1RZUjNhZjF0YkkweE91dXBIZ3k2OXNjQld4cmF6?=
- =?utf-8?B?cUpnRUxYaWI1YUQxVUxFTXNuTFVvaVNYeWxEVGgxY0hXVnZQT0JFRTl4OGhF?=
- =?utf-8?B?N0hJOWJpQXE3aFFiYTFsUWdkVXo2K1FOVGVZT1hlTUlyLys2bUdyUmNuc2hp?=
- =?utf-8?B?bzFiOFN5TGM3NnF3VzJJM2dWa2VRdktjc2VlQnBrajEwakNZL3p5KzNSUTJ2?=
- =?utf-8?B?VkFkdlg4dCtRM2E5bWxreVU5RURsNTZqK1pXRjkwYllzVTgxbjVKWHBNRjMx?=
- =?utf-8?B?STFIUVhJZlIzbys5QW12dlJhTnBXclZzQ1BZdGNHMlFwWDZVTFpZc0RRN25m?=
- =?utf-8?B?LzJ3UnR5WHRDOFhJRUpIVGxsUExWSSsyaWUvUUJjdUZDa3Y3RmZmQXEwUE1s?=
- =?utf-8?B?N1pVd1MzUnhMMzRJSnh5TEN0UVBMNDBKcS9VNTVEckVvaFE2YXZ5RVM0UkhZ?=
- =?utf-8?B?bVRuNGlGdW4wLytMLzltT3NZMnA4bWNQOUYxYkNKNWlQWFpkNnY4UWdvWFR0?=
- =?utf-8?B?ZHc5cDhwckt0dTB1cnV3ZURWRHFBeitLR2E4S25aMmlOaSszTTdRZEFCTDd0?=
- =?utf-8?B?YTcyQUs0V01FSkJUSDYyTk9PN1U4TU1xSzNTU1VJZHJmUENxYWd6dGMwOVRm?=
- =?utf-8?B?b25ITlhici9Za2tabDdjQVFFdWJSdVAwV00xQ1YrQmNkWk1tT1dDWUJ2STRn?=
- =?utf-8?B?THI4ZTg5cXpVZXJXSjg3UzZkWjgxelRpb2w5Y3pneEJsajZNVE1sdGNSWi92?=
- =?utf-8?B?dzdyaCswZjVRbzNIZ250T1V1NkZnR0pNbUNnMXhwSXdNanNEdGU5VTNDVGV5?=
- =?utf-8?B?QWVEM2IzZ2d1S29NN2U4K2JsVndzbGlRUzN0VVJXS3BrajVtUjlabENwZHZx?=
- =?utf-8?Q?qJ0XuSZ3XWg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WTBOWXdiUHJoS2s1WmRuNG1UeERXNnFJQTdXeFdIU3VzSnVNSURBMitxTEw3?=
- =?utf-8?B?M0FXc2Z5YWh1ekxtMUkxS1ZqeUdmWFFFNzhGejhrK0g1K2lIR2xOV1lrTVha?=
- =?utf-8?B?Rk9WZVJJeUhUS08rNlgrQTA4U0hyaGx5Q1Jsa3lKbzAvWDFSVnJFMzkxdnE4?=
- =?utf-8?B?cVJJay9XS2xUdHp6N3M0SHRWbVB3RlRlNUliQ0pYQ29abjlMT0NJcFd4dUt4?=
- =?utf-8?B?YytSZjFBQUxmSEJEL3hrN2szOHRqaVowdExaZnNUcFRoWnFoNHFFRXZHKzFN?=
- =?utf-8?B?cUFCdnJwcEVUekNMZzZnWTRDRHpJTGRTNFVBcENYM3ltK3l6NzFUQ0c4ek1I?=
- =?utf-8?B?czd4ZnRkaTVPZnJxN0VQN0Z0WW1RNE80dHBMZmdUaVBxVDZkSDRoSElMMWpI?=
- =?utf-8?B?L0huV3VXeXJIUUkrMlhVbUpNN21VNzZPSklpQ2hsR1d0S2lTYVZPbFpRckdn?=
- =?utf-8?B?NEVDTlJYZUxTZDZmTWMxeUI3NE5QZlVneU9BNHZGeWF3YWR2MGhQc2lEMERP?=
- =?utf-8?B?SkR2dE01cnJoRlNyM2pXZ2l5UFI5RnAzQmU0T2F2YU9VMVJYc1VJRVZ2RzVz?=
- =?utf-8?B?ankyQ256MUFmY1ZJZ1R3MFVNZmFTZ2VlR2J6ejBkcHVsczFZREp6bEhhTENQ?=
- =?utf-8?B?RVNGbG1kUDQyYk5ZOEZLbXlieE1JcmhZQ1g4YmoydXpnY1hzZFRJaHlIajNF?=
- =?utf-8?B?YnNvQ2JzWEZtMmVhQnFiN1N6d2pjVG9renNqbGJ0WWR1N09IS3R6OUxnSEVB?=
- =?utf-8?B?aUxBMjUxRjdoT3RLYzVqQzZWWWRzZmFZSzM3eEUrelUrVVdPTEFGNW5wbTFi?=
- =?utf-8?B?YU9lM3ZDQ2V4aUhvOU9DYzNnL1JJSG1HNTdJRTdQY3pwTER6TDlnS1NFSUhP?=
- =?utf-8?B?SnhDWm83Q0FZN1RJcHZWSWJtK2dUTHIyZWJJcW4zNXFzTjZkcjg1VUlJVHht?=
- =?utf-8?B?Szc0Sy9PdVZNS2dmZW50dCtWQnVGWGRiZEdmY1VMSFI5WHVlL0lnSS8zbTNB?=
- =?utf-8?B?YVJXd2sxMnBQWHkrdTlTQkFDNllLeEpYWHZCSkVIb3YyZFFuWGFqMEJNR1Nr?=
- =?utf-8?B?WUV0RGZuSVhzN1BOZHZRZFJRbXEzTUlyb0RyTWo2cHUrZDZVTG0vbFBudG0v?=
- =?utf-8?B?Z01PNlhiNGpJbC9mUmY5a05uS0MxVkVYMS93b01tZFBUM2VyZmtid1hjRE96?=
- =?utf-8?B?Q1QxaktldnI4by9zTDFZaFlEdlRZY1ZTd1lSb0hjdEpOblFsd2tBNVNOT3oz?=
- =?utf-8?B?Q1ZNNDVVcENnRnJwZk5mSUJUUHYxY01wbjNCaEliSnoxUlExY1lSYmVlK2lT?=
- =?utf-8?B?K3hVYm43Q25UM09ZMHNGeXlrMW95WlA0K2RyV0JoNG5hWnl3b2p3czZpVXJ5?=
- =?utf-8?B?RDgrazRvZWhKaTJpMFQwellSL09VbWE4L3BRT0NGNVM3RVo3L1JSSysvNk1L?=
- =?utf-8?B?a3JTZldoZWtIVEZ6cUx3SzNOemFWM3JFMnJ2aktNZkwxYnl5aXFaMENLc1Ez?=
- =?utf-8?B?bnoxc0FNYTVkS1cvV0hnWUhCZjgwZUJtaFhVK2JpbDdtUVdrYUVnMTZ0QmZD?=
- =?utf-8?B?dnluVnV1QmltMVpudm1WK3ZPTFdhV3hkQXNmblVHUUNPdHJjZVNKYXpFNGdS?=
- =?utf-8?B?emdKcmxBUTFHSHlYSFQ2QklkV0Exa0JNVFNCSDlsVUdMaTlySW1VbEcwTXBY?=
- =?utf-8?B?QXBEUXRaWG5RZTRTbU0yQWZNR2FSUWdjWVJtVDc4cGxZNGlwR01zTEVjMXR1?=
- =?utf-8?B?ejg1RTBxbUprSnk0cWVGWWpPZzZaTGpoSlRzU0tiTk10K05mdVBVL0M4V1hH?=
- =?utf-8?B?UXJFK0NvY0JNa1c3SldrOTE3WkNnRGlDNTFjelNwVEYraE5XUEhZOUMwdm5W?=
- =?utf-8?B?Z29WWFlodW8zZFBNSFp0QUlXQXg2MU1ISXNkSDRrejFFZjlXRDdMUHRYbTZT?=
- =?utf-8?B?WDZXVXJCRW9FV2NBcjBkamd2UFBBY2VZeVBxamI4OGliWEh1blJiRHo5Vnpa?=
- =?utf-8?B?cnMzcHVMZG1GK0JDQktjelhvNnRqZVFtanI5VUFBcjRHcTVsVnRCMVlldTdu?=
- =?utf-8?B?WGdGREpzQWdyV0lIMGpDUGdhQ1h5bGFaaWVFZUFCODNHa3Rqay9FN1lLZnhT?=
- =?utf-8?B?UkxmQVRQNzRMQjd3ODJPVTdPdDRxQjdlZjhEVmdmb3VueXQ3NGlvWWg0VW95?=
- =?utf-8?B?d2c9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	3SZsJfCfB669gvRyVfaWOQUCPVftLQJcWLDkZDKWnyAHgq4nUE1TeiyekLCsrvbcWwQRD4Jc6FJBoeHwj74EsZ1anRpN3d4NrsIfuu+5gj4s/NTWawq6HjG4VVOCItjpr5fzlG78ei5yoIMLiY2y5oZIRWmcsEzeMD2bpjQNYnrZlqWFFnUCCvJUTxXn++bUEoY0iRmw+BdQVdK2T8CiUVEkFEdLViOwuqMrpuRylpTK9M+q0g9EZu2lex2kJ7RKM8c3nfpPlAHCXnTl5iBSduSoE0/0pBB2IE9EnvQrKp2Y2qnBeAGn4HzrhUFOmy1/X5DqY5qWaNMh6EQmZJ1uj0tuBlyWmYl7X73fh0glZPqKd7s71QJzUlkIQuZVsx7l6pQB/gUx0moAixhYGrP7339LkGPcOloF3NKcxhrTEpqK7cpjcenCKxklCfiImVgOEU3VGtrWLjJDVvQjjbjKBIWjSMW//wXPqYNd6SGtnN6yazgHzEQZysIBpaRataVxqLrlGtxkazMfkh4SnpdNHFfCq+0zMxstGq1Xn0bIAusUyEzv9d3Xc6ZZ2m3gac+ORKf9ljP/ZGSYY/BR36qk+lQRN5XBL9ez3AXFvBZSXQ8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 638c310f-f8df-4eb7-3286-08ddf1df14a0
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-OriginatorOrg: amd.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 09:30:58.3113
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB8120.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8d8a476-1151-4344-a597-08ddf1df1bed
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2025 09:31:10.4863
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5MGPh/Z8v4RD8YOAuh842Mrx4gpbRjhC6WRePCc0FUfFj3yJsS8JgjAwBuzopwKLm6RY9eqzyk9F6nB8baJ3+aM9sHGdbSsDh6G0HDgAkjY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR10MB5126
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_03,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 adultscore=0 suspectscore=0
- bulkscore=0 mlxscore=0 mlxlogscore=999 phishscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2508110000
- definitions=main-2509120089
-X-Proofpoint-GUID: 7mwuqag9AE5rTcnMOcyeDfGRvO2Msh5b
-X-Authority-Analysis: v=2.4 cv=CPEqXQrD c=1 sm=1 tr=0 ts=68c3e857 b=1 cx=c_pps
- a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=fYbhGPvKPZ0hst4Z:21 a=xqWC_Br6kY4A:10
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8
- a=pGLkceISAAAA:8 a=yPCof4ZbAAAA:8 a=JsIZJZhev9T1LyQr-swA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 cc=ntf awl=host:12084
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA4MDE1OSBTYWx0ZWRfX5jpFdGefQVMx
- 5+M9D6vjzOCTEHH2L4RhBQ0LH+oJ1nKSzpIVTp03TuKbGa3VCQ8qVO3Q+1CA0OejYXI7d/12eE5
- oPTJ8s3OFS3uHRmVw7F8lHEwdAHEpF7Dcw2R8CgDTx2ePV3dy2sBm8gOsEixXHjc6GiSj5Zplrd
- GGsB+wGCDQRD/ihS2x2/Z3hHBSQeKMjBeHC0/A++8FyXsgPnuBbqJ3sWrZE2S3lQs1rDeGCTJ8O
- z0UGHCEmbRjCxqMW/kQzK+cM7xLr9Bom4ga7zAug93mGkJWbdOdFA6WI7cmC1ZzbYdgIEdpDzIh
- mieyrH3a0inx6y/k8ppbrCxsql5xjkOzsv4wtJI/piFCCj7PsvWtySW7e3mxILYwqUVdeFlDSPB
- meCIrrKKwR0+DAIJh7lkQz64J/B2Ug==
-X-Proofpoint-ORIG-GUID: 7mwuqag9AE5rTcnMOcyeDfGRvO2Msh5b
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IsmPkSIWhPzVH+xH6B5rG7+qm7tCypr0IZmca0/8f4nV66+VU0GAfeUJbYaogQ8mhxcYWN1L+jxIyLiBUGWimw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF80FB91A80
 
-On Thu, Sep 11, 2025 at 10:54:19AM +0800, Lance Yang wrote:
+[AMD Official Use Only - AMD Internal Distribution Only]
+
+Hi Bjorn
+
+Please check my response inline.
+Regards,
+Devendra
+
+> -----Original Message-----
+> From: Bjorn Helgaas <helgaas@kernel.org>
+> Sent: Friday, September 12, 2025 02:14
+> To: Verma, Devendra <Devendra.Verma@amd.com>
+> Cc: bhelgaas@google.com; mani@kernel.org; vkoul@kernel.org;
+> dmaengine@vger.kernel.org; linux-pci@vger.kernel.org; linux-
+> kernel@vger.kernel.org; Simek, Michal <michal.simek@amd.com>
+> Subject: Re: [PATCH 2/2] dmaengine: dw-edma: Add non-LL mode
+>
+> Caution: This message originated from an External Source. Use proper caut=
+ion
+> when opening attachments, clicking links, or responding.
 >
 >
-> On 2025/9/11 10:48, Kairui Song wrote:
-> > On Thu, Sep 11, 2025 at 10:34 AM Lance Yang <lance.yang@linux.dev> wrote:
+> On Thu, Sep 11, 2025 at 11:42:31AM +0000, Verma, Devendra wrote:
+> > > -----Original Message-----
+> > > From: Bjorn Helgaas <helgaas@kernel.org>
+>
+> > > On Wed, Sep 10, 2025 at 12:30:39PM +0000, Verma, Devendra wrote:
+> > > > > From: Bjorn Helgaas <helgaas@kernel.org>
 > > >
-> > > On Thu, Sep 11, 2025 at 10:27 AM Lance Yang <lance.yang@linux.dev> wrote:
+> > > [redundant headers removed]
+> > >
+> > > > > On Fri, Sep 05, 2025 at 03:46:59PM +0530, Devendra K Verma wrote:
+> > > > > > AMD MDB IP supports Linked List (LL) mode as well as non-LL mod=
+e.
+> > > > > > The current code does not have the mechanisms to enable the
+> > > > > > DMA transactions using the non-LL mode. The following two
+> > > > > > cases are added with this patch:
+> > >
+> > > > > > +static u64 dw_edma_get_phys_addr(struct pci_dev *pdev,
+> > > > > > +                              struct dw_edma_pcie_data *pdata,
+> > > > > > +                              enum pci_barno bar) {
+> > > > > > +     if (pdev->vendor =3D=3D PCI_VENDOR_ID_XILINX)
+> > > > > > +             return pdata->phys_addr;
+> > > > > > +     return pci_bus_address(pdev, bar);
+> > > > >
+> > > > > This doesn't seem right.  pci_bus_address() returns
+> > > > > pci_bus_addr_t, so pdata->phys_addr should also be a
+> > > > > pci_bus_addr_t, and the function should return pci_bus_addr_t.
+> > > > >
+> > > > > A pci_bus_addr_t is not a "phys_addr"; it is an address that is
+> > > > > valid on the PCI side of a PCI host bridge, which may be
+> > > > > different than the CPU physical address on the CPU side of the
+> > > > > bridge because of things like IOMMUs.
+> > > > >
+> > > > > Seems like the struct dw_edma_region.paddr should be renamed to
+> > > > > something like "bus_addr" and made into a pci_bus_addr_t.
 > > > >
-> > > > Hi Kairui,
-> > > >
-> > > > I'm hitting a build error with allnoconfig:
-> > > >
-> > > > In file included from mm/shmem.c:44:
-> > > > mm/swap.h: In function ‘folio_index’:
-> > > > mm/swap.h:462:24: error: implicit declaration of function
-> > > > ‘swp_offset’; did you mean ‘pmd_offset’?
-> > > > [-Wimplicit-function-declaration]
-> > > > 462 | return swp_offset(folio->swap);
-> > > >
-> > > > It looks like a header might be missing in mm/swap.h. Please let me know
-> > > > if you need any more information.
+> > > > In case of AMD, it is not an address that is accessible from host
+> > > > via PCI, it is the device side DDR offset of physical address
+> > > > which is not known to host,that is why the VSEC capability is used
+> > > > to let know host of the DDR offset to correctly programming the LLP=
+ of DMA
+> controller.
+> > > > Without programming the LLP controller will not know from where to
+> > > > start reading the LL for DMA processing. DMA controller requires
+> > > > the physical address of LL present on its side of DDR.
 > > >
-> > > Confirmed that just adding #include <linux/swapops.h> into mm/swap.h fixes it.
-> > >
-> > > diff --git a/mm/swap.h b/mm/swap.h
-> > > index ad339547ee8c..271e8c560fcc 100644
-> > > --- a/mm/swap.h
-> > > +++ b/mm/swap.h
-> > > @@ -3,6 +3,7 @@
-> > >   #define _MM_SWAP_H
-> > >
-> > >   #include <linux/atomic.h> /* for atomic_long_t */
-> > > +#include <linux/swapops.h>
-> > >   struct mempolicy;
-> > >   struct swap_iocb;
-> > >
-> > > Cheers,
-> > > Lance
-> > >
+> > > I guess "device side DDR offset" means this Xilinx device has some
+> > > DDR internal to the PCI device, and the CPU cannot access it via a
+> > > BAR?
 > >
-> > Hi Lance,
-> >
-> > You are testing V2 not V3 right? The build error is in V2 and I can
-> > confirm that. But In V3 I've added "ifdef CONFIG_SWAP" for the
-> > swp_offset usage in swap.h. I've just tested allnoconfig and it
-> > works fine on aarch64 and x86_64.
-> >
-> > V2: https://lore.kernel.org/linux-mm/20250905191357.78298-12-ryncsn@gmail.com/
+> > The host can access the DDR internal to the PCI device via BAR, but it
+> > involves an iATU translation. The host can use the virtual / physical
+> > address to access that DDR.  The issue is not with the host rather DMA
+> > controller which does not understand the physical address provided by
+> > the host, eg, the address returned by pci_bus_addr(pdev, barno).
 >
+> Does this mean dw_edma_get_phys_addr() depends on iATU programming done b=
+y
+> the PCI controller driver?  Is it possible for that driver to change the =
+iATU
+> programming after dw_edma_get_phys_addr() in a way that breaks this?
 >
-> Ah, I was testing V2. My apologies for the noise!
->
 
-OK so my bug is different then :)
+No, driver can neither program nor modify the iATU. Once device is configur=
+ed using
+AMD Programmable Device Image (PDI) which contains these configurations.
+Once programmed the configuration can not be changed by the driver.
 
-I think the issue is that you're not properly checking for:
-
-#ifdef CONFIG_MMU
-...
-#endif
-
-This is v3 (I see the #ifdef CONFIG_SWAP) btw.
-
-So swapops.h is wrapped by #ifdef CONFIG_MMU which is why the declaration is
-missing.
-
-The below fixpatch fixes things for me.
-
-Cheers, Lorenzo
-
-----8<----
-From 5a3969a438af9c33422a45fe813a44068d784b2f Mon Sep 17 00:00:00 2001
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Date: Fri, 12 Sep 2025 10:28:40 +0100
-Subject: [PATCH] fix
-
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- arch/sparc/include/asm/pgtable_64.h |  3 +++
- mm/swap.h                           | 37 +++++++++++++++++------------
- 2 files changed, 25 insertions(+), 15 deletions(-)
-
-diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm/pgtable_64.h
-index b8000ce4b59f..b06f55915653 100644
---- a/arch/sparc/include/asm/pgtable_64.h
-+++ b/arch/sparc/include/asm/pgtable_64.h
-@@ -1050,6 +1050,9 @@ int page_in_phys_avail(unsigned long paddr);
-
- int remap_pfn_range(struct vm_area_struct *, unsigned long, unsigned long,
- 		   unsigned long, pgprot_t);
-+void remap_pfn_range_prepare(struct vm_area_desc *desc, unsigned long pfn);
-+int remap_pfn_range_complete(struct vm_area_struct *vma, unsigned long addr,
-+		unsigned long pfn, unsigned long size, pgprot_t pgprot);
-
- void adi_restore_tags(struct mm_struct *mm, struct vm_area_struct *vma,
- 		     unsigned long addr, pte_t pte);
-diff --git a/mm/swap.h b/mm/swap.h
-index caff4fe30fc5..18651687fcd1 100644
---- a/mm/swap.h
-+++ b/mm/swap.h
-@@ -53,7 +53,7 @@ enum swap_cluster_flags {
- 	CLUSTER_FLAG_MAX,
- };
-
--#ifdef CONFIG_SWAP
-+#if defined(CONFIG_SWAP) && defined(CONFIG_MMU)
- #include <linux/swapops.h> /* for swp_offset */
- #include <linux/blk_types.h> /* for bio_end_io_t */
-
-@@ -317,7 +317,26 @@ static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
- 	return i;
- }
-
-+/**
-+ * folio_index - File index of a folio.
-+ * @folio: The folio.
-+ *
-+ * For a folio which is either in the page cache or the swap cache,
-+ * return its index within the address_space it belongs to.  If you know
-+ * the folio is definitely in the page cache, you can look at the folio's
-+ * index directly.
-+ *
-+ * Return: The index (offset in units of pages) of a folio in its file.
-+ */
-+static inline pgoff_t folio_index(struct folio *folio)
-+{
-+	if (unlikely(folio_test_swapcache(folio)))
-+		return swp_offset(folio->swap);
-+	return folio->index;
-+}
-+
- #else /* CONFIG_SWAP */
-+
- struct swap_iocb;
- static inline struct swap_cluster_info *swap_cluster_lock(
- 	struct swap_info_struct *si, pgoff_t offset, bool irq)
-@@ -442,24 +461,12 @@ static inline int non_swapcache_batch(swp_entry_t entry, int max_nr)
- {
- 	return 0;
- }
--#endif /* CONFIG_SWAP */
-
--/**
-- * folio_index - File index of a folio.
-- * @folio: The folio.
-- *
-- * For a folio which is either in the page cache or the swap cache,
-- * return its index within the address_space it belongs to.  If you know
-- * the folio is definitely in the page cache, you can look at the folio's
-- * index directly.
-- *
-- * Return: The index (offset in units of pages) of a folio in its file.
-- */
- static inline pgoff_t folio_index(struct folio *folio)
- {
--	if (unlikely(folio_test_swapcache(folio)))
--		return swp_offset(folio->swap);
- 	return folio->index;
- }
-
-+#endif
-+
- #endif /* _MM_SWAP_H */
---
-2.51.0
+> Bjorn
 
