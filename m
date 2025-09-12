@@ -1,198 +1,299 @@
-Return-Path: <linux-kernel+bounces-813462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDD0B545CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:45:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3CAAB545CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 667531C26474
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:45:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0453B7AC1AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D078173;
-	Fri, 12 Sep 2025 08:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C9C2AE77;
+	Fri, 12 Sep 2025 08:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MlN9jErh"
-Received: from mail-ed1-f65.google.com (mail-ed1-f65.google.com [209.85.208.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="edj1OScb"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4FA2DC793
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE29223336;
+	Fri, 12 Sep 2025 08:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757666728; cv=none; b=JaZo6acVFlroCQMs7lbhgdUwkWgpsBcp+7iUFgFNtJdjrirKn37CqG+NIwlIpP9Ozv/1eedAEDEuRsP8b9mBD/XKyzw3oAnmQxPlqfD556Qv93xUbSGBHsvKB6jT4ubffBax5hiUSdyqVlb+5bFX7t9OaZt4PlGU9jpjthGMPcY=
+	t=1757666732; cv=none; b=nu22PMnYOO96EQaQCjhiD/KMEwtvhOCzGq+nDr4vIREzMOLXOt4EVIgHJ/3yHVS7B7FqLHY65ZbpZGQsd0KeIBV1s9UfjFdHBypq3GDe8zOCKvDHFLrXxZ+BuOUhpfn8DUTItLSEQYLaL57I5mZIBHgrj/OgAYEG9F1FAv3YBU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757666728; c=relaxed/simple;
-	bh=y6SqD4opMLTBzB+vMKKrLNxDUqf3Md3exUO7Rz6xZAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1UFWcMDAhoZQodZi3u3xh5EDt4l8O1mpaYICPP7OHR9r17CUKMJxhpIlwh/SShpy5snV8CpDBPobcrQY1Ol0y4pcPDG/jex+AE5m6ZCbRoPUf6n2XBHOPDKwtlIEhHAZy0mu/zOozQV8mUwCtP9ge9aNbvrdZvbIERpD3GBV+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MlN9jErh; arc=none smtp.client-ip=209.85.208.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f65.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso3019604a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757666725; x=1758271525; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4dmbNrsxYZOP/9r26krcI+hvxuOb8ZjJdTUVMQTp5Hk=;
-        b=MlN9jErhtKqXP8y1RQOWjytADR0plhK54cdsS0aDXpIy/t5nwW8r7Df9CshQ5EqPeI
-         huq5EykfNUT7SgPXa7kWE3MPNeheQkyj2sJ+eqD7C4KAdPU1bJ2P7E3jFEanOIF/yQnN
-         /+2o4jaLg9u3iJrN5M8yaA8PBpo//Cgeniwmu/QMzuDjXcxgORUs+nfgL8dDnSW4mUyS
-         oP6o35+ToEANDu41wDjimk4ruVBLbz8C59C8O8k5N2mbbB4kE8qg0zVLG7JMVZqy7NQJ
-         cp98jAcu34cFkm0f0XFQPDbm0Kj8fhAYjXAnsa+xhbValh0SaM1Io6mk2K9XXd3YkjUN
-         6RSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757666725; x=1758271525;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4dmbNrsxYZOP/9r26krcI+hvxuOb8ZjJdTUVMQTp5Hk=;
-        b=MCceY5LcCUWSQChmwKkf8geKqwamKmK3BfCin7YEC0ivBC/xyTm58DPf6XBywo1mZI
-         kmfHQ35U0y/3K0bHkKX9EX0Vzt/OF+g97zdd8LQ0d1j4NV82VvFrkmRdoTAkO2TaKgYf
-         mTWkyQZ7cGw6vCXxUyXLptM+Y6S5oAGJZSGz8SY0VBq4ceAN3eS9EE/kN9m467fsaIwJ
-         qFW2u5nJqd/RuOdVPcBDkY8asm6WjQbjQ/A5VDCw7pW+hJkBptr4m3l+epWDEmK4p3n3
-         7/10pAOrj3H9yKTKjygR0hUO/oJPh3wJxPpCxjNaI1+ZQi5anG4ln9zYTokSME/7If5S
-         vQyw==
-X-Forwarded-Encrypted: i=1; AJvYcCWQa9Xhq3WU/5O+Z/d4ZyR//wJG0/xr4yBmqmUyKXxF4YztLGwV1bhNLy/rTTHtp7kasgwRPQG1vnNQAlc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRWuRocSS0ZfPJu+bdq9j0zhrzLKhyTCgzjt67ALWQ47kwiSJh
-	2gekp+Z0HWCgIPuHfIHwAvHK4AsM3YNX5GSyKK4dJSwf3m5EQCL/Y95NGUmkdkfBogA=
-X-Gm-Gg: ASbGncvWw2ipGJk8v5QuZQChhm1GwJtEry8KsC5kebINrLx41i0qGShaJ1wFGSFZD65
-	etFWwx2liKFrBsxcju/8px1fI/nTs9AcUkV3QWdHT/7O/VclyTat7CB4YXY9zBZ5NX63SQQw1/6
-	ThYWsKpOJjJcK+XIJsPexBO3y7oZt8vofBYvPWHhBBT/MT0wEeUDT+Ow6IyUX/zYTkf9eN50qGK
-	TfqPW4nxoRofOMTDSC7+4sf6J4EZvkoyQUVWio7QY6W3Msrx2319O056dcsQcESwqtCUlAO4gbd
-	3A77bMBkpK51iLwMujGzSiE7ZoQuw/BzLpH6to6pN6tkcSFp3tH37ZJ8DNId8ohlNH8tqi7y8eF
-	gXCVMjwRVm2taMyZ2f72NKIT7l6zcKGut
-X-Google-Smtp-Source: AGHT+IH20RVCEo08tPDuflYf2M9BAiW07weceBSUqJQU9A4maSux1wFhb3cdo/qMf7Gm3yN0wAdi4Q==
-X-Received: by 2002:a17:907:a07:b0:b04:2ee1:8e2 with SMTP id a640c23a62f3a-b07c37fd0e7mr168381766b.36.1757666725361;
-        Fri, 12 Sep 2025 01:45:25 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:30:5fc2:ee41:2050:2d49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32ef574sm330539566b.73.2025.09.12.01.45.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 01:45:25 -0700 (PDT)
-Date: Fri, 12 Sep 2025 10:45:21 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: YijieYang <yijie.yang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Wangao Wang <quic_wangaow@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v11 2/4] arm64: dts: qcom: x1e80100: add video node
-Message-ID: <aMPdoa6wVEW9q9Sn@linaro.org>
-References: <20250910-hamoa_initial-v11-0-38ed7f2015f7@oss.qualcomm.com>
- <20250910-hamoa_initial-v11-2-38ed7f2015f7@oss.qualcomm.com>
+	s=arc-20240116; t=1757666732; c=relaxed/simple;
+	bh=++xvC23WhHonK4sqNZlcsGHCfTMQ0DzxYYwMOSCnYoU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LGxNvDrPRG9qXVYugy8/B5OfwHI7WaDVzwXofvj295WWS7J44kowBb3cqmDZ/Rit2aoLsMrPweQX16mBmd7I/XbHnL+ZpWRXpll6ji1gvm65bwMzapUIXjzV/h80SfiP5Dn2fzJpPVajt+g90OwXZJswedm9rJkGHO92iN8gty0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=edj1OScb; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757666728;
+	bh=++xvC23WhHonK4sqNZlcsGHCfTMQ0DzxYYwMOSCnYoU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=edj1OScbrKjpPVqztmCVz9kh91znYHmnqwOnX4GXTDDv1rtZIK728AZjneSp3elzY
+	 Q7faCe9qJ2iiDgBK2Y8ie1+DtY0ffIDT82bLf4glmBgbN6B4YfNWivCtP5HyyYqO3p
+	 3XisioVSWwPoQAO3fPmGoexGmx9Pdi2yJf1JnTYw7uHIKrqwa5ZDkUO17yYxITw5fa
+	 0Tui/EJ8SPEeBpZ239R/oexYToNreeCKobYAq5jCftly1XQ8CdbDkzA9l0QCdUe5kk
+	 VzHljIsbAwGjt2YvnnVipRTIeWsQ7nwvL1QXdSgGqSl0XSI8FQdAITNLxaqKKR9pCE
+	 AMcHm6kBRF2og==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0093717E04D6;
+	Fri, 12 Sep 2025 10:45:27 +0200 (CEST)
+Message-ID: <9fafe6a4-e30b-4ea8-a85c-2e66ebd34040@collabora.com>
+Date: Fri, 12 Sep 2025 10:45:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-hamoa_initial-v11-2-38ed7f2015f7@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] remoteproc: mtk_scp: Construct FW path if firmware-name
+ not present
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+ linux-remoteproc@vger.kernel.org
+Cc: arnd@arndb.de, andersson@kernel.org, mathieu.poirier@linaro.org,
+ wenst@chromium.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com
+References: <20250911140043.190801-1-angelogioacchino.delregno@collabora.com>
+ <6f60bb97-86fc-4cda-a373-a991547bbd77@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <6f60bb97-86fc-4cda-a373-a991547bbd77@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 05:02:10PM +0800, YijieYang wrote:
-> From: Wangao Wang <quic_wangaow@quicinc.com>
+Il 12/09/25 09:01, Matthias Brugger ha scritto:
 > 
-> Add the IRIS video-codec node on X1E80100 platform to support video
-> functionality.
 > 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Wangao Wang <quic_wangaow@quicinc.com>
-> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 82 ++++++++++++++++++++++++++++++++++
->  1 file changed, 82 insertions(+)
+> On 11/09/2025 16:00, AngeloGioacchino Del Regno wrote:
+>> After a reply on the mailing lists [1] it emerged that the DT
+>> property "firmware-name" should not be relied on because of
+>> possible issues with firmware versions.
+>> For MediaTek SCP, there has never been any firmware version vs
+>> driver version desync issue but, regardless, the firmwares are
+>> always using the same name and they're always located in a path
+>> with a specific pattern.
+>>
+>> Instead of unconditionally always relying on the firmware-name
+>> devicetree property to get a path to the SCP FW file, drivers
+>> should construct a name based on what firmware it knows and
+>> what hardware it is running on.
+>>
+>> In order to do that, add a `scp_get_default_fw_path()` function
+>> that constructs the path and filename based on two of the infos
+>> that the driver can get:
+>>   1. The compatible string with the highest priority (so, the
+>>      first one at index 0); and
+>>   2. The type of SCP HW - single-core or multi-core.
+>>
+>> This means that the default firmware path is generated as:
+>>   - Single core SCP: mediatek/(soc_model)/scp.img
+>>     for example:     mediatek/mt8183/scp.img;
+>>
+>>   - Multi core SCP:  mediatek/(soc_model)/scp_c(core_number).img
+>>     for example:     mediatek/mt8188/scp_c0.img for Core 0, and
+>>                      mediatek/mt8188/scp_c1.img for Core 1.
+>>
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 737c5dbd1c80..4a450738b695 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -5186,6 +5186,88 @@ usb_1_ss1_dwc3_ss: endpoint {
->  			};
->  		};
->  
-> +		iris: video-codec@aa00000 {
-> +			compatible = "qcom,x1e80100-iris", "qcom,sm8550-iris";
-> +
-> +			reg = <0x0 0x0aa00000 0x0 0xf0000>;
-> +			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			power-domains = <&videocc VIDEO_CC_MVS0C_GDSC>,
-> +					<&videocc VIDEO_CC_MVS0_GDSC>,
-> +					<&rpmhpd RPMHPD_MXC>,
-> +					<&rpmhpd RPMHPD_MMCX>;
-> +			power-domain-names = "venus",
-> +					     "vcodec0",
-> +					     "mxc",
-> +					     "mmcx";
-> +			operating-points-v2 = <&iris_opp_table>;
-> +
-> +			clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
-> +				 <&videocc VIDEO_CC_MVS0C_CLK>,
-> +				 <&videocc VIDEO_CC_MVS0_CLK>;
-> +			clock-names = "iface",
-> +				      "core",
-> +				      "vcodec0_core";
-> +
-> +			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +					 &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
-> +					<&mmss_noc MASTER_VIDEO QCOM_ICC_TAG_ALWAYS
-> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-> +			interconnect-names = "cpu-cfg",
-> +					     "video-mem";
-> +
-> +			memory-region = <&video_mem>;
-> +
-> +			resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>;
-> +			reset-names = "bus";
-> +
-> +			iommus = <&apps_smmu 0x1940 0x0>,
-> +				 <&apps_smmu 0x1947 0x0>;
-> +			dma-coherent;
-> +
-> +			status = "disabled";
-> +
-> +			iris_opp_table: opp-table {
-> +				compatible = "operating-points-v2";
-> +
-> +				opp-192000000 {
-> +					opp-hz = /bits/ 64 <192000000>;
-> +					required-opps = <&rpmhpd_opp_low_svs_d1>,
-> +							<&rpmhpd_opp_low_svs_d1>;
-> +				};
-> +
-> +				opp-240000000 {
-> +					opp-hz = /bits/ 64 <240000000>;
-> +					required-opps = <&rpmhpd_opp_low_svs>,
-> +							<&rpmhpd_opp_low_svs>;
+> As we inventing a naming scheme here: if we decide that signle core FW is calle 
+> scp_c0.img we can get rid of some code.
+> 
 
-You need &rpmhpd_opp_svs here for one of the OPPs, because this
-describes not just the requirements for the derived clocks but also the
-requirements for the PLL itself. sm8550.dtsi has the same.
+Ohey!
 
-I didn't realize that you sent a DT patch for qcom,x1e80100-iris, so
-I sent my own patch yesterday [1] that was just waiting for the
-dt-bindings to land in linux-next.
+No, well, we're not inventing a naming scheme... if you check in linux-firmware
+and in the current devicetrees, you'll see that the path adheres to what I wrote.
 
-Have you talked to your colleagues in the video team before submitting
-this patch? I'm pretty sure they could have pointed that out during
-internal review. They also have access to my patch (which has been
-shared in a public branch for over a year now) and knew I was going to
-send it as soon as the binding lands in linux-next. I just wish we could
-have coordinated this better to avoid the duplicate work. :/
+As in - all of the single core SCP always had the firmware in path
+mediatek/mtXXXX/scp.img - and the dual core SCP has two firmwares.
 
-I suggest that you add a dependency on my patch series or postpone
-enabling IRIS support for a follow up patch, it's better to have it
-separate from a new board addition.
+The dual core one is a bit special in that the two cores are *almost* (but not
+fully) independent from each other (not entirely relevant to this discussion tho)
+and can load one firmware per core.
 
-Thanks,
-Stephan
+In short - in upstream, the only naming that we're inventing is the multicore SCP,
+but we're simply keeping the same name for the singlecore ones.
 
-[1]: https://lore.kernel.org/linux-arm-msm/20250911-x1e-iris-dt-v1-1-63caf0fd202c@linaro.org/
+Even for multicore, I'm not really inventing that out of the blue - MediaTek are
+using that naming in downstream, so I'm just copying that.
+
+Btw... I really don't want to change the single core FW name to "scp_c0.img"
+because my plan is to get this merged and then cleanup the devicetrees for all
+MTK machines to *remove* the firmware-name property from the SCP node(s).
+
+firmware-name support in this driver is retained only for retrocompatibility
+with old DTs (and perhaps "very special" devices needing "very special" firmwares,
+of which none exist right now and hopefully we'll never see anything like that in
+the future).
+
+>> Note that the generated firmware path is being used only if the
+>> "firmware-name" devicetree property is not present in the SCP
+>> node or in the SCP Core node(s).
+>>
+>> [1 - Reply regarding firmware-name property]
+>> Link: https://lore.kernel.org/all/7e8718b0-df78-44a6- 
+>> a102-89529d6abcce@app.fastmail.com/
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+>> ---
+>>   drivers/remoteproc/mtk_scp.c | 64 ++++++++++++++++++++++++++++++++----
+>>   1 file changed, 58 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/remoteproc/mtk_scp.c b/drivers/remoteproc/mtk_scp.c
+>> index 8206a1766481..80fcb4b053b3 100644
+>> --- a/drivers/remoteproc/mtk_scp.c
+>> +++ b/drivers/remoteproc/mtk_scp.c
+>> @@ -16,6 +16,7 @@
+>>   #include <linux/remoteproc.h>
+>>   #include <linux/remoteproc/mtk_scp.h>
+>>   #include <linux/rpmsg/mtk_rpmsg.h>
+>> +#include <linux/string.h>
+>>   #include "mtk_common.h"
+>>   #include "remoteproc_internal.h"
+>> @@ -1093,22 +1094,73 @@ static void scp_remove_rpmsg_subdev(struct mtk_scp *scp)
+>>       }
+>>   }
+>> +/**
+>> + * scp_get_default_fw_path() - Get default SCP firmware path
+>> + * @dev:     SCP Device
+>> + * @core_id: SCP Core number
+>> + *
+>> + * This function generates a path based on the following format:
+>> + *     mediatek/(soc_model)/scp(_cX).img; for multi-core or
+>> + *     mediatek/(soc_model)/scp.img for single core SCP HW
+>> + *
+>> + * Return: A devm allocated string containing the full path to
+>> + *         a SCP firmware or an error pointer
+>> + */
+>> +static const char *scp_get_default_fw_path(struct device *dev, int core_id)
+>> +{
+>> +    struct device_node *np = core_id < 0 ? dev->of_node : dev->parent->of_node;
+>> +    char scp_fw_file[7] = "scp_cX";
+> 
+> We provide a string that we later overwrite. I'd prefer to have just the 
+> reservation without any 'artificial' string in it.
+> 
+
+Yeah, this one is a leftover that I forgot to cleanup. I fully agree with you.
+
+Will change that in v2.
+
+>> +    const char *compatible, *soc;
+>> +    int ret;
+>> +
+>> +    /* Use only the first compatible string */
+>> +    ret = of_property_read_string_index(np, "compatible", 0, &compatible);
+>> +    if (ret)
+>> +        return ERR_PTR(ret);
+>> +
+>> +    /* If the compatible string's length is implausible bail out early */
+>> +    if (strlen(compatible) < strlen("mediatek,mtXXXX-scp"))
+> 
+> Seems like a double check of compatible. Why is dt-bindings for that not enough?
+> 
+
+It's more than that... (check below)
+
+>> +        return ERR_PTR(-EINVAL);
+>> +
+>> +    /* If the compatible string starts with "mediatek,mt" assume that it's ok */
+>> +    if (!str_has_prefix(compatible, "mediatek,mt"))
+> 
+> Same here.
+> 
+
+....and it's because.... (check below)
+
+>> +        return ERR_PTR(-EINVAL);
+>> +
+>> +    if (core_id >= 0)
+>> +        ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp_c%1d", core_id);
+>> +    else
+>> +        ret = snprintf(scp_fw_file, ARRAY_SIZE(scp_fw_file), "scp");
+>> +    if (ret <= 0)
+>> +        return ERR_PTR(ret);
+>> +
+>> +    soc = &compatible[strlen("mediatek,")];
+
+...I'd otherwise anyway have to check here, as this is a pointer to the middle of
+the compatible string, used below to extract "mtXXXX" (mt8195, mt1234 etc) from it.
+
+Sure I get your point about bindings - but IMO those multi-purpose checks make the
+code robust, and will avoid exposure of random memory locations (and/or produce
+undefined behavior) in the event that the compatible string is shorter than needed.
+
+>> +
+>> +    return devm_kasprintf(dev, GFP_KERNEL, "mediatek/%.*s/%s.img",
+>> +                  (int)strlen("mtXXXX"), soc, scp_fw_file);
+>> +}
+>> +
+>>   static struct mtk_scp *scp_rproc_init(struct platform_device *pdev,
+>>                         struct mtk_scp_of_cluster *scp_cluster,
+>> -                      const struct mtk_scp_of_data *of_data)
+>> +                      const struct mtk_scp_of_data *of_data,
+>> +                      int core_id)
+>>   {
+>>       struct device *dev = &pdev->dev;
+>>       struct device_node *np = dev->of_node;
+>>       struct mtk_scp *scp;
+>>       struct rproc *rproc;
+>>       struct resource *res;
+>> -    const char *fw_name = "scp.img";
+>> +    const char *fw_name;
+>>       int ret, i;
+>>       const struct mtk_scp_sizes_data *scp_sizes;
+>>       ret = rproc_of_parse_firmware(dev, 0, &fw_name);
+>> -    if (ret < 0 && ret != -EINVAL)
+>> -        return ERR_PTR(ret);
+>> +    if (ret) {
+>> +        fw_name = scp_get_default_fw_path(dev, core_id);
+> 
+> Wouldn't it make more sense to encapsulate the whole fw_name retrival in one 
+> function, e.g. scp_get_fw_path.
+> 
+
+Sorry, not a fan of that, I don't see the actual benefit, as in, (imo) it doesn't
+improve readability and it doesn't remove any duplication (as it's called only once
+in one single place).
+
+But of course, I'm open to understand if I'm missing any point :-)
+
+Cheers,
+Angelo
+
+>> +        if (IS_ERR(fw_name)) {
+>> +            dev_err(dev, "Cannot get firmware path: %ld\n", PTR_ERR(fw_name));
+>> +            return ERR_CAST(fw_name);
+>> +        }
+>> +    }
+>>       rproc = devm_rproc_alloc(dev, np->name, &scp_ops, fw_name, sizeof(*scp));
+>>       if (!rproc) {
+>> @@ -1212,7 +1264,7 @@ static int scp_add_single_core(struct platform_device *pdev,
+>>       struct mtk_scp *scp;
+>>       int ret;
+>> -    scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev));
+>> +    scp = scp_rproc_init(pdev, scp_cluster, of_device_get_match_data(dev), -1);
+>>       if (IS_ERR(scp))
+>>           return PTR_ERR(scp);
+>> @@ -1259,7 +1311,7 @@ static int scp_add_multi_core(struct platform_device *pdev,
+>>               goto init_fail;
+>>           }
+>> -        scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id]);
+>> +        scp = scp_rproc_init(cpdev, scp_cluster, cluster_of_data[core_id], 
+>> core_id);
+>>           put_device(&cpdev->dev);
+>>           if (IS_ERR(scp)) {
+>>               ret = PTR_ERR(scp);
+> 
+
+
 
