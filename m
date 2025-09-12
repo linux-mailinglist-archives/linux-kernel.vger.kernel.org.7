@@ -1,119 +1,183 @@
-Return-Path: <linux-kernel+bounces-814114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E7F3B54F6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:24:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B13B54F6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EA1D5A4E84
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:24:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A343AF5B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C476830DEBA;
-	Fri, 12 Sep 2025 13:24:27 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EF930C621;
+	Fri, 12 Sep 2025 13:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BMtWMfMS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GBrRQ/pl"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018B6276056;
-	Fri, 12 Sep 2025 13:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC2A249E5;
+	Fri, 12 Sep 2025 13:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757683467; cv=none; b=VFtg3ymN1QJ//E7xeT+iaO7MTpQSpo0fkk/myaRU69Iv81SLtNMmotQw8YcGZSKMCOqS1GMJuvLRZ5HpUnAbT3703hpgZ2k1LdeItpOL0UY1Qa3/5K8m9jx3GUUmoADpbY/yFCqkEdttCi/97DXGHFPpqKJJ6XDwwZn4kzWUAl8=
+	t=1757683490; cv=none; b=OndzRjcBu2uk7MPtu26wjyqVMVghya80dxcwJyDng7bEqVneMScHJj3owIDXWM5khEK+QwaxBUOk10Br+4OsNTATpOSmhWTso9UbMh2d2BVVoWDXRxSrLRKVf/5+8xUDDIf9eRPvlH/P4rXwvkw3SmK+K3MthBpde3Y99Qj0iDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757683467; c=relaxed/simple;
-	bh=8hO1gh4QPpX+qUJtvAUp2n3+2tbru0yK4/bJ3sYDKoQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fD5ztY+L0oh4d0cEdPGFHgzlD3rOPHuGT2nVu13Z38/QlTj6hx4/cRak9B3zEf8YK73bzW/CBt1Jsnm7uvnMbnf7TLMqLQhNG2pQFUh74elYN+GMyqjS5w/eYm6tUcbuTyWO5Wv++91sqjU/hQbtULonxyj+MJU/VDvqcC3D1iM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNZqX0v5cz6GDGM;
-	Fri, 12 Sep 2025 21:23:04 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5579C14038F;
-	Fri, 12 Sep 2025 21:24:22 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
- 2025 15:24:21 +0200
-Date: Fri, 12 Sep 2025 14:24:19 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 24/29] arm_mpam: Track bandwidth counter state for
- overflow and power management
-Message-ID: <20250912142419.00006c6d@huawei.com>
-In-Reply-To: <20250910204309.20751-25-james.morse@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-25-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757683490; c=relaxed/simple;
+	bh=4rNLBR8Upg4ZrbCVRyBH/yDBONUT3eiZqdnUTvjhE/s=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=f/esGuw7DPqlzqoq6Jc4dmS1VkUw5tziP5UoALB2TVdFsYLSWtjvI+FDKVWiaWDiGbK9bKEU62MZFSCE86pwZ8uXZ2CoDULvDnFieXDM7iaEdCrEg9SfUhX0Zys+drDLeHgRc9l6Li/4Bdi7EQHX5tP3ogw5O50WC14hbAwd6kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BMtWMfMS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GBrRQ/pl; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 8626B1D004E4;
+	Fri, 12 Sep 2025 09:24:45 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Fri, 12 Sep 2025 09:24:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757683485;
+	 x=1757769885; bh=6KZ3evzHd0jMHwprrzgXlCgpdKsD3TU8bNk1cnRINdw=; b=
+	BMtWMfMScvjRRHN4lZ5+SxhDrLoe8ViG79wH4rmFIyydLBJqmdvdFK6c19xBWobW
+	2oabqe5bXoCvPdabnoU+fokhgoYryavomnRIPJK8opa803KVgzXTxKTb55JHNtiE
+	GJ1eY8sX8nZ5ydB7YT3o3XSs0SCy/BRyq4nS4ohoYsAj6nC0Prd+hM6tVznh3l8Z
+	mu+0uweQEhVKDaoGfOSsoMn6fP1VysZAqd9ZeIg2G3N9mJySx2zfcU76r13KLUe+
+	flnIriEDfWikQbTaecZVtM7j5laAUmtd7NrHMVfwv91Y5XEpcdF05Dqygzb8+bPA
+	RQAq5k1JeGkdRh/ovN/RJw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757683485; x=
+	1757769885; bh=6KZ3evzHd0jMHwprrzgXlCgpdKsD3TU8bNk1cnRINdw=; b=G
+	BrRQ/plvFwYVEW9Jz6iNWKKn4g7t0pSJJ2O7daQUEVPVaPFoe2OvukHI8NL/5DkN
+	AR1Apk+5HQKKMMAHVPB9q6r9rrBdHP04o2UhOwPxK6Kvd4zsGvI2G9Fp+rEJBBy9
+	mPmzlSFqWVydh8SlDnAWXjtrd9a3x6tq4HZpdzonMDyFJ320PHxpEyTsBEkpG+k0
+	tg07+9FkxJH+DbsICeIrS0NswFLRvSal0vn5B+cBskxNb67WPzpn65rDtElKoFEg
+	V2HbheedFhZVAvTLkW37p9+ExuPF5fhWBN8jCsVJ69puGfE/4F1x5y+RnIL2gRFd
+	rG9vKsUQTecG9QpROhRxw==
+X-ME-Sender: <xms:Gx_EaMbRJ60j31zTG2MqZpqYKtA9xgPXXUJYqxFrNAQT0qS22Dw7eg>
+    <xme:Gx_EaHZR6t4-h5qjnHbsAciVCb_3k3lay4Kq-TwIuEvPnwnJ-Yko0fwbYQGzsOVSe
+    vnMWi4SrXqmGpDO4gQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthhhinhhordguvghlrhgvghhnohestg
+    holhhlrggsohhrrgdrtghomhdprhgtphhtthhopegsvghnrdgthhhurghnghesghgvnhgv
+    shihshhlohhgihgtrdgtohhmrdhtfidprhgtphhtthhopehvihgtthhorhdrshhhihhhse
+    hgvghnvghshihslhhoghhitgdrtghomhdrthifpdhrtghpthhtohepughlrghnsehgvghn
+    thhoohdrohhrghdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrh
+    drsggvpdhrtghpthhtoheprggurhhirghnrdhhuhhnthgvrhesihhnthgvlhdrtghomhdp
+    rhgtphhtthhopehmihhkkhhordhrrghpvghliheslhhinhgrrhhordhorhhgpdhrtghpth
+    htohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepiihh
+    ohhusghinhgsihhnsehlohhonhhgshhonhdrtghn
+X-ME-Proxy: <xmx:Gx_EaO1soN_PdTt7MvIqKxrrGib6VGcyThUcZhLyg0Uvi03HtS8_7Q>
+    <xmx:Gx_EaLJZkeK-WAGNJ1BBhGsVuJ9d3kjsY53xgMl8br8dyzRBGYK_hQ>
+    <xmx:Gx_EaL1oOyi7TFRowu02Q9l8GB13nD6h2fVDancfLC2U-S5VWoZ1ew>
+    <xmx:Gx_EaHlJj2_DriJdFp22gbM-2ubESgPagiPBOAyFuH6I69ug-afSpA>
+    <xmx:HR_EaCQrZbnCYhqoX5090l_f5n5TQjw2ituBwsV22mBIgXrMvEiih3ff>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 83630700065; Fri, 12 Sep 2025 09:24:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-ThreadId: Ab0invGq7VjZ
+Date: Fri, 12 Sep 2025 15:24:23 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Mikko Rapeli" <mikko.rapeli@linaro.org>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Ulf Hansson" <ulf.hansson@linaro.org>,
+ "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, "Adrian Hunter" <adrian.hunter@intel.com>,
+ "Victor Shih" <victor.shih@genesyslogic.com.tw>,
+ "Ben Chuang" <ben.chuang@genesyslogic.com.tw>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
+ "Yixun Lan" <dlan@gentoo.org>, "Binbin Zhou" <zhoubinbin@loongson.cn>
+Message-Id: <4479d851-33be-4559-b998-fdd0480d9f78@app.fastmail.com>
+In-Reply-To: <aMQEO7tmvSY5thC-@nuoska>
+References: <20250911144313.2774171-1-mikko.rapeli@linaro.org>
+ <CAPDyKFqLag_WkxqOCebvBCJy4TzZEqt-rFD_Z30sajUxgSpcaA@mail.gmail.com>
+ <1813054.X513TT2pbd@diego>
+ <acbc46c8-30df-47bb-9d3d-91ba477f6029@app.fastmail.com>
+ <aMQEO7tmvSY5thC-@nuoska>
+Subject: Re: [PATCH] mmc: dw_mmc-rockchip: add dependency to ROCKCHIP_PM_DOMAINS
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 10 Sep 2025 20:43:04 +0000
-James Morse <james.morse@arm.com> wrote:
+On Fri, Sep 12, 2025, at 13:30, Mikko Rapeli wrote:
+> On Fri, Sep 12, 2025 at 10:47:29AM +0200, Arnd Bergmann wrote:
+>> On Thu, Sep 11, 2025, at 18:05, Heiko St=C3=BCbner wrote:
+>>=20
+>>       depends on (ARCH_ROCKCHIP || COMPILE_TEST)
+>>=20
+>> after you check that this actually builds on x86 with COMPILE_TEST
+>> enabled, as there may be other compile-time dependencies.
+>
+> Ok so a lot of mmc driver set this correctly but few don't:
+>
+>  * MMC_PXA
+>  * MMC_OMAP
+>  * MMC_ATMELMCI
+>  * MMC_MXC
+>  * MMC_MXS
+>  * MMC_DW_ROCKCHIP
+>  * MMC_WMT
+>
+> Maybe there are good reasons why these are not part of COMPILE_TEST.
+> I can try adding MMC_DW_ROCKCHIP. Did not yet find out how to start
+> the COMPILE_TEST build. Hints welcome. Which top level Makefile
+> target or script to run?
 
-> Bandwidth counters need to run continuously to correctly reflect the
-> bandwidth.
-> 
-> The value read may be lower than the previous value read in the case
-> of overflow and when the hardware is reset due to CPU hotplug.
-> 
-> Add struct mbwu_state to track the bandwidth counter to allow overflow
-> and power management to be handled.
-> 
-> Signed-off-by: James Morse <james.morse@arm.com>
-Trivial comment inline.  I haven't spent enough time thinking about this
-to give a proper review so no tags yet.
+I see that Krzysztof went through the subsystem five years ago
+and enabled everything he could in commit 54d8454436a2 ("mmc: host:
+Enable compile testing of multiple drivers").
 
-Jonathan
- 
-> ---
-> Changes since v1:
->  * Fixed lock/unlock typo.
-> ---
->  drivers/resctrl/mpam_devices.c  | 154 +++++++++++++++++++++++++++++++-
->  drivers/resctrl/mpam_internal.h |  23 +++++
->  2 files changed, 175 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
-> index 1543c33c5d6a..eeb62ed94520 100644
-> --- a/drivers/resctrl/mpam_devices.c
-> +++ b/drivers/resctrl/mpam_devices.c
-> @@ -918,6 +918,7 @@ static void gen_msmon_ctl_flt_vals(struct mon_read *m, u32 *ctl_val,
->  	*ctl_val |= MSMON_CFG_x_CTL_MATCH_PARTID;
->  
->  	*flt_val = FIELD_PREP(MSMON_CFG_x_FLT_PARTID, ctx->partid);
-> +
-Unrelated change.  If it makes sense figure out where to push it back to.
+The set you found above is probably a combination of drivers
+that were added after that without the COMPILE_TEST check,
+and drivers that fail to build on x86.
 
->  	if (m->ctx->match_pmg) {
->  		*ctl_val |= MSMON_CFG_x_CTL_MATCH_PMG;
->  		*flt_val |= FIELD_PREP(MSMON_CFG_x_FLT_PMG, ctx->pmg);
+>> I think in this case a 'default ARCH_ROCKCHIP' in the
+>> ROCKCHIP_PM_DOMAINS definition is sufficient to have it
+>> normally enabled, and still allows someone to try turning
+>> it into a loadable module later, which would be a requirement
+>> e.g. for Android GKI.
+>
+> Ok I can test this out.
 
+Thanks!
+
+> kernel.org defconfigs have ROCKCHIP_PM_DOMAINS
+> enabled so they don't see any issues but when users/distros configure
+> kernels, then ROCKCHIP_PM_DOMAINS is needed for MMC_DW_ROCKCHIP to wor=
+k.
+> To me a warning is sufficient from kernel config tooling since yocto
+> side tooling picks this up but enabling by default is even better.
+> These runtime dependencies hard to track down. Kernel modules would
+> be sufficient if support was there since in my case there is always
+> an initrd with udev and modules.
+
+There is no good answer in general here. Adding a lot of
+dependencies for each run-time requirement would make Kconfig
+overly complicated and introduce circular dependencies
+everywhere, so generally I recommend to only have either
+compile-time dependencies specified, or dependencies on specific
+platforms that can then be turned off when you know you are
+building for another one,
+
+     Arnd
 
