@@ -1,123 +1,180 @@
-Return-Path: <linux-kernel+bounces-813598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE09B54808
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:39:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC1EB5482C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:43:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 167365A118A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:38:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA333BCA29
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1A779CD;
-	Fri, 12 Sep 2025 09:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="HyxKJPCw"
-Received: from out28-169.mail.aliyun.com (out28-169.mail.aliyun.com [115.124.28.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D50B27AC44;
+	Fri, 12 Sep 2025 09:40:03 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1E726057F;
-	Fri, 12 Sep 2025 09:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191CC277CA5
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757669915; cv=none; b=ny9dGViduJDwYF8IYhVSRb4zV87spzQVB1CHkOW2r4MPYtaPO3lE2hPm+7Rh247GLvcJHGcvFAU5sU4jdXJs25tc26LeDyLWSymaiegFjuv5h7SCF507YHoCsTMjfQxw4L4ujoLiMlG5uOupQ32iCX50Kqd3/0qWB2Iid420rbg=
+	t=1757670002; cv=none; b=O1l1CXQiwxy4EUPwIculAIWUs6ZUoE5yJg10DnvXMbLHONrJN6WdjI+cRVbTaFPa8YVP2NHda+jzNzVIuZ8wamtPgIzdpUrjQaA07gnVw79SIaQOL9ZYkkIIOFrfD8TiYOjH7lBPnf8A/t3/exwf19905WaxIgjr3WBHGXJp2oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757669915; c=relaxed/simple;
-	bh=Q4RsKfIzmyxzKp8K4v2h79QFNV2EsiC86mjT5cGWiGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NS2arZI+RjwZVx46ska9X3yqK4+boKK8MSRP4ZczJvuRGv6Hs2GOqlSA9pOiP1Q/RbXJjOgEIeVQLQ43aatgJLrf/nVdLNNfNa0prglPJz5927st7qsTPz8RkT8fXlzlwi6EszrU/UoxddgqtaTslluPRb3g4kIM5m8ZDpAZmlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=HyxKJPCw; arc=none smtp.client-ip=115.124.28.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1757669903; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=nNS8A+t9o8wvAOaFCUjxryhM3zoj/mewmNrjEY/7elc=;
-	b=HyxKJPCwX0pd0Zr6JL/z1q/8lurhjI+tKih+teMhkFN/+UNPV4ROVqFT1fQVIDTj4bAwkWuU/6lEyetwqO4BO8img7IvtwCyQ3ea0x94N9wl+jCHWKqnTf7GvlBW+QDjdxFvY4IqtuHcqc1q1wN1vVx7YnfT4/v3d25N2Fn7bN0=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.edVVvTr_1757669902 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Sep 2025 17:38:22 +0800
-Date: Fri, 12 Sep 2025 17:38:22 +0800
-From: Hou Wenlong <houwenlong.hwl@antgroup.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: Remove outdated comments and code in
- kvm_on_user_return()
-Message-ID: <20250912093822.GA10794@k08j02272.eu95sqa>
-References: <c10fb477105231e62da28f12c94c5452fa1eff74.1757662000.git.houwenlong.hwl@antgroup.com>
- <aMPbNBofTCFGTCs6@intel.com>
+	s=arc-20240116; t=1757670002; c=relaxed/simple;
+	bh=Rl4LZnuxJh/7FUqam/oyJRnVsEvzTdOO3HZUZncPAOk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=JFr8qbPYQ234eLG0xMGfRn25ehOZQ7VZ6kWcBlKmg7nQUn4TGQMw3o8s0HK6SVXfhQGm9McbFEX4Krt9JCgdquY/FTAgpPqk4IywIihHrngc7katRzeLdiMU6bFYSngYQfe8DjNHPdBMSQxoMNRD535jrAo4X9Gc+QyDS0Glbm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-402abd9bfadso22335625ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:40:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757670000; x=1758274800;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gFUjs+Fu4o45ZXWdCFUMEIMO8W2FMJLrrC6MotjvsXI=;
+        b=AOzqKDYdWwJFg5Bh98OlspMyMnIvG5IuiCV1vuAWpXp89CSyizgBRKZ6FLaZiOuS+0
+         ZUZHEEESiLhpmmNq/1eLsPXZ9uMJfmnBUMwkT7hGdTCC9ZBVEt9xkt9tD6Tav/3wj7PM
+         E3KrQdKMSuvNPFDOibkiWOVrzrVg461/03vd5GPA52GzJSpexhmMPTUYKVyD3iV8L0wc
+         7y6Iq1wHCWa0VbFfduyXel3gwKocq+V5RxFgHf59nKEh/3jgzrl51Gale20xjQRQ5EML
+         wIJ7kdz+gXdXGolXshcy7p6osJ1hz2B9s2TujIrF3Q7NQKvkg/nrnst9Sd6hflZwUKQB
+         uhKg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+aiIO+qEO4K/m1xe6JTF2WWNO1SSCyfLBa4LtKqcw5w781Dbn6oCgiiyRwhc8KimjiCJeksTg0cn5wSQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAtdKsHAKmO9HLeMifGOVis443MCXhwakfiVyxsSuqw4rl8dI3
+	nESJpShcixuXZIFvGTt5AQUkUeYNOsXz6Mc2jK3wK6l2DT5kOupeEs465dy/aonsQsfHSQuHhp9
+	s/PQKbwinEmEVDzczzg8pqUVh4pzTRAFhVRTVMbPFNP7bkPNKMYG1ATidvkY=
+X-Google-Smtp-Source: AGHT+IFmcqWbQZYj0mK10M7BRzGMuWjtQ35FL3y2cmLKlB6WL6LNQORXJu4TcFFRXoWTp4/dfgGqQkDY1Q/U9t3HI9bgKWmFrYwj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMPbNBofTCFGTCs6@intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Received: by 2002:a05:6e02:154e:b0:419:de32:2cf7 with SMTP id
+ e9e14a558f8ab-4209d40feabmr41543785ab.3.1757670000237; Fri, 12 Sep 2025
+ 02:40:00 -0700 (PDT)
+Date: Fri, 12 Sep 2025 02:40:00 -0700
+In-Reply-To: <20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c3ea70.050a0220.3c6139.049f.GAE@google.com>
+Subject: [syzbot ci] Re: net: devmem: improve cpu cost of RX token management
+From: syzbot ci <syzbot+ci29ccfbf0bb0ca710@syzkaller.appspotmail.com>
+To: almasrymina@google.com, bobbyeshleman@gmail.com, bobbyeshleman@meta.com, 
+	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, kuniyu@google.com, 
+	linux-kernel@vger.kernel.org, ncardwell@google.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com, sdf@fomichev.me, willemb@google.com
+Cc: syzbot@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 12, 2025 at 04:35:00PM +0800, Chao Gao wrote:
-> On Fri, Sep 12, 2025 at 03:35:29PM +0800, Hou Wenlong wrote:
-> >The commit a377ac1cd9d7b ("x86/entry: Move user return notifier out of
-> >loop") moved fire_user_return_notifiers() into the section with
-> >interrupts disabled, so the callback kvm_on_user_return() cannot be
-> >interrupted by kvm_arch_disable_virtualization_cpu() now. Therefore,
-> >remove the outdated comments and local_irq_save()/local_irq_restore()
-> >code in kvm_on_user_return().
-> >
-> >Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
-> >---
-> > arch/x86/kvm/x86.c | 16 +++++-----------
-> > 1 file changed, 5 insertions(+), 11 deletions(-)
-> >
-> >diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> >index 33fba801b205..10afbacb1851 100644
-> >--- a/arch/x86/kvm/x86.c
-> >+++ b/arch/x86/kvm/x86.c
-> >@@ -568,18 +568,12 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
-> > 	struct kvm_user_return_msrs *msrs
-> > 		= container_of(urn, struct kvm_user_return_msrs, urn);
-> > 	struct kvm_user_return_msr_values *values;
-> >-	unsigned long flags;
-> >
-> >-	/*
-> >-	 * Disabling irqs at this point since the following code could be
-> >-	 * interrupted and executed through kvm_arch_disable_virtualization_cpu()
-> >-	 */
-> >-	local_irq_save(flags);
-> >-	if (msrs->registered) {
-> >-		msrs->registered = false;
-> >-		user_return_notifier_unregister(urn);
-> >-	}
-> >-	local_irq_restore(flags);
-> >+	lockdep_assert_irqs_disabled();
-> 
-> kvm_offline_cpu() may call into this function. But I am not sure if interrupts
-> are disabled in that path.
->
-Thanks for pointing that out. I see that interrupts are enabled in the
-callback during the CPU offline test. I'll remove the
-lockdep_assert_irqs_disabled() here.
- 
-> Documentation/core-api/cpu_hotplug.rst says that callbacks in the ONLINE section
-> are invoked with interrupts and preemption enabled.
-> 
-> >+
-> >+	msrs->registered = false;
-> >+	user_return_notifier_unregister(urn);
-> >+
-> > 	for (slot = 0; slot < kvm_nr_uret_msrs; ++slot) {
-> > 		values = &msrs->values[slot];
-> > 		if (values->host != values->curr) {
-> >--
-> >2.31.1
-> >
-> >
+syzbot ci has tested the following series
+
+[v2] net: devmem: improve cpu cost of RX token management
+https://lore.kernel.org/all/20250911-scratch-bobbyeshleman-devmem-tcp-token-upstream-v2-0-c80d735bd453@meta.com
+* [PATCH net-next v2 1/3] net: devmem: rename tx_vec to vec in dmabuf binding
+* [PATCH net-next v2 2/3] net: devmem: use niov array for token management
+* [PATCH net-next v2 3/3] net: ethtool: prevent user from breaking devmem single-binding rule
+
+and found the following issue:
+general protection fault in sock_devmem_dontneed
+
+Full report is available here:
+https://ci.syzbot.org/series/40b2252a-f8bb-4cec-bfc1-2ff8a3c55336
+
+***
+
+general protection fault in sock_devmem_dontneed
+
+tree:      net-next
+URL:       https://kernel.googlesource.com/pub/scm/linux/kernel/git/netdev/net-next.git
+base:      5adf6f2b9972dbb69f4dd11bae52ba251c64ecb7
+arch:      amd64
+compiler:  Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+config:    https://ci.syzbot.org/builds/2c30c608-f14f-4e6d-9772-cc5e129939fc/config
+C repro:   https://ci.syzbot.org/findings/c89c36f8-4666-47d0-bc39-35662a268e4d/c_repro
+syz repro: https://ci.syzbot.org/findings/c89c36f8-4666-47d0-bc39-35662a268e4d/syz_repro
+
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 6028 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:sock_devmem_dontneed+0x40b/0x910 net/core/sock.c:1112
+Code: 8b 44 24 18 44 8b 20 44 03 64 24 14 48 8b 44 24 68 80 3c 18 00 74 08 4c 89 ef e8 f0 bb c9 f8 4d 8b 7d 00 4c 89 f8 48 c1 e8 03 <80> 3c 18 00 74 08 4c 89 ff e8 d7 bb c9 f8 4d 8b 2f 4c 89 e8 48 c1
+RSP: 0018:ffffc90002987ac0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 1ffff11020d27e78
+RDX: ffff88810a039cc0 RSI: 0000000000000003 RDI: 0000000000000000
+RBP: ffffc90002987c50 R08: ffffc90002987bdf R09: 0000000000000000
+R10: ffffc90002987b60 R11: fffff52000530f7c R12: 0000000000000006
+R13: ffff8881235cb710 R14: 0000000000000000 R15: 0000000000000000
+FS:  000055555e866500(0000) GS:ffff8881a3c14000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b31b63fff CR3: 0000000027a20000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ sk_setsockopt+0x682/0x2dc0 net/core/sock.c:1301
+ do_sock_setsockopt+0x11b/0x1b0 net/socket.c:2340
+ __sys_setsockopt net/socket.c:2369 [inline]
+ __do_sys_setsockopt net/socket.c:2375 [inline]
+ __se_sys_setsockopt net/socket.c:2372 [inline]
+ __x64_sys_setsockopt+0x13f/0x1b0 net/socket.c:2372
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7faf24f8eba9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc3eb96018 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007faf251d5fa0 RCX: 00007faf24f8eba9
+RDX: 0000000000000050 RSI: 0000000000000001 RDI: 0000000000000003
+RBP: 00007faf25011e19 R08: 0000000000000048 R09: 0000000000000000
+R10: 0000200000000100 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007faf251d5fa0 R14: 00007faf251d5fa0 R15: 0000000000000005
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:sock_devmem_dontneed+0x40b/0x910 net/core/sock.c:1112
+Code: 8b 44 24 18 44 8b 20 44 03 64 24 14 48 8b 44 24 68 80 3c 18 00 74 08 4c 89 ef e8 f0 bb c9 f8 4d 8b 7d 00 4c 89 f8 48 c1 e8 03 <80> 3c 18 00 74 08 4c 89 ff e8 d7 bb c9 f8 4d 8b 2f 4c 89 e8 48 c1
+RSP: 0018:ffffc90002987ac0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 1ffff11020d27e78
+RDX: ffff88810a039cc0 RSI: 0000000000000003 RDI: 0000000000000000
+RBP: ffffc90002987c50 R08: ffffc90002987bdf R09: 0000000000000000
+R10: ffffc90002987b60 R11: fffff52000530f7c R12: 0000000000000006
+R13: ffff8881235cb710 R14: 0000000000000000 R15: 0000000000000000
+FS:  000055555e866500(0000) GS:ffff8881a3c14000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b31b63fff CR3: 0000000027a20000 CR4: 00000000000006f0
+----------------
+Code disassembly (best guess):
+   0:	8b 44 24 18          	mov    0x18(%rsp),%eax
+   4:	44 8b 20             	mov    (%rax),%r12d
+   7:	44 03 64 24 14       	add    0x14(%rsp),%r12d
+   c:	48 8b 44 24 68       	mov    0x68(%rsp),%rax
+  11:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1)
+  15:	74 08                	je     0x1f
+  17:	4c 89 ef             	mov    %r13,%rdi
+  1a:	e8 f0 bb c9 f8       	call   0xf8c9bc0f
+  1f:	4d 8b 7d 00          	mov    0x0(%r13),%r15
+  23:	4c 89 f8             	mov    %r15,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	80 3c 18 00          	cmpb   $0x0,(%rax,%rbx,1) <-- trapping instruction
+  2e:	74 08                	je     0x38
+  30:	4c 89 ff             	mov    %r15,%rdi
+  33:	e8 d7 bb c9 f8       	call   0xf8c9bc0f
+  38:	4d 8b 2f             	mov    (%r15),%r13
+  3b:	4c 89 e8             	mov    %r13,%rax
+  3e:	48                   	rex.W
+  3f:	c1                   	.byte 0xc1
+
+
+***
+
+If these findings have caused you to resend the series or submit a
+separate fix, please add the following tag to your commit message:
+  Tested-by: syzbot@syzkaller.appspotmail.com
+
+---
+This report is generated by a bot. It may contain errors.
+syzbot ci engineers can be reached at syzkaller@googlegroups.com.
 
