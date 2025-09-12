@@ -1,233 +1,254 @@
-Return-Path: <linux-kernel+bounces-814499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57906B554D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:40:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72C94B554D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A51347B36A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:38:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9824E7B427C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9685131C582;
-	Fri, 12 Sep 2025 16:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD9331CA71;
+	Fri, 12 Sep 2025 16:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OeeeP4T2"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010014.outbound.protection.outlook.com [52.101.69.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b="NW+5Ac7w"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE671175A5;
-	Fri, 12 Sep 2025 16:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757695208; cv=fail; b=gTzLc0oWYwXR0KOuNvFALijYFL4CURtQQoHmiEY2FDVN5Q5MjNb2pox39VH4oigKBcKPyzVEwvK0eyrugRoOFdms+uRxa8fXXktiJufVirFut6YLTPBTB2iw7BjzdQH4SIpnKC1Wkc/PcEUvvojQz40x78TCbdRCVIFh26APrMo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757695208; c=relaxed/simple;
-	bh=MTtnwdU0aEJZKrkg703WP0cFv4QYs0reY2/jDrqaNNw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Rx7yPT9PTtgMd8tozyPbx29bYaF3Ff4OcdWZPP8GqAqK7yFOT+Gl+VNT0tTp735eF/BQOKWSrIQDUZHiS8IgYe2lFvD1rL8c5+PlPFPfoii3QU/iGHbLGw32+Y1dRq6KRwz3Vwv33vAjZxzT1ZsK/QmwEjO5xBN78MEdFqPTDvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OeeeP4T2; arc=fail smtp.client-ip=52.101.69.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Nfr2qR6UOV2AMe+lhR9xQZ/6n2/vFKDfQtQOc5YecOM5M+gZMHfI+IpXvI8H7lZ5gRiRPAC/EpiF8exRrJCbZPbNRvINeFibWdf/DfYxjJARaTC72YUcnUd34+LNjYQWpemmL+Ob1r0dhhLD1juoBNZomyH4gFp5ubh/YRuFSAVd6qRlxfV5z7JKK5vqHizYohtQPHD+dCWPnf/j9h7iqWJ4E/lHDtcE7U8xBiGE7FYZZgLWq0DeYno1X/D3Zz1sOKspc+fYs9FTrq6TlzbvO8jYGT1GVr0iZj2UxQ+rfZ502ZbX/IdqrYPpoRFbycU0z55zEOuUZVD8gntR9fvs/Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YGtYlSntMeKKbhW4nC+fQ8CsC1Hlrz1PAGnmvUirS64=;
- b=Xz2CpvTwetjLXsOp9eEm0QF3Ts5zCMgJURpl+sm2GjAgPincTkdgZmZGozx0pg91s3ldUfXDONZREz4kBW0+1EuMYI5b3NdUr0IDMCdkwBKmJZEQXI+L7D2gXo2F2BYudGtP81eDwE0OUQ+a10Rrm1tA070f9SEgFnZmnoHHlOupo0B/TLfujV9faM8WUe9lyRqTskpLSoYD3K4Xir/X/GtXW6nNfxv+4y7uOvPSC1y4V5A4BvebBA//G62/6RxGNyUlRaI86bO9hmJIqirmk/hEHlBj+s1uzhXu8D57737XoQRWoIPX3mhcsF2vHajCaXb0GzKNQTQSNSFxHAxC5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YGtYlSntMeKKbhW4nC+fQ8CsC1Hlrz1PAGnmvUirS64=;
- b=OeeeP4T2hVVmrQH/KihUGpO4jdSTCDMsZutExw22ET60xuhhW8sMF8kOUXhSpNgboVO7TBXHlrPQDb4gySbzopAWa0DvQ4i/ndxZIsl+VY/kUJ/3vVErxbBKS37n7FHc8jnjZtiK8aW005l6k11UE30oMsLqb1QkFIDmLuLfHDJM3uRbBRlJjMtNNK+ygujMw3fZFLw6o+yz9EDVqdGF4QDg2QUt3KiKq95eRvTbP56PGKAI4dPOCpKhosuEbozo94bO4wy8Z4kyek1NfupzHZ1GeaQv+3KbZcXTiIVa6xCxkfGwVvqq5k0LffUfCXaloCL7sYOEihzPZ2krcplwhA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by VI0PR04MB10589.eurprd04.prod.outlook.com (2603:10a6:800:25f::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.16; Fri, 12 Sep
- 2025 16:40:02 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9115.015; Fri, 12 Sep 2025
- 16:40:02 +0000
-Date: Fri, 12 Sep 2025 12:39:55 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] dmaengine: imx-sdma: make use of
- devm_add_action_or_reset to unregiser the dma-controller
-Message-ID: <aMRM2x7dN3UWn/FN@lizhi-Precision-Tower-5810>
-References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
- <20250911-v6-16-topic-sdma-v2-9-d315f56343b5@pengutronix.de>
- <aMQzNDE8QuUZwGkt@lizhi-Precision-Tower-5810>
- <20250912152809.nj3yk5wmrb7ojjoo@pengutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912152809.nj3yk5wmrb7ojjoo@pengutronix.de>
-X-ClientProxiedBy: PH8P221CA0058.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:510:349::7) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418E42ED87A
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757695321; cv=none; b=AMn+fIjNy5aXqv0N28zj/1vYWPowVawR9fBx1Ru60ZDvNeCHGa9OYSCxSfW/Shx4Q4uo3V1ceqKQP+omt3a77sn5g7hDgSWC7wauOizZ9pykt9cTPiCYB6zd/TSjB11r9upv0aBjdXRun+3hdsga4jrkGvb6N1I5Fq+hRwF6Ytw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757695321; c=relaxed/simple;
+	bh=iYOckhXvoXHI89aZgEd+P0bhwExKnzLKVvLjUbSKj3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S8z9KjwRFCnfA0+1ZZSFuXxQGRca1Txq6hIIixuOlKv7KkPgy0AcnbXZC+ncpVXsb0+SZCsYwP7/CFd8Y/Ob5ClbcM3V0CPkaVTty1VjygNWShi24ZAvxIJN2MAogRsHKy8NucJeteGIZ4tKWx1O+eBxczmVHxO3rlm5dFYi7r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (1024-bit key) header.d=furiosa.ai header.i=@furiosa.ai header.b=NW+5Ac7w; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7761b83fd01so629671b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa.ai; s=google; t=1757695319; x=1758300119; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=eUzTaaKQdM78ZqXpIezMElUSzU7VXjFq6bGRx3LctHs=;
+        b=NW+5Ac7wBU3jLuW4Je3egpX7udJ9A1sqenRMhhOBxh0GS5dpAJ77vTgwN1BlOKxR4m
+         pCnFcIl0K8XDYkBorXUDTJhocRANny2atAWmIXBrd3kVdTlndHVH5qCs5xR/p866RTdI
+         FogH0m2zzqDTOcMsOp9t50DOkrni6t/EDLsuU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757695319; x=1758300119;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eUzTaaKQdM78ZqXpIezMElUSzU7VXjFq6bGRx3LctHs=;
+        b=Yzvgbf6NsIm3j+wx0H7hsipxJIg0GSNEOyFpwEYhxg/mWQhRMlMyBWjNzewBKrID2a
+         K/Sufbso1qeRI+dQPgKqAoCp61FNe5D0amkn39Np39lu1ppRGzTxseWsZXTNxkx21eyg
+         +oFGpwiBnTLGn3TEKAQKPidwfzQnYkOYGKWLAq6w5Q1mA0ePIxFIY2KGVq+4toZU/GEA
+         X8wxeqTzIjQk18SiDOwV5G9EhY2GGxi2/VYLYnYML7AMrAMclRRRIen82tIER0wVluk5
+         mfQ93fQoudjU+t0YU66cdPHoiJpaR5vFFuAobIxb2rYfTxwkPpJ4iJucCurdRxJ+Q7YP
+         5fdw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7iOmOnkLqMxoO88Gas8LjZziYIGRaGPvMAaouWu85AoMibwFFF1aJjMsrSyU5kZWbMRfYL1dTVBBTDn4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk4f+tNfDr4k/yWqq44LBw1KwQB9vixiItR/l5TdYYyEhElqzk
+	5EbewERnWD+oML3IHlD0YpbdEq1igJLmdd7phgDVP7jHZr9cg4HzwdyzsCWnYIEZdmY=
+X-Gm-Gg: ASbGncuHdBQ6e7DSgLTRUIF/W+qsiNl5clvIdahtY5uXDklJ5i3ILE4UQuGpAIKkh0n
+	ZYPboGapYiNbrxiHd3RnNg/f65Ba/i4acKROoryl3FqUcrRNUBBlLgCXzQFH1QjBQwBayczyMze
+	UzMh3es6oURmpBLjQ7T2xCfXGRZ+1d39I5bZKPt0hAbUjM2ES7dQ1WJKbLs2dIa0awEd+dNpzW9
+	ka9twcFQglip3/gjfIUkhbRJDEfcuwHqK/5DVrN0zx3dzHRn3msBRHV/tWJMDp5bazL4+4ozbP6
+	qSq0s3ZIWBAR+1HT8I2LmdMmT0JF+uFKdFhNKsT+gowVAWy9FYpOThgJo877Vfu38gxASOXMxbi
+	8Aace3gwqtaG7cfIEh0HZvi6YLwhOusmy1DhnDHlLB7FdoUH05mbtP4Lu
+X-Google-Smtp-Source: AGHT+IH+5x9DuKFx9PMoW08FbBeZtXn84JaYEDOdb8DYH7O2d5sqqNiM+uDN2bMJC7MuYFmvHxIQtw==
+X-Received: by 2002:a05:6a00:a8a:b0:771:ec42:1c1e with SMTP id d2e1a72fcca58-77612168e3emr3844530b3a.16.1757695319263;
+        Fri, 12 Sep 2025 09:41:59 -0700 (PDT)
+Received: from sidongui-MacBookPro.local ([175.195.128.78])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-77607b17e23sm5970153b3a.55.2025.09.12.09.41.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 09:41:58 -0700 (PDT)
+Date: Sat, 13 Sep 2025 01:41:44 +0900
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: Caleb Sander Mateos <csander@purestorage.com>
+Cc: Jens Axboe <axboe@kernel.dk>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Benno Lossin <lossin@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org
+Subject: Re: [RFC PATCH v3 2/5] io_uring/cmd: zero-init pdu in
+ io_uring_cmd_prep() to avoid UB
+Message-ID: <aMRNSBHDM4nkewHO@sidongui-MacBookPro.local>
+References: <20250822125555.8620-1-sidong.yang@furiosa.ai>
+ <20250822125555.8620-3-sidong.yang@furiosa.ai>
+ <CADUfDZpsePAbEON_90frzrPCPBt-a=1sW2Q=i8BGS=+tZhudFA@mail.gmail.com>
+ <aLbFiChBnTNLBAyV@sidongui-MacBookPro.local>
+ <CADUfDZpPvj3R7kzWC9bQVV0iuCBOnKsNUFn=B3ivf7De5wCB8g@mail.gmail.com>
+ <aLxFAamglufhUvq0@sidongui-MacBookPro.local>
+ <CADUfDZruwQyOcAeOXkXMLX+_HgOBeYdHUmgnJdT5pGQEmXt9+g@mail.gmail.com>
+ <aMA8_MuU0V-_ja5O@sidongui-MacBookPro.local>
+ <CADUfDZppdnM2QAeX37OmZsXqd7sO7KvyLnNPUYOgLpWMb+FpoQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI0PR04MB10589:EE_
-X-MS-Office365-Filtering-Correlation-Id: cffda36c-2605-4a3a-8ab8-08ddf21b0565
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|19092799006|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3oYI43CySIBxL9hsnUp4Tbe8Tk2TEdbEZePvR/FPsKTh9gPYUpv36Pyr9VHl?=
- =?us-ascii?Q?plyvbPDp5XOP0Htn/Bpcl+kZYoQl4wYLm3LwKbJaDzbClsgivjwVZwWxjREh?=
- =?us-ascii?Q?PiwQO45sPyRuTvLpsMPi/PYq/cwQJbt+ZVgg/Ae02mWv3J8gwNgEKfO57nad?=
- =?us-ascii?Q?8jzt4lleFQlwyW9z+pMVKbFCyglNTsYPbLuNhLrEsCyFbVzTczj/2m7M5mDo?=
- =?us-ascii?Q?YiTUc2QlakPI7AwZis+LNUCcIkeZorFwJV0JaVttJBLUwCLfV00GuOx4uq1m?=
- =?us-ascii?Q?8mNS3X06dbHYoaMgcGiPLJ63CssqXZVVV+ERic7a/vOpXip/DKTnIqQLSL4t?=
- =?us-ascii?Q?tPpq7lPwvbgybfma3pmvGOr39MK1GPmqIdB6OCD5R1hOQr7YaC9gYuCQcmnR?=
- =?us-ascii?Q?bjheFwgMx4cX7WugYhLxws+/YD2xMwJ34H8fWdIyPpMsh/tFcITmlXoHE9N2?=
- =?us-ascii?Q?jGaZ6t8OUII+Ao1eEODnembRTrl4rhWyJwADqcna8CuqNDEGcWMnaCCSF3xK?=
- =?us-ascii?Q?JSEY0aYDxmXVQwrnOSafNZZZngs7TbINnFMssOMKIjLBKXRzDwGlMs34a9eX?=
- =?us-ascii?Q?uIXvGW59FbSr4LjAdrMtUJgrdIulKH6K2nYA1IhRQ7+/QaMTyM7x1nP8GOdX?=
- =?us-ascii?Q?7+sEjzw0huXIwWjdVDiFUOE92YVnvIm2y5m1HEa5j4An3o999FO9/dQ076lz?=
- =?us-ascii?Q?qgGGsb/lQkYN95t8K5zAsfM1cc8mMDvm1h8+2ulHSpdpQ9jvnNIK6VmNM+qw?=
- =?us-ascii?Q?MJGyucUl/OoN4YyJkQEfYk1I+DXce3r3YJ3q7APkJrxmpJHDSxMFsZMpZQ7N?=
- =?us-ascii?Q?L8gDKWOAkD2CRL6sKyxH2MgR4ZKFdcphCv/fE9cy15HjAB6XFBCcq016XldV?=
- =?us-ascii?Q?AaCCPavyH5vtaLC1HxNvsSJE8sRdeQwdLHoP7HyXHvggkAofERmQMEY9TlHo?=
- =?us-ascii?Q?RquD4eRb901R5FizGVRCIto7IqK6Hn8zJavRJuAGKc5NKk6vS1kLRtLAZUXv?=
- =?us-ascii?Q?IH4BVuCMW7XD1xxW7gc6MY1IHYsU87GWVjg0z2UNAGPFaMtPzfXDKeQITH28?=
- =?us-ascii?Q?2CGNwim7UEavBD8LH55i9m1z3QbrsXLZA9rRSBaEoxY2bo2FgHj3Qmq0e9zo?=
- =?us-ascii?Q?ZqweKi4JHE6R8xoPz7b0wV5+LPuUp6NcvWff4dCtDBdmSisAm4tP80XezTiJ?=
- =?us-ascii?Q?+rvgTqZ9lVf9vgn4C/PVjsyGy0rV7xlVqXfVw8jQj6EepFN2b0yDhtgTWwBK?=
- =?us-ascii?Q?oJ+XFAR8tFGib2cDo96MPoohoXiKcesKunHtH3dLnpyrjuiZ+ROrGsUF+jnc?=
- =?us-ascii?Q?Tt2kMrdkmj+8qlL/9VOeQ12cV9MZ1g1YRVTT9YcYReEnL9SjHfazTdD8MHqB?=
- =?us-ascii?Q?O5s8RttpnT3Yj89CzlpgkSiZbj0WU0JZ054g2BX2x9VgsJCt0GLVMbaKamGK?=
- =?us-ascii?Q?ySC7qmXKOBPyvnKuNl+1DyvOXLQeq5Cu1n+9C5cmw+iSeBBGDvEnGw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(19092799006)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?M02YuGGogdNn1J1jxOXQ3HGWHPlUZsRQVjPxlttdxSqsboMTgXzHlpSsE87b?=
- =?us-ascii?Q?WOxhBSPCFPyurF52yeN0KrkFl55NEphE8z6EVcoxlj8edyKwX+/4Z+53ML6G?=
- =?us-ascii?Q?4mweZvouHKAriBu9PJEco9QIeVRl0J4nkblk9FwcGpo1Aq6ZsfIcYHvGFWxe?=
- =?us-ascii?Q?ig+//u4Msv+xFa7IlR3bVHaH1kDls+S3QPJhVpSAA7rq902nFNrz+Pxk6yG/?=
- =?us-ascii?Q?eujudw4qAcviHszXh3eB/qvY7h9RQgMi5tNPT5iMFG674JiHt3MjbBSdxx3R?=
- =?us-ascii?Q?vfGaKHZ960PtF33IoiMkh5SYHrxdC+LOxenlh4rkno0lxdDjgYB0m4+dL7P8?=
- =?us-ascii?Q?yWDu/Kcx9bgpGhfR0sGsUW10Y3r44qRUaOt6AXMkNRGCucL+7qrIc1FwDRJu?=
- =?us-ascii?Q?+6iRSi6fuMaPKSWrpl+a2eWNNMej9fl7CEm64PnqKjggpB1tOLzv/2iKKTND?=
- =?us-ascii?Q?NHTXv2AHn4zQXqO2t/QxKEJZZ2UjjtQH+D7wjFVDY5GEMJAYG6htvwjB2c9s?=
- =?us-ascii?Q?T3VP7u0Ts9IQLGyecYyBHutEMjY6XNWYDUC2DmI0bgnVujU6AFGQ+/mZhoSW?=
- =?us-ascii?Q?UdDwqRb2TS2N/XJgardH359oBf8sskWtGWltjHV9bYC2fwr2pIJSbV3S+iuP?=
- =?us-ascii?Q?1DMx5Iie5eCFZiwr4OO1kLqvvdlRluns0eOtcKAfv/CQ1PQVFpU7lc28C0rG?=
- =?us-ascii?Q?ZzBSEuQwFlsIi5ExKMPW8LoDn6Fazq7OyZdLqzCfJp46JGurqebBcqObcRcU?=
- =?us-ascii?Q?WCYXGOh+UvV10aa06pOZcgWU2GX2ipJ59e2heXxYfgDSddY9sSmYY+baDTFw?=
- =?us-ascii?Q?hykGqx60lEFEccqu6vvDHv+b52cbPrNDvdpQeUGQqRYqDjfb+pUhUPmn6QSr?=
- =?us-ascii?Q?ozn0NCwT4Qy8uhyh9+6kjhm2GpfBE6AmKV60d0QIRumfbb/Rcv9VRcIt3T7g?=
- =?us-ascii?Q?zWrc/JCdCKi/mqojEkCS4wtvwu9CkNhqcrRIut2vQaLtSpciGuDRKthbIz9U?=
- =?us-ascii?Q?MM+VamUdi99D/6fMgMTTEvVjhjmawXmkToNDqor+byCDqqyexWy8HDrhTKo6?=
- =?us-ascii?Q?2fK5+rEl1N5dX/l4T9rgwamqISVM4AN1rw0diBvsS80MDkSNiPM6YH0xQ47z?=
- =?us-ascii?Q?isGtrUeFfSBg7ab1dPcxVbzoEkFTMz/Kcpq7gglGwHUa2aIVZ7v5obPa0MNG?=
- =?us-ascii?Q?ZoP4BHtrBrS0qlllDWeslS5rou1yU1KP0elTpdp0AbUTr6EIhsZVZxIhvkxF?=
- =?us-ascii?Q?WZCgfpzOtGE6ktDnGslInMbssxcsx4NT2mFWaRAw+8O1WIkCf1pMNGEvXKeh?=
- =?us-ascii?Q?4biOaY47qRGO2R2O2JSt6tG8ILof861Wihf4Agntb+u5xbI1AG6k/BS+kxSP?=
- =?us-ascii?Q?oBUvhcaqteO4M5B3k+2rh389QF7sAUZ28FE5v97W75h+r1BkE2VB5AYVDHXS?=
- =?us-ascii?Q?OCZV4gIvMWSKqLwo/YHhapqomquStr+wY1X9vjaClqRIlMg7v2apMb2Se65L?=
- =?us-ascii?Q?+zT+6EuMQmU2uAkYAqYwl1JSQv78b/1moktf97xrqMULUhHRm/Zas2M2QHBO?=
- =?us-ascii?Q?AK2s02aVplt9ei/Ao5gZM5g4zmL1G2A3flRD6kDt?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cffda36c-2605-4a3a-8ab8-08ddf21b0565
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 16:40:02.6300
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: QNoM7WaVp0X/SUUgT1o0ErtngTUGHepUt71069RYUu3AcbGF4FI+QBULZaD8po+jblKkY9XARttrdqNefC1dJg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10589
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADUfDZppdnM2QAeX37OmZsXqd7sO7KvyLnNPUYOgLpWMb+FpoQ@mail.gmail.com>
 
-On Fri, Sep 12, 2025 at 05:28:09PM +0200, Marco Felsch wrote:
-> On 25-09-12, Frank Li wrote:
-> > On Thu, Sep 11, 2025 at 11:56:50PM +0200, Marco Felsch wrote:
-> > > Use the devres capabilities to cleanup the driver remove() callback.
-> > >
-> > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > > ---
-> > >  drivers/dma/imx-sdma.c | 14 +++++++++++++-
-> > >  1 file changed, 13 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> > > index d6d0d4300f540268a3ab4a6b14af685f7b93275a..a7e6554ca223e2e980caf2e2dea832db9ad60ed6 100644
-> > > --- a/drivers/dma/imx-sdma.c
-> > > +++ b/drivers/dma/imx-sdma.c
-> > > @@ -2264,6 +2264,13 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
-> > >  				     ofdma->of_node);
-> > >  }
-> > >
-> > > +static void sdma_dma_of_dma_controller_unregister_action(void *data)
-> > > +{
-> > > +	struct sdma_engine *sdma = data;
-> > > +
-> > > +	of_dma_controller_free(sdma->dev->of_node);
-> > > +}
-> > > +
-> > >  static void sdma_dma_device_unregister_action(void *data)
-> > >  {
-> > >  	struct sdma_engine *sdma = data;
-> > > @@ -2408,6 +2415,12 @@ static int sdma_probe(struct platform_device *pdev)
-> > >  		return ret;
-> > >  	}
-> > >
-> > > +	ret = devm_add_action_or_reset(dev, sdma_dma_of_dma_controller_unregister_action, sdma);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "failed to register of-dma-controller unregister hook\n");
-> > > +		return ret;
-> > > +	}
-> > > +
+On Tue, Sep 09, 2025 at 09:32:37AM -0700, Caleb Sander Mateos wrote:
+> On Tue, Sep 9, 2025 at 7:43 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
 > >
-> > return dev_err_probe()
->
-> Please check my last patch.
-
-You can use dev_err_probe() here, last patch only convert exist one.
-Avoid add A, then remove A later.
-
-Frank
-
->
-> Regards,
->   Marco
->
+> > On Mon, Sep 08, 2025 at 12:45:58PM -0700, Caleb Sander Mateos wrote:
+> > > On Sat, Sep 6, 2025 at 7:28 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> > > >
+> > > > On Tue, Sep 02, 2025 at 08:31:00AM -0700, Caleb Sander Mateos wrote:
+> > > > > On Tue, Sep 2, 2025 at 3:23 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> > > > > >
+> > > > > > On Mon, Sep 01, 2025 at 05:34:28PM -0700, Caleb Sander Mateos wrote:
+> > > > > > > On Fri, Aug 22, 2025 at 5:56 AM Sidong Yang <sidong.yang@furiosa.ai> wrote:
+> > > > > > > >
+> > > > > > > > The pdu field in io_uring_cmd may contain stale data when a request
+> > > > > > > > object is recycled from the slab cache. Accessing uninitialized or
+> > > > > > > > garbage memory can lead to undefined behavior in users of the pdu.
+> > > > > > > >
+> > > > > > > > Ensure the pdu buffer is cleared during io_uring_cmd_prep() so that
+> > > > > > > > each command starts from a well-defined state. This avoids exposing
+> > > > > > > > uninitialized memory and prevents potential misinterpretation of data
+> > > > > > > > from previous requests.
+> > > > > > > >
+> > > > > > > > No functional change is intended other than guaranteeing that pdu is
+> > > > > > > > always zero-initialized before use.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> > > > > > > > ---
+> > > > > > > >  io_uring/uring_cmd.c | 1 +
+> > > > > > > >  1 file changed, 1 insertion(+)
+> > > > > > > >
+> > > > > > > > diff --git a/io_uring/uring_cmd.c b/io_uring/uring_cmd.c
+> > > > > > > > index 053bac89b6c0..2492525d4e43 100644
+> > > > > > > > --- a/io_uring/uring_cmd.c
+> > > > > > > > +++ b/io_uring/uring_cmd.c
+> > > > > > > > @@ -203,6 +203,7 @@ int io_uring_cmd_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+> > > > > > > >         if (!ac)
+> > > > > > > >                 return -ENOMEM;
+> > > > > > > >         ioucmd->sqe = sqe;
+> > > > > > > > +       memset(&ioucmd->pdu, 0, sizeof(ioucmd->pdu));
+> > > > > > >
+> > > > > > > Adding this overhead to every existing uring_cmd() implementation is
+> > > > > > > unfortunate. Could we instead track the initialized/uninitialized
+> > > > > > > state by using different types on the Rust side? The io_uring_cmd
+> > > > > > > could start as an IoUringCmd, where the PDU field is MaybeUninit,
+> > > > > > > write_pdu<T>() could return a new IoUringCmdPdu<T> that guarantees the
+> > > > > > > PDU has been initialized.
+> > > > > >
+> > > > > > I've found a flag IORING_URING_CMD_REISSUE that we could initialize
+> > > > > > the pdu. In uring_cmd callback, we can fill zero when it's not reissued.
+> > > > > > But I don't know that we could call T::default() in miscdevice. If we
+> > > > > > make IoUringCmdPdu<T>, MiscDevice also should be MiscDevice<T>.
+> > > > > >
+> > > > > > How about assign a byte in pdu for checking initialized? In uring_cmd(),
+> > > > > > We could set a byte flag that it's not initialized. And we could return
+> > > > > > error that it's not initialized in read_pdu().
+> > > > >
+> > > > > Could we do the zero-initialization (or T::default()) in
+> > > > > MiscdeviceVTable::uring_cmd() if the IORING_URING_CMD_REISSUE flag
+> > > > > isn't set (i.e. on the initial issue)? That way, we avoid any
+> > > > > performance penalty for the existing C uring_cmd() implementations.
+> > > > > I'm not quite sure what you mean by "assign a byte in pdu for checking
+> > > > > initialized".
+> > > >
+> > > > Sure, we could fill zero when it's the first time uring_cmd called with
+> > > > checking the flag. I would remove this commit for next version. I also
+> > > > suggests that we would provide the method that read_pdu() and write_pdu().
+> > > > In read_pdu() I want to check write_pdu() is called before. So along the
+> > > > 20 bytes for pdu, maybe we could use a bytes for the flag that pdu is
+> > > > initialized?
+> > >
+> > > Not sure what you mean about "20 bytes for pdu".
+> > > It seems like it would be preferable to enforce that write_pdu() has
+> > > been called before read_pdu() using the Rust type system instead of a
+> > > runtime check. I was thinking a signature like fn write_pdu(cmd:
+> > > IoUringCmd, value: T) -> IoUringCmdPdu<T>. Do you feel there's a
+> > > reason that wouldn't work and a runtime check would be necessary?
 > >
-> > Frank
-> > >  	/*
-> > >  	 * Because that device tree does not encode ROM script address,
-> > >  	 * the RAM script in firmware is mandatory for device tree
-> > > @@ -2431,7 +2444,6 @@ static void sdma_remove(struct platform_device *pdev)
-> > >  	struct sdma_engine *sdma = platform_get_drvdata(pdev);
-> > >  	int i;
-> > >
-> > > -	of_dma_controller_free(sdma->dev->of_node);
-> > >  	/* Kill the tasklet */
-> > >  	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
-> > >  		struct sdma_channel *sdmac = &sdma->channel[i];
-> > >
-> > > --
-> > > 2.47.3
-> > >
+> > I didn't think about make write_pdu() to return IoUringCmdPdu<T> before.
+> > I think it's good way to pdu is safe without adding a new generic param for
+> > MiscDevice. write_pdu() would return IoUringCmdPdu<T> and it could call
+> > IoUringCmdPdu<T>::pdu(&mut self) -> &mut T safely maybe.
+> 
+> Yes, that's what I was thinking.
+
+Good, I'll change api in this way. Thanks!
+
+> 
 > >
+> > >
+> > > >
+> > > > But maybe I would introduce a new struct that has Pin<&mut IoUringCmd> and
+> > > > issue_flags. How about some additional field for pdu is initialized like below?
+> > > >
+> > > > struct IoUringCmdArgs {
+> > > >   ioucmd: Pin<&mut IoUringCmd>,
+> > > >   issue_flags: u32,
+> > > >   pdu_initialized: bool,
+> > > > }
+> > >
+> > > One other thing I realized is that issue_flags should come from the
+> > > *current* context rather than the context the uring_cmd() callback was
+> > > called in. For example, if io_uring_cmd_done() is called from task
+> > > work context, issue_flags should match the issue_flags passed to the
+> > > io_uring_cmd_tw_t callback, not the issue_flags originally passed to
+> > > the uring_cmd() callback. So it probably makes more sense to decouple
+> > > issue_flags from the (owned) IoUringCmd. I think you could pass it by
+> > > reference (&IssueFlags) or with a phantom reference lifetime
+> > > (IssueFlags<'_>) to the Rust uring_cmd() and task work callbacks to
+> > > ensure it can't be used after those callbacks have returned.
+> >
+> > I have had no idea about task work context. I agree with you that
+> > it would be better to separate issue_flags from IoUringCmd. So,
+> > IoUringCmdArgs would have a only field Pin<&mut IoUringCmd>?
+> 
+> "Task work" is a mechanism io_uring uses to queue work to run on the
+> thread that submitted an io_uring operation. It's basically a
+> per-thread atomic queue of callbacks that the thread will process
+> whenever it returns from the kernel to userspace (after a syscall or
+> an interrupt). This is the context where asynchronous uring_cmd
+> completions are generally processed (see
+> io_uring_cmd_complete_in_task() and io_uring_cmd_do_in_task_lazy()). I
+> can't speak to the history of why io_uring uses task work, but my
+> guess would be that it provides a safe context to acquire the
+> io_ring_ctx uring_lock mutex (e.g. nvme_uring_cmd_end_io() can be
+> called from an interrupt handler, so it's not allowed to take a
+> mutex). Processing all the task work at once also provides natural
+> opportunities for batching.
+
+Thanks, I've checked io_uring_cmd_complete_in_task() that it receives
+callback that has issue_flags different with io_uring_cmd(). I'll try to add
+a api that wrapping io_uring_cmd_complete_in_task() for next version.
+
+>
+> Yes, we probably don't need to bundle anything else with the
+> IoUringCmd after all. As I mentioned earlier, I don't think Pin<&mut
+> IoUringCmd> will work for uring_cmds that complete asynchronously, as
+> they will need to outlive the uring_cmd() call. So uring_cmd() needs
+> to transfer ownership of the struct io_uring_cmd.
+
+I can't think that how to take ownership of struct io_uring_cmd. The
+struct allocated with io_alloc_req() and should be freed with io_free_req().
+If taking ownership means having pointer of struct io_uring_cmd, I think
+it's no difference with current version. Also could it be called with
+mem::forget() if it has ownership?
+
+Thanks,
+Sidong
+ 
+> Best,
+> Caleb
 
