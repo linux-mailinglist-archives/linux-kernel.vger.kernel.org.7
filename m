@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-813297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF52BB5433D
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C65CAB5433C
 	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:49:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282B11BC7D77
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9AB91BC7E9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBF62BD5B2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A27D2BDC15;
 	Fri, 12 Sep 2025 06:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2SRpwkP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoYbU8UR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822972874F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821AA28726A;
 	Fri, 12 Sep 2025 06:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757659751; cv=none; b=URIAh//OHLnSGbtsctbOJwHTM/75iLuoiDVna3S6NzMmX6Fv/orBmTUWs91mwjfWebYONJAdgf6r8I3JoCOznLzngdAKLwBunQQdUSv3gu8CZhPDP89Z68xIzRbzkDoX74vR1HIr3xaQLYERb4YDv70sZ+ZXctd5b1poybSVWxk=
+	t=1757659751; cv=none; b=boVlItUoe3iHEBdJoBJjAgGIADQACRDZhGjfFwiZfEuXQbZsXWl4XuTj/Io7HqLpPOVsEqhPg6nsR0IRar5Gr8PRTd+zftXzrQ4q71SmInGaTPazLAK/54YNc8RwhBqBGkyu0XoYczy2yJtGVgqZOoNpRfxNUkmXpIqrblrnC0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757659751; c=relaxed/simple;
-	bh=AfD1lGXGhBJ72syghpA4tAQn0Om1/q15shkj744ZzgI=;
+	bh=CU0Tkkq2oieQT86ftxffSgSTBVZAVNabh+8fprnY9xM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=EowA3t4n2+zZQGW1vJ/ljyOiIHmk6bpMhH0qe7yfinEUM729dPLI0XBygk6pwhBPekRwx/GCxRTwuBV/gs4/t6jjXJjPnYSSTLuNvJmq8gM87aCz3RkGBwaI5MqEZ40w9TyTABE6SuvlsztK2WbXOeO7lwX3CTeFr5NIDxiECvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2SRpwkP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 12153C4CEF7;
+	 In-Reply-To:To:Cc; b=e3MY9vUpTU6t8vJsLGy007z4EMLR4/FuEqCO0uNON1aO+YatgflO7BNRb3SqV9TGR+v6WdWhCvEuQZ2j+rZN4KAoHNDm4NlR6vnLZU7CutDEgpc9mAuw0m0UvPS3CB3CBk1AGvhvTHKSE6dS/qZuzzUZmmQ9gPFap6watxDqKJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoYbU8UR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1D30CC4CEF5;
 	Fri, 12 Sep 2025 06:49:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1757659751;
-	bh=AfD1lGXGhBJ72syghpA4tAQn0Om1/q15shkj744ZzgI=;
+	bh=CU0Tkkq2oieQT86ftxffSgSTBVZAVNabh+8fprnY9xM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=j2SRpwkPWcUQ4gvQPoXrle8m2BOLrU/Dn9Umm9FZY80I+aB8KeVjSyOmhpwo+s9lf
-	 KPTdXZ1xiWXrQigYeIMflEvl8cgDyC3vpZ4E6Fkk84bE1AfHoDIcgB1flVfbwuFDc4
-	 +Al7tq7HdPYHqRl2vk3JOTknZ9cG4PhMvORIsZbttSlzqnbnYdjfb3c4B9zIdguR8b
-	 +/+vvpbUSrxqTPHVyV6j7iC5qgtDHRn7nTNJT31oOHbustolRy0drsFLWHOmNB2tE/
-	 2vn4wchPPOf+3htry11Erbo5ohDjtBSlufhQGqrQkQ6Ctix849buX7QmdkUPFonC/p
-	 YKeEiN5vM1e6g==
+	b=IoYbU8URfguXua5HcDZ4Kn330WTAuZ28DKc82D3chpDOIcXlfpzSxUyhWoCxKsclb
+	 W/fnRKdZV+o0dBRpHTl3bUA/p7Q2mkivtmYanQy05/dPBXVhbzlN0jGQO95NbAKRbC
+	 a5Yuy2IMSvxOryak2qoNrVI+6ckHvn6J5ebR3GylxGxGyeyQ+5jwH33Qcm+mF4tUvL
+	 m4XCeUTPeYEPKI3l9BOtGrjRfJa3FbZtMycwWlNNqMFFvVb8oIy9wDl/1G2ow6e5Rk
+	 8dKbzSNFVDyd6ZWwo8YA88ZmbFhZOnS0mvhJrSXWsUPVFEgkR7aAJ1b3A+B27CbfDf
+	 F15kBmMXWuYgA==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00CCCCA101F;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBBACAC582;
 	Fri, 12 Sep 2025 06:49:11 +0000 (UTC)
 From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Fri, 12 Sep 2025 14:48:58 +0800
-Subject: [PATCH v2 1/3] ALSA: usb-audio: add two-way convert between name
- and bit for QUIRK_FLAG_*
+Date: Fri, 12 Sep 2025 14:48:59 +0800
+Subject: [PATCH v2 2/3] ALSA: usb-audio: add module param
+ device_quirk_flags
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250912-sound-v2-1-01ea3d279f4b@uniontech.com>
+Message-Id: <20250912-sound-v2-2-01ea3d279f4b@uniontech.com>
 References: <20250912-sound-v2-0-01ea3d279f4b@uniontech.com>
 In-Reply-To: <20250912-sound-v2-0-01ea3d279f4b@uniontech.com>
 To: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
@@ -67,11 +67,11 @@ Cc: linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
  Feng Yuan <fengyuan@uniontech.com>, qaqland <anguoli@uniontech.com>, 
  kernel@uniontech.com, Cryolitia PukNgae <cryolitia@uniontech.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757659749; l=4063;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757659749; l=8167;
  i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=/BXquMWJMNiFdz+nh5s6GogPhAqR6jecE2iPTQLfG8w=;
- b=+sfLtT4u8nox/3hjkxd/5tp3ulZEsn8icd5sLuV50YzaSnwSLQFiixNhBdw2yzRdjeQhN4Udi
- EL3r0yhHFRLD4xa0q6nNqDHp2ITf6aMhuyqRR2Yjv+l1ICVaGEZaF8i
+ bh=vy1GhNtVVe5bJjpuCQxdcSZoCeXV0hfadpQ5aSIqw6I=;
+ b=Pb/RudesldX8zHjBeWMP9jkifnq+gq13CKuNCdv6+DmNFKf2xHrtRHbHHMLOxnUErQKbm6mTE
+ WnNMqxZRvjTD3iMafWiYh9C3IKK1+h8JZ2Aw9lgsCDnACygE7sbyz7J
 X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
  pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
 X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
@@ -81,137 +81,292 @@ Reply-To: cryolitia@uniontech.com
 
 From: Cryolitia PukNgae <cryolitia@uniontech.com>
 
-Also improve debug logs for applied quirks
+For apply and unapply quirk flags more flexibly though param and sysfs
 
 Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
 ---
- sound/usb/quirks.c   | 82 +++++++++++++++++++++++++++++++++++++++++++++++++---
- sound/usb/quirks.h   |  3 ++
- sound/usb/usbaudio.h |  1 +
- 3 files changed, 82 insertions(+), 4 deletions(-)
+ sound/usb/card.c     | 165 ++++++++++++++++++++++++++++++++++++++++++++++++++-
+ sound/usb/quirks.c   |  28 +++++++++
+ sound/usb/quirks.h   |   2 +
+ sound/usb/usbaudio.h |  13 ++++
+ 4 files changed, 207 insertions(+), 1 deletion(-)
 
-diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
-index d736a4750356597bfb0f9d5ab01cdaeaac0f907c..94854f352b1702b491e1bf3c8b769f7088e03976 100644
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -2446,6 +2446,62 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
- 	{} /* terminator */
- };
+diff --git a/sound/usb/card.c b/sound/usb/card.c
+index 0265206a8e8cf31133e8463c98fe0497d8ace89e..e53fd868f34e93d42b1447958fc136658a6f9dd2 100644
+--- a/sound/usb/card.c
++++ b/sound/usb/card.c
+@@ -77,6 +77,7 @@ static unsigned int quirk_flags[SNDRV_CARDS];
  
-+static const char *const snd_usb_audio_quirk_flag_names[] = {
-+	"get_sample_rate",
-+	"share_media_device",
-+	"align_transfer",
-+	"tx_length",
-+	"playback_first",
-+	"skip_clock_selector",
-+	"ignore_clock_source",
-+	"itf_usb_dsd_dac",
-+	"ctl_msg_delay",
-+	"ctl_msg_delay_1m",
-+	"ctl_msg_delay_5m",
-+	"iface_delay",
-+	"validate_rates",
-+	"disable_autosuspend",
-+	"ignore_ctl_error",
-+	"dsd_raw",
-+	"set_iface_first",
-+	"generic_implicit_fb",
-+	"skip_implicit_fb",
-+	"iface_skip_close",
-+	"force_iface_reset",
-+	"fixed_rate",
-+	"mic_res_16",
-+	"mic_res_384",
-+	"mixer_playback_min_mute",
-+	"mixer_capture_min_mute",
-+	NULL
-+};
+ bool snd_usb_use_vmalloc = true;
+ bool snd_usb_skip_validation;
++char device_quirk_flags[MAX_QUIRK_PARAM_LEN];
+ 
+ module_param_array(index, int, NULL, 0444);
+ MODULE_PARM_DESC(index, "Index value for the USB audio adapter.");
+@@ -110,6 +111,149 @@ MODULE_PARM_DESC(use_vmalloc, "Use vmalloc for PCM intermediate buffers (default
+ module_param_named(skip_validation, snd_usb_skip_validation, bool, 0444);
+ MODULE_PARM_DESC(skip_validation, "Skip unit descriptor validation (default: no).");
+ 
++DEFINE_MUTEX(device_quirk_mutex); /* protects device_quirk_list */
 +
-+const char *snd_usb_quirk_flag_find_name(unsigned long index)
++struct device_quirk_entry *device_quirk_list;
++unsigned int device_quirk_count;
++
++static int device_quirks_param_set(const char *value,
++				   const struct kernel_param *kp)
 +{
-+	if (index >= ARRAY_SIZE(snd_usb_audio_quirk_flag_names))
-+		return NULL;
++	char *val, *p, *field, *flag_field;
++	u32 mask_flags, unmask_flags, bit;
++	bool is_unmask;
++	u16 vid, pid;
++	size_t i;
++	int err;
 +
-+	return snd_usb_audio_quirk_flag_names[index];
++	val = kstrdup(value, GFP_KERNEL);
++	if (!val)
++		return -ENOMEM;
++
++	err = param_set_copystring(val, kp);
++	if (err) {
++		kfree(val);
++		return err;
++	}
++
++	mutex_lock(&device_quirk_mutex);
++
++	if (!*val) {
++		device_quirk_count = 0;
++		kfree(device_quirk_list);
++		device_quirk_list = NULL;
++		goto unlock;
++	}
++
++	for (device_quirk_count = 1, i = 0; val[i]; i++)
++		if (val[i] == ';')
++			device_quirk_count++;
++
++	kfree(device_quirk_list);
++
++	device_quirk_list = kcalloc(device_quirk_count,
++				    sizeof(struct device_quirk_entry),
++				    GFP_KERNEL);
++	if (!device_quirk_list) {
++		device_quirk_count = 0;
++		mutex_unlock(&device_quirk_mutex);
++		kfree(val);
++		return -ENOMEM;
++	}
++
++	for (i = 0, p = val; p && *p;) {
++		/* Each entry consists of VID:PID:flags */
++		field = strsep(&p, ":");
++		if (!field)
++			break;
++
++		if (strcmp(field, "*") == 0)
++			vid = 0;
++		else if (kstrtou16(field, 16, &vid))
++			break;
++
++		field = strsep(&p, ":");
++		if (!field)
++			break;
++
++		if (strcmp(field, "*") == 0)
++			pid = 0;
++		else if (kstrtou16(field, 16, &pid))
++			break;
++
++		field = strsep(&p, ";");
++		if (!field || !*field)
++			break;
++
++		/* Collect the flags */
++		mask_flags = 0;
++		unmask_flags = 0;
++		while (field && *field) {
++			flag_field = strsep(&field, ",");
++
++			if (!flag_field)
++				break;
++
++			if (*flag_field == '!') {
++				is_unmask = true;
++				flag_field++;
++			} else {
++				is_unmask = false;
++			}
++
++			if (!kstrtou32(flag_field, 16, &bit)) {
++				if (is_unmask)
++					unmask_flags |= bit;
++				else
++					mask_flags |= bit;
++
++				break;
++			}
++
++			bit = snd_usb_quirk_flags_from_name(flag_field);
++
++			if (bit) {
++				if (is_unmask)
++					unmask_flags |= bit;
++				else
++					mask_flags |= bit;
++			} else {
++				pr_warn("snd_usb_audio: unknown flag %s while parsing param device_quirk_flags\n",
++					flag_field);
++			}
++		}
++		device_quirk_list[i++] = (struct device_quirk_entry){
++			.vid = vid,
++			.pid = pid,
++			.mask_flags = mask_flags,
++			.unmask_flags = unmask_flags,
++		};
++	}
++
++	if (i < device_quirk_count)
++		device_quirk_count = i;
++
++unlock:
++	mutex_unlock(&device_quirk_mutex);
++	kfree(val);
++
++	return 0;
 +}
 +
-+u32 snd_usb_quirk_flags_from_name(char *name)
++static const struct kernel_param_ops device_quirks_param_ops = {
++	.set = device_quirks_param_set,
++	.get = param_get_string,
++};
++
++static struct kparam_string device_quirks_param_string = {
++	.maxlen = sizeof(device_quirk_flags),
++	.string = device_quirk_flags,
++};
++
++device_param_cb(device_quirk_flags, &device_quirks_param_ops,
++		&device_quirks_param_string, 0644);
++MODULE_PARM_DESC(device_quirk_flags, "Add/modify USB audio quirks");
++
+ /*
+  * we keep the snd_usb_audio_t instances by ourselves for merging
+  * the all interfaces on the same card as one sound device.
+@@ -755,6 +899,8 @@ static int snd_usb_audio_create(struct usb_interface *intf,
+ 	else
+ 		snd_usb_init_quirk_flags(chip);
+ 
++	snd_usb_init_dynamic_quirks(chip);
++
+ 	card->private_free = snd_usb_audio_free;
+ 
+ 	strscpy(card->driver, "USB-Audio");
+@@ -1290,4 +1436,21 @@ static struct usb_driver usb_audio_driver = {
+ 	.supports_autosuspend = 1,
+ };
+ 
+-module_usb_driver(usb_audio_driver);
++static int __init usb_audio_init(void)
 +{
-+	u32 flag = 0;
-+	u32 i;
++	return usb_register_driver(&usb_audio_driver, THIS_MODULE,
++							   KBUILD_MODNAME);
++}
 +
-+	if (!name || !*name)
-+		return 0;
++static void __exit usb_audio_exit(void)
++{
++	mutex_lock(&device_quirk_mutex);
++	kfree(device_quirk_list);
++	device_quirk_list = NULL;
++	mutex_unlock(&device_quirk_mutex);
 +
-+	for (i = 0; snd_usb_audio_quirk_flag_names[i]; i++) {
-+		if (strcmp(name, snd_usb_audio_quirk_flag_names[i]) == 0) {
-+			flag = (1U << i);
-+			break;
++	usb_deregister(&usb_audio_driver);
++}
++
++module_init(usb_audio_init);
++module_exit(usb_audio_exit);
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
+index 94854f352b1702b491e1bf3c8b769f7088e03976..bb40c747c1d25ddedeaf9df7df99edc79eacbb84 100644
+--- a/sound/usb/quirks.c
++++ b/sound/usb/quirks.c
+@@ -2537,3 +2537,31 @@ void snd_usb_init_quirk_flags(struct snd_usb_audio *chip)
+ 		}
+ 	}
+ }
++
++void snd_usb_init_dynamic_quirks(struct snd_usb_audio *chip)
++{
++	u16 vid = USB_ID_VENDOR(chip->usb_id);
++	u16 pid = USB_ID_PRODUCT(chip->usb_id);
++	int i;
++
++	mutex_lock(&device_quirk_mutex);
++
++	for (i = 0; i < device_quirk_count; i++) {
++		if (device_quirk_list[i].vid == 0 ||
++		    (vid == device_quirk_list[i].vid &&
++		     device_quirk_list[i].pid == 0) ||
++		    (vid == device_quirk_list[i].vid &&
++		     pid == device_quirk_list[i].pid)) {
++			chip->quirk_flags |= device_quirk_list[i].mask_flags;
++			chip->quirk_flags &= ~device_quirk_list[i].unmask_flags;
++			usb_audio_dbg(chip,
++				      "Set mask quirk flag 0x%x and unmask quirk flag 0x%x from param for device %04x:%04x\n",
++				      device_quirk_list[i].mask_flags,
++				      device_quirk_list[i].unmask_flags,
++				      USB_ID_VENDOR(chip->usb_id),
++				      USB_ID_PRODUCT(chip->usb_id));
 +		}
 +	}
 +
-+	return flag;
++	mutex_unlock(&device_quirk_mutex);
 +}
-+
- void snd_usb_init_quirk_flags(struct snd_usb_audio *chip)
- {
- 	const struct usb_audio_quirk_flags_table *p;
-@@ -2454,10 +2510,28 @@ void snd_usb_init_quirk_flags(struct snd_usb_audio *chip)
- 		if (chip->usb_id == p->id ||
- 		    (!USB_ID_PRODUCT(p->id) &&
- 		     USB_ID_VENDOR(chip->usb_id) == USB_ID_VENDOR(p->id))) {
--			usb_audio_dbg(chip,
--				      "Set quirk_flags 0x%x for device %04x:%04x\n",
--				      p->flags, USB_ID_VENDOR(chip->usb_id),
--				      USB_ID_PRODUCT(chip->usb_id));
-+			unsigned long flags = p->flags;
-+			unsigned long bit;
-+
-+			for_each_set_bit(bit, &flags,
-+					 BYTES_TO_BITS(sizeof(p->flags))) {
-+				const char *name =
-+					snd_usb_audio_quirk_flag_names[bit];
-+
-+				if (name)
-+					usb_audio_dbg(chip,
-+						      "Set quirk flag %s for device %04x:%04x\n",
-+						      name,
-+						      USB_ID_VENDOR(chip->usb_id),
-+						      USB_ID_PRODUCT(chip->usb_id));
-+				else
-+					usb_audio_warn(chip,
-+						       "Set unknown quirk flag 0x%lx for device %04x:%04x\n",
-+						       bit,
-+						       USB_ID_VENDOR(chip->usb_id),
-+						       USB_ID_PRODUCT(chip->usb_id));
-+			}
-+
- 			chip->quirk_flags |= p->flags;
- 			return;
- 		}
 diff --git a/sound/usb/quirks.h b/sound/usb/quirks.h
-index f9bfd5ac7bab01717de3a76227482a128bf73165..bd5baf2b193a1985f3a0e52bf4a77ca741364769 100644
+index bd5baf2b193a1985f3a0e52bf4a77ca741364769..1257d81bf5fd9f6b83bfdfb190f18fe08f83f12a 100644
 --- a/sound/usb/quirks.h
 +++ b/sound/usb/quirks.h
-@@ -50,4 +50,7 @@ void snd_usb_audioformat_attributes_quirk(struct snd_usb_audio *chip,
+@@ -53,4 +53,6 @@ void snd_usb_init_quirk_flags(struct snd_usb_audio *chip);
+ const char *snd_usb_quirk_flag_find_name(unsigned long flag);
+ u32 snd_usb_quirk_flags_from_name(char *name);
  
- void snd_usb_init_quirk_flags(struct snd_usb_audio *chip);
- 
-+const char *snd_usb_quirk_flag_find_name(unsigned long flag);
-+u32 snd_usb_quirk_flags_from_name(char *name);
++void snd_usb_init_dynamic_quirks(struct snd_usb_audio *chip);
 +
  #endif /* __USBAUDIO_QUIRKS_H */
 diff --git a/sound/usb/usbaudio.h b/sound/usb/usbaudio.h
-index 30b5102e3caed01eeb86d0075c41338104c58950..0a22cb4a02344b2dcf4009c560a759f2da25ca67 100644
+index 0a22cb4a02344b2dcf4009c560a759f2da25ca67..cb6cab37d749a258258394816e74c939cdd471fe 100644
 --- a/sound/usb/usbaudio.h
 +++ b/sound/usb/usbaudio.h
-@@ -252,5 +252,6 @@ extern bool snd_usb_skip_validation;
- #define QUIRK_FLAG_MIC_RES_384		(1U << 23)
- #define QUIRK_FLAG_MIXER_PLAYBACK_MIN_MUTE	(1U << 24)
- #define QUIRK_FLAG_MIXER_CAPTURE_MIN_MUTE	(1U << 25)
-+/* Please also edit snd_usb_audio_quirk_flag_names */
+@@ -20,6 +20,7 @@ struct media_device;
+ struct media_intf_devnode;
  
+ #define MAX_CARD_INTERFACES	16
++#define MAX_QUIRK_PARAM_LEN	128
+ 
+ /*
+  * Structure holding assosiation between Audio Control Interface
+@@ -165,6 +166,11 @@ DEFINE_CLASS(snd_usb_lock, struct __snd_usb_lock,
+ extern bool snd_usb_use_vmalloc;
+ extern bool snd_usb_skip_validation;
+ 
++extern struct mutex device_quirk_mutex;
++extern char device_quirk_flags[MAX_QUIRK_PARAM_LEN];
++extern unsigned int device_quirk_count;
++extern struct device_quirk_entry *device_quirk_list;
++
+ /*
+  * Driver behavior quirk flags, stored in chip->quirk_flags
+  *
+@@ -254,4 +260,11 @@ extern bool snd_usb_skip_validation;
+ #define QUIRK_FLAG_MIXER_CAPTURE_MIN_MUTE	(1U << 25)
+ /* Please also edit snd_usb_audio_quirk_flag_names */
+ 
++struct device_quirk_entry {
++	u16 vid;
++	u16 pid;
++	u32 mask_flags;
++	u32 unmask_flags;
++};
++
  #endif /* __USBAUDIO_H */
 
 -- 
