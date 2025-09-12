@@ -1,114 +1,92 @@
-Return-Path: <linux-kernel+bounces-814370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21AD2B55308
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:19:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6BD7B55300
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6483B5D02
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:18:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21A2B188588F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2777222560;
-	Fri, 12 Sep 2025 15:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B604C204096;
+	Fri, 12 Sep 2025 15:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZQkPnZnU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o9EJkBgC";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZQkPnZnU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o9EJkBgC"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="N2uiKvw2"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24170222597
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CD51DE4F1
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757690137; cv=none; b=fpjzrwQCP7n75vuzhIQL7vihhnrAmiUjL0jahZWylttfdFZdRipx7UHEOvHq+ooMha1pwXM1+gWKbzqGiliJfnQDsORj7d+2Dibrp/dR1kKatalIVoA5BjU5IiwJ3inOLSxrwqn+qFkC3DnQVOrs4Qyt0GfvPvn/4XqIfUMWAdM=
+	t=1757690131; cv=none; b=i/rH2LFXIC1X1N/WkscLehcl4RqE/vKAvAKewiKLHaXBKLCdlTs9hHWX/M1znSEF1F3mHMb0Wgkfh6fzIenP1DLYNPbBib+AxOQxLutc6E3wsRjNU+zqp1HYFT6YnnMBRyi+R6n2s5qtJu+OMkPmHTm8J7UDUEvhlaqYn/4HYYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757690137; c=relaxed/simple;
-	bh=i0qQXh+7DIrwwhu0DnxHg44sg9lfslYI1FKhuGJhOUo=;
+	s=arc-20240116; t=1757690131; c=relaxed/simple;
+	bh=aAyPQU0HgcI1WzAUx4XyXoKrSnHpQFjdA05lbr9RevU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WtJ2D2985RIM5iAw2FjLxB4RBPBKduEuMFNByEzzTsNX9PlF+tcrmsgSEuUBJKcX/60GmNsxrexgR1QqdRlh/iF/UQqrm07fo0PpDkx7QGQZZ/BZ8th8bJAf5qFotFVWP1t4MOdGfeKEOysOeKm4EmEE774TSPJB/22NIbiNDkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZQkPnZnU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o9EJkBgC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZQkPnZnU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o9EJkBgC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9819F5F89F;
-	Fri, 12 Sep 2025 15:15:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757690132; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FWdXdLhM1N+CqR/OguV/6Acj3qPcJbiUisZav4LkXGY=;
-	b=ZQkPnZnUu0qs3kJEusmuAXceM6Cr2U2hTKszSrPMNpY2THiPZeW/Juuus6RPE2J94Y8IQk
-	CEkqZwKLD3dlDwefjM+0IUpZo0a0CnkApYDdt1MtFrVgEfmsQn7PctIVYwdPve20guNUI+
-	ZRjYiJbsdYTcQ1gs3ZC/4H+K7PDpU2k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757690132;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FWdXdLhM1N+CqR/OguV/6Acj3qPcJbiUisZav4LkXGY=;
-	b=o9EJkBgCdfy9n0AMynRlG7cd+7nwcG2V+Rxk2lHxoLENnKZiD+UnslU7EURZvxnDhezG2O
-	10PBsEc2Ijyq+cAw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZQkPnZnU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=o9EJkBgC
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757690132; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FWdXdLhM1N+CqR/OguV/6Acj3qPcJbiUisZav4LkXGY=;
-	b=ZQkPnZnUu0qs3kJEusmuAXceM6Cr2U2hTKszSrPMNpY2THiPZeW/Juuus6RPE2J94Y8IQk
-	CEkqZwKLD3dlDwefjM+0IUpZo0a0CnkApYDdt1MtFrVgEfmsQn7PctIVYwdPve20guNUI+
-	ZRjYiJbsdYTcQ1gs3ZC/4H+K7PDpU2k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757690132;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FWdXdLhM1N+CqR/OguV/6Acj3qPcJbiUisZav4LkXGY=;
-	b=o9EJkBgCdfy9n0AMynRlG7cd+7nwcG2V+Rxk2lHxoLENnKZiD+UnslU7EURZvxnDhezG2O
-	10PBsEc2Ijyq+cAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C73C713869;
-	Fri, 12 Sep 2025 15:15:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fndjLRE5xGi0MwAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Fri, 12 Sep 2025 15:15:29 +0000
-Date: Fri, 12 Sep 2025 16:15:23 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Kiryl Shutsemau <kas@kernel.org>, 
-	Nico Pache <npache@redhat.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, 
-	baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, 
-	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, 
-	baohua@kernel.org, willy@infradead.org, peterx@redhat.com, 
-	wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com, 
-	vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
-	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com, 
-	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, 
-	jack@suse.cz, cl@gentwo.org, jglisse@google.com, surenb@google.com, 
-	zokeefe@google.com, rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, 
-	hughd@google.com, richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz, 
-	rppt@kernel.org, jannh@google.com
-Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
-Message-ID: <hcpxpo3xpqcppxlxhmyxkqkqnu4syohhkt5oeyh7qse7kvuwiw@qbhiubf2ubtm>
-References: <20250912032810.197475-1-npache@redhat.com>
- <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
- <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
- <20250912133701.GA802874@cmpxchg.org>
- <da251159-b39f-467b-a4e3-676aa761c0e8@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kM/flRHpAtHk4xxS+tOmKaFRmRAI1+in6XTPD32m/BvMxG0/WfKSmrrnguqF+r8RgDG2ZMCpulrsuMyVWKpm+QNB0NSzfp+GXK5Hg2Ggb+iKzeTb0ZvoB/pvEiRc6JO+Y6lOLharUzDf8BdfijSnlxJdU9o/23302dIcvNRJScg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=N2uiKvw2; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-afcb7ae6ed0so318170166b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757690127; x=1758294927; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DISFPBuhwuQiQ7VtaSSQJZYoE4Z/v987CUXIUT2Ngxc=;
+        b=N2uiKvw2kjMQ+2kC4pOFSo8AA0nTYpABkIx6IUdFqb6fXvIeoPVCNyg3yOEfVrKWHA
+         mC9RjHt/y2Eg+Td9RaMnMehR9G8cuNCDsUSwA8pgvh4Qv+t6UiBCSmZUjqVFBYvI9el0
+         kH20LSrOpHfqE+qKjaJN9vCbym+SegLANRbRHZx8z3QHsAeLmwKWFbeEIfpDJlPthUBq
+         rzjWHZi3MtTRSSax8CY2la0ECfaK9ELlMtU7cF/LpJaqZnG69gxlITnItnHM4FnqYy9+
+         uKH5wZnHTaI9dbLH1zfVo6qm/dvzo/8XsdDATGk/zFlve660Vsp93U21tt/XljcYldUw
+         OVDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757690127; x=1758294927;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DISFPBuhwuQiQ7VtaSSQJZYoE4Z/v987CUXIUT2Ngxc=;
+        b=pWzVWj6lQLoVw0P7u1vlBLEyBh656TDB3ovQFB8lEZzg4rh+4ognQ6ZTOAgFtOuu2g
+         OJYL+872yzxe3BJg64MrVjbm1wmWkMsHz08VhR9bxZcQKYjua62FzVCwbuOK2uEgxmuF
+         ms9rj2sqgN56lFx7+Rpket/b8YfXtt2Nz5/ghj0bMUnSGw3Ud6eZVMmK5WPqG7AFgLrq
+         btBOnJm7P0NMnefawg46jD6qhSXHg5V1YzGE7arqOeW4xhvuaEUr37cn3MR+NQ+ftQcW
+         0UeUHPPruZcp5wNwU1gP0Fqc+umUDV5GBRj8kq3Q4cM3tKk6TKGKL2gMBI+PnRD4h+JI
+         wIIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrehiErNjBNKJn7yZ/OAX6BSY6x7sKYArahEWyJXnBRrGwPJr8Hsn8D6XLSBzbCoEB91uYyeofx70RssU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2A2Cev7mh4x62vZb3zwFlOdPnkNshnIvXOgXqki3gbR2k93Ms
+	c6mR+JS6a/Hq/akppjDE0bMzFAEQzn6RhUnKbg6/Ow2TYWaWp6F9mOXh6aNxpEPRTsE=
+X-Gm-Gg: ASbGncuAVUXkpwW6nP0RqT6j9DWbd151Xde5/7BmcEP/KebFAo9ynwhY1r1rFAYw8YN
+	u12siqQ7i1d5oTkoLE7Pa+SZd3tscx0kOfKKkNJkujxZKEyqBeJrB00VhlnrtmjP3EOHB+2mYIR
+	JuwkxzBIl2PpgVm7lx0tf6e05QPnjSdJQcTOGcqVjNDmyVWLJ7SbneDvZo4RPiyVQvWfNGcyvIm
+	2sT3c57Y2mZNGW5x67oHvrjAznWlxJI91/XtDeGIWZd/OKk/cMqxCDVKuIi26m2z1NY40G+ydEq
+	bdAe98EQV8CBgSp9o5YkguRkhG1MLHYzPFvZo2H6tpeBuu43GgPmj/H/SpM1hLt+Vmqook4BCdG
+	0rWlV0UEJyEG4CfkDGyJzkxIcjkWpw7iIogjk
+X-Google-Smtp-Source: AGHT+IG0/knR1delqni7opuVRY/orLXBBQPghmCf5TA0Cxjc9eEVIvA8SPULmL++0rmtha1vTUTArw==
+X-Received: by 2002:a17:907:e885:b0:b07:c909:ceb0 with SMTP id a640c23a62f3a-b07c909d374mr226263266b.32.1757690127408;
+        Fri, 12 Sep 2025 08:15:27 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62ec33ad69csm3638083a12.16.2025.09.12.08.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 08:15:27 -0700 (PDT)
+Date: Fri, 12 Sep 2025 17:15:25 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
+	linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2 0/2] printk_ringbuffer: don't needlessly wrap data
+ blocks around
+Message-ID: <aMQ5DdY41jlftEZn@pathway.suse.cz>
+References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
+ <aMLrGCQSyC8odlFZ@pathway.suse.cz>
+ <aMLxt5k5U1vpmaQ3@pathway.suse.cz>
+ <84bjnhx91r.fsf@jogness.linutronix.de>
+ <aMPm8ter0KYBpyoW@pathway.suse.cz>
+ <aMPt8y-8Wazh6ZmO@pathway.suse.cz>
+ <aMQzD9CLP1F01Rry@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -117,127 +95,169 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <da251159-b39f-467b-a4e3-676aa761c0e8@redhat.com>
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[49];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[cmpxchg.org,kernel.org,redhat.com,kvack.org,vger.kernel.org,nvidia.com,linux.alibaba.com,oracle.com,arm.com,lwn.net,goodmis.org,efficios.com,linux-foundation.org,infradead.org,huawei.com,gmail.com,linux.intel.com,os.amperecomputing.com,suse.de,suse.cz,gentwo.org,google.com,suse.com,linux.dev];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLp4so9kg11imxa9yzyism77ru)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 9819F5F89F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -2.51
+In-Reply-To: <aMQzD9CLP1F01Rry@pathway.suse.cz>
 
-On Fri, Sep 12, 2025 at 03:46:36PM +0200, David Hildenbrand wrote:
-> On 12.09.25 15:37, Johannes Weiner wrote:
-> > On Fri, Sep 12, 2025 at 02:25:31PM +0200, David Hildenbrand wrote:
-> > > On 12.09.25 14:19, Kiryl Shutsemau wrote:
-> > > > On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
-> > > > > The following series provides khugepaged with the capability to collapse
-> > > > > anonymous memory regions to mTHPs.
-> > > > > 
-> > > > > To achieve this we generalize the khugepaged functions to no longer depend
-> > > > > on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
-> > > > > pages that are occupied (!none/zero). After the PMD scan is done, we do
-> > > > > binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
-> > > > > range. The restriction on max_ptes_none is removed during the scan, to make
-> > > > > sure we account for the whole PMD range. When no mTHP size is enabled, the
-> > > > > legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
-> > > > > by the attempted collapse order to determine how full a mTHP must be to be
-> > > > > eligible for the collapse to occur. If a mTHP collapse is attempted, but
-> > > > > contains swapped out, or shared pages, we don't perform the collapse. It is
-> > > > > now also possible to collapse to mTHPs without requiring the PMD THP size
-> > > > > to be enabled.
-> > > > > 
-> > > > > When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
-> > > > > 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
-> > > > > mTHP collapses to prevent collapse "creep" behavior. This prevents
-> > > > > constantly promoting mTHPs to the next available size, which would occur
-> > > > > because a collapse introduces more non-zero pages that would satisfy the
-> > > > > promotion condition on subsequent scans.
+On Fri 2025-09-12 16:49:53, Petr Mladek wrote:
+> On Fri 2025-09-12 11:55:02, Petr Mladek wrote:
+> > On Fri 2025-09-12 11:25:09, Petr Mladek wrote:
+> > > On Thu 2025-09-11 18:18:32, John Ogness wrote:
+> > > > On 2025-09-11, Petr Mladek <pmladek@suse.com> wrote:
+> > > > > diff --git a/kernel/printk/printk_ringbuffer_kunit_test.c b/kernel/printk/printk_ringbuffer_kunit_test.c
+> > > > > index 2282348e869a..241f7ef49ac6 100644
+> > > > > --- a/kernel/printk/printk_ringbuffer_kunit_test.c
+> > > > > +++ b/kernel/printk/printk_ringbuffer_kunit_test.c
+> > > > > @@ -56,7 +56,7 @@ struct prbtest_rbdata {
+> > > > >  	char text[] __counted_by(size);
+> > > > >  };
+> > > > >  
+> > > > > -#define MAX_RBDATA_TEXT_SIZE 0x80
+> > > > > +#define MAX_RBDATA_TEXT_SIZE (0x256 - sizeof(struct prbtest_rbdata))
 > > > > 
-> > > > Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
-> > > > all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
+> > > > I guess this should be:
 > > > > 
+> > > > #define MAX_RBDATA_TEXT_SIZE (256  - sizeof(struct prbtest_rbdata))
 > > > 
-> > > I am all for not adding any more ugliness on top of all the ugliness we
-> > > added in the past.
+> > > Great catch!
 > > > 
-> > > I will soon propose deprecating that parameter in favor of something
-> > > that makes a bit more sense.
+> > > But the KUnit test fails even with this change, see below. And I am
+> > > not surprised. The test should work even with larger-than-allowed
+> > > messages. prbtest_writer() should skip then because prb_reserve()
+> > > should fail.
 > > > 
-> > > In essence, we'll likely have an "eagerness" parameter that ranges from
-> > > 0 to 10. 10 is essentially "always collapse" and 0 "never collapse if
-> > > not all is populated".
+> > > Here is test result with:
 > > > 
-> > > In between we will have more flexibility on how to set these values.
+> > > #define MAX_RBDATA_TEXT_SIZE (256 - sizeof(struct prbtest_rbdata))
+> > > #define MAX_PRB_RECORD_SIZE (sizeof(struct prbtest_rbdata) + MAX_RBDATA_TEXT_SIZE)
 > > > 
-> > > Likely 9 will be around 50% to not even motivate the user to set
-> > > something that does not make sense (creep).
+> > > DEFINE_PRINTKRB(test_rb, 4, 4);
+> > > 
+> > > and with this patchset reverted, aka, sources from
+> > > printk/linux.git, branch for-next:
+> > > 
+> > > It is well reproducible. It always fails after reading few records.
+> > > Here are results from few other runs:
 > > 
-> > One observation we've had from production experiments is that the
-> > optimal number here isn't static. If you have plenty of memory, then
-> > even very sparse THPs are beneficial.
-> 
-> Exactly.
-> 
-> And willy suggested something like "eagerness" similar to "swapinness" that
-> gives us more flexibility when implementing it, including dynamically
-> adjusting the values in the future.
->
-
-Ideally we would be able to also apply this to the page faulting paths.
-In many cases, there's no good reason to create a THP on the first fault...
-
+> > And I am not longer able to reproduce it after limiting the size
+> > of the record to 1/4 of the data buffer size. I did it with
+> > the following change:
 > > 
-> > An extreme example: if all your THPs have 2/512 pages populated,
-> > that's still cutting TLB pressure in half!
+> > diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+> > index bc811de18316..2f02254705aa 100644
+> > --- a/kernel/printk/printk_ringbuffer.c
+> > +++ b/kernel/printk/printk_ringbuffer.c
+> > @@ -398,8 +398,6 @@ static unsigned int to_blk_size(unsigned int size)
+> >   */
+> >  static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
+> >  {
+> > -	struct prb_data_block *db = NULL;
+> > -
+> >  	if (size == 0)
+> >  		return true;
+> >  
+> > @@ -409,7 +407,7 @@ static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
+> >  	 * at least the ID of the next block.
+> >  	 */
+> >  	size = to_blk_size(size);
+> > -	if (size > DATA_SIZE(data_ring) - sizeof(db->id))
+> > +	if (size > DATA_SIZE(data_ring) / 4)
+> >  		return false;
+> >  
+> >  	return true;
+> > 
+> > 
+> > I guess that there is a race when we need to make all existing records
+> > reusable when making space for the next one.
 > 
-> IIRC, you create more pressure on the huge entries, where you might have
-> less TLB entries :) But yes, there can be cases where it is beneficial, if
-> there is absolutely no memory pressure.
->
+> It looks to me that the reader API is not ready to handle the
+> situation when all records are "reusable".
+> 
+> At least, it looks like prb_next_seq() might end up in an "infinite"
+> loop because it blindly increments "seq" until finding a valid record...
+> 
+> Honestly, I would really like to limit the maximal record size to
+> 1/4 of the buffer size. I do not want to make the design more
+> complicated just to be able to fill just one record, definitely.
+> 
+> 
+> That said, I still a bit nervous because I do not understand why
+> the KUnit test fails. It does not depend on prb_next_seq().
+> 
+> It seems that prb_read_valid() retuns success even when
+> returning a garbage. I have added some debug output using
+> trace_printk():
+> 
+> BTW2: It seems the even writers had problems to reserve space this
+>       time. Only few of them succeeded few times from many attempts.
+>       I the numbers by this change:
 
-Correct, but it depends on the microarchitecture. For modern x86_64 AMD, it
-happens that the L1 TLB entries are shared between 4K/2M/1G. This was not
-(is not?) the case for Intel, where e.g back on kabylake, you had separate
-entries for 4K/2MB/1GB.
+This actually helped. It seems that even prb_read_valid() is blindly
+incrementing seq when the last entry is reusable
+(desc_read_finalized_seq() return -ENOENT).
 
-Maybe in the Great Glorious Future (how many of those do we have?!) it would
-be a good idea to take this kinds of things into account. Just because we can
-map a THP, doesn't mean we should.
+And the failed entries are entries which have not been written.
+Here is another output where it is easier to see:
 
-Shower thought: it might be in these cases especially where the FreeBSD
-reservation system comes in handy - best effort allocating a THP, but not
-actually mapping it as such until you really _know_ it is hot - and until
-then, memory reclaim can just break your THP down if it really needs to.
+[  241.991189]     KTAP version 1
+[  241.991511]     # Subtest: printk-ringbuffer
+[  241.991912]     # module: printk_ringbuffer_kunit_test
+[  241.991941]     1..1
+[  241.993854]     # test_readerwriter: running for 10000 ms
+[  241.995189]     # test_readerwriter: start thread 001 (writer)
+[  241.995451]     # test_readerwriter: start thread 002 (writer)
+[  241.995722]     # test_readerwriter: start thread 003 (writer)
+[  241.997300]     # test_readerwriter: start thread 004 (writer)
+[  241.997947]     # test_readerwriter: start thread 005 (writer)
+[  241.998351]     # test_readerwriter: start thread 006 (writer)
+[  241.998686]     # test_readerwriter: start thread 007 (writer)
+[  241.998971]     # test_readerwriter: start thread 008 (writer)
+[  242.001305]     # test_readerwriter: start thread 009 (writer)
+[  242.001984]     # test_readerwriter: start thread 010 (writer)
+[  242.002680]     # test_readerwriter: start thread 011 (writer)
+[  242.002686]     # test_readerwriter: starting test
+[  242.009239]     # test_readerwriter: start reader
+[  242.009940]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=485 size=4325444 text=
+[  242.011676]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=487 size=1145324612 text=
+[  242.013569]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=490 size=4325444 text=
+[  242.015316]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=491 size=61 text=DDDDDDDDDDDDDDDDDDDBBBBBBBBBBB
+[  242.017483]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=492 size=1145324612 text=
+[  252.221105]     # test_readerwriter: end reader: read=14 seq=496
+[  252.221918]     # test_readerwriter: completed test
+[  252.225842]     # test_readerwriter: end thread 011: wrote=0 by attempts=9760048
+[  252.226808]     # test_readerwriter: end thread 010: wrote=0 by attempts=9764865
+[  252.227766]     # test_readerwriter: end thread 009: wrote=0 by attempts=9768991
+[  252.228507]     # test_readerwriter: end thread 008: wrote=0 by attempts=12716826
+[  252.229283]     # test_readerwriter: end thread 007: wrote=0 by attempts=12674260
+[  252.230046]     # test_readerwriter: end thread 006: wrote=0 by attempts=9769229
+[  252.230880]     # test_readerwriter: end thread 005: wrote=0 by attempts=12716512
+[  252.231639]     # test_readerwriter: end thread 004: wrote=0 by attempts=12627682
+[  252.232390]     # test_readerwriter: end thread 003: wrote=364 by attempts=9766282
+[  252.233222]     # test_readerwriter: end thread 002: wrote=0 by attempts=12710049
+[  252.233970]     # test_readerwriter: end thread 001: wrote=123 by attempts=9786928
+[  252.234758]     # test_readerwriter.speed: slow
+[  252.234792]     not ok 1 test_readerwriter
 
--- 
-Pedro
+Only two write threads succeed in writing few messages:
+
+    264 + 123 = 487
+
+And the failed records have sequence numbers: 485, 487, 490, 491, 492.
+
+I am not sure about 485 and 487. But the other three read entries
+were never written.
+
+It is possible the 485 and 487 entries were read before they were
+written. I mean that the reader failed before writers failed.
+
+I am not sure why writers failed. But I guess that they also
+somehow depend on the fact that at least one oldest entry is
+always finalized. I vaguely recall that we operated with this
+condition at some point.
+
+Best Regards,
+Petr
 
