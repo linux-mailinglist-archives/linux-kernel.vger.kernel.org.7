@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-813670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97266B5492B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:17:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29A12B54924
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF6977A31C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:14:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1086D4816A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371322E888C;
-	Fri, 12 Sep 2025 10:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CB82F0C60;
+	Fri, 12 Sep 2025 10:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnx3N7Q0"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Db3HAijE"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC88F2EC553
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E482F0C40
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757671995; cv=none; b=gTth2c3p9tTYYeS8H9FJoCd+ZSzlZjQIVllbu1OGCxG4aNlpNYFEHoBYIjAW6QqzK3c8xrKUV7yeUVxHHEdC8WzleSrPc5NBtfLHZqb97nPmgiPjPVLu3+JoBGYArYRtX6FlnClmRT+gN5mwdpqL2quocoSa0dOfGls4xEGLBcU=
+	t=1757672001; cv=none; b=ERFDvNDfnvAY6JPFKXh81JkaXQL57ViiPHEEwqKqoNlswjSlHTshtnPR/2YMOEDlacb0ZhFHKbT9XV1JHkDH918cb4LBxkDlOj/ldfB8gi9+Jd4AfVOSw/3SWdc+7G287/TCjyYUQNTJJ7wypSci/EEPPLm9O4/pSRvibzo7ZwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757671995; c=relaxed/simple;
-	bh=EgCZjLTIkqtRjqUx6K0w0F3NJZwiUfm4DLne+JUEvxw=;
+	s=arc-20240116; t=1757672001; c=relaxed/simple;
+	bh=0pYLSOeA0PAf1TeSGJQVGULqR9LKSdf8J0mO6JXy6uc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UKBvpbYXS9XZWVY5AG9LuqFTq3q2K6T5Yxd9pyd0PuJYzPdH+WPtlC6vs/I174e4o7iLqF/PwsIPMeQTNJfw9nh7RpT36miW8sszp0FYjqJZG5AaslMcRplyPhMW8n/vSbxTsAqD0RJ8Xq4Uc77LXkhvvyNlbtlpqieRL0sid94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnx3N7Q0; arc=none smtp.client-ip=209.85.215.174
+	 MIME-Version; b=MPpEcMrmXq6W4otyvqnDYcGGVk/CDN0bEJfw988DYou77stMfH2CFiFme7K7239X0jlHy4TH8LJG42P58xFdUmdipXcIElKr+EbxRvqEUCsJYw9ErXTgurAThEQV/GYRJ2GiVtbQUrSsQW2N2X7OSZxCJpVjGJqE9GYf9xfYeoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Db3HAijE; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b49b56a3f27so1046232a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:13:13 -0700 (PDT)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7723cf6e4b6so1466598b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:13:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757671993; x=1758276793; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757671998; x=1758276798; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Hza3KqRNKGSLYWfBSKXFsxDeH0DXXBXA3429C+Yqz2A=;
-        b=lnx3N7Q0UCWOROsQKLiSqOofasuN5O1eJ4c42khTCR4SEMDK2067Qp/33iXYQx6hI3
-         YPicD5Fl1RMw8sMdO+I5KMPG9sc70SRlTYhEGOtoYeE98QWBBgCAe9YqnhAH/krec7zT
-         TOfBgS1VaAmH+Q6qSrXNhRxnx2ueTuLupH3V+jeJwr4KxVc2sEW0XQP6HUgIMk+48yON
-         3d+EYV6YFCxNn0liAtsoXz5Ukr9z9E+izbPH62lZn0vKsXk6FMU8iyeujm3mbygQdVfy
-         GzI01wxXBiir9AuSZMeC7AvRtv+TKFMvvy6ChfuZNcseus/t1vmSTaasF7YcKfQZ4Iql
-         rSeQ==
+        bh=C6BBsZfnmfgl1Jgn+pU00vd6g5c1DTmTteWqGp/Sk64=;
+        b=Db3HAijEZOAxxCS4azI+v3897g+Px4fNXXX8O1J57b5GaVlBDxGdpcMW/NK0oxC1Hy
+         AKBZdwFXD5RI0k3g1X5Bfm08BtJSpjbZaoolfuK/xgPDTaJFTaC5lT+EsN44WYulgcDT
+         IqJIbHCL5SSWb8q04xRt917RijNp4uyDzvxLhNHfRFEeBqkViPBjVsQdLA/i27Ihqjob
+         roogCkLcI1JphxyRD5NCgMQyvGy/eWVkyVB0ImXaKoJaNa58cWmIGxJvPfi1k8SEdR2c
+         bEX3rP1mEkvfaZkzQoTHkYLy8pZhZDLUkhjYyumlvg4kspuTDl9j/kF5qzM8Iw0zcCxF
+         nQXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757671993; x=1758276793;
+        d=1e100.net; s=20230601; t=1757671998; x=1758276798;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hza3KqRNKGSLYWfBSKXFsxDeH0DXXBXA3429C+Yqz2A=;
-        b=f9uzypQ3Twmz9OjL+/AoQzYZ9y7Yqum6gA2tiwueb9IFOF5p0hwmSVMRDtZGXAJaQJ
-         +EsGfZXm4kDU6jOm2U1XrMydKQ8vn8ogaZ7fVzn5DW/2987vA8T/z+1YThQ5AhSRwb/o
-         al2vo03gnW0VtMbX1sj3mCTcYlgJ5GgzRnr1bOBirnyQBTCsFyAugrCHyHAsa6t3meK0
-         QuKyVSILaqHtQGSFmAMwc6xFUyZmNA3DOWVcZwXklwbUyZSB065WiPtEtG23dk0x2tUx
-         meqtUl+PKhJr/gwKL+zBpCimdUJdmXmaXcs7aj/CmPDUSTPkYj3QEumGxa2nwX7w0q4A
-         ecsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMdIcgn3Yk61h0yP6ZJmVbmU/9TZmNGpA79w2hKaZO2aAs4Bi0taShvmJ2T+cq1hadq+LRLlyvLYmCRJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKUtvTjJ4OVVBVJcLK1D9G7eoj6ah2CBg0iPgqTxOq4r4NpQ/H
-	42He0EMgOhpO935TmIBUd3R7HUqwyByW0zAhIH+eWbcqRI/zIDeUdin6
-X-Gm-Gg: ASbGncsY+hTZqfkH1oi7qoP4/NXm8hW3hUE2OgeFnvuZOMVM/WgC0lIKQIzJN9J2fGd
-	j2lkdbJD8eOwMS8j0kdaV+WyaRapPEGxehjInmV79GRycqb4Z5IXtjSZfXsymV715n4PqyWyzt6
-	Rx7IyApzihIwDyY0Ku2Wwq1xX4hSeJm7Q92K3eWiaQwdpNOpUKU6tPDCg4V6wdf7kNqpuyBcsdG
-	ow6ViobtHu5zOuZPoWeiklsJ1wdwDEgyG8AsQhzgISXrDc+vdmvInav8wv/NXqNM0+SypTlROM5
-	VxS7+w3a/5xY27iJe9MmoDdrvBa6NlJ2SymMX/NjvlD2EeXdvTY2lgY2woFG/Dr+FIW17XoWXoN
-	hjZToGp4VTt4IwLtUQwPDfz/bh1VbP2hp7AA=
-X-Google-Smtp-Source: AGHT+IG7f8OaGED6NtpM7NPcRiOM1jQkAe90+ggoUOI4OH0YlfR6qug9mcoSa6nxv/Hl/BMuWG/tLg==
-X-Received: by 2002:a17:902:c407:b0:24c:784c:4a90 with SMTP id d9443c01a7336-25d24cac4e3mr30450705ad.1.1757671992780;
-        Fri, 12 Sep 2025 03:13:12 -0700 (PDT)
+        bh=C6BBsZfnmfgl1Jgn+pU00vd6g5c1DTmTteWqGp/Sk64=;
+        b=TaRMmXDVohRMnle+o3+F/C24Q59nJeG8oIg/t39JZfx9mqFk/ZylFYxHvtFE3cTuNG
+         bdWYeq+hk1bAx6wWv7FDwYRkEcwHFNME/ZupispPFe8Ir3ox6/2/DcqSGx5R4CFKr0Lm
+         SxdJah6S+gl22Xu8gh/IvQNUpW93Hk0ZTbFykP87xAG/PBIgzr53GegSD6gEErHwf6oj
+         H7L0TvDJMH6H6uBvcOWQRl/cK+4ZUj3mzTIX7ew1Zt6d3GVk4EQPa5QQ4LG2AYr5s2cM
+         nmbg9MCEQ5q0w7FBUDZedWEihcvK4p2apDX9aMsjpu48CAWCSMmfwA0peIfysOrgczB4
+         Wp5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUkZ1i1+Hy1i8InQQyAiIblPL00BOVSuR1illY06+yFcUd7ejy/WMEqT0jNrWTCz45agIZP+98zvr1JgtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwRfGHKeOvaSjEvW+WzO16eJ02Fn1QjKxrr8nXl3VbUHSwSqcI
+	1mh5zgW6+Fe/DAw2PKh3qlvt5Aght7C7mnk2zUNEw035ZxP4psKlDc8C
+X-Gm-Gg: ASbGncuUefx16kz/6uohexIPZ343Ezl/OKqZ1JvPcLFNQxoW1YPmBMzpMKHk5JzihDi
+	SviTbGsEsjltgUuB7HELhcdMWtLB6T1B6+t9kPD/hoTrPc4DN6B4gGG7ylxMWn6UkBtZiZx7LtC
+	Zu81GAE6CM9rdWava2LA2LSWlvVwQvCZW043BonuQZzTPLjt2DFEVqgfYi9+aAe7Ars92o0DTBt
+	/GJSHYfHmXDsuHL+4YYtz5vx59QxTdz7i62CunlESWXXSvjgSBFBusk8ur7fG50S2N+YXSVWv/c
+	pTkBxeow7SUEBWm4JTei92FkR9AbGk8cqzFeJOcF3ZE8BswSfS/MAJDQAZWAwbWIBj0dqCrcth9
+	ewVxrlajmlMBJ3t0JvKF147HAjl9wtBV/2AyKiknKJKDshA==
+X-Google-Smtp-Source: AGHT+IFP0Z697TA4h3v44yo8u1mt3XK26j9kYKC9Oe9buFWhspRDiIMhNWMUBIxM8GwcPJ0/MCOUpw==
+X-Received: by 2002:a05:6a21:33a6:b0:246:3a6:3e41 with SMTP id adf61e73a8af0-2602a5937a8mr3020791637.6.1757671998049;
+        Fri, 12 Sep 2025 03:13:18 -0700 (PDT)
 Received: from localhost ([185.49.34.62])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3ad33ed7sm45397685ad.102.2025.09.12.03.13.11
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd98b43a7sm5206301a91.13.2025.09.12.03.13.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 03:13:12 -0700 (PDT)
+        Fri, 12 Sep 2025 03:13:17 -0700 (PDT)
 From: Jinchao Wang <wangjinchao600@gmail.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	Masami Hiramatsu <mhiramat@kernel.org>,
@@ -136,9 +136,9 @@ To: Andrew Morton <akpm@linux-foundation.org>,
 	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
 	linux-trace-kernel@vger.kernel.org
 Cc: Jinchao Wang <wangjinchao600@gmail.com>
-Subject: [PATCH v4 15/21] mm/ksw: add test module
-Date: Fri, 12 Sep 2025 18:11:25 +0800
-Message-ID: <20250912101145.465708-16-wangjinchao600@gmail.com>
+Subject: [PATCH v4 16/21] mm/ksw: add stack overflow test
+Date: Fri, 12 Sep 2025 18:11:26 +0800
+Message-ID: <20250912101145.465708-17-wangjinchao600@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250912101145.465708-1-wangjinchao600@gmail.com>
 References: <20250912101145.465708-1-wangjinchao600@gmail.com>
@@ -150,177 +150,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a separate test module to validate functionality in controlled
-scenarios, such as stack canary writes and simulated corruption.
+Extend the test module with a new test case (test1) that intentionally
+overflows a local u64 buffer to corrupt the stack canary. This helps
+validate detection of stack corruption under overflow conditions.
 
-The module provides a proc interface (/proc/kstackwatch_test) that allows
-triggering specific test cases via simple commands:
+The proc interface is updated to document the new test:
 
- - test0: directly corrupt the canary to verify watch/fire behavior
-
-Test module is built with optimizations disabled to ensure predictable
-behavior.
+ - test1: stack canary overflow test
 
 Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
 ---
- mm/Kconfig.debug        |  10 ++++
- mm/kstackwatch/Makefile |   6 +++
- mm/kstackwatch/test.c   | 115 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 131 insertions(+)
- create mode 100644 mm/kstackwatch/test.c
+ mm/kstackwatch/test.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-index fdfc6e6d0dec..46c280280980 100644
---- a/mm/Kconfig.debug
-+++ b/mm/Kconfig.debug
-@@ -320,3 +320,13 @@ config KSTACK_WATCH
- 	  the recursive depth of the monitored function.
- 
- 	  If unsure, say N.
-+
-+config KSTACK_WATCH_TEST
-+	tristate "KStackWatch Test Module"
-+	depends on KSTACK_WATCH
-+	help
-+	  This module provides controlled stack exhaustion and overflow scenarios
-+	  to verify the functionality of KStackWatch. It is particularly useful
-+	  for development and validation of the KStachWatch mechanism.
-+
-+	  If unsure, say N.
-diff --git a/mm/kstackwatch/Makefile b/mm/kstackwatch/Makefile
-index 84a46cb9a766..d007b8dcd1c6 100644
---- a/mm/kstackwatch/Makefile
-+++ b/mm/kstackwatch/Makefile
-@@ -1,2 +1,8 @@
- obj-$(CONFIG_KSTACK_WATCH)	+= kstackwatch.o
- kstackwatch-y := kernel.o stack.o watch.o
-+
-+obj-$(CONFIG_KSTACK_WATCH_TEST)	+= kstackwatch_test.o
-+kstackwatch_test-y := test.o
-+CFLAGS_test.o := -fno-inline \
-+		-fno-optimize-sibling-calls \
-+		-fno-pic -fno-pie -O0 -Og
 diff --git a/mm/kstackwatch/test.c b/mm/kstackwatch/test.c
-new file mode 100644
-index 000000000000..76dbfb042067
---- /dev/null
+index 76dbfb042067..ab1a3f92b5e8 100644
+--- a/mm/kstackwatch/test.c
 +++ b/mm/kstackwatch/test.c
-@@ -0,0 +1,115 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/delay.h>
-+#include <linux/kthread.h>
-+#include <linux/module.h>
-+#include <linux/prandom.h>
-+#include <linux/printk.h>
-+#include <linux/proc_fs.h>
-+#include <linux/string.h>
-+#include <linux/uaccess.h>
-+
-+#include "kstackwatch.h"
-+
-+MODULE_AUTHOR("Jinchao Wang");
-+MODULE_DESCRIPTION("Simple KStackWatch Test Module");
-+MODULE_LICENSE("GPL");
-+
-+static struct proc_dir_entry *test_proc;
-+#define BUFFER_SIZE 4
-+#define MAX_DEPTH 6
-+
+@@ -40,6 +40,27 @@ static void canary_test_write(void)
+ 	pr_info("canary write test completed\n");
+ }
+ 
 +/*
-+ * Test Case 0: Write to the canary position directly (Canary Test)
-+ * use a u64 buffer array to ensure the canary will be placed
-+ * corrupt the stack canary using the debug function
++ * Test Case 1: Stack Overflow (Canary Test)
++ * This function uses a u64 buffer 64-bit write
++ * to corrupt the stack canary with a single operation
 + */
-+static void canary_test_write(void)
++static void canary_test_overflow(void)
 +{
 +	u64 buffer[BUFFER_SIZE];
 +
 +	pr_info("starting %s\n", __func__);
-+	ksw_watch_show();
-+	ksw_watch_fire();
++	pr_info("buffer 0x%lx\n", (unsigned long)buffer);
 +
-+	buffer[0] = 0;
++	/* intentionally overflow the u64 buffer. */
++	((u64 *)buffer + BUFFER_SIZE)[0] = 0xdeadbeefdeadbeef;
 +
 +	/* make sure the compiler do not drop assign action */
 +	barrier_data(buffer);
-+	pr_info("canary write test completed\n");
++
++	pr_info("canary overflow test completed\n");
 +}
 +
-+static ssize_t test_proc_write(struct file *file, const char __user *buffer,
-+			       size_t count, loff_t *pos)
-+{
-+	char cmd[256];
-+	int test_num;
-+
-+	if (count >= sizeof(cmd))
-+		return -EINVAL;
-+
-+	if (copy_from_user(cmd, buffer, count))
-+		return -EFAULT;
-+
-+	cmd[count] = '\0';
-+	strim(cmd);
-+
-+	pr_info("received command: %s\n", cmd);
-+
-+	if (sscanf(cmd, "test%d", &test_num) == 1) {
-+		switch (test_num) {
-+		case 0:
-+			pr_info("triggering canary write test\n");
-+			canary_test_write();
+ static ssize_t test_proc_write(struct file *file, const char __user *buffer,
+ 			       size_t count, loff_t *pos)
+ {
+@@ -63,6 +84,10 @@ static ssize_t test_proc_write(struct file *file, const char __user *buffer,
+ 			pr_info("triggering canary write test\n");
+ 			canary_test_write();
+ 			break;
++		case 1:
++			pr_info("triggering canary overflow test\n");
++			canary_test_overflow();
 +			break;
-+		default:
-+			pr_err("Unknown test number %d\n", test_num);
-+			return -EINVAL;
-+		}
-+	} else {
-+		pr_err("invalid command format. Use 'test1', 'test2', or 'test3'.\n");
-+		return -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t test_proc_read(struct file *file, char __user *buffer,
-+			      size_t count, loff_t *pos)
-+{
-+	static const char usage[] =
-+		"KStackWatch Simplified Test Module\n"
-+		"==================================\n"
-+		"Usage:\n"
-+		"  echo 'test0' > /proc/kstackwatch_test  - Canary write test\n";
-+
-+	return simple_read_from_buffer(buffer, count, pos, usage,
-+				       strlen(usage));
-+}
-+
-+static const struct proc_ops test_proc_ops = {
-+	.proc_read = test_proc_read,
-+	.proc_write = test_proc_write,
-+};
-+
-+static int __init kstackwatch_test_init(void)
-+{
-+	test_proc = proc_create("kstackwatch_test", 0600, NULL, &test_proc_ops);
-+	if (!test_proc) {
-+		pr_err("Failed to create proc entry\n");
-+		return -ENOMEM;
-+	}
-+	pr_info("module loaded\n");
-+	return 0;
-+}
-+
-+static void __exit kstackwatch_test_exit(void)
-+{
-+	if (test_proc)
-+		remove_proc_entry("kstackwatch_test", NULL);
-+	pr_info("module unloaded\n");
-+}
-+
-+module_init(kstackwatch_test_init);
-+module_exit(kstackwatch_test_exit);
+ 		default:
+ 			pr_err("Unknown test number %d\n", test_num);
+ 			return -EINVAL;
+@@ -82,7 +107,8 @@ static ssize_t test_proc_read(struct file *file, char __user *buffer,
+ 		"KStackWatch Simplified Test Module\n"
+ 		"==================================\n"
+ 		"Usage:\n"
+-		"  echo 'test0' > /proc/kstackwatch_test  - Canary write test\n";
++		"  echo 'test0' > /proc/kstackwatch_test  - Canary write test\n"
++		"  echo 'test1' > /proc/kstackwatch_test  - Canary overflow test\n";
+ 
+ 	return simple_read_from_buffer(buffer, count, pos, usage,
+ 				       strlen(usage));
 -- 
 2.43.0
 
