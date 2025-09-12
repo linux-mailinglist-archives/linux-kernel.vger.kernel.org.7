@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-814882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE2BB55A0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:27:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 071C8B55A14
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C9121D62E9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68ADB1D62E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7641E2D5932;
-	Fri, 12 Sep 2025 23:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B1D2D6E58;
+	Fri, 12 Sep 2025 23:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ryTZbXL+"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r1d5NAvx"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285732D3EE1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B000E2D375C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757719428; cv=none; b=YMLyNIFM7z3gizq2B9NQ8fOgtbzQ+tirg3gmI/4EYoXQvElAQQYzodzkE0lH7KS9E6Nlax/UGXlbe2Pk9ll0KRTv4/BnPcUMyYpF1TMOCw6kGk/tNm4PK2PTYsUQz+vL1p0trBtWHo5ygzZv4B7JUVYE/uzSUhgRA4xM6wu8748=
+	t=1757719430; cv=none; b=jzQeRMcuj5UrTnmfvD1Wt/VMcm0185i5GbgS0vM6kjW0Vs+sIkOeSA2v28n5frSoFJrUUDSZ4bD92/1unCIeHFAg9yimwK+Akq3sOxVlxwIaPwoNVm7y7fCNz9MgYi1pKFwyQJTKlhpeVOVplibYGtukAvrQIQ/1Y6xNqhXrjNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757719428; c=relaxed/simple;
-	bh=jFuG8SZ3oXYlYLdNCqg5cGDDZwBjK3vSWtK4a4ni1t0=;
+	s=arc-20240116; t=1757719430; c=relaxed/simple;
+	bh=985mQqULIGpufOuzaAVFSt7yUo06RAYS1zBwm4OIB80=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hyMkmr5Skdx86QhuFRDMTrEa/gsoUxZXoin6yeaMOar5XXjptUDJtuzOP0fCUF7Mc6VMwQjjn1nAQeUPMr1hXyCTYLCzUTlpA+4ejeYYqIbb+9gOOEalksg7JztEGPKjEOHB3yC5vTwvDt7T0qY8xiP9qiHc+DNAR0mbgx5R7Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ryTZbXL+; arc=none smtp.client-ip=209.85.214.201
+	 To:Cc:Content-Type; b=YhTQE8739bGXGAv4+3VayKFR5qGhmrld6WWmw//6q2QunNBqLjj8F/eivpsZkIxMeuy+++Mg7ocyVLnswtIpgF6M2bCPkX5K3I6ahh5BM2jc3kxvXhz1dbzq5P3LMl/NT3VBk974oiikT+ERF20BdMEsceIns93xCxme2Pe705M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r1d5NAvx; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-244581ce13aso49437955ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:23:46 -0700 (PDT)
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b54ad69f143so1603812a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:23:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757719426; x=1758324226; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757719428; x=1758324228; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=/p8II4kIeI0l7K05B/fK4WrVrGU6imnR3v3OJDUj/Eo=;
-        b=ryTZbXL+R8/JLVJOxAzG7L6OsvE6oPs1gjY7kBUQESX1xkYC90czzet2anRpl1XKsl
-         isfYP/h9+2gw6YQt/Yb5RLnQIhtfIVkeDWZak3fkvOVZVHF28yJosnx52nrBTe0+jcUW
-         SnOROEw/APue8F9kYKzoqSphteBADJCaX1/ytW4v35B6cRn8Jk4wRWtXgFxCumuD3TAu
-         iI0jSmjoN2QBwZSMjtgTCS7NyV6xjpDSkX79b/LA4u/Uc8wWqR0gL5ZwX9TZS0UgPNAB
-         H2AoZYnQVxIbapRJwSxY7zdIiLHStUtjf9Sy9qnoWREMzKe0Cc0tqfObCHE+5Q++deuF
-         jGpQ==
+        bh=EGYFfxiDLtJ7q4NwudFUxWdrWn2kGXus37phRe1p0h4=;
+        b=r1d5NAvxKqmBTnUfjQtH4DnKocTiyZYfNhlMmERlKmyi7MzgvpOE3ygb2Gsjl+CDAq
+         opPYhZ2F+JI0q02wjm5B0NdjewenzS4BQGP2IThFGQDdD4g6hHSf32F6s6gd5tGyDAh8
+         qN/zJyQnzy3eBjtS+fZCw44iRxH7ML1eC0eZtu5nn/ZyBxcnrfwWsDFkP47pED7EHHfZ
+         p6q/ygdfS4yevQvfLKqcO7nUIXp3Qps3iVlHL16A/uWM6ATStKJk8xXLwJx3ry+mUViX
+         V2nyu9Fr+fvTRVHxbVrqOTbxcbwXxxjKZN1Se28yFgvnfbye6bYnnfQlQe+06qwq3IJP
+         nDcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757719426; x=1758324226;
+        d=1e100.net; s=20230601; t=1757719428; x=1758324228;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=/p8II4kIeI0l7K05B/fK4WrVrGU6imnR3v3OJDUj/Eo=;
-        b=rzto+ocbE0yv8ukH8Qnd0DibeqUTfnBX562ZFIAz5x5SQDLEzS1yhQI2zY4UFJcps4
-         W5zYr5hJe3wQg3h54ansL3Q8m/4B8khJ16mJHasI9okt1y+Un5Ivopse0K5/KVkPjS4O
-         GXmJBJQQBAWYddNRgau58KahCzPGmQSQ8cjrjsSEoSoB8lb1L03TnQ3x+YBYUQccFDXI
-         T+EM96RcSrLIJXFdfNuX9oRbFAc7fYnuFoZQm41E0o1WwpOEZh4th7gBTRbhsPsJUp8T
-         EHJP+nUtiqvuJeA4BqSH3tGIMC8D0x2r7yhix434/u8olLO4lTqvP19NvjoQQH7vFHVj
-         Vjtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyi2NV1iTSSUfEpqD9F/+DihYwZmBbPzRTKOz3dfMEHGz0Zv/1g26DzPkFc7eghAhD1yLSAAZKWG+igXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZVcAQai+QhkN3dapEo5Ys3r5bvRoV7wKw9xkmENy+bKYDmXM0
-	LFh57peOLiY91ubI7qJCwJVLNo8xWYKlGnxQ2XpdKiuLEKeV3pREyLGcfXzjZGGtayjfAqL+eu5
-	0Fd1UQg==
-X-Google-Smtp-Source: AGHT+IGg6dmIXvzm4jTWf6m62O2N/yxsDeCk+4Uiji5QF9e6I/audnB9epImW8IR/7OE1mc+Q57D/Ute5Lo=
-X-Received: from pjcc4.prod.google.com ([2002:a17:90b:5744:b0:325:a8d:a485])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:4b47:b0:246:464d:118a
- with SMTP id d9443c01a7336-25d26d4d433mr54398555ad.46.1757719426448; Fri, 12
- Sep 2025 16:23:46 -0700 (PDT)
+        bh=EGYFfxiDLtJ7q4NwudFUxWdrWn2kGXus37phRe1p0h4=;
+        b=HoN8sTH4Mc7B3wUPc0sx2eGnmdB7dgpzi02ecVXy4+nrTEyw7sm/jMmipSKxNEfvBW
+         7H45muQKEKE33gdMZeBAQuZBfeH4Ip+h3EPTv++GUSmaDA1Qxe6zjZiddGVeKgvufNb0
+         W39wtJaUYfIEB+2YUtoPrCkWhFWUCMViiMMUk0IduwowCkmF60HKlxY3KzujXfJ5J6CU
+         YO+EIY2h3acvRemIm/dU6x8gSg9CxkVdyFvsupOdCxqkiKql7eV56bJA5gw5UQZ5gdFL
+         iN/ZsYdZUxeW1YJhlLbBkcCMlWb4yi2BNX3LvzQFo64hQExL7IrEi5y3Ktu9o8Xl62mb
+         vsQw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZDJaxOCK8g+Xjmb0FCKuommga0UtrsHsKH8zBOi5ht41T3apIInfIC2VuWCZVVCfX2sAvFmEFJkaWMvg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9o5h4wBAwfr5nBV+p9fMXohhZb0lu9/uIApme9LvDCjljZDP2
+	+mbw5zUakSt4TXz6aoPKEsAEzAJxdk2sW/w8YJ/tsoVTtK9H4vys76zs9G31zOKNTw04bmaSmiC
+	Wt6frbg==
+X-Google-Smtp-Source: AGHT+IF3EsKj/KEE1isiWP6uA4W6JiQbK2d3C0u8tqB9rJOm/OOK+jqg062W5TZ7UziXwYy9ajwdI76c0fw=
+X-Received: from pjbee16.prod.google.com ([2002:a17:90a:fc50:b0:32b:5ea2:778])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:9186:b0:243:15b9:765b
+ with SMTP id adf61e73a8af0-2602cd11f0fmr5877361637.53.1757719428215; Fri, 12
+ Sep 2025 16:23:48 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 12 Sep 2025 16:22:50 -0700
+Date: Fri, 12 Sep 2025 16:22:51 -0700
 In-Reply-To: <20250912232319.429659-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250912232319.429659-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250912232319.429659-13-seanjc@google.com>
-Subject: [PATCH v15 12/41] KVM: VMX: Introduce CET VMCS fields and control bits
+Message-ID: <20250912232319.429659-14-seanjc@google.com>
+Subject: [PATCH v15 13/41] KVM: x86: Enable guest SSP read/write interface
+ with new uAPIs
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -88,111 +89,129 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Yang Weijiang <weijiang.yang@intel.com>
 
-Control-flow Enforcement Technology (CET) is a kind of CPU feature used
-to prevent Return/CALL/Jump-Oriented Programming (ROP/COP/JOP) attacks.
-It provides two sub-features(SHSTK,IBT) to defend against ROP/COP/JOP
-style control-flow subversion attacks.
+Enable guest shadow stack pointer(SSP) access interface with new uAPIs.
+CET guest SSP is HW register which has corresponding VMCS field to save
+and restore guest values when VM-{Exit,Entry} happens. KVM handles SSP
+as a fake/synthetic MSR for userspace access.
 
-Shadow Stack (SHSTK):
-  A shadow stack is a second stack used exclusively for control transfer
-  operations. The shadow stack is separate from the data/normal stack and
-  can be enabled individually in user and kernel mode. When shadow stack
-  is enabled, CALL pushes the return address on both the data and shadow
-  stack. RET pops the return address from both stacks and compares them.
-  If the return addresses from the two stacks do not match, the processor
-  generates a #CP.
+Use a translation helper to set up mapping for SSP synthetic index and
+KVM-internal MSR index so that userspace doesn't need to take care of
+KVM's management for synthetic MSRs and avoid conflicts.
 
-Indirect Branch Tracking (IBT):
-  IBT introduces instruction(ENDBRANCH)to mark valid target addresses of
-  indirect branches (CALL, JMP etc...). If an indirect branch is executed
-  and the next instruction is _not_ an ENDBRANCH, the processor generates
-  a #CP. These instruction behaves as a NOP on platforms that have no CET.
-
-Several new CET MSRs are defined to support CET:
-  MSR_IA32_{U,S}_CET: CET settings for {user,supervisor} CET respectively.
-
-  MSR_IA32_PL{0,1,2,3}_SSP: SHSTK pointer linear address for CPL{0,1,2,3}.
-
-  MSR_IA32_INT_SSP_TAB: Linear address of SHSTK pointer table, whose entry
-			is indexed by IST of interrupt gate desc.
-
-Two XSAVES state bits are introduced for CET:
-  IA32_XSS:[bit 11]: Control saving/restoring user mode CET states
-  IA32_XSS:[bit 12]: Control saving/restoring supervisor mode CET states.
-
-Six VMCS fields are introduced for CET:
-  {HOST,GUEST}_S_CET: Stores CET settings for kernel mode.
-  {HOST,GUEST}_SSP: Stores current active SSP.
-  {HOST,GUEST}_INTR_SSP_TABLE: Stores current active MSR_IA32_INT_SSP_TAB.
-
-On Intel platforms, two additional bits are defined in VM_EXIT and VM_ENTRY
-control fields:
-If VM_EXIT_LOAD_CET_STATE = 1, host CET states are loaded from following
-VMCS fields at VM-Exit:
-  HOST_S_CET
-  HOST_SSP
-  HOST_INTR_SSP_TABLE
-
-If VM_ENTRY_LOAD_CET_STATE = 1, guest CET states are loaded from following
-VMCS fields at VM-Entry:
-  GUEST_S_CET
-  GUEST_SSP
-  GUEST_INTR_SSP_TABLE
-
-Co-developed-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
+Suggested-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-Reviewed-by: Chao Gao <chao.gao@intel.com>
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 Tested-by: Mathias Krause <minipli@grsecurity.net>
 Tested-by: John Allen <john.allen@amd.com>
 Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 Signed-off-by: Chao Gao <chao.gao@intel.com>
+Co-developed-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/include/asm/vmx.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ Documentation/virt/kvm/api.rst  |  8 ++++++++
+ arch/x86/include/uapi/asm/kvm.h |  3 +++
+ arch/x86/kvm/x86.c              | 23 +++++++++++++++++++++--
+ arch/x86/kvm/x86.h              | 10 ++++++++++
+ 4 files changed, 42 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-index cca7d6641287..ce10a7e2d3d9 100644
---- a/arch/x86/include/asm/vmx.h
-+++ b/arch/x86/include/asm/vmx.h
-@@ -106,6 +106,7 @@
- #define VM_EXIT_CLEAR_BNDCFGS                   0x00800000
- #define VM_EXIT_PT_CONCEAL_PIP			0x01000000
- #define VM_EXIT_CLEAR_IA32_RTIT_CTL		0x02000000
-+#define VM_EXIT_LOAD_CET_STATE                  0x10000000
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index abd02675a24d..6ae24c5ca559 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -2911,6 +2911,14 @@ such as set vcpu counter or reset vcpu, and they have the following id bit patte
+ x86 MSR registers have the following id bit patterns::
+   0x2030 0002 <msr number:32>
  
- #define VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR	0x00036dff
++Following are the KVM-defined registers for x86:
++
++======================= ========= =============================================
++    Encoding            Register  Description
++======================= ========= =============================================
++  0x2030 0003 0000 0000 SSP       Shadow Stack Pointer
++======================= ========= =============================================
++
+ 4.69 KVM_GET_ONE_REG
+ --------------------
  
-@@ -119,6 +120,7 @@
- #define VM_ENTRY_LOAD_BNDCFGS                   0x00010000
- #define VM_ENTRY_PT_CONCEAL_PIP			0x00020000
- #define VM_ENTRY_LOAD_IA32_RTIT_CTL		0x00040000
-+#define VM_ENTRY_LOAD_CET_STATE                 0x00100000
+diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+index 508b713ca52e..8cc79eca34b2 100644
+--- a/arch/x86/include/uapi/asm/kvm.h
++++ b/arch/x86/include/uapi/asm/kvm.h
+@@ -437,6 +437,9 @@ struct kvm_xcrs {
+ #define KVM_X86_REG_KVM(index)					\
+ 	KVM_X86_REG_ENCODE(KVM_X86_REG_TYPE_KVM, index)
  
- #define VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR	0x000011ff
++/* KVM-defined registers starting from 0 */
++#define KVM_REG_GUEST_SSP	0
++
+ #define KVM_SYNC_X86_REGS      (1UL << 0)
+ #define KVM_SYNC_X86_SREGS     (1UL << 1)
+ #define KVM_SYNC_X86_EVENTS    (1UL << 2)
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 2c9908bc8b32..460ceae11495 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6017,7 +6017,15 @@ struct kvm_x86_reg_id {
  
-@@ -369,6 +371,9 @@ enum vmcs_field {
- 	GUEST_PENDING_DBG_EXCEPTIONS    = 0x00006822,
- 	GUEST_SYSENTER_ESP              = 0x00006824,
- 	GUEST_SYSENTER_EIP              = 0x00006826,
-+	GUEST_S_CET                     = 0x00006828,
-+	GUEST_SSP                       = 0x0000682a,
-+	GUEST_INTR_SSP_TABLE            = 0x0000682c,
- 	HOST_CR0                        = 0x00006c00,
- 	HOST_CR3                        = 0x00006c02,
- 	HOST_CR4                        = 0x00006c04,
-@@ -381,6 +386,9 @@ enum vmcs_field {
- 	HOST_IA32_SYSENTER_EIP          = 0x00006c12,
- 	HOST_RSP                        = 0x00006c14,
- 	HOST_RIP                        = 0x00006c16,
-+	HOST_S_CET                      = 0x00006c18,
-+	HOST_SSP                        = 0x00006c1a,
-+	HOST_INTR_SSP_TABLE             = 0x00006c1c
- };
+ static int kvm_translate_kvm_reg(struct kvm_x86_reg_id *reg)
+ {
+-	return -EINVAL;
++	switch (reg->index) {
++	case KVM_REG_GUEST_SSP:
++		reg->type = KVM_X86_REG_TYPE_MSR;
++		reg->index = MSR_KVM_INTERNAL_GUEST_SSP;
++		break;
++	default:
++		return -EINVAL;
++	}
++	return 0;
+ }
  
- /*
+ static int kvm_get_one_msr(struct kvm_vcpu *vcpu, u32 msr, u64 __user *user_val)
+@@ -6097,11 +6105,22 @@ static int kvm_get_set_one_reg(struct kvm_vcpu *vcpu, unsigned int ioctl,
+ static int kvm_get_reg_list(struct kvm_vcpu *vcpu,
+ 			    struct kvm_reg_list __user *user_list)
+ {
+-	u64 nr_regs = 0;
++	u64 nr_regs = guest_cpu_cap_has(vcpu, X86_FEATURE_SHSTK) ? 1 : 0;
++	u64 user_nr_regs;
++
++	if (get_user(user_nr_regs, &user_list->n))
++		return -EFAULT;
+ 
+ 	if (put_user(nr_regs, &user_list->n))
+ 		return -EFAULT;
+ 
++	if (user_nr_regs < nr_regs)
++		return -E2BIG;
++
++	if (nr_regs &&
++	    put_user(KVM_X86_REG_KVM(KVM_REG_GUEST_SSP), &user_list->reg[0]))
++		return -EFAULT;
++
+ 	return 0;
+ }
+ 
+diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
+index 786e36fcd0fb..a7c9c72fca93 100644
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -101,6 +101,16 @@ do {											\
+ #define KVM_SVM_DEFAULT_PLE_WINDOW_MAX	USHRT_MAX
+ #define KVM_SVM_DEFAULT_PLE_WINDOW	3000
+ 
++/*
++ * KVM's internal, non-ABI indices for synthetic MSRs. The values themselves
++ * are arbitrary and have no meaning, the only requirement is that they don't
++ * conflict with "real" MSRs that KVM supports. Use values at the upper end
++ * of KVM's reserved paravirtual MSR range to minimize churn, i.e. these values
++ * will be usable until KVM exhausts its supply of paravirtual MSR indices.
++ */
++
++#define MSR_KVM_INTERNAL_GUEST_SSP	0x4b564dff
++
+ static inline unsigned int __grow_ple_window(unsigned int val,
+ 		unsigned int base, unsigned int modifier, unsigned int max)
+ {
 -- 
 2.51.0.384.g4c02a37b29-goog
 
