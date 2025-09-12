@@ -1,271 +1,126 @@
-Return-Path: <linux-kernel+bounces-814837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20580B55927
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:26:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 177B7B55929
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 993EBAA009C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C70AE167E77
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:28:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF4F28C87C;
-	Fri, 12 Sep 2025 22:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03C627B4F5;
+	Fri, 12 Sep 2025 22:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hilwuCj6"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Xm+3mahz"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367B0286D60
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1149826D4E6
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757715945; cv=none; b=ATEQfh2gehc2FNnRVTtP/91HUpjG6AGzooSlbbTvOjC+40g/ScEIlr2u32+E/Xl52zHPxBjl9nebSy+NmxPfB/Q4d4U8n5LsUDuxADcXQcaevLHcZsg1n8cqrsyes7g78SujPqi4UtutQwlCettjSnGCKcuVSugQ40L9luVfmA4=
+	t=1757716107; cv=none; b=st4wvdmHeqAGgjlqNSFmfsojx7SE9tYmLiAUgM5O9Inih2ubaHuEPHmNsSy9NTkUak5NJeF6HX5YVDc5nQ66Uu5b+AG90LWEF5gxzadCqkmsv+Tuj5D21oEhQ2YOunD4zUAqM5VUI8bAtI63cezdTiUubJGwS2j2nkGoqgMmWxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757715945; c=relaxed/simple;
-	bh=FwI+WCSKE5HG3xr7ZmyOW8sVTzLtmQY7Kswik4+arpQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VcRa4mQXuAgDvMY0EBMu8/3tXVdkxg9CWZjpQhhh8LVkR5dgh8PY00Qxf1fQm6JjdHylGlvXq61WDxQhzui6iPFBMIDc7eqZ+zX/vqsClXu3m+Aa029cJ5YV5XQSfaOKaE/rInuoDYPqj+7lSMdZwTAzF+8HhX2wjR6BJHXBD+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hilwuCj6; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-811dc3fdc11so185381885a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757715943; x=1758320743; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IfzMYXD5+OWWJnzTVfDJIl3IqMEPtzWckoBOmNSCMkc=;
-        b=hilwuCj6OekogYgcOk+dC+aygGumnD/Qbr7A/nDGLXmDu67nL7xRBLv95L+LF2SNWU
-         wwAYIPt7Sg6AltSw440TbihdWCEf+ffETpYpdW0IQnWc6LhD12eRWKOplSlro8KagHvr
-         n3rYGFVrglB4Itz1dLlFK4Xuo1Yy2YOmydRazLwBQ0JDYeFsoNP6HfNEnS+tP7Wi7jsu
-         bJStl+99e4Cml+Kq4K+DL7/HIRJRbrOhbo8V3nXfreNJNE7Bn2xS9o6HunET/1v5raDs
-         3E9rIPblxvdfouo0kvXICYZ03mX47NF0qKDlKwF80qpJnptQ5pwRHhCAzo2A+0FtZlVk
-         kM4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757715943; x=1758320743;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IfzMYXD5+OWWJnzTVfDJIl3IqMEPtzWckoBOmNSCMkc=;
-        b=VAdlrB7ki/Lm684i+aWnxiXSIZybimXfY7GpYeKXtKnKX+1z0+sCeDBn4WQMXoNErA
-         G+6nyBvLbzCZEKJn4VGnHWAbnntW/azGANee7pzE5JRDhYVBbfteH8FOvn5n7G8fS4o/
-         lqd8y9i8EU8Ns1KcOQLfda11ce7L5K+EImduyolayxlDaaHy3Hb2/5/lSCbAgAImYduO
-         SuIrlQOuTRMmtJZT4riqY4ojPmaLUm15MBl82/4XlBWGwboITku3edGpjptrKU05dXpv
-         aKnKPLty3FxnM2x3Rs6kzpK/i3OC+E38HLAadzv4tqJfR2nmB/gJF7P3DVlC/RPUl1Bz
-         YdNg==
-X-Gm-Message-State: AOJu0Ywhcm7IwFQwgMvToIS8K3iKXMJliffMYQDYnU4+XX4hVv5Gky6u
-	fHhmuJDAsS1wkYJGF3etxVp/bcPdJrIrc1ttebwFX71V6M9YIJGy4MoR
-X-Gm-Gg: ASbGncvXZeyMUH4NiyLdmyKXjSB23CO7BUPWZaXlKjSQhNSokM6xQkqggsPU8YoLz4G
-	flKakZsMKuyH4LybJX84GoIVh0IAPgDlKo6aVlxsQ6BXsGGhn8ESwrMpZ49ue8t2cGGbDzJe3aI
-	PDm7dRrzbb+vWluT7XYSVO1dIx31iw6D26kJJn5qZsb28WRb4w1kdyjPnAN5z7wa1AfUZ4PcT/2
-	ikCcHKfUCjD9WkFEfqqbo7sPxKkhQPYAWNQhPsjigFxeI8JD+dcVORnORkko8Y6q+4qig6nSIEu
-	IJMWpXiSkZpo9tqASMAmgAyyplDr6JPn9cv0eE7kTTDCN0BYyk3JXsEbmsWT6I+weWTiSYPu+H+
-	lyovLf0e0CNY9EnzTISiS2X8JucM0UC1Kd0OdycvQ5iNLJVjxAekpWIhVpbFWx2TgVOjMKyEUu6
-	EAWfvPz0F6GN8GNDu8VD8XGRUw07Vtwk9an0d7YfIWvJNdOxVTeLD2jJmjSn4=
-X-Google-Smtp-Source: AGHT+IGg3Ohj0cka3NMv8jpZpR2hL/U0yANDpl3+efLMgDEhXvomkdNYbM7ZOzQEZbtjUgAv8a7kTA==
-X-Received: by 2002:a05:620a:46ac:b0:815:5815:36a8 with SMTP id af79cd13be357-8240253dfd3mr549652485a.86.1757715943022;
-        Fri, 12 Sep 2025 15:25:43 -0700 (PDT)
-Received: from kerndev.lan (pool-100-15-227-251.washdc.fios.verizon.net. [100.15.227.251])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-820c974d635sm339136985a.25.2025.09.12.15.25.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 15:25:42 -0700 (PDT)
-From: David Windsor <dwindsor@gmail.com>
-To: bpf@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	dwindsor@gmail.com
-Subject: [PATCH 2/2] selftests/bpf: Add cred local storage tests
-Date: Fri, 12 Sep 2025 18:25:39 -0400
-Message-ID: <20250912222539.149952-3-dwindsor@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250912222539.149952-1-dwindsor@gmail.com>
-References: <20250912222539.149952-1-dwindsor@gmail.com>
+	s=arc-20240116; t=1757716107; c=relaxed/simple;
+	bh=e6mzgxhiG8kK8Y1Gmfux4Bc513Ya67T9ITtiJe4Ehs0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eKruMd5oyKydVHM4INSOTHkDN5ykPbkQC4HZLZD6GjaqWWnbqHkne8UMK0PUU4VqDtsD/bsBnVGLabitN45sRPaTPcmFkiglmdQ8QRT/Y4UJ1PTvgv2w0pawVzr/pFC18NKj8GzbR3IZKKx/G3fjOCo2Sf8X3zFEM2NYAKTt5aI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Xm+3mahz; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=e6mz
+	gxhiG8kK8Y1Gmfux4Bc513Ya67T9ITtiJe4Ehs0=; b=Xm+3mahzWOOxiVVIAga+
+	iSHfGVRqvJ5PFCGLaL/GzUjX4YNb/hPFuCvnTGNl0HAzseT3fxq608VUQlaaTqct
+	b21GFfV8Ea6MzDTHNNNQUJg/QZaOotINmZHSrFAdd1BNxqFatFklS+1N9Ho9+FDJ
+	+ZtHsX6GPNPO4SUmj8PEl/u+02gQb3a8GGbXsDGQc0ZieTKmFBFhZ52rDM5+Mxcv
+	60kivSuurKFEu1qkK6+nXimSBJ3KWgMDIMHiK2aNHbJr5fok49a8dljDiqbTRjBn
+	Q/y7ceiHzl1FeKhkdQovn69mZ3McAOecvIldHVzAyJm/qfuulrt+slQKkXfwc7tA
+	0Q==
+Received: (qmail 1504370 invoked from network); 13 Sep 2025 00:28:23 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:28:23 +0200
+X-UD-Smtp-Session: l3s3148p1@UR/rK6I+npcgAQnoAHJ8AC93OVDMgFWg
+Date: Sat, 13 Sep 2025 00:28:22 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: =?utf-8?Q?Jean-Fran=C3=A7ois?= Lessard <jefflessard3@gmail.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] device property: Add scoped fwnode child node
+ iterators
+Message-ID: <aMSehiADcCEpfJUa@shikoro>
+References: <20250902190443.3252-1-jefflessard3@gmail.com>
+ <aLgY1z-MvQbDBx2_@smile.fi.intel.com>
+ <aLlgpUlHp7t8P4dQ@shikoro>
+ <aLljGIcjAjQhC2uS@smile.fi.intel.com>
+ <aMF0xW9rBrSK--Cl@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="QSvRZOkrwrDINmRa"
+Content-Disposition: inline
+In-Reply-To: <aMF0xW9rBrSK--Cl@shikoro>
 
-Add test coverage for the new BPF_MAP_TYPE_CRED_STORAGE map type.
-The test verifies that credential storage can be created, accessed,
-and persists across credential lifecycle events.
 
-Signed-off-by: David Windsor <dwindsor@gmail.com>
----
- .../selftests/bpf/prog_tests/cred_storage.c   | 52 +++++++++++
- .../selftests/bpf/progs/cred_storage.c        | 87 +++++++++++++++++++
- 2 files changed, 139 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/cred_storage.c
- create mode 100644 tools/testing/selftests/bpf/progs/cred_storage.c
+--QSvRZOkrwrDINmRa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/cred_storage.c b/tools/testing/selftests/bpf/prog_tests/cred_storage.c
-new file mode 100644
-index 000000000000..1a99f6453a0f
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/cred_storage.c
-@@ -0,0 +1,52 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <test_progs.h>
-+#include <unistd.h>
-+#include <sys/wait.h>
-+
-+#include "cred_storage.skel.h"
-+
-+static void test_cred_lifecycle(void)
-+{
-+	struct cred_storage *skel;
-+	pid_t child;
-+	int status, err;
-+
-+	skel = cred_storage__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_load"))
-+		return;
-+
-+	err = cred_storage__attach(skel);
-+	if (!ASSERT_OK(err, "attach"))
-+		goto cleanup;
-+
-+	skel->data->cred_storage_result = -1;
-+
-+	skel->bss->monitored_pid = getpid();
-+
-+	child = fork();
-+	if (child == 0) {
-+		/* forces cred_prepare with new credentials */
-+		exit(0);
-+	} else if (child > 0) {
-+		waitpid(child, &status, 0);
-+
-+		/* give time for cred_free hook to run */
-+		usleep(10000);
-+
-+		/* verify that the dummy value was stored and persisted */
-+		ASSERT_EQ(skel->data->cred_storage_result, 0,
-+			  "cred_storage_dummy_value");
-+	} else {
-+		ASSERT_TRUE(false, "fork failed");
-+	}
-+
-+cleanup:
-+	cred_storage__destroy(skel);
-+}
-+
-+void test_cred_storage(void)
-+{
-+	if (test__start_subtest("lifecycle"))
-+		test_cred_lifecycle();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/cred_storage.c b/tools/testing/selftests/bpf/progs/cred_storage.c
-new file mode 100644
-index 000000000000..ae66d3b00d2e
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/cred_storage.c
-@@ -0,0 +1,87 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2025 David Windsor.
-+ */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#define DUMMY_STORAGE_VALUE 0xdeadbeef
-+
-+extern struct bpf_local_storage_data *bpf_cred_storage_get(struct bpf_map *map,
-+							   struct cred *cred,
-+							   void *init, int init__sz, __u64 flags) __ksym;
-+
-+__u32 monitored_pid = 0;
-+int cred_storage_result = -1;
-+
-+struct cred_storage {
-+	__u32 value;
-+};
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_CRED_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, struct cred_storage);
-+} cred_storage_map SEC(".maps");
-+
-+SEC("lsm/cred_prepare")
-+int BPF_PROG(cred_prepare, struct cred *new, const struct cred *old, gfp_t gfp)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct cred_storage init_storage = {
-+		.value = DUMMY_STORAGE_VALUE,
-+	};
-+	struct bpf_local_storage_data *sdata;
-+	struct cred_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	sdata = bpf_cred_storage_get((struct bpf_map *)&cred_storage_map, new, &init_storage,
-+				     sizeof(init_storage), BPF_LOCAL_STORAGE_GET_F_CREATE);
-+	if (!sdata)
-+		return 0;
-+
-+	storage = (struct cred_storage *)sdata->data;
-+	if (!storage)
-+		return 0;
-+
-+	/* Verify the storage was initialized correctly */
-+	if (storage->value == DUMMY_STORAGE_VALUE)
-+		cred_storage_result = 0;
-+
-+	return 0;
-+}
-+
-+SEC("lsm/cred_free")
-+int BPF_PROG(cred_free, struct cred *cred)
-+{
-+	__u32 pid = bpf_get_current_pid_tgid() >> 32;
-+	struct bpf_local_storage_data *sdata;
-+	struct cred_storage *storage;
-+
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	/* Try to retrieve the storage that should have been created in prepare */
-+	sdata = bpf_cred_storage_get((struct bpf_map *)&cred_storage_map, cred,
-+				     NULL, 0, 0);
-+	if (!sdata)
-+		return 0;
-+
-+	storage = (struct cred_storage *)sdata->data;
-+	if (!storage)
-+		return 0;
-+
-+	/* Verify the dummy value is still there during free */
-+	if (storage->value == DUMMY_STORAGE_VALUE)
-+		cred_storage_result = 0;
-+
-+	return 0;
-+}
--- 
-2.43.0
+Andi,
 
+> > > > It might be good to have an immutable branch for me from i2c core.
+> > > > Wolfram, can you provide a such if no objections?
+> > >=20
+> > > Sure thing, I can do that. But there is still discussion on patch 1, =
+so
+> > > I will wait for an outcome there.
+> >=20
+> > But it seems that the discussion can be implemented in a followup?
+> > I think we are not in hurry anyway, so let see if it settles down soon.
+>=20
+> I pushed out an immutable branch now:
+>=20
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/immutable=
+/scoped_fwnode_child
+>=20
+> Please have a look if I got the tags correct. Once confirmed, I will
+> merge it into i2c/for-mergewindow and Andy can pull it as well.
+
+Andy, did you pull this immutable branch already?
+
+
+--QSvRZOkrwrDINmRa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjEnoYACgkQFA3kzBSg
+Kbb9Og//ZzoS9CwadDc/npU9PDNiW9zqCCQ0/ib6AkExeYbcn84OVIPDIBvWrJgN
+od9fKs7x0Uxe1RRrxRQzqnk8LEdktydGxj0kA53M95QfBKzYFQHhVSeltDQdVvEq
+zIeaz1Hwsu4OdPqDHxOZ1eTB5I1LNcIVMPV19zb9qCdu7dcOwD3/ApFKZfmiJAb/
+ZOR9yfuLQXsvzfOj1HJFG38l5SXjRkjh0RPqMWYEXhTv1Tw2Vx6mI5fuIuI2/q0L
+SrsfTZGeLlNEmxPJZpCUspA7wgXc6Q4O7Y+RNkPT9MY8nKTtsgRBopCBHzi9OvRo
+JiOYhLIGdL7bNTSx/In9k9fCvDm/hFxRn4s8beWjSocNyaVyHLAEf1i5lQtz8r8l
+/gZgeeupR1iAEigDzhzodNoLmU5LXNZ62Z0PIq7cGQ4hXDq+Ekp2vkEZtE6GrdcO
+HcJtlLDcO+iDJZmohNm9tJ3uBibt7Qg0pajdGTDQ+J4ZosXmoCD5xmD8qVWy8mzw
+YPG8EC4A0l4LMlPGS20K4uLyeGx+tVovPf3VPMAdF5E78A1YeWss93FsNV2XGivl
+ZWJc4kQ+jXriQREkIGzvCsvyRupFBSedhZ3t1Gq2JE6nNgpA/5G/dwnmXhzkng6w
+D1WG2+UZ086rV5p/8ZbPKHoWZ1fZ3dyswq1VmkgJLZXK0q5xqes=
+=fqwy
+-----END PGP SIGNATURE-----
+
+--QSvRZOkrwrDINmRa--
 
