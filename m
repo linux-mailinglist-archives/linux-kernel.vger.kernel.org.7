@@ -1,713 +1,488 @@
-Return-Path: <linux-kernel+bounces-813286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDEFB54324
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C682AB54326
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D04AA1C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:44:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A19A03681
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:47:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACC7285C82;
-	Fri, 12 Sep 2025 06:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3E1286411;
+	Fri, 12 Sep 2025 06:47:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCYA8JHj"
-Received: from mail-lf1-f68.google.com (mail-lf1-f68.google.com [209.85.167.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V4Ml71xo"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75EA284B33
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1776A8D2
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757659486; cv=none; b=DpqgCkOvvW9Yr+lK9akqVwFhpvRApH5CmXW40JZBTRrgrMav1huMLd8pnX3KzipyglkKyj2mC7Y5ZsSONGVPPn2A3isgZM17KImfXyAvK/xAJjjLuqyvVxxJl547S5KYOpxLLHgGdzSo2diAs4V0ozwWtp7BTYo733/zkwiETXI=
+	t=1757659621; cv=none; b=ZbYwQSlSslhiWL1KtsVL0dTf4lh3kmwxpVKzPzlZ1EWKhH9q34xj0O7gtQanOIfH4XfqFfUe+p/7ARgb37cHnnML0Hq5z9VeQoqD7G/cKkiCaiSd1soAY2K0kqCu4nBSea37ewUn7lpelWTSZmVFoYvPW8tWPyPiq8Cu0qge3Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757659486; c=relaxed/simple;
-	bh=2HSOW5nkoP7gYRCfZIysdf+wF4upO3G23/sXmLSYs5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BglINdN5dUNdKohaUfc3SEQSZ1zOfPyikH6pDMggsrA+vFohuA44kVWKFZRNm+j9OG47XdKfrJuEwSqYihwR7LZB4K7s1lRkvaY8sJjvyqaBHWEtR8QJsBgdiBNh0GlINVBw/KHLZFBYJxJkfHV3Llu6UghnYC4CAIDJ/RXXlmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCYA8JHj; arc=none smtp.client-ip=209.85.167.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f68.google.com with SMTP id 2adb3069b0e04-56afe77bc1eso1655553e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 23:44:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757659482; x=1758264282; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ihMDkIVZPu0vRt9mESexaXtW1swGqs9/4c69zS1ipTU=;
-        b=VCYA8JHjyU8SUUFVNGG3Fe2Y59MWXVy6DmRaNguI5XJXe3NXmx44oLEYLivQmZib+t
-         itOj3/jLPO9gV25OAImpdSQuLG5qYW7CkgeqpfSAfiPLKS7AZPvaLfgZG80lxq8XqXc4
-         a5Aoszm4MkCwkXlHG8MM/+Br7qipg11zRszevJxImqSBrSiCrflQnSBBEi5WHxQZhyuk
-         Q8Wd680JNkJjXdu3w7jfzRjbm+M/wq4ncTXpNPi6Bcc8VivXP7V8wKGn6mfPtEyDgQGW
-         JWfBYXJjJX+FQI/Anp/Dd0OEt0EIphFTufH5pRfUevALYi5FvjzQbgayB9vNo/ZWwM6t
-         rjUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757659482; x=1758264282;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ihMDkIVZPu0vRt9mESexaXtW1swGqs9/4c69zS1ipTU=;
-        b=pi6ffenP/EH0yQOACCFx3nAlcXXCdJRg1H598MaM/w+Uqu0DCs1ay8UxR4dq2DATZm
-         VPGOt3o6Patif6fd0T+d5mroAd5C7jkhWzDPoTVeVcV91hOgZL/tyS0Bz60voqZN4wBC
-         dGXVDWqMXoc/kTH71QIZgVzuogF8WVRgQy+G4pFE13ktNaPCKkBL9e0K9k6jmM7rXUy1
-         MSl3g/FECSWarDtfQrt9R3LFqglJaxTSbipF5tBPhTBk01gCyOtRaGoMz4l263LP54DT
-         T2qgT93TVJB3ntCJjEKfmu3qfDGS7taU1kmGlkklzxhvW94VQAm2UxJwNtKtDWDKjYJe
-         5YEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUirWENoFYyauu/dQyOyPYXleFFo6megN2FQZbxEPnBLNgWYBbXOE8EDAEI3vWumJ+ZKlhMlWLu7tsm7qM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrWZnA3pKoBWzZHgtSfXODVq4mi0FwNHpcc7fXwRjx/XB+jp9x
-	lF6gq++F/nvd3xLWBeOmULgMJQhVa0fpchbsW9XhfbkqNTgQR1Dtjvr8nQBBAeLm97WIaxSR2q+
-	sgklHl8WTTU7tZpsPEQVrbYGwK04Bsgo=
-X-Gm-Gg: ASbGnct8ZZ1rplhJ8GiwvP2CFmqKBQ4f61E7A0RgIeHgncxv7qc1lp/lxsEPeTxHlgt
-	2XlNeNYCxLzpYi9rzKVXzdUZrw6Nk4rw5Vd81BNX70mjeaWbeOKvho2Th1f0hsPchpXtorZ8AGP
-	a+fZI7obxmZnuFLdDy1t++ixXpe0fmuTpSfb/baWgP/Rs1IPL1QfaiqCBhE80KZpEdn5ZlVkHBB
-	TaSpwlvTSjIMZwi8YQ=
-X-Google-Smtp-Source: AGHT+IGghfIH1Px4J8uXiqDN3PPJGDprrq+RK7jdWZKW9XUgbMptXwOQECzLiPTZZPnenewJ1VKO+CqnvA5OtzC3PDc=
-X-Received: by 2002:a05:6512:12c4:b0:562:d04d:fa07 with SMTP id
- 2adb3069b0e04-5704f3befcbmr634750e87.32.1757659481559; Thu, 11 Sep 2025
- 23:44:41 -0700 (PDT)
+	s=arc-20240116; t=1757659621; c=relaxed/simple;
+	bh=Nej9L2phyGIyPfv6R96GYg9gxlJNz0bBwJXRDUJ9h0c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=loLyK8aDccOdad2KBdKmOxJSxXx2yrP5c2hvrqqw0sO6qB+SFXh4AW27zhsmwokhjqAQDQE5ZX0N1q8+ZrEGyG4UhutSLTOB1Tq+iJ92241r+OYTRZ9YjpeFbzQthsB6ZlCwT03TMGkDeEEsB9U7cApVrG+Z5y1ya07pE8gwyjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V4Ml71xo; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2155a731-9c52-4e45-b916-ff7d2bf40b69@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757659606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/DauHBO5tEc9mr/Rq2ZJB5kCpTpE66GYJXPYT9RaboU=;
+	b=V4Ml71xoXzhOB3qbBakcfbmqh9CJXCGg2/puVRz3tR0a7YIP5m2JuF5lkvgAvHiRPSXney
+	IueZLkFYzKPPmOU8Z+9hF42Q72TVX52D08dSwfDwPZoJ7becaQ3mWsZhqG/8IXVXV1q/VH
+	SB8CPp133WjkkchuVIM6PvtON93Mqp0=
+Date: Fri, 12 Sep 2025 14:46:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910084316.356169-1-hupu.gm@gmail.com> <CAKfTPtCyL=ofg4yLtfG7zsoBMDnP48KCeUELT_Hddd3gnWeYEw@mail.gmail.com>
-In-Reply-To: <CAKfTPtCyL=ofg4yLtfG7zsoBMDnP48KCeUELT_Hddd3gnWeYEw@mail.gmail.com>
-From: hupu <hupu.gm@gmail.com>
-Date: Fri, 12 Sep 2025 14:44:29 +0800
-X-Gm-Features: Ac12FXxY8vNgtojMgM7adlBFGier-_BKVNRQuOJF0TbT6WGqzP5BzUaPQnrcY9U
-Message-ID: <CADHxFxTkexicChcg3To4=AsX8c+s2RNWZ5NfA9UBLMfYRZtmKg@mail.gmail.com>
-Subject: Re: [RESEND][RFC] sched: Introduce removed.load_sum for precise load propagation
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] docs/zh_CN: Add security ipe Chinese translation
+To: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>, alexs@kernel.org, corbet@lwn.net
+Cc: dzm91@hust.edu.cn, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250902031918.591908-1-zhaoshuo@cqsoftware.com.cn>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250902031918.591908-1-zhaoshuo@cqsoftware.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Vincent Guittot
-Thank you very much for your reply.
 
-On Thu, Sep 11, 2025 at 4:01=E2=80=AFPM Vincent Guittot
-<vincent.guittot@linaro.org> wrote:
+在 9/2/25 11:19 AM, Shuo Zhao 写道:
+> Translate .../security/ipe.rst into Chinese.
 >
-> On Wed, 10 Sept 2025 at 10:43, hupu <hupu.gm@gmail.com> wrote:
-> >
-> > Currently, load_sum to be propagated is estimated from
-> > (removed_runnable * divider) >> SCHED_CAPACITY_SHIFT, which relies on
-> > runnable_avg as an approximation. This approach can introduce precision
-> > loss due to the shift operation, and the error may become more visible
-> > when small tasks frequently enter and leave the queue.
+> Update the translation through commit ac6731870ed9
+> ("documentation: add IPE documentation")
 >
-> Do you have a level of error ? Do you have a typical use case ?
+> Signed-off-by: Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+
+Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
+
+
+Thanks,
+
+Yanteng
+
+> ---
+>   .../translations/zh_CN/security/ipe.rst       | 398 ++++++++++++++++++
+>   1 file changed, 398 insertions(+)
+>   create mode 100644 Documentation/translations/zh_CN/security/ipe.rst
 >
-
-In fact, I derived the error here from the underlying mathematical
-relationship. The error mainly comes from two sources:
-a) The approximation of load_sum using runnable_avg;
-b) The truncation introduced by the right shift (SCHED_CAPACITY_SHIFT).
-
-Below is the detailed derivation and explanation.
-
-removed_runnable records the sum of se->avg.runnable_avg for tasks
-that have migrated to another CPU. It represents the decayed
-cumulative contribution of a task=E2=80=99s runtime, with the unit being
-microseconds (=CE=BCs). Right-shifting by SCHED_CAPACITY_SHIFT (10 bits) is
-equivalent to truncating the low part below 1024 =CE=BCs. In other words,
-if a task has accumulated less than 1024 =CE=BCs of runtime before
-dequeueing, its load contribution will be completely discarded by the
-shift operation. Even if the accumulated runtime exceeds 1024 =CE=BCs, the
-shift may still introduce up to nearly 1024 =CE=BCs of truncation error
-(about 1 ms).
-
-For example, suppose a task has accumulated 4095 =CE=BCs (4.095 ms) of
-runtime on CPU0, then goes to sleep and is migrated to CPU1 upon
-wakeup. Ideally, CPU0 should remove that task=E2=80=99s contribution fully.
-However, after the shift, the result is 4095 >> 10 =3D 3 ms, which means
-CPU0 will still retain about 1023 =CE=BCs (~=3D 1.023 ms) of the task=E2=80=
-=99s
-contribution.
-
-Experimental results also confirm this. By adding debug output before
-add_tg_cfs_propagate and comparing the actual removed_load_sum (the
-true value to be removed) with the approximate value obtained through
-the shift, we observed that the latter is smaller in most cases. This
-discrepancy is exactly due to the approximation and truncation
-introduced by the shift.
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-old mode 100644
-new mode 100755
-index b173a059315c..92396da04520
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4561,7 +4561,8 @@ static void migrate_se_pelt_lag(struct
-sched_entity *se) {}
- static inline int
- update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
- {
--       unsigned long removed_load =3D 0, removed_util =3D 0, removed_runna=
-ble =3D 0;
-+       unsigned long removed_load_sum =3D 0, removed_load =3D 0;
-+       unsigned long removed_util =3D 0, removed_runnable =3D 0;
-        struct sched_avg *sa =3D &cfs_rq->avg;
-        int decayed =3D 0;
-
-@@ -4572,6 +4573,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq=
-)
-                raw_spin_lock(&cfs_rq->removed.lock);
-                swap(cfs_rq->removed.util_avg, removed_util);
-                swap(cfs_rq->removed.load_avg, removed_load);
-+               swap(cfs_rq->removed.load_sum, removed_load_sum);
-                swap(cfs_rq->removed.runnable_avg, removed_runnable);
-                cfs_rq->removed.nr =3D 0;
-                raw_spin_unlock(&cfs_rq->removed.lock);
-@@ -4609,8 +4611,10 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_r=
-q)
-                 * removed_runnable is the unweighted version of
-removed_load so we
-                 * can use it to estimate removed_load_sum.
-                 */
--               add_tg_cfs_propagate(cfs_rq,
--                       -(long)(removed_runnable * divider) >>
-SCHED_CAPACITY_SHIFT);
-+               trace_printk("DEBUG BYHP: removed_load_sum=3D%lu,
-raw_removed_runnable_sum=3D%lu\n",
-+                               (long)removed_load_sum,
-+                               (long)((removed_runnable * divider) >>
-SCHED_CAPACITY_SHIFT));
-+               add_tg_cfs_propagate(cfs_rq, -(long)removed_load_sum);
-
-                decayed =3D 1;
-        }
-@@ -4792,6 +4796,7 @@ static void remove_entity_load_avg(struct
-sched_entity *se)
-        ++cfs_rq->removed.nr;
-        cfs_rq->removed.util_avg        +=3D se->avg.util_avg;
-        cfs_rq->removed.load_avg        +=3D se->avg.load_avg;
-+       cfs_rq->removed.load_sum        +=3D se->avg.load_sum;
-        cfs_rq->removed.runnable_avg    +=3D se->avg.runnable_avg;
-        raw_spin_unlock_irqrestore(&cfs_rq->removed.lock, flags);
- }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index be9745d104f7..659935a5c694 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -682,6 +682,7 @@ struct cfs_rq {
-        struct {
-                raw_spinlock_t  lock ____cacheline_aligned;
-                int             nr;
-+               unsigned long   load_sum;
-                unsigned long   load_avg;
-                unsigned long   util_avg;
-                unsigned long   runnable_avg;
-
-The logs are as follows: raw_removed_runnable_sum is often smaller
-than removed_load_sum. This difference is exactly caused by the
-approximate calculation and the truncation introduced by bit shifting.
-
-   stress-ng-cpu-183     (-------) [001] dnh1.   144.338335:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D35463,
-raw_removed_runnable_sum=3D35429
-   stress-ng-cpu-184     (-------) [007] dNs1.   144.346203:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D20607, raw_removed_runnable_sum=3D20496
-   stress-ng-cpu-185     (-------) [001] d.h1.   144.568803:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-   stress-ng-cpu-183     (-------) [000] d.h1.   145.526897:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D11103,
-raw_removed_runnable_sum=3D11072
-   stress-ng-cpu-183     (-------) [000] d.h1.   145.563980:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-   stress-ng-cpu-185     (-------) [002] d..2.   145.593563:
-sched_balance_update_blocked_averages: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-   stress-ng-cpu-181     (-------) [005] d.s1.   145.653525:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D2537, raw_removed_runnable_sum=3D2508
-   stress-ng-cpu-183     (-------) [003] d.s1.   145.657599:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D28510, raw_removed_runnable_sum=3D28473
-   stress-ng-cpu-180     (-------) [007] d.h1.   146.049167:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D9548,
-raw_removed_runnable_sum=3D9526
-   stress-ng-cpu-184     (-------) [005] d.h1.   146.057200:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D5974,
-raw_removed_runnable_sum=3D5963
-   stress-ng-cpu-182     (-------) [000] d.s1.   146.062025:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D55, raw_removed_runnable_sum=3D45
-      kcompactd0-65      (-------) [001] d..2.   146.095334:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-      kcompactd0-65      (-------) [001] d..2.   146.095433:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D17493, raw_removed_runnable_sum=3D17461
-   stress-ng-cpu-186     (-------) [006] d.h1.   146.118910:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D11404,
-raw_removed_runnable_sum=3D11389
-   stress-ng-cpu-186     (-------) [000] d.h1.   147.112614:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-             cat-234     (-------) [005] d.s2.   147.161900:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D36778, raw_removed_runnable_sum=3D36768
-   stress-ng-cpu-181     (-------) [004] d.h1.   147.406979:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D3029,
-raw_removed_runnable_sum=3D3014
-   stress-ng-cpu-185     (-------) [003] d.s1.   147.474502:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D1242, raw_removed_runnable_sum=3D1205
-   stress-ng-cpu-186     (-------) [000] d.h1.   147.533368:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D11,
-raw_removed_runnable_sum=3D0
-   stress-ng-cpu-181     (-------) [001] d.s1.   148.341639:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D15837, raw_removed_runnable_sum=3D15804
-     migration/7-51      (-------) [007] d..2.   148.384219:
-sched_balance_update_blocked_averages: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-          <idle>-0       (-------) [004] d.s2.   148.431501:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D4292, raw_removed_runnable_sum=3D1924
-             cat-234     (-------) [007] d.h1.   148.434474:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D10380,
-raw_removed_runnable_sum=3D9945
-   stress-ng-cpu-184     (-------) [001] d.h1.   148.853949:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D15896,
-raw_removed_runnable_sum=3D15869
-   stress-ng-cpu-185     (-------) [007] d.s1.   148.862267:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D31, raw_removed_runnable_sum=3D0
-   stress-ng-cpu-183     (-------) [006] d.h1.   149.157805:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D20553,
-raw_removed_runnable_sum=3D20527
-   stress-ng-cpu-179     (-------) [007] d.h1.   149.330189:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D9204,
-raw_removed_runnable_sum=3D9177
-   stress-ng-cpu-185     (-------) [002] d.h1.   149.434768:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D11198,
-raw_removed_runnable_sum=3D11176
-          <idle>-0       (-------) [006] dNs2.   149.456004:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D2826, raw_removed_runnable_sum=3D465
-   stress-ng-cpu-184     (-------) [005] d.s1.   149.483636:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D11607, raw_removed_runnable_sum=3D11595
-   stress-ng-cpu-186     (-------) [001] d.h1.   149.668063:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-          <idle>-0       (-------) [001] d.h2.   149.672477:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-   stress-ng-cpu-183     (-------) [007] d.s1.   149.684045:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D5657, raw_removed_runnable_sum=3D5458
-     ksoftirqd/1-22      (-------) [001] d.s1.   149.700089:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D0,
-raw_removed_runnable_sum=3D0
-   stress-ng-cpu-183     (-------) [004] d.h1.   149.807666:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D10481,
-raw_removed_runnable_sum=3D10474
-   stress-ng-cpu-184     (-------) [000] d.h1.   149.817148:
-update_load_avg: DEBUG BYHP: removed_load_sum=3D3,
-raw_removed_runnable_sum=3D0
-          <idle>-0       (-------) [001] d.s2.   149.866309:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D4010, raw_removed_runnable_sum=3D3999
-   stress-ng-cpu-184     (-------) [000] d.s1.   149.914423:
-sched_balance_update_blocked_averages: DEBUG BYHP:
-removed_load_sum=3D1920, raw_removed_runnable_sum=3D1876
-
-
-
-
-> >
-> > This patch introduces removed.load_sum to directly accumulate
-> > se->avg.load_sum when tasks dequeue, and uses it during load
-> > propagation. By doing so:
-> >
-> >   a) Avoid relying on runnable_avg-based approximation and obtain
-> >      higher precision in load_sum propagation;
-> >   b) Eliminate precision loss from the shift operation, especially
-> >      with frequent short-lived tasks;
-> >   c) Reduce one multiplication and shift in the hotpath, which
-> >      theoretically lowers overhead (though the impact is minor).
->
-> This doesn't work because rq's load_sum tracks current weight whereas
-> se's load_sum doesn't include the weight which is only applied on se's
-> load_avg. So you can't directly add/sub se's load_sum and rq's
-> load_sum. Only load_avg of both se and rq use the same unit.
->
-
-I understand and agree with your point: cfs_rq->avg.load_sum includes
-the weight while se->avg.load_sum does not, so the two are indeed in
-different units and cannot be directly added or subtracted.
-
-However, in this patch we DO NOT directly add or subtract
-se->avg.load_sum to/from cfs_rq->avg.load_sum. Instead, the load_sum
-of dequeued tasks is accumulated into cfs_rq->prop_runnable_sum.
-Later, in update_tg_cfs_load, this prop_runnable_sum is used to
-recompute the load_sum and load_avg of both gse and cfs_rq.
-
-In other words, the update here is performed via recomputation rather
-than direct arithmetic, so the =E2=80=9Cunit mismatch=E2=80=9D issue you me=
-ntioned
-does not occur.
-
-update_tg_cfs_load
-  |-- long delta_avg, runnable_sum =3D gcfs_rq->prop_runnable_sum;
-  |
-  |   runnable_sum +=3D gse->avg.load_sum;
-  |
-  |   load_sum =3D se_weight(gse) * runnable_sum;
-  |   load_avg =3D div_u64(load_sum, divider);
-  |
-  |   delta_avg =3D load_avg - gse->avg.load_avg;
-  |   delta_sum =3D load_sum - (s64)se_weight(gse) * gse->avg.load_sum;
-  |
-  |-- /* Recalculate the load_sum and load_avg of gse. */
-  |   gse->avg.load_sum =3D runnable_sum;
-  |   gse->avg.load_avg =3D load_avg;
-  |
-  |-- /* Recalculate the load_sum and load_avg of cfs_rq. */
-  |   add_positive(&cfs_rq->avg.load_avg, delta_avg);
-  |   add_positive(&cfs_rq->avg.load_sum, delta_sum);
-
-
-
-
->
-> Then, why is it a problem only for load and not util or runnable ?
->
-
-I broke this question into three parts and derived the related
-formulas step by step.
-
-
-Q1: Why doesn=E2=80=99t util_avg have the same problem?
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-A1: Because the formulas of util_avg / util_sum are exactly the same
-for both se and cfs_rq. Neither involves weight, and the units are
-consistent, so direct addition and subtraction are valid.
-
-The formulas for a sched_entity (tse) are:
-
-             util_sum
-util_avg =3D ------------
-              divider
-
-
-    decay(history) + contrib(running) * 1024
-  =3D ----------------------------------------
-                  divider
-
-
-    (decay(history) + contrib(running)) * 1024
- ~=3D ------------------------------------------
-                  divider
-
-
-    decay(history) + contrib(running)
-  =3D --------------------------------- * 1024
-                  divider
-
-
-Where:
-util_sum =3D decay(history) + contrib(running) * 1024
-util_avg < 1024
-decay(history): represents geometric decay of the historical contribution (=
-time)
-contrib(running): contribution added when the task is in running state
-
-
-For cfs_rq, the formulas of util_avg / util_sum are:
-
-             util_sum
-util_avg =3D ------------
-              divider
-
-
-    decay(history) + contrib(running) * 1024
-  =3D ----------------------------------------
-                  divider
-
-
-    (decay(history) + contrib(running)) * 1024
- ~=3D ------------------------------------------
-                      divider
-
-
-    decay(history) + contrib(running)
-  =3D --------------------------------- * 1024
-                 divider
-
-
-Where:
-util_sum =3D decay(history) + contrib(running) * 1024
-util_avg < 1024
-decay(history): represents geometric decay of the historical contribution (=
-time)
-contrib(running): contribution added when the task is in running state
-
-
-Therefore, se and cfs_rq share the same units for util_avg / util_sum,
-which makes direct addition and subtraction valid. This is also why
-update_tg_cfs_util performs direct subtraction when updating:
-
-update_tg_cfs_util
-  |-- /* Calculate the delta between gse and gcfs_rq directly by subtractio=
-n. */
-  |   long delta_avg =3D gcfs_rq->avg.util_avg - se->avg.util_avg;
-  |
-  |-- /* Set new sched_entity's utilization */
-  |   se->avg.util_avg =3D gcfs_rq->avg.util_avg;
-  |   new_sum =3D se->avg.util_avg * divider;
-  |   delta_sum =3D (long)new_sum - (long)se->avg.util_sum;
-  |   se->avg.util_sum =3D new_sum;
-  |
-  |-- /* Update parent cfs_rq utilization */
-  |   add_positive(&cfs_rq->avg.util_avg, delta_avg);
-  |   add_positive(&cfs_rq->avg.util_sum, delta_sum);
-
-
-Q2: Why doesn=E2=80=99t runnable_avg have the same problem?
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-A2: Similarly, the runnable_avg / runnable_sum of se and cfs_rq also
-do not include weight.
-
-The calculation formulas for tse's runnable_avg and runnable_sum are as fol=
-lows:
-
-                 runnable_sum
-runnable_avg =3D ----------------
-                   divider
-
-
-    decay(history) + contrib(running + runnable) * 1024
-  =3D ---------------------------------------------------
-                        divider
-
-
-    (decay(history) + contrib(running + runnable)) * 1024
- ~=3D -----------------------------------------------------
-                         divider
-
-
-    decay(history) + contrib(running + runnable)
-  =3D -------------------------------------------- * 1024
-                      divider
-
-
-Where:
-runnable_sum =3D decay(history) + contrib(running + runnable) * 1024
-runnable_avg < 1024
-decay(history): represents geometric decay of the historical contribution (=
-time)
-contrib(running + runnable): contribution added when the task is in
-running and runnable states
-
-
-The calculation formulas for cfs_rq's runnable_avg and runnable_sum
-are as follows:
-
-                 runnable_sum
-runnable_avg =3D ----------------
-                   divider
-
-
-    decay(history) + contrib(running + runnable) * cfs_rq->h_nr_running * 1=
-024
-  =3D ---------------------------------------------------------------------=
------
-                                     divider
-
-
-  (decay(history) + contrib(running + runnable)) * cfs_rq->h_nr_running * 1=
-024
- ~=3D ---------------------------------------------------------------------=
------
-                                   divider
-
-
-    decay(history) + contrib(running + runnable)
-  =3D -------------------------------------------- * cfs_rq->h_nr_running *=
- 1024
-                      divider
-
-
-Where:
-runnable_sum =3D decay(history) + contrib(running + runnable) *
-cfs_rq->h_nr_running * 1024
-runnable_avg < cfs_rq->h_nr_running * 1024
-decay(history): represents geometric decay of the historical contribution (=
-time)
-contrib(running + runnable): contribution added when the task is in
-running and runnable states
-
-
-The runnable statistic of cfs_rq is represented by h_nr_running, which
-indicates the number of tasks and can be regarded as the accumulated
-runnable of all se. Therefore, in update_tg_cfs_runnable, the update
-can also be done directly using subtraction.
-
-update_tg_cfs_runnable
-  |-- /* Calculate the delta directly by subtraction. */
-  |   long delta_avg =3D gcfs_rq->avg.runnable_avg - gse->avg.runnable_avg;
-  |
-  |-- /* Set new sched_entity's runnable */
-  |   gse->avg.runnable_avg =3D gcfs_rq->avg.runnable_avg;
-  |   new_sum =3D gse->avg.runnable_avg * divider;
-  |   delta_sum =3D (long)new_sum - (long)gse->avg.runnable_sum;
-  |   gse->avg.runnable_sum =3D new_sum;
-  |
-  |-- /* Update parent cfs_rq runnable */
-  |   add_positive(&cfs_rq->avg.runnable_avg, delta_avg);
-  |   add_positive(&cfs_rq->avg.runnable_sum, delta_sum);
-
-
-Q3: Why does load_avg have this problem?
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-A3: The key difference is that cfs_rq=E2=80=99s load_avg and load_sum inclu=
-de
-weight information, while a task=E2=80=99s load_sum does not. Moreover, we
-cannot reconstruct load_sum from a task=E2=80=99s load_avg.
-
-For a task (tse), the formulas are:
-
-             load_sum
-load_avg =3D ------------ * se_weight(se)
-              divider
-
-
-   decay(history) + contrib(running + runnable)
- =3D -------------------------------------------- * se_weight(se)
-                     divider
-
-
-Where:
-load_sum =3D decay(history) + contrib(running + runnable)
-load_avg < se_weight(se)
-decay(history): represents geometric decay of the historical contribution (=
-time)
-contrib(running + runnable): contribution added when the task is in
-running and runnable states
-
-
-For a cfs_rq, the formulas are:
-
-             load_sum
-load_avg =3D ------------
-              divider
-
-
-    decay(history) + contrib(running + runnable) * cfs_rq->load.weight
-  =3D ------------------------------------------------------------------
-                                  divider
-
-
-    (decay(history) + contrib(running + runnable)) * cfs_rq->load.weight
- ~=3D --------------------------------------------------------------------
-                                 divider
-
-
-    decay(history) + contrib(running + runnable)
-  =3D -------------------------------------------- * cfs_rq->load.weight
-                      divider
-
-
-Where:
-load_sum =3D decay(history) + contrib(running + runnable) * cfs_rq->load.we=
-ight
-load_avg < cfs_rq->load.weight
-decay(history): represents geometric decay of the historical contribution (=
-time)
-contrib(running + runnable): contribution added when the task is in
-running and runnable states
-
-
-From these formulas, we can see that tse=E2=80=99s load_sum does not includ=
-e
-weight, while cfs_rq=E2=80=99s does. Their units differ, so they cannot be
-directly added or subtracted. In addition, weight is a "historical
-variable" that changes over time, which means load_sum cannot be
-derived from se=E2=80=99s load_avg.
-
-To propagate load_sum changes from a child cfs_rq, the upstream
-implementation uses runnable_avg to APPROXIMATE load_sum. The
-derivation is as follows.
-
-For tse:
-
-                 runnable_sum
-runnable_avg =3D ----------------
-                   divider
-
-    decay(history) + contrib(running + runnable) * 1024
-  =3D ---------------------------------------------------
-                     divider
-
-     decay(history) + contrib(running + runnable)
- ~=3D --------------------------------------------- * 1024
-                     divider
-
-
-Thus:
-
-decay(history) + contrib(running + runnable)
-
-
-     runnable_avg * divider
- ~=3D -----------------------
-             1024
-
-
- ~=3D (runnable_avg * divider) >> SCHED_CAPACITY_SHIFT        (1)
-
-
-Equation (1) represents the contribution when a task is in running or
-runnable state. The kernel refers to this as the "unweighted version
-of removed_load", which is essentially time with exponential decay
-applied.
-
-It is worth noting that equation (1) happens to be equal to tse=E2=80=99s
-load_sum. Therefore, for tse we have:
-
-load_sum ~=3D (runnable_avg * divider) >> SCHED_CAPACITY_SHIFT     (2)
-
-However, equation (2) itself is only an approximation, and the
-right-shift operation introduces further truncation error.
-
-My idea is that since the task=E2=80=99s load_sum already exists when it
-dequeues, it is more reasonable to record this value directly. By
-doing so, we can avoid both the approximation and the shift-induced
-error. This is the motivation behind introducing removed.load_sum in
-my patch.
-
-
-
-
-> Also we don't want to track both load_sum and load_avg, only one is
-> enough and by the above it is load_avg
->
-
-My view is consistent with yours, but I personally lean towards
-keeping load_sum and deprecating load_avg, since load_avg does not
-seem to be accurate.
-
-That said, this is only my personal perspective and may not be
-comprehensive. I would like to further discuss the feasibility of this
-approach with you.
-
-Thanks.
-hupu
+> diff --git a/Documentation/translations/zh_CN/security/ipe.rst b/Documentation/translations/zh_CN/security/ipe.rst
+> new file mode 100644
+> index 000000000000..55968f0c7ae3
+> --- /dev/null
+> +++ b/Documentation/translations/zh_CN/security/ipe.rst
+> @@ -0,0 +1,398 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. include:: ../disclaimer-zh_CN.rst
+> +
+> +:Original: Documentation/security/sak.rst
+> +
+> +:翻译:
+> + 赵硕 Shuo Zhao <zhaoshuo@cqsoftware.com.cn>
+> +
+> +完整性策略执行（IPE）-内核文档
+> +==============================
+> +
+> +.. NOTE::
+> +
+> +   这是针对开发人员而不是管理员的文档。如果您正在
+> +   寻找有关IPE使用的文档，请参阅 :doc:`IPE admin
+> +   guide </admin-guide/LSM/ipe>`。
+> +
+> +历史背景
+> +--------
+> +
+> +最初促使IPE实施的原因，是需要创建一个锁定式系统。该系统将
+> +从一开始就具备安全性，并且在可执行代码和系统功能关键的特定
+> +数据文件上，提供强有力的完整性保障。只有当这些特定数据文件
+> +符合完整性策略时，它们才可以被读取。系统中还将存在强制访问
+> +控制机制，因此扩展属性（xattrs）也必须受到保护。这就引出了
+> +需要选择能够提供完整性保证的机制。当时，有两种主要机制被考
+> +虑，用以在满足这些要求的前提下保证系统完整性：
+> +
+> +  1. IMA + EVM Signatures
+> +  2. DM-Verity
+> +
+> +这两个选项都经过了仔细考虑，然而在原始的IPE使用场景
+> +中，最终选择DM-Verity而非IMA+EVM作为完整性机制，主
+> +要有三个原因：
+> +
+> +  1. 防护额外的攻击途径
+> +
+> +    * 使用IMA+EVM时，如果没有加密解决方案，系统很容易受到
+> +      离线攻击，特别是针对上述特定数据文件的攻击。
+> +
+> +      与可执行文件不同，读取操作（如对受保护数据文件的读
+> +      取操作）无法强制性进行全局完整性验证。这意味着必须
+> +      有一种选择机制来决定是否应对某个读取操作实施完整性
+> +      策略。
+> +
+> +      在当时，这是通过强制访问控制标签来实现的，IMA策略会
+> +      指定哪些标签需要进行完整性验证，这带来了一个问题：
+> +      EVM虽然可以保护标签，但如果攻击者离线修改文件系统，
+> +      那么攻击者就可以清除所有的扩展属性（xattrs）——包括
+> +      用于确定文件是否应受完整性策略约束的SELinux标签。
+> +
+> +      使用DM-Verity，由于xattrs被保存为Merkel树的一部分，
+> +      如果对由dm-verity保护的文件系统进行了离线挂载，校验
+> +      和将不在匹配，文件将无法读取。
+> +
+> +    * 由于用户空间的二进制文件在Linux中是分页加载的，dm-
+> +      verity同样提供了对抗恶意块设备的额外保护。在这样的
+> +      攻击中，块设备最初报告适当的内容以供IMA哈希计算，通
+> +      过所需的完整性检查。然后，在访问真实数据时发生的页面
+> +      错误将报告攻击者的有效载荷。由于dm-verity会在页面错
+> +      误发生时检查数据（以及磁盘访问），因此这种攻击得到了
+> +      缓解。
+> +
+> +  2. 性能:
+> +
+> +    * dm-verity在块被读取时按需提供完整性验证，而不需要将整
+> +      个文件读入内存进行验证。
+> +
+> +  3. 签名的简化性:
+> +
+> +    * 不需要两个签名（IMA 然后是 EVM）：一个签名可以覆盖整个
+> +      块设备。
+> +    * 签名可以存储在文件系统元数据之外。
+> +    * 该签名支持基于 x.509 的签名基础设施。
+> +
+> +下一步是选择一个策略来执行完整性验证机制，该策略的最低
+> +要求是：
+> +
+> +  1. 策略本身必须经过完整性验证（防止针对它的简单攻击）。
+> +  2. 策略本身必须抵抗回滚攻击。
+> +  3. 策略执行必须具有类似宽松模式的功能。
+> +  4. 策略必须能够在不重启的情况下，完整地进行更新。
+> +  5. 策略更新必须是原子性的。
+> +  6. 策略必须支持撤销先前创建的组件。
+> +  7. 策略必须在任何时间点都能进行审计。
+> +
+> +当时，IMA作为唯一的完整性策略机制，被用来与这些要求进行对比，
+> +但未能满足所有最低要求。尽管考虑过扩展IMA以涵盖这些要求，但
+> +最终因两个原因被放弃：
+> +
+> +  1. 回归风险；这其中许多变更将导致对已经存在于内核的IMA进行
+> +     重大代码更改，因此可能会影响用户。
+> +
+> +  2. IMA在该系统中用于测量和证明；将测量策略与本地完整性策略
+> +     的执行分离被认为是有利的。
+> +
+> +由于这些原因，决定创建一个新的LSM，其职责是仅限于本地完整性
+> +策略的执行。
+> +
+> +职责和范围
+> +----------
+> +
+> +IPE顾名思义，本质上是一种完整性策略执行解决方案；IPE并不强制规定
+> +如何提供完整性保障，而是将这一决策权留给系统管理员，管理员根据自身
+> +需求，选择符合的机制来设定安全标准。存在几种不同的完整性解决方案，
+> +它们提供了不同程度的安全保障；而IPE允许系统管理员理论上为所有这些
+> +解决方案制定策略。
+> +
+> +IPE自身没有内置确保完整性的固有机制。相反，在构建具备完整性保障能力
+> +的系统时，存在更高效的分层方案可供使用。需要重点注意的是，用于证明完
+> +整性的机制，与用于执行完整性声明的策略是相互独立的。
+> +
+> +因此，IPE依据以下方面进行设计：
+> +
+> +  1. 便于与完整性提供机制集成。
+> +  2. 便于平台管理员/系统管理员使用。
+> +
+> +设计理由:
+> +---------
+> +
+> +IPE是在评估其他操作系统和环境中的现有完整性策略解决方案后设计的。
+> +在对其他实现的调查中，发现了一些缺陷：
+> +
+> +  1. 策略不易为人们读取，通常需要二进制中间格式。
+> +  2. 默认情况下会隐式采取单一的、不可定制的操作。
+> +  3. 调试策略需要手动来确定违反了哪个规则。
+> +  4. 编写策略需要对更大系统或操作系统有深入的了解。
+> +
+> +IPE尝试避免所有这些缺陷。
+> +
+> +策略
+> +~~~~
+> +
+> +纯文本
+> +^^^^^^
+> +
+> +IPE的策略是纯文本格式的。相较于其他Linux安全模块（LSM），
+> +策略文件体积略大，但能解决其他平台上部分完整性策略方案存在
+> +的两个核心问题。
+> +
+> +第一个问题是代码维护和冗余的问题。为了编写策略，策略必须是
+> +以某种形式的字符串形式呈现（无论是 XML、JSON、YAML 等结构化
+> +格式，还是其他形式），以便策略编写者能够理解所写内容。在假设
+> +的二进制策略设计中，需要一个序列化器将策略将可读的形式转换为
+> +二进制形式，同时还需要一个反序列化器来将二进制形式转换为内核
+> +中的数据结构。
+> +
+> +最终，还需要另一个反序列化器将是必要的，用于将二进制形式转换
+> +为人类可读的形式，并尽可能保存所有信息，这是因为使用此访问控
+> +制系统的用户必须维护一个校验表和原始文件，才能理解哪些策略已
+> +经部署在该系统上，哪些没有。对于单个用户来说，这可能没问题，
+> +因为旧的策略可以在更新生效后很快被丢弃。但对于管理成千上万、
+> +甚至数十万台计算机的用户，且这些计算机有不同的操作系统和不同
+> +的操作需求，这很快就成了一个问题，因为数年前的过时策略可能仍然
+> +存在，从而导致需要快速恢复策略或投资大量基础设施来跟踪每个策略
+> +的内容。
+> +
+> +有了这三个独立的序列化器/反序列化器，维护成本非常昂贵。如果策略
+> +避免使用二进制格式，则只需要一个序列化器；将人类可读的形式转换
+> +为内核中的数据结构。从而节省了代码维护成本，并保持了可操作性。
+> +
+> +第二个关于二进制格式的问题是透明性，由于IPE根据系统资源的可信度
+> +来控制访问，因此其策略也必须可信，以便可以被更改。这是通过签名来
+> +完成的，这就需要签名过程。签名过程通常具有很高的安全标准，因为
+> +任何被签名的内容都可以被用来攻击完整性执行系统。签署时，签署者
+> +必须知道他们在签署什么，二进制策略可能会导致这一点的模糊化；签署
+> +者看到的只是一个不透明的二进制数据块。另一方面，对于纯文本策略中，
+> +签署者看到的则是实际提交的策略。
+> +
+> +启动策略
+> +~~~~~~~~
+> +
+> +如果配置得当，IPE能够在内核启动并进入用户模式时立即执行策略。
+> +这意味着需要在用户模式开始的那一刻就存储一定的策略。通常，这种
+> +存储可以通过一下三种方式之一来处理：
+> +
+> +  1. 策略文件存储在磁盘上，内核在进入可能需要做出执行决策的代码
+> +     路径之前，先加载该策略。
+> +  2. 策略文件由引导加载程序传递给内核，内核解析这些策略。
+> +  3. 将一个策略文件编译到内核中，内核在初始化过程中对其进行解析并
+> +     执行。
+> +
+> +第一种方式存在问题：内核从用户空间读取文件通常是不推荐的，并且在
+> +内核中极为罕见。
+> +
+> +第二种选项同样存在问题：Linux在其整个生态系统中支持多种引导加载程序，
+> +所有引导加载程序都必须支持这种新方法，或者需要有一个独立的来源，这
+> +可能会导致内核启动过程发生不必要的重大变化。
+> +
+> +第三种选项是最佳选择，但需要注意的是，编译进内核的策略会占用磁盘空间。
+> +重要的是要使这一策略足够通用，以便用户空间能够加载新的、更复杂的策略，
+> +同时也要足够严格，以防止过度授权并避免引发安全问题。
+> +
+> +initramfs提供了一种建立此启动路径的方法。内核启动时以最小化的策略启动，
+> +该策略仅信任initramfs。在initramfs内，当真实的根文件系统已挂载且尚未
+> +切换时，它会部署并激活一个信任新根文件系统的策略。这种方法防止了在任何
+> +步骤中出现过度授权，并保持内核策略的最小化。
+> +
+> +启动
+> +^^^^
+> +
+> +然而，并不是每个系统都以initramfs启动，因此编译进内核的启动策略需要具备
+> +一定的灵活性，以明确如何为启动的下一个阶段建立信任。为此，如果我们将编译
+> +进内核的策略设计为一个完整的IPE策略，这样系统构建者便能合理定义第一阶段启
+> +动的需求。
+> +
+> +可更新、无需重启的策略
+> +~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +随着时间的推移，系统需求发生变化（例如，之前信任的应用程序中发现漏洞、秘钥
+> +轮换等）。更新内核以满足这些安全目标并非始终是一个合适的选择，因为内核更新并
+> +非完全无风险的，而搁置安全更新会使系统处于脆弱状态。这意味着IPE需要一个可以
+> +完全更新的策略（允许撤销现有的策略），并且这个更新来源必须是内核外部的（允许
+> +再不更新内核的情况下更新策略）。
+> +
+> +此外，由于内核在调用之间是无状态的，并且从内核空间读取磁盘上的策略文件不是一
+> +个好主意，因此策略更新必须能够在不重启的情况下完成。
+> +
+> +为了允许从外部来源进行更新，考虑到外部来源可能是恶意的，因此该策略需要具备可被
+> +识别为可信的机制。这一机制通过签名链实现：策略的签名需与内核中的某个信任源相
+> +关联。通常，这个信任源是 ``SYSTEM_TRUSTED_KEYRING`` ，这是一个在内核编译时就被
+> +初始化填充的密钥环，因为这符合上述编译进来策略的制作者与能够部署策略更新的实体
+> +相同的预期。
+> +
+> +防回滚 / 防重放
+> +~~~~~~~~~~~~~~~
+> +
+> +随着时间的推移，系统可能会发现漏洞，曾经受信任的资源可能不再可信，IPE的
+> +策略也不例外。可能会出现的情况是，策略制作者误部署了一个不安全的策略，
+> +随后再用一个安全的策略进行修正。
+> +
+> +假设一旦不安全的策略被部署，攻击者获取了这个不安全的策略，IPE需要有一种
+> +方式来防止从安全的策略更新回滚到不安全的策略。
+> +
+> +最初，IPE的策略可以包含一个policy_version字段，声明系统上所有可激活策略
+> +所需的最低版本号。这将在系统运行期间防止回滚。
+> +
+> +.. WARNING::
+> +
+> +   然而，由于内核每次启动都是无状态的，因此该策略版本将在下次
+> +   启动时被重置为0.0.0。系统构建者需要意识到这一点，并确保在启
+> +   动后尽快部署新的安全策略，以确保攻击者部署不安全的策略的几
+> +   率最小化。
+> +
+> +隐式操作:
+> +~~~~~~~~~
+> +
+> +隐式操作的问题只有在考虑系统中多个操作具有不同级别时才会显现出来。
+> +例如，考虑一个系统，该系统对可执行代码和系统中对其功能至关重要的
+> +特定数据提供强大的完整性保障。在这个系统中，可能存在三种类型的
+> +策略：
+> +
+> +  1. 一种策略，在这种策略中，如果操作未能匹配到任何规则，则该操
+> +     作将被拒绝。
+> +  2. 一种策略，在这种策略中，如果操作未能匹配到任何规则，则该操
+> +     作将被允许。
+> +  3. 一种策略，在这种策略中，如果操作未能匹配到任何规则，则执行
+> +     操作由策略作者指定。
+> +
+> +第一种类型的策略示例如下::
+> +
+> +  op=EXECUTE integrity_verified=YES action=ALLOW
+> +
+> +在示例系统中，这对于可执行文件来说效果很好，因为所有可执行文件
+> +都应该拥有完整性保障。但问题出现在第二个要求上，即关于特定数据
+> +文件的要求。这将导致如下策略（假设策略按行依次执行）::
+> +
+> +  op=EXECUTE integrity_verified=YES action=ALLOW
+> +
+> +  op=READ integrity_verified=NO label=critical_t action=DENY
+> +  op=READ action=ALLOW
+> +
+> +若阅读过文档，了解策略按顺序执行且默认动作是拒绝，那么这个策略的
+> +逻辑还算清晰；但最后一行规则实际上将读取操作的默认动作改成了允许。
+> +这种设计是必要的，因为在实际系统中，存在一些无需验证的读取操作（例
+> +如向日志文件追加内容时的读取操作）。
+> +
+> +第二种策略类型（未匹配任何规则时默认允许）在管控特定数据文件时逻辑
+> +更清晰，其策略可简化为::
+> +
+> +  op=READ integrity_verified=NO label=critical_t action=DENY
+> +
+> +但与第一种策略类似，这种默认允许的策略在管控执行操作时会存在缺陷，
+> +因此仍需显式覆盖默认动作::
+> +
+> +  op=EXECUTE integrity_verified=YES action=ALLOW
+> +  op=EXECUTE action=DENY
+> +
+> +  op=READ integrity_verified=NO label=critical_t action=DENY
+> +
+> +这就引出了第三种策略类型（自定义默认动作）。该类型无需让用户绞尽脑汁
+> +通过空规则覆盖默认动作，而是强制用户根据自身场景思考合适的默认动作是
+> +什么，并显式声明::
+> +
+> +  DEFAULT op=EXECUTE action=DENY
+> +  op=EXECUTE integrity_verified=YES action=ALLOW
+> +
+> +  DEFAULT op=READ action=ALLOW
+> +  op=READ integrity_verified=NO label=critical_t action=DENY
+> +
+> +策略调试:
+> +~~~~~~~~~
+> +
+> +在开发策略时，知道策略违反了哪一行有助于减少调试成本；可以
+> +将调查的范围缩小到导致该行为的确切行。有些完整性策略系统并
+> +不提供这一信息，而是提供评估过程中使用的信息。这随后需要将
+> +这些信息和策略进行关联，以分析哪里了问题。
+> +
+> +相反，IPE只会输出匹配到的规则。这将调查范围限制到确切到策略行
+> +（在特定规则的情况下）或部分（在DEFAULT规则的情况下）。当在
+> +评估策略时观察到策略失败时，这可以减少迭代和调查的时间。
+> +
+> +IPE的策略引擎还被设计成让人类容易理解如何调查策略失败。每一
+> +行都会按编写顺序进行评估，因此算法非常简单，便于人类重现步
+> +骤并找出可能导致失败的原因。而在调查其他的系统中，加载策略
+> +时会进行优化（例如对规则排序）。在这些系统中，调试需要多个
+> +步骤，而且没有先阅读代码的情况下，终端用户可能无法完全理解
+> +该算法的原理。
+> +
+> +简化策略:
+> +~~~~~~~~~
+> +
+> +最后，IPE的策略是为系统管理员设计的，而不是内核开发人员。
+> +IPE不涉及单独的LSM钩子（或系统调用），而是涵盖操作。这
+> +意味着，系统管理员不需要知道像 ``mmap`` 、 ``mprotect`` 、
+> +``execve`` 和 ``uselib`` 这些系统调用必须有规则进行保护，
+> +而只需要知道他们想要限制代码执行。这减少了由于缺乏对底层
+> +系统的了解而可能导致的绕过情况；而IPE的维护者作为内核开发
+> +人员，可以做出正确的选择，确定某些操作是否与这些操作匹配，
+> +以及在什么条件下匹配。
+> +
+> +实现说明
+> +--------
+> +
+> +匿名内存
+> +~~~~~~~~
+> +
+> +在IPE中，匿名内存的处理方式与其他任何类型的访问没有区别。当匿
+> +名内存使用 ``+X`` 映射时，它仍然会进入 ``file_mmp`` 或
+> +``file_mprotect`` 钩子，但此时会带有一个 ``NULL`` 文件对象
+> +这会像其他文件一样提交进行评估。然而，所有当前的信任属性都会
+> +评估为假，因为它们都是基于文件的，而此次操作并不与任何文件相关联。
+> +
+> +.. WARNING::
+> +
+> +  这也适用于 ``kernel_load_data`` 钩子，当内核从一个没有文件
+> +  支持的用户空间缓冲区加载数据时。在这种情况下，所有当前的信任
+> +  属性也将评估为false。
+> +
+> +Securityfs接口
+> +~~~~~~~~~~~~~~
+> +
+> +每个策略的对应的securityfs树是有些独特的。例如，对于一个标准的
+> +securityfs策略树::
+> +
+> +  MyPolicy
+> +    |- active
+> +    |- delete
+> +    |- name
+> +    |- pkcs7
+> +    |- policy
+> +    |- update
+> +    |- version
+> +
+> +策略存储在MyPolicy对应节点的 ``->i_private`` 数据中。
+> +
+> +测试
+> +----
+> +
+> +IPE为策略解析器提供了KUnit测试。推荐kunitconfig::
+> +
+> +  CONFIG_KUNIT=y
+> +  CONFIG_SECURITY=y
+> +  CONFIG_SECURITYFS=y
+> +  CONFIG_PKCS7_MESSAGE_PARSER=y
+> +  CONFIG_SYSTEM_DATA_VERIFICATION=y
+> +  CONFIG_FS_VERITY=y
+> +  CONFIG_FS_VERITY_BUILTIN_SIGNATURES=y
+> +  CONFIG_BLOCK=y
+> +  CONFIG_MD=y
+> +  CONFIG_BLK_DEV_DM=y
+> +  CONFIG_DM_VERITY=y
+> +  CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG=y
+> +  CONFIG_NET=y
+> +  CONFIG_AUDIT=y
+> +  CONFIG_AUDITSYSCALL=y
+> +  CONFIG_BLK_DEV_INITRD=y
+> +
+> +  CONFIG_SECURITY_IPE=y
+> +  CONFIG_IPE_PROP_DM_VERITY=y
+> +  CONFIG_IPE_PROP_DM_VERITY_SIGNATURE=y
+> +  CONFIG_IPE_PROP_FS_VERITY=y
+> +  CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG=y
+> +  CONFIG_SECURITY_IPE_KUNIT_TEST=y
+> +
+> +此外，IPE 具有一个基于 Python 的集成
+> +`测试套件 <https://github.com/microsoft/ipe/tree/test-suite>`_
+> +可以测试用户界面和强制执行功能。
 
