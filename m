@@ -1,122 +1,155 @@
-Return-Path: <linux-kernel+bounces-813938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D53B54D49
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:21:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55EE0B54B05
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D94A0152D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:17:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A99C7AEB35
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE05327A1E;
-	Fri, 12 Sep 2025 12:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA452EE612;
+	Fri, 12 Sep 2025 11:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WsYaVhjQ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uhVfks31"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71CE324B1B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB2B274FDB
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678936; cv=none; b=dNlLhROI+6hNFIV67CErHFvS4IyTRN88raCGSopdIvoMiNFe+BxO48L+HUSu8XcnAuwxkwTalhmkebMcKf+haIfA4+4VZ1rxDXJPUe6Qs+jLkyY031KNt7XAUeHURhQfck/HuHVxKd7Nkz09XQsFjz6E1qtfWN68aY1x+4YmZKI=
+	t=1757676770; cv=none; b=utJ5IqcrGGwb/qPGpS6rpS4PTQtNSkvsq7BDtnabVE/aj9sOs3+VC5r3dT4EiGlctiS1nBgFc16lTzREsHAwWky5gohDiPJQ9UhySvKUFwCCXumCBXf0LOMrnJoKwA5Xf2unNkwx9qWYjyGODUElwbo3d1SNQOYgj1TwGBr/ndA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678936; c=relaxed/simple;
-	bh=Wz4E5peEWJEuLH5HpKzn2maiOPcV7d/t/JntClDMc3Y=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=gPQ8HtR0ZW6oQpxB9dOpXfym70C0ZWTNeGei0RI5ffmhTwozL9qnoRphtYraXq+1U2VEUNmWL/jXz/xBAmfaniQ3M8QbYJtqRHnOTULSjFHIl4aJdFiMayrjP8ncSJth1YY8gRRP/XD6Wz3vzUhWlLlGxwt+l8echzJrKtFuftE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WsYaVhjQ; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45dfb8e986aso19164005e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:08:54 -0700 (PDT)
+	s=arc-20240116; t=1757676770; c=relaxed/simple;
+	bh=mEjJFVIYIe7tqpxYWnwn8npcdZ3rzCy2M6nLHqTd3WY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=akfkNvUgeWllq4CI4EBWkaFHRfama32BBiAXd9mBN+BLxwc9nxy/UxDLH09UD64Wsh/KRqKzInHP0YVw9W93kGvUgx50G/uJMuCXVTw3XUM7i1m9pBdZO8uEGgyc9tH0wC2olAMn40NwuCAYQEBYHbHxuTkCYva5uVFV4+oNRbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uhVfks31; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b49b56a3f27so1082375a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:32:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757678933; x=1758283733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:from:to:cc:subject
+        d=linaro.org; s=google; t=1757676768; x=1758281568; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Wz4E5peEWJEuLH5HpKzn2maiOPcV7d/t/JntClDMc3Y=;
-        b=WsYaVhjQn2JqKOoWVPSN3hvIwjd0D7IZWiGO4L4yFLbMk/ocRhAfR+M1tcvbeiXIe2
-         LB2VMBqAyNaKlV33VR9TlZnlKbOZGT088PYnXiLVebdx2M/khLD+oYqScZQgSq8jMOwk
-         JVeOS1sf52TKhpVshHayo436Z9lo5dxkZkxw3Iip8ayWuU/xKH49sUvEbkGpwC4sflaY
-         O/w0b8vAGiBImtanSV1xlRWMmvMqzmRntkYpu3AsRf0l/2JQucBPqV9sxhFuKay4eJaQ
-         cav0gQEn3pUvJGtkdGuw3DkwZUY3dfMQ+bsJVAT09ssZ3vklqDGZk4RjOcDkcG/IycEf
-         04Jw==
+        bh=y6Vu9krI8L/L917eJRdmIwH3Jf+YuSh9fi/gZdnGGTM=;
+        b=uhVfks31+0tcoVyU0GVpuTuBPBKY4lB1FDJ5XgACl0jUahUff6jWNOqMHF1Teq0DSz
+         MKLzWdnPqVv2oxkuf8PTybCakTNdK4ETOw7VmakDHzWm896g21AZlWm7waq3hWr1LGHQ
+         zePyhUg5J3RtXp1MJIB5i9idbBbnRwzWIeHqp8xqX4/SgMvOXQYMm/iHFLAyMPHv3wNE
+         bWbArj9TWcprjsWdNkqUNHNtF0sjmrKaGUCZUG3M/UzVy47o8dd8mWGiOaZwmbf0HS8p
+         l7kGHURM1tsfCKP/b3YX1HeAPOthQwSVXL4eZchuchq11tpbiDZFWGsUmb3se+D7GncR
+         ddEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757678933; x=1758283733;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :message-id:date:in-reply-to:subject:cc:to:from:x-gm-message-state
+        d=1e100.net; s=20230601; t=1757676768; x=1758281568;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wz4E5peEWJEuLH5HpKzn2maiOPcV7d/t/JntClDMc3Y=;
-        b=dxlwAaszZr8nnANSR+yDgQ5zBszQBdhyrYCNcksPdfo0Upewg+WzsPgoRxn2y+JRgs
-         Y39fi/cQg8MG3mHukO+iWz6iyzFg7pBIekbWrq8CqF+KQfWAhWUwVw0oOv4Q64V41iW2
-         L3AqHPjEjqHFlyGReZ+A63Dzlqa3x8dCddSCeKDHDSlbRWSEN54bElURHebdZTrm+KiW
-         nG1x0nD8/BL0t2gKaTSe/mEkUOIrH/NrXsu/0CWyijsnuSdZ9+A6qobNWOkaZgMcUXrT
-         pvyD4nRnvEyvJrO9G6KEg8fkoEmNQfmi1HtfmoEVFguVfp5AUssgr/VIJz2hsKEyDl7y
-         Xw0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWmzuwM8xD0ICwlPnmWz7hs5UQLCbkZqhU8VlHHOFQIlbHqCTU+5FRsaFnC/CgmuMaRe543KaYJj5+z0Ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ/ZAwQcz/tIR0RT2yzV4SfldGMaqsed/Wj8bUT3dxKqoouQUF
-	Vnv1Dhlfyn88Sie5fwBNZ4bX6RzErXJRzgBJSCrIvcyc8cLP40fXJXZml9g44Q==
-X-Gm-Gg: ASbGncvRMfhJUP0N7xZ85ktDW5ZXuUoQtIb9GBfw3IV7H8DF3oSIyPSUdbfvU1yenKj
-	cnJb/zkcrbMbavTDPkFdnHOPwfrWsG9Hqj6TibsMW/3whaMjmyv24GveJQ5md/SekTnBLZ64Ssc
-	o2OpxElu3fa4JXf3n6P0cme+DBeJBG0pbQ6Pd2aT/2sU8SlwDRLt38J3/Viwkksl6SN03ncePWJ
-	tFjrcmBLReVMNHBjjJ0+HxKFr8UuxoQZJereURoII/o+JSdt22GUFPgzK9JgDSrX2R46QQB3ffv
-	n/qv7+GglHivEqfgaTFC7LJInm418Doak55QHaHpEKOvPG2aWaefhBwYY+pPoxwDoZJ1xI2Dx1H
-	ohey+DgnUT0byDK3UK76QkADD52femu13l3qrSph1oCh1
-X-Google-Smtp-Source: AGHT+IFBSzBHrD878oYYF5kKGavS67qgNolUi5Ck7EzGdSc891Ykev73AV+0ueAWDKAT71qdNTJHOA==
-X-Received: by 2002:a05:600c:1d2a:b0:45b:9c93:d21d with SMTP id 5b1f17b1804b1-45f24ef20d0mr11997575e9.8.1757678932165;
-        Fri, 12 Sep 2025 05:08:52 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:18f9:fa9:c12a:ac60])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e017b2722sm33750515e9.1.2025.09.12.05.08.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 05:08:51 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: =?utf-8?Q?Asbj=C3=B8rn?= Sloth =?utf-8?Q?T=C3=B8nnesen?=
- <ast@fiberby.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,  "David S. Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Jakub
- Kicinski <kuba@kernel.org>,  Paolo Abeni <pabeni@redhat.com>,  Simon
- Horman <horms@kernel.org>,  Jacob Keller <jacob.e.keller@intel.com>,
-  Sabrina Dubroca <sd@queasysnail.net>,  wireguard@lists.zx2c4.com,
-  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 07/13] tools: ynl-gen: avoid repetitive
- variables definitions
-In-Reply-To: <20250911200508.79341-8-ast@fiberby.net>
-Date: Fri, 12 Sep 2025 12:30:32 +0100
-Message-ID: <m21pobvrfr.fsf@gmail.com>
-References: <20250911200508.79341-1-ast@fiberby.net>
-	<20250911200508.79341-8-ast@fiberby.net>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        bh=y6Vu9krI8L/L917eJRdmIwH3Jf+YuSh9fi/gZdnGGTM=;
+        b=OKNQQJAJrA7ty/2jodQ39MxyVzYCFnGzPZrZmYm6L/uolH+U0lmW/81yclRmbWbhQZ
+         OWGltnpJXTN3Spuueg6CcW618puTA85w+/4GFLOtRhDYxdVwx4AvPjaLaG3/wSkl29Gz
+         txvZ4nDonR/NloaG3WVYmMXUwZVNK0mOSkfJeqFxxi3BzDInvFnLke7ymiEMzfNpjJs5
+         gifYYpE49CtbrA5+9//D7Fuwrli4K6IDFbv6QHGiy6NR6UsPj8d7Iy8uHrN9vW0SJ63z
+         QAj2MAJgT+Zric4npDXzVMba+GibnJ4WEvsaPm2LYtNcoz4wXdFpoTAxdYPQh7jr499q
+         Vv3g==
+X-Forwarded-Encrypted: i=1; AJvYcCW25fW/R4lzduE59rWNVJO9DysyBi/6+CgSg1rsV3C24g7BTX2MJPR4+dMAJ9WwRGH9NTiJEytj0GSw3tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdJ/Edw1W9s/f2a9rTxeR52w5gAlUnGonNYh3TnrV4zQbAbckV
+	XhoOHPJ1L4PkLoT0u1JR3RE8ggy68SRFV9274JSKEocjIEi/DN9l10ic8w79nJPjJg9/W7nHkZE
+	zeGHTVCEfEr7rJTbecA5fRWi5b1WwD+goRQiRfih77A==
+X-Gm-Gg: ASbGncvLFus+AmhWd0mWOe3/Enqzt8qB96UNJqHBQd3j4lQfVjaUvppow3ECAuxrxEb
+	oNcQZWyeETB7SxRJKZMSD+EP70pvXsjION6YTbzgN4NoLyjYvKL/iH4s4unnCgRQQZ6cIzN8j1T
+	iPUNBSvzVRD4KheYsJeRj7BWxVfI8vUzDZLEuO7dEXr3EyW4b7DPs2xtiGqs/q8YLNWoS85/vyw
+	KcFW4mmTcCtJ8GRSHIqwLfjH7QkQyekByssUT2icTsCZax7JFbZDfiM+zEix1QobDkDDjSC4+5X
+	uVNNc5s=
+X-Google-Smtp-Source: AGHT+IF1n0wZVljtgQdO4YjkTkuDA16K7j3EGrt+LavVV05cNjZjVMw0mRnQJqWQrvbyjkw61l+wH9wnd6eTRWsTKWg=
+X-Received: by 2002:a17:902:c40d:b0:251:a3b3:1580 with SMTP id
+ d9443c01a7336-25d24cac4eemr35190575ad.6.1757676768437; Fri, 12 Sep 2025
+ 04:32:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Fri, 12 Sep 2025 17:02:36 +0530
+X-Gm-Features: AS18NWCRkwK2BEtW0uxWjqehT8uEFjWUmULflZWeqoftij31KvQE0_RmSXQs-jg
+Message-ID: <CA+G9fYvQekqNdZpOeibBf0DZNjqR+ZGHRw1yHq6uh0OROZ9sRw@mail.gmail.com>
+Subject: next-20250912: riscv: s390: mm/kasan/shadow.c 'kasan_populate_vmalloc_pte'
+ pgtable.h:247:41: error: statement with no effect [-Werror=unused-value]
+To: kasan-dev <kasan-dev@googlegroups.com>, linux-mm <linux-mm@kvack.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	linux-riscv <linux-riscv@lists.infradead.org>, linux-s390@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net> writes:
+The following build warnings / errors noticed on the riscv and s390
+with allyesconfig build on the Linux next-20250912 tag.
 
-> In the generated attribute parsing code, avoid repetitively
-> defining the same variables over and over again, local to
-> the conditional block for each attribute.
->
-> This patch consolidates the definitions of local variables
-> for attribute parsing, so that they are defined at the
-> function level, and re-used across attributes, thus making
-> the generated code read more natural.
->
-> If attributes defines identical local_vars, then they will
-> be deduplicated, attributes are assumed to only use their
-> local variables transiently.
->
-> ...
->
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
+Regression Analysis:
+- New regression? yes
+- Reproducibility? yes
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+Build regression: next-20250912 mm/kasan/shadow.c
+'kasan_populate_vmalloc_pte' pgtable.h error statement with no effect
+[-Werror=unused-value]
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+$ git log --oneline next-20250911..next-20250912 --  mm/kasan/shadow.c
+  aed53ec0b797a mm: introduce local state for lazy_mmu sections
+  307f2dc9b308e kasan: introduce ARCH_DEFER_KASAN and unify static key
+across modes
+
+## Test log
+In file included from include/linux/kasan.h:37,
+                 from mm/kasan/shadow.c:14:
+mm/kasan/shadow.c: In function 'kasan_populate_vmalloc_pte':
+include/linux/pgtable.h:247:41: error: statement with no effect
+[-Werror=unused-value]
+  247 | #define arch_enter_lazy_mmu_mode()      (LAZY_MMU_DEFAULT)
+      |                                         ^
+mm/kasan/shadow.c:322:9: note: in expansion of macro 'arch_enter_lazy_mmu_mode'
+  322 |         arch_enter_lazy_mmu_mode();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+mm/kasan/shadow.c: In function 'kasan_depopulate_vmalloc_pte':
+include/linux/pgtable.h:247:41: error: statement with no effect
+[-Werror=unused-value]
+  247 | #define arch_enter_lazy_mmu_mode()      (LAZY_MMU_DEFAULT)
+      |                                         ^
+mm/kasan/shadow.c:497:9: note: in expansion of macro 'arch_enter_lazy_mmu_mode'
+  497 |         arch_enter_lazy_mmu_mode();
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+## Source
+* Kernel version: 6.17.0-rc5
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git describe: 6.17.0-rc5-next-20250912
+* Git commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
+* Architectures: riscv, s390
+* Toolchains: gcc (Debian 13.3.0-16) 13.3.0
+* Kconfigs: allyesconfig
+
+## Build
+* Build log: https://qa-reports.linaro.org/api/testruns/29863344/log_file/
+* Build details:
+https://regressions.linaro.org/lkft/linux-next-master/next-20250912/log-parser-build-gcc/gcc-compiler-include_linux_pgtable_h-error-statement-with-no-effect/
+* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/32aTGVWBLzkF7PsIq9FBtLK3T4W
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32aTGVWBLzkF7PsIq9FBtLK3T4W/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/32aTGVWBLzkF7PsIq9FBtLK3T4W/config
+
+## Steps to reproduce
+ $ tuxmake --runtime podman --target-arch riscv --toolchain gcc-13
+--kconfig allyesconfig
+
+
+--
+Linaro LKFT
 
