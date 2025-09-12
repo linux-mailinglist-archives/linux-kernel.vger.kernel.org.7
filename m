@@ -1,225 +1,134 @@
-Return-Path: <linux-kernel+bounces-813442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0636B54583
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:33:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD84B545F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D59174462
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A26563DCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B412D73B6;
-	Fri, 12 Sep 2025 08:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NzGZs2Va";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IJRvEf8M";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NzGZs2Va";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="IJRvEf8M"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A775727055E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1663275B1A;
+	Fri, 12 Sep 2025 08:50:46 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BE919E97A;
+	Fri, 12 Sep 2025 08:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757665971; cv=none; b=NSfnMTiybXbz3oocZCl/8D2/eB7jWNNTbPmqXCi4JOfPeKTH1XscfRZokOeXHTOcFNW+OwRo4tTZW1ny27NjLeoLIVFmmlPxM+IshimyqSfrKIHzLvvpyPMUionWEed3igIcNhQLkehA3F87mVJEPiupV10p/OA3QzPCTFGv4Dc=
+	t=1757667046; cv=none; b=PGI65DUrd0I47f9QXtoDqAx0NmQCnPzt9DxklHm5YQiZDw/Skc8XFuaUNuJXY/0Ws1OMmUJyWtDsk51/dOTdI/uY+wJg6d+HoD1a+RCP4c25ogGnAK3IWx6eqGubQwcxWKNmOXQprgR7Ag1mYov0wIdrICPF+YACLbPkd1gnpFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757665971; c=relaxed/simple;
-	bh=LipYxOUh3mZhOquz2ghmpDRHwnWmjxQ7Y1qMaDoBYyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiZd+Z7RyHWgWPVMZa0w5yWEUWogcraWGOqo1/waaMuOurQll1JdjZqkT15DYlL1jF5doaRkheal2ZgjKJjsJG+2FPPKxC8zoDJ2mpEmEySB/kbblbPmDPCTnseacVOrsh3wC0YA+QzyGCB2K/Xa57aXzUjaohF6XUl33tHZaoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NzGZs2Va; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IJRvEf8M; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NzGZs2Va; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=IJRvEf8M; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 46C8C20706;
-	Fri, 12 Sep 2025 08:32:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757665967; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E/CSSfN43nuBpCmvlSQv0g4m2YsMRqWgQtvSodhnH28=;
-	b=NzGZs2VaUva7nAB6VbcEuZSvhBSVlcW4blbtBY6HNBMWWAXbae08r9qYs3v5z+GdRFYgY/
-	VbeEpqO4pA7jByje53TP/rNV4Elzxv+SZjUQ0OFLzzAAZ+Kr/L3Bym88W7Dx4Ul2nVvL3l
-	TyT0M91a3S/Kr9Dj+CvBgTFiBddEJYI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757665967;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E/CSSfN43nuBpCmvlSQv0g4m2YsMRqWgQtvSodhnH28=;
-	b=IJRvEf8MaAIKPa9ZL8mK7o1+fIpbj5bi9eT0ydLdxT6d/IYDCbkKoZdlcbLdgnxuO7SBlJ
-	gjmRz1UNrH/tLXCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757665967; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E/CSSfN43nuBpCmvlSQv0g4m2YsMRqWgQtvSodhnH28=;
-	b=NzGZs2VaUva7nAB6VbcEuZSvhBSVlcW4blbtBY6HNBMWWAXbae08r9qYs3v5z+GdRFYgY/
-	VbeEpqO4pA7jByje53TP/rNV4Elzxv+SZjUQ0OFLzzAAZ+Kr/L3Bym88W7Dx4Ul2nVvL3l
-	TyT0M91a3S/Kr9Dj+CvBgTFiBddEJYI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757665967;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E/CSSfN43nuBpCmvlSQv0g4m2YsMRqWgQtvSodhnH28=;
-	b=IJRvEf8MaAIKPa9ZL8mK7o1+fIpbj5bi9eT0ydLdxT6d/IYDCbkKoZdlcbLdgnxuO7SBlJ
-	gjmRz1UNrH/tLXCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 33B4113869;
-	Fri, 12 Sep 2025 08:32:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YkOaDK/aw2hKLgAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Fri, 12 Sep 2025 08:32:47 +0000
-Date: Fri, 12 Sep 2025 10:32:38 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Hannes Reinecke <hare@suse.de>, Daniel Wagner <wagi@kernel.org>, 
-	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Aaron Tomlin <atomlin@atomlin.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	Valentin Schneider <vschneid@redhat.com>, Waiman Long <llong@redhat.com>, Ming Lei <ming.lei@redhat.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org, 
-	storagedev@microchip.com, virtualization@lists.linux.dev, 
-	GR-QLogic-Storage-Upstream@marvell.com
-Subject: Re: [PATCH v8 10/12] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
-Message-ID: <bc5ebdea-7091-4999-a021-ec2a65573aa0@flourine.local>
-References: <20250905-isolcpus-io-queues-v8-0-885984c5daca@kernel.org>
- <20250905-isolcpus-io-queues-v8-10-885984c5daca@kernel.org>
- <ff66801c-f261-411d-bbbf-b386e013d096@suse.de>
- <d11a0c60-1b75-49ec-a2f8-7df402c4adf2@flourine.local>
- <87ms72u3at.ffs@tglx>
+	s=arc-20240116; t=1757667046; c=relaxed/simple;
+	bh=kOCT0uKL+2GCzdTJlM237/8qYHdNnAgbYOdpMlv95/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h9ql1hq8l/2fg1fjtwdUl/x3nQ+wX2N5nHN38M5N5n9j46AH/4yK3pM2pmhZluxWpAcuisFvOEB7nvN/F7Qs8h0c1jMvM8fiCaAkOMLZU1yWIqUdZeiYHkRephl5+BgXYhNpvKvab7544oodDiLcV7d7qQR+EDWGcGZa+lYI5qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cNSNn3h8zz9sjC;
+	Fri, 12 Sep 2025 10:32:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qrMr2wDWbrGI; Fri, 12 Sep 2025 10:32:57 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cNSNn2wqYz9sjB;
+	Fri, 12 Sep 2025 10:32:57 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4DFD58B7A7;
+	Fri, 12 Sep 2025 10:32:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id zoIQp3eX62gY; Fri, 12 Sep 2025 10:32:57 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id C9D828B764;
+	Fri, 12 Sep 2025 10:32:56 +0200 (CEST)
+Message-ID: <7ded6ce4-1fcb-4e2d-94ab-5c330de6aea0@csgroup.eu>
+Date: Fri, 12 Sep 2025 10:32:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ms72u3at.ffs@tglx>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL67935bhfdkbndpbo95z3ogoo)];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] perf: Completely remove possibility to override
+ MAX_NR_CPUS
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, Leo Yan <leo.yan@arm.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <b205802edbb6fcc78822f558dff7104e64b29864.1755510867.git.christophe.leroy@csgroup.eu>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <b205802edbb6fcc78822f558dff7104e64b29864.1755510867.git.christophe.leroy@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 10, 2025 at 10:20:26AM +0200, Thomas Gleixner wrote:
-> On Mon, Sep 08 2025 at 09:26, Daniel Wagner wrote:
-> > On Mon, Sep 08, 2025 at 08:13:31AM +0200, Hannes Reinecke wrote:
-> >> >   const struct cpumask *blk_mq_online_queue_affinity(void)
-> >> >   {
-> >> > +	if (housekeeping_enabled(HK_TYPE_IO_QUEUE)) {
-> >> > +		cpumask_and(&blk_hk_online_mask, cpu_online_mask,
-> >> > +			    housekeeping_cpumask(HK_TYPE_IO_QUEUE));
-> >> > +		return &blk_hk_online_mask;
-> >> 
-> >> Can you explain the use of 'blk_hk_online_mask'?
-> >> Why is a static variable?
-> >
-> > The blk_mq_*_queue_affinity helpers return a const struct cpumask *, the
-> > caller doesn't need to free the return value. Because cpumask_and needs
-> > store its result somewhere, I opted for the global static variable.
-> >
-> >> To my untrained eye it's being recalculated every time one calls
-> >> this function. And only the first invocation run on an empty mask,
-> >> all subsequent ones see a populated mask.
-> >
-> > The cpu_online_mask might change over time, it's not a static bitmap.
-> > Thus it's necessary to update the blk_hk_online_mask. Doing some sort of
-> > caching is certainly possible. Given that we have plenty of cpumask
-> > logic operation in the cpu_group_evenly code path later, I am not so
-> > sure this really makes a huge difference.
+Le 18/08/2025 à 11:57, Christophe Leroy a écrit :
+> Commit 21b8732eb447 ("perf tools: Allow overriding MAX_NR_CPUS at
+> compile time") added the capability to override MAX_NR_CPUS. At
+> that time it was necessary to reduce the huge amount of RAM used
+> by static stats variables.
 > 
-> Sure,  but none of this is serialized against CPU hotplug operations. So
-> the resulting mask, which is handed into the spreading code can be
-> concurrently modified. IOW it's not as const as the code claims.
+> But this has been unnecessary since commit 6a1e2c5c2673 ("perf stat:
+> Remove a set of shadow stats static variables"), and
+> commit e8399d34d568 ("libperf cpumap: Hide/reduce scope of
+> MAX_NR_CPUS") broke the build in that case because it failed to
+> add the guard around the new definition of MAX_NR_CPUS.
+> 
+> So cleanup things and remove guards completely to officialise it
+> is not necessary anymore to override MAX_NR_CPUS.
+> 
+> Link: https://lore.kernel.org/all/8c8553387ebf904a9e5a93eaf643cb01164d9fb3.1736188471.git.christophe.leroy@csgroup.eu/
+> Fixes: e8399d34d568 ("libperf cpumap: Hide/reduce scope of MAX_NR_CPUS")
+> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 
-Thanks for explaining.
+Gentle ping
 
-In group_cpu_evenly:
+Thanks
+Christophe
 
-	/*
-	 * Make a local cache of 'cpu_present_mask', so the two stages
-	 * spread can observe consistent 'cpu_present_mask' without holding
-	 * cpu hotplug lock, then we can reduce deadlock risk with cpu
-	 * hotplug code.
-	 *
-	 * Here CPU hotplug may happen when reading `cpu_present_mask`, and
-	 * we can live with the case because it only affects that hotplug
-	 * CPU is handled in the 1st or 2nd stage, and either way is correct
-	 * from API user viewpoint since 2-stage spread is sort of
-	 * optimization.
-	 */
-	cpumask_copy(npresmsk, data_race(cpu_present_mask));
+> ---
+>   tools/perf/perf.h                        | 2 --
+>   tools/perf/util/bpf_skel/kwork_top.bpf.c | 2 --
+>   2 files changed, 4 deletions(-)
+> 
+> diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+> index 3cb40965549f..e004178472d9 100644
+> --- a/tools/perf/perf.h
+> +++ b/tools/perf/perf.h
+> @@ -2,9 +2,7 @@
+>   #ifndef _PERF_PERF_H
+>   #define _PERF_PERF_H
+>   
+> -#ifndef MAX_NR_CPUS
+>   #define MAX_NR_CPUS			4096
+> -#endif
+>   
+>   enum perf_affinity {
+>   	PERF_AFFINITY_SYS = 0,
+> diff --git a/tools/perf/util/bpf_skel/kwork_top.bpf.c b/tools/perf/util/bpf_skel/kwork_top.bpf.c
+> index 73e32e063030..6673386302e2 100644
+> --- a/tools/perf/util/bpf_skel/kwork_top.bpf.c
+> +++ b/tools/perf/util/bpf_skel/kwork_top.bpf.c
+> @@ -18,9 +18,7 @@ enum kwork_class_type {
+>   };
+>   
+>   #define MAX_ENTRIES     102400
+> -#ifndef MAX_NR_CPUS
+>   #define MAX_NR_CPUS     4096
+> -#endif
+>   #define PF_KTHREAD      0x00200000
+>   #define MAX_COMMAND_LEN 16
+>   
 
-
-0263f92fadbb ("lib/group_cpus.c: avoid acquiring cpu hotplug lock in
-group_cpus_evenly"):
-
-  group_cpus_evenly() could be part of storage driver's error handler, such
-  as nvme driver, when may happen during CPU hotplug, in which storage queue
-  has to drain its pending IOs because all CPUs associated with the queue
-  are offline and the queue is becoming inactive.  And handling IO needs
-  error handler to provide forward progress.
-
-  Then deadlock is caused:
-
-  1) inside CPU hotplug handler, CPU hotplug lock is held, and blk-mq's
-     handler is waiting for inflight IO
-
-  2) error handler is waiting for CPU hotplug lock
-
-  3) inflight IO can't be completed in blk-mq's CPU hotplug handler
-     because error handling can't provide forward progress.
-
-  Solve the deadlock by not holding CPU hotplug lock in group_cpus_evenly(),
-  in which two stage spreads are taken: 1) the 1st stage is over all present
-  CPUs; 2) the end stage is over all other CPUs.
-
-  Turns out the two stage spread just needs consistent 'cpu_present_mask',
-  and remove the CPU hotplug lock by storing it into one local cache.  This
-  way doesn't change correctness, because all CPUs are still covered.
-
-This sounds like I should do something similar with cpu_online_mask.
-Anyway, I'll work on this.
-
-> How is this even remotely correct?
-
-It isn't :( I did hotplug tests but obviously these were not really up
-to the task. The kernel test bot gave me a pointer how I should test.
 
