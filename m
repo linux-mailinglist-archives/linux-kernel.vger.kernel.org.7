@@ -1,52 +1,58 @@
-Return-Path: <linux-kernel+bounces-814080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D400FB54EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:13:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A067B54F00
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:14:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F29A7C7BB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:13:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4C11CC31C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD91630DD35;
-	Fri, 12 Sep 2025 13:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D4330E82C;
+	Fri, 12 Sep 2025 13:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2I0j5yX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7dxhjpr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBA330DD0B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6DC430DECF
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757682794; cv=none; b=jLXFQ0DIOxwqohYQVCBLpzKjdf0ATqzUt+vEYj+semgACccSh+Zlsw0cGl7YaAiaQ0iwcgARsH6jENOiUOKs3v8U2rHRmjsw6hDd5cbdQlevH6owh+vz2/kpQbyLR18/OI6GmhWDKxJo9MTdGPT2DTqeRRTQUHV4beN3sCqwN4U=
+	t=1757682795; cv=none; b=MzNvtn0bY+ZT5OsvLwrY+DLnb/2zaxil+bokcYqF9FFmha8gOyT7bOJJQwABkfn4BZCqp38ErLelHSuLuHsONebXmK9lcV8cthgyMlrAX2GKWqBCD7viFDiensDpWs6QdxmXv2iY3hCyCIKPgK4KBlsqyGZdNZ+m9yhzm4NiMkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757682794; c=relaxed/simple;
-	bh=I3uc5v38YjLrIBNmiNuvx9FTcSXpMa14aoGNM815qDw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZGfGVNaIp118NVIm8JhwvNmBbAlGK4cpfzpJNkMK1CASS2weGbCz6ErBdCNXS+p8VD4jxhnNdawoFaPVx3yrp3hAgl4LcgIL8SbFBatAuaG4Tms9HfeSg5rIA68+SFZoMQSDg7tegdzj4eEubyQVq/cauKVH9G3rTnAJKLz9vfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2I0j5yX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F8B1C4CEF1;
-	Fri, 12 Sep 2025 13:13:12 +0000 (UTC)
+	s=arc-20240116; t=1757682795; c=relaxed/simple;
+	bh=zDxzy6kp4ylEzSSnp4BJo+hrkNtna5+yUe6Yeev5icU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qYvRyO0CWf1FUCTmYm1iONmx28Mn12FNyVn7ATPkM6qUvGvwWCQ7RPa4fFzVqvz+pKrrR6JWYn5KVV+sJFEQvJDZpgvAyN0VFQaiaXcsd9c/TeymgGsW+JhTFd/Li0juEUQcYU3UGKiLo8E6Vkpc7H2tMpCcMhZZEnHVVKPnr3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7dxhjpr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E498C4CEF7;
+	Fri, 12 Sep 2025 13:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757682793;
-	bh=I3uc5v38YjLrIBNmiNuvx9FTcSXpMa14aoGNM815qDw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=N2I0j5yXcNp+RZ7c0pEL51diDMSv3CeUpDsBlzEmeUOo5/ZOuCmRcUyaA26WlbU0S
-	 UNIlVBx3D3G7IKZ3hEGgF+xaZoWQhrw9X774q1JgAr7mrHdoTCXdVqCXNtNAmpn0HO
-	 XxyW7E48pfdkRgq11+10GsrXLcNjwj27hMMtVYvzJhxaUU/paIKwx8xfnO3dOSnRB1
-	 cdtnKzQrvQeygtqYTSSTCIZ4YQzRJoWDCvcAk4wCkNczZab6G8okLb6km/x7roMdDJ
-	 0MWzrc/mAlEqeKB2ff444Yg1nThDSKLIVbb8k/DpWk/m900YVuBj1ozMTc3aaHSRcc
-	 IhCd3xuc5cu0Q==
+	s=k20201202; t=1757682795;
+	bh=zDxzy6kp4ylEzSSnp4BJo+hrkNtna5+yUe6Yeev5icU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=l7dxhjprLVqy14SY2I2X/bZy001rYno8uv7HccEI2XdfKseTTmC6n6CDA+pmPF8n3
+	 j2VLjZMZ3xfI3oBtez56Al+PFYoGmyhh+QxqV0C3JvkY4B9xIn7IykM88nSIbRj2ad
+	 2MD0+VZXH9wVsqtt1vVYTwb0I/YlXHo8JiRrInuDqle6ULpvlFiGoavqTatyIhG1XJ
+	 jGO1rv2NDLtHsYJVH2+e9mug/S9Sg5ac2eXBFae8ZE0v0dch9TCi412+AGttyCtJJc
+	 CWYqex8m7Q0DiVf9Ha8IiI1MDBO6A/NZjt132jnDqOmdel/EiRKSt47MKWp/iJMbwF
+	 GANeUcL+Oib/Q==
 From: srini@kernel.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
+	Ling Xu <quic_lxu5@quicinc.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
 	Srinivas Kandagatla <srini@kernel.org>
-Subject: [PATCH 0/4] fastrpc: patches for 6.18
-Date: Fri, 12 Sep 2025 14:12:58 +0100
-Message-ID: <20250912131302.303199-1-srini@kernel.org>
+Subject: [PATCH 1/4] dt-bindings: misc: qcom,fastrpc: Add GDSP label
+Date: Fri, 12 Sep 2025 14:12:59 +0100
+Message-ID: <20250912131302.303199-2-srini@kernel.org>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250912131302.303199-1-srini@kernel.org>
+References: <20250912131302.303199-1-srini@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,30 +61,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Srinivas Kandagatla <srini@kernel.org>
+From: Ling Xu <quic_lxu5@quicinc.com>
 
-Hi Greg,
+There are some products which support GDSP remoteprocs. GDSP is General
+Purpose DSP where tasks can be offloaded. There are 2 GDSPs named gdsp0
+and gdsp1. Add "gdsp0" and "gdsp1" as the new supported labels for GDSP
+fastrpc domains.
 
-Here are few fastrpc patches for 6.18, Could you please queue
-these for 6.18.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Reviewed-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
+Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+Signed-off-by: Srinivas Kandagatla <srini@kernel.org>
+---
+ Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Patches mainly include cleaning up how the domain id and names are
-used and make this more sustainable, and easy to add new domains.
-
-Thanks,
-Srini
-
-Ling Xu (4):
-  dt-bindings: misc: qcom,fastrpc: Add GDSP label
-  misc: fastrpc: Remove kernel-side domain checks from capability ioctl
-  misc: fastrpc: Cleanup the domain names
-  misc: fastrpc: add support for gdsp remoteproc
-
- .../bindings/misc/qcom,fastrpc.yaml           |  2 +
- drivers/misc/fastrpc.c                        | 54 +++++++++----------
- include/uapi/misc/fastrpc.h                   |  2 +-
- 3 files changed, 28 insertions(+), 30 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+index 0840a3d92513..3f6199fc9ae6 100644
+--- a/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
++++ b/Documentation/devicetree/bindings/misc/qcom,fastrpc.yaml
+@@ -27,6 +27,8 @@ properties:
+       - sdsp
+       - cdsp
+       - cdsp1
++      - gdsp0
++      - gdsp1
+ 
+   memory-region:
+     maxItems: 1
 -- 
 2.50.0
 
