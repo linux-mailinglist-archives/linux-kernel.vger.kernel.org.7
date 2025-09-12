@@ -1,78 +1,131 @@
-Return-Path: <linux-kernel+bounces-814706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FFFB5578B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:17:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E34B55795
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0ABC5A6BC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:17:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED721CC3DDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E372D0C60;
-	Fri, 12 Sep 2025 20:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FB12D0C60;
+	Fri, 12 Sep 2025 20:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmPfeuVj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=armadeus.com header.i=@armadeus.com header.b="i/yNa6K0"
+Received: from 20.mo550.mail-out.ovh.net (20.mo550.mail-out.ovh.net [188.165.45.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5095B1C54A9;
-	Fri, 12 Sep 2025 20:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D6B22097
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.45.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757708244; cv=none; b=dGuDSpFNeoHRGyeipT+MGxdL3ooQ+AO1sClvwyERGG76SGNb5NFCvvxKDBCP6uk85pUGZTXT2r+1oe90wtfmdqNlh4Xc0yXguJGJoE9hcAkKWRrgy45ix6H6TfsNKa6IM1czKbD6VUU5nX9Dkejy/+zV45/751bzWax3NVp1iNQ=
+	t=1757708847; cv=none; b=j+ctYDIcf/WnEjrNqYWjAUkW4Y5DT7w4sGPgeB0p74ifb/RNiolLbwouNSMR8gdj+gVZpOjzZ2bVnsoQ0epUUuC7u+Qfv2DNIeZTrmE2LrTbB/KJqy1iKs7e/D9g4nstClibWLqhuz+wvmvOmRf8yos7wOMMbG0pVgmSeMrqK34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757708244; c=relaxed/simple;
-	bh=xzYM6gGITlLdf30EXs4Ltyuk3aaTOSZ0Cc0L+EpH8hU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MNZIyyWjp5OYXUXPza90gG/LF0F8TUDAOpdeWtV3VfqyknJkjv2JMa3mu7Amp8QzW9Vp7xH0SeVyN5OkwHn0Zan5b1FawuSPgrG5z3Z4PTIsJux/MdGZ6v+l2EG0vciNBd9z4i69rYQ4tu1N8Z6x48jb28lezJyEqoOrB0bNcyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmPfeuVj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBE0C4CEF1;
-	Fri, 12 Sep 2025 20:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757708243;
-	bh=xzYM6gGITlLdf30EXs4Ltyuk3aaTOSZ0Cc0L+EpH8hU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bmPfeuVjIhl84bamQEp4dco3dnTtzMRRex4ZranpAvU2GbR61Rq0qKN61JF2rk+iF
-	 is4dJBqAAns/liU28pVKtOT8t168cvkMOPoCot2HF2Lk2Ou49TQP9G2AdZcXM5LlCF
-	 qPGLN1vJAYQiWk6tNDG+Z4R0Wh8ep7Du2erMyWW2sdC010MMK9vSg4D+NaHOlgG/yr
-	 XiOM3OmtRm1QJoWPKcwYUSK52EF7YSBqZn/UXwtYw1oazRlrq0YYScRYM44dU0T6z3
-	 AeLpXxSFYEQ5CjILM4U763KcCBSi8l4+IxTctvGlmSWaUB+XmSt1UW8PW/QNRIewzW
-	 6WcmQy4uBLAcg==
-Date: Fri, 12 Sep 2025 13:17:22 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Yana Bashlykova <yana2bsh@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
- <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Nathan
- Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
- Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-riscv@lists.infradead.org, bpf@vger.kernel.org, llvm@lists.linux.dev,
- lvc-project@linuxtesting.org
-Subject: Re: [PATCH 6.1 00/15] genetlink: Test Netlink subsystem of Linux
- v6.1
-Message-ID: <20250912131722.74658ec0@kernel.org>
-In-Reply-To: <20250912195339.20635-1-yana2bsh@gmail.com>
-References: <20250912195339.20635-1-yana2bsh@gmail.com>
+	s=arc-20240116; t=1757708847; c=relaxed/simple;
+	bh=g9s4aBgq9mUA/MaM7/N6IjRsE8phQz3zLoYU9BI7XB4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nhBuzBfimp2pbu1TRARfeisLLhHelq5irMim+VMMhwCO4/yvbjjBRpxpcQWKoiDfvcrOU6M2glR1EU30r24J0AbjVNbcCQmV6RqCvXvu1338uWA73+A9oGUmnhDLu1dxxhA57LbU7lVBWWj36rk8U+RdAtSaRp7Cpl8aaatOgqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com; spf=pass smtp.mailfrom=armadeus.com; dkim=pass (2048-bit key) header.d=armadeus.com header.i=@armadeus.com header.b=i/yNa6K0; arc=none smtp.client-ip=188.165.45.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=armadeus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=armadeus.com
+Received: from director10.ghost.mail-out.ovh.net (unknown [10.110.58.249])
+	by mo550.mail-out.ovh.net (Postfix) with ESMTP id 4cNm3X6DTxz5xbx
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:19:04 +0000 (UTC)
+Received: from ghost-submission-5b5ff79f4f-8lnd4 (unknown [10.110.188.251])
+	by director10.ghost.mail-out.ovh.net (Postfix) with ESMTPS id 2D59FC15C2;
+	Fri, 12 Sep 2025 20:19:04 +0000 (UTC)
+Received: from armadeus.com ([37.59.142.112])
+	by ghost-submission-5b5ff79f4f-8lnd4 with ESMTPSA
+	id LoviOjeAxGilAw4AMdo/aw
+	(envelope-from <sebastien.szymanski@armadeus.com>); Fri, 12 Sep 2025 20:19:04 +0000
+Authentication-Results:garm.ovh; auth=pass (GARM-112S006d9550b98-7ae0-4798-a2a1-6fec4990740f,
+                    24C0CD233B02D59DA4C9EFE158FBDB7975D525F0) smtp.auth=sebastien.szymanski@armadeus.com
+X-OVh-ClientIp:86.243.209.203
+From: =?utf-8?q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
+Date: Fri, 12 Sep 2025 22:18:50 +0200
+Subject: [PATCH] gpiolib: acpi: initialize acpi_gpio_info struct
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250912-gpiolib-acpi-fix-v1-1-1a41acbffadf@armadeus.com>
+X-B4-Tracking: v=1; b=H4sIACmAxGgC/x2MUQqAIBAFrxL73YJKUXaV6KPsZQtRohBBePekz
+ xmYeSkhChIN1UsRtyS5zgK6rsjt8+nBshYmo0yrrDbsg1yHLDy7ILzJwx3QWINlbdFTyUJE0f9
+ ynHL+AObJw7RiAAAA
+X-Change-ID: 20250912-gpiolib-acpi-fix-7ee492ebd5e8
+To: Mika Westerberg <westeri@kernel.org>, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?S=C3=A9bastien_Szymanski?= <sebastien.szymanski@armadeus.com>
+X-Mailer: b4 0.14.2
+X-Ovh-Tracer-Id: 9239134636664548198
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleellecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkvfevofesthekredtredtjeenucfhrhhomhepuforsggrshhtihgvnhcuufiihihmrghnshhkihcuoehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomheqnecuggftrfgrthhtvghrnhepleelgeetueelieekffeiveekvddukefgfeetvedtgedvjedtgedvheehkeeuleetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvjedrtddrtddruddpkeeirddvgeefrddvtdelrddvtdefpdefjedrheelrddugedvrdduuddvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepuddvjedrtddrtddruddpmhgrihhlfhhrohhmpehsvggsrghsthhivghnrdhsiiihmhgrnhhskhhisegrrhhmrgguvghushdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdpoffvtefjohhsthepmhhoheehtdgmpdhmohguvgepshhmthhpohhuth
+DKIM-Signature: a=rsa-sha256; bh=p8MdL3xIorxozybFE1L91018QY5I/1ptU7GUsykpYEE=;
+ c=relaxed/relaxed; d=armadeus.com; h=From; s=ovhmo103079-selector1;
+ t=1757708344; v=1;
+ b=i/yNa6K0lMjZqi+wijFic2vsqkF2gxMVzZxSAwTGjghyf8NUs3NVmAznCr9v3dNSfU5+63yp
+ APiYmO2HTAaYrbd0JWjGeRkh4hu/o/jA8I6nJX0LqDvNq/F8CTQBd6MBsCfK57THcQ7bSTKc4z1
+ D6hydl1YdpZMQHWHwVzHiBSXSmy/YQqek9sCub1QjlZoN9kP0HC0jJRri4vszDQVg6hZ9D/sDb2
+ Z3chzBacKjv36GASfqsKokTU0TLE3h9uP5Tt8yjDmCwZazazdsvNHFUCX5WOJ6usIkdnJtGN/J2
+ E7v8q8irfevLf3fIPuuqmWyWrbc0Wx8HV/DBgOmJJdJ3w==
 
-On Fri, 12 Sep 2025 22:53:23 +0300 Yana Bashlykova wrote:
-> This series adds comprehensive testing infrastructure for Netlink
-> and Generic Netlink
-> 
-> The implementation includes both kernel module and userspace tests to
-> verify correct Generic Netlink and Netlink behaviors under
-> various conditions.
+Since commit 7c010d463372 ("gpiolib: acpi: Make sure we fill struct
+acpi_gpio_info"), uninitialized acpi_gpio_info struct are passed to
+__acpi_find_gpio() and later in the call stack info->quirks is used in
+acpi_populate_gpio_lookup. This breaks the i2c_hid_cpi driver:
 
-What is the motivation for this work?
+[   58.122916] i2c_hid_acpi i2c-UNIW0001:00: HID over i2c has not been provided an Int IRQ
+[   58.123097] i2c_hid_acpi i2c-UNIW0001:00: probe with driver i2c_hid_acpi failed with error -22
+
+Fix this by initializing the acpi_gpio_info pass to __acpi_find_gpio()
+
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=220388
+Fixes: 7c010d463372 ("gpiolib: acpi: Make sure we fill struct acpi_gpio_info")
+Signed-off-by: Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+---
+ drivers/gpio/gpiolib-acpi-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib-acpi-core.c b/drivers/gpio/gpiolib-acpi-core.c
+index 12b24a717e43f17621c054bfc4e9c2e287236d8c..d11bcaf1ae88421e5e5a11a2ba94983f437c413a 100644
+--- a/drivers/gpio/gpiolib-acpi-core.c
++++ b/drivers/gpio/gpiolib-acpi-core.c
+@@ -942,7 +942,7 @@ struct gpio_desc *acpi_find_gpio(struct fwnode_handle *fwnode,
+ {
+ 	struct acpi_device *adev = to_acpi_device_node(fwnode);
+ 	bool can_fallback = acpi_can_fallback_to_crs(adev, con_id);
+-	struct acpi_gpio_info info;
++	struct acpi_gpio_info info = {};
+ 	struct gpio_desc *desc;
+ 
+ 	desc = __acpi_find_gpio(fwnode, con_id, idx, can_fallback, &info);
+@@ -992,7 +992,7 @@ int acpi_dev_gpio_irq_wake_get_by(struct acpi_device *adev, const char *con_id,
+ 	int ret;
+ 
+ 	for (i = 0, idx = 0; idx <= index; i++) {
+-		struct acpi_gpio_info info;
++		struct acpi_gpio_info info = {};
+ 		struct gpio_desc *desc;
+ 
+ 		/* Ignore -EPROBE_DEFER, it only matters if idx matches */
+
+---
+base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+change-id: 20250912-gpiolib-acpi-fix-7ee492ebd5e8
+
+Best regards,
+-- 
+Sébastien Szymanski <sebastien.szymanski@armadeus.com>
+
 
