@@ -1,153 +1,159 @@
-Return-Path: <linux-kernel+bounces-814912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27836B55A4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:35:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11630B55A17
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 516B33BCF4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:35:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC21EB63D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 013372E973D;
-	Fri, 12 Sep 2025 23:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C5302D6E68;
+	Fri, 12 Sep 2025 23:23:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mRcSUT3X"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2AEkExt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBD42E8B88
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3822D5A14;
+	Fri, 12 Sep 2025 23:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757719480; cv=none; b=QZBO9u200pQbGkOJAAQp70Usr/6z8TZXNqhNo9ZiTQCynOxo4Sq2zU7XmOaJyNHkJWlw2m6DUy6ezSadI0sVzsQJl3w5+txr4G+Wl8rBvExyocvuko6+SrniSLDJ6qfYIFQEaAhHGwjT1CXaGQg0slRVV7kBYOY+7HnpzjuibmQ=
+	t=1757719430; cv=none; b=rbZHlvlVWqNplLYKiJT1Zb9LNEjlDndXiHlEZ3UW3ttWLkBxjSom6qCqu4d03h8l8DLPuAo7FV0nNMUpXCOHtr5IZRYrkZJaE7qgkLfcVXIrJlcyhSmEapot0jMSXyIEfsfARk4pMW8DHL3EzTwbzUeaFfQKIdTsU4eiZ2rJIjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757719480; c=relaxed/simple;
-	bh=OWTTMi08oveLIrPuJqP45tpmsLGScshtxdeU8uIZNEk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=N9qTQQlPZiJp1U8ZQgkX8yv+NkV+rRxRRFcakzjPxm9ITyHJxvELd+QyK8fLQ+OIQCnW+/sY6MaGw0q2D4ci4zWsl2iIuSy0NByLhrmzaPs8eB6yEqC+PtF+WSRxl9Q2UCGw0+PNOLlaf+251V++L0G4RqtRC6oNBkfg8QlYERw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mRcSUT3X; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32dd692614aso3440790a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757719478; x=1758324278; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=UalbFbYpbYP+6PV9nGy4JWWryNap6zGGgleYmZzrupU=;
-        b=mRcSUT3XjYXuFOSCPFJOpRTOY/36djqUjb1k4csghvVxYLpuyMmqz4KSRxzYreceli
-         gKnZO7qhPyCNMga3mtnC1dqG1z5QZYDrwRpgPiyaBxTQUBbrHj7TUQ5i9qMvYoiLdgeK
-         rshJaQltbKNg8/TmGHxvaNQBwo3k+XmtnAFndg+8TxcsXmb/KxW0vFXbRCtun8zI+3Mu
-         sfwbWxEDZe1WbB1leMbfCSK6dr4coLpOmwm5Zy7OZaXvAJpiV3YZK9xxRMkxTP7iP0dV
-         xvK5Aslkfv7VosHA0WYugNDXyWOyWo+95k4QY8+5li3qrDR4mdiKXLd2BGrhGr/j2Tes
-         CH8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757719478; x=1758324278;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UalbFbYpbYP+6PV9nGy4JWWryNap6zGGgleYmZzrupU=;
-        b=mhGAUEakvPLm9+g9KDul3SoDa4tZwtK60dA7xFQu++V1oxkB/7zZxJxWQQa/2/XVwT
-         zFyBY7fj9hA7AX3UvyvGHhbkfANy6KCwfHeCVf/11H2N8gL7lfrJl7Xws6g2wBzb0Mnp
-         l+hXP+B/r6VcVyI0b+ZuMAruT/qm4QAV42yYzFuPNylNB+MiNZUvIalsVEXM8UOctZlD
-         lMrY9orpKvT5j+ERFhBw/Lm8EdL+aGOT8PXDqd9NOXPo5AiUOGKyBPJgLQCIecwJ6K3U
-         0S3jZWfXpeRSl1DJYrN3J3uG5s46qsqqxh1roZhzZeRPbQ7B4r6keqWn3+pDqtTAsnr9
-         19uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUe/P7ahBdBn/X3Qe878GULh06szM/j+CRuhHRV4oh1vB7LzvbXQON/Ytz03sB2GnNER4VX3EDrb1PAg0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2WzGVcUw9EznGr0qfkXxByidRU5m/1EDeE76+omqyZryndKUo
-	4vOxp2XwCBg82vP794Zkbk1JhxAAJ6LzGVFayh9gao6AP5rvOxMW38k6dztHVrgr2DnFIFCg9v9
-	7RtKATg==
-X-Google-Smtp-Source: AGHT+IHUuOlxNOMwEPAMe7F2+HYod0TA3wRiT968IXMC6hLEeFRUjBha/TOLMv9OfQI78AbJpZp4d3uWhq0=
-X-Received: from pjh8.prod.google.com ([2002:a17:90b:3f88:b0:329:d09b:a3f2])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c10:b0:32d:d8de:1929
- with SMTP id 98e67ed59e1d1-32de4e7e2ddmr5026221a91.2.1757719478303; Fri, 12
- Sep 2025 16:24:38 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 12 Sep 2025 16:23:19 -0700
-In-Reply-To: <20250912232319.429659-1-seanjc@google.com>
+	s=arc-20240116; t=1757719430; c=relaxed/simple;
+	bh=HhlQH87muZ5l8bahZ1JQh/wQL2+NmIcRaW7diyeKJdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ancc0xPcmvZC2XIr88OnXySGvPASXnNaX+ROrKmBb5LvwLVUYNQay90Mse3NP6xPbR02Jxu20VcvKulW7YrqMK4IZBgSwMq4lumb7nJpntcX+/4s4X4HqhGLTyF+4pSQ9IR+QEq+/agfjtQY3McgXdiobJNXzaqn510Vxp/A+6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2AEkExt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD9E4C4CEF1;
+	Fri, 12 Sep 2025 23:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757719429;
+	bh=HhlQH87muZ5l8bahZ1JQh/wQL2+NmIcRaW7diyeKJdo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=S2AEkExtho8QDGnTQat0wBZUTZuRwc+kdQEO7RVyWP7AHMuIrMKZkxwsqE7AtZvlN
+	 OS1RbVqgwdLIlVpWuWnYqNjbCr+jDLXUZt7+WStynlyJjkOWgY2CXMvJIyd12Pz8i6
+	 YUJCYncP6daouDdOhxljI2LbhYNjcyHlPYmW/NlpL2QhBB2AvDUCEkzUJuYfn9rP//
+	 go9wIC9pHQJrXK2RoUr8qXENrVRdvtZAOKSduX0L9Sv1yEQCDZgIuhZDw2lZQQCUa7
+	 Ngk2jqePqNtmMsB3383ZL8XOfb9B29um6lwXROv1OcgakHKPu3zo1MtwsC6fDl8Mxv
+	 BpNjRq9rIN26Q==
+Date: Fri, 12 Sep 2025 18:23:48 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: manivannan.sadhasivam@oss.qualcomm.com
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Saravana Kannan <saravanak@google.com>, linux-pci@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+	Brian Norris <briannorris@chromium.org>
+Subject: Re: [PATCH v3 2/4] PCI: qcom: Move host bridge 'phy' and 'reset'
+ pointers to struct qcom_pcie_port
+Message-ID: <20250912232348.GA1653056@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250912232319.429659-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250912232319.429659-42-seanjc@google.com>
-Subject: [PATCH v15 41/41] KVM: VMX: Make CR4.CET a guest owned bit
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Mathias Krause <minipli@grsecurity.net>, 
-	John Allen <john.allen@amd.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Chao Gao <chao.gao@intel.com>, Maxim Levitsky <mlevitsk@redhat.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912-pci-pwrctrl-perst-v3-2-3c0ac62b032c@oss.qualcomm.com>
 
-From: Mathias Krause <minipli@grsecurity.net>
+On Fri, Sep 12, 2025 at 02:05:02PM +0530, Manivannan Sadhasivam via B4 Relay wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> 
+> DT binding allows specifying 'phy' and 'reset' properties in both host
+> bridge and Root Port nodes, though specifying in the host bridge node is
+> marked as deprecated. Still, the pcie-qcom driver should support both
+> combinations for maintaining the DT backwards compatibility. For this
+> purpose, the driver is holding the relevant pointers of these properties in
+> two structs: struct qcom_pcie_port and struct qcom_pcie.
+> 
+> However, this causes confusion and increases the driver complexity. Hence,
+> move the pointers from struct qcom_pcie to struct qcom_pcie_port. As a
+> result, even if these properties are specified in the host bridge node,
+> the pointers will be stored in struct qcom_pcie_port as if the properties
+> are specified in a single Root Port node. This logic simplifies the driver
+> a lot.
 
-Make CR4.CET a guest-owned bit under VMX by extending
-KVM_POSSIBLE_CR4_GUEST_BITS accordingly.
+> @@ -297,11 +295,8 @@ static void qcom_perst_assert(struct qcom_pcie *pcie, bool assert)
+>  	struct qcom_pcie_port *port;
+>  	int val = assert ? 1 : 0;
+>  
+> -	if (list_empty(&pcie->ports))
+> -		gpiod_set_value_cansleep(pcie->reset, val);
+> -	else
+> -		list_for_each_entry(port, &pcie->ports, list)
+> -			gpiod_set_value_cansleep(port->reset, val);
+> +	list_for_each_entry(port, &pcie->ports, list)
+> +		gpiod_set_value_cansleep(port->reset, val);
 
-There's no need to intercept changes to CR4.CET, as it's neither
-included in KVM's MMU role bits, nor does KVM specifically care about
-the actual value of a (nested) guest's CR4.CET value, beside for
-enforcing architectural constraints, i.e. make sure that CR0.WP=1 if
-CR4.CET=1.
+This is so much nicer, thanks for doing this!
 
-Intercepting writes to CR4.CET is particularly bad for grsecurity
-kernels with KERNEXEC or, even worse, KERNSEAL enabled. These features
-heavily make use of read-only kernel objects and use a cpu-local CR0.WP
-toggle to override it, when needed. Under a CET-enabled kernel, this
-also requires toggling CR4.CET, hence the motivation to make it
-guest-owned.
+>  static int qcom_pcie_parse_legacy_binding(struct qcom_pcie *pcie)
+>  {
+>  	struct device *dev = pcie->pci->dev;
+> +	struct qcom_pcie_port *port;
+> +	struct gpio_desc *reset;
+> +	struct phy *phy;
+>  	int ret;
+>  
+> -	pcie->phy = devm_phy_optional_get(dev, "pciephy");
+> -	if (IS_ERR(pcie->phy))
+> -		return PTR_ERR(pcie->phy);
+> +	phy = devm_phy_optional_get(dev, "pciephy");
+> +	if (IS_ERR(phy))
+> +		return PTR_ERR(phy);
 
-Using the old test from [1] gives the following runtime numbers (perf
-stat -r 5 ssdd 10 50000):
+Seems like it would be easier to integrate this fallback into
+qcom_pcie_parse_port() instead if separating it into
+qcom_pcie_parse_legacy_binding().
 
-* grsec guest on linux-6.16-rc5 + cet patches:
-  2.4647 +- 0.0706 seconds time elapsed  ( +-  2.86% )
+What if you did something like this in qcom_pcie_parse_port():
 
-* grsec guest on linux-6.16-rc5 + cet patches + CR4.CET guest-owned:
-  1.5648 +- 0.0240 seconds time elapsed  ( +-  1.53% )
+  qcom_pcie_parse_port
+  {
+      reset = devm_fwnode_gpiod_get(dev, of_fwnode_handle(node),
+				    "reset",  GPIOD_OUT_HIGH, "PERST#");
+      if (IS_ERR(reset)) {
+	  reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_HIGH);
+	  if (IS_ERR(reset))
+	      return PTR_ERR(reset);
+      }
+      ...
 
-Not only does not intercepting CR4.CET make the test run ~35% faster,
-it's also more stable with less fluctuation due to fewer VMEXITs.
+Then you could share all the port kzalloc and port list management.
 
-Therefore, make CR4.CET a guest-owned bit where possible.
+Could do the same with the PHY stuff.
 
-This change is VMX-specific, as SVM has no such fine-grained control
-register intercept control.
-
-If KVM's assumptions regarding MMU role handling wrt. a guest's CR4.CET
-value ever change, the BUILD_BUG_ON()s related to KVM_MMU_CR4_ROLE_BITS
-and KVM_POSSIBLE_CR4_GUEST_BITS will catch that early.
-
-Link: https://lore.kernel.org/kvm/20230322013731.102955-1-minipli@grsecurity.net/ [1]
-Reviewed-by: Chao Gao <chao.gao@intel.com>
-Signed-off-by: Mathias Krause <minipli@grsecurity.net>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/kvm_cache_regs.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/kvm/kvm_cache_regs.h b/arch/x86/kvm/kvm_cache_regs.h
-index 36a8786db291..8ddb01191d6f 100644
---- a/arch/x86/kvm/kvm_cache_regs.h
-+++ b/arch/x86/kvm/kvm_cache_regs.h
-@@ -7,7 +7,8 @@
- #define KVM_POSSIBLE_CR0_GUEST_BITS	(X86_CR0_TS | X86_CR0_WP)
- #define KVM_POSSIBLE_CR4_GUEST_BITS				  \
- 	(X86_CR4_PVI | X86_CR4_DE | X86_CR4_PCE | X86_CR4_OSFXSR  \
--	 | X86_CR4_OSXMMEXCPT | X86_CR4_PGE | X86_CR4_TSD | X86_CR4_FSGSBASE)
-+	 | X86_CR4_OSXMMEXCPT | X86_CR4_PGE | X86_CR4_TSD | X86_CR4_FSGSBASE \
-+	 | X86_CR4_CET)
- 
- #define X86_CR0_PDPTR_BITS    (X86_CR0_CD | X86_CR0_NW | X86_CR0_PG)
- #define X86_CR4_TLBFLUSH_BITS (X86_CR4_PGE | X86_CR4_PCIDE | X86_CR4_PAE | X86_CR4_SMEP)
--- 
-2.51.0.384.g4c02a37b29-goog
-
+> -	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_HIGH);
+> -	if (IS_ERR(pcie->reset))
+> -		return PTR_ERR(pcie->reset);
+> +	reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(reset))
+> +		return PTR_ERR(reset);
+>  
+> -	ret = phy_init(pcie->phy);
+> +	ret = phy_init(phy);
+>  	if (ret)
+>  		return ret;
+>  
+> +	port = devm_kzalloc(dev, sizeof(*port), GFP_KERNEL);
+> +	if (!port)
+> +		return -ENOMEM;
+> +
+> +	port->reset = reset;
+> +	port->phy = phy;
+> +	INIT_LIST_HEAD(&port->list);
+> +	list_add_tail(&port->list, &pcie->ports);
+> +
+>  	return 0;
+>  }
 
