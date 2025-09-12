@@ -1,243 +1,223 @@
-Return-Path: <linux-kernel+bounces-813948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9471AB54D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:24:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14157B54D6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D06EB17F526
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:20:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7885416080A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB4930F80B;
-	Fri, 12 Sep 2025 12:12:29 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A08630E846;
+	Fri, 12 Sep 2025 12:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ERMbbQEI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB37C3043C3;
-	Fri, 12 Sep 2025 12:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4BD30F921
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757679148; cv=none; b=eFy/1sAceaiQIw0UlqlbjOpjjQeow18QaTnaqE/6QzS29+0HmRgcFdNuS0NqoqnxipDlzsT31UqloNWLoEIdeOSfMlNzxXIRuJtZea123PMYj4mWxoeR34vkdzmgqQcX084nS4JNYNwnHOR2BUJk9zSovbGKCWP4vjFKGp29/dg=
+	t=1757679164; cv=none; b=Fph9UnE6o3CYgnlLsqmDiEGlt/CejVeeG+XPTtOSwpHFon5jUy5qxVnL1FkJKSCJlVbauLZdGhAUAdU2oB9iObU3aK4N3bt8n/Sz/6iiz/ALOsa2RI3soFnpV9GF1VF2md43P7CLzK2yIt5Snw9FOES9ooDVx2k7A5/uxw9WVU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757679148; c=relaxed/simple;
-	bh=w9zzgq+7Cuxu5JSgH1TY5NHegQHnUejKAdDFtRLDyD0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JQmoo6Eg4nmGgvWgxSbaCu3teuspN+kRZN2YTphX4HGhOEMy8cFU/Muqng76XEItsRj5OUfq6ra76uLbh8/Zf0pYyvDjKvMUNkOoCse272zlT3hHEUteHQVkilwCw1tlAaIeDd8Sn4e2BSYdBTwaNLHtzJMvPBZI5H6uZHugvgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNY916FLFz6L5pF;
-	Fri, 12 Sep 2025 20:08:05 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9A59B1402EA;
-	Fri, 12 Sep 2025 20:12:22 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
- 2025 14:12:21 +0200
-Date: Fri, 12 Sep 2025 13:12:19 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 18/29] arm_mpam: Register and enable IRQs
-Message-ID: <20250912131219.00000938@huawei.com>
-In-Reply-To: <20250910204309.20751-19-james.morse@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-19-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757679164; c=relaxed/simple;
+	bh=oWGivKsHxkmHI/ov59Bz/LsMaz2L1v6ycuboHhiWC0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2Fg3B9H40gwTvxq8XirySpKeyiPwt+edMmMTo4qsBwqOn+mdNqrLVp2gKOPHsVMo8MRXpDVsHbvNiaIbId6EFDk/ZPk3097MohEIZm6EBiu6lRIlLxUr0NX6GwWGrtd6UFFr9nTnfFTuVdOvEdqQQxLPC5yssDvLpM54GvLgKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ERMbbQEI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fLVP017819
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:12:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=zI8guBb3Lo60ZeYXEP0MXbu6
+	oVCoqd2RpOjF36niL0E=; b=ERMbbQEIEeC7btydKuXkpC0mwnfj1F7Ywp2yIK+Y
+	p0xIR881VWrMk5qiPUA4VMMUlXNe+85sKGEbX1sj5wohtBp22e7uwOdcHhxTdtyW
+	SiOQ29t8n5XmP4/USzu4AdHykf/SEYvTF0y7bUmPU6mNpyyXzVBdYjRp23J2UE6D
+	ywGwqEn//5Qsuc1E7NNAgVAfX9hxAAHJN91zR/QDcTm3rNroYNm55fipI1483YfN
+	27wBLYz5yW8IffYX3cEhIGWswS0VkRX7VDo0Zk0pdmMNMlUtkssLUhEZdPMyEzd5
+	nbxEvwCX/tOJD6UMCM+71b06AjOgcpTfuVVQkzUfIovT3A==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490db8unhr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:12:40 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-718c2590e94so64640046d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:12:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757679159; x=1758283959;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zI8guBb3Lo60ZeYXEP0MXbu6oVCoqd2RpOjF36niL0E=;
+        b=CipZER++PTa192xx1vneVLmUj4ChxGXlrzAIArGvMmefzgCSPeuJkdx9CFlhyIL/Jx
+         OtXblwWYSIHRVML3aq0sBNqkLBnek2hKWij4utfaVTe/05Nx5b8OXc87av4tSOX7404c
+         n2BLJrAHVWwBCJlI7xQdw0q3LvDtkz2ctfz9sVPjnc5WCGnonoard8l/E0MPU6ChiFR/
+         m0rg6WWH5vH4GCAa5vJ25zs027/Cbw57WiLnFu75cJgEsdO9rAKfQotgNDgOP4y9FyJb
+         UkvpRqiYWCmxB+6+rpBzgnxmRRHpAmcJ/3zv/JH/V2tLW1vYPnEgsKj1rqJCF3fOWVn+
+         XziA==
+X-Forwarded-Encrypted: i=1; AJvYcCUC0GNRqcZDHYG2S1KoakhJ4JrJt5gckcUDHl+oX3iUWj/z94RBDz/UsXOxoE96zuOzoohk7/jn70jnuO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoG087pRW9MAwJ0FspITYlmFgqkThuCuLLRovCWTpNhs69cOQk
+	+XxosrwTkOgAW9tBpI2aPV7njXCnxFsZRITrtHJxX+ef6ZbsoPu85qyNiZ3paCrn5WIsQu69lp2
+	45NSJnJhi2d2OqPWEbOzwWSNjXxtitYIEQpMA0lqSmODhBXfhxs/UmWK5eYz4YGOjztY=
+X-Gm-Gg: ASbGncuxQi+ZVIRHIW7tiCr69gzDa8fLiY1VndovEc925vUcxtNHuFDWSVXhmvSXnHl
+	Ij8Kg+RTrCnrMb3piAS4AM7KJbDhBmmSGMzeHv2vHcugls785LsRmATRm51G61f7AWz4bY4AgYT
+	TxPESc+Dm8enssAj5XRJBNwI7wDTh2O96enkN2pODHhOQexdMJlBN+0xqSx4L74o+FvFCYY0d6t
+	fhzm/zhCnc96Z/COkAZkay8b0KMzh0mm5KXqET3X5P5b8Xyh104kXOb+HQPQRhgOiZST1DrgZHq
+	ci0IWuk4y8sxnsaMy81X3Hnwd9fXaB5IkZaMudbHDqZUdBvD6qnlzndRBY1jO2nnHHk3wNpkEue
+	lxCimS+9H0XKRyc3H82pywIjeKPYV6WhygGSwX98kPYKMuEQQWz4K
+X-Received: by 2002:a05:6214:e44:b0:72a:6d80:89 with SMTP id 6a1803df08f44-7621f5326bcmr84955566d6.14.1757679158466;
+        Fri, 12 Sep 2025 05:12:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IETqAAx9aPZRKQ9jf+u+KmM6Kvfm0l4R77YKoWyoC00QsU84Zpj1UOrIYuydwW4MVV7TmB7Pg==
+X-Received: by 2002:a05:6214:e44:b0:72a:6d80:89 with SMTP id 6a1803df08f44-7621f5326bcmr84954736d6.14.1757679157622;
+        Fri, 12 Sep 2025 05:12:37 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1b2a925dsm7684111fa.46.2025.09.12.05.12.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 05:12:36 -0700 (PDT)
+Date: Fri, 12 Sep 2025 15:12:34 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-phy@lists.infradead.org
+Subject: Re: [PATCH v3 3/5] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp-phy:
+ Document lanes mapping when not using in USB-C complex
+Message-ID: <rioswugtt3v6f6qa2w5qcmnqjzuxkm372sgovdy7cj3g2jfxru@tg2bdy5hxjhr>
+References: <20250908-topic-x1e80100-hdmi-v3-0-c53b0f2bc2fb@linaro.org>
+ <20250908-topic-x1e80100-hdmi-v3-3-c53b0f2bc2fb@linaro.org>
+ <7dzfcuvr45h4iailtjutqjev7lofoqu7w6ob77gehgmy7mctpk@k7oob4wj3c7a>
+ <14d58c6d-ca20-4349-8031-9906a4539fef@linaro.org>
+ <c25kbb65aijgolxjzunydvhupt774pfmbcz5lvfvl5f74rrxtr@vboh347gdvdp>
+ <da984d8f-85ae-44cf-8de4-208bfc9e292d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da984d8f-85ae-44cf-8de4-208bfc9e292d@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzMSBTYWx0ZWRfX5aMe1Nzm5PIT
+ IMkBZTCB1C6Nv8Iko39F/QNpQ4xFzVXlbN0QBPnSkXEbA8I5/o+KWNBu7IDulsBonLu8PktWnpP
+ PsJjud7VIMKyN8bLGBKJsaQnzQRmGfRF9cqu5eP1V9jfNDB7YfrIdmfGOVtr7lN1uw/BntPeRTb
+ b+xVkTJx+gB37Mhd3tJ2RH7cCh6rycgvjxx+LKoE6Hdnv5XN9yClMMWyEfQC2FeReP3SECwQSEo
+ i/uM2oQr4WyE8CDAVzZEXXCjVcvibO/WjJrjACWV72MlTzV2JBYA6lh0OCxIt77jUDvadzVUl+g
+ carn/pSo1nnDJmICmngRSnAcxkOJ1VyXTSa3a5PAGioAOp7JyTcKpH4JVsFcZsQBhtXjlkGsLkS
+ RobDOhNi
+X-Proofpoint-ORIG-GUID: GfGw4OpCYcKQdwfhU_nocmgJRIqc-13X
+X-Proofpoint-GUID: GfGw4OpCYcKQdwfhU_nocmgJRIqc-13X
+X-Authority-Analysis: v=2.4 cv=VIDdn8PX c=1 sm=1 tr=0 ts=68c40e38 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=yJojWOMRYYMA:10 a=KKAkSRfTAAAA:8 a=r0EWWIcaWpoI38bJcbMA:9 a=CjuIK1q_8ugA:10
+ a=iYH6xdkBrDN1Jqds4HTS:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 spamscore=0 suspectscore=0 bulkscore=0
+ phishscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060031
 
-On Wed, 10 Sep 2025 20:42:58 +0000
-James Morse <james.morse@arm.com> wrote:
-
-> Register and enable error IRQs. All the MPAM error interrupts indicate a
-> software bug, e.g. out of range partid. If the error interrupt is ever
-> signalled, attempt to disable MPAM.
+On Tue, Sep 09, 2025 at 01:21:19PM +0200, Konrad Dybcio wrote:
+> On 9/9/25 1:16 PM, Dmitry Baryshkov wrote:
+> > On Tue, Sep 09, 2025 at 09:14:49AM +0200, Neil Armstrong wrote:
+> >> On 08/09/2025 23:14, Dmitry Baryshkov wrote:
+> >>> On Mon, Sep 08, 2025 at 03:04:20PM +0200, Neil Armstrong wrote:
+> >>>> The QMP USB3/DP Combo PHY hosts an USB3 phy and a DP PHY on top
+> >>>> of a combo glue to route either lanes to the 4 shared physical lanes.
+> >>>>
+> >>>> The routing of the lanes can be:
+> >>>> - 2 DP + 2 USB3
+> >>>> - 4 DP
+> >>>> - 2 USB3
+> >>>>
+> >>>> The layout of the lanes was designed to be mapped and swapped
+> >>>> related to the USB-C Power Delivery negociation, so it supports
+> >>>> a finite set of mappings inherited by the USB-C Altmode layouts.
+> >>>>
+> >>>> Nevertheless those QMP Comby PHY can be used to drive a DisplayPort
+> >>>> connector, DP->HDMI bridge, USB3 A Connector, etc... without
+> >>>> an USB-C connector and no PD events.
+> >>>>
+> >>>> Document the data-lanes on numbered port@0 out endpoints,
+> >>>> allowing us to document the lanes mapping to DisplayPort
+> >>>> and/or USB3 connectors/peripherals.
+> >>>>
+> >>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> >>>> ---
+> >>>>   .../phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml         | 59 +++++++++++++++++++++-
+> >>>>   1 file changed, 58 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> >>>> index 5005514d7c3a1e4a8893883497fd204bc04e12be..51e0d0983091af0b8a5170ac34a05ab0acc435a3 100644
+> >>>> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> >>>> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-usb43dp-phy.yaml
+> >>>> @@ -81,10 +81,67 @@ properties:
+> >>>>     ports:
+> >>>>       $ref: /schemas/graph.yaml#/properties/ports
+> >>>> +
+> >>>>       properties:
+> >>>>         port@0:
+> >>>> -        $ref: /schemas/graph.yaml#/properties/port
+> >>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> >>>>           description: Output endpoint of the PHY
+> >>>> +        unevaluatedProperties: false
+> >>>> +
+> >>>> +        properties:
+> >>>> +          endpoint:
+> >>>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+> >>>> +            unevaluatedProperties: false
+> >>>> +
+> >>>> +          endpoint@0:
+> >>>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+> >>>> +            description: Display Port Output lanes of the PHY when used with static mapping
+> >>>> +            unevaluatedProperties: false
+> >>>> +
+> >>>> +            properties:
+> >>>> +              data-lanes:
+> >>>> +                $ref: /schemas/types.yaml#/definitions/uint32-array
+> >>>> +                minItems: 2
+> >>>
+> >>> Nit: DP can work in a 1-lane mode. Do we nned to support that in the PHY?
+> >>
+> >> So the PHY already supports 1-lane, but the QMP Combo only supports
+> >> mapping 2+2 or 4, but nevetheless we can still decscribe 1 lane in DT
+> >> int both in & out endpoint and still should work fine.
+> >>
+> >> Do you think this should be done now ?
+> > 
+> > Do we support it in the PHY hardware?
 > 
-> Only the irq handler accesses the ESR register, so no locking is needed.
-> The work to disable MPAM after an error needs to happen at process
-> context as it takes mutex. It also unregisters the interrupts, meaning
-> it can't be done from the threaded part of a threaded interrupt.
-> Instead, mpam_disable() gets scheduled.
-> 
-> Enabling the IRQs in the MSC may involve cross calling to a CPU that
-> can access the MSC.
-> 
-> Once the IRQ is requested, the mpam_disable() path can be called
-> asynchronously, which will walk structures sized by max_partid. Ensure
-> this size is fixed before the interrupt is requested.
-> 
-> CC: Rohit Mathew <rohit.mathew@arm.com>
-> Tested-by: Rohit Mathew <rohit.mathew@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-A few comments inline.
+> I don't think the PHY cares if it's 1 or 2 lanes
 
+After taking a lookg at the HPG and the driver sources, it does. So, I'd
+say, please describe 1-lane mode (which most likely can be enabled only
+on selected set of lanes).
 
-> @@ -1318,11 +1405,172 @@ static void mpam_enable_merge_features(struct list_head *all_classes_list)
->  	}
->  }
->  
-> +static char *mpam_errcode_names[16] = {
-> +	[0] = "No error",
-
-I think you had a bunch of defines for these in an earlier patch.  Can we use
-that to index here instead of [0] etc. 
-
-> +	[1] = "PARTID_SEL_Range",
-> +	[2] = "Req_PARTID_Range",
-> +	[3] = "MSMONCFG_ID_RANGE",
-> +	[4] = "Req_PMG_Range",
-> +	[5] = "Monitor_Range",
-> +	[6] = "intPARTID_Range",
-> +	[7] = "Unexpected_INTERNAL",
-> +	[8] = "Undefined_RIS_PART_SEL",
-> +	[9] = "RIS_No_Control",
-> +	[10] = "Undefined_RIS_MON_SEL",
-> +	[11] = "RIS_No_Monitor",
-> +	[12 ... 15] = "Reserved"
-> +};
-
-
-> +static void mpam_unregister_irqs(void)
-> +{
-> +	int irq, idx;
-> +	struct mpam_msc *msc;
-> +
-> +	cpus_read_lock();
-
-	guard(cpus_read_lock)();
-	guard(srcu)(&mpam_srcu);
-
-> +	/* take the lock as free_irq() can sleep */
-> +	idx = srcu_read_lock(&mpam_srcu);
-> +	list_for_each_entry_srcu(msc, &mpam_all_msc, all_msc_list,
-> +				 srcu_read_lock_held(&mpam_srcu)) {
-> +		irq = platform_get_irq_byname_optional(msc->pdev, "error");
-> +		if (irq <= 0)
-> +			continue;
-> +
-> +		if (test_and_clear_bit(MPAM_ERROR_IRQ_HW_ENABLED, &msc->error_irq_flags))
-> +			mpam_touch_msc(msc, mpam_disable_msc_ecr, msc);
-> +
-> +		if (test_and_clear_bit(MPAM_ERROR_IRQ_REQUESTED, &msc->error_irq_flags)) {
-> +			if (irq_is_percpu(irq)) {
-> +				msc->reenable_error_ppi = 0;
-> +				free_percpu_irq(irq, msc->error_dev_id);
-> +			} else {
-> +				devm_free_irq(&msc->pdev->dev, irq, msc);
-> +			}
-> +		}
-> +	}
-> +	srcu_read_unlock(&mpam_srcu, idx);
-> +	cpus_read_unlock();
-> +}
-> +
->  static void mpam_enable_once(void)
->  {
-> -	mutex_lock(&mpam_list_lock);
-> -	mpam_enable_merge_features(&mpam_classes);
-> -	mutex_unlock(&mpam_list_lock);
-> +	int err;
->  
->  	/*
->  	 * Once the cpuhp callbacks have been changed, mpam_partid_max can no
-> @@ -1332,6 +1580,27 @@ static void mpam_enable_once(void)
->  	partid_max_published = true;
->  	spin_unlock(&partid_max_lock);
->  
-> +	/*
-> +	 * If all the MSC have been probed, enabling the IRQs happens next.
-> +	 * That involves cross-calling to a CPU that can reach the MSC, and
-> +	 * the locks must be taken in this order:
-> +	 */
-> +	cpus_read_lock();
-> +	mutex_lock(&mpam_list_lock);
-> +	mpam_enable_merge_features(&mpam_classes);
-> +
-> +	err = mpam_register_irqs();
-> +	if (err)
-> +		pr_warn("Failed to register irqs: %d\n", err);
-
-Perhaps move the print into the if (err) below?
-
-> +
-> +	mutex_unlock(&mpam_list_lock);
-> +	cpus_read_unlock();
-> +
-> +	if (err) {
-> +		schedule_work(&mpam_broken_work);
-> +		return;
-> +	}
-
-> diff --git a/drivers/resctrl/mpam_internal.h b/drivers/resctrl/mpam_internal.h
-> index 6e047fbd3512..f04a9ef189cf 100644
-> --- a/drivers/resctrl/mpam_internal.h
-> +++ b/drivers/resctrl/mpam_internal.h
-> @@ -32,6 +32,10 @@ struct mpam_garbage {
->  	struct platform_device	*pdev;
->  };
->  
-> +/* Bit positions for error_irq_flags */
-> +#define	MPAM_ERROR_IRQ_REQUESTED  0
-> +#define	MPAM_ERROR_IRQ_HW_ENABLED 1
-
-If there aren't going to be load more of these (I've not really thought
-about whether there might) then using a bitmap for these seems to add complexity
-that we wouldn't see with 
-bool error_irq_req;
-bool error_irq_hw_enabled;
-
-
-> +
->  struct mpam_msc {
->  	/* member of mpam_all_msc */
->  	struct list_head        all_msc_list;
-> @@ -46,6 +50,11 @@ struct mpam_msc {
->  	struct pcc_mbox_chan	*pcc_chan;
->  	u32			nrdy_usec;
->  	cpumask_t		accessibility;
-> +	bool			has_extd_esr;
-> +
-> +	int				reenable_error_ppi;
-> +	struct mpam_msc * __percpu	*error_dev_id;
-> +
->  	atomic_t		online_refs;
->  
->  	/*
-> @@ -54,6 +63,7 @@ struct mpam_msc {
->  	 */
->  	struct mutex		probe_lock;
->  	bool			probed;
-> +	unsigned long		error_irq_flags;
->  	u16			partid_max;
->  	u8			pmg_max;
->  	unsigned long		ris_idxs;
-
+-- 
+With best wishes
+Dmitry
 
