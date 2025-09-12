@@ -1,421 +1,190 @@
-Return-Path: <linux-kernel+bounces-813847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B72B54B80
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:48:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319E2B54B5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D69F768627C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D24B16EB75
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DCB305E28;
-	Fri, 12 Sep 2025 11:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078A430101C;
+	Fri, 12 Sep 2025 11:46:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGdsB7JX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="M9Md+6Sb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E32A301485;
-	Fri, 12 Sep 2025 11:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E422F28EB
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757677595; cv=none; b=J/zjI/ldZ23BFayaGyZMRB0Or84OiwnGX+ZdgoZCcQtc0RwtRA4731mX7L0nD06QJbJUJHaXgR/oGWdWPu3f+qaVjm7VqaKsUG/lTiWbns9SV8k2/+9rj5nwfyoy2NqkeyeN5n4G404wxW2s7kyvd2GZRwmpvmk+8/yBWHFSd2Y=
+	t=1757677587; cv=none; b=OScUkvM1CnrH/P2g/e9+s9VjlLrOIGTeamFofJSMqXyN4Dp9TnyzV3p6rIcfouVkiJj/k0zbeKXs62njyYXO9U4bQnTVM+PdyypWynxKPoEqtx01qIIw7nzkJQWcHybf+jQ8BYU8GRlKQQYXEWclY03THH5dZswVy9GMb8nByPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757677595; c=relaxed/simple;
-	bh=fnTPEr295iKUMZRb112PItsVBFn7TVmO7VSK+qWICNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ieGU54Xn896YSc5Psfk5nMj2GRM2hRe5Sqf7ID3em11la1uY1PYYU9irOdVTIuktNcXL+vfKJWAt0EK1pFVcyUR1YYIXSppVO9UmzgkycalTCXDMgNgIZEE+ktONzUjv+yQYZ5msIi5SLEtp0KYmBwCZqGJdiQgJvGW+eW8ks+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGdsB7JX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AAA4C4CEF4;
-	Fri, 12 Sep 2025 11:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757677594;
-	bh=fnTPEr295iKUMZRb112PItsVBFn7TVmO7VSK+qWICNA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gGdsB7JXXephzAwu543z4f1m+gG/D4+SLtKqcdqn0OnC3ND38V1XRj2m/a4yT4mGm
-	 oEUSMZTzsEk0jDDPAqIBB3RD1aczVppk51qRcnK975yBkW9Zf2CKapnwl39PxeUJfg
-	 LyFyobNtssMTJ5zel92OjqXPhfmUvMkof6woVhOxP5T/1oDkREkEQWGAWbibRa/SnE
-	 Xx+zETADbG+oGDfNYXB5FX7QwsncIxAwHgBcQysZpRo6wxQ+PUt6U5ohCggnOckCGX
-	 2EAubXlfy0RKV8nW/yeB1jimueF5qGiJRXxJBw1aELN4lhmPYKNlnUe6cVSugsdBaY
-	 KD2KciyKZDbPQ==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1ux2Ea-00000008RsD-2XpG;
-	Fri, 12 Sep 2025 13:46:32 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 05/18] tools/docs: python_version: move version check from sphinx-pre-install
-Date: Fri, 12 Sep 2025 13:46:12 +0200
-Message-ID: <89a0df21ed074ba58dbc9d1d9fa1a097dc4c5398.1757677427.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <cover.1757677427.git.mchehab+huawei@kernel.org>
-References: <cover.1757677427.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757677587; c=relaxed/simple;
+	bh=sarR2gK1o23su9ij3Nbhg6+aI0jOXkLMOpLRa4ob2jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A2OSkCwCa6/n/XeFwZQY8uFX2UwNuyAJfh7ylTx2F7NgTAK8S5uIDCSH76xfOZttmWmRUqVspM4S+uxoiM8j/ta8V4nr80VMlQVfwrvIjeyPhl4n+yoGkgUmJDeBbUy5PyIuXq/jmWWyfDBgHQPf+HAipW5yaYvGR3slFKLerr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=M9Md+6Sb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fJxG014003
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:46:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	7bZSPwCaveiNyjpoVwp2JaCT2rjVag5Jy+2B65HThZ8=; b=M9Md+6Sbi3Z5o7Sj
+	0pPKOLsdok6kNB6liuAecuvU8W3GY9mtrWjlG0q/ItPlQY2xkHSECp2X/TphSiFJ
+	+kS8eRpb/hE0pzK7m2Eg7gLamreGUY/ohLmuXby/H5sof+kVeg5tmxrzlNCye+SC
+	9WPNPKtRVmYkYJw/gkmim3xTDMaKfi12Cokxf/qZSiHfonaMVD9tNDflDi9kXBHA
+	1cyMaeGaccb3lQXqd5SPINvOkvYwLQMmiNbvQHTwWdo4/CPOtHujvuawS+b6MTiE
+	HVsaAOcCd9+wp3ydOAsl+7JNPcKyjKu0dJxMnib1ZdKKdtXT/QwR6GVFBvB2/sCN
+	eJoEmA==
+Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493qphw7h1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:46:24 +0000 (GMT)
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-329976ff73cso427147a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:46:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757677583; x=1758282383;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7bZSPwCaveiNyjpoVwp2JaCT2rjVag5Jy+2B65HThZ8=;
+        b=STLMTNnp83KHBnqbKZraPcXLYJ5s8fplt90xnldKyQBXommRAdkN950hqYBI2FIEY3
+         QApot+0hniFUXeR7K22wIXmFr9GGWGAiMIoclN4vLJBjVJ4QhPYGbzaoRUQMVhOngdyy
+         PiyxY+ARg7qukF4odUqpxws4TjbR22pJNoTa7UQmvStzhc9qUAkLyfMqfCJe/usmDh7S
+         LK0wUYyeGyDCvsgto3LleQUzaT9CCiz3SrdLWLqnqYn1+NfO+2MQl9/Ock+fJ7l42MsN
+         pMZy26kF0RzWFTQUb2ckSqYVIuspQttMdfqrAPrjjJBX6t3B+khphKxckTIfHX+heMV1
+         Sodw==
+X-Forwarded-Encrypted: i=1; AJvYcCUs8RlMQD0/j1ukQzGpSh2Vv3ygp5sDGUcgqxryC0LeZ4C7WIrOT2cpODNwwUp3gB1aQRYeB/OwomQIDKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTNre51evXDTy5ykgkGepZ9uJWLQ/kMT8T4KhIEAXeKSZ5Aa+k
+	w7KENPL7TPwbYXSNqym4v9nhAQV5T+KUHNjjzfgjlE5k3OBBpqvki7INbLwrWKnMqJI7HeIHyhc
+	pyhogqTZaqpJ7nudOzWxGIxzxvoEC1AAo9RJHthtrFTJ4ZM5aVTOCJPqvE6rU0xKFcGs=
+X-Gm-Gg: ASbGncvmBEfVAGpHezAkPPBdj5hp4HHUhIumUkdXWo0JiHdFKYo76PXgBh9hHaCrIp1
+	5amyjA8zGbhjJos3zU0OPLQ/9zHTTkzIfirziH5PjNp8zLFsKkGvLZ7EHcG+keYuxLC7qqEtjvY
+	Qj1Cy/kFdQhLDU5aLrBS2S5Tr0KJ+qJ6O9GgjlaUihOtpG1smAj5ckxM9dZNKREi5VZMk5UflZs
+	kn9Rd8VM8rYjIAeMZz0gQHe5WTg6czAL1HTauvmurRvyeVegiQy1r239NWQSEztfwuQs9fBYaTm
+	ia3fZmxLhp+xFewCspgbKSFebZiFnZx5cpzqCScDYtqp8N1R1vYAj/pnQj7IQS7D7yDwT+3phRR
+	JAQaG4vVAEQPxh5ENDIpaD+qziP6F3w==
+X-Received: by 2002:a17:90b:3b49:b0:32d:ed8d:722b with SMTP id 98e67ed59e1d1-32ded8d7605mr1011419a91.2.1757677583422;
+        Fri, 12 Sep 2025 04:46:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHOO3x9HBu+6RQUyafNlV1VtHCgdpyhgYvQ2Af2AZB8bDMWIdgsW8DZPmtsiC8C+rNUWBKRqA==
+X-Received: by 2002:a17:90b:3b49:b0:32d:ed8d:722b with SMTP id 98e67ed59e1d1-32ded8d7605mr1011388a91.2.1757677582972;
+        Fri, 12 Sep 2025 04:46:22 -0700 (PDT)
+Received: from [10.133.33.174] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a3aa9234sm4626367a12.54.2025.09.12.04.46.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 04:46:22 -0700 (PDT)
+Message-ID: <d08bd288-6aa2-4a7b-9424-0e2e220f1c1e@oss.qualcomm.com>
+Date: Fri, 12 Sep 2025 19:46:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 04/13] phy: qcom: qmp-usbc: Add QCS615 DP PHY
+ configuration and init data
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+ <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        fange.zhang@oss.qualcomm.com, yongxing.mou@oss.qualcomm.com,
+        li.liu@oss.qualcomm.com, tingwei.zhang@oss.qualcomm.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+References: <20250911-add-displayport-support-for-qcs615-platform-v4-0-2702bdda14ed@oss.qualcomm.com>
+ <20250911-add-displayport-support-for-qcs615-platform-v4-4-2702bdda14ed@oss.qualcomm.com>
+ <3ihzpsmf3btzeltxggdnbheji6bdeornravua76adw5dhotztu@e3fca2prl45r>
+ <e974ffc4-9bcf-4de3-ac09-76b34b47cf5b@oss.qualcomm.com>
+ <274b27e6-ef43-4597-a7d6-1f948f2e6c5b@oss.qualcomm.com>
+From: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+In-Reply-To: <274b27e6-ef43-4597-a7d6-1f948f2e6c5b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+X-Authority-Analysis: v=2.4 cv=aPDwqa9m c=1 sm=1 tr=0 ts=68c40810 cx=c_pps
+ a=RP+M6JBNLl+fLTcSJhASfg==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=EUspDBNiAAAA:8 a=1iQPH-MNloaYeFAjbucA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=iS9zxrgQBfv6-_F4QbHw:22
+X-Proofpoint-GUID: 77bT_ggTh6YA9K5hD7RwxgXLtdogk_H3
+X-Proofpoint-ORIG-GUID: 77bT_ggTh6YA9K5hD7RwxgXLtdogk_H3
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDA0MCBTYWx0ZWRfX9IISkTmcM2aW
+ VQoSJg0iQrguOlUm+uHz+EK/GrRr0QdxICU3WM9q8kVlGoGu4Dxxrm2gwDGsWbwNF9In+GiKD9R
+ Rk25NKXavCqo7EKdrtOPvkIRX2e75b+qoH5ALVKXjF4EIOei5m/rkyyk4P85UuS4DuJoNaGjdQh
+ if/Nf/3TsbJWf8LF80egXONcM2KsQM1p6UrWexVpP8dJ+17xZCdCV/NlAyIPgiwoGfxGCgh7yg9
+ zLDH3RZtUAnwys0lHysH75mYg0Jufzw6D5zhiUIEH8SmkMsH3MoCRPAoYFVPXZfn4JVy2yfkhVS
+ z/nGuUpbUDk+cKBq/t6+ExjAIzKOSPu/vTnIQZ1c1Xd+d3+SIz4jH7xumnLIQE1M4Zy+Ao8OU0Y
+ 72ZYIEGX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509110040
 
-The sphinx-pre-install code has some logic to deal with Python
-version, which ensures that a minimal version will be enforced
-for documentation build logic.
 
-Move it to a separate library to allow re-using its code.
+On 9/12/2025 4:46 PM, Konrad Dybcio wrote:
+> On 9/12/25 4:15 AM, Xiangxu Yin wrote:
+>> On 9/12/2025 9:24 AM, Dmitry Baryshkov wrote:
+>>> On Thu, Sep 11, 2025 at 10:55:01PM +0800, Xiangxu Yin wrote:
+>>>> Introduce QCS615 hardware-specific configuration for DP PHY mode,
+>>>> including register offsets, initialization tables, voltage swing
+>>>> and pre-emphasis settings.
+>>>>
+>>>> Add qcs615-qmp-usb3-dp-phy compatible string to associate QCS615
+>>>> platform with its USB/DP switchable PHY configuration.
+>>> This should be the last patch in the series: once you add the compatible
+>>> string, it is expected that it works.
+>>>
+>>> The patch LGTM.
+>>
+>> In v3[12/14], the compatible string was placed in the last, and you remind me
+>> will trigger unused warnings for the earlier-defined qcs615_usb3dp_phy_cfg.
+>> So I merged them in v4. 
+> The intention is that you can do all the preparing first (which doesn't need
+> to include an assignment to e.g. DP tables, since the code operates on a
+> pointer if it's non-null), and you can push all the platform additions at the
+> end (both tables and compatible in one patch)
+>
+> Konrad
 
-No functional changes.
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- tools/docs/lib/python_version.py | 133 +++++++++++++++++++++++++++++++
- tools/docs/sphinx-pre-install    | 120 +++-------------------------
- 2 files changed, 146 insertions(+), 107 deletions(-)
- create mode 100644 tools/docs/lib/python_version.py
+Ok, then merging 04 and 07 with the compatible in the last patch
+looks appropriate, will update in next patch.
 
-diff --git a/tools/docs/lib/python_version.py b/tools/docs/lib/python_version.py
-new file mode 100644
-index 000000000000..0519d524e547
---- /dev/null
-+++ b/tools/docs/lib/python_version.py
-@@ -0,0 +1,133 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0-or-later
-+# Copyright (c) 2017-2025 Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-+
-+"""
-+Handle Python version check logic.
-+
-+Not all Python versions are supported by scripts. Yet, on some cases,
-+like during documentation build, a newer version of python could be
-+available.
-+
-+This class allows checking if the minimal requirements are followed.
-+
-+Better than that, PythonVersion.check_python() not only checks the minimal
-+requirements, but it automatically switches to a the newest available
-+Python version if present.
-+
-+"""
-+
-+import os
-+import re
-+import subprocess
-+import sys
-+
-+from glob import glob
-+
-+class PythonVersion:
-+    """
-+    Ancillary methods that checks for missing dependencies for different
-+    types of types, like binaries, python modules, rpm deps, etc.
-+    """
-+
-+    def __init__(self, version):
-+        """�nitialize self.version tuple from a version string"""
-+        self.version = self.parse_version(version)
-+
-+    @staticmethod
-+    def parse_version(version):
-+        """Convert a major.minor.patch version into a tuple"""
-+        return tuple(int(x) for x in version.split("."))
-+
-+    @staticmethod
-+    def ver_str(version):
-+        """Returns a version tuple as major.minor.patch"""
-+        return ".".join([str(x) for x in version])
-+
-+    def __str__(self):
-+        """Returns a version tuple as major.minor.patch from self.version"""
-+        return self.ver_str(self.version)
-+
-+    @staticmethod
-+    def get_python_version(cmd):
-+        """
-+        Get python version from a Python binary. As we need to detect if
-+        are out there newer python binaries, we can't rely on sys.release here.
-+        """
-+
-+        kwargs = {}
-+        if sys.version_info < (3, 7):
-+            kwargs['universal_newlines'] = True
-+        else:
-+            kwargs['text'] = True
-+
-+        result = subprocess.run([cmd, "--version"],
-+                                stdout = subprocess.PIPE,
-+                                stderr = subprocess.PIPE,
-+                                **kwargs, check=False)
-+
-+        version = result.stdout.strip()
-+
-+        match = re.search(r"(\d+\.\d+\.\d+)", version)
-+        if match:
-+            return PythonVersion.parse_version(match.group(1))
-+
-+        print(f"Can't parse version {version}")
-+        return (0, 0, 0)
-+
-+    @staticmethod
-+    def find_python(min_version):
-+        """
-+        Detect if are out there any python 3.xy version newer than the
-+        current one.
-+
-+        Note: this routine is limited to up to 2 digits for python3. We
-+        may need to update it one day, hopefully on a distant future.
-+        """
-+        patterns = [
-+            "python3.[0-9]",
-+            "python3.[0-9][0-9]",
-+        ]
-+
-+        # Seek for a python binary newer than min_version
-+        for path in os.getenv("PATH", "").split(":"):
-+            for pattern in patterns:
-+                for cmd in glob(os.path.join(path, pattern)):
-+                    if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
-+                        version = PythonVersion.get_python_version(cmd)
-+                        if version >= min_version:
-+                            return cmd
-+
-+        return None
-+
-+    @staticmethod
-+    def check_python(min_version):
-+        """
-+        Check if the current python binary satisfies our minimal requirement
-+        for Sphinx build. If not, re-run with a newer version if found.
-+        """
-+        cur_ver = sys.version_info[:3]
-+        if cur_ver >= min_version:
-+            ver = PythonVersion.ver_str(cur_ver)
-+            print(f"Python version: {ver}")
-+
-+            return
-+
-+        python_ver = PythonVersion.ver_str(cur_ver)
-+
-+        new_python_cmd = PythonVersion.find_python(min_version)
-+        if not new_python_cmd:
-+            print(f"ERROR: Python version {python_ver} is not spported anymore\n")
-+            print("       Can't find a new version. This script may fail")
-+            return
-+
-+        # Restart script using the newer version
-+        script_path = os.path.abspath(sys.argv[0])
-+        args = [new_python_cmd, script_path] + sys.argv[1:]
-+
-+        print(f"Python {python_ver} not supported. Changing to {new_python_cmd}")
-+
-+        try:
-+            os.execv(new_python_cmd, args)
-+        except OSError as e:
-+            sys.exit(f"Failed to restart with {new_python_cmd}: {e}")
-diff --git a/tools/docs/sphinx-pre-install b/tools/docs/sphinx-pre-install
-index 954ed3dc0645..d6d673b7945c 100755
---- a/tools/docs/sphinx-pre-install
-+++ b/tools/docs/sphinx-pre-install
-@@ -32,20 +32,10 @@ import subprocess
- import sys
- from glob import glob
- 
-+from lib.python_version import PythonVersion
- 
--def parse_version(version):
--    """Convert a major.minor.patch version into a tuple"""
--    return tuple(int(x) for x in version.split("."))
--
--
--def ver_str(version):
--    """Returns a version tuple as major.minor.patch"""
--
--    return ".".join([str(x) for x in version])
--
--
--RECOMMENDED_VERSION = parse_version("3.4.3")
--MIN_PYTHON_VERSION = parse_version("3.7")
-+RECOMMENDED_VERSION = PythonVersion("3.4.3").version
-+MIN_PYTHON_VERSION = PythonVersion("3.7").version
- 
- 
- class DepManager:
-@@ -235,95 +225,11 @@ class AncillaryMethods:
- 
-         return None
- 
--    @staticmethod
--    def get_python_version(cmd):
--        """
--        Get python version from a Python binary. As we need to detect if
--        are out there newer python binaries, we can't rely on sys.release here.
--        """
--
--        result = SphinxDependencyChecker.run([cmd, "--version"],
--                                            capture_output=True, text=True)
--        version = result.stdout.strip()
--
--        match = re.search(r"(\d+\.\d+\.\d+)", version)
--        if match:
--            return parse_version(match.group(1))
--
--        print(f"Can't parse version {version}")
--        return (0, 0, 0)
--
--    @staticmethod
--    def find_python():
--        """
--        Detect if are out there any python 3.xy version newer than the
--        current one.
--
--        Note: this routine is limited to up to 2 digits for python3. We
--        may need to update it one day, hopefully on a distant future.
--        """
--        patterns = [
--            "python3.[0-9]",
--            "python3.[0-9][0-9]",
--        ]
--
--        # Seek for a python binary newer than MIN_PYTHON_VERSION
--        for path in os.getenv("PATH", "").split(":"):
--            for pattern in patterns:
--                for cmd in glob(os.path.join(path, pattern)):
--                    if os.path.isfile(cmd) and os.access(cmd, os.X_OK):
--                        version = SphinxDependencyChecker.get_python_version(cmd)
--                        if version >= MIN_PYTHON_VERSION:
--                            return cmd
--
--    @staticmethod
--    def check_python():
--        """
--        Check if the current python binary satisfies our minimal requirement
--        for Sphinx build. If not, re-run with a newer version if found.
--        """
--        cur_ver = sys.version_info[:3]
--        if cur_ver >= MIN_PYTHON_VERSION:
--            ver = ver_str(cur_ver)
--            print(f"Python version: {ver}")
--
--            # This could be useful for debugging purposes
--            if SphinxDependencyChecker.which("docutils"):
--                result = SphinxDependencyChecker.run(["docutils", "--version"],
--                                                    capture_output=True, text=True)
--                ver = result.stdout.strip()
--                match = re.search(r"(\d+\.\d+\.\d+)", ver)
--                if match:
--                    ver = match.group(1)
--
--                print(f"Docutils version: {ver}")
--
--            return
--
--        python_ver = ver_str(cur_ver)
--
--        new_python_cmd = SphinxDependencyChecker.find_python()
--        if not new_python_cmd:
--            print(f"ERROR: Python version {python_ver} is not spported anymore\n")
--            print("       Can't find a new version. This script may fail")
--            return
--
--        # Restart script using the newer version
--        script_path = os.path.abspath(sys.argv[0])
--        args = [new_python_cmd, script_path] + sys.argv[1:]
--
--        print(f"Python {python_ver} not supported. Changing to {new_python_cmd}")
--
--        try:
--            os.execv(new_python_cmd, args)
--        except OSError as e:
--            sys.exit(f"Failed to restart with {new_python_cmd}: {e}")
--
-     @staticmethod
-     def run(*args, **kwargs):
-         """
-         Excecute a command, hiding its output by default.
--        Preserve comatibility with older Python versions.
-+        Preserve compatibility with older Python versions.
-         """
- 
-         capture_output = kwargs.pop('capture_output', False)
-@@ -527,11 +433,11 @@ class MissingCheckers(AncillaryMethods):
-         for line in result.stdout.split("\n"):
-             match = re.match(r"^sphinx-build\s+([\d\.]+)(?:\+(?:/[\da-f]+)|b\d+)?\s*$", line)
-             if match:
--                return parse_version(match.group(1))
-+                return PythonVersion.parse_version(match.group(1))
- 
-             match = re.match(r"^Sphinx.*\s+([\d\.]+)\s*$", line)
-             if match:
--                return parse_version(match.group(1))
-+                return PythonVersion.parse_version(match.group(1))
- 
-     def check_sphinx(self, conf):
-         """
-@@ -542,7 +448,7 @@ class MissingCheckers(AncillaryMethods):
-                 for line in f:
-                     match = re.match(r"^\s*needs_sphinx\s*=\s*[\'\"]([\d\.]+)[\'\"]", line)
-                     if match:
--                        self.min_version = parse_version(match.group(1))
-+                        self.min_version = PythonVersion.parse_version(match.group(1))
-                         break
-         except IOError:
-             sys.exit(f"Can't open {conf}")
-@@ -562,8 +468,8 @@ class MissingCheckers(AncillaryMethods):
-             sys.exit(f"{sphinx} didn't return its version")
- 
-         if self.cur_version < self.min_version:
--            curver = ver_str(self.cur_version)
--            minver = ver_str(self.min_version)
-+            curver = PythonVersion.ver_str(self.cur_version)
-+            minver = PythonVersion.ver_str(self.min_version)
- 
-             print(f"ERROR: Sphinx version is {curver}. It should be >= {minver}")
-             self.need_sphinx = 1
-@@ -1304,7 +1210,7 @@ class SphinxDependencyChecker(MissingCheckers):
-             else:
-                 if self.need_sphinx and ver >= self.min_version:
-                     return (f, ver)
--                elif parse_version(ver) > self.cur_version:
-+                elif PythonVersion.parse_version(ver) > self.cur_version:
-                     return (f, ver)
- 
-         return ("", ver)
-@@ -1411,7 +1317,7 @@ class SphinxDependencyChecker(MissingCheckers):
-             return
- 
-         if self.latest_avail_ver:
--            latest_avail_ver = ver_str(self.latest_avail_ver)
-+            latest_avail_ver = PythonVersion.ver_str(self.latest_avail_ver)
- 
-         if not self.need_sphinx:
-             # sphinx-build is present and its version is >= $min_version
-@@ -1507,7 +1413,7 @@ class SphinxDependencyChecker(MissingCheckers):
-         else:
-             print("Unknown OS")
-         if self.cur_version != (0, 0, 0):
--            ver = ver_str(self.cur_version)
-+            ver = PythonVersion.ver_str(self.cur_version)
-             print(f"Sphinx version: {ver}\n")
- 
-         # Check the type of virtual env, depending on Python version
-@@ -1613,7 +1519,7 @@ def main():
- 
-     checker = SphinxDependencyChecker(args)
- 
--    checker.check_python()
-+    PythonVersion.check_python(MIN_PYTHON_VERSION)
-     checker.check_needs()
- 
- # Call main if not used as module
--- 
-2.51.0
 
+>> If move this patch to the end, patch v4[07/13] will hit unused warnings due to
+>> missing references. Should I squash patches 04 & 07 and move them to the end?
+>> I'm concerned the resulting patch might be too large.
+>>
+>>
+>>>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+>>>> ---
+>>>>  drivers/phy/qualcomm/phy-qcom-qmp-usbc.c | 141 +++++++++++++++++++++++++++++++
+>>>>  1 file changed, 141 insertions(+)
+>>>>
 
