@@ -1,122 +1,190 @@
-Return-Path: <linux-kernel+bounces-814330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617D2B55282
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:59:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69846B55285
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F816AA452E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C6B81CC74E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25A53128D1;
-	Fri, 12 Sep 2025 14:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718BD313E39;
+	Fri, 12 Sep 2025 14:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vXURIzoL"
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmoCwZSy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0CD311C03
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF2D256C9B;
+	Fri, 12 Sep 2025 14:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689127; cv=none; b=enWGGtb/kr+Ad6MJkHYEfUJI8Twfkl3slClGm7ldR639RmBJRqkhum4ERLHjWiu6qQE2vhbf1+L3+F8zaDkten/UgtNHcxzD907Fr4OVn7/IaOt3ygzgNYvEsAUhmUnYTAoMSneXK9+U48l+yoOKSBbnQOu/iuoPN1JdxfNkqHk=
+	t=1757689138; cv=none; b=gsbIJ0+gPRjxn7aRGtK3ENOwhojqsyXefuc5Ks5quKRDZRLzPJ282si1ijXj2BShVu6FS9rc3s/6yVS1cnM31l9R1IxCScceuuNIdgxjgNBIDcKySLHMclauJvR92Pci8LFYo8yg2pHED16nz4/xZjNsnCa5b0Nzm+tJdD8YWPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689127; c=relaxed/simple;
-	bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UrQ/vflQvQRddUedZhDq4LRfA7HrsVnZhtTQdk0zssj0BJh/m7ze4aaTfFhw/uZUXQxw4T7U7g4uKTUvyL10Y2SCAw81AUPLFZ+p8SxwaicsCin2sfwLG7YIsUude3uKjt8qObtcpLVbhpB5Ouw60MHpGfjW5oZqjYkG83QqUP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vXURIzoL; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-30cce872d9cso1505145fac.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:58:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757689124; x=1758293924; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
-        b=vXURIzoL6WOeHy68epWap3ErmNrC29xtLmfmt/5OszeFvCcBTXd9+e7funIXOiH1WE
-         jQUlydwxAqRRUSzjNPsX5gHuXQRClfjIzGBhA1yVFh8Wx4E/I2eHgAZNB8gnsJJlJLrg
-         qpBiAAef9FKGxqxnPsIVZKvBhTOvvs8z3RgusIBTBMpSwtYTpf/8kKvzhTrifkGV7O4p
-         9AHcCNNXS6KaIAkWvORPqfSTlRn1bEMfa6TjjUBZgHMd6weNK2Z3E1BXVucskAbhRmzp
-         vShp0Ug9U0wvKqbVBEcUFK5PfpEtk3+tUyoDXK1MFVj+zJWQSu9R6TfhZ1BRbhdWdqog
-         wv5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757689124; x=1758293924;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
-        b=LY3YzBvFQF93Sqa9aVrqt+G8o+5FPVw3nKxEKJPFXBCgsOGB5kFWZAkNc4S7U98cd0
-         heRdmV7CV/AkJr9wvpdUI/E9kOln5xX8yNlKmNgWJkhj8ipkRFx7iKpp/zyNtj8+w0J/
-         Qjiv6O+Tb/KAEkE4yzY7BPcDYaCRXP/usQQs7Ncmgdhb5Enr25FBLX8tVvS8nrpmtTq1
-         6LSyuLjunu+sDwWiOy7vH4WDnGbjT8uC2Lj4XgxZ5HNkNkx6EF/2sWQaCRfGeybXRWD3
-         aOP6o3JV2zkW2RHsuhNrCUlMT93aJC4qQNWHFym4JFIpFsyDPYboBD20e0YsmZ04RMzJ
-         mleg==
-X-Forwarded-Encrypted: i=1; AJvYcCU870kDzJHbDPcvhYUUBceh1WBYaFqIWZq2ok/TLYWBsor61nlpjR/bvEwwbGGL+/70xefe0WwZUgCvyG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7+4psApSkiU8AvwBZNOAP75ui5vjKGUM4QD0hGOCp+3ZV5N2K
-	KmE6T53KnbyH7NzdoiuAZpH3wSICUC6uMIoTwSFeBYDWO/eadPIJsvZo4CqwZKv8KTbIMbkeaxU
-	zswsq5Nx0IEQXGxCtft8Fu1MfLsfz6D8Ki4bvBxzX2A==
-X-Gm-Gg: ASbGncup5sV75vFWniBFwNVYVWODoxEHlw0eFO1HVHoyGziLYMVd7IWROK+EMhV2ASc
-	EhP+Jjapp7Ghuq4s8kKQLG76VSRSR52valInGWY/9CqEkyjr3O7vQ2DQ+eq8fiQHXIscjJ4o0vl
-	Abb2EIaDPqgdKmPFkUAl5j2uRU1LhxdzHQCXVgadNMOVpLQRDJ3j7s0aBi3vapbftnaed8AKnSU
-	mPhuO6GSQR/BI91yQ==
-X-Google-Smtp-Source: AGHT+IHAJ42BGc4DV3+A7HRXSgNpI4Ckz1R2zEcxWqCWvdlWoM2kBfvVDgKpueHQzqgzBraygif8YB0P1rDNI9gE4qo=
-X-Received: by 2002:a05:6870:b907:b0:315:3ef4:eecd with SMTP id
- 586e51a60fabf-32e553a280fmr1618278fac.17.1757689123738; Fri, 12 Sep 2025
- 07:58:43 -0700 (PDT)
+	s=arc-20240116; t=1757689138; c=relaxed/simple;
+	bh=IbGGPnja3Pw/pYEQhfDuD63zXjf7UQWXx6Xegr9kjxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxIkQRRv58lIQIPXEOMX4L9xaNCVV323OYpEhHNbK5DYrV6+q7Uym78JUY1I5sqVMCx8EyYb+MqlYx/pquSJ959XYP+QPokNx1N2OKy9BvTS8R49VdDPysrc0cXQzc0M2Gefvs5Bv6AW3+djLEvSeAN6utRJGqs0gIQ0W9gAM0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmoCwZSy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15020C4CEF1;
+	Fri, 12 Sep 2025 14:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757689138;
+	bh=IbGGPnja3Pw/pYEQhfDuD63zXjf7UQWXx6Xegr9kjxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gmoCwZSyKuiswNLhlwM1xmuN0EFmGVe5qDdB4cRTF6w9iwM69JKM9SkpYG3WOeqwh
+	 Iimohm3llK0DUYa/PkTBQyCS7gwRS5WkNpMpxuGdYTm6GxzebzX6dlmzxtX/lwoZ/w
+	 3m8vf7c5SPfJi5dShXYXdATfj3GLby6eO+YydZXEc94NDFmDkR898Q/G2urPB8mdwt
+	 Y5FaN9UwAAqgURFjfJf2YMknHmJbSpDGajI+s8o7iSDLl68By8ZPoWpUV08U9RSYSd
+	 SyiIcvYb506GbNHnHDiZdPvQmE5mq2m9pvCEtFYSUw9SNng4HbChwF5AFDc+UnBnlq
+	 oqNbTixfsob2Q==
+Date: Fri, 12 Sep 2025 07:58:57 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Luis Henriques <luis@igalia.com>,
+	Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20250912145857.GQ8117@frogsfrogsfrogs>
+References: <8734afp0ct.fsf@igalia.com>
+ <20250729233854.GV2672029@frogsfrogsfrogs>
+ <20250731130458.GE273706@mit.edu>
+ <20250731173858.GE2672029@frogsfrogsfrogs>
+ <8734abgxfl.fsf@igalia.com>
+ <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
+ <CAOQ4uxg1zXPTB1_pFB=hyqjAGjk=AC34qP1k9C043otxcwqJGg@mail.gmail.com>
+ <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
-In-Reply-To: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 12 Sep 2025 15:58:32 +0100
-X-Gm-Features: Ac12FXwxoqn3zsYfC0T8IDf20S9zDpzsxcpDfKlZfpZdk1czNZgS3-vJNTlzLBQ
-Message-ID: <CADrjBPo8L=P2bHKTFvYOj7i0u6pA7vs32d3y+4Ho+82Z1mRE_Q@mail.gmail.com>
-Subject: Re: [PATCH v4 0/5] exynos-acpm: add DVFS protocol and clock driver
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	willmcvicker@google.com, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2e57be4f-e61b-4a37-832d-14bdea315126@bsbernd.com>
 
-On Mon, 8 Sept 2025 at 14:13, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
->
-> Dependencies description:
-> All patches should go through the Samsung SoC tree.
-> The acpm-clk driver (#4) depends on the ACPM DVFS ops (#2).
-> If the clock subsystem needs to merge the new clock driver, it will
-> need an immutable tag with the 2 patches.
-> No dependecies for #1, #3, #5.
->
-> The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
-> are variable and index based. These clocks don't provide an entire range
-> of values between the limits but only discrete points within the range.
-> The firmware also manages the voltage scaling appropriately with the
-> clock scaling. Make the ACPM node a clock provider.
->
-> Add support for the ACPM DVFS protocol. It translates clock frequency
-> requests to messages that can be interpreted by the ACPM firmware.
-> Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
->
+On Fri, Sep 12, 2025 at 02:29:03PM +0200, Bernd Schubert wrote:
+> 
+> 
+> On 9/12/25 13:41, Amir Goldstein wrote:
+> > On Fri, Sep 12, 2025 at 12:31 PM Bernd Schubert <bernd@bsbernd.com> wrote:
+> >>
+> >>
+> >>
+> >> On 8/1/25 12:15, Luis Henriques wrote:
+> >>> On Thu, Jul 31 2025, Darrick J. Wong wrote:
+> >>>
+> >>>> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
+> >>>>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
+> >>>>>>
+> >>>>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> >>>>>> could restart itself.  It's unclear if doing so will actually enable us
+> >>>>>> to clear the condition that caused the failure in the first place, but I
+> >>>>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> >>>>>> aren't totally crazy.
+> >>>>>
+> >>>>> I'm trying to understand what the failure scenario is here.  Is this
+> >>>>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
+> >>>>> is supposed to happen with respect to open files, metadata and data
+> >>>>> modifications which were in transit, etc.?  Sure, fuse2fs could run
+> >>>>> e2fsck -fy, but if there are dirty inode on the system, that's going
+> >>>>> potentally to be out of sync, right?
+> >>>>>
+> >>>>> What are the recovery semantics that we hope to be able to provide?
+> >>>>
+> >>>> <echoing what we said on the ext4 call this morning>
+> >>>>
+> >>>> With iomap, most of the dirty state is in the kernel, so I think the new
+> >>>> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
+> >>>> would initiate GETATTR requests on all the cached inodes to validate
+> >>>> that they still exist; and then resend all the unacknowledged requests
+> >>>> that were pending at the time.  It might be the case that you have to
+> >>>> that in the reverse order; I only know enough about the design of fuse
+> >>>> to suspect that to be true.
+> >>>>
+> >>>> Anyhow once those are complete, I think we can resume operations with
+> >>>> the surviving inodes.  The ones that fail the GETATTR revalidation are
+> >>>> fuse_make_bad'd, which effectively revokes them.
+> >>>
+> >>> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
+> >>> but probably GETATTR is a better option.
+> >>>
+> >>> So, are you currently working on any of this?  Are you implementing this
+> >>> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
+> >>> look at fuse2fs too.
+> >>
+> >> Sorry for joining the discussion late, I was totally occupied, day and
+> >> night. Added Kevin to CC, who is going to work on recovery on our
+> >> DDN side.
+> >>
+> >> Issue with GETATTR and LOOKUP is that they need a path, but on fuse
+> >> server restart we want kernel to recover inodes and their lookup count.
+> >> Now inode recovery might be hard, because we currently only have a
+> >> 64-bit node-id - which is used my most fuse application as memory
+> >> pointer.
+> >>
+> >> As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
+> >> outstanding requests. And that ends up in most cases in sending requests
+> >> with invalid node-IDs, that are casted and might provoke random memory
+> >> access on restart. Kind of the same issue why fuse nfs export or
+> >> open_by_handle_at doesn't work well right now.
+> >>
+> >> So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
+> >> would not return a 64-bit node ID, but a max 128 byte file handle.
+> >> And then FUSE_REVALIDATE_FH on server restart.
+> >> The file handles could be stored into the fuse inode and also used for
+> >> NFS export.
+> >>
+> >> I *think* Amir had a similar idea, but I don't find the link quickly.
+> >> Adding Amir to CC.
+> > 
+> > Or maybe it was Miklos' idea. Hard to keep track of this rolling thread:
+> > https://lore.kernel.org/linux-fsdevel/CAJfpegvNZ6Z7uhuTdQ6quBaTOYNkAP8W_4yUY4L2JRAEKxEwOQ@mail.gmail.com/
+> 
+> Thanks for the reference Amir! I even had been in that thread.
+> 
+> > 
+> >>
+> >> Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
+> >> will iterate over all superblock inodes and mark them with fuse_make_bad.
+> >> Any objections against that?
+
+What if you actually /can/ reuse a nodeid after a restart?  Consider
+fuse4fs, where the nodeid is the on-disk inode number.  After a restart,
+you can reconnect the fuse_inode to the ondisk inode, assuming recovery
+didn't delete it, obviously.
+
+I suppose you could just ask for refreshed stat information and either
+the server gives it to you and the fuse_inode lives; or the server
+returns ENOENT and then we mark it bad.  But I'd have to see code
+patches to form a real opinion.
+
+It's very nice of fuse to have implemented revoke() ;)
+
+--D
+
+> > IDK, it seems much more ugly than implementing LOOKUP_HANDLE
+> > and I am not sure that LOOKUP_HANDLE is that hard to implement, when
+> > comparing to this alternative.
+> > 
+> > I mean a restartable server is going to be a new implementation anyway, right?
+> > So it makes sense to start with a cleaner and more adequate protocol,
+> > does it not?
+> 
+> Definitely, if we agree on the approach on LOOKUP_HANDLE and using it
+> for recovery, adding that op seems simple. And reading through the
+> thread you had posted above, just the implementation was missing.
+> So let's go ahead to do this approach.
+> 
+> 
 > Thanks,
-> ta
->
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
-
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-Tested-by: Peter Griffin <peter.griffin@linaro.org> # on gs101-oriole
+> Bernd
+> 
+> 
+> 
 
