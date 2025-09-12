@@ -1,118 +1,99 @@
-Return-Path: <linux-kernel+bounces-814087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A89EB54F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:15:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F29FB54F08
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D135A2209
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097607C565B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA67F30E0FC;
-	Fri, 12 Sep 2025 13:14:18 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6DE30DEBC;
+	Fri, 12 Sep 2025 13:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXKD3EoA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47CB230DEBC;
-	Fri, 12 Sep 2025 13:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8736D30E852
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:14:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757682858; cv=none; b=dmfmCJ6sKLkXyRDGXKtz8e+t5ppaLacqzBVvCqSyoGx3rzO/lXQNaOHLaAzkUIKo1hohld+a35razu+H2Mnc3RzKEiNR2/Zv27hd/35rwHNIZ7aVHMpxufD2XaJCnONQnhEtG4K/DyGOWXeMlJy9rqaskVNZAgH9WVB45U7stqo=
+	t=1757682859; cv=none; b=pWmuXvP+DKAHkHa+CdVaoNq4aJfYPydw7q/Wc0j1kQZssu+Bch50rTOZCLI4qCDJiLLCz02tOeJI9g9ZbQw7gTMd+HZgMpcDlzEwwDD7uz9zIg5YkT/mZN28yoODUYPfuovXb9galNqVDuwaDU35L+BWAFv3TTajfR+Rsa4n9wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757682858; c=relaxed/simple;
-	bh=6e+sVle9MifWvb6/53/ryU72tPHkEfNKBpFNkBJjL+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JzDhU4ce0Xm+6bskW9P3PjdCtiVvTQwHTo4vp2RApnCuj+C9tMiomilP7psWzWLGj9CRzt/G5ubD1ieTji84XNdw8MqzzreSv8inrJiAmy3ea2V+h+hdT1OvoOvrOSRTPqBoqW/ekjrOrYAdB77njyORgpu4N2Uzkm0xjYAUKR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id D57E32C09E2B;
-	Fri, 12 Sep 2025 15:14:06 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id ABA63121533; Fri, 12 Sep 2025 15:14:06 +0200 (CEST)
-Date: Fri, 12 Sep 2025 15:14:06 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: wufan@kernel.org
-Cc: dhowells@redhat.com, ignat@cloudflare.com, herbert@gondor.apana.org.au,
-	davem@davemloft.net, jarkko@kernel.org, zohar@linux.ibm.com,
-	eric.snowberg@oracle.com, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KEYS: X.509: Fix Basic Constraints CA flag parsing
-Message-ID: <aMQcnoETIt4t4Tqz@wunner.de>
-References: <20250911225356.2678-1-wufan@kernel.org>
+	s=arc-20240116; t=1757682859; c=relaxed/simple;
+	bh=evlpQzRLcxJYz7A4vHQ6cL7wOcbGjnT2zO6lvyTzayw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sxZr80yU6KB6utgwWM/XeiPZgYqZ+avMzaQ5D5jxhHxIwYrYorpGgtD8AsMD0VW+VC/eQkE+J20Q1DSS9IAKjb2gbsbJ6slfQxImp8A94JCTCWhumCQ+7tYpgQbjqEVCyaJeY1SPo+lvyYhm+RKgSwVTb7h6Y3/TCaL/iu8PCNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXKD3EoA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5724C4CEF4;
+	Fri, 12 Sep 2025 13:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757682859;
+	bh=evlpQzRLcxJYz7A4vHQ6cL7wOcbGjnT2zO6lvyTzayw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RXKD3EoA/jw9e4AiWt895FwnCGVafUUptYdxExGu1nzdvFkrXggGwppXqT7t9y1EF
+	 WY/rJJG/jl5ia4ZolmTlspgI6wLukGqGbnrtaFdH2jCMHXN45dcFGtR6Yn53qbj2pm
+	 ESSIUOenBb3uzcP8+KkM6i9Viz6U5Te1SR1UNsGgPhGm1fNGqyjmrIYmsIUo9rBW7r
+	 EXHv6vduR1YLIITa/9jkrf4ibRPVVkxwlBTKlb3kuwVHtLsd/OlJM26HQVZWoMLoJn
+	 p9u+6SCjZCNyD7a6wdJiw0WktWti4KMbL6v71DPcn84EzTpc3jv93iWVoNs/nbYwcK
+	 m9STvRWmouF1Q==
+From: srini@kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Srinivas Kandagatla <srini@kernel.org>
+Subject: [PATCH 0/5] nvmem: patches for 6.18
+Date: Fri, 12 Sep 2025 14:14:10 +0100
+Message-ID: <20250912131415.303407-1-srini@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911225356.2678-1-wufan@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 11, 2025 at 10:53:56PM +0000, wufan@kernel.org wrote:
-> Fix the X.509 Basic Constraints CA flag parsing to correctly handle
-> the ASN.1 DER encoded structure. The parser was incorrectly treating
-> the length field as the boolean value.
-> 
-> According to ITU-T X.690 section 8.2, a BOOLEAN is encoded as:
-> 
-> Tag (0x01), Length (0x01), Value (0x00 for FALSE, non-zero for TRUE)
-> 
-> The basicConstraints extension with CA:TRUE is encoded as:
-> 
->   SEQUENCE (0x30) | Length | BOOLEAN (0x01) | Length (0x01) | Value (0xFF)
->                              ^-- v[2]         ^-- v[3]        ^-- v[4]
-> 
-> The parser was checking v[3] (the length field, always 0x01) instead
-> of v[4] (the actual boolean value, 0xFF for TRUE).
+From: Srinivas Kandagatla <srini@kernel.org>
 
-Excellent catch!  How did you find it?
+Hi Greg,
 
-> +++ b/crypto/asymmetric_keys/x509_cert_parser.c
-> @@ -623,7 +625,7 @@ int x509_process_extension(void *context, size_t hdrlen,
->  		if (v[0] != (ASN1_CONS_BIT | ASN1_SEQ))
->  			return -EBADMSG;
->  		if (vlen < 2)
->  			return -EBADMSG;
->  		if (v[1] != vlen - 2)
->  			return -EBADMSG;
-> -		if (vlen >= 4 && v[1] != 0 && v[2] == ASN1_BOOL && v[3] == 1)
-> +		if (vlen >= 5 && v[1] != 0 && v[2] == ASN1_BOOL && v[3] == 1 && v[4] != 0)
->  			ctx->cert->pub->key_eflags |= 1 << KEY_EFLAG_CA;
->  		return 0;
->  	}
+Here are few nvmem patches for 6.18, Could you please queue
+these for 6.18.
 
-Your patch is correct, however the conditions ...
-
-  vlen >= 5 && v[1] != 0 && v[2] == ASN1_BOOL && v[3] == 1
-
-... all check well-formedness of the BasicConstraints object,
-so it seems if any of those checks fails, -EBADMSG should be returned.
-
-The check "if (vlen < 2)" could be changed to "if (vlen < 5)" because
-5 bytes seems to be the minimum size of a well-formed BasicConstraints
-object.  Then the "vlen >= 5" and "v[1] != 0" checks can be dropped.
-
-Up to you whether to respin this patch or make those changes in
-a separate patch on top.  And up to Herbert whether to take this
-patch as is or wait for a respin.
-
-Reviewed-by: Lukas Wunner <lukas@wunner.de>
-
-I note that parsing the v[] array is quite error-prone and it
-might have been better to either declare a packed struct for the
-BasicConstraints object with human-readable member names,
-or create a separate ASN.1 module for it.
-
+Patches include
+	- new Airoha AN8855 nvmem provider
+	- new nxp S32G OCOTP nvmem provider
+	- new dt binding for sa67mcu
 Thanks,
+Srini
 
-Lukas
+Christian Marangi (2):
+  dt-bindings: nvmem: Document support for Airoha AN8855 Switch EFUSE
+  nvmem: an8855: Add support for Airoha AN8855 Switch EFUSE
+
+Ciprian Costea (2):
+  dt-bindings: nvmem: Add the nxp,s32g-ocotp yaml file
+  nvmem: s32g-ocotp: Add driver for S32G OCOTP
+
+Michael Walle (1):
+  dt-bindings: nvmem: sl28cpld: add sa67mcu compatible
+
+ .../bindings/nvmem/airoha,an8855-efuse.yaml   | 123 ++++++++++++++++++
+ .../nvmem/layouts/kontron,sl28-vpd.yaml       |   7 +-
+ .../bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml  |  45 +++++++
+ drivers/nvmem/Kconfig                         |  21 +++
+ drivers/nvmem/Makefile                        |   4 +
+ drivers/nvmem/an8855-efuse.c                  |  68 ++++++++++
+ drivers/nvmem/s32g-ocotp-nvmem.c              | 100 ++++++++++++++
+ 7 files changed, 367 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/nvmem/airoha,an8855-efuse.yaml
+ create mode 100644 Documentation/devicetree/bindings/nvmem/nxp,s32g-ocotp-nvmem.yaml
+ create mode 100644 drivers/nvmem/an8855-efuse.c
+ create mode 100644 drivers/nvmem/s32g-ocotp-nvmem.c
+
+-- 
+2.50.0
+
 
