@@ -1,171 +1,223 @@
-Return-Path: <linux-kernel+bounces-813710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD143B549D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:28:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45744B549D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC00F1C80D04
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:29:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96CB91C27C28
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB002E9748;
-	Fri, 12 Sep 2025 10:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E44158538;
+	Fri, 12 Sep 2025 10:30:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kjZ6ou1t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ggu5c7Bw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vsMbCTGC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABD52E8E05
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B29283C90;
+	Fri, 12 Sep 2025 10:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757672908; cv=none; b=nUKq/73Y9z4lyMqdRjvqbqqAEjYRqbrCDHZjeKoB8IqPO1VG/GOnbRgDGKewPUF7vPBeEzQqM+fXWXyWu/5HuZmjy2hb1dTdYMe5cntz5aU8PvL0bYEmAwpt7iw7KYcYvguSfLqW00UTZvZ49zb8BnfeQjqjPOjDSH/UFbI1kBQ=
+	t=1757673014; cv=none; b=KBF0IpUdfv71cfDC+h0JAhVMUszMTbuJeItHg8Sq4bxsvbwgbKatmlJA61t0KK6eor2U56stjm1pu3rY6pvbfgcvRJVCDNFDtw1Ay6mYmdY/3vPNsv/KvAUofzk7/+fs16dLFqe4sS5+hYh9NBMRv8zGauDs2d9XiEdbdb2GiRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757672908; c=relaxed/simple;
-	bh=XHvzLANHb2pGo7ihBR6DIe9uzZw6cuzHHxU8rvOBtPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRMcY3u5vfIaOMR4xFagEgno/yUBJrYP7Z013ZnRS/gpy0pJL9Z/ocbQdQ/XAZx6acmzBSQM0Sjw2Pw6S0NtQfOfJ8Vrgg43UrcRJGANX/HnlnA7ngBZUunodjf/BtpoHwkB90TpKQtpPubRRl/SOFEMcdFKrHvQtU8dXKPYP08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kjZ6ou1t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38229C4CEF1;
-	Fri, 12 Sep 2025 10:28:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757672907;
-	bh=XHvzLANHb2pGo7ihBR6DIe9uzZw6cuzHHxU8rvOBtPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kjZ6ou1tv7rLaLTktshdDoPDpCPf1Lh/9rsEb2nWvUHx8btvCO9M91SQ/okITnPuM
-	 rfR1ZNmrQWqHG5C5JqK5pUge+KPh+OELNjJ7HkotzHgeH6uZNdABJDZNPhSzJLY3U9
-	 D7bHiVsO/nYMSIBWgZ0TUKSYuoaJilMo2PPAv9YWOe5UJC9daf8W8LOemYn/2XDEbq
-	 sOFnRSju8/NQbdYcsoS+2M/5hb2kOVO+voD3QggvX2d/mDH6WqrZX30aATuphqkCcf
-	 U8VQepCjeCUWkhNbpuNY5+gw/bmSvl84SqPZyFZJooNORHvHnNDG5Pa7CLcqYCHLot
-	 030QNhShgfwLw==
-Date: Fri, 12 Sep 2025 12:28:24 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Miguel Gazquez <miguel.gazquez@bootlin.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
-	Phong LE <ple@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	thomas.petazzoni@bootlin.com, miquel.raynal@bootlin.com, kory.maincent@bootlin.com, 
-	romain.gantois@bootlin.com, praneeth@ti.com, Aradhya Bhatia <a-bhatia1@ti.com>
-Subject: Re: [PATCH] drm/bridge: ite-it66121: Add drm_connector support
-Message-ID: <20250912-tricky-offbeat-cicada-e8bc2d@penduick>
-References: <20250909-it66121-fix-v1-1-bc79ca83df17@bootlin.com>
- <do5zciwcanpiciy52zj3nn6igmwlgmbcfdwbibv2ijxm2fif5s@ib6jhzi5h2jo>
- <6164422a-6265-4726-8da5-68bb8eafb9e6@bootlin.com>
- <20250911-innocent-daffodil-macaque-797f13@houat>
- <012046ab-d866-4b3a-8c8a-e130bc2b9628@bootlin.com>
- <2l5kp4ojrcsg2apcpv7mzeeypwynecyfesenks6zzvnst3qkbt@4yhbosy2zhah>
- <e6af5c37-d18a-423e-b822-367441a48f86@bootlin.com>
- <21f80397-be9c-49bd-b814-ea5f0eb5fdc8@bootlin.com>
+	s=arc-20240116; t=1757673014; c=relaxed/simple;
+	bh=DXMVQwajIHGM20w9QwArrqXxPVylrRI4m3vJglLJ+IU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=F0LmOEk61ibkZqbrqWvkG8hV1jR5Si1dVnwl0R7lVpeoKuxyCOuJNMLJun0vdeGHoAty9BL5L8XT4azgvFSR1UYp15ZvkwfL0TG+pvcTv8xy218vQ3RNsDtBwUKSRTNfhxmCATdNigzU4fH+JYjGtF4kANtQZ7qTp3qzlRa8s/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ggu5c7Bw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vsMbCTGC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 12 Sep 2025 10:30:08 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757673010;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=652ddeVERFvMmExPVijujEXvSlxRd76/CPNI3WLcaMs=;
+	b=Ggu5c7Bw9OofEFbLF4tnKZigBESWoYnNB/TIK3jEONffScqlwEuT9xEE1Z/FzmxVFkpfP8
+	CjRWXPuvbev3/i5N6kZraW7Y7UlWohEfNsoTwQYe14itlOdvsrRbkYBwulkg2PLXROhzKn
+	RN0RtA8Ecw4BtUSd/CfEB5UJ9iVJhNNbsLXlKda0KuZMnamfEbUg3PD+5DZhGxflMqh6K9
+	WPqPQjPHHXBGc77yxl1nfwcfOet62f4G0mxolkBqNTmDr7IGJBfMK0H0hZSp6T1NR3uNdt
+	fD5Y0XYPh+ZScFi9U4SLEwf6PKYgwHfXdMG1/MlFG6LMbm/wdS9PaLJ5rdzy1A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757673010;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=652ddeVERFvMmExPVijujEXvSlxRd76/CPNI3WLcaMs=;
+	b=vsMbCTGCzznesSNyRJ1dX0hnlxgU8Pk21YBeTBr00Lzq69DddNsinAdkXMo1dg9cmSGyHn
+	34vw/Yi4XMbbLGCw==
+From: "tip-bot2 for Josh Poimboeuf" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/bugs] x86/its: Move ITS indirect branch thunks to
+ .text..__x86.indirect_thunk
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <67a17ed2fc8d12111e76504c8364b1597657c29a.1749228881.git.jpoimboe@kernel.org>
+References:
+ <67a17ed2fc8d12111e76504c8364b1597657c29a.1749228881.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="b5r5hogjlsaahvlz"
-Content-Disposition: inline
-In-Reply-To: <21f80397-be9c-49bd-b814-ea5f0eb5fdc8@bootlin.com>
-
-
---b5r5hogjlsaahvlz
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+Message-ID: <175767300880.709179.1206741455136771586.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/bridge: ite-it66121: Add drm_connector support
-MIME-Version: 1.0
 
-On Thu, Sep 11, 2025 at 05:47:57PM +0200, Miguel Gazquez wrote:
-> Le 11/09/2025 =E0 17:40, Miguel Gazquez a =E9crit=A0:
-> > Le 11/09/2025 =E0 15:09, Dmitry Baryshkov a =E9crit=A0:
-> > > On Thu, Sep 11, 2025 at 02:49:59PM +0200, Miguel Gazquez wrote:
-> > > >=20
-> > > >=20
-> > > > Le 11/09/2025 =E0 11:50, Maxime Ripard a =E9crit=A0:
-> > > > > On Thu, Sep 11, 2025 at 10:51:06AM +0200, Miguel Gazquez wrote:
-> > > > > >=20
-> > > > > >=20
-> > > > > > Le 10/09/2025 =E0 04:28, Dmitry Baryshkov a =E9crit=A0:
-> > > > > > > On Tue, Sep 09, 2025 at 06:16:43PM +0200, Miguel Gazquez wrot=
-e:
-> > > > > > > > From: Aradhya Bhatia <a-bhatia1@ti.com>
-> > > > > > > >=20
-> > > > > > > > Add support for DRM connector and make the driver support t=
-he older
-> > > > > > > > format of attaching connectors onto the encoder->bridge->co=
-nnector
-> > > > > > > > chain.
-> > > > > > > > This makes the driver compatible with display controller th=
-at only
-> > > > > > > > supports the old format.
-> > > > > > > >=20
-> > > > > > > > [Miguel Gazquez: Rebased + made driver work with or without
-> > > > > > > > DRM_BRIDGE_ATTACH_NO_CONNECTOR]
-> > > > > > >=20
-> > > > > > > What is the use case for not using DRM_BRIDGE_ATTACH_NO_CONNE=
-CTOR?
-> > > > > >=20
-> > > > > > Some display controller drivers (like the tilcdc) call
-> > > > > > drm_bridge_attach
-> > > > > > without DRM_BRIDGE_ATTACH_NO_CONNECTOR, so the bridge
-> > > > > > must support both with
-> > > > > > and without DRM_BRIDGE_ATTACH_NO_CONNECTOR to be
-> > > > > > compatible with all display
-> > > > > > controllers.
-> > > > >=20
-> > > > > I'd rather convert tilcdc to use DRM_BRIDGE_ATTACH_NO_CONNECTOR t=
-hen.
-> > > >=20
-> > > > The problem is that doing that break devicetrees using the tilcdc a=
-nd a
-> > > > bridge who doesn't support DRM_BRIDGE_ATTACH_NO_CONNECTOR (there are
-> > > > multiple bridges that don't support
-> > > > DRM_BRIDGE_ATTACH_NO_CONNECTOR), and if
-> > > > my understanding is correct breaking devicetrees is not allowed.
-> > >=20
-> > > How does it break devicetree? The drm_bridge_connector isn't a part of
-> > > DT.
-> >=20
-> >=20
-> > In the current situation, a board could have the tilcdc linked with a
-> > bridge that does not support DRM_BRIDGE_ATTACH_NO_CONNECTOR (for
-> > example, the analogix-anx6345) , and everything will work fine.
-> > If we convert the tilcdc to always use DRM_BRIDGE_ATTACH_NO_CONNECTOR,
-> > that same configuration will stop working.
-> >=20
-> > When I said "breaking devicetree" I meant that a devicetree describing
-> > this setup would no longer produce a working system, not that the DT
-> > files or bindings themselves are incorrect.
-> > I didn't find any upstream dts with this configuration, but maybe there
-> > is some out-of-tree dts which would be affected.
-> > As far as I understand, we should avoid that.
-> >=20
->=20
-> If I can rephrase myself, is my understanding correct ? Do we care about
-> breaking out-of-tree dts ?
+The following commit has been merged into the x86/bugs branch of tip:
 
-There's only so much we can do, and we can't fix issues we can't know
-about. So no.
+Commit-ID:     41bab90bbfdc55228b8697d960839a4abb5016d4
+Gitweb:        https://git.kernel.org/tip/41bab90bbfdc55228b8697d960839a4abb5=
+016d4
+Author:        Josh Poimboeuf <jpoimboe@kernel.org>
+AuthorDate:    Fri, 06 Jun 2025 09:55:02 -07:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 12 Sep 2025 12:14:54 +02:00
 
-Maxime
+x86/its: Move ITS indirect branch thunks to .text..__x86.indirect_thunk
 
---b5r5hogjlsaahvlz
-Content-Type: application/pgp-signature; name="signature.asc"
+The ITS mitigation includes both indirect branch thunks and return
+thunks.  Both are currently placed in .text..__x86.return_thunk, which is
+appropriate for the latter but not the former.
 
------BEGIN PGP SIGNATURE-----
+For consistency with other mitigations, move the indirect branch thunks to
+.text..__x86.indirect_thunk.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaMP1xwAKCRAnX84Zoj2+
-dvFUAX4mGzr+jhCS+JMrw0EOA1ttiPb9P5MJpffpYl0eKwA4c4dvT4RoSwj4aDWd
-GZko+C8BfR0tqqWniPbxIPbfBsehe8DQq1xZlq4pHBwpQPK+C7IJWwfhSBcMrpuI
-ljCJs6Dseg==
-=J7wq
------END PGP SIGNATURE-----
+Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+ arch/x86/lib/retpoline.S | 75 ++++++++++++++++++++-------------------
+ 1 file changed, 40 insertions(+), 35 deletions(-)
 
---b5r5hogjlsaahvlz--
+diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
+index d78d769..f513d33 100644
+--- a/arch/x86/lib/retpoline.S
++++ b/arch/x86/lib/retpoline.S
+@@ -15,7 +15,6 @@
+=20
+ 	.section .text..__x86.indirect_thunk
+=20
+-
+ .macro POLINE reg
+ 	ANNOTATE_INTRA_FUNCTION_CALL
+ 	call    .Ldo_rop_\@
+@@ -73,6 +72,7 @@ SYM_CODE_END(__x86_indirect_thunk_array)
+ #undef GEN
+=20
+ #ifdef CONFIG_MITIGATION_CALL_DEPTH_TRACKING
++
+ .macro CALL_THUNK reg
+ 	.align RETPOLINE_THUNK_SIZE
+=20
+@@ -126,7 +126,45 @@ SYM_CODE_END(__x86_indirect_jump_thunk_array)
+ #define GEN(reg) __EXPORT_THUNK(__x86_indirect_jump_thunk_ ## reg)
+ #include <asm/GEN-for-each-reg.h>
+ #undef GEN
+-#endif
++
++#endif /* CONFIG_MITIGATION_CALL_DEPTH_TRACKING */
++
++#ifdef CONFIG_MITIGATION_ITS
++
++.macro ITS_THUNK reg
++
++/*
++ * If CFI paranoid is used then the ITS thunk starts with opcodes (0xea; jne=
+ 1b)
++ * that complete the fineibt_paranoid caller sequence.
++ */
++1:	.byte 0xea
++SYM_INNER_LABEL(__x86_indirect_paranoid_thunk_\reg, SYM_L_GLOBAL)
++	UNWIND_HINT_UNDEFINED
++	ANNOTATE_NOENDBR
++	jne 1b
++SYM_INNER_LABEL(__x86_indirect_its_thunk_\reg, SYM_L_GLOBAL)
++	UNWIND_HINT_UNDEFINED
++	ANNOTATE_NOENDBR
++	ANNOTATE_RETPOLINE_SAFE
++	jmp *%\reg
++	int3
++	.align 32, 0xcc		/* fill to the end of the line */
++	.skip  32 - (__x86_indirect_its_thunk_\reg - 1b), 0xcc /* skip to the next =
+upper half */
++.endm
++
++/* ITS mitigation requires thunks be aligned to upper half of cacheline */
++.align 64, 0xcc
++.skip 29, 0xcc
++
++#define GEN(reg) ITS_THUNK reg
++#include <asm/GEN-for-each-reg.h>
++#undef GEN
++
++	.align 64, 0xcc
++SYM_FUNC_ALIAS(__x86_indirect_its_thunk_array, __x86_indirect_its_thunk_rax)
++SYM_CODE_END(__x86_indirect_its_thunk_array)
++
++#endif /* CONFIG_MITIGATION_ITS */
+=20
+ #ifdef CONFIG_MITIGATION_RETHUNK
+=20
+@@ -370,39 +408,6 @@ SYM_FUNC_END(call_depth_return_thunk)
+=20
+ #ifdef CONFIG_MITIGATION_ITS
+=20
+-.macro ITS_THUNK reg
+-
+-/*
+- * If CFI paranoid is used then the ITS thunk starts with opcodes (0xea; jne=
+ 1b)
+- * that complete the fineibt_paranoid caller sequence.
+- */
+-1:	.byte 0xea
+-SYM_INNER_LABEL(__x86_indirect_paranoid_thunk_\reg, SYM_L_GLOBAL)
+-	UNWIND_HINT_UNDEFINED
+-	ANNOTATE_NOENDBR
+-	jne 1b
+-SYM_INNER_LABEL(__x86_indirect_its_thunk_\reg, SYM_L_GLOBAL)
+-	UNWIND_HINT_UNDEFINED
+-	ANNOTATE_NOENDBR
+-	ANNOTATE_RETPOLINE_SAFE
+-	jmp *%\reg
+-	int3
+-	.align 32, 0xcc		/* fill to the end of the line */
+-	.skip  32 - (__x86_indirect_its_thunk_\reg - 1b), 0xcc /* skip to the next =
+upper half */
+-.endm
+-
+-/* ITS mitigation requires thunks be aligned to upper half of cacheline */
+-.align 64, 0xcc
+-.skip 29, 0xcc
+-
+-#define GEN(reg) ITS_THUNK reg
+-#include <asm/GEN-for-each-reg.h>
+-#undef GEN
+-
+-	.align 64, 0xcc
+-SYM_FUNC_ALIAS(__x86_indirect_its_thunk_array, __x86_indirect_its_thunk_rax)
+-SYM_CODE_END(__x86_indirect_its_thunk_array)
+-
+ .align 64, 0xcc
+ .skip 32, 0xcc
+ SYM_CODE_START(its_return_thunk)
 
