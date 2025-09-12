@@ -1,124 +1,145 @@
-Return-Path: <linux-kernel+bounces-813453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFAFFB545AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:39:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26234B545AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69E9C3ACCAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:39:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE128162F6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D332D46B1;
-	Fri, 12 Sep 2025 08:39:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164582D5436;
+	Fri, 12 Sep 2025 08:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="SFhjdn0u"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BX4sXHIy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6105E19E97A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1CAE1E1DE9
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757666384; cv=none; b=JedDu/lok1/1GGhPtlb7HXBt56zJRklhH61muB8BXNUyJDxMBeo2kfGZM+e27fFt/V9Bp5447HjrSSSKzpJsB2kHy0WN+W7P/umAeam+nVs1599lJu+aRdGU9EsXNTUMO5kexpamTqUwyqvDPuavRh5i2PKh36sMQBCvMF6rJDE=
+	t=1757666446; cv=none; b=glTYgP8/CtDapCD3Lp5Qj6+QX3txxWMBAwPJIRu6BxRsibMeQVIZPpt6AOUzIQTQTq4r04ysg3QSoGWy1PbqJbQV1Wi8rnQMMBXO9X0UnfdvwIZz57NlYDdzRLB9GPIw6L4zo7dYZrH+jzsjHxDfNeaG1WEA/UPhfq/ykxETBWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757666384; c=relaxed/simple;
-	bh=sTOimKal0OOupS0ld0czPYaXJXBqN6bh9JEXfgay0oY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JoOI/GKrigRkU6r+Wx6L6QGFiinz9fvtlPfcosu06NZPGnAtt6cjHp7gbcScU9zEChAXPEUkAHk1L0284BVyMYIg7m5VLIEV4H+HRSDdGfh05Hg3xN+jF6pcQ/OgH0sekcfOGS/o+com9sdJcrus/U7adlw6mQboHF0LkXSiRv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=SFhjdn0u; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-329b760080fso1721991a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757666382; x=1758271182; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zo2y5SuH7T8OLSqI5px4qVfoaEsoGvOPtgjER3NygYk=;
-        b=SFhjdn0u0lhYd3kAld0ElsPu5FM42QVESiNC0wpl8u4frizEAyj/4ozabCnuB+3tWs
-         jtxi71BK50dSy5JSNsd2vYR/B1kvq/drd70ISe2oHhbGAkREakrTJVCSBYACsvPaBQ71
-         MYZpDSCCwXI3Nk/1lYhNZ7Uqz5gVUgy8e4c0KQyYkrIXLd942UlJPo9C9rtZY326Hi3+
-         l/HgVGbUsGWJM8+v5PA9vQd8D83raf9971ORCuhHliE1u7OhSRwaklmyz0+yNIoavbdg
-         hWwagu9wL6yLzo1QstIR5PAKeyUGHdOobTVj9KCoy4HXfvCrcGRvFNXheywx11B4A/3Q
-         dfHQ==
+	s=arc-20240116; t=1757666446; c=relaxed/simple;
+	bh=JFm9q5MHFWvo/CMc0shtVH4Yt0n17LPmzfEtHqz8xTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=J5K3UvClTQBCTggdidOFkMAlx2SVeeONgHK9xoHd02aZaTLeImoK0xOfJboJ55OfKG8VqB8OEsrpURW+7sVOiCKxJPeysf8lbFg+4C1aqYWmpiDblrDk6ALdIj+7cuaAxHFFSZ9NMVe1xm8CU+g7j57vky9U+LYeFpfq1K2qoUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BX4sXHIy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757666443;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=PvsOvjK7iiT9XUkiykze+uFI53RNvUT/umyb7XIvWRc=;
+	b=BX4sXHIyfmUqX/re2OO3kYV0coQ/I1Uo2TkytzxInPBNQ/cQNAR/6xzk9a+eAfC3//yg+9
+	dG4dflkc6Pjbpwo1PcWRG9UHrJbpotgSvcMRpWHOzKudUhGepEkB9IH29Sxw4aefHkvGiz
+	4f/twswpEXgKxVjxJPlT74bG/q/+quo=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-199-igpGSFQPPUGjsYRh7uy6sw-1; Fri, 12 Sep 2025 04:40:42 -0400
+X-MC-Unique: igpGSFQPPUGjsYRh7uy6sw-1
+X-Mimecast-MFC-AGG-ID: igpGSFQPPUGjsYRh7uy6sw_1757666441
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45de07b831dso9986125e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:40:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757666382; x=1758271182;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zo2y5SuH7T8OLSqI5px4qVfoaEsoGvOPtgjER3NygYk=;
-        b=keJ9Kg93n4esXjq6pTd75egYLjizZr5wlJcY4vNz34s/GLmvFaT86sFpiXCwTsEnjy
-         YgDUQjq6mwnEnRXc2LOdm18IiKM6OyowXES28EIdsccJRwUIBr+DC351v/T9WpnGiD8p
-         Ez8S/3S6kv1hOTEoftZm8EgLzPG90q8wtYSVT2z7i7pL0+SbBY20tTmoB1OVF2y2b06G
-         UsLoj9nC5FomO4ZYmDNTcdiuzD/jtqyX+jF+3U2LlHFVqqsdVtikeo77S0f8JOQGqUlk
-         NqDBTjArSkxWs6aOT7a+IuDnrJGlZ6IgxrRJguL1gt64LBibaz+SyKNrm/GteI6tfAh5
-         JnVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSPfD1PYfKfC63Thdxm+KcDh1Rs4IYyNopKO16AJf2IQttpOqK7AzLPGqQTzYPeJL0sCgmSw+tJfILye8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAl6yd66EUJB32pEAxoB9ysuWkJaFkyRYKZZNPl56D/0eOo34e
-	9F7Uj8f3iMDB6z6w7maJPcVdUuoLbKnXnwEp5Fue6irQUWR8S67Vm2R1RE7FBI0PQ3w=
-X-Gm-Gg: ASbGncvsnvGObJeAhlyfpUosQKZdRLsmIhQzxta4+FTz2pwS75iHUan3CTEzysDZE2t
-	3sfdxxg1Z4TqGh8Dfqi6n3PBDefXRaF/1HhJ1ylKPNW8qb/hsdvVeNRRaQ3RszEwRcNhYAFCI/g
-	3CVfdoc3gMSmRBxORfnNZ6AgTZo6wwFesOPzhKO6rd9bmGLXA1Jh0YtQ7bk/mk9LiAuFWpc03JO
-	Q3x4Vc+lql+NxU9nYZjWpArSVLckv/IHtjw6Q/94ZWIw2Y49iakOk4g+l0WaBrsV8PejzfD5F9E
-	ts31qlan2n+uq7jrYuJ5qPe+V7tuQ0o6j/DpYw5/IlejjKuIVUCZV3ltpLb+wYF+o+y1op/f2c+
-	isICEGqhwBBS9voihgdLa2FIelGUoX0U2SN9eMTp8cYGPWMI4PjEBHaPoHtvViA8fnFMFimyNcm
-	ke7A==
-X-Google-Smtp-Source: AGHT+IEqAukig5SK56pMA6nrwve3MWNwfRDwSWB7fLDadRbqTiOZACMZ5Ss4IFWNyQP9DaEbbiz5IA==
-X-Received: by 2002:a17:90b:4c43:b0:32b:6cf2:a2cf with SMTP id 98e67ed59e1d1-32de4ecfef6mr2289797a91.14.1757666381742;
-        Fri, 12 Sep 2025 01:39:41 -0700 (PDT)
-Received: from C02F52LSML85.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd62201edsm5335170a91.10.2025.09.12.01.39.37
+        d=1e100.net; s=20230601; t=1757666441; x=1758271241;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PvsOvjK7iiT9XUkiykze+uFI53RNvUT/umyb7XIvWRc=;
+        b=gqGjp3Ha1rrxy8kePxoiwiRFapfBPiDBcfDD5Jypb1QO8YkfsUFVNhGWoWjWzMiEj1
+         KtSB39cFdJvb7bZ9UAad5nP2r/nnLmtx3hXxuBpTtG6+zUNHRZ1m0Qt06+VpoORMw/cs
+         4YlkGKQNrz7i7nImQDGat1trEDDiDXwV30X+VYeQPFt1t/H/FyiLzYA/YjTKNF3W9m09
+         cikAiwe4Iw9cFs/JGgNbDT9wWMbHZ8uOI9eqFj9MnPrgmdHa+HdaEPn7dMDNz8rp7uWB
+         SiwIZ+jQgnRoqfFgZwTRdU16vzM4zVmlqR68VgleqJqaDL+xkyRAjOVDvov1HTRQzXwB
+         vdsA==
+X-Gm-Message-State: AOJu0YzF5u7k1oc9xj7Z7A3meMLPxZB1EWTPfOieJtQS2O7Gism1x6Mt
+	qQcUlKdvEKHwRSVKTRqCrr2Tssw8jdCVUUF5XfTGcejBf614smIFXsz2IjiKWgZSt+aOgWZi2f3
+	Kqmih/cA/HBfm6cPSGvtIH50Dtb5nTe38HSImHEpPVUO0g5YL7Z8swj1Jy4qBGjtL3VqJekDAaX
+	WNEbH56DWQ4Nmi0w6FLLOzJAOgYiFOKWuFm5vwzu5Nmns=
+X-Gm-Gg: ASbGncuD2H+lBC5/DgEM1KWsKVNUEDfgXkskNMNU9o7RC7PuY0coOJMrSkBxu7VSct3
+	4/xQ8GbOlrCi+RfQzbVDPi+EymZNzyYYAqfzGEAl+XsPBAML9F78YvcbKZx14R3Tzkb4vsiqz2t
+	u0O+TqvFLVuAfW/zWJQA4oALgALHUvM4Li56nNfk55lcslC9ska+i005DKzAi5V/wyNFNeRyu6S
+	y0/UwZyMFcooz8V6jNjN+qvWG9dQkkzfdVM41gU4bvc7fUC5CX5k1gcbrI0uz4qlefGVy9uw1E/
+	z+3yQc3ZZASVw5kDpqoIc1ZbHHq4SSNi
+X-Received: by 2002:a05:600c:1c9b:b0:45d:dd47:b465 with SMTP id 5b1f17b1804b1-45f211c8395mr18631815e9.7.1757666441126;
+        Fri, 12 Sep 2025 01:40:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFpABu+JYhUlWvQU7+IMiPKX/l2FbW8SOSOf9lAUj55zctSTxUjYZ6Qb1tuKOdhGKXoNOk0oQ==
+X-Received: by 2002:a05:600c:1c9b:b0:45d:dd47:b465 with SMTP id 5b1f17b1804b1-45f211c8395mr18631505e9.7.1757666440626;
+        Fri, 12 Sep 2025 01:40:40 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc0:1536:c800:2952:74e:d261:8021])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0153fbd5sm29710965e9.5.2025.09.12.01.40.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 01:39:41 -0700 (PDT)
-From: Feng zhou <zhoufeng.zf@bytedance.com>
-To: axboe@kernel.dk,
-	asml.silence@gmail.com,
-	almasrymina@google.com,
-	kuba@kernel.org,
-	dtatulea@nvidia.com
-Cc: io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yangzhenze@bytedance.com,
-	wangdongdong.6@bytedance.com,
-	zhoufeng.zf@bytedance.com
-Subject: [PATCH net-next] io_uring/zcrx: fix ifq->if_rxq is -1, get dma_dev is NULL
-Date: Fri, 12 Sep 2025 16:39:30 +0800
-Message-Id: <20250912083930.16704-1-zhoufeng.zf@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+        Fri, 12 Sep 2025 01:40:40 -0700 (PDT)
+Date: Fri, 12 Sep 2025 04:40:38 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: Filip Hejsek <filip.hejsek@gmail.com>,
+	Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>,
+	Amit Shah <amit@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	virtualization@lists.linux.dev
+Subject: [PATCH] Revert "virtio_console: fix order of fields cols and rows"
+Message-ID: <7ebfa9a5ec3f07506b3d8f01cd4f2a35e2135679.1757666355.git.mst@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email 2.27.0.106.g8ac3dc51b1
+X-Mutt-Fcc: =sent
 
-From: Feng Zhou <zhoufeng.zf@bytedance.com>
+This reverts commit 5326ab737a47278dbd16ed3ee7380b26c7056ddd.
 
-ifq->if_rxq has not been assigned, is -1, the correct value is
-in reg.if_rxq.
+The problem is that for a long time, the
+Linux kernel used a different field order from what was specified in the
+virtio spec. The kernel implementation was apparently merged around 2010,
+while the virtio spec came in 2014, so when a previous version of this
+patch series was being discussed here on this mailing list in 2020, it
+was decided that QEMU should match the Linux implementation, and ideally,
+the virtio spec should be changed.
 
-Fixes: 59b8b32ac8d469958936fcea781c7f58e3d64742 ("io_uring/zcrx: add support for custom DMA devices")
-Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+There are about 15 years' worth
+of kernel versions with the swapped field order, including the kernel
+currently shipped in Debian stable. The effects of the swapped dimensions
+can sometimes be quite annoying - e.g. if you have a terminal with
+24 rows, this will be interpreted as 24 columns, and your shell may limit
+line editing to this small space, most of which will be taken by your
+prompt.
+
+NB: the command structures really should move to the UAPI header so it
+is easier to notice when a change is breaking the guest/host ABI.
+
+Reported-by: Filip Hejsek <filip.hejsek@gmail.com>
+Fixes: 5326ab737a47 ("virtio_console: fix order of fields cols and rows")
+Cc: "Maximilian Immanuel Brandtner" <maxbr@linux.ibm.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 ---
- io_uring/zcrx.c | 2 +-
+ drivers/char/virtio_console.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index 319eddfd30e0..3639283c87ca 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -600,7 +600,7 @@ int io_register_zcrx_ifq(struct io_ring_ctx *ctx,
- 		goto err;
- 	}
+diff --git a/drivers/char/virtio_console.c b/drivers/char/virtio_console.c
+index 088182e54deb..216c5115637d 100644
+--- a/drivers/char/virtio_console.c
++++ b/drivers/char/virtio_console.c
+@@ -1576,8 +1576,8 @@ static void handle_control_message(struct virtio_device *vdev,
+ 		break;
+ 	case VIRTIO_CONSOLE_RESIZE: {
+ 		struct {
+-			__virtio16 cols;
+ 			__virtio16 rows;
++			__virtio16 cols;
+ 		} size;
  
--	ifq->dev = netdev_queue_get_dma_dev(ifq->netdev, ifq->if_rxq);
-+	ifq->dev = netdev_queue_get_dma_dev(ifq->netdev, reg.if_rxq);
- 	if (!ifq->dev) {
- 		ret = -EOPNOTSUPP;
- 		goto err;
+ 		if (!is_console_port(port))
 -- 
-2.30.2
+MST
 
 
