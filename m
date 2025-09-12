@@ -1,175 +1,115 @@
-Return-Path: <linux-kernel+bounces-814778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D410DB55891
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:44:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98078B55896
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC335C3E00
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:44:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 768321CC4E5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB164334389;
-	Fri, 12 Sep 2025 21:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4399A2D46AC;
+	Fri, 12 Sep 2025 21:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hZNnGh5P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tFP9k03y";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dcd6fEft"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BF931E10D;
-	Fri, 12 Sep 2025 21:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D18B2D0C96;
+	Fri, 12 Sep 2025 21:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757713474; cv=none; b=aTNEVyeB0YLnTTHu/CYTEs/qZRn5PZg483YtczsFD9DsKV3U4qyZdVEELOnoqPGES7iSn0zkOaJmGSN7m0wCMDP/JGPOj+pQ30GBou1zZHZftDldlPu2qkg4fS15CmQTJqoLYPJyHCwGaFc7Oda9P9gIJxutMvZ0lJ/fy73H7PI=
+	t=1757713500; cv=none; b=bXt++6OTyoWCiOxK1eS2g6Xy2D/S3/OaCgzVhVUR0ObDFaInamPzWwNe67BKVG1+njWHvSIy4vXJTMnaXmMwgbmaECvVkCKrY5iEGtciA+iLLWF8xo5v5fHUnALyJ1iokuyy3mV5O6JNgWrv0QvyzCGpZOdOkx8BDRjptQJkYtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757713474; c=relaxed/simple;
-	bh=6UKL5HC+zU7YTOzkHx8luGmERQO7nrAOzQQrNjTkAJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=uBfmvHKU9ONmxQ8Fagcmpd/CaOhWA9jlpQ1WMRwvhO4KnSnFRY3Xln70viq+5i3CvMjMM1WNUweHSBPWIY4ps45CWRVLszwZA+sL3eHivKq8sP88HrpEuzlObxO+PYeu+b2iM4JzReG930edm7w5l5QKyavqzfa9N5LCfIgJxZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hZNnGh5P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1A8C4CEF1;
-	Fri, 12 Sep 2025 21:44:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757713473;
-	bh=6UKL5HC+zU7YTOzkHx8luGmERQO7nrAOzQQrNjTkAJk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=hZNnGh5Pn06b2AoeIWYn4VmJHdZU4hvJ3EcLY0ki9vPN5xFvR6VyhIXQCqM41ApNT
-	 Zed+cf/ZelcW9juAhbwF7aMgXsJDoeAESfDBfm2Ed75qXD4DLILzYqyB0lsY4adviy
-	 v4+zLmcyEcrsimYdIAznAclnxu33/TSHic1p3xgvlcHEBz2I2e21o7xniruc1K678V
-	 Qh3+llXJq93ZXz1ypZeGaNKnadnxt6NNeF7XgYTgGKYtP04g2XU0wUKA5j2HKkbVEM
-	 Y3RgJHdupJArCAQC6nTvTnDfEw1wqAC5+1KHv4ohRyAtrW0F/jx0Po9kL/omv8HPTU
-	 /VOC52wgsnC6A==
-Date: Fri, 12 Sep 2025 16:44:32 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Jonathan Chocron <jonnyc@amazon.com>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Subject: Re: [PATCH v9 3/4] PCI: qcom: Prepare for the DWC ECAM enablement
-Message-ID: <20250912214432.GA1643354@bhelgaas>
+	s=arc-20240116; t=1757713500; c=relaxed/simple;
+	bh=3bwpwH96FGD43V8N+Qioew5g8bhS8VcWR9Aib1bPJ3Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nL04y4q3yIdEZSVH0ye6Ja5oEJq0bMcK5kBjhDPDn9+EA07AnurJL9aNlBWfyKyeoNTpJenZ+SjcXKFMhA+sa+woU4ksc+FPoakah9RHYSwosUDZZRhH4di1f1Q984jiCqO5PVHpa+Ba9stXBVmfQw/EeXRoJjah0nT2iMk2Nww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tFP9k03y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dcd6fEft; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 12 Sep 2025 23:44:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757713496;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qXTiwDjhcLaZDRFliKAViVaEmmpH7tw9UemheZXgpg4=;
+	b=tFP9k03yleUE+hUQQynXhdIOm/FkEhl/zD3OwnTDv0FfPOphL6g2cXZjoonkRd90+U63kH
+	YEMPEZfOoGSijGRCUQv4sCYJd1oBCXzShm/Btq+f10c5i11gfn7YXhtaENu6rOLcxOgia/
+	sMMc9G8Bly5A//qqGTlveWvn2BYbWz10Q/FGlnphechNlp0Pdn70leOS+SZPiG9PPbMAOW
+	pqfQNH74I8e0wIoQ6uwXXX4Um2qv1je+8qHl+HFc8aiQur0V6IRzIdtQWEmgO+0Ql1SjTd
+	vsfqYJFNScY+9kCJhso97lffNl5QfaAp76rMZc8zGD9GnAopp0LfgGIvDrHBdw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757713496;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qXTiwDjhcLaZDRFliKAViVaEmmpH7tw9UemheZXgpg4=;
+	b=dcd6fEftFXzYf28tjOHQN/2x/RgZ27pswBmj/oUcB0QKOEkwZWTlL09pQSYvVt6PLv+yBy
+	XhNLbphNGB7ErkBA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Wake Liu <wakel@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?utf-8?B?QW5kcsOp?= Almeida <andrealmeid@igalia.com>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH] selftests/futex: Conditionally run futex_numa_mpol test
+Message-ID: <20250912214454.t0qhEqT2@linutronix.de>
+References: <20250908113721.4031242-1-wakel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250909-controller-dwc-ecam-v9-3-7d5b651840dd@kernel.org>
+In-Reply-To: <20250908113721.4031242-1-wakel@google.com>
 
-Sorry, I missed your repost of this series, Mani.  I'll reiterate my
-questions here.
-
-I also deleted the pci/controller/dwc-ecam branch, where Krishna's v8
-series was queued up, to avoid confusion (it looked like that branch
-was ready to be included in linux-next, but it's not).
-
-On Tue, Sep 09, 2025 at 12:37:52PM +0530, Manivannan Sadhasivam wrote:
-> From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+On 2025-09-08 19:37:20 [+0800], Wake Liu wrote:
+> The futex_numa_mpol test requires libnuma, which is not available on
+> all platforms. When the test is not built, the run.sh script fails
+> because it unconditionally tries to execute the test binary.
 > 
-> To support the DWC ECAM mechanism, prepare the driver by performing below
-> configurations:
+> Check for the futex_numa_mpol executable before running it. If the
+> binary is not present, print a skip message and continue.
 > 
->   1. Since the ELBI region will be covered by the ECAM 'config' space,
->      override the 'elbi_base' with the address derived from 'dbi_base' and
->      the offset from PARF_SLV_DBI_ELBI register.
+> This allows the test suite to run successfully on platforms that do
+> not have libnuma and therefore do not build the futex_numa_mpol
+> test.
+
+If you skip the test, how to you compile this?
+Does
+	https://lore.kernel.org/all/20250818135458.F352St6W@linutronix.de/
+
+help?
+
+> Signed-off-by: Wake Liu <wakel@google.com>
+> ---
+>  tools/testing/selftests/futex/functional/run.sh | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
->   2. Block the transactions from the host bridge to devices other than Root
->      Port on the root bus to return all F's. This is required when the 'CFG
->      Shift Feature' of iATU is enabled.
-
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-
-> +static void qcom_pci_config_ecam(struct dw_pcie_rp *pp)
-> +{
-> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-> +	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> +	u64 addr, addr_end;
-> +	u32 val;
-> +
-> +	writel_relaxed(lower_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE);
-> +	writel_relaxed(upper_32_bits(pci->dbi_phys_addr), pcie->parf + PARF_ECAM_BASE_HI);
-> +
-> +	/*
-> +	 * The only device on root bus is a single Root Port. So if PCI core
-> +	 * tries to access any devices other than Device/Function (0.0) in Bus
-> +	 * 0, the TLP will go outside of the controller to the PCI bus. But with
-> +	 * CFG Shift Feature (ECAM) enabled in iATU, there is no guarantee that
-> +	 * the response is going to be all F's. Hence, to make sure that the
-> +	 * requester gets all F's response for accesses other than the Root
-> +	 * Port, configure iATU to block the transactions starting from function
-> +	 * 1 of the root bus to the end of the root bus (i.e from dbi_base + 4kb
-> +	 * to dbi_base + 1MB).
-> +	 */
-> +	addr = pci->dbi_phys_addr + SZ_4K;
-> +	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE);
-> +	writel_relaxed(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_WR_BASE_HI);
-> +
-> +	writel_relaxed(lower_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE);
-> +	writel_relaxed(upper_32_bits(addr), pcie->parf + PARF_BLOCK_SLV_AXI_RD_BASE_HI);
-> +
-> +	addr_end = pci->dbi_phys_addr + SZ_1M - 1;
-> +
-> +	writel_relaxed(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT);
-> +	writel_relaxed(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_WR_LIMIT_HI);
-> +
-> +	writel_relaxed(lower_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT);
-> +	writel_relaxed(upper_32_bits(addr_end), pcie->parf + PARF_BLOCK_SLV_AXI_RD_LIMIT_HI);
-> +
-> +	val = readl_relaxed(pcie->parf + PARF_SYS_CTRL);
-> +	val |= PCIE_ECAM_BLOCKER_EN;
-> +	writel_relaxed(val, pcie->parf + PARF_SYS_CTRL);
-
-The driver already supported ECAM in the existing "firmware_managed"
-path (which looks untouched by this series and doesn't do any of this
-iATU configuration).
-
-And IIUC, this series adds support for ECAM whenever the DT 'config'
-range is sufficiently aligned.  In this new ECAM support, it looks
-like we look for and pay attention to 'bus-range' in this path:
-
-  qcom_pcie_probe
-    dw_pcie_host_init
-      devm_pci_alloc_host_bridge
-        devm_of_pci_bridge_init
-          pci_parse_request_of_pci_ranges
-            devm_of_pci_get_host_bridge_resources
-              of_pci_parse_bus_range
-                of_property_read_u32_array(node, "bus-range", ...)
-      dw_pcie_host_get_resources
-        res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "config")
-        pp->ecam_enabled = dw_pcie_ecam_enabled(pp, res)
-
-Since qcom_pci_config_ecam() doesn't look at the root bus number at
-all, is this also an implicit restriction that the root bus must be
-bus 0?  Does qcom support root buses other than 0?
-
-> +}
-> +
->  static int qcom_pcie_start_link(struct dw_pcie *pci)
->  {
->  	struct qcom_pcie *pcie = to_qcom_pcie(pci);
-> @@ -326,6 +382,9 @@ static int qcom_pcie_start_link(struct dw_pcie *pci)
->  		qcom_pcie_common_set_16gt_lane_margining(pci);
->  	}
+> diff --git a/tools/testing/selftests/futex/functional/run.sh b/tools/testing/selftests/futex/functional/run.sh
+> index 81739849f299..f3e43eb806bf 100755
+> --- a/tools/testing/selftests/futex/functional/run.sh
+> +++ b/tools/testing/selftests/futex/functional/run.sh
+> @@ -88,4 +88,8 @@ echo
+>  ./futex_priv_hash -g $COLOR
 >  
-> +	if (pci->pp.ecam_enabled)
-> +		qcom_pci_config_ecam(&pci->pp);
+>  echo
+> -./futex_numa_mpol $COLOR
+> +if [ -x ./futex_numa_mpol ]; then
+> +    ./futex_numa_mpol $COLOR
+> +else
+> +    echo "SKIP: futex_numa_mpol (not built)"
+> +fi
 
-qcom_pcie_start_link() seems like a strange place to do this
-ECAM-related iATU configuration.  ECAM is a function of the host
-bridge, not of any particular Root Port or link.
-
->  	/* Enable Link Training state machine */
->  	if (pcie->cfg->ops->ltssm_enable)
->  		pcie->cfg->ops->ltssm_enable(pcie);
+Sebastian
 
