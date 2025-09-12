@@ -1,177 +1,183 @@
-Return-Path: <linux-kernel+bounces-813631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D71EB54873
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:55:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE59FB54876
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BEFE1768F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:55:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 844043AC03F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4BD28750A;
-	Fri, 12 Sep 2025 09:55:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F2E288C02;
+	Fri, 12 Sep 2025 09:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NLkp2wrM"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L2Y1YPpr"
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7092571D4
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F1F28643C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757670906; cv=none; b=oqM7xZMgMPZnsyzm/snn6n22ZsQSAtiDW6sguHO1Vf7KGINP9jn2DtV8FaUVWbHOXSFqrxEVWbgIFZV735uBzbpqY6qpYmjhMFQTGZou+SUSQcplpLr78ICe1HgGR1zf5wHBrzb6u4rqHKggck8L2Nq9AK4j2m36Fl+7oJPU6lw=
+	t=1757670972; cv=none; b=hOXNtKyuzpvirt87gKjFSlMByoph80Scnnju4NMzfaRAdPPhXRlIF9PL/ifOUupbl/F1mkZuM24ZXhKNhEGGod0c+UgFHPbEFt9xnElljYcrtIPKlamTZuelh62PAACkJZhE3VWxZJJpYcumW0iMCu82Fyb8B1VVB+1X3AFiORY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757670906; c=relaxed/simple;
-	bh=EuhKOu5I9B4y/dYif9Sc1fgwAmFm2XI1KeMdUaX7hAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3AyNHsxJRLSr8uBxzOToc2J61X9heloE1FVNa8UIGhQftQWN3HfV6mCuE1C2/USJBO0Pv3Et5Rm8WGIhngpLvO+7AAjfOcbhhjWv311lOyzfSE6EXLjLggmYUxdXmoKGEk+ftP6wl9Z2bB6EghAKN2b+VxjK78Bp4QB7rzgCgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NLkp2wrM; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6237202020bso2784364a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:55:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1757670902; x=1758275702; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gu8eftj9lO+8MZ35o1UII2RnGbq23waotf1b1sIZgRI=;
-        b=NLkp2wrMgkst8ZYBwoO7vrEwFOxhA5ES9VYeigCGXh9IxhSxMnHgsntphbO5RDSeZz
-         2Nf0VdLIVsvmExWR+NNpavpFR7xywSd3y82bW8n2aPteRSMuwXVjnEoJJnjuTutDlm8Z
-         JwWu/bEymhG4K6s21TpNff92dgkFIfFs1SbJ+JQTtUWKdak4wXEkhLwl/Xa3zVtTCtFt
-         V0nctHktTrPJk6hNQ1UlTsLmc2uvb1UyZpHEakfoDqc+ys+HmhAa7oSOUi1/eMiVWs+9
-         nZayQdgwB2of1DELiqYSAFyQ71veA0bzgVCrg6QZ9P8c4fEa5RdsXLR9gEQXqcbYvFgA
-         hBhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757670902; x=1758275702;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gu8eftj9lO+8MZ35o1UII2RnGbq23waotf1b1sIZgRI=;
-        b=P6vY0W4I752k7eHovqxxmftGUlwyxvVhb2KCjNoi1htnyT0kPViwD2qqFrq6I6hkdb
-         4SjMIYnPJhLt++2JyDVWKoM1gX8OGo12BRCypaMWZUDBIVtPxtFLAfZDjr8QQgsk1izV
-         FSR7TaVseHiFy1g0mJmB8eVA78r5/nvKt75P1HxTob7L0GNh3AVWbfnYbmuBYtjAEmwb
-         L7zwjampV/7JeOO37brQwv8obAsAuRnui5VpDJvOYd3ebU+luD8DPh2/M57q5KLSRD7v
-         Qk+WlMS4JCUC+an2Au/pM4SI67TUlbXyQukKizCgm1oMIQZaJtmFrU4te6+/5ee4ZtS6
-         Dk7w==
-X-Forwarded-Encrypted: i=1; AJvYcCW0hu7HTlMJvozgf+df1kKeAoej6RPCpoqpRGgABZUnI4oYseQusZC9/4Arug8zftp5CjyZQO5bve1pKBQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj062uM1bpX49/B8jIcG0fI8rOhsfXEry8L517NIb5hx994vQv
-	7VwmSPEI3DkE8NUs1HY+rLcGJa6qj1eNqa+ZLxWgw6CXz7Ln09ZkJjXa1YZWh/ma/RRBGGytJhr
-	W6Kb+WZw=
-X-Gm-Gg: ASbGnct7f2ZfgnOrOjjWL6EA+35PDHIYNhrS6jCOrnWYHNchOc+oQ+6NFXFla7WRqRG
-	/y7iExJeXkXgL1kC+JVZHhXEzPOx/J4nXcK0tCwDcIlWxcAFM1G3Wk9LIsmuCvkYTPAv7HqUPaP
-	XEBlUxSoLgDBI6LWk4Bl2HlSrhePk3Kj9nyT8R3YZEN3+W6jrYZnLVEUP1LLwrJAbYSfTLGQJu9
-	tNetWIjsM2KYIT9B5cGAS5swk/hqToS1i0a5FiuwM/BW4mFS5SNt0rZ+xR0532h4M8EKMvM918P
-	m1/moyzgX9xjkM910uPVTUN68QSt4RHcz4gsMp8XhI4dcFhoZASqR6wVtZl/iHB3ZATlHVHZCv3
-	Rn88sN0J7pD5MvIELcNkbROFazw==
-X-Google-Smtp-Source: AGHT+IGxyE9vkABOt3gbaAeUK07jTCLD+YMy9b7gS6a0UrTNFcfefOdVYqgMjyZDfqObnnOor64qEQ==
-X-Received: by 2002:a05:6402:a0cd:b0:626:1fce:d2f2 with SMTP id 4fb4d7f45d1cf-62ed826785emr2591915a12.16.1757670901948;
-        Fri, 12 Sep 2025 02:55:01 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-62ec33ad741sm3032515a12.21.2025.09.12.02.55.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 02:55:01 -0700 (PDT)
-Date: Fri, 12 Sep 2025 11:54:59 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
-	linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v2 0/2] printk_ringbuffer: don't needlessly wrap data
- blocks around
-Message-ID: <aMPt8y-8Wazh6ZmO@pathway.suse.cz>
-References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
- <aMLrGCQSyC8odlFZ@pathway.suse.cz>
- <aMLxt5k5U1vpmaQ3@pathway.suse.cz>
- <84bjnhx91r.fsf@jogness.linutronix.de>
- <aMPm8ter0KYBpyoW@pathway.suse.cz>
+	s=arc-20240116; t=1757670972; c=relaxed/simple;
+	bh=g/3ZaYso/0pjp5dxKshltWnxQcEKzEEb2wavyCxGWXE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=KJnX98nKj606QcFlPBMbFS4QNaH6BBkst7cR6h3KT9vCA3NXJcPRrtcXzqEbPBKh/c9hgqk4C4SuOuFwL5pJldsxNwTlLmeBd2bYp+1rQPVEe87B7tW0wkMkpGRLyj5K9Eegs1d+uIqRVbrYBBvF3D4kxwl9kDAHiqIsAP5JAgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=L2Y1YPpr; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250912095607euoutp01e655aab4d7b8f4ed4b6e46807b236f5c~kgG7FBU5a1252212522euoutp01P
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:56:07 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250912095607euoutp01e655aab4d7b8f4ed4b6e46807b236f5c~kgG7FBU5a1252212522euoutp01P
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1757670967;
+	bh=/WgaU7Y24edcvelE6VWdeVRjrf0TYEj3umrowZuuiQ4=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=L2Y1YPprEPGLfmwqODN1Guom3McSDbIB5VdVRbCRwMw835DYk5l2p910cNLpNI+z5
+	 rHhytp43Bafk8VFnZrR8BEkRHwf3Se4vxg/aDHH6RYQFEA57hhRE08pTAIp74BuXKO
+	 9QMxfpC3Jk94QuvYOBNoEmOoa3cK1eiUw1e7BptY=
+Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250912095607eucas1p2a18c183541e1b3a3d852cce1a0a151b7~kgG6gXgC42606026060eucas1p2a;
+	Fri, 12 Sep 2025 09:56:07 +0000 (GMT)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250912095605eusmtip13971d667cb9ff7ae4e1a11bc688d941c~kgG5C1vwN0365103651eusmtip1O;
+	Fri, 12 Sep 2025 09:56:05 +0000 (GMT)
+Message-ID: <0ff3ba73-18e8-4941-bac6-2efa790c36ab@samsung.com>
+Date: Fri, 12 Sep 2025 11:56:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMPm8ter0KYBpyoW@pathway.suse.cz>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v5 00/17] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: Damon Ding <damon.ding@rock-chips.com>, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+	hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+	dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
+	luca.ceresoli@bootlin.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20250912085846.7349-1-damon.ding@rock-chips.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250912095607eucas1p2a18c183541e1b3a3d852cce1a0a151b7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250912085902eucas1p2b611b4afd6b453c161753f50386a6d01
+X-EPHeader: CA
+X-CMS-RootMailID: 20250912085902eucas1p2b611b4afd6b453c161753f50386a6d01
+References: <CGME20250912085902eucas1p2b611b4afd6b453c161753f50386a6d01@eucas1p2.samsung.com>
+	<20250912085846.7349-1-damon.ding@rock-chips.com>
 
-On Fri 2025-09-12 11:25:09, Petr Mladek wrote:
-> On Thu 2025-09-11 18:18:32, John Ogness wrote:
-> > On 2025-09-11, Petr Mladek <pmladek@suse.com> wrote:
-> > > diff --git a/kernel/printk/printk_ringbuffer_kunit_test.c b/kernel/printk/printk_ringbuffer_kunit_test.c
-> > > index 2282348e869a..241f7ef49ac6 100644
-> > > --- a/kernel/printk/printk_ringbuffer_kunit_test.c
-> > > +++ b/kernel/printk/printk_ringbuffer_kunit_test.c
-> > > @@ -56,7 +56,7 @@ struct prbtest_rbdata {
-> > >  	char text[] __counted_by(size);
-> > >  };
-> > >  
-> > > -#define MAX_RBDATA_TEXT_SIZE 0x80
-> > > +#define MAX_RBDATA_TEXT_SIZE (0x256 - sizeof(struct prbtest_rbdata))
-> > 
-> > I guess this should be:
-> > 
-> > #define MAX_RBDATA_TEXT_SIZE (256  - sizeof(struct prbtest_rbdata))
-> 
-> Great catch!
-> 
-> But the KUnit test fails even with this change, see below. And I am
-> not surprised. The test should work even with larger-than-allowed
-> messages. prbtest_writer() should skip then because prb_reserve()
-> should fail.
-> 
-> Here is test result with:
-> 
-> #define MAX_RBDATA_TEXT_SIZE (256 - sizeof(struct prbtest_rbdata))
-> #define MAX_PRB_RECORD_SIZE (sizeof(struct prbtest_rbdata) + MAX_RBDATA_TEXT_SIZE)
-> 
-> DEFINE_PRINTKRB(test_rb, 4, 4);
-> 
-> and with this patchset reverted, aka, sources from
-> printk/linux.git, branch for-next:
-> 
-> It is well reproducible. It always fails after reading few records.
-> Here are results from few other runs:
+On 12.09.2025 10:58, Damon Ding wrote:
+> PATCH 1 is a small format optimization for struct analogid_dp_device.
+> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+> PATCH 3-9 are preparations for apply drm_bridge_connector helper.
+> PATCH 10 is to apply the drm_bridge_connector helper.
+> PATCH 11-14 are to move the panel/bridge parsing to the Analogix side.
+> PATCH 15-16 are preparations for apply panel_bridge helper.
+> PATCH 17 is to apply the panel_bridge helper.
+>
+> Damon Ding (17):
+>    drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
+>    drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
+>      &drm_bridge_funcs.atomic_enable
+>    drm/bridge: analogix_dp: Add &analogix_dp_plat_data.next_bridge
+>    drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
+>    drm/exynos: exynos_dp: Remove unused &exynos_dp_device.connector
+>    drm/bridge: analogix_dp: Remove redundant
+>      &analogix_dp_plat_data.skip_connector
+>    drm/exynos: exynos_dp: Add legacy bridge to parse the display-timings
+>      node
+>    drm/bridge: analogix_dp: Move the color format check to
+>      .atomic_check() for Rockchip platforms
+>    drm/bridge: analogix_dp: Remove unused
+>      &analogix_dp_plat_data.get_modes()
+>    drm/bridge: analogix_dp: Apply drm_bridge_connector helper
+>    drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
+>    drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
+>    drm/rockchip: analogix_dp: Apply &analogix_dp_plat_data.attach() to
+>      attach next bridge
+>    drm/exynos: exynos_dp: Apply analogix_dp_finish_probe()
+>    drm/bridge: analogix_dp: Remove panel disabling and enabling in
+>      analogix_dp_set_bridge()
+>    drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing
+>      in analogix_dp_unbind()
+>    drm/bridge: analogix_dp: Apply panel_bridge helper
+>
+>   drivers/gpu/drm/bridge/analogix/Kconfig       |   1 +
+>   .../drm/bridge/analogix/analogix_dp_core.c    | 394 ++++++++++--------
+>   .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
+>   drivers/gpu/drm/exynos/exynos_dp.c            | 168 ++++----
+>   drivers/gpu/drm/rockchip/Kconfig              |   1 -
+>   .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  74 ++--
+>   include/drm/bridge/analogix_dp.h              |   9 +-
+>   7 files changed, 342 insertions(+), 310 deletions(-)
+>
+> ---
+>
+> Changes in v2:
+> - Update Exynos DP driver synchronously.
+> - Move the panel/bridge parsing to the Analogix side.
+>
+> Changes in v3:
+> - Rebase for the existing devm_drm_bridge_alloc() applying commit.
+> - Fix the typographical error of panel/bridge check in exynos_dp_bind().
+> - Squash all commits related to skip_connector deletion in both Exynos and
+>    Analogix code into one.
+> - Apply panel_bridge helper to make the codes more concise.
+> - Fix the handing of bridge in analogix_dp_bridge_get_modes().
+> - Remove unnecessary parameter struct drm_connector* for callback
+>    &analogix_dp_plat_data.attach().
+> - In order to decouple the connector driver and the bridge driver, move
+>    the bridge connector initilization to the Rockchip and Exynos sides.
+>
+> Changes in v4:
+> - Rebase for the applied &drm_bridge_funcs.detect() modification commit.
+> - Rename analogix_dp_find_panel_or_bridge() to analogix_dp_finish_probe().
+> - Drop the drmm_encoder_init() modification commit.
+> - Rename the &analogix_dp_plat_data.bridge to
+>    &analogix_dp_plat_data.next_bridge.
+>
+> Changes in v5:
+> - Add legacy bridge to parse the display-timings node under the dp node
+>    for Exynos side.
+> - Move color format check to &drm_connector_helper_funcs.atomic_check()
+>    in order to get rid of &analogix_dp_plat_data.get_modes().
+> - Remove unused callback &analogix_dp_plat_data.get_modes().
+> - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
+>    the downstream device is a panel, a bridge or neither.
+> - Select DRM_DISPLAY_DP_AUX_BUS for DRM_ANALOGIX_DP, and remove it for
+>    ROCKCHIP_ANALOGIX_DP.
+> - Apply rockchip_dp_attach() to support the next bridge attachment for
+>    the Rockchip side.
+> - Move next_bridge attachment from Analogix side to Rockchip/Exynos sides.
 
-And I am not longer able to reproduce it after limiting the size
-of the record to 1/4 of the data buffer size. I did it with
-the following change:
+Exynos part still lacks "select DRM_BRIDGE_CONNECTOR" in Kconfig, 
+besides that it works fine on all my test boards. Fix this issue and 
+feel free to add:
 
-diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
-index bc811de18316..2f02254705aa 100644
---- a/kernel/printk/printk_ringbuffer.c
-+++ b/kernel/printk/printk_ringbuffer.c
-@@ -398,8 +398,6 @@ static unsigned int to_blk_size(unsigned int size)
-  */
- static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
- {
--	struct prb_data_block *db = NULL;
--
- 	if (size == 0)
- 		return true;
- 
-@@ -409,7 +407,7 @@ static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
- 	 * at least the ID of the next block.
- 	 */
- 	size = to_blk_size(size);
--	if (size > DATA_SIZE(data_ring) - sizeof(db->id))
-+	if (size > DATA_SIZE(data_ring) / 4)
- 		return false;
- 
- 	return true;
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-I guess that there is a race when we need to make all existing records
-reusable when making space for the next one.
-
-Another aspect might be the very small amount of descriptors (16).
-They are quickly recycled. But it is not a problem after
-limiting the size of the record to 1/4.
-
-Note that my test system is using 12 CPUs in KVM.
-And it is x86_64.
-
-Best Regards,
-Petr
 
