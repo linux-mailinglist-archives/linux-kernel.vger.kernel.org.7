@@ -1,199 +1,261 @@
-Return-Path: <linux-kernel+bounces-813089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6090B54091
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:41:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BD91B54095
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:42:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BF517A8083
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FEBCAA09F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A38F20E6F3;
-	Fri, 12 Sep 2025 02:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DE32221269;
+	Fri, 12 Sep 2025 02:41:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Qsw+Pe59"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2086.outbound.protection.outlook.com [40.107.220.86])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BAB07N4W"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD69D1D5146
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757644832; cv=fail; b=VU97hqVLXNYwSIouAXkS11lgyMEg9cmXMnd9imF/2TZEGCaenllrH9aLMvzWSMatDSIQuipVW/IyQ4RqVNyFsnfBU142u1E+pXvh4xWtaWlbD/6GHZCwr89WZ72AFU0urN89Moa5LH6q50fawHKBasNRqvGP6IcNAiXtkvqvDJA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757644832; c=relaxed/simple;
-	bh=RoxdYZGxOSrTQOwPrQMbtnBfVDse/K5V+fQl8as/yUU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=prJvwVxqS0QnmGzOZE+0dUIy1Iid4jVSnU5zq1/m/eSxeIgWYnxTCU+3Iidh0qTw8gcxgHeGv6MJPbf/jWByyMP2525RgkQcKo92OEcU45oOCjmgYEbaNq28A6JlClf9f2EER8J/rhx/yJobHYwPG67SeeCRr4DjKGTdU/4NDlg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Qsw+Pe59; arc=fail smtp.client-ip=40.107.220.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=biWDk+Qk6C87kUWT2J2SSVuHhaaeEw9eZ7uR6nRRYDQETWMMHTP8wrqsyYs2qqsQZyfeLCWMpL7AeASoj+uTURFkBYEs0BnTVyKfExrwVJ+a8t/AiHMekwnklSO3I+qfikrK5PEWfauTADmjCFuFJwoOMFPIB4nOs+lm7ilVrpAFVNfNItMwYXA9tBXwXy2Z6Ew3FHWJzcjY4uyqnHTGU18OyW9oeWNwPEqoVYjG2TLVr3klFSQwZGz122UhHNvu6Mwq/5PT5h5SFinRF46d0XKdpzb4WW7QCr8RX/1tO9PsaYhb9FOLogeQW/dapwi9iQSBz5aJaZn5SAuZJvy++Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QWFQgvbfSFCt5+GWnwfMDQavlZwu8VgPoTmNQaGR9kA=;
- b=sNbp0iLv3CxBiLTEIl7Q+gzH4rDSI/O65uErdUMED8URXfwvHLOnw1a5K22mzVcEBR80gzhU9i9WPaxmoBKVx1KyIlDvG9NnU7jLEhJ3lfBileFKmBSPqMpNtlzv467JhUlQxJvF2kjZQ9C1J04ClFKM0jiEUtaNtIGFbJX/Ss8olb+gpspHv1AMTg1azWpUTmHHmOumJftr7xTlRgJMyRRXga4vGMhDUxrdJ74jUC/z2daoYWXHMGF4VvItvJMEh2ZBosqxsGAZ1g9z1JahlVj+TplwMHbHo9p0HqFNJhNgGW/yINIPJ0MqixHmmWoidOAtzep/ihsgKq5EPuVa/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QWFQgvbfSFCt5+GWnwfMDQavlZwu8VgPoTmNQaGR9kA=;
- b=Qsw+Pe59FLVEem4XXccjtP+BQfOGpo3rFgtLjCypOqTd6YFI1/BOn60WARg2eom5E4ahYBwdnun1H1e9gu0Xj9SQyaONWG9AO6/mvH9YQW8VlNc6bJ2FXA1o+H3p0WRYu++Vl+p5nvxoyAWbHC4J1X6EilXyWo1AEeYdffrA6rg=
-Received: from SJ0PR03CA0296.namprd03.prod.outlook.com (2603:10b6:a03:39e::31)
- by BL1PR12MB5731.namprd12.prod.outlook.com (2603:10b6:208:386::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 02:40:27 +0000
-Received: from SJ1PEPF00002322.namprd03.prod.outlook.com
- (2603:10b6:a03:39e:cafe::16) by SJ0PR03CA0296.outlook.office365.com
- (2603:10b6:a03:39e::31) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Fri,
- 12 Sep 2025 02:40:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb08.amd.com; pr=C
-Received: from satlexmb08.amd.com (165.204.84.17) by
- SJ1PEPF00002322.mail.protection.outlook.com (10.167.242.84) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Fri, 12 Sep 2025 02:40:27 +0000
-Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 11 Sep
- 2025 19:40:26 -0700
-Received: from satlexmb08.amd.com (10.181.42.217) by satlexmb10.amd.com
- (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 11 Sep
- 2025 19:40:26 -0700
-Received: from [10.136.41.4] (10.180.168.240) by satlexmb08.amd.com
- (10.181.42.217) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
- Transport; Thu, 11 Sep 2025 19:40:22 -0700
-Message-ID: <d8bb7091-7127-41df-9a2d-0b51897592a7@amd.com>
-Date: Fri, 12 Sep 2025 08:10:21 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F82C1F582E;
+	Fri, 12 Sep 2025 02:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757644867; cv=none; b=nN6/e13ZhxztfLdnCMG6ct4+1G1BQ0dKdrRBqDomqNeOTEw3IQ7xHk2ERVs6pnA1ohqZApltXr7Jgu1gRQNGP+UeAGakd3vy2eTfBWJ50oZFIVmwVksf9SHxOeCKm/KJPUJVNjum1fawzFh/3giaU+bMdo4aKUgiFLt2TiLRSWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757644867; c=relaxed/simple;
+	bh=NsauGeiklvzZmSjLPeSDEaoxcNrSuaYWf8M3YHJQe4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=NMkw+Gx2pgm/1A5v/ZA57QX1IWcqErwV6pv9InsEOPOykNoqtOEuuAmwsVKL3LhWBjhi78v59ijecoc9rkw8Sly+r+4DZU2XIt/FgK9wN7v+zofX+Ug9HCOr4JZ0tRRBUXvk1AJbjtATCgwtN9M5cWk1efFMaifXfvSE4yp22TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BAB07N4W; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1757644861;
+	bh=Mxz+MJMpxgcjbcJa8tZchrjniFjVcmYRhAdQ4VJ3mEw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BAB07N4WQbbiv9utw13tmckecOGdQcNBaWpBJovcu1tcIpiMVTGp8CDHwCh9l55dh
+	 VjGRjzQ3PxIxBAmpSGF1QFEw2SAGIxqgk84vZFubZEQt2XVYgqg/qHlAa1cI3gYke1
+	 TSlTtfhXUMOBQGp+ykbWeNFCKDb+t7rdWijoE5tslxW2TD5Lg5INLchkL1D6EsdMoR
+	 jBAwLaz2HUpyUsuH32k40wqGvzC2+QkjTdlM1ZkpHMDqQpN0j+oIa087/l69xI1SEE
+	 GfIbUTOQky9W8hdmUV9YcdLOTOw4Pi46QJxL+sk2UiXDD8sqNO8KjvmWdfaigQQpWX
+	 25xkpjOE4/VVA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cNJZh1c8sz4w90;
+	Fri, 12 Sep 2025 12:41:00 +1000 (AEST)
+Date: Fri, 12 Sep 2025 12:40:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>
+Cc: Jiawei Zhao <phoenix500526@163.com>, Jiri Olsa <jolsa@kernel.org>, bpf
+ <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the tip tree with the bpf-next tree
+Message-ID: <20250912124059.0428127b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: simplify task_numa_find_cpu()
-To: Yury Norov <yury.norov@gmail.com>, Ingo Molnar <mingo@redhat.com>, "Peter
- Zijlstra" <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
-	"Vincent Guittot" <vincent.guittot@linaro.org>, Dietmar Eggemann
-	<dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Ben Segall
-	<bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin Schneider
-	<vschneid@redhat.com>, <linux-kernel@vger.kernel.org>
-References: <20250911203136.548844-1-yury.norov@gmail.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250911203136.548844-1-yury.norov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002322:EE_|BL1PR12MB5731:EE_
-X-MS-Office365-Filtering-Correlation-Id: 72ae8f6c-b323-44c1-bb8e-08ddf1a5bb58
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013|921020|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dzh3UTFKclNoYUJZM2xHMGMrQUtQTEZaRTlUN3Q5L0trb3NkQzNUL1dkNmRH?=
- =?utf-8?B?THFrNkNqTUo1S3VUanp5QUxGZ25DTy9QUWUwZVU4aDRHRmhMUTRZNXpjaFMz?=
- =?utf-8?B?TXNtaDBMWllhcHJJRjE2NVVlcWpGTjJKT29SZkJyRkFWMVpCcnhWWUI4ZXh6?=
- =?utf-8?B?Z29pbFFYQTF2TWR4eXgzY2pPVnZJYTQxRjJIKzNmUTdTTlBUbmJheE5lcU50?=
- =?utf-8?B?akVYMy92SHhHL0pxQnZrc09MWFNZUWFieWU5dGkwT2Rta05Ka2VSRGRtcWdr?=
- =?utf-8?B?d3lWOXplNk5yUllhQmFmVW40NDhTakV0NHUzbGh2M2ROQVpVV0ZqR1B1TkF0?=
- =?utf-8?B?aElGUnRLYTBseDJMNUU2NUprdGpaREJ1ckFCa1lIZXZSTjgzWk1nS2hva1c3?=
- =?utf-8?B?TXV6TXhyN3RFYnpGS3MwZkFYbElURnBWZDM1YTRVN2ovbU5XSHZPSzBWZ0ta?=
- =?utf-8?B?Zkk3ZGtBcTRTQ1FRVlQzWkQ3c1FaaEZNZG4rN2NIOGlQOTh6Q1A4U1ZjdENZ?=
- =?utf-8?B?bnJVNUtQNEk2S3JlZWdNTUN5cUlOTEVIZGRHTVplZFVPTzNSSE5yNFozdC9J?=
- =?utf-8?B?djNPTEtNZVo5MVJVaFBIb1NYZ2tHY1VpYmtzSVN4OTEzcUEweEZjd2QxT0tv?=
- =?utf-8?B?Y2xyeDJzWXRuRTNrbEh2OG9WQTU2eGRtMnFFQXo2NmgrcTRDcUQrSVJiSXM2?=
- =?utf-8?B?SWJuL3dwVy9wSDBPQVR6TFRIdFpQZTR0N1VzRzJzV0N3aVgxL2xpM3NBbTVW?=
- =?utf-8?B?aEo0LzBGQXlsTUVhRm0rMytLaVJJUGR5V25mTERHcGRQRlArSjZkQnI2dmhN?=
- =?utf-8?B?OWJKRG9DYk9KU3BWY2o1TG0yOTZseS9ITm1uMlU0SjhiM2ppSjU1c1R3My9L?=
- =?utf-8?B?TjZXc2ZOd0VvZDE1SlBVejhQNm5LZktJVmMvamViTm9BZnhVbkp6c1V2bFRD?=
- =?utf-8?B?THVMSWhvM0tUOFNEYXdLc25CV1UvY3Q1Y0VrbUF4U0FnMGhKVS9TaDhzbHBl?=
- =?utf-8?B?c0hUUklXUUN3OEhQclQ3RzhpT3pwUEpYaVk0MkxyM2V2RCs4WnYrSktFN1gx?=
- =?utf-8?B?K2N4Wmw3djRzTWVnSUUzbDRrcEl6UElsTU01R3NvS1pkWHBXOFVWZG9lQTNO?=
- =?utf-8?B?cGZMNjRnVThKM0ZKRDMzZE1ZNDZMWXJySkxqMmhIVWYwc0xXTUZNdnpHZnhK?=
- =?utf-8?B?UzRZMFQ4L2dpSnVhYmlIUjVvaTFheHZ6N2ZuOE9YTjUreE96R2lJVGdEN25W?=
- =?utf-8?B?SFN1WnJUa1pGaFRDUDRTdE5ldkJ1N01zbFJxN2NIeFhreXU3ajk1cnJzNjhI?=
- =?utf-8?B?dUVmZzN6bW5hY1c1SGs4MXZzYTZRZ2ZZbDlOT1A5S1dieWZOY24wWnk1eTFn?=
- =?utf-8?B?SmlmS29FOXFFUUFlUG1XYWw2Kzl4YUF2RDg5aHNBV0w0YlppNnVFTjlLU1hI?=
- =?utf-8?B?YjlJMDBnYndXRVk0S2g4UjlFRUhmMnc0VlhmOU43QktpNjdJV0JpNVgycE0w?=
- =?utf-8?B?elplL0FvT3k3T0VPanQydmRvQWZ6SkxqWCtUOGRRejJQYTVpb0xQWWtGb2RC?=
- =?utf-8?B?K0UxV2VLUEV4dU0xMjhHYTIzYkJnZDhYVExMUnplbm5Kb0Jwb1NQRzluSDMy?=
- =?utf-8?B?NkRnbHZnR0h6eGE5djZlNTRiRWxmZTh4QS9GRTJuSU5YOXcyZVRVSzd5Z1hE?=
- =?utf-8?B?aU8xL3pUY0YxeHhSZEs2OVNiL3ZqWGpnM1FnaWNJRjJvUkl0T1BZSHZ5b1VS?=
- =?utf-8?B?QUI1THhOUmF2SWN1SUJwaEF3ekZDTDhaUStWbE5GOEY1MFBhNnQ5VXBBNS9F?=
- =?utf-8?B?ZmRQRllyZW1QQUxLYmk3Zkx3Y1hXcGRPQ0ZtVEJydUs2UXJyYitJYlR5UmQ1?=
- =?utf-8?B?dURlekkwM2JJeFc2ZkdUeDRtSFN6K0FMS2t1MmI4aXdSeEprL3BwQlh1ejFW?=
- =?utf-8?B?SU55SXNGZjUwVHJ2bmtjNE9Ta1RQTFh5RzZFSUpoaHBpM2RWMVBQMFBnQ1F6?=
- =?utf-8?B?WmQ1SlZEVnNpSTc0VE92MVY4SlpCVHBZdldiVDZJNUFEZ3RrejVkQTdVMEYz?=
- =?utf-8?B?QlFPR3Rna253Qm5SYTZTcTQwd05HVDFLbFV2QT09?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb08.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013)(921020)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 02:40:27.0191
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 72ae8f6c-b323-44c1-bb8e-08ddf1a5bb58
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb08.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002322.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5731
+Content-Type: multipart/signed; boundary="Sig_/506VhIn.sowjLdO/xYsUGH_";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello Yury,
+--Sig_/506VhIn.sowjLdO/xYsUGH_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 9/12/2025 2:01 AM, Yury Norov wrote:
-> From: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> 
-> Use for_each_cpu_and() and drop some housekeeping code.
+Hi all,
 
-Please feel free to include:
+Today's linux-next merge of the tip tree got a conflict in:
 
-Reviewed-by: K Prateek Nayak <kprateek.nayak@amd.com>
+  tools/testing/selftests/bpf/prog_tests/usdt.c
 
-> 
-> Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
-> ---
->  kernel/sched/fair.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 0990ed90c14e..c48c0975fe7a 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -2474,11 +2474,8 @@ static void task_numa_find_cpu(struct task_numa_env *env,
->  		maymove = !load_too_imbalanced(src_load, dst_load, env);
->  	}
->  
-> -	for_each_cpu(cpu, cpumask_of_node(env->dst_nid)) {
-> -		/* Skip this CPU if the source task cannot migrate */
-> -		if (!cpumask_test_cpu(cpu, env->p->cpus_ptr))
-> -			continue;
-> -
-> +	/* Skip CPUs if the source task cannot migrate */
-> +	for_each_cpu_and(cpu, cpumask_of_node(env->dst_nid), env->p->cpus_ptr) {
->  		env->dst_cpu = cpu;
->  		if (task_numa_compare(env, taskimp, groupimp, maymove))
->  			break;
+between commit:
 
--- 
-Thanks and Regards,
-Prateek
+  69424097ee10 ("selftests/bpf: Enrich subtest_basic_usdt case in selftests=
+ to cover SIB handling logic")
 
+from the bpf-next tree and commit:
+
+  875e1705ad99 ("selftests/bpf: Add optimized usdt variant for basic usdt t=
+est")
+
+from the tip tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc tools/testing/selftests/bpf/prog_tests/usdt.c
+index 615e9c3e93bf,833eb87483a1..000000000000
+--- a/tools/testing/selftests/bpf/prog_tests/usdt.c
++++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
+@@@ -40,73 -40,20 +40,80 @@@ static void __always_inline trigger_fun
+  	}
+  }
+ =20
+ +#if defined(__x86_64__) || defined(__i386__)
+ +/*
+ + * SIB (Scale-Index-Base) addressing format: "size@(base_reg, index_reg, =
+scale)"
+ + * - 'size' is the size in bytes of the array element, and its sign indic=
+ates
+ + *   whether the type is signed (negative) or unsigned (positive).
+ + * - 'base_reg' is the register holding the base address, normally rdx or=
+ edx
+ + * - 'index_reg' is the register holding the index, normally rax or eax
+ + * - 'scale' is the scaling factor (typically 1, 2, 4, or 8), which match=
+es the
+ + *    size of the element type.
+ + *
+ + * For example, for an array of 'short' (signed 2-byte elements), the SIB=
+ spec would be:
+ + * - size: -2 (negative because 'short' is signed)
+ + * - scale: 2 (since sizeof(short) =3D=3D 2)
+ + *
+ + * The resulting SIB format: "-2@(%%rdx,%%rax,2)" for x86_64, "-2@(%%edx,=
+%%eax,2)" for i386
+ + */
+ +static volatile short array[] =3D {-1, -2, -3, -4};
+ +
+ +#if defined(__x86_64__)
+ +#define USDT_SIB_ARG_SPEC -2@(%%rdx,%%rax,2)
+ +#else
+ +#define USDT_SIB_ARG_SPEC -2@(%%edx,%%eax,2)
+ +#endif
+ +
+ +unsigned short test_usdt_sib_semaphore SEC(".probes");
+ +
+ +static void trigger_sib_spec(void)
+ +{
+ +	/*
+ +	 * Force SIB addressing with inline assembly.
+ +	 *
+ +	 * You must compile with -std=3Dgnu99 or -std=3Dc99 to use the
+ +	 * STAP_PROBE_ASM macro.
+ +	 *
+ +	 * The STAP_PROBE_ASM macro generates a quoted string that gets
+ +	 * inserted between the surrounding assembly instructions. In this
+ +	 * case, USDT_SIB_ARG_SPEC is embedded directly into the instruction
+ +	 * stream, creating a probe point between the asm statement boundaries.
+ +	 * It works fine with gcc/clang.
+ +	 *
+ +	 * Register constraints:
+ +	 * - "d"(array): Binds the 'array' variable to %rdx or %edx register
+ +	 * - "a"(0): Binds the constant 0 to %rax or %eax register
+ +	 * These ensure that when USDT_SIB_ARG_SPEC references %%rdx(%edx) and
+ +	 * %%rax(%eax), they contain the expected values for SIB addressing.
+ +	 *
+ +	 * The "memory" clobber prevents the compiler from reordering memory
+ +	 * accesses around the probe point, ensuring that the probe behavior
+ +	 * is predictable and consistent.
+ +	 */
+ +	asm volatile(
+ +		STAP_PROBE_ASM(test, usdt_sib, USDT_SIB_ARG_SPEC)
+ +		:
+ +		: "d"(array), "a"(0)
+ +		: "memory"
+ +	);
+ +}
+ +#endif
+ +
+- static void subtest_basic_usdt(void)
++ static void subtest_basic_usdt(bool optimized)
+  {
+  	LIBBPF_OPTS(bpf_usdt_opts, opts);
+  	struct test_usdt *skel;
+  	struct test_usdt__bss *bss;
+- 	int err, i;
++ 	int err, i, called;
+ +	const __u64 expected_cookie =3D 0xcafedeadbeeffeed;
+ =20
++ #define TRIGGER(x) ({			\
++ 	trigger_func(x);		\
++ 	if (optimized)			\
++ 		trigger_func(x);	\
++ 	optimized ? 2 : 1;		\
++ 	})
++=20
+  	skel =3D test_usdt__open_and_load();
+  	if (!ASSERT_OK_PTR(skel, "skel_open"))
+  		return;
+@@@ -126,22 -73,13 +133,22 @@@
+  	if (!ASSERT_OK_PTR(skel->links.usdt0, "usdt0_link"))
+  		goto cleanup;
+ =20
+ +#if defined(__x86_64__) || defined(__i386__)
+ +	opts.usdt_cookie =3D expected_cookie;
+ +	skel->links.usdt_sib =3D bpf_program__attach_usdt(skel->progs.usdt_sib,
+ +							 0 /*self*/, "/proc/self/exe",
+ +							 "test", "usdt_sib", &opts);
+ +	if (!ASSERT_OK_PTR(skel->links.usdt_sib, "usdt_sib_link"))
+ +		goto cleanup;
+ +#endif
+ +
+- 	trigger_func(1);
++ 	called =3D TRIGGER(1);
+ =20
+- 	ASSERT_EQ(bss->usdt0_called, 1, "usdt0_called");
+- 	ASSERT_EQ(bss->usdt3_called, 1, "usdt3_called");
+- 	ASSERT_EQ(bss->usdt12_called, 1, "usdt12_called");
++ 	ASSERT_EQ(bss->usdt0_called, called, "usdt0_called");
++ 	ASSERT_EQ(bss->usdt3_called, called, "usdt3_called");
++ 	ASSERT_EQ(bss->usdt12_called, called, "usdt12_called");
+ =20
+ -	ASSERT_EQ(bss->usdt0_cookie, 0xcafedeadbeeffeed, "usdt0_cookie");
+ +	ASSERT_EQ(bss->usdt0_cookie, expected_cookie, "usdt0_cookie");
+  	ASSERT_EQ(bss->usdt0_arg_cnt, 0, "usdt0_arg_cnt");
+  	ASSERT_EQ(bss->usdt0_arg_ret, -ENOENT, "usdt0_arg_ret");
+  	ASSERT_EQ(bss->usdt0_arg_size, -ENOENT, "usdt0_arg_size");
+@@@ -225,18 -163,9 +232,19 @@@
+  	ASSERT_EQ(bss->usdt3_args[1], 42, "usdt3_arg2");
+  	ASSERT_EQ(bss->usdt3_args[2], (uintptr_t)&bla, "usdt3_arg3");
+ =20
+ +#if defined(__x86_64__) || defined(__i386__)
+ +	trigger_sib_spec();
+ +	ASSERT_EQ(bss->usdt_sib_called, 1, "usdt_sib_called");
+ +	ASSERT_EQ(bss->usdt_sib_cookie, expected_cookie, "usdt_sib_cookie");
+ +	ASSERT_EQ(bss->usdt_sib_arg_cnt, 1, "usdt_sib_arg_cnt");
+ +	ASSERT_EQ(bss->usdt_sib_arg, nums[0], "usdt_sib_arg");
+ +	ASSERT_EQ(bss->usdt_sib_arg_ret, 0, "usdt_sib_arg_ret");
+ +	ASSERT_EQ(bss->usdt_sib_arg_size, sizeof(nums[0]), "usdt_sib_arg_size");
+ +#endif
+ +
+  cleanup:
+  	test_usdt__destroy(skel);
++ #undef TRIGGER
+  }
+ =20
+  unsigned short test_usdt_100_semaphore SEC(".probes");
+
+--Sig_/506VhIn.sowjLdO/xYsUGH_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmjDiDsACgkQAVBC80lX
+0Gwn2wf+JdEg0JBrrqOJ/mxKRiIsOTu4bxuxaLCeAgoa0DJNc5hvVaIYnFx/nuAX
+ys9BuJ10hkEWzuJqBSWBKIunMipD1vPZNXQypHYAbu7hTlue2C1uWOTI/xyMEKHw
+bQciNXwP9FAsZoEYse0Hyb9CjYUARd/WN195DAv0IQn1Om1Rh24xr0+WpCCNS8Si
+HCNiZ0L20BHUn3k2t75wme5i77PFWrsdsv24PwzDgSFQ66W+iY1z/d9ZF3J2rClO
+dx/VNN0hkkQ/qnmb4Fxa8LbwNNZaWmQYZBost00aiqEZW9bq9SNPL6956OH9/Ltb
+F/CXavvsytxkpOPiYC3R9mLG6505PA==
+=Su5e
+-----END PGP SIGNATURE-----
+
+--Sig_/506VhIn.sowjLdO/xYsUGH_--
 
