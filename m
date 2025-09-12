@@ -1,245 +1,165 @@
-Return-Path: <linux-kernel+bounces-813232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655FDB54254
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:57:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884EBB54250
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:56:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3644D3B35E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF20A1B23C19
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8C3527A139;
-	Fri, 12 Sep 2025 05:56:55 +0000 (UTC)
-Received: from zg8tmty1ljiyny4xntuumtyw.icoremail.net (zg8tmty1ljiyny4xntuumtyw.icoremail.net [165.227.155.160])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74E01A2387;
-	Fri, 12 Sep 2025 05:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=165.227.155.160
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D012798FE;
+	Fri, 12 Sep 2025 05:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SI7aETGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5F41A2387;
+	Fri, 12 Sep 2025 05:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757656615; cv=none; b=ZNJ6f10IpAD2UJbp+okIvHTENqTp3KovpSD9lM4ruNs8GMI8GEOOCOzrzB4NVk21412Nw35oPc9iv7dnuCoXKvDCMncK4Mzr+Mvl2/gDoWPzuysP0ar1G3QE4cxIygn7V23vaq43doFjCChHbtE3KRgbXLGf6k/jtu/Iwec135M=
+	t=1757656590; cv=none; b=f3fdtlFolHgnbCrcRDEHq8nlmpSRd01598R7nf2RJGzkhed4PhBv3K54glYhk5zmiYdSNb+Rs6Epxi+5d7kDaIRaVAfR0b3I28SihMg0erO8yTzQ30D1qBu1/2cQ+JX2mV/cfuq21yrxi9JLwWIE3+aBRNQyFq3Te6hfiYgECBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757656615; c=relaxed/simple;
-	bh=2jGN5LEfqRngPTPphZ3E97pLOSBWaU5nEcTqsUo341g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UdK3y/k+2056j9gQZ2PAUFezXHhPHYvjUM36KO9LZpakXkhl5DnWQqGpihDCCNh+4ZVOqa/t0fK/Y+Q4PiWdZGh8assQyAC/ukdAdertKOlZbk+1M8LgriQ1b+ogX4MMG1nHEFGoM+zcnj5488HKRH4VQRe1LfRf9k3x5+jUZjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=165.227.155.160
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
-	by app1 (Coremail) with SMTP id TAJkCgD3DQ_+tcNowaPOAA--.51970S2;
-	Fri, 12 Sep 2025 13:56:17 +0800 (CST)
-From: weishangjuan@eswincomputing.com
-To: devicetree@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	yong.liang.choong@linux.intel.com,
-	vladimir.oltean@nxp.com,
-	rmk+kernel@armlinux.org.uk,
-	faizal.abdul.rahim@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	inochiama@gmail.com,
-	jan.petrous@oss.nxp.com,
-	jszhang@kernel.org,
-	p.zabel@pengutronix.de,
-	boon.khai.ng@altera.com,
-	0x1207@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	emil.renner.berthing@canonical.com
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	lizhi2@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Shangjuan Wei <weishangjuan@eswincomputing.com>
-Subject: [PATCH v6 1/2] dt-bindings: ethernet: eswin: Document for EIC7700 SoC
-Date: Fri, 12 Sep 2025 13:56:12 +0800
-Message-Id: <20250912055612.2884-1-weishangjuan@eswincomputing.com>
-X-Mailer: git-send-email 2.31.1.windows.1
-In-Reply-To: <20250912055352.2832-1-weishangjuan@eswincomputing.com>
-References: <20250912055352.2832-1-weishangjuan@eswincomputing.com>
+	s=arc-20240116; t=1757656590; c=relaxed/simple;
+	bh=NoVcwhHFhGVy4YaFMNb6TmrHk9QeQ0TL+216knOdmWo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t615ZO15zoHwgH8w5XQ2IuJ2J0CznrS19JGuSIMBi/Gg3r0arbJri+EMLaoOO2Ms1L/ErkeVxmOAcL7+xmdhVKs7PqumhITw1ukdI2tPQzWlsqhFx+uAMbf+1I+c1BH5SCja5j4Jc8KxDIa7xywgwj5BiacI6mHWZI5QxvTYiYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SI7aETGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE472C4CEF4;
+	Fri, 12 Sep 2025 05:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757656588;
+	bh=NoVcwhHFhGVy4YaFMNb6TmrHk9QeQ0TL+216knOdmWo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SI7aETGTzluOOEMW/W1Yf2oJIhfw+qt0AykEt+OlCHsqowZTUgxU7oUVaTUkzzR/c
+	 S1/R6Tav6Ja+kIX74IpvNBe72B57B3Rz45ou78b0eQyKNT3cDrMC7zZesYtUvqe9Cr
+	 AbCG9Wt1bQRpbLISofMxJZ0j5G665gshmHgrC+wRvp/ivLWmiP/uqgiaFpleqcbvVu
+	 7nZzXWcwEjGHFHZmYSWkQe1m341Q3a+VRh0007c2KexS/xYDDhfkfbFPjC5eOhgZIw
+	 FR4993IFUSHqxoxZx7UnDEC6cuYnDHzr2O8elUaYkEPrkTFnqoflalaQHHm1VBciyW
+	 1YpSNXHxTRO2g==
+Date: Fri, 12 Sep 2025 07:56:25 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>, 
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: display: msm: Document the Glymur
+ Mobile Display SubSystem
+Message-ID: <20250912-beautiful-radiant-pheasant-72dedd@kuoka>
+References: <20250911-glymur-display-v1-0-d391a343292e@linaro.org>
+ <20250911-glymur-display-v1-1-d391a343292e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TAJkCgD3DQ_+tcNowaPOAA--.51970S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxCr4kJF18CFWUAr43GFyDKFg_yoWrJw4kpF
-	WkCrW5Jr4fXr1fXa17tF10kFn3tanrCF1Ykrn7t3Waq3s0qas0qw1ayFy5Ga43Cr47ZFy5
-	WFWYvayxA3W2k3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBl14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26rWY6Fy7MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI4
-	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4j6r4U
-	JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcV
-	C2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sR_jjg7UUUUU==
-X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250911-glymur-display-v1-1-d391a343292e@linaro.org>
 
-From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+On Thu, Sep 11, 2025 at 03:28:48PM +0300, Abel Vesa wrote:
+> +
+> +            mdp_opp_table: opp-table {
+> +                compatible = "operating-points-v2";
+> +
+> +                opp-200000000 {
+> +                    opp-hz = /bits/ 64 <200000000>;
+> +                    required-opps = <&rpmhpd_opp_low_svs>;
+> +                };
+> +
+> +                opp-325000000 {
+> +                    opp-hz = /bits/ 64 <325000000>;
+> +                    required-opps = <&rpmhpd_opp_svs>;
+> +                };
+> +
+> +                opp-375000000 {
+> +                    opp-hz = /bits/ 64 <375000000>;
+> +                    required-opps = <&rpmhpd_opp_svs_l1>;
+> +                };
+> +
+> +                opp-514000000 {
+> +                    opp-hz = /bits/ 64 <514000000>;
+> +                    required-opps = <&rpmhpd_opp_nom>;
+> +                };
+> +            };
+> +        };
+> +
+> +        displayport-controller@ae90000 {
+> +            compatible = "qcom,glymur-dp";
+> +            reg = <0 0xae90000 0 0x200>,
+> +                  <0 0xae90200 0 0x200>,
+> +                  <0 0xae90400 0 0x600>,
+> +                  <0 0xae91000 0 0x400>,
+> +                  <0 0xae91400 0 0x400>;
+> +
+> +            interrupt-parent = <&mdss>;
+> +            interrupts = <12>;
+> +
+> +            clocks = <&dispcc_mdss_ahb_clk>,
+> +               <&dispcc_dptx0_aux_clk>,
+> +               <&dispcc_dptx0_link_clk>,
+> +               <&dispcc_dptx0_link_intf_clk>,
+> +               <&dispcc_dptx0_pixel0_clk>;
 
-Add ESWIN EIC7700 Ethernet controller, supporting clock
-configuration, delay adjustment and speed adaptive functions.
+Mis-aligned entries.
 
-Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
-Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
----
- .../bindings/net/eswin,eic7700-eth.yaml       | 128 ++++++++++++++++++
- 1 file changed, 128 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+> +            clock-names = "core_iface", "core_aux",
+> +                    "ctrl_link",
+> +                    "ctrl_link_iface",
+> +                    "stream_pixel";
 
-diff --git a/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml b/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
-new file mode 100644
-index 000000000000..9771fed9604e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
-@@ -0,0 +1,128 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/eswin,eic7700-eth.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Eswin EIC7700 SOC Eth Controller
-+
-+maintainers:
-+  - Shuang Liang <liangshuang@eswincomputing.com>
-+  - Zhi Li <lizhi2@eswincomputing.com>
-+  - Shangjuan Wei <weishangjuan@eswincomputing.com>
-+
-+description:
-+  Platform glue layer implementation for STMMAC Ethernet driver.
-+
-+select:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - eswin,eic7700-qos-eth
-+  required:
-+    - compatible
-+
-+allOf:
-+  - $ref: snps,dwmac.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: eswin,eic7700-qos-eth
-+      - const: snps,dwmac-5.20
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    const: macirq
-+
-+  clocks:
-+    items:
-+      - description: AXI clock
-+      - description: Configuration clock
-+      - description: GMAC main clock
-+      - description: Tx clock
-+
-+  clock-names:
-+    items:
-+      - const: axi
-+      - const: cfg
-+      - const: stmmaceth
-+      - const: tx
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: stmmaceth
-+
-+  rx-internal-delay-ps:
-+    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
-+
-+  tx-internal-delay-ps:
-+    enum: [0, 200, 600, 1200, 1600, 1800, 2000, 2200, 2400]
-+
-+  eswin,hsp-sp-csr:
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+    items:
-+      - description: Phandle to HSP(High-Speed Peripheral) device
-+      - description: Offset of phy control register for internal
-+                     or external clock selection
-+      - description: Offset of AXI clock controller Low-Power request
-+                     register
-+      - description: Offset of register controlling TX/RX clock delay
-+    description: |
-+      High-Speed Peripheral device needed to configure clock selection,
-+      clock low-power mode and clock delay.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - interrupts
-+  - interrupt-names
-+  - phy-mode
-+  - resets
-+  - reset-names
-+  - rx-internal-delay-ps
-+  - tx-internal-delay-ps
-+  - eswin,hsp-sp-csr
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    ethernet@50400000 {
-+        compatible = "eswin,eic7700-qos-eth", "snps,dwmac-5.20";
-+        reg = <0x50400000 0x10000>;
-+        clocks = <&d0_clock 186>, <&d0_clock 171>, <&d0_clock 40>,
-+                <&d0_clock 193>;
-+        clock-names = "axi", "cfg", "stmmaceth", "tx";
-+        interrupt-parent = <&plic>;
-+        interrupts = <61>;
-+        interrupt-names = "macirq";
-+        phy-mode = "rgmii-id";
-+        phy-handle = <&phy0>;
-+        resets = <&reset 95>;
-+        reset-names = "stmmaceth";
-+        rx-internal-delay-ps = <200>;
-+        tx-internal-delay-ps = <200>;
-+        eswin,hsp-sp-csr = <&hsp_sp_csr 0x100 0x108 0x118>;
-+        snps,axi-config = <&stmmac_axi_setup>;
-+        snps,aal;
-+        snps,fixed-burst;
-+        snps,tso;
-+        stmmac_axi_setup: stmmac-axi-config {
-+            snps,blen = <0 0 0 0 16 8 4>;
-+            snps,rd_osr_lmt = <2>;
-+            snps,wr_osr_lmt = <2>;
-+        };
-+    };
---
-2.17.1
+Same here and in other places.
+
+> +
+> +            assigned-clocks = <&dispcc_mdss_dptx0_link_clk_src>,
+> +                  <&dispcc_mdss_dptx0_pixel0_clk_src>;
+> +            assigned-clock-parents = <&usb_1_ss0_qmpphy QMP_USB43DP_DP_LINK_CLK>,
+> +                  <&usb_1_ss0_qmpphy QMP_USB43DP_DP_VCO_DIV_CLK>;
+> +
+> +            operating-points-v2 = <&mdss_dp0_opp_table>;
+> +
+> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
+> +
+> +            phys = <&usb_1_ss0_qmpphy QMP_USB43DP_DP_PHY>;
+> +            phy-names = "dp";
+> +
+> +            #sound-dai-cells = <0>;
+> +
+> +            ports {
+> +              #address-cells = <1>;
+
+Mixed up indentation, keep 4 spaces.
+
+> +              #size-cells = <0>;
+> +
+> +              port@0 {
+> +                  reg = <0>;
+> +
+> +                  mdss_dp0_in: endpoint {
+> +                    remote-endpoint = <&mdss_intf0_out>;
+> +                  };
+> +              };
+> +
+> +              port@1 {
+> +                  reg = <1>;
+> +
+> +                  mdss_dp0_out: endpoint {
+> +                  };
+> +              };
+> +            };
+
+Best regards,
+Krzysztof
 
 
