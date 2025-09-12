@@ -1,109 +1,100 @@
-Return-Path: <linux-kernel+bounces-814290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DE9B55206
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:43:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7CBB55217
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:45:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4A7D167EB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:42:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9B501898805
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464C030E0D1;
-	Fri, 12 Sep 2025 14:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fnOXnWi8"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C98C19D8A3
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D8730E830;
+	Fri, 12 Sep 2025 14:43:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76DF30E0D1;
+	Fri, 12 Sep 2025 14:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757688172; cv=none; b=DTvXvpw+Avlp3teQsiTMw/0+FVYwy09/EFF7vkePs6LUe8WbizkO/1OV4eCHKaCCwtQOWVRWxT/nHT/uKKliDteAEAKJYCxpWL3WbpRjLNET0X+Q6CT193M8P3G9bSa+H+RhLMbuk7k9K/aSe7ZDCFdGgTIt8fSDHt8HLBHOFMc=
+	t=1757688187; cv=none; b=FqvcMew+IfCDz1Crbcq26rhVJcrr8cXk8hIO12Gjr2fT9EIqlOe4c7XUn9Pm2RbbeuBmtaibJDvvi0ejygzLQEkvW2fvRQSNvOPQbaSI5H2QbdfefJZkPSvL81UC5wM8Edt1B2QasLR/LB1AptkKOr9hxLE0qokp+20kh8mQbII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757688172; c=relaxed/simple;
-	bh=KTadnoVs1L6tK95w6iygbd6p3+n0bYUtRrTsFoZ4CAg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=k7mCjohUW/2oLmGRGE9gxjuRQfnYzT02sxtIwKCS3FlwCKxNF/js6lgqEhz7RIlfQKjIdGK0iis3XSWZALhzOeMSqAOt74JagmYr6AoF3UAf7eJYnvOlzzYqe/HvktXlFj943qQYrQ4b80sDv0BU467ilSX93wvzy4hcLVCSfS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fnOXnWi8; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2445805d386so25402755ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:42:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757688170; x=1758292970; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yF0zfvMhee/gZd9MiBKDEInbBjcZAk4MGGOi4+ZB0UM=;
-        b=fnOXnWi8xVvbjxMd33BuMxu6M/qtZULvNN75Eb/a+TQq8jPjt8scUFWtGCgOIIyxe2
-         1UIMmZSsx1lMjskDRd6QU716UDCLu/wSm+ztEam2o53i0Bin+c3m9MuIap9TppYS8RVn
-         YkcKayFUz5NKQX3jZw+P+c5cX6LfF7NuZPniQsdDpUohmbNCVqdzet901wqPkPEsZqxE
-         0/8n2HtXtuno7+t2tO1X+yWxHHmgKvHZ7MQYIT6SjiTMNx8pd552wZaN2HF69I2yA4oU
-         Lf7/naSkaYOYB7XDMnYRf6SmSt+TEetOiB30w35YDqAvQODf1pG0TYxurv2lfhZxSlQD
-         hqnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757688170; x=1758292970;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yF0zfvMhee/gZd9MiBKDEInbBjcZAk4MGGOi4+ZB0UM=;
-        b=hTiJ9kn9Ue/zk4STf6lCb3aKOVJh7+ksHX5HVwnwh7LioGNXYqs3XZGqWqDIQIdClT
-         P2/96Z/YLsHn8nlwUH8wf5tlVyH6rhkWTKis5sBP4u6UzDuStm+3sS4YVcfxsuObEqFz
-         MJ4X9rtoI6TQNxYuAgPGOLPiX+9QYeCqrgJxGUJRT87QTk9IUqzxLXw35assj8+CBXK2
-         uWqGToRgZZzfw5NUOQnoZSyfiDHPWov6Do3CDpwiMc2HjJUu9q2UYiX0DYorTkSt7oKx
-         kGY5AX1x6Eoqle8j1crIcBNWldVmlUmgfDy1RncT6FrCBrt+i3IhZeWXEhHxJjyZBaSm
-         OLlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWB6aOilxIqPyyM+qRyOzrfKBXMNp+BLHzAUbpAJK3+AYDwVPVRNPa/OGoXSxwGyUKueCv07ff0WlRTlPs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5S0OfEdSgXaSYsF5KTpBNgARfc+bRudXTgkX0c/rJjJgQUAgu
-	FWxq0X+5kqquZEa7QYOtqzWua3325gVnieU4jnCmLx7lxAI8pfVzM0PRRKUtRRUqGwY1NdR56UH
-	JjfzdWA==
-X-Google-Smtp-Source: AGHT+IHuWddlIKYwLsPDO46b/KLE6cD3JB+tatHKJT4EdyfraYehwgzt5OK7QnPmkojgvWHkl0xgI31PLXg=
-X-Received: from pjbsn5.prod.google.com ([2002:a17:90b:2e85:b0:32b:80cc:6439])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ab8e:b0:25c:e2c:6653
- with SMTP id d9443c01a7336-25d271344a4mr24620975ad.48.1757688170547; Fri, 12
- Sep 2025 07:42:50 -0700 (PDT)
-Date: Fri, 12 Sep 2025 07:42:49 -0700
-In-Reply-To: <20250909093953.202028-16-chao.gao@intel.com>
+	s=arc-20240116; t=1757688187; c=relaxed/simple;
+	bh=vrIPv5i/CQ8Y+l31lRrsdhIHOYFa4QZouWNok4yLK9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XszW3IQYECFqCavnEI6gxIWBBfcaLT1ErACEf1akVD97Wiz+/IF8mCOUgYG2KaN+i3iIQme8sDeQWQuycEFhJyBLcteWNvMaO0UxaqNI3oogx02urVyjC00iNTDqo9PcPaSdYU88SgTRMxYU+g1DKa3vz34UiU5Uh9CRvZ0lGZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8C4816A3;
+	Fri, 12 Sep 2025 07:42:56 -0700 (PDT)
+Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9163F3F66E;
+	Fri, 12 Sep 2025 07:43:00 -0700 (PDT)
+Message-ID: <7b72615a-a1a5-4945-9199-d30b7caee70b@arm.com>
+Date: Fri, 12 Sep 2025 15:42:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250909093953.202028-1-chao.gao@intel.com> <20250909093953.202028-16-chao.gao@intel.com>
-Message-ID: <aMQxaf6SwMz-RJ0I@google.com>
-Subject: Re: [PATCH v14 15/22] KVM: x86: Don't emulate instructions guarded by CET
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, john.allen@amd.com, 
-	mingo@kernel.org, mingo@redhat.com, minipli@grsecurity.net, 
-	mlevitsk@redhat.com, namhyung@kernel.org, pbonzini@redhat.com, 
-	prsampat@amd.com, rick.p.edgecombe@intel.com, shuah@kernel.org, 
-	tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org, xin@zytor.com, 
-	xiaoyao.li@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 19/29] arm_mpam: Use a static key to indicate when mpam
+ is enabled
+To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
+Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
+ Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+ fenghuay@nvidia.com, baisheng.gao@unisoc.com,
+ Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
+ <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
+ Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Danilo Krummrich <dakr@kernel.org>
+References: <20250910204309.20751-1-james.morse@arm.com>
+ <20250910204309.20751-20-james.morse@arm.com>
+From: Ben Horgan <ben.horgan@arm.com>
+Content-Language: en-US
+In-Reply-To: <20250910204309.20751-20-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 09, 2025, Chao Gao wrote:
-> @@ -4068,9 +4070,11 @@ static const struct opcode group4[] = {
->  static const struct opcode group5[] = {
->  	F(DstMem | SrcNone | Lock,		em_inc),
->  	F(DstMem | SrcNone | Lock,		em_dec),
-> -	I(SrcMem | NearBranch | IsBranch,       em_call_near_abs),
-> -	I(SrcMemFAddr | ImplicitOps | IsBranch, em_call_far),
-> -	I(SrcMem | NearBranch | IsBranch,       em_jmp_abs),
-> +	I(SrcMem | NearBranch | IsBranch | ShadowStack | IndirBrnTrk,
-> +	em_call_near_abs),
+Hi James,
 
-Argh, these wraps are killing me.  I spent a good 20 seconds staring at the code
-trying to figure out which instructions are affected.  There's definitely a bit
-of -ENOCOFFEE going on, but there's also zero reason to wrap.
+On 9/10/25 21:42, James Morse wrote:
+> Once all the MSC have been probed, the system wide usable number of
+> PARTID is known and the configuration arrays can be allocated.
+> 
+> After this point, checking all the MSC have been probed is pointless,
+> and the cpuhp callbacks should restore the configuration, instead of
+> just resetting the MSC.
+> 
+> Add a static key to enable this behaviour. This will also allow MPAM
+> to be disabled in repsonse to an error, and the architecture code to
+> enable/disable the context switch of the MPAM system registers.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> ---
+>  drivers/resctrl/mpam_devices.c  | 12 ++++++++++++
+>  drivers/resctrl/mpam_internal.h |  8 ++++++++
+>  2 files changed, 20 insertions(+)
+> 
 
-> +	I(SrcMemFAddr | ImplicitOps | IsBranch | ShadowStack | IndirBrnTrk,
-> +	em_call_far),
-> +	I(SrcMem | NearBranch | IsBranch | IndirBrnTrk, em_jmp_abs),
->  	I(SrcMemFAddr | ImplicitOps | IsBranch, em_jmp_far),
->  	I(SrcMem | Stack | TwoMemOp,		em_push), D(Undefined),
->  };
+Reviewed-by: Ben Horgan <ben.horgan@arm.com>
+
+Thanks,
+
+Ben
+
 
