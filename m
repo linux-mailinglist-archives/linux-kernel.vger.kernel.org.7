@@ -1,266 +1,395 @@
-Return-Path: <linux-kernel+bounces-814583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6119B555EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15D2B555EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27982B60EC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:12:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23AA41D65B3D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD77432A823;
-	Fri, 12 Sep 2025 18:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4BA32A827;
+	Fri, 12 Sep 2025 18:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=LIVE.CA header.i=@LIVE.CA header.b="WqDFNydh"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazolkn19011057.outbound.protection.outlook.com [52.103.14.57])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jdTY/+9V"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010014.outbound.protection.outlook.com [52.101.69.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C41302CB2;
-	Fri, 12 Sep 2025 18:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.14.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024E132BF38;
+	Fri, 12 Sep 2025 18:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757700861; cv=fail; b=i9kcuy1Lpa0CnqiqNnKaelTXcNCh65V6K5+44GN65CRTHBD9XFOQW/DT/fFVz8roXgrCKqjrEEVA7FsmcI+W22Rte+5k7N6i5dj6O1u6pHOdDpyPHXAXhjtzir5F/9gycNm6pLOwuGeY1e3KzmysJNSsB37PD7h6Ejy4IxaDZac=
+	t=1757700884; cv=fail; b=khqUtzsqKihtySHb273/RBsxILRdi/axMxjA3PvHCuE1XZzywKi5Nnyxp/aJVupMi3j9wf95qJctgEWrVttSX55zi9ARGLW5Ti+LTQ6710KpcxTKGWy3e/zdTRecS5EEFowdkrytALcqydxuVsO6vrLW+1KiGWPYJz6ZoLqnYqU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757700861; c=relaxed/simple;
-	bh=fVP0oq5C2GKVx1n7yalNWTzWsY0wDjNpOmyaqxBJAWA=;
-	h=Message-ID:Date:From:Subject:To:Cc:Content-Type:MIME-Version; b=cEnmTaohryQH4qUxkPzqLZeWZKPzIPZKKNK7OXbRCgCHJwO51FTHXIXjfvrwYkdZ7D2qmKMEIbECgH8dzgXMuZoxSCWkeMXKJlbR+e3bizLr4EzLN/GQ7zvAiKD/a5eZKWUlah8GzGq6pI2CWudp6y5cKm+DzdFOawSZ8wEAydY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.ca; spf=pass smtp.mailfrom=live.ca; dkim=pass (2048-bit key) header.d=LIVE.CA header.i=@LIVE.CA header.b=WqDFNydh; arc=fail smtp.client-ip=52.103.14.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.ca
+	s=arc-20240116; t=1757700884; c=relaxed/simple;
+	bh=8S3X/iOaA+TCIxGswgD7YbyKNIxOUxNrwcRNPy9WVhk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=tFiqfa3OuEmEcLhkCdK1nees1GbLJKevdzV1RB8DnYJnfUrUbKtYbjDTpBkD/9RjFjA1kDxBqqEwoqxa6lDylYqmhis73UIhrYUucwITtffCoITd2CVk2Sjgz8CsWAEqlnv6BLZPLEzJO2/JwijiF5vbUFHGLi+W1GwQEbpcTy4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jdTY/+9V; arc=fail smtp.client-ip=52.101.69.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D4SzyZQgsfzTVNGFPfmjB4X8eOqc84tqSjknUXtmhBBjhfRrRhewd5+HUZ/42JYP1cAkbSLmd7t8XRlh9a3VGL3iwRLXODz4ia7+skt5tNvH6yTuJAB4uGP5IYLHV/5QgfltQ+5G/e6EoLeugk7Lu5ewZDs9K9qPFjujcnTYfGqpsbopDMFhMzO0WLSUiTE7v/qaJ2zG0va804eJJsW85CwV7NnPHWA56QUHlZQSj/3JSPemx5NDcC4uzIAP3zxRUGgRfARpQw81M0dEvtqBifrwG/bQU78qr2LByLtpodJtOPYhFUYsJAQswot5QU7GkfZVgXPnjRVG31JPpKg//g==
+ b=OdT7Iaji9ParmzUMpimmqtQk9LdaYu+l8FGchH0FUkK+0TYqWcZO7MwXBllYTJ87R5tt9X97YWn0P17pFjhODKWZGTv5dcj9QRCfiIZIy7cOHvGCGuaDUOCs4uxGL4nHgNr1UyuuHKsdxAYE5HODlMCW9pah3aWdv9A2sbJVIQPZygNDGRJI2+pj2jXCGleWNZLjCnfbdYqK4Zr4WivBFpyWL/lZF9tjy0zesTsNMAu/MoDoomJdIoKlaA7HUDIvNcEE0fjzDl2evMyTMmbksgMEeVSnZBTka0mYYZPZ6iu/03fpdMLzksQf1f2zBj8HJTYn2eU9VvIFeEvzO8/L4w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/WB5XHOeLHYILbS+1jJ2lFf6RpVNOGKYEfkzJdB8qgg=;
- b=V2WS91UKghFa7MKqYlvJdLjWRab7mtEPCPm4TqN5ttKD89s/65rLpHF+wBgQecWp1IH13pM8XdEiAjIX+Iw81JrhKv2SYZhgHYYR+gVL54dzzoFoJjqH0m3hL2jGGolj3bIQ+ylqVNZI772P9KghTB/H6/2lynZEokSnVcOK3xWH8IRes8wsWpzhFuvYXBKyAGlrnemVoWOrr+FkQPOOIuvFqw7Qydx85zi0QZQdGdROK5TfZj0iuwRLMiwEIte30vw0ls8RZXh1XxWTZAJbzzgi4JBR/MxUx4CrMz/uwrycyqwpbW/lb3L2YUgFJLFL6IjFjCEMV4kYlnj/OwSFbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=LIVE.CA; s=selector1;
+ bh=ViDZmyzJ570XYbET9vt1oQ0HRzsovTUPp7YA+ycOq0c=;
+ b=CAAxJKxAP5Q0tUmcAtk5ISDwQtJQVSYRDnP0PppGa7vACAXwKlmj8o/tv6adjo+A9/1PQTyZciAdXMu/TElUzN4g5KupVoFF/uXGpU+YniLbnkegD0aFSwAU6FdF8jlL+ddBSb08Kt6QPPNsLnL2n8/VqanLFxYTDNFFGL+0SRHL8MHM2A2Ui0Q4O/vJ6rCDNjEUBJ2xFFVwyMC9zvpx2mozp9bRWUvFKD+e0dAM8K989dxIyoRdLWeX80HhPt6dVwOMX6NSVU4ZCMbNYaf6RAneM2Ry1ock9Dif1VMZXI4sAt5cmUM4tzqx8SOasQozRNhIAkT1ogvP+133oxfz1A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/WB5XHOeLHYILbS+1jJ2lFf6RpVNOGKYEfkzJdB8qgg=;
- b=WqDFNydhO8Bql2WD37F76chfgkxVt/zjkbJrs7+Kv+4XYmF/eQMNh3Bgx7lIgmi+yuMdXQFjdr+zoCYtCJsmncQ+Tbm8MvS2jWNIYokmvFEhkjy08lkNHTgSeVlAXNmgLPvweTBRxUednYOA1OD2dg+j7o1MXdjqUw03uq6d6cTB4gKwtXh+dLCHs7OENCHMwgrjNXXCalUNpeJCOyveCmRY6oWFWOUIhFNmAQXEakyjWzbAOTUvwy9WLyYfJ146KVsg64hd6oqll3V/ewH43dK1M4ku/Nbdtq6LP7p9O0K2PUIRgbpzfAVK5EAoyTSGzJdelPXwhobau9MseHgyYA==
-Received: from MN2PR06MB5598.namprd06.prod.outlook.com (2603:10b6:208:c3::13)
- by DS4PR06MB10905.namprd06.prod.outlook.com (2603:10b6:8:2aa::7) with
+ bh=ViDZmyzJ570XYbET9vt1oQ0HRzsovTUPp7YA+ycOq0c=;
+ b=jdTY/+9V2+66mv0mzqP6h72blavQzDEhoHGHCoX7UsgcrLptFkbu7XSFIl1CdCXr0BsNMf3tCE/UqpDUAgm04UMlBX+BX5M5mxOnd/YF4La6WY5zKW+30/ZF/IMH3iR6/7U45EtHYPjc1dcrygHTNM9xUmML6jlEP3cyaCeU08pEIuxv/8Zsr/e9gmjVmIUllpcWD2xytIOQ1iL7VrSDF6T6Iepo2qKZC+BL1ajhwVnXEPb0tIe/k/lbP5sm0AHCtChDgToo6FOY3MmERgOPiUmOhFiiO2RYWEWbC+IlEZfsDfi+fYhQICIWO/Yf81gN3jnlLvVw9OQ3Vf+diYFd4A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
+ by VI0PR04MB10951.eurprd04.prod.outlook.com (2603:10a6:800:25c::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 18:14:15 +0000
-Received: from MN2PR06MB5598.namprd06.prod.outlook.com
- ([fe80::96f9:fd1e:4b7c:17f4]) by MN2PR06MB5598.namprd06.prod.outlook.com
- ([fe80::96f9:fd1e:4b7c:17f4%4]) with mapi id 15.20.9073.032; Fri, 12 Sep 2025
- 18:14:15 +0000
-Message-ID:
- <MN2PR06MB5598DFC94FB13E9F809F0EB3DC08A@MN2PR06MB5598.namprd06.prod.outlook.com>
-Date: Fri, 12 Sep 2025 14:13:52 -0400
-User-Agent: Mozilla Thunderbird
-From: Daniel <dany97@live.ca>
-Subject: [PATCH v2] platform/x86: lg-laptop: Fix WMAB call in fan_mode_store
-To: matan@svgalib.org
-Cc: hansg@kernel.org, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0089.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cd::18) To MN2PR06MB5598.namprd06.prod.outlook.com
- (2603:10b6:208:c3::13)
-X-Microsoft-Original-Message-ID:
- <86bd3541-3ff9-4203-a7c5-f505cf948159@live.ca>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.17; Fri, 12 Sep
+ 2025 18:14:38 +0000
+Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
+ ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9115.015; Fri, 12 Sep 2025
+ 18:14:38 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Peter Senna Tschudin <peter.senna@gmail.com>,
+	Ian Ray <ian.ray@ge.com>,
+	Martyn Welch <martyn.welch@collabora.co.uk>,
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: display: bridge: convert megachips-stdpxxxx-ge-b850v3-fw.txt to yaml
+Date: Fri, 12 Sep 2025 14:14:18 -0400
+Message-Id: <20250912181419.1114695-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR04CA0006.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::16) To PAXSPRMB0053.eurprd04.prod.outlook.com
+ (2603:10a6:102:23f::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR06MB5598:EE_|DS4PR06MB10905:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1577f643-f16a-4344-7fd6-08ddf2282ac4
+X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|VI0PR04MB10951:EE_
+X-MS-Office365-Filtering-Correlation-Id: e48a7356-2240-441e-3495-08ddf2283c18
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799012|5062599005|15080799012|8060799015|23021999003|41001999006|461199028|8022599003|6090799003|5072599009|440099028|3412199025|12091999003|26104999006;
+ BCL:0;ARA:13230040|366016|376014|52116014|7416014|19092799006|1800799024|38350700014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QllqY1drUjFBTXFTYXVSQ0hOWnZDM1dCZkJNNThLdVJQckRNT21JWUJOTHVF?=
- =?utf-8?B?cFpTRlh6UDI1OHQ1SWwvaXphaFN5VDkyNEpnSEwwRDVVTjdVemVWL0JPRWNu?=
- =?utf-8?B?THZjYXhlUmRWbWM0alpZQ2I3UXdsMTNKSmxHZURzRXZwNkVndlZGZ1JQTkE0?=
- =?utf-8?B?MDZlYTlEWGtHQm0vZGJyWnZrdGN0MGUvRXpyUnRQY1ozVEJOS0FDdDhpSHJl?=
- =?utf-8?B?MEdGQml1cy8vUHZhbVZ2M1dHUXI3bUJGRnBCYXRTMWFZQ1RDRXFZR1djU0Ux?=
- =?utf-8?B?RTNHNWI4aGhmWWxvVWxJcno0c0h6dkRWTm9pRlZBaElDMGJqSEZsN3BoaE5M?=
- =?utf-8?B?SGp1QTh1SjdlZEVhS1ViYWFPRmRNWEtvZU9LQUxoRktsK3JLWlhoN3hFcU5Z?=
- =?utf-8?B?eTlpUkNkUmRIemlKN0tCVkp6MjErN3NkK2pQMXhTeE1kdDNOY2dyT1pKc3VN?=
- =?utf-8?B?Z0I2RzkxaFNZV3lQWHRUWFhJODZoYnkzczd3bWRoQzRLaUlidlovaXVLL2Uy?=
- =?utf-8?B?YU1QVWluTDZ5ZG5aZjBjc2xJdVRKdEpDRWR5MXJjMitZRXNBeEd5QkFsQXpL?=
- =?utf-8?B?eDdoZ2phN0xzTlYxaU0zUGJRM2EyeHo2MzNLeDVYTXFWVGhFUHo1VlZncjRU?=
- =?utf-8?B?Y01GS21PRW9yZWhqcE5keG1YNEZVMFIzUDZWemdlMmExVlNIZ08rVzRqQWhr?=
- =?utf-8?B?OTVnVDFYWWFzZ0JxclNhaFpES0U2aFM4NEVhM1lFZmp3YWh1SkFjQjN5amIx?=
- =?utf-8?B?RGVWcnk2dENsUHhZcTJrZ0VOUVM5cHZ4S2lmbG1qNjYvQXF1QUhLWXVRTG1K?=
- =?utf-8?B?M2VHbjJzeFB3UEF6Z2xuZ2d5QjdwVDM1NnF4TkxGSTRqS1kwV3Q3c0JRM2dl?=
- =?utf-8?B?c1RVZFhkS3JaUkpZWUhSNkpmS21SZDZjd3Q3NHVNOElOOVRJTzdzNXNZMkpU?=
- =?utf-8?B?eGd3eFRldmlaTzc2aUJndGVzNlN2ZFlaallRV1crNDN1K1dBYVBVVS9OdVNB?=
- =?utf-8?B?c00zSVFaZGpoRHhocHZQMXA5cUFIYkp1LzljOUNQbEpJZEdpcUFiNHlXSndP?=
- =?utf-8?B?NGpqVWVGM3UxNkg5QjNkODJDNXZDMEdXYWhZOUhIODZkeC9WOEg3ZjJDMzFh?=
- =?utf-8?B?OW5IYldybmRIQ2tCRUMyOWgwaGpDYWtGY2o2RjBZTE1Tcjd3M2Y0UDVveCtX?=
- =?utf-8?B?UzhhRFBvc2RZN1psZG1SNHFpTUpzQ1VGSWV6Mkk3NVBHc2NYLzBKMC92UGVF?=
- =?utf-8?B?Mys1Z252VmEyMmE0dkU5TXJQNVR6Y1hBWW1tQkhNdjBRRmpPcnRLbDR2QVlT?=
- =?utf-8?B?Unpna3ZPcHZaYW1FMHpCNy9QL1dzMkpmTVVqV25mRDVjMzBYdGI3ZTFycmNW?=
- =?utf-8?B?ZEdNbEN3NjdyZUxCd3p5WXBlOWJ5M2hFQkVZV1lxN0t5NWVIdmVHbnVIMjZz?=
- =?utf-8?B?NkRvR1ExTDRyYUhLSkhQaUlEcG9yMmZESUhSVGthV3hVQ3pIMVFIVWRGc3FS?=
- =?utf-8?B?OFp6ayt3c3paYWprRW96aEMxZVVJaFlwaHFlNFdNVTlaVVI2MGNibmlOM1lO?=
- =?utf-8?B?TEkvUVhHRGJ2Uk5xL0l0OTgvcXh6QlVKajl6TEhrYlhncW5xU1FMa0Y1UTU3?=
- =?utf-8?B?QXhkeW1JdE9Id0tMMWE3TTVxRlhFdUxFL3hxdHFnSEF2R2RGdUxmc2NMeGRn?=
- =?utf-8?B?bFQ3Z3YyS3dNYlNRRnFiWjR1cWNEU1FzT3JxMkVldEpkWVFtVGtTakczc05h?=
- =?utf-8?Q?wE5JfNYBg++SVHz67M=3D?=
+ =?us-ascii?Q?7FtR3OIo124kjg3Cjh/nz/dtckURAPTLoVm4GioT97FI7tK63VTqpzlsG3Es?=
+ =?us-ascii?Q?6yqsWDy4gimkVTnXWqKzy9cJiIszIbjjnLZleTiRPPbkI83iXXPBYgfMHJ8T?=
+ =?us-ascii?Q?Hue++eXDwofyRt/1eL5u72z2qAkCy2O8I8WNviFmrqePgY7eVgnnMYVuhyKh?=
+ =?us-ascii?Q?hUXxoWLO3ys5iQJlJZsJ61OLxp7UikEr1dIhc0AqjLWyQHGJ+WGAi3rX2Tyd?=
+ =?us-ascii?Q?uflxlgJM+5EoeHLRwXL+wrw2GMQVkJBRLWqceo575aQTBJXw9skeS2SHeQuq?=
+ =?us-ascii?Q?0RaeueXi748lmVUwO2ULI7AXefV+OVBdj8ahBMhQEJe116jWT521EOTKgXRk?=
+ =?us-ascii?Q?iM48SixyHZGz6YTF5QpYz/yRTyWs+HPAitKB0djTgysrmkVkU90NbT98nsNh?=
+ =?us-ascii?Q?0NhVPtvbOh3iaPfNZIG7AddDX3wPsEQvt/LnSLpPh+5MmGXGEhOhiAGPKkF2?=
+ =?us-ascii?Q?//LTdv59l51FHQqpS1Vcv5CDX2hnMGELLQIrdnAVPG/1GIrdlSiay+qnjmBh?=
+ =?us-ascii?Q?CGdrIyYt7jd8MVBjBMy/XSvWXyiu6LPuilSdXw4CWOHX9flZArlL7NEaycct?=
+ =?us-ascii?Q?B7nTxj/u0C7DnnQJ8vjD9lYpqNyGw6bx2tdO96rCpraw9qeZt/DKPaYn9avP?=
+ =?us-ascii?Q?wKkjpUkmKlCNjTL6qREzKOW+wYa9qiCr48r3r5BdXSY5DWbUHIJrt36qDDzC?=
+ =?us-ascii?Q?NuLXK8+3PZ4Oma8ysJqCA95i+TB8zZfnFfNRwxffMlsb0Dmph4MJsGI781LO?=
+ =?us-ascii?Q?vDU8FU4svBuJ38k2CoZOuPvYCHF/w8qw5JDH48cTrqEqkL15n2NIDJTUAV9r?=
+ =?us-ascii?Q?581dYfgaPrc7gYhMImazUXP0EHzMrP5raFguBoiQL6cGFhKWkz3MXZuESaYa?=
+ =?us-ascii?Q?SPY7IZO87vi7IwEVfHwKxH74x1LpgzKFzPIZeqEHoX6qPLOXTQ4pw9dFSv0W?=
+ =?us-ascii?Q?RFnG7XZohcvuhvsa6ON0pRdfrxwo0BQr4xf82bP6JE/d6lFIB/T5ukJAdiRn?=
+ =?us-ascii?Q?bHTiZREMcASiXxbgpjrP50riuDTToBGuK9L+SuxrVxmg1K4UA2Btek7uV21r?=
+ =?us-ascii?Q?JbYsrMIchSbJ8kpTFbwcDQn5n066mI+lvgCX12wE1fkQ/exleMAHtOsoEfAn?=
+ =?us-ascii?Q?9MvW68n2HP94Hk+Tl4Edut3bd+TorxdvTfOGS1kdJsexBk7tMzY931KccUFq?=
+ =?us-ascii?Q?K/Eg3TOmOGmTNud8gXY4gOKO27lcpwosGaXZQQVw/1tgI1+dk1iocXbnvFpK?=
+ =?us-ascii?Q?F0UN1cijVb28BZ8658cSuhymPMsE/tIYp8AzeugzGCr9gVz15C8K1uN7XAp9?=
+ =?us-ascii?Q?JxTmLaihORul2/UgkzfmxBHH5172qbIHuhXVh8CDipc2F+FBPFBLWBHxJHIK?=
+ =?us-ascii?Q?7Lkju45xmxMrHzTgB99Og/ywnKhc/7nP+NtYI5vuOc/XYlwXnCeu0kKxn6XE?=
+ =?us-ascii?Q?Hcv+Dh4wiTtBGwPH5A0elcg+xKg5ctnk?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(7416014)(19092799006)(1800799024)(38350700014)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YTRXcEc1K0F0a2gzbFBwNzgzVlZCd3RPRVBaUXpjeGJ1dHlySHdaZnlOMWQ3?=
- =?utf-8?B?bUIxTy9yUzRHQkRhclM3TlA4VGhOckNUQS94S01wallXNTRPbE5CeU1lOHl4?=
- =?utf-8?B?VEVaaVNqUXJsaFUrc0JTdDF3K2xDOHFyQ1FwaEFZWE5BdnFMKzFnZVhPRnYr?=
- =?utf-8?B?dkNuVSs5TUhlUDBza3FleG9HY0pzUHlrU0xxbVM3bGZDQ1VpcmR1M2RISjdr?=
- =?utf-8?B?VW5CZnUvazh4VDBFejNoWWx5VlkrQnFjdUJHdEtqTndhVTZaby9JUFdwWFNo?=
- =?utf-8?B?ays4cCs5VThFYXhkazVuSmF6VmdRWFk4dG1MUW9melN6MVRNRERXWVcwY0NZ?=
- =?utf-8?B?WGpjdElmS1I2ZGY0Q3ZFQVRtZUtZT0gxWGJpR0VBRHM4OFlzc0lEWmZCSjFi?=
- =?utf-8?B?UWtMRjNrTE5uVkxXUitsTnZFSmU1S0plcXpMRGF6Y0cvdUlqT2hNbmgwYXkr?=
- =?utf-8?B?c2dCQTN5dHNuWGl5RHlXRWlTUkl1R3lNMWlsU3hlb1UyQ05wUlYvdGdkMjdl?=
- =?utf-8?B?SHp5QkJBZmxNZVc4ZXVxRXUvbVFCTnRqWTdnUWVhNnB3VFVHTW1KOGMwdDZN?=
- =?utf-8?B?V2dMQ08zOFU3Q25vZEx4OC9JZzdxd0o0YlI4eXkzVjJBOGJTUCtyTkJNQ0dY?=
- =?utf-8?B?cUNRa0VPWlNMdFZCaHBvVXdVN0ZuSWg5T3hYQWVYOVVjNnp0ZUF2YldGalk2?=
- =?utf-8?B?QnRoYWpqZXVKT1Jac1d3VnNxTXpCU0xmR2NHczRTTkVsbENCcWp2Q0JiRUVT?=
- =?utf-8?B?Y0tsc2o2S3h0QVFLM0c4bG5iWXlXR1ZTV0QxRjVIL2tlVmRyMHZDbmZidUVj?=
- =?utf-8?B?VUpzaUpqcnVEUWJReTBQdWpMQ2ZqOTYzQ3hDczlhak43Q29LcXBYdDIyTkRu?=
- =?utf-8?B?M0R1SWJEMmIrd0FyR3ZaNGdnVnNLVVZpNTB3Z0JnK01RYkoxZFhXK3pZamhV?=
- =?utf-8?B?YWRxazNPV3g5dXhwRUZzTC8rUjFQWlcrL0JLN0orWUY3cU5XUDM3WmdySVZa?=
- =?utf-8?B?ZmV3aDB1UXRmUTJJbmhvTW9QUURpaTZvaWlMS1VrYW1wTS9lQ3ZLVWcwREhJ?=
- =?utf-8?B?NGdLZzNnanRQSUNjOTZiRWFrajBlRzA2Si9EY1E4MEQzdjc5TTZJT1YyNWRD?=
- =?utf-8?B?c1dCQTY5UDJBaFVWMUVuLy9KTDQ5UmYyYkc0YU84bmpFZElwbGVSVXJOSElx?=
- =?utf-8?B?cEdxN2dKbkQyTHdLT0tWU3VGSmNET2NaeHk2b2JxTTJRZ1dUb1lscitCdHhZ?=
- =?utf-8?B?VEd1ZnhuZ2FuNkpCRmNyNFhlQm5Wa3B6VjZVMkVKMkhCVTBsVnhIZ3NRMEZH?=
- =?utf-8?B?WnVMRjFLbkNxRW1KV204WmRZRnArRCt1SjdxOHM0ZytORzVyejFEMWFFMGlZ?=
- =?utf-8?B?U0hBcFEwcitqc2ZDSHhwY0IvekgzS3ZrR2psaE4rdml6anY0QjFOMlduVTFa?=
- =?utf-8?B?Ynppc09hRG1IOU40RFp6K3NrWHdHdGtaeXIvRkc5czdBQlpCMjhsRWNkMkJM?=
- =?utf-8?B?S1RYcEhmSlJpZkRwd0lHVlArYlp0QnQxc0ExK2d5V0lNcXRjb1M0SlJxT1pB?=
- =?utf-8?B?NVlmMS9rOVYzamE3NEpMNlRmYUsvdmNiZGtwaVEvaVJ6YnExUStKWU5XeWg1?=
- =?utf-8?B?MGNPYUU1YzIrY0UvMFZ4OW9CT1kyeVE9PQ==?=
-X-OriginatorOrg: sct-15-20-8534-20-msonline-outlook-a1430.templateTenant
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1577f643-f16a-4344-7fd6-08ddf2282ac4
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR06MB5598.namprd06.prod.outlook.com
+ =?us-ascii?Q?w9CWCywAJRPJwwKSBSWvAzg5bSgOwPmQCaT35g2leiusXMQ0iog7PPs6P6Pf?=
+ =?us-ascii?Q?zWJlRxZJiNZktkVC4S7pnMrWaxW5zOUCswaN3RhcFFFMgXLcnCzwLpW3EE/c?=
+ =?us-ascii?Q?V0HkSDKoo2Jfm2UHMLvo3+KoqtjQCoQGFHhAdJ1I4+pZyqNvKB6tGLQNhOIg?=
+ =?us-ascii?Q?DvjayVhR8MrBHGPkW/j9y0t9iMXBa1C5gGYYKSMMx75mUXq4JvL9AU1lZZK1?=
+ =?us-ascii?Q?eCgkka2yHJ8NEUKzNZUHUHK9luoNyctlKz8mBYHnj9Muj5hdVvmtvMLG7LgB?=
+ =?us-ascii?Q?nj9tHXelNuJYI6BGL1jMAEdCqc4CuQm3WGUUysmXNfzhk6LPZ1GpGfTSLu+0?=
+ =?us-ascii?Q?2KrfXWwFzDcdsf+4ow0VBzS4A+pFfDTIOhcGwwP/bQapkcJWjiHFXs7OsIoq?=
+ =?us-ascii?Q?JYfPVDlBiFFTyZo1OwNZJ+mzXe9slFwYVCctk2/1pKuBXLq/CMhw6dsXt7qf?=
+ =?us-ascii?Q?8js3SOxVes5cdXZEDZvCuPQKGhj6C/jDqhuaBmEkjg4dWsZKXyERelmEqOsR?=
+ =?us-ascii?Q?wpaTItpNkG20VJ6G+FcldH65JbVZ/cKMjHBase9hPcSsQaDI0mLWf9LbSurY?=
+ =?us-ascii?Q?0C6if/xOhvIlCROEleROQE335omsC3BwFV/+WzWYE38q02sj2wZQDcm1CYJJ?=
+ =?us-ascii?Q?AO88qK76angJF57UIdUB6+cFVgXIkjZIAy5faEKl3N+vzl9ayZSLtlAfey68?=
+ =?us-ascii?Q?1cOQkc2sPd2xGYBuMFqp1ECEAw4BXWBBHSILCMiz8ccD27Lbz9f1z3ZCuD4t?=
+ =?us-ascii?Q?QC/JLNQrhqJhMmcbGlrb65z8twhEW1Fw7WvyIKBG80cevrk/W7Ox8pL+OxSx?=
+ =?us-ascii?Q?V/qRdTaFGy+Aw16mXOrvwJH1MgxHTAkNGNF8jMPBCqcQ8+IXonorWaRQCoC2?=
+ =?us-ascii?Q?pjF7P3541OAVXBnai31Q548RiSNW4PQw+DuLlY0u6R27gHmWfoooz9qrCgwx?=
+ =?us-ascii?Q?3USqapIWH/yMAky78a7dOK1mb+/Sm/ua/zdIBHB9PysgW6lS01EKut01IBZQ?=
+ =?us-ascii?Q?jiyl30s9Ok0/kFlvPqNQSRZVYWu+Qp6dFKF2Q3ci+CGPq/mo1hSFmkUJPOWx?=
+ =?us-ascii?Q?X5CsVxjsuoI1hzFOzDkikGJthCe8hL8kk+H79C1R/KmHiMcHnSGwZyRl38Ye?=
+ =?us-ascii?Q?wSbTUPcVPpTGNRnF9x00hlTbvtrRPoejWZDHuYw35EHzmO9aSDqRimXNB8CZ?=
+ =?us-ascii?Q?XLd+VSMkeApwGSoKYgEhtR+I68zLhdbkjLdVI1DT5Kbu+srEIRx19b5hi4PE?=
+ =?us-ascii?Q?4S9b5CfwGS+l6eiQGDZIS0cAx6b+G+vtNPSFbLx079GTLPIXS15kd+0t9ZOG?=
+ =?us-ascii?Q?rq1/TDbFwZGnn5UiOo//ck+ggi/Ddn8SiiVMZYue+/7Pc+M2ehYpVmxwfm+F?=
+ =?us-ascii?Q?C3X+vfeeKqRxxTxswcDz+Yof9Ea1Zh4g09odwi2euSRvUjEtI/xCKJbQNJLT?=
+ =?us-ascii?Q?DJbq4LJQHOUQaeInW5slDcbVP0npF5/DrvC9G3I4wAEqlX8zYuahyLR3+rl5?=
+ =?us-ascii?Q?hkgVBwNqpT42uxZ9yoMXOJTerNB/yMn/TYTBuU4Eeg8OzAOQqCn1R5Uv0Ta3?=
+ =?us-ascii?Q?LBhSq31MtTIOVxLyuW1788Vcu444n+XrdHCI7rGA?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e48a7356-2240-441e-3495-08ddf2283c18
+X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 18:14:15.4384
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 18:14:38.1666
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR06MB10905
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CTDMYxe38GEOcZQXFd6OgNCt65zGZnD5rwZZvGiLheDlPOFb3RLy8uJ+cShIc89Ufh+sznPIvxgczNGnQgnigg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10951
 
-On my LG Gram 16Z95P-K.AA75A8 (2022), writes to
-/sys/devices/platform/lg-laptop/fan_mode have no effect and reads always
-report a status of 0.
+Convert megachips-stdpxxxx-ge-b850v3-fw.txt to yaml format.
 
-Disassembling the relevant ACPI tables reveals that in the WMAB call to
-set the fan mode, the new mode is read either from bits 0,1 or bits 4,5
-(depending on the value of some other EC register).  Thus when we call
-WMAB twice, first with bits 4,5 zero, then bits 0,1 zero, the second
-call undoes the effect of the first call.
+Additional changes:
+- Only keep one example.
 
-Fix this by calling WMAB once, with the mode set in bits 0,1 and 4,5.
-When the fan mode is returned from WMAB it always has this form, so
-there is no need to preserve the other bits.  As a bonus, the driver
-now supports the "Performance" fan mode seen in the LG-provided Windows
-control app, which provides less aggressive CPU throttling but louder
-fan noise and shorter battery life.
-
-I can confirm with this patch reading/writing the fan mode now works
-as expected on my laptop, although I have not tested it on any other
-LG laptop.
-
-Also, correct the documentation to reflect that 0 corresponds to the
-default mode (what the Windows app calls "Optimal") and 1 corresponds
-to the silent mode.
-
-Signed-off-by: Daniel <dany97@live.ca>
-Tested-by: Daniel <dany97@live.ca>
-Fixes: dbf0c5a6b1f8e7bec5e17baa60a1e04c28d90f9b ("platform/x86: Add LG Gram laptop special features driver")
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- .../admin-guide/laptops/lg-laptop.rst         |  4 +--
- drivers/platform/x86/lg-laptop.c              | 29 +++++++------------
- 2 files changed, 13 insertions(+), 20 deletions(-)
+ .../megachips,stdp2690-ge-b850v3-fw.yaml      | 105 ++++++++++++++++++
+ .../megachips-stdpxxxx-ge-b850v3-fw.txt       |  91 ---------------
+ 2 files changed, 105 insertions(+), 91 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
 
-diff --git a/Documentation/admin-guide/laptops/lg-laptop.rst b/Documentation/admin-guide/laptops/lg-laptop.rst
-index 67fd6932c..c4dd534f9 100644
---- a/Documentation/admin-guide/laptops/lg-laptop.rst
-+++ b/Documentation/admin-guide/laptops/lg-laptop.rst
-@@ -48,8 +48,8 @@ This value is reset to 100 when the kernel boots.
- Fan mode
- --------
- 
--Writing 1/0 to /sys/devices/platform/lg-laptop/fan_mode disables/enables
--the fan silent mode.
-+Writing 0/1/2 to /sys/devices/platform/lg-laptop/fan_mode sets fan mode to
-+Optimal/Silent/Performance respectively.
- 
- 
- USB charge
-diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-laptop.c
-index 4b57102c7..335afdc75 100644
---- a/drivers/platform/x86/lg-laptop.c
-+++ b/drivers/platform/x86/lg-laptop.c
-@@ -75,6 +75,9 @@ MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages");
- #define WMBB_USB_CHARGE 0x10B
- #define WMBB_BATT_LIMIT 0x10C
- 
-+#define FAN_MODE_FIELD_LOWER GENMASK(1, 0)
-+#define FAN_MODE_FIELD_UPPER GENMASK(5, 4)
+diff --git a/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml b/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
+new file mode 100644
+index 0000000000000..6b5cfc41f7414
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml
+@@ -0,0 +1,105 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/bridge/megachips,stdp2690-ge-b850v3-fw.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- #define PLATFORM_NAME   "lg-laptop"
- 
- MODULE_ALIAS("wmi:" WMI_EVENT_GUID0);
-@@ -274,29 +277,19 @@ static ssize_t fan_mode_store(struct device *dev,
- 			      struct device_attribute *attr,
- 			      const char *buffer, size_t count)
- {
--	bool value;
-+	unsigned long value;
- 	union acpi_object *r;
--	u32 m;
- 	int ret;
- 
--	ret = kstrtobool(buffer, &value);
-+	ret = kstrtoul(buffer, 10, &value);
- 	if (ret)
- 		return ret;
-+	if (value >= 3)
-+		return -EINVAL;
- 
--	r = lg_wmab(dev, WM_FAN_MODE, WM_GET, 0);
--	if (!r)
--		return -EIO;
++title: GE B850v3 video bridge
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++description: |
++   STDP4028-ge-b850v3-fw bridges (LVDS-DP)
++   STDP2690-ge-b850v3-fw bridges (DP-DP++)
++
++   The video processing pipeline on the second output on the GE B850v3:
++
++   Host -> LVDS|--(STDP4028)--|DP -> DP|--(STDP2690)--|DP++ -> Video output
++
++   Each bridge has a dedicated flash containing firmware for supporting the custom
++   design. The result is that, in this design, neither the STDP4028 nor the
++   STDP2690 behave as the stock bridges would. The compatible strings include the
++   suffix "-ge-b850v3-fw" to make it clear that the driver is for the bridges with
++   the firmware specific for the GE B850v3.
++
++   The hardware do not provide control over the video processing pipeline, as the
++   two bridges behaves as a single one. The only interfaces exposed by the
++   hardware are EDID, HPD, and interrupts.
++
++properties:
++  compatible:
++    enum:
++      - megachips,stdp4028-ge-b850v3-fw
++      - megachips,stdp2690-ge-b850v3-fw
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/properties/port
++
++      port@1:
++        $ref: /schemas/graph.yaml#/properties/port
++
++required:
++  - compatible
++  - reg
++  - ports
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: megachips,stdp4028-ge-b850v3-fw
++    then:
++      required:
++        - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        bridge@73 {
++            compatible = "megachips,stdp4028-ge-b850v3-fw";
++            reg = <0x73>;
++            interrupt-parent = <&gpio2>;
++            interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
++
++            ports {
++                #address-cells = <1>;
++                #size-cells = <0>;
++
++                port@0 {
++                    reg = <0>;
++
++                    endpoint {
++                        remote-endpoint = <&lvds0_out>;
++                    };
++
++                };
++
++                port@1 {
++                    reg = <1>;
++
++                    endpoint {
++                        remote-endpoint = <&stdp2690_in>;
++                    };
++               };
++            };
++        };
++    };
++
+diff --git a/Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt b/Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
+deleted file mode 100644
+index 09e0a21f705ef..0000000000000
+--- a/Documentation/devicetree/bindings/display/bridge/megachips-stdpxxxx-ge-b850v3-fw.txt
++++ /dev/null
+@@ -1,91 +0,0 @@
+-Drivers for the second video output of the GE B850v3:
+-   STDP4028-ge-b850v3-fw bridges (LVDS-DP)
+-   STDP2690-ge-b850v3-fw bridges (DP-DP++)
 -
--	if (r->type != ACPI_TYPE_INTEGER) {
--		kfree(r);
--		return -EIO;
--	}
+-The video processing pipeline on the second output on the GE B850v3:
 -
--	m = r->integer.value;
--	kfree(r);
--	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xffffff0f) | (value << 4));
--	kfree(r);
--	r = lg_wmab(dev, WM_FAN_MODE, WM_SET, (m & 0xfffffff0) | value);
-+	r = lg_wmab(dev, WM_FAN_MODE, WM_SET,
-+		FIELD_PREP(FAN_MODE_FIELD_LOWER, value) |
-+		FIELD_PREP(FAN_MODE_FIELD_UPPER, value));
- 	kfree(r);
- 
- 	return count;
-@@ -317,7 +310,7 @@ static ssize_t fan_mode_show(struct device *dev,
- 		return -EIO;
- 	}
- 
--	status = r->integer.value & 0x01;
-+	status = FIELD_GET(FAN_MODE_FIELD_LOWER, r->integer.value);
- 	kfree(r);
- 
- 	return sysfs_emit(buffer, "%d\n", status);
+-   Host -> LVDS|--(STDP4028)--|DP -> DP|--(STDP2690)--|DP++ -> Video output
+-
+-Each bridge has a dedicated flash containing firmware for supporting the custom
+-design. The result is that, in this design, neither the STDP4028 nor the
+-STDP2690 behave as the stock bridges would. The compatible strings include the
+-suffix "-ge-b850v3-fw" to make it clear that the driver is for the bridges with
+-the firmware specific for the GE B850v3.
+-
+-The hardware do not provide control over the video processing pipeline, as the
+-two bridges behaves as a single one. The only interfaces exposed by the
+-hardware are EDID, HPD, and interrupts.
+-
+-stdp4028-ge-b850v3-fw required properties:
+-  - compatible : "megachips,stdp4028-ge-b850v3-fw"
+-  - reg : I2C bus address
+-  - interrupts : one interrupt should be described here, as in
+-    <0 IRQ_TYPE_LEVEL_HIGH>
+-  - ports : One input port(reg = <0>) and one output port(reg = <1>)
+-
+-stdp2690-ge-b850v3-fw required properties:
+-    compatible : "megachips,stdp2690-ge-b850v3-fw"
+-  - reg : I2C bus address
+-  - ports : One input port(reg = <0>) and one output port(reg = <1>)
+-
+-Example:
+-
+-&mux2_i2c2 {
+-	clock-frequency = <100000>;
+-
+-	stdp4028@73 {
+-		compatible = "megachips,stdp4028-ge-b850v3-fw";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		reg = <0x73>;
+-
+-		interrupt-parent = <&gpio2>;
+-		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				stdp4028_in: endpoint {
+-					remote-endpoint = <&lvds0_out>;
+-				};
+-			};
+-			port@1 {
+-				reg = <1>;
+-				stdp4028_out: endpoint {
+-					remote-endpoint = <&stdp2690_in>;
+-				};
+-			};
+-		};
+-	};
+-
+-	stdp2690@72 {
+-		compatible = "megachips,stdp2690-ge-b850v3-fw";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		reg = <0x72>;
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@0 {
+-				reg = <0>;
+-				stdp2690_in: endpoint {
+-					remote-endpoint = <&stdp4028_out>;
+-				};
+-			};
+-
+-			port@1 {
+-				reg = <1>;
+-				stdp2690_out: endpoint {
+-					/* Connector for external display */
+-				};
+-			};
+-		};
+-	};
+-};
 -- 
-2.51.0
+2.34.1
+
 
