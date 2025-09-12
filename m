@@ -1,128 +1,147 @@
-Return-Path: <linux-kernel+bounces-814578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DBFB555DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:08:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5055B555E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DAFBA00EA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:08:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF9163B8C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507D932A818;
-	Fri, 12 Sep 2025 18:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2B832ED2D;
+	Fri, 12 Sep 2025 18:10:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GIyZ4r01"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEFF302CB2;
-	Fri, 12 Sep 2025 18:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="LQ3BgZpe"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51810302CB2;
+	Fri, 12 Sep 2025 18:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757700485; cv=none; b=rmEchUMe7G4xPstM9NLnkfL45Uk+yFnIJCoI88sbyjdtIsog7kqWVxVHQNbHY/fnx/fvuVMyLMxqBuxZiP2GeXHsgwb5hgQn6lC/keJoXo5oEkkAcv/YNPpJLQfl/8ZSQGJUad3S3nLZbSzFDD2XKPKXLBAKOTCQrcjgvU/P0P8=
+	t=1757700609; cv=none; b=JxqUS9OQDGgaAyDAAMKec8QM684ZH6xZQwlJnymGck3XTl4lCq6qylYrbvG0jxl+EF6LL/BYS9BQi8VCPovP3V2DomvnuD/n4q1yYJRl9l/41AiPZ1nQuLCa8LlQ6DZkVTRTFUuBhm51kS4MPcR0m97ZZBW9DLY1ah/972CM0pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757700485; c=relaxed/simple;
-	bh=jEwwm4/6zTqKRC8QViHL6oy6KM82ROk+Hgx3bmTXReU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uA123GXhZLILd1j0JvaUUu82+QT3auhcQRFThF/rm4opbbC6qHvoNR6X4WXa+HSne694PVFgwlzzie/58LAVQcPJoAg/cBNemFj0gAd5AMs4MIoUpgabz12SYi+rVJt/pFToc9joTk4BedlULQ6n6UpwyjH32o/4LYIqOcrUtKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GIyZ4r01; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757700484; x=1789236484;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=jEwwm4/6zTqKRC8QViHL6oy6KM82ROk+Hgx3bmTXReU=;
-  b=GIyZ4r016Qn4T3KVfpR2X2bNZ7oHRBV3W7hyAQInLxs2FkwpV+OSwr4i
-   lU+oEJbdCJK9fWKUHZVC04tK2SuVZ20G7mOzD7yQ2gdGaZzlywkvlFKdJ
-   +uUglW4kEDLCaMz7Tr/1nXN0b47D7DsL14n1Z8elsUXEaT+f9Rvde8tFu
-   X4EI5HCA5d6aGXrPb0j9jzRx+vb8Hyfidhc/okmgxVl6gWBQnnAif5oZE
-   A8IiQuifmuS5PJV6fdECtcFGLIbRQY54NVatXhqmDNnoxXrzuvjV+MgXw
-   Qn7nqOFOm3tV/FhSa8d/f3C01kO9k/f8cZZVuoVcY3KX96daZT8MhsfHG
-   A==;
-X-CSE-ConnectionGUID: dXIIBNOhTiGGavQyQ5qK6Q==
-X-CSE-MsgGUID: zeKMMf3mQO++P2pnsyKL0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="71151563"
-X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
-   d="scan'208";a="71151563"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 11:08:03 -0700
-X-CSE-ConnectionGUID: 9568HXzwTzeSipFpqvTyZA==
-X-CSE-MsgGUID: K68GfwIVRrWfPtQWnvqMYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
-   d="scan'208";a="204799418"
-Received: from smile.fi.intel.com ([10.237.72.51])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 11:08:01 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1ux8Bi-00000002T0S-20K4;
-	Fri, 12 Sep 2025 21:07:58 +0300
-Date: Fri, 12 Sep 2025 21:07:58 +0300
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/6] iio: adc: ad7124: use guard(mutex) to simplify
- return paths
-Message-ID: <aMRhfvi88aoWRZao@smile.fi.intel.com>
-References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
- <20250911-iio-adc-ad7124-add-filter-support-v2-3-b09f492416c7@baylibre.com>
- <CAHp75VdVUOxkKhiheujAK0gjk_GXGqQ0g=LhNDjZr-Of1gH=sQ@mail.gmail.com>
- <d5e53a9c-418c-4c33-bbf4-b7d49d523cf2@baylibre.com>
- <aMRVKZGPv4PwR8-o@smile.fi.intel.com>
- <6dee1849-45f0-47c8-b29e-8057dee44b6a@baylibre.com>
+	s=arc-20240116; t=1757700609; c=relaxed/simple;
+	bh=yPJqLt8S5WWM4BObvCnuZSDbc1t/tgpd5gl4wkceEGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X3c+crgGM9/fJ1XVtzaq2C74CVkrhehomByFYYJ3536xoME/bMOoI+eCfaFN+QpLEeXimyjuMh1mHTFgsWFMP0cunydtYHzj6hzrZoeg6QfcYcDom9jPyqzvP0axGR48m3M6LnNbhmhdWwc3I8hVBhZEFcjUksr1tpZ8m7qj9EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=LQ3BgZpe; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id ED2B42119CBF;
+	Fri, 12 Sep 2025 11:10:00 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ED2B42119CBF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757700602;
+	bh=HXYJgEfXFwo/OPKrYhrveFvpXwC44rrX+LkCZApziY4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LQ3BgZpeMJGwjTLRudlWpMa8SX8RO+j/34vsQaL4PkTvTkI/qkWK/wElTFG4ma7bq
+	 8NM3LoJh5HhkcNK+KwwYAoh01/HqKWzw8IdRL8lUGd7y0lqldMU83UUu/URfbdFHiD
+	 X8LZ8UBwGVc2sHYIuNq4iAAYSpEmzqL/34I8VDGk=
+Message-ID: <a8c8305c-b518-c840-fc64-50bcba302725@linux.microsoft.com>
+Date: Fri, 12 Sep 2025 11:10:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6dee1849-45f0-47c8-b29e-8057dee44b6a@baylibre.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v1 2/2] Drivers: hv: Make CONFIG_HYPERV bool
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ linux-arch@vger.kernel.org, virtualization@lists.linux.dev,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch, jikos@kernel.org, bentiss@kernel.org,
+ kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, dmitry.torokhov@gmail.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, bhelgaas@google.com,
+ James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+ deller@gmx.de, arnd@arndb.de, sgarzare@redhat.com, horms@kernel.org
+References: <20250906010952.2145389-1-mrathor@linux.microsoft.com>
+ <20250906010952.2145389-3-mrathor@linux.microsoft.com>
+ <2025090621-rumble-cost-2c0d@gregkh>
+ <d7d7b23f-eaea-2dbc-9c9d-4bee082f6fe7@linux.microsoft.com>
+ <2025091253-overwrite-carol-b197@gregkh>
+From: Mukesh R <mrathor@linux.microsoft.com>
+In-Reply-To: <2025091253-overwrite-carol-b197@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 12, 2025 at 12:41:08PM -0500, David Lechner wrote:
-> On 9/12/25 12:15 PM, Andy Shevchenko wrote:
-> > On Fri, Sep 12, 2025 at 09:19:36AM -0500, David Lechner wrote:
-> >> On 9/11/25 11:39 PM, Andy Shevchenko wrote:
-> >>> On Fri, Sep 12, 2025 at 12:42 AM David Lechner <dlechner@baylibre.com> wrote:
-> >>>>
-> >>>> Use guard(mutex) in a couple of functions to allow direct returns. This
-> >>>> simplifies the code a bit and will make later changes easier.
-> >>>
-> >>> From this and the patch it's unclear if cleanup.h was already there or
-> >>> not. If not, this patch misses it, if yes, the commit message should
-> >>> be different.
-> >>
-> >> cleanup.h is already there. I'm not sure what would need to be different
-> >> in the commit message though.
-> > 
-> > I expect something like "finish converting the driver to use guard()()..."
+On 9/12/25 04:43, Greg KH wrote:
+> On Mon, Sep 08, 2025 at 02:01:34PM -0700, Mukesh R wrote:
+>> On 9/6/25 04:36, Greg KH wrote:
+>>> On Fri, Sep 05, 2025 at 06:09:52PM -0700, Mukesh Rathor wrote:
+>>>> With CONFIG_HYPERV and CONFIG_HYPERV_VMBUS separated, change CONFIG_HYPERV
+>>>> to bool from tristate. CONFIG_HYPERV now becomes the core Hyper-V
+>>>> hypervisor support, such as hypercalls, clocks/timers, Confidential
+>>>> Computing setup, PCI passthru, etc. that doesn't involve VMBus or VMBus
+>>>> devices.
+>>>
+>>> But why are you making it so that this can not be a module anymore?  You
+>>> are now forcing ALL Linux distro users to always have this code in their
+>>> system, despite not ever using the feature.  That feels like a waste to
+>>> me.
+>>>
+>>> What is preventing this from staying as a module?  Why must you always
+>>> have this code loaded at all times for everyone?
+>>
+>> This is currently not a module. I assume it was at the beginning. In
+>> drivers/Makefile today:
+>>
+>> obj-$(subst m,y,$(CONFIG_HYPERV))       += hv/
+>>
+>>
+>> More context: CONFIG_HYPERV doesn't really reflect one module. It is
+>> both for kernel built in code and building of stuff in drivers/hv.
+>>
+>> drivers/hv then builds 4 modules:
+>>
+>> obj-$(CONFIG_HYPERV)            += hv_vmbus.o
+>> obj-$(CONFIG_HYPERV_UTILS)      += hv_utils.o
+>> obj-$(CONFIG_HYPERV_BALLOON)    += hv_balloon.o
+>> obj-$(CONFIG_MSHV_ROOT)         += mshv_root.o
+>>
+>> Notice vmbus is using CONFIG_HYPERV because there is no 
+>> CONFIG_HYPERV_VMBUS. We are trying to fix that here.
 > 
-> cleanup.h was previously included for __free(), so the guard() stuff
-> is all new.
+> This series does not apply to my tree:
+> 
+> checking file drivers/gpu/drm/Kconfig
+> checking file drivers/hid/Kconfig
+> checking file drivers/hv/Kconfig
+> Hunk #2 FAILED at 82.
+> 1 out of 2 hunks FAILED
+> checking file drivers/hv/Makefile
+> checking file drivers/input/serio/Kconfig
+> checking file drivers/net/hyperv/Kconfig
+> checking file drivers/pci/Kconfig
+> checking file drivers/scsi/Kconfig
+> checking file drivers/uio/Kconfig
+> checking file drivers/video/fbdev/Kconfig
+> checking file include/asm-generic/mshyperv.h
+> Hunk #1 succeeded at 162 with fuzz 2 (offset -3 lines).
+> Hunk #2 succeeded at 198 (offset -3 lines).
+> Hunk #3 succeeded at 215 (offset -3 lines).
+> checking file net/vmw_vsock/Kconfig
+> 
+> What was it made against?
+> 
 
-Okay, then something like "Cover the lock handling using guard()()..."
-The point I'm trying to make is that "Use $FOO API/etc" without new header
-being included either:
-1) missing inclusion (proxying);
-2) start using of a new API from the library/header that we already use for
-another API, but without mentioning that.
+Sorry to hear that. It was built against hyper-next, but perhaps I 
+accidentally used our internal mirror. Let me rebase and send V2
+right away.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+-Mukesh
+
 
 
 
