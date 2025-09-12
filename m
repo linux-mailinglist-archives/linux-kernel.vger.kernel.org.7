@@ -1,127 +1,198 @@
-Return-Path: <linux-kernel+bounces-813503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-816122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B58DAB5465F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B059B56FD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 07:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC2D97BD480
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:59:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D06A77A0FE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 05:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F105B27B4F7;
-	Fri, 12 Sep 2025 09:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3222765FF;
+	Mon, 15 Sep 2025 05:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="e3NUhl7P"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LY4R44OP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104C625A2CD;
-	Fri, 12 Sep 2025 09:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6425619DF4F;
+	Mon, 15 Sep 2025 05:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757667648; cv=none; b=N2E+xdm5zbLnHb1x3f1MqhhQw2rfZzDLbV7hLI0WFq3rPbPZoGhWrMzM/jKxMbCClreVavmfKJQ6RA2Cw2pTilxUIBgaPjufTMqID/zfjU81CiD/tvmK/QHiLS08yjxrj+M0UgBuwQ4c86PZslqFsxyp+DnvKf6W7TEQSSqV9jY=
+	t=1757915303; cv=none; b=NnQiUxY2wFuIognBsaawOoG2kQ1evvRAqaUwDAYR0xJbKI4ehdO0qwvNwPNkUD22XcyUxB2X0an7G86ttbOnMMSCitqoe+5YULxGJQQuyOaB+FpT2mAcFJTtz5jQ1ucsFx7u1eQRZC8B0aQCt2PT28b1QJO7Ui+pU55BZ8OiwuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757667648; c=relaxed/simple;
-	bh=I8lnMndXG8pdCIl26nEFltqvWn8FNn3OcwqWnXiwNbY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DKyxBIUOPweK8L15gqdArBB1ry2VtGKub26NbDnH/b++TlEVe0Z5WySAChxe5CVOvN2GpicHVtce391e+HyYnb1vZqahglbBgX8aPwIvaryV3sO7cI6Mil0Gqt872QSI8+pfPCUJ3ci1M2wlq6zex9cA7ByEZ2K5lhvF+IVfK6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=e3NUhl7P; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757667644;
-	bh=I8lnMndXG8pdCIl26nEFltqvWn8FNn3OcwqWnXiwNbY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=e3NUhl7PV7etZf6rkduBXP9LFytOiLRWRVHpQQi34pLQH2vmBc4DiFZqBhkEoahk+
-	 5lqCt82nU8wxCLKpQoITHdJ8Z0JsAUN8gOiCPGkt/3l4KRabrWgd5GMXOYQR7MNjEN
-	 w8GljBH0yMYh7X4ylpEAJ7M3LR9VBwXXRQIkre1CLWp79yxx662xYoLeF+NA97Tx9n
-	 BwwzxDPf26QjC+A4fKFR3wlu0CKWesFtQY6iOeUPiM6YJbLuMgtk36+zTtoNy9JK3J
-	 z2oi2V/9DNedgWdar2swblhT1SWvuu35nFikjvuz8hxt/bUi712fqQesF/nE5n4J3I
-	 4es+30UGJcTSA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 43F6A17E07EE;
-	Fri, 12 Sep 2025 11:00:42 +0200 (CEST)
-Message-ID: <56380fe5-8358-4341-9478-ba4ce52daeed@collabora.com>
-Date: Fri, 12 Sep 2025 11:00:41 +0200
+	s=arc-20240116; t=1757915303; c=relaxed/simple;
+	bh=QmA1uWtopyZKqYFa3aB5R38vcRhwp6UNA5QEhCCpxlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EmIRlyKdzm0hyWCwrNXqF55utMwmqArkWgLr0xxkZi0sRopwMt+PkX42NnEzgPFDoV5Davve/fS9s7/eHt61ICZh6poB2Ph4ckH/Xy8iKC7yLQ2o9sadbtWN41w+PTbNOyzjqaLoo/7XijgSHqmhRdpwsghXHU2tAesJEdv/CEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LY4R44OP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1FCDC4CEF1;
+	Mon, 15 Sep 2025 05:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757915302;
+	bh=QmA1uWtopyZKqYFa3aB5R38vcRhwp6UNA5QEhCCpxlY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LY4R44OPNzL3Qer2vVNQup9uUTcNx43gZqh5FwLU0Oh1PdFVX0Y/KMu9Uvifa32bq
+	 LKQg8b7U2pc5ik4+PxHv4Vxaw4OOg+vsmxh8TnpYqhx/pMCEM27S4kfw09R8Z3+SrS
+	 WOCH3NphTYB7cis3wXHahmF9XEuFQFnTdwnEgrsxicfvxKQHyvsgH5+RBeSZZNlt+1
+	 jN5OeNDI/I13LeozFgh3Z/w6y7Zqmf8gbZ1coqUma25WZo+AQ3j6hF69NbTonbiUow
+	 a8r0c3Mzdr4L7umKhPtyml+GICc0Iz7CXrXjBFFY5PAmWMihDcJf2V0TWoeJPC1g6V
+	 RKkFNq598mfYQ==
+Date: Fri, 12 Sep 2025 12:03:27 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@lst.de>, Danilo Krummrich <dakr@kernel.org>,
+	David Hildenbrand <david@redhat.com>, iommu@lists.linux.dev,
+	Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Joerg Roedel <joro@8bytes.org>, Jonathan Corbet <corbet@lwn.net>,
+	Juergen Gross <jgross@suse.com>, kasan-dev@googlegroups.com,
+	Keith Busch <kbusch@kernel.org>, linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-nvme@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, linux-trace-kernel@vger.kernel.org,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, rust-for-linux@vger.kernel.org,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	virtualization@lists.linux.dev, Will Deacon <will@kernel.org>,
+	xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v6 00/16] dma-mapping: migrate to physical address-based
+ API
+Message-ID: <20250912090327.GU341237@unreal>
+References: <CGME20250909132821eucas1p1051ce9e0270ddbf520e105c913fa8db6@eucas1p1.samsung.com>
+ <cover.1757423202.git.leonro@nvidia.com>
+ <0db9bce5-40df-4cf5-85ab-f032c67d5c71@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/38] dt-bindings: media: mediatek,mt8195-jpeg: Allow
- range number in node address
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- linux-mediatek@lists.infradead.org, robh@kernel.org
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org,
- conor+dt@kernel.org, chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
- airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
- mchehab@kernel.org, matthias.bgg@gmail.com, chunfeng.yun@mediatek.com,
- vkoul@kernel.org, kishon@kernel.org, sean.wang@kernel.org,
- linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
- andersson@kernel.org, mathieu.poirier@linaro.org, daniel.lezcano@linaro.org,
- tglx@linutronix.de, atenart@kernel.org, jitao.shi@mediatek.com,
- ck.hu@mediatek.com, houlong.wei@mediatek.com,
- kyrie.wu@mediatek.corp-partner.google.com, andy.teng@mediatek.com,
- tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com, shane.chien@mediatek.com,
- olivia.wen@mediatek.com, granquet@baylibre.com, eugen.hristev@linaro.org,
- arnd@arndb.de, sam.shih@mediatek.com, jieyy.yang@mediatek.com,
- frank-w@public-files.de, mwalle@kernel.org, fparent@baylibre.com,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
- <20250724083914.61351-15-angelogioacchino.delregno@collabora.com>
- <70ae6787-ee0b-43a0-851e-1fb6c82f6c31@kernel.org>
- <72934f23-08eb-4214-a946-7aa7a432352e@collabora.com>
-Content-Language: en-US
-In-Reply-To: <72934f23-08eb-4214-a946-7aa7a432352e@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0db9bce5-40df-4cf5-85ab-f032c67d5c71@samsung.com>
 
-Il 04/08/25 11:02, AngeloGioacchino Del Regno ha scritto:
-> Il 24/07/25 11:14, Krzysztof Kozlowski ha scritto:
->> On 24/07/2025 10:38, AngeloGioacchino Del Regno wrote:
->>> The dual and triple core jpeg encoder and decoder (respectively)
->>> on MT8195 are far apart: the only way to have this to make sense
->>> is to split those in multiple address ranges in device trees as
->>> one big range would overlap with other IP in at least the MT8195
->>> SoC.
->>>
->>> Change both the jpegdec and jpegenc bindings to allow specifying
->>> children nodes such as "jpegdec@0,10000", "jpegdec@1,0" or for
->>> encoder "jpegenc@0,0", "jpegenc@1,0" to resolve dtbs_check issues.
->>
->>
->> This should not be needed for standard MMIO/simple-bus nodes. I think
->> DTS is wrong here.
->>
->> Which cases really need the ','?
->>
+On Fri, Sep 12, 2025 at 12:25:38AM +0200, Marek Szyprowski wrote:
+> On 09.09.2025 15:27, Leon Romanovsky wrote:
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> >
+> > Changelog:
+> > v6:
+> >   * Based on "dma-debug: don't enforce dma mapping check on noncoherent
+> >     allocations" patch.
+> >   * Removed some unused variables from kmsan conversion.
+> >   * Fixed missed ! in dma check.
+> > v5: https://lore.kernel.org/all/cover.1756822782.git.leon@kernel.org
+> >   * Added Jason's and Keith's Reviewed-by tags
+> >   * Fixed DMA_ATTR_MMIO check in dma_direct_map_phys
+> >   * Jason's cleanup suggestions
+> > v4: https://lore.kernel.org/all/cover.1755624249.git.leon@kernel.org/
+> >   * Fixed kbuild error with mismatch in kmsan function declaration due to
+> >     rebase error.
+> > v3: https://lore.kernel.org/all/cover.1755193625.git.leon@kernel.org
+> >   * Fixed typo in "cacheable" word
+> >   * Simplified kmsan patch a lot to be simple argument refactoring
+> > v2: https://lore.kernel.org/all/cover.1755153054.git.leon@kernel.org
+> >   * Used commit messages and cover letter from Jason
+> >   * Moved setting IOMMU_MMIO flag to dma_info_to_prot function
+> >   * Micro-optimized the code
+> >   * Rebased code on v6.17-rc1
+> > v1: https://lore.kernel.org/all/cover.1754292567.git.leon@kernel.org
+> >   * Added new DMA_ATTR_MMIO attribute to indicate
+> >     PCI_P2PDMA_MAP_THRU_HOST_BRIDGE path.
+> >   * Rewrote dma_map_* functions to use thus new attribute
+> > v0: https://lore.kernel.org/all/cover.1750854543.git.leon@kernel.org/
+> > ------------------------------------------------------------------------
+> >
+> > This series refactors the DMA mapping to use physical addresses
+> > as the primary interface instead of page+offset parameters. This
+> > change aligns the DMA API with the underlying hardware reality where
+> > DMA operations work with physical addresses, not page structures.
+> >
+> > The series maintains export symbol backward compatibility by keeping
+> > the old page-based API as wrapper functions around the new physical
+> > address-based implementations.
+> >
+> > This series refactors the DMA mapping API to provide a phys_addr_t
+> > based, and struct-page free, external API that can handle all the
+> > mapping cases we want in modern systems:
+> >
+> >   - struct page based cacheable DRAM
+> >   - struct page MEMORY_DEVICE_PCI_P2PDMA PCI peer to peer non-cacheable
+> >     MMIO
+> >   - struct page-less PCI peer to peer non-cacheable MMIO
+> >   - struct page-less "resource" MMIO
+> >
+> > Overall this gets much closer to Matthew's long term wish for
+> > struct-pageless IO to cacheable DRAM. The remaining primary work would
+> > be in the mm side to allow kmap_local_pfn()/phys_to_virt() to work on
+> > phys_addr_t without a struct page.
+> >
+> > The general design is to remove struct page usage entirely from the
+> > DMA API inner layers. For flows that need to have a KVA for the
+> > physical address they can use kmap_local_pfn() or phys_to_virt(). This
+> > isolates the struct page requirements to MM code only. Long term all
+> > removals of struct page usage are supporting Matthew's memdesc
+> > project which seeks to substantially transform how struct page works.
+> >
+> > Instead make the DMA API internals work on phys_addr_t. Internally
+> > there are still dedicated 'page' and 'resource' flows, except they are
+> > now distinguished by a new DMA_ATTR_MMIO instead of by callchain. Both
+> > flows use the same phys_addr_t.
+> >
+> > When DMA_ATTR_MMIO is specified things work similar to the existing
+> > 'resource' flow. kmap_local_pfn(), phys_to_virt(), phys_to_page(),
+> > pfn_valid(), etc are never called on the phys_addr_t. This requires
+> > rejecting any configuration that would need swiotlb. CPU cache
+> > flushing is not required, and avoided, as ATTR_MMIO also indicates the
+> > address have no cacheable mappings. This effectively removes any
+> > DMA API side requirement to have struct page when DMA_ATTR_MMIO is
+> > used.
+> >
+> > In the !DMA_ATTR_MMIO mode things work similarly to the 'page' flow,
+> > except on the common path of no cache flush, no swiotlb it never
+> > touches a struct page. When cache flushing or swiotlb copying
+> > kmap_local_pfn()/phys_to_virt() are used to get a KVA for CPU
+> > usage. This was already the case on the unmap side, now the map side
+> > is symmetric.
+> >
+> > Callers are adjusted to set DMA_ATTR_MMIO. Existing 'resource' users
+> > must set it. The existing struct page based MEMORY_DEVICE_PCI_P2PDMA
+> > path must also set it. This corrects some existing bugs where iommu
+> > mappings for P2P MMIO were improperly marked IOMMU_CACHE.
+> >
+> > Since ATTR_MMIO is made to work with all the existing DMA map entry
+> > points, particularly dma_iova_link(), this finally allows a way to use
+> > the new DMA API to map PCI P2P MMIO without creating struct page. The
+> > VFIO DMABUF series demonstrates how this works. This is intended to
+> > replace the incorrect driver use of dma_map_resource() on PCI BAR
+> > addresses.
+> >
+> > This series does the core code and modern flows. A followup series
+> > will give the same treatment to the legacy dma_ops implementation.
 > 
-> All of the multi-core JPEG enc/decoders on MT8195 (and newer).
-> 
-> The DT changes are included in the same series as this commit; check:
-> 
-> 20250724083914.61351-35-angelogioacchino.delregno@collabora.com
-> 
-> Cheers,
-> Angelo
-> 
+> Applied patches 1-13 into dma-mapping-for-next branch. Let's check if it 
+> works fine in linux-next.
 
-Any further comments on this?
+Thanks a lot.
 
-Regards,
-Angelo
+> 
+> Best regards
+> -- 
+> Marek Szyprowski, PhD
+> Samsung R&D Institute Poland
+> 
+> 
 
