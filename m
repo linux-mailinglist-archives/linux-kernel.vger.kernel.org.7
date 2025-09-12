@@ -1,174 +1,136 @@
-Return-Path: <linux-kernel+bounces-813574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1287B547B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:34:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2EBFB547B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89A451889636
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8488564E35
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:33:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E5327B340;
-	Fri, 12 Sep 2025 09:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93C427E1B1;
+	Fri, 12 Sep 2025 09:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IPfuMEFO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="hBhoOIi0"
+Received: from r3-20.sinamail.sina.com.cn (r3-20.sinamail.sina.com.cn [202.108.3.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2292F7494
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065A427BF99
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757669399; cv=none; b=th3X1A0Dxk2gSelStvMmyrN9skjS/K/uhoiQ76Ck2SpBaiXN8504udWrM+wF2GlG1kADPMxo1fdOK/6x1NQxoRS/9djz51jjlrmIFNjG9u/uVnX3wylMeHvWw2zEcG7YpmuMSiw6ccOIVOjVDjbSGSN+z7YKY5pWgyEpd2hU4EM=
+	t=1757669467; cv=none; b=n5RTBG3Bf5eA1g6EoZQtDsFr4L8JIcV+xasqS3yJW5JoCLO/k0awROiLP9S6twXlk6T06Nl3PPXo2dbWxk2tiAkn7L0Ss3WSLYIp0shOAE7ZDlf+UAzdQG5Ecs3MNHHvPx69BoEEracUPhYXVva0dUyOhWMG2Z1q/fb957FsPIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757669399; c=relaxed/simple;
-	bh=ues0s9adPEQYWl+VgmLi4AZpQ7GxaxuZKJ7J9dlYyjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lr+LgRGVl2h80ymCbGj+UXJ75NJAwDMhLOv8Whk4C4zqmMPjgK2gn2QtL+nj/3BtTp9K5FWsRi0PiAAhDFgIySJ3pqFNG9HpAzki6yyx8wtmLd97VOHl9c387h85UZq+WCm6juKCjhLCTzJuLqB6nSKUjJ5gC7VcV2zmdWlE/SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IPfuMEFO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3BA0C4CEFC
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757669399;
-	bh=ues0s9adPEQYWl+VgmLi4AZpQ7GxaxuZKJ7J9dlYyjU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IPfuMEFO3BxQhVLp5GInrSYY90Yhw5P8EfhKkDMqTxKpZyhrApqi3Dd+uzrx86aqR
-	 QtNb2vsLPD6HClXeNovAGHhcVO2nEQBu1jBnBxgJK2vdTT3q/5SKC41ji8cIlHMkvu
-	 29EsfrEQq4gesIjVpIX0ISt3Bj+VvZJWn5zLRsHgMT7nK7/uuR/0SHpeQQxfBg1fbe
-	 X6rwOSMaXbdjksArs/PSTBsT2QxRpSY/hGiMU8HflChSxmwDUaSsLe8yJKK4a8VH6N
-	 nP0v3ugl3JjXct/XHxm+o8B+4lpblFs/LZQhApC0U3SFh/4O1lHV08isEMa5lTadAs
-	 ymiL5B9iNTkgQ==
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-745a415bf72so631518a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:29:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWHa7cpZEF+5p9vz1L+RQ8lc22E+4T0Cun6PlrAC8D3xB1xpNVSHZVtcc7BcJ6sIt/bl3tfbehvcP3+JPE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg0hdrpWowCToD+7GizWdG3oHWWUGb8R82xf+bVa778VtfvKQ5
-	On10FBQpmjzCtO/T6vbAVZ3UjlgF+VMiqMv6uex8zE26KnOQm+OdTDD24vAQgDSUEqT9UMv46dU
-	JDfwkkq1Sx0lPepzWo2Aw/idcRnHNqrg=
-X-Google-Smtp-Source: AGHT+IGeWfmmiVD+ssLwRhwIZTTBYCiDGcJ3RZ6TNsf81JV/srbaGDAdqu1Iuuwl39G/3fqEJgOJVVT8vD+V8j6+K7Y=
-X-Received: by 2002:a05:6830:f8c:b0:744:f08d:15fd with SMTP id
- 46e09a7af769-75356769c81mr1159075a34.35.1757669398210; Fri, 12 Sep 2025
- 02:29:58 -0700 (PDT)
+	s=arc-20240116; t=1757669467; c=relaxed/simple;
+	bh=VLzRH5i0JLT74wmDUdGamn6Jxb9ovbHt31u7tOOVi30=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=T1RX3ndVg8LH2tvLlKFNmAN/kZOSiS/RqFgbh1ShMCt080C25Ziv0kYDgk37zjOAykcEC0bp5H0ELQijY6+A7G2+cNWZW+ECpO3S++YXLi1t/5Vs2sUFulW5ZG74PDyad81iD5UZ9eW8KDvmUHZ+hi3IEvr4WWLWx2WEqQRhc3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=hBhoOIi0; arc=none smtp.client-ip=202.108.3.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757669462;
+	bh=dC/FEgwzaJQpUN/2woeCURGorJIUHc+dhOmt5OhDmWc=;
+	h=From:Subject:Date:Message-ID;
+	b=hBhoOIi0DsI3OlMOdFJussCdhEtm9OIROtiSXCbisob6b19Ei8pLMzVBb2JopY65W
+	 HGcIbd8xKlmKW2KJj5GKkqlTciaYQtq9mqJpqGIeAht9B2cpe61F1lEhewyCDSEmQ7
+	 ZPu4bzZFN2owO2gDc8niAYQWR1F5Lv0mBKP7aIPI=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 68C3E84B0000185A; Fri, 12 Sep 2025 17:30:53 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 300374456618
+X-SMAIL-UIID: FE4B7EBD75BE4438B085BBC002C532AE-20250912-173053-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+5a66db916cdde0dbcc1c@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] BUG: corrupted list in flow_block_cb_setup_simple
+Date: Fri, 12 Sep 2025 17:30:40 +0800
+Message-ID: <20250912093042.6843-1-hdanton@sina.com>
+In-Reply-To: <68c3c675.050a0220.2ff435.0353.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912085756.1742-1-cp0613@linux.alibaba.com>
-In-Reply-To: <20250912085756.1742-1-cp0613@linux.alibaba.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 12 Sep 2025 11:29:44 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iZmHCOzcTD6b4XGNXWUWEoO0v_qLMDFNtA43XLAOmhZQ@mail.gmail.com>
-X-Gm-Features: Ac12FXxsc-mPa-B2SuO9WYf97fhF_zumJJvBySHCsZ_mNDXoskJXIYgRlmfjhvU
-Message-ID: <CAJZ5v0iZmHCOzcTD6b4XGNXWUWEoO0v_qLMDFNtA43XLAOmhZQ@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: SPCR: Support Precise Baud Rate filed
-To: cp0613@linux.alibaba.com
-Cc: rafael@kernel.org, lenb@kernel.org, guoren@kernel.org, 
-	jeeheng.sia@starfivetech.com, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 10:58=E2=80=AFAM <cp0613@linux.alibaba.com> wrote:
->
-> From: Chen Pei <cp0613@linux.alibaba.com>
->
-> The Microsoft Serial Port Console Redirection (SPCR) specification
-> revision 1.09 comprises additional field: Precise Baud Rate [1].
->
-> It is used to describe non-traditional baud rates (such as those
-> used by high-speed UARTs).
->
-> It contains a specific non-zero baud rate which overrides the value
-> of the Configured Baud Rate field. If this field is zero or not
-> present, Configured Baud Rate is used.
->
-> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serports=
-/serial-port-console-redirection-table # 1
->
-> Signed-off-by: Chen Pei <cp0613@linux.alibaba.com>
-> ---
->  drivers/acpi/spcr.c | 56 ++++++++++++++++++++++++++-------------------
->  1 file changed, 33 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-> index cd36a97b0ea2..69142c2ac4b3 100644
-> --- a/drivers/acpi/spcr.c
-> +++ b/drivers/acpi/spcr.c
-> @@ -146,29 +146,39 @@ int __init acpi_parse_spcr(bool enable_earlycon, bo=
-ol enable_console)
->                 goto done;
->         }
->
-> -       switch (table->baud_rate) {
-> -       case 0:
-> -               /*
-> -                * SPCR 1.04 defines 0 as a preconfigured state of UART.
-> -                * Assume firmware or bootloader configures console corre=
-ctly.
-> -                */
-> -               baud_rate =3D 0;
-> -               break;
-> -       case 3:
-> -               baud_rate =3D 9600;
-> -               break;
-> -       case 4:
-> -               baud_rate =3D 19200;
-> -               break;
-> -       case 6:
-> -               baud_rate =3D 57600;
-> -               break;
-> -       case 7:
-> -               baud_rate =3D 115200;
-> -               break;
-> -       default:
-> -               err =3D -ENOENT;
-> -               goto done;
-> +       /*
-> +        * SPCR 1.09 defines Precise Baud Rate Filed contains a specific
-> +        * non-zero baud rate which overrides the value of the Configured
-> +        * Baud Rate field. If this field is zero or not present, Configu=
-red
-> +        * Baud Rate is used.
-> +        */
-> +       if (table->precise_baudrate)
-> +               baud_rate =3D table->precise_baudrate;
-> +       else {
+> Date: Fri, 12 Sep 2025 00:06:29 -0700	[thread overview]
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    e59a039119c3 Merge tag 's390-6.17-4' of git://git.kernel.o..
+> git tree:       bpf
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1523e934580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
+> dashboard link: https://syzkaller.appspot.com/bug?extid=5a66db916cdde0dbcc1c
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d4bd62580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d69642580000
 
-The outer braces here are redundant and if you combined the "else"
-above with the "switch ()" statement below in one line, the patch
-would be smaller.
+#syz test upstream master
 
-> +               switch (table->baud_rate) {
-> +               case 0:
-> +                       /*
-> +                        * SPCR 1.04 defines 0 as a preconfigured state o=
-f UART.
-> +                        * Assume firmware or bootloader configures conso=
-le correctly.
-> +                        */
-> +                       baud_rate =3D 0;
-> +                       break;
-> +               case 3:
-> +                       baud_rate =3D 9600;
-> +                       break;
-> +               case 4:
-> +                       baud_rate =3D 19200;
-> +                       break;
-> +               case 6:
-> +                       baud_rate =3D 57600;
-> +                       break;
-> +               case 7:
-> +                       baud_rate =3D 115200;
-> +                       break;
-> +               default:
-> +                       err =3D -ENOENT;
-> +                       goto done;
-> +               }
->         }
->
->         /*
-> --
+--- x/net/core/flow_offload.c
++++ y/net/core/flow_offload.c
+@@ -334,6 +334,7 @@ bool flow_block_cb_is_busy(flow_setup_cb
+ }
+ EXPORT_SYMBOL(flow_block_cb_is_busy);
+ 
++static DEFINE_MUTEX(setup_lock);
+ int flow_block_cb_setup_simple(struct flow_block_offload *f,
+ 			       struct list_head *driver_block_list,
+ 			       flow_setup_cb_t *cb,
+@@ -348,27 +349,37 @@ int flow_block_cb_setup_simple(struct fl
+ 
+ 	f->driver_block_list = driver_block_list;
+ 
++	mutex_lock(&setup_lock);
+ 	switch (f->command) {
+ 	case FLOW_BLOCK_BIND:
+-		if (flow_block_cb_is_busy(cb, cb_ident, driver_block_list))
++		if (flow_block_cb_is_busy(cb, cb_ident, driver_block_list)) {
++			mutex_unlock(&setup_lock);
+ 			return -EBUSY;
++		}
+ 
+ 		block_cb = flow_block_cb_alloc(cb, cb_ident, cb_priv, NULL);
+-		if (IS_ERR(block_cb))
++		if (IS_ERR(block_cb)) {
++			mutex_unlock(&setup_lock);
+ 			return PTR_ERR(block_cb);
++		}
+ 
+ 		flow_block_cb_add(block_cb, f);
+ 		list_add_tail(&block_cb->driver_list, driver_block_list);
++		mutex_unlock(&setup_lock);
+ 		return 0;
+ 	case FLOW_BLOCK_UNBIND:
+ 		block_cb = flow_block_cb_lookup(f->block, cb, cb_ident);
+-		if (!block_cb)
++		if (!block_cb) {
++			mutex_unlock(&setup_lock);
+ 			return -ENOENT;
++		}
+ 
+ 		flow_block_cb_remove(block_cb, f);
+ 		list_del(&block_cb->driver_list);
++		mutex_unlock(&setup_lock);
+ 		return 0;
+ 	default:
++		mutex_unlock(&setup_lock);
+ 		return -EOPNOTSUPP;
+ 	}
+ }
+--
 
