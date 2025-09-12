@@ -1,125 +1,152 @@
-Return-Path: <linux-kernel+bounces-814557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0645AB5558C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:41:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D4BB5558E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F9D27AC9C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDECEAE2ADE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF712324B1E;
-	Fri, 12 Sep 2025 17:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB06B326D57;
+	Fri, 12 Sep 2025 17:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tAjR29Eu"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abWVJLlu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353C623314B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:41:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358C63081BD;
+	Fri, 12 Sep 2025 17:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757698873; cv=none; b=uzgkR199enM29lwjyJgGpuLFpSsn4ZABl4CLYGcwcA1l8k8dARTiSZm4+OYNQwEZez7rhIYomXJ/WHNXuzj5k7ksG+TscIGG6rk/AhI63JgjqNNwu40Kni+cJEmFkwQGRK3K22LVaVMF7xtPRSD1itDMBjU/96zvvOn1ATWAYsM=
+	t=1757698944; cv=none; b=XO2tYKnAoZXDSCzblyunj06NbB/jhMOUgHVoHmZiul2TB729Id8MuzGHg+i3TlohALSXd5gvc8EMBnT3UCHZNfhDH71nefgwTR1szkzxuPoykA8mbh1WCweTXVolrp2oT8sVHZ285ZorIkxV540tcFSOnc3IVkj/s8STMy/dLUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757698873; c=relaxed/simple;
-	bh=ebVMkI3NMLghY3II0wHlBBRcDRzhUEGXKBz6MIW4EmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBv8NJgU2Ihs5d806re/s0Pc9WvdX7KTp/TTSxEcdGPFubJ2V2Su6Ry65YRPmFWXbasiEHxRW4L08RjXnS4leMN4R6iKUtyaiZF2Uex2INt9ax6kABxG4H9lZ+tFEyCQXjnCM+w7FZu7hDZkToxrDNzChu/rpeSv3sVpsWAvwpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tAjR29Eu; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-750e52fb2deso1829254a34.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:41:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757698870; x=1758303670; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UMFngDg+ThTxH2TqhAB/OrQnknv0ugZMsORXJCad8C8=;
-        b=tAjR29Eup60dWmdPXZTlLtnuXR51PmBwfneMTLfOeMuPdMQZ6t4DpJ+P59gLo3IOr0
-         aFla4USTyJO2Oy1IYD2OK3Pxcdpi7+dE3Ce+svZhO47OyUUSzvnNH3FqRleqWmb/BlKf
-         XVh9/WFd390bEl+B4aXzSwucvxFoY1kzloR1myNdgyY6foky7NsVCONoAjgkQFjLv0ug
-         QYaEuySSreWaSirwuHkufF+0F9tp2rlLdghKYgyF5W3MHN/HRgVSL2dgsMmJIBdMxYRk
-         fpVS8F14gckwGgT33Rwh4f/Vhm7TFNEqymCFQEeMnqC8jsWeXsOW1GutKeQ8XYZP39uT
-         6w5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757698870; x=1758303670;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UMFngDg+ThTxH2TqhAB/OrQnknv0ugZMsORXJCad8C8=;
-        b=rPDW5FjQGKnocT6fNTokhaV0ZNRGjpZ55pJV5zjmM3E7H825Y1jG7LjZjbOH1GnNxE
-         cASmVDPVqQOnjcW3BDNKNurCqE6QxWCPqt1V4iEXC6F5qm2RbmO3oAwlsVqfQ2FtvpCK
-         x1n7tndOc6DSCzqN6QDChsScIdAs2jhZfz+nzNE81GvRE4XbO2c09siIq2QWSpALr6qk
-         jcRXZ03W12O+1JNYJV57wVD0QNCvQUEuXK9HFJfIN65l5we5FpNeXCsSKGXQu/hWUT32
-         Hwu6YLo1T/3/b+YLwVmR9YvaN62WvqERG5ctS9P/WMwKGaoJJ3LAiLN6DctqDuJky5Kr
-         deaA==
-X-Forwarded-Encrypted: i=1; AJvYcCXf5LeVgsm+Ng2m3Qdm1/nC8e/GkdvkxgAl1yTzL1vvQhhnXpSA+gUXrrSeVHKrogVpcGbjKxBYe7P0Aqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymyieKVIk1gj9xOV521TpGLnzSl/G3eTIQhCrzikuyfYLMDD5n
-	XXRHAlDFTwqcytFerDYT/BZEePr6OGGFRDlbiY2/BRr5SGnI7BIr2u4znZtQKGfGTrM=
-X-Gm-Gg: ASbGnctCa2xukzmQJHmZOmspDGXYVd7KpK7ZA0fED5aRp1QYFuqMSk+VlIwps4AYDDF
-	2led5f20llVrVjv6+mMrCi+LJDRkgsfEgNzBVaC5gMJPiytH1nAYh4LlbhC2c7R7slqemXVD1/9
-	JniKqYbogmVKIpv3a0LBQxiNoSylCez9fKQ+vmLHkBDCWZLDaBErPyMsLqhcs+w706UVW2bCVzV
-	vCorsY3iF+m4uT/Jlsb6FFhsg17/Oc+1AV5q7axzEpHZBzMf7VMEW//j3AOH7Xt1Dgj/C1NzrLz
-	rX3cUJvd85Yo1LlQ7dNwtZBYk/urQls7NB+ArRWK+YgQN+dPT6KO2CfQ1Yji0XpS7VxdC/VSyZX
-	ogyxPwu33fGoLZ8Q3E1arNLkO6bOJz1mmZsl4Nx/4uy1V3ikOQdks+zs3s7D6iaaJZa1DLRgnrn
-	A=
-X-Google-Smtp-Source: AGHT+IF4uHwM0m4f1PF0IHcsQHJY8vH9pv/dJXciija6fJHfMxoFbxn0mU5WZrupa3mzpzPuWfE4wg==
-X-Received: by 2002:a05:6808:2185:b0:438:1b50:fd7e with SMTP id 5614622812f47-43b8d934557mr2303922b6e.22.1757698870299;
-        Fri, 12 Sep 2025 10:41:10 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1? ([2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b82aa7b97sm869170b6e.24.2025.09.12.10.41.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 10:41:08 -0700 (PDT)
-Message-ID: <6dee1849-45f0-47c8-b29e-8057dee44b6a@baylibre.com>
-Date: Fri, 12 Sep 2025 12:41:08 -0500
+	s=arc-20240116; t=1757698944; c=relaxed/simple;
+	bh=0cY7VeaySFBSAW5INmThb2nsUazkylOBbySNCBPZKbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VX1vx7p1ohl8fRf0dFBZKMdLxTHBGhxQMjKyoyn/vvgOmwmK/no2RqGsP82+yVll1UKNvV3k41OxnXS4ErqEMJPOzi1t6wy2yVQuQw+DXGn5mIGkPwBbgzU4QZYX4VkAIG7YpJekkvSMZNdSXMEZguushY9mrYKK0bQOnlfNR08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abWVJLlu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0A1EC4CEF1;
+	Fri, 12 Sep 2025 17:42:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757698943;
+	bh=0cY7VeaySFBSAW5INmThb2nsUazkylOBbySNCBPZKbw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=abWVJLluulo3Sk63YTyecs8iH4LIt/zrLRDB5tD2tBXVS1+CDaUuymgYv4H8Iu2e+
+	 jqp+YeWn1u/W9HmZ8uuv3y+CeFyk2O8TGJ+Q1Uz88EcyWG5DGBHxLGWWeBp2EDVrxY
+	 mdJJ+6gRj//jEbPpWz00DlDDCcsb6MN4Fyt7GfrpCHJtypipvNSDiKpzuAfqY86TIZ
+	 BI0dORgLOvQQqqqdBGljofFyaejshKgxVvD1V2Vugw4QPD4jTneT5tCofs7ToFh3Kb
+	 qfrXIZm63eXPsPHhExHGzb3CNeBzdBWgeP5Ese5GCL+oRQ47ciyXLcDwvXEYN2NZxh
+	 AZEZ88lGdszVw==
+From: Benno Lossin <lossin@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Benno Lossin <lossin@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Tamir Duberstein <tamird@gmail.com>,
+	Dirk Behme <dirk.behme@gmail.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Fiona Behrens <me@kloenk.dev>,
+	Christian Schrefl <chrisi.schrefl@gmail.com>,
+	Alban Kurti <kurti@invicto.ai>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: [GIT PULL] Rust pin-init for v6.18
+Date: Fri, 12 Sep 2025 19:41:46 +0200
+Message-ID: <20250912174148.373530-1-lossin@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6] iio: adc: ad7124: use guard(mutex) to simplify
- return paths
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
- <20250911-iio-adc-ad7124-add-filter-support-v2-3-b09f492416c7@baylibre.com>
- <CAHp75VdVUOxkKhiheujAK0gjk_GXGqQ0g=LhNDjZr-Of1gH=sQ@mail.gmail.com>
- <d5e53a9c-418c-4c33-bbf4-b7d49d523cf2@baylibre.com>
- <aMRVKZGPv4PwR8-o@smile.fi.intel.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aMRVKZGPv4PwR8-o@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 9/12/25 12:15 PM, Andy Shevchenko wrote:
-> On Fri, Sep 12, 2025 at 09:19:36AM -0500, David Lechner wrote:
->> On 9/11/25 11:39 PM, Andy Shevchenko wrote:
->>> On Fri, Sep 12, 2025 at 12:42 AM David Lechner <dlechner@baylibre.com> wrote:
->>>>
->>>> Use guard(mutex) in a couple of functions to allow direct returns. This
->>>> simplifies the code a bit and will make later changes easier.
->>>
->>> From this and the patch it's unclear if cleanup.h was already there or
->>> not. If not, this patch misses it, if yes, the commit message should
->>> be different.
->>
->> cleanup.h is already there. I'm not sure what would need to be different
->> in the commit message though.
-> 
-> I expect something like "finish converting the driver to use guard()()..."
-> 
+Hi Danilo,
 
-cleanup.h was previously included for __free(), so the guard() stuff
-is all new.
+As discussed with Miguel, I'm sending my PR to you this time.
 
+The code changes themselves aren't that big, but functionality-wise
+there are three important ones: pin-projections, code blocks and access
+to previously initialized fields. More syntax changes will be on the way
+for v6.19 and I hope I'll be a bit earlier in that cycle :)
+
+The commits have been in linux-next for one day.
+
+I have a conflict with your devres fix that's in -rc3, the resolution in
+linux-next looks good.
+
+Please pull for v6.18 -- thanks!
+
+---
+Cheers,
+Benno
+
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
+
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+
+are available in the Git repository at:
+
+  https://github.com/Rust-for-Linux/linux.git tags/pin-init-v6.18
+
+for you to fetch changes up to 42415d163e5df6db799c7de6262d707e402c2c7e:
+
+  rust: pin-init: add references to previously initialized fields (2025-09-11 23:30:02 +0200)
+
+----------------------------------------------------------------
+pin-init changes for v6.18
+
+Changed:
+
+- `#[pin_data]` now generates a `*Projection` struct similar to the
+  `pin-project` crate.
+
+- Add initializer code blocks to `[try_][pin_]init!` macros: make
+  initializer macros accept any number of `_: {/* arbitrary code */},` &
+  make them run the code at that point.
+
+- Make the `[try_][pin_]init!` macros expose initialized fields via a
+  `let` binding as `&mut T` or `Pin<&mut T>` for later fields.
+
+Upstream dev news:
+
+- Released v0.0.10 before the changes included in this tag.
+
+- Inform users of the impending rename from `pinned-init` to `pin-init`
+  (in the kernel the rename already happened).
+
+- More CI improvements.
+
+----------------------------------------------------------------
+Benno Lossin (6):
+      rust: pin-init: examples: error: use `Error` in `fn main()`
+      rust: pin-init: README: add information banner on the rename to `pin-init`
+      rust: pin-init: rename `project` -> `project_this` in doctest
+      rust: pin-init: add pin projections to `#[pin_data]`
+      rust: pin-init: add code blocks to `[try_][pin_]init!` macros
+      rust: pin-init: add references to previously initialized fields
+
+ rust/kernel/devres.rs           |   6 +-
+ rust/kernel/workqueue.rs        |   9 +-
+ rust/pin-init/README.md         |  12 ++
+ rust/pin-init/examples/error.rs |   4 +-
+ rust/pin-init/src/lib.rs        |   4 +-
+ rust/pin-init/src/macros.rs     | 239 ++++++++++++++++++++++++++++++++++------
+ samples/rust/rust_driver_pci.rs |   2 +-
+ 7 files changed, 227 insertions(+), 49 deletions(-)
 
