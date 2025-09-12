@@ -1,150 +1,161 @@
-Return-Path: <linux-kernel+bounces-814131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B7CB54FA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:35:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF83B54FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AF567B020B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:33:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3B055A599B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7C030F924;
-	Fri, 12 Sep 2025 13:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168F530E852;
+	Fri, 12 Sep 2025 13:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HZY+ICV6"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ffQiWbGc"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D40303A13
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF373303A13
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:35:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684097; cv=none; b=oemEaaKMBdjeSjwEjdH1nxiN70RmFF6fQQaT9hvvgrh0yoFvG6WNqN9Y30azMravGW3SPoPTwwWQmgkkHUvW9YEFYUEZB0mfRnP8cMdpu41CTMXAWVw4VsQUA4nog2dsdA+t3zFZWrDjV7KXf2/qzPmY30sAJdachUirhMrFAL0=
+	t=1757684111; cv=none; b=IIyOXtNJQZkgKIsxWuoZ/yjad8ejE/7oYr2Nf2iT/6QLq1mvbh7yWKd7a+IW78nRcnWRb3Ca65J1JCPqhsY9RwjOPACDz+3frqL6GqywM8xc889l3fV9DanLrsxUo3LR0t4T+TYEq4KGFUdkQTzhIGJ8dcWtFkjNQ2AikQFH08I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684097; c=relaxed/simple;
-	bh=fEA2x43XLCIFZ1HAK3Qmgt2WPelPhB3G6VX1hKyr04E=;
+	s=arc-20240116; t=1757684111; c=relaxed/simple;
+	bh=Mw1uqYx7xqErJ7dWKzMJLyxHHuWnHuDvctPdOSnJ6Uc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hAYGAFeiBtH55lyJPlcbR1wajgLK2hUxLgJHKjJutnFQ8JtQceZU4A6fwpRgsnwsq0ff4QdeJE+SWjDSh62DPWFKxxy0f4ZhL+vYBQxVbG3YeIiDpCARAUQk/Cbg8ye8SelThjBDEIku44C58HgJtSVX2sV0yY8QtRzY6kdzhXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HZY+ICV6; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=usWM+Sx1E3DjxID61R0oJWNVbrGdlwqbpi1vOsIbsTfuoHChUYHZvLfv3pw/yQI8sur0AEptqD1ky9E6B2yV48feja2s6uw9FEhVHJCedYn2SmFJ+Ozi8Mu0yZPwHA08/2rzX8YGd58Q3it51oRZuCUjVgjZ2WgxyE1IdUEno1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ffQiWbGc; arc=none smtp.client-ip=209.85.219.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-ea0297e9cd4so1195221276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:34:53 -0700 (PDT)
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e94d678e116so2009759276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757684093; x=1758288893; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757684108; x=1758288908; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2bpJdu9pcJQYlguGDM8bqSYyNGG/RarwGDha2QaDV7I=;
-        b=HZY+ICV6iudkiQNYe2sLLea4NT501Dw4egsi9L6nTGUS3TP4likQcWCh0l33zEkBor
-         qld7HSDUKGCUZ3+K0pF4lA1NirUluSRDV7pIkFP+hsPRrt7d8IVtUvbAqpgAtK/rMYs3
-         ggav0uF00M845sDJV/DSYbF8jXSMUNnFIPASX80UqZyWNik35Qs+raHmfHG/lGH+933g
-         CQB8WuC2LHrS3Tdo296WX3l/jWoi+AtyWBkgtjg9iY8nsGB/DEVUNeDQ4gFAkY+ayQoe
-         gMTiOLlY43MuWoA4ffPTPYUnyJz8bzYTCWyahejh6QpwdZqjTto+O57VOagO0Y1NYmte
-         SESw==
+        bh=Oif+Qq/ko4e9IqPBpRdx3M/nH7onkOEoHN9rr45t7A0=;
+        b=ffQiWbGc8jBI0/MMekKJOTGkZ8I5gVMNordx3lAAXmMexZijDRX/sDFrNJ3Ypu1iEM
+         SHIZsWei5E7e5pkXjsTysVPt0NtxGHy6FR8zcwp58R7e0lasL+xCANzO8/WS6UeP4JRn
+         pmf9tutWHLs+bL0uBzV9ttQ0x0eOTZaJs9Y2Lmx+5TKgq+ox+i2/MePnp7cUx0WpPOBD
+         yOYNJudMtypBBjyesWYlU2BRbqBWFzvMoqCwhzkGiTvzxGY01RT+weROfGd9SGZgv/R1
+         862GSVo1ZFhrPWa+Cji/qFWzofTLJ9zu7FAMnQ6yF8f1FNFXAfO9UjKTlI715jxsXB4k
+         VweQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757684093; x=1758288893;
+        d=1e100.net; s=20230601; t=1757684108; x=1758288908;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=2bpJdu9pcJQYlguGDM8bqSYyNGG/RarwGDha2QaDV7I=;
-        b=BNGjYlN9+MYcV0/7vAy/jj/WYIrwPgRrTG8fj1ePbKSvSTzBEo6iq11pcnEEvCuUR2
-         vn0C9a9Gf40hNoS2cVLcdnOpUSbMxc/LoWpa1iEOXQz4PLI8iPhkV6v/se7yjGLc1sE1
-         R1ZFPbQYxjkv2EYNZqLo+elW7AXNW/y5CRIVfz7r2Dwsb/fXMMs2Cqp1U5saZsccZ4uP
-         ioMIoMjAixX0UakAwhk7eZc7YLgGg0hncy2DUj41Dp7Lul/iWF5AHct0FkHUaciGMl+H
-         P6nb01UcJC7/F8r+4JjmaZiDhrcknzBYcdTU7mvBlS6utgtO0wAAnl3FW093XTxXO/VB
-         bDzg==
-X-Forwarded-Encrypted: i=1; AJvYcCUa530s+2I3LW/hUQ8MofrnsC4a5i6pINKtozO0FdSytDOP5Wk+lQbTsxHX3v9mE9Vycl7qQ8404GqnDbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzigngF8ZVTnA2MkiRljOGWpUKS/XegjvpFf31BF8GACpTbHI2p
-	y62ntXyK+TVdmb+SrY3BRcREN6MHEpdja7ZhVG9WdJNTc0WimKg3A7HaoT9Z+YbXWkupoSKKnvg
-	qeSUSPpix7+CEeBgMN+SLGTKpQ02v0hzbUTRLilbGTQ==
-X-Gm-Gg: ASbGncv8fU23DovD0JaXpQmWOlSWUFGWSsJr5iGMzIZrPxi+I2Jago1klClPK7P6DEP
-	A6s/rutijux4qczjlYsV5IVTQmDzhv2Wc2PtgAXKiMdTKqjYWgPd3cK7CLPc78jWMt+Rp9LsXa9
-	nM4Ii3sTOb0yRPQpTIvDw83hw00cBLmGDLfXKW4oxFS9I7EsY5Huo1+1iQ/Isf/d4b7q4TdZhWK
-	Jb1KdGYbHsbIY3gofE=
-X-Google-Smtp-Source: AGHT+IEuZCNOuhgw71RPHODJCaUVdzYWPbD3/yFfpzIGoCGg4ZN37cLNl53g3621ReprRkmpK3fxKWmw69qSmb5zAxc=
-X-Received: by 2002:a05:6902:420a:b0:e96:cb0a:de1e with SMTP id
- 3f1490d57ef6-ea3d9a52b30mr2169012276.24.1757684092934; Fri, 12 Sep 2025
- 06:34:52 -0700 (PDT)
+        bh=Oif+Qq/ko4e9IqPBpRdx3M/nH7onkOEoHN9rr45t7A0=;
+        b=mZujZj9bPCVgsOX0o3HdO20TdmFCwTywGGT0OJg3NyIOXtx5HL6Ihiv1C20U0FOucm
+         ZZVe8mvUdjZoAI820XuI8CB9ezEt/tzP8LFDdsk+OrO4gy0FpF4OD5+89huyKizX5IiA
+         s/mv39pxGu1xQk+InojDOGgSN628XPRtL7Da34xspybyZ5d8OTS+DtM9kAbWu6KLxkQG
+         rD8YD7nmSGUpEFPqCwG6euhgxo5IzzNNMGUTr1hPjZH2YkCUeLJ4gbxWIf++Num/1PjY
+         rccwz9PTqjMYPx0OIIe5QEV4O33vILp1Bhx1HiPXhxEtBmyDD8gsVKEX+sIbcQUS8PJG
+         ebSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXEKfzjZMB+CQWzN/eywOR6Q+aV1UlWWpA5qWUU7MjBeL2TF0JKonEaraSoEI5ls/EYUDe1l3L6Vj/nyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynmoTdgXdEIPNW+Y3zNAXyjt6Iakwy584A78XokTEu8cinC0SJ
+	+3JRXoRKwvN3pCJfBZY9XUdt5n7KbgJWklYiaj7/4nel0URV/dG9i6MdZXThSqRyCUVZg+5eU/w
+	8/L/huj2BCt6Oio9UKPh+fH4Gi/K0SbcFPa3E0QidGQ==
+X-Gm-Gg: ASbGncvRFfkk2zB4wJhs572H6EeXHoBSjFqR/is1UVXDBTKMLWvXqcZJ+BhD+j/6AsF
+	dlkse0Fair4dqzZpK4jRtMzTunSrtkKNqa/IHJrs6CNMZzW6in00AGXmyeiBQNKpgWPjhNTpeHk
+	p2MfsIbCkbUXxGBjhFCma+GiF5pr70Oy2jE3s0zwr7eezSIcKTmJoonivhp/RFS7mOPumk5NBHd
+	cO4EBXG3rwxCM/CQ7mU4BDVUtsaxQ==
+X-Google-Smtp-Source: AGHT+IGATGH4zT90wO86AA8WBiOnGk/LXDY5uDAcwdw9i5ErydnHz9qSPT6Guu/RQKz7ZbqSt/y/uvpf3m3dqjiDPL4=
+X-Received: by 2002:a05:690e:155a:10b0:62a:42ce:b7b9 with SMTP id
+ 956f58d0204a3-62a42ceb93fmr411217d50.1.1757684107248; Fri, 12 Sep 2025
+ 06:35:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250908-lemans-evk-bu-v4-0-5c319c696a7d@oss.qualcomm.com>
- <20250908-lemans-evk-bu-v4-1-5c319c696a7d@oss.qualcomm.com> <aMP+cdmPkej+lPtN@hu-mchunara-hyd.qualcomm.com>
-In-Reply-To: <aMP+cdmPkej+lPtN@hu-mchunara-hyd.qualcomm.com>
+References: <20250908104122.2062653-1-quic_sartgarg@quicinc.com>
+In-Reply-To: <20250908104122.2062653-1-quic_sartgarg@quicinc.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 12 Sep 2025 15:34:17 +0200
-X-Gm-Features: AS18NWClkCqcmoRAoe-mTGNfJBFQQqeUo2elvNw9ONlW9bzSgs8qRR9fnA2vWEI
-Message-ID: <CAPDyKFoZEWyysS+WT=JBY388kFgKUeUL5hxm1wL1pmn+NUAEhA@mail.gmail.com>
-Subject: Re: [PATCH v4 01/14] dt-bindings: mmc: sdhci-msm: Document the Lemans compatible
-To: Monish Chunara <quic_mchunara@quicinc.com>
+Date: Fri, 12 Sep 2025 15:34:31 +0200
+X-Gm-Features: AS18NWCooWdb8G6qEjRwFzci8cfjJRbJFJ2Ea7ro1afYf_iz88sxBWUweu1ZDLI
+Message-ID: <CAPDyKFptA06Khx-9HFf9Vt+OUXRtVqmb++HQ3ZbZD0rjRkOsPg@mail.gmail.com>
+Subject: Re: [PATCH V6 0/4] Add level shifter support for qualcomm SOC's.
+To: Sarthak Garg <quic_sartgarg@quicinc.com>
 Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
 	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Richard Cochran <richardcochran@gmail.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, kernel@oss.qualcomm.com, 
-	Wasim Nazir <wasim.nazir@oss.qualcomm.com>, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+	Konrad Dybcio <konradybcio@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	linux-mmc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com, 
+	quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, 
+	quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 12 Sept 2025 at 13:05, Monish Chunara <quic_mchunara@quicinc.com> wrote:
+On Mon, 8 Sept 2025 at 12:41, Sarthak Garg <quic_sartgarg@quicinc.com> wrote:
 >
-> On Mon, Sep 08, 2025 at 01:49:51PM +0530, Wasim Nazir wrote:
-> > From: Monish Chunara <quic_mchunara@quicinc.com>
-> >
-> > Add the MSM SDHCI compatible name to support both eMMC and SD card for
-> > Lemans, which uses 'sa8775p' as the fallback SoC. Ensure the new
-> > compatible string matches existing Lemans-compatible formats without
-> > introducing a new naming convention.
-> >
-> > The SDHCI controller on Lemans is based on MSM SDHCI v5 IP. Hence,
-> > document the compatible with "qcom,sdhci-msm-v5" as the fallback.
-> >
-> > Signed-off-by: Monish Chunara <quic_mchunara@quicinc.com>
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Add level shifter support for qualcomm SOC's.
 >
-> Hi Ulf,
+> - Changed from v5
+>     - As suggested by Krzysztof Kozlowski reintroduced minimum/maximum
+>     in dt bindings and avoid repeating constraints in free form
+>     text.
+>     - As suggested by Krzysztof Kozlowski/Konrad Dybcio update commit
+>     message reflecting discussions and previous disagreements.
 >
-> Could you please pick the binding (this patch) through your tree, so that the DT
-> Maintainer can pick up the remaining dts changes through the qcom tree?
+> - Changed from v4
+>     - As suggested by Krzysztof Kozlowski Renamed the property from
+>     `max-sd-hs-frequency` to `max-sd-hs-hz` for clarity.
+>     - As suggested by Krzysztof Kozlowski remove min/max constraints
+>     and add default: 50000000 in dt-bindings.
+>     - As suggested by Konrad Dybcio moved max-sd-hs-hz property in the
+>     SoC dtsi.
+>     - Retained sdhci-caps-mask in sm8550.dtsi for now and will revisit
+>     its removal for future targets after thorough validation and testing
+>     from the beginning.
+>
+> - Changed from v3
+>     - As suggested by Krzysztof Kozlowski moved the property from the
+>     SoC-level DTS to the board-level DTS.
+>     - Revised the commit messages to clearly explain its board-specific.
+>
+> - Changed from v2
+>     - As suggested by Konrad Dybcio and Ulf Hansson redesigned logic
+>       to introduce a new DT property max-sd-hs-frequency and override
+>       the hs_max_dtr accordingly in sd.c file.
+>
+> - Changed from v1
+>     - As suggested by Krzysztof Kozlowski redesigned logic to use
+>     compatible property for adding this level shifter support.
+>     - Addressed Adrian Hunter comments on V1 with resepect to
+>       checkpatch.
+>     - Cleared the bits first and then set bits in
+>       sdhci_msm_execute_tuning as suggested by Adrian Hunter.
+>     - Upated the if condition logic in msm_set_clock_rate_for_bus_mode
+>       as suggested by Adrian Hunter.
+>
+> Sarthak Garg (4):
+>   mmc: sdhci-msm: Enable tuning for SDR50 mode for SD card
+>   dt-bindings: mmc: controller: Add max-sd-hs-hz property
+>   mmc: core: Introduce a new flag max-sd-hs-hz
+>   arm64: dts: qcom: sm8550: Limit max SD HS mode frequency by default
+>
+>  .../bindings/mmc/mmc-controller-common.yaml       |  8 ++++++++
+>  arch/arm64/boot/dts/qcom/sm8550.dtsi              |  1 +
+>  drivers/mmc/core/host.c                           |  2 ++
+>  drivers/mmc/core/sd.c                             |  2 +-
+>  drivers/mmc/host/sdhci-msm.c                      | 15 +++++++++++++++
+>  include/linux/mmc/host.h                          |  1 +
+>  6 files changed, 28 insertions(+), 1 deletion(-)
+>
+> --
+> 2.34.1
+>
 
-Sure, I usually do that, but sorry for the delay!
+Patch 1 -> 3, applied for next, thanks!
 
-Applied for next, thanks!
+Note that, I took the liberty of amending patch3 to change the
+declaration of "max_sd_hs_hz" to an u32, rather than an unsigned int.
 
 Kind regards
 Uffe
-
-
->
-> Regards,
-> Monish
->
-> > Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> > ---
-> >  Documentation/devicetree/bindings/mmc/sdhci-msm.yaml | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> > index 22d1f50c3fd1..594bd174ff21 100644
-> > --- a/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/sdhci-msm.yaml
-> > @@ -48,6 +48,7 @@ properties:
-> >                - qcom,qcs615-sdhci
-> >                - qcom,qcs8300-sdhci
-> >                - qcom,qdu1000-sdhci
-> > +              - qcom,sa8775p-sdhci
-> >                - qcom,sar2130p-sdhci
-> >                - qcom,sc7180-sdhci
-> >                - qcom,sc7280-sdhci
-> >
-> > --
-> > 2.51.0
-> >
 
