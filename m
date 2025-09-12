@@ -1,197 +1,111 @@
-Return-Path: <linux-kernel+bounces-814133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B065B54FB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:36:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75D0BB55006
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78468188C259
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39352164104
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:50:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89B230EF96;
-	Fri, 12 Sep 2025 13:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sY3wGmzz"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8604330C62B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB3030DED0;
+	Fri, 12 Sep 2025 13:50:37 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F067C14EC62
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684119; cv=none; b=QS9gtbmtfZwGClEmU9oVGrR7puitO5SH/kNe9p0nOQ/l2H9yvfUU/K5tSZa5ezel+UWJfEBYrJjkJBtxCnHaCNZiZyt37jaoNBAZGGaOSIs5Nh4S1rnAL35/Hv6NENk4uIhxzm5heALk5t8Ukj4OGcALvrA4xvh+xB+95rkwc2M=
+	t=1757685036; cv=none; b=NnU/jvR6uMcMU2Ft/1+P48uRBSvArRV/rtRryp0F9FXBpiekhiKZfmBrsF8ei/MBEVpCjwSQrSnSyeP48Sd6QD6M0BawYBTsMPFhrb4eIkpQlAfn4oSp2pDITaAhYNe4pP8wkC40fqAo3wRpk18+wCl4eNJnpO/z4h/N7lCH5+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684119; c=relaxed/simple;
-	bh=PttHOtNSt54YmkHpxLOxewRDuYl5ElnQt5nSiLj/+UQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=liQxzMYPYP2Nb4HzJhcNbzq0d4317MAzpDx7A10cb10wZ3pBsOEjKdhI3+HT4wWVpNVEfoKFEG2UG/Fm+SPlnAS49BGVecrzch0na1sJ1qensjw/8OwPpdLVfkbqU9GPLPSt+/nnnxF5qf+8xSYYHXBGjZfD99cTDHoj/DpO860=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sY3wGmzz; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-ea3e0b4a98aso385066276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:35:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757684116; x=1758288916; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=STW83QuqpPn8naDxab/PdZOErOUZSmZlWHjvyy+1Bc8=;
-        b=sY3wGmzzXJ3Wy37ghSS7gCJIq5Tg79SexBUJMEzolfguCgPr+Dt47t+qsomrpLFTmM
-         XrFLxd7ZM+kuBR/wNcMmR4hq7qhsMz001QtQFe5ZQoDzpLVX9Ix1dmY3+Bmvc4Uo0sh3
-         iwpqhEaS4KOX2cMRAWtoUe5GNgH2i7BvOupOClnnfhM9yQfKq1TlvB/JeC3BEBPLJ5go
-         zi0x+3cCsjJ4VuCYCqWES1/J7EVz0+XMW+EIe+0Qcw64LQHopa5AqZmeG+vklHrvLhN8
-         YR7bhrJY0mJs/SfhpmWX9+rcw5XTU3ZuYvH0a900csxx6iWtgx6Zfhnryo+ztco+4mph
-         SS2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757684116; x=1758288916;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=STW83QuqpPn8naDxab/PdZOErOUZSmZlWHjvyy+1Bc8=;
-        b=IFEMD2rqqK22lQRbzimQ/Ia5w/OV08bqr/7wJVBzpS01NmIHeEpH1a9UblcFW6qaLw
-         zDMddzsAkWY5HqLnBbjwYhWX0B9YymNy8fxoHEsjNXm7inv5WrYQyEzQXcln6V0s0Kou
-         DS64S8n4oalTBqVPGhpXMCBAkFCNwEdNxbslWk2keewNn6Ip8DC0WKCaBlpR/CFbckzE
-         Dl3v9qSQoJsFbBP7Gb1ZRjoECjF5tuLPnqzwgwjcAyRq7xLYRZDP8xZ8cFAGer9SSmAe
-         0nYoVeLS/bcMbsIe8yMtXuFMz75DHTBTXjTJFJk7mfC4xHWwpLgp9UTW8pz18/O6D1PR
-         cTIA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2OCHM8WjJWBEZ+yFZa/3thJ/5rB0KCkGnXaYc31rzHIuYKKlE0MX/xXZq+WbjGUhIveZdaW6ztv3BFJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNO08aM3elvrKbL9Gr6C0UWyfYxtWSUeWupY0kLUcdhHLub2nE
-	ybu/MjeT+kreeLXFlZbLupBaQSJQuhRI5UZIgmUnqDeE1duPqnfD1lW3Uoz2sQ4wg0LL5uzRt3N
-	f4i16c9oNqrBP3uATmH4V/quoZYc7VDgGMaOPfQIVLg==
-X-Gm-Gg: ASbGncuvtiZcraKDEQRloVTT3dSJGK0hv7IkR/PtJTdjOLDLrDLC+oKH0OkTCm/88Ge
-	K7V8RklLmVbmYtGC3gIdo55Pkbgj812ucu0FFeG/QEcJMHs+LmsHDyV4ZJhSzbpqxFQqMHaAux1
-	H1Ixx+OSIHCLgvCwqMhnvdrlST0I3IIbyDOucmI8CjpCYWItLLXEjC2rxBPS/zjcY3bmROIsPvA
-	aT5mhun
-X-Google-Smtp-Source: AGHT+IFo+2s4Q86nT2eqhVliAZu16Xq60jFBF+35ttgMF2c4G40bikUsQYD5P2gDHZOjV2sSsnsF8GATwLaYyZPlNu8=
-X-Received: by 2002:a53:c485:0:b0:61c:3356:6287 with SMTP id
- 956f58d0204a3-6271e75703emr2053628d50.6.1757684115808; Fri, 12 Sep 2025
- 06:35:15 -0700 (PDT)
+	s=arc-20240116; t=1757685036; c=relaxed/simple;
+	bh=neSgLYdM9N09DtH248eIShadedDlU7L6yXq+VjAnkes=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eUY825MTPy4c+r5LxK8ZLNaOfl5WuQTzz0B/OGvYUGsZx9WuJJgGBFRF+h1++Mr9SNWZ2PhlMS+ng0Lz98lbeMGQmAMyZhsqhju3oQuAZZARb6YyFH0Jd4f9RQ2F7Qe8eZRz+YlYlAqou4Bwfv1ZpML5ofaYZ6lB/9gltlz15BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4cNb583xjNz9sj9;
+	Fri, 12 Sep 2025 15:34:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 0ANH-naw3LRi; Fri, 12 Sep 2025 15:34:52 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4cNb5837Bsz9sj8;
+	Fri, 12 Sep 2025 15:34:52 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 507FB8B7A7;
+	Fri, 12 Sep 2025 15:34:52 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id U1ZvI99EDa4A; Fri, 12 Sep 2025 15:34:52 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 33E138B764;
+	Fri, 12 Sep 2025 15:34:51 +0200 (CEST)
+Message-ID: <73b75b17-adde-44f0-b252-5a7ea2f9d138@csgroup.eu>
+Date: Fri, 12 Sep 2025 15:34:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <736d7edd2d361f2a8fc01b112802f7c4dd68b7d6.1757557996.git.benchuanggli@gmail.com>
-In-Reply-To: <736d7edd2d361f2a8fc01b112802f7c4dd68b7d6.1757557996.git.benchuanggli@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 12 Sep 2025 15:34:38 +0200
-X-Gm-Features: AS18NWDa8oAmyLB5iGs8tfqz2bWfk_t3a_iJsG9ghkszoFvcQ-b_7YQWIwr5bdU
-Message-ID: <CAPDyKFqGWRRii3z-Q3zz2+=48J7BjqdK8ab5qU75x5W==0yBYA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] mmc: sdhci: Move the code related to setting the
- clock from sdhci_set_ios_common() into sdhci_set_ios()
-To: Ben Chuang <benchuanggli@gmail.com>
-Cc: adrian.hunter@intel.com, victor.shih@genesyslogic.com.tw, 
-	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
-	SeanHY.Chen@genesyslogic.com.tw, victorshihgli@gmail.com, 
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] powerpc/32: Fix unpaired stwcx. on interrupt exit
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <6040b5dbcf5cdaa1cd919fcf0790f12974ea6e5a.1757666244.git.christophe.leroy@csgroup.eu>
+ <aMQfD5M5yNmYxLho@gate>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <aMQfD5M5yNmYxLho@gate>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 11 Sept 2025 at 04:40, Ben Chuang <benchuanggli@gmail.com> wrote:
->
-> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
->
-> The sdhci_set_clock() is called in sdhci_set_ios_common() and
-> __sdhci_uhs2_set_ios(). According to Section 3.13.2 "Card Interface
-> Detection Sequence" of the SD Host Controller Standard Specification
-> Version 7.00, the SD clock is supplied after power is supplied, so we only
-> need one in __sdhci_uhs2_set_ios(). Let's move the code related to setting
-> the clock from sdhci_set_ios_common() into sdhci_set_ios() and modify
-> the parameters passed to sdhci_set_clock() in __sdhci_uhs2_set_ios().
->
-> Fixes: 10c8298a052b ("mmc: sdhci-uhs2: add set_ios()")
-> Cc: stable@vger.kernel.org # v6.13+
-> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+Hi Segher,
 
-The series applied for fixes, thanks!
+Le 12/09/2025 à 15:24, Segher Boessenkool a écrit :
+> Hi!
+> 
+> On Fri, Sep 12, 2025 at 10:37:34AM +0200, Christophe Leroy wrote:
+>>   BEGIN_FTR_SECTION
+>> +	lwarx   r0,0,r1
+>> +END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
+>>   	stwcx.	r0,0,r1		/* to clear the reservation */
+>> -FTR_SECTION_ELSE
+>> -	lwarx	r0,0,r1
+>> -ALT_FTR_SECTION_END_IFCLR(CPU_FTR_STCX_CHECKS_ADDRESS)
+> 
+> Hrm.  So this is for V'ger (mpc7450)?  What kind of issues does that
+> old thing have with unpaired larx/stcx., some performance impact?
 
-Kind regards
-Uffe
+No idea, The original commit (from 2007) only says "some processors can 
+have issues if this stwcx to address A occurs while the reservation is 
+already held to a different address B".
 
+> 
+> The extra "dummy" larx has serious performance impact itself, on most
+> implementations (also on all newer stuff).
 
-> ---
-> v3:
->  * use ios->clock instead of host->clock as the parameter of
->     sdhci_set_clcok() in __sdhci_uhs2_set_ios().
->  * set ios->clock to host->clock after calling sdhci_set_clock() in
->    __sdhci_uhs2_set_ios().
->
-> v2: add this patch
-> v1: None
-> ---
->  drivers/mmc/host/sdhci-uhs2.c |  3 ++-
->  drivers/mmc/host/sdhci.c      | 34 +++++++++++++++++-----------------
->  2 files changed, 19 insertions(+), 18 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-uhs2.c b/drivers/mmc/host/sdhci-uhs2.c
-> index 0efeb9d0c376..18fb6ee5b96a 100644
-> --- a/drivers/mmc/host/sdhci-uhs2.c
-> +++ b/drivers/mmc/host/sdhci-uhs2.c
-> @@ -295,7 +295,8 @@ static void __sdhci_uhs2_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->         else
->                 sdhci_uhs2_set_power(host, ios->power_mode, ios->vdd);
->
-> -       sdhci_set_clock(host, host->clock);
-> +       sdhci_set_clock(host, ios->clock);
-> +       host->clock = ios->clock;
->  }
->
->  static int sdhci_uhs2_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 3a17821efa5c..ac7e11f37af7 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -2367,23 +2367,6 @@ void sdhci_set_ios_common(struct mmc_host *mmc, struct mmc_ios *ios)
->                 (ios->power_mode == MMC_POWER_UP) &&
->                 !(host->quirks2 & SDHCI_QUIRK2_PRESET_VALUE_BROKEN))
->                 sdhci_enable_preset_value(host, false);
-> -
-> -       if (!ios->clock || ios->clock != host->clock) {
-> -               host->ops->set_clock(host, ios->clock);
-> -               host->clock = ios->clock;
-> -
-> -               if (host->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK &&
-> -                   host->clock) {
-> -                       host->timeout_clk = mmc->actual_clock ?
-> -                                               mmc->actual_clock / 1000 :
-> -                                               host->clock / 1000;
-> -                       mmc->max_busy_timeout =
-> -                               host->ops->get_max_timeout_count ?
-> -                               host->ops->get_max_timeout_count(host) :
-> -                               1 << 27;
-> -                       mmc->max_busy_timeout /= host->timeout_clk;
-> -               }
-> -       }
->  }
->  EXPORT_SYMBOL_GPL(sdhci_set_ios_common);
->
-> @@ -2410,6 +2393,23 @@ void sdhci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->
->         sdhci_set_ios_common(mmc, ios);
->
-> +       if (!ios->clock || ios->clock != host->clock) {
-> +               host->ops->set_clock(host, ios->clock);
-> +               host->clock = ios->clock;
-> +
-> +               if (host->quirks & SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK &&
-> +                   host->clock) {
-> +                       host->timeout_clk = mmc->actual_clock ?
-> +                                               mmc->actual_clock / 1000 :
-> +                                               host->clock / 1000;
-> +                       mmc->max_busy_timeout =
-> +                               host->ops->get_max_timeout_count ?
-> +                               host->ops->get_max_timeout_count(host) :
-> +                               1 << 27;
-> +                       mmc->max_busy_timeout /= host->timeout_clk;
-> +               }
-> +       }
-> +
->         if (host->ops->set_power)
->                 host->ops->set_power(host, ios->power_mode, ios->vdd);
->         else
-> --
-> 2.51.0
->
+To be honnest I don't know. I just discovered I made a mistake when I 
+implemented C interrupt exit and this patch is aiming at restoring the 
+previous behaviour.
+
+If you think this is pointless then no problem, I can instead just 
+remove the impossible case and that's it.
+
+What is odd to begin with is that we have two features that seems to 
+address the same problem but in a slightly different way
+- CPU_FTR_NEED_PAIRED_STWCX for PPC32
+- CPU_FTR_STCX_CHECKS_ADDRESS for PPC64
+
+What do you recommend ?
+
+Christophe
 
