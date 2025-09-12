@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-814757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD0EB5584A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:21:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B0BB5584D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAAA01D61F98
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:21:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A1641D61FFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8960D25228D;
-	Fri, 12 Sep 2025 21:21:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7DD25CC74;
+	Fri, 12 Sep 2025 21:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OrcFcU6J"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msb/XFUi"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146D021E097;
-	Fri, 12 Sep 2025 21:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632A32253EB
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757712080; cv=none; b=UqJR9FFz5IOcqZWt9HGKvJ3H181J6sB7QAdbsLt6qdzDUZ4q97li5stNe0gSsa9+T5DRPmamC3azsilDTBrZDElztZ4GuuHp/tEINi0jV3yxoUupxyypWvOWlmFWjJIbS8WkMVmBlOqV8pmR8A6tfqxMSmpgr6OnsUxURKErRYs=
+	t=1757712148; cv=none; b=BQPNNKbayOEhWhhwwwdtbLl7XUzBeSv4xheagAx5Psgx02ZUsDAz+hX7FcbgDsqKmmVjxXGoQSmgyl/RsX1Bw0IwUydHWB0braJBwCMxmwgnTQPD8Ji71cBn3yX9q7R6l7PDjcfNnMQXKlg7DQozMOsejvCan8FYBoDMh6OmObs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757712080; c=relaxed/simple;
-	bh=qa7lPK8UAXm8q99e2nmS2RFFR8iqR2JHBvidTMJzSGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SJuEMVci14ATCK1QRJLyjgfP1lRI4MfrLWGi5IDz0BGDMBII/CwxS1SU40yN0AkwPAfQw9bjOfKAewulB4an7cdW9IkHMMi5k56yEkLz14rwjq4leAY4osnjq1yt/64V9/nqmV6ma3Do1t3qEVuO75N7QY2oGl5z16QoJBSU9Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OrcFcU6J; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757712078; x=1789248078;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qa7lPK8UAXm8q99e2nmS2RFFR8iqR2JHBvidTMJzSGU=;
-  b=OrcFcU6J1jkR4+Md7b4nTm60AQyVCOwmjrVuzhsCH2yd/dVyZM3JI1+o
-   HXE50DtqWxu2Mmj9xB3/X18p6OoT5Tq424KMwGU2qeLp8yyqvEVeLRQ05
-   2zLWIUBMHTOEhbjAOs3gybOAmrxforfpiiXmJFoCflUd6/RV7zPi4PTxI
-   CbnDeghb8SIQopzcBnvGT83Vjl/ksSN6eu6pN9tM7MBwWk2rmE8baUKtf
-   e50KnXKvtqzQ4Ybnt3fjdN/34brxXGyifJj/XRyk8xG4KrHdY57z365DX
-   vaG6iktkXOxCsPc8vYbvUGmb1j8tn/DXwGO+UEY5wsSzO6X/nF8EU1xSM
-   g==;
-X-CSE-ConnectionGUID: YuRrvm9kQJKMXaSytyXlQA==
-X-CSE-MsgGUID: aZ9lU2vBTK2fDIHW+/uo6A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="59761467"
-X-IronPort-AV: E=Sophos;i="6.18,260,1751266800"; 
-   d="scan'208";a="59761467"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 14:21:17 -0700
-X-CSE-ConnectionGUID: O+RpWiKEQ9uHK3CNwfB52Q==
-X-CSE-MsgGUID: mXLy4rNNR76FCz/cdoVtRg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,260,1751266800"; 
-   d="scan'208";a="178421845"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.111.66]) ([10.125.111.66])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 14:21:17 -0700
-Message-ID: <7c132aed-e10e-499f-9442-aa8df110390d@intel.com>
-Date: Fri, 12 Sep 2025 14:21:16 -0700
+	s=arc-20240116; t=1757712148; c=relaxed/simple;
+	bh=0QDEMIkD0ujZYhffTIC0PtzHOyjYuE9Qn2yWiOmBpBY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GCoClvGM9vh8GME0kUEQ4bs60fa69DDCnDFRO357AQ5vuZV6fPezuUVbH4eWRMVK83ptYpXxZ1aix01SP5bbMTIVrffMVQyj9V4EDFxFKbv+7rpM/3Eaqlbkli1ffZGrQsPCmmBHQQsRVpdoaZIXO4Eq9Gswz76uni6SxOI0uX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=msb/XFUi; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b5488c409d1so1466392a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757712147; x=1758316947; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P6OytC4WzM7xin5NB/68oPu8ar5BWRJQQBFVeXDGUks=;
+        b=msb/XFUiz8n8cf/Kqwf9QRrfIy0DXaaO1w/BMJBHwG2tGNQh/xnJhD0DfULo5GZAt6
+         0r0PZAZVAgSZc+0BEPjzJGzQH7RAmHd7A+ZoAhZw/KQQPRv/aNimLFGyWZerp3bTAokl
+         GhAmSM9VJQZ1X99TqypAxFARS3M4f9TV1m+M3olW18K8T9BqEzejhimPVZLJwZdhvhLe
+         e7Ts1gsHvcmybIr+k1Bn5I7uAe0nBRz3qepsCFP3j2Non9sTY7v8SSzVVlLLeHP8SaqZ
+         3McjGMGhgIUl1qq2BkXvLZM8StrUb58jF4XDKOAmP0E+rYNCxZjlVNaAQzFqA3VCo6So
+         P+GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757712147; x=1758316947;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P6OytC4WzM7xin5NB/68oPu8ar5BWRJQQBFVeXDGUks=;
+        b=TwqYhn6CltAai66F30+qBUsibLPteWHSRzRlSY08epiY/umfvVL6xtQS8CkoZ8db5m
+         Lvo3UTJEwqKIQPylU+KfypwBEX8FJGjJaxsi1awrk0F8AGAnqJprRPH98jSJXk2BUNR8
+         N5iC8KnMjSAbyPuZqlpxDBGF5I+0XNrxmo0ruiO2QRRshdRHKGISdCwXt1zvf8ar1H2s
+         lkLWCkVkNKgEGkBMxojRRkpTTVqqoPJFere3xySNadPKzrztyVOwh82KCVE/ulV7WPck
+         mUOz3XyayPOVf2RzvoXDojiUNYAGnAUggSwltb07KXJ60ScIZG5rM/Csy07Iz2dus2af
+         UEug==
+X-Forwarded-Encrypted: i=1; AJvYcCVSV7uOd3MjjU7Vu+KdtCMZBYCrmo/mkXmuHkpp468kPPT1b9gZ5ctGdttr4ETtxJj41yfbqkfJiJlTrRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkEJWoIpX0Hcp5Vn8hkNU53GJLDwLMW4ENvrTQKbnihe5HZpB1
+	uGexG+4ZdcqT1yp4tE6IhSdSwqL4764/nr3zl6ZmqVdTbeKAg2luqI65Ao1J24TxFs4=
+X-Gm-Gg: ASbGncv7TDb+Vo+ZNs36rpS3HV0ZlZHsFDhjQCWYzpXVBFv51iExNSCdiWdNDCylDRf
+	KMEcGXnGuct5zB2ZJXLv6dBlubsPTldY8CdeVp/je7/nUUVr3UHloPWN66DpZTMxaFYWIoSPk2Y
+	HpQ5HNXhuRtDvF4VEl+9ZBk/xQYmCE6kuAwjIinhGVNjNi1gE1JlX25wg5C1/woEkoD4wQQQOJC
+	GMCh69O86MkWcEQ3WxDk5PhTA5+KKC7viNqU2aE7F9XZTVQ+rLRpsnVBZVDs6Lr1sWFUEmV55uh
+	PUfX39OA4rNWvSV/+dUpM9gAqc/hbufXJagTXqnceWt0+J/X8mHlZiZpSjFkrV/nGa1O8ZzRYn8
+	J2EDr48Vu4Cu8FfZj+rMOmCbCiyEqhsVx1ncdhs8b0QTugnfoMm9c/4OT6LFuYO4Z2PHTwA==
+X-Google-Smtp-Source: AGHT+IEQq4b8hyO+zBL1CbmGsvcwCC1z7ykCNzk57MZB1tNy3T0mA7mB7VPfoTd5YWUBYMazeI7JTg==
+X-Received: by 2002:a17:902:ce92:b0:24c:8d45:8049 with SMTP id d9443c01a7336-25d27a27d59mr45376955ad.61.1757712146567;
+        Fri, 12 Sep 2025 14:22:26 -0700 (PDT)
+Received: from lolcat.iiitdmj.ac.in ([14.139.241.220])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25db018df7esm25710095ad.152.2025.09.12.14.22.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 14:22:26 -0700 (PDT)
+From: rodgepritesh@gmail.com
+To: netdev@vger.kernel.org
+Cc: "David S . Miller" <davem@davemloft.net>,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-hams@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+7d660d9b8bd5efc7ee6e@syzkaller.appspotmail.com,
+	Pritesh Rodge <rodgepritesh@gmail.com>
+Subject: [PATCH] net/rose: Fix uninitialized values in rose_add_node
+Date: Sat, 13 Sep 2025 02:52:16 +0530
+Message-ID: <20250912212216.66338-1-rodgepritesh@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/11] cxl: Introduce callback to translate a decoder's
- HPA to the next parent port
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-8-rrichter@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250912144514.526441-8-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Pritesh Rodge <rodgepritesh@gmail.com>
 
+The rose_add_node() function uses kmalloc to allocate a new rose_node
+but only initializes the first element of the 'neighbour' array. If
+the node's count is later incremented, other parts of the kernel may
+access the uninitialized pointers in the array.
 
-On 9/12/25 7:45 AM, Robert Richter wrote:
-> To enable address translation, the endpoint decoder's HPA range must
-> be translated when crossing memory domains to the next parent port's
-> address ranges up to the root port. The root port's HPA range is
-> equivalent to the system's SPA range.
-> 
-> Introduce a callback to translate an address of the decoder's HPA
-> range to the address range of the parent port. The callback can be set
-> for ports that need to handle address translation.
-> 
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> ---
->  drivers/cxl/cxl.h | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index f182982f1c14..eb837867d932 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -429,6 +429,17 @@ struct cxl_rd_ops {
->  	u64 (*spa_to_hpa)(struct cxl_root_decoder *cxlrd, u64 spa);
->  };
->  
-> +/**
-> + * cxl_to_hpa_fn - type of a callback function to translate an HPA
-> + * @cxld: cxl_decoder to translate from
-> + * @hpa: HPA of the @cxld decoder's address range
-> + *
-> + * The callback translates a decoder's HPA to the address range of the
-> + * decoder's parent port. The return value is the translated HPA on
-> + * success or ULLONG_MAX otherwise.
-> + */
-> +typedef u64 (*cxl_to_hpa_fn)(struct cxl_decoder *cxld, u64 hpa);
+This was discovered by KMSAN, which reported a crash in
+__run_timer_base. When a timer tried to clean up a resource using
+one of these garbage pointers.
 
-cxl_to_parent_hpa_fn()?
+Fix this by switching from kmalloc() to kzalloc() to ensure the
+entire rose_node struct is initialized to zero upon allocation. This
+sets all unused neighbour pointers to NULL.
 
-DJ 
+[1] https://syzkaller.appspot.com/bug?extid=7d660d9b8bd5efc7ee6e
 
-> +
->  /**
->   * struct cxl_root_decoder - Static platform CXL address decoder
->   * @res: host / parent resource for region allocations
-> @@ -599,6 +610,7 @@ struct cxl_dax_region {
->   * @parent_dport: dport that points to this port in the parent
->   * @decoder_ida: allocator for decoder ids
->   * @reg_map: component and ras register mapping parameters
-> + * @to_hpa: Callback to translate a child port's decoder address to the port's HPA address range
->   * @nr_dports: number of entries in @dports
->   * @hdm_end: track last allocated HDM decoder instance for allocation ordering
->   * @commit_end: cursor to track highest committed decoder for commit ordering
-> @@ -619,6 +631,7 @@ struct cxl_port {
->  	struct cxl_dport *parent_dport;
->  	struct ida decoder_ida;
->  	struct cxl_register_map reg_map;
-> +	cxl_to_hpa_fn to_hpa;
->  	int nr_dports;
->  	int hdm_end;
->  	int commit_end;
+Reported-by: syzbot+7d660d9b8bd5efc7ee6e@syzkaller.appspotmail.com
+Signed-off-by: Pritesh Rodge <rodgepritesh@gmail.com>
+---
+ net/rose/rose_route.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/rose/rose_route.c b/net/rose/rose_route.c
+index a1e9b05ef6f5..6ca41cbe867a 100644
+--- a/net/rose/rose_route.c
++++ b/net/rose/rose_route.c
+@@ -148,7 +148,7 @@ static int __must_check rose_add_node(struct rose_route_struct *rose_route,
+ 		}
+ 
+ 		/* create new node */
+-		rose_node = kmalloc(sizeof(*rose_node), GFP_ATOMIC);
++		rose_node = kzalloc(sizeof(*rose_node), GFP_ATOMIC);
+ 		if (rose_node == NULL) {
+ 			res = -ENOMEM;
+ 			goto out;
+-- 
+2.43.0
 
 
