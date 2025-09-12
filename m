@@ -1,183 +1,177 @@
-Return-Path: <linux-kernel+bounces-813819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEE3EB54B11
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:36:04 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C18AB54B12
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:36:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 099EF1895913
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:36:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 163D54E175F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EB82FF642;
-	Fri, 12 Sep 2025 11:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400313009E7;
+	Fri, 12 Sep 2025 11:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PJD+coNo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XOj2mOFZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273AB2F28EB
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34EA2F28EB
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757676957; cv=none; b=ASWRhFgI3SxeDHokyyT0f2TKrA9XQDqhWNWk6AAXZ2/0A3bQEWfl+kV4ru8BE9ldYj1XOTzgE+I/DMLOWzcy04g3cSdj/ikobdlbXecJsv6mKFLqchuke75VxnwKsmZDx3sSNDNZcPRIPfxSsFdncaoq+5j++3eSSPQ3ZeiZkcY=
+	t=1757676970; cv=none; b=Hd+66tcDPSrLekN5M14J8KEF4xylCpDe4R2+/U+Wu+xL3tnaGyfPbIUiuBh5szxMm9NTi4fu4Yv8UtBDAIjSL8hESIFpSKyxM/KJRs56ZtLHgvv7MBOQ4Kc3wJ5dfm6+yiQa1u7F2heOeWyTITWGs6q+Em5scTnhoqs2I05/9Z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757676957; c=relaxed/simple;
-	bh=Yl7ujEHEAh73YZHCAHa0wkjKZDX13Pw4McYKnCytuVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oRccXeKWyRY3Kt5i3DugvALNr8mRcQlPA++oHE1qT5JWoFSC5C9/cFaogIKLIxZQ+6GTaR0vPnmZ9WYoA1sS12skAV6d7xJkqezl7GJVMl9yLDSCSJEU/vs/lo44QzJEoO80qKj+RP1dqaSwQgdt2xD3v7c+TPQZSi+ExhkUuAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PJD+coNo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fL9R009110
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:35:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=batHstE5cPVe/iEJdpRC0Az2
-	jhHV3oaHtrZXg6JQFZQ=; b=PJD+coNoOdQ9nvOu9veDvFESDwp5vvSE/a+2JmjA
-	NFwW6N3GKkUOkQL1OMFxBaRkFCfIkGVbqcCUPpiMcHeWqfoVV6SUhPmr6bPjquRS
-	/Xvs3PJxmgLtA/Z1LNfMMEHTcFR2xBQiOFj8b/YQcSs+HIYvurkREhSUxj/cSLA6
-	/Yw8FsDXi4psf0tCyuhPF+uR3WNty0/tk5bceWbqAJpk2du8uqa9Mxft7WUdXGjj
-	rflnjwjm12cLUoo+EmgprEWNBSdafIGNmAyp5ZZwYTAef6MI8icwA/teNk0qbN/w
-	gCQM5Fl7RxmalIibM8/kdyUBboc4DSZ/PCM2JlE7Ll8yrQ==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj13eu3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:35:53 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4b5fb1f057fso24741891cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:35:53 -0700 (PDT)
+	s=arc-20240116; t=1757676970; c=relaxed/simple;
+	bh=6HhHl5Q9HyjWqX7Y9YXL8kJIJbLXHU49bGi4e4jAGxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YG5eut58YD16L61awC49WHS+jgZ8L96TYintc7RmfPMTmNlkCQfRu/0RN770uXAhM9DfYgqvrZOe2bEqOUxG+nL7ddjw7ZaeRtQwZqMsdzEiObNwJp12QdBpVOdiUNpvSzMdra/ORAlb05YM/tD1b8O5ybaaHU6mRDa7g/sYXnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XOj2mOFZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757676967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L4WTNdMCGh54uRDM/L4Uxaq4pm+e6gS6JQHYqsqi25s=;
+	b=XOj2mOFZ9fzs7SqurF0FUpLkugTTqOXC6JTSoQFXQKKtK2P3cqUH+hv52Zroggs8OUAMF8
+	ztYhs4ieaq5bdY+745oMRqnWwkNZlmEXVIWz2hQzf5OyEjAG8r+/wlgthu/hD6/qLMSqdS
+	ZRCF/W7TqAdtY9be0lSkkE+4B2VSHFY=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-204-mkdYAifzPEy5rHIJuh-R8Q-1; Fri, 12 Sep 2025 07:36:06 -0400
+X-MC-Unique: mkdYAifzPEy5rHIJuh-R8Q-1
+X-Mimecast-MFC-AGG-ID: mkdYAifzPEy5rHIJuh-R8Q_1757676965
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45de27bf706so8772295e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:36:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757676953; x=1758281753;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=batHstE5cPVe/iEJdpRC0Az2jhHV3oaHtrZXg6JQFZQ=;
-        b=azvCo8bAeuHKYOaOErxzqPChr2A3qHBhTBLwg1W7+Z6r/PgscixfJVTQyT0pI1Ag/t
-         3uW7+osA7yPhijOb2OYOQFAqLRb10zL+v2KFnQN7FvDkl3XQZbl33tWCpEEEXxzfZcht
-         P4e0sPfxE3Z/tmAbDfhEXnD7gnGpQguvN9DlACp8/uayuPFMneGWrgfANQNLVEIwusiO
-         9REteToOG/4/wQbTK7+GrMe3RUeU1uiBBAi6HWDVxZnE2a36pkOAS1Jk9hWO+jbfgnFk
-         Q+/5SA7FfPWfDsN5jKNzv6CH7L6TIdPu/8x1E5bx5MwAFN5f9U2wnQkwbAQNH4JjsWhT
-         X8gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaXWVlP3zM85vW+oGE8Mn28rGfv899eOpfTQbV2XVptya4J4FHF4D04y4rlFj4Re1ZLqDKp6Tg4YVoy+g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxxJSlFuK/SJZP3UijjXy5sQpQarrVUl7aefywNbNz+JpyaOJf
-	rTYsFQQqOCtEUAe+LflLJQTJdm/RZFQGgpnL54tcey/WstivygAaUdQMQeS7DuBiMJ3Bo9xiNYs
-	2X7ciqq80yNNpKANG7IcvYirYLG1ioj3ny8NCmEnBIh769Rcj2+DCvSmXDrHf2raOcZQ=
-X-Gm-Gg: ASbGncuNv0UIjbukH+UMwo48Ke1SMPKFsCTKRZLgCQLp9+yTQpejE2DrqXxo6HlkREE
-	MChtDy5y9fqqpRmfdFOtL0WqIvF8DI8QcJb89ELVoJJ+VAgGFwY/zVOlY47ULjMm597ShvU0IDR
-	OmRZtmSkNuu1L6BcGag1fShCfekPapDrpnBHCIs4D6HSvNe3UMwR9Y9HU5zXSluOOyDcy6qyUcB
-	xbKHfqlJR+7poV60t0DNnDqzBhogSm6xeZGLodnWgmXECQupQRNoJIkU/Vx2htAD0sjsAJbIGPT
-	TlNh2f7hHNuR+uActPGbopFVHdVeCI1l1KR0DiUqW1N3hIHOoP1epSzR4ci3A2O86fSSfHqunkQ
-	OZXespxBPMDSY3zdNwNqCzxIdaa/UIX9yOhCJ2dxEe9K7SIVizlYm
-X-Received: by 2002:ac8:5f0c:0:b0:4b3:509b:8048 with SMTP id d75a77b69052e-4b77d08930dmr26685551cf.45.1757676952998;
-        Fri, 12 Sep 2025 04:35:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFROb0xZp9Rvgv2adavalmKsqHLfU8/KA8mNM14Xqc42eIicOFb6cnSvUsMAx7DV/IVH8dmwQ==
-X-Received: by 2002:ac8:5f0c:0:b0:4b3:509b:8048 with SMTP id d75a77b69052e-4b77d08930dmr26685171cf.45.1757676952396;
-        Fri, 12 Sep 2025 04:35:52 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-570ba3d222bsm499760e87.104.2025.09.12.04.35.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 04:35:51 -0700 (PDT)
-Date: Fri, 12 Sep 2025 14:35:49 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Maxime Ripard <mripard@kernel.org>,
-        =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Dmitry Baryshkov <lumag@kernel.org>
-Subject: Re: [PATCH RESEND v7] drm/vc4: hdmi: switch to generic CEC helpers
-Message-ID: <kg7adf363xjpragtvkub3gkstul6ycivr6jz4hld2isxjebdlz@z2cewulo3jwd>
-References: <20250705-drm-hdmi-connector-cec-v7-1-d14fa0c31b74@oss.qualcomm.com>
- <pz5luqbagulactqp7h237apoostl64rcrnvmu53eauvtb6cqly@nsmzsvbfixrr>
- <bmbu6dfhr4i37fxlqo7ltalkzz6bocb5whuv34x437k3crie5j@ndtqjrv64n5j>
- <CAPY8ntD-q6nZcVJmo5OG_6U5cxdOVdwKLJChsQZd_ZFjCRuGZQ@mail.gmail.com>
- <CAPY8ntAspTdWB6nNXrkNpZ9TYUtbkxJc_QB3ZmF5iGC31_U33Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1757676965; x=1758281765;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L4WTNdMCGh54uRDM/L4Uxaq4pm+e6gS6JQHYqsqi25s=;
+        b=NHMYwkXDE4ruN3xF9HvwsQwaSk+jW/q1+LPikbGaY89N9XEShhsF32CuBNX97P/i0b
+         455xAC/EH67mAd8vi42TonpZ01RwS0AyjOCY2l3SDZby+M0fGAuRda5w7h7ToOl/2jHC
+         FZMnO0Xio2I7y9Yhh80sI2jU50M1da192SXLlqthBa4Gmbu0XcPLflZg5u7Xs5Qe/3CI
+         k4v6Cut5sneOkfM8HgsNnfMb9+GaEOVHyi+O5bq1IzmVRG2KkHBCuHDF914QhBhTxTtw
+         f8B9r858DsZxjOmgbf2IT92Vuo5Mbofz+JN649CTa/D4kJZ4MVF7y4DjzkpWHijgspBA
+         RXjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAvfT7+jL8I8Iq7yCJzsWR6wDel0MA4UPZDfZ/PwF6mJ36y9QAa3hRhRJURP7xFnnHXWr/qKQGPsr8vNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0gQgh/8WCObjtKVNCNX1YZmjCa63B8AUfOoJxtsRdsHaNkCSc
+	g51CKD7Vi4eQ/aZZufq+vLqo5c5vNRpyvlaNOLRarsviXrqDV2nCbrpTW+vBghne5rX7ltcgNEE
+	DJ2FbTOW/KSiysYTTQbEnRyMx6xwsRqycvuZKJKWZ67twS/mtYUQ89L5FewQd/Pc2GA==
+X-Gm-Gg: ASbGncu/BkECaW/0dSk1w/mL2Dve0o4+zNqCDxqQ5xboVWISu5BZFIHvfS2CMIe9JDG
+	B9qsDtpuULbiK8Fkh3FZTXYlbjEQ5W51c7ag5lIzkw/C9cmaq+I6CfipgvA9RhclRzE3bk2MHXY
+	hnHHDqxba8PXVoC/dMD6CxH44kqoXUEHMKuUgt57IZieISeOV6toNvmY95YB5cwTuu7bbpfdnWQ
+	qWvdDVoaveEXviY1k82RXHLrrhYUlXY9tXsUnpuk/6TsLLQxHsvCBnPxz0d50EJSlixhKC4gjkI
+	W3HKVhICBnlcUZv6/fEuhj+3xn5OOj2lyijKJfZL7Gob3EJWuaGfT1+LU11SB3opdh4hulv4Kn3
+	FqHEzlNxWOVlid4OJuNkdxQWdh4n0dQkRD090hXyJcWx2zzudpuCShrM5doSsl0KmUc0=
+X-Received: by 2002:a05:600c:4e4b:b0:45d:cff6:733f with SMTP id 5b1f17b1804b1-45f211d517emr27953555e9.11.1757676965164;
+        Fri, 12 Sep 2025 04:36:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEApCot1i+5m775BUiDD6WRxTCaO0+qykFG5pVRf5Sw41hSYWcT5lrn+50Nw2D8nJepyAo5JA==
+X-Received: by 2002:a05:600c:4e4b:b0:45d:cff6:733f with SMTP id 5b1f17b1804b1-45f211d517emr27953335e9.11.1757676964784;
+        Fri, 12 Sep 2025 04:36:04 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760775842sm6503959f8f.7.2025.09.12.04.36.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 04:36:04 -0700 (PDT)
+Message-ID: <3f739d3e-f6fc-4a3f-9bbb-151a6dc6c083@redhat.com>
+Date: Fri, 12 Sep 2025 13:36:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPY8ntAspTdWB6nNXrkNpZ9TYUtbkxJc_QB3ZmF5iGC31_U33Q@mail.gmail.com>
-X-Proofpoint-ORIG-GUID: WemsyetHPOFejoiKNfivYEyb_j8snLFc
-X-Proofpoint-GUID: WemsyetHPOFejoiKNfivYEyb_j8snLFc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfXyPoP4U4BD3WM
- kOvL1mw6MWL7uyR0PNV9+GlVP+0xwkSNk9oMfvwj/z0YCQqYXNvyT1J2HoLrEcDs/ANMAPKqond
- YSGdlE+VXfj52HiWi8b4UGRMSGbf3Rr0oJG+ajCy1WpOR9sPdrNPUHtUSARIr8U3OoR8SzH0cYw
- JUjRPVQqCT1mwZkLClQjXBs/ue61Qi8Gh6CnZQCmM4y/kVHqta1J4F6WQSUNcUOfnLGDrfDVqfH
- UNrAcaqxHJURYgoJVYJVbx/BdlCnWdc/tpOueDO0A58NVXl0DiKL5f4Cb9xldI6o4QXkQVlYfIR
- sbDdxkzyLAxdXcgvfJdcPHm82bfs3ojsVqY67K7fVx8+ha9oFNnl1VdlTehhlJOaQxi+4e9BY9k
- Mjy9NnEa
-X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c40599 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=RF00TdSWAAAA:8
- a=KKAkSRfTAAAA:8 a=Tw4uHNu3hZ8oP4iaKF8A:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=_nx8FpPT0le-2JWwMI5O:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060024
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: transhuge-stress: fix potential memory leak on
+ realloc failure
+To: Haofeng Li <920484857@qq.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: 13266079573@163.com, lihaofeng@kylinos.cn, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, ziy@nvidia.com
+References: <b6f38984-5f89-4a9d-a905-ddcdbd7510a3@redhat.com>
+ <tencent_43768D3DB24034B62C249781C1DE7359C807@qq.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <tencent_43768D3DB24034B62C249781C1DE7359C807@qq.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 06:37:18PM +0100, Dave Stevenson wrote:
-> On Wed, 10 Sept 2025 at 15:21, Dave Stevenson
-> <dave.stevenson@raspberrypi.com> wrote:
-> >
-> > Hi Dmitry
-> >
-> > On Fri, 5 Sept 2025 at 17:51, Dmitry Baryshkov
-> > <dmitry.baryshkov@oss.qualcomm.com> wrote:
-> > >
-> > > On Fri, Aug 15, 2025 at 06:11:57PM +0300, Dmitry Baryshkov wrote:
-> > > > On Sat, Jul 05, 2025 at 01:05:13PM +0300, Dmitry Baryshkov wrote:
-> > > > > Switch VC4 driver to using CEC helpers code, simplifying hotplug and
-> > > > > registration / cleanup. The existing vc4_hdmi_cec_release() is kept for
-> > > > > now.
-> > > > >
-> > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > Reviewed-by: Maxime Ripard <mripard@kernel.org>
-> > > > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > > > > ---
-> > > > > This is a part of the HDMI CEC rework, posting separately to let it be
-> > > > > tested by the maintainers.
-> > > > > ---
-> > > > > Changes in v7:
-> > > > > - Dropped all applied patches, keeping just VC4
-> > > > > - Link to v6: https://lore.kernel.org/r/20250517-drm-hdmi-connector-cec-v6-0-35651db6f19b@oss.qualcomm.com
-> > > > >
-> > > >
-> > > > Can I please get Tested-by for this patch? It has been R-B'ed, but I
-> > > > totally don't think it should be applied without testing on the actual
-> > > > hardware...
-> > >
-> > > And another ping to get it tested by...
-> >
-> > Apologies - I'll find a display or AVR that supports CEC tomorrow to test.
+On 12.09.25 12:10, Haofeng Li wrote:
+> From: David Hildenbrand <david@redhat.com>
+>> What do you think happens when a process exits? :)
 > 
-> I've only got a Sony soundbar here that supports CEC, but I can
-> control the volume and mute status of that from the Pi, read the
-> status back, and monitor mode is reporting power on/off events.
+>> Correct! All memory ever allocated to that process gets freed, avoiding
+>> any memory leaks.
 > 
-> A colleague is going to give it more of a test via Kodi when he gets a
-> chance, but I'm happy to give it a:
+> Thanks for pointing this out. You are absolutely correct that the operating system will reclaim all allocated memory when a process exits, so there is no persistent memory leak in this specific scenario.
 > 
-> Tested-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> I opted to add explicit memory freeing in the error path primarily as a practice for better long-term maintainability:
 > 
-> Sorry for the delay in doing that testing.
+> It ensures correctness if the code structure changes in the future (e.g., becomes part of a longer-running routine).
+> 
+> It maintains consistency with other error paths in the codebase.
+> 
+> It prevents false positives from static analysis tools (like valgrind).
+> 
+> I'm happy to adjust it if you still think it's preferable to remove the free() in this context.
 
-No worries, thank you!
+No code changes are required. This patch adds more complexity without 
+any benefit.
 
 -- 
-With best wishes
-Dmitry
+Cheers
+
+David / dhildenb
+
 
