@@ -1,100 +1,54 @@
-Return-Path: <linux-kernel+bounces-814793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21593B558D5
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:08:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37500B558E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:09:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811FA1B25518
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:08:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89FE61B25899
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D121C27280C;
-	Fri, 12 Sep 2025 22:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0118D27F00E;
+	Fri, 12 Sep 2025 22:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="U/TSqtgk"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TrPPpSTd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A304259CBB
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5471E1F416A;
+	Fri, 12 Sep 2025 22:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757714873; cv=none; b=ZqH7tRh+KCHBbXrRzJ7vZueCK5s3k+jGPVcatejEyG9QMXFcIFhreFYtJy9fZl2qMhaYs/Wj4dhkh9CZ90nKkc6RfPaQkBwxbcaH40LnB2vOM707J4Nl8JDxR2GS2PPNAGG+m1pc+HCyxuNjp7I6JRDFc5ytqlrTKaKddaWzfdQ=
+	t=1757714974; cv=none; b=JQlfOcPXajMMbCxlRof36O41vHY8Y0IACH/Eex37J3Ca66Y4XjPR7TZtbmc7Z8LIqcjNW3b4FC5lUply1hzZ1gXUOgr4orxAPz2yfy0FP66q9FS/4clePTuMmN99fbpDZVYCgOBDkis2KteV4dAifR3v6cS82uuCxvdBAV1Mr44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757714873; c=relaxed/simple;
-	bh=+yph0vA7hH7D2dOH8dcz8OTQ5zI8ZyZYi0J1x57wbuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RSFGa977XX/WAjTvhjtixhVG4gbq2hpZ/1g+S001jZjRGLwR52emz16cuLD8PR+DkIAW1zuW7Ph31yxMhlsdpWavzGsj9CjZ4F03+LGf3eM7v+xyCJFQXXUZ0Or3nzCSiWk1VQYwgGjOd+Ho0SR/i/WS3+ZI8XAMkjVdwTeFRzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=U/TSqtgk; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=XtZM
-	38dcKGfPDowHADfBNhN+yZMd/DBKAr/Q56lBQhU=; b=U/TSqtgky9mRHKpLYuTy
-	UfXd7XedJP9Hk+5/2IqTWU+ncNGhELZK0Vc0RXbSYaIz7Hw6VMZAT5JoyMYY6z4g
-	WzMES95KXJxGoQ7e6ctjM2JN/2k4u/gVXKL/EPXHHKnINEvdgPhLK+f+fB3cHt9L
-	BpsliJIKV+ndVoI8YPP2/7JNqgTQ5aLQNm6R5gAL99+5MFMbIChu6laV+I2f8W3m
-	RpmupwmKLyH5mtQ8NSf2xEebzmoGbDEbi8by9Z1l1UyIN+iGY8UbAOXQISM6qt8c
-	5VvYJPYCkQGivyZtg4DnvEdmEwmxNTAeKfuH6DGfDaXfeL6rCKUkNLis+l/AE6hJ
-	Eg==
-Received: (qmail 1499859 invoked from network); 13 Sep 2025 00:07:43 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:07:43 +0200
-X-UD-Smtp-Session: l3s3148p1@dRQG4qE+rtYgAQnoAHJ8AC93OVDMgFWg
-Date: Sat, 13 Sep 2025 00:07:42 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Kettenis <kettenis@openbsd.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org,
-	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 10/37] dt-bindings: i2c: apple,i2c: Add apple,t6020-i2c
- compatible
-Message-ID: <aMSZrp3pbS2CeBOE@shikoro>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
- <20250828-dt-apple-t6020-v1-10-507ba4c4b98e@jannau.net>
+	s=arc-20240116; t=1757714974; c=relaxed/simple;
+	bh=785dnL1cR503sPXwzjQgs+d32xf0TfDWlI00A3IB32U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=GZGBRv7txUVe7yyBDcRsNJega+kBunsHpFenB7tDoqSrJZRltQ/iLnKZRj3iV7MWOwWZ5l2u1Zto6maEWfKNzTnZ5FfhkaNUiUI0timmvqPKpN6B4cgn+OYrnTm4NQ8k1QoOW2z8O3b73gUXx3X+ajYF7OtEVyB/fmwmBS4ut2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TrPPpSTd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A015DC4CEF1;
+	Fri, 12 Sep 2025 22:09:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757714973;
+	bh=785dnL1cR503sPXwzjQgs+d32xf0TfDWlI00A3IB32U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=TrPPpSTdVPuY4ofdfnAp34z/qSX4uirK7BXjuBjCO53vgTS1OE+LaBwfVgdfE1wEQ
+	 AtkgulPMm9P/6sxKSGAL3pbO+iziMNa3TzryfHRqqykU3OTLl+dLmzbrhH2MXyswfX
+	 Pao+j3QLa9FtTo0kzMzE48UMNECMPfQ5hT5fymptpLfhwnOvG/VAKzwRTOkb3tC4cp
+	 dOZsFVbuknxOfJBKN28wP6nOF325Jf3nXpgLNJ/jzEyZPnvC4T0vOKoyxnM4J8axUJ
+	 Nc8Zck8IRcL5mbqVFucS5aF0O44HcMD+0NZVajKryUBBaDe8Sikc5T0HV29R4tMx6m
+	 MT+kyiWnsgYIQ==
+Date: Fri, 12 Sep 2025 17:09:32 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Xichao Zhao <zhao.xichao@vivo.com>
+Cc: daire.mcnamara@microchip.com, lpieralisi@kernel.org,
+	kwilczynski@kernel.org, mani@kernel.org, bhelgaas@google.com,
+	robh@kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: plda: Remove the use of dev_err_probe()
+Message-ID: <20250912220932.GA1644863@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,22 +57,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250828-dt-apple-t6020-v1-10-507ba4c4b98e@jannau.net>
+In-Reply-To: <20250820085200.395578-1-zhao.xichao@vivo.com>
 
-On Thu, Aug 28, 2025 at 04:01:29PM +0200, Janne Grunau wrote:
-> After discussion with the devicetree maintainers we agreed to not extend
-> lists with the generic compatible "apple,i2c" anymore [1]. Use
-> "apple,t8103-i2c" as fallback compatible as it is the SoC the driver
-> and bindings were written for.
-> 
-> This block is compatible with t8103, so just add the new per-SoC
-> compatible using apple,t8103-i2c as base.
-> 
-> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
-> 
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Acked-by: Andi Shyti <andi.shyti@kernel.org>
+On Wed, Aug 20, 2025 at 04:52:00PM +0800, Xichao Zhao wrote:
+> The dev_err_probe() doesn't do anything when error is '-ENOMEM'.
+> Therefore, remove the useless call to dev_err_probe(), and just
+> return the value instead.
 
-Applied to for-next, thanks!
+Seems sort of weird to avoid dev_err_probe(-ENOMEM) because we have
+internal knowledge that dev_err_probe() does nothing in that case.
 
+It leads to patterns where the first few things in a .probe() function
+return -ENOMEM directly and later things use dev_err_probe(), and
+there's no obvious reason for the difference.
+
+But it's very common, so I guess it's OK with me to follow the common
+pattern even though it's a bit strange.
+
+> Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
+> ---
+>  drivers/pci/controller/plda/pcie-plda-host.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/plda/pcie-plda-host.c b/drivers/pci/controller/plda/pcie-plda-host.c
+> index 8e2db2e5b64b..3c2f68383010 100644
+> --- a/drivers/pci/controller/plda/pcie-plda-host.c
+> +++ b/drivers/pci/controller/plda/pcie-plda-host.c
+> @@ -599,8 +599,7 @@ int plda_pcie_host_init(struct plda_pcie_rp *port, struct pci_ops *ops,
+>  
+>  	bridge = devm_pci_alloc_host_bridge(dev, 0);
+>  	if (!bridge)
+> -		return dev_err_probe(dev, -ENOMEM,
+> -				     "failed to alloc bridge\n");
+> +		return -ENOMEM;
+>  
+>  	if (port->host_ops && port->host_ops->host_init) {
+>  		ret = port->host_ops->host_init(port);
+> -- 
+> 2.34.1
+> 
 
