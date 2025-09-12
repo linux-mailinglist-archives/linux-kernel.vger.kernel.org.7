@@ -1,103 +1,155 @@
-Return-Path: <linux-kernel+bounces-813178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF59B541A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:12:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B25C6B541AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF5C43A9249
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:12:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A38F97A17AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DB124DD1F;
-	Fri, 12 Sep 2025 04:12:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70AC23ABA0;
+	Fri, 12 Sep 2025 04:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ky8vn3Jb"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTZi9oqP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A081F91C8;
-	Fri, 12 Sep 2025 04:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6A34207A
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757650359; cv=none; b=iSdfH64aFrebXH5Hqm+1ZmjH7R2KVFtdY7A2R/u3UOXFHiC0yh+CQ/qv/fzgnX6QrbhnxWzxk+DlY4mXTHLRJ3ekFyy3Xxxnx/ntSSp5MOIKd9u9Pbkym1E7Ua0Vu1hSbP8TMqAqJ1GjsLHJUqlB2wncMu0u+YdonSqp1SBsFus=
+	t=1757650966; cv=none; b=RRDzy0M18w+okHrJGQxE056xeh3/FOS1MQovFmgodiVfwHoynPgOEA/wVmiF7VoRkX4LvG0vdmmdzQoKwOZP8aQxIPbMb4nuxWW6S6JyFIHSkERQ0Wa/zO1pQpnijnMZaLPxpPbWvV/NN3TfBaxWGdPnOwIpTMO5o1LNDplYudE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757650359; c=relaxed/simple;
-	bh=5dalgK3wNp0Ugp5s0DObfoyPNrQQbmvYf6npe1LBWXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KbyC6gD/O8zgD6KwfbgNVpypNOR6B2J1bDZQsnUIs9iEcdTAm3WYsnwG1TyOKqiZ2Ao+suNI5fdIGFJlED9+JGugTx6RvyfeQjqr0eoWHfbdOo7YgmSn02x3jTyr6ZTY4gHRjVgmeKcw/RsqU/XURxCiiRJXkSv4BBDT3wYsSqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ky8vn3Jb; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757650353;
-	bh=hGuC3yj3H39+Asb7Q2B/ZqdlijGwENJJJrr97U+XodU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Ky8vn3Jb6wWJl9WKsB2xc2+NfxRRvuC57Boby/b4qrIedncLlK0nRpYqKTH0j7B45
-	 nIogbtQIonodTjJTIRAGv1TlAuu5teA0mJ1LzKFgQuHicW0FolRdHkZ28mXLIcvaIP
-	 Dy/yuUixPrYdmBPC/dAOkrdSwI84h9EI7DR3ed79/PZStsV8aOL4RGcS21PIpQOANn
-	 GUAazY6hi2uqFRmcf2n2n/2b0I+UERJ00Y/wbmgKOLiqKysw70MrVAf0Vv3XmLRRxo
-	 K5hB52XuhXliGAUQ0Y7jQSNMRSvEncFWzKqunqsnLLFIq2e0nKLqfd+dUv5vKOMo2b
-	 INyhfjb5TqJcA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cNLcJ6xpjz4w9Q;
-	Fri, 12 Sep 2025 14:12:32 +1000 (AEST)
-Date: Fri, 12 Sep 2025 14:12:32 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Balbir Singh <balbirs@nvidia.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the mm-unstable tree
-Message-ID: <20250912141232.17bd512f@canb.auug.org.au>
+	s=arc-20240116; t=1757650966; c=relaxed/simple;
+	bh=Vv2YrcjBvxFvZZi58UBaLJNHyadz2sEpT9KVQerfpjQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KX2lZxtS7CLQtez+jS9fWL1zBdXiKH5+ZMHsDRWeqo6bxVKhi3yoouLXgAujkHDH7wHoH0ThkEztW8cMM7ZodQexkURGVPVrx/02Z1apsGP/8W9rMQS1xDGTZeIu5eI9HlMOlsOOhTvu8JV8LuLGRaiuYs4ZaDyATPu07o4irYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTZi9oqP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF13C4CEFD
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:22:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757650965;
+	bh=Vv2YrcjBvxFvZZi58UBaLJNHyadz2sEpT9KVQerfpjQ=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=mTZi9oqPQCUG17+6d+Y0N/T40s6bdZXvcoppvr+58VDrpnyc5bKxHCYZR4ogxBiY9
+	 j6opu1C0Ipp3RsrRZ949zRP969yzGQR560hkMDPPw8hjuPvjXZ3i6y8jShJqX/kVBP
+	 k7eJdsps0TDdLQn0shhwv+KLvQv9PTb0vVKe7ErNeJ4qvk1r0i33ScXowCqET2ARxe
+	 +LMN4HsCqgMCk63VnnRXsLp+I8Ta4ZVfe5S51cC9qfZx1wf2E9grIuAw4jivjXySax
+	 Es1D8hKj+NI2chI6GhzIaUtevkFg2fExyyYZjV+Mpt4+F/BdNMXzdTNSQTyUsZkJiO
+	 99AkHKnhVXJkA==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f7b6e4145so1440529e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:22:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXkdmcgaSDpACztRNczd9B5D0wpul09i1TmKc6yWKyr6NF85qUsB+pL6X3XK+uyMvJjQLx6xFZPiFkTdsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMPLg7JPaXN8Wkzprw0saqT/8Fk32sXlun1R/nNnn8dLEiqs2p
+	9pDNLbMCBaHBIvdEip/QFoAbZEz4AxilE+smMwij6rHLMDOCQuaF0Pm+J8+D1YVT1b9GaZerhIb
+	PeSV2YoWknQEhSdJzK0cqrQxAEvcmm14=
+X-Google-Smtp-Source: AGHT+IHbHGyZZve3/p2hQZn8nRc22BGYEXQJpdLfsbDiglhu6zahB25whpo6UiHtPzKB79uDzR6h/pwt7mPQi7mAzl0=
+X-Received: by 2002:a2e:ae18:0:10b0:337:f025:512 with SMTP id
+ 38308e7fff4ca-35139e509c9mr2890861fa.16.1757650963840; Thu, 11 Sep 2025
+ 21:22:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/CAiNis4Cs0jKLYn/h8DvN=2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/CAiNis4Cs0jKLYn/h8DvN=2
-Content-Type: text/plain; charset=US-ASCII
+References: <20250908181059.1785605-1-wens@kernel.org> <20250908181059.1785605-3-wens@kernel.org>
+ <aMMQSR7yYBQkY4CI@shell.armlinux.org.uk> <CAGb2v64n_eMBiUaT1S=V6v4Bqv5hLP8vP3=20sp4w4Fxh7RcOQ@mail.gmail.com>
+ <DU0P190MB244515E7CE0741A1E47E0543BC08A@DU0P190MB2445.EURP190.PROD.OUTLOOK.COM>
+In-Reply-To: <DU0P190MB244515E7CE0741A1E47E0543BC08A@DU0P190MB2445.EURP190.PROD.OUTLOOK.COM>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Fri, 12 Sep 2025 12:22:28 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64JvE=9PvaLYi50uK_dNsP6Sdw34H+d0-vCs2GSSoiocQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzFUjZYvnptlxG7S8Tq_6X0mBNQa2E6WmUp7iQd5dFFSAZgzFUYRyKwirM
+Message-ID: <CAGb2v64JvE=9PvaLYi50uK_dNsP6Sdw34H+d0-vCs2GSSoiocQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v4 02/10] net: stmmac: Add support for Allwinner
+ A523 GMAC200
+To: Muhammed Subair <msubair@hotmail.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andre Przywara <andre.przywara@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Fri, Sep 12, 2025 at 12:09=E2=80=AFPM Muhammed Subair <msubair@hotmail.c=
+om> wrote:
+>
+> Hi
+>
+> There are A527 boards with 25 Mhz clock from PH13 ( rgmii-0) and PJ10 (rg=
+mii-1). See the attached .
+> I believe that a patch is required to support this. Not sure it can be a =
+global or board specific.
 
-After merging the mm-unstable tree, today's linux-next build (htmldocs)
-produced this warning:
+This is board specific. If you have such a board you can send a patch
+on top of this series for it.
 
-WARNING: mm/migrate_device.c:792 function parameter 'page' not described in=
- 'migrate_vma_insert_huge_pmd_page'
+ChenYu
 
-Introduced by commit
-
-  9a5e80c43c9e ("mm/migrate_device: implement THP migration of zone device =
-pages")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/CAiNis4Cs0jKLYn/h8DvN=2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmjDnbAACgkQAVBC80lX
-0GxAtAf/Y8Q561Si4LvCVeLcr1guTEGAZomSX8y0+BMMZYGE0O83RLBEoqw+82cc
-nrJUZLVcfzVVz3HL3XaMTG3+o4QxxVgPR+vrcD6St+J4KmBm2exyblgOHD/NXoUu
-wfyAvPiv42YYlx+YP82YMxHwjmo9/40tQum0jsb/4ZwvpyaKO+swW7aUjm71w1UL
-xOjHXfvAQhlFLrHSkUyYNiKohzHk7/B2xpbBu6we0kDqTjvcBkQI9bjr2iWs+PuT
-qVm4ZOB0tueMr+sxACQ/+4/BOMcrja0XanF+5xnO9+PMRLdGbh+OlJ8NOfDI1Q4A
-9ULKs7sHwwivJr1XohJ0NZ4mtDHoFw==
-=uqsi
------END PGP SIGNATURE-----
-
---Sig_/CAiNis4Cs0jKLYn/h8DvN=2--
+> Subair
+>
+> -----Original Message-----
+> From: Chen-Yu Tsai <wens@kernel.org>
+> Sent: Thursday, 11 September 2025 10:18 PM
+> To: Russell King (Oracle) <linux@armlinux.org.uk>
+> Cc: Andrew Lunn <andrew+netdev@lunn.ch>; David S. Miller <davem@davemloft=
+.net>; Eric Dumazet <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>=
+; Paolo Abeni <pabeni@redhat.com>; Rob Herring <robh@kernel.org>; Krzysztof=
+ Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; Jernej=
+ Skrabec <jernej@kernel.org>; Samuel Holland <samuel@sholland.org>; netdev@=
+vger.kernel.org; devicetree@vger.kernel.org; linux-arm-kernel@lists.infrade=
+ad.org; linux-sunxi@lists.linux.dev; linux-kernel@vger.kernel.org; Andre Pr=
+zywara <andre.przywara@arm.com>
+> Subject: Re: [PATCH net-next v4 02/10] net: stmmac: Add support for Allwi=
+nner A523 GMAC200
+>
+> On Fri, Sep 12, 2025 at 2:09=E2=80=AFAM Russell King (Oracle) <linux@arml=
+inux.org.uk> wrote:
+> >
+> > Hi,
+> >
+> > I drafted this but never sent it and can't remember why, but it's
+> > relevant for v5 that you recently posted. Same concern with v5.
+> >
+> > On Tue, Sep 09, 2025 at 02:10:51AM +0800, Chen-Yu Tsai wrote:
+> > > +     switch (plat->mac_interface) {
+> > > +     case PHY_INTERFACE_MODE_MII:
+> > > +             /* default */
+> > > +             break;
+> > > +     case PHY_INTERFACE_MODE_RGMII:
+> > > +     case PHY_INTERFACE_MODE_RGMII_ID:
+> > > +     case PHY_INTERFACE_MODE_RGMII_RXID:
+> > > +     case PHY_INTERFACE_MODE_RGMII_TXID:
+> > > +             reg |=3D SYSCON_EPIT | SYSCON_ETCS_INT_GMII;
+> > > +             break;
+> > > +     case PHY_INTERFACE_MODE_RMII:
+> > > +             reg |=3D SYSCON_RMII_EN;
+> > > +             break;
+> > > +     default:
+> > > +             return dev_err_probe(dev, -EINVAL, "Unsupported interfa=
+ce mode: %s",
+> > > +                                  phy_modes(plat->mac_interface));
+> >
+> > I'm guessing that there's no way that plat->phy_interface !=3D
+> > plat->mac_interface on this platform? If so, please use phy_interface
+> > plat->here.
+>
+> Makes sense. Looking at stmmac_platform.c, for us mac_interface only come=
+s from phy_interface.
+>
+> I'll wait a day before sending yet another version.
+>
+> ChenYu
+>
 
