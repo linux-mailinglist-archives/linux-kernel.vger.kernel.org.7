@@ -1,254 +1,137 @@
-Return-Path: <linux-kernel+bounces-813646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAFEB548BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:08:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 948B1B548C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95EB9A00979
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60C0FA079FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D773C2DF127;
-	Fri, 12 Sep 2025 10:08:09 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6772E03FF;
+	Fri, 12 Sep 2025 10:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OqAPmlMA"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5651F91C8
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BF927CCC4;
+	Fri, 12 Sep 2025 10:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757671689; cv=none; b=sm2jHNh8rEGbGtKvqULUSFL5gTsgm0QzOOvGxNl+vD78CN1Qg4BXFuEtsAlRymRpnP7/RTjgBo1IBvwwNf/QBNT8/uzVIpEvu7nrkucPxp3mpD2F098lsmCJqRJSkMIwNyYogzh4lyX4k/77AMS6Hl90A9XJBZ+alJ1eROZN7fY=
+	t=1757671705; cv=none; b=h/dI4U47hbfKn6IhBD59hkdPEPuzfbL4wNzaARFapVAR2mrvgaY5Pxr8CjmxLnN+WXVuZBnBzbJdfe3p8mzKpk34INTcPQt9M2jGrdc5MT3debHSHYonrkc/9aNQyZeYECCH6r9rMth0lR/iy9a0VrthuVawwR2lvTvkGEvHnPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757671689; c=relaxed/simple;
-	bh=EF0XbL6IlnaHE2qbTDiV/IN2E9A96iQ4Th57l3axgJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bZSfHMJhGSz22AruamWHBm5qRYRghIw/sQLKbEv2N2Daaw9odpEt3dpYq3gsr3SJxEma/JtPvWlXb5I3po9c11N9i0yszazxdoc8FY5l9Ivgdun17jQVowG8Sx9/ojyhP3MwHmpvtE8wBWWcZocI+FcffCzK0j5SSOLZf72Q3Hg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ux0gz-0003Fr-F3; Fri, 12 Sep 2025 12:07:45 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ux0gw-000umm-0n;
-	Fri, 12 Sep 2025 12:07:42 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1ux0gw-002yar-0I;
-	Fri, 12 Sep 2025 12:07:42 +0200
-Date: Fri, 12 Sep 2025 12:07:42 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Nishanth Menon <nm@ti.com>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com, linux-doc@vger.kernel.org,
-	Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk <roan@protonic.nl>
-Subject: Re: [PATCH net-next v5 2/5] ethtool: netlink: add
- ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
-Message-ID: <aMPw7kUddvGPJCzx@pengutronix.de>
-References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
- <20250908124610.2937939-3-o.rempel@pengutronix.de>
- <20250911193440.1db7c6b4@kernel.org>
+	s=arc-20240116; t=1757671705; c=relaxed/simple;
+	bh=CFr0GsRX1ePBBaWO+P0uLssrp1EXY24CAwGtNTif/Mg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FEpqn0N4gvAeIhAmZi8K6vnTGZA5Ovw8dBfsSByM7LQvqoJLojI3Bz1Q2PBRCaQSqhCF1CgQPFTK8/Uqt8GsTWN03ZdJaxZQaKlXK9AcjB+AB1ynATWzXTJ+NDklzKaTapAAK6ByHafQZneD6Wl8z2MmQAvdazagr3V4WkFDMT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OqAPmlMA; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58CA89L71011360;
+	Fri, 12 Sep 2025 05:08:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1757671689;
+	bh=QAI1/iuQnmfWqwTdKggQ6qlQpdt/mhf+D90s4RMqkNI=;
+	h=From:To:CC:Subject:Date;
+	b=OqAPmlMAOuoKOdqjkDQVk7CR8Zfr19sScOkUTLrQ9o40U29VXVT5qcbB+0zUFJgyC
+	 ATU1kr8XH8wO2J8FsofrFlavpJEZZw3D9em9ZpQCFnsdi1/fYEEw2kEOIF3M6LR0MC
+	 fFIHP6GLgpgy0CCjwk3di+0WUK90kIcw19WXiq64=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58CA89vI1904747
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Fri, 12 Sep 2025 05:08:09 -0500
+Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 12
+ Sep 2025 05:08:08 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE213.ent.ti.com
+ (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Fri, 12 Sep 2025 05:08:08 -0500
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58CA83MG3740807;
+	Fri, 12 Sep 2025 05:08:03 -0500
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
+        <robh@kernel.org>, <bhelgaas@google.com>, <cassel@kernel.org>,
+        <kishon@kernel.org>, <sergio.paracuellos@gmail.com>,
+        <18255117159@163.com>, <jirislaby@kernel.org>, <m-karicheri2@ti.com>,
+        <santosh.shilimkar@ti.com>
+CC: <stable@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH 0/2] PCI: Keystone: __init and IRQ Fixes
+Date: Fri, 12 Sep 2025 15:37:57 +0530
+Message-ID: <20250912100802.3136121-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250911193440.1db7c6b4@kernel.org>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Jakub,
+Hello,
 
-On Thu, Sep 11, 2025 at 07:34:40PM -0700, Jakub Kicinski wrote:
-> On Mon,  8 Sep 2025 14:46:07 +0200 Oleksij Rempel wrote:
-> > diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-> > index 969477f50d84..d69dd3fb534b 100644
-> > --- a/Documentation/netlink/specs/ethtool.yaml
-> > +++ b/Documentation/netlink/specs/ethtool.yaml
-> > @@ -1899,6 +1899,79 @@ attribute-sets:
-> >          type: uint
-> >          enum: pse-event
-> >          doc: List of events reported by the PSE controller
-> > +  -
-> > +    name: mse-config
-> > +    attr-cnt-name: --ethtool-a-mse-config-cnt
-> > +    attributes:
-> > +      -
-> > +        name: unspec
-> > +        type: unused
-> > +        value: 0
-> 
-> Are you actually using this somewhere?
-> It's good to not use attr ID 0 in case we encounter an uninitialized
-> attr, but there's no need to define a name for it, usually.
-> Just skip the entry 0 if you don't need then name.
+This series is based on commit
+320475fbd590 Merge tag 'mtd/fixes-for-6.17-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux
+of Mainline Linux.
 
-No. I'll drop it.
+The first patch in the series has been posted as a Fix in contrast to
+its predecessor at:
+https://lore.kernel.org/r/20250903124505.365913-10-s-vadapalli@ti.com/
+based on the feedback provided by Jiri Slaby <jirislaby@kernel.org> at:
+https://lore.kernel.org/r/3d3a4b52-e343-42f3-9d69-94c259812143@kernel.org/
+Since the Fix is independent of enabling loadable module support for the
+pci-keystone.c driver, it is being posted as a new patch.
 
-> 
-> > +      -
-> > +        name: max-average-mse
-> > +        type: u32
-> > +      -
-> > +        name: max-peak-mse
-> > +        type: u32
-> > +      -
-> > +        name: refresh-rate-ps
-> > +        type: u64
-> > +      -
-> > +        name: num-symbols
-> > +        type: u64
-> 
-> type: uint for all these?
+Checking out at the commit of Mainline Linux which this series is based
+on, I noticed an exception triggered by the pci-keystone.c driver during
+its probe. Although this is not a fatal exception and Linux continues to
+boot, the driver is non-functional. I root-caused the exception to
+free_initmem() freeing the memory associated with the ks_pcie_host_init()
+function in the driver before the driver's probe was invoked. This
+appears to be a race condition but it is easily reproducible with the
+Linux .config that I have used. The fix therefore is to remove the
+__init macro which is implemented by the second patch in the series.
 
-I would prefer to keep u64 for refresh-rate-ps and num-symbols.
+For reference, the logs for the case where Linux is built by checking
+out at the base commit of Mainline Linux are:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/f4891b707921c53dfb464ad2f3a968bf
+and the logs clearly prove that the print associated with free_initmem()
+which is:
+[    2.446834] Freeing unused kernel memory: 4864K
+is displayed prior to the prints associated with the pci-keystone.c
+driver being probed which is:
+[    7.707103] keystone-pcie 5500000.pcie: host bridge /bus@100000/pcie@5500000 ranges:
 
-My reasoning comes from comparing the design decisions of today's industrial
-hardware to the projected needs of upcoming standards like 800 Gbit/s. This
-analysis shows that future PHYs will require values that exceed the limits of a
-u32.
+Building Linux by applying both patches in the series on the base commit of
+Mainline Linux, the driver probes successfully without any exceptions or
+errors. This was tested on AM654-EVM with an NVMe SSD connected to the
+PCIe Connector on the board. The NVMe SSD enumerates successfully.
+Additionally, the 'hdparm' utility was used to read from the SSD
+confirming that the SSD is functional. The logs corresponding to this are:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/1b09a12a53db4233e82c5bcfc0e89214
 
-We see two different design approaches in today's PHYs:
+Regards,
+Siddharth.
 
-- The "Quick Check" Approach (e.g., KSZ9477): This PHY uses a minimal sample
-  size for a very fast check, capturing ~250 symbols over 2 microseconds.
+Siddharth Vadapalli (2):
+  PCI: keystone: Use devm_request_irq() to free "ks-pcie-error-irq" on
+    exit
+  PCI: keystone: Remove the __init macro for the ks_pcie_host_init()
+    callback
 
-- The "Detailed Sample" Approach (e.g., KSZ9131): This PHY captures a much
-larger sample for a more statistically significant analysis, capturing 125,000
-symbols over 1 millisecond.
+ drivers/pci/controller/dwc/pci-keystone.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Now, let's see what happens when we apply these same design decisions to an 800
-Gbit/s link.
-
-Applying the "Quick Check" (KSZ9477) Logic:  If a future PHY designer wants to
-capture the same minimal amount of symbols (250), the required refresh interval
-on an 800G link would shrink to just 2.5 nanoseconds. Since future standards
-will be even faster, this demonstrates why picosecond-level granularity is
-necessary. In this specific minimal case, the values (250 symbols and 2,500 ps)
-would still fit within a u32.
-
-Applying the "Detailed Sample" Logic: If a designer follows the "detailed
-sample" approach or needs to run common diagnostics, the numbers become too
-large for a u32.
-
-- Scenario A (High-Granularity Sample): To get a dense sample over a 100
-millisecond interval, the PHY would need to process ~10 billion symbols. This
-overflows the u32 for num-symbols.
-
-- Scenario B (Long-Term Monitoring): To run a standard 10 millisecond
-diagnostic, the interval measured in picoseconds is 10 billion ps. This
-overflows the u32 for refresh-rate-ps.
-
-> > +      -
-> > +        name: supported-caps
-> > +        type: nest
-> > +        nested-attributes: bitset
-> > +      -
-> > +        name: pad
-> > +        type: pad
-> 
-> you shouldn't need it if you use uint
-> 
-> > +  -
-> > +    name: mse-snapshot
-> > +    attr-cnt-name: --ethtool-a-mse-snapshot-cnt
-> > +    attributes:
-> > +      -
-> > +        name: unspec
-> > +        type: unused
-> > +        value: 0
-> > +      -
-> > +        name: channel
-> > +        type: u32
-> > +        enum: phy-mse-channel
-> > +      -
-> > +        name: average-mse
-> > +        type: u32
-> > +      -
-> > +        name: peak-mse
-> > +        type: u32
-> > +      -
-> > +        name: worst-peak-mse
-> > +        type: u32
-> > +  -
-> > +    name: mse
-> > +    attr-cnt-name: --ethtool-a-mse-cnt
-> > +    attributes:
-> > +      -
-> > +        name: unspec
-> > +        type: unused
-> > +        value: 0
-> > +      -
-> > +        name: header
-> > +        type: nest
-> > +        nested-attributes: header
-> > +      -
-> > +        name: channel
-> > +        type: u32
-> 
-> Please annotate attrs which carry enums and flags with
-> 
-> 	enum: $name
-
-Sorry, I can't follow here. What do you mean?
-
-> 
-> > +        enum: phy-mse-channel
-> > +      -
-> > +        name: config
-> > +        type: nest
-> > +        nested-attributes: mse-config
-> 
-> config sounds like something we'd be able to change
-> Looks like this is more of a capability struct?
-
-Yes? mse-config describes haw the measurements in the snapshot should be
-interpreted.
-
-> > +      -
-> > +        name: snapshot
-> > +        type: nest
-> > +        multi-attr: true
-> > +        nested-attributes: mse-snapshot
-> 
-> This multi-attr feels un-netlinky to me.
-> You define an enum for IDs which are then carried inside
-> snapshot.channel. In netlink IDs should be used as attribute types.
-> Why not add an entry here for all snapshot types?
-
-Can you please give me some examples here? I feel under-caffeinated, sorry.
-
-Best Regards,
-Oleksij
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.43.0
+
 
