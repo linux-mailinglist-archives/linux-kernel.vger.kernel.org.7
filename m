@@ -1,173 +1,152 @@
-Return-Path: <linux-kernel+bounces-814209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9612EB550CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:19:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0DCB550D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C3E1586AD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:19:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F251B586A3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F67308F24;
-	Fri, 12 Sep 2025 14:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13841311959;
+	Fri, 12 Sep 2025 14:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4F/j9KvO"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AYP94Yvm"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7F013BC0C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2B230F959;
+	Fri, 12 Sep 2025 14:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686755; cv=none; b=ER+unKTApdJfS6utIEBBEwJbgMYpqK8vuj+31UYd9nWmAFi8zOaiVYWXUxU5HkDgFU4dca6uMYzKxh7JOMzKFpp147F1E9Gi2kxPSnYuNM/1Nj7XPkihGJtZdIK/nPxNs1IEJgIWSQIpB/wdayQ38nxyFnyAbzOOLEY5fOSiCsc=
+	t=1757686759; cv=none; b=nLiuim2hm7VAOupAAd+McctaHx/10BM4fZ5VISXLHZ8Yu2IoWrCmO+Wr5O1cvkMmDaX4+m5wwM0FuEWaE0qTt0h7doGl4IQ54YqmFK4x+TbTAla5Jp9yQBy9Dq+2fJdTYOr8olaS/XpH70ETuR+JOLxuRN1sHGbIn4DU1TbY1sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686755; c=relaxed/simple;
-	bh=DvXpHvEJ0p4DqJ3NRYzOqsD/rTFzc/TriCC2S5OkytU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ccGAVaDvswWbvmH0pFQq8AvvEZe4A4tKqy8AXGeFTOd8y7gl3LEHD5i+glw6DcM62t6/YdNYRZmtkW+wy1aF4q9RIlWy2pt6Wlo7wtiz5pWxwHCJ5KLeJpdyNWHuAuRHdWy5S6HV9yscGZDXgIgzmcWslnEdXxVisCfatHuSfbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4F/j9KvO; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4b5f7fe502dso10587871cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:19:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757686752; x=1758291552; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xM4cXfsx0W9pxO9c+zmvYxuG+N7LbG4mrlPiJQK3K1k=;
-        b=4F/j9KvObruqgk5ctkQMQVKi7gLB+hbPHyMgFy9h3XG1SQAflCoILEbmC/Ki0+fDH+
-         zJw1zVJ4O7eMgsK5IX8hXDebwHVIDsz+zUJ7KBYcoGbf5819J9xCeWFE1Xikr+ckQ5Wo
-         S9jG2U3YzYQF3lsBWsUytI5sn+lXW5Ss+2A3V4YnKv3SgeobrkfnZVB8udkQAUGzV/Vm
-         0+Kwf/JhO5eHjiwQPZLI/QJcpWl3K87L+fbk9LUgRUfXZOEFctfBVMnq3TZUsI+uikxo
-         5IomjaA0LmnSDc3AFUenkA6+WlBJNBdXx3BRJtLY4IYLB+CnMqEHjgpWAmfMICh5C8CI
-         xkzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757686752; x=1758291552;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xM4cXfsx0W9pxO9c+zmvYxuG+N7LbG4mrlPiJQK3K1k=;
-        b=i6c1oZOovqw9IAXdsozr0ieoiQJQxq9I+Ny+Bavvgj262zSEAepw8sOuuJ3B25fuTp
-         /xCbFQ0y9yMMG4oGgnJV30OhvToaHJ0/DkQDa3OsjTBAgq9i8dEsHHYfZLmCmWcbkmvO
-         dPfPixTNImCfT1dfkW9clOkocPkVT8zZxvrBk8Juu/GPDQCmbx6RUAHrfPX3CckT973I
-         XrYZVHqjLP4YvhwYNbDwEqKVKdOXlj8nSqrvihobLpOSu29BWTw37/Id9+ctFr91o2md
-         8RH3e65TSjFEEK9P/K1qyBp9vaU1hJ0iO+QFWFBRwtIA6XcipxELyjO0F5STADi0C6PC
-         rdow==
-X-Forwarded-Encrypted: i=1; AJvYcCVWFhqH2DlAOrff//Mt4woigbagkBhkb8/DRlo7nsRjzTVbrBtD7OsYJVrNUZJ3FQd7O3cWoPdInLoK3Bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2dONG/VU5e/FY5OsmbugmvEffQmOkB2n03uESQn5W1gMTrfDt
-	axEHPd5dGXe4Nk4UCoOB//wW/LQSBbzTlaf3yVfS7nxNMOR56QX5hWVodeJF6gobL+dkSCUgcKb
-	KjdJKhTwlsapMVfFhDSyKDViIIMWLYGS6lnFGZ1d45JHQBDVvDJe1SHJdZps=
-X-Gm-Gg: ASbGncsH6WGHJTkgon+yLZw8l84bqPkoZjytejdhbkPKjj/MdMP2fEFZXhhsbBiNMy9
-	wDxsY5LMHIPxTrjWPJUV9QEIP6Uo/YI62eQtuy/j1JPDxusU4zPMua7khO5dZpDUtzXytzTUqP1
-	iR+qNczb9C42OKsh2OxMLHNLoCDrl1tOEhj1t6D3QXhQqQ8RkAfyJHSo49tHWUMzxykOnbOSFgC
-	T839DWw4gI=
-X-Google-Smtp-Source: AGHT+IFYWvGPQuJv08IxnOCKGvIZjk+nEyO34AR84OPul9f5Gq0QsOn48fw0yQSKP7mN7sS9gmiA8aACo9ZpUI51beU=
-X-Received: by 2002:ac8:7d88:0:b0:4b3:4c51:642e with SMTP id
- d75a77b69052e-4b77cfdbc50mr28052461cf.3.1757686751387; Fri, 12 Sep 2025
- 07:19:11 -0700 (PDT)
+	s=arc-20240116; t=1757686759; c=relaxed/simple;
+	bh=IThJc79ZMqu+nxxQpWPHTn5+ZM5siQtLtI07yjgNoxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rAc12d2+o60dOHo8thoqmN2td6km4nX04w1Wyc307I7GAvVqeLpUcIPGt+QmPTxdiXcc0V/1KMYA+w0YAWlgi8AG3WUD8+nwzlwEZRW2gH0SCQiRg8iK7XEl6atFw8TQif+huwUrgCy74wSRs34pOQjFp77tCGCKWG8ThnmADtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AYP94Yvm; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JtzadXmaZhLTqqwgtcx6yBg2tzYSUH/6NHLfE6xeaaU=; b=AYP94Yvmz1IDsfKDos14Mq84md
+	tC6BTBSpfh0VnI9tU4WRvEOb7n3pGi9AYXJ+V71f/ofs/OzoY+1O0FRG6yIOG1SYYcLbra+eQzU6W
+	Fj/N1Nv40TaoI0IZ3grtxW2pmgId9Ymk9uEkFYrUUm4piPHfXVdhP8a7T5nQ061aCXUm7wSZUNTg1
+	p2K600Dk5SBY/a2n4UywZoosgUL1cZSQN7RBnfal7Q77DgWoXQuY5w042mKbQbk9eDOLwzw0p55aY
+	PrZ5eKPgiklGYt0/dN42JZlOh2826LdiU1Ou20xr9hZSS6ACeLK60KNBPC21N7F+E3SNzLK8e3HxV
+	xGrqbb8g==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ux4cD-0000000HJ1J-3tKA;
+	Fri, 12 Sep 2025 14:19:06 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 31FBE3002EB; Fri, 12 Sep 2025 16:19:04 +0200 (CEST)
+Date: Fri, 12 Sep 2025 16:19:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
+	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, cgroups@vger.kernel.org,
+	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
+Subject: Re: [PATCH 13/14] sched: Add {DE,EN}QUEUE_LOCKED
+Message-ID: <20250912141904.GA3289052@noisy.programming.kicks-ass.net>
+References: <20250910154409.446470175@infradead.org>
+ <20250910155809.800554594@infradead.org>
+ <aMItk3c5H6Z2CD4X@slm.duckdns.org>
+ <20250911094240.GW3289052@noisy.programming.kicks-ass.net>
+ <aMMzpnyx__ZgZGRc@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911053310.15966-2-yyyynoom@gmail.com>
-In-Reply-To: <20250911053310.15966-2-yyyynoom@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 12 Sep 2025 07:19:00 -0700
-X-Gm-Features: Ac12FXw7adrTtTEamjUd1dARgNXXs2vtOQ7AFK8Dk6Xa4BQJI1VYpFDvt0r4s3I
-Message-ID: <CANn89iLUTs4oKK30g8AjYhreM2Krwt5sAwzsO=xU--G7myt6WQ@mail.gmail.com>
-Subject: Re: [PATCH net] net: natsemi: fix `rx_dropped` double accounting on
- `netif_rx()` failure
-To: Yeounsu Moon <yyyynoom@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMMzpnyx__ZgZGRc@slm.duckdns.org>
 
-On Wed, Sep 10, 2025 at 10:35=E2=80=AFPM Yeounsu Moon <yyyynoom@gmail.com> =
-wrote:
->
-> `netif_rx()` already increments `rx_dropped` core stat when it fails.
-> The driver was also updating `ndev->stats.rx_dropped` in the same path.
-> Since both are reported together via `ip -s -s` command, this resulted
-> in drops being counted twice in user-visible stats.
->
-> Keep the driver update on `skb_put()` failure, but skip it after
-> `netif_rx()` errors.
->
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+On Thu, Sep 11, 2025 at 10:40:06AM -1000, Tejun Heo wrote:
+> Hello,
+> 
+> On Thu, Sep 11, 2025 at 11:42:40AM +0200, Peter Zijlstra wrote:
+> ...
+> > I didn't immediately see how to do that. Doesn't that
+> > list_for_each_entry_safe_reverse() rely on rq->lock to retain integrity?
+> 
+> Ah, sorry, I was thinking it was iterating scx_tasks list. Yes, as
+> implemented, it needs to hold rq lock throughout.
+> 
+> > Moreover, since the goal is to allow:
+> > 
+> >  __schedule()
+> >    lock(rq->lock);
+> >    next = pick_task() := pick_task_scx()
+> >      lock(dsq->lock);
+> >      p = some_dsq_task(dsq);
+> >      task_unlink_from_dsq(p, dsq);
+> >      set_task_cpu(p, cpu_of(rq));
+> >      move_task_to_local_dsq(p, ...);
+> >      return p;
+> > 
+> > without dropping rq->lock, by relying on dsq->lock to serialize things,
+> > I don't see how we can retain the runnable list at all.
+> >
+> > And at this point, I'm not sure I understand ext well enough to know
+> > what this bypass stuff does at all, let alone suggest means to
+> > re architect this.
+> 
+> Bypass mode is enabled when the kernel side can't trust the BPF scheduling
+> anymore and wants to fall back to dumb FIFO scheduling to guarantee forward
+> progress (e.g. so that we can switch back to fair).
+> 
+> It comes down to flipping scx_rq_bypassing() on, which makes scheduling
+> paths bypass most BPF parts and fall back to FIFO behavior, and then making
+> sure every thread is on FIFO behavior. The latter part is what the loop is
+> doing. It scans all currently runnable tasks and dequeues and re-enqueues
+> them. As scx_rq_bypass() is true at this point, if a task were queued on the
+> BPF side, the cycling takes it out of the BPF side and puts it on the
+> fallback FIFO queue.
+> 
+> If we want to get rid of the locking requirement:
+> 
+> - Walk scx_tasks list which is iterated with a cursor and allows dropping
+>   locks while iterating. However, on some hardware, there are cases where
+>   CPUs are extremely slowed down from BPF scheduler making bad decisions and
+>   causing a lot of sync cacheline pingponging across e.g. NUMA nodes. As
+>   scx_bypass() is what's supposed to extricate the system from this state,
+>   walking all tasks while going through each's locking probably isn't going
+>   to be great.
+> 
+> - We can update ->runnable_list iteration to allow dropping rq lock e.g.
+>   with a cursor based iteration. Maybe some code can be shared with
+>   scx_tasks iteration. Cycling through locks still isn't going to be great
+>   but here it's likely a lot fewer of them at least.
+> 
+> Neither option is great. Leave it as-is for now?
 
-I do not think this Fixes: is correct.
+Ah, but I think we *have* to change it :/ The thing is that with the new
+pick you can change 'rq' without holding the source rq->lock. So we
+can't maintain this list.
 
-I think core networking got this accounting in netif_rx() in 2010
+Could something like so work?
 
-commit caf586e5f23c (" net: add a core netdev->rx_dropped counter")
+	scoped_guard (rcu) for_each_process_thread(g, p) {
+		if (p->flags & PF_EXITING || p->sched_class != ext_sched_class)
+			continue;
 
-
-> Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
-> ---
->  drivers/net/ethernet/natsemi/ns83820.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/etherne=
-t/natsemi/ns83820.c
-> index 56d5464222d9..cdbf82affa7b 100644
-> --- a/drivers/net/ethernet/natsemi/ns83820.c
-> +++ b/drivers/net/ethernet/natsemi/ns83820.c
-> @@ -820,7 +820,7 @@ static void rx_irq(struct net_device *ndev)
->         struct ns83820 *dev =3D PRIV(ndev);
->         struct rx_info *info =3D &dev->rx_info;
->         unsigned next_rx;
-> -       int rx_rc, len;
-> +       int len;
->         u32 cmdsts;
->         __le32 *desc;
->         unsigned long flags;
-> @@ -881,8 +881,10 @@ static void rx_irq(struct net_device *ndev)
->                 if (likely(CMDSTS_OK & cmdsts)) {
->  #endif
->                         skb_put(skb, len);
-> -                       if (unlikely(!skb))
-
-I doubt this driver is used.
-
-Notice that this test  about skb being NULL or not happens after
-skb_put(skb, len)
-which would have crashed anyway if skb was NULL.
+		guard(task_rq_lock)(p);
+		scoped_guard (sched_change, p) {
+			/* no-op */
+		}
+	}	
 
 
-> +                       if (unlikely(!skb)) {
-> +                               ndev->stats.rx_dropped++;
->                                 goto netdev_mangle_me_harder_failed;
-> +                       }
->                         if (cmdsts & CMDSTS_DEST_MULTI)
->                                 ndev->stats.multicast++;
->                         ndev->stats.rx_packets++;
-> @@ -901,15 +903,12 @@ static void rx_irq(struct net_device *ndev)
->                                 __vlan_hwaccel_put_tag(skb, htons(ETH_P_I=
-PV6), tag);
->                         }
->  #endif
-> -                       rx_rc =3D netif_rx(skb);
-> -                       if (NET_RX_DROP =3D=3D rx_rc) {
-> -netdev_mangle_me_harder_failed:
-> -                               ndev->stats.rx_dropped++;
-> -                       }
-> +                       netif_rx(skb);
->                 } else {
->                         dev_kfree_skb_irq(skb);
->                 }
->
-> +netdev_mangle_me_harder_failed:
->                 nr++;
->                 next_rx =3D info->next_rx;
->                 desc =3D info->descs + (DESC_SIZE * next_rx);
-> --
-> 2.51.0
->
 
