@@ -1,148 +1,196 @@
-Return-Path: <linux-kernel+bounces-814094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C07BB54F10
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:16:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9616DB54F18
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874297C803B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:16:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BAFFA005A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:16:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421B0314A62;
-	Fri, 12 Sep 2025 13:14:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E5F81ACA;
+	Fri, 12 Sep 2025 13:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEwyhLVW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VIngeNS4"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AB030EF89;
-	Fri, 12 Sep 2025 13:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C0C30EF7D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757682873; cv=none; b=LrSg2aDwpUSBoB7r39gkEL5a7ei1RIc4fexXpuJi5REnKlomZSjFf3N3AhLn5BwUPk/t+0ejEs/0/5FFVD/kq4zI2J3FkGk8OokfkbLgh/eS+zXR8cDPFsfIdWnixnHc+hwlSB3OO6DNzFjM79S1c5ZI9KyXYWYgIOcHjwJ59+4=
+	t=1757682908; cv=none; b=TQG+40zr6AQdkPuv3srvVIf398aNkqerow3hCb+O4RtaKR8TiIwC4DiKuM3Ic3WCTRHvQmjkRWq+ErTXxpgAhwCwh3KCPY2R/ef3JMXit9aLie0Rl06iWDZP35/90lHk0BqwQrqEmjCGquj6dpIwi8ApllL4TOqFNtGKQupf2pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757682873; c=relaxed/simple;
-	bh=MxMamnhy9oj92yxyc9e8YwEgNJD+oI68n6DyGiWWVCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bdrnSRlb6swhkC7mRCtERRxvQqoHY/vUIhqbsbUReDOAw3CwZyYzzoHEnPNUSIYU1jdfVrwSrbOExS+XeMiVgJrffa6udDuroOJ1S8ImRSX37gRDGBJyMzDpWR/1or+Z+a6n1/l/J3LL2tEAyj25mxIY2wMkjyd9tOGqT/M9CiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEwyhLVW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E603C4CEF1;
-	Fri, 12 Sep 2025 13:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757682873;
-	bh=MxMamnhy9oj92yxyc9e8YwEgNJD+oI68n6DyGiWWVCs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GEwyhLVW7tgTFSLAz7JK3+1HYMD/7HIye32Lxy3ySptbeD+445/nkm2JHAK+972z4
-	 hN1yg6qT/Cv6KzMK+8abeYegIyHojhenatknUEJABAkmsZKRhxN9A/1PKsL28JNgpG
-	 P8gPONP1X/RAQ3DDLBshYfOaHDXkUep0mwc3eyRp2eHwvDGNkpqIyR27ghXrurze4a
-	 32xG1qLEdaIZUklU3/X4Sb88ZgBxKg0LUkvcL4hf/jh43Eg4SPXr+hTax9PtE/mo+E
-	 agzGNJBkiGuwxZdGrjohvI5zMdbZtdppELU60GEdYwgj7UoTvHhVvBA+kwIrM0xjlf
-	 O2SDiRwfa8GpQ==
-Message-ID: <50496bf2-1d10-4d89-addb-f4fe774497d9@kernel.org>
-Date: Fri, 12 Sep 2025 15:14:24 +0200
+	s=arc-20240116; t=1757682908; c=relaxed/simple;
+	bh=09VgY2p82kk4TWXOIJsno3OACTHYSWqM1ipNT58ZzO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CuFnedXcP+dPxToG5FcDTuOVmQ37wIz9T981fjKV4rfTXUTVp5CB0/eU5nEr1MmxUuuEWMsYMW4m3yLSFjzP8+HZO1QpeZ7QcmHZDGTEI7K2csmfhCg0zwEMh+h7OeNQmfU1nu5B0a050dVZesKEIfhSdNWP4qPDXiMCGPBG9uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VIngeNS4; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-32326e2f0b3so1520732a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757682906; x=1758287706; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AK5P+/Isdiha4wioMF1al81oH5WF5xA1f1RgLDaypCg=;
+        b=VIngeNS4f7eIOEV7e7IpaBl35ql8lb15xYuhKARGYxaGhTHF2HcZe4F0gfuw5I1uPT
+         polWCzjErHdh4p5+JHEHORufeo8a5jYbqOmir9Fb30qBCyMdbjXPIR+fmm4x9pcrTqZu
+         5Tig6dcU/CkkiDXQK4ndnbsZKvFWSprDWaAkhPVDvRn1f0ODnSuu7WoHnNumiP/8ZmDj
+         EaUoSvf9eegefyZl8l5DO2L/Ib28g4lnypy9QnKyFNdf0Lsgkx8d2jhl8JOt1fEJxswt
+         rvTCxojnOVFgqXMDBSY/uu9j0eaTjzRG7KeOdlyO/XXp/62w1qL5o7/rta1QAmySH3bR
+         Mo5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757682906; x=1758287706;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AK5P+/Isdiha4wioMF1al81oH5WF5xA1f1RgLDaypCg=;
+        b=VvqQzjmzdSlaaC1J2V17ZQduwGolJA8PL4c7bz86sq7bSPcTc35Iqjq7pxlHjH/RWD
+         bmQXNaSQE6REhg09PnkVDM3s6pT/zkjTa7MxA8ICTIU7fTNNundNm6bD/q7jwPhVp724
+         zxMxEDQ+S/LmA0JGShEm3jDqvnzXXW3k8t7d4+LmR0gwLCNmk2r+1iaUIna3f4ebrz7p
+         EgHNt3Sj/W9UpD1wedlVGUB3qZzEd5I3c/p3Vgm6bp2cWklGbwAJrSlWujeEnHNAuvtB
+         5MNQdtFUOgCHV2bpsUM2HP5zDeQS4PR+pkhUI13NWZXYWuifcfTUpIgbc1YCp/tQeKW9
+         LPuw==
+X-Forwarded-Encrypted: i=1; AJvYcCX99dNIof1TOxQRqiTXDZdL6+XksvmTXqvclagfZsHHzK8ae/74xmEGJ39cJ621KQ1HyVRRyTmRb96pC9k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVJEWyS1fOOecTUfT9DxQIz0hFF5UJIO81Jt5p6f8wBwOhS5xu
+	Oaj+a8nSqIzUpUZNHfCmtPhWDuc7Qz+/bsdMGUrIyHxh51t7eLMMFbk3
+X-Gm-Gg: ASbGncuAbf1lUzubLwckLr+AI3uwg01wEbgPr4Lrb/UYfDypGSkg/zbn7dht53bzRBA
+	7y4BLGdDbGSHZnjSYE6jFp8fMaCx+nHpIO2KjPXNsd1y5S/LwFIamkqHy5fSKVqugsyoTwobHjs
+	SPKCITaQLLkKiBL7E/BAQ2Wh4TmOabTzfuKtNecMAG5sWTZizYUIZpDda443oWoogUjrCNVjLw8
+	asJUnYH22km/NWlVp4Lor0D3VRJAG7j3F/AzSWW8hoeSLoM96PzvnKGWy205VNMCwtU2MAga3sU
+	YdqAQUY5U+LzHaBt9sCF9kpKtV0V5f71YZNXvBfP0chRbzEwYxkdV+CmTPFKdAxMc25hV/Fzunb
+	g+5IxJyh3RmWl48IQlYs6iUXmuLMh6rIi68NUpWSaZ3NP0SmNJ5ItqS7pJmLpOQzjadOaxQPi+5
+	ulwb4BUl1iMAJu5XLBLBOUfweJuZxUSQ==
+X-Google-Smtp-Source: AGHT+IEUFiDh0LUyJUkxuiV3KaaaNq/kqG31HiQyugm9FbL5DIYEPw3QbzV/WRcaFMnjA3+f1IawkQ==
+X-Received: by 2002:a17:90b:4b09:b0:32b:baaa:2a8f with SMTP id 98e67ed59e1d1-32de4d86c83mr3341213a91.0.1757682906428;
+        Fri, 12 Sep 2025 06:15:06 -0700 (PDT)
+Received: from OSC.. ([106.222.234.17])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd98b439asm5580814a91.15.2025.09.12.06.15.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 06:15:06 -0700 (PDT)
+From: Pavan Bobba <opensource206@gmail.com>
+To: mchehab@kernel.org,
+	hverkuil@kernel.org,
+	ribalda@chromium.org,
+	laurent.pinchart@ideasonboard.com,
+	yunkec@google.com,
+	sakari.ailus@linux.intel.com,
+	james.cowgill@blaize.com
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Bobba <opensource206@gmail.com>
+Subject: [PATCH] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
+Date: Fri, 12 Sep 2025 18:44:59 +0530
+Message-ID: <20250912131459.6833-1-opensource206@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: ethernet: eswin: Document for EIC7700
- SoC
-To: weishangjuan@eswincomputing.com, devicetree@vger.kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
- yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
- rmk+kernel@armlinux.org.uk, faizal.abdul.rahim@linux.intel.com,
- prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
- jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
- boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- emil.renner.berthing@canonical.com
-Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
- lizhi2@eswincomputing.com, pinkesh.vaghela@einfochips.com
-References: <20250912055352.2832-1-weishangjuan@eswincomputing.com>
- <20250912055612.2884-1-weishangjuan@eswincomputing.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250912055612.2884-1-weishangjuan@eswincomputing.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/09/2025 07:56, weishangjuan@eswincomputing.com wrote:
-> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
-> 
-> Add ESWIN EIC7700 Ethernet controller, supporting clock
-> configuration, delay adjustment and speed adaptive functions.
-> 
-> Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
-> Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
+The AV1 stateless decoder API provides the control
+V4L2_CID_STATELESS_AV1_SEQUENCE to pass sequence header parameters
+from userspace. The current validator only checked that seq_profile
+≤ 2 and that monochrome was not signaled in profile 1.
 
-There is no explanation of dropping the tag. Please read CAREFULLY
-submitting patches.
+This patch completes the "TODO: PROFILES" by enforcing all
+profile-specific constraints as defined by the AV1 specification
+(Section 5.5.2, "Color config syntax"):
 
-Comparing also fails:
+- Profile 0: 8/10-bit only, 4:2:0 subsampling, no monochrome
+- Profile 1: 8/10-bit only, 4:4:4 only, no monochrome
+- Profile 2: 8/10/12-bit, 4:2:0 / 4:2:2 / 4:4:4 allowed, monochrome allowed
 
-b4 diff '<20250912055352.2832-1-weishangjuan@eswincomputing.com>'
-Using cached copy of the lookup
+Additionally, when the MONO_CHROME flag is set:
+- subsampling_x and subsampling_y must both be 1
+- separate_uv_delta_q must be 0
+
+These checks prevent userspace from providing invalid AV1 sequence
+headers that would otherwise be accepted, leading to undefined
+driver or hardware behavior.
+
+Signed-off-by: Pavan Bobba <opensource206@gmail.com>
 ---
-Analyzing 55 messages in the thread
-Preparing fake-am for v6: dt-bindings: ethernet: eswin: Document for
-EIC7700 SoC
-ERROR: Could not fake-am version v6
----
-Could not create fake-am range for upper series v6
+ drivers/media/v4l2-core/v4l2-ctrls-core.c | 54 +++++++++++++++++++++--
+ 1 file changed, 50 insertions(+), 4 deletions(-)
 
-I am not going to review twice, so you can drop my tag again without
-explanation.
+diff --git a/drivers/media/v4l2-core/v4l2-ctrls-core.c b/drivers/media/v4l2-core/v4l2-ctrls-core.c
+index 98b960775e87..3283ed04cc36 100644
+--- a/drivers/media/v4l2-core/v4l2-ctrls-core.c
++++ b/drivers/media/v4l2-core/v4l2-ctrls-core.c
+@@ -852,14 +852,60 @@ static int validate_av1_sequence(struct v4l2_ctrl_av1_sequence *s)
+ 	 V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q))
+ 		return -EINVAL;
+ 
+-	if (s->seq_profile == 1 && s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME)
+-		return -EINVAL;
+-
+ 	/* reserved */
+ 	if (s->seq_profile > 2)
+ 		return -EINVAL;
+ 
+-	/* TODO: PROFILES */
++	/* Profile-specific checks */
++	switch (s->seq_profile) {
++	case 0:
++		/* Bit depth: 8 or 10 */
++		if (s->bit_depth != 8 && s->bit_depth != 10)
++			return -EINVAL;
++
++		/* Subsampling must be 4:2:0 → x=1, y=1 */
++		if (!(s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X) ||
++		    !(s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y))
++			return -EINVAL;
++		break;
++
++	case 1:
++		/* Monochrome is forbidden in profile 1 */
++		if (s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME)
++			return -EINVAL;
++
++		/* Bit depth: 8 or 10 */
++		if (s->bit_depth != 8 && s->bit_depth != 10)
++			return -EINVAL;
++
++		/* Subsampling must be 4:4:4 → x=0, y=0 */
++		if ((s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X) ||
++		    (s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y))
++			return -EINVAL;
++		break;
++
++	case 2:
++		/* Bit depth: 8, 10, or 12 */
++		if (s->bit_depth != 8 && s->bit_depth != 10 &&
++		    s->bit_depth != 12)
++			return -EINVAL;
++
++		/* Subsampling: 4:2:0, 4:2:2, or 4:4:4 allowed → no extra check */
++		break;
++	}
++
++	/* If monochrome flag is set, enforce spec rules */
++	if (s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME) {
++		/* Must signal subsampling_x=1, subsampling_y=1 */
++		if (!(s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X) ||
++		    !(s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y))
++			return -EINVAL;
++
++		/* separate_uv_delta_q must be 0 in monochrome */
++		if (s->flags & V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q)
++			return -EINVAL;
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
 
-Best regards,
-Krzysztof
 
