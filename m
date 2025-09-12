@@ -1,201 +1,171 @@
-Return-Path: <linux-kernel+bounces-814280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0469B551D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:38:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33568B551D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 88C684E2F55
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:38:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49643BCB25
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CBC31A07F;
-	Fri, 12 Sep 2025 14:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D361830103C;
+	Fri, 12 Sep 2025 14:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="mbpxPk1l";
-	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="IkcFcszH"
-Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LSl5xnXP"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334612FD7BB;
-	Fri, 12 Sep 2025 14:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94DDB17A2FC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687795; cv=none; b=Nn/jmXC5XAEJPamRRCgNSEuFJIulXCZfWRCzKwIcnbgZYNM2BAStLC2iShyRAkcInyyibfM3q30RjHWG1jq1hOk2Pp1IKtVtNbfAJgVY6n++S9tj/wxFImydL3eRBoYZkOk+CtWWH3Kbyc/4PDn7JHaMdNf9/i7UA1MLUpKbAts=
+	t=1757687843; cv=none; b=KzDeU7USgI3WLbcB4BYU0fUGIzKjyiiH0gcYp52Ct3sYw6f10BN+JYFq9e00ROHNKb0neK9YwNKavS1LTBur53VVtmNdw/nTF8hkp6EFpaMy1lAVIH98C5hyryqhIeMg7aY0q36TUeFLps6bhhKMQqoOP9isU9AbJKLMBuK+rj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687795; c=relaxed/simple;
-	bh=dTwijpqxPuJ5/+Cv765kEWi1w2X5GAUQShLGuMoHk5U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PygQrv1gKm6XLf9piqimqGNKvlqRqKBprOeuNc2zQlYKywX30cZJfeON/k3xOTrahG7vhs2GIOgghXcSfxO5Yfe9CaSHbwo4mdSNeRT2rDUT4b6FxcdacARGm8J0La+a4T/gdYRIid9J4ePjYd9GUOiOhVnJKaUmusLwIiIRGxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=mbpxPk1l; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=IkcFcszH; arc=none smtp.client-ip=89.207.88.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yadro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
-Received: from mta-03.yadro.com (localhost [127.0.0.1])
-	by mta-03.yadro.com (Postfix) with ESMTP id 79B4CE0016;
-	Fri, 12 Sep 2025 17:36:23 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com 79B4CE0016
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
-	t=1757687783; bh=VaM+fruqw2bqW5awJBxikdRTCIjPIaJ9zrDGbC0YTzs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=mbpxPk1lhCAq1UNMeVap9rQQ96TKJ7E5+/htaO+EIKVNKrBzPx1R4iV2Yf6p0HpeG
-	 Szv/V2C4W5MGuYMKnUM29uIYoGIEXeqjkA/fTTmpa/BvKopOinl3I/atQNqfQQGhab
-	 kyNRn6Mr0JgYa4GLxnm2/J7jClhKf9+uyheb6tD1RWENvJ2wiic43MsGDNdBtcZqQ1
-	 U/ZAgnT9I8CRxXARrM22OZ0zPO34lE4T4eJ/YmVVBYthEcTFroFetPr7A5yBjtugVk
-	 LjGrlHw6+Wu3XqtEU0lle7gdxNWsYZ4/yEjMnHYdcnAvkpPnk9HeDJTpUmz326pjpw
-	 HAT/sOTyl9iKQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
-	t=1757687783; bh=VaM+fruqw2bqW5awJBxikdRTCIjPIaJ9zrDGbC0YTzs=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=IkcFcszHP5S54ZgosxBwdliHnbFW8FDuLXP1r6WwgJUXO/h22Bnv04M+6J5Om4/+j
-	 1byPQqr25cqdAYY7ZYFf9WCI79AK5r8f2hnt75lJh/21jdeT1ESC13XLPMWa/ANbsq
-	 SBjS+r4WA/mgqNqQQp93QarTLMh+Z1XcpbeDvBRw+lxQV+VM9ASlQJA3QurpRntjOj
-	 Quo2TPYhQYSzROLdd6+Tgu2uQIElwpZ4KLSLPCJverlnwDra9BkTQQkWsvAktVoa0m
-	 zN5L/OZBauJYBiTAsZ+g54sijinlxio9GqAEqHUZxsbPVbLO8UUC3Y7LRn5vlYMbcR
-	 1T6ofL3191RrQ==
-Received: from T-EXCH-10.corp.yadro.com (T-EXCH-10.corp.yadro.com [10.34.9.212])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mta-03.yadro.com (Postfix) with ESMTPS;
-	Fri, 12 Sep 2025 17:36:18 +0300 (MSK)
-Received: from T-EXCH-12.corp.yadro.com (10.34.9.214) by
- T-EXCH-10.corp.yadro.com (10.34.9.212) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.9; Fri, 12 Sep 2025 17:36:17 +0300
-Received: from yadro.com (172.17.34.55) by T-EXCH-12.corp.yadro.com
- (10.34.9.214) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 12 Sep
- 2025 17:36:17 +0300
-Date: Fri, 12 Sep 2025 17:36:15 +0300
-From: Dmitry Bogdanov <d.bogdanov@yadro.com>
-To: Tony Battersby <tonyb@cybernetics.com>
-CC: Nilesh Javali <njavali@marvell.com>,
-	<GR-QLogic-Storage-Upstream@marvell.com>, "James E.J. Bottomley"
-	<James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, linux-scsi <linux-scsi@vger.kernel.org>,
-	<target-devel@vger.kernel.org>, <scst-devel@lists.sourceforge.net>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 10/15] scsi: qla2xxx: fix TMR failure handling
-Message-ID: <20250912143615.GB624@yadro.com>
-References: <f8977250-638c-4d7d-ac0c-65f742b8d535@cybernetics.com>
- <f7f93110-bd53-4ebc-9aed-abe5de82028d@cybernetics.com>
+	s=arc-20240116; t=1757687843; c=relaxed/simple;
+	bh=YpwgMyR671W9zCbxFcbCh8JUcv1uLLeYZ10agHNOyOM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=bWmcxajSchb9A+JkjubqK+lBWEDk81zlFU9BywIdVJJ6YRQJEHcbC1Wkc8xqMiSWOkrB/dn6oXnAsWJwZGCQhhzRZAmdcwsmtA4KAM4cMkL8QfGXnPhUEkqaTJO1Z8rNEUjEQDhZnxs9Ed/658+QmqeFUlPFD053wppyvTjy9jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LSl5xnXP; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-77264a9408cso3952950b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757687841; x=1758292641; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2P+x88UUE2GDQfwUUdAyI+XxcaLbXssYKBKZgNEjDhg=;
+        b=LSl5xnXPdRRRTvR6liviTjzTRISzzyYOFRnotRqUjlP7f9HGHbiqwaXQb8LmBV4RLM
+         +Mrb8Y4afn+YM13mHgpoHI0E8JMaa4TUe2qL0Um0CAUYxInm8HuIJ7+aM6JaoaXEQ4Sa
+         9AsunfyIqnQIdhde2uz8ITxS7LdNOUwQ6Cclq7PFko6lWHIN/O28NDmehO3fvIBU0NCt
+         mBNsTSqyZLmUCs7FmiuHVpB48F9At0Lg94roxTT7NKEDCfb2otZZeGLMPsTmE6zSlTOO
+         rkZyrQKrDIQvKxEgohMceHb7gNb39P/64BH6KQv6hToXIi9U5xmRusRgjW+xw0g86fFD
+         cejA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757687841; x=1758292641;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2P+x88UUE2GDQfwUUdAyI+XxcaLbXssYKBKZgNEjDhg=;
+        b=FeT9y51wU6jPqF3RtT9GmopBFGjG6gq3I2Z5cPeu/zrK5Lw2u4CHTWPo1KPwBq5MA7
+         SsZE+S3mh/JmavzoiAUeDm+KBGf6eyfPwhL86qOerLFrrj2Ml0b9WhkUXBM4PXr5wkS9
+         o6yCXIdg4eh0vUWTqFcv045kunmXc5Z3JyXioWr7GwYElpGtPH6zJjYjFfYJ7UZRo0f2
+         TaCi4Z1jnq42eIClegIEAlxYmZfOZQYdQ4uo66blj7Y24AcAMfsfm7arMZIEvxbB3ljP
+         1HHZLG182iVF02RmgM0m9CnhBMYcaHhpZvxLkBERyy0D2AHyO9IcTECuZJzOT1Q7WKSZ
+         wsGw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5iOYphXM0a9Fjhguz1BMVKLVwk1wTJmocxD4PyKQiFIg0mn+VTUdux6iySKAHhCDohO9/jNYoWEA12/M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycoR/GAhjghP33vCh7t/eDbeuwC0RbkNRJsyZ2M4Hu8f+59ygZ
+	NEDS7CmjTC3QjWg5uM8lXPFv7htajrVxprCsRkcaoBhP27bQOcbw70UKYTV5q50WznTdfkUmHSR
+	z5xm2uw==
+X-Google-Smtp-Source: AGHT+IE1gQ7ivjZR8g0gLqSSuhwVcNqxUEvHF3Z4Hr5v0ExRBR0jo9zcuJja0j6DJ3NuA4KDhWRWN7Wyrms=
+X-Received: from pgno17.prod.google.com ([2002:a63:7e51:0:b0:b47:18b4:f5cb])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:7d86:b0:248:e0f7:1326
+ with SMTP id adf61e73a8af0-26029eaa47dmr4203315637.2.1757687840892; Fri, 12
+ Sep 2025 07:37:20 -0700 (PDT)
+Date: Fri, 12 Sep 2025 07:37:19 -0700
+In-Reply-To: <ac7eb055-a3a2-479c-8d21-4ebc262be93b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <20250909093953.202028-1-chao.gao@intel.com> <20250909093953.202028-16-chao.gao@intel.com>
+ <8121026d-aede-4f78-a081-b81186b96e9b@intel.com> <aMKniY+GguBPe8tK@intel.com> <ac7eb055-a3a2-479c-8d21-4ebc262be93b@intel.com>
+Message-ID: <aMQwH8UZQoU90LBr@google.com>
+Subject: Re: [PATCH v14 15/22] KVM: x86: Don't emulate instructions guarded by CET
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	acme@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	john.allen@amd.com, mingo@kernel.org, mingo@redhat.com, 
+	minipli@grsecurity.net, mlevitsk@redhat.com, namhyung@kernel.org, 
+	pbonzini@redhat.com, prsampat@amd.com, rick.p.edgecombe@intel.com, 
+	shuah@kernel.org, tglx@linutronix.de, weijiang.yang@intel.com, x86@kernel.org, 
+	xin@zytor.com
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <f7f93110-bd53-4ebc-9aed-abe5de82028d@cybernetics.com>
-X-ClientProxiedBy: RTM-EXCH-02.corp.yadro.com (10.34.9.202) To
- T-EXCH-12.corp.yadro.com (10.34.9.214)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/09/12 13:48:00 #27812074
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-KATA-Status: Not Scanned
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
 
-On Mon, Sep 08, 2025 at 03:02:49PM -0400, Tony Battersby wrote:
-> 
-> (target mode)
-> 
-> If handle_tmr() fails (e.g. -ENOMEM):
-> - qlt_send_busy() makes no sense because it sends a SCSI command
->   response instead of a TMR response.
+On Fri, Sep 12, 2025, Xiaoyao Li wrote:
+> On 9/11/2025 6:42 PM, Chao Gao wrote:
+> > > > @@ -4941,6 +4947,24 @@ int x86_decode_insn(struct x86_emulate_ctxt *ctxt, void *insn, int insn_len, int
+> > > >    	if (ctxt->d == 0)
+> > > >    		return EMULATION_FAILED;
+> > > > +	if (ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET) {
+> > > > +		u64 u_cet, s_cet;
+> > > > +		bool stop_em;
+> > > > +
+> > > > +		if (ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &u_cet) ||
+> > > > +		    ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &s_cet))
+> > > > +			return EMULATION_FAILED;
+> > > > +
+> > > > +		stop_em = ((u_cet & CET_SHSTK_EN) || (s_cet & CET_SHSTK_EN)) &&
+> > > > +			  (opcode.flags & ShadowStack);
+> > > > +
+> > > > +		stop_em |= ((u_cet & CET_ENDBR_EN) || (s_cet & CET_ENDBR_EN)) &&
+> > > > +			   (opcode.flags & IndirBrnTrk);
+> > > 
+> > > Why don't check CPL here? Just for simplicity?
+> > 
+> > I think so. This is a corner case and we don't want to make it very precise
 
-There is not only -ENOMEM can be returned by handle_tmr.
+Checking CPL here would not make the code more complex, e.g. naively it could be
+something like:
 
-> - Calling mempool_free() directly can lead to memory-use-after-free.
+		u64 cet;
+		int r;
 
-No, it is a API contract between modules. If handle_tmr returned an error,
-then the caller of handle_tmr is responsible to make a cleanup.
-Otherwise, target module (tcm_qla2xxx) is responsible. The same rule is
-for handle_cmd.
+		if (ctxt->ops->cpl(ctxt) == 3)
+			r = ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &cet);
+		else
+			r = ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &cet);
+		if (r)
+			return EMULATION_FAILED;
 
-> 
-> Instead just reject the TMR and send the TMR response since that code
-> path is well-tested.  But be sure to set SCF_SCSI_TMR_CDB in case
-> core_tmr_alloc_req() returns -ENOMEM; otherwise the wrong function will
-> be called to free the mcmd.
-> 
-> Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
-> ---
->  drivers/scsi/qla2xxx/qla_target.c | 33 +++++++------------------------
->  1 file changed, 7 insertions(+), 26 deletions(-)
-> 
-> diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-> index da010de9ba8a..7c278f92ff3b 100644
-> --- a/drivers/scsi/qla2xxx/qla_target.c
-> +++ b/drivers/scsi/qla2xxx/qla_target.c
-> @@ -2005,7 +2005,6 @@ static void qlt_do_tmr_work(struct work_struct *work)
->         struct qla_hw_data *ha = mcmd->vha->hw;
->         int rc;
->         uint32_t tag;
-> -       unsigned long flags;
-> 
->         switch (mcmd->tmr_func) {
->         case QLA_TGT_ABTS:
-> @@ -2020,34 +2019,16 @@ static void qlt_do_tmr_work(struct work_struct *work)
->             mcmd->tmr_func, tag);
-> 
->         if (rc != 0) {
-> -               spin_lock_irqsave(mcmd->qpair->qp_lock_ptr, flags);
-> -               switch (mcmd->tmr_func) {
-> -               case QLA_TGT_ABTS:
-> -                       mcmd->fc_tm_rsp = FCP_TMF_REJECTED;
-> -                       qlt_build_abts_resp_iocb(mcmd);
-> -                       break;
-> -               case QLA_TGT_LUN_RESET:
-> -               case QLA_TGT_CLEAR_TS:
-> -               case QLA_TGT_ABORT_TS:
-> -               case QLA_TGT_CLEAR_ACA:
-> -               case QLA_TGT_TARGET_RESET:
-> -                       qlt_send_busy(mcmd->qpair, &mcmd->orig_iocb.atio,
-> -                           qla_sam_status);
+		if (cet & CET_SHSTK_EN && opcode.flags & ShadowStack)
+			  return EMULATION_FAILED;
 
-Sending SCSI status(other octets in FCP_RSP frame) in response to TMF is
-against the standard. So, that is the real subject to fix.
+		if (cet & CET_ENDBR_EN && opcode.flags & IndirBrnTrk)
+			  return EMULATION_FAILED;
 
-> -                       break;
-> -
-> -               case QLA_TGT_ABORT_ALL:
-> -               case QLA_TGT_NEXUS_LOSS_SESS:
-> -               case QLA_TGT_NEXUS_LOSS:
-> -                       qlt_send_notify_ack(mcmd->qpair,
-> -                           &mcmd->orig_iocb.imm_ntfy, 0, 0, 0, 0, 0, 0);
-> -                       break;
-> -               }
-> -               spin_unlock_irqrestore(mcmd->qpair->qp_lock_ptr, flags);
-> -
->                 ql_dbg(ql_dbg_tgt_mgt, mcmd->vha, 0xf052,
->                     "qla_target(%d):  tgt_ops->handle_tmr() failed: %d\n",
->                     mcmd->vha->vp_idx, rc);
-> -               mempool_free(mcmd, qla_tgt_mgmt_cmd_mempool);
-> +               /*
-> +                * SCF_SCSI_TMR_CDB might not have been set on error, but it
-> +                * must be set for the mcmd to be freed properly.
-> +                */
-> +               mcmd->se_cmd.se_cmd_flags |= SCF_SCSI_TMR_CDB;
-> +               mcmd->fc_tm_rsp = FCP_TMF_REJECTED;
-
-FCP_TMF_REJECTED means that this TMF is not supported, FCP_TMF_FAILED is
-more appretiate here.
-
-> +               qlt_xmit_tm_rsp(mcmd);
-
-qlt_xmit_tm_rsp does not free mcmd for TMF ABORT. So you introduce a memleak.
-
->         }
->  }
+> > (and thus complex). The reason is that no one had a strong opinion on whether
+> > to do the CPL check or not. I asked the same question before [*], but I don't
+> > have a strong opinion on this either.
 > 
-> --
-> 2.43.0
-> 
-> 
-> 
+> I'm OK with it.
+
+I have a strong opinion.  :-)
+
+KVM must NOT check CPL, because inter-privilege level transfers could trigger
+CET emulation and both levels.  E.g. a FAR CALL will be affected by both shadow
+stacks and IBT at the target privilege level.
+
+So this need more than just a changelog blurb, it needs a comment.  The code
+can also be cleaned up and optimized.  Reading CR4 and two MSRs (via indirect
+calls, i.e. potential retpolines) is wasteful for the vast majority of instructions,
+and gathering "stop emulation" into a local variable when a positive test is fatal
+is pointless.
+
+	/*
+	 * Reject emulation if KVM might need to emulate shadow stack updates
+	 * and/or indirect branch tracking enforcement, which the emulator
+	 * doesn't support.  Deliberately don't check CPL as inter-privilege
+	 * level transfers can trigger emulation at both privilege levels, and
+	 * the expectation is that the guest will not require emulation of any
+	 * CET-affected instructions at any privilege level.
+	 */
+	if (opcode.flags & (ShadowStack | IndirBrnTrk) &&
+	    ctxt->ops->get_cr(ctxt, 4) & X86_CR4_CET) {
+		u64 u_cet, s_cet;
+
+		if (ctxt->ops->get_msr(ctxt, MSR_IA32_U_CET, &u_cet) ||
+		    ctxt->ops->get_msr(ctxt, MSR_IA32_S_CET, &s_cet))
+			return EMULATION_FAILED;
+
+		if ((u_cet | s_cet) & CET_SHSTK_EN && opcode.flags & ShadowStack)
+			  return EMULATION_FAILED;
+
+		if ((u_cet | s_cet) & CET_ENDBR_EN && opcode.flags & IndirBrnTrk)
+			  return EMULATION_FAILED;
+	}
 
