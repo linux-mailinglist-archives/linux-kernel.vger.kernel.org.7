@@ -1,122 +1,91 @@
-Return-Path: <linux-kernel+bounces-814633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8EDCB556B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:58:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99803B556BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DC7756192D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:57:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 962A31CC2383
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C82338F54;
-	Fri, 12 Sep 2025 18:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EE12877C2;
+	Fri, 12 Sep 2025 19:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="fAeHE267"
-Received: from fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com [3.65.3.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BuJkLv4o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B163009F0;
-	Fri, 12 Sep 2025 18:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.65.3.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3799E279351;
+	Fri, 12 Sep 2025 19:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757703426; cv=none; b=cKlD9JQzCJvHfGWnR5xLMp1etxxLB+41jleK6EqoxAX8RP+nDif07DFNq0fKraqrnp5+FtBggTcFN3zra8BeeNV3fvhHBFgGqgkhfMYluLRKZmzs+kXFt04ryZeCz3hcsD9nqva77kGaqVp2/o9/mGwHEIMwHO4nnT043lfbSlU=
+	t=1757703922; cv=none; b=XMhIXxwhuKVzhI3YtRwXgPEhtIrM8fqcg4J37S5d9gVqcnalm7qSEUcjLl6qXQhTfl9DdBEI4MI33vLQ9YQTqnPou3V8vmrNh2+d/cA3/6T64JoWDY1YI1k8vcfEEzXiFlXppeq2+K5rpU07443UDPt/zwsLkyCJu0C3WSKhovw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757703426; c=relaxed/simple;
-	bh=N6IEPKkPlcIcHL4w87Dmwga9t6buCmp04U4z0XGo0rs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jBsdvRq45PfI1EXdLkqF5N4JGhtZvuQopkTjY3dufX2mJB5PRH1Y189RvhcYsA013J6jahr7MvFiWG2/8vUJwwYVJLuL+1bIA1ykE7SfBFrGQ42Mtf0cq2+Ydtx0s6WCqXCwh76HxT1Z/Acs6cjHkCi9f5q199755oAXgx9j2h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=fAeHE267; arc=none smtp.client-ip=3.65.3.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1757703425; x=1789239425;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=N6IEPKkPlcIcHL4w87Dmwga9t6buCmp04U4z0XGo0rs=;
-  b=fAeHE267vGfui+dcBaruWgWohcQ91UR3qGA4WkENWjfm9ocnpR9MDVP3
-   Dk9OF9d0dzKPhX1BoJFc4vQykf+YuLnrmsb42U40TQNu5DyqZwws1/IBb
-   9fiF5D5tqtWMtfQgw3YZmPmKjYD/g8Af5l4miFA6g3Rem2X93tIC+2Zj6
-   JLycXHrcTtg1o8R6YGUJ1u6twAh3BHghkGgoFgNqIXQyLNeBn6a1gu2q3
-   4U6YujHU6LEmVHKXZaNiaK/Lj2zoz45yO+8MKEeBdWp1uKijrRGYQippv
-   H0RdJh3fnf8215ZANMTBuL4KO2YV+bULHsrbDZFdWEQFmNEP+g8r8tpgz
-   w==;
-X-CSE-ConnectionGUID: TYSMQi+hRyORnDTNtWzSVQ==
-X-CSE-MsgGUID: 5EQNxFGHTreeDE4eahjckA==
-X-IronPort-AV: E=Sophos;i="6.18,259,1751241600"; 
-   d="scan'208";a="2039152"
-Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
-  by internal-fra-out-002.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 18:56:52 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [54.240.197.232:4208]
- by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.27.75:2525] with esmtp (Farcaster)
- id 5bbe4fcc-b042-435b-ae23-0636ea2841e9; Fri, 12 Sep 2025 18:56:52 +0000 (UTC)
-X-Farcaster-Flow-ID: 5bbe4fcc-b042-435b-ae23-0636ea2841e9
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.79) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 12 Sep 2025 18:56:51 +0000
-Received: from EX19D018EUA004.ant.amazon.com (10.252.50.85) by
- EX19D018EUA004.ant.amazon.com (10.252.50.85) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.20;
- Fri, 12 Sep 2025 18:56:50 +0000
-Received: from EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d]) by
- EX19D018EUA004.ant.amazon.com ([fe80::e53:84f8:3456:a97d%3]) with mapi id
- 15.02.2562.020; Fri, 12 Sep 2025 18:56:50 +0000
-From: "Farber, Eliav" <farbere@amazon.com>
-To: Sasha Levin <sashal@kernel.org>
-CC: "luc.vanoostenryck@gmail.com" <luc.vanoostenryck@gmail.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>, "mingo@redhat.com"
-	<mingo@redhat.com>, "natechancellor@gmail.com" <natechancellor@gmail.com>,
-	"ndesaulniers@google.com" <ndesaulniers@google.com>, "keescook@chromium.org"
-	<keescook@chromium.org>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "ojeda@kernel.org" <ojeda@kernel.org>,
-	"elver@google.com" <elver@google.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "kbusch@kernel.org" <kbusch@kernel.org>,
-	"sj@kernel.org" <sj@kernel.org>, "bvanassche@acm.org" <bvanassche@acm.org>,
-	"leon@kernel.org" <leon@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>,
-	"clang-built-linux@googlegroups.com" <clang-built-linux@googlegroups.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, "Chocron, Jonathan"
-	<jonnyc@amazon.com>
-Subject: RE: [PATCH v2 0/4 5.10.y] overflow: Allow mixed type arguments in
- overflow macros
-Thread-Topic: [PATCH v2 0/4 5.10.y] overflow: Allow mixed type arguments in
- overflow macros
-Thread-Index: AQHcJBb/hwKEbqodcEOOyWaCx0hteA==
-Date: Fri, 12 Sep 2025 18:56:50 +0000
-Message-ID: <278538a1b67d48e1912a23b91536c505@amazon.com>
-References: <20250912153040.26691-1-farbere@amazon.com>
- <aMRPueS-kkgjHec4@laps>
-In-Reply-To: <aMRPueS-kkgjHec4@laps>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1757703922; c=relaxed/simple;
+	bh=RKdauv/AdcWwEL1f3Fr7fXZqk6LC/PBKfY0hTYKghUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFVRyC3RvQxnJWGnlivyQr3+EkEHjmWlRR5HiyF4A+N9OinchvJ/+GvfxGRHyxQsqjwWphaak2+FwNzaL02TKdsvIi1iqFc5s5Eoze6mRFrqhgYFb2qvxSttoNAmWQP6G8k4msdTPqHqZN9jAbPrFTTYWO3JBgr2ja7Q7JBTkS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BuJkLv4o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92FEEC4CEF1;
+	Fri, 12 Sep 2025 19:05:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757703921;
+	bh=RKdauv/AdcWwEL1f3Fr7fXZqk6LC/PBKfY0hTYKghUY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BuJkLv4oxDB4Jq6Wxu/bhBWMFDu6NmEu9KV9VrAd29q8NVeHoluognzCyg3xBgX3F
+	 pZ4fS/I71RoAwbYzb6Hz8vAjzIDysVEhctVZ5g1IiQP4gw8KZNkjMjyk91vc2lEA3X
+	 I1NE9vx+B/KUGc6225RxMgSvBby8FnOr8H1zpX2e5zZ/gvOFUNykaqt0uWdlLs0yoJ
+	 C/VsMO73MjjuqXEGvfzi8tYcAIoV7j7iSYHuwkY4rBywD53mxRfUH+mPxvQdSHUcir
+	 2exzxmi9IOnl4eCxmBcDfHHZ9O5MjEWmYeVqrCXbHi717NBR0W+G1pwLYQh4nKTw/w
+	 /mkNqjNdZNmxw==
+Date: Fri, 12 Sep 2025 20:05:17 +0100
+From: Simon Horman <horms@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, netdev@vger.kernel.org,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] rxrpc: Fix unhandled errors in
+ rxgk_verify_packet_integrity()
+Message-ID: <20250912190517.GE224143@horms.kernel.org>
+References: <2038804.1757631496@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2038804.1757631496@warthog.procyon.org.uk>
 
-> On Fri, Sep 12, 2025 at 03:30:34PM +0000, Eliav Farber wrote:
-> >This series backports four commits to bring include/linux/overflow.h in=
-=20
-> >line with v5.15.193:
-> > - 2541be80b1a2 ("overflow: Correct check_shl_overflow() comment")
-> > - 564e84663d25 ("compiler.h: drop fallback overflow checkers")
-> > - 1d1ac8244c22 ("overflow: Allow mixed type arguments")
-> > - f96cfe3e05b0 ("tracing: Define the is_signed_type() macro once")
->
-> None of these SHA1s match with what's actually in v5.15.193. What's going=
- on here?
-Fixed in v3.
+On Thu, Sep 11, 2025 at 11:58:16PM +0100, David Howells wrote:
+>     
+> rxgk_verify_packet_integrity() may get more errors than just -EPROTO from
+> rxgk_verify_mic_skb().  Pretty much anything other than -ENOMEM constitutes
+> an unrecoverable error.  In the case of -ENOMEM, we can just drop the
+> packet and wait for a retransmission.
+> 
+> Similar happens with rxgk_decrypt_skb() and its callers.
+> 
+> Fix rxgk_decrypt_skb() or rxgk_verify_mic_skb() to return a greater variety
+> of abort codes and fix their callers to abort the connection on any error
+> apart from -ENOMEM.
+> 
+> Also preclear the variables used to hold the abort code returned from
+> rxgk_decrypt_skb() or rxgk_verify_mic_skb() to eliminate uninitialised
+> variable warnings.
+> 
+> Fixes: 9d1d2b59341f ("rxrpc: rxgk: Implement the yfs-rxgk security class (GSSAPI)")
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lists.infradead.org/pipermail/linux-afs/2025-April/009739.html
+> Closes: https://lists.infradead.org/pipermail/linux-afs/2025-April/009740.html
+> Signed-off-by: David Howells <dhowells@redhat.com>
 
----
-Thanks, Eliav
+Reviewed-by: Simon Horman <horms@kernel.org>
+
 
