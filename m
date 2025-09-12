@@ -1,307 +1,160 @@
-Return-Path: <linux-kernel+bounces-814449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07ADDB5543E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:59:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F420AB55443
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAFCD7AA168
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E3D15C6DCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4776289E36;
-	Fri, 12 Sep 2025 15:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPfpl4LI"
-Received: from mail-yx1-f47.google.com (mail-yx1-f47.google.com [74.125.224.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F2C31A544;
+	Fri, 12 Sep 2025 15:59:32 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A60188580
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC0D3093A0
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757692762; cv=none; b=ntQruGis6O29PHe4Spxax+hzlp0PFBVQbidHBwMShyOBurPZkkPIDDChe9szQ22+iALRmJd52Z+WOj6EYT2WcYHUc2TXL5yMfcXH7GWpzJgn7ipO5mwWbNSSrNPkru2VgEYlNDOsR7xls/WnMN8+4nLLJ8cN4VrXf/BPE06APKg=
+	t=1757692771; cv=none; b=JUKQNQfdZlszn5m+6ezMRFCype+Mve5X9LkBwKd9dD2j74J0GxC01FyoHqJbJ3AwMhFkJD+HEWv1FuyJaug3wvzy/mMf4ZJjPifKS5bIUz3P54RN6GR8sNSf3zUQ+vHgyaXqBzUSeUqfykPWMF0iuUzcIxrwfxtv58ruhGLJPUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757692762; c=relaxed/simple;
-	bh=TuAzyNPGnwVNiEBJHxM/Ls2i5o0BOH8PQQAsR59WEKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JvJY/IxD2oDOL7RRoBZpGHt7+En34HHcLyzzWPOCqaUNttdCgvJC3jqXe+oJa8s7U8AJENYqCXxjaRhMGtA5DAc1sOwXpIEU/0LzkmEA/vIb3NMR8ooMDLt7zdWdloNWuj7I4oXNRDFdstsDnKks+Ffh0ilBQ5ygTXO39OykP0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WPfpl4LI; arc=none smtp.client-ip=74.125.224.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1757692771; c=relaxed/simple;
+	bh=N/IbfzYztm6rjlvOxD8pgVODM7w/tTKYDjq4WFCFiKU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XgOTaE8ORlsTNlzpMMHIps+mF8zQ6UU+k3sTIruaW/rOpfoBjIRFLrJg78uwcHefTTK8IEvokX5eFQ/sADLgx4pC3/yQfyDdUuH/biavbC1xL8xQxQLoh8LN8iDrVvEkDJx44L3qeBfcaBMm8d26I6yFTzs8k/7i07Ntr4p3HGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f47.google.com with SMTP id 956f58d0204a3-6045eb3848eso1306343d50.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:59:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757692759; x=1758297559; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E0Cr1L3C1DrWZsQV8RyCWXKMvihSUdo/Iyu9CmnOxbM=;
-        b=WPfpl4LIvc1n41EnqMfz0LH705SF2x9Jbo0JhaktJYwKNSaMDQoJfylextHidPKarN
-         1toAVBWBB460JkR1wKlrmJCiWEnyZAvRaPdHXPDmfGQzKEteO7dnv09zLphTeDzsSqsw
-         rFU+VkXMHK4Pj4wgNMp1bQfglau0PF5tChHcNt7GzDNGDUcSrexPx7pVUDilIhPDfC/z
-         HhwnIUyebbTXd7DSN+MvZ2d+AYsuBEmkafaQ+C3QhPSbSgM1MGGf2xUDnF0dNSlKD6S0
-         JKOz/9ZgFxYjATLPWEtP1gwpVFm9bWz9/mynxpJgZuoq4XJI3Yo2P8YWCTj4qInVg5eL
-         VgOw==
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b04ba58a84fso290388966b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:59:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757692759; x=1758297559;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E0Cr1L3C1DrWZsQV8RyCWXKMvihSUdo/Iyu9CmnOxbM=;
-        b=hr22VIAuKxE4sc2jXtb9yRplHWT5utHw17ure75mT2aElJbn/iN4TPJtGtT+4ufxv/
-         RFW7SkFphe6ReHF3gZZy3CDif4EzN2Q4lem0Ylz7980RZdQ5b1fMQfo9PHXCNJlceUzT
-         +PrOaqFzAGpeZAl/jWM52E5fiJ7xOJP9u1VEKWITb2L+DlNaW/4/iKikzU6JSghFM7RT
-         LwudEIYwaG1VH3zT/ptYXEwZDCY712Fo3dZJN97eW+ZoKkIKCaiITqbBs8HFyAg5lDMr
-         33GjTdDtwrN6GUt7+CxlGI8B8+87PlwbMN17lliRXqjdESCyjX0Cq50YvyuewBVjpTJe
-         TiQg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpS3FXj4X+5OAwLYBClnvTBf78rAVKzJGv4p13gfV8YVpc8h1A6JSrqhucjJvN+xjrPl9okJ8fvwLl1e0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzMwJyOMg/dXKfXR4fP5pPkQsqAJ0gHzB3aeHqBMNJRMsHskK7
-	IVm/xmUP4ujolKb6CGu46CBeIfFrseFpCf1HxLN95uZ3e3sfUGRxBChsJ94OSOsqVFzDKGhT8sT
-	UbKaiF97dc28QHikOndsuihGp/Kcdl/E=
-X-Gm-Gg: ASbGnct6gX5I6wZsxRwmMfcUzFUqDbwWCuob4TejCzOqHKgRwI0nDuQ9oS48E4PtVi4
-	JByzSinXHf9F0XbUeAk/OO+km46ntboLadkglLZGL+WxvoU5Slz1o5Z0uB/wW4MBbW8GeJQ8tBD
-	OVq2Cs0QVfGnZEi9DSbEL91sjgEUPNeF8KUGequ31x1o16YGKNxEfiOtp03IyUmgpUfy/Hlq5qE
-	p/Y3nI7fT7SugxG
-X-Google-Smtp-Source: AGHT+IHN4SUZhdnPTVvomHmuEMOMHmI1+MjG0jdorWAdIM7GN744ycMdH7qzyb9hsoNMEsEO0X8VoIyWeQbkBn/YxEM=
-X-Received: by 2002:a05:690e:2247:b0:5fc:5d98:3478 with SMTP id
- 956f58d0204a3-6271d70d75emr2359769d50.7.1757692758977; Fri, 12 Sep 2025
- 08:59:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757692768; x=1758297568;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4EvLF922o6xh90k0jchOOI1hJMbi5YioNq3mzLJ5T5Y=;
+        b=l4CSFSVHm7DG8iM+RcSY95eeZAsCzm1q2d9PhVZTjDid7VyMj4Oce+rhEZFLh5rIjK
+         xPOUiIBgQBul5UzWRjw9Zqu1OVEyzlIHxq6ZvIRa9wSsCf/nAFrK/h5vuTYTamq98qgw
+         1/GsGEiwU1mY5r+RIUGxXktO1lXxZnhOQo+Nh95ENHPhLe2gVKMzRAxK1d2PJDJaMAwR
+         2UwHz6D4FWen21PZfU8xzRsHM39oOZJQyTP4N6sh/vMeNB1dklV7VRFD19A7NaG8oZXI
+         NF6HK0M2B3o8Y6gfqvtZ9wQgjDBTJs9Y2ym4vNMz6ZDwEQVCJgzNJVsRBOgA95xlvFf8
+         /Z1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWZneqVepdOUpjylTw0i/8cBmG8e69E1gEf3X2pJhdSl5FDdXHcSkgR1Qx1mWaZ1Eg/BEJthn6HjFjebfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKtkvPpCYZ4zA9+OXiRZcReoD+NOa0lDmQK61dLvsRuS50jiOa
+	N5eKeeJTFmBSiwdaZ2LSOjQ82GPhh6bhKXjRdhZu9N4WBBhGxV6mDZfa
+X-Gm-Gg: ASbGncvN+KgJQPKSLlekfm2TBEPRalaHdjdWWBTyRj7V/D3CMAn63KbNy/Te/8reUND
+	MeSZvJuN2l0NgC6q1187gQDeoRKKithjNHDEp/8s09O56ToE7vKHuljCH3VJk+Tw9VTz4gy7GNQ
+	ykfcNPKw3QFa/zS4aCo6fU/4GteTAW1yOFdHUHnZ8jJt2tD1Q8Z/iFBgjQYIhx5UyD9/7jiDaFj
+	IjHC5+oK6E4ChfBbBL31Z7Jdc/yierNF3PehrKog681C8/fGGVS7csEFbKpMbUkNNFtIuU3ZbvL
+	6GthAEfCD8H1W9/oGxXxTdQGImC6N6z2+0JrA/rPPXoFqpYRDhD5rNzGUvxljHAxsPAfhW/1fr6
+	puT5Sa72ZcKQqL/ddVIxVg6E=
+X-Google-Smtp-Source: AGHT+IF7nXKfppCZg0T1oDeoByPuGMm7/AxQ/s4l0lUlv1p/sNnpirQWVObNtStv6YhQ7tnpMLjRBA==
+X-Received: by 2002:a17:907:6e93:b0:b04:6045:f7ed with SMTP id a640c23a62f3a-b07c353f09cmr340005766b.10.1757692767750;
+        Fri, 12 Sep 2025 08:59:27 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:5::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da268sm391595466b.10.2025.09.12.08.59.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 08:59:27 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Subject: [PATCH net-next v2 0/7] net: ethtool: add dedicated GRXRINGS
+ driver callbacks
+Date: Fri, 12 Sep 2025 08:59:09 -0700
+Message-Id: <20250912-gxrings-v2-0-3c7a60bbeebf@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFRLqsUfDuoMMCUmBuSkiV_b=VNn7CuYqJSc19bhyQ6Kims36w@mail.gmail.com>
- <CABBYNZ+PJuvWYk_XVw=esNj1hVMPESjTc70VLQH=LrKdSqD7ag@mail.gmail.com>
-In-Reply-To: <CABBYNZ+PJuvWYk_XVw=esNj1hVMPESjTc70VLQH=LrKdSqD7ag@mail.gmail.com>
-From: cen zhang <zzzccc427@gmail.com>
-Date: Fri, 12 Sep 2025 23:59:06 +0800
-X-Gm-Features: Ac12FXxqawp43xXlxJUlugCa9sdxcFslfoZfhAPJQvvKeWVdmKhLV7tTq6KxUJQ
-Message-ID: <CAFRLqsUE84wW0JKbsh6Lw0USQbnCbokXd3PANc+4i_nsnEUMYA@mail.gmail.com>
-Subject: Re: [BUG]: slab-use-after-free Read in mgmt_set_powered_complete
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: johan.hedberg@gmail.com, marcel@holtmann.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, zhenghaoran154@gmail.com, r33s3n6@gmail.com, 
-	linux-bluetooth@vger.kernel.org, "gality369@gmail.com" <gality369@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE5DxGgC/42NQQ6CMBAAv9LsmZqyFgRO/sN4qGVb9lJMSxoM4
+ e8G4gHjxfNkZhZIFJkSdGKBSJkTjwE6gYUAO5jgSXIPnQBUWKlWVdLPkYNP0iBZRCI0ZKEQ8Iz
+ keN5LNwg0yUDzBPdCwMBpGuNrX+Ry5z+1XEol20Y7qy+lw8Zde3qwCacx+q3+EdpvoT5rbNCp2
+ lT6KGzXjMfTv+K6rm942q9+EwEAAA==
+X-Change-ID: 20250905-gxrings-a2ec22ee2aec
+To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+ kuba@kernel.org, Simon Horman <horms@kernel.org>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+ Andrew Lunn <andrew+netdev@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ virtualization@lists.linux.dev, Breno Leitao <leitao@debian.org>, 
+ Lei Yang <leiyang@redhat.com>, kernel-team@meta.com
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2331; i=leitao@debian.org;
+ h=from:subject:message-id; bh=N/IbfzYztm6rjlvOxD8pgVODM7w/tTKYDjq4WFCFiKU=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBoxENdao+OCMI/V6R3A03GZZi2wJ2qZih+VI3HD
+ OQAz4Oj/teJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaMRDXQAKCRA1o5Of/Hh3
+ be4aD/4677eIqWjN+GaivFYOB2waQlJAdd5PtEqvoyZKzCciN2ZLwUv+CL3k+BAHdaTzo9ZMCLT
+ VQOiK9vGWvS9zMoS0c+FbVzUle4Cc3QDLo3KnnY4CwTZ1cN3Moo+ZwI1RvXLvFzLPu8P4ROjCG8
+ CE/JHoN90fusHc3X6hSHgzA4GyQvSQOGwU7EW6LYbdeKn/kA98CbgXEK0fJZ+jJ0dGJf9bpmO4O
+ rS/Ko4VuvV9NqhHSIo2bVLc1c/JmGffxuPnPL3HOLOG8Wf4uu94ORR2l16wZjY0/j3coblw6fqD
+ ISCD4jZo1OQcrGxhFCia/5sD5Sx1k/L6OWczduJWiIOMYwz3ttBD/bZKUX5WKod22ML7XBMqRJ9
+ F5LSpqLdQ3Uet+TcpM2FycBnx9+0rAducmnxTMygeTdkc5teBTkXAXDH6Z1SL2Kp9Q45wPYaqad
+ Vb5pWwznlWWIotZRFnIRtC1i2W+pdASKa3OLHBuT4yjCRggJ+AdSYFtFkwtwFipukrEYpoQeFzg
+ xZ+lzTU68F+iGvT1zmq1zlCerOpG5W3JIM6Y7P89z2N8+0xaWVf4mugimFjg7YIghhSwAhNTglE
+ rqpue1RtBDxjV6Js1Z84KmjPwafCdWs94F+rd9lNz0s09ZmCGeY9erBMGPOGfR5L3hRi5edoraQ
+ nkmjP+G5wvxICMw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-Hi Luiz,
+This patchset introduces a new dedicated ethtool_ops callback,
+.get_rx_ring_count, which enables drivers to provide the number of RX
+rings directly, improving efficiency and clarity in RX ring queries and
+RSS configuration.
 
-Thank you for your quick response and the important clarification
-about hci_cmd_sync_dequeue().
+Number of drivers implements .get_rxnfc callback just to report the ring
+count, so, having a proper callback makes sense and simplify .get_rxnfc
+(in some cases remove it completely).
 
-You are absolutely correct - I was indeed referring to the TOCTOU
-problem in pending_find(), not the -ECANCELED check. The
-hci_cmd_sync_dequeue() call in cmd_complete_rsp() is a crucial detail
-that I initially overlooked in my analysis.
+This has been suggested by Jakub, and follow the same idea as RXFH
+driver callbacks [1].
 
-After examining the code more carefully, I can see that while
-hci_cmd_sync_dequeue() does attempt to remove pending sync commands
-from the queue, but it cannot prevent the race condition we're seeing.
-The fundamental issue is that hci_cmd_sync_dequeue() can only remove
-work items that are still queued, but cannot stop work items that are
-already executing or about to execute their completion callbacks.
+This also port virtio_net to this new callback. Once there is consensus
+on this approach, I can start moving the drivers to this new callback.
 
-The race window occurs when:
-1. mgmt_set_powered_complete() is about to execute (work item has been dequ=
-eued)
-2. mgmt_index_removed() -> mgmt_pending_foreach() -> cmd_complete_rsp() exe=
-cutes
-3. hci_cmd_sync_dequeue() removes queued items but cannot affect the
-already-running callback
-4. mgmt_pending_free() frees the cmd object
-5. mgmt_set_powered_complete() still executes and accesses freed cmd->param
+Link: https://lore.kernel.org/all/20250611145949.2674086-1-kuba@kernel.org/ [1]
 
-I am sorry that I haven't get a reliable reproducer from syzkaller for
-this bug may be due to it is timing-sensitive.
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Tested-by: Lei Yang <leiyang@redhat.com>
+---
+Changes in v2:
+- rename get_num_rxrings() to ethtool_get_rx_ring_count() (Jakub)
+- initialize struct ethtool_rxnfc() (Jakub)
+- Link to v1: https://lore.kernel.org/r/20250909-gxrings-v1-0-634282f06a54@debian.org
+---
+Changes v1 from RFC:
+- Renaming and changing the return type of .get_rxrings() callback (Jakub)
+- Add the docstring format for the new callback (Simon)
+- Remove the unecessary WARN_ONCE() (Jakub)
+- Link to RFC: https://lore.kernel.org/r/20250905-gxrings-v1-0-984fc471f28f@debian.org
 
+---
+Breno Leitao (7):
+      net: ethtool: pass the num of RX rings directly to ethtool_copy_validate_indir
+      net: ethtool: add support for ETHTOOL_GRXRINGS ioctl
+      net: ethtool: remove the duplicated handling from ethtool_get_rxrings
+      net: ethtool: add get_rx_ring_count callback to optimize RX ring queries
+      net: ethtool: update set_rxfh to use ethtool_get_rx_ring_count helper
+      net: ethtool: update set_rxfh_indir to use ethtool_get_rx_ring_count helper
+      net: virtio_net: add get_rxrings ethtool callback for RX ring queries
+
+ drivers/net/virtio_net.c | 15 ++-------
+ include/linux/ethtool.h  |  2 ++
+ net/ethtool/ioctl.c      | 81 +++++++++++++++++++++++++++++++++++++-----------
+ 3 files changed, 68 insertions(+), 30 deletions(-)
+---
+base-commit: 1f24a240974589ce42f70502ccb3ff3f5189d69a
+change-id: 20250905-gxrings-a2ec22ee2aec
 
 Best regards,
-Cen Zhang
+--  
+Breno Leitao <leitao@debian.org>
 
-Luiz Augusto von Dentz <luiz.dentz@gmail.com> =E4=BA=8E2025=E5=B9=B49=E6=9C=
-=8812=E6=97=A5=E5=91=A8=E4=BA=94 22:27=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi Cen,
->
-> On Fri, Sep 12, 2025 at 8:34=E2=80=AFAM cen zhang <zzzccc427@gmail.com> w=
-rote:
-> >
-> > Hello maintainers,
-> >
-> > I would like to report  a use-after-free (UAF) vulnerability
-> > found in the Bluetooth management subsystem using our
-> > customized syzkaller on 6.17.0-rc5.
-> > The bug occurs due to a race condition between HCI command completion
-> > callbacks and HCI socket bind operations that trigger device cleanup.
-> >
-> > After my superficial analysis, the situation when race occurs may be as=
- follows:
-> >
-> > PATH 1 - SET_POWERED Command Execution:
-> > 1. User space application sends MGMT_OP_SET_POWERED command via HCI
-> > management socket
-> > 2. set_powered() function creates mgmt_pending_cmd object via mgmt_pend=
-ing_add()
-> > 3. Command is submitted to HCI work queue via
-> > hci_cmd_sync_submit()/hci_cmd_sync_queue()
-> > 4. Work queue executes set_powered_sync() followed by
-> > mgmt_set_powered_complete() callback
-> > 5. mgmt_set_powered_complete() attempts to access cmd->param (line 1342=
-)
-> >
-> > PATH 2 - HCI Socket Bind Cleanup:
-> > 1. Another process attempts to bind HCI socket with HCI_CHANNEL_USER mo=
-de
-> > 2. hci_sock_bind() calls mgmt_index_removed() to clean up management st=
-ate
-> > 3. mgmt_index_removed() calls mgmt_pending_foreach(0, hdev, true, ...)
-> > 4. All pending commands are removed and freed, including the
-> > SET_POWERED command object
->
-> It doesn't only do that it also does:
->
->     /* dequeue cmd_sync entries using cmd as data as that is about to be
->      * removed/freed.
->      */
->     hci_cmd_sync_dequeue(match->hdev, NULL, cmd, NULL);
->
-> > 5. The mgmt_pending_cmd object and its cmd->param are freed via
-> > mgmt_pending_free()
-> >
-> > RACE CONDITION:
-> > The issue occurs when PATH 2 executes between the time PATH 1 submits
-> > the command
-> > to the work queue and when the completion callback accesses
-> > cmd->param. The current
-> > protection mechanism in mgmt_set_powered_complete() has a TOCTOU
-> > (Time-of-Check-to-Time-of-Use) flaw:
-> >
-> >     if (err =3D=3D -ECANCELED || cmd !=3D pending_find(MGMT_OP_SET_POWE=
-RED, hdev))
-> >         return;
->
-> i guess you are talking about pending_find not -ECANCELED having
-> TOCTOU problem, do you have a reproducer that I can test with?
->
-> >
-> >     cp =3D cmd->param;  // <-- USE-AFTER-FREE occurs here
-> >
-> > The check allowing the cmd object to be freed between
-> > the validation and the actual memory access.
-> >
-> > The detail KASAN report as follow:
-> >
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > BUG: KASAN: slab-use-after-free in
-> > mgmt_set_powered_complete+0x83d/0xf10 net/bluetooth/mgmt.c:1342
-> > Read of size 8 at addr ffff88810edd90b0 by task kworker/u17:3/811
-> >
-> > CPU: 0 UID: 0 PID: 811 Comm: kworker/u17:3 Not tainted
-> > 6.17.0-rc5-ge5bbb70171d1 #7 PREEMPT(voluntary)
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
-/01/2014
-> > Workqueue: hci0 hci_cmd_sync_work
-> > Call Trace:
-> >  <TASK>
-> >  __dump_stack lib/dump_stack.c:94 [inline]
-> >  dump_stack_lvl+0xca/0x130 lib/dump_stack.c:120
-> >  print_address_description mm/kasan/report.c:378 [inline]
-> >  print_report+0x171/0x7f0 mm/kasan/report.c:482
-> >  kasan_report+0x139/0x170 mm/kasan/report.c:595
-> >  mgmt_set_powered_complete+0x83d/0xf10 net/bluetooth/mgmt.c:1342
-> >  hci_cmd_sync_work+0x8df/0xaf0 net/bluetooth/hci_sync.c:334
-> >  process_one_work kernel/workqueue.c:3236 [inline]
-> >  process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
-> >  worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
-> >  kthread+0x3d4/0x800 kernel/kthread.c:463
-> >  ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >  </TASK>
-> >
-> > Allocated by task 197:
-> >  kasan_save_stack mm/kasan/common.c:47 [inline]
-> >  kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
-> >  poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
-> >  __kasan_kmalloc+0x72/0x90 mm/kasan/common.c:405
-> >  kmalloc_noprof include/linux/slab.h:905 [inline]
-> >  kzalloc_noprof include/linux/slab.h:1039 [inline]
-> >  mgmt_pending_new+0xcd/0x580 net/bluetooth/mgmt_util.c:269
-> >  mgmt_pending_add+0x54/0x410 net/bluetooth/mgmt_util.c:296
-> >  set_powered+0x8c6/0xea0 net/bluetooth/mgmt.c:1407
-> >  hci_mgmt_cmd+0x1ee4/0x33f0 net/bluetooth/hci_sock.c:1719
-> >  hci_sock_sendmsg+0xcb0/0x2510 net/bluetooth/hci_sock.c:1839
-> >  sock_sendmsg_nosec net/socket.c:714 [inline]
-> >  __sock_sendmsg+0x21c/0x270 net/socket.c:729
-> >  sock_write_iter+0x1b7/0x250 net/socket.c:1179
-> >  do_iter_readv_writev+0x598/0x760
-> >  vfs_writev+0x3c8/0xd20 fs/read_write.c:1057
-> >  do_writev+0x105/0x270 fs/read_write.c:1103
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > Freed by task 100890:
-> >  kasan_save_stack mm/kasan/common.c:47 [inline]
-> >  kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
-> >  kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
-> >  poison_slab_object mm/kasan/common.c:243 [inline]
-> >  __kasan_slab_free+0x41/0x50 mm/kasan/common.c:275
-> >  kasan_slab_free include/linux/kasan.h:233 [inline]
-> >  slab_free_hook mm/slub.c:2428 [inline]
-> >  slab_free mm/slub.c:4701 [inline]
-> >  kfree+0x189/0x390 mm/slub.c:4900
-> >  mgmt_pending_free net/bluetooth/mgmt_util.c:311 [inline]
-> >  mgmt_pending_foreach+0x6c4/0x8a0 net/bluetooth/mgmt_util.c:257
-> >  mgmt_index_removed+0x164/0x530 net/bluetooth/mgmt.c:9370
-> >  hci_sock_bind+0x151a/0x1f30 net/bluetooth/hci_sock.c:1314
-> >  __sys_bind_socket net/socket.c:1858 [inline]
-> >  __sys_bind+0x229/0x2f0 net/socket.c:1889
-> >  __do_sys_bind net/socket.c:1894 [inline]
-> >  __se_sys_bind net/socket.c:1892 [inline]
-> >  __x64_sys_bind+0x7a/0x90 net/socket.c:1892
-> >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> >  do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
-> >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> >
-> > The buggy address belongs to the object at ffff88810edd9080
-> >  which belongs to the cache kmalloc-96 of size 96
-> > The buggy address is located 48 bytes inside of
-> >  freed 96-byte region [ffff88810edd9080, ffff88810edd90e0)
-> >
-> > The buggy address belongs to the physical page:
-> > page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10=
-edd9
-> > anon flags: 0x200000000000000(node=3D0|zone=3D2)
-> > page_type: f5(slab)
-> > raw: 0200000000000000 ffff888100042280 ffffea00041e07c0 dead00000000000=
-3
-> > raw: 0000000000000000 0000000000200020 00000000f5000000 000000000000000=
-0
-> > page dumped because: kasan: bad access detected
-> >
-> > Memory state around the buggy address:
-> >  ffff88810edd8f80: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
-> >  ffff88810edd9000: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> > >ffff88810edd9080: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> >                                      ^
-> >  ffff88810edd9100: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> >  ffff88810edd9180: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Best regards,
-> > Cen Zhang
->
->
->
-> --
-> Luiz Augusto von Dentz
 
