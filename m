@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-814393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6158AB5538C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:29:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00046B55382
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A41B5A8667
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:29:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3049B6479A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2943D222597;
-	Fri, 12 Sep 2025 15:28:21 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7062D3735;
+	Fri, 12 Sep 2025 15:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cshk9sz/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE0022DF9E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879D781ACA;
+	Fri, 12 Sep 2025 15:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757690900; cv=none; b=E7z7YkNbNawvsJNUFTU0K1sBKZFoYJ9WLSBsGHzIkKQ7vsrMw/N88LnetJNTogh2vMsEJiJHFl+9BS/oVkEnewA9at+12WzZtO+6dmT7v255zjIwG1pHtWFXuhdYkPftFhySxEQbQ/EDcVskpaWXVkfjmOhVEporI2oSYe90a/g=
+	t=1757690924; cv=none; b=i+qCY5uMIYeTfiUYoBBCS7bxTPdUJpIWrdIbyGorQjNPfPvbVVNl/sXjBXoBnHG19t77h1L8LiwcqnjVen2Q6mrUKAhSsZjqdMH6VSkFdHhpWLAP4wyGsXYaAfiO4Alj9YgjJtjgFpHaQmxh/jmxDmcCUAfJaGVZuqwjh69uSCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757690900; c=relaxed/simple;
-	bh=1J+ny7LKPXsnDwoQUpd/se26HOP6NxiKEsHAFbX8lzY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqL5RNFxTlikElpNNRGB99C5iOem8FoMihT33b7SVMYS7G+Ykll2ylgSYLIa5vupOQB4d/7PBMzzQtk482XlsXaUzaBGBN832r5Yfv7Cjuq0eH086aNfQ9gizS1Bz2E1gTCKr2GHrM2vV5sn+UmJcNglCEJYRKKCeg/jjMCzHBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux5h3-0005sz-Dg; Fri, 12 Sep 2025 17:28:09 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux5h3-000xIq-0a;
-	Fri, 12 Sep 2025 17:28:09 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux5h3-0032oV-0E;
-	Fri, 12 Sep 2025 17:28:09 +0200
-Date: Fri, 12 Sep 2025 17:28:09 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] dmaengine: imx-sdma: make use of
- devm_add_action_or_reset to unregiser the dma-controller
-Message-ID: <20250912152809.nj3yk5wmrb7ojjoo@pengutronix.de>
-References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
- <20250911-v6-16-topic-sdma-v2-9-d315f56343b5@pengutronix.de>
- <aMQzNDE8QuUZwGkt@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1757690924; c=relaxed/simple;
+	bh=zkrlxh87Pfqa6odbArry9+vOqn1frQ7KIL3iHO0zQro=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RDtTLBZPwaxivmzFFCeOcdNhLli6G9Civh9wQnMH8O7IMLj95ooebCM8bLm7e/pJswLKSycgkNzfw2PxoJkY3XcBEyIkaBce9e2hVr8dahGtcF9vEc5EsL08PA4nC9NyEQH0kCS/bRwMKSpWalqpxJc1sHXhgmj3CRqlQkln3ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cshk9sz/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFBCAC4CEF1;
+	Fri, 12 Sep 2025 15:28:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757690924;
+	bh=zkrlxh87Pfqa6odbArry9+vOqn1frQ7KIL3iHO0zQro=;
+	h=Date:From:To:Cc:Subject:From;
+	b=cshk9sz/SWdyq3FMcX/MWeO7YUhptJ/dlgMkYzth4svS5p+BizTs+5OLHlecbNRI4
+	 awoRkyHhS/YvZ9q8ZITod4PolnLKJSczKEjb+ekWSsZ8WBTraJKUwXYrd6YXh2IPdz
+	 Zvg80ghAfrn5MqhkqwPwFzPqBat9wRGJJdB4GKYYsdTxaumlK0eGYsMkG/vZBeNpUq
+	 vJ3wyPkK+X/dWexkodPl8eOxMrDx9wETLXbOgzzdEHf5x3xUZV3nhTgyzrk6VQ95qJ
+	 GelGJnGUcQx4tx2q/iV2riSBu48d7JWU9SmangsUC4Otm3J8vxnVwWQ1fIoBTjekS7
+	 uLwkN869zb3RA==
+Date: Fri, 12 Sep 2025 10:28:42 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Klaus Kudielka <klaus.kudielka@gmail.com>,
+	Jan Palus <jpalus@fastmail.com>, Tony Dinh <mibodhi@gmail.com>,
+	Rob Herring <robh@kernel.org>
+Subject: [GIT PULL] PCI fixes for v6.17
+Message-ID: <20250912152842.GA1625331@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,73 +60,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aMQzNDE8QuUZwGkt@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 25-09-12, Frank Li wrote:
-> On Thu, Sep 11, 2025 at 11:56:50PM +0200, Marco Felsch wrote:
-> > Use the devres capabilities to cleanup the driver remove() callback.
-> >
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >  drivers/dma/imx-sdma.c | 14 +++++++++++++-
-> >  1 file changed, 13 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> > index d6d0d4300f540268a3ab4a6b14af685f7b93275a..a7e6554ca223e2e980caf2e2dea832db9ad60ed6 100644
-> > --- a/drivers/dma/imx-sdma.c
-> > +++ b/drivers/dma/imx-sdma.c
-> > @@ -2264,6 +2264,13 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
-> >  				     ofdma->of_node);
-> >  }
-> >
-> > +static void sdma_dma_of_dma_controller_unregister_action(void *data)
-> > +{
-> > +	struct sdma_engine *sdma = data;
-> > +
-> > +	of_dma_controller_free(sdma->dev->of_node);
-> > +}
-> > +
-> >  static void sdma_dma_device_unregister_action(void *data)
-> >  {
-> >  	struct sdma_engine *sdma = data;
-> > @@ -2408,6 +2415,12 @@ static int sdma_probe(struct platform_device *pdev)
-> >  		return ret;
-> >  	}
-> >
-> > +	ret = devm_add_action_or_reset(dev, sdma_dma_of_dma_controller_unregister_action, sdma);
-> > +	if (ret) {
-> > +		dev_err(dev, "failed to register of-dma-controller unregister hook\n");
-> > +		return ret;
-> > +	}
-> > +
-> 
-> return dev_err_probe()
+The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-Please check my last patch.
+  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
 
-Regards,
-  Marco
+are available in the Git repository at:
 
-> 
-> Frank
-> >  	/*
-> >  	 * Because that device tree does not encode ROM script address,
-> >  	 * the RAM script in firmware is mandatory for device tree
-> > @@ -2431,7 +2444,6 @@ static void sdma_remove(struct platform_device *pdev)
-> >  	struct sdma_engine *sdma = platform_get_drvdata(pdev);
-> >  	int i;
-> >
-> > -	of_dma_controller_free(sdma->dev->of_node);
-> >  	/* Kill the tasklet */
-> >  	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
-> >  		struct sdma_channel *sdmac = &sdma->channel[i];
-> >
-> > --
-> > 2.47.3
-> >
-> 
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.17-fixes-3
+
+for you to fetch changes up to b816265396daf1beb915e0ffbfd7f3906c2bf4a4:
+
+  PCI: mvebu: Fix use of for_each_of_range() iterator (2025-09-08 14:40:27 -0500)
+
+----------------------------------------------------------------
+
+- Fix mvebu PCI enumeration regression caused by converting to
+  for_each_of_range() iterator (Klaus Kudielka)
+
+----------------------------------------------------------------
+Klaus Kudielka (1):
+      PCI: mvebu: Fix use of for_each_of_range() iterator
+
+ drivers/pci/controller/pci-mvebu.c | 21 ++++-----------------
+ 1 file changed, 4 insertions(+), 17 deletions(-)
 
