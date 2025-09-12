@@ -1,98 +1,116 @@
-Return-Path: <linux-kernel+bounces-814342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 977BBB552A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:04:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839A5B552AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57A273A7457
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:04:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4673D1779CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A801B1F8724;
-	Fri, 12 Sep 2025 15:04:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C33F22172E;
+	Fri, 12 Sep 2025 15:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="jcbKXfSE"
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ggZNCJzA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57610306489;
-	Fri, 12 Sep 2025 15:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B5928373;
+	Fri, 12 Sep 2025 15:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689473; cv=none; b=d1xW6L2VEYtnVjjf+k4BKMT8ECrLV1gRkH+1WslpOpib0+5rqrgfhwaKOIiESjI17IR5MsPPkYFY3gRGK+3Pb/1AbcJJaIwj/HkTTfwRY6UZrnIaz9EV6/X4/RpK0xswnujB83sp/a88KA9Le3VR/TsPBPVVL8uXFdZl7Nlf/d8=
+	t=1757689556; cv=none; b=eN6YxvLK3uJ7G6EZYhn6rwqk7nR3DpL5ML9UbmFTmLbQxFej72EtODs5kpZhcHbydwz7XAwuo+WvcPYa0qM/c3gZ6bWo/4WZ66fE/Ru4yjx2ygbppGriD484feDruwbyxUqnKIMNi87yj6WllURpQbKtYaPyRlN4axlnBQNdUoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689473; c=relaxed/simple;
-	bh=XGL64NNi6TaH/AkBDUnkiTBSXhwNdkQxWPbDvlaZBk0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jhZMOGSmojcqVYBlSTHCDKN87ZfQLVe9D/NnSJHlk3BKZtvHs7Glw7Z2YmRRxUXgupRXov6Iue9jBtHOlU4CNi1T20Cqigb+aiLV4fbIjQ/jSqxEVpU2WJSzTY8XdQoIEO1vViVIQjukA24FWV1StUOZkEPUi3oha2hzuHtgYTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=jcbKXfSE; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 22a119306;
-	Fri, 12 Sep 2025 23:04:21 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: brett.creeley@amd.com
-Cc: jgg@ziepe.ca,
-	yishaih@nvidia.com,
-	shameerali.kolothum.thodi@huawei.com,
-	kevin.tian@intel.com,
-	alex.williamson@redhat.com,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jianhao.xu@seu.edu.cn,
-	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH] vfio/pds: replace bitmap_free with vfree
-Date: Fri, 12 Sep 2025 15:04:18 +0000
-Message-Id: <20250912150418.129306-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757689556; c=relaxed/simple;
+	bh=FEMpsaKNILw1LWW9PgrPUEjyVRdy+lNTf4a93hFSDCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GivpWuhkcRKL7lhFFO2FQUgokPHAPN2Fn6Jjccn9OEG9v85+AEebWBmYqR1kExf0Gx+Z6Yy80OM94LxtnNzmGUSysoxPRnU2uoKBTcnGqG0ncXR+S+wNb2qZPSQVcB+2vMFB8VHoNa3ovTysvuMfpwMBt/OEfJgYSISD+/+i91s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ggZNCJzA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9DEEC4CEF1;
+	Fri, 12 Sep 2025 15:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757689555;
+	bh=FEMpsaKNILw1LWW9PgrPUEjyVRdy+lNTf4a93hFSDCU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ggZNCJzAWraLvntXfeMfeiDI2AQwKSi/CMv4LAcRqcyZdoffP96etlBbO+MYrQfqM
+	 uANsl9/UKx2G30zOXwChThSt5p/S5fE5/oq4rHaHh6O6XDgvzZ1s6zgtnX8udGrU6o
+	 QQJ03wlo81mVR9YjY0q+rDdFvYc5SUl92asEqV1guQxQzsdX7SXYuMzcLEi+wx1hwn
+	 0Bi+kRaO6+gJHsJnaQ9lG4Mnpk9jw//Us3nnQ/hHirYmPCPt5vLmgVmcZHitFv80lk
+	 ZbvCFzo64rAGwDMkcYRULl4daHKpDZPLzcSL1BAQhhIsZIXOExU3J6h2U5Fd5iRx/f
+	 fzRQSzX6+MT9g==
+Date: Fri, 12 Sep 2025 08:05:55 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Dave Kleikamp <shaggy@kernel.org>,
+	jfs-discussion@lists.sourceforge.net
+Subject: Re: [PATCH (REPOST)] jfs: Verify inode mode when loading from disk
+Message-ID: <20250912150555.GI1587915@frogsfrogsfrogs>
+References: <1cd51309-096d-497f-8c5e-b0c9cca102fc@I-love.SAKURA.ne.jp>
+ <dce0adb2-a592-44d8-b208-d939415b8d54@I-love.SAKURA.ne.jp>
+ <a471c731-e6ae-408d-b8b8-94f3045b2966@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a993e74b98303a1kunm5608525b2a1f75
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaHh5PVk4eGEwdT0pCTUhOS1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
-DKIM-Signature: a=rsa-sha256;
-	b=jcbKXfSEuUg7t9cXzTaOcQsVCKh6+Xjvlt77+XXn3dmREjSSVNBZ9NW0druG64vw9MyjzvbV9A9p8S9Bc+TC6UTrB30yhAnZtqddzkixZCqPqnRa3Gw6ob1c65eC4BVWqZ1o3cBkPkwXjyK/WwbokxwapzJP2WwomF6iA3o4eGI=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=07KwbvMf5FzS48nluqd6fO5k3J0q2pzbe1zWajGuFmQ=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a471c731-e6ae-408d-b8b8-94f3045b2966@I-love.SAKURA.ne.jp>
 
-host_ack_bmp is allocated with vzalloc but is currently freed via
-bitmap_free (which ends up using kfree).  This is incorrect as
-allocation and deallocation functions should be paired.
+On Fri, Sep 12, 2025 at 11:18:44PM +0900, Tetsuo Handa wrote:
+> The inode mode loaded from corrupted disk can be invalid. Do like what
+> commit 0a9e74051313 ("isofs: Verify inode mode when loading from disk")
+> does.
+> 
+> Reported-by: syzbot <syzbot+895c23f6917da440ed0d@syzkaller.appspotmail.com>
+> Closes: https://syzkaller.appspot.com/bug?extid=895c23f6917da440ed0d
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> ---
+> This fix is similar to fixes for other filesystems, but got no response.
+> Do we have to wait for Ack from Dave Kleikamp for another month?
 
-Using mismatched alloc/free may lead to undefined behavior, memory leaks,
-or system instability.
+Let's hope not, this is a validation issue...
 
-This patch fixes the mismatch by freeing host_ack_bmp with vfree to
-match the vzalloc allocation.
+>  fs/jfs/inode.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
+> index fcedeb514e14..21f3d029da7d 100644
+> --- a/fs/jfs/inode.c
+> +++ b/fs/jfs/inode.c
+> @@ -59,9 +59,15 @@ struct inode *jfs_iget(struct super_block *sb, unsigned long ino)
+>  			 */
+>  			inode->i_link[inode->i_size] = '\0';
+>  		}
+> -	} else {
+> +	} else if (S_ISCHR(inode->i_mode) || S_ISBLK(inode->i_mode) ||
+> +		   S_ISFIFO(inode->i_mode) || S_ISSOCK(inode->i_mode)) {
+>  		inode->i_op = &jfs_file_inode_operations;
+>  		init_special_inode(inode, inode->i_mode, inode->i_rdev);
+> +	} else {
+> +		printk(KERN_DEBUG "JFS: Invalid file type 0%04o for inode %lu.\n",
+> +		       inode->i_mode, inode->i_ino);
+> +		iget_failed(inode);
+> +		return ERR_PTR(-EIO);
 
-Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
----
- drivers/vfio/pci/pds/dirty.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+...but how about EFSCORRUPTED instead of EIO here?  Several filesystems
+(xfs, ext*, erofs, f2fs, fuse, ocfs2, udf) return that for corrupt
+metadata.
 
-diff --git a/drivers/vfio/pci/pds/dirty.c b/drivers/vfio/pci/pds/dirty.c
-index c51f5e4c3dd6..481992142f79 100644
---- a/drivers/vfio/pci/pds/dirty.c
-+++ b/drivers/vfio/pci/pds/dirty.c
-@@ -82,7 +82,7 @@ static int pds_vfio_dirty_alloc_bitmaps(struct pds_vfio_region *region,
- 
- 	host_ack_bmp = vzalloc(bytes);
- 	if (!host_ack_bmp) {
--		bitmap_free(host_seq_bmp);
-+		vfree(host_seq_bmp);
- 		return -ENOMEM;
- 	}
- 
--- 
-2.34.1
+--D
 
+>  	}
+>  	unlock_new_inode(inode);
+>  	return inode;
+> -- 
+> 2.51.0
+> 
+> 
 
