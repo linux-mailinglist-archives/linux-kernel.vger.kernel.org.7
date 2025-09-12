@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-814082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D630B54EFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DACB54F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:14:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55082177145
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:14:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F7D97C7CE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E58730DEC8;
-	Fri, 12 Sep 2025 13:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961FA30FF3F;
+	Fri, 12 Sep 2025 13:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDITvuyV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EKmaSm4T"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD9630E84F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C6030F529
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757682797; cv=none; b=YcXwx/W4lZXLPGzqwMG1MaXFF0tsclI4Z/5U3DJVK6mmD4JT5OkSD7jJTWinYHR9UVYQJlFT3mVhU7hADkO1O4s9a7RGDX6d16NA9cE2s1hvsjWb4InPmEw5rzj5p4Cw2KPqZ44HrOraggDoDEF8esx5SbBKPxX6aMlKPCffcBI=
+	t=1757682798; cv=none; b=aJVVL06j4gJhUnR7pZva0Lzgkr/txVK0xWCORfjpC8B/ZC9qxBduP6dRYAu0il2SCRnsEifPTO4/qVldPknQr+iV7jdClu0Rm9mJbzR/5BJYmIsESXgV4oczqZX7+FeH0CQk9mbUleZWlkxpGQo2B6xA6wLeWcnO1bgt/GJtMQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757682797; c=relaxed/simple;
-	bh=Vem+mD7YnvII4WUoWkOsIWojVllp/ghNcYZB9qlvTLQ=;
+	s=arc-20240116; t=1757682798; c=relaxed/simple;
+	bh=RWcZD9xAE7KcutgA/HLhkTOkAiPLVusWcV5umMhzW+c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TdtiQPx1lZSdR1I+QJm3WJJBACo+/wKH9Q8kFiuBACOhVdUwN/4m+GozgLxWLYvcahO4AVdGquWsj9l/2v9UtZ0kFOtI2i6dA83XGP1IW0ruLuTbxMGRnXeAjD1PDVcwARaoXTEZEk2tLLnCQb2g0JbmjEXat5a9+yX+/ZtfKww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDITvuyV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C976BC4CEF9;
-	Fri, 12 Sep 2025 13:13:15 +0000 (UTC)
+	 MIME-Version; b=YkGOt/NEuo9wjS3JbeGMJLNN6cYXZozUJHYJ7YVQ3dvOYJ9gT/RjjCmnUi1MMPgtbXYZ8qxkt7TT9YGUeYNwUwFsxHuKceFnTVp9F8r0XDFFBKdDSbQ+lqSj+I9eFUdh644TiSbvOuDbnDe1ySOJoBpWMSq0E6Zd0b7/ZtQESuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EKmaSm4T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 600C5C4CEF1;
+	Fri, 12 Sep 2025 13:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757682797;
-	bh=Vem+mD7YnvII4WUoWkOsIWojVllp/ghNcYZB9qlvTLQ=;
+	s=k20201202; t=1757682798;
+	bh=RWcZD9xAE7KcutgA/HLhkTOkAiPLVusWcV5umMhzW+c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EDITvuyVWmvwzKJFj2L1dg7jOGHOuSn9pJOw2JnP6XLPIHi/Sq28wkzPEZQd4YXyd
-	 jgzYdYuJtpabDD0Bzf1gKtlJPgQ+6H8/PnjSqkiy80CMYJp9wG0QvfE0VAKNLiDV4m
-	 slnbOdfn+80r2D/Xp1+iun97NacnqCTyTajwxjE3BmYdc3oT3OhMNCv4Pq8i3BBvp1
-	 qdMV67joWrzuZhsf3J5RoAcye2kAaIp2CBMHv8LDE7po8sBbSF8S6xQCB9gluTqg9s
-	 pouN93YZPbzX+AKUCWTd0kYxbw65MlFa/WsA7TfwMe6fMBW3xQBt+5TG1rXnITw174
-	 3PLKy6Zyi6TNA==
+	b=EKmaSm4TC14fSBBWlnd6qYTXySZ1IK7M3Kvb2t2/ibWFbLCyJqw2Hn0bZ2ca9TEvO
+	 PudERgS92Covz9Hg1FqMW2Ui7fOhGR1T5jVjCCVk30PTpKlLKatZosizpDhhwrAFtH
+	 //VtagUUuXoqVSfZTLyQ1JF+hLsWz8AOrzFp3o0+gRt/sY9W/v7VXcYmZQPsLx8uV7
+	 MeLFzXZK7J/S5y6P6sO7xVT/QElO7Pwf5pl9BuikNXqkUnSuIPCUKBa3aBw2P2Pwom
+	 eBVtrdbgOikLYnHIfc6BHivKezzqKnyGhMWL7UfJQhlQkJR0GANhFAz9XVqTXOpN/J
+	 uhGzywRgXBWiA==
 From: srini@kernel.org
 To: gregkh@linuxfoundation.org
 Cc: linux-kernel@vger.kernel.org,
 	Ling Xu <quic_lxu5@quicinc.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
 	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
 	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
 	Srinivas Kandagatla <srini@kernel.org>
-Subject: [PATCH 2/4] misc: fastrpc: Remove kernel-side domain checks from capability ioctl
-Date: Fri, 12 Sep 2025 14:13:00 +0100
-Message-ID: <20250912131302.303199-3-srini@kernel.org>
+Subject: [PATCH 3/4] misc: fastrpc: Cleanup the domain names
+Date: Fri, 12 Sep 2025 14:13:01 +0100
+Message-ID: <20250912131302.303199-4-srini@kernel.org>
 X-Mailer: git-send-email 2.50.0
 In-Reply-To: <20250912131302.303199-1-srini@kernel.org>
 References: <20250912131302.303199-1-srini@kernel.org>
@@ -63,71 +64,107 @@ Content-Transfer-Encoding: 8bit
 
 From: Ling Xu <quic_lxu5@quicinc.com>
 
-Domain ID in the uAPI is misleading. Remove checks and log messages
-related to 'domain' field in capability structure. Update UAPI to
-mark the field as unused.
+Currently the domain ids are added for each instance of domains, this is
+totally not scalable approach. Clean this mess and create domain ids for
+only domains not its instances.
 
+Co-developed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 Reviewed-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
 Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
 Signed-off-by: Srinivas Kandagatla <srini@kernel.org>
 ---
- drivers/misc/fastrpc.c      | 14 +-------------
- include/uapi/misc/fastrpc.h |  2 +-
- 2 files changed, 2 insertions(+), 14 deletions(-)
+ drivers/misc/fastrpc.c | 36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 7eec907ed454..1dc69d234996 100644
+index 1dc69d234996..93ec587fcab6 100644
 --- a/drivers/misc/fastrpc.c
 +++ b/drivers/misc/fastrpc.c
-@@ -1750,7 +1750,6 @@ static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
- 	uint32_t attribute_id = cap->attribute_id;
- 	uint32_t *dsp_attributes;
- 	unsigned long flags;
--	uint32_t domain = cap->domain;
- 	int err;
+@@ -27,8 +27,6 @@
+ #define MDSP_DOMAIN_ID (1)
+ #define SDSP_DOMAIN_ID (2)
+ #define CDSP_DOMAIN_ID (3)
+-#define CDSP1_DOMAIN_ID (4)
+-#define FASTRPC_DEV_MAX		5 /* adsp, mdsp, slpi, cdsp, cdsp1 */
+ #define FASTRPC_MAX_SESSIONS	14
+ #define FASTRPC_MAX_VMIDS	16
+ #define FASTRPC_ALIGN		128
+@@ -106,8 +104,6 @@
  
- 	spin_lock_irqsave(&cctx->lock, flags);
-@@ -1768,7 +1767,7 @@ static int fastrpc_get_info_from_kernel(struct fastrpc_ioctl_capability *cap,
- 	err = fastrpc_get_info_from_dsp(fl, dsp_attributes, FASTRPC_MAX_DSP_ATTRIBUTES);
- 	if (err == DSP_UNSUPPORTED_API) {
- 		dev_info(&cctx->rpdev->dev,
--			 "Warning: DSP capabilities not supported on domain: %d\n", domain);
-+			 "Warning: DSP capabilities not supported\n");
- 		kfree(dsp_attributes);
- 		return -EOPNOTSUPP;
- 	} else if (err) {
-@@ -1796,17 +1795,6 @@ static int fastrpc_get_dsp_info(struct fastrpc_user *fl, char __user *argp)
- 		return  -EFAULT;
+ #define miscdev_to_fdevice(d) container_of(d, struct fastrpc_device, miscdev)
  
- 	cap.capability = 0;
--	if (cap.domain >= FASTRPC_DEV_MAX) {
--		dev_err(&fl->cctx->rpdev->dev, "Error: Invalid domain id:%d, err:%d\n",
--			cap.domain, err);
--		return -ECHRNG;
+-static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
+-						"sdsp", "cdsp", "cdsp1" };
+ struct fastrpc_phy_page {
+ 	u64 addr;		/* physical address */
+ 	u64 size;		/* size of contiguous region */
+@@ -2270,6 +2266,20 @@ static int fastrpc_device_register(struct device *dev, struct fastrpc_channel_ct
+ 	return err;
+ }
+ 
++static int fastrpc_get_domain_id(const char *domain)
++{
++	if (!strncmp(domain, "adsp", 4))
++		return ADSP_DOMAIN_ID;
++	else if (!strncmp(domain, "cdsp", 4))
++		return CDSP_DOMAIN_ID;
++	else if (!strncmp(domain, "mdsp", 4))
++		return MDSP_DOMAIN_ID;
++	else if (!strncmp(domain, "sdsp", 4))
++		return SDSP_DOMAIN_ID;
++
++	return -EINVAL;
++}
++
+ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+ {
+ 	struct device *rdev = &rpdev->dev;
+@@ -2285,15 +2295,10 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+ 		return err;
+ 	}
+ 
+-	for (i = 0; i < FASTRPC_DEV_MAX; i++) {
+-		if (!strcmp(domains[i], domain)) {
+-			domain_id = i;
+-			break;
+-		}
 -	}
--
--	/* Fastrpc Capablities does not support modem domain */
--	if (cap.domain == MDSP_DOMAIN_ID) {
--		dev_err(&fl->cctx->rpdev->dev, "Error: modem not supported %d\n", err);
--		return -ECHRNG;
--	}
++	domain_id = fastrpc_get_domain_id(domain);
  
- 	if (cap.attribute_id >= FASTRPC_MAX_DSP_ATTRIBUTES) {
- 		dev_err(&fl->cctx->rpdev->dev, "Error: invalid attribute: %d, err: %d\n",
-diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-index f33d914d8f46..c6e2925f47e6 100644
---- a/include/uapi/misc/fastrpc.h
-+++ b/include/uapi/misc/fastrpc.h
-@@ -134,7 +134,7 @@ struct fastrpc_mem_unmap {
- };
+ 	if (domain_id < 0) {
+-		dev_info(rdev, "FastRPC Invalid Domain ID %d\n", domain_id);
++		dev_info(rdev, "FastRPC Domain %s not supported\n", domain);
+ 		return -EINVAL;
+ 	}
  
- struct fastrpc_ioctl_capability {
--	__u32 domain;
-+	__u32 unused; /* deprecated, ignored by the kernel */
- 	__u32 attribute_id;
- 	__u32 capability;   /* dsp capability */
- 	__u32 reserved[4];
+@@ -2340,21 +2345,20 @@ static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
+ 	case ADSP_DOMAIN_ID:
+ 	case MDSP_DOMAIN_ID:
+ 	case SDSP_DOMAIN_ID:
+-		/* Unsigned PD offloading is only supported on CDSP and CDSP1 */
++		/* Unsigned PD offloading is only supported on CDSP */
+ 		data->unsigned_support = false;
+-		err = fastrpc_device_register(rdev, data, secure_dsp, domains[domain_id]);
++		err = fastrpc_device_register(rdev, data, secure_dsp, domain);
+ 		if (err)
+ 			goto err_free_data;
+ 		break;
+ 	case CDSP_DOMAIN_ID:
+-	case CDSP1_DOMAIN_ID:
+ 		data->unsigned_support = true;
+ 		/* Create both device nodes so that we can allow both Signed and Unsigned PD */
+-		err = fastrpc_device_register(rdev, data, true, domains[domain_id]);
++		err = fastrpc_device_register(rdev, data, true, domain);
+ 		if (err)
+ 			goto err_free_data;
+ 
+-		err = fastrpc_device_register(rdev, data, false, domains[domain_id]);
++		err = fastrpc_device_register(rdev, data, false, domain);
+ 		if (err)
+ 			goto err_deregister_fdev;
+ 		break;
 -- 
 2.50.0
 
