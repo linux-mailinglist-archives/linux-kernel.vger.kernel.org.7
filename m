@@ -1,172 +1,198 @@
-Return-Path: <linux-kernel+bounces-814176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 737E1B5503E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:03:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE251B55041
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C95C8189F181
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F72D1898721
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420CA30DD30;
-	Fri, 12 Sep 2025 14:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF8617555;
+	Fri, 12 Sep 2025 14:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1Q8ddkK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="joRavizD"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A71131E49
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11592E889B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757685790; cv=none; b=h5it2DtPQI7l9mt647LAUtROnQWT3SPiNFr9u2EFXPdELNxCUkj0GWZL3PGdp+OlPh1v3MBWktpIjCdHaek9y4FKFXkovAOVUTPibUlTogMVNKLgaNl6PBg51JeCKZcN4RpdyG7SrLu1+i9EY5zYaodXAay3zuB/mKznNoqKrlY=
+	t=1757685799; cv=none; b=ABVcH/tAxwmGp4F1SSs6R3hh5OLLgtahgh6WfCV0RlQvfvHeXaT7B7wsvrUFSsQJBbqqwpbUbZQovN1B6RLRnxOFBoN7zRVo8A9SIINx/9GHl1vKneb1Z9PswecvhkE+wGzRPM9W6bVhWQ12ny1xxdwMJO+JCMpU2nsoYi3SCKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757685790; c=relaxed/simple;
-	bh=P6j52c1ZBID9nSzuMUN4OsHR4CI2OCt0NbRs7SSigUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eVMuqOyRupfMVNgFnNM4RLyCpF50h3LPzw/zZdxB+++z5G1CDfoSEugevu1xlO+jt1xz80eT+dh5/jwUennXxr23Ny9Xpsa3igfHjrahlpRroh4JVwQUMB3gcGVSm3BGtVuRagUdXs5SxDBHO9Eu2/yuDGN/6c8qHGzVRC4YEC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1Q8ddkK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50578C4AF0B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:03:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757685790;
-	bh=P6j52c1ZBID9nSzuMUN4OsHR4CI2OCt0NbRs7SSigUY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=n1Q8ddkKGw+dh/3W9+Abb6EQMna0gOjdCFY8WTNm2BFWky5TtzdBvWHYy0aMNUUGs
-	 SsRWbu8mzs0M8xSM9v+iT4bHK2ifbN20A91E6bIcbTanRKfA0hOaJZuLrI8aNFk1Oa
-	 5dVxgQCebFJMDA5/KbJF5dN3yRMduV2lh/FV42RwoVj8YRZkQN2zkiHwb6nZhecifB
-	 fQWVQbjqxHTCCWL/EsUopMllLZyulJZIqhEoIHflgxh1sqh333j4+kS+iQN2XjHIL7
-	 iSK4AFRMb74jsGwkoqfLjmyGDDo4+XOw6b4XR7jzP2VJIeyLi6YFbCkuFPLRzJSIUz
-	 cGHDUhJ9tpWFQ==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-746d7c469a8so1750493a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:03:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVLQGi5wYwkDO+A7LuSuJ8uGVektYfDk1N4a3BnmBibL1JzJbxTku2wsdzucudONBZOfQacIy8oiXz/Yes=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvlieM4Qw0UbbzFhVHB2O9Ug/uvOVge5QkJOUt3eHuVPriBh6i
-	TBLJui8ZsXxVbr0zvxJ1OWTxcdlTe+1SgmydsOjS5iCkcAgr55wqKj/e7GhD5vlVDHsxLOWVMBT
-	JtS7bENAI7xJH5a4gjK0tIxHYUhW6q8I=
-X-Google-Smtp-Source: AGHT+IGhBy1gpmzVXCHhAB87qYksRZOt/cHDn7hmpgZGeeYQzrGTyprkXl4IqCCdm6dUgWcM9326p9pUbWRwlMnbBF8=
-X-Received: by 2002:a05:6830:699b:b0:745:5653:15d4 with SMTP id
- 46e09a7af769-753550e2c1dmr1524988a34.22.1757685789582; Fri, 12 Sep 2025
- 07:03:09 -0700 (PDT)
+	s=arc-20240116; t=1757685799; c=relaxed/simple;
+	bh=aAY1g8zOPqBn5miZfFbCjKlL6xfEQPFSG95Zowlpqzg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aqs78687O1G3k9+DHM+sA08QIZKpsRbBs9uQnZjmvPOBktnmpeTMSJqJgpfrL960F2nHizhlelhA2DDdRfvjVnp/ao0rDTTs/sfFoKWc+ShS971mxgmKLleyzlmXWziXaSflNq6O7IP4hCH6KXTVLUjNgCQcFIxb2m5gzAH+Tu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=joRavizD; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3e249a4d605so2123868f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:03:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757685795; x=1758290595; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=uH+YHXFVH2K1mzrQAHIZiTdd0wND2UdYXw5OhP6ad/I=;
+        b=joRavizDgeqwMPy2GO941dAZlnGDdgRFCcQAhvfu2jv8w7yf/aXrXuDdGSuNACmW7Y
+         gB+0fQTN4KAsXe9t3n4U+FNJWhQRsRElye6MB21w7YIztFYBDdJqe5IrHdnWT+4pqKSh
+         x2nZWF8ZFh3+trITdOudXMlhPEgPmSkCGPO+1syKjs8PEjB7JYvgSjIlS71wadFYaH4/
+         Tp7Vj6Y7jPVCclyvCoO6F5BZUPO7uXTeAKtL2I7bDhb6fIzuVfqp/XXt/fipVI2BCHI0
+         jiJ/20AWbgFs6Y8m/eBuu+Wgrhc6pORzGXZjs90vHOmWPx7s/26nhVTDshQrNjZsYra3
+         4Gxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757685795; x=1758290595;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uH+YHXFVH2K1mzrQAHIZiTdd0wND2UdYXw5OhP6ad/I=;
+        b=okUvGVu//pHk07/lEvrPycvqxkphWjeFM/KjLh6qZ5Ih05Bl+4a4mUTm89uAqigkd7
+         IuZaFGdjR71G63qYhoKcsHF7UPXOmPeQnOwRMAlQ5sLsOwZVHouzQqvGVPSYGxeLtu1b
+         WXirLTGfvo9YlkCjW4BrswiFlNkuogWKmO+fuZP70vipHe1niCAYcrNa7pAjh7NR++3S
+         mX6GrKU4k+94+YQSKVtAB9xuJ+21038kVCqNHvfck3c8ejxH6fDOvRNPpoC/jyWPARg/
+         0r1knxqdTdzYLUsPbrG9XOelXjfBtvvr9dXIelKFVPN2Vm4dSWq55uklqa1pvwxL+in4
+         9caA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIfNFMSrfyoS9DkrqJAGYEh2LhvR9Txxg+LOAX6dC8Nztkq0tARkZWNUu3TmFH0ceunrtw+7OdHttQl60=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQso8kcxjR2XaYFwMCoSZ95Tg/u89M8p7U0s39aya73Ipjqh8q
+	I6sTRs72mFFSH/jr5zSDJopdIKoIajImr0utgKR6MHVZ6v4gIukRan8c
+X-Gm-Gg: ASbGncv8sMuHDT3LS3WeNhg5qn5YKVqcRhYDlOCfHcNlffF4JouB9e1wrUH0FP8D6Gc
+	5XzWkZxNmbF/67wsQNqVvG83MX5wbYIJk4SO09IeuwGRvIBg6o3e2WTuC/zme5cAS6iXpub6bu3
+	QQ7XtqGCDhDE76a6fWqToyj2t96iuwX25NkvaVkqNfU9FygW+bfeHrovVQHD4gCHveoVJdIY1De
+	FqrTGbR1pzjewjWFx9Z/D5OIw8c2gJxutv01H/ZHjZOd9j5sfg5BBzWIjEq3cyJO8jt/7FAvfu1
+	OthcPw3IuX/hTF99/eQ3lPYaUua7cVlvpmbO8ihQ9muP6BX4l9QrrbKOy1RStE3icUkOed+59WU
+	7IBgiJJCfuNgm/LptWKCCTelZ2y+bS9x0xioWEkCbBiK2ejr1VAzQ
+X-Google-Smtp-Source: AGHT+IHkpXgL67su2eP0NWVxDv0gnk9lbCDXLQlAVKtF0IvH2Kl70osZH/zbwKbUjcuxvdmzPdw9Pw==
+X-Received: by 2002:a05:6000:61e:b0:3e7:4414:794b with SMTP id ffacd0b85a97d-3e765a018a5mr2537897f8f.50.1757685794754;
+        Fri, 12 Sep 2025 07:03:14 -0700 (PDT)
+Received: from [192.168.2.177] ([91.116.220.47])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e774a3fb5bsm2033837f8f.58.2025.09.12.07.03.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 07:03:13 -0700 (PDT)
+Message-ID: <7765f224-60b2-4c92-a597-58c1c6bc5580@gmail.com>
+Date: Fri, 12 Sep 2025 16:03:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912122514.2303-1-cp0613@linux.alibaba.com>
-In-Reply-To: <20250912122514.2303-1-cp0613@linux.alibaba.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 12 Sep 2025 16:02:58 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j1xJ04dWZWKaM_jxZ9aKfZWg40kvxS4s+meWitasRJng@mail.gmail.com>
-X-Gm-Features: Ac12FXxe51JvThurYq7qgUlL7CMkQrsbXiNHC29_jlLEdpWm8TKb3U462SEUkAs
-Message-ID: <CAJZ5v0j1xJ04dWZWKaM_jxZ9aKfZWg40kvxS4s+meWitasRJng@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: SPCR: Support Precise Baud Rate filed
-To: cp0613@linux.alibaba.com
-Cc: rafael@kernel.org, lenb@kernel.org, guoren@kernel.org, 
-	jeeheng.sia@starfivetech.com, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 19/38] arm64: dts: mediatek: mt6795: Add mediatek,infracfg
+ to iommu node
+To: Fei Shao <fshao@chromium.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, robh@kernel.org,
+ daniel.lezcano@linaro.org, mwalle@kernel.org, devicetree@vger.kernel.org,
+ linus.walleij@linaro.org, linux-remoteproc@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ olivia.wen@mediatek.com, shane.chien@mediatek.com,
+ linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
+ airlied@gmail.com, simona@ffwll.ch, herbert@gondor.apana.org.au,
+ jassisinghbrar@gmail.com, jiaxin.yu@mediatek.com, andy.teng@mediatek.com,
+ chunfeng.yun@mediatek.com, jieyy.yang@mediatek.com, chunkuang.hu@kernel.org,
+ conor+dt@kernel.org, jitao.shi@mediatek.com, p.zabel@pengutronix.de,
+ arnd@arndb.de, kishon@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
+ maarten.lankhorst@linux.intel.com, tinghan.shen@mediatek.com,
+ mripard@kernel.org, ck.hu@mediatek.com, broonie@kernel.org,
+ eugen.hristev@linaro.org, houlong.wei@mediatek.com, tglx@linutronix.de,
+ mchehab@kernel.org, linux-arm-kernel@lists.infradead.org,
+ granquet@baylibre.com, sam.shih@mediatek.com, mathieu.poirier@linaro.org,
+ fparent@baylibre.com, andersson@kernel.org, sean.wang@kernel.org,
+ linux-sound@vger.kernel.org, lgirdwood@gmail.com, vkoul@kernel.org,
+ linux-crypto@vger.kernel.org, tzimmermann@suse.de, atenart@kernel.org,
+ krzk+dt@kernel.org, linux-media@vger.kernel.org, davem@davemloft.net
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-20-angelogioacchino.delregno@collabora.com>
+ <CAC=S1nguRWyG3ubmSFE95_zgsCjjq4dxGWr5ErV9-Yu2+mTmpw@mail.gmail.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <CAC=S1nguRWyG3ubmSFE95_zgsCjjq4dxGWr5ErV9-Yu2+mTmpw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 2:25=E2=80=AFPM <cp0613@linux.alibaba.com> wrote:
->
-> From: Chen Pei <cp0613@linux.alibaba.com>
->
-> The Microsoft Serial Port Console Redirection (SPCR) specification
-> revision 1.09 comprises additional field: Precise Baud Rate [1].
->
-> It is used to describe non-traditional baud rates (such as those
-> used by high-speed UARTs).
->
-> It contains a specific non-zero baud rate which overrides the value
-> of the Configured Baud Rate field. If this field is zero or not
-> present, Configured Baud Rate is used.
->
-> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serports=
-/serial-port-console-redirection-table # 1
->
-> Signed-off-by: Chen Pei <cp0613@linux.alibaba.com>
-> ---
->  drivers/acpi/spcr.c | 54 ++++++++++++++++++++++++++-------------------
->  1 file changed, 31 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-> index cd36a97b0ea2..a97b02ee5538 100644
-> --- a/drivers/acpi/spcr.c
-> +++ b/drivers/acpi/spcr.c
-> @@ -146,29 +146,37 @@ int __init acpi_parse_spcr(bool enable_earlycon, bo=
-ol enable_console)
->                 goto done;
->         }
->
-> -       switch (table->baud_rate) {
-> -       case 0:
-> -               /*
-> -                * SPCR 1.04 defines 0 as a preconfigured state of UART.
-> -                * Assume firmware or bootloader configures console corre=
-ctly.
-> -                */
-> -               baud_rate =3D 0;
-> -               break;
-> -       case 3:
-> -               baud_rate =3D 9600;
-> -               break;
-> -       case 4:
-> -               baud_rate =3D 19200;
-> -               break;
-> -       case 6:
-> -               baud_rate =3D 57600;
-> -               break;
-> -       case 7:
-> -               baud_rate =3D 115200;
-> -               break;
-> -       default:
-> -               err =3D -ENOENT;
-> -               goto done;
-> +       /*
-> +        * SPCR 1.09 defines Precise Baud Rate Filed contains a specific
-> +        * non-zero baud rate which overrides the value of the Configured
-> +        * Baud Rate field. If this field is zero or not present, Configu=
-red
-> +        * Baud Rate is used.
-> +        */
-> +       if (table->precise_baudrate)
-> +               baud_rate =3D table->precise_baudrate;
-> +       else switch (table->baud_rate) {
 
-Please do not change the indentation below.
 
-> +               case 0:
-> +                       /*
-> +                        * SPCR 1.04 defines 0 as a preconfigured state o=
-f UART.
-> +                        * Assume firmware or bootloader configures conso=
-le correctly.
-> +                        */
-> +                       baud_rate =3D 0;
-> +                       break;
-> +               case 3:
-> +                       baud_rate =3D 9600;
-> +                       break;
-> +               case 4:
-> +                       baud_rate =3D 19200;
-> +                       break;
-> +               case 6:
-> +                       baud_rate =3D 57600;
-> +                       break;
-> +               case 7:
-> +                       baud_rate =3D 115200;
-> +                       break;
-> +               default:
-> +                       err =3D -ENOENT;
-> +                       goto done;
->         }
->
->         /*
-> --
-> 2.49.0
->
+On 25/07/2025 12:52, Fei Shao wrote:
+> On Thu, Jul 24, 2025 at 5:49 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> The "M4U" IOMMU requires a handle to the infracfg to switch to
+>> the 4gb/pae addressing mode: add it.
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> Reviewed-by: Fei Shao <fshao@chromium.org>
+
+Applied thanks
+
+> 
+>> ---
+>>   arch/arm64/boot/dts/mediatek/mt6795.dtsi | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt6795.dtsi b/arch/arm64/boot/dts/mediatek/mt6795.dtsi
+>> index e5e269a660b1..38f65aad2802 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt6795.dtsi
+>> +++ b/arch/arm64/boot/dts/mediatek/mt6795.dtsi
+>> @@ -427,6 +427,7 @@ iommu: iommu@10205000 {
+>>                          clocks = <&infracfg CLK_INFRA_M4U>;
+>>                          clock-names = "bclk";
+>>                          interrupts = <GIC_SPI 146 IRQ_TYPE_LEVEL_LOW>;
+>> +                       mediatek,infracfg = <&infracfg>;
+>>                          mediatek,larbs = <&larb0 &larb1 &larb2 &larb3>;
+>>                          power-domains = <&spm MT6795_POWER_DOMAIN_MM>;
+>>                          #iommu-cells = <1>;
+>> --
+>> 2.50.1
+>>
+>>
+
 
