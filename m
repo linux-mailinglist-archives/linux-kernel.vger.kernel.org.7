@@ -1,145 +1,132 @@
-Return-Path: <linux-kernel+bounces-813333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FB3B543BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:22:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94437B543C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:24:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B715C683866
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:22:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE9E67B01D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABF902C08C0;
-	Fri, 12 Sep 2025 07:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BE62C0285;
+	Fri, 12 Sep 2025 07:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="flO1iKZ1"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHzPOqEc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831982BE62D;
-	Fri, 12 Sep 2025 07:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076D02BEFE5;
+	Fri, 12 Sep 2025 07:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757661737; cv=none; b=KyLAZqv7/iLCB5X7lcPFDzyXtHQ4zhlNDHdO4JAWG/9jPPllWSBuB8+bFYtT9Yfl7EMSccPAKzs0AdpQYNkRRe6UZO7eaUIo4x9DnJJjxJ8np0eF2lLovGroA+J7T7WN9346EtwTssCCQDAnWrNJ7+NixhUv3yEZmTIT0bUhby8=
+	t=1757661832; cv=none; b=gI+SeLsTxPq8f7NLCWoCkRMnwef5ihjJdT0pLrzabrvaNgNYHJKVxx3WPeNXi671zK2/u9CvneWcYCVyG/IHZx4Zl+FOgtJjPFpJwVzl9hJcoqHeVm2yGbo8TUvrilgUOw0NDU42BONroFFphmjbZpZfXwI+eGPM9/5srm5muG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757661737; c=relaxed/simple;
-	bh=7N8j92UF1rmeEeMIiK9A/lZjg3S0qoHyuNm6kSJjeD4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=ZoHC3JpdbxIP8NKm49QlFA+fb2pVBo3weCsCznAK/FReBb6MLctLcGEuRu2a8HB5qhcjqmb0cEVyXdgZ94NlWpcxWpZ3+OnL/nlzudYoZEOf7F/WKTWy1jR3ArBZdIdYrKYHYHcwHI+4B6WCC3OCrhPbNUae/8zc/dFrY9w4HOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=flO1iKZ1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58BMBPqt026821;
-	Fri, 12 Sep 2025 07:22:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7N8j92
-	UF1rmeEeMIiK9A/lZjg3S0qoHyuNm6kSJjeD4=; b=flO1iKZ1NObM3bAjoluDKi
-	r840Bk0ASzcAGEyhoQiQHLlJ7Ft+jP6aEFN8ygl67RTR6/t2+z387deHtexSTIrG
-	y/Hhzc6YRvWV395ksfKkcaue2N2tqw/m8G33vI2vKFdOTG2Q8n8Ts3+jFvtaPLK0
-	brrwPNPabfFAiEN7n7t8Aa0ViG0NCK52r39Jt+ucrv4R2JiD5fJu5cjB6CiM/fqE
-	ziaMFpl4lzQ7RVu23tMxb3BiK1XRsEUDZJ1JPDA280yeISqu/aA5E9MyOi4Y2c8Z
-	IoNQNxGtkf1aK83jjVqQtucDtTaov3f1ihN780KJ6T6RLh8hxxmecr3G146BylAQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490bct8pm1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 07:22:04 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58C5BHBf011457;
-	Fri, 12 Sep 2025 07:22:03 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 490y9ut181-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 07:22:03 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58C7M2cM29754062
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 07:22:02 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AC9435805D;
-	Fri, 12 Sep 2025 07:22:02 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5EA2A58059;
-	Fri, 12 Sep 2025 07:21:58 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.244.60])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 12 Sep 2025 07:21:58 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1757661832; c=relaxed/simple;
+	bh=lgswvGmaOM92orFcIk7ELFqc1CnpJ5duXFyCDPrJDro=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s3vetVyWBXKm4/IyeHwAzc3/ZIl+6k/lL+hHVbDPJKjTEDZpHl971xVXyFeLY80KvnpbEFRuR6lBhENBbgN2AdqVHHxjpfqmG5Mzqj3lJcTKBRSLdcv+WLu3EVTP1P7UtI/03J6elrQR2vghhtwTpnWaIoLUs+i5Jm+baWuhRDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHzPOqEc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE16C4CEF4;
+	Fri, 12 Sep 2025 07:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757661829;
+	bh=lgswvGmaOM92orFcIk7ELFqc1CnpJ5duXFyCDPrJDro=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EHzPOqEcibhYmiN/YOzZJ5d6Vb4pEU/u1WpYCJGcx650Vrm/fSYfow6g2WPK9n2pK
+	 8f/IjkWDpt81Ts3sG7kK6kt6pQWNzJxyH58+j49WibGOQZJuzNSv/y+QzrjC5MN9vD
+	 8zT2FlX/wzqtuVX/v499iWFRr7zmVvPrKk6Fk8QwXvMWhvUEuniZgmRbecVs5oDY6E
+	 v6D25+SOBDnefPIEevDc7fpyyvZmnm9RRdia1v0RxUGiJBywGh25uZzotSkoujMCfx
+	 SIgHImpCbXMq66SLkuhQnOrb+lgAlgWYi1Ya9N97vG3/Vgw8Ore8R8Vj9EfHkIdiIA
+	 8rbrWuQxdxqQQ==
+Message-ID: <1beb1e15-cafd-408a-96bf-7f749b3499fd@kernel.org>
+Date: Fri, 12 Sep 2025 09:23:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [linux-next20250911]Kernel OOPs while running generic/256 on Pmem
- device
-From: Venkat <venkat88@linux.ibm.com>
-In-Reply-To: <aMPIwdleUCUMFPh2@infradead.org>
-Date: Fri, 12 Sep 2025 12:51:44 +0530
-Cc: linux-fsdevel@vger.kernel.org, riteshh@linux.ibm.com,
-        ojaswin@linux.ibm.com, linux-xfs@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        linux-mm@vger.kernel.org, cgroups@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <96AA28C4-24DD-4638-B944-CC2E2E7FC4C0@linux.ibm.com>
-References: <8957c526-d05c-4c0d-bfed-0eb6e6d2476c@linux.ibm.com>
- <aMPIwdleUCUMFPh2@infradead.org>
-To: Christoph Hellwig <hch@infradead.org>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAxMCBTYWx0ZWRfX694bk+5dV0QP
- vwkrmWpJdqg0KMSFaHJMTLh0yb6j5fa0y1iPDNVi4pdil47n+vvxxr4pLL3ub/OdAaQj1q8Esnz
- vPvFbCZk0F35dt0vp/JvFz8GNb4vgPCQUrc2FIDO/3nd8dFS6bm4+qJeyNWVze+9W+lO8DKaGw5
- jyfUiC+o6z7bke/wjJyQZSLiXz9DnmO9SHDxKCLNc/Il7HOwAzIL36Lr5h+uGafQsLsS5AHXftK
- wD2K8JqZWwHbs1esDqsRI5/KdAkXg00ohc2JCYIudWZM2fBctB78NvGFPtbRADdyfcXRxahP8Wu
- 9fCoJg8hQnfCpGtfJqsLYVHeT9UKw9sxKwDYdCa8oaSxRruSx1Gf/aovLAUBWLK8b4B7vN/ddgr
- hzJNLVW7
-X-Authority-Analysis: v=2.4 cv=SKNCVPvH c=1 sm=1 tr=0 ts=68c3ca1c cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=JfrnYn6hAAAA:8 a=wOK_BrywWAtTNq7yZiUA:9
- a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22
-X-Proofpoint-GUID: 62UQL51jW9jaTqixgBdQ7gy0k8zYkkMo
-X-Proofpoint-ORIG-GUID: 62UQL51jW9jaTqixgBdQ7gy0k8zYkkMo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_02,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 spamscore=0 priorityscore=1501 bulkscore=0 malwarescore=0
- adultscore=0 suspectscore=0 impostorscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060010
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] arm64: dts: qcom: x1e80100: Add IRIS video codec
+To: Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>
+References: <20250911-x1e-iris-dt-v1-0-63caf0fd202c@linaro.org>
+ <20250911-x1e-iris-dt-v1-1-63caf0fd202c@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250911-x1e-iris-dt-v1-1-63caf0fd202c@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 11/09/2025 20:38, Stephan Gerhold wrote:
+> Add the IRIS video codec to accelerate video decoding/encoding. Copied
+> mostly from sm8550.dtsi, only the opp-table is slightly different for X1E.
+> For opp-240000000, we need to vote for a higher OPP on one of the power
+> domains, because the voltage requirements for the PLL and the derived
+> clocks differ (sm8550.dtsi has the same).
+> 
+> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 87 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 87 insertions(+)
 
+Feels like duplicating this:
 
-> On 12 Sep 2025, at 12:46=E2=80=AFPM, Christoph Hellwig =
-<hch@infradead.org> wrote:
->=20
-> On Fri, Sep 12, 2025 at 10:51:18AM +0530, Venkat Rao Bagalkote wrote:
->> Greetings!!!
->>=20
->>=20
->> IBM CI has reported a kernel crash, while running generic/256 test =
-case on
->> pmem device from xfstests suite on linux-next20250911 kernel.
->=20
-> Given that this in memcg code you probably want to send this to =
-linux-mm
-> and the cgroups list.
+https://lore.kernel.org/all/20250910-hamoa_initial-v11-2-38ed7f2015f7@oss.qualcomm.com/
 
-Thanks for advice.
-
-Adding mm and croups mailing list.
-
-Regards,
-Venkat.
-
-
-
+Best regards,
+Krzysztof
 
