@@ -1,117 +1,76 @@
-Return-Path: <linux-kernel+bounces-814182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FF1B55060
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:06:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7311B55068
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A47751D63B33
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:06:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157B31D644FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A9F730EF7C;
-	Fri, 12 Sep 2025 14:06:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468C130FF39;
+	Fri, 12 Sep 2025 14:06:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JdymV3IT"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzznp34s"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82201E32B7;
-	Fri, 12 Sep 2025 14:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734E91E32B7;
+	Fri, 12 Sep 2025 14:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757685963; cv=none; b=uVLlgd6EhPf1d/iSJzA0+ZEgsUXjzsJiMuvPYMUcDogpWsu9H9OznruxdEpW51Who7sLrl7YAEB7yJbMo8NJWZyg6NbVDR7CKsbpjySZHktgoSCamgyvjJUZwtiJS+gmnVAg8oJMnRrj76BGP3DIgyDtEMzab3R1LG7BIsyb3EU=
+	t=1757685980; cv=none; b=drcD++6DNCVsB64OeziMZ+4YU4pXb9n6Qk8PbMQEoX+4UdB+Xh1QU54HbUZCXg1DM0DDS0ptD3NC6EzxdD7ksNYsUd34OBMtdKohWeVIRh4io9/KInqIbUjjJseRDswJh9TEOsWElecfUzbFNhFS4kKuugCnbgxSS3TQZ+g/mu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757685963; c=relaxed/simple;
-	bh=Q5tQBMRGECYTjUJv3iSHhuQaOAPyqtBjTDgliuo4s/s=;
+	s=arc-20240116; t=1757685980; c=relaxed/simple;
+	bh=gQYcfi405JQ9buqQxkTP7o9NnD/8vJsE/3UdfYC31Vk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S84EWkhuT8jE7Nz/QGjHbyKZ5dH33kqMSFFHRDU7r6JjZkfK3FwU5m/atAEIVeN98bzGoWc1L1VpTjaO5u4bkkj7qrSXu+MKix5pv9s4cjF+YEw+rooyIJsXLucOhqQZhRxJ8xAHfHYvc4DmR0pgaAEAvwvD2cjlm+YhzjoRGOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JdymV3IT; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C386ET024821;
-	Fri, 12 Sep 2025 14:05:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=1Fi+81t5zqEybF/Ll9ApuHFjhXkkb1
-	vHdHvbxL0Vc8U=; b=JdymV3ITkTcSWYrGAqYC9vUBwbPERmwdJ7SwSpzPahVcmB
-	br9gT4phgvwygUUAi3bNoWfXtnHy6dCZTXY+1IcGYGCd6MSDvQFtwZ59FVh14Zkm
-	vfzwu2r9YJDSn9D4O25/8kKQeaXBrfxGz7ow9SGeZK6IqKoWvjNrVhipWaODarli
-	GtDPVfrbEzN5BeTqC/p995pcDrx5upjpVdi3aGcDIMnh5WmfSVmAgJWAuMpIitpB
-	dx+gg/KyXJBqYUJvppfytE11Gs6VCBfid+zHk9Mld+hpjF8BzLN0R4DoaJen6tmh
-	Qsj/3X1kE2+aoD7/v/vGVE9/PNoEAxLm1WFuoGLQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmxby8m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 14:05:13 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CE2ClP009324;
-	Fri, 12 Sep 2025 14:05:13 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cmxby8e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 14:05:13 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CAOXI1010588;
-	Fri, 12 Sep 2025 14:05:11 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4910snb7ur-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 14:05:11 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CE59N522544674
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 14:05:09 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 536162004B;
-	Fri, 12 Sep 2025 14:05:09 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8D07120043;
-	Fri, 12 Sep 2025 14:05:08 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 12 Sep 2025 14:05:08 +0000 (GMT)
-Date: Fri, 12 Sep 2025 16:05:07 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Mark Rutland <Mark.Rutland@arm.com>
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-Message-ID: <cdd9bc60-96d4-4f19-86c3-dcf598ccbd92-agordeev@linux.ibm.com>
-References: <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
- <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
- <15d01c8b-5475-442e-9df5-ca37b0d5dc04@arm.com>
- <7953a735-6129-4d22-be65-ce736630d539@redhat.com>
- <781a6450-1c0b-4603-91cf-49f16cd78c28@arm.com>
- <a17ab4e3-627a-4989-a5a5-d430eadabb86@redhat.com>
- <9ed5441f-cc03-472a-adc6-b9d3ad525664-agordeev@linux.ibm.com>
- <74d1f275-23c3-4fd8-b665-503c7fc87df0@redhat.com>
- <248b4623-8755-4323-8a44-be4af30e4856-agordeev@linux.ibm.com>
- <b46d3430-fb84-464b-b053-490c6ea083da@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q+KEjLNmux7tdeSbXfEkMgcpwTN6sSD742Ym+xA6xbU8hT5jwGH32BilhsTqmNx4flfOKpC7/ttRp2W6KOMQ3AljUjjR9UEFfKD80therHBSZF+nX4rjeLQl0rurLgN964m1z0muE5o12aNgdfU/BEi/gm7x2gG12kGcW/9k9Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzznp34s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3BA2C4CEF1;
+	Fri, 12 Sep 2025 14:06:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757685979;
+	bh=gQYcfi405JQ9buqQxkTP7o9NnD/8vJsE/3UdfYC31Vk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jzznp34s7YFwrDjEEJkZ6iekjTLnPUhXzJLoPxBZyYG7N5CYK4W0PMCRqN5AARwKl
+	 VymP7CBqTch6oU3Dxu+8CbAWzZ0kIqydRCrxLBhWWMw1bhQ7Z0t2YuRuWT8PhZMYIS
+	 Kfz1cNTv0+6uUTVt0rhcsIvu+8XBwwvlvJbDRBPtUXZi6WaKHo+fJ4EgKll7QJ1KOo
+	 UF6gaG8l5++/aG16KdKtx01G+jonZrF4pNSs9q4TWqU3ki3ZkruTpdg/M5gSykWMLS
+	 gn47pNV+L6Wki7pJ42z98l/YWp8hyHWCGWhDKKhEbjU7tW/W+1B318r/PjuvYKi3cx
+	 6YB8Oj981CRLQ==
+Date: Fri, 12 Sep 2025 09:06:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+Cc: airlied@gmail.com, amergnat@baylibre.com, andrew+netdev@lunn.ch,
+	andrew-ct.chen@mediatek.com,
+	angelogioacchino.delregno@collabora.com, broonie@kernel.org,
+	chunkuang.hu@kernel.org, conor+dt@kernel.org, davem@davemloft.net,
+	dmitry.torokhov@gmail.com, edumazet@google.com,
+	flora.fu@mediatek.com, heiko@sntech.de, houlong.wei@mediatek.com,
+	jeesw@melfas.com, kernel@collabora.com, krzk+dt@kernel.org,
+	kuba@kernel.org, lgirdwood@gmail.com, linus.walleij@linaro.org,
+	louisalexis.eyraud@collabora.com, luiz.dentz@gmail.com,
+	maarten.lankhorst@linux.intel.com, marcel@holtmann.org,
+	matthias.bgg@gmail.com, mchehab@kernel.org,
+	minghsiu.tsai@mediatek.com, mripard@kernel.org,
+	p.zabel@pengutronix.de, pabeni@redhat.com, sean.wang@kernel.org,
+	simona@ffwll.ch, support.opensource@diasemi.com,
+	tiffany.lin@mediatek.com, tzimmermann@suse.de,
+	yunfei.dong@mediatek.com, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-bluetooth@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-sound@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 03/12] dt-bindings: net: Convert Marvell 8897/8997
+ bindings to DT schema
+Message-ID: <20250912140619.GA1293647-robh@kernel.org>
+References: <20250911151001.108744-1-ariel.dalessandro@collabora.com>
+ <20250911151001.108744-4-ariel.dalessandro@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -120,64 +79,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b46d3430-fb84-464b-b053-490c6ea083da@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ZMmKMxWqtsslbAtdOPAzBRJYU4GL7wAu
-X-Proofpoint-ORIG-GUID: j5mM8DCXgm3DPCWWxntSIgsJIjsuTDHV
-X-Authority-Analysis: v=2.4 cv=J52q7BnS c=1 sm=1 tr=0 ts=68c42899 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=xegNWJJ1Rn4Hofgs2fcA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNSBTYWx0ZWRfXyQgs4MJipRKm
- Vh4mPp8mP6XTDOkYJ7/naEofqsCMunScyHXUNGqkDffcXe8gbUTaR6visxv0m0kRskga/a5g93o
- Y0rVCYsKPe9P0+nMVlo+OxrV7SEnalYxsvJH/2d4bx8m5Zotd/48CmrUGFK82F0g4ZHLlVG2QyQ
- v9UaEdTcRwYdLo8RFKENqA+3oT6sxrdZPoE2SA+aupZ9ucY0p/3lfsPwTVCbkACKw9viHKZUPh5
- sUwnl0/J1iAjs+cvRsvj5o5BYd545b8qOoQTDQow9AxgiianjYJVfAmcO4Lvo/OxYU1Zraata1S
- PL9YSDjhZWpLjBNA8UeDChKZIto5ViRARZ1acta2OR59pSCA4kyBpUWrv47WX0z1P1aU2UCNZhg
- VoRSX1Jb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_05,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 clxscore=1015 suspectscore=0 spamscore=0 phishscore=0
- bulkscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060025
+In-Reply-To: <20250911151001.108744-4-ariel.dalessandro@collabora.com>
 
-On Fri, Sep 12, 2025 at 03:02:15PM +0200, David Hildenbrand wrote:
-> How would that work with nesting? I feel like there is a fundamental problem
-> with nesting with what you describe but I might be wrong.
+On Thu, Sep 11, 2025 at 12:09:52PM -0300, Ariel D'Alessandro wrote:
+> Convert the existing text-based DT bindings for Marvell 8897/8997
+> (sd8897/sd8997) bluetooth devices controller to a DT schema.
+> 
+> While here:
+> 
+> * bindings for "usb1286,204e" (USB interface) are dropped from the DT
+>   schema definition as these are currently documented in file [0].
+> * DT binding users are updated to use bluetooth generic name
+>   recommendation.
+> 
+> [0] Documentation/devicetree/bindings/net/btusb.txt
+> 
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
+>  .../net/bluetooth/marvell,sd8897-bt.yaml      | 79 ++++++++++++++++++
+>  .../devicetree/bindings/net/btusb.txt         |  2 +-
+>  .../bindings/net/marvell-bt-8xxx.txt          | 83 -------------------
 
-My picture is - flush on each lazy_mmu_disable(), pause on lazy_mmu_pause()
-and honour only top-level arch_enter_lazy_mmu_mode_pte(mm, start, end, ptep) 
-context on all nested levels.
+>  .../dts/rockchip/rk3288-veyron-fievel.dts     |  2 +-
+>  .../boot/dts/rockchip/rk3288-veyron-jaq.dts   |  2 +-
+>  arch/arm64/boot/dts/mediatek/mt8173-elm.dtsi  |  2 +-
 
-In theory (and if I got it right, you leave the door open for this possibility)
-every (mm, start, end, ptep) context could be stored for each nesting level
-(as an opaque arch-specific data?).
+.dts files should be separate patches. Please send the bindings patches 
+separately per subsystem so subsystem maintainers can apply them. All 
+the Mediatek dts changes can be 1 series.
 
-But I do not really expect it ever, since arch_enter_lazy_mmu_mode_pte()
-is only to be called in PTE walkers that never span more than one page
-table and follow the pattern:
+The schema looks good.
 
-	ptep = pte_offset_map_lock(...);
-	arch_enter_lazy_mmu_mode_pte(mm, start, end, ptep);
-
-	for (...; ptep++) {
-		/*
-		 * set_pte(ptep, ...) or something
-		 */
-	}
-
-	arch_leave_lazy_mmu_mode();                                             
-	pte_unmap_unlock(...);                                         
-
-As result, the lazy mmu mode is only "bound" to a single PTE table on s390,
-while arch_enter_lazy_mmu_mode() is going to stay NOP.
-
-So when you say you feel a fundamental problem - what that could be?
-
-> David / dhildenb
-
-Thanks!
+Rob
 
