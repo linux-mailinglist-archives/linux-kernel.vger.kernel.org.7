@@ -1,125 +1,98 @@
-Return-Path: <linux-kernel+bounces-814739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFA2BB557FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:58:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3450DB557FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38AE67A7CF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C417C66E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:02:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB71A305940;
-	Fri, 12 Sep 2025 20:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF24828466A;
+	Fri, 12 Sep 2025 21:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GgYY+K7+"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="kiNWHG1G"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1AF242D9E;
-	Fri, 12 Sep 2025 20:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A69223316
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757710719; cv=none; b=rs+zxA/nNqQJwoPa2CCWw+Hb9tUven3fQZ10ZFmjzxGOizqWF0a9q//RlNYSOrvd4nZ02g1IcgExHHf6EiVR2QwMalogi+BCOP0BQGq+aMSDB/MJKUEhFq2maiw5/pozWYeAw6FXJ9UsGn+oX15FCJZ1zWHHCJ8pJtHE85rTMmM=
+	t=1757710944; cv=none; b=Apulsynojm82W/+3YU1XFF8N8cp3mtWnGfA9Q5sJ+YnbS4e0gdIICwLhM0ErVLDXiGvgHyLQ4INf9L2r/Ec80Qby5g7X7RwIkQc81XJyQLrueGyazd7bXgaiP8wq4M+edrIuQ1H57hj/xIxyXi7mr+Dbd9cvHZJWA7FwKx97KSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757710719; c=relaxed/simple;
-	bh=hkPf4NG18cr+svLukm92kqXa86JRyXzWrX2yDcyUf2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kiJG+Gh0KgHqtEIYUU79wo70Zmw0nAyshej81Ku6aA6g7GYoEsaTL7P9q03nQ5QuXYWlyg34YLPN32LHEO7fCXlbzbjq7iJT9AFsIwwfxBexVrkdSeVn0sRu4z4TeUnfP17fzryDA3Gt20KjeBMysygjS+euVMhBzfFMAs+t4KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GgYY+K7+; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=LJHK7dsTB/ThO7Z2EP/SeNUzVk4mffiuK9Sa9a/39e4=; b=GgYY+K7+wiV+MpG4kO15w5qH+k
-	2WDSXuAg5k3G6ic4OnsA5tqxqUWWIkTVHHvl/OF3XUy4DakgAE6fiiA985ifFXW6TT5faR1uLIXG8
-	B6ciUprU+MM+N892Ut5ku3Ln9p15qVGYJX54q5e1j2xxS0sOVSnCx0q5FyYxZFu0RIvJlbPzW4oKL
-	SGU6xNfcRf8rc9vwKjxOUOEgPgVyfma6HNa9LbmE3Dom08imHl4z3AD8eeQr4BnijnnkZZXToFOBH
-	2EgfzN80emdvF98CXoiOicwkmvywStj1NrGJRChqiwg88Fgz9WtqGjF0SYkPl2H70sRRkmCr7NGrG
-	OFTEQkgw==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uxAqp-0000000BXIW-2wyb;
-	Fri, 12 Sep 2025 20:58:35 +0000
-Message-ID: <de409ffc-100a-4120-b6b1-f89c59a97530@infradead.org>
-Date: Fri, 12 Sep 2025 13:58:34 -0700
+	s=arc-20240116; t=1757710944; c=relaxed/simple;
+	bh=GMz9+xllyST7cIhbITQMk9tKHdJ0slp/rL9hgA4+46I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1PTr/TYgYsi5xUJlpxxK8cwp1qiOLqwimAoTlKX3+PFyZOASo75HGxxt8JXyoZ5jhXawV8H4IrRGFcOOBc2g5fWpuPX4F/Ll7Nh3xG2p5nze9NSm1GxUe2pXS++JfLeCudhGlwvurT0UVLMz12oL8I2rhuSihV7DgrkOzyyzWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=kiNWHG1G; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 561CA40E015C;
+	Fri, 12 Sep 2025 21:02:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id qM5yvJScYERo; Fri, 12 Sep 2025 21:02:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1757710937; bh=tjDwjUF6W4gKnSGSAp/M3RRbEWfvCsNGQIiPadPWm40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kiNWHG1GU0FG0FrmpVczlfeQlISJm0JfA7jXOiaJcL/Esl5w9Ium5WwnoN1MOJ98/
+	 3/Go0CygRpNOaTw8VdRaUvsOn4kaCZ7Okk6C51G2yYkkGwovUZoqtuPPD0XdzEnV2f
+	 CQbz7ig0MNwA1fRME3Xv9swTg6GUx8ZWMvGIXAYzQbE8R43kXnDhaUEL0Dl0TwiNWJ
+	 pj0r6k+fNDwi3yVC7c3MOHPgMJW2gYREB6o2Q17fDVOTZA5/NLWxeYNac11+R4Cu2W
+	 GXT8iMqCDFVX3jqgxI+myNK9nqXQVE5eclvqXjYRNmdzuhqttLWvtM6wpHwqBYLvIw
+	 I5ga8j+xVCHtccniNV+15TcvddU/d7n0LYDHPw4sINLKq+lephCOc3hhb0quikVR/d
+	 57MJBuT8WBrivd8dKccNdrDo5jrnZohErrnKJgakiBBcIR2kvyLERBEt9By+kt4vnA
+	 d8mfac7QznpzF5514EIWgRHoGfv4oDB1B010f8eFxkRYvfq3KkUdPfdrQsxCcH+VWd
+	 kTluTPkqWpRwXFnEPiEY1L31v0aDTo/xYSVFwfAAqoKS9b300OGv9ieJwb7NgoMBRu
+	 RJw+PgBkw8NPbP7N0YltTmcpbz3Ak7aLuUQHvC2/8MNFTglezLT8h1Po+T+smJBa7I
+	 8+8QSMU7NYCnWQFx5aOTs8SM=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id F027140E0140;
+	Fri, 12 Sep 2025 21:02:07 +0000 (UTC)
+Date: Fri, 12 Sep 2025 23:02:01 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Michael Roth <michael.roth@amd.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>, stable@kernel.org
+Subject: Re: [PATCH] x86/sev: Guard sev_evict_cache() with
+ CONFIG_AMD_MEM_ENCRYPT
+Message-ID: <20250912210201.GFaMSKSSvK55XIwR3e@fat_crate.local>
+References: <70e38f2c4a549063de54052c9f64929705313526.1757708959.git.thomas.lendacky@amd.com>
+ <20250912204203.GEaMSFm2-N6lPteue5@fat_crate.local>
+ <20250912204929.pls6245t746gtalr@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "drm: Add directive to format code in comment"
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux DRI Development <dri-devel@lists.freedesktop.org>
-Cc: Danilo Krummrich <dakr@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Javier Garcia <rampxxxx@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Antonino Maniscalco <antomani103@gmail.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20250912130649.27623-2-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250912130649.27623-2-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250912204929.pls6245t746gtalr@amd.com>
 
+On Fri, Sep 12, 2025 at 03:49:29PM -0500, Michael Roth wrote:
+> I think that's actually the concerning thing. If someone built a guest
+> kernel with CONFIG_KVM_AMD_SEV=y they might be under the impression that
+> this is performing evictions when it's actually just a stub function.
 
-
-On 9/12/25 6:06 AM, Bagas Sanjaya wrote:
-> Commit 6cc44e9618f03f ("drm: Add directive to format code in comment")
-> fixes original Sphinx indentation warning as introduced in
-> 471920ce25d50b ("drm/gpuvm: Add locking helpers"), by means of using
-> code-block:: directive. It semantically conflicts with earlier
-> bb324f85f72284 ("drm/gpuvm: Wrap drm_gpuvm_sm_map_exec_lock() expected
-> usage in literal code block") that did the same using double colon
-> syntax instead. These duplicated literal code block directives causes
-> the original warnings not being fixed.
-> 
-> Revert 6cc44e9618f03f to keep things rolling without these warnings.
-> 
-> Fixes: 6cc44e9618f0 ("drm: Add directive to format code in comment")
-> Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks!
-
-> ---
->  drivers/gpu/drm/drm_gpuvm.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
-> index db9b089ef62c85..86853535fb7bd7 100644
-> --- a/drivers/gpu/drm/drm_gpuvm.c
-> +++ b/drivers/gpu/drm/drm_gpuvm.c
-> @@ -2432,8 +2432,6 @@ static const struct drm_gpuvm_ops lock_ops = {
->   *
->   * The expected usage is::
->   *
-> - * .. code-block:: c
-> - *
->   *    vm_bind {
->   *        struct drm_exec exec;
->   *
-> 
-> base-commit: 9a3f210737e958c3f45a4ce0d7f1ff330af3965f
+That sooo needs to be in the commit message...
 
 -- 
-~Randy
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
