@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-813336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D1AB543CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:26:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA64B543D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF00683F84
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:26:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63EF17B2C3F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED742C08CC;
-	Fri, 12 Sep 2025 07:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaIt/vNG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09C72BF016;
-	Fri, 12 Sep 2025 07:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498F62C08CE;
+	Fri, 12 Sep 2025 07:26:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434322C0284;
+	Fri, 12 Sep 2025 07:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757661979; cv=none; b=pJObp+icySlMi/yJ/SjrzIJRK2T68b1ySd8pRFkWCz59POfPtmeklrwcKKf1HZPbEtfgjF2kv6V7CbNqg/DuaPDIxOiGBC6zpsU2txxk3iHGvZ6Uro9QCpE9q1JRWlF+kKFNHRtDfxOavvZVSm1PJD4rdUaaBcWzI6b1wxjJvTY=
+	t=1757661991; cv=none; b=nkYMU841feZJuCwnbeRIlyHp8uaKihWqlZ43sgxErwNX6ePF+LRmU9MKdov2B6qhGMubMasmwanLOSAmexvLsqZPtAjZxJJr942B7phtOfUrHLAc5ZsWN8fuloDYSR4z0NZblL6Xrbxs3fa+1niovq2f91dlHfXp2gbTfCQoMAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757661979; c=relaxed/simple;
-	bh=VnE1w+fAO4s1dCAkCqZL0H1AztE0vPgCLhgwJC3Z6bs=;
+	s=arc-20240116; t=1757661991; c=relaxed/simple;
+	bh=jHtH5ew5HJ7wpnudtpflMQ+7ZEEIn9+nbCJ8h1BOfgo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LTLgiZHM1xG6RkhFOkS3InEePDltlk8xZlDFRcLiaL8eZniBdvzi8cQycZKLjHsjpHXi05ecObgf4/34+rR03KW48IfhgAg9N6JjJAQQKsiCkaurc01aqUCuNEoH82bquhj5ZUHe9bLGb1zeORaRu+xJhcH/fNT0OSW36MJR1I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaIt/vNG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B5E5C4CEF4;
-	Fri, 12 Sep 2025 07:26:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757661979;
-	bh=VnE1w+fAO4s1dCAkCqZL0H1AztE0vPgCLhgwJC3Z6bs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gaIt/vNGziqV0951DS9uklbUIxhEH7Oh/cecEfDoKPGw4l74GHLZVc9SbKjqQVSWe
-	 hv4Kww9BkD0yO+uLdbn0cLAqpKuMgTiKfbN9kJh0l0RQNnx1hTgiDAhIpzIeNjdiVK
-	 NHV2Z3dCi5okaO4j5AgTw9utEFhACLpjwdqKRWS5F3Q4FwGRBl80HG2a4NB2KrsF81
-	 +q1NUPyHnDeN3UQFMOsXawDCy25/rUGKOtWVNH8KNPKnxjNx0vSy7m6niL/gwgTz2/
-	 Gmfg6FPNaGY8dAT1B5oxBe5MvKfTlorqDrxbvWhGLhI4GMDnjqfie4Uq7Xw73mD6ea
-	 DQBjyNIN8NeEg==
-Message-ID: <2d41c617-b7c7-43ae-aa90-7368e960e8a5@kernel.org>
-Date: Fri, 12 Sep 2025 09:26:15 +0200
+	 In-Reply-To:Content-Type; b=gCLK1LgE4EIj3kxjvt9NNLVYlXl9StlSwx9CnvU4ths2AGpd3DU8fhQKsHAmOC1YiGIe5G7UGpRoBHPEWHHctH/h9HMFHMAiuSIXPzHtXM3oYJJDVbONPJ99CCwXte15QdC52OMkGwoeJW2ahWYixXxyBDm7wSpfJw7h2/GOByU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD76F16A3;
+	Fri, 12 Sep 2025 00:26:19 -0700 (PDT)
+Received: from [10.57.66.147] (unknown [10.57.66.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD1E03F63F;
+	Fri, 12 Sep 2025 00:26:20 -0700 (PDT)
+Message-ID: <15d01c8b-5475-442e-9df5-ca37b0d5dc04@arm.com>
+Date: Fri, 12 Sep 2025 09:26:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,97 +41,183 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: qcom: sdm845-shift-axolotl: Fix typo of
- compatible
-To: Tamura Dai <kirinode0@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <38c24430-16ce-4d9a-8641-3340cc9364cf@kernel.org>
- <20250912070145.54312-1-kirinode0@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250912070145.54312-1-kirinode0@gmail.com>
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+To: David Hildenbrand <david@redhat.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+ Mark Rutland <Mark.Rutland@arm.com>
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908073931.4159362-3-kevin.brodsky@arm.com>
+ <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
+ <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
+ <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
+ <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
+ <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
+ <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
+ <29383ee2-d6d6-4435-9052-d75a263a5c45@redhat.com>
+ <9de08024-adfc-421b-8799-62653468cf63@arm.com>
+ <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
+ <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
+ <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/09/2025 09:01, Tamura Dai wrote:
-> The bug is a typo in the compatible string for the touchscreen node.
-> According to Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml,
-> the correct compatible is "focaltech,ft8719", but the device tree used
-> "focaltech,fts8719".
-> 
-> Fixes: 45882459159de (arm64: dts: qcom: sdm845: add device tree for SHIFT6mq)
+On 11/09/2025 20:14, David Hildenbrand wrote:
+>>>> On the other hand, with a pagefault_disabled-like approach, there
+>>>> is no
+>>>> way to instruct call {3} to fully exit lazy_mmu regardless of the
+>>>> nesting level.
+>>>
+>>> Sure there is, with a better API. See below. :)
+>>
+>> I meant while keeping the existing shape of the API but yes fair enough!
+>
+> Time to do it properly I guess :)
 
+Yes, I think the discussions on that series have shown that we might as
+well refactor it completely. Once and for all™!
 
-Missing quotes.
-[alias]
-	sf = show --pretty='Fixes: %h (\"%s\")'
+>
+> [...]
+>
+>>> Assume we store in the task_struct
+>>>
+>>> uint8_t lazy_mmu_enabled_count;
+>>> bool lazy_mmu_paused;
+>>
+>> I didn't think of that approach! I can't immediately see any problem
+>> with it, assuming we're fine with storing arch-specific context in
+>> thread_struct (which seems to be the case as things stand).
+>
+> Right, just to complete the picture:
+>
+> a) We will have some CONFIG_ARCH_LAZY_MMU
+>
+> b) Without that config, all lazy_mmu_*() functions are a nop and no
+> lazy_mmu_state is stored in task_struct 
 
-and then just `git sf commit`
+Agreed on both counts (replacing __HAVE_ARCH_ENTER_LAZY_MMU_MODE).
 
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
+>
+> struct lazy_mmu_state {
+>     uint8_t enabled_count;
+>     bool paused;
 
-Do not attach (thread) your patchsets to some other threads (unrelated
-or older versions). This buries them deep in the mailbox and might
-interfere with applying entire sets. See also:
-https://elixir.bootlin.com/linux/v6.16-rc2/source/Documentation/process/submitting-patches.rst#L830
+Looking at the arm64 implementation, I'm thinking: instead of the paused
+member, how about a PF_LAZY_MMU task flag? It would be set when lazy_mmu
+is actually enabled (i.e. inside an enter()/leave() section, and not
+inside a pause()/resume() section). This way, architectures could use
+that flag directly to tell if lazy_mmu is enabled instead of reinventing
+the wheel, all in slightly different ways. Namely:
 
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Tamura Dai <kirinode0@gmail.com>
+* arm64 uses a thread flag (TIF_LAZY_MMU) - this is trivially replaced
+with PF_LAZY_MMU
+* powerpc and sparc use batch->active where batch is a per-CPU variable;
+I expect this can also be replaced with PF_LAZY_MMU
+* x86/xen is more complex as it has xen_lazy_mode which tracks both
+LAZY_MMU and LAZY_CPU modes. I'd probably leave that one alone, unless a
+Xen expert is motivated to refactor it.
 
-With quotes fixed:
+With that approach, the implementation of arch_enter() and arch_leave()
+becomes very simple (no tracking of lazy_mmu status) on arm64, powerpc
+and sparc.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+(Of course we could also have an "enabled" member in lazy_mmu_state
+instead of PF_LAZY_MMU, there is no functional difference.)
 
-Best regards,
-Krzysztof
+> }
+>
+> c) With that config, common-code lazy_mmu_*() functions implement the
+> updating of the lazy_mmu_state in task_struct and call into arch code
+> on the transition from 0->1, 1->0 etc.
+
+Indeed, this is how I thought about it. There is actually quite a lot
+that can be moved to the generic functions:
+* Updating lazy_mmu_state
+* Sanity checks on lazy_mmu_state (e.g. underflow/overflow)
+* Bailing out if in_interrupt() (not done consistently across arch's at
+the moment)
+
+>
+> Maybe that can be done through exiting
+> arch_enter_lazy_mmu_mode()/arch_leave_lazy_mmu_mode() callbacks, maybe
+> we need more. I feel like
+> we might be able to implement that through the existing helpers.
+
+We might want to rename them to align with the new generic helpers, but
+yes otherwise the principle should remain unchanged.
+
+In fact, we will also need to revive arch_flush_lazy_mmu_mode(). Indeed,
+in the nested situation, we need the following arch calls:
+
+enter() -> arch_enter()
+    enter() -> [nothing]
+    leave() -> arch_flush()
+leave() -> arch_leave()
+
+leave() must always flush whatever arch state was batched, as may be
+expected by the caller.
+
+How does all that sound?
+
+>
+> [...]
+>
+>>
+>> Overall what you're proposing seems sensible to me, the additional
+>> fields in task_struct don't take much space and we can keep the API
+>> unchanged in most cases. It is also good to have the option to check
+>> that the API is used correctly. I'll reply to the cover letter to let
+>> anyone who didn't follow this thread chip in, before I go ahead and try
+>> out that new approach.
+>
+> And on top of the proposal above we will have some
+>
+> struct arch_lazy_mmu_state;
+>
+> define by the architecture (could be an empty struct on most).
+>
+> We can store that inside "struct lazy_mmu_state;" or if we ever have
+> to, start returning only that from the enable/disable etc. functions.
+
+I'm not sure we'd want to mix those styles (task_struct member + local
+variable), that's adding complexity without much upside... Also having a
+local variable at every nesting level only makes sense if we have an
+arch callback regardless of nesting level, which is unnecessary in this
+proposed API.
+
+>
+> For now, I'd say just store it in the task struct in the
+> lazy_mmu_state. But we can always adjust later if required.
+>
+> In the first (this) series we probably don't even have to introduce
+> arch_lazy_mmu_state. 
+
+I suppose this could improve the overall struct layout - but otherwise I
+don't really see the need compared to adding members to thread_struct
+(which is fully arch-specific).
+
+- Kevin
 
