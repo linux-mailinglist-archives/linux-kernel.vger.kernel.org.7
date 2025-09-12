@@ -1,279 +1,127 @@
-Return-Path: <linux-kernel+bounces-814711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB662B5579B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:27:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1554DB5579C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:28:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6066C3B4E08
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:27:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C984D3BD1A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B7DC31691E;
-	Fri, 12 Sep 2025 20:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8F02D24BE;
+	Fri, 12 Sep 2025 20:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nQw90EGT"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wx+/QIu+"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E3930DD0B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0F854758
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757708860; cv=none; b=Q/7ey6fEZAoF5S+Wj55iuCvb7P7mXSgX2hcXYLs5twruAcFrovhQQuFecnlfG9amjbqxVftehoiwQp3ZxByiwB81JUK+Nepuhc1B5jwiYk2xnvgHWtJ8Vb0jkKiZuBtsm/BqzFQjaiAQml/bjdPm9pcdBk0PCNa9uDxBPv1HIPY=
+	t=1757708921; cv=none; b=i1AWMhIt2pfA5FY8XlkKTFhl+Glifl7CI8MzV9M9XczEzS3AuRPlRz7lT7fzMsXox50IKTt6wiKVS91af94Npz6GrLrYABQrWyBeI/IfRVW6GeTWAxNOUTzdt7hLby+lN74L2PGMoZWnQsSsY2/n+DBLLg2PoJG4Qo7XTWlc/To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757708860; c=relaxed/simple;
-	bh=KdBVnZAxu/f0jdaREIsPWjWbUPo+9pZ4VL2JdVmsAR8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=amvJy/Vk3z1X12NUunjVhOQA3gYYFdLeXzwGBDRzjyoTrC/eLdrJ29CbmFdunXf4t7u0z2YM/5ZgwkPsKA51mjgP5kzQuPHGqfm+efi4efIj2l6bDkoeyJdL3nBGD9MiG0zQwbVFuW+YjOt+mJKeXu2ZcLeU+M2flR4hP0ad4aQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nQw90EGT; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7761a8a1dbcso831255b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:27:38 -0700 (PDT)
+	s=arc-20240116; t=1757708921; c=relaxed/simple;
+	bh=5CRQ1Wk/o0j/G2nHEl90c33QVDlowgMy5EcywRApncQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t+33BaxmZ6V9DIjTctk/VsL29JX77Dni5BjnTF578JtbElzgOjox71sVzpV/AXJAVfyxn+Bl/nBUlLaXB0O0C+DTzPXGDA1f1msyofPC2/zrOHS8KzChWSE8ILgJeu2/Q5q/ACRQn4JlA5JkFERIDeha576yFJfR1OB6xVPIOa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wx+/QIu+; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61ed6eeaff9so484a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757708858; x=1758313658; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1757708918; x=1758313718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YE3GYubdo1braKo3QL8VbxJmRniOCS+YTb/GoUUCFKU=;
-        b=nQw90EGT9todIan2zMOrfchq0m2ZAwSxEw50Sv6iwTBTyTo57pDGwWm4b9VwHRfXq3
-         7r9/A+Cd4+IdHdd7adVUH1HzB/Rbcfaxj7WrO5rEU6o1VZejXJJbfAm6+8i2YC2qoPg2
-         40rrRS0bhrrRckv682kQCl8ysrzy7gHMkKy9xHSa+HcqraahHWV0f8Gnu7U8VEZqVvpS
-         nfY/QiyFah1AdgkjJIU40f6wW0d2EtS1KSkUqVO6UdeE20DcFTTw+CXSpssDsRnLqxB+
-         2utTuOWDyMFrsdeLa1g3i/eQCL+lBljarhddfeneuGK9b3kdn7vwtigZUgRqLEhrsvQ2
-         47VA==
+        bh=EkdPl3mJf0N7aHo7vS0NETAJN5x+QRdYgue6V4hYEyk=;
+        b=Wx+/QIu+CfvykWXlvHaQoQtm09bFs+WO0BguULsjBr2JXkHX33ONwrs2p5vmGGrpIr
+         lRgGSyyGoneGLYsih6Odzv4B/NBkKGUvdM5/EPPQlN0pWBOapKW5Nzx6sVIjx5CUOOdx
+         CzrO33HNbCid7JX/hmVb/O3JHzFXtehT3IfM6AjQLLtnS8HpWL4s77Z8WE1aSqS8kB0M
+         zY02ZG/wrAt1bjrWXeejxRtc45y1ZNVN9MXmdbML3PH/xAKTdWPbIl4/4GoIMmdKZbiJ
+         aTR9ZLZlQ1OoUWgXBBkWJ5GpkMalJe6QjEX6uEz6qd0XcRGBJtNYTYaidDZeOp7XXW7b
+         eJ7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757708858; x=1758313658;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1757708918; x=1758313718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YE3GYubdo1braKo3QL8VbxJmRniOCS+YTb/GoUUCFKU=;
-        b=gv0xRYOKPPRFKSPr+1lrmVLfCNs4xf2o9gpxWmxT3obvQC6QGu+Q6925cm1hbZdQIL
-         O66eUQB9xchtLyI74CkAH+2moA7eGVLV2SGStezFnxvZtwty0KkBo/NwWg7wdA7ezzhB
-         j2VVSkktVeOqZCbTcynOaFYk0kr4UciOPydCjD8crCEnIRs3PIr5F0CjC5QtQB7VVweo
-         JiTdnqLeHWfeaobiHZtWya3X+SYv8E0EqC1bypMafgyrJ/HYBmlbNw5FyYmbWQ1wCxZj
-         g4JW6avMlWaL/65eEaEYVw9A1OZUYSfhWkr0aJQDb20FgG9xxJoDH0IQSbog/aCV3CGh
-         VyLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnwyndxeUoMpWlMoyXlbXlopU3nODQFqHdkRJrbWR96rnOxClZU3e7UDLAPZBEKEx7DyJeSKOOVhhpA5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1aHCeWDS8ryewtxqgBmhstQv/YqL6gAvXJg8fNPvw3JGczO+F
-	o5xUw+ZRAvw61RhCOSU71ESxzJG6P5hbU5HFDXCT4l/nxO4l85RWlB7a
-X-Gm-Gg: ASbGncuiBhoeRUgrmWV9YKgbUDnuTbUgnDP8/OBotM8DGrzaV+aHh7eBDT/w45HRpeb
-	ub1f36CyJoIA9WhSOuHHehQX2wv0e8KGggOygAMoTty5o2X9XVyXCXw7RQ8C3s9OPqJNCbm82iM
-	clLRhiG4Ubco4qWguZoGieZDAkATkK2YUzUOJojqN2zy8V/t019DSQTQYJ99MI2KR/7HQ2y6sdv
-	rDeNd+9aU0n2SyXiG6U+/1IasmiHUQTLHjuANsREV3zwj0/nWeVCXp7KSd6I9Y2Pc+cFndm1uQN
-	wrfkF9YpoUNT+PTPTafiMHFZICnm4g4+zgziHM7pe9ZLTJzoFQhxezoJwxPzkjSqCwQkO6jzhT3
-	3utlEZWtqNsYlfe1stNGOc62AEvKOqA==
-X-Google-Smtp-Source: AGHT+IFvw6M81Uqea3q9MeDb/2jUwHTBlTDeDpS8zi1x5lzGzLpgoV9d8rW9kBVAsGB1U+PHiHpc5g==
-X-Received: by 2002:a05:6a20:42a3:b0:249:d3d:a50b with SMTP id adf61e73a8af0-2602cd277f6mr5318090637.59.1757708857959;
-        Fri, 12 Sep 2025 13:27:37 -0700 (PDT)
-Received: from archlinux ([152.245.61.23])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a32ea462sm5603995a12.0.2025.09.12.13.27.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 13:27:37 -0700 (PDT)
-From: =?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Eric=20Gon=C3=A7alves?= <ghatto404@gmail.com>
-Subject: [PATCH v9 1/1] arm64: dts: qcom: add initial support for Samsung Galaxy S22
-Date: Fri, 12 Sep 2025 20:25:57 +0000
-Message-ID: <20250912202603.7312-2-ghatto404@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250912202603.7312-1-ghatto404@gmail.com>
-References: <20250912202603.7312-1-ghatto404@gmail.com>
+        bh=EkdPl3mJf0N7aHo7vS0NETAJN5x+QRdYgue6V4hYEyk=;
+        b=PmYmGoxhPoMVDrJZ3ZqRqen++gyHXeEFn3u2Cjw7qCPBvZTlQCgTNPz1wVmW8lxlLF
+         1B1xeVzRa00URJUK8NqohQyb9XCaQ6mHA83eg8RQp2ORW5M944QTVQXJ7bzF02HTmAD2
+         cH7LJG0iFW3WACKpxuxBcpvQmZGZHw2Ll9LV8HKNVIUk4sDdw+tn0Jxob/sremmZvbrr
+         FFo+WXt93d6cyA+95sWl9hXcQWp3gLauNAGiC1zZQSTgj3ySIuPapPz2cH97TmbzVxzX
+         b7J1c+N0gGoYdaJo1qpqBkoqi4wwqiK5GPh7Cz4MLWT/avSSVFgLUdA64bibwxpAFg9l
+         Ak1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVasAcuxsFvn87TJUJTlQh7bEM+SU1h1+zRlK0z94X37YNnMU2N4T4v1qAEv6ZY0xo9DxUOttlC7GtPqsE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWNShN9JERJORruIijrfPjRSt5yx8w/mrJQpIa3EDZM9ncfdfs
+	5oRDzI0OMbEVwulPr+JiHT2DUYu9UMAPWsO5ToZi4OIIHcWoz3f4HTadPkl/JyQWQe9FjqaA1/p
+	/++JUz32lCRWw4YTX2dFZiSI8vyvnQph6o0FbuoZx
+X-Gm-Gg: ASbGncsF7MKwHRrSfoUu6wam1wC712GV3DuD70jQ2ShXTVIR4MgZNtZYQuJUiMqctYZ
+	7fpFYTKIrKAEYn6077yPAN/ow5/fPNhRxA7B2JZTL5madgjeWcldw+N8b36D3LJNI+p4nwBeknc
+	NVawli7tiO1S1JKpqvkhE+fvszOrrG7qA4H3YidATlEptbyDyIbgF9hH9VQ7SFSZSCiEcvuyYNM
+	kX9Aor7yqDEAsSgJtTYzGxA
+X-Google-Smtp-Source: AGHT+IEkvcIOSJdOnsWjngaZgia/B6ZJv/NV1qfDBSsgIsWPExuX3vienXVzLgwf4WmDv+gESSlL6lMpOoK3PXd9VFg=
+X-Received: by 2002:a50:9991:0:b0:61c:b5f0:7ddb with SMTP id
+ 4fb4d7f45d1cf-62f03e263b7mr3303a12.6.1757708918218; Fri, 12 Sep 2025 13:28:38
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240815123349.729017-1-mlevitsk@redhat.com> <20240815123349.729017-2-mlevitsk@redhat.com>
+ <Zr_JX1z8xWNAxHmz@google.com> <fa69866979cdb8ad445d0dffe98d6158288af339.camel@redhat.com>
+ <0d41afa70bd97d399f71cf8be80854f13fe7286c.camel@redhat.com>
+ <ZsYQE3GsvcvoeJ0B@google.com> <8a88f4e6208803c52eba946313804f682dadc5ee.camel@redhat.com>
+ <ZsiVy5Z3q-7NmNab@google.com>
+In-Reply-To: <ZsiVy5Z3q-7NmNab@google.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Fri, 12 Sep 2025 13:28:26 -0700
+X-Gm-Features: AS18NWAcs9kOE63nWWnvE8--wogUnl2l6qpewdFnnoJGLyvlOpE75iYZG3HMwn0
+Message-ID: <CALMp9eR91k0t9kSzpvM=-=yePGYmLHggjfvvhmD-qaxBCnRn+Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] KVM: x86: relax canonical check for some x86
+ architectural msrs
+To: Sean Christopherson <seanjc@google.com>
+Cc: mlevitsk@redhat.com, kvm@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	x86@kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add new device support for the Samsung Galaxy S22 (SM-S901E) phone
+On Fri, Aug 23, 2024 at 6:59=E2=80=AFAM Sean Christopherson <seanjc@google.=
+com> wrote:
+> Heh, and for MPX, the SDM kinda sorta confirms that LA57 is ignored, thou=
+gh I
+> doubt the author of this section intended their words to be taken this wa=
+y :-)
+>
+>   WRMSR to BNDCFGS will #GP if any of the reserved bits of BNDCFGS is not=
+ zero or
+>   if the base address of the bound directory is not canonical. XRSTOR of =
+BNDCFGU
+>   ignores the reserved bits and does not fault if any is non-zero; simila=
+rly, it
+>   ignores the upper bits of the base address of the bound directory and s=
+ign-extends
+>   the highest implemented bit of the linear address to guarantee the cano=
+nicality
+>   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^=
+^^^^^^^^
+>   of this address.
 
-What works:
-- SimpleFB
-- USB
+I don't believe there was ever a CPU that supported both MPX and LA57. :)
 
-Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
----
- arch/arm64/boot/dts/qcom/Makefile             |   1 +
- .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 145 ++++++++++++++++++
- 2 files changed, 146 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+Late to the party, as usual, but my interest was piqued by the failure
+of KVM_SET_NESTED_STATE prior to v6.13 if L1 had CR4.LA57 set, L2 did
+not, and the VMCS12.HOST_GSBASE had a kernel address > 48 bits wide.
+The canonicalization checks for the *host* state in the VMCS were done
+using the guest's CR4.LA57.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 94a84770b080..d311e637327e 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -285,6 +285,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8350-sony-xperia-sagami-pdx214.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8350-sony-xperia-sagami-pdx215.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-hdk.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-qrd.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-samsung-r0q.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-sony-xperia-nagara-pdx223.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8450-sony-xperia-nagara-pdx224.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8550-hdk.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
-new file mode 100644
-index 000000000000..b7533c2287b7
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
-@@ -0,0 +1,145 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-+
-+#include "sm8450.dtsi"
-+#include "pm8350.dtsi"
-+#include "pm8350c.dtsi"
-+
-+/ {
-+	model = "Samsung Galaxy S22 5G";
-+	compatible = "samsung,r0q", "qcom,sm8450";
-+	chassis-type = "handset";
-+
-+	chosen {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		framebuffer: framebuffer@b8000000 {
-+			compatible = "simple-framebuffer";
-+			reg = <0x0 0xb8000000 0x0 0x2b00000>;
-+			width = <1080>;
-+			height = <2340>;
-+			stride = <(1080 * 4)>;
-+			format = "a8r8g8b8";
-+		};
-+	};
-+
-+	vph_pwr: regulator-vph-pwr {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vph_pwr";
-+		regulator-min-microvolt = <3700000>;
-+		regulator-max-microvolt = <3700000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	reserved-memory {
-+		/*
-+		 * The bootloader will only keep display hardware enabled
-+		 * if this memory region is named exactly 'splash_region'
-+		 */
-+		splash-region@b8000000 {
-+			reg = <0x0 0xb8000000 0x0 0x2b00000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&apps_rsc {
-+	regulators-0 {
-+		compatible = "qcom,pm8350-rpmh-regulators";
-+		qcom,pmic-id = "b";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+		vdd-s7-supply = <&vph_pwr>;
-+		vdd-s8-supply = <&vph_pwr>;
-+		vdd-s9-supply = <&vph_pwr>;
-+		vdd-s10-supply = <&vph_pwr>;
-+		vdd-s11-supply = <&vph_pwr>;
-+		vdd-s12-supply = <&vph_pwr>;
-+
-+		vdd-l2-l7-supply = <&vreg_bob>;
-+		vdd-l3-l5-supply = <&vreg_bob>;
-+
-+		vreg_l2b_3p07: ldo2 {
-+			regulator-min-microvolt = <3072000>;
-+			regulator-max-microvolt = <3072000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+
-+		vreg_l5b_0p88: ldo5 {
-+			regulator-min-microvolt = <880000>;
-+			regulator-max-microvolt = <888000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+
-+	regulators-1 {
-+		compatible = "qcom,pm8350c-rpmh-regulators";
-+		qcom,pmic-id = "c";
-+
-+		vdd-s1-supply = <&vph_pwr>;
-+		vdd-s2-supply = <&vph_pwr>;
-+		vdd-s3-supply = <&vph_pwr>;
-+		vdd-s4-supply = <&vph_pwr>;
-+		vdd-s5-supply = <&vph_pwr>;
-+		vdd-s6-supply = <&vph_pwr>;
-+		vdd-s7-supply = <&vph_pwr>;
-+		vdd-s8-supply = <&vph_pwr>;
-+		vdd-s9-supply = <&vph_pwr>;
-+		vdd-s10-supply = <&vph_pwr>;
-+
-+		vdd-l1-l12-supply = <&vreg_bob>;
-+		vdd-l2-l8-supply = <&vreg_bob>;
-+		vdd-l3-l4-l5-l7-l13-supply = <&vreg_bob>;
-+		vdd-l6-l9-l11-supply = <&vreg_bob>;
-+
-+		vdd-bob-supply = <&vph_pwr>;
-+
-+		vreg_bob: bob {
-+			regulator-min-microvolt = <3008000>;
-+			regulator-max-microvolt = <3960000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-+		};
-+
-+		vreg_l1c_1p8: ldo1 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+		};
-+	};
-+};
-+
-+&tlmm {
-+	gpio-reserved-ranges = <36 4>; /* SPI (not linked to anything) */
-+};
-+
-+&usb_1 {
-+	/* Keep USB 2.0 only for now */
-+	qcom,select-utmi-as-pipe-clk;
-+
-+	dr_mode = "peripheral";
-+	maximum-speed = "high-speed";
-+	/* Remove USB3 phy */
-+	phys = <&usb_1_hsphy>;
-+	phy-names = "usb2-phy";
-+
-+	status = "okay";
-+};
-+
-+&usb_1_hsphy {
-+	vdda-pll-supply = <&vreg_l5b_0p88>;
-+	vdda18-supply = <&vreg_l1c_1p8>;
-+	vdda33-supply = <&vreg_l2b_3p07>;
-+
-+	status = "okay";
-+};
--- 
-2.50.1
-
+Shouldn't this series have been cc'd to stable?
 
