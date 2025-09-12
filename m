@@ -1,146 +1,160 @@
-Return-Path: <linux-kernel+bounces-812992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 193E6B53F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:06:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98718B53F6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50C2A680EC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:06:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB6AE1CC0CAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29734A08;
-	Fri, 12 Sep 2025 00:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 167A079CD;
+	Fri, 12 Sep 2025 00:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="hiEsnjSn"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NPcHy8dV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A74C38D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EB32030A;
+	Fri, 12 Sep 2025 00:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757635582; cv=none; b=d9ZmXWi2GJiQ28pFCahwodU/5rLzpBN1r6LBfEgV2CWo+PsM4XSUrEbgLzKyaLqaN9vAFc15l0d3K+dxJtWCaXgoV03C3oxe67CV5C6HJVQ7XsWykbiSlfPQOz4aduTw4UY81lL57EQVTVJBXywpN1Z5M2cwxe4POiGNx1PJJng=
+	t=1757635711; cv=none; b=QtbMK1S+B9hGz7QRzm2jjSkrbS6kaRhipcCYHXGzYXwKs1dCsHkNmmvtL9aoVuTyGtOCPLgXjPHoY///EFV+mwqsWkr0MyORy04JB8LKmhmVxqjBeD84w4lfF9MqCV8PHLmZ840l/uKQAG58zpNEDowSPW6qtvR60imIvfF1F3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757635582; c=relaxed/simple;
-	bh=+6OPioA90E5nzaoCC+gocHUjf3q9Y81ZBY0L3e9+kGc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TtrwfOsLemDXhhAk0Rpa5Cw21DAQTxM4oGfaRhubcnrkD5SbsK5rNGslbCx5XNchHuLlqYqFVoCf4ua4ldOM+nvV9iD8aPn6+D9RzofbykMoHcQP0pDWdDtBcGunODmFMsWVUVQl3Nje5YUj9fmfOTov0iLox//Wh0am3agS5Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=hiEsnjSn; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso9308485e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1757635579; x=1758240379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XQ+S/AjoUpa12H97dfICorV7t0bCnG6lmMpJwiBX4/M=;
-        b=hiEsnjSnXJkdG+/RtNT366LSZzvjAwyUEGkOMnZJ6N1n5L/VoAgcfYKXOJokKU/XVC
-         /70FCgZhpTNpgyRefQykB6jpm8eDsSZULJVIlhYJufSFdjVV85bCKRHAulVYIDdf7bwV
-         iwYVXw35L+T5HpnUTIui7eGYv6e4prsMqf75NTUTAlsXHX/cdP++uLmZ9PDj2oiU/oRq
-         VephEKI37yD6OhpB5ItMEav7c05y0YuG6Ls2RfyiJIknh00RNOnMiQ4T0aPKiLECc5w5
-         Oudhz7JDhkhkwbvn2PxyaatsnP0v8eAMlS1D5HzGig1pOSSg9KKRJFK3RRfVwi6aAR4M
-         EGFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757635579; x=1758240379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XQ+S/AjoUpa12H97dfICorV7t0bCnG6lmMpJwiBX4/M=;
-        b=FjLunRpibxhFlu6KzS6mVhx50dr8YV09wSODaW2uw6q1fI6xhc1+bVF6Vw74x4DRdO
-         u9wys19luXXlYqU2obHMfC73JLTpaLyZw/eKYX65nwtTLksg+b4u47xaSaCkJKATgbvm
-         +8O81AxQvg8llLdDYka2KMqChvOoMz8cqJwDLEx0XJJFCufDwKydVnFyJ99usRQs55nk
-         Ssa3uqyyrbOH2gAKSqSxg6XR0ZY9/JdxvhVmVlvVu2YHFtt1xHNsOqmbJuk+Tz0C4aef
-         dDzi8Wcr2sqYOQPDn1Uj0yMFpsSU44NAhIzU9iO56aKNAA0zlrZO8OVweXKgJiIW8drG
-         8rzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAMGGEwKZE8e6fkM7SDwNOn5WTYF2ctf4pw1sBVDDzy/zAfmt+dt1H7utxMFXJD0UAfYr40Qmmz0B+9u8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbnU/37M++8L2SgEnGms1cAWCacsh6FPRUbsjetEKjd7joO+QB
-	o4rqt6suhHy4qL2pcC3ZhsEz2LWwiZv7Vptr80mTGF11AWEU8hPDu0xpipRZmrGGvlw=
-X-Gm-Gg: ASbGnctoqRoyuwSl7F+ohEOniTnVEULIh6EGuWjQgYIeQ7HcBR8VYHYOTZi6LuB++Lk
-	tdGXEyIYASo0Y4JphuyP3rVfZEwTPUiGEuf25TbszmcXhIhbQ29DNFVtD/tOxVi2LhBFTN5Q6Jm
-	UbR97bEbNbpj5B0wSXB+5cIuC65zJ5mVJvwgnUl35h6tZemKP5lv/Oq/OM+0bYWCyy8PcGU4fAH
-	LbLC5Kj7/f9Ylb/NzR68acYFeUcGZ9G4RU3WdEjUXT1nZvgr2ZHVd//7HvlY7bGnBF8MbILbJ7W
-	uAuGI5akiiH4+aeFq1tvdL0tPTytSdKQ30kM8w8fWoCormZqP9yo3GuIFhpyojnlstaxrRS2afh
-	901O2yPGBqH9bjnKiqMVlcmUNJihwn5dkSUKinsgI/tPx6nNVFmU64jgnA0kU0aSty/0l9oB3R5
-	5kNgIlvf74E0glWy9pGX/1/5xK0hHs51ZymUc9EvUfNtXQ
-X-Google-Smtp-Source: AGHT+IFskXhj3JotjTK7+H0Jl9VGIBaJvG/P81CDfESkKjEB2nYSiqffBM8TrVpfVHiNaEyyyaOlqA==
-X-Received: by 2002:a05:600c:1f8b:b0:45b:47e1:ef71 with SMTP id 5b1f17b1804b1-45f21221db1mr10323485e9.36.1757635578608;
-        Thu, 11 Sep 2025 17:06:18 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f31f700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f31:f700:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0157cc84sm22899865e9.7.2025.09.11.17.06.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 17:06:18 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Fengnan Chang <changfengnan@bytedance.com>,
-	Sasha Levin <sashal@kernel.org>,
-	Diangang Li <lidiangang@bytedance.com>,
-	io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] io_uring/io-wq: fix `max_workers` breakage and `nr_workers` underflow
-Date: Fri, 12 Sep 2025 02:06:09 +0200
-Message-ID: <20250912000609.1429966-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1757635711; c=relaxed/simple;
+	bh=UxcuXC6sExcpG8BeW6MP7jgxfMtnH1Fa8tN/NA404Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bV1LhvnOLznGIJdl7tBbnDwFeY8UgDPgfEBKV/PT0GLX2QSlD31ZunRWAZkU1OdjxgblQWq7rs/fi+I7gRixoB03+4OqeIcBGuoIINk4/J525RbV66bnYDnBJF1oCVxlUD8pJ81wLv45JXq38ar7EQq7J2R/bVwKBXWx1tduOMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NPcHy8dV; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757635710; x=1789171710;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UxcuXC6sExcpG8BeW6MP7jgxfMtnH1Fa8tN/NA404Fg=;
+  b=NPcHy8dVB0iuvC5pQB64RBtcao1jIpE4xNT+WfIoc/WSsQ75R+37P58c
+   j3IIdXvUFDH8lYPJDBAJ5lLBJJ83lmlCDV5m5T4W9XzedVbOHPbeL8njA
+   bw8DaUSrV1jEnmw9ExrNVk4SfQSBjqoWx7zyiB5Xr6pYxMMXHuMDuvrWf
+   84bWNdm6L2ukojSLkBe2dh48i/1Ku4AgbuRIVv7s1CglNKSN0D/NK7iMH
+   iRFLL8UxUlW8OUNsLt4H3VYcZBmS8jhNpfOuyQuY9f5vFcfKtbTEJ6osK
+   iEf3tP4b8a3x7ziE6tg33BdIsf4IVRDl03pUOyFBHvCyP3VENFyOgCVYi
+   Q==;
+X-CSE-ConnectionGUID: N8Lk2SD5QfGkbwWhHQEdfw==
+X-CSE-MsgGUID: GcGo7dUlS8Svg/+494UhKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="60040653"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="60040653"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2025 17:08:29 -0700
+X-CSE-ConnectionGUID: JkE15ZKyT4Wcs/nc8sjVrw==
+X-CSE-MsgGUID: jm0+/LUrS322nD6lO7OCzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,258,1751266800"; 
+   d="scan'208";a="178163399"
+Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 11 Sep 2025 17:08:26 -0700
+Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uwrKx-0000iO-2Z;
+	Fri, 12 Sep 2025 00:08:23 +0000
+Date: Fri, 12 Sep 2025 08:08:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peng Fan <peng.fan@nxp.com>, Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	arm-scmi@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH 2/2] firmware: imx: sm-misc: Dump syslog info
+Message-ID: <202509120758.omltrDMi-lkp@intel.com>
+References: <20250910-sm-syslog-v1-2-5b36f8f21da6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250910-sm-syslog-v1-2-5b36f8f21da6@nxp.com>
 
-Commit 88e6c42e40de ("io_uring/io-wq: add check free worker before
-create new worker") reused the variable `do_create` for something
-else, abusing it for the free worker check.
+Hi Peng,
 
-This caused the value to effectively always be `true` at the time
-`nr_workers < max_workers` was checked, but it should really be
-`false`.  This means the `max_workers` setting was ignored, and worse:
-if the limit had already been reached, incrementing `nr_workers` was
-skipped even though another worker would be created.
+kernel test robot noticed the following build errors:
 
-When later lots of workers exit, the `nr_workers` field could easily
-underflow, making the problem worse because more and more workers
-would be created without incrementing `nr_workers`.
+[auto build test ERROR on 65dd046ef55861190ecde44c6d9fcde54b9fb77d]
 
-The simple solution is to use a different variable for the free worker
-check instead of using one variable for two different things.
+url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan/firmware-arm_scmi-imx-Support-getting-syslog-of-MISC-protocol/20250910-223316
+base:   65dd046ef55861190ecde44c6d9fcde54b9fb77d
+patch link:    https://lore.kernel.org/r/20250910-sm-syslog-v1-2-5b36f8f21da6%40nxp.com
+patch subject: [PATCH 2/2] firmware: imx: sm-misc: Dump syslog info
+config: i386-buildonly-randconfig-004-20250912 (https://download.01.org/0day-ci/archive/20250912/202509120758.omltrDMi-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250912/202509120758.omltrDMi-lkp@intel.com/reproduce)
 
-Cc: stable@vger.kernel.org
-Fixes: 88e6c42e40de ("io_uring/io-wq: add check free worker before create new worker")
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- io_uring/io-wq.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509120758.omltrDMi-lkp@intel.com/
 
-diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
-index 17dfaa0395c4..1d03b2fc4b25 100644
---- a/io_uring/io-wq.c
-+++ b/io_uring/io-wq.c
-@@ -352,16 +352,16 @@ static void create_worker_cb(struct callback_head *cb)
- 	struct io_wq *wq;
- 
- 	struct io_wq_acct *acct;
--	bool do_create = false;
-+	bool activated_free_worker, do_create = false;
- 
- 	worker = container_of(cb, struct io_worker, create_work);
- 	wq = worker->wq;
- 	acct = worker->acct;
- 
- 	rcu_read_lock();
--	do_create = !io_acct_activate_free_worker(acct);
-+	activated_free_worker = io_acct_activate_free_worker(acct);
- 	rcu_read_unlock();
--	if (!do_create)
-+	if (activated_free_worker)
- 		goto no_need_create;
- 
- 	raw_spin_lock(&acct->workers_lock);
+All errors (new ones prefixed by >>):
+
+>> drivers/firmware/imx/sm-misc.c:54:39: error: use of undeclared identifier 'SZ_4K'
+      54 |         void *syslog __free(kfree) = kmalloc(SZ_4K, GFP_KERNEL);
+         |                                              ^
+>> drivers/firmware/imx/sm-misc.c:54:39: error: use of undeclared identifier 'SZ_4K'
+>> drivers/firmware/imx/sm-misc.c:54:39: error: use of undeclared identifier 'SZ_4K'
+   drivers/firmware/imx/sm-misc.c:56:13: error: use of undeclared identifier 'SZ_4K'
+      56 |         u16 size = SZ_4K / 4;
+         |                    ^
+   drivers/firmware/imx/sm-misc.c:64:14: error: use of undeclared identifier 'SZ_4K'
+      64 |                 if (size > SZ_4K / 4) {
+         |                            ^
+   drivers/firmware/imx/sm-misc.c:64:14: error: use of undeclared identifier 'SZ_4K'
+   drivers/firmware/imx/sm-misc.c:64:14: error: use of undeclared identifier 'SZ_4K'
+   7 errors generated.
+
+
+vim +/SZ_4K +54 drivers/firmware/imx/sm-misc.c
+
+    49	
+    50	static int syslog_show(struct seq_file *file, void *priv)
+    51	{
+    52		struct device *dev = file->private;
+    53		/* 4KB is large enough for syslog */
+  > 54		void *syslog __free(kfree) = kmalloc(SZ_4K, GFP_KERNEL);
+    55		/* syslog API use num words, not num bytes */
+    56		u16 size = SZ_4K / 4;
+    57		int ret;
+    58	
+    59		if (!ph)
+    60			return -ENODEV;
+    61	
+    62		ret = imx_misc_ctrl_ops->misc_syslog(ph, &size, syslog);
+    63		if (ret) {
+    64			if (size > SZ_4K / 4) {
+    65				dev_err(dev, "syslog size is larger than 4KB, please enlarge\n");
+    66				return ret;
+    67			}
+    68		}
+    69	
+    70		seq_hex_dump(file, " ", DUMP_PREFIX_NONE, 16, sizeof(u32), syslog, size * 4, false);
+    71		seq_putc(file, '\n');
+    72	
+    73		return 0;
+    74	}
+    75	DEFINE_SHOW_ATTRIBUTE(syslog);
+    76	
+
 -- 
-2.47.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
