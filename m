@@ -1,157 +1,101 @@
-Return-Path: <linux-kernel+bounces-814283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A278B55202
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:42:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7AEB55200
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36F721D67A09
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:39:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64E705A7081
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:39:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E332E313531;
-	Fri, 12 Sep 2025 14:38:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3D12FDC4E;
+	Fri, 12 Sep 2025 14:39:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="aFT/2EW8"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DPxH7wWy"
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F9DD3128AF;
-	Fri, 12 Sep 2025 14:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A196D1A7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687894; cv=none; b=a5h4SVXsZ9G7bBP+LT3P/GkPAOwfnaryd/sOS7RpCMdggF6FeWnhEYcOC6Kzj+s+gcrDfmf/o/7cyAku5OFPgieRyrF9St7YIzDi+kQmh23tWyHrgwPPCYzYjgVrrzlX35hXbJgGEnyF/toNlibO+iALbvtaZJ+V3Re0xbZW2ao=
+	t=1757687942; cv=none; b=unmazQO+f5iEJAyP3cNdIUevEsJm+Ko8U4eSQAiFJKSMvuMzvhrV0fpo9A3A1HoPv+OoPgctQMVWHofAMzLKlPItI9f3I8cHTOV4cI9yP+WIpbMD4WDd/JZF/c7QTBeHfR47HjkT7qeoOFiv3gHftHO4sq9FMNRApQrNWTeQDew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687894; c=relaxed/simple;
-	bh=+W9RkNkmmT1IiTtBnRQIf0vW4aRt3gzcijwo74OaTUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DxD9ITJzvsmsQl6kzHhOHc/8XNBPsB/r3UFXneOaHgD/aVyGgiJzpjsOQW3hl2kR2+7GlGPXtnIKs2HQNdCebAnf2tY28IEofK4BsXvl8rBkuae+MFgcpo4nnqF/UOm77/ZRDI4DocYCtyxGT3OBbgpz4Yb2GTWWYZ7bYMgbegQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=aFT/2EW8; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=KqBKUZlM/P2XIZmldzfqFf87P0LiDauesCM5frm4wHM=; b=aFT/2EW8+DdbUF9V9Qseem00aq
-	TKs/hvQR3QWDTBkaq6UvjrdPvBvBTAu1IbZOng6qIKS58tCRLOhFgdsMyztFvTGf/rtswHIbWnGCL
-	BZ7l4RDv+5NK2eDycPi+DVEuTxHcYKAjNU6kJ02nGhu93bMTq6j1rz3jWpz83Lw6AI8N/dUA2JzFt
-	j+OQEJdOEIMaaEa8pOOhvIPwGc5PDjjUiDfjg2KABjPJxrsJqApXFvWjH29BDxTA3E60fe755FaPg
-	C/3FkTHnZwWYk8tnDcI9tfNsAdfKbM9o0dxnXeA0BuFGhpPMAi/1Okcl5Beu7wFDw9ZDCdhSPecfq
-	4XopNUTw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:38276)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ux4uT-000000004j2-1wjo;
-	Fri, 12 Sep 2025 15:37:57 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ux4uO-000000003Za-2uZp;
-	Fri, 12 Sep 2025 15:37:52 +0100
-Date: Fri, 12 Sep 2025 15:37:52 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Jakub Kicinski <kuba@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
- PM to avoid MDIO runtime PM wakeups
-Message-ID: <aMQwQAaoSB0Y0-YD@shell.armlinux.org.uk>
-References: <20250908112619.2900723-1-o.rempel@pengutronix.de>
- <CGME20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94@eucas1p2.samsung.com>
- <b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com>
- <aMLfGPIpWKwZszrY@shell.armlinux.org.uk>
- <20250911075513.1d90f8b0@kernel.org>
- <aMM1K_bkk4clt5WD@shell.armlinux.org.uk>
- <22773d93-cbad-41c5-9e79-4d7f6b9e5ec0@rowland.harvard.edu>
- <aMPawXCxlFmz6MaC@shell.armlinux.org.uk>
- <a25b24ec-67bd-42b7-ac7b-9b8d729faba4@rowland.harvard.edu>
+	s=arc-20240116; t=1757687942; c=relaxed/simple;
+	bh=Zud9w3aS6gjRiWjbIx38CgQlpVxgN+4usfvAb5PGmpM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aBq1aRc81URJ09d7X4/o7JZNYt6cPbROL7ILhcxKpqCCYRLd+czqVZVC4T4cnitqlPzTNlenD2nrxEXUxzcV/W7e9gc7pco2wHtORLtpm9FiBzDgdwzJ7OybBOSLQRTYq2pJogThrK5mW/LvF7YoaghLy8wASyB+Z9xcYWXe3rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DPxH7wWy; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6d833ea6-328f-4743-abfa-fb09b168849e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757687936;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KE1W/r+N8sTKSy321MZ4n/oyG8LmkGslI8PJ1jlVKTs=;
+	b=DPxH7wWyt9AZqvJa+AsTpWqx+6kaakUlHGOVOps7k2s3j31Mq1ZMggEha6nkdR/z5Fx+0R
+	iAHnA9xypPTGPI90VAuKJ0TLayj/SMbvwIA5RuWC+2HL5XVAim/E779dbk+htsPxXZbh1B
+	PaKLQgEKd4EjtukTxm7HdtcNxtzDE9E=
+Date: Fri, 12 Sep 2025 10:38:44 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a25b24ec-67bd-42b7-ac7b-9b8d729faba4@rowland.harvard.edu>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Subject: Re: [PATCH v2] coresight: Fix possible deadlock in coresight_panic_cb
+To: Yeoreum Yun <yeoreum.yun@arm.com>, Leo Yan <leo.yan@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Mike Leach <mike.leach@linaro.org>, Linu Cherian <lcherian@marvell.com>,
+ James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org
+References: <20250911153315.3607119-1-sean.anderson@linux.dev>
+ <20250912093534.GF12516@e132581.arm.com> <aMP95WqHyIQq8TcS@e129823.arm.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <aMP95WqHyIQq8TcS@e129823.arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 12, 2025 at 10:29:47AM -0400, Alan Stern wrote:
-> On Fri, Sep 12, 2025 at 09:33:05AM +0100, Russell King (Oracle) wrote:
-> > On Thu, Sep 11, 2025 at 10:30:09PM -0400, Alan Stern wrote:
-> > > The USB subsystem uses only one pair of callbacks for suspend and resume 
-> > > because USB hardware has only one suspend state.  However, the callbacks 
-> > > do get an extra pm_message_t parameter which they can use to distinguish 
-> > > between system sleep transitions and runtime PM transitions.
-> > 
-> > Unfortunately, this isn't the case. While a struct usb_device_driver's
-> > suspend()/resume() methods get the pm_message_t, a struct usb_driver's
-> > suspend()/resume() methods do not:
-> > 
-> > static int usb_resume_interface(struct usb_device *udev,
-> >                 struct usb_interface *intf, pm_message_t msg, int reset_resume)
-> > {
-> >         struct usb_driver       *driver;
-> > ...
-> >         if (reset_resume) {
-> >                 if (driver->reset_resume) {
-> >                         status = driver->reset_resume(intf);
-> > ...
-> >         } else {
-> >                 status = driver->resume(intf);
-> > 
-> > vs
-> > 
-> > static int usb_resume_device(struct usb_device *udev, pm_message_t msg)
-> > {
-> >         struct usb_device_driver        *udriver;
-> > ...
-> >         if (status == 0 && udriver->resume)
-> >                 status = udriver->resume(udev, msg);
-> > 
-> > and in drivers/net/usb/asix_devices.c:
-> > 
-> > static struct usb_driver asix_driver = {
-> > ...
-> >         .suspend =      asix_suspend,
-> >         .resume =       asix_resume,
-> >         .reset_resume = asix_resume,
-> > 
-> > where asix_resume() only takes one argument:
-> > 
-> > static int asix_resume(struct usb_interface *intf)
-> > {
+On 9/12/25 07:03, Yeoreum Yun wrote:
+> Hi,
 > 
-> Your email made me go back and check the code more carefully, and it 
-> turns out that we were both half-right.  :-)
-> 
-> The pm_message_t argument is passed to the usb_driver's ->suspend 
-> callback in usb_suspend_interface(), but not to the ->resume callback in 
-> usb_resume_interface().  Yes, it's inconsistent.
-> 
-> I suppose the API could be changed, at the cost of updating a lot of 
-> drivers.  But it would be easier if this wasn't necessary, if there was 
-> some way to work around the problem.  Unfortunately, I don't know 
-> anything about how the network stack handles suspend and resume, or 
-> what sort of locking it requires, so I can't offer any suggestions.
+>> Hi Sean,
+>>
+>> On Thu, Sep 11, 2025 at 11:33:15AM -0400, Sean Anderson wrote:
+>> > coresight_panic_cb is called with interrupts disabled during panics.
+>> > However, bus_for_each_dev calls bus_to_subsys which takes
+>> > bus_kset->list_lock without disabling IRQs. This will cause a deadlock
+>> > if a panic occurs while one of the other coresight functions that uses
+>> > bus_for_each_dev is running.
+>>
+>> The decription is a bit misleading. Even when IRQ is disabled, if an
+>> exception happens, a CPU still can be trapped for handling kernel panic.
+>>
+>> > Maintain a separate list of coresight devices to access during a panic.
+>>
+>> Rather than maintaining a separate list and introducing a new spinlock,
+>> I would argue if we can simply register panic notifier in TMC ETR and
+>> ETF drviers (see tmc_panic_sync_etr() and tmc_panic_sync_etf()).
+>>
+>> If there is no dependency between CoreSight modules in panic sync flow,
+>> it is not necessary to maintain list (and lock) for these modules.
 
-I, too, am unable to help further as I have no bandwidth available
-to deal with this. Sorry.
+Yeah, I was thinking about this as I was preparing v2 of this patch.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> +1 for this.
+> and using the spinlock in the panic_cb doesn't work on PREEMPT_RT side.
+
+What do you mean by this? I am using lockdep and it did not warn about this,
+so I assume that on PREEMPT_RT IRQs remain enabled in this path.
+
+--Sean
 
