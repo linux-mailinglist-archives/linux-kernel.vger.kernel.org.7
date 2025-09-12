@@ -1,40 +1,47 @@
-Return-Path: <linux-kernel+bounces-813728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA3CFB549FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:37:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A31FFB54A05
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 870D65851A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:37:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A60651CC5477
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CB82EB86E;
-	Fri, 12 Sep 2025 10:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5512EB840;
+	Fri, 12 Sep 2025 10:38:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="KRDGhJca"
-Received: from mail-m1973188.qiye.163.com (mail-m1973188.qiye.163.com [220.197.31.88])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLGckd0Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3ED02472B5;
-	Fri, 12 Sep 2025 10:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900732EBDDC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:38:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757673448; cv=none; b=FIqf2eNBmNrTtLo/2wr/SaWtTWvAJC64BJR59ik92UES+RYTzZuO4rPQ82AcWKNNrMcaxwNN45xcIwZOzr9zFPaw5f51cLYEemoalPgHqvWphiyOgEtrlXFWqMDCjRooSUiwlxW+k1E60XxOjm75rBIvsLyhh27I0sZ2sAZD/qs=
+	t=1757673536; cv=none; b=kngHm1npgwBIgKWlVtjOiKCGQ1Aww9Wu7chD7Ug/4MtqYkeKA5pIDygk5tEurC7qfoJHKBTz0rqFr5GGlRClU3PK2R1pn+Alfw2ZubUbjUWmBDQyQ5puIvt/QGsOMnTjd6CuiUAflK1VbssOXv/cPjKrYWFubP16cpKhAV+U5K8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757673448; c=relaxed/simple;
-	bh=nAVD+ulFkoAPr0l7rUCeU6W/Wd0LbM07smm2NvrkvTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gcC+JbMLiFuElusIoyEb50jc3hC2UlBGR9uFvRefOrXoBBzHPNM13cpJg0YG9nGgZw37SsY6XuNa/atyVXazrP/eEFFHg4BKj+K3Aj6abDIpWjH1Haqq6HhVIlcvoDLYawm5N09xwlEAk6NsBLaDBg+BlboYFDSR6Kxkh6LgGdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=KRDGhJca; arc=none smtp.client-ip=220.197.31.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 229bf99e7;
-	Fri, 12 Sep 2025 18:37:14 +0800 (GMT+08:00)
-Message-ID: <1a870c14-e52f-4ab1-80d7-cea8a573592d@rock-chips.com>
-Date: Fri, 12 Sep 2025 18:36:54 +0800
+	s=arc-20240116; t=1757673536; c=relaxed/simple;
+	bh=iPCFZZNGeEXP4VXVwEOl0dkNG1owk4NNFMYpbjH9kgI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nIG0Jbjf23rxnS4LHGgEh47d2EIaGQCWgB2F4f/C5jylTy0I77JnhrM3IU9+jqiLuiw5bU+KnQH5mlL7rQahKOApGAdyb7IOM/qimHjCpmZGiL3KBDcTrsCfkgojCYbNGd+PWtWeAU9/0hrf69iaCqWqlgOxLFg5DED+SusZOuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PLGckd0Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC7CBC4CEFA;
+	Fri, 12 Sep 2025 10:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757673536;
+	bh=iPCFZZNGeEXP4VXVwEOl0dkNG1owk4NNFMYpbjH9kgI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=PLGckd0ZoLa+xWUPJPCbrNyz6t6ZLFWHFVE8ilK4gAJPx0557r6mT373s+3OsWxVT
+	 7r33UTrmNbBLYCNfbEcWM48Lbx1GrI/K0V4mweZRSdpYZBZulS9mkSdUsMIQ5MjFDb
+	 v9JKc2KgBTW+RSPyR+bXpaGcAp10Ml0lUv7jENmPx4IObMVkrUIbq/c0JocNJN4n+W
+	 MsMT/nkYH4UE+9G2qI/cqf68M2V7oB01u4rnoPPU0FZBHIn8xQUno3ln+VY5Eb21ga
+	 1JmcOlJoFRNuCD/p70lNwKs5zOurQXVuFhtKhsGdK6cH5ALNEKaKMbQkDWQK+ZaECj
+	 O3pEtE/EVA56Q==
+Message-ID: <6464ded0-b25e-4ce8-a05b-6caa394fbe63@kernel.org>
+Date: Fri, 12 Sep 2025 18:38:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -42,137 +49,279 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 00/17] Apply drm_bridge_connector and panel_bridge
- helper for the Analogix DP driver
-To: Marek Szyprowski <m.szyprowski@samsung.com>, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- dmitry.baryshkov@oss.qualcomm.com, dianders@chromium.org,
- luca.ceresoli@bootlin.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-References: <CGME20250912085902eucas1p2b611b4afd6b453c161753f50386a6d01@eucas1p2.samsung.com>
- <20250912085846.7349-1-damon.ding@rock-chips.com>
- <0ff3ba73-18e8-4941-bac6-2efa790c36ab@samsung.com>
+Cc: chao@kernel.org, feng.han@honor.com, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix wrong extent_info data for
+ precache extents
+To: wangzijie <wangzijie1@honor.com>
+References: <2ecb4f74-cc60-4dd4-8dc3-d4f3ff848e87@kernel.org>
+ <20250912100650.3594565-1-wangzijie1@honor.com>
 Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <0ff3ba73-18e8-4941-bac6-2efa790c36ab@samsung.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250912100650.3594565-1-wangzijie1@honor.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a993d802d4e03a3kunm5b46ebf0a6745e
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQk1JT1ZNGUtCHk9JT0NPSx5WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=KRDGhJcaq71plC6cbAcR6tmLVvGmSaIF26xtcTKXFlsmcuxxuU6izGTDoAWyIeFGcjBJ/LcwfYGyEvFemtEnXGtOfgt7+PImPgG67nj30ykChwHgYr6Es7M2QZmtAcn9ghuAy9FhpB8jEhVeiffTgBCP8OQ7nyaxX7dncYTyn9Y=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=qQQg8rfKPXWWxQ+V8kjtdI95QaKuy+n6AtkZMoL0YJo=;
-	h=date:mime-version:subject:message-id:from;
 
-Hi Marek,
-
-On 9/12/2025 5:56 PM, Marek Szyprowski wrote:
-> On 12.09.2025 10:58, Damon Ding wrote:
->> PATCH 1 is a small format optimization for struct analogid_dp_device.
->> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
->> PATCH 3-9 are preparations for apply drm_bridge_connector helper.
->> PATCH 10 is to apply the drm_bridge_connector helper.
->> PATCH 11-14 are to move the panel/bridge parsing to the Analogix side.
->> PATCH 15-16 are preparations for apply panel_bridge helper.
->> PATCH 17 is to apply the panel_bridge helper.
+On 9/12/2025 6:06 PM, wangzijie wrote:
+>> On 9/12/2025 11:36 AM, wangzijie wrote:
+>>>> On 9/11/2025 5:07 PM, wangzijie wrote:
+>>>>>> On 9/10/25 21:58, wangzijie wrote:
+>>>>>>> When the data layout is like this:
+>>>>>>> dnode1:                     dnode2:
+>>>>>>> [0]      A                  [0]    NEW_ADDR
+>>>>>>> [1]      A+1                [1]    0x0
+>>>>>>> ...                         ....
+>>>>>>> [1016]   A+1016
+>>>>>>> [1017]   B (B!=A+1017)      [1017] 0x0
+>>>>>>>
+>>>>>>> We can build this kind of layout by following steps(with i_extra_isize:36):
+>>>>>>> ./f2fs_io write 1 0 1881 rand dsync testfile
+>>>>>>> ./f2fs_io write 1 1881 1 rand buffered testfile
+>>>>>>> ./f2fs_io fallocate 0 7708672 4096 testfile
+>>>>>>>
+>>>>>>> And when we map first data block in dnode2, we will get wrong extent_info data:
+>>>>>>> map->m_len = 1
+>>>>>>> ofs = start_pgofs - map->m_lblk = 1882 - 1881 = 1
+>>>>>>>
+>>>>>>> ei.fofs = start_pgofs = 1882
+>>>>>>> ei.len = map->m_len - ofs = 1 - 1 = 0
+>>>>>>>
+>>>>>>> Fix it by skipping updating this kind of extent info.
+>>>>>>>
+>>>>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
+>>>>>>> ---
+>>>>>>>     fs/f2fs/data.c | 3 +++
+>>>>>>>     1 file changed, 3 insertions(+)
+>>>>>>>
+>>>>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>>>>> index 7961e0ddf..b8bb71852 100644
+>>>>>>> --- a/fs/f2fs/data.c
+>>>>>>> +++ b/fs/f2fs/data.c
+>>>>>>> @@ -1649,6 +1649,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+>>>>>>>     
+>>>>>>>     		switch (flag) {
+>>>>>>>     		case F2FS_GET_BLOCK_PRECACHE:
+>>>>>>> +			if (__is_valid_data_blkaddr(map->m_pblk) &&
+>>>>>>> +				start_pgofs - map->m_lblk == map->m_len)
+>>>>>>> +				map->m_flags &= ~F2FS_MAP_MAPPED;
+>>>>>>
+>>>>>> It looks we missed to reset value for map variable in f2fs_precache_extents(),
+>>>>>> what do you think of this?
+>>>>>>
+>>>>>> ---
+>>>>>>     fs/f2fs/file.c | 4 +++-
+>>>>>>     1 file changed, 3 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>>>>> index 1aae4361d0a8..2b14151d4130 100644
+>>>>>> --- a/fs/f2fs/file.c
+>>>>>> +++ b/fs/f2fs/file.c
+>>>>>> @@ -3599,7 +3599,7 @@ static int f2fs_ioc_io_prio(struct file *filp, unsigned long arg)
+>>>>>>     int f2fs_precache_extents(struct inode *inode)
+>>>>>>     {
+>>>>>>     	struct f2fs_inode_info *fi = F2FS_I(inode);
+>>>>>> -	struct f2fs_map_blocks map;
+>>>>>> +	struct f2fs_map_blocks map = { 0 };
+>>>>>>     	pgoff_t m_next_extent;
+>>>>>>     	loff_t end;
+>>>>>>     	int err;
+>>>>>> @@ -3617,6 +3617,8 @@ int f2fs_precache_extents(struct inode *inode)
+>>>>>>
+>>>>>>     	while (map.m_lblk < end) {
+>>>>>>     		map.m_len = end - map.m_lblk;
+>>>>>> +		map.m_pblk = 0;
+>>>>>> +		map.m_flags = 0;
+>>>>>>
+>>>>>>     		f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
+>>>>>>     		err = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_PRECACHE);
+>>>>>> -- 
+>>>>>> 2.49.0
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>>>     			goto sync_out;
+>>>>>>>     		case F2FS_GET_BLOCK_BMAP:
+>>>>>>>     			map->m_pblk = 0;
+>>>>>
+>>>>>
+>>>>> We have already reset m_flags (map->m_flags = 0) in f2fs_map_blocks().
+>>>>
+>>>> Zijie:
+>>>>
+>>>> Oops, that's right, thanks for correcting me.
+>>>>
+>>>>>
+>>>>> I think that this bug is caused by we missed to reset m_flags when we
+>>>>> goto next_dnode in below case：
+>>>>>
+>>>>> Data layout is something like this:
+>>>>> dnode1:                     dnode2:
+>>>>> [0]      A                  [0]    NEW_ADDR
+>>>>> [1]      A+1                [1]    0x0
+>>>>> ...
+>>>>> [1016]   A+1016
+>>>>> [1017]   B (B!=A+1017)      [1017] 0x0
+>>>>>
+>>>>> we map the last block(valid blkaddr) in dnode1:
+>>>>> map->m_flags |= F2FS_MAP_MAPPED;
+>>>>> map->m_pblk = blkaddr(valid blkaddr);
+>>>>> map->m_len = 1;
+>>>>> then we goto next_dnode, meet the first block in dnode2(hole), goto sync_out:
+>>>>> map->m_flags & F2FS_MAP_MAPPED == true, and we make wrong blkaddr/len for extent_info.
+>>>>
+>>>> So, can you please add above explanation into commit message? that
+>>>> should be helpful for understanding the problem more clearly.
+>>>>
+>>>> Please take a look at this case w/ your patch:
+>>>>
+>>>> mkfs.f2fs -O extra_attr,compression /dev/vdb -f
+>>>> mount /dev/vdb /mnt/f2fs -o mode=lfs
+>>>> cd /mnt/f2fs
+>>>> f2fs_io write 1 0 1883 rand dsync testfile
+>>>> f2fs_io fallocate 0 7712768 4096 testfile
+>>>> f2fs_io write 1 1881 1 rand buffered testfile
+>>>> xfs_io testfile -c "fsync"
+>>>> cd /
+>>>> umount /mnt/f2fs
+>>>> mount /dev/vdb /mnt/f2fs
+>>>> f2fs_io precache_extents /mnt/f2fs/testfile
+>>>> umount /mnt/f2fs
+>>>>
+>>>>            f2fs_io-733     [010] .....    78.134136: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 1882, len = 0, blkaddr = 17410, c_len = 0
+>>>>
+>>>> I suspect we need this?
+>>>>
+>>>> @@ -1784,7 +1781,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+>>>>           }
+>>>>
+>>>>           if (flag == F2FS_GET_BLOCK_PRECACHE) {
+>>>> -               if (map->m_flags & F2FS_MAP_MAPPED) {
+>>>> +               if ((map->m_flags & F2FS_MAP_MAPPED) &&
+>>>> +                       (map->m_len - ofs)) {
+>>>>                           unsigned int ofs = start_pgofs - map->m_lblk;
+>>>>
+>>>>                           f2fs_update_read_extent_cache_range(&dn,
+>>>
+>>> Thanks for pointing out this. Let me find a way to cover these cases and do more test.
+>>>
+>>>> BTW, I find another bug, if one blkaddr is adjcent to previous extent,
+>>>> but and it is valid, we need to set m_next_extent to pgofs rather than
+>>>> pgofs + 1.
+>>>>
+>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>>> index cbf8841642c7..ac88ed68059c 100644
+>>>> --- a/fs/f2fs/data.c
+>>>> +++ b/fs/f2fs/data.c
+>>>> @@ -1789,8 +1789,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+>>>>                                   start_pgofs, map->m_pblk + ofs,
+>>>>                                   map->m_len - ofs);
+>>>>                   }
+>>>> -               if (map->m_next_extent)
+>>>> -                       *map->m_next_extent = pgofs + 1;
+>>>> +               if (map->m_next_extent) {
+>>>> +                       *map->m_next_extent = pgofs;
+>>>> +                       if (!__is_valid_data_blkaddr(blkaddr))
+>>>> +                               *map->m_next_extent += 1;
+>>>> +               }
+>>>>           }
+>>>>           f2fs_put_dnode(&dn);
+>>>
+>>> Maybe it can be this?
+>>> if (map->m_next_extent)
+>>> 	*map->m_next_extent = is_hole ? pgofs + 1 : pgofs;
 >>
->> Damon Ding (17):
->>     drm/bridge: analogix_dp: Formalize the struct analogix_dp_device
->>     drm/bridge: analogix_dp: Move &drm_bridge_funcs.mode_set to
->>       &drm_bridge_funcs.atomic_enable
->>     drm/bridge: analogix_dp: Add &analogix_dp_plat_data.next_bridge
->>     drm/exynos: exynos_dp: Remove &exynos_dp_device.ptn_bridge
->>     drm/exynos: exynos_dp: Remove unused &exynos_dp_device.connector
->>     drm/bridge: analogix_dp: Remove redundant
->>       &analogix_dp_plat_data.skip_connector
->>     drm/exynos: exynos_dp: Add legacy bridge to parse the display-timings
->>       node
->>     drm/bridge: analogix_dp: Move the color format check to
->>       .atomic_check() for Rockchip platforms
->>     drm/bridge: analogix_dp: Remove unused
->>       &analogix_dp_plat_data.get_modes()
->>     drm/bridge: analogix_dp: Apply drm_bridge_connector helper
->>     drm/bridge: analogix_dp: Add new API analogix_dp_finish_probe()
->>     drm/rockchip: analogix_dp: Apply analogix_dp_finish_probe()
->>     drm/rockchip: analogix_dp: Apply &analogix_dp_plat_data.attach() to
->>       attach next bridge
->>     drm/exynos: exynos_dp: Apply analogix_dp_finish_probe()
->>     drm/bridge: analogix_dp: Remove panel disabling and enabling in
->>       analogix_dp_set_bridge()
->>     drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing
->>       in analogix_dp_unbind()
->>     drm/bridge: analogix_dp: Apply panel_bridge helper
+>> It's better, will update, thank you. :)
 >>
->>    drivers/gpu/drm/bridge/analogix/Kconfig       |   1 +
->>    .../drm/bridge/analogix/analogix_dp_core.c    | 394 ++++++++++--------
->>    .../drm/bridge/analogix/analogix_dp_core.h    |   5 +-
->>    drivers/gpu/drm/exynos/exynos_dp.c            | 168 ++++----
->>    drivers/gpu/drm/rockchip/Kconfig              |   1 -
->>    .../gpu/drm/rockchip/analogix_dp-rockchip.c   |  74 ++--
->>    include/drm/bridge/analogix_dp.h              |   9 +-
->>    7 files changed, 342 insertions(+), 310 deletions(-)
->>
->> ---
->>
->> Changes in v2:
->> - Update Exynos DP driver synchronously.
->> - Move the panel/bridge parsing to the Analogix side.
->>
->> Changes in v3:
->> - Rebase for the existing devm_drm_bridge_alloc() applying commit.
->> - Fix the typographical error of panel/bridge check in exynos_dp_bind().
->> - Squash all commits related to skip_connector deletion in both Exynos and
->>     Analogix code into one.
->> - Apply panel_bridge helper to make the codes more concise.
->> - Fix the handing of bridge in analogix_dp_bridge_get_modes().
->> - Remove unnecessary parameter struct drm_connector* for callback
->>     &analogix_dp_plat_data.attach().
->> - In order to decouple the connector driver and the bridge driver, move
->>     the bridge connector initilization to the Rockchip and Exynos sides.
->>
->> Changes in v4:
->> - Rebase for the applied &drm_bridge_funcs.detect() modification commit.
->> - Rename analogix_dp_find_panel_or_bridge() to analogix_dp_finish_probe().
->> - Drop the drmm_encoder_init() modification commit.
->> - Rename the &analogix_dp_plat_data.bridge to
->>     &analogix_dp_plat_data.next_bridge.
->>
->> Changes in v5:
->> - Add legacy bridge to parse the display-timings node under the dp node
->>     for Exynos side.
->> - Move color format check to &drm_connector_helper_funcs.atomic_check()
->>     in order to get rid of &analogix_dp_plat_data.get_modes().
->> - Remove unused callback &analogix_dp_plat_data.get_modes().
->> - Distinguish the &drm_bridge->ops of Analogix bridge based on whether
->>     the downstream device is a panel, a bridge or neither.
->> - Select DRM_DISPLAY_DP_AUX_BUS for DRM_ANALOGIX_DP, and remove it for
->>     ROCKCHIP_ANALOGIX_DP.
->> - Apply rockchip_dp_attach() to support the next bridge attachment for
->>     the Rockchip side.
->> - Move next_bridge attachment from Analogix side to Rockchip/Exynos sides.
+>> Thanks,
 > 
-> Exynos part still lacks "select DRM_BRIDGE_CONNECTOR" in Kconfig,
-> besides that it works fine on all my test boards. Fix this issue and
-> feel free to add:
+> Hi Chao,
+> I test some cases with this change:
 > 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index 7961e0ddf..7093fdc95 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -1777,13 +1777,13 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
+>          if (flag == F2FS_GET_BLOCK_PRECACHE) {
+>                  if (map->m_flags & F2FS_MAP_MAPPED) {
+>                          unsigned int ofs = start_pgofs - map->m_lblk;
+> -
+> -                       f2fs_update_read_extent_cache_range(&dn,
+> -                               start_pgofs, map->m_pblk + ofs,
+> -                               map->m_len - ofs);
+> +                       if (map->m_len - ofs > 0)
+> +                               f2fs_update_read_extent_cache_range(&dn,
+> +                                       start_pgofs, map->m_pblk + ofs,
+> +                                       map->m_len - ofs);
+>                  }
+>                  if (map->m_next_extent)
+> -                       *map->m_next_extent = pgofs + 1;
+> +                       *map->m_next_extent = is_hole ? pgofs + 1 : pgofs;
+>          }
+>          f2fs_put_dnode(&dn);
+>   unlock_out:
 > 
+> 
+> test cases:
+> 
+> case1:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    NEW_ADDR
+> [1]      A+1                [1]    0x0
+> ...                         ....
+> [1016]   A+1016
+> [1017]   B (B!=A+1017)      [1017] 0x0
+> 
+> case2:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    C (C!=B+1)
+> [1]      A+1                [1]    C+1
+> ...                         ....
+> [1016]   A+1016
+> [1017]   B (B!=A+1017)      [1017] 0x0
+> 
+> case3:
+> dnode1:                     dnode2:
+> [0]      A                  [0]    C (C!=B+2)
+> [1]      A+1                [1]    C+1
+> ...                         ....
+> [1015]   A+1015
+> [1016]   B (B!=A+1016)
+> [1017]   B+1                [1017] 0x0
+> 
+> case4:
+> one blkaddr is adjcent to previous extent, and it is valid.
+ > > And from the result, it seems this change can cover these
+> situations correctly.
+> Do we need a patch with this change?
 
-Thank you for the testing. I will add the DRM_BRIDGE_CONNECTOR selection 
-for DRM_EXYNOS_DP in the next version, with the Tested-by tags.
+Zijie, thanks for the test.
 
-Best regards,
-Damon
+IMO, we'd better use these changes:
+
+-
+-                       f2fs_update_read_extent_cache_range(&dn,
+-                               start_pgofs, map->m_pblk + ofs,
+-                               map->m_len - ofs);
++                       if (map->m_len - ofs > 0)
++                               f2fs_update_read_extent_cache_range(&dn,
++                                       start_pgofs, map->m_pblk + ofs,
++                                       map->m_len - ofs);
+
+instead of
+
+    		switch (flag) {
+    		case F2FS_GET_BLOCK_PRECACHE:
++			if (__is_valid_data_blkaddr(map->m_pblk) &&
++				start_pgofs - map->m_lblk == map->m_len)
++				map->m_flags &= ~F2FS_MAP_MAPPED;
+
+Can you please rebase your patchset on mine and send v2?
+
+https://lore.kernel.org/linux-f2fs-devel/20250912081250.44383-1-chao@kernel.org
+
+BTW, please add fixes line in your patch.
+
+Thanks,
 
 
