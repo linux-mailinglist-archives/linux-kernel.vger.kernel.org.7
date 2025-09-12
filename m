@@ -1,280 +1,306 @@
-Return-Path: <linux-kernel+bounces-813605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A699AB54827
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:42:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAD4B5482D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D1917C3FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFE6117CF6E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E4D283144;
-	Fri, 12 Sep 2025 09:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCF7280308;
+	Fri, 12 Sep 2025 09:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GBfX+44n"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRp4QO8f"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B3127CCC4
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C71517BA1
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757670151; cv=none; b=pD7LqS8YR5x51NI4jbSFDGNY8RjXGVdphAPCa02bGIBJQs7cSpj+wPE0W3N1xvlUNlK/LGJ++1OdG19NHmE18HsgnF92spQDEL/hO1kINNHEf4nPFoJdEJVtvh5GxhC/eVCGSu+2usSwZaChJmlF/08we9nqb3/zxCd1/dG1uXE=
+	t=1757670214; cv=none; b=ttAkSx6DROCDhEyFh4E4BDn62HtYNfwpIdjp9ICPWC2oj+u6ETdRp296taek3SKzb1zUKjHQPCruC1BBihktrt1abGSoBobdS5rdNvsmPKnCp8K83CXm5B4jmX3zLshj3lmQMj7osxInP6syqmMQH0tlsmHbk6ntTTMD8Ild5GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757670151; c=relaxed/simple;
-	bh=W17ijKGznt0ALUSWAdLybAh777Xzk63A8gv1G0t0DjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nQyKfJlsrqWGeyjiLgYtzUUD4U6I+PThDBLkY5sk41J0xqOtKwjUUB83Fl3QfYVB45CQJ2OzPals+MKdLQmpI05KDeIE68Fjnri7wrlSJbcuPGImVSdYXdqI4QiLDM2lWnsLXyCa97J8xVvV3LlO9r+6kixV1eBSd+zzKnxnxXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GBfX+44n; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1757670146;
-	bh=W17ijKGznt0ALUSWAdLybAh777Xzk63A8gv1G0t0DjQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GBfX+44nZW1edMHWcMn/XyzCmugBbnDZ9SrrlBzOj9IchPh0spN/uFd4Iq7srKcWE
-	 4eqiwNEsiXacKUguicmpxokaaG7y5yVT1z5PX/y49kIDlRZTzW9XHHVvhRamI1kybH
-	 PxRGlyB0/Of1hem6zJRywyhKog53yvbEG2Re2Lwp3ai1+s7TidHcqWJ528nsF44tun
-	 651x2LhXKWp3iJQ/tr6ndy1zAYtKW16UZf2FRWrKxCr+7Lu0GegXlr6ZGipWF5tReu
-	 48Uf56Tg/primh+bWcfcBEbk9mJ5V9v8dKCKzagC5Efy2FZHA7fQ2X+z4QNBLl9GXi
-	 kD7ViaqEiDAnA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1ADF617E04D6;
-	Fri, 12 Sep 2025 11:42:26 +0200 (CEST)
-Message-ID: <1cb00d70-05ab-4df5-a776-451fa4ce3dc8@collabora.com>
-Date: Fri, 12 Sep 2025 11:42:25 +0200
+	s=arc-20240116; t=1757670214; c=relaxed/simple;
+	bh=ax4lfeT22K2Tg4wZehKRsBnRhQp4gc/l5I0VC7YWUlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O+SD/UAMtWWyqbHTwp8UP6/eIP7bBA06mYmlUMcoQzeEgHY5gNrtmUAQ4lwuIYYYYDDfD+Q6fifzwaWGSo8OsCk7QBXc0236mQY+bKKLXxjNFq+8P0IZSxUnOSBBNY3LwvY3oXN59FI2R8Fc/JhELIwd6grc3m3mUcOHtBRpxmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KRp4QO8f; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-62105d21297so3426945a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757670210; x=1758275010; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OETlIHZhLuu2YOWBlAPQ9XetW3Ixqb//beh5cOzY/AE=;
+        b=KRp4QO8fsM9uN34ZBTxmR4w3x/xhqvsAzXAQD9P6d+uT08Phn+AxluIp180l1+lFmK
+         6rT0iKhanSeqgeaLwz014lYq2YSh9QkAUxM1NyPIlIQU+SlkeVK9Gvf8/Vj2sTMFgm/r
+         gktPGftdjg788v97yk5IGmoILBoJ5cpzllgY1cRvUjVwGMpFGdvfP4gjFUWbCb8aPAQI
+         e5ktywW6rHMFakRTyG4UXUs3VOiwyzoy2hstybx0DGOHqcsU2IVYjgx8RozI43i9XaeX
+         64yIxWHueRmlikVGzOjlJW4wvZAuqgLyi+hZhZKKpgZzVbKIqSyiFY5v+BjN1w8+36P5
+         mlQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757670210; x=1758275010;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OETlIHZhLuu2YOWBlAPQ9XetW3Ixqb//beh5cOzY/AE=;
+        b=BEtFq6qlpa63eHGfg6ruSnxgJEE5uq5qN0zq723FZszXBcbpl2/k5qIRhiRh1cyY/g
+         LFGBzrA+CmkqK7LKuRe9CKdcYtFbYq/dnQMqhA/IexuaHqS/JQH7bXtekFC8RyfHA5DM
+         p0I/XqEEtBjdQNhfF3Z0yWFe39tmV7crfuNQ+oXkhrE+dUaGs/+xiMrulMROMZ8dx0ls
+         Q1xWV3KhhmESD9Dyt8aLdMVqCbDSymSoi/u1YYktl9Dleo7e/ToS5IPglpfG/WZtcrZF
+         GRI6Prsq06ca9yN4hkPSo8/IXxQvf3+rebXLz2wcz4r2Kgv2zEHqTBrGKklusq/cml1A
+         Qxhg==
+X-Forwarded-Encrypted: i=1; AJvYcCXryaNqNYOcaEFwkqBx1asKftZSw1TZhbhg4wV0l++x1YK0R3FDrIRW7Zo5SnB1eOEhWrtAEaqLRcnhkT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4HiG9b1DTxHD7DlTyCClV4zMTsQ8Za9M7OxRlKTqo5wPAzcGC
+	T+nzJJv28UzG45hRbZ37Dngr5BEb7r1OfzEQq6RM3xJQNrO0RPAxPQsGdQ70Sgyysh4oBrEJTWt
+	uDjcs1CiY97UFY17rGBnbZ6m7yjR/I+s=
+X-Gm-Gg: ASbGncs4Dzr3LLlKSuEe+UXpWnmUOZqDLlkDmEQGcDmH56JQzUANFeJ3NIt9YoX6vd1
+	ULuZ1OfYOgTcPkvLNHtsD+40MskVm1Vo3lxv9R54J2DiTq2SzlatbJgEaup0taLfWwmTiCBYaLW
+	RfdO2dhkdOflKleG2SZzOkl5jopwlxFAGqehjYxCu5cq5FryXlCiwgitqlOvj3sQySuyVh/1hs3
+	9tGEfy/WkU=
+X-Google-Smtp-Source: AGHT+IEzZL/B+m1oA93uBf6bciqzmOCInPrUEGceQPEbgzipBFvRN2q5E9EMf4RZciIhQg3sL5+cbhvs5JrscubJ+vY=
+X-Received: by 2002:a05:6402:2553:b0:627:f96f:aa7a with SMTP id
+ 4fb4d7f45d1cf-62ed85204f8mr2284392a12.30.1757670210176; Fri, 12 Sep 2025
+ 02:43:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 00/10] Add support for MT8195/88 HDMIv2 and DDCv2
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>,
- CK Hu <ck.hu@mediatek.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250808-mediatek-drm-hdmi-v2-v10-0-21ea82eec1f6@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250808-mediatek-drm-hdmi-v2-v10-0-21ea82eec1f6@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250910160833.3464-1-ryncsn@gmail.com> <20250910160833.3464-12-ryncsn@gmail.com>
+ <CABzRoyZc1zHHy5eFaO5hRY=bM36xsk3COd=r18KahmrP11tpSw@mail.gmail.com>
+ <CABzRoyaAA3D0nfkQcBMjZ7crUckJXXpGmYfmq6ojQC+BQUigFw@mail.gmail.com>
+ <CAMgjq7CtYpe4sEYaw2carqGskvchV9Z+1yn2Wa3nMP2VguV_eQ@mail.gmail.com>
+ <223c560b-0234-4203-a11d-661656317808@linux.dev> <d5f84730-c7c0-4059-a5b7-061a9eaebc5c@lucifer.local>
+In-Reply-To: <d5f84730-c7c0-4059-a5b7-061a9eaebc5c@lucifer.local>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Fri, 12 Sep 2025 17:42:53 +0800
+X-Gm-Features: AS18NWCKrRyfpaANX_oyOUj3Wt6htqC4Oat1olLvElN275-UZVlguwjwLMwtUec
+Message-ID: <CAMgjq7BbYmTCmA+NPS_jQ3iWM4DJR1mkDe925qTcYOMzbGwnGg@mail.gmail.com>
+Subject: Re: [PATCH v3 11/15] mm, swap: use the swap table for the swap cache
+ and switch API
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Lance Yang <lance.yang@linux.dev>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
+	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>, 
+	Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	Kemeng Shi <shikemeng@huaweicloud.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Ying Huang <ying.huang@linux.alibaba.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Yosry Ahmed <yosryahmed@google.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 08/08/25 12:12, Louis-Alexis Eyraud ha scritto:
-> This is a respin of AngeloGioacchino Del Regno's patch series, that adds
-> the support of HDMIv2 and DDCv2 for MT8188 and MT8195 in mediatek-drm.
-> 
-
-CK, can we please finally get this upstream? It's been months now...
-
-Regards,
-Angelo
-
-> Changes in v10:
->   - Rebased over next-20250807
->   - Dropped patches from v9 that have been already merged in a previous
->     merge window (1 to 14)
->   - Resolved merge issues with next-20250807 for patches 3, 4 and 9
->   - Added new "drm/mediatek: mtk_hdmi: Drop redundant clock retrieval in
->     mtk_hdmi_get_cec_dev" patch to fix an issue introduced by a previously
->     merged patch from this series
->   - Deleted mtk_hdmi.c.orig file added by "drm/mediatek: mtk_hdmi: Split driver
->     and add common probe function" patch
->   - Fixed in "drm/mediatek: Introduce HDMI/DDC v2 for MT8195/MT8188" patch
->     a bug about EDID reading not properly working in mtk_hdmi_ddc_v2 driver,
->     due to extra byte sent on i2c bus by mtk_ddc_wr_one function when the
->     payload length is equal to 0
->   - Fixed format issues detected by checkpatch in "drm/mediatek: Introduce
->     HDMI/DDC v2 for MT8195/MT8188" patch
->   - Tested on Mediatek Genio 350, 510 and 1200-EVK boards
->   - Link to v9: https://lore.kernel.org/dri-devel/20250415104321.51149-1-angelogioacchino.delregno@collabora.com/
-> 
-> Changes in v9:
->   - Reordered patch from krzk as first as requested by CK
-> 
-> Changes in v8:
->   - Dropped DPI patches as those have been applied in the previous merge window
->   - Changed description in mediatek,mt8195-hdmi.yaml as requested by CK
->   - Refactored function mtk_hdmi_v2_hw_gcp_avmute() to include contents
->     of, and delete, mtk_hdmi_v2_hw_reset_av_mute_regs() as requested by CK
->   - Expanded comment before enablement of HDCP reauthentication interrupt
->     to explain that the HW uses this internally as requested by CK
->   - Added comment in mtk_hdmi_v2_hpd_pord_status() explaining why there
->     are three states for cable detection as requested by CK
->   - Moved extra interrupts clearing from ISR to probe function and added
->     comments explaining the reason why those are being cleaned at probe
->     time, as requested by CK.
->   - Added support (and tested on MT8395/8195 and MT8390/8188) for output
->     in both YUV422 and YUV444 colorspaces other than RGB; please note that
->     RGB is still the default, and that the request for using any of the
->     YUV output formats depends on previous component(s) of the display
->     pipeline declaring support for those; should none of them declare any
->     support for YUV formats, only RGB will be available (no errors, the
->     additional ones will be simply ignored).
-> 
-> Changes in v7:
->   - Split more patches as requested by CK
->   - Changed the order of the interlaced variable addition as requested
->   - Cleanups in DDCv2 as requested by CK
->   - Removed comment from
->     drm/mediatek: mtk_hdmi: Move output init to mtk_hdmi_register_audio_driver()
->     as that was forgotten from reintroduction of print in v5
->   - Some more small nitpicks as pointed out by CK here and there
-> 
-> Changes in v6:
->   - Split the TVD clock enable/disable calls in a different commit
->   - Changed `is_internal_hdmi` to two different variables, one for
->     DPI input clock from HDMI, and one for AFIFO 1T1P output and
->     conversion (mtk_dpi)
->     - Clarified why MT8195/88 HDMI-reserved DPI1 is different
->   - Moved `input_2p_en` bit to platform data to cleanup DPI vs DPINTF
->     - 1T2P enable bit is different between DPI and DPINTF, but usage
->       is actually the same
->   - Cleaned up headers inclusion in mtk_hdmi_v2.c, mtk_hdmi_ddc_v2.c
->     - Removed some unused headers, added missing bitfield.h header
->   - Split some prints cleanup commits as requested by CK
->   - Split the introduction of mtk_hdmi_conf as requested by CK
->   - Split commit to make CEC optional as requested by CK
->   - Reintroduced forgotten no_capture_mute in codec_pdata (mtk_hdmi_common)
->   - Reintroduced error print for audio clocks enablement failure (mtk_hdmi)
->   - Added cleanup syscon_regmap_lookup_by_phandle commit from Krzysztof K
-> 
-> Changes in v5:
->   - Rebased over next-20250113
->   - Resolved merge issues with next-20250113
->   - Added bitfield.h inclusion in mtk_dpi in commit [02/33] to resolve
->     build issue from 0day CI
->   - Removed .atomic_check callback from mtk_hdmi_v2 as it is now part
->     of drm_bridge_connector as pointed out by Dmitry B
->   - Removed call to pm_runtime_disable() as the driver uses devm
->   - Tested again :-)
-> 
-> Changes in v4:
->   - DDCv2 binding erroneously dropped in v3 is included again (oops!)
->   - Added reference to dai-common.yaml in HDMIv2 binding
->   - Dropped pinctrl entries from HDMIv2 binding
->   - Fixed required list in HDMIv2 binding and changed node name to
->     'hdmi' instead of 'hdmi-tx'
->   - Fixed issue in mtk_hdmi derived from wrong commit splitting action
->     from version 3
->   - Exported necessary symbols and added namespaces for those
->   - Fixed module build for both HDMIv1 and HDMIv2
->   - Other cleanups
-> 
-> Changes in v3:
->   - Added hpd_enable() and hpd_disable() callbacks as suggested by Dmitry B
->   - Removed audio mute call in bridge_enable() as suggested by CK
->   - Reworked commonization commits for mtk_hdmi/mtk_hdmi_common and split
->     out debugfs/abist implementation as suggested by CK
->   - Removed .mode_valid() callback as it is now provided by the bridge
->     API in drm_bridge_connector_helper_funcs
->   - A bit of cleanups here and there
->   - Tested again on HW especially for new hpd_enable/disable callbacks.
-> 
-> Changes in v2:
->   - Merged series "Add support for MT8195/8188 and Pattern Generator"
->     and "drm/mediatek: Add support for HDMIv2 and DDCv2 IPs" in one
->     as they are directly related, as requested by CK Hu
->   - More commonization: moved some audio functions to mtk_hdmi_common
->   - Fixed a bug in DDCv2 driver to allow sending a message with len=1
->   - Renamed some functions in HDMIv2 to consistently use the prefix
->     mtk_hdmi_v2_ across the driver
->   - Added .mode_valid() callback to HDMIv2
->   - Added .atomic_check() callback to HDMIv2
->   - Reordered drm_bridge_funcs in HDMIv2 driver
->   - Rewritten .edid_read() callback in HDMIv2 to move checking audio
->     availability to bridge_pre_enable() stage, and to stop using the
->     drm_edid_read_ddc() in favor of drm_edid_read()
->   - Added support for API provided HDMI Helpers
->   - Added .tmds_char_rate_valid() callback to HDMIv2 for HDMI helpers
->   - Added .hdmi_{read,write}_infoframe() callback to HDMIv2 for helpers
->   - Added support for Vendor infoframes in HDMIv2
->   - Added missing audio-dai-cells to HDMIv2 binding to fix check error
->   - Added more information to the HDMIv2 binding for clocks and PHY
->   - Added some comments to the HDMIv2 code to clarify why the controller
->     is preconfigured in bridge_pre_enable() instead of bridge_enable()
->   - Added a mention of the differences in HPD between v1 and v2 to the
->     commit introducing the v2 driver (v2 is not using CEC for HPD)
->   - ...and tested again on HW! :-)
-> 
-> This series adds support for the HDMI-TX v2 Encoder and DDCv2, and for
-> the direct connection DPI as found in MT8195, MT8188 and their variants.
-> 
-> Tested on Genio 700 EVK:
->   - ABIST ON: ok, pattern generated internally from HDMI is shown on
->     HDMI screen at the correct resolution;
->   - ABIST OFF + DPI Pattern Generator ON: ok, pattern coming from DPI is
->     shown on HDMI screen at the correct resolution;
->   - Can negotiate up to 4k60
-> 
-> and on MT8395 Radxa NIO 12L:
->   - ABIST ON: ok, pattern generated internally from HDMI is shown on
->     HDMI screen at the correct resolution;
->   - ABIST OFF + DPI Pattern Generator ON: ok, pattern coming from DPI is
->     shown on HDMI screen at the correct resolution;
->   - Dual screen usecase validated (DSI + HDMI 3840x2160p 60Hz)
->   - Can negotiate up to 4k60
-> 
-> Please note that this submission does *not* include support for HDCP
-> nor for CECv2, as I want this to be upstream before implementing
-> additional features which are not strictly required for simple
-> HDMI output.
-> 
-> Bonus in this series is the addition of support for the Pattern Generator
-> found in the DPI HW: since I needed this for debugging during development,
-> I had to code in the actual support bits and it looked like a waste of
-> time to just remove it.
-> I instead decided to clean it up and upstream it, as this will anyway come
-> handy for multiple things, of which the most important (imo) are:
->   - Adding support for new SoCs in the future will be less time consuming
->     as this driver already has the pattern generator in;
->   - CI Testing might be able to make use of this to validate that the
->     data that comes out is not garbled (so, to help testing display
->     support in an automated manner).
-> 
+On Fri, Sep 12, 2025 at 5:31=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Thu, Sep 11, 2025 at 10:54:19AM +0800, Lance Yang wrote:
+> >
+> >
+> > On 2025/9/11 10:48, Kairui Song wrote:
+> > > On Thu, Sep 11, 2025 at 10:34=E2=80=AFAM Lance Yang <lance.yang@linux=
+.dev> wrote:
+> > > >
+> > > > On Thu, Sep 11, 2025 at 10:27=E2=80=AFAM Lance Yang <lance.yang@lin=
+ux.dev> wrote:
+> > > > >
+> > > > > Hi Kairui,
+> > > > >
+> > > > > I'm hitting a build error with allnoconfig:
+> > > > >
+> > > > > In file included from mm/shmem.c:44:
+> > > > > mm/swap.h: In function =E2=80=98folio_index=E2=80=99:
+> > > > > mm/swap.h:462:24: error: implicit declaration of function
+> > > > > =E2=80=98swp_offset=E2=80=99; did you mean =E2=80=98pmd_offset=E2=
+=80=99?
+> > > > > [-Wimplicit-function-declaration]
+> > > > > 462 | return swp_offset(folio->swap);
+> > > > >
+> > > > > It looks like a header might be missing in mm/swap.h. Please let =
+me know
+> > > > > if you need any more information.
+> > > >
+> > > > Confirmed that just adding #include <linux/swapops.h> into mm/swap.=
+h fixes it.
+> > > >
+> > > > diff --git a/mm/swap.h b/mm/swap.h
+> > > > index ad339547ee8c..271e8c560fcc 100644
+> > > > --- a/mm/swap.h
+> > > > +++ b/mm/swap.h
+> > > > @@ -3,6 +3,7 @@
+> > > >   #define _MM_SWAP_H
+> > > >
+> > > >   #include <linux/atomic.h> /* for atomic_long_t */
+> > > > +#include <linux/swapops.h>
+> > > >   struct mempolicy;
+> > > >   struct swap_iocb;
+> > > >
+> > > > Cheers,
+> > > > Lance
+> > > >
+> > >
+> > > Hi Lance,
+> > >
+> > > You are testing V2 not V3 right? The build error is in V2 and I can
+> > > confirm that. But In V3 I've added "ifdef CONFIG_SWAP" for the
+> > > swp_offset usage in swap.h. I've just tested allnoconfig and it
+> > > works fine on aarch64 and x86_64.
+> > >
+> > > V2: https://lore.kernel.org/linux-mm/20250905191357.78298-12-ryncsn@g=
+mail.com/
+> >
+> >
+> > Ah, I was testing V2. My apologies for the noise!
+> >
+>
+> OK so my bug is different then :)
+>
+> I think the issue is that you're not properly checking for:
+>
+> #ifdef CONFIG_MMU
+> ...
+> #endif
+>
+> This is v3 (I see the #ifdef CONFIG_SWAP) btw.
+>
+> So swapops.h is wrapped by #ifdef CONFIG_MMU which is why the declaration=
+ is
+> missing.
+>
+> The below fixpatch fixes things for me.
+>
+> Cheers, Lorenzo
+>
+> ----8<----
+> From 5a3969a438af9c33422a45fe813a44068d784b2f Mon Sep 17 00:00:00 2001
+> From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Date: Fri, 12 Sep 2025 10:28:40 +0100
+> Subject: [PATCH] fix
+>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> ---
+>  arch/sparc/include/asm/pgtable_64.h |  3 +++
+>  mm/swap.h                           | 37 +++++++++++++++++------------
+>  2 files changed, 25 insertions(+), 15 deletions(-)
+>
+> diff --git a/arch/sparc/include/asm/pgtable_64.h b/arch/sparc/include/asm=
+/pgtable_64.h
+> index b8000ce4b59f..b06f55915653 100644
+> --- a/arch/sparc/include/asm/pgtable_64.h
+> +++ b/arch/sparc/include/asm/pgtable_64.h
+> @@ -1050,6 +1050,9 @@ int page_in_phys_avail(unsigned long paddr);
+>
+>  int remap_pfn_range(struct vm_area_struct *, unsigned long, unsigned lon=
+g,
+>                    unsigned long, pgprot_t);
+> +void remap_pfn_range_prepare(struct vm_area_desc *desc, unsigned long pf=
+n);
+> +int remap_pfn_range_complete(struct vm_area_struct *vma, unsigned long a=
+ddr,
+> +               unsigned long pfn, unsigned long size, pgprot_t pgprot);
+>
+>  void adi_restore_tags(struct mm_struct *mm, struct vm_area_struct *vma,
+>                      unsigned long addr, pte_t pte);
+> diff --git a/mm/swap.h b/mm/swap.h
+> index caff4fe30fc5..18651687fcd1 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -53,7 +53,7 @@ enum swap_cluster_flags {
+>         CLUSTER_FLAG_MAX,
+>  };
+>
+> -#ifdef CONFIG_SWAP
+> +#if defined(CONFIG_SWAP) && defined(CONFIG_MMU)
+>  #include <linux/swapops.h> /* for swp_offset */
+>  #include <linux/blk_types.h> /* for bio_end_io_t */
+>
+> @@ -317,7 +317,26 @@ static inline int non_swapcache_batch(swp_entry_t en=
+try, int max_nr)
+>         return i;
+>  }
+>
+> +/**
+> + * folio_index - File index of a folio.
+> + * @folio: The folio.
+> + *
+> + * For a folio which is either in the page cache or the swap cache,
+> + * return its index within the address_space it belongs to.  If you know
+> + * the folio is definitely in the page cache, you can look at the folio'=
+s
+> + * index directly.
+> + *
+> + * Return: The index (offset in units of pages) of a folio in its file.
+> + */
+> +static inline pgoff_t folio_index(struct folio *folio)
+> +{
+> +       if (unlikely(folio_test_swapcache(folio)))
+> +               return swp_offset(folio->swap);
+> +       return folio->index;
+> +}
+> +
+>  #else /* CONFIG_SWAP */
+> +
+>  struct swap_iocb;
+>  static inline struct swap_cluster_info *swap_cluster_lock(
+>         struct swap_info_struct *si, pgoff_t offset, bool irq)
+> @@ -442,24 +461,12 @@ static inline int non_swapcache_batch(swp_entry_t e=
+ntry, int max_nr)
+>  {
+>         return 0;
+>  }
+> -#endif /* CONFIG_SWAP */
+>
+> -/**
+> - * folio_index - File index of a folio.
+> - * @folio: The folio.
+> - *
+> - * For a folio which is either in the page cache or the swap cache,
+> - * return its index within the address_space it belongs to.  If you know
+> - * the folio is definitely in the page cache, you can look at the folio'=
+s
+> - * index directly.
+> - *
+> - * Return: The index (offset in units of pages) of a folio in its file.
+> - */
+>  static inline pgoff_t folio_index(struct folio *folio)
+>  {
+> -       if (unlikely(folio_test_swapcache(folio)))
+> -               return swp_offset(folio->swap);
+>         return folio->index;
+>  }
+>
+> +#endif
+> +
+>  #endif /* _MM_SWAP_H */
 > --
-> 2.49.0
-> 
-> ---
-> AngeloGioacchino Del Regno (9):
->        drm/mediatek: mtk_hdmi: Improve mtk_hdmi_get_all_clk() flexibility
->        drm/mediatek: mtk_hdmi: Add HDMI IP version configuration to pdata
->        drm/mediatek: mtk_hdmi: Split driver and add common probe function
->        drm/mediatek: mtk_hdmi_common: Make CEC support optional
->        drm/mediatek: mtk_hdmi_common: Assign DDC adapter pointer to bridge
->        drm/mediatek: mtk_hdmi_common: Add OP_HDMI if helper funcs assigned
->        drm/mediatek: mtk_hdmi_common: Add var to enable interlaced modes
->        drm/mediatek: Introduce HDMI/DDC v2 for MT8195/MT8188
->        drm/mediatek: mtk_hdmi_v2: Add debugfs ops and implement ABIST
-> 
-> Louis-Alexis Eyraud (1):
->        drm/mediatek: mtk_hdmi: Drop redundant clock retrieval in mtk_hdmi_get_cec_dev
-> 
->   drivers/gpu/drm/mediatek/Kconfig            |   18 +-
->   drivers/gpu/drm/mediatek/Makefile           |    3 +
->   drivers/gpu/drm/mediatek/mtk_hdmi.c         |  539 +---------
->   drivers/gpu/drm/mediatek/mtk_hdmi_common.c  |  440 ++++++++
->   drivers/gpu/drm/mediatek/mtk_hdmi_common.h  |  198 ++++
->   drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c  |  395 +++++++
->   drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h |  263 +++++
->   drivers/gpu/drm/mediatek/mtk_hdmi_v2.c      | 1521 +++++++++++++++++++++++++++
->   8 files changed, 2858 insertions(+), 519 deletions(-)
-> ---
-> base-commit: cd328e98533cd7035c9b3ab126070d88dae36e18
-> change-id: 20250806-mediatek-drm-hdmi-v2-cf88f51b8458
-> 
-> Best regards,
+> 2.51.0
 
+Thanks for the info. But I think V3 should be good?
+
+CONFIG_SWAP depends on CONFIG_MMU so if you have !CONFIG_MMU, you must
+have !CONFIG_SWAP.
+
+I didn't adjust the header in V3 and fixed it differently from what
+Lance is suggesting, V3 wraps swp_offset with CONFIG_SWAP. It should
+covers !CONFIG_MMU case too.
+
+The folio_index in V3 (this patch) looks like this:
+
+static inline pgoff_t folio_index(struct folio *folio)
+{
+#ifdef CONFIG_SWAP
+        if (unlikely(folio_test_swapcache(folio)))
+               return swp_offset(folio->swap);
+#endif
+        return folio->index;
+}
+
+I just tested !MMU and it seems fine.
 
