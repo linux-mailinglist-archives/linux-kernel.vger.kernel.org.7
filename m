@@ -1,120 +1,139 @@
-Return-Path: <linux-kernel+bounces-813342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0780FB543DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:29:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B69DB543E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B83C517C9A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:29:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BFD31C2413F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42F52C21F0;
-	Fri, 12 Sep 2025 07:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529602D0C7D;
+	Fri, 12 Sep 2025 07:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UpbeDIsY"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YZOSMjLC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14DB2C21C3
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91082C21F0
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757662168; cv=none; b=Vj5Yql04HZp89+LAWJAycuAk2tgl/1YnxRF5RJqSEIhQF30TUxjcqli1HAK/PmC1AZgaSU5m4OtEy7kbJkKig5V0qGGfje/ge6RVAFJH9aYxPHKDPS4NFQXLQK4fE6zP7eDXdwDgwgIYC3dN5bhci50lpkNzdcC71/x5cpDYrx8=
+	t=1757662191; cv=none; b=ngqUXp2DodhUHNQBdp29haj+NWfhDbUE0a6j39X/8AvIIrlhIL/Dvx5wlGENTYuFIht9G3swZ4iixNrde5BkktI9vH6ke6N8v7Mgph6Q/ilcPgYnlC56bVe1qTDOGl1lCD85s/P2geWujv8SAhfwxSGr3/VJL88rhVVq98y/n1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757662168; c=relaxed/simple;
-	bh=HUbm7teAAiCNO5ZplPzoTsRh/PirBkwd7FwusaGR5ZA=;
+	s=arc-20240116; t=1757662191; c=relaxed/simple;
+	bh=IVoYPSD55VQEgGObulLbSMhfUJE3wN6xaZ5g1RXjnj4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mICo2Ag6gSfgXuc7XH6FlVy8OMyYeLtlGnMqXHrtADMfs7r59OESHMbznVkTqJM20zVZr4yHmHyXI7DhMKFkX59ME3bREe8BpXmJx6y3uVeExXsRederMoc7irMUAMNDccEgQuh9pKJYRU6maDI2xAEgSznS01sB4JL/RkJtqbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UpbeDIsY; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-55f76454f69so1587183e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:29:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757662165; x=1758266965; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FkCjzP4vhD32bSP1mBlLDiHz0GdzVd/VyBKFM+8O2pc=;
-        b=UpbeDIsY4UHjElWjfR4NMBkvmIGnZSiqYWZ1d0KXkc75LhRmFajwN5rE0GON7YUAoY
-         tcNZJblubXIFr2Ibwgj87c1E1DmT3IqLdbMmeXQfsIhxFJdvdW0QThqhU9pPG69ro7nV
-         TRJCmxy5j0FQImfw9jFUd1P2BPl+DXyCU0sLRpQrI3yUrKtpDnZ42onIf0sDz834tjjj
-         f3J2yGLWAOB+VX+gD6d72NKWqvecEhsnxJIibQzvmxGKNkcyQ2Tw+US6ucjW4GolBtbz
-         FURs3M8/0PoyJLsZz0tkj7Xwgr2h2M6cO6ZjAZ9vcQ+UTcX9HgVlIZBBDAa7iWy9v9yO
-         JfQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757662165; x=1758266965;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FkCjzP4vhD32bSP1mBlLDiHz0GdzVd/VyBKFM+8O2pc=;
-        b=u5Ttqx6Z/H8nsRN2tMw3t747g9ePYcaGxas8Iohe8IQO4X4gdPTFjJW+ldvZKtyJep
-         87osgcVq8gASvTsOwrHo11rsay31BB7w4MYP1LIf0rYztj6oBId/jEwSUV0pEMr2Rvv/
-         iQwsindhhrlBl56+zabb2SAPvRU5xxgOq/gQ3PBwHrHe0RnzJ50kY4aOrmJGizlJkRWU
-         Mt/Gx+uxEDJZ5bWv74YQZbBuV60svf2XHeBI693qaB3jpLXKUvKOUhtL9MYkAYvZcPVX
-         ZAHohEXESav6GgQceCnqKshFRj1fB2nJB0u98/TxKGckIlAdtvWrk3sMfTpSdkpenqXs
-         +6dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVm0LVJmM94IdvlPbFNQ1Efhna7Gz9Sdk0f6vlpayC9bizJczeqfh3sdgMQK9jqpEo/d8WeFPoAO4/ruCU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz30GF6bxhcuuVnnA2DCnKX2WW5jAWbn+dr7I0YYH4eLtoMF/AB
-	MxrFJzPVDL0TODT0zyzBCgmTu8QT6xwR4YJBqj5VOKvFq5KGD3QNwKTpF3G34ikChvdfYggM+cB
-	yVOQ4DF3NDcCx1BQz8r2vzAPwOTeqE40JbT47I3VRmA==
-X-Gm-Gg: ASbGnct9z4F27BVGZ3hYcziUzOPl/HI8rJPJNymKoqaKhBYwWT0u61O/yWHShoPZJuG
-	eRdM2Z9mqtIq5rsxPW2JpWZUm6E6zPzNaJWoW6b8EgZPsx9udgu90iUIoC12ux8/dn8+GDEgxdB
-	OeGQixI7En5hTzaAGJIhpC5OYM+9Nq2aXjL1E4GgO4+neZS329Z4aaVcKz4coiYNUxwPOtNUeWb
-	G5OReBWHKUVHuT0YOOIwrxEwJ5099c9h1YuYA==
-X-Google-Smtp-Source: AGHT+IFvPcTXQ6WIkQFzLqofqGaeCWwE5V3dpGC1EHzT5ohZgdbDh85iVg7RukP92bY0eYj/+7Dm5YzYYq8NvDagHtk=
-X-Received: by 2002:a05:6512:3d25:b0:55f:4746:61d6 with SMTP id
- 2adb3069b0e04-5704bec62f4mr779028e87.16.1757662164848; Fri, 12 Sep 2025
- 00:29:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=FByTmcP87uDTzYLvZhcPeH55dxq+Sb1quczqMp5VsUqDcwbMvF5c3tfGIlgXGh2wFIpyEWNhmZMb4TV1D+5DwPqUz37GRnYHOtEcKSK2au6+WVrSCGvB/E8rpfd2/X47kvJFbaMPqUK319kcakR4rEIfOkKU4id6yQARI7wEt1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YZOSMjLC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50901C4CEFA
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:29:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757662191;
+	bh=IVoYPSD55VQEgGObulLbSMhfUJE3wN6xaZ5g1RXjnj4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YZOSMjLCNUnDvao2BU2Ec/Y/TEAFDirIoT+BMHHauibuyRXbFxF7Sn0LbFksB5r0x
+	 CP4rSxYLMRYPoKRId0qKCoR+M777pCIns+gTWooe/PldhqXQnJxQTSmyYCCMy2nH4T
+	 n0tLxp10pOIcSUm4zGhlSR1F3cbY6wCZhlkOjcFP6uX0qc+udneQk0p5WXqXWVAaLA
+	 ZwtJ9Z7wyhSkL+FfrOh9S5G5d5TMRRI2Hzk64J7UnqUFGjPyYTueJZd9Zc2aWf1TDV
+	 yMuN1aV+oGje/KaNcIkwVvTlVxnOraH7LSYj09dmz79GQ8dmhMiJ9ixN93OBku8A6e
+	 bAmLUSOo6SDOA==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f6bb0a364so1862491e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:29:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXi1YR8TaTg7XZoOpz9W4Jn27uRTmcOEnH4FVC6Ef5VUuZrnE1jlkK4JJGfv2Rep4qynYKLGmOEHzR4UVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWRYoC9rjDgjkthNZ5F7wj26shREYz5us6LIRSM75Wdcs1m4Yj
+	Va42WZKfuz9W7Ir0a4BRui0ihHCsFu4eAiirmks/O/GTa3Tad5AgxXz8yxuybsF+xCrQW1zo2pN
+	faQSq95uP7j6x3oYzSzQivQ5pD5E3OyM=
+X-Google-Smtp-Source: AGHT+IGfrBa6o27pmxxn1xnpGqIqwq4WH4IYZ2O54otiYdLsrXla2aYgkEblTj9kYXS/EXMufjkO2o+SksZs5QMczI4=
+X-Received: by 2002:a05:6512:696:b0:55f:6649:45b8 with SMTP id
+ 2adb3069b0e04-5704ebf307dmr754106e87.45.1757662189686; Fri, 12 Sep 2025
+ 00:29:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <9652736ef05b94d9113ea5ce7899734ef82343d1.1755520794.git.christophe.leroy@csgroup.eu>
- <175764920912.610338.13254301742963097094.b4-ty@linux.ibm.com>
-In-Reply-To: <175764920912.610338.13254301742963097094.b4-ty@linux.ibm.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 12 Sep 2025 09:29:12 +0200
-X-Gm-Features: Ac12FXzlO0BlEMfk4QQsvjbiy-zbMbEg9ajjT3EbChQkXyCvmLeQtRGDcFX-Szw
-Message-ID: <CAMRc=MchCnTusmP=1rKco908f7CxHcb6REXx7far=1Pp_dq9Aw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mpc5200: Drop legacy-of-mm-gpiochip.h header
-To: Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Anatolij Gustschin <agust@denx.de>, linuxppc-dev@lists.ozlabs.org
+References: <20250909080631.2867579-5-ardb+git@google.com> <20250909080631.2867579-8-ardb+git@google.com>
+ <802166ae-9420-41f6-95ed-6570ef660369@amd.com>
+In-Reply-To: <802166ae-9420-41f6-95ed-6570ef660369@amd.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 12 Sep 2025 09:29:38 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGmgXRA=hO5P1bcTU1ya-RypU_y3_kahO632U5iPT7vaQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy8u5owgmeKI9io1tN_COZ4GouXszZVG6QjR4ZqPDGN-Jk9dbmxMRUdGmk
+Message-ID: <CAMj1kXGmgXRA=hO5P1bcTU1ya-RypU_y3_kahO632U5iPT7vaQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] x86/efistub: Don't bother enabling SEV in the EFI stub
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, Borislav Petkov <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 5:55=E2=80=AFAM Madhavan Srinivasan <maddy@linux.ib=
-m.com> wrote:
+On Thu, 11 Sept 2025 at 23:53, Tom Lendacky <thomas.lendacky@amd.com> wrote:
 >
-> On Mon, 18 Aug 2025 14:42:24 +0200, Christophe Leroy wrote:
-> > Remove legacy-of-mm-gpiochip.h header file. The above mentioned
-> > file provides an OF API that's deprecated. There is no agnostic
-> > alternatives to it and we have to open code the logic which was
-> > hidden behind of_mm_gpiochip_add_data(). Note, most of the GPIO
-> > drivers are using their own labeling schemas and resource retrieval
-> > that only a few may gain of the code deduplication, so whenever
-> > alternative is appear we can move drivers again to use that one.
+> On 9/9/25 03:06, Ard Biesheuvel wrote:
+> > From: Ard Biesheuvel <ardb@kernel.org>
 > >
-> > [...]
+> > One of the last things the EFI stub does before handing over to the core
+> > kernel when booting as a SEV guest is enabling SEV, even though this is
+> > mostly redundant: one of the first things the core kernel does is
+> > calling sme_enable(), after setting up the early GDT and IDT but before
+> > even setting up the kernel page tables. sme_enable() performs the same
+> > SEV-SNP initialization that the decompressor performs in sev_enable().
+> >
+> > So let's just drop this call to sev_enable(), and rely on the core
+> > kernel to initiaize SEV correctly.
+> >
+> > Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+> > ---
+> >  arch/x86/include/asm/sev.h              | 2 --
+> >  drivers/firmware/efi/libstub/x86-stub.c | 6 ------
+> >  2 files changed, 8 deletions(-)
+> >
+> > diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+> > index d7be1ff3f7e0..b017e1dab705 100644
+> > --- a/arch/x86/include/asm/sev.h
+> > +++ b/arch/x86/include/asm/sev.h
+> > @@ -462,7 +462,6 @@ static __always_inline void sev_es_nmi_complete(void)
+> >               __sev_es_nmi_complete();
+> >  }
+> >  extern int __init sev_es_efi_map_ghcbs_cas(pgd_t *pgd);
+> > -extern void sev_enable(struct boot_params *bp);
+> >
+> >  /*
+> >   * RMPADJUST modifies the RMP permissions of a page of a lesser-
+> > @@ -588,7 +587,6 @@ static inline void sev_es_ist_exit(void) { }
+> >  static inline int sev_es_setup_ap_jump_table(struct real_mode_header *rmh) { return 0; }
+> >  static inline void sev_es_nmi_complete(void) { }
+> >  static inline int sev_es_efi_map_ghcbs_cas(pgd_t *pgd) { return 0; }
+> > -static inline void sev_enable(struct boot_params *bp) { }
+> >  static inline int pvalidate(unsigned long vaddr, bool rmp_psize, bool validate) { return 0; }
+> >  static inline int rmpadjust(unsigned long vaddr, bool rmp_psize, unsigned long attrs) { return 0; }
+> >  static inline void setup_ghcb(void) { }
+> > diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+> > index c4ef645762ec..354bc3901193 100644
+> > --- a/drivers/firmware/efi/libstub/x86-stub.c
+> > +++ b/drivers/firmware/efi/libstub/x86-stub.c
+> > @@ -938,12 +938,6 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
+> >               goto fail;
+> >       }
+> >
+> > -     /*
+> > -      * Call the SEV init code while still running with the firmware's
+> > -      * GDT/IDT, so #VC exceptions will be handled by EFI.
+> > -      */
+> > -     sev_enable(boot_params);
 >
-> Applied to powerpc/next.
+> I think we lose the check for GHCB_HV_FT_SNP_MULTI_VMPL by doing this. It
+> might need move into svsm_setup_ca() now.
 >
-> [1/1] gpio: mpc5200: Drop legacy-of-mm-gpiochip.h header
->       https://git.kernel.org/powerpc/c/e7a6475cc0c32213e87ec190d90b8f1440=
-ff05ae
->
-> Thanks
 
-Hi!
+Currently, this check only occurs inside sev_enable(), and so it
+happens too late to have an impact, given that the core kernel will
+set up all of this state from scratch right away.
 
-Looks like it flew under my radar but this should go through the GPIO
-tree, can you please drop it from yours and I'll take it?
-
-Bartosz
+So if this check is needed in the EFI stub to begin with, it should be
+moved into early_is_sevsnp_guest() so that the check occurs before
+attempting to accept memory.
 
