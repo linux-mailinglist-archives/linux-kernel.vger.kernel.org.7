@@ -1,202 +1,156 @@
-Return-Path: <linux-kernel+bounces-814555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC74B55581
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:33:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828B4B5558A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 912F91D60333
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:34:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 373C5178BE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC4F32145E;
-	Fri, 12 Sep 2025 17:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84EC7324B33;
+	Fri, 12 Sep 2025 17:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YLmvk6EP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hLnKdCg9"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC13EBA45;
-	Fri, 12 Sep 2025 17:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA281314A94;
+	Fri, 12 Sep 2025 17:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757698414; cv=none; b=WUdN0du7MjEI8uJI0dfy/66J1W/3fqAbw5cx6UtmCDbSO1O34ST7UyMoJpmXbMo7s4xVM4fam/L7oOVvA3DtEWvY4n4lWRbcTXZZv5eYa5fo9SofOPT4xhUBbUgErQle8kjbzebE1IUM3hpdznzvhV6qF/R//3HG9qyVbzeeGSU=
+	t=1757698640; cv=none; b=JtuiRNalZJlnoAcWMIVaOy2cFHOn3Odhjrjr/gYyLSpdYSulJvhJvEVVae/GB3NzQSEyW2MvW7Yt8eE7kNSNhj0+4ThFTivxm+MrFyQB0gJg43cXnPzdp9eqKeW4dP3KmZ6PwdyqKO0GtYwFD3Ppl3qVlTSizPQlkOvjsyYFq/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757698414; c=relaxed/simple;
-	bh=ocsrSdPooCPV6LDPxcgNVEXn4wHEWYjxRsblCQoKEVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gDcW/Km2qGKsXqlMpmI0OUSi5clXHckQPKzUyaBvt6CGKd9jyUx1N9Z0f3ws3u87OoPuBQtaDLB4oWnwQ+U+qASOQXoJn5oON0saR+DA80OiAdO6OGH3Ib65z3ACyNDR+eoBmlN6ckWkFkRYwG+bmqqu6+ziCYbgcJuHoys8PNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YLmvk6EP; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757698413; x=1789234413;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ocsrSdPooCPV6LDPxcgNVEXn4wHEWYjxRsblCQoKEVg=;
-  b=YLmvk6EPzXFQkfMq1q09o3hRpFVnm7/e/UHMbk4HHV64Jze3XbqMHSTi
-   l9tb6uZjkissEl07TcyJzw4Znxdsu0/6d00I2ePnSPEzKeYvTfFj/yydJ
-   ONFNAAtpP+353XpNChseOCbTBWnxFbz9GJUaSAm9F3bNl0u1vrqG8Jgdq
-   ApVwEm8DwP/N09zVtY+mWkxCpxAhHqsR0ya/3GUezFud/3UkULDsxKp7O
-   iFeNuZ+NLL+bAoFSZ+Ylpk9vtFSwOdItM1c1pp72PNgVzue0am4Oy9wh3
-   qp3dZGX9BcHU1CWCeQTjfaSy4vU+9UyaTWw4rM4OyIMEmikD9rOZbTF70
-   g==;
-X-CSE-ConnectionGUID: yOkjUTEWRHeJIgApP/mk3Q==
-X-CSE-MsgGUID: PV8UNO8+RqG0Iogdzyhr8Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="63869819"
-X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
-   d="scan'208";a="63869819"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 10:33:32 -0700
-X-CSE-ConnectionGUID: cCAmcmmuSVmCZtgs3DOdVg==
-X-CSE-MsgGUID: oBK8cLDsTjiCY0vz8tNdVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
-   d="scan'208";a="173566516"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.111.66]) ([10.125.111.66])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 10:33:31 -0700
-Message-ID: <60f05a02-6a0a-4616-a2f2-d7ae5709d94e@intel.com>
-Date: Fri, 12 Sep 2025 10:33:30 -0700
+	s=arc-20240116; t=1757698640; c=relaxed/simple;
+	bh=tjcSWmW/FLtaPaOYE0AhF4l+cmvCOfsmYIv1Yl4wLeY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GVQv9vxF7t9HcMCQ6vOjHOTXuvs0vpmeBhXWeS60v72EiIS5SKGfO8SfE8dOBFwkhGbXZwPXLYQPBfMou5e9Chf73c8J2O3uzScCv3iycmTZTn+5c14bH9pZBTflXOzbkg58wsrB3o0DJigGgDq2DjGg8Ks42/W9NoOUlfoaZXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hLnKdCg9; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757698635;
+	bh=tjcSWmW/FLtaPaOYE0AhF4l+cmvCOfsmYIv1Yl4wLeY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=hLnKdCg9IdpFTqd2bFHEW1X+2Bhorp0+ygrq5pomVadKqxKOeX67keW1iyRbRUHvm
+	 OCJ+5huJFG2c5OjbHw2ZZiy8NkABepAwBwSg8ljvWXSbmzIGMaqrNIJ+T3BVqKfH21
+	 B7TX9T0SZRTBGro1QN5d+ljCGvunDtV/yW3ww+mLWU+CCPovlXL09Sg3KLSEleZGJ9
+	 ix+Vv+GWB0xpz4KH8GTtxt5BgieAiaGmsdv+ol6uBkBSxbQxUP22zhppspVR70z/fp
+	 QAAVgjhRzwdXgMcRlGlpdNTU0KdsnUFP1PGvt4FcdrXjLtCpEGviBA7Iu2jBOpEM9m
+	 jmrs69oNcJb0w==
+Received: from [IPv6:2606:6d00:10:aee0::c41] (unknown [IPv6:2606:6d00:10:aee0::c41])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3052217E0F88;
+	Fri, 12 Sep 2025 19:37:14 +0200 (CEST)
+Message-ID: <694b9ba15cd67f41a38f4a65a3811f035cf8e99d.camel@collabora.com>
+Subject: Re: [PATCH v9 3/7] iommu: Add verisilicon IOMMU driver
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: =?ISO-8859-1?Q?J=F6rg_R=F6del?= <joro@8bytes.org>, Benjamin Gaignard
+	 <benjamin.gaignard@collabora.com>
+Cc: robin.murphy@arm.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, heiko@sntech.de, jgg@ziepe.ca, p.zabel@pengutronix.de,
+ 	mchehab@kernel.org, iommu@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com, 
+	linux-media@vger.kernel.org
+Date: Fri, 12 Sep 2025 13:37:11 -0400
+In-Reply-To: <vrngq76nnms3jyl5hnxqnkimjc6kil66o6fdyqn5vm3fpovmja@cfynipjw7ktp>
+References: <20250911155720.180465-1-benjamin.gaignard@collabora.com>
+	 <20250911155720.180465-4-benjamin.gaignard@collabora.com>
+	 <vrngq76nnms3jyl5hnxqnkimjc6kil66o6fdyqn5vm3fpovmja@cfynipjw7ktp>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mDMEaCN2ixYJKwYBBAHaRw8BAQdAM0EHepTful3JOIzcPv6ekHOenE1u0vDG1gdHFrChD
+ /e0J05pY29sYXMgRHVmcmVzbmUgPG5pY29sYXNAbmR1ZnJlc25lLmNhPoicBBMWCgBEAhsDBQsJCA
+ cCAiICBhUKCQgLAgQWAgMBAh4HAheABQkJZfd1FiEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrjo
+ CGQEACgkQ2UGUUSlgcvQlQwD/RjpU1SZYcKG6pnfnQ8ivgtTkGDRUJ8gP3fK7+XUjRNIA/iXfhXMN
+ abIWxO2oCXKf3TdD7aQ4070KO6zSxIcxgNQFtDFOaWNvbGFzIER1ZnJlc25lIDxuaWNvbGFzLmR1Z
+ nJlc25lQGNvbGxhYm9yYS5jb20+iJkEExYKAEECGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4
+ AWIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaCyyxgUJCWX3dQAKCRDZQZRRKWBy9ARJAP96pFmLffZ
+ smBUpkyVBfFAf+zq6BJt769R0al3kHvUKdgD9G7KAHuioxD2v6SX7idpIazjzx8b8rfzwTWyOQWHC
+ AAS0LU5pY29sYXMgRHVmcmVzbmUgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29tPoiZBBMWCgBBF
+ iEE7w1SgRXEw8IaBG8S2UGUUSlgcvQFAmibrGYCGwMFCQll93UFCwkIBwICIgIGFQoJCAsCBBYCAw
+ ECHgcCF4AACgkQ2UGUUSlgcvRObgD/YnQjfi4+L8f4fI7p1pPMTwRTcaRdy6aqkKEmKsCArzQBAK8
+ bRLv9QjuqsE6oQZra/RB4widZPvphs78H0P6NmpIJ
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-kb9W2TmWeCI0uNYqiKHV"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/11] cxl/region: Rename misleading variable name @hpa
- to @range
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20250912144514.526441-1-rrichter@amd.com>
- <20250912144514.526441-4-rrichter@amd.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250912144514.526441-4-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
+
+
+--=-kb9W2TmWeCI0uNYqiKHV
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+Le vendredi 12 septembre 2025 =C3=A0 13:47 +0200, J=C3=B6rg R=C3=B6del a =
+=C3=A9crit=C2=A0:
+> On Thu, Sep 11, 2025 at 05:57:13PM +0200, Benjamin Gaignard wrote:
+> > The Verisilicon IOMMU hardware block can be found in combination
+> > with Verisilicon hardware video codecs (encoders or decoders) on
+> > different SoCs.
+> > Enable it will allow us to use non contiguous memory allocators
+> > for Verisilicon video codecs.
+> >=20
+> > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+> > ---
+> > =C2=A0drivers/iommu/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 11 +
+> > =C2=A0drivers/iommu/Makefile=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A0drivers/iommu/vsi-iommu.c | 808 +++++++++++++++++++++++++++++++++=
++++++
+> > =C2=A0include/linux/vsi-iommu.h |=C2=A0 21 +
+> > =C2=A04 files changed, 841 insertions(+)
+> > =C2=A0create mode 100644 drivers/iommu/vsi-iommu.c
+> > =C2=A0create mode 100644 include/linux/vsi-iommu.h
+>=20
+> This will not go in before Will Deacons comment about code duplication wi=
+th the
+> Rockchip driver is addressed.
+
+So you'd like a new layer of ops to abstract the common parts of two driver=
+s ? I
+mean, I can see this happening for VSI/RK, but it seems rather pointless if=
+ in a
+year from now Jason get his new framework ready. Re-doing the ops if they c=
+ause
+too much duplicate seems like a better direction.
+
+Benjamin already stated he'd be happy to port once there is enough example =
+and
+acceptability of the new code to do so. Why do mainline users have to suffe=
+r
+this ?
+
+To me this rejection isn't about Benjamin's driver, all iommu seems to look
+alike, so anyone else that would have sent new driver would have face the s=
+ame
+issue.
+
+Nicolas
+
+--=-kb9W2TmWeCI0uNYqiKHV
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYKAB0WIQTvDVKBFcTDwhoEbxLZQZRRKWBy9AUCaMRaSAAKCRDZQZRRKWBy
+9EjcAP9YQJHmhlXLbfNRAJNUDL3s+p3W5755kVTPrP+lUWAdDwD9GcfJeicvbrcm
+s0c4dwtEZdUQ2fXV0uGPXMCOR+CRWQ4=
+=RKhK
+-----END PGP SIGNATURE-----
 
-On 9/12/25 7:45 AM, Robert Richter wrote:
-> @hpa is actually a @range, rename variables accordingly.
-
-it's a range of HPA right? May as well call it 'hpa_range' to distinguish from 'dpa_range' or 'spa_range'
-
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> ---
->  drivers/cxl/core/region.c | 29 +++++++++++++++--------------
->  1 file changed, 15 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 777d04870180..13113920aba7 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3367,9 +3367,9 @@ static int match_decoder_by_range(struct device *dev, const void *data)
->  }
->  
->  static struct cxl_decoder *
-> -cxl_port_find_switch_decoder(struct cxl_port *port, struct range *hpa)
-> +cxl_port_find_switch_decoder(struct cxl_port *port, struct range *range)
->  {
-> -	struct device *cxld_dev = device_find_child(&port->dev, hpa,
-> +	struct device *cxld_dev = device_find_child(&port->dev, range,
->  						    match_decoder_by_range);
->  
->  	return cxld_dev ? to_cxl_decoder(cxld_dev) : NULL;
-> @@ -3382,14 +3382,14 @@ cxl_find_root_decoder(struct cxl_endpoint_decoder *cxled)
->  	struct cxl_port *port = cxled_to_port(cxled);
->  	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
->  	struct cxl_decoder *root, *cxld = &cxled->cxld;
-> -	struct range *hpa = &cxld->hpa_range;
-> +	struct range *range = &cxld->hpa_range;
->  
-> -	root = cxl_port_find_switch_decoder(&cxl_root->port, hpa);
-> +	root = cxl_port_find_switch_decoder(&cxl_root->port, range);
->  	if (!root) {
->  		dev_err(cxlmd->dev.parent,
->  			"%s:%s no CXL window for range %#llx:%#llx\n",
->  			dev_name(&cxlmd->dev), dev_name(&cxld->dev),
-> -			cxld->hpa_range.start, cxld->hpa_range.end);
-> +			range->start, range->end);
->  		return NULL;
->  	}
->  
-> @@ -3458,7 +3458,7 @@ static int __construct_region(struct cxl_region *cxlr,
->  {
->  	struct cxl_root_decoder *cxlrd = cxlr->cxlrd;
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> -	struct range *hpa = &cxled->cxld.hpa_range;
-> +	struct range *range = &cxled->cxld.hpa_range;
->  	struct cxl_region_params *p;
->  	struct resource *res;
->  	int rc;
-> @@ -3474,13 +3474,13 @@ static int __construct_region(struct cxl_region *cxlr,
->  	}
->  
->  	set_bit(CXL_REGION_F_AUTO, &cxlr->flags);
-> -	cxlr->hpa_range = *hpa;
-> +	cxlr->hpa_range = *range;
->  
->  	res = kmalloc(sizeof(*res), GFP_KERNEL);
->  	if (!res)
->  		return -ENOMEM;
->  
-> -	*res = DEFINE_RES_MEM_NAMED(hpa->start, range_len(hpa),
-> +	*res = DEFINE_RES_MEM_NAMED(range->start, range_len(range),
->  				    dev_name(&cxlr->dev));
->  
->  	rc = cxl_extended_linear_cache_resize(cxlr, res);
-> @@ -3559,11 +3559,11 @@ static struct cxl_region *construct_region(struct cxl_root_decoder *cxlrd,
->  }
->  
->  static struct cxl_region *
-> -cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
-> +cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *range)
->  {
->  	struct device *region_dev;
->  
-> -	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, hpa,
-> +	region_dev = device_find_child(&cxlrd->cxlsd.cxld.dev, range,
->  				       match_region_by_range);
->  	if (!region_dev)
->  		return NULL;
-> @@ -3573,7 +3573,7 @@ cxl_find_region_by_range(struct cxl_root_decoder *cxlrd, struct range *hpa)
->  
->  int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
->  {
-> -	struct range *hpa = &cxled->cxld.hpa_range;
-> +	struct range *range = &cxled->cxld.hpa_range;
->  	struct cxl_region_params *p;
->  	bool attach = false;
->  	int rc;
-> @@ -3584,12 +3584,13 @@ int cxl_add_to_region(struct cxl_endpoint_decoder *cxled)
->  		return -ENXIO;
->  
->  	/*
-> -	 * Ensure that if multiple threads race to construct_region() for @hpa
-> -	 * one does the construction and the others add to that.
-> +	 * Ensure that if multiple threads race to construct_region()
-> +	 * for the HPA range one does the construction and the others
-> +	 * add to that.
->  	 */
->  	mutex_lock(&cxlrd->range_lock);
->  	struct cxl_region *cxlr __free(put_cxl_region) =
-> -		cxl_find_region_by_range(cxlrd, hpa);
-> +		cxl_find_region_by_range(cxlrd, range);
->  	if (!cxlr)
->  		cxlr = construct_region(cxlrd, cxled);
->  	mutex_unlock(&cxlrd->range_lock);
-
+--=-kb9W2TmWeCI0uNYqiKHV--
 
