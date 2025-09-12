@@ -1,252 +1,127 @@
-Return-Path: <linux-kernel+bounces-813502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82B0B54659
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:01:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58DAB5465F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:01:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8967D1C219CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:01:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC2D97BD480
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A16627AC28;
-	Fri, 12 Sep 2025 09:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F105B27B4F7;
+	Fri, 12 Sep 2025 09:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w4JntkdN"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="e3NUhl7P"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFFE27A929
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104C625A2CD;
+	Fri, 12 Sep 2025 09:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757667621; cv=none; b=lVs/4JZNfATj3QY61KOMfa5Q+zpvpU5bwsaGPeepJZ5SPk6+rmmoraQ3AYxqFM6JBUcpDqrEYQY+F2cCsb5Wgx9lVezNVsarrexnDX8wfFD0L5Eq3RIBItIUOmgKkU+wM5HElK3GTLyRTvZlwUKB+X5UQkJAO6gYuqt2wofIfu4=
+	t=1757667648; cv=none; b=N2E+xdm5zbLnHb1x3f1MqhhQw2rfZzDLbV7hLI0WFq3rPbPZoGhWrMzM/jKxMbCClreVavmfKJQ6RA2Cw2pTilxUIBgaPjufTMqID/zfjU81CiD/tvmK/QHiLS08yjxrj+M0UgBuwQ4c86PZslqFsxyp+DnvKf6W7TEQSSqV9jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757667621; c=relaxed/simple;
-	bh=KkxRQUegu9Ld7QxiircNfbxfnOwVwrbn4bnFeCPC280=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MwmCpeV8TfN8XB8JnG7eCmqGRzdoT9KqW3TwXHMA+lVaCK9gSEMJSDo/b5sC3UKzguSTo9wheieOAUjMK7H1W0T6NJc8kIs6NX7zsqf/Hfo8x5aOBK8bJNN6kgrZ9qwMOjMUGToB+viFNlBOtF5kKTfFbXPgFiHjA83ZtWJP0TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w4JntkdN; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-625e1dfc43dso2864083a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:00:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757667617; x=1758272417; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kqH/ZuUT/Wy0euj5Cau8Rdbvh6wWj1ajWc17fov4n94=;
-        b=w4JntkdNSN2t7pKnaViHvAFVNxomUT6rsF0zPREN3/Ey7Xu8I5prQtkrrZNvD5rbVq
-         E0oeEgQG0Bp85yaS6L8qeTUklfC+6UQo6SeDQ2wXRYcOW0XlypxvbAwRL+zWa++4OFtv
-         Ri+l6K7WSN8fOlULqB/1+c0WufyF4sdqJ2OPUtCxodXVi0reocfm9P6T5Hy2NDv1ZJfg
-         EUxMusqke0cq0UBUdBeh6YsP2/s1CZK06DPBIjKzTFD7OLG7rwY1Nu+SIU6XEq/fnqHS
-         lW3Oafaq4+oREb/ciPhN+HgNnwjcOFidbfuroai1iMUMfB8dIDsryrSAZlPmk36q+jjb
-         3Ogw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757667617; x=1758272417;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kqH/ZuUT/Wy0euj5Cau8Rdbvh6wWj1ajWc17fov4n94=;
-        b=RUPXWKzt86qUhYkt/4Jvuw2fosWJrqmn3rn9W6XrrZwkn303Tq4uwPPjlpdk3QXkuR
-         qOdN+eujYvwVWjRHVAuxpkSeN6G6n4QKB0EWs4RM4I4PM2KZJT1WWxhm3wfX2rgs9lxG
-         /FgC2TbuaKROeRJ5ey5va4zqM0A9A4PAVqLT+z2c59asXMP2c9HuoFAR6a0S8qfI5ngc
-         8Bu3aQfUahN090gjNaDCHbF8F/RtaoSmfxpnXV64JKuljNxNw6UsDNZotXYfPwokJT8n
-         6vzvUX4oucmA576ZPf+TqTcZzrHrxdDHdDbE/4KA8gzRzmIw+fIJ9luWfWRCKd1yaghC
-         BlFw==
-X-Forwarded-Encrypted: i=1; AJvYcCX0YZW3VKj2sf9l6wm7wdxmNHdJnsGt1aWXMAMiqY9m4e1b1QzQgw9vuld/l9d8l9L9XFKHJBpoc+TG4Xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwksXBSKXeALVjo8Si6/Sg78EsFGGzq0jG2+vaKL9N6xI1AcdTF
-	nT0ZabUUYOGP2ehSfu/YW+npIOtGZBSvLdRPJ/VC3zFE/XKqs+DJq9vdrtDIPUVb0M4=
-X-Gm-Gg: ASbGncsyo1WxIWyMSvLkVR6bgsUyV+BBgCBYL7AiSHzKLVU4qWUR98e7vcBEfv/cTaQ
-	q79WA+qD81oh/3JaiIegSMQ+SWJxB5rVLRWnsERtz1joitlf1yoLw6ow4J/c4IvMhnXIrKeODxO
-	vGChATTOHynxzLOHOU7FJKIOxQVaM+pTR5APQLCYSwbyOnWrme3RmFLDWCF5l7EzL9yjvJG35Q9
-	17qY0iRESF7Y4a6yRenMiF/nzhc2vmPqa5DHcyWx/ThM0iSZyB+BOLm8GiVrFEAe3t21mHMwOvn
-	EcxdIVyyzbL6cp9rNy3nTLZZFqKg3xNIzAhjyRkJYgcxHHIUGYJYBGkdS2TabKbSUafgRdQn5bD
-	EqlLKFV0R0PBXu7Xe4dt42KS+nsxXOYC7Uhr5PvV0/BL65vu2XiAG9w==
-X-Google-Smtp-Source: AGHT+IG6ahhooDRjCLAr+j2YJkIYsc7o/D83Omh5S2ijH7u28U1AnCkxcq7mMhp9y7AnOYU5iezA5w==
-X-Received: by 2002:a17:906:d542:b0:aff:9906:e452 with SMTP id a640c23a62f3a-b07c381fdc9mr216146766b.31.1757667616760;
-        Fri, 12 Sep 2025 02:00:16 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:30:5fc2:ee41:2050:2d49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32f20ffsm328900866b.79.2025.09.12.02.00.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 02:00:16 -0700 (PDT)
-Date: Fri, 12 Sep 2025 11:00:11 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 4/4] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
-Message-ID: <aMPhEm8PuhEofHP7@linaro.org>
-References: <20250910-hamoa_initial-v11-0-38ed7f2015f7@oss.qualcomm.com>
- <20250910-hamoa_initial-v11-4-38ed7f2015f7@oss.qualcomm.com>
+	s=arc-20240116; t=1757667648; c=relaxed/simple;
+	bh=I8lnMndXG8pdCIl26nEFltqvWn8FNn3OcwqWnXiwNbY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=DKyxBIUOPweK8L15gqdArBB1ry2VtGKub26NbDnH/b++TlEVe0Z5WySAChxe5CVOvN2GpicHVtce391e+HyYnb1vZqahglbBgX8aPwIvaryV3sO7cI6Mil0Gqt872QSI8+pfPCUJ3ci1M2wlq6zex9cA7ByEZ2K5lhvF+IVfK6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=e3NUhl7P; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1757667644;
+	bh=I8lnMndXG8pdCIl26nEFltqvWn8FNn3OcwqWnXiwNbY=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=e3NUhl7PV7etZf6rkduBXP9LFytOiLRWRVHpQQi34pLQH2vmBc4DiFZqBhkEoahk+
+	 5lqCt82nU8wxCLKpQoITHdJ8Z0JsAUN8gOiCPGkt/3l4KRabrWgd5GMXOYQR7MNjEN
+	 w8GljBH0yMYh7X4ylpEAJ7M3LR9VBwXXRQIkre1CLWp79yxx662xYoLeF+NA97Tx9n
+	 BwwzxDPf26QjC+A4fKFR3wlu0CKWesFtQY6iOeUPiM6YJbLuMgtk36+zTtoNy9JK3J
+	 z2oi2V/9DNedgWdar2swblhT1SWvuu35nFikjvuz8hxt/bUi712fqQesF/nE5n4J3I
+	 4es+30UGJcTSA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 43F6A17E07EE;
+	Fri, 12 Sep 2025 11:00:42 +0200 (CEST)
+Message-ID: <56380fe5-8358-4341-9478-ba4ce52daeed@collabora.com>
+Date: Fri, 12 Sep 2025 11:00:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910-hamoa_initial-v11-4-38ed7f2015f7@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 14/38] dt-bindings: media: mediatek,mt8195-jpeg: Allow
+ range number in node address
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ linux-mediatek@lists.infradead.org, robh@kernel.org
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org,
+ conor+dt@kernel.org, chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
+ airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
+ mchehab@kernel.org, matthias.bgg@gmail.com, chunfeng.yun@mediatek.com,
+ vkoul@kernel.org, kishon@kernel.org, sean.wang@kernel.org,
+ linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
+ andersson@kernel.org, mathieu.poirier@linaro.org, daniel.lezcano@linaro.org,
+ tglx@linutronix.de, atenart@kernel.org, jitao.shi@mediatek.com,
+ ck.hu@mediatek.com, houlong.wei@mediatek.com,
+ kyrie.wu@mediatek.corp-partner.google.com, andy.teng@mediatek.com,
+ tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com, shane.chien@mediatek.com,
+ olivia.wen@mediatek.com, granquet@baylibre.com, eugen.hristev@linaro.org,
+ arnd@arndb.de, sam.shih@mediatek.com, jieyy.yang@mediatek.com,
+ frank-w@public-files.de, mwalle@kernel.org, fparent@baylibre.com,
+ linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-15-angelogioacchino.delregno@collabora.com>
+ <70ae6787-ee0b-43a0-851e-1fb6c82f6c31@kernel.org>
+ <72934f23-08eb-4214-a946-7aa7a432352e@collabora.com>
+Content-Language: en-US
+In-Reply-To: <72934f23-08eb-4214-a946-7aa7a432352e@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 10, 2025 at 05:02:12PM +0800, Yijie Yang wrote:
-> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
-> the Hamoa IoT SoM and a carrier board. Together, they form a complete
-> embedded system capable of booting to UART.
+Il 04/08/25 11:02, AngeloGioacchino Del Regno ha scritto:
+> Il 24/07/25 11:14, Krzysztof Kozlowski ha scritto:
+>> On 24/07/2025 10:38, AngeloGioacchino Del Regno wrote:
+>>> The dual and triple core jpeg encoder and decoder (respectively)
+>>> on MT8195 are far apart: the only way to have this to make sense
+>>> is to split those in multiple address ranges in device trees as
+>>> one big range would overlap with other IP in at least the MT8195
+>>> SoC.
+>>>
+>>> Change both the jpegdec and jpegenc bindings to allow specifying
+>>> children nodes such as "jpegdec@0,10000", "jpegdec@1,0" or for
+>>> encoder "jpegenc@0,0", "jpegenc@1,0" to resolve dtbs_check issues.
+>>
+>>
+>> This should not be needed for standard MMIO/simple-bus nodes. I think
+>> DTS is wrong here.
+>>
+>> Which cases really need the ','?
+>>
 > 
-> Make the following peripherals on the carrier board enabled:
-> - UART
-> - On-board regulators
-> - USB Type-C mux
-> - Pinctrl
-> - Embedded USB (EUSB) repeaters
-> - NVMe
-> - pmic-glink
-> - USB DisplayPorts
-> - Bluetooth
-> - WLAN
-> - Audio
+> All of the multi-core JPEG enc/decoders on MT8195 (and newer).
 > 
-> Written in collaboration with Quill Qi (Audio) <le.qi@oss.qualcomm.com>,
-> Jie Zhang (Graphics) <quic_jiezh@quicinc.com>, Shuai Zhang (Bluetooth)
-> <quic_shuaz@quicinc.com>, Yingying Tang (WLAN) <quic_yintang@quicinc.com>,
-> and Yongxing Mou (USB DisplayPorts) <quic_yongmou@quicinc.com>.
-
-This looks like you should have Co-developed-by: tags together with
-their Signed-off-by: tags.
-
+> The DT changes are included in the same series as this commit; check:
 > 
-> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile          |    1 +
->  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 1221 ++++++++++++++++++++++++++++
->  2 files changed, 1222 insertions(+)
+> 20250724083914.61351-35-angelogioacchino.delregno@collabora.com
 > 
-> [...]
-> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> new file mode 100644
-> index 000000000000..6eedad7e858a
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> @@ -0,0 +1,1221 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "hamoa-iot-som.dtsi"
-> +
-> +/ {
-> +	model = "Qualcomm Technologies, Inc. Hamoa IoT EVK";
-> +	compatible = "qcom,hamoa-iot-evk", "qcom,hamoa-iot-som", "qcom,x1e80100";
-> +	chassis-type = "embedded";
-> +
-> [...]
-> +	/*
-> +	 * TODO: These two regulators are actually part of the removable M.2
-> +	 * card and not the CRD mainboard. Need to describe this differently.
+> Cheers,
+> Angelo
+> 
 
-This is not a CRD, I think?
+Any further comments on this?
 
-> +	 * Functionally it works correctly, because all we need to do is to
-> +	 * turn on the actual 3.3V supply above.
-> +	 */
-> +	vreg_wcn_0p95: regulator-wcn-0p95 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_WCN_0P95";
-> +		regulator-min-microvolt = <950000>;
-> +		regulator-max-microvolt = <950000>;
-> +
-> +		vin-supply = <&vreg_wcn_3p3>;
-> +	};
-> +
-> +	vreg_wcn_1p9: regulator-wcn-1p9 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_WCN_1P9";
-> +		regulator-min-microvolt = <1900000>;
-> +		regulator-max-microvolt = <1900000>;
-> +
-> +		vin-supply = <&vreg_wcn_3p3>;
-> +	};
-> +
-> +	vreg_wcn_3p3: regulator-wcn-3p3 {
-> +		compatible = "regulator-fixed";
-> +
-> +		regulator-name = "VREG_WCN_3P3";
-> +		regulator-min-microvolt = <3300000>;
-> +		regulator-max-microvolt = <3300000>;
-> +
-> +		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
-> +		enable-active-high;
-> +
-> +		pinctrl-0 = <&wcn_sw_en>;
-> +		pinctrl-names = "default";
-> +
-
-regulator-boot-on?
-
-> +		regulator-always-on;
-> +	};
-> +
-> [...]
-> +};
-> +
-> [...]
-> +&mdss {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dp0 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dp0_out {
-> +	data-lanes = <0 1>;
-
-This is unneeded unless you really want to limit this to just 2 lanes.
-x1e80100.dtsi specifies 4 lanes by default.
-
-> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-> +};
-> +
-> +&mdss_dp1 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dp1_out {
-> +	data-lanes = <0 1>;
-
-Same here.
-
-> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-> +};
-> +
-> +&mdss_dp2 {
-> +	status = "okay";
-> +};
-> +
-> +&mdss_dp2_out {
-> +	data-lanes = <0 1>;
-
-And here.
-
-> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
-> +};
-> +
-> +&mdss_dp3 {
-> +	/delete-property/ #sound-dai-cells;
-
-You need to define pinctrl for the HPD pin here.
-
-Thanks,
-Stephan
+Regards,
+Angelo
 
