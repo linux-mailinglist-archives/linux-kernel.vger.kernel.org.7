@@ -1,192 +1,125 @@
-Return-Path: <linux-kernel+bounces-814738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 274B0B557F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:55:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA2BB557FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89A8E3A76E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:55:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38AE67A7CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5926731A04D;
-	Fri, 12 Sep 2025 20:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB71A305940;
+	Fri, 12 Sep 2025 20:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ojia2Gf6"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GgYY+K7+"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57892D6E4C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1AF242D9E;
+	Fri, 12 Sep 2025 20:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757710518; cv=none; b=Xw/55sD1XOQYTZvXhjCyQTYDcr6HoaiPBNpJUG7Y5HHiUDhG4qf+17s7uSAxrDFq1KFljaCeT/5KuhHY0RFA0ScnibrF1Hy/R/HT1z+MeVLSzxrr/fNj9mdJAJKakUeubJfIktqSxn9eTZeNI1OXlB+12IBclnLy5s0AvFrNWyM=
+	t=1757710719; cv=none; b=rs+zxA/nNqQJwoPa2CCWw+Hb9tUven3fQZ10ZFmjzxGOizqWF0a9q//RlNYSOrvd4nZ02g1IcgExHHf6EiVR2QwMalogi+BCOP0BQGq+aMSDB/MJKUEhFq2maiw5/pozWYeAw6FXJ9UsGn+oX15FCJZ1zWHHCJ8pJtHE85rTMmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757710518; c=relaxed/simple;
-	bh=a3zbhO7avmRivgJdN1bTarTT6jvnyHqHhhGhbgz5SOM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jo+fpWA5oaJtcIjWP5Wa9konA6o2o/z2BXTphIHLNSubgIds0wFHN2N2GHAnHqnAzRGbn2RCu4gREIFKNDRaZha5yAUanngI6P8EnWiOdIbiqU3LR+u1KsHR/7zQmgp33Cufg+xnPid6KJyJYPTqqHqGqxCZtWM5Q9Q5ZyWYIjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ojia2Gf6; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3d19699240dso1945144f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757710515; x=1758315315; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=H8aqhiiMcUtn0FeyGFmgA1u06OS1EcQ/EDH2tzgYHHg=;
-        b=Ojia2Gf6OnUKzuANlqNgyE2d4Xd58JUfZ0FhiwOFS8pIIyU2N8+4g5tEolJDHVOXnY
-         2wY3y8xSrPcPth3y1/M1jR6+xqkhqymvYFlzzoL4LxTLgojNtaNfNvkvyF9Nc9zYvATL
-         jG7Z2jIGvRlF6Uo/o/PF6uTCnpmDZeKWG0d1Npe9iHRf+ahE1OB7jdhWt2B6MV1hKYyT
-         xs0X8Qcv4y7NXU/QKJ2K6/rM4Tqe7ZcF1YjziQvjvaCqW/1X5f4LTk2vSUXzokaHzt8g
-         nK9N+DncjdfjJ8mwwWyGuB6LHUbvEbdpEHXsUa+tnPOvgXprFDl9h6NJScq4Ez+XmTi3
-         KAOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757710515; x=1758315315;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H8aqhiiMcUtn0FeyGFmgA1u06OS1EcQ/EDH2tzgYHHg=;
-        b=stmj1x76o8N1m0NnL1s3Sd/F1c+rKJr1tRNboHrrGs578DfU/AQb5YpT5jtKp0wZDU
-         dW8TZX5jvB7xCyo74HcIqEV1rEKTQA8f+CsGoRqoTXemDxn8JFfZAeOEbgg9EPoPvPOb
-         wHmeV0Sm9XsUuUS1cA1mVWaAixEzQDDylZVB3ClyKXF0DqWnm03s3f8+Y7X0cjBCIdkD
-         WnyiQ+Nl2JJIUhP7SoNZOMhqSYvJpbwFWRGm2gOiPH8G9uY4uABfXVS8iHNuOu9ECBC5
-         1W5Y1TdafkkZt7shgVTG+okdQdXC2ApvCbscw8Dozu7H58E+M7YDejJVE90LQIpvPKsz
-         2spw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOA7BGIZ4QzM0ANeBKcD02cx/f9glx/NO5n5byeyPqFhdPxcz4LJ1NaF6ZjzmmrUxENh2vc3RZ2FRVR/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0YHhzc670h5YD7U3oE1mERgTBva9MMmSdKolj+H57f3AXHhGY
-	/Z+uTDLMS9D6inVmrjiUzCmey2UW19lnpxY2s6DrkC5QHk6xem/h4NLu
-X-Gm-Gg: ASbGncsL6vC0z3GyIkDd/cO+Kzi1sYnUvtG+StANfGPEkseOXjGOI0SE7zJJh09v14W
-	S7qg64kEH98/4Iy2S9Tf0udsGgXdF6tzy/hMmMFuhWNb5thQ5OtcM7bVvxn+n4XjaUOE8OLpNd+
-	uTNgZgKRctB1nzj1BRW5WsKXh4rVWjWieCfHnufaqU1GeTRoivR5Ti+KVLGpV6nr/3aqIMLKXNe
-	cDZNROxsRJsYfyCCim3lgdYq97pq63Uf3Gh4+6T0SNllDAQzmVtwGGKAroq/2ZPUjp6+yYJmasT
-	7hmHPAbvyVg1iCYMGe0ceuADIHDIKThGhWZQi2oGufNFYEQcZgdlFuaaKPktRdja9GKuBY5fLsP
-	W4l1J19uV2njGzL7qf4PduNUVWBCAwk4OqZ6eB8Q=
-X-Google-Smtp-Source: AGHT+IE4Ui/OWY5Blho4xzlZ3PsVi9ZXAjNk3hNnkkFx7iqGYbpT09JBBVUN+5Q6z4FwWeQdMkMI6g==
-X-Received: by 2002:a5d:64e4:0:b0:3e1:ca94:3199 with SMTP id ffacd0b85a97d-3e7659f3ea0mr4309536f8f.14.1757710514978;
-        Fri, 12 Sep 2025 13:55:14 -0700 (PDT)
-Received: from krava (89-40-234-69.wdsl.neomedia.it. [89.40.234.69])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607d822fsm7872682f8f.53.2025.09.12.13.55.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 13:55:14 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 12 Sep 2025 22:55:11 +0200
-To: Ihor Solodrai <ihor.solodrai@linux.dev>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	x86@kernel.org, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCHv3 perf/core 0/6] uprobe,bpf: Allow to change app
- registers from uprobe registers
-Message-ID: <aMSIr1oItIfWQd5R@krava>
-References: <20250909123857.315599-1-jolsa@kernel.org>
- <CAEf4Bzb4ErWn=2SajBcyJxqGEYy0DXmtWuXKLskPGLG-Y9POFA@mail.gmail.com>
- <7f591ac9-d3e0-4404-987c-40eceaf51fbb@linux.dev>
+	s=arc-20240116; t=1757710719; c=relaxed/simple;
+	bh=hkPf4NG18cr+svLukm92kqXa86JRyXzWrX2yDcyUf2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kiJG+Gh0KgHqtEIYUU79wo70Zmw0nAyshej81Ku6aA6g7GYoEsaTL7P9q03nQ5QuXYWlyg34YLPN32LHEO7fCXlbzbjq7iJT9AFsIwwfxBexVrkdSeVn0sRu4z4TeUnfP17fzryDA3Gt20KjeBMysygjS+euVMhBzfFMAs+t4KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GgYY+K7+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=LJHK7dsTB/ThO7Z2EP/SeNUzVk4mffiuK9Sa9a/39e4=; b=GgYY+K7+wiV+MpG4kO15w5qH+k
+	2WDSXuAg5k3G6ic4OnsA5tqxqUWWIkTVHHvl/OF3XUy4DakgAE6fiiA985ifFXW6TT5faR1uLIXG8
+	B6ciUprU+MM+N892Ut5ku3Ln9p15qVGYJX54q5e1j2xxS0sOVSnCx0q5FyYxZFu0RIvJlbPzW4oKL
+	SGU6xNfcRf8rc9vwKjxOUOEgPgVyfma6HNa9LbmE3Dom08imHl4z3AD8eeQr4BnijnnkZZXToFOBH
+	2EgfzN80emdvF98CXoiOicwkmvywStj1NrGJRChqiwg88Fgz9WtqGjF0SYkPl2H70sRRkmCr7NGrG
+	OFTEQkgw==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uxAqp-0000000BXIW-2wyb;
+	Fri, 12 Sep 2025 20:58:35 +0000
+Message-ID: <de409ffc-100a-4120-b6b1-f89c59a97530@infradead.org>
+Date: Fri, 12 Sep 2025 13:58:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7f591ac9-d3e0-4404-987c-40eceaf51fbb@linux.dev>
-
-On Fri, Sep 12, 2025 at 01:28:55PM -0700, Ihor Solodrai wrote:
-> On 9/9/25 9:41 AM, Andrii Nakryiko wrote:
-> > On Tue, Sep 9, 2025 at 8:39 AM Jiri Olsa <jolsa@kernel.org> wrote:
-> > > 
-> > > hi,
-> > > we recently had several requests for tetragon to be able to change
-> > > user application function return value or divert its execution through
-> > > instruction pointer change.
-> > > 
-> > > This patchset adds support for uprobe program to change app's registers
-> > > including instruction pointer.
-> > > 
-> > > v3 changes:
-> > > - deny attach of kprobe,multi with kprobe_write_ctx set [Alexei]
-> > > - added more tests for denied kprobe attachment
-> > > 
-> > > thanks,
-> > > jirka
-> > > 
-> > > 
-> > > ---
-> > > Jiri Olsa (6):
-> > >        bpf: Allow uprobe program to change context registers
-> > >        uprobe: Do not emulate/sstep original instruction when ip is changed
-> > >        selftests/bpf: Add uprobe context registers changes test
-> > >        selftests/bpf: Add uprobe context ip register change test
-> > >        selftests/bpf: Add kprobe write ctx attach test
-> > >        selftests/bpf: Add kprobe multi write ctx attach test
-> > > 
-> > 
-> > For the series:
-> > 
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > 
-> > Question is which tree will this go through? Most changes are in BPF,
-> > so probably bpf-next, right?
-> 
-> Hi Jiri.
-> 
-> This series does not apply to current bpf-next, see below.
-> 
-> Could you please respin it with bpf-next tag?
-> E.g. "[PATCH v4 bpf-next 0/6] ..."
-> 
-
-hi,
-the uprobe change it needs to be on top of the optimized uprobes (tip/perf/core)
-but the bpf selftests patches could be applied on bpf-next/master and disabled
-in CI until tip/perf/core changes are merged in?
-
-thanks,
-jirka
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Revert "drm: Add directive to format code in comment"
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux DRI Development <dri-devel@lists.freedesktop.org>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Javier Garcia <rampxxxx@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Antonino Maniscalco <antomani103@gmail.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20250912130649.27623-2-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250912130649.27623-2-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-> Thanks!
+
+On 9/12/25 6:06 AM, Bagas Sanjaya wrote:
+> Commit 6cc44e9618f03f ("drm: Add directive to format code in comment")
+> fixes original Sphinx indentation warning as introduced in
+> 471920ce25d50b ("drm/gpuvm: Add locking helpers"), by means of using
+> code-block:: directive. It semantically conflicts with earlier
+> bb324f85f72284 ("drm/gpuvm: Wrap drm_gpuvm_sm_map_exec_lock() expected
+> usage in literal code block") that did the same using double colon
+> syntax instead. These duplicated literal code block directives causes
+> the original warnings not being fixed.
 > 
-> $ git log -1 --oneline
-> a578b54a8ad2 (HEAD -> master, origin/master, origin/HEAD,
-> kernel-patches/bpf-next) Merge branch
-> 'bpf-report-arena-faults-to-bpf-streams'
-> $ b4 am 20250909123857.315599-1-jolsa@kernel.org
-> [...]
-> $ git am ./v3_20250909_jolsa_uprobe_bpf_allow_to_change_app_registers_from_uprobe_registers.mbx
-> Applying: bpf: Allow uprobe program to change context registers
-> Applying: uprobe: Do not emulate/sstep original instruction when ip is
-> changed
-> error: patch failed: kernel/events/uprobes.c:2768
-> error: kernel/events/uprobes.c: patch does not apply
-> Patch failed at 0002 uprobe: Do not emulate/sstep original instruction when
-> ip is changed
-> [...]
+> Revert 6cc44e9618f03f to keep things rolling without these warnings.
 > 
-> > 
-> > >   include/linux/bpf.h                                        |   1 +
-> > >   kernel/events/core.c                                       |   4 +++
-> > >   kernel/events/uprobes.c                                    |   7 +++++
-> > >   kernel/trace/bpf_trace.c                                   |   7 +++--
-> > >   tools/testing/selftests/bpf/prog_tests/attach_probe.c      |  28 +++++++++++++++++
-> > >   tools/testing/selftests/bpf/prog_tests/kprobe_multi_test.c |  27 ++++++++++++++++
-> > >   tools/testing/selftests/bpf/prog_tests/uprobe.c            | 156 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
-> > >   tools/testing/selftests/bpf/progs/kprobe_write_ctx.c       |  22 +++++++++++++
-> > >   tools/testing/selftests/bpf/progs/test_uprobe.c            |  38 +++++++++++++++++++++++
-> > >   9 files changed, 287 insertions(+), 3 deletions(-)
-> > >   create mode 100644 tools/testing/selftests/bpf/progs/kprobe_write_ctx.c
+> Fixes: 6cc44e9618f0 ("drm: Add directive to format code in comment")
+> Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks!
+
+> ---
+>  drivers/gpu/drm/drm_gpuvm.c | 2 --
+>  1 file changed, 2 deletions(-)
 > 
+> diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+> index db9b089ef62c85..86853535fb7bd7 100644
+> --- a/drivers/gpu/drm/drm_gpuvm.c
+> +++ b/drivers/gpu/drm/drm_gpuvm.c
+> @@ -2432,8 +2432,6 @@ static const struct drm_gpuvm_ops lock_ops = {
+>   *
+>   * The expected usage is::
+>   *
+> - * .. code-block:: c
+> - *
+>   *    vm_bind {
+>   *        struct drm_exec exec;
+>   *
+> 
+> base-commit: 9a3f210737e958c3f45a4ce0d7f1ff330af3965f
+
+-- 
+~Randy
 
