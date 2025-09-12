@@ -1,436 +1,193 @@
-Return-Path: <linux-kernel+bounces-814745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB58AB55813
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:08:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C330B55817
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810297C67FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:08:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37147C6C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E8E324B33;
-	Fri, 12 Sep 2025 21:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C1D32ED36;
+	Fri, 12 Sep 2025 21:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b="xadJ2cCM";
-	dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b="RevmlhL7"
-Received: from mx0b-003cac01.pphosted.com (mx0b-003cac01.pphosted.com [205.220.173.93])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GI4t6+q5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Hg+efwLE"
+Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A48F27280C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.173.93
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757711317; cv=fail; b=A4wl+ulvKD1g2Z+zB/0A1R2s3HCaRF8PyeCoK8snjBXQ9ZJPejez1sSlBLyP3FShxwL14hxm0MEl5xEuG2iQMXoi9Nihl+4jf2epFLiDmYlC6KQExZtpDuKf/+RefpuYghVwQtr+i401NzhPxF/ybdDp4/8311Vfj3+Tb+5lRwY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757711317; c=relaxed/simple;
-	bh=rmUmcGGj9ihtTnHdub8bJrbVHUiuk+mGBFERww+SbkI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SLdyfx31lEEpMeFZjOZw2a5Am08kv66/+dthd1z61YzqcHn2nQWD0EndoKx1jicQzas0gdVA5qBFu/rir3W1XyXHEGEhFjyodyIX7mxPvE9bx87CkXd+e0q3ILLRiNt9YjcN5CCB627GXZTV1n3qZiWax2VdvFJgWw7xE+PfW78=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com; spf=pass smtp.mailfrom=keysight.com; dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b=xadJ2cCM; dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b=RevmlhL7; arc=fail smtp.client-ip=205.220.173.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=keysight.com
-Received: from pps.filterd (m0187216.ppops.net [127.0.0.1])
-	by mx0b-003cac01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58CFwSei028640;
-	Fri, 12 Sep 2025 14:08:19 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=ppfeb2020; bh=
-	XZJO5hQsZ3zdHd+W6Avtz0ZI3a54SRWx52aF+muiTT0=; b=xadJ2cCM4b8/4stv
-	U07bCnEqXywYoi/NK8nyXWRGJ7j331k/pkoPfMJX5FdvvDk2G6HihFphE4LYdMWQ
-	qsU2MQebjN+4DPBiC8y1Kt6ri7E8qkbrX65XFFVoLNF8Q5rN1ZEoIqmsW7NF5nST
-	n1oPpAnYEkBmqhf8dphWesxeWWHHPFCTNIABYGYMjey1Qgz3adijOFrA5wxIe/KX
-	SIx1IDgam191hZh33WY4LY1Jn3zv3aYDYe94TkHGj8TS+87mPIu/Lmda6ZQpkH8Z
-	Dd3OmiqP8tLO8gMjgurixaF0IUxOFaCoT34it3i082RDUlsAApkLuGXn7EA+nTbw
-	Wovoxw==
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2053.outbound.protection.outlook.com [40.107.93.53])
-	by mx0b-003cac01.pphosted.com (PPS) with ESMTPS id 494hwa16x6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 14:08:18 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HQaZHk6c2QEVc7hgkeOQTxzeDmqwwW2gGQYCy9py2Bd1G81bchC/qkD1EyCStYqPzZUzv+JLuD2nmexdihVTVLNYf5QcojldcoiVsYSUyDI29NNLSlBwpZ6XYAL4bjtGFPyH9Fjs1VmBKTyxcABlmWBSHJzeQ3HMXIRp63bcnkUdUNYxD7a9fC/VzaR0Rx29fwQDsiIQZffVJZsiHWQ0Ive2DZpqa2LvSfP/Mm0nibgiyaIedrNEs2tU4O1enSZAbnhTfTkQgSU6sRuI4YGdD0r5+tCVjGfr6+S2oQHiO1oVZNZ+Bbw8JhbUhUTXZ7Lo/XDQSC1O9HeTK3CKl33bgQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XZJO5hQsZ3zdHd+W6Avtz0ZI3a54SRWx52aF+muiTT0=;
- b=Yp3RRnqmMButUh+fg7gELp67T178+C6H2ny6VgZw+ICVSRxzyMQivzTHnQKtCU1yogN0EySsxtSiGRMr//W8y+sGkd/3xab0bT5winTJrYots3UxkAPI7TK0/95+GrNeYXSmQGOTcAOBnZ2M6dFATLGcviMvLAnvru0T2x868f/6DvxtN9trVDb9NIc5LH+EGiFq9/y4WQ9RezBlGlz1SpxrTaNzj1+xe1XUX+HIJ7XR8kAx55By4U52ne9pPEu/bUqDZO64Jw8pLPsjZWNLsSFwHsg6x+rx6stvB0roXzchVe3rnwzfXitWJbOXKXd8d+aZ2jkEMGZMrG8VEoLZjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=keysight.com; dmarc=pass action=none header.from=keysight.com;
- dkim=pass header.d=keysight.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XZJO5hQsZ3zdHd+W6Avtz0ZI3a54SRWx52aF+muiTT0=;
- b=RevmlhL79QF9sLtZ46vokLt3OhQFZO4A3F7pg6xA/jCnrmAz+bPLQrm/+GJ2SILWrK73y9Xs7OlOQFUAsPPim7Fiq0/z7EF0kP9xXWI/FwbyX6xBUWyHAqh054OYz3OfDI55oChqG/WwQHh4FW6qsSXJp7oZQ9H+mghocwbGCq8=
-Received: from PH7PR17MB6130.namprd17.prod.outlook.com (2603:10b6:510:1f5::17)
- by SA1PR17MB4787.namprd17.prod.outlook.com (2603:10b6:806:19e::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 21:08:14 +0000
-Received: from PH7PR17MB6130.namprd17.prod.outlook.com
- ([fe80::54bb:3a4f:5f80:a51e]) by PH7PR17MB6130.namprd17.prod.outlook.com
- ([fe80::54bb:3a4f:5f80:a51e%5]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 21:08:14 +0000
-From: John Ripple <john.ripple@keysight.com>
-To: john.ripple@keysight.com
-Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-        andrzej.hajda@intel.com, blake.vermeer@keysight.com,
-        dianders@chromium.org, dri-devel@lists.freedesktop.org,
-        jernej.skrabec@gmail.com, jonas@kwiboo.se,
-        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
-        matt_laubhan@keysight.com, mripard@kernel.org,
-        neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch,
-        tzimmermann@suse.de
-Subject: [PATCH V5] drm/bridge: ti-sn65dsi86: Add support for DisplayPort mode  with HPD
-Date: Fri, 12 Sep 2025 15:08:05 -0600
-Message-ID: <20250912210805.2910936-1-john.ripple@keysight.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250912192457.2067602-1-john.ripple@keysight.com>
-References: <20250912192457.2067602-1-john.ripple@keysight.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CY5PR19CA0049.namprd19.prod.outlook.com
- (2603:10b6:930:1a::7) To PH7PR17MB6130.namprd17.prod.outlook.com
- (2603:10b6:510:1f5::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F038627280C;
+	Fri, 12 Sep 2025 21:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757711394; cv=none; b=hwLvYcvmp9Lu0EhZ+rP0NeiHMNqoMPcq+l5xm29cnzwTBR6rYT2ieq0YYobA3cIxfETOMTly7U2GKpdG04ukcr7get2Gm7g1XFFNj0ZYCbo/5YM/FnZacRleBG9yZ+AM/yNWuWqw8XzFHzmYBGuduwTeS7xDogQoLKUSqqFL2Js=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757711394; c=relaxed/simple;
+	bh=e7oq3c2bmJNjTLNH0WCmh3oqHoeflOXUxfd9Pnphqm8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Wjlqgy/RxUiW8j/BMkZIDOajFJl/zhU9mq4Xxh1CmRqb8YGjgnWdUV1ga9bDXrl2JstZFIbCd0mQeh5h7mSJnMNUiccVpv4nzmXTPLmTVTQERk0+2rem4lKeKQY63tmkzZSGQ5GlVea3x3UXjQnmOp6oUQEf3vutd7c8bLdYSGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GI4t6+q5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Hg+efwLE; arc=none smtp.client-ip=202.12.124.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 128BF7A01CD;
+	Fri, 12 Sep 2025 17:09:50 -0400 (EDT)
+Received: from phl-imap-17 ([10.202.2.105])
+  by phl-compute-05.internal (MEProxy); Fri, 12 Sep 2025 17:09:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757711389;
+	 x=1757797789; bh=CLqRBKVf5IvTh800HM+2y42LrS7XFT+UlQoEp2IAPso=; b=
+	GI4t6+q5kXjCO6cruisFBrxlfYspQdyR2nSwyVUifQzM7VEMrmYCNyjAVYjNhTgm
+	WqCqX8kZdK2deNSwLTBVJ3N8pSl0NhU5c9HH2kyD2VdFMzafqFVFH9hpDeIJNrzj
+	g4Qa7RVKOklHp6T9//Fk2QqJOmtlyMcvCzaPH7vzB72i03nMdNbtRdOZjHzQ4h/L
+	ftry70985VVJ0JC8deKiZyhzurfBwKKn5fmc5YLwZO9NW0AWFO9cbhr6Oa1pnc8X
+	IbeXUCwwcUmmLw1JIdKGv7tJjqaUU7L6MH1vAFkSQFJ8ZQ5CrDw16pFxmTMYZ3b4
+	iRfechyn/kmAf/3LIGcGLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757711389; x=
+	1757797789; bh=CLqRBKVf5IvTh800HM+2y42LrS7XFT+UlQoEp2IAPso=; b=H
+	g+efwLEojmMZRq8iZwYjjIYprH/XYxRGz4gmpycxwdhPe1s8+YfTor2bbGv0c0B2
+	RLsa8YQz2KykS1Kzwhrjk5vc4sNyX55mlyEc/YPCTF+a+h5XGA1P5EP0qMtntlaW
+	glaOlh/Kn+XcHwMTpuhR2UrjWZGj35jBvgxWwqm5OAUbjTj6+VnIzZ7ANky9E3Wz
+	IpurPFx3x7zuk4nsRKyP70Og/99u4DsemcafNS5R+S7aIEm+gzBBWkmSBQ6mFI6Z
+	sZlMDN5oUpNr0X2A2oOZa95CyTZTboiXtWUjzqMltgruej+lvRP5fnsTfi9FdrWx
+	iwGev+FnsPgCi2tPWVfjQ==
+X-ME-Sender: <xms:GozEaJ7WVeaEI1J4FNYCAeFSe1bMurC67OT_BB0Jbhk6PWXzJbvBLQ>
+    <xme:GozEaG5x_FaTJVZFNRf7pkhjUFbOGrPCkzZW9DKjVtpsq9dK8yfY--QfEjU7m0KIT
+    _ceh86DRDz2N8UZEKI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdeftddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeevhfelgeefleefgedttefhgfffieejkefghfeghffhheelieeivdduteevhedvgeen
+    ucffohhmrghinheplhifnhdrnhgvthenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthho
+    peefvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghhvghsthgvrhdrrgdruh
+    hnrghlsegrrhhinhgtledrtghomhdprhgtphhtthhopegrlhgvgigrnhgurhgvrdgsvghl
+    lhhonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghhrhhishhtohhphhgvrd
+    hlvghrohihsegtshhgrhhouhhprdgvuhdprhgtphhtthhopegrnhgurhgvrghssehgrghi
+    shhlvghrrdgtohhmpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvg
+    hrrdgsvgdprhgtphhtthhopegrlhgvgigrnhguvghrrdhsvhgvrhgulhhinhesghhmrghi
+    lhdrtghomhdprhgtphhtthhopehsvghrghhiohdrphgrrhgrtghuvghllhhoshesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehsuhhrvghnsgesghhoohhglhgvrdgtohhmpdhrtghp
+    thhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrgh
+X-ME-Proxy: <xmx:GozEaDU9e-ltO4GjQuBQZhofb5Kj9EDyPaq1nCnmbW-klx59mcvMXA>
+    <xmx:GozEaKDK4yJBaHtkl_LHlcH0jkKXOLdoeoxqmFBWV2JzvB84rcbpfw>
+    <xmx:GozEaCC2WD64DUi7GSydM1X-85yv-7hi6n4v8g8ii_kFrgTh92XlXw>
+    <xmx:GozEaJphW--h3lZUWi9M-TVTnM42xRnish8dD4tvsnrWGtNkHbKeKA>
+    <xmx:HYzEaKn6J5RHAuH4Qzhj_HsWd61NA-XKIndTEYj5XMySXeVQsv1vmoqt>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id AFA80C40077; Fri, 12 Sep 2025 17:09:46 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR17MB6130:EE_|SA1PR17MB4787:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8c278b14-66b1-4394-fe76-08ddf2407d0a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PAisFXuW2S8EzkzXFAw/WeqsvyTCg+XZuwQ1dFxt2dcVXTtjhE9GgaHFoCDK?=
- =?us-ascii?Q?IFs6eEkshprDaQVrs6C0EYyl+eG9H73sFlrmjSKI+Knesy+z1vgPDibEujMW?=
- =?us-ascii?Q?Wxv1W4HlYjNPkmCFNKTeT4Vp8C0gSRgj4UuUXP5dvQbhombWHXPdcFKceG5V?=
- =?us-ascii?Q?nTaJUD6wAdUScvXWRaaUcVcMiia74QOeHvCXfaKGMdquGc14I3nRpsK765QI?=
- =?us-ascii?Q?azkskYdPiG/crHSCBJ419QFZ8RWm1np7cFfnczNI5LBdtfKASksFeEIVTTi5?=
- =?us-ascii?Q?QP73gZZ8cncGIQ+9gu+yT0vzgDBJ7n5WGR5kXooZrcB+mtrUwg2z9PNcfeeq?=
- =?us-ascii?Q?vyq9FhaV57JZ4xwHXRq+zuKczT4q2bhbQOKZBs9KLiExq79RAnvLlhHZhRvL?=
- =?us-ascii?Q?DL/Ru0prMFowB2o6lfcAPPsyedDBEDy0KGePcSoj0tPWZnUsR7+5R+m/TM86?=
- =?us-ascii?Q?U5mDBMSlI5UwOV+PQedKXa/WeQsHOcgsIqQ4RE5xQJJblFNFRvmlaT+zCFJ3?=
- =?us-ascii?Q?Rf6lfOJME4Thif/TLnxmvBNtptykg8lDUWoLnVTVk67my3nCkcDJf6589UdY?=
- =?us-ascii?Q?sCRMAKSWH/GbGfGJU4PwlMVQFGR+10W8+Hzm42H0snio1LXfu7CotPaH/dnX?=
- =?us-ascii?Q?F83MPPJU2InL149YjHECljY4VkZzaovazWOhquQADRco8a9E6qk3zbdqjc8k?=
- =?us-ascii?Q?P8nHQwpdcGLrMqZKxbiWZ6y9IwsROqcK46JleGb9KvCX4YDTwQ1Y8IcN4fR3?=
- =?us-ascii?Q?Boj2mobcNvhz8FZxdB0pvwiHcaf92z9dvdNaEEzMdHqP1Ki2peKA8GP6lM8y?=
- =?us-ascii?Q?ZhSPw+H3p/FMPL8SRGF7YA2nJLlnX8919c63jc+xOm3wU3BaD24wDOrBKSd5?=
- =?us-ascii?Q?IXEuYpIeWXY7z3S4yWRoFeA+TMuSeT4xsO4MaM/I9IWJ+OgncABEfWh47LeB?=
- =?us-ascii?Q?aan7nAG/fRrvVTb7N3aahGR9MkvGLjDrWMz3vGbAy1pb403SO9tBO++mYUuR?=
- =?us-ascii?Q?9CVvNmaEDyBw66+p84gpAHCZVW4BPyJhRzp8LV8nqSuT4iVGQtHGngNteAyx?=
- =?us-ascii?Q?F/+h+Yj38b+vLSSmJjbb3GCvfceunuh1VRpzir5c4soMrCwIXOJn7EdFs0Ps?=
- =?us-ascii?Q?PBSvQfh/ZAIyFZfiuG8csDWc1oTAl/eEImITGMy0nPU4rtsWUB1RXoMtFE0D?=
- =?us-ascii?Q?N/xrAoLQlgMaTMR7MdyZ4nNm6cvi7ox8Am9w1NrrVzwHdaOmL97SpzD/phsh?=
- =?us-ascii?Q?68QGub3/Udu+qTo2FmyGDjjUUSV8gkib5eSOolu5cKaog8YlhJr++95c6wmu?=
- =?us-ascii?Q?6m2U2RMI/n8l2hY6PbAG5r+OMR5+7YAxZ3TVb0/KH4TZBZ6v4j47v++ETy3M?=
- =?us-ascii?Q?u/BCl2JkrODaAWE4saxi4wQw9x9pKMVEUj1t1z+YpsclUoXBD1JiYnY/uFol?=
- =?us-ascii?Q?s6/8soXa6Ac=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR17MB6130.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?peYHLf8TeVoDklwrmEaH4XmYzAql0HTTBYZ49UUkuAQV36JqIVc1lkFkQkV/?=
- =?us-ascii?Q?hkoJzJSnyjpS1PlQsNdlUCZMSXcNlhvfg9CDtd1AwREYYq4yQWOttCPnXeDA?=
- =?us-ascii?Q?dAaxdo3RS76rMapd/w71PQTOKAhBHF/Przi+QLm/8WUzl/lqbXV7T1uW1sYb?=
- =?us-ascii?Q?mTEalBe4HKs+I9gh8fYW9+Drg3Kvo54BtLm5IosqcTWfVJVspSfISjiyPB4v?=
- =?us-ascii?Q?KCPokcgnfHxSsAK4ivkXVhhioLJ8KHVjJlFjIIpL6itbr2g/USioND0uXv1n?=
- =?us-ascii?Q?m32i4/MQqXp0TtReCi73ao0/lvtS7OVDJJbBhD6R6dPryHt+dBeYSXNLGK8p?=
- =?us-ascii?Q?bkoeJKjDP1y4gFT/CrX67C59CB4XGrv7x5KM0dQCeeaAY7W3HaMP2ix0IuBa?=
- =?us-ascii?Q?Ks4ohB35LrwbXCWhq6tR/twqeY8YJ7S3z49c+3Ed9uO9rXW5Ia3EEO3GgIJh?=
- =?us-ascii?Q?TgHoZazJRmsAVixCEezAt73+49kwYVBOHMuSv9uFwTgCUirlKGZLkLmqF6qi?=
- =?us-ascii?Q?ntchHPnOqWp++3swec+rY08lHlP9nf7Jbm9xGZ3Es2LmxSj3epsxhRg2bZUJ?=
- =?us-ascii?Q?d+VSvS1/9/FpsKDTIZn/gtma1yCelZoZVQU3SlT5xFssrWWzfgrYRytjGY0l?=
- =?us-ascii?Q?CyhLPCqXdSnx6wvTt4mGrCTT+rdrm4kiL2bDqqULGll1t28obR8F41l8HurE?=
- =?us-ascii?Q?WDXIjgQUBkHbW6lIKEXG1xVUAasq0GGUaNhiRkqY8XA6KjAlkNNrjB3aOEQ7?=
- =?us-ascii?Q?aMC7Q1Dc9h91xa5xmgNBM3xfUhxE2s+IlCvNZEcVIJ6p0lxac0wDt5JFyC93?=
- =?us-ascii?Q?klLevyGYkISNecHyOW3RYIl2Yt5T7fm56sS9WG18XlH+bP8qBo94f3xw7RPf?=
- =?us-ascii?Q?S84gJRYrmKYhWIKvw0RsC9AwSh2Rn+WD/Z3nsKAXk2hN1DyZ58eL8Cg4oo1X?=
- =?us-ascii?Q?CIh8eeUSXQo0HgJY8e8dWvl/7na04MqLGmivPuWjnwlOZupvzMFukJlWYYfX?=
- =?us-ascii?Q?5+eOKlYcAuSOQYjlcf2HoFlUz3MnpGF+Ww6gU//Wr8qBpEvr7wIx4BoKXpDA?=
- =?us-ascii?Q?3iju6hPXS24yLY7W12gcPtJSlP/Gt+/khGC7TAvSa7uRjFnaWU2ntEHJ4MSR?=
- =?us-ascii?Q?pP2izPjT4nSi9LnA3xD4/Hyt5nNlPU0BpfmJPyOo1XtKQAQ2ZPhJc1ea7ST9?=
- =?us-ascii?Q?jVoXzyHvY7yfBRHMglNvcO52cgg9WKZQWIEmZ7SIeSzNz1wu7bi7BTWquhJ9?=
- =?us-ascii?Q?Kv/yKKG/A7SFMjmZw191KG02y2UvRfi4mNyWASUckCHBuoCeGCtnGUFhnuAX?=
- =?us-ascii?Q?FIx5z63jlED8WJSRdZ6Jzo9c0XxczJIPd3RsMhV/YXVS0/UnDN3qThCi6hG/?=
- =?us-ascii?Q?BY6p7cJK4+zOwfr8Xjh2g8l+0i8Q5hT4TTc2YpNRRRPZxj3SKLwmdo+KrRpR?=
- =?us-ascii?Q?I446WRTowi84Tdl1APuchlhi4Nos0QWXh9bkKvhnWk6A2ySJwNr6Ck4p38u5?=
- =?us-ascii?Q?9GV5q1ojO024dfC04rdmgEtlDvNSP1gio4VPb9EdEVgBTED/Tk3PFVEMx8hv?=
- =?us-ascii?Q?uG3TfQMuNAqDgr4EQf1pQJ5UjwX/vysqYsIIdm6y/ncRc+h5KYZJCgRpKvdD?=
- =?us-ascii?Q?+A=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	bXhSOBbnWCTJ74QmNoWBGyYHuXO2Q9ip6IPFctyLQ3G1+fUjT1ry9bTOy0qkW579ACqtsnYppZRi/UrQCnADfhgsTvdY+qU7YK20GEhFGR1FS512vMiDQg7uYqTld+N25WALfl7xWKDjwxue3dh4Zej2cJcSWqUeKMds5+zu2p/Yci7Jxjd8aypL+FE7TYVcHEXuA6pp+k03Le6TCu3k87j6atIjubeCokgiNZiShAhC0/zA7Ovp3QMoMG4QPxPMYzlm11wo5zqWvywpQkMxxzS6dm7+5fC4uBoskiRWGU7Nitl77qSnrRTgAWeJ6yXM24bOivCFoM3Uc6RaL+6yAu4Zrw9lLazyHqyX26N8UmWtaHfxZ6KehPBhno+27P8viv2fuxI3xetBRfsKDvKICkVq4W8+BbMR4RV1BZpCJjTRpRbW5tYzOZ2JpV0jE5yqDaWt3b0pmRtFdXNWp8emVONb7OagpR/qt+LgZC3Df/2e837eRs3M/+1uvGu1gLjM0CWXnXht4s+KZX2qDVRA/iCD+5yCCXP7QfCfYGXhjzC1NHb1CGKgfadpeA3IuO6tXG2NG5nzQrq4kJp5yrxLmPHVq8DnlRtO+BTfUArMAa1XvrBq7GMftxaBwsK6wl9k
-X-OriginatorOrg: keysight.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c278b14-66b1-4394-fe76-08ddf2407d0a
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR17MB6130.namprd17.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 21:08:14.7421
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 63545f27-3232-4d74-a44d-cdd457063402
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Hv9IkSF71zn+7GYqgi4wut05ECZ2RjWGnYQD19YSUON5snDhYu9uOmQRasXx7UdDAEegq5d47jlii6VFZGAn908K4viTX3p4quE/mnuuZEU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR17MB4787
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEyMDA5OSBTYWx0ZWRfX3WjYuVxChTwb
- bifARy0zxfOne3ZnlRhrELcgl53oSSIg5lSDWlTtlMLyVV+4luIqNWoc8MLvnwhZKn7p3EGGMhs
- rYlT9nkO+NMXqQkJc4t7e04E89YJfgBKP+pkJji6v1t75jBOgLx4jdXJbF7CXJZKCP3v7U9nR5M
- vmnJ9W29FjK65CHAC4dIM5zdHGZVioTzqnYbtqu0J2cHxBRTJ+w4tCjSEVETzviYfGrYnRHvOG5
- 0qO2h1fsWvXrIiLvz9pdsdQRAoDCwiqc0YrtgjdihaKYRDYMmO/jxAH75GRLGihSfKRfKi/V3im
- YKdQjLpuUjE2HefliW+oXsw5DuySbKQMuKq+o9FZLObE1dKHzwYZBTQfmegBunjyYOvCeF/vSSR
- UiRGO6rV
-X-Proofpoint-ORIG-GUID: 89_WXwunIGZrQrlIuS95IQOndbzIRNBy
-X-Authority-Analysis: v=2.4 cv=XauJzJ55 c=1 sm=1 tr=0 ts=68c48bc3 cx=c_pps
- a=SzVIhQP/G3AuXdMMEvt//w==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10 a=vu2TTH8h0NUA:10 a=F6MVbVVLAAAA:8
- a=J1LsNDdvFZZXQRbGIkUA:9 a=6mxfPxaA-CAxv1z-Kq-J:22
-X-Proofpoint-GUID: 89_WXwunIGZrQrlIuS95IQOndbzIRNBy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_08,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 adultscore=0 spamscore=0 phishscore=0
- bulkscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509120099
+X-ThreadId: AneuvEk2E7Kg
+Date: Fri, 12 Sep 2025 23:09:22 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Nicolas Ferre" <nicolas.ferre@microchip.com>, ksummit@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, imx@lists.linux.dev,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Richard Weinberger" <richard@nod.at>,
+ "Lucas Stach" <l.stach@pengutronix.de>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ "Ankur Arora" <ankur.a.arora@oracle.com>,
+ "David Hildenbrand" <david@redhat.com>,
+ "Mike Rapoport" <rppt@kernel.org>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>,
+ "Matthew Wilcox" <willy@infradead.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Vlastimil Babka" <vbabka@suse.cz>,
+ "Suren Baghdasaryan" <surenb@google.com>,
+ "Ira Weiny" <ira.weiny@intel.com>, "Nishanth Menon" <nm@ti.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
+ "Chester A. Unal" <chester.a.unal@arinc9.com>,
+ "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
+ "Andreas Larsson" <andreas@gaisler.com>,
+ "Mihai.Sain" <Mihai.Sain@microchip.com>,
+ "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+ "Claudiu Beznea" <claudiu.beznea@tuxon.dev>
+Message-Id: <1d58fc51-b921-4669-b6e2-f9a71d1eda58@app.fastmail.com>
+In-Reply-To: <f931da29-5f10-494a-acc0-309bd805d41a@microchip.com>
+References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+ <f931da29-5f10-494a-acc0-309bd805d41a@microchip.com>
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Add support for DisplayPort to the bridge, which entails the following:
-- Get and use an interrupt for HPD;
-- Properly clear all status bits in the interrupt handler;
+On Fri, Sep 12, 2025, at 18:49, Nicolas Ferre wrote:
+> Arnd,
+>
+> On 09/09/2025 at 23:23, Arnd Bergmann wrote:
+>> I'm still collecting information about which of the remaining highmem
+>> users plan to keep updating their kernels and for what reason.
+>
+> We have 1GB of memory on our latest Cortex-A7 SAMA7D65 evaluation boards 
+> [1] (full production announced beg. 2025). The wide range of DDR types 
+> supported make some of these types interesting to use at such density.
+> Both our Cortex-A7 SoCs don't have IOMMU; core and DMAs can address the 
+> full range of the 32 bit address space, so we're quite 
+> standard/simplistic in this area. We use CMA with large chunks as our 
+> camera or display interfaces address "modern-ish" resolutions (~1080p).
+>
+> We use CONFIG_HIGHMEM and activated it for simplicity, conformance to 
+> usual user-space workloads and planned to add it to our sama7_defconfig 
+> [2]. I understand that we might reconsider this "by default" choice and 
+> move to one of the solutions you highlighted in your message, lwn.net 
+> article or recent talk at ELC-E.
 
-Signed-off-by: John Ripple <john.ripple@keysight.com>
----
-V1 -> V2: Cleaned up coding style and addressed review comments
-V2 -> V3:
-- Removed unused HPD IRQs
-- Added mutex around HPD enable/disable and IRQ handler.
-- Cleaned up error handling and variable declarations
-- Only enable IRQs if the i2c client has an IRQ
-- Moved IRQ_EN to ti_sn65dsi86_resume()
-- Created ti_sn65dsi86_read_u8() helper function
-V3 -> V4:
-- Formatting
-- Allow device tree to set interrupt type.
-- Use hpd_mutex over less code.
-V4 -> V5:
-- Formatting.
-- Symmetric mutex use in hpd enable/disable functions.
-- Only set and clear specific bits for IRQ enable and disable.
-- Better error handling in interrupt.
----
----
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 112 ++++++++++++++++++++++++++
- 1 file changed, 112 insertions(+)
+Hi Nicolas,
 
-diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index ae0d08e5e960..239b89838845 100644
---- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-+++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -106,10 +106,21 @@
- #define SN_PWM_EN_INV_REG			0xA5
- #define  SN_PWM_INV_MASK			BIT(0)
- #define  SN_PWM_EN_MASK				BIT(1)
-+
-+#define SN_IRQ_EN_REG				0xE0
-+#define  IRQ_EN					BIT(0)
-+
-+#define SN_IRQ_EVENTS_EN_REG			0xE6
-+#define  HPD_INSERTION_EN			BIT(1)
-+#define  HPD_REMOVAL_EN				BIT(2)
-+
- #define SN_AUX_CMD_STATUS_REG			0xF4
- #define  AUX_IRQ_STATUS_AUX_RPLY_TOUT		BIT(3)
- #define  AUX_IRQ_STATUS_AUX_SHORT		BIT(5)
- #define  AUX_IRQ_STATUS_NAT_I2C_FAIL		BIT(6)
-+#define SN_IRQ_STATUS_REG			0xF5
-+#define  HPD_REMOVAL_STATUS			BIT(2)
-+#define  HPD_INSERTION_STATUS			BIT(1)
- 
- #define MIN_DSI_CLK_FREQ_MHZ	40
- 
-@@ -152,7 +163,9 @@
-  * @ln_assign:    Value to program to the LN_ASSIGN register.
-  * @ln_polrs:     Value for the 4-bit LN_POLRS field of SN_ENH_FRAME_REG.
-  * @comms_enabled: If true then communication over the aux channel is enabled.
-+ * @hpd_enabled:   If true then HPD events are enabled.
-  * @comms_mutex:   Protects modification of comms_enabled.
-+ * @hpd_mutex:     Protects modification of hpd_enabled.
-  *
-  * @gchip:        If we expose our GPIOs, this is used.
-  * @gchip_output: A cache of whether we've set GPIOs to output.  This
-@@ -190,7 +203,9 @@ struct ti_sn65dsi86 {
- 	u8				ln_assign;
- 	u8				ln_polrs;
- 	bool				comms_enabled;
-+	bool				hpd_enabled;
- 	struct mutex			comms_mutex;
-+	struct mutex			hpd_mutex;
- 
- #if defined(CONFIG_OF_GPIO)
- 	struct gpio_chip		gchip;
-@@ -221,6 +236,23 @@ static const struct regmap_config ti_sn65dsi86_regmap_config = {
- 	.max_register = 0xFF,
- };
- 
-+static int ti_sn65dsi86_read_u8(struct ti_sn65dsi86 *pdata, unsigned int reg,
-+				u8 *val)
-+{
-+	int ret;
-+	unsigned int reg_val;
-+
-+	ret = regmap_read(pdata->regmap, reg, &reg_val);
-+	if (ret) {
-+		dev_err(pdata->dev, "fail to read raw reg %#x: %d\n",
-+			reg, ret);
-+		return ret;
-+	}
-+	*val = (u8)reg_val;
-+
-+	return 0;
-+}
-+
- static int __maybe_unused ti_sn65dsi86_read_u16(struct ti_sn65dsi86 *pdata,
- 						unsigned int reg, u16 *val)
- {
-@@ -379,6 +411,7 @@ static void ti_sn65dsi86_disable_comms(struct ti_sn65dsi86 *pdata)
- static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
- {
- 	struct ti_sn65dsi86 *pdata = dev_get_drvdata(dev);
-+	const struct i2c_client *client = to_i2c_client(pdata->dev);
- 	int ret;
- 
- 	ret = regulator_bulk_enable(SN_REGULATOR_SUPPLY_NUM, pdata->supplies);
-@@ -413,6 +446,13 @@ static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
- 	if (pdata->refclk)
- 		ti_sn65dsi86_enable_comms(pdata, NULL);
- 
-+	if (client->irq) {
-+		ret = regmap_update_bits(pdata->regmap, SN_IRQ_EN_REG, IRQ_EN,
-+					 IRQ_EN);
-+		if (ret)
-+			pr_err("Failed to enable IRQ events: %d\n", ret);
-+	}
-+
- 	return ret;
- }
- 
-@@ -1211,6 +1251,8 @@ static void ti_sn65dsi86_debugfs_init(struct drm_bridge *bridge, struct dentry *
- static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
- {
- 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
-+	const struct i2c_client *client = to_i2c_client(pdata->dev);
-+	int ret;
- 
- 	/*
- 	 * Device needs to be powered on before reading the HPD state
-@@ -1219,11 +1261,32 @@ static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
- 	 */
- 
- 	pm_runtime_get_sync(pdata->dev);
-+
-+	mutex_lock(&pdata->hpd_mutex);
-+	pdata->hpd_enabled = true;
-+	mutex_unlock(&pdata->hpd_mutex);
-+
-+	if (client->irq) {
-+		ret = regmap_set_bits(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
-+				      HPD_REMOVAL_EN | HPD_INSERTION_EN);
-+		if (ret)
-+			pr_err("Failed to enable HPD events: %d\n", ret);
-+	}
- }
- 
- static void ti_sn_bridge_hpd_disable(struct drm_bridge *bridge)
- {
- 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
-+	const struct i2c_client *client = to_i2c_client(pdata->dev);
-+
-+	if (client->irq) {
-+		regmap_clear_bits(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
-+				  HPD_REMOVAL_EN | HPD_INSERTION_EN);
-+	}
-+
-+	mutex_lock(&pdata->hpd_mutex);
-+	pdata->hpd_enabled = false;
-+	mutex_unlock(&pdata->hpd_mutex);
- 
- 	pm_runtime_put_autosuspend(pdata->dev);
- }
-@@ -1309,6 +1372,41 @@ static int ti_sn_bridge_parse_dsi_host(struct ti_sn65dsi86 *pdata)
- 	return 0;
- }
- 
-+static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
-+{
-+	struct ti_sn65dsi86 *pdata = private;
-+	struct drm_device *dev = pdata->bridge.dev;
-+	u8 status;
-+	int ret;
-+	bool hpd_event;
-+
-+	ret = ti_sn65dsi86_read_u8(pdata, SN_IRQ_STATUS_REG, &status);
-+	if (ret) {
-+		pr_err("Failed to read IRQ status: %d\n", ret);
-+		return IRQ_NONE;
-+	}
-+
-+	hpd_event = status & (HPD_REMOVAL_STATUS | HPD_INSERTION_STATUS);
-+
-+	if (!status)
-+		return IRQ_NONE;
-+
-+	pr_debug("(SN_IRQ_STATUS_REG = %#x)\n", status);
-+	ret = regmap_write(pdata->regmap, SN_IRQ_STATUS_REG, status);
-+	if (ret) {
-+		pr_err("Failed to clear IRQ status: %d\n", ret);
-+		return IRQ_NONE;
-+	}
-+
-+	/* Only send the HPD event if we are bound with a device. */
-+	mutex_lock(&pdata->hpd_mutex);
-+	if (pdata->hpd_enabled && hpd_event)
-+		drm_kms_helper_hotplug_event(dev);
-+	mutex_unlock(&pdata->hpd_mutex);
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int ti_sn_bridge_probe(struct auxiliary_device *adev,
- 			      const struct auxiliary_device_id *id)
- {
-@@ -1931,6 +2029,8 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
- 	dev_set_drvdata(dev, pdata);
- 	pdata->dev = dev;
- 
-+	mutex_init(&pdata->hpd_mutex);
-+
- 	mutex_init(&pdata->comms_mutex);
- 
- 	pdata->regmap = devm_regmap_init_i2c(client,
-@@ -1971,6 +2071,18 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
- 	if (strncmp(id_buf, "68ISD   ", ARRAY_SIZE(id_buf)))
- 		return dev_err_probe(dev, -EOPNOTSUPP, "unsupported device id\n");
- 
-+	if (client->irq) {
-+		ret = devm_request_threaded_irq(pdata->dev, client->irq, NULL,
-+						ti_sn_bridge_interrupt,
-+						IRQF_ONESHOT,
-+						dev_name(pdata->dev), pdata);
-+
-+		if (ret) {
-+			return dev_err_probe(dev, ret,
-+					     "failed to request interrupt\n");
-+		}
-+	}
-+
- 	/*
- 	 * Break ourselves up into a collection of aux devices. The only real
- 	 * motiviation here is to solve the chicken-and-egg problem of probe
+Thanks for your summary! I think with 1GB, you'll be mostly on the safe
+side in general. I would definitely recommend using VMSPLIT_3G_OPT
+as the default in the long run and turn off highmem on those.
+
+My expectation is that VMSPLIT_3G_OPT may uncover application bugs, but
+those should be fixed anyway, while using highmem is safer but makes
+everything slightly worse through the added runtime overhead and
+increased fragmentation risk. The 1GB case has caused additional bugs
+because it has a very small highmem area on CONFIG_VMSPLIT_3G and
+that can make it run out of highmem first. 
+
+> Of course we plan to maintain these boards and keep updating our kernel 
+> "offer" once a year for those associated SoCs (with maintaining 
+> upstream, as usual). As you said, being ARMv7, we're quite confident for 
+> now.
+>
+> As you mentioned, we've recently released one ARMv5te arm926ejs-based 
+> soc: the SAM9x75 family. But we don't have the intention to use too big 
+> memory sizes on them, even if they do address large screens, with LVDS 
+> and MIPI or modern camera interfaces...
+>
+> I don't have too much info about our customer's use cases as they are 
+> very, very diverse, but don't hesitate to reach out to me if you have 
+> questions about a particular combination of use.
+> Thanks for your regular update on these topics.
+
+I'm curious about the AT91RM9200 part, which I think is the oldest 
+SoC with Linux support that is still advertised as "in production".
+I understand that Microchip hardly ever discontinues parts, and there is
+clearly no need to stop supporting it as long as you maintain the SAM9
+family, but I wonder how many users are still buying this part or
+running the latest kernel on it. 
+
+    Arnd
 
