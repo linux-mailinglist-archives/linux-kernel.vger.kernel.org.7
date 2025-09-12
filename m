@@ -1,86 +1,86 @@
-Return-Path: <linux-kernel+bounces-813346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F4AB543E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:31:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD256B543F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 463987B21B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC03189B9B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B56D2C235A;
-	Fri, 12 Sep 2025 07:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939592C2AA5;
+	Fri, 12 Sep 2025 07:32:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XPJ+rlWO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AOaei1ID"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB5B1917F1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A6B261393
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757662273; cv=none; b=o8AeQYplG8c+DQelD7d7Wz2fmO7sqaVWO7PzaMkdCuqePA4yf9B9iat0KyqdTHUXruBd9b0eQ5ehNaSpjz7ksiG0vTVsavp/eIFboA49VLpNtWyHKgVthEgctEMdjO0mBefmLCqm77X0AGPgu3eWy/CatZ7BsxzbjxHrOX7t7tM=
+	t=1757662350; cv=none; b=rV1kTOqAaxnVEaiw20kqIdTijEGHMuJqI5tGaRYXBEaKHOCupmll+AV8g73dtHxTSaKU0l5/wYUnNmdTo4/YCZ0h31zvtiFi7EnVvKifx4XU8P3CxN08Q+E+xVUMdFlIuXseuEVj0gmZu8kmlO4W4Tko6kWE7VBHl15pa1kygWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757662273; c=relaxed/simple;
-	bh=g3ugLp8l5qE98drOmhyhZPvroBrO64iXPa87r4UZPuw=;
+	s=arc-20240116; t=1757662350; c=relaxed/simple;
+	bh=TkaHB0/HgYwta3Zd8gabIdwGnIt2Q9nrzSgwWYkLv0s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Hxk8mV0XtOtDoiqQxdYiSm9TiiFlpaZYyQaZ7e19t8UZPwTDwABZtdk0U3yfoSLVemhfhT935CoCXnnCgKdKXFzDQ6zDdv8a7J64Fw87Q5To8d92pS1bRVuWrORVfZWii6df9IyutKCA56UnxLyXTMeRdXPXgH/nmukyetU1ml0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XPJ+rlWO; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=j8YPvCDvJEuyKa+UHfyiVAKadKBzD0BNC+lifXxSF/BjUCpIphq0itDOrc5R1EDia1H61rEhS+ADsFtoIg9vlunedeZ/AM2V91c9sbE48T9EpHzQpWrnr43UqCs2R1Y4RiI4i0kZTbrcax654RfhBbF7Gm+I7X3paXiXsYDii24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AOaei1ID; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757662269;
+	s=mimecast20190719; t=1757662348;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=WmiBqy0L2WUHv+kOIrvdhPLSX42K2Mcyiy9ePRV90Tg=;
-	b=XPJ+rlWO6TvKTU+lzNlPF00TRxhdv4rUjNnjcO1xbBvXtwoe0J3PD1KSa+EnJOBJrX5O+q
-	M9qvbUkcxVckGDomnYMfGnvqkRWH3sW1f31+53ZVSQ4Yyc4Eaj5IcYeEbLoxZVs1YwVdck
-	ZpfmhKSCVNukc1/gQc5WoopDlCpU2nQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=95M+ctN1eGHsC7Fsc60NySfMXccvZmx8uQ8XIqmO9d0=;
+	b=AOaei1IDI2OOOb3KhArugtYerJfdNJwM4+IfJyJk5qbd5ANE335Lv37PTDSOAuiRZhNUJw
+	igaeg+RBQ8r5uUHbwsfg33Me4H2uh66Iw3pF9Hjhe+OzBfCgoaIqyJmmLx18ZxVSOhs3rE
+	hG4dla0p24zxaIo3/KU8vgsvg6V//pU=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-556-X_npmFWJNeaI1uNJZ_NW1A-1; Fri, 12 Sep 2025 03:31:07 -0400
-X-MC-Unique: X_npmFWJNeaI1uNJZ_NW1A-1
-X-Mimecast-MFC-AGG-ID: X_npmFWJNeaI1uNJZ_NW1A_1757662266
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3e61deaf253so891515f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:31:07 -0700 (PDT)
+ us-mta-451-aDNsPV1PMN-1UIIDmq3Dhg-1; Fri, 12 Sep 2025 03:32:26 -0400
+X-MC-Unique: aDNsPV1PMN-1UIIDmq3Dhg-1
+X-Mimecast-MFC-AGG-ID: aDNsPV1PMN-1UIIDmq3Dhg_1757662345
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b986a7b8aso12644735e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:32:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757662266; x=1758267066;
+        d=1e100.net; s=20230601; t=1757662345; x=1758267145;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WmiBqy0L2WUHv+kOIrvdhPLSX42K2Mcyiy9ePRV90Tg=;
-        b=eeE29nzYW7m4Z2Nf2nOSURLqWNFH3HTeDj524SrMP3144tmfaSLSV4M3q9eVAhHMI6
-         TtjIOqHvaqdAwN25jWjeF1O89Tq7n25pDEBM0OBt7IpgBSCLAam4qKHGGx1l1sA8Nf+7
-         WpgzTTs+dKQMRe5QrpYS/SW9V6oyiL7z2hNzQlbkt6RwsNFfRXV9aqWsAjANSbB5A60q
-         sin8tQvgtF+V3bz6XjFpwv3ktE9jybJQoBqFQLvqa9MSe3HC+ickTEK6PwZGjQF8dYmR
-         WE38gQRlWqvzsuAy5hPwE2TX64gSoQc3hP1faL4OSrpj9tUOClmOnEGgV6DehV5CtUSt
-         hOkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCoGqxKiOqMwQQ4O4/aRH2Z7pquoWzfLopjy10dM1TioUWCdV+iz5UyCnhgZJOdS1H1JSzaCgxym03/r4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy36xHFmdbHelS03n0UHEddL7rYRUGXy6X1D/XMUZQPfqAppfNp
-	L3si6qgTDMT/H6Qf0KTSQMinjtbVQJhiEOaMxD5SD1PhCgws6Tk6yKGoe3ew2rSsh4xXeZks+tf
-	mx5KHYEzOS3sBhx2R/hd5p0yQ47l1or2Dlx20bQIRNgpyKv/wz0cD9EcJrshDtB3IHw==
-X-Gm-Gg: ASbGnctUsU9qKbUUsAcsSsZHYIKJ9D9o1GKVgGwrcahIbhJJlzQ7zx1UEUbNRr6WZ2y
-	dYxTgQhNGs9hTaF8pwq4Af4F6bmSDNFuFORsPe/6YQQ5gI9F/YK5xv9zyR5YmknHEhRAU2CEKIu
-	/x2eCkmi/jSlBdwrsTo09Gc62SSowq+PUmAdI5Pj6kx0kxArz+1v1pi73rbqjSNyVQ0BCiz1E3i
-	g/3sSpGpU8IcLniCrh+by126mGyRfL2EPqjlRL4EXt6eUfpHbLa7XHVVbPsuiaXT+qPY7dgTggJ
-	P6MiA9/3uWHQdTJwzBgyfcxE0f59wq8yE/fGZzUZi/c1TheS+79AM0ldw9vlnEv1FeXHeMkMuUJ
-	Rr77CA8goEFHF6gKvHgP04ahVt149e+qRILiMwfSqqmLXAM7yvzgIdZ0FbR1dj3uQch0=
-X-Received: by 2002:a5d:5d02:0:b0:3e7:5e19:5ec3 with SMTP id ffacd0b85a97d-3e765a2dd2amr1433344f8f.41.1757662266427;
-        Fri, 12 Sep 2025 00:31:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGvNIXBKO3q6si7Ysd4vKlJR6P6Qcpb2+dcH0QDR1TDVJzzqtFB6D3wBWW/HUyK+eg3VSV32A==
-X-Received: by 2002:a5d:5d02:0:b0:3e7:5e19:5ec3 with SMTP id ffacd0b85a97d-3e765a2dd2amr1433313f8f.41.1757662265971;
-        Fri, 12 Sep 2025 00:31:05 -0700 (PDT)
+        bh=95M+ctN1eGHsC7Fsc60NySfMXccvZmx8uQ8XIqmO9d0=;
+        b=UYlIj+M+hF881QRf4zZYXZDkOC/gWHS6qf5RX3J3VStXyVQ431Rz3z1gJ4ZCKKNPFn
+         HmZerp5uB/aWRkN6Lnp+QEggAQl1uB4019qQBN+aZvitTZzFafCKPQrv8kriWLlooFJz
+         gdFCLpjZoln9UjYKiw0+OKNPwtbVZut4qErPkY6EpiQ29LSlv5aYJV2eY30xhrppfyRJ
+         72QMC9lOZau6TXAj8WR73pWYmGg5Uy90Weq+x2iKmAZPONnHGQ9RW3+XkN+W7djFPRdv
+         Af57xdmirf1awBD16wHKuUZsRMaC3+sF9myM06a2hWrKXCHDVHJBcmfIR3yB+fxT1eMr
+         2rSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyZDeAGdC8rCdTkpmn/+Nk9TUWoAprqzPioEMNbTlJ8ejmov5Ef9fE6iGh4cuNLUYmQ+Ln+Ql3YA9Znaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwON/zlQ4LcBUEsXIcYRonVZ0xhiUrYEtm3v1MPkAbZJBAH7AMn
+	aDEskS7+d9BzeTicph3TE+a+5vM/CVA4INxHU80rMd1/EV+NeozVCchBKusnzFkcJDWUYTKeukn
+	c2k0kd81UfWWeB/kh8a2BWBSjBjcMWPswss3gRUWKdMxpBXfhq/X4KBb+NpohEUxflQ==
+X-Gm-Gg: ASbGnctVshJBKbyuN5GR2b1tTiCH6d/KpwFJK1ltO6M17vhBUrx7gKSJ6jgnA5eUorT
+	U5ETmrU1E1quuqqHcbPJE01YOTM0ZOwhlEjKlj90C0gwy9CLrpv83Qp9O/UAQqw//+RCkV+plcc
+	FGTybELLnJqzbCdzoQI05dH7QXmnaso+rZC3+gqU8kQ5z3Bxw75yURlK3WhX7OwD1MGlj/KvQWb
+	UxdZYo0sMY+6TZxpUtQbuTeOehiWJMzrg72bON4qVCc7H0XI8b+mC/tSuhsmUUL3EuIMT/PskxL
+	jxsiOoDqWfDUh67n68yHgZyTeAehqoQD+aiDU/7NV8Y5luEGb6cqng3WUvsDdHa5u88JvZpo+Id
+	V/b10VSbTsfmSRRsklP07SiGRPGZlxpTvjok/gnijk2aouVX+FVcsJtL70NVAh/prChk=
+X-Received: by 2002:a05:600c:3b23:b0:45d:d2d2:f095 with SMTP id 5b1f17b1804b1-45f211f708emr17024175e9.19.1757662345335;
+        Fri, 12 Sep 2025 00:32:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE291A72hUcioW8Th7oBQOwDU40VMWQG7GX58xF3iUOfk0bITXHhgpL+U49NQSEOwl8XHibag==
+X-Received: by 2002:a05:600c:3b23:b0:45d:d2d2:f095 with SMTP id 5b1f17b1804b1-45f211f708emr17023855e9.19.1757662344930;
+        Fri, 12 Sep 2025 00:32:24 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607770c2sm5412795f8f.8.2025.09.12.00.31.05
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760776bb8sm5665006f8f.3.2025.09.12.00.32.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 00:31:05 -0700 (PDT)
-Message-ID: <eb6e18c0-533f-4e77-a56f-60ab8cacc369@redhat.com>
-Date: Fri, 12 Sep 2025 09:31:04 +0200
+        Fri, 12 Sep 2025 00:32:24 -0700 (PDT)
+Message-ID: <b5bba27f-e26f-4efc-a7e0-92a6d82b9bbb@redhat.com>
+Date: Fri, 12 Sep 2025 09:32:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,14 +88,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/hugetlb: fix copy_hugetlb_page_range() to use
+Subject: Re: [PATCH v2] mm/hugetlb: fix copy_hugetlb_page_range() to use
  ->pt_share_count
 To: jane.chu@oracle.com, harry.yoo@oracle.com, osalvador@suse.de,
  liushixin2@huawei.com, muchun.song@linux.dev, akpm@linux-foundation.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250909184357.569259-1-jane.chu@oracle.com>
- <e9b34151-0879-4900-af9f-2ce0dbb678a6@redhat.com>
- <2fa7aa11-6521-40f3-9934-aba275154ca2@oracle.com>
+ jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250910192730.635688-1-jane.chu@oracle.com>
+ <bfeb8af7-62d3-4dc6-903c-b6697c5ef795@redhat.com>
+ <16fd43b6-930a-4a33-980d-c493f88747b2@oracle.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -142,14 +142,24 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <2fa7aa11-6521-40f3-9934-aba275154ca2@oracle.com>
+In-Reply-To: <16fd43b6-930a-4a33-980d-c493f88747b2@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 11.09.25 21:54, jane.chu@oracle.com wrote:
+On 11.09.25 21:58, jane.chu@oracle.com wrote:
 > 
-> On 9/9/2025 11:45 PM, David Hildenbrand wrote:
+> 
+> On 9/11/2025 1:17 AM, David Hildenbrand wrote:
 > [..]
+>>>
+>>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>>> index 753f99b4c718..8ca5b4f7805f 100644
+>>> --- a/mm/hugetlb.c
+>>> +++ b/mm/hugetlb.c
+>>> @@ -5594,18 +5594,13 @@ int copy_hugetlb_page_range(struct mm_struct
+>>> *dst, struct mm_struct *src,
+>>>                break;
+>>>            }
 >>> -        /*
 >>> -         * If the pagetables are shared don't copy or take references.
 >>> -         *
@@ -158,32 +168,19 @@ On 11.09.25 21:54, jane.chu@oracle.com wrote:
 >>> -         * another vma. So page_count of ptep page is checked instead
 >>> -         * to reliably determine whether pte is shared.
 >>> -         */
->>> -        if (page_count(virt_to_page(dst_pte)) > 1) {
->>> +#ifdef CONFIG_HUGETLB_PMD_PAGE_TABLE_SHARING
->>> +        /* If the pagetables are shared don't copy or take
->>> references. */
 >>
->> Why remove so much of the original comment?
+>> I think you ignored my question to v1 regarding the change of comment.
+>>
 > 
-> Because, this part of checking has already advanced from the "dst_pte ==
-> src_pte" to "page_count() > 1" to ->pt_share_count > 0, it seems cleaner
-> to just keep an one liner comment.
-> That said, if you feel the comments should be kept, I'd be happy to
-> restore them with a bit revision.
+> Sorry David, didn't mean disrespect, I missed your earlier comments.
 
-Well, the comment explains why checking the pte pointers is insufficient 
-and why there is a corner case where the pointers differ but we still 
-want to unshare. :)
+No worries. Replied there about possibly simplifying the comment further.
 
-But yeah, I agree that reading the code it's clear: if dst is already 
-shared, just don't do anything.
+BTW, I think the code would be even clearer if we would have
 
-I would probably rephrase the comment to something simpler like
+ptdesc_pmd_is_shared()
 
-"/* If the pagetables are shared, there is nothing to do. */
-
-If you resend, please add a comment to the patch description like "While 
-at it, simplify the comment, the details are not actually relevant anymore".
+that is simply a wrapper around the ptdesc_pmd_pts_count() check.
 
 -- 
 Cheers
