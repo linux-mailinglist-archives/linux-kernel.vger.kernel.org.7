@@ -1,105 +1,122 @@
-Return-Path: <linux-kernel+bounces-814329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A6BB5527E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:58:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617D2B55282
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A29C27AAE9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F816AA452E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB95F30FF3F;
-	Fri, 12 Sep 2025 14:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25A53128D1;
+	Fri, 12 Sep 2025 14:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="erhzWHaE"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vXURIzoL"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79C52FD1DA
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0CD311C03
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689123; cv=none; b=f+aiJCu6Eb3kioZIQnQjOQd8JXAcumk7gWhj16g03beeOdnOhBLhgcHxe21MotrhXHg8z+h992f4Wgp0+skNjo2GPW9w6wgiJYAr1tWW31VrRQebh+iIJrTLJ4LNQiy80jkAL+2swrrc+AFU0l1rt+2EBIuVHJa/MxFNKwJhomY=
+	t=1757689127; cv=none; b=enWGGtb/kr+Ad6MJkHYEfUJI8Twfkl3slClGm7ldR639RmBJRqkhum4ERLHjWiu6qQE2vhbf1+L3+F8zaDkten/UgtNHcxzD907Fr4OVn7/IaOt3ygzgNYvEsAUhmUnYTAoMSneXK9+U48l+yoOKSBbnQOu/iuoPN1JdxfNkqHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689123; c=relaxed/simple;
-	bh=XPrHkDH6ZI0ZtNaze0i0II8lEvWqKmBCuHaUWLXu0XE=;
+	s=arc-20240116; t=1757689127; c=relaxed/simple;
+	bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jPCDRTp+3hM+qRu2zT2//EOmVYLzZyNIf2EuQxdXdpok5eceRBz1G+G7dqZFOYYr73dMRSqvZpGHbHXfv1gJn9MBg8vsqdXhY1wloUU6v6zy1JcYx1n9+AK9wh0uDjcf9LA4hn0itOfRwRaNjf68QrU7f5IXK0duRGAPzrWvPM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=erhzWHaE; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7741991159bso2992850b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:58:41 -0700 (PDT)
+	 To:Cc:Content-Type; b=UrQ/vflQvQRddUedZhDq4LRfA7HrsVnZhtTQdk0zssj0BJh/m7ze4aaTfFhw/uZUXQxw4T7U7g4uKTUvyL10Y2SCAw81AUPLFZ+p8SxwaicsCin2sfwLG7YIsUude3uKjt8qObtcpLVbhpB5Ouw60MHpGfjW5oZqjYkG83QqUP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vXURIzoL; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-30cce872d9cso1505145fac.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:58:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757689121; x=1758293921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JsRA2lsMsTyTq/Puo1W1+q3FiI8YEvM95g5Tez17y0c=;
-        b=erhzWHaE6a5CMFDaaqv3vmQ20hod1CFVKoFoInWli8yPL/4UxBY6k2dXKo6WZDE7wC
-         hA398cranxG3J+18DA3mYgldrY0XehckRkoVRy7PNNocuL3S44+MVjMwgQ1CAJPi5tmp
-         g2hfoK/iLEOCoqOHKpuP49dQo3p8L8dOv4sXj+Rkm0IHCD0WyfTuy8mHN6h3JMqBQp0R
-         sp6Ex+LFq3Vf0+r5+2upL5j2AhKZuglfPgiHa4Dz24oNRnVzVyEnJ0beaw13SNU9F6B8
-         E9Cvj5Qnfq6q9T4HGtaJ9g92V/LshrBCD5gLiSUF07JxBts9e60gEZEnP7D4virg19Jq
-         Mkug==
+        d=linaro.org; s=google; t=1757689124; x=1758293924; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
+        b=vXURIzoL6WOeHy68epWap3ErmNrC29xtLmfmt/5OszeFvCcBTXd9+e7funIXOiH1WE
+         jQUlydwxAqRRUSzjNPsX5gHuXQRClfjIzGBhA1yVFh8Wx4E/I2eHgAZNB8gnsJJlJLrg
+         qpBiAAef9FKGxqxnPsIVZKvBhTOvvs8z3RgusIBTBMpSwtYTpf/8kKvzhTrifkGV7O4p
+         9AHcCNNXS6KaIAkWvORPqfSTlRn1bEMfa6TjjUBZgHMd6weNK2Z3E1BXVucskAbhRmzp
+         vShp0Ug9U0wvKqbVBEcUFK5PfpEtk3+tUyoDXK1MFVj+zJWQSu9R6TfhZ1BRbhdWdqog
+         wv5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757689121; x=1758293921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JsRA2lsMsTyTq/Puo1W1+q3FiI8YEvM95g5Tez17y0c=;
-        b=Vf7eLGNIoDbCiIBrdmfYv3ARDfdqwuD3v7WVeZIWdjGKCwSMLDfHGeGpAiAgDn8enb
-         RQuAGcOmlpKBQIFUfFymupV2ejc9quNkHZoyShMM6LwKbVPUb5nHEFNnXvXAXmwy1Zz3
-         xTyNJF6nd9/MpiA6hbWEqBnT8USZvMCjDJ9FAwTMGtg8b0YkC8DN+0lAj7RQ1kf+Ow+l
-         z1vW1LNty/weYrN/YiZiE4rs4KbaS1XT0YfETvdarzsVWDsrgkj49CGrocHTaD+j1H9U
-         SV7bsSJOtVVyCNHNlwPTBc/JXntbVlQMZP8UjQ1fe+4COddp6FZeMHSgSFq6EIglwNpB
-         gMQw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjlmV17T6g6UXLbLuamRBiMk80FMljoVgV3x73Mp09eqUqZPdu/0d0crLSLzluVzTQNv23bzT/Un294H4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqpnsUW63KcOYKKDJ+xsV8psXuBQgLZeC7uZSMHcB13kziRHTm
-	CP/xBeY7RCvzM1cJcLk/rGdT1UcVIRmZ2vTsr5P9o+LurHDdaMwLRD8fjebjVfIN5QkixYQoAfd
-	KU+Ro1OwfPiSoyHZtp3WACn0Ep0s/++NLegULETC/
-X-Gm-Gg: ASbGncsi8dCZLwznmQ1zaGhbMwW1Hhy2GzMH4waoZGoipPXEb3TRGzMcM5tq9a1TCMI
-	4EEbp0jvefelJbcvKz60GwI8LgGpHGe57/7oe87J/CgErX6+ApGEHgH/mjIPusIuJLMHlbljQYY
-	Ivg4Y0/w4W8l+0reRxEC1Do4VU3Oo80LvvuMlYosAavevjmK9X9DxJMbptwHgY+9gYY7tzIGb9x
-	8bQv5BT3lFiJa3Yu/pMSFImJrVjehGYFo5EFthvzm4CpMnz
-X-Google-Smtp-Source: AGHT+IG8fHTK0JHRHJykqJ4UGg8mUkj8ySqnJAAwPbZ5I/l4ILqKzu2I8nV3bt5OAzXHc1cMAT83RGVQDVhLDpFSVOs=
-X-Received: by 2002:a17:903:3804:b0:24d:f9f:de8f with SMTP id
- d9443c01a7336-25d25a73995mr47545065ad.17.1757689120635; Fri, 12 Sep 2025
- 07:58:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757689124; x=1758293924;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=28JpikhNh6hlI5zzwVP1Kei7jvxlx3xsZ1bRu7uJFZI=;
+        b=LY3YzBvFQF93Sqa9aVrqt+G8o+5FPVw3nKxEKJPFXBCgsOGB5kFWZAkNc4S7U98cd0
+         heRdmV7CV/AkJr9wvpdUI/E9kOln5xX8yNlKmNgWJkhj8ipkRFx7iKpp/zyNtj8+w0J/
+         Qjiv6O+Tb/KAEkE4yzY7BPcDYaCRXP/usQQs7Ncmgdhb5Enr25FBLX8tVvS8nrpmtTq1
+         6LSyuLjunu+sDwWiOy7vH4WDnGbjT8uC2Lj4XgxZ5HNkNkx6EF/2sWQaCRfGeybXRWD3
+         aOP6o3JV2zkW2RHsuhNrCUlMT93aJC4qQNWHFym4JFIpFsyDPYboBD20e0YsmZ04RMzJ
+         mleg==
+X-Forwarded-Encrypted: i=1; AJvYcCU870kDzJHbDPcvhYUUBceh1WBYaFqIWZq2ok/TLYWBsor61nlpjR/bvEwwbGGL+/70xefe0WwZUgCvyG8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7+4psApSkiU8AvwBZNOAP75ui5vjKGUM4QD0hGOCp+3ZV5N2K
+	KmE6T53KnbyH7NzdoiuAZpH3wSICUC6uMIoTwSFeBYDWO/eadPIJsvZo4CqwZKv8KTbIMbkeaxU
+	zswsq5Nx0IEQXGxCtft8Fu1MfLsfz6D8Ki4bvBxzX2A==
+X-Gm-Gg: ASbGncup5sV75vFWniBFwNVYVWODoxEHlw0eFO1HVHoyGziLYMVd7IWROK+EMhV2ASc
+	EhP+Jjapp7Ghuq4s8kKQLG76VSRSR52valInGWY/9CqEkyjr3O7vQ2DQ+eq8fiQHXIscjJ4o0vl
+	Abb2EIaDPqgdKmPFkUAl5j2uRU1LhxdzHQCXVgadNMOVpLQRDJ3j7s0aBi3vapbftnaed8AKnSU
+	mPhuO6GSQR/BI91yQ==
+X-Google-Smtp-Source: AGHT+IHAJ42BGc4DV3+A7HRXSgNpI4Ckz1R2zEcxWqCWvdlWoM2kBfvVDgKpueHQzqgzBraygif8YB0P1rDNI9gE4qo=
+X-Received: by 2002:a05:6870:b907:b0:315:3ef4:eecd with SMTP id
+ 586e51a60fabf-32e553a280fmr1618278fac.17.1757689123738; Fri, 12 Sep 2025
+ 07:58:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912131104.1726775-1-yanzhijian@huaqin.corp-partner.google.com>
-In-Reply-To: <20250912131104.1726775-1-yanzhijian@huaqin.corp-partner.google.com>
-From: Doug Anderson <dianders@google.com>
-Date: Fri, 12 Sep 2025 07:58:29 -0700
-X-Gm-Features: Ac12FXz1H0aiUVuI2ZceyQFnUNMDlNBWtZs6Dx0LlgWmVPtY7LadNBf506fI8m4
-Message-ID: <CAD=FV=XKOj42jkZWr7OF93=tsAsW+=pAk24JagFVFKZRtxEwMg@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: add support for KD116N3730A07
-To: Zhijian Yan <yanzhijian@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, daniel@ffwll.ch, 
-	hsinyi@google.com, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
+In-Reply-To: <20250908-acpm-clk-v4-0-633350c0c0b1@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 12 Sep 2025 15:58:32 +0100
+X-Gm-Features: Ac12FXwxoqn3zsYfC0T8IDf20S9zDpzsxcpDfKlZfpZdk1czNZgS3-vJNTlzLBQ
+Message-ID: <CADrjBPo8L=P2bHKTFvYOj7i0u6pA7vs32d3y+4Ho+82Z1mRE_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] exynos-acpm: add DVFS protocol and clock driver
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	willmcvicker@google.com, kernel-team@android.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Fri, Sep 12, 2025 at 6:11=E2=80=AFAM Zhijian Yan
-<yanzhijian@huaqin.corp-partner.google.com> wrote:
+On Mon, 8 Sept 2025 at 14:13, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
 >
-> Signed-off-by: Zhijian Yan <yanzhijian@huaqin.corp-partner.google.com>
+> Dependencies description:
+> All patches should go through the Samsung SoC tree.
+> The acpm-clk driver (#4) depends on the ACPM DVFS ops (#2).
+> If the clock subsystem needs to merge the new clock driver, it will
+> need an immutable tag with the 2 patches.
+> No dependecies for #1, #3, #5.
+>
+> The Alive CLock and Power Manager (ACPM) firmware exposes clocks that
+> are variable and index based. These clocks don't provide an entire range
+> of values between the limits but only discrete points within the range.
+> The firmware also manages the voltage scaling appropriately with the
+> clock scaling. Make the ACPM node a clock provider.
+>
+> Add support for the ACPM DVFS protocol. It translates clock frequency
+> requests to messages that can be interpreted by the ACPM firmware.
+> Add an ACPM clock driver to model the clocks exposed by the ACPM firmware.
+>
+> Thanks,
+> ta
+>
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
->  drivers/gpu/drm/panel/panel-edp.c | 1 +
->  1 file changed, 1 insertion(+)
 
-Please provide the EDID in the commit message. See nearly all recent
-commits to this file. Thanks!
-
--Doug
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Tested-by: Peter Griffin <peter.griffin@linaro.org> # on gs101-oriole
 
