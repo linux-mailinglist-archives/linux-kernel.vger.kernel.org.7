@@ -1,111 +1,143 @@
-Return-Path: <linux-kernel+bounces-813795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CEB9B54AC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:14:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA192B54ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 897301CC8541
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 852E53B919D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7A652FF16F;
-	Fri, 12 Sep 2025 11:14:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9741B3009E8;
+	Fri, 12 Sep 2025 11:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qy9CElOx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b="mwmWvLNi"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283B2296BBC;
-	Fri, 12 Sep 2025 11:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490A92EB5BD
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:15:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757675647; cv=none; b=K/nNAapW0TrfdIBt3e9+TNUR27fvvA2eAYIoIbTd5Uf2TuxjgP2+GIaGl8pKhNQbTi2Vt5Cqqp//JIrSShwL02FgJG50l2CbxFKDCycP1mgIsOq54eV0DLLgUKAgr8OB42e5xBQt4XHWDMNFxo9RBoBrmZfOX6f464aCQg0VFdY=
+	t=1757675715; cv=none; b=kgVaz7veLzcUDyh3Ny6y1DF0wSRYuA53weOOwS2FJ4M+KTzAi8noK/E+JG9VAGUqH8rR2kCd+QAIeTdNOfOWC1G5ahNgwybvuQEZoS9TyRy/JjUf0403RiPXLyKPXomKe21d84c0aK1AL5PntWkuuEs68RDuYxs1k9VuklT/oX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757675647; c=relaxed/simple;
-	bh=mnsWNx9b9n/nFBpo4K7P536SZp3NTa4jUVY67kWtsXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8I/Ca8uPBURRY4NtMvZynEFgaW3xEo5vnZSKtsir2DASoOexH8PHWqvFyXOfC8PdSupTzYvev88TZx+vC9VJloxGo59AjXUZZNtzsoC2PXWYhnKs+yAJzhPbs7t5J1M0scGpgPQfj4E/VOeHLmxGNTykWvNsF0xdsiU3Ejutks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qy9CElOx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0CCDC4CEF4;
-	Fri, 12 Sep 2025 11:14:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757675646;
-	bh=mnsWNx9b9n/nFBpo4K7P536SZp3NTa4jUVY67kWtsXY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qy9CElOxO7TKTSvHZ+WBt2DYiefJEdBhwLqBjp5ZF4QHckz28dQ0t4E56EA8rcz3m
-	 UhmaQYDN3QC63ASHmgBo6Lu9O6n2cSlGECU/f+Pwo894bDj7YE9cde7rpCa1rIctAo
-	 Yw8ue56cJfaO9YHTU433AhnPWi1Gfrj/ySngq2SSNxBkiR26dkRigCnGT5C+DAS3gW
-	 wdK9jgBLtaCK7dwAMTUuV5Pwi7YQ9dLB1pza0PXZzWx0l0UqRhgF4mtWUIPFSOVYxK
-	 h87CeO9JLtuPr3Q3bP2txiqNerPZMTdThnazqfKaCcYmdl7LnAOabIO1IOyWnjFyJQ
-	 Znjd585heQb8Q==
-Date: Fri, 12 Sep 2025 12:14:00 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
-	lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Ben Copeland <benjamin.copeland@linaro.org>,
-	Shuah Khan <shuah@kernel.org>
-Subject: Re: next-20250909: selftests/arm64/gcs/basic-gcs.c:390:30: error:
- use of undeclared identifier 'HWCAP_GCS'
-Message-ID: <a1dc9839-ab45-4dd6-9eeb-4bbc35bf8d90@sirena.org.uk>
-References: <CA+G9fYv77X+kKz2YT6xw7=9UrrotTbQ6fgNac7oohOg8BgGvtw@mail.gmail.com>
- <1e331ebb-3315-4cbe-b194-ccbeeaded4da@t-8ch.de>
- <965c8d7e-c5f2-4bd8-ab7c-c3116632f015@sirena.org.uk>
- <5e4d9943-3a8d-4281-9007-f49bfc66dc6d@weissschuh.net>
- <b9b8b8cf-4920-4f9d-bcea-bea913058601@weissschuh.net>
+	s=arc-20240116; t=1757675715; c=relaxed/simple;
+	bh=e5L+tVWzscZr4jLHDRbnNlvC5wSer04cc3J4F0Re2yw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SFnPEUF7ZJ85g7XSLB4BPnxGNlM0SUKLKHxVO9+iolLOFIzptQe8zUpOz0b+d20nFHsGsfS8kVR8xLgK4DS8vomTjSmqRwqV5vmJdDN6OibWXUR/TlG17fC5m5C7VY/RK9/g+2hHdR+lQRf5YaXK6e07c3VkK/SpkWLXwIp0nZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall.org header.i=@blackwall.org header.b=mwmWvLNi; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55f7b6e4145so1781588e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:15:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall.org; s=google; t=1757675711; x=1758280511; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y79xIpnC424FlOC64ZAsCAV+HYrgKwpFVZghrIQKO/0=;
+        b=mwmWvLNiXML6exy4SRXlTldwGg6pMxhlr2TDF/7r2m8nA1D5kLFX2CLPLNmcVh60OI
+         ucX3z7bq1gtD8cUHmFrkIL+HugwnqzuTCzdrZuGz3DY8pcQBtDIr9ICTVxIJvsiBzIOt
+         KBmjJWxNuXi/c75xo5pqh2SEtQlmUlmNM2GzbbaIBSyBq9ttp5aZYOgu07pu5JzBsPwe
+         4akkqM2jiK8Zxp7eROQ09tSc2SNqLn2lqdqn+UHrMoBEi/EvveY78lK33EascoHarWRQ
+         zYi/35xeuoYzX2FTi98CcXYbwh+3TROE3VWxymt1ivvcfdP9E2pXN09smovEYPVrJt23
+         Ossg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757675711; x=1758280511;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y79xIpnC424FlOC64ZAsCAV+HYrgKwpFVZghrIQKO/0=;
+        b=ja9nu2zxlLJKNTwa1hPVURaTkzcOeCo4wCZBsdBbVQC1Sz5Rp01k7jMjB7so28r1Ve
+         TK0oXfXgXP8Z3x2eycfC4PMW48/7RyRyuaZXVYhnpYdTw3RtA9Lo/jf+871CZffPvY5d
+         CC9gqVpFLA1cQ62z6cGl3i4rrxR7NrALc/vKXKUc6qaTE/o88VRDS+xGzpGLK6ICm3Ev
+         9GLHijQA+bJkc0M6+BxDmLr7KNIslVkhiwX44+M7867qCQUlI4W7s+34n3jQYBqdJVcN
+         RgAds5NoGJ6+eHmPaT+Fl/FNnBCDiQ8UITFxMwDnGyrUr90MOTHX6gILTwv80+XCQcbu
+         ga8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVkfyFISlJmtisXozJdqc62w8sySfYCPJg7D99DyDUt1VTZ5QNy8CXEqwHhFJFrrtDsX+4MDw8znKy8xcY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9UGG2e+kv3jSiLaH2TI6wjdYRrM7vJdegahV7tI7smfmHzz/B
+	d4dU7OdL1/MB5fgKwNHoaB+6NjYxv6rJqJwOZHtgB1OePvZYDB7NMNbcRm1u9tVJM3o=
+X-Gm-Gg: ASbGncuYwYgk5PdmRb6U54IWjuPUizFbzPNa8QjpyxBlllDuuz3bFm1ajVdjB52wa4y
+	XEAu25/FzWp0AzXEWZn0wC3d6d7onDg3UGkXhsScFeqFz/9msTdofC3zPo5POVQ1/2DVDP62vcs
+	LFVI+B/FlRhI02qQstX7u6kUCqKRE5O0GPLVAFZTbAFN4NSF7mE8Lld0AtdpE89iMcdCkR7Fx9Z
+	vUUc8rs08xRcea7nEpU6cfcvXrlo6HfplJn3cDGMwhdoOM6XHcvqfvgXZk4dds+VDTf/BmY01hS
+	8nuj6d35iaYXWx9EgqSHhCCaATbtaGK6DlHaEf4NXlFIk6Sqzm12dyJmzVQ+ybrHdaiQA6HXVq9
+	mTjBHqJtHyK79EoFGBJHDg6ZLoAqOEPbrMCWWxzgX1tqV5/qiJqWe2l9dtzoU98udDFxuLUiliP
+	ivDw==
+X-Google-Smtp-Source: AGHT+IEX8lJuZL1YVpyfdl9mCWUkwiQ29IuRWpeUaJuKHQ4wANXuzKH9Gz1hogCk60GadYXtZCSGpA==
+X-Received: by 2002:ac2:4e99:0:b0:55f:65f2:8740 with SMTP id 2adb3069b0e04-5704e34edd5mr666546e87.42.1757675711175;
+        Fri, 12 Sep 2025 04:15:11 -0700 (PDT)
+Received: from [100.115.92.205] (176.111.185.210.kyiv.nat.volia.net. [176.111.185.210])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e6460f138sm1063220e87.111.2025.09.12.04.15.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 04:15:10 -0700 (PDT)
+Message-ID: <4daaaa7e-7a02-4e4c-be3e-c390d7f6e612@blackwall.org>
+Date: Fri, 12 Sep 2025 14:15:06 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1bnwqmLN9TK6wYkC"
-Content-Disposition: inline
-In-Reply-To: <b9b8b8cf-4920-4f9d-bcea-bea913058601@weissschuh.net>
-X-Cookie: Your domestic life may be harmonious.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC net 1/1] net/bonding: add 0 to the range of
+ arp_missed_max
+To: Pradyumn Rahar <pradyumn.rahar@oracle.com>, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, jv@jvosburgh.net, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org
+Cc: anand.a.khoje@oracle.com, rama.nichanamatlu@oracle.com,
+ manjunath.b.patil@oracle.com, rajesh.sivaramasubramaniom@oracle.com
+References: <20250912091635.3577586-1-pradyumn.rahar@oracle.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250912091635.3577586-1-pradyumn.rahar@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 9/12/25 12:16, Pradyumn Rahar wrote:
+> NetworkManager uses 0 to indicate that the option `arp_missed_max`
+> is in unset state as this option is not compatible with 802.3AD,
+> balance-tlb and balance-alb modes.
+> 
+> This causes kernel to report errors like this:
+> 
+> kernel: backend0: option arp_missed_max: invalid value (0)
+> kernel: backend0: option arp_missed_max: allowed values 1 - 255
+> NetworkManager[1766]: <error> [1757489103.9525] platform-linux: sysctl: failed to set 'bonding/arp_missed_max' to '0': (22) Invalid argument
+> NetworkManager[1766]: <warn>  [1757489103.9525] device (backend0): failed to set bonding attribute 'arp_missed_max' to '0'
+> 
+> when NetworkManager tries to set this value to 0
+> 
+> Signed-off-by: Pradyumn Rahar <pradyumn.rahar@oracle.com>
+> ---
+>   drivers/net/bonding/bond_options.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/bonding/bond_options.c b/drivers/net/bonding/bond_options.c
+> index 3b6f815c55ff..243fde3caecd 100644
+> --- a/drivers/net/bonding/bond_options.c
+> +++ b/drivers/net/bonding/bond_options.c
+> @@ -230,7 +230,7 @@ static const struct bond_opt_value bond_ad_user_port_key_tbl[] = {
+>   };
+>   
+>   static const struct bond_opt_value bond_missed_max_tbl[] = {
+> -	{ "minval",	1,	BOND_VALFLAG_MIN},
+> +	{ "minval",	0,	BOND_VALFLAG_MIN},
+>   	{ "maxval",	255,	BOND_VALFLAG_MAX},
+>   	{ "default",	2,	BOND_VALFLAG_DEFAULT},
+>   	{ NULL,		-1,	0},
 
---1bnwqmLN9TK6wYkC
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This sounds like a problem in NetworkManager, why not fix it?
+The kernel code is correct and there are many other options which don't make sense in these
+modes, we're not going to add new states to them just to accommodate broken user-space code.
 
-On Fri, Sep 12, 2025 at 01:07:58PM +0200, Thomas Wei=DFschuh wrote:
+The option's definition clearly states:
+                .unsuppmodes = BIT(BOND_MODE_8023AD) | BIT(BOND_MODE_TLB) |
+                                BIT(BOND_MODE_ALB)
 
-> The Makefile does *not* use -nostdinc, so the nolibc program probably fin=
-ds the toolchain's glibc asm/hwcap.h.
-> There also doesn't seem to be a static arm64 hwcap header in tools/includ=
-e in the first place.
-> I am still wondering how this works for the other tests.
-
-make headers_install puts a copy in usr/include, probably we just need
-to include that in the include path.
-
---1bnwqmLN9TK6wYkC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjEAHcACgkQJNaLcl1U
-h9A1rAf9HVWRdnBd20hpputtVK81rxY+MZvY1yVTmrP8LNTIseS2cf8IdsA7k/z0
-sJSWK/bj7P6ydPFBgpMkE0x4Ac1IMCL4uRUQIuPTPmmP3zf3/8XYzE+p5l4X/DAK
-QxNUxjQAwe0RUTBwTqv+IlnjLJSsEdkSaQLkb2a/cYUobJ2zOiiIHEsuAtrwNc5J
-hBM9bg+j2rTyUClmOODnnf1X60optmElY4qPpY/bvvJJjYR+vm5uMKe2rIjtuUOS
-pEtsNvC+x9uQQJJEZAq7zE3mQhDxBNOuCxIt8aPJBBLUOMXyAC/ncXip2xz0pYzS
-wkuXsLfyepD2oajCOYpck05zbisibA==
-=o/dM
------END PGP SIGNATURE-----
-
---1bnwqmLN9TK6wYkC--
+Cheers,
+  Nik
 
