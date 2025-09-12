@@ -1,144 +1,112 @@
-Return-Path: <linux-kernel+bounces-813049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092B6B5401C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:02:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53467B5401E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57B101C868CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:02:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98D391C86816
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966191957FC;
-	Fri, 12 Sep 2025 02:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067761624E9;
+	Fri, 12 Sep 2025 02:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GXAJZND2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="G5kpzQVc"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6B1A78F2E;
-	Fri, 12 Sep 2025 02:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C8B33E7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757642526; cv=none; b=CyyVwA6yNvb0NNPDGexCvZDml+fRkjy0+CY5cjoZA3vbq9i4+OlXxOPLHaJDXHHS0kTbcxNwZ4oFyeXK5DIjSnsIRvDeuWAPKmPyYPhCIYaaptNg1wn6uDLd09gDnmX5DF/W419+8cSqeKpFC6EQzK9pHyfLHwyg6XR5Ed1QX1Y=
+	t=1757642611; cv=none; b=V73AcpFAjRqQfXNSD4nlAQut7q06Csnr9hobX1tcfFUJz/K3fGG2EE2LMSV0tXLw3SYqHlfGXLKlyy7JDVGBiLJT9vhGZQ8DK35WZUn1Wlr4ph0OOSgoheHoLIoA/EveK3XS/6AIvcvAnjw+9qAB+dgGw0Mnw88ZN8EGquFl1F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757642526; c=relaxed/simple;
-	bh=ofHx56BppN7uG4nMoIOUkT9YW2WwswxmiLHeRFONwG4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=p+btDAlBf/ebEzyHK7eqsFFlqSYvkobNe/Ctpl++1orU/jpwJBxXuXOGYmZ6izz34+NEoWaMCHJnixvWDv4+DG+ZzkzrQxAdOkQvbkxgSqxIm/RNhasxp32AiKrnXvcPws2n+2DmI14s2vubH1IvgiDg0awdfN4OMDDtRQv6hAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=GXAJZND2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1757642520;
-	bh=Z6CwyDe+rDUXNJFHQE/lWblQ0fLT8qQmbmGhKk4M4Rk=;
-	h=Date:From:To:Cc:Subject:From;
-	b=GXAJZND2vcIqgv2fWvefMWl2zMRFl+CN51fozERMQCMmJHIrdgGpqI2FljsXeAHJ3
-	 Zn/CTyg2BinP2zp4A+CemHyjvyk3dImeBKYbh+2c+ZIPx8uH9uwybgfopWhppMw0dV
-	 89qhuPWh8kThH2DH8TLWK6W9Hd7dntH9PIT+OZJz4B1MCRYe+WYV2sfSj/Mb1TRAUl
-	 oBkRKZdLtEFOz+Z5nvFc6z2MhHHi8FRFMwG456T/gFCusNe/9MNvxHK1pzOqXiqxpI
-	 cPdMDIo+mE/MS+E7rE3h8sRWVbOJVP+EsdCjzJioz6cRdgCu+aeOAmmTwtPIfwxwlu
-	 NqXTbsE9rLdXw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cNHjg4wffz4w9Q;
-	Fri, 12 Sep 2025 12:01:59 +1000 (AEST)
-Date: Fri, 12 Sep 2025 12:01:59 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>,
- Greg KH <greg@kroah.com>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm-rust tree with the
- driver-core.current tree
-Message-ID: <20250912120159.1d6518cc@canb.auug.org.au>
+	s=arc-20240116; t=1757642611; c=relaxed/simple;
+	bh=LJmEQZs13F/FHF4ypoYTiLXFKxIIeE3eH7OBaf23C2g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=KUCkmKXMa6ZfKdNsQ4chTBrU0EWayk7COZocHpKL/jIKPE/NjAQI8eO+lwGjDokLhh293Se15t8cw7yhl+34Pkplmf9dcY5K/pmdjSQyJ4NyWxsyvqPbdZ4TwdeRbraE43fMy3Mr78snjk78SP9VfSDRT13OuX9La0xSen6Mfk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=G5kpzQVc reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=2gaxk0ynRjWPbUcOPBABXZM/j5g3V2zX3Gie3kenttI=; b=G
+	5kpzQVc/csgYi0KfemtadKSsFnjqAUJEuEWUWMt5Q38igTntyww6fnpNtY8bzt/g
+	uXnMSbeZL0Hn+nHUKpP3gh+IXEhhMNwbfubBHyuV5EXpj7S6PyF0iMg6aJlQnNQ5
+	fbBThsArpU+0JHVoKYazWINNDhy15RrDfOGrtAxVd8=
+Received: from 00107082$163.com ( [111.35.190.173] ) by
+ ajax-webmail-wmsvr-40-123 (Coremail) ; Fri, 12 Sep 2025 10:02:22 +0800
+ (CST)
+Date: Fri, 12 Sep 2025 10:02:22 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Suren Baghdasaryan" <surenb@google.com>
+Cc: "Andrew Morton" <akpm@linux-foundation.org>,
+	"Usama Arif" <usamaarif642@gmail.com>,
+	"Yueyang Pan" <pyyjason@gmail.com>, kent.overstreet@linux.dev,
+	vbabka@suse.cz, hannes@cmpxchg.org, rientjes@google.com,
+	roman.gushchin@linux.dev, harry.yoo@oracle.com,
+	shakeel.butt@linux.dev, pasha.tatashin@soleen.com,
+	souravpanda@google.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
+ 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <CAJuCfpEoWtgv8k4vApkGsNNUYFBnvS-N2DPQu2JrreCUPbT5dA@mail.gmail.com>
+References: <20250909234942.1104356-1-surenb@google.com>
+ <20cafc1c.a658.199394de44e.Coremail.00107082@163.com>
+ <aMLvCCZbmpSE/aql@devbig569.cln6.facebook.com>
+ <902f5f32-2f03-4230-aab0-a886fd8e4793@gmail.com>
+ <20250911143132.ca88948c48df874f71983218@linux-foundation.org>
+ <CAJuCfpEoWtgv8k4vApkGsNNUYFBnvS-N2DPQu2JrreCUPbT5dA@mail.gmail.com>
+X-NTES-SC: AL_Qu2eBfqfvU0v5CKbZukZnEYQheY4XMKyuPkg1YJXOp80kSTOyB09YWNjB0v388e2MQqGmxSvbTF3wc5YRbl+baiNah29d8FEZXTnPdap4JF1
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/=7zD693h/Iauq0ScLjN9yaz";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Message-ID: <1880ff7f.1d98.1993ba8cca1.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:eygvCgD3v7Mvf8NorwgGAA--.15023W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxTGqmjDX53NQAADss
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
---Sig_/=7zD693h/Iauq0ScLjN9yaz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-Today's linux-next merge of the drm-rust tree got a conflict in:
-
-  MAINTAINERS
-
-between commit:
-
-  f6d2900f2806 ("MAINTAINERS: Update the DMA Rust entry")
-
-from the driver-core.current tree and commit:
-
-  c58466b85b16 ("MAINTAINERS: rust: dma: add scatterlist files")
-
-from the drm-rust tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc MAINTAINERS
-index 5bcaa26029f2,8a11e6c5dd80..000000000000
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@@ -7263,18 -7251,20 +7276,20 @@@ F:	include/linux/dma-mapping.
-  F:	include/linux/swiotlb.h
-  F:	kernel/dma/
- =20
-- DMA MAPPING HELPERS DEVICE DRIVER API [RUST]
-+ DMA MAPPING & SCATTERLIST API [RUST]
- -M:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-  M:	Danilo Krummrich <dakr@kernel.org>
- +R:	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-  R:	Daniel Almeida <daniel.almeida@collabora.com>
-  R:	Robin Murphy <robin.murphy@arm.com>
-  R:	Andreas Hindborg <a.hindborg@kernel.org>
-  L:	rust-for-linux@vger.kernel.org
-  S:	Supported
-  W:	https://rust-for-linux.com
- -T:	git https://github.com/Rust-for-Linux/linux.git alloc-next
- +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/driver-core/driver-c=
-ore.git
-  F:	rust/helpers/dma.c
-+ F:	rust/helpers/scatterlist.c
-  F:	rust/kernel/dma.rs
-+ F:	rust/kernel/scatterlist.rs
-  F:	samples/rust/rust_dma.rs
- =20
-  DMA-BUF HEAPS FRAMEWORK
-
---Sig_/=7zD693h/Iauq0ScLjN9yaz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmjDfxcACgkQAVBC80lX
-0GypTgf+Ld8DInPsDsOfnv2DIzx5uJa5979Lqg5pKOqfBakHom+Viwl41pQKmJRQ
-gR0zvQNpTyUW4rNBUABVQROjP6mpwazh/rP5bPbGq/MEXIv/o3TvnRM9yflfKpdF
-afHNsb8MlBzw8g+I609i+q1e4c4r+R8cLuco99ad+9a4D8H8tL9w8OPZdFNepx/n
-ZmNVC3wVcuCOkHv43hkFbM6qt5pbzIu0cyTsrrLTVjMml4QVvfNH32uR4EQialWZ
-w5t+HSDoDlxal9B5ub/bSpeUjZUEfSgNNExiJqzf0u1aeW7lmPEs8qfotRx4fSgQ
-S8+ok3kQnPGqOUIwr8AWJk0+e6Zy9g==
-=mXO7
------END PGP SIGNATURE-----
-
---Sig_/=7zD693h/Iauq0ScLjN9yaz--
+CkF0IDIwMjUtMDktMTIgMDg6MjU6MTIsICJTdXJlbiBCYWdoZGFzYXJ5YW4iIDxzdXJlbmJAZ29v
+Z2xlLmNvbT4gd3JvdGU6Cj5PbiBUaHUsIFNlcCAxMSwgMjAyNSBhdCAyOjMx4oCvUE0gQW5kcmV3
+IE1vcnRvbiA8YWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZz4gd3JvdGU6Cj4+Cj4+IE9uIFRodSwg
+MTEgU2VwIDIwMjUgMTI6MDA6MjMgLTA0MDAgVXNhbWEgQXJpZiA8dXNhbWFhcmlmNjQyQGdtYWls
+LmNvbT4gd3JvdGU6Cj4+Cj4+ID4gPiBJIHRoaW5rIHNpbXBseSBhZGRpbmcgKiB0byB0aGUgZW5k
+IG9mIGZ1bmN0aW9uIG5hbWUgb3IgZmlsZW5hbWUgaXMgc3VmZmljaWVudAo+PiA+ID4gYXMgdGhl
+eSBhcmUgYWxyZWFkeSBzdHIuCj4+ID4gPgo+PiA+Cj4+ID4gSW5zdGVhZCBvZjoKPj4gPgo+PiA+
+IDQ5MTUyKiAgICAgIDQ4KiBhcmNoL3g4Ni9rZXJuZWwvY3B1L21jZS9jb3JlLmM6MjcwOSBmdW5j
+Om1jZV9kZXZpY2VfY3JlYXRlCj4+ID4KPj4gPiBDb3VsZCB3ZSBkbyBzb21ldGhpbmcgbGlrZToK
+Pj4gPgo+PiA+IDQ5MTUyICAgICAgNDggYXJjaC94ODYva2VybmVsL2NwdS9tY2UvY29yZS5jOjI3
+MDkgZnVuYzptY2VfZGV2aWNlX2NyZWF0ZShpbmFjY3VyYXRlKQo+Pgo+PiBDYW4gd2UgYWRkIGFu
+b3RoZXIgcm93LCBzYXlpbmcgInRoZSBwcmV2aW91cyByb3cgd2FzIGluYWNjdXJhdGUiPyAgSQo+
+PiBndWVzcyB0aGF0IHdvdWxkIGJyZWFrIHBhcnNlcnMgYWxzby4KPj4KPj4KPj4KPj4gSSBkb24n
+dCBrbm93IGlmIHRoaXMgd2FzIGJ5IGRlc2lnbiwgYnV0IHRoZSBwcmVzZW50IGZvcm1hdCBkb2Vz
+IHByb3ZpZGUKPj4gZXh0ZW5zaWJpbGl0eS4gIEl0IGlzIGJhc2ljYWxseQo+Pgo+PiAgICAgICAg
+IE5OTk4gTk5OIG5hbWU6dmFsdWUgbmFtZTp2YWx1ZQo+Pgo+PiBvbmUgY291bGQgYXJndWFibHkg
+YXBwZW5kIGEgdGhpcmQgbmFtZTp2YWx1ZSBhbmQgaG9wZSB0aGF0IGF1dGhvcnMgb2YKPj4gZXhp
+c3RpbmcgcGFyc2VycyBmaWd1cmVkIHRoaXMgb3V0Lgo+Cj5BY3R1YWxseSB0aGF0IHNvdW5kcyBs
+aWtlIHRoZSBiZXN0IGlkZWEgc28gZmFyLiBDdXJyZW50bHkgdGhlIGZvcm1hdCBpczoKPgo+PGJ5
+dGVzPiA8Y291bnQ+IDxmaWxlPjo8bGluZT4gWzxtb2R1bGU+XSBmdW5jOjxmdW5jdGlvbj4KPgo+
+V2UgY2FuIGFkb3B0IGEgcnVsZSB0aGF0IGFmdGVyIHRoaXMsIHRoZSBsaW5lIGNhbiBjb250YWlu
+IGFkZGl0aW9uYWwKPmtleTp2YWx1ZSBwYWlycy4gSW4gdGhhdCBjYXNlIGZvciBpbmFjY3VyYXRl
+IGxpbmVzIHdlIGNhbiBhZGQ6Cj4KPjQ5MTUyICAgICAgNDggYXJjaC94ODYva2VybmVsL2NwdS9t
+Y2UvY29yZS5jOjI3MDkKPmZ1bmM6bWNlX2RldmljZV9jcmVhdGUgYWNjdXJhdGU6bm8KPgo+SW4g
+dGhlIGZ1dHVyZSB3ZSBjYW4gYXBwZW5kIG1vcmUga2V5OnZhbHVlIHBhaXJzIGlmIHdlIG5lZWQg
+dGhlbS4KPlBhcnNlcnMgd2hpY2ggZG9uJ3Qga25vdyBob3cgdG8gcGFyc2UgYSBuZXcga2V5IGNh
+biBzaW1wbHkgaWdub3JlCj50aGVtLgo+Cj5Eb2VzIHRoYXQgc291bmQgZ29vZCB0byBldmVyeW9u
+ZT8KClRoaXMgbG9va3MgZ29vZCB0byBtZSwgYXQgbGVhc3QgZm9yIG15IHRvb2xzLiA6KQpPbiBt
+eSBzeXN0ZW0sIHRoZXJlIGFyZSA0SysgbGluZXMgb2YgaXRlbXMsIGVhY2ggYnl0ZSBhZGRlZCB3
+b3VsZCBpbmNyZWFzZSA0SytieXRlcyBmb3Igb25lIHJlYWQsCmJ1dCBnb29kIHRoaW5nIGlzIG5v
+cm1hbGx5ICJhY2N1cmF0ZTpubyIgd291bGQgbm90IHNob3cgdXAuIAoKRGF2aWQKCj4KPj4KPj4K
+Pj4gV2hhdGV2LiAgSSdsbCBkcm9wIHRoaXMgdmVyc2lvbiBmcm9tIG1tLmdpdC4K
 
