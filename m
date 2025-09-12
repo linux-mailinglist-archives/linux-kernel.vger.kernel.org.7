@@ -1,195 +1,95 @@
-Return-Path: <linux-kernel+bounces-813716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C472CB549DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E49CBB549E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:32:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E281D171643
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B58F11CC0AD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:32:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB0C2EA756;
-	Fri, 12 Sep 2025 10:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="d8Gg1SEN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MspK7O2f"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E0A2EB852;
-	Fri, 12 Sep 2025 10:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0603D2EC0A1;
+	Fri, 12 Sep 2025 10:31:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF822EC097;
+	Fri, 12 Sep 2025 10:31:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757673094; cv=none; b=Gkk5262BBEes+tmGL92QflAZUPRy8jLyBoVzSlVm8KikjA+4IzodCFTU0WzUXDitkzfwNybGgkAglrktq7bntMVa1pQkGR08uvZ+SITDfMYmcYUTzss4U9Wvr218+hLi9cmZ6F8vN+Oalhv82utyobBUMljiuX+vtFeV78cWqdE=
+	t=1757673101; cv=none; b=hfmG8y6XRSNOXxNm5k7UBIdiuoemjewCl6ibs7Td0clVf34Tpr5tNyvh913f+Y5yCVah2tp+5eQ4lG2SO5J+rDJUKKvv2BUr3cMAX0pDFKpnaxitBlAZQZ/ir6ICTJO30W/dmMhBRYvm7JM40BOYPUU1pyxEea1KXskxXxGV7Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757673094; c=relaxed/simple;
-	bh=mi/aFgXjgNLAiM0nHg6PsOIfbdDRcx3f1vhDiQnVFEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQo/CrEM67UfBWTQnJ4uDO7OHBvm2uJNJHtO8FygZX7RcmCA/eUpIQIlsySiioJvdH32FP4egGDj5zmRBP3k0Qxb8fPnqTUsXPUzKQ/IC0bV/doju0HodRsXcCe5WJuPLcNPRkcYi+Rl3veQ+kXJB7g9jZ8uitOT2SHVyl+xklA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=d8Gg1SEN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MspK7O2f; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2AAE2EC0363;
-	Fri, 12 Sep 2025 06:31:20 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 12 Sep 2025 06:31:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757673080;
-	 x=1757759480; bh=5qHXIO8KHSC0qbY8cmXZJOXkjQnDFnbq/6nDZAx+8Po=; b=
-	d8Gg1SENbk24imdnIbyNCyn57KksngOBv6zB2p3cfb2KAvteBsrc+BznyjNLT8P5
-	uNBk+SKUv1EYaWJyHkj88rhY19BkaDQAlgq+NerB3hhQr3k9r06MSYqCdYc/N/TP
-	jq2vXQXs14u60Gpw6dbNexZbN3vc5vqe88zPJkpMy4UFoR0K1+D935KTe7wSIjYf
-	ORQGCIeVQMmqwbZtu0s804Rusp4DMbM571RbRy/2Xv0JEcSVzRzPfNeZ9KW28XI0
-	JMhVd2JqMSV2H/U3Vs+bLBXsOwMLx4McuW0wd5MQT/USuRP98zFPyoB6WrSmaD5P
-	QpaLLVIQvClCbxizbwDP+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757673080; x=
-	1757759480; bh=5qHXIO8KHSC0qbY8cmXZJOXkjQnDFnbq/6nDZAx+8Po=; b=M
-	spK7O2fM9CarEq8I7Bt2KdqLPd12jR1jZA0D1l7temyRJSOWEbRBmnbtmc/uIQDY
-	vEHTPI+ypI0RHSt7F/CoJ5Qt7cY3kEAu7h1ri+L9TDiowxtOqrvTswbAkY3wQaTN
-	RoCEDhvalOipSWUMb/VK/gjRhT9Dc32bIpsAkfjwFWtRCLOgHRlxscqaURzzY/3m
-	Im5K8d2/ShZdgW9/sGt2HO21mhaOSKg0V+LYDLtNnOa6k4KNY/4BuoGkq89SNUSV
-	rMfbyPMxYgdOMiT6HgXOWK4Dynk74Y9lzBdyg8Q41rlPvaNspxBjux8hifWEaNTV
-	MqCnhnmi1JbjMipBMLsLw==
-X-ME-Sender: <xms:d_bDaLEMQemBtCm_FS2LaD7AUI5C49Km3BM7WcIIsFJlH7SU7UYeXA>
-    <xme:d_bDaIwj5wRFkcdoOzXyoEcb4OW_PAwHS6nW52rWGBL9VnL8R9yTvDjTD1cSphmLZ
-    Nqk5WzHrdsEsRT5>
-X-ME-Received: <xmr:d_bDaN3mcLZZh0ZV1fp9wzk6-UT2qd0H3BmABI8dX_Lmlp2NQCCN3vBVGHsmTIxq_5R6RxBGxpa4kMSJKxJFCzmghMlP3kU5uc5KGKCNKN9FkFTv04mS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvkeekvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhnugcu
-    ufgthhhusggvrhhtuceosggvrhhnugessghssggvrhhnugdrtghomheqnecuggftrfgrth
-    htvghrnhephefhjeeujeelhedtheetfedvgfdtleffuedujefhheegudefvdfhheeuvedu
-    ueegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
-    gvrhhnugessghssggvrhhnugdrtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehs
-    mhhtphhouhhtpdhrtghpthhtoheplhhuihhssehighgrlhhirgdrtghomhdprhgtphhtth
-    hopegujhifohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthihthhsohesmhhi
-    thdrvgguuhdprhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpth
-    htohepsghstghhuhgsvghrthesuggunhdrtghomhdprhgtphhtthhopehlihhnuhigqdhf
-    shguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
-    dqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgthhgv
-    nhesuggunhdrtghomhdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:d_bDaArBBA8zFiuw1CBqtCxlj1X0iyMtB5IM0KhBtGnxctJdqODr9Q>
-    <xmx:d_bDaCVmU7_92oECMDEJ0xBug98yEQNoUVMCF7_KKidaaNeetm2V1w>
-    <xmx:d_bDaBq92NTf5B02NYawdyg3vPEXvKRK5tHjtFRpf6hwJfsAkQT4UQ>
-    <xmx:d_bDaBC4Q5Z2Xf1zJZ9cVaaVIiuOlxfXUK5LV3RSY4jaPhlO67bbnw>
-    <xmx:ePbDaOcHAu91hU1Soo7aA7Q-ChmRb93E-H4hOO33Hz1M9L3uHRNL0M4q>
-Feedback-ID: i5c2e48a5:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Sep 2025 06:31:18 -0400 (EDT)
-Message-ID: <39818613-c10b-4ed2-b596-23b70c749af1@bsbernd.com>
-Date: Fri, 12 Sep 2025 12:31:17 +0200
+	s=arc-20240116; t=1757673101; c=relaxed/simple;
+	bh=XZOmmnTzV/tCeT4NypbEAW/KZ7NsBshSl1ifwWF35Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jThOaX5/1ZrEEdz4iMgjPRNclRlCVcXZiN5s0Or8KFiXWZ8k5gDIygBWfAbPqGlg8gP5QT5VVEOuoFB+hZ16wK8l4XRN4mmWt5oAmtbP0a9PS83v/KLuqGwWFzYc/i8zJL6gesW/R/18Ro9iYotu4msiXsSkn/ODw5NJO+gWGrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=foss.arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=foss.arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DEE516A3;
+	Fri, 12 Sep 2025 03:31:30 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CDAE3F66E;
+	Fri, 12 Sep 2025 03:31:37 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:31:34 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Cristian Marussi <cristian.marussi@arm.com>, arm-scmi@vger.kernel.org,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware: arm_scmi: Simplify printks with pOF format
+Message-ID: <20250912-axiomatic-pumpkin-teal-9c9fbc@sudeepholla>
+References: <20250912092423.162497-2-krzysztof.kozlowski@linaro.org>
+ <c5df4196-b951-4f8e-b2ca-c63fba63d1ee@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Another take at restarting FUSE servers
-To: Luis Henriques <luis@igalia.com>, "Darrick J. Wong" <djwong@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, Miklos Szeredi <miklos@szeredi.hu>,
- Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kevin Chen <kchen@ddn.com>,
- Amir Goldstein <amir73il@gmail.com>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs> <20250731130458.GE273706@mit.edu>
- <20250731173858.GE2672029@frogsfrogsfrogs> <8734abgxfl.fsf@igalia.com>
-From: Bernd Schubert <bernd@bsbernd.com>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <8734abgxfl.fsf@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5df4196-b951-4f8e-b2ca-c63fba63d1ee@linaro.org>
 
-
-
-On 8/1/25 12:15, Luis Henriques wrote:
-> On Thu, Jul 31 2025, Darrick J. Wong wrote:
+On Fri, Sep 12, 2025 at 11:34:53AM +0200, Krzysztof Kozlowski wrote:
+> On 12/09/2025 11:24, Krzysztof Kozlowski wrote:
+> > Print full device node name with %pOF format, so the code will be a bit
+> > simpler.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > ---
+> >  drivers/firmware/arm_scmi/bus.c                | 13 ++++++-------
+> >  drivers/firmware/arm_scmi/transports/mailbox.c |  7 +++----
+> >  2 files changed, 9 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/drivers/firmware/arm_scmi/bus.c b/drivers/firmware/arm_scmi/bus.c
+> > index 24e59ddf85e7..c7698cfaa4e8 100644
+> > --- a/drivers/firmware/arm_scmi/bus.c
+> > +++ b/drivers/firmware/arm_scmi/bus.c
+> > @@ -401,8 +401,8 @@ static void scmi_device_release(struct device *dev)
+> >  
+> >  static void __scmi_device_destroy(struct scmi_device *scmi_dev)
+> >  {
+> > -	pr_debug("(%s) Destroying SCMI device '%s' for protocol 0x%x (%s)\n",
+> > -		 of_node_full_name(scmi_dev->dev.parent->of_node),
+> > +	pr_debug("(%pOF) Destroying SCMI device '%s' for protocol 0x%x (%s)\n",
+> > +		 scmi_dev->dev.parent->of_node,
+> >  		 dev_name(&scmi_dev->dev), scmi_dev->protocol_id,
+> >  		 scmi_dev->name);
 > 
->> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
->>> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
->>>>
->>>> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
->>>> could restart itself.  It's unclear if doing so will actually enable us
->>>> to clear the condition that caused the failure in the first place, but I
->>>> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
->>>> aren't totally crazy.
->>>
->>> I'm trying to understand what the failure scenario is here.  Is this
->>> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
->>> is supposed to happen with respect to open files, metadata and data
->>> modifications which were in transit, etc.?  Sure, fuse2fs could run
->>> e2fsck -fy, but if there are dirty inode on the system, that's going
->>> potentally to be out of sync, right?
->>>
->>> What are the recovery semantics that we hope to be able to provide?
->>
->> <echoing what we said on the ext4 call this morning>
->>
->> With iomap, most of the dirty state is in the kernel, so I think the new
->> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
->> would initiate GETATTR requests on all the cached inodes to validate
->> that they still exist; and then resend all the unacknowledged requests
->> that were pending at the time.  It might be the case that you have to
->> that in the reverse order; I only know enough about the design of fuse
->> to suspect that to be true.
->>
->> Anyhow once those are complete, I think we can resume operations with
->> the surviving inodes.  The ones that fail the GETATTR revalidation are
->> fuse_make_bad'd, which effectively revokes them.
+> Heh, I misread the docs and see now in the testing that my patch changes
+> the behavior. of_node_full_name() is just node name. pOF is full path.
 > 
-> Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
-> but probably GETATTR is a better option.
+> This might be desired or not...
 > 
-> So, are you currently working on any of this?  Are you implementing this
-> new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
-> look at fuse2fs too.
 
-Sorry for joining the discussion late, I was totally occupied, day and
-night. Added Kevin to CC, who is going to work on recovery on our
-DDN side.
+That should be fine. I am in the process of changing this but happy to
+take this for now. We may have to move to fwnode as we are in process of
+adding ACPI support for this. Not finalised yet so it may be a while before
+I tinker with it again.
 
-Issue with GETATTR and LOOKUP is that they need a path, but on fuse
-server restart we want kernel to recover inodes and their lookup count.
-Now inode recovery might be hard, because we currently only have a 
-64-bit node-id - which is used my most fuse application as memory
-pointer.
-
-As Luis wrote, my issue with FUSE_NOTIFY_RESEND is that it just re-sends
-outstanding requests. And that ends up in most cases in sending requests
-with invalid node-IDs, that are casted and might provoke random memory
-access on restart. Kind of the same issue why fuse nfs export or
-open_by_handle_at doesn't work well right now.
-
-So IMHO, what we really want is something like FUSE_LOOKUP_FH, which
-would not return a 64-bit node ID, but a max 128 byte file handle.
-And then FUSE_REVALIDATE_FH on server restart.
-The file handles could be stored into the fuse inode and also used for
-NFS export. 
-
-I *think* Amir had a similar idea, but I don't find the link quickly.
-Adding Amir to CC.
-
-Our short term plan is to add something like FUSE_NOTIFY_RESTART, which
-will iterate over all superblock inodes and mark them with fuse_make_bad.
-Any objections against that?
-
-
-Thanks,
-Bernd
-
-
-
-
-
+-- 
+Regards,
+Sudeep
 
