@@ -1,174 +1,229 @@
-Return-Path: <linux-kernel+bounces-813679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C54EDB5493F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:18:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BF7B5493A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:18:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 737791753FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:18:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB5A37B9429
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683862E9748;
-	Fri, 12 Sep 2025 10:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1AA72F360E;
+	Fri, 12 Sep 2025 10:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ws/VFMWy"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRdsS/HT"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C092E093F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFA32E8B81
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757672057; cv=none; b=VW4sOp28kxV4e0Fyql+B9kUTiBa5YiCD1vJCkcCHdZlyvq0Fqi9s3CfapVY+hh3hnUpvLTIO8Yg/iXAeezl9TUa7r4P3WTMM9pi14fYSLh4h6i8LHrtbKgo7//bDfP/E88ELmunz1ClYp8mb1loZe7B3Jd8SsTo1d8V24JmsRN4=
+	t=1757672016; cv=none; b=aa5IQtCYQeinQXBTiOGPMyv8khgaTS1nkduuKjGNtqi031whiReMV0swYWvHzXCMLBZItsAiVL8EKy2sfgrw9txtODZ/q5ERu6qvoHNsPxvgAJ1mvYxBsdx620/ReJC6eDFyTYjEGCd5y7tlt1rdXcC5qk8NjQYBiSZL+sP7X58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757672057; c=relaxed/simple;
-	bh=WzgTnbK9tuNFXaklXyWAZeptvHxNrHodKB3ayQnobdY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=u/BirYwj0fyyyWuAXJwVDM4v6Qfch5qlLHnb+bI1ww9AYKD95uAZrfI5lLmspcTRlJbCZhizKGNyftYkI8MGPSTUmmzo1b0G2gvk2pc0af8FuqhgRjbXBg4C2V9aWqD6Xz6ESZ6TEnpd5HVTQQ0sN0d5Vb47Djv6GoGBiO7/M1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ws/VFMWy; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1757672016; c=relaxed/simple;
+	bh=/OWtcAZEOcPhx9UUr52r3oPYHKOagu17XGDHuTXXdVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZTlvODkA+YZ5aoplCuSJ4Nn/upEzCayJysuZvzUYobbnQ+d+fn2wLW1i68MlApaxw+XICr53cFcENl23wvxyL2g7G0VWE69MsJpJW+EQrazrdHSfOsTBtnZNHqCiIGLDVVebo4y+Z2wBPybaj/LsBYVQP30JlBg2PgD5ub8KBh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cRdsS/HT; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso12152595e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:14:15 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b0418f6fc27so296005366b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:13:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757672054; x=1758276854; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5PQcDKC/bECgYhflDmBq/roZDN26g7PlEyIKs1aCH60=;
-        b=Ws/VFMWyKXeKQ7SgMMLcgYcrpuKZzHD1Fw4Kl9rgqiE2evOHbNKfgytvA87cFo0B5H
-         Qoh7NYTFiWZpeZVS8EX65bYU8QOSX0NVRhIaW4RcUUwCIKuviT2plVrzwk5Mf/VQdnb1
-         qO/ZqBI8/USRCfNik7RHK80/76te3JgFHbMqHbuK1mP9tbwf1IBiBq9oAs/B8TTP78UV
-         Z2GlQd9djlH7Fk7iCJO5eI+CgFoHxJyDQR21cpvnlTHalw9JElEt1wn/QGDx11RJWOO1
-         uvaTx7JacXHQ+lkBZ3kGqf71lvihet+9guu/zBCfYF7kd0mM2eQ20qPsT51Z+fvp4xjU
-         d+MQ==
+        d=gmail.com; s=20230601; t=1757672012; x=1758276812; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ThoxGb368oKgFs/rr2WTmFtwKNun3Wa7IhqSPfymgb8=;
+        b=cRdsS/HTNUTIgUz7Dkb+4BbNnSd2OEjkhkcALkWs/YyVE27dJuQff64T762FVGquEf
+         +shOsODxQGZ0jYtdCkKyu/u2QXm5XgBOaWYUnwJqkkY0TapfI0k98axI1yzLhlFToncT
+         uyCMKbT6J9qeQrFQqjoDe8i79ezgZSs4DtpMpYPXBlD0xc8H0feLF9NQzpvwGbYTR1d1
+         Fv1x7lI/9Autv3QRTHrKt80ZQUcN+CmXc90slabtf+f7aLXgM06CYRgTfCihWQte+VnM
+         aHRA9ZP9y4WfchjN5PbFoYC4ar82JP647nwgtdmCOTtl62q827yPyDl8slJPJZnP2pPl
+         5d2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757672054; x=1758276854;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5PQcDKC/bECgYhflDmBq/roZDN26g7PlEyIKs1aCH60=;
-        b=o5PtMZXWjkRCDN84cKQCFfPrs7UWgmHJb9DknN1j/bKjWbvkUjCtUd0GxrHQsq03XM
-         QnUl4uS3+gAZ6qrNspA4XqPHGyl6UrcSM843CBrxNK0Is+FFz6X0pX2Zr27Cy0rw6TeE
-         uKkMhuraQEa5SuILJWgiygSv99+LWS5cdkoppjXKvNwcEVzIierqwBkBel3mDejqITV3
-         bY5LFUosaQjpuS2YocCfsUbGc44KbHlTj7CrpIIyAjL8OtnuRfoukUp8un1plhTko0Cb
-         v6paj9FWM1aaXaZNpkUiycz5PYs/eeFLkOuhfVy61G6Nj7PPEEF6Wlz4dYS0WuYgM9rW
-         tpOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvO/LCk9kAtthEkIMVNdwq7og0wfj8p++r8jVQzxdsqG7c7OREdssjtUlJPMfXxCtZlBxf7tPevNNCQ48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQCswlWfKmPNmM4AlgxMwaY9WkOFTjZ+0eqUF8uTC0ahJknMj4
-	idJiZ+qeg5cazAQjjWwCIkdJ1Tg9aISXRLX3EIMWrA3pme7QaBscz00j/leOhA==
-X-Gm-Gg: ASbGnct5yMlvBx2wp3Qj5b+elKIbtgGjm6OL7eoUqKxXfXHmuwwZfiXzf0TGWhCw6A3
-	K3+SjWY38Mt/TLIycMIGOZ8iVfyhs+ZMO6PEy4hz/aqBKr30ZG0RcLVVIx+/dbAa75ayIOgZwrt
-	kTNKdzXha4hxGNf36AkFXJ+tQ6hVp2/bmSE1kp+rz5hZsCpHVF6oKTZfzsJpyRPZMEbUAV4BxMn
-	TBO1ghftsFpP8WNf2u7jyeo8U4/2gI1IuvxoB7mqtiMzQGfw5Ie7SzSuaV3XqC/mmyuFrOBimec
-	BJGV78UxRJFwaaQE5U00QkRGJZRj3zYQdfi4j6bXDralmjan4zNF4yZhYQv6MRv4+TWWv6aue89
-	I7802QGxsKnE1G8w8aCtN76CdLiV1GF5+vGWUiYNv51cV
-X-Google-Smtp-Source: AGHT+IH/9UK+74KXPTnSJovBBUuqH7Dh59JphBjwKJfV2cuUIv0/SQm8MsDxBuEOK1XB9vm/BVZEhw==
-X-Received: by 2002:a05:600c:2249:b0:45d:e54b:fa0c with SMTP id 5b1f17b1804b1-45f2121431amr20057115e9.17.1757672054181;
-        Fri, 12 Sep 2025 03:14:14 -0700 (PDT)
-Received: from ws-linux01 ([2a02:2f0e:c207:b600:978:f6fa:583e:b091])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0372b983sm56542395e9.9.2025.09.12.03.14.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 03:14:13 -0700 (PDT)
-From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Cc: gshahrouzi@gmail.com,
-	Ovidiu Panait <ovidiu.panait.oss@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] staging: axis-fifo: flush RX FIFO on read errors
-Date: Fri, 12 Sep 2025 13:13:22 +0300
-Message-ID: <20250912101322.1282507-2-ovidiu.panait.oss@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250912101322.1282507-1-ovidiu.panait.oss@gmail.com>
-References: <20250912101322.1282507-1-ovidiu.panait.oss@gmail.com>
+        d=1e100.net; s=20230601; t=1757672012; x=1758276812;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ThoxGb368oKgFs/rr2WTmFtwKNun3Wa7IhqSPfymgb8=;
+        b=R0A4/SCwO6MlMgy3P8qUj/CibOxpd/itTSjstHRNtrOgiMxgFpZqy+32V0zFMYEIl9
+         09BdtHKC6H4ZMcKDXZWfAG4RYg6Qlof7puQlY9lcoLldWi0o/tjUixIiwlqvyqdIxvMD
+         jN/zaEjYaIjl+73lSduNWTWZYBzgxLovTQt6ATyVJ2DaO1ABPGixJ3ogXyvRVUFq9WSl
+         XCSsZetZyyHC95YBpdZTff8EtQPPgmIJbtDSuR5Mb/KrZiVuvy8M+3LUNWfZkqW8u7+I
+         /63l5gsE/xgpBSZ22TM/Wrv9nr8YnOc3uC2JE9IhbymClrKyRn7Cs65IPzXZOWkA5wP+
+         KN8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV+0UPdYy/8fT8DT4xg81Ora/pORmtIjMa/5IWIzaeZPO8xjpHWlLXGB9W1SbcJ4JMgtBoVOMs5ydAnB5A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkhNYfJ2wxWOB8Y0OI3W5FCGE0QNitU4RBserQL31Z8OJU5urq
+	QQ1NquX8qssrPYDOhfpFeObg2dCtp/qRVrC9fQULQK/2DgNBg1ZeoKhRa4B2ZVhW
+X-Gm-Gg: ASbGncuHch1FHSqQoKm4/SwMwbh8N/nLVv8tvnaPolvuEBjRKgWs2eIn9V0qu0P25vJ
+	hRkXH3CGAFk39KhE9KYrCRoN4kym35pG0urL+Uy7t4Ux1b7B4U7Bgoc8yOxhLzQK2x0MeO1ovC2
+	xaHlan817g1oLR5B+4ILidPfxqvMCGlo6PispLuVyOjEOAmcQhURbkAE+WDXjQ7+4UnwHnD+RmF
+	SOvnXNmWwPYhoMMeiFbIiTM+68eiksrqe8my5dqltenLVK14I5y1CzGO2rDFIvHsAdT8QWd+1kV
+	bNzmr8Axj9Hc6SC4HstDS127vQ1+Jqc/hNxsld9vQ7KVc2quBCD/1xuz7vx45dwOU+yoXXm8JxE
+	fzjTxhGe/w+63THh/IXzv9iyaO3VTVeUN2HV+Rvh5hjCvoyeIRkYbWWqTHSgDB/85EDbWdJdxRu
+	u5iWhMQd46q8o36XL51r4QWV8ZWpLNatB3f+g0gmR51P2cdNM2RlJ8hnB+C/qar9IxYbUamTbVM
+	i7PwBc8mo0JxJgry0zww/pi7H1Jn6P88D3Iig==
+X-Google-Smtp-Source: AGHT+IFmg+eT81PbiNuQPgY7s2M341XtTM4x4qlGKkFnfABcJKEen0jVYDipX4R0Xf97aWu0aqSmSg==
+X-Received: by 2002:a17:907:3c8d:b0:afe:23e9:2b4d with SMTP id a640c23a62f3a-b07c365d4c1mr242353666b.43.1757672012173;
+        Fri, 12 Sep 2025 03:13:32 -0700 (PDT)
+Received: from ?IPV6:2a02:8388:e103:2700:3587:c16e:ba16:4b22? (2a02-8388-e103-2700-3587-c16e-ba16-4b22.cable.dynamic.v6.surfer.at. [2a02:8388:e103:2700:3587:c16e:ba16:4b22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b32dd408sm336095566b.59.2025.09.12.03.13.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 03:13:31 -0700 (PDT)
+Message-ID: <58758ff1-e7d7-4c47-a513-f65bdf777a6a@gmail.com>
+Date: Fri, 12 Sep 2025 12:13:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: use-after-free in firmware_fallback_sysfs
+To: Russ Weight <russ.weight@linux.dev>,
+ "Lalaev, Andrei" <andrei.lalaev@anton-paar.com>
+Cc: "rafael@kernel.org" <rafael@kernel.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "dakr@kernel.org" <dakr@kernel.org>, "mcgrof@kernel.org"
+ <mcgrof@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>
+References: <AS8PR03MB690125FD99DEC3AF5887AE0DC800A@AS8PR03MB6901.eurprd03.prod.outlook.com>
+ <uotbao55xzmqx6rjzfxq63fzow5nesyqy7gb3illrgkwxrhvee@2wzvsghvk2qe>
+Content-Language: en-GB
+From: Andrei Lalaev <andrey.lalaev@gmail.com>
+In-Reply-To: <uotbao55xzmqx6rjzfxq63fzow5nesyqy7gb3illrgkwxrhvee@2wzvsghvk2qe>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Flush stale data from the RX FIFO in case of errors, to avoid reading
-old data when new packets arrive.
+On 12.09.2025 00:35, Russ Weight wrote:
+> 
+> On Thu, Sep 04, 2025 at 04:58:45AM +0000, Lalaev, Andrei wrote:
+>> Hi,
+>>
+>> We performed a long-term stability test on the LP5562 driver by repeatedly
+>> downloading different LED firmwares using sysfs interface.
+>> And after some time, we see the following "use-after-free" trace on kernel 6.12.11:
+>>
+>> [  274.759115] BUG: KASAN: slab-use-after-free in firmware_fallback_sysfs (include/linux/list.h:153 include/linux/list.h:169 drivers/base/firmware_loader/fallback.c:98 drivers/base/firmware_loader/fallback.c:162 drivers/base/firmware_loader/fallback.c:238)
+>> [  274.766743] Write of size 4 at addr b31d0850 by task kworker/2:2/137
+>> [  274.774680] CPU: 2 UID: 0 PID: 137 Comm: kworker/2:2 Tainted: G         C         6.12.11 #1
+>> [  274.783208] Tainted: [C]=CRAP
+>> [  274.786215] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+>> [  274.792775] Workqueue: events request_firmware_work_func
+>> [  274.798151] Call trace:
+>> [  274.800720] dump_backtrace from show_stack (arch/arm/kernel/traps.c:259)
+>> [  274.805827]  r7:600f0093 r6:600f0093 r5:b19659b4 r4:00000000
+>> [  274.811510] show_stack from dump_stack_lvl (lib/dump_stack.c:122)
+>> [  274.816613] dump_stack_lvl from print_report (mm/kasan/report.c:378 mm/kasan/report.c:488)
+>> [  274.822073]  r7:000031d0 r6:df7dba00 r5:f13bbb20 r4:b31d0850
+>> [  274.827755] print_report from kasan_report (mm/kasan/report.c:603)
+>> [  274.832885]  r10:b2d56c20 r9:cdc89808 r8:00003a98 r7:b0f653ac r6:00000004 r5:00000001
+>> [  274.840744]  r4:b31d0850
+>> [  274.843298] kasan_report from __asan_report_store4_noabort (mm/kasan/report_generic.c:385)
+>> [  274.849804]  r7:b9f72c00 r6:cdc89800 r5:b5d31e00 r4:b5d31e10
+>> [  274.855488] __asan_report_store4_noabort from firmware_fallback_sysfs (include/linux/list.h:153 include/linux/list.h:169 drivers/base/firmware_loader/fallback.c:98 drivers/base/firmware_loader/fallback.c:162 drivers/base/firmware_loader/fallback.c:238)
+>> [  274.863105] firmware_fallback_sysfs from _request_firmware (drivers/base/firmware_loader/main.c:941)
+>> [  274.869862]  r10:f13bbda0 r9:b9f72c80 r8:b19c73d8 r7:00000004 r6:00000000 r5:b5d31e00
+>> [  274.877718]  r4:f13bbd00
+>> [  274.880273] _request_firmware from request_firmware_work_func (drivers/base/firmware_loader/main.c:1196)
+>> [  274.887226]  r10:b9f72e98 r9:b9f72e94 r8:f13bbde0 r7:173ee5d3 r6:00000000 r5:ad2777b0
+>> [  274.895097]  r4:b9f72e80
+>> [  274.897661] request_firmware_work_func from process_one_work (kernel/workqueue.c:3235)
+>> [  274.904613]  r10:00000000 r9:b7d7e1e0 r8:b7d7dd80 r7:d76b53c0 r6:b2013c00 r5:b9f72e80
+>> [  274.912469]  r4:b2371a00
+>> [  274.915024] process_one_work from worker_thread (kernel/workqueue.c:3304 (discriminator 2) kernel/workqueue.c:3391 (discriminator 2))
+>> [  274.920823]  r10:b2371a2c r9:b2371a00 r8:b9f72e84 r7:b2371a2c r6:d76b53dc r5:a546e345
+>> [  274.928678]  r4:00000007
+>> [  274.931234] worker_thread from kthread (kernel/kthread.c:389)
+>> [  274.936179]  r10:f0933ca0 r9:b2371a00 r8:b7f6b800 r7:b019ad18 r6:b2354880 r5:b7d7dd80
+>> [  274.944035]  r4:b2354d00
+>> [  274.946592] kthread from ret_from_fork (arch/arm/kernel/entry-common.S:138)
+>> [  274.951350] Exception stack(0xf13bbfb0 to 0xf13bbff8)
+>> [  274.956435] bfa0:                                     00000000 00000000 00000000 00000000
+>> [  274.964647] bfc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>> [  274.972858] bfe0: 00000000 00000000 00000000 00000000 00000013 00000000
+>> [  274.979508]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:b01ba280
+>> [  274.987365]  r4:b2354d00 r3:00000000
+>>
+>> [  274.992472] Allocated by task 8 on cpu 0 at 273.209883s:
+>> [  274.997814] kasan_save_track (mm/kasan/common.c:48 mm/kasan/common.c:68)
+>> [  274.997858] kasan_save_alloc_info (mm/kasan/generic.c:566)
+>> [  274.997892] __kasan_kmalloc (mm/kasan/common.c:398)
+>> [  274.997926] __kmalloc_cache_noprof (mm/slub.c:4319)
+>> [  274.997957] alloc_lookup_fw_priv (drivers/base/firmware_loader/main.c:131 drivers/base/firmware_loader/main.c:190)
+>> [  274.997993] _request_firmware (drivers/base/firmware_loader/main.c:769 drivers/base/firmware_loader/main.c:899)
+>> [  274.998023] request_firmware_work_func (drivers/base/firmware_loader/main.c:1196)
+>> [  274.998055] process_one_work (kernel/workqueue.c:3235)
+>> [  274.998084] worker_thread (kernel/workqueue.c:3304 (discriminator 2) kernel/workqueue.c:3391 (discriminator 2))
+>> [  274.998112] kthread (kernel/kthread.c:389)
+>> [  274.998149] ret_from_fork (arch/arm/kernel/entry-common.S:138)
+>>
+>> [  274.999686] Freed by task 8 on cpu 0 at 273.230581s:
+>> [  275.004679] kasan_save_track (mm/kasan/common.c:48 mm/kasan/common.c:68)
+>> [  275.004718] kasan_save_free_info (mm/kasan/generic.c:582 (discriminator 1))
+>> [  275.004747] __kasan_slab_free (mm/kasan/common.c:271)
+>> [  275.004782] kfree (mm/slub.c:4601 (discriminator 3) mm/slub.c:4749 (discriminator 3))
+>> [  275.004810] free_fw_priv (drivers/base/firmware_loader/main.c:231)
+>> [  275.004840] release_firmware (drivers/base/firmware_loader/main.c:604 drivers/base/firmware_loader/main.c:1170 drivers/base/firmware_loader/main.c:1166)
+>> [  275.004871] lp55xx_firmware_loaded (drivers/leds/leds-lp55xx-common.c:549) leds_lp55xx_common
+>> [  275.005074] request_firmware_work_func (drivers/base/firmware_loader/main.c:1197)
+>> [  275.005112] process_one_work (kernel/workqueue.c:3235)
+>> [  275.005145] worker_thread (kernel/workqueue.c:3304 (discriminator 2) kernel/workqueue.c:3391 (discriminator 2))
+>> [  275.005174] kthread (kernel/kthread.c:389)
+>> [  275.005212] ret_from_fork (arch/arm/kernel/entry-common.S:138)
+>> [  275.006754] The buggy address belongs to the object at b31d0800 which belongs to the cache kmalloc-128 of size 128
+>> [  275.018610] The buggy address is located 80 bytes inside of freed 128-byte region [b31d0800, b31d0880)
+>> [  275.030938] The buggy address belongs to the physical page:
+>> [  275.036533] page: refcount:1 mapcount:0 mapping:00000000 index:0x0 pfn:0x131d0
+>> [  275.036568] flags: 0x0(zone=0)
+>> [  275.036598] page_type: f5(slab)
+>> [  275.036634] raw: 00000000 b2001400 df9544e0 00000002 00000000 00100010 f5000000 00000001
+>> [  275.036659] page dumped because: kasan: bad access detected
+>>
+>> [  275.038189] Memory state around the buggy address:
+>> [  275.043008]  b31d0700: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>> [  275.049563]  b31d0780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>> [  275.056120] >b31d0800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>> [  275.062669]                                          ^
+>> [  275.067831]  b31d0880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>> [  275.074386]  b31d0900: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
+>> [  275.080938] ==================================================================
+>>
+>> I couldn't find any related patches to fix this issue in upstream, so
+>> I have made the following patch to address this issue, but I have some concerns about it.
+>>
+>> Could someone please provide feedback or insights on this?
+>>
+>> ----
+>>  drivers/base/firmware_loader/main.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+>> index c6664a787..1a49022f4 100644
+>> --- a/drivers/base/firmware_loader/main.c
+>> +++ b/drivers/base/firmware_loader/main.c
+>> @@ -211,6 +211,7 @@ static void __free_fw_priv(struct kref *ref)
+>>  		 (unsigned int)fw_priv->size);
+>>  
+>>  	list_del(&fw_priv->list);
+>> +	list_del(&fw_priv->pending_list);
+> 
+> References to &fw_priv->pending_list in this context would need to
+> be bounded with "#ifdef CONFIG_FW_LOADER_USER_HELPER".
+> 
+> Have you repeated your long-term stability test with this change?
+> 
 
-Commit c6e8d85fafa7 ("staging: axis-fifo: Remove hardware resets for
-user errors") removed full FIFO resets from the read error paths, which
-fixed potential TX data losses, but introduced this RX issue.
+Hi Russ,
 
-Fixes: c6e8d85fafa7 ("staging: axis-fifo: Remove hardware resets for user errors")
-Cc: stable@vger.kernel.org
-Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
----
- drivers/staging/axis-fifo/axis-fifo.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+Yes, sure. I had the test running for 2 days, and no "use-after-free" appeared.
 
-diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
-index c47c6a022402..2c8e25a8c657 100644
---- a/drivers/staging/axis-fifo/axis-fifo.c
-+++ b/drivers/staging/axis-fifo/axis-fifo.c
-@@ -230,6 +230,7 @@ static ssize_t axis_fifo_read(struct file *f, char __user *buf,
- 	}
- 
- 	bytes_available = ioread32(fifo->base_addr + XLLF_RLR_OFFSET);
-+	words_available = bytes_available / sizeof(u32);
- 	if (!bytes_available) {
- 		dev_err(fifo->dt_device, "received a packet of length 0\n");
- 		ret = -EIO;
-@@ -240,7 +241,7 @@ static ssize_t axis_fifo_read(struct file *f, char __user *buf,
- 		dev_err(fifo->dt_device, "user read buffer too small (available bytes=%zu user buffer bytes=%zu)\n",
- 			bytes_available, len);
- 		ret = -EINVAL;
--		goto end_unlock;
-+		goto err_flush_rx;
- 	}
- 
- 	if (bytes_available % sizeof(u32)) {
-@@ -249,11 +250,9 @@ static ssize_t axis_fifo_read(struct file *f, char __user *buf,
- 		 */
- 		dev_err(fifo->dt_device, "received a packet that isn't word-aligned\n");
- 		ret = -EIO;
--		goto end_unlock;
-+		goto err_flush_rx;
- 	}
- 
--	words_available = bytes_available / sizeof(u32);
--
- 	/* read data into an intermediate buffer, copying the contents
- 	 * to userspace when the buffer is full
- 	 */
-@@ -265,18 +264,23 @@ static ssize_t axis_fifo_read(struct file *f, char __user *buf,
- 			tmp_buf[i] = ioread32(fifo->base_addr +
- 					      XLLF_RDFD_OFFSET);
- 		}
-+		words_available -= copy;
- 
- 		if (copy_to_user(buf + copied * sizeof(u32), tmp_buf,
- 				 copy * sizeof(u32))) {
- 			ret = -EFAULT;
--			goto end_unlock;
-+			goto err_flush_rx;
- 		}
- 
- 		copied += copy;
--		words_available -= copy;
- 	}
-+	mutex_unlock(&fifo->read_lock);
-+
-+	return bytes_available;
- 
--	ret = bytes_available;
-+err_flush_rx:
-+	while (words_available--)
-+		ioread32(fifo->base_addr + XLLF_RDFD_OFFSET);
- 
- end_unlock:
- 	mutex_unlock(&fifo->read_lock);
 -- 
-2.50.0
-
+Best regards,
+Andrei Lalaev
 
