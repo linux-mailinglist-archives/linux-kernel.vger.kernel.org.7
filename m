@@ -1,277 +1,115 @@
-Return-Path: <linux-kernel+bounces-814391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43E3B5537A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:28:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B32B5537F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D8B93BB4E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF93AE1111
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B048E22DF9E;
-	Fri, 12 Sep 2025 15:28:02 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6334331353A;
+	Fri, 12 Sep 2025 15:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnLdzByC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F4B21A421
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE76D30B527;
+	Fri, 12 Sep 2025 15:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757690882; cv=none; b=KQ84Sa1IavP1XE23dzC01i7bEpBkNof/CwaLqwMtizTcKw0So7Y1ch0/FKMZvDngtHEiWRLRXD25xEta0p52cwgC0T+xK/JmfMp0tngwoSrPb8cPUMORjmaB5n3kCFEG6ZeMa4hOxITkVUmiMnfixx+7W6EMNhdQOQXPWuae/1M=
+	t=1757690886; cv=none; b=fK2MgVZkaBm6ggUnaEv4/AWZ9CWKp0HpsowokoNdsio638UYtyiFiYf7HIRMG4vHKDdBKx4t+eElCBXzpS+06kG/zgxN1L6MkSRocfqP0jnkdsoM/CjXPyTjkTIb6K7dBmMSGOqSXaHx0+as9kGU5WRmsZwOgAjvF9MXCTmhdYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757690882; c=relaxed/simple;
-	bh=Ich4KrqPFUbEnQGywwwKCnfCdX6kg4ccl6lh+uaHa90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eU+neADee6Xlaam0weQHNJrY2vuFHcQVtLKRlfuP1t6IrPd0YrCZlPgxRvPYgQaFcBqFWop5Fb9CJP1tsUgsdQIP62Pe0+OYx+M/cGQga8v+InFecCL+qYgpkwmjByM78mK3fvPxpX7JbqBMevqZZ8ggfgAAEvMNxqnY0FXHJc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux5gi-0005o5-PB; Fri, 12 Sep 2025 17:27:48 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux5gi-000xIm-1T;
-	Fri, 12 Sep 2025 17:27:48 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux5gi-0032oA-14;
-	Fri, 12 Sep 2025 17:27:48 +0200
-Date: Fri, 12 Sep 2025 17:27:48 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 02/10] dmaengine: imx-sdma: fix spba-bus handling for
- i.MX8M
-Message-ID: <20250912152748.gn66fmmrqyqlqdrb@pengutronix.de>
-References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
- <20250911-v6-16-topic-sdma-v2-2-d315f56343b5@pengutronix.de>
- <aMQ53pZQD4tj+GvN@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1757690886; c=relaxed/simple;
+	bh=HJT2W/XLgduGOfKvUGYrXnc6PKzTr4R+1Hb+LsmTYSo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=RssfxPslK3lldiE4tFu2FUBnADH0tKj0Ib/tvk9NuOcDxqYqcMcBwa/p7YdetI+qFZEcUIFEEuKbvLBnw5+pcq6QUgL8iGyoDD2byi6AdxY1HWkJeBgvBhNz0c1TDj048GK12GP4l1wMYOZjVk0bFoooaT8e54xxC9QsULOvzSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnLdzByC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A79D0C4CEF9;
+	Fri, 12 Sep 2025 15:28:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757690886;
+	bh=HJT2W/XLgduGOfKvUGYrXnc6PKzTr4R+1Hb+LsmTYSo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=tnLdzByCPjTlW5RQ+LYGPdcEcICs9RUF+50bhNZRfHpfNdEw5pCdyV57X19DRYOcm
+	 uvSJl1eS4KGc2BClJccYLOMbVcWC+8wygAdyI1pEgcvAE5mpkiuwt/KEe+25GYMc8m
+	 NnH0Bjk1VLXKZoosdATyuWJdbHPuzFlaJGrXt8l4SxpYTzoi2NGp+OcRBQPDVdCJU9
+	 ye09wGGOIER3xqsDj+O457SyXljR4Tu63dbVBLFx0FGfOOHTZOS7+OyosomHyBkZhL
+	 4Dncj8KRgx5enRt9c3zymLvzThwSZFnjpyowtTIVfabNG9aKPErqncbPkLKVBNzUjq
+	 e5w9uLg8BatrQ==
+Date: Fri, 12 Sep 2025 17:28:03 +0200 (CEST)
+From: Jiri Kosina <jikos@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+cc: Jonathan Denose <jdenose@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+    Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+    Angela Czubak <aczubak@google.com>, Sean O'Brien <seobrien@google.com>, 
+    Benjamin Tissoires <bentiss@kernel.org>
+Subject: Re: [PATCH v3 00/11] HID: Implement haptic touchpad support
+In-Reply-To: <vyhhm3x6nfdfw6gbgluq3sjr6bzamhear7nec6xdi5wfxq7wcz@cx2egj4yr5sp>
+Message-ID: <4267074p-78q9-54p9-8q43-2ro1n03259os@xreary.bet>
+References: <20250818-support-forcepads-v3-0-e4f9ab0add84@google.com> <CAMCVhVOUn-un9N_Bv00RVJ7kAw1O+AHgAHOzSGM6UuMBZVdtYw@mail.gmail.com> <vyhhm3x6nfdfw6gbgluq3sjr6bzamhear7nec6xdi5wfxq7wcz@cx2egj4yr5sp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMQ53pZQD4tj+GvN@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
 
-On 25-09-12, Frank Li wrote:
-> On Thu, Sep 11, 2025 at 11:56:43PM +0200, Marco Felsch wrote:
-> > Starting with i.MX8M* devices there are multiple spba-busses so we can't
-> > just search the whole DT for the first spba-bus match and take it.
-> > Instead we need to check for each device to which bus it belongs and
-> > setup the spba_{start,end}_addr accordingly per sdma_channel.
-> >
-> > While on it, don't ignore errors from of_address_to_resource() if they
-> > are valid.
-> >
-> > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> 
-> I think the below method should be better.
-> 
-> of_translate_address(per_address) == OF_BAD_ADDR to check if belong spba-bus
+On Thu, 4 Sep 2025, Benjamin Tissoires wrote:
 
-The SDMA engine doesn't have to be part of the SPBA bus, please see the
-i.MX8MM for example.
+> > > Angela Czubak (11):
+> > >       HID: add haptics page defines
+> > >       Input: add FF_HAPTIC effect type
+> > >       Input: add INPUT_PROP_HAPTIC_TOUCHPAD
+> > >       HID: haptic: introduce hid_haptic_device
+> > >       HID: input: allow mapping of haptic output
+> > >       HID: haptic: initialize haptic device
+> > >       HID: input: calculate resolution for pressure
+> > >       HID: haptic: add functions handling events
+> > >       Input: MT - add INPUT_MT_TOTAL_FORCE flags
+> > >       HID: haptic: add hid_haptic_switch_mode
+> > >       HID: multitouch: add haptic multitouch support
+> > >
+> > >  Documentation/input/event-codes.rst    |  14 +
+> > >  drivers/hid/Kconfig                    |  11 +
+> > >  drivers/hid/Makefile                   |   1 +
+> > >  drivers/hid/hid-haptic.c               | 580 +++++++++++++++++++++++++++++++++
+> > >  drivers/hid/hid-haptic.h               | 127 ++++++++
+> > >  drivers/hid/hid-input.c                |  18 +-
+> > >  drivers/hid/hid-multitouch.c           |  47 +++
+> > >  drivers/input/input-mt.c               |  14 +-
+> > >  include/linux/hid.h                    |  29 ++
+> > >  include/linux/input/mt.h               |   1 +
+> > >  include/uapi/linux/input-event-codes.h |   1 +
+> > >  include/uapi/linux/input.h             |  22 +-
+> > >  12 files changed, 858 insertions(+), 7 deletions(-)
+> > > ---
+> > > base-commit: 86731a2a651e58953fc949573895f2fa6d456841
+> > > change-id: 20250625-support-forcepads-0b4f74fd3d0a
+> > >
+> > > Best regards,
+> > > --
+> > > Jonathan Denose <jdenose@google.com>
+> > >
+> > Hi all,
+> > 
+> > Please let me know if there is anything else needed from me.
+> > 
+> 
+> Dmitry, I've just re-reviewed and tested this series. I'm fine with it.
+> Can you give us your ack on the input bits?
 
-Regards,
-  Marco
+Dmitry, did you have time to review the input bits, please?
 
-> aips3: bus@30800000 {
-> 	...
->         ranges = <0x30800000 0x30800000 0x400000>,
->                  <0x8000000 0x8000000 0x10000000>;
-> 
->                         spba1: spba-bus@30800000 {
->                                 compatible = "fsl,spba-bus", "simple-bus";
->                                 #address-cells = <1>;
->                                 #size-cells = <1>;
->                                 reg = <0x30800000 0x100000>;
->                                 ranges;
-> 
-> 				...
-> 				sdma1:
-> 
-> };
-> 
-> of_translate_address() will 1:1 map at spba-bus@30800000 spba1.
-> then
-> reach ranges = <0x30800000 0x30800000 0x400000> of aips3
-> 
-> if per_address is not in this range, it should return OF_BAD_ADDR. So
-> needn't parse reg of bus@30800000 at all.
-> 
-> Frank
-> 
-> > ---
-> >  drivers/dma/imx-sdma.c | 58 ++++++++++++++++++++++++++++++++++----------------
-> >  1 file changed, 40 insertions(+), 18 deletions(-)
-> >
-> > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> > index 3ecb917214b1268b148a29df697b780bc462afa4..56daaeb7df03986850c9c74273d0816700581dc0 100644
-> > --- a/drivers/dma/imx-sdma.c
-> > +++ b/drivers/dma/imx-sdma.c
-> > @@ -429,6 +429,8 @@ struct sdma_desc {
-> >   * @event_mask:		event mask used in p_2_p script
-> >   * @watermark_level:	value for gReg[7], some script will extend it from
-> >   *			basic watermark such as p_2_p
-> > + * @spba_start_addr:	SDMA controller SPBA bus start address
-> > + * @spba_end_addr:	SDMA controller SPBA bus end address
-> >   * @shp_addr:		value for gReg[6]
-> >   * @per_addr:		value for gReg[2]
-> >   * @status:		status of dma channel
-> > @@ -461,6 +463,8 @@ struct sdma_channel {
-> >  	dma_addr_t			per_address, per_address2;
-> >  	unsigned long			event_mask[2];
-> >  	unsigned long			watermark_level;
-> > +	u32				spba_start_addr;
-> > +	u32				spba_end_addr;
-> >  	u32				shp_addr, per_addr;
-> >  	enum dma_status			status;
-> >  	struct imx_dma_data		data;
-> > @@ -534,8 +538,6 @@ struct sdma_engine {
-> >  	u32				script_number;
-> >  	struct sdma_script_start_addrs	*script_addrs;
-> >  	const struct sdma_driver_data	*drvdata;
-> > -	u32				spba_start_addr;
-> > -	u32				spba_end_addr;
-> >  	unsigned int			irq;
-> >  	dma_addr_t			bd0_phys;
-> >  	struct sdma_buffer_descriptor	*bd0;
-> > @@ -1236,8 +1238,6 @@ static void sdma_channel_synchronize(struct dma_chan *chan)
-> >
-> >  static void sdma_set_watermarklevel_for_p2p(struct sdma_channel *sdmac)
-> >  {
-> > -	struct sdma_engine *sdma = sdmac->sdma;
-> > -
-> >  	int lwml = sdmac->watermark_level & SDMA_WATERMARK_LEVEL_LWML;
-> >  	int hwml = (sdmac->watermark_level & SDMA_WATERMARK_LEVEL_HWML) >> 16;
-> >
-> > @@ -1263,12 +1263,12 @@ static void sdma_set_watermarklevel_for_p2p(struct sdma_channel *sdmac)
-> >  		swap(sdmac->event_mask[0], sdmac->event_mask[1]);
-> >  	}
-> >
-> > -	if (sdmac->per_address2 >= sdma->spba_start_addr &&
-> > -			sdmac->per_address2 <= sdma->spba_end_addr)
-> > +	if (sdmac->per_address2 >= sdmac->spba_start_addr &&
-> > +			sdmac->per_address2 <= sdmac->spba_end_addr)
-> >  		sdmac->watermark_level |= SDMA_WATERMARK_LEVEL_SP;
-> >
-> > -	if (sdmac->per_address >= sdma->spba_start_addr &&
-> > -			sdmac->per_address <= sdma->spba_end_addr)
-> > +	if (sdmac->per_address >= sdmac->spba_start_addr &&
-> > +			sdmac->per_address <= sdmac->spba_end_addr)
-> >  		sdmac->watermark_level |= SDMA_WATERMARK_LEVEL_DP;
-> >
-> >  	sdmac->watermark_level |= SDMA_WATERMARK_LEVEL_CONT;
-> > @@ -1447,6 +1447,31 @@ static void sdma_desc_free(struct virt_dma_desc *vd)
-> >  	kfree(desc);
-> >  }
-> >
-> > +static int sdma_config_spba_slave(struct dma_chan *chan)
-> > +{
-> > +	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> > +	struct device_node *spba_bus;
-> > +	struct resource spba_res;
-> > +	int ret;
-> > +
-> > +	spba_bus = of_get_parent(chan->slave->of_node);
-> > +	/* Device doesn't belong to the spba-bus */
-> > +	if (!of_device_is_compatible(spba_bus, "fsl,spba-bus"))
-> > +		return 0;
-> > +
-> > +	ret = of_address_to_resource(spba_bus, 0, &spba_res);
-> > +	of_node_put(spba_bus);
-> > +	if (ret) {
-> > +		dev_err(sdmac->sdma->dev, "Failed to get spba-bus resources\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	sdmac->spba_start_addr = spba_res.start;
-> > +	sdmac->spba_end_addr = spba_res.end;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int sdma_alloc_chan_resources(struct dma_chan *chan)
-> >  {
-> >  	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> > @@ -1527,6 +1552,8 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
-> >
-> >  	sdmac->event_id0 = 0;
-> >  	sdmac->event_id1 = 0;
-> > +	sdmac->spba_start_addr = 0;
-> > +	sdmac->spba_end_addr = 0;
-> >
-> >  	sdma_set_channel_priority(sdmac, 0);
-> >
-> > @@ -1837,6 +1864,7 @@ static int sdma_config(struct dma_chan *chan,
-> >  {
-> >  	struct sdma_channel *sdmac = to_sdma_chan(chan);
-> >  	struct sdma_engine *sdma = sdmac->sdma;
-> > +	int ret;
-> >
-> >  	memcpy(&sdmac->slave_config, dmaengine_cfg, sizeof(*dmaengine_cfg));
-> >
-> > @@ -1867,6 +1895,10 @@ static int sdma_config(struct dma_chan *chan,
-> >  		sdma_event_enable(sdmac, sdmac->event_id1);
-> >  	}
-> >
-> > +	ret = sdma_config_spba_slave(chan);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >  	return 0;
-> >  }
-> >
-> > @@ -2235,11 +2267,9 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
-> >  static int sdma_probe(struct platform_device *pdev)
-> >  {
-> >  	struct device_node *np = pdev->dev.of_node;
-> > -	struct device_node *spba_bus;
-> >  	const char *fw_name;
-> >  	int ret;
-> >  	int irq;
-> > -	struct resource spba_res;
-> >  	int i;
-> >  	struct sdma_engine *sdma;
-> >  	s32 *saddr_arr;
-> > @@ -2375,14 +2405,6 @@ static int sdma_probe(struct platform_device *pdev)
-> >  			dev_err(&pdev->dev, "failed to register controller\n");
-> >  			goto err_register;
-> >  		}
-> > -
-> > -		spba_bus = of_find_compatible_node(NULL, NULL, "fsl,spba-bus");
-> > -		ret = of_address_to_resource(spba_bus, 0, &spba_res);
-> > -		if (!ret) {
-> > -			sdma->spba_start_addr = spba_res.start;
-> > -			sdma->spba_end_addr = spba_res.end;
-> > -		}
-> > -		of_node_put(spba_bus);
-> >  	}
-> >
-> >  	/*
-> >
-> > --
-> > 2.47.3
-> >
-> 
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
+
 
