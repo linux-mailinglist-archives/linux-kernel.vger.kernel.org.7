@@ -1,217 +1,186 @@
-Return-Path: <linux-kernel+bounces-814231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BBEFB55154
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:27:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864EAB5514A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F8B15866FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DF195C049D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDE13168E3;
-	Fri, 12 Sep 2025 14:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C003101B2;
+	Fri, 12 Sep 2025 14:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="rMS6PkwE"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v5uVUc/Z";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pEacxfmj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F6F310635
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DA61F92E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:22:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686965; cv=none; b=IIKkY/BMD9AoVJkZiZyZsgt1FitfsQXgTQF0ACZCtWMCi7Pn4OGJbaJLZbEkCx6UyHmUwqcRVBcq/VFxzJzaru3UCJT69UW1MtJme8e5cHbYb74d1U4aDATf+ejwrC+tx5gqkh7AvFhhbD8FygwB/vHvT7nGnd+o8UAgu/WxiNI=
+	t=1757686952; cv=none; b=QfK39FKJtaCJ2Y1E+++/CdcjwCT9Q9q/JHbSscTBRjZ29CznxjFceCUJPwlz/voJ1adSvPJ44GJSA0cfV0rXXREkoSgoRYzitGoOLvgp6TOX9J/oRq8qGVqrP6rRnAxSxPgX9qrfwIov9dpCbZUNWyClh6S3pwPdKACrPyTe96E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686965; c=relaxed/simple;
-	bh=3ySml07X4eIB4Y3wf1ZAXOTQ8QZKIJK+PA15hLAjM0Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fpNsN8sc9kB1qovbmZJVQKUL2gUrdqNTaty7DsiBymo1H8q8c2g/BRKCF1f4EJu49i6OCjV/rUuBsWJaGxKnJmqj8ebtNhBlOpLeP6DZGRV9yGtt8hlUahNafBfnN/e39WN2t3b34nkiBIMPgOl6mkGGadSMbc55eFFRzSCSKfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=rMS6PkwE; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1757686956;
- bh=MDyH5E9yt2KIlNyz+7EVC5IwRslVr8Slgb7f8Q70L2o=;
- b=rMS6PkwE0EjLo0lpGw+TECskQqJjQZpiBHGO7El/4aXydZncMgvTd+tq2xXnGSelxoVafYCnm
- VNhpfdRmk1p/K2JvMiQUY1Y1OAhh2Uhb7OxYrNrrQAzZypHdJmSVPVjJ3Kw58Puv0nMkGYLfIbI
- A2LO1NLBuh5KCtBNH1vGqaPHDhtIeLVLg+WLj/vYtMgN8c7V/W2ALXPy06TqIN6mDV/exCiQcjc
- yerPYv1bywXvBtWSdwGloJ4RbiN8Iup/ysKUihyBV0FRAs4sCqJaDdT+7/0Zv0tHKxZEzOkVmjY
- 4qR7cNfo3o+QTRW5iquRtqEOEW1FHEQt78HSIC43SOMg==
-X-Forward-Email-ID: 68c42c9edab860ac3968c5ee
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 1.2.14
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <6bd28aaf-aafd-436e-8799-fcdb07082660@kwiboo.se>
-Date: Fri, 12 Sep 2025 16:22:17 +0200
+	s=arc-20240116; t=1757686952; c=relaxed/simple;
+	bh=+kONGBz/wgiRVWFuJx4MySvfB+RSpP7jYoWHJ8d4/WU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gmOCLYFLw3MaoP7IcmCLXJeY2gaoALNCKl0iF2c7eBgXvUuxtzMgEEQeADxf1e6bRtHtltDevEm5he23ltn+9U4EVTmOlDSrqTczXWvXVq+yfJRp9zX+yV8sJAqhjXk0MnEc/uN0zC0zoo6JAhErI4AmFs1LnT3MN30T/g5N0j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v5uVUc/Z; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pEacxfmj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757686947;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68BF7jsNwtv28FOkFisnMQyz/hSEG+qt4Wf8uH4/ZCY=;
+	b=v5uVUc/Z/DsOc/AKjOHlWHQWdrEWT5NEhNQYGfm9txID5rFKakBPz0tkutUF1aLtO9nrK/
+	d9d/E648svcEQhgBGg085WeJu+MMwhf76+qQjSqqJqwaIavDs9NdU8lfYXDiBX2TE28KXN
+	iqzBvWHpwpOvNtOqsAF8vHazz9wPGFZJIYs15W4kf9B5ZsyjkS7n8tvyWeLkq+O0ikMOCv
+	H+Sqf1JNOPbpRLb8Y6iZLRkW6NcP6fqF13Bx/x8QORemv7yMW8Wy53WqKFWto15597xCpu
+	NtAK+GYT6nse7IUnKbFLjJE38DhKRXeh5H6QHsxymCMzfGJE/mArj6OmLV+jNw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757686947;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=68BF7jsNwtv28FOkFisnMQyz/hSEG+qt4Wf8uH4/ZCY=;
+	b=pEacxfmj8aj+49PJRLgTgTHPgBHvhN+C4JkCAmA+65RU8rgk3i+UjibCNmJX/xmrSibWAJ
+	XlCZ7n32zNYj8MDw==
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
+ Peter Zijlstra <peterz@infradead.org>, "Paul E. McKenney"
+ <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, x86@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>, Heiko Carstens <hca@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
+ <svens@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [patch V4 28/36] rseq: Switch to fast path processing on exit
+ to user
+In-Reply-To: <cda37321-691d-47db-8b71-7a79dedb4bb6@efficios.com>
+References: <20250908212737.353775467@linutronix.de>
+ <20250908212927.058801648@linutronix.de>
+ <84d9beb2-85e7-4fc0-b403-0514bd87ae8b@efficios.com> <87v7lpq6l7.ffs@tglx>
+ <cda37321-691d-47db-8b71-7a79dedb4bb6@efficios.com>
+Date: Fri, 12 Sep 2025 16:22:26 +0200
+Message-ID: <87frcrrbrx.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: arm64: dts: rockchip: RK356x: Add OTP description.
-To: Andrey Leonchikov <andreil499@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- heiko@sntech.de, dsimic@manjaro.org, dmitry.osipenko@collabora.com,
- tglx@linutronix.de, amadeus@jmu.edu.cn, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250912135542.2304150-1-andreil499@gmail.com>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <20250912135542.2304150-1-andreil499@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi Andrey,
+On Thu, Sep 11 2025 at 16:00, Mathieu Desnoyers wrote:
+> On 2025-09-11 12:47, Thomas Gleixner wrote:
+>> The normal case is that the fault is pretty much guaranteed to happen
+>> because the scheduler places the child on a different CPU and therefore
+>> the CPU/MM IDs need to be updated anyway.
+>
+> Is this "normal case" the behavior you wish the scheduler to have or
+> is it based on metrics ?
 
-On 9/12/2025 3:55 PM, Andrey Leonchikov wrote:
-> Add OTP mapping, can be used on future by drivers.
-> Contain a factory-programmed values for a various peripheral.
-> U-Boot already use "CPU-ID" OTP value ("otp_id" on this patch).
-> All values from original Rockchip sources tree on github.
+I did measurements and that's how I came to the conclusion. I measured
+forks vs. faults in the page which holds the RSEQ memory, aka. TLS.
 
-Please do not blindly copy values from vendor tree, they do not always
-match what is expected for mainline Linux.
+> Here is the result of a sched_fork() instrumentation vs the first
+> pick_next_task that follows for each thread (accounted with schedstats
+> see diff at the end of this email, followed by my kernel config), and we
+> can observe the following pattern with a parallel kernel build workload
+> (64-core VM, on a physical machine that has 384 logical cpus):
+>
+> - When undercommitted, in which case the scheduler has idle core
+>    targets to select (make -j32 on a 64-core VM), indeed the behavior
+>    favors spreading the workload to different CPUs (in which case we
+>    would hit a page fault on return from fork, as you predicted):
+>    543 same-cpu vs 62k different-cpu.
+>    Most of the same-cpu are on CPU 0 (402), surprisingly,
+>
+> - When using all the cores (make -j64 on a 64-core VM) (and
+>    also for overcommit scenarios tested up to -j400), the
+>    picture differs:
+>    27k same-cpu vs 32k different-cpu, which is pretty much even.
 
-There is also a series that adds the required dt-bindings and driver
-support for OTP on RK3566, RK3568 and RK3562 pending at [1]. The
-dt-bindings for rockchip,rk3568-otp is required before we can add any
-otp node to the device tree.
+Sure. In overcommit there is obviously a higher probability to stay on
+the same CPU.
 
-Also we should place any nvmem cells inside a nvmem-layout node.
+> This is a kernel build workload, which consist mostly of
+> single-threaded processes (make, gcc). I therefore expect the
+> rseq mm_cid to be always 0 for those cases.
 
-[1] https://lore.kernel.org/all/20250415103203.82972-1-kever.yang@rock-chips.com/
+Sure, but that does not mean the CPU stays the same.
 
-Regards,
-Jonas
+>> The only cases where this is not true, are when there is no capacity to
+>> do so or on UP or the parent was affine to a single CPU, which is what
+>> the child inherits.
+>
+> Wrong. See above.
 
-> 
-> Signed-off-by: Andrey Leonchikov <andreil499@gmail.com>
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-> index fd2214b6fad4..74523efa8ecf 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk356x-base.dtsi
-> @@ -1057,6 +1057,111 @@ rng: rng@fe388000 {
->  		status = "disabled";
->  	};
->  
-> +	otp_ns: otp@fe38c000 {
-> +		compatible = "rockchip,rk3568-otp";
-> +		reg = <0x00 0xfe38c000 0x00 0x4000>;
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		clocks = <&cru CLK_OTPC_NS_USR>,
-> +			<&cru CLK_OTPC_NS_SBPI>,
-> +			<&cru PCLK_OTPC_NS>,
-> +			<&cru PCLK_OTPPHY>;
-> +		clock-names = "usr", "sbpi", "apb", "phy";
-> +		resets = <&cru SRST_OTPPHY>;
-> +		reset-names = "otp_phy";
-> +
-> +		cpu_code: cpu-code@2 {
-> +			reg = <0x02 0x02>;
-> +		};
-> +
-> +		specification_serial_number: specification-serial-number@7 {
-> +			reg = <0x07 0x01>;
-> +			bits = <0x00 0x05>;
-> +		};
-> +
-> +		otp_cpu_version: cpu-version@8 {
-> +			reg = <0x08 0x01>;
-> +			bits = <0x03 0x03>;
-> +		};
-> +
-> +		mbist_vmin: mbist-vmin@9 {
-> +			reg = <0x09 0x01>;
-> +			bits = <0x00 0x04>;
-> +		};
-> +
-> +		otp_id: id@a {
-> +			reg = <0x0a 0x10>;
-> +		};
-> +
-> +		cpu_leakage: cpu-leakage@1a {
-> +			reg = <0x1a 0x01>;
-> +		};
-> +
-> +		log_leakage: log-leakage@1b {
-> +			reg = <0x1b 0x01>;
-> +		};
-> +
-> +		npu_leakage: npu-leakage@1c {
-> +			reg = <0x1c 0x01>;
-> +		};
-> +
-> +		gpu_leakage: gpu-leakage@1d {
-> +			reg = <0x1d 0x01>;
-> +		};
-> +
-> +		core_pvtm: core-pvtm@2a {
-> +			reg = <0x2a 0x02>;
-> +		};
-> +
-> +		cpu_tsadc_trim_l: cpu-tsadc-trim-l@2e {
-> +			reg = <0x2e 0x01>;
-> +		};
-> +
-> +		cpu_tsadc_trim_h: cpu-tsadc-trim-h@2f {
-> +			reg = <0x2f 0x01>;
-> +			bits = <0x00 0x04>;
-> +		};
-> +
-> +		gpu_tsadc_trim_l: npu-tsadc-trim-l@30 {
-> +			reg = <0x30 0x01>;
-> +		};
-> +
-> +		gpu_tsadc_trim_h: npu-tsadc-trim-h@31 {
-> +			reg = <0x31 0x01>;
-> +			bits = <0x00 0x04>;
-> +		};
-> +
-> +		tsadc_trim_base_frac: tsadc-trim-base-frac@31 {
-> +			reg = <0x31 0x01>;
-> +			bits = <0x04 0x04>;
-> +		};
-> +
-> +		tsadc_trim_base: tsadc-trim-base@32 {
-> +			reg = <0x32 0x01>;
-> +		};
-> +
-> +		cpu_opp_info: cpu-opp-info@36 {
-> +			reg = <0x36 0x06>;
-> +		};
-> +
-> +		gpu_opp_info: gpu-opp-info@3c {
-> +			reg = <0x3c 0x06>;
-> +		};
-> +
-> +		npu_opp_info: npu-opp-info@42 {
-> +			reg = <0x42 0x06>;
-> +		};
-> +
-> +		dmc_opp_info: dmc-opp-info@48 {
-> +			reg = <0x48 0x06>;
-> +		};
-> +
-> +		remark_spec_serial_number: remark-spec-serial-number@56 {
-> +			reg = <0x56 1>;
-> +			bits = <0 5>;
-> +		};
-> +	};
-> +
->  	i2s0_8ch: i2s@fe400000 {
->  		compatible = "rockchip,rk3568-i2s-tdm";
->  		reg = <0x0 0xfe400000 0x0 0x1000>;
+Huch? You just confirmed what I was saying. It's not true for
+overcommit, i.e. there is no capacity to do place it on a different CPU
+right away.
 
+> Moreover, a common userspace process execution pattern is fork followed
+> by exec, in which case whatever page faults happen on fork become
+> irrelevant as soon as exec replaces the entire mapping.
+
+That's correct, but for exec to happen it needs to complete the fork
+first and go out to user space to do the exec without touching TLS and
+without being placed on a different CPU, right?
+
+So again, that depends on the ability of placement where this ends up.
+
+>> the fault will happen in the fast path first, which means the exit code
+>> has to go another round through the work loop instead of forcing the
+>> fault right away on the first exit in the slowpath, where it can be
+>> actually resolved.
+>
+> I think you misunderstood my improvement suggestion: I do _not_
+> recommend that we pointlessly take the fast-path on fork, but rather
+> than we keep the cached cpu_cid value (from the parent) around to check
+> whether we actually need to store to userspace and take a page fault.
+> Based on this, we can choose whether we use the fast-path or go directly
+> to the slow-path.
+
+That's not that trivial because you need extra an extra decision in the
+scheduler to take the slowpath based on information whether that's the
+first schedule and change after fork so the scheduler can set either
+TIF_RSEQ or NOTIFY along with the slowpath flag.
+
+But that's just not worth it. So forcing the slowpath after fork seemed
+to be a sensible thing to do.
+
+Anyway, I just took the numbers for a make -j128 build on a 64CPU
+systems again with the force removed. I have to correct my claim about
+vast majority for that case, but 69% of forked childs which fault in the
+TLS/RSEQ page before exit or exec is definitely not a small number.
+
+The pattern, which brought me to actually force the slowpath
+unconditionally was:
+
+  child()
+  ...
+  return to user:
+
+    fast_path -> faults
+    slow_path -> faults and handles the fault
+    fast_path    (usually a NOOP, but not necessarily)
+    done
+
+Though I'm not insisting on keeping the fork force slowpath mechanics.
+
+As we might eventually agree on, it depends on the workload and the
+state of the system, so the milage may vary pretty much.
+
+Thanks,
+
+        tglx
 
