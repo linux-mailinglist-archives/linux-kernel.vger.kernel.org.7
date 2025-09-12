@@ -1,230 +1,134 @@
-Return-Path: <linux-kernel+bounces-813318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D69DB5437C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:06:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E43B5437F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 009BA7B1185
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:05:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9F0B1C81E38
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336D22BCF5D;
-	Fri, 12 Sep 2025 07:06:33 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646B129D268;
+	Fri, 12 Sep 2025 07:08:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFfgNx42"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42EB28689C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20439299A8E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757660792; cv=none; b=fUQuT6iY35/OLtYGE5TazvMkGxEWd1bwkFplkX3LTOVBverfOY7fYYQeLNTnH8HWsJYRyimSKPjEYoINmzam0ipfAa5hoSTzbv75SjtShFpsrB5MT72Sr2SxJw27c0ZHXuORmOQPjqE6u5wiW1r4iG7JP/VzChtsyEU8Dakp8s0=
+	t=1757660889; cv=none; b=omD1N1jNLW+e46YN46Ckl0Vlozx87scsdkmPNOZBOYBmKkxoZycOfR/9KA+uA++lnOaiV1e+PQeMbTkIao0b8tGPkubSAHDej1iDPYWT+nXbHD78pl3XcuEBAyYQxsl0FQoeMUG/DGMqLBkjQA22ilXH3M/NL/a8QwREEiZ6V5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757660792; c=relaxed/simple;
-	bh=Y4aiKmvWkx6G6By0TM3doDi8LDZzC+XcCJeBWIo4Jo0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uawEoZm41Vw3ErTu/N/AJBuceCEXwMB8PVNoW0y8xIa112MafMkjR4Tpm8KTjVa1OJS/WSbM52nRFKqluYqb30v2bTExawH2Fd6jiVhvCGgUYywdPop0N4qFzx9zVLXuIagoLwEai6CGAtf4pkYzx6RPWjoVy64mgNbSh9dLGrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-40f7be8ecf2so42180005ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:06:30 -0700 (PDT)
+	s=arc-20240116; t=1757660889; c=relaxed/simple;
+	bh=W7sa4dPPTPYoYuKBZuN8JhwzRLpV6rUI5E+79YIK4mc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=t4gUINHLCym55oPNYER1gMhUca4mneq6ALyC8qhzuGkxkH6gVTttQ6iiulU790zQQYg+ABn23tJxivI8Rfp+u1nu8YpOGroe6otKjszcsIOlm1zObiEN201vVDUxtv5iGRmO9R5e9AcnsqpcbubD8Ptj8dakq/SO1JLVaYb4cwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFfgNx42; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-336c79c89daso13619891fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:08:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757660886; x=1758265686; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W7sa4dPPTPYoYuKBZuN8JhwzRLpV6rUI5E+79YIK4mc=;
+        b=JFfgNx42pHrehxboUrLkwAHNW1nPOCdRvZ+7dO5Pdx9CZF4ce3nF8+F9jCdnRjsmjo
+         XZ3S9PJBuQzuL4H7uv0iGjeBeGXad6i1lZ7icaf+IRQDo06hgSc830pVPUY//t5/KU2u
+         iD9onufV1WGWLTmRk+poRz4r3yTQAnlEYB2i9ZlvtDjphfF1zqO0/Q/pQjSgaQTEs5JX
+         rISfc33TOzb0fLtM2+wyiAVl6uv8XxxO8e5FS/rOQJylNIzCBuqj91dvk7AHJeLe0Uqf
+         gs5jPip47+/eH/ll7eft30ru2aoq4ciRaYF4W+qnVciWGTktbYRJI0YlvuvCcW58HjcS
+         i28g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757660790; x=1758265590;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pZ7NEZlOFij2ci+qf76F0pjCJoN+xDm7sESWeyA4yO4=;
-        b=uisRor8/hf0GSaNqihXMl0JjUFSgOC3jJYhbU5euUUfNoxHYqoq9pq+3Jo5TxV6s6m
-         joO1Uxf11vuXf3kyGcDd//gHhuSwiua5dcU80WdMcOtpc3e60JbYMFqXA2Jcod0IOelz
-         V8d9QMej+c9pnILpY4xV4FhtUrDf3tAeY32Vx0KBNwTN2HPMMU9wmXXgV//mM06WXsjp
-         IenOoJWbDcnNLoYd8d7NWm787A0GDFFke/9Go5SndmtzwEh5/HGK2JoU4yTr6yw55r08
-         QJtWIEgAWkmkSW7SsGziLif7mOqQEqRTLzTTVyu1fwvh6izVd1QTeG7NHf7N9qV5HVmU
-         xHBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaVHw4szTKNQKP/SVem21/XX0uULaeL3sKzwL0fNG/ucPdXZGF/LSZDiotY5NfJoBXk20AjM061uXNgj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcZDuCaAwJhoNBsgd73F5cCKkcSoiX2GV1Fedu781BD7E4UJ7q
-	m08w/fSH1WYXSqJVfaQ2uyH2mavoZ+H3TCvUyz7FTuuieo2jPjuxW9YZ4oJD8tZRPDa95E/lZw8
-	I+0btTLh7PvXwdYNHz4LEX0Btf+pioskObinyHa+reun6l/uYIGO/c+JPCfE=
-X-Google-Smtp-Source: AGHT+IEIeJcB9JZNOK9zlUZv8PEScGn1I+fmElu+psW/Oq/4czoskpL+2NFF0w+o3Dm6EhRrsyv3rYU4tggTZcXvyhWcUHS01SCX
+        d=1e100.net; s=20230601; t=1757660886; x=1758265686;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W7sa4dPPTPYoYuKBZuN8JhwzRLpV6rUI5E+79YIK4mc=;
+        b=o4oD0w3vVgdAaRBKwje0bZ8rDPfsMNU3Npo4Z+nzT4bP/r3/Nbz5L2E6SNKKy6o8/4
+         7BnlFQWl83N7QVsakdqSihE3eEm6QvDYJE1vWor8GvtgPFDBiGvvTcNGR2jJhQEfo9P7
+         lPQC359XohEqRNjhzniAhIlvtNeWNnhA2ZpaGKZULURohfMH/ZmIz76p3v3hyopw3b+K
+         io6WwB2PxuymgcEkRXQG9VoZE6jbYdeFnhzv4/hbWrlLiebVBNQclK3NvZiWOrwQKngw
+         NVzPBHyYqAwyC1ucxWBmIQWXnd/mhjaJ0VCTMjlahJvfDh6gexOADILriAsmPXxtRxjt
+         lQeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWh3t+xLyHGHPG9Gh/1CB9WrB8+3lmWtf/xeKlbYf1idH6x6TN0xW4zRpk+iZYaQlPgiwKrkyCJHSwS8+4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFuZFc6MH2plq6q4Z+LFafjPqEXym6eq6y8IcwiUxFrON0GeZQ
+	Q0DD4ximMC+Xqdpwvcwcz0Ge9hQ4FF6vieA5oM2wcpflmslmEQsjQBjEhhPCezl+qPgMEftovUC
+	jx7Mi6jrixTZJuBb0+OqNTONuJAnCTGWSZbeznpyvOA==
+X-Gm-Gg: ASbGncvgyKYkKBRgmPnlgMxpJvPVIji0kM0k70UEQgriC9fDR1Aw72hgbCUDSlpK5tK
+	25psnPYmPG2hA5qSlFTbV+aaefsyLDlxnQTYEiLDUco+ek2DfT3DKLVYjnxJ4uKmNGbxZi2R8u6
+	10K3vWXM0gmsEzTlXYKJnX0pZPZpve/qLifaAlejsqM+18pxHC1s6cRzGRfSO1TxYh1UCV61fhh
+	aop1kNUNwH/CLdMHA==
+X-Google-Smtp-Source: AGHT+IG0a/RzAkySA0zv4GtRtoMgb7fMz40QqFaDmGNUnRd1h2GrriKeQPDg7VZPJxieR37sFPCZyvmxOEUrMUgnUno=
+X-Received: by 2002:a05:651c:542:b0:32a:6aa0:2173 with SMTP id
+ 38308e7fff4ca-3513fc37bd3mr5450921fa.20.1757660885920; Fri, 12 Sep 2025
+ 00:08:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18c8:b0:416:d8ba:8aff with SMTP id
- e9e14a558f8ab-4209e64b5f4mr33903055ab.11.1757660789887; Fri, 12 Sep 2025
- 00:06:29 -0700 (PDT)
-Date: Fri, 12 Sep 2025 00:06:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c3c675.050a0220.2ff435.0354.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_trans_update_by_path (2)
-From: syzbot <syzbot+e7b9dfa79acffd3aabdd@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20250831-gk20a-devfreq-v1-1-c25a8f1169a8@gmail.com>
+ <4f3d9122f3fe552f94827b83a7dce5d3bbdc23e2.camel@redhat.com>
+ <CALHNRZ-h2ee5pyOx2YDDBDQzFnXxDFX5EzhjX5+DT25UbKj1MQ@mail.gmail.com> <rvfjkkpsqvk3uedaahzhwrao7bgnxvbn7hdm6goa2bn6co7ctk@2hbiwwvn6y2j>
+In-Reply-To: <rvfjkkpsqvk3uedaahzhwrao7bgnxvbn7hdm6goa2bn6co7ctk@2hbiwwvn6y2j>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Fri, 12 Sep 2025 02:07:54 -0500
+X-Gm-Features: Ac12FXwznuijRqzCnopDIstfQghwKQCFmHybp4tbVUQN04WRkgdFV7WmBtzwMqA
+Message-ID: <CALHNRZ_hZ5rjGpt4rDmMvxcBBcW2fK6Q2Z_1oKzj+eBi6U-1+g@mail.gmail.com>
+Subject: Re: [PATCH] drm/nouveau: Support devfreq for Tegra
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Tue, Sep 9, 2025 at 7:05=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
+.com> wrote:
+>
+> On Sat, Sep 06, 2025 at 08:01:27PM -0500, Aaron Kling wrote:
+> [...]
+> > I should note that I have only actively tested this on gm20b and
+> > gp10b. I am currently unable to get nouveau running on any gk20a
+> > device I own. I am trying to target consumer devices such as the
+> > shield tablet, which use the android bootloader. I can boot the kernel
+> > just fine and tegra-drm works as well, however when nouveau tries to
+> > probe, it hangs the first time it tries to access a register. I have
+> > not yet been able to figure out why.
+>
+> These types of hangs typically indicate that the hardware is not powered
+> on, not clocked or in reset. It's odd that it would hang during register
+> access on gk20a because nothing significant has changed in any of the
+> related drivers, as far as I know.
+>
+> One thing that you could try is passing the clk_ignore_unused and
+> pd_ignore_unused command-line parameters when booting the kernel. If it
+> works with those, try finding out which one of them is causing things to
+> break to narrow down what we need to fix.
 
-syzbot found the following issue on:
+The ignore_unused params didn't make a difference, but this got me
+looking closer at the power rails. I noticed that vdd-gpu for the
+jetson-tk1 is set to always-on for mainline, which it is not on the
+downstream kernel. Mirroring that to ardbeg resulted in nouveau
+successfully probing. One of my other devices needed a pwm-regulator
+for vdd-gpu, after which it also probes as expected. I will need to
+double check the rest of my devices as well. Is there a known reason
+why if vdd-gpu is a pmic regulator, it needs to be always-on, or is
+this another unsolved mystery?
 
-HEAD commit:    02ffd6f89c50 Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14789642580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
-dashboard link: https://syzkaller.appspot.com/bug?extid=e7b9dfa79acffd3aabdd
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+This change looks to be working okay on gk20a. It does a couple
+transitions on startup. I'm having other issues getting full rendering
+started, though. Kasan slab-out-of-bounds in nvkm_falcon_v1_load_imem
+when drm_hwcomposer tries to start up. Looking into that separately
+now, but that shouldn't block any of my open patches.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-02ffd6f8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f0aa130ecc52/vmlinux-02ffd6f8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3649569ef2fb/bzImage-02ffd6f8.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e7b9dfa79acffd3aabdd@syzkaller.appspotmail.com
-
- done
-bcachefs (loop0): check_alloc_info...
-bcachefs (loop0): hole in alloc btree missing in freespace btree
-  device 0 buckets 25-26, fixing
-bcachefs (loop0): bucket incorrectly unset in need_discard btree
-  u64s 13 type alloc_v4 0:29:0 len 0 ver 0: 
-    gen 0 oldest_gen 0 data_type need_discard
-    journal_seq_nonempty 1
-    journal_seq_empty    0
-    need_discard         1
-    need_inc_gen         1
-    dirty_sectors        0
-    stripe_sectors       0
-    cached_sectors       0
-    stripe               0
-    stripe_redundancy    0
-    io_time[READ]        1
-    io_time[WRITE]       1
-    fragmentation     0
-    bp_start          8
-  , fixing
-bcachefs (loop0): hole in alloc btree missing in freespace btree
-  device 0 buckets 30-31, fixing
-bcachefs (loop0): hole in alloc btree missing in freespace btree
-  device 0 buckets 33-34, fixing
-bcachefs (loop0): hole in alloc btree missing in freespace btree
-  device 0 buckets 37-38, fixing
-bcachefs (loop0): hole in alloc btree missing in freespace btree
-  device 0 buckets 42-47, fixing
-bcachefs (loop0): hole in alloc btree missing in freespace btree
-  device 0 buckets 48-50, fixing
-bcachefs (loop0): hole in alloc btree missing in freespace btree
-  device 0 buckets 51-120, fixing
- done
-bcachefs (loop0): check_lrus... done
-bcachefs (loop0): check_backpointers_to_extents... done
-bcachefs (loop0): check_extents_to_backpointers...
-bcachefs (loop0): scanning for missing backpointers in 5/128 buckets
- done
-bcachefs (loop0): check_inodes... done
-bcachefs (loop0): resume_logged_ops... done
-bcachefs (loop0): delete_dead_inodes... done
-bcachefs (loop0): done starting filesystem
-bcachefs (loop0): requested incompat feature 1.16: reflink_p_may_update_opts currently not enabled, allowed up to 1.16: reflink_p_may_update_opts
-  set version_upgrade=incompat to enable
-bcachefs (loop0): (disconnected) offset 0: write error: __bch2_write(): insufficient_devices
-bcachefs (loop0): pointer to missing indirect extent in (disconnected) offset 0: -4096
-  u64s 7 type reflink_p 4104:8:U32_MAX len 8 ver 0: idx 0 front_pad 0 back_pad 0
-  missing reflink btree range 0-8, fixing
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_update.c:410!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5358 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_trans_update_by_path+0x1f2b/0x1f30 fs/bcachefs/btree_update.c:410
-Code: fd 90 0f 0b e8 46 86 8f fd 90 0f 0b e8 3e 86 8f fd 90 0f 0b e8 36 86 8f fd 90 0f 0b e8 2e 86 8f fd 90 0f 0b e8 26 86 8f fd 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3
-RSP: 0018:ffffc9000d3c66c8 EFLAGS: 00010283
-RAX: ffffffff8430488a RBX: 0000000000004000 RCX: 0000000000100000
-RDX: ffffc9000e162000 RSI: 00000000000554a7 RDI: 00000000000554a8
-RBP: ffff888055bfa4d8 R08: ffff88800032c880 R09: 0000000000000002
-R10: 0000000000000006 R11: 0000000000000002 R12: 0000000000000000
-R13: 1ffff1100ab7f49b R14: dffffc0000000000 R15: ffff888055bfa4d8
-FS:  00007f461eb3d6c0(0000) GS:ffff88808d00a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f461a1f4fc8 CR3: 0000000043e03000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- bch2_trans_update_ip+0x9a6/0x1db0 fs/bcachefs/btree_update.c:531
- bch2_trans_update fs/bcachefs/btree_update.h:123 [inline]
- bch2_btree_insert_nonextent fs/bcachefs/btree_update.c:625 [inline]
- bch2_trans_update_extent fs/bcachefs/btree_update.c:321 [inline]
- bch2_trans_update_ip+0x17ef/0x1db0 fs/bcachefs/btree_update.c:503
- bch2_trans_update fs/bcachefs/btree_update.h:123 [inline]
- bch2_btree_insert_trans+0x1cd/0x330 fs/bcachefs/btree_update.c:637
- bch2_indirect_extent_missing_error+0xd2d/0x11b0 fs/bcachefs/reflink.c:239
- bch2_lookup_indirect_extent+0x38d/0x5c0 fs/bcachefs/reflink.c:279
- trans_trigger_reflink_p_segment fs/bcachefs/reflink.c:308 [inline]
- __trigger_reflink_p+0x395/0x19c0 fs/bcachefs/reflink.c:419
- bch2_trigger_reflink_p+0x1ea/0x3a0 fs/bcachefs/reflink.c:454
- run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:-1 [inline]
- bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:554 [inline]
- __bch2_trans_commit+0xa81/0x8870 fs/bcachefs/btree_trans_commit.c:1023
- bch2_trans_commit fs/bcachefs/btree_update.h:241 [inline]
- bch2_inode_delete_keys+0x525/0x700 fs/bcachefs/inode.c:1115
- bch2_inode_rm+0x282/0x820 fs/bcachefs/inode.c:1146
- bch2_evict_inode+0x220/0x520 fs/bcachefs/fs.c:2182
- evict+0x504/0x9c0 fs/inode.c:810
- __dentry_kill+0x209/0x660 fs/dcache.c:669
- dput+0x19f/0x2b0 fs/dcache.c:911
- __fput+0x68e/0xa70 fs/file_table.c:476
- task_work_run+0x1d1/0x260 kernel/task_work.c:227
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f461dd8eba9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f461eb3d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: fffffffffffffffb RBX: 00007f461dfd5fa0 RCX: 00007f461dd8eba9
-RDX: 0000000000141042 RSI: 0000200000000040 RDI: ffffffffffffff9c
-RBP: 00007f461de11e19 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f461dfd6038 R14: 00007f461dfd5fa0 R15: 00007fff274d40e8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_trans_update_by_path+0x1f2b/0x1f30 fs/bcachefs/btree_update.c:410
-Code: fd 90 0f 0b e8 46 86 8f fd 90 0f 0b e8 3e 86 8f fd 90 0f 0b e8 36 86 8f fd 90 0f 0b e8 2e 86 8f fd 90 0f 0b e8 26 86 8f fd 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3
-RSP: 0018:ffffc9000d3c66c8 EFLAGS: 00010283
-RAX: ffffffff8430488a RBX: 0000000000004000 RCX: 0000000000100000
-RDX: ffffc9000e162000 RSI: 00000000000554a7 RDI: 00000000000554a8
-RBP: ffff888055bfa4d8 R08: ffff88800032c880 R09: 0000000000000002
-R10: 0000000000000006 R11: 0000000000000002 R12: 0000000000000000
-R13: 1ffff1100ab7f49b R14: dffffc0000000000 R15: ffff888055bfa4d8
-FS:  00007f461eb3d6c0(0000) GS:ffff88808d00a000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005576da418660 CR3: 0000000043e03000 CR4: 0000000000352ef0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Aaron
 
