@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-813480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D7CB5460A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:54:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C98B54610
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:56:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBC3017648F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:54:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6AACAA5B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4132326D4EF;
-	Fri, 12 Sep 2025 08:54:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA5426E708;
+	Fri, 12 Sep 2025 08:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fMx3Nc6b"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IveBiTgu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E47325FA1D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B511853
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:55:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757667268; cv=none; b=OUlCGNsvZ9XfvkAvgMqu1g6zvslG2vUAWdRNlKAXbKgdxNQiYNCzzu9XFf61aA4eSWAjTjXee9YDVjSqV3EPOloQSA+vwtCnRxvbeUixgcvCnYeFU2ITHn/ocI2r9N8wzaCH491EgUezrX6r+AaSO6XyLtq9/r9/04IjFUvqegg=
+	t=1757667358; cv=none; b=eVy9JKlwdGQz8XqX0WIua58L7sy4w5cUYXxf2vybxOFe6nwTz5vQ7BOSFttjRUji92v1lk5f0QfE/C2ce5CKmBYIbj7fp9hGq41JQV8oT/9KvhcRt636INR+fFLmc/8W9DHHyBOUnde2NGs4XdxzHbi7mYb6jLHe/Gbl5HzUFVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757667268; c=relaxed/simple;
-	bh=8PbhAdsnDNE8wVEk5dE0k09LJKtm/1XBtQQa41DMYFo=;
+	s=arc-20240116; t=1757667358; c=relaxed/simple;
+	bh=d3ohSVyJyux+cigmtzOw8uxF+aWAcNz6BlH9SE0RsNc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aR7XF2mSSLBanG/liankr9M92n7qAGdh2/jhSrk6RxjlEmxWHYq63wMFWocilrzE6/dlj0idBQuAfwwLHWu5nP6AIutDVlbD7tQWWavJIhKweeAfOqgQnpQ2suQbrnAIAvzbBXZVAjP9IsNKH+7YzNc5NkD2A20bqOPvaumnOc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fMx3Nc6b; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=MEHmtGDJL1j5MXt1cWhe2FicU5BUqooo2V7VW6BKeCcHMnCgKpVjx9xBgaxd1AuzJVaBBq+ELF9kVR2dnN3jqWDP9l+AfvA97uwFFpVFFhSTU/fY+f0bXNithIEgrX+4dukK/LEg1hvOXzxpF5NwYYhMRf0edb/WWDK0b8xW9Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IveBiTgu; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757667265;
+	s=mimecast20190719; t=1757667356;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=a24yalJ9UBENITTj+pl79Bqmf3DrH7vWpN1mkZyCn+k=;
-	b=fMx3Nc6bMxZU7CYGva8QjtAx4/MaCgfkjaRAigRKN9fzSs9W2ETqPDwHjaCt8NmdVW4WYn
-	4IS4zF+qqRzC0Yu22hfBr6Gf4x/vpqBPgd7Rb/AOPrKNHWHv6eGH6EtIhWVWNlJKvI1fqL
-	3ShpKvlu3YAwzL7DitfE7IXErSlaszM=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=yhSXL+2pa9oDbDGRuQ4gQlpl18vQ+30/sPKc3K6z7Uo=;
+	b=IveBiTgu6K6wb46I3mtmTdpkQZdEaqeL7kwT/a8yxdSlKW8E78iZo7pxHlYZUQtPHxFiux
+	ab9FzjtoPCb2eSDilf1UonpvzWM9HIJYBUUXLpll/e4fZlMu3/EBp+6NQjhHgc7kmlbz7v
+	K1OjrPcQbN3bxuuhO2kLH+8V/cZFQEk=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-307-Xe5577u7NMumhFE4GgklHQ-1; Fri, 12 Sep 2025 04:54:23 -0400
-X-MC-Unique: Xe5577u7NMumhFE4GgklHQ-1
-X-Mimecast-MFC-AGG-ID: Xe5577u7NMumhFE4GgklHQ_1757667262
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45b986a7b8aso13245615e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:54:22 -0700 (PDT)
+ us-mta-640-orWgfqsjNr-S5kfSwYB20Q-1; Fri, 12 Sep 2025 04:55:54 -0400
+X-MC-Unique: orWgfqsjNr-S5kfSwYB20Q-1
+X-Mimecast-MFC-AGG-ID: orWgfqsjNr-S5kfSwYB20Q_1757667353
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45dd9a66c3fso5732245e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:55:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757667262; x=1758272062;
+        d=1e100.net; s=20230601; t=1757667353; x=1758272153;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=a24yalJ9UBENITTj+pl79Bqmf3DrH7vWpN1mkZyCn+k=;
-        b=iI4QbfHTHvYjK6Bn6rDyHH+pcHZfNliNyJS88JM1nFWAqwwat8fhySh2t6jgofxc8I
-         34NoSw9qzpJGE7DLlyFV8QB4+FWmmyEDn4tP64N5ZvO840UzprIXMmvq5V7oENmLAdqL
-         Ui4uFX1DihB8DYJIRXCjoLRq6NMLWMyoJyTgeEGzNUlhN5t7ISxOM+mhK9lqQ0NVdcBp
-         xkxK4Mnzv4keIDRX2b7vHhWOzGRzHAteZe6m2ejvyQMHu2pgrNhGre8Gim8HGi7UGxpF
-         ACe9LNKCxmHObMViQdRsuo2N8ZCKQNov91s+rkPxR1gZ75vKrp4Ijhs0gucC1e0TLYlY
-         J0Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQkbPJZPMLj6wTCB1BAyIpK8zgff8H2vcJN5yyDVo+UadXKzL8z/TsEuKKmGyM2yq1BQpIu6FoueOXUxQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmoc/DK/RSQyt85evIWJPjKWBBCZMWjiF3M3a77urhIXkrMUUJ
-	BGN6UdopsrmZpGMmUDh+caHFjFBuKbrbmD7gJ7txuuspN3c6DLUGrtpjjsvN/Pn26usjGfFcIQX
-	0p61x7v4+sylDQexklIemm9bZPrBP1XtQvbk6mc/ctPbZYLAitVMbIUTz9G9GhUEQPg==
-X-Gm-Gg: ASbGnctHHH5svaII01zpD8p09dRXdz4ZvVU6kmqNh/3OuW3PoEQYk+OFf6pNVDe4TNB
-	7nOnGaDPiVrJr1lFjRY/p/8G/We32mPu6g8WPDr54Dh7eeLpqXMtu//fX7KaifdTNPWP1yTruyk
-	MImPu16ibbHFZXxlOxHZQP2A+JpkcUctWiGLITjtSp6kgD45Sa7Z4ddFLEHjjChShFgWzypoZPu
-	xnbhI8jyHpCJ70eTKjGzcsXzjKIkr0ISQENcEuc7KIl5Lg2fhmE4koOloO3O5XgWOP4Dxgtz2hg
-	o4ypiwi0YZsQIRohbRFfbGGE8P1R1+TNA11UeEca07ifHU6XQP5wuDJjklsElz9oJ433Autt8P7
-	Se0+MAABaCf4UWTS0XTlbe+IE8Lf8Ap4PCKO+ExgEYTKCqIFmlbe50OnbFzxq9GWI5zk=
-X-Received: by 2002:a05:600c:294c:b0:45d:d5df:ab39 with SMTP id 5b1f17b1804b1-45f211fec30mr15922555e9.26.1757667261785;
-        Fri, 12 Sep 2025 01:54:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzxHEWOj7/CJM7yM+dKgUjsT4XMxGQOVxPLPXDQMosBvdpTxq/L3oW66UT/5ZgoJvXp3UhZA==
-X-Received: by 2002:a05:600c:294c:b0:45d:d5df:ab39 with SMTP id 5b1f17b1804b1-45f211fec30mr15922155e9.26.1757667261329;
-        Fri, 12 Sep 2025 01:54:21 -0700 (PDT)
+        bh=yhSXL+2pa9oDbDGRuQ4gQlpl18vQ+30/sPKc3K6z7Uo=;
+        b=bDwljUjb/v5prc+PBR7RDwC+UeU4Y3C3Mj/BoQKushF/j8wyGyrse1wUyBQx3bqIZQ
+         GW7WUEXnAAs72JSMDRHhOPlPvS1datfaI3xJQ+39lCMgNMsrATJpfMMod1XuULfsLaBB
+         9OTE6Q2QSGDuUuhh3Gqi1oN+NBeEiGrXxomU9LQQflcQVqKveJtyQ7WT1PlFk26LGnp4
+         E+bAVmWmUmLFph2SJmb5lOJ5re0DwEJ8CmrtFBE1SYXKfPnmdA25lOHP/x+cs2mk2Y7y
+         jht4/M4HYCpHDe9oeh/5qbTtwU/nuUOdLrcWPbGQeaLh1jOoF8WrhbPy9PBFsWUJShzH
+         dGJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRFy7b634wuaDyZgBSvqnGKCywAnqeCqobRXLN1WXKMeU7FpdI9Kdn/luTnOKvmG/ldYcutuEmr9ER8Ic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfvifSuEdAIL+ZapArNWRle49Msu/w7KiNF+1/eIwnrmLLM4Tl
+	8ww3xgO7VQiYVqDgiDbRMg0Ss15g6It7tb2yyY8X393S4yzZB3RUuoWgiEvRqadLWgR5vyq19MO
+	at14G/+0VDAh7qaTgAi3QtqzUyMKyHCZh3jSvW1owkqKyKf3+6vg3IwrmJXuWlbZdWw==
+X-Gm-Gg: ASbGnctrzDKeU1/n0+QPZCQyf92hO1uGdLoQyxDgqNa8WiNGbhpcGvlJSCpkoZ9A38S
+	FDFCh3ZnOqi31pNEhAF1ipzdt+GTO8n5Ivz0y2BmTGESitx6Wl/ZfshKrZ56Eok+MFAmnbSjm5J
+	kBOgLn7b36F+BqCo/pWwldxTrGLTKquVcGggDHt486u3rOO+WhR1bri11mjFk2XRLPADEAYn1j3
+	5UpvLX0OCYxmdxAdkw2D5Wt81FANweCyevb10pJd61am66Oog+EYstf3TRs3G3tZgFERtZu5xkD
+	C53GTQAgBcrTBDGyMtoqpiIuIcmYc1Q1Qmor6Ng2+mVpCCziM1LGbKQYgF2UXJcBBO+BDVMqvta
+	H6u7hjeJZbsMbnEW4zu0KkYrkmm7wBGukbvI/yKe6WmSJ3mvyYTq8TZ8aRzL3rqMbTJM=
+X-Received: by 2002:a05:600c:228f:b0:45b:6743:2242 with SMTP id 5b1f17b1804b1-45f211f86c5mr15325605e9.22.1757667353210;
+        Fri, 12 Sep 2025 01:55:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGWDKbJzbJR4/u84XZSgPwx14/k9hN3sfQaLT2TQm5sKZh16Dp+Cgzni1IYyZJBI43U7rR/8A==
+X-Received: by 2002:a05:600c:228f:b0:45b:6743:2242 with SMTP id 5b1f17b1804b1-45f211f86c5mr15325425e9.22.1757667352826;
+        Fri, 12 Sep 2025 01:55:52 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607d7bb1sm5739157f8f.50.2025.09.12.01.54.19
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c3ce5sm54255495e9.16.2025.09.12.01.55.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 01:54:20 -0700 (PDT)
-Message-ID: <009f31e4-aba8-4ab4-b6f3-09244ca03e1c@redhat.com>
-Date: Fri, 12 Sep 2025 10:54:19 +0200
+        Fri, 12 Sep 2025 01:55:52 -0700 (PDT)
+Message-ID: <a17ab4e3-627a-4989-a5a5-d430eadabb86@redhat.com>
+Date: Fri, 12 Sep 2025 10:55:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,24 +89,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 2/5] mm: userfaultfd: Add pgtable_uffd_wp_supported()
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>,
- Ved Shanbhogue <ved@rivosinc.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
- Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>,
- Chunyan Zhang <zhang.lyra@gmail.com>
-References: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
- <20250911095602.1130290-3-zhangchunyan@iscas.ac.cn>
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+To: Kevin Brodsky <kevin.brodsky@arm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+ Mark Rutland <Mark.Rutland@arm.com>
+References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
+ <20250908073931.4159362-3-kevin.brodsky@arm.com>
+ <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
+ <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
+ <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
+ <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
+ <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
+ <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
+ <29383ee2-d6d6-4435-9052-d75a263a5c45@redhat.com>
+ <9de08024-adfc-421b-8799-62653468cf63@arm.com>
+ <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
+ <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
+ <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
+ <15d01c8b-5475-442e-9df5-ca37b0d5dc04@arm.com>
+ <7953a735-6129-4d22-be65-ce736630d539@redhat.com>
+ <781a6450-1c0b-4603-91cf-49f16cd78c28@arm.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -153,234 +175,19 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250911095602.1130290-3-zhangchunyan@iscas.ac.cn>
+In-Reply-To: <781a6450-1c0b-4603-91cf-49f16cd78c28@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11.09.25 11:55, Chunyan Zhang wrote:
-> Some platforms can customize the PTE/PMD entry uffd-wp bit making
-> it unavailable even if the architecture provides the resource.
-> This patch adds a macro API that allows architectures to define their
-> specific implementations to check if the uffd-wp bit is available
-> on which device the kernel is running.
 
-If you change the name of the sofdirty thingy, adjust that one here as well.
+> I also wondered about that. I think the safest is to make them
+> respectively arch_leave() and arch_enter() - the flushing entailed by
+> arch_leave() might not be required, but it is safer. Additionally,
+> powerpc/sparc disable preemption while in lazy_mmu, so it seems like a
+> good idea to re-enable it while paused (by calling arch_leave()).
 
-> 
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
->   fs/userfaultfd.c                   | 23 ++++++++--------
->   include/asm-generic/pgtable_uffd.h | 11 ++++++++
->   include/linux/mm_inline.h          |  7 +++++
->   include/linux/userfaultfd_k.h      | 44 +++++++++++++++++++-----------
->   mm/memory.c                        |  6 ++--
->   5 files changed, 62 insertions(+), 29 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 54c6cc7fe9c6..b549c327d7ad 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -1270,9 +1270,9 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
->   	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_MISSING)
->   		vm_flags |= VM_UFFD_MISSING;
->   	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_WP) {
-> -#ifndef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-> -		goto out;
-> -#endif
-> +		if (!pgtable_uffd_wp_supported())
-> +			goto out;
-> +
->   		vm_flags |= VM_UFFD_WP;
-
-I like that, similar to the softdirty thing we will simply not set the flag.
-
->   	}
->   	if (uffdio_register.mode & UFFDIO_REGISTER_MODE_MINOR) {
-> @@ -1980,14 +1980,15 @@ static int userfaultfd_api(struct userfaultfd_ctx *ctx,
->   	uffdio_api.features &=
->   		~(UFFD_FEATURE_MINOR_HUGETLBFS | UFFD_FEATURE_MINOR_SHMEM);
->   #endif
-> -#ifndef CONFIG_HAVE_ARCH_USERFAULTFD_WP
-> -	uffdio_api.features &= ~UFFD_FEATURE_PAGEFAULT_FLAG_WP;
-> -#endif
-> -#ifndef CONFIG_PTE_MARKER_UFFD_WP
-> -	uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
-> -	uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
-> -	uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
-> -#endif
-> +	if (!pgtable_uffd_wp_supported())
-> +		uffdio_api.features &= ~UFFD_FEATURE_PAGEFAULT_FLAG_WP;
-> +
-> +	if (!IS_ENABLED(CONFIG_PTE_MARKER_UFFD_WP) ||
-> +	    !pgtable_uffd_wp_supported()) {
-
-I wonder if we would want to have a helper for that like
-
-static inline bool uffd_supports_wp_marker(void)
-{
-	return pgtable_uffd_wp_supported() && IS_ENABLED(CONFIG_PTE_MARKER_UFFD_WP);
-}
-
-That should clean all of this futher up.
-
-> +		uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
-> +		uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
-> +		uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
-> +	}
->   
->   	ret = -EINVAL;
->   	if (features & ~uffdio_api.features)
-> diff --git a/include/asm-generic/pgtable_uffd.h b/include/asm-generic/pgtable_uffd.h
-> index 828966d4c281..895d68ece0e7 100644
-> --- a/include/asm-generic/pgtable_uffd.h
-> +++ b/include/asm-generic/pgtable_uffd.h
-> @@ -1,6 +1,17 @@
->   #ifndef _ASM_GENERIC_PGTABLE_UFFD_H
->   #define _ASM_GENERIC_PGTABLE_UFFD_H
->   
-> +/*
-> + * Some platforms can customize the uffd-wp bit, making it unavailable
-> + * even if the architecture provides the resource.
-> + * Adding this API allows architectures to add their own checks for the
-> + * devices on which the kernel is running.
-> + * Note: When overiding it, please make sure the
-
-s/overiding/overriding/
-
-> + * CONFIG_HAVE_ARCH_USERFAULTFD_WP is part of this macro.
-> + */
-> +#ifndef pgtable_uffd_wp_supported
-> +#define pgtable_uffd_wp_supported()	IS_ENABLED(CONFIG_HAVE_ARCH_USERFAULTFD_WP)
-> +#endif
->   #ifndef CONFIG_HAVE_ARCH_USERFAULTFD_WP
->   static __always_inline int pte_uffd_wp(pte_t pte)
->   {
-> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-> index 89b518ff097e..38845b8b79ff 100644
-> --- a/include/linux/mm_inline.h
-> +++ b/include/linux/mm_inline.h
-> @@ -571,6 +571,13 @@ pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
->   			      pte_t *pte, pte_t pteval)
->   {
->   #ifdef CONFIG_PTE_MARKER_UFFD_WP
-> +	/*
-> +	 * Some platforms can customize the PTE uffd-wp bit, making it unavailable
-> +	 * even if the architecture allows providing the PTE resource.
-> +	 */
-> +	if (!pgtable_uffd_wp_supported())
-> +		return false;
-> +
-
-Likely we could use the uffd_supports_wp_marker() wrapper here isntead and
-remove the #ifdef.
-
->   	bool arm_uffd_pte = false;
->   
->   	/* The current status of the pte should be "cleared" before calling */
-> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> index c0e716aec26a..6264b56ae961 100644
-> --- a/include/linux/userfaultfd_k.h
-> +++ b/include/linux/userfaultfd_k.h
-> @@ -228,15 +228,15 @@ static inline bool vma_can_userfault(struct vm_area_struct *vma,
->   	if (wp_async && (vm_flags == VM_UFFD_WP))
->   		return true;
->   
-> -#ifndef CONFIG_PTE_MARKER_UFFD_WP
->   	/*
->   	 * If user requested uffd-wp but not enabled pte markers for
->   	 * uffd-wp, then shmem & hugetlbfs are not supported but only
->   	 * anonymous.
->   	 */
-> -	if ((vm_flags & VM_UFFD_WP) && !vma_is_anonymous(vma))
-> +	if ((!IS_ENABLED(CONFIG_PTE_MARKER_UFFD_WP) ||
-> +	     !pgtable_uffd_wp_supported()) &&
-
-This would also use the helper.
-
-> +	    (vm_flags & VM_UFFD_WP) && !vma_is_anonymous(vma))
->   		return false;
-> -#endif
->   
->   	/* By default, allow any of anon|shmem|hugetlb */
->   	return vma_is_anonymous(vma) || is_vm_hugetlb_page(vma) ||
-> @@ -437,8 +437,11 @@ static inline bool userfaultfd_wp_use_markers(struct vm_area_struct *vma)
->   static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
->   {
->   #ifdef CONFIG_PTE_MARKER_UFFD_WP
-> -	return is_pte_marker_entry(entry) &&
-> -	    (pte_marker_get(entry) & PTE_MARKER_UFFD_WP);
-> +	if (pgtable_uffd_wp_supported())
-> +		return is_pte_marker_entry(entry) &&
-> +			(pte_marker_get(entry) & PTE_MARKER_UFFD_WP);
-> +	else
-> +		return false;
-
-if (!uffd_supports_wp_marker())
-	return false;
-return is_pte_marker_entry(entry) &&
-	(pte_marker_get(entry) & PTE_MARKER_UFFD_WP);
-
->   #else
->   	return false;
->   #endif
-> @@ -447,14 +450,19 @@ static inline bool pte_marker_entry_uffd_wp(swp_entry_t entry)
->   static inline bool pte_marker_uffd_wp(pte_t pte)
->   {
->   #ifdef CONFIG_PTE_MARKER_UFFD_WP
-
-
-Simialrly here, just do a
-
-if (!uffd_supports_wp_marker())
-	return false;
-
-and remove the ifdef
-
->   #endif
-> @@ -467,14 +475,18 @@ static inline bool pte_marker_uffd_wp(pte_t pte)
->   static inline bool pte_swp_uffd_wp_any(pte_t pte)
->   {
->   #ifdef CONFIG_PTE_MARKER_UFFD_WP
-
-Same here.
-
-> -	if (!is_swap_pte(pte))
-> -		return false;
-> +	if (pgtable_uffd_wp_supported()) {
-> +		if (!is_swap_pte(pte))
-> +			return false;
->   
-> -	if (pte_swp_uffd_wp(pte))
-> -		return true;
-> +		if (pte_swp_uffd_wp(pte))
-> +			return true;
->   
-> -	if (pte_marker_uffd_wp(pte))
-> -		return true;
-> +		if (pte_marker_uffd_wp(pte))
-> +			return true;
-> +	} else {
-> +		return false;
-> +	}
->   #endif
->   	return false;
->   }
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 0ba4f6b71847..4eb05c5f487b 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1465,7 +1465,9 @@ zap_install_uffd_wp_if_needed(struct vm_area_struct *vma,
->   {
->   	bool was_installed = false;
->   
-> -#ifdef CONFIG_PTE_MARKER_UFFD_WP
-> +	if (!IS_ENABLED(CONFIG_PTE_MARKER_UFFD_WP) || !pgtable_uffd_wp_supported())
-> +		return false;
-> +
-
-
-Same here.
-
+Great, looking forward to seeing this all getting cleaned up and done 
+properly for good.
 
 -- 
 Cheers
