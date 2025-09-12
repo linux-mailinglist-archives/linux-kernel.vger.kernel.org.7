@@ -1,117 +1,172 @@
-Return-Path: <linux-kernel+bounces-813247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CE4B54293
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:12:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40200B54135
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:52:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E8AF7B8C36
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:11:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98886AA048D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC7927F160;
-	Fri, 12 Sep 2025 06:12:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6214725F97D;
+	Fri, 12 Sep 2025 03:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="gKGW7HGM"
-Received: from mail-m19731111.qiye.163.com (mail-m19731111.qiye.163.com [220.197.31.111])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sBHycMbn"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720A0846F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93403398B;
+	Fri, 12 Sep 2025 03:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757657552; cv=none; b=BMEtIcVN4Mg9UrXtKsrGOe5AVJqjH0qS5QaRancD5yY8lQi7w6ZMy58M07JeZlNlu0QsyifGkfLbBPD4bposQU6PwvCEc0EKzltKjMKy/E/rQsojLk3KTO9yRAP7VkawdUWgWBkwi63GaXqAyvIuGxaPoTzTz3JVpAJKWIDGFgs=
+	t=1757649113; cv=none; b=VQm3je5TTbdeixovnaJl5L+rn7PbRYfM1JOQtVbF856czod/m6gHu9M8MJqoE0uyrIiNVBCgjg7ef3tqKP5gV0ap+hJlwd9a+dbk+7d6HZKuW3XkSC2czMFyiJazkVEaJfqmUq03G6ztElyNAsjTwkU7cfX6OTfv/0os/vp4JrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757657552; c=relaxed/simple;
-	bh=P89qHrULW0PhKlVw0dA+nvxpr2WOTElXxSahzQ9dWV8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ae/AWgww314tDb2fC6F2hQqQGbUhtnu3X/n0D3REmja8WhkTeQxhrKB3Ro2Jk3MsN3RaTQQJXpdE8RX6leHmUe7Pj6B+0Jk4Mcf9nMHF1vHWeBpciR2XU6994TS8laxDoOVrZtB+9/SC1uBykbZ23j91fQwXZxggjVNbJI+IE9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=gKGW7HGM; arc=none smtp.client-ip=220.197.31.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 228d77b2b;
-	Fri, 12 Sep 2025 11:49:59 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	andy.yan@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v2] drm/bridge: analogix_dp: Reuse &link_train.training_lane[] to set DPCD DP_TRAINING_LANEx_SET
-Date: Fri, 12 Sep 2025 11:49:49 +0800
-Message-Id: <20250912034949.4054878-1-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757649113; c=relaxed/simple;
+	bh=Lke6B8VnbpwAIO8FV4RcPocAWafVIdJzBdkm3skzNys=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aSxntc7tFfGG6hkZ89UsS/mxBDAiKlCOr9QHNkUArzgxgoYPIJmEMaSAAURgLjX6brMUZDHPhvC2LPjRfY1husZX5kk7q0uNOURN+O0CBhN3UIvDAA5J+E56bnrkhG3zsawkZtcS4ERxiYfr8Hc3vAS8bOyJFl/7UrbEZHaHpnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sBHycMbn; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1757649107;
+	bh=xdlNIi70W6j9AD8vtMNAyTE1QiqUADYtnXh78eSRV1w=;
+	h=Date:From:To:Cc:Subject:From;
+	b=sBHycMbnzHVEMEWIjkz+sA22rxLiVhkIHuVsBwxdDddiCLGgXM2r39db4lylJQVPD
+	 towHP7WrKxYoGDVF2i6m9xzq4c4dXrF6gtvspxOeVBZVu/NkO+hsOHnBb9Ks8Jj4GA
+	 8we8UOCQaBndJay9DV/AXhn1wSlsoGcmc9AxIazzKBgjr1yysxMDOH5rwXYE0mcoj+
+	 YofOs4Xfa0dCW0P4lWOcKOGAA4BsNaaKLw2HOMgdxSlytzqPbrHcy2BkyXm82svOX4
+	 a3ukEnC+clCFfFM8rfdFfngplbgj4lPff+ni7CMR2LGlUk/5IrYI0y5zjQM1WUrIPH
+	 lDK7RSPcpCTBA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cNL8M0KpFz4w90;
+	Fri, 12 Sep 2025 13:51:47 +1000 (AEST)
+Date: Fri, 12 Sep 2025 13:51:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Benno Lossin <lossin@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the rust-pin-init tree with Linus' tree
+Message-ID: <20250912135146.0c3ea18f@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a993c0b532603a3kunmb7c2e7889d3f5d
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR1DHVZLGENLTkMfGhpJSkNWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=gKGW7HGM9655ndLcjiYMalvGxzC/5ESbK8fhqs3KSjkARm/ig3Dw1jCDzBLn+OGDg/KdZbLabGZaE6+J8dfl8ItiXxUPjGzKHm0mzvUs4qJaArthP060E60aYS/seIF8nUE2bKQTKw3FEX/MTczwAIQSYD8HaTkUYdHTtRDeIQE=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=VN6yQDuRgH2v01VJP76imfc3f9rZYrLrxNyjR9mRFYg=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: multipart/signed; boundary="Sig_/IFJ/fZTfDO===p5aB=huIuZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-In analogix_dp_link_start(), &link_train.training_lane[] is used to
-set phy PE/VS configurations, and buf[] is initialized with the same
-values to set DPCD DP_TRAINING_LANEx_SET.
+--Sig_/IFJ/fZTfDO===p5aB=huIuZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-It makes sense to reuse &link_train.training_lane[] to set DPCD
-DP_TRAINING_LANEx_SET, which can remove the redundant assignments
-and make codes more consice.
+Hi all,
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Today's linux-next merge of the rust-pin-init tree got a conflict in:
 
----
+  rust/kernel/devres.rs
 
-Changes in v2:
-- Add Tested-by tag.
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+between commit:
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index a6d4935234c2..0d7941d37771 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -281,12 +281,8 @@ static int analogix_dp_link_start(struct analogix_dp_device *dp)
- 	if (retval < 0)
- 		return retval;
- 
--	for (lane = 0; lane < lane_count; lane++)
--		buf[lane] = DP_TRAIN_PRE_EMPH_LEVEL_0 |
--			    DP_TRAIN_VOLTAGE_SWING_LEVEL_0;
--
--	retval = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET, buf,
--				   lane_count);
-+	retval = drm_dp_dpcd_write(&dp->aux, DP_TRAINING_LANE0_SET,
-+				   dp->link_train.training_lane, lane_count);
- 	if (retval < 0)
- 		return retval;
- 
--- 
-2.34.1
+  75a7b151e808 ("rust: devres: fix leaking call to devm_add_action()")
 
+from Linus' tree and commit:
+
+  42415d163e5d ("rust: pin-init: add references to previously initialized f=
+ields")
+
+from the rust-pin-init tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc rust/kernel/devres.rs
+index 132545962218,91dbf3f4b166..000000000000
+--- a/rust/kernel/devres.rs
++++ b/rust/kernel/devres.rs
+@@@ -135,21 -134,11 +135,19 @@@ impl<T: Send> Devres<T>=20
+          T: 'a,
+          Error: From<E>,
+      {
+-         let callback =3D Self::devres_callback;
+-=20
+          try_pin_init!(&this in Self {
+              dev: dev.into(),
+-             callback,
++             callback: Self::devres_callback,
+              // INVARIANT: `inner` is properly initialized.
+ -            inner <- {
+ +            inner <- Opaque::pin_init(try_pin_init!(Inner {
+ +                    devm <- Completion::new(),
+ +                    revoke <- Completion::new(),
+ +                    data <- Revocable::new(data),
+ +            })),
+ +            // TODO: Replace with "initializer code blocks" [1] once avai=
+lable.
+ +            //
+ +            // [1] https://github.com/Rust-for-Linux/pin-init/pull/69
+ +            _add_action: {
+                  // SAFETY: `this` is a valid pointer to uninitialized mem=
+ory.
+                  let inner =3D unsafe { &raw mut (*this.as_ptr()).inner };
+ =20
+@@@ -160,14 -149,14 +158,14 @@@
+                  //    properly initialized, because we require `dev` (i.e=
+. the *bound* device) to
+                  //    live at least as long as the returned `impl PinInit=
+<Self, Error>`.
+                  to_result(unsafe {
+-                     bindings::devm_add_action(dev.as_raw(), Some(callback=
+), inner.cast())
++                     bindings::devm_add_action(dev.as_raw(), Some(*callbac=
+k), inner.cast())
+ -                })?;
+ +                }).inspect_err(|_| {
+ +                    let inner =3D Opaque::cast_into(inner);
+ =20
+ -                Opaque::pin_init(try_pin_init!(Inner {
+ -                    devm <- Completion::new(),
+ -                    revoke <- Completion::new(),
+ -                    data <- Revocable::new(data),
+ -                }))
+ +                    // SAFETY: `inner` is a valid pointer to an `Inner<T>=
+` and valid for both reads
+ +                    // and writes.
+ +                    unsafe { core::ptr::drop_in_place(inner) };
+ +                })?;
+              },
+          })
+      }
+
+--Sig_/IFJ/fZTfDO===p5aB=huIuZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmjDmNIACgkQAVBC80lX
+0GyA9Qf+NC/NXrD9V0aSTfwP6ZZ/5nzf1OKTQLnWibGIpMzTEIY/scNN3veeDu9q
+Mlx+94VossjECbz3xdyVjtnuUo1ZZeuIegv5SCnLyF5ibwK73i5wHDWcvxXHdOHd
+C68e84PxUawOnJNSt+o/X7Rraq9nUcboadoVw8Aea6nYQRSrVHijP7D4tXlXdo17
+z86CFSTj00vOqTIKj8EabdgLFy2dH2QWYRiSgPjcHFqMThUt/jTrSJs12Hcn8mHO
+PAHBhwk2oPsa8nmoMi6SnH+r4ZXoqzsj/Y33e7p1H/QrB/eGzNTb8qq67Q8i+S75
+hlYPB14ycUisuS5LB99zkUWFTuKFpQ==
+=kO7s
+-----END PGP SIGNATURE-----
+
+--Sig_/IFJ/fZTfDO===p5aB=huIuZ--
 
