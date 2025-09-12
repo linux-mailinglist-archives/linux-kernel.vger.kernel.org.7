@@ -1,94 +1,132 @@
-Return-Path: <linux-kernel+bounces-814230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E75B5513A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:25:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24173B5515F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B688E3A8FA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662C65C01D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FA82FE06C;
-	Fri, 12 Sep 2025 14:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9DA321456;
+	Fri, 12 Sep 2025 14:23:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PIlOPj4M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIVYY700"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEE91F92E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4229231A544
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686962; cv=none; b=hp9OdcfSRmrwxwx56K4ZsOak5WW8NdFXMe+f4q8mD8OshLd6motT23IGVNy/4qVhCiSHjfgQsf08UL0wOKHtyn13P9yXd0rad2mBGp1UhKdYaIhv4pRpAbZNfld/TELObvRHbLzoj/dhiHrIymnpI5Jb6B1vCuGrsxmd3Q0QRYc=
+	t=1757686988; cv=none; b=JrecuLhmuybKXZcNXbV3b9b4chcF8drOlZXCasNIRjZx9RXkgzYHqu/UMkcgZ2LHVk8GAdrdxifRidXiyqiUZsc/J4PI2BOhsd5asDDQFqtUmalalLAZQpXV3LW5prBw4McU07KHb3MQmkzdPQ0+W5d8zktFXOMRLAZUVwx0onY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686962; c=relaxed/simple;
-	bh=I1qkXFCSlVu3qPLBDZD1qAP77Zo3e56q7EE8dy7zXbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pPqmI60NEyqvWpFKCse5cs/THFYJBxGpFvZOVnAby3KWA3Eu1TA4iJGntHOvUIvqO07Do70ERPXyyoD503zb8EtNSMWcp8cStuxhA5sM30BxYu46bHE0z7ntc1w7IjVTjNJbykJBKYLEUu7KcFnLK03cZcWDPycSUaUwVz1RMS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PIlOPj4M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD8D3C4CEF1;
-	Fri, 12 Sep 2025 14:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757686962;
-	bh=I1qkXFCSlVu3qPLBDZD1qAP77Zo3e56q7EE8dy7zXbI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PIlOPj4Mz2jUiNtRAcuoMhF9TMSVWPu8fsk7jOhATAiUWmytAlk+pOJTWTAeAzSKo
-	 UxTLnDIGjM3JA8pT+O8fQHKgdJkKxyEMwgH/I0hbD2eTpOKGC+IVq1dUd9hBJ3WdrX
-	 dYbqSAQstfmZ+Zuf+V7P45M+Aix8Su3pdz+5rJsk=
-Date: Fri, 12 Sep 2025 16:22:39 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: srini@kernel.org, linux-kernel@vger.kernel.org,
-	Ling Xu <quic_lxu5@quicinc.com>, stable@kernel.org,
-	Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH 1/4] misc: fastrpc: Save actual DMA size in fastrpc_map
- structure
-Message-ID: <2025091212-umpire-large-b601@gregkh>
-References: <20250912131236.303102-1-srini@kernel.org>
- <20250912131236.303102-2-srini@kernel.org>
- <31a37e24-0044-4987-89a9-d891200592ec@oss.qualcomm.com>
+	s=arc-20240116; t=1757686988; c=relaxed/simple;
+	bh=o0lA08GVazKzewGuezaxd9TEVrOola7Ut4wOWEH6hrE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZE4XsV8Pcb5fUZIrtiJZ2niz6UElMfnfXP5brEf3zRv5VcHwH+WSChGDj63qE4TB/VWfjhGu3HTEO8BfEqZ7C82+gQoZic1A/NHFls+SFqW8jn4PoQwnotFlz0utxAlDaZqZLMGuEIM4r7nWEvA4yxGIKzYFzFby6EBJQnKcfJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XIVYY700; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5688ac2f39dso2275698e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:23:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757686984; x=1758291784; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/yHJV3+N8pLzUbLZyCHNtm3fHXHEjlBUmkhDKwaFLWw=;
+        b=XIVYY700/6NVJ9wp6jgNlGPkTo7jJ+MD1HXqxyLqDIxikL8HBnuwdc0T8Oy03bzfAz
+         gSUSSsZz13wrYrZ36j3yRtrOZ8QchE+W0H0ssHWnmT/koU1JwAikEAj17LOEA+kLtsM7
+         6n6nzzpaJR1EgLc2x7RV/pagtRk0tQ6NZDXGSG9t/HNvvcQX4Tl1YoislZJoIuWVSIFQ
+         FHBazSm+miN5JoVnihjV1jOQUgZnscWkej6TA6vzFwGzprWoeQW2+4t7GLRyjYuEtsW2
+         8CLolvJcGVMu4xDgf1VO7yC5474jKd6k8SiAfY1hZVSSIi/YMPRj8/WHTN1SluwNSzwY
+         tICw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757686984; x=1758291784;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/yHJV3+N8pLzUbLZyCHNtm3fHXHEjlBUmkhDKwaFLWw=;
+        b=J9SXQhdGoan8bH3gX5CLTbKGA/0X2BqObSbgO7iklEaaJkoWmdv+EUVtdjxiRCrGw2
+         QYruq1ZL30Jr3/DnNFcCs5ZhUZeGJaYE0vftOLvIge0GggpEgHFXZpTaqwua+2dy/ZIb
+         mVoBipffQLb6yLcos8I32v+aADfziPzIZqBppvRZwQXyO59FhLDW6YkXW5LH8VK/kWSI
+         Le+XM4xvSpijqlb10k3JSY5gEqxLcfl3Ass7thMJteIPtVc5Pe4pHmb5IawEGaI+JrAp
+         WMEUl+ZadUJElxyS8Kn2ueQDTAVLIL4MB8aLkasRmj4huGF+E6Y9VGNsba4AXp2AHfe2
+         4V1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQGSh8IFbZWXDJiQiDvGguDQtg0yHJtPsbmvb0Oi9mEAHAufvkEcXnz3yf+Xc+5W4Dmu2cbPyo/AnZFqA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrQhRDKEb0+3ccMFX0t1azryLi8rnyMniF/q4bS2M++S3nhfUH
+	ws8r1w98fOEKe383k5YtJ0CSDJ7fW3jiQIZ2maSFZh4plOWRfo3HXI8A0gUI4nY1xeA=
+X-Gm-Gg: ASbGncuZuQQPA15qEhmWmLx2Vi4vKvl83WwvATvn6RmH2yH+FRpfJxIZywH/YJ4CfiJ
+	eOWFE//LgloLZP56Gqd5BJ3PmR74HGBy4DuCRbbuaXbHnzzWaPGyhngAsGSa6lhNN43Nn0Y3hgM
+	kdZF9qc5Ho11KVRxc2vCBBtnt3OXS/vWjKV/RaGleXnlrFuKHh7FqQkwszWfW8blkbYOHPVWLN/
+	pnukpodrc8dwabkQTGMbd/9IcU1q/chX6Dj/U7Ejju1cp1/1a4a9wHVVvCVwFhMXmWHFpqRxeuv
+	P4dgE/VhxNkInqUP5xCbk0RgNpxHGIGPxbK7ryWABE664MJiS1H09s5JZTrvSwMJds9x5k+u6xc
+	VYcf75jooFZngG24lVQflHqFz1BmyRz/nKQBA+ruGq5IL/XuvGe5tKahW+b5WdTWSRQ==
+X-Google-Smtp-Source: AGHT+IENzXPjTBozBO5xqGVD7LsBdowwRnBvhEvWrUb7bwzjPSa5sZKgtmjZFq+52KQWVjRkxyVY0g==
+X-Received: by 2002:a05:6512:3f18:b0:55f:4495:51a with SMTP id 2adb3069b0e04-5704f99aed3mr1005515e87.52.1757686984214;
+        Fri, 12 Sep 2025 07:23:04 -0700 (PDT)
+Received: from nuoska (87-100-249-247.bb.dnainternet.fi. [87.100.249.247])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a5df5f74sm164981e87.54.2025.09.12.07.23.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 07:23:03 -0700 (PDT)
+From: Mikko Rapeli <mikko.rapeli@linaro.org>
+To: linux-mmc@vger.kernel.org
+Cc: ulf.hansson@linaro.org,
+	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+	linux-kernel@vger.kernel.org,
+	adrian.hunter@intel.com,
+	victor.shih@genesyslogic.com.tw,
+	ben.chuang@genesyslogic.com.tw,
+	geert+renesas@glider.be,
+	angelogioacchino.delregno@collabora.com,
+	dlan@gentoo.org,
+	arnd@arndb.de,
+	zhoubinbin@loongson.cn,
+	Mikko Rapeli <mikko.rapeli@linaro.org>
+Subject: [PATCH v3 0/4] enable ROCKCHIP_PM_DOMAINS
+Date: Fri, 12 Sep 2025 17:22:49 +0300
+Message-ID: <20250912142253.2843018-1-mikko.rapeli@linaro.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <31a37e24-0044-4987-89a9-d891200592ec@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 04:30:37PM +0300, Dmitry Baryshkov wrote:
-> On 12/09/2025 16:12, srini@kernel.org wrote:
-> > From: Ling Xu <quic_lxu5@quicinc.com>
-> > 
-> > For user passed fd buffer, map is created using DMA calls. The
-> > map related information is stored in fastrpc_map structure. The
-> > actual DMA size is not stored in the structure. Store the actual
-> > size of buffer and check it against the user passed size.
-> > 
-> > Fixes: c68cfb718c8f ("misc: fastrpc: Add support for context Invoke method")
-> > Cc: stable@kernel.org
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> > Co-developed-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-> > Signed-off-by: Ekansh Gupta <ekansh.gupta@oss.qualcomm.com>
-> > Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Signed-off-by: Srinivas Kandagatla <srini@kernel.org>
-> > ---
-> >   drivers/misc/fastrpc.c | 27 ++++++++++++++++++---------
-> >   1 file changed, 18 insertions(+), 9 deletions(-)
-> > 
-> 
-> Please use correct CC list when sending patches. You've missed several
-> entries from the MAINTAINERS file.
+Hi,
 
-This is just to send these patches for me for my tree, it's not really a
-normal "review" as that should have already happened (based on the
-signed-off-by chain above.)
+MMC_DW_ROCKCHIP needs ROCKCHIP_PM_DOMAINS before MMC is detected
+on Rockchip rk3399 rockpi4b and similar devices. Make this dependency
+more visible, or the default with ARCH_ROCKCHIP if possible.
 
-thanks,
-greg k-h
+v3: use "default ARCH_ROCKCHIP" in ROCKCHIP_PM_DOMAINS as suggested
+    by Arnd Bergmann <arnd@arndb.de>, enable more MMC drivers for
+    COMPILE_TEST and remove MMC_LOONGSON2 which doesn't link,
+    remove PM dependency as suggested by
+    Geert Uytterhoeven <geert@linux-m68k.org>
+
+v2: changed from "depend on" in MMC driver to "select" as default
+    on ARCH_ROCKCHIP as suggested by Ulf and Heiko
+    https://marc.info/?i=20250912084112.2795848-1-mikko.rapeli%20()%20linaro%20!%20org
+
+v1: https://lore.kernel.org/linux-mmc/20250911144313.2774171-1-mikko.rapeli@linaro.org/
+
+Mikko Rapeli (4):
+  pmdomain: rockchip: enable ROCKCHIP_PM_DOMAINS with ARCH_ROCKCHIP
+  mmc: add COMPILE_TEST to multiple drivers
+  mmc: remove COMPILE_TEST from MMC_LOONGSON2
+  ARM: rockchip: remove REGULATOR conditional to PM
+
+ arch/arm/mach-rockchip/Kconfig    |  2 +-
+ drivers/mmc/host/Kconfig          | 10 +++++-----
+ drivers/pmdomain/rockchip/Kconfig |  1 +
+ 3 files changed, 7 insertions(+), 6 deletions(-)
+
+-- 
+2.34.1
+
 
