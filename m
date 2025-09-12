@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-814829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B10B55913
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:21:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCE26B55914
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:22:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BDB1C28330
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:22:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CB967B83F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F1F26D4DD;
-	Fri, 12 Sep 2025 22:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FF2257820;
+	Fri, 12 Sep 2025 22:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="gjJQnps9"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H7UOBnbD"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9ECA1F63CD
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25798B67F
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757715712; cv=none; b=ZkjJsceFIzvVmHeetVk1lxtc9vDr8VyHyYLGVm7A5iRujh7hjEMtxoSh8TgvjfT/qjplZPETa+kutE03/HBarL4o7qnMdt0AlqrakV86aYBiCp+BtLT/HEeGhCtprk2VTduWa+m1+ug7cSm/ZRHotMMqFuwBeoR7SjJUtTF1ObY=
+	t=1757715763; cv=none; b=sMGi7djmZB5Y86rgx37i5mXlv2Yv1F6maPoPnP+R31bP2zQMdIakb+7O4rbknY3I4CG7Ykn75pnBJvwAGA1ylXUGPKC0+hd9M3qzbiiWDKYB9BOjdIUTGtTezzoiGOHgGFsX/jtcITN/LkBhpFAPc2RKn7w8CtdGcrGcMqt4QIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757715712; c=relaxed/simple;
-	bh=7fOGJqk2vZj/fqhiH1RjflejSVIFU8XKt/REQU6YVD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M7gmNGNU6gB0FH1ubhXIZM81T/7Imh+FZLJy0XMqiCqrL2bXtHEsJR4me9c6U3o3xA9og1CTNUhY5sAD20FJT6P+HqCcXwxaq5P7IvrwSnZc18hmOoJP/KN61B/E5AmkiZors8qTbKYdHCK1LmzmKTA7mKM+mbbTm6hEV8qazsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=gjJQnps9; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=7fOG
-	Jqk2vZj/fqhiH1RjflejSVIFU8XKt/REQU6YVD4=; b=gjJQnps9P0ECM7TMd07S
-	g4I5j+Gxnivrn37/oauzy2D5owjGcpNWGt/9Fsd7g0/xoEeXM+UsTL0OeqHgi+fg
-	yIcmfT8AfiTtAHSwZMMJitlytxYGDw9nU1twutLmWlCp0M4yrwenbF1iOQnJhpkL
-	h2ZAsXmF26yeDvJarqjFb/TuqLCX9fN1dspqiw6lV3schaGV/QrvKzEV9AWyydVf
-	0M04Pd6Re94DFPdAfnLEzZUjMnrAu+48prmn5Yax8EIJEWGAoh9NiUVxgQbLzrf1
-	hnlGOeCfxwREhH1EWoavGq3yt0XIvRNWQoqLfCccv9tXmtxuICQIdSM6oNTccyZD
-	sw==
-Received: (qmail 1503168 invoked from network); 13 Sep 2025 00:21:48 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:21:48 +0200
-X-UD-Smtp-Session: l3s3148p1@8KlsFKI+XpkgAQnoAHJ8AC93OVDMgFWg
-Date: Sat, 13 Sep 2025 00:21:48 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: ulf.hansson@linaro.org, rafael@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH] i2c: core: Drop dev_pm_domain_detach() call
-Message-ID: <aMSc_PVtS4rv2yI2@shikoro>
-References: <20250827101042.927030-1-claudiu.beznea.uj@bp.renesas.com>
+	s=arc-20240116; t=1757715763; c=relaxed/simple;
+	bh=5xbuOCkdufBm7jzWYxJeb8y1j30FN0f4rsdeSQAU1KY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LnFH+vKmaeLQZVHmmzC87y4cU0xmyKd02sfI5qGfYalJb/2kbn83Axo1P8tAxRE8D1ez1G8qUjgRJsiMDcXLxxqxJMJpetCDxikVmBy3akOUvBHpohWBEwivNGEPrlWav+YXrPCU7Xw3fAd0VjhVmEgeRFFQAiTTdnW5ErAVWl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=H7UOBnbD; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0787fa12e2so352258166b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:22:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1757715759; x=1758320559; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=l3IX9tXeCZIF8Yd1dUkTz5M/Vlip5AauSTVnQe4su0Q=;
+        b=H7UOBnbDBDkIlSVQyggnYMR1UFvkVs93gc/zy0yj/qHuwHTPiQWpJiU1yXyywzcFm2
+         6D4KDE65vVD5eFENDx+j6E9Qo0rAgQJGU4WEe/+LZUC2hqP+HuioBV53VJI9CYZDj2cl
+         N+YpjInFbXNkr4SIvbWvTlRta/tVh2mCdJQP0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757715759; x=1758320559;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l3IX9tXeCZIF8Yd1dUkTz5M/Vlip5AauSTVnQe4su0Q=;
+        b=RzeEKYU2COcqlC83/P7ZB2ePd3e0pMJR+UaUqCA7ek3HUKKE3FRbRZKi5hRCxkhMOg
+         85vXqm4xFAAlEWiOWC0qRHiqMDYDjUXJ46XruTyEoF7WUEOBUcU+V2LG/79fhXG3GQaz
+         OCTZ0ePFa71LM+TAMaCdDswWAP+n2aFxpvwnSlL8HuKKDuozqU0+NyfT4CUixA3s0MjT
+         sPbedcdhWN8Sx0mns0ABevlQNeT8rrG51Ri+yJQRydANagTu7U1WlGIWHRzMSIxPJDxY
+         wlckP6u/6ydw6MaQNBilZNAXZU+YUXK7B4h+qnhfFF/ACYzQ7b5tHKZOKtegUwG0pWtJ
+         27ig==
+X-Gm-Message-State: AOJu0YxAcPdF4P1RL8bjykfslRmN4CYdl4VeKoHR+kFKiMbdgDDKfMUm
+	LFPxCctlvoxibz8bJjNoA3mlWJIMbWhqIZZiLPn4ZZaeRn+B2BizoqUSk5WslET/Awi+rEctU8c
+	478lM
+X-Gm-Gg: ASbGncuy3osHzX6Nov0orjlnUk0Ft6dqP47ZzweYhZBNBB7KKCLs5IL1vqL+RWc3Jxk
+	gs4EOecN6vbaowAPgDpyZM0XMyQk4RrnPFoHNlR5ang5Asks97DwlJlE26DlkfSvLxQ+VSgx6rq
+	Qp8+nwp5bggWbyMS3D4yeVsoQG34FWk/Ba3pmqp7h64FiT02BFFqbiK6AGi2GoHa4xrPQCHUoL1
+	25n0S+Nyas5MTHwIzVEKGK6xKffVGPJNZLO6EHH1GLx86QmP1+LldckQ02b1xoHrzu+9Ss2ZHr4
+	xmHvSTzHHDInNBbn25Dszwpc55VEvwkcMO3KznAs+irATsLZh6rImuXDnUJLtD+aVdHv353h8WC
+	W4P71RFqjrK3JSW6jmmT8gkFg1X4NF8hnB4mO4BPOC33+Srwjh4HzrvXVZLCbcnCu+etUq3GaLe
+	Z1nf//Ogc=
+X-Google-Smtp-Source: AGHT+IE+4lBFm4RizFGj7I9am76Y4Dfhp1Pm9UsNYR3ayBNK7wZ+6zGKQTCxH8ehdEXefCqpRsmJqw==
+X-Received: by 2002:a17:907:1c0f:b0:afe:8b53:448f with SMTP id a640c23a62f3a-b07c3575011mr427848466b.16.1757715759258;
+        Fri, 12 Sep 2025 15:22:39 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b3129199sm445301566b.36.2025.09.12.15.22.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 15:22:38 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b0787fa12e2so352255966b.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:22:37 -0700 (PDT)
+X-Received: by 2002:a17:907:db03:b0:b04:9854:981f with SMTP id
+ a640c23a62f3a-b07c38404edmr467650466b.43.1757715757580; Fri, 12 Sep 2025
+ 15:22:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="JzFD1ugCEMAQ+u7l"
-Content-Disposition: inline
-In-Reply-To: <20250827101042.927030-1-claudiu.beznea.uj@bp.renesas.com>
+References: <CAHk-=wh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K0dJHVg@mail.gmail.com>
+ <ef8479be-8bac-42c5-bac6-5a5841959b45@kernel.org>
+In-Reply-To: <ef8479be-8bac-42c5-bac6-5a5841959b45@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 12 Sep 2025 15:22:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wju1GO-AdGHag2v94mXdmg2uaFez5R8YE2js7ngn+hJyg@mail.gmail.com>
+X-Gm-Features: Ac12FXwPT9-JvAKDoIpe7VsOCbVoWoWfZBEQn8Iy5ViAVoefLXjYcd9yuyFNq30
+Message-ID: <CAHk-=wju1GO-AdGHag2v94mXdmg2uaFez5R8YE2js7ngn+hJyg@mail.gmail.com>
+Subject: Re: Commit Links [was: Linux 6.17-rc5]
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 11 Sept 2025 at 23:24, Jiri Slaby <jirislaby@kernel.org> wrote:
+> OK, can we have Submitted-at: or something for the above which you could
+> completely ignore?
 
---JzFD1ugCEMAQ+u7l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No.
 
-On Wed, Aug 27, 2025 at 01:10:42PM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->=20
-> Starting with commit f99508074e78 ("PM: domains: Detach on
-> device_unbind_cleanup()"), there is no longer a need to call
-> dev_pm_domain_detach() in the bus remove function. The
-> device_unbind_cleanup() function now handles this to avoid
-> invoking devres cleanup handlers while the PM domain is
-> powered off, which could otherwise lead to failures as
-> described in the above-mentioned commit.
->=20
-> Drop the explicit dev_pm_domain_detach() call and rely instead
-> on the flags passed to dev_pm_domain_attach() to power off the
-> domain.
->=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+We're not adding garbage that I'm "supposed to ignore".
 
-Applied to for-next, thanks!
+Stop this idiotic thread. Stop adding crap automatically.
 
+I have made it very clear that you can add "Link" to your submissions
+as long as IT IS NOT SOME AUTOMATIC MEANINGLESS GARBAGE.
 
---JzFD1ugCEMAQ+u7l
-Content-Type: application/pgp-signature; name="signature.asc"
+I have also pointed out that you can find the original submission in
+various much better ways than the meaningless link think you argue
+for.
 
------BEGIN PGP SIGNATURE-----
+So stop arguing for pointless noise.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjEnPUACgkQFA3kzBSg
-KbZTlg//ebtCkEU7aWJidjaqUu6Zl3AZkhmoiWDiDZ4/BnpLPI+o0TgscxxaKSL/
-OlF5A7f9SXH1+3imp7VRVxOsExDUC8FEPJchIcaTCKb+LSlZ5C1Y/7Yv3JkE6vs5
-8K+fFf5Ips9Klo1ek2+Yav3DAzYyouozR5BD2KmV30Km0Lv/DcCqI34PU69+UouE
-0SyK97e/dspOUG3rJ4xIsXf4O57ZF6/KA1lL+VbiZVFn+jC8uFKlOND8ivzLcb9U
-9hBM0TFODndZ7cQpL3q6ucKp+3DQbu1S1oxR1XJtBAK0krnme/W1hUXtC8rNJLYu
-zbJoC76vWbNHu+gc9jeNE1FMjHxPXliJkjy7fnRMRZPFQCe3rfxANT7oQvvraOqZ
-2OiJNhuNJ3ot8cX8dAyPS3/zWH9Ffl9kz/TmElDJCNbcCdONCCoRqLvdRRdKVGqG
-xvkMjUsK6YwOqQW4wd9Dtm7Ra/j5U8n2J/DIkAz79dmKOdDdkaDfC0qLDhwGrAor
-nhwykVksY5jPjxvEe1lMDP7wwclPvy0RQVGYCjfrXqwJQwt+1Xd62I+sKRmZbARq
-CoTPsCIlXEY+e3urzCbu2eUW0auV3LMcOFDQHVxXaNwsQNsGGg+267ckdO7NvhAW
-19eGA++LaomO8P1LlgsI7Kt5J+9OcxdyXi5R4j0xqmv8de9btvk=
-=LWLq
------END PGP SIGNATURE-----
-
---JzFD1ugCEMAQ+u7l--
+                 Linus
 
