@@ -1,47 +1,63 @@
-Return-Path: <linux-kernel+bounces-814508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435A5B554DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:44:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E977DB554E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 669667B6D99
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:42:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E29BAC2A09
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFCD31D385;
-	Fri, 12 Sep 2025 16:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3827931D722;
+	Fri, 12 Sep 2025 16:44:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TZNkjFMp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2646030ACF9;
-	Fri, 12 Sep 2025 16:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7424430ACF9;
+	Fri, 12 Sep 2025 16:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757695461; cv=none; b=cxvbNw2c2kDI31QZKBbhUTfc43+pCfrT/3YUKzyCMa73pz53gPrC8kVKhz5xtJG5mcqn8mubtxv+Te5okfL7tgqkibMw3nO7FS9orZShquOV/DDr9P8wHcO+33cvuBxxDxBFv0P0zTN/rk9JZjoe0QIMQf+1LuUHMa1WCC0u/Xg=
+	t=1757695494; cv=none; b=qk9ybcT+GUaGC4CCSH7Oxg82TzcgH6wBDAv923EuRH+rr+LC2bmspY3FM2CSoGJACtnYohhJHMrkIGGFirk7ccgLwLm1u5l7sGQzfPC/DIGw8LT6VwbC/xLggufOEwmW8FZ2m1wmCjFfJ4SljqOeBJh39wBKTKOViWUPYP5Uew8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757695461; c=relaxed/simple;
-	bh=HPmldDCz7zhpWDN7uGs/4kAMsot1fkoRvtKnK1a+TcM=;
+	s=arc-20240116; t=1757695494; c=relaxed/simple;
+	bh=T3k8yXx71WmXCOcPeK8TWijLJrnwnPMe6SmbiBr3OtU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZxsOpTsYaDNZ98ic+tewSF3FiM+omflHvdy68OaCPRT+zMhYWchCK4uRURCLM9fVfEwe/Mp8JLsiZuAo2TGSRC6PFzG9Hgt0DsgC1KmY882Cfo+/Ws6ZQMIgf++r88/DpqMjmYAFeLideCi0MY/BUhgFg2CLZN8/DvCgFBN7KNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 147A9C4CEF1;
-	Fri, 12 Sep 2025 16:44:17 +0000 (UTC)
-Date: Fri, 12 Sep 2025 17:44:15 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: will@kernel.org, broonie@kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, joey.gouly@arm.com, james.morse@arm.com,
-	ardb@kernel.org, scott@os.amperecomputing.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND v7 4/6] arm64: futex: refactor futex atomic
- operation
-Message-ID: <aMRN3z3WNRGuwBgQ@arm.com>
-References: <20250816151929.197589-1-yeoreum.yun@arm.com>
- <20250816151929.197589-5-yeoreum.yun@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XbwxKghsr/bwZMmisJKohZkLCTnQIRdA5RFMp9VtuiHphF5A0Dyrr8hG5HkN1LJqI9vfJF7YI/2n5eqXt5N7NKIObMaYwaR0HoQFIJmfsGN5bwvooupNLDsCQ9pCZKQFU0LbDyLwv5B7tbOD4a/kNeNGEEzXePbGt/DiYoOdGJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TZNkjFMp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 095D9C4CEF1;
+	Fri, 12 Sep 2025 16:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757695494;
+	bh=T3k8yXx71WmXCOcPeK8TWijLJrnwnPMe6SmbiBr3OtU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TZNkjFMplEJXcSxt1g922eJbDuHFdtPelJyYXhh+Yt2AuKAX/lTgEtSRnHeht4LnN
+	 PtnVtsYwUw5mzq+D8HreufB1OXMoZT/EQXqJiqcM/uIaPpuVz5DMddIzuz00+2scAd
+	 dmdH0c45mBkpsPeM604mXr9h7GkFVDQP0J2uV27FZzCtjQVf+VD5Zy7F2YypKxsICm
+	 0pvDfnDEW1QtS/WGeL8CW8CbyOWbNEEwTHNPN1A88a11RLp7xVe6EvUBQb14RasyPn
+	 VnznBWomfmKptx6SqPqhaukbxkAwTBGs8LqyIhOJiceINXjw0dsPcWzcXrMq48Q57i
+	 IujrPXbnn4+1Q==
+Date: Fri, 12 Sep 2025 17:44:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: Fan Gong <gongfan1@huawei.com>
+Cc: andrew+netdev@lunn.ch, christophe.jaillet@wanadoo.fr, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, guoxin09@huawei.com,
+	gur.stavi@huawei.com, helgaas@kernel.org, jdamato@fastly.com,
+	kuba@kernel.org, lee@trager.us, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, luosifu@huawei.com,
+	luoyang82@h-partners.com, meny.yossefi@huawei.com,
+	mpe@ellerman.id.au, netdev@vger.kernel.org, pabeni@redhat.com,
+	przemyslaw.kitszel@intel.com, shenchenyang1@hisilicon.com,
+	shijing34@huawei.com, sumang@marvell.com, vadim.fedorenko@linux.dev,
+	wulike1@huawei.com, zhoushuai28@huawei.com,
+	zhuyikai1@h-partners.com
+Subject: Re: [PATCH net-next v05 12/14] hinic3: Add port management
+Message-ID: <20250912164446.GA224143@horms.kernel.org>
+References: <20250911123324.GJ30363@horms.kernel.org>
+ <20250911142504.2518-1-gongfan1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,31 +66,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250816151929.197589-5-yeoreum.yun@arm.com>
+In-Reply-To: <20250911142504.2518-1-gongfan1@huawei.com>
 
-On Sat, Aug 16, 2025 at 04:19:27PM +0100, Yeoreum Yun wrote:
-> +#define FUTEX_ATOMIC_OP(op)						\
-> +static __always_inline int						\
-> +__futex_atomic_##op(int oparg, u32 __user *uaddr, int *oval)		\
-> +{									\
-> +	return __llsc_futex_atomic_##op(oparg, uaddr, oval);		\
-> +}
-> +
-> +FUTEX_ATOMIC_OP(add)
-> +FUTEX_ATOMIC_OP(or)
-> +FUTEX_ATOMIC_OP(and)
-> +FUTEX_ATOMIC_OP(eor)
-> +FUTEX_ATOMIC_OP(set)
-> +
-> +static __always_inline int
-> +__futex_cmpxchg(u32 __user *uaddr, u32 oldval, u32 newval, u32 *oval)
-> +{
-> +	return __llsc_futex_cmpxchg(uaddr, oldval, newval, oval);
-> +}
+On Thu, Sep 11, 2025 at 10:25:04PM +0800, Fan Gong wrote:
+> On 9/11/2025 8:33 PM, Simon Horman wrote:
+> 
+> > > +	err = hinic3_get_link_status(nic_dev->hwdev, &link_status_up);
+> > > +	if (!err && link_status_up)
+> > > +		netif_carrier_on(netdev);
+> > > +
+> > > +	return 0;
+> > > +
+> > > +err_flush_qps_res:
+> > > +	hinic3_flush_qps_res(nic_dev->hwdev);
+> > > +	/* wait to guarantee that no packets will be sent to host */
+> > > +	msleep(100);
+> > 
+> > I realise that Jakub's feedback on msleep() in his review of v3 was
+> > in a different code path. But I do wonder if there is a better way.
+> 
+> ...
+> 
+> > > +	hinic3_flush_txqs(netdev);
+> > > +	/* wait to guarantee that no packets will be sent to host */
+> > > +	msleep(100);
+> > 
+> > Likewise, here.
+> 
+> Thanks for your review, Simon.
+> 
+> Firstly, The main issue on the code of Jakub's feedback on msleep() is
+> duplicate code function. The msleep() in hinic3_vport_down and
+> hinic3_free_hwdev is repetitive because of our oversight. So we removed
+> msleep() in hinic3_free_hwdev in v04 patch.
+> 
+> Secondly, there is no better way indeed. As our HW bad decision, HW 
+> didn't have an accurate way of checking if rq has been flushed. The
+> only way is to close the func & port . Then we wait for HW to process
+> the pkts and upload them to driver. 
+> The sleep time is determined through our testing. The two calls of
+> msleep() are the same issue.
 
-The patch looks fine and my impression that the __futex_* functions will
-be used in patch 6 to dispatch between lsui and llsc. But you got them
-the other way around. I'll comment there. For this patch:
+Thanks for the clarification, much appreciated.
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> Finally, we have received your reviews on other patches and we will
+> fix them soon in the next version.
+> 
 
