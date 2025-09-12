@@ -1,267 +1,730 @@
-Return-Path: <linux-kernel+bounces-813215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78475B5420D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:29:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F872B54212
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:30:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9808C1B21DD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81865806DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A8A0284669;
-	Fri, 12 Sep 2025 05:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B482773EF;
+	Fri, 12 Sep 2025 05:29:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Lh4m5648"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W0XzAJJ+"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A95227B4E5
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A2927587E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757654921; cv=none; b=LK4Gc9lUwFtzJB+HIw6iqRnA09D+IMvfg5gQwWC+TiFKOdbwaP42z7+ggw933coS6glpHi2siiYn8RTKsoRuLgSjeR8wwU3fYGYbPIkNEae2AyZ5G2fjrWOQ3JZc4Gji/AKU9yh1phzdz/FLbEzFOvFAqU/cHruYtfBN07i/m4o=
+	t=1757654964; cv=none; b=JFUP7K6ntf3i17WtA9J6g6fVwiZeiLUlOqN2YdrLOHfG4AD7e5NRTakaAwLjjJ6zqBZJaRA9Ps0GvCJ2+U53msK/IWdZJ8NiUTP4NJkn/faFdzExiVR4yfRhz9k1KB8PYvTSfPI8KXVVq7BtiVOm3MjxxlXgEqGKmSnVFza1exc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757654921; c=relaxed/simple;
-	bh=9Cpnoq/DypleHwmgQtKUTSqWF1gCIJKoqqTjacvAgwA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y93STOrahRroaiA6lxSk3AyQIeRWhCh5AJryrJLcxoRXeWloAGaFBgUuiz5W/DzPF7D/YvzD9roEhjADiMDr0qgG4BaLTMLmWweOOvCXujO7AKAWXxVxBGn74KdOxzrnXkzKRTXIBj+fmkyhO6PTcfCrc7S1f/Hlm9zTbVzp39o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Lh4m5648; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757654918;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aJ9I3kFrAfuzRn5zG3IfhkcbkFVirVLdOlMEX4ozb3Q=;
-	b=Lh4m5648XNvKQlKdjYrL00gkPUvQtUC9sn5PelqqyzIvEr0gAoKedpxlJ8rkqkFiWtG+Qr
-	3XQV9BnpwY9iMQyvTTqlCjX6e7fAmcsEWnCmK33u3kFsAv3In+KVQJ4yjnCkOfy8Nan0GV
-	jqHCtZbwkPsEWsyedxHdOo1wTAloAq8=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-44-InuAyUlPOJaAt8nA3-n5nA-1; Fri, 12 Sep 2025 01:28:36 -0400
-X-MC-Unique: InuAyUlPOJaAt8nA3-n5nA-1
-X-Mimecast-MFC-AGG-ID: InuAyUlPOJaAt8nA3-n5nA_1757654915
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-336de0ff5d6so7618131fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:28:36 -0700 (PDT)
+	s=arc-20240116; t=1757654964; c=relaxed/simple;
+	bh=ySBMJtCguETbSFCfru0skriLtrwf8hGqgwcsM67xPmg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kR2F90vvOzAGbUkjObOZkvmi7w+l/EMNt6aMFbHAkudgmqYrl1Ger94OhUJUGtTF5Fv+GzUgpA5AdS300uncfHl8lLAkcPdpauiujNAc1qC1olLD4fTHsFzNzxwPyhpgwiP85WermrTLvXMWeXssCzmqcc+C8AkXfswoC1a5zbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dawidn.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W0XzAJJ+; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dawidn.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-45b96c2f4ccso8193115e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:29:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757654960; x=1758259760; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v6tMxXIHp7GVTK73wm3olOovbXpZX+5kOo655cHGHiE=;
+        b=W0XzAJJ+tUUx4MamSekd6p5xQdLyaEP6qzeFrWfFZ6G/uQq7lNm9rQRoJufwYlNJXZ
+         ttUBXbS1qHNMYVGmtMIUHJoECJJ7kZslTDdcH6s0JZFzrUShOg2oNnPliFP6O/IfYMG3
+         nRizRWg0iOq2w9ffGPutN4J1DP59ChiN0yezz2e8idlxSymIU1Gz9nNOjcdY5JgYTQqT
+         Iow3Xx7axHv3QzOFdYvaQxDof2lSJI+orwaf6uQ94tbtzORahPSKWJc/ASYjRvPdRAgg
+         SG0tDiwPejzpjUez8dYxHkZfdECX1Ssl545tlLofcymXW6IaY4aKkX6rMnY0E8Mm1fPR
+         zm0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757654915; x=1758259715;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aJ9I3kFrAfuzRn5zG3IfhkcbkFVirVLdOlMEX4ozb3Q=;
-        b=IBHADQWlYj9kFYA3f3rfdtksjK32p4c+Di2Edtm+tqMP8eWshY8xWTpmgY8GwViQx/
-         f5JAnWkxApUavFZtvja04U46X4+XdpKGIFLkmsJ4cvhVoe/WSdgEsG1EYHvHYSwhpSPx
-         mMDtXgtZFh+jYABk6D1DopHJbI4aH5q9ab2257pBWgY+RQuZNls+g6XDE4nffTYWClIr
-         X1oP9Fngp5HjSZaWADa8t28zoVkZt5/ws6gL+EQUYX73nMDUNjHR8H6OT+WgWBS8crGi
-         9iaklpbD8lr+sWjMQOxuASa0M/nKVwYvzU+8QUHamQ+vwBkt3idbPnIHo/8f0QNShRCJ
-         kTMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsuV/XoJ+gjoZJ129QDA0mu+8Mq7rDJRxkqgzIPjtBkCYEBye7xfOTnBkmW/34+K6cW566nCWRilGILfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXmAbFVBsh6wtEkHEdqmxErCaqCj5231OFcBm0lZTcMHHG6h7f
-	NGyIuqvKLmz68MZSmBPW/ql0XDOLuISVmxNs8qf8t6QJhBq93llhjVoRsn47SdB9daUrQIF4g3B
-	UGgh9YhmvzbaGslA7jtixto5IQy52CgyF9bfAfoNbQXv93jxoaFX5eiXHyNl+rLa1
-X-Gm-Gg: ASbGnctWfaTNmR+hUFr5VKhYRbYp0uYsN7mqH9xLJCVustJ/deGIKXiXRxiU+NJC7G9
-	dckL1EaH23d3LaJS3w97y+xayzVPuAVIHGLVNjfBfF0rU6MMPyzxO38hapgXxKmw1tDx9WQ3RrX
-	WuX4x7ckp4XSUB8YezCTSusNad3XZbuG9sBBoPF7WS45D7zHffkPtNxPZyDALcmXvJh/rO2Tlut
-	fNIt61fvA0XyfToB0ve3Cno2ZYAVxwBIpFLTlV53JfknW1yK5OcxW4EFSDDf1bUKaof6YUvoUAW
-	xDJAfWIUqFyrTVKvMXRNSiyQBAc/ycM8Y2mnn0s/rRjFzJ4JRVd7Zon2gbv0kiAsM/Dvg/woNAB
-	2VjSY4JIDMk8EelHUq51sBFY0mhalgltmDyJf+NXCC7iVvMUtKk1K
-X-Received: by 2002:a2e:be91:0:b0:351:b11d:e630 with SMTP id 38308e7fff4ca-351b11ded0amr3280491fa.11.1757654914804;
-        Thu, 11 Sep 2025 22:28:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpGJ8fEYHY6vVQRRiNssGfCLT3ZkT3GfJOpIxVKWucfTurAjgfRecqT3PfQJdvJQYHVWNvWA==
-X-Received: by 2002:a2e:be91:0:b0:351:b11d:e630 with SMTP id 38308e7fff4ca-351b11ded0amr3280201fa.11.1757654914261;
-        Thu, 11 Sep 2025 22:28:34 -0700 (PDT)
-Received: from ?IPV6:2001:999:408:6576:1142:7350:b6c5:671e? (n4ctkw60s7hbahed3xa-1.v6.elisa-mobile.fi. [2001:999:408:6576:1142:7350:b6c5:671e])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f15a591fasm6136911fa.9.2025.09.11.22.28.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Sep 2025 22:28:33 -0700 (PDT)
-Message-ID: <4cc2ba18-e7de-448f-aaee-043ed68dc6e3@redhat.com>
-Date: Fri, 12 Sep 2025 08:28:32 +0300
+        d=1e100.net; s=20230601; t=1757654960; x=1758259760;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v6tMxXIHp7GVTK73wm3olOovbXpZX+5kOo655cHGHiE=;
+        b=UBfWFi4jVwSBljltgOSTZ746ooH4cl0MLZlshGl+jRxR+s8bqUOijlUx3tKF/GH2KO
+         jyWGQ3VTQYkq/eWi8HI0sXy5+i75lu//DJ52AxKSEEel+Qk/EHwctsgAvL3hYUPB4Rzo
+         LpiQBOIMINXkjyXQY3GqQ5aKk7ukk6Nu41zV/WHAh7+YUdCoT9DjrbkX/lQSHE76BldA
+         l83HCY/dbhSRsq+h2nyQBKe+uEqStZ4ra/VgZaZRA4QqS/cPVEyRvN9aBi0/kDHgm2GR
+         OkjwKQKCHiGw+M67cyy2AtcYs2q7yCxYBo/0k0YUZvW2M/m1f2j3QUW05AYZbQQv8I4m
+         woig==
+X-Forwarded-Encrypted: i=1; AJvYcCW6B8ZVNqAYB+A1rvngtvwRvUAHrrtJR4Cc6Q4zfeCV5VRZP3I3WhGLtTxxLlugs7RSD9BdHpGle3fovi8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2k+/2VBI5ubkFMly11KzslXLXzfWaN0Iyh+klnPi7BndRk9nM
+	lw/RGOWKfvQe442tX2nXJHZi7dT458ibFF6dxVj+vhuAVyQelmehoLFIeVuOWPQXMsMtf6Hp0V8
+	axdB/1Q==
+X-Google-Smtp-Source: AGHT+IHatnqMKvGR2yM3vyCrkVVNgMmC2OaQEIkVlvn7BD5cCukm9V1LNPRAljSO69gGKIwUg44hjgagoZY=
+X-Received: from wmbjg21.prod.google.com ([2002:a05:600c:a015:b0:45b:9a41:5814])
+ (user=dawidn job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:1c9d:b0:45b:6275:42cc
+ with SMTP id 5b1f17b1804b1-45f211ffafbmr12766155e9.28.1757654960363; Thu, 11
+ Sep 2025 22:29:20 -0700 (PDT)
+Date: Fri, 12 Sep 2025 05:29:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 06/15] mm/migrate_device: implement THP migration of zone
- device pages
-To: Balbir Singh <balbirs@nvidia.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250908000448.180088-1-balbirs@nvidia.com>
- <20250908000448.180088-7-balbirs@nvidia.com>
- <d35eea42-ed32-481f-9dcf-704d22eb8706@redhat.com>
- <49039b9d-4c42-480f-a219-daf0958be28e@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <49039b9d-4c42-480f-a219-daf0958be28e@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250912052919.229757-1-dawidn@google.com>
+Subject: [PATCH v5] platform/chrome: Add ChromeOS EC USB driver
+From: Dawid Niedzwiecki <dawidn@google.com>
+To: Tzung-Bi Shih <tzungbi@kernel.org>, Benson Leung <bleung@chromium.org>
+Cc: chrome-platform@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	chromeos-krk-upstreaming@google.com, 
+	"=?UTF-8?q?=C5=81ukasz=20Bartosik?=" <ukaszb@chromium.org>, Dawid Niedzwiecki <dawidn@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/12/25 08:04, Balbir Singh wrote:
+Use USB to talk to the ChromeOS EC. The protocol is defined by the EC
+and is fairly simple, with a length byte, checksum, command byte and
+version byte in the header.
 
-> On 9/11/25 21:52, Mika Penttilä wrote:
->> sending again for the v5 thread..
->>
->> On 9/8/25 03:04, Balbir Singh wrote:
->>
->>> MIGRATE_VMA_SELECT_COMPOUND will be used to select THP pages during
->>> migrate_vma_setup() and MIGRATE_PFN_COMPOUND will make migrating
->>> device pages as compound pages during device pfn migration.
->>>
->>> migrate_device code paths go through the collect, setup
->>> and finalize phases of migration.
->>>
->>> The entries in src and dst arrays passed to these functions still
->>> remain at a PAGE_SIZE granularity. When a compound page is passed,
->>> the first entry has the PFN along with MIGRATE_PFN_COMPOUND
->>> and other flags set (MIGRATE_PFN_MIGRATE, MIGRATE_PFN_VALID), the
->>> remaining entries (HPAGE_PMD_NR - 1) are filled with 0's. This
->>> representation allows for the compound page to be split into smaller
->>> page sizes.
->>>
->>> migrate_vma_collect_hole(), migrate_vma_collect_pmd() are now THP
->>> page aware. Two new helper functions migrate_vma_collect_huge_pmd()
->>> and migrate_vma_insert_huge_pmd_page() have been added.
->>>
->>> migrate_vma_collect_huge_pmd() can collect THP pages, but if for
->>> some reason this fails, there is fallback support to split the folio
->>> and migrate it.
->>>
->>> migrate_vma_insert_huge_pmd_page() closely follows the logic of
->>> migrate_vma_insert_page()
->>>
->>> Support for splitting pages as needed for migration will follow in
->>> later patches in this series.
->>>
->>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>> Cc: David Hildenbrand <david@redhat.com>
->>> Cc: Zi Yan <ziy@nvidia.com>
->>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->>> Cc: Rakie Kim <rakie.kim@sk.com>
->>> Cc: Byungchul Park <byungchul@sk.com>
->>> Cc: Gregory Price <gourry@gourry.net>
->>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->>> Cc: Alistair Popple <apopple@nvidia.com>
->>> Cc: Oscar Salvador <osalvador@suse.de>
->>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>> Cc: Nico Pache <npache@redhat.com>
->>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>> Cc: Dev Jain <dev.jain@arm.com>
->>> Cc: Barry Song <baohua@kernel.org>
->>> Cc: Lyude Paul <lyude@redhat.com>
->>> Cc: Danilo Krummrich <dakr@kernel.org>
->>> Cc: David Airlie <airlied@gmail.com>
->>> Cc: Simona Vetter <simona@ffwll.ch>
->>> Cc: Ralph Campbell <rcampbell@nvidia.com>
->>> Cc: Mika Penttilä <mpenttil@redhat.com>
->>> Cc: Matthew Brost <matthew.brost@intel.com>
->>> Cc: Francois Dugast <francois.dugast@intel.com>
->>>
->>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>> ---
->>>  include/linux/migrate.h |   2 +
->>>  mm/migrate_device.c     | 456 ++++++++++++++++++++++++++++++++++------
->>>  2 files changed, 395 insertions(+), 63 deletions(-)
->>>
->>> diff --git a/include/linux/migrate.h b/include/linux/migrate.h
->>> index 1f0ac122c3bf..41b4cc05a450 100644
->>> --- a/include/linux/migrate.h
->>> +++ b/include/linux/migrate.h
->>> @@ -125,6 +125,7 @@ static inline int migrate_misplaced_folio(struct folio *folio, int node)
->>>  #define MIGRATE_PFN_VALID	(1UL << 0)
->>>  #define MIGRATE_PFN_MIGRATE	(1UL << 1)
->>>  #define MIGRATE_PFN_WRITE	(1UL << 3)
->>> +#define MIGRATE_PFN_COMPOUND	(1UL << 4)
->>>  #define MIGRATE_PFN_SHIFT	6
->>>  
->>>  static inline struct page *migrate_pfn_to_page(unsigned long mpfn)
->>> @@ -143,6 +144,7 @@ enum migrate_vma_direction {
->>>  	MIGRATE_VMA_SELECT_SYSTEM = 1 << 0,
->>>  	MIGRATE_VMA_SELECT_DEVICE_PRIVATE = 1 << 1,
->>>  	MIGRATE_VMA_SELECT_DEVICE_COHERENT = 1 << 2,
->>> +	MIGRATE_VMA_SELECT_COMPOUND = 1 << 3,
->>>  };
->>>  
->>>  struct migrate_vma {
->>> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
->>> index f45ef182287d..1dfcf4799ea5 100644
->>> --- a/mm/migrate_device.c
->>> +++ b/mm/migrate_device.c
->>> @@ -14,6 +14,7 @@
->>>  #include <linux/pagewalk.h>
->>>  #include <linux/rmap.h>
->>>  #include <linux/swapops.h>
->>> +#include <linux/pgalloc.h>
->>>  #include <asm/tlbflush.h>
->>>  #include "internal.h"
->>>  
->>> @@ -44,6 +45,23 @@ static int migrate_vma_collect_hole(unsigned long start,
->>>  	if (!vma_is_anonymous(walk->vma))
->>>  		return migrate_vma_collect_skip(start, end, walk);
->>>  
->>> +	if (thp_migration_supported() &&
->>> +		(migrate->flags & MIGRATE_VMA_SELECT_COMPOUND) &&
->>> +		(IS_ALIGNED(start, HPAGE_PMD_SIZE) &&
->>> +		 IS_ALIGNED(end, HPAGE_PMD_SIZE))) {
->>> +		migrate->src[migrate->npages] = MIGRATE_PFN_MIGRATE |
->>> +						MIGRATE_PFN_COMPOUND;
->>> +		migrate->dst[migrate->npages] = 0;
->>> +		migrate->npages++;
->>> +		migrate->cpages++;
->>> +
->>> +		/*
->>> +		 * Collect the remaining entries as holes, in case we
->>> +		 * need to split later
->>> +		 */
->>> +		return migrate_vma_collect_skip(start + PAGE_SIZE, end, walk);
->>> +	}
->>> +
->> seems you have to split_huge_pmd() for the huge zero page here in case
->> of !thp_migration_supported() afaics
->>
-> Not really, if pfn is 0, we do a vm_insert_page (please see if (!page) line 1107) and
-> folio  handling in migrate_vma_finalize line 1284
+Use vendor defined usb interface with in/out endpoints to transfer
+requests and responses. Also use one interrupt in endpoint which signals
+readiness of response and pending events on the EC side.
 
-Ok actually seems it is handled by migrate_vma_insert_page() which does
+Signed-off-by: Dawid Niedzwiecki <dawidn@google.com>
+---
+V4 -> V5:
+- Fix typo OCCURED -> OCCURRED
 
-        if (!pmd_none(*pmdp)) {
-                if (pmd_trans_huge(*pmdp)) {
-                        if (!is_huge_zero_pmd(*pmdp))
-                                goto abort;
-                        folio_get(pmd_folio(*pmdp));
-                        split_huge_pmd(vma, pmdp, addr);   <----- here
-                } else if (pmd_leaf(*pmdp))
-                        goto abort;
-        }
+ drivers/platform/chrome/Kconfig       |  11 +
+ drivers/platform/chrome/Makefile      |   1 +
+ drivers/platform/chrome/cros_ec_usb.c | 586 ++++++++++++++++++++++++++
+ 3 files changed, 598 insertions(+)
+ create mode 100644 drivers/platform/chrome/cros_ec_usb.c
 
-
->
-> Thanks,
-> Balbir
->
---Mika
+diff --git a/drivers/platform/chrome/Kconfig b/drivers/platform/chrome/Kconfig
+index 2281d6dacc9b..e77f06f13fc4 100644
+--- a/drivers/platform/chrome/Kconfig
++++ b/drivers/platform/chrome/Kconfig
+@@ -316,6 +316,17 @@ config CROS_TYPEC_SWITCH
+ 	  To compile this driver as a module, choose M here: the module will be
+ 	  called cros_typec_switch.
+ 
++config CROS_EC_USB
++	tristate "ChromeOS Embedded Controller (USB)"
++	depends on CROS_EC && USB
++	help
++	  If you say Y here, you get support for talking to the ChromeOS EC
++	  through a USB. The driver uses vendor defined interface and is capable
++	  of signaling events from EC.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called cros_ec_usb.
++
+ source "drivers/platform/chrome/wilco_ec/Kconfig"
+ 
+ # Kunit test cases
+diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/chrome/Makefile
+index b981a1bb5bd8..444383e8912d 100644
+--- a/drivers/platform/chrome/Makefile
++++ b/drivers/platform/chrome/Makefile
+@@ -38,6 +38,7 @@ obj-$(CONFIG_CROS_EC_SYSFS)		+= cros_ec_sysfs.o
+ obj-$(CONFIG_CROS_HPS_I2C)		+= cros_hps_i2c.o
+ obj-$(CONFIG_CROS_USBPD_LOGGER)		+= cros_usbpd_logger.o
+ obj-$(CONFIG_CROS_USBPD_NOTIFY)		+= cros_usbpd_notify.o
++obj-$(CONFIG_CROS_EC_USB)		+= cros_ec_usb.o
+ 
+ obj-$(CONFIG_WILCO_EC)			+= wilco_ec/
+ 
+diff --git a/drivers/platform/chrome/cros_ec_usb.c b/drivers/platform/chrome/cros_ec_usb.c
+new file mode 100644
+index 000000000000..4e0370a2c3aa
+--- /dev/null
++++ b/drivers/platform/chrome/cros_ec_usb.c
+@@ -0,0 +1,586 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * USB interface for ChromeOS Embedded Controller
++ *
++ * Copyright (C) 2025 Google LLC.
++ */
++
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/kref.h>
++#include <linux/list.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/uaccess.h>
++#include <linux/usb.h>
++
++#include <linux/platform_data/cros_ec_commands.h>
++#include <linux/platform_data/cros_ec_proto.h>
++#include <linux/platform_device.h>
++
++#include "cros_ec.h"
++
++#define USB_VENDOR_ID_GOOGLE 0x18d1
++
++#define USB_SUBCLASS_GOOGLE_EC_HOST_CMD 0x5a
++#define USB_PROTOCOL_GOOGLE_EC_HOST_CMD 0x00
++
++#define RESPONSE_TIMEOUT_MS 200
++#define BULK_TRANSFER_TIMEOUT_MS 100
++
++enum cros_ec_usb_int_type {
++	INT_TYPE_EVENT_OCCURRED = 0,
++	INT_TYPE_RESPONSE_READY = 1,
++};
++
++struct cros_ec_usb {
++	/* the usb device for this device */
++	struct usb_device *udev;
++	/* the interface for this device */
++	struct usb_interface *interface;
++	/* Cros EC device structure */
++	struct cros_ec_device *ec_dev;
++
++	/* the buffer to receive data from bulk ep */
++	u8 *bulk_in_buffer;
++	/* the buffer to receive data from int ep */
++	u8 *int_in_buffer;
++	/* the urb to receive data from int ep */
++	struct urb *int_in_urb;
++	/* the size of the receive buffer from bulk ep */
++	size_t bulk_in_size;
++	/* the size of the receive buffer from int ep */
++	size_t int_in_size;
++
++	/* the pipe of the bulk in ep */
++	unsigned int bulk_in_pipe;
++	/* the pipe of the bulk out ep */
++	unsigned int bulk_out_pipe;
++	/* the pipe of the int in ep */
++	unsigned int int_in_pipe;
++	/* the interval of the int in ep */
++	u8 int_in_interval;
++
++	/* Response ready on EC side */
++	bool resp_ready;
++	/* EC has been registered */
++	bool registered;
++	/* EC is disconnected */
++	bool disconnected;
++	/* synchronize I/O with disconnect */
++	struct mutex io_mutex;
++	/* Work to handle EC events */
++	struct work_struct work_ec_evt;
++	/* Wait queue to signal the response is ready on EC side */
++	wait_queue_head_t resp_ready_wait;
++};
++
++struct int_msg {
++	u8 int_type;
++} __packed;
++
++struct registered_ec {
++	struct list_head node;
++	u16 idProduct;
++	struct cros_ec_usb *ec_usb;
++};
++
++static LIST_HEAD(registered_list);
++static DEFINE_MUTEX(registered_list_mutex);
++
++static int cros_ec_usb_register(u16 idProduct, struct cros_ec_usb *ec_usb)
++{
++	struct registered_ec *ec;
++
++	ec = kmalloc(sizeof(*ec), GFP_KERNEL);
++	if (!ec)
++		return -ENOMEM;
++
++	ec->ec_usb = ec_usb;
++	ec->idProduct = idProduct;
++	mutex_lock(&registered_list_mutex);
++	list_add(&ec->node, &registered_list);
++	mutex_unlock(&registered_list_mutex);
++
++	return 0;
++}
++
++static struct cros_ec_usb *cros_ec_usb_get_registered(u16 idProduct)
++{
++	struct registered_ec *ec;
++	struct cros_ec_usb *ret = NULL;
++
++	mutex_lock(&registered_list_mutex);
++	list_for_each_entry(ec, &registered_list, node) {
++		if (ec->idProduct == idProduct) {
++			ret = ec->ec_usb;
++			break;
++		}
++	}
++	mutex_unlock(&registered_list_mutex);
++	return ret;
++}
++
++static void cros_ec_int_callback(struct urb *urb);
++
++static int submit_int_urb(struct cros_ec_device *ec_dev, gfp_t mem_flags)
++{
++	struct cros_ec_usb *ec_usb = ec_dev->priv;
++	struct usb_device *usb_dev = interface_to_usbdev(ec_usb->interface);
++
++	/* Submit the INT URB. */
++	usb_fill_int_urb(ec_usb->int_in_urb, usb_dev, ec_usb->int_in_pipe, ec_usb->int_in_buffer,
++			 ec_usb->int_in_size, cros_ec_int_callback, ec_usb,
++			 ec_usb->int_in_interval);
++
++	return usb_submit_urb(ec_usb->int_in_urb, mem_flags);
++}
++
++static void cros_ec_int_callback(struct urb *urb)
++{
++	struct cros_ec_usb *ec_usb = urb->context;
++	struct cros_ec_device *ec_dev = ec_usb->ec_dev;
++	int ret;
++
++	switch (urb->status) {
++	case 0:
++		break;
++	case -ECONNRESET:
++	case -ENOENT:
++	case -ESHUTDOWN:
++		/* Expected errors. */
++		return;
++	default:
++		dev_dbg(ec_dev->dev, "Unexpected int urb error: %d\n", urb->status);
++		goto resubmit;
++	}
++
++	if (urb->actual_length >= sizeof(struct int_msg)) {
++		struct int_msg *int_msg = (struct int_msg *)ec_usb->int_in_buffer;
++		enum cros_ec_usb_int_type int_type = (enum cros_ec_usb_int_type)int_msg->int_type;
++
++		switch (int_type) {
++		case INT_TYPE_EVENT_OCCURED:
++			if (ec_usb->registered) {
++				ec_dev->last_event_time = cros_ec_get_time_ns();
++				schedule_work(&ec_usb->work_ec_evt);
++			}
++			break;
++		case INT_TYPE_RESPONSE_READY:
++			ec_usb->resp_ready = true;
++			wake_up(&ec_usb->resp_ready_wait);
++			break;
++		default:
++			dev_err(ec_dev->dev, "Unrecognized event: %d\n", int_type);
++		}
++	} else {
++		dev_err(ec_dev->dev, "Incorrect int transfer len: %d\n", urb->actual_length);
++	}
++
++resubmit:
++	/* Resubmit the INT URB. */
++	ret = submit_int_urb(ec_dev, GFP_ATOMIC);
++	if (ret)
++		dev_err(ec_dev->dev, "Failed to resumbit int urb: %d", ret);
++}
++
++static int do_cros_ec_pkt_xfer_usb(struct cros_ec_device *ec_dev,
++				   struct cros_ec_command *ec_msg)
++{
++	struct cros_ec_usb *ec_usb = ec_dev->priv;
++	struct ec_host_response *host_response;
++	int req_size, ret, actual_length, expected_resp_size, resp_size;
++	const int header_size = sizeof(*host_response);
++	const int max_resp_size = header_size + ec_msg->insize;
++	const int bulk_in_size = umin(ec_usb->bulk_in_size, ec_dev->din_size);
++	u8 sum = 0;
++
++	mutex_lock(&ec_usb->io_mutex);
++	if (ec_usb->disconnected) {
++		mutex_unlock(&ec_usb->io_mutex);
++		ret = -ENODEV;
++		return ret;
++	}
++
++	if (max_resp_size > ec_dev->din_size) {
++		dev_err(ec_dev->dev, "Potential response too big: %d\n", max_resp_size);
++		ret = -EINVAL;
++		goto exit;
++	}
++
++	req_size = cros_ec_prepare_tx(ec_dev, ec_msg);
++	if (req_size < 0) {
++		dev_err(ec_dev->dev, "Failed to prepare msg %d\n", req_size);
++		ret = req_size;
++		goto exit;
++	}
++	dev_dbg(ec_dev->dev, "Prepared len=%d\n", req_size);
++
++	ec_usb->resp_ready = false;
++	/*
++	 * Buffers dout and din are allocated with devm_kzalloc which means it is suitable
++	 * for DMA and we can use by usb functions.
++	 */
++	ret = usb_bulk_msg(ec_usb->udev, ec_usb->bulk_out_pipe, ec_dev->dout, req_size, NULL,
++			   BULK_TRANSFER_TIMEOUT_MS);
++	if (ret) {
++		dev_err(ec_dev->dev, "Failed to send request: %d\n", ret);
++		goto exit;
++	}
++
++	/*
++	 * Wait till EC signals response ready event via INT endpoint,
++	 * before polling a response with a bulk transfer.
++	 */
++	if (!wait_event_timeout(ec_usb->resp_ready_wait, ec_usb->resp_ready,
++				msecs_to_jiffies(RESPONSE_TIMEOUT_MS))) {
++		dev_err(ec_dev->dev, "Timed out waiting for response\n");
++		ret = -ETIMEDOUT;
++		goto exit;
++	}
++
++	/* Get first part of response that contains a header. */
++	ret = usb_bulk_msg(ec_usb->udev, ec_usb->bulk_in_pipe, ec_dev->din, bulk_in_size,
++			   &actual_length, BULK_TRANSFER_TIMEOUT_MS);
++	if (ret) {
++		dev_err(ec_dev->dev, "Failed to get response: %d\n", ret);
++		goto exit;
++	}
++
++	/* Verify number of received bytes. */
++	if (actual_length < header_size) {
++		dev_err(ec_dev->dev, "Received too little bytes: %d\n", actual_length);
++		ret = -ENOSPC;
++		goto exit;
++	}
++
++	host_response = (struct ec_host_response *)ec_dev->din;
++	if (host_response->struct_version != 3 || host_response->reserved != 0) {
++		dev_err(ec_dev->dev, "Received invalid header\n");
++		ret = -ENOSPC;
++		goto exit;
++	}
++
++	expected_resp_size = header_size + host_response->data_len;
++	if (expected_resp_size > max_resp_size || actual_length > expected_resp_size) {
++		dev_err(ec_dev->dev, "Incorrect number of expected bytes: %d\n",
++			expected_resp_size);
++		ret = -ENOSPC;
++		goto exit;
++	}
++
++	/* Get the rest of the response if needed. */
++	resp_size = actual_length;
++	if (resp_size < expected_resp_size) {
++		ret = usb_bulk_msg(ec_usb->udev, ec_usb->bulk_in_pipe, ec_dev->din + resp_size,
++				   expected_resp_size - resp_size, &actual_length,
++				   BULK_TRANSFER_TIMEOUT_MS);
++		if (ret) {
++			dev_err(ec_dev->dev, "Failed to get second part of response: %d\n", ret);
++			goto exit;
++		}
++		resp_size += actual_length;
++	}
++
++	/* Check if number of received of bytes is correct. */
++	if (resp_size != expected_resp_size) {
++		dev_err(ec_dev->dev, "Received incorrect number of bytes: %d, expected: %d\n",
++			resp_size, expected_resp_size);
++		ret = -ENOSPC;
++		goto exit;
++	}
++
++	/* Validate checksum */
++	for (int i = 0; i < expected_resp_size; i++)
++		sum += ec_dev->din[i];
++
++	if (sum) {
++		dev_err(ec_dev->dev, "Bad packet checksum calculated %x\n", sum);
++		ret = -EBADMSG;
++		goto exit;
++	}
++
++	ec_msg->result = host_response->result;
++	memcpy(ec_msg->data, ec_dev->din + header_size, host_response->data_len);
++	ret = host_response->data_len;
++
++	if (ec_msg->command == EC_CMD_REBOOT_EC)
++		msleep(EC_REBOOT_DELAY_MS);
++
++exit:
++	mutex_unlock(&ec_usb->io_mutex);
++	if (ret < 0) {
++		/* Try to reset EC in case of error to restore default state. */
++		usb_reset_device(ec_usb->udev);
++	}
++
++	return ret;
++}
++
++static void usb_evt_handler(struct work_struct *work)
++{
++	struct cros_ec_usb *ec_usb = container_of(work, struct cros_ec_usb, work_ec_evt);
++
++	cros_ec_irq_thread(0, ec_usb->ec_dev);
++}
++
++static void cros_ec_usb_delete(struct cros_ec_usb *ec_usb)
++{
++	usb_kill_urb(ec_usb->int_in_urb);
++	cancel_work_sync(&ec_usb->work_ec_evt);
++
++	usb_free_urb(ec_usb->int_in_urb);
++	usb_put_intf(ec_usb->interface);
++	usb_put_dev(ec_usb->udev);
++	kfree(ec_usb->int_in_buffer);
++	kfree(ec_usb->bulk_in_buffer);
++}
++
++static int cros_ec_usb_probe(struct usb_interface *intf, const struct usb_device_id *id)
++{
++	struct usb_device *usb_dev = interface_to_usbdev(intf);
++	struct usb_endpoint_descriptor *bulk_in, *bulk_out, *int_in;
++	struct device *if_dev = &intf->dev;
++	struct cros_ec_device *ec_dev;
++	const u16 idProduct = le16_to_cpu(usb_dev->descriptor.idProduct);
++	struct cros_ec_usb *ec_usb = cros_ec_usb_get_registered(idProduct);
++	const bool is_registered = !!ec_usb;
++	int ret;
++
++	/*
++	 * Do not register the same EC device twice. The probing is performed every reboot, sysjump,
++	 * crash etc. Recreating the /dev/cros_X file every time would force all application to
++	 * reopen the file, which is not a case for other cros_ec_x divers. Instead, keep
++	 * the cros_ec_device and cros_ec_usb structures constant and replace USB related structures
++	 * for the same EC that is reprobed.
++	 *
++	 * The driver doesn't support handling two devices with the same idProduct, but it will
++	 * never be a real usecase.
++	 */
++	if (!is_registered) {
++		ec_usb = kzalloc(sizeof(*ec_usb), GFP_KERNEL);
++		if (!ec_usb)
++			return -ENOMEM;
++
++		ec_dev = kzalloc(sizeof(*ec_dev), GFP_KERNEL);
++		if (!ec_dev) {
++			kfree(ec_usb);
++			return -ENOMEM;
++		}
++
++		ec_usb->ec_dev = ec_dev;
++		INIT_WORK(&ec_usb->work_ec_evt, usb_evt_handler);
++		mutex_init(&ec_usb->io_mutex);
++		init_waitqueue_head(&ec_usb->resp_ready_wait);
++
++		ec_dev->priv = ec_usb;
++		/* EC uses int endpoint to signal events. */
++		ec_dev->irq = 0;
++		ec_dev->cmd_xfer = NULL;
++		ec_dev->pkt_xfer = do_cros_ec_pkt_xfer_usb;
++		ec_dev->din_size = sizeof(struct ec_host_response) +
++				   sizeof(struct ec_response_get_protocol_info);
++		ec_dev->dout_size = sizeof(struct ec_host_request) +
++				    sizeof(struct ec_params_rwsig_action);
++	} else {
++		ec_dev = ec_usb->ec_dev;
++
++		/*
++		 * We need to allocate dout and din buffers, because cros_ec_register
++		 * won't be called. These buffers were freed once previous usb device was
++		 * disconnected. Use buffer sizes from the last query.
++		 * The EC_HOST_EVENT_INTERFACE_READY event will be triggered at the end
++		 * of a boot, which calls cros_ec_query_all function, that reallocates
++		 * buffers.
++		 */
++		ec_dev->din = devm_kzalloc(if_dev, ec_dev->din_size, GFP_KERNEL);
++		if (!ec_dev->din) {
++			ret = -ENOMEM;
++			dev_err(if_dev, "Failed to allocate din buffer\n");
++			goto error;
++		}
++		ec_dev->dout = devm_kzalloc(if_dev, ec_dev->dout_size, GFP_KERNEL);
++		if (!ec_dev->dout) {
++			ret = -ENOMEM;
++			dev_err(if_dev, "Failed to allocate dout buffer\n");
++			goto error;
++		}
++	}
++
++	ec_dev->dev = if_dev;
++	ec_dev->phys_name = dev_name(if_dev);
++	usb_set_intfdata(intf, ec_dev);
++	/* Allow EC to do remote wake-up - host sends SET_FEATURE(remote wake-up) before suspend. */
++	device_init_wakeup(&usb_dev->dev, true);
++
++	ec_usb->udev = usb_get_dev(usb_dev);
++	ec_usb->interface = usb_get_intf(intf);
++
++	/* Use first bulk-in/out endpoints + int-in endpoint */
++	ret = usb_find_common_endpoints(intf->cur_altsetting, &bulk_in, &bulk_out, &int_in, NULL);
++	if (ret) {
++		dev_err(if_dev,
++			"Could not find bulk-in, bulk-out or int-in endpoint\n");
++		goto error;
++	}
++	/* Bulk endpoints have to be capable of sending headers in one transfer. */
++	if ((usb_endpoint_maxp(bulk_out) < sizeof(struct ec_host_request)) ||
++	    (usb_endpoint_maxp(bulk_in) < sizeof(struct ec_host_response)) ||
++	    (usb_endpoint_maxp(int_in)) < sizeof(struct int_msg)) {
++		ret = -ENOSPC;
++		dev_err(if_dev, "Incorrect max packet size\n");
++		goto error;
++	}
++
++	ec_usb->bulk_out_pipe = usb_sndbulkpipe(ec_usb->udev, bulk_out->bEndpointAddress);
++	ec_usb->bulk_in_size = usb_endpoint_maxp(bulk_in);
++	ec_usb->bulk_in_pipe = usb_rcvbulkpipe(ec_usb->udev, bulk_in->bEndpointAddress);
++	ec_usb->bulk_in_buffer = kmalloc(ec_usb->bulk_in_size, GFP_KERNEL);
++	if (!ec_usb->bulk_in_buffer) {
++		dev_err(if_dev, "Failed to allocate bulk in buffer\n");
++		ret = -ENOMEM;
++		goto error;
++	}
++
++	ec_usb->int_in_size = usb_endpoint_maxp(int_in);
++	ec_usb->int_in_pipe = usb_rcvintpipe(ec_usb->udev, int_in->bEndpointAddress);
++	ec_usb->int_in_interval = int_in->bInterval;
++	ec_usb->int_in_buffer = kmalloc(ec_usb->int_in_size, GFP_KERNEL);
++	if (!ec_usb->int_in_buffer) {
++		dev_err(if_dev, "Failed to allocate int in buffer\n");
++		ret = -ENOMEM;
++		goto error;
++	}
++	ec_usb->int_in_urb = usb_alloc_urb(0, GFP_KERNEL);
++	if (!ec_usb->int_in_urb) {
++		dev_err(if_dev, "Failed to allocate int in urb\n");
++		ret = -ENOMEM;
++		goto error;
++	}
++
++	/* Use URB for the int endpoint. */
++	ret = submit_int_urb(ec_dev, GFP_KERNEL);
++	if (ret) {
++		dev_err(if_dev, "Failed to sumbit int urb: %d\n", ret);
++		goto error;
++	}
++
++	mutex_lock(&ec_usb->io_mutex);
++	ec_usb->disconnected = false;
++	mutex_unlock(&ec_usb->io_mutex);
++
++	if (!is_registered) {
++		ret = cros_ec_register(ec_dev);
++		if (ret) {
++			dev_err(if_dev, "Cannot register EC\n");
++			goto error;
++		}
++		ret = cros_ec_usb_register(idProduct, ec_usb);
++		if (ret) {
++			cros_ec_unregister(ec_dev);
++			goto error;
++		}
++		ec_usb->registered = true;
++	}
++
++	/* Handle potential events that haven't been handled before registration */
++	schedule_work(&ec_usb->work_ec_evt);
++
++	return 0;
++
++error:
++	/* Free allocated memory */
++	cros_ec_usb_delete(ec_usb);
++	if (!is_registered) {
++		/* Free constant structures only if it is a first registration. */
++		kfree(ec_dev);
++		kfree(ec_usb);
++	}
++
++	return ret;
++}
++
++static void cros_ec_usb_disconnect(struct usb_interface *intf)
++{
++	struct cros_ec_device *ec_dev = usb_get_intfdata(intf);
++	struct cros_ec_usb *ec_usb = ec_dev->priv;
++
++	/* prevent more I/O from starting */
++	mutex_lock(&ec_usb->io_mutex);
++	ec_usb->disconnected = true;
++	mutex_unlock(&ec_usb->io_mutex);
++
++	cros_ec_usb_delete(ec_usb);
++}
++
++static int cros_ec_usb_suspend(struct usb_interface *intf, pm_message_t message)
++{
++	return 0;
++}
++
++static int cros_ec_usb_resume(struct usb_interface *intf)
++{
++	struct cros_ec_device *ec_dev = usb_get_intfdata(intf);
++	int err;
++
++	/* URB is killed during suspend. */
++	err = submit_int_urb(ec_dev, GFP_KERNEL);
++	if (err)
++		dev_err(ec_dev->dev, "Failed to sumbit int urb after resume: %d\n", err);
++
++	return err;
++}
++
++static int cros_ec_usb_pre_reset(struct usb_interface *intf)
++{
++	struct cros_ec_device *ec_dev = usb_get_intfdata(intf);
++	struct cros_ec_usb *ec_usb = ec_dev->priv;
++
++	/* Do not start any new operations. */
++	mutex_lock(&ec_usb->io_mutex);
++
++	usb_kill_urb(ec_usb->int_in_urb);
++
++	return 0;
++}
++
++static int cros_ec_usb_post_reset(struct usb_interface *intf)
++{
++	struct cros_ec_device *ec_dev = usb_get_intfdata(intf);
++	struct cros_ec_usb *ec_usb = ec_dev->priv;
++	int err;
++
++	err = submit_int_urb(ec_dev, GFP_KERNEL);
++	if (err)
++		dev_err(ec_dev->dev, "Failed to sumbit int urb after reset: %d\n", err);
++
++	mutex_unlock(&ec_usb->io_mutex);
++
++	return err;
++}
++
++static const struct usb_device_id cros_ec_usb_id_table[] = {
++	{ USB_VENDOR_AND_INTERFACE_INFO(USB_VENDOR_ID_GOOGLE,
++					USB_CLASS_VENDOR_SPEC,
++					USB_SUBCLASS_GOOGLE_EC_HOST_CMD,
++					USB_PROTOCOL_GOOGLE_EC_HOST_CMD) },
++	{} /* Terminating entry */
++};
++MODULE_DEVICE_TABLE(usb, cros_ec_usb_id_table);
++
++static struct usb_driver cros_ec_usb = {
++	.name = "cros-ec-usb",
++	.probe = cros_ec_usb_probe,
++	.disconnect = cros_ec_usb_disconnect,
++	.suspend = cros_ec_usb_suspend,
++	.resume = cros_ec_usb_resume,
++	.pre_reset = cros_ec_usb_pre_reset,
++	.post_reset = cros_ec_usb_post_reset,
++	.id_table = cros_ec_usb_id_table,
++	/* Do not autosuspend EC */
++	.supports_autosuspend = 0,
++};
++module_usb_driver(cros_ec_usb);
++
++MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("ChromeOS EC USB HC driver");
+-- 
+2.51.0.384.g4c02a37b29-goog
 
 
