@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-814153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9FFB54FFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78695B54FFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3945D170AC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:47:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A16A81D61270
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D3E3002DE;
-	Fri, 12 Sep 2025 13:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615E215855E;
+	Fri, 12 Sep 2025 13:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cvPEDHkb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="grzuAL/T"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2098230F529
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A4142065
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684805; cv=none; b=OlmJiE+iNMc1CW3q3AGOMos5HwTd1Tzfd3uo5Coo9ci/uo7ZJSOV3MYeRuOFptu1MK1/UcyJ8vF3k89A4Qxjq3Z15TiMkPhYbaI0ktBZlH97vuQYY+RQOqCOaPgkSJXmVerVz2Km/zTmxIVBjCf3S8QsUaroiGRqtaC2yucaruI=
+	t=1757684886; cv=none; b=hpbQ+hb05OXlgefIJyn6ylAOIehlAJN2WlS9fVemwDQghX0SicpH3obJLJ22IReobVcC3bTRdGVgGMsL1NWSHhDFBJ3hq4dOWYthhVNLGOMCwkMEI7cEVrWZuxCgj6VL1SoZKkVcy8KOaWrzdWxkYHMu6cBc6WcrOziHCLUCd4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684805; c=relaxed/simple;
-	bh=08mzWjt/6o6OaGoelal58fGoqDWE8lgwqZB2PCXBUOw=;
+	s=arc-20240116; t=1757684886; c=relaxed/simple;
+	bh=/ln5JGNWmfcCe8/H0oSeSbnsYQEmNVX3vWvsR1wlNjc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pvhPcOye7wku0v4BzePltcjt69t7MXFTefc4qIokuf2rX/UJstpi48YS3NLrwVW1hXwKhc5d+O54hNXz/+C+vJWfVyMbOMhZVEjAkyAePOq86a+kpVLqua+6q2bnKXtB4/UJN4LU4aOUuQTE5gftXCHPxyraRweE4M02bAzLHf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cvPEDHkb; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=iZY0/GGYAG+7onU4lN8wUC6NEXChwVMFJ/7ygkYvsIY/M+RHngQQAmWv9rKhF6wV0TYW6mR6iqMxxvHpkCGRLrwrptlQx5WfS2F7yE1ApiklJeDhyoZgfY9BiOpLMw3e9pWZvGYM/42n6i+qeA7dJtva5arWrvEPxByFjhOB87c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=grzuAL/T; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757684803;
+	s=mimecast20190719; t=1757684884;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LkEIiRRQkvSVtosaIK3QPaVmFb7eg/hw/VZ7vwDxlFI=;
-	b=cvPEDHkbwVdVjhXJHYbsO2Cs3+KfqPMr2ga+Yys4lztjvw64zrd941NRjP2FmK93mJsI5g
-	VZAJNkqhwsGp1kVSrPFAOl/2mXBIGA6bPExC7YhBhTLJMLTbK6ApjfyOlzlDC+JhKrb8ak
-	NE7iLhIWKw0Mlj7Ve/JhoEnsFev+EnM=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=w3448OdTgFs0YiOnfQSy1wV2L7Q5FFoX8LkMxHWDXQ0=;
+	b=grzuAL/T9NeXhOU/e3E8Hk6xupxbklC21TUsry2qclH7fvSEbBLNvFvzQRzAvGbdAC8HjA
+	Ttgc2Y0nEmM9OPfy4c7Cmo7048TSPworwfNQwNWc8M6mmGMnsl5jPH3WXJcYMi3eH3+Jag
+	Qfijkj1QbntGfxgoniI24/8y9OLkGRY=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-562-CE_EmgFFOEi46ZQlB4UJqA-1; Fri, 12 Sep 2025 09:46:41 -0400
-X-MC-Unique: CE_EmgFFOEi46ZQlB4UJqA-1
-X-Mimecast-MFC-AGG-ID: CE_EmgFFOEi46ZQlB4UJqA_1757684801
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3df19a545c2so1431904f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:46:41 -0700 (PDT)
+ us-mta-616-ssajovW8PPWTELLKC2_y8Q-1; Fri, 12 Sep 2025 09:48:02 -0400
+X-MC-Unique: ssajovW8PPWTELLKC2_y8Q-1
+X-Mimecast-MFC-AGG-ID: ssajovW8PPWTELLKC2_y8Q_1757684881
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3e76416ddd5so1031853f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:48:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757684800; x=1758289600;
+        d=1e100.net; s=20230601; t=1757684881; x=1758289681;
         h=content-transfer-encoding:in-reply-to:autocrypt:content-language
          :from:references:cc:to:subject:user-agent:mime-version:date
          :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=LkEIiRRQkvSVtosaIK3QPaVmFb7eg/hw/VZ7vwDxlFI=;
-        b=LCYUtVCq59xaGLSYn/F8af8DdSe8V6gioUIoZhKIrPq2/TxqEM+quxVXHlv/ugn5JM
-         TxYM2FSIlrUTJpy/fJJHbAi9aEWUa+yKTSLGHYyle1/bPG6P2EVO/QxlZjohc+vZx2O1
-         sPCiu6odkgVh4oAhHuRjIKH1ag43OM6juVnS/CTTWiKP4g5rDqlKR1irudoWF8urzHHZ
-         9iP9qWDrebJZ8rARFufmdYd9HwPpGUlhXh/8VedzEPOgdWlbH0Mn96xz5n1E9z0szoOC
-         ACkqxB3X6WU6B87jMouSHFn6wLrzeGp7Uoy3YJ2TsSS14roLTDauHGGKBiqL/pdGPMDW
-         qhAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIBubyH8sqQMGrSixQAkU5vFj0AGJXUD9Kagg9dxA+5quwRU/HGlm/CtNFXhhKQcJl0HERl+zfBd7rI+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZyMtpZzBSaK7DkbTpxp2V5Rn0hDfh55+CHkEa86yU+p029i1R
-	LPlrhW93vZ/b39sVkLnqLaPoKpjZ3zSkdpCA5BbJ7jhN+f6hp/UyhTMK0W71KtqbDu2pWzjrsWo
-	jnDtUMo6444+ieSvfjTVsHt/abaAj18X9rPBPSYcJYN5GsWCwEevemrHeaRxSulByyQ==
-X-Gm-Gg: ASbGncti3xZAd1SNTsYfb6o3e8jwvR/sRf3L+/q3liMLhQju1pJfA2B8i+OLJfrqaSw
-	BHW+9QDWxEhu5Bif5AO/ya84GEjVqF5jbvBHyaSvrDXC22hvPhNOdpY6deoTpa6dZw3/RqkUAhT
-	ijFniA06wCqgjiGITIz+k53icGSp6HiNbKgbyW3hOgqeagGcXer3fubNedIZQ0+jcxo25OFqvmQ
-	A1sjdbz/458Ha90apF/KiGB5FYCqQnMOu137ZvaAH7Qooge8ncSixlGy4iNPF8jhdj+9qsEDzZB
-	3mAK5xgVGEqlTTDvO+9k1D5X8EemWY7m6DXECZOxwnZiThKLGSanuyQo99wOy0o2aYEqavGHnF2
-	zpyyO3kuXGSzpwFEI+2YtWYMX+87oWyn+gcwNcjMYaiZZA1tKlklAQkmB6iQs3oNF3kA=
-X-Received: by 2002:a5d:64e4:0:b0:3e1:4d93:5580 with SMTP id ffacd0b85a97d-3e7659f409dmr2572913f8f.37.1757684800345;
-        Fri, 12 Sep 2025 06:46:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEh0SWF7pTljY6Vs/x3MxkGL3BzSuLf4FfxVO0ALVeWlY8LdDeumV7KYuM+jKuGgXdED/mnEg==
-X-Received: by 2002:a5d:64e4:0:b0:3e1:4d93:5580 with SMTP id ffacd0b85a97d-3e7659f409dmr2572865f8f.37.1757684799824;
-        Fri, 12 Sep 2025 06:46:39 -0700 (PDT)
+        bh=w3448OdTgFs0YiOnfQSy1wV2L7Q5FFoX8LkMxHWDXQ0=;
+        b=spJlpjvQ/CaUWkx8dQyYVeXd7yIPR5AuE/pc5pmp539RkjJ2nyqWwOL97j84wMJIg3
+         xNw/EeTNhCAD+mBCyQ8M1U2nOJsuTs/GG3Sjx2tDW18caGbattFj9QhOoIbzqDmObi08
+         h1VGMuUeVFkyo5V8866LuGzVYG3dq82Wxb6KdYdw1sLjcyepK+cTEAsBSjyzQW59lHbT
+         oEULea5+JoTnvJ1ne8cIqDxR8daWCaCrJGZn1fI8h3v6iUT1ZViHw5GkNM/UejJLIKG7
+         ZjxwOTWNyLLYyv8FrCi/99cbLN9r+k6CmaEsR0rfSVvc+49vJhZ26y6NSji5mJRCiCja
+         rODQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfjtIL3OMeWD1VC9iBtVG0PaX78Awa0mO7Wwrn8AqO4IjIJezVUQDTlM5XEqgK9fIMmbRjZ9+uCJ6xMoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAShPo8ReLIfpCBVLjIt+OXl6pQwOu018lAV4Czjh7hmNKY6Dy
+	38l9Et8MGiqZ/gRrraYdAqEEucZwLhr8qUnM8iOqZ7MFm6xVTcojVPKqThnnrsHzVgzgS8uGxW4
+	ExK0/ki3Nvq/EUqF9Q2etEAoNQaeUqs66d5NsOnbgsUzMwps/LdN6ZO0wq0VmSkL5IQ==
+X-Gm-Gg: ASbGncvTdoJyb3XkwcjKrcSqv2IRPx/I2Z4AIiZoE+S7O6mRrMrSZMAl1CcNMqn2gGy
+	eVNG9geY0o87FHbEPSylP2539DZpOZ9WhfSX9jBLtD/uaU+nBdWp0tJ091FrvoDLXXGQKESdUHl
+	S8brh/mg10RP3xkEKaInCVeXWsrpKsdpO6hS9FPhYywvW1NLouoGqKYG2DoDtdErxO6Nf3ViaPA
+	TWbzmHFTtwCf9itFIlFo8kGlD5uNGs8fY/XR9ki7j9o5iY3Co38P8LsfCxwVIZsIUEZBJUK6YjM
+	xs5PEocFjglhbv9FAKPo74mzZ4XHdIqyZFdBZJJNHURCfkEVYzctXqerRxYvqWJryRoRWr/LTdT
+	Dxq6+C0BcBnWA9whTFsRIpskX/vT6fw+QaNnsVt5DIO5VZ3JdFcOne0asMdzkKOcsWG0=
+X-Received: by 2002:a05:6000:2903:b0:3e0:152a:87b4 with SMTP id ffacd0b85a97d-3e7659db0ecmr2929917f8f.35.1757684881177;
+        Fri, 12 Sep 2025 06:48:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHR3i6SRCrcMcssae1nGWwzt+oNV7vkhRgpzb3bl3dJ8CMEtAZfsOX+4eMBZZIz5FBmhHDpKA==
+X-Received: by 2002:a05:6000:2903:b0:3e0:152a:87b4 with SMTP id ffacd0b85a97d-3e7659db0ecmr2929876f8f.35.1757684880716;
+        Fri, 12 Sep 2025 06:48:00 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e774a3fb5bsm1982983f8f.58.2025.09.12.06.46.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd691sm6839560f8f.32.2025.09.12.06.47.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 06:46:39 -0700 (PDT)
-Message-ID: <da251159-b39f-467b-a4e3-676aa761c0e8@redhat.com>
-Date: Fri, 12 Sep 2025 15:46:36 +0200
+        Fri, 12 Sep 2025 06:48:00 -0700 (PDT)
+Message-ID: <43f42d9d-f814-4b54-91a6-3073f7c7cedf@redhat.com>
+Date: Fri, 12 Sep 2025 15:47:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,11 +90,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Kiryl Shutsemau <kas@kernel.org>, Nico Pache <npache@redhat.com>,
- linux-mm@kvack.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, ziy@nvidia.com,
- baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
+To: Kiryl Shutsemau <kas@kernel.org>, Nico Pache <npache@redhat.com>
+Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ ziy@nvidia.com, baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com,
  Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
  corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
  mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
@@ -105,13 +104,12 @@ Cc: Kiryl Shutsemau <kas@kernel.org>, Nico Pache <npache@redhat.com>,
  anshuman.khandual@arm.com, catalin.marinas@arm.com, tiwai@suse.de,
  will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
  jglisse@google.com, surenb@google.com, zokeefe@google.com,
- rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org,
- hughd@google.com, richard.weiyang@gmail.com, lance.yang@linux.dev,
- vbabka@suse.cz, rppt@kernel.org, jannh@google.com, pfalcato@suse.de
+ hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
+ rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
+ lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
+ pfalcato@suse.de
 References: <20250912032810.197475-1-npache@redhat.com>
  <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
- <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
- <20250912133701.GA802874@cmpxchg.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -158,105 +156,42 @@ Autocrypt: addr=david@redhat.com; keydata=
  3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
  CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
  qIws/H2t
-In-Reply-To: <20250912133701.GA802874@cmpxchg.org>
+In-Reply-To: <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12.09.25 15:37, Johannes Weiner wrote:
-> On Fri, Sep 12, 2025 at 02:25:31PM +0200, David Hildenbrand wrote:
->> On 12.09.25 14:19, Kiryl Shutsemau wrote:
->>> On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
->>>> The following series provides khugepaged with the capability to collapse
->>>> anonymous memory regions to mTHPs.
->>>>
->>>> To achieve this we generalize the khugepaged functions to no longer depend
->>>> on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
->>>> pages that are occupied (!none/zero). After the PMD scan is done, we do
->>>> binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
->>>> range. The restriction on max_ptes_none is removed during the scan, to make
->>>> sure we account for the whole PMD range. When no mTHP size is enabled, the
->>>> legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
->>>> by the attempted collapse order to determine how full a mTHP must be to be
->>>> eligible for the collapse to occur. If a mTHP collapse is attempted, but
->>>> contains swapped out, or shared pages, we don't perform the collapse. It is
->>>> now also possible to collapse to mTHPs without requiring the PMD THP size
->>>> to be enabled.
->>>>
->>>> When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
->>>> 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
->>>> mTHP collapses to prevent collapse "creep" behavior. This prevents
->>>> constantly promoting mTHPs to the next available size, which would occur
->>>> because a collapse introduces more non-zero pages that would satisfy the
->>>> promotion condition on subsequent scans.
->>>
->>> Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
->>> all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
->>>
+On 12.09.25 14:19, Kiryl Shutsemau wrote:
+> On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
+>> The following series provides khugepaged with the capability to collapse
+>> anonymous memory regions to mTHPs.
 >>
->> I am all for not adding any more ugliness on top of all the ugliness we
->> added in the past.
+>> To achieve this we generalize the khugepaged functions to no longer depend
+>> on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
+>> pages that are occupied (!none/zero). After the PMD scan is done, we do
+>> binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
+>> range. The restriction on max_ptes_none is removed during the scan, to make
+>> sure we account for the whole PMD range. When no mTHP size is enabled, the
+>> legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
+>> by the attempted collapse order to determine how full a mTHP must be to be
+>> eligible for the collapse to occur. If a mTHP collapse is attempted, but
+>> contains swapped out, or shared pages, we don't perform the collapse. It is
+>> now also possible to collapse to mTHPs without requiring the PMD THP size
+>> to be enabled.
 >>
->> I will soon propose deprecating that parameter in favor of something
->> that makes a bit more sense.
->>
->> In essence, we'll likely have an "eagerness" parameter that ranges from
->> 0 to 10. 10 is essentially "always collapse" and 0 "never collapse if
->> not all is populated".
->>
->> In between we will have more flexibility on how to set these values.
->>
->> Likely 9 will be around 50% to not even motivate the user to set
->> something that does not make sense (creep).
+>> When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
+>> 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
+>> mTHP collapses to prevent collapse "creep" behavior. This prevents
+>> constantly promoting mTHPs to the next available size, which would occur
+>> because a collapse introduces more non-zero pages that would satisfy the
+>> promotion condition on subsequent scans.
 > 
-> One observation we've had from production experiments is that the
-> optimal number here isn't static. If you have plenty of memory, then
-> even very sparse THPs are beneficial.
+> Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
+> all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
 
-Exactly.
+BTW, I thought further about this and I agree: if we count zero-filled 
+pages towards none_or_zero one we can avoid the "creep" problem.
 
-And willy suggested something like "eagerness" similar to "swapinness" 
-that gives us more flexibility when implementing it, including 
-dynamically adjusting the values in the future.
-
-> 
-> An extreme example: if all your THPs have 2/512 pages populated,
-> that's still cutting TLB pressure in half!
-
-IIRC, you create more pressure on the huge entries, where you might have 
-less TLB entries :) But yes, there can be cases where it is beneficial, 
-if there is absolutely no memory pressure.
-
-> 
-> So in the absence of memory pressure, allocating and collapsing should
-> optimally be aggressive even on very sparse regions.
-
-Yes, we discussed that as well in the THP cabal.
-
-It's very similar to the max_ptes_swapped: that parameter should not 
-exist. If there is no memory pressure we can just swap it in. If there 
-is memory pressure we probably would not want to swap in much.
-
-> 
-> On the flipside, if there is memory pressure, TLB benefits are very
-> quickly drowned out by faults and paging events. And I mean real
-> memory pressure. If all that's happening is that somebody is streaming
-> through filesystem data, the optimal behavior is still to be greedy.
-> 
-> Another consideration is that if we need to break large folios, we
-> should start with colder ones that provide less benefit, and defer the
-> splitting of hotter ones as long as possible.
-
-Yes, we discussed that as well: there is no QoS right now, which is 
-rather suboptimal.
-
-> 
-> Maybe a good direction would be to move splitting out of the shrinker
-> and tie it to the (refault-aware) anon reclaim. And then instead of a
-> fixed population threshold, collapse on a pressure gradient that
-> starts with "no pressure/thrashing and at least two base pages in THP
-> a region" and ends with "reclaim is splitting everything, back off".
-
-I agree, but have to think further about how that could work in practice.
+The scanning-for-zero part is rather nasty, though.
 
 -- 
 Cheers
