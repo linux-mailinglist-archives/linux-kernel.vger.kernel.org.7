@@ -1,160 +1,210 @@
-Return-Path: <linux-kernel+bounces-813317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FC0B5437B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:06:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D69DB5437C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:06:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83794447916
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:06:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 009BA7B1185
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06BA29B783;
-	Fri, 12 Sep 2025 07:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336D22BCF5D;
+	Fri, 12 Sep 2025 07:06:33 +0000 (UTC)
 Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616A0199FB2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42EB28689C
 	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757660792; cv=none; b=fDTbLs38MlCOv0YGsu1X35BpQWthTzkpMkGgRL6JaXTpX5SgkxR5rxcOT0IisslS7j2V9wIwch6EG0tTOHOQDxuDJWA35yR7KzSYjl7iD1UHn6XsfXNRSUAW7Znj7FaK2FLUg8BLhRqAKFFtmAVpgZaeLiZcGJWyCicImaH7yi0=
+	t=1757660792; cv=none; b=fUQuT6iY35/OLtYGE5TazvMkGxEWd1bwkFplkX3LTOVBverfOY7fYYQeLNTnH8HWsJYRyimSKPjEYoINmzam0ipfAa5hoSTzbv75SjtShFpsrB5MT72Sr2SxJw27c0ZHXuORmOQPjqE6u5wiW1r4iG7JP/VzChtsyEU8Dakp8s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1757660792; c=relaxed/simple;
-	bh=RwHOLyhs5q8fB4z9idz6A/n+Ucus3xYu6vE3rzPaEfU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=o2Id8biPWlxF8pYmtHPGhYG8OP845dE+FlA25LQ5Pv67P4X+T0REeFHDWwdfk+RS7bSQ77jxyIn51l7qdxo0f/xAd/1aZZKNUKQkjsycC21ktQJPXHjdU2pai3MeXGpzJSDkW3oCmhxGi8p4K9Hs4C5XU9jGD3uaEm9OJQENbaU=
+	bh=Y4aiKmvWkx6G6By0TM3doDi8LDZzC+XcCJeBWIo4Jo0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uawEoZm41Vw3ErTu/N/AJBuceCEXwMB8PVNoW0y8xIa112MafMkjR4Tpm8KTjVa1OJS/WSbM52nRFKqluYqb30v2bTExawH2Fd6jiVhvCGgUYywdPop0N4qFzx9zVLXuIagoLwEai6CGAtf4pkYzx6RPWjoVy64mgNbSh9dLGrA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-40e59fba17dso24718465ab.1
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-40f7be8ecf2so42180005ab.1
         for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:06:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757660789; x=1758265589;
+        d=1e100.net; s=20230601; t=1757660790; x=1758265590;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lg7ihBhpULDxOBRw5vjahIiuuwSlCIhJvniZyUe7xQU=;
-        b=AgTmgUZDSX/cRlacE8KiTGYe4nP04gtWjuR9rXwRg1Gu0XLa/plJ2VeAOaiBC1/oyB
-         rRQMyfL4NRMW1drvmjb0ZlS5z44yJ4vhbLp1DQy8vTW1sgm1TmzLsxpQJTMwqi9fDu9N
-         iKUX6ArHTGhPW65uh1RGDlVrjE/9iw5Y0ccuat12tdb7VPOdooRlkI4OmaP1YkU9zmJ6
-         wXA5nt61FrEOTonwVq9lsP+Z6AeRr0CZjknrH1kZb2vi5e5iWrG3tc6+Zt33b+5SvZhF
-         Uw6+EVlnb2eAb2SCQnmaq3Cf8gJZ2vXyCFLS5nj21Vp3v+Hn75/iE2SRkdBp3LuBTVru
-         RY1A==
-X-Forwarded-Encrypted: i=1; AJvYcCV7y6ZIxcsAdfmWap1iyjl3UL3gPqC6xUG9k99EBYmvatSf18SplLhIFdFAfRDMW7a0itocSdbmEQ7ds7s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKerUp5GGI8g7SVMlciFvQxLAWXCyfqB8+WvUWZo1hBL0jgWaj
-	wMouydDlr1F63/VdvTG1jV+F/Frr70swTT+Oqct+d+ONdN2dJlAN5zw1ekobf4qewkJvvrrOtkN
-	aN1yxpd9wFse3XhuoxAvYc6HSsD0qcOZ7daYyX82rFCYtYe2Yg/Q30IZyPg4=
-X-Google-Smtp-Source: AGHT+IGIVGU1dUETB6N5aiBqc/hnnsefPsTbymdoGA7QbpDBRHggxm8iX2/+W+qLKreBp4CKNdD4ULo6KEh/w3zy6CxlBL99+ltO
+        bh=pZ7NEZlOFij2ci+qf76F0pjCJoN+xDm7sESWeyA4yO4=;
+        b=uisRor8/hf0GSaNqihXMl0JjUFSgOC3jJYhbU5euUUfNoxHYqoq9pq+3Jo5TxV6s6m
+         joO1Uxf11vuXf3kyGcDd//gHhuSwiua5dcU80WdMcOtpc3e60JbYMFqXA2Jcod0IOelz
+         V8d9QMej+c9pnILpY4xV4FhtUrDf3tAeY32Vx0KBNwTN2HPMMU9wmXXgV//mM06WXsjp
+         IenOoJWbDcnNLoYd8d7NWm787A0GDFFke/9Go5SndmtzwEh5/HGK2JoU4yTr6yw55r08
+         QJtWIEgAWkmkSW7SsGziLif7mOqQEqRTLzTTVyu1fwvh6izVd1QTeG7NHf7N9qV5HVmU
+         xHBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVaVHw4szTKNQKP/SVem21/XX0uULaeL3sKzwL0fNG/ucPdXZGF/LSZDiotY5NfJoBXk20AjM061uXNgj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcZDuCaAwJhoNBsgd73F5cCKkcSoiX2GV1Fedu781BD7E4UJ7q
+	m08w/fSH1WYXSqJVfaQ2uyH2mavoZ+H3TCvUyz7FTuuieo2jPjuxW9YZ4oJD8tZRPDa95E/lZw8
+	I+0btTLh7PvXwdYNHz4LEX0Btf+pioskObinyHa+reun6l/uYIGO/c+JPCfE=
+X-Google-Smtp-Source: AGHT+IEIeJcB9JZNOK9zlUZv8PEScGn1I+fmElu+psW/Oq/4czoskpL+2NFF0w+o3Dm6EhRrsyv3rYU4tggTZcXvyhWcUHS01SCX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2c:b0:40c:50c:376 with SMTP id
- e9e14a558f8ab-420a4c0378bmr29448695ab.26.1757660789612; Fri, 12 Sep 2025
+X-Received: by 2002:a05:6e02:18c8:b0:416:d8ba:8aff with SMTP id
+ e9e14a558f8ab-4209e64b5f4mr33903055ab.11.1757660789887; Fri, 12 Sep 2025
  00:06:29 -0700 (PDT)
 Date: Fri, 12 Sep 2025 00:06:29 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c3c675.050a0220.2ff435.0353.GAE@google.com>
-Subject: [syzbot] [net?] BUG: corrupted list in flow_block_cb_setup_simple
-From: syzbot <syzbot+5a66db916cdde0dbcc1c@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Message-ID: <68c3c675.050a0220.2ff435.0354.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_trans_update_by_path (2)
+From: syzbot <syzbot+e7b9dfa79acffd3aabdd@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    e59a039119c3 Merge tag 's390-6.17-4' of git://git.kernel.o..
-git tree:       bpf
-console output: https://syzkaller.appspot.com/x/log.txt?x=1523e934580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4d8792ecb6308d0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=5a66db916cdde0dbcc1c
+HEAD commit:    02ffd6f89c50 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14789642580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf99f2510ef92ba5
+dashboard link: https://syzkaller.appspot.com/bug?extid=e7b9dfa79acffd3aabdd
 compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d4bd62580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d69642580000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/324da524bbd8/disk-e59a0391.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/0fa38e1d54f4/vmlinux-e59a0391.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b1ea8074daa0/bzImage-e59a0391.xz
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-02ffd6f8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f0aa130ecc52/vmlinux-02ffd6f8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3649569ef2fb/bzImage-02ffd6f8.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5a66db916cdde0dbcc1c@syzkaller.appspotmail.com
+Reported-by: syzbot+e7b9dfa79acffd3aabdd@syzkaller.appspotmail.com
 
- non-slab/vmalloc memory
-list_del corruption. prev->next should be ffff888077fdb100, but was ffffffff8edac9a0. (prev=ffffffff8edac9a0)
+ done
+bcachefs (loop0): check_alloc_info...
+bcachefs (loop0): hole in alloc btree missing in freespace btree
+  device 0 buckets 25-26, fixing
+bcachefs (loop0): bucket incorrectly unset in need_discard btree
+  u64s 13 type alloc_v4 0:29:0 len 0 ver 0: 
+    gen 0 oldest_gen 0 data_type need_discard
+    journal_seq_nonempty 1
+    journal_seq_empty    0
+    need_discard         1
+    need_inc_gen         1
+    dirty_sectors        0
+    stripe_sectors       0
+    cached_sectors       0
+    stripe               0
+    stripe_redundancy    0
+    io_time[READ]        1
+    io_time[WRITE]       1
+    fragmentation     0
+    bp_start          8
+  , fixing
+bcachefs (loop0): hole in alloc btree missing in freespace btree
+  device 0 buckets 30-31, fixing
+bcachefs (loop0): hole in alloc btree missing in freespace btree
+  device 0 buckets 33-34, fixing
+bcachefs (loop0): hole in alloc btree missing in freespace btree
+  device 0 buckets 37-38, fixing
+bcachefs (loop0): hole in alloc btree missing in freespace btree
+  device 0 buckets 42-47, fixing
+bcachefs (loop0): hole in alloc btree missing in freespace btree
+  device 0 buckets 48-50, fixing
+bcachefs (loop0): hole in alloc btree missing in freespace btree
+  device 0 buckets 51-120, fixing
+ done
+bcachefs (loop0): check_lrus... done
+bcachefs (loop0): check_backpointers_to_extents... done
+bcachefs (loop0): check_extents_to_backpointers...
+bcachefs (loop0): scanning for missing backpointers in 5/128 buckets
+ done
+bcachefs (loop0): check_inodes... done
+bcachefs (loop0): resume_logged_ops... done
+bcachefs (loop0): delete_dead_inodes... done
+bcachefs (loop0): done starting filesystem
+bcachefs (loop0): requested incompat feature 1.16: reflink_p_may_update_opts currently not enabled, allowed up to 1.16: reflink_p_may_update_opts
+  set version_upgrade=incompat to enable
+bcachefs (loop0): (disconnected) offset 0: write error: __bch2_write(): insufficient_devices
+bcachefs (loop0): pointer to missing indirect extent in (disconnected) offset 0: -4096
+  u64s 7 type reflink_p 4104:8:U32_MAX len 8 ver 0: idx 0 front_pad 0 back_pad 0
+  missing reflink btree range 0-8, fixing
 ------------[ cut here ]------------
-kernel BUG at lib/list_debug.c:64!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 0 UID: 0 PID: 6449 Comm: syz.3.301 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-RIP: 0010:__list_del_entry_valid_or_report+0x15a/0x190 lib/list_debug.c:62
-Code: e8 4b a5 31 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 1c 9d 52 fd 49 8b 17 48 c7 c7 a0 40 e3 8b 48 89 de 4c 89 f9 e8 07 0b 57 fc 90 <0f> 0b 4c 89 f7 e8 1c a5 31 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 ed
-RSP: 0018:ffffc90003f4e760 EFLAGS: 00010246
-RAX: 000000000000006d RBX: ffff888077fdb100 RCX: 21dc4908dd936700
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 1ffff920007e9d3e R08: ffffc90003f4e487 R09: 1ffff920007e9c90
-R10: dffffc0000000000 R11: fffff520007e9c91 R12: 1ffffffff1db5934
-R13: dffffc0000000000 R14: ffffffff8edac9a0 R15: ffffffff8edac9a0
-FS:  00005555769e1500(0000) GS:ffff888125c15000(0000) knlGS:0000000000000000
+kernel BUG at fs/bcachefs/btree_update.c:410!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5358 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:bch2_trans_update_by_path+0x1f2b/0x1f30 fs/bcachefs/btree_update.c:410
+Code: fd 90 0f 0b e8 46 86 8f fd 90 0f 0b e8 3e 86 8f fd 90 0f 0b e8 36 86 8f fd 90 0f 0b e8 2e 86 8f fd 90 0f 0b e8 26 86 8f fd 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3
+RSP: 0018:ffffc9000d3c66c8 EFLAGS: 00010283
+RAX: ffffffff8430488a RBX: 0000000000004000 RCX: 0000000000100000
+RDX: ffffc9000e162000 RSI: 00000000000554a7 RDI: 00000000000554a8
+RBP: ffff888055bfa4d8 R08: ffff88800032c880 R09: 0000000000000002
+R10: 0000000000000006 R11: 0000000000000002 R12: 0000000000000000
+R13: 1ffff1100ab7f49b R14: dffffc0000000000 R15: ffff888055bfa4d8
+FS:  00007f461eb3d6c0(0000) GS:ffff88808d00a000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000380 CR3: 0000000030806000 CR4: 00000000003526f0
+CR2: 00007f461a1f4fc8 CR3: 0000000043e03000 CR4: 0000000000352ef0
 Call Trace:
  <TASK>
- __list_del_entry_valid include/linux/list.h:124 [inline]
- __list_del_entry include/linux/list.h:215 [inline]
- list_del include/linux/list.h:229 [inline]
- flow_block_cb_setup_simple+0x62d/0x740 net/core/flow_offload.c:369
- nft_block_offload_cmd net/netfilter/nf_tables_offload.c:397 [inline]
- nft_chain_offload_cmd+0x290/0x660 net/netfilter/nf_tables_offload.c:451
- nft_flow_block_chain net/netfilter/nf_tables_offload.c:471 [inline]
- nft_flow_offload_chain net/netfilter/nf_tables_offload.c:513 [inline]
- nft_flow_rule_offload_commit+0x40d/0x1b60 net/netfilter/nf_tables_offload.c:592
- nf_tables_commit+0x675/0x8700 net/netfilter/nf_tables_api.c:10933
- nfnetlink_rcv_batch net/netfilter/nfnetlink.c:574 [inline]
- nfnetlink_rcv_skb_batch net/netfilter/nfnetlink.c:647 [inline]
- nfnetlink_rcv+0x1a4e/0x2520 net/netfilter/nfnetlink.c:665
- netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
- netlink_unicast+0x82f/0x9e0 net/netlink/af_netlink.c:1346
- netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x219/0x270 net/socket.c:729
- ____sys_sendmsg+0x505/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmsg net/socket.c:2700 [inline]
- __do_sys_sendmsg net/socket.c:2705 [inline]
- __se_sys_sendmsg net/socket.c:2703 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ bch2_trans_update_ip+0x9a6/0x1db0 fs/bcachefs/btree_update.c:531
+ bch2_trans_update fs/bcachefs/btree_update.h:123 [inline]
+ bch2_btree_insert_nonextent fs/bcachefs/btree_update.c:625 [inline]
+ bch2_trans_update_extent fs/bcachefs/btree_update.c:321 [inline]
+ bch2_trans_update_ip+0x17ef/0x1db0 fs/bcachefs/btree_update.c:503
+ bch2_trans_update fs/bcachefs/btree_update.h:123 [inline]
+ bch2_btree_insert_trans+0x1cd/0x330 fs/bcachefs/btree_update.c:637
+ bch2_indirect_extent_missing_error+0xd2d/0x11b0 fs/bcachefs/reflink.c:239
+ bch2_lookup_indirect_extent+0x38d/0x5c0 fs/bcachefs/reflink.c:279
+ trans_trigger_reflink_p_segment fs/bcachefs/reflink.c:308 [inline]
+ __trigger_reflink_p+0x395/0x19c0 fs/bcachefs/reflink.c:419
+ bch2_trigger_reflink_p+0x1ea/0x3a0 fs/bcachefs/reflink.c:454
+ run_one_trans_trigger fs/bcachefs/btree_trans_commit.c:-1 [inline]
+ bch2_trans_commit_run_triggers fs/bcachefs/btree_trans_commit.c:554 [inline]
+ __bch2_trans_commit+0xa81/0x8870 fs/bcachefs/btree_trans_commit.c:1023
+ bch2_trans_commit fs/bcachefs/btree_update.h:241 [inline]
+ bch2_inode_delete_keys+0x525/0x700 fs/bcachefs/inode.c:1115
+ bch2_inode_rm+0x282/0x820 fs/bcachefs/inode.c:1146
+ bch2_evict_inode+0x220/0x520 fs/bcachefs/fs.c:2182
+ evict+0x504/0x9c0 fs/inode.c:810
+ __dentry_kill+0x209/0x660 fs/dcache.c:669
+ dput+0x19f/0x2b0 fs/dcache.c:911
+ __fput+0x68e/0xa70 fs/file_table.c:476
+ task_work_run+0x1d1/0x260 kernel/task_work.c:227
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop+0xec/0x110 kernel/entry/common.c:43
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x2bd/0x3b0 arch/x86/entry/syscall_64.c:100
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe1b0d8eba9
+RIP: 0033:0x7f461dd8eba9
 Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffc23fb3798 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fe1b0fd5fa0 RCX: 00007fe1b0d8eba9
-RDX: 000000000000c050 RSI: 0000200000000cc0 RDI: 0000000000000003
-RBP: 00007fe1b0e11e19 R08: 0000000000000000 R09: 0000000000000000
+RSP: 002b:00007f461eb3d038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: fffffffffffffffb RBX: 00007f461dfd5fa0 RCX: 00007f461dd8eba9
+RDX: 0000000000141042 RSI: 0000200000000040 RDI: ffffffffffffff9c
+RBP: 00007f461de11e19 R08: 0000000000000000 R09: 0000000000000000
 R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fe1b0fd5fa0 R14: 00007fe1b0fd5fa0 R15: 0000000000000003
+R13: 00007f461dfd6038 R14: 00007f461dfd5fa0 R15: 00007fff274d40e8
  </TASK>
 Modules linked in:
 ---[ end trace 0000000000000000 ]---
-RIP: 0010:__list_del_entry_valid_or_report+0x15a/0x190 lib/list_debug.c:62
-Code: e8 4b a5 31 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 1c 9d 52 fd 49 8b 17 48 c7 c7 a0 40 e3 8b 48 89 de 4c 89 f9 e8 07 0b 57 fc 90 <0f> 0b 4c 89 f7 e8 1c a5 31 fd 43 80 3c 2c 00 74 08 4c 89 ff e8 ed
-RSP: 0018:ffffc90003f4e760 EFLAGS: 00010246
-RAX: 000000000000006d RBX: ffff888077fdb100 RCX: 21dc4908dd936700
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: 1ffff920007e9d3e R08: ffffc90003f4e487 R09: 1ffff920007e9c90
-R10: dffffc0000000000 R11: fffff520007e9c91 R12: 1ffffffff1db5934
-R13: dffffc0000000000 R14: ffffffff8edac9a0 R15: ffffffff8edac9a0
-FS:  00005555769e1500(0000) GS:ffff888125c15000(0000) knlGS:0000000000000000
+RIP: 0010:bch2_trans_update_by_path+0x1f2b/0x1f30 fs/bcachefs/btree_update.c:410
+Code: fd 90 0f 0b e8 46 86 8f fd 90 0f 0b e8 3e 86 8f fd 90 0f 0b e8 36 86 8f fd 90 0f 0b e8 2e 86 8f fd 90 0f 0b e8 26 86 8f fd 90 <0f> 0b 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3
+RSP: 0018:ffffc9000d3c66c8 EFLAGS: 00010283
+RAX: ffffffff8430488a RBX: 0000000000004000 RCX: 0000000000100000
+RDX: ffffc9000e162000 RSI: 00000000000554a7 RDI: 00000000000554a8
+RBP: ffff888055bfa4d8 R08: ffff88800032c880 R09: 0000000000000002
+R10: 0000000000000006 R11: 0000000000000002 R12: 0000000000000000
+R13: 1ffff1100ab7f49b R14: dffffc0000000000 R15: ffff888055bfa4d8
+FS:  00007f461eb3d6c0(0000) GS:ffff88808d00a000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000000380 CR3: 0000000030806000 CR4: 00000000003526f0
+CR2: 00005576da418660 CR3: 0000000043e03000 CR4: 0000000000352ef0
 
 
 ---
@@ -167,10 +217,6 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
