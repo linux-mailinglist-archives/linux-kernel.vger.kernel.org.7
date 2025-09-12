@@ -1,97 +1,158 @@
-Return-Path: <linux-kernel+bounces-814097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24C3B54F28
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:17:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77775B54F40
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 389E87AD327
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:15:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9851CC686E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D725030DEDA;
-	Fri, 12 Sep 2025 13:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C37C30DD04;
+	Fri, 12 Sep 2025 13:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V7hbJdPn"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/cve73U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0083F9E8;
-	Fri, 12 Sep 2025 13:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E172E7BAE;
+	Fri, 12 Sep 2025 13:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757683026; cv=none; b=Y+RqULmZu5v9VlwtptuHe4c+54mGu2UEKArs+OyQcdoaPyr1l2qkX81wtG/0QuS+Dlkga+nvepqIBQ2ifUl270P0szvYSEe9UuCCuDsqQnbIEtGXXa8RyhUF66wmGzxgWtqtlGiOfYmC/2rL4YR7+l/E+hBGKkynbslLHQojKYo=
+	t=1757683106; cv=none; b=Seg9V+LKFL2VN4X+YZ48ked1RpRa6bpv1oI4fB1azhTE2R0A6WdRVi5HSRpdSfYDHWBsJ4dwlamrl4tEjl6jUjV8/U94dXjcgi33ZM+wazwfSUzU3Bxzz50ebfhbfohfw3EEWa1mV86HpofBAw5FaJ/jswyt74yaa06FbELYibM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757683026; c=relaxed/simple;
-	bh=7xIMcP92jiQAPxq5/zSswUfSlfX6znUZnWJVD4xQfjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCl00HmcObw4yWrneZSeSPu2beL5k21RcMPX6JSePNrBgweSWoD75Up0L/qEjjq7hWaSUYd9850NQ5N6vsY+aGUMjic/XVFOgAuzgok+ggyB7cnL25/+1ZLwMCokwlbHTA4rwmA4LjS7PksAGFNzqoItAQOojm73V+7ZB+47rHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V7hbJdPn; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=O1QwMEVkzC77rV7TEVB4ZQxwruyo9VsaKM2Zj3Ph0wQ=; b=V7hbJdPnNgBvGak31eOz58Mf1P
-	otiV4vFRfmengjQC3i3FF81bSu7SfBAe1eqxiJzNTi1R4gLaN8u0wpffGkz1JpY9jt3Yom4hqcBia
-	EH96uZOoSoxiTz2Zj9io0vk5m2EHlsDzoA0vREw85DvJq2B06EH11KXlog8cNmVcJCJG39zhOd8bH
-	mw/2V1agjKxuu9Vbd/bpA2oQZ2D7UqzEV3AGXt9sdRGaY3X9Wj3XwpXZotScYIF+ba+xeGTIUi/TN
-	VO8oGIY/qzBSbT23U9PZt7aVPiRKyyRiP8iuAoGvZoxA6fv7XIBlghM+z0k6GaIFOdVxXRMVL3YMB
-	LcM8h7vA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ux3e1-0000000GJeP-3Q7n;
-	Fri, 12 Sep 2025 13:16:53 +0000
-Date: Fri, 12 Sep 2025 14:16:53 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andreas Larsson <andreas@gaisler.com>, Arnd Bergmann <arnd@arndb.de>,
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Richard Weinberger <richard@nod.at>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	David Hildenbrand <david@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
-Message-ID: <aMQdRfcMGGZQrW1_@casper.infradead.org>
-References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
- <5d2fec2b-8e59-417e-b9e6-12c6e27dd5f0@gaisler.com>
- <E986779F-C7AA-4940-9508-08601EE2FDD0@zytor.com>
+	s=arc-20240116; t=1757683106; c=relaxed/simple;
+	bh=0kMqkbeltdD0+hkiQDYxpMhQHrKg2khUuaUPs1Ep/hI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=fujc8mg+jvS4sHk+Ef30Oc1LLq6jvBjYUr4Km6y13QnJtv3F/15pYQSVrSlpyTenUXAYULCGlufHpMJq8S+88/6zt2EM8X4/h/Im6x01Qb2KEwsnTpaXKPZVudYdbzZfMSH02aKUjs72W/Evzr8Cf3UWQc5weI17jq3Jvp5PrrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/cve73U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3DDFC4CEF1;
+	Fri, 12 Sep 2025 13:18:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757683106;
+	bh=0kMqkbeltdD0+hkiQDYxpMhQHrKg2khUuaUPs1Ep/hI=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=S/cve73U+Bw437os2DmOTcDcAxGgeMMGJW70XQxJfg5ffPkgfjlSBiQ8huULc5d+5
+	 zvkaNiaPM03OGirJzboN9rT62iO/WmT7v2ToCve0tUc6y7B++Rs4hioHbFWRbX2nq9
+	 hPx/7JC4p0KuOSgaxI8rAMzGqY/ctvSdQTYpvSq2OYZH59uZjPG9VzLsGCn4TZvU9d
+	 z5WBAC2HxY/NVfFDZiDy22+CM5WFVEflj9rjB9slCD6mCsUQwB63/XpNOxFJiUre2l
+	 x5a0OFES0jcxTY4qIQLbn1OqG6/QsAz7w5slxE+g1qBRRYE2wZC4+7lQYgV+JasYen
+	 gGninWye9fkVg==
+Message-ID: <228603d0-c7fc-48b7-9589-c897ff805808@kernel.org>
+Date: Fri, 12 Sep 2025 15:18:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <E986779F-C7AA-4940-9508-08601EE2FDD0@zytor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] dt-bindings: ethernet: eswin: Document for EIC7700
+ SoC
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: weishangjuan@eswincomputing.com, devicetree@vger.kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
+ rmk+kernel@armlinux.org.uk, faizal.abdul.rahim@linux.intel.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+ jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
+ boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ emil.renner.berthing@canonical.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ lizhi2@eswincomputing.com, pinkesh.vaghela@einfochips.com
+References: <20250912055352.2832-1-weishangjuan@eswincomputing.com>
+ <20250912055612.2884-1-weishangjuan@eswincomputing.com>
+ <50496bf2-1d10-4d89-addb-f4fe774497d9@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <50496bf2-1d10-4d89-addb-f4fe774497d9@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 12, 2025 at 02:58:48AM -0700, H. Peter Anvin wrote:
-> On September 10, 2025 10:38:15 PM PDT, Andreas Larsson <andreas@gaisler.com> wrote:
-> >We have a upcoming SoC with support for up to 16 GiB of DRAM. When that is
-> >used in LEON sparc32 configuration (using 36-bit physical addressing), a
-> >removed CONFIG_HIGHMEM would be a considerable limitation, even after an
-> >introduction of different CONFIG_VMSPLIT_* options for sparc32.
+On 12/09/2025 15:14, Krzysztof Kozlowski wrote:
+> On 12/09/2025 07:56, weishangjuan@eswincomputing.com wrote:
+>> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+>>
+>> Add ESWIN EIC7700 Ethernet controller, supporting clock
+>> configuration, delay adjustment and speed adaptive functions.
+>>
+>> Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
+>> Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
 > 
-> It really sounds like a self-inflicted problem... getting your customers switched over to the RV64 side is probably the best you can do for them.
+> There is no explanation of dropping the tag. Please read CAREFULLY
+> submitting patches.
+> 
+> Comparing also fails:
+> 
+> b4 diff '<20250912055352.2832-1-weishangjuan@eswincomputing.com>'
+> Using cached copy of the lookup
+> ---
+> Analyzing 55 messages in the thread
+> Preparing fake-am for v6: dt-bindings: ethernet: eswin: Document for
+> EIC7700 SoC
+> ERROR: Could not fake-am version v6
+> ---
+> Could not create fake-am range for upper series v6
 
 
-"We only support configurations above 4GB when using the RV64 core".
+Ah, that because your patchset is broken.
+
+Please start using b4, which would solve such problems. Otherwise you
+just waste your own and ours time, because this cannot be applied and
+cannot be tested.
+
+> 
+> I am not going to review twice, so you can drop my tag again without
+> explanation.
+
+Best regards,
+Krzysztof
 
