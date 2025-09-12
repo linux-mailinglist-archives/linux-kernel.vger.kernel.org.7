@@ -1,91 +1,175 @@
-Return-Path: <linux-kernel+bounces-813492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9629CB54632
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:59:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6104CB5464B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B45D4E2616
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2AB2AA758F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAB12749CA;
-	Fri, 12 Sep 2025 08:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5065627B4EB;
+	Fri, 12 Sep 2025 08:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="gQUT9pxh"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPBHNmrd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186311A3142;
-	Fri, 12 Sep 2025 08:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B076276028;
+	Fri, 12 Sep 2025 08:59:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757667545; cv=none; b=pHgiwSsOW935ZhxVSZlMyItx4PUjja4bCQgW46avPn+AAscHwesQcMORXTH3yhHmAA5QwJqMT0wKCdKEbb75yZpvK3N7VTCCPtsHtKgm5DMJ9BGCeiWF0V+4qdrWP36Bg0C3eCP4R+JdTTBOse2xvRAaIESHTyop5L1HrvXEIjw=
+	t=1757667564; cv=none; b=O7E8xC0y0fjWvG+X/U4Fg7Yt0t/OpYu7VTbSdCF2W5BWkTX7pjnXjqnK76UKqTy58NiU6ZzteJv/TgzTUeNW7V0LzRyYP8n8IouJgDDlbkxhXcijWqzotjMAsnKgZbdEjwwGCh4F+/pDYqj2ehF1lKpGUaYjJXXIowDBKowgs8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757667545; c=relaxed/simple;
-	bh=efbW/Sfe0OW517ShQC9CjQHOEKr+0UjfF7wcZYdo6R8=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bHwxYsOvP4QeLqxMrq/Iag8JFdnKSZsXk3vf8FWsf6wJkMlQbOedwhOTMy7z2cSGyrqQ1k9j04iIGh0lbgqTzUt7Ba0hyXclOrHjdf3/CL4VcfG9CbOY4+3pWn0/WiKiX94fHeyrdwBLL/EZzBfjQmkb6iPXhJ41HinGDUCMwQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=gQUT9pxh; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1757667533;
-	bh=efbW/Sfe0OW517ShQC9CjQHOEKr+0UjfF7wcZYdo6R8=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=gQUT9pxhlZK5toz3qpJBhksN8GlW+u9S0jSBZhnkiD/iqI1/v93UiO6gp/fkoZnEu
-	 BNG+EutVZjFVqSirhIOp9fSYQ62IQ4INHGAyJvkiK9+A1vB/LEavjFnLdNacsgCQ2Z
-	 o6LCVucyWVOHDpGi+qSdfStgOMsE5J7GWUNCuRD/0BUcXLU5sUrMvNKoFp9QUiNLgc
-	 vn3Qbpd4Q51l4mdF4ikc9hTCo0Ye6qznEroVNQNMwlE6uJhmbzZJRRBJ3WgTGzfF/c
-	 zy0yPCrTWAvFjjWyhASWPxKXd3EEk8Y0+aU3hBPJ87ASCBluY6wm4OsxTvCmdxEA/3
-	 5QIYAH+Ufn03g==
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0A84664748;
-	Fri, 12 Sep 2025 16:58:48 +0800 (AWST)
-Message-ID: <9d6660f0bf5119cedee824cf764f15838622833a.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v18 1/3] dt-bindings: i2c: aspeed,i2c.yaml: add
- transfer-mode and global-regs properties and update example
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, benh@kernel.crashing.org, 
- joel@jms.id.au, andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-  conor+dt@kernel.org, andrew@codeconstruct.com.au, p.zabel@pengutronix.de, 
- andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, 
- linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
- devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
-Date: Fri, 12 Sep 2025 16:58:48 +0800
-In-Reply-To: <20250820051832.3605405-2-ryan_chen@aspeedtech.com>
-References: <20250820051832.3605405-1-ryan_chen@aspeedtech.com>
-	 <20250820051832.3605405-2-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1757667564; c=relaxed/simple;
+	bh=T1coyMeV9iN8hoV6MthKaTMIgaPUm4XsdaRfs4UcZSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CbtNA8yPDBoW0REuVCpvLc1piEA0bZjbp1qRaps+G6x+2chU5ecxijBL2PeRl05jw4MTZsihQ00sd5ixoiG+E74Th2EIkzc3JGPLRBhkutZCOcY8nUmUu0RfukcKNaISKwV/Oa29HUGuJLUZO68vECu60YVQdSaZRNplW7YMK9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPBHNmrd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3711C4CEF1;
+	Fri, 12 Sep 2025 08:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757667564;
+	bh=T1coyMeV9iN8hoV6MthKaTMIgaPUm4XsdaRfs4UcZSo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oPBHNmrd6KwaWO/WvKaH/rkKXkhtkBqt1Nw56tHijMzDqnDWb3HrTLAaXYlO+qYQT
+	 nbYqOA5+VFOUf9FrgXs4WTrizhVjuzd+TRClYtH3NBj1+0EyD2k2PDRHUzDLL1Hq5S
+	 RH1hsLWTTY4Bb9dt+REoWCxbzrpinbBWgTudjC1GDOMeX0EBVxQ/YMgNOXSVlMFfnl
+	 1Z1vUraycgNLWVEXvvzupiL1M/MUedtVvG06ZPUDmzwRXtosJdfu07tu1/8oBbD7Lt
+	 64a1aki+LPdF9He9PKupXrfQv7+n7+Jo3bOnOMwFTIdcRJzAgu7YLr7s5uTftYzkqG
+	 tHe8VwBuV+wGg==
+Message-ID: <17cc74d6-2e49-4370-ae37-39cddfe67d7d@kernel.org>
+Date: Fri, 12 Sep 2025 10:59:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ACPI: video: Fix missing backlight node creation on
+To: Zihuan Zhang <zhangzihuan@kylinos.cn>
+Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, mario.limonciello@amd.com, rafael@kernel.org,
+ stable@vger.kernel.org
+References: <de4b5ec6-1e42-44b8-b5d3-5a452d7401ef@kernel.org>
+ <20250911074543.106620-1-zhangzihuan@kylinos.cn>
+ <ae7b139f-dc25-413d-bfc3-3be187ab3a73@kernel.org>
+ <365c42f5-56a1-4a2c-9244-7943c3600fa2@kylinos.cn>
+From: Hans de Goede <hansg@kernel.org>
+Content-Language: en-US, nl
+In-Reply-To: <365c42f5-56a1-4a2c-9244-7943c3600fa2@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Ryan,
+Hi,
 
-> And AST2600 i2c controller have two register mode, one is legacy
-> register layout which is mix controller/target register control
-> together, another is new mode which is separate controller/target
-> register control.
+On 12-Sep-25 3:11 AM, Zihuan Zhang wrote:
+> 
+> 在 2025/9/11 18:38, Hans de Goede 写道:
+>> Hi Zihuan,
+>>
+>> On 11-Sep-25 9:45 AM,  Zhang wrote:
 
-OK, but the ast2400 and ast2500 I2C peripherals - which this binding
-also describes - do not have that facility. Given the 2600 is a distinct
-peripheral (as discussed on the v16 series), this would seem to warrant
-a distinct binding.
+...
 
-Should this be split out into an ast2600-specific binding, to reflect
-that it is different hardware? The reference to the global registers and
-transfer modes would then be added only to the ast2600-i2c-bus binding.
+>>> Also, on kernel 5.4 these machines seem to work fine without requiring a native GPU driver, while on 6.6+ the backlight node is missing.
+>>> Could you please clarify what design change or intention caused this behavioral difference between 5.4 and newer kernels?
 
-Cheers,
+...
+
+>> Long story short: The design goal is to only
+>> register 1 backlight handler, so that userspace
+>> does not has to guess and to only register this
+>> once and not do a register + unregister dance
+>> of a potentially unwanted acpi_video backlight.
+> 
+> Thank you for the very detailed explanation!
+
+You're welcome.
+
+> One concern, however, is that the current approach seems to assume the presence of a GPU driver, which may not always be the case. Would it be possible to consider a more generic fallback?
+
+Well x86/ACPI laptops without a GPU are not really
+something which exists anymore. A GPU is a must have
+for a good user experience with modern OS-es.
+
+And now a days we have in kernel drivers for all main
+GPU vendors.
+
+This new way of doing things has been around for
+quite a while now without causing problems.
+
+To me it seems the issue here is that GPU driver
+for the (CPU/chipset integrated?) GPU on these
+laptops is missing from the mainline kernel.
+
+There are many good reasons to have a GPU driver
+in the mainline kernel. So ideally this would be
+fixed by mainlining the GPU driver for these
+laptops.
+
+> For example, if no GPU driver is available, we could still register the acpi_video backlight node.
+
+The problem is how do we know that no GPU driver is
+available ?
+
+Note that the DMI quirk check happens before
+setting *auto_detect = true; So besides doing
+a CPU check another option would be to do
+a DMI check. DMI checks can use substring matches
+(they do a strstr match by default) so if there
+is some common DMI string (part) on the affected
+laptops which is not found on other laptops
+then we can also just DMI quirk these.
+
+As long as it does not end up being an ever
+growing list then adding a bunch of DMI entries
+for this should be fine.
+
+> 
+>  This way we can at least ensure that a backlight device is exposed to userspace instead of leaving the system without any backlight control interface.
+> 
+> Do you think such a fallback could be a reasonable option?
+
+The problem is the kernel does not know if there
+is a GPU driver for the GPU. If it is e.g. the
+nvidia binary driver it may need to first get
+build by dkms, so even using say a timeout is
+tricky and a timeout is always racy so I would
+like to avoid that.
+
+My preferred way of handling this would be:
+
+1. There must be a GPU driver for these laptops somewhere?
+Even if out of tree using a laptop without a GPU these days
+just does not give a good user experience. So fix the GPU
+driver to call acpi_video_register_backlight().
+
+Note acpi_video_register_backlight() is deliberately exported
+without requiring the consuming out of tree kernel module to
+be GPL to allow this.
+
+Other options would be:
+
+2. Add some special heuristics for Zhaoxin CPUs,
+the kernel already has a CPUID match mechanism for
+things like this. This could potentially be combined
+with a DMI system-vendor check to only do this special
+case handling on e.g. Lenovo and Inspur laptops.
+
+3. Instead of adding the CPU-id based special case
+just outright use DMI quirks. In this case lets try
+to use substring matches to cover multiple models
+with a single entry so as to not grow the quirk
+table too much.
+
+Regards,
+
+Hans
 
 
-Jeremy
+
 
