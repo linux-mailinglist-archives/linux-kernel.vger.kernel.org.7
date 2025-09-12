@@ -1,223 +1,155 @@
-Return-Path: <linux-kernel+bounces-813338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA64B543D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:26:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F5BB543D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63EF17B2C3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:25:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810BF1C8739F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:27:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498F62C08CE;
-	Fri, 12 Sep 2025 07:26:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434322C0284;
-	Fri, 12 Sep 2025 07:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBF62C08CB;
+	Fri, 12 Sep 2025 07:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="BoX7T3mu"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D1D2BF016
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757661991; cv=none; b=nkYMU841feZJuCwnbeRIlyHp8uaKihWqlZ43sgxErwNX6ePF+LRmU9MKdov2B6qhGMubMasmwanLOSAmexvLsqZPtAjZxJJr942B7phtOfUrHLAc5ZsWN8fuloDYSR4z0NZblL6Xrbxs3fa+1niovq2f91dlHfXp2gbTfCQoMAQ=
+	t=1757662024; cv=none; b=gU/Yh0kA8BAxw83DQFiDont62a4JSXM9oE7NTYdGdXQMyVWCaFRDkFh1F0nCkoA9jBkWQmuXwzpv3TAHJczDYdxBVPg2NYpGv80y2YPl/v/AriHLHB8+xfwWfRaETojvuBbyIdLyAKVpf5Unzh6HpBfV7dFS851tAH0RDbZRWkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757661991; c=relaxed/simple;
-	bh=jHtH5ew5HJ7wpnudtpflMQ+7ZEEIn9+nbCJ8h1BOfgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gCLK1LgE4EIj3kxjvt9NNLVYlXl9StlSwx9CnvU4ths2AGpd3DU8fhQKsHAmOC1YiGIe5G7UGpRoBHPEWHHctH/h9HMFHMAiuSIXPzHtXM3oYJJDVbONPJ99CCwXte15QdC52OMkGwoeJW2ahWYixXxyBDm7wSpfJw7h2/GOByU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD76F16A3;
-	Fri, 12 Sep 2025 00:26:19 -0700 (PDT)
-Received: from [10.57.66.147] (unknown [10.57.66.147])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD1E03F63F;
-	Fri, 12 Sep 2025 00:26:20 -0700 (PDT)
-Message-ID: <15d01c8b-5475-442e-9df5-ca37b0d5dc04@arm.com>
-Date: Fri, 12 Sep 2025 09:26:18 +0200
+	s=arc-20240116; t=1757662024; c=relaxed/simple;
+	bh=xdcRbwNQYyPOvei/iOTBM/TyZ63L1Uwke68lF4T6tVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lHDH368eGIBfWxheYTQM8JiDdYJNsOwS/OYUdAeWhdRFtHQ3iwsVrzbPyescGPNulJZjE2crXfJaCH22Y99FjvCGSDPNDHt55cEO+aRUhHtLfznzaPkqXv/yOFQ2NHOnlxoHwdbDiJWVrjgLGQKkzVblX+ZgpglZ2TcE9YCxCHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=BoX7T3mu; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-45b9853e630so13758535e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:27:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1757662021; x=1758266821; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j3tI11OAkSN7RqNGcTXf8rRvtsdFAfZUpl45jMI60AM=;
+        b=BoX7T3muxiexNp0SKN0shYggkpN4K0Bx8AJ+P5P4iMwVsJ4UXJKe04CN2fBzLrqdRw
+         IzsRayg3+KTaN0IJd94lCsA+xO9EgdjUiu9yMatMUhQIBqMvKxSyukFF9vnLGDht4j0t
+         Ctlr51XQdfoY8XXmK5+vfehuajHmOzXYRZMrm0ofZsaln7Uc3L6/IMliEe6TnW+Q8l6e
+         YscVvejNTgjJyyfVBRq11jhOE8d/gE+yBi/Dj54QQpBNUa1g1vxn1nrtUyZBWWzZeTE5
+         lpEJbASip1Xk2zxd/ZOXoNFGp/GV1pSb1Vs5s86iUUP/boUWDO6bg2w6B6Nv4U8nyEkN
+         p2wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757662021; x=1758266821;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j3tI11OAkSN7RqNGcTXf8rRvtsdFAfZUpl45jMI60AM=;
+        b=bVPMbHsS3WMyIElMlpaG48zluxm/F07E6DbtX4proSPipFRiDgVHerMc4gtBRTzHyb
+         zmVYUcK9heEWHesLGo6KRWAdnL6VgTOKM0/xJKtaDQWmDi4xQdv5LtaWrci7z5dbiBxf
+         jh2bkJIPlB+vyJJGlA2pdBA1zNn8gabN2WG/pUtDIiAMWu5/JmJhMruzgVPt9a3AqRVj
+         W4dwfH6AAJcr+CdIaNxwQLz7ZzHy72F+HhbikbzOggrijpWDn8sWCUdb+HYnjO7lEwo0
+         Q9Y++XkESgZkc+IGqxUE3a+dm5bvAr/4nIgGAfq0qsM5BRykU675+DUP+PcK/At6Vqd4
+         VFBA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7TndCCWuHD5+dXph+1YUkF3pyDa4WbWnP00/kHMqg6cufaxNmau9uY5xQYw7WTGKvzD4KHY2HPqPjBNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI+/IsTngbtM+yBpVtvoiEIEKONuAMKCp2P35Y+O30VkFEtrG0
+	W1OVpLIjc482sah0zH2MC5pIRJL7DNfF89R/6/zZ09x1UlZdYZgGTqpDYkrrQK0UQLU=
+X-Gm-Gg: ASbGncvcJYIW2b5PF3eFcfybV0OeT4gcgEPWdv+xvUK1P9Es+JrjdZwH3vRvuVfIAwy
+	uu+v05nlcWwKz6ZLGj3MqZUk7uim5v/PWI1HaQlm1paQXvEOZOLMVwoylHamxz33oHcgIDwRZK7
+	ojW82aryi5wakwoY1o7qAulprLuocyRuslKNUWMQp2Rc4WEWrg+8VS1w5PjBTM9ruzcHQek+qu4
+	5G7DIc0KPpiQQUYWXbiCT/2mYqVqakOfX+yqjMgbJSRhcwKmhL7wNR4eZlrkxkmwZlQfGfsWdAT
+	nt442No6rjznYkTk+fxniiOSB4/1eJGJvdqSXURdOumtnVwaYScZDccaO4CgFndHzamidfLjevb
+	0tJS5iCNWJFcS2nuu/fKh97I=
+X-Google-Smtp-Source: AGHT+IGXpoEAuIYw6/UluyUVnBbgfJgpGf6NHBYCv+YqFkoz5Fkn4jAGq9fRMx7AKxy66hsY9dDhlg==
+X-Received: by 2002:a7b:c04b:0:b0:45b:81b4:1917 with SMTP id 5b1f17b1804b1-45f211d5d6fmr14759865e9.10.1757662020614;
+        Fri, 12 Sep 2025 00:27:00 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:b6ab:4211:ebab:762])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e774a3fb5bsm730202f8f.58.2025.09.12.00.26.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 00:27:00 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Lee Jones <lee@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Avi Fishman <avifishman70@gmail.com>,
+	Tomer Maimon <tmaimon77@gmail.com>,
+	Tali Perry <tali.perry1@gmail.com>,
+	Patrick Venture <venture@google.com>,
+	Nancy Yuen <yuenn@google.com>,
+	Benjamin Fair <benjaminfair@google.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	=?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	=?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <legoffic.clement@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	James Cowgill <james.cowgill@blaize.com>,
+	Matt Redfearn <matt.redfearn@blaize.com>,
+	Neil Jones <neil.jones@blaize.com>,
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>,
+	Hoan Tran <hoan@os.amperecomputing.com>,
+	Yang Shen <shenyang39@huawei.com>,
+	Imre Kaloz <kaloz@openwrt.org>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro.iwamatsu.x90@mail.toshiba>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	openbmc@lists.ozlabs.org,
+	linux-gpio@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	imx@lists.linux.dev,
+	linux-unisoc@lists.infradead.org
+Subject: Re: (subset) [PATCH 0/3] gpio/pinctrl/mfd: use more common syntax for compound literals
+Date: Fri, 12 Sep 2025 09:26:54 +0200
+Message-ID: <175766186357.9646.17039178132060352918.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
+References: <20250910-make-compound-literals-normal-again-v1-0-076ee7738a0b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-To: David Hildenbrand <david@redhat.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
- Mark Rutland <Mark.Rutland@arm.com>
-References: <20250908073931.4159362-1-kevin.brodsky@arm.com>
- <20250908073931.4159362-3-kevin.brodsky@arm.com>
- <d23ea683-cca4-4973-88b1-4f6fd9b22314@redhat.com>
- <ca2054ad-b163-4e61-8ec4-6f2e36461628-agordeev@linux.ibm.com>
- <e7acb889-1fe9-4db3-acf4-39f4960e8ccd@redhat.com>
- <2fecfae7-1140-4a23-a352-9fd339fcbae5-agordeev@linux.ibm.com>
- <e521b1f4-3f2b-48cd-9568-b9a4cf4c4830@redhat.com>
- <47ee1df7-1602-4200-af94-475f84ca8d80@arm.com>
- <29383ee2-d6d6-4435-9052-d75a263a5c45@redhat.com>
- <9de08024-adfc-421b-8799-62653468cf63@arm.com>
- <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
- <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
- <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 11/09/2025 20:14, David Hildenbrand wrote:
->>>> On the other hand, with a pagefault_disabled-like approach, there
->>>> is no
->>>> way to instruct call {3} to fully exit lazy_mmu regardless of the
->>>> nesting level.
->>>
->>> Sure there is, with a better API. See below. :)
->>
->> I meant while keeping the existing shape of the API but yes fair enough!
->
-> Time to do it properly I guess :)
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Yes, I think the discussions on that series have shown that we might as
-well refactor it completely. Once and for all™!
 
->
+On Wed, 10 Sep 2025 09:25:44 +0200, Bartosz Golaszewski wrote:
+> As discussed[1] with Andy: it's probably better to use a more common
+> syntax for compound literals so fix the commits that converted GPIO
+> chips to using the new generic GPIO chip API and make them explicitly
+> spell out the type they're initializing.
+> 
+> Each commit in this series can go directly into its respective tree:
+> MFD, pinctrl and GPIO.
+> 
 > [...]
->
->>> Assume we store in the task_struct
->>>
->>> uint8_t lazy_mmu_enabled_count;
->>> bool lazy_mmu_paused;
->>
->> I didn't think of that approach! I can't immediately see any problem
->> with it, assuming we're fine with storing arch-specific context in
->> thread_struct (which seems to be the case as things stand).
->
-> Right, just to complete the picture:
->
-> a) We will have some CONFIG_ARCH_LAZY_MMU
->
-> b) Without that config, all lazy_mmu_*() functions are a nop and no
-> lazy_mmu_state is stored in task_struct 
 
-Agreed on both counts (replacing __HAVE_ARCH_ENTER_LAZY_MMU_MODE).
+Applied, thanks!
 
->
-> struct lazy_mmu_state {
->     uint8_t enabled_count;
->     bool paused;
+[3/3] gpio: use more common syntax for compound literals
+      https://git.kernel.org/brgl/linux/c/7eee64e8be51f9ff0393b5bd0752a6e8f9252bf9
 
-Looking at the arm64 implementation, I'm thinking: instead of the paused
-member, how about a PF_LAZY_MMU task flag? It would be set when lazy_mmu
-is actually enabled (i.e. inside an enter()/leave() section, and not
-inside a pause()/resume() section). This way, architectures could use
-that flag directly to tell if lazy_mmu is enabled instead of reinventing
-the wheel, all in slightly different ways. Namely:
-
-* arm64 uses a thread flag (TIF_LAZY_MMU) - this is trivially replaced
-with PF_LAZY_MMU
-* powerpc and sparc use batch->active where batch is a per-CPU variable;
-I expect this can also be replaced with PF_LAZY_MMU
-* x86/xen is more complex as it has xen_lazy_mode which tracks both
-LAZY_MMU and LAZY_CPU modes. I'd probably leave that one alone, unless a
-Xen expert is motivated to refactor it.
-
-With that approach, the implementation of arch_enter() and arch_leave()
-becomes very simple (no tracking of lazy_mmu status) on arm64, powerpc
-and sparc.
-
-(Of course we could also have an "enabled" member in lazy_mmu_state
-instead of PF_LAZY_MMU, there is no functional difference.)
-
-> }
->
-> c) With that config, common-code lazy_mmu_*() functions implement the
-> updating of the lazy_mmu_state in task_struct and call into arch code
-> on the transition from 0->1, 1->0 etc.
-
-Indeed, this is how I thought about it. There is actually quite a lot
-that can be moved to the generic functions:
-* Updating lazy_mmu_state
-* Sanity checks on lazy_mmu_state (e.g. underflow/overflow)
-* Bailing out if in_interrupt() (not done consistently across arch's at
-the moment)
-
->
-> Maybe that can be done through exiting
-> arch_enter_lazy_mmu_mode()/arch_leave_lazy_mmu_mode() callbacks, maybe
-> we need more. I feel like
-> we might be able to implement that through the existing helpers.
-
-We might want to rename them to align with the new generic helpers, but
-yes otherwise the principle should remain unchanged.
-
-In fact, we will also need to revive arch_flush_lazy_mmu_mode(). Indeed,
-in the nested situation, we need the following arch calls:
-
-enter() -> arch_enter()
-    enter() -> [nothing]
-    leave() -> arch_flush()
-leave() -> arch_leave()
-
-leave() must always flush whatever arch state was batched, as may be
-expected by the caller.
-
-How does all that sound?
-
->
-> [...]
->
->>
->> Overall what you're proposing seems sensible to me, the additional
->> fields in task_struct don't take much space and we can keep the API
->> unchanged in most cases. It is also good to have the option to check
->> that the API is used correctly. I'll reply to the cover letter to let
->> anyone who didn't follow this thread chip in, before I go ahead and try
->> out that new approach.
->
-> And on top of the proposal above we will have some
->
-> struct arch_lazy_mmu_state;
->
-> define by the architecture (could be an empty struct on most).
->
-> We can store that inside "struct lazy_mmu_state;" or if we ever have
-> to, start returning only that from the enable/disable etc. functions.
-
-I'm not sure we'd want to mix those styles (task_struct member + local
-variable), that's adding complexity without much upside... Also having a
-local variable at every nesting level only makes sense if we have an
-arch callback regardless of nesting level, which is unnecessary in this
-proposed API.
-
->
-> For now, I'd say just store it in the task struct in the
-> lazy_mmu_state. But we can always adjust later if required.
->
-> In the first (this) series we probably don't even have to introduce
-> arch_lazy_mmu_state. 
-
-I suppose this could improve the overall struct layout - but otherwise I
-don't really see the need compared to adding members to thread_struct
-(which is fully arch-specific).
-
-- Kevin
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
