@@ -1,91 +1,98 @@
-Return-Path: <linux-kernel+bounces-814035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC29FB54E72
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:51:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2474B54E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0528486958
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7453A485164
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA74F3093B8;
-	Fri, 12 Sep 2025 12:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eRBTg1kU"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70C63054E3;
+	Fri, 12 Sep 2025 12:50:32 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F2A3093BC
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0544D3019C5
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681440; cv=none; b=AfhcFzJyB+7Z3SxAlLzaNQXkmbH9/dvRx13l5RCAHpnGnRqQXMsPnXR+KDYu1DqEEQPagESRKjD7SwwpHfnC305ejXd7JEnDhgC34DPN3FSJb79Af06cHjbvM7T3o/8P+i6gKAeeYQQQ7bWvINOjz2rIE0RmebceGqKfG02azEA=
+	t=1757681432; cv=none; b=ABdBkwq9wu5rhKxDC4nSPnhUS8JelEXU97EfjXsn1awP6ra812QTVwuko0pKBZiAtp25eD0VBGnNXIKbvcXDAc64r6xcKQeg3JkLoq81Y6x0hCKP4S6xQDMav3VVEsHhPofe9p3RiS551nRd6535QkJBPuF/+c4VtB+Oo+GuKVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681440; c=relaxed/simple;
-	bh=1oQXwWv+lJSNtgMzc7cQmQhi/nz00C7zSGZfOqlTCPs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=mExsabdUBIMMwvuxI9OWhSCChFHetl41KKURlTF6J6/easT5JLLXubJyqjNO/R0gkYCt9ZP1rR3Zkz08/+8+u0z+CWGxicnhbkaICeLldsm5Ik0+4EiC1niJ94EaqR3hltE0FYULGYd0r7ME32un+/WsVkMizzUeanTIbyCJ3QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eRBTg1kU; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757681425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uYq3AqU24weJAslNrHOd3hJqC0HeulXIDNwwV6Fs/KY=;
-	b=eRBTg1kUDpov12hPolDE9KMaj4VnodINYcyfhQqLmN64t3PaZITFcmFVemf/Iz5lK/EFEY
-	MXHpHgYtpFegIrJX9e+1KlXgIN33e0az4PgVT90O/2eVE3S3POQCc7oOYDcREVySMXo9h/
-	ZYbgVGMbS/zPG6oLF/BSFz1pfSEtp78=
+	s=arc-20240116; t=1757681432; c=relaxed/simple;
+	bh=WaupZNManUqNcqnsFHmxD7OEwZG42QqbQmAYHworjNU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Be4Ql8d7kzpWXAmR+mUOvsrgEfM/OUx6+VINf34zDjxyV2E1tmkux0DR241CkoyVETFQb9tryFt90JBE6OoJ5+X/P+jftl/eT3ayc8H6CLzp7JW3cqG8/u9XPKz/aJRc6v6CKFMgIB4oUPGXtxY5Ey1pUwNmEzLwLfK8gd/vpgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3f6f0058e9aso55427965ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:50:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757681430; x=1758286230;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CrYY5yU99KJVXopcDS+1qbxSnA+64IIqInr0fnqZVEY=;
+        b=cw5C9NsnouBJehZ/kS9mUqBl8eLEliR3yMbyQ8TebRMJcpl/DZBZk2q9bBelTif1Ei
+         8TlyLRxuXoK8Guf7gUazBSIyG/gF3rF6kC49hobmSJwqHdyy2IS/Blf60VoeHgQ0RU+n
+         BN4CqS6upV+tc8qWt9WlkMw3+46yGSs23LvENKMn4bSHxctfPbHuz99G7TtggZtwqKH9
+         5SgmS56jWjb0FTxFbcYvJEDVbwa0NALTpjfRUV48tNZydIQI31T9bcFG6H7bk6nN28VF
+         0X3U7NUw8HRXYvil6kmteWkxra2JDDpp2JqIa0dGLVBNapoD9YUyRrNjHntFQIrNsjiz
+         6WOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHeVRQe755zTvsdZHToZWUg+4oA6Cz/ag6jWOkh14hJsHzx+7PYtKd+/7pPcuRFRWVToOreifAmdXAYt0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGwfXjH4O32BH4s4xy4smH1SLagetWmcoSGjIRkzRinBnqXh2o
+	rbSJM1CDHapJUprsiIKfmO3qTwU6Un/o4GNqnmArCVk1CdM9UZLgd6idVzzWyf37p3Z+4lgdOc9
+	md+CIe4uVKyEtMvmNp9b8cXmEMe7UG4UzzmKTsXUBaMOV+i17k524qUABgp8=
+X-Google-Smtp-Source: AGHT+IE2qh/2GCKU6BVMPASYLvG4vM/fF0wwnb1ckwYJaxtlUMlxDLBY9UK3FlpTNIcvXMVA0c4lcaUF0EG+xP5Jtax8fQlP9i6w
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] s390/hypfs_sprp: Replace kzalloc() + copy_from_user()
- with memdup_user()
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20250912110619.10147C7e-hca@linux.ibm.com>
-Date: Fri, 12 Sep 2025 14:50:12 +0200
-Cc: Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <BABCE4F4-7C7A-4D25-AFB6-1CF9476151A9@linux.dev>
-References: <20250911214539.1483234-2-thorsten.blum@linux.dev>
- <20250912095620.10147A01-hca@linux.ibm.com>
- <D56B6A09-8633-402D-A942-1C24AE465AC8@linux.dev>
- <20250912110619.10147C7e-hca@linux.ibm.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:19ce:b0:416:75eb:265e with SMTP id
+ e9e14a558f8ab-420a4ee1eb0mr45949005ab.23.1757681430239; Fri, 12 Sep 2025
+ 05:50:30 -0700 (PDT)
+Date: Fri, 12 Sep 2025 05:50:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c41716.050a0220.2ff435.035d.GAE@google.com>
+Subject: [syzbot] Monthly crypto report (Sep 2025)
+From: syzbot <syzbot+listfbe8ca840699475b61f2@syzkaller.appspotmail.com>
+To: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12. Sep 2025, at 13:06, Heiko Carstens wrote:
-> On Fri, Sep 12, 2025 at 12:09:43PM +0200, Thorsten Blum wrote:
->> On 12. Sep 2025, at 11:56, Heiko Carstens wrote:
->>> This is not an improvement and also incorrect, since kfree() may now
->>> be called with an error pointer.
->> 
->> Unless I'm missing something, kfree() works just fine with error
->> pointers. See linux/slab.h:
->> 
->> DEFINE_FREE(kfree, void *, if (!IS_ERR_OR_NULL(_T)) kfree(_T))
-> 
-> This is for automatically freed memory, but not for the generic case.
-> See cd7eb8f83fcf ("mm/slab: make __free(kfree) accept error pointers").
+Hello crypto maintainers/developers,
 
-Interesting, I didn't know this doesn't work for the generic kfree().
+This is a 31-day syzbot report for the crypto subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/crypto
 
-Thanks,
-Thorsten
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 4 issues are still open and 110 have already been fixed.
 
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 271     Yes   possible deadlock in padata_do_serial
+                  https://syzkaller.appspot.com/bug?extid=bd936ccd4339cea66e6b
+<2> 18      No    KMSAN: uninit-value in sw842_decompress (2)
+                  https://syzkaller.appspot.com/bug?extid=8f77ff6144a73f0cf71b
+<3> 7       Yes   KASAN: slab-out-of-bounds Read in xlog_cksum
+                  https://syzkaller.appspot.com/bug?extid=9f6d080dece587cfdd4c
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
