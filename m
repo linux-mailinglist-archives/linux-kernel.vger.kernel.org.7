@@ -1,105 +1,94 @@
-Return-Path: <linux-kernel+bounces-814336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF56EB55291
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:00:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAD4B55295
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8504B4E3417
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADAFC1884BF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:02:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC9884D02;
-	Fri, 12 Sep 2025 15:00:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70F828373;
-	Fri, 12 Sep 2025 15:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7426120E6;
+	Fri, 12 Sep 2025 15:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="BrHK6BXK"
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73DA192D8A;
+	Fri, 12 Sep 2025 15:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689238; cv=none; b=EgOfid13kMnbqKoMD/7h/7sc/+UrWr/PonTw0MgrGyf3z9odzfo+V/MI7l+I2zD5ncbgSXnRphquFPi5br5PucOI8gwI/SsEZpuHJcBczJIOmTmHFfZcfavPqLb3aXpwtsjphSSiHX5hLxKSYvwlXR4DL5CnZV1DkWwEOTnnmF8=
+	t=1757689308; cv=none; b=Kop76HN20zoJquVkuWIIquiHTTW6w3PaJoUQtTi/juVmWvpJPZAUwhcZsekoxbqfuDitnZX4LgKBolLjf9tMpaPX5gyPFj/bdj0X4KvIfxeKGnHJDQbgPnW/0fBT0by7nTz6vF3YipquI1dK37Z+PDZ+dvNKcFwPQtvqTUAWNXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689238; c=relaxed/simple;
-	bh=QYX6DEPnALv8VrhjqMcHzjidP6B9lzW1oyW/6+vMXPU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UoRn98GPhG++Eg4Fvg5Vba0EDBuQUpEMwrYo+WhaSDD9ZYOHOakIPLUG/BQySBJPP94qrFZ3RNR7tPDhFENtKlZNSMDK2atWqPnTl1iHIO2GKR208/mxpYBqjI5sKliIzj4ZfY0mcIESStTXIuYxTwN3WFGT88pbW8al/KUZVKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01E5C16A3;
-	Fri, 12 Sep 2025 08:00:28 -0700 (PDT)
-Received: from [10.1.196.46] (e134344.arm.com [10.1.196.46])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B01D03F694;
-	Fri, 12 Sep 2025 08:00:31 -0700 (PDT)
-Message-ID: <5eb4b7f0-37eb-47c9-a955-ed9db17fa1e5@arm.com>
-Date: Fri, 12 Sep 2025 16:00:30 +0100
+	s=arc-20240116; t=1757689308; c=relaxed/simple;
+	bh=fFmWwbLF1NYujbIy3EXx5QO/7xfiYsFX8VaGLaaO2R4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sZfjT5FB9+Z1BVWMNz80zGLS8zuwXAeNnDeITLFSDAD5kw8Quj5wZjXFLP4bwm3OLtDEAop2p0fnT3PJpny/XQaKHrMXIsPvodQPuVmZSc7VSjzfNe2agdBBEEa964yar0ev17AZCAco7Zpvskgnpm+fdD54VPIzBP9joAkNV4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=BrHK6BXK; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 22a119294;
+	Fri, 12 Sep 2025 23:01:35 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH] drivers/dma: replace dma_free_coherent with dma_free_wc
+Date: Fri, 12 Sep 2025 15:01:32 +0000
+Message-Id: <20250912150132.127135-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 20/29] arm_mpam: Allow configuration to be applied and
- restored during cpu online
-To: James Morse <james.morse@arm.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org
-Cc: D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>,
- Koba Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- fenghuay@nvidia.com, baisheng.gao@unisoc.com,
- Jonathan Cameron <jonathan.cameron@huawei.com>, Rob Herring
- <robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>,
- Rafael Wysocki <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Danilo Krummrich <dakr@kernel.org>
-References: <20250910204309.20751-1-james.morse@arm.com>
- <20250910204309.20751-21-james.morse@arm.com>
-From: Ben Horgan <ben.horgan@arm.com>
-Content-Language: en-US
-In-Reply-To: <20250910204309.20751-21-james.morse@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a993e72301f03a1kunme5a5fcbb2a1add
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGh5LVh5NTh0dGBpDSU1DSFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZT0tIVUpLSEpOQ0tVSktLVU
+	pCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=BrHK6BXKYF2lHBwHVjPd3ZHU0tUdZbecCcL+lq9okGRJL2iC1nnXSTzUNeW5vYXqqemveCuikFuC14PquVNl9b0SEskTHJEIR7eytWZf7WexxQuvhwb+56zZdAC33JG17hocOQrM97qwyByyuF6MY3Lls1KIdWFdm35p7l/VayI=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=PR15YUH9Ayx9sbnffKLREV423yM3Lj/+PILzPjOJIgs=;
+	h=date:mime-version:subject:message-id:from;
 
-Hi James,
+The memory for the DMA descriptor pool (dma_desc_pool_virt) is allocated
+by dma_alloc_wc, but it is freed by dma_free_coherent in the error
+handling path. This is incorrect as DMA allocation and free functions
+should be paired.
 
-On 9/10/25 21:43, James Morse wrote:
-> When CPUs come online the MSC's original configuration should be restored.
-> 
-> Add struct mpam_config to hold the configuration. This has a bitmap of
-> features that were modified. Once the maximum partid is known, allocate
-> a configuration array for each component, and reprogram each RIS
-> configuration from this.
-> 
-> CC: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-> ---
-> Changes since v1:
->  * Switched entry_rcu to srcu versions.
-> 
-> Changes since RFC:
->  * Added a comment about the ordering around max_partid.
->  * Allocate configurations after interrupts are registered to reduce churn.
->  * Added mpam_assert_partid_sizes_fixed();
->  * Make reset use an all-ones instead of zero config.
-> ---
->  drivers/resctrl/mpam_devices.c  | 269 +++++++++++++++++++++++++++++---
->  drivers/resctrl/mpam_internal.h |  29 +++-
->  2 files changed, 271 insertions(+), 27 deletions(-)
-> 
+Using mismatched functions may lead to undefined behavior, memory leaks,
+or system instability.
 
-Reviewed-by: Ben Horgan <ben.horgan@arm.com>
-Thanks,
+The fix is to use dma_free_wc to match the allocation function.
 
-Ben
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ drivers/dma/mv_xor.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
+index 1fdcb0f5c9e7..58de208fc50d 100644
+--- a/drivers/dma/mv_xor.c
++++ b/drivers/dma/mv_xor.c
+@@ -1163,7 +1163,7 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+ err_free_irq:
+ 	free_irq(mv_chan->irq, mv_chan);
+ err_free_dma:
+-	dma_free_coherent(&pdev->dev, MV_XOR_POOL_SIZE,
++	dma_free_wc(&pdev->dev, MV_XOR_POOL_SIZE,
+ 			  mv_chan->dma_desc_pool_virt, mv_chan->dma_desc_pool);
+ err_unmap_dst:
+ 	dma_unmap_single(dma_dev->dev, mv_chan->dummy_dst_addr,
+-- 
+2.34.1
 
 
