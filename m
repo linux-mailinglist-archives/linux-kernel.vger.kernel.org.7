@@ -1,92 +1,113 @@
-Return-Path: <linux-kernel+bounces-812996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C7FB53F70
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:11:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCDBB53F76
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:17:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D648616FA14
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:11:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C41B682F01
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C4FA932;
-	Fri, 12 Sep 2025 00:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC701F92A;
+	Fri, 12 Sep 2025 00:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g84ZqIXI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjqTNAxt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843132AD13;
-	Fri, 12 Sep 2025 00:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2ED04C6E;
+	Fri, 12 Sep 2025 00:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757635890; cv=none; b=iy6I3i1aYFzhDs9KLruIYiZDv0mlgmg8i508vCHxI0WHG6OqfMdfCn8YNAgpLtMz/Vp4lks5zfe4mFwl+DsMwTuXYtjILXZYqzBOWkekdq/nImOCo/1ZOeB5k1YFQGkXBSmtAJ8Ifa1ZxlFT9+QtNOzr9Lg/KZ8bBqla8Fh4yHo=
+	t=1757636269; cv=none; b=NiEnJTuFB+Hobmt0OwjYipAol1WaCDy/OgKWRTTWMXnR0Ah/J7sgD7kR22tRhpCPnnqEGiQ6WJZGnC74R7mz444f035j/+xGUmUUQ160SjF9pk66tDn1p/woxNKGPAPlNYsQYSPzzQYqZo7vsnLyp4Vmpbc7JdYahzsxLcJLlfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757635890; c=relaxed/simple;
-	bh=kMSq6f7BZjti9F7DmtATF2p14qNOOcc1t/6T4gwRn/4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KZBKfxtI9teAoVGKBo420nzpMlyqw0FOW2oXleW2fgp5lASskaU5+sLlFd9+0IQkT/x4LDy9vbHlj/r+1oV1G7bw0GmuCfy61iZWVDKnRQdcKtYn4ZiUBOKjMgh9/3unxYOcfC5o2xauJ3g/YQjBJIzmzRFa069q9Cvb6A4OHS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g84ZqIXI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88A07C4CEF0;
-	Fri, 12 Sep 2025 00:11:29 +0000 (UTC)
+	s=arc-20240116; t=1757636269; c=relaxed/simple;
+	bh=3RZx3B3a93+MI3rsd0ttOFCVaCC1U6RzL2JzBz1Jvjw=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=hAzU5x3DRjAgFrTVt602PQCQtLO2Q/TNkanAEyC3ui1cpwjxr//QpuMF6dY2yXdrLOixq+hEJI8Nu3rQCdyo78MDO//hdy4QMyZuUKq3jhaCqnHpqPMC0bUgPjLekMlvw+KqK/0lrJdrupRFLc4zNcMk7bgwmCRBcSDiI2wgxcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjqTNAxt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3495CC4CEF0;
+	Fri, 12 Sep 2025 00:17:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757635890;
-	bh=kMSq6f7BZjti9F7DmtATF2p14qNOOcc1t/6T4gwRn/4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=g84ZqIXIZfENDA5soIt+2NaCJegz3+0URbc+aM1Yo8uN7sBn/9RvaDjYL9uzNBLnx
-	 nz+aXLKwTa8tfXfMhmjbtpw++Lga0s114XeJhENk0U9/xz7NHcsig1/Y4XGMwz9qR0
-	 8k2DIvBA4wEmWM0xdVA7XMwEeH+bG6GBSXTPNxo3vAV5j/8NwERPew+n/qnNtfRyep
-	 otTgVIet0JWK+Wpuu5wosY3h/7uXpLK36EgYjC2OqTTQto6fBuzI9aO7FcgUqjhyAx
-	 jRzhnaJ8ue9LZdp6GUkCW/NxvBnxuEjNDtM0xIgoaoZ/QfE/YYnzJ01za+75xdeafG
-	 PVsfp7a483Pzw==
-Date: Thu, 11 Sep 2025 17:11:28 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jianbo Liu <jianbol@nvidia.com>
-Cc: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Saeed Mahameed
- <saeedm@nvidia.com>, "Leon Romanovsky" <leon@kernel.org>, Mark Bloch
- <mbloch@nvidia.com>, <netdev@vger.kernel.org>,
- <linux-rdma@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gal Pressman
- <gal@nvidia.com>
-Subject: Re: [PATCH net 2/3] net/mlx5e: Prevent entering switchdev mode with
- inconsistent netns
-Message-ID: <20250911171128.42d0b935@kernel.org>
-In-Reply-To: <5fa69070-59e8-4eba-877e-f0728088fd48@nvidia.com>
-References: <1757326026-536849-1-git-send-email-tariqt@nvidia.com>
-	<1757326026-536849-3-git-send-email-tariqt@nvidia.com>
-	<20250909182319.6bfa8511@kernel.org>
-	<05a83eb7-7fb1-46ae-b7ba-bd366446b5f5@nvidia.com>
-	<20250910174842.6c82fb0c@kernel.org>
-	<5fa69070-59e8-4eba-877e-f0728088fd48@nvidia.com>
+	s=k20201202; t=1757636268;
+	bh=3RZx3B3a93+MI3rsd0ttOFCVaCC1U6RzL2JzBz1Jvjw=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=OjqTNAxt50f5XtTfv85KO5HN1HlBi9MH3vAlSjjTkNouZX1gtx3eYnwtrPIsACsLu
+	 PaLPic86LE5liewv0KeBq5pK4XMOBF9k4u04ssU4U54Ej6brnT+zMjDfg+xorxDAf5
+	 azkVI7gCrlULUpw1x9Ul0SfI68rtMgabxaPQVVNcHLaKJOhAA7lf78EB2WV45HM1nA
+	 Fiu5c+G2qeZXM3avcvel2ePz456eBokzP09UnfgacWwKEUSxNWCH7mFiV35/hPCNGW
+	 7nL4mesiQ7t3FHDI2etHlqvQwuWTzWFBk+G4P1xUPQRH9BHDJ2d57Tfu7ySEphKYxT
+	 ohfxeGuy2mEaA==
+Date: Thu, 11 Sep 2025 19:17:47 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Simona Vetter <simona@ffwll.ch>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
+ linux-arm-msm@vger.kernel.org, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Abhinav Kumar <abhinav.kumar@linux.dev>, freedreno@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+ Conor Dooley <conor+dt@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+ Maxime Ripard <mripard@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Kuogee Hsieh <quic_khsieh@quicinc.com>
+To: Abel Vesa <abel.vesa@linaro.org>
+In-Reply-To: <20250911-glymur-display-v1-3-d391a343292e@linaro.org>
+References: <20250911-glymur-display-v1-0-d391a343292e@linaro.org>
+ <20250911-glymur-display-v1-3-d391a343292e@linaro.org>
+Message-Id: <175763620749.1187186.12529943530682570245.robh@kernel.org>
+Subject: Re: [PATCH 3/6] dt-bindings: display: msm: Document the Glymur
+ DiplayPort controller
 
-On Thu, 11 Sep 2025 15:48:24 +0800 Jianbo Liu wrote:
-> >> There is a requirement from customer who wants to manage openvswitch in
-> >> a container. But he can't complete the steps (changing eswitch and
-> >> configuring OVS) in the container if the netns are different.  
-> > 
-> > You're preventing a configuration which you think is "bad" (for a
-> > reason unknown). How is _rejecting_ a config enabling you to fulfill
-> > some "customer requirement" which sounds like having all interfaces
-> > in a separate ns?
+
+On Thu, 11 Sep 2025 15:28:50 +0300, Abel Vesa wrote:
+> Document the DisplayPort controller found in the Qualcomm Glymur SoC.
+> There are 4 controllers and their base addresses and layouts differ,
+> therefore being incompatible with all previous platforms.
 > 
-> My apologies, I wasn't clear. The problem is specific to the OVS control 
-> plane. ovs-vsctl cannot manage the switch if the PF uplink and VF 
-> representors are in different namespaces. When the PF is in a container 
-> while the devlink instance is bound to the host, enabling switchdev 
-> creates this exact split: the PF uplink stays in the container, while 
-> the VF representors are created on the host.
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/display/msm/dp-controller.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
 
-So you're saying the user can mess up the configuration in a way that'd
-prevent them from using OVS. No strong objection to the patch (assuming
-commit message is improved), but I don't see how this is a fix.
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,glymur-mdss.example.dtb: displayport-controller@ae90000 (qcom,glymur-dp): reg: [[0, 183042048], [0, 512], [0, 183042560], [0, 512], [0, 183043072], [0, 1536], [0, 183046144], [0, 1024], [0, 183047168], [0, 1024]] is too long
+	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,glymur-mdss.example.dtb: displayport-controller@ae90000 (qcom,glymur-dp): reg: [[0, 183042048], [0, 512], [0, 183042560], [0, 512], [0, 183043072], [0, 1536], [0, 183046144], [0, 1024], [0, 183047168], [0, 1024]] is too long
+	from schema $id: http://devicetree.org/schemas/display/msm/dp-controller.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250911-glymur-display-v1-3-d391a343292e@linaro.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
