@@ -1,119 +1,188 @@
-Return-Path: <linux-kernel+bounces-814063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302BBB54ECA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C31EB54ED6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF6BE7C551E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:08:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9D3E16CDFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9E6730BB81;
-	Fri, 12 Sep 2025 13:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E5C30B531;
+	Fri, 12 Sep 2025 13:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="hha8BoUA"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="euD/GVjS"
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2083.outbound.protection.outlook.com [40.107.113.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9388C301473;
-	Fri, 12 Sep 2025 13:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757682508; cv=none; b=sjNcO0144/QQFWFe9Zc52tAt7yPXVfLHpw2bQaOWiVmithVyTMwVJr0oCquKGWCH2FLBeysWXcu8FYM/0mkktk9iXpCKVWYQUnDTnxos2lSroYT92e0UDm5SJGSo6qaBKSAiDuUYLAVcln5c0QEYffru+lCzAlxtkzAJ3ml5BRU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757682508; c=relaxed/simple;
-	bh=UHuTMZ+qyTbbDwiAALau3tpmWs7+C/GRBXfUMsHKt50=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tag8cXN1q2mptx/c7KczMEmWFooGfiw2r2/ABcGh439/OwRVD4Hqcw7Z/lcOGNmA678WDgUeuvORBII+zLsc5HF1PP/UIp3YS7+p5oZhM5NcSqNmRPhQQFVL+yk+i86ITEaLsUEpSdgTf+Of8MSSTjFyCSocM1EqhsCy0llel7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=hha8BoUA; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:To:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=OohjXwdRWXklZTgiotVpN2yjSewFuyJu3XqSDoVVL3E=;
-	b=hha8BoUAekuPS1tOtb+LpPMO42rNQykJYDHD341vnOjP6mfM5kikO9eGW974kI
-	zWdMFQ5Zcw1VShWC7K4+qztHA/hoOqF0Wk7Rl1jg55yJtT1jkPia/s2YvNc2VIt7
-	9Brq9WmwBGNW0viPA6m6JYevm9Ccz5TikaVq2vOGXMzFU=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgDXSnsiG8Ro0HdiBA--.59242S3;
-	Fri, 12 Sep 2025 21:07:48 +0800 (CST)
-Date: Fri, 12 Sep 2025 21:07:46 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Qais Yousef <qyousef@layalina.io>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: cap the default transition delay at 10 ms
-Message-ID: <aMQbIu5QNvPoAsSF@dragon>
-References: <20250910065312.176934-1-shawnguo2@yeah.net>
- <CAJZ5v0gL5s99h0eq1U4ngaUfPq_AcfgPruSD096JtBWVMjSZwQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94843009CB;
+	Fri, 12 Sep 2025 13:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757682580; cv=fail; b=ugBwJttKLVTN3GpohnyHdS2PnsKBfRWLJRQRcmzpFgCka17t8QuO8O7Skmf0TJMM9wAwC6ViNmOxloUU0YxCYVNOmeK3i/GUu5Od9vS0yr6QV+3KhN0uLluMhqlCTAuoKsY6lATjByykvMijroy6lQCQqAI/JRs5hHLz3y7OsAk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757682580; c=relaxed/simple;
+	bh=J1m6QUyVe7hlyZgviCCczF98dGOGA7nWfUWc1gKXylw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=q0bkqR+Mmq5KdNkbqW35LJclCZn7clSj8cqPHJ8Q8Xa/d61s4asxIHpy21yLBivIb/FKycFQFhkKj179u6ciBKf+37xt5j/pEOTLPUey+2e3DJDRUQUV2sN393ZP8b0QJGN5oksJLv5Nz5hfVXN1lTyUZe+Vlgsrzfnck/PxARY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=euD/GVjS; arc=fail smtp.client-ip=40.107.113.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eEaf/azsfW+A0Vgl8cHeAgC68VdGdWKGBrNxuQdacNMt+66qfcovp04k+2LBt6PQ1VbxdAtaIc9y38O0UCps+93Sd0q7Ah3PKYxEeah08uBw9BSD5ibbzln63MxxMZ7I+B81hlJxEUtCG0geooWkmaPpJYPcs2dg4vFGeEyTnv3pbKDv7XwrKGS2SvLoj5bhXUgJLCyMIeOlDqQO9u7bw63/LSjPbMEGLNbjRvHRPN83dZlM2FwvBCcv+l9dghH4HgkYrwiih6MiUHhOVlAxUal2jpMlT/CDHwNgDfOQXuFHfWluc2KeuhzV7ChH9iYo0myKrTBeiKoZW87faY3ltQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vYebapMGfDInh7KixiWRkH74xWEgL7dVnvsQ4nog8wU=;
+ b=i+CnAdE6Kv7wirLviM+zQrjnwBH4Fa8LCj9kEpPZSLkXso5Kqszfp/+YN6fx6Gw8nfk25y0wElyIsdmTNBBEEkury8HSAoJyB7EyPFPp5u6o8Kkd56kh4IJDi6Qcg7lCGPS3hyccZiha0EgyylGJ9sh0g/Hr424RcDm64SPUXxet60AikDQmL2C5t0EWTYwCyVF02d7+WcM6DNwHkfMh2uWobpsydYFBkUiJh1i3YjEujvy+IA06lCERn51TeZKQuOiwU7tFreEe7Fg0RzuckH3nn3So5KRQPRos8+c5WzzAXal3BT59z8qAqysjBEl0cnxqqsMmgSuFTFZvIiSAJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vYebapMGfDInh7KixiWRkH74xWEgL7dVnvsQ4nog8wU=;
+ b=euD/GVjSD7BFbXDPhFCzOHwX6mDM6N+8bzdno/INvUQt0WZmNkjSx9tXM/S55HhPB6JDqVatpztokOC373kDmW32+DAoTGJ1lecGpMy5nn7EqdScgVrjHpHgzK8I1rvIk0GJ6oCGLooMFtumfzJdxHiHPUTgD37gnHfWvqlDzSg=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com (2603:1096:400:3e1::6)
+ by TYYPR01MB13387.jpnprd01.prod.outlook.com (2603:1096:405:1c3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
+ 2025 13:09:34 +0000
+Received: from TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31]) by TYCPR01MB11947.jpnprd01.prod.outlook.com
+ ([fe80::63d8:fff3:8390:8d31%6]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 13:09:34 +0000
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: tomm.merciai@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org,
+	biju.das.jz@bp.renesas.com,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] phy: renesas: rcar-gen3-usb2: Remove extra semicolon in rcar_gen3_phy_usb2_remove()
+Date: Fri, 12 Sep 2025 15:09:10 +0200
+Message-ID: <20250912130911.185674-1-tommaso.merciai.xr@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: FR0P281CA0102.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a9::18) To TYCPR01MB11947.jpnprd01.prod.outlook.com
+ (2603:1096:400:3e1::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJZ5v0gL5s99h0eq1U4ngaUfPq_AcfgPruSD096JtBWVMjSZwQ@mail.gmail.com>
-X-CM-TRANSID:Mc8vCgDXSnsiG8Ro0HdiBA--.59242S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJF1UuryDCF4UKw47WFyDJrb_yoW8CF47pr
-	W5W3y2kw4kWF1vqws7Ka18Z3ZYvFs8JrW7CF1DKrnYv3y3Zw1SgF42ga15KFZIyrs3Gw1U
-	XF1qq3sxAFs5ZFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uz6wZUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiIgQbgGjEGySSBwAA37
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB11947:EE_|TYYPR01MB13387:EE_
+X-MS-Office365-Filtering-Correlation-Id: 619bf206-6755-487b-a314-08ddf1fd9e5c
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?v5WA9eu8f0xRnPfdwfK2Mb3LBarsHFCljaSd0ksInMKA7QKZT1m/v68iITtC?=
+ =?us-ascii?Q?LMgo5QQ5ktyHT43MD5D14sFN10ZszxUC6C3nBZRie9vldqQU9vmXUVxCMC8H?=
+ =?us-ascii?Q?Hs54u8Hfqq1nStrxM8oDB53h9BlSZPVdlZyGR3QrFzcsRyJa7xWzrTaAHBRp?=
+ =?us-ascii?Q?+f128ptv98V41Q54yw9q+NBxtlTxK8OONidTF1PAe6qCZNe1UiEoNZIcho9w?=
+ =?us-ascii?Q?bjh4WdZwfxYsIETzvCmKSrSYgeMPTuFT56Eyausr9ZS5YP83dYsbg3/uOfXr?=
+ =?us-ascii?Q?JTHmfUvHNzWf6k0cRfWeEasWqyRorC3B5cxetbh6AUJONLPCvHyoHU32wgND?=
+ =?us-ascii?Q?RaXYggZc0iv+lvsKySnIKMi64KdeduMjSHmdXSG5rTp8Tc8GF9Lw1OqXNtYM?=
+ =?us-ascii?Q?e40lKGv7iUqAnJqa0jvPB0+4g2IlQV49xCBQ9S/ReYl1I1nTEiut0A8Y8KD7?=
+ =?us-ascii?Q?bl/YhLyQiIS7FkHvGXs4L3QFRosOMa+Ca5F4pSPKF9TxhLcNuf4hqHhM9VIo?=
+ =?us-ascii?Q?cmzbfmtF+bfCVy/8HmqDEl5nVVRtbUqFEzJ/Xfg3MrB8ucweRi7hgVa21b9C?=
+ =?us-ascii?Q?iPIUtlVurkXO0juedDKPzdi7MqGaW+x4V+3ENyMU6KRz9tuOtvMtSl8QivvA?=
+ =?us-ascii?Q?6tzFMAk8+nZYQhoXS8cPNLquq6T44SvklOANB+Vg2R6HF/dLVJaBMBRIZU2F?=
+ =?us-ascii?Q?2SegbzDWNVYtK5kgnB8u0lNNLuRSliHoQ+WiiW9gkwtKYM1phq5li33Fjg1I?=
+ =?us-ascii?Q?VLAiHlJqtEETEtLlxli11waQQMRP8TEVHqC91tvqUvU/1qZx/oAwflXycqdW?=
+ =?us-ascii?Q?cOhg1xXQdtqdiwDtJ3wT6Ri8b5I5dA92tEetDsO53ib6GNc4B26zG0dlYBKp?=
+ =?us-ascii?Q?BsTw9t0UI2DgLh6bMmy8ezS4t6xV1kMzT7vrWvBO2wqYzPsRNKNAPzBj54RD?=
+ =?us-ascii?Q?eWsTJ0GV+9w+0VM4nyms6cuvKJYswDjitkjx6IDVz7PRcXthATvxyw4WDoeV?=
+ =?us-ascii?Q?0LwUeMMBwltkUchMm8mvu9Fy1grFqiwOkgqJxkyATlyUHrCq1x68EILKrgra?=
+ =?us-ascii?Q?9N/4fSGvRLav5ZEIo87dWTwoYZP2Exiv4mT7veXKdJjpWvNd7Aa1U6DgeEbW?=
+ =?us-ascii?Q?aSvkLWnZWUVqW1O5rK0mp4/caHLHOpBK079Jpq46J6mDSRuAVVNcvQwmTOiV?=
+ =?us-ascii?Q?BThVTb7RomcDMb1ttZMM/3m16kjrBOqwUsGfJeslBl7SLmcof8AEQLWyHtaV?=
+ =?us-ascii?Q?5xgsR8X5seUJtm8auPmYcwSHhqxnAxo37Fg7mf70beD31OXVmZkLJgWaIKT6?=
+ =?us-ascii?Q?cs1/B2ZBz9oWS72zkRBJJzClkvvHjAEYt1vakyylN2Rq83LtIBhG58pJyWoY?=
+ =?us-ascii?Q?1JfrCmX/ER5zj+ecdN5P5MLd/gtHl8MafL82uqvFzRXx7ZxM8vYauD8U6OFa?=
+ =?us-ascii?Q?iFmmYrr4x1LYM5jk/0ZoOtc/4JyCdj+uxDHABZnGVSJPVolbHDUUdQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11947.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pWgIqvGm2tWjbxCBjzU1JAiYvYb1+LY7h7Jied4/G+U2T1Fz6TPKjmcUDUTr?=
+ =?us-ascii?Q?Cni+vgFLOHjD0EnWc2ODl5cvR1KXAPTt5cShRGpbv7rd/bZplFH2ZMzF0hUG?=
+ =?us-ascii?Q?qm19wJ6FROrzIWtqdnQDTR/NHFNleDGXoODOsdsdgVpJAc100YlIjGJqv0jc?=
+ =?us-ascii?Q?iw6i23p6ioUbevnWe2rZwUBQJEghbjck4fzGLPwSjRUoVJHw7/4zLjOig8e1?=
+ =?us-ascii?Q?QRylkcVY7qnvOwfaZ8oCMwP2tHTXwmKnW7WmnK7EX4QPhOAAxJW4Cz3Iw6OL?=
+ =?us-ascii?Q?2uXXZKetAlhkx5v4IWbN9RKM9rAu2lL0zwLoZHM3AzNPlmV3/w95aOm+8nVH?=
+ =?us-ascii?Q?Ha+akvcF0Lgpw+2KF5Am/Rkya9ftesQhC4qEu9GabMP6EJNuzAKXLosdhY9X?=
+ =?us-ascii?Q?GB+6ZIg4Gt5haMh/M2WiJk+0uccLVrFqq6NFpTOidQ6VqSqsBkvsuTapBcU0?=
+ =?us-ascii?Q?NG/nDFAMWtKnv7TqsdGXn3/tcSb5cgHSeAjgJOgxnzxDVU4f++l4h4Rj+uBc?=
+ =?us-ascii?Q?+40/aDrsoCACHlr55kceVZhMb20g2psdyAgwbnNu5fcM7aEQ5K52qdVNEZjn?=
+ =?us-ascii?Q?yaIQBbDZlOE7seaWly1z+fW8sKtXqtnhtzhnnk/Sr1KV5/kHxGSgIsAjgj/r?=
+ =?us-ascii?Q?WSpMCmd6HTafZPW45wpjWNTBXZA6oI4TjXKGP4f4nuAoGkX44NllozxfmAUo?=
+ =?us-ascii?Q?q2uyZ0zfARL7EV+H7/IUxZrsFfPqHgaCAsGjws0HUGuxTP1xXJlcPrNl0Fs/?=
+ =?us-ascii?Q?BdvXB4InvvDq3qbLssLETh1oCEAVlewZ4MlAwGHkGAmDlL0RwZRI3jOzfQMG?=
+ =?us-ascii?Q?9gYlPF7Gu5N0Zve+AoEvIh5Zgh/HxPxS+we/8FlWL/OhHmcbRQU4TzzfJnU/?=
+ =?us-ascii?Q?orKgImyDOkJJRuB+6jTRIA/Aoq1aHD5c/8fatBN4QiUnCKUq1lyfbiL5FfmJ?=
+ =?us-ascii?Q?ItwNgphcllcpVyyNe/D+KpXaN179cb51Btv/sT9sQu3AMUch2pN5cV2jV9B2?=
+ =?us-ascii?Q?8HeYNfrX6Krd6hF/QOSdPSVY4dxHR3ew+O0RsS27lFNxDwmxltKwhpMMfy8a?=
+ =?us-ascii?Q?K/GVa7kfi6cbIVI+gDfX9uFDnLVkzwdor8B6ycFjK7R+gmFgxnYOu7BYBNVC?=
+ =?us-ascii?Q?sNMAzPlDPmJnImCVNgZdAZFPZ8CmuLfM489Gm7bBixOIDTaWBp0sY2XK43Zi?=
+ =?us-ascii?Q?CAwd/KKH+LK3/6Nto3J9NtIcFTC3DXa8BdnYGY4VVYUiWobqzeraiqPPWCVP?=
+ =?us-ascii?Q?fd91nBpDcUfzaDD/6tOl+KtvitPd9drVf/indL4Bc7gmPIjtP0uKOOnWKr2B?=
+ =?us-ascii?Q?K3HNbhJuXzXwahknyT91B3lGO3jCB5JekZsGUQ5F+GcRkD44vn5m4vftdo6h?=
+ =?us-ascii?Q?f9ERYK6pU7kPwyjMWpLkTqYKBVT4wB3dnwt5gstOxLS1P2wgW6bxw3F4yv0l?=
+ =?us-ascii?Q?/ArAsm8jMrR3f/6PJzOiP9KkHwiWQqYnm1VxHMNNJnQDxQQ9Nm+KY88gSFdp?=
+ =?us-ascii?Q?RaYnz2DwRu+R6pHS2yqOgr/iNLMfpmL0a9ZiFd0KakDLNdO1ap8LSRgK49xy?=
+ =?us-ascii?Q?CbbfZlt5OaJWvMEsqE04I2y0ykAQFkiQruHVZQzqD281wm1bKBY3UKBb9PrJ?=
+ =?us-ascii?Q?dMBkY4ECz0+ytU1H14MY8nM=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 619bf206-6755-487b-a314-08ddf1fd9e5c
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11947.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 13:09:34.6252
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9ebh3a/Ub5kTdS1XNTF849+2WwqRNXBY6t+tVxxqppU0oP9e/BFeVGH099Mp0gYDZ/4CNVsqqX+ryTc46xtiFmvrhkfzSdkBQHu3+5z7nuGH46cSwE0tTMZ5JLLKi8/I
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB13387
 
-On Fri, Sep 12, 2025 at 12:41:14PM +0200, Rafael J. Wysocki wrote:
-> On Wed, Sep 10, 2025 at 8:53 AM Shawn Guo <shawnguo2@yeah.net> wrote:
-> >
-> > From: Shawn Guo <shawnguo@kernel.org>
-> >
-> > A regression is seen with 6.6 -> 6.12 kernel upgrade on platforms where
-> > cpufreq-dt driver sets cpuinfo.transition_latency as CPUFREQ_ETERNAL (-1),
-> > due to that platform's DT doesn't provide the optional property
-> > 'clock-latency-ns'.  The dbs sampling_rate was 10000 us on 6.6 and
-> > suddently becomes 6442450 us (4294967295 / 1000 * 1.5) on 6.12 for these
-> > platforms, because that the 10 ms cap for transition_delay_us was
-> > accidentally dropped by the commits below.
-> 
-> IIRC, this was not accidental.
+Remove an extraneous semicolon after the closing brace of
+rcar_gen3_phy_usb2_remove().
+This has no functional impact, but cleans up the code style.
 
-I could be wrong, but my understanding is that the intention of Qais's
-commits is to drop 10 ms (and LATENCY_MULTIPLIER) as the *minimal* limit
-on transition_delay_us, so that it's possible to get a much less
-transition_delay_us on platforms like M1 mac mini where the transition
-latency is just tens of us.  But it breaks platforms where 10 ms used
-to be the *maximum* limit.
+Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Even if it's intentional to remove 10 ms as both the minimal and maximum
-limits, breaking some platforms must not be intentional, I guess :)
-
-> Why do you want to address the issue in the cpufreq core instead of
-> doing that in the cpufreq-dt driver?
-
-My intuition was to fix the regression at where the regression was
-introduced by recovering the code behavior.
-
-> CPUFREQ_ETERNAL doesn't appear to be a reasonable default for
-> cpuinfo.transition_latency.  Maybe just change the default there to 10
-> ms?
-
-I think cpufreq-dt is doing what it's asked to do, no?
-
- /*
-  * Maximum transition latency is in nanoseconds - if it's unknown,
-  * CPUFREQ_ETERNAL shall be used.
-  */
-
-Also, 10 ms will then be turned into 15 ms by:
-
-	/* Give a 50% breathing room between updates */
-	return latency + (latency >> 1);
-
-Shawn
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index 3f6b480e10922..6671616b26cec 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -926,7 +926,7 @@ static void rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+ 
+ 	reset_control_assert(channel->rstc);
+ 	pm_runtime_disable(&pdev->dev);
+-};
++}
+ 
+ static struct platform_driver rcar_gen3_phy_usb2_driver = {
+ 	.driver = {
+-- 
+2.43.0
 
 
