@@ -1,123 +1,169 @@
-Return-Path: <linux-kernel+bounces-814764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AA5B55863
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:31:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FE6AB55865
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F6601C853BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:31:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46E5161055
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EBE2765D9;
-	Fri, 12 Sep 2025 21:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A89D274B2B;
+	Fri, 12 Sep 2025 21:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCQ4vNf6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iREMowba"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D06273D6D;
-	Fri, 12 Sep 2025 21:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95BB322F14C;
+	Fri, 12 Sep 2025 21:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757712659; cv=none; b=gqUBnKd/tNHK3oBdn++w0Qu4nKvJzb+u4qPViuH9OeHjXENRVMdAk7JFkrL1W48A4/Y5VtcKKZ7Wn4+80J1pStQaG1NlxvYU6B5VTRsg9NZv+uaWDfNurl3+eQcHi1oYQo3BvnybnnWlq5C1oBj86dUWqeVPayZQ07Vua0V3qAg=
+	t=1757712678; cv=none; b=RMLe8I/ixpbFVQ1YUGK6dys4A/HzD8PBdkR+FAHz/2vyOogW3NvwPaf8AjAfVbzornMEzr2RDVReLCzgWlKM/oMro1wSaC7a5RslXoO2GQBYWx2FnA75LZVoUxRY8Tj4+gogoopzQSVwxnE/Jpkawv8d4O8Q9mcWSITAdLYTk54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757712659; c=relaxed/simple;
-	bh=ROOxPMoHZeX2C55B+T1892lm27mdEE7tXf8RWUdYD4s=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pyD7Iu168c/8ASzoJKnBmq/YU6iN2RE7xBoap38S8gqeFUx4ZG5o+Pe359CG6+UIZ7alporvPS2z1RrhiulGk/S4m3Ei/TnoKPJh5zPoV0MGwc+yBBD0SrUYcitm8Otck9dj/ZCstzDG5Z2GY1yRaF3ZoZGyRKnlDRUUpEMHMgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NCQ4vNf6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F599C4CEF5;
-	Fri, 12 Sep 2025 21:30:58 +0000 (UTC)
+	s=arc-20240116; t=1757712678; c=relaxed/simple;
+	bh=9TERDqn0+X15pemyziSWgElEtDSQeG3yOmJ2tsVV1aE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pbGut44UbfdAjEDAGa8gCwlLjjWPRV0Rac4FaG8o7bPCB3W89mbhnPGTh6kslrP1pP4cstJDh/gGwhs7EtzJTpc0wbrCFJYR59vcXpjrLWFqMylPqFksclHm2wTJel9NcoSVk6LzUZak4MheImRhz/jpt8iWGLEGGu2G5kEXzGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iREMowba; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B018EC4CEF1;
+	Fri, 12 Sep 2025 21:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757712658;
-	bh=ROOxPMoHZeX2C55B+T1892lm27mdEE7tXf8RWUdYD4s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NCQ4vNf6J1KUx693QddwsDnduxLLflhhPbPEkncW3RejjdZYdMemWaPGwzK895scA
-	 FyWtRO+KFAZVF+KUZ/nSMCGg7Gw+WoUrbjeCeG1pzZWodGGYDUNzD9LhKF1ZCV4cMk
-	 efPG20V13+oix10lAReteVa0qUaaSiIsgwEKXZfPsox3Kwiq8CVqELdFirC4M/Mu+A
-	 ETN271tzU5OyQJDNIQdOvha65YOINhAb+ur3AktrnqoANgU9dOE1a2T1kqfyXj/5dV
-	 jjTMDDJitjHRibc7Q7/INfgoyrckQe1yZef4IX2iefNuIHZEA/Fb+8QalMbFtTzFao
-	 EzEzQd+iPJvtQ==
-Received: from ip-185-104-136-29.ptr.icomera.net ([185.104.136.29] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uxBM7-00000005pJX-3RCo;
-	Fri, 12 Sep 2025 21:30:55 +0000
-Date: Fri, 12 Sep 2025 22:30:53 +0100
-Message-ID: <87frcrz7ci.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
+	s=k20201202; t=1757712678;
+	bh=9TERDqn0+X15pemyziSWgElEtDSQeG3yOmJ2tsVV1aE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iREMowba37peCo9YQa9I8FHr0kMyK5OJaH6mCuzGf+RdMdF6ZKADbNouUnzgZ0ZQv
+	 8Op40WBI+63WgZD0sChj/ni4W0lb8nI1ILcnx3TcKmQ+FBLInolnZSF9ZhDDcOYPXC
+	 EeczJ3Gh0eCD/6PYXT4CRA5/V0dDP5ImJ3mjGkyhH5Hez3cecM5/RC9jZAYVcYTMmP
+	 jACTD+BGn3aUWmT39SL6/km9RlIUU9iXwWRyz7QKk6XoybOZH7EzaYNZzVO30Epz5h
+	 k7FugFSLJO55CvssmFMBCbsn43FL9StpZgTUA4d85PG7erA+CU22c2ndzVCWAcVMUW
+	 Il8JXINCM4qnw==
+Date: Fri, 12 Sep 2025 18:31:15 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: James Clark <james.clark@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v16 2/6] KVM: arm64: Manage GCS access and registers for guests
-In-Reply-To: <aMRLYBWfDFiIB7wx@finisterre.sirena.org.uk>
-References: <20250912-arm64-gcs-v16-0-6435e5ec37db@kernel.org>
-	<20250912-arm64-gcs-v16-2-6435e5ec37db@kernel.org>
-	<865xdndgpw.wl-maz@kernel.org>
-	<aMRLYBWfDFiIB7wx@finisterre.sirena.org.uk>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>
+Subject: Re: [PATCH] perf vendor events arm64 AmpereOneX: Fix typo - should
+ be l1d_cache_access_prefetches
+Message-ID: <aMSRIzjysMXxFeVI@x1>
+References: <20250909210120.9823-1-ilkka@os.amperecomputing.com>
+ <6a24df18-832c-41b8-8226-5dc5b3c9995d@linaro.org>
+ <c48690ca-f7d-e711-5b9a-d18c138568d@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.104.136.29
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c48690ca-f7d-e711-5b9a-d18c138568d@os.amperecomputing.com>
 
-On Fri, 12 Sep 2025 17:33:36 +0100,
-Mark Brown <broonie@kernel.org> wrote:
+On Wed, Sep 10, 2025 at 12:46:24PM -0700, Ilkka Koskinen wrote:
 > 
-> On Fri, Sep 12, 2025 at 12:59:23PM +0100, Marc Zyngier wrote:
-> > On Fri, 12 Sep 2025 10:25:28 +0100,
-> > Mark Brown <broonie@kernel.org> wrote:
 > 
-> > >  		MAPPED_EL2_SYSREG(PIR_EL2,     PIR_EL1,     NULL	     );
-> > >  		MAPPED_EL2_SYSREG(PIRE0_EL2,   PIRE0_EL1,   NULL	     );
-> > >  		MAPPED_EL2_SYSREG(POR_EL2,     POR_EL1,     NULL	     );
-> > > +		MAPPED_EL2_SYSREG(GCSCR_EL2,   GCSCR_EL1,   NULL             );
-> > > +		MAPPED_EL2_SYSREG(GCSPR_EL2,   GCSPR_EL1,   NULL             );
-> > >  		MAPPED_EL2_SYSREG(AMAIR_EL2,   AMAIR_EL1,   NULL	     );
-> > >  		MAPPED_EL2_SYSREG(ELR_EL2,     ELR_EL1,	    NULL	     );
-> > >  		MAPPED_EL2_SYSREG(SPSR_EL2,    SPSR_EL1,    NULL	     );
+> On Wed, 10 Sep 2025, James Clark wrote:
+> > On 09/09/2025 10:01 pm, Ilkka Koskinen wrote:
+> > > Add missing 'h' to l1d_cache_access_prefetces
+> > > 
+> > > Also fix a couple of typos and use consistent term in brief descriptions
+> > > 
+> > > Fixes: 16438b652b46 ("perf vendor events arm64 AmpereOneX: Add core
+> > > PMU events and metrics")
+> > > Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> > > ---
+> > >   .../arch/arm64/ampere/ampereonex/metrics.json          | 10 +++++-----
+> > 
+> > The same typos are in arch/arm64/ampere/ampereone/metrics.json as well.
 > 
-> > Just like the previous version, you're missing the accessors that
-> > would be this table useful. Meaning that the vcpu_read_sys_reg() and
-> > vcpu_write_sys_reg() accessors will fail for all 4 GSC registers.
+> Ah, that's right. The descriptions do have the same typos. I'll prepare
+> another patch for AmpereOne and submit them together as v2.
 > 
-> Just to confirm, this is __vcpu_{read,write}_sysreg()?
+> Cheers, Ilkka
 
-No.
+Thanks, applied to perf-tools-next,
 
-vcpu_{read,write}_sys_reg() and co are the broken high-level
-accessors. __vcpu_{read,write}_sysreg() call into those depending on
-the context, and __vcpu_{read,write}_sys_reg_{to,from}_cpu() have now
-been removed and replaced by similar (but private) accessors.
-
-See -rc4 for the details.
-
-In any case, a bunch of register accesses in this series are broken,
-as they don't respect the register life cycle of the guest.
-
-	M.
-
--- 
-Jazz isn't dead. It just smells funny.
+- Arnaldo
+ 
+> > 
+> > Reviewed-by: James Clark <james.clark@linaro.org>
+> > 
+> > >   1 file changed, 5 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git
+> > > a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+> > > b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+> > > index 5228f94a793f..6817cac149e0 100644
+> > > --- a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+> > > +++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+> > > @@ -113,7 +113,7 @@
+> > >       {
+> > >           "MetricName": "load_store_spec_rate",
+> > >           "MetricExpr": "LDST_SPEC / INST_SPEC",
+> > > -        "BriefDescription": "The rate of load or store instructions
+> > > speculatively executed to overall instructions speclatively
+> > > executed",
+> > > +        "BriefDescription": "The rate of load or store instructions
+> > > speculatively executed to overall instructions speculatively
+> > > executed",
+> > >           "MetricGroup": "Operation_Mix",
+> > >           "ScaleUnit": "100percent of operations"
+> > >       },
+> > > @@ -132,7 +132,7 @@
+> > >       {
+> > >           "MetricName": "pc_write_spec_rate",
+> > >           "MetricExpr": "PC_WRITE_SPEC / INST_SPEC",
+> > > -        "BriefDescription": "The rate of software change of the PC
+> > > speculatively executed to overall instructions speclatively
+> > > executed",
+> > > +        "BriefDescription": "The rate of software change of the PC
+> > > speculatively executed to overall instructions speculatively
+> > > executed",
+> > >           "MetricGroup": "Operation_Mix",
+> > >           "ScaleUnit": "100percent of operations"
+> > >       },
+> > > @@ -195,14 +195,14 @@
+> > >       {
+> > >           "MetricName": "stall_frontend_cache_rate",
+> > >           "MetricExpr": "STALL_FRONTEND_CACHE / CPU_CYCLES",
+> > > -        "BriefDescription": "Proportion of cycles stalled and no
+> > > ops delivered from frontend and cache miss",
+> > > +        "BriefDescription": "Proportion of cycles stalled and no
+> > > operations delivered from frontend and cache miss",
+> > >           "MetricGroup": "Stall",
+> > >           "ScaleUnit": "100percent of cycles"
+> > >       },
+> > >       {
+> > >           "MetricName": "stall_frontend_tlb_rate",
+> > >           "MetricExpr": "STALL_FRONTEND_TLB / CPU_CYCLES",
+> > > -        "BriefDescription": "Proportion of cycles stalled and no
+> > > ops delivered from frontend and TLB miss",
+> > > +        "BriefDescription": "Proportion of cycles stalled and no
+> > > operations delivered from frontend and TLB miss",
+> > >           "MetricGroup": "Stall",
+> > >           "ScaleUnit": "100percent of cycles"
+> > >       },
+> > > @@ -391,7 +391,7 @@
+> > >           "ScaleUnit": "100percent of cache acceses"
+> > >       },
+> > >       {
+> > > -        "MetricName": "l1d_cache_access_prefetces",
+> > > +        "MetricName": "l1d_cache_access_prefetches",
+> > >           "MetricExpr": "L1D_CACHE_PRFM / L1D_CACHE",
+> > >           "BriefDescription": "L1D cache access - prefetch",
+> > >           "MetricGroup": "Cache",
+> > 
+> > 
 
