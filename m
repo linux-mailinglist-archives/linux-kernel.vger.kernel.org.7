@@ -1,203 +1,121 @@
-Return-Path: <linux-kernel+bounces-813768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A148FB54A77
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:58:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A34B54A81
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A921D604EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:58:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38C8156041E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A532FD1DA;
-	Fri, 12 Sep 2025 10:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="X/l9f1PK"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB68A2FE596;
+	Fri, 12 Sep 2025 11:00:14 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42E21EA7DD
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757674702; cv=pass; b=aEJfQaTxvo3qImYLo09dulM7xos3e7/fsvMlX+yzt06FFzXA3ftXiM25vNEvhCInFJGOEVhD9CwG06nUMwK8QNSVpKdl6Wfggmn7UWVMB67xo3srHxiWJLZbG3pQjLJyXrs5V2nATWcnaoxehqn5Q401MnlH4MsWecX/LJgYaXc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757674702; c=relaxed/simple;
-	bh=YJXNxaD1HGGLt8C4Puu51R+170zhHAXGYexuWxkY9pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKqw22Dcv86y6DrpqXva6TojYDj/PDkwKxJtUA++KPcjGZbLWf+1UqyySdCkSF84GeKTqh9yv5SJb5kYEsxBhNyaA/kHOUHWQ1mU6VgEtiVeRkAb9UyWQ1ci1Hp+YxhTvH5PxQO8rZN0zRzlmU4a0obftosXPasfP75nICFR4BA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=X/l9f1PK; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1757674676; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=APlkudR0qjLm3XSz5iV/udOwNM0Siv+Wa+lYUjBN0XJDmqzgkIARb3x98conwd4lp/vlx6Chc1TtiuUI+U3ixJ/wDI/fHMrRNbtWbOUwtSxYLXneif8r6OZKk16jYDhCquuH3E3KxlWcLeRpm/e8LC8UGKdSgMJROQLs3zKnD9w=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1757674676; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=qAdSIjUeiPovhOZ5oeAA6F0k6FxawUDv7nW9BDoqdPs=; 
-	b=NW7FA+m/8rNcJ7Whq8jMVqSDaL+zANznArtBPhTNrV3R0aT22USlWtO77emw2trTNyfE7816PUszJ88UqawC7fUqeyau9CAx7nPBMmmrPgFspG/ABCT/OeNIu8B31D9Nen72AAFHO8sLVIsuohACT549VSG8nXrwaTuB970E874=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
-	dmarc=pass header.from=<adrian.larumbe@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1757674676;
-	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=qAdSIjUeiPovhOZ5oeAA6F0k6FxawUDv7nW9BDoqdPs=;
-	b=X/l9f1PKricjPo2coUdGbAprbK6vA1Ivu27kO6aluCoMKzZ8J+oUUNpD4OSc6on5
-	ohXcnLuDs+mV0/8bNoAXFxd1uk9iQpoJ4yB4xneiLZMToT3Xmc6w9s1gB6b8OheeX9P
-	WuxJPkqPDHm3/3jmE+T6H0sGZJlaQ+6y355i4xak=
-Received: by mx.zohomail.com with SMTPS id 1757674674844468.5742493556746;
-	Fri, 12 Sep 2025 03:57:54 -0700 (PDT)
-Date: Fri, 12 Sep 2025 11:57:51 +0100
-From: =?utf-8?Q?Adri=C3=A1n?= Larumbe <adrian.larumbe@collabora.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, kernel@collabora.com, 
-	Rob Herring <robh@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH v2 2/4] drm/panfrost: Introduce JM contexts for manging
- job resources
-Message-ID: <sucdvuv4upf24srwf4ki5z2zubpu3m5rkz2k4opzgcdtc5yovw@jm3dslwedctc>
-References: <20250904001054.147465-1-adrian.larumbe@collabora.com>
- <20250904001054.147465-3-adrian.larumbe@collabora.com>
- <99a903b8-4b51-408d-b620-4166a11e3ad1@arm.com>
- <20250910175213.542fdb4b@fedora>
- <bba00626-f9aa-4525-8568-2616adac7563@arm.com>
- <20250910185058.5239ada4@fedora>
- <aec81419-a827-43bc-a157-75df059c2bd5@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B272F2FDC2C;
+	Fri, 12 Sep 2025 11:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757674814; cv=none; b=nBy8Rh5GYIf97VKrJybnD/Q6wIDDZw1Tq8GgDjTPxFRbrv7GuGXB6dhjlrHLfUC9tCsa24s1lbObdF5zZdzCV2NFkAnC9JjktOYoHE+t/gTNTnnYLX02N33OoPM7arDrVce1+6GOCams6AuCLi0beeS/0XnN6jE4Pg9YkN+thIM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757674814; c=relaxed/simple;
+	bh=SehddXTMIsz74GoDH6nj1R8W/jgXb6jePzjpjFOqgWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T1YsxjGtBoX2rRNmRxkMQPEEeKPN66VmtuOORiKRZCnZZfIAAeQ8wPFKmLt98XbUgqte4bhOJMWrn08AxXJK9xfbO8lofAHUUq4PWrm+SKvp0X9RLpdYw5PUNF6X+rftxpKR8BofC+DyayByMh6G9FQaKAtIAavbz0REI4crlRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cNWfW2hl0zYQvQs;
+	Fri, 12 Sep 2025 19:00:03 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E08A21A155E;
+	Fri, 12 Sep 2025 19:00:01 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.50.85.155])
+	by APP4 (Coremail) with SMTP id gCh0CgCn8Y0r_cNoFHACCQ--.47583S4;
+	Fri, 12 Sep 2025 19:00:01 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] ext4: fix an off-by-one issue during moving extents
+Date: Fri, 12 Sep 2025 18:58:41 +0800
+Message-ID: <20250912105841.1886799-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aec81419-a827-43bc-a157-75df059c2bd5@arm.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCn8Y0r_cNoFHACCQ--.47583S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw4rGFWktF4fJF1UWF1xZrb_yoW8JFW5p3
+	sIkay5KrW0qwnxCw4kW3Z7X3yUG34DKr47W34Fk3W7CFyay3409rWUK3Wq9a45tFWUJrWr
+	XF4rKr15Za4UXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 11.09.2025 10:30, Steven Price wrote:
-> On 10/09/2025 17:50, Boris Brezillon wrote:
-> > On Wed, 10 Sep 2025 16:56:43 +0100
-> > Steven Price <steven.price@arm.com> wrote:
-> >
-> >> On 10/09/2025 16:52, Boris Brezillon wrote:
-> >>> On Wed, 10 Sep 2025 16:42:32 +0100
-> >>> Steven Price <steven.price@arm.com> wrote:
-> >>>
-> >>>>> +int panfrost_jm_ctx_create(struct drm_file *file,
-> >>>>> +			   struct drm_panfrost_jm_ctx_create *args)
-> >>>>> +{
-> >>>>> +	struct panfrost_file_priv *priv = file->driver_priv;
-> >>>>> +	struct panfrost_device *pfdev = priv->pfdev;
-> >>>>> +	enum drm_sched_priority sched_prio;
-> >>>>> +	struct panfrost_jm_ctx *jm_ctx;
-> >>>>> +
-> >>>>> +	int ret;
-> >>>>> +
-> >>>>> +	jm_ctx = kzalloc(sizeof(*jm_ctx), GFP_KERNEL);
-> >>>>> +	if (!jm_ctx)
-> >>>>> +		return -ENOMEM;
-> >>>>> +
-> >>>>> +	kref_init(&jm_ctx->refcnt);
-> >>>>> +
-> >>>>> +	/* Same priority for all JS within a single context */
-> >>>>> +	jm_ctx->config = JS_CONFIG_THREAD_PRI(args->priority);
-> >>>>> +
-> >>>>> +	ret = jm_ctx_prio_to_drm_sched_prio(file, args->priority, &sched_prio);
-> >>>>> +	if (ret)
-> >>>>> +		goto err_put_jm_ctx;
-> >>>>> +
-> >>>>> +	for (u32 i = 0; i < NUM_JOB_SLOTS - 1; i++) {
-> >>>>> +		struct drm_gpu_scheduler *sched = &pfdev->js->queue[i].sched;
-> >>>>> +		struct panfrost_js_ctx *js_ctx = &jm_ctx->slots[i];
-> >>>>> +
-> >>>>> +		ret = drm_sched_entity_init(&js_ctx->sched_entity, sched_prio,
-> >>>>> +					    &sched, 1, NULL);
-> >>>>> +		if (ret)
-> >>>>> +			goto err_put_jm_ctx;
-> >>>>> +
-> >>>>> +		js_ctx->enabled = true;
-> >>>>> +	}
-> >>>>> +
-> >>>>> +	ret = xa_alloc(&priv->jm_ctxs, &args->handle, jm_ctx,
-> >>>>> +		       XA_LIMIT(0, MAX_JM_CTX_PER_FILE), GFP_KERNEL);
-> >>>>> +	if (ret)
-> >>>>> +		goto err_put_jm_ctx;
-> >>>>
-> >>>> On error here we just jump down and call panfrost_jm_ctx_put() which
-> >>>> will free jm_ctx but won't destroy any of the drm_sched_entities. There
-> >>>> seems to be something a bit off with the lifetime management here.
-> >>>>
-> >>>> Should panfrost_jm_ctx_release() be responsible for tearing down the
-> >>>> context, and panfrost_jm_ctx_destroy() be nothing more than dropping the
-> >>>> reference?
-> >>>
-> >>> The idea was to kill/cancel any pending jobs as soon as userspace
-> >>> releases the context, like we were doing previously when the FD was
-> >>> closed. If we defer this ctx teardown to the release() function, we're
-> >>> basically waiting for all jobs to complete, which:
-> >>>
-> >>> 1. doesn't encourage userspace to have proper control over the contexts
-> >>>    lifetime
-> >>> 2. might use GPU/mem resources to execute jobs no one cares about
-> >>>    anymore
-> >>
-> >> Ah, good point - yes killing the jobs in panfrost_jm_ctx_destroy() makes
-> >> sense. But we still need to ensure the clean-up happens in the other
-> >> paths ;)
-> >>
-> >> So panfrost_jm_ctx_destroy() should keep the killing jobs part, butthe
-> >> drm scheduler entity cleanup should be moved.
-> >
-> > The thing is, we need to call drm_sched_entity_fini() if we want all
-> > pending jobs that were not queued to the HW yet to be cancelled
-> > (_fini() calls _flush() + _kill()). This has to happen before we cancel
-> > the jobs at the JM level, otherwise drm_sched might pass us new jobs
-> > while we're trying to get rid of the currently running ones. Once we've
-> > done that, there's basically nothing left to defer, except the kfree().
->
-> Ok, I guess that makes sense.
->
-> In which case panfrost_jm_ctx_create() just needs fixing to fully tear
-> down the context in the event the xa_alloc() fails. Although that makes
-> me wonder whether the reference counting on the JM context really
-> achieves anything. Are we ever expecting the context to live past the
-> panfrost_jm_ctx_destroy() call?
+From: Zhang Yi <yi.zhang@huawei.com>
 
-We still need reference counting, otherwise there would be a racy window between
-the submission and context destruction ioctls, in which a context that has just
-been released is still owned by a newly created job leading to UAF.
+During the movement of a written extent, mext_page_mkuptodate() is
+called to read data in the range [from, to) into the page cache and to
+update the corresponding buffers. Therefore, we should not wait on any
+buffer whose start offset is >= 'to'. Otherwise, it will return -EIO and
+fail the extents movement.
 
-> Indeed is it even possible to have any in-flight jobs after
-> drm_sched_entity_destroy() has returned?
+ $ for i in `seq 3 -1 0`; \
+   do xfs_io -fs -c "pwrite -b 1024 $((i * 1024)) 1024" /mnt/foo; \
+   done
+ $ umount /mnt && mount /dev/pmem1s /mnt  # drop cache
+ $ e4defrag /mnt/foo
+   e4defrag 1.47.0 (5-Feb-2023)
+   ext4 defragmentation for /mnt/foo
+   [1/1]/mnt/foo:    0%    [ NG ]
+   Success:                       [0/1]
 
-My understanding of drm_sched_entity_destroy() is that, after it returns,
-no jobs can be in-flight any more and the entity is rendered unusable by
-any new jobs. This can lead to the unpleasant situation in which a thread
-tries to submit a new job and gets a context reference right before another
-thread takes precedence and destroys it, causing the scheduler entities to
-be unusable.
+Fixes: a40759fb16ae ("ext4: remove array of buffer_heads from mext_page_mkuptodate()")
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+ fs/ext4/move_extent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Then drm_sched_job_init() would contain a reference to an invalid entity,
-which further down the line would cause drm_sched_entity_push_job() to report
-a DRM_ERROR warning that te entity is stopped, which should never happen,
-because drm_sched_entity_push_job() must always suceed.
+diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+index adae3caf175a..4b091c21908f 100644
+--- a/fs/ext4/move_extent.c
++++ b/fs/ext4/move_extent.c
+@@ -225,7 +225,7 @@ static int mext_page_mkuptodate(struct folio *folio, size_t from, size_t to)
+ 	do {
+ 		if (bh_offset(bh) + blocksize <= from)
+ 			continue;
+-		if (bh_offset(bh) > to)
++		if (bh_offset(bh) >= to)
+ 			break;
+ 		wait_on_buffer(bh);
+ 		if (buffer_uptodate(bh))
+-- 
+2.46.1
 
-> Once all the sched entities have been destroyed there doesn't really
-> seem to be anything left in struct panfrost_jm_ctx.
-
-We've thought of a new approach whereby a context would be flagged as destroyed
-inside panfrost_jm_ctx_destroy(), destruction of scheduler entities done at context
-release time and then cancelling new jobs that had been queued after context
-destruction in the .run_job scheduler function if they notice the context
-is so flagged.
-
-> Thanks,
-> Steve
-
-Cheers,
-Adrian Larumbe
 
