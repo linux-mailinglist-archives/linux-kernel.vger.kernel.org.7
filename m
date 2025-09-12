@@ -1,152 +1,175 @@
-Return-Path: <linux-kernel+bounces-813785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B661B54AA3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:07:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49736B54D41
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAFC8680144
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:07:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA5293BEEE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576A72FF171;
-	Fri, 12 Sep 2025 11:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FD6321F57;
+	Fri, 12 Sep 2025 12:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HogY8K/E"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/oSd1W4"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433E12FE59D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA9D5301018
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757675220; cv=none; b=EGqPAQzUYFwwBNB43BhPRt+3uBmytRupLOk2hrUM1JiAnb5j+FJL0rKllH4cX/4Q43PDt3itFnHcxzUNh3iFTMFAizMJqxJO4SqGbvysb1sOkvabtsUIb2cjsqkCk3pRxcIb4v71Bu1WlJ/j6aP1INdySqV4399TlOuDxTr69xo=
+	t=1757678931; cv=none; b=JPMG2DgqoBK6wOvZ/y9NuJWfeqUzTC+z0DlE5vCz9Az0isP3tzQk/ogTHymKwxNu5vrWUkMKZd/5zfkReUEUf3THLjkssDpoqAuvqbRBpsZn/bLv9durCJTWQPELqCm9/DHQzmvwkiJp3Ou0VLM4m6miDe72DMutnGPefQEX8UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757675220; c=relaxed/simple;
-	bh=CuFw3tp4Y2KS4XsNlMWcxOczBnPSe11GRIKj7TlEyko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uDvWFquz749GH+JETIYJf/LYovL1a6zGmKnU0eDmM+QGACAGBQmbSuoM3+m7E/e8Js45N9LjE/OX6FrWu/Bcfa3PIEVpI+emreXSmYJJj6O5e6F8IrMmdfZNhid0pFJZwvaxdjOijXxWS++02VLj7rCYxzNq4F14eub4znGLNrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HogY8K/E; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fKap014048
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:06:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ObqOUZTyrARl8ec8JgmHRIoB
-	QhBr/qr+CrAYCMGQmus=; b=HogY8K/EpkV/pbnGmdiacBZ3fg5WnhBQc14tPHE8
-	dGFAFY15Ke35AX8wHNIxpMICYLjk524LwDwH7+ESLvSWfHG0jX+z3POOceLoiFtd
-	mtnH/kgcCGF7eD7kjQg5pV141NQ/4vaq5p1iQrVBevtotYv1dq86UHBuBdNSQITU
-	+G+1vsOOMsDnwgnCFcy8uVTCL2GuIWHBcliJ2eDN96TsP1+TpiZOuRLLcJhEdxeg
-	brvRfxMyhf6EKz5PpJsb8EZ8HVP7Sb4Pzxw8kqZtRJ8s8XJk4yO0IFKWn1zseqy9
-	n9dvE2lcfcF9bRA1T8jAva9OKWZkM4p6WBf7GfvB3GEAUA==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 493qphw4jp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:06:58 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-76485dfc1f5so41436556d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:06:58 -0700 (PDT)
+	s=arc-20240116; t=1757678931; c=relaxed/simple;
+	bh=pg2OzxfdDmvV4PZ3/yrEF/ttLXM7KmEXR3GgYwf88oM=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=fa6lrTMcNST2nhKswP37dlYXbu1oWfiilOoxq5zyORyO56nR//JihUlXJyo7jDU4BcxbckfnVxrD6bNAIvbDJM1fKrA0/3cWQC8oY/ywyB3pAi2Uzd+NcA/4DAzfRxP9DU4b4rgZFHRhlqCoQGx37rr+InPBp5+3uwHWmhK7Zi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/oSd1W4; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45df09c7128so14938325e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:08:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757678928; x=1758283728; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z3mBB6R4Rvgptsn0OxjqAYg70NanrEyHXxP0kqh9yyw=;
+        b=j/oSd1W49q5GqUpc4lcLYvy2FpJ6r6ZYirBlz6SCqXtj+q1E4NhrYMAZRt2jCALf3Z
+         aYdOqFTvZZ7W3ga1P0A4UJ4iPdackJG2xm3HJTeoqJnVJ3+xXSFFYLDYJ6rBlWxTyIvS
+         u8CIOf11nkX+DDYBU9a4/FJ7TDYPDJTJ3d5Pjn4MOJcDzWSBjvjp/59HyOerZOkzWRrz
+         P3Yl115aDgI4ZVtknoMN6rAtqJ9Uh9w+3qjzQK3X0WdDAvFPmDmhCLcS/QoXXqXtzi5q
+         EgzhFN7HpA1/iV+GgMS10JQNKzIiXB64Iukc582CTVveKrg/kBbBhvImGFf9zN8MN/JP
+         z0yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757675217; x=1758280017;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1757678928; x=1758283728;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ObqOUZTyrARl8ec8JgmHRIoBQhBr/qr+CrAYCMGQmus=;
-        b=MFZkTP+GhqkSuGUIcGMRvIxBgjXC1uX9B/YLb0Z1FSptpKkUx4gS9w9tMLYopbs7mS
-         uUYbQkI3FgdUsoNJnVl6fEeP3V+HSvoNsJQbPf3O9motegU55i15xYzvDRvixSQWbV1X
-         tyAFOWcyjyBIhvBbVKOrbBClFo/kAB8eLalug6jeEw0itlu4kja2V9kdcRzqVymBwZEf
-         p/Davu4L7ETR4PQOE0C2Dt1ifgIvIjbb/xwIEN2JLtRR3rgAC2n1JDK+XfnAwl5ivJ4m
-         6vy+CdPeaNBtliMy2VV3ZKAzD23HVQtgNPbfjHZMd1BLqm/sobuXUrBX2e/KKM8e4p5W
-         0xIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUw2uzJ6580mwHQm6x4rYcxxyC2nH3FmyAa9I/t860OuetBruIp5mPCW+iqgDe9KUUvpNIm01K88foNBXQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYbe6QUCjYkG8D2oKIK9oto/hZ+5F/SBAQb2glvzKGyK28BXDW
-	4PUIalagz9lf7a1geJ+QE0VHknMr8C1RjBSJfnd2/KlnhPp4qkwoc9edKUssbkhU9czNiNoShI+
-	buCT0e4UTWzs5DZ3NRC2nWwZ1UD8/Y/FgWasYLtmw8RexYPp9Vo9JJ7I+kT778FQPa2BhEKQFaP
-	g=
-X-Gm-Gg: ASbGncs+5ExH8HvCH52gstv5rhK4zQV+h0sNGhiyQgw/Y9U3QQJEzxxU8U0bUVv0SZr
-	eZBnAphT3YXVlE5ylFC8FuKSRVZZaqOtSvGx/+LfOtmY47eLFud4VlTMKVLNZdVID3BAjTauGzs
-	hFMg71OfQgyClOoqGEu/Fgi/3wTkw6v4P70g3roTjo4f1JSTuE9lCqp8cizIk+iSEIQ72dITOMX
-	Pe/7Bzi4Rk1jLbOv1En7lYhWX20SSGblx0776B5NiOi8SROTWmG93T9XMGKGsMyL+Isc4TZ0ExD
-	3ApLiG4K95ZrlZZJl3vmF79JqPoOegX5OHggY3L3lzTuXPIjE98MpRGtuCQIWjmvW0AwdauA4o1
-	/fhQrWsNW7/l9928SByANbzCAW4lP7+dcKiXB6tcPAG11sw092oEF
-X-Received: by 2002:ad4:576e:0:b0:70d:81ce:ec1f with SMTP id 6a1803df08f44-767bd2881a8mr34381606d6.12.1757675216782;
-        Fri, 12 Sep 2025 04:06:56 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzL4AO8dNGPWgFHm6qvxn4ogauEObB1TwGr9YSH5AEOx8Q+cb9zElyfiMXPvqBFGwT80wJCA==
-X-Received: by 2002:ad4:576e:0:b0:70d:81ce:ec1f with SMTP id 6a1803df08f44-767bd2881a8mr34381126d6.12.1757675216206;
-        Fri, 12 Sep 2025 04:06:56 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f15a5834esm7432661fa.10.2025.09.12.04.06.53
+        bh=Z3mBB6R4Rvgptsn0OxjqAYg70NanrEyHXxP0kqh9yyw=;
+        b=VvHMLxbpinZ8R9hG+vgreZ54DnkZczEsPLwsjJuMWhsDje28sTRrELUlUTV3kwGIF+
+         r4NnxJ+D0KVhApY1iF3AheiB5JaXUrbECFcc2pAa682yWgaI/uzDPzElzLfgt9OPfJrL
+         0BjeMXolctBt78++Ifi5b5/099MCqJge4OLUIR9BrgVzJ+dga8qB2PQC3Mfulu0H/fQq
+         M7KPLtmcz2I8r5cS1vN8DY8xdVbFtW3namFYFrS5nEzucfRtotTDWkSyNfSs6kEBblhm
+         yTXW/JYEY6JHY4ojp3kroGk4/DES9udUEOdPeZtkPgWI55fdXCf3PHv/s+aKK7Gyhvmx
+         L+Vg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8o2VmxxMVy8i3JNccuybtr3KyzUdHhi/207lz7FFCmBQDGbQQvc+d13Rui2S7JlG/RfUVi7TRdRYc8wk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8WbD/Xv8tU3wTmDLjXS5qt/hNRkWJPfkiTNhp78CsNKpLBk67
+	5EeZwPJvnfjP8n+2Gzgaxts86L3HS3nOyhaFmf58+jLdjMY/7XH2V9J+qGgg5A==
+X-Gm-Gg: ASbGncv2AAo/J9OAYVbJrrZ7N7gAYLwwa2xzfUAHKwCY0uPJHLSSb6zRFKZs5qI0sVs
+	tAGz5oGEgKyGLbN5rqFCW2e1rgm9sVZYDBR9oMei3CQ1EBkLnKSVcd+fh5MC45BPAR32GV2q4Ei
+	UlmBmIGhRjHEF0gdpxLvy5qjNexhGFR4ylnnKCTdpc3ztqDsZlUJnDklThUmeOCUj6rhoQ4Pg/7
+	T7N29ReClP9QOGbCwhKJyIsWA2Ov6GJQzsq6J7a2nlclCDtYEfv9tYVc0y7MwBuMNuVCjErx0bw
+	VxR9DwXUAF7wTvPb9pfROENihKXvbBKdNONAeQi0EMVWrQTp863OOfg1phQBGW3pnGBSTpd3fEn
+	Z8YC411BsfCogI1jvXAbOzmcaVXOPXNBZOA==
+X-Google-Smtp-Source: AGHT+IGv/35p/W7r3GHx5SA997jhumk8Hh17nHWyXFsjPVhFKF0I3tiZFXsC/nBQd4qsEp3pwnV0nA==
+X-Received: by 2002:a05:600c:548f:b0:45b:8ad2:76c8 with SMTP id 5b1f17b1804b1-45f2125d5cdmr28593575e9.2.1757678927561;
+        Fri, 12 Sep 2025 05:08:47 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:18f9:fa9:c12a:ac60])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037186e5sm60557925e9.5.2025.09.12.05.08.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 04:06:54 -0700 (PDT)
-Date: Fri, 12 Sep 2025 14:06:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
-        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-        jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-        mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-        simona@ffwll.ch, jingoohan1@gmail.com, inki.dae@samsung.com,
-        sw0312.kim@samsung.com, kyungmin.park@samsung.com, krzk@kernel.org,
-        alim.akhtar@samsung.com, hjc@rock-chips.com, heiko@sntech.de,
-        andy.yan@rock-chips.com, dianders@chromium.org,
-        m.szyprowski@samsung.com, luca.ceresoli@bootlin.com,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 16/17] drm/bridge: analogix_dp: Remove bridge disabing
- and panel unpreparing in analogix_dp_unbind()
-Message-ID: <zt2kyoq4rnn5gbb22vvpphqwmbbv4vecjvc2iepa6t5iljhpgu@xckynlkyyjiz>
-References: <20250912085846.7349-1-damon.ding@rock-chips.com>
- <20250912085846.7349-17-damon.ding@rock-chips.com>
+        Fri, 12 Sep 2025 05:08:47 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,  Jakub Kicinski <kuba@kernel.org>,
+  "David S. Miller" <davem@davemloft.net>,  Eric Dumazet
+ <edumazet@google.com>,  Paolo Abeni <pabeni@redhat.com>,  Simon Horman
+ <horms@kernel.org>,  linux-doc@vger.kernel.org,  netdev@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] tools: ynl: rst: display attribute-set doc
+In-Reply-To: <a1f55940-7115-4650-835c-2f1138c5eaa4@kernel.org>
+Date: Fri, 12 Sep 2025 12:07:04 +0100
+Message-ID: <m2ecscudyf.fsf@gmail.com>
+References: <20250910-net-next-ynl-attr-doc-rst-v1-1-0bbc77816174@kernel.org>
+	<m2v7lpuv2w.fsf@gmail.com>
+	<a1f55940-7115-4650-835c-2f1138c5eaa4@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912085846.7349-17-damon.ding@rock-chips.com>
-X-Authority-Analysis: v=2.4 cv=aPDwqa9m c=1 sm=1 tr=0 ts=68c3fed2 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=yJojWOMRYYMA:10 a=s8YR1HE3AAAA:8 a=EUspDBNiAAAA:8 a=0i7CoW_5q_0ZA8A6Ya0A:9
- a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=jGH_LyMDp9YhSvY-UuyI:22
-X-Proofpoint-GUID: hhXtjN4iEOpqa5axaw443n-W2Wf0u7LV
-X-Proofpoint-ORIG-GUID: hhXtjN4iEOpqa5axaw443n-W2Wf0u7LV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTExMDA0MCBTYWx0ZWRfX26lwpJ/3yEfl
- /Mah4h1Twipis17A8NXPk7yl8X1sFs2eFIGyw5ln4hA/hGF+3CHSX2Tik5BkH4vnIAoOZFmCd3V
- xAh4WhC9eSxm2g9edhTqkNu9NkeiZCZZup41r2Q4uBseBWbFe9/HH3Frqb+I5LDoHd2I+Gavws7
- 1dojb1pt5ny/Pyro+UWQXkmxWNfh3xuMhgO7tv3N9LIdg01vj6EQIbFUXwkqDtt0KgK2ph8duio
- de+7Is9sHIdVsIze2Wq/4g4Nq018mlRr6Xsodfl8pItxb86qONAQmSZDkb4Gs18JhdCOYaS7OGk
- TFXvY2U3au7nGtNZTX6Gm4W4q8SzZ+LARNYT5aqcofP39/qdxmd08hSu1xFD8hr25wruDYApQ8W
- 931CBLA9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 phishscore=0 impostorscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 spamscore=0 suspectscore=0 adultscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509110040
+Content-Type: text/plain
 
-On Fri, Sep 12, 2025 at 04:58:45PM +0800, Damon Ding wrote:
-> The analogix_dp_unbind() should be balanced with analogix_dp_bind().
-> There are no bridge enabling and panel preparing in analogix_dp_bind(),
-> so it should be reasonable to remove the bridge disabing and panel
-> unpreparing in analogix_dp_unbind().
-> 
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> ---
->  drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
+Matthieu Baerts <matttbe@kernel.org> writes:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Hi Donald,
+>
+> On 11/09/2025 12:44, Donald Hunter wrote:
+>> "Matthieu Baerts (NGI0)" <matttbe@kernel.org> writes:
+>> 
+>>> Some attribute-set have a documentation (doc:), but it was not displayed
+>>> in the RST / HTML version. Such field can be found in ethtool, netdev,
+>>> tcp_metrics and team YAML files.
+>>>
+>>> Only the 'name' and 'attributes' fields from an 'attribute-set' section
+>>> were parsed. Now the content of the 'doc' field, if available, is added
+>>> as a new paragraph before listing each attribute. This is similar to
+>>> what is done when parsing the 'operations'.
+>> 
+>> This fix looks good, but exposes the same issue with the team
+>> attribute-set in team.yaml.
+>
+> Good catch! I forgot to check why the output was like that before
+> sending this patch.
+>
+>> The following patch is sufficient to generate output that sphinx doesn't
+>> mangle:
+>> 
+>> diff --git a/Documentation/netlink/specs/team.yaml b/Documentation/netlink/specs/team.yaml
+>> index cf02d47d12a4..fae40835386c 100644
+>> --- a/Documentation/netlink/specs/team.yaml
+>> +++ b/Documentation/netlink/specs/team.yaml
+>> @@ -25,7 +25,7 @@ definitions:
+>>  attribute-sets:
+>>    -
+>>      name: team
+>> -    doc:
+>> +    doc: |
+>>        The team nested layout of get/set msg looks like
+>>            [TEAM_ATTR_LIST_OPTION]
+>>                [TEAM_ATTR_ITEM_OPTION]
+> Yes, that's enough to avoid the mangled output in .rst and .html files.
+>
+> Do you plan to send this patch, or do you prefer if I send it? As part
+> of another series or do you prefer a v2?
 
+Could you add it to a v2 please.
 
--- 
-With best wishes
-Dmitry
+> Note that a few .yaml files have the doc definition starting at the next
+> line, but without this '|' at the end. It looks strange to me to have
+> the string defined at the next line like that. I was thinking about
+> sending patches containing modifications created by the following
+> command, but I see that this way of writing the string value is valid in
+> YAML.
+>
+>   $ git grep -l "doc:$" -- Documentation/netlink/specs | \
+>         xargs sed -i 's/doc:$/doc: |/g'
+>
+> Except the one with "team", the other ones don't have their output
+> mangled. So such modifications are probably not needed for the other ones.
+
+Yeah, those doc: entries look weird to me too. Not sure it's worth
+fixing them up, given that they are valid. Also worth noting that the
+two formats that we should encourage are
+
+  doc: >-
+    Multi line text that will get folded and
+    stripped, i.e. internal newlines and trailing
+    newlines will be removed.
+
+  doc: |
+    Multi line text that will be handled literally
+    and clipped, i.e. internal newlines and trailing
+    newline are preserved but additional trailing
+    newlines get removed.
+
+So if we were to fix up the doc:$ occurrences, then I'd suggest using
+doc: >-
+
+Cheers,
+Donald
 
