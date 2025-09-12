@@ -1,196 +1,124 @@
-Return-Path: <linux-kernel+bounces-814516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3A6B55500
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:50:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C741CB55505
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:50:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5833A3B71
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:50:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EAEE1CC6E1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F53D322A34;
-	Fri, 12 Sep 2025 16:49:57 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF75321F3A;
+	Fri, 12 Sep 2025 16:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hHjXkSQG"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C7F322A30
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DB230E83D;
+	Fri, 12 Sep 2025 16:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757695796; cv=none; b=e4wTItX1CTQPJKyN70OOpl6XdGrP8TaMyYgM8VRlomWyvQxETrVO9ZjySGNaIgFOBbd0fkIIldaxOOLxw0Ynrcf53IwzSrakby7cFCTOn02sjihy78pOEw5ZuS3ZGzm/xh/JAIVwv5KgHfd9QxqWf49CTRzpYLlIAbBbWeskZZk=
+	t=1757695823; cv=none; b=bYFaQSuL9+T8G9B6s+DlliLVp3PctKkY0vbXMdcGlggDkUUg9QynOcpQsX02yojtgse/M86xiIs8NhhlELV6wucPSVCJkhxJ1mr/QRhtC3FMfzW05QGdf773TlNTnR8bxyvnThLFUVcXbUIrThgeVe5+CcRvgHtMcyOh9RoPu4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757695796; c=relaxed/simple;
-	bh=RrJ5q9STYJMdPVlaw0BgI4YoUoSC25LVeZFcwMPMYmU=;
+	s=arc-20240116; t=1757695823; c=relaxed/simple;
+	bh=yhItCoXJETu41nDKJyPJnnHZE1jRo0RqhqoZPxSC4Ic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YuhPYPudUn8pyxWxyAyoFZFJmGXqNDAU92spXRTBkxE0WJtGIhdWJEa+WVqxyGGlf5o8DyuhYtN/MN8vL2Gf6Z6l5jJpnJnJYj1oyd1TqtHfRIpkuCTVUt7+6YCPXvtg4hiXDk8L9A/oSw7kMm7j/9fCL64Ok0lK5SmHgmqPWGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux6xz-0004dA-7V; Fri, 12 Sep 2025 18:49:43 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux6xy-000xpe-2y;
-	Fri, 12 Sep 2025 18:49:42 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1ux6xy-0033g6-2a;
-	Fri, 12 Sep 2025 18:49:42 +0200
-Date: Fri, 12 Sep 2025 18:49:42 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] dmaengine: imx-sdma: make use of
- devm_add_action_or_reset to unregiser the dma_device
-Message-ID: <20250912164942.p7w2p63wvracosra@pengutronix.de>
-References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
- <20250911-v6-16-topic-sdma-v2-8-d315f56343b5@pengutronix.de>
- <aMQy+Ocs+UWq7WoR@lizhi-Precision-Tower-5810>
- <20250912152508.ccxk2qpcmhxjjsns@pengutronix.de>
- <aMRMWfwcAnkF7wwn@lizhi-Precision-Tower-5810>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iI3+rGT7opO5MmTHIwHKqoX0LJ0lvL6NstR3yKB51595QlhzfiuOSlEM7qaC9tJ74atkcjuUTzdQJzZTlNbco1cC3pgQhyxIsHzYTFZA5LC5QvqtgG69eL0if1xIn7Kye+Xn+8fjcMjbPIuA4gzSstXqkoOC8UZMfnlHr05+IpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hHjXkSQG; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1666640E0163;
+	Fri, 12 Sep 2025 16:50:18 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 4LbRX7pKTjxY; Fri, 12 Sep 2025 16:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1757695814; bh=hiOFsXxPAZefUfcS4fOmUq2Dn7juaTFKBN2G4jHBWd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hHjXkSQGRW4+4xS8O8eCyYiukfFuBJplaNLGCSrJI/0kIzoVrfWnaIIrlxV6wYEQR
+	 MAzqbos7zlZTJL9QWOmAv5APYv4Ic4WRezlL+CnmwGClw35CGGdkKPRspg53cx6Buw
+	 IgdRO+45U9t2z9vL4dcZF5D37Ygeas5Ah/pPcha+OXODMmK/n5P2O1qvwHsFWpud9u
+	 y+dyTWiV1P9wlQSpymQgp3PcbanYrMzg3B+lgd/XU/g3A2ErSPSPq3qtItWEkU/9LW
+	 uwaaEJtC2TKP7ojtVB5A71rxwEPkHpv/he/EByqBFkUbtxGZ8/GZVlPhAfsK3iKePg
+	 VRMf8lC2i+U6AFufmC2ts3u39O+2Kv8Vi84VM/eck+I2RpQMpSBigA02wZjfW3YrUC
+	 MJl9BTt1w8QJgS/LYH13aXfRlwODdT2Go63OYQyI+NyA1fMaw6Z/ESuf9x16FXZ8YS
+	 7fG80Z7tB3yxMKLf9GMxJdKu2yBG2+kzN3EHizKclcNwsl1X+X6OwSHeZLXiS81FZ3
+	 yKPtVvtDlqjXbt4RXGax+IMDEYAzsOX6LnuK/hxy+KlkiMwvVcollhkevAKyCvC8//
+	 AggUyLWFeQ3oDX6l7phjqkdLTj+ta36pislW92TYDBE+/X38MmMb4vmEuc7f7ZtH3k
+	 E3XXA0yyFnpOODmdrU9dBuNo=
+Received: from zn.tnic (p5de8ed27.dip0.t-ipconnect.de [93.232.237.39])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id AA0DB40E00DD;
+	Fri, 12 Sep 2025 16:50:03 +0000 (UTC)
+Date: Fri, 12 Sep 2025 18:49:57 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Alexey Kardashevskiy <aik@amd.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Santosh Shukla <santosh.shukla@amd.com>,
+	"Nikunj A. Dadhania" <nikunj@amd.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
+Subject: Re: [RFC PATCH] PCI: Add quirk to always map ivshmem as write-back
+Message-ID: <20250912164957.GCaMRPNf7P60wqBud9@fat_crate.local>
+References: <20250612082233.3008318-1-aik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aMRMWfwcAnkF7wwn@lizhi-Precision-Tower-5810>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20250612082233.3008318-1-aik@amd.com>
 
-On 25-09-12, Frank Li wrote:
-> On Fri, Sep 12, 2025 at 05:25:08PM +0200, Marco Felsch wrote:
-> > On 25-09-12, Frank Li wrote:
-> > > On Thu, Sep 11, 2025 at 11:56:49PM +0200, Marco Felsch wrote:
-> > > > Make use of the devm_add_action_or_reset() to register a custom devm_
-> > > > release hook. This is required to turn off the IRQs before calling
-> > > > dma_async_device_unregister().
-> > > >
-> > > > Furthermore it removes the last goto error handling within probe() and
-> > > > trims the remove().
-> > > >
-> > > > Make use of disable_irq() and let the devm-irq do the job to free the
-> > > > IRQ, because the only purpose of using devm_free_irq() was to disable
-> > > > the IRQ before calling dma_async_device_unregister().
-> > > >
-> > > > Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> > > > ---
-> > > >  drivers/dma/imx-sdma.c | 23 +++++++++++++++--------
-> > > >  1 file changed, 15 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> > > > index d39589c20c4b2a26d0239feb86cce8d5a0f5acdd..d6d0d4300f540268a3ab4a6b14af685f7b93275a 100644
-> > > > --- a/drivers/dma/imx-sdma.c
-> > > > +++ b/drivers/dma/imx-sdma.c
-> > > > @@ -2264,6 +2264,14 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
-> > > >  				     ofdma->of_node);
-> > > >  }
-> > > >
-> > > > +static void sdma_dma_device_unregister_action(void *data)
-> > > > +{
-> > > > +	struct sdma_engine *sdma = data;
-> > > > +
-> > > > +	disable_irq(sdma->irq);
-> > >
-> > > May not related this cleanup patch, I am just curious why not mask sdma irq
-> > > request.
-> >
-> > You mean by setting irq_set_status_flags(irq, IRQ_DISABLE_UNLAZY)
-> > infront? Not sure if this is required since this is just the cleanup
-> > path.
+On Thu, Jun 12, 2025 at 06:22:33PM +1000, Alexey Kardashevskiy wrote:
+> QEMU Inter-VM Shared Memory (ivshmem) is designed to share a memory
+> region between guest and host. The host creates a file, passes it to QEMU
+> which it presents to the guest via PCI BAR#2. The guest userspace
+> can map /sys/bus/pci/devices/0000:01:02.3/resource2(_wc) to use the region
+> without having the guest driver for the device at all.
 > 
-> It is not important for this patch.
-> 
-> >
-> > > > +	dma_async_device_unregister(&sdma->dma_device);
-> > > > +}
-> > > > +
-> > > >  static int sdma_probe(struct platform_device *pdev)
-> > > >  {
-> > > >  	struct device *dev = &pdev->dev;
-> > > > @@ -2388,10 +2396,16 @@ static int sdma_probe(struct platform_device *pdev)
-> > > >  		return ret;
-> > > >  	}
-> > > >
-> > > > +	ret = devm_add_action_or_reset(dev, sdma_dma_device_unregister_action, sdma);
-> > > > +	if (ret) {
-> > > > +		dev_err(dev, "Unable to register release hook\n");
-> > > > +		return ret;
-> > > > +	}
-> > >
-> > > why not use dev_err_probe() her?
-> >
-> > Please see my last patch.
-> 
-> You can direct use dev_err_probe() here, instead replace all in last one.
+> The problem with this, since it is a PCI resource, the PCI sysfs
+> reasonably enforces:
 
-I get your point and yes I could do this, but I have to do the last
-patch anyway. Therefore I'm not sure what difference this makes for this
-series.
+Ok, so I read it up until now and can't continue because all I hear is a big
+honking HACK alarm here!
 
-> 
-> Frank
-> 
-> >
-> > Regards,
-> >   Marco
-> >
-> > >
-> > > > +
-> > > >  	ret = of_dma_controller_register(np, sdma_xlate, sdma);
-> > > >  	if (ret) {
-> > > >  		dev_err(dev, "failed to register controller\n");
-> > > > -		goto err_register;
-> > > > +		return ret;
-> > >
-> > > the same here.
-> > >
-> > > Frank
-> > > >  	}
-> > > >
-> > > >  	/*
-> > > > @@ -2410,11 +2424,6 @@ static int sdma_probe(struct platform_device *pdev)
-> > > >  	}
-> > > >
-> > > >  	return 0;
-> > > > -
-> > > > -err_register:
-> > > > -	dma_async_device_unregister(&sdma->dma_device);
-> > > > -
-> > > > -	return ret;
-> > > >  }
-> > > >
-> > > >  static void sdma_remove(struct platform_device *pdev)
-> > > > @@ -2423,8 +2432,6 @@ static void sdma_remove(struct platform_device *pdev)
-> > > >  	int i;
-> > > >
-> > > >  	of_dma_controller_free(sdma->dev->of_node);
-> > > > -	devm_free_irq(&pdev->dev, sdma->irq, sdma);
-> > > > -	dma_async_device_unregister(&sdma->dma_device);
-> > > >  	/* Kill the tasklet */
-> > > >  	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
-> > > >  		struct sdma_channel *sdmac = &sdma->channel[i];
-> > > >
-> > > > --
-> > > > 2.47.3
-> > > >
-> > >
-> 
+Shared memory which is presented to a guest via PCI BAR?!?
+
+Can it get any more ugly than this?
+
+I hope I'm missing an important aspect here...
+
+> diff --git a/drivers/pci/mmap.c b/drivers/pci/mmap.c
+> index 8da3347a95c4..8495bee08fae 100644
+> --- a/drivers/pci/mmap.c
+> +++ b/drivers/pci/mmap.c
+> @@ -35,6 +35,7 @@ int pci_mmap_resource_range(struct pci_dev *pdev, int bar,
+>  	if (write_combine)
+>  		vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
+>  	else
+> +	else if (!(pci_resource_flags(pdev, bar) & IORESOURCE_CACHEABLE))
+	^^^^^^
+
+This can't build.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
