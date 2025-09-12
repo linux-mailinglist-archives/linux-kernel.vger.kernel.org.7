@@ -1,117 +1,106 @@
-Return-Path: <linux-kernel+bounces-814830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE26B55914
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:22:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05DDB55916
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CB967B83F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:21:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03C51C2850C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18FF2257820;
-	Fri, 12 Sep 2025 22:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4ACC276028;
+	Fri, 12 Sep 2025 22:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H7UOBnbD"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oI2QAFAp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25798B67F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ACD0257820
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757715763; cv=none; b=sMGi7djmZB5Y86rgx37i5mXlv2Yv1F6maPoPnP+R31bP2zQMdIakb+7O4rbknY3I4CG7Ykn75pnBJvwAGA1ylXUGPKC0+hd9M3qzbiiWDKYB9BOjdIUTGtTezzoiGOHgGFsX/jtcITN/LkBhpFAPc2RKn7w8CtdGcrGcMqt4QIA=
+	t=1757715781; cv=none; b=OvpXANjPuDXX2iYD1tq5nu4N5cfJRC9Ntz//0s9A+CXfafdovrlR8yqljV7DqhwTyIhVq2oujXrETfi+WLxUy/NXhW6n/6cde9rt6w5SJM5TMoEiKF75s5/koABvnw+ve/B3B7GHUTKTbA/alAIx+esceopPKbrALEtLcUf0zUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757715763; c=relaxed/simple;
-	bh=5xbuOCkdufBm7jzWYxJeb8y1j30FN0f4rsdeSQAU1KY=;
+	s=arc-20240116; t=1757715781; c=relaxed/simple;
+	bh=gd76I0c3DRKFlg0RU30jLxRT8RNqHgwObwdp0lVkMi8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LnFH+vKmaeLQZVHmmzC87y4cU0xmyKd02sfI5qGfYalJb/2kbn83Axo1P8tAxRE8D1ez1G8qUjgRJsiMDcXLxxqxJMJpetCDxikVmBy3akOUvBHpohWBEwivNGEPrlWav+YXrPCU7Xw3fAd0VjhVmEgeRFFQAiTTdnW5ErAVWl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=H7UOBnbD; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b0787fa12e2so352258166b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:22:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1757715759; x=1758320559; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3IX9tXeCZIF8Yd1dUkTz5M/Vlip5AauSTVnQe4su0Q=;
-        b=H7UOBnbDBDkIlSVQyggnYMR1UFvkVs93gc/zy0yj/qHuwHTPiQWpJiU1yXyywzcFm2
-         6D4KDE65vVD5eFENDx+j6E9Qo0rAgQJGU4WEe/+LZUC2hqP+HuioBV53VJI9CYZDj2cl
-         N+YpjInFbXNkr4SIvbWvTlRta/tVh2mCdJQP0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757715759; x=1758320559;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l3IX9tXeCZIF8Yd1dUkTz5M/Vlip5AauSTVnQe4su0Q=;
-        b=RzeEKYU2COcqlC83/P7ZB2ePd3e0pMJR+UaUqCA7ek3HUKKE3FRbRZKi5hRCxkhMOg
-         85vXqm4xFAAlEWiOWC0qRHiqMDYDjUXJ46XruTyEoF7WUEOBUcU+V2LG/79fhXG3GQaz
-         OCTZ0ePFa71LM+TAMaCdDswWAP+n2aFxpvwnSlL8HuKKDuozqU0+NyfT4CUixA3s0MjT
-         sPbedcdhWN8Sx0mns0ABevlQNeT8rrG51Ri+yJQRydANagTu7U1WlGIWHRzMSIxPJDxY
-         wlckP6u/6ydw6MaQNBilZNAXZU+YUXK7B4h+qnhfFF/ACYzQ7b5tHKZOKtegUwG0pWtJ
-         27ig==
-X-Gm-Message-State: AOJu0YxAcPdF4P1RL8bjykfslRmN4CYdl4VeKoHR+kFKiMbdgDDKfMUm
-	LFPxCctlvoxibz8bJjNoA3mlWJIMbWhqIZZiLPn4ZZaeRn+B2BizoqUSk5WslET/Awi+rEctU8c
-	478lM
-X-Gm-Gg: ASbGncuy3osHzX6Nov0orjlnUk0Ft6dqP47ZzweYhZBNBB7KKCLs5IL1vqL+RWc3Jxk
-	gs4EOecN6vbaowAPgDpyZM0XMyQk4RrnPFoHNlR5ang5Asks97DwlJlE26DlkfSvLxQ+VSgx6rq
-	Qp8+nwp5bggWbyMS3D4yeVsoQG34FWk/Ba3pmqp7h64FiT02BFFqbiK6AGi2GoHa4xrPQCHUoL1
-	25n0S+Nyas5MTHwIzVEKGK6xKffVGPJNZLO6EHH1GLx86QmP1+LldckQ02b1xoHrzu+9Ss2ZHr4
-	xmHvSTzHHDInNBbn25Dszwpc55VEvwkcMO3KznAs+irATsLZh6rImuXDnUJLtD+aVdHv353h8WC
-	W4P71RFqjrK3JSW6jmmT8gkFg1X4NF8hnB4mO4BPOC33+Srwjh4HzrvXVZLCbcnCu+etUq3GaLe
-	Z1nf//Ogc=
-X-Google-Smtp-Source: AGHT+IE+4lBFm4RizFGj7I9am76Y4Dfhp1Pm9UsNYR3ayBNK7wZ+6zGKQTCxH8ehdEXefCqpRsmJqw==
-X-Received: by 2002:a17:907:1c0f:b0:afe:8b53:448f with SMTP id a640c23a62f3a-b07c3575011mr427848466b.16.1757715759258;
-        Fri, 12 Sep 2025 15:22:39 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b3129199sm445301566b.36.2025.09.12.15.22.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 15:22:38 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b0787fa12e2so352255966b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:22:37 -0700 (PDT)
-X-Received: by 2002:a17:907:db03:b0:b04:9854:981f with SMTP id
- a640c23a62f3a-b07c38404edmr467650466b.43.1757715757580; Fri, 12 Sep 2025
- 15:22:37 -0700 (PDT)
+	 To:Cc:Content-Type; b=RVsrBwZJYI0MJC8kj8goES5WBTGOkzxsMijrErChnwYGFluW+isfQiSCYAtDLTRlhuzjBz9g+TWtt8JzAqNw6hY24L4v9FKYE1Dgl3OZc3wiso7iT5SWwOV4dAZjXvPgztAa1w0uS3k9RssbYva1fshgunOxuikOW1CM4Uzt84c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oI2QAFAp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B752BC4AF0B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:23:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757715780;
+	bh=gd76I0c3DRKFlg0RU30jLxRT8RNqHgwObwdp0lVkMi8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=oI2QAFAp6Iw2GPKTfjZSINy3TJbqZMegV8uMapjMx6R6AeKsK5by+hAmyqaHoMtaS
+	 M8krOng0ldw2s6H3PfiJKYA068ad/ZrT8J+gaBLN+k+6Kq4//mwWwFagOEOO19wF6r
+	 Ld1gwnIQxKoamr+WwnVDesuGUqeFNwrFovQHVk8YYlNetowJC2p8mdiuecrpWmUDaO
+	 EwyBynI6kU4i471s0VDsqgXuhWsmM1cGrgIU+uNZ2B8QK6LEJRrPtwvPuP8nYK2KDg
+	 1aeBaWlHjqHc0SmZpBJiL/yqRezm9DdWvIW+08DrxZiDJj0TS74Iea0PMOv0ugPPNz
+	 KO3Hj0yc+TVKA==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-336b88c5362so23819791fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:23:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGxg0Z/vfs0xznUIu8OGJI4AmSr3AdT4hYSM36Sm5c7Hq1ktJhf8I9tATy3fGNSWnei+f4e/9P0vRdf80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI8p6r8FrMLnLiiw8hY6ujBcB/VCfZQCvsOVmw7WoPeyHDGhbM
+	AolkWmaAG4uYFXH0Udy/Y6vNi6CvpvNj0O0TMM8A6Wq/xJoca1ErF+2Nk+iYCLt5YV6Os9WMKJr
+	TQ3IxmvopLFdwg24wUxe0bcDNS87HIhU=
+X-Google-Smtp-Source: AGHT+IGIMYOMD+Lr01wnAl+ok40CJJ76lYuoLsrBF1nTELiv1Of3Fn8jz1WXHNKzAqgwGuVxmZGdGUnaEnZk3UoExGk=
+X-Received: by 2002:a05:651c:516:b0:335:44d4:161b with SMTP id
+ 38308e7fff4ca-35139e558fdmr11742481fa.2.1757715778973; Fri, 12 Sep 2025
+ 15:22:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wh5AyuvEhNY9a57v-vwyr7EkPVRUKMPwj92yF_K0dJHVg@mail.gmail.com>
- <ef8479be-8bac-42c5-bac6-5a5841959b45@kernel.org>
-In-Reply-To: <ef8479be-8bac-42c5-bac6-5a5841959b45@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 12 Sep 2025 15:22:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wju1GO-AdGHag2v94mXdmg2uaFez5R8YE2js7ngn+hJyg@mail.gmail.com>
-X-Gm-Features: Ac12FXwPT9-JvAKDoIpe7VsOCbVoWoWfZBEQn8Iy5ViAVoefLXjYcd9yuyFNq30
-Message-ID: <CAHk-=wju1GO-AdGHag2v94mXdmg2uaFez5R8YE2js7ngn+hJyg@mail.gmail.com>
-Subject: Re: Commit Links [was: Linux 6.17-rc5]
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20250909080631.2867579-7-ardb+git@google.com> <20250909080631.2867579-5-ardb+git@google.com>
+ <20250912203443.16159-1-Ashish.Kalra@amd.com>
+In-Reply-To: <20250912203443.16159-1-Ashish.Kalra@amd.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 13 Sep 2025 00:22:47 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFtFMp7xTgtGAy9o4s5OrVBLRax2y0N-OSmP8-bzorcKw@mail.gmail.com>
+X-Gm-Features: Ac12FXzSGo65DF-ol_QAeWIk04k3o2pyJo2Dipp0bbtnDlMShG3SncMIhovT77E
+Message-ID: <CAMj1kXFtFMp7xTgtGAy9o4s5OrVBLRax2y0N-OSmP8-bzorcKw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/3] x86/efistub: Don't bother enabling SEV in the EFI stub
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: ardb+git@google.com, bp@alien8.de, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 11 Sept 2025 at 23:24, Jiri Slaby <jirislaby@kernel.org> wrote:
-> OK, can we have Submitted-at: or something for the above which you could
-> completely ignore?
+On Fri, 12 Sept 2025 at 22:36, Ashish Kalra <Ashish.Kalra@amd.com> wrote:
+>
+> From: Ard Biesheuvel <ardb@kernel.org>
+>
+> >One of the last things the EFI stub does before handing over to the core
+> >kernel when booting as a SEV guest is enabling SEV, even though this is
+> >mostly redundant: one of the first things the core kernel does is
+> >calling sme_enable(), after setting up the early GDT and IDT but before
+> >even setting up the kernel page tables. sme_enable() performs the same
+> >SEV-SNP initialization that the decompressor performs in sev_enable().
+>
+> >So let's just drop this call to sev_enable(), and rely on the core
+> >kernel to initiaize SEV correctly.
+>
+> If the EFI stub no longer boots the core kernel via the traditional
+> decompressor and jumps straight to it, there are some specific things
+> which i see are being setup by the decompressed kernel before passing
+> control to the uncompressed kernel such as calling sev_prep_identity_maps()
+> as part of setting up the identity map:
+>
+> From sev_prep_identity_maps():
+>
+> The Confidential Computing blob is used very early in uncompressed
+> kernel to find the in-memory CPUID table to handle CPUID
+> instructions. Make sure an identity-mapping exists so it can be
+> accessed after switchover.
+>
+> Won't this setup in identity mapping be needed to find the
+> in-memory CPUID table as this won't exist if the EFI stub boots
+> directly boots the core kernel skipping the decompressor ?
+>
 
-No.
-
-We're not adding garbage that I'm "supposed to ignore".
-
-Stop this idiotic thread. Stop adding crap automatically.
-
-I have made it very clear that you can add "Link" to your submissions
-as long as IT IS NOT SOME AUTOMATIC MEANINGLESS GARBAGE.
-
-I have also pointed out that you can find the original submission in
-various much better ways than the meaningless link think you argue
-for.
-
-So stop arguing for pointless noise.
-
-                 Linus
+EFI maps all memory 1:1 so none of this is needed.
 
