@@ -1,146 +1,202 @@
-Return-Path: <linux-kernel+bounces-814334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53E9AB5528E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29AD4B55290
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDD5174663
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A8D51764FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B5931352B;
-	Fri, 12 Sep 2025 14:59:51 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF81111A8;
+	Fri, 12 Sep 2025 15:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="IgC1FXen"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE9730EF91;
-	Fri, 12 Sep 2025 14:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687691DEFE9;
+	Fri, 12 Sep 2025 15:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689190; cv=none; b=qJdsWMt0akykPaTvzFJe7MHc+KiVK0nchG/KRA72t2PM5BPe288RPDJYrqd2KgK2DGnPsEWu4TJ4rp8BLKAr/2KQbkcouvYQBFe2KWS+aTac3JehPBBFPKryGew9XZ43WFz+s97Y4c976bRnW5INg7fFP6xwGnnWbQ5/xU9CR7Y=
+	t=1757689220; cv=none; b=lauakUCWj9Q73j6WNBHUMQejaV/Ujz74/RbSmCcun28xON6aPlSc476Xe2fsMXGijmt7EfF6/pPFHBzQLKr7qDE3w5TC+8HruMjBgb6k7EVJi1b1+tm36AtHot1RwaFxOvql7ZPpsmVVkSyUudJWNjn10qNi7zAxftBnAz60HiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689190; c=relaxed/simple;
-	bh=Y63oO/Ez/Xx54356NFRLcKdmi2+o1MjmCWY+eQ6jWto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbAPxVuYGWWFyL+wKWiOw/eFsW45q138/t4o/d42nbBqSUmQCbotxkYE5BmOza+xJnTdyq2jmU/hUz9fsDMikrqbasc1IXKtrYeGlXZOshuHsGum4ffZMwVqubg4Ys3zgxV8wvYkOj5qaW3StunAP5Y0eighiTMYyZvQVHNxpr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C8D5C4CEF1;
-	Fri, 12 Sep 2025 14:59:48 +0000 (UTC)
-Date: Fri, 12 Sep 2025 15:59:45 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-coco@lists.linux.dev, will@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, robin.murphy@arm.com, akpm@linux-foundation.org
-Subject: Re: [RFC PATCH] arm64: swiotlb: dma: its: Ensure shared buffers are
- properly aligned
-Message-ID: <aMQ1YeoB2PsO2e17@arm.com>
-References: <20250905055441.950943-1-aneesh.kumar@kernel.org>
- <aLrh_rbzWLPw9LnH@arm.com>
- <yq5aikht1e0z.fsf@kernel.org>
- <aL7AoPKKKAR8285O@arm.com>
- <b5ee1ab3-f91f-4982-95c7-516f4968a6c9@arm.com>
- <20250908145845.GA699673@ziepe.ca>
- <d8687b08-6bb4-4645-8172-72936a51b0d8@arm.com>
- <aL8RdvuDbtbUDk2D@arm.com>
- <ea4b657e-13fa-485e-9d3c-5b395ad3d8e2@arm.com>
+	s=arc-20240116; t=1757689220; c=relaxed/simple;
+	bh=8WXsj4Rt4wdU5XyvqVm2vpBIseC8WqDgLjS/hEAuaRo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V+l2EFaNyQdETR2X9QawBsJrdLdWS1wMiHJ9Udm6DqA8NqShRhJEtTFWmZqtf3tfYqjsvlomNBqd3QwackVwBwAY5/7Oa8QAYgeygHNun3ZDGUv0YA+YNO52N16nvxPcDIS516iCS8J7UNzjdvouwtfk1fChI0J1TMTiEY6+0g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=IgC1FXen; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
+	bh=PdI0ZWf/Ipj149RcGeqPm4YhKLc1nj1TVl70cM05bzI=; b=IgC1FXenlRjXGCF0I129O/VN4W
+	Fnj8u2hYi65nae9Uwz6TAtXwS6mQG7KN0qh275rwLOczD5zxmiz8hgjeRR1x8fZ0MIAe1Dgr0vDrG
+	NP8ncgyNIHvRvYMJ+oGATQgM8a8pdOYlJIAReR9z7OdwZ/3nz+xTtmKuIziBV/r6LBsexPXyeBgnr
+	Jj3wcdmjDtdasHEHigggrKA3H0xEixy6ng4ggA4/Qci7GDkR+k9QMAmsbV7tgOsafHYSmaf6KE0p+
+	4tLxK/VsXuIMr2g0ZXSVP68YnnJkIiePDkr2NQpRmK9hlHRoCmicrLU3FJVyfU62YMrWHcRhZCUSU
+	7hjWszIg==;
+Received: from i53875a48.versanet.de ([83.135.90.72] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1ux5Fz-00031I-Mv; Fri, 12 Sep 2025 17:00:11 +0200
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: linux-mmc@vger.kernel.org, Mikko Rapeli <mikko.rapeli@linaro.org>
+Cc: ulf.hansson@linaro.org, linux-kernel@vger.kernel.org,
+ adrian.hunter@intel.com, victor.shih@genesyslogic.com.tw,
+ ben.chuang@genesyslogic.com.tw, geert+renesas@glider.be,
+ angelogioacchino.delregno@collabora.com, dlan@gentoo.org, arnd@arndb.de,
+ zhoubinbin@loongson.cn, Mikko Rapeli <mikko.rapeli@linaro.org>
+Subject:
+ Re: [PATCH v3 1/4] pmdomain: rockchip: enable ROCKCHIP_PM_DOMAINS with
+ ARCH_ROCKCHIP
+Date: Fri, 12 Sep 2025 17:00:10 +0200
+Message-ID: <9157586.VV5PYv0bhD@diego>
+In-Reply-To: <20250912142253.2843018-2-mikko.rapeli@linaro.org>
+References:
+ <20250912142253.2843018-1-mikko.rapeli@linaro.org>
+ <20250912142253.2843018-2-mikko.rapeli@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ea4b657e-13fa-485e-9d3c-5b395ad3d8e2@arm.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Sep 10, 2025 at 11:08:19AM +0100, Steven Price wrote:
-> On 08/09/2025 18:25, Catalin Marinas wrote:
-> > On Mon, Sep 08, 2025 at 04:39:13PM +0100, Steven Price wrote:
-> >> On 08/09/2025 15:58, Jason Gunthorpe wrote:
-> >>> If ARM has proper faulting then you don't have an issue mapping 64K
-> >>> into a userspace and just segfaulting the VMM if it does something
-> >>> wrong.
-> >>
-> >> ...the VMM can cause problems. If the VMM touches the memory itself then
-> >> things are simple - we can detect that the fault was from user space and
-> >> trigger a SIGBUS to kill of the VMM.
-> > 
-> > Similarly for uaccess.
-> > 
-> >> But the VMM can also attempt to pass the address into the kernel and
-> >> cause the kernel to do a get_user_pages() call (and this is something we
-> >> want to support for shared memory). The problem is if the kernel then
-> >> touches the parts of the page which are protected we get a fault with no
-> >> (easy) way to relate back to the VMM.
-> > 
-> > I assume the host has a mechanism to check that the memory has been
-> > marked as shared by the guest and the guest cannot claim it back as
-> > private while the host is accessing it (I should dig out the CCA spec).
-> > 
-> >> guest_memfd provided a nice way around this - a dedicated allocator
-> >> which doesn't allow mmap(). This meant we don't need to worry about user
-> >> space handing protected memory into the kernel. It's now getting
-> >> extended to support mmap() but only when shared, and there was a lot of
-> >> discussion about how to ensure that there are no mmap regions when
-> >> converting memory back to private.
-> > 
-> > That's indeed problematic and we don't have a simple way to check that
-> > a user VMM address won't fault when accessed via the linear map. The
-> > vma checks we get with mmap are (host) page size based.
-> > 
-> > Can we instead only allow mismatched (or smaller) granule sizes in the
-> > guest if the VMM doesn't use the mmap() interface? It's not like
-> > trapping TCR_EL1 but simply rejecting such unaligned memory slots since
-> > the host will need to check that the memory has indeed been shared. KVM
-> > can advertise higher granules only, though the guest can ignore them.
-> > 
-> 
-> Yes, mismatched granules sizes could be supported if we disallowed
-> mmap(). This is assuming the RMM supports the required size - which is
-> currently true, but the intention is to optimise the S2 in the future by
-> matching the host page size.
-> 
-> But I'm not sure how useful that would be. The VMMs of today don't
-> expect to have to perform read()/write() calls to access the guest's
-> memory, so any user space emulation would need to also be updated to
-> deal with this restriction.
-> 
-> But that seems like a lot of effort to support something that doesn't
-> seem to have a use case. Whereas there's an obvious use case for the
-> guest and VMM sharing one (or often more) pages of (mapped) memory. The
-> part that CCA makes this tricky is that we need to pick the VMM's page
-> size rather than the guest's.
+Am Freitag, 12. September 2025, 16:22:50 Mitteleurop=C3=A4ische Sommerzeit =
+schrieb Mikko Rapeli:
+> On rk3399 based rockpi4b, mounting rootfs from mmc fails unless
+> ROCKCHIP_PM_DOMAINS is enabled. Accoriding to
+> Heiko St=C3=BCbner <heiko@sntech.de> all SoCs since 2012 have power
+> domains so the support should be enabled by default
+> on both arm and arm64.
+>=20
+> Failing boot without CONFIG_ROCKCHIP_PM_DOMAINS=3Dy:
+>=20
+> https://ledge.validation.linaro.org/scheduler/job/119268
+>=20
+> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
+blockdev
+> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
+blockdev
+> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
+blockdev
+> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
+blockdev
+> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
+blockdev
+> /dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup =
+blockdev
+> dw-apb-uart ff1a0000.serial: forbid DMA for kernel console
+> root '/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e' doesn't=
+ exist or does not contain a /dev.
+> rk_gmac-dwmac fe300000.ethernet: deferred probe timeout, ignoring depende=
+ncy
+> rk_gmac-dwmac fe300000.ethernet: probe with driver rk_gmac-dwmac failed w=
+ith error -110
+> rk_iommu ff650800.iommu: deferred probe timeout, ignoring dependency
+> rk_iommu ff650800.iommu: probe with driver rk_iommu failed with error -110
+> dwmmc_rockchip fe320000.mmc: deferred probe timeout, ignoring dependency
+> rockchip-typec-phy ff7c0000.phy: deferred probe timeout, ignoring depende=
+ncy
+> dwmmc_rockchip fe320000.mmc: probe with driver dwmmc_rockchip failed with=
+ error -110
+> rockchip-typec-phy ff7c0000.phy: probe with driver rockchip-typec-phy fai=
+led with error -110
+> rockchip-typec-phy ff800000.phy: deferred probe timeout, ignoring depende=
+ncy
+> rockchip-typec-phy ff800000.phy: probe with driver rockchip-typec-phy fai=
+led with error -110
+> rk_iommu ff660480.iommu: deferred probe timeout, ignoring dependency
+> rk_iommu ff660480.iommu: probe with driver rk_iommu failed with error -110
+> rk_iommu ff8f3f00.iommu: deferred probe timeout, ignoring dependency
+> rk_iommu ff8f3f00.iommu: probe with driver rk_iommu failed with error -110
+> rk_iommu ff903f00.iommu: deferred probe timeout, ignoring dependency
+> rk_iommu ff903f00.iommu: probe with driver rk_iommu failed with error -110
+> rk_iommu ff914000.iommu: deferred probe timeout, ignoring dependency
+> rk_iommu ff914000.iommu: probe with driver rk_iommu failed with error -110
+> rk_iommu ff924000.iommu: deferred probe timeout, ignoring dependency
+> rk_iommu ff924000.iommu: probe with driver rk_iommu failed with error -110
+> platform fe800000.usb: deferred probe pending: platform: wait for supplie=
+r /phy@ff7c0000/usb3-port
+> sdhci-arasan fe330000.mmc: deferred probe timeout, ignoring dependency
+> platform fe900000.usb: deferred probe pending: platform: wait for supplie=
+r /phy@ff800000/usb3-port
+> sdhci-arasan fe330000.mmc: probe with driver sdhci-arasan failed with err=
+or -110
+> platform ff1d0000.spi: deferred probe pending: (reason unknown)
+> platform hdmi-sound: deferred probe pending: asoc-simple-card: parse error
+>=20
+> Working boot with CONFIG_ROCKCHIP_PM_DOMAINS=3Dy:
+>=20
+> https://ledge.validation.linaro.org/scheduler/job/119272
+>=20
+> dwmmc_rockchip fe320000.mmc: IDMAC supports 32-bit address mode.
+> dwmmc_rockchip fe320000.mmc: Using internal DMA controller.
+> dwmmc_rockchip fe320000.mmc: Version ID is 270a
+> dwmmc_rockchip fe320000.mmc: DW MMC controller at irq 45,32 bit host data=
+ width,256 deep fifo
+> dwmmc_rockchip fe320000.mmc: Got CD GPIO
+> ff1a0000.serial: ttyS2 at MMIO 0xff1a0000 (irq =3D 44, base_baud =3D 1500=
+000) is a 16550A
+> printk: legacy console [ttyS2] enabled
+> mmc_host mmc1: Bus speed (slot 0) =3D 400000Hz (slot req 400000Hz, actual=
+ 400000HZ div =3D 0)
+> dw_wdt ff848000.watchdog: No valid TOPs array specified
+> mmc_host mmc1: Bus speed (slot 0) =3D 50000000Hz (slot req 50000000Hz, ac=
+tual 50000000HZ div =3D 0)
+> mmc0: CQHCI version 5.10
+> rk_gmac-dwmac fe300000.ethernet: IRQ eth_wake_irq not found
+> mmc1: new high speed SDHC card at address aaaa
+> fan53555-regulator 0-0040: FAN53555 Option[8] Rev[1] Detected!
+> fan53555-regulator 0-0041: FAN53555 Option[8] Rev[1] Detected!
+> rk_gmac-dwmac fe300000.ethernet: IRQ eth_lpi not found
+> mmcblk1: mmc1:aaaa SC16G 14.8 GiB
+> rk_gmac-dwmac fe300000.ethernet: IRQ sfty not found
+> GPT:Primary header thinks Alt. header is not at the end of the disk.
+> rk_gmac-dwmac fe300000.ethernet: Deprecated MDIO bus assumption used
+> GPT:1978417 !=3D 31116287
+> rk_gmac-dwmac fe300000.ethernet: PTP uses main clock
+> GPT:Alternate GPT header not at the end of the disk.
+> rk_gmac-dwmac fe300000.ethernet: clock input or output? (input).
+> GPT:1978417 !=3D 31116287
+> rk_gmac-dwmac fe300000.ethernet: TX delay(0x28).
+> GPT: Use GNU Parted to correct GPT errors.
+> rk_gmac-dwmac fe300000.ethernet: RX delay(0x11).
+>  mmcblk1: p1 p2 p3 p4 p5 p6 p7 p8
+>=20
+> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Suggested-by: Heiko St=C3=BCbner <heiko@sntech.de>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+> ---
+>  drivers/pmdomain/rockchip/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/pmdomain/rockchip/Kconfig b/drivers/pmdomain/rockchi=
+p/Kconfig
+> index 218d43186e5b9..17f2e6fe86b6f 100644
+> --- a/drivers/pmdomain/rockchip/Kconfig
+> +++ b/drivers/pmdomain/rockchip/Kconfig
+> @@ -3,6 +3,7 @@ if ARCH_ROCKCHIP || COMPILE_TEST
+> =20
+>  config ROCKCHIP_PM_DOMAINS
+>  	bool "Rockchip generic power domain"
+> +	default ARCH_ROCKCHIP
+>  	depends on PM
+>  	depends on HAVE_ARM_SMCCC_DISCOVERY
+>  	depends on REGULATOR
+>=20
 
-Given that the vmas in Linux are page-aligned, it's too intrusive to
-support sub-page granularity in the host (if at all possible). So, based
-on the discussion here, we do need the guest to play along and share
-mappings with the granularity of the host page size. Of course, one way
-is to mandate that the guest uses the same page size as the host.
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-The original patch needs some more changes mentioned in this thread. It
-is missing places where we have set_memory_decrypted() but the size is
-not guaranteed to be aligned. I would also replace the
-arch_shared_mem_alignment() name with something that resembles the
-mem-encrypt API (e.g. mem_encrypt_align(size) for lack of inspiration;
-the default would return 'size' so there's no change for other
-architectures). Using 'shared' is confusing since the notion of sharing
-is not limited to confidential compute.
 
-It does feel like this could be handled at a higher level (e.g. the
-virtio code or specific device drivers doing DMA) but it won't be
-generic enough. Bouncing of decrypted DMA via swiotlb is already
-generic.
 
-BTW, with device assignment, we need a second, encrypted swiotlb as it's
-used for bouncing small buffers. Unless we mandate that all devices
-assigned to realms are fully coherent.
 
--- 
-Catalin
 
