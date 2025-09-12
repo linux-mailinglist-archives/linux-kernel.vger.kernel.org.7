@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-814266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFF90B551CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:37:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704E1B551D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CA75C1495
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:34:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3EFE18877B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CF731D74A;
-	Fri, 12 Sep 2025 14:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9805E30103C;
+	Fri, 12 Sep 2025 14:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JloY9SSa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PSULSN5f"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA58A3164B8
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D908528E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687398; cv=none; b=SPa6lm3QS8vwl9bxLYa+gGnJ3js4AtS4sKPsuD/j0MUyV6HhHisJjKbyPEx3wcIGNu23rCBEXxxEp7JSMnbPZCH6+yAc8Usrj4j575+wbEU8HxFpoOwGaHttBoCUN2z5X0nNo6LFyzuhwiJffxvIDTqjCUY2M96ebXMdkhJB7b4=
+	t=1757687459; cv=none; b=Tnz9JdXlzM7mPUaTP68NErdjxrN/Rwuu7SzVYkufv+pVznghLd6mfsDw/lUKDnJQFJXt4BrkF9OOQNAJIKeXEcwyzmA0P8NMmP7nQKOq5C0Qz70211DJxWi3CoInN1hYJZ2QQNI/W0323J2blILs8JU75bf2XmUISKVdYv4UBjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687398; c=relaxed/simple;
-	bh=vVe2I9E2DhRASqs+H8As0PLyRNGee7jFoSDQdou8tQw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:Cc:To:Content-Type; b=PCa3D2vk5NqEngy7XUZNvrgUxwB4QU7phDFKRYQ/bePBYjnw5HgLfU940lYGvHyDQXtFjs7ECKwhAMTm41cozVwpQ7Q4ck3mTZ0rdUmUW4s7sfVX7DYplKTehtk1gibABMkaia1eQS/D6eJ0AxW/9/NMX9ddnThRXgP91dFDRPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JloY9SSa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4526C4CEF4;
-	Fri, 12 Sep 2025 14:29:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757687398;
-	bh=vVe2I9E2DhRASqs+H8As0PLyRNGee7jFoSDQdou8tQw=;
-	h=Date:From:Subject:Cc:To:From;
-	b=JloY9SSay7/Rw4N9TEfIUaowhvf9NtttB4W2Yi2/oNLBn+KD0Xc20d+86CeqOHvgx
-	 AJNDoAxk2FDvChiTrhQRpkt2lVXmkI080Tzija0kRuBK5usKHYy13ogJE8QBdtRTQ+
-	 rbPNQNWs1NPKrKS2j04CexYkQKVZoj4bbYI1jaoPsBinkoTM1s8G47QUsTR7VFZuYO
-	 +7sKB59vPMeCw8sXC/xgSs37JFHj86P52adYCjqyEFc1es9RxnR2pJC9wM53o6/F7C
-	 o0YgQFTXRgscMn5bUw8HeFV4AzRtIJGnQDXQU3Sr1+ppQO+StAhnDCpVEiVIbj2wKS
-	 J3LVvCJjv0wRA==
-Message-ID: <c88d98fb-cc14-435a-b943-ee3be4eaf60f@kernel.org>
-Date: Fri, 12 Sep 2025 23:29:56 +0900
+	s=arc-20240116; t=1757687459; c=relaxed/simple;
+	bh=wucKZjXUVtRxrGoS9CppvLYgJwFvEG8gqGPWzlZGBag=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lXvNf8f6mD4ezl7WjywRTzqnqprFbOk9BFKhJQxqPbnhKlW7k4nHObqkJCkHdawu0sY766b2YPKQSMRD63t+awJ/Cm/ki7DH981hydd40fVZFb0CWaTrdV1jXl62waXtvH0kfPtfaJ1MgcwKwcrC/iINwdiVFVfN7gH4YFop/O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PSULSN5f; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-336b0b3d753so19278111fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:30:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757687456; x=1758292256; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/qUTD8uROnoCtAqaX/Ri9iIJ3aP0OlkHXH5AZacDoiM=;
+        b=PSULSN5fQEZrzG3AEkIAZty38UMeDyZyA9dltEdJUV9lEDSj7xa824HwTQsKe5OLFn
+         nDx8hdbTlIIIwYmvI4rnoSExWtFmq3XXfEIq6N5MBC/fWRU8l8039iQWnh+lbZueo83P
+         n2QqZEUqqZI8szY2OwwnaPHDloRAzE3tRiphOt8C9w+1KVlwn5CCy4EkwIHqnQ9KgzLl
+         5/rdWmZPeLWdYIK8eS6CRKfWjsZ1mtPFdAv0y9O5aT+VsT5GtJ1vS8VBb+4dHXyXJPU9
+         VEtpiSdWEkFWpcIE8XTR+AgYjoF/Hmfb2E7iwNbZPkfdaimnTHBSWmccAfwLBUAuZFD2
+         0ijw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757687456; x=1758292256;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/qUTD8uROnoCtAqaX/Ri9iIJ3aP0OlkHXH5AZacDoiM=;
+        b=SG1/d1EUv1hNNJf4mPaPeajMZtnh5hzvwjIx2CqGqXgxgT7Rx4DNKL7FNoxkTb+Flw
+         8JL5ZJRlr+T2+8YmwnZQVi8HIIi6LAekmE1Sstt/bHgnyzgP8kyeyUDxgk9dNXCD/DVp
+         LbpMFIA/ogERSaqkL9XHiOTgzZWSUJwG44/P/q5OoggRmhp1TjbEVuETk/BUOW1N6ets
+         m1vMhf0eCDSYP/k/FE4WMYzDJlfB/vQHPNkMf6SgIF6k8dUCEjNjVNxvmjZ3YUgU6XPE
+         ZV5EdH7Gzg8A8+euTenPh22qwDohE1T5z5zADZoeZ4wo3N69Wi+Hlwvlmxfn0NuhpcrI
+         bktw==
+X-Gm-Message-State: AOJu0Yw2GPpcaa9SH5Vs9caafYeq/OBGOixGbGb7YRFaifJ6pWrLvTr9
+	Q9unAtX1zW8LLj6NHAvbijjlBU4OlA5F7SAZ859nUbxm/sT+wfdO4TyfXF7fL7ilnPg=
+X-Gm-Gg: ASbGnct1U3X8ScVH+1ZOB5imlMVAWftWhIm/rt/ngdN2CLSDsFTb25u+OsPQ3FQtmXw
+	rrnrkNacoA/6jUX3+KVpL0HNIJWrF9Lq6gCKHXyg1B7tpsWCmRIkgv9AmrKiYGcpSHw7eZJZryR
+	p/Dns9xRzx7qsZhJb4kqGWXBv134Zp5+L78rhi8xbb4GJe/w/q6dBpi6QEBg1tFxA0DfUxCXu5D
+	wHr4qMhpwhkRT8cJIQgbsqrUecQpP63/ah39RrYJ+Btb5X8oEjeVlOQWDLsDBTjwJzxWD3laK6q
+	Eq3T8LSMU663lYH+sg/a3kM7pRHtW9bIor3uUoLRpWBbCUaI5bk17E5gGU2UvaBfoL2c2v9N7j+
+	/NkuojHtCS3oqu5uP6y8nA2QnDn8xYiLPUDV3+Cr/O3PDGVzfmEURe/28P7O8eJABwg==
+X-Google-Smtp-Source: AGHT+IEVbatrp/SxHPXDJ7XzOlydV9X5r4NdpCXVehaL+u52W8sQ2+DoFuN3K9k4u9FvHmP6U/Ibmg==
+X-Received: by 2002:a2e:bea6:0:b0:335:4d0e:9493 with SMTP id 38308e7fff4ca-3513fc380f1mr9860391fa.28.1757687455991;
+        Fri, 12 Sep 2025 07:30:55 -0700 (PDT)
+Received: from nuoska (87-100-249-247.bb.dnainternet.fi. [87.100.249.247])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-34f1c6ca914sm8495711fa.67.2025.09.12.07.30.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 07:30:55 -0700 (PDT)
+From: Mikko Rapeli <mikko.rapeli@linaro.org>
+To: Russell King <linux@armlinux.org.uk>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Mikko Rapeli <mikko.rapeli@linaro.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v3 4/4] ARM: rockchip: remove REGULATOR conditional to PM
+Date: Fri, 12 Sep 2025 17:30:36 +0300
+Message-ID: <20250912143036.2844523-1-mikko.rapeli@linaro.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-Subject: [GIT PULL] extcon next for 6.18
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Chanwoo Choi <chanwoo@kernel.org>,
- MyungJoo Ham <myungjoo.ham@samsung.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Dear Greg,
+PM is explicitly enabled in lines just below so
+REGULATOR can be too.
 
-This is extcon-next pull request. I add detailed description of
-this pull request on below. Please pull extcon with following updates.
+Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+---
+ arch/arm/mach-rockchip/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I'm sorry that I did not send the separate fixes pull request.
-This pull request does not contain any problematic patches according to your comment.
+diff --git a/arch/arm/mach-rockchip/Kconfig b/arch/arm/mach-rockchip/Kconfig
+index b7855cc665e94..c90193dd39283 100644
+--- a/arch/arm/mach-rockchip/Kconfig
++++ b/arch/arm/mach-rockchip/Kconfig
+@@ -13,7 +13,7 @@ config ARCH_ROCKCHIP
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+ 	select DW_APB_TIMER_OF
+-	select REGULATOR if PM
++	select REGULATOR
+ 	select ROCKCHIP_TIMER
+ 	select ARM_GLOBAL_TIMER
+ 	select CLKSRC_ARM_GLOBAL_TIMER_SCHED_CLOCK
+-- 
+2.34.1
 
-Best Regards,
-Chanwoo Choi
-
-The following changes since commit 1b237f190eb3d36f52dffe07a40b5eb210280e00:
-
-  Linux 6.17-rc3 (2025-08-24 12:04:12 -0400)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.18
-
-for you to fetch changes up to 94d885eb8ffe15b3eb4abe92e03d852fce8ba81f:
-
-  dt-bindings: extcon: linux,extcon-usb-gpio: GPIO must be provided (2025-09-08 15:13:06 +0900)
-
-----------------------------------------------------------------
-Update extcon next for v6.18
-
-Detailed description for this pull request:
-- Fix wakeup source leaks on device unbind for extcon drivers
-
-- Add new Maxim MAX14526 MUIC extcon driver and dt-binding document
- : The MAX14526 is designed to simplify interface requirements on portable
-   devices by multiplexing common inputs (USB, UART, Microphone, Stereo Audio
-   and Composite Video) on a single micro/mini USB connector. The USB input
-   supports Hi-Speed USB and the audio/video inputs feature
- : This provides the following supported external connector detection
-   - EXTCON_USB
-   - EXTCON_USB_HOST
-   - EXTCON_CHG_USB_FAST
-   - EXTCON_DISP_MHL
-
-- Convert legacy DT binding to YAML of richktek,rt8973a-muic.yaml
-
-- Add missing DT binding information of that must include either id-gpios or
-  vbus-gpios for linux,extcon-usb-gpio.yaml
-
-----------------------------------------------------------------
-Artur Weber (1):
-      dt-bindings: extcon: rt8973a: Convert DT bindings to YAML
-
-David Heidelberg (1):
-      dt-bindings: extcon: linux,extcon-usb-gpio: GPIO must be provided
-
-Krzysztof Kozlowski (5):
-      extcon: adc-jack: Fix wakeup source leaks on device unbind
-      extcon: axp288: Fix wakeup source leaks on device unbind
-      extcon: fsa9480: Fix wakeup source leaks on device unbind
-      extcon: qcom-spmi-misc: Fix wakeup source leaks on device unbind
-      extcon: adc-jack: Cleanup wakeup source only if it was enabled
-
-Randy Dunlap (2):
-      extcon: max14526: avoid defined but not used warning
-      extcon: max14526: depends on I2C to prevent build warning/errors
-
-Svyatoslav Ryhel (2):
-      dt-bindings: extcon: Document Maxim MAX14526 MUIC
-      extcon: Add basic support for Maxim MAX14526 MUIC
-
- .../devicetree/bindings/extcon/extcon-rt8973a.txt  |  23 --
- .../bindings/extcon/linux,extcon-usb-gpio.yaml     |   6 +
- .../devicetree/bindings/extcon/maxim,max14526.yaml |  80 ++++++
- .../bindings/extcon/richtek,rt8973a-muic.yaml      |  49 ++++
- drivers/extcon/Kconfig                             |  13 +
- drivers/extcon/Makefile                            |   1 +
- drivers/extcon/extcon-adc-jack.c                   |   2 +
- drivers/extcon/extcon-axp288.c                     |   2 +-
- drivers/extcon/extcon-fsa9480.c                    |   2 +-
- drivers/extcon/extcon-max14526.c                   | 302 +++++++++++++++++++++
- drivers/extcon/extcon-qcom-spmi-misc.c             |   2 +-
- 11 files changed, 456 insertions(+), 26 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/extcon/extcon-rt8973a.txt
- create mode 100644 Documentation/devicetree/bindings/extcon/maxim,max14526.yaml
- create mode 100644 Documentation/devicetree/bindings/extcon/richtek,rt8973a-muic.yaml
- create mode 100644 drivers/extcon/extcon-max14526.c
 
