@@ -1,141 +1,173 @@
-Return-Path: <linux-kernel+bounces-813922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AABF5B54D05
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:16:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7272FB54D0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D601D61CFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:13:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EAD21895B4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:14:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4523168EB;
-	Fri, 12 Sep 2025 12:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB6331984D;
+	Fri, 12 Sep 2025 12:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OE3gEZ6X"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="atpGPLOR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFA2314A8A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7218319867;
+	Fri, 12 Sep 2025 12:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757678745; cv=none; b=p8VLi7yBZ3c51oAxXa79pYaMd4xNVwWlcVks6grRPa/K7LQE0beabdbZBsW8qpFoEC3SNhZbcMC/v4LBhB8vFl1OtZOtbyogqlPn7INO4NE3QUM9XvOXen8e0HZ1GHut6JjTbwwiEx4sJtZjoHg/3NceGBBXes0xUNpiHxcopS4=
+	t=1757678789; cv=none; b=Amfe3XOHzBi1suOJN+SiHSwzekYXIHM/xCEdXLNI/hJH+Y7yyiUaU3TGoR2BV9XhUSBPDAAs6uvP7zTOcsmMB3jw5EwjbWo29UO3ToN6z+FyH19j50RUHOFwX+0U6SuzPRHLkQZrfk2sO36M+J5mLaRs1Uc59AxkuL+IruhY0Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757678745; c=relaxed/simple;
-	bh=6kXTvgsEt4hrAQkTdQrB5UQT/65SaHckvtwi0km/o5Q=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=P6fSZf2pVdgdd8ADY4rrqF9H/15gj1B4DqUWfRumZeirPbF+L2JTiXjtiebKmt7zVtba5WdHBcsDKyYderj5GfoOreqx0UNDRcxE9+1uvxMANr63V7T4Qh9LvhR2BFSjRzG+nypjMDRv7i4pWt1gulNxdD5EG4pSt+QNcImrAUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OE3gEZ6X; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 3D71DC8EC46;
-	Fri, 12 Sep 2025 12:05:19 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 28A6160638;
-	Fri, 12 Sep 2025 12:05:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8F324102F2999;
-	Fri, 12 Sep 2025 14:05:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757678734; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Os+OidjTl+c1dT3HL1cuaSdhlkiI53JVGWAi5cjuG5g=;
-	b=OE3gEZ6X44PjnQgyrjxBYK80kz9SpzxFU5P6SwdMm81+KP5hIFW7PNtGVIDrgqmh5Cex8C
-	INo3PxGEWtzFW/10tnhbx+Eo0zQKV/+KXZ6zVxN5eHDVaHYkno9fatGG4GcYDlt6kf7OkL
-	/GdcTD6y8s6vhEcjeBrVkUI1zVI6gjwotmc4itWYm3MIoPm0TtO34qMmP350zAF59XnhYA
-	cJfCNZaMvrMaWqJTpyXsPaj8D1Rx7zLJFGqp5VVaxcjH4YqdLYUtK8LNCFCLUIU2iNdoMW
-	eEj7/g6Y47SUTvkRFrQTlFODlOP4c7iItOnrjsMUPlgWokcnxM+locoSf1pMrA==
+	s=arc-20240116; t=1757678789; c=relaxed/simple;
+	bh=A8petOVqvEdmsFYA3MjCwiqV/huIzU9ROOZeN0k+x1E=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TLqSgOPHiwCVr1CEkrRJhoNQFTVBblhnLgkopo46yu9+Y/bFG727IBybe8Oxk46w0BryZK05HDmOHLpljL0cCIqhDH+rLVICSfO4b6gFMiTJYFRveWH5nhJX7Rx+1iql3sEOi1BYYjHOKx2WiSIN5V4NXbKlQe6YCjF1yu4Wu8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=atpGPLOR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC493C4CEF1;
+	Fri, 12 Sep 2025 12:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757678789;
+	bh=A8petOVqvEdmsFYA3MjCwiqV/huIzU9ROOZeN0k+x1E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=atpGPLOReo+o5b9Rzv1hFX5OHQtBhIslvrltVKK+XFmeOjKWb7HbOmV/MP2zAljnc
+	 f2268nyZ6gRgMvCP8U8fegkNEy6meOwcHuM7ZLnzHMlKqbsaX7Jl1o/LIVwWLUSBLK
+	 GclVPUTVBeBvDAXJ6RkjFsISQ3Yhi4RD4JqzPGUhzT/5sJR9fXEJQ9ApusaEC9d3oE
+	 haQTNGUKAfDqK+UO3xX0bRFPifFVMTxndB/QM09+/1UJ+HWIjUGQf1/9/301tryJKM
+	 sQpf0S2jyWpYK6KT48esOOoAE7+HJ+GsQ5NmD1P/udDXxVZaBU5qZ3Mt4hUZckmfeS
+	 d8abCAdiA5kWA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1ux2Xq-00000005g5A-3t5W;
+	Fri, 12 Sep 2025 12:06:27 +0000
+Date: Fri, 12 Sep 2025 13:06:26 +0100
+Message-ID: <864it7dge5.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v16 4/6] KVM: arm64: Validate GCS exception lock when emulating ERET
+In-Reply-To: <20250912-arm64-gcs-v16-4-6435e5ec37db@kernel.org>
+References: <20250912-arm64-gcs-v16-0-6435e5ec37db@kernel.org>
+	<20250912-arm64-gcs-v16-4-6435e5ec37db@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 12 Sep 2025 14:05:24 +0200
-Message-Id: <DCQT3UNG2Y41.2V411GFLLDVEP@bootlin.com>
-Subject: Re: [PATCH v14 04/10] pwm: max7360: Add MAX7360 PWM support
-Cc: "Lee Jones" <lee@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Kamel Bouhara" <kamel.bouhara@bootlin.com>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>, "Michael Walle"
- <mwalle@kernel.org>, "Mark Brown" <broonie@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Danilo Krummrich" <dakr@kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, <linux-input@vger.kernel.org>,
- <linux-pwm@vger.kernel.org>, <andriy.shevchenko@intel.com>,
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, "Thomas
- Petazzoni" <thomas.petazzoni@bootlin.com>, "Andy Shevchenko"
- <andriy.shevchenko@linux.intel.com>
-From: "Mathieu Dubois-Briand" <mathieu.dubois-briand@bootlin.com>
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-X-Mailer: aerc 0.19.0-0-gadd9e15e475d
-References: <20250824-mdb-max7360-support-v14-0-435cfda2b1ea@bootlin.com>
- <20250824-mdb-max7360-support-v14-4-435cfda2b1ea@bootlin.com>
- <7jytyub4v7tn6vbwh4drusaagnskl2dsfg2xr6eqp4leqpfq3y@a7g3de5echs4>
-In-Reply-To: <7jytyub4v7tn6vbwh4drusaagnskl2dsfg2xr6eqp4leqpfq3y@a7g3de5echs4>
-X-Last-TLS-Session-Version: TLSv1.3
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri Sep 12, 2025 at 10:57 AM CEST, Uwe Kleine-K=C3=B6nig wrote:
-> On Sun, Aug 24, 2025 at 01:57:23PM +0200, Mathieu Dubois-Briand wrote:
->> +static int max7360_pwm_round_waveform_tohw(struct pwm_chip *chip,
->> +					   struct pwm_device *pwm,
->> +					   const struct pwm_waveform *wf,
->> +					   void *_wfhw)
->> +{
->> +	struct max7360_pwm_waveform *wfhw =3D _wfhw;
->> +	u64 duty_steps;
->> +
->> +	/*
->> +	 * Ignore user provided values for period_length_ns and duty_offset_ns=
-:
->> +	 * we only support fixed period of MAX7360_PWM_PERIOD_NS and offset of=
- 0.
->> +	 * Values from 0 to 254 as duty_steps will provide duty cycles of 0/25=
-6
->> +	 * to 254/256, while value 255 will provide a duty cycle of 100%.
->> +	 */
->> +	if (wf->duty_length_ns >=3D MAX7360_PWM_PERIOD_NS) {
->> +		duty_steps =3D MAX7360_PWM_MAX;
->> +	} else {
->> +		duty_steps =3D (u32)wf->duty_length_ns * MAX7360_PWM_STEPS / MAX7360_=
-PWM_PERIOD_NS;
->> +		if (duty_steps =3D=3D MAX7360_PWM_MAX)
->> +			duty_steps =3D MAX7360_PWM_MAX - 1;
->> +	}
->> +
->> +	wfhw->duty_steps =3D min(MAX7360_PWM_MAX, duty_steps);
->
-> duty_steps is never bigger than MAX7360_PWM_MAX, isn't it? Then this can
-> be simplified to just
->
-> 	wfhw->duty_steps =3D duty_steps;
->
+On Fri, 12 Sep 2025 10:25:30 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> As per DDI0487 R_TYTWB GCS adds an additional case where an illegal
+> exception return can be generated. If all of:
+> 
+>  - PSTATE.EXLOCK is 0.
+>  - The EL is not being changed by the ERET.
+>  - GCSCR_ELx.EXLOCKEN is 1.
+> 
+> are true then the return is illegal. Emulate this behaviour when
+> emulating ERET for nested guests.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/kvm/emulate-nested.c | 40 +++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 39 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
+> index 90cb4b7ae0ff..9b02b85eda64 100644
+> --- a/arch/arm64/kvm/emulate-nested.c
+> +++ b/arch/arm64/kvm/emulate-nested.c
+> @@ -2632,6 +2632,41 @@ bool forward_debug_exception(struct kvm_vcpu *vcpu)
+>  	return forward_mdcr_traps(vcpu, MDCR_EL2_TDE);
+>  }
+>  
+> +/*
+> + * A subset of the pseudocode ELFromSPSR(), validity checks are
+> + * assumed to have been done in code that is not GCS specific.
+> + */
+> +static inline int exlock_el_from_spsr(u64 spsr)
+> +{
+> +	return FIELD_GET(GENMASK(3, 2), spsr);
+> +}
+> +
+> +/* See IllegalExceptionReturn() pseudocode */
+> +static bool kvm_check_illegal_exlock_return(struct kvm_vcpu *vcpu, u64 spsr)
+> +{
+> +	u64 cur_el, target_el;
+> +	u64 gcscr;
+> +
+> +	if (!kvm_has_gcs(vcpu->kvm))
+> +		return false;
+> +
+> +	if (spsr & PSR_EXLOCK_BIT)
+> +		return false;
+> +
+> +	cur_el = exlock_el_from_spsr(vcpu->arch.ctxt.regs.pstate);
+> +	target_el = exlock_el_from_spsr(spsr);
+> +
+> +	if (cur_el != target_el)
+> +		return false;
+> +
+> +	if (vcpu_is_el2(vcpu))
+> +		gcscr = __vcpu_sys_reg(vcpu, GCSCR_EL2);
+> +	else
+> +		gcscr = __vcpu_sys_reg(vcpu, GCSCR_EL1);
 
-Ok, I reviewed this section and I do agree with you. I will prepare a
-new patch to fix this line and will send it separately.
+At the point where we check for an illegal exception return, the state
+is live on the CPU. How does this work? Also, we only handle ERET
+traps for EL2, not EL1.
 
-> Otherwise looks fine to me.
->
-> To get this series forward, it's OK for me to apply the series as is via
-> Lee's MFD tree and cope for this minor optimisation later. So:
->
-> Acked-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
->
-> Best regards
-> Uwe
+> +
+> +	return gcscr & GCSCR_ELx_EXLOCKEN;
+> +}
+> +
+>  static u64 kvm_check_illegal_exception_return(struct kvm_vcpu *vcpu, u64 spsr)
+>  {
+>  	u64 mode = spsr & PSR_MODE_MASK;
+> @@ -2642,12 +2677,15 @@ static u64 kvm_check_illegal_exception_return(struct kvm_vcpu *vcpu, u64 spsr)
+>  	 * - trying to return to an illegal M value
+>  	 * - trying to return to a 32bit EL
+>  	 * - trying to return to EL1 with HCR_EL2.TGE set
+> +	 * - GCSCR_ELx.EXLOCKEN is 1 and PSTATE.EXLOCK is 0 when attempting
+> +	 *   to return from ELx the same EL.
+>  	 */
+>  	if (mode == PSR_MODE_EL3t   || mode == PSR_MODE_EL3h ||
+>  	    mode == 0b00001         || (mode & BIT(1))       ||
+>  	    (spsr & PSR_MODE32_BIT) ||
+>  	    (vcpu_el2_tge_is_set(vcpu) && (mode == PSR_MODE_EL1t ||
+> -					   mode == PSR_MODE_EL1h))) {
+> +					   mode == PSR_MODE_EL1h)) ||
+> +	    kvm_check_illegal_exlock_return(vcpu, spsr)) {
 
-Thanks,
-Mathieu
+This code is simply never reached. Hint: kvm_hyp_handle_eret().
 
---=20
-Mathieu Dubois-Briand, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+	M.
 
+-- 
+Without deviation from the norm, progress is not possible.
 
