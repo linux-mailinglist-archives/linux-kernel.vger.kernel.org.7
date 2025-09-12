@@ -1,63 +1,117 @@
-Return-Path: <linux-kernel+bounces-814052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1226B54EA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:57:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB0DB54EAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86BCF7C3583
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:57:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F7B1C200C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7403830E83D;
-	Fri, 12 Sep 2025 12:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67E130CDBB;
+	Fri, 12 Sep 2025 12:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="nEJY4alO"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PINgmJaT"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A60D30DEB1;
-	Fri, 12 Sep 2025 12:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C519C30CD8E;
+	Fri, 12 Sep 2025 12:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681820; cv=none; b=dFQ6snYqGZeKP/8FPLspSr/GgYbcm5Ah8rh4J+T81IdmZFbjBK558b2XvXZUjGKADrI8tvcVPMSYED0YUl2NsMDhtG/wiK3NglesTe82XZO1zq6iRfK9oozULthL5p8nz4BY7q6hdSGWr+QUCFQa4SoK5kD7U5TrVq6kBVm23uw=
+	t=1757681862; cv=none; b=jdWvPuyoejN59aZzddkZJUPiIVTyqxN6a3PsRkdHtYEnshBD/U2KtfRx1O4jVAmrNMaLYPeMtDK0Eph9BpbhXrJZTWRMsSx459sXJ3fR9JdwTbrxFcHo1c7VdZbxal24q5xIRy8xTGwP7eDzKez4a4AemzWL4KwIDHExBqY6L9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681820; c=relaxed/simple;
-	bh=isdneW0AQMXzchNHlRx5M+1r0f48Vgl2dv/b+Q9CID4=;
+	s=arc-20240116; t=1757681862; c=relaxed/simple;
+	bh=nPNp7CgvxMjFNyD85c0vIyAgcirLo8qvT4U2NeokHUE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GcYJfNWWhv1DWaIZEwuc27GspR02oQh6I2GeSgVkhlUbAuGbw2868WW9swm17RcBRhkJ9CQ5jADEvTh9F7aArNLWJKMefUpAZLp17YqMrSylOEtKO9h7LoRMqOcfZTLKetCD6XJqCTFphT+dBzy8JudTjMOYWKrd41HUocgre+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=nEJY4alO; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=rUkbo4gs9EL6YjDDNBllsKMR1qK9GCz5ZHIWIO83/I0=; b=nEJY4alO1BTuBTDh/ZSyG2pxCU
-	Okaqs4ynK0JVqI0eSkVv5lmIN/JrRbn4n1aWYywBmUkcl2OWWRXI3RJYpgO5KDFwRdfQrrN8EJMrM
-	K34R4sxa3ToAGvplZJC4OO4kzj5G1xfG4iTflWBQfzTQ0OSMCpy8zUlif0Jwkj4YkCNc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ux3KX-008D1Y-9j; Fri, 12 Sep 2025 14:56:45 +0200
-Date: Fri, 12 Sep 2025 14:56:45 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: David Yang <mmyangfl@gmail.com>
-Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v8 3/3] net: dsa: yt921x: Add support for
- Motorcomm YT921x
-Message-ID: <ae9f7bb0-aef3-4c53-91a3-6631fea6c734@lunn.ch>
-References: <20250912024620.4032846-1-mmyangfl@gmail.com>
- <20250912024620.4032846-4-mmyangfl@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Du/rA1y5F6qK/n909izi8+5fxdICmRwFTzSejDov3Ioxuo+b5gbVoQvYvgSKqqqJ05sZHq2FtkQw1/WEj6nSQVOz0seWy4MulNDO67EULM8unFJ+9yYoI2LP136LY+jcczZ2ztcp5QBJOXwWJib4ZIqyw1CYr2ccEsVeTL681zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PINgmJaT; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58CAlUZY015991;
+	Fri, 12 Sep 2025 12:56:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=58XwPAOdgj8C/KnRAhD4XHr5Jy4g4v
+	ejUcQ6Kbk//CM=; b=PINgmJaTmGHdAT2AF+hgUasxjL9BP3ekGD0+BKKS7KwoK8
+	sGABYUGDODVMXQiHgWK+c+K5Qk7qSwsgdR60qqAZLzYDpggZETp3z0psgslZEABv
+	bBcX5ESEIDmK3Ssh4H9tOANdUsDC4ve3Ss2+F7gv0b2x4eL+/WuLL75MKzVSTweJ
+	BnHNEduw3NBEZJnatPGxz4bNXovlyj8qkSo5dnKOW7TDpBEP+nN+NRBZl40CS5Tr
+	qNJ/GWrhyJzczvz2SBRv1DGgGFj+1abS9It+4g1b4P1w7KVsvZsRQWs+fZ5Ni2Pe
+	K7Sikg3vWmUIf/JocL9wcnOqBq8GCKYq4CYPpeqQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffuknu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:56:53 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CCpNN7003042;
+	Fri, 12 Sep 2025 12:56:53 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffuknk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:56:53 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CALT4M007950;
+	Fri, 12 Sep 2025 12:56:51 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109q31gu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:56:51 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CCunWS30671476
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 12 Sep 2025 12:56:49 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8EA2220043;
+	Fri, 12 Sep 2025 12:56:49 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C6AEE20040;
+	Fri, 12 Sep 2025 12:56:48 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 12 Sep 2025 12:56:48 +0000 (GMT)
+Date: Fri, 12 Sep 2025 14:56:47 +0200
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Mark Rutland <Mark.Rutland@arm.com>
+Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
+Message-ID: <248b4623-8755-4323-8a44-be4af30e4856-agordeev@linux.ibm.com>
+References: <9de08024-adfc-421b-8799-62653468cf63@arm.com>
+ <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
+ <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
+ <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
+ <15d01c8b-5475-442e-9df5-ca37b0d5dc04@arm.com>
+ <7953a735-6129-4d22-be65-ce736630d539@redhat.com>
+ <781a6450-1c0b-4603-91cf-49f16cd78c28@arm.com>
+ <a17ab4e3-627a-4989-a5a5-d430eadabb86@redhat.com>
+ <9ed5441f-cc03-472a-adc6-b9d3ad525664-agordeev@linux.ibm.com>
+ <74d1f275-23c3-4fd8-b665-503c7fc87df0@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,293 +120,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250912024620.4032846-4-mmyangfl@gmail.com>
+In-Reply-To: <74d1f275-23c3-4fd8-b665-503c7fc87df0@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: VjJg1bjgqAhkPIFaDf1mLUh7KWJjYCG6
+X-Proofpoint-GUID: sT9Q6O7KpHDMezFzmg7Jr_oCplhrH_ZC
+X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c41895 cx=c_pps
+ a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
+ a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=uYqTi1GheQgrfgZHFtwA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX5jpC8GUVmzcb
+ WNTQnHEt7CYJzjyNcPBhadLwyx9qWJPieT278SgOv0+fgDWmcDKSO9n/bVKVzE2Km2J/kquNqse
+ Jo2h4tBAH3Rq2bzLQZKuYkpibwvUYGVvMaMFCBcqCEiBXpyJ/14KPD+uGmPeQ+53nO3UReJyF9T
+ vV9SHmTpFlxTvywhGFj1lAohZo5EPieMQrww4F/cF8jq4d9H2qtG/up3a2vR/gmEjopqXn2qMS8
+ 3cpWLt2lTNHCVrgNs3lbLBPz8/ZfWPrNMNeF/iwV1NkiQwT301stt/rMbx65ewChkpW8jMQrt+D
+ mygDppYgjygKsvAP9O23nIW8cFyauWRb1MftHnofDLV/qfCy2wrFGsX2zoH6Hz3rIIVyUeTZ9rw
+ xobmB0cV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
 
-> +static void yt921x_reg_mdio_verify(u32 reg, u16 val, bool lo)
-> +{
-> +	const char *desc;
-> +
-> +	switch (val) {
-> +	case 0xfade:
-> +		desc = "which is likely from a non-existent register";
-> +		break;
-> +	case 0xdead:
-> +		desc = "which is likely a data race condition";
-> +		break;
+On Fri, Sep 12, 2025 at 02:40:55PM +0200, David Hildenbrand wrote:
+> It would just be passing more context down to the architecture, right?
 
-Where did these two values come from? Are they documented in the datasheet?
+Yes. Namely this one would be arch-defined and arch_enter_lazy_mmu_mode()
+by default.
 
-> +	default:
-> +		return;
-> +	}
-> +
-> +	/* Skip registers which are likely to have any valid values */
-> +	switch (reg) {
-> +	case YT921X_MAC_ADDR_HI2:
-> +	case YT921X_MAC_ADDR_LO4:
-> +	case YT921X_FDB_OUT0:
-> +	case YT921X_FDB_OUT1:
-> +		return;
-> +	}
-> +
-> +	pr_warn("%s: Read 0x%x at 0x%x %s32, %s; "
-> +		"consider reporting a bug if this happens again\n",
-> +		__func__, val, reg, lo ? "lo" : "hi", desc);
+static inline void arch_enter_lazy_mmu_mode_pte(struct mm_struct *mm,
+						unsigned long addr,
+						unsigned long end,
+						pte_t *ptep)
+{
+	...
+}
 
-You probably have a warning from checkpatch about pr_warn. Ideally you
-want to give an indication which device has triggered this, making use
-of a struct device. You might want to include that in context.
-
-> +static int
-> +yt921x_intif_read(struct yt921x_priv *priv, int port, int reg, u16 *valp)
-> +{
-> +	if ((u16)val != val)
-> +		dev_err(dev,
-> +			"%s: port %d, reg 0x%x: Expected u16, got 0x%08x\n",
-> +			__func__, port, reg, val);
-> +	*valp = (u16)val;
-> +	return 0;
-
-You don't treat this as an error, you don't return -EIO or -EPROTO etc.
-So maybe this should be dev_info() or dev_dbg().
-
-> +static int
-> +yt921x_mbus_int_write(struct mii_bus *mbus, int port, int reg, u16 data)
-> +{
-> +	struct yt921x_priv *priv = mbus->priv;
-> +	int res;
-> +
-> +	if (port >= YT921X_PORT_NUM)
-> +		return 0;
-
--ENODEV.
-
-> +yt921x_mbus_int_init(struct yt921x_priv *priv, struct device_node *mnp)
-> +{
-> +	struct device *dev = to_device(priv);
-> +	struct mii_bus *mbus;
-> +	int res;
-> +
-> +	if (!mnp)
-> +		res = devm_mdiobus_register(dev, mbus);
-> +	else
-> +		res = devm_of_mdiobus_register(dev, mbus, mnp);
-
-You can call devm_of_mdiobus_register() with a NULL pointer for the
-OF, and it will do the correct thing.
-
-> +static int yt921x_extif_wait(struct yt921x_priv *priv)
-> +{
-> +	u32 val;
-> +	int res;
-> +
-> +	res = yt921x_reg_read(priv, YT921X_EXT_MBUS_OP, &val);
-> +	if (res)
-> +		return res;
-> +	if ((val & YT921X_MBUS_OP_START) != 0) {
-> +		res = read_poll_timeout(yt921x_reg_read, res,
-> +					(val & YT921X_MBUS_OP_START) == 0,
-> +					YT921X_POLL_SLEEP_US,
-> +					YT921X_POLL_TIMEOUT_US,
-> +					true, priv, YT921X_EXT_MBUS_OP, &val);
-> +		if (res)
-> +			return res;
-> +	}
-> +
-> +	return 0;
-
-In mv88e6xxx, we have the generic mv88e6xxx_wait_mask() and on top of
-that mv88e6xxx_wait_bit(). That allows us to have register specific
-wait functions as one liners. Please consider something similar.
-
-> +static int yt921x_mib_read(struct yt921x_priv *priv, int port, void *data)
-> +{
-
-As far as i can see, data is always a pointer to struct
-yt921x_mib_raw. I would be better to not have the void in the middle.
-It also makes it clearer what assumption you are making about the
-layout of that structure.
-
-> +	unsigned char *buf = data;
-> +	int res = 0;
-> +
-> +	for (size_t i = 0; i < sizeof(struct yt921x_mib_raw);
-> +	     i += sizeof(u32)) {
-> +		res = yt921x_reg_read(priv, YT921X_MIBn_DATA0(port) + i,
-> +				      (u32 *)&buf[i]);
-> +		if (res)
-> +			break;
-> +	}
-> +	return res;
-> +}
-> +
-> +static void yt921x_poll_mib(struct work_struct *work)
-> +{
-> +	struct yt921x_port *pp = container_of_const(work, struct yt921x_port,
-> +						    mib_read.work);
-> +	struct yt921x_priv *priv = (void *)(pp - pp->index) -
-> +				   offsetof(struct yt921x_priv, ports);
-
-Can you make container_of() work for this?
-
-> +	unsigned long delay = YT921X_STATS_INTERVAL_JIFFIES;
-> +	struct device *dev = to_device(priv);
-> +	struct yt921x_mib *mib = &pp->mib;
-> +	struct yt921x_mib_raw raw;
-> +	int port = pp->index;
-> +	int res;
-> +
-> +	yt921x_reg_lock(priv);
-> +	res = yt921x_mib_read(priv, port, &raw);
-> +	yt921x_reg_unlock(priv);
-> +
-> +	if (res) {
-> +		dev_err(dev, "Failed to %s port %d: %i\n", "read stats for",
-> +			port, res);
-> +		delay *= 4;
-> +		goto end;
-> +	}
-> +
-> +	spin_lock(&pp->stats_lock);
-> +
-> +	/* Handle overflow of 32bit MIBs */
-> +	for (size_t i = 0; i < ARRAY_SIZE(yt921x_mib_descs); i++) {
-> +		const struct yt921x_mib_desc *desc = &yt921x_mib_descs[i];
-> +		u32 *rawp = (u32 *)((u8 *)&raw + desc->offset);
-> +		u64 *valp = &((u64 *)mib)[i];
-> +		u64 newval;
-> +
-> +		if (desc->size > 1) {
-> +			newval = ((u64)rawp[0] << 32) | rawp[1];
-> +		} else {
-> +			newval = (*valp & ~(u64)U32_MAX) | *rawp;
-> +			if (*rawp < (u32)*valp)
-> +				newval += (u64)1 << 32;
-> +		}
-
-There are way too many casts here. Think about your types, and how you
-can remove some of these casts. In general, casts are bad, and should
-be avoided where possible.
-
-> +static void
-> +yt921x_dsa_get_ethtool_stats(struct dsa_switch *ds, int port, uint64_t *data)
-> +{
-> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
-> +	struct yt921x_port *pp = &priv->ports[port];
-> +	struct yt921x_mib *mib = &pp->mib;
-> +	size_t j;
-> +
-> +	spin_lock(&pp->stats_lock);
-> +
-> +	j = 0;
-> +	for (size_t i = 0; i < ARRAY_SIZE(yt921x_mib_descs); i++) {
-> +		const struct yt921x_mib_desc *desc = &yt921x_mib_descs[i];
-> +
-> +		if (!desc->unstructured)
-> +			continue;
-> +
-> +		data[j] = ((u64 *)mib)[i];
-> +		j++;
-> +	}
->
-
-ethtool APIs are called in a context where you can block. So it would
-be good to updated the statistics first before copying them. You just
-need to think about your locking in case the worker is running.
-
-> +static int yt921x_dsa_get_sset_count(struct dsa_switch *ds, int port, int sset)
-> +{
-> +	int cnt;
-> +
-> +	if (sset != ETH_SS_STATS)
-> +		return 0;
-> +
-> +	cnt = 0;
-
-Please do the zeroing above when you declare the local variable.
-
-> +	for (size_t i = 0; i < ARRAY_SIZE(yt921x_mib_descs); i++) {
-> +		const struct yt921x_mib_desc *desc = &yt921x_mib_descs[i];
-> +
-> +		if (desc->unstructured)
-> +			cnt++;
-> +	}
-> +
-> +	return cnt;
-> +}
-
-> +static int
-> +yt921x_set_eee(struct yt921x_priv *priv, int port, struct ethtool_keee *e)
-> +{
-
-> +	/* Enable / disable port EEE */
-> +	res = yt921x_reg_toggle_bits(priv, YT921X_EEE_CTRL,
-> +				     YT921X_EEE_CTRL_ENn(port), enable);
-> +	if (res)
-> +		return res;
-> +	res = yt921x_reg_toggle_bits(priv, YT921X_EEEn_VAL(port),
-> +				     YT921X_EEE_VAL_DATA, enable);
-
-How do these two different registers differ? Why are there two of
-them? Maybe add a comment to explain this.
-
-> +static bool yt921x_dsa_support_eee(struct dsa_switch *ds, int port)
-> +{
-> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
-> +
-> +	return (priv->pon_strap_cap & YT921X_PON_STRAP_EEE) != 0;
-
-What does the strapping actually tell you?
-
-> +static int
-> +yt921x_dsa_port_mirror_add(struct dsa_switch *ds, int port,
-> +			   struct dsa_mall_mirror_tc_entry *mirror,
-> +			   bool ingress, struct netlink_ext_ack *extack)
-> +{
-> +	struct yt921x_priv *priv = to_yt921x_priv(ds);
-> +	u32 ctrl;
-> +	u32 val;
-> +	int res;
-> +
-> +	yt921x_reg_lock(priv);
-> +	do {
-> +		u32 srcs;
-> +		u32 dst;
-> +
-> +		if (ingress)
-> +			srcs = YT921X_MIRROR_IGR_PORTn(port);
-> +		else
-> +			srcs = YT921X_MIRROR_EGR_PORTn(port);
-> +		dst = YT921X_MIRROR_PORT(mirror->to_local_port);
-> +
-> +		res = yt921x_reg_read(priv, YT921X_MIRROR, &val);
-> +		if (res)
-> +			break;
-> +
-> +		/* other mirror tasks & different dst port -> conflict */
-> +		if ((val & ~srcs & (YT921X_MIRROR_EGR_PORTS_M |
-> +				    YT921X_MIRROR_IGR_PORTS_M)) != 0 &&
-> +		    (val & YT921X_MIRROR_PORT_M) != dst) {
-> +			NL_SET_ERR_MSG_MOD(extack,
-> +					   "Sniffer port is already configured,"
-> +					   " delete existing rules & retry");
-> +			res = -EBUSY;
-> +			break;
-> +		}
-> +
-> +		ctrl = val & ~YT921X_MIRROR_PORT_M;
-> +		ctrl |= srcs;
-> +		ctrl |= dst;
-> +
-> +		if (ctrl != val)
-> +			res = yt921x_reg_write(priv, YT921X_MIRROR, ctrl);
-> +	} while (0);
-
-What does a while (0) loop bring you here?
-
-
-    Andrew
-
----
-pw-bot: cr
+> David / dhildenb
 
