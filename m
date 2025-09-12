@@ -1,162 +1,131 @@
-Return-Path: <linux-kernel+bounces-814054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB0DB54EAA
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BA04B54EA9
 	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F7B1C200C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:58:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25FA91C2051A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67E130CDBB;
-	Fri, 12 Sep 2025 12:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEA0309DAF;
+	Fri, 12 Sep 2025 12:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PINgmJaT"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HxtNRvlX"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C519C30CD8E;
-	Fri, 12 Sep 2025 12:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D678305E0D;
+	Fri, 12 Sep 2025 12:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681862; cv=none; b=jdWvPuyoejN59aZzddkZJUPiIVTyqxN6a3PsRkdHtYEnshBD/U2KtfRx1O4jVAmrNMaLYPeMtDK0Eph9BpbhXrJZTWRMsSx459sXJ3fR9JdwTbrxFcHo1c7VdZbxal24q5xIRy8xTGwP7eDzKez4a4AemzWL4KwIDHExBqY6L9U=
+	t=1757681857; cv=none; b=EVUigbBu4/ir1/851qRFM+5HQQu7gvdWRi8xxtxYIVDs3RnIqVIHinDTOgVT7TXN3Ys98fylyMMXiPZD62ZwHO/REYii9GW690BLAPNUZaexrk6OlbShL0grVrkg7IBXrDfd5Ex0MiJoOj5hCGRReiRgzX7J/GvfGj2U4Xmz6+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681862; c=relaxed/simple;
-	bh=nPNp7CgvxMjFNyD85c0vIyAgcirLo8qvT4U2NeokHUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Du/rA1y5F6qK/n909izi8+5fxdICmRwFTzSejDov3Ioxuo+b5gbVoQvYvgSKqqqJ05sZHq2FtkQw1/WEj6nSQVOz0seWy4MulNDO67EULM8unFJ+9yYoI2LP136LY+jcczZ2ztcp5QBJOXwWJib4ZIqyw1CYr2ccEsVeTL681zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PINgmJaT; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58CAlUZY015991;
-	Fri, 12 Sep 2025 12:56:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=58XwPAOdgj8C/KnRAhD4XHr5Jy4g4v
-	ejUcQ6Kbk//CM=; b=PINgmJaTmGHdAT2AF+hgUasxjL9BP3ekGD0+BKKS7KwoK8
-	sGABYUGDODVMXQiHgWK+c+K5Qk7qSwsgdR60qqAZLzYDpggZETp3z0psgslZEABv
-	bBcX5ESEIDmK3Ssh4H9tOANdUsDC4ve3Ss2+F7gv0b2x4eL+/WuLL75MKzVSTweJ
-	BnHNEduw3NBEZJnatPGxz4bNXovlyj8qkSo5dnKOW7TDpBEP+nN+NRBZl40CS5Tr
-	qNJ/GWrhyJzczvz2SBRv1DGgGFj+1abS9It+4g1b4P1w7KVsvZsRQWs+fZ5Ni2Pe
-	K7Sikg3vWmUIf/JocL9wcnOqBq8GCKYq4CYPpeqQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffuknu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:56:53 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58CCpNN7003042;
-	Fri, 12 Sep 2025 12:56:53 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 490cffuknk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:56:53 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58CALT4M007950;
-	Fri, 12 Sep 2025 12:56:51 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 49109q31gu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:56:51 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58CCunWS30671476
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 12 Sep 2025 12:56:49 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8EA2220043;
-	Fri, 12 Sep 2025 12:56:49 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C6AEE20040;
-	Fri, 12 Sep 2025 12:56:48 +0000 (GMT)
-Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 12 Sep 2025 12:56:48 +0000 (GMT)
-Date: Fri, 12 Sep 2025 14:56:47 +0200
-From: Alexander Gordeev <agordeev@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Andreas Larsson <andreas@gaisler.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ryan Roberts <ryan.roberts@arm.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Mark Rutland <Mark.Rutland@arm.com>
-Subject: Re: [PATCH v2 2/7] mm: introduce local state for lazy_mmu sections
-Message-ID: <248b4623-8755-4323-8a44-be4af30e4856-agordeev@linux.ibm.com>
-References: <9de08024-adfc-421b-8799-62653468cf63@arm.com>
- <ef343405-c394-4763-a79f-21381f217b6c@redhat.com>
- <4b4971fd-0445-4d86-8f3a-6ba3d68d15b7@arm.com>
- <4aa28016-5678-4c66-8104-8dcc3fa2f5ce@redhat.com>
- <15d01c8b-5475-442e-9df5-ca37b0d5dc04@arm.com>
- <7953a735-6129-4d22-be65-ce736630d539@redhat.com>
- <781a6450-1c0b-4603-91cf-49f16cd78c28@arm.com>
- <a17ab4e3-627a-4989-a5a5-d430eadabb86@redhat.com>
- <9ed5441f-cc03-472a-adc6-b9d3ad525664-agordeev@linux.ibm.com>
- <74d1f275-23c3-4fd8-b665-503c7fc87df0@redhat.com>
+	s=arc-20240116; t=1757681857; c=relaxed/simple;
+	bh=doZrhra+WoKnWL3GeWYIh7XwtgJmI0AYgvJj95PavT0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pdUtl+qnEnGbmNqRP9lP46VlQ9+2XHznGBYE/N6Vx2rYvVfy0+nw6sRilrkhwsbIfbCRZNTadb2Nd0qDajd6nUFvarItOpySy22jwUp7b0lHrbM0wjv9J4Xohes7kZziSLwnbBJIYeUCD7+jBmgFgJ08oLPDsKb/S3Ps8/lfbm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HxtNRvlX; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 3AC6B1A09F3;
+	Fri, 12 Sep 2025 12:57:34 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 0127260638;
+	Fri, 12 Sep 2025 12:57:34 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 422FC102F2A70;
+	Fri, 12 Sep 2025 14:57:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1757681852; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=AKTqAHrzTqK2etFjJsAwB8b24D1cRMcQiVtfJ6wvNcQ=;
+	b=HxtNRvlXl7AgpEYwX4jV3sGSiMtCIrbcAJTzAaXRgI3+WvwtmJsxO65WY788GJnNyEYEsw
+	uez+I/TI+as1jTGZhed28C/VnvTrMr63d5RWvmwRcQwbs5MLhNSFmab/LAyM4bfJ7gDD4j
+	MPCdipnIWXWqhitAMHSjYDsaVuIxOZ/UMEjD63X2yUuxoO9yRqUGon+86cJ+2lqRIPZL4b
+	9C1E5nf7cg0pO/qQzEr+NYNYCpg8EthAZ/eqYuiJh+gzvPIiiKVndlTyf4bUnWsDa1xTZB
+	mjGf+MVTvdZharqWHgGztfa7cRPlMNzPjd4QFTia43/1HKImzdjhPF5oehP+cg==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Josua Mayer <josua@solid-run.com>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Frank Wunderlich <frank-w@public-files.de>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Josua Mayer <josua@solid-run.com>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] arm64: dts: marvell: cn9132-clearfog: disable
+ eMMC high-speed modes
+In-Reply-To: <20250911-cn913x-sr-fix-sata-v2-2-0d79319105f8@solid-run.com>
+References: <20250911-cn913x-sr-fix-sata-v2-0-0d79319105f8@solid-run.com>
+ <20250911-cn913x-sr-fix-sata-v2-2-0d79319105f8@solid-run.com>
+Date: Fri, 12 Sep 2025 14:57:28 +0200
+Message-ID: <87ldmjomkn.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74d1f275-23c3-4fd8-b665-503c7fc87df0@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: VjJg1bjgqAhkPIFaDf1mLUh7KWJjYCG6
-X-Proofpoint-GUID: sT9Q6O7KpHDMezFzmg7Jr_oCplhrH_ZC
-X-Authority-Analysis: v=2.4 cv=EYDIQOmC c=1 sm=1 tr=0 ts=68c41895 cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=kj9zAlcOel0A:10 a=yJojWOMRYYMA:10 a=uYqTi1GheQgrfgZHFtwA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyMCBTYWx0ZWRfX5jpC8GUVmzcb
- WNTQnHEt7CYJzjyNcPBhadLwyx9qWJPieT278SgOv0+fgDWmcDKSO9n/bVKVzE2Km2J/kquNqse
- Jo2h4tBAH3Rq2bzLQZKuYkpibwvUYGVvMaMFCBcqCEiBXpyJ/14KPD+uGmPeQ+53nO3UReJyF9T
- vV9SHmTpFlxTvywhGFj1lAohZo5EPieMQrww4F/cF8jq4d9H2qtG/up3a2vR/gmEjopqXn2qMS8
- 3cpWLt2lTNHCVrgNs3lbLBPz8/ZfWPrNMNeF/iwV1NkiQwT301stt/rMbx65ewChkpW8jMQrt+D
- mygDppYgjygKsvAP9O23nIW8cFyauWRb1MftHnofDLV/qfCy2wrFGsX2zoH6Hz3rIIVyUeTZ9rw
- xobmB0cV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 suspectscore=0 spamscore=0 impostorscore=0
- priorityscore=1501 phishscore=0 clxscore=1015 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060020
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Sep 12, 2025 at 02:40:55PM +0200, David Hildenbrand wrote:
-> It would just be passing more context down to the architecture, right?
+Josua Mayer <josua@solid-run.com> writes:
 
-Yes. Namely this one would be arch-defined and arch_enter_lazy_mmu_mode()
-by default.
+> Similar to MacchiatoBIN the high-speed modes are unstable on the CN9132
+> CEX-7 module, leading to failed transactions under normal use.
+>
+> Disable all high-speed modes including UHS.
+>
+> Additionally add no-sdio and non-removable properties as appropriate for
+> eMMC.
+>
+> Fixes: e9ff907f4076 ("arm64: dts: add description for solidrun cn9132 cex=
+7 module and clearfog board")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Josua Mayer <josua@solid-run.com>
 
-static inline void arch_enter_lazy_mmu_mode_pte(struct mm_struct *mm,
-						unsigned long addr,
-						unsigned long end,
-						pte_t *ptep)
-{
-	...
-}
+Applied on mvebu/fixes
 
-> David / dhildenb
+Thanks,
+
+Gregory
+
+> ---
+>  arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi b/arch/arm64=
+/boot/dts/marvell/cn9132-sr-cex7.dtsi
+> index afc041c1c448c3e49e1c35d817e91e75db6cfad6..bb2bb47fd77c12f1461b5b9f6=
+ef5567a32cc0153 100644
+> --- a/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/cn9132-sr-cex7.dtsi
+> @@ -137,6 +137,14 @@ &ap_sdhci0 {
+>  	pinctrl-0 =3D <&ap_mmc0_pins>;
+>  	pinctrl-names =3D "default";
+>  	vqmmc-supply =3D <&v_1_8>;
+> +	/*
+> +	 * Not stable in HS modes - phy needs "more calibration", so disable
+> +	 * UHS (by preventing voltage switch), SDR104, SDR50 and DDR50 modes.
+> +	 */
+> +	no-1-8-v;
+> +	no-sd;
+> +	no-sdio;
+> +	non-removable;
+>  	status =3D "okay";
+>  };
+>=20=20
+>
+> --=20
+> 2.51.0
+>
+>
+
+--=20
+Gr=C3=A9gory CLEMENT, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
