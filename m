@@ -1,212 +1,239 @@
-Return-Path: <linux-kernel+bounces-814413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EDA3B553D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:39:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6A3B553D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 853811B225D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:39:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C208B5C2758
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7A9313533;
-	Fri, 12 Sep 2025 15:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904A8313533;
+	Fri, 12 Sep 2025 15:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d78ruUZV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XPtRqWx8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A57D220F5E;
-	Fri, 12 Sep 2025 15:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E491031283E
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757691544; cv=none; b=qKvimIs9uT7rdvEYpMjCuuI6nNFVJE+HZ7FosbBn2U5I5N/znYRltN+jY66DzB03/GCcXWS87Oz/zHZfqa+iYg5/jkYliU88VgCfRmpyDi8TPZ/vN1Q/qDrHRI8iSud3B986drM0w1ofF5iYmUOHOxcqq/3m2LENMiDUloDjltQ=
+	t=1757691556; cv=none; b=emI2lYiKdGnU+41RE075RFXo538/n0/s9OQJPS/BJY5MBtg2ROeo+8Pg8GQM3iB//kOftPiPXwFUxj77VecCDO8I2UOeFcGhUni1pKkOr8n/yJpY336RLBgL3yYbfqXSU4j9QhE6jdWh4La94bo6miUmY2W2ozltAlpzJXivfqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757691544; c=relaxed/simple;
-	bh=MqWqEVkiavY1Oa+6UsdYHS5X7LREs3JN+4OZa8gJU1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k0HtWMjp05Bc5k1XN5ipr6bdiKSvh/KX8MdYHieB5aAq8SESuDeZdmkECaCiUwmlO/62IgQbo6AP/9+3ntqwapl1W8/oLBizWQZm6wWzeXcAZsT0tAFOMDuv3cyXWL+GTgNEnE+/x0QuM5Yj2nQm2faiOrezXXI+hJ/065EJQPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d78ruUZV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDE88C4AF0B;
-	Fri, 12 Sep 2025 15:39:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757691544;
-	bh=MqWqEVkiavY1Oa+6UsdYHS5X7LREs3JN+4OZa8gJU1s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d78ruUZVhOjeYkF1ayZ7BTafwkKl5MtnhcQA3vyg9+Z/zGFyr6Cv6IY/37xaGE5KA
-	 E2UkLzMuS2a6hOoIETtRjkX0Sy31SXpDxIFcZTIgSjZBQB/qphjykl+uv4LHXYsnvt
-	 HRRW8MD6nr6f02XVFgHfXUIkddJ8xL8bqKfZQ9iLdyBF0D7OCELuwFLYYot1h6C+aB
-	 ELsGSe8jzThCmeUPoqwIoY8JRjIwnXNcX3UUJt/3eYy+0ph3CEVbQzGkwKg5xaokRV
-	 nX5ZLdmIWk1p6q3fNYntpdLe+DsKzkpRGJSZdX1pzBYXDZO3Y8MlHwsgEZM+t0iB4F
-	 2P163fhRC1y1Q==
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfauth.phl.internal (Postfix) with ESMTP id E95DDF40068;
-	Fri, 12 Sep 2025 11:39:01 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Fri, 12 Sep 2025 11:39:01 -0400
-X-ME-Sender: <xms:lT7EaHmd6YseUp8_myHE6QI5XITPd40RhUlV69wM0VdVN1w-u43ghA>
-    <xme:lT7EaHrCEItqTX1gDappaQb9WOxjSOCiBzqu9SDmnA6QuXyW-v6mcJPa4yU7sHpza
-    iF3vywUwrDTXhY7LtI>
-X-ME-Received: <xmr:lT7EaP5HVr1QBClyORn4Xn1cbEHmjCW3UzoAcg1kG90YM1IHJo9VktilHoK9Mw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleegfecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfu
-    hhhuthhsvghmrghuuceokhgrsheskhgvrhhnvghlrdhorhhgqeenucggtffrrghtthgvrh
-    hnpeehieekueevudehvedtvdffkefhueefhfevtdduheehkedthfdtheejveelueffgeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrih
-    hllhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqudeiudduiedvieehhedq
-    vdekgeeggeejvdekqdhkrghspeepkhgvrhhnvghlrdhorhhgsehshhhuthgvmhhovhdrnh
-    grmhgvpdhnsggprhgtphhtthhopeelkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    ohepphhfrghltggrthhosehsuhhsvgdruggvpdhrtghpthhtohepuggrvhhiugesrhgvug
-    hhrghtrdgtohhmpdhrtghpthhtohephhgrnhhnvghssegtmhhpgigthhhgrdhorhhgpdhr
-    tghpthhtohepnhhprggthhgvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuh
-    igqdhmmheskhhvrggtkhdrohhrghdprhgtphhtthhopehlihhnuhigqdguohgtsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqthhrrggtvgdqkhgv
-    rhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepiihihiesnhhvih
-    guihgrrdgtohhm
-X-ME-Proxy: <xmx:lT7EaPvb5YgSO-BnFXc5GNkonXqhrxEzv9gl9ZO5OcMhkpTc8h9W2w>
-    <xmx:lT7EaK9myZsXSE11OMxOm9GP9D8cWKgR7IF0PS-QeUE18mBYBBh7tA>
-    <xmx:lT7EaD6aalZPZm7Wy-Nn5NxqjbeTxzw5DSTmNlaytsOtiXB9WUadVw>
-    <xmx:lT7EaM8_9ZA0Vty_GXNotMrr7XBmMeXwptz08uyaQT13YdpSdBFJYA>
-    <xmx:lT7EaD-QWgKjY6rpuxP47U04xMwQlWW3OD-igRLAeIY6Jry9BD2K-Qr5>
-Feedback-ID: i10464835:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Sep 2025 11:39:01 -0400 (EDT)
-Date: Fri, 12 Sep 2025 16:38:59 +0100
-From: Kiryl Shutsemau <kas@kernel.org>
-To: Pedro Falcato <pfalcato@suse.de>
-Cc: David Hildenbrand <david@redhat.com>,
- 	Johannes Weiner <hannes@cmpxchg.org>, Nico Pache <npache@redhat.com>,
- linux-mm@kvack.org, 	linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- 	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
- lorenzo.stoakes@oracle.com, 	Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
- 	rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, 	akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- 	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
- sunnanyong@huawei.com, 	vishal.moola@gmail.com,
- thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
- 	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
- 	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
- dave.hansen@linux.intel.com, 	jack@suse.cz, cl@gentwo.org,
- jglisse@google.com, surenb@google.com, 	zokeefe@google.com,
- rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org,
- 	hughd@google.com, richard.weiyang@gmail.com, lance.yang@linux.dev,
- vbabka@suse.cz, 	rppt@kernel.org, jannh@google.com
-Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
-Message-ID: <k54teuep6r63gbgivpka32tk47zvzmy5thik2mekl5xpycvead@fth2lv4kuicg>
-References: <20250912032810.197475-1-npache@redhat.com>
- <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
- <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
- <20250912133701.GA802874@cmpxchg.org>
- <da251159-b39f-467b-a4e3-676aa761c0e8@redhat.com>
- <hcpxpo3xpqcppxlxhmyxkqkqnu4syohhkt5oeyh7qse7kvuwiw@qbhiubf2ubtm>
+	s=arc-20240116; t=1757691556; c=relaxed/simple;
+	bh=GRXHdoeXgs2rRRY6tyhSrt4hGOweA6vNgajT9/12Zek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MfaDree1zBOy4Pri99IHEpwPNXgN7iPBqELpgOPmzR249bbJsKSLayM39NEY5Ck+xcuOulbnqGq0xcZ9UNuey65wsn7ECRyobDgbfUUpGJxBX5mgw+FdKAnnNP5+hJDp9uVBoy6fFUMxRlJQwJSYdb/JgXqo5ZG+asw8n1K3K50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XPtRqWx8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757691553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2pXtBqfp2bEFBqLzvF+btY6ON3Qyio7xhH4wSuKco70=;
+	b=XPtRqWx8H5JnYl+NW3HknulchBddcW1hhOm/Ww7YMwH6aG9QnVNwlgRYzV2htv+ooBsQhF
+	75/XmGR0SVCyXhMwM9QZIz+U8fdn/DptvQ6JMDVoXK3m90WXiYALtrvZGW4hLDa4JZ+EqM
+	7oSW+lAT9v3Xg2uTIXSrjMq6jJkmcM8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-145-FEcnJ7cIPvaV2ZurE4O5Dg-1; Fri, 12 Sep 2025 11:39:12 -0400
+X-MC-Unique: FEcnJ7cIPvaV2ZurE4O5Dg-1
+X-Mimecast-MFC-AGG-ID: FEcnJ7cIPvaV2ZurE4O5Dg_1757691551
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45de27bf706so10227445e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:39:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757691551; x=1758296351;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2pXtBqfp2bEFBqLzvF+btY6ON3Qyio7xhH4wSuKco70=;
+        b=XY+tPZikma6MK3cvet/Nm2b639NyXRcQLqyM9F8Xu5LfqpNr+eMtYegIhnGcmNIFhV
+         wypTxAmOJ428aOA9Re+SXldMYySGHDKu24ZJDzJ3D6u1gumtgnX47X+SdJmBYEKCop8Z
+         xGb1IR1cG7u1qvVzB9s7HcAcjcj4e4HnZrvBrOkJ/5p6T3miFvYGm8f8ZHm5/9zlMoAn
+         FgJ7CQjviwfiDWLCJ5nnYF7h4Oq+Qp5sL7YUchv92yjD17fzTQhPP9iMANVSHPYbefBR
+         GYs9vqOCNtoswzrReKvEF1QmKWsyZHoAauawganivu4upgZTKH5MvKKJbC6J339WRCI9
+         YwVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAIpl4jMwei6gLYCuqP8j388T/QllZVkJLW6VK0i751jVTn73XLAzf+BdZeEMuA5JMKKhJdYwz8MeHV64=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxoDPPB75RSIzz2kpxyK2dbEXw75MO4Y08CBfAyYgDDeUfWb/M
+	f+lrzZKOn4Paikmokxy8KpxZd9IJ7PGrwtQf89x76o+KxpyS/2lFQnIzm7KrDUNnBXzytbgt2Ea
+	6A+VCc0AiODAMKBWpcqZ0EBOaccevJKshw00kmGioXpqTAqIATe51oK2S3am9ABWrkQ==
+X-Gm-Gg: ASbGncu82FMlDwNFIz+MaYIJ0aqA/0Fw6nN2MQ6E+ZVjhUzDDFj60UxqCtj8N8Ks6KO
+	FgsYS+gJuKnMAZ3Gr4a7I6Wpn2YezXqpbOfrUGx94C4jKK7crK5aa3KrgZlyCMTZUAsdcEHNFa6
+	0S4Q4XDSdeCzhm7mkv5wXxIxLXQnW2J7s2jGvdwzFhhafmCx9XChG7iXbfCutbgwz17W340T4XD
+	77pMnAWyadGUOnJkBt0r6jxBOUWo5oSndEcfpfLJKB+TkUrZ5lg6ydBn+J5eHd5pOF+VlF0VdVP
+	nZbc/qF/loQRbN1bpYdo+3VaEkenV/xQLv9++5vbpLGbfKvmjXPwwMEXfZglXu5LbuYNbGbI94w
+	pW0t9xvEC6/uElYwuklkCvOq0p+nAIOsTefUkaTb5TcJd9tKM1rH8sAGblfnjm9UUWLI=
+X-Received: by 2002:a05:600c:1991:b0:45d:d522:5b2c with SMTP id 5b1f17b1804b1-45f2120717dmr33990965e9.34.1757691551021;
+        Fri, 12 Sep 2025 08:39:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGu0gMuqkCIPX52SGtePGrKmTkbOBkfc+AQ06Rj5/vieuYX7W284rbFR/kLNgC2eQweLIIqGw==
+X-Received: by 2002:a05:600c:1991:b0:45d:d522:5b2c with SMTP id 5b1f17b1804b1-45f2120717dmr33990575e9.34.1757691550592;
+        Fri, 12 Sep 2025 08:39:10 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e01984a62sm37029785e9.4.2025.09.12.08.39.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 08:39:10 -0700 (PDT)
+Message-ID: <55b727fc-8fd3-4e03-8143-1ed6dcab2781@redhat.com>
+Date: Fri, 12 Sep 2025 17:39:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <hcpxpo3xpqcppxlxhmyxkqkqnu4syohhkt5oeyh7qse7kvuwiw@qbhiubf2ubtm>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] KVM: guest_memfd: add generic population via write
+To: kalyazin@amazon.com, James Houghton <jthoughton@google.com>,
+ "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "shuah@kernel.org" <shuah@kernel.org>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "michael.day@amd.com" <michael.day@amd.com>,
+ "Roy, Patrick" <roypat@amazon.co.uk>, "Thomson, Jack"
+ <jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>,
+ "Cali, Marco" <xmarcalx@amazon.co.uk>
+References: <20250902111951.58315-1-kalyazin@amazon.com>
+ <20250902111951.58315-2-kalyazin@amazon.com>
+ <CADrL8HV8+dh4xPv6Da5CR+CwGJwg5uHyNmiVmHhWFJSwy8ChRw@mail.gmail.com>
+ <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com>
+ <8e55ba3a-e7ae-422a-9c79-11aa0e17eae9@redhat.com>
+ <bc26eaf1-9f01-4a65-87a6-1f73fcd00663@amazon.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <bc26eaf1-9f01-4a65-87a6-1f73fcd00663@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 04:15:23PM +0100, Pedro Falcato wrote:
-> On Fri, Sep 12, 2025 at 03:46:36PM +0200, David Hildenbrand wrote:
-> > On 12.09.25 15:37, Johannes Weiner wrote:
-> > > On Fri, Sep 12, 2025 at 02:25:31PM +0200, David Hildenbrand wrote:
-> > > > On 12.09.25 14:19, Kiryl Shutsemau wrote:
-> > > > > On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
-> > > > > > The following series provides khugepaged with the capability to collapse
-> > > > > > anonymous memory regions to mTHPs.
-> > > > > > 
-> > > > > > To achieve this we generalize the khugepaged functions to no longer depend
-> > > > > > on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
-> > > > > > pages that are occupied (!none/zero). After the PMD scan is done, we do
-> > > > > > binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
-> > > > > > range. The restriction on max_ptes_none is removed during the scan, to make
-> > > > > > sure we account for the whole PMD range. When no mTHP size is enabled, the
-> > > > > > legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
-> > > > > > by the attempted collapse order to determine how full a mTHP must be to be
-> > > > > > eligible for the collapse to occur. If a mTHP collapse is attempted, but
-> > > > > > contains swapped out, or shared pages, we don't perform the collapse. It is
-> > > > > > now also possible to collapse to mTHPs without requiring the PMD THP size
-> > > > > > to be enabled.
-> > > > > > 
-> > > > > > When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
-> > > > > > 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
-> > > > > > mTHP collapses to prevent collapse "creep" behavior. This prevents
-> > > > > > constantly promoting mTHPs to the next available size, which would occur
-> > > > > > because a collapse introduces more non-zero pages that would satisfy the
-> > > > > > promotion condition on subsequent scans.
-> > > > > 
-> > > > > Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
-> > > > > all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
-> > > > > 
-> > > > 
-> > > > I am all for not adding any more ugliness on top of all the ugliness we
-> > > > added in the past.
-> > > > 
-> > > > I will soon propose deprecating that parameter in favor of something
-> > > > that makes a bit more sense.
-> > > > 
-> > > > In essence, we'll likely have an "eagerness" parameter that ranges from
-> > > > 0 to 10. 10 is essentially "always collapse" and 0 "never collapse if
-> > > > not all is populated".
-> > > > 
-> > > > In between we will have more flexibility on how to set these values.
-> > > > 
-> > > > Likely 9 will be around 50% to not even motivate the user to set
-> > > > something that does not make sense (creep).
-> > > 
-> > > One observation we've had from production experiments is that the
-> > > optimal number here isn't static. If you have plenty of memory, then
-> > > even very sparse THPs are beneficial.
-> > 
-> > Exactly.
-> > 
-> > And willy suggested something like "eagerness" similar to "swapinness" that
-> > gives us more flexibility when implementing it, including dynamically
-> > adjusting the values in the future.
-> >
+On 12.09.25 16:48, Nikita Kalyazin wrote:
 > 
-> Ideally we would be able to also apply this to the page faulting paths.
-> In many cases, there's no good reason to create a THP on the first fault...
 > 
-> > > 
-> > > An extreme example: if all your THPs have 2/512 pages populated,
-> > > that's still cutting TLB pressure in half!
-> > 
-> > IIRC, you create more pressure on the huge entries, where you might have
-> > less TLB entries :) But yes, there can be cases where it is beneficial, if
-> > there is absolutely no memory pressure.
-> >
+> On 12/09/2025 14:36, David Hildenbrand wrote:
+>> On 11.09.25 12:15, Nikita Kalyazin wrote:
+>>>
+>>>
+>>> On 10/09/2025 22:23, James Houghton wrote:
+>>>> On Tue, Sep 2, 2025 at 4:20 AM Kalyazin, Nikita
+>>>> <kalyazin@amazon.co.uk> wrote:
+>>>>>
+>>>>> From: Nikita Kalyazin <kalyazin@amazon.com>
+>>>>
+>>>> Hi Nikita,
+>>>
+>>> Hi James,
+>>>
+>>> Thanks for the review!
+>>>
+>>>
+>>>>>
+>>>>> write syscall populates guest_memfd with user-supplied data in a
+>>>>> generic
+>>>>> way, ie no vendor-specific preparation is performed.  This is supposed
+>>>>> to be used in non-CoCo setups where guest memory is not
+>>>>> hardware-encrypted.
+>>>>
+>>>> What's meant to happen if we do use this for CoCo VMs? I would expect
+>>>> write() to fail, but I don't see why it would (seems like we need/want
+>>>> a check that we aren't write()ing to private memory).
+>>>
+>>> I am not so sure that write() should fail even in CoCo VMs if we access
+>>> not-yet-prepared pages.  My understanding was that the CoCoisation of
+>>> the memory occurs during "preparation".  But I may be wrong here.
+>>
+>> But how do you handle that a page is actually inaccessible and should
+>> not be touched?
+>>
+>> IOW, with CXL you could crash the host.
+>>
+>> There is likely some state check missing, or it should be restricted to
+>> VM types.
 > 
-> Correct, but it depends on the microarchitecture. For modern x86_64 AMD, it
-> happens that the L1 TLB entries are shared between 4K/2M/1G. This was not
-> (is not?) the case for Intel, where e.g back on kabylake, you had separate
-> entries for 4K/2MB/1GB.
+> Sorry, I'm missing the link between VM types and CXL.  How are they related?
 
-On Intel secondary TLB is shared between 4k and 2M. L2 TLB for 1G is
-separate.
+I think what you explain below clarifies it.
 
-> Maybe in the Great Glorious Future (how many of those do we have?!) it would
-> be a good idea to take this kinds of things into account. Just because we can
-> map a THP, doesn't mean we should.
 > 
-> Shower thought: it might be in these cases especially where the FreeBSD
-> reservation system comes in handy - best effort allocating a THP, but not
-> actually mapping it as such until you really _know_ it is hot - and until
-> then, memory reclaim can just break your THP down if it really needs to.
+> My thinking was it is a regular (accessible) page until it is "prepared"
+> by the CoCo hardware, which is currently tracked by the up-to-date flag,
+> so it is safe to assume that until it is "prepared", it is accessible
+> because it was allocated by filemap_grab_folio() ->
+> filemap_alloc_folio() and hasn't been taken over by the CoCo hardware.
+> What scenario can you see where it doesn't apply as of now?
 
-This is just silly. All downsides without benefit until maybe later. And
-for short-lived processes the "later" never comes.
+Thanks for clarifying, see below.
+
+> 
+> I am aware of an attempt to remove preparation tracking from
+> guest_memfd, but it is still at an RFC stage AFAIK [1].
+> 
+>>
+>> Do we know how this would interact with the direct-map removal?
+> 
+> I'm using folio_test_uptodate() to determine if the page has been
+> removed from the direct map as kvm_gmem_mark_prepared() is what
+> currently removes the page from the direct map and marks it as
+> up-to-date.  [2] is a Firecracker feature branch where the two work in
+> combination.
+
+Ah, okay. Yes, I recalled [1] that we wanted to change these semantics 
+to be "uptodate: was zeroed", and that preparation handling would be 
+essentially handled by the arch backend.
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Cheers
+
+David / dhildenb
+
 
