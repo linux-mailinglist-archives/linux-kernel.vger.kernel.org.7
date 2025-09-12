@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-814859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE66B559C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18645B559D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C14D5C3643
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DCA01895CCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F7E2609DC;
-	Fri, 12 Sep 2025 22:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C565B24BCF5;
+	Fri, 12 Sep 2025 23:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UjoqhsHB"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q5CQp2O6"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AA9283FC2
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966F72550CA
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757717729; cv=none; b=Y72bBjTryO6bU2t62cUK09tdLnCSKkz3whGBOsZK01S+WgQmiuroDM6PSWbCfC8x67d0ZjH7RGuq6tl91hCSvQDvZbLbw8ojaPC1xHcvLJHjCjvEQnsy4Gbu2RCp5CGQkmTFmGBN9jPAOMOZTH8nIPzKQBESw6B/XwKQUs4saKw=
+	t=1757718594; cv=none; b=AbZxaEyHdMebRe3F9NX6uZeVvUtTUmODmNR5rAxmEpvlA2l8fe1G08dGxNGEQ1vVQzZrasLAwr+u3f1QuUvPsjnyVgRxRwhtQRh/0n13XlAplymFj+rLfoRTJqJ+uQEkYavXwiSULAxf9h3imkuT7wbwFWYZ8upI+d8Gr17Cfjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757717729; c=relaxed/simple;
-	bh=s81gDgnQeGccrS8LsVmeNH8hG65sh8m34+oHvpgsrrI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tYaRHJ4iJhk3drpHpHmGB5oFyQGsHGQtfAwJWICxOIhVNt/aGj4HdjRxKtoerSYmTTiS6pnCPjfu+Up4cehbNWpWJ4D8bKmKlFgxbfurmJED3L0Sgrw5a1fPzkqRtcR+1+s1hmYKceu18drWlb/hzSSHrHLFP5jiiQ4IuXmVV2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UjoqhsHB; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2445806b18aso24183175ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:55:28 -0700 (PDT)
+	s=arc-20240116; t=1757718594; c=relaxed/simple;
+	bh=GRUOPBmcHG5rwny33Aqll6uFm6c2yeYTGyp3ev0i/kQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UlCnO2XoaiPZIFyDICxPxIhmNRMwRIzQPz1nZOVpmTFdJx+RAkS8zIFSL0DHm4YF01rQwXK0NJbGggwTqWSn4sBwdk2RfjtIyLjr2YR4BP+gK6xLYgsfbqiG84JlK2F9Fq7KkM+ljQgmAhZ5PyoDNGSP0tQguiMEVe4aJxOD0eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q5CQp2O6; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7722c8d2694so2467747b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757717727; x=1758322527; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5UxjIlsEgvTF8daNW02GCq6jap774PItnDVhlq0f8c=;
-        b=UjoqhsHBA61DXGARwcZ/ROhWFgX4maQIWYOp5mN9IV3MW0X5MWk7xdLBpAeRRCMmUK
-         pdtcq2WVt3/qkLjJy9J4cbCRWaBCMWFzWpzRdYMot1MRQiRG3sb8w3/27juv7qVbFYHD
-         p4R5d/5O4cL34/hsCTStpRuAb41nW1UjuS5qxnKIlCnCRbMd9WWGP7T9wExKM+SvAby2
-         IokeMJjXzdMt8PFiw7++y+hFWdQSmw1pY2ovq8Es0v565lb0OVyNLKcAipNole5ZySiw
-         eH236h9HrPy7L/UA9CV+ZpzJ77BMC+Cow0MV1BopuB/yQaptc+ynze6vcxiSUpFUfOps
-         j8sQ==
+        d=chromium.org; s=google; t=1757718592; x=1758323392; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wj2EzCDO/uH/NVYiO2SSDOzQUMFnuWGG6J5ju6LXtrM=;
+        b=Q5CQp2O69f1yH3w5fW9x9Vrg84tpfjAUvhJtgMCnUCzUFeFvlm813v6Sr/CNWCF63T
+         0G+cA2SxVWsib562VIodjvXc6z0nYLTbGJaAlK6AU3sQ+Hmx2hvSRDEJsnJZ5sMrYRAf
+         EGkdmHL6Z2/XcMOqmHTAFbLl18ZZxFRVnI1HE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757717727; x=1758322527;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M5UxjIlsEgvTF8daNW02GCq6jap774PItnDVhlq0f8c=;
-        b=pdEJXKIUaKGOfQsMW9jKgfrfNd0kOeOTzwfFtTTaJGsayV4jgA10X6fwovUlgf8dHl
-         Grh14G95dmZ6jnJHkZU6ZV5t3qsngrQA3SHExzwM5dKnREZcuMS+uI+tbqY+B6+r7R+l
-         xBiSYZJqsF3WjORjvA6ITJZPc+SvsqBgV+kpkkfFAkC6OaeqAf5uXU3vruXd1DOzmNdc
-         KzFtAMEf5ZoKG6Z9rmCANTW9y0qIxxnIt8fvAVN7+LFp/l/pg3ea3hjBBU2feLxvnwgS
-         Dboicyql7hZpSxlnJIPErWB0tWT7EUl6HHIPB2rRT70qhXy/UtzYlVeI8hmjhiXoY/ZZ
-         mGeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWEtTmgBIPm7mmPbtJ1mfGSqVmjKMdLNdc5pgoDKz8iGXlZWJs9uGhO9mIbAckBGmVTMJazaDbu9bu0pjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk0ICC5uprlyL/A4kXfHON8Yg1v2jFU7L1fArDqZpTzTEs02tM
-	E3rCf7zGtFy4cyB3k7OyVgBqrE8SzHti1zfv1pWerpvUyLlFjUDEF0uBVjHKs+GW+vj/ckLBfp/
-	nfiIE2A==
-X-Google-Smtp-Source: AGHT+IEBFW2+no450hTjR9z5hEWHspR3hha0vnhjysBUIwJUVLZG1hVKgUXc1l4Dd+5wBSZ/IjDFCVmvLWg=
-X-Received: from plbja20.prod.google.com ([2002:a17:902:efd4:b0:25c:a8a8:add6])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f60d:b0:25d:df7a:b1a2
- with SMTP id d9443c01a7336-25ddf7ab591mr33868625ad.5.1757717727608; Fri, 12
- Sep 2025 15:55:27 -0700 (PDT)
-Date: Fri, 12 Sep 2025 15:55:25 -0700
-In-Reply-To: <20250908201750.98824-2-john.allen@amd.com>
+        d=1e100.net; s=20230601; t=1757718592; x=1758323392;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wj2EzCDO/uH/NVYiO2SSDOzQUMFnuWGG6J5ju6LXtrM=;
+        b=tnwIBDBbltqGbi4BxBenL8komgvH4EpjUKXkIsqvLwJSRRbVmwrvE9bSVTqBIrGCPc
+         Jfc777nL6Bzi7JTtD8llrW30Tup5JnM5c8aPgtofxCwSN8SjpcIy+LmSKE4YDPvj7EjO
+         ja8RAcGjvjEo5LaNI6Im7GP0lxB1Qa0OVuz24Ay0Ac4ONEUJGIj1TIXpg1n1b6IP1AhM
+         fe9mmqNSy36FnLURIoFLEwmmYZOoydkna4I3F9RgR+L9hzlr7l4dooW4hClV/HYcCt9u
+         NrjuY8N6QHNamSQP017saMeO0jVId5H4orrr4lJrFNAIVl2lQFgx2vobvUWMaSxCKzSv
+         2YLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVt8CqMOHHt7EQxeKNuPXKAwX47NwdFWLIBj7azkBIzrMHV8W9EtNXKJKNWXtuNzNdrsIzaOUkdEbl0hLI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjdxVfASZjNbySsYO9Wngc7XQRr407MDR/hX9TiRgOhXuktq5D
+	+Zv2tBE1+giRUxiWKQ/x1VnuxcMXKNXn6rGF7Wl23jEXGIr01JnLtpGH5poz3nzBPw==
+X-Gm-Gg: ASbGnctf7Qv9Fr4CAzN47/jKJnGFstdcys2AidtwaaIfH089RpE3YCm+fBdHF79kwYm
+	1xchhHlijUJybavbafhypj1RZwNxYF9Qyqar1zpwJLgN52rICpwI67ZaAU9kQX/zHPWalqHvJXW
+	tku2hnhCA49XD5HPmeKKVoqt1KK+H1pOvVxnhOI1P3zflqOoH3vaW1+G2RH0cbGNMpAVjjpoz1+
+	l7gxASB/7U+GJy8yEl8E0mCINBNaxUZWwSBSIlWy0rOHcTc0LaRc6hXPqAACg50aQjC1ZT7kCZi
+	0Xa0tlnzalWoI3NOLnDESqXCRDglIOwSUt+mwAGYQYxLeFPBGtkbrLpuqOZJibq6eGnXSjQwqku
+	SwEFPTqgihV8yQUYl47bvzsUR65grslbj4/jNbAaCZK1ZZ0r+SWObTA5Gklw=
+X-Google-Smtp-Source: AGHT+IE5DR0gvGWUro9z10EvotDyakdL5SHVeYZ/tNuNggcehVsLSaHVKcMNLMyAhxmQVoCyYfqTvQ==
+X-Received: by 2002:a05:6a20:9147:b0:251:9f29:454b with SMTP id adf61e73a8af0-2602bb59347mr5854185637.39.1757718592010;
+        Fri, 12 Sep 2025 16:09:52 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:e464:c3f:39d8:1bab])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-32df97c3b9csm1227762a91.11.2025.09.12.16.09.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 16:09:51 -0700 (PDT)
+From: Brian Norris <briannorris@chromium.org>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Daniel Gomez <da.gomez@kernel.org>
+Cc: linux-pci@vger.kernel.org,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	Johannes Berg <johannes@sipsolutions.net>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Richard Weinberger <richard@nod.at>,
+	Wei Liu <wei.liu@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	kunit-dev@googlegroups.com,
+	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+	linux-um@lists.infradead.org,
+	Brian Norris <briannorris@chromium.org>
+Subject: [PATCH 0/4] PCI: Add support and tests for FIXUP quirks in modules
+Date: Fri, 12 Sep 2025 15:59:31 -0700
+Message-ID: <20250912230208.967129-1-briannorris@chromium.org>
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250908201750.98824-1-john.allen@amd.com> <20250908201750.98824-2-john.allen@amd.com>
-Message-ID: <aMSk3fY7XzScBuOx@google.com>
-Subject: Re: [PATCH v4 1/5] KVM: x86: SVM: Emulate reads and writes to shadow
- stack MSRs
-From: Sean Christopherson <seanjc@google.com>
-To: John Allen <john.allen@amd.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	pbonzini@redhat.com, dave.hansen@intel.com, rick.p.edgecombe@intel.com, 
-	mlevitsk@redhat.com, weijiang.yang@intel.com, chao.gao@intel.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com, 
-	tglx@linutronix.de, thomas.lendacky@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 08, 2025, John Allen wrote:
-> Emulate shadow stack MSR access by reading and writing to the
-> corresponding fields in the VMCB.
-> 
-> Signed-off-by: John Allen <john.allen@amd.com>
-> ---
->  arch/x86/kvm/svm/svm.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index e4af4907c7d8..fee60f3378e1 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -2767,6 +2767,15 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  		if (guest_cpuid_is_intel_compatible(vcpu))
->  			msr_info->data |= (u64)svm->sysenter_esp_hi << 32;
->  		break;
-> +	case MSR_IA32_S_CET:
-> +		msr_info->data = svm->vmcb->save.s_cet;
-> +		break;
-> +	case MSR_IA32_INT_SSP_TAB:
-> +		msr_info->data = svm->vmcb->save.isst_addr;
-> +		break;
-> +	case MSR_KVM_INTERNAL_GUEST_SSP:
-> +		msr_info->data = svm->vmcb->save.ssp;
-> +		break;
->  	case MSR_TSC_AUX:
->  		msr_info->data = svm->tsc_aux;
->  		break;
-> @@ -2999,6 +3008,15 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
->  		svm->vmcb01.ptr->save.sysenter_esp = (u32)data;
->  		svm->sysenter_esp_hi = guest_cpuid_is_intel_compatible(vcpu) ? (data >> 32) : 0;
->  		break;
-> +	case MSR_IA32_S_CET:
-> +		svm->vmcb->save.s_cet = data;
+This series primarily adds support for DECLARE_PCI_FIXUP_*() in modules.
+There are a few drivers that already use this, and so they are
+presumably broken when built as modules.
 
-These writes should mark VMCB_CET (the dirty/clean flag) dirty, and obviously
-KVM should mark VMCB_CET clean along with everything else on #VMEXIT.
+While at it, I wrote some unit tests that emulate a fake PCI device, and
+let the PCI framework match/not-match its vendor/device IDs. This test
+can be built into the kernel or built as a module.
 
-> +		break;
-> +	case MSR_IA32_INT_SSP_TAB:
-> +		svm->vmcb->save.isst_addr = data;
-> +		break;
-> +	case MSR_KVM_INTERNAL_GUEST_SSP:
-> +		svm->vmcb->save.ssp = data;
-> +		break;
->  	case MSR_TSC_AUX:
->  		/*
->  		 * TSC_AUX is always virtualized for SEV-ES guests when the
-> -- 
-> 2.47.3
-> 
+I also include some infrastructure changes (patch 3 and 4), so that
+ARCH=um (the default for kunit.py), ARCH=arm, and ARCH=arm64 will run
+these tests by default. These patches have different maintainers and are
+independent, so they can probably be picked up separately. I included
+them because otherwise the tests in patch 2 aren't so easy to run.
+
+
+Brian Norris (4):
+  PCI: Support FIXUP quirks in modules
+  PCI: Add KUnit tests for FIXUP quirks
+  um: Select PCI_DOMAINS_GENERIC
+  kunit: qemu_configs: Add PCI to arm, arm64
+
+ arch/um/Kconfig                           |   1 +
+ drivers/pci/Kconfig                       |  11 ++
+ drivers/pci/Makefile                      |   1 +
+ drivers/pci/fixup-test.c                  | 197 ++++++++++++++++++++++
+ drivers/pci/quirks.c                      |  62 +++++++
+ include/linux/module.h                    |  18 ++
+ kernel/module/main.c                      |  26 +++
+ tools/testing/kunit/qemu_configs/arm.py   |   1 +
+ tools/testing/kunit/qemu_configs/arm64.py |   1 +
+ 9 files changed, 318 insertions(+)
+ create mode 100644 drivers/pci/fixup-test.c
+
+-- 
+2.51.0.384.g4c02a37b29-goog
+
 
