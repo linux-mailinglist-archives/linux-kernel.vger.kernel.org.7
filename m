@@ -1,202 +1,94 @@
-Return-Path: <linux-kernel+bounces-814028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CDEDB54E65
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:49:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B849CB54E66
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 537A21BC7811
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797DAAC089A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D06530E0D3;
-	Fri, 12 Sep 2025 12:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588D630EF66;
+	Fri, 12 Sep 2025 12:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O8Jq+DOG"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HkmJrg+m"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC1430C62A;
-	Fri, 12 Sep 2025 12:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACDB530C614
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757681311; cv=none; b=JR/k9W78CMwvCIReYpCGagZn0zmvs4VHaLpfvaDudVKFo/InHDJI2y7OICrbEAh2ouRwy2LDCnyZfDtpU/MuFCxuE6k85rFZUuEtd/oz9QQ5xFM1YQ6w5fDG4+EkPRWomJiAKm2moonyhUA0QbX3lBRQuNwrJIBd77Q3DSPz4go=
+	t=1757681312; cv=none; b=sUIAjuwOC4RON3p5+T2LQ1QuszWsZagcuT63wZVBpZz7dpWPb7TThSjQvP7jYZbC8XSWdzN+2t3KEOmEJMxacjRAR9lJ0MZvKGjsX+MPx9A7T8kpxUyYtJvD5kf5TJdDN7cekyAI9/ZtP7jaBzI8cIgMIeZ8fsHpNgU+OS9A7TQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757681311; c=relaxed/simple;
-	bh=4SFuEubmFaiGps0CP3Ly5iZC/s5WN25OLjJ+LpWzhts=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=TKwooeV7AOqODQrWf/54/JqZBIY1sC7Iv9v65hlNULHMQmRO4cOq80IcjgnQKZKA9OYq5frah8TuwiNxrG6sappuRZmSsWax3v6NRU0vydXHa3AnfNBW67Zl9kqKmWKAsW4DVmwqtK/+6YzDV/RnyobligRbwTA4oGeINUezMLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O8Jq+DOG; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58C9fKJC009094;
-	Fri, 12 Sep 2025 12:48:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MsGGPNwY8cXigk7bjzPUFp93nvN9ZPJmkA14HYaXLBQ=; b=O8Jq+DOG4V66LTOc
-	3a1E6sCuhHOPWdvHcUc4iySlnHRGKMAufqhqj++/l1FR5VCnzoKpJFE5XvoOMPR8
-	l4MPVPfkEJCNsKeNeWoi0oYlEZjMQv+b7JrfwYXgsj9SEWNWbhP0w7l1mTXLUj+7
-	3rKiNustZ4U/fGv090KhGJCQlmFuUHWLa8jOvv2alqhZ2mrMqi3Yemn0eCFppd3m
-	9OT1SUoeQCkdy3ucN6r3hScmRj/eX9Haifad2jt1XSu9EPIDtCTgFMJbG9776GCl
-	T1mehqMFD1bMeKZJXWQZUibYDR0eNFPz5SWDD6hYg3ksFhnr8mwjvdV0j6kcRAyR
-	vCgCmQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490cj13mqh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:48:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 58CCmPXO014792
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 12:48:25 GMT
-Received: from hu-vpernami-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.24; Fri, 12 Sep 2025 05:48:23 -0700
-From: Vivek.Pernamitta@quicinc.com
-Date: Fri, 12 Sep 2025 18:18:10 +0530
-Subject: [PATCH v4 6/6] bus: mhi: host: pci_generic: Support independent
- DMA mask for VFs
+	s=arc-20240116; t=1757681312; c=relaxed/simple;
+	bh=W2Do7P+lCvL8d6sw1htS5uhjgo1iwh2ZcwSHREXCl7o=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=pBvbYTkWUsXaS3LfPMeqfy/tklSvLYMrMqvQF/HzyFgIW7lkNYB06RvJU2jW0A+yJMy0OuJwLCRYrueaOxKbxQR+RpI2GePJhn4tKTLpuqj+Y3XzFTkn/KXJ9qJjtkhGW9h016on+fJQBgsWYhqSJ1DAtf2k8o9dMGcfHVcjZsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HkmJrg+m; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757681306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=NL7JO++Q7ebDk6pnXvHTsS19g6iMYqqChi1RqThV9CA=;
+	b=HkmJrg+mMrppIasXNvQVeCpET13y1bq8glGlYP1V2XPWP9scdkCLANvhZfhm8HjcJC4KLK
+	PByAdTAnV5kpTdjMI0Fv/tELbfO5gxo8mT6tK/cNOtDYnwS25Llnv53CE0KKOqrCcoQ4bD
+	5h7+0gBTn9+OQZp2R4pDjb/O7cOYFm4=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250912-uevent_vdev_next-20250911-v4-6-fa2f6ccd301b@quicinc.com>
-References: <20250912-uevent_vdev_next-20250911-v4-0-fa2f6ccd301b@quicinc.com>
-In-Reply-To: <20250912-uevent_vdev_next-20250911-v4-0-fa2f6ccd301b@quicinc.com>
-To: Manivannan Sadhasivam <mani@kernel.org>
-CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vivek Pernamitta <quic_vpernami@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757681290; l=3681;
- i=<quic_vpernami@quicinc.com>; s=20241114; h=from:subject:message-id;
- bh=gWNq35DSTvJwD2BrTCkoj2BC1wvazwuSQspATqlZUbk=;
- b=M+56bPSVELGRXP/k56OnMe4dEpxh5XwWofbURhe9Ef7BqTNbt6hxJ0Nk01cFoUCEebazQmuw0
- DU87+ChbbYxCF9OtltP2GHiD/bFMtm3SdyUm3Z6YIHUuQs3ALe7nu+y
-X-Developer-Key: i=<quic_vpernami@quicinc.com>; a=ed25519;
- pk=HDwn8xReb8K52LA6/CJc6S9Zik8gDCZ5LO4Cypff71Y=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: sH7FGgFly8voxh4jOQqas3u5VZD6_78Q
-X-Proofpoint-GUID: sH7FGgFly8voxh4jOQqas3u5VZD6_78Q
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAyNCBTYWx0ZWRfX3RwYJ9NnkMG3
- hVZNStug9rRHBX0Z+crNPQbKelRyRc9J42pRIYdCLl9CbPzjWiunv6GHhPEYhX9eFIqHFhQEXq7
- X5MWJRSlo/UPjIDbxHx33qBsTV0sYhIJZ3wYiGagTdu1alQosPPphKoDSRGapAiIlCbI2z0BYzC
- kNKabI0rpCqY8wrDpTbauQ7hOdI8PaTgO2EgObnTDae/ciq9HH8YYylaIkf136t1osfR/A0PpPz
- OAc7+9pGyE8sokV3UQOBv46E/hya8Ne5hg92iNm+xxSu02A9i+nBBqkDuX680SLBNTpejeA3p/x
- D+sJHkKtiFTXQTSuDDuIbHA1FMM9pSg3fxoergVOPqWeC7Y5p90eaVQcVarsEWXYpvbKmh70545
- 29JWuydW
-X-Authority-Analysis: v=2.4 cv=QeFmvtbv c=1 sm=1 tr=0 ts=68c4169a cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=yJojWOMRYYMA:10 a=COk6AnOGAAAA:8
- a=B_Hsn4pIL-mR84e0YfAA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-12_04,2025-09-11_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 clxscore=1015 spamscore=0 impostorscore=0
- bulkscore=0 suspectscore=0 adultscore=0 malwarescore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509060024
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] drm/amdkfd: Replace kmalloc + copy_from_user with
+ memdup_user
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <CADnq5_MFDZdJg3XFFw9+tWB=_LP47PwE3HXgPK=sryOx+_0wGQ@mail.gmail.com>
+Date: Fri, 12 Sep 2025 14:48:13 +0200
+Cc: Felix Kuehling <Felix.Kuehling@amd.com>,
+ Alex Deucher <alexander.deucher@amd.com>,
+ =?utf-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FED6FFD1-2C51-45F4-BF34-76484C415C83@linux.dev>
+References: <20250909151146.760450-2-thorsten.blum@linux.dev>
+ <CADnq5_MFDZdJg3XFFw9+tWB=_LP47PwE3HXgPK=sryOx+_0wGQ@mail.gmail.com>
+To: Alex Deucher <alexdeucher@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-From: Vivek Pernamitta <quic_vpernami@quicinc.com>
+Hi Alex,
 
-Certain devices like QDU100 bootloader support only up to a 32-bit DMA
-address range. However, Virtual Functions (VFs) are enabled only after
-the device enters Mission Mode and can support higher DMA address ranges
-(up to 40 bits).
+On 9. Sep 2025, at 17:35, Alex Deucher wrote:
+> Applied.  Thanks!
+>=20
+> On Tue, Sep 9, 2025 at 11:29=E2=80=AFAM Thorsten Blum =
+<thorsten.blum@linux.dev> wrote:
+>>=20
+>> Replace kmalloc() followed by copy_from_user() with memdup_user() to
+>> improve and simplify kfd_criu_restore_queue().
+>>=20
+>> No functional changes intended.
+>>=20
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>> ---
 
-A 32-bit DMA mask limits addressable space to 4GiB, which is insufficient
-for data transfer requirements over VFs on platforms like QDU100. These
-devices require larger memory regions to be mapped for efficient VF
-operation.
+I just learned that calling kfree() on an error pointer doesn't work, so
+this patch should probably be reverted/not applied.
 
-To address this, configure `dma_mask` independently for Physical Functions
-(PFs) and Virtual Functions (VFs), allowing VFs to use higher DMA mask
-values where supported.
-
-As per PCIe SR-IOV specification (rev 0.9, Section 1), VFs are capable of
-handling resources associated with the main data movement of the Function.
-
-This change ensures compatibility with bootloaders that have limited DMA
-capabilities while enabling full VF functionality once the device reaches
-Mission Mode.
-
-Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
----
- drivers/bus/mhi/host/pci_generic.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index 4de7e56d4b8819f1b26a34b8a9649327314169dd..b188bbf7de042d8b9aa0dde1217d2c86558c3caf 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -41,6 +41,7 @@
-  * @edl_trigger: capable of triggering EDL mode in the device (if supported)
-  * @bar_num: PCI base address register to use for MHI MMIO register space
-  * @dma_data_width: DMA transfer word size (32 or 64 bits)
-+ * @vf_dma_data_width: DMA transfer word size for VF's (optional)
-  * @mru_default: default MRU size for MBIM network packets
-  * @sideband_wake: Devices using dedicated sideband GPIO for wakeup instead
-  *		   of inband wake support (such as sdx24)
-@@ -56,6 +57,7 @@ struct mhi_pci_dev_info {
- 	bool edl_trigger;
- 	unsigned int bar_num;
- 	unsigned int dma_data_width;
-+	unsigned int vf_dma_data_width;
- 	unsigned int mru_default;
- 	bool sideband_wake;
- 	bool no_m3;
-@@ -300,6 +302,7 @@ static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
- 	.config = &mhi_qcom_qdu100_config,
- 	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
- 	.dma_data_width = 32,
-+	.vf_dma_data_width = 40,
- 	.sideband_wake = false,
- 	.no_m3 = true,
- 	.reset_on_remove = true,
-@@ -1300,6 +1303,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 	const struct mhi_controller_config *mhi_cntrl_config;
- 	struct mhi_pci_device *mhi_pdev;
- 	struct mhi_controller *mhi_cntrl;
-+	unsigned int dma_data_width;
- 	int err;
- 
- 	dev_info(&pdev->dev, "MHI PCI device found: %s\n", info->name);
-@@ -1322,9 +1326,12 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	mhi_cntrl = &mhi_pdev->mhi_cntrl;
- 
-+	dma_data_width = (pdev->is_virtfn && info->vf_dma_data_width) ?
-+			  info->vf_dma_data_width : info->dma_data_width;
-+
- 	mhi_cntrl->cntrl_dev = &pdev->dev;
- 	mhi_cntrl->iova_start = 0;
--	mhi_cntrl->iova_stop = (dma_addr_t)DMA_BIT_MASK(info->dma_data_width);
-+	mhi_cntrl->iova_stop = (dma_addr_t)DMA_BIT_MASK(dma_data_width);
- 	mhi_cntrl->fw_image = info->fw;
- 	mhi_cntrl->edl_image = info->edl;
- 
-@@ -1348,7 +1355,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		mhi_cntrl->wake_toggle = mhi_pci_wake_toggle_nop;
- 	}
- 
--	err = mhi_pci_claim(mhi_cntrl, info->bar_num, DMA_BIT_MASK(info->dma_data_width));
-+	err = mhi_pci_claim(mhi_cntrl, info->bar_num, DMA_BIT_MASK(dma_data_width));
- 	if (err)
- 		return err;
- 
-
--- 
-2.34.1
+Thanks,
+Thorsten
 
 
