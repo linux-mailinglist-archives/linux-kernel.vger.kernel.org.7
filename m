@@ -1,92 +1,132 @@
-Return-Path: <linux-kernel+bounces-813184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C623B541B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:42:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4DB7B541BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44844626D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:42:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249341B273E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB24926B942;
-	Fri, 12 Sep 2025 04:42:04 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D35119D8A3;
+	Fri, 12 Sep 2025 04:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X92hgrNR"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E984014A4CC
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3441146588
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757652124; cv=none; b=GWgOXqsBw0KzUfn1Zu9a5vfMyF0CpHTop4rcL48b/WfZiD5tIL8vANteatm2z7uodobQh4vQvmUnmPLfgsc5Jv4jWgAvsq31utNZlMluOyq+vvKcXUY/OysP9nWfUP0bW9ogU/grBX3ZHYc/aoQQ3p7sSEGsncNGgM3345FVM/c=
+	t=1757652380; cv=none; b=QhoOQa9DvFLCSuLSxjnM523EeJziix8++1shCSHypD/Gk9qXCV9ev05/wvkqVq2Bl51VPpqjUh5eFC0nXJ3lCMZOwXxMxdNvc750tL1hAsOGeZWnOLt6mzF58y2dDvCpolBeNVGQ3r1idQFUZpk1/4v8kUxqQQU64JL0ZEIUQUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757652124; c=relaxed/simple;
-	bh=Fptw9TkIyST6rg2tazLPSYWcZUmtHqtzpEpZ4Prdayk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=S0Ix0QVZq4QomICBvoaYTfVGQFKMY7nRem0lvaEZz1bLGOWsef3Q9KZ7g02TjNDjHIOVmg1dNq0+liqunRE9utK8oxMpBSE6PJTn+/uHWXLgddne57JfuX+QAJdPBrUDCFa0NvaJsy4beI4tozlYr58RMgjZ00j/NWjSo6BYC8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3f90a583e07so15097025ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:42:02 -0700 (PDT)
+	s=arc-20240116; t=1757652380; c=relaxed/simple;
+	bh=TpUNMHEqmkCZSGnRTVB1Ed/+IAY3EQrOacZve65hZyY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GqgjUKbqNTLSvtAPE7cwkTIbPRCErsBHmYJTLhkYo/iFeg1IcTtDOM75VhCjmk756y+KtZPBMeVoiPLXzjUxs1115aqSxhewnV7u0pT5PrKU+mOrKyv8mW2XnnkSbbQXGFxhPOWCbQZ3NDGzl1TrdD3+48f0wlQ/1oGNCoKWzWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X92hgrNR; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b02c719a117so253438766b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757652377; x=1758257177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GPyIFFvWJ2Fqxf0usnACNYTRuGONj4aV/5x3K8yq/0Y=;
+        b=X92hgrNRbUMCE4ViUGEmvMyOEWyXx+uX6KZwziGn/b39YdgGHZj/unIyPnBOJV7RuJ
+         8bzv/4AIdWDymcqMcXqbGeudzOWET75GGmBjFeGpxovodWy6ngpWWdiWkGFYKxx5j5H4
+         iUjYV3E5fkJaefDFF0JXnp38Cv1z1FmqeRp8qmlRKczdh6Za2WFBS+8m71WgHCJGYA7j
+         xzGZvsATllar07JVbPTFubG71oVPSmHM8VvOVxM5EFeJBYGOBe7j+JcunL4zQmSgj9Fw
+         eaR8jKowCyNFR+duJ7WfSPeVKaBvsJLCeNWsyxkgGM+4V8KOhhyYpQvudRtwvsEiKW6R
+         qSqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757652122; x=1758256922;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QEEv35Wlr+ozjAsH3vwrObCKIxWmWsxGPbGbWyIn5nk=;
-        b=CJuC9QVjfjrNgUPUeJ7jTPPUVR5pkYaRssq3dgcn7M6x/NY6X9PAdUeQ6gTf+VOVtM
-         Zxyui8NaElUViTtsYkEz8GqDJEPCY1ElsCQuemO5PXRfmBRRBiFzcspLCOZcWv2RGzW1
-         Evl4OoilWUmNCEhNvl7SDvor2IeM2BsK48NWbSVg7GU5HcWT7pQhwsHna3GJi5IpbGdj
-         9I6+D9ST/AD1mqjaGu9bJhCXPdQwdZgxgJ1UQG31AqOWKmg6ppgpj4j91YVzcqHgEkQQ
-         M4rA6R+3yiBuhuEuo6IYhuX9ki6gJ7s6/CUxX8+n/3T1WcmKUGpXualXo6HBFysVixSZ
-         J5BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdwerHbQgAI/kH36tAw+3JG65E4XHgfb/HvPMdfVxqO43A17q7OBwGQNN+8qsJzNXWqLt3Zu0dARm6JBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk7baNCIbRQbkhFO2lSrtnb834EaRByGz4rAc2mi84zt2VxxmV
-	nPJ3smzKnAMoaRqG7xpbpC0bZCVJZclOIlUTaalIlZ3eOjimlGPX4AvffiLRsjKVyDWdKahZvCD
-	O5u2aop0o8xvQLzzINUQfaOLqg2mTT5+BT18C+pCOOnlyIp5oT4Fxcd99VUc=
-X-Google-Smtp-Source: AGHT+IGNt9oe189cknDHKvOK7DO8mmhGmDb7pQl7w/dRubRVTvFDLkuRxL+XeO729rtQxdH7CDeVS5fZWUpvBKhsojsOeFHPIIZP
+        d=1e100.net; s=20230601; t=1757652377; x=1758257177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GPyIFFvWJ2Fqxf0usnACNYTRuGONj4aV/5x3K8yq/0Y=;
+        b=I2j0hcu1WFgMh1UUIo84pDNfLqFH1gZDjJgWSEm6jnJxe2yl4z33aM36StLUdocYom
+         r4W+SHjO2yHNr87OB2fFDflkJO47SgqWzPnAT0xYwQ+3bWt5vKGSiEV7FR+0AdSwwquC
+         7MzJKy3Ra8nLAxYl2qDAGgxxVI/WhaYOmbXtbUB53h6lJd6oJk8AGJQUNBNSHxM1RvBM
+         9xqgl1eJ2SyRyiu8hKlWCq1F35AlaWg77+9MA1qjVSjxM7KhHlRDxQeY/7cduiuclVOO
+         cq2j/4rttNXVCReVXPP5B59LUUXuR4tcSjjZXsdYnvKrfnRX0IhSQnhXeqKIAtt3+xMp
+         zY+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWkM7k+z9xd52xLe/9P2KmYkeQnAUObGD23nIgsrGuQ6IKvOXogy7vMR49i71pdM8n+JsrJa7ZRK30HnAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrIBsURu5e2zsaIHduLQwitQdfZLG5bBdgIzWpH/d+zvGOiGJy
+	yVE6gwY0ggu+pQODxn4v5qqylmIk40kMzgJYQpAP6YZOD6Kcl0tK7n7KNioPEJieHfC61r3NbPr
+	PoGCcWh4RYwanwtFiyhgAsX4z3393T6M=
+X-Gm-Gg: ASbGncsU6M/+JSYgcWaNqB3g1Xdto45gC5dF/vji3WimjRI44dN6Da4IVWBS9V3q+GD
+	zMHYA5p8B36KQFhAzr95c1QzaEkbCTW1SjBXrN7YoKW8JLJW6AQ9EpZYYlzIl6RKcdzWlGElbIn
+	7vqhxGLVoSHVgYByoTDXbOBuf4VOqijVoEUWAA7lvU1IGipjO1LTBqGApZiExxtZD0vbHjVb4Cr
+	i9tzgX/1cvYTAVZFg==
+X-Google-Smtp-Source: AGHT+IGrjZ4Yal+gsevWhgCEpcnrtzJz9j54FSUPVtZ49Qh1nxgsRYE/+aTevgym4aFnuwf0J3Dt95GMvslt3Ecgfos=
+X-Received: by 2002:a17:907:7faa:b0:b04:74d1:a57c with SMTP id
+ a640c23a62f3a-b07c3a76750mr146310366b.58.1757652376991; Thu, 11 Sep 2025
+ 21:46:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a89:b0:403:c8eb:877c with SMTP id
- e9e14a558f8ab-420a42687c3mr30972285ab.25.1757652122133; Thu, 11 Sep 2025
- 21:42:02 -0700 (PDT)
-Date: Thu, 11 Sep 2025 21:42:02 -0700
-In-Reply-To: <68232e7b.050a0220.f2294.09f6.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c3a49a.a70a0220.3543fc.0031.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: edwards@nvidia.com, hdanton@sina.com, jgg@ziepe.ca, leon@kernel.org, 
-	leonro@nvidia.com, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
+ <20250911-iio-adc-ad7124-add-filter-support-v2-4-b09f492416c7@baylibre.com>
+In-Reply-To: <20250911-iio-adc-ad7124-add-filter-support-v2-4-b09f492416c7@baylibre.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 12 Sep 2025 07:45:40 +0300
+X-Gm-Features: Ac12FXzDMR8_bGyEoyQ1qf9m-hGEeoE7KKekcW58wgWXbu-hWTBEx_d3jGIfl9o
+Message-ID: <CAHp75VdMSr400YokZfv8SAkt-M8kuw7gt4+eCBb68xt7ipKJbQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] iio: adc: ad7124: support fractional sampling_frequency
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+On Fri, Sep 12, 2025 at 12:42=E2=80=AFAM David Lechner <dlechner@baylibre.c=
+om> wrote:
+>
+> Modify the attribute read/write functions for sampling_frequency and
+> filter_low_pass_3db_frequency to return fractional values.
+>
+> These ADCs support output data rates in the single digits, so being
+> able to specify fractional values is necessary to use all possible
+> sampling frequencies.
 
-commit a92fbeac7e94a420b55570c10fe1b90e64da4025
-Author: Leon Romanovsky <leonro@nvidia.com>
-Date:   Tue May 28 12:52:51 2024 +0000
+...
 
-    RDMA/cache: Release GID table even if leak is detected
+>         factor =3D 32 * 4; /* N =3D 4 for default sinc4 filter. */
+> -       odr_sel_bits =3D clamp(DIV_ROUND_CLOSEST(fclk, odr * factor), 1, =
+2047);
+> +       odr_sel_bits =3D DIV_ROUND_CLOSEST(fclk, odr * factor +
+> +                                              odr_micro * factor / MICRO=
+);
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13fc9642580000
-start commit:   5f540c4aade9 Add linux-next specific files for 20250910
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=10029642580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17fc9642580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b52362580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b41642580000
+> +       odr_sel_bits =3D clamp(odr_sel_bits, 1, 2047);
 
-Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
-Fixes: a92fbeac7e94 ("RDMA/cache: Release GID table even if leak is detected")
+I would rather see this clamp() call to be the part of
+cfg.odr_sel_bits() assignment, otherwise the above line and this
+operate on the semantically (slightly) different data. So, the first
+line should use different variable name, or the second, like
+odr_sel_bits_clamped.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>         if (odr_sel_bits !=3D st->channels[channel].cfg.odr_sel_bits)
+>                 st->channels[channel].cfg.live =3D false;
+>
+> -       /* fADC =3D fCLK / (FS[10:0] x 32) */
+> -       st->channels[channel].cfg.odr =3D DIV_ROUND_CLOSEST(fclk, odr_sel=
+_bits *
+> -                                                               factor);
+>         st->channels[channel].cfg.odr_sel_bits =3D odr_sel_bits;
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
