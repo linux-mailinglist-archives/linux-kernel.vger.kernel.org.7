@@ -1,210 +1,275 @@
-Return-Path: <linux-kernel+bounces-814729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC3AB557DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6372BB557E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B661E1CC7DF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:48:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51226AC4B72
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC472E06E4;
-	Fri, 12 Sep 2025 20:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55A5631D39B;
+	Fri, 12 Sep 2025 20:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="OQm+2pDn"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11020111.outbound.protection.outlook.com [52.101.85.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ay5gNk+T"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C450A15C0;
-	Fri, 12 Sep 2025 20:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.111
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757710077; cv=fail; b=ZUpDDudyuiGh6Y6yrN1vnOx9Uip2deXQO8rPPACRm36kFThwQD8p/k6NmoDT/7Gg3GkIKiWj9n+WY4whAxsgZChAnhYMsYzf+59kextrYhODWn5tjNvntyh+tYptWX1o1fVkV6J42/3lCElcuEGJYZDNPs8RdNT59R3KakaOAfc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757710077; c=relaxed/simple;
-	bh=ZLDYOzvtn6AqGu9h1vNekywftG+SEXaccDieSsUQDaU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qIpBGSIFDD6SG8tltkU1BT0WA18TOjbN49UFgIA/WdKiUoRUnVmlXedQsGFmpaIoMP8Pq3m+B0HtdswMzHnj1Skci7Z2MTgETW5H5hQluUVI6O8CWMOM3L9sUu/GBr2kK8qarDNTE801qhVhTMHdHdrGNeO4hR8r2u5YCItnUgE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=OQm+2pDn; arc=fail smtp.client-ip=52.101.85.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dixeeX4Eoc5IudrU6RKXYJQAMUppnhb0UlQR02WmYLWWZFv60R6gMVQzvZem4eFEMZdKyjQm8Xq0a/GTisyNoCNMxF58NDO0FNzfVLRXA9cHWNfhUY3JSqrRt5A8aNlX3e1VPtVeOjobMe+oDsduzabZ6rtcPZvmr3J17PUx9fqBhcQ7LCFDVUfXgLaBU7zIkG08oOd4MMZMG2zi5bYggmyZ4FqGC5nKnVwZlZSiiECjqVhuO2zAfCigrz/0DsOpsKlOYoTFazhH6mluINTZe7HnS78VZQIa3pGm4IukXtyoznnKWAZ7Puro6X7b8Svmf+BdtIci66D3XCGGqn1fXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZLDYOzvtn6AqGu9h1vNekywftG+SEXaccDieSsUQDaU=;
- b=jgp9OWOEZ1VxaJ7CyI/Fj9T1v0CDVqejqYhpN31P1q76yZImObTkrbtKxWcd7LYDW4VXwgJ4DyE/sLJFPM6QKsKtYB3utNwkpYjtThjKjQdj65UekHgQPkoKKfuY9xI8UD5Z2Wlv2xzGFaX0WwG68NeOcjTYI4tFTqBimpczN5JOm8f4DNvgQicpYImK8wtFl3HinznVtNfcYGsV3eeZZHrhOF3F9+VkKmaj1l5TjDoGjYtGX8hazXMAkB3AlJpoGkwmeem9m7hGBkL6TE/rjbEi6JkXjgR1oLHAah9mHGVOv9xv7UHCH7yoLQGUnOZBW2keq5BMjsdorYJ1cci1Ig==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZLDYOzvtn6AqGu9h1vNekywftG+SEXaccDieSsUQDaU=;
- b=OQm+2pDnqB2VfRI4r6UEVRIPiGWeU5HRfZdKSvIB8lMfPjE6PQaKNDWGyNbe7sgtJqbMAsHQ48lvoU7nnGb0Ac3JFx/g9grch6LaiyHaUlLwUjy4wDKTaEdoDw7I7HV1MyED08+Zh8MV+DWR7/gWKNDlwX1HCmvj3jmlsl5uqnA=
-Received: from DS3PR21MB5878.namprd21.prod.outlook.com (2603:10b6:8:2df::6) by
- DM4PR21MB3781.namprd21.prod.outlook.com (2603:10b6:8:a1::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9137.2; Fri, 12 Sep 2025 20:47:52 +0000
-Received: from DS3PR21MB5878.namprd21.prod.outlook.com
- ([fe80::72b7:dfed:2b1d:c845]) by DS3PR21MB5878.namprd21.prod.outlook.com
- ([fe80::72b7:dfed:2b1d:c845%4]) with mapi id 15.20.9115.002; Fri, 12 Sep 2025
- 20:47:52 +0000
-From: Dexuan Cui <decui@microsoft.com>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, "x86@kernel.org"
-	<x86@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Rob Herring <robh@kernel.org>, KY Srinivasan
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Michael Kelley <mhklinux@outlook.com>, "Rafael J.
- Wysocki" <rafael@kernel.org>
-CC: "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>, Chris Oo
-	<cho@microsoft.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ricardo Neri
-	<ricardo.neri@intel.com>
-Subject: RE: [EXTERNAL] [PATCH v5 10/10] x86/hyperv/vtl: Use the wakeup
- mailbox to boot secondary CPUs
-Thread-Topic: [EXTERNAL] [PATCH v5 10/10] x86/hyperv/vtl: Use the wakeup
- mailbox to boot secondary CPUs
-Thread-Index: AQHb592xG7vqeA8nY0qNs35WkkCj+7SQfTBw
-Date: Fri, 12 Sep 2025 20:47:52 +0000
-Message-ID:
- <DS3PR21MB5878BD23A845865D898E3C4DBF08A@DS3PR21MB5878.namprd21.prod.outlook.com>
-References: <20250627-rneri-wakeup-mailbox-v5-0-df547b1d196e@linux.intel.com>
- <20250627-rneri-wakeup-mailbox-v5-10-df547b1d196e@linux.intel.com>
-In-Reply-To:
- <20250627-rneri-wakeup-mailbox-v5-10-df547b1d196e@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=07ba2062-6c75-4dbe-a70c-71fce1751640;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-09-12T20:47:31Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS3PR21MB5878:EE_|DM4PR21MB3781:EE_
-x-ms-office365-filtering-correlation-id: e32f5149-e0e0-4411-7d3f-08ddf23da4c9
-x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|10070799003|7416014|376014|366016|921020|38070700021;
-x-microsoft-antispam-message-info:
- =?utf-8?B?dnRoblJXMjBMMDlJdW5nN3FONEtnTGRSNnNxTGJBMXBKSk4zRWYzTzg5REtO?=
- =?utf-8?B?NldDQ3ZYbkI4czRsOFZMQnpKaFZrWjdkQk5MSmRsUW9ZTVp2aWlIZzVqRjZI?=
- =?utf-8?B?emNlM1dOZ0JTY1BQbzRYUHhlMzNEckN4NVQ3L3QzSVQ4NkFIT0Z1enpTVFR2?=
- =?utf-8?B?VGlFQTZOR1o5QitPTzViYkNEZjUyYmZhODlwbm1zUmhkYzdMVHFuQSs3NFJB?=
- =?utf-8?B?dWlJbVlubVpMYzY4eU0zZmplREw2KzlzK0FFTWdnVlpJQnJJaUIvditna1ha?=
- =?utf-8?B?MnZ3NCtxOEppRWNua0pPWTRjM2ZVZ3RqMUwxZVNGR205c2dtRXlveGFlemcx?=
- =?utf-8?B?QjhxNk1HSUduNTFYNmJmek1QdFkzYjVJWGNmdEVpS293OGUzL1owekpVSTha?=
- =?utf-8?B?cDlPT2cvdXF1aTFBWlBFVmxPUkc3MnBWaTlrYlpxY3ZYeU1sQ29LcU9qNE5M?=
- =?utf-8?B?TXFiQlIyNHlhbEFMeHV0RG1LL3FvNXdhVm9KQnUxbGtEdDZmcDg0S1dIaFpo?=
- =?utf-8?B?OXloNXBPa080b3owTW9rTVR3bEw5OFhKaEJlLytrWUY3MStwZUZMSUxUTzNz?=
- =?utf-8?B?dmtsQVVKM0lVN2FaanRoZFAyTW5McXVEeCs5QTFIK1lMWWhzQzQ3ZEhINVdk?=
- =?utf-8?B?UnRqZWZqWFBHemR5bjZMZ3pocVV5MW9LNEE1bjRuNVBvNG1neFBkd1JDQktK?=
- =?utf-8?B?UlloZFVUWWJNaEp2RzZCeHJ6NDU4THRBbGthWlh3TWNONit2QTZSUzcwdXYz?=
- =?utf-8?B?YXRiaU1oalI4eEdNZkg3WlVuQkR3NDRQdVoxRm1sRHplaFlLVVVDVzBlMHhz?=
- =?utf-8?B?cFVBeVJoNHVpVDZucm41eG56eDVlVEVxSGpteTRsQTVkY0ppb0QzUWlZTCtj?=
- =?utf-8?B?S21lVkltWlFJdkwxNEhYYko3eHQxL3hLRDVFRE1NV0hkLzV2M2hQTnZHNzFs?=
- =?utf-8?B?by9ObThPOTBYN1VOOHM2WVQwVXU1TGxtTHcvSlFHalptcU5SUmJKUU83aW9S?=
- =?utf-8?B?alBuMk5ML0FrYmdwSFhtT1VIbnZwdE1SZGt3N0Z4d2VNMCtYNjJ4RGN2ZHpV?=
- =?utf-8?B?Vk1zSkN5ZUgzN3kzZXJFSXBwZjZ4THVGb3RJTWlhV09xcWkyMWRJcTBSODdM?=
- =?utf-8?B?clpjckNVWEJFNzEyazZ3TThMOXA4eFVvVGZXYnNwSTFqSmRWL1hTZ0xzZnlO?=
- =?utf-8?B?cmp3MHdjNFBHYlZRMTh2Q3pyTlQ1T3JQaStjUENMTWl3Z0c4WU1UY1o4N1Bt?=
- =?utf-8?B?RkNDL3BVZlcyckdtOU52eEpwODBWYktPRVl4VVhReFNVMHVwakZCMkc5TDVy?=
- =?utf-8?B?UVkwQUFteHgvUG1HUi9VVUxobDFYMEVqVVBZQ0JxY21WMWhUUFdwYytsdzJr?=
- =?utf-8?B?MnFOOVdVbzAwS1h4bjVZeTg4OWxoSWxtWmx2T1loNDhiMWRmZUpQK2lwRS9J?=
- =?utf-8?B?UWdzZ1BwUmhUTVh1L3l1ZGIzRUpqNU5ZKzdtSDE1cWtXNTRXSnhyb1ZSRGdv?=
- =?utf-8?B?MTJyU1hETXFNRUsyR2hoQ3FZeHVCcnlrczI2Q2Y0RW81cHNhQm53RXdHL2Vk?=
- =?utf-8?B?dTJmZWtkQ1VMOURPKzlHcnZFTjdGR1ZwOUVpd3hIZmFCVGdLVUU0eUJkQnBu?=
- =?utf-8?B?RHNHSGViVStpSFJuem12anBWTTVxMWhoWlVsenJGc2owb3dXL3BINThNRTFP?=
- =?utf-8?B?S3l1VzNqcHU1YlI0eWNhWDZiRVRYTUZqODZnSFlxNWQyVVpIZXJvRUNxK1pB?=
- =?utf-8?B?K20rVzBFaVd3WUV3dE5EY1d1MTdVM1F3U21CMXRTNVIzdUNNd1h0Y2FsREJl?=
- =?utf-8?B?aU5vVytTaVRLMmcrb1NqNzN0NnQ1dExqR1pRd2M3dzg3aUVTWXZvVnlzYlBj?=
- =?utf-8?B?WlZzT1dPTCtydm5wbU1VNXJJYVBPRDhhdXd1cXBEZUJBai83Wjg4N0kzZWZx?=
- =?utf-8?B?RjhpYmpDUVErQ2hWMEZDVVFPSFZFM01SUkZEbkVqZTJLcDBYa0x0NDZpZEw2?=
- =?utf-8?Q?94gndVhx5V79FzXAABmF+1+koTG2uo=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS3PR21MB5878.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(7416014)(376014)(366016)(921020)(38070700021);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?ZFZpNStHU2gzT0pmZzVXQUhRY1FsaUdITnZOdjlETGM0R2lSS3FFaXlTNVZm?=
- =?utf-8?B?emh6dWtwekFUc0VRWERWQzkyRjN4Z1FlTlNlY2pIN2d6WmcwajNKbU0xNzdW?=
- =?utf-8?B?VlVHQThLT3M3bDFZUWRBaFpjeTliVFFxMVN1cHNobCtweFRYeWg0WFRxYWtE?=
- =?utf-8?B?UzZIbHpPMW9Vd0oxVlNnMklaa2JuS09Yd3hYVnpIdEs3Um1iWU91K2JiTldD?=
- =?utf-8?B?SHlrMGtoU1RZQzlUc3BnOUU5dUZqUDg3MEJqMVVXSGk5MGpESzBuRkU4OE1m?=
- =?utf-8?B?d1MycGxsZkxmdG9zcVVQeEUwdGo3N0IxZTBjQ1JEZXlaN09FZnppVldwRWhJ?=
- =?utf-8?B?cklYWW4vbDhtMUg5YWxyNkxuK29CSVdTc3NxcndDQmM3TjFydGVGZFFrNFl3?=
- =?utf-8?B?N1M2V2pCVHp2Q3ZNd0tCbzJORjFOYlpSb0VzektGKzJiang4MkFtWlAzSHpN?=
- =?utf-8?B?WlVnVFBaYzRBN0o4WGtIdXdKQjMrUUlaNHhmcjJWV3RqN0xDNXVkbUxvTDdF?=
- =?utf-8?B?UGNlYVFjTUpEVWtCeXY3bFZpTU8yRkkzSUphMjVLSHJVbVM1bGRNYUJERU1p?=
- =?utf-8?B?UEpPL3c5azdJL1RXVmdKR21Qa0c2bXg1VzIxbWRyNmtXOGRIbTN1VC9IMlVk?=
- =?utf-8?B?VUVReUUzaG1vdlhYYnBpc3FWTndIZ2N6MC8reHNPdVFKbER2SHNmWUFYTUMr?=
- =?utf-8?B?eGJDek5kQ3p2YUl1T1dWM2JBWTNpWEMrdGNZa0lDRUdqRGpqbCt3Y2NhRm0y?=
- =?utf-8?B?c2hhTTdobXNTazRGVzlIcUtEaThvVlJxZ3lVdEdGck5mRjZnNWFZUndwcEZC?=
- =?utf-8?B?NGgvZmN4b2xLUXpRQmUwVkNYcFRyS3hlTTdjTTdZMlZOR0NLV2NVdjJjUC9v?=
- =?utf-8?B?cmZCNVFKaTQ4V1hPKy9YMU1nZVdVQmZvMUE4SGNtY1NlL1N6bzhyTUlzM0Ux?=
- =?utf-8?B?VFZ5Qytlby9DMkJWV05BQjRIZS94dGcycE4vSVlLSUFXTG5WMnhUNnVhVnMz?=
- =?utf-8?B?T2ZWY3hCRkw1OVdndC9uVU9VcklVeEFxTjdDSVppNnBvUjFrTVRsbGxLRGhM?=
- =?utf-8?B?dlpiajJxNFdpY09MbVhJNHJrYTRTWjhPdFpuQkV4TzhlcG4ycFVLMlBJT005?=
- =?utf-8?B?YUc4Z2hjVEtGdy9OWnhPYUNUY0ZGbjlxV09WbTMwbzNDUWFGZGtpclNJbnU5?=
- =?utf-8?B?eU8zWFY5ckFpbW5KdTE1aUprd3ZlZ0pkY3U3RWRKRXhTcElYcjAwVFBYNlZW?=
- =?utf-8?B?M250QmpJc1dZK3B3Qm9zbHNPNzlicFV4ZGFEcmRzSGlsRnNNR3ZzUVV3U3Mw?=
- =?utf-8?B?TitUZGdUSW5RcW5zWENOTVVVSVFXVVFSWjZqbXhBSDdsajI1c212ZkpKdWVi?=
- =?utf-8?B?aVVlcDNHdW95TWk0WTNiQmQ2ZWQ5emFPS0hjZnhYbC84SlpDdjhTNVd6WjRW?=
- =?utf-8?B?VnJEZ2k5d0IwaUJvTWQ2YnEzUDFLZngrYm9BNCtxK1BTUDVra3ZMSENuUjl0?=
- =?utf-8?B?Y29rdWhmMXlkazZ0M0dEVEs0Y0Q3dVlJWm84MURrSVloUkJ4UnhtVmM5djUw?=
- =?utf-8?B?WlNYOGkxV1BXZGpXTGExc05rMTVwRnBEcUhmMXpXZ2thMFpxeEI5R2ZrVldm?=
- =?utf-8?B?QUkvSUQ4TytDdWxHVFFzdThLQU55UmFRU1hZNTl4aEovbGlFTHJ1ZjJ2SGZY?=
- =?utf-8?B?SkZFc0dhWThDUExZNi9QaEcrMEtnNkNaZlJ1eUZLYkN2dkdHWnMrcDBxWDZh?=
- =?utf-8?B?R01sbTZBN0VDQkI0bWpQY3BEUGcwSytJdEkweDY4Nk5neHlpWkxLNUJ1dEVF?=
- =?utf-8?B?OENzQjRqZHBFN0ErSlNZNVV2ZUxES3RhMEpmdVRsSHRtKzF4K2NjYUJZU21a?=
- =?utf-8?B?T0ROU0ZRVUtCYU8rYmg0VlA1d1l4WUJPL2VCbW9sYkt3RXZlTjBndlBuUjZF?=
- =?utf-8?B?bFBxZ3lUckcyTnRqQ2w2YnMwazNBbEp2Tm9BYnZORGoxZFZSdjFMNXlUU0tz?=
- =?utf-8?B?SFpVb25WK3NYUzNNd0hkaE5LREhOenorbEtibVZQYXRwbTRHckRQcEtZbTNO?=
- =?utf-8?B?Ky9Ldk1nQTh6WnRiYXU4UU12amNHMDUzL2xLU1Q2bUJLeTVTWTRrVm5SU2Ri?=
- =?utf-8?B?UjE0NU83L3gyWXNFU0pQbUl4NWZCd3JvandKNThlK1pZSFRFZGREQzAzYVRz?=
- =?utf-8?Q?47RWaXFRe8KclCY8QSLuBJQcEqmRajAA1CUE7+DqE/0z?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCD92D662D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757710079; cv=none; b=b9sZRJrFwAjh7UIa4iz/xW6GjdYiaGlR9fhxYCVLKyKyfPysIYo4hURGe+CwoiovYGKjZKTzK8yletNf8FECPJdzO5lTnwPDkgyaWSTzVQx7ko0ptOfe/lFoYjuQ3zBftDmVh1HOheqcqWvK/iL6SmLED7qHXQ91N8Bsx1HvXd8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757710079; c=relaxed/simple;
+	bh=a5r1D82Y2WoGNE88dbhuZrqCxTlrKYnBKNCQdv+sI1Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VV6AU1TXbwfpa0bqrPzIDNoTsqt1kWq4TM5vRqo7E4N8+PzzWmURs4+Wu0xIkO9RMSZRDMApq6Xa7RKYBDZ4Q7kOq4d2FOPYF1rwwZR5l0e4DLna4yWr9aRcR2ecMh/ypZ325d+KuBTZcbBYvIcraFJZ2o6vWU94akbEZk/rvVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ay5gNk+T; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45df09c7128so19478615e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:47:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757710076; x=1758314876; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ztodRZzqZ7LwwLlFxMHp4gp6whyJBQuaH7JG6HpRU/w=;
+        b=Ay5gNk+TlZZC5WsVXpdZzb0LGcNZHY3+FScsegHImpTMGiFKyenG22jTe+TXZDMkk8
+         Q33ce0pdgxb/aiQ0kUn7L4u8EW50kep/tsGZz6RdWEswLmQmgv5qTwYufUJCxZm2uK1M
+         jT2ra4GmL8qA3mLQcTCuT8A4euoOpuUR4xJwIa3Ukn/dMGj3bbCHFhMk+UM80JanO/qg
+         7MLIUG60PjLXpaIX69kqKJpmN7+VT7Y+NycF/+VV9EIxGEJCKHpXcmZ0HmiZ8Zh4xIfm
+         71hQh3QXNmzcR4mxxoyia7NEOO+2kWzS/mlprYmm8/DNsCbFSnOJrOtzctBzGkv1SyOu
+         qoJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757710076; x=1758314876;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ztodRZzqZ7LwwLlFxMHp4gp6whyJBQuaH7JG6HpRU/w=;
+        b=G5xjI++9l1e9zvPoJOmA0Ii4InE8QCEuq7lRBBKD7FWgWQ9BMrfyDDn9vad/Aq2CWG
+         uFl0K1OC/AhN5l3MXwoaqYEiv44QsUmuCseLhuLETPA9w8dej4getfmQ4mcbpc++MbRM
+         VIAFkpwKb/ah7l6DEZX7Nrxq1J9/Y2uSOHWFY6PkQc4T9kBO3Eaeaa0eF+3IP28pp6aT
+         9Nq0Ds7ZqTB9OkX/77vwVkWfG7ywNXH6GIKhds5tDMc8Y5YyTRMyHeZ30Gtz2KgvOznB
+         hdUxgqqb6S0r5r5nLjyYauCuwCb9KxsXOOZsd+JbtL84gb7DUlJwjVB1ldNVhpTKD9m9
+         VUEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWR8anQG1guE9i4+4Mg7BmQ8UigrnSuQGMv6FI2Ey5EnZOk4WaumnLZcmcAssoiRWxVpU02foxUcTDAh2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1IpAeFuAh8HD6KzuOi1DFlAEwIyTc3CXJjMz6yfGU4yA3dbVA
+	T63H5w+wn95uzTs1WdH+Q6O4pjgPP28uBX2GXHldntFMlGG+oklA12Er
+X-Gm-Gg: ASbGnctkJ6TNNycb0u8/LHYBPdYwo5kY+A7KGnXsjNAVnrRsIAER8M1ICnsHygcif74
+	K3gIxRQOKmYo9FaW8l1orrhZlW6+5cvExPyFk4BzImdNR+n8zTNEGVIys9Cv3jSY8x+qTwEBec/
+	qoV9YbUPiymVCLkM0Wx2yGPgBsdsYFphaqcIJQEppLhWW7nxY2Ouk3e7jxBlxmbrMhJmVVX73T1
+	hPLWcRYj6+JG+8hve2pEx9yDlmZl0hkSFDayHbuiDcdCSbXEWxh1BUxs/hROtfbOaGbPnoFG9u5
+	rsR5IaqGKsaryC02HPRF20Lg8tbhBfqXSWWIgy7RkHpo6Q/dfzs4PsXreZAu2g3JJrmP4Na4Wyb
+	bs1aUJohIZX4rZcVOWpFUkQ67yzzni8KIUz1vHxcIMDoUARWnxg==
+X-Google-Smtp-Source: AGHT+IFIvkjy8Vwo+tcss+tuzUrJigzqjS7F4UVyfQ+Mr6yldJrMZviznywA0j6s22x0kQNAy0i8hQ==
+X-Received: by 2002:a05:600c:3b93:b0:45b:8ac2:9761 with SMTP id 5b1f17b1804b1-45f2698a026mr4412855e9.13.1757710075861;
+        Fri, 12 Sep 2025 13:47:55 -0700 (PDT)
+Received: from krava (89-40-234-69.wdsl.neomedia.it. [89.40.234.69])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e015ad780sm38311015e9.10.2025.09.12.13.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 13:47:55 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 12 Sep 2025 22:47:52 +0200
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Jiawei Zhao <phoenix500526@163.com>, bpf <bpf@vger.kernel.org>,
+	Networking <netdev@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the tip tree with the bpf-next tree
+Message-ID: <aMSG-N9MiySZX6UQ@krava>
+References: <20250912124059.0428127b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DS3PR21MB5878.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e32f5149-e0e0-4411-7d3f-08ddf23da4c9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2025 20:47:52.7903
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xL1iJFvt1q+Xvq5yUjNoqh73gn36zUQBv8t9bQQTcQAuZECJM/ZQX1lYyx1DrbTMja/0q/pr4TPtCX0J6uuREw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR21MB3781
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912124059.0428127b@canb.auug.org.au>
 
-PiBGcm9tOiBSaWNhcmRvIE5lcmkgPHJpY2FyZG8ubmVyaS1jYWxkZXJvbkBsaW51eC5pbnRlbC5j
-b20+DQo+IFNlbnQ6IEZyaWRheSwgSnVuZSAyNywgMjAyNSA4OjM1IFBNDQo+IFsuLi5dDQo+IFRo
-ZSBoeXBlcnZpc29yIGlzIGFuIHVudHJ1c3RlZCBlbnRpdHkgZm9yIFREWCBndWVzdHMuIEl0IGNh
-bm5vdCBiZSB1c2VkDQo+IHRvIGJvb3Qgc2Vjb25kYXJ5IENQVXMuIFRoZSBmdW5jdGlvbiBodl92
-dGxfd2FrZXVwX3NlY29uZGFyeV9jcHUoKSBjYW5ub3QNCj4gYmUgdXNlZC4NCj4gDQo+IEluc3Rl
-YWQsIHRoZSB2aXJ0dWFsIGZpcm13YXJlIGJvb3RzIHRoZSBzZWNvbmRhcnkgQ1BVcyBhbmQgcGxh
-Y2VzIHRoZW0gaW4NCj4gYSBzdGF0ZSB0byB0cmFuc2ZlciBjb250cm9sIHRvIHRoZSBrZXJuZWwg
-dXNpbmcgdGhlIHdha2V1cCBtYWlsYm94Lg0KPiANCj4gVGhlIGtlcm5lbCB1cGRhdGVzIHRoZSBB
-UElDIGNhbGxiYWNrIHdha2V1cF9zZWNvbmRhcnlfY3B1XzY0KCkgdG8gdXNlDQo+IHRoZSBtYWls
-Ym94IGlmIGRldGVjdGVkIGVhcmx5IGR1cmluZyBib290IChlbnVtZXJhdGVkIHZpYSBlaXRoZXIg
-YW4gQUNQSQ0KPiB0YWJsZSBvciBhIERldmljZVRyZWUgbm9kZSkuDQo+IA0KPiBSZXZpZXdlZC1i
-eTogTWljaGFlbCBLZWxsZXkgPG1oa2xpbnV4QG91dGxvb2suY29tPg0KPiBTaWduZWQtb2ZmLWJ5
-OiBSaWNhcmRvIE5lcmkgPHJpY2FyZG8ubmVyaS1jYWxkZXJvbkBsaW51eC5pbnRlbC5jb20+DQo+
-IC0tLQ0KDQpMR1RNDQoNClJldmlld2VkLWJ5OiBEZXh1YW4gQ3VpIDxkZWN1aUBtaWNyb3NvZnQu
-Y29tPg0K
+On Fri, Sep 12, 2025 at 12:40:59PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tip tree got a conflict in:
+> 
+>   tools/testing/selftests/bpf/prog_tests/usdt.c
+> 
+> between commit:
+> 
+>   69424097ee10 ("selftests/bpf: Enrich subtest_basic_usdt case in selftests to cover SIB handling logic")
+> 
+> from the bpf-next tree and commit:
+> 
+>   875e1705ad99 ("selftests/bpf: Add optimized usdt variant for basic usdt test")
+> 
+> from the tip tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+hi,
+fwiw the conflict was mentioned in here:
+  https://lore.kernel.org/bpf/aMAiMrLlfmG9FbQ3@krava/
+
+the fix looks good, thanks
+
+jirka
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc tools/testing/selftests/bpf/prog_tests/usdt.c
+> index 615e9c3e93bf,833eb87483a1..000000000000
+> --- a/tools/testing/selftests/bpf/prog_tests/usdt.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
+> @@@ -40,73 -40,20 +40,80 @@@ static void __always_inline trigger_fun
+>   	}
+>   }
+>   
+>  +#if defined(__x86_64__) || defined(__i386__)
+>  +/*
+>  + * SIB (Scale-Index-Base) addressing format: "size@(base_reg, index_reg, scale)"
+>  + * - 'size' is the size in bytes of the array element, and its sign indicates
+>  + *   whether the type is signed (negative) or unsigned (positive).
+>  + * - 'base_reg' is the register holding the base address, normally rdx or edx
+>  + * - 'index_reg' is the register holding the index, normally rax or eax
+>  + * - 'scale' is the scaling factor (typically 1, 2, 4, or 8), which matches the
+>  + *    size of the element type.
+>  + *
+>  + * For example, for an array of 'short' (signed 2-byte elements), the SIB spec would be:
+>  + * - size: -2 (negative because 'short' is signed)
+>  + * - scale: 2 (since sizeof(short) == 2)
+>  + *
+>  + * The resulting SIB format: "-2@(%%rdx,%%rax,2)" for x86_64, "-2@(%%edx,%%eax,2)" for i386
+>  + */
+>  +static volatile short array[] = {-1, -2, -3, -4};
+>  +
+>  +#if defined(__x86_64__)
+>  +#define USDT_SIB_ARG_SPEC -2@(%%rdx,%%rax,2)
+>  +#else
+>  +#define USDT_SIB_ARG_SPEC -2@(%%edx,%%eax,2)
+>  +#endif
+>  +
+>  +unsigned short test_usdt_sib_semaphore SEC(".probes");
+>  +
+>  +static void trigger_sib_spec(void)
+>  +{
+>  +	/*
+>  +	 * Force SIB addressing with inline assembly.
+>  +	 *
+>  +	 * You must compile with -std=gnu99 or -std=c99 to use the
+>  +	 * STAP_PROBE_ASM macro.
+>  +	 *
+>  +	 * The STAP_PROBE_ASM macro generates a quoted string that gets
+>  +	 * inserted between the surrounding assembly instructions. In this
+>  +	 * case, USDT_SIB_ARG_SPEC is embedded directly into the instruction
+>  +	 * stream, creating a probe point between the asm statement boundaries.
+>  +	 * It works fine with gcc/clang.
+>  +	 *
+>  +	 * Register constraints:
+>  +	 * - "d"(array): Binds the 'array' variable to %rdx or %edx register
+>  +	 * - "a"(0): Binds the constant 0 to %rax or %eax register
+>  +	 * These ensure that when USDT_SIB_ARG_SPEC references %%rdx(%edx) and
+>  +	 * %%rax(%eax), they contain the expected values for SIB addressing.
+>  +	 *
+>  +	 * The "memory" clobber prevents the compiler from reordering memory
+>  +	 * accesses around the probe point, ensuring that the probe behavior
+>  +	 * is predictable and consistent.
+>  +	 */
+>  +	asm volatile(
+>  +		STAP_PROBE_ASM(test, usdt_sib, USDT_SIB_ARG_SPEC)
+>  +		:
+>  +		: "d"(array), "a"(0)
+>  +		: "memory"
+>  +	);
+>  +}
+>  +#endif
+>  +
+> - static void subtest_basic_usdt(void)
+> + static void subtest_basic_usdt(bool optimized)
+>   {
+>   	LIBBPF_OPTS(bpf_usdt_opts, opts);
+>   	struct test_usdt *skel;
+>   	struct test_usdt__bss *bss;
+> - 	int err, i;
+> + 	int err, i, called;
+>  +	const __u64 expected_cookie = 0xcafedeadbeeffeed;
+>   
+> + #define TRIGGER(x) ({			\
+> + 	trigger_func(x);		\
+> + 	if (optimized)			\
+> + 		trigger_func(x);	\
+> + 	optimized ? 2 : 1;		\
+> + 	})
+> + 
+>   	skel = test_usdt__open_and_load();
+>   	if (!ASSERT_OK_PTR(skel, "skel_open"))
+>   		return;
+> @@@ -126,22 -73,13 +133,22 @@@
+>   	if (!ASSERT_OK_PTR(skel->links.usdt0, "usdt0_link"))
+>   		goto cleanup;
+>   
+>  +#if defined(__x86_64__) || defined(__i386__)
+>  +	opts.usdt_cookie = expected_cookie;
+>  +	skel->links.usdt_sib = bpf_program__attach_usdt(skel->progs.usdt_sib,
+>  +							 0 /*self*/, "/proc/self/exe",
+>  +							 "test", "usdt_sib", &opts);
+>  +	if (!ASSERT_OK_PTR(skel->links.usdt_sib, "usdt_sib_link"))
+>  +		goto cleanup;
+>  +#endif
+>  +
+> - 	trigger_func(1);
+> + 	called = TRIGGER(1);
+>   
+> - 	ASSERT_EQ(bss->usdt0_called, 1, "usdt0_called");
+> - 	ASSERT_EQ(bss->usdt3_called, 1, "usdt3_called");
+> - 	ASSERT_EQ(bss->usdt12_called, 1, "usdt12_called");
+> + 	ASSERT_EQ(bss->usdt0_called, called, "usdt0_called");
+> + 	ASSERT_EQ(bss->usdt3_called, called, "usdt3_called");
+> + 	ASSERT_EQ(bss->usdt12_called, called, "usdt12_called");
+>   
+>  -	ASSERT_EQ(bss->usdt0_cookie, 0xcafedeadbeeffeed, "usdt0_cookie");
+>  +	ASSERT_EQ(bss->usdt0_cookie, expected_cookie, "usdt0_cookie");
+>   	ASSERT_EQ(bss->usdt0_arg_cnt, 0, "usdt0_arg_cnt");
+>   	ASSERT_EQ(bss->usdt0_arg_ret, -ENOENT, "usdt0_arg_ret");
+>   	ASSERT_EQ(bss->usdt0_arg_size, -ENOENT, "usdt0_arg_size");
+> @@@ -225,18 -163,9 +232,19 @@@
+>   	ASSERT_EQ(bss->usdt3_args[1], 42, "usdt3_arg2");
+>   	ASSERT_EQ(bss->usdt3_args[2], (uintptr_t)&bla, "usdt3_arg3");
+>   
+>  +#if defined(__x86_64__) || defined(__i386__)
+>  +	trigger_sib_spec();
+>  +	ASSERT_EQ(bss->usdt_sib_called, 1, "usdt_sib_called");
+>  +	ASSERT_EQ(bss->usdt_sib_cookie, expected_cookie, "usdt_sib_cookie");
+>  +	ASSERT_EQ(bss->usdt_sib_arg_cnt, 1, "usdt_sib_arg_cnt");
+>  +	ASSERT_EQ(bss->usdt_sib_arg, nums[0], "usdt_sib_arg");
+>  +	ASSERT_EQ(bss->usdt_sib_arg_ret, 0, "usdt_sib_arg_ret");
+>  +	ASSERT_EQ(bss->usdt_sib_arg_size, sizeof(nums[0]), "usdt_sib_arg_size");
+>  +#endif
+>  +
+>   cleanup:
+>   	test_usdt__destroy(skel);
+> + #undef TRIGGER
+>   }
+>   
+>   unsigned short test_usdt_100_semaphore SEC(".probes");
+
+
 
