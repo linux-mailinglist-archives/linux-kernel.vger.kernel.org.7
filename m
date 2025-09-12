@@ -1,305 +1,128 @@
-Return-Path: <linux-kernel+bounces-813014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CEBB53F9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:05:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C2DB53F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:07:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BE8A000AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:05:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 628117BBD23
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6926F35965;
-	Fri, 12 Sep 2025 01:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C8A50276;
+	Fri, 12 Sep 2025 01:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCFrRBKN"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dLrXaBU9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16894168BD
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D312AE66;
+	Fri, 12 Sep 2025 01:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757639124; cv=none; b=k1ERDxz6P3AM3gb+7bXpJFNUveFVKUN+X7+6Vg+o025PAWOPdOTGtKHHDWGNNd0cqMpcAKmIq5yXuSsmVDTYMjKhJ90yVtaMvy+pSsJDayidQMcYkXqOwrdmyVV2R0pNFMF9btFPqV+LGYRx8tKDCk2ZJmya2uc4EkJAg+3v8/w=
+	t=1757639249; cv=none; b=h+2h9ytysy3Gs7fDDs34IJx7e1pLmMAjNwGYby4IKAEOE3zxlsZVods5/dPreSFeMh71c46SwMuk7eT05eabb7Q8hkRszmHZYQDvRBN0kBB+yUWsHW8ofIswMPvheaMttc664C+P0shynl+/HLnKldOLQQ/DiYubVHrQ7/alh6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757639124; c=relaxed/simple;
-	bh=9lJzn+itqID29kEdUdzBfBMpzUgt9SdFodtR/JzWcB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbQC2D5V+R+zCzKDnMFo8halzGy/e8+KJUc0fw/MdCQBDH+jFs+WwAp0lPNPAceOpXv7LtoKcTPQzzOogBlLBcg7dibdCSuyfnsPwKmvkakCpK2sQM0VbJ4eHk/IPJtbbTgVfsbJC7YTp+1aCBdk4vuvB7uNRHdzUu8UwAUvIT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jCFrRBKN; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-25669596921so12724105ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 18:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757639122; x=1758243922; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hbYmMIs+/4yMUw9lg/R3ZdC/yxr5eXq4wDbIYDDjtE4=;
-        b=jCFrRBKNraxdgqipmEF9fRgOdSAj/80RIZOzt4yyJkn81pVS8i7j1FP91rKodLwMH8
-         RLMdeOInbOe+smaN8wCFFKEAx2GCTNUdPi60jpibE4PXyZtqU5n3OnXMEiNxdjd5YbRQ
-         o+QeWHhXXONSnimJtqcWNcXehtFIQBiALIF/FtAlYSJnYGpWn2uz7L488g4eJRLiLzig
-         I0CbEf4RqxvZk6fcx1ksq7DTZK5wDPORKJax04jlFF+P6NiSociUImlC7sg8/kHAuZFt
-         DuHuSVAFpKKErh+Oo1zOBOu3jTwHtnpRZlDCgNywaKrsSc/9A+AIHnBRu9KPYzq2ebV3
-         4v2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757639122; x=1758243922;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hbYmMIs+/4yMUw9lg/R3ZdC/yxr5eXq4wDbIYDDjtE4=;
-        b=rEXKUdWzV8rT6qL3CRIIphMdKDFM8kvGowFHD6h9jzwqO6ze4FiQ2Ghsgjs+CmZX4g
-         hgkG16iwnWytINeRTIRsy9xG/eYXt5bg6CURBINJJiJYoHNEjRuGLr0M5jMpmw0b+sCy
-         rVYJp7itiUe85a6JOxVFMuppz6umewgO792XozBBYuEmdDVFyWsxpY+b9JCPdkJ5cFtN
-         lbjOeB5Snz7AqC3UnwSUFyEuWJdSoC9Ku4kayAZzdpuABZsD6atek6Bn4XAsiJJhO2gt
-         htxrTxuQQlPgRU+RdCW/fr5P8Woez6+Y7/LTRvvgxeIqNTzHAesVWqWHwkWJF6cJym01
-         wrNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3wOJe6XUBgTcQUxv1bQ6HWgE9pCV09XuaU8nrA5coDYrgcrs/0K7oifo/+au/dy+agjLYQea7ZHcrUvs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMyNXfLNeY5QhlwiZAUYpqQnW77zVavJxMWIJJD4NObBHTQgpk
-	aAjlAU909oH78w5JYOtC7RDk9etfG7Gh2Xn5XezvzKxALgttPwp3jf8o
-X-Gm-Gg: ASbGncszjMA+y6H+13c/13yGU6DiBzE08O2MmznR9KXREfoxGCTz5hkM23cXqYjeMfq
-	td7Yv7Ji5g/0RIXW9hDZyp8dNv2AQwQxJmoJG643iAcfMy1BL/IgUI6U+dVA0a6dfvtZcjEO+b1
-	NUTQ0gnqSF2rUTWIyXqtkEVS85iui/yj9YK2TsWFEbJi/u4OgL6eqJ1PKJhSJyigf4A5vlezZb7
-	2lo6VrRPBuv/bJwnGQNeDuITSZFcqiVvBnVwkEXAfDieYo6gfaZRuqax9hlSsMiJfLzQuR+9dBe
-	2W8SbkQkqNJN3iUEuWWHLYImdqN1GigC0LtKzfBoPWfyWRfwHKttkWBEvuQ9A9+5tO06g68sp5L
-	X3oEzKhB0sxj/QJXEA+fiYUUpQpVhqFaFeY0=
-X-Google-Smtp-Source: AGHT+IFSN+MBg51ax1+Sm6whZztszcgJF+OA3CQXmlICHV8OLSi9h1nLs77AdjLPvKOaSFSq2WdFVw==
-X-Received: by 2002:a17:902:ebc1:b0:240:9dd8:219b with SMTP id d9443c01a7336-25d2703a588mr16160945ad.49.1757639121815;
-        Thu, 11 Sep 2025 18:05:21 -0700 (PDT)
-Received: from localhost ([45.90.208.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3a84a767sm32069995ad.67.2025.09.11.18.05.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 18:05:21 -0700 (PDT)
-Date: Fri, 12 Sep 2025 09:05:15 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] x86/hw_breakpoint: Unify breakpoint install/uninstall
-Message-ID: <aMNxyx3RADiosttf@mdev>
-References: <20250910093951.1330637-1-wangjinchao600@gmail.com>
- <20250911170345.80169f37b3964eb9c9475c41@kernel.org>
+	s=arc-20240116; t=1757639249; c=relaxed/simple;
+	bh=PXuMJATVT4V0Y16Ka+lqtvBlfX81tB2vy3KhW0U7yNw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=rFy91xpFZ7NefJiOToOQq3B0STEChovQll3jGUJiaEVf0/qeaR+O2Wv4RPry0giKnDkp3JhiptzVg2AKF3E4uIZgYvhGI621e6+/ZGR+oZ4keX6AD/M728si8DtDJadhJ2nC5OtC0rYfD3KewOAR8rJcJSBssCaJMfHgGhuBhD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dLrXaBU9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EA00C4CEF0;
+	Fri, 12 Sep 2025 01:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757639247;
+	bh=PXuMJATVT4V0Y16Ka+lqtvBlfX81tB2vy3KhW0U7yNw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dLrXaBU9sm6JjTx7yMnrAWHzGggmPl9ChW3HUUfCJfPQ1RupdUGBZupZevzvrNAnj
+	 qqWKh9IbNcZOots0tCo95xxx38IqCC5RLsHH+wgRArii+KRrvzl9hivVoGr0Qp7Mdj
+	 e6JIb3kknNcn8VC1kJf3GL6WzF9Zu/3FatptpsAQjwFcfw6BasZKVrhcMcCRTXgsKs
+	 bj0uLjCJNYkas6NBhgR6Sup+5dN6l79ufOCpZ+TcaeYVhLsRtLmLFz4uAF6rYYP3VB
+	 mBwt859ZmB4c1FCaydz731HnFwNvP3RJpzinCL6N042yJBgpiazhbYOpwywUejcy5V
+	 f6EcX6h9WVWdQ==
+Date: Fri, 12 Sep 2025 10:07:23 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-mm@kvack.org, Kees Cook
+ <keescook@chromium.org>, Aleksa Sarai <cyphar@cyphar.com>, Al Viro
+ <viro@ZenIV.linux.org.uk>
+Subject: Re: [PATCH] uaccess: Comment that copy to/from inatomic requires
+ page fault disabled
+Message-Id: <20250912100723.4fce2b29c4d77f3a89c0b636@kernel.org>
+In-Reply-To: <20250910161820.247f526a@gandalf.local.home>
+References: <20250910161820.247f526a@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911170345.80169f37b3964eb9c9475c41@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 11, 2025 at 05:03:45PM +0900, Masami Hiramatsu wrote:
-> On Wed, 10 Sep 2025 17:39:34 +0800
-> Jinchao Wang <wangjinchao600@gmail.com> wrote:
+On Wed, 10 Sep 2025 16:18:20 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> From: Steven Rostedt <rostedt@goodmis.org>
 > 
-> > Consolidate breakpoint management into a single helper function to
-> > reduce code duplication. This introduces new static helpers for
-> > slot management and debug register manipulation.
-> > 
-> > Also, add `<linux/types.h>` to the header file to fix a build
-> > dependency.
+> The functions __copy_from_user_inatomic() and __copy_to_user_inatomic()
+> both require that either the user space memory is pinned, or that page
+> faults are disabled when they are called. If page faults are not disabled,
+> and the memory is not present, the fault handling of reading or writing to
+> that memory may cause the kernel to schedule. That would be bad in an
+> atomic context.
 > 
-> Looks good to me. Just some nitpicks.
+> Link: https://lore.kernel.org/all/20250819105152.2766363-1-luogengkun@huaweicloud.com/
 > 
-> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Looks good to me.
+
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks,
+
+
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  include/linux/uaccess.h | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> > 
-> > Signed-off-by: Jinchao Wang <wangjinchao600@gmail.com>
-> > ---
-> >  arch/x86/include/asm/hw_breakpoint.h |   7 +-
-> >  arch/x86/kernel/hw_breakpoint.c      | 151 ++++++++++++++++-----------
-> >  2 files changed, 96 insertions(+), 62 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/hw_breakpoint.h b/arch/x86/include/asm/hw_breakpoint.h
-> > index 0bc931cd0698..bd437a30dbf2 100644
-> > --- a/arch/x86/include/asm/hw_breakpoint.h
-> > +++ b/arch/x86/include/asm/hw_breakpoint.h
-> > @@ -3,8 +3,8 @@
-> >  #define	_I386_HW_BREAKPOINT_H
-> >  
-> >  #include <uapi/asm/hw_breakpoint.h>
-> > -
-> 
-> nit: Why this line is removed?
-sharp eye, will restore to its original state.
-> 
-> >  #define	__ARCH_HW_BREAKPOINT_H
-> > +#include <linux/types.h>
-> >  
-> >  /*
-> >   * The name should probably be something dealt in
-> > @@ -18,6 +18,11 @@ struct arch_hw_breakpoint {
-> >  	u8		type;
-> >  };
-> >  
-> > +enum bp_slot_action {
-> > +	BP_SLOT_ACTION_INSTALL,
-> > +	BP_SLOT_ACTION_UNINSTALL,
-> > +};
-> > +
-> >  #include <linux/kdebug.h>
-> >  #include <linux/percpu.h>
-> >  #include <linux/list.h>
-> > diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-> > index b01644c949b2..1736063a82b7 100644
-> > --- a/arch/x86/kernel/hw_breakpoint.c
-> > +++ b/arch/x86/kernel/hw_breakpoint.c
-> > @@ -48,7 +48,6 @@ static DEFINE_PER_CPU(unsigned long, cpu_debugreg[HBP_NUM]);
-> >   */
-> >  static DEFINE_PER_CPU(struct perf_event *, bp_per_reg[HBP_NUM]);
-> >  
-> > -
-> 
-> Ditto.
-There were double-space lines, so delete one.
-> 
-> >  static inline unsigned long
-> >  __encode_dr7(int drnum, unsigned int len, unsigned int type)
-> >  {
-> > @@ -84,54 +83,115 @@ int decode_dr7(unsigned long dr7, int bpnum, unsigned *len, unsigned *type)
-> >  	return (dr7 >> (bpnum * DR_ENABLE_SIZE)) & 0x3;
-> >  }
-> >  
-> > -/*
-> > - * Install a perf counter breakpoint.
-> > - *
-> > - * We seek a free debug address register and use it for this
-> > - * breakpoint. Eventually we enable it in the debug control register.
-> > - *
-> > - * Atomic: we hold the counter->ctx->lock and we only handle variables
-> > - * and registers local to this cpu.
-> > - */
-> > -int arch_install_hw_breakpoint(struct perf_event *bp)
-> > +static int manage_bp_slot(struct perf_event *bp, enum bp_slot_action action)
-> >  {
-> > -	struct arch_hw_breakpoint *info = counter_arch_bp(bp);
-> > -	unsigned long *dr7;
-> > -	int i;
-> > +	struct perf_event *old_bp;
-> > +	struct perf_event *new_bp;
-> > +	int slot;
-> > +
-> > +	switch (action) {
-> > +	case BP_SLOT_ACTION_INSTALL:
-> > +		old_bp = NULL;
-> > +		new_bp = bp;
-> > +		break;
-> > +	case BP_SLOT_ACTION_UNINSTALL:
-> > +		old_bp = bp;
-> > +		new_bp = NULL;
-> > +		break;
-> > +	default:
-> > +		return -EINVAL;
-> > +	}
-> >  
-> >  	lockdep_assert_irqs_disabled();
-> >  
-> > -	for (i = 0; i < HBP_NUM; i++) {
-> > -		struct perf_event **slot = this_cpu_ptr(&bp_per_reg[i]);
-> > +	for (slot = 0; slot < HBP_NUM; slot++) {
-> > +		struct perf_event **curr = this_cpu_ptr(&bp_per_reg[slot]);
-> >  
-> > -		if (!*slot) {
-> > -			*slot = bp;
-> > -			break;
-> > +		if (*curr == old_bp) {
-> > +			*curr = new_bp;
-> > +			return slot;
-> >  		}
-> >  	}
-> >  
-> > -	if (WARN_ONCE(i == HBP_NUM, "Can't find any breakpoint slot"))
-> > -		return -EBUSY;
-> > +	if (old_bp) {
-> > +		WARN_ONCE(1, "Can't find matching breakpoint slot");
-> > +		return -EINVAL;
-> > +	}
-> >  
-> > -	set_debugreg(info->address, i);
-> > -	__this_cpu_write(cpu_debugreg[i], info->address);
-> > +	WARN_ONCE(1, "No free breakpoint slots");
-> > +	return -EBUSY;
-> > +}
-> >  
-> > -	dr7 = this_cpu_ptr(&cpu_dr7);
-> > -	*dr7 |= encode_dr7(i, info->len, info->type);
-> > +static void setup_hwbp(struct arch_hw_breakpoint *info, int slot, bool enable)
-> > +{
-> > +	unsigned long dr7;
-> > +
-> > +	set_debugreg(info->address, slot);
-> > +	__this_cpu_write(cpu_debugreg[slot], info->address);
-> > +
-> > +	dr7 = this_cpu_read(cpu_dr7);
-> > +	if (enable)
-> > +		dr7 |= encode_dr7(slot, info->len, info->type);
-> > +	else
-> > +		dr7 &= ~__encode_dr7(slot, info->len, info->type);
-> >  
-> >  	/*
-> > -	 * Ensure we first write cpu_dr7 before we set the DR7 register.
-> > -	 * This ensures an NMI never see cpu_dr7 0 when DR7 is not.
-> > +	 * Enabling:
-> > +	 *   Ensure we first write cpu_dr7 before we set the DR7 register.
-> > +	 *   This ensures an NMI never see cpu_dr7 0 when DR7 is not.
-> >  	 */
-> > +	if (enable)
-> > +		this_cpu_write(cpu_dr7, dr7);
-> > +
-> >  	barrier();
-> >  
-> > -	set_debugreg(*dr7, 7);
-> > +	set_debugreg(dr7, 7);
-> > +
-> >  	if (info->mask)
-> > -		amd_set_dr_addr_mask(info->mask, i);
-> > +		amd_set_dr_addr_mask(enable ? info->mask : 0, slot);
-> > +
-> > +	/*
-> > +	 * Disabling:
-> > +	 *   Ensure the write to cpu_dr7 is after we've set the DR7 register.
-> > +	 *   This ensures an NMI never see cpu_dr7 0 when DR7 is not.
-> > +	 */
-> > +	if (!enable)
-> > +		this_cpu_write(cpu_dr7, dr7);
-> > +}
-> > +
-> > +static int arch_manage_bp(struct perf_event *bp, enum bp_slot_action action)
-> > +{
-> > +	struct arch_hw_breakpoint *info;
-> > +	bool install = true;
-> > +	int slot;
-> > +
-> > +	if (action == BP_SLOT_ACTION_UNINSTALL)
-> > +		install = false;
-> 
-> This looks a bit unnecessary. 
-> 
-> > +
-> > +	slot = manage_bp_slot(bp, action);
-> > +	if (slot < 0)
-> > +		return slot;
-> > +
-> > +	info = counter_arch_bp(bp);
-> > +	setup_hwbp(info, slot, install);
-> 
-> since you can do
-> 
-> 	setup_hwbp(info, slot,
-> 		   action != BP_SLOT_ACTION_UNINSTALL);
-> 
-> Thank you,
-Thanks, I will follow your advice in the next patch.
-> 
-> 
+> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+> index 1beb5b395d81..add99fa9b656 100644
+> --- a/include/linux/uaccess.h
+> +++ b/include/linux/uaccess.h
+> @@ -86,6 +86,12 @@
+>   * as usual) and both source and destination can trigger faults.
+>   */
+>  
+> +/*
+> + * __copy_from_user_inatomic() is safe to use in an atomic context but
+> + * the user space memory must either be pinned in memory, or page faults
+> + * must be disabled, otherwise the page fault handling may cause the function
+> + * to schedule.
+> + */
+>  static __always_inline __must_check unsigned long
+>  __copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
+>  {
+> @@ -124,7 +130,8 @@ __copy_from_user(void *to, const void __user *from, unsigned long n)
+>   * Copy data from kernel space to user space.  Caller must check
+>   * the specified block with access_ok() before calling this function.
+>   * The caller should also make sure he pins the user space address
+> - * so that we don't result in page fault and sleep.
+> + * or call page_fault_disable() so that we don't result in a page fault
+> + * and sleep.
+>   */
+>  static __always_inline __must_check unsigned long
+>  __copy_to_user_inatomic(void __user *to, const void *from, unsigned long n)
 > -- 
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 2.50.1
+> 
+> 
+
 
 -- 
-Jinchao
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
