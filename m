@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-813319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC442B5437D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:07:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDF6B5411D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23A731C80C15
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CDDBA0431B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BDB29E101;
-	Fri, 12 Sep 2025 07:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B6525785A;
+	Fri, 12 Sep 2025 03:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="T6HBA5xo"
-Received: from mail-m1973191.qiye.163.com (mail-m1973191.qiye.163.com [220.197.31.91])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="pEArDUuE"
+Received: from r3-17.sinamail.sina.com.cn (r3-17.sinamail.sina.com.cn [202.108.3.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765E2299A8E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCF3246348
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757660826; cv=none; b=Ehqh157iEoGbV/bKovvU5J63z51t+ZR6SbsP8SUCDM3R+CMq6cGwhWHm9ro2V4DHvgfMdwFoi1Ak5CcQ3rWjsEHcloWsS6IYCz4LAMbZPPpIg80wKdsJo3aMx5inFwmG3zR2z50qtfGi9ZGMh5BEeWVlTU1QNtNCbVIbhhv5ERQ=
+	t=1757648523; cv=none; b=F4FNk9/PnUUfWX3wJxjPTRxLK3SvCYoFFyIiX44XrYGIAOZD14cVsEMi+dugBJ4i1JV52d+wvoXUQVuFdhORhYMwMpev/YSXPjYS2POjDK5RMZmVb1REnWpKkxkPcguAq1KIKESVTb8c0UDCbYIcY9A0SDhlCxbwrE9CbrMPQSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757660826; c=relaxed/simple;
-	bh=XAzsXpm0YeVBnC+4rYOk6KkHRI2q7s9VMRz/i1NcDug=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fqd9p/+dq1YSQvWQAtCQbvRLi4IEpLgrnNHm22gQA2ij0XVwdAQ0LWJioEn6OVvOBEsRXzGXWQFzi+CGQnSWnf8oSFkT7eXQdRefpAdkzFAVFoHBKUgJzc4gexu6IoDSACG6Ec/bXS5auPoNA12qXqrt3BWMpx0HlT6M0WU2dRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=T6HBA5xo; arc=none smtp.client-ip=220.197.31.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 228cf42bf;
-	Fri, 12 Sep 2025 11:37:50 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	hjc@rock-chips.com
-Cc: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Damon Ding <damon.ding@rock-chips.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH v3] drm/rockchip: analogix_dp: Apply devm_clk_get_optional() for &rockchip_dp_device.grfclk
-Date: Fri, 12 Sep 2025 11:37:25 +0800
-Message-Id: <20250912033725.4054304-1-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757648523; c=relaxed/simple;
+	bh=jzNKu2lXSx5ScqDbHaQ4Zr6soQdmnqh0vwtPLuRv+Eg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=p5DPCwy+h2gD8JJNK06y3F5wKQEUWZhlbVTqI131gJEbqRF5XUIaz6oTnMYtvdntMKfbESEJf2Lwe71KP+7guu02YsTl1olmjF2vWmRMDP/2JcdmmnPTve/Lo0ox9o602lPXrTnUrZ5XH5E1baKm1rVgEJrJ3at5hUevUztB44E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=pEArDUuE; arc=none smtp.client-ip=202.108.3.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757648516;
+	bh=QAQawdjdxUnCmKK2sv+xDFgHaY34kb5syTH90unbTeo=;
+	h=From:Subject:Date:Message-ID;
+	b=pEArDUuEsEqjtJU/50xUwBYMhA+kgawkDerzYCFprOLxmgKO2e68mabde2wgUq4AV
+	 pPhAopCXouXe7AkltoY7qOfCtXgcRNanqy+RrCFEYh8VP+E/RPgOI4KO5tiNsK3gvZ
+	 ZYe4lxToJL1tAviUDRydaolW8pugYsw+Xn47A5yo=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 68C395EA000003DD; Fri, 12 Sep 2025 11:39:24 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 235626292007
+X-SMAIL-UIID: 5585466F7A504E538F7F1140847D8E5B-20250912-113924-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+Date: Fri, 12 Sep 2025 11:39:10 +0800
+Message-ID: <20250912033912.6788-1-hdanton@sina.com>
+In-Reply-To: <68c2ec01.050a0220.3c6139.003f.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,63 +64,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a993c0034cc03a3kunm74a946b99d0374
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUgfQ1ZOSE9KTkoYHx9CHx1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=T6HBA5xoEntcxaxL1UxN5gxv62xuBDnFoO4RPii/PwIzDb4I4xGBN26QdOMZCfoDyG8kt+BKR7SdhdDsXfyU+A8GTsYSXLE4GNIGdJngnC8Yt8L7VBSVO2VXMlMxG6EERgJp9C1MMtnn6Scw5UmIfjYmXdpFgmosYrpio+6oEV8=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=0W+y5K8NTQvQx4kvJHari7pfRGCnr5lxmaUJ+MriK1E=;
-	h=date:mime-version:subject:message-id:from;
 
-The "grf" clock is optional for Rockchip eDP controller(RK3399 needs
-while RK3288 and RK3588 do not).
+> Date: Thu, 11 Sep 2025 08:34:25 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    5f540c4aade9 Add linux-next specific files for 20250910
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=157dab12580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b52362580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b41642580000
 
-It can make the code more consice to use devm_clk_get_optional()
-instead of devm_clk_get() with extra checks.
+#syz test
 
-In addtion, DRM_DEV_ERROR() is replaced by dev_err_probe().
-
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-
-------
-
-Changes in v2:
-- Replace DRM_DEV_ERROR() with dev_err_probe().
-
-Changes in v3:
-- Update Reviewed-by tag.
----
- drivers/gpu/drm/rockchip/analogix_dp-rockchip.c | 12 +++---------
- 1 file changed, 3 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-index d30f0983a53a..937f83cf42fc 100644
---- a/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-+++ b/drivers/gpu/drm/rockchip/analogix_dp-rockchip.c
-@@ -335,15 +335,9 @@ static int rockchip_dp_of_probe(struct rockchip_dp_device *dp)
- 		return PTR_ERR(dp->grf);
- 	}
- 
--	dp->grfclk = devm_clk_get(dev, "grf");
--	if (PTR_ERR(dp->grfclk) == -ENOENT) {
--		dp->grfclk = NULL;
--	} else if (PTR_ERR(dp->grfclk) == -EPROBE_DEFER) {
--		return -EPROBE_DEFER;
--	} else if (IS_ERR(dp->grfclk)) {
--		DRM_DEV_ERROR(dev, "failed to get grf clock\n");
--		return PTR_ERR(dp->grfclk);
--	}
-+	dp->grfclk = devm_clk_get_optional(dev, "grf");
-+	if (IS_ERR(dp->grfclk))
-+		return dev_err_probe(dev, PTR_ERR(dp->grfclk), "failed to get grf clock\n");
- 
- 	dp->pclk = devm_clk_get(dev, "pclk");
- 	if (IS_ERR(dp->pclk)) {
--- 
-2.34.1
-
+--- x/drivers/infiniband/core/device.c
++++ y/drivers/infiniband/core/device.c
+@@ -506,6 +506,7 @@ static void ib_device_release(struct dev
+ 	if (dev->hw_stats_data)
+ 		ib_device_release_hw_stats(dev->hw_stats_data);
+ 	if (dev->port_data) {
++		ib_cache_cleanup_one(dev);
+ 		ib_cache_release_one(dev);
+ 		ib_security_release_port_pkey_list(dev);
+ 		rdma_counter_release(dev);
+--
 
