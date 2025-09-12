@@ -1,251 +1,369 @@
-Return-Path: <linux-kernel+bounces-814310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E674BB5523E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:49:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247EFB55242
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:50:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CE15A045F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C9F0189F572
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C84D191493;
-	Fri, 12 Sep 2025 14:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0F130DEDA;
+	Fri, 12 Sep 2025 14:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="BknV3wzz"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011038.outbound.protection.outlook.com [40.107.130.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="JFMKGcIG"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69A4319D065;
-	Fri, 12 Sep 2025 14:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.38
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757688585; cv=fail; b=DJ4bxVwJK01N0jyB+RdR4C1pzcmCgSVPLALyc1q9PUMidkpMgQtg7miH+62aICakVeTch976U783ZVv5x/wbSZ9Z+ovDNMDe7S3cPZfMNmoiitW/3/mjEUNEMwngokhvKTuu4Jv3SV+vo9mi8GRwCE+YTRUwhBwpStl6ksPgnNk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757688585; c=relaxed/simple;
-	bh=/XyZROd7/NuAKnos8/eHhqHIbRi/k2hpmikaHBlEI9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iGKvcaePheXHRDW8MGapYRirEzUmFQBGBH0o84nVAxypuuJNhCLU4y3OB/ZaTrIOk7Q1sPpbSuT2j0uKhuXDaMaErPBfTndQ5NQxXsNTZ5HoftgxKFV8H1xD28uJ5dBPWGMvZZLszrGnTWu/BPoFDv8/Md+9LkICoCOfEJLb58w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=BknV3wzz; arc=fail smtp.client-ip=40.107.130.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aDg9LgfiuAUbu0bd1WvJrCwu1VI6c/aM38NpMup9HtoH2AuZjMYRdhN9Y08a6NTfa8i9Lxcfnrmj0mLFXxHqDRH/0wIk510h6OtSaG5FiAhEcuCSWJwZUomKmVyLil3P+wm8kl7HCGEyzFgL8mSeWVGEWFc0NXCSHrCFFZZf6Pubps1TLkQevUuKoZTYuXiEvKkkpwLAQCIhRVHzF3zoulRmektsB0RXruGDmb3vOqnNvZRuBteYyhd2CPKW+Rs+amL7ef7gnopZbinHYLCCEEhTbgPjq9JKDA8+f8O0jiBh4a3t7BbSS9ttnN7q8c4USUBeXU1fnFi3e/mlBuUGew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jVnJENHKbgQ1J0mueH4vHl2j195vVwZ/hWwP5jD0u3o=;
- b=Be7WxZ0vLJ9w8wtwdPuI1el2GpBh3yDfxwtkh62K8S2ieKBJeCv7x8mOwyuWJ0AGEx+YNHWDfE2nCr0TuZ2ezljBn1N4dz/uSkOaRx+LxO1UWpsxiPprdAq5LYulzfVlsNzfN61bNDejVdYfiGFEwyumgtEekBurYXP7Waf0JIiegY+CxZmdS3z66MqeUVx67LKMsm9taHYm9aDuesIAFJSzcFOvDtHX8WAXbFMCW+lCv3YG3msL6L5uB8oBOyxQ2/ObalFkzxBHc4KqOFcKm/oaLMd/8aGmJMCZ8JIS683BeO2DFjXQUhd0FoGVWnDSYBuaOxEz7IPWsIWG5feyqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jVnJENHKbgQ1J0mueH4vHl2j195vVwZ/hWwP5jD0u3o=;
- b=BknV3wzzphHK5mndb84tKdLEtd97x2zemzayqJd5JeyDwmOniNdRgZ9oEQkRCRuGctsOqS7OQl//71y42zpHkjivdb2b3HjVEWqoNr17eE3ocIKkP+V92D4ncReDbkoDMDY+/70xlhbZTiLcojCVgfXiQ2qQHlh7vBxtp+D33zyONWajoKT3j+CmiT8BwNvl2uT7TmCgLTG/Nvb6CwBcBWteER4ci2+GWU8Buz2fOY89pT8cTgcaSkgiBI0zyJux0LW4hnSUALd9vU4BKdgcRp4yL5N6RLXP8GncQTnyv8hoXUADJ/Fx2QCMEXOYTuZkM/2r9MSvfy4ic6xFBkGzNg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by AS8PR04MB8834.eurprd04.prod.outlook.com (2603:10a6:20b:42d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Fri, 12 Sep
- 2025 14:49:35 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9115.015; Fri, 12 Sep 2025
- 14:49:35 +0000
-Date: Fri, 12 Sep 2025 10:49:28 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Marco Felsch <m.felsch@pengutronix.de>
-Cc: Vinod Koul <vkoul@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jiada Wang <jiada_wang@mentor.com>, dmaengine@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 08/10] dmaengine: imx-sdma: make use of
- devm_add_action_or_reset to unregiser the dma_device
-Message-ID: <aMQy+Ocs+UWq7WoR@lizhi-Precision-Tower-5810>
-References: <20250911-v6-16-topic-sdma-v2-0-d315f56343b5@pengutronix.de>
- <20250911-v6-16-topic-sdma-v2-8-d315f56343b5@pengutronix.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250911-v6-16-topic-sdma-v2-8-d315f56343b5@pengutronix.de>
-X-ClientProxiedBy: BYAPR08CA0066.namprd08.prod.outlook.com
- (2603:10b6:a03:117::43) To PAXSPRMB0053.eurprd04.prod.outlook.com
- (2603:10a6:102:23f::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FCD19D065
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757688597; cv=none; b=bqI+ZYR2NnhvPR5lzXdyDlCFHdT5QwwiePNXJPiTwOfQaeDMabsKsEl168verIJCw2RmcFOCfRJTmmTFM8L+jHI+o9g94oHv8Vs2wyrFfYItBdE3U2P86KmD5VOIwtzyshiJyaiWLb+4ABg76Zn44j//yoEqRpnlQwy7tmnJkXI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757688597; c=relaxed/simple;
+	bh=U1lI3ZpBRuHXvUA3OHcz7g8g2Uds60issmg3Gfz9jbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jN4Bmcq5h9lUOM/qTM1ulQgj8VyZ22+IFe+w6KC0WEgzabuR7P+2Bx3+BwwNpHf4i9YkowNJHGrFyk3xGGB8kNVylY1t85daK7P1OjbkBv5m7vDV+oA9PrSaAPjGh5ihcM4rfpe5XJaoIzMj0NzlpSMSZp0N/j8Q8/LYV15e12Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=JFMKGcIG; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b0418f6fc27so348006766b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:49:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1757688593; x=1758293393; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7qQb5KvZJBUUSlaKBevCwqp/YotLKMogK7EJGEORCSg=;
+        b=JFMKGcIGPSl/1K0HT3bV9RrgJUvQNmRrHZk3UtuqPu83gGfL7OXwm84/KnjalhPv0G
+         /qZKkDDlapZME3GqQQ/co0cKCCaJ7fWw/WxEUN2BSO14pVyno6t9SnD5/9bxyssuF8sy
+         sqYgK0oFJCKTeFIDT2jMphAR/kXV96qUA5YRu6DxO/c0moSrFNZiK77yA1BP3wFM8hXe
+         zz9WQM8ed6DReJuSopF28HQlD9v1Q6mwr2RZZYAU9K7jZPsYPc2Cyw4JXW3poOAX3tnS
+         1p1FyG2j/0zjUiX9hpaeUXjeOgpocp+BogMaXPT4xXHqOLroLz8eVFcpYPylBozhQ7cG
+         gFiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757688593; x=1758293393;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7qQb5KvZJBUUSlaKBevCwqp/YotLKMogK7EJGEORCSg=;
+        b=q0iShGU9T/uRNCo4vZnJPmLz5WrjZe1kCRV+OnAokZrzQHDArj3Tupl79kbWErqAHo
+         Q/WuF0UaVvuzfKfvpiU5pIChQg9LWjpmSJ7BM1f+TvZxmAsuzDeADKLQEYXI46p4tCQw
+         LHgZFtQJ3qJ3UgLgAlk5jf9ZECUSFhJdGO0NcHfBq03yyXfJ0H/JInrNUFipwEKaeDMI
+         v7SIKty8jniQ7+qPjJ4WqijrzFFl98sCD9lCJWhQHXzAC9JTw7wFaajfe44loJp0QeDA
+         LzCaK+7Ms+saaTjAXsRk/CfCPfu8Ve92eWqTq5HFCHGIvUfuSWVxGQM9vig8X5Xga54O
+         PKWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQQ8znyq/7DVWw+P19l1YxbXPuanvwYn99KW6xnvHdgdpA+fsvFMIb1vpTy1jaKq1LEBb6d26mc5MiIQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1NRzra40xrSR/8l2K+X7nz5wM5pG9GEdjeCSQv1re9XI1ZB2j
+	Ge3qVJp90jSORuuIjbUNkmbZ2X/7YZoLk81Vq29gjzTKWMoZEtNpRpbe1EuI+hsE3E2IHN4I3GH
+	EcJFWWjY=
+X-Gm-Gg: ASbGnctwRK4HgCI1nr7VCMF057dDWX5Is83OQiNz/VbtfI58D0zxP00UAcywt2i8Djc
+	gNhSBJj4PvjQgJvQw1FCsnKi0e4ClcJ9ArO5v01dAbB+3pECEQ3FBmYUEr2s3T9PJYheJQtv2R9
+	q8/hiv73LVVS5o2qdsSlxlmWvORHn60Fn76fl9XaS5q8mBsEizXNAaLgcoNjC/C34DvHQjziwVF
+	wxjIeW1Q2LqgXFexYuh6/ed1Zn3GU5nHkWUSSjB3PtBBbNBV1vyeHY7c4P54t2JuY2wD9+CUW/n
+	OVTCU7Ub7qOjUmqwIuML8Qx9M3LSOtGh5rHzbrH3GQEb1maSusBwg8zpTakyv1wCWUlj4x5zuUr
+	kSd4fhlwSllrBk1TScMXdTDO6NMQTMgnQlkgf
+X-Google-Smtp-Source: AGHT+IFFmpOq7PMlffPseBM6Y0xBmEsPODkNAN3DH4ybTp224pGOQG/0ISdNYVpaILhseHQq5vo8UA==
+X-Received: by 2002:a17:907:944b:b0:b04:21c9:ad83 with SMTP id a640c23a62f3a-b07c3662cf5mr307093066b.52.1757688593404;
+        Fri, 12 Sep 2025 07:49:53 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da4c5sm373993566b.21.2025.09.12.07.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 07:49:52 -0700 (PDT)
+Date: Fri, 12 Sep 2025 16:49:51 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Daniil Tatianin <d-tatianin@yandex-team.ru>,
+	linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: Re: [PATCH v2 0/2] printk_ringbuffer: don't needlessly wrap data
+ blocks around
+Message-ID: <aMQzD9CLP1F01Rry@pathway.suse.cz>
+References: <20250905144152.9137-1-d-tatianin@yandex-team.ru>
+ <aMLrGCQSyC8odlFZ@pathway.suse.cz>
+ <aMLxt5k5U1vpmaQ3@pathway.suse.cz>
+ <84bjnhx91r.fsf@jogness.linutronix.de>
+ <aMPm8ter0KYBpyoW@pathway.suse.cz>
+ <aMPt8y-8Wazh6ZmO@pathway.suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AS8PR04MB8834:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06a07812-d7f9-4434-c6fe-08ddf20b9778
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|19092799006|376014|366016|52116014|7416014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?McWfViZUsKCpXW1J7RAIIyATO+TDXFygmpLEWU1YcO9PbNjlMOEpJwFNFPc1?=
- =?us-ascii?Q?ZUJkb92BWMr8SZNfhLhFpM2wU7nHMty6HLTFDNBOiTFbgWsyvPJ10TJqRG4S?=
- =?us-ascii?Q?fccXp+dXWROjjMW+rIkixdEUzkKOC1jS8jHf6ZMPu9X4r3m38N5RBQO21qFi?=
- =?us-ascii?Q?A+GOq5fmV+x5rmaKQEcrHmn5ZiXMXXjKhw6CD6w/9ADD3DLG73K7SoTyH08q?=
- =?us-ascii?Q?VmHTNUur5ZOuPUeY5S1thaT7fMkLaJqB66YdHp78GX3nFjcQjkHgwG+8eDms?=
- =?us-ascii?Q?f68/IO1mXseBlazrnJBwAFUotWvj4YSX1gxWFeH7Km/ur14hc2HVKRRH9q64?=
- =?us-ascii?Q?hp15oZPpPQL9faaDyWWr56j8UFWd3zItoIqar42OMNx51tl9Oy3FnfqYS07I?=
- =?us-ascii?Q?28pamAutYVJEFcT7Sb138j/jNpaKFczYyzoJM9rH9VIT95awg/MYaAOBTWJF?=
- =?us-ascii?Q?LU+FrREGQ+S0+c4tozOvab75u6yYzbBxHYeC0ihecAOz9euUIqU0tU/PEbsC?=
- =?us-ascii?Q?fJrT9m2q/MPuSVmtNIuOOXHlBoTeXh/4QtQJnIHFo+3uBSSldf0YF/u0KBZX?=
- =?us-ascii?Q?X7AHrHBYjLdWeNANDCcKbhbAgLs+dx0/xuawjfsiXadxVkErtV9Pt7qWpldH?=
- =?us-ascii?Q?chqANSIC9/6YWk/w+KcQ/RGNrhIGSXYglnlDS6wnXSpP696kr0+Sgwdy+c29?=
- =?us-ascii?Q?zs8lwQmUmnCRXlpaDuqRxT29Vx9llKRiJk5lTkezO4upWw6Xw5BMHDKJGauk?=
- =?us-ascii?Q?P6RnSy03d/wXNvyMcZSbTR0A5iWxaUq7nJqrRo+sxGSos1LYcbPc9xVQqUpM?=
- =?us-ascii?Q?jlETlXj16j+Ic2N1C3iMWH2ZCJBKS+fMxEMbjjLskQPf3fbrWEDTp0tUmfnS?=
- =?us-ascii?Q?+dhDO+Dl4eSlbv4CICKqd3VxncD/mont5KY99FmG1nEQoKaOkYmFczc6ZKo5?=
- =?us-ascii?Q?YakGg5wWc5VmqrZNGcA0AhmSO2flR368Cxb07uUqOCTv/PdDhgzY0SBLaoBl?=
- =?us-ascii?Q?EnjoxxvwwQm5Z+DVW4m5spVRNePqRnJmdnONFl82gETkRrGB1SjbtxmNmEOl?=
- =?us-ascii?Q?A4WAZo5b3zg6oosHOFcQhSqv2bcCMQPUSTnLJn5HtgZWE6ATajop9wizL/Cm?=
- =?us-ascii?Q?nIVDmB99y6z3qtAJpBF4XA+WcMKu/iHM1PHnEdEwxu8aCipxnYwPTjHK7XQs?=
- =?us-ascii?Q?TY3qDBuWGas3wUyKljivP5VyQNVVoxNtU/PUCCAkz5KuIkqv001COmBEthDx?=
- =?us-ascii?Q?EFES1JmvqR/PFRuGUrKuXv/l/SRzwEF09m73DpqI8NIOcJTf/kLJWZ4trB1k?=
- =?us-ascii?Q?WDf/1wKOBx4sBdCOUA6T1w9msyftD6VcZGD5NWKNSOHacJUYLYFbuNd2RFUx?=
- =?us-ascii?Q?vpg2UGd+GxYYx2NOvY/3SOPd6/sDLZvCvsMrZ6yqIxyuR+e7LkjESyLeJ8o6?=
- =?us-ascii?Q?DOGDKDoXRuuYqDaxxFnhSntDGN4wrQc7xcTLQnijbJaMLVWanAFxCQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(376014)(366016)(52116014)(7416014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BuLlMQ33N5UsZEzzU1/Z8x2AbvXrCDgqWhjPBiy+ak1c4dmmS6cAulcKYjhU?=
- =?us-ascii?Q?vtfDou4s5fQORvOMIcmBRGIU9Ap5kesY0oSRxp1xoURWhUoSPH4Jmp4WAZYu?=
- =?us-ascii?Q?v50Opvm8n4MP3R8EmGbeIBEPWc6E7A2awKog7mRDU7b/JBy9MDa/OP6cdqVO?=
- =?us-ascii?Q?1DM6cCvY9uqL0b3ys82v1u6DWOuveUNmER/gRL57Hs29wESPNkW5gdSlLezm?=
- =?us-ascii?Q?XqWCsVQueyRX8YGYxR4IfLKh88FqMQc4jZQpg+kxVIs+BBMag6hmz6TUlIk3?=
- =?us-ascii?Q?P0H6Psm1novqTLHnrFrCSgccydILGkLd82pTPZJqopoxRUuR2RZzBT87JenZ?=
- =?us-ascii?Q?FliLOp4aaG7AmBTIsZ0kONNEVr/wChXOSQ3kOlyd6lAQeGniiatrpiU0NEaI?=
- =?us-ascii?Q?KSW63lJNNcN2Q3Givdo42tse47gC9sSD3yuViaCkbLsm31F/aHE1w812pDqc?=
- =?us-ascii?Q?YdSrPcU+ePKttWzeiP3Y4DXIdbrnT808WroY5tG6MUAKRCOEdmNhQBx5ULp3?=
- =?us-ascii?Q?coOctm0YRvOYQUHfP1u70h2EGmW7XzxnICHkcV5bcXncwugJ80QMX0O2SSmm?=
- =?us-ascii?Q?NlUvtboSa1RFuWDwHirMaPjNvDBjjTBK/F/UCki5t7quttLQ5tg4cyAbSf0g?=
- =?us-ascii?Q?yTQjWQo42JwmZJRwOzebPqqr223rQKQ4VvQlDeXXRsR3VcjBsMnS6vRo4ePZ?=
- =?us-ascii?Q?qRSLL/tQr0zYygz9zrYkAgRCx12YEAKL7++lb2RQVn0GKUKJYdW2FauLDfqL?=
- =?us-ascii?Q?6VDnoWyNCTydEmY3VgMuPskDCDau3ojOHT4WAQb3p1Q9Lx9ayJF006NNB07Z?=
- =?us-ascii?Q?MJvFnt78pIi2AycsvklnRurBiV0ttH135SgeGu8rLP/ewwiqzWxalk/jQ5xw?=
- =?us-ascii?Q?uhPpP0urUnuN6TwB35sMC0qWhe1MHTgmK46ACpP3Qxz5GcwBY7PJ5zMEQfuQ?=
- =?us-ascii?Q?DBpZLzqqnmnf+Ia1316L5srGLrW61BFrz2t3vTznfkheiosnAtpHp5hFvme7?=
- =?us-ascii?Q?7VdsHDZ5JnS6qeFcqnXRWbDpAMrAIv574ihEdC7AMt2eYoenm30vN8/3DLdT?=
- =?us-ascii?Q?h0EIjJ/ygeVKo1oVS52ehOtWzlfUzLQ02AROwmTB3OJHPL+ZgfJxQcSgvq8W?=
- =?us-ascii?Q?72U3VnObS0DFNJ51YiOYuQ9bISWRkiObQZx6LoPQvmXcu12g4LzPWW6DWmS3?=
- =?us-ascii?Q?XCzcCOPDTAiwMKWV9Rvy2+Ih3Uph9OeI1R3P9bUUBmxadPV8xdMdOs3AKxTl?=
- =?us-ascii?Q?TTYSB7b7F3S+ROqw311YSzbdC4aYNMa8akdoSfnWaAflzLrf5opMS+lFYekS?=
- =?us-ascii?Q?XOfc1oLWdDXd9vf3Q0ZEkkQwzHI4P0kjROwO5IyfLRqAXjbpUoZTAJsG6jZK?=
- =?us-ascii?Q?+yTCaXEJl+29LtdJ8DwBaAhURr6gs3Gp+V+Il2jmXBbLFfXqa9qKesgW/cM+?=
- =?us-ascii?Q?Mk+4ASCs6s1B0dmyYVEBW15QayC1dAqy6ivLU6591Q9tPet+vbBRrShk6Ftx?=
- =?us-ascii?Q?eQEPn5dZD2m0ktsH+JoffneuHR+EvzXhZlO+X/dfBsJmLYmXHM0bKBLIKcLQ?=
- =?us-ascii?Q?JtAdnQSeUn4SRZgQsEEC/2hnMIA5EEZF/UtNgAfO?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06a07812-d7f9-4434-c6fe-08ddf20b9778
-X-MS-Exchange-CrossTenant-AuthSource: PAXSPRMB0053.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 14:49:35.7174
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PVcuIPeNDzVMUM7UCaZeQZcG9RHPXN7CkrjfiYeNdoJpitJic/PZMc00JR3urd5pCN1eSHa6GfHO+/n9nyQDYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8834
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMPt8y-8Wazh6ZmO@pathway.suse.cz>
 
-On Thu, Sep 11, 2025 at 11:56:49PM +0200, Marco Felsch wrote:
-> Make use of the devm_add_action_or_reset() to register a custom devm_
-> release hook. This is required to turn off the IRQs before calling
-> dma_async_device_unregister().
->
-> Furthermore it removes the last goto error handling within probe() and
-> trims the remove().
->
-> Make use of disable_irq() and let the devm-irq do the job to free the
-> IRQ, because the only purpose of using devm_free_irq() was to disable
-> the IRQ before calling dma_async_device_unregister().
->
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
-> ---
->  drivers/dma/imx-sdma.c | 23 +++++++++++++++--------
->  1 file changed, 15 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index d39589c20c4b2a26d0239feb86cce8d5a0f5acdd..d6d0d4300f540268a3ab4a6b14af685f7b93275a 100644
-> --- a/drivers/dma/imx-sdma.c
-> +++ b/drivers/dma/imx-sdma.c
-> @@ -2264,6 +2264,14 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
->  				     ofdma->of_node);
->  }
->
-> +static void sdma_dma_device_unregister_action(void *data)
-> +{
-> +	struct sdma_engine *sdma = data;
-> +
-> +	disable_irq(sdma->irq);
-
-May not related this cleanup patch, I am just curious why not mask sdma irq
-request.
-
-> +	dma_async_device_unregister(&sdma->dma_device);
-> +}
-> +
->  static int sdma_probe(struct platform_device *pdev)
+On Fri 2025-09-12 11:55:02, Petr Mladek wrote:
+> On Fri 2025-09-12 11:25:09, Petr Mladek wrote:
+> > On Thu 2025-09-11 18:18:32, John Ogness wrote:
+> > > On 2025-09-11, Petr Mladek <pmladek@suse.com> wrote:
+> > > > diff --git a/kernel/printk/printk_ringbuffer_kunit_test.c b/kernel/printk/printk_ringbuffer_kunit_test.c
+> > > > index 2282348e869a..241f7ef49ac6 100644
+> > > > --- a/kernel/printk/printk_ringbuffer_kunit_test.c
+> > > > +++ b/kernel/printk/printk_ringbuffer_kunit_test.c
+> > > > @@ -56,7 +56,7 @@ struct prbtest_rbdata {
+> > > >  	char text[] __counted_by(size);
+> > > >  };
+> > > >  
+> > > > -#define MAX_RBDATA_TEXT_SIZE 0x80
+> > > > +#define MAX_RBDATA_TEXT_SIZE (0x256 - sizeof(struct prbtest_rbdata))
+> > > 
+> > > I guess this should be:
+> > > 
+> > > #define MAX_RBDATA_TEXT_SIZE (256  - sizeof(struct prbtest_rbdata))
+> > 
+> > Great catch!
+> > 
+> > But the KUnit test fails even with this change, see below. And I am
+> > not surprised. The test should work even with larger-than-allowed
+> > messages. prbtest_writer() should skip then because prb_reserve()
+> > should fail.
+> > 
+> > Here is test result with:
+> > 
+> > #define MAX_RBDATA_TEXT_SIZE (256 - sizeof(struct prbtest_rbdata))
+> > #define MAX_PRB_RECORD_SIZE (sizeof(struct prbtest_rbdata) + MAX_RBDATA_TEXT_SIZE)
+> > 
+> > DEFINE_PRINTKRB(test_rb, 4, 4);
+> > 
+> > and with this patchset reverted, aka, sources from
+> > printk/linux.git, branch for-next:
+> > 
+> > It is well reproducible. It always fails after reading few records.
+> > Here are results from few other runs:
+> 
+> And I am not longer able to reproduce it after limiting the size
+> of the record to 1/4 of the data buffer size. I did it with
+> the following change:
+> 
+> diff --git a/kernel/printk/printk_ringbuffer.c b/kernel/printk/printk_ringbuffer.c
+> index bc811de18316..2f02254705aa 100644
+> --- a/kernel/printk/printk_ringbuffer.c
+> +++ b/kernel/printk/printk_ringbuffer.c
+> @@ -398,8 +398,6 @@ static unsigned int to_blk_size(unsigned int size)
+>   */
+>  static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
 >  {
->  	struct device *dev = &pdev->dev;
-> @@ -2388,10 +2396,16 @@ static int sdma_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->
-> +	ret = devm_add_action_or_reset(dev, sdma_dma_device_unregister_action, sdma);
-> +	if (ret) {
-> +		dev_err(dev, "Unable to register release hook\n");
-> +		return ret;
-> +	}
-
-why not use dev_err_probe() her?
-
-> +
->  	ret = of_dma_controller_register(np, sdma_xlate, sdma);
->  	if (ret) {
->  		dev_err(dev, "failed to register controller\n");
-> -		goto err_register;
-> +		return ret;
-
-the same here.
-
-Frank
->  	}
->
->  	/*
-> @@ -2410,11 +2424,6 @@ static int sdma_probe(struct platform_device *pdev)
->  	}
->
->  	return 0;
+> -	struct prb_data_block *db = NULL;
 > -
-> -err_register:
-> -	dma_async_device_unregister(&sdma->dma_device);
-> -
-> -	return ret;
->  }
->
->  static void sdma_remove(struct platform_device *pdev)
-> @@ -2423,8 +2432,6 @@ static void sdma_remove(struct platform_device *pdev)
->  	int i;
->
->  	of_dma_controller_free(sdma->dev->of_node);
-> -	devm_free_irq(&pdev->dev, sdma->irq, sdma);
-> -	dma_async_device_unregister(&sdma->dma_device);
->  	/* Kill the tasklet */
->  	for (i = 0; i < MAX_DMA_CHANNELS; i++) {
->  		struct sdma_channel *sdmac = &sdma->channel[i];
->
-> --
-> 2.47.3
->
+>  	if (size == 0)
+>  		return true;
+>  
+> @@ -409,7 +407,7 @@ static bool data_check_size(struct prb_data_ring *data_ring, unsigned int size)
+>  	 * at least the ID of the next block.
+>  	 */
+>  	size = to_blk_size(size);
+> -	if (size > DATA_SIZE(data_ring) - sizeof(db->id))
+> +	if (size > DATA_SIZE(data_ring) / 4)
+>  		return false;
+>  
+>  	return true;
+> 
+> 
+> I guess that there is a race when we need to make all existing records
+> reusable when making space for the next one.
+
+It looks to me that the reader API is not ready to handle the
+situation when all records are "reusable".
+
+At least, it looks like prb_next_seq() might end up in an "infinite"
+loop because it blindly increments "seq" until finding a valid record...
+
+Honestly, I would really like to limit the maximal record size to
+1/4 of the buffer size. I do not want to make the design more
+complicated just to be able to fill just one record, definitely.
+
+
+That said, I still a bit nervous because I do not understand why
+the KUnit test fails. It does not depend on prb_next_seq().
+
+It seems that prb_read_valid() retuns success even when
+returning a garbage. I have added some debug output using
+trace_printk():
+
+--- a/kernel/printk/printk_ringbuffer.c
++++ b/kernel/printk/printk_ringbuffer.c
+@@ -1856,6 +1856,10 @@ static bool copy_data(struct prb_data_ring *data_ring,
+ 	data_size = min_t(unsigned int, buf_size, len);
+ 
+ 	memcpy(&buf[0], data, data_size); /* LMM(copy_data:A) */
++	if (data_ring != &prb->text_data_ring) {
++		trace_printk("  %s: reading from 0x%lx (%d bytes)\n",
++			     __func__, (unsigned long)data, data_size);
++	}
+ 	return true;
+ }
+ 
+@@ -1939,6 +1943,9 @@ static int prb_read(struct printk_ringbuffer *rb, u64 seq,
+ 	if (r->info)
+ 		memcpy(r->info, info, sizeof(*(r->info)));
+ 
++	if (rb != prb)
++		trace_printk("%s: Calling copy_data() for seq=%llu\n", __func__, seq);
++
+ 	/* Copy text data. If it fails, this is a data-less record. */
+ 	if (!copy_data(&rb->text_data_ring, &desc.text_blk_lpos, info->text_len,
+ 		       r->text_buf, r->text_buf_size, line_count)) {
+@@ -2160,6 +2167,11 @@ static bool _prb_read_valid(struct printk_ringbuffer *rb, u64 *seq,
+ 		}
+ 	}
+ 
++	if (rb != prb && r && r->text_buf) {
++		trace_printk("%s: Successfully read record with seq=%llu\n",
++			     __func__, *seq);
++	}
++
+ 	return true;
+ }
+ 
+
+The test failed with the output:
+
+[   57.654444] KTAP version 1
+[   57.654739] 1..1
+[   57.655363]     KTAP version 1
+[   57.655766]     # Subtest: printk-ringbuffer
+[   57.656105]     # module: printk_ringbuffer_kunit_test
+[   57.656137]     1..1
+[   57.657997]     # test_readerwriter: running for 10000 ms
+[   57.659135]     # test_readerwriter: start thread 001 (writer)
+[   57.659328]     # test_readerwriter: start thread 002 (writer)
+[   57.659626]     # test_readerwriter: start thread 003 (writer)
+[   57.659827]     # test_readerwriter: start thread 004 (writer)
+[   57.660008]     # test_readerwriter: start thread 005 (writer)
+[   57.660209]     # test_readerwriter: start thread 006 (writer)
+[   57.661648]     # test_readerwriter: start thread 007 (writer)
+[   57.662040]     # test_readerwriter: start thread 008 (writer)
+[   57.662283]     # test_readerwriter: start thread 009 (writer)
+[   57.662539]     # test_readerwriter: start thread 010 (writer)
+[   57.662833]     # test_readerwriter: start thread 011 (writer)
+[   57.662841]     # test_readerwriter: starting test
+[   57.662945]     # test_readerwriter: start reader
+[   57.663072]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=1519 size=1145324612 text=
+[   57.663253]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=1520 size=4473924 text=
+[   57.663432]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=1524 size=1145324612 text=
+[   57.672125]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=1526 size=4473924 text=
+[   57.672322]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=1528 size=1145324612 text=
+[   57.675564]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=1529 size=1145324612 text=
+[   57.675761]     # test_readerwriter: EXPECTATION FAILED at kernel/printk/printk_ringbuffer_kunit_test.c:80
+               BAD RECORD: seq=1531 size=1145324612 text=
+[   67.904538]     # test_readerwriter: end reader: read=14 seq=1531
+[   67.905316]     # test_readerwriter: completed test
+[   67.907023]     # test_readerwriter: end thread 011: wrote=0 by attempts=10260578
+[   67.907974]     # test_readerwriter: end thread 010: wrote=0 by attempts=10271385
+[   67.908929]     # test_readerwriter: end thread 009: wrote=0 by attempts=10281631
+[   67.909675]     # test_readerwriter: end thread 008: wrote=0 by attempts=10266089
+[   67.910571]     # test_readerwriter: end thread 007: wrote=0 by attempts=10278468
+[   67.911294]     # test_readerwriter: end thread 006: wrote=0 by attempts=13344945
+[   67.912009]     # test_readerwriter: end thread 005: wrote=160 by attempts=10290490
+[   67.912800]     # test_readerwriter: end thread 004: wrote=247 by attempts=13351217
+[   67.913499]     # test_readerwriter: end thread 003: wrote=294 by attempts=13337712
+[   67.914167]     # test_readerwriter: end thread 002: wrote=281 by attempts=13373189
+[   67.914858]     # test_readerwriter: end thread 001: wrote=439 by attempts=13283005
+[   67.915980]     # test_readerwriter.speed: slow
+[   67.916068]     not ok 1 test_readerwriter
+[   67.916930] not ok 1 printk-ringbuffer
+
+
+with the mathing trace output:
+
+kunit_try_catch-1487    [000] .....    57.792815: _prb_read_valid: prb_read: Calling copy_data() for seq=1518
+ kunit_try_catch-1487    [000] .....    57.792818: _prb_read_valid:   copy_data: reading from 0xffffffffc02554c8 (78 bytes)
+ kunit_try_catch-1487    [000] .....    57.792819: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1518
+ kunit_try_catch-1487    [000] .....    57.792821: _prb_read_valid: prb_read: Calling copy_data() for seq=1519
+ kunit_try_catch-1487    [000] .....    57.792822: _prb_read_valid:   copy_data: reading from 0xffffffffc0255520 (17 bytes)
+ kunit_try_catch-1487    [000] .....    57.792823: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1519
+ kunit_try_catch-1487    [000] .....    57.793011: _prb_read_valid: prb_read: Calling copy_data() for seq=1520
+ kunit_try_catch-1487    [000] .....    57.793012: _prb_read_valid:   copy_data: reading from 0xffffffffc0255558 (15 bytes)
+ kunit_try_catch-1487    [000] .....    57.793013: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1520
+ kunit_try_catch-1487    [000] .....    57.793182: _prb_read_valid: prb_read: Calling copy_data() for seq=1521
+ kunit_try_catch-1487    [000] .....    57.793183: _prb_read_valid:   copy_data: reading from 0xffffffffc02554c8 (131 bytes)
+ kunit_try_catch-1487    [000] .....    57.793184: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1521
+ kunit_try_catch-1487    [000] .....    57.793185: _prb_read_valid: prb_read: Calling copy_data() for seq=1522
+ kunit_try_catch-1487    [000] .....    57.793186: _prb_read_valid:   copy_data: reading from 0xffffffffc02554c8 (95 bytes)
+ kunit_try_catch-1487    [000] .....    57.793186: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1522
+ kunit_try_catch-1487    [000] .....    57.793187: _prb_read_valid: prb_read: Calling copy_data() for seq=1523
+ kunit_try_catch-1487    [000] .....    57.793188: _prb_read_valid:   copy_data: reading from 0xffffffffc02554c8 (131 bytes)
+ kunit_try_catch-1487    [000] .....    57.793189: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1523
+ kunit_try_catch-1487    [000] .....    57.793190: _prb_read_valid: prb_read: Calling copy_data() for seq=1524
+ kunit_try_catch-1487    [000] .....    57.793191: _prb_read_valid:   copy_data: reading from 0xffffffffc0255530 (87 bytes)
+ kunit_try_catch-1487    [000] .....    57.793192: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1524
+ kunit_try_catch-1487    [000] .....    57.801868: _prb_read_valid: prb_read: Calling copy_data() for seq=1525
+ kunit_try_catch-1487    [000] .....    57.801869: _prb_read_valid:   copy_data: reading from 0xffffffffc02554c8 (107 bytes)
+ kunit_try_catch-1487    [000] .....    57.801870: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1525
+ kunit_try_catch-1487    [000] .....    57.801872: _prb_read_valid: prb_read: Calling copy_data() for seq=1526
+ kunit_try_catch-1487    [000] .....    57.801873: _prb_read_valid:   copy_data: reading from 0xffffffffc0255558 (60 bytes)
+ kunit_try_catch-1487    [000] .....    57.801873: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1526
+ kunit_try_catch-1487    [000] .....    57.802067: _prb_read_valid: prb_read: Calling copy_data() for seq=1527
+ kunit_try_catch-1487    [000] .....    57.802068: _prb_read_valid:   copy_data: reading from 0xffffffffc02554c8 (51 bytes)
+ kunit_try_catch-1487    [000] .....    57.802068: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1527
+ kunit_try_catch-1487    [000] .....    57.802070: _prb_read_valid: prb_read: Calling copy_data() for seq=1528
+ kunit_try_catch-1487    [000] .....    57.802070: _prb_read_valid:   copy_data: reading from 0xffffffffc0255540 (67 bytes)
+ kunit_try_catch-1487    [000] .....    57.802071: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1528
+ kunit_try_catch-1487    [000] .....    57.805307: _prb_read_valid: prb_read: Calling copy_data() for seq=1529
+ kunit_try_catch-1487    [000] .....    57.805308: _prb_read_valid:   copy_data: reading from 0xffffffffc0255508 (57 bytes)
+ kunit_try_catch-1487    [000] .....    57.805309: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1529
+ kunit_try_catch-1487    [000] .....    57.805505: _prb_read_valid: prb_read: Calling copy_data() for seq=1530
+ kunit_try_catch-1487    [000] .....    57.805506: _prb_read_valid:   copy_data: reading from 0xffffffffc02554c8 (45 bytes)
+ kunit_try_catch-1487    [000] .....    57.805507: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1530
+ kunit_try_catch-1487    [000] .....    57.805509: _prb_read_valid: prb_read: Calling copy_data() for seq=1531
+ kunit_try_catch-1487    [000] .....    57.805509: _prb_read_valid:   copy_data: reading from 0xffffffffc0255550 (109 bytes)
+ kunit_try_catch-1487    [000] .....    57.805510: _prb_read_valid: _prb_read_valid: Successfully read record with seq=1531
+
+
+It seems that the first successfully read record was OK.
+
+BTW: I have added the trace_printk() "Calling copy_data()..."
+     because before I saw that the test failed more times than
+     _prb_read_valid() returned success. So, I was curious
+     whether it at least copied the data for the seq number.
+
+
+BTW2: It seems the even writers had problems to reserve space this
+      time. Only few of them succeeded few times from many attempts.
+      I the numbers by this change:
+
+--- a/kernel/printk/printk_ringbuffer_kunit_test.c
++++ b/kernel/printk/printk_ringbuffer_kunit_test.c
+@@ -112,6 +112,7 @@ static int prbtest_writer(void *data)
+ 	struct prbtest_rbdata *dat;
+ 	u32 record_size, text_size;
+ 	unsigned long count = 0;
++	unsigned long success_count = 0;
+ 	struct printk_record r;
+ 
+ 	kunit_info(tr->test_data->test, "start thread %03lu (writer)\n", tr->num);
+@@ -154,6 +155,7 @@ static int prbtest_writer(void *data)
+ 			prb_commit(&e);
+ 
+ 			wake_up_interruptible(&tr->test_data->new_record_wait);
++			success_count++;
+ 		}
+ 
+ 		if ((count++ & 0x3fff) == 0)
+@@ -163,7 +165,9 @@ static int prbtest_writer(void *data)
+ 			break;
+ 	}
+ 
+-	kunit_info(tr->test_data->test, "end thread %03lu: wrote=%lu\n", tr->num, count);
++	kunit_info(tr->test_data->test,
++		   "end thread %03lu: wrote=%lu by attempts=%lu\n",
++		   tr->num, success_count, count);
+ 
+ 	return 0;
+ }
+
+
+Best Regards,
+Petr
 
