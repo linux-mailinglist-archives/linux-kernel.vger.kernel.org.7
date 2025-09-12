@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-814501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDAAB554D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:42:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FE3B554D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F4FAA1C82
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:42:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E71D1CC31D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DADD31CA53;
-	Fri, 12 Sep 2025 16:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C4231D737;
+	Fri, 12 Sep 2025 16:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N8FOe4iT"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlnTmPrC"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E0A2ED87A
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EAF531B126
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757695364; cv=none; b=iigXDkE6W4WIgo7+WVbsKhquWO0Me2/eqT0HCOUL9WVcwax3bWcCo2DDxmuFbQprKcDyZM7tIXYiBNcvZrNbQFY/H6Jf98UhwBODnV3ziWDuwoUJqtcJJ1UvJJTvOwsOiHM8M1E9yNeAb/D3Y6tWd+hSy6AaL2mJKGImSp0pPdo=
+	t=1757695365; cv=none; b=E522SbWqbtSXiLUFYhLN4kZ6heuVc068hjKgYs+6coREJoAF3BtEl2I7etOzn7MszzePMZo4E3lDuK0Xg05JpwXw+vRxS1Ku2VIhGOwtrw7ERr/0mIyWdL8y/FurtdyCkb2GEqdY+xdYxqhQZkGuEyCOEEtjtibmZ9EgK5cYsDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757695364; c=relaxed/simple;
-	bh=y7Ft1pzhK4KYTHSAmSw6Bso+6cplQ6jkqO9FbU1IdHM=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uElKSIYpXtwVzhTSOvOsSnxadu/7e5tTrA4vCfd7B71zINpbpXI2gTQrrg8rpEIef0VZVzSrxVseC9ZlG9MvPd3HdCwNfszPZdpPsY56gJxrOrZXw2FbdNYcAvuTlUitSQHlMNuDgvwJRzuAVnxYInf/6Ahy9DiEQE+H3B2YM7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N8FOe4iT; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1757695365; c=relaxed/simple;
+	bh=tzsN7qKm6dUmRDagLQir/qm3kiDTLaHsDU+/1R/XgkY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=faHVkcyij/s9ZPXp68KZRY8r7lwJkEUCFnlcVqStEAdQ87sR3MrBkhknW6ww/qbniI5W+SjkMu7I+S+c4gZ7AVcxCOPZ1P/xgMBaxDbZIPnhQqMEANMDlRCYHqJsvikI1DzM5MV6tYFSTMdgl40Ug29Do/G8IEeWss9gZZEI5e4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dlnTmPrC; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45dfe95bbb7so20160935e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:42:42 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45dec1ae562so19948835e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:42:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757695361; x=1758300161; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yWqbHcu30xqhsc7+J01h1Frd6Q/2FaMV7jjWv5Z2IxY=;
-        b=N8FOe4iTth7B+a+sTOKSUidxUyeplE95stix/3Q2yCHzpDzM03wYJZRtmRLrkLaZbU
-         smfV09KqS3TkoL/D4lOwSsCounOzW/KkrWsXJ6M3lggDTg1mCeyb6X+V4lxzGvC6AsIu
-         Xd+LzHb0PK5YnwNc6EfWTVAaSQn0xS+5DtSxUqoy2lkgigsOS4JX1uy9upNzXXh5wujP
-         AYIMZFMZ4sZCVbWnWd3hCpznrwwdKGXTjtujLOXxlq5EBNBvMMklUKzaJ47KeQgHx+nk
-         Rnm1jW9bvvU2Bu3PWOWfOsI8XwyM6LdfIZIiUtJr8tG1V7lapOQiEJ1yIUU3u4GUS7Y5
-         kaRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757695361; x=1758300161;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1757695362; x=1758300162; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=yWqbHcu30xqhsc7+J01h1Frd6Q/2FaMV7jjWv5Z2IxY=;
-        b=m7sRra6zi3a+itAXwNbmxnfAYlcx//zsiQIj8bHhqJyb4YVql/DTAKb6UTE/wGYYdF
-         TCL/N2Mr9ZoS71F4gP/AAuiNk4dpCmlnIfLFeaOw8WYmgye73edmjYGWQP28me2i/CvM
-         paCvEGRKtukvDWlMcfhfYuAw3OZPFvURz2kCrgS6kqs6UAruj6y7/2BPdL3r5w9eJtGn
-         N/frVCL617jUDPgOBVuSIIao89lusBT1KfCzOlTEmwhO/ljpm5zYw+Z0ws2YjUy2uU8g
-         +jYMpQ8H4aGV7KsFptt+F7u2z3s+h8Wdj1uLzfigf4lt12Br2ROeWV6dQR+H34wR8z+/
-         83Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCXd3xaJp1y7FDVHqiNr9GmcX4ZRLiCFdADqPIWQyo51R66hc3cKdzUxFV1HgxkcJrjYYnJkOjC1c0GrgeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyypO1W9Bei4uT2iem3N6SZhN1AxedtElK3Kv0WBbPCvxxhmlI1
-	kpS7++1yHDtbRcWW0GMOaYG0zleEFKFw0yQ4vdu24f4/inkjLTic/Pht
-X-Gm-Gg: ASbGncvXeG+3JdJPeYA/k8g/quMsPbfqYKx6wLCfiumb4Rq94CdklAbFwae+U3vcf/1
-	EQwS0vl+6ptwCu9A/69aSLBo5ej8o/XqXFibH1oKEnUH7rumoh1u/jvzPZFg9qiGMsH6eIkWmkb
-	9K4dSaFY/NGww++Vc+PH/xXeQSoXJjL0gR0EyinuMpmtHlfryiIzqnc47guT4FrV1UaS96wa8PK
-	bGVzBy5dl0PZ3z1mQnUMgkIDWWshfxcXWep1gCmvAY7ow0LKX7jS/geIuQNtqBv+OlA/3CI/JoE
-	zTXNTAHb3TdODPaWQVf6D0FP9Y0mqRMm3ub8QQ9Za5vCaRmxjGFqydOBbrd1VmOQj2d98fOx01x
-	/IJX5PEbTuILjrgIrG6EpAlnFws5RlONMM1c6pmA76O0G0g4yE4RRtYKguDZfFv2P2PjDd397z4
-	I=
-X-Google-Smtp-Source: AGHT+IH2WqFFYwwZKcq2dDys6lYV3Y9NNnL0D9d/ETn6ueyPNEao8tuz1jm9o8gPdjUwlS1YqeaFbA==
-X-Received: by 2002:a05:600c:2282:b0:456:1dd2:4e3a with SMTP id 5b1f17b1804b1-45f211ca99amr27964535e9.3.1757695361061;
-        Fri, 12 Sep 2025 09:42:41 -0700 (PDT)
+        bh=SoeciE1g87M9Qxg6df56vLYD1QTe3IoOL1+JcFYtWuk=;
+        b=dlnTmPrCmZgpYzUwfna9MgeYFNSaYhRelcrXb8jLe4JeUUoYbjG+u4xEVX5MQ7GArW
+         dorxuWQPBI/ZoLHr9Vj5snOfrmZTGTgq2cZycR5LoG6HsChAGhguCuAYtEwic7qYIXaF
+         lX6h4Q088zAHYTxDZ3gSbWh3xZihtQ+3NfKX288hacx8TWqaAifEbtHAA+ChU9XdqHbP
+         U4HZ04EQPsCTvZICuAj31YdstbEBIz2iGgRRzJi+pQNf6+3y5XJ1FwDrWGrO+XsrYnfT
+         unyKxJKLKBemhAT8a+iKbyWwwqfGDjzEYRF4u3kW0/Q2mFuVUK5hndyA9PX1iqDfh77W
+         UX8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757695362; x=1758300162;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SoeciE1g87M9Qxg6df56vLYD1QTe3IoOL1+JcFYtWuk=;
+        b=uwa37K3Bo7Gr08IMocI9+PyI7g5/iRq6ON0mt3+/jPaZH/z5WoDuUyDgN973oInOgW
+         hONmYWD/eEHWR28I2YbWYngT5bzjM+ebiAS9TM1ukL1jsTQdijCOasz94rxsqbqhIdTc
+         IA+4mLZdgQCZMrJT8kwhoW3vfw0q5lFTxa7cNNJcpnDvogoOZArsu+e5dMGCdpvlGrtH
+         zJFZs0BXUXJ1BCZXTSwMNfX4sr/p6wZ6GgVlnK2COYpx+CHDyjWKkUyijjQuWJ/FOPmi
+         4fx+Q2qKWX4BGjpD6/3zpU42i003Mmdxl6WjrxeroNDoNanxlaStakqOXJS7vGqTlj0E
+         eYwg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoJefSlDtMHgII68MSD66T8zF3JDfrWR+lTuLz/i8T2a/tpxeOH9RY0MZ2WmPG7Men793APNQAgvmBmow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzYtxMDY21PJsG8rWwkBVpgnsntSKkq521fXPAvT4jro5yfTO1
+	uPmIrMqdZBEGiZBVnla/bWZrFx3+5PBm1RkbEuS763rDKd6mYhaQRqD0
+X-Gm-Gg: ASbGncvv76gO1S+AIA3Qi+u7YW9Yqxchbs8LFsGsZKPvep6FQM3gNeW8A4ZbgJcQjal
+	Q+81HfQXDJHJXXi+5HTHOPFkllxPYz91Jd9jWTwoLRCnsIRjVZRYo9dO1D5UncSWNICYwphIKuO
+	B6FXuDoM6zXBDBJXwu2s3lzq/OB8zcThMbu2XOKSXIXoyaWNV0JZgLwb7BBf4QZ7cu7UPiqYUQS
+	VzKOrio7OR8OUPBErZNJFrvVztfToBU1fNnCmxFxNmJ30vsp9qDLRJi2ZYOaAlkojymnYupxFQp
+	DbF2DUuXojOpUs6kJ3iHmvqQuy9QNNoh2SamSQ33Owk0XhHERsn3p4zI65IwRa3XfbcUqFJui6X
+	sg9fO1H+A3Vef3uD/Ucq4U4j14RebW6YIwJHoIrzPjafuLvzejby5msorkM8AgIBx2m4zgP+rT2
+	Y=
+X-Google-Smtp-Source: AGHT+IHuJSFr0dqtOsT5NPWoHGSkNkCmgSeBnBH2v+uNiFiipuyD5CsBrYBuPM84MejkBy847xlygg==
+X-Received: by 2002:a05:600c:55c6:b0:45d:e0d8:a0aa with SMTP id 5b1f17b1804b1-45f211fa411mr30126825e9.17.1757695362172;
+        Fri, 12 Sep 2025 09:42:42 -0700 (PDT)
 Received: from ipedrosa-thinkpadx1carbongen12.rmtes.csb ([5.225.138.131])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd415sm7086696f8f.30.2025.09.12.09.42.40
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd415sm7086696f8f.30.2025.09.12.09.42.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 09:42:40 -0700 (PDT)
+        Fri, 12 Sep 2025 09:42:41 -0700 (PDT)
 From: Iker Pedrosa <ikerpedrosam@gmail.com>
-Subject: [PATCH 0/5] drm/solomon: Code improvements and DRM helper adoption
-Date: Fri, 12 Sep 2025 18:42:08 +0200
-Message-Id: <20250912-improve-ssd130x-v1-0-bc9389ed299e@gmail.com>
+Date: Fri, 12 Sep 2025 18:42:09 +0200
+Subject: [PATCH 1/5] drm/solomon: Move calls to drm_gem_fb_end_cpu*()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,10 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAGBNxGgC/x3MQQqAIBBA0avErBPUNLKrRIvKsWaRhQMhhHdPW
- r7F/y8wJkKGsXkh4UNMV6xQbQPbscQdBflq0FJb6ZQWdN7pelAwe9XJLFZj18GFYHrXQa3uhIH
- yf5zmUj6aX2o9YQAAAA==
-X-Change-ID: 20250912-improve-ssd130x-b45b89ff4693
+Message-Id: <20250912-improve-ssd130x-v1-1-bc9389ed299e@gmail.com>
+References: <20250912-improve-ssd130x-v1-0-bc9389ed299e@gmail.com>
+In-Reply-To: <20250912-improve-ssd130x-v1-0-bc9389ed299e@gmail.com>
 To: Javier Martinez Canillas <javierm@redhat.com>, 
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
  Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -95,40 +95,127 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Iker Pedrosa <ikerpedrosam@gmail.com>
 X-Mailer: b4 0.14.2
 
-This patch series improves the Solomon SSD130x DRM driver by adopting
-existing DRM helpers, improving code clarity, and following kernel
-coding standards.
-
-* Patch #1 moves DRM GEM framebuffer CPU access calls to make critical
-  sections more visible and maintainable.
-* Patch #2 replaces WARN_ON with drm_WARN_ON_ONCE to prevent log spam.
-* Patch #3 adopts drm_crtc_helper_mode_valid_fixed() for mode
-  validation.
-* Patch #4 adopts drm_connector_helper_get_modes_fixed() for mode
-  management.
-* Patch #5 enforces one assignment per line per kernel coding style.
-
-These improvements reduce code duplication by leveraging existing DRM
-infrastructure and enhance code readability without changing
-functionality.
+Calls to drm_gem_fb_end_cpu*() should be between the calls to
+drm_dev*(), and not hidden inside some other function. This way the
+critical section code is visible at a glance, keeping it short and
+improving maintainability.
 
 Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
 ---
-Iker Pedrosa (5):
-      drm/solomon: Move calls to drm_gem_fb_end_cpu*()
-      drm/solomon: Use drm_WARN_ON_ONCE instead of WARN_ON
-      drm/solomon: Simplify mode_valid() using DRM helper
-      drm/solomon: Simplify get_modes() using DRM helper
-      drm/solomon: Enforce one assignment per line
+ drivers/gpu/drm/solomon/ssd130x.c | 33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
 
- drivers/gpu/drm/solomon/ssd130x.c | 77 +++++++++++++++------------------------
- 1 file changed, 29 insertions(+), 48 deletions(-)
----
-base-commit: c571cb70e1ed43ee543c70151e61a001ab2eefa2
-change-id: 20250912-improve-ssd130x-b45b89ff4693
+diff --git a/drivers/gpu/drm/solomon/ssd130x.c b/drivers/gpu/drm/solomon/ssd130x.c
+index dd2006d51c7a2fc8501904565da806aa47333ad6..297593c7fd20a5a5da81f1e1fcfda9092b19cf90 100644
+--- a/drivers/gpu/drm/solomon/ssd130x.c
++++ b/drivers/gpu/drm/solomon/ssd130x.c
+@@ -1016,15 +1016,9 @@ static int ssd130x_fb_blit_rect(struct drm_framebuffer *fb,
+ 
+ 	dst_pitch = DIV_ROUND_UP(drm_rect_width(rect), 8);
+ 
+-	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
+-	if (ret)
+-		return ret;
+-
+ 	iosys_map_set_vaddr(&dst, buf);
+ 	drm_fb_xrgb8888_to_mono(&dst, &dst_pitch, vmap, fb, rect, fmtcnv_state);
+ 
+-	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
+-
+ 	ssd130x_update_rect(ssd130x, rect, buf, data_array);
+ 
+ 	return ret;
+@@ -1048,15 +1042,9 @@ static int ssd132x_fb_blit_rect(struct drm_framebuffer *fb,
+ 
+ 	dst_pitch = drm_rect_width(rect);
+ 
+-	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
+-	if (ret)
+-		return ret;
+-
+ 	iosys_map_set_vaddr(&dst, buf);
+ 	drm_fb_xrgb8888_to_gray8(&dst, &dst_pitch, vmap, fb, rect, fmtcnv_state);
+ 
+-	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
+-
+ 	ssd132x_update_rect(ssd130x, rect, buf, data_array);
+ 
+ 	return ret;
+@@ -1078,15 +1066,9 @@ static int ssd133x_fb_blit_rect(struct drm_framebuffer *fb,
+ 
+ 	dst_pitch = drm_format_info_min_pitch(fi, 0, drm_rect_width(rect));
+ 
+-	ret = drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE);
+-	if (ret)
+-		return ret;
+-
+ 	iosys_map_set_vaddr(&dst, data_array);
+ 	drm_fb_xrgb8888_to_rgb332(&dst, &dst_pitch, vmap, fb, rect, fmtcnv_state);
+ 
+-	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
+-
+ 	ssd133x_update_rect(ssd130x, rect, data_array, dst_pitch);
+ 
+ 	return ret;
+@@ -1232,6 +1214,9 @@ static void ssd130x_primary_plane_atomic_update(struct drm_plane *plane,
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
+ 
++	if (drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE))
++		return;
++
+ 	drm_atomic_helper_damage_iter_init(&iter, old_plane_state, plane_state);
+ 	drm_atomic_for_each_plane_damage(&iter, &damage) {
+ 		dst_clip = plane_state->dst;
+@@ -1245,6 +1230,8 @@ static void ssd130x_primary_plane_atomic_update(struct drm_plane *plane,
+ 				     &shadow_plane_state->fmtcnv_state);
+ 	}
+ 
++	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
++
+ 	drm_dev_exit(idx);
+ }
+ 
+@@ -1267,6 +1254,9 @@ static void ssd132x_primary_plane_atomic_update(struct drm_plane *plane,
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
+ 
++	if (drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE))
++		return;
++
+ 	drm_atomic_helper_damage_iter_init(&iter, old_plane_state, plane_state);
+ 	drm_atomic_for_each_plane_damage(&iter, &damage) {
+ 		dst_clip = plane_state->dst;
+@@ -1280,6 +1270,8 @@ static void ssd132x_primary_plane_atomic_update(struct drm_plane *plane,
+ 				     &shadow_plane_state->fmtcnv_state);
+ 	}
+ 
++	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
++
+ 	drm_dev_exit(idx);
+ }
+ 
+@@ -1301,6 +1293,9 @@ static void ssd133x_primary_plane_atomic_update(struct drm_plane *plane,
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
+ 
++	if (drm_gem_fb_begin_cpu_access(fb, DMA_FROM_DEVICE))
++		return;
++
+ 	drm_atomic_helper_damage_iter_init(&iter, old_plane_state, plane_state);
+ 	drm_atomic_for_each_plane_damage(&iter, &damage) {
+ 		dst_clip = plane_state->dst;
+@@ -1313,6 +1308,8 @@ static void ssd133x_primary_plane_atomic_update(struct drm_plane *plane,
+ 				     &shadow_plane_state->fmtcnv_state);
+ 	}
+ 
++	drm_gem_fb_end_cpu_access(fb, DMA_FROM_DEVICE);
++
+ 	drm_dev_exit(idx);
+ }
+ 
 
-Best regards,
 -- 
-Iker Pedrosa <ikerpedrosam@gmail.com>
+2.51.0
 
 
