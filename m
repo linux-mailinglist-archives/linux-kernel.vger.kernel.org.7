@@ -1,119 +1,91 @@
-Return-Path: <linux-kernel+bounces-813501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFA7B5467D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:06:47 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9629CB54632
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6F618892DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:07:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B45D4E2616
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AC5274FD1;
-	Fri, 12 Sep 2025 08:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DAB12749CA;
+	Fri, 12 Sep 2025 08:59:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hcrNDAFV"
-Received: from mail-m49202.qiye.163.com (mail-m49202.qiye.163.com [45.254.49.202])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="gQUT9pxh"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E89274B2F;
-	Fri, 12 Sep 2025 08:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186311A3142;
+	Fri, 12 Sep 2025 08:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757667584; cv=none; b=mmmmFu/nfDz1VkBvZr3su8yCeybhujx47rf4iCaTv/M3ma3BMRYQeo10gjadjVz56KF6+HhhCAnestu60VGgaNWAFClQBbUyb1i5e390ETyz8WHNdauUp6K+x/ZD3/dDAdXPseTqmqjq8PUR56519KQIqy686w4JF7q0IMJUPK8=
+	t=1757667545; cv=none; b=pHgiwSsOW935ZhxVSZlMyItx4PUjja4bCQgW46avPn+AAscHwesQcMORXTH3yhHmAA5QwJqMT0wKCdKEbb75yZpvK3N7VTCCPtsHtKgm5DMJ9BGCeiWF0V+4qdrWP36Bg0C3eCP4R+JdTTBOse2xvRAaIESHTyop5L1HrvXEIjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757667584; c=relaxed/simple;
-	bh=UE6L+s0nPxvXRfXR4xkcPhVx4Rgz+wr+4sUpEfZayXo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OsopDPJvO68B+MPH/oMFYENtmqlc5gQ/1ku4lYSE9VSyZxrz8CimQFNz6ZQw8s9NJBnX2PuB1SMvN3Wf7C19ZDK9mwkmo5TsVbpOKxD/znsmvvHeaJbx5HOwdYERpWl1VX9c5yCuHkMHwPg3g42k1H3eH1dGcMdeQTrvOxBx47A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hcrNDAFV; arc=none smtp.client-ip=45.254.49.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2298a0eed;
-	Fri, 12 Sep 2025 16:59:38 +0800 (GMT+08:00)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	jingoohan1@gmail.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com,
-	hjc@rock-chips.com,
-	heiko@sntech.de,
-	andy.yan@rock-chips.com,
-	dmitry.baryshkov@oss.qualcomm.com,
-	dianders@chromium.org,
-	m.szyprowski@samsung.com,
-	luca.ceresoli@bootlin.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Damon Ding <damon.ding@rock-chips.com>
-Subject: [PATCH v5 16/17] drm/bridge: analogix_dp: Remove bridge disabing and panel unpreparing in analogix_dp_unbind()
-Date: Fri, 12 Sep 2025 16:58:45 +0800
-Message-Id: <20250912085846.7349-17-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250912085846.7349-1-damon.ding@rock-chips.com>
-References: <20250912085846.7349-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1757667545; c=relaxed/simple;
+	bh=efbW/Sfe0OW517ShQC9CjQHOEKr+0UjfF7wcZYdo6R8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bHwxYsOvP4QeLqxMrq/Iag8JFdnKSZsXk3vf8FWsf6wJkMlQbOedwhOTMy7z2cSGyrqQ1k9j04iIGh0lbgqTzUt7Ba0hyXclOrHjdf3/CL4VcfG9CbOY4+3pWn0/WiKiX94fHeyrdwBLL/EZzBfjQmkb6iPXhJ41HinGDUCMwQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=gQUT9pxh; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1757667533;
+	bh=efbW/Sfe0OW517ShQC9CjQHOEKr+0UjfF7wcZYdo6R8=;
+	h=Subject:From:To:Date:In-Reply-To:References;
+	b=gQUT9pxhlZK5toz3qpJBhksN8GlW+u9S0jSBZhnkiD/iqI1/v93UiO6gp/fkoZnEu
+	 BNG+EutVZjFVqSirhIOp9fSYQ62IQ4INHGAyJvkiK9+A1vB/LEavjFnLdNacsgCQ2Z
+	 o6LCVucyWVOHDpGi+qSdfStgOMsE5J7GWUNCuRD/0BUcXLU5sUrMvNKoFp9QUiNLgc
+	 vn3Qbpd4Q51l4mdF4ikc9hTCo0Ye6qznEroVNQNMwlE6uJhmbzZJRRBJ3WgTGzfF/c
+	 zy0yPCrTWAvFjjWyhASWPxKXd3EEk8Y0+aU3hBPJ87ASCBluY6wm4OsxTvCmdxEA/3
+	 5QIYAH+Ufn03g==
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 0A84664748;
+	Fri, 12 Sep 2025 16:58:48 +0800 (AWST)
+Message-ID: <9d6660f0bf5119cedee824cf764f15838622833a.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v18 1/3] dt-bindings: i2c: aspeed,i2c.yaml: add
+ transfer-mode and global-regs properties and update example
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, benh@kernel.crashing.org, 
+ joel@jms.id.au, andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+  conor+dt@kernel.org, andrew@codeconstruct.com.au, p.zabel@pengutronix.de, 
+ andriy.shevchenko@linux.intel.com, naresh.solanki@9elements.com, 
+ linux-i2c@vger.kernel.org, openbmc@lists.ozlabs.org,
+ devicetree@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org,  linux-kernel@vger.kernel.org
+Date: Fri, 12 Sep 2025 16:58:48 +0800
+In-Reply-To: <20250820051832.3605405-2-ryan_chen@aspeedtech.com>
+References: <20250820051832.3605405-1-ryan_chen@aspeedtech.com>
+	 <20250820051832.3605405-2-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a993d26d0f803a3kunm813a8c8ea46349
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGRhIGVYfTUtMSU8YTE5LQh1WFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpKQk
-	1VSktLVUpCWQY+
-DKIM-Signature: a=rsa-sha256;
-	b=hcrNDAFVgHCnqsQ7PX05oOzD6tFw623+JrVW/+osoJGGf6+DsXXwbVzfdEXGf7ju25zBD39M40MDJ2KVFDIub/P+YVYGaLtjQIgjTLFEnyLMy7a48IoTZpPTNKkGwPmlC8i7A4pP8kBLV2Z76iiNWuHnEvgHXVLcMGPUbOObE7s=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=LOvH71uNt7uS8xhhfFmnDFxc/3Aovjmqf/M6vbkDSxw=;
-	h=date:mime-version:subject:message-id:from;
 
-The analogix_dp_unbind() should be balanced with analogix_dp_bind().
-There are no bridge enabling and panel preparing in analogix_dp_bind(),
-so it should be reasonable to remove the bridge disabing and panel
-unpreparing in analogix_dp_unbind().
+Hi Ryan,
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
----
- drivers/gpu/drm/bridge/analogix/analogix_dp_core.c | 4 ----
- 1 file changed, 4 deletions(-)
+> And AST2600 i2c controller have two register mode, one is legacy
+> register layout which is mix controller/target register control
+> together, another is new mode which is separate controller/target
+> register control.
 
-diff --git a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-index c98058e9c917..5e9e14b2f29a 100644
---- a/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-+++ b/drivers/gpu/drm/bridge/analogix/analogix_dp_core.c
-@@ -1531,10 +1531,6 @@ EXPORT_SYMBOL_GPL(analogix_dp_bind);
- 
- void analogix_dp_unbind(struct analogix_dp_device *dp)
- {
--	analogix_dp_bridge_disable(&dp->bridge);
--
--	drm_panel_unprepare(dp->plat_data->panel);
--
- 	drm_dp_aux_unregister(&dp->aux);
- }
- EXPORT_SYMBOL_GPL(analogix_dp_unbind);
--- 
-2.34.1
+OK, but the ast2400 and ast2500 I2C peripherals - which this binding
+also describes - do not have that facility. Given the 2600 is a distinct
+peripheral (as discussed on the v16 series), this would seem to warrant
+a distinct binding.
 
+Should this be split out into an ast2600-specific binding, to reflect
+that it is different hardware? The reference to the global registers and
+transfer modes would then be added only to the ast2600-i2c-bus binding.
+
+Cheers,
+
+
+Jeremy
 
