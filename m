@@ -1,183 +1,74 @@
-Return-Path: <linux-kernel+bounces-814115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B13B54F6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DA4B54F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:30:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8A343AF5B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:24:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58BB53B6E8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EF930C621;
-	Fri, 12 Sep 2025 13:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="BMtWMfMS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GBrRQ/pl"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BC2A249E5;
-	Fri, 12 Sep 2025 13:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C952262FC2;
+	Fri, 12 Sep 2025 13:30:27 +0000 (UTC)
+Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A64A13635C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757683490; cv=none; b=OndzRjcBu2uk7MPtu26wjyqVMVghya80dxcwJyDng7bEqVneMScHJj3owIDXWM5khEK+QwaxBUOk10Br+4OsNTATpOSmhWTso9UbMh2d2BVVoWDXRxSrLRKVf/5+8xUDDIf9eRPvlH/P4rXwvkw3SmK+K3MthBpde3Y99Qj0iDM=
+	t=1757683826; cv=none; b=q2y2qQUG/NURR/OzybzXs8180Pa3LbtIwGqGURRsb71vQlfzC5cOWA78dYb71FZINWAtDpSo66lsK90WQKYmmXXOvp+2Ws7sY/kUshaMjk8WI7K3IDkOYmUbXPZH7h+oKtiqKnZXjB+AxIRxlLosFtQWkKBVrb4UbO9xKAzVRNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757683490; c=relaxed/simple;
-	bh=4rNLBR8Upg4ZrbCVRyBH/yDBONUT3eiZqdnUTvjhE/s=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=f/esGuw7DPqlzqoq6Jc4dmS1VkUw5tziP5UoALB2TVdFsYLSWtjvI+FDKVWiaWDiGbK9bKEU62MZFSCE86pwZ8uXZ2CoDULvDnFieXDM7iaEdCrEg9SfUhX0Zys+drDLeHgRc9l6Li/4Bdi7EQHX5tP3ogw5O50WC14hbAwd6kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=BMtWMfMS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GBrRQ/pl; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 8626B1D004E4;
-	Fri, 12 Sep 2025 09:24:45 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Fri, 12 Sep 2025 09:24:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757683485;
-	 x=1757769885; bh=6KZ3evzHd0jMHwprrzgXlCgpdKsD3TU8bNk1cnRINdw=; b=
-	BMtWMfMScvjRRHN4lZ5+SxhDrLoe8ViG79wH4rmFIyydLBJqmdvdFK6c19xBWobW
-	2oabqe5bXoCvPdabnoU+fokhgoYryavomnRIPJK8opa803KVgzXTxKTb55JHNtiE
-	GJ1eY8sX8nZ5ydB7YT3o3XSs0SCy/BRyq4nS4ohoYsAj6nC0Prd+hM6tVznh3l8Z
-	mu+0uweQEhVKDaoGfOSsoMn6fP1VysZAqd9ZeIg2G3N9mJySx2zfcU76r13KLUe+
-	flnIriEDfWikQbTaecZVtM7j5laAUmtd7NrHMVfwv91Y5XEpcdF05Dqygzb8+bPA
-	RQAq5k1JeGkdRh/ovN/RJw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757683485; x=
-	1757769885; bh=6KZ3evzHd0jMHwprrzgXlCgpdKsD3TU8bNk1cnRINdw=; b=G
-	BrRQ/plvFwYVEW9Jz6iNWKKn4g7t0pSJJ2O7daQUEVPVaPFoe2OvukHI8NL/5DkN
-	AR1Apk+5HQKKMMAHVPB9q6r9rrBdHP04o2UhOwPxK6Kvd4zsGvI2G9Fp+rEJBBy9
-	mPmzlSFqWVydh8SlDnAWXjtrd9a3x6tq4HZpdzonMDyFJ320PHxpEyTsBEkpG+k0
-	tg07+9FkxJH+DbsICeIrS0NswFLRvSal0vn5B+cBskxNb67WPzpn65rDtElKoFEg
-	V2HbheedFhZVAvTLkW37p9+ExuPF5fhWBN8jCsVJ69puGfE/4F1x5y+RnIL2gRFd
-	rG9vKsUQTecG9QpROhRxw==
-X-ME-Sender: <xms:Gx_EaMbRJ60j31zTG2MqZpqYKtA9xgPXXUJYqxFrNAQT0qS22Dw7eg>
-    <xme:Gx_EaHZR6t4-h5qjnHbsAciVCb_3k3lay4Kq-TwIuEvPnwnJ-Yko0fwbYQGzsOVSe
-    vnMWi4SrXqmGpDO4gQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleduiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
-    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeduvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheprghnghgvlhhoghhiohgrtggthhhinhhordguvghlrhgvghhnohestg
-    holhhlrggsohhrrgdrtghomhdprhgtphhtthhopegsvghnrdgthhhurghnghesghgvnhgv
-    shihshhlohhgihgtrdgtohhmrdhtfidprhgtphhtthhopehvihgtthhorhdrshhhihhhse
-    hgvghnvghshihslhhoghhitgdrtghomhdrthifpdhrtghpthhtohepughlrghnsehgvghn
-    thhoohdrohhrghdprhgtphhtthhopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrh
-    drsggvpdhrtghpthhtoheprggurhhirghnrdhhuhhnthgvrhesihhnthgvlhdrtghomhdp
-    rhgtphhtthhopehmihhkkhhordhrrghpvghliheslhhinhgrrhhordhorhhgpdhrtghpth
-    htohepuhhlfhdrhhgrnhhsshhonheslhhinhgrrhhordhorhhgpdhrtghpthhtohepiihh
-    ohhusghinhgsihhnsehlohhonhhgshhonhdrtghn
-X-ME-Proxy: <xmx:Gx_EaO1soN_PdTt7MvIqKxrrGib6VGcyThUcZhLyg0Uvi03HtS8_7Q>
-    <xmx:Gx_EaLJZkeK-WAGNJ1BBhGsVuJ9d3kjsY53xgMl8br8dyzRBGYK_hQ>
-    <xmx:Gx_EaL1oOyi7TFRowu02Q9l8GB13nD6h2fVDancfLC2U-S5VWoZ1ew>
-    <xmx:Gx_EaHlJj2_DriJdFp22gbM-2ubESgPagiPBOAyFuH6I69ug-afSpA>
-    <xmx:HR_EaCQrZbnCYhqoX5090l_f5n5TQjw2ituBwsV22mBIgXrMvEiih3ff>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 83630700065; Fri, 12 Sep 2025 09:24:43 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757683826; c=relaxed/simple;
+	bh=Phvf/+4TTzo2+XZPAndnu+kUC9CkpgD9w0ZXtkj7VI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fing5mrYg5JPBhZkBq60hReqV++B/ZeR3Qw8+V8/nZpGbrTVK+wJZQ7W+mVntebh0/+jImT2R3An//4Q8bTWphx9N/aMx6FQW9B+gwCwh9xGS8QW+NB3ePD6Sg1UDbqY+BUn/yBJoZjbJP3gGUxKm95ZPhRZTTqjtlSZ898AVqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
+Received: from gate.crashing.org (localhost [127.0.0.1])
+	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 58CDOWIi048951;
+	Fri, 12 Sep 2025 08:24:32 -0500
+Received: (from segher@localhost)
+	by gate.crashing.org (8.18.1/8.18.1/Submit) id 58CDOVJU048950;
+	Fri, 12 Sep 2025 08:24:31 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date: Fri, 12 Sep 2025 08:24:31 -0500
+From: Segher Boessenkool <segher@kernel.crashing.org>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] powerpc/32: Fix unpaired stwcx. on interrupt exit
+Message-ID: <aMQfD5M5yNmYxLho@gate>
+References: <6040b5dbcf5cdaa1cd919fcf0790f12974ea6e5a.1757666244.git.christophe.leroy@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Ab0invGq7VjZ
-Date: Fri, 12 Sep 2025 15:24:23 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Mikko Rapeli" <mikko.rapeli@linaro.org>
-Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- "Ulf Hansson" <ulf.hansson@linaro.org>,
- "linux-mmc @ vger . kernel . org" <linux-mmc@vger.kernel.org>,
- linux-kernel@vger.kernel.org, "Adrian Hunter" <adrian.hunter@intel.com>,
- "Victor Shih" <victor.shih@genesyslogic.com.tw>,
- "Ben Chuang" <ben.chuang@genesyslogic.com.tw>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Yixun Lan" <dlan@gentoo.org>, "Binbin Zhou" <zhoubinbin@loongson.cn>
-Message-Id: <4479d851-33be-4559-b998-fdd0480d9f78@app.fastmail.com>
-In-Reply-To: <aMQEO7tmvSY5thC-@nuoska>
-References: <20250911144313.2774171-1-mikko.rapeli@linaro.org>
- <CAPDyKFqLag_WkxqOCebvBCJy4TzZEqt-rFD_Z30sajUxgSpcaA@mail.gmail.com>
- <1813054.X513TT2pbd@diego>
- <acbc46c8-30df-47bb-9d3d-91ba477f6029@app.fastmail.com>
- <aMQEO7tmvSY5thC-@nuoska>
-Subject: Re: [PATCH] mmc: dw_mmc-rockchip: add dependency to ROCKCHIP_PM_DOMAINS
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6040b5dbcf5cdaa1cd919fcf0790f12974ea6e5a.1757666244.git.christophe.leroy@csgroup.eu>
 
-On Fri, Sep 12, 2025, at 13:30, Mikko Rapeli wrote:
-> On Fri, Sep 12, 2025 at 10:47:29AM +0200, Arnd Bergmann wrote:
->> On Thu, Sep 11, 2025, at 18:05, Heiko St=C3=BCbner wrote:
->>=20
->>       depends on (ARCH_ROCKCHIP || COMPILE_TEST)
->>=20
->> after you check that this actually builds on x86 with COMPILE_TEST
->> enabled, as there may be other compile-time dependencies.
->
-> Ok so a lot of mmc driver set this correctly but few don't:
->
->  * MMC_PXA
->  * MMC_OMAP
->  * MMC_ATMELMCI
->  * MMC_MXC
->  * MMC_MXS
->  * MMC_DW_ROCKCHIP
->  * MMC_WMT
->
-> Maybe there are good reasons why these are not part of COMPILE_TEST.
-> I can try adding MMC_DW_ROCKCHIP. Did not yet find out how to start
-> the COMPILE_TEST build. Hints welcome. Which top level Makefile
-> target or script to run?
+Hi!
 
-I see that Krzysztof went through the subsystem five years ago
-and enabled everything he could in commit 54d8454436a2 ("mmc: host:
-Enable compile testing of multiple drivers").
+On Fri, Sep 12, 2025 at 10:37:34AM +0200, Christophe Leroy wrote:
+>  BEGIN_FTR_SECTION
+> +	lwarx   r0,0,r1
+> +END_FTR_SECTION_IFSET(CPU_FTR_NEED_PAIRED_STWCX)
+>  	stwcx.	r0,0,r1		/* to clear the reservation */
+> -FTR_SECTION_ELSE
+> -	lwarx	r0,0,r1
+> -ALT_FTR_SECTION_END_IFCLR(CPU_FTR_STCX_CHECKS_ADDRESS)
 
-The set you found above is probably a combination of drivers
-that were added after that without the COMPILE_TEST check,
-and drivers that fail to build on x86.
+Hrm.  So this is for V'ger (mpc7450)?  What kind of issues does that
+old thing have with unpaired larx/stcx., some performance impact?
 
->> I think in this case a 'default ARCH_ROCKCHIP' in the
->> ROCKCHIP_PM_DOMAINS definition is sufficient to have it
->> normally enabled, and still allows someone to try turning
->> it into a loadable module later, which would be a requirement
->> e.g. for Android GKI.
->
-> Ok I can test this out.
+The extra "dummy" larx has serious performance impact itself, on most
+implementations (also on all newer stuff).
 
-Thanks!
 
-> kernel.org defconfigs have ROCKCHIP_PM_DOMAINS
-> enabled so they don't see any issues but when users/distros configure
-> kernels, then ROCKCHIP_PM_DOMAINS is needed for MMC_DW_ROCKCHIP to wor=
-k.
-> To me a warning is sufficient from kernel config tooling since yocto
-> side tooling picks this up but enabling by default is even better.
-> These runtime dependencies hard to track down. Kernel modules would
-> be sufficient if support was there since in my case there is always
-> an initrd with udev and modules.
-
-There is no good answer in general here. Adding a lot of
-dependencies for each run-time requirement would make Kconfig
-overly complicated and introduce circular dependencies
-everywhere, so generally I recommend to only have either
-compile-time dependencies specified, or dependencies on specific
-platforms that can then be turned off when you know you are
-building for another one,
-
-     Arnd
+Segher
 
