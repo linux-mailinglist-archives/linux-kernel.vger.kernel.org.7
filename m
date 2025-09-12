@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-814355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD2CB552D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:13:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1315BB552D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C87471D621FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:13:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AE55AC511A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813C5320CD8;
-	Fri, 12 Sep 2025 15:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2878E314A65;
+	Fri, 12 Sep 2025 15:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HfMx/0vs"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fAOMROtg"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1527C320A35
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:10:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B40321435
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689834; cv=none; b=cGAsb2YUhHjnPwPGljxUAl9hm9vFFDcjFtTkuZDuO5+xWKsj5sc6WchKzDWx9m4Luvq+NUx8gisuj+SbSYtFNe4Km/AVcQVL0B14DmCz2noadM0x80gN2OgthN3PCoVrQSae04BkIMkWu+sQT/kXyIe4MoqSlG/KGJxgPCAEAZQ=
+	t=1757689840; cv=none; b=E+8s6QLiZHzb3eMUnvjiW+WqwqfJBHPFEJiIxdWyORf8CBURHKS7eJCtY+HnAX3QSTvZeLXkP3hbVzqXDYdYxr5uwhm6YgL1tMFsnz86m2is/wdzu9Qj7zEBOlRvVWI14fPu+I8YJShod1lygA4LgY44FgbO9Acy/J19t16/9wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689834; c=relaxed/simple;
-	bh=k5/I3UYTWdnJjKzBx+/VZfwmc+jXcyZQNgYc3CqZv50=;
+	s=arc-20240116; t=1757689840; c=relaxed/simple;
+	bh=lBamo/mRxiUtCBdbmIZyVniV6pvujs45sCbA4KFEQzE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QAZ6IwvPsokDncRSRa61qsMNVkgVRDjCriq7d8baqnRrdmVQ2n+f91MisDxn7iw+kelHD97f/duaEaJYZGMBCQBFjKa3GsMN1p9AlU6rbnHE5GgurSCYWsRbCu+uPjvR2E9eIdPqZtXKrxwITMaEnX/0nTRnom7a6HUWZWIBktM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HfMx/0vs; arc=none smtp.client-ip=209.85.219.171
+	 MIME-Version; b=cEHfKxCvYRnSEDbRETjtmqp776r3vcYQgT6fQ1NMAKpcsdD/hHG4qCxtzhoPeuVOFrMoPVLgjl36bjz9qZx8FwgYR7uW1LK4TyzBXIDifN7fsw87Fdgw3iRkhApCMmZnicLazQcgfQKtAZdkkg+1cB/8kn9aiFvCPM/MXi6oG7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fAOMROtg; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e96c48e7101so1629420276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:10:32 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71d60504bf8so19144487b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:10:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757689832; x=1758294632; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1757689836; x=1758294636; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b1ubFmujdan3yUawwr3ZvZLjd/mUy6/pR3VRzzGBTTA=;
-        b=HfMx/0vsbroSzJq953+Rkb0H9mHq9RI5B7qrFW1tGLb53uvBDW5BtguQARURlLnza9
-         5N1YjSdgWvN8f/dqIDzl1GhsgZ0F8EE22Xh/hCTWIlVps2vCGSMMQi9ZdpaIzIsnUArW
-         zIMaep99JpL829ErZkCMFjitM9/RwViNkXpdm1sMdVxotgIDHXYUDKouFDIbRJbBon3t
-         MLEDeUwZwwznfow9A81XcDaK54+jRvzkrpDenbrH5qHPySSk64I/fcUpjvQ+Gq+ylNEH
-         vNZPas2Od5OpRkSw9WWE6YGFp6RhTxZ5FgqeVv8wF+/tc+D+PoYUhx2Rzslb+rCnCqZH
-         6jTg==
+        bh=+ds8gslyRhEA90VqYYB6jUYRwIuKnqG3r9jdtCHu7D4=;
+        b=fAOMROtg/82tIva9GG3Qq7B1/Xo0+WLG/MAQv4jrJm8l+dpu/m7w88+hJOQUjbEBCE
+         Q/c6F7hcNX4R6eSvQuECiTJ/TwZ5ordlY296OA611EL10F6Q1XB+2shpcmNX1wJysvwv
+         NOh0HeeJrlREnwXJPTUTPDanh1+wbk5RqHQ26uU6u2xA9a2cR+CzZhb7PNYnsb0MizPk
+         vfA0nSyqNet2mhTreKSt6W/pq1aHgIboBGbT4SMlpCiDS1qWyPIW2mSg10P7JSnWUfnN
+         dgEWo/RJpZfZ7WXd2RPHPcUbUJGClDGaXmF6kF1cvaXdV1OhTMqaB58W9YZMg4944Pzp
+         7LQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757689832; x=1758294632;
+        d=1e100.net; s=20230601; t=1757689836; x=1758294636;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b1ubFmujdan3yUawwr3ZvZLjd/mUy6/pR3VRzzGBTTA=;
-        b=RLEI4pu53AE8g4i97MYPIbCtsrmCFT2Q8gkJGLIQR7R15s66xRhty+TYme9eWZjN73
-         EziIb+DRq/1KihAlJU+2Yuprk3rmW4V+VFkzBnior3qlGTilqIdREjkZN3CNp6nxxw0S
-         c4bSSprcy8CStwJPiZT8MGNDtYeEuphw2NmOEikc1ULWtvNe7mgjpxJXvVwL3J4LdD7e
-         OR/urIkeCi8k1YFH2FV5/ubATpVskzC2MJzEwMSFdwl7yETqij8sn7zdq+7APvs1nyTY
-         Ftc4rr9u7z1AyJB3JHL8ibMhoTnqqLhSvkgReqtA93PU8UNlgi3p91F0qDXGh4gJZ4R7
-         MvDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVc6I0bAztvS1sAid4dY26Xf36SEVFFfNvyU8gboFp6sUEyu3wvlHdcNsCeOeIuB2zkEs/7BLtT8uxFa2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8E5Gpiqy37zZZhXpBjXtDNCK9DDRifSwMomR+EidBFHaIract
-	6MC8OHo0gDbvx2E/Zq5Q64jq+to0Gc8iKCMJrf+ybc+fCY5eaPKPqPgDMLYX1lTGYKE=
-X-Gm-Gg: ASbGncvPi1BfK7b912+3UzckYAD5kGvTuzxL7CiC8h7iVyRWuOCdRPrBuHRbN7RDu9f
-	gtQZH1h3SJJ/cMAkTJ+Tz00KaftVg7xER/4WRtj3HxF9euKocveiqdtf3OozvunIP5CAGLNMQz7
-	ShTf6G9sixfdbCI4MZBWZp02WJOhfEWGzqhM7das7SRFxMo1V+gWwNsud++pMpATtnKNhal6Q3i
-	UbwzapEcF0J849C+QDfcDGPX05Fh1Z3i1fwxIJSe1vhkl10RWOLdXyxul2RNNYSjPg29YHXVQ+0
-	YaJD9U1L1mLGZVJ3YDLvfy0UY6ZbwOZzS8MuFS2bJ3sU9NaJ/3UN0fmvZygJq92mcAhoU5VJxcJ
-	6qSNer55uFDERQ5pE74ZU1w20QgLYBUDrL/exgs8NRix4
-X-Google-Smtp-Source: AGHT+IGQPX6y0JKi888sfyXxAah3q3fQIwu7cpMyf9JJWf5Y6/yYrim06D3kAGSOfpN7Gh01tRPdkA==
-X-Received: by 2002:a05:690c:c08:b0:72a:2d15:a2a2 with SMTP id 00721157ae682-730627c9015mr33553397b3.11.1757689831515;
-        Fri, 12 Sep 2025 08:10:31 -0700 (PDT)
+        bh=+ds8gslyRhEA90VqYYB6jUYRwIuKnqG3r9jdtCHu7D4=;
+        b=nZHDzWS7n/qZSaW2jJ8WkogMkbdbmMIjrtx1/RDr+bhFt8hPLVVTASVYFrR8CXhF1R
+         N05GpI2Ybz86foIdZgY+qM2Xq/GDQRzw80+O/1iNdkPo85QoHyjJbEhRaAo6wbCOFWYw
+         +hpI7IoiS2APBZRVaVRb5avTehBTW4RrBHptG+a6+1XNUCStiRWCRIltgAoYtYUP8zWQ
+         kLPt5erYcvvQKe1l3+zUOqzyO2z2400bKzo9zTK1zEoKb888VkJCVsc5ONHPgMveWtz+
+         b9hV7uP2QTMAuwXefYZEqCSY1Xr2B/kX1R5dm+uFgIVGaq5LVLgVw1mFW6+t4PRkCRvG
+         U64g==
+X-Forwarded-Encrypted: i=1; AJvYcCXBC0RktN6a/GmB1qajZInB9uuXE5E98ydtz6Ru/qoeWYzhJwxSQWXXIk1wKk9bA4xpeQ5pSzLPQA5fsh0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbSmEg/1joqCb7KtNbyKYpOf7bl+q3GP1ZwA2pgPj+TLbZ2Lfu
+	CP5h2MYMB31JH0gQrRNvvEbX5CHOJRyDXS0h9Mvr1Kd5+yt+emCokQc11aeYOp9UEaI=
+X-Gm-Gg: ASbGncvlwAkogz9jIRB6UuS4YzZt6yWAPPxhJKNkxCU5s/3nzSTjZOdjadd6Oc8EpV/
+	vyJ6jnfZGmMEgNPrHmLJ2Y2nkastt5+YJcP7zcJn4uQAKiiu3JVWBvrTzJWQXGO4eQT4DCc/AmU
+	aM6w11rERM70x2ZntzSoU7ADgh35zZ7srYgsrTNg5wc/L2jjEGyn9gXft/re8ruCPdNywJUXcTL
+	DCm89UN7h817gz5qyY6/JGRRUk05rT++PFQ0JlVDo5y5eAjHyoNq8xuZ2GqD9uRrqGdOt0HHdxG
+	2It9RczHXgSH/9/bPlzbT9pYj4QUl+1lz6IS+5h8+K5dBju1sJ6xRDoQyHZYxlXm+yode/tSDY5
+	/C83KtfnFLHdKqHCmIQ8YhCjOn5TDBTJCqg==
+X-Google-Smtp-Source: AGHT+IGUk5zUSgxh+r2dAU6fmhsNlb1RTWa2J7nuwDb4l4jA+t4jqiomYFBGdZGHaaNJrIZspvEapA==
+X-Received: by 2002:a05:690c:7286:b0:725:dc12:3004 with SMTP id 00721157ae682-73063d589abmr33964367b3.22.1757689836260;
+        Fri, 12 Sep 2025 08:10:36 -0700 (PDT)
 Received: from eugen-station.. ([145.224.119.89])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-624841586c1sm1302244d50.6.2025.09.12.08.10.27
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-624841586c1sm1302244d50.6.2025.09.12.08.10.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 08:10:31 -0700 (PDT)
+        Fri, 12 Sep 2025 08:10:36 -0700 (PDT)
 From: Eugen Hristev <eugen.hristev@linaro.org>
 To: linux-arm-msm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -92,9 +92,9 @@ Cc: tudor.ambarus@linaro.org,
 	linux-doc@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	Eugen Hristev <eugen.hristev@linaro.org>
-Subject: [RFC][PATCH v3 08/16] init/version: Add banner_len to save banner length
-Date: Fri, 12 Sep 2025 18:08:47 +0300
-Message-ID: <20250912150855.2901211-9-eugen.hristev@linaro.org>
+Subject: [RFC][PATCH v3 09/16] genirq/irqdesc: Have nr_irqs as non-static
+Date: Fri, 12 Sep 2025 18:08:48 +0300
+Message-ID: <20250912150855.2901211-10-eugen.hristev@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250912150855.2901211-1-eugen.hristev@linaro.org>
 References: <20250912150855.2901211-1-eugen.hristev@linaro.org>
@@ -106,49 +106,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add banner_len to store banner length.
-This is useful to save the banner into dumping mechanisms.
+nr_irqs is required for debugging the kernel, and needs to be
+accessible for kmemdump into vmcoreinfo.
 
 Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
 ---
- include/linux/printk.h   | 1 +
- init/version-timestamp.c | 1 +
- init/version.c           | 1 +
- 3 files changed, 3 insertions(+)
+ kernel/irq/irqdesc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 45c663124c9b..5bc617222948 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -12,6 +12,7 @@
- struct console;
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index db714d3014b5..6c3c8c4687fd 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -139,7 +139,7 @@ static void desc_set_defaults(unsigned int irq, struct irq_desc *desc, int node,
+ 	desc_smp_init(desc, node, affinity);
+ }
  
- extern const char linux_banner[];
-+extern const int banner_len;
- extern const char linux_proc_banner[];
+-static unsigned int nr_irqs = NR_IRQS;
++unsigned int nr_irqs = NR_IRQS;
  
- extern int oops_in_progress;	/* If set, an oops, panic(), BUG() or die() is in progress */
-diff --git a/init/version-timestamp.c b/init/version-timestamp.c
-index 043cbf80a766..1fdd795be747 100644
---- a/init/version-timestamp.c
-+++ b/init/version-timestamp.c
-@@ -28,3 +28,4 @@ struct uts_namespace init_uts_ns = {
- const char linux_banner[] =
- 	"Linux version " UTS_RELEASE " (" LINUX_COMPILE_BY "@"
- 	LINUX_COMPILE_HOST ") (" LINUX_COMPILER ") " UTS_VERSION "\n";
-+const int banner_len = sizeof(linux_banner);
-diff --git a/init/version.c b/init/version.c
-index 94c96f6fbfe6..68d16748b081 100644
---- a/init/version.c
-+++ b/init/version.c
-@@ -48,6 +48,7 @@ BUILD_LTO_INFO;
- 
- struct uts_namespace init_uts_ns __weak;
- const char linux_banner[] __weak;
-+const int banner_len __weak;
- 
- #include "version-timestamp.c"
- 
+ /**
+  * irq_get_nr_irqs() - Number of interrupts supported by the system.
 -- 
 2.43.0
 
