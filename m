@@ -1,254 +1,186 @@
-Return-Path: <linux-kernel+bounces-813402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB0BB544E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:15:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9C8B544E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FD0B1894DFA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:15:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 209A1585E81
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7F81B042E;
-	Fri, 12 Sep 2025 08:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A972D3EF6;
+	Fri, 12 Sep 2025 08:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QExhu0PH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B26DaC/p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276C02D249C
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757664850; cv=fail; b=t+l2lnht6j3eripu1AQy0Jf/4g65wMj+DvOt0GFA8A59XGMpgYMIdqlTR1icCjAqo/S+Vp0tIUT3G1pCMQ92U4Vi23Z7ib0v6WMOI0E/tT9EEKBBvkSkMozp4e/fCPttgW09YD23AU5IPuOHdBA/f9/rO9cHWTjJHXDBWVOtn0M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757664850; c=relaxed/simple;
-	bh=dJQIAC2g/l0wjDgLlnnYfcnFgdv0mJsusvVM2fKpwbE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dWxIflJXZkSq8DpL7cffdJ5qviSIuL0ik9T7y5OgLoih2C6lAnXGdG54HnpZd/DXcYoTNiANnVp1QvFoazNsI89Ask6FdM2bBbDfb8kA+D4gsmx+uJRDAGzWCiGnaYDcoQhWHxkSMIMshW8aEBEmml3LqRJQ3vrsPdAN1wsTnxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QExhu0PH; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757664848; x=1789200848;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=dJQIAC2g/l0wjDgLlnnYfcnFgdv0mJsusvVM2fKpwbE=;
-  b=QExhu0PHzO0ZSOjvoIOTMuYIs+vVcv3Ycp9v+5HVWo1uesHyLbnUifVj
-   uglx3RMDeZ2auDTTqxpB5mNl25gf4dn1B7N3Ra5N5r7zb2D6DFOF8tSNb
-   f81rv1P8WiT1huYEJqmcMxQ/KIFV2bu/bSMGLOqiU61xTXpt3uTbAXymQ
-   qqngzI37ph1I1nEBb5NNCtuxAnQp7FFpMA08AwuUD7PM1NFBGC/eQ1+Hc
-   9BawaBm79ELhmHEtzxL4+SWHehevVT8ibaiYvHy8hMAJ96RdkLI7iUpZC
-   v7DIiBRgat024Hz98tpa7/7UVUZiv6CNllECT2qttuhZaLu+CXyNEll65
-   A==;
-X-CSE-ConnectionGUID: pIFXlrzXTJWbjwltGk1P1w==
-X-CSE-MsgGUID: vY5+esBqSvusTG2MLTrz9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11550"; a="62637829"
-X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
-   d="scan'208";a="62637829"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 01:14:07 -0700
-X-CSE-ConnectionGUID: owjNK39tQFOFHTU81dB3cw==
-X-CSE-MsgGUID: 9qiHKHRSSOGh+3TJkB8KCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,259,1751266800"; 
-   d="scan'208";a="204906980"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 01:14:07 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 12 Sep 2025 01:14:06 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17 via Frontend Transport; Fri, 12 Sep 2025 01:14:06 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (40.107.212.63)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.17; Fri, 12 Sep 2025 01:14:06 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IgMuEW5eceq6ohrXiIr0J9GEH5QLGlJjoc9IuVisR/wTN9Xg48+A6izkx5czJPvX+iExbq3E+4kT1phq03dOX3uuI9p4g7cJmwDGBI75vl5jSHtH7AOCvvds2JKoe8hQ7T0rMemqRIWdyZ6/urtRLm1ihIBUXFsOM9hsAUjDq1YTtZtJh9IN5uu06XAyycCp3dTB+vqK7X1la9HZwtyrczNa/5WAOGaoU6Zh8q5SghbSjXPDSnUA/0udH/ugzbQXbnZeHigSC19ns2Gmpynktw1kW8FWZsG7UPYKZFy+0Izu49Alx77bkHb7ziZbXO5B/j/ei5ts22h5qFksGV4r0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dJQIAC2g/l0wjDgLlnnYfcnFgdv0mJsusvVM2fKpwbE=;
- b=Fv844O1jYk4VmDwIMVUdCrmrK7aY0s1/T2BCwf9aF/xJIotpI8BKgCzkgB7Lu4yUqdgvYejLzRp4rormN85wAqT/TywoHscH22t6vfa7FC5fDbwQauOdCflG/VaK2VW+CRwLQ4IvtqqofJbBbHqzbfo94Bj2Lrz9NhZwuwJqZGKoss9fmAbWPJPMixISM8Szj3xISlRMGs3cAwm3TMH/nJc63s2aa4eKlc7drQDA/sHDRw02CzUYR1F9O1pJgEnntQzxn/3aejhAVuwWUaAKHoT0ffZzdlBXBBx1kSyVFda2VtEDfvauD9iV5Gc4tICR4ZRZ+QqrMRSucJegWcpVQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BL1PR11MB5271.namprd11.prod.outlook.com (2603:10b6:208:31a::21)
- by DS0PR11MB9503.namprd11.prod.outlook.com (2603:10b6:8:297::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Fri, 12 Sep
- 2025 08:14:04 +0000
-Received: from BL1PR11MB5271.namprd11.prod.outlook.com
- ([fe80::5616:a124:479a:5f2a]) by BL1PR11MB5271.namprd11.prod.outlook.com
- ([fe80::5616:a124:479a:5f2a%3]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 08:14:04 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Will
- Deacon" <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, "Jason
- Gunthorpe" <jgg@nvidia.com>, Jann Horn <jannh@google.com>, Vasant Hegde
-	<vasant.hegde@amd.com>, "Hansen, Dave" <dave.hansen@intel.com>, "Alistair
- Popple" <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
-	Uladzislau Rezki <urezki@gmail.com>, Jean-Philippe Brucker
-	<jean-philippe@linaro.org>, Andy Lutomirski <luto@kernel.org>, "Lai, Yi1"
-	<yi1.lai@intel.com>
-CC: "iommu@lists.linux.dev" <iommu@lists.linux.dev>, "security@kernel.org"
-	<security@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>
-Subject: RE: [PATCH v4 6/8] mm: Introduce deferred freeing for kernel page
- tables
-Thread-Topic: [PATCH v4 6/8] mm: Introduce deferred freeing for kernel page
- tables
-Thread-Index: AQHcHil0+WjIl5Nj6UekRoJQglk8lrSPPRpA
-Date: Fri, 12 Sep 2025 08:14:04 +0000
-Message-ID: <BL1PR11MB52719E654E5AE227FE29B75F8C08A@BL1PR11MB5271.namprd11.prod.outlook.com>
-References: <20250905055103.3821518-1-baolu.lu@linux.intel.com>
- <20250905055103.3821518-7-baolu.lu@linux.intel.com>
-In-Reply-To: <20250905055103.3821518-7-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BL1PR11MB5271:EE_|DS0PR11MB9503:EE_
-x-ms-office365-filtering-correlation-id: 7dd3b96a-e30d-488b-5daa-08ddf1d45697
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700021|921020;
-x-microsoft-antispam-message-info: =?us-ascii?Q?BzsunJQh2PK2faDJIIvjp+oOWRhztcv6HT3EOPh5gM6msB66eo23wbx0EUeg?=
- =?us-ascii?Q?FB1hZ4Ni3hehdAfFzwhBNlw5zx8bTs50mTZFmlT2Ixo2198xFdaAzhd4n48R?=
- =?us-ascii?Q?EiiEE527kKonfipNtW/Zg9PYXrD5pPbXeCj8r+JMB5Y045XrU5PXX1KPV3t7?=
- =?us-ascii?Q?hqQUQRYpQVkWHDYFQhYkL1wFqyZaZ6VNy64dIBT/oHmnlXI3RVI4M8t57JtG?=
- =?us-ascii?Q?bhfAX0g2J0f9RDAbWLL5dGepnwR13TVuqls3EG4YvFidPG46X0zC8TINwxes?=
- =?us-ascii?Q?Nww7BTJKkIbD3G3gkIjeooGExdRMyx6jBHBDpcznPOGD6/hjC616lT369XRi?=
- =?us-ascii?Q?4x8CiclfTX95CdqpYwkWn5FiQWKIcZ2iwG4JEpu6befrWmiWHpLbD7uZuz7i?=
- =?us-ascii?Q?gLTnKNibHcPsvSLij6ERYCITk6IMstc9L6WAthc0J8jXR+iXGSauL8pz5O/u?=
- =?us-ascii?Q?sU3qlaWWp/AiJcsrpu/hBZjTruA0EzcwN2E6yC6TdbIk06WN8wUDDxiUB0Pk?=
- =?us-ascii?Q?P05eO1+cYle0vOkxDWs0K88S4OsOZsey7BDuvLzaIG1335FlXiTvwb1qHALF?=
- =?us-ascii?Q?g7yD9dGruAAmvp9VpnrPgLghOPlI3d+LPR1bsPgtFH6ZPrdbi95y/cYzTalv?=
- =?us-ascii?Q?6JS6IB/wWuOg+8METByPIxT3gjlKqAxXNTX4LwH5VRduF2yz8ZvTO1YcfWff?=
- =?us-ascii?Q?JAnYQjzwO4jERAiRyweCVU8wPZtsAkgqlc2Je5Avlo7lW8XXpb5KSzb+jTup?=
- =?us-ascii?Q?MnZqGxCwxvCwNopj3bIuJHuvCbqdn99w+JaiBEPoxiZRsvUAYnCYHC8pcvdT?=
- =?us-ascii?Q?7euPoryErF7DhQMNSpGZnp+Zpszu5b3l/o7j8TSHOoY88tgZjIJ5Rq9om3sb?=
- =?us-ascii?Q?0COlIJI5Mp28531ClZG7ig2xez6LqCKGju8QQelQsg5SNTaZ2p/0ttD2ZyqP?=
- =?us-ascii?Q?flczyOaP4sdOenSqLRZPqN2K3HFMKnVjUc/yErmNeA8tRXJE4bYy1dqDAmQB?=
- =?us-ascii?Q?NElMc5YW5/Q7DHqkGsjFlNX484FgRk5Y2TsEvQZYE5bYbIaN2DfrkA7m82Cw?=
- =?us-ascii?Q?Bgoi/ZqiGcGVT7eNX0YIo+ll5tHx8jEe/Rpuda+d5nElUz+evSR/9knLI+yg?=
- =?us-ascii?Q?E/r6GbDUflpNlTZ6LtCFdp8lQm2kfCcc0bgceBFHqhUAjnQTvwfPtVDbOHgf?=
- =?us-ascii?Q?oMoM+FbUzmVDHWbeWaRTgiVGYIKzQq84c5yywHQl6LWHRf/B7q4X2bAqn901?=
- =?us-ascii?Q?qqGR6gTt7AQmvI6KDao9eIG33O2nP+jWaSQy42IHtsWhB6MWjHnBRHPlwI/e?=
- =?us-ascii?Q?2+00+BiZI8xQXnXTgv7VIyxpHCgHD/JfDBc8GgOG8XE/ZLZ/EfWA0DrbwewE?=
- =?us-ascii?Q?1ZoQa7udQmaIwNczgBCyw8veAKSIyp8WOelvqzPJ2FGRi8qAlFcrTb3QjusA?=
- =?us-ascii?Q?VTRmtvHmeGpfRdInIeg9BAFbMkpuA9VBCH8oVyXxiZlEV6vACAk2OlmZOIC0?=
- =?us-ascii?Q?BsrAU2pH3scaRdc=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5271.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700021)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?0LlZ+22BqBhyl3ir3leLL3oA4xXqZLr5J6MzB2sWfvMXcfaY2+mdZSReAfoo?=
- =?us-ascii?Q?t11/77gcX/izm2EprrfmYkoATU8yU7Ho+shU8PTtFboSqmklM9NMs+SItFlL?=
- =?us-ascii?Q?AxkKamIyt/sZUPI5597b5U2ctmKRx0e3TMGb7h30G73XA6IRVks+V+iQe92e?=
- =?us-ascii?Q?I+k1SjnjvCzz2nsnNQNxkWuoCgfzbdZOri0aFXPXkgVO8gvfNSJdCfs88iV6?=
- =?us-ascii?Q?viJfGX7NBiIbJzyd9PUeV4z69BhSVoEvjgeP3ZOXzH0H86v1HTYp9Wka5GAZ?=
- =?us-ascii?Q?17VBlcwlTqzLB+RvqwkPe6sWqeYAeibQYejLduNMBJJmhhUVHF/kwGccRpnc?=
- =?us-ascii?Q?Nxbw1uUUv0hxIMb8NDjoNtyJ2T5WMOA0Ih2VL+cM6HoYIxWrcq2QAcruTtzt?=
- =?us-ascii?Q?3CF4mWhwUv6+1GfFSrhxKvsCIUx6WAq3hi1k9urz39g26ht3m1eFXpskBfk7?=
- =?us-ascii?Q?ONA1Ru24aCC81idOac19S8UkLXcdc6sRG2ypBWBZ2AqonWHd758hiz7CEdJX?=
- =?us-ascii?Q?0F0hMrEprISW86jqFbKbe6Ic0IynhKvkZ3gqKrK03LaY3EbgI4tVjEwpfsWp?=
- =?us-ascii?Q?0QAVMJYFAwtZiEsjq7aMEN1jrNQZlqunArwxs+i92rfEABRPdOlULPpo3Zg2?=
- =?us-ascii?Q?oI7s1NEYzcqP4c5KnKfWvrHGI5GHd3RE68FSBp8PDNvFCFzBSBKiDZxbWbYv?=
- =?us-ascii?Q?r880yn7BCF1fBr2AI89NjSXQAShpLexOxWzpQWvoCncRFnR1EX3nXOUsooic?=
- =?us-ascii?Q?JLxg/HjAaU+RQoNhNg6uY1jJ/TiEzCfdPfUg0zTTeeGnF9pknrAhgY0HYoHf?=
- =?us-ascii?Q?FCA289TRK5I+k5u8lRnVTZNvx46n0S7KavNno6KBHQoajyjrJvphdtDQtMhf?=
- =?us-ascii?Q?8bkD5wwH3+aF2QhcsKFCeg12rlPhQGGtnOGyCPvC0XQg9c/96N6/I9+ycOwy?=
- =?us-ascii?Q?dkThJUC2oOtyDx63OjeIGV8DXavuMzMwnT37fCmhdedsL6WXUpyTsCE0E7li?=
- =?us-ascii?Q?houP4HVSOpVsqg0RbqsF1AkPzQJKsQZmvBnQvFASupN8G2cq2qjqZ+Y4lbLk?=
- =?us-ascii?Q?3zh6Q6Po7h5nZXTbF2wX6jtYTB1+9Byh5/hQZbrh5zPpwqKw3CmQXKLN5NGW?=
- =?us-ascii?Q?PI4F2VZU02eI3kSNcmdSY5iqHh2YcSISdyP58isfHHv+5461J5t1naC0dghG?=
- =?us-ascii?Q?oPmnm5iC4nr8Ow9Ye0PBxBCa63cpymDoGlH/o9roih4tFgHyI873NaStJOi8?=
- =?us-ascii?Q?NNCXxLagp+Jrq6BWJCPyVrBJUWEk50yxzIXO6aQTws/Gv4eER+5QFVplXp+p?=
- =?us-ascii?Q?00Xz9L2vL/WH3kORG6xnXppEJcxRnOJ8rl5KfT4grCKYesrAjxiOXU4ttrrY?=
- =?us-ascii?Q?H4T4s7Oa9JnR/nVgR8abNd/4OEjGTmaQ7FzFUHLE9J2Sc8jULwfBjT8l4J6H?=
- =?us-ascii?Q?JJ1TmD+JtIj76eocAJfrBf7CYugl0zrcOC31C1WFhfnBrkbC5k62kIRLKDlF?=
- =?us-ascii?Q?/GSEIe5MmsZEeKTTCe0tUapHnutSp1HkDFf/5nqUyKIOtmAqdIwF2saUt7zz?=
- =?us-ascii?Q?hAXhOJJ2hZDMgrgumqustPosgZ2i3KhrBkB2CPIO?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D042D8773
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757664859; cv=none; b=RJHcuM4zS5NYNhNN9yB7xhvwQqObR41/Sh/zA87uURWOuLTWdJj0FMa4OzTprNHUsjFxDQrfLbMt+gqBUzl02biwf9GnrvXAdEGZLfBMUh8jW7FgTQRjmJ0y3TLetDRaMmTbPR3c+aC1OXFZdqoeU1u5UcwQYIoLX48kJITc67U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757664859; c=relaxed/simple;
+	bh=azMsw9UcYYDqC9B7k/Y8GO+xdiR80U6koOLcPLTzvp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pk+g1hfIvg2TSuu5y+Z4/wcjyin5B38bSGHR9wlgnEy3eKs6H7XHol6ZSNesbHFRxk0fbuvKK+EiztX8rVUFEvmvTZn3fPx2keM4inuHSDrAx/XibZO/YnBNtDScoTEgCtK2eh3D8XeeKHQYoIMW5el9NX0EZvG81rMUma9yI4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B26DaC/p; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757664856;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GLQ9zpwy/op/MmGGkXMW1QcaWAZBupI3LsVE45/b150=;
+	b=B26DaC/pbVr3Rag/TnikgRTdRtW7qw9tI/7HNj6wkkbOsH4KpqLlkbTJrSvPtuVCdArWHW
+	2oFbYClnrGzC0V4HG6qzR52Toh2traTHhVRbiErIEMSOAFc/hvGeb7tgkjzDi/xJ1RHXjU
+	vX2P1UkpWuSYwjHlP5zp4pX7MlzEgRQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-177-H3d8U1SdOzmkE2o_0enmZg-1; Fri, 12 Sep 2025 04:14:15 -0400
+X-MC-Unique: H3d8U1SdOzmkE2o_0enmZg-1
+X-Mimecast-MFC-AGG-ID: H3d8U1SdOzmkE2o_0enmZg_1757664854
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45ceeae0513so8975555e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:14:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757664854; x=1758269654;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GLQ9zpwy/op/MmGGkXMW1QcaWAZBupI3LsVE45/b150=;
+        b=YHmYYGJOMW2gcVjS8ppJMuM7xNF41uB+3vPRmrc+ZoVnWWgalC4foiQJUFW31vrKss
+         eXZv3vAPbhfW2Vvvi8vM7TwnmkkM1fIqC+lu4OoE11W/AK5fRTVd8v0p7XuRjton3gh7
+         5Gpypgb8MGpbjr5mpFfWEl6IaQIDXdDBkvplfPmiXS+2BnQcEi26/6woswdCFE/Kg9iu
+         Yj99NCXRuWt11bnv024fdr3Nk0nDWFdu54U63sK8ySf2GOCa0fe0pogCbsCbdcET/7jE
+         pSdSECy3Xx1X3oonlILvELlBifKpRLGHpmj9qREUIcaOYvnSJ23OeaBP/K0ZdFVidzUl
+         umGw==
+X-Gm-Message-State: AOJu0YxC8fntqc0p+lZDInojM5n9nvE5LCZdZnWTz9NzMrZgM3zqMTRC
+	riePjFpRnSFHaa1T4zb+pmLYtYmzY2VUCUGWTViHV5q+M+qYmFfne4YlcOXDkUrlZqnzW9OdEu0
+	7+gX4jUca4CRySvZAaQ18tSzi0o9LbUeBYRwhjime1inWtiFsh5axglCpQcTj46heoNMR5zbdxP
+	MGKiQ=
+X-Gm-Gg: ASbGnct0OWAyPzx7i+1EUWWUTH896amNcUMLX5xrXyKKso3PZwb2vsw8lvhxlXukZ48
+	byzLrz8/D6qjvCzRjGEJ0DkDNxgMiWklRn8qUXjmZEfNTvG6/CF/jM/CNu4B7Gwg8/iNLNB4VMx
+	X2lpYL9JpNNYfhhpZK/0w04z2DrhRTTb6ZgwEqQHDCuNSMHT/p4eiwC3ucmen5nZodiw+FSm/j2
+	ifd/QfhGkmc5zB36OUJ6T0G4rMeLenkNoh8DQF9v5fo9JbawNUTOOc4HbJdals4l58AzQxRfjsX
+	+yoHXNKRZpbC8BfGnCXFeyzwc+ulUQvuCrglKX8Plw2i7nnNbv7nEnd8H761K4ancvAaWsg=
+X-Received: by 2002:a05:600c:34d4:b0:45b:81ad:336 with SMTP id 5b1f17b1804b1-45f211dad50mr30324715e9.16.1757664853566;
+        Fri, 12 Sep 2025 01:14:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESJFvAeYhdkW4KAMfuQIYjrYum5mTZiCkwxPFGIeV9u9GC9mwwnJ96IkXOGNe4ZRIqcwxMmw==
+X-Received: by 2002:a05:600c:34d4:b0:45b:81ad:336 with SMTP id 5b1f17b1804b1-45f211dad50mr30324275e9.16.1757664853119;
+        Fri, 12 Sep 2025 01:14:13 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.70.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0157619fsm56152315e9.7.2025.09.12.01.14.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 01:14:12 -0700 (PDT)
+Date: Fri, 12 Sep 2025 10:14:09 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Suleiman Souhlal <suleiman@google.com>,
+	kuyo chang <kuyo.chang@mediatek.com>, hupu <hupu.gm@gmail.com>,
+	kernel-team@android.com, Luca Abeni <luca.abeni@santannapisa.it>,
+	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+	yurand2000@gmail.com
+Subject: Re: [RESEND][PATCH v21 0/6] Donor Migration for Proxy Execution (v21)
+Message-ID: <aMPWUYTMMrtUeZqn@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250904002201.971268-1-jstultz@google.com>
+ <aMLVuZbkMEQzXPqR@jlelli-thinkpadt14gen4.remote.csb>
+ <CANDhNCqx1cGRH=H5ze5LWdjTzA40Ajf5pmjrxj==oh_FcTd2oA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5271.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7dd3b96a-e30d-488b-5daa-08ddf1d45697
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2025 08:14:04.3992
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KkorWwJ8O3ivKtEdmm297eAxUG0KoBTSPvhcDznnx1pCtFXh/awrm5vHfEl64Uucox0eAOTMnpawE0TUnQvBsA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB9503
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCqx1cGRH=H5ze5LWdjTzA40Ajf5pmjrxj==oh_FcTd2oA@mail.gmail.com>
 
-> From: Lu Baolu <baolu.lu@linux.intel.com>
-> Sent: Friday, September 5, 2025 1:51 PM
->=20
-> From: Dave Hansen <dave.hansen@linux.intel.com>
->=20
-> On x86 and other architectures that map the kernel's virtual address spac=
-e
-> into the upper portion of every process's page table, the IOMMU's paging
-> structure caches can become stale when the CPU page table is shared with
-> IOMMU in the Shared Virtual Address (SVA) context. This occurs when a pag=
-e
-> used for the kernel's page tables is freed and reused without the IOMMU
-> being notified.
->=20
-> While the IOMMU driver is notified of changes to user virtual address
-> mappings, there is no similar notification mechanism for kernel page
-> table changes. This can lead to data corruption or system instability
-> when Shared Virtual Address (SVA) is enabled, as the IOMMU's internal
-> caches may retain stale entries for kernel virtual addresses.
+On 11/09/25 16:21, John Stultz wrote:
+> On Thu, Sep 11, 2025 at 6:59 AM Juri Lelli <juri.lelli@redhat.com> wrote:
+> > On 04/09/25 00:21, John Stultz wrote:
+> > > I’d really appreciate any feedback or review thoughts on the
+> > > full series as well.
+> >
+> > I current have the following on top of your complete series
+> >
+> > https://github.com/jlelli/linux/commits/experimental/eval-mbwi/
+> > https://github.com/jlelli/linux experimental/eval-mbwi
+> >
+> > of which
+> >
+> > https://github.com/jlelli/linux/commit/9d4bbb1aca624e76e5b34938d848dc9a418c6146
+> >
+> > introduces the testing (M-BWI is Multiprocessor Bandwidth Inheritance)
+> > infra and the rest some additional tracepoints (based on Gabriele's
+> > patch) to get more DEADLINE info out of tests (in conjuction with
+> > sched_tp [1]).
+> >
+> > Nothing bit to report just yet, mainly spent time getting this working.
+> 
+> Very cool to see! I'll have to pull those and take a look at it!
+> 
+> And I'm of course very interested to hear if you find anything with
+> the proxy set that I need to revise.
+> 
+> > One thing I noticed thouh (and probably forgot from previous
+> > discussions) is that spin_on_owner might be 'confusing' from an
+> > RT/DEADLINE perspective as it deviates from what one expects from the
+> > ideal theoretical world (as tasks don't immediately block and
+> > potentially donate). Not sure what to do about it. Maybe special case it
+> > for RT/DEADLINE, but just started playing with it.
+> 
+> Can you refresh me a bit on why blocking to donate is preferred? If
+> the lock owner is running, there's not much that blocking to donate
+> would help with. Does this concern not apply to the current mutex
+> logic without proxy?  With proxy-exec, I'm trying to preserve the
+> existing mutex behavior of spin_on_owner, with the main tweak is just
+> the lock handoff to the current donor when we are proxying, otherwise
+> the intent is it should be the same.
 
-above could be saved to the last patch.
+Yeah, I think we want to preserve that behavior for non-RT mutexes for
+throughput, but for RT I fear we might risk priority inversion if tasks
+spin (for a bit) before blocking. My understanding is that with PI
+enabled futexes (apart from some initial tries to get the lock with
+atomic ops) we then call into __rt_mutex_start_proxy_lock() which
+enqueues the blocked tasks onto the pi chain (so that PI rules are
+respected etc.). Guess maybe we could end-up reintroducing this behavior
+when we eventually kill rt-mutexes, so don't worry to much about it yet
+I think, just something to keep in mind. :)
 
->=20
-> This introduces a conditional asynchronous mechanism, enabled by
-> CONFIG_ASYNC_PGTABLE_FREE. When enabled, this mechanism defers the
-> freeing
-> of pages that are used as page tables for kernel address mappings. These
-> pages are now queued to a work struct instead of being freed immediately.
->=20
-> This deferred freeing provides a safe context for a future patch to add
-> an IOMMU-specific callback, which might be expensive on large-scale
-> systems. This ensures the necessary IOMMU cache invalidation is performed
-> before the page is finally returned to the page allocator outside of any
-> critical, non-sleepable path.
->=20
-> In the current kernel, some page table pages are allocated with an
-> associated struct ptdesc, while others are not. Those without a ptdesc ar=
-e
-> freed using free_pages() and its variants, which bypasses the destructor
-> that pagetable_dtor_free() would run. While the long-term plan is to
-> convert all page table pages to use struct ptdesc, this uses a temporary
-> flag within ptdesc to indicate whether a page needs a destructor,
-> considering that this aims to fix a potential security issue in IOMMU SVA=
-.
-> The flag and its associated logic can be removed once the conversion is
-> complete.
+> Now, I do recognize that rt_mutexes and mutexes do have different lock
+> handoff requirements for RT tasks (needs to strictly go to the highest
+> priority waiter, and we can't let a lower priority task steal it),
+> which is why I've not yet enabled proxy-exec on rt_mutexes.
 
-stale comment?
+Right. I will probably hack something in to test the DEADLINE scenarios,
+but again don't worry about it.
 
->=20
-> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Thanks,
+Juri
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
 
