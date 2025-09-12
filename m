@@ -1,99 +1,113 @@
-Return-Path: <linux-kernel+bounces-814476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF70B55487
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:15:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F897B5548A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F34A31886400
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:15:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2C227C0214
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC89D3191DB;
-	Fri, 12 Sep 2025 16:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52873128CA;
+	Fri, 12 Sep 2025 16:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCtNvQzt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="JZMTIQZJ"
+Received: from www3141.sakura.ne.jp (www3141.sakura.ne.jp [49.212.207.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEA73164DC;
-	Fri, 12 Sep 2025 16:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757693694; cv=none; b=i9YE6R7uCfD2/UZ3d2aG9bA8takl52AMzFZSEThXNomMKODlYewbdb2E0q3oR0Tac7ht2cCdRs+Xg0h/CkoKM19NiiFpXSzyvK9sKUknc8yX40xQ2LQYQTXJ8JenNZKQSYPiNt/xt5o1k32RpRanqEBA4dNZYmX5KW6kKrA6Zq4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757693694; c=relaxed/simple;
-	bh=apN7Uzrx30Vskl1nvqSzwHB00iLTqqOAeKmaDGKp/d4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GnywymrJHs5Vj+DGraY9ornnSkbBxdtq1NKHGdi/QvGmzH91HngUX9ifkNfAGdsA6aiSEQ+3XDj/E/rFrUcW0JbOtzQP5Yv65xIIDojpA3LWxDNoY7AFxoVnkqKj53ph+7z8MvqrGPZ3T2pWBxS8oCFy/IoJzWwCEeHAwHXA6vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCtNvQzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B84C4CEF1;
-	Fri, 12 Sep 2025 16:14:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757693693;
-	bh=apN7Uzrx30Vskl1nvqSzwHB00iLTqqOAeKmaDGKp/d4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eCtNvQztn9Dzg3IMUrjoWjTpNpfkMnjgSIgxmjmqRrcuvbe+zO2O0WfJVn93AWcif
-	 AfJfrR91ft0gevSBETp1kC8pIiz38ot+d3VE+qLBEFjd0iESw4cfE7cKZjkhqvDY+8
-	 p41ImxjnB/5VnG5MYicxKgJyObmd520w8J32USc2JILPPaUM6glRjJXJQMGVJSKL1w
-	 uA5HgdvWK1we/YZV/iCqM9/TQexRh55YGsO5zmxsifDdc6roZfylIaI5VqwdRnFvnd
-	 1D3YWlETgjUIu4Nkn94GmqbLZSLJ5mLF0BV/pJGsotomfkA/bllYbvmIJMhYA9j7Ll
-	 Fja+zjyZ1SaMQ==
-Date: Fri, 12 Sep 2025 18:14:49 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
-	Roderick Colenbrander <thunderbird2k@gmail.com>, Roderick Colenbrander <roderick.colenbrander@sony.com>, 
-	Henrik Rydberg <rydberg@bitmath.org>, kernel@collabora.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/11] HID: playstation: Add support for audio jack
- handling on DualSense
-Message-ID: <s3tus6usbokl5hpwlbzbxfqdqwnyxqqnjiwhzdbd5obvfxavvf@cwopa6fpjctb>
-References: <s4596421-sr43-893r-o90r-86nr588sp32q@xreary.bet>
- <74d4675d-d6f5-41ed-b715-f62fb569df5d@collabora.com>
- <CAEc3jaAFV_PXdFAX9th4-hhKNAhBKdVCNP+Qf8nH=g8FwoCabQ@mail.gmail.com>
- <CAEc3jaAGP3HV_+tGLHWZXA-baD4HkA2nYWGxpmox4cuZMh+ksw@mail.gmail.com>
- <CAEc3jaD8tUNW6hkPHDp=iGmdwD5m3uKg0vNtyZr-u1mmPSAkVQ@mail.gmail.com>
- <ab1c06b1-9b79-426a-a43b-cf5a89688770@collabora.com>
- <CAEc3jaDsX8OSVskO6-Rsvn12BbV2-8ZjhV+tPaRpu9Nai3czEg@mail.gmail.com>
- <8f7242f0-c217-47e4-ad88-fc1481ca936f@collabora.com>
- <c6a16e71-e431-47dd-a3d1-6a79fd7e4a37@collabora.com>
- <r8qr0nrn-0n5r-6r96-7p26-q22ns73484np@xreary.bet>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F2B311C03;
+	Fri, 12 Sep 2025 16:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=49.212.207.181
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757693790; cv=pass; b=Rv0gd0wuc7AHXOm0QN/KvlQ23ft9pxa/A24dLU8KoWce5N+an6n1WD9TN6+GaRTNQNl/VzEw//FxHwoCwslUofCnbqDpn71zTZtdqD2mmgg1o5B6mf5xXTWCPFEgxwzgWi4OlUfecMAvQJ2WzclQN9Zd5aLIB5WkWL3RoCBfWXY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757693790; c=relaxed/simple;
+	bh=NRicx5aDD8RGc5CnrwE3vZncgiYuHcH40CPQSUOyWHY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iMHXUqlHvOwZF8rMm8trU03rT2BsH7MhEzgICj+vHFlJ80+Rg3lwkLkTHOr7oS1pEmM66JYIX5zmKyEoJPvlT4qcLMO7MjmS4oDnbZHbEaDfohOd03PupSMnhTZHUMpsMCVm+7VFL1d/D+aEZzzj0WgaqRNWtKS8GpzqcT28QNE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=JZMTIQZJ; arc=pass smtp.client-ip=49.212.207.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
+	(authenticated bits=0)
+	by www3141.sakura.ne.jp (8.16.1/8.16.1) with ESMTPSA id 58CGGCs0099082
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 13 Sep 2025 01:16:13 +0900 (JST)
+	(envelope-from weibu@redadmin.org)
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id 76211109F7118;
+	Sat, 13 Sep 2025 01:16:12 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id JJKnyZmSTD7K; Sat, 13 Sep 2025 01:16:07 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id 6677B109EFAC6; Sat, 13 Sep 2025 01:16:07 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757693767;
+	cv=none; b=kFLdblhr0fsqTLCwzoR56mhoDKS1wOZP3Z7GEyOg2ZNeaWM3Ls7134xPP4wQCwI4AViz08nKweDob0C3Dmi8rxx5ZR7qPpVx+98ybl5+1Sq7Os4sG2Z/zDU7AokemfTIVBcEDS1Mcmdlp2chKTMYPHDQBKBbcHo0fj2IvAFIB8Q=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1757693767; c=relaxed/relaxed;
+	bh=NRicx5aDD8RGc5CnrwE3vZncgiYuHcH40CPQSUOyWHY=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=oLDqEg5UsKtgxYIJCNTfXVfDnfSqZDkpUDapV9cRIqEIUWubx7mIylKRtEt5f73abl6Nm8o8FdLQLIYbMRE7L3qPb4gYxKyPULYPjBsbE5o2HbYE2SDJx3VZ+EiYI3nz7j/qkdov59N85mlPXjLHdakMTwXB1OTjbOcgA9I9egI=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 6677B109EFAC6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1757693767;
+	bh=NRicx5aDD8RGc5CnrwE3vZncgiYuHcH40CPQSUOyWHY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JZMTIQZJ9AVpCBA2Gr5x+bHA+wEAXrnlyoDSHjh1mrHhdruCEwrLdKLv4ZSDjWo3L
+	 xHlNGijDDI0DTQIz6RJGiVNJ000GYoxMRlGK9KIvU2ZCsJQKmAsdGug6Zqeggh19rD
+	 8X3N/DKQdLPOeHxMAchRd6TzdMeADlwHudIL+21g=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+        Philipp Hortmann <philipp.g.hortmann@gmail.com>,
+        Michael Straube <straube.linux@gmail.com>,
+        Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] staging: rtl8723bs: rtw_efuse.h: simplify copyright banner
+Date: Sat, 13 Sep 2025 01:16:05 +0900
+Message-ID: <20250912161605.775637-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <r8qr0nrn-0n5r-6r96-7p26-q22ns73484np@xreary.bet>
+Content-Transfer-Encoding: quoted-printable
 
-On Sep 12 2025, Jiri Kosina wrote:
-> On Wed, 27 Aug 2025, Cristian Ciocaltea wrote:
-> 
-> > It's been over a month now since this was kind of blocked without any clear
-> > reason, and by the end of next week I'll be on leave, which means we're
-> > close to missing the merge window once again.
-> > 
-> > Considering the counterpart quirk in the generic USB audio driver has been
-> > already merged since v6.17, I kindly ask for your support in getting this
-> > into v6.18.
-> 
-> Roderick, do you have any word on this, please?
+Replace the banner-style copyright comment with a single-line comment.
 
-If this can help moving forward:
-Patches 1-9 are:
-Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
-and can be merged right away
+No functional change.
 
-Cheers,
-Benjamin
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+---
+ drivers/staging/rtl8723bs/include/rtw_efuse.h | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-> 
-> -- 
-> Jiri Kosina
-> SUSE Labs
-> 
+diff --git a/drivers/staging/rtl8723bs/include/rtw_efuse.h b/drivers/stagin=
+g/rtl8723bs/include/rtw_efuse.h
+index 669565fa1c69..ac7d6ef454c3 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_efuse.h
++++ b/drivers/staging/rtl8723bs/include/rtw_efuse.h
+@@ -1,9 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-/*************************************************************************=
+*****
+- *
+- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
+- *
+- *************************************************************************=
+*****/
++/* Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved. */
++
+ #ifndef __RTW_EFUSE_H__
+ #define __RTW_EFUSE_H__
+=20
+--=20
+2.47.3
+
 
