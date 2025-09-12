@@ -1,197 +1,146 @@
-Return-Path: <linux-kernel+bounces-814259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1935EB551B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:35:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B1A9B5519B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:32:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 155214604E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:32:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37BADB62D40
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:30:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6E3322763;
-	Fri, 12 Sep 2025 14:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE6431B806;
+	Fri, 12 Sep 2025 14:27:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="joc1cDfP"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3Iq82o9s"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4F3093D3
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08894309EEC
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687272; cv=none; b=Rkba8ftjYWNg2Z1V+IDLSt8ho55UMv+bG1b5hM1fgavyXwbsOs5YO3y0lgcS4pwoDXNTrrSqcAHf7l10+rzknpuzgVYXV4Jk/C4AswCY7Ztv6t0rqMHSobSiYWlRCnl+qiUZeNWEBMn0HGGkVqZ2JIpDvld+LMmFJI31POUNApg=
+	t=1757687271; cv=none; b=QGJS2IcpfJGaRwkwYOqEMR4JLZloCRXtl3Pv6Ju9QGngM06JLN75etqMuCGGh6z2mgvZcb2JCQZcYQXFA/AUqn17/QE0/Sv3pRxILqYHM5gLxvDuUZDvN5Gj3rIC1NQ1pYX9gozV+hE8yjFygfPU0BNqZkwRPdByPF5rT7zE69k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687272; c=relaxed/simple;
-	bh=/SxMVDTkZvMbBsZ1m84K+ZCGY5O9Fq7p3OG5ytCeDD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P7Uy82eTjP8AAA6/T4nF7FXe9vn9VrhSMLdDJNQQLZxxlWJ71qxsTmChBNrMPb7tiH40WGUrjXDll3WVLZtES1VfjOT/BjmEktWCAxgMVFgKjcIW/5wWu3wQ7Vb4yKeOgSahMz5VlbylIH7icr+kPYontub3EmtUGXBhBtKWIwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=joc1cDfP; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5607c2f1598so2236519e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:27:50 -0700 (PDT)
+	s=arc-20240116; t=1757687271; c=relaxed/simple;
+	bh=xvKkuDuT4tDgy/UE5wL4JG5idUxNjrx/Cbg6stFEYiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EiRhDcoUBkNi/2KYsS8RODFG9GyhOjzWGue/yJ9WbwVkMng4idQmu3pAe3B+0wlCjYWwiBgUlWqxtRRbnGKcyNMaFGYL+mIRc6PtR/xwz9XVZT/aQnhOpK0nqk4tCOD63SNU/0gBXJ2mHhQ20KQO8WTJU3tRsvmT+U+lDX/v8lM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3Iq82o9s; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7459d088020so986639a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:27:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757687269; x=1758292069; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=IKVoiH7XLcNaedQxfza9YTAwsoIt9Wu8Ls74q3lR27g=;
-        b=joc1cDfPDmNxrVrnsk35GiUVgBpO3oSxEGlmtf7cz5zwa7R4qCPYM0Jn9285n67I92
-         SYqHhgQWTPkwQ5cpLrYQ4kbnCGV5d93a+slSx8/CgU0LY3H2Ns4jNQ8q8ImH+MYfJcwr
-         rOPlG6ebtjntN91qacbfaahjIj8y6tzXpq3/kHrGC2B92OLYoSTA5hfMqYAPc+78pp4v
-         4/3OFM6SGdGWNltT4Y/sjmLQshgL0BXmHlYL8FMmu9XwSkBLSsFOMrdz/AtkFWdz1k2D
-         VMDw7CEkaOR75XvWOZfTBbG1l75iNZCFhQ+ruBLMLpIsw0Ire8oq8dfH92dx9S6+sMQQ
-         emEg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757687269; x=1758292069; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XeSWmeoO30alM4SGxp8l0P3Dl3Lx3yjW/TdKB75posM=;
+        b=3Iq82o9sByUC/sbMyJix0gEF05VP4KB1FEaR3TJSjkQUqj1zfFK1O/oG7UtEQYBw+W
+         R9Jwt4lIbo4mcnTbCPpSCZg2yL0ipy8+gcwhRBgILTaOXVT8ADZYbZZTrC2zCHHAOyYC
+         OKZuNQUSCWom4FpVfOPWwQQ0TPoDtshyeJl2RouQNwxfX8P07HZCluwC4bevqDhB1UQ0
+         oN7FLA/eahGpw+IxN53aDz4ulGm5m5FZcPdGnGCNktrh0+i9toDGpbDsErtPxNk+nopK
+         XfhNbTZu0ctAEI6IgmPByZDA+hpS/VvMDM+fKoODnYZpgamjxWyrc1wDZ/U3XaqeX7VT
+         8Epw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1757687269; x=1758292069;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IKVoiH7XLcNaedQxfza9YTAwsoIt9Wu8Ls74q3lR27g=;
-        b=FS9lSOr0r+nj3j5c8auSMvxT5UGHGCeVz0GwaXEq1ycAEjGj+Kkj0a2OloXuEc1j2N
-         RVQ5SYEkgeL9z5ke2H3LrjP4FBrDrz25xkqWWB8gR0otoEe2AVdg6elqeACLX1Wr3gpd
-         T2KSu6SLShtK0J3+mFRIJF/mhmaful6FzXPyJJlsQ1t+WmCayzFw87jDW5SGTayYUx7/
-         UOByLw5tIWqSU4zyxfoi7AqMQzIgtvdq5bddb2mOnoFbQo13d7dHuxCcGuKLAHhods0e
-         cFw3+YKesAAFPeTYkoZz28II165FJ8E1BXeBHA8PPNAdK92RlTQiI4FQmWuSthQVlc2M
-         8BIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcr3BWQky5kfuH84Z6zmdwbhu1Zk//kC5Px8lK3rmD5WJdt29ar+JsP/lu9YOz0rj/EeSYG1jhwITvknI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFFiShxuL2o3xk/8QhOYPfrU3/wFWrLE6spa9rngjC98iGMjyx
-	tWbkKD7E0m9MhHE9OJvBfcJr1cD5R4s/sxtiXpUV/Q6NQHKTZkPFCJQfHYHEp4Pm42I=
-X-Gm-Gg: ASbGnctxWTZrC65hE5cpL6JcQcX8bNZ9btosFZ4jIQNP5/xNnh7zUxb9YZmxZhWbQmT
-	ye0su4ZDxyVbtfwRtU+TKzKMRvdhK6NWfUMh7peugfidrCRVleS+WunVqckD+fuBYUPL92UBtXi
-	FOMbB+SwYR5JJubFGG4NIdrOnVl8DyDqZIAhRp1oaFHA0exbUAR7mjeAkNOe1KFREh4VxGOOUqU
-	PgUzyl5mwsUNIkzx7qSbGyfm9JNFVOuEG8HLim25+/xIJy/f0yVxLzLCIp4eC/xCpnTALBWxSV8
-	fQ9xxRKr2WYbgbO5cdg/nx4KhBlgkCbB/yN01HP471k7eiTLeT8/eQHGrGjXUdy2QKNKCoSBzgL
-	Am541EB3gxF23Gqa5k+3EksSm/TTvjNc3djG8WU9ekSAb02Sd9d4GL34=
-X-Google-Smtp-Source: AGHT+IEElym8VeagaBl+nzdswFEmu7VAD/4OSv6vmc7bSL5e4EMGTxBVOdIqLiD6z+3vnjFAisOdJQ==
-X-Received: by 2002:a19:6a13:0:b0:55f:6a68:c44a with SMTP id 2adb3069b0e04-5704a105f44mr667707e87.2.1757687268467;
-        Fri, 12 Sep 2025 07:27:48 -0700 (PDT)
-Received: from nuoska (87-100-249-247.bb.dnainternet.fi. [87.100.249.247])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e63c63daesm1171816e87.77.2025.09.12.07.27.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 07:27:48 -0700 (PDT)
-From: Mikko Rapeli <mikko.rapeli@linaro.org>
-To: linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: ulf.hansson@linaro.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mikko Rapeli <mikko.rapeli@linaro.org>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v3 1/4] pmdomain: rockchip: enable ROCKCHIP_PM_DOMAINS with ARCH_ROCKCHIP
-Date: Fri, 12 Sep 2025 17:27:35 +0300
-Message-ID: <20250912142735.2843958-1-mikko.rapeli@linaro.org>
-X-Mailer: git-send-email 2.50.0
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XeSWmeoO30alM4SGxp8l0P3Dl3Lx3yjW/TdKB75posM=;
+        b=JDKx71yGLF4vKOmvknG8hkzBScVtX53ezvBUpa3ZcsW03g6Mafo0Gm3mkS8EioOutU
+         /cXXIswn0olc6aI1GoHVMJ4PvDMXwolc8wdJ1Lqd8Xisx1EigR7+6T5R3WwwxAaR4Ubc
+         c8wAb6s+RtqYcXHitAyv8hynXd3YYKlKe/tU5unt0kSOBC3yeaBt1m2mfkX1pvRWwVoJ
+         lybozwic5O5xipiBctzJoFbTt2tHLzB1AtjU/fjFJUpeJypnA0iUnzDLXm8rrJU2SZQ7
+         E4Lh1voT2KANPTaW2slMj6ddn7MH8u85EuaDPBlG/CbFHH9rGyADUX7QHN+UMYMRz3a5
+         KP9A==
+X-Forwarded-Encrypted: i=1; AJvYcCX29BueutgVEPCum8D650wN+6v1RFOYOiw6yZ+UVUwFyWlCoPVdlKjiUdbMVVawSYuyB90oCT9H52GGDoI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4Jka8OpgCs5+4r82OQnnddiBiGyvUDyxKI6eCIe/X2Ok2MOlm
+	9qfY5dHwPt/ccNVuhTjqxJCQYC0mY+0jiA+YPx2tjUpF4LAf/PSFHeLFJet1acvmb0c=
+X-Gm-Gg: ASbGncssQlsPMDteZv43l+/ZdzbX+BVOxnM8dPQTlifNuli0F/IzGo5OsvZ1w7O0GaP
+	/3QNqg4aLCwhilt4TNfzcprgIkeSJ5za8zGI/RX1dWRVfhNT3YN2Z3FjA06XV926D5i1LEt8Cjg
+	U02LHudsEEaJ5yj1FlB3L8FKHlkAVHtYIoc5QfXlam+IoyF2b3Px1prnZRR8e/dfItvHg0Jdanx
+	7azR+nKd9+UkKwzHs7EuLewNBEe9vLp14JUgkAgqVwk+I0oTgfE6QisxO5TUkChNN24Ix/IjyHv
+	QMcZImxP8vT/xmLCVwDOdmhTZx5YJoJzJ5JFhXyLB7DlIJB99vbz5aA9forbPrFrInMS8GHpSzS
+	UCmLvriHjzvYM/uqYiI4z8we5R28hUPJ86hVt093iLMdISWPOWK4L2l0LaPzFMKsh2E6n9EmQXV
+	A=
+X-Google-Smtp-Source: AGHT+IEP9sQNrQbQqJFC9+/KQJAwg9aeP94y7Xr+y9MeShoX1peXPBF36a5b54hrq2fEsDH/EtQHEg==
+X-Received: by 2002:a05:6830:67c7:b0:74b:3422:f335 with SMTP id 46e09a7af769-753537700a6mr1927270a34.8.1757687269073;
+        Fri, 12 Sep 2025 07:27:49 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1? ([2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524b8a399fsm1025877a34.24.2025.09.12.07.27.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 07:27:47 -0700 (PDT)
+Message-ID: <87245221-c3d0-4026-980d-36562f0b4669@baylibre.com>
+Date: Fri, 12 Sep 2025 09:27:47 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/6] iio: adc: ad7124: add filter support
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
+ <20250911-iio-adc-ad7124-add-filter-support-v2-5-b09f492416c7@baylibre.com>
+ <CAHp75Vf69X4PmGx2c_9KvQwu1opLDyfL0+TyjwX2wTG9bgtMZw@mail.gmail.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <CAHp75Vf69X4PmGx2c_9KvQwu1opLDyfL0+TyjwX2wTG9bgtMZw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On rk3399 based rockpi4b, mounting rootfs from mmc fails unless
-ROCKCHIP_PM_DOMAINS is enabled. Accoriding to
-Heiko Stübner <heiko@sntech.de> all SoCs since 2012 have power
-domains so the support should be enabled by default
-on both arm and arm64.
+On 9/11/25 11:49 PM, Andy Shevchenko wrote:
+> On Fri, Sep 12, 2025 at 12:43 AM David Lechner <dlechner@baylibre.com> wrote:
+>>
+>> Add support to the ad7124 driver for selecting the filter type.
+>>
+>> The filter type has an influence on the effective sampling frequency of
+>> each channel. For sinc3+pf{1,2,3,4}, the sampling frequency is fixed.
+>> For sinc{3,4} (without post filter), there is a factor of 3 or 4
+>> depending on the filter type. For the extra +sinc1, there is an extra
+>> averaging factor that depends on the power mode.
+>>
+>> In order to select the closest sampling frequency for each filter type,
+>> we keep a copy of the requested sampling frequency. This way, if the
+>> user sets the sampling frequency first and then selects the filter type,
+>> the sampling frequency will still be as close as possible to the
+>> requested value.
+>>
+>> Since we always either have the SINGLE_CYCLE bit set or have more than
+>> one channel enabled, the sampling frequency is always using the
+>> "zero-latency" calculation from the data sheet. This is only documented
+>> for the basic sinc{3,4} filters, so the other filter types had to be
+>> inferred and confirmed through testing.
+>>
+>> Since the flat filter type list consists of multiple register fields,
+>> the struct ad7124_channel_config::filter_type field is changed to the
+>> enum ad7124_filter_type type to avoid nested switch statements in a
+>> lot of places.
+> 
+> ...
+> 
+>> -       factor = 32 * 4; /* N = 4 for default sinc4 filter. */
+>> -       odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor +
+>> -                                              odr_micro * factor / MICRO);
+>> -       odr_sel_bits = clamp(odr_sel_bits, 1, 2047);
+>> +       divisor = cfg->requested_odr * factor +
+>> +                 cfg->requested_odr_micro * factor / MICRO;
+>> +       odr_sel_bits = clamp(DIV_ROUND_CLOSEST(fclk, divisor), 1, 2047);
+> 
+> I have a déjà vu feeling here. Is this similar code to elsewhere?  Can
+> it be factored out to a helper?
+> 
+> 
 
-Failing boot without CONFIG_ROCKCHIP_PM_DOMAINS=y:
-
-https://ledge.validation.linaro.org/scheduler/job/119268
-
-/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
-/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
-/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
-/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
-/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
-/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e: Can't lookup blockdev
-dw-apb-uart ff1a0000.serial: forbid DMA for kernel console
-root '/dev/disk/by-partuuid/1d48ffd8-f2a7-4a33-b52f-186089b3c85e' doesn't exist or does not contain a /dev.
-rk_gmac-dwmac fe300000.ethernet: deferred probe timeout, ignoring dependency
-rk_gmac-dwmac fe300000.ethernet: probe with driver rk_gmac-dwmac failed with error -110
-rk_iommu ff650800.iommu: deferred probe timeout, ignoring dependency
-rk_iommu ff650800.iommu: probe with driver rk_iommu failed with error -110
-dwmmc_rockchip fe320000.mmc: deferred probe timeout, ignoring dependency
-rockchip-typec-phy ff7c0000.phy: deferred probe timeout, ignoring dependency
-dwmmc_rockchip fe320000.mmc: probe with driver dwmmc_rockchip failed with error -110
-rockchip-typec-phy ff7c0000.phy: probe with driver rockchip-typec-phy failed with error -110
-rockchip-typec-phy ff800000.phy: deferred probe timeout, ignoring dependency
-rockchip-typec-phy ff800000.phy: probe with driver rockchip-typec-phy failed with error -110
-rk_iommu ff660480.iommu: deferred probe timeout, ignoring dependency
-rk_iommu ff660480.iommu: probe with driver rk_iommu failed with error -110
-rk_iommu ff8f3f00.iommu: deferred probe timeout, ignoring dependency
-rk_iommu ff8f3f00.iommu: probe with driver rk_iommu failed with error -110
-rk_iommu ff903f00.iommu: deferred probe timeout, ignoring dependency
-rk_iommu ff903f00.iommu: probe with driver rk_iommu failed with error -110
-rk_iommu ff914000.iommu: deferred probe timeout, ignoring dependency
-rk_iommu ff914000.iommu: probe with driver rk_iommu failed with error -110
-rk_iommu ff924000.iommu: deferred probe timeout, ignoring dependency
-rk_iommu ff924000.iommu: probe with driver rk_iommu failed with error -110
-platform fe800000.usb: deferred probe pending: platform: wait for supplier /phy@ff7c0000/usb3-port
-sdhci-arasan fe330000.mmc: deferred probe timeout, ignoring dependency
-platform fe900000.usb: deferred probe pending: platform: wait for supplier /phy@ff800000/usb3-port
-sdhci-arasan fe330000.mmc: probe with driver sdhci-arasan failed with error -110
-platform ff1d0000.spi: deferred probe pending: (reason unknown)
-platform hdmi-sound: deferred probe pending: asoc-simple-card: parse error
-
-Working boot with CONFIG_ROCKCHIP_PM_DOMAINS=y:
-
-https://ledge.validation.linaro.org/scheduler/job/119272
-
-dwmmc_rockchip fe320000.mmc: IDMAC supports 32-bit address mode.
-dwmmc_rockchip fe320000.mmc: Using internal DMA controller.
-dwmmc_rockchip fe320000.mmc: Version ID is 270a
-dwmmc_rockchip fe320000.mmc: DW MMC controller at irq 45,32 bit host data width,256 deep fifo
-dwmmc_rockchip fe320000.mmc: Got CD GPIO
-ff1a0000.serial: ttyS2 at MMIO 0xff1a0000 (irq = 44, base_baud = 1500000) is a 16550A
-printk: legacy console [ttyS2] enabled
-mmc_host mmc1: Bus speed (slot 0) = 400000Hz (slot req 400000Hz, actual 400000HZ div = 0)
-dw_wdt ff848000.watchdog: No valid TOPs array specified
-mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 50000000Hz, actual 50000000HZ div = 0)
-mmc0: CQHCI version 5.10
-rk_gmac-dwmac fe300000.ethernet: IRQ eth_wake_irq not found
-mmc1: new high speed SDHC card at address aaaa
-fan53555-regulator 0-0040: FAN53555 Option[8] Rev[1] Detected!
-fan53555-regulator 0-0041: FAN53555 Option[8] Rev[1] Detected!
-rk_gmac-dwmac fe300000.ethernet: IRQ eth_lpi not found
-mmcblk1: mmc1:aaaa SC16G 14.8 GiB
-rk_gmac-dwmac fe300000.ethernet: IRQ sfty not found
-GPT:Primary header thinks Alt. header is not at the end of the disk.
-rk_gmac-dwmac fe300000.ethernet: Deprecated MDIO bus assumption used
-GPT:1978417 != 31116287
-rk_gmac-dwmac fe300000.ethernet: PTP uses main clock
-GPT:Alternate GPT header not at the end of the disk.
-rk_gmac-dwmac fe300000.ethernet: clock input or output? (input).
-GPT:1978417 != 31116287
-rk_gmac-dwmac fe300000.ethernet: TX delay(0x28).
-GPT: Use GNU Parted to correct GPT errors.
-rk_gmac-dwmac fe300000.ethernet: RX delay(0x11).
- mmcblk1: p1 p2 p3 p4 p5 p6 p7 p8
-
-Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
-Suggested-by: Heiko Stübner <heiko@sntech.de>
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
----
- drivers/pmdomain/rockchip/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/pmdomain/rockchip/Kconfig b/drivers/pmdomain/rockchip/Kconfig
-index 218d43186e5b9..17f2e6fe86b6f 100644
---- a/drivers/pmdomain/rockchip/Kconfig
-+++ b/drivers/pmdomain/rockchip/Kconfig
-@@ -3,6 +3,7 @@ if ARCH_ROCKCHIP || COMPILE_TEST
- 
- config ROCKCHIP_PM_DOMAINS
- 	bool "Rockchip generic power domain"
-+	default ARCH_ROCKCHIP
- 	depends on PM
- 	depends on HAVE_ARM_SMCCC_DISCOVERY
- 	depends on REGULATOR
--- 
-2.34.1
-
+It is changing the same code from a previous commit, not duplicating
+it. I guess I could have introduced the divisor variable in the
+earlier commit and saved some churn.
 
