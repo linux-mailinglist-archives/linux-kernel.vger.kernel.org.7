@@ -1,222 +1,106 @@
-Return-Path: <linux-kernel+bounces-813312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F7FB54368
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27F6B5436B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:04:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2411B2720F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:04:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC1981B27C43
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:04:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546982857FA;
-	Fri, 12 Sep 2025 07:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4702C2DC776;
+	Fri, 12 Sep 2025 07:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YAw3MQpS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r6rquoKC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YAw3MQpS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="r6rquoKC"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H+JvqXb0"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDFE136347
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF85136347
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757660639; cv=none; b=OT8V/1kQQ3J2uFz0WLSxwQfe+K5sbbkvSdbJVEDEcHIg8LOSlIkOC0tjg8Fr+aiL2vXG5+Uwnmoy2BuVLLq7u/OhjmBO5B3oe9uxqPbL/K7Dehm9rK1O75JkdjbYAQm42NcZUEn1Owr86hUxp3j4RJJavWG7+UP2k/c08A09IBk=
+	t=1757660663; cv=none; b=rKM/LbH/K2fpLF7uGpkEQCvQPVuXyvKFyn/odux3v09yTB01Sgfy+fALZQtdNebbKFQggMcsHks8o/ZCOqX4j0f/u4da5DPFkMSQ6SzMeQi2PDSFbStl5J6J29k2ywAci3uZrNxtU70SLcj/wpxz0cpLNTobx4sXvpJ6+BYXGgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757660639; c=relaxed/simple;
-	bh=cHajQOZsPzVozCWUa01tkKBih00zOeTanjm1WNf+BGc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gc6/t/1yzbrNKDpA/eXDAMZj/UyIlr74s2/p3NJXcedVgmw64rsMH7vtftXbg5CbRZodzI9MSp2zcMskpPaPTe/wP5714ZRS9/AvRavzb3ExBpIWeCZ7VoKk+umIG8JbKq3PSkGmi5OVklQ5EqB90g34txqwTLghmoTlbvuFboQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YAw3MQpS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r6rquoKC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YAw3MQpS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=r6rquoKC; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 235683498E;
-	Fri, 12 Sep 2025 07:03:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757660636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hb+M6nmwYLobuCedusXEdpwyQSQdI3DZay+vrJXRqEw=;
-	b=YAw3MQpSQMNJzqxOgp6MXtaLAHbZz3Ns9UKk+gw++Y0CGtMedZTNdmqBZ5OaOlmt76FeZS
-	Gd89kNPnplmgrpq1q2eaohYhLZWbuUDasY9eOxbez/fFuEN1n0AUyJot9e1ND0yZcySfwu
-	OZ9W1AwBUh6ct91p2NxpJesW4l9K+LA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757660636;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hb+M6nmwYLobuCedusXEdpwyQSQdI3DZay+vrJXRqEw=;
-	b=r6rquoKCeW9A5SHzxgDfenOh5wd44S8lpFMwMWU/8QTAN1wX5hq4CGMX8Pkdiia4VirwdD
-	tjhZsKsOa52yKZAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757660636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hb+M6nmwYLobuCedusXEdpwyQSQdI3DZay+vrJXRqEw=;
-	b=YAw3MQpSQMNJzqxOgp6MXtaLAHbZz3Ns9UKk+gw++Y0CGtMedZTNdmqBZ5OaOlmt76FeZS
-	Gd89kNPnplmgrpq1q2eaohYhLZWbuUDasY9eOxbez/fFuEN1n0AUyJot9e1ND0yZcySfwu
-	OZ9W1AwBUh6ct91p2NxpJesW4l9K+LA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757660636;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=hb+M6nmwYLobuCedusXEdpwyQSQdI3DZay+vrJXRqEw=;
-	b=r6rquoKCeW9A5SHzxgDfenOh5wd44S8lpFMwMWU/8QTAN1wX5hq4CGMX8Pkdiia4VirwdD
-	tjhZsKsOa52yKZAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0576713869;
-	Fri, 12 Sep 2025 07:03:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /+UDAdzFw2goEQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 12 Sep 2025 07:03:56 +0000
-Message-ID: <298f6a92-7bf0-4cf4-afbf-554ef3e8e7e7@suse.cz>
-Date: Fri, 12 Sep 2025 09:03:55 +0200
+	s=arc-20240116; t=1757660663; c=relaxed/simple;
+	bh=q/3azkhASRepTVItgM865PhVwehLOoknq13jGplyT2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R5xbyMzedmsGBiBOnlzqgpizptUvexGEunkpzZVm0CVUhtLE4tH+KlnBI3QuF/0WDIw+L8XzR6MmELhGXANpeQsifep3y1sMQObovn5wU29WElCjDOLpOoCQuVLlf8PW7fGu9gYIY1M+rPaHOJYPVPG6738VqSEft23taAVpaAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H+JvqXb0; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4b61161c35cso28300631cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:04:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757660660; x=1758265460; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q/3azkhASRepTVItgM865PhVwehLOoknq13jGplyT2c=;
+        b=H+JvqXb0NTY2ziR0DYc9iXXDLkN8PxZJeA27/OMeSJvWepEJy0Wp/qqpG3P/h0zK5b
+         1/UyUpMLtjd7x4jR8qaR3HENViubXEgR1JLVutMG0IHUTu7yegsxxlFKITm/yw+Kv8Yk
+         9E8MIErhYLOAYb35PcLzX0e38aM3S8CCaZj6BxpnpzoLj1iSdCgongschHnFNr2EWDrL
+         QWuO8Bpp9KFGmjebYDErULrUMTT/yiGpmDSfvXypMNpZP5WkM5gSjoCguwGMYnFYLGFq
+         U1aWXtbz6kTKXQA10dufjq0dPu2vugkVgtSsf82WYd4on0iEb6ShvnR7qvpQydFy3/df
+         mgyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757660660; x=1758265460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q/3azkhASRepTVItgM865PhVwehLOoknq13jGplyT2c=;
+        b=iRbM7dVKH0XTdZeLkadPcjGWHTuhVmQLfGoyO5dnhq4Z5lfrDnTqTSAHH6CMygM0xn
+         xZUA6Z7k2JIOHqg8CBJVjjO7GISpkK7RE5s5sLW/ifGEopykFKL5jH48nqTdycbhHbXq
+         3fgBwlWscZ7HtxTVXzI9NAaPW6t9s75b7GNG57wQtdFF/ApP/e+FbiVDKPXmRXm3RVnt
+         2gzIBz5oLuWfnBNyyLCj9pVHl13F/BaA9E77Odk4D9JNtUMvlHCo1rERRF9eKNnX3GK4
+         1e5YMQpoe3y9rfY9Vi9byNwyf5X9lo3LpesB4D+d+h8JfsMDjmGXaOw1Hy6NEhx1AGWJ
+         3hrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTMTqcPYkmDBNO14doe0vxV0Wmg79o6q3rtJkk9f7Bcr/9uXvAhKBhY3IlNYq4BWgmZFNCgUMKYXx71i8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUcVgAl4KbRGb9jL9KIuSJrA9Da4F7+dTjRh6Wb0KuQQTYnYDF
+	gan/Q6iDllNRAwKnC6jM0XvkS8VNUqO23Sau3fHrNgcOqfWslNRb1ChltMS3QNGI/tJ4UhC5JnR
+	auW/sfucJmTAwOs76BvkcG7M+jLbj2ykYgALCsNBD
+X-Gm-Gg: ASbGncuPnoTnlPv8ZTRgyLNi1ZLvmGmuesK5cIUWIUCH3a2g0KaCCm3iCpVND/pTz1w
+	xRcv9zqgfDKtJIMnSTPg6BzOo4jDntkUWwsiRBJnO7Tkpjknu8W8ibLdHH7iACqpUVGKhMT5jIH
+	nCWrFo0VUPuaQLhoZfBcZoXatv6gmvBRLbwZM9E2EFPARvCm3Zytg3fVDYI9g9sTY1oHWnR0WyW
+	xPSWBiV6RQjx9kbup6urQ==
+X-Google-Smtp-Source: AGHT+IHgWpsGKQ730X4wPp2YJnGKAlEQTxGeuAX55Bp6TeDYnQIZhudmoMoA+b7dxsgyn8zLKB8Su+Ge7eawJWqcabc=
+X-Received: by 2002:ac8:5882:0:b0:4b6:33e6:bc04 with SMTP id
+ d75a77b69052e-4b77d05a075mr20716431cf.60.1757660659500; Fri, 12 Sep 2025
+ 00:04:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching kfree_rcu()
- operations
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>,
- Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
- <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
- <iycnfietmsgggxcdjuqngjuzbuygsxfpvkcz2fwm4frdxin42u@pxhmqcgejnov>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <iycnfietmsgggxcdjuqngjuzbuygsxfpvkcz2fwm4frdxin42u@pxhmqcgejnov>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,oracle.com,gentwo.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+References: <20250911230743.2551-3-anderson@allelesecurity.com> <CAJwJo6bsZg-arM6GAQM8Lv3DivWUERu0VyFQgi4DA+SxRrZypw@mail.gmail.com>
+In-Reply-To: <CAJwJo6bsZg-arM6GAQM8Lv3DivWUERu0VyFQgi4DA+SxRrZypw@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 12 Sep 2025 00:04:07 -0700
+X-Gm-Features: Ac12FXy4bKErw1s13GarDS8xoicxXKEJIYUhfNSFduEdoTfv6TSJEbr9zbXNqeY
+Message-ID: <CANn89i+MPuFReHcGsp6B=40N7kvkDjZipY7ZFZXTkv+erzk8OQ@mail.gmail.com>
+Subject: Re: [PATCH v3] net/tcp: Fix a NULL pointer dereference when using
+ TCP-AO with TCP_REPAIR
+To: Dmitry Safonov <0x7f454c46@gmail.com>
+Cc: Anderson Nascimento <anderson@allelesecurity.com>, Neal Cardwell <ncardwell@google.com>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Salam Noureddine <noureddine@arista.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/12/25 02:38, Sergey Senozhatsky wrote:
-> Hi Vlastimil,
-> 
-> On (25/09/10 10:01), Vlastimil Babka wrote:
-> [..]
->> +
->> +	if (rcu_free)
->> +		call_rcu(&rcu_free->rcu_head, rcu_free_sheaf_nobarn);
->> +}
->> +
->> +
->> +/* needed for kvfree_rcu_barrier() */
->> +void flush_all_rcu_sheaves()
->> +{
-> 
-> mm/slub.c:3960:27: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
->  3960 | void flush_all_rcu_sheaves()
->       |                           ^
->       |                            void
-> 
-> ---
+On Thu, Sep 11, 2025 at 4:27=E2=80=AFPM Dmitry Safonov <0x7f454c46@gmail.co=
+m> wrote:
+>
+> On Fri, 12 Sept 2025 at 00:23, Anderson Nascimento
 
-Thanks, the bots told me too and it's fixed in -next
+> LGTM, thanks for your fix!
+>
+> Reviewed-by: Dmitry Safonov <0x7f454c46@gmail.com>
 
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 11ad4173e2f2..a1eae71a0f8c 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -3955,9 +3955,8 @@ static void flush_rcu_sheaf(struct work_struct *w)
->  		call_rcu(&rcu_free->rcu_head, rcu_free_sheaf_nobarn);
->  }
->  
-> -
->  /* needed for kvfree_rcu_barrier() */
-> -void flush_all_rcu_sheaves()
-> +void flush_all_rcu_sheaves(void)
->  {
->  	struct slub_percpu_sheaves *pcs;
->  	struct slub_flush_work *sfw;
+Same, thanks for the fix.
 
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
