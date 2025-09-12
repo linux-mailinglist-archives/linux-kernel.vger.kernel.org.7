@@ -1,190 +1,443 @@
-Return-Path: <linux-kernel+bounces-813421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8277AB54529
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:22:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0A48B5452B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35D41B24FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:22:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F099F3ACE54
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 08:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F5C2D3ED2;
-	Fri, 12 Sep 2025 08:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001372D4B55;
+	Fri, 12 Sep 2025 08:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oX70Eznt"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gzo3qeEw"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E132D6E6D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB782DC780
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757665336; cv=none; b=DwvrXTvlsgvsQY5lbeGS56599fBKplmTjiPUXC26YSEs8oPOXeGu0Tt63kUfHnPXf/cP5745zKadZNPIEV7kZQGh+UNcXy+ltmXjlPK/OFnTfv7Z1bK4aovomZraINkFs2ALDRVC7Ugd1PmHKgx5dioM1n0bDaRBmCj5I9DQdhw=
+	t=1757665381; cv=none; b=Ozz5oO3H5fchBUhoEamRCJliPHiuYbwydmEb+GTTX+Aw2+C2+Z21lXCjAWU+v3+aSkcacT53aQFu1HOdVy4ZX03ewIrWJRKJquAh4EaSM/eP8d636pXUDdQXBR2hT0v+A5+XunzbNhY4hRLiLPi4F8D8pSMVj7BSYNRG+m7xp0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757665336; c=relaxed/simple;
-	bh=nVUTEQBfoeqTO4sOiLQwgZp23HBV3yAR4Uze7AXkKdM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tqdBhmGkK2h2N/jXsyp3q6z7mYucumEW9OEpd+Kl8gIGHTdSrHnLWh2TdVmsMkqIv1+bPg2T5osQATx60YSrzdAAhGyG3J9Sx1Bzb1bFMWzhD4SBj9p2aFq6QrDaAwOT6F/zxsZ+9hfNzKo463uvhhfrLc2Oq4viUc/+JdgCHBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oX70Eznt; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757665326; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=a04ysXcVM3EZCSALMoyb9EewsnLnr/d3s7vYk7XR0aY=;
-	b=oX70EzntosG4A15Fnu+zdIKMomPMDdA9+MZgFkrak2DXUYTAJQQtS4ZZ5+YzP06VKcjFjQOXOz4EMFD7yDa2ZeEQ2fOz0/2tWRVDYqrXCapfXAxIurYJJkOAGn5KlMhSpOtPSVDEBLHR4ZtnFb6pX/UKGBNc34IDzqSUnyB5jWw=
-Received: from 30.74.144.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WnqIOy8_1757665324 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Sep 2025 16:22:05 +0800
-Message-ID: <0cb2bc82-1957-4efe-8c85-8558743dcf80@linux.alibaba.com>
-Date: Fri, 12 Sep 2025 16:22:03 +0800
+	s=arc-20240116; t=1757665381; c=relaxed/simple;
+	bh=C5IqdBkHyvPRcADa39m1fUcH5iX23Tm0UaXWH0jDLs4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hlc0VA9CNSKxk3Tl1ibF/s+v7X3e+1KGddBrQ1qG3zFj00iOwcDqsSFOUr+TUUmEyE2nxI1vYRCpPNdjsJCVxz7cWRo5dom6frtqJ0Ak0K9DvPiN/Cb/CvYMkGufVKfjaBYAz4GblwVe2ezA3gLDa5CG4whfKMUwSTgKmnWBT0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gzo3qeEw; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-74381df387fso690432a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 01:22:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757665379; x=1758270179; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=E5OA4HGL1bZCBXlCcQNNT1fh5jmZSp0K7o8ch/qdvnc=;
+        b=gzo3qeEwlx/i4mf4xyWHS88VBAjDG2Yw1heIZORYOBf/ja+YccGVgAI0cUtGcGmHy0
+         YhmhYUJ5qzKC9XvbHd+neVZuxsZR1tr4tWLDkvNTupqb4iBLqS9/GOFGHwyaV1pFfzZB
+         DFd621AQG0Gr/SR1OmIw7kgj/mRioc8v/HvRRDe/WoAzXWNps/4TkqdrzA9TWUs0hV9v
+         IohAn6a/NKH4yeoQuqy0+S0R/J5fiL7bUPmCWzy7EB2cXpa1m+sOdHydXlH//ltOAzJ5
+         m15ry/BvWPpf/EZF36vqP5wohDEOWG1czl3QYiCAhiRz5Q7o0+OEH9so0S83+lkhGc3w
+         mlMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757665379; x=1758270179;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E5OA4HGL1bZCBXlCcQNNT1fh5jmZSp0K7o8ch/qdvnc=;
+        b=ikfomkl621ooArdZnS3EUPTTVxSWzNgyYhczAGzDiEWcdipzPzxoI0WImuRkqwcUCW
+         5oN4frOk/YustegPDyd5RgzmECPWJWGeP2hRcOlSWu79yJf4odoq3DheMWoDP8wGMni+
+         NNNgyojIMVBy4+5kUT56kYa49on7dZr5c6vbDqaTDKDATIEIK9oaW6Emz+OJ5qqfKba5
+         9v0hdachV01QKH2EqdvWLVE9rGPMNoew1XdAUycW3zNbO0PO/S3QdLiVJSJUodClYGr1
+         XwcvvAWTFRICBnpEeWKNbDRkULyAHzCNzjIz+pVLIIdk27cTkzo3+yZcdsGecPAdFnjT
+         3avw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLbPPor9GUK36dtpakh3IsCFpzKggRRXq43248nwGcUG9BR8twAtnr8+PjYc6pw6L53+Fc+B0mKELRDJU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywBpDQc0saflttIG4y+0PKXYxSKlORHww208HrEyInKHgK16yS
+	WpeYtjAH8WZnFumgVuZ7BWPZTMCim5Qd2mHeGEgbXYqEGPkwp7/Qx6R3WhoRZ807t1beuMmgVXV
+	40MMfq/JM4Z8ZIzmulTPc/eCg9RXdWqY=
+X-Gm-Gg: ASbGncuinWhrFVrgsTrZRuCCiUSkDzig2U/6kzCVjd3YbdYZiESdgYj8Kmkeu5kVwzR
+	iKIGsRIxrgZJwYXRY/9/VxZ1GFeUr9N4kF0Qdh9oiGB+uvCz8YfnNL181GZYfTBapqFrDB7ct42
+	kEZ447DGI/aImh2bkk7h00sqgA2nrgdRNw1mi9BSHErIqORMY/Gsxn1x0YBgJuQ3b/aDEYoej33
+	UUqCay8/etOirsP4IHWOqp94xc=
+X-Google-Smtp-Source: AGHT+IHhOajMg45qoQKuHFqOphgW1v8C6Y3NGv24TZhjVOQCnYNmKayhLoX2A9i2pe11HP7tejVyO8ZyZRPs6TouXr8=
+X-Received: by 2002:a05:6808:80ad:b0:437:d306:3067 with SMTP id
+ 5614622812f47-43b8d896834mr791446b6e.5.1757665378727; Fri, 12 Sep 2025
+ 01:22:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/15] mm/shmem, swap: remove redundant error handling
- for replacing folio
-To: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
- Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
- Kemeng Shi <shikemeng@huaweicloud.com>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>,
- Yosry Ahmed <yosryahmed@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>
-References: <20250910160833.3464-1-ryncsn@gmail.com>
- <20250910160833.3464-10-ryncsn@gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250910160833.3464-10-ryncsn@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250911095602.1130290-1-zhangchunyan@iscas.ac.cn>
+ <20250911095602.1130290-2-zhangchunyan@iscas.ac.cn> <9bcaf3ec-c0a1-4ca5-87aa-f84e297d1e42@redhat.com>
+In-Reply-To: <9bcaf3ec-c0a1-4ca5-87aa-f84e297d1e42@redhat.com>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 12 Sep 2025 16:22:22 +0800
+X-Gm-Features: Ac12FXy-cDQ5eFXWwommKSKcCFuy-deRstciVxjZJ-jBtke_I7rVvu7ZtFQQsPg
+Message-ID: <CAAfSe-sAru+FuhVWRa+i5_sj6m4318pLFrgP0Gsd0DVWzjE-hg@mail.gmail.com>
+Subject: Re: [PATCH v11 1/5] mm: softdirty: Add pgtable_soft_dirty_supported()
+To: David Hildenbrand <david@redhat.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, linux-riscv@lists.infradead.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Deepak Gupta <debug@rivosinc.com>, Ved Shanbhogue <ved@rivosinc.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Axel Rasmussen <axelrasmussen@google.com>, Yuanchu Xie <yuanchu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi David,
 
+On Thu, 11 Sept 2025 at 21:09, David Hildenbrand <david@redhat.com> wrote:
+>
+> On 11.09.25 11:55, Chunyan Zhang wrote:
+> > Some platforms can customize the PTE PMD entry soft-dirty bit making it
+> > unavailable even if the architecture provides the resource.
+> >
+> > Add an API which architectures can define their specific implementations
+> > to detect if soft-dirty bit is available on which device the kernel is
+> > running.
+>
+> Thinking to myself: maybe pgtable_supports_soft_dirty() would read better
+> Whatever you prefer.
 
-On 2025/9/11 00:08, Kairui Song wrote:
-> From: Kairui Song <kasong@tencent.com>
-> 
-> Shmem may replace a folio in the swap cache if the cached one doesn't
-> fit the swapin's GFP zone. When doing so, shmem has already double
-> checked that the swap cache folio is locked, still has the swap cache
-> flag set, and contains the wanted swap entry. So it is impossible to
-> fail due to an XArray mismatch. There is even a comment for that.
-> 
-> Delete the defensive error handling path, and add a WARN_ON instead:
-> if that happened, something has broken the basic principle of how the
-> swap cache works, we should catch and fix that.
-> 
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> ---
->   mm/shmem.c | 42 ++++++++++++------------------------------
->   1 file changed, 12 insertions(+), 30 deletions(-)
-> 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 410f27bc4752..5f395fab489c 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1661,13 +1661,13 @@ int shmem_writeout(struct folio *folio, struct swap_iocb **plug,
->   		}
->   
->   		/*
-> -		 * The delete_from_swap_cache() below could be left for
-> +		 * The swap_cache_del_folio() below could be left for
->   		 * shrink_folio_list()'s folio_free_swap() to dispose of;
->   		 * but I'm a little nervous about letting this folio out of
->   		 * shmem_writeout() in a hybrid half-tmpfs-half-swap state
->   		 * e.g. folio_mapping(folio) might give an unexpected answer.
->   		 */
-> -		delete_from_swap_cache(folio);
-> +		swap_cache_del_folio(folio);
->   		goto redirty;
->   	}
->   	if (nr_pages > 1)
-> @@ -2045,7 +2045,7 @@ static struct folio *shmem_swap_alloc_folio(struct inode *inode,
->   	new->swap = entry;
->   
->   	memcg1_swapin(entry, nr_pages);
-> -	shadow = get_shadow_from_swap_cache(entry);
-> +	shadow = swap_cache_get_shadow(entry);
+I will use pgtable_supports_* in the next version.
 
-Again, there are still some issues with the patch split. The swapcache 
-related APIs replacement should be placed in Patch 8, otherwise there 
-will be buidling errors after applying Patch 8.
+> >
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
+> >   fs/proc/task_mmu.c      | 17 ++++++++++++++++-
+> >   include/linux/pgtable.h | 12 ++++++++++++
+> >   mm/debug_vm_pgtable.c   | 10 +++++-----
+> >   mm/huge_memory.c        | 13 +++++++------
+> >   mm/internal.h           |  2 +-
+> >   mm/mremap.c             | 13 +++++++------
+> >   mm/userfaultfd.c        | 10 ++++------
+> >   7 files changed, 52 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > index 29cca0e6d0ff..9e8083b6d4cd 100644
+> > --- a/fs/proc/task_mmu.c
+> > +++ b/fs/proc/task_mmu.c
+> > @@ -1058,7 +1058,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >        * -Werror=unterminated-string-initialization warning
+> >        *  with GCC 15
+> >        */
+> > -     static const char mnemonics[BITS_PER_LONG][3] = {
+> > +     static char mnemonics[BITS_PER_LONG][3] = {
+> >               /*
+> >                * In case if we meet a flag we don't know about.
+> >                */
+> > @@ -1129,6 +1129,16 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+> >               [ilog2(VM_SEALED)] = "sl",
+> >   #endif
+> >       };
+> > +/*
+> > + * We should remove the VM_SOFTDIRTY flag if the soft-dirty bit is
+> > + * unavailable on which the kernel is running, even if the architecture
+> > + * provides the resource and soft-dirty is compiled in.
+> > + */
+> > +#ifdef CONFIG_MEM_SOFT_DIRTY
+> > +     if (!pgtable_soft_dirty_supported())
+> > +             mnemonics[ilog2(VM_SOFTDIRTY)][0] = 0;
+> > +#endif
+>
+> You can now drop the ifdef.
 
-With this issue fixed:
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+Ok, you mean define VM_SOFTDIRTY 0x08000000 no matter if
+MEM_SOFT_DIRTY is compiled in, right?
 
->   	if (shadow)
->   		workingset_refault(new, shadow);
->   	folio_add_lru(new);
-> @@ -2121,35 +2121,17 @@ static int shmem_replace_folio(struct folio **foliop, gfp_t gfp,
->   	/* Swap cache still stores N entries instead of a high-order entry */
->   	xa_lock_irq(&swap_mapping->i_pages);
->   	for (i = 0; i < nr_pages; i++) {
-> -		void *item = xas_load(&xas);
-> -
-> -		if (item != old) {
-> -			error = -ENOENT;
-> -			break;
-> -		}
-> -
-> -		xas_store(&xas, new);
-> +		WARN_ON_ONCE(xas_store(&xas, new));
->   		xas_next(&xas);
->   	}
-> -	if (!error) {
-> -		mem_cgroup_replace_folio(old, new);
-> -		shmem_update_stats(new, nr_pages);
-> -		shmem_update_stats(old, -nr_pages);
-> -	}
->   	xa_unlock_irq(&swap_mapping->i_pages);
->   
-> -	if (unlikely(error)) {
-> -		/*
-> -		 * Is this possible?  I think not, now that our callers
-> -		 * check both the swapcache flag and folio->private
-> -		 * after getting the folio lock; but be defensive.
-> -		 * Reverse old to newpage for clear and free.
-> -		 */
-> -		old = new;
-> -	} else {
-> -		folio_add_lru(new);
-> -		*foliop = new;
-> -	}
-> +	mem_cgroup_replace_folio(old, new);
-> +	shmem_update_stats(new, nr_pages);
-> +	shmem_update_stats(old, -nr_pages);
-> +
-> +	folio_add_lru(new);
-> +	*foliop = new;
->   
->   	folio_clear_swapcache(old);
->   	old->private = NULL;
-> @@ -2183,7 +2165,7 @@ static void shmem_set_folio_swapin_error(struct inode *inode, pgoff_t index,
->   	nr_pages = folio_nr_pages(folio);
->   	folio_wait_writeback(folio);
->   	if (!skip_swapcache)
-> -		delete_from_swap_cache(folio);
-> +		swap_cache_del_folio(folio);
->   	/*
->   	 * Don't treat swapin error folio as alloced. Otherwise inode->i_blocks
->   	 * won't be 0 when inode is released and thus trigger WARN_ON(i_blocks)
-> @@ -2422,7 +2404,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
->   		folio->swap.val = 0;
->   		swapcache_clear(si, swap, nr_pages);
->   	} else {
-> -		delete_from_swap_cache(folio);
-> +		swap_cache_del_folio(folio);
->   	}
->   	folio_mark_dirty(folio);
->   	swap_free_nr(swap, nr_pages);
+Then I need memcpy() to set mnemonics[ilog2(VM_SOFTDIRTY)] here.
 
+>
+> But, I wonder if could we instead just stop setting the flag. Then we don't
+> have to worry about any VM_SOFTDIRTY checks.
+>
+> Something like the following
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 892fe5dbf9de0..8b8bf63a32ef7 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -783,6 +783,7 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
+>   static inline void vm_flags_init(struct vm_area_struct *vma,
+>                                  vm_flags_t flags)
+>   {
+> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
+>         ACCESS_PRIVATE(vma, __vm_flags) = flags;
+>   }
+>
+> @@ -801,6 +802,7 @@ static inline void vm_flags_reset(struct vm_area_struct *vma,
+>   static inline void vm_flags_reset_once(struct vm_area_struct *vma,
+>                                        vm_flags_t flags)
+>   {
+> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
+>         vma_assert_write_locked(vma);
+>         WRITE_ONCE(ACCESS_PRIVATE(vma, __vm_flags), flags);
+>   }
+> @@ -808,6 +810,7 @@ static inline void vm_flags_reset_once(struct vm_area_struct *vma,
+>   static inline void vm_flags_set(struct vm_area_struct *vma,
+>                                 vm_flags_t flags)
+>   {
+> +       VM_WARN_ON_ONCE(!pgtable_soft_dirty_supported() && (flags & VM_SOFTDIRTY));
+>         vma_start_write(vma);
+>         ACCESS_PRIVATE(vma, __vm_flags) |= flags;
+>   }
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 5fd3b80fda1d5..40cb3fbf9a247 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1451,8 +1451,10 @@ static struct vm_area_struct *__install_special_mapping(
+>                 return ERR_PTR(-ENOMEM);
+>
+>         vma_set_range(vma, addr, addr + len, 0);
+> -       vm_flags_init(vma, (vm_flags | mm->def_flags |
+> -                     VM_DONTEXPAND | VM_SOFTDIRTY) & ~VM_LOCKED_MASK);
+> +       vm_flags |= mm->def_flags | VM_DONTEXPAND;
+
+Why use '|=' rather than not directly setting vm_flags which is an
+uninitialized variable?
+
+> +       if (pgtable_soft_dirty_supported())
+> +               vm_flags |= VM_SOFTDIRTY;
+> +       vm_flags_init(vma, vm_flags & ~VM_LOCKED_MASK);
+>         vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+>
+>         vma->vm_ops = ops;
+> diff --git a/mm/vma.c b/mm/vma.c
+> index abe0da33c8446..16a1ed2a6199c 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -2551,7 +2551,8 @@ static void __mmap_complete(struct mmap_state *map, struct vm_area_struct *vma)
+>          * then new mapped in-place (which must be aimed as
+>          * a completely new data area).
+>          */
+> -       vm_flags_set(vma, VM_SOFTDIRTY);
+> +       if (pgtable_soft_dirty_supported())
+> +               vm_flags_set(vma, VM_SOFTDIRTY);
+>
+>         vma_set_page_prot(vma);
+>   }
+> @@ -2819,7 +2820,8 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>         mm->data_vm += len >> PAGE_SHIFT;
+>         if (vm_flags & VM_LOCKED)
+>                 mm->locked_vm += (len >> PAGE_SHIFT);
+> -       vm_flags_set(vma, VM_SOFTDIRTY);
+> +       if (pgtable_soft_dirty_supported())
+> +               vm_flags_set(vma, VM_SOFTDIRTY);
+>         return 0;
+>
+>   mas_store_fail:
+> diff --git a/mm/vma_exec.c b/mm/vma_exec.c
+> index 922ee51747a68..c06732a5a620a 100644
+> --- a/mm/vma_exec.c
+> +++ b/mm/vma_exec.c
+> @@ -107,6 +107,7 @@ int relocate_vma_down(struct vm_area_struct *vma, unsigned long shift)
+>   int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
+>                           unsigned long *top_mem_p)
+>   {
+> +       unsigned long flags  = VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
+>         int err;
+>         struct vm_area_struct *vma = vm_area_alloc(mm);
+>
+> @@ -137,7 +138,9 @@ int create_init_stack_vma(struct mm_struct *mm, struct vm_area_struct **vmap,
+>         BUILD_BUG_ON(VM_STACK_FLAGS & VM_STACK_INCOMPLETE_SETUP);
+>         vma->vm_end = STACK_TOP_MAX;
+>         vma->vm_start = vma->vm_end - PAGE_SIZE;
+> -       vm_flags_init(vma, VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP);
+> +       if (pgtable_soft_dirty_supported())
+> +               flags |= VM_SOFTDIRTY;
+> +       vm_flags_init(vma, flags);
+>         vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
+>
+>         err = insert_vm_struct(mm, vma);
+>
+>
+> > +
+> >       size_t i;
+> >
+> >       seq_puts(m, "VmFlags: ");
+> > @@ -1531,6 +1541,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
+> >   static inline void clear_soft_dirty(struct vm_area_struct *vma,
+> >               unsigned long addr, pte_t *pte)
+> >   {
+> > +     if (!pgtable_soft_dirty_supported())
+> > +             return;
+> >       /*
+> >        * The soft-dirty tracker uses #PF-s to catch writes
+> >        * to pages, so write-protect the pte as well. See the
+> > @@ -1566,6 +1578,9 @@ static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+> >   {
+> >       pmd_t old, pmd = *pmdp;
+> >
+> > +     if (!pgtable_soft_dirty_supported())
+> > +             return;
+> > +
+> >       if (pmd_present(pmd)) {
+> >               /* See comment in change_huge_pmd() */
+> >               old = pmdp_invalidate(vma, addr, pmdp);
+>
+> That would all be handled with the above never-set-VM_SOFTDIRTY.
+
+Sorry I'm not sure I understand here, you mean no longer need #ifdef
+CONFIG_MEM_SOFT_DIRTY for these function definitions, right?
+
+>
+> > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> > index 4c035637eeb7..2a3578a4ae4c 100644
+> > --- a/include/linux/pgtable.h
+> > +++ b/include/linux/pgtable.h
+> > @@ -1537,6 +1537,18 @@ static inline pgprot_t pgprot_modify(pgprot_t oldprot, pgprot_t newprot)
+> >   #define arch_start_context_switch(prev)     do {} while (0)
+> >   #endif
+> >
+> > +/*
+> > + * Some platforms can customize the PTE soft-dirty bit making it unavailable
+> > + * even if the architecture provides the resource.
+> > + * Adding this API allows architectures to add their own checks for the
+> > + * devices on which the kernel is running.
+> > + * Note: When overiding it, please make sure the CONFIG_MEM_SOFT_DIRTY
+> > + * is part of this macro.
+> > + */
+> > +#ifndef pgtable_soft_dirty_supported
+> > +#define pgtable_soft_dirty_supported()       IS_ENABLED(CONFIG_MEM_SOFT_DIRTY)
+> > +#endif
+> > +
+> >   #ifdef CONFIG_HAVE_ARCH_SOFT_DIRTY
+> >   #ifndef CONFIG_ARCH_ENABLE_THP_MIGRATION
+> >   static inline pmd_t pmd_swp_mksoft_dirty(pmd_t pmd)
+> > diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> > index 830107b6dd08..b32ce2b0b998 100644
+> > --- a/mm/debug_vm_pgtable.c
+> > +++ b/mm/debug_vm_pgtable.c
+> > @@ -690,7 +690,7 @@ static void __init pte_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pte_t pte = pfn_pte(args->fixed_pte_pfn, args->page_prot);
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!pgtable_soft_dirty_supported())
+> >               return;
+> >
+> >       pr_debug("Validating PTE soft dirty\n");
+> > @@ -702,7 +702,7 @@ static void __init pte_swap_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pte_t pte;
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!pgtable_soft_dirty_supported())
+> >               return;
+> >
+> >       pr_debug("Validating PTE swap soft dirty\n");
+> > @@ -718,7 +718,7 @@ static void __init pmd_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pmd_t pmd;
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!pgtable_soft_dirty_supported())
+> >               return;
+> >
+> >       if (!has_transparent_hugepage())
+> > @@ -734,8 +734,8 @@ static void __init pmd_swap_soft_dirty_tests(struct pgtable_debug_args *args)
+> >   {
+> >       pmd_t pmd;
+> >
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY) ||
+> > -             !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
+> > +     if (!pgtable_soft_dirty_supported() ||
+> > +         !IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION))
+> >               return;
+> >
+> >       if (!has_transparent_hugepage())
+> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > index 9c38a95e9f09..218d430a2ec6 100644
+> > --- a/mm/huge_memory.c
+> > +++ b/mm/huge_memory.c
+> > @@ -2271,12 +2271,13 @@ static inline int pmd_move_must_withdraw(spinlock_t *new_pmd_ptl,
+> >
+> >   static pmd_t move_soft_dirty_pmd(pmd_t pmd)
+> >   {
+> > -#ifdef CONFIG_MEM_SOFT_DIRTY
+> > -     if (unlikely(is_pmd_migration_entry(pmd)))
+> > -             pmd = pmd_swp_mksoft_dirty(pmd);
+> > -     else if (pmd_present(pmd))
+> > -             pmd = pmd_mksoft_dirty(pmd);
+> > -#endif
+> > +     if (pgtable_soft_dirty_supported()) {
+> > +             if (unlikely(is_pmd_migration_entry(pmd)))
+> > +                     pmd = pmd_swp_mksoft_dirty(pmd);
+> > +             else if (pmd_present(pmd))
+> > +                     pmd = pmd_mksoft_dirty(pmd);
+> > +     }
+> > +
+>
+> Wondering, should simply the arch take care of that and we can just clal
+> pmd_swp_mksoft_dirty / pmd_mksoft_dirty?
+
+Ok, I think I can do that in another patchset.
+
+>
+> >       return pmd;
+> >   }
+> >
+> > diff --git a/mm/internal.h b/mm/internal.h
+> > index 45b725c3dc03..c6ca62f8ecf3 100644
+> > --- a/mm/internal.h
+> > +++ b/mm/internal.h
+> > @@ -1538,7 +1538,7 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
+> >        * VM_SOFTDIRTY is defined as 0x0, then !(vm_flags & VM_SOFTDIRTY)
+> >        * will be constantly true.
+> >        */
+> > -     if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
+> > +     if (!pgtable_soft_dirty_supported())
+> >               return false;
+> >
+>
+> That should be handled with the above never-set-VM_SOFTDIRTY.
+
+We don't need to check if (!pgtable_soft_dirty_supported()) if I
+understand correctly.
+
+Thanks for the review,
+Chunyan
+
+>
+> >       /*
+> > diff --git a/mm/mremap.c b/mm/mremap.c
+> > index e618a706aff5..7beb3114dbf5 100644
+> > --- a/mm/mremap.c
+> > +++ b/mm/mremap.c
+> > @@ -162,12 +162,13 @@ static pte_t move_soft_dirty_pte(pte_t pte)
+> >        * Set soft dirty bit so we can notice
+> >        * in userspace the ptes were moved.
+> >        */
+> > -#ifdef CONFIG_MEM_SOFT_DIRTY
+> > -     if (pte_present(pte))
+> > -             pte = pte_mksoft_dirty(pte);
+> > -     else if (is_swap_pte(pte))
+> > -             pte = pte_swp_mksoft_dirty(pte);
+> > -#endif
+> > +     if (pgtable_soft_dirty_supported()) {
+> > +             if (pte_present(pte))
+> > +                     pte = pte_mksoft_dirty(pte);
+> > +             else if (is_swap_pte(pte))
+> > +                     pte = pte_swp_mksoft_dirty(pte);
+> > +     }
+> > +
+> >       return pte;
+> >   }
+> >
+> --
+> Cheers
+>
+> David / dhildenb
+>
 
