@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-813334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94437B543C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:24:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B737BB543C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:24:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE9E67B01D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41725683A5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BE62C0285;
-	Fri, 12 Sep 2025 07:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEC12BF3DF;
+	Fri, 12 Sep 2025 07:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EHzPOqEc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="diB98gXK"
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076D02BEFE5;
-	Fri, 12 Sep 2025 07:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E40A2BE05F
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757661832; cv=none; b=gI+SeLsTxPq8f7NLCWoCkRMnwef5ihjJdT0pLrzabrvaNgNYHJKVxx3WPeNXi671zK2/u9CvneWcYCVyG/IHZx4Zl+FOgtJjPFpJwVzl9hJcoqHeVm2yGbo8TUvrilgUOw0NDU42BONroFFphmjbZpZfXwI+eGPM9/5srm5muG8=
+	t=1757661873; cv=none; b=IoTsyIv6HqBjXZ0rwNB5qWwZN0hrrpx6mivJdk9HrdYQIFgkHCZk8w+pjel4v7pGFT/hyafKc/ebJnAq2x/114jbri3YQJeRnupcxOeZUSsnmCJGmarHK+zZN8kWL4J4rbZq2Paka+vKvFQIB7mPPnv77bzMzELasX0uwnvN51s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757661832; c=relaxed/simple;
-	bh=lgswvGmaOM92orFcIk7ELFqc1CnpJ5duXFyCDPrJDro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s3vetVyWBXKm4/IyeHwAzc3/ZIl+6k/lL+hHVbDPJKjTEDZpHl971xVXyFeLY80KvnpbEFRuR6lBhENBbgN2AdqVHHxjpfqmG5Mzqj3lJcTKBRSLdcv+WLu3EVTP1P7UtI/03J6elrQR2vghhtwTpnWaIoLUs+i5Jm+baWuhRDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EHzPOqEc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE16C4CEF4;
-	Fri, 12 Sep 2025 07:23:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757661829;
-	bh=lgswvGmaOM92orFcIk7ELFqc1CnpJ5duXFyCDPrJDro=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EHzPOqEcibhYmiN/YOzZJ5d6Vb4pEU/u1WpYCJGcx650Vrm/fSYfow6g2WPK9n2pK
-	 8f/IjkWDpt81Ts3sG7kK6kt6pQWNzJxyH58+j49WibGOQZJuzNSv/y+QzrjC5MN9vD
-	 8zT2FlX/wzqtuVX/v499iWFRr7zmVvPrKk6Fk8QwXvMWhvUEuniZgmRbecVs5oDY6E
-	 v6D25+SOBDnefPIEevDc7fpyyvZmnm9RRdia1v0RxUGiJBywGh25uZzotSkoujMCfx
-	 SIgHImpCbXMq66SLkuhQnOrb+lgAlgWYi1Ya9N97vG3/Vgw8Ore8R8Vj9EfHkIdiIA
-	 8rbrWuQxdxqQQ==
-Message-ID: <1beb1e15-cafd-408a-96bf-7f749b3499fd@kernel.org>
-Date: Fri, 12 Sep 2025 09:23:45 +0200
+	s=arc-20240116; t=1757661873; c=relaxed/simple;
+	bh=ov0o+N7VlhjyhV78KxdzxA6UTh8zdhFtw9m5AFWO1II=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=TyosBWMklzxjmkhdhUBDSkG4oUh9hAFaN3upesvnRBhqUERREiWgQidW2nOOADB3at7JjaVQwwXqWCC4zifpptJn052z2CtHe7PL+wDHw6kRxl7LOld+Nip0QwFpvjaQCz5j9wOjlKM5KtbkeXhStvqsITTiV+IwFj+tjCkIafQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=diB98gXK; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-b079c13240eso255970066b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:24:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1757661870; x=1758266670; darn=vger.kernel.org;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uaHiq8VH1qzCN6aCnAst3zvDqtwjzvVk1OyYrGXolto=;
+        b=diB98gXK4dZXzwzBGUPRLjJ3EBr/uT2s+OXXXAkMiFkwF4lgo6b2pvuj2z46iqVqRV
+         N+CW3ztFuwjuq7r0/lpunEnGISP0ufh8TvG6Af7jvI8bx4YYp2lcYc9Ga6kSFcG54kzS
+         CexscO4HTY9Gvo2NdIgj6M0AzwSD46bd0ZV4DP/uVOeOFKJ3V3r5XKbY6vq2jCfQt6xp
+         KNEC7jzbjQDNDH9BlIprYnz38qiggic1/vwCmWvoShNyeTFiMlwn3otJYR8vpmKA2sYt
+         jWIV6Ubhq2v0R+Qhc65V19p7ahp/iY9lrG+Jp6hkpnzzfeys7lF2shO6g9mfb1yUx7MK
+         dO1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757661870; x=1758266670;
+        h=in-reply-to:references:from:subject:cc:to:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uaHiq8VH1qzCN6aCnAst3zvDqtwjzvVk1OyYrGXolto=;
+        b=wAtP4crToCrgAJDOMaKZX2yzu8TYgHGFej4uoIu/Ys89oAIXnN4WZepvgiB/2nXVuv
+         +ZW4MRwiJSkLrDYIpW7ijOBJvyYxJILwcOS6XFanBRXmfVeYdpjjWtHSjaY78kis5Abx
+         oYvhtikiFr+fPEnSav4BVLMpcDr7q29AyTyV/WSJdPVid9bYYwlHYMa9+MU+QcykxePs
+         bql1sb8HC69czP3ZR72u0u83vefMwGW2ewAFU+AV0VKVPWX1C4LTJENJPqrXXjxeMpH2
+         iA0VKcBvek/o2YUF+XfRA0HhagGrQy4NdqDLJCk69qo+3WfrDRqTQmgPUvW76DmY/0Ou
+         3KBg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEstyVC50R93H2zOyAm1c17RY8TYQl4JL0TJqEdjo9c6Wsd2Ypc4NGLKmFVxM4+5Jwaz1ld0hnaqITuF0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhMScgwrxzBicXQt6Ku6SKKCs6FmYCEbs3MLJWfajUk+B1j2R6
+	GsZuENvGaIHPSDJetXahN0ogV7fdrAD+lOmAO/b690FXHeE8Nml7ndzrQaH7lL/Wsko=
+X-Gm-Gg: ASbGncvP65X3hZbhy5YwcVB4ugzxHBE300PihyUFXVCthUEhUzOmCDgtDmrNOPZOs0b
+	d175a0gtQWoLOXjlrK89vaH3WvEnaaPmgXKzyKpT836vuHgUwbaDYN52CdfP+TXtuoTL0wBqfwK
+	uhfJdQDvNrNNwW5Ho0weXEI0kBIsvOtDFq/c3Q13UI/saZyamVdiYUO94kNrn8bUIP13fwYeSDV
+	PVHnSPzX/fx8HWbETLV1SnS6G10LGRz+jla2H3BxjahzlMEBVw12fVMGM1qbPKhecj5rjh7X7C4
+	fSWy5ujj3YCdVTLodbD1cN5Ds+4pSdln/qJtD6luNrsMBheIICzocvJrg+rIMBTNGDKFebB0EzX
+	rtbcctfGnaxeSud//ZLbInHKjAonkWoRBRGP5u8/Qf09F6SKS4iqwme+cL3xz2scNPwptU/hGAM
+	YEHfIzYyi0YVwOB5M2fAkRZQTeS6Q+FQM2mPN9xG3l5WY=
+X-Google-Smtp-Source: AGHT+IElFju5c0ol0hw7nESeIjDDTstVEiLNQomQ5v8H5idD7G4pKPF7+MO6caJyGVA3MvvQLK7alQ==
+X-Received: by 2002:a17:907:2d0c:b0:b04:1957:8e72 with SMTP id a640c23a62f3a-b07c3ad9ce3mr161741066b.65.1757661870248;
+        Fri, 12 Sep 2025 00:24:30 -0700 (PDT)
+Received: from localhost (2001-1c00-3b8a-ea00-c4de-d39d-05f4-c77a.cable.dynamic.v6.ziggo.nl. [2001:1c00:3b8a:ea00:c4de:d39d:5f4:c77a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07c2d043desm139043466b.40.2025.09.12.00.24.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 00:24:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arm64: dts: qcom: x1e80100: Add IRIS video codec
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
- Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Neil Armstrong <neil.armstrong@linaro.org>
-References: <20250911-x1e-iris-dt-v1-0-63caf0fd202c@linaro.org>
- <20250911-x1e-iris-dt-v1-1-63caf0fd202c@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250911-x1e-iris-dt-v1-1-63caf0fd202c@linaro.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Fri, 12 Sep 2025 09:24:29 +0200
+Message-Id: <DCQN4RMOO9OV.8H4YABRJY4BV@fairphone.com>
+To: "Tamura Dai" <kirinode0@gmail.com>, "Bjorn Andersson"
+ <andersson@kernel.org>, "Konrad Dybcio" <konradybcio@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>, "Joel Selvaraj"
+ <joelselvaraj.oss@gmail.com>
+Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v2] arm64: dts: qcom: sdm845-shift-axolotl: Fix typo of
+ compatible
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <38c24430-16ce-4d9a-8641-3340cc9364cf@kernel.org>
+ <20250912070145.54312-1-kirinode0@gmail.com>
+In-Reply-To: <20250912070145.54312-1-kirinode0@gmail.com>
 
-On 11/09/2025 20:38, Stephan Gerhold wrote:
-> Add the IRIS video codec to accelerate video decoding/encoding. Copied
-> mostly from sm8550.dtsi, only the opp-table is slightly different for X1E.
-> For opp-240000000, we need to vote for a higher OPP on one of the power
-> domains, because the voltage requirements for the PLL and the derived
-> clocks differ (sm8550.dtsi has the same).
-> 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+Hi Tamura,
+
+On Fri Sep 12, 2025 at 9:01 AM CEST, Tamura Dai wrote:
+> The bug is a typo in the compatible string for the touchscreen node.
+> According to Documentation/devicetree/bindings/input/touchscreen/edt-ft5x=
+06.yaml,
+> the correct compatible is "focaltech,ft8719", but the device tree used
+> "focaltech,fts8719".
+
++Joel
+
+I don't think this patch is really correct, in the sdm845-mainline fork
+there's a different commit which has some more changes to make the
+touchscreen work:
+
+https://gitlab.com/sdm845-mainline/linux/-/commit/2ca76ac2e046158814b043fd4=
+e37949014930d70
+
+Regards
+Luca
+
+
+>
+> Fixes: 45882459159de (arm64: dts: qcom: sdm845: add device tree for SHIFT=
+6mq)
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Tamura Dai <kirinode0@gmail.com>
 > ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 87 ++++++++++++++++++++++++++++++++++
->  1 file changed, 87 insertions(+)
+>  arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/arm=
+64/boot/dts/qcom/sdm845-shift-axolotl.dts
+> index 2cf7b5e1243c..a0b288d6162f 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+> +++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
+> @@ -432,7 +432,7 @@ &i2c5 {
+>  	status =3D "okay";
+> =20
+>  	touchscreen@38 {
+> -		compatible =3D "focaltech,fts8719";
+> +		compatible =3D "focaltech,ft8719";
+>  		reg =3D <0x38>;
+>  		wakeup-source;
+>  		interrupt-parent =3D <&tlmm>;
 
-Feels like duplicating this:
-
-https://lore.kernel.org/all/20250910-hamoa_initial-v11-2-38ed7f2015f7@oss.qualcomm.com/
-
-Best regards,
-Krzysztof
 
