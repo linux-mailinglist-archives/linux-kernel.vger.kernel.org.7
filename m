@@ -1,178 +1,139 @@
-Return-Path: <linux-kernel+bounces-814857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3573EB559C2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:55:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE66B559C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:55:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECC155C2E15
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:55:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C14D5C3643
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6901A27281C;
-	Fri, 12 Sep 2025 22:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F7E2609DC;
+	Fri, 12 Sep 2025 22:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q1UqL8sr"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UjoqhsHB"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC05025F7A9
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AA9283FC2
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757717725; cv=none; b=iVkte5IKXOhtcBw36vrQNkwmyATEQQjk39GZT3rW23FmNk4TQ7CNGswxn02IUsj1k5amCkr9ChsGtR1LctY+FE9Zeq4BNtGOjDBNy1plaIthm7coPEBBZnAnKCE09cW+i8wrMNgFBsAFbC20q3go7Y56xvRO4NPHmzxy23e/Hes=
+	t=1757717729; cv=none; b=Y72bBjTryO6bU2t62cUK09tdLnCSKkz3whGBOsZK01S+WgQmiuroDM6PSWbCfC8x67d0ZjH7RGuq6tl91hCSvQDvZbLbw8ojaPC1xHcvLJHjCjvEQnsy4Gbu2RCp5CGQkmTFmGBN9jPAOMOZTH8nIPzKQBESw6B/XwKQUs4saKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757717725; c=relaxed/simple;
-	bh=Q2sUHFIOorZfsz85uahNX9/PsDeSkb1RNGOg1UBbjto=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:References:
-	 In-Reply-To:Content-Type; b=tw/70XmAnv4q/Bw5JEtBkaHoTdP83P0A8sPsNxnqwsVg2EXLVeXM/qlNAI+mYiZMqgr8TKt13cgud3o0NtbsQjMKVEKv2OrlBuekiB+fJlTOSJvly8duRmwM4H2+yK+673cXIKWiBgQ4tBRk6ofp8IYNEIikZwwgYoZLFR4IIfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q1UqL8sr; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e7fc9584-3b69-4cbb-ab45-efb1dc37efdb@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757717719;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0jqhWxjNOmgHrhvCRjQLK/k0iEoywnR3FWANReeq9Yo=;
-	b=q1UqL8sr3NoiBVM0UPmAUa8k1UMepIWYjSgYwohHo/rkVS3LyGlG/LjDXzAvy54uc9nZIs
-	IYuvAuao3ZOWjcUaaLS/RMOAdrxQJPsA9u5R4+azOd+WfV+rPOXowGSKGjV52H+j7W1Ceh
-	ZpICsBfjaLgOg4okEVEvlPjabs1rWwU=
-Date: Fri, 12 Sep 2025 15:55:08 -0700
+	s=arc-20240116; t=1757717729; c=relaxed/simple;
+	bh=s81gDgnQeGccrS8LsVmeNH8hG65sh8m34+oHvpgsrrI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tYaRHJ4iJhk3drpHpHmGB5oFyQGsHGQtfAwJWICxOIhVNt/aGj4HdjRxKtoerSYmTTiS6pnCPjfu+Up4cehbNWpWJ4D8bKmKlFgxbfurmJED3L0Sgrw5a1fPzkqRtcR+1+s1hmYKceu18drWlb/hzSSHrHLFP5jiiQ4IuXmVV2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UjoqhsHB; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2445806b18aso24183175ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:55:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757717727; x=1758322527; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=M5UxjIlsEgvTF8daNW02GCq6jap774PItnDVhlq0f8c=;
+        b=UjoqhsHBA61DXGARwcZ/ROhWFgX4maQIWYOp5mN9IV3MW0X5MWk7xdLBpAeRRCMmUK
+         pdtcq2WVt3/qkLjJy9J4cbCRWaBCMWFzWpzRdYMot1MRQiRG3sb8w3/27juv7qVbFYHD
+         p4R5d/5O4cL34/hsCTStpRuAb41nW1UjuS5qxnKIlCnCRbMd9WWGP7T9wExKM+SvAby2
+         IokeMJjXzdMt8PFiw7++y+hFWdQSmw1pY2ovq8Es0v565lb0OVyNLKcAipNole5ZySiw
+         eH236h9HrPy7L/UA9CV+ZpzJ77BMC+Cow0MV1BopuB/yQaptc+ynze6vcxiSUpFUfOps
+         j8sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757717727; x=1758322527;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M5UxjIlsEgvTF8daNW02GCq6jap774PItnDVhlq0f8c=;
+        b=pdEJXKIUaKGOfQsMW9jKgfrfNd0kOeOTzwfFtTTaJGsayV4jgA10X6fwovUlgf8dHl
+         Grh14G95dmZ6jnJHkZU6ZV5t3qsngrQA3SHExzwM5dKnREZcuMS+uI+tbqY+B6+r7R+l
+         xBiSYZJqsF3WjORjvA6ITJZPc+SvsqBgV+kpkkfFAkC6OaeqAf5uXU3vruXd1DOzmNdc
+         KzFtAMEf5ZoKG6Z9rmCANTW9y0qIxxnIt8fvAVN7+LFp/l/pg3ea3hjBBU2feLxvnwgS
+         Dboicyql7hZpSxlnJIPErWB0tWT7EUl6HHIPB2rRT70qhXy/UtzYlVeI8hmjhiXoY/ZZ
+         mGeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEtTmgBIPm7mmPbtJ1mfGSqVmjKMdLNdc5pgoDKz8iGXlZWJs9uGhO9mIbAckBGmVTMJazaDbu9bu0pjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzk0ICC5uprlyL/A4kXfHON8Yg1v2jFU7L1fArDqZpTzTEs02tM
+	E3rCf7zGtFy4cyB3k7OyVgBqrE8SzHti1zfv1pWerpvUyLlFjUDEF0uBVjHKs+GW+vj/ckLBfp/
+	nfiIE2A==
+X-Google-Smtp-Source: AGHT+IEBFW2+no450hTjR9z5hEWHspR3hha0vnhjysBUIwJUVLZG1hVKgUXc1l4Dd+5wBSZ/IjDFCVmvLWg=
+X-Received: from plbja20.prod.google.com ([2002:a17:902:efd4:b0:25c:a8a8:add6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f60d:b0:25d:df7a:b1a2
+ with SMTP id d9443c01a7336-25ddf7ab591mr33868625ad.5.1757717727608; Fri, 12
+ Sep 2025 15:55:27 -0700 (PDT)
+Date: Fri, 12 Sep 2025 15:55:25 -0700
+In-Reply-To: <20250908201750.98824-2-john.allen@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Yanjun.Zhu" <yanjun.zhu@linux.dev>
-To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>,
- edwards@nvidia.com, hdanton@sina.com, jgg@ziepe.ca, leon@kernel.org,
- leonro@nvidia.com, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- syzkaller-bugs@googlegroups.com
-References: <68c3a49a.a70a0220.3543fc.0031.GAE@google.com>
- <6f3b9149-2a2d-4532-b38f-946b98e72000@linux.dev>
- <691d3ecd-7960-46bb-b41e-be223e320d33@linux.dev>
- <122fe058-a02e-41a7-b012-4d38262055ac@linux.dev>
-Content-Language: en-US
-In-Reply-To: <122fe058-a02e-41a7-b012-4d38262055ac@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Mime-Version: 1.0
+References: <20250908201750.98824-1-john.allen@amd.com> <20250908201750.98824-2-john.allen@amd.com>
+Message-ID: <aMSk3fY7XzScBuOx@google.com>
+Subject: Re: [PATCH v4 1/5] KVM: x86: SVM: Emulate reads and writes to shadow
+ stack MSRs
+From: Sean Christopherson <seanjc@google.com>
+To: John Allen <john.allen@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	pbonzini@redhat.com, dave.hansen@intel.com, rick.p.edgecombe@intel.com, 
+	mlevitsk@redhat.com, weijiang.yang@intel.com, chao.gao@intel.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, mingo@redhat.com, 
+	tglx@linutronix.de, thomas.lendacky@amd.com
+Content-Type: text/plain; charset="us-ascii"
 
+On Mon, Sep 08, 2025, John Allen wrote:
+> Emulate shadow stack MSR access by reading and writing to the
+> corresponding fields in the VMCB.
+> 
+> Signed-off-by: John Allen <john.allen@amd.com>
+> ---
+>  arch/x86/kvm/svm/svm.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index e4af4907c7d8..fee60f3378e1 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -2767,6 +2767,15 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>  		if (guest_cpuid_is_intel_compatible(vcpu))
+>  			msr_info->data |= (u64)svm->sysenter_esp_hi << 32;
+>  		break;
+> +	case MSR_IA32_S_CET:
+> +		msr_info->data = svm->vmcb->save.s_cet;
+> +		break;
+> +	case MSR_IA32_INT_SSP_TAB:
+> +		msr_info->data = svm->vmcb->save.isst_addr;
+> +		break;
+> +	case MSR_KVM_INTERNAL_GUEST_SSP:
+> +		msr_info->data = svm->vmcb->save.ssp;
+> +		break;
+>  	case MSR_TSC_AUX:
+>  		msr_info->data = svm->tsc_aux;
+>  		break;
+> @@ -2999,6 +3008,15 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
+>  		svm->vmcb01.ptr->save.sysenter_esp = (u32)data;
+>  		svm->sysenter_esp_hi = guest_cpuid_is_intel_compatible(vcpu) ? (data >> 32) : 0;
+>  		break;
+> +	case MSR_IA32_S_CET:
+> +		svm->vmcb->save.s_cet = data;
 
+These writes should mark VMCB_CET (the dirty/clean flag) dirty, and obviously
+KVM should mark VMCB_CET clean along with everything else on #VMEXIT.
 
-On 9/12/25 3:33 PM, Yanjun.Zhu wrote:
+> +		break;
+> +	case MSR_IA32_INT_SSP_TAB:
+> +		svm->vmcb->save.isst_addr = data;
+> +		break;
+> +	case MSR_KVM_INTERNAL_GUEST_SSP:
+> +		svm->vmcb->save.ssp = data;
+> +		break;
+>  	case MSR_TSC_AUX:
+>  		/*
+>  		 * TSC_AUX is always virtualized for SEV-ES guests when the
+> -- 
+> 2.47.3
 > 
-> 
-> On 9/12/25 1:01 PM, Yanjun.Zhu wrote:
->>
->>
->> On 9/12/25 12:38 PM, yanjun.zhu wrote:
->>> On 9/11/25 9:42 PM, syzbot wrote:
->>>> syzbot has bisected this issue to:
->>>>
->>>> commit a92fbeac7e94a420b55570c10fe1b90e64da4025
->>>> Author: Leon Romanovsky <leonro@nvidia.com>
->>>> Date:   Tue May 28 12:52:51 2024 +0000
->>>>
->>>>      RDMA/cache: Release GID table even if leak is detected
->>>
->>> Maybe this commit just detects ref leaks and reports ref leak.
->>> Even though this commit is reverted, this ref leak still occurs.
->>>
->>> The root cause is not in this commit.
->>>
->>> "
->>> GID entry ref leak for dev syz1 index 2 ref=615
->>> "
->>>
->>> Ref leaks in dev syz1.
->> In this link: https://syzkaller.appspot.com/x/log.txt?x=157dab12580000
->>
->> "
->> [  184.209420][ T6164] infiniband syz1: set active
->> [  184.215960][ T6164] infiniband syz1: added syz_tun
->> [  184.222514][ T6001] veth0_macvtap: entered promiscuous mode
->> [  184.231935][   T42] wlan0: Created IBSS using preconfigured BSSID 
->> 50:50:50:50:50:50
->> [  184.239777][   T42] wlan0: Creating new IBSS network, BSSID 
->> 50:50:50:50:50:50
->> [  184.256962][ T6001] veth1_macvtap: entered promiscuous mode
->> [  184.276479][ T6164] syz1: rxe_create_cq: returned err = -12 < -- 
->> rxe_create_cq failed, the test should not continue.
->>
->> [  184.288430][ T6008] veth0_vlan: entered promiscuous mode
->> "
->>
->> err = -12, is -ENOMEM.
-> 
-> "
-> [  139.009314][ T6730] infiniband syz1: added syz_tun
-> [  139.015974][ T6730] rdma_rxe: vmalloc_user failed, buf_size: 131456, 
-> num_slots: 1024, elem_size: 128
-> [  139.016142][ T6730] syz1: rxe_cq_from_init: unable to create cq
-> "
-
-The above logs are in the link: 
-https://syzkaller.appspot.com/x/log.txt?x=144a9934580000
-
-Please check it.
-
-Zhu Yanjun
-
-> 
->  From the above logs, vmalloc_user() fails when trying to allocate 
-> 131,456 bytes of memory.
-> 
-> Is there a specific limit on vmalloc allocations in this test case?
-> 
-> Also, what is the size of memory available on this machine? (Hardware 
-> name: Google Google Compute Engine/Google Compute Engine, BIOS Google 
-> 08/18/2025)
-> 
-> Thanks,
-> Zhu Yanjun
-> 
->>
->> It means that memory allocation fails.
->>
->> Zhu Yanjun
->>
->>>
->>> Zhu Yanjun
->>>
->>>>
->>>> bisection log:  https://syzkaller.appspot.com/x/bisect.txt? 
->>>> x=13fc9642580000
->>>> start commit:   5f540c4aade9 Add linux-next specific files for 20250910
->>>> git tree:       linux-next
->>>> final oops:     https://syzkaller.appspot.com/x/report.txt? 
->>>> x=10029642580000
->>>> console output: https://syzkaller.appspot.com/x/log.txt? 
->>>> x=17fc9642580000
->>>> kernel config:  https://syzkaller.appspot.com/x/.config? 
->>>> x=5ed48faa2cb8510d
->>>> dashboard link: https://syzkaller.appspot.com/bug? 
->>>> extid=b0da83a6c0e2e2bddbd4
->>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz? 
->>>> x=15b52362580000
->>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c? 
->>>> x=16b41642580000
->>>>
->>>> Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
->>>> Fixes: a92fbeac7e94 ("RDMA/cache: Release GID table even if leak is 
->>>> detected")
->>>>
->>>> For information about bisection process see: https://goo.gl/ 
->>>> tpsmEJ#bisection
->>>
->>
-> 
-
 
