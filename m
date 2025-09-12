@@ -1,170 +1,166 @@
-Return-Path: <linux-kernel+bounces-813579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF249B547C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:34:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F20B547F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95FCE460AF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:34:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D53383BD601
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA2C2874E3;
-	Fri, 12 Sep 2025 09:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C684B2882D6;
+	Fri, 12 Sep 2025 09:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDl2A0LO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="K2KSDbGz"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1F9E2848B4;
-	Fri, 12 Sep 2025 09:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA362848B4;
+	Fri, 12 Sep 2025 09:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757669507; cv=none; b=UKZIA24I3cgOiR5xHITFq3td6ODh/lt5xPLFJQ++49ANkIiaOES2EGOgDtfIJxTJriAkU6LLZwARKPefdt67vDKXDrhTqxPpY3ugHqeflgWfPnZKe7FmJvt82CstGHTy22fUV5daefjy7tqFoncbF+Tl8qDLxo7JYYFNN1KR/fc=
+	t=1757669537; cv=none; b=hd+zAs40qeJrV/fQ/ZWCKmyTLkKquLjIfyHwwfuofFwnEbInARi9ke7IqOde9SNg8XFIOv7iRnpYvSoU2dMnG/xBrUbcLPjcNJccYazJgymQyr6PrKhsHBQRIa5gE7hpKm2UbLeJV7Ie1sJ0vvexB+xCweifR7blJAjfBQ+d8Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757669507; c=relaxed/simple;
-	bh=cZZSj/PLAmvPikniIesMdJfhqh3VOpUH71TpGrecZ8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tIUScZ6Gzx9bxdDLH7qle5FByA8HOy260Awo0S7Oxp4PHfo+Ao6tQmigQBbIokDw0n6b0hp6GeL5M5lk5HzJ2BvuStC1kygrHoCX5vof//FsXAzmY+OrKjvhDBl4NyqVaa0zCR/EMPEbydokKZyLJO15Mdm+U2v+NSDoqSEsKsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDl2A0LO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB683C4CEF1;
-	Fri, 12 Sep 2025 09:31:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757669506;
-	bh=cZZSj/PLAmvPikniIesMdJfhqh3VOpUH71TpGrecZ8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oDl2A0LOXO/1X2zNKv7aRnP0NHdkbAsbDDgwtZzvwmo12fpeFM2E3/tK2+Vtp6jDf
-	 LtHjqH3FhqX9XCd49ZEoi9d2wFua1A1xl2NpXDXII2TJgNe2FaEGcY3H9R3K+d/kSk
-	 i5GbpzjLt0Me2HD69Wbc5uGIc3TwgDS6JZFlUf4XXoZCI/2uPJn9w8cEPAn3NjkatI
-	 mrNqigkcd6DbPU1UEsK3MA+M2bqLjMfjb8ArXgRSIyAq3CjGnxkE8s7LGICh/mIf7j
-	 5pUu4Qe144CAGGymifmDXQ3yvwNpleByOIrvrEZ2XoQVUNyLe8+LbR96tJeBNXKw/y
-	 Se8H2lBXfymbQ==
-Date: Fri, 12 Sep 2025 11:31:43 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Janne Grunau <j@jannau.net>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Hector Martin <marcan@marcan.st>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Mark Kettenis <kettenis@openbsd.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Jassi Brar <jassisinghbrar@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Sasha Finkelstein <fnkl.kernel@gmail.com>, Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Johannes Berg <johannes@sipsolutions.net>, 
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Michael Turquette <mturquette@baylibre.com>, Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>, 
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dmaengine@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 20/37] dt-bindings: pwm: apple,s5l-fpwm: Add t6020-fpwm
- compatible
-Message-ID: <ahxdf3l6zvmjp2nlgklg3go7biaimuz7qh5upnhohrrbrg62e6@gmi3pmbccwwe>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
- <20250828-dt-apple-t6020-v1-20-507ba4c4b98e@jannau.net>
+	s=arc-20240116; t=1757669537; c=relaxed/simple;
+	bh=Ce7fdp+lyhbKwDMukdlU8c7lTw0HSqaCFWJYr1TtJQk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CAj7ghouh19AuXBoGPZoLccZCCLpXmpAeP/6XifERnyZE2kAidKudM7imTeirNGxx3zpIWQ8CfsfBo3MayM7bw26Fv+/o3xYCEz6jnwIoeAMOys6jjIMKSjiEJYNNwQUEWwUCFkhMuX3lYFDC+//8mCcFeFcOknaddePp0CBqxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=fail (0-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=K2KSDbGz reason="key not found in DNS"; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4cNTj20s27z1FXSX;
+	Fri, 12 Sep 2025 11:32:06 +0200 (CEST)
+Received: from [10.10.15.10] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4cNTj10dkrz1DNGn;
+	Fri, 12 Sep 2025 11:32:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=simplycom2; t=1757669526;
+	bh=MdbRNQz00X6py3J27RP8bnCKWb4q1OzSckJ7oG7jAxY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=K2KSDbGzkvWBOxonsgdVaz4kyPUEDqqg6zdhMLv2aF3Nzko04CUw7JvSMaWWK04Lm
+	 vNC1Cj2uBTKc8xdM9glCOdIXQssxtmJblCCyQc2Hi8GbcgeoJPlaNNtX0zy4fREEW3
+	 r6UBaNcudI5k5SPw01Hru5aQU4tI1O1+rPvNEGW9haH4Jy2D6mmjs1dPo7LscCkHqG
+	 0exPIQ+bH57TWaUThA+auuuCXOn4ogST+BxKsuMBMtASfRMsOGVWUUlnDa9TIfd9b/
+	 3Pojb/BipKi+V2g4K0tvCJ/Ey32+ia3F6PZBK+f4oAwOhtLZwlnW83e9G2I0Ng81Ss
+	 PBZ0wbaihaoyA==
+Message-ID: <a393f6bd-ac30-4861-818c-ba0b558df4a4@gaisler.com>
+Date: Fri, 12 Sep 2025 11:32:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="hd4ybrkt7tr5jevb"
-Content-Disposition: inline
-In-Reply-To: <20250828-dt-apple-t6020-v1-20-507ba4c4b98e@jannau.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [TECH TOPIC] Reaching consensus on CONFIG_HIGHMEM phaseout
+To: Arnd Bergmann <arnd@arndb.de>, ksummit@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, imx@lists.linux.dev,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Richard Weinberger <richard@nod.at>, Lucas Stach <l.stach@pengutronix.de>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Ankur Arora <ankur.a.arora@oracle.com>, David Hildenbrand
+ <david@redhat.com>, Mike Rapoport <rppt@kernel.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
+ Ira Weiny <ira.weiny@intel.com>, Nishanth Menon <nm@ti.com>,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+ "Chester A. Unal" <chester.a.unal@arinc9.com>,
+ Sergio Paracuellos <sergio.paracuellos@gmail.com>
+References: <4ff89b72-03ff-4447-9d21-dd6a5fe1550f@app.fastmail.com>
+ <5d2fec2b-8e59-417e-b9e6-12c6e27dd5f0@gaisler.com>
+ <363853cd-7f10-4aa9-8850-47eee6d516b9@app.fastmail.com>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <363853cd-7f10-4aa9-8850-47eee6d516b9@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 2025-09-11 09:53, Arnd Bergmann wrote:
+> On Thu, Sep 11, 2025, at 07:38, Andreas Larsson wrote:
+>>
+>> We have a upcoming SoC with support for up to 16 GiB of DRAM. When that is
+>> used in LEON sparc32 configuration (using 36-bit physical addressing), a
+>> removed CONFIG_HIGHMEM would be a considerable limitation, even after an
+>> introduction of different CONFIG_VMSPLIT_* options for sparc32.
+> 
+> I agree that without highmem that chip is going to be unusable from Linux,
+> but I wonder if there is a chance to actually use it even with highmem,
+> for a combination of reasons:
+
+I would definitely not call it unusable in LEON sparc32 mode with
+HIGHMEM gone, but it would of course be seriously hampered memory wise
+without HIGHMEM support compared to with HIGHMEM. In NOEL-V 64-bit
+RISC-V mode it will of course not be affected by these matters.
 
 
---hd4ybrkt7tr5jevb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 20/37] dt-bindings: pwm: apple,s5l-fpwm: Add t6020-fpwm
- compatible
-MIME-Version: 1.0
+> - sparc32 has 36-bit addressing in the MMU, but Linux apparently never
+>   supported a 64-bit phys_addr_t here, which would be required.
+>   This is probably the easiest part and I assume you already have patches
+>   for it.
+> 
+> - As far as I can tell, the current lowmem area is 192MB, which would
+>   be ok(-ish) on a 512MB maxed-out SPARCstation, but for anything bigger
+>   you likely run out of lowmem long before being able to touch the
+>   all highmem pages. This obviously depends a lot on the workload.
+> 
+> - If you come up with patches to extend lowmem to 2GB at the expense
+>   of a lower TASK_SIZE, you're still  looking at a ration of 7:1 with
+>   14GB of highmem on the maxed-out configuration, so many workloads
+>   would still struggle to actually use that memory for page cache.
 
-Hello,
+Yes, we already have patches for 36-bit addressing with 64-bit
+phys_addr_t. Patches for CONFIG_VMSPLIT_* are under development.
 
-On Thu, Aug 28, 2025 at 04:01:39PM +0200, Janne Grunau wrote:
-> The PWM controller on Apple's M2 Pro/Max SoCs behaves in the same way as
-> on previous M1 and M2 SoCs. Add its per SoC compatible.
->=20
-> At the same time fix the order of existing entries. The sort order logic
-> is having SoC numeric code families in release order, and SoCs within
-> each family in release order:
->=20
-> - t8xxx (Apple HxxP/G series, "phone"/"tablet" chips)
->   - t8103 (Apple H13G/M1)
->   - t8112 (Apple H14G/M2)
-> - t6xxx (Apple HxxJ series, "desktop" chips)
->   - t6000/t6001/t6002 (Apple H13J(S/C/D) / M1 Pro/Max/Ultra)
->   - t6020/t6021/t6022 (Apple H14J(S/C/D) / M2 Pro/Max/Ultra)
->=20
-> Note that SoCs of the t600[0-2] / t602[0-2] family share the
-> t6000 / t6020 compatible where the hardware is 100% compatible, which is
-> usually the case in this highly related set of SoCs.
->=20
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> ---
->  Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml b/=
-Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
-> index 142157bff0cd851c85fbf0132d734d470c5a0761..04519b0c581d0e9fb1ae6aa21=
-9a4e850027de6a2 100644
-> --- a/Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
-> +++ b/Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
-> @@ -17,8 +17,9 @@ properties:
->      items:
->        - enum:
->            - apple,t8103-fpwm
-> -          - apple,t6000-fpwm
->            - apple,t8112-fpwm
-> +          - apple,t6000-fpwm
-> +          - apple,t6020-fpwm
->        - const: apple,s5l-fpwm
-> =20
->    reg:
+Even with 192 MiB lowmem we have being using up to 4 GiB without running
+into problems. Could you elaborate on why you think lowmem would run out
+before 14 GiB highmem in a VMSPLIT_3G or VMSPLIT_2G configuration?
 
-The patch is fine for me. There was no merge plan sketched out in the
-cover letter and I don't spot any dependencies this patch is a part of.
-So I applied this patch to
+And even if 14 GiB highmem would be hard to get full usage out of, for a
+board with 8 GiB memory (or a configuration limiting 16 GiB down to only
+use 8 GiB or somewhere in between) the difference between getting to use
+2 GiB and 8 GiB is quite hefty.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for=
--next
+ 
+> - If we remove HIGHPTE (as discussed in this thread) but keep HIGHMEM,
+>   you probably still lose on the 16GB configuration. On 4GB configurations,
+>   HIGHPTE is not really a requirement, but for workloads with many
+>   concurrent tasks using a lot of virtual address space, you would
+>   likely want to /add/ HIGHPTE support on sparc32 first.
 
-as 6.18-rc1 material.
+That is an interesting point. Regardless of workloads though, it still
+would be a huge difference between having or not having HIGHMEM, with or
+without HIGHPTE.
 
-Best regards
-Uwe
 
---hd4ybrkt7tr5jevb
-Content-Type: application/pgp-signature; name="signature.asc"
+> When you say "used in LEON sparc32 configuration", does that mean
+> you can also run Linux in some other confuration like an rv64
+> kernel on a NOEL-V core on that chip?
 
------BEGIN PGP SIGNATURE-----
+Yes, boot strapping will select between sparc32 LEON and rv64 NOEL-V.
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmjD6HwACgkQj4D7WH0S
-/k5dDwf/ZhdoZ04wcFscsQjfQPV9sY5Kzs8OxPgL+m4AV85SDwzSuZybeACCfsL2
-U+r2uMlK/Q21DJwXbTJjmnyAe19XWYtcvtUfKd50OAsoPnpijd6XN/VzkpPwSI1v
-MM1rZmYLCNhucLOPo87uqSwtHmOGOiHGefUgolr3pa9kl2VjNfe2U9byQTQegxaK
-CxeDN6bZEPo8n7PoU1mmnwFDouEZD1xzQt3FdvPpL2XORk2Ye5r89n1q02uTLbkj
-EsQ7IOSbpp2UDyIkxF0ESV6nWtpLn7AIB0rNABUH7JZA9FQ29vzAc9a3FRiLJsUa
-2cvxXsdWOdhpncFiR4L1mRq39BoLAQ==
-=7x/6
------END PGP SIGNATURE-----
 
---hd4ybrkt7tr5jevb--
+> Aside from the upcoming SoC and whatever happens to that, what is
+> the largest LEON Linux memory configuration that you know is used
+> in production today and still requires kernel updates beyond ~2029?
+
+The maximum I know of for systems currently in production has the
+capacity to have up to 2 GiB memory.
+
+
+Cheers,
+Andreas
+
 
