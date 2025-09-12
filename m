@@ -1,190 +1,112 @@
-Return-Path: <linux-kernel+bounces-814528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0546EB5552F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:58:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA23B55532
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3987F1D661FA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:58:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC4C77A4725
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA88322763;
-	Fri, 12 Sep 2025 16:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE53F322544;
+	Fri, 12 Sep 2025 16:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="WXSLXHFz";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B3qsl0q3"
-Received: from fhigh-b6-smtp.messagingengine.com (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f4ZaR96j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08543322544
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0DA1FCCF8;
+	Fri, 12 Sep 2025 16:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757696299; cv=none; b=uCcgkiYa/eHQcmVKeQDE3ujMFJY1VQvKdVS0z34h9IgZtgE+CaWsWRp0ozHbXtKfA62Ha8uqx6lKmnAXpnPSHUsjlwUePhcZuCi6a/zkETF42nC/KvduLWr1NFI4UJ3C46T1WjlhsotnlVGjlfmgjxIoECn2g36/KhQOUyWWS64=
+	t=1757696337; cv=none; b=jVPaEnIhn3p4YUEmImj3v4/mftmRtLUfbnV+9kpUw6DnwoH+kUPfB+Knp25obBph8wckhO/zagVjEIDgtvl8FovVrNBKOI2jpE9gPSiOvdKUHpas47kKfDl5sGhP+LjYatIosNTyO9s4NP4zWp6Y38hr5mmQpLZUE8fAlaYIN4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757696299; c=relaxed/simple;
-	bh=K8hZXZUDdOVsE7IJZcctswQbxgA/STz8bHlpCW2WVhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=JTmegcV068lZJ182sqsmDWupQzicTem7TiYMIIRUcZs163QA/aCz3MUCUoEi4hapmHYIpAlCAiJsB4y69/BulNfQOFqoC9MFntBxG1THz9VLq8J3iqdp/VDSGtbiAZmCpe6SSDYePU13PcinJaYglP3UoTYGQhv7iy5QpzRI0Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=WXSLXHFz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B3qsl0q3; arc=none smtp.client-ip=202.12.124.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 8144F7A0145;
-	Fri, 12 Sep 2025 12:58:15 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Fri, 12 Sep 2025 12:58:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1757696295; x=1757782695; bh=upnrRYU6bn+uBt1fGKw3p
-	6hAlWqFSwlxqJgEcP0xUEk=; b=WXSLXHFz4Eg996BrG1TuO+hDbfjJsr5zmoaMu
-	4OG24FCJ9ws3ZSuDRzFvBHNPzBwCqmyd6fUX1rkPLyD8jw2uMAxfHqDCg9+7pYXA
-	1iePl57kOXkQUWHHq/VIX92Vakl5iGOsHmuVrZ0JeVQYsPOy4aSKfTuYHZlSpwrA
-	hK/UNdCWxPr3WZwaFgFwkBaCLqOZHp56L0/oHzH53LqFha/yT0IpL5r4xZJrFt2e
-	YiZt3/kVWJF1srsaWHf89AA6pQ/I1Spzzju+bLTyV60SfFIHjJKxrBvIXtFNCkAH
-	2by37mMKosUtefuW02l3H5ZiQdj0SOYLRMJAnMo3TyARbh7FA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:message-id
-	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757696295; x=
-	1757782695; bh=upnrRYU6bn+uBt1fGKw3p6hAlWqFSwlxqJgEcP0xUEk=; b=B
-	3qsl0q33858qadPEzFXWKzd5k4TXP/gBqZ3s8rEIHdzjP6YegAEsgxiTNWec9RUa
-	PMd85Zr7oXvzKNibN8A5jG1VlRLLagP9wbhRDxoOLjZAsHlm97Blkbj+l3BMgoNE
-	VnUoZvvy0rin6xkHKLhyiZz97B7NyDjSesBWBDga8jpOn0R8h4BHYWL05GDDpORo
-	jSzpDNl/Oam3+DDU9cynoUvHHs9jkC44T9cF89HeOBfRVuOhatCvmd6wJW48s8EY
-	GQ2PvRryCEiMRwm/9OdhuE9cfDzLh+1NlJMEhLJNeO3Wt6wxfRh/L4Ym/PHLAfno
-	m3KZeWpYHnghmOMEIKtWA==
-X-ME-Sender: <xms:JlHEaNiLR-LMVhcfewzkaoYUsYkFo79QWAm1g7hsGxUzjqpfTIh-Gg>
-    <xme:JlHEaN7a9yO4-00uoqEMsCOZ6VHt_0D7BNNgo71j4A1CsI9rYMVbH_mA_ZNtuFM42
-    aK1EDjCvm7ryNQIWPI>
-X-ME-Received: <xmr:JlHEaF61r7mHUYPFQXYPtDUEx0azbEjJLgVQRZQZ2oTcZ22DGkLvCoyLHryLuA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleehlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfggtggusehttdfstddttddvnecuhfhrohhmpefmihhrhihlucfuhhhu
-    thhsvghmrghuuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrg
-    htthgvrhhnpeefhfdugfeghfdvfeefvddujeeuueefvdefuddvfeejheevveeigfejteet
-    teeiudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvgdpnhgspghrtghpthhtohepvdegpdhm
-    ohguvgepshhmthhpohhuthdprhgtphhtthhopegrkhhpmheslhhinhhugidqfhhouhhnug
-    grthhiohhnrdhorhhgpdhrtghpthhtohepuggrvhhiugesrhgvughhrghtrdgtohhmpdhr
-    tghpthhtoheplhhorhgvnhiiohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtg
-    hpthhtohepiihihiesnhhvihguihgrrdgtohhmpdhrtghpthhtohepsggrohhlihhnrdif
-    rghngheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehlihgrmhdrhh
-    hofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepnhhprggthhgvsehrvggu
-    hhgrthdrtghomhdprhgtphhtthhopehrhigrnhdrrhhosggvrhhtshesrghrmhdrtghomh
-    dprhgtphhtthhopeguvghvrdhjrghinhesrghrmhdrtghomh
-X-ME-Proxy: <xmx:JlHEaLH_MnLrv7K_tzBlUdSsVroMe6YE7s7287G-Zcfpv6MlO0nmuA>
-    <xmx:JlHEaDz25KXMEbRbN-HWsHgrLN68RP6YZhKZj7nG0ufAmcuNxfJsIg>
-    <xmx:JlHEaL3l966TxlLzY-b_JuezyIin1hBw8MX8fl054bTs7xw56rhJ0Q>
-    <xmx:JlHEaGPO0kAiiQsM5xbntXTe-uBltdCOx8_lNhFeL86bhh9lNbEebA>
-    <xmx:J1HEaP0hCnFIs3xOnKUjvL3hHeaPCEad_K-hwv5brwN7MqostgwHUt6A>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Sep 2025 12:58:13 -0400 (EDT)
-Date: Fri, 12 Sep 2025 17:58:11 +0100
-From: Kiryl Shutsemau <kirill@shutemov.name>
-To: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Zi Yan <ziy@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mm/khugepaged: Do not fail collapse_pte_mapped_thp() on
- SCAN_PMD_NULL
-Message-ID: <xhan2av3fyl7qpsl4bhjtds2zeegrl57ehtc5grtkua3c3v3nz@vain5s6gpycl>
+	s=arc-20240116; t=1757696337; c=relaxed/simple;
+	bh=gtfvdfI+H0ACLSjUJUR2tLLcJx+U29SK+JJDuNQ7ox8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JK74nUHqmhdW17Tmj4ryYGG5vljE8D6p+UMiUkhul/XROmE3T88MXBvPeyq2s+eJ3WVRhqkKEhKQLS/JscwSopZmCmykfAQiK5C5qChB76ds2zAavmf0D5RtsarO8SYzqPj/WOE4RMhokkjrUutkr3M9w14DmJyuaknbTk56GF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f4ZaR96j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61234C4CEF1;
+	Fri, 12 Sep 2025 16:58:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757696336;
+	bh=gtfvdfI+H0ACLSjUJUR2tLLcJx+U29SK+JJDuNQ7ox8=;
+	h=From:Subject:Date:To:Cc:From;
+	b=f4ZaR96j9y4Fv5BDp+3cD7er4v0fcdLgYSL8Iv6eBUrcgDCxoCc6kPkEwHyqfpmoG
+	 Wcqf7jK79M4mn80aGGGjXIRk+9rSUI51Sqz6dOJ1jCOtVFwqCiG/4SDoxhxOyzQzwY
+	 YXO99uuwxX7AmbjdKQxrQgOA7o6wYROVT+DzYKTg6eAXxbE7dSc61Wr7yvBp5Ow3wi
+	 owL7QJadoG5ELCdNdwiIynbxhz6+ehKFLOfz/JbQCVpR2zd9qbXwrsFen/adADHur+
+	 4vpdkTZafAsKMjUPRjN2bPGDBxKjdkWbDOioPqWAp7+Y4ziMdye7MjdN9fD5gAWKQM
+	 bdIv+TXQWP+kA==
+From: Benjamin Tissoires <bentiss@kernel.org>
+Subject: [PATCH v3 0/3] HID: hidraw: rework ioctls
+Date: Fri, 12 Sep 2025 18:58:48 +0200
+Message-Id: <20250912-b4-hidraw-ioctls-v3-0-cd2c6efd8c20@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEhRxGgC/2XOQQ6CMBCF4auQrh1SptCCK+9hWBQotFFbMyWoI
+ dxdIDGauPwX78ubWTTkTGTHZGZkJhdd8GuIQ8Jaq/1gwHVrM+RY8BILaHKwriP9ABfa8RpByl7
+ kWCkuULN1difTu+dOnuu1ewo3GC0Z/YVUlnGFZa5SLIWsJEIGmnx3uhjy5poGGjbKujgGeu3nJ
+ tzAzw/5/2NC4NAqhbJBIVVW/WL1sixvmJDOfewAAAA=
+X-Change-ID: 20250825-b4-hidraw-ioctls-66f34297032a
+To: Jiri Kosina <jikos@kernel.org>, Shuah Khan <shuah@kernel.org>, 
+ Arnd Bergmann <arnd@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
+ Arnd Bergmann <arnd@arndb.de>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757696335; l=1534;
+ i=bentiss@kernel.org; s=20230215; h=from:subject:message-id;
+ bh=gtfvdfI+H0ACLSjUJUR2tLLcJx+U29SK+JJDuNQ7ox8=;
+ b=Ge/420ffPrqyxuns74cDDV0Rzuf5zWMRe4nIq/DbhZh85ai6UUD1mgEeZf8HLly0V4IMJgK8U
+ Y07ZmMzWIdsBXq4a2/Bh0mAqQj4DEk9dQW7aer/6ya+KE3b7p1/eKUr
+X-Developer-Key: i=bentiss@kernel.org; a=ed25519;
+ pk=7D1DyAVh6ajCkuUTudt/chMuXWIJHlv2qCsRkIizvFw=
 
-From: Kiryl Shutsemau <kas@kernel.org>
+Arnd sent the v1 of the series in July, and it was bogus. So with a
+little help from claude-sonnet I built up the missing ioctls tests and
+tried to figure out a way to apply Arnd's logic without breaking the
+existing ioctls.
 
-MADV_COLLAPSE on a file mapping behaves inconsistently depending on if
-PMD page table is installed or not.
+The end result is in patch 3/3, which makes use of subfunctions to keep
+the main ioctl code path clean.
 
-Consider following example:
-
-	p = mmap(NULL, 2UL << 20, PROT_READ | PROT_WRITE,
-		 MAP_SHARED, fd, 0);
-	err = madvise(p, 2UL << 20, MADV_COLLAPSE);
-
-fd is a populated tmpfs file.
-
-The result depends on the address that the kernel returns on mmap().
-If it is located in an existing PMD table, the madvise() will succeed.
-However, if the table does not exist, it will fail with -EINVAL.
-
-This occurs because find_pmd_or_thp_or_none() returns SCAN_PMD_NULL when
-a page table is missing, which causes collapse_pte_mapped_thp() to fail.
-
-SCAN_PMD_NULL and SCAN_PMD_NONE should be treated the same in
-collapse_pte_mapped_thp(): install the PMD leaf entry and allocate page
-tables as needed.
-
-Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
+Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
 ---
- mm/khugepaged.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+Changes in v3:
+- dropped the co-developed-by tag and put a blurb instead
+- change the attribution of patch 3/3 to me as requested by Arnd.
+- Link to v2: https://lore.kernel.org/r/20250826-b4-hidraw-ioctls-v2-0-c7726b236719@kernel.org
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index b486c1d19b2d..9e76a4f46df9 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1488,6 +1488,28 @@ static int set_huge_pmd(struct vm_area_struct *vma, unsigned long addr,
- 	return SCAN_SUCCEED;
- }
- 
-+static int install_huge_pmd(struct vm_area_struct *vma, unsigned long haddr,
-+			    pmd_t *pmd, struct folio *folio)
-+{
-+	struct mm_struct *mm = vma->vm_mm;
-+	pgd_t *pgd;
-+	p4d_t *p4d;
-+	pud_t *pud;
-+
-+	pgd = pgd_offset(mm, haddr);
-+	p4d = p4d_alloc(mm, pgd, haddr);
-+	if (!p4d)
-+		return SCAN_FAIL;
-+	pud = pud_alloc(mm, p4d, haddr);
-+	if (!pud)
-+		return SCAN_FAIL;
-+	pmd = pmd_alloc(mm, pud, haddr);
-+	if (!pmd)
-+		return SCAN_FAIL;
-+
-+	return set_huge_pmd(vma, haddr, pmd, folio, &folio->page);
-+}
-+
- /**
-  * collapse_pte_mapped_thp - Try to collapse a pte-mapped THP for mm at
-  * address haddr.
-@@ -1556,6 +1578,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
- 	switch (result) {
- 	case SCAN_SUCCEED:
- 		break;
-+	case SCAN_PMD_NULL:
- 	case SCAN_PMD_NONE:
- 		/*
- 		 * All pte entries have been removed and pmd cleared.
-@@ -1700,7 +1723,7 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
- maybe_install_pmd:
- 	/* step 5: install pmd entry */
- 	result = install_pmd
--			? set_huge_pmd(vma, haddr, pmd, folio, &folio->page)
-+			? install_huge_pmd(vma, haddr, pmd, folio)
- 			: SCAN_SUCCEED;
- 	goto drop_folio;
- abort:
+changes in v2:
+- add new hidraw ioctls tests
+- refactor Arnd's patch to keep the existing error path logic
+- link to v1: https://lore.kernel.org/linux-input/20250711072847.2836962-1-arnd@kernel.org/
+
+---
+Benjamin Tissoires (3):
+      selftests/hid: hidraw: add more coverage for hidraw ioctls
+      selftests/hid: hidraw: forge wrong ioctls and tests them
+      HID: hidraw: tighten ioctl command parsing
+
+ drivers/hid/hidraw.c                     | 224 ++++++++-------
+ include/uapi/linux/hidraw.h              |   2 +
+ tools/testing/selftests/hid/hid_common.h |   6 +
+ tools/testing/selftests/hid/hidraw.c     | 473 +++++++++++++++++++++++++++++++
+ 4 files changed, 603 insertions(+), 102 deletions(-)
+---
+base-commit: 02d6eeedbc36d4b309d5518778071a749ef79c4e
+change-id: 20250825-b4-hidraw-ioctls-66f34297032a
+
+Best regards,
 -- 
-2.50.1
+Benjamin Tissoires <bentiss@kernel.org>
+
 
