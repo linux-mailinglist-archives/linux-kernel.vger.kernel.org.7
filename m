@@ -1,197 +1,107 @@
-Return-Path: <linux-kernel+bounces-813016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59A55B53FAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:11:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6567DB53FB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:11:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AA6C487B97
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:11:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2646116E2C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 01:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A257261E;
-	Fri, 12 Sep 2025 01:11:17 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40307381C4;
+	Fri, 12 Sep 2025 01:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PsKmCw3c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEDE168BD;
-	Fri, 12 Sep 2025 01:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2BC168BD;
+	Fri, 12 Sep 2025 01:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757639477; cv=none; b=CejFA6Drgu6Mxzu3m1oPNyA4dk0yJi4V9dOgLkNMITOh4YIogK+QyGeG5ko07x7E7T9CS52nvRf1pt+TA6nz3AIvuWaBYSwzsXjfQopeGNGqTyN3YD5qxGc+FSPeO7I9zEaxSX+rOdQFO9JOYVHKUHfRt8mGGzkQUk32EBT6faA=
+	t=1757639486; cv=none; b=SLLKLSBlQAzDMSJE3diPfy3Bfe2e7OQrLq+T3m7dFdlDfZErfkEHrSA7jrr/XZgyOLx2b7odnvWPqwkZshzFnR6W4bZYpwF/WqQ+mhjU9cv5YxZ5w2C3BlVCq26LzN9zETzLE2KPu6IORP5SIh9OWhuX9pPqQNd0N7YYRvHZiDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757639477; c=relaxed/simple;
-	bh=vV9IcXnxbwOyZ8l1SQmnYpbR2lc+Z9Ae+far9EGwBBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NqXYUC//auVqiNTJ+EdqDDSh7G0uQLFSZHAHTP9NuG59S9QuuLqXfWKmj89hNsgo2wqqw3EEgAOB8pS77Z0GKKhbvd0ydKCWe5kC9CD5q4GBgR1tbc2Tu1cNR+vZxNlXMgf7v3Y4pnZPouWHsf+EaCPPyE6Y9hGr55rhdvU3MGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 5c0e01c08f7511f0b29709d653e92f7d-20250912
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:d7750f67-295c-450f-86ba-968d43d9bad1,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:ef6f51f2fe3759adf93d1299e6ece788,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5c0e01c08f7511f0b29709d653e92f7d-20250912
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <zhangzihuan@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1210366386; Fri, 12 Sep 2025 09:11:06 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 7E747E009007;
-	Fri, 12 Sep 2025 09:11:06 +0800 (CST)
-X-ns-mid: postfix-68C3732A-41695370
-Received: from [172.25.120.24] (unknown [172.25.120.24])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 8C08CE009007;
-	Fri, 12 Sep 2025 09:11:05 +0800 (CST)
-Message-ID: <365c42f5-56a1-4a2c-9244-7943c3600fa2@kylinos.cn>
-Date: Fri, 12 Sep 2025 09:11:04 +0800
+	s=arc-20240116; t=1757639486; c=relaxed/simple;
+	bh=BCQ6ooMUqjJ44vEm08o6flrbCyjr9CZj34vyNm7zsJo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=hIOd8YGWCBKlUIDyLyX3Y9AilhdpRy5lDAPUdHRM64MBk5JQfJ6z/w/JZLHTvtdr97fRO+6hwXCizIW/tsrXFKhu4cfFWY+2kwN5+p3QAqqR+KUTb1aQJ6y9qIHD+HccWU5LQQhW/skZRBvUFIuAR1KO6xsc2WY7g+mRUqgzOvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PsKmCw3c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EF4AC4CEF0;
+	Fri, 12 Sep 2025 01:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757639486;
+	bh=BCQ6ooMUqjJ44vEm08o6flrbCyjr9CZj34vyNm7zsJo=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=PsKmCw3c6dLI9HzTstQVy1COehG5HkNSo06sr+cOYMAvIH2/z+vxujB30kkBAdsxh
+	 FJ9GzYib6C7RsWJrdqqs4RmB73XKJoi30rzPy2DGLJcY2lBtswMPlHLCJbYRk65Mya
+	 0TroozGbiy3o3Jxkfjn++XOhUNqjelz51XMHn8DRjF1NGCeyD0lWDjg8yo44ojKQQs
+	 tVD7yZd8n54vU3fOSs7Eo5pgpQyHx1f5GKK3NRRr8rMg1hIIFSFGvEGsWhBR3mVo69
+	 qZjDzQJ1TrX9sIsTVcdHI4YmOWBuQMSkr+425c4zVLHRoxBzV3WCpste8SkVvM3tCE
+	 dPJw/0vlJcMfA==
+From: Mark Brown <broonie@kernel.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Liang Yang <liang.yang@amlogic.com>, 
+ Feng Chen <feng.chen@amlogic.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: linux-spi@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org
+In-Reply-To: <20250829-spifc-v4-0-1e57fd39f584@amlogic.com>
+References: <20250829-spifc-v4-0-1e57fd39f584@amlogic.com>
+Subject: Re: [PATCH v4 0/3] support for Amlogic SPI Flash Controller IP
+Message-Id: <175763948411.238908.9952245869421618986.b4-ty@kernel.org>
+Date: Fri, 12 Sep 2025 02:11:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] ACPI: video: Fix missing backlight node creation on
-To: Hans de Goede <hansg@kernel.org>
-Cc: lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, mario.limonciello@amd.com, rafael@kernel.org,
- stable@vger.kernel.org
-References: <de4b5ec6-1e42-44b8-b5d3-5a452d7401ef@kernel.org>
- <20250911074543.106620-1-zhangzihuan@kylinos.cn>
- <ae7b139f-dc25-413d-bfc3-3be187ab3a73@kernel.org>
-From: Zihuan Zhang <zhangzihuan@kylinos.cn>
-In-Reply-To: <ae7b139f-dc25-413d-bfc3-3be187ab3a73@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-56183
 
+On Fri, 29 Aug 2025 13:16:12 +0800, Xianwei Zhao wrote:
+> This Flash Controller is derived by adding an SPI path to the original
+> raw NAND controller. This controller supports two modes: raw mode and
+> SPI mode. The raw mode has already been implemented in the community
+> (drivers/mtd/nand/raw/meson_nand.c).
+> This submission supports the SPI mode.
+> 
+> Add the drivers and bindings corresponding to the SPI Flash Controller.
+> 
+> [...]
 
-=E5=9C=A8 2025/9/11 18:38, Hans de Goede =E5=86=99=E9=81=93:
-> Hi Zihuan,
->
-> On 11-Sep-25 9:45 AM,  Zhang wrote:
->
-> ...
->
->>>   So as you say the issue is that you have no native GPU driver calli=
-ng
->>>   acpi_video_register_backlight().
->> I'm very happy that you got it.
->>
->>> First of all I assume that there is some sort of builtin GPU on these
->>> Lenovo and Inspur machines with Zhaoxin CPUs. Even if the GPU driver
->>> is not in the mainline kernel then I assume there is some out of tree
->>> driver. Can that driver not call acpi_video_register_backlight() ?
->> We are currently working with Zhaoxin on this matter, and we expect to=
- have some results in a few days.
->> I will keep you updated once we have progress.
-> Ok.
->
-> ...
->
->> Thanks a lot for your patch and for looking into this issue.
-> You're welcome.
->
->> At the moment, we are still confirming with Zhaoxin whether this behav=
-ior is consistent across all their platforms,
->> so we are not sure if the special handling should always apply.
->>
->> Also, on kernel 5.4 these machines seem to work fine without requiring=
- a native GPU driver, while on 6.6+ the backlight node is missing.
->> Could you please clarify what design change or intention caused this b=
-ehavioral difference between 5.4 and newer kernels?
-> The main problem is that on x86 laptops there are too much different
-> ways to control the backlight:
->
-> enum acpi_backlight_type {
->          acpi_backlight_undef =3D -1,
->          acpi_backlight_none =3D 0,
->          acpi_backlight_video,
->          acpi_backlight_vendor,
->          acpi_backlight_native,
->          acpi_backlight_nvidia_wmi_ec,
->          acpi_backlight_apple_gmux,
->          acpi_backlight_dell_uart,
-> };
->
-> With video, vendor and native all 3 being quite normal to have
-> around on a single laptop.
->
-> A long time ago the kernel just used to register all
-> backlight handlers for which there seemed to be support,
-> so "ls /sys/class/backlight" would e.g. output:
->
-> acpi_video0
-> intel_backlight
-> dell_laptop
->
-> And then userspace would pick one to use, typically
-> checking for different backlight types (raw/platform/firmware)
-> in descending order of preference and picking the first
-> backlight interface matching the highest preference type.
->
-> But even though multiple types may be advertised by
-> the firmware, they do not necessarily actually work.
->
-> So the simple userspace pick based on preferred type
-> solution did not work on all laptop models and
-> drivers/acpi/video_detect.c starting growing heuristics
-> + quirks to let the kernel pick one and hide the others.
->
-> At first for acpi_video# backlights they would get
-> registered and then later if a native backlight
-> (e.g. intel_backlight) showed up and the heuristics /
-> quirks set that should be preferred then the
-> acpi_video# backlight would be unregistered again.
->
-> But this is racy (and ugly) and caused issues for userspace
-> trying to open the already unregistered backlight.
->
-> So the code was changed to delay registering the
-> acpi_video backlights till after the GPU driver has
-> loaded so that it is known if native backlight
-> control is supported or not.
->
-> Long story short: The design goal is to only
-> register 1 backlight handler, so that userspace
-> does not has to guess and to only register this
-> once and not do a register + unregister dance
-> of a potentially unwanted acpi_video backlight.
+Applied to
 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
-Thank you for the very detailed explanation!
+Thanks!
 
-One concern, however, is that the current approach seems to assume the=20
-presence of a GPU driver, which may not always be the case. Would it be=20
-possible to consider a more generic fallback?
+[1/3] spi: dt-bindings: add Amlogic A113L2 SFC
+      commit: 0467d6c99d1c64210ee8c9621cd63b12301cab2e
+[2/3] spi: amlogic: add driver for Amlogic SPI Flash Controller
+      commit: 4670db6f32e9379f5ab6c9bb2a6787cd9b9230a9
+[3/3] MAINTAINERS: Add an entry for Amlogic spifc driver
+      commit: 6a129b2ca5c533aec89fbeb58470811cc4102642
 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-For example, if no GPU driver is available, we could still register the=20
-acpi_video backlight node.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
- =C2=A0This way we can at least ensure that a backlight device is exposed=
- to=20
-userspace instead of leaving the system without any backlight control=20
-interface.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-Do you think such a fallback could be a reasonable option?
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Thanks again for your insights!
+Thanks,
+Mark
 
-
-> Regards,
->
-> Hans
->
->
->
 
