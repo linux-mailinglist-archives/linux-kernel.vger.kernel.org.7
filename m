@@ -1,226 +1,141 @@
-Return-Path: <linux-kernel+bounces-814005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A4FB54E25
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:38:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38B6B54E2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:38:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FD9E4674A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:35:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CACC17A4AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CEF3081D6;
-	Fri, 12 Sep 2025 12:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDED126561D;
+	Fri, 12 Sep 2025 12:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnzQEbFC"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bi95CEmk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E806F308F24
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E33C15E5D4;
+	Fri, 12 Sep 2025 12:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757680447; cv=none; b=pBciabARCQhsF0zvbHH4/iBZmurm0mSINMyah57XvzPtKgxX1jhu11REStqFsmWUC61h6kxKgQ2V7inc2tr9oJNYur0lw5rb/sxmGVu6AE+DwUcQhJFy5q19lEiYy0VedUnT1AI967yaI25F2rfvh9HlC/bB5cSm3wntxYrcJCs=
+	t=1757680459; cv=none; b=WxE8gHTekmnFP8JsHHFE1stuRLvTjILRkjf1dnnRteT55PA5doOsObN84U+Qtza+To6rhaJiBgyl4zQ+gkVX4Cqtl2gAbYLI/J1t6dUq/CeV9BceZ9c+gDTy09G6RU2GmoXXtZo4V5jM6qAi6KWGuA93jcxhY7EeuD/inkhDFSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757680447; c=relaxed/simple;
-	bh=+XPqbX516hI+cQw05AmgNv3Ek7Tw6q3nXyfUTfVrhek=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=P3N4nbHlZQbZJmr6zGLpnf+HrD9rZXTU7DxxxO+xTmUlGAUr4s6chaffvysu+EbvdsfJdt6bjHigfDUpUHnoBn+sHw2TIa3exeJ+KkT5JUGt+EDVaj7KuDz0V0aRoV3hi1zFDNr+eX6J3CRfrH4uwCo5Udqn3haoZf4U2pkA8O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnzQEbFC; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-ea3e82483d3so245903276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:34:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757680445; x=1758285245; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DuvMxcFE5N0x3cvon6RUHiFurPTszusWZEjqpqYpeOM=;
-        b=ZnzQEbFC2U0xvF4APC39rPRSBlDjrkzOdQ3xuwwTMVQSbQo5nduBT1QzZc4raTNVjP
-         QSxxOCJjDYYw5DK8OD3TbUvRzEUvRd8GZTwKWLNjUd1VsM46f6oWQ6uI1y4a1FPn/gdQ
-         NpP8+I2Rk1xQaxeydLQSvQ4ofYXE5GBvKdTol0XKlnByTLHCAXRTpAhEQ26mOYdwVe1c
-         k6njQ03Oma37BC0Y8A4RWVIcUsrat0JkGCkmk9O1dezUHh/e2ovfA/J44WKR+jBIWuW5
-         4PsuzTvNj3RLnLlxg8NJiHybbId19RwcgdXszfgRpc5ufadO9wjRiltAwoqXG+yI8VpW
-         RZqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757680445; x=1758285245;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DuvMxcFE5N0x3cvon6RUHiFurPTszusWZEjqpqYpeOM=;
-        b=uS7ZXW35oMtWtbG8YQtxmDkIlR1nq3WCTmEacYu8B/KzhPMP40hRDfCaLJLE8sIa2t
-         NM/40hdbNt5fOPQoPVshiZg+9JxoZm07Vj4tqOwJ6WmL8EexsKkFJwejSzzwKs/YIPrm
-         y7rbDlsrskDTz9nXnOyRvtJUV7iUf3GCLmrKMrFR+yeMiUe0mt1VdW7AnqfgnSgHi93s
-         mhRWeLLrntrvLLsbiphTxDImsgV7shrspJEK3VPLt+JHO+rPGs387WiWEUloN3XTFiDQ
-         vq6E3SAeV6X+cyI4wbCmnXdiFQvJy8t70YZ5HbQrYV6+1MQM//LOOsqjtk1HdkWfNPde
-         SZfA==
-X-Gm-Message-State: AOJu0Yzoq4LLiGLcp9tI+qzP1kwxSz0JLWf2upZfgafgr2Tiug0P8ISA
-	g5RNfFqAquS/2nhOReEauKoc+LfhP8ggYnFttNcOM2pJI2V28/oa2nDHDjqxQRNKq9FXLmD6wX0
-	jTQSadbQkI7+d2Z0XsFZJW50iMFXgTTc=
-X-Gm-Gg: ASbGncu8/Ulu+Vt9VFXdvQkZYwApt/Swc+BO/VEzoSfa6nBrccZOvbg4063xpi7xDru
-	IYo9yBh/3kz0HgV5nU0cd3rO997bc9OLIHV2lhXWhMOtVkLBACKciHXCuZPDG/yeTOCyY7syAW9
-	yGe07xRlZjlEhWOtHp6B4DihbtbE8rv5Ndyh5TJjO3AVBE3PZWkZGQF/yB/NtTXKflCEFBN5/1R
-	JA2KHLK1ZkyuNN2
-X-Google-Smtp-Source: AGHT+IHdmfBql5i3xm8+nIIOV3db7ITq1VWg/vaUFfu3+H05qGdAZWsPU3EYOa2xrAEKiL4s5qJJdqlfZkwTQSTWE1Y=
-X-Received: by 2002:a05:690e:425c:b0:5fc:e0ba:8a95 with SMTP id
- 956f58d0204a3-62749bd84fdmr1586557d50.5.1757680444722; Fri, 12 Sep 2025
- 05:34:04 -0700 (PDT)
+	s=arc-20240116; t=1757680459; c=relaxed/simple;
+	bh=Tjc4aRuxymCZ05qVsiyWO+INl0NvIFXtmcqG+Mtz0Pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CyogaJzftVWj6btrRWGQlxI64R7w/uqeknlGPGx7vXHpENMqSPf9Vo0AP/i7p7qs5f0boPQn0uExtkXcble8x1hu+dDMYS6JbmVWX4R37aBokLrBmmp8kBWGvEnjZ19gA5s6NIqkm7BWIPKHpFlJs+d9OIWsUoY2i/JgovsN0OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bi95CEmk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88714C4CEF1;
+	Fri, 12 Sep 2025 12:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757680458;
+	bh=Tjc4aRuxymCZ05qVsiyWO+INl0NvIFXtmcqG+Mtz0Pw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bi95CEmk0eoYHVzLCN/iS98WPmbwI1N+juNar8iZb3wxG3aZRNtHqniXL+qRHnXtb
+	 S8+W8qXaODY3RL7D/BIZnhqocVB7jhGlEQvfz5Rb8Q0nF38ehB2+++t86IvrBZ86JX
+	 Z6Kdld8IIJi9+a2uPHEeFtsZCYHZBYLkr3BjVSqZMqjd5KrvK0UjwiGMDBsQfdkrOs
+	 Tx7HY9l8oicrlNRFNUpU6GqqCHfdnoNWt5ouRFmmuvetb8MVgVDZxsSWICAlOgN4ot
+	 BKUoDWxJzI8erAVkfzOebTBvuIjZQYOpSNeX9PpLeq5vIqkHC6J3gqHAL7w4SRnBUF
+	 crIg9Xf6QLApg==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1ux2ym-00000008T70-2e5O;
+	Fri, 12 Sep 2025 14:34:16 +0200
+Date: Fri, 12 Sep 2025 14:34:16 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 10/19] tools/docs: sphinx-build-wrapper: add support
+ to run inside venv
+Message-ID: <tarfb5x6kg6s3q3yboep6obfvi4s6ahbj2pkcyvgbyvcwrrfxw@v4pnnpjivwwx>
+References: <cover.1756969623.git.mchehab+huawei@kernel.org>
+ <2158cc4cf1f9bcf4c191f8031c1fb717cb989f7f.1756969623.git.mchehab+huawei@kernel.org>
+ <b76575eab805884ee5227ae6f1aded505df4ec56@intel.com>
+ <20250912104639.4781b638@foz.lan>
+ <4d7acb77be634212056426aee139496da42dc520@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: cen zhang <zzzccc427@gmail.com>
-Date: Fri, 12 Sep 2025 20:33:53 +0800
-X-Gm-Features: Ac12FXw6WRQZW-4Sm1poTyOWaUnl4x1FMHibXeaKIGo-aRxo_iirVP_pLoC-WII
-Message-ID: <CAFRLqsUfDuoMMCUmBuSkiV_b=VNn7CuYqJSc19bhyQ6Kims36w@mail.gmail.com>
-Subject: [BUG]: slab-use-after-free Read in mgmt_set_powered_complete
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>, johan.hedberg@gmail.com, marcel@holtmann.org
-Cc: linux-kernel@vger.kernel.org, baijiaju1990@gmail.com, 
-	zhenghaoran154@gmail.com, r33s3n6@gmail.com, linux-bluetooth@vger.kernel.org, 
-	"gality369@gmail.com" <gality369@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4d7acb77be634212056426aee139496da42dc520@intel.com>
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hello maintainers,
+On Fri, Sep 12, 2025 at 12:22:42PM +0300, Jani Nikula wrote:
+> On Fri, 12 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> > Em Wed, 10 Sep 2025 13:51:40 +0300
+> > Jani Nikula <jani.nikula@linux.intel.com> escreveu:
+> >
+> >> On Thu, 04 Sep 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> >> > Sometimes, it is desired to run Sphinx from a virtual environment.
+> >> > Add a command line parameter to automatically build Sphinx from
+> >> > such environment.  
+> >> 
+> >> Why?
+> >
+> > In my case, to be able to test build with different Sphinx versions.
+> > On some distros, only venv works.
+> 
+> I mean why add the complexity of running inside a venv in the wrapper.
 
-I would like to report  a use-after-free (UAF) vulnerability
-found in the Bluetooth management subsystem using our
-customized syzkaller on 6.17.0-rc5.
-The bug occurs due to a race condition between HCI command completion
-callbacks and HCI socket bind operations that trigger device cleanup.
+I don't think it venv support is complex.
 
-After my superficial analysis, the situation when race occurs may be as follows:
+> 
+> >> If you want Sphinx from a virtual environment, you enter the
+> >> environment, and run the regular build, with sphinx-build from the PATH
+> >> that points at the venv.
+> >
+> > when you do that, ./scripts/spdxcheck.py breaks, affecting checkpatch.
+> 
+> Then you could turn the whole argument around, and say spdxcheck.py
+> should jump through venv and dependency hoops instead of the docs build.
 
-PATH 1 - SET_POWERED Command Execution:
-1. User space application sends MGMT_OP_SET_POWERED command via HCI
-management socket
-2. set_powered() function creates mgmt_pending_cmd object via mgmt_pending_add()
-3. Command is submitted to HCI work queue via
-hci_cmd_sync_submit()/hci_cmd_sync_queue()
-4. Work queue executes set_powered_sync() followed by
-mgmt_set_powered_complete() callback
-5. mgmt_set_powered_complete() attempts to access cmd->param (line 1342)
+Neither spdxcheck.py nor checkpatch recommends venv; make docs targets do.
 
-PATH 2 - HCI Socket Bind Cleanup:
-1. Another process attempts to bind HCI socket with HCI_CHANNEL_USER mode
-2. hci_sock_bind() calls mgmt_index_removed() to clean up management state
-3. mgmt_index_removed() calls mgmt_pending_foreach(0, hdev, true, ...)
-4. All pending commands are removed and freed, including the
-SET_POWERED command object
-5. The mgmt_pending_cmd object and its cmd->param are freed via
-mgmt_pending_free()
+> The point is, it should be the user's responsibility to deal with the
+> environment and the dependencies.
+> 
+> If they're setting up a virtual environment, and it affects checkpatch,
+> then they should also include the spdxcheck.py dependencies in the
+> virtual environment.
 
-RACE CONDITION:
-The issue occurs when PATH 2 executes between the time PATH 1 submits
-the command
-to the work queue and when the completion callback accesses
-cmd->param. The current
-protection mechanism in mgmt_set_powered_complete() has a TOCTOU
-(Time-of-Check-to-Time-of-Use) flaw:
+They are because we're recommending it.
 
-    if (err == -ECANCELED || cmd != pending_find(MGMT_OP_SET_POWERED, hdev))
-        return;
+> This feels like reinventing pipx in a Sphinx wrapper.
+> 
+> We should *reduce* the complexity, not increase it.
 
-    cp = cmd->param;  // <-- USE-AFTER-FREE occurs here
+Complexity is not the issue: There are several things a the Kernel
+tree that are complex. Here, the entire wrapper script (not counting
+blank lines/comments) is not more than ~300 lines of code, splitted
+on multiple functions. This is not complex.
 
-The check allowing the cmd object to be freed between
-the validation and the actual memory access.
+The big issue is what we have now where docs makefile is full of
+hacks:
 
-The detail KASAN report as follow:
+    - scripts to workaround issues;
+    - "|| exit" to fix broken latexmk/xelatex error outputs;
+    - "+" to use GNU make parallelism;
+    - complex call macros;
+    - ...
 
-==================================================================
-BUG: KASAN: slab-use-after-free in
-mgmt_set_powered_complete+0x83d/0xf10 net/bluetooth/mgmt.c:1342
-Read of size 8 at addr ffff88810edd90b0 by task kworker/u17:3/811
+None of those documented.
 
-CPU: 0 UID: 0 PID: 811 Comm: kworker/u17:3 Not tainted
-6.17.0-rc5-ge5bbb70171d1 #7 PREEMPT(voluntary)
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
-Workqueue: hci0 hci_cmd_sync_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xca/0x130 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x171/0x7f0 mm/kasan/report.c:482
- kasan_report+0x139/0x170 mm/kasan/report.c:595
- mgmt_set_powered_complete+0x83d/0xf10 net/bluetooth/mgmt.c:1342
- hci_cmd_sync_work+0x8df/0xaf0 net/bluetooth/hci_sync.c:334
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
- worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
- kthread+0x3d4/0x800 kernel/kthread.c:463
- ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+Liking or not, this series as a whole makes a lot clearer what
+is done to build preparation, Sphinx build and post-build steps
+that are required to produce Kernel docs. Also, almost half of
+it is documentation. IMHO, a lot better from what we have so
+far.
 
-Allocated by task 197:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
- __kasan_kmalloc+0x72/0x90 mm/kasan/common.c:405
- kmalloc_noprof include/linux/slab.h:905 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- mgmt_pending_new+0xcd/0x580 net/bluetooth/mgmt_util.c:269
- mgmt_pending_add+0x54/0x410 net/bluetooth/mgmt_util.c:296
- set_powered+0x8c6/0xea0 net/bluetooth/mgmt.c:1407
- hci_mgmt_cmd+0x1ee4/0x33f0 net/bluetooth/hci_sock.c:1719
- hci_sock_sendmsg+0xcb0/0x2510 net/bluetooth/hci_sock.c:1839
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- sock_write_iter+0x1b7/0x250 net/socket.c:1179
- do_iter_readv_writev+0x598/0x760
- vfs_writev+0x3c8/0xd20 fs/read_write.c:1057
- do_writev+0x105/0x270 fs/read_write.c:1103
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 100890:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
- poison_slab_object mm/kasan/common.c:243 [inline]
- __kasan_slab_free+0x41/0x50 mm/kasan/common.c:275
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2428 [inline]
- slab_free mm/slub.c:4701 [inline]
- kfree+0x189/0x390 mm/slub.c:4900
- mgmt_pending_free net/bluetooth/mgmt_util.c:311 [inline]
- mgmt_pending_foreach+0x6c4/0x8a0 net/bluetooth/mgmt_util.c:257
- mgmt_index_removed+0x164/0x530 net/bluetooth/mgmt.c:9370
- hci_sock_bind+0x151a/0x1f30 net/bluetooth/hci_sock.c:1314
- __sys_bind_socket net/socket.c:1858 [inline]
- __sys_bind+0x229/0x2f0 net/socket.c:1889
- __do_sys_bind net/socket.c:1894 [inline]
- __se_sys_bind net/socket.c:1892 [inline]
- __x64_sys_bind+0x7a/0x90 net/socket.c:1892
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff88810edd9080
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 48 bytes inside of
- freed 96-byte region [ffff88810edd9080, ffff88810edd90e0)
-
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10edd9
-anon flags: 0x200000000000000(node=0|zone=2)
-page_type: f5(slab)
-raw: 0200000000000000 ffff888100042280 ffffea00041e07c0 dead000000000003
-raw: 0000000000000000 0000000000200020 00000000f5000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff88810edd8f80: fa fb fb fb fc fc fc fc fa fb fb fb fc fc fc fc
- ffff88810edd9000: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->ffff88810edd9080: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                                     ^
- ffff88810edd9100: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff88810edd9180: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-==================================================================
-
-Best regards,
-Cen Zhang
+-- 
+Thanks,
+Mauro
 
