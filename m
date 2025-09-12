@@ -1,234 +1,102 @@
-Return-Path: <linux-kernel+bounces-814825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482EEB55904
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA41CB558EC
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:12:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8834F7BBD12
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:14:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55EDFAC8123
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C793835E4E8;
-	Fri, 12 Sep 2025 22:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5356433EB1C;
+	Fri, 12 Sep 2025 22:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eiAnG25Z"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="JrTuTlC6"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0569E3680BD
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F8C127280C
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757715088; cv=none; b=PXk8EDFBFg8DqMxtYU5PTWJZo1YpIZfmjT3oz/lAAzg5Z98a58IALIHYyozm83e4SUg20+K92bZSxzgDMe/9u6OjY5r472FJfT/B9aPPp6eD2eHtLVDuUTvHiXhlD/vizdMei7B0DaZi6QMrUnZwLCmLDFbzkl0OVATZ9FRrS5Y=
+	t=1757715070; cv=none; b=Sqz8NzE9DQgzo6ZHA/rztnrGsq9L4k2jTJw2S75mRrj6rhxsKa1wp5YGr/jGZ1mLN3NgW5sIU84oDvQvV6VRG5bzWC6rovKk+ZkP64YYxaRcipHLEdhpC9VdfhFQidIxU4RcmeaeB3S169RFh/stzeSE8yamA+z9x6C9elDKa3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757715088; c=relaxed/simple;
-	bh=puOZuc9Vb+XErd2BvLMila18u24KctRdt01/g/axxVk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JmCA5IBn4vAtI/IiCzxVTTlUws5u4ycDfnc4DpBat8sWCZyAwKvmG/egJBwxznhrWJakPCF2BZYYDQfQS0/TYEScMLxZtZ6UBfRxOt0wU32X6LrCLnGnOcYRidgrIEvnOXsglpTPp7wd3Y0eN1Z/t18mDTxv8gVUUtw4xMKW7Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eiAnG25Z; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757715085; x=1789251085;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=puOZuc9Vb+XErd2BvLMila18u24KctRdt01/g/axxVk=;
-  b=eiAnG25ZYm4ofB0SZrWP7LK4Cf3ia9SCgs9ff6cSVFKSnSNynzvDj9oP
-   FqpogaqN6YrnA4dqtlA2YR5eQ0VW0RPCCDiAtDbQA3NMERFxWfSXkloDt
-   ZcHu4IFyZTsKCmPWHExCXeW32kyO0O8gFqUOJNqz5U5WKQAMawAa3HeNb
-   rBi55TiYAAziK725wzRft35ica0fIeXjW8qJtMMTAFVHj6xCasp0v4fYJ
-   Owh/Yce0saHrSVG1QsGrB/vrlbKYYbwwBFbiEUF90pOBiKahCOaGdE4+X
-   uTR9I0v/HeyIP0bSdkemmq7/URKeS0x9TTp6ZgjxEHTDNWyxShQyicUPX
-   A==;
-X-CSE-ConnectionGUID: gFoLq76RRiaQ8RqOJgb5Iw==
-X-CSE-MsgGUID: jXo9juvbTnWwwaw40QhRuw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="60002863"
-X-IronPort-AV: E=Sophos;i="6.18,260,1751266800"; 
-   d="scan'208";a="60002863"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 15:11:15 -0700
-X-CSE-ConnectionGUID: pRuHcp9NRA2O0RAdjwk0zA==
-X-CSE-MsgGUID: YXkoiUbKSKiSgbPPjskOIQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,260,1751266800"; 
-   d="scan'208";a="179265244"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO agluck-desk3.intel.com) ([10.124.221.49])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 15:11:14 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghuay@nvidia.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	James Morse <james.morse@arm.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Drew Fustini <dfustini@baylibre.com>,
-	Dave Martin <Dave.Martin@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v10 28/28] x86,fs/resctrl: Update Documentation for package events
-Date: Fri, 12 Sep 2025 15:10:49 -0700
-Message-ID: <20250912221053.11349-29-tony.luck@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250912221053.11349-1-tony.luck@intel.com>
-References: <20250912221053.11349-1-tony.luck@intel.com>
+	s=arc-20240116; t=1757715070; c=relaxed/simple;
+	bh=Do/QvGbQwHCSoORXG3wZywD4x2NobHezRPoGvcXH1Dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dj3mE6nMB4D7GmhuSpWEbP160nXUjhF03IB6DllLxujnVM3XQZRhvhqEIZsNRokBGarS2jp+nRRFlWuOTrpES+6t0Dai10Y9KFUX9QGXOKaYRQItI1hVqlqWi1v1lKbTHceUVEfkPcsxgBpiwSJwsfpz9ycdPl6HIqHbpCGKC80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=JrTuTlC6; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Do/Q
+	vGbQwHCSoORXG3wZywD4x2NobHezRPoGvcXH1Dw=; b=JrTuTlC6XmDXRFkkoAa5
+	ZcbmsLfNXNeDnn7nmUpkTAwi32rBl8c3FbSkvA5QR/fJUMmTJHk9EoR0P9rMM5yR
+	Hxr7u3afuJrz5TvGzmzfRnuNewVW8wP1sk4h2BrzqpR4w6yP3k9VhYxfKfPHY2Tg
+	6Qw162y7LK6rV1DRjCsjGV9yKMlEL0gIsUDbYjtZvX7EUuoHSS4cSEHPnOAtHBVp
+	bm3kifPH4X7eaGGyHvrJvoLAPvfTutjWe67j7oH1jGqojjK639kwKQ/twj4UbGEk
+	UhMZhmCxVBsgvL8kGbSgXVoasF3fSRaIJVJ3IqYD9atMpxnub62gUAzE0Qx2zH+8
+	tA==
+Received: (qmail 1500904 invoked from network); 13 Sep 2025 00:11:06 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 13 Sep 2025 00:11:06 +0200
+X-UD-Smtp-Session: l3s3148p1@J5si7qE+VMEgAQnoAHJ8AC93OVDMgFWg
+Date: Sat, 13 Sep 2025 00:11:05 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	viken.dadhaniya@oss.qualcomm.com
+Subject: Re: [PATCH] MAINTAINERS: Update email address for Qualcomm's I2C
+ GENI maintainers
+Message-ID: <aMSaedMWatJ3agPL@shikoro>
+References: <20250826185718.467474-1-mukesh.savaliya@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="NVXODSEym1yQVLDF"
+Content-Disposition: inline
+In-Reply-To: <20250826185718.467474-1-mukesh.savaliya@oss.qualcomm.com>
 
-Update resctrl filesystem documentation with the details about the
-resctrl files that support telemetry events.
 
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- Documentation/filesystems/resctrl.rst | 100 ++++++++++++++++++++++----
- 1 file changed, 87 insertions(+), 13 deletions(-)
+--NVXODSEym1yQVLDF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/filesystems/resctrl.rst b/Documentation/filesystems/resctrl.rst
-index 006d23af66e1..361cea6afd52 100644
---- a/Documentation/filesystems/resctrl.rst
-+++ b/Documentation/filesystems/resctrl.rst
-@@ -168,13 +168,12 @@ with respect to allocation:
- 			bandwidth percentages are directly applied to
- 			the threads running on the core
- 
--If RDT monitoring is available there will be an "L3_MON" directory
-+If L3 monitoring is available there will be an "L3_MON" directory
- with the following files:
- 
- "num_rmids":
--		The number of RMIDs available. This is the
--		upper bound for how many "CTRL_MON" + "MON"
--		groups can be created.
-+		The number of RMIDs supported by hardware for
-+		L3 monitoring events.
- 
- "mon_features":
- 		Lists the monitoring events if
-@@ -400,6 +399,19 @@ with the following files:
- 		bytes) at which a previously used LLC_occupancy
- 		counter can be considered for re-use.
- 
-+If telemetry monitoring is available there will be an "PERF_PKG_MON" directory
-+with the following files:
-+
-+"num_rmids":
-+		The number of RMIDs supported by hardware for
-+		telemetry monitoring events.
-+
-+"mon_features":
-+		Lists the telemetry monitoring events that are enabled on this system.
-+
-+The upper bound for how many "CTRL_MON" + "MON" can be created
-+is the smaller of the L3_MON and PERF_PKG_MON "num_rmids" values.
-+
- Finally, in the top level of the "info" directory there is a file
- named "last_cmd_status". This is reset with every "command" issued
- via the file system (making new directories or writing to any of the
-@@ -505,15 +517,40 @@ When control is enabled all CTRL_MON groups will also contain:
- When monitoring is enabled all MON groups will also contain:
- 
- "mon_data":
--	This contains a set of files organized by L3 domain and by
--	RDT event. E.g. on a system with two L3 domains there will
--	be subdirectories "mon_L3_00" and "mon_L3_01".	Each of these
--	directories have one file per event (e.g. "llc_occupancy",
--	"mbm_total_bytes", and "mbm_local_bytes"). In a MON group these
--	files provide a read out of the current value of the event for
--	all tasks in the group. In CTRL_MON groups these files provide
--	the sum for all tasks in the CTRL_MON group and all tasks in
--	MON groups. Please see example section for more details on usage.
-+	This contains directories for each monitor domain. One set for
-+	each instance of an L3 cache, another set for each processor
-+	package. The L3 cache directories are named "mon_L3_00",
-+	"mon_L3_01" etc. The package directories "mon_PERF_PKG_00",
-+	"mon_PERF_PKG_01" etc.
-+
-+	Within each directory there is one file per event. For
-+	example the L3 directories may contain "llc_occupancy", "mbm_total_bytes",
-+	and "mbm_local_bytes". The PERF_PKG directories may contain "core_energy",
-+	"activity", etc. The info/*/mon_features files provide the full
-+	list of event/file names.
-+
-+	"core energy" reports a floating point number for the energy (in Joules)
-+	consumed by cores (registers, arithmetic units, TLB and L1/L2 caches)
-+	during execution of instructions summed across all logical CPUs on a
-+	package for the current RMID.
-+
-+	"activity" also reports a floating point value (in Farads).
-+	This provides an estimate of work done independent of the
-+	frequency that the CPUs used for execution.
-+
-+	Note that these two counters only measure energy/activity
-+	in the "core" of the CPU (arithmetic units, TLB, L1 and L2
-+	caches, etc.). They do not include L3 cache, memory, I/O
-+	devices etc.
-+
-+	All other events report decimal integer values.
-+
-+	In a MON group these files provide a read out of the current
-+	value of the event for all tasks in the group. In CTRL_MON groups
-+	these files provide the sum for all tasks in the CTRL_MON group
-+	and all tasks in MON groups. Please see example section for more
-+	details on usage.
-+
- 	On systems with Sub-NUMA Cluster (SNC) enabled there are extra
- 	directories for each node (located within the "mon_L3_XX" directory
- 	for the L3 cache they occupy). These are named "mon_sub_L3_YY"
-@@ -1506,6 +1543,43 @@ Example with C::
-     resctrl_release_lock(fd);
-   }
- 
-+Debugfs
-+=======
-+In addition to the use of debugfs for tracing of pseudo-locking
-+performance, architecture code may create debugfs directories
-+associated with monitoring features for a specific resource.
-+
-+The full pathname for these is in the form:
-+
-+    /sys/kernel/debug/resctrl/info/{resource_name}_MON/{arch}/
-+
-+The presence, names, and format of these files may vary
-+between architectures even if the same resource is present.
-+
-+PERF_PKG_MON/x86_64
-+-------------------
-+Three files are present per telemetry aggregator instance
-+that show status.  The prefix of
-+each file name describes the type ("energy" or "perf") which
-+processor package it belongs to, and the instance number of
-+the aggregator. For example: "energy_pkg1_agg2".
-+
-+The suffix describes which data is reported in the file and
-+is one of:
-+
-+data_loss_count:
-+	This counts the number of times that this aggregator
-+	failed to accumulate a counter value supplied by a CPU.
-+
-+data_loss_timestamp:
-+	This is a "timestamp" from a free running 25MHz uncore
-+	timer indicating when the most recent data loss occurred.
-+
-+last_update_timestamp:
-+	Another 25MHz timestamp indicating when the
-+	most recent counter update was successfully applied.
-+
-+
- Examples for RDT Monitoring along with allocation usage
- =======================================================
- Reading monitored data
--- 
-2.51.0
+On Wed, Aug 27, 2025 at 12:27:18AM +0530, Mukesh Kumar Savaliya wrote:
+> Update email address to @oss.qualcomm.com for both the maintainers
+> from qualcomm, Viken dadhani and Mukesh Kumar Savaliya.
+>=20
+> Signed-off-by: Mukesh Kumar Savaliya <mukesh.savaliya@oss.qualcomm.com>
 
+Applied to for-current, thanks!
+
+
+--NVXODSEym1yQVLDF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmjEmnkACgkQFA3kzBSg
+KbYKhA//RknMf0vFAzMsxg1tmRbMquXwmUb0V0jbGXvLv6KyGmYlJnpL5et2Y+B1
+IxdrxeZlld8FKi/vTB06XGZq4tha/04uTGIBzk04sD2z0Uqf+TyHaBikrLOro0TO
+EXCfCR+q3F8Zaes3X30OpU/M4fNEO0Z/VyVLArAa4T7eccasa0xGW90jkscDJ/2X
+yXd4udCDypwM/glNhhiV2cQ+PjeYiCadulzIl1cKDZG2VGdrKgXzJvhM+86ilVu5
+b84OtjqjvuYgjpPWH7h+BU1TveApf4qfR2wqdNotLIynhnEO52+9XjMrNMBej48s
+aFxd5Pkdl6zpiaNxZhX1g7PcDT72EGGQS/I0lA9acghPvRzIucvWLvauaxNUd4aJ
+KzoV2vzQmHgnumBsPOxhJI1J7Dbh8vtEjss+ETsdPaCgsLpPwv3/gX1lOHix04au
+4E2bgLSZ6RuOlDo5Au6XivNoOyMqxRQ3dpRE4fvyn84OZYTQPoOJccZndfcCyW3U
+aWUvFdeYuXTglF3qBF2u5lcbmCeGL8H+/tTP17LdzyyBbfNo/DUCiAaEeTBQA+Rw
+eGYEIiz9ady81O684ZkUwZsM/q6E7czxufRr9GOqojgTKdcVEvcF4fRpfyKBwP5u
+DLMlKDGEVMrgboq1Yo+LJEvygajvjcHRuYW2p62yBKsSEx6TUk0=
+=z/09
+-----END PGP SIGNATURE-----
+
+--NVXODSEym1yQVLDF--
 
