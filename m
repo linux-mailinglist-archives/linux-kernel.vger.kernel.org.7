@@ -1,110 +1,93 @@
-Return-Path: <linux-kernel+bounces-813740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A11B54A2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:47:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B9BB54A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4479246464D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:47:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52D7B585235
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFC62FD7B3;
-	Fri, 12 Sep 2025 10:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A042FE581;
+	Fri, 12 Sep 2025 10:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="W/sj3sNr";
-	dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b="fxVYywmX"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W2j8mVEe"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF861A41;
-	Fri, 12 Sep 2025 10:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.149.25
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757674015; cv=fail; b=sJKFRQ82ssIfNqsWw57FBNJI+7b1vGWLz3U/YXAfHzUHatfmBUPNn7pePEkeeNKWWbUAJaVE2ylWu6ZAjRrRg6x5HfbZlmZdbyZ+mp2hnbOPeGX4KO10wiTBdTrLyKjDDf1qKy2xObp8dJHSlXp+brPPRn60HcZ23NDmPlmAbEE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757674015; c=relaxed/simple;
-	bh=Z71A7T/4k+ANYtestCIMmxwBFPXXayN8iWUZfgC9u3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EDsnYR7KFMyFzfgIjzA8eYBTHIJS+7xojSclTeNvIhGK0FZfCXbBt3iKcDrccAyoTP7S+WSOSKYPDNNOOvmiR6Q6VNDD5/bvXp+0AvxlvRSRF+s4DjqOq8Hm3vsQowfwcmBDw+4Pp0RVNiMu+OQIgiUsbdzMxhrCmCppv0h3rOY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=W/sj3sNr; dkim=pass (1024-bit key) header.d=cirrus4.onmicrosoft.com header.i=@cirrus4.onmicrosoft.com header.b=fxVYywmX; arc=fail smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 58C4oDu41137784;
-	Fri, 12 Sep 2025 05:46:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=FKoDupw6iAZh+442GD4UOmv+03loFRrD7e6ENv+GptU=; b=
-	W/sj3sNriH2p09lx6WV43YAEjuT2qdR3efW0DCOAgneHq5bj5FWEURuig/YJuZWN
-	n4MHkUXV7W6KHRZT2u8C7apQynSYBxMACyjKeAdzxZitQcpc/1fgFeW13mKir56f
-	LgKmKzQlW9fpr91QC85o265Tomi8521ucPDg17KJ2HK7yuQn+jIYcOva6fdRXsa8
-	d5zJc23sB5o2HSN4uDqywesYQLsYrywnSaWV3qUNHFUzlQzIp6Fw2yf41UnKAB0d
-	FuRgNXPB54Bl20lb+QgG4Ap8D7Ov/+BYLj+/dR49xpD7pTVjqypOGmn43kXLk7/H
-	Sy9FW3ZQt7oCie+yZkBZBA==
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2123.outbound.protection.outlook.com [40.107.220.123])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 492q6tcpv4-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 12 Sep 2025 05:46:51 -0500 (CDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dI9kiJ11Fz2NOrxKbqn/OWFyXk4GMTHpCtHBq6ejoxTjmsyQ8YJrt3ZPtrzkao1i368Zex1DmzMz/MrjhqntOOVutIbu9VdqIKkXmlSrBuwvGXwmb9Wzn9O/ZrXxV+d8YicrteCyMhksqekJnQ/lmX/M9KVxx8sq7eRKsEzFFEVpAEn6oBfGlgO6PxK6OsHukFWB63tKCMmg8LL1Kvav4iIsyb8Wv5hU09AgRzlpDDoNbAqzNPlZfzCFIiUGisIm/sGuKqGjozLG1OfkRIvBR0YzMTSHWbWXksJniFsQZgYB+YAbRXi7d/JYN7eFMYOdRWguap4oG1taq00DzT3VNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FKoDupw6iAZh+442GD4UOmv+03loFRrD7e6ENv+GptU=;
- b=kJHIsbFpHXOBKB90Yds9sfV4JkdqWh7k2ne0RltOK5tmySgELrmAIJljo8rvd266u4X1sNcZtxjeXPGjJYhreObNstzurquw3SKmQ5UydxD0jovMveiP+WyZ5C0oh7l4OPIRubaY1rmn1suS/7UobPahtsMTYnaFFOXVPXRYthanwuSks7076jksoaMgbrEdnZEikLMarGe+7ZkmtIePiCPiE9hzIlXXDIErkY2qWFqsZ/NMxEqjCfW8fIucFIyadTwIsKRhrUdL3ANbwJTkgkEyiw/zTahmMTTUodNJcz4k1AAprRYVJDOatu14uSxG2O106v2Uha1pYeT8NA9L1g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=fail (sender ip is
- 84.19.233.75) smtp.rcpttodomain=cirrus.com
- smtp.mailfrom=opensource.cirrus.com; dmarc=fail (p=reject sp=reject pct=100)
- action=oreject header.from=opensource.cirrus.com; dkim=none (message not
- signed); arc=none (0)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE9C2FDC29
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757674059; cv=none; b=aik3sWhiPNre6LXIRupFMR2kT3ZaTPjPVbsdbtzQOyPUcoQlqfF4Wc+fDwkzjVryqa2hmk5hoVlJiAL4nmYOElY5QkIol9lbbOpA8FOPhsuQ7SQvONqemTQBlWK4/6IHvLYSCFV24p3D5BWvdiC4ggouj1rxjhLPnhvHgSvUFVM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757674059; c=relaxed/simple;
+	bh=QkZ3p1cNyITf5OPXOZZOeBTIKQ1JtBSjwxNWu+BfvUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lB4SOVsV8U8a/CAvwCR3o//wWvN/TbM2cDpFsgDzlBabw3/dPUPaa1iKbMvh81Syxt+aQ2gpHGzvgLyQIMbIT0U7r9yMW2Z6bikaEsxPHwpuEXzYBbgs3LJ79CHrj5AVGPT+Jgi0DqU40YFTK6EudZSasK9HwMUGSys/nJrh59c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W2j8mVEe; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45ddc7d5731so12658755e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:47:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=cirrus4.onmicrosoft.com; s=selector2-cirrus4-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FKoDupw6iAZh+442GD4UOmv+03loFRrD7e6ENv+GptU=;
- b=fxVYywmXPhYMWIwMy4AO9TXxV+6y72a3dz3M6/ZvV9FkKD3vi56YCl9wpXHeRsuEq5L8JE5HfN3GhPVsi4L6mxlSTRPObFfj/0zK/1lhKvwd04bLQeCzqxYeQq2e5O2vm+ZnShHoL59kdevyUIhya1CC/nkuWcC9ScVEqh2wGoQ=
-Received: from BN9PR03CA0945.namprd03.prod.outlook.com (2603:10b6:408:108::20)
- by BLAPR19MB4418.namprd19.prod.outlook.com (2603:10b6:208:299::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 10:46:47 +0000
-Received: from BN1PEPF00004681.namprd03.prod.outlook.com
- (2603:10b6:408:108:cafe::82) by BN9PR03CA0945.outlook.office365.com
- (2603:10b6:408:108::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9094.22 via Frontend Transport; Fri,
- 12 Sep 2025 10:46:47 +0000
-X-MS-Exchange-Authentication-Results: spf=fail (sender IP is 84.19.233.75)
- smtp.mailfrom=opensource.cirrus.com; dkim=none (message not signed)
- header.d=none;dmarc=fail action=oreject header.from=opensource.cirrus.com;
-Received-SPF: Fail (protection.outlook.com: domain of opensource.cirrus.com
- does not designate 84.19.233.75 as permitted sender)
- receiver=protection.outlook.com; client-ip=84.19.233.75;
- helo=edirelay1.ad.cirrus.com;
-Received: from edirelay1.ad.cirrus.com (84.19.233.75) by
- BN1PEPF00004681.mail.protection.outlook.com (10.167.243.87) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.13
- via Frontend Transport; Fri, 12 Sep 2025 10:46:46 +0000
-Received: from ediswmail9.ad.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by edirelay1.ad.cirrus.com (Postfix) with ESMTPS id C52B2406545;
-	Fri, 12 Sep 2025 10:46:45 +0000 (UTC)
-Received: from lonswws02.ad.cirrus.com (lonswws02.ad.cirrus.com [198.90.188.42])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPSA id 8AFBE82024A;
-	Fri, 12 Sep 2025 10:46:45 +0000 (UTC)
-From: Stefan Binding <sbinding@opensource.cirrus.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        Stefan Binding <sbinding@opensource.cirrus.com>
-Subject: [PATCH v1 2/2] ASoC: cs35l41: Fallback to reading Subsystem ID property if not ACPI
-Date: Fri, 12 Sep 2025 11:45:38 +0100
-Message-ID: <20250912104612.361125-3-sbinding@opensource.cirrus.com>
+        d=gmail.com; s=20230601; t=1757674055; x=1758278855; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zvhHPfMyVnRQHDE/Wsrr3mGdMtLEq8FfsaVlUqEDKgY=;
+        b=W2j8mVEePNs57XKtw/a0jTHCuVb35LuyGNhQdwsYHGBayp8xyPK/9l6kPNrMNbpz1d
+         XwXJ1aT9eYBeQWAVJX9jOAHd6+ObDY7H+gNZxQmXn9OrinbmA/ze+WJJIkTnIxNl9bfw
+         8s/MhxmNCkvqGiA6ZWR3CZ6gKWCJ5+QlYRxDjy/Ms0p1aE0qy+mQ2PAVQF7RjK2WEmmW
+         O+1yZtIo0HkMdZdyF+T6uWql0cQ4p/C+BpBTGYTSNpJPsC4B8uUOjsR9OplrKLTP6Vqo
+         dniYILYtXYSGfb8t0FTJLXBayFR+cgxnf/r5WiD06lZvnqd/DLa6k+mf/Mp3RO4rJxd0
+         Jigg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757674055; x=1758278855;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zvhHPfMyVnRQHDE/Wsrr3mGdMtLEq8FfsaVlUqEDKgY=;
+        b=EAJOhHyz9KvxiLGVVwCLXy/QI35ZbNZnFvqPCxhOv53SKwcqwzhT9Lvp9v5b8fXmHk
+         f3HTMI7cFC9bEOt09MQmL1JaZ5hurEKInR2gE6vsYrecWdwTu4ZhH2IB2Qlf5ZBMMJM1
+         v1LiCYLZHCZVqzkFJX+hobs3ZtuRytWY/kW67qS8pkoyRRGs9kg+oKmuZTUiFZkLdipI
+         RtMpgZsBRy9UXhzKAMhIRLQzOoH9mzaBAUz9UDrlXUF8W+sERRFAPKQSm5ri9c5xwChs
+         STWLiUI0y0vId4PMW9PcvykZexbWGoUZslS9emlsqsidU5HLllwplDpkbgmjcPGgLBtf
+         muAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvit7ouwDkgbnvkjMLyVShoudFL9du4q5aXMkvGX0603ERJBf3sTZz5YGh78Yb3+SzfaHhhIiSCcOXGHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+egcBSitLXXibUhH7qqIIErKc46r5cNhVtM/pO/vkaTEf4WDR
+	Gv64q6we477otyQ7Mbs3SERAnA9n4On6UfWsHGSl5oxACgKfZXhMH+n+
+X-Gm-Gg: ASbGncu0XootANUX9pSjR4AoiXHrwdNwA68GZpx/lgP2x3zuwSFt4iJUvUTFLX3Msgp
+	Pjc9xTaALJYSCPqD3lYwKeLlN+6z/RuLrDsS6W51FNgMwEPeYDyTwH8JOyaYPm9PsEG0739HjX0
+	Ldc5KLnnUgVm2X1ThWLNMDaRuhkhVhxhdlCiqKWDMPp+f1tcbFZvAedA+/g9T445VtUpVcsr1PW
+	trZKyTKsR6t31YiNlLQK+LROCQQO8aGAFkdeZUceLoTf2Inb9uY/qgrxzkmiDZ3LFR9AFMR7XDC
+	6skeajlttIZLE8fVSujHIFYVBIIcfphquEU/nOSs59MYjtFVCTuvEy2YDargfyOw+FC+slo2yzS
+	ozpiiQVCmEJFpjSENk2ahvyitgQY4Ptcs4hhPyo7tGS++Mkz2vu1Ogs4gamrjVEbisUSm0aCkNy
+	H7Eol+3b1kD/L8
+X-Google-Smtp-Source: AGHT+IGujmcN4fyQBQx1hNEHlQ9GX4FoUMI1IDvKHNbUiACXJBxa9v7K/dhtoyBnWCjhCazL+bwaCw==
+X-Received: by 2002:a05:600c:138a:b0:456:19eb:2e09 with SMTP id 5b1f17b1804b1-45f211e575dmr31091895e9.8.1757674055294;
+        Fri, 12 Sep 2025 03:47:35 -0700 (PDT)
+Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd329sm6197316f8f.31.2025.09.12.03.47.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 03:47:35 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	linux-can@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2 0/7] Add suspend/resume support
+Date: Fri, 12 Sep 2025 11:47:18 +0100
+Message-ID: <20250912104733.173281-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250912104612.361125-1-sbinding@opensource.cirrus.com>
-References: <20250912104612.361125-1-sbinding@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -112,190 +95,207 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF00004681:EE_|BLAPR19MB4418:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 93cbb022-b0bd-4011-030f-08ddf1e9abfd
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|82310400026|36860700013|61400799027;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wrpqDPrsutw1QbvtqR+tYK2eGpDE6tH0zndMn8J8JkCMlXR6KDG7l84oLEve?=
- =?us-ascii?Q?/CyUTQnzecbUiOq5Z+R6zMp60WZQz2Qk7wV7ya1qli6p3fJxfMDTmfO2ByCo?=
- =?us-ascii?Q?VBgeuVGMZXdg3KytmA50XMrJPZHgPDy6tY6QjOBZV4o58gbCxwUFghzWPsh6?=
- =?us-ascii?Q?cK9YuRSVEMewiHrH78K1vVZ+fLlSkzr6JhnwK7umryLwfWSP9GY9wj2n8soJ?=
- =?us-ascii?Q?vfikNhukrxRBHmUOrP7uZzGrkAemQVXdu5TxWtIz+lti0MMRUf+xHZL8ue+E?=
- =?us-ascii?Q?oZ/gecV2gI2RhiMRkwtGFtmyY4K+eECygYUzXSYIw9ZGXBTAszLUDkjoLRsd?=
- =?us-ascii?Q?bdwfFIe6pt3OEwTKi7C9Uk9dDu6TLdcq8wNfpbzKSnvKfVsIrUkLO1YCJG+C?=
- =?us-ascii?Q?1vUHPkUZ3VDRZzQO6cBgTsUcZQViSPxAO5OGb87GXi6XFGvi6JKopD14zaeo?=
- =?us-ascii?Q?ONnR3gP0rfsQLnPyPDqjD40S/A9Reoj08cIpccfgskfhggD9xR+Ec2YpdIu6?=
- =?us-ascii?Q?akMotlFl+eAhVTuYIet9xI47MBGnOvkL/f3mAOpxc/WY5MrePmypxoVc5JjS?=
- =?us-ascii?Q?N7lMFZbifVpZqcGobQAtqg0EdS6R748560OCpFcfeG/G63T/LbwZ7foT1u+V?=
- =?us-ascii?Q?AsOdY87psoGWZ4ymuGkVtcigRNipO79uEMjdNYDEtWimXC9VAAnWa0cRqgkH?=
- =?us-ascii?Q?ZcXVwWt5RPGYUFBqUFM7644oh4wdIpByg7ByT8TlYVGm9VHfQ6gZX3U2n2Gb?=
- =?us-ascii?Q?LJ3nsLCcp9JBIoZEriBzIFGHPGSBN1OeqDCrioHMLwB5u41BWKLfbJHh5eR2?=
- =?us-ascii?Q?50n/edMzsUvonqvHF/mr+UiAM/2Sz+gASOn+aCEVz2Y5W1xRDftjd2eCv/bG?=
- =?us-ascii?Q?Es6TDXewp9re+oRKXOJrGbrpDie98n+dvsqaKWHyWhTaPBdrGTChsKl154BQ?=
- =?us-ascii?Q?pZU1AjsMfHBjwe1nxhkSmMC29Sno70SnuRBEGqfvzGLbaBaSRxKloURVzgtA?=
- =?us-ascii?Q?17XSLxtkzY8/iNs8JQRSq+NfoQFXQMpm01/aQlGyMpIoP/cOB2sqbWzmw1eq?=
- =?us-ascii?Q?gTUy3LgTG2fDDEWwwWH+PYO85wjaM/nUIQw6P84ttv5IfqPkp5NkHLhF2VdZ?=
- =?us-ascii?Q?OLeLNgYoQcxd6mRDqoEBEZvuyGj1Vs0FyaocTTtrh0duLBZ4eFAasYC3jbRA?=
- =?us-ascii?Q?7ljQ1LLtk04MuNeWZUIUvA+BbueijhvUO/IZw4WfWQ/G4geepM9mQoYpBC15?=
- =?us-ascii?Q?cgGsJqhaxoFngEeAG3DJQTfBnxaiWxaX0KV9SCA4nxQ/8vCLWC0bEV+lwu9I?=
- =?us-ascii?Q?sZvb8LHfaEU+oO6/WnAwrPsgHbXxBw2DY3O77oPZ66LwzDAtgCNFFgCi//+T?=
- =?us-ascii?Q?B/UNeDK5JrR6nXsG/Hnqq6TgQvDzxzDFD4QjsucrQnhEkA8kqNWaPJomLxJP?=
- =?us-ascii?Q?vCmrYdEt3D/XSVnKF8RsPaNIkasNwg68k+Zets3f5RQggazDP2zp9tqP/Ebd?=
- =?us-ascii?Q?FmYkvqj+gsYvqcqajwfPkRABxah3RnmCgc+Q?=
-X-Forefront-Antispam-Report:
-	CIP:84.19.233.75;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:edirelay1.ad.cirrus.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(61400799027);DIR:OUT;SFP:1102;
-X-OriginatorOrg: opensource.cirrus.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 10:46:46.9488
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93cbb022-b0bd-4011-030f-08ddf1e9abfd
-X-MS-Exchange-CrossTenant-Id: bec09025-e5bc-40d1-a355-8e955c307de8
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=bec09025-e5bc-40d1-a355-8e955c307de8;Ip=[84.19.233.75];Helo=[edirelay1.ad.cirrus.com]
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TreatMessagesAsInternal-BN1PEPF00004681.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR19MB4418
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEyMDEwMCBTYWx0ZWRfX6oJbhgBuX9yJ
- XHh+I4gsBiOxudtC+YAF1bgvf7j0y80gW1/65/51bt5Lyf9COpxxYIYAoJp18V/nJk6TAMxzYNh
- ydhJFrH7yCxwbp4t34iO6G5MDXimkj0XhBKsOIKu2We4NNh005QRok68ceBrN2njhahgKdg4ABM
- 7N0CMhSkM5OxG9m+ZiRIPxROjtTVswH1oT8EZhtw1h1d1GaIXL7/J3dkWIeKziP3a3Ou/kR02LN
- 5K69YlAr5Uw7rKaeCopsTf9h1Nu+48aUIp9T2tTUnEydrvzuLVHQQ4VqDSZXooVlb2xPZvMeVkp
- MxaphAPJ+0m659hoyTiqgWv1ECPXowsKY7w9qqa6CDVFc3NUBn5QhclFNLmsQg=
-X-Proofpoint-GUID: mdwPVoCwifqwVnhAPp-MxXIO6mLqPFRI
-X-Authority-Analysis: v=2.4 cv=X71SKHTe c=1 sm=1 tr=0 ts=68c3fa1b cx=c_pps
- a=f3Kr4HZljxwrsYTGj9vx4g==:117 a=h1hSm8JtM9GN1ddwPAif2w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=yJojWOMRYYMA:10 a=s63m1ICgrNkA:10 a=RWc_ulEos4gA:10 a=w1d2syhTAAAA:8
- a=bL0rdlc7CeB77TPmB0MA:9
-X-Proofpoint-ORIG-GUID: mdwPVoCwifqwVnhAPp-MxXIO6mLqPFRI
-X-Proofpoint-Spam-Reason: safe
 
-If ACPI is not used, then there is currently no way of reading a
-Subsystem ID property used for a system name to uniquely identify
-the system in order to load the correct firmware and tuning.
-Add a new property which can be read from device tree to be able to set
-the system name.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Signed-off-by: Stefan Binding <sbinding@opensource.cirrus.com>
+Hi all,
+
+This patch series adds proper suspend/resume support to the Renesas
+R-Car CAN-FD controller driver, after the customary cleanuops and fixes.
+It aims to fix CAN-FD operation after resume from s2ram on systems where
+PSCI powers down the SoC.
+
+This patch series has been tested on RZ/G3E SMARC EVK, Ebisu-4D (R-Car E3)
+and White Hawk (R-Car V4H).
+
+v1->v2:
+ * Added logs from RZ/G3E
+ * Collected tags.
+ * Moved enabling of RAM clk from probe().
+ * Added RAM clk handling in rcar_canfd_global_{,de}init().
+ * Fixed the typo in error path of rcar_canfd_resume().
+
+Logs from RZ/G3E:
+root@smarc-rzg3e:~# /canfd_t_003_all.sh
+ [INFO] Testing can0<->can1 with bitrate 1000000 and dbitrate 4000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+[  541.705921] can: controller area network core
+[  541.710369] NET: Registered PF_CAN protocol family
+[  541.753974] can: raw protocol
+ [INFO] Testing can0 as producer and can1 as consumer
+ [INFO] Testing can0<->can1 with bitrate 500000 and dbitrate 2000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+ [INFO] Testing can0<->can1 with bitrate 250000 and dbitrate 1000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+
+EXIT|PASS|canfd_t_003.sh|[00:00:25] ||
+
+bind/unbind
+----------
+[  566.821475] rcar_canfd 12440000.can: can_clk rate is 80000000
+[  566.828076] rcar_canfd 12440000.can: device registered (channel 1)
+[  566.834361] rcar_canfd 12440000.can: can_clk rate is 80000000
+[  566.841842] rcar_canfd 12440000.can: device registered (channel 4)
+[  566.848093] rcar_canfd 12440000.can: global operational state (canfd clk, fd mode)
+ [INFO] Testing can0<->can1 with bitrate 1000000 and dbitrate 4000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+ [INFO] Testing can0<->can1 with bitrate 500000 and dbitrate 2000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+ [INFO] Testing can0<->can1 with bitrate 250000 and dbitrate 1000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+
+EXIT|PASS|canfd_t_003.sh|[00:00:25] ||
+
+s2idle
+-----
+[  592.182479] PM: suspend entry (s2idle)
+[  592.187031] Filesystems sync: 0.000 seconds
+[  592.193221] Freezing user space processes
+[  592.199425] Freezing user space processes completed (elapsed 0.002 seconds)
+[  592.206450] OOM killer disabled.
+[  592.209843] Freezing remaining freezable tasks
+[  592.215775] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[  592.223247] printk: Suspending console(s) (use no_console_suspend to debug)
+[  592.260524] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+[  592.322759] renesas-gbeth 15c30000.ethernet end0: Link is Down
+[  596.070955] dwmac4: Master AXI performs any burst length
+[  596.072307] renesas-gbeth 15c30000.ethernet end0: No Safety Features support found
+[  596.072376] renesas-gbeth 15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+[  596.077470] renesas-gbeth 15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+[  596.087503] dwmac4: Master AXI performs any burst length
+[  596.088817] renesas-gbeth 15c40000.ethernet end1: No Safety Features support found
+[  596.088881] renesas-gbeth 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+[  596.093997] renesas-gbeth 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+[  596.141986] usb usb1: root hub lost power or was reset
+[  596.142031] usb usb2: root hub lost power or was reset
+[  598.304525] usb 2-1: reset SuperSpeed Plus Gen 2x1 USB device number 2 using xhci-renesas-hcd
+[  598.414846] OOM killer enabled.
+[  598.418002] Restarting tasks: Starting
+[  598.422518] Restarting tasks: Done
+[  598.425999] random: crng reseeded on system resumption
+[  598.431248] PM: suspend exit
+[  598.661875] renesas-gbeth 15c30000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
+ [INFO] Testing can0<->can1 with bitrate 1000000 and dbitrate 4000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+ [INFO] Testing can0<->can1 with bitrate 500000 and dbitrate 2000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+ [INFO] Testing can0<->can1 with bitrate 250000 and dbitrate 1000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+
+EXIT|PASS|canfd_t_003.sh|[00:00:25] ||
+
+str
 ---
- sound/soc/codecs/cs35l41.c | 77 ++++++++++++++++++++++----------------
- 1 file changed, 44 insertions(+), 33 deletions(-)
+[  624.898952] PM: suspend entry (deep)
+[  624.903619] Filesystems sync: 0.000 seconds
+[  624.908715] Freezing user space processes
+[  624.914609] Freezing user space processes completed (elapsed 0.001 seconds)
+[  624.921599] OOM killer disabled.
+[  624.924862] Freezing remaining freezable tasks
+[  624.930642] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+[  624.938059] printk: Suspending console(s) (use no_console_suspend to debug)
+NOTICE:  BL2: v2.10.5(release):2.10.5/rz_soc_dev-169-g1410189b0
+NOTICE:  BL2: Built : 12:53:12, Jul 15 2025
+NOTICE:  BL2: SYS_LSI_MODE: 0x13e06
+NOTICE:  BL2: SYS_LSI_DEVID: 0x8679447
+NOTICE:  BL2: SYS_LSI_PRR: 0x0
+NOTICE:  BL2: Booting BL31
+[  624.984425] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+[  625.036962] renesas-gbeth 15c30000.ethernet end0: Link is Down
+[  625.050909] Disabling non-boot CPUs ...
+[  625.055800] psci: CPU3 killed (polled 0 ms)
+[  625.062476] psci: CPU2 killed (polled 0 ms)
+[  625.068380] psci: CPU1 killed (polled 4 ms)
+[  625.073342] Enabling non-boot CPUs ...
+[  625.073551] Detected VIPT I-cache on CPU1
+[  625.073598] GICv3: CPU1: found redistributor 100 region 0:0x0000000014960000
+[  625.073635] CPU1: Booted secondary processor 0x0000000100 [0x412fd050]
+[  625.074465] CPU1 is up
+[  625.074565] Detected VIPT I-cache on CPU2
+[  625.074587] GICv3: CPU2: found redistributor 200 region 0:0x0000000014980000
+[  625.074609] CPU2: Booted secondary processor 0x0000000200 [0x412fd050]
+[  625.075179] CPU2 is up
+[  625.075276] Detected VIPT I-cache on CPU3
+[  625.075299] GICv3: CPU3: found redistributor 300 region 0:0x00000000149a0000
+[  625.075320] CPU3: Booted secondary processor 0x0000000300 [0x412fd050]
+[  625.076021] CPU3 is up
+[  625.092153] dwmac4: Master AXI performs any burst length
+[  625.093058] renesas-gbeth 15c30000.ethernet end0: No Safety Features support found
+[  625.093078] renesas-gbeth 15c30000.ethernet end0: IEEE 1588-2008 Advanced Timestamp supported
+[  625.096594] renesas-gbeth 15c30000.ethernet end0: configuring for phy/rgmii-id link mode
+[  625.114030] dwmac4: Master AXI performs any burst length
+[  625.114926] renesas-gbeth 15c40000.ethernet end1: No Safety Features support found
+[  625.114942] renesas-gbeth 15c40000.ethernet end1: IEEE 1588-2008 Advanced Timestamp supported
+[  625.118528] renesas-gbeth 15c40000.ethernet end1: configuring for phy/rgmii-id link mode
+[  625.165208] usb usb1: root hub lost power or was reset
+[  625.165216] usb usb2: root hub lost power or was reset
+[  627.324220] usb 2-1: reset SuperSpeed Plus Gen 2x1 USB device number 2 using xhci-renesas-hcd
+[  627.511216] OOM killer enabled.
+[  627.514354] Restarting tasks: Starting
+[  627.518782] Restarting tasks: Done
+[  627.522274] random: crng reseeded on system resumption
+[  627.527525] PM: suspend exit
+[  627.788377] renesas-gbeth 15c30000.ethernet end0: Link is Up - 1Gbps/Full - flow control rx/tx
+ [INFO] Testing can0<->can1 with bitrate 1000000 and dbitrate 4000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+ [INFO] Testing can0<->can1 with bitrate 500000 and dbitrate 2000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
+ [INFO] Testing can0<->can1 with bitrate 250000 and dbitrate 1000000
+ [INFO] Bringing down can0 can1
+ [INFO] Bringing up can0 can1
+ [INFO] Testing can1 as producer and can0 as consumer
+ [INFO] Testing can0 as producer and can1 as consumer
 
-diff --git a/sound/soc/codecs/cs35l41.c b/sound/soc/codecs/cs35l41.c
-index 224d65987a8d..d7e3d89de652 100644
---- a/sound/soc/codecs/cs35l41.c
-+++ b/sound/soc/codecs/cs35l41.c
-@@ -7,6 +7,7 @@
- // Author: David Rhodes <david.rhodes@cirrus.com>
- 
- #include <linux/acpi.h>
-+#include <acpi/acpi_bus.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/init.h>
-@@ -1147,45 +1148,55 @@ static int cs35l41_dsp_init(struct cs35l41_private *cs35l41)
- 	return ret;
- }
- 
--#ifdef CONFIG_ACPI
--static int cs35l41_acpi_get_name(struct cs35l41_private *cs35l41)
-+static int cs35l41_get_system_name(struct cs35l41_private *cs35l41)
- {
- 	struct acpi_device *adev = ACPI_COMPANION(cs35l41->dev);
--	acpi_handle handle = acpi_device_handle(adev);
--	const char *hid;
--	const char *sub;
--
--	/* If there is no acpi_device, there is no ACPI for this system, return 0 */
--	if (!adev)
--		return 0;
-+	const char *sub = NULL;
-+	const char *tmp;
-+	int ret = 0;
- 
--	sub = acpi_get_subsystem_id(handle);
--	if (IS_ERR(sub)) {
--		/* If no _SUB, fallback to _HID, otherwise fail */
--		if (PTR_ERR(sub) == -ENODATA) {
--			hid = acpi_device_hid(adev);
--			/* If dummy hid, return 0 and fallback to legacy firmware path */
--			if (!strcmp(hid, "device"))
--				return 0;
--			sub = kstrdup(hid, GFP_KERNEL);
--			if (!sub)
--				sub = ERR_PTR(-ENOMEM);
--
--		} else
--			return PTR_ERR(sub);
-+	/* If there is no acpi_device, there is no ACPI for this system, skip checking ACPI */
-+	if (adev) {
-+		acpi_handle handle = acpi_device_handle(adev);
-+
-+		sub = acpi_get_subsystem_id(handle);
-+		ret = PTR_ERR(sub);
-+		if (ret) {
-+			sub = NULL;
-+			/* If no _SUB, fallback to _HID, otherwise fail */
-+			if (ret == -ENODATA) {
-+				tmp = acpi_device_hid(adev);
-+				/* If dummy hid, return 0 and fallback to legacy firmware path */
-+				if (!strcmp(tmp, "device")) {
-+					ret = 0;
-+					goto err;
-+				}
-+				sub = kstrdup(tmp, GFP_KERNEL);
-+				if (!sub) {
-+					ret = -ENOMEM;
-+					goto err;
-+				}
-+			}
-+		}
-+	} else {
-+		if (!device_property_read_string(cs35l41->dev, "cirrus,subsystem-id", &tmp)) {
-+			sub = kstrdup(tmp, GFP_KERNEL);
-+			if (!sub) {
-+				ret = -ENOMEM;
-+				goto err;
-+			}
-+		}
- 	}
- 
--	cs35l41->dsp.system_name = sub;
--	dev_dbg(cs35l41->dev, "Subsystem ID: %s\n", cs35l41->dsp.system_name);
-+err:
-+	if (sub) {
-+		cs35l41->dsp.system_name = sub;
-+		dev_info(cs35l41->dev, "Subsystem ID: %s\n", cs35l41->dsp.system_name);
-+	} else
-+		dev_warn(cs35l41->dev, "Subsystem ID not found\n");
- 
--	return 0;
--}
--#else
--static int cs35l41_acpi_get_name(struct cs35l41_private *cs35l41)
--{
--	return 0;
-+	return ret;
- }
--#endif /* CONFIG_ACPI */
- 
- int cs35l41_probe(struct cs35l41_private *cs35l41, const struct cs35l41_hw_cfg *hw_cfg)
- {
-@@ -1317,7 +1328,7 @@ int cs35l41_probe(struct cs35l41_private *cs35l41, const struct cs35l41_hw_cfg *
- 		goto err;
- 	}
- 
--	ret = cs35l41_acpi_get_name(cs35l41);
-+	ret = cs35l41_get_system_name(cs35l41);
- 	if (ret < 0)
- 		goto err;
- 
+EXIT|PASS|canfd_t_003.sh|[00:00:25] ||
+
+root@smarc-rzg3e:~#
+
+Biju Das (1):
+  can: rcar_canfd: Move enabling of RAM clk from probe()
+
+Geert Uytterhoeven (6):
+  can: rcar_canfd: Invert reset assert order
+  can: rcar_canfd: Invert global vs. channel teardown
+  can: rcar_canfd: Extract rcar_canfd_global_{,de}init()
+  can: rcar_canfd: Invert CAN clock and close_candev() order
+  can: rcar_canfd: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+  can: rcar_canfd: Add suspend/resume support
+
+ drivers/net/can/rcar/rcar_canfd.c | 246 ++++++++++++++++++++----------
+ 1 file changed, 168 insertions(+), 78 deletions(-)
+
 -- 
 2.43.0
 
