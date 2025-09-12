@@ -1,165 +1,103 @@
-Return-Path: <linux-kernel+bounces-814658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E8CB55700
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49884B556FF
 	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE55AC210E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595ECAC02D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE28133470A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F6332CF6C;
 	Fri, 12 Sep 2025 19:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="seTW88sX"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oIMNpUsC"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5F42BE64B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC57C28725A
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757705895; cv=none; b=qt5cMlDNa7grBot46hzyCvEOer/aAmTNdwTp7V8BVogZnXXabFabaOw34jTjQ36XvSSi6ZiG3RlGBy+15RM0sP8+MuNxfzmjCVxoehtHgZA5DrFLskm7VEBHxguO3CxXiUWRmuczJY1Z1bq09HzaDJubMzD5Bm+T9y9/P7yQXq4=
+	t=1757705894; cv=none; b=agIOvpLw84/vVHB1ZN1KpP7DFuoGt7p0VuJjx3WDwOMX7q89I6/TZidehhNkJxXx/nKCIkI1I30BIz4ija7wxMepr1OyZ2HslKeq70YRaUgAvwTfqW1wa29NMTgaFMflQsuKSWrUbnU3QbwWm3D9Xzu4+CU4dniwsRuLbfvwm90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757705895; c=relaxed/simple;
-	bh=y0VYww+M4ZzsyVZfflEm4vo49RpQMYtnYpeg4xESzDs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WG8rd9RTy0xHTp3P+M6z8CVyisZR6+Pz9V2DfpUcdUncS2pFqCw6RtPogthWBe0NiJ4NrhKRN2bF0FT9+5gAXrS7MkDAkyzOirFBuzUYI+fE/0/poVhCOPhG6lMyiQbHzqQQSJPs1XLhWOUUU93iY3z7CVWoXF93sTsPhOil49g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=seTW88sX; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b4bcb9638aso5221cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:38:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757705892; x=1758310692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hxKLJXAozeMmWAPKUjfUsQIDjzwB9fwUvrZiHvNyBbo=;
-        b=seTW88sXYv75bgkKqySKM3E4tT0AwAsdc3QurCyhpkxm1pIiiZ0TlXnlPBN0mhVzlo
-         pqtm1sKTx2VAyl0I5eaiojvGkA8qzfDSf0yscVtjHqrSZ7vEN4oRazfDjJ5LMiftzpPl
-         plMLBFitUbUYrw9R1EWDUajbOjre/qp2hjKoMy4JnFNiJF6/G1x/oZIFKU7FAjDWlvaF
-         FX6Ze3flNW0ZmULzEfGMOJKOkW4ugx/WP/suayRPnRE2ZGlswDUSz1IVN9xzTLWef/Vf
-         kLBMv6HUnMV1/iabldfqo2J4rRgXnh6hYIpo6u0l0fxSO2CWE/EM6gHWPkCeD1EYeYzt
-         dUfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757705892; x=1758310692;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hxKLJXAozeMmWAPKUjfUsQIDjzwB9fwUvrZiHvNyBbo=;
-        b=D2h80aBKapZByp1TirF81awh4SuNwnqEB7Mdgs0USZhFZtCWxuPpqgoNsixgfgXwSR
-         flxnalcSKjI4+eNdUBCu1hf8XgA7SkWtkzwl+9YpK9NBdA8qQ+DTzU/TLnZtfKrgg+if
-         7tywFllEvBwUQ3ycQu9kwJM8cieHRkPSOY0lpXIuUUq2PWWgttVKn31qhz5oj4dD6Wdy
-         skU0dahpV2D3dUFKwroNwm1PZwOHtFthICwEqVeheVBYXKmB4ZuKlqfCp5Vih58bGdgr
-         Ic9QSaXMFL8ovuNjVt+13pXQgH2a7MXeEORdekcaV5aT+NFiMEh4jHZP0L2NyRizfi6a
-         iHrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAqcXSrcnO4XEv82dkHseWNCtOcjN1puKA58Jv36091w5v/O8fxiwXAZdMqavg/ymv+mPBiNJJoWbg86Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTCL8YbNCrJuCyjVVy0rlnFNB32Br8IrnqR2Dd33yl+WyN2AeU
-	OtOmWAC42VvmSr+GEH8cLy/6P7nSBJDFgBOnUKTieddGXAhvd3YVNjHZvz4Pb7hwfiIAPgQC3fQ
-	JFvxgK2i7xbqb4x816Xfah1J8l0R4jdE16jnybino
-X-Gm-Gg: ASbGncvb584DekvLaD7O+thFunLHq87KJTTaJnIORpGbKzVFMH5qRxHhWz1bakMRtr9
-	kUQEEx5Ic99Ah9nGa/X6ynjbpIVcsoiZ99SF2TQiNHMDwrAQ27IRWa3rTjce/QE0em5m07eA4Hp
-	E6kHooErQHuqwKtM6o40Sl7U8eM0TqeR/4MmlT8ce+63Xp3aXZubeVo+10efz2s/UhQJJYqI+HY
-	q5CCkK9JLCJ82XZqIRnsyk=
-X-Google-Smtp-Source: AGHT+IFmFvmuMn+gst9JeecVjoOqDASQ8FiGmAOvs5QtdO3E6xy+fy2CjLC5X+Z4o1NPGM2DESnpaITFOKT0WwBaSWY=
-X-Received: by 2002:a05:622a:1a08:b0:4b1:22f0:8016 with SMTP id
- d75a77b69052e-4b78b78b205mr803781cf.2.1757705892211; Fri, 12 Sep 2025
- 12:38:12 -0700 (PDT)
+	s=arc-20240116; t=1757705894; c=relaxed/simple;
+	bh=kVdVoE4gybFTANwmPEdaeati0u3esKOiokiwd3mxlRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CdIfHTTs54m7amIAQ+HoQ/8p0UjK+q4Q5M8Z6KVm75xr5uN9mN6o2DueVbkI1I+pGAnCmC3yyQk1aCDLUPPWbDdARjAdMGB2UpKM7W1VDoDBZnDr/t+galwV30qh8hQUbNto/isFN7uj6ymNbKmutMyHyH7+wGeaIPYLDZrQlB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oIMNpUsC; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6f3b9149-2a2d-4532-b38f-946b98e72000@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757705889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vX5FNfh32HsPx94JItMdCOB+Unc0XHjjtrYR8Ey18iY=;
+	b=oIMNpUsCfpeP+kxppfx25DKocOWjO4sb0uvbGFmLKlcjXViKRfGGN+3S4gr3W3RAFffmX7
+	P7c8jKJ5A5AzZDHSAQCWM9Uv0KSQnCDIcGKZ5v/cJKWMD4Shuuz4wDWg+HBDeJwT5dp0fd
+	xGN/d7YquKZfbC5iNORdRvVAI+F2mkQ=
+Date: Fri, 12 Sep 2025 12:38:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909234942.1104356-1-surenb@google.com> <20cafc1c.a658.199394de44e.Coremail.00107082@163.com>
- <aMLvCCZbmpSE/aql@devbig569.cln6.facebook.com> <902f5f32-2f03-4230-aab0-a886fd8e4793@gmail.com>
- <20250911143132.ca88948c48df874f71983218@linux-foundation.org>
- <CAJuCfpEoWtgv8k4vApkGsNNUYFBnvS-N2DPQu2JrreCUPbT5dA@mail.gmail.com> <aMP7g7ts8n2Gubql@devbig569.cln6.facebook.com>
-In-Reply-To: <aMP7g7ts8n2Gubql@devbig569.cln6.facebook.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 12 Sep 2025 12:38:01 -0700
-X-Gm-Features: AS18NWD6AauY0FbZgSwcBpoAh8LOEeedT2LpwLIFm0sZjdQgHEGT9i9EDpb1gFY
-Message-ID: <CAJuCfpEy7kQdDzU9GR6T=nz7HB6EnSkfx3vXmTBEuvJPqhxyfQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
- /proc/allocinfo output
-To: Yueyang Pan <pyyjason@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Usama Arif <usamaarif642@gmail.com>, 
-	David Wang <00107082@163.com>, kent.overstreet@linux.dev, vbabka@suse.cz, 
-	hannes@cmpxchg.org, rientjes@google.com, roman.gushchin@linux.dev, 
-	harry.yoo@oracle.com, shakeel.butt@linux.dev, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>,
+ edwards@nvidia.com, hdanton@sina.com, jgg@ziepe.ca, leon@kernel.org,
+ leonro@nvidia.com, linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <68c3a49a.a70a0220.3543fc.0031.GAE@google.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "yanjun.zhu" <yanjun.zhu@linux.dev>
+In-Reply-To: <68c3a49a.a70a0220.3543fc.0031.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 12, 2025 at 3:52=E2=80=AFAM Yueyang Pan <pyyjason@gmail.com> wr=
-ote:
->
-> On Thu, Sep 11, 2025 at 05:25:12PM -0700, Suren Baghdasaryan wrote:
-> > On Thu, Sep 11, 2025 at 2:31=E2=80=AFPM Andrew Morton <akpm@linux-found=
-ation.org> wrote:
-> > >
-> > > On Thu, 11 Sep 2025 12:00:23 -0400 Usama Arif <usamaarif642@gmail.com=
-> wrote:
-> > >
-> > > > > I think simply adding * to the end of function name or filename i=
-s sufficient
-> > > > > as they are already str.
-> > > > >
-> > > >
-> > > > Instead of:
-> > > >
-> > > > 49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device=
-_create
-> > > >
-> > > > Could we do something like:
-> > > >
-> > > > 49152      48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_c=
-reate(inaccurate)
-> > >
-> > > Can we add another row, saying "the previous row was inaccurate"?  I
-> > > guess that would break parsers also.
-> > >
-> > >
-> > >
-> > > I don't know if this was by design, but the present format does provi=
-de
-> > > extensibility.  It is basically
-> > >
-> > >         NNNN NNN name:value name:value
-> > >
-> > > one could arguably append a third name:value and hope that authors of
-> > > existing parsers figured this out.
-> >
-> > Actually that sounds like the best idea so far. Currently the format is=
-:
-> >
-> > <bytes> <count> <file>:<line> [<module>] func:<function>
-> >
-> > We can adopt a rule that after this, the line can contain additional
-> > key:value pairs. In that case for inaccurate lines we can add:
-> >
-> > 49152      48 arch/x86/kernel/cpu/mce/core.c:2709
-> > func:mce_device_create accurate:no
-> >
-> > In the future we can append more key:value pairs if we need them.
-> > Parsers which don't know how to parse a new key can simply ignore
-> > them.
-> >
-> > Does that sound good to everyone?
->
-> Yeah I agree on this proposal. We can keep this convention.
+On 9/11/25 9:42 PM, syzbot wrote:
+> syzbot has bisected this issue to:
+> 
+> commit a92fbeac7e94a420b55570c10fe1b90e64da4025
+> Author: Leon Romanovsky <leonro@nvidia.com>
+> Date:   Tue May 28 12:52:51 2024 +0000
+> 
+>      RDMA/cache: Release GID table even if leak is detected
 
-Ok, if no further objections I'll post the next version and will
-document that v2 allows additional key:value pairs in each line.
-Thanks,
-Suren.
+Maybe this commit just detects ref leaks and reports ref leak.
+Even though this commit is reverted, this ref leak still occurs.
 
->
-> >
-> > >
-> > >
-> > > Whatev.  I'll drop this version from mm.git.
+The root cause is not in this commit.
+
+"
+GID entry ref leak for dev syz1 index 2 ref=615
+"
+
+Ref leaks in dev syz1.
+
+Zhu Yanjun
+
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13fc9642580000
+> start commit:   5f540c4aade9 Add linux-next specific files for 20250910
+> git tree:       linux-next
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10029642580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17fc9642580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b52362580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b41642580000
+> 
+> Reported-by: syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com
+> Fixes: a92fbeac7e94 ("RDMA/cache: Release GID table even if leak is detected")
+> 
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
 
