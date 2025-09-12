@@ -1,140 +1,150 @@
-Return-Path: <linux-kernel+bounces-814741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FAEAB55806
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:05:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B20EB55809
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC63A7A25BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:04:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 209437AE3A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB5E2C11DD;
-	Fri, 12 Sep 2025 21:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0695928C841;
+	Fri, 12 Sep 2025 21:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wqFLv+Vp"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YgG5eUwo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A8B41C63
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7304334363
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757711132; cv=none; b=KvqJ/WQto3Cegi45L4yJgns15h5x2fz3Dm4drPZyJnbx35yj9ML8hkKDO0ui900k44JHINJrrsGvUcd9dbb4YEKL8BcL0HeKHF4ZULp5s2wkDUiH5oz+kRzK2DObYct3i5gHZGAUAcVbdQLh+9T5LaBI1DpLtBbQmOVP37VEAv8=
+	t=1757711139; cv=none; b=nldnH08kNLVYUsJQej+n4+lZjvGnkPXGhL2twbCjt2HlnCVLybbFiQCsToQYQq6zf2ig0ZDuG2AZifauU99wirxWQ2BXf15WHPInXkrmCryj3eUCG+2wKS8CAX/WQ9Sqh9KUr6H1j4AQc10xv+ktSuAktOXjcbGS24cA/OkJLhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757711132; c=relaxed/simple;
-	bh=JYX5EldBPy0ZL4Zuzzinq9pqXW3Wh+8F35d8+PWqnLc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fabzM5gyuvqhA1icx2gw049u05xJUgmHhxNIOZReaxcqYLxzyZcdooLVnRrEg9ZafR2DbuWzgFZS7yz+l/ISCvHc+QuGyy6YxIi8m72n4Ggmu/TZYvQdqM2ccPY1y12lJNJzWUp3gC1NeJSuuCz9wj2+hZYb4zIM9CHDoFQd3WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wqFLv+Vp; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4b350971a2eso11231cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:05:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757711130; x=1758315930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LS6N8Phvjq9J+fDOffQfqEhS8X+tEPx7m7a32OEvstM=;
-        b=wqFLv+Vp2IZXLwXVv6S0HyIBQ/fYnarPJevYqMImOctn8jVAUCm6OEwfD3JTbqi89m
-         wYohexE9DeW/kD9uIDbjijh/Y6ZPXapYpuwQgoGhYq+7BdRaGkcN6TrMyGm3aC/RiU9C
-         8T1D6HMdvwGhfh/8YnkF2eg3YyhvugYNUo4MmfuGTP6wfHmBY3MDvnQSPVCATlJ8jFIe
-         Sa8CQSxG2dS+7QYe284HuaCSdCfxYa7yaymJfyNf0nmyaY+gJ8yXDzgIUvQiZayof0L7
-         8AeE4+ldw2hi8iFNyPMH21LaZoZ9nUb7xhgleVSmtR6Y6JbBe0q+RevYLFLpU/EY2TQ/
-         x7LQ==
+	s=arc-20240116; t=1757711139; c=relaxed/simple;
+	bh=tAKgUDssB2Zg+/L2UJaRq55G33qRsupCF9DvLWF0uL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jGPZDQg7gCKbKh89lw/Z0vDOs+wKOkD2wbEHyhvxRNyyGuulUghyEz3XZbiwYTMn30danhk8Qn1fq5w+6eWZYy0jb4Y928NoeAKOsS70KbsI/UKYXiim7Djp3OcFJoSfpqjTm3IAgcyckmwTzg9TOoQ9uiSEEz9TxxZhnWx5Z7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YgG5eUwo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58CHNIqm012842
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:05:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	f6x45dTFSIMJV/gJWuKckpagRMD+esitL+Lw3qTQiUk=; b=YgG5eUwoIypKISQz
+	S3iZ8dryEFCU7L9bIY5x1iq3uIv6ymIkOmPeNnHca4X+3aVlPvagBFvQv9khD2f7
+	dbviXKSxuMoAaglxDZkFhI/6RweerfDJxanl2R8S/b4UDKBUKuFj5/wXZMVPnvAs
+	PkiaULnpAHyFMGtnxEDCIpinpiE8bEJxRgGEZjdQQp67f9hN0Vd6RCC/j5MO48lQ
+	McODbKSYYi5XBZ/PtaZyJUd8q6ESW6orIrH1a/MH5BgzwmxP4F2lB1ern6n2Egoy
+	0YsUd9GOkgh20tdc8ZZhVa/LiNH7s1gdQuMAgu11leBEqlW1QGkxA2Hk8XGP4N4l
+	0d3+Ng==
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 490dqgcjkc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 21:05:37 +0000 (GMT)
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-71ff3e1256cso66026326d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:05:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757711130; x=1758315930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LS6N8Phvjq9J+fDOffQfqEhS8X+tEPx7m7a32OEvstM=;
-        b=rZ4sPeB0qOZ3KgKJOJf7OKExCUO/LmyW5i7H2JlzZG3nS134v/4YRGnJOJlf3lfQ5j
-         SC/wW5c3rVk+FI+GHSh/uSyaoayYLglsrN2KPV9yqYOtkg3zRSpCyuWIFEqa5ugrQ0Vz
-         /fZ4nqDbDj9xLfto1bT8XJY2QtOP/NJ1He0evIDzuiN5z3iDN10FHj/+wUOH4qAB+fdC
-         I8mnS/nSARcrGCS6QXsYKdJaSocbn7ReRLTavem5LFtP9xoJWKD7gx786b9k/UDbzZF5
-         lqKo6rCpVUUGY54S9TGO8bDbsi6H+C2W8zvxVQM0m9bYXeegNeK8s23k4G1BOzPv/3S2
-         RUGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsTlnKKTXfkKs/E4/Rh2jrpxtSRuZyqzakgNhWT2RuAdpZtJ1zAllnpV8hHZLuyung2q0kwoPlfGJ1l8M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+uiTbt7ieeilIijw3YyIqUZxIqa5VIPoxwM537n3Y+CO2E7/T
-	YZH7CC4Vb2Ri/ND2dBAnLKIRMqQVijFYsF1CBlhtH2tDP1JwiWSStoRPKR33qGIv3sMevrvwcqa
-	sVkWF/oXVOCetZMfd9WOR8El9zIOehF9nm7rDnirw
-X-Gm-Gg: ASbGnctJjNzzEkj+2MN5apKie69DhBsDpV5zMhfWy3xUKd80rdMftR0MfI9qQ6sgMnp
-	INKq2uyoRQ7uFSCqFBEIuC0bWlILoHg7UEIzLNcbK+nurQRG3qstiqZExyYN1evIXKjk3jYelUQ
-	t3HVLTOsA4eA3fVn83RGBxurkbbvTkU4oM6nQuyiTPWH6d+baWtnKkGTkcodb9qZxwWRfnQkRNW
-	qxVaJRT2P5uxFgvGd+paZ4=
-X-Google-Smtp-Source: AGHT+IHb2K2xXlIpqcAzf1xMj6i87zxQ9C/c1C073ZrqSL1hu65ba+HrjVU/5m45uOUXUsbx8ELp9JxVxwF+qaMRAJs=
-X-Received: by 2002:ac8:5910:0:b0:4b3:487e:741b with SMTP id
- d75a77b69052e-4b78c6df940mr338881cf.4.1757711129577; Fri, 12 Sep 2025
- 14:05:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757711135; x=1758315935;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f6x45dTFSIMJV/gJWuKckpagRMD+esitL+Lw3qTQiUk=;
+        b=to0gAyZME8qUUKdPx18VlwF9wXzWiST4i/J7SLw+mTmMZisNdNgBnhD8p8XHZKzLlm
+         yK/1tNspuZmM1qgm/hn3r1myLTysd45Psc1Db/MaW7Dtl5LJuBZZLsq22C4wXndFnKO7
+         o1uaKV9F5jw5BMKVscMu641DM+pHr90LjRAde7mRbvFqG3oSCoaILmgDm0cXYWVYIrxw
+         lYieQ2Ljrv4U09z9aVFt4FcbmnT2elbucdI5vUOjXPpJlCO9pcyS7vBs3R3OGx0rrCz3
+         9nmtyKtOmbGBj5zMEOI0inULY4il1zwqiNLqL7FApFJ1wqy04atrfdViZ0M5TWPH7Lzy
+         nnGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxKdOiAblrmmbrpp0UnvhdCnupTLOHgnkaaoZfISX+sfpFXwvky52Wx0bvAuZHJPKGTLJboXK4Xw0UBhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI55IwkFvIuhLUcUo4uFx+xKC5l7bB6i0rJ2+JjK7V40m5kFXN
+	CygoSOv/Nx/V+satH+OuPh0khk0wQ1Tnbpaf4klvfZljU0vXsScHh3HHFwDq+rtZyFwOzm1/N+i
+	1TqAAdJFtAwAewzJljbhGoObiqxFaBz54JycxUGfhLSQt9d4KiDYJzwu9ChWSx/0g4aySdU3HJm
+	A=
+X-Gm-Gg: ASbGncvZvIlCCVOnrP3jgk6e4ZXypCUF5ckq2YiaTsLf4/ZXGHuV5enlAhx9Q1GPzD2
+	nYMkxznVPL4x9Q9GTFoybTUaX0R8lQtras3k9F0104G5MjivBMV4BJEIUqrwZtePSro7E4Vp6YS
+	bQTy26nLavCilZSbVaFHK1B/IdMpRz6wI++IJins89VAeZ+XUg+vLLgsnaAoXgNBukhG+ARiLJH
+	nEuulQFh/+4BXrT/DtA6akW3HXhgyithMyv9RVzEtrljh4HbUn4hy/stl6GYcNwnU3+xXoWSt1n
+	vrlRd2KSabrqZvKdrvV7yY5lHIc7VztzvvWg71RTt5UVc+Ki/Z5z2PIsdH9hBqTU1grpDOoJhi3
+	RKHstKIbXBbdTtwAFYdaAbS9Xmzk9Mw/gMVtNmSMosDQsWB/I8sQX
+X-Received: by 2002:a05:6214:5298:b0:72e:d34:573f with SMTP id 6a1803df08f44-767c215fe50mr70481056d6.39.1757711135347;
+        Fri, 12 Sep 2025 14:05:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHnPEfmxh9SvYDKqxVQYcOajqc191SHlEL2DXweV7tBIxlxuRMvWPEoACAWRiuFYSJsB6Xgsg==
+X-Received: by 2002:a05:6214:5298:b0:72e:d34:573f with SMTP id 6a1803df08f44-767c215fe50mr70479806d6.39.1757711134456;
+        Fri, 12 Sep 2025 14:05:34 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e63c63e47sm1413683e87.80.2025.09.12.14.05.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 14:05:33 -0700 (PDT)
+Date: Sat, 13 Sep 2025 00:05:31 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Eric =?utf-8?Q?Gon=C3=A7alves?= <ghatto404@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 1/1] arm64: dts: qcom: add initial support for Samsung
+ Galaxy S22
+Message-ID: <sbushql2kigkpuqdgt5w2b5jdim5h2jk3ncestgfgyaloqswpk@gf4pakjdcp53>
+References: <20250912202603.7312-1-ghatto404@gmail.com>
+ <20250912202603.7312-2-ghatto404@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909233409.1013367-1-surenb@google.com> <20250909233409.1013367-2-surenb@google.com>
- <c2efc885-8b23-4ef9-8eca-05f17e158fb3@gmail.com>
-In-Reply-To: <c2efc885-8b23-4ef9-8eca-05f17e158fb3@gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 12 Sep 2025 14:05:18 -0700
-X-Gm-Features: AS18NWCOujUdYpmOTJkjMpH1lwHsOYcF8mubnSwHOTjZmB4XICE1Z6kVVsS-ZQ4
-Message-ID: <CAJuCfpHf6shxs0A1dmRuYjjU-wU8p=tFD3BO43DTYbZ0U=rFMQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] alloc_tag: use release_pages() in the cleanup path
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
-	mhocko@suse.com, jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com, 
-	shakeel.butt@linux.dev, 00107082@163.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250912202603.7312-2-ghatto404@gmail.com>
+X-Proofpoint-ORIG-GUID: pf5ES3Q42lRAl2XgPEzkq1A9ivMa01vj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTA2MDAzNSBTYWx0ZWRfXxPKYTd+qJPap
+ BYbG77Xrs8OW2WeZ4+AH348zpNx53pANsVTI7kq7Y+iW36mSizN5uls7T4wW76Khp/ZvqyBmRR9
+ 8lMMuJxK6830uSH7+eqdZ6MAINZ7RhAL6qlMct4+/k4kcwoGoXB1gX1uD7lqqGBklSKHi/K5hlj
+ zXYowD80H/BVj6OLFeOh3GgwGU8CubnDLPDOqLiH91zOm+OGEIyGQTHkHucmW9Es5ZfsVYy/+5i
+ dmXUuipqiqyBs/GEt+5AdikF3tsQrc+HFlGo6AtzKxoWHJ5Xwt60JBtzxGA4+3CTKbUitJYlZlm
+ x77G3+Rvjc7APNEffhuhmqCqS292U6iJ4Onpw9Gacs6+orT53HSuCtm02YeltDSKXb6CHyn8tM6
+ sr3ddzNC
+X-Proofpoint-GUID: pf5ES3Q42lRAl2XgPEzkq1A9ivMa01vj
+X-Authority-Analysis: v=2.4 cv=N8UpF39B c=1 sm=1 tr=0 ts=68c48b21 cx=c_pps
+ a=UgVkIMxJMSkC9lv97toC5g==:117 a=xqWC_Br6kY4A:10 a=8nJEP1OIZ-IA:10
+ a=yJojWOMRYYMA:10 a=pGLkceISAAAA:8 a=EUspDBNiAAAA:8 a=fUB9F6JP8phhdykgREMA:9
+ a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10 a=1HOtulTD9v-eNWfpl4qZ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_08,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 spamscore=0 malwarescore=0 clxscore=1015 bulkscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509060035
 
-On Wed, Sep 10, 2025 at 1:49=E2=80=AFPM Usama Arif <usamaarif642@gmail.com>=
- wrote:
->
->
->
-> On 10/09/2025 00:34, Suren Baghdasaryan wrote:
-> > When bulk-freeing an array of pages use release_pages() instead of free=
-ing
-> > them page-by-page:
-> >
-> > Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  lib/alloc_tag.c | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
->
-> Acked-by: Usama Arif <usamaarif642@gmail.com>
->
-> > diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> > index e9b33848700a..95688c4cba7a 100644
-> > --- a/lib/alloc_tag.c
-> > +++ b/lib/alloc_tag.c
-> > @@ -438,9 +438,10 @@ static int vm_module_tags_populate(void)
-> >               if (nr < more_pages ||
-> >                   vmap_pages_range(phys_end, phys_end + (nr << PAGE_SHI=
-FT), PAGE_KERNEL,
-> >                                    next_page, PAGE_SHIFT) < 0) {
-> > +                     release_pages_arg arg =3D { .pages =3D next_page =
-};
-> > +
-> >                       /* Clean up and error out */
-> > -                     for (int i =3D 0; i < nr; i++)
-> > -                             __free_page(next_page[i]);
-> > +                     release_pages(arg, nr);
-> >                       return -ENOMEM;
-> >               }
-> >
->
-> Maybe this can be done in free_mod_tags_mem as well?
+On Fri, Sep 12, 2025 at 08:25:57PM +0000, Eric Gonçalves wrote:
+> Add new device support for the Samsung Galaxy S22 (SM-S901E) phone
+> 
+> What works:
+> - SimpleFB
+> - USB
+> 
+> Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>  .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 145 ++++++++++++++++++
+>  2 files changed, 146 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
+> 
 
-Good point. I think I will respin this patchset with your suggestions
-and will include one more fix for an issue that Shakeel just reported
-(see https://lore.kernel.org/all/CAJuCfpGUjaZcs1r9ADKck_Ni7f41kHaiejR01Z0bE=
-8pG0K1uXA@mail.gmail.com/).
-Thanks!
-Suren.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+
+
+-- 
+With best wishes
+Dmitry
 
