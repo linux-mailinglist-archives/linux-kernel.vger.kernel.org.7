@@ -1,174 +1,138 @@
-Return-Path: <linux-kernel+bounces-814717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B2F5B557AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:36:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478E7B557AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21FB3AA21DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:36:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A533A1D62DC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A582279DB7;
-	Fri, 12 Sep 2025 20:36:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ecW4poqz"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2066.outbound.protection.outlook.com [40.107.94.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5D62652B2;
+	Fri, 12 Sep 2025 20:35:30 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2FE72DC76D;
-	Fri, 12 Sep 2025 20:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757709367; cv=fail; b=GlRUqHj88LazDyjA2m/RKgb6jKiVv5osIAcisEailuTzvHQYf/R3d1PFq+FoDNPx3BgSJXw988FeKTw6l6snyBOc/ywtWbBuLkt2m69b4kS/BeGYNQUgBRvy0jlvhDbI7XFZTXwDs9LG0zqd8sVn6uke1v0bv8gIblimAoEIn1A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757709367; c=relaxed/simple;
-	bh=mh9qQag0Fi5XO0SRXRj0skHAba9oKk4Nkk8zKm3MFoA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NP5UWY/x/6X2KN8jjc6X7Y4C85lwC4KtSCuK2pfAlbhokrZrrzEtbyg7v/Kg6DkOAMz9/kxe22rOSUulbcA8P81YblCMMF+S32+7q+L5G73UO8cC0QpfXbBuaOkE7DT+mTghIZaNYkf6zrt+hRWtDsati395nHGssMlJImcj4E0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ecW4poqz; arc=fail smtp.client-ip=40.107.94.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M0twCfMNlxmV8rIJmL9oedoyTvtAFFfRnDiU9hGU7F/Q+vpXflsKmmlNCkIL6kj80RgXOu9auG08DQicfo5KowFubKttRHF6mQOk82bQlkBnEs97QNvdnqaGPfh4S6eeDp3x/5XuUx9ZDcOuco/HsFjpVI3z7+E20BvHZ8vKfBfuTuPVuskbqpJ412V9N8/ilLqOKDa6gW6rwZxjhw9hQgcpGF1jsH97wBcETRnpc9nCHuHBhPyh2SjD+nVbTUJvvGJajRC1MHJQooiVRz07UnjRL+BBYqBbFRHXQ9dYybGV7XqMgNVg59DXLIMKavZILjjjlxkkY/VRFIwOByBcnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bfqnl+H42l3Iq9mbj698nFahwkklG5kFk+f+eCPOpFo=;
- b=KQBnKeUUDD/hqwuCM/AlzIEwcm5FKB1le33IytDpb30/UaCEhRAc339mXJNy0xZzKtLO4Y7As35SgImz0aBeBXxUtdi8FRh0AJTFKcY5a0dNNx4ghdWnXfqZmQeLGZhr+GtWJZLJaL7V3vmqkRFkKlOz2X0xr6DQ//DjL1MpQF3lQKJQwSs9BNWSAyDZsya0Dnz0hcUcxGY2OH/fNaldwiv7b0pV0PYZA8E+5mZ+uWrvHMSiijW+lJffKNa6BM6r8AlOTrC2OBNEx8yWe1yjs0PqSa+ksTZTEvH+xxqO/2m0IS3ojQDWcWGYtK+wgxfIH+cka2IqKv4wWOcu339HSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bfqnl+H42l3Iq9mbj698nFahwkklG5kFk+f+eCPOpFo=;
- b=ecW4poqzkXSAwpWpLwD4DTYjPo318ASMWVuzzibyy4pHa+K7UvZUbyP2V8BMa1n1KSFtL5ogwsOVZ5b07+5SQ4zzNjAkVyM6sRlA6euBi1MyfJAglIDyVpdfRG7BDUkmDkCHHCv1vAIYl5LimtnXwFiiW9LkRat+FiKdnSJOWF0=
-Received: from SJ0PR03CA0054.namprd03.prod.outlook.com (2603:10b6:a03:33e::29)
- by SJ2PR12MB8884.namprd12.prod.outlook.com (2603:10b6:a03:547::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 20:36:00 +0000
-Received: from SJ5PEPF000001D3.namprd05.prod.outlook.com
- (2603:10b6:a03:33e:cafe::88) by SJ0PR03CA0054.outlook.office365.com
- (2603:10b6:a03:33e::29) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9115.15 via Frontend Transport; Fri,
- 12 Sep 2025 20:35:58 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ5PEPF000001D3.mail.protection.outlook.com (10.167.242.55) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9115.13 via Frontend Transport; Fri, 12 Sep 2025 20:35:58 +0000
-Received: from ethanolx7e2ehost.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Fri, 12 Sep
- 2025 13:35:57 -0700
-From: Ashish Kalra <Ashish.Kalra@amd.com>
-To: <ardb+git@google.com>
-CC: <ardb@kernel.org>, <bp@alien8.de>, <linux-efi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <thomas.lendacky@amd.com>, <x86@kernel.org>
-Subject: Re: [PATCH v4 3/3] x86/efistub: Don't bother enabling SEV in the EFI stub
-Date: Fri, 12 Sep 2025 20:34:43 +0000
-Message-ID: <20250912203443.16159-1-Ashish.Kalra@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250909080631.2867579-5-ardb+git@google.com>
-References: <20250909080631.2867579-7-ardb+git@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B3F2DC76D;
+	Fri, 12 Sep 2025 20:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757709329; cv=none; b=OmaD9LrWQNWuUlBp/4vMPJUatUX9JIWTuqEopjEAWL87nItzUR+0ORtaWcsilOA43L4XxkWRPOZiq/xXVkKmS0zMwkBnGSOirk2WHPXt/5U2lczt/6Ptqabd7fjCy1ICJncwge517DjYIhBzqaZiP+iRfdw5eXSOrVtWGPkIKZY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757709329; c=relaxed/simple;
+	bh=pI2xXThVA2j/bMJn7Qrz6ZQIqgg27DQdVGJLHXZHBxs=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=oLddCUsoq2/I5YRHU9COVhBrVbdpm8OKVWzZw8/6HVwtbhh5UBZSGiK73BuxYcXEWfNIthMK6KHQ6c+2iWhRVeTr0qTZnFc7ni6Y8A1E3wqcyAS/6hlvOEoFwl4efam4mkQrQOdAFzshY7CC/2vkjBFjf046Tbtdl9eLybwt9JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from [192.168.2.102] (213.87.146.251) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Fri, 12 Sep
+ 2025 23:35:07 +0300
+Message-ID: <b6ebf19c-8328-44de-a695-157061a9d8a8@omp.ru>
+Date: Fri, 12 Sep 2025 23:35:07 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001D3:EE_|SJ2PR12MB8884:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6583635-b69c-42f8-4a61-08ddf23bfb01
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0r9/XcMO67hzJ493yJL8RjHh9yMvcMEd7wXE+Jh+o+KM5kPbxj8U/BhGPZzJ?=
- =?us-ascii?Q?C8w0ZbLjwKmNKw9dBadbveCO3K1ZpAAfHXOPTpxGF+HUQVHRFtbNxN7tzWtG?=
- =?us-ascii?Q?qtCtVosKxfltT+Khm2TeIFo6zeH3xCsZ32W/fIyy9MwrZhlymQNHbnsy/SDk?=
- =?us-ascii?Q?v60Zx3TbzBT8WPyy0bvUL0jbnFi+AN516TGH0afq6WDF/mQh3wWTnUXJ7NS0?=
- =?us-ascii?Q?fF3Nc9d6MbEOZOTb/G7CNigntInuhJMVNX9f8NyomdEQzHNW8giHjUstYET/?=
- =?us-ascii?Q?59jEZk1Hrnn3CwHmfjpvlImnhlXag7ge96K+95+FztS000zAzUtn21O7QtGg?=
- =?us-ascii?Q?SSTqNTW1pt4l7Fwzaes4eNoFR1OkTsxm1uA3vwqL9eejQ0idw8oRuKY7MkHH?=
- =?us-ascii?Q?A16vdZmapr6mIrECMnKIUladzsXMBbD6fMoCCFdH7FlYp/dRWN7+vW+YayiS?=
- =?us-ascii?Q?XMOqEDpBU5SmdQsu6dd5eRukC7chw+JnrMBZglHcHSXjftTOWsTY83OddVDR?=
- =?us-ascii?Q?k+T/Kf+J9IJkBwBN16ct0lXKPD2BOnqbXmot1o5U4fbmqtOVsJmfp1PYS6g2?=
- =?us-ascii?Q?2Ake3uJ/N3tTduJWA+yn5XE5fT4R8kUDjdlb0BFUS0Z98+Y/+ZbMh1znghEK?=
- =?us-ascii?Q?081Pur+HEjAtuGPkr8S5RLfbxwNb7lA+lKe2a6mEIKBYjV5XEFcxSXK1LUZ0?=
- =?us-ascii?Q?fZNzp+aRt9XiHJkUyhjkvwo31t86DWadD2rz26e2O2iGIw46q0Py1KJaORqY?=
- =?us-ascii?Q?8DbI9KVIKe6l+JMsyyaycjuHiVq+6pvuaHzgyaEvB/xLmIuVxQOLvF1HstQx?=
- =?us-ascii?Q?2feBVYLpY53jjc9t6ktrjMeR4/dI9230dQHDPujX8b1mhb2SbXBWr5w+gyK5?=
- =?us-ascii?Q?qU5tLQickTCBGO0OTFiDVTc+URiwzOsTQjEJIHxXuw2On/Pi7MK6H1uXCiab?=
- =?us-ascii?Q?ggdypCq/2aMuvTJ5JyslMaz5vplO0XT3s6p6LoG0EPcE7PoWA/nZx5sXdsyn?=
- =?us-ascii?Q?A1b+uLLc/sqQJNu/wqhAbGnrjl25/tCuPRV1eN9u1teng8iyP21VxvGOiczF?=
- =?us-ascii?Q?GoHTNGwkA54obR1qMJREWhwbuXPw2QiTP9liycNV7KZbVCmiaafGAH4RLH3o?=
- =?us-ascii?Q?UqlrFOiKIffpriOxdAFS6Gp16BP1PKJ5HUJS28kUJOf/xCCgTsaJRF9beF7t?=
- =?us-ascii?Q?UtQRj3WS46m7VUKkOXK8kvjbkvg4CosSI4/+Mp45jHBiUbLdPJF6bmIjSGtE?=
- =?us-ascii?Q?KjQxRUVmwR5fpkxfMLaMzELzXcAnurmnWcW77gPbguNteO76LbhsaJ0sOyuX?=
- =?us-ascii?Q?M9/pceXcqomOlKsH18CXgPlk3WjHGz4WKgNANJlCZWG7X8BxpLc9fX1WzrkG?=
- =?us-ascii?Q?rpw+KBFJbm73ObDajhc9/s96yeA8bPJVtg6VhrGVJ5Qx1eQlzF2wPtCTmZZ9?=
- =?us-ascii?Q?irjNrfaS7zdiJbAJhWQeh6nJ8KRweBgLO4ENvUezV7f88TIU0/lEO+kDTPFN?=
- =?us-ascii?Q?bIbGyG90AP6iHZiMYf8Ny1ze6tmvfLDbaBkm?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 20:35:58.3283
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6583635-b69c-42f8-4a61-08ddf23bfb01
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001D3.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8884
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Henry Martin <bsdhenrymartin@gmail.com>, Sudeep Holla
+	<sudeep.holla@arm.com>, Viresh Kumar <viresh.kumar@linaro.org>,
+	<lvc-project@linuxtesting.org>
+From: Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: [PATCH 5.10.y] cpufreq: scmi: Fix null-ptr-deref in
+ scmi_cpufreq_get_rate()
+Organization: Open Mobile Platform
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/12/2025 20:12:11
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 196228 [Sep 12 2025]
+X-KSE-AntiSpam-Info: Version: 6.1.1.11
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 66 0.3.66
+ fc5dda3b6b70d34b3701db39319eece2aeb510fb
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_uf_ne_domains}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info:
+	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;omp.ru:7.1.1;127.0.0.199:7.1.2;213.87.146.251:7.1.2
+X-KSE-AntiSpam-Info: FromAlignment: s
+X-KSE-AntiSpam-Info: ApMailHostAddress: 213.87.146.251
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 09/12/2025 20:14:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 9/12/2025 6:07:00 PM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-From: Ard Biesheuvel <ardb@kernel.org>
+From: Henry Martin <bsdhenrymartin@gmail.com>
 
->One of the last things the EFI stub does before handing over to the core
->kernel when booting as a SEV guest is enabling SEV, even though this is
->mostly redundant: one of the first things the core kernel does is
->calling sme_enable(), after setting up the early GDT and IDT but before
->even setting up the kernel page tables. sme_enable() performs the same
->SEV-SNP initialization that the decompressor performs in sev_enable().
+[ Upstream commit 484d3f15cc6cbaa52541d6259778e715b2c83c54 ]
 
->So let's just drop this call to sev_enable(), and rely on the core
->kernel to initiaize SEV correctly.
+cpufreq_cpu_get_raw() can return NULL when the target CPU is not present
+in the policy->cpus mask. scmi_cpufreq_get_rate() does not check for
+this case, which results in a NULL pointer dereference.
 
-If the EFI stub no longer boots the core kernel via the traditional 
-decompressor and jumps straight to it, there are some specific things 
-which i see are being setup by the decompressed kernel before passing
-control to the uncompressed kernel such as calling sev_prep_identity_maps()
-as part of setting up the identity map: 
+Add NULL check after cpufreq_cpu_get_raw() to prevent this issue.
 
-From sev_prep_identity_maps(): 
+[Sergey: resolved reject (reordering the local variables).]
 
-The Confidential Computing blob is used very early in uncompressed
-kernel to find the in-memory CPUID table to handle CPUID
-instructions. Make sure an identity-mapping exists so it can be
-accessed after switchover.
+Fixes: 99d6bdf33877 ("cpufreq: add support for CPU DVFS based on SCMI message protocol")
+Signed-off-by: Henry Martin <bsdhenrymartin@gmail.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 
-Won't this setup in identity mapping be needed to find the 
-in-memory CPUID table as this won't exist if the EFI stub boots
-directly boots the core kernel skipping the decompressor ?
+---
+ drivers/cpufreq/scmi-cpufreq.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Thanks,
-Ashish
-
-
+Index: linux-stable/drivers/cpufreq/scmi-cpufreq.c
+===================================================================
+--- linux-stable.orig/drivers/cpufreq/scmi-cpufreq.c
++++ linux-stable/drivers/cpufreq/scmi-cpufreq.c
+@@ -29,12 +29,18 @@ static const struct scmi_handle *handle;
+ 
+ static unsigned int scmi_cpufreq_get_rate(unsigned int cpu)
+ {
+-	struct cpufreq_policy *policy = cpufreq_cpu_get_raw(cpu);
+ 	const struct scmi_perf_ops *perf_ops = handle->perf_ops;
+-	struct scmi_data *priv = policy->driver_data;
++	struct cpufreq_policy *policy;
++	struct scmi_data *priv;
+ 	unsigned long rate;
+ 	int ret;
+ 
++	policy = cpufreq_cpu_get_raw(cpu);
++	if (unlikely(!policy))
++		return 0;
++
++	priv = policy->driver_data;
++
+ 	ret = perf_ops->freq_get(handle, priv->domain_id, &rate, false);
+ 	if (ret)
+ 		return 0;
 
