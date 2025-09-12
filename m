@@ -1,100 +1,115 @@
-Return-Path: <linux-kernel+bounces-814489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD97B554B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:32:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0769EB554B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 18:33:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3ED617EA9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:32:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B008C17D740
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F029D31CA71;
-	Fri, 12 Sep 2025 16:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE4731C582;
+	Fri, 12 Sep 2025 16:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJdc4e2/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKDuNMrg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F08731AF31;
-	Fri, 12 Sep 2025 16:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD06221FCA;
+	Fri, 12 Sep 2025 16:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757694754; cv=none; b=Y689YXc92s7Lpm2dv9MdfWom7ouyqhtBI5yVrnsD5jbv6Ka4VJN9iMx8EJuR87W+0OfyEjO9ewzBzdDa66CK9XuzncLcghS6PsU1z2T3C5jNT/l20Z4MjK4QabUW7RV/xaTHdTldXtBlFMa0dtsEwbJFKiwF4UjmmvdOhl1+UX8=
+	t=1757694819; cv=none; b=KdT3ocXK5AB9aXLne58Ex6ecsFie8Xh065xTLNxwvSlmkwPjcGDxjs1V2y7QoU/U/H23Y4AhFYD60BauBswEP9u06u9x7hnvhtZnaBhQu+mIshfgxybWjMWmm69HDxsTGexKUR5FPlQtD3aC223GmoIx/oiRrwHBTy8JMTFiC6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757694754; c=relaxed/simple;
-	bh=k6DozkD2qnAlpcYCFgcPvCG/FlOIBf8mDL1YnHlApZI=;
+	s=arc-20240116; t=1757694819; c=relaxed/simple;
+	bh=40D3azo32aA432DW1jWO97dUK4u+gf4msaD08ReAdlc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uh+zwrCc26x2TEviJ8/WT9+QqbX1MPJSqILJxwlO7ML6ukTeeiG3tTuDE3IIUUAWgfJzwJ3dx5W6nyFjiMqrxOJRkf/RZR+a06/Muko3qp0Bk2AKS46jmUDG/qgAXiTmX4NesT8yAx2AujxKVb0q5Bz/EmtGflLHcFGAIL5u9rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJdc4e2/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF165C4CEF1;
-	Fri, 12 Sep 2025 16:32:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TuBN9U3csWgOMCyTS3W8MP0xzSSMjKA3y7b0boJrAFUgkEIue8mOBmKmZO+IekRPnrfzghZpJUzhxemCU7/kj/Hl7TlXVCFC72tKy+0K95mAvEEm0gT8c0BS1HfPzGiaqvvclxQMZvLFerjNzNFyXlkg+xu/ctvx1YoWJzxGrD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKDuNMrg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03B2CC4CEF1;
+	Fri, 12 Sep 2025 16:33:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757694753;
-	bh=k6DozkD2qnAlpcYCFgcPvCG/FlOIBf8mDL1YnHlApZI=;
+	s=k20201202; t=1757694819;
+	bh=40D3azo32aA432DW1jWO97dUK4u+gf4msaD08ReAdlc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CJdc4e2/OhFsiErFJ0J+4XpIWuoqHEcSOQbMz5LgEbe4McWH2PybozfrYwcVVxK+I
-	 VZw81bZQbl1DpEnTMrhUSgafgFWJS8MrnuU3fRkrnubwtMKZWmlwdLCsDXF/RVLevW
-	 208QzIeNQlBL0t72p8cavBRc3JDYt0s3FJUY9D/p/p0SXfl+U7U4Z+GDKsdv+oSMF6
-	 CPqtImiK/C3IQc3o93p+Jmhg234lVDBHP52vFDnwVtrvd5WZJ2XYCSUBXkMQbmxk90
-	 hXPk+v6ZmVQ7otvkXFPzD+YLUX6mPzUs6k4AePv2vuQOi6lfRFL+2Q/xI1oRg1aIBv
-	 2JNeBB+zl6HMg==
-Date: Fri, 12 Sep 2025 06:32:32 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 13/14] sched: Add {DE,EN}QUEUE_LOCKED
-Message-ID: <aMRLIEtmcWc0XNmg@slm.duckdns.org>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.800554594@infradead.org>
- <aMItk3c5H6Z2CD4X@slm.duckdns.org>
- <20250911094240.GW3289052@noisy.programming.kicks-ass.net>
- <aMMzpnyx__ZgZGRc@slm.duckdns.org>
- <20250912141904.GA3289052@noisy.programming.kicks-ass.net>
+	b=IKDuNMrgspTKbgKs/S3dV0K/yVqGkd+Mc06d0z1Hs9jytEautBcOG9mVnAMSOfi7T
+	 HvBDXePdazel5390VyNYnn/xv3+rn/vW2s6bgyLc/IBSG2NMWAFLMUDaes15fp2p0N
+	 DkZoRUnpad0gCJrmECdXdY+uE0FKo/3nLDL4jUbpZAgPBYKFVoYz9+TYtZl+8BESRn
+	 TeTVTxn0gytq7iBJd+TKhBxB9lhbqH31KQ7rRiqjzPOZope7CwxDgO2So/ErWAEal1
+	 gbJlZYEJ3DZPftPQBBosopqREX0gQnLwu1Wt5kw6lkociLd/HvQWradNN7SZ2zxMbp
+	 0tyAHTMyymsNQ==
+Date: Fri, 12 Sep 2025 17:33:36 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v16 2/6] KVM: arm64: Manage GCS access and registers for
+ guests
+Message-ID: <aMRLYBWfDFiIB7wx@finisterre.sirena.org.uk>
+References: <20250912-arm64-gcs-v16-0-6435e5ec37db@kernel.org>
+ <20250912-arm64-gcs-v16-2-6435e5ec37db@kernel.org>
+ <865xdndgpw.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bzAqF05U+jmCCGjc"
+Content-Disposition: inline
+In-Reply-To: <865xdndgpw.wl-maz@kernel.org>
+X-Cookie: Filmed before a live audience.
+
+
+--bzAqF05U+jmCCGjc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250912141904.GA3289052@noisy.programming.kicks-ass.net>
 
-Hello,
+On Fri, Sep 12, 2025 at 12:59:23PM +0100, Marc Zyngier wrote:
+> On Fri, 12 Sep 2025 10:25:28 +0100,
+> Mark Brown <broonie@kernel.org> wrote:
 
-On Fri, Sep 12, 2025 at 04:19:04PM +0200, Peter Zijlstra wrote:
-...
-> Ah, but I think we *have* to change it :/ The thing is that with the new
-> pick you can change 'rq' without holding the source rq->lock. So we
-> can't maintain this list.
-> 
-> Could something like so work?
-> 
-> 	scoped_guard (rcu) for_each_process_thread(g, p) {
-> 		if (p->flags & PF_EXITING || p->sched_class != ext_sched_class)
-> 			continue;
-> 
-> 		guard(task_rq_lock)(p);
-> 		scoped_guard (sched_change, p) {
-> 			/* no-op */
-> 		}
-> 	}	
+> >  		MAPPED_EL2_SYSREG(PIR_EL2,     PIR_EL1,     NULL	     );
+> >  		MAPPED_EL2_SYSREG(PIRE0_EL2,   PIRE0_EL1,   NULL	     );
+> >  		MAPPED_EL2_SYSREG(POR_EL2,     POR_EL1,     NULL	     );
+> > +		MAPPED_EL2_SYSREG(GCSCR_EL2,   GCSCR_EL1,   NULL             );
+> > +		MAPPED_EL2_SYSREG(GCSPR_EL2,   GCSPR_EL1,   NULL             );
+> >  		MAPPED_EL2_SYSREG(AMAIR_EL2,   AMAIR_EL1,   NULL	     );
+> >  		MAPPED_EL2_SYSREG(ELR_EL2,     ELR_EL1,	    NULL	     );
+> >  		MAPPED_EL2_SYSREG(SPSR_EL2,    SPSR_EL1,    NULL	     );
 
-Yeah, or I can make scx_tasks iteration smarter so that it can skip through
-the list for tasks which aren't runnable. As long as it doesn't do lock ops
-on every task, it should be fine. I think this is solvable one way or
-another. Let's continue in the other subthread.
+> Just like the previous version, you're missing the accessors that
+> would be this table useful. Meaning that the vcpu_read_sys_reg() and
+> vcpu_write_sys_reg() accessors will fail for all 4 GSC registers.
 
-Thanks.
+Just to confirm, this is __vcpu_{read,write}_sysreg()?
 
--- 
-tejun
+Sorry, I missed your comment about this on the prior version due to UI
+confusion with my mail cllent.  My mistake.
+
+--bzAqF05U+jmCCGjc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmjES10ACgkQJNaLcl1U
+h9AzDgf/duT63XwRmgWz0snIItmYAaIOhyi9DSxNDPK1rp7/ouyg/0hMk2fa5glv
+1ILW6aKRp8AdJeKuqbRnCdJ+G5dxtmtOV6BmkxcK7bPorQYP51Xlat7OqsLF56R2
+vRT2MwbM6VDt9cyp08gbJ6TVLrbHfwYz9XEr19HsrDqRYyCojz41cGf7QzPbKIBz
+6HeUZQHSZnsf6Ov7DIsZons63MmVdvYgKAv29I5tLca+TlnwVoumfVCGNeM1BB/4
+/9yhS+DQB47AvKDMX2jI3MzaQ3n3NLL7pYUF7c5K3e7uiToZZZRjxm2hTvPYGzrS
+I0ulFq9qRSGr6EH8H02+ru7NA5yWOA==
+=rXPS
+-----END PGP SIGNATURE-----
+
+--bzAqF05U+jmCCGjc--
 
