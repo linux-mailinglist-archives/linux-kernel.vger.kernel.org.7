@@ -1,172 +1,243 @@
-Return-Path: <linux-kernel+bounces-814368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82740B55304
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:18:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21AD2B55308
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7EEEAC7608
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:17:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A6483B5D02
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D131CA51;
-	Fri, 12 Sep 2025 15:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2777222560;
+	Fri, 12 Sep 2025 15:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="YpCc6mTm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dQN79vfI"
-Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZQkPnZnU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o9EJkBgC";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZQkPnZnU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o9EJkBgC"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2591E27B356;
-	Fri, 12 Sep 2025 15:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24170222597
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757690104; cv=none; b=mT8oBXG5pZUZ6poNnBNP8faLexO98u3L1f8PEgq6bMCMM2t251KN57gJ1NumRC+nOB+pG2HQwokyDwV0GYHPIc9KeE7eqFZ8waV/dZhGOFqjpzDv2+x6ZaypdjjnNksD2LGbAqdGGlzO/guthzvGd726JB4wuagLSWn7oDXDuWs=
+	t=1757690137; cv=none; b=fpjzrwQCP7n75vuzhIQL7vihhnrAmiUjL0jahZWylttfdFZdRipx7UHEOvHq+ooMha1pwXM1+gWKbzqGiliJfnQDsORj7d+2Dibrp/dR1kKatalIVoA5BjU5IiwJ3inOLSxrwqn+qFkC3DnQVOrs4Qyt0GfvPvn/4XqIfUMWAdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757690104; c=relaxed/simple;
-	bh=sTA7wdLLP5StoLzQlnJfbA/m/hasnjg9SRRfSR18UGY=;
+	s=arc-20240116; t=1757690137; c=relaxed/simple;
+	bh=i0qQXh+7DIrwwhu0DnxHg44sg9lfslYI1FKhuGJhOUo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H2RI3B2BwuRIbvu8fSSZuMg/rLNfopRNGg5kzUid4t8XegAxRyX78eg8gc95iI+blv2Ai9n9bJ5zKAjCc4l+Am1IEgl8ujbS4Cf1aKHk2yhBOJVuaKuEdv/kjPUADZehrFtisLJBWovEWdpaNwtq5lI1xLXVdjWEoIPdL5EXZQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=YpCc6mTm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dQN79vfI; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 24A8A1400420;
-	Fri, 12 Sep 2025 11:15:00 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-10.internal (MEProxy); Fri, 12 Sep 2025 11:15:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1757690100; x=
-	1757776500; bh=uvtZXsfcELV22AtbWmz3YRzUDbKCxWdiP6BvEqTMA3I=; b=Y
-	pCc6mTmRbZ1PT+/u0Ku5tHOy3vZGinnuCT1oYEMaTR6M6tAYDYg12RLHY1WrZ84W
-	qcs+iKRF9g+RmsmeffRAob1lH1jH8AdSzX++E8/IFgN5eBBFB/RwCpkM/Mm6cUBU
-	h5HMTdU1hwb8WHLdEAkHkFZwYMQ115lyuH9D2IdhEVO7bICR9bO/4n+S4/ylTPXi
-	DxiEmqL7+UDNocYRG8ct6xFnNxrtkmZRfYr7LIj9sMYwmkgDiN3XqPiFfALzikqL
-	zOce/QfGHw4QlVr7qttCxjCFXXbRsQxISDsyAf23ud7iY0hO9+sN7i30TmLwN5by
-	aI+bCu4hMRXcg+gEzkPFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757690100; x=1757776500; bh=uvtZXsfcELV22AtbWmz3YRzUDbKCxWdiP6B
-	vEqTMA3I=; b=dQN79vfIb3K02YjC3P/u9/D+Y8Ug+2xruRrTk0h4gSS4AnwCt/K
-	CsrMvG7iPWfXm9S2BrGBIU15m8AHDhkOvceGRGhlhVewELUsnt910wYdujOMbtiD
-	5lZXmCgfp6WahdRwiDSmzbkkqrwk2sDkAPxNrVW7muCA0VxlY6uKfj4dZovAZ9a9
-	FvXh4Xb5XC/E0VRwjz2WcHkHafhG3+QEWqRrZZUPTnsM8+LO7k1i8cDhPCxKyHF+
-	jdpFQFdBPKQu6hJC37gIRPj3WERuNXnLSAXHjG5eYDRAY/ARMJQNYemic0uRtzBz
-	YX0M6ahP82mwTFn9ONcZWzx88doIVL1uTXw==
-X-ME-Sender: <xms:8zjEaPiw75v6e0-ZjTS1NqzxwkjqUUEn4uiUJRWuYXDUou1T6wrIGw>
-    <xme:8zjEaH2x_gY7709oabEQ71Jw0gcxmG72T4HWvDL9AcmnnmZDIqxZyRoOvUcWTzC1i
-    zqCXRVm8uDxELe3c8c>
-X-ME-Received: <xmr:8zjEaEkeqrKPKhyY4z2sr2HXFazIUuieO5nCT51fjQszPpLNy3yBCQ1VTPWW>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddvleefkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpefurggsrhhinhgr
-    ucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrihhlrdhnvghtqeenucggtffrrg
-    htthgvrhhnpeeuhffhfffgfffhfeeuiedugedtfefhkeegteehgeehieffgfeuvdeuffef
-    gfduffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    hsugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepudeipdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehtrghrihhqthesnhhvihguihgrrdgtohhmpd
-    hrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehk
-    uhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrth
-    drtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghhpdhr
-    tghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehsrg
-    gvvggumhesnhhvihguihgrrdgtohhmpdhrtghpthhtoheplhgvohhnsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopehmsghlohgthhesnhhvihguihgrrdgtohhm
-X-ME-Proxy: <xmx:8zjEaOuW7JgBvUC7YndKSAwADOCWAYc3fihhz8Lz9Ys1f7GvnWWeHw>
-    <xmx:8zjEaM2vXWhfhufI4Mvq_3cT1BFykhcyD_ageMNbZaFforq90Uj9uw>
-    <xmx:8zjEaCRG0UIdhYyt0j0dwt6ZE_Ze1ZCz3mxP-30XXXDWhjT8hu_SdQ>
-    <xmx:8zjEaIuzh5Xt5akEBi6fRAh4YPjYIOFdHwTcUBhfNUrIdW0AIvlY9Q>
-    <xmx:9DjEaLI5-lBhMfa3tbkMJi5kCLWWuGWd-N_NOYv8zH1PN7OIQfO0CZIN>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 12 Sep 2025 11:14:58 -0400 (EDT)
-Date: Fri, 12 Sep 2025 17:14:56 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, Mark Bloch <mbloch@nvidia.com>,
-	John Fastabend <john.fastabend@gmail.com>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Gal Pressman <gal@nvidia.com>, Boris Pismenny <borisp@nvidia.com>,
-	Shahar Shitrit <shshitrit@nvidia.com>
-Subject: Re: [PATCH net 2/3] net: tls: Cancel RX async resync request on
- rdc_delta overflow
-Message-ID: <aMQ48Ba7BcHKjhP_@krikkit>
-References: <1757486861-542133-1-git-send-email-tariqt@nvidia.com>
- <1757486861-542133-3-git-send-email-tariqt@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WtJ2D2985RIM5iAw2FjLxB4RBPBKduEuMFNByEzzTsNX9PlF+tcrmsgSEuUBJKcX/60GmNsxrexgR1QqdRlh/iF/UQqrm07fo0PpDkx7QGQZZ/BZ8th8bJAf5qFotFVWP1t4MOdGfeKEOysOeKm4EmEE774TSPJB/22NIbiNDkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZQkPnZnU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o9EJkBgC; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZQkPnZnU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o9EJkBgC; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 9819F5F89F;
+	Fri, 12 Sep 2025 15:15:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757690132; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FWdXdLhM1N+CqR/OguV/6Acj3qPcJbiUisZav4LkXGY=;
+	b=ZQkPnZnUu0qs3kJEusmuAXceM6Cr2U2hTKszSrPMNpY2THiPZeW/Juuus6RPE2J94Y8IQk
+	CEkqZwKLD3dlDwefjM+0IUpZo0a0CnkApYDdt1MtFrVgEfmsQn7PctIVYwdPve20guNUI+
+	ZRjYiJbsdYTcQ1gs3ZC/4H+K7PDpU2k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757690132;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FWdXdLhM1N+CqR/OguV/6Acj3qPcJbiUisZav4LkXGY=;
+	b=o9EJkBgCdfy9n0AMynRlG7cd+7nwcG2V+Rxk2lHxoLENnKZiD+UnslU7EURZvxnDhezG2O
+	10PBsEc2Ijyq+cAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZQkPnZnU;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=o9EJkBgC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1757690132; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FWdXdLhM1N+CqR/OguV/6Acj3qPcJbiUisZav4LkXGY=;
+	b=ZQkPnZnUu0qs3kJEusmuAXceM6Cr2U2hTKszSrPMNpY2THiPZeW/Juuus6RPE2J94Y8IQk
+	CEkqZwKLD3dlDwefjM+0IUpZo0a0CnkApYDdt1MtFrVgEfmsQn7PctIVYwdPve20guNUI+
+	ZRjYiJbsdYTcQ1gs3ZC/4H+K7PDpU2k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1757690132;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FWdXdLhM1N+CqR/OguV/6Acj3qPcJbiUisZav4LkXGY=;
+	b=o9EJkBgCdfy9n0AMynRlG7cd+7nwcG2V+Rxk2lHxoLENnKZiD+UnslU7EURZvxnDhezG2O
+	10PBsEc2Ijyq+cAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C73C713869;
+	Fri, 12 Sep 2025 15:15:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fndjLRE5xGi0MwAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Fri, 12 Sep 2025 15:15:29 +0000
+Date: Fri, 12 Sep 2025 16:15:23 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Kiryl Shutsemau <kas@kernel.org>, 
+	Nico Pache <npache@redhat.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, ziy@nvidia.com, 
+	baolin.wang@linux.alibaba.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
+	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net, rostedt@goodmis.org, 
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, akpm@linux-foundation.org, 
+	baohua@kernel.org, willy@infradead.org, peterx@redhat.com, 
+	wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com, 
+	vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com, 
+	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com, 
+	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, 
+	jack@suse.cz, cl@gentwo.org, jglisse@google.com, surenb@google.com, 
+	zokeefe@google.com, rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org, 
+	hughd@google.com, richard.weiyang@gmail.com, lance.yang@linux.dev, vbabka@suse.cz, 
+	rppt@kernel.org, jannh@google.com
+Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
+Message-ID: <hcpxpo3xpqcppxlxhmyxkqkqnu4syohhkt5oeyh7qse7kvuwiw@qbhiubf2ubtm>
+References: <20250912032810.197475-1-npache@redhat.com>
+ <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
+ <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
+ <20250912133701.GA802874@cmpxchg.org>
+ <da251159-b39f-467b-a4e3-676aa761c0e8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1757486861-542133-3-git-send-email-tariqt@nvidia.com>
+In-Reply-To: <da251159-b39f-467b-a4e3-676aa761c0e8@redhat.com>
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[49];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[cmpxchg.org,kernel.org,redhat.com,kvack.org,vger.kernel.org,nvidia.com,linux.alibaba.com,oracle.com,arm.com,lwn.net,goodmis.org,efficios.com,linux-foundation.org,infradead.org,huawei.com,gmail.com,linux.intel.com,os.amperecomputing.com,suse.de,suse.cz,gentwo.org,google.com,suse.com,linux.dev];
+	TAGGED_RCPT(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	R_RATELIMIT(0.00)[to_ip_from(RLp4so9kg11imxa9yzyism77ru)];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 9819F5F89F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -2.51
 
-2025-09-10, 09:47:40 +0300, Tariq Toukan wrote:
-> From: Shahar Shitrit <shshitrit@nvidia.com>
+On Fri, Sep 12, 2025 at 03:46:36PM +0200, David Hildenbrand wrote:
+> On 12.09.25 15:37, Johannes Weiner wrote:
+> > On Fri, Sep 12, 2025 at 02:25:31PM +0200, David Hildenbrand wrote:
+> > > On 12.09.25 14:19, Kiryl Shutsemau wrote:
+> > > > On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
+> > > > > The following series provides khugepaged with the capability to collapse
+> > > > > anonymous memory regions to mTHPs.
+> > > > > 
+> > > > > To achieve this we generalize the khugepaged functions to no longer depend
+> > > > > on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
+> > > > > pages that are occupied (!none/zero). After the PMD scan is done, we do
+> > > > > binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
+> > > > > range. The restriction on max_ptes_none is removed during the scan, to make
+> > > > > sure we account for the whole PMD range. When no mTHP size is enabled, the
+> > > > > legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
+> > > > > by the attempted collapse order to determine how full a mTHP must be to be
+> > > > > eligible for the collapse to occur. If a mTHP collapse is attempted, but
+> > > > > contains swapped out, or shared pages, we don't perform the collapse. It is
+> > > > > now also possible to collapse to mTHPs without requiring the PMD THP size
+> > > > > to be enabled.
+> > > > > 
+> > > > > When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
+> > > > > 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
+> > > > > mTHP collapses to prevent collapse "creep" behavior. This prevents
+> > > > > constantly promoting mTHPs to the next available size, which would occur
+> > > > > because a collapse introduces more non-zero pages that would satisfy the
+> > > > > promotion condition on subsequent scans.
+> > > > 
+> > > > Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
+> > > > all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
+> > > > 
+> > > 
+> > > I am all for not adding any more ugliness on top of all the ugliness we
+> > > added in the past.
+> > > 
+> > > I will soon propose deprecating that parameter in favor of something
+> > > that makes a bit more sense.
+> > > 
+> > > In essence, we'll likely have an "eagerness" parameter that ranges from
+> > > 0 to 10. 10 is essentially "always collapse" and 0 "never collapse if
+> > > not all is populated".
+> > > 
+> > > In between we will have more flexibility on how to set these values.
+> > > 
+> > > Likely 9 will be around 50% to not even motivate the user to set
+> > > something that does not make sense (creep).
+> > 
+> > One observation we've had from production experiments is that the
+> > optimal number here isn't static. If you have plenty of memory, then
+> > even very sparse THPs are beneficial.
 > 
-> When a netdev issues an RX async resync request, the TLS module
-> increments rcd_delta for each new record that arrives. This tracks
-> how far the current record is from the point where synchronization
-> was lost.
+> Exactly.
 > 
-> When rcd_delta reaches its threshold, it indicates that the device
-> response is either excessively delayed or unlikely to arrive at all
-> (at that point, tcp_sn may have wrapped around, so a match would no
-> longer be valid anyway).
-> 
-> Previous patch introduced tls_offload_rx_resync_async_request_cancel()
-> to explicitly cancel resync requests when a device response failure
-> is detected.
-> 
-> This patch adds a final safeguard: cancel the async resync request when
-> rcd_delta crosses its threshold, as reaching this point implies that
-> earlier cancellation did not occur.
-> 
-> Signed-off-by: Shahar Shitrit <shshitrit@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> ---
->  net/tls/tls_device.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/tls/tls_device.c b/net/tls/tls_device.c
-> index f672a62a9a52..56c14f1647a4 100644
-> --- a/net/tls/tls_device.c
-> +++ b/net/tls/tls_device.c
-> @@ -721,8 +721,11 @@ tls_device_rx_resync_async(struct tls_offload_resync_async *resync_async,
->  		/* shouldn't get to wraparound:
->  		 * too long in async stage, something bad happened
->  		 */
-> -		if (WARN_ON_ONCE(resync_async->rcd_delta == USHRT_MAX))
-> +		if (WARN_ON_ONCE(resync_async->rcd_delta == USHRT_MAX)) {
+> And willy suggested something like "eagerness" similar to "swapinness" that
+> gives us more flexibility when implementing it, including dynamically
+> adjusting the values in the future.
+>
 
-Do we still need to WARN here? It's a condition that can actually
-happen (even if it's rare), and that the stack can handle, so maybe
-not?
+Ideally we would be able to also apply this to the page faulting paths.
+In many cases, there's no good reason to create a THP on the first fault...
 
-> +			/* cancel resync request */
-> +			atomic64_set(&resync_async->req, 0);
->  			return false;
-> +		}
->  
->  		/* asynchronous stage: log all headers seq such that
->  		 * req_seq <= seq <= end_seq, and wait for real resync request
-> -- 
-> 2.31.1
+> > 
+> > An extreme example: if all your THPs have 2/512 pages populated,
+> > that's still cutting TLB pressure in half!
 > 
+> IIRC, you create more pressure on the huge entries, where you might have
+> less TLB entries :) But yes, there can be cases where it is beneficial, if
+> there is absolutely no memory pressure.
+>
+
+Correct, but it depends on the microarchitecture. For modern x86_64 AMD, it
+happens that the L1 TLB entries are shared between 4K/2M/1G. This was not
+(is not?) the case for Intel, where e.g back on kabylake, you had separate
+entries for 4K/2MB/1GB.
+
+Maybe in the Great Glorious Future (how many of those do we have?!) it would
+be a good idea to take this kinds of things into account. Just because we can
+map a THP, doesn't mean we should.
+
+Shower thought: it might be in these cases especially where the FreeBSD
+reservation system comes in handy - best effort allocating a THP, but not
+actually mapping it as such until you really _know_ it is hot - and until
+then, memory reclaim can just break your THP down if it really needs to.
 
 -- 
-Sabrina
+Pedro
 
