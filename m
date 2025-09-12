@@ -1,112 +1,123 @@
-Return-Path: <linux-kernel+bounces-813648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEC28B548C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375D8B548D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F8FC1C88028
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:09:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 823EDAA516B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE4DD2E22A7;
-	Fri, 12 Sep 2025 10:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724502E0413;
+	Fri, 12 Sep 2025 10:09:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUQeBxIS"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ILF+4k1l"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA891F4C9F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B18123C513;
+	Fri, 12 Sep 2025 10:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757671708; cv=none; b=LIP/b45+pNA7xggRA4iJXjQopdePzod9H6Zgzb53qW/MaltnA9NJT3IHGBIe66J9ZoaB67bGYXtn8IViAABOyiW5otjZgFmayfz+iwj04WX5H0lize4PtGKwM72C1XdTb2zkXLTCWsc5XjnIUgB1Y3ClCeAEhZbgE64niUZt7AE=
+	t=1757671745; cv=none; b=VRIalcQpI5d3VcKhj2W5NNhmKKNiqyPjNVu0ItzeDSPTcV2ypSCE6r0C3aIMWbtjZMUw7zDfdwyk2yWaivpV8USBMQCCY+/ljQmtv2n6Wzi19jOGTgLhfa+TlWEcRUF1VJtR11WogStOxJh5ZW3fa3ZqsOY3klKGr4RcpUn8rck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757671708; c=relaxed/simple;
-	bh=1hO22WTszQUiOOn2ymdABjLhmL5qLOEUS3j8TjLksi4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AVHzrxcwBFYMSF1ByTtQdvbfk6q3W0k0CAsFbtHVUrYaTNsz35/djxB7ewBMuVS2Ui6mji8aG8R4OdmPy46MFRI+yC/3og8AZ+kpdgOTJUrNXsWFCLtmpSW8C+BmyGH3zEZXt/+FSXcgm1AW+ba3lVMqI61LljQ471pmSsFRwWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUQeBxIS; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24ca270d700so2584775ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757671706; x=1758276506; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1hO22WTszQUiOOn2ymdABjLhmL5qLOEUS3j8TjLksi4=;
-        b=QUQeBxISS3Bge0937BI1fkrBWuJbnA7g+BKHhLyS/LMtNCdY2EoObjZPs3dcSfz1d/
-         4xlpB/zP+cGkZWzFU+zZduUC+dptP0CupV5xU4X4E9mQk+LjJEcA4ymEyJmLWinlnJch
-         jz2vIkZKueoR1/zPJc+GUBlJYm2oLStKS8fr88fLGs3VU5SWpReuwZXng0CbbIXS0Hpg
-         8Micmqib6rx45+NZ7Vb+ewa9+E9AP8Q4aCZf6cFEcFiGZBgMQffsS5aEVD7UxBgMJtOi
-         9o+aLqxhN98KGh9dcwERcZh2PHSYKB+Oas7Klu7GfsVQAJzYYeAD4Gq7z9Kl3zoXQoGY
-         CaXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757671706; x=1758276506;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1hO22WTszQUiOOn2ymdABjLhmL5qLOEUS3j8TjLksi4=;
-        b=s5sdEZCSVN2SrF2K+LcvfF2++YBwqQ4otip159WuQA0ADGy5yAadLL5n4zaC2AuSPJ
-         RaRrdj06YYjXTsuWXfLzhtTC++y1TmknGHNzoNvnaSjKWEdNdxVI37g7vcOTx7/Zivw9
-         9nRXcUvm8Ao3AK/81osEaeiurnekxaMvXjch5jncFv86qJJFwg+qdMDBz7m8Qa+AvZyT
-         DRIUqUUbL7n+R3lj215fgzIy3Wo2/MQLTN+8lycJH7sHlyaWaH/qjza3bujPk0wCoe6c
-         0MBq+KsHbl16a5P3NN+oaHaMUtQN8jPWafpFrgzrhPbl0tHbYNc33x92I673r7il2Dve
-         KmgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQKXms42UZjNvJcozLJSl4PhyRqjb0i/iul75JVNvAc774IULE3twttVU6rs0hjgvKf+MczR5uVmocfSU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHAH/e7LJfMQNl+0JykcejaiepBmDajqdon1XxDUYhPMdfrBsG
-	/bxNOwaqU1AIe91IAzmrzs73g/PXSxQPZffvJ3lqgeaOTnPobsFSfEUfRIC63ZGTtbFeCAnY+6n
-	f/4kDaLwAmukWgG6+T0WTKBsW8fUVwQw=
-X-Gm-Gg: ASbGnctUAlMIXu1w/f+JJp6Mgl9sjp/8oeEGKkuV91lssRP9zITDR4LXMGQN88GnKoK
-	n73PAYS7G/KqH8HaxUH90QvIvfwGsDXcdvRzl46a1oFgUvp1n1lPY4nUCRDf6soTsAZeIn9InYO
-	KOirbXRdzsI9VyYw/R4EuvUnatwfTKTdmzXjzo6I2IdpOXJL5zjpCmRTERqJ51ECJc99PB7tx5d
-	Bm2uhtXi4EAqO8Dm1YXrP/+CNA+yj+fArt593FsUol4w9NxnsZWOB/sSaTaXM6JZc9ub5rdTnhM
-	+DbNfC7BwMc+RjhDMcIe+2pVBId+28tlyRC3
-X-Google-Smtp-Source: AGHT+IHQqgeTLWd69ii0h7rl5fFlUKx8SePmbFP0D2U+jaqBaQg25KiFArA+FTLhQ2AISsw0AP7/WNmwmwYZfmun5FM=
-X-Received: by 2002:a17:903:120b:b0:25c:9c28:b425 with SMTP id
- d9443c01a7336-25d2752ec54mr14668875ad.11.1757671706025; Fri, 12 Sep 2025
- 03:08:26 -0700 (PDT)
+	s=arc-20240116; t=1757671745; c=relaxed/simple;
+	bh=oOGKu5RrTwNZiSl9cE7/ZL75AiB/oPFcQZTrU6IP0Hk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fJ+P3DpBvoT/iN/8f7fLwPS2uDz4YHYO3Gp0t7SJLhqX+jp7+6LnyavAQZ5DIYpGZSK3OPZw59fP/lftVZZEphrGAVXphdiBlOussWA9f06L6uwCRJ7ReyLQeBiGUPOX6/onHNB2t5s6fjZHMW6Nj4VTcbWbUeoXNmobvayM9Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ILF+4k1l; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=oy
+	u7BW8V2JIsKMsTCJkb2DN0ZU7uiiP0XMLRvwlY21I=; b=ILF+4k1lDZDqEx5DaI
+	CBihxPkyeXdYsrzVmRf7O4ZBH+MbdlwOS7QyMzheQVkMN/Yiq3nsC4PjZdJQ7eL3
+	9NeuSu5/w4f3skWidxsvXanfwbiJOwl27t0xhKpECjwaTlCbtQaN/+k+pE1pFlDs
+	rhKRyA0ewyh8bA/fCMvqKNGjs=
+Received: from localhost.localdomain (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgDHcr8d8cNoME_RCg--.64198S2;
+	Fri, 12 Sep 2025 18:08:31 +0800 (CST)
+From: Slark Xiao <slark_xiao@163.com>
+To: mani@kernel.org
+Cc: mhi@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Slark Xiao <slark_xiao@163.com>
+Subject: [PATCH] bus: mhi: host: Update session id for each suspend and resume
+Date: Fri, 12 Sep 2025 18:08:27 +0800
+Message-Id: <20250912100827.294443-1-slark_xiao@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911213157.GA1039411@joelbox2> <aMNo7qRCp_yprUAW@my-computer>
- <20250912025343.GA1376629@joelbox2> <4940aa5a-18d0-4bcd-9125-80f5a9920627@gmail.com>
- <CANiq72kZgZdU4Dut3rmcWT-cujyJaP_99ekis_XdfQ-7LmgZ5Q@mail.gmail.com> <CAH5fLgiP2DRcGy04YdsWS9+N1=_CCNEtAGrCn31vUHjnDLW9xw@mail.gmail.com>
-In-Reply-To: <CAH5fLgiP2DRcGy04YdsWS9+N1=_CCNEtAGrCn31vUHjnDLW9xw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 12 Sep 2025 12:08:12 +0200
-X-Gm-Features: AS18NWD4HXb9lW_s1SuGtIZzZ6y8l5yEzJq-b0E0GkqyxH4Mxc2RoG_2ansHfds
-Message-ID: <CANiq72=89-22iORBttRtNeMN1ZHzH=MRvqfS5qPufHsMx8C0ng@mail.gmail.com>
-Subject: Re: Printing with overflow checks can cause modpost errors
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Andrew Ballance <andrewjballance@gmail.com>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	John Hubbard <jhubbard@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, 
-	Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgDHcr8d8cNoME_RCg--.64198S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CFyDZFW8XF1UXrW8Cw1xXwb_yoW8tr17pF
+	s0grW3Wr4Fq3y7Cr1xta4xZrW5KwsavFWkGF9rKw1a9anIyFyvkF1kKFyrX39IkryDGa1F
+	kr4UX3yDGa1qyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piw0ekUUUUU=
+X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiJQfGZGjD8NIHzQAAsD
 
-On Fri, Sep 12, 2025 at 11:45=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> I believe this code is using an immutable reference and not just a
-> pointer, so it would be UB to use it to write to `offset`, and so it
-> would be valid to assume it has not changed. But I think that in most
-> scenarios, Rust only optimizes using that information when the
-> reference appears as a function argument, which is not the case here.
+On Qualcomm module side, there is a UART print as below:
+session id: 0x355fe689 state:2
+session id: 0x1f478e42 state:5
+The session id reads from register BHI_IMGTXDB(0x218), and the
+state indicates the D3 or D0 state.
 
-I understood Andrew as talking about the C side, i.e. a guarantee
-coming from the C side.
+In Windows side, MHI driver would update this session id for each
+suspend/resume progress. We benefit from this mechanism since it
+could help sync each suspend and resume progress between host and
+device, especially for some suspend issue which needs to take
+hundreds or thousands cycle. We can easy to figure out which
+suspend cycle get a problem and what's happened at that time for
+both host and device because they have same id.
 
-Callers can guarantee in other ways, but I wanted to clarify that the
-C const pointer doesn't really do anything.
+But in Linux side, this session id value would always be 0x0.
+So we add it for potential debug usage.
 
-Cheers,
-Miguel
+Signed-off-by: Slark Xiao <slark_xiao@163.com>
+---
+ drivers/bus/mhi/host/pm.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/drivers/bus/mhi/host/pm.c b/drivers/bus/mhi/host/pm.c
+index 33d92bf2fc3e..a6573f687363 100644
+--- a/drivers/bus/mhi/host/pm.c
++++ b/drivers/bus/mhi/host/pm.c
+@@ -864,6 +864,13 @@ int mhi_pm_suspend(struct mhi_controller *mhi_cntrl)
+ 	struct device *dev = &mhi_cntrl->mhi_dev->dev;
+ 	enum mhi_pm_state new_state;
+ 	int ret;
++	void __iomem *base = mhi_cntrl->bhi;
++	u32 session_id;
++
++	session_id = MHI_RANDOM_U32_NONZERO(BHI_TXDB_SEQNUM_BMSK);
++	dev_dbg(dev, "Starting enter suspend, session id: 0x%x\n",
++		session_id);
++	mhi_write_reg(mhi_cntrl, base, BHI_IMGTXDB, session_id);
+ 
+ 	if (mhi_cntrl->pm_state == MHI_PM_DISABLE)
+ 		return -EINVAL;
+@@ -952,6 +959,14 @@ static int __mhi_pm_resume(struct mhi_controller *mhi_cntrl, bool force)
+ 	struct device *dev = &mhi_cntrl->mhi_dev->dev;
+ 	enum mhi_pm_state cur_state;
+ 	int ret;
++	void __iomem *base = mhi_cntrl->bhi;
++	u32 session_id;
++
++	session_id = MHI_RANDOM_U32_NONZERO(BHI_TXDB_SEQNUM_BMSK);
++	dev_dbg(dev, "Starting enter resume, session id: 0x%x\n",
++		session_id);
++
++	mhi_write_reg(mhi_cntrl, base, BHI_IMGTXDB, session_id);
+ 
+ 	dev_dbg(dev, "Entered with PM state: %s, MHI state: %s\n",
+ 		to_mhi_pm_state_str(mhi_cntrl->pm_state),
+-- 
+2.25.1
+
 
