@@ -1,81 +1,101 @@
-Return-Path: <linux-kernel+bounces-813080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA9F8B54084
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:38:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529C9B54087
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BDA2A04CB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:38:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 143A5175FD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67912010EE;
-	Fri, 12 Sep 2025 02:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33641E833D;
+	Fri, 12 Sep 2025 02:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGMeQtrL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gjp2JOSR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC76D74420;
-	Fri, 12 Sep 2025 02:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F0C74420;
+	Fri, 12 Sep 2025 02:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757644716; cv=none; b=pu6Pk+VedGoIIlzIxNFKmXfuFtr+u6faLtzrpQCXAPe3DLEVQ7gKQ1APtfm2RV//PjUqgLrqUZCwG5I+M7nlnbNVXMky4StQMV+3krfrfmXeVj5OrFXmeZ59onbceF2HDawvhRXcsJE3ygk22uRPnKivr/Xaa6Dfte9AQqLWsh0=
+	t=1757644791; cv=none; b=Vcko/MllzsGQkRVQPceJVlTed4L0ic/AqU6QKBJcp8AsRy3ka07dq6PUooH9Muu3h/jaFdaxS9sdwrpxcHD+JNdPKQb/SsRfvEjdumYKNB3FLm3zXq8RINwGkBsMUYkeZZfFZSkQjIPvPKec/mG/hg42S7xjCwwkUTVDgVJ4nzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757644716; c=relaxed/simple;
-	bh=FzNr6jU11BYOrsA8fEAsDsmuFN8EhcezX0jnKLLVtwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kIqJfJJUVrb/axhYxCnMVSsSqGfVpJo60/adV8COMkmEDz59Urt1qXOADSQy95Ilthv8smxVdtJtTqWXUdaxTwJYS8+gtKfGZCX8KUq6+m8gRVIgta+go8XdiHIwZkApn7Omb4dUPu1PDLOj9ry3vdxY4EIzCYZa2/pTQjFiusk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGMeQtrL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA55AC4CEF0;
-	Fri, 12 Sep 2025 02:38:35 +0000 (UTC)
+	s=arc-20240116; t=1757644791; c=relaxed/simple;
+	bh=yE3VMp+2UTdfVTTFqOV7Z0nyOpwlVrjxuafiWpvqlwE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PaOtyOfNb6c/MFnBSJFFLsRLzKUhEzxSTct1AjxDLijA5H5QUbNxA1Qn1qOV0KAsi9ihoPQjE2qUc8YxzsERSp5Zj3raRq8Bf2q0X4fwR4NUqDTQn8QC7mM7Jv8Oxv2qQ7bF3+lxAAnSmq6xUY4HEn35Qoerh8TrWqXc1GUJiZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gjp2JOSR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5ED9C4CEF0;
+	Fri, 12 Sep 2025 02:39:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757644716;
-	bh=FzNr6jU11BYOrsA8fEAsDsmuFN8EhcezX0jnKLLVtwM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qGMeQtrLDpVVkEPnxT9DlRqXJ4RDsTViTxZX85bKmBIJKd1PHDI+nOyjybLqrNYB/
-	 elor/cPRgfJOAZi84IQpIn9YMWmTAxvukKLR6zGVSx+KA6pXRo9Myrx/j2re39m9S5
-	 zKptGGaa0r9vCR5GWePuRYEAAZiXuwMaDOiEKNK4b/HEcCNITFu811OFIXUUvXpx4+
-	 XMsGd3FDxQjGR7XRb8Jg+rQXo3asURhNqq+yYotxU5JNal0u5zkzBeag1qAAbkmmQa
-	 zCxnKFbL1wr/7L4SjDfFkWqCQYyoqbjWlk6gvVOb8k0AZNUsRy3K9PCblVyuNeT/Qa
-	 j4PkI/SAtvBXA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-sc8280xp: drop obsolete PCIe GDSC comment
-Date: Thu, 11 Sep 2025 21:38:33 -0500
-Message-ID: <175764471183.3066893.2385641952524635282.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250910134737.19381-1-johan+linaro@kernel.org>
-References: <20250910134737.19381-1-johan+linaro@kernel.org>
+	s=k20201202; t=1757644790;
+	bh=yE3VMp+2UTdfVTTFqOV7Z0nyOpwlVrjxuafiWpvqlwE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Gjp2JOSRRHGG1CZXw+/9INztzNXz/8KDImRW0yh5Zhks9Rn2VEaug46cf/LgKim+t
+	 IdkB9zeKcEuZu98IyCGoJwkNKDDVjQz0k/QZO0yt33T0SuXthd2Bqli/G7TvvSLK+Z
+	 5fzwzmLEpRDpuT2MpxUpsdBQ60oL9L9oJn3nYxft0PU1T19DaIfaaFBCWSWJoTmMuN
+	 YUkkraVh3TH9aG+g0WpI7SuHmtMLDZFgSkUojfd4D7GG6rjrrU2wSnxH5M9tKJEdfL
+	 hheXBau+mIXeqrSVhSb3eI0tw5cy2I/qyqgvBglqy6LOH8ewK4PoD29OC4FMk/BTqd
+	 uVQEADXIseP7g==
+From: SeongJae Park <sj@kernel.org>
+To: 
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC PATCH 0/7] mm/damon: define and use DAMON initialization check function
+Date: Thu, 11 Sep 2025 19:39:39 -0700
+Message-Id: <20250912023946.62337-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
+If DAMON is tried to be used by its API callers when it is not yet
+successfully initialized, the callers could be crashed.  Such issues
+actually happened and were fixed [1].  DAMON API callers are therefore
+having their own hacks for seeing if it is safe to use DAMON or not.
+Those built on an untreliable assumption that DAMON should be ready to
+be used on module init time.  DAMON initialization could fail if
+KMEM_CACHE() fails, though.  Also those are basically duplications that
+make their maintenance difficult.
 
-On Wed, 10 Sep 2025 15:47:37 +0200, Johan Hovold wrote:
-> Drop an obsolete comment about keeping the PCIe GDSCs always-on,
-> something which is no longer the case since commit db382dd55bcb ("clk:
-> qcom: gcc-sc8280xp: Allow PCIe GDSCs to enter retention state").
-> 
-> 
+Make it reliable and easy to maintain, by implementing a new DAMON core
+layer API function for seeing if DAMON is ready to be used or not, and
+replacing the hacks of DAMON API callers with the new core layer
+function.
 
-Applied, thanks!
+[1] https://lore.kernel.org/20250909022238.2989-1-sj@kernel.org
 
-[1/1] clk: qcom: gcc-sc8280xp: drop obsolete PCIe GDSC comment
-      commit: 4ca6a89f38718d6cd84304e6a26e7ddc90e03356
+SeongJae Park (7):
+  mm/damon/core: implement damon_initialized() function
+  mm/damon/stat: use damon_initialized()
+  mm/damon/reclaim: use damon_initialized()
+  mm/damon/lru_sort: use damon_initialized()
+  samples/damon/wsse: use damon_initialized()
+  samples/damon/prcl: use damon_initialized()
+  samples/damon/mtier: use damon_initialized()
 
-Best regards,
+ include/linux/damon.h |  1 +
+ mm/damon/core.c       | 10 ++++++++++
+ mm/damon/lru_sort.c   |  9 +++++++--
+ mm/damon/reclaim.c    |  9 +++++++--
+ mm/damon/stat.c       | 10 ++++++----
+ samples/damon/mtier.c | 11 +++++++----
+ samples/damon/prcl.c  | 11 +++++++----
+ samples/damon/wsse.c  | 15 +++++++++------
+ 8 files changed, 54 insertions(+), 22 deletions(-)
+
+
+base-commit: f115189b48629e7a8aa707112190b7ccf9928d6b
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.39.5
 
