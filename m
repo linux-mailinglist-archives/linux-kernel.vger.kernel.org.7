@@ -1,134 +1,84 @@
-Return-Path: <linux-kernel+bounces-813320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63E43B5437F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:08:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F0B4B54386
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9F0B1C81E38
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:08:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F00B3178FAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646B129D268;
-	Fri, 12 Sep 2025 07:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFfgNx42"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C792BE646;
+	Fri, 12 Sep 2025 07:08:21 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20439299A8E
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF01D29AB12;
+	Fri, 12 Sep 2025 07:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757660889; cv=none; b=omD1N1jNLW+e46YN46Ckl0Vlozx87scsdkmPNOZBOYBmKkxoZycOfR/9KA+uA++lnOaiV1e+PQeMbTkIao0b8tGPkubSAHDej1iDPYWT+nXbHD78pl3XcuEBAyYQxsl0FQoeMUG/DGMqLBkjQA22ilXH3M/NL/a8QwREEiZ6V5A=
+	t=1757660900; cv=none; b=qhKgLzTmY9PdQkAhYZsZ38BchpDH7stnqibf7evE6kPxf3oR89mqm5VbeBJS0j23DMND63c3DJPofEaZNXohfIJIPrAFFQBJETXyOZWLa9mCSLoK3RyaHQVVoUJODsLkJ2cbsgn7b/krkY7uWqbSyYdnvTE5gqUQRVTtIy5fxk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757660889; c=relaxed/simple;
-	bh=W7sa4dPPTPYoYuKBZuN8JhwzRLpV6rUI5E+79YIK4mc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t4gUINHLCym55oPNYER1gMhUca4mneq6ALyC8qhzuGkxkH6gVTttQ6iiulU790zQQYg+ABn23tJxivI8Rfp+u1nu8YpOGroe6otKjszcsIOlm1zObiEN201vVDUxtv5iGRmO9R5e9AcnsqpcbubD8Ptj8dakq/SO1JLVaYb4cwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFfgNx42; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-336c79c89daso13619891fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:08:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757660886; x=1758265686; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W7sa4dPPTPYoYuKBZuN8JhwzRLpV6rUI5E+79YIK4mc=;
-        b=JFfgNx42pHrehxboUrLkwAHNW1nPOCdRvZ+7dO5Pdx9CZF4ce3nF8+F9jCdnRjsmjo
-         XZ3S9PJBuQzuL4H7uv0iGjeBeGXad6i1lZ7icaf+IRQDo06hgSc830pVPUY//t5/KU2u
-         iD9onufV1WGWLTmRk+poRz4r3yTQAnlEYB2i9ZlvtDjphfF1zqO0/Q/pQjSgaQTEs5JX
-         rISfc33TOzb0fLtM2+wyiAVl6uv8XxxO8e5FS/rOQJylNIzCBuqj91dvk7AHJeLe0Uqf
-         gs5jPip47+/eH/ll7eft30ru2aoq4ciRaYF4W+qnVciWGTktbYRJI0YlvuvCcW58HjcS
-         i28g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757660886; x=1758265686;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W7sa4dPPTPYoYuKBZuN8JhwzRLpV6rUI5E+79YIK4mc=;
-        b=o4oD0w3vVgdAaRBKwje0bZ8rDPfsMNU3Npo4Z+nzT4bP/r3/Nbz5L2E6SNKKy6o8/4
-         7BnlFQWl83N7QVsakdqSihE3eEm6QvDYJE1vWor8GvtgPFDBiGvvTcNGR2jJhQEfo9P7
-         lPQC359XohEqRNjhzniAhIlvtNeWNnhA2ZpaGKZULURohfMH/ZmIz76p3v3hyopw3b+K
-         io6WwB2PxuymgcEkRXQG9VoZE6jbYdeFnhzv4/hbWrlLiebVBNQclK3NvZiWOrwQKngw
-         NVzPBHyYqAwyC1ucxWBmIQWXnd/mhjaJ0VCTMjlahJvfDh6gexOADILriAsmPXxtRxjt
-         lQeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWh3t+xLyHGHPG9Gh/1CB9WrB8+3lmWtf/xeKlbYf1idH6x6TN0xW4zRpk+iZYaQlPgiwKrkyCJHSwS8+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFuZFc6MH2plq6q4Z+LFafjPqEXym6eq6y8IcwiUxFrON0GeZQ
-	Q0DD4ximMC+Xqdpwvcwcz0Ge9hQ4FF6vieA5oM2wcpflmslmEQsjQBjEhhPCezl+qPgMEftovUC
-	jx7Mi6jrixTZJuBb0+OqNTONuJAnCTGWSZbeznpyvOA==
-X-Gm-Gg: ASbGncvgyKYkKBRgmPnlgMxpJvPVIji0kM0k70UEQgriC9fDR1Aw72hgbCUDSlpK5tK
-	25psnPYmPG2hA5qSlFTbV+aaefsyLDlxnQTYEiLDUco+ek2DfT3DKLVYjnxJ4uKmNGbxZi2R8u6
-	10K3vWXM0gmsEzTlXYKJnX0pZPZpve/qLifaAlejsqM+18pxHC1s6cRzGRfSO1TxYh1UCV61fhh
-	aop1kNUNwH/CLdMHA==
-X-Google-Smtp-Source: AGHT+IG0a/RzAkySA0zv4GtRtoMgb7fMz40QqFaDmGNUnRd1h2GrriKeQPDg7VZPJxieR37sFPCZyvmxOEUrMUgnUno=
-X-Received: by 2002:a05:651c:542:b0:32a:6aa0:2173 with SMTP id
- 38308e7fff4ca-3513fc37bd3mr5450921fa.20.1757660885920; Fri, 12 Sep 2025
- 00:08:05 -0700 (PDT)
+	s=arc-20240116; t=1757660900; c=relaxed/simple;
+	bh=RRtUOZThdqYvD2gGCk5TTsXRXY57iVZQgC/XXqZA+jA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e8JxdViJ6fo10PBJgpAf8TURO+w/Fhv8YR/EpXHmkNX2wMi0fEYjpwEXMuLsRfsWjJgr8/vSa2KDIikfdaXMkWy+VtS5eLgeT6N0QnXghQFh/w123UfcGDG2LDFeU9U1tttNs4iacHjsqUzs0oKAMywBfCaGg8xGzfrgfdUbR38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12BAAC4CEF4;
+	Fri, 12 Sep 2025 07:08:20 +0000 (UTC)
+Date: Fri, 12 Sep 2025 09:08:18 +0200
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Luo Jie <quic_luoj@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Varadarajan Narayanan <quic_varada@quicinc.com>, Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Anusha Rao <quic_anusha@quicinc.com>, Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, 
+	Devi Priya <quic_devipriy@quicinc.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Richard Cochran <richardcochran@gmail.com>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
+	quic_pavir@quicinc.com, quic_suruchia@quicinc.com
+Subject: Re: [PATCH v5 07/10] dt-bindings: clock: qcom: Add NSS clock
+ controller for IPQ5424 SoC
+Message-ID: <20250912-chowchow-of-famous-art-8fcd7e@kuoka>
+References: <20250909-qcom_ipq5424_nsscc-v5-0-332c49a8512b@quicinc.com>
+ <20250909-qcom_ipq5424_nsscc-v5-7-332c49a8512b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831-gk20a-devfreq-v1-1-c25a8f1169a8@gmail.com>
- <4f3d9122f3fe552f94827b83a7dce5d3bbdc23e2.camel@redhat.com>
- <CALHNRZ-h2ee5pyOx2YDDBDQzFnXxDFX5EzhjX5+DT25UbKj1MQ@mail.gmail.com> <rvfjkkpsqvk3uedaahzhwrao7bgnxvbn7hdm6goa2bn6co7ctk@2hbiwwvn6y2j>
-In-Reply-To: <rvfjkkpsqvk3uedaahzhwrao7bgnxvbn7hdm6goa2bn6co7ctk@2hbiwwvn6y2j>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Fri, 12 Sep 2025 02:07:54 -0500
-X-Gm-Features: Ac12FXwznuijRqzCnopDIstfQghwKQCFmHybp4tbVUQN04WRkgdFV7WmBtzwMqA
-Message-ID: <CALHNRZ_hZ5rjGpt4rDmMvxcBBcW2fK6Q2Z_1oKzj+eBi6U-1+g@mail.gmail.com>
-Subject: Re: [PATCH] drm/nouveau: Support devfreq for Tegra
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250909-qcom_ipq5424_nsscc-v5-7-332c49a8512b@quicinc.com>
 
-On Tue, Sep 9, 2025 at 7:05=E2=80=AFAM Thierry Reding <thierry.reding@gmail=
-.com> wrote:
->
-> On Sat, Sep 06, 2025 at 08:01:27PM -0500, Aaron Kling wrote:
-> [...]
-> > I should note that I have only actively tested this on gm20b and
-> > gp10b. I am currently unable to get nouveau running on any gk20a
-> > device I own. I am trying to target consumer devices such as the
-> > shield tablet, which use the android bootloader. I can boot the kernel
-> > just fine and tegra-drm works as well, however when nouveau tries to
-> > probe, it hangs the first time it tries to access a register. I have
-> > not yet been able to figure out why.
->
-> These types of hangs typically indicate that the hardware is not powered
-> on, not clocked or in reset. It's odd that it would hang during register
-> access on gk20a because nothing significant has changed in any of the
-> related drivers, as far as I know.
->
-> One thing that you could try is passing the clk_ignore_unused and
-> pd_ignore_unused command-line parameters when booting the kernel. If it
-> works with those, try finding out which one of them is causing things to
-> break to narrow down what we need to fix.
+On Tue, Sep 09, 2025 at 09:39:16PM +0800, Luo Jie wrote:
+> NSS clock controller provides the clocks and resets to the networking
+> blocks such as PPE (Packet Process Engine) and UNIPHY (PCS) on IPQ5424
+> devices.
+> 
+> Add support for the compatible string "qcom,ipq5424-nsscc" based on the
+> existing IPQ9574 NSS clock controller Device Tree binding. Additionally,
+> update the clock names for PPE and NSS for newer SoC additions like
+> IPQ5424 to use generic and reusable identifiers "nss" and "ppe" without
+> the clock rate suffix.
+> 
+> Also add master/slave ids for IPQ5424 networking interfaces, which is
+> used by nss-ipq5424 driver for providing interconnect services using
+> icc-clk framework.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
 
-The ignore_unused params didn't make a difference, but this got me
-looking closer at the power rails. I noticed that vdd-gpu for the
-jetson-tk1 is set to always-on for mainline, which it is not on the
-downstream kernel. Mirroring that to ardbeg resulted in nouveau
-successfully probing. One of my other devices needed a pwm-regulator
-for vdd-gpu, after which it also probes as expected. I will need to
-double check the rest of my devices as well. Is there a known reason
-why if vdd-gpu is a pmic regulator, it needs to be always-on, or is
-this another unsolved mystery?
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-This change looks to be working okay on gk20a. It does a couple
-transitions on startup. I'm having other issues getting full rendering
-started, though. Kasan slab-out-of-bounds in nvkm_falcon_v1_load_imem
-when drm_hwcomposer tries to start up. Looking into that separately
-now, but that shouldn't block any of my open patches.
+Best regards,
+Krzysztof
 
-Aaron
 
