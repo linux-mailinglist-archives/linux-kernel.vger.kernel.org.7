@@ -1,265 +1,200 @@
-Return-Path: <linux-kernel+bounces-813094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BEFB540A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:48:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DDEBB540B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C552AA156D
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:48:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5B5E48031D
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E3B222560;
-	Fri, 12 Sep 2025 02:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA2C220F2D;
+	Fri, 12 Sep 2025 02:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TG98E05g"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JfntySs/"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2080.outbound.protection.outlook.com [40.107.244.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325E821D3F5
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757645273; cv=none; b=OWaT+7S6JUoG32nd+MTW9cVFdI4b3qpa76d3ID0T+83h3eMc+FE+IPSuQbh0eGjPLMHfPMwSxPniRT1xFXdz0CYOKCimrx6E0zq50rrQK9oiy+hKxnP456gTkTomPxekwCeqH5fk7HWASYNjltppvz7uGzHjNlGm/DxXyzDPvqg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757645273; c=relaxed/simple;
-	bh=yFDobYsSZq/zp8BICShjZEiQbdcNvnbpAn3GlnqQnOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZiQxAq5hDVtuDKhmYHq6yJmjbMOLcPFnyt9KYtbDGap0IH9aebwVx+C/RujDudm/hr65m8ZtB4dbcwyZC4i+7jhenCRoXiQi6VCCkjF3/0MwIVhjS6o3Mf28hchIQKZwkwz7IQqyBMRbo5Pb7hta606V4p+ZegpuhjC7xsVY6Ho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TG98E05g; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-24b21006804so16213365ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 19:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757645270; x=1758250070; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kEod2N8uRbvkJvc+UFZ4BZQkPJQ0ifAgQ3mIeVf0CVo=;
-        b=TG98E05g4HZwnKnGjecWPbkjS3E5/UOCN9/u3PsJcFmvdlZb3+X7Hgx44bjxpJfubF
-         55U5cKvhA6POqtp/I8s6pyAhPu85/bnfZbjeJg+Vxj6gIg5UZk24DrvpLE22B5tYnC05
-         3rO+ZpEsHodQk2IunI+PQnKQxekGD3t51a0B0wuYIU/x880xOO8GcxDXaBu/Tkg/snj7
-         NbiCDZice+9zbTpRn0GsBXrYhfPqPow1fnYtQtzNxcJl6dlI6n7/1oiOMklWzp9FKoBU
-         5pkVipG/h9xAhZvmVlQq/H2QYfH6VzEExk0QCxNzPsLWaxIb56pk5t4TK4k2gsMg9gaX
-         mr3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757645270; x=1758250070;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kEod2N8uRbvkJvc+UFZ4BZQkPJQ0ifAgQ3mIeVf0CVo=;
-        b=LOwZM4NEZg/AjYrQ/4GLPKQaMcJ5d9RAZE6fDgCgIJLZChiDGouy8xKuoY3XxzQfzU
-         xxL2G0GKyIkjacdWi8Og9iXaEaq0Uq3Zfj4hpHewMD6d9Xptc5Q3/5z8dfGZ9kYFuqRJ
-         IHY/n2YrQGWdXdzzLQIh0Fbqv09XdkebdB1qtknuoTiwoPL5iXJZ+oISkEfBniJjwpHR
-         JH9hapYIDOoraRO4Dz0+YIjQQFC4k4PTY8ypPiBYQz8rwxYlw1lm88iIwN0PqUD2Scmv
-         ywr4z8uOZ+K9If2rlqg9gXCdWMX8PDtMyy5ZHol5ejWcz6Uz4bmDkkUtwaTlOW8rcr2h
-         ByRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjGRjUOgSS/dOymzQs/l+JHaQuMcpMMPRbBI7Se8tZSXAhTC57ZtMFCpFKLzixAhWrl31Wri3mU6v5Y4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqu9J27nZEhywp0sb8nQyR2p40EC28Q59JkCgzTrdNH8vH/au8
-	9aEnP8mLffyL2JCITo8tdx4+z6qQ6fP36QcvQ+sHgaO0fA725uGEt9lG
-X-Gm-Gg: ASbGncu1s58fHvwweDqgyQvCLiM0/lE48YkA2vW16q6g63QD36E1l62vSgwUmMF7Eje
-	ICm0cKY5gz2HEc6z71AsXRl1ZAiHqqwT1fbu2SJ25efEecEhWankGSWjhpYh+qhXN9G5gk6MLRV
-	xBAGStjJwhNMpuuWzHNBS+HDUBd0uNu11Xpqqln3VSGdEPo5Q6bJgo2EpAG7N/uabZ0LjQ0qzNp
-	rOO8qJvSiXBOmUGOrhTq7/QFwLVLQW/Wi7IYTbLuNl9O8TPJAQevsWpn0ChR/+zrTpqIDA/Jz+g
-	cXX0hOr7lU56v+MwC9rGXkws0ird0cFzL/t6I/jZJRTXvyD4egkYyjfqnDBFzRiSa7Wlnv8y/cX
-	syYWUFFeD1YS8O1+ZIHQfKchzdws3Tvuj
-X-Google-Smtp-Source: AGHT+IHk193yNMltpKeNNARwHZ7rfre7JMx5iLiB6RE3QMb05YheJaq48yb+Ee7d1Mu/dSjamjkpPw==
-X-Received: by 2002:a17:902:ea09:b0:24c:829a:ee4a with SMTP id d9443c01a7336-25d247d175emr16495555ad.17.1757645270081;
-        Thu, 11 Sep 2025 19:47:50 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-25c36cc53bcsm33542345ad.28.2025.09.11.19.47.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 19:47:49 -0700 (PDT)
-Date: Fri, 12 Sep 2025 10:47:43 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Manivannan Sadhasivam <mani@kernel.org>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicornxw@gmail.com>, kwilczynski@kernel.org, 
-	u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, alex@ghiti.fr, arnd@arndb.de, 
-	bwawrzyn@cisco.com, bhelgaas@google.com, unicorn_wang@outlook.com, 
-	conor+dt@kernel.org, 18255117159@163.com, kishon@kernel.org, krzk+dt@kernel.org, 
-	lpieralisi@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, 
-	s-vadapalli@ti.com, tglx@linutronix.de, thomas.richard@bootlin.com, 
-	sycamoremoon376@gmail.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-riscv@lists.infradead.org, sophgo@lists.linux.dev, 
-	rabenda.cn@gmail.com, chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, 
-	fengchun.li@sophgo.com
-Subject: Re: [PATCH v2 3/7] PCI: sg2042: Add Sophgo SG2042 PCIe driver
-Message-ID: <kd3wxvditosgj7rihh2q5iqvl43ljunbxaqbqpcxpmsbdnsbga@f4jm3o33ilkv>
-References: <cover.1757467895.git.unicorn_wang@outlook.com>
- <162d064228261ccd0bf9313a20288e510912effd.1757467895.git.unicorn_wang@outlook.com>
- <xmk5uvnw7mcizxpaoarvx2c2sejaz2skaiyyac7oo5y6loyjgp@5v3sldwbqpw5>
- <rarvqtex3vsve3sscaky3rw727hwp5avmxve3lluwoviqbt6m6@h3nlqbi2s3fd>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81863155A4E;
+	Fri, 12 Sep 2025 02:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757645629; cv=fail; b=tNPNcVLXpXthRVetEKG2UY6mh0a6nsXujcTB9oAXTmEfP2EKaalfqt10qJD9wC4Wx5dEWOCnJyJZvfhwGRwf7s0bQGHhbaaXRQ/bcmQhok5JbOliQfVQKXMLUh+3HpGn2U0g03n25dA4Cx5lckoFG5CSqcTTO11s2VbzcI8wrGo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757645629; c=relaxed/simple;
+	bh=Zt4y6LIPubCAUqi57bTc7XqHd1MZ0VPOTcd06B/dUGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iDIfUT0Mr1sxDqQXboogx6IljC7T9A9b5GnrgzoRvpeZrAOm926GfgQKmmoGOip/Q9iY7G8zQSQrPwBCpbz6+0T2CRKH1T8Sz82QMBYxbKSf/uvE3lPeG8BgI73C1+Tmfjd4BCC3emcdvUIOil8ylnJyKOpg0StJIbn7cIthxEk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JfntySs/; arc=fail smtp.client-ip=40.107.244.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=g/C9mW2HAYvU8dfouzR2sOuT5BwePjz+ZBrQlXZk5zTt1QDtxpE3tmxSRlN2sbd8vaQyug926nvvrvCG8zWoT+6JQ+5+JDiuLtDcemVdHDOaotYq8913bOxxOpNKmtTb7JjYINey1W87g7QXDTWFNbdJEX8OOcdfiHP4pxsye0hW3WZEkzRHY9yW97NpxCLrXYH5SAaf+GUNCJXr5e6XokQQ/vNkfLE2YtcvID8I2bsYHcscItuc+jAr1wm2NDfEJQ1JFEH+2cMHds7fcw1sp+6maJzrtYq68jBoT6DoxTJo56I/2U/uZnNGgPcz+bWPReRUgpiDoJ1ScYn53d8vYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fKiLY2EGRgq93FFiLGHdSG8NHtFo5lIzkrMJmfIrdOs=;
+ b=lcWkIDr60uHFwspxyhdE88sxY+bhjFPcKsPn2g3Qitxq7Y0BnykpBUzC+b7igrsxZOrBO/ThuF1H0vQJvsWa2i2+Z48ZkJhsdR6CfyJOFzDJPk0WWOkOlfQwOdfqN6bWQpgQEbOoNp4uHe7cCcztoQeUA6yNBqB5TbtYtQKiobz9sFmP0ql9E73tA3CMJNHMg3+9HmN1l3KomgWV1kBSpieXZdnQwh+5WnQxF58uYDTdwXhMusYnczaAXxae7ML1DIfq2QdcBzKOJJrYPp4VrtFIHK+6U7B12/k1ma+9JcnU8eYYg5amaSJWxBcDjFqood0MFKF+aFq7Cv/k7myl7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fKiLY2EGRgq93FFiLGHdSG8NHtFo5lIzkrMJmfIrdOs=;
+ b=JfntySs/ddc+h74Z4hHoSdaIC6manVPkV9xHwKje5N/JbRCzlc38j6WA4F38rg09GZumIi1njBhP2YcB9eMsTMBqXIkp1fswIdrDmnR3H/74FKILbQMms2Dam6uys6GK7BilIufQ82cT+xw0mjARrBACGXWyqpuL5oV8Wz2JiNChYUoa3JtYR/2uez5rg5p2gNreCDf6bHMgmELh0OhABELehdEMgt0CX0HNFc6tC9gBRDzzOMREnUhFEMZ697EafAPm1iIOUSjz1MYYNFsc2Ujukcb0PMzCtg5syWzeC8ONBY4bSrpra1J88/YnTrHgxeewkjwon1Qy26XqOOFWPw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by LV3PR12MB9412.namprd12.prod.outlook.com (2603:10b6:408:211::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
+ 2025 02:53:45 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 02:53:45 +0000
+Date: Thu, 11 Sep 2025 22:53:43 -0400
+From: Joel Fernandes <joelagnelf@nvidia.com>
+To: Andrew Ballance <andrewjballance@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	John Hubbard <jhubbard@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>, Alistair Popple <apopple@nvidia.com>,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: Printing with overflow checks can cause modpost errors
+Message-ID: <20250912025343.GA1376629@joelbox2>
+References: <20250911213157.GA1039411@joelbox2>
+ <aMNo7qRCp_yprUAW@my-computer>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMNo7qRCp_yprUAW@my-computer>
+X-ClientProxiedBy: BN9PR03CA0939.namprd03.prod.outlook.com
+ (2603:10b6:408:108::14) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <rarvqtex3vsve3sscaky3rw727hwp5avmxve3lluwoviqbt6m6@h3nlqbi2s3fd>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|LV3PR12MB9412:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8a1aeb50-be0f-4663-5050-08ddf1a796e5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LXz4eo7bHAeh7alor3nQgwl10t5MbP9FJJoV0G7Pm+q915Yf51GaXrVD8Qak?=
+ =?us-ascii?Q?4FvS2DL7MFD7sTXTurq+MlKx8q2x5+bbcPzF7kZPo15SSgUGWUJbY0tDftvN?=
+ =?us-ascii?Q?eWIOoOLXs44wD+uiBEUkT0sM57HnNUiX5O1F37jZKSoU9laJddsRrUGbg73d?=
+ =?us-ascii?Q?DL9VjD1+fVEIbSnEEqKk/huk/Oz/mzqRiaFrJKVQvoNb3QBBQ06kVTiIVWT1?=
+ =?us-ascii?Q?pC4PnEqvWoe0ShWT59gBnjyI7lEbohPaf6M5KqSZXkrDuN1OoXcfFdGFyzBX?=
+ =?us-ascii?Q?7We/VACr9t1q3O9J6hXqwG4uu8wJ+SOlkd2aADGQhJoTsIqySd3aUrFjY7w/?=
+ =?us-ascii?Q?h9ohf+hzTUDwPafj03HsFSey2fXD3R1208yNkhDNDff8yziSkI9/DBCIgea/?=
+ =?us-ascii?Q?u9h77q1TLh3q1D/OcTkdh+hXN1FSAcHjgKAFnu17kUG+baytIB+Kjdhdqd2f?=
+ =?us-ascii?Q?ZNqJauMF9mplAzoUx8KwXfVUbIsrgwLe8D2ArOm5dMASW09xt7an7OFEq7nX?=
+ =?us-ascii?Q?PBWR85oMW1y1mOiZDcMK2gE3Wh3SVfanLufpCgtuA4/N3G8sTpsLmZDUuz7r?=
+ =?us-ascii?Q?seqyr9GzmTlYvR3NNs1DE77Rjd/U1ouy0JAtstlWZ7HjWZ6h59nuwX33RIb8?=
+ =?us-ascii?Q?pt/A5Ye9C4oLWYd5borElA4Rg46W4/2xZ5euu59R61b3AuIHrcNZL9pSmhvk?=
+ =?us-ascii?Q?SY88wLPfg+uJL7sr/3Vl5fU0PmMQEJSmGYSKemuIiLgsitOzkcPuobu3aOAz?=
+ =?us-ascii?Q?JNm32eDsiZjqaeHMXaD89B9H3JMP88axqtzDhfi7EC6UDu+VNLx99ithjtFD?=
+ =?us-ascii?Q?zhbpzIAOseZTMvKD71rYraT3nWh4EljD6KhxvdJsIzlhrR1mNyavFYpXMU/e?=
+ =?us-ascii?Q?RNr9AM8fpkYESGyykPNd6gWm4TYjo1wV4+RGKO0Xz54WA5CVcZOJ+7jj3qyw?=
+ =?us-ascii?Q?/RbDZyTny0baIUYXk6KgXxKAd9DJVWu70RNACmxF43b+AO4k22ud0PXrITGT?=
+ =?us-ascii?Q?QOV2WjGOJMCf4q4+wbNaq+8TRNGteMd4bnOEkCQm3P0lvHuPRkUFNR6QRQda?=
+ =?us-ascii?Q?1sS7x12438fQwZwmNgUzUGzktdklzJ7C5WZ+9ispholwk+Zfch77b+MEVejs?=
+ =?us-ascii?Q?AHjwa0ugUl7zcF9iJQll/QfeZsHEzN0ldSTot7/TtzO+oxURPDkn7zAxnGEK?=
+ =?us-ascii?Q?pj3kLnszNtq5ktqZMCkxj6Nh8soaV8nSniUi62/Ai4O5ZRswgCDbmWRCRZtd?=
+ =?us-ascii?Q?NRzrH7b9+Bt2BZ6hTpCytmKbMR/5YWxUhZxTNXSivCw7GMjrCtl7zkE3Asvi?=
+ =?us-ascii?Q?w27BkTSZhhti5yHY8nAa35ETTyh9QxuNbZPwc34R48UCxUmXXqXySEWUngI+?=
+ =?us-ascii?Q?mKp7RsuLSvWmLGH2Wf0f+6mPRehrvZMq76FWMiScRbxworJxof+Mso7QgRLj?=
+ =?us-ascii?Q?+nBITa9p48E=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OywLHnh91u+7S+9vEVjiJpSSQSvK6oop5aRujwU/3iOYMRf00KylBdVENm2T?=
+ =?us-ascii?Q?627lOihtgOGbjDSyIeAfDTsS/YIPydUYBT+pUlJ+BxSyz++LX32LC4g0fAIC?=
+ =?us-ascii?Q?q/DxPyt6C7Pz+IdY/jloL9adn8qy56g2MiLxWCl20AKiWJieig4SUjhPVnT5?=
+ =?us-ascii?Q?M8ox1BMGTKFtcyZbZiwwvGJTZKXFZz0+XMHgHWlrDQbL/FIw09H8/+XoNQJJ?=
+ =?us-ascii?Q?lHzxbROl/jPmK+m7eXYr1CmzZd3lPD5qj7JkvzPhZBTLbg57rRQEjvNI4jta?=
+ =?us-ascii?Q?P2RSP8rdS0bU1jrpkG3JdEuSFXk8CIGYimzPcCPhJibh6EPHiV+0aFgcxsya?=
+ =?us-ascii?Q?s6sK+I4EfQHJYoz1JTPFF0TwEjCD6gSG0JNXY7ugmtdbEgV12cWmNxgcZje9?=
+ =?us-ascii?Q?5NJ1BCi12S/4t8Hn3e8SUXYQiuL/SYZUTvTArDhErgK7lYQK3a3baIWuzAaP?=
+ =?us-ascii?Q?tyoSDjYkFqcFe71Cyywzuk7xKmX12hPYLL1Wb4MofSojJRkxoKNpOeIS5wf0?=
+ =?us-ascii?Q?CDDvbzoIx7/L48NYtVBV/6mAfyiTZ+HgOhpdKP6JoHgiLesx5WFb54TY4IAb?=
+ =?us-ascii?Q?mCdA2R7X0cdo8cKWzIogrVfX3o4OQHvFjrHbtplo81n7iqm08iGFKcgRZwbO?=
+ =?us-ascii?Q?54HWCeRmoFtzOw0v6YypTk5dhp8bbgtMEKEvvRx5IAAa3J2azO5K+gsc8ebw?=
+ =?us-ascii?Q?GkFHMhruQrQrx0XAhk2WwXayQ3n+M0S6Jkr5xeonz0p02sQ67Z+f1/hJBUjJ?=
+ =?us-ascii?Q?TAV96MLYeZYgS5MajGXG4BLXH/QsTFJBQNsarz9njEyUOW2vo+kl//A6quw4?=
+ =?us-ascii?Q?5kTiL0OTgK8495SHN3N7W6upobt/7jk2AGP/hlD3nOHioXvImYRnotXbDrL7?=
+ =?us-ascii?Q?z6ltPETnhwegJ+4UIsS2y8OFoQGuEfCoPm9QJAWjSPE+7gxtuZ9fZFKyitjA?=
+ =?us-ascii?Q?QBdf1ix6zOB0NxqjdHad6+5Mv7BVfdCpArFVICZ8bEQdXlSpjvu5ZuokioAo?=
+ =?us-ascii?Q?k46wOQmQDADxgwqVQqKcjv4PeWTMMzfzjHUCAMYIJWqQEqDYmjbkzIZyJMt1?=
+ =?us-ascii?Q?5th/pSZlcoP7IB6kfuDFUXrfQ6bDjhXeC3o8PyQB5LjEmaDs98YSRmksjbQT?=
+ =?us-ascii?Q?H10D0o0UNcvBUAUTZ3nQZNLtwLujnFv1XFmVXLDIdKLXr4f9o9WJh8w14DlU?=
+ =?us-ascii?Q?+CtDgizl1AMu464j1Nx7Ztjyi5kn3Mk0fEqU9HQ6tH7KckOVkA0HOnIORQOO?=
+ =?us-ascii?Q?JxAHlnr/yrwEXmpJokwPa7JvExKbtLOrBxTTayvFIiHyiaJizXHS8x+01ptd?=
+ =?us-ascii?Q?6h/hwZ7qJMmUoWxEid9Ve3adEvcEzF60+V+dszm1mwD61NOr/F+CzjQMsJUg?=
+ =?us-ascii?Q?YgHkbyWdz5hKYSC/MAtRNWzABhzZ/dL4PwL/kopjBBZ19YszdGcqcK3Ir1Gs?=
+ =?us-ascii?Q?6oxo9+Jbk6djHoHUNyPJCpusRPm+EcKs6wBOKKSec/AkT/D0Adf4O4+Whyub?=
+ =?us-ascii?Q?3TP8ujxFReAukztk90nkJ1dNfuJD0/5aq6kKQVpxqItf2aK2ZtnyJOtL4waw?=
+ =?us-ascii?Q?wQ++mOnv3+WfWlV3BoqYgkMZTEoazXN7vrkCDP9e?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a1aeb50-be0f-4663-5050-08ddf1a796e5
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 02:53:45.1650
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2L6K64ElWOmZ8QfSLwLu8HvwFfqZrIwva+3moLDt9u3DdXur5OKmpxdeCl3mNE/eQ2plz8KaeouisWdoiui6rQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9412
 
-On Thu, Sep 11, 2025 at 10:33:18PM +0530, Manivannan Sadhasivam wrote:
-> On Wed, Sep 10, 2025 at 10:56:23AM GMT, Inochi Amaoto wrote:
-> > On Wed, Sep 10, 2025 at 10:08:39AM +0800, Chen Wang wrote:
-> > > From: Chen Wang <unicorn_wang@outlook.com>
-> > > 
-> > > Add support for PCIe controller in SG2042 SoC. The controller
-> > > uses the Cadence PCIe core programmed by pcie-cadence*.c. The
-> > > PCIe controller will work in host mode only, supporting data
-> > > rate(gen4) and lanes(x16 or x8).
-> > > 
-> > > Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> > > ---
-> > >  drivers/pci/controller/cadence/Kconfig       |  10 ++
-> > >  drivers/pci/controller/cadence/Makefile      |   1 +
-> > >  drivers/pci/controller/cadence/pcie-sg2042.c | 104 +++++++++++++++++++
-> > >  3 files changed, 115 insertions(+)
-> > >  create mode 100644 drivers/pci/controller/cadence/pcie-sg2042.c
-> > > 
-> > > diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
-> > > index 666e16b6367f..02a639e55fd8 100644
-> > > --- a/drivers/pci/controller/cadence/Kconfig
-> > > +++ b/drivers/pci/controller/cadence/Kconfig
-> > > @@ -42,6 +42,15 @@ config PCIE_CADENCE_PLAT_EP
-> > >  	  endpoint mode. This PCIe controller may be embedded into many
-> > >  	  different vendors SoCs.
-> > >  
-> > > +config PCIE_SG2042_HOST
-> > > +	tristate "Sophgo SG2042 PCIe controller (host mode)"
-> > > +	depends on OF && (ARCH_SOPHGO || COMPILE_TEST)
-> > > +	select PCIE_CADENCE_HOST
-> > > +	help
-> > > +	  Say Y here if you want to support the Sophgo SG2042 PCIe platform
-> > > +	  controller in host mode. Sophgo SG2042 PCIe controller uses Cadence
-> > > +	  PCIe core.
-> > > +
-> > >  config PCI_J721E
-> > >  	tristate
-> > >  	select PCIE_CADENCE_HOST if PCI_J721E_HOST != n
-> > > @@ -67,4 +76,5 @@ config PCI_J721E_EP
-> > >  	  Say Y here if you want to support the TI J721E PCIe platform
-> > >  	  controller in endpoint mode. TI J721E PCIe controller uses Cadence PCIe
-> > >  	  core.
-> > > +
-> > >  endmenu
-> > > diff --git a/drivers/pci/controller/cadence/Makefile b/drivers/pci/controller/cadence/Makefile
-> > > index 9bac5fb2f13d..5e23f8539ecc 100644
-> > > --- a/drivers/pci/controller/cadence/Makefile
-> > > +++ b/drivers/pci/controller/cadence/Makefile
-> > > @@ -4,3 +4,4 @@ obj-$(CONFIG_PCIE_CADENCE_HOST) += pcie-cadence-host.o
-> > >  obj-$(CONFIG_PCIE_CADENCE_EP) += pcie-cadence-ep.o
-> > >  obj-$(CONFIG_PCIE_CADENCE_PLAT) += pcie-cadence-plat.o
-> > >  obj-$(CONFIG_PCI_J721E) += pci-j721e.o
-> > > +obj-$(CONFIG_PCIE_SG2042_HOST) += pcie-sg2042.o
-> > > diff --git a/drivers/pci/controller/cadence/pcie-sg2042.c b/drivers/pci/controller/cadence/pcie-sg2042.c
-> > > new file mode 100644
-> > > index 000000000000..c026e1ca5d6e
-> > > --- /dev/null
-> > > +++ b/drivers/pci/controller/cadence/pcie-sg2042.c
-> > > @@ -0,0 +1,104 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * pcie-sg2042 - PCIe controller driver for Sophgo SG2042 SoC
-> > > + *
-> > > + * Copyright (C) 2025 Sophgo Technology Inc.
-> > > + * Copyright (C) 2025 Chen Wang <unicorn_wang@outlook.com>
-> > > + */
-> > > +
-> > > +#include <linux/mod_devicetable.h>
-> > > +#include <linux/pci.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/pm_runtime.h>
-> > > +
-> > > +#include "pcie-cadence.h"
-> > > +
-> > > +/*
-> > > + * SG2042 only supports 4-byte aligned access, so for the rootbus (i.e. to
-> > > + * read/write the Root Port itself, read32/write32 is required. For
-> > > + * non-rootbus (i.e. to read/write the PCIe peripheral registers, supports
-> > > + * 1/2/4 byte aligned access, so directly using read/write should be fine.
-> > > + */
-> > > +
-> > > +static struct pci_ops sg2042_pcie_root_ops = {
-> > > +	.map_bus	= cdns_pci_map_bus,
-> > > +	.read		= pci_generic_config_read32,
-> > > +	.write		= pci_generic_config_write32,
-> > > +};
-> > > +
-> > > +static struct pci_ops sg2042_pcie_child_ops = {
-> > > +	.map_bus	= cdns_pci_map_bus,
-> > > +	.read		= pci_generic_config_read,
-> > > +	.write		= pci_generic_config_write,
-> > > +};
-> > > +
-> > > +static int sg2042_pcie_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct device *dev = &pdev->dev;
-> > > +	struct pci_host_bridge *bridge;
-> > > +	struct cdns_pcie *pcie;
-> > > +	struct cdns_pcie_rc *rc;
-> > > +	int ret;
-> > > +
-> > > +	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*rc));
-> > > +	if (!bridge) {
-> > > +		dev_err_probe(dev, -ENOMEM, "Failed to alloc host bridge!\n");
-> > > +		return -ENOMEM;
-> > > +	}
-> > > +
-> > > +	bridge->ops = &sg2042_pcie_root_ops;
-> > > +	bridge->child_ops = &sg2042_pcie_child_ops;
-> > > +
-> > > +	rc = pci_host_bridge_priv(bridge);
-> > > +	pcie = &rc->pcie;
-> > > +	pcie->dev = dev;
-> > > +
-> > > +	platform_set_drvdata(pdev, pcie);
-> > > +
-> > > +	pm_runtime_set_active(dev);
-> > > +	pm_runtime_no_callbacks(dev);
-> > > +	devm_pm_runtime_enable(dev);
-> > > +
-> > > +	ret = cdns_pcie_init_phy(dev, pcie);
-> > > +	if (ret) {
-> > > +		dev_err_probe(dev, ret, "Failed to init phy!\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	ret = cdns_pcie_host_setup(rc);
-> > > +	if (ret) {
-> > > +		dev_err_probe(dev, ret, "Failed to setup host!\n");
-> > > +		cdns_pcie_disable_phy(pcie);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
+On Thu, Sep 11, 2025 at 07:27:26PM -0500, Andrew Ballance wrote:
+> On Thu, Sep 11, 2025 at 05:31:57PM -0400, Joel Fernandes wrote:
+> > Hello,
+> > Recently some of have been running into modpost errors more frequently. Ahead
+> > of Kangrejos, I am trying to study them, the one I looked at today is truly
+> > weird, below are more details.
 > > 
-> > > +static void sg2042_pcie_remove(struct platform_device *pdev)
-> > > +{
-> > > +	struct cdns_pcie *pcie = platform_get_drvdata(pdev);
-> > > +
-> > > +	cdns_pcie_disable_phy(pcie);
-> > > +}
-> > > +
+> > I narrowed it down to the print statement and specifically the FFI call to
+> > printk bindings. This was first reported by Timur Tabi on CC. 
 > > 
-> > I think this remove is useless, as it is almost impossible to
-> > remove a pcie at runtime.
+> > With CONFIG_RUST_OVERFLOW_CHECKS=y and CONFIG_RUST_BUILD_ASSERT_ALLOW=y, the
+> > following patch when applied to nova-core will fail to build with following
+> > errors. The question is why does the overflow checking fail since the
+> > arithmetic is valid, and why only during printing (and say not during the
+> > call to write32).
+> > 
+> >   MODPOST Module.symvers
+> > ERROR: modpost: "rust_build_error" [drivers/gpu/nova-core/nova_core.ko] undefined!
+> > make[2]: *** [scripts/Makefile.modpost:147: Module.symvers] Error 1
+> > make[1]: *** [/home/joelaf/repo/linux-nova-rm-call/Makefile:1961: modpost] Error 2
+> > make: *** [Makefile:248: __sub-make] Error 2
+> > 
+> > Any comments or thoughts?
 > > 
 > 
-> Why impossible? We only have concerns with removing PCIe controllers
-> implementing irqchip, but this driver is not implementing it and using an
-> external irqchip controller.
-> 
-> So it is safe and possible to remove this driver during runtime.
-> 
+> Io::write32 tries to do a bounds check at compile time and if it cannot
+> be done it causes a build error. it looks like because a pointer to
+> offset is passed across a ffi boundary, rustc makes no assumptions about
+> the value of offset. so it cannot do the bounds check at compile time
+> and causes a build error.
 
-Good to know this. It is the thing I did not know before.
-So it is OK for me to see this code.
+Are you saying this issue is related to iowrite32? I don't think so because
+the issue does not happen if you comment out the pr_err in my example and
+leave the write32 as it is. So it is something with the call to printk (FFI).
 
-Thanks,
-Inochi
+Why can't it assume the value of offset? All the values to compute it are
+available at compile time right?
+
+thanks,
+
+ - Joel
+
 
