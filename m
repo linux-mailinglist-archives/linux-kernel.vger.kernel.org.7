@@ -1,102 +1,54 @@
-Return-Path: <linux-kernel+bounces-813975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCD50B54DB8
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:30:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE3EB54DC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:32:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462FB467BB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B657417B8A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8498D30EF9D;
-	Fri, 12 Sep 2025 12:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117A23115A1;
+	Fri, 12 Sep 2025 12:25:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UuT9PLWb"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DNo4tpsG"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31EC30C62D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665C83112BB;
+	Fri, 12 Sep 2025 12:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757679903; cv=none; b=SjiT4hBRC1MezXfbfek8J+QQFWvlMVWLRz8HxBc+h+nefMjKpNEoVl70YO+WKSWqTlXfvQvW1Vq10sSaaQTJWhYU/qqHFwajjZTqFijxcLWsCxUi0GNqxNue+dHEKdB1gtrYEkpQYNzb3859qNqRDz6Kbexofgr++RDvOEJM428=
+	t=1757679925; cv=none; b=Vi8OZMrTmvpcQqZrwpgpxZACSrOvWrNuTSe3/SI5LDdD6EJQIkRM8hyLAVg3koheoTVOa/T+onlDMQ2gR3ubN2TwOoWrd+knPNigcVjl5UEATLs8BNIZMgWx0DP60iQu+2wYVgX+WBeN1fdhjTT1988guN/IAcSkbKfbxq3HAvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757679903; c=relaxed/simple;
-	bh=rlU12FG+4sUq0XnXmaxg6zY2V7ONJn4T+IfJgTnkVPc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D/f4yF3vpTv1egT7JRt623r0y+0Qj2ePPgllWa2YBBuAFefiRKphGy/BOfFu2w9TtEtYf5zZ4hbFtL0MyLcNZ+GNUPdBvVtjmFsYOxqyYk7bPxYenjpRcdTbqX3V9saZulrJSGHdIfdFJh8RA2PYbTJ6lra428cv2J0GPTOHzkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UuT9PLWb; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3e2055ce973so1041855f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757679900; x=1758284700; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=md5nkDmRRh2gMN/cfSkiCbamlknh5oiGopcdy0QJF8Y=;
-        b=UuT9PLWb2lfWbAIh0WkT7qwgzoW0KT8KC3XMLU9NE5FRaozLRPm4CS8L6q7a35uSL9
-         49+DAdxtYhNJIrCiw6sz3BYnCMkDSu0MIquWtcQAyeAOnLMJF+LNcb0dvIgsKZpYhXs9
-         5oq1c5B8AZL9zrdbYBR21Q/Bn9wbOSsKvzA1WbREOC5qmtIDZ3eHZslt/6rKxr9Htf4i
-         g7JJrb3SosqooP9y2AuPB+hZdsII1wlGE7kHcYf25imF9A1TmriSUzDLPyC6GDLCKGu6
-         8jQbaSkmnJCymmITs7rPIi9serU0ipAcFhuoSMuSm2EKES7uZKHNzpd2e+Y8WVA77jtZ
-         hAJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757679900; x=1758284700;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=md5nkDmRRh2gMN/cfSkiCbamlknh5oiGopcdy0QJF8Y=;
-        b=Kjp2yC94Ufple2P+07UR3Xamzn2prS7mGtiiSyMJT/3mOIwWhe1CQDwtTdLmZE6m/+
-         G/wstWc1IngcxVPwJfTBANEsenUWLJ9CixatG9Zsh85c7o/ycQ3dURbt3Jaz255/Mqen
-         IRIKsGEIGkpF4/3GckA9WefJwCQMFpqoXJ/TKBOru71e9Ws8TmPF2lH+vkFpoOh0QFmF
-         /TbwelLDVjNtLKd8g9BYwkH/GAm7h092hO49R4orXmcwNERv3XObtfY078Xcpto7Nkr0
-         e4HTlm0xgJTt6AMbn4qxrSxLCDViBunYutlRWVaQQPuPzfaaU+1wHvYDjeWjiFGmN0qt
-         ujTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG9enWK7NgDc01RU651jdV7bBSfjTlIC59HsoLrqk5tcKnxh2xnq6TZJBVuJHnap+XEIPxbxRAVOMD7X8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaSRqK4XsGNgEPutuA1WNT75V8EkO2oak0H/8DxJsrkHbKZHaf
-	yAyslHR3kVeW/e+IZRofbxy8YWYFVc/vKFtr1auRlSI9Rr0IuuDzb6hclVSoaDluJ94=
-X-Gm-Gg: ASbGncvc0lHfKi7cZmfp/pXLgV4MQ9dqWWdzXoBVOGKlv0w3yl8B21LoLni4LVmOBxt
-	DtUJSpvGItEd3wB6Dv4kgySEMDnXk4LXBVLuRWSNnLkWDnLSr/Woa4V50W4FlPut4EqzdrmlZ99
-	rkWnRFTD/ncegY+X6/ZYQa4FDNQ0CvTOi/24LfcH57gO/c4hcUdtvMlMWrmRNl1qWJRmTiFNc1s
-	PaVjXIrFJS48Re+qimnPX6jMYRN54r4FJSmCNVNFcC2DO3JscMNZwS59wcdPtzEh/iooTSrcQgc
-	xdbabQlATdpndoszrgzxkiyrP6Lj7Uso64eQ/bfli7kGSFx2ISOf8gSqSvpIAfHkOsLZKl+JNOJ
-	3TT7OEK+0zogye0fJcpDnq35ysqnK1Z4AgduWGxuOm2nmH477vlMC
-X-Google-Smtp-Source: AGHT+IFeFgkWbvNLPP6zQb3x+mqbY/nkKchmA7T4My9baxdYYpQETFEEocYlizuFZpzNAgPRzsrfUw==
-X-Received: by 2002:a05:6000:240b:b0:3e7:6457:ca85 with SMTP id ffacd0b85a97d-3e765781280mr3017656f8f.5.1757679899686;
-        Fri, 12 Sep 2025 05:24:59 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607770c2sm6320091f8f.8.2025.09.12.05.24.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 05:24:59 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de
-Cc: claudiu.beznea@tuxon.dev,
-	linux-pci@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1757679925; c=relaxed/simple;
+	bh=5nT/wxso1ClexhEwU9wf9VV5ahhYIiPbAkvmh86C1SU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S06TtH1Ho5dqc6eWcTOGDu/bTTuDgYTmNubV/aooCiVd23OI8SSrKim1zWq2xFLdaFOtqVCoxsplS2Tn8+UY789YMTymjochkg+IIpla03wx/yXWYdBNksAuY2z1ksUuqVsDCPEpY4KN1E3H1YOkfLrBGNvldhng3pIvwGzoMb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DNo4tpsG; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757679919; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=Vw4bLV5JSDa5YV80BV+CFESp5VPTl9W3M3spAbxNswU=;
+	b=DNo4tpsGVegYsqqs2WzQh8AmFrnHbVWQJiGLR7bEe5pEJuml1Fa0Zu2tu75ybclz8h3PuQwPAmYbL4WIIEVG+CwfnhMsDyvdnu+mtHAQrqKAY6OCSuLGN+YpuNy//wNgnjUyXUqxCiPS7g4hFHyyQ55rkRYbIQWADldwLjDmTPk=
+Received: from DESKTOP-S9E58SO.localdomain(mailfrom:cp0613@linux.alibaba.com fp:SMTPD_---0Wnr7gxV_1757679915 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 12 Sep 2025 20:25:19 +0800
+From: cp0613@linux.alibaba.com
+To: rafael@kernel.org,
+	lenb@kernel.org,
+	guoren@kernel.org,
+	jeeheng.sia@starfivetech.com
+Cc: linux-acpi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v4 6/6] arm64: defconfig: Enable PCIe for the Renesas RZ/G3S SoC
-Date: Fri, 12 Sep 2025 15:24:44 +0300
-Message-ID: <20250912122444.3870284-7-claudiu.beznea.uj@bp.renesas.com>
+	Chen Pei <cp0613@linux.alibaba.com>
+Subject: [PATCH v2] ACPI: SPCR: Support Precise Baud Rate filed
+Date: Fri, 12 Sep 2025 20:25:14 +0800
+Message-ID: <20250912122514.2303-1-cp0613@linux.alibaba.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20250912122444.3870284-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -105,39 +57,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Chen Pei <cp0613@linux.alibaba.com>
 
-Enable PCIe for the Renesas RZ/G3S SoC.
+The Microsoft Serial Port Console Redirection (SPCR) specification
+revision 1.09 comprises additional field: Precise Baud Rate [1].
 
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+It is used to describe non-traditional baud rates (such as those
+used by high-speed UARTs).
+
+It contains a specific non-zero baud rate which overrides the value
+of the Configured Baud Rate field. If this field is zero or not
+present, Configured Baud Rate is used.
+
+Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serports/serial-port-console-redirection-table # 1
+
+Signed-off-by: Chen Pei <cp0613@linux.alibaba.com>
 ---
+ drivers/acpi/spcr.c | 54 ++++++++++++++++++++++++++-------------------
+ 1 file changed, 31 insertions(+), 23 deletions(-)
 
-Changes in v4:
-- made it builtin
-
-Changes in v3:
-- collected tags
-
-Changes in v2:
-- none
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5dcf36e99cd2..ca731843a9ba 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -230,6 +230,7 @@ CONFIG_PCIE_MEDIATEK_GEN3=m
- CONFIG_PCI_TEGRA=y
- CONFIG_PCIE_RCAR_HOST=y
- CONFIG_PCIE_RCAR_EP=y
-+CONFIG_PCIE_RENESAS_RZG3S_HOST=y
- CONFIG_PCIE_ROCKCHIP_HOST=m
- CONFIG_PCI_XGENE=y
- CONFIG_PCI_IMX6_HOST=y
+diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+index cd36a97b0ea2..a97b02ee5538 100644
+--- a/drivers/acpi/spcr.c
++++ b/drivers/acpi/spcr.c
+@@ -146,29 +146,37 @@ int __init acpi_parse_spcr(bool enable_earlycon, bool enable_console)
+ 		goto done;
+ 	}
+ 
+-	switch (table->baud_rate) {
+-	case 0:
+-		/*
+-		 * SPCR 1.04 defines 0 as a preconfigured state of UART.
+-		 * Assume firmware or bootloader configures console correctly.
+-		 */
+-		baud_rate = 0;
+-		break;
+-	case 3:
+-		baud_rate = 9600;
+-		break;
+-	case 4:
+-		baud_rate = 19200;
+-		break;
+-	case 6:
+-		baud_rate = 57600;
+-		break;
+-	case 7:
+-		baud_rate = 115200;
+-		break;
+-	default:
+-		err = -ENOENT;
+-		goto done;
++	/*
++	 * SPCR 1.09 defines Precise Baud Rate Filed contains a specific
++	 * non-zero baud rate which overrides the value of the Configured
++	 * Baud Rate field. If this field is zero or not present, Configured
++	 * Baud Rate is used.
++	 */
++	if (table->precise_baudrate)
++		baud_rate = table->precise_baudrate;
++	else switch (table->baud_rate) {
++		case 0:
++			/*
++			 * SPCR 1.04 defines 0 as a preconfigured state of UART.
++			 * Assume firmware or bootloader configures console correctly.
++			 */
++			baud_rate = 0;
++			break;
++		case 3:
++			baud_rate = 9600;
++			break;
++		case 4:
++			baud_rate = 19200;
++			break;
++		case 6:
++			baud_rate = 57600;
++			break;
++		case 7:
++			baud_rate = 115200;
++			break;
++		default:
++			err = -ENOENT;
++			goto done;
+ 	}
+ 
+ 	/*
 -- 
-2.43.0
+2.49.0
 
 
