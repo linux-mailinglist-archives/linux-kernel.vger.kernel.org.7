@@ -1,224 +1,259 @@
-Return-Path: <linux-kernel+bounces-813592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A76B54811
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:41:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD04DB54816
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4383A019EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CD4F3A6039
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA39286897;
-	Fri, 12 Sep 2025 09:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADFE288CA6;
+	Fri, 12 Sep 2025 09:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DREDYWrR"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2072.outbound.protection.outlook.com [40.107.237.72])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DVY9SEPw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6402848AE;
-	Fri, 12 Sep 2025 09:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757669762; cv=fail; b=FbRbLS7RATWdJ0HrL27SEAtqWZd4VGtO0HkW3kmCD5vcjRHjMQBne5d6wUKLCAZ3YNixVS6CFgdqYubfM9/0Wpr2bZR2mvRuN6rcJr+50Wg7ClovVqcY7cUYr6Y06WTuY1BvQSFOBaCMpJaQu6meqmOTcZHgECtuuf5frwP8OZc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757669762; c=relaxed/simple;
-	bh=lqjRl4bdpZDxaJlcMp78RZfF5YX/AJxsYQ2IzJXW8jU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IMCoMCy4YwV3NRyeVDeXOHfTZpRoFn+SvV+9wNGMYNmlLOSNf9+Y07bhTvTMoVNcmOFI1VZrJ/aHkvuzLv/l+tNLNCwordA31bIwOlSxhD5SrpGyCWsf+Ojf15hl7uqViaL4mWIOT+BtcW8OT8IfOfYBK+gN1NdfNMizdcRfoZs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DREDYWrR; arc=fail smtp.client-ip=40.107.237.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SCFKN6l9sK7df0+RZ5VWN5qPSfzPDOApSaGYz4yZr9ZFCSunhWdkFGp9eZ6aHsXAAldO6CtDtk2Gh3A7H+tRfOPuQPsZcVoVIerpyOo57mA0G42j/ftijZ9SzRa40NjPOxNSXJu8IaWmG1wWD4GUT6AqJ6fxqdLWq4p/CVrocqbjMwOoPn0SMsXLXV7dQEgmfi3FnS4MtHZ/rpmhSVGkfqKN/dLzXSrY6PrirjngPDlvo4kI96imcM2rJtplOiKA171QV4+43KM81tZlWP6ZzFFDiN9+1GDddfbsvsIFZCvuZzqpcCaVkcPx3OS5JLCri8O2nsQYHh1JawUy6749AQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=01dKBeXR+VKcd/4Md54QVpH5HztQTD77lg5gY0uyfGU=;
- b=ol3ZfqMQ6n1fWTmE4wemBzDnBNU1Sopn0yBky11i+0GRvHhZGRJI96ICS9k5Pq14ns54r37y7NrEiIjEQ6WIbPExUtG2fkMEdDu8CTxAsLP56y7AECdWzXSRaGQZTHh5+diZGgYum6Cdotsx9Le2PI0H2QnGyRm2Flut3EImuzKMvcf+sR53rOYJ0hItnZt8rfBNCfIcKLD2tb1p2D4UIX+c7dU1A95Qp88Jk7nyA0E+0ipup2PqkmT7PmAMkKhOq80+i4z17SpnHOjr9Feo+anmRRd7FfuJ6S1LTuXdGBllCFnAKO7APUxPe0bx0bF83kW+d8UumWsC5qsH3v4uUg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=01dKBeXR+VKcd/4Md54QVpH5HztQTD77lg5gY0uyfGU=;
- b=DREDYWrRChmIxzebCeDUo3n1XwMJis2RKmm82a4gyAnI2d0a0yaBjD+gElKo+KetnNP9MruhXXnH1Mm2synQ7eEprTHNjzrMno36Izc1YvtTUXmmHA2fuaZ10KVgKkxL+sUu9BPuWp8kxYeV4obhbp0Fh124I7f00Z235whzhJs=
-Received: from SA1PR12MB8120.namprd12.prod.outlook.com (2603:10b6:806:331::16)
- by IA0PPF80FB91A80.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bd5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9115.18; Fri, 12 Sep
- 2025 09:35:56 +0000
-Received: from SA1PR12MB8120.namprd12.prod.outlook.com
- ([fe80::a160:b30e:1d9c:eaea]) by SA1PR12MB8120.namprd12.prod.outlook.com
- ([fe80::a160:b30e:1d9c:eaea%7]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 09:35:56 +0000
-From: "Verma, Devendra" <Devendra.Verma@amd.com>
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: "bhelgaas@google.com" <bhelgaas@google.com>, "mani@kernel.org"
-	<mani@kernel.org>, "vkoul@kernel.org" <vkoul@kernel.org>,
-	"dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Simek,
- Michal" <michal.simek@amd.com>
-Subject: RE: [PATCH v1 2/2] dmaengine: dw-edma: Add non-LL mode
-Thread-Topic: [PATCH v1 2/2] dmaengine: dw-edma: Add non-LL mode
-Thread-Index: AQHcI2aRkcXSEDz8T0WQWVSYvwF0+bSPSTZQ
-Date: Fri, 12 Sep 2025 09:35:56 +0000
-Message-ID:
- <SA1PR12MB8120288197801A3F6C41993A9508A@SA1PR12MB8120.namprd12.prod.outlook.com>
-References: <20250911114451.15947-3-devendra.verma@amd.com>
- <20250911215347.GA1594166@bhelgaas>
-In-Reply-To: <20250911215347.GA1594166@bhelgaas>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2025-09-12T09:31:24.0000000Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR12MB8120:EE_|IA0PPF80FB91A80:EE_
-x-ms-office365-filtering-correlation-id: daf5c20c-dd9f-4eb0-4bce-08ddf1dfc632
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?OEJz2kA4HN4za7MbVbIVTOz7cdsghHU6X7qACcfZbxMyvs0Ql9y3VqIabil2?=
- =?us-ascii?Q?GXHryuCpjCn66NNI5TlApUjs3lcnmc/EiVmsSKBEokF+J+WsNk7DLGcOzAuZ?=
- =?us-ascii?Q?tYoxclPFsS1By9SFwi1QkYIirhmZbXCtpfxkaCZXBnCNwjHm+ZAzd0T7PB9B?=
- =?us-ascii?Q?MrbAJjiwT/pWkFSDfGqBqFWFawB19fTfEPfJYwFLkJWBQ3zl0Yd6yOFpTCFp?=
- =?us-ascii?Q?kMxfh5r1ANFl5yChSkm0+W+Ax3UJl409sNq1s2ecy2tM/IY9LX1kLBqz963N?=
- =?us-ascii?Q?nFj0YZObxeb4Zp96Zy4oUGEiYA9mC91JY0o+xqlg99DTFXNbwptXKrwMhgXh?=
- =?us-ascii?Q?QmbFj2lsNrid+kVhwaO1LgJCuoTvpipwRZkT/pFAF7bu5qqgW8YlJF0Sh9RW?=
- =?us-ascii?Q?zJodtLY+c9p+4Ts/GG0SW/mQsBKjqCHQnRtGTwGtNawnIPb/YpIzhrb0BboQ?=
- =?us-ascii?Q?WL78gMmH11Lr9RT1V5N5aR39beb0kG6Z1w+2v+MSPrz+AsHtMcG4EHxdwsDW?=
- =?us-ascii?Q?QDJRq7ZbfNbqu/ie18ZAe1LMRkRxr5xjdfBRt2z1F8Dr+d5ept3j0LDhlJas?=
- =?us-ascii?Q?Rqvj/AIVYo3MifTVs5M0QEaT+/r7i3MWOpWCwn/KI5RJ5yt2JbhPaqxMVGYK?=
- =?us-ascii?Q?chReEWUSPwItRE5llo/v3tQuISzFTTEyP1/4p/0NmIl0bI4DRuoFyeKaTNk4?=
- =?us-ascii?Q?bItmJsFFIlMmQrPlWGIPMPOwAR68x7bewegqI/4pCk2P43tB22RzTfauJOzA?=
- =?us-ascii?Q?TJ74AFcBcIrCYmBDCcxk+cGBhwPUYS2/VFz6Q6PtEoOfrJJw4zZYNtZAzfL6?=
- =?us-ascii?Q?K/XW0t+n+bLgajKXwaeLYEorJHcAhEsyr+JoBIYFM1TeO83brsG9ofRpLhV+?=
- =?us-ascii?Q?dQr93KMpk+cPv/az1yXE+Cy6Hypq2jwaZntRxzkxEOYiviL/aQk6fGxfAbuW?=
- =?us-ascii?Q?/lvEdZv5cweOWsIPuIsvXDb6DckdplmB6vbUHggE03ZOh/Y2L4SPwoGO5fSx?=
- =?us-ascii?Q?AVnXcRdCK0Es4hOzMU9eLPArsozqJAnNGGT/Vq4/JTCtSVOgdaYhd5Gnbe9o?=
- =?us-ascii?Q?em9SwvJew/YPEVNNLDFlEobdeZD7L7BIPPOiXSiOQrpe3Vvn+lFGkGq03xeh?=
- =?us-ascii?Q?L0lSuwuI8m8Xtf1q1Q2pU+q4cMPupmGn5eYLgF7ieUGLFpZzLFgkGM4d2nY4?=
- =?us-ascii?Q?Oh0AOc5WSCGLX2Cd+1AIV/DsMKvIB+bUjngYibtdLRcKW40TIyCgU6lbluV8?=
- =?us-ascii?Q?kNlqSROqbHvyKOCAkGIw90jOJylwmARJkhpDpNjYFmRMx1qrU9UHStjMoPLf?=
- =?us-ascii?Q?nI8MKeahCOTpqeHi3ObkSnPBka1W2DrsIuLQ/JQYl4HEoP9MIR9OXtdqdyZO?=
- =?us-ascii?Q?d9hmKwUgTbu3hUosXdnVjURm+r8egQpZD3nfDVMh55gYv7tgwPipwsrjoFrZ?=
- =?us-ascii?Q?xw5l1aGY5Hz0/KqS2Wt9PE7qfxsJm6276e1DnmtOyBkLCVU8lp41OA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB8120.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?b7lXtpJYNp6KSr7RUTFuicyD/RUE6KNmA/e4RDuj58qSDjiMbQn9mnQjs21X?=
- =?us-ascii?Q?OC+8S08AVxF0FJhBo6KkCDoYCJqb/8PIPN7sgQjCp9EuCg7b5MJjr0lCuRmS?=
- =?us-ascii?Q?Zky67ox+kagBaes4Xo9HdzVwnUeiAT/HPmdFVylTkO/fJuFJrLWA/9tr+Q+c?=
- =?us-ascii?Q?6ccgYiTPTtPO6abTzu84v17COsdgEpAa1Xd0TOfvEUPSLddzpdXK+yGhN0cX?=
- =?us-ascii?Q?30LUTb3AMxW54pgANbCKLC/t6c9jDdKFLpl+PO/OLboiBweSkFMsuMi6TuuA?=
- =?us-ascii?Q?zet+67UnG8tftyHxollh6AyHWCEbbGnwySz9JNcmsaRrWhJm2RGTHOIDXU/A?=
- =?us-ascii?Q?v5K60ngrhgyfBnFx7KpXEb08FopUbdFxxvwuqQDaYYvR6t4ibuyX0ddT/R6j?=
- =?us-ascii?Q?hYz1Eqm2Fw9Rp18hvss5wgaceG+8xu8oWRc27GsDaP0Gl+BwXf8rFOu3kZHW?=
- =?us-ascii?Q?HbZ0H+96ZUe8bmZ4IGes2OSbvlpOxFGKsW4Vk0x+nk/NOqp0i42hf9bzjSAg?=
- =?us-ascii?Q?yGGsZmCiPj3t2Gb1DDnmg2R+1FcP9PpW6lReGnDbea7uzVtcIotJcEU+ln8p?=
- =?us-ascii?Q?mCn2ZDosVqS8IB1Rkv++E6UyVaHuzAcFqMa/th1T0XGNTBl2qeD/x9CN4cGk?=
- =?us-ascii?Q?9Ztl2AfD7eEW3mQMfUEcdjKoHj12vl6b0yXOUdmYiycGTuU5xXYHloU31EIb?=
- =?us-ascii?Q?jKN5CYFSHj0LfOVQuhZ/GXflNi3htBo6A2sRZz0+CBdOvG86Nb/BOmo5/9Hm?=
- =?us-ascii?Q?VlUXCG7Nq93xlpaOa3gBOPlYoQDaFL5TmVjXaCVhL6xI8HPKzMZVeOThZsUG?=
- =?us-ascii?Q?vKxT1Dm3fBo0arn17xVNdXRrcH/ovCYQNCYztbhU2teQ+dKOh9/Tf+WKmJUE?=
- =?us-ascii?Q?Sz5M6tB59d6FlwzFSLDxJoW+kzIRq6ViXYzQI6tQQQfif+4AjtutZ9YMYZnc?=
- =?us-ascii?Q?TGmf5Fv0TQBVV9lv/3GcmtVvOoC/tG9nLkD88XgU3PyCKkX2xoIVwwpa2hXn?=
- =?us-ascii?Q?qWYVptdvRv59+vQTPtMpDnN0CDWolWN84iQi6P8VgbzuLTMoNrT1tkMp1rwW?=
- =?us-ascii?Q?xbHdn8gRcq/bbEu/dZ7IiCagGNr0ad+xrB+u/58JTDZIRTtaS3C4y94toumj?=
- =?us-ascii?Q?YOsO18SBtEEIdi1r4MLFliHltuMIkW5ypqvLfCceMVci1Oa6dG7G+f+/fScC?=
- =?us-ascii?Q?lAwJn+WAgHeDC0tVWhdXEOl5QJ5ozgE4XeLrIkuBsc0ykf5p+hX2/2IQWu+l?=
- =?us-ascii?Q?xteckU4LcuL452xAVJ05XqtMl+Lvg8aQJa0KlHef0I1cDty2PFSQSCAGpN02?=
- =?us-ascii?Q?HBzONo2/tWFXygJM+vV0vmBG73PsQ+Wcu2ddN/o1uEIQI7+vO/tZsY+gAfx0?=
- =?us-ascii?Q?I6+HIbwIa6XmrJeEB624C2IPwxrOLOgDy6OoyK8Lq0S07zRdZj1DngimHYPK?=
- =?us-ascii?Q?v/rvV+NgPeLTmgkv/OY52TP04gz46KypyB9s/ccNqZ4W9XYUuqiEPT5n0SJ1?=
- =?us-ascii?Q?hqSp3Um4qA89k0ZMbvTBcuNsMstHYhJquy+6KxXqEGf2OceR2DpBgUjo9CqF?=
- =?us-ascii?Q?SPetmh50E5lso4IMsjs=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E700284681
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757669785; cv=none; b=qOhKwodigvw/etqb3XRy1BpDdXJgNK52m7GgtMZGPDOF79nzDOGA+6XRdHSz/hHWNjsuwjYE9dWlRlkAiv24xVOzOXTz+YHNRqZ7CKoyQseNmuXZeihCkuAqItRBlkQWYsdQvMK0vRzHeLVJt5TsvaCWrOxgjMFZfFYsdZudmTY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757669785; c=relaxed/simple;
+	bh=YVpEMtUPBfI0kSglK1+tG/cRaueTcLeBcBexxPbUDjU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XsjthcbR/5OVIqGVbjIru5ooQY3+qShxwfN8fvQDFXhk8RHWyzUePMqcIp3Fwj8o4c8IwiVapX0eh95+IvC1k1J0cfFd1mFuLkwrRMZOuiSrbxkk3aYYDj40eFmyzeFGDnR9GE7/kPLAqr8aYWO/BQVxjvCnUR/3YyNinmFPkdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DVY9SEPw; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757669782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=B4KJZdY1MD+iAN7yxyMGS4DtOSEdOr2LuczyAdAae4g=;
+	b=DVY9SEPwFGTmzT6ffJylpI0tLbpzffjtOX8j/p4kgQjztrVNrg96cutieXGnISmxALvMny
+	vYzXURzuPrv5L4e2GYgwqE6St2zDLNJ7eFD5q81W4Df0TKdR0yyaH2tkTo5Mkl2ii6Ry2b
+	YIfbYXfl94mFp20pt+h2RLHt53B1JWk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-676-o3RZdu8tMvS1snVqU3nzDA-1; Fri, 12 Sep 2025 05:36:21 -0400
+X-MC-Unique: o3RZdu8tMvS1snVqU3nzDA-1
+X-Mimecast-MFC-AGG-ID: o3RZdu8tMvS1snVqU3nzDA_1757669780
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3e4a8e6df10so1035131f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:36:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757669780; x=1758274580;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B4KJZdY1MD+iAN7yxyMGS4DtOSEdOr2LuczyAdAae4g=;
+        b=jWt9jJTXqzhdXwDfzjNAT2aLUHtg0EJWsr8tLD48ZBw4TzqJtB2sjrR4pEvYWH5zK4
+         3xRyYIkcHVgT4JtVdq0SDd1gfcCOZzleBwA7oYh/bxrnQQnyrd6e4db33VJ145NaiaJm
+         o2z7nMZah2xOBp8rA/citTRsFv31zLxh7ix3HY2OFivh5P57dIrLm0K4Q8NBDt/Mv2/t
+         MsQdHKCoCabKRnuymwrruOVZih0RjxUqiNMwxOVGAEOa8cOd9ZuajNtTyaRKfH+ldsI5
+         f+UdEnElKXFh5+CIxnUfVBmrNz+l/nrCotcrQDhphKwPmRaa+VnJ1sb3hL8hw6yDYf86
+         PMfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJORWmmzgOCgHCwxtOEKNhX66j4TqPgwdPNhtDCYpIhXhaFwNWVMdDtZzAnYVZxlYMGuHomosA09FvPdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzoSLxyw6I8E4o/dyP1aw9e6O9CV04YXweZOmBBoBqazDDghZr
+	Va3qXBmvqWy7PXPvY9LNoca30uLDwdNmqIs14xlWl7Ev6lI34pq08VX3RDXAExHN+ayJWZjqRkY
+	BKF2VmFYC+KtqPf6XyfPYNjV+UNxN4nBonLlvwNTMShGdlfS0VZU4LndH96ruWMXBHw==
+X-Gm-Gg: ASbGncv/stIGhg86Iiz9SxXXyp1Go2eY2ktk+dbXQds2ZXaCsSqdJGiRC/kCtE/+ha2
+	gJbWpWF66bLEoZ6qr1HX4255DXSMVksW4kq0kiKZLa+0oQYY20DM1VA25HhxhIQrhG8MtvRXNjZ
+	C0Ukn+V2vwZ+7gKT3GpuaGHr/ueyFsj8FgG7Lq7YIxcDDjMkg18BUS7so34M3COE2ke6WH8YVKr
+	4xPPLxCiRLtELhdvH5YwbkR2J/hhhVmTKq15tmtOHE82TZIXZvgCCHU/fUvZU42curQVedzkqLK
+	F0P1OkOEqjsNyF3wgrR4NLUqR2o9ohpGxnWE690jH+du/1bfnIsXRGnMCp0ouZftSWb0e00hAMW
+	ZY/b+P4XCpDqqGK1/T9UMQrRvBhpovVxHG8m/emLhDp1ZAkvm8paUrlqYgZUQYfVvj4A=
+X-Received: by 2002:a05:6000:2410:b0:3e4:64b0:a75d with SMTP id ffacd0b85a97d-3e7659db640mr1861330f8f.30.1757669779715;
+        Fri, 12 Sep 2025 02:36:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEffTnkjpwSgdIokrJRdi0r1dJ0It77LZ+hWwe5tws1dme1LH9tLiMm17T34HzdwjxEeiy8uw==
+X-Received: by 2002:a05:6000:2410:b0:3e4:64b0:a75d with SMTP id ffacd0b85a97d-3e7659db640mr1861304f8f.30.1757669779279;
+        Fri, 12 Sep 2025 02:36:19 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607e2fd7sm5942242f8f.63.2025.09.12.02.36.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 02:36:18 -0700 (PDT)
+Message-ID: <37816bb5-97f8-4c05-84ed-9a81cfc5c755@redhat.com>
+Date: Fri, 12 Sep 2025 11:36:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB8120.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: daf5c20c-dd9f-4eb0-4bce-08ddf1dfc632
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2025 09:35:56.1059
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: X4azAsSvAh0A2CIG/mdc7s4N426XPqoYux/Q63UtxasIdba/vx3GjJndtZKpntJ0H6uTyBYSSRXxck77BJH+Ew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PPF80FB91A80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] resource: Improve child resource handling in
+ release_mem_region_adjustable()
+To: Sumanth Korikkar <sumanthk@linux.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
+ linux-s390@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>
+References: <20250911140004.2241566-1-sumanthk@linux.ibm.com>
+ <0ab2cb14-ba8e-4436-b03d-9457137f492a@redhat.com>
+ <aMPluIk8EnOuIWbi@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <aMPluIk8EnOuIWbi@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[AMD Official Use Only - AMD Internal Distribution Only]
 
-Hi Bjorn
+> 
+> Hi David,
 
-Please check my comments inline.
+Hi!
 
-Regards,
-Devendra
+> 
+> I am working on the item related to the last discussion -  dynamic
+> runtime (de)configuration of memory on s390:
+> https://lore.kernel.org/all/aCx-SJdHd-3Z12af@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com/
+> 
+> I came across the problem when I tried to offline and remove the memory
+> via /sys/firmware/memory interface.
 
-> -----Original Message-----
-> From: Bjorn Helgaas <helgaas@kernel.org>
-> Sent: Friday, September 12, 2025 03:24
-> To: Verma, Devendra <Devendra.Verma@amd.com>
-> Cc: bhelgaas@google.com; mani@kernel.org; vkoul@kernel.org;
-> dmaengine@vger.kernel.org; linux-pci@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Simek, Michal <michal.simek@amd.com>
-> Subject: Re: [PATCH v1 2/2] dmaengine: dw-edma: Add non-LL mode
->
-> Caution: This message originated from an External Source. Use proper caut=
-ion
-> when opening attachments, clicking links, or responding.
->
->
-> On Thu, Sep 11, 2025 at 05:14:51PM +0530, Devendra K Verma wrote:
-> > AMD MDB IP supports Linked List (LL) mode as well as non-LL mode.
-> > The current code does not have the mechanisms to enable the DMA
-> > transactions using the non-LL mode. The following two cases are added
-> > with this patch:
-> > - When a valid physical base address is not configured via the
-> >   Xilinx VSEC capability then the IP can still be used in non-LL
-> >   mode. The default mode for all the DMA transactions and for all
-> >   the DMA channels then is non-LL mode.
-> > - When a valid physical base address is configured but the client
-> >   wants to use the non-LL mode for DMA transactions then also the
-> >   flexibility is provided via the peripheral_config struct member of
-> >   dma_slave_config. In this case the channels can be individually
-> >   configured in non-LL mode. This use case is desirable for single
-> >   DMA transfer of a chunk, this saves the effort of preparing the
-> >   Link List.
->
-> > +static pci_bus_addr_t dw_edma_get_phys_addr(struct pci_dev *pdev,
-> > +                                         struct dw_edma_pcie_data *pda=
-ta,
-> > +                                         enum pci_barno bar) {
-> > +     if (pdev->vendor =3D=3D PCI_VENDOR_ID_XILINX)
-> > +             return pdata->devmem_phys_off;
-> > +     return pci_bus_address(pdev, bar);
->
-> Does this imply that non-Xilinx devices don't have the iATU that translat=
-es a PCI
-> bus address to an internal device address?
->
+Ah, that makes sense. Sorry that I didn't immediately connect the dots 
+when seeing your name.
 
-Non-Xilinx devices can have iATU enabled or bypassed as well. In bypass mod=
-e
-no translation is done and the TLPs are simply forwarded untranslated.
+> 
+> I have also modified lsmem (not yet upstream) to list deconfigured
+> memory, which currently appears as offline. An additional "configured"
+> column is also introduced to show the configuration state, but it is not
+> displayed here yet (without --output-all).
 
-> > +}
+Worth mentioning in the patch description, otherwise it's confusing.
+
+> 
+>>> 0x0000000150000000-0x0000000157ffffff  128M offline               42
+> 
+> True, this will not be shown with the master lsmem, since the sysfs
+> entry is removed after deconfiguration.
+> 
+>> Do we need a Fixes: and CC stable?
+> 
+> It will reference commit 825f787bb496 ("resource: add
+> release_mem_region_adjustable()"). Since the commit already states
+> "enhance this logic when necessary," I did not add a Fixes tag.
+
+So if this cannot be triggered yet, all good and no need for Fixes:.
+
+I was assuming that maybe this can be triggered with ppc dlpar, so I was 
+concerned.
+
+> 
+>>> Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
+>>> ---
+>>>    kernel/resource.c | 44 +++++++++++++++++++++++++++++++++++++++-----
+>>>    1 file changed, 39 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/kernel/resource.c b/kernel/resource.c
+>>> index f9bb5481501a..c329b8a4aa2f 100644
+>>> --- a/kernel/resource.c
+>>> +++ b/kernel/resource.c
+>>> @@ -1388,6 +1388,41 @@ void __release_region(struct resource *parent, resource_size_t start,
+>>>    EXPORT_SYMBOL(__release_region);
+>>>    #ifdef CONFIG_MEMORY_HOTREMOVE
+>>> +static void append_child_to_parent(struct resource *new_parent, struct resource *new_child)
+>>> +{
+>>> +	struct resource *child;
+>>> +
+>>> +	child = new_parent->child;
+>>> +	if (child) {
+>>> +		while (child->sibling)
+>>> +			child = child->sibling;
+>>> +		child->sibling = new_child;
+>>
+>> Shouldn't we take care of the address ordering here? I guess this works
+>> because we process them in left-to-right (lowest-to-highest) address.
+> 
+> __request_resource() adds the child resources in the increasing order.
+> With that, we dont need to check the ordering again here.  True, here we
+> process the child resources from lowest to highest address.
+> 
+>>> +	} else {
+>>> +		new_parent->child = new_child;
+>>> +	}
+>>> +	new_child->parent = new_parent;
+>>> +	new_child->sibling = NULL;
+>>> +}
+>>> +
+>>> +static void move_children_to_parent(struct resource *old_parent,
+>>> +				    struct resource *new_parent,
+>>> +				    resource_size_t split_addr)
+>>
+>> I'd call this "reparent_child_resources". But actually the function is
+>> weird. Because you only reparents some resources from old to now.
+>>
+>> Two questions:
+>>
+>> a) Is split_addr really required. Couldn't we derive that from "old_parent"
+> 
+> old_parent->end points to old end range before the split, so I think it
+> doesnt tell where the split boundary is, until __adjust_resource() is
+> called. Hence, split_addr was added.
+
+Makes sense, that's also where the sanity checks happen.
+
+Worth throwing in a comment for the function telling that lower was not 
+adjusted yet.
+
+-- 
+Cheers
+
+David / dhildenb
+
 
