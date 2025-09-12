@@ -1,146 +1,441 @@
-Return-Path: <linux-kernel+bounces-814258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1A9B5519B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:32:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BB1B551A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37BADB62D40
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:30:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19FCD3B6F71
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BE6431B806;
-	Fri, 12 Sep 2025 14:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E0C32ED35;
+	Fri, 12 Sep 2025 14:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="3Iq82o9s"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lywUhWjw"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08894309EEC
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6FE32A827
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687271; cv=none; b=QGJS2IcpfJGaRwkwYOqEMR4JLZloCRXtl3Pv6Ju9QGngM06JLN75etqMuCGGh6z2mgvZcb2JCQZcYQXFA/AUqn17/QE0/Sv3pRxILqYHM5gLxvDuUZDvN5Gj3rIC1NQ1pYX9gozV+hE8yjFygfPU0BNqZkwRPdByPF5rT7zE69k=
+	t=1757687319; cv=none; b=Sw0HMpwNgTuPZogNWzqfoPGka6vm6fRWTGkJdSUw19TYtT/BbUXIgNAtJLpEZgLmHER1Xg2Pacv3mfT1ZpXi7c6GLIx+YKw1xRSt6sDLlrvM6XnkXIF0bQqvL0QbytRuGlaU4mEWZ5AxZn3oEHYEKCFdrpz1g4BnhR086ROUPJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687271; c=relaxed/simple;
-	bh=xvKkuDuT4tDgy/UE5wL4JG5idUxNjrx/Cbg6stFEYiA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EiRhDcoUBkNi/2KYsS8RODFG9GyhOjzWGue/yJ9WbwVkMng4idQmu3pAe3B+0wlCjYWwiBgUlWqxtRRbnGKcyNMaFGYL+mIRc6PtR/xwz9XVZT/aQnhOpK0nqk4tCOD63SNU/0gBXJ2mHhQ20KQO8WTJU3tRsvmT+U+lDX/v8lM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=3Iq82o9s; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7459d088020so986639a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:27:49 -0700 (PDT)
+	s=arc-20240116; t=1757687319; c=relaxed/simple;
+	bh=ln4LSDz4z0GBtHdfaQdU2oy01/F3Qmayqfdti+7xSBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ki4bwgBSWKc9cGVUlqLpD3Zfjc7k8VPOrd8kPLDyako5bweBkqI8swnEOYeSfDLoHsgOQAKpXWQZpP9UaugjrpknsvfwXHl7J9ZdlhKjPwaK75gcenCV/wdfowSD4EYK0OGsIwfkwIq67cXZx+ZtlnPTVMtLGDMBLjEDEhcS57s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lywUhWjw; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-25669596921so18745785ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:28:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757687269; x=1758292069; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XeSWmeoO30alM4SGxp8l0P3Dl3Lx3yjW/TdKB75posM=;
-        b=3Iq82o9sByUC/sbMyJix0gEF05VP4KB1FEaR3TJSjkQUqj1zfFK1O/oG7UtEQYBw+W
-         R9Jwt4lIbo4mcnTbCPpSCZg2yL0ipy8+gcwhRBgILTaOXVT8ADZYbZZTrC2zCHHAOyYC
-         OKZuNQUSCWom4FpVfOPWwQQ0TPoDtshyeJl2RouQNwxfX8P07HZCluwC4bevqDhB1UQ0
-         oN7FLA/eahGpw+IxN53aDz4ulGm5m5FZcPdGnGCNktrh0+i9toDGpbDsErtPxNk+nopK
-         XfhNbTZu0ctAEI6IgmPByZDA+hpS/VvMDM+fKoODnYZpgamjxWyrc1wDZ/U3XaqeX7VT
-         8Epw==
+        d=gmail.com; s=20230601; t=1757687316; x=1758292116; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wLUpR90LE58OzXIw+QX3bYrOA4Su+xcaS0EertGeCHk=;
+        b=lywUhWjwlS570J5XTj017UAw+ZCrJ1DuYeAJxqjfffFLS0BEmcIIRyO67SnNk2NX8Z
+         ooBRgP7H0x/86kyZRnez9Jg4+d+bCykyY8+0rPOHCXt1rEdqAeY6P96BPXDqk3gxK1id
+         qxtCIgoLzOfQnp5qINFxsqESNxMyvIZsQ/fUB5br41thYYBOETsM6PnyDRcG/hKhp37O
+         fCHvg5tGcs0wfHLjYpqwpD2zNUw/AYLTSLUDbL3mUaTYgQ+uqNO1qeGUWI/2h24CXiJ5
+         qUSgwPxQnBlxGgFHNEuJBgXjfVsT3+zhdg0sU6y46LRIfbnzvrhzDqpKvJs2Bmvo8W0e
+         9TeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757687269; x=1758292069;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XeSWmeoO30alM4SGxp8l0P3Dl3Lx3yjW/TdKB75posM=;
-        b=JDKx71yGLF4vKOmvknG8hkzBScVtX53ezvBUpa3ZcsW03g6Mafo0Gm3mkS8EioOutU
-         /cXXIswn0olc6aI1GoHVMJ4PvDMXwolc8wdJ1Lqd8Xisx1EigR7+6T5R3WwwxAaR4Ubc
-         c8wAb6s+RtqYcXHitAyv8hynXd3YYKlKe/tU5unt0kSOBC3yeaBt1m2mfkX1pvRWwVoJ
-         lybozwic5O5xipiBctzJoFbTt2tHLzB1AtjU/fjFJUpeJypnA0iUnzDLXm8rrJU2SZQ7
-         E4Lh1voT2KANPTaW2slMj6ddn7MH8u85EuaDPBlG/CbFHH9rGyADUX7QHN+UMYMRz3a5
-         KP9A==
-X-Forwarded-Encrypted: i=1; AJvYcCX29BueutgVEPCum8D650wN+6v1RFOYOiw6yZ+UVUwFyWlCoPVdlKjiUdbMVVawSYuyB90oCT9H52GGDoI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4Jka8OpgCs5+4r82OQnnddiBiGyvUDyxKI6eCIe/X2Ok2MOlm
-	9qfY5dHwPt/ccNVuhTjqxJCQYC0mY+0jiA+YPx2tjUpF4LAf/PSFHeLFJet1acvmb0c=
-X-Gm-Gg: ASbGncssQlsPMDteZv43l+/ZdzbX+BVOxnM8dPQTlifNuli0F/IzGo5OsvZ1w7O0GaP
-	/3QNqg4aLCwhilt4TNfzcprgIkeSJ5za8zGI/RX1dWRVfhNT3YN2Z3FjA06XV926D5i1LEt8Cjg
-	U02LHudsEEaJ5yj1FlB3L8FKHlkAVHtYIoc5QfXlam+IoyF2b3Px1prnZRR8e/dfItvHg0Jdanx
-	7azR+nKd9+UkKwzHs7EuLewNBEe9vLp14JUgkAgqVwk+I0oTgfE6QisxO5TUkChNN24Ix/IjyHv
-	QMcZImxP8vT/xmLCVwDOdmhTZx5YJoJzJ5JFhXyLB7DlIJB99vbz5aA9forbPrFrInMS8GHpSzS
-	UCmLvriHjzvYM/uqYiI4z8we5R28hUPJ86hVt093iLMdISWPOWK4L2l0LaPzFMKsh2E6n9EmQXV
-	A=
-X-Google-Smtp-Source: AGHT+IEP9sQNrQbQqJFC9+/KQJAwg9aeP94y7Xr+y9MeShoX1peXPBF36a5b54hrq2fEsDH/EtQHEg==
-X-Received: by 2002:a05:6830:67c7:b0:74b:3422:f335 with SMTP id 46e09a7af769-753537700a6mr1927270a34.8.1757687269073;
-        Fri, 12 Sep 2025 07:27:49 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1? ([2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524b8a399fsm1025877a34.24.2025.09.12.07.27.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 07:27:47 -0700 (PDT)
-Message-ID: <87245221-c3d0-4026-980d-36562f0b4669@baylibre.com>
-Date: Fri, 12 Sep 2025 09:27:47 -0500
+        d=1e100.net; s=20230601; t=1757687316; x=1758292116;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wLUpR90LE58OzXIw+QX3bYrOA4Su+xcaS0EertGeCHk=;
+        b=DEzS7ehAHFMBjjrSxVs7MeHq1EueCHEK237QfaqwnDAg9Ozqcix3/P2ZHXtDgMAdpn
+         aPrH/XSmNMEt6e2Blj2YXBUBtJtG/rztqVQVVilJRQoPzDQgPxFWx8SazTop7LTJeLIw
+         xgU2Dm8E52WX8Xo7SNisP/0fDmpmfaALZd6r5ISSW/GlCI4phBuJoR/JrkAeJYKrb0dY
+         ciXJOlf7qp4yf0dEgVEnzEHI0bV5z4kGqSLxQi0drrzCTz/pxzlnI5c00yFmc7XA61l0
+         Ij9D8ZgD99+6z2HlrB0QRX3MNzfjU9m43cs6+kN4Juyb8GHzdyfNOEfJgzBbJDPjbAwY
+         F1kA==
+X-Forwarded-Encrypted: i=1; AJvYcCXzcqU9rHO6sajnFGMj5r3+wYfNach41NAsW0itTA6+YqcOSv3MV3sLFfeJDMgqhyriKERxKc6pqGyXenc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy01jgX9IblRKzYcPCXjNH1FfqxU5oAVRLSF2JZ/Szo71l0aD4p
+	iHn8azckM/fw/zLDeEOF3R7NtMrpW23jhE3SvFrAJ6PVYlptkX+prSg6z/IRjRwPGrqu17hzxfI
+	ZPNiYSyrAzsyy3ulY+Mnrm57dfkMOvBs=
+X-Gm-Gg: ASbGnct38B0NalTlwRoFB8zqrcdEqk6kbUqxKBHXYloG0M5MbXT2DyzHIX3YUl5X65D
+	pTLrFyWyEKoRuVdH77QxsNkLVgajO3yACG4b4ymFlstBUrBm4FzWfYNHIewQ8FRFZ4cXnHjqY/x
+	h6Z9s+CfeKr4yUC42TEjR5fvN2ITZz4GYF4BPuXuYtF+fR8MSRTwq7yoZM2Mczl1azmluXcypta
+	zhVXE9WjlMxyXMkM9te3iYrfLlvkK/z8RNnIjLi
+X-Google-Smtp-Source: AGHT+IEcneNw16gbJJql70fTxorBqm72kbhal+B5SJ4p7LAMv7dgrrIOquxya5RkH6h/fyvtOefakEGfVGjkH3C6Rwc=
+X-Received: by 2002:a17:902:ce89:b0:25c:5747:4491 with SMTP id
+ d9443c01a7336-25d26c4ab81mr40310785ad.46.1757687315938; Fri, 12 Sep 2025
+ 07:28:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] iio: adc: ad7124: add filter support
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
- <20250911-iio-adc-ad7124-add-filter-support-v2-5-b09f492416c7@baylibre.com>
- <CAHp75Vf69X4PmGx2c_9KvQwu1opLDyfL0+TyjwX2wTG9bgtMZw@mail.gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CAHp75Vf69X4PmGx2c_9KvQwu1opLDyfL0+TyjwX2wTG9bgtMZw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250912024620.4032846-1-mmyangfl@gmail.com> <20250912024620.4032846-4-mmyangfl@gmail.com>
+ <ae9f7bb0-aef3-4c53-91a3-6631fea6c734@lunn.ch>
+In-Reply-To: <ae9f7bb0-aef3-4c53-91a3-6631fea6c734@lunn.ch>
+From: Yangfl <mmyangfl@gmail.com>
+Date: Fri, 12 Sep 2025 22:27:58 +0800
+X-Gm-Features: Ac12FXx50TgVM93R2-OvnvYQQ_QMFrwWUgGE9FqVhKAwulOVqxoeDn2iCv7B0no
+Message-ID: <CAAXyoMPLRHfSUGboC4SO+gBD0TdHq19fNs7AK3W2ZQnHT48gyA@mail.gmail.com>
+Subject: Re: [PATCH net-next v8 3/3] net: dsa: yt921x: Add support for
+ Motorcomm YT921x
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Vladimir Oltean <olteanv@gmail.com>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/25 11:49 PM, Andy Shevchenko wrote:
-> On Fri, Sep 12, 2025 at 12:43 AM David Lechner <dlechner@baylibre.com> wrote:
->>
->> Add support to the ad7124 driver for selecting the filter type.
->>
->> The filter type has an influence on the effective sampling frequency of
->> each channel. For sinc3+pf{1,2,3,4}, the sampling frequency is fixed.
->> For sinc{3,4} (without post filter), there is a factor of 3 or 4
->> depending on the filter type. For the extra +sinc1, there is an extra
->> averaging factor that depends on the power mode.
->>
->> In order to select the closest sampling frequency for each filter type,
->> we keep a copy of the requested sampling frequency. This way, if the
->> user sets the sampling frequency first and then selects the filter type,
->> the sampling frequency will still be as close as possible to the
->> requested value.
->>
->> Since we always either have the SINGLE_CYCLE bit set or have more than
->> one channel enabled, the sampling frequency is always using the
->> "zero-latency" calculation from the data sheet. This is only documented
->> for the basic sinc{3,4} filters, so the other filter types had to be
->> inferred and confirmed through testing.
->>
->> Since the flat filter type list consists of multiple register fields,
->> the struct ad7124_channel_config::filter_type field is changed to the
->> enum ad7124_filter_type type to avoid nested switch statements in a
->> lot of places.
-> 
-> ...
-> 
->> -       factor = 32 * 4; /* N = 4 for default sinc4 filter. */
->> -       odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor +
->> -                                              odr_micro * factor / MICRO);
->> -       odr_sel_bits = clamp(odr_sel_bits, 1, 2047);
->> +       divisor = cfg->requested_odr * factor +
->> +                 cfg->requested_odr_micro * factor / MICRO;
->> +       odr_sel_bits = clamp(DIV_ROUND_CLOSEST(fclk, divisor), 1, 2047);
-> 
-> I have a déjà vu feeling here. Is this similar code to elsewhere?  Can
-> it be factored out to a helper?
-> 
-> 
+On Fri, Sep 12, 2025 at 8:56=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> > +static void yt921x_reg_mdio_verify(u32 reg, u16 val, bool lo)
+> > +{
+> > +     const char *desc;
+> > +
+> > +     switch (val) {
+> > +     case 0xfade:
+> > +             desc =3D "which is likely from a non-existent register";
+> > +             break;
+> > +     case 0xdead:
+> > +             desc =3D "which is likely a data race condition";
+> > +             break;
+>
+> Where did these two values come from? Are they documented in the datashee=
+t?
+>
 
-It is changing the same code from a previous commit, not duplicating
-it. I guess I could have introduced the divisor variable in the
-earlier commit and saved some churn.
+I don't have the comprehensive datasheet and it (along with other
+parts) is not mentioned in the documents I have, so I dug them out by
+testing.
+
+> > +     default:
+> > +             return;
+> > +     }
+> > +
+> > +     /* Skip registers which are likely to have any valid values */
+> > +     switch (reg) {
+> > +     case YT921X_MAC_ADDR_HI2:
+> > +     case YT921X_MAC_ADDR_LO4:
+> > +     case YT921X_FDB_OUT0:
+> > +     case YT921X_FDB_OUT1:
+> > +             return;
+> > +     }
+> > +
+> > +     pr_warn("%s: Read 0x%x at 0x%x %s32, %s; "
+> > +             "consider reporting a bug if this happens again\n",
+> > +             __func__, val, reg, lo ? "lo" : "hi", desc);
+>
+> You probably have a warning from checkpatch about pr_warn. Ideally you
+> want to give an indication which device has triggered this, making use
+> of a struct device. You might want to include that in context.
+>
+
+I don't want to introduce priv struct layout into register
+implementations, which makes unnecessary dependency between functions.
+The warning will not appear if no bugs exist, and it can still be
+easily identified by its function name.
+
+> > +static int
+> > +yt921x_intif_read(struct yt921x_priv *priv, int port, int reg, u16 *va=
+lp)
+> > +{
+> > +     if ((u16)val !=3D val)
+> > +             dev_err(dev,
+> > +                     "%s: port %d, reg 0x%x: Expected u16, got 0x%08x\=
+n",
+> > +                     __func__, port, reg, val);
+> > +     *valp =3D (u16)val;
+> > +     return 0;
+>
+> You don't treat this as an error, you don't return -EIO or -EPROTO etc.
+> So maybe this should be dev_info() or dev_dbg().
+>
+> > +static int
+> > +yt921x_mbus_int_write(struct mii_bus *mbus, int port, int reg, u16 dat=
+a)
+> > +{
+> > +     struct yt921x_priv *priv =3D mbus->priv;
+> > +     int res;
+> > +
+> > +     if (port >=3D YT921X_PORT_NUM)
+> > +             return 0;
+>
+> -ENODEV.
+>
+
+mdio-tools complains a lot when returning an error code. Also that is
+what dsa_user_phy_write() returns for a non-existing port.
+
+> > +yt921x_mbus_int_init(struct yt921x_priv *priv, struct device_node *mnp=
+)
+> > +{
+> > +     struct device *dev =3D to_device(priv);
+> > +     struct mii_bus *mbus;
+> > +     int res;
+> > +
+> > +     if (!mnp)
+> > +             res =3D devm_mdiobus_register(dev, mbus);
+> > +     else
+> > +             res =3D devm_of_mdiobus_register(dev, mbus, mnp);
+>
+> You can call devm_of_mdiobus_register() with a NULL pointer for the
+> OF, and it will do the correct thing.
+>
+> > +static int yt921x_extif_wait(struct yt921x_priv *priv)
+> > +{
+> > +     u32 val;
+> > +     int res;
+> > +
+> > +     res =3D yt921x_reg_read(priv, YT921X_EXT_MBUS_OP, &val);
+> > +     if (res)
+> > +             return res;
+> > +     if ((val & YT921X_MBUS_OP_START) !=3D 0) {
+> > +             res =3D read_poll_timeout(yt921x_reg_read, res,
+> > +                                     (val & YT921X_MBUS_OP_START) =3D=
+=3D 0,
+> > +                                     YT921X_POLL_SLEEP_US,
+> > +                                     YT921X_POLL_TIMEOUT_US,
+> > +                                     true, priv, YT921X_EXT_MBUS_OP, &=
+val);
+> > +             if (res)
+> > +                     return res;
+> > +     }
+> > +
+> > +     return 0;
+>
+> In mv88e6xxx, we have the generic mv88e6xxx_wait_mask() and on top of
+> that mv88e6xxx_wait_bit(). That allows us to have register specific
+> wait functions as one liners. Please consider something similar.
+>
+> > +static int yt921x_mib_read(struct yt921x_priv *priv, int port, void *d=
+ata)
+> > +{
+>
+> As far as i can see, data is always a pointer to struct
+> yt921x_mib_raw. I would be better to not have the void in the middle.
+> It also makes it clearer what assumption you are making about the
+> layout of that structure.
+>
+> > +     unsigned char *buf =3D data;
+> > +     int res =3D 0;
+> > +
+> > +     for (size_t i =3D 0; i < sizeof(struct yt921x_mib_raw);
+> > +          i +=3D sizeof(u32)) {
+> > +             res =3D yt921x_reg_read(priv, YT921X_MIBn_DATA0(port) + i=
+,
+> > +                                   (u32 *)&buf[i]);
+> > +             if (res)
+> > +                     break;
+> > +     }
+> > +     return res;
+> > +}
+> > +
+> > +static void yt921x_poll_mib(struct work_struct *work)
+> > +{
+> > +     struct yt921x_port *pp =3D container_of_const(work, struct yt921x=
+_port,
+> > +                                                 mib_read.work);
+> > +     struct yt921x_priv *priv =3D (void *)(pp - pp->index) -
+> > +                                offsetof(struct yt921x_priv, ports);
+>
+> Can you make container_of() work for this?
+>
+
+Impossible, also see ar9331_sw_port_to_priv().
+
+> > +     unsigned long delay =3D YT921X_STATS_INTERVAL_JIFFIES;
+> > +     struct device *dev =3D to_device(priv);
+> > +     struct yt921x_mib *mib =3D &pp->mib;
+> > +     struct yt921x_mib_raw raw;
+> > +     int port =3D pp->index;
+> > +     int res;
+> > +
+> > +     yt921x_reg_lock(priv);
+> > +     res =3D yt921x_mib_read(priv, port, &raw);
+> > +     yt921x_reg_unlock(priv);
+> > +
+> > +     if (res) {
+> > +             dev_err(dev, "Failed to %s port %d: %i\n", "read stats fo=
+r",
+> > +                     port, res);
+> > +             delay *=3D 4;
+> > +             goto end;
+> > +     }
+> > +
+> > +     spin_lock(&pp->stats_lock);
+> > +
+> > +     /* Handle overflow of 32bit MIBs */
+> > +     for (size_t i =3D 0; i < ARRAY_SIZE(yt921x_mib_descs); i++) {
+> > +             const struct yt921x_mib_desc *desc =3D &yt921x_mib_descs[=
+i];
+> > +             u32 *rawp =3D (u32 *)((u8 *)&raw + desc->offset);
+> > +             u64 *valp =3D &((u64 *)mib)[i];
+> > +             u64 newval;
+> > +
+> > +             if (desc->size > 1) {
+> > +                     newval =3D ((u64)rawp[0] << 32) | rawp[1];
+> > +             } else {
+> > +                     newval =3D (*valp & ~(u64)U32_MAX) | *rawp;
+> > +                     if (*rawp < (u32)*valp)
+> > +                             newval +=3D (u64)1 << 32;
+> > +             }
+>
+> There are way too many casts here. Think about your types, and how you
+> can remove some of these casts. In general, casts are bad, and should
+> be avoided where possible.
+>
+
+Some casts are necessary for shifting operations, otherwise an error
+will pop out for shift overflow.
+
+Others are just synonyms of val & 0xffffffff. I'd consider casts are
+neater than magic numbers.
+
+> > +static void
+> > +yt921x_dsa_get_ethtool_stats(struct dsa_switch *ds, int port, uint64_t=
+ *data)
+> > +{
+> > +     struct yt921x_priv *priv =3D to_yt921x_priv(ds);
+> > +     struct yt921x_port *pp =3D &priv->ports[port];
+> > +     struct yt921x_mib *mib =3D &pp->mib;
+> > +     size_t j;
+> > +
+> > +     spin_lock(&pp->stats_lock);
+> > +
+> > +     j =3D 0;
+> > +     for (size_t i =3D 0; i < ARRAY_SIZE(yt921x_mib_descs); i++) {
+> > +             const struct yt921x_mib_desc *desc =3D &yt921x_mib_descs[=
+i];
+> > +
+> > +             if (!desc->unstructured)
+> > +                     continue;
+> > +
+> > +             data[j] =3D ((u64 *)mib)[i];
+> > +             j++;
+> > +     }
+> >
+>
+> ethtool APIs are called in a context where you can block. So it would
+> be good to updated the statistics first before copying them. You just
+> need to think about your locking in case the worker is running.
+>
+> > +static int yt921x_dsa_get_sset_count(struct dsa_switch *ds, int port, =
+int sset)
+> > +{
+> > +     int cnt;
+> > +
+> > +     if (sset !=3D ETH_SS_STATS)
+> > +             return 0;
+> > +
+> > +     cnt =3D 0;
+>
+> Please do the zeroing above when you declare the local variable.
+>
+> > +     for (size_t i =3D 0; i < ARRAY_SIZE(yt921x_mib_descs); i++) {
+> > +             const struct yt921x_mib_desc *desc =3D &yt921x_mib_descs[=
+i];
+> > +
+> > +             if (desc->unstructured)
+> > +                     cnt++;
+> > +     }
+> > +
+> > +     return cnt;
+> > +}
+>
+> > +static int
+> > +yt921x_set_eee(struct yt921x_priv *priv, int port, struct ethtool_keee=
+ *e)
+> > +{
+>
+> > +     /* Enable / disable port EEE */
+> > +     res =3D yt921x_reg_toggle_bits(priv, YT921X_EEE_CTRL,
+> > +                                  YT921X_EEE_CTRL_ENn(port), enable);
+> > +     if (res)
+> > +             return res;
+> > +     res =3D yt921x_reg_toggle_bits(priv, YT921X_EEEn_VAL(port),
+> > +                                  YT921X_EEE_VAL_DATA, enable);
+>
+> How do these two different registers differ? Why are there two of
+> them? Maybe add a comment to explain this.
+>
+
+Datasheet gives no explanation here too, so this is a carbon copy of the sa=
+mple
+code. I'm also confused too.
+
+> > +static bool yt921x_dsa_support_eee(struct dsa_switch *ds, int port)
+> > +{
+> > +     struct yt921x_priv *priv =3D to_yt921x_priv(ds);
+> > +
+> > +     return (priv->pon_strap_cap & YT921X_PON_STRAP_EEE) !=3D 0;
+>
+> What does the strapping actually tell you?
+>
+
+Whether EEE capability is present.
+
+> > +static int
+> > +yt921x_dsa_port_mirror_add(struct dsa_switch *ds, int port,
+> > +                        struct dsa_mall_mirror_tc_entry *mirror,
+> > +                        bool ingress, struct netlink_ext_ack *extack)
+> > +{
+> > +     struct yt921x_priv *priv =3D to_yt921x_priv(ds);
+> > +     u32 ctrl;
+> > +     u32 val;
+> > +     int res;
+> > +
+> > +     yt921x_reg_lock(priv);
+> > +     do {
+> > +             u32 srcs;
+> > +             u32 dst;
+> > +
+> > +             if (ingress)
+> > +                     srcs =3D YT921X_MIRROR_IGR_PORTn(port);
+> > +             else
+> > +                     srcs =3D YT921X_MIRROR_EGR_PORTn(port);
+> > +             dst =3D YT921X_MIRROR_PORT(mirror->to_local_port);
+> > +
+> > +             res =3D yt921x_reg_read(priv, YT921X_MIRROR, &val);
+> > +             if (res)
+> > +                     break;
+> > +
+> > +             /* other mirror tasks & different dst port -> conflict */
+> > +             if ((val & ~srcs & (YT921X_MIRROR_EGR_PORTS_M |
+> > +                                 YT921X_MIRROR_IGR_PORTS_M)) !=3D 0 &&
+> > +                 (val & YT921X_MIRROR_PORT_M) !=3D dst) {
+> > +                     NL_SET_ERR_MSG_MOD(extack,
+> > +                                        "Sniffer port is already confi=
+gured,"
+> > +                                        " delete existing rules & retr=
+y");
+> > +                     res =3D -EBUSY;
+> > +                     break;
+> > +             }
+> > +
+> > +             ctrl =3D val & ~YT921X_MIRROR_PORT_M;
+> > +             ctrl |=3D srcs;
+> > +             ctrl |=3D dst;
+> > +
+> > +             if (ctrl !=3D val)
+> > +                     res =3D yt921x_reg_write(priv, YT921X_MIRROR, ctr=
+l);
+> > +     } while (0);
+>
+> What does a while (0) loop bring you here?
+>
+
+break statement instead of goto err.
+
+>
+>     Andrew
+>
+> ---
+> pw-bot: cr
 
