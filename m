@@ -1,107 +1,83 @@
-Return-Path: <linux-kernel+bounces-813602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFA3B54813
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:41:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189D4B5480C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BA271632A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6509A014BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E2127E045;
-	Fri, 12 Sep 2025 09:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Xt6HyY9g"
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9580D27A465;
-	Fri, 12 Sep 2025 09:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E198246348;
+	Fri, 12 Sep 2025 09:35:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24AD223336
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 09:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757670061; cv=none; b=hYqwYP2XWD5x4oPil2bCBnd5/GTh+ZEP7ttBJu5udbtQNvnNFaE8enLaVTJlC24p0cyxsps6rBnNzJQcDQCigvxbQbTtUHrS0jfIb/jOc3sD7X9nsaD319NIcOshJuZJj4K4B1yrWTTssJ+JO1NJY8j8G/MApZfYVPDOFQSNlvY=
+	t=1757669739; cv=none; b=dhLk1SVtYGKK7N+lJqrbXkdHh6bTA0pfAFkDowEe3KpNPeL2ZKhdvywuy5NNzI69/sdroatOQeNvpBxMjzqvTbJ3Hn1C7Jf6tHNvwujrwCpKjcnHBi3nWYrB0KM1GwJWIur5XNrgw/BWHhjJNC71XY0J3kKlLdtks4ZjuB/qNlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757670061; c=relaxed/simple;
-	bh=lJ36e+t/tg8LmpoQ6endDbrNr7eRgy5K+DROEoJYN0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sUl9gPGtqqknMPzwYLARIV3SsOKXgZwcxHYRmvg43RlRD1AF5aPWmB6Ge4d2D1LHz+IeSOt0atGAHv/GCQwRiIChUxEi9h9COXpDEpQ32VIm1s6PGeHH6RAQbxs6uOozo79gOz4CljYEceCgtsfHfvQ496Flmry/sb0REMP1aGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Xt6HyY9g; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757670055; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=8wqlXppzbfyIOcS8BfKoIJCpvoAzpjciPU1+yNHw35A=;
-	b=Xt6HyY9gswY87UdAPCE6BA83evTUJGamPqQrffh1bPmucYESaMAp1YO7dpWY00k08ZipzcHOZeuS348ILcdMcFfFbzGeW4liQnegRPvzQ447HhLpix+iwk/K3fVXjRCFPk1UiCKuyR+wjMFAGAPjH7TB7VSKp4uCZxpL66KbBoo=
-Received: from 30.74.144.122(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WnqpLMs_1757669731 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 12 Sep 2025 17:35:32 +0800
-Message-ID: <068a41eb-3a5c-4749-a8f6-c1bda1fb6a4b@linux.alibaba.com>
-Date: Fri, 12 Sep 2025 17:35:31 +0800
+	s=arc-20240116; t=1757669739; c=relaxed/simple;
+	bh=e8Kv+heaIGHh0UyeIZLnqRvrSzgtEd+kbBWci2LzLmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RV3wIdX06bZ9lSFIAbDqSHoonFOeiy1HyxD4Pb5ZhFSUKmb/J2F222NDQVfq8G8rYDsh6EVPdOMKpXCLb2ON4+BQzf2HDzH570O0c+f5pWOD9zFlcrC/CaabKRqHOJxq6lAAnIaMAQ1CanvziSPkD9vkb+oRXCWQa1CuKaVibSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F0EAA1A25;
+	Fri, 12 Sep 2025 02:35:28 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D25273F63F;
+	Fri, 12 Sep 2025 02:35:36 -0700 (PDT)
+Date: Fri, 12 Sep 2025 10:35:34 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	Linu Cherian <lcherian@marvell.com>,
+	James Clark <james.clark@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] coresight: Fix possible deadlock in coresight_panic_cb
+Message-ID: <20250912093534.GF12516@e132581.arm.com>
+References: <20250911153315.3607119-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 09/15] khugepaged: add per-order mTHP collapse failure
- statistics
-To: Nico Pache <npache@redhat.com>, linux-mm@kvack.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: david@redhat.com, ziy@nvidia.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, ryan.roberts@arm.com, dev.jain@arm.com,
- corbet@lwn.net, rostedt@goodmis.org, mhiramat@kernel.org,
- mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
- baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
- wangkefeng.wang@huawei.com, usamaarif642@gmail.com, sunnanyong@huawei.com,
- vishal.moola@gmail.com, thomas.hellstrom@linux.intel.com,
- yang@os.amperecomputing.com, kas@kernel.org, aarcange@redhat.com,
- raquini@redhat.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- tiwai@suse.de, will@kernel.org, dave.hansen@linux.intel.com, jack@suse.cz,
- cl@gentwo.org, jglisse@google.com, surenb@google.com, zokeefe@google.com,
- hannes@cmpxchg.org, rientjes@google.com, mhocko@suse.com,
- rdunlap@infradead.org, hughd@google.com, richard.weiyang@gmail.com,
- lance.yang@linux.dev, vbabka@suse.cz, rppt@kernel.org, jannh@google.com,
- pfalcato@suse.de
-References: <20250912032810.197475-1-npache@redhat.com>
- <20250912032810.197475-10-npache@redhat.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20250912032810.197475-10-npache@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250911153315.3607119-1-sean.anderson@linux.dev>
 
+Hi Sean,
 
+On Thu, Sep 11, 2025 at 11:33:15AM -0400, Sean Anderson wrote:
+> coresight_panic_cb is called with interrupts disabled during panics.
+> However, bus_for_each_dev calls bus_to_subsys which takes
+> bus_kset->list_lock without disabling IRQs. This will cause a deadlock
+> if a panic occurs while one of the other coresight functions that uses
+> bus_for_each_dev is running.
 
-On 2025/9/12 11:28, Nico Pache wrote:
-> Add three new mTHP statistics to track collapse failures for different
-> orders when encountering swap PTEs, excessive none PTEs, and shared PTEs:
-> 
-> - collapse_exceed_swap_pte: Increment when mTHP collapse fails due to swap
-> 	PTEs
-> 
-> - collapse_exceed_none_pte: Counts when mTHP collapse fails due to
->    	exceeding the none PTE threshold for the given order
-> 
-> - collapse_exceed_shared_pte: Counts when mTHP collapse fails due to shared
->    	PTEs
-> 
-> These statistics complement the existing THP_SCAN_EXCEED_* events by
-> providing per-order granularity for mTHP collapse attempts. The stats are
-> exposed via sysfs under
-> `/sys/kernel/mm/transparent_hugepage/hugepages-*/stats/` for each
-> supported hugepage size.
-> 
-> As we currently dont support collapsing mTHPs that contain a swap or
-> shared entry, those statistics keep track of how often we are
-> encountering failed mTHP collapses due to these restrictions.
-> 
-> Signed-off-by: Nico Pache <npache@redhat.com>
-> ---
+The decription is a bit misleading. Even when IRQ is disabled, if an
+exception happens, a CPU still can be trapped for handling kernel panic.
 
-LGTM.
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Maintain a separate list of coresight devices to access during a panic.
+
+Rather than maintaining a separate list and introducing a new spinlock,
+I would argue if we can simply register panic notifier in TMC ETR and
+ETF drviers (see tmc_panic_sync_etr() and tmc_panic_sync_etf()).
+
+If there is no dependency between CoreSight modules in panic sync flow,
+it is not necessary to maintain list (and lock) for these modules.
+
+I have not involved in panic patches before, so I would like to know
+the maintainers' opinion.
+
+Thanks,
+Leo
 
