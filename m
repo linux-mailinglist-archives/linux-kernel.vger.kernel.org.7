@@ -1,203 +1,196 @@
-Return-Path: <linux-kernel+bounces-814137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E5BB54FC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:37:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81216B54FCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6DE3A393C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:37:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FCD046051C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC1D30EF86;
-	Fri, 12 Sep 2025 13:37:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9AD30DEC9;
+	Fri, 12 Sep 2025 13:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bLJehbzA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB7D3019BD;
-	Fri, 12 Sep 2025 13:37:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CDA238C08;
+	Fri, 12 Sep 2025 13:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684233; cv=none; b=NoIVWCqQmfyPSj9SJTaO0Lkp+j5XPWJWTahlfrYoLbGrHi3vkP09Hr1KQdNyxRZtExP/Rq3NKHGt0nICSkhX4YDCx1g/Qqri+JN4mIgoG2n4uBguPjbDxZzf1FzdKINun55vGWbvQk1N91meuvvTPb4F93X6l2+npNZRsRVHToY=
+	t=1757684389; cv=none; b=E6jdXAGczEPWmql6wMtczGWFmrsmpVTLb4m64ikSjs+1uPN6uBxlnWYNelacbSLcZh0kfYLFBqzkqOdMYAP7J3tPLpQ7dWIwuMZ26pdVLpv8xZK9pFEONpKEGyxi4VobmOFCTzulqvw1JS3XyBRn3gJ3DeE+ygaNedY5dTvqdko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684233; c=relaxed/simple;
-	bh=caCHJd76BgXdmJ9d1eRBAJ32I6fa8yfJlblZoCmMvqY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JbkIcXjf8noNxpQvAtguKip48fxhb0DOMHkEDAwTDido2w0ZHJ1MHFmMGEEuHi8uf0B3H5Y5Iyge/GD7dGqSlYH5kfp7tlYWnkQsdEyHgFphIYGHHJZUZDE538eS7GALf0xi7is/42bgIEPRLBMXNMatezWAiyiqOW2nWrPJUQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNb4f50qdz6M535;
-	Fri, 12 Sep 2025 21:34:26 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 211D11402A4;
-	Fri, 12 Sep 2025 21:37:08 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
- 2025 15:37:05 +0200
-Date: Fri, 12 Sep 2025 14:37:04 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: James Morse <james.morse@arm.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-acpi@vger.kernel.org>, D Scott Phillips OS
-	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
-	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
-	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
-	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
-	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
-	David Hildenbrand <david@redhat.com>, Dave Martin <dave.martin@arm.com>, Koba
- Ko <kobak@nvidia.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
-	<fenghuay@nvidia.com>, <baisheng.gao@unisoc.com>, Rob Herring
-	<robh@kernel.org>, Rohit Mathew <rohit.mathew@arm.com>, "Rafael Wysocki"
-	<rafael@kernel.org>, Len Brown <lenb@kernel.org>, Lorenzo Pieralisi
-	<lpieralisi@kernel.org>, Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, "Will
- Deacon" <will@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v2 28/29] arm_mpam: Add kunit test for bitmap reset
-Message-ID: <20250912143704.00001ae8@huawei.com>
-In-Reply-To: <20250910204309.20751-29-james.morse@arm.com>
-References: <20250910204309.20751-1-james.morse@arm.com>
-	<20250910204309.20751-29-james.morse@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757684389; c=relaxed/simple;
+	bh=T4XIhNwAGX0HU08OWG2KQjGtnp1D5QvWEzqBQEolNck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XRAldx2dtNle7KoeCN81k81loay0NYPJ6Fqo1dwmOKSV5AK6JgZEFttU6R4hrQ8zF8AlKTjLdx7UVnfvpMFmJ/2gBcYiVw0i6761CLA0qmA3WveDap8XKjsmz+tTVK2H2nEE3DQyRGKNPC3uRmqkNB6rfkYQ5q7k2uiQhru/its=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bLJehbzA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ED89C4CEF1;
+	Fri, 12 Sep 2025 13:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757684388;
+	bh=T4XIhNwAGX0HU08OWG2KQjGtnp1D5QvWEzqBQEolNck=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bLJehbzAlcPZp39zOPV/XANzj1DZcrUodyNHc5eigpXWne2OyjaSiqyBIMslkomAD
+	 z72WCThDsYDhtwnN6hGmjzqwJ436ztNZaDnlkagv1dO8SvZEWHCtUpgWd895rxE/zM
+	 sp5LdAAmtV9RVsaNMWRI7Q/s0eCcBWBlXJIIYAnQ=
+Date: Fri, 12 Sep 2025 15:39:45 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, brgl@bgdev.pl
+Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
+Message-ID: <2025091209-curfew-safari-f6e0@gregkh>
+References: <20250912081718.3827390-1-tzungbi@kernel.org>
+ <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
+ <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
+ <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
+ <20250912132656.GC31682@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912132656.GC31682@pendragon.ideasonboard.com>
 
-On Wed, 10 Sep 2025 20:43:08 +0000
-James Morse <james.morse@arm.com> wrote:
-
-> The bitmap reset code has been a source of bugs. Add a unit test.
+On Fri, Sep 12, 2025 at 04:26:56PM +0300, Laurent Pinchart wrote:
+> On Fri, Sep 12, 2025 at 08:49:30PM +0800, Tzung-Bi Shih wrote:
+> > On Fri, Sep 12, 2025 at 11:24:10AM +0200, Bartosz Golaszewski wrote:
+> > > On Fri, 12 Sept 2025 at 11:09, Krzysztof Kozlowski wrote:
+> > > > On 12/09/2025 10:17, Tzung-Bi Shih wrote:
+> > > > > Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > > Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > > > > Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > >
+> > > > Thanks for the work. Just a note, please start using b4, so above Cc
+> > > > will be propagated to all patches. Folks above received only the cover
+> > > > letter...
+> > 
+> > Thank you for bringing this to my attention.  I wasn't aware of that and
+> > will ensure this is handled correctly in the future.
+> > 
+> > > Thanks to Krzysztof for making me aware of this. Could you please Cc
+> > > my brgl@bgdev.pl address on the next iteration.
+> > 
+> > Sure, will do.
+> > 
+> > > I haven't looked into the details yet but the small size of the first
+> > > patch strikes me as odd. The similar changes I did for GPIO were quite
+> > > big and they were designed just for a single sub-system.
+> > > 
+> > > During the talk you reference, after I suggested a library like this,
+> > > Greg KH can be heard saying: do this for two big subsystems so that
+> > > you're sure it's a generic solution. Here you're only using it in a
+> > > single driver which makes me wonder if we can actually use it to
+> > > improve bigger offenders, like for example I2C, or even replace the
+> > > custom, SRCU-based solution in GPIO we have now. Have you considered
+> > > at least doing a PoC in a wider kernel framework?
+> > 
+> > Yes, I'm happy to take this on.
+> > 
+> > To help me get started, could you please point me to some relevant code
+> > locations?  Also, could you let me know if any specific physical devices
+> > will be needed for testing?
 > 
-> This currently has to be built in, as the rest of the driver is
-> builtin.
+> One interesting test would be to move the logic to the cdev layer. The
+> use-after-free problem isn't specific to one type of character device,
+> and so shouldn't require a fix in every driver instantiating a cdev
+> directly (or indirectly). See [1] for a previous attempt to handle this
+> at the V4L2 level and [2] for an attempt to handle it at the cdev level.
 > 
-> Suggested-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: James Morse <james.morse@arm.com>
-Few trivial comments inline.
-
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-
-> ---
->  drivers/resctrl/Kconfig             | 10 +++++
->  drivers/resctrl/mpam_devices.c      |  4 ++
->  drivers/resctrl/test_mpam_devices.c | 68 +++++++++++++++++++++++++++++
->  3 files changed, 82 insertions(+)
->  create mode 100644 drivers/resctrl/test_mpam_devices.c
+> In [1], two new functions named video_device_enter() and
+> video_device_exit() flag the beginning and end of protected code
+> sections. The equivalent in [2] is the manual get/put of cdev->qactive,
+> and if I understand things correctly, your series creates a REVOCABLE()
+> macro to do the same. I'm sure we'll bikesheed about names at some
+> point, but for the time being, what I'd like to see if this being done
+> in fs/char_dev.c to cover all entry points from userspace at the cdev
+> level.
 > 
-> diff --git a/drivers/resctrl/Kconfig b/drivers/resctrl/Kconfig
-> index c30532a3a3a4..ef59b3057d5d 100644
-> --- a/drivers/resctrl/Kconfig
-> +++ b/drivers/resctrl/Kconfig
-> @@ -5,10 +5,20 @@ menuconfig ARM64_MPAM_DRIVER
->  	  MPAM driver for System IP, e,g. caches and memory controllers.
->  
->  if ARM64_MPAM_DRIVER
-> +
->  config ARM64_MPAM_DRIVER_DEBUG
->  	bool "Enable debug messages from the MPAM driver"
->  	depends on ARM64_MPAM_DRIVER
+> We then have video_device_unplug() in [1], which I think is more or less
+> the equivalent of revocable_provider_free(). I don't think we'll be able
+> to hide this completely from drivers, at least not in all cases. We
+> should however design the API to make it easy for drivers, likely with
+> subsystem-specific wrappers.
+> 
+> What I have in mind is roughly the following:
+> 
+> 1. Protect all access to the cdev from userspace with enter/exit calls
+>    that flag if a call is in progress. This can be done with explicit
+>    function calls, or with a scope guard as in your series.
+> 
+> 2. At .remove() time, start by flagging that the device is being
+>    removed. That has to be an explicit call from drivers I believe,
+>    likely using subsystem-specific wrappers to simplify things.
+> 
+> 3. Once the device is marked as being removed, all enter() calls should
+>    fail at the cdev level.
+> 
+> 4. In .remove(), proceed to perform driver-specific operations that will
+>    stop the device and wake up any userspace task blocked on a syscall
+>    protected by enter()/remove(). This isn't needed for
+>    drivers/subsystems that don't provide any blocking API, but is
+>    required otherwise.
+> 
+> 5. Unregister, still in .remove(), the cdev (likely through
+>    subsystem-specific APIs in most cases). This should block until all
+>    protected sections have exited.
+> 
+> 6. The cdev is now unregistered, can't be opened anymore, and any
+>    new syscall on any opened file handle will return an error. The
+>    driver's .remove() function can proceed to free data, there won't be
+>    any UAF caused by userspace.
+> 
+> [1] implemented this fairly naively with flags and spinlocks. An
+> RCU-based implementation is probably more efficient, even if I don't
+> know how performance-sensitive all this is.
+> 
+> Does this align with your design, and do you think you could give a try
+> at pushing revocable resource handling to the cdev level ?
+> 
+> On a separate note, I'm not sure "revocable" is the right name here. I
+> believe a revocable resource API is needed, and well-named, for
+> in-kernel consumers (e.g. drivers consuming a GPIO or clock). For the
+> userspace syscalls racing with .remove(), I don't think we're dealing
+> with "revocable resources". Now, if a "revocable resources" API were to
+> support the in-kernel users, and be usable as a building block to fix
+> the cdev issue, I would have nothing against it, but the "revocable"
+> name should be internal in that case, used in the cdev layer only, and
+> not exposed to drivers (or even subsystem helpers that should wrap cdev
+> functions instead).
 
-Doing this under an if for the same isn't useful. So if you want to do this
-style I'd do it before adding this earlier config option.
+I think the name makes sense as it matches up with how things are
+working (the backend structure is "revoked"), but naming is tough :)
 
->  	help
->  	  Say yes here to enable debug messages from the MPAM driver.
->  
-> +config MPAM_KUNIT_TEST
-> +	bool "KUnit tests for MPAM driver " if !KUNIT_ALL_TESTS
-> +	depends on KUNIT=y
-> +	default KUNIT_ALL_TESTS
-> +	help
-> +	  Enable this option to run tests in the MPAM driver.
-> +
-> +	  If unsure, say N.
-> +
->  endif
+I have no objection moving this to the cdev api, BUT given that 'struct
+cdev' is embedded everywhere, I don't think it's going to be a simple
+task, but rather have to be done one-driver-at-a-time like the patch in
+this series does it.
 
-> diff --git a/drivers/resctrl/test_mpam_devices.c b/drivers/resctrl/test_mpam_devices.c
-> new file mode 100644
-> index 000000000000..3e7058f7601c
-> --- /dev/null
-> +++ b/drivers/resctrl/test_mpam_devices.c
-> @@ -0,0 +1,68 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2024 Arm Ltd.
-> +/* This file is intended to be included into mpam_devices.c */
-> +
-> +#include <kunit/test.h>
-> +
-> +static void test_mpam_reset_msc_bitmap(struct kunit *test)
-> +{
-> +	char __iomem *buf = kunit_kzalloc(test, SZ_16K, GFP_KERNEL);
-> +	struct mpam_msc fake_msc = {0};
+And that's fine, we have "interns" that we can set loose on this type of
+code conversions, I think we just need to wrap the access to the cdev
+with this api, which will take a bit of rewriting in many drivers.
 
-= { }; is sufficient and what newer c specs have adopted to mean
-fill everything including holes in structures with 0.  There are some
-tests that ensure that behavior applies with older compilers + the options
-we use for building the kernel.
+Anyway, just my thought, if someone else can see how this could drop
+into the core cdev code without any changes needed, that would be great,
+but I don't see it at the moment.  cdev is just too "raw" for that.
 
-> +	u32 *test_result;
-> +
-> +	if (!buf)
-> +		return;
-> +
-> +	fake_msc.mapped_hwpage = buf;
-> +	fake_msc.mapped_hwpage_sz = SZ_16K;
-> +	cpumask_copy(&fake_msc.accessibility, cpu_possible_mask);
-> +
-> +	mutex_init(&fake_msc.part_sel_lock);
-> +	mutex_lock(&fake_msc.part_sel_lock);
+thanks,
 
-Perhaps add a comment to say this is to satisfy lock markings?
-Otherwise someone might wonder why mutex_init() immediately followed
-by taking the lock maskes sense.
-
-> +
-> +	test_result = (u32 *)(buf + MPAMCFG_CPBM);
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 0);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 0);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 1);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 1);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 16);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffff);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 32);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffffffff);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 0);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mpam_reset_msc_bitmap(&fake_msc, MPAMCFG_CPBM, 33);
-> +	KUNIT_EXPECT_EQ(test, test_result[0], 0xffffffff);
-> +	KUNIT_EXPECT_EQ(test, test_result[1], 1);
-> +	test_result[0] = 0;
-> +	test_result[1] = 0;
-> +
-> +	mutex_unlock(&fake_msc.part_sel_lock);
-> +}
-
-
+greg k-h
 
