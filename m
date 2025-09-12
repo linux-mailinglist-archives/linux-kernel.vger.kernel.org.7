@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-813045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3180B54013
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:00:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D80AB54017
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C5C1486410
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E04965A6FB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:01:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1371A7264;
-	Fri, 12 Sep 2025 02:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD5F2E40B;
+	Fri, 12 Sep 2025 02:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiJo/3Xm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvAdBuOh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768A619D8A3;
-	Fri, 12 Sep 2025 02:00:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43FF1C861A;
+	Fri, 12 Sep 2025 02:00:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757642429; cv=none; b=E7oa9SGL6W5OetyI9U/2hsjzi/JjCxv91SRJRcnAzbK5gimK3ILFLEUrIPPW4D/NdQg/P5zoqrjBuWdgFk67IPiewwPnF7CV6NBokby5pK3hILCJsqaHEKMiHhtByETxGFfzoVqSG8/8l7RuI7RI2NwrAlMjpwRFXax6whuFfeU=
+	t=1757642431; cv=none; b=QJMB6tI7Vy2oE6O3D+g4RnID1utniybGfeKFtjUAX+/LHKhxVQwNLJxz33bJvY+nHOOK2uh4iKyjbn5+yFRGtpbfvyI15plHmplpASInc5aTqrg9+0mHQ2ThMy6FgdznFCtbyxYDKEEoEGz+dWZCkwGS965+mma3lE/y1oRoY/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757642429; c=relaxed/simple;
-	bh=lphVgeZ5on8hME4WbnO3PM9jKNXeDY52nLMTTDIR+fI=;
+	s=arc-20240116; t=1757642431; c=relaxed/simple;
+	bh=TdbZxSnvieCSrjZnnZ2t1OUCezbwMzYoDiL3DVs10z8=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=AqD0TcRduU1zZ0cgemwZG7m2qujU6Ztu8nzC+nGeoA3rKI4ZHuVbDSe+fIjszyERAsG/bV/gktro78UQuGxg1ZVC6ksejeTi4w8hhKbepD1daNG/LuRCpctLExBRCfBHgYj1gJKqaNumCfkwTz/SSAWto8Ybizkzw1jJWePRsGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IiJo/3Xm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44EF5C4CEF0;
-	Fri, 12 Sep 2025 02:00:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rftIsoWDajh7Zpr3SBL/cAUEfXoabS3Q9/X8jJ+t22ymrEQ1I+NGh0sO8mwGP8eQy7fLp40cUP3jly4GL+P1FC9DFkQH4u5lF6EiQ/kuCA7gR+c92yoY+eF38VzwJYiSVD5fzIOGVUnobSZth6XZt9iyRbRYSeoa2sCCU1/UsiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvAdBuOh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A411EC4CEF0;
+	Fri, 12 Sep 2025 02:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757642429;
-	bh=lphVgeZ5on8hME4WbnO3PM9jKNXeDY52nLMTTDIR+fI=;
+	s=k20201202; t=1757642431;
+	bh=TdbZxSnvieCSrjZnnZ2t1OUCezbwMzYoDiL3DVs10z8=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=IiJo/3XmDWnP64k5OqvMuwZWtlZLc2eV8+kg8outlM8OYe/leANyK0rZwaee0ZFQv
-	 7W0OGUGgaGoouZb/DFyHBk0RyJGrxE2zePRtU8HEOwsXlnndj8wCHi/LqYpHlE2T8P
-	 KMMS3zE2YUoh4Pzi6/sQ3SMLn4IatoGsjyXw28fiHnzegRsvUh8SfcSPRmKMCqqfjB
-	 T/JzK1aGrDWPIIDhIDNNAnurr1qWkb3iNHuXEWUSHboIkufjN9KZdB0GWa2sA1/Juk
-	 SagRdZ4zKFVuFyJtoQjhjVGgSZ2LOyiXx1k/rhlK8dKHZJi/ILNb81d4G0Rq5SR5eg
-	 67rU7eXPvCbyQ==
+	b=cvAdBuOhvZkD5DT5YW7wMxli0oVzhh/q0Iy3KJT4eJotjnjnvJktMngbzCOtIssY+
+	 jMzFvGReNLcE0udlE72KBitruUOUrLA0l2p1SkZajcCUv9+x2hnvyOm+qERdD7t1Xk
+	 HziNfQIKzl0grWY5fVDT5OtERlNLCLvzjuSio7m1/TBtxSfGWP6Ti9e8wqSW7C65Dv
+	 FESsXZk2vsev3k0LW4NfQTSFj+8GV/mzZvsPyn3FUs90jpC7xdSpHpxUotpFh12kch
+	 GQbewnM5fW6KSQ4C2MCTDQ3tpFWXiT9XUftzRkTn0fjGeF+Y8rjGXjGKxs+uKf45ap
+	 oqKlXINT53gvQ==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE26383BF69;
-	Fri, 12 Sep 2025 02:00:32 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F20383BF69;
+	Fri, 12 Sep 2025 02:00:35 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,45 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v12 0/2] net: af_packet: optimize retire
- operation
+Subject: Re: [PATCH][next] geneve: Avoid -Wflex-array-member-not-at-end
+ warning
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <175764243148.2373516.17876362727543730939.git-patchwork-notify@kernel.org>
-Date: Fri, 12 Sep 2025 02:00:31 +0000
-References: <20250908104549.204412-1-jackzxcui1989@163.com>
-In-Reply-To: <20250908104549.204412-1-jackzxcui1989@163.com>
-To: Xin Zhao <jackzxcui1989@163.com>
-Cc: willemdebruijn.kernel@gmail.com, kerneljasonxing@gmail.com,
- edumazet@google.com, ferenc@fejes.dev, davem@davemloft.net, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <175764243424.2373516.12165345909541767678.git-patchwork-notify@kernel.org>
+Date: Fri, 12 Sep 2025 02:00:34 +0000
+References: <aMBK78xT2fUnpwE5@kspp>
+In-Reply-To: <aMBK78xT2fUnpwE5@kspp>
+To: Gustavo A. R. Silva <gustavoars@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
 
 Hello:
 
-This series was applied to netdev/net-next.git (main)
+This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Mon,  8 Sep 2025 18:45:47 +0800 you wrote:
-> In a system with high real-time requirements, the timeout mechanism of
-> ordinary timers with jiffies granularity is insufficient to meet the
-> demands for real-time performance. Meanwhile, the optimization of CPU
-> usage with af_packet is quite significant. Use hrtimer instead of timer
-> to help compensate for the shortcomings in real-time performance.
-> In HZ=100 or HZ=250 system, the update of TP_STATUS_USER is not real-time
-> enough, with fluctuations reaching over 8ms (on a system with HZ=250).
-> This is unacceptable in some high real-time systems that require timely
-> processing of network packets. By replacing it with hrtimer, if a timeout
-> of 2ms is set, the update of TP_STATUS_USER can be stabilized to within
-> 3 ms.
+On Tue, 9 Sep 2025 17:42:39 +0200 you wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Move the conflicting declaration to the end of the corresponding
+> structure. Notice that `struct ip_tunnel_info` is a flexible
+> structure, this is a structure that contains a flexible-array
+> member.
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v12,1/2] net: af_packet: remove last_kactive_blk_num field
-    https://git.kernel.org/netdev/net-next/c/28d2420d403a
-  - [net-next,v12,2/2] net: af_packet: Use hrtimer to do the retire operation
-    https://git.kernel.org/netdev/net-next/c/f7460d2989fa
+  - [next] geneve: Avoid -Wflex-array-member-not-at-end warning
+    https://git.kernel.org/netdev/net-next/c/4094920b19f7
 
 You are awesome, thank you!
 -- 
