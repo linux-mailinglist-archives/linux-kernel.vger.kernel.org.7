@@ -1,256 +1,140 @@
-Return-Path: <linux-kernel+bounces-813187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9232B541C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:49:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B6BBB541C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 06:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5713C163C32
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:49:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9BA43AFD52
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA43626AAB6;
-	Fri, 12 Sep 2025 04:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1804F25A321;
+	Fri, 12 Sep 2025 04:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qEGsnToP"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2040.outbound.protection.outlook.com [40.107.95.40])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWFJqk0u"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 298DA23F417
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757652568; cv=fail; b=M8X12iQvg6P2IZwguZLBd+Lxwcy6EiKOMqEnb+aU/L7B7NhMXGI2RiPY9NavE/qXMUriKbk/egdjZqw0VOxYjotsA4+eqigd/HTshXiNZdLUzG4xH8VydryLvNviJkXFPL2l9ycaMK0CkKQE95gv1kpjGb99b8mzmiBgRDx14OA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757652568; c=relaxed/simple;
-	bh=TSJFDuG7gQ2MVuYofYysV20Zx/ZbcuRTrGDRlffJOiE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=H8VJei9UFW4l7u3U0pWdt3oqcOiKnWtK/IPgEaxT0l42t19WH7YRI+Ngys32wTGFNyyttOmfwqusO40PkMyLD0dVQFsxQBXT2K2fOB2QBc83H1YL6xaMr/n1PokLbxobtl/gOazuyrupKulWqchPySBdkFb6b9VA4OspNUs27Og=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qEGsnToP; arc=fail smtp.client-ip=40.107.95.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vkxHmzsCS6Dt4OOE8LE0zVmMdpMxZ5EZoRCa5t6eu00RW46RbWrkyhFC3Z10geVhas7X95QKQeKUII3Y3RmNVbBbteqc9aa2nmfb/q0AQ9qGzh/ZNFuc13ogKMOO9Fgvr+oivlp5MJ7AM79mhwovqtn7vPSE8EWdz9e6sMAdll0YOI6KNjuPTYczN0zedNyC9Aj5paGuAdNIOfDZfEdFZkk43X3CbZgbZrceHvN9ioPY+YwRWjVkO0WcKZEpjWuIOGRlH64FctBcOvqSPY/m68YweJq3m39dcL/nKEaMqVjrfWf+DLNyBTFJdy1jLjibJBeKWGxIjptkBGRzccHknQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TZbnvhPcJkwG7QOK/UjP2uuHdcWwysF8q7nlHm5aGf8=;
- b=tY1LHYVngetkADEfMRWkl2zwjcQAWOsp7Nvx5sRSa2aCPcKrvSUfAAQX2zuL+ZIWksT5oawJAd6RoovD9cxNjUZlPzEs98BPpI6NPWNOxFy3CEKaOqC3kajoJa+++BBmOuwqH1CFjeWIgFbv5Hs8PZ4u9qiLY1iZ7e94B7G5Hlo0Z7MuNLIIcykEXIWrDkXz99K4CsRa7KzlytkQS770SKAApxfiggl2qVrXul11SEu5rSo3RsSOIVs7b+ngEDPXeZEc+ilK/tydxMLZltTjeqeY5gTYC0mfGyRUbHbbYP99V1Z6j+gnleADDL6QGHyNBpZwlTZzjlWtIU03b6P+1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TZbnvhPcJkwG7QOK/UjP2uuHdcWwysF8q7nlHm5aGf8=;
- b=qEGsnToPCjH9YInxx29jlRcIDg9HBiCQyangVSonn+l3rVfrAyavwUmN3UoLp98dr0WhwSplxi5io6ZBXCOtoGVRyQwElsDk1BLlIUGaYVPi/OxbWVDiouvg69d8jm+/6g8l0nIvNnoL+a/B9STW+Yp22sHBvJYQesv/pLNBJPQv1aUOMN13y1W1mThK6GX+xNYAB8TGXPqFlcwp9bkAhViC1Xs7WabXde+MWqU7mERzTEuRjK0IcDSR2vsANZTYoN5nr1OjWyWkimBrrm7fommTyJQbI6cQukRdxPpnx/YI8ixabr1/XCIyWLnXlRS8T8VbOoYkDDLb9tIgVQxxfw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
- by SN7PR12MB6791.namprd12.prod.outlook.com (2603:10b6:806:268::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
- 2025 04:49:23 +0000
-Received: from PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
- ([fe80::3a4:70ea:ff05:1251%7]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
- 04:49:23 +0000
-Message-ID: <ce40579b-4ded-473b-8fdb-a41d5b5021d5@nvidia.com>
-Date: Fri, 12 Sep 2025 14:49:16 +1000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v5 01/15] mm/zone_device: support large zone device private
- folios
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: damon@lists.linux.dev, dri-devel@lists.freedesktop.org,
- Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>,
- Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
- Byungchul Park <byungchul@sk.com>, Gregory Price <gourry@gourry.net>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Alistair Popple <apopple@nvidia.com>, Oscar Salvador <osalvador@suse.de>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lyude Paul <lyude@redhat.com>,
- Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Ralph Campbell <rcampbell@nvidia.com>,
- =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>
-References: <20250908000448.180088-1-balbirs@nvidia.com>
- <20250908000448.180088-2-balbirs@nvidia.com>
- <8c5267ec-cc85-4eff-b890-eb705472e2b2@redhat.com>
- <f98d3149-9cc1-4211-af8f-e49547134b8c@nvidia.com>
- <244005a2-4796-4985-853e-f916bdfd096a@redhat.com>
-Content-Language: en-US
-From: Balbir Singh <balbirs@nvidia.com>
-In-Reply-To: <244005a2-4796-4985-853e-f916bdfd096a@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY5PR13CA0031.namprd13.prod.outlook.com
- (2603:10b6:a03:180::44) To PH8PR12MB7277.namprd12.prod.outlook.com
- (2603:10b6:510:223::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22F223D7F7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757652639; cv=none; b=XwT+KL39VAq15YdQAtfdXWxDYpxdVR9qNdKDlNRuZRe2lnI9LR255K/JVeq5QO2UJWQqbS/G8AB4IdwPnH2HHhPutj9aw79U3NYzrKskztDka9zJzbew/Jtkjh2MB9/DCmGTlF0obkj9WZFHNX9pPs3X8HxI2jM9T7dj/KDRxrc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757652639; c=relaxed/simple;
+	bh=ZZZC5ID6Dmql9sLkOkKSqFgni0vwgmQc2djTCjy1b+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dzwjWQQ20cpVWhKBb36RgGF/hzFBdD6nEJB9s95A6V+89Y0CMtBkQtKRZqtarmAha+fxju8fmKsRFH6P6aXNLYSUstzxDeZ35BP0WxQ2NGXezA7VB8JNTfqTTbYUfFpquz8N9oBT5wxaf3GIXVWYXujp99inCo5Sjqxt5SM/KOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWFJqk0u; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-afcb7ae31caso248604266b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 21:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757652636; x=1758257436; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eSbP+5U1920kReaRVhFD02z/dLBf/KIwYOUnhUmfjZM=;
+        b=mWFJqk0uJBoyo9q/JHb11fVA4CTlYcjrFH/Cqs6HbpjNcFTqHi77HeNh0NYzPcsBWW
+         sxCoR5jWbnpabkqTW2DEsuYb6QahiFideXTvRJi3BaK+FRdlODzHjzMu5SavBEn/6HVp
+         h3zj2k1wuyijXrazgkq9i/xsLO9A7hqaPKUpZfaOHUdioOiwWrq3YJgIw9hZgqfo3fjk
+         VhfsmWcsFSl+88ljQVH0AiAIvJaqGjvdfzd27g6HJtxhUkpHVLUPI9THUN1YLe3ieQmj
+         6yuxqU65crDjxNn4jNvyk9zGZT6UQRcqyDMo5DTl26XwsiLHvfFhnW75mA3UsFGF8EeH
+         AIrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757652636; x=1758257436;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eSbP+5U1920kReaRVhFD02z/dLBf/KIwYOUnhUmfjZM=;
+        b=ue+TYy99eWm1naj+LlDcodt3xY0UXBY6ALAqo9TMKaIAD3I+C9XDfQpvjGllLgWuRw
+         Qggyoz3ZYLXlZ6hoYqPMAQMGFIGdCpLu+8Jvi+6qZb8lCM44osrTyslOHKsurzL09UtP
+         W5HL/C/ZV4cGaWqNTDKHsSJq05ovRrme0dgOrTvPTyfWU8q0RKRVJ8hZP433Qh25f1eV
+         QztbyYxkHe1/xqXCcmshXoO+o69Rl/ZOlS+3lreNes5n65QC8oxCMbonXYv1JjAX/au1
+         wkCFrPNZaLerdtCFMt2BRuGrV4Ievej7wQDcJxiqxCF35SazgxfQUiVnHr2XcWfqwxAD
+         3GOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGWT6tMZiEIhaKHxFgNXlRXfXELt7U9yW5XeMY4XySn7roj4/Meqn4xoROiiJ8E9v0VsuIsPflJ1KVTxQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6BPSQp8CHRXd2JpkvdZJSjG4s4DLLLZFNQ4NqhEan4ylnkMOt
+	FSCo9f7H+wssTPwZGLsUEpzqke9lzJkSFG0obsDCXuh53VZjQvH/k4RjxM/Us/7m/SZRqcCj8oz
+	zbLFecKrlbmZOO0ZcYf+3GT02w+D6s3PM/12UzjU=
+X-Gm-Gg: ASbGncvJylI3EoLrziYwmbxGjLVaAFs3eUHRwda+vNperqfVT2U+etdDbGXSsEnQYF5
+	e7DxcP6X36ilMAN4tx+XlMtZ1NMc7i5GEEpx4OdgMMHpA3tnYT3D8cBBbTCS+kBNCpX3hBitkCw
+	r4kEH/TVpW4ugV1+hy2vPmZvlq2/PAaB+W/IycZXaBLHz5079ta1JQcrGM5koF93qlqt92XJa2n
+	MwSJ0dYykQ8HI1PGQ==
+X-Google-Smtp-Source: AGHT+IEr9QdS+8LdEAtRlXI7ckRg+OWnLwA6rpusj1+cersmlsUpBu+P8ucShtwzA+WLwEoSfK7SMZfF+Khe66NJ1Jk=
+X-Received: by 2002:a17:906:9f8e:b0:b04:82bc:1dd2 with SMTP id
+ a640c23a62f3a-b07c35f1021mr145304366b.29.1757652635872; Thu, 11 Sep 2025
+ 21:50:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|SN7PR12MB6791:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1b987d30-a074-4d46-9676-08ddf1b7be98
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|366016|1800799024|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NnAvTWw5YW1Lb2R5UnNaRW9LNFdudURyT0s0anc2UnRadCsveDEvUkNJSEdq?=
- =?utf-8?B?bncrRElPa3pyQjJvd2dGTXJKQ2phL0U3Rms4b2g0TzJieE9aSmFOakc4S1VC?=
- =?utf-8?B?TWtucU1WRE5xTVdYSnRUcGRCQUVyRGlFdGRtalhJU0lhcjRkamI3aEVGOFFE?=
- =?utf-8?B?VURjSEFYMW9tbUsyRFo0RnErSkE4UU14UjZLVmNtdTJqWXNGL21PcktScWFS?=
- =?utf-8?B?RWg0ZzdDNjd4aDlBUzBiUHZNdk8wUDdBZjliZDNWY2FWT1BUUFNHampZM3c5?=
- =?utf-8?B?aUNQa3FiakRReFB2RFJsVG5SNlJVNzhLclNrSS85QnRTWmc5c0g1THJ1dWpP?=
- =?utf-8?B?QXUyTmg2NEtmVUk3K2hYMzUyUUZXSzBzSE5ZVmZaeUgrL1NkT2xLWnhLaVV1?=
- =?utf-8?B?ak1DOW1sbXBRSHkyMGdGbEFyS0xhSXZWejF2cDB0MWREczZLQU9xTHFnU2cr?=
- =?utf-8?B?dlpZZzhQanl0M0dwN1JpYktBU0lLV3pkL2JISXJQMnhldzlnVmNvaDN1VUxn?=
- =?utf-8?B?NWNZSCswQUxIQ2J4c1NRUU5mSEkzUFJ0U3hERFEyVkhvdTN2T1ZJOFpGREgw?=
- =?utf-8?B?RHY1cXZwcGR6RVFiNjQrV2lXcjFYN29oNXZKTGlXdkhJWWZDTkNJMUwrdXIz?=
- =?utf-8?B?bDNKek5mdXZoZ2E2eFRGaytLckRkNUNCY2sxNE5JTmVJWW5VT1JQWis5WTM0?=
- =?utf-8?B?NTUyVWg2SzlpY1lGVTE4eW1zMmI4Z2xSMzJWVndBckd3Q1NlbTg3Sk5PSUpy?=
- =?utf-8?B?NzlXb21ldWZKdkJYWi9sUXFkcWQzZWtjWGhzTkdLMWxCenp0Q1Q1NWZaN1Vp?=
- =?utf-8?B?WExDN09lQ1RZNEpFSXlWK0xJNy9RQ0k0c0ZPSGpNYk82eE5WVC9NMHRrU3N4?=
- =?utf-8?B?OC8vWmJTcmhNY3F1UFpEVUNUUWZlWHVWcThCQXoydU9xaXozSmNTU0R5NGpX?=
- =?utf-8?B?YU12VnU5SnYybTY1dUFnUFJEY0J1YnRSV0FPOUU0MG5YNTZNYzN4dmx4R1Ay?=
- =?utf-8?B?OFNjQWJTbk4zZzVRUmlCY3BQdUpCU0dTN2FYNG5OeGFoaG1oMnFmTUFsZmxZ?=
- =?utf-8?B?UVl4elozVDYvT2RsNEtlUHFGZmJyeUd6SVJtdlVCTWRZNE9YY2NuUHRCdmhK?=
- =?utf-8?B?b1BwTy9nR3UxYzhQeWpnRmd6cEJSRkpSbzFGUjVmTDcvaWRQd29xYVlOcGN1?=
- =?utf-8?B?TWEyMXZZTGoyY1JNYWxncGZFQmpkOTFPdjhWT2xDb0hxcjhMWTEvbTZmRFlh?=
- =?utf-8?B?dkxGVW1GcThHd3loSzJaZ0lucGEyVHZkUFlrKzBpdWNKMzBMZ1VtdE5OVU4v?=
- =?utf-8?B?T2orQzM3MnFEeDUxN1I5UHNQczZrTUNRQ1ZqT3NPK3lRRkVMbHNLemxUQmFS?=
- =?utf-8?B?RWdwcXNsOFpnZnZYdHZHUS82RmZFdlFKVVVZOFM1eTZBYktOTHBCSXlmcDJ4?=
- =?utf-8?B?SHEwcWRQcW8vRE9oUUZUUmxLczFlRzdJRXZvYXlaUDZLbVFKNStTTUNmWEY1?=
- =?utf-8?B?TGgrRUttYW04am9GemlMTm92eHQybDRvSmExSzl1Q1ROc2Zmd2R0VHpQVlk1?=
- =?utf-8?B?cG1tU2ZmOWN5blNUcWZqeVBmc2NqY2VoZUxZTmZNRXZVeWdjYVFiVVk0aGJl?=
- =?utf-8?B?RmsxRDZ0M0pnY3Y0NzlFL3VqUjQydGJZRzNiQlkzUW11RlArdGJOVDdhT2h5?=
- =?utf-8?B?QUVyU3BVZ2VSeUQreTU5NURRaWFXK0Jjb3BpWmlncjNOSGVUemp1aWNUYWtG?=
- =?utf-8?B?LzVpOG44NEpVZ0JGODNnTWNFVVZreTQ2OGthRVpCd0FXcHNzOTN4RVdESXQz?=
- =?utf-8?B?K3Y3aW9uQlE1ckFtTUtqdk4wZFRoQlkzNkhqK3RoVlF3QTh3c0k1VHNpR0Iz?=
- =?utf-8?B?QWpINHRUakxRS25MTmFjbHFpR2tXR2kwMVJPbWxvY2tFakdpbHdiQk5wTkNz?=
- =?utf-8?Q?rjTHKvVTrQI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b2NuTEFheURCQXF3Z3U3L1hNTVpiL1U5NGtZZitoWWYySGxXZUpnOEVFMlYv?=
- =?utf-8?B?MFh4RE9IbWlKTURqME5uNVZHa2twZ2xKNjkxQ0UrZ01DNXdoOVEzbHhZYzJ2?=
- =?utf-8?B?ejZjdWp0VXdIcldGeDMyYzBQdVZ1Y2hLejJwd3JZRWRoYkNMN3RPcjV6bUc4?=
- =?utf-8?B?Vi90QkRPN1lzblpiNDFyM0R6b3d4enVkZlRONTNaL1lqeTQwcGFtaU4xRjhJ?=
- =?utf-8?B?eXR5NnBMcS9pVStZM0FwWUVlWFBtWDBteW9JZndJMGYwRTE0TTMreEpLeW0z?=
- =?utf-8?B?Rmg2NmVPdWxrd0xNdGlqdkZieDFJdmlwamthZDV0UkdDNkQvemFsUm1ETXpQ?=
- =?utf-8?B?YWd3dFRKTyt4bklvczNCVGMzVktTeElNS2M5d0xkSDB2SWRpQlhNczlMaUZR?=
- =?utf-8?B?UzVBZGZkaFhIWEJiSyt3QkZjOXo5WnYrYUR3T1Qyd2tOTHNRc25YRG84K3RX?=
- =?utf-8?B?T0hqWDIzdUZMR1VyZkJDcDYzQmowb3Fsd0tsRG9UTTFUTUVZd0UzZ2NJNGFp?=
- =?utf-8?B?RXYrbnRBYUFaMkN2YWswdEp3NmtRTDg5SngycHhxSzVBdS9SSkJ2RmY3Mjhx?=
- =?utf-8?B?NzMzcUJaN2RpbWhmWWFRSUZHUDI4TnZ2dHNuUjl0bTNpaWszZ2g0b0JWUjBD?=
- =?utf-8?B?aXNXQVZOMGJrVW1TMGR5a09rL1hldVF2NjZtS0t6ZFkvbHg4bVg1eTNwamtK?=
- =?utf-8?B?QVRYQ2xwSzEwbHp0L0F4bm14T3BnMnY1dklaUTNDT2MvMnMwdk0rancrd3d1?=
- =?utf-8?B?cWNLWXNaNE1lVittek1HRU9sWkIrdGxCc2hlaXRHOVBOM0xUcXJxQnBPWm4v?=
- =?utf-8?B?S1dDdjBtY3lMYkJXeGdWYXlnL3BtMVBHbEtLRDJMekN5czVncjNCRmUzUXdT?=
- =?utf-8?B?cldVSnBLQUVFeXdpOFdibFlKMVlKZ1VPUEdsWi9UOUFNQTM3MGpHdzNDQmd0?=
- =?utf-8?B?NnBKSXhxYmZmSEV1U29tbFpyTEozSGJnbWdydzFmK1NZOTZZeVBuOUhEYlEv?=
- =?utf-8?B?VUN4bmpvS3pPQjVUNUhpRVh5YWNHdGhWSGdSY0xBaEFXMkpGcHUrOFJGdXY5?=
- =?utf-8?B?VWRvR1dNZjRkdE1YUzIxQzd6akd5NXJ4ZlF4Wkx6dHNkdTA2UWRxakNObFYz?=
- =?utf-8?B?ZTJ4TndPMG5lMk1zN0JkTjlFM1pBMysvRHV0Z3liY2VXMDFuWEt4VTdnWkE4?=
- =?utf-8?B?UzNOREJuQ2tWUTQ1a05nZkluUEdrTHY2MUc1cDRUbXd0MmJia0c3cXkxbWND?=
- =?utf-8?B?VHdtOGdMUGEzYmZ0eW9ndlVvekIwandYVXVObEN2WDlsOUpqVnFKWmp6RmVD?=
- =?utf-8?B?SUc0a01idmFwY2xCNDYrRDRWMHNXVytFN3cwUWVNSGJEblhhcjNaZFAyTUN5?=
- =?utf-8?B?Q3hPcHhiaFJscFhQZ1ZXaS9HWlA2bnpTaEpVTzU1SDVFNzZjZXE1d3VGNHlC?=
- =?utf-8?B?c0hSV3Z2RFN0cC81UEsxV0RHSlBxNGEybFdZZy9sWVptUnFQNFFyUW1zYlpz?=
- =?utf-8?B?M3N1Q3dnWmllS0w5MlZndlVZeGZsa01PRGRNZHlUUUt2UzZSbXhndDd3Z3pK?=
- =?utf-8?B?MEZONlVaS3F2RHY4cHBUMnpFSW96a1g4dlRkSWlNL3lPK1NsMnN6ZE1MYnI4?=
- =?utf-8?B?ejlrcFIzVFdGbkg4cEsrYlJvVEpHTFNDSXh0MUlnR2MzUGFudWN5ZXRIS0hh?=
- =?utf-8?B?NmRDbzFiOGp4L1dVUEk2TlJCdjhXOEM3T3VSaHlncFV3UGhNQ1JnSnhWWkxk?=
- =?utf-8?B?QUZ4VHBsaERySnVlSy9DemEwdTRDbjE5Mi91ZGRzMG1mUTF4dmNvUi92dW1V?=
- =?utf-8?B?Z2tFNWlGSXJhUWRVemw5bzZmQ1lubTU3eVdEK0doakRzbUxYcVBRQitnNWNP?=
- =?utf-8?B?d1VrODlzeXRqa3drVUhxRGoxMHJ0Y2U1NTN4ZXNBRGpBZlRacmYrZ2lRa0Vo?=
- =?utf-8?B?R2YrTjhpWjNCYXZpTE81NXF6VE5Wd2puOS9ZUUZqRi81Q0NmU1BGWEZCaFBM?=
- =?utf-8?B?cTRTQ0ZoL0lZUFpuYklFS2U0b0p0TUxRdzFhV2IzSDdVVXUyaktGYzBWMXpD?=
- =?utf-8?B?WFRPMlNIem1OZkwvRmZWdk9LWmVYUXNTVTV5UG8yRkIyMmlCMmkrYWlsR0lE?=
- =?utf-8?B?cGk1WWt5R2JXbjQ2TEpGUFF3MDNCeENiR1BPMnVNS21oOTdJVUp1VDgzd3dS?=
- =?utf-8?Q?iE9g2JdR5/2NFmE9VazT8KQu4b3ky4PEEtFUEjkBS+Nu?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1b987d30-a074-4d46-9676-08ddf1b7be98
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 04:49:23.6891
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qdcxWec91nFVgWU54n9LNNp+qAeTjlPGtAZudeIA9kq4ctZJJCC6hB9DHz8pChT90cd7AB53HY7Sg4IT7nwJtw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6791
+References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
+ <20250911-iio-adc-ad7124-add-filter-support-v2-5-b09f492416c7@baylibre.com>
+In-Reply-To: <20250911-iio-adc-ad7124-add-filter-support-v2-5-b09f492416c7@baylibre.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 12 Sep 2025 07:49:59 +0300
+X-Gm-Features: Ac12FXz7RWVY2rw2n6KAFXegbg6NhMjrRCZKE1Hp0hZ0URfG36z9HMWG8eMr7_8
+Message-ID: <CAHp75Vf69X4PmGx2c_9KvQwu1opLDyfL0+TyjwX2wTG9bgtMZw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] iio: adc: ad7124: add filter support
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/25 22:52, David Hildenbrand wrote:
-> On 11.09.25 14:49, Balbir Singh wrote:
->> On 9/11/25 21:45, David Hildenbrand wrote:
->>> On 08.09.25 02:04, Balbir Singh wrote:
->>>> Add routines to support allocation of large order zone device folios
->>>> and helper functions for zone device folios, to check if a folio is
->>>> device private and helpers for setting zone device data.
->>>>
->>>> When large folios are used, the existing page_free() callback in
->>>> pgmap is called when the folio is freed, this is true for both
->>>> PAGE_SIZE and higher order pages.
->>>>
->>>> Zone device private large folios do not support deferred split and
->>>> scan like normal THP folios.
->>>>
->>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>> Cc: David Hildenbrand <david@redhat.com>
->>>> Cc: Zi Yan <ziy@nvidia.com>
->>>> Cc: Joshua Hahn <joshua.hahnjy@gmail.com>
->>>> Cc: Rakie Kim <rakie.kim@sk.com>
->>>> Cc: Byungchul Park <byungchul@sk.com>
->>>> Cc: Gregory Price <gourry@gourry.net>
->>>> Cc: Ying Huang <ying.huang@linux.alibaba.com>
->>>> Cc: Alistair Popple <apopple@nvidia.com>
->>>> Cc: Oscar Salvador <osalvador@suse.de>
->>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->>>> Cc: Nico Pache <npache@redhat.com>
->>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>> Cc: Dev Jain <dev.jain@arm.com>
->>>> Cc: Barry Song <baohua@kernel.org>
->>>> Cc: Lyude Paul <lyude@redhat.com>
->>>> Cc: Danilo Krummrich <dakr@kernel.org>
->>>> Cc: David Airlie <airlied@gmail.com>
->>>> Cc: Simona Vetter <simona@ffwll.ch>
->>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
->>>> Cc: Mika Penttilä <mpenttil@redhat.com>
->>>> Cc: Matthew Brost <matthew.brost@intel.com>
->>>> Cc: Francois Dugast <francois.dugast@intel.com>
->>>>
->>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>>> ---
->>>
->>> You missed my comments of this patch in v3.
->>>
->>
->> Hi, David
->>
->> Looks I missed your comments, just checked those were largely about alignment and
->> integrating the code for DEVICE_COHERENT and DEVICE_PRIVATE cases into similar looking
->> bits for zone device folio free and code-alignment. I'll take a look and update as needed.
-> 
-> Yes, and the confusing folio->mapping = NULL that I cannot connect to THP support.
-> 
+On Fri, Sep 12, 2025 at 12:43=E2=80=AFAM David Lechner <dlechner@baylibre.c=
+om> wrote:
+>
+> Add support to the ad7124 driver for selecting the filter type.
+>
+> The filter type has an influence on the effective sampling frequency of
+> each channel. For sinc3+pf{1,2,3,4}, the sampling frequency is fixed.
+> For sinc{3,4} (without post filter), there is a factor of 3 or 4
+> depending on the filter type. For the extra +sinc1, there is an extra
+> averaging factor that depends on the power mode.
+>
+> In order to select the closest sampling frequency for each filter type,
+> we keep a copy of the requested sampling frequency. This way, if the
+> user sets the sampling frequency first and then selects the filter type,
+> the sampling frequency will still be as close as possible to the
+> requested value.
+>
+> Since we always either have the SINGLE_CYCLE bit set or have more than
+> one channel enabled, the sampling frequency is always using the
+> "zero-latency" calculation from the data sheet. This is only documented
+> for the basic sinc{3,4} filters, so the other filter types had to be
+> inferred and confirmed through testing.
+>
+> Since the flat filter type list consists of multiple register fields,
+> the struct ad7124_channel_config::filter_type field is changed to the
+> enum ad7124_filter_type type to avoid nested switch statements in a
+> lot of places.
 
-I can remove that, let me reunify those bits, seems relatively straight forward
+...
 
-Balbir
+> -       factor =3D 32 * 4; /* N =3D 4 for default sinc4 filter. */
+> -       odr_sel_bits =3D DIV_ROUND_CLOSEST(fclk, odr * factor +
+> -                                              odr_micro * factor / MICRO=
+);
+> -       odr_sel_bits =3D clamp(odr_sel_bits, 1, 2047);
+> +       divisor =3D cfg->requested_odr * factor +
+> +                 cfg->requested_odr_micro * factor / MICRO;
+> +       odr_sel_bits =3D clamp(DIV_ROUND_CLOSEST(fclk, divisor), 1, 2047)=
+;
+
+I have a d=C3=A9j=C3=A0 vu feeling here. Is this similar code to elsewhere?=
+  Can
+it be factored out to a helper?
 
 
+--=20
+With Best Regards,
+Andy Shevchenko
 
