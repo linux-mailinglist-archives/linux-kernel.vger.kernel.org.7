@@ -1,202 +1,180 @@
-Return-Path: <linux-kernel+bounces-814134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59816B54FBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:36:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10965B54FC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C83E346627E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:36:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39B8E1885894
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267683081A8;
-	Fri, 12 Sep 2025 13:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C52930B527;
+	Fri, 12 Sep 2025 13:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GdoUUoCZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="ma45wmIq"
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C214A28641B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7065B296BD0
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757684189; cv=none; b=Bh/9+iOqnk7ZKXLmBGuH8hZaZyOMpXBVkQpY6sYx5skrbDPLqX//dwa56lVpFtFeNipWkjNkmcY+9/VXb+w03KmHnt6VtfuHalNWr+Y/PCPnfcHtvmiVhFvvaB2ZgYcOLTWXvyIJ/g+JVxK32Oqgcz1hn7Lbb0XMtsgDZhX4FJE=
+	t=1757684229; cv=none; b=YteS2NyuDErl4ghu3oLp2973sz+4omrF2Q9EaLktMKmJxN/Yd/sAMEsCRkPF80d5jf1ViTwOZe8hWrdqbNwaQeS3763K1Ha7061uTjikjUrZCTM/um9uWkjSWpPnpfTaJplEzoitHaSmyzapj3sJydd00V9aDlsarC25BNYkvJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757684189; c=relaxed/simple;
-	bh=t9IrEKU78LnKLsHKxdMDundR46ahi8bvNgSaH4WLBT8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PSk2M8b1OLZvuMvjuVxFFax3eB7eyORzjhbRBMrnoobgMh4NgZ1ggJI9c/+FZ93Lrz0jeTRLwzbNq48bcezeN0zVHlZUyKIV1XdJRtsaPJ7Hz5Y09BywZaIrRhGgykxMkyihxFLTems482+2tnkIKivCB4SmdU6ujeB4oaLx2E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GdoUUoCZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757684186;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=c1q+KGAAfVttCgY48bVWecGNxQdsIbBlAjKhfUHOaks=;
-	b=GdoUUoCZZynqE3IpYws6VixVNOmYPBf9+eenH+RgXbu6UuvjLSGYqxEm9HEpX7UD9eMHRP
-	zC/WK5bumGUL/ZkdvGPlTCmqFvXsC1PoKLlEWpMZCRxuVqj4qjl28CtbbaadbG2Wk0syvQ
-	5bP3V8QzuqaSRGncieq9IjLTHM+ta+U=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-215-NwAvhz_WPX2v5uuslSouMg-1; Fri, 12 Sep 2025 09:36:25 -0400
-X-MC-Unique: NwAvhz_WPX2v5uuslSouMg-1
-X-Mimecast-MFC-AGG-ID: NwAvhz_WPX2v5uuslSouMg_1757684184
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45b99c18484so7538425e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:36:25 -0700 (PDT)
+	s=arc-20240116; t=1757684229; c=relaxed/simple;
+	bh=RWTW4K5eP4TSPhMx3HngqWzPlbT3R5Y5FLEaVy22UJ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4C6poQLh8QzN69xvNz5b7vR7Zkm5l3H+o6UFoivBrYE8XMqRyLthh8bTembvY1f0TkYs6TuV4n6tet+ChjhzTLl6tPZqeCce+JyoHmrteyHsu/4x2bm9+ppk1Pmj0+O7tcKx3BkhYz5ujztd5O1fZj/6f1/SYBRx6OefF/58SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=ma45wmIq; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-817f23fea68so90682085a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1757684226; x=1758289026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gMM405brjjFdnpjK1r8i1H+eFiy2IHFybvmi8f16fpw=;
+        b=ma45wmIqeJoW/dmADYDGMgV2ZRK5TRXZFol/rsTXY4kGeTpjNbwMeTRtrGDdkqJ6Ty
+         JgGSn9GQr+cxscPPgPhMkMLPulCtvwRotZQ6aPAE8mZb0D62SEj1lV76YUsf6gHi0dRO
+         7+uO+Utanm+IoMtL4likXzIaBDv/jM5Pti2JdPT2RLA9iV5LUPW2cprl/lHi44ei5KFk
+         kY5zkoo20601UdNKSA49EbMLa+ZtPGK738MmcpP8E+29l0sLr87D8YT//D9SS9u3hSsq
+         Y4NOjiZWiT0GO43nVFlBhQMIVbAr8PlbPJynpNikNsZ82eyYQyv+csz56J2NSKTPYxEp
+         9Ndg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757684184; x=1758288984;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=c1q+KGAAfVttCgY48bVWecGNxQdsIbBlAjKhfUHOaks=;
-        b=E00AsDPfn1NsRRqsHPnIcMTkv6NHtiojm/22bT3IvHj2qnn3wYbkzj9aTG2D+HTlf4
-         Deafl05zytIf3fVxcr3uITlj8u9TJebhuYtsOXKl60rLh0jTDwnPz24/JhvlXjhw1YV7
-         QLDzt1vWxSi3PcffXV4x4jVTy4AQSoTqvdGrtqBKDlQ7l4S0sYNohIGRbF6tD7TTBFtM
-         9uR/F4kGK5ddIQ4xSiECvZSAkyseY+/97kUvcZjTVFcPFyZPQKzOitrl6Ny0yJfpH1Ji
-         J1RfSj7XOuLNwrPtc6UAtQyOxgza/FQi1fy7huJsMt/P6mvXVV1+HTi1KYWkGG2SAtWm
-         0Qkw==
-X-Forwarded-Encrypted: i=1; AJvYcCW797cxN8lz1INwDm8KLnVy6b82y22u79soKOZR4REE2UfUc0TdViCOUSctFEJaPSPbs15ra5Uo314r4/Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGmlbDEah23/OYLmgYMyG4u3mheljbUYHkSFXbEgoA3SfuEvYG
-	Uw2/LklXiWo2M+xzC/w4HDXDrLlndlf5cBPJI3MhqhTeJE0iJnVG8xLeOFCC+h9jGmC8QV5EtWX
-	Ucud2H2wMqceDv62zh5yxcbkTCSSAHirfzcNlcvShgkeT/KlTatFeotGmjVs/aUm24w==
-X-Gm-Gg: ASbGncvEwUg8tt2EmWiUcKiL0fMIV7LLakT8HzXCr2Sr5JKqc/D7RevcgU6LrlNGAC1
-	PWeM1voyYZ2DQAIO4HqEzX2rBXhWWnjb57HN2jTwSE04NHfG5abMjgJ1HGGG4ozwWgR9+LsHS73
-	XGiaJ/RQ2GscQoD5HC8xyPlLWH37PP5Ypo93/qd1PFT8v7/Qqrut6MUyuwIFEZAvHjPNzTOCVj9
-	+knLnz1Zux+XDUXgzUBFsKWf4QPyFbG5c2TLhvX18qjiACV/5c59D1J3oTsRUwrBZ0OHYEKmqNr
-	fiO2Zed/FEKQ4PU0Wyskb86NGabPPvywsCW9WkAVJLTeoHnsU9CGrj+/BkNf3F8WuvxrjOvXp60
-	fobp/YMv3NPlABCq6PS5cjlGu6f+hXs0c1Cq6eIEyiUOF6XA2CHJEHnML8yK53H3bB3s=
-X-Received: by 2002:a05:600c:6c94:b0:45b:9afe:ad48 with SMTP id 5b1f17b1804b1-45f211d57e3mr30671025e9.16.1757684183968;
-        Fri, 12 Sep 2025 06:36:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF3C7qbPdEaHDu5BvlzuZaVRkx6nsTgwqOonYfi1PulO3k0njjhXYjiDSVgBgoJliI1MGMrzg==
-X-Received: by 2002:a05:600c:6c94:b0:45b:9afe:ad48 with SMTP id 5b1f17b1804b1-45f211d57e3mr30670335e9.16.1757684182982;
-        Fri, 12 Sep 2025 06:36:22 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f20:da00:b70a:d502:3b51:1f2d? (p200300d82f20da00b70ad5023b511f2d.dip0.t-ipconnect.de. [2003:d8:2f20:da00:b70a:d502:3b51:1f2d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e01512379sm65835905e9.0.2025.09.12.06.36.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 06:36:22 -0700 (PDT)
-Message-ID: <8e55ba3a-e7ae-422a-9c79-11aa0e17eae9@redhat.com>
-Date: Fri, 12 Sep 2025 15:36:21 +0200
+        d=1e100.net; s=20230601; t=1757684226; x=1758289026;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gMM405brjjFdnpjK1r8i1H+eFiy2IHFybvmi8f16fpw=;
+        b=fW3cCCdbQPmDUU17cLpH5o2MR01Ut5tkrG9odbJ0Fy6HqD9FJaoeiBJyx+LlxSC2OB
+         oD6NuWkQIlxAd+Bk1bKhLZWJZTmdlz452OUMt77L/iYcGs1DMytP3hul+VoMC31lONy9
+         lK+ZC2X8dVG1TDOFwZxjNly7seFXcNQVCoLna7ojzXhXheZ50m9pD4Cd0LUXwfK0QM23
+         hc78aJ3TfI5oPYdWsubDznnIoati/HGGuWec+v+uDyaVAHyvRBmnqBm7Xtylm2Zu+kxN
+         clEn8aQx5GbLY3drWtgtze47y8102qICj5CC7JJSHlQZmQbr3D3Cpa7ipxbPN344SIeP
+         /DLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyWPzouC5RObhqnaZFbZriO+0gllZKyYZ8eypwSKE4YC01TS0G5BM6yBmiC9q6zmTbGdPNayPIjLZCJA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yweohgkr27WsYScMo9cMBL5RRRp2tyeCmXiL/X6ErlRe4a7z90t
+	kPStswRm8KaFKQHW0+DYYm+BEm++Ty5SxW4zpBCBKLCDfI+NceKpkmzV4ZScNCL6tfA=
+X-Gm-Gg: ASbGncs23ABnJ0DcA07yx7n2D1K+fTHUY05/+hwlTLQJPpN3bDiDGb47C5Xt/Nhht8e
+	nXML64mxDpUQqGTt9v8oIl3zlZInR2HypWrE9ZSat9YDK+pBmp1xAHnr0bl0h1N6bNI2U8kzvml
+	g1c1vJ6lg4fpqf7idDqjtjoXXvAFxtBXNmMrHGH0xR6tXsAibJ4QUddK/vDTecUmKy6NXVT1oUK
+	qdXxZA4X5A+nHyICjh2sPrHQHu/UnoOH5q+iTRdUfEsxLpHru9yolcOBqlbV2dsFVMlHNEfXibO
+	AaI6Yo2AnBOigWcYWvBHKPrjFxH22kR4gOhsrFUDQyC32xhhB5i+wtw/CaOwAnsLFlk1HFXkDDh
+	g835Ss2DtipCWkUnEzWSyYg==
+X-Google-Smtp-Source: AGHT+IH1l85hOnywb8IKpBRIwjiNyZNrQdv1GYRya5V6eeksFNDva+bovkUz+anne+WxO6cXhs6oQQ==
+X-Received: by 2002:a05:6214:2429:b0:72d:8061:93fb with SMTP id 6a1803df08f44-767bb3b6516mr31641516d6.11.1757684225728;
+        Fri, 12 Sep 2025 06:37:05 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:929a:4aff:fe16:c778])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-763c03a7fa1sm26881466d6.59.2025.09.12.06.37.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 06:37:04 -0700 (PDT)
+Date: Fri, 12 Sep 2025 09:37:01 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Kiryl Shutsemau <kas@kernel.org>, Nico Pache <npache@redhat.com>,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+	ryan.roberts@arm.com, dev.jain@arm.com, corbet@lwn.net,
+	rostedt@goodmis.org, mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com, akpm@linux-foundation.org,
+	baohua@kernel.org, willy@infradead.org, peterx@redhat.com,
+	wangkefeng.wang@huawei.com, usamaarif642@gmail.com,
+	sunnanyong@huawei.com, vishal.moola@gmail.com,
+	thomas.hellstrom@linux.intel.com, yang@os.amperecomputing.com,
+	aarcange@redhat.com, raquini@redhat.com, anshuman.khandual@arm.com,
+	catalin.marinas@arm.com, tiwai@suse.de, will@kernel.org,
+	dave.hansen@linux.intel.com, jack@suse.cz, cl@gentwo.org,
+	jglisse@google.com, surenb@google.com, zokeefe@google.com,
+	rientjes@google.com, mhocko@suse.com, rdunlap@infradead.org,
+	hughd@google.com, richard.weiyang@gmail.com, lance.yang@linux.dev,
+	vbabka@suse.cz, rppt@kernel.org, jannh@google.com, pfalcato@suse.de
+Subject: Re: [PATCH v11 00/15] khugepaged: mTHP support
+Message-ID: <20250912133701.GA802874@cmpxchg.org>
+References: <20250912032810.197475-1-npache@redhat.com>
+ <ppzgohmkll7dbf2aiwhw7f4spf6kxjtwwe3djkx26pwy4ekrnd@mgeantq5sn2z>
+ <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] KVM: guest_memfd: add generic population via write
-To: kalyazin@amazon.com, James Houghton <jthoughton@google.com>,
- "Kalyazin, Nikita" <kalyazin@amazon.co.uk>
-Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "shuah@kernel.org" <shuah@kernel.org>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "michael.day@amd.com" <michael.day@amd.com>,
- "Roy, Patrick" <roypat@amazon.co.uk>, "Thomson, Jack"
- <jackabt@amazon.co.uk>, "Manwaring, Derek" <derekmn@amazon.com>,
- "Cali, Marco" <xmarcalx@amazon.co.uk>
-References: <20250902111951.58315-1-kalyazin@amazon.com>
- <20250902111951.58315-2-kalyazin@amazon.com>
- <CADrL8HV8+dh4xPv6Da5CR+CwGJwg5uHyNmiVmHhWFJSwy8ChRw@mail.gmail.com>
- <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d0e81c75-ad63-4e37-9948-3ae89bc94334@redhat.com>
 
-On 11.09.25 12:15, Nikita Kalyazin wrote:
+On Fri, Sep 12, 2025 at 02:25:31PM +0200, David Hildenbrand wrote:
+> On 12.09.25 14:19, Kiryl Shutsemau wrote:
+> > On Thu, Sep 11, 2025 at 09:27:55PM -0600, Nico Pache wrote:
+> >> The following series provides khugepaged with the capability to collapse
+> >> anonymous memory regions to mTHPs.
+> >>
+> >> To achieve this we generalize the khugepaged functions to no longer depend
+> >> on PMD_ORDER. Then during the PMD scan, we use a bitmap to track individual
+> >> pages that are occupied (!none/zero). After the PMD scan is done, we do
+> >> binary recursion on the bitmap to find the optimal mTHP sizes for the PMD
+> >> range. The restriction on max_ptes_none is removed during the scan, to make
+> >> sure we account for the whole PMD range. When no mTHP size is enabled, the
+> >> legacy behavior of khugepaged is maintained. max_ptes_none will be scaled
+> >> by the attempted collapse order to determine how full a mTHP must be to be
+> >> eligible for the collapse to occur. If a mTHP collapse is attempted, but
+> >> contains swapped out, or shared pages, we don't perform the collapse. It is
+> >> now also possible to collapse to mTHPs without requiring the PMD THP size
+> >> to be enabled.
+> >>
+> >> When enabling (m)THP sizes, if max_ptes_none >= HPAGE_PMD_NR/2 (255 on
+> >> 4K page size), it will be automatically capped to HPAGE_PMD_NR/2 - 1 for
+> >> mTHP collapses to prevent collapse "creep" behavior. This prevents
+> >> constantly promoting mTHPs to the next available size, which would occur
+> >> because a collapse introduces more non-zero pages that would satisfy the
+> >> promotion condition on subsequent scans.
+> > 
+> > Hm. Maybe instead of capping at HPAGE_PMD_NR/2 - 1 we can count
+> > all-zeros 4k as none_or_zero? It mirrors the logic of shrinker.
+> > 
 > 
+> I am all for not adding any more ugliness on top of all the ugliness we 
+> added in the past.
 > 
-> On 10/09/2025 22:23, James Houghton wrote:
->> On Tue, Sep 2, 2025 at 4:20 AM Kalyazin, Nikita <kalyazin@amazon.co.uk> wrote:
->>>
->>> From: Nikita Kalyazin <kalyazin@amazon.com>
->>
->> Hi Nikita,
+> I will soon propose deprecating that parameter in favor of something 
+> that makes a bit more sense.
 > 
-> Hi James,
+> In essence, we'll likely have an "eagerness" parameter that ranges from 
+> 0 to 10. 10 is essentially "always collapse" and 0 "never collapse if 
+> not all is populated".
 > 
-> Thanks for the review!
+> In between we will have more flexibility on how to set these values.
 > 
-> 
->>>
->>> write syscall populates guest_memfd with user-supplied data in a generic
->>> way, ie no vendor-specific preparation is performed.  This is supposed
->>> to be used in non-CoCo setups where guest memory is not
->>> hardware-encrypted.
->>
->> What's meant to happen if we do use this for CoCo VMs? I would expect
->> write() to fail, but I don't see why it would (seems like we need/want
->> a check that we aren't write()ing to private memory).
-> 
-> I am not so sure that write() should fail even in CoCo VMs if we access
-> not-yet-prepared pages.  My understanding was that the CoCoisation of
-> the memory occurs during "preparation".  But I may be wrong here.
+> Likely 9 will be around 50% to not even motivate the user to set 
+> something that does not make sense (creep).
 
-But how do you handle that a page is actually inaccessible and should 
-not be touched?
+One observation we've had from production experiments is that the
+optimal number here isn't static. If you have plenty of memory, then
+even very sparse THPs are beneficial.
 
-IOW, with CXL you could crash the host.
+An extreme example: if all your THPs have 2/512 pages populated,
+that's still cutting TLB pressure in half!
 
-There is likely some state check missing, or it should be restricted to 
-VM types.
+So in the absence of memory pressure, allocating and collapsing should
+optimally be aggressive even on very sparse regions.
 
-Do we know how this would interact with the direct-map removal?
+On the flipside, if there is memory pressure, TLB benefits are very
+quickly drowned out by faults and paging events. And I mean real
+memory pressure. If all that's happening is that somebody is streaming
+through filesystem data, the optimal behavior is still to be greedy.
 
--- 
-Cheers
+Another consideration is that if we need to break large folios, we
+should start with colder ones that provide less benefit, and defer the
+splitting of hotter ones as long as possible.
 
-David / dhildenb
-
+Maybe a good direction would be to move splitting out of the shrinker
+and tie it to the (refault-aware) anon reclaim. And then instead of a
+fixed population threshold, collapse on a pressure gradient that
+starts with "no pressure/thrashing and at least two base pages in THP
+a region" and ends with "reclaim is splitting everything, back off".
 
