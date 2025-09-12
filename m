@@ -1,155 +1,166 @@
-Return-Path: <linux-kernel+bounces-813814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EE0B54B05
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A91CB54B08
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:34:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A99C7AEB35
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:31:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B287B0D28
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA452EE612;
-	Fri, 12 Sep 2025 11:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2292FF656;
+	Fri, 12 Sep 2025 11:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uhVfks31"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MH9C2hqE"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB2B274FDB
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8104E17A5BE
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 11:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757676770; cv=none; b=utJ5IqcrGGwb/qPGpS6rpS4PTQtNSkvsq7BDtnabVE/aj9sOs3+VC5r3dT4EiGlctiS1nBgFc16lTzREsHAwWky5gohDiPJQ9UhySvKUFwCCXumCBXf0LOMrnJoKwA5Xf2unNkwx9qWYjyGODUElwbo3d1SNQOYgj1TwGBr/ndA=
+	t=1757676833; cv=none; b=XlEQOaIePL01WcuzN4AFmxxNsSNILtK3BaFCpPyaxKRH4FszO5MHe513eAlM9Gj5juGpcbH5FDwlJJYKPOPpAsF6kavrTaLf+FoM1WYHhjnGNq/5LILXGWesdKAfxo1sz/3N+wjJolmcx38xJqVyfDUhR28TjmCnfSxCZbhG3zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757676770; c=relaxed/simple;
-	bh=mEjJFVIYIe7tqpxYWnwn8npcdZ3rzCy2M6nLHqTd3WY=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=akfkNvUgeWllq4CI4EBWkaFHRfama32BBiAXd9mBN+BLxwc9nxy/UxDLH09UD64Wsh/KRqKzInHP0YVw9W93kGvUgx50G/uJMuCXVTw3XUM7i1m9pBdZO8uEGgyc9tH0wC2olAMn40NwuCAYQEBYHbHxuTkCYva5uVFV4+oNRbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uhVfks31; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b49b56a3f27so1082375a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:32:49 -0700 (PDT)
+	s=arc-20240116; t=1757676833; c=relaxed/simple;
+	bh=XBHAModFzS9RT7TpF2/ykWjDQcNt9+bCE4YK2ZwUuV0=;
+	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
+	 Cc:In-Reply-To:To; b=bovU5ngy/GLveLTkKxH48W6iPVBx4Gb4crL15fbYYAUVHETmRXyfrQkEGlHcTin9G+RZ5PmSStmRhlya1nEE+dVWCVNCUjLMncqhhAfYUrzJ9qzQuZkRNjYk0AlLs+VbjW23Qp6nUHUNGUFAYvoVB+1dgBBWsXcG6fIMBBl1xzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MH9C2hqE; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32dea064b51so565660a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 04:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1757676768; x=1758281568; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y6Vu9krI8L/L917eJRdmIwH3Jf+YuSh9fi/gZdnGGTM=;
-        b=uhVfks31+0tcoVyU0GVpuTuBPBKY4lB1FDJ5XgACl0jUahUff6jWNOqMHF1Teq0DSz
-         MKLzWdnPqVv2oxkuf8PTybCakTNdK4ETOw7VmakDHzWm896g21AZlWm7waq3hWr1LGHQ
-         zePyhUg5J3RtXp1MJIB5i9idbBbnRwzWIeHqp8xqX4/SgMvOXQYMm/iHFLAyMPHv3wNE
-         bWbArj9TWcprjsWdNkqUNHNtF0sjmrKaGUCZUG3M/UzVy47o8dd8mWGiOaZwmbf0HS8p
-         l7kGHURM1tsfCKP/b3YX1HeAPOthQwSVXL4eZchuchq11tpbiDZFWGsUmb3se+D7GncR
-         ddEg==
+        d=gmail.com; s=20230601; t=1757676832; x=1758281632; darn=vger.kernel.org;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Me3gQ2+XLChgmuRgGxhLuD7lEdljJYpRCmXxWniexUs=;
+        b=MH9C2hqEnNTNu/TciRFE1ayLBu/2QhgDxOnC908dXHqhNJNxIYzEHsvpyJ8s6f8OL1
+         lEE5eAdq2YdI5mUxtoo+VS/NuQJokgkNdAPVyXM/Wt5/YINrtvYvGQ/ozDn0j5Ky5rp6
+         h61TX1v2V5hV7z7WjWYzUby6xrGAwJ3+QYFth5h2GIuJ0z+mGMoaBHbLnDZVeQ2W/1Bc
+         lcPA+WkA7kMEuwrKteRAy9jAY2qq1iivUaa/KVVThTmDc2HZgApdBecuIlUgzY5bfHwW
+         h8NladE/4KBqwXgFd1EjZfLfajJBkF4Sl5872VYr2+63wzlYMMCSOttQJ4ve9MRChJrC
+         pPkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757676768; x=1758281568;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y6Vu9krI8L/L917eJRdmIwH3Jf+YuSh9fi/gZdnGGTM=;
-        b=OKNQQJAJrA7ty/2jodQ39MxyVzYCFnGzPZrZmYm6L/uolH+U0lmW/81yclRmbWbhQZ
-         OWGltnpJXTN3Spuueg6CcW618puTA85w+/4GFLOtRhDYxdVwx4AvPjaLaG3/wSkl29Gz
-         txvZ4nDonR/NloaG3WVYmMXUwZVNK0mOSkfJeqFxxi3BzDInvFnLke7ymiEMzfNpjJs5
-         gifYYpE49CtbrA5+9//D7Fuwrli4K6IDFbv6QHGiy6NR6UsPj8d7Iy8uHrN9vW0SJ63z
-         QAj2MAJgT+Zric4npDXzVMba+GibnJ4WEvsaPm2LYtNcoz4wXdFpoTAxdYPQh7jr499q
-         Vv3g==
-X-Forwarded-Encrypted: i=1; AJvYcCW25fW/R4lzduE59rWNVJO9DysyBi/6+CgSg1rsV3C24g7BTX2MJPR4+dMAJ9WwRGH9NTiJEytj0GSw3tg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdJ/Edw1W9s/f2a9rTxeR52w5gAlUnGonNYh3TnrV4zQbAbckV
-	XhoOHPJ1L4PkLoT0u1JR3RE8ggy68SRFV9274JSKEocjIEi/DN9l10ic8w79nJPjJg9/W7nHkZE
-	zeGHTVCEfEr7rJTbecA5fRWi5b1WwD+goRQiRfih77A==
-X-Gm-Gg: ASbGncvLFus+AmhWd0mWOe3/Enqzt8qB96UNJqHBQd3j4lQfVjaUvppow3ECAuxrxEb
-	oNcQZWyeETB7SxRJKZMSD+EP70pvXsjION6YTbzgN4NoLyjYvKL/iH4s4unnCgRQQZ6cIzN8j1T
-	iPUNBSvzVRD4KheYsJeRj7BWxVfI8vUzDZLEuO7dEXr3EyW4b7DPs2xtiGqs/q8YLNWoS85/vyw
-	KcFW4mmTcCtJ8GRSHIqwLfjH7QkQyekByssUT2icTsCZax7JFbZDfiM+zEix1QobDkDDjSC4+5X
-	uVNNc5s=
-X-Google-Smtp-Source: AGHT+IF1n0wZVljtgQdO4YjkTkuDA16K7j3EGrt+LavVV05cNjZjVMw0mRnQJqWQrvbyjkw61l+wH9wnd6eTRWsTKWg=
-X-Received: by 2002:a17:902:c40d:b0:251:a3b3:1580 with SMTP id
- d9443c01a7336-25d24cac4eemr35190575ad.6.1757676768437; Fri, 12 Sep 2025
- 04:32:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757676832; x=1758281632;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Me3gQ2+XLChgmuRgGxhLuD7lEdljJYpRCmXxWniexUs=;
+        b=Fb2oGTsF844pCIr4acMsi7LqNrcIs/sUAAvLYmtyIFtMOcCLnWpQL3n1CbVWucat1m
+         XTsG05MtCG881suRvL2X20qegsQFSy74bem5kE0RcrnwvjQ2IoxNgJ8oetZ8dqlJk4q9
+         6bavG3XdSKqT33RT0mFzF3lNjcLUPQqnYIyvuYX0RxSR59250fXlolfVHiP8FZdv24Tu
+         NFVpG2Kt19euDx9ED5bSBk3aOeSvY+66XUDvXT06P0rcJQ7VeHBeYHpoPOWOeo08VTDt
+         LqbhhwTX8AX4P1zzGRJhPrGDLg9YLdavROppDDQwJcKYDiU4oTwn+E1rXes6kS/ZAzRO
+         DE6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX/eMIiBGH05qDMDVQCaQ/wMnw4DiR1b1GF6xU6eNdnOjcDhws+92ll71tAli5UjryStR0oCHyBtF1gDdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzawoohGnICINRsN1LJW602qr/v2n+4YLjvwIAO/elcSSgaGWj
+	Lyoxqk27ud8KJorafv7wwi5PnQHCNwnWAvo+DY2+1w/hrjXgCjiybW0d
+X-Gm-Gg: ASbGncscD7bR3VC5xzZkqiTje9+SGsdEmdX5tztzC484lEJ3mxMzp13XVIxttU9VQAK
+	mHkOiSekQ1GlDtp+AffACcQ4Hu7+QmZzgeMdylT/rd31encxt6KHTTYd5eRW5BTXhgmlm1inpyD
+	RwP4HGw/EYa2JhrTRbUG1ZkbOJ6VzY1kDYKxvHmKdC32qunw/+lXaNrk9elg+FcIgFZdAyPNhlW
+	Jd3uAwxWS5DjQMnJncNl2hkScypuG4IjN5NmKMfJmH5HWS3c6Qqvi5Q+wK5/RRoYr6wlwuYYre5
+	EEtnhfDtqmBjxA94kH5LqBgnJXk4X3g7s3jFiV6Ovx5UcifvVW2hENmGzvKiqVqNxGwF6MtNkIO
+	a74kJH7xqBZg1CM2h/IG2gvnxw2ZdXOBxpwA6UIjhBoCWy113IvKGZD1annOC2sRhv65sOYh+Hf
+	C/zmXlG1Y=
+X-Google-Smtp-Source: AGHT+IG4CQOrsidgDKZqODfMcOoJgWe/C+OuZOd1ih4oVDYDwhAJqojGn09l0Bnkzu0cbpihXieC8w==
+X-Received: by 2002:a17:90b:3889:b0:32d:5721:df96 with SMTP id 98e67ed59e1d1-32de4f808f5mr2582134a91.32.1757676831756;
+        Fri, 12 Sep 2025 04:33:51 -0700 (PDT)
+Received: from smtpclient.apple (p73a27f58.hyognt01.ap.so-net.ne.jp. [115.162.127.88])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd7ceecfasm2203933a91.7.2025.09.12.04.33.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 04:33:51 -0700 (PDT)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From: Itaru Kitayama <itaru.kitayama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Fri, 12 Sep 2025 17:02:36 +0530
-X-Gm-Features: AS18NWCRkwK2BEtW0uxWjqehT8uEFjWUmULflZWeqoftij31KvQE0_RmSXQs-jg
-Message-ID: <CA+G9fYvQekqNdZpOeibBf0DZNjqR+ZGHRw1yHq6uh0OROZ9sRw@mail.gmail.com>
-Subject: next-20250912: riscv: s390: mm/kasan/shadow.c 'kasan_populate_vmalloc_pte'
- pgtable.h:247:41: error: statement with no effect [-Werror=unused-value]
-To: kasan-dev <kasan-dev@googlegroups.com>, linux-mm <linux-mm@kvack.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	linux-riscv <linux-riscv@lists.infradead.org>, linux-s390@vger.kernel.org, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Ben Copeland <benjamin.copeland@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-
-The following build warnings / errors noticed on the riscv and s390
-with allyesconfig build on the Linux next-20250912 tag.
-
-Regression Analysis:
-- New regression? yes
-- Reproducibility? yes
-
-Build regression: next-20250912 mm/kasan/shadow.c
-'kasan_populate_vmalloc_pte' pgtable.h error statement with no effect
-[-Werror=unused-value]
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-$ git log --oneline next-20250911..next-20250912 --  mm/kasan/shadow.c
-  aed53ec0b797a mm: introduce local state for lazy_mmu sections
-  307f2dc9b308e kasan: introduce ARCH_DEFER_KASAN and unify static key
-across modes
-
-## Test log
-In file included from include/linux/kasan.h:37,
-                 from mm/kasan/shadow.c:14:
-mm/kasan/shadow.c: In function 'kasan_populate_vmalloc_pte':
-include/linux/pgtable.h:247:41: error: statement with no effect
-[-Werror=unused-value]
-  247 | #define arch_enter_lazy_mmu_mode()      (LAZY_MMU_DEFAULT)
-      |                                         ^
-mm/kasan/shadow.c:322:9: note: in expansion of macro 'arch_enter_lazy_mmu_mode'
-  322 |         arch_enter_lazy_mmu_mode();
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-mm/kasan/shadow.c: In function 'kasan_depopulate_vmalloc_pte':
-include/linux/pgtable.h:247:41: error: statement with no effect
-[-Werror=unused-value]
-  247 | #define arch_enter_lazy_mmu_mode()      (LAZY_MMU_DEFAULT)
-      |                                         ^
-mm/kasan/shadow.c:497:9: note: in expansion of macro 'arch_enter_lazy_mmu_mode'
-  497 |         arch_enter_lazy_mmu_mode();
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
-
-## Source
-* Kernel version: 6.17.0-rc5
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git describe: 6.17.0-rc5-next-20250912
-* Git commit: 590b221ed4256fd6c34d3dea77aa5bd6e741bbc1
-* Architectures: riscv, s390
-* Toolchains: gcc (Debian 13.3.0-16) 13.3.0
-* Kconfigs: allyesconfig
-
-## Build
-* Build log: https://qa-reports.linaro.org/api/testruns/29863344/log_file/
-* Build details:
-https://regressions.linaro.org/lkft/linux-next-master/next-20250912/log-parser-build-gcc/gcc-compiler-include_linux_pgtable_h-error-statement-with-no-effect/
-* Build plan: https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/builds/32aTGVWBLzkF7PsIq9FBtLK3T4W
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/32aTGVWBLzkF7PsIq9FBtLK3T4W/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/32aTGVWBLzkF7PsIq9FBtLK3T4W/config
-
-## Steps to reproduce
- $ tuxmake --runtime podman --target-arch riscv --toolchain gcc-13
---kconfig allyesconfig
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH] PMCR_EL0.N is RAZ/WI. At least a build failes in Ubuntu 22.04 LTS. Remove the set function.
+Date: Fri, 12 Sep 2025 20:33:39 +0900
+Message-Id: <3FEB4D87-EEAF-4A21-BCBC-291A4A7C2230@gmail.com>
+References: <867by4c4v1.wl-maz@kernel.org>
+Cc: Itaru Kitayama <itaru.kitayama@linux.dev>,
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+ K Poulose Suzuki <suzuki.poulose@arm.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Itaru Kitayama <itaru.kitayama@fujitsu.com>
+In-Reply-To: <867by4c4v1.wl-maz@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+X-Mailer: iPhone Mail (22G100)
 
 
---
-Linaro LKFT
+
+> On Sep 12, 2025, at 20:01, Marc Zyngier <maz@kernel.org> wrote:
+>=20
+> =EF=BB=BFOn Fri, 12 Sep 2025 09:27:40 +0100,
+> Itaru Kitayama <itaru.kitayama@linux.dev> wrote:
+>>=20
+>> Signed-off-by: Itaru Kitayama <itaru.kitayama@fujitsu.com>
+>=20
+> This isn't an acceptable commit message.
+>=20
+>> ---
+>> Seen a build failure with old Ubuntu 22.04 LTS, while the latest release
+>> has no build issue, a write to the bit fields is RAZ/WI, remove the
+>> function.
+>> ---
+>> tools/testing/selftests/kvm/arm64/vpmu_counter_access.c | 6 ------
+>> 1 file changed, 6 deletions(-)
+>>=20
+>> diff --git a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c b/to=
+ols/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>> index f16b3b27e32ed7ca57481f27d689d47783aa0345..56214a4430be90b3e1d840f27=
+19b22dd44f0b49b 100644
+>> --- a/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>> +++ b/tools/testing/selftests/kvm/arm64/vpmu_counter_access.c
+>> @@ -45,11 +45,6 @@ static uint64_t get_pmcr_n(uint64_t pmcr)
+>>    return FIELD_GET(ARMV8_PMU_PMCR_N, pmcr);
+>> }
+>>=20
+>> -static void set_pmcr_n(uint64_t *pmcr, uint64_t pmcr_n)
+>> -{
+>> -    u64p_replace_bits((__u64 *) pmcr, pmcr_n, ARMV8_PMU_PMCR_N);
+>> -}
+>> -
+>> static uint64_t get_counters_mask(uint64_t n)
+>> {
+>>    uint64_t mask =3D BIT(ARMV8_PMU_CYCLE_IDX);
+>> @@ -490,7 +485,6 @@ static void test_create_vpmu_vm_with_pmcr_n(uint64_t p=
+mcr_n, bool expect_fail)
+>>     * Setting a larger value of PMCR.N should not modify the field, and
+>>     * return a success.
+>>     */
+>> -    set_pmcr_n(&pmcr, pmcr_n);
+>>    vcpu_set_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0), pmcr);
+>>    pmcr =3D vcpu_get_reg(vcpu, KVM_ARM64_SYS_REG(SYS_PMCR_EL0));
+>>=20
+>>=20
+>=20
+> So what are you fixing here? A build failure? A semantic defect?
+> Something else? What makes this a valid change?
+>=20
+> Frankly, I have no idea.
+>=20
+> But KVM definitely allows PMCR_EL0.N to be written from userspace, and
+> that's not going to change.
+>=20
+
+Then I=E2=80=99ll drop this patch.
+
+Thanks,
+Itaru.
+
+>    M.
+>=20
+> --
+> Without deviation from the norm, progress is not possible.
 
