@@ -1,107 +1,165 @@
-Return-Path: <linux-kernel+bounces-814656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF25B55702
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E8CB55700
 	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CED317B8A4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE55AC210E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10E2229B783;
-	Fri, 12 Sep 2025 19:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE28133470A;
+	Fri, 12 Sep 2025 19:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kUyVkTSy"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="seTW88sX"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2AD26561D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5F42BE64B
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757705892; cv=none; b=OEvK4iCOBXBC/jSg9P6rGcfzNR5/QgA01nZHb5+UBwo528TFWomiT50wtsez+T0XKbzVHHyE0RHL2lyXSTWbrHM7a5Od7bdSke9kV6OlxnDw/IOG7hfLqozWSYl2m/gFe/sZKpLWXWEHojIBCnHRYxPEEjp7myZJhL0x1eV9pXg=
+	t=1757705895; cv=none; b=qt5cMlDNa7grBot46hzyCvEOer/aAmTNdwTp7V8BVogZnXXabFabaOw34jTjQ36XvSSi6ZiG3RlGBy+15RM0sP8+MuNxfzmjCVxoehtHgZA5DrFLskm7VEBHxguO3CxXiUWRmuczJY1Z1bq09HzaDJubMzD5Bm+T9y9/P7yQXq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757705892; c=relaxed/simple;
-	bh=kXB7fgIjDrPdzxlWH2AFXI5nuEEz1CxiPSVennyibNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qLGhxE+bx4WAsPLR47jKg14odrWCaup2VJ2fnxUe3S58ELXqsBM9FqMTR8rUh/uF+bmO3vV94pHXCpgQg1ZW0DWLdbPeoU5SQ+jPpFI9VRZyirTrB0rTe+YnN6A3sWyLhGOIk1Fnl43DDr/HqP1G3yFqLusMk2T5CQj+NDrwKd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kUyVkTSy; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6c98a19e-473a-4935-a3aa-51c53618b2a9@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757705878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uQ2KCs807BX1l1T21cClC25/50cbTeqEYFEvr09qaVE=;
-	b=kUyVkTSyONcFR96kTxvQD5T2WnGBrOWaN0al0nAXX6+JiCC/9nv51hSBlKsnWWuZpwKlCl
-	XEH0D2Bqm/VciunKvrAN1hLQqdBPKmYf7NP8KXYM+D9oOCjZ4uMjOaqtzGQUqKTlTNsAqp
-	p7IiAEq0WaGDUF94zYZ60W5qGQYW2qI=
-Date: Fri, 12 Sep 2025 20:37:55 +0100
+	s=arc-20240116; t=1757705895; c=relaxed/simple;
+	bh=y0VYww+M4ZzsyVZfflEm4vo49RpQMYtnYpeg4xESzDs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WG8rd9RTy0xHTp3P+M6z8CVyisZR6+Pz9V2DfpUcdUncS2pFqCw6RtPogthWBe0NiJ4NrhKRN2bF0FT9+5gAXrS7MkDAkyzOirFBuzUYI+fE/0/poVhCOPhG6lMyiQbHzqQQSJPs1XLhWOUUU93iY3z7CVWoXF93sTsPhOil49g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=seTW88sX; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4b4bcb9638aso5221cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:38:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757705892; x=1758310692; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hxKLJXAozeMmWAPKUjfUsQIDjzwB9fwUvrZiHvNyBbo=;
+        b=seTW88sXYv75bgkKqySKM3E4tT0AwAsdc3QurCyhpkxm1pIiiZ0TlXnlPBN0mhVzlo
+         pqtm1sKTx2VAyl0I5eaiojvGkA8qzfDSf0yscVtjHqrSZ7vEN4oRazfDjJ5LMiftzpPl
+         plMLBFitUbUYrw9R1EWDUajbOjre/qp2hjKoMy4JnFNiJF6/G1x/oZIFKU7FAjDWlvaF
+         FX6Ze3flNW0ZmULzEfGMOJKOkW4ugx/WP/suayRPnRE2ZGlswDUSz1IVN9xzTLWef/Vf
+         kLBMv6HUnMV1/iabldfqo2J4rRgXnh6hYIpo6u0l0fxSO2CWE/EM6gHWPkCeD1EYeYzt
+         dUfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757705892; x=1758310692;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hxKLJXAozeMmWAPKUjfUsQIDjzwB9fwUvrZiHvNyBbo=;
+        b=D2h80aBKapZByp1TirF81awh4SuNwnqEB7Mdgs0USZhFZtCWxuPpqgoNsixgfgXwSR
+         flxnalcSKjI4+eNdUBCu1hf8XgA7SkWtkzwl+9YpK9NBdA8qQ+DTzU/TLnZtfKrgg+if
+         7tywFllEvBwUQ3ycQu9kwJM8cieHRkPSOY0lpXIuUUq2PWWgttVKn31qhz5oj4dD6Wdy
+         skU0dahpV2D3dUFKwroNwm1PZwOHtFthICwEqVeheVBYXKmB4ZuKlqfCp5Vih58bGdgr
+         Ic9QSaXMFL8ovuNjVt+13pXQgH2a7MXeEORdekcaV5aT+NFiMEh4jHZP0L2NyRizfi6a
+         iHrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAqcXSrcnO4XEv82dkHseWNCtOcjN1puKA58Jv36091w5v/O8fxiwXAZdMqavg/ymv+mPBiNJJoWbg86Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTCL8YbNCrJuCyjVVy0rlnFNB32Br8IrnqR2Dd33yl+WyN2AeU
+	OtOmWAC42VvmSr+GEH8cLy/6P7nSBJDFgBOnUKTieddGXAhvd3YVNjHZvz4Pb7hwfiIAPgQC3fQ
+	JFvxgK2i7xbqb4x816Xfah1J8l0R4jdE16jnybino
+X-Gm-Gg: ASbGncvb584DekvLaD7O+thFunLHq87KJTTaJnIORpGbKzVFMH5qRxHhWz1bakMRtr9
+	kUQEEx5Ic99Ah9nGa/X6ynjbpIVcsoiZ99SF2TQiNHMDwrAQ27IRWa3rTjce/QE0em5m07eA4Hp
+	E6kHooErQHuqwKtM6o40Sl7U8eM0TqeR/4MmlT8ce+63Xp3aXZubeVo+10efz2s/UhQJJYqI+HY
+	q5CCkK9JLCJ82XZqIRnsyk=
+X-Google-Smtp-Source: AGHT+IFmFvmuMn+gst9JeecVjoOqDASQ8FiGmAOvs5QtdO3E6xy+fy2CjLC5X+Z4o1NPGM2DESnpaITFOKT0WwBaSWY=
+X-Received: by 2002:a05:622a:1a08:b0:4b1:22f0:8016 with SMTP id
+ d75a77b69052e-4b78b78b205mr803781cf.2.1757705892211; Fri, 12 Sep 2025
+ 12:38:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] dpll: fix clock quality level reporting
-To: Ivan Vecera <ivecera@redhat.com>, netdev@vger.kernel.org
-Cc: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250912093331.862333-1-ivecera@redhat.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20250912093331.862333-1-ivecera@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250909234942.1104356-1-surenb@google.com> <20cafc1c.a658.199394de44e.Coremail.00107082@163.com>
+ <aMLvCCZbmpSE/aql@devbig569.cln6.facebook.com> <902f5f32-2f03-4230-aab0-a886fd8e4793@gmail.com>
+ <20250911143132.ca88948c48df874f71983218@linux-foundation.org>
+ <CAJuCfpEoWtgv8k4vApkGsNNUYFBnvS-N2DPQu2JrreCUPbT5dA@mail.gmail.com> <aMP7g7ts8n2Gubql@devbig569.cln6.facebook.com>
+In-Reply-To: <aMP7g7ts8n2Gubql@devbig569.cln6.facebook.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 12 Sep 2025 12:38:01 -0700
+X-Gm-Features: AS18NWD6AauY0FbZgSwcBpoAh8LOEeedT2LpwLIFm0sZjdQgHEGT9i9EDpb1gFY
+Message-ID: <CAJuCfpEy7kQdDzU9GR6T=nz7HB6EnSkfx3vXmTBEuvJPqhxyfQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] alloc_tag: mark inaccurate allocation counters in
+ /proc/allocinfo output
+To: Yueyang Pan <pyyjason@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Usama Arif <usamaarif642@gmail.com>, 
+	David Wang <00107082@163.com>, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	hannes@cmpxchg.org, rientjes@google.com, roman.gushchin@linux.dev, 
+	harry.yoo@oracle.com, shakeel.butt@linux.dev, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12.09.2025 10:33, Ivan Vecera wrote:
-> The DPLL_CLOCK_QUALITY_LEVEL_ITU_OPT1_EPRC is not reported via netlink
-> due to bug in dpll_msg_add_clock_quality_level(). The usage of
-> DPLL_CLOCK_QUALITY_LEVEL_MAX for both DECLARE_BITMAP() and
-> for_each_set_bit() is not correct because these macros requires bitmap
-> size and not the highest valid bit in the bitmap.
-> 
-> Use correct bitmap size to fix this issue.
-> 
-> Fixes: a1afb959add1 ("dpll: add clock quality level attribute and op")
-> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
-> ---
->   drivers/dpll/dpll_netlink.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
-> index 036f21cac0a9..0a852011653c 100644
-> --- a/drivers/dpll/dpll_netlink.c
-> +++ b/drivers/dpll/dpll_netlink.c
-> @@ -211,8 +211,8 @@ static int
->   dpll_msg_add_clock_quality_level(struct sk_buff *msg, struct dpll_device *dpll,
->   				 struct netlink_ext_ack *extack)
->   {
-> +	DECLARE_BITMAP(qls, DPLL_CLOCK_QUALITY_LEVEL_MAX + 1) = { 0 };
->   	const struct dpll_device_ops *ops = dpll_device_ops(dpll);
-> -	DECLARE_BITMAP(qls, DPLL_CLOCK_QUALITY_LEVEL_MAX) = { 0 };
+On Fri, Sep 12, 2025 at 3:52=E2=80=AFAM Yueyang Pan <pyyjason@gmail.com> wr=
+ote:
+>
+> On Thu, Sep 11, 2025 at 05:25:12PM -0700, Suren Baghdasaryan wrote:
+> > On Thu, Sep 11, 2025 at 2:31=E2=80=AFPM Andrew Morton <akpm@linux-found=
+ation.org> wrote:
+> > >
+> > > On Thu, 11 Sep 2025 12:00:23 -0400 Usama Arif <usamaarif642@gmail.com=
+> wrote:
+> > >
+> > > > > I think simply adding * to the end of function name or filename i=
+s sufficient
+> > > > > as they are already str.
+> > > > >
+> > > >
+> > > > Instead of:
+> > > >
+> > > > 49152*      48* arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device=
+_create
+> > > >
+> > > > Could we do something like:
+> > > >
+> > > > 49152      48 arch/x86/kernel/cpu/mce/core.c:2709 func:mce_device_c=
+reate(inaccurate)
+> > >
+> > > Can we add another row, saying "the previous row was inaccurate"?  I
+> > > guess that would break parsers also.
+> > >
+> > >
+> > >
+> > > I don't know if this was by design, but the present format does provi=
+de
+> > > extensibility.  It is basically
+> > >
+> > >         NNNN NNN name:value name:value
+> > >
+> > > one could arguably append a third name:value and hope that authors of
+> > > existing parsers figured this out.
+> >
+> > Actually that sounds like the best idea so far. Currently the format is=
+:
+> >
+> > <bytes> <count> <file>:<line> [<module>] func:<function>
+> >
+> > We can adopt a rule that after this, the line can contain additional
+> > key:value pairs. In that case for inaccurate lines we can add:
+> >
+> > 49152      48 arch/x86/kernel/cpu/mce/core.c:2709
+> > func:mce_device_create accurate:no
+> >
+> > In the future we can append more key:value pairs if we need them.
+> > Parsers which don't know how to parse a new key can simply ignore
+> > them.
+> >
+> > Does that sound good to everyone?
+>
+> Yeah I agree on this proposal. We can keep this convention.
 
-I believe __DPLL_CLOCK_QUALITY_LEVEL_MAX should be used in both places
+Ok, if no further objections I'll post the next version and will
+document that v2 allows additional key:value pairs in each line.
+Thanks,
+Suren.
 
->   	enum dpll_clock_quality_level ql;
->   	int ret;
->   
-> @@ -221,7 +221,7 @@ dpll_msg_add_clock_quality_level(struct sk_buff *msg, struct dpll_device *dpll,
->   	ret = ops->clock_quality_level_get(dpll, dpll_priv(dpll), qls, extack);
->   	if (ret)
->   		return ret;
-> -	for_each_set_bit(ql, qls, DPLL_CLOCK_QUALITY_LEVEL_MAX)
-> +	for_each_set_bit(ql, qls, DPLL_CLOCK_QUALITY_LEVEL_MAX + 1)
->   		if (nla_put_u32(msg, DPLL_A_CLOCK_QUALITY_LEVEL, ql))
->   			return -EMSGSIZE;
->   
-
+>
+> >
+> > >
+> > >
+> > > Whatev.  I'll drop this version from mm.git.
 
