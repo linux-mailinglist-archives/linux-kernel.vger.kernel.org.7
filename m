@@ -1,175 +1,427 @@
-Return-Path: <linux-kernel+bounces-814649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEC8B556E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E20B556E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09112AA659F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52AC7A04AB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D1932F75F;
-	Fri, 12 Sep 2025 19:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1B1321F3A;
+	Fri, 12 Sep 2025 19:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZZ+EeJ/X"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b="2qS1EDqy";
+	dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b="b1gwa/++"
+Received: from mx0a-003cac01.pphosted.com (mx0a-003cac01.pphosted.com [205.220.161.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7142C21E7;
-	Fri, 12 Sep 2025 19:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757705247; cv=none; b=bPtrMiS96q8RuuIrCOnR+ROKqdtPHHHsf5H5j+ono40DsKES/MJ6rdtkcFQT4svDX/8StojOpQrlWE7fe/nxCRhc+9C2PoaFCw3lsm+4MFIny3Qdcs17qYQHND9F9QEM489NzSxkwQ/W9JVDakRYF9feTbnbx8B9UXgrf4KSuSo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757705247; c=relaxed/simple;
-	bh=EHXp00PvSV5BL2JzcicYuQ7QaA7Hb0E5dVZbhEWZgVU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q4O3U5sGZdymDrGKi/M6R/t5jzcDdcAEGA74Bl/qbcFfFKeH9lpPldERV53bJv87+cNzY0woJFCARfqffOgTgCqgG8n8z5at+aqUvdEH2UoqiHoj2FOlRsp2UM4ezKvGJ9bf5qgw+eoo9HXcujcNEyZW1FI8XodyT2Rrb7of6HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZZ+EeJ/X; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58CJOvCc668524;
-	Fri, 12 Sep 2025 14:24:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757705097;
-	bh=Q4NS2lGNDYPRFSd1ovtwkZb7OAAyExi6xlEfHJJUBmQ=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=ZZ+EeJ/XiIL22njUd2gX5udls+1mAirxXEHksdBu0njlTzgvOx7WWptSXLbMNKltE
-	 M/O8RcnXHxUHFnpQZRP2Jp3wEK6u4t9k78rHVtuRrKQJsGpUduLu13T3ZpxEQGtEcC
-	 HwW/XN6U4cqMbAhoA7IxW84ZRc2IgDv4qXLAh1IU=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58CJOu6i2993241
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 12 Sep 2025 14:24:57 -0500
-Received: from DFLE200.ent.ti.com (10.64.6.58) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 12
- Sep 2025 14:24:56 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE200.ent.ti.com
- (10.64.6.58) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 12 Sep 2025 14:24:56 -0500
-Received: from localhost (bb.dhcp.ti.com [128.247.81.12])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58CJOuXa187040;
-	Fri, 12 Sep 2025 14:24:56 -0500
-Date: Fri, 12 Sep 2025 14:24:56 -0500
-From: Bryan Brattlof <bb@ti.com>
-To: Andrew Davis <afd@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Linus
- Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH v6 3/4] arm64: dts: ti: k3-am62l: add initial
- infrastructure
-Message-ID: <20250912192456.msnw64b62yr5ricw@bryanbrattlof.com>
-X-PGP-Fingerprint: D3D1 77E4 0A38 DF4D 1853 FEEF 41B9 0D5D 71D5 6CE0
-References: <20250912-am62lx-v6-0-29d5a6c60512@ti.com>
- <20250912-am62lx-v6-3-29d5a6c60512@ti.com>
- <0153912f-04a5-4118-a286-4e9c0293aae6@ti.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1536F23F412
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.161.93
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757705148; cv=fail; b=LE1t2PbggSYKZqKSmS7Ug+97ax24nH39UcVwLT70tKBbNyvxl3jPvCZFYN1GoouzmloPLlU2a5nYjkGS2pWHGibwZ4puPCJMTz9I2gFbwDHzM0HTLKSw+yTvO83PBE0lv8f/tCLJ+useXQH/2OyzddGDzj+Aymju7sAhm7dinZ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757705148; c=relaxed/simple;
+	bh=oI7PJo6a+vML0KFO/eZGUThyDpBXPndxW+RtaFlqYm8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lbMuDWRA1MI0X8pC9wAEc30wBG1Jtv8cVi8JFyi2Q1ii9xKv5ohHd6ImRd8KuSXX2YGT2rxhXRv8oqtadQZZd6lnyhO9ZYEZ7qMnyqKBKT5IivfHE3cdYiMtv4VL6Svwt6KOnb4TP7TBSBIrPYknrH8XmCzgUj7cbOxeKW2+7L0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com; spf=pass smtp.mailfrom=keysight.com; dkim=pass (2048-bit key) header.d=keysight.com header.i=@keysight.com header.b=2qS1EDqy; dkim=pass (1024-bit key) header.d=keysight.com header.i=@keysight.com header.b=b1gwa/++; arc=fail smtp.client-ip=205.220.161.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=keysight.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=keysight.com
+Received: from pps.filterd (m0187213.ppops.net [127.0.0.1])
+	by mx0b-003cac01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58CJGCxs022483;
+	Fri, 12 Sep 2025 12:25:17 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=ppfeb2020; bh=
+	6zTM/B0kNdlePWa+XW9hEUBx/zCfQwspIQo61wg5jBU=; b=2qS1EDqydfE3LEdy
+	6Gd/oI+IP86SB9shfDNsIhQopdxbaSE3acnvUKvf/PQcfx+qUUAHsbUi6a2W4Dfu
+	8QM9u7WO/yr9LUVB3vO+qEF27hNqiMXTQrLUmkBxR85K/joI+7WjRfg5yn0cAuVE
+	ZOwTNT9ztbj7jebzBMjfqbyE487JgIElm2gOuWy0mneS5HvaztFIOgrbFwlPgfCI
+	G+89Ok97dtR6XB7/r+jhK9ZXMq0mnxbESvjYqUEBS/DYj5z5JGXg7zEvsbcNc8KS
+	OTqxbbnd70WbV+YKr1Gq1AA+5cOtsPrEvbBNgwiY3yRybjJydnrWfMUmRm83ZOnF
+	QvRUMA==
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2048.outbound.protection.outlook.com [40.107.220.48])
+	by mx0b-003cac01.pphosted.com (PPS) with ESMTPS id 4937hrpvxc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 12 Sep 2025 12:25:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OSOPNZKQ+eH9DkgSYqOLovRGognRVcc3H3UJShZdIJ7KQYLvQKwa8XH1Cp5Ptfv0zerPZZziSDWwggPl7u6p8uBpVTcJNAQWNEFF2kiFoi6x8wMhpjyLjBlKukEOklvXBOFsWK+n9q8jmGPeZUJxzGijpu+51zbLlizeTROEnKmwHmtjsc1avMZZ/fdmPPSIaiRFUBvViFESRrRz20yqYh7I+Ef3cB6JjzRJJeR1HoZLUZ9sP4pEdDnD4i7Ehig/fj6QbcwtoKHpcjSqBWXUwEP1zb3UNSfMEPjoIaxdBkWlx9zn2yZWnEzmIlStGjW4nEsOEvqjRUGPi6sZ66ICSg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6zTM/B0kNdlePWa+XW9hEUBx/zCfQwspIQo61wg5jBU=;
+ b=XjAa0FShtKMgn0ydgLfAsTmdJSXAbs3WfqyY2ptdxkuResPDdi5Qe30iPc+gDUs0SVp84qIRM9H0/oZAAQNoS+TxCOTXW0dLWKQD6papNGMNZ6rP+3vKRqCnfgGMAR0faNECVrFMVwxk3agzLV2H7xsojBPDugt4Nrb02OP0G4R5dZWzVAKAcPvUistxzYyMgfkrQptoU5umbUcksslPSEHbItSsZyjZ9qDN5LNjRan68z4cbKc+rFP2l8+n2mawfUv26SWWybiIdcZ70BukPWVz0DUUfHanfQiEAwi8OwUf5tKMxNPUeQ5AeCpSD7t+1hYoQ4RpQFz2Kfv6No0D+Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=keysight.com; dmarc=pass action=none header.from=keysight.com;
+ dkim=pass header.d=keysight.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=keysight.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6zTM/B0kNdlePWa+XW9hEUBx/zCfQwspIQo61wg5jBU=;
+ b=b1gwa/++4nm3KcxUSVEFe7olorOMxOB8AaaM/9FVkmYTt5Vd4k39qxm+LlVd28J4HKx9k572CjYjjpzDzzSETp3iPLWCyKC0W432rOgeUUY7iJq4XOopV2Oi6PnG5eIFMhrJftj4BiBbz9tkvVzJaBpcyfU1mWza0pL4QhvCSfE=
+Received: from PH7PR17MB6130.namprd17.prod.outlook.com (2603:10b6:510:1f5::17)
+ by DM4PR17MB6939.namprd17.prod.outlook.com (2603:10b6:8:181::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Fri, 12 Sep
+ 2025 19:25:15 +0000
+Received: from PH7PR17MB6130.namprd17.prod.outlook.com
+ ([fe80::54bb:3a4f:5f80:a51e]) by PH7PR17MB6130.namprd17.prod.outlook.com
+ ([fe80::54bb:3a4f:5f80:a51e%5]) with mapi id 15.20.9094.021; Fri, 12 Sep 2025
+ 19:25:15 +0000
+From: John Ripple <john.ripple@keysight.com>
+To: john.ripple@keysight.com
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
+        andrzej.hajda@intel.com, blake.vermeer@keysight.com,
+        dianders@chromium.org, dri-devel@lists.freedesktop.org,
+        jernej.skrabec@gmail.com, jonas@kwiboo.se,
+        linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com,
+        matt_laubhan@keysight.com, mripard@kernel.org,
+        neil.armstrong@linaro.org, rfoss@kernel.org, simona@ffwll.ch,
+        tzimmermann@suse.de
+Subject: [PATCH V4] drm/bridge: ti-sn65dsi86: Add support for DisplayPort mode  with HPD
+Date: Fri, 12 Sep 2025 13:24:57 -0600
+Message-ID: <20250912192457.2067602-1-john.ripple@keysight.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20250910183353.2045339-1-john.ripple@keysight.com>
+References: <20250910183353.2045339-1-john.ripple@keysight.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CY5PR15CA0227.namprd15.prod.outlook.com
+ (2603:10b6:930:88::25) To PH7PR17MB6130.namprd17.prod.outlook.com
+ (2603:10b6:510:1f5::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <0153912f-04a5-4118-a286-4e9c0293aae6@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR17MB6130:EE_|DM4PR17MB6939:EE_
+X-MS-Office365-Filtering-Correlation-Id: b31189ae-d3ed-4d9f-acac-08ddf23219b4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?d06ZAw7WAZczG6xj6Zo2opfL0Bxpe8A/brQ1fL2GpIb6yuNHQJUq3b+HcLDZ?=
+ =?us-ascii?Q?1II1arw6carBE8t29+5tMFUuozU068jhBjjv7e7HEAqnAT/+Bdg6FzmO32F6?=
+ =?us-ascii?Q?ukJrup1nxjFMjAVLzTQisIx2v9EjqrowAPuQY88RMJG25t1fvVAFu9eLZB/9?=
+ =?us-ascii?Q?fKsQbDXiZQFnvERIkoUz87usXvjoM4hhxL6RqAELhD9zcj1hxXfOMtvNHV1h?=
+ =?us-ascii?Q?EF3Cd/TGmicsVCfCF3sKA94FM6WaudY630eLnQpbCsHEOJ0ypqhvcFGDWKK0?=
+ =?us-ascii?Q?I1lnI3Fts2wc2M4RsKHJp7vh3MWPWjmeE0+9U4fYGa0Kk0mkk814uHPMmT+J?=
+ =?us-ascii?Q?LIYO4KwfIElon5/pXd5TQi/60z5n6e+n7IC3JibxUYNpiBCeClgUEKAJs/HB?=
+ =?us-ascii?Q?aU7tYXfkAND0bj4s9LOHbaCP8iw/SJ2gp/Vm7Bemm+jxEj1VsyIEkBzd+B9D?=
+ =?us-ascii?Q?CD5matJM+RZa9IZPH1cXZcmAgk8r5bW4bLSYTSZvc+Ge3Rw3QxYyunfIKV5u?=
+ =?us-ascii?Q?aTd5Nzjfmc0HSuXqdxc1Xa+K3pmg/hL5tV1o35prc46YxS7uNqcNQ/65nbc2?=
+ =?us-ascii?Q?5uUoUbV+dbeySFLs9/qho7jiXRuq3Iygagk+27/T2LTA1GueFz+ozepfBzOq?=
+ =?us-ascii?Q?8U7B46vNNaZx1MnzOuGDq9Advp5GS5zbcFKiEBh0MEpGef8h6zttX20k3thz?=
+ =?us-ascii?Q?My73OqdawwWZiqtkc1FnjQGc1OTsWXLEdtsbrK3+iy/VmT3h8GcT+5MVK2Gl?=
+ =?us-ascii?Q?gUJjs7RzMp7dSw+OgMbT1Yj6TWypKHZXrj4L3KKOWqb9NRJyOScfw1uNiiEN?=
+ =?us-ascii?Q?b+k5Ibt9365Y91qvXRkirQjbd9NH+N61+bdzINr+HFZRdMxaJEZcanjVxNDF?=
+ =?us-ascii?Q?IeiVZpUpUOHRaGoTC81VxUD68R/vhHnkATgarZ9sg7DoYpqltSAn0G/PAEwi?=
+ =?us-ascii?Q?nGlv9sAk8fSH/514idW6vNA4aORRgZBThtjKBOPNiPV6hiowlzwZCOBMC3QG?=
+ =?us-ascii?Q?3xIfeKH6fW+I7G7TooiCbUhqFrRtv2oYMCEErqQ4A8yQ9lE5pWnfvDa1SqUf?=
+ =?us-ascii?Q?8FGD+BT6gvrvkTfp/o4OaTHWFAw0BDjZHRNk9IDedMP0SeZPC5Zj7RNiUOGJ?=
+ =?us-ascii?Q?onQzYxJMmk5LsyyeoQ/HplzjGf5Yb13G3naW7V5D2ib2en9j7m2Kqb6Zq6Sz?=
+ =?us-ascii?Q?5XB4+AzCCon9+tucHuSy3QULw0VYHPjICEHHChtLvFZI2bAih+s7+NIJCZGf?=
+ =?us-ascii?Q?9JWg3W1jZfy/YFAlsqF6c9mS6iFDoJC0OsrRksH6ZGUMakt/jseRM+DcstsD?=
+ =?us-ascii?Q?cZW33rwIL85KPA95SKc+A8d8O2XR4rFuL1mMQyXcfD/DZLWEook/FSmS7QiG?=
+ =?us-ascii?Q?bD653cAcFeI7XwojXXbb8KJ32+UnJFB2tlCZSx964+sA4BAP27uooiJ8YvX8?=
+ =?us-ascii?Q?+ZgL0OlilMc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR17MB6130.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rL0zfIdlrjB5GDpuWWLtN1pmJtEJ5dkgSQN3adQ+N6ETmYTl5SCuf/HU9Rnc?=
+ =?us-ascii?Q?ZvwoKFBSCiQ07Vh1ba8xes87mAqlwmXrv0H2MXHnib/oH8ciFtoEAzXQ+cmQ?=
+ =?us-ascii?Q?Kib2VUZDQ3Pfsy0lgsOnauRlvRK5fX6ra0w6THck1Gzn6PIZNl+FwHJ4n6Fu?=
+ =?us-ascii?Q?aG3QnfjxlM2ogK3jW528wh7+5YFiLgoiO9lgyDE4E6z7qOGS/tyuSQBXJYYj?=
+ =?us-ascii?Q?HpeiUUGE5K7qRHL8xMlVbuqsxLxLirlQRZt4Dret/jPwdc03zdb4n4nkJN4I?=
+ =?us-ascii?Q?6O+JQpgRjNiolB3B3Uv66+of/tU4Mo4EC+f/gSFnBlL+wB2a/TCgihGUTk6o?=
+ =?us-ascii?Q?tpBA4e/PywYVe7V9lq4EOnzd6eeSEP/hWBKy8I0LFV5S8xYhLKLnn+s7B+7C?=
+ =?us-ascii?Q?vIhedWzl0jgMLrcHP4UADAQcY5opEqEqrSYG5ePBQ3RDYoNBMZuL+HvX6v9m?=
+ =?us-ascii?Q?umdmeQW8+4VE1tjKZf9wJ3tASXeMe+jRtjzbQswtrzEuevMzo/6DbNayO6ll?=
+ =?us-ascii?Q?JP3YXCmIRZdXNf58rJfox1pol50efhqTLfDB5ntZr9DEKsz4DZWVJtS/6KXf?=
+ =?us-ascii?Q?wsY22OnDvOqLp9dHpgpP6AxhyZsjqObgeUHDWtHLQMFV0CHQ1OMBCeJoK9/q?=
+ =?us-ascii?Q?c2RaXQyhDW1Gr0T348eKgE/9ss8NYVaeS5bhltUbTROfyiE0gmD0kOsXCckt?=
+ =?us-ascii?Q?Y5EbJmc3Q3uGz7qKEQPi6Uhv+WxPZki4r1QQ4O8i9ESPr2VSgS5XQx7ErDqt?=
+ =?us-ascii?Q?tIrYn31LbdQiyKG7gN5qQSKZ/yoDQ/aJ53ln9+kUDCOiVtT9ToQiQaPjmTdv?=
+ =?us-ascii?Q?/d0TxUwo9KGFX16afz7xKbiN2KM0RO1dp2KOLryCaCzCYM+ypdfVB/dXndur?=
+ =?us-ascii?Q?k9Osrbx4y6xkQlHKUx+3BghuZ/4N5U3/Y+VzLDEy3wAcpdQ1s3BPfSh+9+Qc?=
+ =?us-ascii?Q?NOmtuLcURH+2JSY/TF4ooVBwXYcgXcF+QfVwqiHnU0LI14ePTnzWsAb4okUf?=
+ =?us-ascii?Q?IBXwaZZ5K/HAfXg4yrPoT7xIIuW5in0/m8SHmcfT+IAmmZQkHu4ia7jAM/FL?=
+ =?us-ascii?Q?/1koQfsrMrYbN+hHt87S4JqYPWakvpSfcMKr+G3MF8ggU1IaoI9x4NyZQ6dw?=
+ =?us-ascii?Q?imEswU/PPSFDd5BkaySsrdVRx2C4lxZrAkPf3ndl6I0/mPZUxN3qjolarTdY?=
+ =?us-ascii?Q?f06V0C7tyYuyAoTxI286j1crHXLcEozGR/Jo/yZ8YDjCaXrq6P3hQU05tYCc?=
+ =?us-ascii?Q?OWbLOYGBIa2zbqRN+6hgbOfWaQ+M1LjM4pFj7jAhAKU4K3GLIk883lQrXhvw?=
+ =?us-ascii?Q?Bl1u7QPDf6SBs5oHeNC0xqwmH77ipnLmmBQecqFKuPcBXc/MLLmlfVDNdNrq?=
+ =?us-ascii?Q?fgm8ZuSKjHjLxqhctNGZjSPrxdMn6tzeF3kH1AqJW4ukUrrSUYbnWIkkGCkh?=
+ =?us-ascii?Q?EYfdzmvqo9/KgHoXWOQOlFTa6utxkZgd9OSikacZzjZsmkCt5Pb5yvRCm6Eo?=
+ =?us-ascii?Q?rClO8pGEJftF1onBxnKK6mmkeONNIxe0LcIHVk5tG6TDioQrfzQ3bVzPo6DN?=
+ =?us-ascii?Q?IJctnnugx9sSy8ScRd47xSEo3aTsyiEbtSvR0UfgmP8WYId4h2efAFVlkfV8?=
+ =?us-ascii?Q?9A=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	U7+oxlcdohWqyFlZeXOjFUIYz40Tp/5OWK7uigOyw2Wdv7w4wf4ZzMQSOcw7NUtym9HAFUO9PQPhSkvw30eOlX7f6La4OsB4KgZnZBZ+ZOQsf+Sz5LZu8TSKI5HA3Ud3S7qpinP/rcOfD6PT4i6NxBgW5sptBo9/aWU/OCYIpVR8rPCfLT/J44mzx+gh3Jlw4u7BEsJhsTPD0TscoMY/XoljIg/6XodlIBnJZxvuGC+vJfwCvDQMq9esztrRqL54weJ+RKrU6GWNQGZURizDQBvc9ztz+z8waLLxpkEubvJy7jZdrTXKBs3GzAmgAIsXA3q3WhhO5DFcuok0xjDJHpA4ykQ+/sYTb5J8jirvO0SyAgbyTHusE4HEj53jW6f/CNUuE+0GnVD91ADWYy0cRRhKvcEF0CVwzBpxbRRTCwzVJpKz56CBSf0fYtTCMbgrY6zclBm4mzCNwzrQitU2lXYoYbdXK2OnoDB4h31W5pLLxS2xUGa7kx/frVTVINg4syaDHyIpB8nPXrbCYLMJEkoXy2EpIgksU4E4cfYCKgkAVPOwBVmKi8UCV+dFTuPvHiqUzQKYzQ3BqEyZ+ptph7PbSrmqhtbEn1ewecpeGaH7pw5KeqHJInnlW2rmEx7r
+X-OriginatorOrg: keysight.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b31189ae-d3ed-4d9f-acac-08ddf23219b4
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR17MB6130.namprd17.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2025 19:25:15.1640
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 63545f27-3232-4d74-a44d-cdd457063402
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oDn1Ls3GnEyNbX5ppmTF84VZWr9LWoCKhv2lmk3fhnJWqwfJSe5W0TNXfxHryfGUjZrq+7vqOAr3YkraTQiQiIHv2/Y16mPHvYT4QuwwPS4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR17MB6939
+X-Authority-Analysis: v=2.4 cv=UKDdHDfy c=1 sm=1 tr=0 ts=68c4739d cx=c_pps
+ a=TZoYUOSjQ4LR4/tQgtptEw==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
+ a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
+ a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=yJojWOMRYYMA:10 a=vu2TTH8h0NUA:10 a=F6MVbVVLAAAA:8
+ a=NYnuEPRvgIRkhLNBil4A:9 a=6mxfPxaA-CAxv1z-Kq-J:22
+X-Proofpoint-ORIG-GUID: 1U5AiWIsD35BnfwgklD7x4lVt1Ae8fgV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEwMDA5NCBTYWx0ZWRfX6Z7mH/oSV7Ku
+ 1cfXNaapyhGVruJtwG96bsNknqh/hsoIJhIbL/I5b7TZvcA9EFe9v1AArd+dFt4KNUjsrXLDo1+
+ CTqhrQVJrNX73/fWBdyym2Q4lYMYB/iGqpW/A9I0E0tqVfvrQur+CmZfx6JmJsybm/dhlBITs9I
+ BVf7LPnv1Yi4t+hqru2rqREuL9HZ4eHl1SazQlaKDSJeoa0tklDKzCI9EGrLAAPz3uqRRfLABZK
+ 9sftE+s10tZd3YRvF4MZhmRDWYfZNteDe6qWGn0VAJrALbE0aFEdKXAWvwUK7e2GWhV/jzgl1Nb
+ BmJ4iOI/lEscw8tvDgbF6QnDPKmeNZa0cb1vpp6pxtUGZHS8H291noGfq2MxEjLwkU1fZxniFWN
+ 4UkG25Oy
+X-Proofpoint-GUID: 1U5AiWIsD35BnfwgklD7x4lVt1Ae8fgV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-12_07,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 malwarescore=0 adultscore=0 clxscore=1015 phishscore=0
+ impostorscore=0 suspectscore=0 bulkscore=0 spamscore=0 classifier=typeunknown
+ authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2507300000 definitions=main-2509100094
 
-On September 12, 2025 thus sayeth Andrew Davis:
-> On 9/12/25 10:40 AM, Bryan Brattlof wrote:
-> > From: Vignesh Raghavendra <vigneshr@ti.com>
-> > 
-> > Add the initial infrastructure needed for the AM62L. ALl of which can be
-> > found in the Technical Reference Manual (TRM) located here:
-> > 
-> >      https://www.ti.com/lit/pdf/sprujb4
-> > 
-> > Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-> > Signed-off-by: Bryan Brattlof <bb@ti.com>
-> > ---
-> > Changes in v4:
-> >   - Corrected Copyright year
-> >   - Used 'ranges' property in the fss{} node
-> > 
-> > Changes in v3:
-> >   - Added more nodes now that the SCMI interface is ready
-> > 
-> > Changes in v1:
-> >   - switched to non-direct links to TRM updates are automatic
-> >   - fixed white space indent issues with a few nodes
-> >   - separated out device tree bindings
-> > ---
-> >   arch/arm64/boot/dts/ti/k3-am62l-main.dtsi    | 603 +++++++++++++++++++++++++++
-> >   arch/arm64/boot/dts/ti/k3-am62l-thermal.dtsi |  25 ++
-> >   arch/arm64/boot/dts/ti/k3-am62l-wakeup.dtsi  | 141 +++++++
-> >   arch/arm64/boot/dts/ti/k3-am62l.dtsi         | 120 ++++++
-> >   arch/arm64/boot/dts/ti/k3-am62l3.dtsi        |  67 +++
-> >   arch/arm64/boot/dts/ti/k3-pinctrl.h          |   2 +
-> >   6 files changed, 958 insertions(+)
-> > 
+Add support for DisplayPort to the bridge, which entails the following:
+- Get and use an interrupt for HPD;
+- Properly clear all status bits in the interrupt handler;
 
-...
+Signed-off-by: John Ripple <john.ripple@keysight.com>
+---
+V1 -> V2: Cleaned up coding style and addressed review comments
+V2 -> V3:
+- Removed unused HPD IRQs
+- Added mutex around HPD enable/disable and IRQ handler.
+- Cleaned up error handling and variable declarations
+- Only enable IRQs if the i2c client has an IRQ
+- Moved IRQ_EN to ti_sn65dsi86_resume()
+- Created ti_sn65dsi86_read_u8() helper function
+V3 -> V4:
+- Formatting
+- Allow device tree to set interrupt type.
+- Use hpd_mutex over less code.
+---
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 110 ++++++++++++++++++++++++++
+ 1 file changed, 110 insertions(+)
 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-am62l.dtsi 
-> > b/arch/arm64/boot/dts/ti/k3-am62l.dtsi
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..d058394a8d19d16f100cd87cf293c67bc189b475
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/ti/k3-am62l.dtsi
-> > @@ -0,0 +1,120 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only or MIT
-> > +/*
-> > + * Device Tree Source for AM62L SoC Family
-> > + * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.com/
-> > + *
-> > + * Technical Reference Manual: https://www.ti.com/lit/pdf/sprujb4
-> > + */
-> > +
-
-...
-
-> > +		};
-> > +	};
-> > +
-> > +	#include "k3-am62l-thermal.dtsi"
-> 
-> Not a fan of how this is included (yes I know it is done like this in
-> a couple other places, those need fixed too), as we have better/standard
-> ways to add nodes to nodes other than directly including a file with the
-> node. The other issue is now the content of the file, including its #include
-> lines are now inside this parent node.
-> 
-> This dtsi file should just start with "/ {" and add the extra node.
-> 
-> Also, isn't this broken out into a dtsi so we can handle versions of
-> this device qualified for other thermal ranges without having to use
-> a different parent device dtsi? If so then adding it directly to the
-> base dtsi prevents that. Either all AM62L have this one thermal situation
-> and then it doesn't need to be a dtsi, or this include should go into the
-> board level as it is up to the given board what specific variant was chosen
-> to be populated on that board type.
-> 
-
-Yeah I've noticed this as well. We have a few parts available in 
-different packaging that have different maximum temp ratings. Ideally we 
-should have some way to specify which package variant the board is using 
-and include these thermal trip points for that package.
-
-It does add more #includes into all of this but I guess if you've picked 
-up on this as well I should probably look into seeing what we can do.
-
-~Bryan
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+index ae0d08e5e960..166920b2fcc7 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+@@ -106,10 +106,21 @@
+ #define SN_PWM_EN_INV_REG			0xA5
+ #define  SN_PWM_INV_MASK			BIT(0)
+ #define  SN_PWM_EN_MASK				BIT(1)
++
++#define SN_IRQ_EN_REG				0xE0
++#define  IRQ_EN					BIT(0)
++
++#define SN_IRQ_EVENTS_EN_REG			0xE6
++#define  HPD_INSERTION_EN			BIT(1)
++#define  HPD_REMOVAL_EN				BIT(2)
++
+ #define SN_AUX_CMD_STATUS_REG			0xF4
+ #define  AUX_IRQ_STATUS_AUX_RPLY_TOUT		BIT(3)
+ #define  AUX_IRQ_STATUS_AUX_SHORT		BIT(5)
+ #define  AUX_IRQ_STATUS_NAT_I2C_FAIL		BIT(6)
++#define SN_IRQ_STATUS_REG			0xF5
++#define  HPD_REMOVAL_STATUS			BIT(2)
++#define  HPD_INSERTION_STATUS			BIT(1)
+ 
+ #define MIN_DSI_CLK_FREQ_MHZ	40
+ 
+@@ -153,6 +164,8 @@
+  * @ln_polrs:     Value for the 4-bit LN_POLRS field of SN_ENH_FRAME_REG.
+  * @comms_enabled: If true then communication over the aux channel is enabled.
+  * @comms_mutex:   Protects modification of comms_enabled.
++ * @hpd_enabled:   If true then HPD events are enabled.
++ * @hpd_mutex:     Protects modification of hpd_enabled.
+  *
+  * @gchip:        If we expose our GPIOs, this is used.
+  * @gchip_output: A cache of whether we've set GPIOs to output.  This
+@@ -190,7 +203,9 @@ struct ti_sn65dsi86 {
+ 	u8				ln_assign;
+ 	u8				ln_polrs;
+ 	bool				comms_enabled;
++	bool				hpd_enabled;
+ 	struct mutex			comms_mutex;
++	struct mutex			hpd_mutex;
+ 
+ #if defined(CONFIG_OF_GPIO)
+ 	struct gpio_chip		gchip;
+@@ -221,6 +236,23 @@ static const struct regmap_config ti_sn65dsi86_regmap_config = {
+ 	.max_register = 0xFF,
+ };
+ 
++static int ti_sn65dsi86_read_u8(struct ti_sn65dsi86 *pdata, unsigned int reg,
++				u8 *val)
++{
++	int ret;
++	unsigned int reg_val;
++
++	ret = regmap_read(pdata->regmap, reg, &reg_val);
++	if (ret) {
++		dev_err(pdata->dev, "fail to read raw reg %#x: %d\n",
++			reg, ret);
++		return ret;
++	}
++	*val = (u8)reg_val;
++
++	return 0;
++}
++
+ static int __maybe_unused ti_sn65dsi86_read_u16(struct ti_sn65dsi86 *pdata,
+ 						unsigned int reg, u16 *val)
+ {
+@@ -379,6 +411,7 @@ static void ti_sn65dsi86_disable_comms(struct ti_sn65dsi86 *pdata)
+ static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
+ {
+ 	struct ti_sn65dsi86 *pdata = dev_get_drvdata(dev);
++	const struct i2c_client *client = to_i2c_client(pdata->dev);
+ 	int ret;
+ 
+ 	ret = regulator_bulk_enable(SN_REGULATOR_SUPPLY_NUM, pdata->supplies);
+@@ -413,6 +446,13 @@ static int __maybe_unused ti_sn65dsi86_resume(struct device *dev)
+ 	if (pdata->refclk)
+ 		ti_sn65dsi86_enable_comms(pdata, NULL);
+ 
++	if (client->irq) {
++		ret = regmap_update_bits(pdata->regmap, SN_IRQ_EN_REG, IRQ_EN,
++					 IRQ_EN);
++		if (ret)
++			pr_err("Failed to enable IRQ events: %d\n", ret);
++	}
++
+ 	return ret;
+ }
+ 
+@@ -1211,6 +1251,8 @@ static void ti_sn65dsi86_debugfs_init(struct drm_bridge *bridge, struct dentry *
+ static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
+ {
+ 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
++	const struct i2c_client *client = to_i2c_client(pdata->dev);
++	int ret;
+ 
+ 	/*
+ 	 * Device needs to be powered on before reading the HPD state
+@@ -1219,11 +1261,33 @@ static void ti_sn_bridge_hpd_enable(struct drm_bridge *bridge)
+ 	 */
+ 
+ 	pm_runtime_get_sync(pdata->dev);
++
++	if (client->irq) {
++		/* Enable HPD events. */
++		ret = regmap_set_bits(pdata->regmap, SN_IRQ_EVENTS_EN_REG,
++				      HPD_REMOVAL_EN | HPD_INSERTION_EN);
++		if (ret)
++			pr_err("Failed to enable HPD events: %d\n", ret);
++	}
++	mutex_lock(&pdata->hpd_mutex);
++	pdata->hpd_enabled = true;
++	mutex_unlock(&pdata->hpd_mutex);
+ }
+ 
+ static void ti_sn_bridge_hpd_disable(struct drm_bridge *bridge)
+ {
+ 	struct ti_sn65dsi86 *pdata = bridge_to_ti_sn65dsi86(bridge);
++	const struct i2c_client *client = to_i2c_client(pdata->dev);
++
++	if (client->irq) {
++		/* Disable HPD events. */
++		regmap_write(pdata->regmap, SN_IRQ_EVENTS_EN_REG, 0);
++		regmap_update_bits(pdata->regmap, SN_IRQ_EN_REG, IRQ_EN, 0);
++	}
++
++	mutex_lock(&pdata->hpd_mutex);
++	pdata->hpd_enabled = false;
++	mutex_unlock(&pdata->hpd_mutex);
+ 
+ 	pm_runtime_put_autosuspend(pdata->dev);
+ }
+@@ -1309,6 +1373,38 @@ static int ti_sn_bridge_parse_dsi_host(struct ti_sn65dsi86 *pdata)
+ 	return 0;
+ }
+ 
++static irqreturn_t ti_sn_bridge_interrupt(int irq, void *private)
++{
++	struct ti_sn65dsi86 *pdata = private;
++	struct drm_device *dev = pdata->bridge.dev;
++	u8 status;
++	int ret;
++	bool hpd_event = false;
++
++	ret = ti_sn65dsi86_read_u8(pdata, SN_IRQ_STATUS_REG, &status);
++	if (ret)
++		pr_err("Failed to read IRQ status: %d\n", ret);
++	else
++		hpd_event = status & (HPD_REMOVAL_STATUS | HPD_INSERTION_STATUS);
++
++	if (status) {
++		pr_debug("(SN_IRQ_STATUS_REG = %#x)\n", status);
++		ret = regmap_write(pdata->regmap, SN_IRQ_STATUS_REG, status);
++		if (ret)
++			pr_err("Failed to clear IRQ status: %d\n", ret);
++	} else {
++		return IRQ_NONE;
++	}
++
++	/* Only send the HPD event if we are bound with a device. */
++	mutex_lock(&pdata->hpd_mutex);
++	if (pdata->hpd_enabled && hpd_event)
++		drm_kms_helper_hotplug_event(dev);
++	mutex_unlock(&pdata->hpd_mutex);
++
++	return IRQ_HANDLED;
++}
++
+ static int ti_sn_bridge_probe(struct auxiliary_device *adev,
+ 			      const struct auxiliary_device_id *id)
+ {
+@@ -1931,6 +2027,8 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
+ 	dev_set_drvdata(dev, pdata);
+ 	pdata->dev = dev;
+ 
++	mutex_init(&pdata->hpd_mutex);
++
+ 	mutex_init(&pdata->comms_mutex);
+ 
+ 	pdata->regmap = devm_regmap_init_i2c(client,
+@@ -1971,6 +2069,18 @@ static int ti_sn65dsi86_probe(struct i2c_client *client)
+ 	if (strncmp(id_buf, "68ISD   ", ARRAY_SIZE(id_buf)))
+ 		return dev_err_probe(dev, -EOPNOTSUPP, "unsupported device id\n");
+ 
++	if (client->irq) {
++		ret = devm_request_threaded_irq(pdata->dev, client->irq, NULL,
++						ti_sn_bridge_interrupt,
++						IRQF_ONESHOT,
++						dev_name(pdata->dev), pdata);
++
++		if (ret) {
++			return dev_err_probe(dev, ret,
++					     "failed to request interrupt\n");
++		}
++	}
++
+ 	/*
+ 	 * Break ourselves up into a collection of aux devices. The only real
+ 	 * motiviation here is to solve the chicken-and-egg problem of probe
 
