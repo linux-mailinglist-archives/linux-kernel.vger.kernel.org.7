@@ -1,188 +1,148 @@
-Return-Path: <linux-kernel+bounces-814093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FF5B54F14
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:17:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C07BB54F10
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561CD1CC4A83
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:16:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874297C803B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:16:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0490531353E;
-	Fri, 12 Sep 2025 13:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421B0314A62;
+	Fri, 12 Sep 2025 13:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZgusYff"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEwyhLVW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59EBD3112C1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87AB030EF89;
+	Fri, 12 Sep 2025 13:14:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757682867; cv=none; b=pMNZ2Hzt/hTIuon+X5lQMn7P83TXul7mQeHRNbe/BrIsOv1FrxfIG5Y2niOzXqzxY4pLCpHUKOcqUozmNkpqcQA+La4lquE8rt75CG+UWZPSibYIMZ+xVkbIRL2cBBJ4IVAgdjChnBG+VzVyJyU7I+jREQYzhC7mVJoUysmPYQM=
+	t=1757682873; cv=none; b=LrSg2aDwpUSBoB7r39gkEL5a7ei1RIc4fexXpuJi5REnKlomZSjFf3N3AhLn5BwUPk/t+0ejEs/0/5FFVD/kq4zI2J3FkGk8OokfkbLgh/eS+zXR8cDPFsfIdWnixnHc+hwlSB3OO6DNzFjM79S1c5ZI9KyXYWYgIOcHjwJ59+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757682867; c=relaxed/simple;
-	bh=4jt0WH+ib9lMrNTRLeJ7mkZWBV7AKrfXxg/X9EzV/nY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aQEmfwk291+XKhs2Rrk8sMVHbHjHA9JiH8cdhZRoHrQ1XwFsxI4kWio6mhKgJrF+Ew+Ln/IoCyBC2REKR+S4KYQ5V4ST5pPYATieVocrUk3HMYQfPH1e39/poFgz9aX2gLvYqxCxNS0Tg+z3sO4gPNs+wOCItLFp2p/RmWW9Ra4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZgusYff; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D90CC4CEF7;
-	Fri, 12 Sep 2025 13:14:25 +0000 (UTC)
+	s=arc-20240116; t=1757682873; c=relaxed/simple;
+	bh=MxMamnhy9oj92yxyc9e8YwEgNJD+oI68n6DyGiWWVCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bdrnSRlb6swhkC7mRCtERRxvQqoHY/vUIhqbsbUReDOAw3CwZyYzzoHEnPNUSIYU1jdfVrwSrbOExS+XeMiVgJrffa6udDuroOJ1S8ImRSX37gRDGBJyMzDpWR/1or+Z+a6n1/l/J3LL2tEAyj25mxIY2wMkjyd9tOGqT/M9CiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEwyhLVW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E603C4CEF1;
+	Fri, 12 Sep 2025 13:14:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757682866;
-	bh=4jt0WH+ib9lMrNTRLeJ7mkZWBV7AKrfXxg/X9EzV/nY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aZgusYffgwKndLCNjm033DHZPfxGStzMCI1RSzh4XssDJMSpnL11eMGeoZBVO3XCT
-	 2zyazLtQJAXCk5multFrJozbGP5lB9Aq4GCVNyN8dp4sNDx1djFMyUJUIPkj3fzGkp
-	 Y8NYNOTl40Sz+JLnUD4WOxrVGr6EUCfnQ3yXYqJSZk0Po1xTjGWUEIzRVtft1pE3SA
-	 a2cevqr41+O6v2+wQtyXnKTT8yAWxYgar8+k+sh4vUww0C0Tdf8f3Iv77wuT4bhWrJ
-	 UvkGWCRAudn8ttRJQ2k935mDvKZDeuCjK1hoK1D3Hp0ZvV2pa0onYQIckN1Oo45JFD
-	 lXVoOo1cQzLgw==
-From: srini@kernel.org
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	Srinivas Kandagatla <srini@kernel.org>
-Subject: [PATCH 5/5] nvmem: an8855: Add support for Airoha AN8855 Switch EFUSE
-Date: Fri, 12 Sep 2025 14:14:15 +0100
-Message-ID: <20250912131415.303407-6-srini@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250912131415.303407-1-srini@kernel.org>
-References: <20250912131415.303407-1-srini@kernel.org>
+	s=k20201202; t=1757682873;
+	bh=MxMamnhy9oj92yxyc9e8YwEgNJD+oI68n6DyGiWWVCs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GEwyhLVW7tgTFSLAz7JK3+1HYMD/7HIye32Lxy3ySptbeD+445/nkm2JHAK+972z4
+	 hN1yg6qT/Cv6KzMK+8abeYegIyHojhenatknUEJABAkmsZKRhxN9A/1PKsL28JNgpG
+	 P8gPONP1X/RAQ3DDLBshYfOaHDXkUep0mwc3eyRp2eHwvDGNkpqIyR27ghXrurze4a
+	 32xG1qLEdaIZUklU3/X4Sb88ZgBxKg0LUkvcL4hf/jh43Eg4SPXr+hTax9PtE/mo+E
+	 agzGNJBkiGuwxZdGrjohvI5zMdbZtdppELU60GEdYwgj7UoTvHhVvBA+kwIrM0xjlf
+	 O2SDiRwfa8GpQ==
+Message-ID: <50496bf2-1d10-4d89-addb-f4fe774497d9@kernel.org>
+Date: Fri, 12 Sep 2025 15:14:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] dt-bindings: ethernet: eswin: Document for EIC7700
+ SoC
+To: weishangjuan@eswincomputing.com, devicetree@vger.kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
+ mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
+ yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
+ rmk+kernel@armlinux.org.uk, faizal.abdul.rahim@linux.intel.com,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
+ jan.petrous@oss.nxp.com, jszhang@kernel.org, p.zabel@pengutronix.de,
+ boon.khai.ng@altera.com, 0x1207@gmail.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ emil.renner.berthing@canonical.com
+Cc: ningyu@eswincomputing.com, linmin@eswincomputing.com,
+ lizhi2@eswincomputing.com, pinkesh.vaghela@einfochips.com
+References: <20250912055352.2832-1-weishangjuan@eswincomputing.com>
+ <20250912055612.2884-1-weishangjuan@eswincomputing.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250912055612.2884-1-weishangjuan@eswincomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Christian Marangi <ansuelsmth@gmail.com>
+On 12/09/2025 07:56, weishangjuan@eswincomputing.com wrote:
+> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+> 
+> Add ESWIN EIC7700 Ethernet controller, supporting clock
+> configuration, delay adjustment and speed adaptive functions.
+> 
+> Signed-off-by: Zhi Li <lizhi2@eswincomputing.com>
+> Signed-off-by: Shangjuan Wei <weishangjuan@eswincomputing.com>
 
-Add support for Airoha AN8855 Switch EFUSE. These EFUSE might be used
-for calibration data for the internal switch PHYs.
+There is no explanation of dropping the tag. Please read CAREFULLY
+submitting patches.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Signed-off-by: Srinivas Kandagatla <srini@kernel.org>
+Comparing also fails:
+
+b4 diff '<20250912055352.2832-1-weishangjuan@eswincomputing.com>'
+Using cached copy of the lookup
 ---
- drivers/nvmem/Kconfig        | 11 ++++++
- drivers/nvmem/Makefile       |  2 ++
- drivers/nvmem/an8855-efuse.c | 68 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 81 insertions(+)
- create mode 100644 drivers/nvmem/an8855-efuse.c
+Analyzing 55 messages in the thread
+Preparing fake-am for v6: dt-bindings: ethernet: eswin: Document for
+EIC7700 SoC
+ERROR: Could not fake-am version v6
+---
+Could not create fake-am range for upper series v6
 
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index f3b8ffa77528..e0d88d3199c1 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -28,6 +28,17 @@ source "drivers/nvmem/layouts/Kconfig"
- 
- # Devices
- 
-+config NVMEM_AN8855_EFUSE
-+	tristate "Airoha AN8855 eFuse support"
-+	depends on MFD_AIROHA_AN8855 || COMPILE_TEST
-+	help
-+	  Say y here to enable support for reading eFuses on Airoha AN8855
-+	  Switch. These are e.g. used to store factory programmed
-+	  calibration data required for the PHY.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called nvmem-an8855-efuse.
-+
- config NVMEM_APPLE_EFUSES
- 	tristate "Apple eFuse support"
- 	depends on ARCH_APPLE || COMPILE_TEST
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 5634945f8196..70a4464dcb1e 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -10,6 +10,8 @@ nvmem_layouts-y			:= layouts.o
- obj-y				+= layouts/
- 
- # Devices
-+obj-$(CONFIG_NVMEM_AN8855_EFUSE)	+= nvmem-an8855-efuse.o
-+nvmem-an8855-efuse-y 			:= an8855-efuse.o
- obj-$(CONFIG_NVMEM_APPLE_EFUSES)	+= nvmem-apple-efuses.o
- nvmem-apple-efuses-y 			:= apple-efuses.o
- obj-$(CONFIG_NVMEM_APPLE_SPMI)		+= apple_nvmem_spmi.o
-diff --git a/drivers/nvmem/an8855-efuse.c b/drivers/nvmem/an8855-efuse.c
-new file mode 100644
-index 000000000000..d1afde6f623f
---- /dev/null
-+++ b/drivers/nvmem/an8855-efuse.c
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ *  Airoha AN8855 Switch EFUSE Driver
-+ */
-+
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define AN8855_EFUSE_CELL		50
-+
-+#define AN8855_EFUSE_DATA0		0x1000a500
-+#define   AN8855_EFUSE_R50O		GENMASK(30, 24)
-+
-+static int an8855_efuse_read(void *context, unsigned int offset,
-+			     void *val, size_t bytes)
-+{
-+	struct regmap *regmap = context;
-+
-+	return regmap_bulk_read(regmap, AN8855_EFUSE_DATA0 + offset,
-+				val, bytes / sizeof(u32));
-+}
-+
-+static int an8855_efuse_probe(struct platform_device *pdev)
-+{
-+	struct nvmem_config an8855_nvmem_config = {
-+		.name = "an8855-efuse",
-+		.size = AN8855_EFUSE_CELL * sizeof(u32),
-+		.stride = sizeof(u32),
-+		.word_size = sizeof(u32),
-+		.reg_read = an8855_efuse_read,
-+	};
-+	struct device *dev = &pdev->dev;
-+	struct nvmem_device *nvmem;
-+	struct regmap *regmap;
-+
-+	/* Assign NVMEM priv to MFD regmap */
-+	regmap = dev_get_regmap(dev->parent, NULL);
-+	if (!regmap)
-+		return -ENOENT;
-+
-+	an8855_nvmem_config.priv = regmap;
-+	an8855_nvmem_config.dev = dev;
-+	nvmem = devm_nvmem_register(dev, &an8855_nvmem_config);
-+
-+	return PTR_ERR_OR_ZERO(nvmem);
-+}
-+
-+static const struct of_device_id an8855_efuse_of_match[] = {
-+	{ .compatible = "airoha,an8855-efuse", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, an8855_efuse_of_match);
-+
-+static struct platform_driver an8855_efuse_driver = {
-+	.probe = an8855_efuse_probe,
-+	.driver = {
-+		.name = "an8855-efuse",
-+		.of_match_table = an8855_efuse_of_match,
-+	},
-+};
-+module_platform_driver(an8855_efuse_driver);
-+
-+MODULE_AUTHOR("Christian Marangi <ansuelsmth@gmail.com>");
-+MODULE_DESCRIPTION("Driver for AN8855 Switch EFUSE");
-+MODULE_LICENSE("GPL");
--- 
-2.50.0
+I am not going to review twice, so you can drop my tag again without
+explanation.
 
+Best regards,
+Krzysztof
 
