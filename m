@@ -1,132 +1,190 @@
-Return-Path: <linux-kernel+bounces-814207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF85B550C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:19:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F6FB5511F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7C01C80EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:19:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4EBD5A247F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8162DF13B;
-	Fri, 12 Sep 2025 14:18:54 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8291F2E172D;
+	Fri, 12 Sep 2025 14:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/JIYmXP"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33B01F16B;
-	Fri, 12 Sep 2025 14:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96831313E16
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757686734; cv=none; b=R6J3EPirs0Kia2G68Hx0NHhwBNccCci0SwML1WMaxZNCY95NGy/sYmMjmRtix3zkPXJr8PdcnitasdhYljnqXk3YJMzxhRoJr64aypEdUb8vENgDj1eZ1RhKRU2tMQW5oPnlDi8FTKbAcUd/njdkFd5fi3DAGeN6uN4LUtdjcXs=
+	t=1757686892; cv=none; b=r7OHF9PUVYhQTK17zZYp6+Mte7ZHluL9BWe1TmP1QsELqx6ZlVuAMiUtAFjIwiIEOdwUc55raMiF/Hh/lVcbBIepwWUB0k4RkHyQkYGKAmkoh2602THxsAR4FHVq5cIIvIEYGtsUgBjgFD/8wv01GTQ4SwEV90OIcaUiXD2uVEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757686734; c=relaxed/simple;
-	bh=F6GrmkoCEAOXZtxxQSAaFKv2Epo0dqUdTMBqm9EYMh4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JpKeST9tpDqkYrrcJi/ivTMoT9JGLDjT9jBxGExXp7d8OYhOJKgHVfOAwsv9XCwJxW14w+M1ja69iPyaLlLihgUUMdkK4CtXqbyWL4aQy2boUimlHiERjO/hgzmH8qB5UVqiz+oZug9vSJcxWQ47t/ogl6iVwVXIE9HePPbhUxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cNc2M35Nxz6GDFg;
-	Fri, 12 Sep 2025 22:17:31 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id BA4241401F4;
-	Fri, 12 Sep 2025 22:18:49 +0800 (CST)
-Received: from localhost (10.203.177.15) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 12 Sep
- 2025 16:18:49 +0200
-Date: Fri, 12 Sep 2025 15:18:48 +0100
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-CC: Jonathan Cameron <jic23@kernel.org>, <dlechner@baylibre.com>,
-	<nuno.sa@analog.com>, <andy@kernel.org>, <robh@kernel.org>,
-	<conor+dt@kernel.org>, <krzk+dt@kernel.org>, <linux-iio@vger.kernel.org>,
-	<s32@nxp.com>, <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<chester62515@gmail.com>, <mbrugger@suse.com>,
-	<ghennadi.procopciuc@oss.nxp.com>
-Subject: Re: [PATCH v2 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-Message-ID: <20250912151848.0000470e@huawei.com>
-In-Reply-To: <b4d2ad54-54d5-4c26-be49-b6ac671683d2@linaro.org>
-References: <20250910155759.75380-1-daniel.lezcano@linaro.org>
-	<20250910155759.75380-3-daniel.lezcano@linaro.org>
-	<20250910183212.6640e662@jic23-huawei>
-	<b4d2ad54-54d5-4c26-be49-b6ac671683d2@linaro.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1757686892; c=relaxed/simple;
+	bh=Y+vesMFUWtZsFpRaYxFfsKUFrGm7KkfUA64s8bpSzls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OyfVtkwciCX3mViGezJ4DAT3V5+10Dv8C8oR5jw8kCZagSwpLDo4D4xK2OyPqXt1UkaUkLMPBlK7WP4Q9wJTl7ikhmUcevGTnXzKUQRIAtwYmxCZsqcH1TTY+MJ0UB/j2Px0ryGmDERPj7cYDagt752+efTNUmNam21QBtjuOa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/JIYmXP; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45dd7b15a64so17730895e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:21:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757686889; x=1758291689; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=m6s4DjcKlA2pZ7v6EsAu/6cLi/c1+O59CbRYF+E3qZc=;
+        b=C/JIYmXPpaaP+KkFDwbo3TmhwxAwXRY6ILmQL5fOgXeHH9OsfynVY4Vctt1yr/pUQs
+         eMB3Taxoa3vHEFcboS1cinDBNXhu4JVYlSGGTWSSmeJ835bslmA02ZS/zJMmDOuprRLj
+         E/1bXDbGm0OuEhAgXoccfGAon5iMXxXGBWqdhvgSyBfiNI+ccYg0xV6WGE7abmfxKfXY
+         F5wU1rZRUs1ZLGUE9z2vAtlQPSB5z9N5xkI8YlKFJa66AC9cVAxMuzfCSe5c2JLfxhhP
+         iHpFAk4JFZ/rOxELSXHfG90MORgxsCOU2je9JrXbDaD4P4CTsu5FPJZs4SLEZ8LnQtTV
+         +xYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757686889; x=1758291689;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m6s4DjcKlA2pZ7v6EsAu/6cLi/c1+O59CbRYF+E3qZc=;
+        b=cRFAcQWsO75BIrTsamfIlwZ1NYP+r2bae3wLEIBJ+ZzYXaD1gEjUzkNZ4RODP92pSZ
+         T3rIwClSDmf/ecP/c+jIdxdswn10c2mGUJSK3hHGyp4vtMp4+vLhd43fLqODW110IZzb
+         ErknFgWrAr8HdeDhwWC5Iu9Nasvhoym7puVCDJsC1r/ksGv0q4sL+N5kjWwlH64lCNaD
+         4fv+SNbQXAE6n/+RSi1KQf5HmIrbhOVsMfSusEuN8P3i86AGSawhFhp+YH9cSbYaZeFn
+         u+TtZtVZG1ZJuQAMHvZivZXnTzaXu0NF7NivQSCwv6F8Xn3gv13eCwTe6GNmvnvtha9r
+         BSGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUU8MV+TmlP8og4kExtwJOIQHv4387Kj0D/T+VtFTCgTclRDAuSI+T0sj2sffxhhMihuMW6ExAZNOKvxbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGS160g6wE95RxkyxunR1aJJmZIXncg9PLVrz81R4+RFlHZhMe
+	NAVfMvUhrDl71bwYdz/ON8L/Dr/F8Dnj9Wj6X5JAwFGSkcF4pIaGT0DB
+X-Gm-Gg: ASbGncsXmOg66YGAvgwHusZ9rwvNIZvQhvUfwyco2SNb7LhK5446JZzeScNjYkFklF5
+	Z9ZINAHMbNYsjX7bYr/UCmt/A5UEGol4k5MKPxvLYyrjFgqtsrDHWBvDoQU80XE41vjEaBRaUAC
+	QJa91SK/ZaojipHiTLW33CcKe4LcfN1+RUIMWsIix7f+CHKXoEsXvTMVCopP6QWDA4jht4gYxQG
+	AdOyXt1ifN1aLiqzSKf7zmqT+4peINQZ4d/RpKfrG1/F6hn7f/Du+MIFegvrNTxJwHjPp9CTTW7
+	MaIJBAiLsjlLvRqjhgjG9jXICk/WeB4kkSwHajTF34fy0tD5zo6/PmcUEN9BxrTd5hVssoqlDqx
+	sNLEPtN942JXgLLvfBXikD/KxFqulp2M=
+X-Google-Smtp-Source: AGHT+IF9qckBbO1/MUfpNiCtEF6z09eaYzKoz6jvuBpXQ6fGTJDkBa8yQ4C1wqtVjU1kYwNtwHUpjg==
+X-Received: by 2002:a05:600c:3146:b0:45d:dc6c:9e30 with SMTP id 5b1f17b1804b1-45f21293373mr35435585e9.14.1757686888870;
+        Fri, 12 Sep 2025 07:21:28 -0700 (PDT)
+Received: from [192.168.2.177] ([91.116.220.47])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e015784c3sm71413955e9.10.2025.09.12.07.21.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 07:21:27 -0700 (PDT)
+Message-ID: <6f60e909-b267-4140-8384-6e06e9a199fb@gmail.com>
+Date: Fri, 12 Sep 2025 16:18:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 31/38] arm64: dts: mediatek: mt8183-pumpkin: Add power
+ supply for CCI
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-mediatek@lists.infradead.org, robh@kernel.org
+Cc: herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org,
+ conor+dt@kernel.org, chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
+ airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
+ mchehab@kernel.org, chunfeng.yun@mediatek.com, vkoul@kernel.org,
+ kishon@kernel.org, sean.wang@kernel.org, linus.walleij@linaro.org,
+ lgirdwood@gmail.com, broonie@kernel.org, andersson@kernel.org,
+ mathieu.poirier@linaro.org, daniel.lezcano@linaro.org, tglx@linutronix.de,
+ atenart@kernel.org, jitao.shi@mediatek.com, ck.hu@mediatek.com,
+ houlong.wei@mediatek.com, kyrie.wu@mediatek.corp-partner.google.com,
+ andy.teng@mediatek.com, tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com,
+ shane.chien@mediatek.com, olivia.wen@mediatek.com, granquet@baylibre.com,
+ eugen.hristev@linaro.org, arnd@arndb.de, sam.shih@mediatek.com,
+ jieyy.yang@mediatek.com, frank-w@public-files.de, mwalle@kernel.org,
+ fparent@baylibre.com, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-sound@vger.kernel.org
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-32-angelogioacchino.delregno@collabora.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <20250724083914.61351-32-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
-
-On Thu, 11 Sep 2025 14:55:00 +0200
-Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-
-> Hi Jonathan,
-> 
-> thanks for the review
-> 
-> On 10/09/2025 19:32, Jonathan Cameron wrote:
-> > On Wed, 10 Sep 2025 17:57:56 +0200
-> > Daniel Lezcano <daniel.lezcano@linaro.org> wrote:  
-> 
-> [ ... ]
-> 
-> >> +/* Main Configuration Register */
-> >> +#define REG_ADC_MCR(__base)		((__base) + 0x00)  
-> > 
-> > I'm not really convinced these macros help over just having
-> > readl(info->regs + NXP_SADC_MCR_REG);  
-> 
-> That is really a matter of taste :)
-> 
-> I used to create this format in order to stick the macros with the 
-> debugfs register code which is not part of these changes. There is a 
-> similar format in drivers/clocksource/timer-nxp-stm.c or 
-> driver/thermal/mediatek/lvts.c IMHO is less prone to error than base + 
-> REG all around the code.
-> 
-> Do you want me to convert all the macros to info->__base + MACRO ?
-
-I'm not that fussed if there is other code for related devices using this
-style.  To me it adds little benefit but it doesn't hurt that much either!
-
-> 
-> [ ... ]
-> 
-> >> +static const struct iio_chan_spec nxp_sar_adc_iio_channels[] = {
-> >> +	ADC_CHAN(0, IIO_VOLTAGE),
-> >> +	ADC_CHAN(1, IIO_VOLTAGE),
-> >> +	ADC_CHAN(2, IIO_VOLTAGE),
-> >> +	ADC_CHAN(3, IIO_VOLTAGE),
-> >> +	ADC_CHAN(4, IIO_VOLTAGE),
-> >> +	ADC_CHAN(5, IIO_VOLTAGE),
-> >> +	ADC_CHAN(6, IIO_VOLTAGE),
-> >> +	ADC_CHAN(7, IIO_VOLTAGE),
-> >> +	IIO_CHAN_SOFT_TIMESTAMP(32),  
-> > 
-> > Whilst we only insist on monotonic numbering, putting it all the way down
-> > at 32 seems excessive. Why not 8?  Perhaps a comment if this is to avoid
-> > moving it for some future feature.  
-> 
-> The ADC has 8 channels for external acquisition however others channels 
-> 8->31 are described as reserved. They may evolve in the future to more 
-> channels. That is probably the reason why 32 is used here.
-
-Add a comment on that so we don't forget the reasoning.
-
-Thanks,
-
-Jonathan
 
 
+
+On 24/07/2025 10:39, AngeloGioacchino Del Regno wrote:
+> Add a power supply for the Cache Coherent Interconnect node as it
+> is required to perform CPU DVFS because both are scaling together.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+Applied, thanks
+
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+> index dbdee604edab..d5fcb010e1ac 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts
+> @@ -482,6 +482,10 @@ &mfg {
+>   	domain-supply = <&mt6358_vgpu_reg>;
+>   };
+>   
+> +&cci {
+> +	proc-supply = <&mt6358_vproc12_reg>;
+> +};
+> +
+>   &cpu0 {
+>   	proc-supply = <&mt6358_vproc12_reg>;
+>   };
 
 
