@@ -1,245 +1,195 @@
-Return-Path: <linux-kernel+bounces-814348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 511C1B552BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:11:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD418B552C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:12:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00094582991
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07E721D61F4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:12:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BAA43164C0;
-	Fri, 12 Sep 2025 15:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CAE31CA71;
+	Fri, 12 Sep 2025 15:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PvctjGLf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T7cdSouk";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PvctjGLf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T7cdSouk"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nJPtWhqb"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EF031353D
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BD731A557
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757689803; cv=none; b=TaRYIhXkmynDZKM9gvXwqQxOuNG7EBRJqqjRIB4Jqs4mHTc0pNzoLN62n7IEp7xTjJtRWEvetVLXJ95gHqt+c6Cuwzjw4uk4VQlmVCZAXoiCQIb7QgnO/Fz0ibPUJenyfjILE/fhiS4zU1x3tqbAX8zC2WAzGTeAQJZyv+XhodU=
+	t=1757689818; cv=none; b=Oug0gxTphtOKBkDj4dLxJkbF8nIcWDwPuMfuWeKqnKzKFQ/FpQfIrgRKKfSMIaewSgnv1iC2/Tv9xaSjRapl8Stw8wf6ehbSHJPHhjopCS3Qe0WaNG8gS/LIZYiTtVQPs74tnJGHnH8a2szicF+q5X+lb2HCpmH64eefhRqwrbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757689803; c=relaxed/simple;
-	bh=yBMtdHR8Z2DW6AnutSlIlWUYFnDNkrdCerjgdZMZ7KU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ss4mbloEMkbjHHmlnHjST3U0O72XiQOlQ/IZVNScdi+bY5A5v4AmVYOl5F8RQm3lTaf0tt4e/azvzpj/M4JC8zMejlMd2WCpYfga0RooCog/F5J3p4s5ry6ynuY78Y2XdhIBKDtKgABDhBMr1Db6uT2UsU6YyrPkWzHTuSY+7/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PvctjGLf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T7cdSouk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PvctjGLf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T7cdSouk; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 36FC620F12;
-	Fri, 12 Sep 2025 15:09:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757689798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F/pM/9W1r75+CaDorOZpGk2LU+S6hOX+QgOMBroL+zs=;
-	b=PvctjGLfSuDclCddVBNmBQSwY9/Flua3RqMf0XLlwJ0ZwrSrQzsQkvzOzIHqHbbMlrVVf3
-	SMHveOmH9RTeuGx+A6NvQZpSaoe2A/1Yq+AoT8mgpM0pmfSy00GSzGb+n1YLaigb5xwA+n
-	e7GxWfsk9Xmim5wGMqimqplINPibA+g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757689798;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F/pM/9W1r75+CaDorOZpGk2LU+S6hOX+QgOMBroL+zs=;
-	b=T7cdSouk/K4l81JJ/UOIziYPp4EFoWTjUIl9vPrTFC0u88tskt6+l+DR6pgfOdpfMy//q1
-	ku1F5jIgoOkcWsCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=PvctjGLf;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=T7cdSouk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1757689798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F/pM/9W1r75+CaDorOZpGk2LU+S6hOX+QgOMBroL+zs=;
-	b=PvctjGLfSuDclCddVBNmBQSwY9/Flua3RqMf0XLlwJ0ZwrSrQzsQkvzOzIHqHbbMlrVVf3
-	SMHveOmH9RTeuGx+A6NvQZpSaoe2A/1Yq+AoT8mgpM0pmfSy00GSzGb+n1YLaigb5xwA+n
-	e7GxWfsk9Xmim5wGMqimqplINPibA+g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1757689798;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F/pM/9W1r75+CaDorOZpGk2LU+S6hOX+QgOMBroL+zs=;
-	b=T7cdSouk/K4l81JJ/UOIziYPp4EFoWTjUIl9vPrTFC0u88tskt6+l+DR6pgfOdpfMy//q1
-	ku1F5jIgoOkcWsCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C867113869;
-	Fri, 12 Sep 2025 15:09:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id b1yDL8U3xGi0MQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 12 Sep 2025 15:09:57 +0000
-Date: Fri, 12 Sep 2025 17:09:57 +0200
-Message-ID: <87a52zr9kq.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: cryolitia@uniontech.com
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-sound@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Mingcong Bai <jeffbai@aosc.io>,
-	Kexy Biscuit <kexybiscuit@aosc.io>,
-	Nie Cheng <niecheng1@uniontech.com>,
-	Zhan Jun <zhanjun@uniontech.com>,
-	Feng Yuan <fengyuan@uniontech.com>,
-	qaqland <anguoli@uniontech.com>,
-	kernel@uniontech.com
-Subject: Re: [PATCH v2 0/3] ALSA: usb-audio: add module param device_quirk_flags
-In-Reply-To: <20250912-sound-v2-0-01ea3d279f4b@uniontech.com>
-References: <20250912-sound-v2-0-01ea3d279f4b@uniontech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1757689818; c=relaxed/simple;
+	bh=EH8Jpbjf3tVpIiReCk8fmBnFNlqArmOcU2ajNR0GzrM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=m6oyQ0LnYqIfCdOMdzIcZpQVo+oxaAJSOZFHuFmpJYo/O3+uy4RVFBrRwlkeHBtJ5g3erJ92kqOy64WtM4lG6/8Y8SVSjBxpSc8J3U3I9ztFnfDLb0XN08ea5wKDsfUkNNHAs9Orudknw87g+VIW0sRWV2yBfRCWHtxENsaB7HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nJPtWhqb; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3d44d734cabso1670378f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 08:10:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757689815; x=1758294615; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EH8Jpbjf3tVpIiReCk8fmBnFNlqArmOcU2ajNR0GzrM=;
+        b=nJPtWhqbjPPD2Nx3MHiLul2qrJQN5Qwvj3VTNUd5tioRXJfFREvUMol/uoBAbJqikN
+         1lSx3mOGYDVRV5NQZQVvlPMN+XbhbA4hlx9R/P/6p3K/DfglKaQ/5uCv7hiTAnTVyNi9
+         nKgOJMLRqej6muFKUYfT7yYDxOsmVXUqBMcpogty94Yt/QiyOpwCmM0meF0fdFVIpmg/
+         8ssCUC2Wu0yVP5PgTeVGwPTGxmgQL5aaTcgJEozMY76Y6MRCucmWUimvhuCydARkwNEQ
+         G743Spty4rI/xHLqCbsTkFygsxxNgx7orYw/nYhYEjLi2hwec4J1H1y38E6aggzotUA5
+         9i1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757689815; x=1758294615;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EH8Jpbjf3tVpIiReCk8fmBnFNlqArmOcU2ajNR0GzrM=;
+        b=YNwSezm/dm5xxONBTR5GOhlrGJfZMlLQE1+rIbZ8dXFu6PnqFhX6As4OeOzWhH9xYA
+         jrvo/hf2QOFEOLmIzAnwx1XkYZoPmVyzfl+1hjBe2XVEmoO0u8157toD+60UQqP8IwYo
+         0YjvbxpeYA+9Pa7G8n662z8PRTPoBdmStdbYKQvvXi0tF1St5mZR/KjgZ85zipAOVdT5
+         3x9W78jyKKsTOx45QDkD1jeekFlcJMpkC54OxmnGWauKKAeS5kmdTxvaPAlWRkqf02Ke
+         0dxVwmF2SK6Av93ppf33+d1ruWiVMXlvOCY1OZ6cYqs5PwRBq2o7Jgdu7E7Wg69oKJhs
+         F8EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxQoBB87RSbCubyEiKpa8O1CeZBuhWR4UME9NgZyCpRCRG5u2b79reFvVOwMHjGFhBpCHf0Nois3pABxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyspS4uvNcZCv23DIpKYv+VkkCd5w5kgXWnpX/QSEeEOBo7AHiB
+	SLk3AIrMlCADs5Xr/zzYlmmnqPrsu3JIEjBXGVnX6X720/kig8obLUHo
+X-Gm-Gg: ASbGnctKqui43zANkplg7d2nbTaVFWgG/EFPD9mQ9UtViNPAV4Dqm9Eg+jsG0S2/S7f
+	nqsNRkMdlsy0KRGYdc1RUR+oqiJPj6oMeEjt6eeqcUz8sfgkQ0DWcs7R3TIqzbmS3Qu/F4Juvej
+	UJlXN1+w22zBdYfwjzVcICB9BQCNsuPKvwhfYNRkXSTadRnK7V6sqjkyPuMpAShjZZG5PwvkHo5
+	VoY55Jt+NF+/05mXjG3vyvoQEwe2johCu7zM1RogvcNd8QBdoAbPKxUVo3IkXBGOpoI+8NKYRZx
+	K+/1xX24oC/w1W72wBULZlQK4lZHEa7BHFqf0eLW06YhKU+pGLhzrha9jPzv5ZpcFQ36pjC4BEJ
+	ij8z0sPs/DM8OjMz6cv74jw==
+X-Google-Smtp-Source: AGHT+IFBZ7ayZR6As5TqBDPX+xL1vq+uJ+g/MEFjF5Qhn9/NpX91L+SlvU7V18reC2hiHLdmFxq/pg==
+X-Received: by 2002:a05:6000:60f:b0:3e7:4835:8ea7 with SMTP id ffacd0b85a97d-3e765780af8mr2560033f8f.8.1757689813723;
+        Fri, 12 Sep 2025 08:10:13 -0700 (PDT)
+Received: from [10.5.0.2] ([185.128.9.25])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e760775b13sm7063783f8f.10.2025.09.12.08.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 08:10:13 -0700 (PDT)
+Message-ID: <6bf6a282ee8a4e55ebba21d89ec6dcf3fa499188.camel@gmail.com>
+Subject: Re: [PATCH v2 2/2] iio: adc: Add the NXP SAR ADC support for the
+ s32g2/3 platforms
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>, David Lechner
+	 <dlechner@baylibre.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Jonathan Cameron	
+ <jic23@kernel.org>, nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, 
+	conor+dt@kernel.org, krzk+dt@kernel.org, linux-iio@vger.kernel.org,
+ s32@nxp.com, 	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ chester62515@gmail.com, 	mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com
+Date: Fri, 12 Sep 2025 16:10:38 +0100
+In-Reply-To: <20250912151718.00004cf1@huawei.com>
+References: <20250910155759.75380-1-daniel.lezcano@linaro.org>
+		<20250910155759.75380-3-daniel.lezcano@linaro.org>
+		<20250910183212.6640e662@jic23-huawei>
+		<b4d2ad54-54d5-4c26-be49-b6ac671683d2@linaro.org>
+		<c746e72c-dbd9-4afb-9da4-5d13733fd561@baylibre.com>
+	 <20250912151718.00004cf1@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:mid,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 36FC620F12
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.51
+MIME-Version: 1.0
 
-On Fri, 12 Sep 2025 08:48:57 +0200,
-Cryolitia PukNgae via B4 Relay wrote:
-> 
-> As an implementation of what has been discussed previously[1].
-> 
-> > An open question is whether we may want yet a new module option or
-> > rather extend the existing quirk option to accept the strings
-> > instead.  Basically, when the given argument has a colon, it's a new
-> > syntax.  If it's only a number, it's an old syntax, and parse like
-> > before.  But, I'm open for either way (a new option or extend the
-> > existing one).
-> 
-> I would like to add a new param. The existed param
-> `static unsigned int quirk_flags[SNDRV_CARDS]` seems to related to
-> some sequence the card probed. To be honest, I havn't fully understood
-> it. And it seems hard to improve it while keeping compatibility.
-> 
-> 1. https://lore.kernel.org/all/87h5xm5g7f.wl-tiwai@suse.de/
-> 
-> Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
-> ---
-> Changes in v2:
-> - Cleaned up some internal rebase confusion, sorry for that
-> - Link to v1: https://lore.kernel.org/r/20250912-sound-v1-0-cc9cfd9f2d01@uniontech.com
-> 
-> ---
-> Cryolitia PukNgae (3):
->       ALSA: usb-audio: add two-way convert between name and bit for QUIRK_FLAG_*
->       ALSA: usb-audio: add module param device_quirk_flags
->       ALSA: doc: add docs about device_device_quirk_flags in snd-usb-audio
+On Fri, 2025-09-12 at 15:17 +0100, Jonathan Cameron wrote:
+> On Thu, 11 Sep 2025 08:26:06 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+>=20
+> > On 9/11/25 7:55 AM, Daniel Lezcano wrote:
+> > >=20
+> > > Hi Jonathan,
+> > >=20
+> > > thanks for the review
+> > >=20
+> > > On 10/09/2025 19:32, Jonathan Cameron wrote:=C2=A0=20
+> > > > On Wed, 10 Sep 2025 17:57:56 +0200
+> > > > Daniel Lezcano <daniel.lezcano@linaro.org> wrote:=C2=A0=20
+> > >=20
+> > > [ ... ]
+> > > =C2=A0=20
+> >=20
+> > ...
+> >=20
+> > > =C2=A0=20
+> > > > > +=C2=A0=C2=A0=C2=A0 indio_dev->name =3D dev_name(dev);=C2=A0=20
+> > > >=20
+> > > > This should be the 'part number'.=C2=A0 That is a little ill define=
+d
+> > > > for a SoC integrated ADC, but generally not what we get from dev_na=
+me()
+> > > > on the platform_device.=C2=A0=20
+> > >=20
+> > > Sorry, I don't get the comment. If I refer to the different drivers t=
+here
+> > > is not consistency with the iio_dev->name.=C2=A0=20
+> >=20
+> > dev_name() will be something like adc@12345678 from the devicetree,
+> > so not the "part number".
+> >=20
+> > >=20
+> > > rtq6056.c:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 indio_dev->name =3D "rtq6056=
+";=C2=A0=20
+> >=20
+> > This style is preferred if there is only one supported part.
+> >=20
+> > > rzg2l_adc.c:=C2=A0=C2=A0=C2=A0 indio_dev->name =3D DRIVER_NAME;=C2=A0=
+=20
+> >=20
+> > We try to avoid using a macro for the driver name like this.
+> >=20
+> > > sc27xx_adc.c:=C2=A0=C2=A0 indio_dev->name =3D dev_name(dev);=C2=A0=
+=20
+> >=20
+> > Looks like we missed catching this one in review.
+>=20
+> There are a bunch of historical drivers (and maybe some more recent
+> ones that snuck in). The risk of changing that ABI seemed too high to fix=
+ them
+> up.=C2=A0 I guess this happens often enough I should add a comment to the=
+ ones
+> that still do this about it being wrong but left alone as the ABI was in =
+use.
+>=20
 
-Well, what I had in mind is something like:
+Yeah, we (at ADI) also had the highly questionable practise of using the OF=
+ node
+name until we the label property got in. So I would not be surprised if som=
+e of
+those are still around.
 
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -73,7 +73,7 @@ static bool lowlatency = true;
- static char *quirk_alias[SNDRV_CARDS];
- static char *delayed_register[SNDRV_CARDS];
- static bool implicit_fb[SNDRV_CARDS];
--static unsigned int quirk_flags[SNDRV_CARDS];
-+static char *quirk_flags[SNDRV_CARDS];
- 
- bool snd_usb_use_vmalloc = true;
- bool snd_usb_skip_validation;
-@@ -103,8 +103,8 @@ module_param_array(delayed_register, charp, NULL, 0444);
- MODULE_PARM_DESC(delayed_register, "Quirk for delayed registration, given by id:iface, e.g. 0123abcd:4.");
- module_param_array(implicit_fb, bool, NULL, 0444);
- MODULE_PARM_DESC(implicit_fb, "Apply generic implicit feedback sync mode.");
--module_param_array(quirk_flags, uint, NULL, 0444);
--MODULE_PARM_DESC(quirk_flags, "Driver quirk bit flags.");
-+module_param_array(quirk_flags, charp, NULL, 0444);
-+MODULE_PARM_DESC(quirk_flags, "Driver quirk overrides.");
- module_param_named(use_vmalloc, snd_usb_use_vmalloc, bool, 0444);
- MODULE_PARM_DESC(use_vmalloc, "Use vmalloc for PCM intermediate buffers (default: yes).");
- module_param_named(skip_validation, snd_usb_skip_validation, bool, 0444);
-@@ -692,6 +692,22 @@ static void usb_audio_make_longname(struct usb_device *dev,
- 	}
- }
- 
-+static void set_quirk_flags(struct snd_usb_audio *chip, int idx)
-+{
-+	int i;
-+
-+	/* old style option found: the position-based integer value */
-+	if (quirk_flags[idx] &&
-+	    !kstrtou32(quirk_flags[idx], 0, &chip->quirk_flags))
-+		return;
-+
-+	/* take the default quirk from the quirk table */
-+	snd_usb_init_quirk_flags(chip);
-+	/* add or correct quirk bits from options */
-+	for (i = 0; i < ARRAY_SIZE(quirk_flags); i++)
-+		snd_usb_apply_quirk_option(chip, quirk_flags[i]);
-+}
-+
- /*
-  * create a chip instance and set its names.
-  */
-@@ -750,10 +766,7 @@ static int snd_usb_audio_create(struct usb_interface *intf,
- 	INIT_LIST_HEAD(&chip->midi_v2_list);
- 	INIT_LIST_HEAD(&chip->mixer_list);
- 
--	if (quirk_flags[idx])
--		chip->quirk_flags = quirk_flags[idx];
--	else
--		snd_usb_init_quirk_flags(chip);
-+	set_quirk_flags(chip, idx);
- 
- 	card->private_free = snd_usb_audio_free;
- 
-.... and snd_usb_apply_quirk_option() adds or corrects the quirk bits
-based on the string value if it matches with the probed device.
-This function will be similar like your parser.
+- Nuno S=C3=A1=20
 
-In that way, the old quirk_flags options work as-is, while you can use
-a new style by passing values with "X:Y:Z" style.
-
-
-Takashi
+>=20
+> >=20
+> > > mt6359-auxadc.c:=C2=A0 indio_dev->name =3D adc_dev->chip_info->model_=
+name;=C2=A0=20
+> >=20
+> > This is preferred if there is more than one part supported in the drive=
+r.
+> >=20
+> > > mcp3911.c:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 indio_dev->name =3D spi_get_=
+device_id(spi)->name;=C2=A0=20
+> >=20
+> > This is fine too in cases where there isn't chip_info.
+> >=20
+> > >=20
+> > > Are you suggesting to use the compatible part number ?
+> > >=20
+> > > =C2=A0=C2=A0=C2=A0=C2=A0indio->name =3D "s32g2-sar-adc";
+> > > =C2=A0=20
+> >=20
+> > That works.
+> >=20
+> >=20
+> >=20
 
