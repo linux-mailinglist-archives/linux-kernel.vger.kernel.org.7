@@ -1,93 +1,108 @@
-Return-Path: <linux-kernel+bounces-814432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A42B5540A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CB4B5540C
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A76057A2845
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE88AE4B62
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7129623F429;
-	Fri, 12 Sep 2025 15:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AC5246764;
+	Fri, 12 Sep 2025 15:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="vYHl0HmB"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="Xo/rFNoS"
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C64821D3F5;
-	Fri, 12 Sep 2025 15:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA3921D3F5;
+	Fri, 12 Sep 2025 15:47:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757692029; cv=none; b=dmFz1U2GbvaLZSYGBv8OBbU4QgKaRPBHOFbpy1wY5PS/4742OqedmoPgaFjh609ZEk/h7s97PqBKiiueDSmIn6DH56E3hWb3HiV5uUYZwebJM6gdZvkAfmcirVWKAA7kryBq1Cp+NIcr2Oi+RawqpG+RfZoY+VYwmMSD1LfLu2g=
+	t=1757692066; cv=none; b=TRPHUM+zTzYDKizoYxANr71etlRsO7xPHm+CFNFrheGRdRsck8DaV9jw15HnfKeSoKaCDvgnM1b0LryaeQQ311pkH2xFRO7z2tMqpPoQI8vHdNB2/jkuPxMQ6Lna0kUzuWI8sTkD+sUC4TXBCFiOKB6ILYdZ1QgrzIKPRReFVw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757692029; c=relaxed/simple;
-	bh=KV9fPRdJJi11XK23xc1n6iiyjQO6SEMZD22HfaRPNi4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hB6iNPmGPgnz1Bbaqe681hFcw1gLexw3ufMpORCjXWuZH7chs6x3+CrTe0EwNMJ83vKdp2Hj7L7FQ/FzvYu8d2tnXeuOgeaGYQ0PEa/HMRGC1O8DA6JB5XV02Nka78I/wj073GK7Xz8We+o/Efb3Ixvkk3U0igfV7nxoTlvj6Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=vYHl0HmB; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4cNf1k6d6Dzm174p;
-	Fri, 12 Sep 2025 15:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1757692023; x=1760284024; bh=KV9fPRdJJi11XK23xc1n6iiy
-	jQO6SEMZD22HfaRPNi4=; b=vYHl0HmBmRwdAYGZeNrHzYRpEIUS0QF8lpuHG5u2
-	SECQVYGByIz595cOUy2X3nMVeQP4wA0ceSv08Xk5Sb7tm++MKSlGz7ig9CPXPHWq
-	bHgT6wsc3bf0gkEb21vvcq7gDnzqGv27qrDOiMypzP6u2SMpgyxELctcQ1sPcSb5
-	pDPRnA2Fb0K8+fL6d5EdS78YcLLKIdtB5/s/dofO6tz8vmPGaOfGMDbZPZiJBzW9
-	zyvzxybwV2PV4/OWkhlocwTVXKVvdIuuLWhvh/2paB92zak2OOudhWKOGeZ/qP8K
-	x/a+YHwVhnhAlyK+KEocWp0fdIUqUZqU1NkVRRd+MS857Q==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id Aa2NVnjuFGVG; Fri, 12 Sep 2025 15:47:03 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4cNf1N3BLwzm174V;
-	Fri, 12 Sep 2025 15:46:47 +0000 (UTC)
-Message-ID: <39fa7ce5-1d58-456f-a58a-907aaa59c9ab@acm.org>
-Date: Fri, 12 Sep 2025 08:46:46 -0700
+	s=arc-20240116; t=1757692066; c=relaxed/simple;
+	bh=jPe1pdv9rph8uVbl98SfuP23RiP7V6VDtBfkTK5lkSI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dyzRiXmdLYElX605lsoHSHt7wT0Z2g8K1DZfQSd4HJqzx38dMyAeRFyYMFFVM1lRR0M1mAtVjb14pYmyyfcJUU0h902/yiKuG2FP0fRTbk7XprXGUA+RNK/M0HLmEd9cGgUpYfvOLOCruHv9DsYl+2WvMELn2L1FqcPKF53Rs6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=Xo/rFNoS; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 22a15e980;
+	Fri, 12 Sep 2025 23:47:39 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: rafael@kernel.org
+Cc: robert.moore@intel.com,
+	lenb@kernel.org,
+	linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH] acpi: replace ACPI_FREE with acpi_ut_delete_object_desc
+Date: Fri, 12 Sep 2025 15:47:35 +0000
+Message-Id: <20250912154735.158537-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/4 5.10.y] overflow: Allow mixed type arguments in
- overflow macros
-To: Eliav Farber <farbere@amazon.com>, luc.vanoostenryck@gmail.com,
- rostedt@goodmis.org, mingo@redhat.com, natechancellor@gmail.com,
- ndesaulniers@google.com, keescook@chromium.org, sashal@kernel.org,
- akpm@linux-foundation.org, ojeda@kernel.org, elver@google.com,
- gregkh@linuxfoundation.org, kbusch@kernel.org, sj@kernel.org,
- leon@kernel.org, jgg@ziepe.ca, linux-kernel@vger.kernel.org,
- linux-sparse@vger.kernel.org, clang-built-linux@googlegroups.com,
- stable@vger.kernel.org
-Cc: jonnyc@amazon.com
-References: <20250912153040.26691-1-farbere@amazon.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250912153040.26691-1-farbere@amazon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a993e9c5da603a1kunmf7421b2a2a66ff
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCGU4fVklDT09KGk8YS0weHVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+DKIM-Signature: a=rsa-sha256;
+	b=Xo/rFNoS1dz+c0yx+HedhqhhqKgS6VOs02EpGJlZ+ROoYv3jt7JF0MFeEBwRqFvpp11mzAIkZZLDxwUOpXYrhRiw50Jd+FuLdoEc2zPJPv6pXoBkOpLLkYcX8GLEagXU/Y8JaNKHoB/+jsESq0aDeDCcpuSree6Z4H178pAaWPo=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=b9yWIDSto645FMwYolwTKJoPgHsiJq2d08oXP46kQO4=;
+	h=date:mime-version:subject:message-id:from;
 
-On 9/12/25 8:30 AM, Eliav Farber wrote:
-> BarteVan Assche (1):
+acpi_ut_create_internal_object may allocate memory from a slab cache
+via kmem_cache_zalloc, but the code currently frees it with ACPI_FREE,
+which calls kfree. This mismatch prevents the object from being
+released properly and may lead to memory leaks or other issues.
 
-Please spell my name correctly in future emails.
+Fix this by replacing ACPI_FREE with acpi_ut_delete_object_desc, which
+matches the allocation method used for internal objects.
 
-Thanks,
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
+ drivers/acpi/acpica/nsxfname.c | 2 +-
+ drivers/acpi/acpica/utobject.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Bart.
+diff --git a/drivers/acpi/acpica/nsxfname.c b/drivers/acpi/acpica/nsxfname.c
+index 1db831545ec8..b6895a48ae68 100644
+--- a/drivers/acpi/acpica/nsxfname.c
++++ b/drivers/acpi/acpica/nsxfname.c
+@@ -601,7 +601,7 @@ acpi_status acpi_install_method(u8 *buffer)
+ error_exit:
+ 
+ 	ACPI_FREE(aml_buffer);
+-	ACPI_FREE(method_obj);
++	acpi_ut_delete_object_desc(method_obj);
+ 	return (status);
+ }
+ ACPI_EXPORT_SYMBOL(acpi_install_method)
+diff --git a/drivers/acpi/acpica/utobject.c b/drivers/acpi/acpica/utobject.c
+index 272e46208263..8362204b57b5 100644
+--- a/drivers/acpi/acpica/utobject.c
++++ b/drivers/acpi/acpica/utobject.c
+@@ -148,7 +148,7 @@ union acpi_operand_object *acpi_ut_create_package_object(u32 count)
+ 	package_elements = ACPI_ALLOCATE_ZEROED(((acpi_size)count +
+ 						 1) * sizeof(void *));
+ 	if (!package_elements) {
+-		ACPI_FREE(package_desc);
++		acpi_ut_delete_object_desc(package_desc);
+ 		return_PTR(NULL);
+ 	}
+ 
+-- 
+2.34.1
+
 
