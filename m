@@ -1,122 +1,197 @@
-Return-Path: <linux-kernel+bounces-813226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D893AB54234
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:52:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27B2B5423F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 07:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65F08483A8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0635D586A4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4792773D0;
-	Fri, 12 Sep 2025 05:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hooFbfX9"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E37C270EC1
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 05:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3BD27EC80;
+	Fri, 12 Sep 2025 05:54:58 +0000 (UTC)
+Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [13.75.44.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BAE279DC4;
+	Fri, 12 Sep 2025 05:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.75.44.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757656311; cv=none; b=MX7G7/ZnHrylr7rmmGAbS5RDst9xYsl2cCi2xdj96IqVS3HUzEaxGf/57HGB72MjuCIB+H2lfnyEcmzxSNSf4JbLlPLrHID8NdCay2NLRt6hhDSZoIJX9LsDdmuVN4JFcs4YdsxU143IQJfT+duIdBY/2YXq5c6PHUlZnRE+ETs=
+	t=1757656497; cv=none; b=lGTnoKINcmFscaE4Ir/aDxlMW+HFpHU0M9DqFa7lLSZbLpEXGumf4RxDRzISv2IMEc/mfXRiwbv38YXARQmXA3Lbl5+zRFRtHeXqgs8UKb+lkmBqWN0ezUWiq2XNJO+WYuAzxIbdaitW1pf92WRMKm6uq3nBJM0PsDA9zH6wiko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757656311; c=relaxed/simple;
-	bh=7i6b0HQZmpItcoHiRjDWPxsI+KEN2RjAWI+wYkI2Gzs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ND9OpVrdjGrS+KK7mqtAb3q9hLkS9/7BBeWQRG5DuVkHAdCLRpzytqEbyjIx0z4kh8IXTlI/tm/UiFwS9rosLg2U5RXo+/brw6fjAQeClNcquRRsQiIExbrljF+B2Sr+fZ4+19s6bn8L+vO+I9BtR87NyYyiiKuf0Nv6zMDMizA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hooFbfX9; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7728815e639so1205098b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 22:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757656309; x=1758261109; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wwxrf7orhL2KYO0iCZZdsGPUWyavjuMuxgjcqzj0tsA=;
-        b=hooFbfX9qGIPRouDdpxKBh+VC5sYTXZliz4PmWvxPCKl127AIagsLLtwPvzPQBXWHP
-         s4ekyjZzE1pcGPnQ0s5HDN/8EHEH4Vm4cCTG6oPTDCBSuu2ZdF16Zq2IqYg2/iKHJ7nI
-         4IwiiHRCcKEiujfc8bI18/8dED7qymMVGHMAHCFHcO5V3hIyrrE+dU/BGvOHbNYJsGHa
-         WfHh4XrwKEWttPfNv5Nw9NE7cfEfvp/vXkwGzC/TdDX7emiY5122jLuF9EdigCoNkO8Y
-         4Su5s+5Rl6OMi23xBHWUrE9UiE4W5DSA4YCBfNaQR1X0D04uRrqtGVobhP4cr32bOK4Z
-         lNRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757656309; x=1758261109;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wwxrf7orhL2KYO0iCZZdsGPUWyavjuMuxgjcqzj0tsA=;
-        b=BxQEJkgFmMUoRUY/49mBdd4YupQU4xVAe1F2Db7kxF8JWEcZAD9zFbvEz6kdlhcNTd
-         cR4RKb/TYHhV0gwSmxX61I/xZmYJxGttvrd73WKqyd8KzBNfQau8+hLv/r2xuA+Hx1aG
-         +/+xU9lARAvVF1sovpMgpHxPdsd25SnOQ6s+rwJIiUyHFSsIAWbIdX0sLS2W4lx3GiPj
-         9rOEi5Z2kXVJGKn7Py9RUJN9p1de0ySsEBCUcCvPdALOlnxW4HoJboB/yOYG+0T/axTY
-         AaIN2BE+5dKrJ9R42nBsa/8kej3z+eUZFAXXbzAmdVNrFl9egjcCzS9iNzeC253NOuWu
-         JPJA==
-X-Gm-Message-State: AOJu0YyXlsHSLEoxYF5IoRMybMli5ddHVrf2t9jDxwhzGPpjJ+uyqNIQ
-	w2VOZcM1Vn/aSQ1OOuwEM+OnlSHlbThCsMDjvd2vgiBrw5lDL11dMiov
-X-Gm-Gg: ASbGnctOyZczDiqnsfO8FChojYR/zyGKkENn51jDT5e3hkp1s5o6JkkDIJRcEKDQdkF
-	M/t3YSfKNRdaWsfiRk7ZSfvIIVU57pTu3QQvX4LWr2r2/tiTV9/OxCPVX3+lPtl7F17jr4HO9h6
-	srdaHieF42ZMQGovO8iIEPJW05l3h2N4AW17PmLn66+lGT40YwyisAzdL8Xl2nMdqZfSxaMMp40
-	FVwZD2N3LlCSA5YYsu1peMqC+2LO/ty85RMTd1FtFK3LZhrkeZPNSw2vM5Fi4zsz9Kln33ecMiT
-	0a876FFLhDO9lvwC6CLpLPoaUxJTDIdHjGQBv3AvD2kc1yHDCXKqb1lupwYcptO5fd4F9ZwoY8I
-	Duph9pkUxDQcugrlibMUEZYOPDJHX0Myxo8VQNCPjluu6KA==
-X-Google-Smtp-Source: AGHT+IGzJaB63wIa8y1WxrhARLk2qyeDzg2l8cffF9pjyL26hVSSSTlaS01B7UHtSYXcq7zGWNVPeg==
-X-Received: by 2002:a05:6a20:7f9c:b0:249:467e:ba68 with SMTP id adf61e73a8af0-2602c90cda4mr2342631637.50.1757656309414;
-        Thu, 11 Sep 2025 22:51:49 -0700 (PDT)
-Received: from localhost ([45.90.208.139])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7761853866bsm450111b3a.95.2025.09.11.22.51.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Sep 2025 22:51:48 -0700 (PDT)
-Date: Fri, 12 Sep 2025 13:51:43 +0800
-From: Jinchao Wang <wangjinchao600@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mike Rapoport <rppt@kernel.org>,
-	"Naveen N . Rao" <naveen@kernel.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	kasan-dev@googlegroups.com, "David S. Miller" <davem@davemloft.net>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/19] mm/ksw: Introduce real-time Kernel Stack Watch
- debugging tool
-Message-ID: <aMO07xMDpDdDc1zm@mdev>
-References: <20250910052335.1151048-1-wangjinchao600@gmail.com>
+	s=arc-20240116; t=1757656497; c=relaxed/simple;
+	bh=YZ7fSuvOg4a6mIjRDQpqGb1lB0J9UHwtdb6bmbT1l3Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=F/2Ond8Qh7rBFFDFU6O7ePM4/HES4AHzAhCcLtpRQONV0qcchuXM+ieb7yis/w/AmnsKku49GpdcijHhd8azasvyd7DpuyX98B3+1LEA0jvl7YaDKmI3gQ1mX3MLwqQ/gAek9qHMy2gLlqp9c9/ueSGkNKvigXy3xMLQI9HnaZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=13.75.44.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from E0005182LT.eswin.cn (unknown [10.12.96.155])
+	by app2 (Coremail) with SMTP id TQJkCgAHmZJztcNo553OAA--.31689S2;
+	Fri, 12 Sep 2025 13:53:57 +0800 (CST)
+From: weishangjuan@eswincomputing.com
+To: devicetree@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com,
+	yong.liang.choong@linux.intel.com,
+	vladimir.oltean@nxp.com,
+	rmk+kernel@armlinux.org.uk,
+	faizal.abdul.rahim@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	inochiama@gmail.com,
+	jan.petrous@oss.nxp.com,
+	jszhang@kernel.org,
+	p.zabel@pengutronix.de,
+	boon.khai.ng@altera.com,
+	0x1207@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	emil.renner.berthing@canonical.com
+Cc: ningyu@eswincomputing.com,
+	linmin@eswincomputing.com,
+	lizhi2@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com,
+	Shangjuan Wei <weishangjuan@eswincomputing.com>
+Subject: [PATCH v6 0/2] Add driver support for Eswin eic7700 SoC ethernet controller
+Date: Fri, 12 Sep 2025 13:53:52 +0800
+Message-Id: <20250912055352.2832-1-weishangjuan@eswincomputing.com>
+X-Mailer: git-send-email 2.31.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910052335.1151048-1-wangjinchao600@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:TQJkCgAHmZJztcNo553OAA--.31689S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZFyUXFy7uw1UZr43ZF4fKrg_yoWrurWUpF
+	W0kry5Wwn8tryxX3yftw10kFyfJan3Xr1akr1Iqw1fXa1qvas0vr4ak3W5GFy7Ar4DZ34Y
+	9ay3ZFW7Ca4ay3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBm14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26rWY6Fy7MxkIecxEwVCm-wCF04
+	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
+	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Wrv_Gr1UMIIYrxkI7VAKI4
+	8JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4U
+	MIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I
+	8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjTRJPEfUUUUU
+X-CM-SenderInfo: pzhl2xxdqjy31dq6v25zlqu0xpsx3x1qjou0bp/
 
-FYI: The current patchset contains lockdep issues due to the kprobe handler
-running in NMI context. Please do not spend time reviewing this version.
-Thanks.
+From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+
+This series depends on the config option patch [1].
+
+[1] https://lore.kernel.org/all/20250825132427.1618089-3-pinkesh.vaghela@einfochips.com/
+
+Updates:
+
+  Changes in v6：
+  - Update driver patch's commit message
+  - Update eswin,eic7700-eth.yaml
+    - Modify the description content
+  - Update dwmac-eic7700.c  
+    - Move three variables from priv to local scope
+    - Inline eic7700_apply_delay logic directly into the probe function
+  - Link to v5: https://lore.kernel.org/all/20250904085913.2494-1-weishangjuan@eswincomputing.com/
+
+  Changes in v5：
+  - Update eswin,eic7700-eth.yaml
+    - Use "items" instead "enum" for clock-names
+    - Arrange clocks description in correct order
+    - Delete redundant descriptions for eswin,hsp-sp-csr property
+  - Update dwmac-eic7700.c  
+    - Optimize the implementation of eic7700_ appy_delay
+    - Update comments and remove reg checking
+    - Use FIELD_PREP in eic7700_apply_delay function
+    - Use clk_bulk related APIs to manage clks
+  - Link to v4: https://lore.kernel.org/all/20250827081135.2243-1-weishangjuan@eswincomputing.com/
+
+  Changes in v4:
+  - Update eswin,eic7700-eth.yaml
+    - Modify reg:minItems:1 to reg:maxItems: 1
+    - Delete minItems and maxItems of clock and clock-names
+    - Delete phy-mode and phy-handle properties
+    - Add description for clock
+    - Add types of clock-names
+    - Delete descriptions for rx-internal-delay-ps and tx-internal-delay-ps
+    - Add enum value for rx-internal-delay-ps and tx-internal-delay-ps
+    - Modify description for eswin,hsp-sp-csr property
+    - Delete eswin,syscrg-csr and eswin,dly-hsp-reg properties
+    - Modify phy-mode="rgmii" to phy-mode="rgmii-id"
+  - Update dwmac-eic7700.c
+    - Remove fix_mac_speed and configure different delays for different rates
+    - Merge the offset of the dly register into the eswin, hsp sp csr attributes
+      for unified management
+    - Add missing Author and optimize the number of characters per
+      line to within 80
+    - Support default delay configuration and add the handling of vendor delay 
+      configuration
+    - Add clks_config for pm_runtime
+    - Modify the attribute format, such as eswin,hsp_sp_csr to eswin,hsp-sp-csr
+  - Link to v3: https://lore.kernel.org/all/20250703091808.1092-1-weishangjuan@eswincomputing.com/
+
+  Changes in v3:
+  - Update eswin,eic7700-eth.yaml
+    - Modify snps,dwmac to snps,dwmac-5.20
+    - Remove the description of reg
+    - Modify the value of clock minItems and maxItems
+    - Modify the value of clock-names minItems and maxItems
+    - Add descriptions of snps,write-questions, snps,read-questions
+    - Add rx-internal-delay-ps and tx-internal-delay-ps properties
+    - Modify descriptions for custom properties, such as eswin,hsp-sp-csr
+    - Delete snps,axi-config property
+    - Add snps,fixed-burst snps,aal snps,tso properties
+    - Delete snps,lpi_en property
+    - Modify format of custom properties
+  - Update dwmac-eic7700.c
+    - Simplify drivers and remove unnecessary API and DTS attribute configurations
+    - Increase the mapping from tx/rx_delay_ps to private dly
+  - Link to v2: https://lore.kernel.org/all/aDad+8YHEFdOIs38@mev-dev.igk.intel.com/
+
+  Changes in v2:
+  - Update eswin,eic7700-eth.yaml
+    - Add snps,dwmac in binding file
+    - Modify the description of reg
+    - Modify the number of clock-names
+    - Change the names of reset-names and phy-mode
+    - Add description for custom properties, such as eswin,hsp_sp_csr
+    - Delete snps,blen snps,rd_osr_lmt snps,wr_osr_lmt properties
+  - Updat dwmac-eic7700.c
+    - Remove the code related to PHY LED configuration from the MAC driver
+    - Adjust the code format and driver interfaces, such as replacing kzalloc
+      with devm_kzalloc, etc.
+    - Use phylib instead of the GPIO API in the driver to implement the PHY
+      reset function
+  - Link to v1: https://lore.kernel.org/all/20250516010849.784-1-weishangjuan@eswincomputing.com/
+
+Shangjuan Wei (2):
+  dt-bindings: ethernet: eswin: Document for EIC7700 SoC
+  ethernet: eswin: Add eic7700 ethernet driver
+
+ .../bindings/net/eswin,eic7700-eth.yaml       | 128 ++++++++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-eic7700.c   | 226 ++++++++++++++++++
+ 4 files changed, 366 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/eswin,eic7700-eth.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-eic7700.c
+
 -- 
-Jinchao
+2.17.1
+
 
