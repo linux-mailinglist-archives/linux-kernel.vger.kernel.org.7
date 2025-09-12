@@ -1,143 +1,138 @@
-Return-Path: <linux-kernel+bounces-814251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 369AEB55184
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:30:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA63B55188
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:30:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCBC7B6185B
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:28:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E3BCB61AE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23246320398;
-	Fri, 12 Sep 2025 14:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3013931987A;
+	Fri, 12 Sep 2025 14:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rsIoBwud"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="j94keYI5"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2DA320384
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD8F3191BF;
+	Fri, 12 Sep 2025 14:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757687145; cv=none; b=Rhx+PaPEQ/I7LDR/iPnLeshfqpRAvvYzJVtK354Ps79KgtkaMCwfioVNL/vuunib33ajJzEJHgrV1ITpnNfsPlAzbfpo37GwFibmMgMInpS9u31p8qLqbryj0hBPfY0bJ+tj9AtIPG0kpkeF7MxXv/7aUsLpJ4tIDIpVQYTOMyY=
+	t=1757687236; cv=none; b=nPoU45HObdXD34g4Bz9wb/jCREiNf8QVSr6Qy7021sKDcSwytev0E6d04yV+93E8HJZrZ1PHPo2P6RGFA2Wd/lgIojdOz4y1APxEfE2Y24TOCrWHfYO2Np5nKn4cKb2kRo9uyvUS7veEvf0fKRu+Qt7E4CUJjRd37iac4HFy0RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757687145; c=relaxed/simple;
-	bh=ObQub0Fn7ODydg5DGf8K9+pxMyAg4npUNxDcfdTxVRM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iVfzk56BXn8sRWb1ujhuCBtFhuSPCItuMSJ988HQi8RxcdsskVa+4v2xyjpWUsnMF21QlxZffiURTcZP4KMEdPsOzT+xsLhTTOSQ2QyxeZ0u5CAtNGkFh2zLIeSdvnsfofY22TJ0aQQUWKa1Lp+LrNDVh6RnTuAz9k05Dc5IFek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rsIoBwud; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7459d088020so985048a34.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757687142; x=1758291942; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X0+BU7GduzvivgLsJAA2dCFR38oEykasv0I1p1J9djc=;
-        b=rsIoBwudzsQoXa83Vw3sn8MbAZfQYwBcUHlp1DMDJIUEom8nX2JFk6s7vQdt8nWo3h
-         WOT2N4tJC4yWEQbw2FgnZWGmy/LWcG+J8it33H7wHl9eE9UU5vZwS553WyJiThmBABDP
-         /+/RxSiGTfrzIfoQ5WNYdHkPoUtS0UDT3NTdPLQ318REY1FAdyFe1SVgOnRItURTPY3R
-         +GLjcLr2FGH/FokSitt2eXYaYBKv1ZgxCrnzBMaCuH042ABqQRJygLIsSZl3Y1+1TaLO
-         7ktyqjNJGhL9nzqhMC2/XlbnPKJIoBKG9d07StPaD0G6FLejMhgRfFcWN1bxMwiKD1Fl
-         b8Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757687142; x=1758291942;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X0+BU7GduzvivgLsJAA2dCFR38oEykasv0I1p1J9djc=;
-        b=eMUQZoZU1cDJpzKNW85hU/8Yj356Uw0fpUklKRCHomcvNJaOheAeBcYbK9Remtwu9E
-         y7fvnfAkSVmkTIu1pdkt9DuU8VkQrtY+vf2pUIjbxQxp97exejRmdxHXS0RVI+rbuJk/
-         I/HTnTQYxTZuz92f3A5vOoBw+unhQzvggrSWOnK614G6/OfgeedipmNSV3A8Xk1LH86Z
-         4YywN9U+NxYzR1NY0Qp2DOeMYv2AB0t1M7CMr2lSCy7i73b0Ssgvagljyx3h4vxfJLv7
-         ntj83Rn5DIBxl+G4hrId9bwnaRKfQg76Cti925IsxGEdx1PnanDVBsbJj0apA1kuyulB
-         kWBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCBmLJ54VBV6bBOFPqQCLOqaZu+k+1v62p7u5+bjFTdKIJo4SMJb8SQD1RwlHhV6YZ4LK4/a6mgsawlFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0zUlrwbcv+SbJMfuQ8916ixKxp5X8rjH0StPlo4k2cQ/wTCUN
-	mDMkT+H4zEcY6VsyCaGmILVpwmxmbbMT9uQR+d4O3ZxvY1YpbBdh0Q36lI7n1mHNIKI=
-X-Gm-Gg: ASbGncvw2/hcZqoYaOxuimxr5nQveeWQx9EHaF8cLO+6huslSQoXOO5TjG+GYIv+IBq
-	bEo8gjGTiR9D0Gx1XfeNgLVTJnren0GYCbwUl3n1QeLKAZHi5XCMnyA+oUpx2MbVHdp6TCDzxzE
-	vyDIv5ClIQpRqli7IcwV99zKCgf1jCBCHwBgl/upqYw7sPw+KxEQlEq7aORTkp4DTwzxcdd3jji
-	tCP3TAf3itTKEJVem6Zypt04yYfSm5eDtBpc+IM/aX8HPaFnSzkkGIys5Cq9BPheIs4smUV+7af
-	en5x130uZ9s/GLMX7V1KdGPpzf8cuHfcTXQiVlQ/kFse3GZBgmzJl+ZTTXzMN2r8wQEpYj0/fjq
-	PcJMoLdFQpkII1Hc7aIe94uoCBaU1bqOvR32oICvCnvTC2GdeYoBRcvOoys+6RMIERkj5vA0Rb6
-	w=
-X-Google-Smtp-Source: AGHT+IHpKSZF4MQEZ+u/oC7k9WZoRds7vIivV2qRW4sbQwQlgWqoybEkVA4pca3nFzL2BSPAaioX+A==
-X-Received: by 2002:a05:6830:6615:b0:745:a095:22a2 with SMTP id 46e09a7af769-75352d8e0c3mr1671283a34.7.1757687142583;
-        Fri, 12 Sep 2025 07:25:42 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1? ([2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524986ca64sm1037256a34.14.2025.09.12.07.25.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 07:25:42 -0700 (PDT)
-Message-ID: <889408fb-e7c5-4a1e-be96-1f632e97469e@baylibre.com>
-Date: Fri, 12 Sep 2025 09:25:41 -0500
+	s=arc-20240116; t=1757687236; c=relaxed/simple;
+	bh=s4x1fq+9gTDWN/WvRg4NU7rlFYdnurWYObuojRZ1FfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1OkDBONVqxI8/B4VRJFTwU3tlEQ5a51UI8Wz6GIZFBwXP49Rg00DqRRvDk/LLUQQxEbak+JTvC9gFv2quuw4PdMp66YyCzCKCFWSNHrI+38ATym7WS1TJ79u4Mpr+k/2OcG3JVPsc0G3t72W8dq8TcX4xPEnmq6/BOwJEtlQ5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=j94keYI5; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id F270FC7A;
+	Fri, 12 Sep 2025 16:25:56 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757687157;
+	bh=s4x1fq+9gTDWN/WvRg4NU7rlFYdnurWYObuojRZ1FfM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j94keYI5n9BkRegb0rDwI1XkRuVaR8acEz7lF/iOzyNGDuAsbPOKq4Pjs27HTHHnk
+	 x0hBOcij8mMRK2/2ta23wTwV9fVBF0Xh83U50fADOXrA9JyUo7TN01lUDiMBrqFVmb
+	 Yn21J+ZiTKoOrQcK9MbgSz3Jo26gFp0pd53YdP4A=
+Date: Fri, 12 Sep 2025 17:26:46 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
+Message-ID: <20250912142646.GI31682@pendragon.ideasonboard.com>
+References: <20250912081718.3827390-1-tzungbi@kernel.org>
+ <2033c6cd-4112-4c8a-a9ef-2ab34f3504b8@kernel.org>
+ <CACMJSeuKH+WKOXLNU92dMssqhK02xG3z=cT0VeXYM+ZGuPCB9g@mail.gmail.com>
+ <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
+ <20250912132656.GC31682@pendragon.ideasonboard.com>
+ <2025091209-curfew-safari-f6e0@gregkh>
+ <CAMRc=MfdoB50o=3Q2p94o+f7S2Bzr=TAtWWQcDrC5Wf3Q5nqAA@mail.gmail.com>
+ <20250912135916.GF31682@pendragon.ideasonboard.com>
+ <2025091220-private-verse-d979@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] iio: adc: ad7124: support fractional
- sampling_frequency
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
- <20250911-iio-adc-ad7124-add-filter-support-v2-4-b09f492416c7@baylibre.com>
- <CAHp75VdMSr400YokZfv8SAkt-M8kuw7gt4+eCBb68xt7ipKJbQ@mail.gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CAHp75VdMSr400YokZfv8SAkt-M8kuw7gt4+eCBb68xt7ipKJbQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025091220-private-verse-d979@gregkh>
 
-On 9/11/25 11:45 PM, Andy Shevchenko wrote:
-> On Fri, Sep 12, 2025 at 12:42 AM David Lechner <dlechner@baylibre.com> wrote:
->>
->> Modify the attribute read/write functions for sampling_frequency and
->> filter_low_pass_3db_frequency to return fractional values.
->>
->> These ADCs support output data rates in the single digits, so being
->> able to specify fractional values is necessary to use all possible
->> sampling frequencies.
-> 
-> ...
-> 
->>         factor = 32 * 4; /* N = 4 for default sinc4 filter. */
->> -       odr_sel_bits = clamp(DIV_ROUND_CLOSEST(fclk, odr * factor), 1, 2047);
->> +       odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * factor +
->> +                                              odr_micro * factor / MICRO);
-> 
->> +       odr_sel_bits = clamp(odr_sel_bits, 1, 2047);
-> 
-> I would rather see this clamp() call to be the part of
-> cfg.odr_sel_bits() assignment, otherwise the above line and this
-> operate on the semantically (slightly) different data. So, the first
-> line should use different variable name, or the second, like
-> odr_sel_bits_clamped.
+(CC'ing Dan Williams)
 
-If we moved it, then we would unnecessarily clear the cfg.live bit
-in cases where clamping changed the value.
-
-In a later commit, this gets combined to a single assignment so
-not much point in adding a 2nd variable temporarily.
-
+On Fri, Sep 12, 2025 at 04:19:53PM +0200, Greg KH wrote:
+> On Fri, Sep 12, 2025 at 04:59:16PM +0300, Laurent Pinchart wrote:
+> > On Fri, Sep 12, 2025 at 03:46:27PM +0200, Bartosz Golaszewski wrote:
+> > > On Fri, Sep 12, 2025 at 3:39 PM Greg Kroah-Hartman wrote:
+> > > >
+> > > > I have no objection moving this to the cdev api, BUT given that 'struct
+> > > > cdev' is embedded everywhere, I don't think it's going to be a simple
+> > > > task, but rather have to be done one-driver-at-a-time like the patch in
+> > > > this series does it.
+> > > 
+> > > I don't think cdev is the right place for this as user-space keeping a
+> > > reference to a file-descriptor whose "backend" disappeared is not the
+> > > only possible problem. We can easily create a use-case of a USB I2C
+> > > expander being used by some in-kernel consumer and then unplugged.
+> > > This has nothing to do with the character device. I believe the
+> > > sub-system level is the right place for this and every driver
+> > > subsystem would have to integrate it separately, taking its various
+> > > quirks into account.
+> > 
+> > That's why I mentioned in-kernel users previously. Drivers routinely
+> > acquire resources provided by other drivers, and having a way to revoke
+> > those is needed.
+> > 
+> > It is a different but related problem compared to userspace racing with
+> > .remove(). Could we solve both using the same backend concepts ?
+> > Perhaps, time will tell, and if that works nicely, great. But we still
+> > have lots of drivers exposing character devices to userspace (usually
+> > through a subsystem-specific API, drivers that create a cdev manually
+> > are the minority). That problem is in my opinion more urgent than
+> > handling the removal of in-kernel resources, because it's more common,
+> > and is easily triggerable by userspace. The good news is that it should
+> > also be simpler to solve, we should be able to address the enter/exit
+> > part entirely in cdev, and limit the changes to drivers in .remove() to
+> > the strict minimum.
+> > 
+> > What I'd like to see is if the proposed implementation of revocable
+> > resources can be used as a building block to fix the cdev issue. If it
+> > ca, great, let's solve it then. If it can't, that's still fine, it will
+> > still be useful for in-kernel resources, even if we need a different
+> > implementation for cdev.
 > 
->>         if (odr_sel_bits != st->channels[channel].cfg.odr_sel_bits)
->>                 st->channels[channel].cfg.live = false;
->>
->> -       /* fADC = fCLK / (FS[10:0] x 32) */
->> -       st->channels[channel].cfg.odr = DIV_ROUND_CLOSEST(fclk, odr_sel_bits *
->> -                                                               factor);
->>         st->channels[channel].cfg.odr_sel_bits = odr_sel_bits;
-> 
-> 
+> Patch 5/5 in this series does just this for a specific use of a cdev in
+> the driver.  Is that what you are looking for?
 
+Not quite, I would like to see the enter/exit (aka revocable scope if my
+understanding is correct) being pushed to char_dev.c, as Dan did in [1].
+I'm fine having to add an extra function call in the .remove() path of
+drivers, but I'm not fine with having to mark revocable sections
+manually in drivers. That part belongs to cdev.
+
+[1] https://lore.kernel.org/r/161117153248.2853729.2452425259045172318.stgit@dwillia2-desk3.amr.corp.intel.com
+
+-- 
+Regards,
+
+Laurent Pinchart
 
