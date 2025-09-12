@@ -1,144 +1,254 @@
-Return-Path: <linux-kernel+bounces-813747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CFBB54A3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:48:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD77B54A32
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C324872CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:48:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 057B3587F58
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 10:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D192FF140;
-	Fri, 12 Sep 2025 10:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D61D2FDC22;
+	Fri, 12 Sep 2025 10:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NWmFk/hT"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yF4ok2Dn"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E682FE04F
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D52E2FD7BB
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 10:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757674061; cv=none; b=lSWZsN0yFTJOjmWuOMozABOyVrSVBorhdYi2T6+sH9Ku6CKCVlAXvKgnpPTkcWo8qjJjjDFjp8so1fzzH0jdUC/NL6w7cq4/YUYDKhYUQmE3yopQ5PLCWBIoL/XyDAZyoO1b51M0RWOPSj5RD9egv6ikIMsZj8d88Bcz0tjtXDk=
+	t=1757674055; cv=none; b=VkgTRV0ZU6l8gqrKWv9jSXod+NeN5lpKcwAesANcScCSPHXwarGhFr6bJI203rHm1Mz1qgtV2yfhKTOD7+YHeG3wp17x7Alo6P2TX0ApZ0lwgOT6XFoPZkpYLTWluYHSUf8mnOzJCx770YFyF2QYRHwJuEVH0LtA1/CxVXpcQQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757674061; c=relaxed/simple;
-	bh=jEe+LssdJuX0Sol/ICpsmWzbrOJwv26l/qHv6esdx/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hM0tjQvxz0VmeM/xeMZpi7Du98sdG0V9jjQo3fDL6EvfaaYNeJpq+GvlHgzOdmtazk8x2zQUu0NFY3KLiunsr5CJ4///2cMJV6fQqV7Zik0ZRdV5DehAYvg1uUZTAFY7YNXNo2v8TGIhW6fZMPsLk1PiPmCa0/yElfHkxtjyWX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NWmFk/hT; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45dec1ae562so16760675e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:47:38 -0700 (PDT)
+	s=arc-20240116; t=1757674055; c=relaxed/simple;
+	bh=fZ2Y+QVj1Q980T6u7XGCiKBFfT4CA2Sib8XpluNcSWI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iv46szGt9OClgCul/F8EVF32XFuz9fMvMsMjIhOlKNmVPya2tL8GItUrSi3sVIOM/tZgFRA6sG1DbaRVpYZbqMD4mW2XLpfAExain9HMWuVooqMjDYW7IVjWl628ADyTjy18AXQjlRrb+mYmRcprqgBaaw9u+Cigbhr9Ub/mh3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yF4ok2Dn; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-753103d3dafso1206206a34.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:47:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757674057; x=1758278857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1S7AuUlSi67Znb0Wq+XUSupvk0GbKEmlDvc8tRj0Jnw=;
-        b=NWmFk/hTtB4O9nB5UxL237V6ljbhej4rW+y9tBWLMRssjN77rUPuqY1RauCmtper8z
-         w9YoEbOJqnr0l9QCm4v+S4wo375Ey7PGWtEA+Djt72YMhb/dGB/uH5xAdtzMn9k4eA/o
-         G7NwHn2HFGGIfktOE0JQLjklzQrv6FyN2v6gA0sDxP452u9uGT9rGz3Ken6SqfEOFI6z
-         MCsKv2aN1I4pXrHa63B1/rOHksF81RXzGLamOYrtbZfb72jgI6KJQW93vt9Ifm2ns9+L
-         PwVzG+bsb5pqZbQqXUBWDxqniV944gzgVDJMRpPLCt+EOV6Q9NCysjvGdFNtf55QnFwX
-         djXQ==
+        d=linaro.org; s=google; t=1757674052; x=1758278852; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=3OPza13UxQG3vaIXj292M6st2XTaYne/dlf9fQOIh4A=;
+        b=yF4ok2DnJKy8g4WUEIhF3p62qGvM3lhFUmSA+pAVbC5cd8u1tPHpMIKPp1WCJOHSG5
+         TJvn82wDF1U+SAryIeD5w3sAWzpqOHjGwk+lrj39hqSDkEsRzt98LF3tofAAGv2uIS65
+         hrK9WYDiJTx1+QNjrj26dbaxPxqoP6MYnIzKaXLUhLVtxLt948OJ1bCJY+9UW6My8Edb
+         N5Nojj2kserwLQbtOJkAEL9IrXIOeLCHjR0xgoT1ggIBZcoQ60UjKGEDDDHjzVCaTMoL
+         X4ONxGToHxIEkk0mkazVU7I8nsSc1lmc1D6kh+MX94c0HkmK1swfajfwlv51MGVHoG9a
+         x7Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757674057; x=1758278857;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1S7AuUlSi67Znb0Wq+XUSupvk0GbKEmlDvc8tRj0Jnw=;
-        b=ALgHY704+sAv/TH/GThcR2TUDQtnXJZFg8LXCjiB5A7IJug0cCAXHb8ujljV8OXLdH
-         C+scarz2zkR2WrF8Z5aboIi+8iqC5EeDPyBDopoTF6wSF54F95ICUg6AylANyZ1kn/a6
-         CvQ2FLtE2aAA0Pr4QeKFb6m3ywPIIRPwnRey6w8bHPDBDn8n80Gcf2HZKa1yc/TSJDLV
-         rdcCBsvQXKGzGSfZt+oSL+cSePpZxMyjVlCLr/Kv5sXKkcqms2YVj1Tds+4Vq7fXxUbE
-         N9qkZV0XGLW/AwGFTWcSn0aRKbKnsjeoQamjQrcteQ0WWWg/BKypy7ElUc+cL0NCVJ8m
-         P2oA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvyZZ1b4Xtk+UFT9wxp90bo+5to/vzZAkdLJpujC5H1q4upjpEazzVG+84ymF3bBeB/bQ5uwzKkxCrwGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8LUhuohes8kqck5ItcKSQDEzD1gy0e9AR6o4LDRNkEsv7VAup
-	UkYcGtTHqX5vIHg9LyozywJwKHLS6PbJ8se+Wh7WyE27jcGQue0DwchY
-X-Gm-Gg: ASbGncseqOjLZhpL0NjzZYphkfs5GI+rnaXW7fv2Acp/5gl9Zm/4BQDgffWDRKWQvWd
-	2ffmRh2qVsHoz5gshN1zpr6Pa1NiJ4VXDGLRoAjvisEJTW+tHWYM6cV/y7GlXqb9WVXXww+AVyh
-	feW1i14bgM+0i/4RGH4mqdouauLUq5vxqoS/bc+/L7/R/vk3aDYVUTHQXVpZXmSl9yBLsglzP7A
-	3oa1pLACFcRz35rAO55PCZaL1kN3ETYRHzEGse90dy1mJ/sxdBhxWxmurS6NpYVtr5xU8xKgKI4
-	MZfk1xXO126Pxa9sBNQbi5GXJHimg/04558SgeyvOCPlTfhl4FaMYNHjy7RAgK22oIHr1LgxBtj
-	3z1/nbew+l7kF47QdpHzr/TXm7fyMYOChfv5TTDOLrJ6NF3FMg4rW676jz9+fz8k9PC4ZFHyy6J
-	lw3Q==
-X-Google-Smtp-Source: AGHT+IGGQn4z6FJczqoIOf8FijkX45T6VbvuIudJ+ZXc3G02iFJUUELPhSpYW2NzZxdr0hLI4woaSg==
-X-Received: by 2002:a7b:cc91:0:b0:45b:8039:6196 with SMTP id 5b1f17b1804b1-45f211cce4fmr18730275e9.4.1757674056487;
-        Fri, 12 Sep 2025 03:47:36 -0700 (PDT)
-Received: from biju.lan (host86-139-30-37.range86-139.btcentralplus.com. [86.139.30.37])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd329sm6197316f8f.31.2025.09.12.03.47.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 03:47:36 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	linux-can@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Biju Das <biju.das.au@gmail.com>,
-	Vincent Mailhol <mailhol@kernel.org>
-Subject: [PATCH v2 2/7] can: rcar_canfd: Invert global vs. channel teardown
-Date: Fri, 12 Sep 2025 11:47:20 +0100
-Message-ID: <20250912104733.173281-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250912104733.173281-1-biju.das.jz@bp.renesas.com>
-References: <20250912104733.173281-1-biju.das.jz@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1757674052; x=1758278852;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3OPza13UxQG3vaIXj292M6st2XTaYne/dlf9fQOIh4A=;
+        b=tLNNcF6vrmFvxjtrKjri4cBEwR8Av5Ahlx5MsSeuCbm8qYY2ezCiMTmzLnjIKoctz9
+         lzmb0c3AppLRqXwgXTjDopWz204YAx45oZ/Xz+Zz90PxBfzJQh0gwK2A2T2SgpwU+4K3
+         GS4EzKSoJtXvOYMe/UTyvDYhK+Z+FLwcLJf7nA9cxYIQ2uuYHdtfFC+y1uObaajXNb/3
+         Vhf5U2CMFsl1gpxObi4RuvnWq5Lx8m93UlDExne1Bx4SQwzWSDInn0WvTsMsc1N/Cg0n
+         Hib2lF8EfwZKwF1aon3a6TR/B0hl2tCoG3eQMqI3pZpStxusNRn8p90GgBI8eUtIcNjO
+         cw6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW7CbDAw/c6optp1v6c+RouVAiM9r5yZicN9YrjyWXiMY8AfkgdABpnQcmIk6IMjakfH5tqT5vf4Tq0QRk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBLDwvaj4saH0hSOXKgdfAq8FfKquVGg1fl+EpDWGTcewXmMl6
+	U9RS7D/3P1EU4ISqxvwRCgRRmSYc4aVMudzVH2Y4uAaShtLKRJg/GO1rzdnIbqh2NB3c8HY+3x8
+	EBWjU/OyYRTnlSgabhlNosLHaVgLAkgBepYauKB5yTQ==
+X-Gm-Gg: ASbGncsinZ9qcUsZ5GJ9TzvMQ17mPBPtFX77rwLwY2jitjuRX6nr7z/CKoCAkv/1WfQ
+	2/ZMQleFs4EBDP1ybCKnBT+jSVhscJtXx0e/1t+nJ51PYIhoWoY/cd+JoKIYZT87l5hnVjL96F1
+	ikMiPdTkUmZL7oXRlda1CZMSoS6wshBZmwbig+UtbGQnYQcmgJ2OOZ7lmjmUT4vWU4fWwhCudBJ
+	eDjM2Y=
+X-Google-Smtp-Source: AGHT+IEwK6PAnW60amX/KFZUitg+3IWCKUF6YtBbEuqSyk7vuHndUimzJs3aHNTIWVsqYWSuZljSYmdD0ujXlXGOsTc=
+X-Received: by 2002:a05:6830:25c3:b0:741:924c:3f60 with SMTP id
+ 46e09a7af769-753550e1f31mr1194594a34.20.1757674052466; Fri, 12 Sep 2025
+ 03:47:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250804-b4-gs101_max77759_fg-v5-0-03a40e6c0e3d@uclouvain.be> <20250804-b4-gs101_max77759_fg-v5-4-03a40e6c0e3d@uclouvain.be>
+In-Reply-To: <20250804-b4-gs101_max77759_fg-v5-4-03a40e6c0e3d@uclouvain.be>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 12 Sep 2025 11:47:21 +0100
+X-Gm-Features: Ac12FXyNpSAUYBZClLOkGpS7sVjhUkL1QiaqAQuJpPSEayd4ohKDjbLy5QhjEPs
+Message-ID: <CADrjBPqT8GORaMReQwMGUV+Lrh-njhk_giD2gQUPJRRuSz4XNw@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] arm64: dts: exynos: google: add Maxim MAX77759 Fuel-gauge
+To: t.antoine@uclouvain.be
+Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dimitri Fedrau <dima.fedrau@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, 4 Aug 2025 at 15:25, Thomas Antoine via B4 Relay
+<devnull+t.antoine.uclouvain.be@kernel.org> wrote:
+>
+> From: Thomas Antoine <t.antoine@uclouvain.be>
+>
+> Add the node for the Maxim MAX77759 fuel gauge as a slave of the i2c.
+>
+> The TODO is still applicable given there are other slaves on the
+> bus (e.g. PCA9468, other MAX77759 functions and the MAX20339 OVP).
+>
+> For the device specific values (full design capacity and terminal
+> current), the device should check an EEPROM at address 0x50 of the
+> hsi2c_8 for a battery id stored in register 0x17. A set of parameters
+> for the initialization of the fuel gauge should be chosen based on
+> this id. Those sets are defined here:
+>
+> Link: https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviole-5.10-android15/arch/arm64/boot/dts/google/gs101-oriole-battery-data.dtsi
+> Link: https://android.googlesource.com/kernel/gs/+/refs/heads/android-gs-raviole-5.10-android15/arch/arm64/boot/dts/google/gs101-raven-battery-data.dtsi
+>
+> This does not seem to be a standard pattern in the kernel currently
+> so it is not implemented. Values observed on tested devices are
+> instead used. The driver or the devicetree should be should be
+> extended in the future to take versions into account.
+>
+> The pinctrl name follows the convention proposed in
+> Link: https://lore.kernel.org/all/20250524-b4-max77759-mfd-dts-v2-2-b479542eb97d@linaro.org/
+>
+> Signed-off-by: Thomas Antoine <t.antoine@uclouvain.be>
+> ---
 
-Global state is initialized and torn down before per-channel state.
-Invert the order to restore symmetry.
+This needs rebasing now to apply. With Andre's feedback addressed
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Vincent Mailhol <mailhol@kernel.org>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Collected tags.
----
- drivers/net/can/rcar/rcar_canfd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
 
-diff --git a/drivers/net/can/rcar/rcar_canfd.c b/drivers/net/can/rcar/rcar_canfd.c
-index cf70029968ad..460bb62bbd08 100644
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -2203,14 +2203,14 @@ static void rcar_canfd_remove(struct platform_device *pdev)
- 	struct rcar_canfd_global *gpriv = platform_get_drvdata(pdev);
- 	u32 ch;
- 
--	rcar_canfd_reset_controller(gpriv);
--	rcar_canfd_disable_global_interrupts(gpriv);
--
- 	for_each_set_bit(ch, &gpriv->channels_mask, gpriv->info->max_channels) {
- 		rcar_canfd_disable_channel_interrupts(gpriv->ch[ch]);
- 		rcar_canfd_channel_remove(gpriv, ch);
- 	}
- 
-+	rcar_canfd_disable_global_interrupts(gpriv);
-+	rcar_canfd_reset_controller(gpriv);
-+
- 	/* Enter global sleep mode */
- 	rcar_canfd_set_bit(gpriv->base, RCANFD_GCTR, RCANFD_GCTR_GSLPR);
- 	clk_disable_unprepare(gpriv->clkp);
--- 
-2.43.0
 
+
+
+>  arch/arm64/boot/dts/exynos/google/gs101-oriole.dts | 10 ++++++++
+>  .../boot/dts/exynos/google/gs101-pixel-common.dtsi | 30 ++++++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/google/gs101-raven.dts  | 11 ++++++++
+>  3 files changed, 51 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> index 8df42bedbc036b5e97f6238d64820370043ffef2..18d147f6ea4a1a76c375996557349c866b9dad72 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101-oriole.dts
+> @@ -13,6 +13,12 @@
+>  / {
+>         model = "Oriole";
+>         compatible = "google,gs101-oriole", "google,gs101";
+> +
+> +       battery: battery {
+> +               compatible = "simple-battery";
+> +               charge-full-design-microamp-hours = <4524000>;
+> +               charge-term-current-microamp = <45000>;
+> +       };
+>  };
+>
+>  &cont_splash_mem {
+> @@ -27,3 +33,7 @@ &framebuffer0 {
+>         format = "a8r8g8b8";
+>         status = "okay";
+>  };
+> +
+> +&fuel_gauge {
+> +       monitored-battery = <&battery>;
+> +};
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+> index d6ddcc13f7b20c6dfbe92e86abafe965870d0c78..3362ad89ef6bacb7349259cf9e14452193ff7361 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101-pixel-common.dtsi
+> @@ -10,6 +10,7 @@
+>
+>  #include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/input/input.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/usb/pd.h>
+>  #include "gs101-pinctrl.h"
+>  #include "gs101.dtsi"
+> @@ -99,6 +100,16 @@ &hsi2c_8 {
+>         eeprom: eeprom@50 {
+>                 compatible = "atmel,24c08";
+>                 reg = <0x50>;
+> +
+> +               nvmem-layout {
+> +                       compatible = "fixed-layout";
+> +                       #address-cells = <1>;
+> +                       #size-cells = <1>;
+> +
+> +                       fg_state: fgstate@42 {
+> +                               reg = <0x42 0x17>;
+> +                       };
+> +               };
+>         };
+>  };
+>
+> @@ -188,6 +199,18 @@ usbc0_role_sw: endpoint {
+>                         };
+>                 };
+>         };
+> +
+> +       fuel_gauge: fuel-gauge@36 {
+> +               compatible = "maxim,max77759-fg";
+> +               reg = <0x36>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&if_pmic_fg_int>;
+> +               interrupt-parent = <&gpa9>;
+> +               interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+> +               shunt-resistor-micro-ohms = <5000>;
+> +               nvmem-cell-names = "fg_state";
+> +               nvmem-cells = <&fg_state>;
+> +       };
+>  };
+>
+>  &pinctrl_far_alive {
+> @@ -214,6 +237,13 @@ typec_int: typec-int-pins {
+>  };
+>
+>  &pinctrl_gpio_alive {
+> +       if_pmic_fg_int: if-pmic-fg-int-pins {
+> +               samsung,pins = "gpa9-3";
+> +               samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+> +               samsung,pin-pud = <GS101_PIN_PULL_UP>;
+> +               samsung,pin-drv = <GS101_PIN_DRV_2_5_MA>;
+> +       };
+> +
+>         key_power: key-power-pins {
+>                 samsung,pins = "gpa10-1";
+>                 samsung,pin-function = <GS101_PIN_FUNC_EINT>;
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101-raven.dts b/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
+> index 1e7e6b34b8649bc700a745c579a0268f0f6a9524..f91800879ea94b8fb0008c5e1f828072cabc1ac7 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101-raven.dts
+> @@ -13,6 +13,13 @@
+>  / {
+>         model = "Raven";
+>         compatible = "google,gs101-raven", "google,gs101";
+> +
+> +       battery: battery {
+> +               compatible = "simple-battery";
+> +
+> +               charge-full-design-microamp-hours = <4904000>;
+> +               charge-term-current-microamp = <49000>;
+> +       };
+>  };
+>
+>  &cont_splash_mem {
+> @@ -27,3 +34,7 @@ &framebuffer0 {
+>         format = "a8r8g8b8";
+>         status = "okay";
+>  };
+> +
+> +&fuel_gauge {
+> +       monitored-battery = <&battery>;
+> +};
+>
+> --
+> 2.50.1
+>
+>
 
