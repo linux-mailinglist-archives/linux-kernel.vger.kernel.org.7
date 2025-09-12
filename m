@@ -1,180 +1,216 @@
-Return-Path: <linux-kernel+bounces-813069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BE9B54064
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:34:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85BAFB54067
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 04:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 148AA5A38BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:34:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA90D7B4380
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988601E5B72;
-	Fri, 12 Sep 2025 02:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF2A1D5146;
+	Fri, 12 Sep 2025 02:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLD5W5Fm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKp+ypH0"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED194E555;
-	Fri, 12 Sep 2025 02:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4CD1A0BE0
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 02:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757644483; cv=none; b=hZbc4wywf/6YhKdPXs5LXKY6l65NtvrmV1UXDEy6uV9B3CF24ImS7AJ3lCz90zX/W5yCcoEiXQm/1cit6uQaiZO3ISC2VIiFMDaZndNlBrK5WtqgzJwvjsWuX/6fgXqG8IPjBSO0q353eaZwWCtLcCAda/rQCzSE9g1FGQNk/qY=
+	t=1757644524; cv=none; b=F8JiUJNhc1monmpW7ZG5sPjcV+HTw/bMrM1OmDlFeUQgTxb6wJgkUzOaybDlnbfcfXo/5d4E+RYHlEbdBK98FJIElbpqXYokfLia/O+wPIN0hpAXuTaDtxkpoE1fNwSfAcFHhYsqAWg4SbPwRRpqB6z/7Tf5MSfFb7Ws/ozwRwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757644483; c=relaxed/simple;
-	bh=SwPQNn5pPNWxmJTZxjxdWn5osFkcEVxEdmvE11iK9Ec=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PEwe5EdILiatCOJg7ihVXRpNKB3UNv7tsNYVHNDwLCUk6hHO7B8ryCaoUU/743mVmRQ/qOZOTKS5G3/V+y1Kf1yPHlm3tTCF8eZrpHbV4vfWq8yb2M7GVCrvH3szgrTp9/7NIC7QWGLUcKWbT9Es1rF4OH5cRbuKRvZoUuon18s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLD5W5Fm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A954EC4CEF0;
-	Fri, 12 Sep 2025 02:34:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757644482;
-	bh=SwPQNn5pPNWxmJTZxjxdWn5osFkcEVxEdmvE11iK9Ec=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=JLD5W5FmJe2oTeOwZVwNNu8IssffS8Y/ZonRTku80JiMh/bTIm85ulNdHoPD0j9dm
-	 l43OedQc9YNONXHc6Fw7pIuGc67etpd3FgYcuF/wH0PUq7IVFIdHY6Ojd/tKZmW7Dy
-	 xUEEpQnEKo+s+/9wtQpj7nB4OZVUzxhnA++m3L6VZYrTNqlYTUbqTfbA7V3H33+pw0
-	 W0TpwgI7EFha0lwXcYcSFb9UirLrAPwuaWijj9lNTTWER5bJ6+QMp2L83vf8Woi9/T
-	 BAAObKXsDtt5UxgAX1dhpOaeap+J4Z6T4vCisE4bgSxbAzw1nbPtXo+b9rJHX03gmI
-	 +kIhF+vqjBHyw==
-Date: Thu, 11 Sep 2025 19:34:40 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Kory Maincent
- <kory.maincent@bootlin.com>, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Nishanth Menon <nm@ti.com>,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
- linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk
- <roan@protonic.nl>
-Subject: Re: [PATCH net-next v5 2/5] ethtool: netlink: add
- ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
-Message-ID: <20250911193440.1db7c6b4@kernel.org>
-In-Reply-To: <20250908124610.2937939-3-o.rempel@pengutronix.de>
-References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
-	<20250908124610.2937939-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1757644524; c=relaxed/simple;
+	bh=gH9mXsZ1NreP7BRLCz/KnwpMOnnbb5r27TVVPsD+/H8=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=PAIGgkaZLEIrTUKDRHCdRUl3RF093Nth3P+Lxccfk6859n13WRXxDkoJ44JR5WLUA1pTtEzYi3bP3IakqdYSER3pyYw8JjCrsjaujQ2yGqaE7wlq6+KUWOOZGwyD+GWnwAMckEURbw4ZfcPgtipXynfm1WJvXr7M659vLV/vyE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKp+ypH0; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-621bbe7534eso341909eaf.3
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 19:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757644521; x=1758249321; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=adSqTL8NuaakTvHTADgBkkDWAaGQjbxG9j1BynMCSQU=;
+        b=VKp+ypH093oI8Ktp341QcMLUOJjacimTQNFUh4Tr9Odze586piRXkqVfvGhC7Uq2ti
+         SrEp6pMPczWAR/bAqUdXwtQ6XZDFeb11Pnfcv2LjgxRK9BBk0c9dqGpg+s3VIJjG0O3C
+         Yr55K7d6rgxt+SxWyxkp1bc00/1LG443YtF/AWrFzsJgXjapwguxff+1cTLYzobAMrbQ
+         hFKbLZ2R3i9IaYJ1xHXnCAhmFHoDSC5OpjDUFHx8dXs0NVCcZSCUUmv4W0xBjs6PbDy+
+         k9rnHGj9yu7FLNwYaxshje3VDVzM6A4+DGwLdoZgvfdCBkHsAO8uwPy4HhDUC072+bt4
+         Hf7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757644521; x=1758249321;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=adSqTL8NuaakTvHTADgBkkDWAaGQjbxG9j1BynMCSQU=;
+        b=b2Pu+36fmFxyY4I0YiFaOQWhW1Hb7cx1MwKSj7xdOu+7T8mfLXA7TtK4yA8B0JqS8B
+         hI+iGEiW1WP1FYWDtM9toQCZGkvWdbRJcYFwlA1PzDDr7EXeLeLbsBrL+qh0KixXg63+
+         wAFNz4nooI6umec8u23BbrMCtQwD+XyZHPiRoU6lU5SkqyFJx3XmVAFaIEPNuqxr3of/
+         hqVE7mw4KRCx50uQ6uL4kUOKZqWU6QEreoSPz6sCkVZRl3/PH5fxyNzD497yV+U9HxMe
+         uXSnXB2M4pW3rBSOD8WUw3KOPfNBZL/+XoPj0IMO9K7r793uWoNSM8s4RN5/VzsfafzF
+         GJMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfbgf9tRrKueJpiOpG2aTe3X/PEZK4ugaBMSFdhMbUDLvXdRXzppQe2cxkI9a9xdL8mDeRHXRRsH2JwpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNdICyMPWZhXTwg6Q6tv1Nlo+Dbme53VW6/YR7kccJe8OaCtdU
+	dDwDomQxVJXSn+Vt9tqrRPma4lCvv1fbvCp7dBu+yVA1quznF8PkiifL
+X-Gm-Gg: ASbGnct8fW46M12K2UQMalojibLoIoFp/cHenCOwM47+OqdwHyhnKt3+is4Rj91d5vQ
+	cA8YaWoflu87JJ7B/5sq9aovhkEctCXYmvvjYUgCUpBykm2d+0Fj4HZiumqga1vFTU8p3piDI5C
+	q7ZGV8d/4rOuUKjgJbq9yn5YAG4BkP0bLvAVWmQFrNixUOZWh6vQI5SoxjCXJNcXT2HeEwZLxJV
+	4XcHl7Jd7BVxo0I+ExzgEVE+RgAkJmNfo7aB1eIUp1JqSJ8w1R2vVPdWDD1UGInoJCJPX3i/JrC
+	BBKlPb5iruenEuoACon+oBueXNjD9T8XfzjF1sl04MwWQEp2qV4KWDHL28p9oYnUvamxkUnKazr
+	Ss15tVh6bJn919UxGLvZ3YONW/jIQR4pq
+X-Google-Smtp-Source: AGHT+IGWQK39i39FWL4qHMCK2JcI2v7l2UTe5cu2Hfp1wmFQwUNAPDH21RFBHh1BoHV6V+GM7HwRsg==
+X-Received: by 2002:a05:6808:1244:b0:437:eb1d:cdde with SMTP id 5614622812f47-43b8da33f47mr464232b6e.33.1757644520618;
+        Thu, 11 Sep 2025 19:35:20 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-43b82aa7b97sm559913b6e.24.2025.09.11.19.35.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 19:35:19 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: kwilczynski@kernel.org,
+	u.kleine-koenig@baylibre.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	arnd@arndb.de,
+	bwawrzyn@cisco.com,
+	bhelgaas@google.com,
+	unicorn_wang@outlook.com,
+	conor+dt@kernel.org,
+	18255117159@163.com,
+	inochiama@gmail.com,
+	kishon@kernel.org,
+	krzk+dt@kernel.org,
+	lpieralisi@kernel.org,
+	mani@kernel.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	robh@kernel.org,
+	s-vadapalli@ti.com,
+	tglx@linutronix.de,
+	thomas.richard@bootlin.com,
+	sycamoremoon376@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	sophgo@lists.linux.dev,
+	rabenda.cn@gmail.com,
+	chao.wei@sophgo.com,
+	xiaoguang.xing@sophgo.com,
+	fengchun.li@sophgo.com,
+	jeffbai@aosc.io
+Subject: [PATCH v3 0/7] Add PCIe support to Sophgo SG2042 SoC
+Date: Fri, 12 Sep 2025 10:35:10 +0800
+Message-Id: <cover.1757643388.git.unicorn_wang@outlook.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon,  8 Sep 2025 14:46:07 +0200 Oleksij Rempel wrote:
-> diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-> index 969477f50d84..d69dd3fb534b 100644
-> --- a/Documentation/netlink/specs/ethtool.yaml
-> +++ b/Documentation/netlink/specs/ethtool.yaml
-> @@ -1899,6 +1899,79 @@ attribute-sets:
->          type: uint
->          enum: pse-event
->          doc: List of events reported by the PSE controller
-> +  -
-> +    name: mse-config
-> +    attr-cnt-name: --ethtool-a-mse-config-cnt
-> +    attributes:
-> +      -
-> +        name: unspec
-> +        type: unused
-> +        value: 0
+From: Chen Wang <unicorn_wang@outlook.com>
 
-Are you actually using this somewhere?
-It's good to not use attr ID 0 in case we encounter an uninitialized
-attr, but there's no need to define a name for it, usually.
-Just skip the entry 0 if you don't need then name.
+Sophgo's SG2042 SoC uses Cadence PCIe core to implement RC mode.
 
-> +      -
-> +        name: max-average-mse
-> +        type: u32
-> +      -
-> +        name: max-peak-mse
-> +        type: u32
-> +      -
-> +        name: refresh-rate-ps
-> +        type: u64
-> +      -
-> +        name: num-symbols
-> +        type: u64
+This is a completely rewritten PCIe driver for SG2042. It inherits
+some previously submitted patch codes (not merged into the upstream
+mainline), but the biggest difference is that the support for
+compatibility with old 32-bit PCIe devices has been removed in this
+new version. This is because after discussing with community users,
+we felt that there was not much demand for support for old devices,
+so we made a new design based on the simplified design and practical
+needs. If someone really needs to play with old devices, we can provide
+them with some necessary hack patches in the downstream repository.
 
-type: uint for all these?
+Since the new design is quite different from the old code, I will
+release it as a new patch series. The old patch series can be found in
+here [old-series].
 
-> +      -
-> +        name: supported-caps
-> +        type: nest
-> +        nested-attributes: bitset
-> +      -
-> +        name: pad
-> +        type: pad
+Note, regarding [2/7] of this patchset, this fix is introduced because
+the pcie->ops pointer is not filled in SG2042 PCIe driver. This is not
+a must-have parameter, if we use it w/o checking will cause a null
+pointer access error during runtime.
 
-you shouldn't need it if you use uint
+Link: https://lore.kernel.org/linux-riscv/cover.1736923025.git.unicorn_wang@outlook.com/ [old-series]
 
-> +  -
-> +    name: mse-snapshot
-> +    attr-cnt-name: --ethtool-a-mse-snapshot-cnt
-> +    attributes:
-> +      -
-> +        name: unspec
-> +        type: unused
-> +        value: 0
-> +      -
-> +        name: channel
-> +        type: u32
-> +        enum: phy-mse-channel
-> +      -
-> +        name: average-mse
-> +        type: u32
-> +      -
-> +        name: peak-mse
-> +        type: u32
-> +      -
-> +        name: worst-peak-mse
-> +        type: u32
-> +  -
-> +    name: mse
-> +    attr-cnt-name: --ethtool-a-mse-cnt
-> +    attributes:
-> +      -
-> +        name: unspec
-> +        type: unused
-> +        value: 0
-> +      -
-> +        name: header
-> +        type: nest
-> +        nested-attributes: header
-> +      -
-> +        name: channel
-> +        type: u32
+Thanks,
+Chen
 
-Please annotate attrs which carry enums and flags with
+---
 
-	enum: $name
+Changes in v3:
 
-> +        enum: phy-mse-channel
-> +      -
-> +        name: config
-> +        type: nest
-> +        nested-attributes: mse-config
+  This patchset is based on v6.17-rc1.
 
-config sounds like something we'd be able to change
-Looks like this is more of a capability struct?
+  Fixed following issues for driver code based on feedbacks from Bjorn Helgaas,
+  Mingcong Bai, thanks.
 
-> +      -
-> +        name: snapshot
-> +        type: nest
-> +        multi-attr: true
-> +        nested-attributes: mse-snapshot
+  - Fixed the issue when building the driver as a module. Define own pm_ops
+    inside driver, don't use the ops defined in other built-in drivers.
+  - Improve .remove() function to properly disable the host.
 
-This multi-attr feels un-netlinky to me.
-You define an enum for IDs which are then carried inside
-snapshot.channel. In netlink IDs should be used as attribute types.
-Why not add an entry here for all snapshot types?
+Changes in v2:
+
+  This patchset is based on v6.17-rc1. You can simply review or test the
+  patches at the link [2].
+
+  Fixed following issues based on feedbacks from Rob Herring, Manivannan Sadhasivam,
+  Bjorn Helgaas, ALOK TIWARI, thanks.
+
+  - Driver binding:
+    - Removed vendor-id/device-id from "required" property.
+  - Improve drivers code:
+    - Have separated pci_ops for the root bus and child buses.
+    - Make the driver tristate and as a module.
+    - Change the configuration name from PCIE_SG2042 to PCIE_SG2042_HOST.
+    - Removed "Fixes" tag from commit [2/7], since this is not for an existing bug fix.
+    - Other code cleanups and optimizations
+  - DT:
+    - Add PCIe support for SG2042 EVB boards.    
+
+Changes in v1:
+
+  The patch series is based on v6.17-rc1. You can simply review or test the
+  patches at the link [1].
+
+Link: https://lore.kernel.org/linux-riscv/cover.1756344464.git.unicorn_wang@outlook.com/ [1]
+Link: https://lore.kernel.org/linux-riscv/cover.1757467895.git.unicorn_wang@outlook.com/ [2]
+
+---
+
+Chen Wang (7):
+  dt-bindings: pci: Add Sophgo SG2042 PCIe host
+  PCI: cadence: Check pcie-ops before using it
+  PCI: sg2042: Add Sophgo SG2042 PCIe driver
+  riscv: sophgo: dts: add PCIe controllers for SG2042
+  riscv: sophgo: dts: enable PCIe for PioneerBox
+  riscv: sophgo: dts: enable PCIe for SG2042_EVB_V1.X
+  riscv: sophgo: dts: enable PCIe for SG2042_EVB_V2.0
+
+ .../bindings/pci/sophgo,sg2042-pcie-host.yaml |  64 ++++++++
+ arch/riscv/boot/dts/sophgo/sg2042-evb-v1.dts  |  12 ++
+ arch/riscv/boot/dts/sophgo/sg2042-evb-v2.dts  |  12 ++
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |  12 ++
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        |  88 +++++++++++
+ drivers/pci/controller/cadence/Kconfig        |  10 ++
+ drivers/pci/controller/cadence/Makefile       |   1 +
+ .../controller/cadence/pcie-cadence-host.c    |   2 +-
+ drivers/pci/controller/cadence/pcie-cadence.c |   4 +-
+ drivers/pci/controller/cadence/pcie-cadence.h |   6 +-
+ drivers/pci/controller/cadence/pcie-sg2042.c  | 138 ++++++++++++++++++
+ 11 files changed, 343 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2042-pcie-host.yaml
+ create mode 100644 drivers/pci/controller/cadence/pcie-sg2042.c
+
+
+base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+-- 
+2.34.1
+
 
