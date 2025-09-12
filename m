@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-814880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 985D7B55A0C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:27:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0A1B55A0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11F5D5A430A
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:26:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC6A73B6C1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 23:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98F592D24B8;
-	Fri, 12 Sep 2025 23:23:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FAC92D46CC;
+	Fri, 12 Sep 2025 23:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0iF/PjD9"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F6Ba/LOh"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9B62D238B
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCFA2D24A9
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757719425; cv=none; b=pPQJ+RGaaz6dW3a9PqKSAlh32aS2432eGozJTFJ6fievUdc9XSfPJt+dFZR+Y0WyLKxFgvhkLXV7nbH1qZ2DacnlP3xLO95AnHjcYFtAWhXURFZsOMisJ94/AXANNIOuSZC4C1+kweEKVNRrCQQ3mttHY16JLi9fWACkaU+jZd8=
+	t=1757719426; cv=none; b=IaHNeTmf/4ttZcd/JHfZ2f2ZpT5fhdKFshvE+Uz8MrxTFa/LnOoOQ6n4HhtS7lGFOW5+6TxxLUmigDv8tQ9eBuezDq9NhQMs+VilL775THO/DnPgmgTHevoTWHxqZ9ENcdH84rLK2rZ74+XtsUmYFd7qQ+J5InzHkaZfio6gjog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757719425; c=relaxed/simple;
-	bh=7/QfmUh94cpKnRYcIs/AdmMBk2eIOUXj9qsTocROstw=;
+	s=arc-20240116; t=1757719426; c=relaxed/simple;
+	bh=e1JeRGkKaj9TgfxxMHwrDucQg8WoISztqz9SDCyYcKE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ttXVVteURJy5GESzx9se5my5c0mkWNNeSdRBBC/BApCUjoNYdxxM0nmn3ch6RIKcaAgOWe+yuh/2fU7HAPJA/0+we8Z2MXNzjagAFC/YUZIMR7I8TTvG3tESf3NVO+/LX12h91BbdivZmCE9tfl1DdFzRKf74spAWyQovhErLB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0iF/PjD9; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=lLjl1/CRUM7PVpoJSH6PCFAg195gEZLEL8oaxdqRRGUFfMm6VLpb9eZvPGfc/qJnGoW5uMZPOTe35iHv5sdA9fzOjvxuXPSob1ag8Mh4NfmC/bJG1vBJ1YcVaUq8qaf3Lzr3wrhrCSl8RL/qZyoOmXR+vk6iY5rDZvQRKyJiR+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F6Ba/LOh; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32e0b001505so184013a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:23:43 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b549a25ade1so3172775a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 16:23:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757719423; x=1758324223; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757719424; x=1758324224; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=f+rSSX++v1qgnsGhpIx8DklxJ9wJTs1Gj78GbeI9Rw8=;
-        b=0iF/PjD95vLy/LkAWHsSqQbYARSoOs+rvzEC7tcCVSoShoXnbko19mzDa1b01IuscM
-         K++z00mCKi3vmXRf/EX7O0waRa1mgwzrwFvZiRfDbSa4X93+dK6laUFAOAfqEZ/XHs3C
-         WqvAKZRH+DLaWpMt6IOGQi3Tbt7D7ToFhNvg9nChSogiGAwvcZOrfsqhvVBFs9+zktZw
-         krYytDA1PVYXawf68NYJzGof9YbUZOuWyNg06VEggXA9zXM3kpBmDxwtz8NnmvmnwO58
-         zlgBn1pLnH8DYE7fy/OZXka5BVacDzw1qbfhYkjw/8jR7zRWtE2hHMo0mzCFtT4S2eue
-         L9Cw==
+        bh=4hD6RqHRhoBQyAEPebACVdMiw3nYWEKr1GVCYwgXxlE=;
+        b=F6Ba/LOhxXFIE45TEJx6ZNROg5MTzlBb9wKdwfnMHgvikaykMxC2WsD8LF5Ex9HBfJ
+         w/idEuUTlyCmI0rKaT4ojXpJUbFxRGFrskXBH+LgOBAbcFGIN01SBKFpnyw1ZjWfth0v
+         /XCoW6uVXXUq0rMYIYNaUiNI69O2BQYmxmcbUtWtRccJzZemxnM0W+40Y05qNghfPv7h
+         uvq2grjH0cAyhEhQspskFhksPOf+tqu2ecyCJad8yvmTKGsP7FHckmYsPZiHJJLBAFje
+         tcQOn747iUc9EYCLgc+p27BURbvw1uqaRcI/gIPtPn7yF3SFRq9z3JlOYvmq6B/doMfd
+         IMug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757719423; x=1758324223;
+        d=1e100.net; s=20230601; t=1757719424; x=1758324224;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=f+rSSX++v1qgnsGhpIx8DklxJ9wJTs1Gj78GbeI9Rw8=;
-        b=gGsjnLnnrXdfuCn6ozVg4r028s5Yckx4ROeeS5gy5wfurobyGJMbWep2IeFFVBlBVO
-         cu5HYVpU57kEzKgOjO2YxxyRZo5QxUJhryyZtgeGvoewSjvSaYK9hOcZit2BNHlStJXY
-         qENXDVwSP0lZpCoNBEaHwlJtR1IXFB10Rgbs65qbee97lvjdxiEg5EjSDF1yo0i307s+
-         ZyPq7QuKlGuYuNnxlkSI3KsvOY18ATDujXyhEx0gQ7Evv5ZUoorWUoGh1vKXQUR2BHJk
-         HynIxPC7SPROGo9T3OddFMuQk0xGlPZPzOl8YRQvHAmIcBpsyBFbfo62a6qGYJ+aH7Yf
-         N6FA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvzZuYh+y69YLX/X/x7WkKxvraGW7YfQtgsiGgmFOMOSwVhcvCnMEuQYKVCVuTUNNIr5ZwICKYliwJQX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVVbrUifSmtwteCW0O8UArqIpY+cf9Vdyn2SI8iFqlpMHuFACp
-	LWqs2zTWHVYxJlC1WVifbTDpW3O4cArm1RDfgsT8B6Qdxo5HSsolFjynlvRV1fLtEkopfhWH18R
-	0orjEfg==
-X-Google-Smtp-Source: AGHT+IH1eNU2hQP1gvDQaW9z3NfGk3O72hFIvwJ884+L0C1h8IQkwA5/mG7MdJMxGMHC4seZBdGAjvKVpos=
-X-Received: from pjm14.prod.google.com ([2002:a17:90b:2fce:b0:325:7c49:9cce])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:ec83:b0:32b:9506:1773
- with SMTP id 98e67ed59e1d1-32de4fc1430mr5296039a91.33.1757719423002; Fri, 12
- Sep 2025 16:23:43 -0700 (PDT)
+        bh=4hD6RqHRhoBQyAEPebACVdMiw3nYWEKr1GVCYwgXxlE=;
+        b=EGugLxc4Sq3hzTJlCMLyFg/vSGiHoTjGXEmSI1fPt7f0as8LQ6VmbECOhQ21hAxXMT
+         XhGUzcOjWhg6dOzYTEtHXaqCLRPKhqFeOxa0S6XamA+Iv6u+t4F/pLmu6LJxQdljf4/s
+         p7Lt+/vK8KvfkHv1cwkwpcUkhEwr/wb6ySyWmi7QffzC+4gat72PmACCwzmltXpDnDYK
+         A/H6mCrv5VAq1kiJvtiHkBlwEkLckKaiST7BLs8KfTn+leubileYmeO1D1dxUCfAXKCo
+         20X057GQyjb5Q5/qUAvZmetHJg0olNFrrPydqXmAzaKUNsYCegN2IYACATWEPJW5g3wv
+         nX7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXUHpsWLBDiTKLvdrIWC5gqBqMoydDgw05PNHHDcTKzoTtv6PYJtQwT2HgtR1LSSO3aewHrvuQubTUBD20=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3nmo3J+1TCLOKabU4SSsGxw1Z7Sf/pfqyrddaBndiy9Orbc3l
+	lNgSHEi7EzCm/xwvNmVJhmPDIv3rmqtakPTPYkWZSBoviAHBPWJ2OkD+sX/cQ0QHFeMyi2jOcZ/
+	aHG98pg==
+X-Google-Smtp-Source: AGHT+IGWLwsQU+dLejivzjWhZVlfpjqnxSofRQrCbAJJqAIc4rCqQN32hHX4+j9WegaCO61lPFy9geyAemo=
+X-Received: from pjkk4.prod.google.com ([2002:a17:90b:57e4:b0:31f:b2f:aeed])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:32aa:b0:246:d43a:3877
+ with SMTP id adf61e73a8af0-2602a49da06mr5641736637.8.1757719424555; Fri, 12
+ Sep 2025 16:23:44 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri, 12 Sep 2025 16:22:48 -0700
+Date: Fri, 12 Sep 2025 16:22:49 -0700
 In-Reply-To: <20250912232319.429659-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,8 +75,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250912232319.429659-1-seanjc@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250912232319.429659-11-seanjc@google.com>
-Subject: [PATCH v15 10/41] KVM: x86: Add fault checks for guest CR4.CET setting
+Message-ID: <20250912232319.429659-12-seanjc@google.com>
+Subject: [PATCH v15 11/41] KVM: x86: Report KVM supported CET MSRs as to-be-saved
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -88,48 +88,56 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Yang Weijiang <weijiang.yang@intel.com>
 
-Check potential faults for CR4.CET setting per Intel SDM requirements.
-CET can be enabled if and only if CR0.WP == 1, i.e. setting CR4.CET ==
-1 faults if CR0.WP == 0 and setting CR0.WP == 0 fails if CR4.CET == 1.
+Add CET MSRs to the list of MSRs reported to userspace if the feature,
+i.e. IBT or SHSTK, associated with the MSRs is supported by KVM.
 
+Suggested-by: Chao Gao <chao.gao@intel.com>
 Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-Reviewed-by: Chao Gao <chao.gao@intel.com>
-Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 Tested-by: Mathias Krause <minipli@grsecurity.net>
 Tested-by: John Allen <john.allen@amd.com>
 Tested-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 Signed-off-by: Chao Gao <chao.gao@intel.com>
-Co-developed-by: Sean Christopherson <seanjc@google.com>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/x86/kvm/x86.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index a95ca2fbd3a9..5653ddfe124e 100644
+index 5653ddfe124e..2c9908bc8b32 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -1176,6 +1176,9 @@ int kvm_set_cr0(struct kvm_vcpu *vcpu, unsigned long cr0)
- 	    (is_64_bit_mode(vcpu) || kvm_is_cr4_bit_set(vcpu, X86_CR4_PCIDE)))
- 		return 1;
+@@ -344,6 +344,10 @@ static const u32 msrs_to_save_base[] = {
+ 	MSR_IA32_UMWAIT_CONTROL,
  
-+	if (!(cr0 & X86_CR0_WP) && kvm_is_cr4_bit_set(vcpu, X86_CR4_CET))
-+		return 1;
+ 	MSR_IA32_XFD, MSR_IA32_XFD_ERR, MSR_IA32_XSS,
 +
- 	kvm_x86_call(set_cr0)(vcpu, cr0);
++	MSR_IA32_U_CET, MSR_IA32_S_CET,
++	MSR_IA32_PL0_SSP, MSR_IA32_PL1_SSP, MSR_IA32_PL2_SSP,
++	MSR_IA32_PL3_SSP, MSR_IA32_INT_SSP_TAB,
+ };
  
- 	kvm_post_set_cr0(vcpu, old_cr0, cr0);
-@@ -1376,6 +1379,9 @@ int kvm_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
- 			return 1;
+ static const u32 msrs_to_save_pmu[] = {
+@@ -7598,6 +7602,20 @@ static void kvm_probe_msr_to_save(u32 msr_index)
+ 		if (!kvm_caps.supported_xss)
+ 			return;
+ 		break;
++	case MSR_IA32_U_CET:
++	case MSR_IA32_S_CET:
++		if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK) &&
++		    !kvm_cpu_cap_has(X86_FEATURE_IBT))
++			return;
++		break;
++	case MSR_IA32_INT_SSP_TAB:
++		if (!kvm_cpu_cap_has(X86_FEATURE_LM))
++			return;
++		fallthrough;
++	case MSR_IA32_PL0_SSP ... MSR_IA32_PL3_SSP:
++		if (!kvm_cpu_cap_has(X86_FEATURE_SHSTK))
++			return;
++		break;
+ 	default:
+ 		break;
  	}
- 
-+	if ((cr4 & X86_CR4_CET) && !kvm_is_cr0_bit_set(vcpu, X86_CR0_WP))
-+		return 1;
-+
- 	kvm_x86_call(set_cr4)(vcpu, cr4);
- 
- 	kvm_post_set_cr4(vcpu, old_cr4, cr4);
 -- 
 2.51.0.384.g4c02a37b29-goog
 
