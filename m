@@ -1,237 +1,194 @@
-Return-Path: <linux-kernel+bounces-813140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B90B54118
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:41:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD2CB54120
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 05:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 561A34E04EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35171891CF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 03:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3187494;
-	Fri, 12 Sep 2025 03:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACBD259C9C;
+	Fri, 12 Sep 2025 03:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCNXCSxi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="jn7KOVSI"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5DE235041
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63562DC775
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 03:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757648479; cv=none; b=tzFUgrdFb/3FErjPfpPu3B5RFx28cH5SBcVhzXpaOwYj/ZjjPz2yiw0/q8FLN69BFFkP7wtHkeBML4RyZ531VhrzxhVP5L5Fbcr9dJ0S6NRsaVtRLbaOyfV1pkyKf7K/f5vE7X0v7L7nKODm9kDyBxvA7q6g5SS40Sns6SBQVTM=
+	t=1757648699; cv=none; b=M0E8agZdfKLUrQxYRKRtULhgLjJwF+cD0YFLrQQvQHCVWKe4/8G+zWjxeXSZFm6HZXUiptjiVl5ECSPJogTKiE+0vOHdRuMHw+wKbi49UiMMnw9XGQIN/TrxudRv8CKPLhYXcylfBbN/e8rn3CWjcXgGQRPL6UivtAfwSV9VHnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757648479; c=relaxed/simple;
-	bh=XDwDklRFyhTQ7jpEFuln8g3jtb2GyRw7CB0tY3hlXIE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=oJbFm5AnqfPJAl7OvTL1xY4v7B0M/Q8VFx6XUN2q/jQTYoirsV+tPW9VpqHLy4yJBAP86pAXj2EUN4fKriiwRvhJvX9kqh9TSoBKRY/vVv1tfps014xlYcmVSESz5RB0TaDh/jgHrjircDZxKYKyQZdoGlP28TZXBgQ/4in8bGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCNXCSxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CCCC4CEF4;
-	Fri, 12 Sep 2025 03:41:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757648479;
-	bh=XDwDklRFyhTQ7jpEFuln8g3jtb2GyRw7CB0tY3hlXIE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=sCNXCSxisFb6QSyP/WoUcT62/cIWYvK/VB/grwR38wDI1Sc/zVAJwMao5k7iLDyCK
-	 o1mYGgOSrEZLBsiWQTejzn1KDItxoTx8YcZx6+91tlXzmz5LySQrWydAl8OoahZyKu
-	 7xGsLY7GlBiHAdXzpfZ0WgYM9rjT7KWmOKZv+3C+BuOxIIG5eN68ulQcV5WpNzhdJe
-	 yFyGJEqWFfknz3ChDzIoLvivUztP9hiubrZM4nZaC3GW17vmd0yqVhUZIjNstqorS8
-	 Z/MO/ldNHKNJukHUqo0ApITHY/ghRsevMaAfVhrWKnDNL8vLZNINON+CQzXyOotnV7
-	 FDDbAc2SkU++w==
-Message-ID: <2ecb4f74-cc60-4dd4-8dc3-d4f3ff848e87@kernel.org>
-Date: Fri, 12 Sep 2025 11:41:22 +0800
+	s=arc-20240116; t=1757648699; c=relaxed/simple;
+	bh=ZpxiM4NXhcZmKQdU/kQz5uIyINJQczpioixRluD7LSk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jwlo32C+gFCGap0F2dYf8bvw5zpa+8gMICCfdYF1Lxl9PfTBsYEo2wjFUXRW3CVDNZEYEgIKidw8PTlQ+iEzMbyRQz0uwvJ0qBhenhXIvOX/BNd1LafNhp+c10H/T3sNgsyxK7gKFr2lIjfYh5WDeIp2cq59arnyzNDBAqEnvCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=jn7KOVSI; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-32da88701c7so1517637a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 20:44:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1757648697; x=1758253497; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dLXLF/8rG6hnfrvnt+B3nOdP0tZ4TwcwQmPFhduodfg=;
+        b=jn7KOVSIru0TOoytBog8vRccJyaT1Mh4k1sgAj7nnYEQ5CHv5ynm2rF28EZ2MYtH/U
+         qJFsMyDw5F2v5lW7QOax742uAnrA0uln6LfwL1Koy9lGE/jEMoxdyGMbZqNf/8url/61
+         LlsmfwOXluXKkMhaIJHOAPArjEck1ocDMK93eBIvBTED7dBgtbway15uCvnD67nGsrnZ
+         ugwsbcByBq2LyvDBuD65oPj3jspkPL6mUjDBKeFDvxjxr1w7GZkZJ8rEEvbNppwoFXMH
+         YnZrq2EouDn9ecDG8bWPqVqo4m5AYWFWBVwTtM242WpRC+uvj+ruYOSBcnOLnZEcmGsR
+         dp/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757648697; x=1758253497;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dLXLF/8rG6hnfrvnt+B3nOdP0tZ4TwcwQmPFhduodfg=;
+        b=q/VVXtEv2A2xD3feXs7PKWNv5CEi5qngtV8yN9rYCiPUTErdh1I+BuOQDwbnsl+mWP
+         qz+lSHDAGYswMXWB2Zi4Wnj5dbd39mqNIan3X3/A1Y0SlaWWZplW+IjpF7qhZVTbMeeA
+         Ml6tz1Zvi9S7eN/kgQ5sO/40MmlFCsqQ4Xw48B5NJHpyEPAWD4ucwI1m0/MeVF9EiHWz
+         6e8wsFDz9C5s6RyP2RR0UIPyOj4RwlAkaNhBZqHzeMbpjmTRnOf1VhNOL4RlFgI8VRDS
+         NB1g80phLL9xDwqhzblEtZ0+swJ0mH6a1yPqPXmErZ3WAAdY5xIYm0K7QBWgvpQkb9mJ
+         o7FA==
+X-Forwarded-Encrypted: i=1; AJvYcCWslG2YECcyY1Z1pgh/QbLm4Pba1ocuMUbq7qxnkUZPPFEs/RKQfus1x6x2/3YoQFU9VCs2WNj3g9WHOag=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzblku30ATkxyad2rj8RqW7jubb8lyVoMjpgNRg/0X2C5HD8vry
+	AYptCRx0xZ78tHR/l13SuZ8JrPShTb4GXT7SrnzQLMne5lCaKaOlMa0eZi2WN9AWYw==
+X-Gm-Gg: ASbGncvbqxrTCS51u4XJczj5BUCVWm6Z0Hkr0k/WX0ic5q6FkqfzXXc44ObexJjGrC+
+	mPrPL1sSVQWX4XwC86TGEGPID2Bwn2klJN00RUMw8zGSXXF1lQgI4/avsCXAdATr5dJxDFqM87w
+	HNS6DI856beDTsbOa4p4kv/SGKc47ZiiNW4ysGzEeQzoKo5Yj5ScfWzjv+PS6vA/zdSn8mTE1wG
+	FIsdPfhsMydBcpXFh9ciVZCR8dlVRz0QSDc4xgsPAnokEODeOCa7pIzQ2FeD3PjX0hXIyjxWCHJ
+	8Sx2+uww45Rh5u9GopjSBECTWe8OASJRtJQ95RGfalNhS2O3ROQRJ2A/NCYh+STruW/PrtssYKx
+	Nf/4VCXPzeK3HzTIHhyhcn+AQKVkwE2bBYpfZtBJOimOIsH8efw==
+X-Google-Smtp-Source: AGHT+IFy47WDgms/J9fw3Arbmga7E0E69RmMlFIFl878TTLy6zDNn+h2L90/JBQCa9swVYMkh+9a9Q==
+X-Received: by 2002:a17:90b:5386:b0:32d:e413:966a with SMTP id 98e67ed59e1d1-32de4f9c4aamr1454436a91.32.1757648696964;
+        Thu, 11 Sep 2025 20:44:56 -0700 (PDT)
+Received: from bytedance ([61.213.176.57])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54a36d0d5bsm3385304a12.22.2025.09.11.20.44.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 20:44:56 -0700 (PDT)
+Date: Fri, 12 Sep 2025 11:44:28 +0800
+From: Aaron Lu <ziqianlu@bytedance.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel test robot <lkp@intel.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Xi Wang <xii@google.com>, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
+	Chuyi Zhou <zhouchuyi@bytedance.com>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Florian Bezdeka <florian.bezdeka@siemens.com>,
+	Songtang Liu <liusongtang@bytedance.com>,
+	Chen Yu <yu.c.chen@intel.com>,
+	Matteo Martelli <matteo.martelli@codethink.co.uk>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH update 4/4] sched/fair: Do not balance task to a throttled
+ cfs_rq
+Message-ID: <20250912034428.GA33@bytedance>
+References: <20250910095044.278-5-ziqianlu@bytedance.com>
+ <202509110908.a2P8HZ8A-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, feng.han@honor.com, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: fix wrong extent_info data for
- precache extents
-To: wangzijie <wangzijie1@honor.com>
-References: <c83ac24b-9997-4f2e-9e51-00c29909ad85@kernel.org>
- <20250912033609.3033352-1-wangzijie1@honor.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250912033609.3033352-1-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202509110908.a2P8HZ8A-lkp@intel.com>
 
-On 9/12/2025 11:36 AM, wangzijie wrote:
->> On 9/11/2025 5:07 PM, wangzijie wrote:
->>>> On 9/10/25 21:58, wangzijie wrote:
->>>>> When the data layout is like this:
->>>>> dnode1:                     dnode2:
->>>>> [0]      A                  [0]    NEW_ADDR
->>>>> [1]      A+1                [1]    0x0
->>>>> ...                         ....
->>>>> [1016]   A+1016
->>>>> [1017]   B (B!=A+1017)      [1017] 0x0
->>>>>
->>>>> We can build this kind of layout by following steps(with i_extra_isize:36):
->>>>> ./f2fs_io write 1 0 1881 rand dsync testfile
->>>>> ./f2fs_io write 1 1881 1 rand buffered testfile
->>>>> ./f2fs_io fallocate 0 7708672 4096 testfile
->>>>>
->>>>> And when we map first data block in dnode2, we will get wrong extent_info data:
->>>>> map->m_len = 1
->>>>> ofs = start_pgofs - map->m_lblk = 1882 - 1881 = 1
->>>>>
->>>>> ei.fofs = start_pgofs = 1882
->>>>> ei.len = map->m_len - ofs = 1 - 1 = 0
->>>>>
->>>>> Fix it by skipping updating this kind of extent info.
->>>>>
->>>>> Signed-off-by: wangzijie <wangzijie1@honor.com>
->>>>> ---
->>>>>    fs/f2fs/data.c | 3 +++
->>>>>    1 file changed, 3 insertions(+)
->>>>>
->>>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>>>> index 7961e0ddf..b8bb71852 100644
->>>>> --- a/fs/f2fs/data.c
->>>>> +++ b/fs/f2fs/data.c
->>>>> @@ -1649,6 +1649,9 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
->>>>>    
->>>>>    		switch (flag) {
->>>>>    		case F2FS_GET_BLOCK_PRECACHE:
->>>>> +			if (__is_valid_data_blkaddr(map->m_pblk) &&
->>>>> +				start_pgofs - map->m_lblk == map->m_len)
->>>>> +				map->m_flags &= ~F2FS_MAP_MAPPED;
->>>>
->>>> It looks we missed to reset value for map variable in f2fs_precache_extents(),
->>>> what do you think of this?
->>>>
->>>> ---
->>>>    fs/f2fs/file.c | 4 +++-
->>>>    1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->>>> index 1aae4361d0a8..2b14151d4130 100644
->>>> --- a/fs/f2fs/file.c
->>>> +++ b/fs/f2fs/file.c
->>>> @@ -3599,7 +3599,7 @@ static int f2fs_ioc_io_prio(struct file *filp, unsigned long arg)
->>>>    int f2fs_precache_extents(struct inode *inode)
->>>>    {
->>>>    	struct f2fs_inode_info *fi = F2FS_I(inode);
->>>> -	struct f2fs_map_blocks map;
->>>> +	struct f2fs_map_blocks map = { 0 };
->>>>    	pgoff_t m_next_extent;
->>>>    	loff_t end;
->>>>    	int err;
->>>> @@ -3617,6 +3617,8 @@ int f2fs_precache_extents(struct inode *inode)
->>>>
->>>>    	while (map.m_lblk < end) {
->>>>    		map.m_len = end - map.m_lblk;
->>>> +		map.m_pblk = 0;
->>>> +		map.m_flags = 0;
->>>>
->>>>    		f2fs_down_write(&fi->i_gc_rwsem[WRITE]);
->>>>    		err = f2fs_map_blocks(inode, &map, F2FS_GET_BLOCK_PRECACHE);
->>>> -- 
->>>> 2.49.0
->>>>
->>>> Thanks,
->>>>
->>>>>    			goto sync_out;
->>>>>    		case F2FS_GET_BLOCK_BMAP:
->>>>>    			map->m_pblk = 0;
->>>
->>>
->>> We have already reset m_flags (map->m_flags = 0) in f2fs_map_blocks().
->>
->> Zijie:
->>
->> Oops, that's right, thanks for correcting me.
->>
->>>
->>> I think that this bug is caused by we missed to reset m_flags when we
->>> goto next_dnode in below case：
->>>
->>> Data layout is something like this:
->>> dnode1:                     dnode2:
->>> [0]      A                  [0]    NEW_ADDR
->>> [1]      A+1                [1]    0x0
->>> ...
->>> [1016]   A+1016
->>> [1017]   B (B!=A+1017)      [1017] 0x0
->>>
->>> we map the last block(valid blkaddr) in dnode1:
->>> map->m_flags |= F2FS_MAP_MAPPED;
->>> map->m_pblk = blkaddr(valid blkaddr);
->>> map->m_len = 1;
->>> then we goto next_dnode, meet the first block in dnode2(hole), goto sync_out:
->>> map->m_flags & F2FS_MAP_MAPPED == true, and we make wrong blkaddr/len for extent_info.
->>
->> So, can you please add above explanation into commit message? that
->> should be helpful for understanding the problem more clearly.
->>
->> Please take a look at this case w/ your patch:
->>
->> mkfs.f2fs -O extra_attr,compression /dev/vdb -f
->> mount /dev/vdb /mnt/f2fs -o mode=lfs
->> cd /mnt/f2fs
->> f2fs_io write 1 0 1883 rand dsync testfile
->> f2fs_io fallocate 0 7712768 4096 testfile
->> f2fs_io write 1 1881 1 rand buffered testfile
->> xfs_io testfile -c "fsync"
->> cd /
->> umount /mnt/f2fs
->> mount /dev/vdb /mnt/f2fs
->> f2fs_io precache_extents /mnt/f2fs/testfile
->> umount /mnt/f2fs
->>
->>           f2fs_io-733     [010] .....    78.134136: f2fs_update_read_extent_tree_range: dev = (253,16), ino = 4, pgofs = 1882, len = 0, blkaddr = 17410, c_len = 0
->>
->> I suspect we need this?
->>
->> @@ -1784,7 +1781,8 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
->>          }
->>
->>          if (flag == F2FS_GET_BLOCK_PRECACHE) {
->> -               if (map->m_flags & F2FS_MAP_MAPPED) {
->> +               if ((map->m_flags & F2FS_MAP_MAPPED) &&
->> +                       (map->m_len - ofs)) {
->>                          unsigned int ofs = start_pgofs - map->m_lblk;
->>
->>                          f2fs_update_read_extent_cache_range(&dn,
-> 
-> Thanks for pointing out this. Let me find a way to cover these cases and do more test.
-> 
->> BTW, I find another bug, if one blkaddr is adjcent to previous extent,
->> but and it is valid, we need to set m_next_extent to pgofs rather than
->> pgofs + 1.
->>
->> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->> index cbf8841642c7..ac88ed68059c 100644
->> --- a/fs/f2fs/data.c
->> +++ b/fs/f2fs/data.c
->> @@ -1789,8 +1789,11 @@ int f2fs_map_blocks(struct inode *inode, struct f2fs_map_blocks *map, int flag)
->>                                  start_pgofs, map->m_pblk + ofs,
->>                                  map->m_len - ofs);
->>                  }
->> -               if (map->m_next_extent)
->> -                       *map->m_next_extent = pgofs + 1;
->> +               if (map->m_next_extent) {
->> +                       *map->m_next_extent = pgofs;
->> +                       if (!__is_valid_data_blkaddr(blkaddr))
->> +                               *map->m_next_extent += 1;
->> +               }
->>          }
->>          f2fs_put_dnode(&dn);
-> 
-> Maybe it can be this?
-> if (map->m_next_extent)
-> 	*map->m_next_extent = is_hole ? pgofs + 1 : pgofs;
+When doing load balance and the target cfs_rq is in throttled hierarchy,
+whether to allow balancing there is a question.
 
-It's better, will update, thank you. :)
+The good side to allow balancing is: if the target CPU is idle or less
+loaded and the being balanced task is holding some kernel resources,
+then it seems a good idea to balance the task there and let the task get
+the CPU earlier and release kernel resources sooner. The bad part is, if
+the task is not holding any kernel resources, then the balance seems not
+that useful.
 
-Thanks,
+While theoretically it's debatable, a performance test[0] which involves
+200 cgroups and each cgroup runs hackbench(20 sender, 20 receiver) in
+pipe mode showed a performance degradation on AMD Genoa when allowing
+load balance to throttled cfs_rq. Analysis[1] showed hackbench doesn't
+like task migration across LLC boundary. For this reason, add a check in
+can_migrate_task() to forbid balancing to a cfs_rq that is in throttled
+hierarchy. This reduced task migration a lot and performance restored.
 
+[0]: https://lore.kernel.org/lkml/20250822110701.GB289@bytedance/
+[1]: https://lore.kernel.org/lkml/20250903101102.GB42@bytedance/
+Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
+---
+update: fix build error reported by kernel test robot when
+CONFIG_FAIR_GROUP_SCHED is not set.
+
+ kernel/sched/fair.c | 22 ++++++++++++++++++----
+ 1 file changed, 18 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 3dbdfaa697477..18a30ae35441a 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5737,6 +5737,11 @@ static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
+ 	return cfs_bandwidth_used() && cfs_rq->throttle_count;
+ }
+ 
++static inline int lb_throttled_hierarchy(struct task_struct *p, int dst_cpu)
++{
++	return throttled_hierarchy(task_group(p)->cfs_rq[dst_cpu]);
++}
++
+ static inline bool task_is_throttled(struct task_struct *p)
+ {
+ 	return cfs_bandwidth_used() && p->throttled;
+@@ -6733,6 +6738,11 @@ static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
+ 	return 0;
+ }
+ 
++static inline int lb_throttled_hierarchy(struct task_struct *p, int dst_cpu)
++{
++	return 0;
++}
++
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b, struct cfs_bandwidth *parent) {}
+ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq) {}
+@@ -9369,14 +9379,18 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
+ 	/*
+ 	 * We do not migrate tasks that are:
+ 	 * 1) delayed dequeued unless we migrate load, or
+-	 * 2) cannot be migrated to this CPU due to cpus_ptr, or
+-	 * 3) running (obviously), or
+-	 * 4) are cache-hot on their current CPU, or
+-	 * 5) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
++	 * 2) target cfs_rq is in throttled hierarchy, or
++	 * 3) cannot be migrated to this CPU due to cpus_ptr, or
++	 * 4) running (obviously), or
++	 * 5) are cache-hot on their current CPU, or
++	 * 6) are blocked on mutexes (if SCHED_PROXY_EXEC is enabled)
+ 	 */
+ 	if ((p->se.sched_delayed) && (env->migration_type != migrate_load))
+ 		return 0;
+ 
++	if (lb_throttled_hierarchy(p, env->dst_cpu))
++		return 0;
++
+ 	/*
+ 	 * We want to prioritize the migration of eligible tasks.
+ 	 * For ineligible tasks we soft-limit them and only allow
+-- 
+2.39.5
 
 
