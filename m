@@ -1,138 +1,259 @@
-Return-Path: <linux-kernel+bounces-814639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A4C2B556CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:10:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A47B556C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 21:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387455C1756
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:10:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 948EF1CC51EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C06833EB0D;
-	Fri, 12 Sep 2025 19:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B38B322C63;
+	Fri, 12 Sep 2025 19:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Fh9xv9Qh"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HbdrWw+q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776B83375AB
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B236309EEC;
+	Fri, 12 Sep 2025 19:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757704216; cv=none; b=T7u2myKLOxlJO9Z5HWwTpkp7VRuxrehO8j+xvjX/TyERRIY9bnHyzB+QvIXmelQQbUs6wnGJiZPAtifGicfVDaLF1PDBjRVuEjQyyCqsHvPtNrjm89DdThSyCrFB4DqqMlIcBWb+kFqiyf1TBWRUDboBYoglZbF3tcoM/KMs2/0=
+	t=1757704211; cv=none; b=hI1PncQu7q2KvI/+xpicWbNPCFmxX7kavupEIlRhn+IYNueP2BjwUx6k9xpUZIDRZEuWqrAv/uirybbhAobRDpbvD/1ysDtNEg5jGp0+3q+k3h2sLPGzP8fQwbiKW/cqq510ZFFUgq8YGRLu3Ku8eO2lWQP12cbCBp7r6Im1nKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757704216; c=relaxed/simple;
-	bh=22rZRQwccdDXCdWucL0md8nKZ5xUlhtkQsl5aauAsOM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ABgCsKw98CdXmEEQFL88iyGKbN+/ZNb1OyrxHGzq186HhXY/gs98f5sNHn4HLYcAbcXccDRXQjVl/q/CAF77ri6ZFTluwh2+HJC9VOKndHJn3X6myZA58OtzIORcYhR+OloD87rIw3p4pdft/H89kkHs3rkV2R7l6hZmcpRurB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Fh9xv9Qh; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-30ccebab736so1854278fac.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 12:10:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1757704213; x=1758309013; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wdlmWREl3KGVca0VuH2Pgk1lTP5tsygacI/dk5FYqvU=;
-        b=Fh9xv9QhDUtcPb0v2qovXrMRPKHInIIEbWfThs0u6NVMgo//LKC2JM3gYeLq8HUVyD
-         roVGjQdN7xx9nQyZD4Dj1ACdrt0HsQ1KqMPSUHtv1wUwlxskrruEg6qBOVXO+5YJQYcU
-         LOq4uJfzHdn6DXJD7CSJrakY9G2nDWGRGqCasyXBYn9ez8dbh3gmOJotaGseOAFD9e6N
-         TV9aXINt8VOX4hh+R81gyI6UcyxgIFO6h/mX/gNuH9qUDoABRG9FF1fmCMO3bJsicuJV
-         RGI+cI6GZn6OF2J2swDUikPjRbYnB6E/vc474M2O8bSBjfjuhX15HvDTgcHIbnaREqWt
-         UDVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757704213; x=1758309013;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wdlmWREl3KGVca0VuH2Pgk1lTP5tsygacI/dk5FYqvU=;
-        b=MPemRehoTHJcZjwtFYgAsev8oJonel/oHVh7Ggh6UgZPfME8i/v+VckV/ajeNgQB3U
-         zgKLumTdR1sBwULQcy42OedYE7np+wYMVQY7Abc7tm/d23CFqwTiSRQIqOu48ySsNEp+
-         ed8I75qRo+vvStekDMU0MT1a+xACF/J3KdFWCHONCPKrRYCP0CQsexY9QmUtlh8RBoaV
-         FF/5d7EvYfhtnHvx+apB04W0ssj6VbISJiXRnXIsLmmVRPON6hxeShyFLVHtoqkN+W1d
-         gG51XNupkPFkedsAgv6ndS/s4e6YwId3RyJZ/0Ku5SdYeskIMqHSRkDckp0NDTGVzdAu
-         4j7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXclOQaitRZP+EdgKJdJhqVmJyn7UXtVXuShs8PbVJYf05dYfx2T7jLdy8FHpvR4omK3RbBAOWrd17MPVo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFunTLlxvJYruLS5kKDtssd6PN5IXKDft0aRX7lbTWR1fY2bQZ
-	HunS4/N8TPeeQUig8Mwtl43n5nyhG1SxeQTg0BhJE1wBXXoZwv0rqSvKunOoh1Xjvhk=
-X-Gm-Gg: ASbGnctTBAVNaz3MDYd8+fqUsX+So+eCprp6fIdWgHMrcvFTfI6mRKCibSillV9eLRt
-	+VeuYxhwTtt+rQz+t9gJN0rffIUKUWxfluc87gpnxqFyXqnrZwZ0v6LPsGEOfb00f7t/jbX0xBr
-	eQTnjZP9uS3SH0A8j5nFWjsefWjGTIG4LfaGOHr8Qiu6axfA8xVn/tJ/dBRWWHhw3E3W2zB10CM
-	6jawkbSYgbIxqEh70DbeTflIuf4XBWRkqsQ3t2AvSx+WTMrSPKyjD31oYubzhdNtsVVCQVcbADl
-	rmQMTHjCMPYweFniNokEoc0P3SoTrDyi44BqhQX0uh/Jb9T3wDKHQyD9VUmSdKrcN2MIDMr/Ktk
-	RXNwhwKGs7h/gs0g4XXiwwXlGSLnS
-X-Google-Smtp-Source: AGHT+IGfyzjSKeBPxKUtCFxXgNXOtuPFBWMr9b01M1myKuXzLh1KXZkhphCsxl5slJPnH3wGEAUdnA==
-X-Received: by 2002:a05:6870:c085:b0:30b:ba5e:3472 with SMTP id 586e51a60fabf-32e552aa8bfmr1913830fac.12.1757704213337;
-        Fri, 12 Sep 2025 12:10:13 -0700 (PDT)
-Received: from [127.0.1.1] ([2600:8803:e7e4:1d00:fdf1:f11e:e330:d3c1])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7524986c872sm1172564a34.15.2025.09.12.12.10.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 12:10:13 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 12 Sep 2025 14:09:33 -0500
-Subject: [PATCH v2 4/4] iio: ABI: add filter types for ad7173
+	s=arc-20240116; t=1757704211; c=relaxed/simple;
+	bh=BHvO3ffOu/pYItZcjhAHlIsp5Ebwcjc3/LkaEdv6EYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYcIM1nV26aZMYcI7bzmriu1oyPpWkkpuxz9zLUKvjBg5S/Mm3rgcNQm6jYtS4l2CDI5Zo6P7PmDagvNEeCex0J082mXfOuPQYSTynitVeVCZ+4OHWwIe6XiQtQ99VlnlIrcRQZh2QIrCSyBezMdjo7UrWT7tEzmhk6fZBLJhlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HbdrWw+q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E70A4C4CEF1;
+	Fri, 12 Sep 2025 19:10:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757704210;
+	bh=BHvO3ffOu/pYItZcjhAHlIsp5Ebwcjc3/LkaEdv6EYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HbdrWw+qY6KsEX7m6TBsiOQZHcO3FJQNY0FxU1AUBr89RmfNJX8ys5j0lqqRaodld
+	 FGZrkvkZAzbWh2yDTywPu7bIJLMJ4EL40PDVEWgKatHREe2006Tf0zRYH0gygHZpNm
+	 38YvJJT42306TLIRY3UDKGjU3gh+DbypDHqJYmwG8y+F/9iYtBrOMWSgwgg7BuDTe5
+	 FjxLszL6EdzIz79xcJggobJYyze67DTQUmQoVZBLAGNj2Je6OhthnMKXvTOeKDRMhZ
+	 RYifvyGjGvKIN6BMUQgUMMDeDtqxxNntYAftHrbzQfHagQjn69VIhDqdwmVTIqHb3U
+	 UOuBwU9kDMSrw==
+Date: Fri, 12 Sep 2025 20:10:04 +0100
+From: Conor Dooley <conor@kernel.org>
+To: hehuan1@eswincomputing.com
+Cc: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, jszhang@kernel.org, adrian.hunter@intel.com,
+	p.zabel@pengutronix.de, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	pinkesh.vaghela@einfochips.com, xuxiang@eswincomputing.com,
+	luyulin@eswincomputing.com, dongxuyang@eswincomputing.com,
+	zhangsenchuan@eswincomputing.com, weishangjuan@eswincomputing.com,
+	lizhi2@eswincomputing.com, caohang@eswincomputing.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: mmc: sdhci-of-dwcmshc: Add Eswin
+ EIC7700
+Message-ID: <20250912-pork-oaf-3480d3d0ef67@spud>
+References: <20250912093451.125-1-hehuan1@eswincomputing.com>
+ <20250912093713.142-1-hehuan1@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250912-iio-adc-ad7137-add-filter-support-v2-4-bd32dfa3d761@baylibre.com>
-References: <20250912-iio-adc-ad7137-add-filter-support-v2-0-bd32dfa3d761@baylibre.com>
-In-Reply-To: <20250912-iio-adc-ad7137-add-filter-support-v2-0-bd32dfa3d761@baylibre.com>
-To: Michael Hennerich <Michael.Hennerich@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1242; i=dlechner@baylibre.com;
- h=from:subject:message-id; bh=22rZRQwccdDXCdWucL0md8nKZ5xUlhtkQsl5aauAsOM=;
- b=owEBbQGS/pANAwAKAcLMIAH/AY/AAcsmYgBoxHAKH1jnud58OUFIrZj3B2cZPTbYotYbHhZ9Y
- SFIDafYS8iJATMEAAEKAB0WIQTsGNmeYg6D1pzYaJjCzCAB/wGPwAUCaMRwCgAKCRDCzCAB/wGP
- wC5BB/0drW3DCMb2URgt3eb7DLU10MmceSqnl1yxf0jQJr9fVffggOZinYw2vuZeSWNSY5jRyHB
- vVq+rWfRDxLt5o952KzlF3V7f022WCVbpGxvm4AW9xBj4QRRJ2JQ1nEuI4TJzUB3r75YVNg9Mi4
- HzB4ac+qViJnsBaoxup+TGO8mKnMUpc8A4YzpYei4kqOsfkP/M7sGSsdj9/reNTfbPoGTF4E/Mr
- byq3aedZducLSI+cw0zb5kwcErC7SjJp+PqxTlVrPgbMoLPQuA1nCBsHYwaqdD6JXY+n0x00EGW
- 6YAfXMKt7sgPd4hYhUtQr+ns+cX19HV/4OlDYUA4I4dd2s+w
-X-Developer-Key: i=dlechner@baylibre.com; a=openpgp;
- fpr=8A73D82A6A1F509907F373881F8AF88C82F77C03
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="er6Xm9SJtE93Y+go"
+Content-Disposition: inline
+In-Reply-To: <20250912093713.142-1-hehuan1@eswincomputing.com>
 
-Add new filter types used in the ad7173 driver to the IIO ABI
-documentation. These chips have a few filter types that haven't been
-seen before in other drivers.
 
-Reviewed-by: Nuno Sá <nuno.sa@analog.com>
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- Documentation/ABI/testing/sysfs-bus-iio | 5 +++++
- 1 file changed, 5 insertions(+)
+--er6Xm9SJtE93Y+go
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-index 2fb2cea4b19249743398b1ff0b538b03ced0340b..845dd20aab78e5c7afbeb26ba04c295a28aaafa2 100644
---- a/Documentation/ABI/testing/sysfs-bus-iio
-+++ b/Documentation/ABI/testing/sysfs-bus-iio
-@@ -2296,6 +2296,11 @@ Description:
- 		  performance
- 		* "sinc5+avg" - Sinc5 + averaging by 4.
- 		* "sinc5+pf1" - Sinc5 + device specific Post Filter 1.
-+		* "sinc5+sinc1" - Sinc5 + Sinc1.
-+		* "sinc5+sinc1+pf1" - Sinc5 + Sinc1 + device specific Post Filter 1.
-+		* "sinc5+sinc1+pf2" - Sinc5 + Sinc1 + device specific Post Filter 2.
-+		* "sinc5+sinc1+pf3" - Sinc5 + Sinc1 + device specific Post Filter 3.
-+		* "sinc5+sinc1+pf4" - Sinc5 + Sinc1 + device specific Post Filter 4.
- 		* "wideband" - filter with wideband low ripple passband
- 		  and sharp transition band.
- 
+On Fri, Sep 12, 2025 at 05:37:13PM +0800, hehuan1@eswincomputing.com wrote:
+> From: Huan He <hehuan1@eswincomputing.com>
+>=20
+> EIC7700 use Synopsys dwcmshc IP for SD/eMMC controllers.
+> Add Eswin EIC7700 support in sdhci-of-dwcmshc.yaml.
+>=20
+> Signed-off-by: Huan He <hehuan1@eswincomputing.com>
+> ---
+>  .../bindings/mmc/snps,dwcmshc-sdhci.yaml      | 81 +++++++++++++++++--
+>  1 file changed, 75 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yam=
+l b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> index f882219a0a26..e0f34bc28e0c 100644
+> --- a/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/snps,dwcmshc-sdhci.yaml
+> @@ -30,6 +30,7 @@ properties:
+>            - sophgo,sg2002-dwcmshc
+>            - sophgo,sg2042-dwcmshc
+>            - thead,th1520-dwcmshc
+> +          - eswin,eic7700-dwcmshc
+> =20
+>    reg:
+>      maxItems: 1
+> @@ -52,17 +53,51 @@ properties:
+>      maxItems: 5
+> =20
+>    reset-names:
+> -    items:
+> -      - const: core
+> -      - const: bus
+> -      - const: axi
+> -      - const: block
+> -      - const: timer
+> +    maxItems: 5
+> =20
+>    rockchip,txclk-tapnum:
+>      description: Specify the number of delay for tx sampling.
+>      $ref: /schemas/types.yaml#/definitions/uint8
+> =20
+> +  clock-output-names:
+> +    maxItems: 1
+> +    description:
+> +      The name of the clock output representing the card clock,
+> +      consumed by the PHY.
 
--- 
-2.43.0
+You have one clock, why do you need this?
 
+> +
+> +  '#clock-cells':
+> +    enum: [0]
+
+const: 0
+
+> +    description:
+> +      Specifies how many cells are used when referencing the
+> +      exported clock from another node. This property indicates
+> +      that the clock output has no extra parameters and represents
+> +      the card clock.
+
+This description is not needed.
+
+> +
+> +  eswin,hsp-sp-csr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - description: Phandle to HSP(High-Speed Peripheral) device
+> +      - description: Offset of the stability status register for
+> +                     internal clock
+> +      - description: Offset of the stability register for host
+> +                     regulator voltage.
+> +    description: |
+> +      High-Speed Peripheral device needed to configure internal
+> +      clocks, and the power.
+> +
+> +  eswin,syscrg-csr:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    items:
+> +      - description: Phandle to system CRG(System Clock and Reset
+> +                     Generator) device
+> +      - description: Offset of core clock control register
+> +    description: |
+> +      System Clock and Reset Generator device needed to configure
+> +      core clock.
+
+This reeks of improper clock tree description. Why can you not just
+request the rate that you need via the common clk framework? Likewise
+for reset. You already have a clocks property that has to include the
+core clock, so I don't see why you need another property to get around
+it.
+
+As a result, I'm also suspicious of your hsp-sp-csr, but these at least
+appear to be internal clocks if your description is to be believed.
+I'd like you to explain exactly what those clocks do and what the "HSP"
+actually is. What other peripherals use it?
+
+Also, your driver turns on this hsp clock but never turns it off. Same
+for the power.
+
+I want to see the full dts for what you're doing here before I approve
+this, there's too much here that looks wrong.
+
+> +
+> +  drive-impedance-ohm:
+
+How come this one has no eswin prefix? Also, the unit is "Ohms", not
+"Ohm".
+
+Additionally, any eswin properties should be restricted to eswin devices
+only.
+
+> +    description: Specifies the drive impedance in Ohm.
+> +    enum: [33, 40, 50, 66, 100]
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -110,6 +145,40 @@ allOf:
+>              - const: block
+>              - const: timer
+> =20
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: eswin,eic7700-dwcmshc
+> +    then:
+> +      properties:
+> +        resets:
+> +          minItems: 4
+> +          maxItems: 4
+> +        reset-names:
+> +          items:
+> +            - const: arstn
+> +            - const: phy_rst
+> +            - const: prstn
+> +            - const: txrx_rst
+
+How come you're so drastically different to the other devices?
+Also, putting "_rst" in a reset name is pointless. These are all resets
+after all by nature.
+
+Cheers,
+Conor.
+
+> +      required:
+> +        - clock-output-names
+> +        - '#clock-cells'
+> +        - eswin,hsp-sp-csr
+> +        - eswin,syscrg-csr
+> +        - drive-impedance-ohm
+> +    else:
+> +      properties:
+> +        resets:
+> +          maxItems: 5
+> +        reset-names:
+> +          items:
+> +            - const: core
+> +            - const: bus
+> +            - const: axi
+> +            - const: block
+> +            - const: timer
+> +
+>    - if:
+>        properties:
+>          compatible:
+> --=20
+> 2.25.1
+>=20
+
+--er6Xm9SJtE93Y+go
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaMRwDAAKCRB4tDGHoIJi
+0shHAQC+SrqvSbv2pQ0Nma2DkzXWQp1AlSILxib/onOdJjFDjAD/StEwusEOYc0V
+WqBLKaCHIC5d9NoKe6QdUlkErvglkAY=
+=vvpd
+-----END PGP SIGNATURE-----
+
+--er6Xm9SJtE93Y+go--
 
