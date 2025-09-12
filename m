@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-814564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F51B5559F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:49:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29363B555A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 19:49:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186575812E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:49:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A9601D64EE4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 17:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2FD32A817;
-	Fri, 12 Sep 2025 17:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66706326D60;
+	Fri, 12 Sep 2025 17:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZ3Uy4KF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YuTtuv7J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53096329F3F;
-	Fri, 12 Sep 2025 17:49:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F373019BD
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757699344; cv=none; b=R6QxYQD+UG/becBG4o5fh2jfqJH92BjehuM+T2rLMcZnCHGRJ8SGrHhrSLNo1EGLrXvox3au/ISLtS6ve7w4BJoPqKRHpJke5qWglaJ9EPZrn304/5c38Zg54uz+pqozrgno2DOZKrCPw/r6gGLObTI2NvkUfZtmUySHF6gZi1g=
+	t=1757699349; cv=none; b=J9Q5HvQHlNQuEnUhZQIVvhuslb9d96TKKmnkFoIOIzeLDGF8oE+LEMOpRKXrUKdy90TqHiCciR9TjecjAHixSMxJA280mB3QcseWBm8LlJdcKmMHwsJF5qiTqBMebiunyggWrYuGA3WJwAOA9N6/ARE7keqfahWwhIi9qBCfJsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757699344; c=relaxed/simple;
-	bh=QW9jAxsE0BHuYb8pADHkxYBs4aPFw2GiNbEAj9orAMA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=qZqne9nZWDjDvND6ZASEc4fHvYe1rdHQX0+XOj2m5RJYUPvznx2PhGPuz5IdLMxF/feGS1oKubk+D0pwAoroffKk6KznIwMSKF3KH9tbFEaq9QYMxRSsx6lXADmBptvpZRi6lD403aMkcsLijT9sobczdqvrrdESnG/SCRDD41Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZ3Uy4KF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D609AC4CEF1;
-	Fri, 12 Sep 2025 17:49:03 +0000 (UTC)
+	s=arc-20240116; t=1757699349; c=relaxed/simple;
+	bh=Y3N3CVC4GV5QWmVOOamNa1sfvGeVvIJ++ZM8Dzz0v1E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=TwFAROOFmK6X7e/jBq1bppKm6DA7WQO/39IXWhm/QIjzUtxd+ZzGLzK3eLabH+BihHCzpHHeajFoNtI0dLvpLKgqLx52u24duuFWhC34XjUu3ZizzeG8vOFYpf7hx8cN1mGHNgCmlJjVCicZWv2pE4nFaGythfe2nAMHZQ10tfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YuTtuv7J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A57FC4CEF1;
+	Fri, 12 Sep 2025 17:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757699343;
-	bh=QW9jAxsE0BHuYb8pADHkxYBs4aPFw2GiNbEAj9orAMA=;
+	s=k20201202; t=1757699349;
+	bh=Y3N3CVC4GV5QWmVOOamNa1sfvGeVvIJ++ZM8Dzz0v1E=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=MZ3Uy4KFtUP99h/jsj293C9ZB23Ca1cQZxusNBo3rja2NjqmzRKihgc4Qj2DZPYHd
-	 pDaAeFL2HbbVbZ7d0K2z4s7CtXYbZpkLc/q+fJn0bS/ptpeJ0RkHmpsN6L3vLLYDA0
-	 Jy9ahpLKC0a3w+O6E3sa9to9R5QIX1WY/Re1PpF6AUrZctKsCXu9kxBBO8e+DkC7Y6
-	 S2JMAA6R+w93ZgwY2IF/8kXbAOS5uAFVMp37GavZCLJV0zMwn78h8+XGT2houJMBpo
-	 VrDgB7G/v5Nfdyro/JcPLBSSaCVMvKJlaGCEfIa00WJsA/9WrKUm/tu2Umpn0MXbPK
-	 dF9MRwEu/7QCA==
+	b=YuTtuv7JI7LY9pekHmj7epSB/l7uwiNNkjajCWALSFgVcYqqPWzE2EHmHLlGa0+Wr
+	 WFnc0LWJomc+0fJArBCpWaNZl5CJv7RJI5SiANx1VrOtuIbexxRHcYNdBJljHvvotl
+	 GdjOjN5SY9oXG65BuErbz520AXj6C92xh5JuZnXB6/X3QlHUC8igzkqGn2Kg5l1H38
+	 GhCPoXUN8TWWzP4xdg6ZvnquEjxjz5GN+B2x6Xr3TJs7Yim8/fv+ougfPMUOGPS9UW
+	 Qy8Vhji0g3hgh0+iZ4XjJ1hh3YREKT8JO/1FIl82KFmKA442ppAMMjYUqKSYwvOVvH
+	 hGn6CGuKCeJlA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 71410383BF4E;
-	Fri, 12 Sep 2025 17:49:07 +0000 (UTC)
-Subject: Re: [GIT PULL] PCI fixes for v6.17
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33DD6383BF4E;
+	Fri, 12 Sep 2025 17:49:13 +0000 (UTC)
+Subject: Re: [git pull] drm fixes for 6.17-rc6
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250912152842.GA1625331@bhelgaas>
-References: <20250912152842.GA1625331@bhelgaas>
-X-PR-Tracked-List-Id: <linux-pci.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250912152842.GA1625331@bhelgaas>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.17-fixes-3
-X-PR-Tracked-Commit-Id: b816265396daf1beb915e0ffbfd7f3906c2bf4a4
+In-Reply-To: <CAPM=9tw1QOZSBq+QhAbpyc9UvY7KYTfA+K=JQyo+_u+nBcTdGw@mail.gmail.com>
+References: <CAPM=9tw1QOZSBq+QhAbpyc9UvY7KYTfA+K=JQyo+_u+nBcTdGw@mail.gmail.com>
+X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
+ <dri-devel.lists.freedesktop.org>
+X-PR-Tracked-Message-Id: <CAPM=9tw1QOZSBq+QhAbpyc9UvY7KYTfA+K=JQyo+_u+nBcTdGw@mail.gmail.com>
+X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-09-12
+X-PR-Tracked-Commit-Id: 9a3f210737e958c3f45a4ce0d7f1ff330af3965f
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 22f20375f5b71f30c0d6896583b93b6e4bba7279
-Message-Id: <175769934592.3023336.8078993412767026909.pr-tracker-bot@kernel.org>
-Date: Fri, 12 Sep 2025 17:49:05 +0000
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, Klaus Kudielka <klaus.kudielka@gmail.com>, Jan Palus <jpalus@fastmail.com>, Tony Dinh <mibodhi@gmail.com>, Rob Herring <robh@kernel.org>
+X-PR-Merge-Commit-Id: 965c995c9a4b395471ff48790a0155ee986ca405
+Message-Id: <175769935190.3023336.14398687217530924597.pr-tracker-bot@kernel.org>
+Date: Fri, 12 Sep 2025 17:49:11 +0000
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 12 Sep 2025 10:28:42 -0500:
+The pull request you sent on Fri, 12 Sep 2025 14:24:52 +1000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.17-fixes-3
+> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2025-09-12
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/22f20375f5b71f30c0d6896583b93b6e4bba7279
+https://git.kernel.org/torvalds/c/965c995c9a4b395471ff48790a0155ee986ca405
 
 Thank you!
 
