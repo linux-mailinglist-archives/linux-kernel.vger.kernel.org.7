@@ -1,78 +1,73 @@
-Return-Path: <linux-kernel+bounces-813620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-813621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB2B6B54856
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:51:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1EDB54857
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 11:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D83A57AF67E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4CE1AA0B52
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 09:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0EB28851C;
-	Fri, 12 Sep 2025 09:50:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF28289E07;
+	Fri, 12 Sep 2025 09:51:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k7dEIi2o"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="K6KcnFM4"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BEF2877C1;
-	Fri, 12 Sep 2025 09:50:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25767286D6D;
+	Fri, 12 Sep 2025 09:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757670655; cv=none; b=QK4ayMf6pkXLqjIIVnK0QJ+7MHFFYfzIwb+M7ugZBVUe9P0Cv4tkH+gG2GRcLLbRt3LS2RYd0RJnK1n0A7MkXtLNoOBUmgWZbaDgs/ksoAWcqn+s6uFAHFtNP5NWB/FJ0Am9WVm6mu6sy+gILVgyzAKHLlf6xU70Kt0WFGolLS8=
+	t=1757670664; cv=none; b=FzW037umj5qdzFouUjG0+gnqsnXN9ctJnDBRzHmbw6Rc8gdn+1G86eNl5NCQU5Y/QMsRrGf3J3BKbGTBlHHeIKXs0idUtwhDVHACBWumqh9CFfaakWlbstcj19HGe7NW0oukL5zSwX2VJLLTMVjNMy+MbRsMZjFv4IwGViHXTZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757670655; c=relaxed/simple;
-	bh=xHNkoqoHwX0TX4dRlZUjDWlMHlGpsEYKhGtb6jKAu1I=;
+	s=arc-20240116; t=1757670664; c=relaxed/simple;
+	bh=t9p7bpqB7n4cS7utuqwt/T6JfzcJ/XWx4QwDxJmemXQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m0Mpt/wTwMGCReXECpqMj7DKEd9qGw0tELcZvYWGZWLjgRA2ZEbhlOU83UZneJZVZ+up5qkkTT26qIef1Dub6pAoLv54h1Uw1/lLhG6jjSXrM9rCIEprLU5cqrEcLU9tMmstf7rl9hjXtpxTh71GKmnzWgH+B79TFo61EJq44pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=k7dEIi2o; arc=none smtp.client-ip=198.47.23.235
+	 MIME-Version:Content-Type; b=IkDkOJH0Yz02tuAbl5XoK3Swlu3DyKe1e9opK9DZYng4Wcw823S3JD/GjunN6suWHMY6/vUMvg9rwbdt123DtUkcBy2l4G1Zj2mFe9fNABEPeDDoWpquv2I9p3TSPfYTGzRIPL2Qy2VPVpA0aBCfG3Ik9cuT8MMmlo1KzA/K4kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=K6KcnFM4; arc=none smtp.client-ip=198.47.19.245
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58C9okDc1008505;
-	Fri, 12 Sep 2025 04:50:46 -0500
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58C9ouLT495897;
+	Fri, 12 Sep 2025 04:50:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757670646;
-	bh=00JJC95eGA+9HiqS1iD9cIi+d8wa3H1eHI7M7UBEhDw=;
+	s=ti-com-17Q1; t=1757670656;
+	bh=CzRMAuJOXVTxhce0Yc4MGKlUon63tvYdJK66DMNKHrM=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=k7dEIi2oy/7V+x016xrssKCDh0D/Qq8H6awn2f4qhmk8DWiJ2/TtAM+AK3fRUBZ0q
-	 Gm0zT6uPrCMkJRalRJShu56NVfGuOG6znYSRb1e09f6hLeW5oLklFw/Km7Fm+dZLpW
-	 DB0mtbIJ/gl3onBiaZl6c7FxWpz57CF3RNaJShw4=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58C9ojBn1895129
+	b=K6KcnFM4lkgAwuBBNwCOo+92tBqr09gOT7Xn35MVRKScCODwqvEjtfmyWNEwuI8ts
+	 l7UkHfEsPr7dggZk54wCBR89qAD4shirsNNM77/S/pEk1T6+HMk5ENE2NYfbdg55KB
+	 OoILfiuxpm4z57ZeZQ1sCproiWGGHYdSvWi6w6vc=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58C9ouvu1776454
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 12 Sep 2025 04:50:45 -0500
-Received: from DLEE202.ent.ti.com (157.170.170.77) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+	Fri, 12 Sep 2025 04:50:56 -0500
+Received: from DFLE202.ent.ti.com (10.64.6.60) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 12
- Sep 2025 04:50:45 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE202.ent.ti.com
- (157.170.170.77) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2025 04:50:55 -0500
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE202.ent.ti.com
+ (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 12 Sep 2025 04:50:45 -0500
+ Transport; Fri, 12 Sep 2025 04:50:56 -0500
 Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58C9ojIl3414296;
-	Fri, 12 Sep 2025 04:50:45 -0500
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58C9ouqf3718647;
+	Fri, 12 Sep 2025 04:50:56 -0500
 From: Nishanth Menon <nm@ti.com>
-To: Judith Mendez <jm@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Moteen Shah <m-shah@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
+To: <vigneshr@ti.com>, <praneeth@ti.com>, Paresh Bhagat <p-bhagat@ti.com>
+CC: Nishanth Menon <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        Andrew Davis <afd@ti.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 0/2] Remove HS400 support from common
-Date: Fri, 12 Sep 2025 04:50:41 -0500
-Message-ID: <175766786999.26286.12984291959565660129.b4-ty@ti.com>
+        <linux-kernel@vger.kernel.org>, <khasim@ti.com>, <v-singh1@ti.com>,
+        <afd@ti.com>, <bb@ti.com>, <s-k6@ti.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-am62d2-evm: Add support for OSPI flash
+Date: Fri, 12 Sep 2025 04:50:52 -0500
+Message-ID: <175766786947.26144.12602123819286079278.b4-ty@ti.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250908235207.473628-1-jm@ti.com>
-References: <20250908235207.473628-1-jm@ti.com>
+In-Reply-To: <20250813090300.733295-1-p-bhagat@ti.com>
+References: <20250813090300.733295-1-p-bhagat@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,26 +78,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Judith Mendez,
+Hi Paresh Bhagat,
 
-On Mon, 08 Sep 2025 18:52:05 -0500, Judith Mendez wrote:
-> Since eMMC HS400 has been descoped for j722s due to errata i2478 [0]
-> and is supported by default for AM62Px device, remove sdhci0 node from
-> common-main.dtsi and include instead only for AM62Px in am62p-main.dtsi.
+On Wed, 13 Aug 2025 14:33:00 +0530, Paresh Bhagat wrote:
+> AM62D2 EVM has S28HS512T 64 MiB Octal SPI NOR flash connected to the
+> OSPI interface. Add support for the flash and describe the partition
+> information as per bootloader.
 > 
-> Also, update the STRB value for am62p eMMC sdhci0 node.
 > 
-> Tested on am62p SK board.
-> 
-> [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/2] arm64: dts: ti: k3-am62p/j722s: Remove HS400 support from common
-      commit: 7efc354b7fe1ac5e874d0188b3d6be88a3fa0fe4
-[2/2] arm64: dts: ti: k3-am62p: Update eMMC HS400 STRB value
-      commit: 9fdcc5f98141cf2f77e8778bee830190d7b71ced
+[1/1] arm64: dts: ti: k3-am62d2-evm: Add support for OSPI flash
+      commit: 1a1066f553df1777ffa5ede050457e41972f34f4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
