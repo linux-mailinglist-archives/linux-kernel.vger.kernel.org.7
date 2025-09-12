@@ -1,95 +1,146 @@
-Return-Path: <linux-kernel+bounces-812991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-812992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1FF1B53F5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:02:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193E6B53F63
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 02:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48BBF48851E
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:02:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50C2A680EC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 00:06:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F24772613;
-	Fri, 12 Sep 2025 00:02:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29734A08;
+	Fri, 12 Sep 2025 00:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kd44Djh7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="hiEsnjSn"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C444D2DC76D;
-	Fri, 12 Sep 2025 00:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A74C38D
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 00:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757635321; cv=none; b=f2f8L6tUl7FhiRDn7QF57sLl6JB8tL8Y7QDdmv7vnKKSA4Z3Ac9USzAbT9nqazXsxwlmPgrIaRk3gHR3VYHAyJZrEek/G7+vSKCScFxIXnnmZBAxTh1n9XvPlAi1ZFJSlB+VnEb72Diq6VnTRynFesF4COnjeKCd0eI8w7pwH+A=
+	t=1757635582; cv=none; b=d9ZmXWi2GJiQ28pFCahwodU/5rLzpBN1r6LBfEgV2CWo+PsM4XSUrEbgLzKyaLqaN9vAFc15l0d3K+dxJtWCaXgoV03C3oxe67CV5C6HJVQ7XsWykbiSlfPQOz4aduTw4UY81lL57EQVTVJBXywpN1Z5M2cwxe4POiGNx1PJJng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757635321; c=relaxed/simple;
-	bh=0wrrUK4oFK61WEcwJoC3CXhY9QFy4rgtgWwUYrq0Opk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E7YUx9SGzTaMmlKejf+0Kj2DE1sIyub51Q+UNeqfxomyAD3Ygt37vxJQGLcEwrpIQZ0GhdnMhRz9eIIyHL35BJ0m/bFK7BmgBG21d7+I1JoBU6JjXFPgFyfnDOQn5yF7PBiml088waXZFgDMv1ig0EdqYy6Kzy3TCFA7yx7mnxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kd44Djh7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03CCC4CEF0;
-	Fri, 12 Sep 2025 00:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757635321;
-	bh=0wrrUK4oFK61WEcwJoC3CXhY9QFy4rgtgWwUYrq0Opk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kd44Djh7pYO5hpTr2eXfUuw2U3SIZXAP03Bx/lMr6U5OjMqZoVFGwuKp9niagx3mW
-	 J7wtpMixRjTORzLjl3S57ubl0+IUzLk2Jwu1UVqVexsGvGbvJnRYY+mfuDQ3hUEkt4
-	 y0za4yPT4yyi/dVgIcHUQEK6ourw0nMI3CYlkmVqykCbpokVXyaeIChewqrrWBSgif
-	 vZh8FxXMumht53cMKwt5uakXzo17LP/lsOSN5N6iZN7VpaPIeXChx0YXuUVaX+Tf8J
-	 wFrn2ZgrkBGKTmDjZs0myx2YZDxAwO2DWG630RBOHmXYddJusBJhctH/sQIZCqypnJ
-	 t87HiHPMP/kLg==
-Date: Thu, 11 Sep 2025 17:01:59 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "G Thomas, Rohan" <rohan.g.thomas@altera.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Jose Abreu <Jose.Abreu@synopsys.com>, Rohan
- G Thomas <rohan.g.thomas@intel.com>, netdev@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Matthew
- Gerlach <matthew.gerlach@altera.com>
-Subject: Re: [PATCH net 1/2] net: stmmac: est: Fix GCL bounds checks
-Message-ID: <20250911170159.383edcc6@kernel.org>
-In-Reply-To: <2d00df77-870d-426c-a823-3a9f53d9eb30@altera.com>
-References: <20250911-qbv-fixes-v1-0-e81e9597cf1f@altera.com>
-	<20250911-qbv-fixes-v1-1-e81e9597cf1f@altera.com>
-	<aMKxc6AuEiWplhcV@shell.armlinux.org.uk>
-	<2d00df77-870d-426c-a823-3a9f53d9eb30@altera.com>
+	s=arc-20240116; t=1757635582; c=relaxed/simple;
+	bh=+6OPioA90E5nzaoCC+gocHUjf3q9Y81ZBY0L3e9+kGc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TtrwfOsLemDXhhAk0Rpa5Cw21DAQTxM4oGfaRhubcnrkD5SbsK5rNGslbCx5XNchHuLlqYqFVoCf4ua4ldOM+nvV9iD8aPn6+D9RzofbykMoHcQP0pDWdDtBcGunODmFMsWVUVQl3Nje5YUj9fmfOTov0iLox//Wh0am3agS5Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=hiEsnjSn; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-45b4d89217aso9308485e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 11 Sep 2025 17:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1757635579; x=1758240379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XQ+S/AjoUpa12H97dfICorV7t0bCnG6lmMpJwiBX4/M=;
+        b=hiEsnjSnXJkdG+/RtNT366LSZzvjAwyUEGkOMnZJ6N1n5L/VoAgcfYKXOJokKU/XVC
+         /70FCgZhpTNpgyRefQykB6jpm8eDsSZULJVIlhYJufSFdjVV85bCKRHAulVYIDdf7bwV
+         iwYVXw35L+T5HpnUTIui7eGYv6e4prsMqf75NTUTAlsXHX/cdP++uLmZ9PDj2oiU/oRq
+         VephEKI37yD6OhpB5ItMEav7c05y0YuG6Ls2RfyiJIknh00RNOnMiQ4T0aPKiLECc5w5
+         Oudhz7JDhkhkwbvn2PxyaatsnP0v8eAMlS1D5HzGig1pOSSg9KKRJFK3RRfVwi6aAR4M
+         EGFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757635579; x=1758240379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XQ+S/AjoUpa12H97dfICorV7t0bCnG6lmMpJwiBX4/M=;
+        b=FjLunRpibxhFlu6KzS6mVhx50dr8YV09wSODaW2uw6q1fI6xhc1+bVF6Vw74x4DRdO
+         u9wys19luXXlYqU2obHMfC73JLTpaLyZw/eKYX65nwtTLksg+b4u47xaSaCkJKATgbvm
+         +8O81AxQvg8llLdDYka2KMqChvOoMz8cqJwDLEx0XJJFCufDwKydVnFyJ99usRQs55nk
+         Ssa3uqyyrbOH2gAKSqSxg6XR0ZY9/JdxvhVmVlvVu2YHFtt1xHNsOqmbJuk+Tz0C4aef
+         dDzi8Wcr2sqYOQPDn1Uj0yMFpsSU44NAhIzU9iO56aKNAA0zlrZO8OVweXKgJiIW8drG
+         8rzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAMGGEwKZE8e6fkM7SDwNOn5WTYF2ctf4pw1sBVDDzy/zAfmt+dt1H7utxMFXJD0UAfYr40Qmmz0B+9u8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbnU/37M++8L2SgEnGms1cAWCacsh6FPRUbsjetEKjd7joO+QB
+	o4rqt6suhHy4qL2pcC3ZhsEz2LWwiZv7Vptr80mTGF11AWEU8hPDu0xpipRZmrGGvlw=
+X-Gm-Gg: ASbGnctoqRoyuwSl7F+ohEOniTnVEULIh6EGuWjQgYIeQ7HcBR8VYHYOTZi6LuB++Lk
+	tdGXEyIYASo0Y4JphuyP3rVfZEwTPUiGEuf25TbszmcXhIhbQ29DNFVtD/tOxVi2LhBFTN5Q6Jm
+	UbR97bEbNbpj5B0wSXB+5cIuC65zJ5mVJvwgnUl35h6tZemKP5lv/Oq/OM+0bYWCyy8PcGU4fAH
+	LbLC5Kj7/f9Ylb/NzR68acYFeUcGZ9G4RU3WdEjUXT1nZvgr2ZHVd//7HvlY7bGnBF8MbILbJ7W
+	uAuGI5akiiH4+aeFq1tvdL0tPTytSdKQ30kM8w8fWoCormZqP9yo3GuIFhpyojnlstaxrRS2afh
+	901O2yPGBqH9bjnKiqMVlcmUNJihwn5dkSUKinsgI/tPx6nNVFmU64jgnA0kU0aSty/0l9oB3R5
+	5kNgIlvf74E0glWy9pGX/1/5xK0hHs51ZymUc9EvUfNtXQ
+X-Google-Smtp-Source: AGHT+IFskXhj3JotjTK7+H0Jl9VGIBaJvG/P81CDfESkKjEB2nYSiqffBM8TrVpfVHiNaEyyyaOlqA==
+X-Received: by 2002:a05:600c:1f8b:b0:45b:47e1:ef71 with SMTP id 5b1f17b1804b1-45f21221db1mr10323485e9.36.1757635578608;
+        Thu, 11 Sep 2025 17:06:18 -0700 (PDT)
+Received: from raven.intern.cm-ag (p200300dc6f31f700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f31:f700:230:64ff:fe74:809])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e0157cc84sm22899865e9.7.2025.09.11.17.06.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Sep 2025 17:06:18 -0700 (PDT)
+From: Max Kellermann <max.kellermann@ionos.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Fengnan Chang <changfengnan@bytedance.com>,
+	Sasha Levin <sashal@kernel.org>,
+	Diangang Li <lidiangang@bytedance.com>,
+	io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] io_uring/io-wq: fix `max_workers` breakage and `nr_workers` underflow
+Date: Fri, 12 Sep 2025 02:06:09 +0200
+Message-ID: <20250912000609.1429966-1-max.kellermann@ionos.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 11 Sep 2025 18:12:16 +0530 G Thomas, Rohan wrote:
-> On 9/11/2025 4:54 PM, Russell King (Oracle) wrote:
-> > On Thu, Sep 11, 2025 at 04:22:59PM +0800, Rohan G Thomas via B4 Relay wrote:  
-> >> @@ -1012,7 +1012,7 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
-> >>   		s64 delta_ns = qopt->entries[i].interval;
-> >>   		u32 gates = qopt->entries[i].gate_mask;
-> >>   
-> >> -		if (delta_ns > GENMASK(wid, 0))
-> >> +		if (delta_ns >= BIT(wid))  
-> > 
-> > While I agree this makes it look better, you don't change the version
-> > below, which makes the code inconsistent. I also don't see anything
-> > wrong with the original comparison.  
-> 
-> Just to clarify the intent behind this change:
-> For example, if wid = 3, then GENMASK(3, 0) = 0b1111 = 15. But the
-> maximum supported gate interval in this case is actually 7, since only 3
-> bits are available to represent the value. So in the patch, the
-> condition delta_ns >= BIT(wid) effectively checks if delta_ns is 8 or
-> more, which correctly returns an error for values that exceed the 3-bit
-> limit.
+Commit 88e6c42e40de ("io_uring/io-wq: add check free worker before
+create new worker") reused the variable `do_create` for something
+else, abusing it for the free worker check.
 
-Comparison to BIT() looks rather odd, I think it's better to correct
-the GENMASK() bound?
+This caused the value to effectively always be `true` at the time
+`nr_workers < max_workers` was checked, but it should really be
+`false`.  This means the `max_workers` setting was ignored, and worse:
+if the limit had already been reached, incrementing `nr_workers` was
+skipped even though another worker would be created.
+
+When later lots of workers exit, the `nr_workers` field could easily
+underflow, making the problem worse because more and more workers
+would be created without incrementing `nr_workers`.
+
+The simple solution is to use a different variable for the free worker
+check instead of using one variable for two different things.
+
+Cc: stable@vger.kernel.org
+Fixes: 88e6c42e40de ("io_uring/io-wq: add check free worker before create new worker")
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ io_uring/io-wq.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/io_uring/io-wq.c b/io_uring/io-wq.c
+index 17dfaa0395c4..1d03b2fc4b25 100644
+--- a/io_uring/io-wq.c
++++ b/io_uring/io-wq.c
+@@ -352,16 +352,16 @@ static void create_worker_cb(struct callback_head *cb)
+ 	struct io_wq *wq;
+ 
+ 	struct io_wq_acct *acct;
+-	bool do_create = false;
++	bool activated_free_worker, do_create = false;
+ 
+ 	worker = container_of(cb, struct io_worker, create_work);
+ 	wq = worker->wq;
+ 	acct = worker->acct;
+ 
+ 	rcu_read_lock();
+-	do_create = !io_acct_activate_free_worker(acct);
++	activated_free_worker = io_acct_activate_free_worker(acct);
+ 	rcu_read_unlock();
+-	if (!do_create)
++	if (activated_free_worker)
+ 		goto no_need_create;
+ 
+ 	raw_spin_lock(&acct->workers_lock);
+-- 
+2.47.3
+
 
