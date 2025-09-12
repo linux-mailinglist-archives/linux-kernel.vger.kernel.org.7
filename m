@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-814834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B15BAB5591F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:25:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09655B55924
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6B43AD786
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:25:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B351B5A3FC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD0127A47C;
-	Fri, 12 Sep 2025 22:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B67286D62;
+	Fri, 12 Sep 2025 22:25:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwyCdPw2"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fj2GwCDE"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62957257820
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357AB2741C9
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757715914; cv=none; b=Ya4Egf8vWhK425gBvyz1M70mksplkLhymnUqIZJO2kA9pU9IhIf/aBCRIBWnmzBmqJbvX/Xf+cOgZDeybPzyukQWDOPk1513475otuHyu5zGpPofNVb6r/uaNBu/zVsv1igDuzlAu8/91RBIBLSGGVXW7Eoxee7ScxN6e8d9cXk=
+	t=1757715943; cv=none; b=oA3gzaGisBdXXLlgNv4hJ0AS/pCC6f+gl1cP2mk41wKN+TlA8jCbhazRjszMJjY11bjzw5AwPowDP9bfOX0RKmdDQy758rYyZO9oVg1j8Mu7zlI4GeLq8CuE5Pup8JUolfB2Ov626OFfQIZ2SjG6WAOvxlQs4V/6FHNN7XbZug0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757715914; c=relaxed/simple;
-	bh=iTr7M893E4gTqL49aZVHGGZS32qlPZ3IW8d9Y0OSJ2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ceDWafwolv6coFFIwaKODZkK9tN2qCk0H+mu+5eRQLdffAI/dhKX+uudcjojKInSf3RoPov/uwlvLt4jrHi6l2pG7qH7aVVfY508rS/s6WnugrPrMR8/JXLfLD8Ohjk9rhErwWEzY+wvDnAN/oFnJPvbBe3i2LrGbPPA4gTPdSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwyCdPw2; arc=none smtp.client-ip=209.85.210.175
+	s=arc-20240116; t=1757715943; c=relaxed/simple;
+	bh=kK67gOsMKdnTk8XfJvCFmZ1AgZVmladu8chilWBm6No=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ug2n+h6p4IVJuWRS4O0c5M8hLHKI6mhUTiSIg5shxXFVh5GynQmvuTJjqXrAWxebqC1j//iL1+UF5UcOp4FMv+X2BptdDho59R4l+dT8lZxUN1Poc7gQCL2pCc4HmSI5ZtuNIKo78lurcfZnIQfcCgguPLNR4KDACwHZMDrEq88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fj2GwCDE; arc=none smtp.client-ip=209.85.222.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-77256e75eacso2237678b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:25:13 -0700 (PDT)
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-80e3612e1a7so401650885a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 15:25:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757715913; x=1758320713; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2KLKlGBJI1d0fx9t2uSJ4mzy0rd5NfzB4VUuG4EkoD8=;
-        b=iwyCdPw2AR0kWzu9CltuNd4ZRhbIMADpxB2LlNzCMaXf+i85MtPzztjUB0Yz6PA9Re
-         7UsEiAC/AdanZ3JNj90V0KMFJCeqI6y8txmzPlKhG2AA9NhCiydKp2TPiWNcfCSckWLH
-         XYjGYN9j4Lv2zMmxNHP/lhV6JQ/nXAly+IEGXSq9LjQr5NWLyXaDvrg8uxtTuN/6rTtJ
-         oq/UJvqGHqx2XrXqmRs6J0y5UxTNDANBzQIvDNCdqrLmt/H5WtQwqI99g+YQ0h++9tuX
-         nNbK1sxBiOK8q4ZaqMbEMsJ0yu7RB6a47mC3cSOzZPyItMjSoAmzzDRfmxUEYrOvUcNK
-         dzvw==
+        d=gmail.com; s=20230601; t=1757715941; x=1758320741; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pzZnnPEt3bRj9xxliys6aMLfk6CSAaQd8ndI256Y7tQ=;
+        b=Fj2GwCDEF42NjL5js8RIKxSdYKFiwRb5qkfg6dTzNVdpHb1HkMIPrurM/TXlmoIKMO
+         /Oj5r3RUe0Ute1cDJPaWSsNGEuEfwEusmmYfuogCbILQeeMPGEW1zV4M9rQS1R43MNjf
+         Y+CouY+I3Ypeg8fzOFzGEmuvj4Z+6yjWr/024m/kqueLMYR90yp/gtx6afy7zgLZpPAo
+         iHUVEaG+m2OR4TBndXtGSrv5M55BzIUxEZEZFugth11wkY+bIz/fcWKwuxjGbW9g65Ac
+         K45FNKjYs4kPn7fNcMrLoT/GMRDT2HOBrywdW6+qzKeBrHBPHAHA2qkpLRHdhy82PnnT
+         cbWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757715913; x=1758320713;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2KLKlGBJI1d0fx9t2uSJ4mzy0rd5NfzB4VUuG4EkoD8=;
-        b=OK2H50gNT5OS9O25ZGGajQuUMRd8PcCeZlw9r28GGVSrQxYzJU8kMiYrrHGRJ+dUKD
-         U8UwmWav2eGMfA1MzKYYtRugsnD+BF4km973pWl6zCCPZkOlfsMullCa9CwNRTpKStGd
-         +C0+UwkDVmPp3mEKhFLFLcO4Tc1CaxNQAbRCAjU713KeerPVLQ2XHZb5VupW2xzL2+Ks
-         9ouKgVPl9wG0TabttLoY5rckmQlbtz66UnW6Yjdd99UlndDJgk+V/1wY3fKC+HGJo03t
-         I6NR1Vles/TOPjfJr6iomaQZVlq0TnCjlW7sx7Fc4vObBaw9FCu9RzKlH+g3kwzJRD3B
-         75BA==
-X-Gm-Message-State: AOJu0YzEPzS0XW4W2jhvwNlWDLANdPULE5jvkf0Wr4E7cBTw1Qv7vuG5
-	00NpK4LOp+kd6Aqs14JXRi1KOkkvGvpAs6GmzvP7iajcf/JOkfMBzg1Z
-X-Gm-Gg: ASbGncsYDR7G+S3v5xUQ8cWsx5b9aM0BlomNuU7XnNqaix8+npgalnBPBgYdDtXdebz
-	IpcMsySPcGW49J4Irzv472JTv6HuZSL3msQyt+baXtoYtgm+0v3u2UKpKKGAxPXyefBdb0Fenqw
-	oICK1weAb4NQRVgwAwTHJ+cI8MQufoQnz+1RwtmTd/zqlTTIWb0GLW7Tz3+uC2DYmp7xXpKOisX
-	pDiY/I/lDTbvoQiaw9Xw2qEzlwNDaHUteGgWfyXgbtZEMFYpki50O5NawVcwdTON/7DbygMtanm
-	G069m03BF9iC8SZRxgRsUONZtGY5Anww2TUgWeYSnj114NGkuqWvEFwai9jcwe+X5r5V3vOiJba
-	UxNPXDcoTptMbeMHaPjvosdBONqMtV7/OCsMkDTt+nSJW
-X-Google-Smtp-Source: AGHT+IHurQvXunsL/HJ9vmn0CKdkJYzOpZYBsq2mAMEb4zKVK5+W5oEbdRBLo7URkB3G7O+IBF1fVw==
-X-Received: by 2002:a17:903:2410:b0:24c:9a51:9a33 with SMTP id d9443c01a7336-25d24e9df3dmr43777705ad.22.1757715912450;
-        Fri, 12 Sep 2025 15:25:12 -0700 (PDT)
-Received: from [192.168.0.150] ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3a84a5c0sm58194845ad.71.2025.09.12.15.25.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 15:25:11 -0700 (PDT)
-Message-ID: <0680f2fa-e583-4b7d-a1ff-9fcd4c5a8269@gmail.com>
-Date: Sat, 13 Sep 2025 05:25:06 +0700
+        d=1e100.net; s=20230601; t=1757715941; x=1758320741;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pzZnnPEt3bRj9xxliys6aMLfk6CSAaQd8ndI256Y7tQ=;
+        b=mXhOiSgcOLkJ5F07EpOG9weI3wZdXb6AxI8vBbLuzxHKO2QgfMJn1hYt0uqU2hDJz7
+         uQ9zcbmlSxWpkKqqiquP72vEiaM8524b7ztZcGg3FpbiEJ5X+z34liscAktCNJYKdCqz
+         d3qk7pZ4cqSjhzwru2HP34qtpC+b7pRJ5CvlvFD/nGYNHJIuam8ouj1SrN4KyybF9EEa
+         COWsOGUXa72NgtCgFGZUJ3lr2+uruFgCvWkJJDw70+WBW25TURlAkoabn7+b1+pnfvBN
+         Hrqv00e24QtlGN2Q9qU53ioqOa/N9czpN+VI+uYcbAZbJV6myCMgNI2cQMEktUCO1cWw
+         67VQ==
+X-Gm-Message-State: AOJu0YwgAPRDhL+slXB6lhyBISPreHXRYTFoBfSSqwn4hcxs63kSK2GX
+	05CqkpUCSaSLZI9btf7egpEhFrxszl5Nm+moBJFLYOuUHVM4jP8s+tU/
+X-Gm-Gg: ASbGncsh6aug5HX1IWtW1r3iMCUbVFpjHgIETksUG61Sf3VBtq30zX3ilv3rrzr746D
+	ANKrp2qFk/CgrgHd7GIVrTC8BxL8fLKK0V/CAu7NN9T7y//bcW8wqIw+kG7lFg4RZ7F/mc5nXgO
+	6BB17rSHi3YVmF5clMN5XHcHrYBfusukbUdOSGu+Wn7BJTArjvgF8/XBIbVHUgDqRb7R0a/aEzz
+	a7NUydxGgue3lhD3L5LC/nURjF2jsrK6J9TPsFxbyaosqNsqAAinxliti5KGbhxl4WTbaP0nad/
+	okfgmfybbtXaUuTqRnx6nAfH9w/nNcQtXbMmpCmg+HXxqonwk+xOp8/6RKoi+JyO7II/0lWMk+N
+	CPbbvvWl3M6qJb90x7mvHQC7IZkkOcCXQHwgYk/mWEYTfa2ye35AQjQT3FxLEaO2H/GmiIFni9H
+	nUdh7P6atCUilH6/axc8xQ5pOu/jbjwcqA1obb8aroUJo7pnNc
+X-Google-Smtp-Source: AGHT+IHDnmgT2LntxCPaqHLYhzHzjBtnWhONEJnC/8/CEs6lbcLFbVpRT6CWOfWsSwot3fYuSD9/uw==
+X-Received: by 2002:a05:620a:3185:b0:826:c5c8:7cca with SMTP id af79cd13be357-826c5c87ccfmr82561185a.24.1757715941058;
+        Fri, 12 Sep 2025 15:25:41 -0700 (PDT)
+Received: from kerndev.lan (pool-100-15-227-251.washdc.fios.verizon.net. [100.15.227.251])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-820c974d635sm339136985a.25.2025.09.12.15.25.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 15:25:40 -0700 (PDT)
+From: David Windsor <dwindsor@gmail.com>
+To: bpf@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	dwindsor@gmail.com
+Subject: [PATCH v2 0/2] bpf: Add BPF_MAP_TYPE_CRED_STORAGE support
+Date: Fri, 12 Sep 2025 18:25:37 -0400
+Message-ID: <20250912222539.149952-1-dwindsor@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Revert "drm: Add directive to format code in comment"
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux DRI Development <dri-devel@lists.freedesktop.org>,
- Matthew Brost <matthew.brost@intel.com>,
- =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Javier Garcia <rampxxxx@gmail.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Antonino Maniscalco <antomani103@gmail.com>,
- Rob Clark <robin.clark@oss.qualcomm.com>,
- Randy Dunlap <rdunlap@infradead.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-References: <20250912130649.27623-2-bagasdotme@gmail.com>
- <e0252635-4dc4-483a-911a-fee5a36c19c3@kernel.org>
-Content-Language: en-US
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-In-Reply-To: <e0252635-4dc4-483a-911a-fee5a36c19c3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/13/25 04:27, Danilo Krummrich wrote:
-> On 9/12/25 3:06 PM, Bagas Sanjaya wrote:
->> Commit 6cc44e9618f03f ("drm: Add directive to format code in comment")
->> fixes original Sphinx indentation warning as introduced in
->> 471920ce25d50b ("drm/gpuvm: Add locking helpers"), by means of using
->> code-block:: directive. It semantically conflicts with earlier
->> bb324f85f72284 ("drm/gpuvm: Wrap drm_gpuvm_sm_map_exec_lock() expected
->> usage in literal code block") that did the same using double colon
->> syntax instead. These duplicated literal code block directives causes
->> the original warnings not being fixed.
->>
->> Revert 6cc44e9618f03f to keep things rolling without these warnings.
->>
->> Fixes: 6cc44e9618f0 ("drm: Add directive to format code in comment")
->> Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
->> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> 
-> Need me to pick this one up? Otherwise,
-> 
+This series adds BPF_MAP_TYPE_CRED_STORAGE, enabling BPF programs to
+associate data with credential structures (struct cred).
 
-Of course!
+Like other local storage types (task, inode, sk), this provides automatic
+lifecycle management and is useful for LSM programs tracking credential
+state across LSM calls. Lifetime management is necessary for detecting
+credential leaks and enforcing time-based security policies.
+
+The implementation uses kfuncs (bpf_cred_storage_get/delete) that return
+bpf_local_storage_data pointers, with map values accessible via the data
+field.
+
+v2:
+- fix kernel ci build error
+
+David Windsor (2):
+  bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type and kfuncs
+  selftests/bpf: Add cred local storage tests
+
+ include/linux/bpf_lsm.h                       |  35 ++++
+ include/linux/bpf_types.h                     |   1 +
+ include/uapi/linux/bpf.h                      |   1 +
+ kernel/bpf/Makefile                           |   1 +
+ kernel/bpf/bpf_cred_storage.c                 | 175 ++++++++++++++++++
+ kernel/bpf/syscall.c                          |  10 +-
+ kernel/cred.c                                 |   7 +
+ security/bpf/hooks.c                          |   1 +
+ .../selftests/bpf/prog_tests/cred_storage.c   |  52 ++++++
+ .../selftests/bpf/progs/cred_storage.c        |  87 +++++++++
+ 10 files changed, 367 insertions(+), 3 deletions(-)
+ create mode 100644 kernel/bpf/bpf_cred_storage.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/cred_storage.c
+ create mode 100644 tools/testing/selftests/bpf/progs/cred_storage.c
 
 -- 
-An old man doll... just what I always wanted! - Clara
+2.43.0
+
 
