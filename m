@@ -1,118 +1,144 @@
-Return-Path: <linux-kernel+bounces-814059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B04A6B54EBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:06:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DE1B54EC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 15:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16EAE1C835E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:06:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8756D581163
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 13:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48862305077;
-	Fri, 12 Sep 2025 13:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82EA30AAC5;
+	Fri, 12 Sep 2025 13:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jX8c+to4"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UbeVSEJG"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EE22DC787
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822DB305077
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:07:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757682380; cv=none; b=F5wogjKQf7n9nb5bjJ0NXGWE57M2z3/tVg2jXWUMzsOPg9chEkIQPdZsUUmoacZKyrXkurFKW2kjwyqrawPMyZvvISqUez/UYqGSSPqAexvq9S63JKmxJu9vqpOvjQprbt8oY55bNleoR28zydhme1DJec1hR0jkl5JcS8uawos=
+	t=1757682443; cv=none; b=Bwh/iL7XEi3NDqmFkqLotn6iitzJMjUH+YdoIBS3qCbSFUZ6O3YeEvsSJD2nU790hQYKMNYdY3qE04DtHQaAETPEfh7IqPZ0vQe9NA2/1X36oB+PDuJRjTVf2zhg5XZryoxXoCdQAajtgDH+y0ad0ITBR1SAPht+aP4HuIiRnkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757682380; c=relaxed/simple;
-	bh=vk699rVhodheWPWoL0W1GwqpoAL90lDdPjyBrXCBHN0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KxN6qAxFOVsJo3hAwnWSVTnLk5PaxC6sMKLjgImCQiC4nRpG0M0SaSsOBuW4hNMGWgknteLtbdMbVh1nD578dG/pB9+bYqO71EwKi4TaoYOgWuFH/d2daq4en29rU6kHxVf2FFW9g5pDY8bCtHl+n2mHEvi3XSczeoFmrDORjos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jX8c+to4; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1757682443; c=relaxed/simple;
+	bh=m4qhwnsry/SWycpMdOHNFZlNWW6x4f1W26dSGmgsJ6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qJpUuQFInO6CnsauecrYbHF3oRF/7dtv7MHqsroR8tELz4rcK4m6u2gM+qvxKbValH853clDCjLVRfD7vpljsCpaXz3EgYzbI80kXuOP9R+m636UGixpP7wlAo2V23MU8i1YY5Z4XZ7OK05Q//FfaCiyVgRn1aAEbX2yuIO8+qY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UbeVSEJG; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77280e7bde3so281149b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:06:18 -0700 (PDT)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24c784130e6so21359505ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 06:07:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757682378; x=1758287178; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ckr1nOupG/FHOX87n/x1D8vzmImJQCNO14BvHg2YgKk=;
-        b=jX8c+to4GbSMMwxtcSe7lBC58RBqz1jndQPlZrKQetfaW8moNLTac4Aj7bzKrhMSd9
-         HdK0tmwqTkEaxx3MwyUQbkIJLSKJmrVZwO97QYO08oepYrbZnbZlWmjCMnWfpSN1E7Ut
-         4/P9RChZsA0TIvbcqG+Mmwl0A/wOb+9SofvTmfpD7wTPhVEKcaQItpl82cKhG9HwZ/za
-         QGeRucqz+Kkx2QImGe56jL7rcSrfKxNP7rrVFii19P1txLeRoQMZyyoxV7TwfcfMxzsr
-         sEC2dcheJC7M63KOK/AF7xrXAUza+GAqZ+Ydi4w5bFW7dWRHksV68H69/YLw1aVVWSUM
-         2xCw==
+        d=gmail.com; s=20230601; t=1757682441; x=1758287241; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x544GYJay0OImzEkLS/doW76Om1NP9OFkc47rJ1bRQg=;
+        b=UbeVSEJGsx5L4+X2GjmpwNQPMul4dTVwnTmQ9wwb/c8Ze/lyLFFnVliJe+1bWmc67j
+         V+0qNq7p/6dYc2leTqyChjY6ioO/DG64skca74puTFWVC4XH5fOaMNAF9nhLMKEXIJHc
+         VIBzv6e2qC4L9XmtUpLXy8ykiTdpuB7+AFFTzgS3dJBNPqGI0WUHAiIWKQR/Qk7+NPbW
+         bTzjLG6fTGFuVrctSISX75jDKQleeN509HKRI0T4qv0tMB7tbKoYQh4ZOnST/hjHzPxe
+         0NsfYJoOP++issdfFw5HtiuUk14TFyWgrsUTLth6MPfGat5FBd3VOp3Mv3viLLVLtpcy
+         C9tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757682378; x=1758287178;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ckr1nOupG/FHOX87n/x1D8vzmImJQCNO14BvHg2YgKk=;
-        b=CwHflgXNYXN3fLdIay0A8WKXZCb5T5+0XzgKYSMfZUQY6BO6UBgj9Ywb/nbn01rSmX
-         azt9IfNWLBX5qnkf/RDgH0VI2PXfA1XeztjQC0ghvbjoMREn5dZBfsYZc9VgaW6cu3zO
-         CW7aojXm6Uh984X6pLIk8oX+bCbooxMwxKnN0vZjDzhfStbLWa3iPJB9CvjHpiAcWc9s
-         S8xNMtmwT5u4i/B6h2OMnAsO+QXMg0vGMhKsGzH0K31TTu1ULNylvnYnsSSzl421hidh
-         4Igh3eRSp/idWl8ANyVCTI4TWHSbGEKUWvOOSYUoEmpg9P95JHsHJglusQ+g4sOnaxda
-         ZvLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoAqy6XMK0AGBqXG+2cnkHSeditCuhAg0fQhIOg0cvSXt4wMwMZMqVSQ5rSyz0aF7BJIfVKvToXACSWGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT1F0IVgzI7Jx61bM8ekwiym4wdublIh9H4TtxEVg4FZSVTTdu
-	+V+kXtLGtj93IPglnObunvKcKJ0j8f2c7Tdwre/f2csGlXysrDo2STHmkfswT2RsDPH9L5TGlx5
-	ntNh7tM3y12EF7uQSaGrhL7I0SdM4+NuupA==
-X-Gm-Gg: ASbGncu16ITcLArAoLj5Bsf5GmFGrrSzpoT9Vlp/uXDMIqfWQsIMRsauxR7t64kLMoG
-	KUb4YDyQH3I2yYfWrlg873P0yG7eC5A+aK4cbKs81IfhSRp83YDmH9JrQl0zFg7o6L0wP6c+9k2
-	6ucr2VefSX43rbsRsR7hz5GRUwxe65dbupdnWMEFe9ESOudJnYph/pIA1LxSONkTclt3v6tPbfB
-	IlbZS8cKZsO3/yjDQ==
-X-Google-Smtp-Source: AGHT+IGTTvtC1IuLrcY8b4AvWUeugef+D6CmgxiovRG+v0ayfpqmLzCTs+HKBKHE/plPyLUKu92jZlW/yTLM+LNCrgY=
-X-Received: by 2002:a17:90b:3b84:b0:32b:bc5c:85b2 with SMTP id
- 98e67ed59e1d1-32de4e69e6emr2013081a91.2.1757682378471; Fri, 12 Sep 2025
- 06:06:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1757682441; x=1758287241;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x544GYJay0OImzEkLS/doW76Om1NP9OFkc47rJ1bRQg=;
+        b=ggXU5Nc3wwerp+ALAAmLE4JFO2eyfPp/7cC9hrZ3t8JIj5nl2YUN6gEaeR+RP6K9a3
+         6Wlg49BlaY2iyNXPnve/+moL3jWBMbbJUgvauaCBR3SrlrUsUOZTIyfbqozZ1NU1yDj6
+         slqh23rxsbRK6cfUtlHASNntZZzMmsMry2qdJGPckY2numMVLp63D9/P2W5ebh+OinUI
+         +RgNG3xjfiEfW1c2G0b0y/pqmC7bFAzPDNGbMOL4d2dwaHR4qJT+6t7AbqimPYNVzCHs
+         clf/KJrlw2j0UBTBEgmXhxfPS9etHu+sGbGGpvfh1rmpDdI1Sw1EFyFE08GvsfFafAce
+         oP+A==
+X-Gm-Message-State: AOJu0Yw1KWmPBiFg241u5753qElIszXg0NmrB+4pwv9sgYM9C/AYfNB6
+	0FYVFdJv+BlnzqxIBGJjuV9IB1vey1TLEErHf8Y24WwTXAaXNEqOJVu/
+X-Gm-Gg: ASbGnctnXUcDewK83y38ny3cxYtFcGewreRHxvPO/2SfW5A8h2q90J0r0Ka1ulsUMw6
+	+5Ue6Jb1Z9CET8E8GX0Thw2OsZCzjKyuMULHQm1dUlJ8/DcOX08mupk7MbnJO+WFOtx+qLvr8M3
+	eC0/9nJAY/xHJgWiA8CFz6YZVcqbYO8ECa0arClFZpCystR0dpJNG9IOw+v15hiL5/Yvv/iAAhk
+	Lqn86zcLgRhlTt2iNis3FXHS4orvNCHaCMdunQqN6TyavxbN8zRCdX8cnW/vwKXhlXRME2f10sq
+	0Kvt9rkVfJkP1JB0O+jYb4FTry8/o/z4nc4gCikzYJ8dV/Y2hCaRXkinxZco2ArX+MarIcT7LeV
+	EyzXK8x+9wYd/5b+Kj1PsUwG7u3HSFWB4jUXh
+X-Google-Smtp-Source: AGHT+IFNtOF9483lJqZ0eCDuywtMNSA4/x1QrNPIz5w6iEwUoJ0MCDnna++VYIfN2AunXMyW/zkq8A==
+X-Received: by 2002:a17:903:144f:b0:251:19e0:2805 with SMTP id d9443c01a7336-25d27922652mr33876225ad.55.1757682440563;
+        Fri, 12 Sep 2025 06:07:20 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3b307225sm49207635ad.145.2025.09.12.06.07.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 06:07:19 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id AA34441FA3A0; Fri, 12 Sep 2025 20:07:16 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux DRI Development <dri-devel@lists.freedesktop.org>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Javier Garcia <rampxxxx@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Antonino Maniscalco <antomani103@gmail.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] Revert "drm: Add directive to format code in comment"
+Date: Fri, 12 Sep 2025 20:06:50 +0700
+Message-ID: <20250912130649.27623-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250909151146.760450-2-thorsten.blum@linux.dev>
- <CADnq5_MFDZdJg3XFFw9+tWB=_LP47PwE3HXgPK=sryOx+_0wGQ@mail.gmail.com> <FED6FFD1-2C51-45F4-BF34-76484C415C83@linux.dev>
-In-Reply-To: <FED6FFD1-2C51-45F4-BF34-76484C415C83@linux.dev>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Fri, 12 Sep 2025 09:06:07 -0400
-X-Gm-Features: Ac12FXwJwCDZ_BVgzYuq56yoU1VX5uqBys40Ob0J7ZAD0NdiVqJ_P3OSul7PJJI
-Message-ID: <CADnq5_NXCEFH6V_m0nvEqHU6tOhjUZ-ExSRb93Hi=7qxDAo6Vg@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdkfd: Replace kmalloc + copy_from_user with memdup_user
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Felix Kuehling <Felix.Kuehling@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1345; i=bagasdotme@gmail.com; h=from:subject; bh=m4qhwnsry/SWycpMdOHNFZlNWW6x4f1W26dSGmgsJ6o=; b=kA0DAAoW9rmJSVVRTqMByyZiAGjEGlKhXlw/mPScHOQuMTJJKb9msLDKVjN5d75gGJeg1FAW4 Ih1BAAWCgAdFiEEkmEOgsu6MhTQh61B9rmJSVVRTqMFAmjEGlIACgkQ9rmJSVVRTqNraQD9G99e 9SXsT9d6z3iT9FNmQBBdwBmkS2WzrDYbjm1fbCgBANgvs+XgMdf6dSl9lCQ5vHWWgIoppY6NPRZ zWj/mPL4M
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 12, 2025 at 8:48=E2=80=AFAM Thorsten Blum <thorsten.blum@linux.=
-dev> wrote:
->
-> Hi Alex,
->
-> On 9. Sep 2025, at 17:35, Alex Deucher wrote:
-> > Applied.  Thanks!
-> >
-> > On Tue, Sep 9, 2025 at 11:29=E2=80=AFAM Thorsten Blum <thorsten.blum@li=
-nux.dev> wrote:
-> >>
-> >> Replace kmalloc() followed by copy_from_user() with memdup_user() to
-> >> improve and simplify kfd_criu_restore_queue().
-> >>
-> >> No functional changes intended.
-> >>
-> >> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> >> ---
->
-> I just learned that calling kfree() on an error pointer doesn't work, so
-> this patch should probably be reverted/not applied.
+Commit 6cc44e9618f03f ("drm: Add directive to format code in comment")
+fixes original Sphinx indentation warning as introduced in
+471920ce25d50b ("drm/gpuvm: Add locking helpers"), by means of using
+code-block:: directive. It semantically conflicts with earlier
+bb324f85f72284 ("drm/gpuvm: Wrap drm_gpuvm_sm_map_exec_lock() expected
+usage in literal code block") that did the same using double colon
+syntax instead. These duplicated literal code block directives causes
+the original warnings not being fixed.
 
-Thanks for the heads up.
+Revert 6cc44e9618f03f to keep things rolling without these warnings.
 
-Alex
+Fixes: 6cc44e9618f0 ("drm: Add directive to format code in comment")
+Fixes: 471920ce25d5 ("drm/gpuvm: Add locking helpers")
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ drivers/gpu/drm/drm_gpuvm.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_gpuvm.c b/drivers/gpu/drm/drm_gpuvm.c
+index db9b089ef62c85..86853535fb7bd7 100644
+--- a/drivers/gpu/drm/drm_gpuvm.c
++++ b/drivers/gpu/drm/drm_gpuvm.c
+@@ -2432,8 +2432,6 @@ static const struct drm_gpuvm_ops lock_ops = {
+  *
+  * The expected usage is::
+  *
+- * .. code-block:: c
+- *
+  *    vm_bind {
+  *        struct drm_exec exec;
+  *
+
+base-commit: 9a3f210737e958c3f45a4ce0d7f1ff330af3965f
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
