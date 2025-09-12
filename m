@@ -1,203 +1,282 @@
-Return-Path: <linux-kernel+bounces-813982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96A8B54DDB
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:33:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21A4B5504E
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 16:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E80981885F8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 12:29:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D9D3BA3ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 14:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9512D313538;
-	Fri, 12 Sep 2025 12:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917C81E32B7;
+	Fri, 12 Sep 2025 14:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="sga40TPb"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BypA0bHt"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F0D303A13;
-	Fri, 12 Sep 2025 12:25:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718DE6D1A7
+	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 14:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757679940; cv=none; b=X2JfBKZ8mL5xHh6/rKbIxAf31bEnQdT7p/rCMx274wyY2+N/pziwZh1OzzNhozd/daVdF1aApWeTqr7x96Fw5JYt7Uq4R3l5W65lhFHa6GoRHKZAz089E4AOV4rmKeULkU5RZTgweiOJwULFxRZbjl6j69HfdZ2eRRVhk0tkJD8=
+	t=1757685819; cv=none; b=UNBKMngSee4Lt4uGvt+UHfFB0T4LHVs+bkm0ewQIwtWjK4K1YzqoIemNrrKudiyw4I7wmXlaEFOqFHWttKUMpfmikRUdWb65OEERnZBW3JbQPDw1mpXx+y0Zz9fqxnURfPdZ/G7ajb9kyyWX/0McTetd77s8/D8+gSMgyVvhRss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757679940; c=relaxed/simple;
-	bh=3P3PAZ/ZvvSohXI8QCKB1SR20xpdsKjkvrAi8p8Li3g=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kSSelVlqTQuuQAZbgKm25qiFZAItj1MW/SDL5rw/DEAOxSSrKruPn/bJTv9Ds7mfxokX8j5Bz6FW294AC2w869VkBJwwDsE2akS6dF0hQihd59OmGldeRFcFDhUjDXuF2HG73nk2TUKcOY2oYR5CITwdLFE39wdeRBRGbFcodPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=sga40TPb; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58CCPE65968259;
-	Fri, 12 Sep 2025 07:25:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757679914;
-	bh=W3wNqasuPPpJNRZvnxmgSVHOkxs2jXZ6/IsjcnNJii8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=sga40TPbvjpvMJSKV3OTySsYpLMeyuYrTyLC7WNggLMultoS43/tpiKtMCAzfBXQS
-	 fniBw15seitUR9P2KOIQXTYBwZ06SqUOl1gNhQeGz24W2MYo46s7sr4TpAOSGkCCIA
-	 KHUgLc/KoT4EKWnuRU4cWXztv04tche0ZphoEkus=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58CCPEX91291704
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 12 Sep 2025 07:25:14 -0500
-Received: from DLEE201.ent.ti.com (157.170.170.76) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 12
- Sep 2025 07:25:14 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE201.ent.ti.com
- (157.170.170.76) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Fri, 12 Sep 2025 07:25:14 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [172.24.231.84])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58CCNuLc3589278;
-	Fri, 12 Sep 2025 07:25:07 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <lpieralisi@kernel.org>, <kwilczynski@kernel.org>, <mani@kernel.org>,
-        <robh@kernel.org>, <bhelgaas@google.com>, <jingoohan1@gmail.com>,
-        <christian.bruel@foss.st.com>, <qiang.yu@oss.qualcomm.com>,
-        <mayank.rana@oss.qualcomm.com>, <thippeswamy.havalige@amd.com>,
-        <shradha.t@samsung.com>, <quic_schintav@quicinc.com>,
-        <inochiama@gmail.com>, <cassel@kernel.org>, <kishon@kernel.org>,
-        <sergio.paracuellos@gmail.com>, <18255117159@163.com>,
-        <rongqianfeng@vivo.com>
-CC: <jirislaby@kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH v2 10/10] PCI: keystone: Add support to build as a loadable module
-Date: Fri, 12 Sep 2025 17:46:21 +0530
-Message-ID: <20250912122356.3326888-11-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250912122356.3326888-1-s-vadapalli@ti.com>
-References: <20250912122356.3326888-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1757685819; c=relaxed/simple;
+	bh=I9n2pVmu6LmPD6zvLHRAM5ekmJJV3HNaSaih80Ri9aQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=StJ5sXjaPzSnHkzB3laN+Uu5t75fe3Cbzm9+XdRvDwuMCqbpwdVDlPYEoyXicBDBBUedQAMUvUNkTn3xoaQraXtye2k22XU5IBEwmS9IxXxV8FdUmaBmsQJVtxlGQoFtyVxuHu+uE7A4I5pCOjtTX7gDhlmH5qNcoP0+xHAnBZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BypA0bHt; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45dcfecdc0fso19053685e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 07:03:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757685816; x=1758290616; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=/awESVZkJ9K+JfRYd9Rjr/yLS5bHXWrAEyFkBSavtRk=;
+        b=BypA0bHtW8dc/9jFOduQ+R25ll0YATGAEaWEVnPnqn7pWbwrmTbEVvtGUj3ynHfroY
+         s2PSNRHk2yNthP/TF1iOjTqEwoxDVOAghcPZ3vjw1FWt9hMoAnl+5lfMRMpxuy/EXJWO
+         YhdsLY0KSNR626866tS4QUcTkkJpj6xiywYTSX7VZ3jt0VnCFg8U0pjZNhVNiA/8TbTv
+         hBAdGcw03C0DJkYipsJsoMP7HjjVbjBQ+g5EXZJHQCu7WYjNpJdTB70hiVt7mW1yrdpd
+         7nubU2A9S0bZfSTfEXoDrLOegDyhwcQrhclEMFmg0jvKFJC7OIXm78GDYb1aj/eEzhud
+         40Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757685816; x=1758290616;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/awESVZkJ9K+JfRYd9Rjr/yLS5bHXWrAEyFkBSavtRk=;
+        b=CqzqxBBmVUi7in5jMFuEeCtYEIbguS+IOxnetZnzDeon5dCttZzMlAD0CP+mMrXIut
+         JKwNAgfvKIFIyWuBRH7HJVuM21cdTeMlYnSyj/KVDsNQxyme8okaEwJQKNRE4vYsqEkV
+         n/JEUzLPQAJY5xTwuNudO1xn7wcU+tVnrSugiVrIdFUXUYDUeG0wTKlKabKx1IeJ9E3N
+         N8l+LvwRxEq8QSqMtBJboEkS/HjMnEh2cwyizCYYLDvqm7k24F++yvzQPxM+niFhHRX7
+         KP1x1wZbvzhImXct+g4lHUbbOgVzK7lmNgNpP18Omc1GhGASMqO0NAy9YVwrWbapbjDz
+         LbHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFODAmhFpz5EHZ5E0PhoLmmtjGuYT7eiiFXmD1Fjq4ZfsRpVCkP50SBiN3EXCqY+YW8bpJ9LQkw0jmnGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmTl6TCVfxj6QIX2WHLvLVKaqN5NOt1CjlFy9jjg4sjxc0z1OT
+	xEqzkEREBQh8D+GSzeZh+9YIuAgdIjLKYS6OlQGQLcngl1ScmkObA0o+
+X-Gm-Gg: ASbGncuRUHy31SQpHUBH4ASy0fAw2B//CMYBi6CIPG+fjsUENQH/rOWLAo98TJEMWuv
+	Li93Jlo1F36Ou9SL7eYNpXN3KBipf381LRZXKt7ok5DUH3Yc1cCUvsVwiz+0oYJUn9AynQasPaW
+	LvTzTZUgZ5doLuAUCz3YwP2MPS/z+n4gBN/Fng1uQiKRoDtZEva8F3qMI5YQJu6dysIANy2aTyK
+	NH77PVlHa4sJIc665600nODC1vmTjRui9gbkZuxgehjV2b35rCkQMnPgRy/UwWgc70KHPTemcrG
+	ONFoKPCEi+I5xXJwgGsnSE3/IFlNUmd6Yvm6zsMt8gs54EAZIU3k0SdetPzwosr8I7FoEtWMKm6
+	4SNCM5GnkbxXaLpdySmrkjErGrtBQaf+MEcG4GSdEVQ==
+X-Google-Smtp-Source: AGHT+IFrFziaROE6t7OvfnHw1fSxmStjyRsw0iDsiUclaiLc+LNP4gi88MN0nbdrnjXQvf8i78gTdw==
+X-Received: by 2002:a7b:cd0b:0:b0:45d:dbf4:8880 with SMTP id 5b1f17b1804b1-45f211efda6mr20357825e9.27.1757685815284;
+        Fri, 12 Sep 2025 07:03:35 -0700 (PDT)
+Received: from [192.168.2.177] ([91.116.220.47])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e01832af1sm35682985e9.3.2025.09.12.07.03.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Sep 2025 07:03:34 -0700 (PDT)
+Message-ID: <0c088460-da7e-4443-92e3-23f160415ce8@gmail.com>
+Date: Fri, 12 Sep 2025 14:16:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/38] arm64: dts: mediatek: mt6797: Fix pinctrl node
+ names
+To: Fei Shao <fshao@chromium.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org, robh@kernel.org,
+ daniel.lezcano@linaro.org, mwalle@kernel.org, devicetree@vger.kernel.org,
+ linus.walleij@linaro.org, linux-remoteproc@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ olivia.wen@mediatek.com, shane.chien@mediatek.com,
+ linux-gpio@vger.kernel.org, linux-phy@lists.infradead.org,
+ airlied@gmail.com, simona@ffwll.ch, herbert@gondor.apana.org.au,
+ jassisinghbrar@gmail.com, jiaxin.yu@mediatek.com, andy.teng@mediatek.com,
+ chunfeng.yun@mediatek.com, jieyy.yang@mediatek.com, chunkuang.hu@kernel.org,
+ conor+dt@kernel.org, jitao.shi@mediatek.com, p.zabel@pengutronix.de,
+ arnd@arndb.de, kishon@kernel.org, kyrie.wu@mediatek.corp-partner.google.com,
+ maarten.lankhorst@linux.intel.com, tinghan.shen@mediatek.com,
+ mripard@kernel.org, ck.hu@mediatek.com, broonie@kernel.org,
+ eugen.hristev@linaro.org, houlong.wei@mediatek.com, tglx@linutronix.de,
+ mchehab@kernel.org, linux-arm-kernel@lists.infradead.org,
+ granquet@baylibre.com, sam.shih@mediatek.com, mathieu.poirier@linaro.org,
+ fparent@baylibre.com, andersson@kernel.org, sean.wang@kernel.org,
+ linux-sound@vger.kernel.org, lgirdwood@gmail.com, vkoul@kernel.org,
+ linux-crypto@vger.kernel.org, tzimmermann@suse.de, atenart@kernel.org,
+ krzk+dt@kernel.org, linux-media@vger.kernel.org, davem@davemloft.net
+References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
+ <20250724083914.61351-18-angelogioacchino.delregno@collabora.com>
+ <CAC=S1nh5bF6kZe7TFA_EGPGt8Xp_rfuc-rkeXgjRCU=QEtZQiw@mail.gmail.com>
+Content-Language: en-US, ca-ES, es-ES
+From: Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; keydata=
+ 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
+In-Reply-To: <CAC=S1nh5bF6kZe7TFA_EGPGt8Xp_rfuc-rkeXgjRCU=QEtZQiw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The 'pci-keystone.c' driver is the application/glue/wrapper driver for the
-Designware PCIe Controllers on TI SoCs. Now that all of the helper APIs
-that the 'pci-keystone.c' driver depends upon have been exported for use,
-enable support to build the driver as a loadable module.
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
 
-v1: https://lore.kernel.org/r/20250903124505.365913-12-s-vadapalli@ti.com/
-Changes since v1:
-- Based on the feedback from Manivannan Sadhasivam <mani@kernel.org> at:
-  https://lore.kernel.org/r/2gzqupa7i7qhiscwm4uin2jmdb6qowp55mzk7w4o3f73ob64e7@taf5vjd7lhc5/
-  builtin_platform_driver() is being retained in the driver due to which
-  the change made in the v1 patch of replacing builtin_platform_driver()
-  with module_platform_driver() has been discarded in this patch.
+On 25/07/2025 12:56, Fei Shao wrote:
+> On Thu, Jul 24, 2025 at 5:48 PM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Change the pinctrl node names to adhere to the binding: the main
+>> nodes are now named like "uart0-pins" and the children "pins-bus".
+>>
+>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 
+> Reviewed-by: Fei Shao <fshao@chromium.org>
+> 
 
- drivers/pci/controller/dwc/Kconfig        |  6 +++---
- drivers/pci/controller/dwc/pci-keystone.c | 22 ++++++++++++++++++++++
- 2 files changed, 25 insertions(+), 3 deletions(-)
+Applied, thanks
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 34abc859c107..46012d6a607e 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -482,10 +482,10 @@ config PCI_DRA7XX_EP
- 	  This uses the DesignWare core.
- 
- config PCI_KEYSTONE
--	bool
-+	tristate
- 
- config PCI_KEYSTONE_HOST
--	bool "TI Keystone PCIe controller (host mode)"
-+	tristate "TI Keystone PCIe controller (host mode)"
- 	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
- 	depends on PCI_MSI
- 	select PCIE_DW_HOST
-@@ -497,7 +497,7 @@ config PCI_KEYSTONE_HOST
- 	  DesignWare core functions to implement the driver.
- 
- config PCI_KEYSTONE_EP
--	bool "TI Keystone PCIe controller (endpoint mode)"
-+	tristate "TI Keystone PCIe controller (endpoint mode)"
- 	depends on ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST
- 	depends on PCI_ENDPOINT
- 	select PCIE_DW_EP
-diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
-index e85942b4f6be..661e31b60a48 100644
---- a/drivers/pci/controller/dwc/pci-keystone.c
-+++ b/drivers/pci/controller/dwc/pci-keystone.c
-@@ -17,6 +17,7 @@
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include <linux/msi.h>
- #include <linux/of.h>
- #include <linux/of_irq.h>
-@@ -132,6 +133,7 @@ struct keystone_pcie {
- 	struct			device_node *msi_intc_np;
- 	struct irq_domain	*intx_irq_domain;
- 	struct device_node	*np;
-+	struct gpio_desc	*reset_gpio;
- 
- 	/* Application register space */
- 	void __iomem		*va_app_base;	/* DT 1st resource */
-@@ -1211,6 +1213,7 @@ static const struct of_device_id ks_pcie_of_match[] = {
- 	},
- 	{ },
- };
-+MODULE_DEVICE_TABLE(of, ks_pcie_of_match);
- 
- static int ks_pcie_probe(struct platform_device *pdev)
- {
-@@ -1329,6 +1332,7 @@ static int ks_pcie_probe(struct platform_device *pdev)
- 			dev_err(dev, "Failed to get reset GPIO\n");
- 		goto err_link;
- 	}
-+	ks_pcie->reset_gpio = gpiod;
- 
- 	/* Obtain references to the PHYs */
- 	for (i = 0; i < num_lanes; i++)
-@@ -1440,9 +1444,23 @@ static void ks_pcie_remove(struct platform_device *pdev)
- {
- 	struct keystone_pcie *ks_pcie = platform_get_drvdata(pdev);
- 	struct device_link **link = ks_pcie->link;
-+	struct dw_pcie *pci = ks_pcie->pci;
- 	int num_lanes = ks_pcie->num_lanes;
-+	const struct ks_pcie_of_data *data;
- 	struct device *dev = &pdev->dev;
-+	enum dw_pcie_device_mode mode;
-+
-+	ks_pcie_disable_error_irq(ks_pcie);
-+	data = of_device_get_match_data(dev);
-+	mode = data->mode;
-+	if (mode == DW_PCIE_RC_TYPE) {
-+		dw_pcie_host_deinit(&pci->pp);
-+	} else {
-+		pci_epc_deinit_notify(pci->ep.epc);
-+		dw_pcie_ep_deinit(&pci->ep);
-+	}
- 
-+	gpiod_set_value_cansleep(ks_pcie->reset_gpio, 0);
- 	pm_runtime_put(dev);
- 	pm_runtime_disable(dev);
- 	ks_pcie_disable_phy(ks_pcie);
-@@ -1459,3 +1477,7 @@ static struct platform_driver ks_pcie_driver = {
- 	},
- };
- builtin_platform_driver(ks_pcie_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("PCIe host controller driver for Texas Instruments Keystone SoCs");
-+MODULE_AUTHOR("Murali Karicheri <m-karicheri2@ti.com>");
--- 
-2.43.0
+>> ---
+>>   arch/arm64/boot/dts/mediatek/mt6797.dtsi | 40 ++++++++++++------------
+>>   1 file changed, 20 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+>> index 0e9d11b4585b..be401617dfd8 100644
+>> --- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+>> +++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+>> @@ -135,71 +135,71 @@ pio: pinctrl@10005000 {
+>>                  gpio-controller;
+>>                  #gpio-cells = <2>;
+>>
+>> -               uart0_pins_a: uart0 {
+>> -                       pins0 {
+>> +               uart0_pins_a: uart0-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO234__FUNC_UTXD0>,
+>>                                           <MT6797_GPIO235__FUNC_URXD0>;
+>>                          };
+>>                  };
+>>
+>> -               uart1_pins_a: uart1 {
+>> -                       pins1 {
+>> +               uart1_pins_a: uart1-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO232__FUNC_URXD1>,
+>>                                           <MT6797_GPIO233__FUNC_UTXD1>;
+>>                          };
+>>                  };
+>>
+>> -               i2c0_pins_a: i2c0 {
+>> -                       pins0 {
+>> +               i2c0_pins_a: i2c0-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO37__FUNC_SCL0_0>,
+>>                                           <MT6797_GPIO38__FUNC_SDA0_0>;
+>>                          };
+>>                  };
+>>
+>> -               i2c1_pins_a: i2c1 {
+>> -                       pins1 {
+>> +               i2c1_pins_a: i2c1-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO55__FUNC_SCL1_0>,
+>>                                           <MT6797_GPIO56__FUNC_SDA1_0>;
+>>                          };
+>>                  };
+>>
+>> -               i2c2_pins_a: i2c2 {
+>> -                       pins2 {
+>> +               i2c2_pins_a: i2c2-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO96__FUNC_SCL2_0>,
+>>                                           <MT6797_GPIO95__FUNC_SDA2_0>;
+>>                          };
+>>                  };
+>>
+>> -               i2c3_pins_a: i2c3 {
+>> -                       pins3 {
+>> +               i2c3_pins_a: i2c3-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO75__FUNC_SDA3_0>,
+>>                                           <MT6797_GPIO74__FUNC_SCL3_0>;
+>>                          };
+>>                  };
+>>
+>> -               i2c4_pins_a: i2c4 {
+>> -                       pins4 {
+>> +               i2c4_pins_a: i2c4-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO238__FUNC_SDA4_0>,
+>>                                           <MT6797_GPIO239__FUNC_SCL4_0>;
+>>                          };
+>>                  };
+>>
+>> -               i2c5_pins_a: i2c5 {
+>> -                       pins5 {
+>> +               i2c5_pins_a: i2c5-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO240__FUNC_SDA5_0>,
+>>                                           <MT6797_GPIO241__FUNC_SCL5_0>;
+>>                          };
+>>                  };
+>>
+>> -               i2c6_pins_a: i2c6 {
+>> -                       pins6 {
+>> +               i2c6_pins_a: i2c6-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO152__FUNC_SDA6_0>,
+>>                                           <MT6797_GPIO151__FUNC_SCL6_0>;
+>>                          };
+>>                  };
+>>
+>> -               i2c7_pins_a: i2c7 {
+>> -                       pins7 {
+>> +               i2c7_pins_a: i2c7-pins {
+>> +                       pins-bus {
+>>                                  pinmux = <MT6797_GPIO154__FUNC_SDA7_0>,
+>>                                           <MT6797_GPIO153__FUNC_SCL7_0>;
+>>                          };
+>> --
+>> 2.50.1
+>>
+>>
 
 
