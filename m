@@ -1,74 +1,78 @@
-Return-Path: <linux-kernel+bounces-814697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EF0BB55762
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FFFB5578B
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 22:17:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D42835C2D10
-	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:08:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0ABC5A6BC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 12 Sep 2025 20:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7887633CE82;
-	Fri, 12 Sep 2025 20:06:44 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E372D0C60;
+	Fri, 12 Sep 2025 20:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmPfeuVj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73A63376A6
-	for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5095B1C54A9;
+	Fri, 12 Sep 2025 20:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757707604; cv=none; b=TX/khCZ81TjKGyZ6ODLNoKUgMCRJXfQL/gQ1sgE84Ngsf7bU6Y41ExYYjkKwUdcG4Dr07HQDRFX2w/Y8IWpK6Nc6lKg3LKJPwX3X/pWgjynnA3EojO8tF1YJ2P1QnxJPAwgp2KRwwcetCIBQ+Bblps1Xxiw8zqEJrZTK+Ox2X4M=
+	t=1757708244; cv=none; b=dGuDSpFNeoHRGyeipT+MGxdL3ooQ+AO1sClvwyERGG76SGNb5NFCvvxKDBCP6uk85pUGZTXT2r+1oe90wtfmdqNlh4Xc0yXguJGJoE9hcAkKWRrgy45ix6H6TfsNKa6IM1czKbD6VUU5nX9Dkejy/+zV45/751bzWax3NVp1iNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757707604; c=relaxed/simple;
-	bh=Vn8kTjaiavDdyc8/wlZpxrXePEbx3gjEURKJpd8Gq8k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Zmpj/Khh3QDAp1aCIv6YUeQ+XaM2ZaG6f1fOyQafsxeolHXID/lpqgh5QA8hIXxh81rtgsA/ewLP73sbzcJ+uWCSK467nishWDAK7cv29oFEUHlA+aCEW4+GEbefTDrTJhoAo7jCEkipRy6uhBhIrfuO5V9gXtAaaOGoLm37Tgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88ad82b713cso282451439f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 13:06:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757707602; x=1758312402;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Vn8kTjaiavDdyc8/wlZpxrXePEbx3gjEURKJpd8Gq8k=;
-        b=bX472xsCrvhe9oWDeAe2/VfM1ekXWS4hSds62WiYGl1RRcySSPUxH+3yLaYSqmBicD
-         SobsPMZooHETikyjLmxXFa/ihKNlr4wTd8kuwI0HaUDDhGbV024MirjbitZkwHHq1lOq
-         4Okt/WJBdYUUu8P2S20hjyDsAUKEBDg0W+3OqMDejFvzhfCAsXCzfZH/pUFNYPzgiZGg
-         uRcDiR/zEd0HVFdS9C6LNX8FpdDORzEDqvGFcvxC6cEqHu9sqXnAzEsUY+7BELsODrqm
-         yaN5kPkxTxJqsYk0tEow7pjb7O6/tLXLPF3B9cETFPUK8jdBVzwJyGc5x61ipb+2yLxo
-         2qvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtkf96fiP9K72G5wh87VxKwKAkNUED/mxjs650PvF7v1ZegPw4Q7ABgBM9mYnW4CHde3GF9L87EqyLU58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuAI+d/V7qQbC8Za6Xz9EWAFEuHoU26Kco1WRm5F6yI40nd0cx
-	ZFk+Lw8KAz/lrJyPovzX86YMWzcYs7R0x+iLcrefbLL2RnSzrMo35PPu4UNNucNIkn/utWHVTga
-	5/N4P3N0uYcMOHANkyVIqbTKuTB9UoCDbrztz5VrzfeMPcpt6NYBba1bBJW8=
-X-Google-Smtp-Source: AGHT+IGe5Wk6YE6UlNdFqd1Peh9ol2Z7QyziL+R5YMsiyKksyEdkEC/iOf5DflIECn9de1E0ih1QrfYz6E27vJIpGnypxkPrxWrv
+	s=arc-20240116; t=1757708244; c=relaxed/simple;
+	bh=xzYM6gGITlLdf30EXs4Ltyuk3aaTOSZ0Cc0L+EpH8hU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MNZIyyWjp5OYXUXPza90gG/LF0F8TUDAOpdeWtV3VfqyknJkjv2JMa3mu7Amp8QzW9Vp7xH0SeVyN5OkwHn0Zan5b1FawuSPgrG5z3Z4PTIsJux/MdGZ6v+l2EG0vciNBd9z4i69rYQ4tu1N8Z6x48jb28lezJyEqoOrB0bNcyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmPfeuVj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBE0C4CEF1;
+	Fri, 12 Sep 2025 20:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757708243;
+	bh=xzYM6gGITlLdf30EXs4Ltyuk3aaTOSZ0Cc0L+EpH8hU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bmPfeuVjIhl84bamQEp4dco3dnTtzMRRex4ZranpAvU2GbR61Rq0qKN61JF2rk+iF
+	 is4dJBqAAns/liU28pVKtOT8t168cvkMOPoCot2HF2Lk2Ou49TQP9G2AdZcXM5LlCF
+	 qPGLN1vJAYQiWk6tNDG+Z4R0Wh8ep7Du2erMyWW2sdC010MMK9vSg4D+NaHOlgG/yr
+	 XiOM3OmtRm1QJoWPKcwYUSK52EF7YSBqZn/UXwtYw1oazRlrq0YYScRYM44dU0T6z3
+	 AeLpXxSFYEQ5CjILM4U763KcCBSi8l4+IxTctvGlmSWaUB+XmSt1UW8PW/QNRIewzW
+	 6WcmQy4uBLAcg==
+Date: Fri, 12 Sep 2025 13:17:22 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Yana Bashlykova <yana2bsh@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+ <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
+ Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Nathan
+ Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+ Tom Rix <trix@redhat.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-riscv@lists.infradead.org, bpf@vger.kernel.org, llvm@lists.linux.dev,
+ lvc-project@linuxtesting.org
+Subject: Re: [PATCH 6.1 00/15] genetlink: Test Netlink subsystem of Linux
+ v6.1
+Message-ID: <20250912131722.74658ec0@kernel.org>
+In-Reply-To: <20250912195339.20635-1-yana2bsh@gmail.com>
+References: <20250912195339.20635-1-yana2bsh@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4807:b0:422:1893:3b70 with SMTP id
- e9e14a558f8ab-42218933f43mr39727645ab.9.1757707601773; Fri, 12 Sep 2025
- 13:06:41 -0700 (PDT)
-Date: Fri, 12 Sep 2025 13:06:41 -0700
-In-Reply-To: <CAKX1i=DvuPZ4LUPxn8W5d2-5t86xEJ_T2J3PFxZZoxL=99QzJQ@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c47d51.050a0220.2ff435.0361.GAE@google.com>
-Subject: Re: KMSAN: uninit-value in __run_timer_base (2)
-From: syzbot <syzbot+7d660d9b8bd5efc7ee6e@syzkaller.appspotmail.com>
-To: rodgepritesh@gmail.com
-Cc: rodgepritesh@gmail.com, syzkaller-bugs@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> #syz test
+On Fri, 12 Sep 2025 22:53:23 +0300 Yana Bashlykova wrote:
+> This series adds comprehensive testing infrastructure for Netlink
+> and Generic Netlink
+> 
+> The implementation includes both kernel module and userspace tests to
+> verify correct Generic Netlink and Netlink behaviors under
+> various conditions.
 
-This crash does not have a reproducer. I cannot test it.
-
+What is the motivation for this work?
 
