@@ -1,127 +1,85 @@
-Return-Path: <linux-kernel+bounces-815376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2AAB56384
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:05:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED44DB56387
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75182480124
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C976B4805B0
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 664922BD016;
-	Sat, 13 Sep 2025 22:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19B32BD037;
+	Sat, 13 Sep 2025 22:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmlapBZo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="We1IPP37"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FF6283FD3
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 22:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329F42BD012;
+	Sat, 13 Sep 2025 22:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757801147; cv=none; b=MfIVRFSrwe0LNO3DhSQADxpxEYqkv5ktDZ3lKQpZsRgTqw4/oRVSmW9SJ2Meizyi9M6xTU9HSg0a1HeQ5yJEXBI6SJ1K+0GOlGFmnAkOs/gy8gToNxWp9WYCkkcdLD7I949A1xv9wOLTZG0flOnTWamW+XoS3pKinSYpLIfbbRg=
+	t=1757801158; cv=none; b=Lfws99LjO3gxdlZ2Cg70E3WTj0Sz62brMbx009/9uGUFHYk1QhzAmp5/9zbsDAyQyE+97tPU+CPGecZBFH8xuwE8tO0FQPOYXR83TOVi91XxIirle8HhdyW9Hf0x3lrJ3EaQyA6sDd/l0dM5Vl1pl86J31LVVRGAVMbpLahZWAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757801147; c=relaxed/simple;
-	bh=FfCHvHzysQGnHS4bnbkUBTtqUl8KdzZGH9zK4Iu003c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j+/T8gt5W4pNoI0ZubHCAKjPozKS9ETdeE7Ko+Fm34XJOH4JF5WjyyofojcPaVhZP2trOM745nxDzBSujjcKeVK0i48glEeFJ8UhfjNBqAv13LlB87cP8DHRnt+hgj/R547PoVRgcr9K6AD1esETo1zli/szWdVLwQJVImFVAIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmlapBZo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F9B8C4CEEB;
-	Sat, 13 Sep 2025 22:05:47 +0000 (UTC)
+	s=arc-20240116; t=1757801158; c=relaxed/simple;
+	bh=fuRN9sDs6dXkvQ77eK0VxpVXR3WpUFozkEd78OmmtIQ=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=JFY8NsnP4UjnrCaVd23ON2KvXcz7hyjP84nvnRcwHakgllHcsRvNUemqNZvkDGHeSpbI9koQFJlqG4wIp5+MpiR8d6X56I6EiWzisx29gJpBJecig74DLZZ9F6JWH/AGUlJFFdVx28u6JxOv2X2rsMYN5Grtcevja2me2byAvY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=We1IPP37; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A5BFC4CEEB;
+	Sat, 13 Sep 2025 22:05:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757801147;
-	bh=FfCHvHzysQGnHS4bnbkUBTtqUl8KdzZGH9zK4Iu003c=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=JmlapBZopfYusHwOq/86gKZTHVhRKuf+DYzFbuVocgz6dpgH1DigP+kz6INSLdbUs
-	 pSlwF/WMY/Pf0jiFIRmR/TR1kCHrEtMa1TmrpaERoAQWbDQ7jQKkq1y0MQXdm5+eDK
-	 kK/MZ43SdE57SyJYnXvNdzn7vH4KtGrea4eRxTRyE9IzuC5+JH6Tgy2h8bRNATyaD6
-	 x0ZHvETz8HKeiwdAARdgAzhs0Hlu2aXaowNcIlrSOIdzLuVyD8lyDwzQT3k3WtxS3c
-	 +QNZiNGOiSCtBQlBlLwMhE/Qp4TTfuUwxUwJjpdQ1kx8NTxueVwlGHxz25rTkCxXua
-	 jDi17A9Tzc41w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 06999CE0DDA; Sat, 13 Sep 2025 15:05:47 -0700 (PDT)
-Date: Sat, 13 Sep 2025 15:05:47 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Waiman Long <llong@redhat.com>
-Cc: Hillf Danton <hdanton@sina.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	pengdonglin <dolinux.peng@gmail.com>, linux-kernel@vger.kernel.org,
-	herbert@gondor.apana.org.au
-Subject: Re: [PATCH] rcu: Remove redundant rcu_read_lock/unlock() in
- spin_lock critical sections
-Message-ID: <7cdb6f45-de42-4139-a050-b318a69ad86d@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250912065050.460718-1-dolinux.peng@gmail.com>
- <6831b9fe-402f-40a6-84e6-b723dd006b90@redhat.com>
- <20250912213531.7-YeRBeD@linutronix.de>
- <20250913080018.7032-1-hdanton@sina.com>
- <10adb9b7-ea19-407b-818e-79061a067e13@redhat.com>
+	s=k20201202; t=1757801157;
+	bh=fuRN9sDs6dXkvQ77eK0VxpVXR3WpUFozkEd78OmmtIQ=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=We1IPP37ACpr4Dzx9imqWs8RBtMbfJ0aPIIGonYxVnzzE0YoY9L0wvLxb3n15N/x0
+	 1XcXEBJsUxH5WKPJy01d7yms75Ra2pMC5Dr6uP4TfknhyeHUE5CS7P7bw54Gg3RSWu
+	 Ss76ZOnuaIDAWi6mYM4BU4XV2AyCKbr5MWIb1Y9fRknSfGNTX13kuz5Gki9BSrbEZe
+	 /VUBhc/Vrh9KMlEIzk02idGYtkf9BEisHOF//lRdLCZcR2G9K15h7ZpYMVXiKbwb3b
+	 PZTduFEp88X7F7W41WWYyigrL8i1JVg5esTBm0m+F9nKhCeHuC7iCY/JoQVAsaJXYR
+	 cufAiI7N0YKtQ==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <10adb9b7-ea19-407b-818e-79061a067e13@redhat.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250909171321-GYC7803064@gentoo.org>
+References: <20250909171321-GYC7803064@gentoo.org>
+Subject: Re: [GIT PULL] clk: spacemit: Updates for v6.18
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Yixun Lan <dlan@gentoo.org>, Michael Turquette <mturquette@baylibre.com>, Brian Masney <bmasney@redhat.com>, Alex Elder <elder@riscstar.com>, linux-clk@vger.kernel.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Yixun Lan <dlan@gentoo.org>
+Date: Sat, 13 Sep 2025 15:05:56 -0700
+Message-ID: <175780115692.4354.14857999848718953911@lazor>
+User-Agent: alot/0.11
 
-On Sat, Sep 13, 2025 at 01:23:03PM -0400, Waiman Long wrote:
-> On 9/13/25 4:00 AM, Hillf Danton wrote:
-> > On Fri, 12 Sep 2025 20:33:31 -0400 Waiman Long wrote:
-> > > On 9/12/25 5:35 PM, Sebastian Andrzej Siewior wrote:
-> > > > On 2025-09-12 17:13:09 [-0400], Waiman Long wrote:
-> > > > > On 9/12/25 2:50 AM, pengdonglin wrote:
-> > > > > > From: pengdonglin <pengdonglin@xiaomi.com>
-> > > > > > 
-> > > > > > When CONFIG_PREEMPT_RT is disabled, spin_lock*()
-> > > > > > operations implicitly
-> > > > > > disable preemption, which provides RCU read-side protection. When
-> > > > > > CONFIG_PREEMPT_RT is enabled, spin_lock*() implementations internally
-> > > > > > manage RCU read-side critical sections.
-> > > > > I have some doubt about your claim that disabling preemption
-> > > > > provides RCU
-> > > > > read-side protection. It is true for some flavors but
-> > > > > probably not all. I do
-> > > > > know that disabling interrupt will provide RCU read-side
-> > > > > protection. So for
-> > > > > spin_lock_irq*() calls, that is valid. I am not sure about
-> > > > > spin_lock_bh(),
-> > > > > maybe it applies there too. we need some RCU people to confirm.
-> > > > The claim is valid since Paul merged the three flavours we had. Before
-> > > > that preempt_disable() (and disabling irqs) would match
-> > > > rcu_read_lock_sched(). rcu_read_lock() and rcu_read_lock_bh() were
-> > > > different in terms of grace period and clean up.
-> > > > So _now_ we could remove it if it makes things easier.
-> > > 
-> > > Thanks for the clarification.
-> > > 
-> > > In this case, I think the patch description should mention the
-> > > commit that unify the 3 RCU flavors to make sure that this patch
-> > > won't be accidentally backport'ed to an older kernel without the
-> > > necessary prerequisite commit(s).
-> > 
-> > This change also affects the dereference helpers.
-> > 
-> > #define rcu_dereference_check(p, c) \
-> >     __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
-> >                 (c) || rcu_read_lock_held(), __rcu)
-> > 
-> Right, this macro will need to be updated as well to avoid false positive if
-> we decide that preempt_disabled region is a valid rcu_read_lock critical
-> section.
+Quoting Yixun Lan (2025-09-09 02:15:03)
+> Hi Stephen,
+>=20
+>    Please pull SpacemiT's clock changes for v6.18
+>=20
+> Yixun Lan
+>=20
+> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
+85:
+>=20
+>   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://github.com/spacemit-com/linux tags/spacemit-clk-for-6.18-1
+>=20
+> for you to fetch changes up to d02c71cba7bba453d233a49497412ddbf2d44871:
+>=20
+>   clk: spacemit: ccu_pll: convert from round_rate() to determine_rate() (=
+2025-08-26 06:07:45 +0800)
+>=20
+> ----------------------------------------------------------------
 
-I suggest that you instead use the new rcu_dereference_all_check()
-that Herbert Xu (added on CC) has put together here:
-
-https://lore.kernel.org/all/aLlflTV_SDwMB7mq@gondor.apana.org.au/
-
-This way, people wanting rcu_read_lock() and nothing else can continue
-using rcu_dereference_check() and you can use rcu_dereference_all_check()
-that takes rcu_read_lock() along all any other types of RCU readers.
-
-							Thanx, Paul
+Thanks. Pulled into to clk-next
 
