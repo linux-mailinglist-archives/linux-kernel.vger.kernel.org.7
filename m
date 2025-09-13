@@ -1,408 +1,235 @@
-Return-Path: <linux-kernel+bounces-815099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCB1AB55FB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:03:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01507B55FB9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:06:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F02C71CC0F4E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 09:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B293A07193
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 09:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF88B2E973F;
-	Sat, 13 Sep 2025 09:03:05 +0000 (UTC)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1ED26B95B;
+	Sat, 13 Sep 2025 09:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OiAHel96"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B8D29AB12
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 09:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D768A2EA464
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 09:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757754185; cv=none; b=C6/H5fhLVaF7w2cm3JskL+Z5Fn3JRapAQJXKHyRrWpMIp5BEBuFYmoEcj8E1Vn606N2uhuKXKXnGs+VbCoLcAGKFWFQoeIyQLAm8brPeJZs/hthporAcfdAt2eD5w6SnxfYJOWuich0XpNKecQ/XMnQdIpLhICN7D2sOHGpqx4k=
+	t=1757754388; cv=none; b=W7SOJzlcNMynBv2n3lprsg3HcxxVlPxp9nOfND8FB4Gou6823bXqdZAVt/KVp3IcEeyD2q4gcZ3JdqSQjCIn+Zgv8EoRxkH/7b/umniYD3iD3vXh7+54/rUZbeYM8xb7Ln7X2vjaamOmFuT7SkuvAMwAbPBk/A1OSPfNmNut4jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757754185; c=relaxed/simple;
-	bh=FtkU5WbYNwooptUFdXcibNW6kvMRzKs6zenXx6kEbT4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BOm0ggq+uI/g1KA6LsP3Yff/MP1ieyQDrIMcw54UlvfOKFdNsHml/NF0IGZRCZuutYr18cxDOjSPY9wN14xgJv8V14VRJWTCAnAlOiGpayo5f17DdliqeRTy5MKvdLcZemaGZ9BsJPNflPBBAt2iRfJVn97TN33JCylgJnqHnFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-571a58b385aso1229484e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:03:02 -0700 (PDT)
+	s=arc-20240116; t=1757754388; c=relaxed/simple;
+	bh=8dEp1AU6wmo+g+BbWCezxqlLsb7zc0IB8g7OnuHFGSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J5o9IT5rzw+ro5+TaQ5IV/dMChaR3awy2j04ibVfmZFxa45Gf9KsR+3Sj8nD59YC16mcL+NEYBpXsVggCBhAemvBJiMp4JHx2SROokad64mQE3BC5mHahQjiyQzrG/kN8nHEGf8iLwpOxNKmPvXj+8GVR2pFbViYvJLkq7hp5lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OiAHel96; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757754385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uOsyKEsT4d7f0MxqTpsXQLTyDPQ6JiWR10VEY3czRBY=;
+	b=OiAHel96hdSqvygMwcXVsT10EtcUCX9BpTXezygfuP/jBvNclpxulxObdAR4cRtSCnhfK0
+	eOS8zfg4mS4hHcUwKXOXeMIDgoPV3qMpsU3qLttR/OXuilFYddzyAYRgzbuDMDkkFN7uaG
+	eALZPTwooHpmZAyA1bBp835V1xmHMj4=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-IZ3KfyuqNB-l5Fr7ro5nPQ-1; Sat, 13 Sep 2025 05:06:24 -0400
+X-MC-Unique: IZ3KfyuqNB-l5Fr7ro5nPQ-1
+X-Mimecast-MFC-AGG-ID: IZ3KfyuqNB-l5Fr7ro5nPQ_1757754383
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-41179d41311so5457315ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:06:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757754179; x=1758358979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+        d=1e100.net; s=20230601; t=1757754383; x=1758359183;
+        h=content-transfer-encoding:mime-version:organization:references
+         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+9yf8Ktp4HQCNlkhLraLZ3muqM4SOy6F+jw9y0V/VXs=;
-        b=J0YPf3lD2UZB84UIQp8gp3hJeF/mvqRU9unlUQDm+dxRes/i4eLjhaUr7QzaWHyttt
-         VLqPoTtDJzV3b2jBzk9g45pxBnclFKzyY6zINQzGxV2Lct4rFGCp3404AWjbV0uudsNM
-         IEI2SVAFVapIKg/hapopxTMDxU9D3CoDKrkJw0OPjZnOCdkF4BLX/HZXTfB+WU5M5TJv
-         qXmfdcrtJZxHxBl+oWe7VF1zpvKIBNp+HMvOpwCtyQ6pfAZem+rMtARm95S3KhNDuw/T
-         JGSs1ieuFcBLq+G5I88Mlj5UV7CKjEnWruHNEfYdWBM+Fq9g6aPPiDsldUR/Nr0udvX+
-         uQGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWp6AqaGxK+3w2ySnz7tZKKhL9IgvuZBQo9UYpXTUtYpH2otunl1SeFPlIrgXEtjUpxnLSqkBNt137Au9Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4tix7EB7XuGBv8lRb5SSCVGpdPNi9eg3aJe5aE3+vTFrzI6Rh
-	s7dytXfT1mawb5LkRo+cJ0h8w5n48oojYII/TDS3XTp6ZU8BejiC+58sBsTfP7dX
-X-Gm-Gg: ASbGncsl5CaYAKdvnBPXfp4OUknavPUc3aKJiiPBsqdZqDkmnQ/4eIgja1nQdOTsyWs
-	rnLhNgr4kkmREOVrVHXbsTqu5rSRU3p3g989en1GSr1Vvj8RIzfIIh5dnhnDbn70VILnm9xwDyO
-	aqFpvcv9FzTHp8c30zprNyeGdI3Puw1/1EMJSLP1YlO5pplqoMJArxfourEXhewNBuJ1SdeEDT1
-	FeoWzlMLHA7kR+L75pBZQvm+ZCJaLzfnyaBX7BGnD1Wbl4EAVGTZeVjitRiShBVqcgQSV1e6rmn
-	tP4xf+oY0uGKyhdpOb+mqI8lSZ3WMJqOoXdtIQ7RsMoeonca2Orv/H142GC5ouCK4pTCoZI+Yc/
-	X8FjE4cWtvQ9IqgmN7R1jzGRQFF1SWBzBCWjlihUzS2ODDvzJGR6yBYw=
-X-Google-Smtp-Source: AGHT+IH9Pg72CcLf5MUGbRaC1vSoE8hF9f6MnE4zqZggUQm9ZpjXK+zMO07ca2QZIk21yB6tZ7YeYw==
-X-Received: by 2002:a05:6512:3b0e:b0:572:97e:9297 with SMTP id 2adb3069b0e04-572097e949cmr351299e87.1.1757754178708;
-        Sat, 13 Sep 2025 02:02:58 -0700 (PDT)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571a6d0e20csm645508e87.38.2025.09.13.02.02.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Sep 2025 02:02:58 -0700 (PDT)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-336b908cbaaso23767101fa.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:02:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUBYcz11i9vtjSBAmDtMZdzH0z1GI3hkWt8cg4ysYOLdCTq6eqtk3/Tyd/te76w1TRCpSNPgXA82LQ6HD0=@vger.kernel.org
-X-Received: by 2002:a05:651c:31da:b0:338:11e1:c7d9 with SMTP id
- 38308e7fff4ca-351415650afmr16006951fa.43.1757754176539; Sat, 13 Sep 2025
- 02:02:56 -0700 (PDT)
+        bh=uOsyKEsT4d7f0MxqTpsXQLTyDPQ6JiWR10VEY3czRBY=;
+        b=kYADDAQxqzwf3tWLs4ke7Qy1MqrtjyxW4xwbeE3Nvnvfc0bb9KZJ/GoNZnf3oFbQkq
+         kmAv/MbYCu9NA0ACKARj4oRECPM2X/1cS2UKEymyqm+wJspALK8ohHVbAuH0QRJdHxES
+         HdKmiilmAbCj167KMNxCnVM6YfpUil2Tx5/ASDC8hSWt0E4Gq5rZcVzqZPtTlDbOaZF0
+         HBXMW9xxMq+fa7Cw5E41f1OBOkucaununw6WxMVU0fXN/J6ltksu69Dopguj01z3QMuW
+         /djma0SRN13UoqSmw7TQU4iTkxwYQq6i+sdLZZzPVmTnXeQ1ykjRcNczUFo3eH8bVSez
+         SoJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW65xtm2CP6SZF0hEU1Uh/mjsxQL3jGVq8gdID6T0wmCEC8h07rnEZzjb4eOOFQaJeaLRH8w6imD8XvYxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywdne7sbNvNLJ09tdW5d0XGml0uXgerkkafEmt+bJEe9RaP+Ith
+	nuir5Zu2WKG5SWSnfm0HfYCX9FT4AlTHJra+PtXwpTgB5qBkQJ5EmXR6QL/w9EtpraN5szaxdx9
+	1tD7AX703COl65UkjxApo5SenpGU8qL3E9X460Y2TarZc9x0w1+kWP2sqtb9g5f/lsg==
+X-Gm-Gg: ASbGncucvc704+qhYe4oNkNVqfz8+4Sl9B+9mAFbsUuBcKuZwC1VDykOgnbldUuoEi/
+	CGMLQuKCrF6wvYtwUW8OUkhDkkZuJM7au6yubrMebyE5GUcAA0+zyWMwk9f1pJitYi27PPtNMpo
+	1oo7vF5yleBIvLcdTK7zAt7cwLQxd3UtakT72lN8Mze8/nO7evtiQhwsbJ8YCstBlMR1F8TERbt
+	sdtxxghAeJUgIx5z0FOZeoi3owRzb4stlCA8FjKrw7e2YLvu7Cs1rn2ZrzO5ygOcHrjtXIM7UP3
+	qFishZ2+fzUZuo2BVxVluXnEhX4RPmph3FdNSa4bLI4=
+X-Received: by 2002:a92:ca4d:0:b0:419:de32:2d01 with SMTP id e9e14a558f8ab-420a1bf0e2amr28604265ab.4.1757754383437;
+        Sat, 13 Sep 2025 02:06:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IENFwGsYCj5we8cqrgqcps0vU//BTqxnSv90KfRfiVLx0DBHmLiooNtsdQvyKhq4QCqGgNKww==
+X-Received: by 2002:a92:ca4d:0:b0:419:de32:2d01 with SMTP id e9e14a558f8ab-420a1bf0e2amr28604185ab.4.1757754383024;
+        Sat, 13 Sep 2025 02:06:23 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-41deede6d15sm31335025ab.7.2025.09.13.02.06.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 02:06:21 -0700 (PDT)
+Date: Sat, 13 Sep 2025 10:04:57 +0100
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Farhan Ali <alifm@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+ helgaas@kernel.org, schnelle@linux.ibm.com, mjrosato@linux.ibm.com
+Subject: Re: [PATCH v3 08/10] vfio-pci/zdev: Add a device feature for error
+ information
+Message-ID: <20250913100457.1af13cd7.alex.williamson@redhat.com>
+In-Reply-To: <20250911183307.1910-9-alifm@linux.ibm.com>
+References: <20250911183307.1910-1-alifm@linux.ibm.com>
+	<20250911183307.1910-9-alifm@linux.ibm.com>
+Organization: Red Hat
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250831162536.2380589-1-lukas.schmid@netcube.li> <20250831162536.2380589-4-lukas.schmid@netcube.li>
-In-Reply-To: <20250831162536.2380589-4-lukas.schmid@netcube.li>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 13 Sep 2025 17:02:44 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66iD1BBwOeECrckmf_d-xQmmMzFhkj-SjO5ja7i1f0YDw@mail.gmail.com>
-X-Gm-Features: Ac12FXxX2oqvFnH_76fKkzLJQXu3WsG74ENxnFjJOqn4Ha6355qDBEr_yZ7zdgg
-Message-ID: <CAGb2v66iD1BBwOeECrckmf_d-xQmmMzFhkj-SjO5ja7i1f0YDw@mail.gmail.com>
-Subject: Re: [PATCH v8 3/5] ARM: dts: sunxi: add support for NetCube Systems
- Nagami SoM
-To: Lukas Schmid <lukas.schmid@netcube.li>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Thu, 11 Sep 2025 11:33:05 -0700
+Farhan Ali <alifm@linux.ibm.com> wrote:
 
-On Mon, Sep 1, 2025 at 12:26=E2=80=AFAM Lukas Schmid <lukas.schmid@netcube.=
-li> wrote:
->
-> NetCube Systems Nagami SoM is a module based around the Allwinner T113s
-> SoC. It includes the following features and interfaces:
->
-> - 128MB DDR3 included in SoC
-> - 10/100 Mbps Ethernet using LAN8720A phy
-> - One USB-OTG interface
-> - One USB-Host interface
-> - One I2S interface with in and output support
-> - Two CAN interfaces
-> - ESP32 over SDIO
-> - One SPI interface
-> - I2C EEPROM for MAC address
-> - One QWIIC I2C Interface with dedicated interrupt pin shared with EEPROM
-> - One external I2C interface
-> - SD interface for external SD-Card
->
-> Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
+> For zPCI devices, we have platform specific error information. The platform
+> firmware provides this error information to the operating system in an
+> architecture specific mechanism. To enable recovery from userspace for
+> these devices, we want to expose this error information to userspace. Add a
+> new device feature to expose this information.
+> 
+> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
 > ---
->  .../allwinner/sun8i-t113s-netcube-nagami.dtsi | 250 ++++++++++++++++++
->  1 file changed, 250 insertions(+)
->  create mode 100644 arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagam=
-i.dtsi
->
-> diff --git a/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi =
-b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
-> new file mode 100644
-> index 0000000000000..4d3627f6d58d2
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/allwinner/sun8i-t113s-netcube-nagami.dtsi
-> @@ -0,0 +1,250 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (C) 2025 Lukas Schmid <lukas.schmid@netcube.li>
+>  drivers/vfio/pci/vfio_pci_core.c |  2 ++
+>  drivers/vfio/pci/vfio_pci_priv.h |  8 ++++++++
+>  drivers/vfio/pci/vfio_pci_zdev.c | 34 ++++++++++++++++++++++++++++++++
+>  include/uapi/linux/vfio.h        | 14 +++++++++++++
+>  4 files changed, 58 insertions(+)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+> index 7dcf5439dedc..378adb3226db 100644
+> --- a/drivers/vfio/pci/vfio_pci_core.c
+> +++ b/drivers/vfio/pci/vfio_pci_core.c
+> @@ -1514,6 +1514,8 @@ int vfio_pci_core_ioctl_feature(struct vfio_device *device, u32 flags,
+>  		return vfio_pci_core_pm_exit(device, flags, arg, argsz);
+>  	case VFIO_DEVICE_FEATURE_PCI_VF_TOKEN:
+>  		return vfio_pci_core_feature_token(device, flags, arg, argsz);
+> +	case VFIO_DEVICE_FEATURE_ZPCI_ERROR:
+> +		return vfio_pci_zdev_feature_err(device, flags, arg, argsz);
+>  	default:
+>  		return -ENOTTY;
+>  	}
+> diff --git a/drivers/vfio/pci/vfio_pci_priv.h b/drivers/vfio/pci/vfio_pci_priv.h
+> index a9972eacb293..a4a7f97fdc2e 100644
+> --- a/drivers/vfio/pci/vfio_pci_priv.h
+> +++ b/drivers/vfio/pci/vfio_pci_priv.h
+> @@ -86,6 +86,8 @@ int vfio_pci_info_zdev_add_caps(struct vfio_pci_core_device *vdev,
+>  				struct vfio_info_cap *caps);
+>  int vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev);
+>  void vfio_pci_zdev_close_device(struct vfio_pci_core_device *vdev);
+> +int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 flags,
+> +			      void __user *arg, size_t argsz);
+>  #else
+>  static inline int vfio_pci_info_zdev_add_caps(struct vfio_pci_core_device *vdev,
+>  					      struct vfio_info_cap *caps)
+> @@ -100,6 +102,12 @@ static inline int vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev)
+>  
+>  static inline void vfio_pci_zdev_close_device(struct vfio_pci_core_device *vdev)
+>  {}
+> +
+> +static int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 flags,
+> +				     void __user *arg, size_t argsz);
+> +{
+> +	return -ENODEV;
+> +}
+>  #endif
+>  
+>  static inline bool vfio_pci_is_vga(struct pci_dev *pdev)
+> diff --git a/drivers/vfio/pci/vfio_pci_zdev.c b/drivers/vfio/pci/vfio_pci_zdev.c
+> index 2be37eab9279..261954039aa9 100644
+> --- a/drivers/vfio/pci/vfio_pci_zdev.c
+> +++ b/drivers/vfio/pci/vfio_pci_zdev.c
+> @@ -141,6 +141,40 @@ int vfio_pci_info_zdev_add_caps(struct vfio_pci_core_device *vdev,
+>  	return ret;
+>  }
+>  
+> +int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 flags,
+> +			      void __user *arg, size_t argsz)
+> +{
+> +	struct vfio_device_feature_zpci_err err;
+> +	struct vfio_pci_core_device *vdev =
+> +		container_of(device, struct vfio_pci_core_device, vdev);
+> +	struct zpci_dev *zdev = to_zpci(vdev->pdev);
+> +	int ret;
+> +	int head = 0;
+> +
+> +	if (!zdev)
+> +		return -ENODEV;
+> +
+> +	ret = vfio_check_feature(flags, argsz, VFIO_DEVICE_FEATURE_GET,
+> +				 sizeof(err));
+> +	if (ret != 1)
+> +		return ret;
+> +
+> +	mutex_lock(&zdev->pending_errs_lock);
+> +	if (zdev->pending_errs.count) {
+> +		head = zdev->pending_errs.head % ZPCI_ERR_PENDING_MAX;
+> +		err.pec = zdev->pending_errs.err[head].pec;
+> +		zdev->pending_errs.head++;
+> +		zdev->pending_errs.count--;
+> +		err.pending_errors = zdev->pending_errs.count;
+> +	}
+> +	mutex_unlock(&zdev->pending_errs_lock);
+> +
+> +	if (copy_to_user(arg, &err, sizeof(err)))
+> +		return -EFAULT;
+> +
+> +	return 0;
+> +}
+> +
+>  int vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev)
+>  {
+>  	struct zpci_dev *zdev = to_zpci(vdev->pdev);
+> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+> index 75100bf009ba..a950c341602d 100644
+> --- a/include/uapi/linux/vfio.h
+> +++ b/include/uapi/linux/vfio.h
+> @@ -1478,6 +1478,20 @@ struct vfio_device_feature_bus_master {
+>  };
+>  #define VFIO_DEVICE_FEATURE_BUS_MASTER 10
+>  
+> +/**
+> + * VFIO_DEVICE_FEATURE_ZPCI_ERROR feature provides PCI error information to
+> + * userspace for vfio-pci devices on s390x. On s390x PCI error recovery involves
+> + * platform firmware and notification to operating system is done by
+> + * architecture specific mechanism.  Exposing this information to userspace
+> + * allows userspace to take appropriate actions to handle an error on the
+> + * device.
 > + */
-> +
-> +/dts-v1/;
-> +#include "sun8i-t113s.dtsi"
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +/ {
-> +       model =3D "NetCube Systems Nagami SoM";
-> +       compatible =3D "netcube,nagami", "allwinner,sun8i-t113s";
-> +
-> +       aliases {
-> +               serial1 =3D &uart1; // ESP32 Bootloader UART
-> +               serial3 =3D &uart3; // Console UART on Card Edge
-> +               ethernet0 =3D &emac;
-> +       };
-> +
-> +       chosen {
-> +               stdout-path =3D "serial3:115200n8";
-> +       };
-> +
-> +       /* module wide 3.3V supply directly from the card edge */
-> +       reg_vcc3v3: regulator-3v3 {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "vcc-3v3";
-> +               regulator-min-microvolt =3D <3300000>;
-> +               regulator-max-microvolt =3D <3300000>;
-> +               regulator-always-on;
-> +       };
-> +
-> +       /* SY8008 DC/DC regulator on the board, also supplying VDD-SYS */
-> +       reg_vcc_core: regulator-core {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "vcc-core";
-> +               regulator-min-microvolt =3D <880000>;
-> +               regulator-max-microvolt =3D <880000>;
-> +               vin-supply =3D <&reg_vcc3v3>;
-> +       };
-> +
-> +       /* USB0 MUX to switch connect to Card-Edge only after BootROM */
-> +       usb0_sec_mux: mux-controller{
-> +               compatible =3D "gpio-mux";
-> +               #mux-control-cells =3D <0>;
-> +               mux-gpios =3D <&pio 3 9 GPIO_ACTIVE_HIGH>; /* PD9 */
-> +               idle-state =3D <1>; /* USB connected to Card-Edge by defa=
-ult */
-> +       };
-> +
-> +       /* Reset of ESP32 */
-> +       wifi_pwrseq: wifi-pwrseq {
-> +               compatible =3D "mmc-pwrseq-simple";
-> +               reset-gpios =3D <&pio 6 9 GPIO_ACTIVE_LOW>; /* PG9 */
-> +               post-power-on-delay-ms =3D <1500>;
-> +               power-off-delay-us =3D <200>;
-> +       };
+> +struct vfio_device_feature_zpci_err {
+> +	__u16 pec;
+> +	int pending_errors;
 > +};
-> +
-> +&cpu0 {
-> +       cpu-supply =3D <&reg_vcc_core>;
-> +};
-> +
-> +&cpu1 {
-> +       cpu-supply =3D <&reg_vcc_core>;
-> +};
-> +
-> +&dcxo {
-> +       clock-frequency =3D <24000000>;
-> +};
-> +
-> +&emac {
-> +       nvmem-cells =3D <&eth0_macaddress>;
-> +       nvmem-cell-names =3D "mac-address";
-> +       phy-handle =3D <&lan8720a>;
-> +       phy-mode =3D "rmii";
-> +       pinctrl-0 =3D <&rmii_pe_pins>;
-> +       pinctrl-names =3D "default";
-> +       status =3D "okay";
-> +};
-> +
-> +/* Default I2C Interface on Card-Edge */
-> +&i2c2 {
-> +       pinctrl-0 =3D <&i2c2_pins>;
-> +       pinctrl-names =3D "default";
-> +       status =3D "disabled";
-> +};
-> +
-> +/* Exposed as the QWIIC connector and used by the internal EEPROM */
-> +&i2c3 {
-> +       pinctrl-0 =3D <&i2c3_pins>;
-> +       pinctrl-names =3D "default";
-> +       status =3D "okay";
-> +
-> +       eeprom0: eeprom@50 {
-> +               compatible =3D "atmel,24c02";             /* actually it'=
-s a 24AA02E48 */
-> +               reg =3D <0x50>;
-> +               pagesize =3D <16>;
-> +               read-only;
-> +               vcc-supply =3D <&reg_vcc3v3>;
-> +
-> +               #address-cells =3D <1>;
-> +               #size-cells =3D <1>;
-> +
-> +               eth0_macaddress: macaddress@fa {
-> +                       reg =3D <0xfa 0x06>;
-> +               };
-> +       };
-> +};
-> +
-> +/* Default I2S Interface on Card-Edge */
-> +&i2s1 {
-> +       pinctrl-0 =3D <&i2s1_pins>, <&i2s1_din_pins>, <&i2s1_dout_pins>;
-> +       pinctrl-names =3D "default";
-> +       status =3D "disabled";
-> +};
-> +
-> +/* Phy is on SoM. MDI signals pre-magentics are on the card edge */
 
-                                 ^ pre-magnetics?
+This should have some explicit alignment.  Thanks,
 
-Will fix up when applying if nothing else in the series is wrong.
+Alex
 
-ChenYu
+> +#define VFIO_DEVICE_FEATURE_ZPCI_ERROR 11
+> +
+>  /* -------- API for Type1 VFIO IOMMU -------- */
+>  
+>  /**
 
-> +&mdio {
-> +       lan8720a: ethernet-phy@0 {
-> +               compatible =3D "ethernet-phy-ieee802.3-c22";
-> +               reg =3D <0>;
-> +       };
-> +};
-> +
-> +/* Default SD Interface on Card-Edge */
-> +&mmc0 {
-> +       pinctrl-0 =3D <&mmc0_pins>;
-> +       pinctrl-names =3D "default";
-> +       status =3D "disabled";
-> +};
-> +
-> +/* Connected to the on-board ESP32 */
-> +&mmc1 {
-> +       pinctrl-0 =3D <&mmc1_pins>;
-> +       pinctrl-names =3D "default";
-> +       vmmc-supply =3D <&reg_vcc3v3>;
-> +       bus-width =3D <4>;
-> +       non-removable;
-> +       mmc-pwrseq =3D <&wifi_pwrseq>;
-> +       status =3D "okay";
-> +};
-> +
-> +/* Connected to the on-board eMMC */
-> +&mmc2 {
-> +       pinctrl-0 =3D <&mmc2_pins>;
-> +       pinctrl-names =3D "default";
-> +       vmmc-supply =3D <&reg_vcc3v3>;
-> +       vqmmc-supply =3D <&reg_vcc3v3>;
-> +       bus-width =3D <4>;
-> +       non-removable;
-> +       status =3D "okay";
-> +};
-> +
-> +&pio {
-> +       vcc-pb-supply =3D <&reg_vcc3v3>;
-> +       vcc-pc-supply =3D <&reg_vcc3v3>;
-> +       vcc-pd-supply =3D <&reg_vcc3v3>;
-> +       vcc-pe-supply =3D <&reg_vcc3v3>;
-> +       vcc-pf-supply =3D <&reg_vcc3v3>;
-> +       vcc-pg-supply =3D <&reg_vcc3v3>;
-> +
-> +       gpio-line-names =3D "", "", "", "", // PA
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "CAN0_TX", "CAN0_RX", /=
-/ PB
-> +                                         "CAN1_TX", "CAN1_RX", "UART3_TX=
-", "UART3_RX",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "eMMC_CLK", "eMMC_CMD",=
- // PC
-> +                                         "eMMC_D2", "eMMC_D1", "eMMC_D0"=
-, "eMMC_D3",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "", // PD
-> +                                         "", "", "", "",
-> +                                         "", "USB_SEC_EN", "SPI1_CS", "S=
-PI1_CLK",
-> +                                         "SPI1_MOSI", "SPI1_MISO", "SPI1=
-_HOLD", "SPI1_WP",
-> +                                         "PD16", "", "", "",
-> +                                         "I2C2_SCL", "I2C2_SDA", "PD22",=
- "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "ETH_CRSDV", "ETH_RXD0", "ETH_R=
-XD1", "ETH_TXCK", // PE
-> +                                         "ETH_TXD0", "ETH_TXD1", "ETH_TX=
-EN", "",
-> +                                         "ETH_MDC", "ETH_MDIO", "QWIIC_n=
-INT", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "SD_D1", "SD_D0", "SD_CLK", "SD=
-_CLK", // PF
-> +                                         "SD_D3", "SD_D2", "PF6", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "ESP_CLK", "ESP_CMD", "ESP_D0",=
- "ESP_D1", // PG
-> +                                         "ESP_D2", "ESP_D3", "UART1_TXD"=
-, "UART1_RXD",
-> +                                         "ESP_nBOOT", "ESP_nRST", "I2C3_=
-SCL", "I2C3_SDA",
-> +                                         "I2S1_WS", "I2S1_CLK", "I2S1_DI=
-N0", "I2S1_DOUT0",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "",
-> +                                         "", "", "", "";
-> +};
-> +
-> +/* Remove the unused CK pin from the pinctl as it is unconnected */
-> +&rmii_pe_pins {
-> +       pins =3D "PE0", "PE1", "PE2", "PE3", "PE4",
-> +                  "PE5", "PE6", "PE8", "PE9";
-> +};
-> +
-> +/* Default SPI Interface on Card-Edge */
-> +&spi1 {
-> +       #address-cells =3D <1>;
-> +       #size-cells =3D <0>;
-> +       pinctrl-0 =3D <&spi1_pins>, <&spi1_hold_pin>, <&spi1_wp_pin>;
-> +       pinctrl-names =3D "default";
-> +       cs-gpios =3D <0>;
-> +       status =3D "disabled";
-> +};
-> +
-> +/* Connected to the Bootloader/Console of the ESP32 */
-> +&uart1 {
-> +       pinctrl-0 =3D <&uart1_pg6_pins>;
-> +       pinctrl-names =3D "default";
-> +       status =3D "okay";
-> +};
-> +
-> +/* Console/Debug UART on Card-Edge */
-> +&uart3 {
-> +       pinctrl-0 =3D <&uart3_pb_pins>;
-> +       pinctrl-names =3D "default";
-> +       status =3D "okay";
-> +};
-> --
-> 2.39.5
->
->
 
