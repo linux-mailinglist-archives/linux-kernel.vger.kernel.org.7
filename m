@@ -1,92 +1,97 @@
-Return-Path: <linux-kernel+bounces-815155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E057AB5605B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:57:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E480FB5605F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:58:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A432656243A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 10:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BEB87B823F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 10:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F1A2EC54F;
-	Sat, 13 Sep 2025 10:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4ED62EC56B;
+	Sat, 13 Sep 2025 10:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="C+ZDDDRp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZeeTkr6c"
-Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="VfXUHIf+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mPpig+Vk"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECE52E2DE4
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA2B2EC0BA
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757761063; cv=none; b=MaYZyC//Iuf6Ls9IDE1crAKEeNCS3buSQNaoEf2faGPIAYm6FLli11cUB0znQULVaPXTErreUiQSJnuMHkQqo5UnsO0eb8jKoHu7uG4rXgW7JZqw8TNKEu/rVtMMgpyywWEaat9FwedTFPxjuEtZmXv7P0sQitXvJFb71B2rnQg=
+	t=1757761065; cv=none; b=ItaFxMzuSWI2eT8FFug36xAAYVEPI0nc06wMyCPlQG5O/QBrAkUajB60ZZUrq0KUD0pwh1JBfIhg++4C9KmUhlH9gPiHDIw9CCrguzARtoGViuEiqysTd6UTz5IE2M46PhFKKLjZxwbzyJ+wafJ0wlj4GHbtIVHGAIti35bwCdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757761063; c=relaxed/simple;
-	bh=CsQGCBsTatedql4lnSrz9vNFBukD1zL3rUYTBMKIK7I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qIojAukGyGhyWfD7sgWLg4EP9p2F4K2igxOs3dSzcJ4MWqDkDHiGgABTwGPWnv4PdhUQjHdCIkL04HcEYnoUPQwLiHPnmsjdnb/QeavB0AJeju859MF5ydOoD6AckutHpgtRaWHaVkKpaHPS641VJ+uxWYBNW8gn2S78TLqGd8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=C+ZDDDRp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZeeTkr6c; arc=none smtp.client-ip=103.168.172.152
+	s=arc-20240116; t=1757761065; c=relaxed/simple;
+	bh=SI4gSrLroLcxiPO6+TUPS+OVtyIiXAbmou7cIOpggBI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ErNxAdUYjImlMdFpxbBSFuWTH0SDN9qvmLvDPncGBZRt8Jbl/sI9pUXr0XyBvGo3kDGdsGDcc5GF8TmROJbhjvcFc8+laGIC4Etv//CryAINpWBDBssEfOzGDCHaVlqYZsOcQFMvz7zoqgskqpkkfja56mQFEERzlKz32olMH44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=VfXUHIf+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mPpig+Vk; arc=none smtp.client-ip=103.168.172.145
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id D296D1400124;
-	Sat, 13 Sep 2025 06:57:40 -0400 (EDT)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 35F1BEC01E7;
+	Sat, 13 Sep 2025 06:57:42 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-06.internal (MEProxy); Sat, 13 Sep 2025 06:57:40 -0400
+  by phl-compute-03.internal (MEProxy); Sat, 13 Sep 2025 06:57:42 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm1; t=1757761060; x=1757847460; bh=Ke1+46Unlv
-	WlNxeH+CbOubd1oTFRZM0wqYyrcYtRd7k=; b=C+ZDDDRpUZtvXR2mFqApju+Ir6
-	nGIwbSbkF55QoCGNKLx9cN5yHVttd9K6gce1w/8r0x2Y7/bEa7rYrPcdQN/5gxu7
-	m/uy/HuPEglfvJvd9TZmZqzd8IoLKm6Odb+5NiXy1tCN0QOZ+O7zqNouap5EVikv
-	dVpshgtxEVsKAYqtAbwCdcxKqIFzflxAaFc2H13C8cNyJVy4N65yJuu97RxKZztA
-	JBD6hgw5PvMqqbCcHGNEc/2jGN6esYz1TlZjUgzdPHtbsA+sJEdbr6WXu4zQqMw/
-	0Nw1C+o3t4M5+jzXX3Oo2y8gvPDE5jtlZgkaqHrGZ76d1sY/AIuxrO1idNTQ==
+	:from:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1757761062; x=
+	1757847462; bh=/rTl3ZLV4TDqbR0iApij3yZEA1dATqWt7hFVGfCHOY0=; b=V
+	fXUHIf++HTrtPc4dVzqII4XxBnKw/qYBaJC2t3OXjx7AKavEB+8uTnAfDPUHNn8o
+	S2DX0H9a7Qd8NC3i1Y32TXZCRbhKF5g0Jvm/lRwIG3MSL3Ztg3El6TZCbtXqXUH2
+	InMeyrMexf66OOYoNvijV0f+vCqjCFA34LdDARmhBlE2dhKaaiOmDlKR3TipHgFp
+	mJbbqNPiY0besh4fiJ1t2uWugpMaLWZY3GfZk4CFegP4M/8GJxPdFYZW5BqXoAk/
+	+NRd/OO8z1T99Iz56vxk0jktD8LNq15ONdaA4slDoBH0sJTGTqeUf9IbPbjg6TAM
+	Dr6IV1EObJ1SaaAb8wUCg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757761060; x=1757847460; bh=Ke1+46UnlvWlNxeH+CbOubd1oTFRZM0wqYy
-	rcYtRd7k=; b=ZeeTkr6cRzdR+EX3FuqwUSr1YdrcxII5DJW7EBjZJsVI6p9o5Uh
-	fU/qdZDnantKcav8pECAaT2pONfaldDs0Y7zfkiAuQLRS/t+WpM9cNiqSGL5lbAs
-	m0+1cUymarO7SHb1kpXeOmDDOEGg/DqGHvrskBaCI1zarhKqQZIE9W45vKwpNRk/
-	n7N/CFnZvjMTwnWszr7MX/rz5dmQUmztMDeVuWIyrkcLF9ythRv2X3AZXP17JAah
-	vSdmtM+fh0WtxCeqVsuZaVapVA08oEYIBNUCDiaRGE/S/6v3lmRZ7c4PzUzH+Bbc
-	1If4oIGP6FuJBvnd5kt2cBI8aLPU62/Bg4w==
-X-ME-Sender: <xms:JE7FaAz19PgKvVG1AM-cJil4hJ5yHFtNEGxQO9YCNhCrdTtWHet1QA>
-    <xme:JE7FaNObS01J-ivzeLK2kasGCmzNjNo-OEpx-NwYtLrVSsFdicuHSMjSjXd6Zvzt1
-    tBlgkv1ajZrXjn8YZE>
-X-ME-Received: <xmr:JE7FaETWTBWEf4ElLeEWoNX0PligF0uOk974fjTutDpKJ_DxlLQHKQL81NxznajFQtELchrpaZLFcBgpB2XkPnSHY3TMrDFA78sP3Pl1znnZog>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefudejhecutefuodetggdotefrod
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm1; t=1757761062; x=1757847462; bh=/
+	rTl3ZLV4TDqbR0iApij3yZEA1dATqWt7hFVGfCHOY0=; b=mPpig+VkQJ+x1tEuA
+	vISC8Ozrnzh6gP6j5LOTtQb+9wboo1MF3U3CtLjXXU0GmknKPT8BfZgxaEAOhSiN
+	I/yR4bxdf3W6p+24NtEW3a8PqzZd/jKXDOUd4M1ZbG7DWGQi0gUe+r/OJKiy6Kua
+	Xqn8yjzaShcrglyK9DhNrX20e05dUls0BBUpeovffxcaFeqM5u2wIzG7nsFtkT7/
+	c8+a6EgzBlkHMmW9k6fO8hnqfEv5gvBb1E5xi83zk3cwKHRXUU0wPz7cvIzyWuNl
+	0kR2yMn+on01Szlv8pBCDysF14DhZVqR81zH2Pdhy1zKv2kCz9WreGL764+aQYhA
+	9GeUg==
+X-ME-Sender: <xms:Jk7FaDb3hPSIdinfCWu8TKmSG93GczZrBsFpBvGFPqRXUTc0C4XAMw>
+    <xme:Jk7FaLVDRjaY4HiD6CCnhzORFFPtxV6mgeYbD63fNxCLfZ3dDQRB7CadEaptLxOCS
+    pbL38kWSGcfG0eRI-M>
+X-ME-Received: <xmr:Jk7FaH5dMzt241F75jHYPfgdyAbRhHDzDFpd_CeLytDT7hgu-92IYVnupOl1zagEtHm5X_YZ1akyNuJKFNIMxxA3DcswIb7QPe2oBh2m1uSFeg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefudejgecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtredttd
-    enucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihes
-    shgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevkeduhf
-    etjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfuihii
-    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmh
-    hotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtggvfh
-    horhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:JE7FaLYFfXRVpiXDF0IJ1StzhLS1zqBTez9dUlk_UNQoS6fnjV8dHA>
-    <xmx:JE7FaB3q9rXrW9s7XW526_Hdiwt2q5HPWYc2ehQnIIhQMInWJHOadg>
-    <xmx:JE7FaLXEsX0OKpDHq05McrmYXZ69CE3j2sjMArJD4Qlz0KNJt6nGrA>
-    <xmx:JE7FaLXiEXGyqWEm3EWllr7LmTDqvY7Xp5EVUYhDRoZcJp0qJcqhVw>
-    <xmx:JE7FaJ1h3BZ966-uUpAP2nHjzSo_IDoVHTicQgtU1w8-dZrkFJrbbgCh>
+    ihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgjfhgggfestdekredtre
+    dttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
+    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepvdejgfejuedvgf
+    duudekleevtefgtdevhfdtffefiefgveeuteffiedvffekvddtnecuvehluhhsthgvrhfu
+    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
+    grmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtg
+    gvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:Jk7FaGi1mqpDkJJKrOElOvCr97rzi6S_TeNmzo4QnscUpSN7GyULug>
+    <xmx:Jk7FaOekjMClzqHGjzyvK8NUG2SipJmGp4qyK2Z0Bk4izdSj67fZ8Q>
+    <xmx:Jk7FaLfIe-MMht4KxdW2mapcRdOaKhhAKCee7C4orKZJ4iyutV3Fvg>
+    <xmx:Jk7FaI9jh7XvxBpvqoPWrift9BMoe9SaQNXsgo7bZ7TmFXSCZBh8MQ>
+    <xmx:Jk7FaJfowPJHjS8TVAOFxYIl4XhV10a4hfmHrCl-_6RADk3x9j_G4oaY>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 13 Sep 2025 06:57:39 -0400 (EDT)
+ 13 Sep 2025 06:57:41 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] firewire: core: use macro for magic numbers related to bus manager work
-Date: Sat, 13 Sep 2025 19:57:35 +0900
-Message-ID: <20250913105737.778038-1-o-takashi@sakamocchi.jp>
+Subject: [PATCH 1/2] firewire: core: use macro expression for gap count mismatch
+Date: Sat, 13 Sep 2025 19:57:36 +0900
+Message-ID: <20250913105737.778038-2-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250913105737.778038-1-o-takashi@sakamocchi.jp>
+References: <20250913105737.778038-1-o-takashi@sakamocchi.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,26 +100,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+The gap_count field is assigned to zero when mismatch is detected. In such
+case, the macro expression is preferable since it is easy to understand
+the situation.
 
-Some magic numbers are used for bus manager work. This patchset adds
-some macros to replace the magic numbers.
+This commit applies the idea.
 
-* 0x3f: BUS_MANAGER_ID_NOT_REGISTERED
-* 0: GAP_COUNT_MISMATCHED
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-card.c     | 2 +-
+ drivers/firewire/core-topology.c | 2 +-
+ drivers/firewire/core.h          | 3 +++
+ 3 files changed, 5 insertions(+), 2 deletions(-)
 
-Takashi Sakamoto (2):
-  firewire: core: use macro expression for gap count mismatch
-  firewire: core: use macro expression for not-registered state of
-    BUS_MANAGER_ID
-
- drivers/firewire/core-card.c     | 14 +++++++++-----
- drivers/firewire/core-topology.c |  2 +-
- drivers/firewire/core.h          |  6 ++++++
- 3 files changed, 16 insertions(+), 6 deletions(-)
-
-
-base-commit: 136d8a6f73fee0686d163dca91fdffb35e25f092
+diff --git a/drivers/firewire/core-card.c b/drivers/firewire/core-card.c
+index 32cf6b3344cd..bf2e7f55b83e 100644
+--- a/drivers/firewire/core-card.c
++++ b/drivers/firewire/core-card.c
+@@ -425,7 +425,7 @@ static void bm_work(struct work_struct *work)
+ 	 */
+ 	card->bm_generation = generation;
+ 
+-	if (card->gap_count == 0) {
++	if (card->gap_count == GAP_COUNT_MISMATCHED) {
+ 		/*
+ 		 * If self IDs have inconsistent gap counts, do a
+ 		 * bus reset ASAP. The config rom read might never
+diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
+index 74a6aa7d8cc9..5f8fb1201d80 100644
+--- a/drivers/firewire/core-topology.c
++++ b/drivers/firewire/core-topology.c
+@@ -241,7 +241,7 @@ static struct fw_node *build_tree(struct fw_card *card, const u32 *sid, int self
+ 		// If PHYs report different gap counts, set an invalid count which will force a gap
+ 		// count reconfiguration and a reset.
+ 		if (phy_packet_self_id_zero_get_gap_count(self_id_sequence[0]) != gap_count)
+-			gap_count = 0;
++			gap_count = GAP_COUNT_MISMATCHED;
+ 
+ 		update_hop_count(node);
+ 
+diff --git a/drivers/firewire/core.h b/drivers/firewire/core.h
+index 083e39034c37..79eb57fd5812 100644
+--- a/drivers/firewire/core.h
++++ b/drivers/firewire/core.h
+@@ -27,6 +27,9 @@ struct fw_packet;
+ 
+ /* -card */
+ 
++// This is the arbitrary value we use to indicate a mismatched gap count.
++#define GAP_COUNT_MISMATCHED	0
++
+ extern __printf(2, 3)
+ void fw_err(const struct fw_card *card, const char *fmt, ...);
+ extern __printf(2, 3)
 -- 
 2.48.1
 
