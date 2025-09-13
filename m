@@ -1,341 +1,265 @@
-Return-Path: <linux-kernel+bounces-815004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2620BB55DE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:48:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D218B55DE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5802C1B24F40
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:48:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E91585108
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFAF1991BF;
-	Sat, 13 Sep 2025 02:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B02C3D984;
+	Sat, 13 Sep 2025 03:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="K+QLVMqx"
-Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dd4R4ceV"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D71D1C8626
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C658191484
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 03:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757731706; cv=none; b=VH8RdecbwGv2d6/tTVValkJYqbxkiiOo6taB/vX9Llh0U9BK4MMfZJeJwulw0SnZegHCmN3Pa7oPaBFJFGjUvgyqBIPpo5WmLasAd87XKhKisL4UC4pOq+Wv6fWQxUiEgoexJ5takCk6NuLtrD4PeN+TpsDdlV4aKb5Qbg1iinc=
+	t=1757732501; cv=none; b=KF8ywFWzOdAhQAbKTqFiytXL+yVUQYfMvawRS7Wqb/Mu8GpuL9k1iuFL6T8ni5N1sAzD+UxaLTknAbx2q1Dxur8iOC85TMAHExEgBot5bOCxKjmRbzsaBDV3jLKna6opCB8zsVjsejH/BRs7PYsh/1YmXKzck50lvoV/v0rRfnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757731706; c=relaxed/simple;
-	bh=ZgDzLUPuZXuQEWnXyNiXs6bEELAKGlfOKneMLqyun5Y=;
+	s=arc-20240116; t=1757732501; c=relaxed/simple;
+	bh=Tqmy3RzN69T7WsAassez3x+szYhWb4TDPIz6UCoacb0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c46+XJTUT5OouT9NmgFIFVee0XeAK769QNaCTUoyBZ/9QQ8Doy08wkOU7hWx1rQxjpdAQHy7P9dfCz6IQ4d40a1itF9DBfdoO0/ugiZ1cheg4I1ndAvrVHe7i9RbY8W3xYOpzjNkXaHck/8SJ6gDZLSwe+yWwCvxyNBTn24Zcr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=K+QLVMqx; arc=none smtp.client-ip=74.125.224.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6296f6ce5ddso511768d50.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:48:24 -0700 (PDT)
+	 To:Cc:Content-Type; b=FrAaKyJEBIasC5nnTljdmTfE2pll7w9PxePvW+CiACuGca/QsuNdah01X6DCZQ50UqBibxR9s92gpMRSC1NJRONN4lv88Uqn5cHBn5w8zpcdpjQKl8ZRitWAgNJRuSKUR9Zw4n0Ah5HhowrJT2ZFOWK8xcJpcdGmUv9bYWnK+L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dd4R4ceV; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-71d60110772so20202327b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:01:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1757731703; x=1758336503; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757732498; x=1758337298; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dkY2yS7RSwh45nVEv3otHU3VH9SAKoF62TZrQgSQhHE=;
-        b=K+QLVMqxoe/VPwG14fizIyXZJhHeo7E909SiTRkxy9MdedQ555Co7frMx1W0bGNdHu
-         J9Z6k586KkpF1nTkU24dj438IUr7kXq8Fg1+SS2FPURLAsj2BD6dEtW0cGwrFlXvQFu8
-         x9kTdCxCxgjWni+ioxLM8cJChC0i7YV98xZqOGJpj8A/Ojo1eKB7H5X5VKKT+FWlMhSh
-         KmsQMaBcaOA3fHj7nwSFh0svbYDgVVAPMLUeZYI9+MAOZu6PtR55qG9KFZggk0v0G08F
-         fA1QIp0gIyjhpFQ7Uu/pjl55pqhyGWguUNDMYbFwYnpj5B7kf9/JmkGMMikznMBPKgB5
-         lgzg==
+        bh=uliSGbwbhsOvGzihBxvx6lyD+FSejHQfj2aem/BFtBo=;
+        b=dd4R4ceVkXifY9HkOjM0GNEnRGQovCcW+38Bn8RRsTDuLC8PcXC+V8ALYUa2WUf8nO
+         eWVXK4ILVx7qTshCEjgVXqqP/RfKFfQr3wsW8jAQiAkNVyxcLTIw++zozwKVWqnpd0g/
+         kX2gISbjhG9x84y5zrzriLIsBekMZGFFFyJtdNc19AIjRg37TeXV4s0P2HkMrk9/ADVL
+         cBIU0EhpNbAEZExpU55dMY2Enlu4yxiJJi3AtQ39yyRM7d6I0I3eYPHAkpgOGkDWr5K2
+         C9pJp8a74vfBZE+MVOVQe5LnPtk2bQBYGx9k4rIhM/Xb0a3Fx12juGMQzbNgkKH6qmzQ
+         QCKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757731703; x=1758336503;
+        d=1e100.net; s=20230601; t=1757732498; x=1758337298;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dkY2yS7RSwh45nVEv3otHU3VH9SAKoF62TZrQgSQhHE=;
-        b=bp+lF+HhSVIaeoScBTWHmhtRX1oi+nWgBtsOIXB2L77G0KQ1YFi+kEuJTF2Hs0OoOh
-         ZTl8UBJGha/NmS1RINVJ4eKFU+iC5kQmr6b1yCp/+2uPXykVKuWpQw0EaKIGmL3fkZAJ
-         zGXd6jJ3ZvFijkzn8gNYt9n7pdGthajX1d6fTJA1JIx8QPaKNzgJ0SYBMftGqba8qB8v
-         phOy4fvmxOJ0r/hUjIV+XKqqWkdjJTYRHkihgvj2hTRG30hex1KTJrR7EvZGvrubfLYA
-         uH0+QizvkQ9hJKfwo9tWNjLSBtbX5Odb7yiQsijtoymbE8VGCmD8eEeXu2NKb2aj0p29
-         A2AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgmzDsWH4i2h8OWmplhqMl3r8CJbvE7+kdqwVTI6RvZU3VU2aHM7IwljcDHsN7a08UcmXW/tp1fpSQa30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhnPkv24l0Z9toF0YWVHGZP7iWyr390QPH5N5bJxARbbkQGF3p
-	mgI0zc1+gEsZvxO9d1Z1gyk5EghzQtoXArLNY+6/umYEwfNeyGd/gt+07nKAiH4kgJcuc4LBOWA
-	DqSNoeVrIhEirGnxNIdQx4+mBV1VUo/k8hHCEJb6j7w==
-X-Gm-Gg: ASbGncuKE9ukTAoMXtkZ1I6CENy47v1UmNOvxRcudsIxbme48z/gIXglgQQxzlXlUYS
-	o9xzn7XPedzPjDKyQlTDk5XR4sSyHd+rj8cEuT4tlj9ATwxVcOZE7od3ZZdFsnvE+x7fzvTu124
-	S807TX/J3/HzGXWmdJbZHkEm9RxoNfpKozsGkfkRs5otZVhhYL+emYBmIY5kUy1PRkMXgQvY4qE
-	up4h/aRI6y/pkg=
-X-Google-Smtp-Source: AGHT+IGiKD+4jzf4TGq8bTBu8gsWjwWmWFiXXnkLbYhS2Yr6yBghdtRZuNxqqC+KU1Yu03Hdf+Hg2fEWLC9p8tq8dhA=
-X-Received: by 2002:a53:e712:0:b0:5fe:91c3:f0fb with SMTP id
- 956f58d0204a3-627234f4904mr3827458d50.32.1757731703206; Fri, 12 Sep 2025
- 19:48:23 -0700 (PDT)
+        bh=uliSGbwbhsOvGzihBxvx6lyD+FSejHQfj2aem/BFtBo=;
+        b=wXaUp6sGMXSeDRg57QICq94cWdtUSzINOK5r3Ks7C4zX83ENMcVL6lfcwH54vMFIrr
+         RwXcsPBJP0B7LDJRHgECcnLZBS+IT9Fo7s7ySLEpGD6DN6o3goYh0/o1k/ndsh0UJBGt
+         zyBgs/mPxUAZ71JBalC4p8Gfq6L+cEWLrZT4C/sOYnoVcRpz6c2OWLvgFbyxUZGc6WNA
+         wISePQNjx36ZMzJkA1o2XWX3AWTkw0nOB7AUxqt5EGoMD7TSLqJjHvknrbDkcg+yRwFX
+         nCZT6wxHo1vFyEif+uQIZjFAoP831CSQwuf63J15hEmrqjlXCbTDqePctLEGdCg9JpZA
+         xQmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUY4ejFA3aE0BeEDnJLoaf8eqVfL1fuesGOd2dwHtejPT0BcfntyH3nRtE79btZ0OKa+xsg/qtY0YVEVYY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3jhA/mr+/84wxNGjt40XeQvwmSezn8eq8My5qDBcgITqgU4JH
+	CSlcoeZuIoJfeVQ+xxVJl9wYa3cIb4WVvcB8Ah60aooCG5hvDTu2yNl4g7XTmIdNs4RmE2k+5AI
+	VBjRmcFFygnXApnRGnxRs/zYd3fVrtto=
+X-Gm-Gg: ASbGncsnFDD2mWTg+3K+k5kifdHL5R++dt8o13Bko0+9oj+Lbi4fNZgDjidbtbrBTgd
+	aIIq8tvQUpwdIdC7dpdUXgh7YfWrmJipljzWK23aefmk0gclyNq0LyKMl5y08LXM3BnyCAQfcZy
+	iuEuT0Zs0+zF+QxQOqqc7nlDTh2Z3QVnlf44ZBrjsoXoTOjq+UVRgV+X9eHtFZKUjHFFuYEBqX3
+	dND2zdp7q1YTPWT
+X-Google-Smtp-Source: AGHT+IF7lM80ofxl9uby0dTffjMvg+YkhDg0Gt/xUeKJW0MwA28xGC5rzQ6PFKetGJ5+XuhmXlirPVdi/5xICQYzzC4=
+X-Received: by 2002:a05:690c:4989:b0:721:5b31:54bb with SMTP id
+ 00721157ae682-73063097308mr55415927b3.23.1757732498067; Fri, 12 Sep 2025
+ 20:01:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8957c526-d05c-4c0d-bfed-0eb6e6d2476c@linux.ibm.com> <BAEAC2F7-7D7F-49E4-AB21-10FC0E4BF5F3@linux.ibm.com>
-In-Reply-To: <BAEAC2F7-7D7F-49E4-AB21-10FC0E4BF5F3@linux.ibm.com>
-From: Julian Sun <sunjunchao@bytedance.com>
-Date: Sat, 13 Sep 2025 10:48:12 +0800
-X-Gm-Features: Ac12FXxyQ3rupesgBRE_rBBovmGPVj00T36Qe6boIv2jYp-KBN6pOz85tL_EOvs
-Message-ID: <CAHSKhteHC26yXVFtjgdanfM7+vsOVZ+HHWnBYD01A4eiRHibVQ@mail.gmail.com>
-Subject: Re: [External] Re: [linux-next20250911]Kernel OOPs while running
- generic/256 on Pmem device
-To: Venkat <venkat88@linux.ibm.com>
-Cc: tj@kernel.org, akpm@linux-foundation.org, stable@vger.kernel.org, 
-	songmuchun@bytedance.com, shakeelb@google.com, hannes@cmpxchg.org, 
-	roman.gushchin@linux.dev, mhocko@suse.com, 
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, riteshh@linux.ibm.com, 
-	ojaswin@linux.ibm.com, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	cgroups@vger.kernel.org, linux-mm@vger.kernel.org
+References: <CAFRLqsUfDuoMMCUmBuSkiV_b=VNn7CuYqJSc19bhyQ6Kims36w@mail.gmail.com>
+ <CABBYNZ+PJuvWYk_XVw=esNj1hVMPESjTc70VLQH=LrKdSqD7ag@mail.gmail.com>
+ <CAFRLqsUE84wW0JKbsh6Lw0USQbnCbokXd3PANc+4i_nsnEUMYA@mail.gmail.com>
+ <CABBYNZ+xg05sbfU51VXo1M=PqPOktDtRpTe5yHwwUhF9ui+NPA@mail.gmail.com> <CAFRLqsVj28niHO9XejYrMu2g3fCrDXXgArshP-kr4CM=eV2smQ@mail.gmail.com>
+In-Reply-To: <CAFRLqsVj28niHO9XejYrMu2g3fCrDXXgArshP-kr4CM=eV2smQ@mail.gmail.com>
+From: cen zhang <zzzccc427@gmail.com>
+Date: Sat, 13 Sep 2025 11:01:26 +0800
+X-Gm-Features: Ac12FXzN8m70AXsZ_MHwW6LEpK6VSvv2st-TVbwslihDNu-HZZ47xPLGiBG-oNc
+Message-ID: <CAFRLqsV4m5GNr9fHsSneJkxG=crm5R75rJJJO4w5yQUd324znA@mail.gmail.com>
+Subject: Re: [BUG]: slab-use-after-free Read in mgmt_set_powered_complete
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: johan.hedberg@gmail.com, marcel@holtmann.org, linux-kernel@vger.kernel.org, 
+	baijiaju1990@gmail.com, zhenghaoran154@gmail.com, r33s3n6@gmail.com, 
+	linux-bluetooth@vger.kernel.org, "gality369@gmail.com" <gality369@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Hi Luiz,
 
-Does this fix make sense to you?
+I've just started testing the patch, and it seems to have introduced a
+new issue. I've attached the detailed report below:
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index d0dfaa0ccaba..ed24dcece56a 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3945,9 +3945,10 @@ static void mem_cgroup_css_free(struct
-cgroup_subsys_state *css)
-                 * Not necessary to wait for wb completion which might
-cause task hung,
-                 * only used to free resources. See
-memcg_cgwb_waitq_callback_fn().
-                 */
--               __add_wait_queue_entry_tail(wait->done.waitq, &wait->wq_ent=
-ry);
-                if (atomic_dec_and_test(&wait->done.cnt))
--                       wake_up_all(wait->done.waitq);
-+                       kfree(wait);
-+               else
-+                       __add_wait_queue_entry_tail(wait->done.waitq,
-&wait->wq_entry);;
-        }
- #endif
-        if (cgroup_subsys_on_dfl(memory_cgrp_subsys) && !cgroup_memory_noso=
-cket)
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+BUG: KASAN: slab-use-after-free in mgmt_pending_valid+0x8f/0x7e0
+net/bluetooth/mgmt_util.c:330
+Read of size 8 at addr ffff888140eae198 by task kworker/u17:2/82
 
-On Fri, Sep 12, 2025 at 8:33=E2=80=AFPM Venkat <venkat88@linux.ibm.com> wro=
-te:
->
->
->
-> > On 12 Sep 2025, at 10:51=E2=80=AFAM, Venkat Rao Bagalkote <venkat88@lin=
-ux.ibm.com> wrote:
-> >
-> > Greetings!!!
-> >
-> >
-> > IBM CI has reported a kernel crash, while running generic/256 test case=
- on pmem device from xfstests suite on linux-next20250911 kernel.
-> >
-> >
-> > xfstests: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
-> >
-> > local.config:
-> >
-> > [xfs_dax]
-> > export RECREATE_TEST_DEV=3Dtrue
-> > export TEST_DEV=3D/dev/pmem0
-> > export TEST_DIR=3D/mnt/test_pmem
-> > export SCRATCH_DEV=3D/dev/pmem0.1
-> > export SCRATCH_MNT=3D/mnt/scratch_pmem
-> > export MKFS_OPTIONS=3D"-m reflink=3D0 -b size=3D65536 -s size=3D512"
-> > export FSTYP=3Dxfs
-> > export MOUNT_OPTIONS=3D"-o dax"
-> >
-> >
-> > Test case: generic/256
-> >
-> >
-> > Traces:
-> >
-> >
-> > [  163.371929] ------------[ cut here ]------------
-> > [  163.371936] kernel BUG at lib/list_debug.c:29!
-> > [  163.371946] Oops: Exception in kernel mode, sig: 5 [#1]
-> > [  163.371954] LE PAGE_SIZE=3D64K MMU=3DRadix  SMP NR_CPUS=3D8192 NUMA =
-pSeries
-> > [  163.371965] Modules linked in: xfs nft_fib_inet nft_fib_ipv4 nft_fib=
-_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_=
-ct nft_chain_nat nf_nat nf_conntrack bonding tls nf_defrag_ipv6 nf_defrag_i=
-pv4 rfkill ip_set nf_tables nfnetlink sunrpc pseries_rng vmx_crypto dax_pme=
-m fuse ext4 crc16 mbcache jbd2 nd_pmem papr_scm sd_mod libnvdimm sg ibmvscs=
-i ibmveth scsi_transport_srp pseries_wdt
-> > [  163.372127] CPU: 22 UID: 0 PID: 130 Comm: kworker/22:0 Kdump: loaded=
- Not tainted 6.17.0-rc5-next-20250911 #1 VOLUNTARY
-> > [  163.372142] Hardware name: IBM,9080-HEX Power11 (architected) 0x8202=
-00 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
-> > [  163.372155] Workqueue: cgroup_free css_free_rwork_fn
-> > [  163.372169] NIP:  c000000000d051d4 LR: c000000000d051d0 CTR: 0000000=
-000000000
-> > [  163.372176] REGS: c00000000ba079b0 TRAP: 0700   Not tainted (6.17.0-=
-rc5-next-20250911)
-> > [  163.372183] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>=
-  CR: 28000000  XER: 00000006
-> > [  163.372214] CFAR: c0000000002bae9c IRQMASK: 0
-> > [  163.372214] GPR00: c000000000d051d0 c00000000ba07c50 c00000000230a60=
-0 0000000000000075
-> > [  163.372214] GPR04: 0000000000000004 0000000000000001 c000000000507e2=
-c 0000000000000001
-> > [  163.372214] GPR08: c000000d0cb87d13 0000000000000000 000000000000000=
-0 a80e000000000000
-> > [  163.372214] GPR12: c00e0001a1970fa2 c000000d0ddec700 c000000000208e5=
-8 c000000107b5e190
-> > [  163.372214] GPR16: c00000000d3e5d08 c00000000b71cf78 c00000000d3e5d0=
-5 c00000000b71cf30
-> > [  163.372214] GPR20: c00000000b71cf08 c00000000b71cf10 c000000019f5858=
-8 c000000004704bc8
-> > [  163.372214] GPR24: c000000107b5e100 c000000004704bd0 000000000000000=
-3 c000000004704bd0
-> > [  163.372214] GPR28: c000000004704bc8 c000000019f585a8 c000000019f53da=
-8 c000000004704bc8
-> > [  163.372315] NIP [c000000000d051d4] __list_add_valid_or_report+0x124/=
-0x188
-> > [  163.372326] LR [c000000000d051d0] __list_add_valid_or_report+0x120/0=
-x188
-> > [  163.372335] Call Trace:
-> > [  163.372339] [c00000000ba07c50] [c000000000d051d0] __list_add_valid_o=
-r_report+0x120/0x188 (unreliable)
-> > [  163.372352] [c00000000ba07ce0] [c000000000834280] mem_cgroup_css_fre=
-e+0xa0/0x27c
-> > [  163.372363] [c00000000ba07d50] [c0000000003ba198] css_free_rwork_fn+=
-0xd0/0x59c
-> > [  163.372374] [c00000000ba07da0] [c0000000001f5d60] process_one_work+0=
-x41c/0x89c
-> > [  163.372385] [c00000000ba07eb0] [c0000000001f76c0] worker_thread+0x55=
-8/0x848
-> > [  163.372394] [c00000000ba07f80] [c000000000209038] kthread+0x1e8/0x23=
-0
-> > [  163.372406] [c00000000ba07fe0] [c00000000000ded8] start_kernel_threa=
-d+0x14/0x18
-> > [  163.372416] Code: 4b9b1099 60000000 7f63db78 4bae8245 60000000 e8bf0=
-008 3c62ff88 7fe6fb78 7fc4f378 38637d40 4b5b5c89 60000000 <0fe00000> 600000=
-00 60000000 7f83e378
-> > [  163.372453] ---[ end trace 0000000000000000 ]---
-> > [  163.380581] pstore: backend (nvram) writing error (-1)
-> > [  163.380593]
-> >
-> >
-> > If you happen to fix this issue, please add below tag.
-> >
-> >
-> > Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-> >
-> >
-> >
-> > Regards,
-> >
-> > Venkat.
-> >
-> >
->
-> After reverting the below commit, issue is not seen.
->
-> commit 61bbf51e75df1a94cf6736e311cb96aeb79826a8
-> Author: Julian Sun <sunjunchao@bytedance.com>
-> Date:   Thu Aug 28 04:45:57 2025 +0800
->
->     memcg: don't wait writeback completion when release memcg
->          Recently, we encountered the following hung task:
->          INFO: task kworker/4:1:1334558 blocked for more than 1720 second=
-s.
->     [Wed Jul 30 17:47:45 2025] Workqueue: cgroup_destroy css_free_rwork_f=
-n
->     [Wed Jul 30 17:47:45 2025] Call Trace:
->     [Wed Jul 30 17:47:45 2025]  __schedule+0x934/0xe10
->     [Wed Jul 30 17:47:45 2025]  ? complete+0x3b/0x50
->     [Wed Jul 30 17:47:45 2025]  ? _cond_resched+0x15/0x30
->     [Wed Jul 30 17:47:45 2025]  schedule+0x40/0xb0
->     [Wed Jul 30 17:47:45 2025]  wb_wait_for_completion+0x52/0x80
->     [Wed Jul 30 17:47:45 2025]  ? finish_wait+0x80/0x80
->     [Wed Jul 30 17:47:45 2025]  mem_cgroup_css_free+0x22/0x1b0
->     [Wed Jul 30 17:47:45 2025]  css_free_rwork_fn+0x42/0x380
->     [Wed Jul 30 17:47:45 2025]  process_one_work+0x1a2/0x360
->     [Wed Jul 30 17:47:45 2025]  worker_thread+0x30/0x390
->     [Wed Jul 30 17:47:45 2025]  ? create_worker+0x1a0/0x1a0
->     [Wed Jul 30 17:47:45 2025]  kthread+0x110/0x130
->     [Wed Jul 30 17:47:45 2025]  ? __kthread_cancel_work+0x40/0x40
->     [Wed Jul 30 17:47:45 2025]  ret_from_fork+0x1f/0x30
->          The direct cause is that memcg spends a long time waiting for di=
-rty page
->     writeback of foreign memcgs during release.
->          The root causes are:
->         a. The wb may have multiple writeback tasks, containing millions
->            of dirty pages, as shown below:
->          >>> for work in list_for_each_entry("struct wb_writeback_work", =
-\
->                                         wb.work_list.address_of_(), "list=
-"):
->     ...     print(work.nr_pages, work.reason, hex(work))
->     ...
->     900628  WB_REASON_FOREIGN_FLUSH 0xffff969e8d956b40
->     1116521 WB_REASON_FOREIGN_FLUSH 0xffff9698332a9540
->     1275228 WB_REASON_FOREIGN_FLUSH 0xffff969d9b444bc0
->     1099673 WB_REASON_FOREIGN_FLUSH 0xffff969f0954d6c0
->     1351522 WB_REASON_FOREIGN_FLUSH 0xffff969e76713340
->     2567437 WB_REASON_FOREIGN_FLUSH 0xffff9694ae208400
->     2954033 WB_REASON_FOREIGN_FLUSH 0xffff96a22d62cbc0
->     3008860 WB_REASON_FOREIGN_FLUSH 0xffff969eee8ce3c0
->     3337932 WB_REASON_FOREIGN_FLUSH 0xffff9695b45156c0
->     3348916 WB_REASON_FOREIGN_FLUSH 0xffff96a22c7a4f40
->     3345363 WB_REASON_FOREIGN_FLUSH 0xffff969e5d872800
->     3333581 WB_REASON_FOREIGN_FLUSH 0xffff969efd0f4600
->     3382225 WB_REASON_FOREIGN_FLUSH 0xffff969e770edcc0
->     3418770 WB_REASON_FOREIGN_FLUSH 0xffff96a252ceea40
->     3387648 WB_REASON_FOREIGN_FLUSH 0xffff96a3bda86340
->     3385420 WB_REASON_FOREIGN_FLUSH 0xffff969efc6eb280
->     3418730 WB_REASON_FOREIGN_FLUSH 0xffff96a348ab1040
->     3426155 WB_REASON_FOREIGN_FLUSH 0xffff969d90beac00
->     3397995 WB_REASON_FOREIGN_FLUSH 0xffff96a2d7288800
->     3293095 WB_REASON_FOREIGN_FLUSH 0xffff969dab423240
->     3293595 WB_REASON_FOREIGN_FLUSH 0xffff969c765ff400
->     3199511 WB_REASON_FOREIGN_FLUSH 0xffff969a72d5e680
->     3085016 WB_REASON_FOREIGN_FLUSH 0xffff969f0455e000
->     3035712 WB_REASON_FOREIGN_FLUSH 0xffff969d9bbf4b00
->              b. The writeback might severely throttled by wbt, with a spe=
-ed
->            possibly less than 100kb/s, leading to a very long writeback t=
-ime.
->          >>> wb.write_bandwidth
->     (unsigned long)24
->     >>> wb.write_bandwidth
->     (unsigned long)13
->          The wb_wait_for_completion() here is probably only used to preve=
-nt
->     use-after-free.  Therefore, we manage 'done' separately and automatic=
-ally
->     free it.
->          This allows us to remove wb_wait_for_completion() while preventi=
-ng the
->     use-after-free issue.
->      com
->     Fixes: 97b27821b485 ("writeback, memcg: Implement foreign dirty flush=
-ing")
->     Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
->     Acked-by: Tejun Heo <tj@kernel.org>
->     Cc: Michal Hocko <mhocko@suse.com>
->     Cc: Roman Gushchin <roman.gushchin@linux.dev>
->     Cc: Johannes Weiner <hannes@cmpxchg.org>
->     Cc: Shakeel Butt <shakeelb@google.com>
->     Cc: Muchun Song <songmuchun@bytedance.com>
->     Cc: <stable@vger.kernel.org>
->     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
->
-> Regards,
-> Venkat.
->
-> >
->
+CPU: 1 UID: 0 PID: 82 Comm: kworker/u17:2 Not tainted
+6.17.0-rc5-ge5bbb70171d1-dirty #8 PREEMPT(voluntary)
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014
+Workqueue: hci0 hci_cmd_sync_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xca/0x130 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x171/0x7f0 mm/kasan/report.c:482
+ kasan_report+0x139/0x170 mm/kasan/report.c:595
+ mgmt_pending_valid+0x8f/0x7e0 net/bluetooth/mgmt_util.c:330
+ mgmt_set_powered_complete+0x81/0xf20 net/bluetooth/mgmt.c:1326
+ hci_cmd_sync_work+0x8df/0xaf0 net/bluetooth/hci_sync.c:334
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
+ worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
+ kthread+0x3d4/0x800 kernel/kthread.c:463
+ ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
 
+Allocated by task 195:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:388 [inline]
+ __kasan_kmalloc+0x72/0x90 mm/kasan/common.c:405
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ mgmt_pending_new+0xcd/0x580 net/bluetooth/mgmt_util.c:269
+ mgmt_pending_add+0x54/0x410 net/bluetooth/mgmt_util.c:296
+ set_powered+0x8c6/0xea0 net/bluetooth/mgmt.c:1406
+ hci_mgmt_cmd+0x1ee4/0x33f0 net/bluetooth/hci_sock.c:1719
+ hci_sock_sendmsg+0xcb0/0x2510 net/bluetooth/hci_sock.c:1839
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:729
+ sock_write_iter+0x1b7/0x250 net/socket.c:1179
+ do_iter_readv_writev+0x598/0x760
+ vfs_writev+0x3c8/0xd20 fs/read_write.c:1057
+ do_writev+0x105/0x270 fs/read_write.c:1103
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd2/0x200 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
---=20
-Julian Sun <sunjunchao@bytedance.com>
+Freed by task 82:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3e/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:243 [inline]
+ __kasan_slab_free+0x41/0x50 mm/kasan/common.c:275
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2428 [inline]
+ slab_free mm/slub.c:4701 [inline]
+ kfree+0x189/0x390 mm/slub.c:4900
+ mgmt_pending_free net/bluetooth/mgmt_util.c:311 [inline]
+ mgmt_pending_foreach+0x6c4/0x8a0 net/bluetooth/mgmt_util.c:257
+ mgmt_power_on+0x43d/0x5e0 net/bluetooth/mgmt.c:9448
+ hci_dev_open_sync+0x44fa/0x5060 net/bluetooth/hci_sync.c:5137
+ hci_power_on_sync net/bluetooth/hci_sync.c:5376 [inline]
+ hci_set_powered_sync+0x43e/0xfa0 net/bluetooth/hci_sync.c:5768
+ set_powered_sync+0x1e0/0x2c0 net/bluetooth/mgmt.c:1369
+ hci_cmd_sync_work+0x798/0xaf0 net/bluetooth/hci_sync.c:332
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0x7a8/0x1030 kernel/workqueue.c:3319
+ worker_thread+0xb97/0x11d0 kernel/workqueue.c:3400
+ kthread+0x3d4/0x800 kernel/kthread.c:463
+ ret_from_fork+0x13b/0x1e0 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+The buggy address belongs to the object at ffff888140eae180
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 24 bytes inside of
+ freed 96-byte region [ffff888140eae180, ffff888140eae1e0)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000
+index:0xffff888140eae200 pfn:0x140eae
+flags: 0x200000000000200(workingset|node=3D0|zone=3D2)
+page_type: f5(slab)
+raw: 0200000000000200 ffff888100042280 ffffea0004763ad0 ffffea0004763a90
+raw: ffff888140eae200 000000000020001f 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+ ffff888140eae080: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff888140eae100: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>ffff888140eae180: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                            ^
+ ffff888140eae200: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff888140eae280: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Best regards,
+Cen Zhang
+
+cen zhang <zzzccc427@gmail.com> =E4=BA=8E2025=E5=B9=B49=E6=9C=8813=E6=97=A5=
+=E5=91=A8=E5=85=AD 10:16=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi Luiz,
+>
+> Thanks for your patch! It not only addresses the TOCTOU issue we
+> discussed but may also fix another bug I reported
+> (https://lore.kernel.org/linux-bluetooth/CAFRLqsWWMnrZ6y8MUMUSK=3DtmAb3r8=
+_jfSwqforOoR8_-=3DXgX7g@mail.gmail.com/T/#u).
+>
+> I will test it soon to confirm.
+>
+> Thanks again for the great work.
+>
+> Best regards,
+>
+> Cen Zhang
+>
+> Luiz Augusto von Dentz <luiz.dentz@gmail.com> =E4=BA=8E2025=E5=B9=B49=E6=
+=9C=8813=E6=97=A5=E5=91=A8=E5=85=AD 02:29=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > Hi Cen,
+> >
+> > On Fri, Sep 12, 2025 at 11:59=E2=80=AFAM cen zhang <zzzccc427@gmail.com=
+> wrote:
+> > >
+> > > Hi Luiz,
+> > >
+> > > Thank you for your quick response and the important clarification
+> > > about hci_cmd_sync_dequeue().
+> > >
+> > > You are absolutely correct - I was indeed referring to the TOCTOU
+> > > problem in pending_find(), not the -ECANCELED check. The
+> > > hci_cmd_sync_dequeue() call in cmd_complete_rsp() is a crucial detail
+> > > that I initially overlooked in my analysis.
+> > >
+> > > After examining the code more carefully, I can see that while
+> > > hci_cmd_sync_dequeue() does attempt to remove pending sync commands
+> > > from the queue, but it cannot prevent the race condition we're seeing=
+.
+> > > The fundamental issue is that hci_cmd_sync_dequeue() can only remove
+> > > work items that are still queued, but cannot stop work items that are
+> > > already executing or about to execute their completion callbacks.
+> > >
+> > > The race window occurs when:
+> > > 1. mgmt_set_powered_complete() is about to execute (work item has bee=
+n dequeued)
+> > > 2. mgmt_index_removed() -> mgmt_pending_foreach() -> cmd_complete_rsp=
+() executes
+> > > 3. hci_cmd_sync_dequeue() removes queued items but cannot affect the
+> > > already-running callback
+> > > 4. mgmt_pending_free() frees the cmd object
+> > > 5. mgmt_set_powered_complete() still executes and accesses freed cmd-=
+>param
+> > >
+> > > I am sorry that I haven't get a reliable reproducer from syzkaller fo=
+r
+> > > this bug may be due to it is timing-sensitive.
+> >
+> > Let's try to fix all instances then, since apparently there is more
+> > than one cmd with this pattern, please test with the attached patch.
 
