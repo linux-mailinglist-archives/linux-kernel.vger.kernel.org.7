@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-815167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA67DB5607C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:29:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D4EB5607E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D834583EBB
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 921DF1BC573E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C442EC57E;
-	Sat, 13 Sep 2025 11:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39AA22773C9;
+	Sat, 13 Sep 2025 11:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfyd7Ffg"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYQRnEbH"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6002EC565
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103F7284B42
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757762980; cv=none; b=BqYsKgVyV7MLtUMu3LrOxs+XWlwy52B0oAXEO5hmB3P3qcInsLUlw8qNxQy4RErtIbJcaZ1UKKH01w4LK22yy19PmevVBRvPkujdVhIlCKkxT9kDS2FUAnFfX3O0VYnnlpa0Wc6T7UaGsbxiMRe8ZV4Ys2mHJYzL4zL2JJCqScs=
+	t=1757763016; cv=none; b=opu3UMMdJWdH5LiCqCNyeRrVzJEu4Ts3QcHcYVNQVRIZ8psbLAAl5uhxI2PaN916IfdNXmOtkQJWQyk5hUNLr5e2yqB76fcdSrRT0MZjVdGZnGB7pyD86S7mvGpS8aqSNMRXiIMCq6yZSTQgu+YuyLiQSttnTTiqqceSYJrDxT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757762980; c=relaxed/simple;
-	bh=TYXbLO+kOKJUzkyQuk0TWYQxWbv9RVNrgbRkhz69Gko=;
+	s=arc-20240116; t=1757763016; c=relaxed/simple;
+	bh=x7djyqcnacv1DN7MFD9deVtmkZvxAh8dRtXGYaZoXno=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YsLOkOfiY8Zs4khHb/epweoGThxXgN42+qT5Yrv4orwc4ULAAE7Um1s2oy2hXHKHz/8e41kbuhxVi6rMsXz9gMoWMINcVdhtjHo8ZvMW6iwCfQAskLkPzwlxkENRLN4CR4xP1NvlIxOwjb6L1weTt54ESRpqgNlh/3pGkZKD7t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfyd7Ffg; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version:Content-Type; b=ON8upZbej6a6fzeYYdF/O/iSKcwSWFf6eM6ABtSBRPOXf87z+57Sh+swJEx7q6vDMrbnHLbjecbePu5L4gRpQk2MrfCivmkQtGg2edaak1HGCvTUWqWRA9q8B3m7j7qcrJzuQm2FVixuUH66f8e0qjCNunfi7VhuigOLctQzpU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PYQRnEbH; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-b07c2908f3eso267341966b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 04:29:38 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b0473327e70so461685066b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 04:30:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757762977; x=1758367777; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757763013; x=1758367813; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dMMoSzCc5h3tOZ4YYR+aO/iNO1TdT3TVeZmWGA5I9nI=;
-        b=nfyd7Ffg1nUmto4aL14FZ2/3q8E4WGdJT9FHeCnIVfkwJergzzv+ZlabR+KAxFV/Po
-         PMJkhKy7aNzYYQYApXn8LMwjxlq7BrAf5bWEnDa/nNjbDMIRy2j5aQmCZLdLAUlQ/k55
-         MDlTyk/CkEsNmp0E+LDdVXJIt1GbErMbeN5egVyoIhlAVQVKj9J7x/OEWG2hQ03DQkJn
-         Bk1EMj+DZBYBSNCpFgwFR3nzDuSxTE9NZ7jIynxZVBASARfgJoXX/XeElEDCQRu9KpdJ
-         y34rVnVMwQkUZPe5KJMOiswKpKLbR2EGHe1P253ZsL225/YwhReeeBt8ey6zwzCpQnRv
-         9ezQ==
+        bh=vM/wOHbGgB/+niDKSnNnlcAAPUzV0FZzOUIFNQXZ5cc=;
+        b=PYQRnEbHjEe0Ti84EVD0gMk0InqJQo8jzCXSJTzExiUn7oSRecH4mkyXMGG/7pIXqC
+         oMZSseshivrQIxS5uYjk0hQRC40BOmqWObm9uJhXfPV5qNfo9QDHSpaGfX0vfbLyUiA+
+         2qxI2PNqKrOkGVSlWjT4MHShidtCFAPNYf1nZy5KMdztHdemkOi2Y1FO2knr6b08FK1i
+         lwinu9xiHhRzy63+63hA6NwpFM/m8BALMkRheu18gsHi5y/2YApCpMP+zk1J9b7ewNqN
+         st/qFh7pRoFx94QlPnautAFz80hX9PQafFzUSwf597yMts2mAMfrnrKZB4Q36QwbCpa7
+         5byQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757762977; x=1758367777;
+        d=1e100.net; s=20230601; t=1757763013; x=1758367813;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dMMoSzCc5h3tOZ4YYR+aO/iNO1TdT3TVeZmWGA5I9nI=;
-        b=rnbik5K1HzBkeucWXkkCLtzuB9dZVI0AbzK4xFMUB4TlY4Nznr8drKHaz3nlOzfHmu
-         IiEQNdhF2ZDMQlJt54TvrTv1XuVhCufahFfNReLqyJkbqsj4jRazhasZPBl99CKM8qkn
-         gfXAkFQaH6xJdsiOPvAGQkl7DCU1cl3WF20kpZGExIQn0kZIzYeE9RW1v544jV+m4b2z
-         yR9r+QOFPy+3ubQq4Rs6JhoQuJuFs0D4ZFrmD9mORjCn89Fg68C/uWSHti1C3UHENxjr
-         bZftpGVIpEVm2F+gmX/dOq/kWLQrL4ZhDcmMLpZdbE+dF+c6prVQBFHAg2ohsOLy0hfc
-         c6pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWuyRiNXV7hjKHcQbMTdmWacBrYooO0AKDqdqEv/SJQLgE8DPulFQBOjDevwDUdP1lf74r7olxeL69VFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGoQLFTMSsMjKZtyLhjIdnLJKvBHImjx1wQ43Xqjxn8nRVZY2Y
-	2o23za/VldCBcRz84y1aTIUlesTp95HaHD/I3y7lX5CIUhwcuRhBSzhF
-X-Gm-Gg: ASbGncsLwU7CFf42LtqGvqzR7xilRwgwEsI02RDQ/YqYxn9Y4mU8jsntu6ccuhaOmDw
-	rqxuG6bUKwyYNf4mtP8q2Ubft4bj5ZvZyhiB55CLp9Pd53Q+m/mFNk6t5uvYqhu8b/Qj8A3E0Kp
-	RbKKY4i1PyqeUmP80SKgx0Jm+e1YbU7iAGsob20Dm36V6Js7QQVwqS/n0KI2OVM/qNQSmKR/J1a
-	kCvHC8Hk6Q8R8hFpXTZkrF3KzzZMjr4nOJWCxSy7qFDgyYynTkKtrf2DFnEb0q1undum+AlMqRS
-	rno7WbUM8PbriFcwTdG9/QcjJ5J9CnN5tyrFzO3HmnukLABSEm8DredSgjKeQSkuMFtT3AmAAom
-	PLjaEbaY7jlmtpA7I2/Rws511yFPqaT2ve4TY2rDWaYsRiInjkqjryyY=
-X-Google-Smtp-Source: AGHT+IHjrg9HhMV8KoVTmQL6sNcOl2lLDDIPwEcS0bg0jeSuB02uw0MNZjGq45peF5NvlyJozkp5Pg==
-X-Received: by 2002:a17:907:968a:b0:b04:a289:7b with SMTP id a640c23a62f3a-b07c347f8cemr599471366b.4.1757762977003;
-        Sat, 13 Sep 2025 04:29:37 -0700 (PDT)
+        bh=vM/wOHbGgB/+niDKSnNnlcAAPUzV0FZzOUIFNQXZ5cc=;
+        b=VeXuM/pfAvgT34uOKJqPL92Ts3MxgX0iT68UmeDoIEBopt9ynMOovtjfNwT8Z/KpjX
+         hNCmzGkYxy4Us18uMRoI2R7mpVE+kexzP7fBMCGpXI35xKoeObLW0ZR/aLrjgMzqdEkI
+         u0kwD09aCiK67XrGtDg6H+/5x48aHtbgBO6L855DPvS3KjHdIGMuZJrJUXft/HIbV45T
+         5171ds69wgu72YqrB2afo4cktMp/7W6+pToyxyZkqRKp7u0sLl8yKMO3yWQinvwge2Cx
+         /6ugwxmcyL8M0Z+uKkJwODoLFW1SDrWc5HXlquso4/JaLA2h+hCD9souFQvW5Ww9/LQj
+         u7qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGTrvfWPgSytPwJw+5Mf7VgRLg+vL3wPpbF9dadAD0w6DTFCOwAXBJ/ncfzjl5X53cdcnB1yqVJPIiPzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjGo6JxE3xISvrv4Le4gQgCUYncsGkVBWrLddgvoqxhlh8bnc8
+	xKvlo8Jy/TKEqcc2KiXpb6tazv5LcLdQtkBy3LxBdW1YbWhfUy6cmPbB
+X-Gm-Gg: ASbGncsvoIsstGdB9oVyQNbjSY4YfbZEqzCc93fCh5l7ZAr5GnjRwdXOaz4ZQKXd3oR
+	gW8aUiQe0HKoJhjTd/L9L1yH+Cy3wmiAAJZ7Hg/SW8ppFADf6Cvs2ZT9I8HT3hntzTXqaSASk9l
+	xVsRwWvOSrMlPniidQGx6vGUtfh+Mqwhs4OSK4/NaN+ZDgasy48KR6oV/Jztzi/fqwg8bbFhoBx
+	s3pNLrQjmhE8mKwqSRbdfJ5XQhn3Zlm0b/qWCTmQvUn1MtuL6tJFec4sUR5oVeKtQ4fxlRqQrWU
+	QwP2tGw2wryASGiOiIJuTFHnxVv8DjIHC72hdtS3W7l/D7mVwTwzA1YMfOnZRHfmxHDvh1XpuGt
+	FvMyFUWqgJUHfO2QVVcjeLKptJ3tkzV0AfGo61eHcZZwoRhl+tZ/nO70=
+X-Google-Smtp-Source: AGHT+IHGrkQn7+NmuVgBdc10MUVOT+vd1j8NXgn0gL8ncYy9IeCu/BFaE0KTAPOvNiL0g93r6GOAgw==
+X-Received: by 2002:a17:907:3f16:b0:b04:5a74:b674 with SMTP id a640c23a62f3a-b07c3a88730mr640143666b.58.1757763013249;
+        Sat, 13 Sep 2025 04:30:13 -0700 (PDT)
 Received: from jernej-laptop.localnet ([188.159.248.16])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07de03d93csm167035166b.12.2025.09.13.04.29.36
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b334e720sm551560166b.104.2025.09.13.04.30.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 04:29:36 -0700 (PDT)
+        Sat, 13 Sep 2025 04:30:12 -0700 (PDT)
 From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
 To: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
  Samuel Holland <samuel@sholland.org>,
@@ -79,12 +79,12 @@ To: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
 Cc: linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Subject:
- Re: [PATCH] arm64: dts: sun55i: a523: Assign standard clock rates to PRCM bus
- clocks
-Date: Sat, 13 Sep 2025 13:29:34 +0200
-Message-ID: <12739001.O9o76ZdvQC@jernej-laptop>
-In-Reply-To: <20250913101600.3932762-1-wens@kernel.org>
-References: <20250913101600.3932762-1-wens@kernel.org>
+ Re: [PATCH 1/3] arm64: dts: allwinner: a527: cubie-a5e: Drop external 32.768
+ KHz crystal
+Date: Sat, 13 Sep 2025 13:30:10 +0200
+Message-ID: <6190895.lOV4Wx5bFT@jernej-laptop>
+In-Reply-To: <20250913102450.3935943-1-wens@kernel.org>
+References: <20250913102450.3935943-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,49 +94,49 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
 
-Dne sobota, 13. september 2025 ob 12:16:00 Srednjeevropski poletni =C4=8Das=
+Dne sobota, 13. september 2025 ob 12:24:48 Srednjeevropski poletni =C4=8Das=
  je Chen-Yu Tsai napisal(a):
 > From: Chen-Yu Tsai <wens@csie.org>
 >=20
-> At least in the initial version of U-boot support landed upstream, the
-> PRCM bus clocks were not configured, and left at their reset default 24
-> MHz clock rate. This is quite slow for the peripherals on them.
+> The Radxa Cubie A5E has empty pads for a 32.768 KHz crystal, but it is
+> left unpopulated, as per the schematics and seen on board images. A dead
+> give away is the RTC's LOSC auto switch register showing the external
+> OSC to be abnormal.
 >=20
-> The recommended rates from the manual are:
+> Drop the external crystal from the device tree. It was not referenced
+> anyway.
 >=20
-> - AHBS: 200 MHz
-> - APBS0: 100 MHz
-> - APBS1: 24 MHz
->=20
-> Since 24 MHz is the hardware default, just assign rates for the first two.
-
-I think it's better to be explicit than assume. However, this is fine too.
+> Fixes: c2520cd032ae ("arm64: dts: allwinner: a523: add Radxa A5E support")
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
 Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
 Best regards,
 Jernej
 
->=20
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 > ---
->  arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts | 7 -------
+>  1 file changed, 7 deletions(-)
 >=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm64/=
-boot/dts/allwinner/sun55i-a523.dtsi
-> index 3aad1b909501..5cd6ddae86c8 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
-> @@ -767,6 +767,8 @@ r_ccu: clock-controller@7010000 {
->  				      "pll-audio";
->  			#clock-cells =3D <1>;
->  			#reset-cells =3D <1>;
-> +			assigned-clocks =3D <&r_ccu CLK_R_AHB>, <&r_ccu CLK_R_APB0>;
-> +			assigned-clock-rates =3D <200000000>, <100000000>;
->  		};
+> diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts b/ar=
+ch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> index 71074b072184..e333bbaf01d3 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> +++ b/arch/arm64/boot/dts/allwinner/sun55i-a527-cubie-a5e.dts
+> @@ -24,13 +24,6 @@ chosen {
+>  		stdout-path =3D "serial0:115200n8";
+>  	};
 > =20
->  		nmi_intc: interrupt-controller@7010320 {
+> -	ext_osc32k: ext-osc32k-clk {
+> -		#clock-cells =3D <0>;
+> -		compatible =3D "fixed-clock";
+> -		clock-frequency =3D <32768>;
+> -		clock-output-names =3D "ext_osc32k";
+> -	};
+> -
+>  	leds {
+>  		compatible =3D "gpio-leds";
+> =20
 >=20
 
 
