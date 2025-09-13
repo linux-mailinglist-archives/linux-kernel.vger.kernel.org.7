@@ -1,84 +1,127 @@
-Return-Path: <linux-kernel+bounces-815209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA8AB56141
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:48:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B06B56143
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:48:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE1D87B6F25
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:46:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB5A0483E25
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38622EFDA6;
-	Sat, 13 Sep 2025 13:47:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F90B2EFD99;
+	Sat, 13 Sep 2025 13:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zx6w/wak"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+2VFjXs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A623283FC4;
-	Sat, 13 Sep 2025 13:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39F72EA468;
+	Sat, 13 Sep 2025 13:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757771272; cv=none; b=k8cyMumVW4I1nRuOTm3xXjUM/0mCmpVDr7q1iYXvTar8QXk3CQEVGCd+pqYaDOjrEWyXC+1IoSANURknzEbV/S6O1Dp+vRIVJZRzWL98Wxb0Lep5MbrwELdo+jiOrR26fzB/yIqlgIBRKXVKBIOaC1OWEE6JMncFrYbfWe7SN1k=
+	t=1757771288; cv=none; b=afHJJSuDbLS5Ful+00MGz6IN8rU1e5X/CHCroQVgJZ9VCRuxT4GduYvxgGNYV9a1HbahAQ4zc7zO3oSnMQnAWwkzgyJaiMYn5sK13Txfd1q+ZNzmZ3kMgN22FCHembyYLYNjSP/8eh5wv3IrHfvjA98NIVXU7vyt16J50LqAsEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757771272; c=relaxed/simple;
-	bh=UZ1FFYDAeyzL3fNFGkn2S5wdPo1eKK0Z4qYLy68oj7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=awz+XzaGRgVV98oUR0O8VqHm//Z5A4k8SMBOWscMais2+kRr1eOfCSwyAM1XDnZGBy4MjiqKooXJwp7Z8fVwlyx5GZ3k5Bjfv8WxDoTBAGd+/nY+wPP5IV/Plt16rdHUSszLHYcWFrBrM8QpGDvIwdIQpMcQMBpy2jggLDLreE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zx6w/wak; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=OgE8sh8Nl8Fom30U4y6FEEnUsfW7+fGifiRiLj1bT5M=; b=zx6w/wakWP9gzD8miF9IP8dv88
-	n41j/awfWO4z/uL74iYw5DEO3KMvn78vzYYlS3is3/mqW7UAohpTHqRTkEy91A/wfRXbGV1ReeDr5
-	zQ8torMtWqq7p/kl+xqcQjq6P5iJm4xl17IZLcY7+YGXIjaVii9ssFfgeJTcHE1G41fU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uxQbL-008Ij6-37; Sat, 13 Sep 2025 15:47:39 +0200
-Date: Sat, 13 Sep 2025 15:47:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Li Tian <litian@redhat.com>
-Cc: netdev@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, linux-rdma@vger.kernel.org,
-	Haiyang Zhang <haiyangz@microsoft.com>
-Subject: Re: [PATCH net] net/mlx5: report duplex full when speed is known
-Message-ID: <bacbeaf2-104f-4da5-a66b-b8aee2b2de12@lunn.ch>
-References: <20250913062810.11141-1-litian@redhat.com>
+	s=arc-20240116; t=1757771288; c=relaxed/simple;
+	bh=kAb/6Q3HAUctmHWVedyL+l7FRRMhD0STnVCd1l+573o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rBeS5jbGOtLzOjH4AdLQalSvytfxNh63LoVjCL6c/MGRU4xGwky7wnlQKNXgo5TEK7OlYDwme3Z6OHkWRibRnwsPieBpPdKUAEMyhV8oQb3/t/2OrxYefnKlb/guOzytIEwZ0HcCOADAvEfaZ5e9drJ975WDBDcIxUEWYE1wQ9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+2VFjXs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67C87C4CEEB;
+	Sat, 13 Sep 2025 13:48:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757771288;
+	bh=kAb/6Q3HAUctmHWVedyL+l7FRRMhD0STnVCd1l+573o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j+2VFjXsDTIF3DKC4SqTxcxbvMJIFJITs9ZvWPmOcZrkY30AFypLg53BaVBso8k/j
+	 QkvN2VEo0UuU0OdszGVr/KNAwQMopvKHshdLhHMMD3mgJrK/qfeAeqsLllOzsC45Gv
+	 IDwHjK4i2EiKonx9qJQT9NWtde41aHl4gMM0eMhqBbyNzxeUfufSJVVBTwhqf1htyJ
+	 9VjhYCfH6/uBm6UiCpNbJFU5fs4tBQ8oQJXGmJanXOOySjps8HxkLPo1wRvhWJnLvg
+	 Yqned5wlFc3WT2gKdyfQsNvyyyt332Lj5K7czTcDEbgdXJ8jrClg98tjWorEyVH6RE
+	 ygLZNFVPs3O7w==
+Date: Sat, 13 Sep 2025 14:47:57 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <dujemihanovic32@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Karel Balej
+ <balejk@matfyz.cz>, Lee Jones <lee@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, David Wronek <david@mainlining.org>,
+ phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, Duje =?UTF-8?B?TWloYW5vdmnEhw==?=
+ <duje@dujemihanovic.xyz>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 0/3] Marvell 88PM886 PMIC GPADC driver
+Message-ID: <20250913144757.4c8cf0b5@jic23-huawei>
+In-Reply-To: <20250911-88pm886-gpadc-v4-0-60452710d3a0@dujemihanovic.xyz>
+References: <20250911-88pm886-gpadc-v4-0-60452710d3a0@dujemihanovic.xyz>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250913062810.11141-1-litian@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Sep 13, 2025 at 02:28:10PM +0800, Li Tian wrote:
-> Prior commit in Fixes, duplex is always reported full as long
-> as the speed is known. Restore this behavior. Besides, modern
-> Mellanox doesn't seem to care about half duplex. This change
-> mitigates duplex unknown issue on Azure Mellanox 5.
-> 
-> Fixes: c268ca6087f55 ("net/mlx5: Expose port speed when possible")
+On Thu, 11 Sep 2025 14:43:43 +0200
+Duje Mihanovi=C4=87 <dujemihanovic32@gmail.com> wrote:
 
-I'm confused with your commit message. You say DUPLEX used to be
-reported as Full if the speed is known. How does c268ca6087f55 change
-this? You don't say in the commit message. Why is Half duplex
-important to this fix? I don't see Half anywhere in the code.
+> This series adds a driver for the GPADC found on the Marvell 88PM886
+> PMIC. The GPADC monitors various system voltages and is a prerequisite
+> for battery monitoring on boards using the PMIC.
+>=20
+> Signed-off-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
+Applied patches 1 and 2. I'm assuming the mfd cell will
+patch (3) will go through MFD.
 
-Also, what sort of problems do you see with duplex unknown? When
-somebody has a problem and is looking to find a patch which might fix
-it, seeing a description of the problem fixed in the commit message is
-useful.
+Thanks,
 
-	Andrew
+Jonathan
+
+> ---
+> Changes in v4:
+> - More refactoring
+> - Update trailers
+> - Rebase on v6.17-rc5
+> - Link to v3: https://lore.kernel.org/r/20250905-88pm886-gpadc-v3-0-4601a=
+d9ccb51@dujemihanovic.xyz
+>=20
+> Changes in v3:
+> - Refactor driver according to comments
+> - Update trailers
+> - Rebase on v6.17-rc4
+> - Link to v2: https://lore.kernel.org/r/20250831-88pm886-gpadc-v2-0-759c1=
+e14d95f@dujemihanovic.xyz
+>=20
+> Changes in v2:
+> - Refactor driver according to comments
+> - Add binding patch
+> - Link to v1: https://lore.kernel.org/r/20250829-88pm886-gpadc-v1-0-f6026=
+2266fea@dujemihanovic.xyz
+>=20
+> ---
+> Duje Mihanovi=C4=87 (3):
+>       dt-bindings: mfd: 88pm886: Add #io-channel-cells
+>       iio: adc: Add driver for Marvell 88PM886 PMIC ADC
+>       mfd: 88pm886: Add GPADC cell
+>=20
+>  .../bindings/mfd/marvell,88pm886-a1.yaml           |   4 +
+>  MAINTAINERS                                        |   5 +
+>  drivers/iio/adc/88pm886-gpadc.c                    | 393 +++++++++++++++=
+++++++
+>  drivers/iio/adc/Kconfig                            |  13 +
+>  drivers/iio/adc/Makefile                           |   1 +
+>  drivers/mfd/88pm886.c                              |   1 +
+>  include/linux/mfd/88pm886.h                        |  58 +++
+>  7 files changed, 475 insertions(+)
+> ---
+> base-commit: 76eeb9b8de9880ca38696b2fb56ac45ac0a25c6c
+> change-id: 20250827-88pm886-gpadc-81e2ca1d52ce
+>=20
+> Best regards,
+
 
