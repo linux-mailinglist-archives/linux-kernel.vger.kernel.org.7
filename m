@@ -1,144 +1,181 @@
-Return-Path: <linux-kernel+bounces-815060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FE5B55EDC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 08:10:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F75EB55EE0
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 08:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B6818972AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:10:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3F71CC42A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF912E6CCC;
-	Sat, 13 Sep 2025 06:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951762E6CDA;
+	Sat, 13 Sep 2025 06:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mj9J6WDO"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L6blC4sc"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF1E40855
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 06:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85A02DC775
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 06:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757743801; cv=none; b=uu/Tr70CECBX66nbMlVlsI7aolHnvBhmnZ/rqb41l9UYdI/UiERYBPrLqXMyOynhIjbJd7FpLZyR+gutAczX22Z/IjGRWL0kv1kz1HxXHzcc7UEYJ6BX7+/HTjFaMxKqvPmcHl6ySdjMJZ2IDMivp5ifDIum89XVb4tASHcfxsc=
+	t=1757744074; cv=none; b=NddjeJo1CxwOII805LlNzq1S4psCchiXWPtCmg51VLA+scRHlSMYKiX1R3pwVHexfMV4NVDMQV64J4ohIC2XgYM1wLrwTdEcndvvbQjsvo/obG3SUvkDxKucTWU9PGGMVB8Ojpau/8Ml81yZtf2NRHUujrd52n8+YgZ9+4/72c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757743801; c=relaxed/simple;
-	bh=gTOEkj4ZvjJRwjmvXK70zhZ6+r0iqgJJfzfUuKz4ewI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=C08iL0IHoeGrPRvGyj77mkYloidArVm+7UZQ12rI48L+PAiQ1x3PBJptHpEZr72qXmnMNYgAznqw7sje4Gp3SLWJU3fXl3gbPe2sSPBEEE9V0FGzh2+I+tReWEYO3M6d/y683GjydXyaobento034iOawKbCPZxuwiKb2SM3SpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mj9J6WDO; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55f6f434c96so2879605e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:09:59 -0700 (PDT)
+	s=arc-20240116; t=1757744074; c=relaxed/simple;
+	bh=aka9VwKHllHoJlb6yXFx6AebhdsgKvLlBtJD6Knv8g8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gppo+14sihTQZqjygbwDrZlMAtwrrA3XhHe+TP5yXhlvFl+vFreKvy0XXw3+Wo5YfTFgOli7Ms+Ny3AFz27NGMmfhEqoQCdW5zJ5/bPgFUFADDXiW1Iz82oVdkXNGEh2+zsGd28AArCfIFkyay2QKoEEd9ys0GGJjI1bdNUxFIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L6blC4sc; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-7222f8f2b44so24017376d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:14:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757743798; x=1758348598; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eilgNmLM+UnUigD1ts/5zlgpCEeCLq2Z2wcl87G6xGI=;
-        b=mj9J6WDO/1Nji/YPX98vPU5Xv/RjDvWrPRoQR6YgoKBurHXWj18VP2ki01g+TZ5mab
-         iaUzKjRPieu9wsrchiCQ/0W44MlAjRMoSMw78gggMV8sKyXy1fG7Dj4gZuZA50frH44U
-         SSGw3YI8ivCCXUKNPHOPDCB5BSzNUdUYtKzE5OIPxcRbLgs8/B8OLnzUrl2AMHjBErO7
-         FNy7WGGIOYaKB1717HMgD/AWpHkvc0N/RCeZaOBniDHsMkZITjMT5uUD0mniQHWD1AZ2
-         ZWpcAYeBPwewEUYoSRAn34Ln0oRtsAemhChCEK35GDvAaSmgFIAJFtsJnhWrtNXPe5JT
-         pm+w==
+        d=google.com; s=20230601; t=1757744070; x=1758348870; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XCvwV5WoqoYVySUmFtMHQmX2ZgogkxDxtUeViriH4AA=;
+        b=L6blC4scI58PAMg06Vndw/gvSEYVhePMVkgPsQmpVH8J1uelRwg5GDN0Do+xpFSBjw
+         vYLjySfLA8bDAh247QmpRa3m4rv69BuIOyMymY1PdPyvvyEW38z4DFQJ+uNQU/5R1d1q
+         FIPDSTFfsTjX0oCjbmZl0DTDe2uEnTYcAQ4nV4ll5YoT7xbNTSfYmx/aP50Y/MAduH5d
+         ELa+vwlNpi2XEb3zQ+NfgwXv12rcxGwSR6GN6P0BHD57x03UbOwBQC59TSM9cO97eKYJ
+         +2fBfaouFduGWovcZ+7+rpvM/9d7/6a/1EdEbWWqp6Rpy/OcUS2n+kJFvNP2eDTRbGGe
+         i5gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757743798; x=1758348598;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eilgNmLM+UnUigD1ts/5zlgpCEeCLq2Z2wcl87G6xGI=;
-        b=EgKaqbEt0CCcgUKhCgWDT8pA/MIPyksWOHp45ZRl5LPX/4JcVj956Rf1AFt0BWTPfg
-         GtGSviyejeYUoJmuZ6bMNJJ3hYIgV4zZZnuybi9PKO/Qbuv1T4s3zNjlCm1cDzJ7bEJy
-         yuNUvuYHY/n26ArONMZgr54FqcSWcVuIVztXHbAC9IBeBp4GY+jLNQBUDuYU424KgERB
-         yzIfOGWExUHmzSGAT3ktRxe1GoDOApY+jlqOiH8xTUl8csQ2FL2r8co1buzAnqVrd3Ux
-         V8lGZqW/LjLtKdzv3wsDRu98Bb0k0KxDUrdDjqPm82ZX1uEZXufRv4rL0gYDlds/pClc
-         7z+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXFjz9kv4WgKaUlKR7oxoZqqNs+1nSsd4lTe/qlXaGNtoC47XZIIhWXfSfR76t5xm9ntLAknCMkaJkXNso=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywroiCZGgegfLcvV3QAkV4RoKxMyVMi+Hm+xynxcSVRMmyuMy2
-	h/OW5UPZAnVqUTFyo/wuHib+xKdYiTNzSmQfqdgrnMAlQPBTTE8QQtOvuW2mP9/j
-X-Gm-Gg: ASbGncv4auXV4qPbvyq3YM/1nEoKcYjxXiz4RtIp3MY1tbLoTvZhJh0siiSqMuGc+Ez
-	NbJBPzh5fAzbN9xNMSdUTSK60F1zAjKg8aE/ChE3+1rHWqy9zn8KVmR4+JmAXkDgzZbVLnPVTMi
-	dlHqxQ6yUaCeLew+7v9KMfyL3HuuiAJu9e9lG7Jp80a7eGRb/z1WHxEIBxTTNFXBRf2N3045NA/
-	wk2SlMv+o9xkvatHFXZohQtwiCX7JKg2+awFdreas1qCT799QdVidXy53LyAsNVmwet74W73mCQ
-	fw/YJbZQ25WYsLz/L75I96B83yzUQQmNNu/+Gtt2lxGyA9wGz97fw/+VNU3xQ4SELJEQZmSl6cU
-	lTbp4V4sD2t79U/DXjfZF+lkp+nTGhhPhyXqMVp/9CZxTL8ljcDS2M/HKUUbOvILrgBA=
-X-Google-Smtp-Source: AGHT+IGmwZmsbVKZyzEV62EILsLHTLklQ4e5+PHt8mSyNhEWHnxkOXo8eDX3vJX/WmXUbz0ahwUfaw==
-X-Received: by 2002:ac2:4e12:0:b0:55f:4839:d059 with SMTP id 2adb3069b0e04-5704b52f28fmr1387061e87.13.1757743797629;
-        Fri, 12 Sep 2025 23:09:57 -0700 (PDT)
-Received: from [192.168.1.166] (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-56e64fa7134sm1699740e87.122.2025.09.12.23.09.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 23:09:55 -0700 (PDT)
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-Date: Sat, 13 Sep 2025 08:09:40 +0200
-Subject: [PATCH] drm/sitronix/st7571-i2c: reset position before clearing
- display
+        d=1e100.net; s=20230601; t=1757744070; x=1758348870;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XCvwV5WoqoYVySUmFtMHQmX2ZgogkxDxtUeViriH4AA=;
+        b=RPvFVdYUo8BUKVSnbtGa7FXFnUarwO+SDS8t1gTnq0tsqOns04OO7fau21WTAb7a6f
+         IAXPs78wLwOBzEuY37mk4RW92hgEpcsJvT/18kyOra+NMmno4T9QOlEJQsKQOmyct8uG
+         kcsReBayGpZcT+UFLfv5RwNSwOn1ZOHshhWSyrQOHJT//TlPYoabk/+frzhyCCIWrBLk
+         bfb01U4+JBOoOTxcqKHRIPK4/+sDLBD7OrxwG2mtHNYANzt/Jd7+XS33CyLZt30b9oVp
+         SIjhfltV0mkmRCE4n0H9m1SoV/lKFtronNceNz2cYY3ONrwFKG2HGfMVNd4ugCFHtbO/
+         upAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGURI8WopdefnyArOsTWFexgw9aI5xZeFkuI6e4w3idzeu6HZAOT9YjfvuzW29SCKeWW422zSAjJ4kYJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznXhEH4a6LTytVAHwysVh/HLi3BqGJMwLmWf2McvnWC2GuOo8e
+	qZkDLwOZ7PN1sbpSzUbdgauaQPGA0tHAjUYMRArXlIT/YAIHDufxiOb/H8O8+3zvPPHUCBgiPNx
+	otRq+2+jtwsMQdGzhnPpucrbe2DaSSfqDUnbsYYOm
+X-Gm-Gg: ASbGncsOnYLA6iUs5COGIvBGrXwI9Nrln7yvtHZr09oM35gyGEFTHV+YUf8khpQFb9y
+	YxJsq7yJNa47t3IOndFI4Jc+K2P6WPEGKYRsCyAd21BOYy4lLdkWbHmaYRyzvXTjlOrMsDNuxl5
+	1l2d0NzIWj+A53JjHXDEZ00M0X2l9gGC8EhA6piPKdtN5aYIaIWissLjNo39RWhcnaWVvKtisjq
+	68N2VgASUp6yMrFbCGphhLf2gWPwrcThA==
+X-Google-Smtp-Source: AGHT+IHJrx6ozvbMDWYDP71LNjU3nqhgVJjdnL9fmTR9g9kuYNj5UraKu8PJNDMK54JfJxbFZNaR1S+PCFRCKfHmv5I=
+X-Received: by 2002:ad4:5cea:0:b0:766:ab7c:3e89 with SMTP id
+ 6a1803df08f44-767c5621b4bmr71883766d6.64.1757744070327; Fri, 12 Sep 2025
+ 23:14:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250913-st7571-reset-v1-1-ae5f58acdf8d@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKMKxWgC/x3MMQqAMAxA0atIZgtNNbR6FXEQjZqlSiMiFO9uc
- XzD/xmUk7BCX2VIfIvKEQuwrmDep7ixkaUYnHVkO0SjlyePJrHyZXyg0AQXqEWCkpyJV3n+3TC
- +7wdYQRDMXgAAAA==
-X-Change-ID: 20250911-st7571-reset-785838285415
-To: Javier Martinez Canillas <javierm@redhat.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Marcus Folkesson <marcus.folkesson@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1067;
- i=marcus.folkesson@gmail.com; h=from:subject:message-id;
- bh=gTOEkj4ZvjJRwjmvXK70zhZ6+r0iqgJJfzfUuKz4ewI=;
- b=owEBbQKS/ZANAwAKAYiATm9ZXVIyAcsmYgBoxQqrq2QBZ5XmdEg1YGZgvM51PpAyHQA1cma49
- Pxth4Z6rlOJAjMEAAEKAB0WIQQFUaLotmy1TWTBLGWIgE5vWV1SMgUCaMUKqwAKCRCIgE5vWV1S
- MlHYD/4pbEnIrJLmXXp6nL/tqtzdNleFjnCyFXglVYfrviZpWfQcRHITojRjKvxWzP2IhDC4Y+P
- NrHgwauETMdNdnDxjGEpRUTqjujqCErHENLyl/hWAmpg1tx4P2HvVZcS5UpcSNqAH1ZnC/2fJOu
- R309eTTC7cs0LbDAuYtu/0Y3t+jtuncOIS1uE9KYjLt3EL0A99zbNuO6EnHYUM02Ded9Wr7ESHJ
- 1JAkWNVPHJfKOnHM0elGpcw/WkIRwotKNEJ1xua1RLpmikMNoaewSAMdQlTnS/n72RYujG3u8Xu
- AkeDC3J1s4JMLwmQZPg03zAnCi8ZYLpzspaGuqgx36Vlf29SKkKrGDg6vLBMWryKOwcirl155nI
- WB8NxD/VsqpeZATgf+OsybyVCyo736tm+bDvmc3ZRX6mH0mhb/p8aVVKXfiSvmdoPPTXGvMJkSI
- BMQwPw2vKvV/UubmUGF0tdaSmMuxDXRpJplymv22U65E8kX+sW4cOt4frj0I7Fdm6I4Kh3cAnK2
- Gh10oc/rW9BWmIHV9vN/gODDIJUzmkfO8156H2qiN6pgr4cApu0HiaTVCeNruFsmJxBQZYF5LoB
- 745SP3hFHr0c0ackuVP6pJm7dhJpTH7i1E5UUnwqztkPAUNVST7csZwSasC5Vk5M7P2I0G8de6g
- 71uA8W1/HEA+rpQ==
-X-Developer-Key: i=marcus.folkesson@gmail.com; a=openpgp;
- fpr=AB91D46C7E0F6E6FB2AB640EC0FE25D598F6C127
+References: <20250908-kunit-uml-pci-v2-1-d8eba5f73c9d@linutronix.de>
+In-Reply-To: <20250908-kunit-uml-pci-v2-1-d8eba5f73c9d@linutronix.de>
+From: David Gow <davidgow@google.com>
+Date: Sat, 13 Sep 2025 14:14:18 +0800
+X-Gm-Features: AS18NWAwSSI4FfaR6_Z8Utcpxcsk0azDBC1iBVWsOW6hluo678X_JayUhmQMwFs
+Message-ID: <CABVgOSmCNs2DQbyj=MAm-LHBRbEiCO1Adb-mSt+fbgOa8v4iYA@mail.gmail.com>
+Subject: Re: [PATCH RESEND v2] kunit: Enable PCI on UML without triggering WARN()
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	linux-um@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We cannot know where the write pointer is, always reset position to
-(0,0) before clearing display.
+On Mon, 8 Sept 2025 at 15:03, Thomas Wei=C3=9Fschuh
+<thomas.weissschuh@linutronix.de> wrote:
+>
+> Various KUnit tests require PCI infrastructure to work. All normal
+> platforms enable PCI by default, but UML does not. Enabling PCI from
+> .kunitconfig files is problematic as it would not be portable. So in
+> commit 6fc3a8636a7b ("kunit: tool: Enable virtio/PCI by default on UML")
+> PCI was enabled by way of CONFIG_UML_PCI_OVER_VIRTIO=3Dy. However
+> CONFIG_UML_PCI_OVER_VIRTIO requires additional configuration of
+> CONFIG_UML_PCI_OVER_VIRTIO_DEVICE_ID or will otherwise trigger a WARN() i=
+n
+> virtio_pcidev_init(). However there is no one correct value for
+> UML_PCI_OVER_VIRTIO_DEVICE_ID which could be used by default.
+>
+> This warning is confusing when debugging test failures.
+>
+> On the other hand, the functionality of CONFIG_UML_PCI_OVER_VIRTIO is not
+> used at all, given that it is completely non-functional as indicated by
+> the WARN() in question. Instead it is only used as a way to enable
+> CONFIG_UML_PCI which itself is not directly configurable.
+>
+> Instead of going through CONFIG_UML_PCI_OVER_VIRTIO, introduce a custom
+> configuration option which enables CONFIG_UML_PCI without triggering
+> warnings or building dead code.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+> Reviewed-by: Johannes Berg <johannes@sipsolutions.net>
+> ---
 
-Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
----
- drivers/gpu/drm/sitronix/st7571-i2c.c | 1 +
- 1 file changed, 1 insertion(+)
+Reviewed-by: David Gow <davidgow@google.com>
 
-diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
-index a6c4a6738dedf5881328414e9d8810d3af2a6fe4..32b91d65b768b26caa7dcef42a00d36f236fbc32 100644
---- a/drivers/gpu/drm/sitronix/st7571-i2c.c
-+++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
-@@ -263,6 +263,7 @@ static int st7571_fb_clear_screen(struct st7571_device *st7571)
- 	u32 npixels = st7571->ncols * round_up(st7571->nlines, ST7571_PAGE_HEIGHT) * st7571->bpp;
- 	char pixelvalue = 0x00;
- 
-+	st7571_set_position(st7571, 0, 0);
- 	for (int i = 0; i < npixels; i++)
- 		regmap_bulk_write(st7571->regmap, ST7571_DATA_MODE, &pixelvalue, 1);
- 
+Cheers,
+-- David
 
----
-base-commit: 91494dee1091a14d91da6bcb39e12a907765c793
-change-id: 20250911-st7571-reset-785838285415
-
-Best regards,
--- 
-Marcus Folkesson <marcus.folkesson@gmail.com>
-
+> Changes in v2:
+> - Rebase onto v6.17-rc1
+> - Pick up review from Johannes
+> - Link to v1: https://lore.kernel.org/r/20250627-kunit-uml-pci-v1-1-a622f=
+a445e58@linutronix.de
+> ---
+>  lib/kunit/Kconfig                           | 7 +++++++
+>  tools/testing/kunit/configs/arch_uml.config | 5 ++---
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+>
+> diff --git a/lib/kunit/Kconfig b/lib/kunit/Kconfig
+> index c10ede4b1d2201d5f8cddeb71cc5096e21be9b6a..1823539e96da30e165fa8d395=
+ccbd3f6754c836e 100644
+> --- a/lib/kunit/Kconfig
+> +++ b/lib/kunit/Kconfig
+> @@ -106,4 +106,11 @@ config KUNIT_DEFAULT_TIMEOUT
+>           If unsure, the default timeout of 300 seconds is suitable for m=
+ost
+>           cases.
+>
+> +config KUNIT_UML_PCI
+> +       bool "KUnit UML PCI Support"
+> +       depends on UML
+> +       select UML_PCI
+> +       help
+> +         Enables the PCI subsystem on UML for use by KUnit tests.
+> +
+>  endif # KUNIT
+> diff --git a/tools/testing/kunit/configs/arch_uml.config b/tools/testing/=
+kunit/configs/arch_uml.config
+> index 54ad8972681a2cc724e6122b19407188910b9025..28edf816aa70e6f408d9486ef=
+ff8898df79ee090 100644
+> --- a/tools/testing/kunit/configs/arch_uml.config
+> +++ b/tools/testing/kunit/configs/arch_uml.config
+> @@ -1,8 +1,7 @@
+>  # Config options which are added to UML builds by default
+>
+> -# Enable virtio/pci, as a lot of tests require it.
+> -CONFIG_VIRTIO_UML=3Dy
+> -CONFIG_UML_PCI_OVER_VIRTIO=3Dy
+> +# Enable pci, as a lot of tests require it.
+> +CONFIG_KUNIT_UML_PCI=3Dy
+>
+>  # Enable FORTIFY_SOURCE for wider checking.
+>  CONFIG_FORTIFY_SOURCE=3Dy
+>
+> ---
+> base-commit: 8f5ae30d69d7543eee0d70083daf4de8fe15d585
+> change-id: 20250626-kunit-uml-pci-a2b687553746
+>
+> Best regards,
+> --
+> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+>
 
