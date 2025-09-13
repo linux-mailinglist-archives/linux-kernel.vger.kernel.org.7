@@ -1,102 +1,126 @@
-Return-Path: <linux-kernel+bounces-815016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA746B55E31
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:00:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D35B55E35
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E8917A91A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C12AA57E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D36241EA7F4;
-	Sat, 13 Sep 2025 04:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422211E9B0B;
+	Sat, 13 Sep 2025 04:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="NSetxOan"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Q3gQjR+W"
+Received: from mail3-165.sinamail.sina.com.cn (mail3-165.sinamail.sina.com.cn [202.108.3.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D841DED5B;
-	Sat, 13 Sep 2025 04:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CF135968
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 04:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757736019; cv=none; b=r4vmghADACsn/VdqdcVCZfjRGBwBIMo3QJHAzvhhXu7IJs5xs+eJhKEgzhEzkdtNafmeF4zBD6EwbpiRmZNaN8z8/95a9LQGX9yKg8icY8QKrU5iccBUBNBqlo+kkBPpHZnEMf4Wx3vxPSDdmUK8+ke/kbtC03za29alBIrIc4I=
+	t=1757736519; cv=none; b=e2JEPbWZoKg9BfNzo0He2LvWfWX2k5xsjXhordncpIGe/hds83UXlkfmAjkozNLJlno8D0rZuUQd0A1OKd3nOyNuVjCt2YqFsReD+aSVm4Ned7YSLC76a9kh5hZA4eh9+P333OO0w1mIWUpi8o7udvNRj0jDQQMPI2YzFXJ7mj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757736019; c=relaxed/simple;
-	bh=StjCYRKjxo+/uNGUMp4u2Q/MThjN6is5yTdKHAtUacc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGfpbXKullzSs9il21pUtpxA0Nma2d36S06M+Kqw+468PeZ+evzZP3u5abqorUnXigumG8HfF6jMAJy5yjnUzNQJKkbh7wyvBsMC58GR2ja0oyPftd0ObhAOYZwiVVegAZ+DfEaPLBEXiOzQhwsHu2fZBAhTeK8FaVpg1tAJj3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=NSetxOan; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=z83lnUz437zAhQCp3R6e8kZDrrmry8SzUSHt/UweV2w=; b=NSetxOanypfCNDYPOlDCHDZJjO
-	U+DY2i8GR8nCcDZxsnahzGvKop0yR+KeNrtE/Ff7lGozeN2VW0Or7wLa7p6E9M6G+f6O0RUYeTPFe
-	Zj7/ItcUpqv6p1jqDK2yD8S3ljiuTOhKWnLvpuGO8vcY6+R7MmmSePaO0uc3fy3P0xioEUnInaq6W
-	r0+ySGtNlE5NB7HqeLPzFKHKnVXcvetS+UmA12+NhdIlakLZmQgXwD6NG58dak4JoQGCLhvi+/boP
-	fgheH2gV+/Jif/8tRdEi+2ogfCXPiLGrXhlUEW7whPTT1W+BBqIF20l7ccVH5OBt5RmoYvZn4TlTV
-	zdPNXo9w==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1uxHBH-0053eK-2M;
-	Sat, 13 Sep 2025 12:00:05 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 13 Sep 2025 12:00:04 +0800
-Date: Sat, 13 Sep 2025 12:00:04 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: meenakshi.aggarwal@nxp.com
-Cc: horia.geanta@nxp.com, V.sethi@nxp.com, pankaj.gupta@nxp.com,
-	gaurav.jain@nxp.com, davem@davemloft.net,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Meenakshi Aggarwal <nxa07556@lsv05950.swis.nl-cdc01.nxp.com>
-Subject: Re: [PATCH] drivers: crypto: caam: Add CRYPTO_ALG_NO_FALLBACK
-Message-ID: <aMTsRIxG44TmqOnp@gondor.apana.org.au>
-References: <20250904112615.4050572-1-meenakshi.aggarwal@nxp.com>
+	s=arc-20240116; t=1757736519; c=relaxed/simple;
+	bh=Jt33AzfLQIuLqIBPvJLVZ9RYYyN0qYenLlVwz0XaD+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JDY6LQkTN8jSZrTIXoHrjxADPCRZqWQ2KiK5vUVL+sExjiZHegmsG1R3jcTIoXXXIAIUS1x2fv0lng40MNQ4LHic5JwBCs0cUpAk2mpcuxEIZaksaCJwiy59yk9dTpHGXv43O4l7NFxGAdazFiGdpZRvzIxE0FagJ/QwAJmqaqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Q3gQjR+W; arc=none smtp.client-ip=202.108.3.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757736514;
+	bh=gGYwm0LRjTr770IHkOLO2QN58gYe1BuaylrhdxrBUiU=;
+	h=From:Subject:Date:Message-ID;
+	b=Q3gQjR+Wz13M42ATzfcdkYzaL2UmFXogvkquqzbNl5n4M7H5+uz5fZDozeaLDPQNb
+	 Sq1Uw19sLUE+O+Ne/Y7ZjTTXn71FNr0xk/7r0zRWDMQL+CVn8t7iJ1aSZE8YmiHQF4
+	 OlBhhlSTAaQoZOMgtVMlTo5tia/+u3RRwFcO3bl0=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 68C4ECF9000008D9; Sat, 13 Sep 2025 12:03:07 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3389216685357
+X-SMAIL-UIID: 7CECBC62C76742E69A6671562AC2546A-20250913-120307-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+0e4ebcc970728e056324@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: wild-memory-access Read in l2cap_connect_cfm
+Date: Sat, 13 Sep 2025 12:02:51 +0800
+Message-ID: <20250913040256.6972-1-hdanton@sina.com>
+In-Reply-To: <68c44056.a70a0220.3543fc.0036.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250904112615.4050572-1-meenakshi.aggarwal@nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 04, 2025 at 01:26:15PM +0200, meenakshi.aggarwal@nxp.com wrote:
-> From: Meenakshi Aggarwal <nxa07556@lsv05950.swis.nl-cdc01.nxp.com>
+> Date: Fri, 12 Sep 2025 08:46:30 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
 > 
-> Add CRYPTO_ALG_NO_FALLBACK cra_flag for hash algorithms.
-> 
-> Fixes: 4ccd065a69df ("crypto: ahash - Add support for drivers with no fallback")
-> 
-> Signed-off-by: Meenakshi Aggarwal <nxa07556@lsv05950.swis.nl-cdc01.nxp.com>
-> ---
->  drivers/crypto/caam/caamhash.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/crypto/caam/caamhash.c b/drivers/crypto/caam/caamhash.c
-> index 25c02e267258..90aecefdce01 100644
-> --- a/drivers/crypto/caam/caamhash.c
-> +++ b/drivers/crypto/caam/caamhash.c
-> @@ -1933,7 +1933,8 @@ caam_hash_alloc(struct caam_hash_template *template,
->  	alg->cra_priority = CAAM_CRA_PRIORITY;
->  	alg->cra_blocksize = template->blocksize;
->  	alg->cra_alignmask = 0;
-> -	alg->cra_flags = CRYPTO_ALG_ASYNC | CRYPTO_ALG_ALLOCATES_MEMORY;
-> +	alg->cra_flags = CRYPTO_ALG_ASYNC | CRYPTO_ALG_ALLOCATES_MEMORY |
-> +			 CRYPTO_ALG_NO_FALLBACK;
+> HEAD commit:    590b221ed425 Add linux-next specific files for 20250912
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=161d1934580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=9134e501f17b95a4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0e4ebcc970728e056324
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111d1934580000
 
-All hardware drivers are meant to have fallbacks.  The only exception
-would be phmac where the key is inaccessible to the software fallback.
+#syz test
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--- x/include/net/bluetooth/l2cap.h
++++ y/include/net/bluetooth/l2cap.h
+@@ -938,6 +938,7 @@ static inline long l2cap_chan_no_get_snd
+ 
+ extern bool disable_ertm;
+ extern bool enable_ecred;
++extern struct mutex cfm_mutex;
+ 
+ int l2cap_init_sockets(void);
+ void l2cap_cleanup_sockets(void);
+--- x/net/bluetooth/l2cap_sock.c
++++ y/net/bluetooth/l2cap_sock.c
+@@ -1411,6 +1411,7 @@ shutdown_already:
+ 	return err;
+ }
+ 
++DEFINE_MUTEX(cfm_mutex);
+ static int l2cap_sock_release(struct socket *sock)
+ {
+ 	struct sock *sk = sock->sk;
+@@ -1422,9 +1423,11 @@ static int l2cap_sock_release(struct soc
+ 	if (!sk)
+ 		return 0;
+ 
++	mutex_lock(&cfm_mutex);
+ 	lock_sock_nested(sk, L2CAP_NESTING_PARENT);
+ 	l2cap_sock_cleanup_listen(sk);
+ 	release_sock(sk);
++	mutex_unlock(&cfm_mutex);
+ 
+ 	bt_sock_unlink(&l2cap_sk_list, sk);
+ 
+--- x/net/bluetooth/l2cap_core.c
++++ y/net/bluetooth/l2cap_core.c
+@@ -7301,7 +7301,9 @@ next:
+ 		pchan = next;
+ 	}
+ 
++	mutex_lock(&cfm_mutex);
+ 	l2cap_conn_ready(conn);
++	mutex_unlock(&cfm_mutex);
+ }
+ 
+ int l2cap_disconn_ind(struct hci_conn *hcon)
+--
 
