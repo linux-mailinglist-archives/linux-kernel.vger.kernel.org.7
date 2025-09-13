@@ -1,106 +1,85 @@
-Return-Path: <linux-kernel+bounces-815191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 551ECB56109
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:04:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 231AAB5610A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5830B1889B85
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:05:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5477587781
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298BE2ED15D;
-	Sat, 13 Sep 2025 13:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EDF2ECE8C;
+	Sat, 13 Sep 2025 13:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROOTANAu"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZ16S2Tz"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37932EC57B
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 13:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E2D2ECD05
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 13:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757768686; cv=none; b=FLqJh0IFDXMXfz7g4kLT7QeHJVBli7tPu3fcbhArnIYCoLx0L4QOalABijwmASaUuo3xq60GA1FnPaEuE/+YeRw/oFkOA1EsiWJBjA0B7oczTq5HruiPq+12rSnH7s77sO+rF0HJRA6H19sFNWgAb+tUSnx6O2RmacW3aMozt4o=
+	t=1757769073; cv=none; b=p+z/Ysqi/NfJrSn4E+faWY9nPLkLtya+XRpmEi98+RvRfzKIGEhjMBhN8/YIxNe4DFNVlzb/dL4qaB93dVNcBIDULcizUtk037Un0oHwnKWgAPYP3/I6YEuDyyuBkq30wRdenXaTi5Xs7vWmKO7mw018YxpIizgBQ/7PcocyxBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757768686; c=relaxed/simple;
-	bh=b7tBpzh15qGN8uVwd9Pr+CjEOhF0/2vXJq5OskdvkFI=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MRzEYoXa1fyK5oORk//waYfAfCH+LoLfN/sireGb4QjXlmJ0w7Jmn1SJggc85LuVfXszbaYTezY1ge81PPfoCwyQHv6LIGyQHSwfj0Q8V+Q/iFg5fXw+RT8OHNu1k1UscCkyXrE9V7NEup4akJA/wzXD2YKQSLGvQkjfwdP2/Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROOTANAu; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1757769073; c=relaxed/simple;
+	bh=oKJpDAv/IgzpjfgwUgdYGRiJ0C5lJdTjcz+qAOTK/kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ET3iqXWi281yWaQWrkXKT5l6vv5umQw7A1KjZOFInq9aealPO8KhFJUwnsyJ9IE0tiTKYqkNMAs2WtKR8IAgwWv2kktcVRLIYrTgtZ7UgUX5AS1Wt2owe9NGJno33S/dacg9dpqvvo3ID9EBIqnKYwm5PCOW9lsPLUYp5XWDUSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NZ16S2Tz; arc=none smtp.client-ip=209.85.167.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45ed646b656so19842145e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 06:04:44 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-55f6507bd53so2948643e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 06:11:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757768683; x=1758373483; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bn5g5etmrQRhW0GOll7653iUOWDP8XBcYnO++0L6iOw=;
-        b=ROOTANAuPag/jlv1nGo0RpkMHmO2JTrBDg2Yrw87LzqGxDemmhmp+U5etJ17YVcPl1
-         WxCTSa1CnoCQ9h5Y3ID4q+BkPhYPJHWrcj+elvYxZzSJ63kZ/XMjtbDDsAvmbhyKyoxv
-         tgS5LtxbLRxKp0B0VKzCg4FTcTnXIrgFLINkSq7uc8DfkaXiOjh8EJZsq0vqyOmjNfS0
-         RrcgpJ5Yae/3gol1jHciPc+CP/aPSRyqDTYlNzGfEq8tl+p0H5IrGeUGJ916r0Rw1IoI
-         KQ4dHe5K8+mgsBcxZ1A0FMqox0nnqLd5xSjm1r+3ocpoTE+HUVItkSN+4g0V1heE87W6
-         ufug==
+        d=gmail.com; s=20230601; t=1757769070; x=1758373870; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hWxwIgbTiJWjsGEavEfT0kkniKrODy1r+jAuDGwG3dA=;
+        b=NZ16S2Tz+d2OYoxBdvbOczEP00GfPVLHQRzFmSrII9ZPWj2BxoKC5HVTMM1AtR8lRb
+         frFEEfXhh6dDoLlrGluu/Op4RpDF1WmIa3n7+oqmk5+7iMtVPt7L+t07JncnL8z/9BR2
+         z/fk91bvXxOac67AGyPqfdoP6PkGWziKlT38T3Ew9iceUHTypIkr99omj1ZowSiJt1Z0
+         vOauwCGtklVDiNKVMXZGkFCAR5uCgqpHA7iAG+rOZyXROXTmpfBs4mhvPNlb6b4yjlkJ
+         dD/uND9lgA+LWaWES5eershn8v5bjpwSO4ohXZQr6Ejf80vLMsGemqW4kWTGydWE8VG1
+         Ub7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757768683; x=1758373483;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1757769070; x=1758373870;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bn5g5etmrQRhW0GOll7653iUOWDP8XBcYnO++0L6iOw=;
-        b=PX5Yrx7K1zu8k4amWLthhOz8owtbTKlEVHKc4deY77kJKdQp3VmwWdmAHRVDwCXhCi
-         hVQiUlH7mEuE6vVYypJWvwwTO41kaomwxM5NlD6/Ltvwd75rPPrJU7ctmP8/QFxy1S2T
-         sXDxcqllJiubp7oDJhf06JQiVN/UO9umZ3hUi3U1jdvUOCws7CLGsS51LuxHhHsfAdYi
-         L4uEeVEhnwjj9dmba0QQxne4gSBi1i3HkaP1WLXp2vFedXGOcxrGMT+8/Sn7Yx9jPKQY
-         Bi/Z0O6ofu2R5hrIOsowHFzFxIa0rxlpTR33WfOslvxR+s3yDqd7cXUYzUIWwQCssQH9
-         z1+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWNw4Zp9pd+4DbWpObZRLB/UtukOVUsWIT7knLxehSs4r0ESXw4tl12feaeQft1X/ZwmbdAejeIAZ4yAjc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOR8f84iOpNQdt1T3anbYtNQRMU4P2gNcftZ+64xF4ykLmnMji
-	Pc6G4WFv223SIQDsg1I2Uemn1sqm8wE60WURaUpK2lWS++8DRNXlpe6C
-X-Gm-Gg: ASbGnctHCVqMV1z6fdcG2r5odXr9rMvoccV9/Po5hG+/X9y+JeJX2/U2NAbUcAAFq1n
-	qRT7PzJTOaHr6/eJBnOB6o53/LD/7luAw6cG1pxJmzReiDcaEEpXKnokTCtgGFZYdfbnhtI9MJM
-	LMTOvPVxYo4J6etgs2FwgSuJfx99pmtFOJQsdBGnrF8S1WZZkk1rYC4rSmd5c7Y3y+zHp3znqMf
-	oxv8UlXE0VCFKPCVGFpETU6nWuK1UH9Tn7QhEQxI1+yD1tAHJwEAiQNfHhgBNU3MzU9dI8zfFsn
-	OwQhIEjGYBzpqyNiWN7FZX9Nan4yITlfdfTr0DucVEKwMhc6yOU/gg7I7D/PGz6rksIjKtUUcTK
-	is8Nj/iIaAaq9JLK5lkQgkFLRTRa6S/HF81kcEevWoqHPMzDTrCh2bZw/Qzo97FLDEOG+WqHHrP
-	qpbj8X
-X-Google-Smtp-Source: AGHT+IH7bqCK1wDu540Yv6h59nRCAcKulg0ljt7g6L2IwpwzA60j/nsTl5Zjtr2oKtoo9w4/vWv6Gg==
-X-Received: by 2002:a05:600c:a45:b0:45d:dd9c:4467 with SMTP id 5b1f17b1804b1-45f211ca33cmr60235475e9.7.1757768682776;
-        Sat, 13 Sep 2025 06:04:42 -0700 (PDT)
-Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e015784c3sm105911875e9.10.2025.09.13.06.04.40
+        bh=hWxwIgbTiJWjsGEavEfT0kkniKrODy1r+jAuDGwG3dA=;
+        b=ijyROHx76xDXXTq8kYZs5ZMrhmd9NMeMmQxxDSPq/91mzSrERyIrBfEpyQ004pCYpL
+         u3amAvyxQhbnzOsfHK+/B4XTCu8ob0QdY/FLjTYKMuYMHwc6FtyUiE3gdd9ESqSv344I
+         7ovg9o/aJvtR0yrD5j1POD2Z6fY/Oqa9KeotqtCVExOiAwkFN91aKlq7jhKtAoc3D3Wi
+         /DG92tLxJFL+FT4AlYEThKc9VhXpPz8WlA1JLyCf6CYsCvf886UAopQc1uGizQ3OfCk5
+         kjjT9Liij9yqjNKBSLUUknPSG8BSDfPWlPX1emBeu47DEl6/NcPOWUMVCFmowBQmNQRF
+         Oqvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdux6nQr1c4DAV2g3ABRaHHiSsrkazohpgW0qkRjfEJVwwEBHTyzGCAh9G4sAzuzhEk7p3FHZbw3Z9HNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDAMC4PLxj8BwqnKLpPJx6/j/FO8gTJe2jmg6uZQ6AA5Mo7lgu
+	wePdYtER9YagdcgeLsgTUAiL6V/HE/KHW8WdFZYr9V5613K/pk0F39uM
+X-Gm-Gg: ASbGncufFMxD66PiCs+lqkIYqnT023bex5y1nPV6vnctR1ajz1otdn2Mji/fpNqVLG9
+	A75RXIKEUwEedlQ+XU3llnHcFWql8KNVGZCKl+1bVgQTqZoK6r8Myr2u5S+7ztEHjpd26pXIW96
+	eAStNowg/N76CHJujHO/qclDxm3PeoCatQX4n4FQ645ko6e7fsG12t2H4v0pfKyPX07nbYEmsM7
+	XNu9EbRnuhievWpVvoXAbhoNqxKCmEt0s+QJfXCTUAL6mUxc4pLEh/fU4GpF35w35RcsDNXyt5n
+	0cvbNU6pHrJ0OksxL2o2o6Loj8OISQOb47iR2Rt0CZ6f2E7pFySAa1A42nufiTc4tgt77jK0yci
+	0x/28oHDjUqhjQy1HAQ9/ch1bXyAPPIHRzdjA
+X-Google-Smtp-Source: AGHT+IFW3X/biyePEhlGPyL2QecOAnqaoRAKpWNM3rOTQZRDK64Zl3Y9eY7OF5QskdIkE2Rwq3bT2Q==
+X-Received: by 2002:a05:6512:404c:b0:55f:5526:602a with SMTP id 2adb3069b0e04-5704ad8326amr2165663e87.15.1757769069492;
+        Sat, 13 Sep 2025 06:11:09 -0700 (PDT)
+Received: from localhost (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-56e65a34096sm1924029e87.136.2025.09.13.06.11.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 06:04:42 -0700 (PDT)
-Message-ID: <68c56bea.050a0220.a9dbf.b7c8@mx.google.com>
-X-Google-Original-Message-ID: <aMVr6Hkskt5mPfFP@Ansuel-XPS.>
-Date: Sat, 13 Sep 2025 15:04:40 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"Chester A. Unal" <chester.a.unal@arinc9.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	DENG Qingfang <dqfext@gmail.com>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next PATCH v17 6/8] mfd: an8855: Add support for Airoha
- AN8855 Switch MFD
-References: <20250911133929.30874-1-ansuelsmth@gmail.com>
- <20250911133929.30874-7-ansuelsmth@gmail.com>
- <20250913130137.GL224143@horms.kernel.org>
+        Sat, 13 Sep 2025 06:11:09 -0700 (PDT)
+Date: Sat, 13 Sep 2025 15:11:08 +0200
+From: Klara Modin <klarasmodin@gmail.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] initrd: Remove unnecessary goto label 'successful_load'
+Message-ID: <o2ijjlbcicrrfflp54o53sj5v6morqedtkkzizhhyvl6cqvezw@yl7hx3naojcn>
+References: <20250913121514.1789204-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -109,62 +88,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250913130137.GL224143@horms.kernel.org>
+In-Reply-To: <20250913121514.1789204-1-thorsten.blum@linux.dev>
 
-On Sat, Sep 13, 2025 at 02:01:37PM +0100, Simon Horman wrote:
-> On Thu, Sep 11, 2025 at 03:39:21PM +0200, Christian Marangi wrote:
-> > Add support for Airoha AN8855 Switch MFD that provide support for a DSA
-> > switch and a NVMEM provider.
-> > 
-> > Also make use of the mdio-regmap driver and register a regmap for each
-> > internal PHY of the switch.
-> > This is needed to handle the double usage of the PHYs as both PHY and
-> > Switch accessor.
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> 
-> ...
-> 
-> > diff --git a/drivers/mfd/airoha-an8855.c b/drivers/mfd/airoha-an8855.c
-> 
-> ...
-> 
-> > +static int an855_mdio_register(struct device *dev, struct an8855_core_priv *priv)
-> > +{
-> > +	struct device_node *mdio_np;
-> > +	int ret;
-> > +
-> > +	mdio_np = of_get_child_by_name(dev->of_node, "mdio");
-> > +	if (!mdio_np)
-> > +		return -ENODEV;
-> > +
-> > +	for_each_available_child_of_node_scoped(mdio_np, phy_np) {
-> > +		ret = an8855_phy_register(dev, priv, phy_np);
-> > +		if (ret)
-> > +			break;
-> > +	}
-> 
-> Hi Christian,
-> 
-> Maybe it cannot happen, but if the loop above iterates zero times,
-> then ret will be used uninitialised below.
-> 
-> Flagged by Smatch.
->
+Hi,
 
-Do you have hint of how to run smatch on this? Is there a simple arg to
-make to enable this?
-
-Anyway yes it goes against schema but it's possible somehow to have a
-very broken DT node with no phy in it.
-
-> > +
-> > +	of_node_put(mdio_np);
-> > +	return ret;
-> > +}
+On 2025-09-13 14:15:14 +0200, Thorsten Blum wrote:
+> The goto label 'successful_load' isn't really necessary. Set 'res = 1'
+> immediately and let 'goto done' handle the rest.
 > 
-> ...
+> No functional changes.
+> 
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  init/do_mounts_rd.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+> index ac021ae6e6fa..97ddcdaba893 100644
+> --- a/init/do_mounts_rd.c
+> +++ b/init/do_mounts_rd.c
+> @@ -210,7 +210,7 @@ int __init rd_load_image(char *from)
+>  
 
--- 
-	Ansuel
+>  	if (nblocks == 0) {
+>  		if (crd_load(decompressor) == 0)
+> -			goto successful_load;
+> +			res = 1; /* load successful */
+>  		goto done;
+>  	}
+
+This is now the only place where res will be set to 1.
+
+>  
+> @@ -264,8 +264,6 @@ int __init rd_load_image(char *from)
+>  	}
+>  	pr_cont("done.\n");
+>  
+
+> -successful_load:
+> -	res = 1;
+
+This does not seem correct? After this patch res is not updated to 1 anymore
+if execution reaches here without taking another goto, i.e. the return
+value is changed by this patch.
+
+Regards,
+Klara Modin
+
+>  done:
+>  	fput(in_file);
+>  noclose_input:
+> -- 
+> 2.51.0
+> 
 
