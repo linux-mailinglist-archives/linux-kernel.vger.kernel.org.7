@@ -1,109 +1,103 @@
-Return-Path: <linux-kernel+bounces-815257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8180B561CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:24:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2504B561D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B70D7A8DD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:23:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1BCD1B25BD2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670022F1FD9;
-	Sat, 13 Sep 2025 15:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE972F28EF;
+	Sat, 13 Sep 2025 15:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="kDKm9Rn0"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="iGdsm5Ua"
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334CE2DC776;
-	Sat, 13 Sep 2025 15:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D9119E98C;
+	Sat, 13 Sep 2025 15:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757777078; cv=none; b=HXUckx5xkBjM69hjs1TqykSyzsrViwlXE5Bfotzm6XWokqfgrCaYl6hbWfs21TVXEwscfw6tLIOh5BvS2NwnQ0+ancqskrTLYPN/x5asBFxoCLZhmZKFR8mC+syu/95FuwJZzGTWOaVfnwc1O1n55U2NgTyxIVLKlpfiLrLIE/s=
+	t=1757777532; cv=none; b=Jp3yxbLJ8QPDap8OGQkMciK3s/yu/byNod9uz5hlj6KWmRbYXVkNjFuOmPxyae874PstMw4uHBLKgn814lCKkrD8I0NEaLaPCIyzrAEv6rtFtWS7DV1s1U0hE6v+xfgCiqZggUd4IBSzs5sqxgF+FLgQnM8Q5zbM4gqDHl6JFBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757777078; c=relaxed/simple;
-	bh=1Y5sE84WKiYBBtWVFqxs3GYbYV6WKM/EJWKTEDg3LK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dCa5EzpuOUgiTzCbmAb4eBKr1Xv4Hq+fEOEMakHwphj2qLJPs4xJjPZgL0qpZwtf6bGLWbTDa7Zdqr6nSf0buvW/ogO+CoggEYOWtJcccnbvDyLFFD+gy0iB20GclZRe2dEufIw6Pzcl8m4lq3RjP3twHYWH1fhePpUO1Inptvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=kDKm9Rn0; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1757777075;
-	bh=1Y5sE84WKiYBBtWVFqxs3GYbYV6WKM/EJWKTEDg3LK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Transfer-Encoding:In-Reply-To:
-	 X-Gw-Outgoing-Server-Hash:X-Gw-Message-ID:X-Gw-PM-Hash:Message-ID:
-	 Date:From:Reply-To:Subject:To:Cc:In-Reply-To:References:
-	 Resent-Date:Resent-From:Resent-To:Resent-Cc:User-Agent:
-	 Content-Type:Content-Transfer-Encoding;
-	b=kDKm9Rn0ZT6aUrEM4rhXe7APbzLU2uwQK+dFgRs3w7idU0Tjb/gH71HL4UQ1p2KOv
-	 kPDzg28ycfpZTS0atzhzHGyHYuOJwnAQWkfrtAroG9vEqzDv67XDDRkQdPYbVBrptH
-	 28WDPpJ20GA93eVCjFyKzfimC2rU9hFXzPQzxJX0MaEI1tVXeDcYHBVqcgHmvg8yDE
-	 8NgKpCMMOUWW5I2ehkuV0dykWpzXMpQInUAUB6/D5jEy7TQ52XvJR4L5qSlzvePXh7
-	 IIBhblUGirkx9Oy0DFNcKP63KlGfn6NenKXDynEBo597ns6iU8liur92syfr+sAW2M
-	 FdrI5p1JhFZnw==
-Received: from linux.gnuweeb.org (unknown [182.253.126.215])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 5C6E631279A4;
-	Sat, 13 Sep 2025 15:24:31 +0000 (UTC)
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Sat, 13 Sep 2025 22:24:22 +0700
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	io-uring Mailing List <io-uring@vger.kernel.org>,
-	dr.xiaosa@gmail.com,
-	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Subject: Re: [PATCH liburing v1] barrier: Convert C++ barrier functions into
- macros
-Message-ID: <20250913152422.GA31788-ammarfaizi2@gnuweeb.org>
-References: <20250913131547.466233-1-ammarfaizi2@gnuweeb.org>
- <e0559c10-104d-4da8-9f7f-d2ffd73d8df3@acm.org>
+	s=arc-20240116; t=1757777532; c=relaxed/simple;
+	bh=TBfdcMiQonrtQcFEM0J7fs7KepDjCbzU2TgkLxqV1/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IGfvL0yePBbNd20izug2DuP95JXmi51GK7OsOuWoIDojyT5Tw5OtrHYt6cpAoxvCKY5mpdI3wKhtV9JZGqsOmUKYC8VezHPvGhD+NZNbc7FLWff7tlz1jzAJyXE+AP1h0yWwTPkAkSubejvXONYMsyaSPvm7ZE5dAQ0Kku0Xe0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=iGdsm5Ua; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 22b0da691;
+	Sat, 13 Sep 2025 23:31:57 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: jgg@ziepe.ca
+Cc: yishaih@nvidia.com,
+	shameerali.kolothum.thodi@huawei.com,
+	kevin.tian@intel.com,
+	brett.creeley@amd.com,
+	alex.williamson@redhat.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jianhao.xu@seu.edu.cn,
+	Zilin Guan <zilin@seu.edu.cn>
+Subject: [PATCH V2] vfio/pds: replace bitmap_free with vfree
+Date: Sat, 13 Sep 2025 15:31:54 +0000
+Message-Id: <20250913153154.1028835-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <e0559c10-104d-4da8-9f7f-d2ffd73d8df3@acm.org>
-X-Gw-Outgoing-Server-Hash: 01afd303c8b96d0c1d5e80aa96a4ee40ec69888f786fa24107c0862c0644af79
-X-Gw-Message-ID: 69bdbc9f940afd776081821f9fa810c6830cd39bcf9f613d97449c2948bd9b81
-X-Gw-PM-Hash: 15fa1b86cfde8d1fea056597e811231aa9750ec8bc49fba31f2b60ebbd104993
+X-HM-Tid: 0a9943b45b3003a1kunm3b7c7b9d32b33a
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSENDVklLTkNJSUNOSExNH1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVU
+	tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=iGdsm5Ua9G4VMuJua4zcPaC0tLCCofe2qMtwmSkXSc01VgtU9wsTU4UEOzr07BbA55cWVcGGyuTUugS2KnGiPmyBe3yb1VSAlO+RvD5KkGqaJOdOVzqEJAO6g7RSS9lkMv4pUfJaRAI1nidKm7xZTU70RaOtv7mOy4Uv7MnoKqg=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=r5mWJk/Ysllkg7QlCphqR+IJ9ALHc3igH8VzjEuhodU=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sat, Sep 13, 2025 at 07:40:17AM -0700, Bart Van Assche wrote: 
-> Converting functions into macros is a step backwards. Please check
-> whether removing the "static" keyword from the inline function definitions
-> in header files is sufficient to suppress the compiler
-> warning about TU-local definitions.
+host_seq_bmp is allocated with vzalloc but is currently freed with
+bitmap_free, which uses kfree internally. This mismach prevents the
+resource from being released properly and may result in memory leaks
+or other issues.
 
-OK, that works. I will send a follow up patch to do that instead.
+Fix this by freeing host_seq_bmp with vfree to match the vzalloc
+allocation.
 
-After further testing, I found a new issue, still related to the "static
-inline" problems apart from the barrier:
-```
-  In file included from work.cpp:3:
-  /usr/include/liburing.h:1808:19: error: ‘int io_uring_wait_cqe(io_uring*, io_uring_cqe**)’ exposes TU-local entity ‘int __io_uring_peek_cqe(io_uring*, io_uring_cqe**, unsigned int*)’
-   1808 | IOURINGINLINE int io_uring_wait_cqe(struct io_uring *ring,
-        |                   ^~~~~~~~~~~~~~~~~
-  /usr/include/liburing.h:1745:19: note: ‘int __io_uring_peek_cqe(io_uring*, io_uring_cqe**, unsigned int*)’ declared with internal linkage
-   1745 | static inline int __io_uring_peek_cqe(struct io_uring *ring,
-        |                   ^~~~~~~~~~~~~~~~~~~
-```
-It happens due to commit:
+Fixes: f232836a9152 ("vfio/pds: Add support for dirty page tracking")
+Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
+---
 
-  f2b6fb85b79b ("liburing: Don't use `IOURINGINLINE` on private helpers")
+Changes in v2:
+- Fix the incorrect description in the commit log.
+- Add "Fixes" tag accordingly.
 
-I will try to introduce a new macro to make it C++ friendly. Apparently,
-replacing "static inline" with "inline" needs to be done everywhere. Not
-only in barrier.h.
+ drivers/vfio/pci/pds/dirty.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/vfio/pci/pds/dirty.c b/drivers/vfio/pci/pds/dirty.c
+index c51f5e4c3dd6..481992142f79 100644
+--- a/drivers/vfio/pci/pds/dirty.c
++++ b/drivers/vfio/pci/pds/dirty.c
+@@ -82,7 +82,7 @@ static int pds_vfio_dirty_alloc_bitmaps(struct pds_vfio_region *region,
+ 
+ 	host_ack_bmp = vzalloc(bytes);
+ 	if (!host_ack_bmp) {
+-		bitmap_free(host_seq_bmp);
++		vfree(host_seq_bmp);
+ 		return -ENOMEM;
+ 	}
+ 
 -- 
-Ammar Faizi
+2.34.1
 
 
