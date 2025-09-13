@@ -1,149 +1,201 @@
-Return-Path: <linux-kernel+bounces-814999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FECB55DD1
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:16:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAF5B55DD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21C9DA0837B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:16:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24A65C38CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96051D5CC6;
-	Sat, 13 Sep 2025 02:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF251D5CFE;
+	Sat, 13 Sep 2025 02:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhqNS/da"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD45B3594F
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="m21hctkB"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCC43594F;
+	Sat, 13 Sep 2025 02:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757729794; cv=none; b=s2b7KPcpdsapzCW1+5nKJHp2tUFEEBlUJGGrNuZS2smtKgyyyEcr3lgUbAl27AQOeyYw4zSz5VgfkQoeGlb0JpRCocAlrsaSLu2aCAFtyZZJFvlSgPdOQgSuWL1PfmNKVtXbFvEIVypu6vDpcCreDUaANpmJxkoxwlRvmufFiE4=
+	t=1757729896; cv=none; b=jp7jeHktROoJArB88XY0n8vDSICXDbBKxlsgbzYE3+gt8AHybtAnNJVmEJvPFNzJjYv4JXUrrwcDSW427ke+LsLCFsyjTF2uUX6vCi+sYAUejh+VEvLrR6CXIZVkj/hsNCsuSWfCDmFRL8L/rVZEQBWanGb1S0fl55zZ27k8HAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757729794; c=relaxed/simple;
-	bh=xGbt/rQns9Xu5005jWUhfQNWdPT+cghf1LrEGQeNWFI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u+IVwcMRQ1xL0INx9xcjjrD3EUUieOVtWiQ8hIFMeEOtfQCZM3pmsRtU6ltd9HrSx0sokA8rCAUnvzoEXtyhpx4sxpBYzfMxkrCxOmQhHVES79YQhB91z8Tcy49KTLeM/XJQmW+jX6MFylcA+ZyZNVsRwQvHlJ6Wjj+uPWU/mfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bhqNS/da; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e96e1c82b01so1520139276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:16:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757729792; x=1758334592; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xGbt/rQns9Xu5005jWUhfQNWdPT+cghf1LrEGQeNWFI=;
-        b=bhqNS/dakLhQNXHeGd35vFqEnlG8EnX+a9Gbg67EOUje61ZaoV6MQ5VQuWx2jNwcmb
-         1UgrWtYzPbaOYDNxh4jeEdwnt5gLtO9pe+XA9/Zvw/tsEj9tTgDci8mlPtP1rcsuedjY
-         P7ioeokpljH2rU5tLV+3wm8pyxedjz+pYzWsBK66I1pKN+5tYNL5NmEimYhq1aJQ2KR5
-         cG6jTcY+8Hhwo2fOhHF4C2wNO1yZHg6eGaasMa8tNkJhS9Gf/m+wme+IDbZSYLjO4v8k
-         8TOr6OtK724LF3jot+UekM6OR4ikTTrOH/QTNRvLnLvP2llerrs4KKkUWqNlAlYZ2WYT
-         gbkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757729792; x=1758334592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xGbt/rQns9Xu5005jWUhfQNWdPT+cghf1LrEGQeNWFI=;
-        b=Ic/xsg0CKhW5mahtZTDLCFt8Q3J6GYT9aNeqNhSz9vLckZv7JgrkfIfOOYOVZ0zf7q
-         mhKURbOrR2+PrvEmWdyQYZ2jldCed9+oYy4kLjZsu7JZYV2P8gXCXk+4RZegEn795C3Q
-         2SmkD3NiJlRKnemmKMq1xDfxa2NvFSWuPbd1dcy07tyQJCLZjxlhlWqNWjSrZVmeGwFm
-         zFuK1DkkE6rm9n13CFK1kcZKROif15F6stBVMfA6luGk/AXsnoNUPZUNbf41ZZ/dnMqK
-         BBSOj90Rp+dI50swFttzUCQxD70PoEOZsokLzOT29S4aaVo4TnsEyw+w/Age/J8lW++Z
-         ApgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwyNYjWvU/tXhWeHTTKeVpYvWiKvNu0Wl764isi1PIC4SZ2RT0PySMgoDd8ZAlf3MJJ4FqtkxrGiQ3MKo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNX4oCo0pgidI8euZOnVLDt2Q99u7vu+WZtjBNdW06a1aknBRZ
-	OtAleNkhRpPWXR4pmKgY+N0WAptMn09V/D6nAYfJ8hUaAk7N2ZlFs7K5j8I9RTR1MbiJIGFQSXn
-	F1gsbjulnAQrXZ8jl/gh/vxNsF/Yxtes=
-X-Gm-Gg: ASbGncsCN4pRBdEnvYhVzLDKJp4DtrOc3LODHJyS1mIWsUrnTfJqrM3lF/S8yDFoBFN
-	K6oIYMWpHpsF/84P5N6oE6ZBHI0ZbPtHMWhzAG7TdqOvM+6aCh8wLVQ260bjlCeR/orK61SbpGU
-	vjUmeEhf2XDf0nhI5GWrusjzZ7JRd9GX1Xcd/5/V6MZxK7XoMYhyIdeCFwfJillIUPEDLQCNUPk
-	nVEbmS+y7PMoiILj11p6Cyr+pI=
-X-Google-Smtp-Source: AGHT+IEuudP1MbDDzDJ1Axa9SCCj4RwO48Bzzr207D0xOeX8T5X5b1dOTn/r/1lDgWqGhIk9sTkt80hOQTBN9t/z3bM=
-X-Received: by 2002:a05:6902:540f:b0:e9d:75c1:7584 with SMTP id
- 3f1490d57ef6-ea3d9a326e2mr4933440276.15.1757729791476; Fri, 12 Sep 2025
- 19:16:31 -0700 (PDT)
+	s=arc-20240116; t=1757729896; c=relaxed/simple;
+	bh=8qXiJSMEz70CJJyZBmfhphnYdJah4N8ITAV+vxiw8B0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=toevmmp2HUMIO+icuToOW0b1q+beGncq9L5tUMu1YjNYEaXWan4U3ieekIzvYLGZ7vTyY0IAKteeUoIWGWl8A25TkrOYkuqLNZCIKm9YxY/GWu4MjHzF5v0iSbTzQwJW+wcTbIOqUTRFh8rpPAsOsXjKC8sHgbntge/8O5h5QwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=m21hctkB; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.0.88] (192-184-212-33.fiber.dynamic.sonic.net [192.184.212.33])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3EC6D211AD04;
+	Fri, 12 Sep 2025 19:18:13 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3EC6D211AD04
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1757729893;
+	bh=qOt0TBqCe0QCWONCv2pqyI3pCBn1b1ZIwH52f/TrEDE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m21hctkBJpAAvPT14i0FYZtzlISv5mc1KdMdUKKQhmnzfoCElHUGBS+seT0oarMWz
+	 Iot9rItOfVaGuBBzEf1dpzmTbMUw768EMx54jcKZGqo9hdfr970CkylZBj8ESJFeCq
+	 A5s6IMzPUDi2A+V2R/nF+SwCQVXtZBcN3o1+C4dE=
+Message-ID: <1033ff35-850c-e2f0-e2f3-1d5bf4b96a76@linux.microsoft.com>
+Date: Fri, 12 Sep 2025 19:18:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFRLqsUfDuoMMCUmBuSkiV_b=VNn7CuYqJSc19bhyQ6Kims36w@mail.gmail.com>
- <CABBYNZ+PJuvWYk_XVw=esNj1hVMPESjTc70VLQH=LrKdSqD7ag@mail.gmail.com>
- <CAFRLqsUE84wW0JKbsh6Lw0USQbnCbokXd3PANc+4i_nsnEUMYA@mail.gmail.com> <CABBYNZ+xg05sbfU51VXo1M=PqPOktDtRpTe5yHwwUhF9ui+NPA@mail.gmail.com>
-In-Reply-To: <CABBYNZ+xg05sbfU51VXo1M=PqPOktDtRpTe5yHwwUhF9ui+NPA@mail.gmail.com>
-From: cen zhang <zzzccc427@gmail.com>
-Date: Sat, 13 Sep 2025 10:16:19 +0800
-X-Gm-Features: Ac12FXzsluXLpHyt7EcRtG6kj7lTIOteS8YvIwP_xzOAOF1VPauaqg8FN5vOBFI
-Message-ID: <CAFRLqsVj28niHO9XejYrMu2g3fCrDXXgArshP-kr4CM=eV2smQ@mail.gmail.com>
-Subject: Re: [BUG]: slab-use-after-free Read in mgmt_set_powered_complete
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: johan.hedberg@gmail.com, marcel@holtmann.org, linux-kernel@vger.kernel.org, 
-	baijiaju1990@gmail.com, zhenghaoran154@gmail.com, r33s3n6@gmail.com, 
-	linux-bluetooth@vger.kernel.org, "gality369@gmail.com" <gality369@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.1
+Subject: Re: [PATCH v3 1/7] Drivers: hv: Introduce hv_hvcall_*() functions for
+ hypercall arguments
+Content-Language: en-US
+To: Michael Kelley <mhklinux@outlook.com>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com"
+ <kw@linux.com>,
+ "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>, "arnd@arndb.de" <arnd@arndb.de>
+Cc: "x86@kernel.org" <x86@kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+References: <20250415180728.1789-1-mhklinux@outlook.com>
+ <20250415180728.1789-2-mhklinux@outlook.com>
+ <f711d4ad-87a8-9cb3-aabc-a493ff18986a@linux.microsoft.com>
+ <33b59cc4-2834-b6c7-5ffd-7b9d620a4ce5@linux.microsoft.com>
+ <SN6PR02MB4157376DD06C1DC2E28A76B7D432A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <833a0c96-470f-acff-72e7-cc82995fbc2f@linux.microsoft.com>
+ <SN6PR02MB4157875C0979EFF29626A18CD43DA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <d6e63ef3-bdd2-f185-f065-76b333dd1fc3@linux.microsoft.com>
+ <SN6PR02MB41575CDB3874DB0867FF9E8FD43EA@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <SN6PR02MB4157BF605BE8EE1777AE1860D408A@SN6PR02MB4157.namprd02.prod.outlook.com>
+From: Mukesh R <mrathor@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157BF605BE8EE1777AE1860D408A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Luiz,
+On 9/12/25 08:25, Michael Kelley wrote:
+> From: Michael Kelley <mhklinux@outlook.com> Sent: Monday, August 25, 2025 2:01 PM
+>>
+>> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Friday, August 22, 2025 7:25 PM
+>>>
+>>> On 8/21/25 19:10, Michael Kelley wrote:
+>>>> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Thursday, August 21, 2025 1:50 PM
+>>>>>
+>>>>> On 8/21/25 12:24, Michael Kelley wrote:
+>>>>>> From: Mukesh R <mrathor@linux.microsoft.com> Sent: Wednesday, August 20, 2025 7:58 PM
+>>>>>>>
+>>>>>>> On 8/20/25 17:31, Mukesh R wrote:
+>>>>>>>> With time these functions only get more complicated and error prone. The
+>>>>>>>> saving of ram is very minimal, this makes analyzing crash dumps harder,
+>>>>>>>> and in some cases like in your patch 3/7 disables unnecessarily in error case:
+>>>>>>>>
+>>>>>>>> - if (count > HV_MAX_MODIFY_GPA_REP_COUNT) {
+>>>>>>>> -  pr_err("Hyper-V: GPA count:%d exceeds supported:%lu\n", count,
+>>>>>>>> -   HV_MAX_MODIFY_GPA_REP_COUNT);
+>>>>>>>> + local_irq_save(flags);      <<<<<<<
+>>>>>>>> ...
+>>>>>>
+>>>>>> FWIW, this error case is not disabled. It is checked a few lines further down as:
+>>>>>
+>>>>> I meant disabled interrupts. The check moves after disabling interrupts, so
+>>>>> it runs "disabled" in traditional OS terminology :).
+>>>>
+>>>> Got it. But why is it problem to make this check with interrupts disabled?
+>>>
+>>> You are creating disabling overhead where that overhead previously
+>>> did not exist.
+>>
+>> I'm not clear on what you mean by "disabling overhead". The existing code
+>> does the following:
+>>
+>> 1) Validate that "count" is not too big, and return an error if it is.
+>> 2) Disable interrupts
+>> 3) Populate the per-cpu hypercall input arg
+>> 4) Make the hypercall
+>> 5) Re-enable interrupts
+>>
+>> With the patch, steps 1 and 2 are done in a different order:
+>>
+>> 2) Disable interrupts
+>> 1) Validate that "count" is not too big. Re-enable interrupts and return an error if it is.
+>> 3) Populate the per-cpu hypercall input arg
+>> 4) Make the hypercall
+>> 5) Re-enable interrupts
+>>
+>> Validating "count" with interrupts disabled is probably an additional
+>> 2 or 3 instructions executed with interrupts disabled, which is negligible
+>> compared to the thousands (or more) of instructions the hypercall will
+>> execute with interrupts disabled.
+>>
+>> Or are you referring to something else as "disabling overhead"?
+> 
+> Mukesh -- anything further on what you see as the problem here?
+> I'm just not getting what your concern is.
 
-Thanks for your patch! It not only addresses the TOCTOU issue we
-discussed but may also fix another bug I reported
-(https://lore.kernel.org/linux-bluetooth/CAFRLqsWWMnrZ6y8MUMUSK=3DtmAb3r8_j=
-fSwqforOoR8_-=3DXgX7g@mail.gmail.com/T/#u).
+It increases the interrupts disabled window, does a print from
+interrupts disabled (not a great idea unless it is pr_emerg and system
+is crashing), and in case of actual error of (count > batch_size) 
+interrupts are getting enabled and disabled that were not before.
 
-I will test it soon to confirm.
+> [snip]
+> 
+>>>>>>> Furthermore, this makes us lose the ability to permanently map
+>>>>>>> input/output pages in the hypervisor. So, Wei kindly undo.
+>>>>>>>
+>>>>>>
+>>>>>> Could you elaborate on "lose the ability to permanently map
+>>>>>> input/output pages in the hypervisor"? What specifically can't be
+>>>>>> done and why?
+>>>>>
+>>>>> Input and output are mapped at fixed GPA/SPA always to avoid hyp
+>>>>> having to map/unmap every time.
+>>>>
+>>>> OK. But how does this patch set impede doing a fixed mapping?
+>>>
+>>> The output address can be varied depending on the hypercall, instead
+>>> of it being fixed always at fixed address:
+>>>
+>>>           *(void **)output = space + offset; <<<<<<
+>>
+>> Agreed. But since mappings from GPA to SPA are page granular, having
+>> such a fixed mapping means that there's a mapping for every byte in
+>> the page containing the GPA to the corresponding byte in the SPA,
+>> right? So even though the offset above may vary across hypercalls,
+>> the output GPA still refers to the same page (since the offset is always
+>> less than 4096), and that page has a fixed mapping. I would expect the
+>> hypercall code in the hypervisor to look for an existing mapping based
+>> on the output page, not the output address that includes the offset.
+>> But I'm haven't looked at the hypervisor code. If the Hyper-V folks say
+>> that a non-zero offset thwarts finding the existing mapping, what does
+>> the hypervisor end up doing? Creating a 2nd mapping wouldn't seem
+>> to make sense. So I'm really curious about what's going on ....
+>>
+> 
+> Again, any further information about why we "lose the ability to
+> permanently map input/output pages"? It seems doubtful to me
+> that an offset within the same page would make any difference,
+> but maybe Hyper-V is doing something unexpected. If so, I'd like
+> to know more about what that is.
+> 
+> Michael
 
-Thanks again for the great work.
 
-Best regards,
+you've to pass the offset/pointer ever time, and hyp has to map
+that instead of just per cpu permanent mapping.
 
-Cen Zhang
+-Mukesh
 
-Luiz Augusto von Dentz <luiz.dentz@gmail.com> =E4=BA=8E2025=E5=B9=B49=E6=9C=
-=8813=E6=97=A5=E5=91=A8=E5=85=AD 02:29=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi Cen,
->
-> On Fri, Sep 12, 2025 at 11:59=E2=80=AFAM cen zhang <zzzccc427@gmail.com> =
-wrote:
-> >
-> > Hi Luiz,
-> >
-> > Thank you for your quick response and the important clarification
-> > about hci_cmd_sync_dequeue().
-> >
-> > You are absolutely correct - I was indeed referring to the TOCTOU
-> > problem in pending_find(), not the -ECANCELED check. The
-> > hci_cmd_sync_dequeue() call in cmd_complete_rsp() is a crucial detail
-> > that I initially overlooked in my analysis.
-> >
-> > After examining the code more carefully, I can see that while
-> > hci_cmd_sync_dequeue() does attempt to remove pending sync commands
-> > from the queue, but it cannot prevent the race condition we're seeing.
-> > The fundamental issue is that hci_cmd_sync_dequeue() can only remove
-> > work items that are still queued, but cannot stop work items that are
-> > already executing or about to execute their completion callbacks.
-> >
-> > The race window occurs when:
-> > 1. mgmt_set_powered_complete() is about to execute (work item has been =
-dequeued)
-> > 2. mgmt_index_removed() -> mgmt_pending_foreach() -> cmd_complete_rsp()=
- executes
-> > 3. hci_cmd_sync_dequeue() removes queued items but cannot affect the
-> > already-running callback
-> > 4. mgmt_pending_free() frees the cmd object
-> > 5. mgmt_set_powered_complete() still executes and accesses freed cmd->p=
-aram
-> >
-> > I am sorry that I haven't get a reliable reproducer from syzkaller for
-> > this bug may be due to it is timing-sensitive.
->
-> Let's try to fix all instances then, since apparently there is more
-> than one cmd with this pattern, please test with the attached patch.
 
