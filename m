@@ -1,88 +1,184 @@
-Return-Path: <linux-kernel+bounces-815046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7381AB55E8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:21:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF3EB55E90
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36B8B584D72
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:21:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6DAAC7B4F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFBC2E2DDA;
-	Sat, 13 Sep 2025 05:21:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2A82E2DF4;
+	Sat, 13 Sep 2025 05:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3KoHn/r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F38C1DD0D4
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E221DD0D4
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757740865; cv=none; b=PQayjyjDNVWj9XjJI3YCR/1sg7eCpUAAPfeLCq1BxIMpipFITchNl4+GVhgSdl9V5y5KuODK/i39jcQuCdCalszhLoqYQ+RTXYm3eteTynaaKrX4d3ikQF9wtcSa1allNGsR2sM7Hx3Hc1IsPhI3JnSsaEGNW+RAH4enqhRFgI8=
+	t=1757741075; cv=none; b=U3IyRg5QieUb6B5GZzk0nFvgjFZOgLjoaEvlu+ADMSDbiNqBX3eaXdKw4+T4zXwrZM1FCEaPxOVoI3IuQ4b1I7oNebyfMgJBAPMxWyLeBGiK1UUsQcGmNw4KpESp1u+3wp4h/a062cbYrJR5teIfI+LAKTg0ElLkVpD110zLQ+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757740865; c=relaxed/simple;
-	bh=Z7ZSR9EyxMMQqeWQt+m1uG+wIRg69Q3hluxN2EVzIjw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mGfG6Z3zmfiZikHXux9nuiRgovqhaILXgdFhP91hotSzMgrGcjN70Rl7PtPZVQbUu+UhiERQGQoc6XK0EfBc+0DJqjW2yHK7F3hGTAHlGnruOwyymM3gsyeF+rRP3Xb0ow7tiUgmPYFcYtkiKSR6aZMs/FCZ0D+5L0Uoez6OkXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-42218094a8eso12272295ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:21:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757740862; x=1758345662;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RhVvbU0rgso/JFyAD4UWmIENdtWehkKLrhixk+g849k=;
-        b=KxWe9OJcGiY0h85Rxy3EDg4rSaMAmAR+lQTo/3diomiOm0NIpsh5mOgr1mlwEPQi8d
-         KnZIVDjiWU0iHqK2E7F4qocn6SFoIO9hA8i+ehn/Gs2pqCeg4/4mejjvqcUIXbGegsGr
-         jpIQ+IAoSNhFbuZuYF+TRL64VSy1i7ZQAapcnVihpWNQrDabJoDH+B9QbQOc4VZZO3s7
-         TmiEULtiiBJk0BJpf20K5TBxAJtCRfR0qXdgTriFktmHYJMpggySyEvIsc9YF/1l9ASr
-         SqciRLsQkSSmbzAFvBUU/yd+BSvUXSuIYBEo87omfOvso9WC+oh31KtmxAJzzXbKrImc
-         +wqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWur5g9SyHNGYcaieeOiMXfuw999Hy/bCj3xuvSsgavQQVM9m+rS50eJ6X6yg32p3rNjuXfLdG+3y3XL8U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYOgWl8DHLoUusIj27mqzo+W/VIP7yzk6/A3Mq0FiIbWOfOGPP
-	IvWlBkX5p/8CHFbLjTCXdVHIZGBMh4vQH86Y4v74Pw07wtzl04wJseogKZYeN/ZXJE70MTbopW8
-	FSqtOOV6Pzt0fomHKfnhHDtA1pTrKSD6qB0KkBkcwsI5RkN8LzP2nXREiNRk=
-X-Google-Smtp-Source: AGHT+IHmalwVNUIYg5Jty9WvO/kA4KZwg3TMwEbqN14D3a0FhfM1W07E/tEu+WGpMSGNALq6IpV2HBruPX7uYGr0i+2BrWe0eH1i
+	s=arc-20240116; t=1757741075; c=relaxed/simple;
+	bh=ndtaFZkPNDUgMTuk/DI+nRVkfYYyHV/1NbW/hy/UTiU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d6OfHGVeDJdyGqNKlAkKwFWydcNF1bb5TYvCP+McML7fbAYj0+JMH91HXGDDdvKy+YDFoaaIZqk0l+QvRs0A767+eNWJA+Wbv8YMDrupvR04Sd4IV9sWwpxVpx9XpH/z9u4puk+GjuH9CHI51W//y1aCIUNCLZJT2SDK8W43pOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3KoHn/r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3403C4CEF9
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:24:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757741074;
+	bh=ndtaFZkPNDUgMTuk/DI+nRVkfYYyHV/1NbW/hy/UTiU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=T3KoHn/rdLOt+mwg8ydl/A0WLdKYmDgNZMpnI4hNMDc+UFSPaBnKljSvTIaLAoBFp
+	 Gg3KVWV17pnz92Q7VaHsNozXE9n+M0NA056WEUVKx2UtWFfVY6DgTZqElCMJOEpFOM
+	 aZchZls4kgvdorKioIbpC+0CoWWA4CI4YU9GRTurOCcMqkJl0ZulkilArUmnC6Kfnn
+	 sDMdilCWPgdgOd02n4Yi2pu6jHtwieHSVCY/f85+6neXlbqzbA01mjjvb9ObXiWOqi
+	 G5COk8OFx8gwKtv/PvwOohPmhRCaY9oWPLSIS+89L3xbxGXawgwUdKQ9i3oljyOTtx
+	 YTP6/39cXIWMA==
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3dcce361897so1737721f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:24:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7Q15Mtw0t9MinxvGEqKy2zsd2UVFOY13H8XtLg/by66HZHj4w29kCXDGvrRrYSbQhYdbXnqsGESLs/I4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR2DkGlWYkHq3l932Edw9xWbofOsI+hr6PLEhEKcCNi1beRtAP
+	+1iZr593PMejZlN8pXaU2kexqSoxoZJZ557vptQfCIRiqvH3CNZtZnznBh9CsTWDjVHmwCvaOS4
+	QoF8Laax2tVgcQ+qefbm3CWWvE6udBf4=
+X-Google-Smtp-Source: AGHT+IGYTlvCo1WvcEHh91h2ZDsn0VW1EcDF9c5qsObu2X+gkm2UWwxkRXm7fnuygodN0nywuj843j1eBkLjOQTn8hY=
+X-Received: by 2002:a5d:4d81:0:b0:3e7:bbaf:6a07 with SMTP id
+ ffacd0b85a97d-3e7bbbeb55cmr2183699f8f.6.1757741073221; Fri, 12 Sep 2025
+ 22:24:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1688:b0:412:5782:c7d2 with SMTP id
- e9e14a558f8ab-420a3025fedmr64844095ab.16.1757740862647; Fri, 12 Sep 2025
- 22:21:02 -0700 (PDT)
-Date: Fri, 12 Sep 2025 22:21:02 -0700
-In-Reply-To: <41049daa-ffa1-42d8-9935-c56e02344afb@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c4ff3e.050a0220.3c6139.04c1.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] KASAN: slab-out-of-bounds Read in change_page_attr_set_clr
-From: syzbot <syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com>
-To: chandna.linuxkernel@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20250912122514.2303-1-cp0613@linux.alibaba.com>
+In-Reply-To: <20250912122514.2303-1-cp0613@linux.alibaba.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Sat, 13 Sep 2025 13:24:21 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTTn6PhqjOPAxVfSy_8avb1_7BAeqOsFxPnvmZ3KF8sqog@mail.gmail.com>
+X-Gm-Features: AS18NWDOH5r854UR2hS_3wx8Jmy2rJ-1fVmoABF8wvrbI9Y09wJRDu310WBBPi8
+Message-ID: <CAJF2gTTn6PhqjOPAxVfSy_8avb1_7BAeqOsFxPnvmZ3KF8sqog@mail.gmail.com>
+Subject: Re: [PATCH v2] ACPI: SPCR: Support Precise Baud Rate filed
+To: cp0613@linux.alibaba.com
+Cc: rafael@kernel.org, lenb@kernel.org, jeeheng.sia@starfivetech.com, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Sep 12, 2025 at 8:25=E2=80=AFPM <cp0613@linux.alibaba.com> wrote:
+>
+> From: Chen Pei <cp0613@linux.alibaba.com>
+>
+> The Microsoft Serial Port Console Redirection (SPCR) specification
+> revision 1.09 comprises additional field: Precise Baud Rate [1].
+>
+> It is used to describe non-traditional baud rates (such as those
+> used by high-speed UARTs).
+>
+> It contains a specific non-zero baud rate which overrides the value
+> of the Configured Baud Rate field. If this field is zero or not
+The spec states that it would "override" the baud rate. That means it
+should happen behind the table->baud_rate or firmware still needs to
+give out a legal Configured Baud Rate for precise_baudrate.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Then, we move these:
++       if (table->precise_baudrate)
++               baud_rate =3D table->precise_baudrate;
+behind the "switch (table->baud_rate) {}".
 
-failed to apply patch:
-checking file arch/x86/mm/pat/set_memory.c
-patch: **** unexpected end of file in patch
+Right?
+
+> present, Configured Baud Rate is used.
+>
+> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serports=
+/serial-port-console-redirection-table # 1
+>
+> Signed-off-by: Chen Pei <cp0613@linux.alibaba.com>
+> ---
+>  drivers/acpi/spcr.c | 54 ++++++++++++++++++++++++++-------------------
+>  1 file changed, 31 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+> index cd36a97b0ea2..a97b02ee5538 100644
+> --- a/drivers/acpi/spcr.c
+> +++ b/drivers/acpi/spcr.c
+> @@ -146,29 +146,37 @@ int __init acpi_parse_spcr(bool enable_earlycon, bo=
+ol enable_console)
+>                 goto done;
+>         }
+>
+> -       switch (table->baud_rate) {
+> -       case 0:
+> -               /*
+> -                * SPCR 1.04 defines 0 as a preconfigured state of UART.
+> -                * Assume firmware or bootloader configures console corre=
+ctly.
+> -                */
+> -               baud_rate =3D 0;
+> -               break;
+> -       case 3:
+> -               baud_rate =3D 9600;
+> -               break;
+> -       case 4:
+> -               baud_rate =3D 19200;
+> -               break;
+> -       case 6:
+> -               baud_rate =3D 57600;
+> -               break;
+> -       case 7:
+> -               baud_rate =3D 115200;
+> -               break;
+> -       default:
+> -               err =3D -ENOENT;
+> -               goto done;
+> +       /*
+> +        * SPCR 1.09 defines Precise Baud Rate Filed contains a specific
+> +        * non-zero baud rate which overrides the value of the Configured
+> +        * Baud Rate field. If this field is zero or not present, Configu=
+red
+> +        * Baud Rate is used.
+> +        */
+> +       if (table->precise_baudrate)
+> +               baud_rate =3D table->precise_baudrate;
+> +       else switch (table->baud_rate) {
+> +               case 0:
+> +                       /*
+> +                        * SPCR 1.04 defines 0 as a preconfigured state o=
+f UART.
+> +                        * Assume firmware or bootloader configures conso=
+le correctly.
+> +                        */
+> +                       baud_rate =3D 0;
+> +                       break;
+> +               case 3:
+> +                       baud_rate =3D 9600;
+> +                       break;
+> +               case 4:
+> +                       baud_rate =3D 19200;
+> +                       break;
+> +               case 6:
+> +                       baud_rate =3D 57600;
+> +                       break;
+> +               case 7:
+> +                       baud_rate =3D 115200;
+> +                       break;
+> +               default:
+> +                       err =3D -ENOENT;
+> +                       goto done;
+>         }
+>
+>         /*
+> --
+> 2.49.0
+>
 
 
-
-Tested on:
-
-commit:         590b221e Add linux-next specific files for 20250912
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=75c8190df02c3a12
-dashboard link: https://syzkaller.appspot.com/bug?extid=e34177f6091df113ef20
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=119f7362580000
-
+--=20
+Best Regards
+ Guo Ren
 
