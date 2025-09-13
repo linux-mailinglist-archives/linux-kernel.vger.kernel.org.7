@@ -1,243 +1,257 @@
-Return-Path: <linux-kernel+bounces-815359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22334B5633A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 23:27:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE4B9B56340
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 23:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93ECAA0967
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 21:27:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D9F189802D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 21:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E672C28150A;
-	Sat, 13 Sep 2025 21:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4167F28150A;
+	Sat, 13 Sep 2025 21:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyVM9Ml9"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qj253Yqf"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2049.outbound.protection.outlook.com [40.107.237.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661E325D208
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 21:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757798840; cv=none; b=q2TBklxQ6bGl//SDb1Zm5y+R66YCcp8Z/WN/v08v3hN9UP2oVpFFHSbZNwNcq9aYYXPAhLqlqgNcWX6sXk8zuavjIXs2535La8ou1TngC/ZeprZebYW354TRoH1Y7DaPNcZpTU+pUT0YrO/sTfExj3L+jrvr5dc4TamUkGVq1A4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757798840; c=relaxed/simple;
-	bh=ufmuC/ajygYiJt41KWo5diQtSs90kkBHWQ3weR88km8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PoVRPlcpcBadtm2fMcDC4BpBSTdURAfxoMzBZjtxVhPlswwTDTyqyDOXXN2uwfq7tz5O2s1lgA7gVVXQRzeXsi/FBLvWW0cyrmXPyExkfjgGPNDwnbJojTTBDMk7o/U0wUA3itdFDMoltQ4S4p3I20WK07WzSmNzobh2Btwn7QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZyVM9Ml9; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3e46fac8421so2508016f8f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 14:27:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757798837; x=1758403637; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=04qpIN+fZKNNBN7I+FlAUBoFYreC9O4k+On5eLa+qz8=;
-        b=ZyVM9Ml9U/B6y3PK+oYcv1qH9jmaqOM0eQfdzZTsdLPxGUl5rR50UpbYYnGv1zHLeU
-         foeN1HBMaqpb+GjPbETyt/HlTsMpJs9yrN4OIdp4NErbUP8Q0OSqn2lNIQHfGu2O+8L4
-         v6k8KRhqjkN/UOL1E92R88l2ZeDUo0KyGv+xHJIWYPieMz+9dtz2PlYnm11U0acPeMps
-         I68hGve/X2jDAajNgQUbF49X3rD7ZeCpGUtXWcYKPJG+hSPqIk8+x3BYjjGkvgyrTwxj
-         5xJHi/47LtAOqpSnGU9CvTuW9H3PdRhvcU0MyKRvijbtU7ttzXZqYTe1lG/ibUg8htnG
-         7slQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757798837; x=1758403637;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=04qpIN+fZKNNBN7I+FlAUBoFYreC9O4k+On5eLa+qz8=;
-        b=VHwqBuwfIaSlvRAs/EKwN9QaWxBeo1N9wF0lFUax99rnsJGLihEol5WU3a1Ra7Mgid
-         PZ/hOX9z7ptJ6BZAx6pyfIMmqg8xpxcQlOPHDFiTbBqiLsZFvf1iWOJULkjl9iKJH2At
-         ppe6RgyalCUz7w1C9cCO3cwnTcz/hfTr4Hy3aVnvQB2pJFjAEbx8OArG59+onThzeMMb
-         Bh4XY51Xp73yPnwiForkv5kw9xdxOjYj3dfJHU6zVSauTmjJYUiX26lv89GilrFrq2nu
-         XEOOUS5H0FLfMZKG/g7HSs3zE3jEUMeJcMsa2KbMVMgEAXdaOdTUn3IZUHC1ggyzPJHQ
-         bqtg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEYii6I3C6etjZWWzQu1xiRMeCoo8+a5RF7QYHPA4e1gp/xCJk1BpHPyLu9I6r3GyHPVjDEYHbDk5vC6g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtucKM7fiPir9zj0Cb5BCTtmbhqDoL8QTV6eZu29J9+8SipAHm
-	zQoXZSjg8YyVIVc0AhSE50S/uc5Ke2CeVjN5XNB+lr0rq94MwGvgXvTx
-X-Gm-Gg: ASbGncsdx3q0BCseYfXaaO+CPj2D+4Nom+V6LR/NSqg7ZtFHrNMq23qUFy+3KxGzrYP
-	37fwlDG4CEMstcVI6c1zJJjt2f6cINPTka9EMrIdI+grPuITr0FZCgZJHE9OyvfhSzdq/HEP7KQ
-	oUmvgf9W9bOnLwg9Uxr9JJDWhdZ+u+/JB70Pqx2/O1pTxFB/vu3NPMSMd/vr3O7yyY/UKGw83xz
-	77k1iCB2KON7FZSGFuSWXi6JQH9A6QWrezgpNoZuAwHTC/BINyVMT3eEFqTM7gih2RTder2eAso
-	o3dYV8xi3by3KKFxjEZ2xziUqxrrK4GOaq3Dg2PKche5lT0Y0dPPWc0WNUgXcpElCXXRoZslVlk
-	R19ajYl67u3jZndlr49MlIPCK5YhlalksmW/Ihqg8SzLrHeJqv+kndJUbl1SDOVW+UQp9DnyiaB
-	/cVBx0nA==
-X-Google-Smtp-Source: AGHT+IGN6z9+pVmuqZyHNovffXCVFTiBlSaxwVU9Is7CF2e2b52XUbcCYIX0d3TqqhVYSkV6hsC0Cg==
-X-Received: by 2002:a05:6000:2307:b0:3e3:e7a0:1fec with SMTP id ffacd0b85a97d-3e7657924f5mr5797120f8f.16.1757798836589;
-        Sat, 13 Sep 2025 14:27:16 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e9a066366fsm753048f8f.44.2025.09.13.14.27.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 14:27:16 -0700 (PDT)
-Date: Sat, 13 Sep 2025 22:27:14 +0100
-From: David Laight <david.laight.linux@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: Eric Biggers <ebiggers@kernel.org>, Guan-Chun Wu
- <409411716@gms.tku.edu.tw>, akpm@linux-foundation.org, axboe@kernel.dk,
- ceph-devel@vger.kernel.org, hch@lst.de, home7438072@gmail.com,
- idryomov@gmail.com, jaegeuk@kernel.org, kbusch@kernel.org,
- linux-fscrypt@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-nvme@lists.infradead.org, sagi@grimberg.me, tytso@mit.edu,
- xiubli@redhat.com
-Subject: Re: [PATCH v2 1/5] lib/base64: Replace strchr() for better
- performance
-Message-ID: <20250913222714.47b9e65b@pumpkin>
-In-Reply-To: <aMMYmfVfmkm7Ei+6@visitorckw-System-Product-Name>
-References: <20250911072925.547163-1-409411716@gms.tku.edu.tw>
-	<20250911073204.574742-1-409411716@gms.tku.edu.tw>
-	<20250911181418.GB1376@sol>
-	<aMMYmfVfmkm7Ei+6@visitorckw-System-Product-Name>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB308280CFB;
+	Sat, 13 Sep 2025 21:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757799000; cv=fail; b=jEe9eMoLsT40C/xFymBsuNHkW8AHu+6HiF6LXWmXL0xKQQwVMOnp7A2mxl5ulS714SmzXb1/nGBy62lg7EILR7Hmt0ovX79UIOVtn1DZEFA98EFoICunpV+wFmR4qJvXy0oezzX7a0bttlCnEQxN/Sk5Qne2HuYfqbmvx6Ob95M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757799000; c=relaxed/simple;
+	bh=eJ+auyzipHhES/xJTGW/B+t9P9k4yl8xwH74MG3En8M=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=invnxmY3G9AGH+D06AbE0WopmtDTx562vRSKmZNIGSAp/ktlGa2+BHCQ9b+3Ev850s1yvRun62pUDeljVicXOFwVlej6Hlogp54WterNRke+WTZ11811itoRsRg0NUgA4yqvtqrx+i7BePAvoZwc4M+s4vys+09MZE64AusZO/g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qj253Yqf; arc=fail smtp.client-ip=40.107.237.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E1Mg1GE5+K99C8BsgQCQvzyKAGy6c49aSAXqqyxSLwshP3XDMSIIO6uWYEGija/z8VwjFiNRVjf/vGet2IqojS1IaKyP2/IbvcdeJo4AyKUNIwtkyHFshnVpKegpMni9ybKcDg+E7FoGeYIv1AbA78KdfopRqAVdBaqwhguQSBPE/pMQvRjee8rRPquu80FroZV86Svj2DXsLW8XKm2SoRprSmRv/D0zJcpOP7kyO2t9B6TCjeRsnTyeob7TixR+cfCCyKBbrEpr1e004BjADZxuC5P9Sp+HLtR13NG1v7hlF6+78o5dJExJEp+w1kneZs4dbn1e76VybAveZwh3mA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+c2S/N8t/hWI8QICP2Mm021TTiaG2f6UG7qfcZcREAw=;
+ b=S7dbJ/EICTJkDLrFVfV/2JERt7KNqKhU9UEo6qp50ZxNOk45nIeCienyq6MspniURo571mdThvdTkGK60ShCRWQVQl9mKNDPWeezAjXKqCOtr4osnxGyXpLXLutEcUtVwktQx+zIexq4QZRft5ic2pZJpIcK5FyqrCp2otsaYlKGPcWfegB29lbrHoJOe+dM2K8xCOSjopHFl7DGFdU+HUdCoeqigrKxsO0pWv9BWvjaXz3+012Dr8X6vrHb8zfvQUh8OGkW+FPz/tiD/KnILPwu2E14NrucZv/4vG1BUSk5pvLIp1dqtZ1OJy+tjhQHEyC798QIte9uTxrn4hGv4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+c2S/N8t/hWI8QICP2Mm021TTiaG2f6UG7qfcZcREAw=;
+ b=qj253YqfdZmkqWufYMojGGskauDx8wYZTyzOuygeuE+XbKXDdhp584xPc3dlC/I0RqrsN3vJuNu5pIQSiKSnYpEkwNnzW4IHGNDB45xnrMcnP5FLY7rsDevvV6f7qtdoPSFATbskbHIgvOQCtXhQ1xp2IjFED/izWuADtOyGDpB9OvAAacscuFFRgZCIJrjWXD5QXmGyFWN/hH3oUu6Pg/jjc8GlG/LKK+df2ub5oBjZWkg4Drlsql+GQ7AEcUenZmC6NxV281Q808loC8cqmS8aEUTrf1GGPCvLktVr1WW7nuqXctojhD+Dc5E6dO0NPKf8YOl784gEAgmCANSZUg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by SA5PPFCB4F033D6.namprd12.prod.outlook.com (2603:10b6:80f:fc04::8e2) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Sat, 13 Sep
+ 2025 21:29:55 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9115.018; Sat, 13 Sep 2025
+ 21:29:55 +0000
+Message-ID: <b1aea815-68b4-4d6c-9e12-3a949ee290c6@nvidia.com>
+Date: Sat, 13 Sep 2025 14:29:54 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/12] gpu: nova-core: move GSP boot code to a
+ dedicated method
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+References: <20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com>
+ <20250911-nova_firmware-v5-2-5a8a33bddca1@nvidia.com>
+ <e1755470-587b-4a43-8171-3d031b7fb4f4@kernel.org>
+ <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com>
+ <ce74db34-77bc-4207-94c8-6e0580189448@kernel.org>
+ <DCQ074EMFNIK.1OJLWJXWZLDXZ@nvidia.com> <20250913010226.GA1478480@joelbox2>
+ <DCRPJKD0UHDQ.IOWSOB2IK06E@kernel.org> <20250913171357.GA1551194@joelbox2>
+ <CANiq72n50MaMXeWdwvVOEQd3YEHbDRqeeRzbdY8hPnePtq-hnw@mail.gmail.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <CANiq72n50MaMXeWdwvVOEQd3YEHbDRqeeRzbdY8hPnePtq-hnw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0287.namprd03.prod.outlook.com
+ (2603:10b6:a03:39e::22) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|SA5PPFCB4F033D6:EE_
+X-MS-Office365-Filtering-Correlation-Id: 645b7240-4222-485d-19e7-08ddf30caeb9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|10070799003|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y3ZLM01WUkRuc3RVRVh6QVFLOCtmbDB1OHNYeDRILzJGUG5DMDJkcnI5aEpU?=
+ =?utf-8?B?UlRsVlAxMGhPVVFaY3FJMU1lekVlano1UHBWZnAvZDNnQ01mckk4ZngrbWRT?=
+ =?utf-8?B?eGxtY3h4UElhVVVmcUozY0ZDMWk5eWRtSmxGZmtuYWxrcHNqc1UzckR5cDJT?=
+ =?utf-8?B?ZGhpWVZERnZXdlFIa3lPU0Z4cURSb09NeGtUNk9vTUhTcGZvUlZYVW41SHdl?=
+ =?utf-8?B?SitPVlpKdWRvR0E2azltQkphdkNwVUxuRFVzVlhmQVUvZG1UU1lrbWF3c256?=
+ =?utf-8?B?T0s0UVJjcHUxVHhlMjllU3NadzVTU0Q1U3liVFB0aVRnVkVHekZXZzlHczFO?=
+ =?utf-8?B?NEltdDFmMFhzY2lISENFdXdrb0J0aVVJTy9pRS8zSm5BeUxtTms3UzNDcGVo?=
+ =?utf-8?B?Znd0eU9DNEV3N1J4YXdxdWxwTFpLcGFmcllYZjMrWHZnb0pNY0RBWnUrVGp2?=
+ =?utf-8?B?RkwzKzJrU3hVekVDUDExZkQ3YlZ2QnpaM0FKWnN5WVNyMVJ5eDJOYUFCSzZB?=
+ =?utf-8?B?R3Q0MVBwbm5Wa0hxTFFPaEFFVDhHbjNodlhDZ3l6TUtsMjhEVDhQaUZ1SjZa?=
+ =?utf-8?B?Z2xRNzdjR0VvTVZBTTJVb0FlQXY3bmF1VTBPbCtkclduSzZKSi9lemVhWGxz?=
+ =?utf-8?B?U1lFQTFaenlMTUgzR1QrRUJrMVFwSWIvdDJNQ2xBOVpVTzZhcnBiRHFHbEp4?=
+ =?utf-8?B?S3lXK0hyanhOYUQ2UlBYZHA4aFU5NUE3Z2dkL2VoaVhiaU5zNXk0MjJWeFZG?=
+ =?utf-8?B?U0Zic0JVWlAzd3pUUFRDUmlNNXpqL1ZaRDF1N1piY3I5Yyt1eE45UGI4bWFk?=
+ =?utf-8?B?b28ySWlvaFd1cjRraWY2TFlTb1AyNnpodExxM1hIQmlrVklHMGZkQVV3cmVq?=
+ =?utf-8?B?NW9yT0hGZElFZzdCdGlnZjJiMWRXTmRndEUwUnAxRHRXNUVZQ2t0U3VPdHAz?=
+ =?utf-8?B?eFhkckFqbjFxeklkU24weGsxUWhnZXJiUWVjZ0tHQUJMNGxMZm04V2syUnJn?=
+ =?utf-8?B?cnJuVmhwajd6UGo0aVNYcXdGQmVhL25LQWdnMUdrV3BXWGpqOG5va3lJUEpI?=
+ =?utf-8?B?emFyaXVmWmdWdmJob3hvc05QTDNKWXVKRmhITlJZNFhOb2ZQVVZoZHdHRUZN?=
+ =?utf-8?B?V1RTT052V1NmMHM3eTV2WU0xUlEydy83eWJkVUhIZmZ3WFdaNW4rbGlKTzQw?=
+ =?utf-8?B?ODd0bHRmejF3dFhCVWhSdkRtWjRCOHIyQXlSdkMzTW1DQWZ1NE84eEI1VFNC?=
+ =?utf-8?B?MmN1c3BnTjZWU2ZkdjZVVFRFSGQ1czF3OXZZRWNyUUlLRE84NWd0MWxYRDMv?=
+ =?utf-8?B?WGoyQlh6NytUbU1ITXM5YkN3VnVXVWVscER0aWJFeVEyaXdrZGMvMG5YVith?=
+ =?utf-8?B?RCsyVGtDTGpZeUJRRGhZQkpNNllpZy9CSGQvZzlQMGxjdlNRbUtYd1RCSUhw?=
+ =?utf-8?B?QkoybC9uMHUrSHZKSTVtcHk4cEhGUlR4Sy9HMGlqNWZhK2FmWGF0L2dhVFJI?=
+ =?utf-8?B?V29jcHZkVkRLWWg3SU9Bb0NJSXhFZEF2TjcvV3h6VEZsZ3lOQTNJcEhhNDZF?=
+ =?utf-8?B?UWp2ZFZacjNwRDJDYnJFemxvOEJ0ejZLODk2ZW0xU3RqRWxPSmkxbHRmUUIw?=
+ =?utf-8?B?a0NWRXpvY21xdnUrSXo4OTFRcks3dURnTUZWYmpxY2Fnbkhzc1M2b2M5dFlP?=
+ =?utf-8?B?Qm1NNzB4T0Z6ZVF1TklRMTdrbVFCcmNPL2hWVStOcFRhNW1QWmxPUm9aRm51?=
+ =?utf-8?B?UjdEVjZVaVVZNEJrTXVOaTdubHlYdjZUdktaa1VremJPTml3c3VRRkt5WTJB?=
+ =?utf-8?B?ZDlUUzZPNDE1RkVXSWVndmhXYmw5aGo4c3VnTFlpZGpHQy9YVGtrOFlkWlNh?=
+ =?utf-8?B?SHdVT3Ruc0dSdW9vSnJrMkxmNHhhVWZBSW9HZ0tIeW5kMVlWU0VwNk9JWVZH?=
+ =?utf-8?Q?pbCp1iSi7YE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(10070799003)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QTVmSEw1azc4SjZ6SHI2ZUJFYzE5dWdNZGRDZU1xRkJUSTFzc01qQ2s3b29Y?=
+ =?utf-8?B?RFVWbW0wZFZhVEZMVFlOU2s3Rk42WGJxY2MrSzlIZVEyZnVWWmZjUjdFOEFL?=
+ =?utf-8?B?L1dJZmJWY3hpdHoyR05GNVVCVFExUEYxQzVNd3VFa0NHVGZxVlFoV2Y3Y1NZ?=
+ =?utf-8?B?SWUydkthU3I1SSt4b0NrSG15VHZSN29uYUs4UGNWWHljTnhyekp2alllcFFN?=
+ =?utf-8?B?SlFxSVFEWGQveVZJQlo4aFVDUHgzNkQxZnRRcHZZcTVwQUxlZXc1SS9OR2Nn?=
+ =?utf-8?B?RkV5eXdMdjRGWktDRlpaRDVLZE9tRWR6MXRVVTJzQ29ocmhoOFFiQTVCUGpG?=
+ =?utf-8?B?cWN4NVB2bmJzTXR1cEFwQ3RXUDVYdkloSXdqYW9aRDM5d1JaeDRXNVJpeEND?=
+ =?utf-8?B?WitscVZJM1BEb0tvQW4zVVJIYTBFZmFxRHJCOU9FWFh0MWxPaStHYk9LQjFO?=
+ =?utf-8?B?VEdMYlVGRWEvY2JIMVZKZWRaOWYraEdsc1J3SGFUK09lczZvUXg1VkNkd0lx?=
+ =?utf-8?B?V3J2YUZyS1JyZUFXdVgxMTVSRU11YktvN1FsUGh0OEZ3TEJtbU1MUzFiUHlG?=
+ =?utf-8?B?L2U4NXY0MysyNThVR0xDSW9aRFlmaHpYUXY2NlJCMkkxMmRYUURqSXdndUN0?=
+ =?utf-8?B?SUs5VU90UEFKQ2pqbGhKN2dqMVhRVnFDWDBXSkZLNi9nRFF6V1JkdVBtQndw?=
+ =?utf-8?B?TUloNUZTZEE4OGUrYk1UaTN1TEtGL2kwUWNOaUlIVi9jOWJsS2pYaUlBd214?=
+ =?utf-8?B?cjFlcW5FbGpsRTl6bWg1ZVpTc2VOZTRHNW45L2lkdzkyUnZHVWpZRGFxNFk4?=
+ =?utf-8?B?UmIyTFFrRjZEa1Y0ZWlKOGFTZXBZS21UR1gxcGlYWXk0YnZFbGVHdVNkYnVk?=
+ =?utf-8?B?RCt3YjdOck9pSzRIRWQzYlNoaXM2am4rdVJpWHJjc0NwdUlLZENvakdJQlpt?=
+ =?utf-8?B?akdyaXJrcG5RNVRWdXN4NnRPekN4NGpvZFVBYnh3VDgwN2NtNllvbHBsZmJ0?=
+ =?utf-8?B?V1I3WDJSM2N2cHFwN1JPUGppWHhZajBNVDdtVkxvQXlDTFBDVXJ2enpIUTVo?=
+ =?utf-8?B?ZTZKeWYrUUlXeWdIcHJBR0JCTHcvME0wcHhYeHJYUVE4TlR2RzlrYmkrcnVr?=
+ =?utf-8?B?djBZakJ0cEtPOWhWRmE0aDIwbG9xK2liMHhOYml2enBYQ1NHUGQ1ZmNRRldk?=
+ =?utf-8?B?ZHd3SHo2TXhGcnByYm8xajhuUEhobmhka2FvQWpVaE1iZWY3M3dHdWhIakNV?=
+ =?utf-8?B?cW9CdFdVbVZmNVVLcURMb3BoVzBBLzV0a3ZKaHJ4V1ZrOWVTUElkeXJGMHVz?=
+ =?utf-8?B?aVptMHQzdWRVT3JZV0ozQjFETU1zbTFBV0lLVDc0Tm9HVldwb2tlNHVjdmoy?=
+ =?utf-8?B?eHJoUWNNOXhKUkZXbXdjYjJnT3p5cE1sTVZiMFdBY2pTM2kzWUloUUh0YkN2?=
+ =?utf-8?B?Tkhoa1hzUGt3ZlF2eUpyU2d4YlphUUpCSjlPc2RMSWFhbmIyVUx1VU1VcmhI?=
+ =?utf-8?B?bW9Rc3gwMUdUNzRtaHRZeTlIaTZFRW9QVDFpTmpIeTFSK1dqMS9FT0NyaGRG?=
+ =?utf-8?B?akhrN25LaDdpYm1HUXBxMTdDakJFTUpmb2dNaDVEMkFXNGlMUDhjTmFKYjZJ?=
+ =?utf-8?B?cTZ0cmI4TlJDdkQxbjJXTzN0U0J5Qmc0ZFM5TFpNSlg5cUtQLzB2NGZyVEVs?=
+ =?utf-8?B?clFud0JuRkgzTkxmd3FveHpta1lLdDRXbndLeVVPVHgzbWo3a0NTZ2RseHN3?=
+ =?utf-8?B?bVpLU090M0xVZm1pQWNaLzdrR1lWcWdhTk1GQURwM21yK1M2V1JsbEVyMkJI?=
+ =?utf-8?B?dGF1WEl3UklXZnVSM0ZaeFVXWkZ3RkJrK1lhQ2lFNHlwZjRSbnR1Z0hQazgz?=
+ =?utf-8?B?NjVHaWlwNmJROHc1dUxxWjBJYlJERWhCNXdCejM2SzRLcnQ5UFhEMGt0OUxC?=
+ =?utf-8?B?Y0M5anlYM3FUOG1Ec0xtT25wd3p0Q2lWZjEzRHhRcTVtQVpTOHNMMlZKQUk1?=
+ =?utf-8?B?Lyt1ME56OUZUaXZDaXMwV3RhU1dpUTJEalRNK1M2Z0FyYzZSVEo1NjFCUjlv?=
+ =?utf-8?B?NW41bTY3ak9jSmZ0TE5Ub0w5K3hNSndYTFZzaGlPazN0N1BCOWs0RE5xWnEv?=
+ =?utf-8?B?WFRmMnhjSEJsL0ZnaHpCT29kbHlIUXFCdkRyajBNU1J5aXRzSUZwQmMwcHQ0?=
+ =?utf-8?B?SWc9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 645b7240-4222-485d-19e7-08ddf30caeb9
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2025 21:29:55.4776
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: w0m9KoeT30atgm6Xa+Eun70wTvAv/Afqfy853oUOHejpriCgXpXK/Bg9Uesh5Z+8CQKsp/WPF3jQFB4k0cS7SA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPFCB4F033D6
 
-On Fri, 12 Sep 2025 02:44:41 +0800
-Kuan-Wei Chiu <visitorckw@gmail.com> wrote:
-
-> Hi Eric,
+On 9/13/25 1:37 PM, Miguel Ojeda wrote:
+> On Sat, Sep 13, 2025 at 7:14 PM Joel Fernandes <joelagnelf@nvidia.com> wrote:
+>>
+>> I am not alone in that opinion.
 > 
-> On Thu, Sep 11, 2025 at 11:14:18AM -0700, Eric Biggers wrote:
-> > On Thu, Sep 11, 2025 at 03:32:04PM +0800, Guan-Chun Wu wrote:  
-> > > From: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > 
-> > > The base64 decoder previously relied on strchr() to locate each
-> > > character in the base64 table. In the worst case, this requires
-> > > scanning all 64 entries, and even with bitwise tricks or word-sized
-> > > comparisons, still needs up to 8 checks.
-> > > 
-> > > Introduce a small helper function that maps input characters directly
-> > > to their position in the base64 table. This reduces the maximum number
-> > > of comparisons to 5, improving decoding efficiency while keeping the
-> > > logic straightforward.
-> > > 
-> > > Benchmarks on x86_64 (Intel Core i7-10700 @ 2.90GHz, averaged
-> > > over 1000 runs, tested with KUnit):
-> > > 
-> > > Decode:
-> > >  - 64B input: avg ~1530ns -> ~126ns (~12x faster)
-> > >  - 1KB input: avg ~27726ns -> ~2003ns (~14x faster)
-> > > 
-> > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> > > Co-developed-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > > Signed-off-by: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-> > > ---
-> > >  lib/base64.c | 17 ++++++++++++++++-
-> > >  1 file changed, 16 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/lib/base64.c b/lib/base64.c
-> > > index b736a7a43..9416bded2 100644
-> > > --- a/lib/base64.c
-> > > +++ b/lib/base64.c
-> > > @@ -18,6 +18,21 @@
-> > >  static const char base64_table[65] =
-> > >  	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-> > >  
-> > > +static inline const char *find_chr(const char *base64_table, char ch)
-> > > +{
-> > > +	if ('A' <= ch && ch <= 'Z')
-> > > +		return base64_table + ch - 'A';
-> > > +	if ('a' <= ch && ch <= 'z')
-> > > +		return base64_table + 26 + ch - 'a';
-> > > +	if ('0' <= ch && ch <= '9')
-> > > +		return base64_table + 26 * 2 + ch - '0';
-> > > +	if (ch == base64_table[26 * 2 + 10])
-> > > +		return base64_table + 26 * 2 + 10;
-> > > +	if (ch == base64_table[26 * 2 + 10 + 1])
-> > > +		return base64_table + 26 * 2 + 10 + 1;
-> > > +	return NULL;
-> > > +}
-> > > +
-> > >  /**
-> > >   * base64_encode() - base64-encode some binary data
-> > >   * @src: the binary data to encode
-> > > @@ -78,7 +93,7 @@ int base64_decode(const char *src, int srclen, u8 *dst)
-> > >  	u8 *bp = dst;
-> > >  
-> > >  	for (i = 0; i < srclen; i++) {
-> > > -		const char *p = strchr(base64_table, src[i]);
-> > > +		const char *p = find_chr(base64_table, src[i]);
-> > >  
-> > >  		if (src[i] == '=') {
-> > >  			ac = (ac << 6);  
-> > 
-> > But this makes the contents of base64_table no longer be used, except
-> > for entries 62 and 63.  So this patch doesn't make sense.  Either we
-> > should actually use base64_table, or we should remove base64_table and
-> > do the mapping entirely in code.
-> >   
-> For base64_decode(), you're right. After this patch it only uses the last
-> two entries of base64_table. However, base64_encode() still makes use of
-> the entire table.
+> Hmm... I am not sure how to read this.
 > 
-> I'm a bit unsure why it would be unacceptable if only one of the two
-> functions relies on the full base64 table.
+>> This should be first-class in a (systems) language, built into
+>> the language itself?
 
-I think the point is that that first 62 entries are fixed, only the last two
-change.
-Passing the full table might make someone think they can an arbitrary table.
-Clearly this isn't true.
+On this particular point, and *only* this point: some time around
+mid-2025, I started wondering out loud, "shouldn't Rust have some
+built-in understanding, in the language/compiler itself, of the
+concept of pinned memory?"
 
-Having the full table is convenient for the encoder (although the memory
-lookups may be slower than other algorithms).
-This might be ok if you could guarantee the compiler would use conditional moves:
-	if (val > 26)
-		val += 'a' - 'Z' - 1;
-	if (val > 52)
-		val += '0' - 'z' - 1;
-	if (val > 62)
-		val = val == 62 ? ch_62 : ch_63;
-	else
-		val += 'A';
+Because, after doing a modest bit of Rust for Linux coding, I was
+struck by "Rust is a systems programming langauge", vs. "systems
+programming often involves DMA (which generally pins memory)".
+And the other observation is that pin-init discussions are some
+of the most advanced and exotic in Rust for Linux. These things
+don't go together.
 
-This test code seems to do the decode.
-The only conditional is in the path for 62 and 53 (and errors).
-
-int main(int argc, char **argv)
-{
-        char *cp = argv[1];
-        unsigned char ch;
-        unsigned int bank, val;
-        unsigned int ch_62 = '+', ch_63 = '/';
-
-        if (!cp)
-                return 1;
-        while ((ch = *cp++)) {
-                bank = (ch >> 5) * 4;
-                val = ch & 0x1f;
-		// Need to subtract 1 or 16, variants using 'conditional move'
-		// are probably better - but not all cpu have sane ones.
-                val -= ((0xf << 4) >> bank) + 1;
-                if (val >= (((10u << 4 | 26u << 8 | 26u << 12) >> bank) & 0x1e)) {
-                        if (ch == ch_62)
-                                val = 62;
-                        else if (ch == ch_63)
-                                val = 63;
-                        else
-                                val = 255;
-                } else {
-                        val += ((52u << 8 | 0u << 16 | 26u << 24) >> (bank * 2)) & 63;
-                }
-                printf("%c => %u\n", ch, val);
-        }
-        return 0;
-}
-
-	David
+So it seemed like this is a lesson that Rust for Linux has learned,
+that can be taken back to Rust itself. I recommended this as a
+non-urgent Kangrejos topic.
 
 > 
-> Regards,
-> Kuan-Wei
+> I would suggest taking a look at our website and the links there (like
+> issue #2) -- what we are doing upstream Rust is documented.
+
+...and my question was asked before reading through issue #2. So your
+and Danilo's responses seem to be saying that there is already some
+understanding that this is an area that could be improved.
+
+Good!
+
+I believe "issue #2" refers to this, right?
+
+    https://github.com/Rust-for-Linux/linux/issues/2
+
+That's going to take some time to figure out if it interects
+what I was requesting, but I'll have a go at it.
+
 > 
+> (Danilo gave you a direct link, but I mention it this way because
+> there are a lot of things going on, and it is worth a look and perhaps
+> you may find something interesting you could help with).
 > 
+>> except to satisfy paranoia
+> 
+> Using unsafe code everywhere (or introducing unsoundness or UB for
+> convenience) would defeat much of the Rust for Linux exercise.
+> 
+
+Yes. It's only "paranoia" if the code is bug-free. So Rust itself
+naturally will look "a little" paranoid, that's core to its mission. :)
+
+
+thanks,
+-- 
+John Hubbard
 
 
