@@ -1,51 +1,79 @@
-Return-Path: <linux-kernel+bounces-815317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47ACDB56293
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:43:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F7E0B5629A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B7256651B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:43:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7828E1B27DED
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36B921B9CD;
-	Sat, 13 Sep 2025 18:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14BA231A24;
+	Sat, 13 Sep 2025 18:49:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XbfTZai+"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLn3vU3e"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A216F469D;
-	Sat, 13 Sep 2025 18:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B0E222593
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757788975; cv=none; b=ernMR2eS+sZgaVby4jaUbeRwf5aMU4iDgpek3nmCW9xKPn47QdKyBZwsQRrzwpL0fa4rlsq5Rh8ctkgWpvizUtA4BhGGaGR1tbun3/Xo4/PFzYxHgSuMWCzCIuCH2MYys/CrHu3QqR9Hp3itTPgPtfNiIonYBUHgU5JvldxNFrg=
+	t=1757789364; cv=none; b=JYgookPQGS0wqFeHnpS40KAaTN8rIECekIf3etK9MwSqlHmgLas2ZtDC7oSbHq9KlHYk7750tlV2Ch2hGAZ08AJvRceLEEE3jks18UD76m0+R4ZmuWcOlESU2lZWvJljjXEhEfK2ISb/waN25u49he5Q6t57TqE4wbxLaM2UVtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757788975; c=relaxed/simple;
-	bh=SLuR8qxEMfqe5InDtzQ2oGLELyg+xNWm9EY+STIRKqw=;
+	s=arc-20240116; t=1757789364; c=relaxed/simple;
+	bh=If4Dx8GnGsI9EAn+Csky6KF5QogT6E3JWcOUF8Exyug=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=luDYyISFR9nX8c0aoQXtsVRM9ik6Xp/b7hsKV6q9opqZZheDRWrpY4kURyWjCJPh8CDCv52X2UzVD9v3WQ9GjSNPyHvcUeNygp90buTWCti3Pul/j6D7Yyep8Ey763ZA0/d/EMmgnj+zIoCOA3EhWusl6t2Kdo1mTn0gqZU/I2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XbfTZai+; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=COxpmyOT+gvU5PDlLKI7BwcE7Zrd/1BXxX/O8Ztn2XE=; b=XbfTZai+eLISQeMJzWY9/6VOcL
-	l+cQ1JpB6HWKf7ZdSNDD+TzRTs3f6ZPlQPTsPYSYsVnX5ya2zrOm5cZk53bliqDH2iYKU1gS+EwqA
-	MIE7Bd55uhfsAHfGLShpFRm6E56bh8T3eUI3kbwNPNFp8oODheUKp1T55MHOp7xBsgcY+QkAP/iGq
-	c4dsFExPpKigAPVzsRzrBVl9hVdJwRGDdrCZgHUVMLo8W5Zqtl3lIVEO8x9ccghmQ/3+JBe6pY/Ao
-	Yeif04ako0h8Pp4gN3sbkEe/EuU498mmV3y7eCkrZDaKs5TcTlCo8rOEAeDvb+10jC8ZQTvoLsS7Y
-	VoWN2WDQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uxVCz-0000000FqhZ-024R;
-	Sat, 13 Sep 2025 18:42:49 +0000
-Message-ID: <208fa944-6aef-4acb-ba39-d351d364c53e@infradead.org>
-Date: Sat, 13 Sep 2025 11:42:48 -0700
+	 In-Reply-To:Content-Type; b=T9nAsHFe3xR5gBNQnstQMrlNIBy6oxAj9QeqepnJ8+HUz5HhFSoPGPxBiqkZ2Ck8XqpH1c9gOazySV20XPhT+7s2c9j/l3s/Yr3ggrQ0qQU0t5NpHCn+mPUqMuVesnWmhzUw3ZNd3IUisKioGtv20v5/DvRPx+jA4o/xxKeAuHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bLn3vU3e; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-772301f8ae2so2864007b3a.0
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757789362; x=1758394162; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rF3GBCGcRqV69CZBLaKsXGjUvkwSYhGDg0qUaj1ycYE=;
+        b=bLn3vU3e8T50AEZHqvp91RBvtEh7tO2VWyN4zSS1BsInQyQho0KLVaPw4gtwgkT5O5
+         IpNJ1A6lkpgBOgTP5JYiGZzjnIJNPWhzE5IzW+WtiRmR20AqB5IH83CuoX1KKRvTCCGc
+         FLrMqSArEmXsge8MoS2c3VcGiop0OoCpEDuHlyKfgCgK+E87YH1o+L3isZzVDqWyB3x/
+         uXcrXZaHhFacnJs1DbdzFI2FZoEMcbzHp7MksLrjbOj0Y0CjjJckObUAkRr+2hq2BaZg
+         fIGzShRt+rUUc9//cn8goyALhqAXbwQoLh5sQ3pqd1Dt59nlKj7AivgjS2XMgqTsCLQg
+         sLhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757789362; x=1758394162;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rF3GBCGcRqV69CZBLaKsXGjUvkwSYhGDg0qUaj1ycYE=;
+        b=HyudzLW5Ap0oofScbQMke82po5NtoqlrHJR/mB9oavcC/s7AR4x4KVz/GB4SQVGabO
+         B64Dw+It1j4f6AUPqC5+aqIf9mHLMqO1jGgfOrs07C8QF9lbfquUOXh92y1qYRaCYJrz
+         gKEMJ6jDGfzOQ8DcsZpO/XC0+hUEwd+OYJSs5vHRbxtxZlOVEfQ0vx5IzTj1J+t53aUt
+         BVt9UA675kJzv0SdoJd5SpAV1969zx8vHgMPVc1BWgYqulCo5JOreZIiJ1Va1vk4UW2c
+         R486b6tKHIIUyTYVU335zLnue3XD24922Prw8tV24rB/GAQWNehF6SLpTCIF4turZEGT
+         ua4g==
+X-Forwarded-Encrypted: i=1; AJvYcCX4jqkcRyMLoKrf6tvP+AoUY820kWqj0jeGqolYWh8zdUUwoUdb7VMUb8bH5yIjjl9RHiVTy6vYf4tJwHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxahhotA0GZRjgLES7nov9ogYudgkgDVVLkEpuiAp5hpHY+AtNE
+	2+f0A/f9ToaJ+0ug9YrhgASTpQGQ/m9g8KfDP0fHLoqFCsEBpg4FSf/B
+X-Gm-Gg: ASbGncvj7ZEOiHZqlRPFUdNQem8HNOaVWMnm1jNxeR4G6UKXjnJKCu1FbL+NT5MOOiE
+	7x4+08hxfdcYRBtugKGr7AgLEfhqJdgWiYfKabdEPU0XfaQ2FylffjNy0kT0i0ErDol+mN+AnMM
+	0JMstOLjkNIsqrmILdpUKXcMTrXVE3XgQgphUB4nNPF+Xa+3tKBeHksi15aR3AVoUAcls5eI0fT
+	BVNB6m9+3kkPz87D3+iNcEJEiuCxpLvFN/9jPhhDUvpATZFtH4yBqQeHaxoF2NZ0o9jYWgXmXbJ
+	QI04rGg2A1n/6f0hERidQPlhkEKt230sSpM9RvvI0AfBcK3uk0St93YwS4UJvqNOFGLaWYXUK7p
+	X/gNpO1+xJSLcXUEAjecDwgdR0ZQEChJVK9QFVrrhYuChNqIMfHCouu9rVQ==
+X-Google-Smtp-Source: AGHT+IER3H6K6+0dTJYxwoJBwqd4juH0cQSJgRMY2gXd9jT2iPi/p7I16dBYJ0ZSS5sqJlCrdMRqag==
+X-Received: by 2002:a05:6a20:2449:b0:252:f0b6:be9 with SMTP id adf61e73a8af0-26027c23f4fmr9459029637.0.1757789362176;
+        Sat, 13 Sep 2025 11:49:22 -0700 (PDT)
+Received: from [192.168.1.6] ([223.181.119.30])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b54b03cf65csm4920585a12.16.2025.09.13.11.49.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Sep 2025 11:49:21 -0700 (PDT)
+Message-ID: <501a4e0a-2d6e-4a57-9006-91413bd2ebb4@gmail.com>
+Date: Sun, 14 Sep 2025 00:19:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,51 +81,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: w1: ds2482: fix typo in buses
-To: Akiyoshi Kurita <weibu@redadmin.org>,
- platform-driver-x86@vger.kernel.org, mpearson-lenovo@squebb.ca,
- derekjohn.clark@gmail.com, W_Armin@gmx.de
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net
-References: <20250913173413.951378-1-weibu@redadmin.org>
+Subject: Re: [PATCH v2 1/2] arm: dts: ti: omap: Drop unnecessary or unused
+ properties
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Barker <paul.barker@sancloud.com>,
+ Marc Murphy <marc.murphy@sancloud.com>, Tony Lindgren <tony@atomide.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-omap@vger.kernel.org
+References: <20250908-ti-sdhci-omap-v2-0-72927890482f@gmail.com>
+ <20250908-ti-sdhci-omap-v2-1-72927890482f@gmail.com>
+ <20250909-uptight-fluorescent-markhor-4639db@kuoka>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250913173413.951378-1-weibu@redadmin.org>
+From: Charan Pedumuru <charan.pedumuru@gmail.com>
+In-Reply-To: <20250909-uptight-fluorescent-markhor-4639db@kuoka>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 9/13/25 10:34 AM, Akiyoshi Kurita wrote:
-> Correct a spelling mistake in ds2482.rst
-> ("busses" -> "buses").
+On 09-09-2025 12:50, Krzysztof Kozlowski wrote:
+> On Mon, Sep 08, 2025 at 04:17:12PM +0000, Charan Pedumuru wrote:
+>> Remove unnecessary properties like ti,needs-special-reset,
+>> ti,needs-special-hs-handling and cap-mmc-dual-data-rate from the DTS
+>> files as there is no user of them.
 > 
-> No functional change.
+> No user? That's not true:
 > 
-> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
-> ---
->  Documentation/w1/masters/ds2482.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/w1/masters/ds2482.rst b/Documentation/w1/masters/ds2482.rst
-> index 17ebe8f660cd..5862024e4b15 100644
-> --- a/Documentation/w1/masters/ds2482.rst
-> +++ b/Documentation/w1/masters/ds2482.rst
-> @@ -22,7 +22,7 @@ Description
->  -----------
->  
->  The Maxim/Dallas Semiconductor DS2482 is a I2C device that provides
-> -one (DS2482-100) or eight (DS2482-800) 1-wire busses.
-> +one (DS2482-100) or eight (DS2482-800) 1-wire buses.
->  
->  
+> git grep ti,needs-special-reset
 
-Well, I'll leave that one up to Jon. The $internet says that
-"buses" is preferred but also says:
-"In both British English and American English, busses is a less
-common but still acceptable variant."
+Should I remove ti,needs-special-reset property for the compatibles "ti,am335-sdhci" and "ti,am437-sdhci" instead of removing for all mmc nodes? ti,needs-special-hs-handling and cap-mmc-dual-data-rate were defined for board specific, so these two properties should be defined in the YAML file to resolve dtb_check errors or can I remove those properties for those boards too?
 
+> 
+> Best regards,
+> Krzysztof
+> 
 
 -- 
-~Randy
+Best Regards,
+Charan.
 
 
