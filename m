@@ -1,91 +1,84 @@
-Return-Path: <linux-kernel+bounces-815243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 961F7B5619D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFE4B5619E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A1103B42D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C130E170BBB
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FDF12F068B;
-	Sat, 13 Sep 2025 14:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BF32F068F;
+	Sat, 13 Sep 2025 14:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="ynkFk0Al"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGjpKzLN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E089454723;
-	Sat, 13 Sep 2025 14:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530521684B0;
+	Sat, 13 Sep 2025 14:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757774432; cv=none; b=FcpAiFoS5UNE9iFdETScog3KX9PuQK++kue6BxAf3K2oiBBOwMag93bZjVjkIRUUBb7wblaXraoXlI76FoZipBh+5QS7PQjXcP2obTDmHYJzIimifOsz8stP2SLxRXshfSPgLtrkgPusYB/Z8FqjEndWSUflhh3C4FaQWaob0dU=
+	t=1757774493; cv=none; b=hHo9OchosriQfMqYlwHIxTq/gfLrIt1vriNYce4wua9SvHQ0sQsEw3lgsFYykigdLHQ/QeaMrRIAjBnWigo2+hL1LrmlUAZAFAtOvhxM7I3h4XgBDRoIhf6+grAxAZvxAQemRYIVie/U4LmxBoFDD0BvRTZaQ0Y/kuVltAzLlYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757774432; c=relaxed/simple;
-	bh=bs1jj5XpzcErQhSmzXH6wOSW8ZsoNPCNXOynjLDDBJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K1wKTZCkpkdcFFpeqZ0mcWjlWO/+g2rMP7xZ03QJiQZhQcUW5jLBbLJBa758ISGmmjhYivvFEbhJVK8sZdrPctIYVtB+d+012MbwTJUOZuXPqbVtjEoqoYbStXNj5g9D1p8YepGJy9OGGW6ZWvkA91sPwUNcL1wgGFUeYH+2lQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=ynkFk0Al; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4cPDVM5zDfzltBDd;
-	Sat, 13 Sep 2025 14:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1757774426; x=1760366427; bh=RCpZ57OE6NjfFIJI3GSRMcqB
-	ZFGJIths38CZgXKjEq0=; b=ynkFk0Al98OyeHWDZfaFOzAimwhyftg82YaqDEB9
-	Oo2j/HtvOwxUBdyBOdJeIn1Jyc/yyJb/i8JVaNvhmylbX2z0MxpEXvQxVnsajbVG
-	tEEW55KyQQruhypOj+GdKG3c2D9Jm8NAvFT2Q6UxIO+7SnOX/+hOCFx46XJX3UAH
-	TxPajYa5iavB6Rx2jY0DxotE7AzeVT65j8XQqmQe0DCs13eSw6pBQXW5gb/Du4Aj
-	dKFPP3hwisDnzL7q946dpeLc0eZqSWEJGDZ0L/MdHd8a3Y7CWTAmgcwT14Gsau5m
-	hP2SoD0QbGW3BRhKuuukonyYbeDNS7gXfWRSTzPWeMbPOw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ppjM-XIk1y-W; Sat, 13 Sep 2025 14:40:26 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4cPDVF42h2zlrvtM;
-	Sat, 13 Sep 2025 14:40:20 +0000 (UTC)
-Message-ID: <e0559c10-104d-4da8-9f7f-d2ffd73d8df3@acm.org>
-Date: Sat, 13 Sep 2025 07:40:17 -0700
+	s=arc-20240116; t=1757774493; c=relaxed/simple;
+	bh=EJ20niRDRCpy5ltgrVyEy2cwZcfwHRS6Ohbpbbx4muI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=twLbgloVVSHmWR0MTjAydOHxqgyWwi5dfCueBvBh4ZK8ArDCE8ce+8O+6WWRHUlFUDovH0RfTdY2KZyhvOG87xi6iBE4QinIGRBpLquY/T1d/SGSrFYS6WuyT1LXwweu8pDA0n7AgycwFuxxH4Fz9c7vudeDesJjvHhs654eYMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGjpKzLN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFCB9C4CEEB;
+	Sat, 13 Sep 2025 14:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757774493;
+	bh=EJ20niRDRCpy5ltgrVyEy2cwZcfwHRS6Ohbpbbx4muI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VGjpKzLN4UYTp3bsiLFLEWhW0nBO9BvUSpVL7/BGirzEr4KYFo1XSnUhyJNfMUZxk
+	 eDugvl9jmJ+VtyfgD1DbEMZRG+oxVQ84rb/FfrNta7tGhUbDPW1TkP9Llp2Cv7+oZU
+	 3BdbMyOdXWXSTx0BK6fLLWwu/fXSssij/9b8torOS0cdxvzATnkS7bpXyjmZPze/Bh
+	 Ki/UdyUb3QPL7V6Ifmm6UDVH6TKCkwucWWSkcvT8RBuf4jdY8V/lgaqFQ5SFa0B4h2
+	 tQWtV++gJfxWzVRDY6kj2WEY3V4GNBlNHUN0tBSptBAqj0h1xxYnAQ/kE6TetxZim9
+	 ElUU3BrvLIqvw==
+Date: Sat, 13 Sep 2025 11:41:30 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Zecheng Li <zecheng@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] perf dwarf-aux: fix __die_find_scope_cb for
+ namespaces
+Message-ID: <aMWCmkQhlOj4fNol@x1>
+References: <20250825195817.226560-1-zecheng@google.com>
+ <aLKpAxq5QQIwD_Z_@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH liburing v1] barrier: Convert C++ barrier functions into
- macros
-To: Ammar Faizi <ammarfaizi2@gnuweeb.org>, Jens Axboe <axboe@kernel.dk>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- io-uring Mailing List <io-uring@vger.kernel.org>, dr.xiaosa@gmail.com,
- Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-References: <20250913131547.466233-1-ammarfaizi2@gnuweeb.org>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250913131547.466233-1-ammarfaizi2@gnuweeb.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLKpAxq5QQIwD_Z_@google.com>
 
-On 9/13/25 6:15 AM, Ammar Faizi wrote:
-> Convert them into macros just like the C version to fix it.
+On Sat, Aug 30, 2025 at 12:32:19AM -0700, Namhyung Kim wrote:
+> On Mon, Aug 25, 2025 at 07:58:17PM +0000, Zecheng Li wrote:
+> > Currently __die_find_scope_cb goes to check siblings when the DIE
+> > doesn't include the given PC. However namespaces don't have a PC and
+> > could contain children that have that PC. When we encounter a namespace,
+> > we should check both its children and siblings.
+> > 
+> > Signed-off-by: Zecheng Li <zecheng@google.com>
+> 
+> Reviewed-by: Namhyung Kim <namhyung@kernel.org>
 
-Converting functions into macros is a step backwards. Please check
-whether removing the "static" keyword from the inline function 
-definitions in header files is sufficient to suppress the compiler
-warning about TU-local definitions.
+I'm cherry picking this one as well.
 
-Thanks,
-
-Bart.
+- Arnaldo
 
