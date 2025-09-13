@@ -1,281 +1,190 @@
-Return-Path: <linux-kernel+bounces-815217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC025B56151
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:00:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE38B56155
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC881C22049
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:01:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E6D07AC461
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BE52ED843;
-	Sat, 13 Sep 2025 14:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E9E2F067D;
+	Sat, 13 Sep 2025 14:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G1pzWbuO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="srvrJTxS"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127D6199FAB
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 14:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEC663CF;
+	Sat, 13 Sep 2025 14:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757772036; cv=none; b=tFGfjMoVB9AIcaUjwsER5jpR5/3zIIqrxDU5VQ0lggDRJnGHpnaVDeDg8k8uYtG3n9vqZZba+/uyQ4V4ppPrIeiyoetnKQospJEnikK7f4a/6SDtCHeU77X46mBQcOgwNeH8ZsK1qwXVZO3nyBvbkBDR5Yp2jg7MjFTBKJ0IUGE=
+	t=1757772417; cv=none; b=SmaLRv1jxEhsU0ZIrBeaxRfk1fBBiZ4mY/a83t7IMANvgbPc5lLrveKBIwmBZCdbS9q7EeVHIjN0Vc0lHZlkJZC2BS6O3Jx4w8tIjsLu0ouUmDS2HWkKIikKfLdy1hsWr2NuwMsRnyCl9h3zVq+DPpQbLRomlUCLAyMU/nD2Cr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757772036; c=relaxed/simple;
-	bh=nEomdwrY0x+N627biNdsd37XgirP9L8af7tXqvHXYeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WbPblTkahXRHa3Y/CRiSTdpdlNKYKN7Vw5s3J8Xysot0pFsTHPjISSYvWHieYAQR59FDGi3hQbb19irbh8CpK+xT5fzionrK5ZsvWQ9Nup1JaBjhh/Vojc7gpLjUKiKUV62NkoDxFzT1VmQxkdKCgHNvYxjZM9Zu0E4XGy1gxFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G1pzWbuO; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757772035; x=1789308035;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=nEomdwrY0x+N627biNdsd37XgirP9L8af7tXqvHXYeA=;
-  b=G1pzWbuOkiBHEwXS1vvT/zxIez4yjdDWF0NYKSZfhe8uV5x9TszoSIXN
-   RgVmmf+EGw6MlwsFGXi/3rYLY8FFeAknxFd5EhMp2k0TF+RxfvZ6gTFI9
-   MQCcM2MWL9ZiSfSjdSkh1/UY9FOr++oSv5OLACgr8rtpx7tnZy0SuSjRI
-   u/lFhJZb1O/7RWTDRZazXfwzYNHw678pSRin4Feeel/RcfWa6fRYsVuom
-   mP6VGltlyJGEwj9ha8nX818B6LrO22eTcJ7wBZOhQnBstKK/rFO/IADHy
-   C/8UETZdoAnmE9W4Y65WV1d7d4gRjIDi7cEKYT1hIPSZHsEf4MnZUfz+q
-   w==;
-X-CSE-ConnectionGUID: nfjO0sC9QxuG//SAP8jRjA==
-X-CSE-MsgGUID: ykXcZAqjQcWD+Jy3xHN8jQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11552"; a="62724445"
-X-IronPort-AV: E=Sophos;i="6.18,261,1751266800"; 
-   d="scan'208";a="62724445"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2025 07:00:34 -0700
-X-CSE-ConnectionGUID: 7vC6pctMTCy6XcykPzGg9g==
-X-CSE-MsgGUID: 4u37J0pkR22bZhtFWu/Yjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,261,1751266800"; 
-   d="scan'208";a="174151474"
-Received: from igk-lkp-server01.igk.intel.com (HELO 0e586ad5e7f7) ([10.91.175.65])
-  by fmviesa006.fm.intel.com with ESMTP; 13 Sep 2025 07:00:32 -0700
-Received: from kbuild by 0e586ad5e7f7 with local (Exim 4.98.2)
-	(envelope-from <lkp@intel.com>)
-	id 1uxQnm-000000001dh-0Kc5;
-	Sat, 13 Sep 2025 14:00:30 +0000
-Date: Sat, 13 Sep 2025 16:00:27 +0200
-From: kernel test robot <lkp@intel.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>,
-	Elle Rhumsaa <elle@weathered-steel.dev>
-Subject: [tip:locking/core 1/13] error[E0425]: cannot find function
- `atomic_add` in crate `bindings`
-Message-ID: <202509131610.IPwv7fy3-lkp@intel.com>
+	s=arc-20240116; t=1757772417; c=relaxed/simple;
+	bh=h/aHcUcrLTnTYI0mLM9B2w4gQ26lylTJYxKCXczLBqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H71XIlH3tLUDctStBPK+70qbj2k+q5TQAJRKMZ0a7tNkJvKUZilc0csRJKlbl2qP7tRRaWtr46vegQcQ2PaZCXb7zYG4+cpYOHEgeGR41wCTKZTSipHwM8Jd2xFBYIJw3mDQKM5LNB2WWTfAFm0tTpXXW/re6sk64pYVdqxa27U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=srvrJTxS; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id DBFC3E91;
+	Sat, 13 Sep 2025 16:05:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757772338;
+	bh=h/aHcUcrLTnTYI0mLM9B2w4gQ26lylTJYxKCXczLBqw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=srvrJTxSgKt2fLOTbQWRv9AsCT+HONmZzHpImt5H0LZoxpGI5vofSRC40SgEFhhp+
+	 xL5zhhMTLA2E27f8BK9NdjyPN4X7yoavLgVULi8Y1jHmBO/yBYI4XpMPpMw/KUdq3f
+	 Q7QHhWck3dw2DxeZfZZqAasWWhJ0v4iMkkvqyik4=
+Date: Sat, 13 Sep 2025 17:06:28 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH 4/4] media: uvcvideo: Support
+ UVC_CROSXU_CONTROL_IQ_PROFILE
+Message-ID: <20250913140628.GB10328@pendragon.ideasonboard.com>
+References: <20250818-uvc-iq-switch-v1-0-f7ea5e740ddd@chromium.org>
+ <20250818-uvc-iq-switch-v1-4-f7ea5e740ddd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20250818-uvc-iq-switch-v1-4-f7ea5e740ddd@chromium.org>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
-head:   502ae97746ab6d7b7b48d54b6a85a11815f390d0
-commit: eb57133305f61b612252382d0c1478bba7f57b67 [1/13] rust: sync: Add basic atomic operation mapping framework
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250913/202509131610.IPwv7fy3-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250913/202509131610.IPwv7fy3-lkp@intel.com/reproduce)
+On Mon, Aug 18, 2025 at 08:15:39PM +0000, Ricardo Ribalda wrote:
+> The ChromeOS XU provides a control to change the IQ profile for a camera.
+> It can be switched from VIVID (a.k.a. standard) to NONE (a.k.a. natural).
+>
+> Wire it up to the standard v4l2 control.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 32 ++++++++++++++++++++++++++++++++
+>  include/linux/usb/uvc.h          |  5 +++++
+>  2 files changed, 37 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index ff975f96e1325532e2299047c07de5d1b9cf09db..8766a441ad1d8554c0daaed3f87758321684246b 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -376,6 +376,15 @@ static const struct uvc_control_info uvc_ctrls[] = {
+>  				| UVC_CTRL_FLAG_GET_DEF
+>  				| UVC_CTRL_FLAG_AUTO_UPDATE,
+>  	},
+> +	{
+> +		.entity		= UVC_GUID_CHROMEOS_XU,
+> +		.selector	= UVC_CROSXU_CONTROL_IQ_PROFILE,
+> +		.index		= 3,
+> +		.size		= 1,
+> +		.flags		= UVC_CTRL_FLAG_SET_CUR
+> +				| UVC_CTRL_FLAG_GET_RANGE
+> +				| UVC_CTRL_FLAG_RESTORE,
+> +	},
+>  };
+>  
+>  static const u32 uvc_control_classes[] = {
+> @@ -384,6 +393,17 @@ static const u32 uvc_control_classes[] = {
+>  };
+>  
+>  static const int exposure_auto_mapping[] = { 2, 1, 4, 8 };
+> +static const int cros_colorfx_mapping[] = { 1, // V4L2_COLORFX_NONE
+> +					    -1, // V4L2_COLORFX_BW
+> +					    -1, // V4L2_COLORFX_SEPIA
+> +					    -1, // V4L2_COLORFX_NEGATIVE
+> +					    -1, // V4L2_COLORFX_EMBOSS
+> +					    -1, // V4L2_COLORFX_SKETCH
+> +					    -1, // V4L2_COLORFX_SKY_BLUE
+> +					    -1, // V4L2_COLORFX_GRASS_GREEN
+> +					    -1, // V4L2_COLORFX_SKIN_WHITEN
+> +					    0}; // V4L2_COLORFX_VIVID};
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509131610.IPwv7fy3-lkp@intel.com/
+Extar '};' at the end of the line. The indentation also looks a bit
+weird. I'll replace it with
 
-All errors (new ones prefixed by >>):
+static const int cros_colorfx_mapping[] = {
+	1,	/* V4L2_COLORFX_NONE */
+	-1,	/* V4L2_COLORFX_BW */
+	-1,	/* V4L2_COLORFX_SEPIA */
+	-1,	/* V4L2_COLORFX_NEGATIVE */
+	-1,	/* V4L2_COLORFX_EMBOSS */
+	-1,	/* V4L2_COLORFX_SKETCH */
+	-1,	/* V4L2_COLORFX_SKY_BLUE */
+	-1,	/* V4L2_COLORFX_GRASS_GREEN */
+	-1,	/* V4L2_COLORFX_SKIN_WHITEN */
+	0,	/* V4L2_COLORFX_VIVID */
+};
 
->> error[E0425]: cannot find function `atomic_read_acquire` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   201 | / declare_and_impl_atomic_methods!(
-   202 | |     /// Basic atomic operations
-   203 | |     pub trait AtomicBasicOps {
-   204 | |         /// Atomic read (load).
-   ...   |
-   216 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_read` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   201 | / declare_and_impl_atomic_methods!(
-   202 | |     /// Basic atomic operations
-   203 | |     pub trait AtomicBasicOps {
-   204 | |         /// Atomic read (load).
-   ...   |
-   216 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_xchg_relaxed` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-   help: consider importing this function
-   |
-   7   + use core::intrinsics::atomic_xchg_relaxed;
-   |
---
->> error[E0425]: cannot find function `atomic_xchg` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_try_cmpxchg_acquire` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_try_cmpxchg_release` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_try_cmpxchg_relaxed` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_try_cmpxchg` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic64_xchg_acquire` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic64_xchg_release` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic64_xchg_relaxed` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-..
+> +
+>  
+>  static bool uvc_ctrl_mapping_is_compound(struct uvc_control_mapping *mapping)
+>  {
+> @@ -975,6 +995,18 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+>  		.data_type	= UVC_CTRL_DATA_TYPE_BITMASK,
+>  		.name		= "Region of Interest Auto Ctrls",
+>  	},
+> +	{
+> +		.id		= V4L2_CID_COLORFX,
+> +		.entity		= UVC_GUID_CHROMEOS_XU,
+> +		.selector	= UVC_CROSXU_CONTROL_IQ_PROFILE,
+> +		.size		= 8,
+> +		.offset		= 0,
+> +		.v4l2_type	= V4L2_CTRL_TYPE_MENU,
+> +		.data_type	= UVC_CTRL_DATA_TYPE_ENUM,
+> +		.menu_mapping	= cros_colorfx_mapping,
+> +		.menu_mask	= BIT(V4L2_COLORFX_VIVID) |
+> +				  BIT(V4L2_COLORFX_NONE),
+> +	},
+>  };
+>  
+>  /* ------------------------------------------------------------------------
+> diff --git a/include/linux/usb/uvc.h b/include/linux/usb/uvc.h
+> index 12a57e1d34674a3a264ed7f88bed43926661fcd4..22e0dab0809e296e089940620ae0e8838e109701 100644
+> --- a/include/linux/usb/uvc.h
+> +++ b/include/linux/usb/uvc.h
+> @@ -29,6 +29,9 @@
+>  #define UVC_GUID_EXT_GPIO_CONTROLLER \
+>  	{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, \
+>  	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03}
+> +#define UVC_GUID_CHROMEOS_XU \
+> +	{0x24, 0xe9, 0xd7, 0x74, 0xc9, 0x49, 0x45, 0x4a, \
+> +	 0x98, 0xa3, 0xc8, 0x07, 0x7e, 0x05, 0x1c, 0xa3}
+
+I'd like to add a link to the documentation, but searching for the GUID
+didn't turn up any meaningful result. Where can I find documentation for
+this XU ?
+
+The link can be added later, so
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  #define UVC_GUID_MSXU_1_5 \
+>  	{0xdc, 0x95, 0x3f, 0x0f, 0x32, 0x26, 0x4e, 0x4c, \
+>  	 0x92, 0xc9, 0xa0, 0x47, 0x82, 0xf4, 0x3b, 0xc8}
+> @@ -50,6 +53,8 @@
+>  #define UVC_MSXU_CONTROL_FIELDOFVIEW2_CONFIG	0x0f
+>  #define UVC_MSXU_CONTROL_FIELDOFVIEW2		0x10
+>  
+> +#define UVC_CROSXU_CONTROL_IQ_PROFILE		0x04
+> +
+>  #define UVC_GUID_FORMAT_MJPEG \
+>  	{ 'M',  'J',  'P',  'G', 0x00, 0x00, 0x10, 0x00, \
+>  	 0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71}
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+
+Laurent Pinchart
 
