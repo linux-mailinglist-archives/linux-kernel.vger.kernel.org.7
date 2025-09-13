@@ -1,36 +1,36 @@
-Return-Path: <linux-kernel+bounces-815052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BF6B55EB4
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:55:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F28B55EB7
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 194FC1C871FC
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CE355A5F65
 	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF20B2E2F1F;
-	Sat, 13 Sep 2025 05:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74972E6114;
+	Sat, 13 Sep 2025 05:55:58 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7173B2E2DD8;
-	Sat, 13 Sep 2025 05:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD092E2DEF;
+	Sat, 13 Sep 2025 05:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757742935; cv=none; b=caGFun8RVS/5O3KrFPE0XHnEuQvSA5ig8qJkneNtr1hdZujRw2ekL28+uUOmfoiuH8OwDdA1Ltd8xVYd9tIA0mn3ZkkMiwV57CaI6loh3ueZnZljuWGv2Bv6UXR3V7cjoG61mXC+K1IzaNCOC0MF5e8FquFDvYnfz4DQSrQtTms=
+	t=1757742958; cv=none; b=PafsX5efSyNPmN3RIwjx4iNcNcVqvAznb9UXg5uGd4Pchvl8zq/R5YEyulHjPjOPFV8spfMeRXpiktrAkTHfNlKlQVjQ/Sk9ZFKJmC7FNQBf00/czG6pQLFzWfwoV70mkF+X+BCyMlgct0Rk8IB2FfJRoPIj7DfCYFkh5p3ZnF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757742935; c=relaxed/simple;
-	bh=DQfsESmj7Ce6z0+PXfSGkMPULcTYQxPru4tBSh4sXiA=;
+	s=arc-20240116; t=1757742958; c=relaxed/simple;
+	bh=JWb8Zyg/NhVu758uzLscAQXH0MAEqOEfj0DXL1VqHak=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WKo5BsYPsv7lVXv+LwV1xFW6Mg0AXjdWPXFq4Q/4B0aR6g+GTDnOTE314No0aMa6CiX74wUgC8P7sgoXju9vjy19jxK33bQkw+aMdKE5ptVSpYLqIciDU6rWW+oTLZpkT/+iH+jJH1X+Wd3XG+FIQu0Omoag2LTrN24rYOahu+M=
+	 MIME-Version:Content-Type; b=NECIgE/jZjXnVpwCrfMzBr747BZ22BJSpc0elPgw6WH6WLjxTd7UpcXJXJV5mWUkVqYqF/VfAS2yxOMTdLOBVQdv7eRD9JEqD+Ts7aQg9ASXCjrOvCAMnbtzBhougdksvlYWZmn8ES/coXep5rk+ld14xlBcxOsjD5uLpBNzYqo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4F9C4CEEB;
-	Sat, 13 Sep 2025 05:55:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6CA9C4CEEB;
+	Sat, 13 Sep 2025 05:55:57 +0000 (UTC)
 Received: from wens.tw (localhost [127.0.0.1])
-	by wens.tw (Postfix) with ESMTP id F1B455FBEB;
-	Sat, 13 Sep 2025 13:55:31 +0800 (CST)
+	by wens.tw (Postfix) with ESMTP id 830EC5FBEB;
+	Sat, 13 Sep 2025 13:55:55 +0800 (CST)
 From: Chen-Yu Tsai <wens@csie.org>
 To: Stephen Boyd <sboyd@kernel.org>, Jernej Skrabec <jernej@kernel.org>, 
  Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@kernel.org>
@@ -40,8 +40,8 @@ Cc: Andre Przywara <andre.przywara@arm.com>, linux-sunxi@lists.linux.dev,
 In-Reply-To: <20250911174710.3149589-1-wens@kernel.org>
 References: <20250911174710.3149589-1-wens@kernel.org>
 Subject: Re: [PATCH v2 0/7] arm64: allwinner: a523: Enable MCU PRCM and NPU
-Message-Id: <175774293191.3795761.5114630927586047824.b4-ty@csie.org>
-Date: Sat, 13 Sep 2025 13:55:31 +0800
+Message-Id: <175774295553.3795925.6792417362455816621.b4-ty@csie.org>
+Date: Sat, 13 Sep 2025 13:55:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,18 +80,18 @@ On Fri, 12 Sep 2025 01:47:03 +0800, Chen-Yu Tsai wrote:
 > 
 > [...]
 
-Applied to sunxi/shared-dt-headers-for-6.18 in local tree, thanks!
+Applied to sunxi/clk-for-6.18 in local tree, thanks!
 
 [1/7] dt-bindings: clock: sun55i-a523-ccu: Add missing NPU module clock
       commit: e9671ddd82eee96146a7359431a4e1f04ac2b076
 [2/7] dt-bindings: clock: sun55i-a523-ccu: Add A523 MCU CCU clock controller
       commit: 0f610e650d4e979490ccfa4c22ca29ca547f41e7
 [3/7] clk: sunxi-ng: sun55i-a523-ccu: Add missing NPU module clock
-      (no commit info)
+      commit: 828dea389683d8e1df687fbd4521d391df369437
 [4/7] clk: sunxi-ng: div: support power-of-two dividers
-      (no commit info)
+      commit: 44293edd013e5ed48060e6a8848c215fd3bf8ce3
 [5/7] clk: sunxi-ng: add support for the A523/T527 MCU CCU
-      (no commit info)
+      commit: 598e4b6713b54267acc257b3c66a269079ee4d8f
 [6/7] arm64: dts: allwinner: a523: Add MCU PRCM CCU node
       (no commit info)
 [7/7] arm64: dts: allwinner: a523: Add NPU device node
