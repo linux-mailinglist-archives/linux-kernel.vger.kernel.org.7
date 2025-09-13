@@ -1,128 +1,177 @@
-Return-Path: <linux-kernel+bounces-815205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766BBB56131
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:42:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C867DB56134
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B34D1BC4EC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6741BC4EE9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBCD2EF67A;
-	Sat, 13 Sep 2025 13:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DED42EFD99;
+	Sat, 13 Sep 2025 13:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0KAUyAe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="u9bKJf8K"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08FF52E7BA2;
-	Sat, 13 Sep 2025 13:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E17182B4;
+	Sat, 13 Sep 2025 13:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757770929; cv=none; b=uN8kDwsF1oc24Tw8bZZk+l/IC5O8eoBvdY+3TI2J/LXZgLNG3Dd5qbAlqA0aNCj1PI3y4eH1wcr0D3c8zVAnfWoaSK+1df+ZsBvhIYsAKJBPFVDt21Psu6yze9Skq+M6Y9pG4WZHYiZl8QzQsCQ0OzuFspkj/dJSiYEh21hbLf0=
+	t=1757770965; cv=none; b=YCdtAcXAnD5/BI0hgQZ9yAgygZxGwBZTidztpHRNplPwtzJNPBVGUYlhxv80jqL11rkpOoUMUz+bup7b6h/4TkUhZ4I8ekgdXYKwxKdzloBBTMTGujL96tESKyYDb74S8SmuL8+fEI7e2Q+j03rKBY8uXCTqfmzkIV8w/jHK/BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757770929; c=relaxed/simple;
-	bh=Rim3KkEyi7viemKrPUHNd1Ff0UKCC6EKGZx1aIDg/t8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pA0vyXJnAfKrA8LVzaYk6ZDpfpsAfgTDGhojwxkbc/dGi0y0blQj6yDyunUBgiN1vMz6D+UWHXOqMxFhSAJVxTGLL3X2xdQS563s8ITG8DnnRRUtqr4ZzvRuDAbJQ61T1clu/XcKgnO5/Erdeqzvj9DG4YuolbP8iwPuhHZuM9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0KAUyAe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D696CC4CEEB;
-	Sat, 13 Sep 2025 13:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757770928;
-	bh=Rim3KkEyi7viemKrPUHNd1Ff0UKCC6EKGZx1aIDg/t8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Y0KAUyAej47GlDXw0OvlDkIpdjfrhVCvfF+cpflo/3cvJdbeLQfDnCzcRopuWQCHM
-	 iSviL254i8GEwuAAOtLxxC+bIJFGfLS2HaIRs18iEUUBP1CHRQUpYv9UUrqrQxO/FY
-	 o1zdgGR0bNFlrHl1jp+jc50KfnjwKhwscmKvUEfYlfQvdGeKya0OvF7TBrn41LqcpS
-	 Ft/KnIjwJty5T287PBqJVsNfxupNVHuuoQ3WoHtmQj6Z6p60L1TtSReiiHloZvRshN
-	 YorN6P8hIXWKGLJ70hrmtZ88xQT2NfGCKsKPKiNGbEHKvx84pzow9Rnx6qxrabEGk1
-	 UDVsT+2foTmuw==
-Date: Sat, 13 Sep 2025 14:42:00 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] iio: adc: ad7124: add filter support
-Message-ID: <20250913144200.17337dd8@jic23-huawei>
-In-Reply-To: <87245221-c3d0-4026-980d-36562f0b4669@baylibre.com>
-References: <20250911-iio-adc-ad7124-add-filter-support-v2-0-b09f492416c7@baylibre.com>
-	<20250911-iio-adc-ad7124-add-filter-support-v2-5-b09f492416c7@baylibre.com>
-	<CAHp75Vf69X4PmGx2c_9KvQwu1opLDyfL0+TyjwX2wTG9bgtMZw@mail.gmail.com>
-	<87245221-c3d0-4026-980d-36562f0b4669@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757770965; c=relaxed/simple;
+	bh=nLO1F8+f5KOWc4rLVGDrhuASC8iN5AllB+IaQ48VKMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q0ZJEHMZDLQ4wBMCtXYjf0SGLBWgjsvpFIs+h43BkZG2MAV2TdfTLGUDQaMNzElslPJvbcb3IJt8XNxI9fTiR0gFa+j7RRFMAfjK4F8CocCrb9xqUiJ2SQwhkKSpoWQOq2L+krWE/KJ7YSCpEcjar9K8B2g6t7rn6x44cc0c/HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=u9bKJf8K; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5720E6F3;
+	Sat, 13 Sep 2025 15:41:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1757770885;
+	bh=nLO1F8+f5KOWc4rLVGDrhuASC8iN5AllB+IaQ48VKMw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u9bKJf8KXJuQ+Ly/3qOXIlTGLpGdkCj8vskYd0elr4fwROmyR0JlDBTt1KaPcENgF
+	 YpK8LVcvZw0xwHgBvqb7EflCXMEilfW2xcR6+jD70N3o56Ad/xKcJ8/OOzFveboaW+
+	 GtG6bDI5pfqdiyFQ4VgXv8qfeTuwS/OTyDFFUgls=
+Date: Sat, 13 Sep 2025 16:42:16 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Hans de Goede <hansg@kernel.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH 3/4] media: uvcvideo: Run uvc_ctrl_init_ctrl for all
+ controls
+Message-ID: <20250913134216.GA10328@pendragon.ideasonboard.com>
+References: <20250818-uvc-iq-switch-v1-0-f7ea5e740ddd@chromium.org>
+ <20250818-uvc-iq-switch-v1-3-f7ea5e740ddd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250818-uvc-iq-switch-v1-3-f7ea5e740ddd@chromium.org>
 
-On Fri, 12 Sep 2025 09:27:47 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+Hi Ricardo,
 
-> On 9/11/25 11:49 PM, Andy Shevchenko wrote:
-> > On Fri, Sep 12, 2025 at 12:43=E2=80=AFAM David Lechner <dlechner@baylib=
-re.com> wrote: =20
-> >>
-> >> Add support to the ad7124 driver for selecting the filter type.
-> >>
-> >> The filter type has an influence on the effective sampling frequency of
-> >> each channel. For sinc3+pf{1,2,3,4}, the sampling frequency is fixed.
-> >> For sinc{3,4} (without post filter), there is a factor of 3 or 4
-> >> depending on the filter type. For the extra +sinc1, there is an extra
-> >> averaging factor that depends on the power mode.
-> >>
-> >> In order to select the closest sampling frequency for each filter type,
-> >> we keep a copy of the requested sampling frequency. This way, if the
-> >> user sets the sampling frequency first and then selects the filter typ=
-e,
-> >> the sampling frequency will still be as close as possible to the
-> >> requested value.
-> >>
-> >> Since we always either have the SINGLE_CYCLE bit set or have more than
-> >> one channel enabled, the sampling frequency is always using the
-> >> "zero-latency" calculation from the data sheet. This is only documented
-> >> for the basic sinc{3,4} filters, so the other filter types had to be
-> >> inferred and confirmed through testing.
-> >>
-> >> Since the flat filter type list consists of multiple register fields,
-> >> the struct ad7124_channel_config::filter_type field is changed to the
-> >> enum ad7124_filter_type type to avoid nested switch statements in a
-> >> lot of places. =20
-> >=20
-> > ...
-> >  =20
-> >> -       factor =3D 32 * 4; /* N =3D 4 for default sinc4 filter. */
-> >> -       odr_sel_bits =3D DIV_ROUND_CLOSEST(fclk, odr * factor +
-> >> -                                              odr_micro * factor / MI=
-CRO);
-> >> -       odr_sel_bits =3D clamp(odr_sel_bits, 1, 2047);
-> >> +       divisor =3D cfg->requested_odr * factor +
-> >> +                 cfg->requested_odr_micro * factor / MICRO;
-> >> +       odr_sel_bits =3D clamp(DIV_ROUND_CLOSEST(fclk, divisor), 1, 20=
-47); =20
-> >=20
-> > I have a d=C3=A9j=C3=A0 vu feeling here. Is this similar code to elsewh=
-ere?  Can
-> > it be factored out to a helper?
-> >=20
-> >  =20
->=20
-> It is changing the same code from a previous commit, not duplicating
-> it. I guess I could have introduced the divisor variable in the
-> earlier commit and saved some churn.
-For this and the previous patch, to me it feels like we are letting
-aiming for perfect patch break up be the enemy of a good result.
-So I've applied them both but as I don't know if Andy will agree
-not his RB.
+Thank you for the patch.
 
-Jonathan
+On Mon, Aug 18, 2025 at 08:15:38PM +0000, Ricardo Ribalda wrote:
+> The function uvc_ctrl_init_ctrl() is called for every control for every
+> entity, but it exits early if the entity is a extension unit. The comment
+> claims that this is done to avoid querying XU controls during probe.
+> 
+> We only query a control if its entity GUIDs and index matches the
+> uvc_ctrls list. There are only controls for the following GUIDs:
+> UVC_GUID_UVC_PROCESSING, UVC_GUID_UVC_CAMERA and
+> UVC_GUID_EXT_GPIO_CONTROLLER.
+> 
+> In other words, XU controls will not be queried even without this
+> condition.
 
+Looking at the commit that introduced this code
+
+commit 52c58ad6f95ff60343bf0c517182d5f649ca0403
+Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date:   Wed Sep 29 16:03:03 2010 -0300
+
+    [media] uvcvideo: Delay initialization of XU controls
+
+we see it contains the following change
+
+-       /* Query XU controls for control information */
+-       if (UVC_ENTITY_TYPE(ctrl->entity) == UVC_VC_EXTENSION_UNIT) {
+-               struct uvc_control_info info;
+-               int ret;
+-
+-               ret = uvc_ctrl_fill_xu_info(dev, ctrl, &info);
+-               if (ret < 0)
+-                       return;
+-
+-               ret = uvc_ctrl_add_info(dev, ctrl, &info);
+-               if (ret < 0) {
+-                       /* Skip the control */
+-                       uvc_trace(UVC_TRACE_CONTROL, "Failed to initialize "
+-                               "control %pUl/%u on device %s entity %u\n",
+-                               info.entity, info.selector, dev->udev->devpath,
+-                               ctrl->entity->id);
+-                       memset(ctrl, 0, sizeof(*ctrl));
+-               }
++       /* XU controls initialization requires querying the device for control
++        * information. As some buggy UVC devices will crash when queried
++        * repeatedly in a tight loop, delay XU controls initialization until
++        * first use.
++        */
++       if (UVC_ENTITY_TYPE(ctrl->entity) == UVC_VC_EXTENSION_UNIT)
+                return;
+-       }
+
+
+This is followed by
+
+        for (; info < iend; ++info) {
+                if (uvc_entity_match_guid(ctrl->entity, info->entity) &&
+                    ctrl->index == info->index) {
+                        uvc_ctrl_add_info(dev, ctrl, info);
+                        break;
+                 }
+        }
+
+        if (!ctrl->initialized)
+                return;
+
+(this loops over uvc_ctrls). As uvc_ctrls doesn't contain any non-XU
+control, you're right that the function never calls uvc_ctrl_add_info()
+for XU controls. The ctrl->initialized check then causes the function to
+return, as uvc_ctrl_add_info() wasn't called and initialized is false.
+The entity type check was therefore not needed, and can be removed.
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> In future patches we want to add ChromeOS XU controls that need to the
+> initialized. We will make sure that all cameras with ChromeOS XU can
+> be queried at probe time.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 9 ---------
+>  1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index efe609d7087752cb2ef516eef0fce12acd13e747..ff975f96e1325532e2299047c07de5d1b9cf09db 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -3181,15 +3181,6 @@ static void uvc_ctrl_init_ctrl(struct uvc_video_chain *chain,
+>  {
+>  	unsigned int i;
+>  
+> -	/*
+> -	 * XU controls initialization requires querying the device for control
+> -	 * information. As some buggy UVC devices will crash when queried
+> -	 * repeatedly in a tight loop, delay XU controls initialization until
+> -	 * first use.
+> -	 */
+> -	if (UVC_ENTITY_TYPE(ctrl->entity) == UVC_VC_EXTENSION_UNIT)
+> -		return;
+> -
+>  	for (i = 0; i < ARRAY_SIZE(uvc_ctrls); ++i) {
+>  		const struct uvc_control_info *info = &uvc_ctrls[i];
+>  
+
+-- 
+Regards,
+
+Laurent Pinchart
 
