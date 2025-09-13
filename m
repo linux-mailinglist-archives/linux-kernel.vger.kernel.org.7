@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-815149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 119BCB5604A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:40:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FAEB56049
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:40:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E0E1C82CBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 10:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6063AC0A20
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 10:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587EF2367A0;
-	Sat, 13 Sep 2025 10:40:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oQZyTZbN"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF392EB86C;
+	Sat, 13 Sep 2025 10:40:32 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB5918E25
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE0318E25;
+	Sat, 13 Sep 2025 10:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757760035; cv=none; b=l7p78IIZ4SkZWEiMo2XBh/I4S8sVOrJL/wpg15mduOxCk6NHpbksNKH7tLTkatr0E9cZ8+BKLarG2adtFtoUTR/qJxGJYwwYwf5DXroBQfzacnEdD+XKwXAkvRZCz/MYaXNKSc1PVhaNSw01ghg9at+PvkPMtQP4RMPoyRHaXO0=
+	t=1757760031; cv=none; b=Av3KyJ5kjXJxuGlU0ySC6HAbg/jHnzB2bhvpgKwpZ9zHM+Mee+t4zk45azWDLe0nY8aAU9NMm9egkDEpcdM1psRLF7Q/YWkngqqFpKxYFzAQN9FjCiFqsWFV0mKm4KGFg6C9ZGsmRkyhTK5ZWrlRiVcpI+oI21JGlWDL+dmof1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757760035; c=relaxed/simple;
-	bh=7kwY4K3spBa+KkC0kt2vnh741tWhEjIo0BO1Ky8KVtE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=udROM4g2F1yolhHkFeW+roQ7tmAtEUSmzsSl93w+BhUehk/AQrAFRDUEQ30IRxnTgJBwdXvxg9R1okkY7D1z3/Xdt0ZTNTFk2mgwCgEcBycj2nXXO4z12utO/pVKf842wV6TDcQ2XJOPO+pf5TgdNUeF2t6osyL1YETcsF3jo1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oQZyTZbN; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757760021;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bROeHm5yLYSDjWrQN66sseRBMeR9fQM3QsxmZdeOcXQ=;
-	b=oQZyTZbNyW/V3QofscmZ36jTcOBrwoxdDW+F5I4yeeWfEE1HrGuUapma1InOUtDCIgIfgh
-	yZSf1e8xOKvILCOIH80InZ9gQD48TeJYYVo9aT89UPE9YEvcYy3um3oqYKkSdqdyc+qrOK
-	P7QFy8e6rOatT2OcdhZJs6RPaKzAZ1M=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] initrd: Fix logged Minix/Ext2 block numbers in identify_ramdisk_image()
-Date: Sat, 13 Sep 2025 12:39:54 +0200
-Message-ID: <20250913103959.1788193-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757760031; c=relaxed/simple;
+	bh=UMCdlUdE4CgcOXDd6+wHo8Ks8fxQLTZteOew0yo/mBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IPxHqZXKiNmgGGLk0i4bZ99G9mP4WfBQP0dVxk9DCA0MgCdaA9QnT25XfbnrJcFTyVbnrRofIylzBzUUTVMUiONdALizskHJ2otpIlU1BRQIfPaVKjXbF+UMu7788Tw4HHBIVLDh0Pmja2XNPPwjWRJxSVStl5unuO7qGRCyvh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4cP7470bhczdcHw;
+	Sat, 13 Sep 2025 18:35:51 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id E192618048E;
+	Sat, 13 Sep 2025 18:40:24 +0800 (CST)
+Received: from kwepemq200001.china.huawei.com (7.202.195.16) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 13 Sep 2025 18:40:24 +0800
+Received: from [10.67.120.171] (10.67.120.171) by
+ kwepemq200001.china.huawei.com (7.202.195.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 13 Sep 2025 18:40:23 +0800
+Message-ID: <868ceb0e-f4ba-4495-a1e1-0e387049281a@huawei.com>
+Date: Sat, 13 Sep 2025 18:40:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] uacce: implement mremap in uacce_vm_ops to return
+ -EPERM
+To: Greg KH <gregkh@linuxfoundation.org>, Zhangfei Gao
+	<zhangfei.gao@linaro.org>
+CC: <wangzhou1@hisilicon.com>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@huawei.com>, <linux-crypto@vger.kernel.org>,
+	<fanghao11@huawei.com>, <shenyang39@huawei.com>, <qianweili@huawei.com>,
+	<linwenkai6@hisilicon.com>, <liulongfang@huawei.com>
+References: <20250822103904.3776304-1-huangchenghai2@huawei.com>
+ <20250822103904.3776304-4-huangchenghai2@huawei.com>
+ <2025082208-coauthor-pagan-e72c@gregkh>
+ <CABQgh9GEZSasZq5bDthQrTZnJ_Uo8G-swDsrM_gWCecWbtTKgA@mail.gmail.com>
+ <2025090608-afloat-grumbling-e729@gregkh>
+From: huangchenghai <huangchenghai2@huawei.com>
+In-Reply-To: <2025090608-afloat-grumbling-e729@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemq200001.china.huawei.com (7.202.195.16)
 
-Both Minix and Ext2 filesystems are located at 'start_block + 1'. Update
-the log messages to report the correct block numbers.
 
-Replace printk(KERN_NOTICE) with pr_notice() to avoid checkpatch
-warnings.
+On Sat, 6 Sept 2025 at 20:03, Greg KH wrote:
+> On Thu, Aug 28, 2025 at 01:59:48PM +0800, Zhangfei Gao wrote:
+>> Hi, Greg
+>>
+>> On Fri, 22 Aug 2025 at 19:46, Greg KH <gregkh@linuxfoundation.org> wrote:
+>>> On Fri, Aug 22, 2025 at 06:39:03PM +0800, Chenghai Huang wrote:
+>>>> From: Yang Shen <shenyang39@huawei.com>
+>>>>
+>>>> The current uacce_vm_ops does not support the mremap operation of
+>>>> vm_operations_struct. Implement .mremap to return -EPERM to remind
+>>>> users
+>>> Why is this needed?  If mremap is not set, what is the value returned?
+>> Did some debug locally.
+>>
+>> By default, mremap is permitted.
+>>
+>> With mremap, the original vma is released,
+>> The vma_close is called and free resources, including q->qfr.
+>>
+>> However, vma->vm_private_data (q) is copied to the new vma.
+>> When the new vma is closed, vma_close will get q and q->qft=0.
+>>
+>> So disable mremap here looks safer.
+>>
+>>> And why is -EPERM the correct value to return here?  That's not what the
+>>> man pages say is valid :(
+>> if disable mremap, -1 is returned as MAP_FAILED.
+>> The errno is decided by the return value, -EPERM (-1) or -EINVAL (-22).
+>> man mremap only lists -EINVAL.
+>>
+>> However, here the driver wants to disable mremap, looks -EPERM is more suitable.
+> Disabling mremap is not a permission issue, it's more of an invalid
+> call?  I don't know, what do other drivers do?
+>
+> thanks,
+>
+> greg k-h
+Hi Greg,
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- init/do_mounts_rd.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Thank you for your feedback.
 
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index ac021ae6e6fa..9283fdd605f0 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -148,9 +148,8 @@ identify_ramdisk_image(struct file *file, loff_t pos,
- 	/* Try minix */
- 	if (minixsb->s_magic == MINIX_SUPER_MAGIC ||
- 	    minixsb->s_magic == MINIX_SUPER_MAGIC2) {
--		printk(KERN_NOTICE
--		       "RAMDISK: Minix filesystem found at block %d\n",
--		       start_block);
-+		pr_notice("RAMDISK: Minix filesystem found at block %d\n",
-+			  start_block + 1);
- 		nblocks = minixsb->s_nzones << minixsb->s_log_zone_size;
- 		goto done;
- 	}
-@@ -158,9 +157,8 @@ identify_ramdisk_image(struct file *file, loff_t pos,
- 	/* Try ext2 */
- 	n = ext2_image_size(buf);
- 	if (n) {
--		printk(KERN_NOTICE
--		       "RAMDISK: ext2 filesystem found at block %d\n",
--		       start_block);
-+		pr_notice("RAMDISK: ext2 filesystem found at block %d\n",
-+			  start_block + 1);
- 		nblocks = n;
- 		goto done;
- 	}
--- 
-2.51.0
+The reason we need to explicitly disable mremap is that when the
+driver does not implement .mremap, it uses the default mremap
+method. This could lead to a risk scenario:
 
+An application might first mmap address p1, then mremap to p2,
+followed by munmap(p1), and finally munmap(p2). Since the default
+mremap copies the original vma's vm_private_data (i.e., q) to the
+new vma, both munmap operations would trigger vma_close, causing
+q->qfr to be freed twice(qfr will be set to null here, so repeated 
+release is ok).
+
+Regards,
+ChengHai
 
