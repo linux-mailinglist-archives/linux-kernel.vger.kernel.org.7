@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-815174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF09B560A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:22:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D94B560A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B02C1B24BB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:23:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E3E485589
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940432EC573;
-	Sat, 13 Sep 2025 12:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA532EC55C;
+	Sat, 13 Sep 2025 12:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iOfN1J2J"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n2x5DhhU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98D2D2EB5D8
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 12:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2AE42EC573;
+	Sat, 13 Sep 2025 12:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757766151; cv=none; b=eIwXC53N5DlZ2hm2wuNG6m0mb/IszYA6deXJrZqrvwAALSOr0IddM76NgsO60uAXF/5FqgnSjFzWdI/6OchxESz6Kc3g7ByC5+QxG/DoC/6Nh4Ti4ahP/PHTo4a2uGCyr6k7/Xs0im5F83JNVm5wkHzt/iNRehPkEN+1EnVoOks=
+	t=1757766170; cv=none; b=k21gA9eP9vwPzWmI93AGhxumogt8GXW70QkPjpAnxh3zfnK31BiDSTWdZlutGGBsNYOf1R02nCl+g8tlmOufXZaIZMYC1RafUQqi6j3S7/Cmz4XqgDFGn7gKu0LQIeL4IGuTyef6HLROv0wyiu8QHKBz7FlQ7HlaoQh3XFccXBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757766151; c=relaxed/simple;
-	bh=171/ewW80b21xzRc5ZzHiwlW5EO38WnFcO9L9j2rMB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JT9gC4azTtlacnDpQ3MC7yi2VpEvAJKKytYEFC6VJeWJncl38kvq3yFH4NJQkBG1msOOSL9akdZfUgctsvzUB+ezQnM9OuXJH/udOrv3P91Xxh/4YehxSAoIXgsYVTZMBPfuTXZiB9vvo6LV+0iAvSmRD/SP9fVxfTjFNcBASFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iOfN1J2J; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-329a41dc2ebso2413956a91.3
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:22:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757766149; x=1758370949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=60AwFUTClZtbec6HlNW9ztZwz66oBtfZkSSuuGwT+0c=;
-        b=iOfN1J2JtmlKbqh4m+P4P9n1R5eKIrvfvdW/p88SyfaC+ian2eBbKAMNSv7MbR5n/O
-         G/2eci67YeUYGlYIM+oWC+Xsblvmz1NVxigHrd9LM7Fdn5LarWw5l+bFWHt3mS5kgM7R
-         80gYdlzXkJ2DW21mD27aAgt7EGU7k1FzeSPfOEoJjqZZCYY4T4DaFMZ26hHuZlENYJz8
-         78xjtBcmySWXVllZG0wBwElrhXDqb4PJnGLOkQgWP9WK3dwRXEt5B0AIX4LUrxX+ifkC
-         PgJ1dq5Xnu4LwyLJ1K/4+W06smcomyrYaqGvrzkyCjVBYNdZdzIO+l6taVjP+huCqVaj
-         MTFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757766149; x=1758370949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=60AwFUTClZtbec6HlNW9ztZwz66oBtfZkSSuuGwT+0c=;
-        b=OF6O3LzVW9IrMPRNpmn/+/sBukifu4rgxKhsEP477DSc3OhDXpJMavB0KsVGOLmRiU
-         bOZFhGpHZmNna7uqkGjTuCLg9Bf7/Xy7jtf0l9M6gtGzcqz8WtvpA3gdePke9ZIsCS39
-         OFjATFCiTjg53fHGkW/oPp41yp5oIqR8ywkqQphEsnN/keK6YNPDkx/G/bVxmhGNmeJC
-         HfzQHTCc0RjZmytJofNMNdERLk9uxTQuCWS1u+BdHOAPYUorhwHHQrnjtpYqxdguU+MX
-         kV4D5uARo7QaGS/thG3OEUwu5hIAndzUsQQyfZgMEpDgcHwBHC6nqUsyU4dJhKC61/7n
-         LCow==
-X-Forwarded-Encrypted: i=1; AJvYcCUj+jwh7/D0Wz+N1I3gj5q4ibEWsqKpTOHyJEjT+1rDGhPBoR/UjpSO3Nu5ia10+jPqXY4bD3sVxFHtxkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwU3tpdJ0XBqyqdZsCcn9X7tcC3JPhSiBckdZLCysrteNZQgT4U
-	AzXDKmH4eRjtilAghhxBP+ZOejsGhB+lh4nR4swybDNvDYDKl+V765x6m87LzjC6VKvym2fB/5M
-	M2glFKzhnAhoSTIGKPbW83x1CgwnnjiY=
-X-Gm-Gg: ASbGncuvhKnoTp3TaAoIGkzIsJtmtk7opG0pAYD0Mc0tY4mw1WRQ1cXX3ejRbFapwyh
-	0UcavToyAM2JZXpTDWz8KzDaqtqGS+fyXO+vLiAyfQuKuN5xGoYslR/G0p00rw7+ks9Drhbnz/n
-	Zg0HsIFbOZTNbzxq6Ca5UkC3BurKOfN7Zx1P6YE3ecr26DL+skAYvy6xo9jJlKKm4vSS1Z39cwc
-	iXvuDzRkVVZ3HaFAwwha7faZZlP8e6MBc7Xv0pGoQilaZWtMeRG2UfRyB+JIsqCqbF55tWC5K27
-	ZKWg2gHR31L9HqfaClVt/q9erco=
-X-Google-Smtp-Source: AGHT+IGV9NMTo+uQTqcQx5A7bzhqPHnVVPJBG6TLtLVtjnmYb/wzqX3fQzybGaOnqUlWtZnFVMNGDxqHijiu7bIPNCk=
-X-Received: by 2002:a17:90b:3d8c:b0:32e:ef4:bc7c with SMTP id
- 98e67ed59e1d1-32e0ef4bf3cmr2708537a91.24.1757766148752; Sat, 13 Sep 2025
- 05:22:28 -0700 (PDT)
+	s=arc-20240116; t=1757766170; c=relaxed/simple;
+	bh=z0sFtHeP/KuEGcrHcbfYqU2tVN3HyUc6UcNhLNDNyDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ns9/mpUE8Bkub3zYjqDDY2zJnF57mlIQAhoCPwwqd8laXiULUjF/hzJjAf8RMgfYw51+bCn+o1xvi3bl0NtYXaSaCRHPonPD0dwQndHMojt1h2ic8dBAAkMTbNjWO4d7cl2OMi8Wk9n0QGklIOs8eYWDS31txBznAopEuU1sJMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n2x5DhhU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76E7EC4CEEB;
+	Sat, 13 Sep 2025 12:22:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757766170;
+	bh=z0sFtHeP/KuEGcrHcbfYqU2tVN3HyUc6UcNhLNDNyDg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=n2x5DhhUeI3xEtFSeZxSvF18v2NoUNgu00zLRW4VJPuLySG0y1cCyF0+MfEnzFMWN
+	 Nmmi92um57a/EvrmemLJPs9M4/gRVfSbPvGP0Jhwdf4Dz9ZOvB0fqGZ5QAbTT9GMPg
+	 F6AY6k9XZwrBjgIq65X3/cZO+HleLB+KKfpuIhDdzzTEVG4gIz4YQAAu00dJ6/48r2
+	 1M0ZBserZeKX4U0ogZRaihfST0J1tbFqUuTrPQOLyTTZ/QdlJpErU0mz08ZNlARj5s
+	 6oHCaSE3MJgpzDkPIXCH8SfS74V42mRn1ug4zFM/bfDoVuF7uDi3n/hfVS/zio/nzr
+	 gTXzkyxrouh+g==
+Date: Sat, 13 Sep 2025 13:22:41 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Petre Rodan <petre.rodan@subdimension.ro>
+Cc: David Lechner <dlechner@baylibre.com>, Nuno S?? <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/14] iio: accel: bma220: migrate to regmap API
+Message-ID: <20250913132241.0047e93b@jic23-huawei>
+In-Reply-To: <aMQ0JlbqIuMwDBpQ@sunspire>
+References: <20250910-bma220_improvements-v2-0-e23f4f2b9745@subdimension.ro>
+	<20250910-bma220_improvements-v2-8-e23f4f2b9745@subdimension.ro>
+	<20250910191225.43a89a1f@jic23-huawei>
+	<aMQ0JlbqIuMwDBpQ@sunspire>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912131459.6833-1-opensource206@gmail.com> <cbab615b1b17ce869cf2359c6a16f54afb17802e.camel@collabora.com>
-In-Reply-To: <cbab615b1b17ce869cf2359c6a16f54afb17802e.camel@collabora.com>
-From: opensource india <opensource206@gmail.com>
-Date: Sat, 13 Sep 2025 17:52:16 +0530
-X-Gm-Features: Ac12FXxbYuBZHrqqYSRjrQYBopLcayEcZ2HOucrJxzaE2cRRSmyIg1_AfqwW60E
-Message-ID: <CAKPKb89KkEz6nitJk6sX59J=AX1FaG4jA2EBXfRLdGHms8ER4w@mail.gmail.com>
-Subject: Re: [PATCH] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Cc: mchehab@kernel.org, hverkuil@kernel.org, ribalda@chromium.org, 
-	laurent.pinchart@ideasonboard.com, yunkec@google.com, 
-	sakari.ailus@linux.intel.com, james.cowgill@blaize.com, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 12, 2025 at 9:07=E2=80=AFPM Nicolas Dufresne
-<nicolas.dufresne@collabora.com> wrote:
+On Fri, 12 Sep 2025 17:54:30 +0300
+Petre Rodan <petre.rodan@subdimension.ro> wrote:
 
-> The changes looks good and seems safer. I will have to run some tests to =
-make
-> sure we don't regress anything. About your commit message, there is a pus=
-h to
-> make things more imperative, so that would mean reformatting to the follo=
-wing
-> and dropping the first paragraph:
->
->    Complete the "TODO: PROFILES" by enforcing all profile-specific constr=
-aints
->    as defined by the AV1 specification (Section 5.5.2, "Color config synt=
-ax"):
->
->    - Profile 0: 8/10-bit only, 4:2:0 subsampling, no monochrome
->    - Profile 1: 8/10-bit only, 4:4:4 only, no monochrome
->    - Profile 2: 8/10/12-bit, 4:2:0 / 4:2:2 / 4:4:4 allowed, monochrome al=
-lowed
->
->    Additionally, when the MONO_CHROME flag is set:
->    - subsampling_x and subsampling_y must both be 1
->    - separate_uv_delta_q must be 0
->
->    These checks prevent userspace from providing invalid AV1 sequence
->    headers that would otherwise be accepted, leading to undefined
->    driver or hardware behavior.
->
-> If you are fine with this change I can apply. Otherwise please include my=
- Rb in
-> your v2.
->
-> Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+> Hi Jonathan,
+> 
+> On Wed, Sep 10, 2025 at 07:12:25PM +0100, Jonathan Cameron wrote:
+> > On Wed, 10 Sep 2025 10:57:13 +0300
+> > Petre Rodan <petre.rodan@subdimension.ro> wrote:
+> >   
+> > > Switch to regmap API.
+> > >   
+> > There are a few things in here that seem unrelated to the regmap change
+> > and should be in separate patches where we can review and discuss them more easily.
+> > 
+> > Thanks,
+> > Jonathan
+> >   
+> > > diff --git a/drivers/iio/accel/bma220_core.c b/drivers/iio/accel/bma220_core.c  
+> > >>  static irqreturn_t bma220_trigger_handler(int irq, void *p)  
+> > >  {  
+> [..]
+> > >  	iio_push_to_buffers_with_ts(indio_dev, &data->scan, sizeof(data->scan),
+> > > -				    pf->timestamp);  
+> > 
+> > Why the move to grabbing timestamps in the thread rather than the top half?
+> > 
+> > I don't necessarily mind that change but doesn't feel appropriate to have
+> > it in the same patch as the regmap change.  
+> 
+> one of my unit tests [1] fails when using the original code (all timestamps are
+> 0 when reading the IIO buffer with iio_generic_buffer)
+> 
+> would be easier to just split modification into new patch instead of debugging
+> the old code :)
+> 
+> [1]: https://codeberg.org/subDIMENSION/lkm_sandbox/src/branch/main/bosch_bma220/unit-tests/permanent_latch/test.sh
 
-Thank you for your feedback. I=E2=80=99ve added some more changes and sent
-patch v3 in this series.
-Could you please review it?
+Ah. So this is the problem we've had various attempts to fix of not all triggers
+have a top half.  Definitely wants to be a separate patch with an explanation of
+why you are making the change.  Hopefully someone will get time to finish of
+fixing this up more generically but I don't mind papering over it in a particular
+driver in the meantime because the generic fix is rather complex.
 
-Regards,
-Pavan Bobba
+Jonathan
+
+> 
+> best regards,
+> peter
+
 
