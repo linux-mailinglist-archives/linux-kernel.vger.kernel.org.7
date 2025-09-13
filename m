@@ -1,136 +1,175 @@
-Return-Path: <linux-kernel+bounces-815193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68071B5610C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:11:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F318B56110
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225AEA07D65
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:11:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364B57AF847
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A152ED178;
-	Sat, 13 Sep 2025 13:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30862EC0B5;
+	Sat, 13 Sep 2025 13:16:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oscillator.se header.i=@oscillator.se header.b="S1GReF/J"
-Received: from sv9.manufrog.com (sv9.manufrog.com [46.246.119.84])
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="eqYU++Js"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062342EC570;
-	Sat, 13 Sep 2025 13:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.246.119.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCED1145B27;
+	Sat, 13 Sep 2025 13:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757769085; cv=none; b=VO25nFMjHtIv/E05XRHa0349fGjj1VUtW9AkLmeM4G246yA2pKZWRpZCYlKnGjuDiTuSU8mAEjAeLJasib9qzc+PQyFv4qsYSwldzyiS8gTSoo991d/Y/ZTgxBrehuDoGNw5mPmL1nS8+wKGqYp/6Pwqc5hQsAlWNerVvkqEGAE=
+	t=1757769368; cv=none; b=n5yf9awCAnYKwpRjMC2YmmIkALMJlBnkqLgBxPj+yEvy23Id6u1aZ7GzOveoSMVrWsSY7/OK+njqx0LwmSjMg/EtJKWtKH/gNwgoUFAo6XZQhq6kvHrCRUK+Fme46aY6rX7DYaA6r1OremHKxzAEDVbEEMRRX+bVEDd1bGQNuDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757769085; c=relaxed/simple;
-	bh=v0BBL64UmOk+e62Q4T1pCcqVThxT3xZi5jSjhI5lYy0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=FK4uTRgORU5kTBp20Wg+eaB6ce7Rc4mJtKQvpMNSmKBFlmmd/XXMBLKyLm1j4F8mVWnC16cxf8PEwBWRPtEiLoSO3HK1vky9yeRJ6nouE7MTeb/XzBWqwybnlNLW5rrCFrZcrqpMEfEmKVGsWOLMzLbiI600kanz+zmHaTF3Ljk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oscillator.se; spf=pass smtp.mailfrom=oscillator.se; dkim=pass (2048-bit key) header.d=oscillator.se header.i=@oscillator.se header.b=S1GReF/J; arc=none smtp.client-ip=46.246.119.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oscillator.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oscillator.se
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oscillator.se; s=default; h=Content-Transfer-Encoding:Content-Type:
-	Message-ID:References:In-Reply-To:Subject:Cc:To:From:Date:MIME-Version:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ImRo0mF6q6nENrBTd4EI8p/Zv5nZZbTSLKettAexwII=; b=S1GReF/JGBFsi0MdL5iOwVTOpw
-	FZyfgj8fepG8l5gsLdVTiDGH5uMdpBHuQcDS5sI4/NSbzVfsABzwshJncYKq3suPDjRURABnxlq1f
-	O1rKWeFSDfTQSV8OH5LGIzXo5iBdOEH8TxNOFxxjtpNGWSkmDetttLi3dmz6wiYTKyENXtZQlJUk/
-	lTZJfsHMi/mevRXSZyL833yNsCsQuIZh0xrCT55biRo/+QFwG2zS+B/C65YDYw5JXNebGeEisTieO
-	AjdNPQWeGd87h3rFRFHaXPEsRT+ly6GFccRa0jTYimouT1t5tzNFtCCvJG9cu4Kal1kxj1yjTJqaF
-	A0a8j0nw==;
-Received: from [::1] (port=55148 helo=sv9.manufrog.com)
-	by sv9.manufrog.com with esmtpa (Exim 4.98.2)
-	(envelope-from <staffan.melin@oscillator.se>)
-	id 1uxQ2F-00000001cTy-1N03;
-	Sat, 13 Sep 2025 15:11:18 +0200
+	s=arc-20240116; t=1757769368; c=relaxed/simple;
+	bh=HEcey3oOKkFMYxoJsTsYPxiXSLPXDv9uKA9bYgH7v9A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QfN/d9i/Dgq+2cyZjTrhXuKynMlk+JgqocXSocm3btxw70mvpOuMkTJE7n+46EQqpzjX5ZyA/l1rU9rTcsSeATK7l1zC5CCE+pEZK+Nx/QKSPUrc8LDIXRWGGnDxWN1CrpAJp4uxutY/YwSft2uHOb6lYLUquxJvT1z65XdMqQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=eqYU++Js; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1757769356;
+	bh=HEcey3oOKkFMYxoJsTsYPxiXSLPXDv9uKA9bYgH7v9A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=eqYU++JslmCu7DoyXBX6i5SPCggPQ4IXTmMJVoJbNGQRsVrsCQNcQigVW8zIE1XGN
+	 UjBIwUBdeLgG2L3SY1vvKr2OLXf14siWk9igYOxO6RErF+RHrsLh3GH0Jc/L37zNRa
+	 G2ArQMghy7iE3MNbkFqJIsLSKdAaiLLIztvPGMj0awnBFesdtjiFUr+pAbQJ7fJXtl
+	 gewXKajXgs6iBn81XVdAmgM4lYlyXI0+8K35aiIrN9FweD2/ip56fOqPXWPI3YEHHW
+	 K5Ixdw8GOhJO/Ch22Mji3fSXBF95quu95mYrJozGw1+l48dUByZUl1xJokxMCzdOML
+	 ejHjKrF/DdgPA==
+Received: from integral2.. (unknown [182.253.126.215])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 9ECEE3127994;
+	Sat, 13 Sep 2025 13:15:52 +0000 (UTC)
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	io-uring Mailing List <io-uring@vger.kernel.org>,
+	dr.xiaosa@gmail.com,
+	Bart Van Assche <bvanassche@acm.org>,
+	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Subject: [PATCH liburing v1] barrier: Convert C++ barrier functions into macros
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Sat, 13 Sep 2025 20:15:47 +0700
+Message-Id: <20250913131547.466233-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sat, 13 Sep 2025 15:11:16 +0200
-From: Staffan Melin <staffan.melin@oscillator.se>
-To: Salvatore Bonaccorso <carnil@debian.org>
-Cc: zhangheng <zhangheng@kylinos.cn>, Jiri Kosina <jkosina@suse.com>,
- Benjamin Tissoires <bentiss@kernel.org>, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
- stable@vger.kernel.org, 1114557@bugs.debian.org
-Subject: Re: [regression] 1a8953f4f774 ("HID: Add IGNORE quirk for
- SMARTLINKTECHNOLOGY") causes issue with ID 4c4a:4155 Jieli Technology USB
- Composite Device
-In-Reply-To: <aMUxg6FLqDetwiGu@eldamar.lan>
-References: <aL2gYJaXoB6p_oyM@eldamar.lan>
- <c8f3d402-e0ec-4767-b925-d7764aec3d93@kylinos.cn>
- <e81e8d68cb33c7de7b0e353791e21e53@oscillator.se>
- <aMUxHZF-7p7--1qS@eldamar.lan> <aMUxg6FLqDetwiGu@eldamar.lan>
-User-Agent: Roundcube Webmail/1.6.11
-Message-ID: <f08669ec112d6ab2f62e35c0c96d1f06@oscillator.se>
-X-Sender: staffan.melin@oscillator.se
-Organization: Oscillator
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - sv9.manufrog.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oscillator.se
-X-Get-Message-Sender-Via: sv9.manufrog.com: authenticated_id: staffan.melin@oscillator.se
-X-Authenticated-Sender: sv9.manufrog.com: staffan.melin@oscillator.se
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Ah, thanks, I get it now :)
+The C++20 module export feature fails to operate correctly with the C++
+version's static inline barrier functions:
 
-So I got 6.16.7, and the patch applied without problems.
+  In file included from src/work.cpp:3:
+  ./include/liburing.h:343:20: error: \
+    ‘void io_uring_cq_advance(io_uring*, unsigned int)’ \
+    exposes TU-local entity ‘void io_uring_smp_store_release(T*, T) [with T = unsigned int]’
+    343 | IOURINGINLINE void io_uring_cq_advance(struct io_uring *ring, unsigned nr)
+        |                    ^~~~~~~~~~~~~~~~~~~
+  In file included from ./include/liburing.h:20:
+  ./include/liburing/barrier.h:42:20: note: \
+    ‘void io_uring_smp_store_release(T*, T) [with T = unsigned int]’ is a \
+    specialization of TU-local template \
+    ‘template<class T> void io_uring_smp_store_release(T*, T)’
+    42 | static inline void io_uring_smp_store_release(T *p, T v)
+        |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
+  ./include/liburing/barrier.h:42:20: note: \
+    ‘template<class T> void io_uring_smp_store_release(T*, T)’ declared with internal linkage
 
-But no luck, the same results as before: touchscreen not working, xinput 
---list not showing the Jieli touchscreen. dmesg shows the same as 
-before, too.
+Convert them into macros just like the C version to fix it.
 
-Best regards,
+Closes: https://github.com/axboe/liburing/issues/1457
+Reported-by: @xiaosa-zhz # A GitHub user
+Fixes: 3d74c677c45e ("Make the liburing header files again compatible with C++")
+Cc: dr.xiaosa@gmail.com
+Cc: Bart Van Assche <bvanassche@acm.org>
+Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+ src/include/liburing/barrier.h | 55 ++++++++++++----------------------
+ 1 file changed, 19 insertions(+), 36 deletions(-)
 
-Staffan
+diff --git a/src/include/liburing/barrier.h b/src/include/liburing/barrier.h
+index 985569f496a8..9bf1eaf374a3 100644
+--- a/src/include/liburing/barrier.h
++++ b/src/include/liburing/barrier.h
+@@ -23,46 +23,29 @@ after the acquire operation executes. This is implemented using
+ 
+ #ifdef __cplusplus
+ #include <atomic>
+-#define LIBURING_NOEXCEPT noexcept
++#define IO_URING_WRITE_ONCE(var, val) \
++	std::atomic_store_explicit( \
++		reinterpret_cast<std::atomic<__typeof__(var)> *>(&(var)), \
++		(val), std::memory_order_relaxed)
+ 
+-template <typename T>
+-static inline void IO_URING_WRITE_ONCE(T &var, T val)
+-	LIBURING_NOEXCEPT
+-{
+-	std::atomic_store_explicit(reinterpret_cast<std::atomic<T> *>(&var),
+-				   val, std::memory_order_relaxed);
+-}
+-template <typename T>
+-static inline T IO_URING_READ_ONCE(const T &var)
+-	LIBURING_NOEXCEPT
+-{
+-	return std::atomic_load_explicit(
+-		reinterpret_cast<const std::atomic<T> *>(&var),
+-		std::memory_order_relaxed);
+-}
++#define IO_URING_READ_ONCE(var) \
++	std::atomic_load_explicit( \
++		reinterpret_cast<const std::atomic<__typeof__(var)> *>(&(var)), \
++		std::memory_order_relaxed)
+ 
+-template <typename T>
+-static inline void io_uring_smp_store_release(T *p, T v)
+-	LIBURING_NOEXCEPT
+-{
+-	std::atomic_store_explicit(reinterpret_cast<std::atomic<T> *>(p), v,
+-				   std::memory_order_release);
+-}
++#define io_uring_smp_store_release(p, v) \
++	std::atomic_store_explicit( \
++		reinterpret_cast<std::atomic<__typeof__(*(p))> *>((p)), \
++		(v), std::memory_order_release)
+ 
+-template <typename T>
+-static inline T io_uring_smp_load_acquire(const T *p)
+-	LIBURING_NOEXCEPT
+-{
+-	return std::atomic_load_explicit(
+-		reinterpret_cast<const std::atomic<T> *>(p),
+-		std::memory_order_acquire);
+-}
++#define io_uring_smp_load_acquire(p) \
++	std::atomic_load_explicit( \
++		reinterpret_cast<const std::atomic<__typeof__(*(p))> *>((p)), \
++		std::memory_order_acquire)
++
++#define io_uring_smp_mb() \
++	std::atomic_thread_fence(std::memory_order_seq_cst)
+ 
+-static inline void io_uring_smp_mb()
+-	LIBURING_NOEXCEPT
+-{
+-	std::atomic_thread_fence(std::memory_order_seq_cst);
+-}
+ #else
+ #include <stdatomic.h>
+ 
+-- 
+Ammar Faizi
 
-
-On 2025-09-13 10:55, Salvatore Bonaccorso wrote:
-> Hi Staffan,
-> 
-> chiming in hopefully it is of help.
-> 
-> Now really with the patch ...
-> 
-> On Fri, Sep 12, 2025 at 09:57:04PM +0200, Staffan Melin wrote:
->> Thank you,
->> 
->> I tried to apply this patch to 6.12.39, the first problematic kernel, 
->> as
->> well as 6.12.41, the first bad I tried, and on both I got an error 
->> message:
->> 
->> Applying: HID: quirks: Add device descriptor for 4c4a:4155
->> error: patch failed: drivers/hid/hid-quirks.c:1068
->> error: drivers/hid/hid-quirks.c: patch does not apply
->> Patch failed at 0001 HID: quirks: Add device descriptor for 4c4a:4155
->> 
->> To which kernel version should I apply the patch?
-> 
-> As the deveopment goes from mainline then down to stable series, the
-> fix needs to be developed first for mainline. So the patch is targeted
-> there.
-> 
-> But please find attached an updated patch which hopefully should work
-> which resolved the context changes on top of 6.12.47.
-> 
-> But ideally you can provide a Tested-by on zhangheng's mainline patch
-> to get things rolling as needed.
-> 
-> Regards,
-> Salvatore
 
