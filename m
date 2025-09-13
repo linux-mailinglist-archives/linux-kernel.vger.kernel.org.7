@@ -1,133 +1,92 @@
-Return-Path: <linux-kernel+bounces-815044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D89DB55E87
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:07:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83911B55E8B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:13:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4E3F17BBC2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:06:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36168AA4BAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F6F2E2846;
-	Sat, 13 Sep 2025 05:06:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="DfFHlaZt"
-Received: from out28-149.mail.aliyun.com (out28-149.mail.aliyun.com [115.124.28.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F002E2667;
+	Sat, 13 Sep 2025 05:13:16 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D40218E20;
-	Sat, 13 Sep 2025 05:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9552B1E1DFC
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757740011; cv=none; b=rqEcMbmEET+UZbPaI69apw4Zy5yIFgteYR2+6A5XhA1p/nrG5Fx8yyDnZg68J7kgTN29ogpR33OrYqRTsLQl0cmIcMdWLtONtcRb4zVdoDcjZ3KZhG3/OWKKW7G8E65KARCZu5N8O+d7cJhyP9zUjMRU1g5gUWUIWhRRB9x+sDU=
+	t=1757740396; cv=none; b=c70YoJvnjF26Hxza/mV+Vmiyf+rf2AhfR2isYtLorEppgjpbf4P2pN1zMwo7McxidMUtabmCYYQSh5y/BfdQ3Psh/5UyGV2DrTc0M95aVheCKPhk9uM7CIEEeZEHgZVy7GWeI9sMVO7aaakYXmQxEsAtiuZPPEl3bLKR22lL6RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757740011; c=relaxed/simple;
-	bh=Z3Bsk4yeuSaWiOfI2QPSAKBu+5jfsIQ/9hW08Kg+oas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PpOvhSCpVfI7XfujAw35DWB0jw8IjddEp/iVYiKI4Lx11IF4h6ft8kim03Whrh130/ngakVo8YKBf9hGDHdTmm0N6x6pmdYxzXZi1qLc1IGBMWWboPbE9cW21IOR+vEe2QduUq0U0EnJR+jgWdSK4pokZuYyjvWnv0cECLLScb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=DfFHlaZt; arc=none smtp.client-ip=115.124.28.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1757740004; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=r1khi3w4XkNENikcoeGAA5mHsJaRYmGZ2SI2OOjmJew=;
-	b=DfFHlaZtiR1yCRRQCD9IbEHH1VvxMt0Fjux6W4JZEaZOcZF7pLsuKjgPLWZ2fhkkjXU0nS1DJmqzERNexy5HO6MxCjtJAqurRyu98htIME3p5oLy9ONPJmxQz2Uyb28Vdy5GcGhqJC6gI/FeVEGukBDk1jDrW8JjSo3QAGtVJzk=
-Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.ee6pIz1_1757740003 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Sat, 13 Sep 2025 13:06:44 +0800
-Date: Sat, 13 Sep 2025 13:06:43 +0800
-From: Hou Wenlong <houwenlong.hwl@antgroup.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: Remove outdated comments and code in
- kvm_on_user_return()
-Message-ID: <20250913050643.GA50691@k08j02272.eu95sqa>
-References: <c10fb477105231e62da28f12c94c5452fa1eff74.1757662000.git.houwenlong.hwl@antgroup.com>
- <aMPbNBofTCFGTCs6@intel.com>
- <20250912093822.GA10794@k08j02272.eu95sqa>
- <20250912141132.GA85606@k08j02272.eu95sqa>
- <aMQw67a7Ku7wXTXO@google.com>
+	s=arc-20240116; t=1757740396; c=relaxed/simple;
+	bh=Y1EB1F7wqkcKdPGiWFAgzT1vD3kRNCXKoWFSPsBJMuk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NbjQRifnXM8e9l89qLlaYm99uTyFaDcLwrLLb6Rkt6YnDCJJwpXLy/yeAmz+GCsS4wY6545p7szYwfMB/X3WH37xjyDyYomh4+hgps2NVlsSDSuh8rABCH7YijnoWxw7ELdE+TsrZ+yMDuFR1G628q4qv3DtNRxbKUFalQgGafQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-889b6f1d015so240846339f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:13:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757740392; x=1758345192;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bciVpENkkAQl1Nb9KiU787KLtYJt4sWwL8kSht62TpE=;
+        b=Ax+YWXy6PcA2jYdd1joLtOGLFt/ey3DasEuBq1Ek8enzeyViKEAzn4MtvRI8Not8j0
+         C1iEPNNoGoq/4Z6W6pydxboHRWOr+q96E5d15qGgNFN4YpU2lghG78Z9jp2d6QSYuwz/
+         i/6BeV5HSFMCfLSNTCt0G8wT+8+UrbqnUoBNcld7IJ+ohfscXoi5DgCATmprEdIq7ml1
+         d6jStmCEck4tXSH0ypXUGZH7Lq6U95SQRmuZioE0z1T/B7jIxJjOn6yExkWGwNvVCYus
+         I1W50VQg2AOIFRDtzli3xtJYShDBg1Ap+ixQLkcjkZAfO3mqUav0R+Q4RBalQf22crVM
+         OlgQ==
+X-Gm-Message-State: AOJu0Yx8pbNfz1MwCmSjn0CJzY7GROYr99QjQsLNZOoVv7wMwmRpNK+C
+	BHNRqZCPOQu4/pKflteQ/uFiIUFOeyNdlgNzEAlLUGEt2MFnoGLnHdC0NnCdplD3Gkt3Zxz/Z6O
+	9fPF7BRFa1768XFGOhCcQUHQ4TBboAMKLIOJDjHKqV2C4hQww5xkKfuhTGkE=
+X-Google-Smtp-Source: AGHT+IFYSYbSi5+P/xy9Hrjzt3Zf2GjNc1dP6V5iCD/ugs9Wmc2ixiFyCQ7YNGXv3mS4JyYhmVvu+b3JDk2LJ+zl253FbcwCMXO4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMQw67a7Ku7wXTXO@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Received: by 2002:a05:6602:1492:b0:887:133a:c9a8 with SMTP id
+ ca18e2360f4ac-890330c472bmr713788939f.1.1757740391775; Fri, 12 Sep 2025
+ 22:13:11 -0700 (PDT)
+Date: Fri, 12 Sep 2025 22:13:11 -0700
+In-Reply-To: <68b87c9f.050a0220.3db4df.01fa.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68c4fd67.050a0220.3c6139.04c0.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [kernel?] KASAN: slab-out-of-bounds Read in change_page_attr_set_clr
+From: syzbot <syzbot+e34177f6091df113ef20@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 12, 2025 at 07:40:43AM -0700, Sean Christopherson wrote:
-> On Fri, Sep 12, 2025, Hou Wenlong wrote:
-> > On Fri, Sep 12, 2025 at 05:38:22PM +0800, Hou Wenlong wrote:
-> > > On Fri, Sep 12, 2025 at 04:35:00PM +0800, Chao Gao wrote:
-> > > > On Fri, Sep 12, 2025 at 03:35:29PM +0800, Hou Wenlong wrote:
-> > > > >The commit a377ac1cd9d7b ("x86/entry: Move user return notifier out of
-> > > > >loop") moved fire_user_return_notifiers() into the section with
-> > > > >interrupts disabled, so the callback kvm_on_user_return() cannot be
-> > > > >interrupted by kvm_arch_disable_virtualization_cpu() now. Therefore,
-> > > > >remove the outdated comments and local_irq_save()/local_irq_restore()
-> > > > >code in kvm_on_user_return().
-> > > > >
-> > > > >Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
-> > > > >---
-> > > > > arch/x86/kvm/x86.c | 16 +++++-----------
-> > > > > 1 file changed, 5 insertions(+), 11 deletions(-)
-> > > > >
-> > > > >diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > > >index 33fba801b205..10afbacb1851 100644
-> > > > >--- a/arch/x86/kvm/x86.c
-> > > > >+++ b/arch/x86/kvm/x86.c
-> > > > >@@ -568,18 +568,12 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
-> > > > > 	struct kvm_user_return_msrs *msrs
-> > > > > 		= container_of(urn, struct kvm_user_return_msrs, urn);
-> > > > > 	struct kvm_user_return_msr_values *values;
-> > > > >-	unsigned long flags;
-> > > > >
-> > > > >-	/*
-> > > > >-	 * Disabling irqs at this point since the following code could be
-> > > > >-	 * interrupted and executed through kvm_arch_disable_virtualization_cpu()
-> > > > >-	 */
-> > > > >-	local_irq_save(flags);
-> > > > >-	if (msrs->registered) {
-> > > > >-		msrs->registered = false;
-> > > > >-		user_return_notifier_unregister(urn);
-> > > > >-	}
-> > > > >-	local_irq_restore(flags);
-> > > > >+	lockdep_assert_irqs_disabled();
-> > > > 
-> > > > kvm_offline_cpu() may call into this function. But I am not sure if interrupts
-> > > > are disabled in that path.
-> > > >
-> > > Thanks for pointing that out. I see that interrupts are enabled in the
-> > > callback during the CPU offline test. I'll remove the
-> > > lockdep_assert_irqs_disabled() here.
-> > >
-> > 
-> > Upon a second look, can we just disable interrupts in kvm_cpu_offline()?
-> > The other paths that call kvm_disable_virtualization_cpu() are all in an
-> > interrupt-disabled state, although it seems that
-> > kvm_disable_virtualization_cpu() cannot be reentered.
-> 
-> Why do we care?  I.e. what is the motivation for changing this code?  I'm hesitant
-> to touch this code without good reason given its fragility and subtlety.
-Hi, Sean.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I'm just reworking the shared MSRs part in our inner multi-KVM. First, I
-noticed that the comment mentions that kvm_on_user_return() can be
-interrupted or reentered, which is a little confusing to me. Then, I
-found that the comment is outdated, so I decided to remove it and also
-make changes to the code. I agree that this code is fragile, maybe
-just change the comment?
+***
 
-Thanks!
+Subject: Re: [syzbot] [kernel?] KASAN: slab-out-of-bounds Read in change_page_attr_set_clr
+Author: chandna.linuxkernel@gmail.com
+
+#syz test
+
+--- a/arch/x86/mm/pat/set_memory.c
++++ b/arch/x86/mm/pat/set_memory.c
+@@ -305,6 +305,9 @@ static inline unsigned long fix_addr(unsigned long addr)
+
+  static unsigned long __cpa_addr(struct cpa_data *cpa, unsigned long idx)
+  {
++       if (WARN_ON_ONCE(!cpa->pages || !cpa->pages[idx]))
++               return 0;
++
+         if (cpa->flags & CPA_PAGES_ARRAY) {
+                 struct page *page = cpa->pages[idx];
+
+-- 
+2.51.0
+
 
