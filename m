@@ -1,73 +1,96 @@
-Return-Path: <linux-kernel+bounces-815171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3837CB56087
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:44:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB392B56096
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7F0B7AD581
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:42:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9441B2364A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6BB2EC545;
-	Sat, 13 Sep 2025 11:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1A526FA54;
+	Sat, 13 Sep 2025 12:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KMKUgEqP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CvVrJbso"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE3C26281;
-	Sat, 13 Sep 2025 11:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E28E1E4AB
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 12:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757763860; cv=none; b=ge8yU/yykbmuHaHDorgV3FpkvLE/3WQp+7xef/C+4Bmha05Rw3MfPSOUAGCou/ZPWRlDL6+VcawDbIggNUOCkK/vHlLp7KoUlHMdOZAIlahr0dk2IGGbMRRccp/OyC3r6GKXsCXHAhwksD/X08Rcj9RvhRni2kY4OH5jeni7miM=
+	t=1757765731; cv=none; b=jt1FfKTZykciC/4GZb+tiPdMYA16/su8PTPpwIJTCrO2MKKxhpSbQjRpCRfwfQFljVSyVhSrkgl10JaueLAa2Prbg+DaFSNkfzRRE5s2jAf5t1kXcDJ7o18kJ0lEL0mBGrO4XTNX2bv1F679nqlr4ZPNZxmJ0W72Qd2wQyE03Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757763860; c=relaxed/simple;
-	bh=OX/8ExrAvr+0QCe8fRUnJcR44aTmTRK7r3dF/K1NSlk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQlcjufkru0Xw+AmFOUwnuZteQowf+KBorag83kRDvlqkDQq5zy1V/vOdd4/o5Hnp9zi3zy6GJM1i+VmGb/0umyrCRWeLmeDjr7s8s5sqYBgBhm6SE5McLwkjFT7JYTIhDWKv5R5IdNYFAfRCifY48mJsA76VQBW9qowvorUbxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KMKUgEqP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8AACC4CEEB;
-	Sat, 13 Sep 2025 11:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757763860;
-	bh=OX/8ExrAvr+0QCe8fRUnJcR44aTmTRK7r3dF/K1NSlk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KMKUgEqPbO3SG1OaT89uMny0EjiYJf+W+KXq/Fod8jlmtK5x40xR6SJPomJ+uzdm0
-	 voRW6XKdMq0qys3i8aSvK4HLyhUcq83j8/YRYtO3Lx1yXHYr1VPmft3i01is3aGOGb
-	 M7mVgyhiyJpsnsatS7SULgS8HjYlUrPyNg9Vv2jk=
-Date: Sat, 13 Sep 2025 13:44:17 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Eliav Farber <farbere@amazon.com>
-Cc: luc.vanoostenryck@gmail.com, rostedt@goodmis.org, mingo@redhat.com,
-	natechancellor@gmail.com, ndesaulniers@google.com,
-	keescook@chromium.org, sashal@kernel.org, akpm@linux-foundation.org,
-	ojeda@kernel.org, elver@google.com, kbusch@kernel.org,
-	sj@kernel.org, bvanassche@acm.org, leon@kernel.org, jgg@ziepe.ca,
-	linux-kernel@vger.kernel.org, linux-sparse@vger.kernel.org,
-	clang-built-linux@googlegroups.com, stable@vger.kernel.org,
-	jonnyc@amazon.com, Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: Re: [PATCH v3 4/4 5.10.y] tracing: Define the is_signed_type() macro
- once
-Message-ID: <2025091303-collector-outtakes-51d0@gregkh>
-References: <20250912185518.39980-1-farbere@amazon.com>
- <20250912185518.39980-5-farbere@amazon.com>
+	s=arc-20240116; t=1757765731; c=relaxed/simple;
+	bh=PfZXNJG/xSPRuRYlfKl/8Y13YarP7AvpsGLxf9wgfjY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EqKXDmPx6RQg5jwpfWQYIvtRLKREBxY6KJf4T+T7mjPJpvDk7eMgcEB5hITFn+Ewyj76GFsSOWLNeGOg/16iBRkP0nd6qjNtbavHiuYBcPRTdZjcvi3ya8VVUP9/+/Sq+Q+cEaPAokUovzlZMTI8i3vLV71xiKuhS0XzkpYDW88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CvVrJbso; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757765727;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=8uIVmqLTNP2ho9cEgGDB2Pyg3082OKfjVPPx4gDblF8=;
+	b=CvVrJbsoLjVNKWOnb7kb8rto5nY6ORGzgjSC0eDTySHLYRssVLVvBWCAU1VZBsHBd9jMkO
+	JpmP+m7P01SuWLwQsnYOOrtQZTb7qQ/WNoLpqf90oL6k9XkYSEV2HBGf1cQMFp6WqRU7dd
+	muBshufmz+9OQfacgpRIkzBLRA6J7kA=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] initrd: Remove unnecessary goto label 'successful_load'
+Date: Sat, 13 Sep 2025 14:15:14 +0200
+Message-ID: <20250913121514.1789204-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250912185518.39980-5-farbere@amazon.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Sep 12, 2025 at 06:55:16PM +0000, Eliav Farber wrote:
-> From: Bart Van Assche <bvanassche@acm.org>
-> 
-> commit a49a64b5bf195381c09202c524f0f84b5f3e816f upstream.
+The goto label 'successful_load' isn't really necessary. Set 'res = 1'
+immediately and let 'goto done' handle the rest.
 
-This is not a valid upstream commit id :(
+No functional changes.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ init/do_mounts_rd.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index ac021ae6e6fa..97ddcdaba893 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -210,7 +210,7 @@ int __init rd_load_image(char *from)
+ 
+ 	if (nblocks == 0) {
+ 		if (crd_load(decompressor) == 0)
+-			goto successful_load;
++			res = 1; /* load successful */
+ 		goto done;
+ 	}
+ 
+@@ -264,8 +264,6 @@ int __init rd_load_image(char *from)
+ 	}
+ 	pr_cont("done.\n");
+ 
+-successful_load:
+-	res = 1;
+ done:
+ 	fput(in_file);
+ noclose_input:
+-- 
+2.51.0
 
 
