@@ -1,98 +1,135 @@
-Return-Path: <linux-kernel+bounces-815292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2009B56240
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:32:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DF7B56248
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 19:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6005A5664BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:32:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BEBEA02F08
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA632F0C7A;
-	Sat, 13 Sep 2025 16:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96DC1F63CD;
+	Sat, 13 Sep 2025 17:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="MjhXIRAa"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dvjll8GJ"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C6E944F;
-	Sat, 13 Sep 2025 16:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF351CAA6C
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 17:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757781166; cv=none; b=r3h08NCuDTNXhXoaR2P4TWShnzdhoOeKu9V12VXBQmtIQVSaxf4I7XOkt/mDUdRTpCanpIr/elFV8kMLjrBDGWJnxR5zs0klDlslsBHIz/rWLlrw17xzV9Uxf3K3B0nl4VRqCE8z8+2K+2Y6kCjD74ZXtaTrDJSj0oRgw+8ZkdM=
+	t=1757782874; cv=none; b=tORtrMjBrJHqyGtQmUBVYOcY2Jy58oly2jn1KvTayKZ7TNbLhRoFiYvpAEHyObzEG5C9uopSR0EIB9ENIBYGwQcCKtp5bcrC4efGTsMBYAL5QNha/nRAf1rm/2ZcjZLtfT92OA5GpDN6G6xdFEHfl2DBmRfgcgTb+Hup7jd4W58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757781166; c=relaxed/simple;
-	bh=TClIczkA1dqCneaeajy+7psQhihdDWrymDzBA3Qm99M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oVqSujeUnsMetjnhQJAM0w87Phv2VfFxq94NwVCNGB6EOZP9ZYScq+Lrm/KKQEtu1KpYg1hRmbVmM96N06dtuEaBHHDObq7AQpFSdRoNPU6LiGg5KI33WpS1dWl9+I2mtA8zdzRhbPWL0jIFi6mosKpydQuVPMqt44BsggSbFHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=MjhXIRAa; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from sunspire (unknown [IPv6:2a02:2f0e:3e0c:5b00:e2d5:5eff:fed9:f1c4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id ED9D2173BE2;
-	Sat, 13 Sep 2025 19:32:41 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1757781162;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jnW7pB3M4rqQbhC3HFPiYkMusXa21KSoLOZlD3AhDXg=;
-	b=MjhXIRAaGuMZPdrgr0mzKoJFAGc/eBoatd8G5wTDPFa7LTJhVTMq04EUm2TT6F1m9TXfEE
-	Yq+ViCBSxV/iTnYpqIbA5JqKCywNYYn4wYu9Py7vT2t68zgfLNH3204VXBcvEwDHcQS7r/
-	Ol4jPHYJKqgpi2Qc6ZA7nPg+55nsjsphw8mg0O4tdWXYxa4E8XqBnO1zPSuSgL0/s0WObZ
-	OS6hfEsRkgG5Z41i4vK1/Z0cQmt24tzxuv9F5WkDI0TGgXL14LbWs0dQEuFRfFM75KVRCn
-	eWLAp36PkYLGTohN2HcBnz+ASdnfPtkWrMEXXov6cjFBCfjJgJH9tOOvJbNH1A==
-Date: Sat, 13 Sep 2025 19:32:39 +0300
-From: Petre Rodan <petre.rodan@subdimension.ro>
-To: Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno S?? <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 15/18] iio: accel: bma220: add interrupt trigger
-Message-ID: <aMWcpxacC30ME9Ew@sunspire>
-References: <20250913-b4-bma220_improvements-v3-0-0b97279b4e45@subdimension.ro>
- <20250913-b4-bma220_improvements-v3-15-0b97279b4e45@subdimension.ro>
+	s=arc-20240116; t=1757782874; c=relaxed/simple;
+	bh=fAl811+LJx+57xhD3ZDBRMsx59Zi632qqhWlpTaXmmQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=bUFJRMZ2DA0x3MLYO4C5/z1M5zlrIr1vnMs7l/2Uwz37DxGdQlt2tJypu3zUxIEkiGjmlI0yPL6A0SgdtB+I0V9qKkZk4yUAsjjFERO+/3aMiCw4r6m5HKosCgjw0bT5zUOrhlG4AHhS2Trn8uS/eb2KcS10wQas8y3HgYZ3qls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dvjll8GJ; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3e8ef75b146so289938f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:01:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757782871; x=1758387671; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8jVrbxVggAGGjVPECN0iWVqlzdgucYLKcpcWurPyD3c=;
+        b=Dvjll8GJ0wnD0ppxn4LNP6U8prNscBJo1opMdLj3djyH6IZZ9qgnwIhswWC6Ij937R
+         N7HU3rDW05qtyUGzK2CUDClWIUiTUrmSQJQ64I03lv8uPdUs0iTf906qEYpLQP90er7h
+         QF0VoK2n1mvjPCmj7wx0J8xwenYCXEvkGAxKgsHXWAgVG2TNN4kXRcvyt2PdAeruftEe
+         yqrqi/SGPGgoyRj27+nRrwCDK53ZcfQ/n7lmq2uSTho6XJx/GbmRrjvgAN9EBT5pwFoI
+         FxGiHXQIxR1y9BJ2AK4nnfsh3tU/vTjg6+HEnyt6CBOQrscbTuYzZ4KZwTBK+R87IYSN
+         QkFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757782871; x=1758387671;
+        h=mime-version:user-agent:content-transfer-encoding:date:cc:to:from
+         :subject:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8jVrbxVggAGGjVPECN0iWVqlzdgucYLKcpcWurPyD3c=;
+        b=HvZu99LqrPpD6xawH/dMgA94jsfQFiUFwOeUPu61bZKt+Fp/f70IWEAKJiMHhECDaJ
+         bTk9M4VuNDNyrxSPHq81mLeTDtmoNi+LfEHicIjd1lGFhfdQieFJla8PCocWL/QDcHHL
+         Co7pcEYXugy3FF7kn+n0xerA1/kxUtRMRV8+NDS6m680mm8WOOz7HrJkLHvMMiPu4Bea
+         dmS5Jh7iDb1pAw4sGAx4Re0NLsriG13RL1FomCo3oX1JylPDBoFklhxPDL6vwc2sKpOH
+         wCGR99NMYNyAcyO81d4pfOYRsskhwS/HfeVcnrfeMmHDw3QfYIxXquNqfaeDwMDvdgqz
+         RLpA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/3VNXSubzMKOTSeLLc19iUBAqWcaUZlTHiMjoNsrgHxtcDOmSWaKHRDHzFnhNFs7LRD22dLN3YXFAcLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5c3mYoTUCaJ4Q35RhdZe78mTUYoaasozvM8HHGoNlZO1TJNkh
+	Rl6uSGfez/tX3kVEJHxqq8v4Gq1EmLYbNRFLskkcaY40FxbUGQ21bdckfURwlm1BBPU=
+X-Gm-Gg: ASbGnctnB2nvSEtykAqgure1jC8rP/EdR7yXWIfKpTXbMbJujIGEjzoZdJx9vtAuMJg
+	FBYUz7aeWAVkaCkRmfVhpnX9rA/DxWwntYZ3bYqpn6of9iAFgBu4Riyso3GQC0SRsjSR/14l4KN
+	NNZZO+1GNs7T6pLHQObrVGvPnGOshfGV8L9azeUU5pn/0GYcKuKYDfFW24uF6/LrlYgRDjjrEaL
+	R7/MLqqrZ/hyU1D24BLn3azdx2HII8d+5KaVqy8AISAIBiAPfxtZsVSDOe89hDUgXez/Cv4+3Ur
+	EMZFgQOgOY5+HK8D+dhegjGab89jHah682zj8ha8Opf6tKCnV3nvhvKTd8QKUDK/pjTf6phbAXR
+	kASHnkopevFtfzl0NWinHDRzsOLx+pefbArNCIfIYvYwk83gRh6JqSUJ2IwLnC7bxBOdjMOCHGY
+	RSvNc=
+X-Google-Smtp-Source: AGHT+IHxuiEOQg1v7lYGNdadask14TKYGQh97aQt2avC5UpjAiAMPfP2BgCYtn/tTDqWMXPMlc9qqA==
+X-Received: by 2002:a05:6000:2510:b0:3e4:ea11:f7df with SMTP id ffacd0b85a97d-3e7659db441mr6402177f8f.40.1757782870686;
+        Sat, 13 Sep 2025 10:01:10 -0700 (PDT)
+Received: from [10.33.80.40] (mem-185.47.220.165.jmnet.cz. [185.47.220.165])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e80da7f335sm4379634f8f.8.2025.09.13.10.01.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 10:01:09 -0700 (PDT)
+Message-ID: <e5d594d0aee93da67a22a42d0e2b4e6e463ab894.camel@gmail.com>
+Subject: [bug report] [regression?] bpf lsm breaks /proc/*/attr/current with
+ security= on commandline
+From: Filip Hejsek <filip.hejsek@gmail.com>
+To: linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+  James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	regressions@lists.linux.dev
+Date: Sat, 13 Sep 2025 19:01:08 +0200
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250913-b4-bma220_improvements-v3-15-0b97279b4e45@subdimension.ro>
 
-On Sat, Sep 13, 2025 at 06:39:36PM +0300, Petre Rodan wrote:
-> +static irqreturn_t bma220_irq_handler(int irq, void *private)
-> +{
-> +	struct iio_dev *indio_dev = private;
-> +	struct bma220_data *data = iio_priv(indio_dev);
-> +	int rv;
-> +	unsigned int bma220_reg_if1;
-> +
-> +	guard(mutex)(&data->lock);
-> +	rv = regmap_read(data->regmap, BMA220_REG_IF1, &bma220_reg_if1);
-> +	if (rv)
-> +		return IRQ_NONE;
-> +
-> +	if (FIELD_GET(BMA220_IF_DRDY, bma220_reg_if1)) {
-> +		iio_trigger_poll_nested(data->trig);
-> +
-> +	return IRQ_HANDLED;
-> +}
+Hello,
 
-sorry, errant '{' in FIELD_GET line throws compilation off, will fix in next rev.
+TLDR: because of bpf lsm, putting security=3Dselinux on commandline
+      results in /proc/*/attr/current returning errors.
 
-best regards,
-peter
+When the legacy security=3D commandline option is used, the specified lsm
+is added to the end of the lsm list. For example, security=3Dapparmor
+results in the following order of security modules:
+
+   capability,landlock,lockdown,yama,bpf,apparmor
+
+In particular, the bpf lsm will be ordered before the chosen major lsm.
+
+This causes reads and writes of /proc/*/attr/current to fail, because
+the bpf hook overrides the apparmor/selinux hook.
+
+As you can see in the code below, only the first registered hook is
+called (when reading attr/current, lsmid is 0):
+
+int security_getprocattr(struct task_struct *p, int lsmid, const char *name=
+,
+			 char **value)
+{
+	struct lsm_static_call *scall;
+
+	lsm_for_each_hook(scall, getprocattr) {
+		if (lsmid !=3D 0 && lsmid !=3D scall->hl->lsmid->id)
+			continue;
+		return scall->hl->hook.getprocattr(p, name, value);
+	}
+	return LSM_RET_DEFAULT(getprocattr);
+}
+
+Even though the bpf lsm doesn't allow attaching bpf programs to this
+hook, it still prevents the other hooks from being called.
+
+This is maybe a regression, because with the same commandline, reading
+from /proc/*/attr/current probably worked before the introduction of
+bpf lsm.
+
+Regards,
+Filip Hejsek
 
