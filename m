@@ -1,165 +1,131 @@
-Return-Path: <linux-kernel+bounces-814925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D5CB55A7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:01:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E2EB55A7F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F181EAA4ACB
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:01:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2269E5C0A17
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951B114A9B;
-	Sat, 13 Sep 2025 00:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE264C83;
+	Sat, 13 Sep 2025 00:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6xa6N1m"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gP7WqKpj"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E242B4A04;
-	Sat, 13 Sep 2025 00:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F3F1607A4
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 00:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757721656; cv=none; b=KzYOIz3ubYU/HEj9OYh3/xZjiVNGTTyiWaDpX1rhxS1mCzTV38DrT4Dxe7Y58wAGD+zWwcjIhfPPLwRWW1vf+PNdWx51DnHclMOluBUinI+7IVMwgVTXfMpqkrq3+HQtOnoNhao+qlVuleIVwGv5Epio+w0ULl/OHxSAyRQTu18=
+	t=1757721695; cv=none; b=KoQ/ZJM/U5LS7H33M0PjKqZTfS0b9soQg1k5hYZDLJj54R/BezTsZDAMdlQFFB3f+IRTBKk6sqtB8hq2U6lURiMTaCp4kRdeezPJ5F94UJVmMENmhZMC9IiBixrbaKxDHMzwGqtqsJRa5TRtTknigsd8VcagtrdqOZ1Kn3Wn5wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757721656; c=relaxed/simple;
-	bh=vDd0droX2aKcaau/BNTdQdVX/uMVNYwOAjEVk2x/OR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TfDgOw2Yb1UTOHwLUPX5QFNak8LBJs7vl6zdpftWUZUnm+D1WZripg4OIsYxeOE6g1nwspzacG3V/Ap7fdi3ktwkDwt5YCq/vo3vIIof9DmZxs49tok280zwkDpkAs9vnA5+YMyWq/hYe3Z5hQjcd2dMFbdvu3gwKssshCPY0so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z6xa6N1m; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D41C4CEF5;
-	Sat, 13 Sep 2025 00:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757721655;
-	bh=vDd0droX2aKcaau/BNTdQdVX/uMVNYwOAjEVk2x/OR0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z6xa6N1msn3dWzdap/jTIR6yKJnb3Fq3ylNH5lk/XVgayapDO1QXYB1QNw4GSOTQ3
-	 qxb8IIsz7q09LOLU8DAKpXGZDoFAV1wIUuLtx6yMx/NDO8jdghaDTQ5WR8h/9lZJKy
-	 D7fGRTgsJpbk2MMmmGm8GjsQ0LTlVpcGtxgIqHIdqrg4dxZfSM6ZauLyKJt7S+Ypzc
-	 4hgiUR3niakewJazMQjQGJeLm187U/o08ITsvOKc8S9ZX9NnXWMycFhsPW+cK2y95Z
-	 plnVJVOAD6dU/Ks2tJf98EbgErdD2gxChjy4b3wrlUNTRksqdFBatcggH1c8AAMOTS
-	 GQ6IZr2AUM02Q==
-Date: Fri, 12 Sep 2025 17:00:53 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>, Heiner Kallweit <hkallweit1@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Kory Maincent
- <kory.maincent@bootlin.com>, Maxime Chevallier
- <maxime.chevallier@bootlin.com>, Nishanth Menon <nm@ti.com>,
- kernel@pengutronix.de, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
- linux-doc@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>, Roan van Dijk
- <roan@protonic.nl>
-Subject: Re: [PATCH net-next v5 2/5] ethtool: netlink: add
- ETHTOOL_MSG_MSE_GET and wire up PHY MSE access
-Message-ID: <20250912170053.24348da3@kernel.org>
-In-Reply-To: <aMPw7kUddvGPJCzx@pengutronix.de>
-References: <20250908124610.2937939-1-o.rempel@pengutronix.de>
-	<20250908124610.2937939-3-o.rempel@pengutronix.de>
-	<20250911193440.1db7c6b4@kernel.org>
-	<aMPw7kUddvGPJCzx@pengutronix.de>
+	s=arc-20240116; t=1757721695; c=relaxed/simple;
+	bh=hCsy/qb5fsV4U/ZfD33cto6EmCWWefY4GtL+u9D9szM=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=AWEc6la6SrfN2hw7oSRb9gq1B7f11b6hHIc8iWulDN1QqaKdGHTtfjWOjzTQHb3rhsaMV0XDcf1fyFXr2aKf2iV+a8fNW6mQv4X1KI3fhDNI34S/f+L+dWCBBqaT14Bt1lJN6hyswwkeM5HPdDR60+GMdnyJAJjEEnvs06k17NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gP7WqKpj; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-32d4e8fe166so3384812a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757721693; x=1758326493; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=PMhMwVUWtkQhQozvbkaye4gfec+Uus5/E0Yhl+qmRTo=;
+        b=gP7WqKpjI1vLr8cB72GdxLrnHx1Spm04uAAuX0l1LLDghpUpY8k3VsG8NqIeF/9I4q
+         wgf+eoM3YD8v3dwmXmkGdluAGj14fqLlsUZKPj93zyv5qOFDSXXoxs8/9npaeJ6Y1fa+
+         yEvOPpWRwgTDGwbgaSmZ5H8Jik6dSl6Xl59z79lf0mB5Her9VaPaLtjw1lZrat2Bgp/1
+         q0YDbK9KbYz9VR5ol0CppbRuMUURFBpXJ40wGfM400cUp5DWTgSr9kmYKEVycsPQtlMJ
+         8au5WZ4NFMj3hX/N39HRMqQaC4kYPGUsOkABHra1LJB4bIbZGKINKvVCLitP8xIL7r8n
+         OtzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757721693; x=1758326493;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PMhMwVUWtkQhQozvbkaye4gfec+Uus5/E0Yhl+qmRTo=;
+        b=ScuzyVJ1QnNKjYNEASxPOpSo2MucSnZC2Oz6ElCWsHlkjA6K3XKneInKvVEcPTxJq1
+         XWm06YV3dA2SHEEqf0Uh7LbVbM9u9kXDi/gVhDNQsiNgSLhBy0zuwpjSluzmkH6y2rDf
+         1GKSwQIKKIh5DLTEKTUEtpASzWqLVRwPY0ynIxoVnd5A0vfInDUNuBY7zqikRflnqDoQ
+         4EgfcjPJoSXQEUhNSHcPfv5TX6suMp9jRxwOPi/Zb1jgws7b7qXqHhF5iLqnXpmXYVXc
+         kWI3l+gI5s1w4kw8V7v7OlpFUnVuBx4s2xYSRX68Yu76fSRo15xD6Lr/nM/0aPk2DfvU
+         s3jg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7EwZmBie9g2HvM1It5Nffwwr7je5O2MoLZMz+qgLOx5QtNiAP+0OCr4JDerZUK3IRFi7GUUZkPZ58Wyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+uR/7E2ZmEkfkiDrABNRIH9iQti9+JtYzAGu5ueW2Y8xT3ChM
+	SA0Q1oirGu0NhR6H5q3R65Y6fhiDgNi/bYTKDbqn6M49J0CIw9bcjRLhQRPtM7xEfOkLQQNHxDI
+	wK+z4JZrRsg==
+X-Google-Smtp-Source: AGHT+IFYXWG5c4pWx8SGKm+MYzC4up5S0kC5qWHuqEAb7gKco/PQlJGOcBTDF6ZQWJ2Jg2rbCpSXqG1lYr9B
+X-Received: from pjbqb3.prod.google.com ([2002:a17:90b:2803:b0:32b:8eda:24e8])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d40c:b0:329:f535:6e4b
+ with SMTP id 98e67ed59e1d1-32de4fb9de0mr5671674a91.37.1757721693349; Fri, 12
+ Sep 2025 17:01:33 -0700 (PDT)
+Date: Fri, 12 Sep 2025 17:01:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
+Message-ID: <20250913000129.1306162-1-irogers@google.com>
+Subject: [PATCH v1] perf lock: Provide a host_env for session new
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 12 Sep 2025 12:07:42 +0200 Oleksij Rempel wrote:
-> > > +      -
-> > > +        name: max-average-mse
-> > > +        type: u32
-> > > +      -
-> > > +        name: max-peak-mse
-> > > +        type: u32
-> > > +      -
-> > > +        name: refresh-rate-ps
-> > > +        type: u64
-> > > +      -
-> > > +        name: num-symbols
-> > > +        type: u64  
-> > 
-> > type: uint for all these?  
-> 
-> I would prefer to keep u64 for refresh-rate-ps and num-symbols.
-> 
-> My reasoning comes from comparing the design decisions of today's industrial
-> hardware to the projected needs of upcoming standards like 800 Gbit/s. This
-> analysis shows that future PHYs will require values that exceed the limits of a
-> u32.
+When "perf lock con" is run in a live mode, with no data file, a host
+environment must be provided. Testing missed this as a failing assert
+was creating the 1 line of expected stderr output.
 
-but u64 may or may not also have some alignment expectations, which uint
-explicitly excludes
+Signed-off-by: Ian Rogers <irogers@google.com>
+---
+Please consider this patch for v6.17 fixes.
+---
+ tools/perf/builtin-lock.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> > > +      -
-> > > +        name: header
-> > > +        type: nest
-> > > +        nested-attributes: header
-> > > +      -
-> > > +        name: channel
-> > > +        type: u32  
-> > 
-> > Please annotate attrs which carry enums and flags with
-> > 
-> > 	enum: $name  
-> 
-> Sorry, I can't follow here. What do you mean?
+diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
+index fd49703021fd..078634461df2 100644
+--- a/tools/perf/builtin-lock.c
++++ b/tools/perf/builtin-lock.c
+@@ -2009,6 +2009,7 @@ static int __cmd_contention(int argc, const char **argv)
+ 		.owner = show_lock_owner,
+ 		.cgroups = RB_ROOT,
+ 	};
++	struct perf_env host_env;
+ 
+ 	lockhash_table = calloc(LOCKHASH_SIZE, sizeof(*lockhash_table));
+ 	if (!lockhash_table)
+@@ -2024,7 +2025,10 @@ static int __cmd_contention(int argc, const char **argv)
+ 	eops.mmap		 = perf_event__process_mmap;
+ 	eops.tracing_data	 = perf_event__process_tracing_data;
+ 
+-	session = perf_session__new(use_bpf ? NULL : &data, &eops);
++	perf_env__init(&host_env);
++	session = __perf_session__new(use_bpf ? NULL : &data, &eops,
++				/*trace_event_repipe=*/false, &host_env);
++
+ 	if (IS_ERR(session)) {
+ 		pr_err("Initializing perf session failed\n");
+ 		err = PTR_ERR(session);
+@@ -2142,6 +2146,7 @@ static int __cmd_contention(int argc, const char **argv)
+ 	evlist__delete(con.evlist);
+ 	lock_contention_finish(&con);
+ 	perf_session__delete(session);
++	perf_env__exit(&host_env);
+ 	zfree(&lockhash_table);
+ 	return err;
+ }
+-- 
+2.51.0.384.g4c02a37b29-goog
 
-The values carried by this attr are from enum phy-mse-channel right?
-So you should annotate the attribute, this way C will use an enum
-type, and Python will decode the values into a human readable string.
-
-> > > +        enum: phy-mse-channel
-> > > +      -
-> > > +        name: config
-> > > +        type: nest
-> > > +        nested-attributes: mse-config  
-> > 
-> > config sounds like something we'd be able to change
-> > Looks like this is more of a capability struct?  
-> 
-> Yes? mse-config describes haw the measurements in the snapshot should be
-> interpreted.
-
-Right. 'capability' is not great either, but as I said 'config' sounds
-like something that's tunable by the user. 
-
-> > > +      -
-> > > +        name: snapshot
-> > > +        type: nest
-> > > +        multi-attr: true
-> > > +        nested-attributes: mse-snapshot  
-> > 
-> > This multi-attr feels un-netlinky to me.
-> > You define an enum for IDs which are then carried inside
-> > snapshot.channel. In netlink IDs should be used as attribute types.
-> > Why not add an entry here for all snapshot types?  
-> 
-> Can you please give me some examples here? I feel under-caffeinated, sorry.
-
-Instead of this attr:
-
-	-
-		name: channel-a
-		type: nest
-		nested-attributes: mse-snapshot	
-	        multi-attr: true
-	-
-		name: channel-b
-		type: nest
-		nested-attributes: mse-snapshot	
-	        multi-attr: true
-...
-	-
-		name: worst-channel
-		type: nest
-		nested-attributes: mse-snapshot	
-	        multi-attr: true
-...
 
