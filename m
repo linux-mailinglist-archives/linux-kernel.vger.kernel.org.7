@@ -1,278 +1,134 @@
-Return-Path: <linux-kernel+bounces-815152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23276B56054
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:53:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D20B56056
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5515F1BC1362
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 10:53:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 707447B79FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 10:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034AE2EC0BA;
-	Sat, 13 Sep 2025 10:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059002EC0B5;
+	Sat, 13 Sep 2025 10:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHW6Sbkj"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=heyquark.com header.i=@heyquark.com header.b="ZPwflY85"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2CC629AB12
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DD12EC0AC
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757760783; cv=none; b=oUlm3335UZXs70wJmgFoiMvplIGoUEjKEkI7+4rVkdEM+kq7xV9ZBLH2be76kU+i/MCPO66kLM/cLmotpOwUcvX+QZw/27QHQFdopTd3uBBT+3pTZxEImcuMcOrbF4xh15jem4tFXTch57+AKslWS/nXkhJomD9xsCO4G/OHhf4=
+	t=1757760803; cv=none; b=CWQDUl6er4L9I6CF1Rrk4ffvFKrDXwZWRCa37hLmV8nitR2Z5IF8ycVdhLZhlZYJSBW9nH4TmiXIcjRm4+FMJfzvASDx4zDlmHfoGnA2K+yX459Kj+fUK0TCxcoWhDn9Yk3QQ9qLNHhcaq7ZgtZ8Psw1N6ktHFLmz9vH8mf8c9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757760783; c=relaxed/simple;
-	bh=3W3xEbJ+OnGQpEfzZrEKAg4fktAWY6avvyUfMvCq+Mk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g3eaxZ2Y77NSbv7uAjHxlPEOnf2kudIlAOs+ftrt2m6ubQE6wcp/sVDZWmC+T429oeOEk8KkVbUDHYNZlG4NaPpQEmtDt+AUyIFbZPysU6q9UAmHM0yGTKOvAOLMOQWUYF3Vjreli0W5Ge2sx72fEetDujGImhV1Stk0u99pkc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WHW6Sbkj; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b4c9a6d3fc7so1659253a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 03:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757760781; x=1758365581; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OV5DQKgNzMjChO4Nhv4m29zzwJfRA25ChVerFVXCkS8=;
-        b=WHW6SbkjUuP5TzQGtzA51Ot9/LoK/lmP4cXxcAWhCMhVk1aoxcmPCvkR535IqV7rwA
-         NrQiEPFLDL0cOdHq6z28d0bdjZfEKBVa4J6Rwun22kz1lDT24p/YgWq/Q7Q8pyivEnQk
-         sgPdSO6nJq4xLguHA/BPPuGCBp6Fwlfc5SO3/TClSEAx9NvlRqhsDyT0X3qh99rdFopr
-         Yd8kT1+kLgOMfMei9nsk+S+r82louDX5Mg2f2VsuR48qNwzogGDj8gO0YVfhFSpVq3ww
-         sxEPr6v8AZ5ifSkVujwv4giHlLgX1ldQ6C3hp8v7KpdeptdtVrf8qdq5r8RwWP/Fs7Ak
-         ZlDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757760781; x=1758365581;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OV5DQKgNzMjChO4Nhv4m29zzwJfRA25ChVerFVXCkS8=;
-        b=oxc0FdO7+//5SEv8n5BYTKBtGgolOBbDPdqJEPb++vtvStGvDFseDQ1yhMLPC/9Jq7
-         mCsnKJQuxKILx1hJVYr5eN5bS1pKpAnpA4kEEUWs+IlSqNC+5ocPWHog6FZt6YzmDoYz
-         38Wge54zzDYvlRJw7IgCbrB58G8ymDk3aeBvatd5B5J6zAl2ZCQv6mN6lvKkGga3Leoc
-         0zcsdeqGJrwFogyh8UMhfA+XDhtBPnKx5XasElXhngRpaAhJkS8ziKBtC3GPr7kO9IL6
-         9Zg3Di9xJmrxcRMLudSUvnTiYA16qTyl6zSvY3k4VvMPF4OklFf6xVdfuNRKTFYIPLP+
-         vlfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsZCcM4e/SJGjcUdaQ+kTFwm5uuRgCMGiaBRo6ymdj5RZ+prDcfM8X1dTCh730Tc7mW6bdkxXlQJbJ4Uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqN1wqxgTV3thFLAss7kPPr9hOpziM7UlyKpbljRgRYm+0WWu4
-	xl0uJoQue7goLLTALLRSM5Qi9Xmxgsajaz8k4yLUUfmzrRiDldBzrDaV
-X-Gm-Gg: ASbGncsZnskC/ukghQHnRgAkNUb75A8G6oFt2cDuWKVlUVA/jUmRC435UOYhjY4X9MA
-	hQbXKsyEP4toCBRtjgLDf6p8xTwO9imXzpWKaV/8mT2ryBy3pc+DUCbW4Par2BA8dL85ZDQOAFm
-	rXdLl+M/c7t3fpzU9HdXPD9U9R/dFrIllQYW3JSFrTdJud0ZL3SOy/kkuFOYT6Wgy+cGeB7FewM
-	JxHUbQH3JGmmcrF4ihnWTosxN/Iobty/pjSmZVwv0OGrxWus4gVBtiq4oUP/ZCQLmX132jQmvSP
-	BJEB9DAVdyyqNruc70NTfZu469APHjmYxeqLV4T3HSwwHI7yMzVCjJGdD/nD1MyMWju1eq9IHxV
-	DKMeSxwgztSSSTSirjg4zXKwDjoRgkgnXyAr51W1p08DLhd0ZahYYKnA8vMQ7q0FD7YH7erV3tE
-	IiFX/eYwMt+EGo6DcfUcEA7k/T0jFLZDA=
-X-Google-Smtp-Source: AGHT+IEqw8+zkx7b0cYHTqhVod4btnlz5c+QZ128H9zmbGX1XTqIQKuJB+aABdLtaPEvIOzaDj8WhQ==
-X-Received: by 2002:a17:903:2f4f:b0:252:1743:de67 with SMTP id d9443c01a7336-25d268641c4mr66535755ad.44.1757760780893;
-        Sat, 13 Sep 2025 03:53:00 -0700 (PDT)
-Received: from OSC.. ([106.222.231.149])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-261586f50b2sm14931475ad.135.2025.09.13.03.52.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 03:53:00 -0700 (PDT)
-From: Pavan Bobba <opensource206@gmail.com>
-To: mchehab@kernel.org,
-	hverkuil@kernel.org,
-	ribalda@chromium.org,
-	laurent.pinchart@ideasonboard.com,
-	yunkec@google.com,
-	sakari.ailus@linux.intel.com,
-	james.cowgill@blaize.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pavan Bobba <opensource206@gmail.com>
-Subject: [PATCH v3] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
-Date: Sat, 13 Sep 2025 16:22:46 +0530
-Message-ID: <20250913105252.26886-1-opensource206@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757760803; c=relaxed/simple;
+	bh=qXx1wONTbcgawN/zX0ziVSkmOFKWffOPfCIo4Thq7VI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Lr6ls5qxZTJKnGMY3iV6hv9tQXApIUMZYtspC4pFBR9gUDale9UprZn8fC2dL9FSIxrYWWbj+sIuG7F2VZBKXWxF4Gw/lSjMHA2abbygqwR0P4cszvgD/Mt7Fpol6r14PU1XrzsnRlyecBoHaY0KNrZQr99w0Wxs/SSwGQJ5NHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=heyquark.com; spf=pass smtp.mailfrom=heyquark.com; dkim=pass (2048-bit key) header.d=heyquark.com header.i=@heyquark.com header.b=ZPwflY85; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=heyquark.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heyquark.com
+Message-ID: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heyquark.com;
+	s=key1; t=1757760798;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1iZiELOPGgRZDBi2au223SZgjALhV2isPuOLR/SKVds=;
+	b=ZPwflY854lfR6+0k+h4yDgxJWLkTlhGcfYHnB/PhTWkU+vIwyWhZXL2UE3uTJ/Xix0zK+U
+	66IwEf6xsXakDFWxyhzg5a83nJTtKwd9NJnINz/rCmXaV9Cc68bKyH7w0BLmHPvxDQnBrH
+	/+l9KErxJkMkbsE2KDFnkgWqLYMw5nWZqZS9Px0jM1D+spx4jdK6KajIco0RNkdxxcHtaV
+	3Eoi6Mp6KFCk2A78L+jA21XKKsmGZPFZGrvggAWwSeXCADlOjNHhaRyrU4FTMwimAHNr1o
+	t7axN5rc/TW5uDrrhmLVPsGCp+EF2UhBiCCo9Je2k3qGp0KZ+JF6VdQTsEaskQ==
+Date: Sat, 13 Sep 2025 20:53:08 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Ash Logan <ash@heyquark.com>
+Subject: 32-bit HIGHMEM and game console downstreams
+Content-Language: en-US
+To: arnd@arndb.de, christophe.leroy@csgroup.eu
+Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ officialTechflashYT@gmail.com, AWilcox@Wilcox-Tech.com,
+ Michael Ellerman <mpe@ellerman.id.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Complete the "TODO: PROFILES" by enforcing profile-specific and
-monochrome constraints as defined by the AV1 specification
-(Section 5.5.2, "Color config syntax").
+Hello!
 
-The validator now checks:
+LWN recently did a piece on 32-bit support in the kernel, and thought as 
+a user of 32-bit I would share my 2c. [1]
 
- - Flags: reject any unknown bits set in sequence->flags
- - Profile range: only profiles 0..2 are valid
- - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=1, sy=1),
-   monochrome allowed
- - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=0, sy=0),
-   monochrome forbidden
- - Profile 2:
-    * 8/10-bit: only 4:2:2 allowed (sx=1, sy=0)
-    * 12-bit: 4:4:4 (sx=0, sy=0), 4:2:2 (sx=1, sy=0), or 4:2:0 (sx=1, sy=1)
-      allowed
- - Monochrome path (all profiles except 1): forces subsampling_x=1,
-   subsampling_y=1, separate_uv_delta_q=0
+I maintain a downstream fork of 6.6 to support the Nintendo Wii U 
+hardware [2]. I'm also in regular contact with another doing the same 
+for the older Wii [3]. Linux on this era of game consoles is doing 
+pretty well :)
 
-These checks prevent userspace from providing invalid AV1 sequence
-headers that would otherwise be accepted, leading to undefined driver
-or hardware behavior.
+The Wii and Wii U are both 32-bit PowerPC machines with holes in their 
+memory map, which I think makes them interesting for this discussion. 
+Let me summarize the hardware and kernels involved:
 
-Signed-off-by: Pavan Bobba <opensource206@gmail.com>
----
-v1 -> v2 : Added more checks for subsampling combinations per profile.
-         : Added a TODO note in the function header for checks to be implemented later.
+Wii (2006)
+- 1x PowerPC 750CL "Broadway" @ 729MHz
+- 24MB "MEM1" + 64MB "MEM2" (non-contiguous - MEM2 starts 256MiB in)
+- Kernel 4.19 (+ CIP patchset), dev has been working on forward-porting 
+all the drivers one major version at a time (he's currently up to 5.15 
+last I checked) + limited upstream support (hardware bringup, UART, not 
+many peripherals)
 
-v2 -> v3 : Patch generated properly with all the changes
+Wii U (2012)
+- 3x PowerPC 750CL "Espresso" @ 1.2GHz
+- 32MB "MEM1" + 2GB "MEM2" (also starts 256MiB in) + various small SRAMs
+- Kernel 6.6 (+ LTS patchset), I also had a run at upstreaming some of 
+it in 2022 [4] and would eventually like to go again
 
- drivers/media/v4l2-core/v4l2-ctrls-core.c | 125 +++++++++++++++++-----
- 1 file changed, 100 insertions(+), 25 deletions(-)
+Special mention to the GameCube, basically a slower Wii with only 24MB 
+direct RAM and 16MB of non-mapped "ARAM". Wii Linux has experimental 
+support for this where they use the ARAM as swap.
 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls-core.c b/drivers/media/v4l2-core/v4l2-ctrls-core.c
-index 98b960775e87..fa03341588e4 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls-core.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls-core.c
-@@ -827,39 +827,114 @@ static int validate_av1_frame(struct v4l2_ctrl_av1_frame *f)
- 	return 0;
- }
- 
-+/**
-+ * validate_av1_sequence - validate AV1 sequence header fields
-+ * @s: control struct from userspace
-+ *
-+ * Implements AV1 spec §5.5.2 color_config() checks that are
-+ * possible with the current v4l2_ctrl_av1_sequence definition.
-+ *
-+ * TODO: extend validation once additional fields such as
-+ *       color_primaries, transfer_characteristics,
-+ *       matrix_coefficients, and chroma_sample_position
-+ *       are added to the uAPI.
-+ *
-+ * Returns 0 if valid, -EINVAL otherwise.
-+ */
- static int validate_av1_sequence(struct v4l2_ctrl_av1_sequence *s)
- {
--	if (s->flags &
--	~(V4L2_AV1_SEQUENCE_FLAG_STILL_PICTURE |
--	 V4L2_AV1_SEQUENCE_FLAG_USE_128X128_SUPERBLOCK |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_FILTER_INTRA |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_INTRA_EDGE_FILTER |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_INTERINTRA_COMPOUND |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_MASKED_COMPOUND |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_WARPED_MOTION |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_DUAL_FILTER |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_ORDER_HINT |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_JNT_COMP |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_REF_FRAME_MVS |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_SUPERRES |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_CDEF |
--	 V4L2_AV1_SEQUENCE_FLAG_ENABLE_RESTORATION |
--	 V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME |
--	 V4L2_AV1_SEQUENCE_FLAG_COLOR_RANGE |
--	 V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X |
--	 V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y |
--	 V4L2_AV1_SEQUENCE_FLAG_FILM_GRAIN_PARAMS_PRESENT |
--	 V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q))
--		return -EINVAL;
-+	const bool mono  = s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME;
-+	const bool sx    = s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X;
-+	const bool sy    = s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y;
-+	const bool uv_dq = s->flags & V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q;
- 
--	if (s->seq_profile == 1 && s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME)
-+	/* 1. Reject unknown flags */
-+	if (s->flags &
-+	    ~(V4L2_AV1_SEQUENCE_FLAG_STILL_PICTURE |
-+	      V4L2_AV1_SEQUENCE_FLAG_USE_128X128_SUPERBLOCK |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_FILTER_INTRA |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_INTRA_EDGE_FILTER |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_INTERINTRA_COMPOUND |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_MASKED_COMPOUND |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_WARPED_MOTION |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_DUAL_FILTER |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_ORDER_HINT |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_JNT_COMP |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_REF_FRAME_MVS |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_SUPERRES |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_CDEF |
-+	      V4L2_AV1_SEQUENCE_FLAG_ENABLE_RESTORATION |
-+	      V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME |
-+	      V4L2_AV1_SEQUENCE_FLAG_COLOR_RANGE |
-+	      V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X |
-+	      V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y |
-+	      V4L2_AV1_SEQUENCE_FLAG_FILM_GRAIN_PARAMS_PRESENT |
-+	      V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q))
- 		return -EINVAL;
- 
--	/* reserved */
-+	/* 2. Profile range */
- 	if (s->seq_profile > 2)
- 		return -EINVAL;
- 
--	/* TODO: PROFILES */
-+	/* 3. Monochrome shortcut */
-+	if (mono) {
-+		/* Profile 1 forbids monochrome */
-+		if (s->seq_profile == 1)
-+			return -EINVAL;
-+
-+		/* Mono → subsampling must look like 4:0:0: sx=1, sy=1 */
-+		if (!sx || !sy)
-+			return -EINVAL;
-+
-+		/* separate_uv_delta_q must be 0 */
-+		if (uv_dq)
-+			return -EINVAL;
-+
-+		return 0;
-+	}
-+
-+	/* 4. Profile-specific rules */
-+	switch (s->seq_profile) {
-+	case 0:
-+		/* Profile 0: only 8/10-bit, subsampling=4:2:0 (sx=1, sy=1) */
-+		if (s->bit_depth != 8 && s->bit_depth != 10)
-+			return -EINVAL;
-+		if (!(sx && sy))
-+			return -EINVAL;
-+		break;
-+
-+	case 1:
-+		/* Profile 1: only 8/10-bit, subsampling=4:4:4 (sx=0, sy=0) */
-+		if (s->bit_depth != 8 && s->bit_depth != 10)
-+			return -EINVAL;
-+		if (sx || sy)
-+			return -EINVAL;
-+		break;
-+
-+	case 2:
-+		/* Profile 2: 8/10/12-bit allowed */
-+		if (s->bit_depth != 8 && s->bit_depth != 10 &&
-+		    s->bit_depth != 12)
-+			return -EINVAL;
-+
-+		if (s->bit_depth == 12) {
-+			if (!sx) {
-+				/* 4:4:4 → sy must be 0 */
-+				if (sy)
-+					return -EINVAL;
-+			} else {
-+				/* sx=1 → sy=0 (4:2:2) or sy=1 (4:2:0) */
-+				if (sy != 0 && sy != 1)
-+					return -EINVAL;
-+			}
-+		} else {
-+			/* 8/10-bit → only 4:2:2 allowed (sx=1, sy=0) */
-+			if (!(sx && !sy))
-+				return -EINVAL;
-+		}
-+		break;
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.43.0
+All of these are flatmem devices, as that's all the 32-bit PowerPC arch 
+supports, with the Wii U additionally enabling highmem for its 2GB of 
+RAM. Both devices have a small memory area (MEM1) with the "bulk" of RAM 
+starting at 256MiB. The Wii U in particular sounds like a candidate 
+system for densemem - I would like to read up more about this if I can, 
+I was only able to find seemingly unrelated information about CXL when 
+searching online.
 
+There is a somewhat active userbase for both devices. I only have stats 
+for the Wii U side, but some rough nginx grepping for the last few days 
+- Sep 7th-Sep 12th - shows 39 downloads of distribution tarballs and 
+bootloader binaries in that period, not including torrents. In the past 
+2 weeks - Aug 29th-Sep 12th - 9 people joined the community Discord, 442 
+total. Anecdotally, the Wii Linux userbase appears at least twice as big 
+(based on their Discord activity).
+
+Distribution-wise, we're supported by ArchPOWER [5], Adélie Linux [6], 
+and other distros. The Wii U's Espresso has CPU errata requiring a 
+patched compiler, and both distributions ship separate package repos for 
+this CPU. ArchPOWER requested I rebase onto 6.6 so they could have 
+firmware compression - previously the Wii U was on 4.19 - so there is 
+some demand for newer kernel features as well.
+
+I know I'm talking about hobbyist use - and mostly downstream use at 
+that - and I do suspect that in the event of a wider 32-bit deprecation 
+we'd be fine on the final LTS, whatever that ends up being. Still, I 
+think the Wii and Wii U represent a decent number of 32-bit users, so I 
+wanted to add to the conversation here.
+
+Thanks,
+Ash
+
+[1] https://lwn.net/Articles/1035727/
+[2] https://linux-wiiu.org/
+[3] https://wii-linux.org/
+[4] https://lore.kernel.org/lkml/20221119113041.284419-1-ash@heyquark.com/
+[5] https://archlinuxpower.org/
+[6] https://www.adelielinux.org/
 
