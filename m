@@ -1,141 +1,79 @@
-Return-Path: <linux-kernel+bounces-815176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627AEB560B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:25:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047A0B560C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F467188F03A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:25:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBA15565A55
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA902ECD1C;
-	Sat, 13 Sep 2025 12:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B282EC573;
+	Sat, 13 Sep 2025 12:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQCQks+N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uoGxmExG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC2D26057A;
-	Sat, 13 Sep 2025 12:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D194F2EC085
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 12:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757766288; cv=none; b=vCZ5tTwQVjVdpMXi6gOkVmT2Ckg98xRrgX2YOix/GQdzQxow5tqL0kHbBshOSnxVvKIomyyum1l8RXKsKe8NX5qODDRQeRJhOc4CIZnhtqWQma4Ib0f3/dn9/8mO+sP29tnU2nxemGUr1rENPUuZvxo7uu6Wj+BV5H0Lj8pDs4Y=
+	t=1757766331; cv=none; b=CBW229tF+30D86UAli6izDcuYzjqgukSsHSf8H5+NH5ct4M6Tlh+YAV06FpywLFJMvKR148UGl4PvB8K41G1hYWh7SVHSYrwsZIZW9fb424p8cjSppyo0/7XPQ/fA9Om99V2Xm/z/1iySaF1AxK/7j2CFgJg51/24PlH+1RWSho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757766288; c=relaxed/simple;
-	bh=Vv4EpD59A8wJjkz0wkOsjCktkIvh4LqGHl4EZ4PD0OM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aJlENu0n3nEnvnns3qpwqxgQojKgZZu3xRQB+z1ilLD3BI/Esq83vfvQ7EktQdwfFGZKKcMME+GSQ96G2uh0mKkRJ8uH3kQaeHnJsMzxxC74oTSUup/MpfOC9RV56N0ijyrmnqx/O1+h1R9cGMR7QmaHEGcXcJLBpkiIhIxyPk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQCQks+N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E14DEC4CEEB;
-	Sat, 13 Sep 2025 12:24:43 +0000 (UTC)
+	s=arc-20240116; t=1757766331; c=relaxed/simple;
+	bh=6Udm7LDKiV5E/jbo0KJPnlyot4x0PgDq03jR/IZ6S+g=;
+	h=Message-ID:From:To:Cc:Subject:Date; b=kryZhLwFuhszM5Mep0k3llc8hpvhg23Nlobu1HtgJ05g+DjPxYLUy7WDWXP/rZJgYCV3ASY37B0uA/9hDXiRSq+njPaOMyb3X/UpcJDj3v8R/r3VeAqYffBhFDAdTIjmNMMWxSoEJjaD9B50lqE/wjiox2kKACHyOOReIbswdHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uoGxmExG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 012FFC4CEEB;
+	Sat, 13 Sep 2025 12:25:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757766288;
-	bh=Vv4EpD59A8wJjkz0wkOsjCktkIvh4LqGHl4EZ4PD0OM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eQCQks+NlXUcRnFtT45lg0458Zhcws1AN9ZBsGkb0V7k9pGL7WpYOM8mUxw7D0Nmt
-	 qbaztFs/t6xiw7B17OIVZC48WKvpfmalX1c7RWhnvyiIsBfs6ieEqM6M4EHCJdak76
-	 Bl4i1YEf7pmW2ZsEobH0rMibbmiZQ9BEvlkWEMm2PaMkQa9XnCSCPraIw3CuXPcwcX
-	 RgXMW3fGTVRSnTLJhtKylrbgUPZ0Bf7VttYbhOTmfCAK/MeW9Oeq61t9BLXyGxjNHx
-	 Wioi2qghp/QltAiSU1b2dVAGaWVadmFZ0IjNLsYSqMS6LbOK7e/xCwzTQwKWt0KHP8
-	 fAnKdH7IVYiBw==
-Date: Sat, 13 Sep 2025 13:24:38 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] iio: adc: Support ROHM BD79112 ADC/GPIO
-Message-ID: <20250913132438.11d14416@jic23-huawei>
-In-Reply-To: <d586b4a3-8fb8-45b5-a5a6-5bee8d366879@gmail.com>
-References: <20250910-bd79112-v4-0-f82f43746a8c@gmail.com>
-	<20250910-bd79112-v4-2-f82f43746a8c@gmail.com>
-	<20250910184619.0303163d@jic23-huawei>
-	<d586b4a3-8fb8-45b5-a5a6-5bee8d366879@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=k20201202; t=1757766331;
+	bh=6Udm7LDKiV5E/jbo0KJPnlyot4x0PgDq03jR/IZ6S+g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uoGxmExGElhvaxGKFL4PJJscXENHoemAGAseg3mnEGTj9qxzlf3XNUNvB9hLJY3qN
+	 a80lXvMy3u9U/kpZGgnuoqrT1wSoz9NJlL2TtXiQwTpgA2br9PzTvhVukryBmdNYhg
+	 ukH1xgPFE640PhtITMc0se44Ma877pMB1Y7/b7X7TfaWc7sPuHhtAccK1F4A+5fVSW
+	 p7Y4KElY5h2FDsGD36pfxFhR52yXm1eWeLfVL3nnhOR5yYQcwPYdIKrAJsHTNKCfG3
+	 BkWarjPSseXchgB20QwNkcHScEqQsHPzc7ZPDv1oqzTY7ZWCxpDiJeNYsAG0rJy3Yp
+	 rPKHO7oGS84JA==
+Message-ID: <9b157e1eae10b302d050b76d9483f548@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [GIT PULL] regulator fixes for v6.17-rc5
+Date: Sat, 13 Sep 2025 13:25:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Thu, 11 Sep 2025 08:13:03 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+The following changes since commit b320789d6883cc00ac78ce83bccbfe7ed58afcf0:
 
-> Morning Jonathan,
-> 
-> On 10/09/2025 20:46, Jonathan Cameron wrote:
-> > On Wed, 10 Sep 2025 14:24:35 +0300
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >   
-> >> The ROHM BD79112 is an ADC/GPIO with 32 channels. The channel inputs can
-> >> be used as ADC or GPIO. Using the GPIOs as IRQ sources isn't supported.
-> >>
-> >> The ADC is 12-bit, supporting input voltages up to 5.7V, and separate I/O
-> >> voltage supply. Maximum SPI clock rate is 20 MHz (10 MHz with
-> >> daisy-chain configuration) and maximum sampling rate is 1MSPS.
-> >>
-> >> The IC does also support CRC but it is not implemented in the driver.
-> >>
-> >> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>  
-> > 
-> > Hi Matti,
-> > 
-> > A few trivial things that I'll tidy up if nothing else comes up (I might not
-> > bother given how trivial they are!)  
-> 
-> Thanks again!
-> 
-> > Also one question. I couldn't immediately follow why any random register
-> > read is sanity checking if an ADC pin is configured as GPIO.
-> >   
-> 
-> Ah. Valid question! I see my comment below is partially wrong.
-> 
-> 
-> >> +/*
-> >> + * Read transaction consists of two 16-bit sequences separated by CSB.
-> >> + * For register read, 'IOSET' bit must be set. For ADC read, IOSET is cleared
-> >> + * and ADDR equals the channel number (0 ... 31).
-> >> + *
-> >> + * First 16-bit sequence, MOSI as below, MISO data ignored:
-> >> + * - SCK: | 1 | 2 |   3   |    4   | 5 .. 8 | 9 .. 16 |
-> >> + * - MOSI:| 0 | 0 | IOSET | RW (1) |  ADDR  |  8'b0   |
-> >> + *
-> >> + * CSB released and re-acquired between these sequences
-> >> + *
-> >> + * Second 16-bit sequence, MISO as below, MOSI data ignored:
-> >> + *   For Register read data is 8 bits:
-> >> + *   - SCK: | 1 .. 8 |   9 .. 16   |
-> >> + *   - MISO:|  8'b0  | 8-bit data  |
-> >> + *
-> >> + *   For ADC read data is 12 bits:
-> >> + *   - SCK: | 1 .. 4 |   4 .. 16   |
-> >> + *   - MISO:|  4'b0  | 12-bit data |  
-> 
-> This is not 100% true. I overlooked the ADC read "status flag" when 
-> adding this comment for the ADC data reading.
-> 
-> This should be:
-> 
->   *   For ADC, read data is 12 bits prepended with a status flag:
->   *   - SCK: | 1 |      2      | 3  4 |   4 .. 16   |
->   *   - MISO:| 0 | STATUS_FLAG | 2'b0 | 12-bit data |
-> 
-> The 'STATUS_FLAG' is set if the input pin is configured as a GPIO.
+  Linux 6.17-rc4 (2025-08-31 15:33:07 -0700)
 
-That's good additional info, but I'm still struggling on why
-we are effectively providing a 'debug' check in ever register
-read. My assumption is that it should never fire unless you have
-a driver bug?  
+are available in the Git repository at:
 
-Jonathan
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.17-rc5
+
+for you to fetch changes up to c05d0b32eebadc8be6e53196e99c64cf2bed1d99:
+
+  regulator: sy7636a: fix lifecycle of power good gpio (2025-09-08 16:33:24 +0100)
+
+----------------------------------------------------------------
+regulator: Fix for v6.17
+
+One fix for sy7636a which got confused about which device to use to
+manage the lifecycle of the power good GPIO because it's looked up from
+the parent device due to the way DT bindings work.
+
+----------------------------------------------------------------
+Andreas Kemnade (1):
+      regulator: sy7636a: fix lifecycle of power good gpio
+
+ drivers/regulator/sy7636a-regulator.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
