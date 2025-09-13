@@ -1,181 +1,94 @@
-Return-Path: <linux-kernel+bounces-814929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9497CB55A87
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:09:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA075B55A8A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E976F1D6126C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9AF5C094C
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9ABD632;
-	Sat, 13 Sep 2025 00:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7846863CF;
+	Sat, 13 Sep 2025 00:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ri+zYwWt"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EvaeNJAB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E97A59
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 00:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EB0139E;
+	Sat, 13 Sep 2025 00:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757722183; cv=none; b=DtYZArSr09BiNyxpiInkAzP21R54FSVaazBSEdqe+dUMi+DSXlWs34S+W6xwJbgcgbe75azbqlfj79ZytvxiG3HivY3hp7bO+9rYTYoNCZcwNjr7EHjUr0ml3cn00e5YkU7xo26+ftul+2c8QA9gJEhRW3Tn3zCQwRUjyybmPLc=
+	t=1757722211; cv=none; b=qX383ccEr4G4AQoqFyD+wRacgeiTsm0LXp4djP1tmR4BiUtliNhudfei32NtXAXV72fa/UT60qOGm/TIWpFn7/pEvWBxm+S4jzwLsIO2nUhQXI3pe4NiOPdwSVXjcKCOfMJq1xK30+UGH53QG5Q/uc5SefxmhiHMG2N6neqL7zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757722183; c=relaxed/simple;
-	bh=VxsSXWx59/PbkxkYiW4MNE18cTdfGL+gqvmPrXQYGPE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=kwU+GeXfMYEPzDOK0qJ4bzJpBJnJOz5l53sqavgcEobuOsUklDfT679IyIFeyfq6NT24joazxzK6+5TEMgXT6uKSXjUnLzBreoP/+gtAQuXb3AHpRFO5gIyjtr0nkRJMxb8G49WCDmuPtUK2+nT0gp19hQKP/unrGK6ZyFrIrg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sudarsanm.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ri+zYwWt; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sudarsanm.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b47173afd90so3184480a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:09:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757722181; x=1758326981; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D4qcwx7tIF7ceX4FWdqTaXFiCrpIzKr7ul9F9MwN60k=;
-        b=ri+zYwWtyA4vH4dsGZPBWP1LCXqjF95k62taFje+peHmdayulrFcogllOIShjRpJ3L
-         VuUX52NlnNsOPqVoIyHxycItmAIzdLdfSYGRYdbx+ANjamyYsIHzvP8dQwCEOwCyd9r+
-         vUcnsaHaD/E1xASRq5e425vvIPl3THCs+Z4FwfEjU4VaTm+SCPy3r7eekc9LXAYxPrTn
-         jSfLwCGdTUqlVunkFLNZybKG6HzfGNTZQRvU1HaFDduhaWcA6zXodaf9gWTAaPKJdygA
-         V2eNic3xCWOoDinFJ/Yr5zkrJO2c5tW0WwFYl2LDUDMEqkTcgkkM+Wd1xYj33qqqar3C
-         4dMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757722181; x=1758326981;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D4qcwx7tIF7ceX4FWdqTaXFiCrpIzKr7ul9F9MwN60k=;
-        b=bZ26svzEPtHj+Hnpj8XL4IgbaBSsykslDWO0pQ+EMm+PqD/hyvXKTzsBWBeo3OQUnN
-         KXLqN6xYWhHrJ0pY+yKT+cwgFNy80eyDLi2JnA3+9ZcL7CwT3/5EPAQz25aJDwFLa/3e
-         H6/L8RNCjLZkPQ34WEENQgRNzkWWQYiCTgdpGLv5ke9cAGkrF6unUhtV2HU8/WXMl+zJ
-         YUu/b/ikGnp0/lvlYSYB33DwT3sl5CSBzQUHlhJ1SgN9MMTcvJ7juSFPUlIhIcBrsctb
-         9QvsEeWnbklySljJ9SR3box68EwxjU6zRZS7EbOOQG+TqYmeeNFmBUatgB0RrtyutHwm
-         uxAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVucKwT7TPjmqGA2kjE1QvtziaiUsw1Urj0wl7a6VVMNIzednmbo8VnpfwNW3NUp00VBa59xFkRizpJELA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFeeMj3LF2MTicwFg3yxcvkh5RtwhvrKBnZGs/PY3cSj7+jJZt
-	Gx8cWC/53qGr2wC7GEpMQUpV8pYo18Uc7HMR2HTgPpKDgG2Ih74wJQy/CY3Cy0IlAh1yvxJsVV7
-	yTjcDLJnijY/Ozd9O7g==
-X-Google-Smtp-Source: AGHT+IHS23gulFRPNDYDol1StJlKh3HDBOcLTAfZPF7cXgJccYt3Eih+Wl2Bgx4LCQZX6nkkbvzcr31DF56Mzcs=
-X-Received: from pjwx7.prod.google.com ([2002:a17:90a:c2c7:b0:327:d54a:8c93])
- (user=sudarsanm job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:3288:b0:252:2bfe:b648 with SMTP id adf61e73a8af0-2602c6246e2mr5853775637.52.1757722180835;
- Fri, 12 Sep 2025 17:09:40 -0700 (PDT)
-Date: Fri, 12 Sep 2025 17:09:35 -0700
-In-Reply-To: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
+	s=arc-20240116; t=1757722211; c=relaxed/simple;
+	bh=huvopUx+fCF+W27J4ozI5YLGzWrBy737PtGOGcG4H2Y=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=DFk9qoBjnDeNeGpgUMNruztKXtObM1CVt9cR0aVu5I/CASUPoM9MFfZ/TIoKmwwsWDLYSPx71mhcTAbfv+M9MNNwetdkkKQGX6SNKKSpwcWMrEB/Gk17HUiVEkDJgMYnigJPnUr4Tbyt8oWbLEciqY+lHUPIxOwqZF9L4/E6qNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EvaeNJAB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A003C4CEF1;
+	Sat, 13 Sep 2025 00:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757722211;
+	bh=huvopUx+fCF+W27J4ozI5YLGzWrBy737PtGOGcG4H2Y=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=EvaeNJABzLxa6LhqrXHKVF36AkpXQbsvz+v9RyeVtxdNP34QjmT8GSOoXFtJL41yc
+	 L9fa9ZC9Y2fW/SNvki+UrPwI4aVkXchkn60Y7pAhT9MzTCEaMOJdy5yOZWsVGv1Tmg
+	 2W9DjDaNl5KiKXmEELv/yDtrB12eG9Rm3SDTfZsWCDcZkGQ/VgwjD2Eq4Mv6IfuQwS
+	 WniiTnX/xtv6q7zkompLKdq29dYD9k+a4jOWuArCXPm401r7kDz4Qa91Z551VtAtPH
+	 s8O2qPPl5/aYv3U1/+I6kmajVP/ON4++MZHi+PxvV2q6AbttUn9mOwSz+fAepwKTOa
+	 BE19EAcU2RhXg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE329383BF4E;
+	Sat, 13 Sep 2025 00:10:14 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250913000935.1021068-1-sudarsanm@google.com>
-Subject: Re: Benchmarking [PATCH v5 00/14] SLUB percpu sheaves
-From: Sudarsan Mahendran <sudarsanm@google.com>
-To: vbabka@suse.cz
-Cc: Liam.Howlett@oracle.com, cl@gentwo.org, harry.yoo@oracle.com, 
-	howlett@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	maple-tree@lists.infradead.org, rcu@vger.kernel.org, rientjes@google.com, 
-	roman.gushchin@linux.dev, surenb@google.com, urezki@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] dt-bindings: net: Drop duplicate
+ brcm,bcm7445-switch-v4.0.txt
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175772221351.3109205.11738417185121524239.git-patchwork-notify@kernel.org>
+Date: Sat, 13 Sep 2025 00:10:13 +0000
+References: <20250909142339.3219200-2-robh@kernel.org>
+In-Reply-To: <20250909142339.3219200-2-robh@kernel.org>
+To: Rob Herring (Arm) <robh@kernel.org>
+Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Hi Vlastimil,
+Hello:
 
-I ported this patch series on top of v6.17 and ran
-some benchmarks: will-it-scale, hackbench, redis,
-unixbench and kernbench. I ran the benchmarks
-on Intel Granite Rapids (480 cores), AMD Turin (512 cores)
-and ARM (80 cores)
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Summary of the results:
+On Tue,  9 Sep 2025 09:23:38 -0500 you wrote:
+> The brcm,bcm7445-switch-v4.0.txt binding is already covered by
+> dsa/brcm,sf2.yaml. The listed deprecated properties aren't used anywhere
+> either.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  .../bindings/net/brcm,bcm7445-switch-v4.0.txt | 50 -------------------
+>  1 file changed, 50 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/net/brcm,bcm7445-switch-v4.0.txt
 
-- Significant change (meaning >10% difference
-  between base and experiment) on will-it-scale
-  tests in AMD.
-- No significant change on other benchmarks ran.
+Here is the summary with links:
+  - [net-next] dt-bindings: net: Drop duplicate brcm,bcm7445-switch-v4.0.txt
+    https://git.kernel.org/netdev/net-next/c/3456820e01f9
 
-Summary of AMD will-it-scale test changes:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Number of runs : 15
-Direction      : + is good
-
-|            | MIN        | MAX        | MEAN       | MEDIAN     | STDDEV     |
-|:-----------|:-----------|:-----------|:-----------|:-----------|:-----------|
-| brk1_8_processes
-| BASE       | 7,667,220  | 7,705,767  | 7,682,782  | 7,676,211  | 12,733     |
-| TEST       | 9,477,395  | 10,053,058 | 9,878,753  | 9,959,360  | 182,014    |
-| %          | +23.61%    | +30.46%    | +28.58%    | +29.74%    | +1,329.46% |
-| brk1_8_threads
-| BASE       | 1,838,468  | 1,890,873  | 1,864,473  | 1,864,875  | 18,406     |
-| TEST       | 1,464,917  | 1,668,207  | 1,608,345  | 1,654,578  | 70,558     |
-| %          | -20.32%    | -11.78%    | -13.74%    | -11.28%    | +283.34%   |
-| brk1_128_processes
-| BASE       | 65,018,211 | 65,603,366 | 65,285,348 | 65,103,197 | 232,885    |
-| TEST       | 51,287,801 | 52,161,228 | 51,647,807 | 51,509,505 | 277,326    |
-| %          | -21.12%    | -20.49%    | -20.89%    | -20.88%    | +19.08%    |
-| brk1_256_processes
-| BASE       | 15,186,881 | 15,239,120 | 15,210,265 | 15,205,809 | 15,850     |
-| TEST       | 20,478,924 | 23,936,204 | 22,754,698 | 22,771,320 | 1,255,974  |
-| %          | +34.85%    | +57.07%    | +49.60%    | +49.75%    | +7,823.72% |
-| brk1_384_processes
-| BASE       | 11,587,076 | 11,851,775 | 11,765,869 | 11,806,007 | 73,736     |
-| TEST       | 25,464,757 | 29,176,818 | 26,695,946 | 26,563,116 | 1,012,563  |
-| %          | +119.77%   | +146.18%   | +126.89%   | +125.00%   | +1,273.23% |
-| brk1_512_processes
-| BASE       | 14,410,293 | 14,891,082 | 14,775,209 | 14,793,142 | 114,384    |
-| TEST       | 22,918,195 | 29,648,177 | 25,204,321 | 25,128,471 | 1,604,037  |
-| %          | +59.04%    | +99.10%    | +70.59%    | +69.87%    | +1,302.32% |
-| mmap1_8_processes
-| BASE       | 3,164,411  | 3,170,585  | 3,167,590  | 3,167,692  | 2,436      |
-| TEST       | 3,516,242  | 3,756,209  | 3,684,585  | 3,698,731  | 68,659     |
-| %          | +11.12%    | +18.47%    | +16.32%    | +16.76%    | +2,718.28% |
-| mmap1_8_threads
-| BASE       | 627,817    | 632,702    | 630,554    | 629,281    | 1,764      |
-| TEST       | 541,202    | 554,097    | 549,104    | 549,896    | 4,257      |
-| %          | -13.80%    | -12.42%    | -12.92%    | -12.62%    | +141.34%   |
-| mmap1_128_processes
-| BASE       | 30,303,429 | 30,736,686 | 30,466,107 | 30,343,821 | 174,985    |
-| TEST       | 9,749,426  | 9,893,331  | 9,823,701  | 9,857,157  | 52,125     |
-| %          | -67.83%    | -67.81%    | -67.76%    | -67.52%    | -70.21%    |
-| mmap1_256_processes
-| BASE       | 7,496,765  | 7,546,703  | 7,528,379  | 7,543,246  | 21,465     |
-| TEST       | 10,868,119 | 16,947,857 | 12,695,418 | 11,608,083 | 2,157,787  |
-| %          | +44.97%    | +124.57%   | +68.63%    | +53.89%    | +9,952.34% |
-| mmap1_384_processes
-| BASE       | 5,629,206  | 5,856,927  | 5,758,347  | 5,733,892  | 85,930     |
-| TEST       | 12,053,514 | 13,635,555 | 12,966,975 | 13,283,450 | 606,325    |
-| %          | +114.12%   | +135.49%   | +112.89%   | +104.26%   | +2,855.57% |
-| mmap1_512_processes
-| BASE       | 6,959,199  | 6,996,383  | 6,975,912  | 6,974,353  | 15,446     |
-| TEST       | 10,197,814 | 12,029,690 | 11,458,180 | 11,381,726 | 534,690    |
-| %          | +46.54%    | +71.94%    | +64.25%    | +63.19%    | +3,361.67% |
-| tlb_flush2_384_threads
-| BASE       | 2,953,477  | 3,021,464  | 3,003,512  | 3,014,264  | 25,525     |
-| TEST       | 2,231,417  | 2,526,876  | 2,408,368  | 2,411,121  | 115,773    |
-| %          | -24.45%    | -16.37%    | -19.81%    | -20.01%    | +353.55%   |
-| tlb_flush2_512_threads
-| BASE       | 2,499,486  | 2,542,966  | 2,520,278  | 2,530,049  | 17,161     |
-| TEST       | 1,707,641  | 1,714,524  | 1,708,951  | 1,707,713  | 1,877      |
-| %          | -31.68%    | -32.58%    | -32.19%    | -32.50%    | -89.06%    |
-| mmap2_128_processes
-| BASE       | 29,754,984 | 30,313,146 | 30,010,106 | 29,897,731 | 218,812    |
-| TEST       | 9,688,640  | 9,750,688  | 9,710,137  | 9,696,830  | 23,428     |
-| %          | -67.44%    | -67.83%    | -67.64%    | -67.57%    | -89.29%    |
-| mmap2_256_processes
-| BASE       | 7,483,929  | 7,532,461  | 7,491,876  | 7,489,398  | 11,134     |
-| TEST       | 11,580,023 | 16,508,551 | 15,337,145 | 15,943,608 | 1,489,489  |
-| %          | +54.73%    | +119.17%   | +104.72%   | +112.88%   | +13,276.75%|
-| mmap2_384_processes
-| BASE       | 5,725,503  | 5,826,364  | 5,763,341  | 5,765,247  | 29,674     |
-| TEST       | 11,682,353 | 13,720,566 | 12,269,665 | 11,776,228 | 877,060    |
-| %          | +104.04%   | +135.49%   | +112.89%   | +104.26%   | +2,855.57% |
-| mmap2_512_processes
-| BASE       | 6,959,199  | 6,996,383  | 6,975,912  | 6,974,353  | 15,446     |
-| TEST       | 10,197,814 | 12,029,690 | 11,458,180 | 11,381,726 | 534,690    |
-| %          | +46.54%    | +71.94%    | +64.25%    | +63.19%    | +3,361.67% |
 
 
