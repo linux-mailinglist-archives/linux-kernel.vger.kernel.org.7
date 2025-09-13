@@ -1,168 +1,164 @@
-Return-Path: <linux-kernel+bounces-815185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D063B560F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:54:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B480B560F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:57:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 085A33B16AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D502D487F46
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:57:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E09F2ED14E;
-	Sat, 13 Sep 2025 12:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E6C2ED163;
+	Sat, 13 Sep 2025 12:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+M1I8iM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N4r9yMcT"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877A4DDD2;
-	Sat, 13 Sep 2025 12:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265352EC570
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 12:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757768067; cv=none; b=jx/hzB04Qn72EvGg0c5tuZHohfldiy3CQB23F5TwJe1ccOwhhlsba3Gkfa8xDnWfQZQZATM30umo6CxkCuyXwqpdGgFy4rvfZUGrp7YGye0UhufxDwrdfdr9ehxCAO4AallO2/XAlLjdNXkD9D/uIRv8SRJvONw7vo9FGC82NGk=
+	t=1757768240; cv=none; b=b84yLn2jUCd/JQEbvTnsVfJaiYHuCit8nnbwg9CwUZfh+/euW53DtFu2IGjFoyPWSjV/GdlbVcxn4BTSRezhazjpu4gfBod4dM56OInKkv7IvqfKrHGPCewcYB3OBocHTmKFsirwXw5a4T7w6KFwU+otRVNe3ru92KuGA1BvZPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757768067; c=relaxed/simple;
-	bh=5kZch37YLxnV/FLcAbcomFjzaUi7yAZ3rioG5zfcjPA=;
+	s=arc-20240116; t=1757768240; c=relaxed/simple;
+	bh=tUiYl0q8nzJqURhBlH50zoLRaS/z9qcITQokKmLz2p4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d4CYMTqgPeuWLwg9WhScPx1cUfUs/vXyFy0dW4vPHGx8FGJPSdE1wKnDwSTvlFl5xjvRcgm4s2BUUsqPt9yeVmTmtqI4ukp2/TVl8UxPjEg9hRgnkZDC3YXJAq820ikJH38Kd0lsVAL0/Bf+tqYjNSHKkd9LcRJ+YCc0meZaV2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+M1I8iM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73A3C4CEEB;
-	Sat, 13 Sep 2025 12:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757768067;
-	bh=5kZch37YLxnV/FLcAbcomFjzaUi7yAZ3rioG5zfcjPA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m+M1I8iMxy7O1gG9pJ8jomsV+kgs7Y/ARiQZwk1/rzpS9Wh4NmxPAZ4sol7h+VODn
-	 YUqMJVR3+AjvceUoX1lprtpFVYED27wBNixgAZbcLlAJN1vJXEZn7QUBEOo5X227vy
-	 NIX2ZnMHO7k9z2gCGF5yToM8MXs1XA70EAHSrzhQcpPbzyHV5QQhj5rtXuvGzmhger
-	 vTGqu1sQ5F2sAxGrTIqeDvY941gDF/ipcgdz/snbIse/fb56FrMFJ6Ykp9CLzy/1c+
-	 jjMhp/jJ9yRNuUlzmHtp2q/wwl+STwWJPWSMnwOFIUkiJw6GN4K4/M1CdPKkFIgZO7
-	 Xhn0oVWLIN0qQ==
-Message-ID: <50d79030-9e45-4890-9fee-c0027caf07c9@kernel.org>
-Date: Sat, 13 Sep 2025 14:54:21 +0200
+	 In-Reply-To:Content-Type; b=VcKocGquC6TMWhldSC5c2GRPR8tkqFT1xndMOwnYoMXEPdg7I/zhPDZ92tH896s+ELT9MlfDUhcsKgR4SEFzTbDtScxgNpfUnkLR1FLUPRnmrwfPw0nhQUNPq31YI4n2c6msEyZbTUz+wKMP/J1Kru4BNanEbZR/S47R/akCJG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=N4r9yMcT; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ce208c7505so452606f8f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1757768235; x=1758373035; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ajlX5M9D9raPkoDC7DsJaAjqkrSXNAPNl1i9qyNoGCQ=;
+        b=N4r9yMcTiT923AivOuOCM817JOx+o1P7JP5CiW2QiASdtJisi42/0ogxnA9EjRlhIl
+         jmwraHq38BRr1uWL7elN5gv5Ro74atRIUZtf7rKArDgedYF8xxgTRe4Cx6FY1gmdXjvg
+         KkizoZiKm7IczgC7TSl4b/C9Te9r9A4ZyDjGPs33Y+qDpzwPuPJxqt0eDU7IXw9J7quk
+         PJFjJ0b1FXM9abTW4W5VxBhS+hGPFVpcxeVZVXs0fQ/qZyP1NSP4K3RrE/n/xXM4cxTD
+         qq+3svhUQr8L5q7LKR8bVUqutIvTVDQhiSvp2JmyezhVALkSFQGZwLOgrNJQ0ku+90Ef
+         FRjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757768235; x=1758373035;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ajlX5M9D9raPkoDC7DsJaAjqkrSXNAPNl1i9qyNoGCQ=;
+        b=C6EHBlBojNbzPcQqr2tZDvvO4qlg7mmYwH2EyOgsgfO2dRhDTZSkd66ZxOAdLILZ2y
+         aP314443fuyzGCMojEcINVlGBQZ8YvWfVSyGpu6vET1FhLDgwXjpDQbIWMwXnH1N8X0s
+         P8pYeQyoDA3FUNi3bMtc01zTLA6ODRk3kPEUkINpRAqhkn5Hy08TJEC4XZhZDXilJ1Ce
+         4WS4tcQRRu2RbXTj3zUxj6GjE+MBush0WF1YxwUp9Ha+OP5iayf37NOhqqhW1X5wo3PZ
+         /Q1kU1pnXWxHWquuBKM8gvL9hXW777s7MZQdiMbZwxVPGei1Mi5oUm1Ud0aGOED+ZBQz
+         G7Uw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNzNAeR/lJ+D3fajSLtY/rcJis27hCN2jmBXaAKhGgFWbWXv4cmLDchX0PURCj//QmlnXB5EaO889v/jY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsUQz00cRQDr83hxSZ8Y8imNoG5OMTd3pu5MC5QbmILnbQPPnn
+	ChJ2qTsuJQG58nUki08JCm1/MnrUzyHY69Z6yucCoecXuDU63Ov+VAaItCrm5NQNqWE=
+X-Gm-Gg: ASbGncujVNDOy3f9EPTRfN17mlhtyF0OD98H6vIX78rkpvTDjp8xzqHAHyxMGsNAjDz
+	cpzVIyv67Jnf3Y2D77M87h6rnwWC0PnUSQ5exqRp47LpsHp9WXOYq2cHpenOZUtMJMFfY8g872b
+	RGQNxJ75TWdcyXzXoiHsvh3JdJUIXSyTXmWQiY+ZFRGuX6IHrZY7B2EP1RLqBJ6KjWSya+D0Xy9
+	uCkHM5LNOcTnhPEPuWFY2KfuKCeWFXHEpb6AU12welO0HrG1gvVZQJVU0eBrGNG8U0XD7+QLkZh
+	mobPZj5c/UPuVlAIM91UikrNlPgm+9WLg2pKlz479k/y7uIzZzj10wfaVWS2AKxT66i6/QuVEli
+	bfFPnrJgf2Aryuq3ZppE5BHX2/xyPXK1M0wgfvnRFqVk=
+X-Google-Smtp-Source: AGHT+IGn5sCzsoqc2MaMoViDVBdvECXXkAco+Eu+Io81V2kX6oTtmJINauxexWPqK3aRnlW4W1Kmug==
+X-Received: by 2002:a05:600c:6090:b0:45d:d289:f505 with SMTP id 5b1f17b1804b1-45f211f859dmr32547895e9.4.1757768235253;
+        Sat, 13 Sep 2025 05:57:15 -0700 (PDT)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7e645d1fcsm4235977f8f.48.2025.09.13.05.57.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Sep 2025 05:57:14 -0700 (PDT)
+Message-ID: <0ac9fe53-8f0c-4729-82a9-3358eec19892@linaro.org>
+Date: Sat, 13 Sep 2025 14:57:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next v2 2/3] netlink: specs: team: avoid mangling
- multilines doc
-Content-Language: en-GB, fr-BE
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Donald Hunter
- <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Jiri Pirko <jiri@resnulli.us>,
- linux-doc@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250912-net-next-ynl-attr-doc-rst-v2-0-c44d36a99992@kernel.org>
- <20250912-net-next-ynl-attr-doc-rst-v2-2-c44d36a99992@kernel.org>
- <20250912123518.7c51313b@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20250912123518.7c51313b@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] arm64: dts: qcom: sdm845-shift-axolotl: Fix typo of
+ compatible
+To: Tamura Dai <kirinode0@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <Message-ID: <2d41c617-b7c7-43ae-aa90-7368e960e8a5@kernel.org>
+ <20250913063958.149-1-kirinode0@gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <20250913063958.149-1-kirinode0@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Jakub,
+On 13/09/2025 08:39, Tamura Dai wrote:
+> Fix typo in the compatible string for the touchscreen node. According to
+> Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml,
+> the correct compatible is "focaltech,ft8719", but the device tree used
+> "focaltech,fts8719".
 
-Thank you for the reply!
+I am sorry, but why are you sending this? You were told this is wrong.
 
-On 12/09/2025 21:35, Jakub Kicinski wrote:
-> On Fri, 12 Sep 2025 15:23:00 +0200 Matthieu Baerts (NGI0) wrote:
->> By default, strings defined in YAML at the next line are folded:
->> newlines are replaced by spaces. Here, the newlines are there for a
->> reason, and should be kept in the output.
->>
->> This can be fixed by adding the '|' symbol to use the "literal" style.
->> This issue was introduced by commit 387724cbf415 ("Documentation:
->> netlink: add a YAML spec for team"), but visible in the doc only since
->> the parent commit.
->>
->> Suggested-by: Donald Hunter <donald.hunter@gmail.com>
->> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
->> ---
->>  Documentation/netlink/specs/team.yaml | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/Documentation/netlink/specs/team.yaml b/Documentation/netlink/specs/team.yaml
->> index cf02d47d12a458aaa7d45875a0a54af0093d80a8..fae40835386c82e934f205219cc5796e284999f1 100644
->> --- a/Documentation/netlink/specs/team.yaml
->> +++ b/Documentation/netlink/specs/team.yaml
->> @@ -25,7 +25,7 @@ definitions:
->>  attribute-sets:
->>    -
->>      name: team
->> -    doc:
->> +    doc: |
->>        The team nested layout of get/set msg looks like
->>            [TEAM_ATTR_LIST_OPTION]
->>                [TEAM_ATTR_ITEM_OPTION]
->>
 > 
-> htmldoc is not super happy :(
-> 
-> Documentation/netlink/specs/team.yaml:21: WARNING: Definition list ends without a blank line; unexpected unindent.
-> Documentation/netlink/specs/team.yaml:21: WARNING: Definition list ends without a blank line; unexpected unindent.
+> Fixes: 45882459159d ("arm64: dts: qcom: sdm845: add device tree for SHIFT6mq")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Tamura Dai <kirinode0@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Arf, I looked at the HTML version, I forgot to look for new warnings...
+Missing changelog. What is the reason of this v3? Why are you sending it?
 
-> Shooting from the hip -- maybe throwing :: at the end of the first line
-> will make ReST treat the attrs as a block?
 
-Indeed, I guess it is better to declare a code block instead of a list.
-I will fix that in the next version.
-
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
-
+Best regards,
+Krzysztof
 
