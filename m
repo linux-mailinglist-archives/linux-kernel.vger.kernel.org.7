@@ -1,133 +1,104 @@
-Return-Path: <linux-kernel+bounces-815409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46330B563EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:00:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B82CB56408
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45A663A93CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:00:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5190117FB70
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19A82C21DF;
-	Sat, 13 Sep 2025 23:59:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="is9uAdaN"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951B678F39;
+	Sun, 14 Sep 2025 00:27:20 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043412C11CE;
-	Sat, 13 Sep 2025 23:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EBD163;
+	Sun, 14 Sep 2025 00:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757807958; cv=none; b=OqQvoQUTjL7ROT19FPMgL5dzRbegGYVs6fAaKME+qG3ivpIivk/q2oLAeiKfji4vvW8mRCp0Wx/y0vkWhWob4wAos7BEXFNgYYQR4rCBFBY2qXZUgnsCVBuiR++bRE+lDC2eyOFb9IZf8IOv94iEqLU536DhPEvjHViEy/v2Fjs=
+	t=1757809640; cv=none; b=r9MCBqNubJYMlwaU3s8U8bnm/fjl6TTvW1V9i63vnetX1huNYf1XP1yU6PUxWQeN4O9mIM7YBuo1ZqfgMkE1Aa5D/HRN3RrCFP/I55se4kcF4k4YTeAzMF4JUeSn+HFh+pk6WqUff7FRdbRd4HPGpTg1jxjvZ/dqcY2cQYIb3JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757807958; c=relaxed/simple;
-	bh=M8RZw0PcAr23td7B4SWZsTm8GfTk/HQcBuK2/+z1TOk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dp3bfDVHibrDc+zZonweAvLXAondxUrs8sQpKPsmkfkba2Ba46vOqfg6+8TkXNH8+mDuig2vNZyDwLgt4LtD7WEav3bmUOk7T6pWA69xuvsrkW/24rnPdZ2qtvoFdRdkue7/oRb1OjEEfKYL+P2vk+qP9Tf1Pj4rAQNLaXdm540=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=is9uAdaN; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1757807952;
-	bh=M8RZw0PcAr23td7B4SWZsTm8GfTk/HQcBuK2/+z1TOk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=is9uAdaN3UZ0mzHCMX0szSPW7peuoWfu+HJ9BcWLE0npk2Je3H+rNphAB1f7b6n9b
-	 U3wa9DTDS+ktV/g9CrKQUXMQhZvIq8pjnqf0pGWsX+lFU2hkA0eBqBOY41ZDeFFa2P
-	 ubNrF9EHP8wa8AiyMkaQD0+JxDwxm0+znMtQ0Xa8Y2w5IBCrZRMnewdlGd42x1mKJr
-	 eb4je4zeyQ2RecQMSQPZxRoW8h5jlNor+7/HkxsIQAtj0EWJ3KqxS5LVpf58jYjWNB
-	 zmwT1iDInze2uP5Z88JsigSQRVuxSuiARFr4eyrQlpXvAp4X6cJg3NEHqB/j8IIAZV
-	 XnWFyaDesxDwQ==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id BF3BF6012E;
-	Sat, 13 Sep 2025 23:59:12 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id 912D32051E5; Sat, 13 Sep 2025 23:58:57 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	wireguard@lists.zx2c4.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v4 11/11] tools: ynl: add ipv4-or-v6 display hint
-Date: Sat, 13 Sep 2025 23:58:32 +0000
-Message-ID: <20250913235847.358851-12-ast@fiberby.net>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20250913235847.358851-1-ast@fiberby.net>
-References: <20250913235847.358851-1-ast@fiberby.net>
+	s=arc-20240116; t=1757809640; c=relaxed/simple;
+	bh=XhAY2Nc3nA6iDpUI121blFa1UrnZBHRgmQH83AHqnJU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AzQOonlNNHWvLpITLKhWcv6NI+R+twO//NE2q6wtlCBbtsNsPSmli6QiWuBOcu622XkAqvw4avrXR2h+8ePilni/dpWxHZ3JT7kjX9BnmwXxWeszGdBR+mCf1u7/VdIFDXxnHiUkFw5/U/HSamk9r/NCbkrdskHf8yTOfuaaSkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1uxa9C-0000000077z-2TM1;
+	Sat, 13 Sep 2025 23:59:14 +0000
+Date: Sun, 14 Sep 2025 00:59:11 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Yu Jiaoliang <yujiaoliang@vivo.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Changqi Hu <changqi.hu@mediatek.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Steven Liu <steven.liu@mediatek.com>,
+	John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH] tty: serial: 8250_mtk: enable baud clock
+Message-ID: <5d6acd2273e3c98a5cbc685ad94eff19c6b6d044.1757807642.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The attribute WGALLOWEDIP_A_IPADDR can contain either an IPv4
-or an IPv6 address depending on WGALLOWEDIP_A_FAMILY, however
-in practice it is enough to look at the attribute length.
+Some MediaTek SoCs got a gated UART baud clock, which currently gets
+disabled as the clk subsystem believes it would be unused. This results in
+the uart freezing right after "clk: Disabling unused clocks" on those
+platforms.
 
-This patch implements an ipv4-or-v6 display hint, that can
-deal with this kind of attribute.
+To fix this request the "baud" clock as enabled to prevent disabling it
+among with the unused clocks.
+Runtime power management can probably also be restored to the state before
+commit e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock
+management"), but that isn't strictly needed to fix the regression
+introduced by that commit.
 
-It only implements this display hint for genetlink-legacy, it
-can be added to other protocol variants if needed, but we don't
-want to encourage it's use.
-
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+Fixes: e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock management")
+Suggested-by: Sam Shih <sam.shih@mediatek.com>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 ---
- Documentation/netlink/genetlink-legacy.yaml | 2 +-
- tools/net/ynl/pyynl/lib/ynl.py              | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/tty/serial/8250/8250_mtk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/netlink/genetlink-legacy.yaml b/Documentation/netlink/genetlink-legacy.yaml
-index b29d62eefa16..66fb8653a344 100644
---- a/Documentation/netlink/genetlink-legacy.yaml
-+++ b/Documentation/netlink/genetlink-legacy.yaml
-@@ -154,7 +154,7 @@ properties:
-                   Optional format indicator that is intended only for choosing
-                   the right formatting mechanism when displaying values of this
-                   type.
--                enum: [ hex, mac, fddi, ipv4, ipv6, uuid ]
-+                enum: [ hex, mac, fddi, ipv4, ipv6, ipv4-or-v6, uuid ]
-               struct:
-                 description: Name of the nested struct type.
-                 type: string
-diff --git a/tools/net/ynl/pyynl/lib/ynl.py b/tools/net/ynl/pyynl/lib/ynl.py
-index 707753e371e2..62383c70ebb9 100644
---- a/tools/net/ynl/pyynl/lib/ynl.py
-+++ b/tools/net/ynl/pyynl/lib/ynl.py
-@@ -956,7 +956,7 @@ class YnlFamily(SpecFamily):
-                 formatted = hex(raw)
-             else:
-                 formatted = bytes.hex(raw, ' ')
--        elif display_hint in [ 'ipv4', 'ipv6' ]:
-+        elif display_hint in [ 'ipv4', 'ipv6', 'ipv4-or-v6' ]:
-             formatted = format(ipaddress.ip_address(raw))
-         elif display_hint == 'uuid':
-             formatted = str(uuid.UUID(bytes=raw))
-@@ -965,7 +965,7 @@ class YnlFamily(SpecFamily):
-         return formatted
+diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
+index b44de2ed7413..9329ed1f759d 100644
+--- a/drivers/tty/serial/8250/8250_mtk.c
++++ b/drivers/tty/serial/8250/8250_mtk.c
+@@ -475,13 +475,13 @@ static int mtk8250_probe_of(struct platform_device *pdev, struct uart_port *p,
+ 	int dmacnt;
+ #endif
  
-     def _from_string(self, string, attr_spec):
--        if attr_spec.display_hint in ['ipv4', 'ipv6']:
-+        if attr_spec.display_hint in ['ipv4', 'ipv6', 'ipv4-or-v6']:
-             ip = ipaddress.ip_address(string)
-             if attr_spec['type'] == 'binary':
-                 raw = ip.packed
+-	data->uart_clk = devm_clk_get(&pdev->dev, "baud");
++	data->uart_clk = devm_clk_get_enabled(&pdev->dev, "baud");
+ 	if (IS_ERR(data->uart_clk)) {
+ 		/*
+ 		 * For compatibility with older device trees try unnamed
+ 		 * clk when no baud clk can be found.
+ 		 */
+-		data->uart_clk = devm_clk_get(&pdev->dev, NULL);
++		data->uart_clk = devm_clk_get_enabled(&pdev->dev, NULL);
+ 		if (IS_ERR(data->uart_clk)) {
+ 			dev_warn(&pdev->dev, "Can't get uart clock\n");
+ 			return PTR_ERR(data->uart_clk);
 -- 
 2.51.0
-
 
