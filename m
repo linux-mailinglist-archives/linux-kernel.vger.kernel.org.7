@@ -1,155 +1,155 @@
-Return-Path: <linux-kernel+bounces-815295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD5F5B5624D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 19:23:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90949B56251
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 19:23:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9051B26890
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:23:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A48AA1B269AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD10D1EFF9A;
-	Sat, 13 Sep 2025 17:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61701FBCB0;
+	Sat, 13 Sep 2025 17:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zc7kbV1k"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="sqn/FvhW"
+Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7957B7260D
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 17:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F1BF1E8333;
+	Sat, 13 Sep 2025 17:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757784190; cv=none; b=R6p0tMijjl2yURwzjL7bX8n/MKZ3q7Izxdl+9DB9aRtVz3tYEPEJII92SsxdSs/+OLBNOGo+FfeqvGPp+gU3sTNYPjduopHa+mr11Hb9M4kKy+yzq7ha8n3oZwwOfM72r28RfJiUQBeGaa5oMJVVMFWj99ZGP7JefUeWBjYO2Ko=
+	t=1757784217; cv=none; b=kYkCHFGeOrUj2O6phL00AwZda7MxAlxQdf0VCPsQQLUUidgxE7BTZJfFJW9RRcZgDm3HkObIV3yZwiNeNKB7AfHPy3Rv3JZ4l7tZp2ettQnpFx9Rbv/zAY7XflfvUnNaGtPz7f9FsTGpwrWgUG9twMHs00a4d6AAPqp1zPSazmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757784190; c=relaxed/simple;
-	bh=uYJxU5KCUZ5eXqj/aGyYCYeLYOgevx00fW2OwO9yuro=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UEro4raDf5XvCL7+7SqRVKYQUs8XdLEN81MmNxT0p6Vhb8usPt6d08JodkQJvE9QO1Digfr4gdUgMKf0jHmsk3bFE2euV5vxrL+puhlTufXx6dhBq808svU97G1Yu+KqlIgweJYWEdl9bLEsmUFHkaBVvTrhNUf9yQ7/+30HxE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zc7kbV1k; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757784187;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b4YlQXKpH+D4qdOkt+p9oYx5rPR3S2A16NbP/v9A0Os=;
-	b=Zc7kbV1kjLyFg/PMEDwop+mK86C2q4H34t5CSjzfmqPzJrvH2lFAzDqLi7zawGXTGkuKXf
-	uHczbm5az0Vt4KQpboWn/T5qm4wb378qbNKA5Ua2lhXtllAegs16QSGS1FUMQ1V/tfHFzb
-	wekvyAV1U67w1rWwm9kSHQa4vXp/2TM=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-306-4Q9-dXSVOAi0QqgYe6c9Lg-1; Sat, 13 Sep 2025 13:23:05 -0400
-X-MC-Unique: 4Q9-dXSVOAi0QqgYe6c9Lg-1
-X-Mimecast-MFC-AGG-ID: 4Q9-dXSVOAi0QqgYe6c9Lg_1757784185
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-804512c4373so746293485a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:23:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757784185; x=1758388985;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b4YlQXKpH+D4qdOkt+p9oYx5rPR3S2A16NbP/v9A0Os=;
-        b=OpVR/6943+iGzYbQCiFQkaIx77LsNls0JCz7hvlAZIFwsuq8Uwjj8D0WxeV2jxO9g8
-         MAkjPcHfJ3h1Tz1CobmVp/ZnhL1GpOOxK+QUaSnLPwhHw3hYFFFgAHMTOH6wDFDmGrFh
-         zIx6OxJtOuELrsPTkHMaw4TmLrJaJPYgGtr7URYQT/Vu1Rp3BY+gk2TGREt5elAXvipn
-         gvF0DXR3uvIl0v2Tf1ygIhj9pW26RQiN0trYQddaG1MGfKpGJ86bkmxR4M8S8LDOSQVw
-         V/ykQ8hvEyygynYjQvGOwEnIe0P5RmpATONWnWdGhOd5UCdZuo+tJmvTo7O/x7bfBF7H
-         MuXA==
-X-Forwarded-Encrypted: i=1; AJvYcCU9cfG57mE8FNqR3G51G3XS9VuPUwDKZvKqO1XsWlks5ln1GviqBPsBqQ7XmeZ3QAYgQCSJs97aVb0h0bo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKeNpFpEQpJ+fISRGsxIoAvEeo5Oi/FiTC7DPGkWGqnvwTsb8U
-	f0+rvQ4Y/2ZsvRSLV+tjOIKcJNUQLqUvShRsZxHrjZLNCVXjD5xHdTaY2BxpEsJbu2zKlv6VZeg
-	0uPuc7l4zmKQse459lfbgJbdRlU+GHgTBvxVj7kwN9bC292HD4qyLzkv8F1ekNqHFxA==
-X-Gm-Gg: ASbGncuV1FTV32Ssfwuzc26F65E74VTon6byARXHOYouFP1QHNMmeK06Sd6mI/ZfBOj
-	MVF5B0R+aWm4W97hkSd3mpzIb2lBD/NaooS0AxpZJExFRjCZKojz2EAXevMknrKVIf4bleg0jUl
-	ABwQ123E6rqnboNdao55F3VSxyzF1GxvWGfPZLyTMMDE18ny4PQjP1jotDSnbklCzq/i0zHOhR1
-	gIy5Xg5LWdPTQR+OkxiaPPpQLzYSvHcRORV0ZGQSyKRT0Yzq0q1tdzegg4mNi0iNroT7+u7yfXg
-	TR/fCE7jlGJDpIW3uMfznUqSLGvotnVlyXQPA8J64fGoOHTVQHXmJzCvyEcTdtw0cyKwlSBwA40
-	WxfJmQwoANA==
-X-Received: by 2002:a05:620a:1a26:b0:827:e9b0:2752 with SMTP id af79cd13be357-827e9b0a59emr204293685a.80.1757784185294;
-        Sat, 13 Sep 2025 10:23:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHWnXMQDadZBZIlmdUC/NCNWtr/64a6WXDfp8/eqdfqUQNqD7uWPjY6byxTl9nNLc/OUpzclw==
-X-Received: by 2002:a05:620a:1a26:b0:827:e9b0:2752 with SMTP id af79cd13be357-827e9b0a59emr204290985a.80.1757784184787;
-        Sat, 13 Sep 2025 10:23:04 -0700 (PDT)
-Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8240be68ee9sm332130085a.39.2025.09.13.10.23.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Sep 2025 10:23:04 -0700 (PDT)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <10adb9b7-ea19-407b-818e-79061a067e13@redhat.com>
-Date: Sat, 13 Sep 2025 13:23:03 -0400
+	s=arc-20240116; t=1757784217; c=relaxed/simple;
+	bh=hQrqb6mIdtNaw5IoEb/MqdcF49HaYq7QCH933ZOxA3Q=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rnJCEgPIh9YOXveTxDunJEllkj170Vofa1TEc9zjcmO/L0Kt8b9U6GPHKCLj16fkTtTizj9xzpWhNCsymv+EV76h4mQ5fvd0LONh9+VkwsjbExqwV/gr6uPneyLtv2gEbvbqEI3SqTINZ1l3OsVaKWhLXD0zhCeKxdcuHB8aRTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=sqn/FvhW; arc=none smtp.client-ip=193.238.174.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mx.ssi.bg (localhost [127.0.0.1])
+	by mx.ssi.bg (Potsfix) with ESMTP id 261D52055B;
+	Sat, 13 Sep 2025 20:23:24 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
+	:content-type:content-type:date:from:from:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=ssi;
+	 bh=U/LMK9fOxEJZWLbS+ivg/XnNJz/FLhKUxGb+S6dYdE4=; b=sqn/FvhWwnIK
+	Pq1Enswo9aHUqGsRmwF/E+CzNALMVkLsr9c0wugg35TMBgTBwz9yIiPhHsIJmFgP
+	1YlA5MZfR8mlb+A1lMCW3QtXRRoAO+89I98ozwHnRbnykfs1R4gi4ma7Yl3OAlIF
+	1tY78io3VqNKwj+0IJG83IjNqic2geer3E2w2i/k2/BHQIhIPbgna93mAdIOdbCf
+	HKLDp1saMzYTTag7aTLsGK0GTafeSb0tGuEHlovynLK1xyOxzyQyhFS3IzgujnKW
+	Ppxsj/0FVe2+97nrauNPq/orFEX5v/ChcCN5Bdgo6rxO1KgttSLcNNdz7MZ2srAY
+	eZ/a3X20t15W2KVbCucQmXH73YHQBXE3soR229FJT4gbrpn3FAnzmAr0t3TVvJup
+	+u+w2wYTJNkLl/XZV9YZtKUAHQ8gQ/gljMRujtVjtEht0a1D8dOa8ALaNS7C8Ceh
+	TOdiWaJ24mYw8EF/hvUCbv6F77lfRoSmnhfwcidv/F+fmObCRzcyep0/v6K+zuVf
+	aLSI/SMawYipt4KQhOEg+8VEo9s7VTwuR+WwW5sur3SWKbUFIqDZCzw8BpnLsQvL
+	fpS93eqUEi8O6J0pkhoywL1ZPf/0qSh0W+YaSc04Carva4PtfEMQMfgypYpk2m1M
+	zloHlo/77jUrAhBB/Ndujs6uFkXcCAE=
+Received: from box.ssi.bg (box.ssi.bg [193.238.174.46])
+	by mx.ssi.bg (Potsfix) with ESMTPS;
+	Sat, 13 Sep 2025 20:23:23 +0300 (EEST)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by box.ssi.bg (Potsfix) with ESMTPSA id D2360654D1;
+	Sat, 13 Sep 2025 20:23:20 +0300 (EEST)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.18.1/8.18.1) with ESMTP id 58DHN4dO029190;
+	Sat, 13 Sep 2025 20:23:04 +0300
+Date: Sat, 13 Sep 2025 20:23:04 +0300 (EEST)
+From: Julian Anastasov <ja@ssi.bg>
+To: Slavin Liu <slavin452@gmail.com>
+cc: Simon Horman <horms@verge.net.au>, Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, lvs-devel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] ipvs: Defer ip_vs_ftp unregister during netns
+ cleanup
+In-Reply-To: <20250911175759.474-1-slavin452@gmail.com>
+Message-ID: <0effae4a-4b9d-552e-5de7-756af4627451@ssi.bg>
+References:  <20250911175759.474-1-slavin452@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rcu: Remove redundant rcu_read_lock/unlock() in spin_lock
- critical sections
-To: Hillf Danton <hdanton@sina.com>, Waiman Long <llong@redhat.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- pengdonglin <dolinux.peng@gmail.com>, linux-kernel@vger.kernel.org,
- "Paul E . McKenney" <paulmck@kernel.org>
-References: <20250912065050.460718-1-dolinux.peng@gmail.com>
- <6831b9fe-402f-40a6-84e6-b723dd006b90@redhat.com>
- <20250912213531.7-YeRBeD@linutronix.de>
- <20250913080018.7032-1-hdanton@sina.com>
-Content-Language: en-US
-In-Reply-To: <20250913080018.7032-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 9/13/25 4:00 AM, Hillf Danton wrote:
-> On Fri, 12 Sep 2025 20:33:31 -0400 Waiman Long wrote:
->> On 9/12/25 5:35 PM, Sebastian Andrzej Siewior wrote:
->>> On 2025-09-12 17:13:09 [-0400], Waiman Long wrote:
->>>> On 9/12/25 2:50 AM, pengdonglin wrote:
->>>>> From: pengdonglin <pengdonglin@xiaomi.com>
->>>>>
->>>>> When CONFIG_PREEMPT_RT is disabled, spin_lock*() operations 
->>>>> implicitly
->>>>> disable preemption, which provides RCU read-side protection. When
->>>>> CONFIG_PREEMPT_RT is enabled, spin_lock*() implementations internally
->>>>> manage RCU read-side critical sections.
->>>> I have some doubt about your claim that disabling preemption 
->>>> provides RCU
->>>> read-side protection. It is true for some flavors but probably not 
->>>> all. I do
->>>> know that disabling interrupt will provide RCU read-side 
->>>> protection. So for
->>>> spin_lock_irq*() calls, that is valid. I am not sure about 
->>>> spin_lock_bh(),
->>>> maybe it applies there too. we need some RCU people to confirm.
->>> The claim is valid since Paul merged the three flavours we had. Before
->>> that preempt_disable() (and disabling irqs) would match
->>> rcu_read_lock_sched(). rcu_read_lock() and rcu_read_lock_bh() were
->>> different in terms of grace period and clean up.
->>> So _now_ we could remove it if it makes things easier.
->>
->> Thanks for the clarification.
->>
->> In this case, I think the patch description should mention the commit 
->> that unify the 3 RCU flavors to make sure that this patch won't be 
->> accidentally backport'ed to an older kernel without the necessary 
->> prerequisite commit(s).
->
-> This change also affects the dereference helpers.
->
-> #define rcu_dereference_check(p, c) \
->     __rcu_dereference_check((p), __UNIQUE_ID(rcu), \
->                 (c) || rcu_read_lock_held(), __rcu)
->
-Right, this macro will need to be updated as well to avoid false 
-positive if we decide that preempt_disabled region is a valid 
-rcu_read_lock critical section.
 
-Cheers,
-Longman
+	Hello,
+
+On Fri, 12 Sep 2025, Slavin Liu wrote:
+
+> On the netns cleanup path, __ip_vs_ftp_exit() may unregister ip_vs_ftp
+> before connections with valid cp->app pointers are flushed, leading to a
+> use-after-free.
+> 
+> Fix this by introducing a global `exiting_module` flag, set to true in
+> ip_vs_ftp_exit() before unregistering the pernet subsystem. In
+> __ip_vs_ftp_exit(), skip ip_vs_ftp unregister if called during netns
+> cleanup (when module_removing is false) and defer it to
+
+	Pablo, can you change here module_removing to exiting_module 
+before applying?
+
+> __ip_vs_cleanup_batch(), which unregisters all apps after all connections
+> are flushed. If called during module exit, unregister ip_vs_ftp
+> immediately.
+> 
+> Fixes: 61b1ab4583e2 ("IPVS: netns, add basic init per netns.")
+> Suggested-by: Julian Anastasov <ja@ssi.bg>
+> Signed-off-by: Slavin Liu <slavin452@gmail.com>
+
+	Looks good to me for the nf tree after above text is
+changed, thanks!
+
+Signed-off-by: Julian Anastasov <ja@ssi.bg>
+
+> ---
+>  net/netfilter/ipvs/ip_vs_ftp.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_ftp.c b/net/netfilter/ipvs/ip_vs_ftp.c
+> index d8a284999544..206c6700e200 100644
+> --- a/net/netfilter/ipvs/ip_vs_ftp.c
+> +++ b/net/netfilter/ipvs/ip_vs_ftp.c
+> @@ -53,6 +53,7 @@ enum {
+>  	IP_VS_FTP_EPSV,
+>  };
+>  
+> +static bool exiting_module;
+>  /*
+>   * List of ports (up to IP_VS_APP_MAX_PORTS) to be handled by helper
+>   * First port is set to the default port.
+> @@ -605,7 +606,7 @@ static void __ip_vs_ftp_exit(struct net *net)
+>  {
+>  	struct netns_ipvs *ipvs = net_ipvs(net);
+>  
+> -	if (!ipvs)
+> +	if (!ipvs || !exiting_module)
+>  		return;
+>  
+>  	unregister_ip_vs_app(ipvs, &ip_vs_ftp);
+> @@ -627,6 +628,7 @@ static int __init ip_vs_ftp_init(void)
+>   */
+>  static void __exit ip_vs_ftp_exit(void)
+>  {
+> +	exiting_module = true;
+>  	unregister_pernet_subsys(&ip_vs_ftp_ops);
+>  	/* rcu_barrier() is called by netns */
+>  }
+> -- 
+> 2.34.1
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
 
 
