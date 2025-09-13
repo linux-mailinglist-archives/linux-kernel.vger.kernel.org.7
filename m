@@ -1,92 +1,96 @@
-Return-Path: <linux-kernel+bounces-815386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4DFCB56399
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:32:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99481B5639D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2552C189CEDE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:32:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA8AA7A8C26
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27DFD2C028C;
-	Sat, 13 Sep 2025 22:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A669283FFC;
+	Sat, 13 Sep 2025 22:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s06s7Cdc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=inboxia.org header.i=@inboxia.org header.b="ejVdlobP"
+Received: from mail.inboxia.org (mail.inboxia.org [95.217.72.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6481D7984;
-	Sat, 13 Sep 2025 22:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BFA1A314B;
+	Sat, 13 Sep 2025 22:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.217.72.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757802749; cv=none; b=jtwZdZ+sSw+7cSZXBdgAX3farg82V9nZn4w24REJFZcuYrp07+OtczSqfBFbfM0f5EE2Rx89+TvbynvGmbf1zSTB0Pjw7VW23R8EF+6oP6U/JvIxO8QzAUFW4gfwNh6qeExLM7vuWjcXcAhh4Fwc1cgZUnFvzzTyjvawH3DrcNU=
+	t=1757803530; cv=none; b=JWM6ErT5h/99MVQBMjzudfzy1vpXNziv5tTeLITBctXBOZ9RT1fn0cMjs/yqF8tzHRrYvpiiC7z3LnZ7lOZGlbc7NY7gdO+cFY+e8v+dPSH3LogYD1hD762zM25ayFTYUCDNw/hi06Jaus8TK6fxw8KLOMR4UZf6tnkuwfjjooU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757802749; c=relaxed/simple;
-	bh=+cx1XGB5AUqRTT31YlcTyMc4JGYSAoJbSnKDP8tEAu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PN+TQFTITC8vbzEFkey+0+Dajviro+ePlS+dPjwzA5/6s78F2Ign18Lwl2deS/AM2gwGgiGRKdDEN155+lEQv9QliF35Pkc1G7aTPDrq07YUrOhXmvn2XRF6dcQKtP/2y4erPNYpJjNFKDsUcwbtv6kKK9jx8gioxMFWPa3LauQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s06s7Cdc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBE1FC4CEEB;
-	Sat, 13 Sep 2025 22:32:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757802749;
-	bh=+cx1XGB5AUqRTT31YlcTyMc4JGYSAoJbSnKDP8tEAu8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s06s7CdcaszdHuwxPqGiSsBxOluZLuB1g8e04OmqX1Ip99TmI8xwE8O+/+Fw/oAIM
-	 w0klN7r5vjBZxTAWPTSS8HfoioXin74uMgrDfHsovLYJ7GVNy/Kk0sTXcpRJ0ebkJ0
-	 y6YRWNBx3DgFdd6EDAlZwJOUE4BlkYcl4kTZYqi4mgMvwTjljtfmVEjs0gltvMSk2U
-	 yH4QszBzqC8dUhV9u+lqMY4H/d8XX+a6MhtXwsC5t/Ez/f3ZwtumzM+mM+GFw9Uafv
-	 ubGqqPSSQeXAckfPhYdQffmhMxegMGSipMNqiGWEEZ4yoVZRvi8+ZtvTycMal/yqIo
-	 oQe6kde9hO9hw==
-Date: Sat, 13 Sep 2025 12:32:27 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, longman@redhat.com, hannes@cmpxchg.org,
-	mkoutny@suse.com, void@manifault.com, arighi@nvidia.com,
-	changwoo@igalia.com, cgroups@vger.kernel.org,
-	sched-ext@lists.linux.dev, liuwenfang@honor.com, tglx@linutronix.de
-Subject: Re: [PATCH 13/14] sched: Add {DE,EN}QUEUE_LOCKED
-Message-ID: <aMXw-xvmGIZ9-UFJ@slm.duckdns.org>
-References: <20250910154409.446470175@infradead.org>
- <20250910155809.800554594@infradead.org>
- <aMItk3c5H6Z2CD4X@slm.duckdns.org>
- <20250911094240.GW3289052@noisy.programming.kicks-ass.net>
- <aMMzpnyx__ZgZGRc@slm.duckdns.org>
- <20250912141904.GA3289052@noisy.programming.kicks-ass.net>
- <aMRLIEtmcWc0XNmg@slm.duckdns.org>
+	s=arc-20240116; t=1757803530; c=relaxed/simple;
+	bh=KAlbMy49hkms1Al+qR8sVuuf/ndsc9PyiN4dXJi+Mlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e812mHV9IozyPoMABMHG/9OCXeQOXYIrm7HVyJaEKgQD+NKLP+khOxOF6dGeOEqK3OipM1QDRO9MyHRUxEv7MgtWdy3DkP9CwTOSMeoEpzVe+9Wg/B/scQUxigp5URatjZ5IaCvEPNCl7jCbdpAIQzfPsYRLgdF1IYz2gAMhy3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inboxia.org; spf=pass smtp.mailfrom=inboxia.org; dkim=pass (2048-bit key) header.d=inboxia.org header.i=@inboxia.org header.b=ejVdlobP; arc=none smtp.client-ip=95.217.72.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inboxia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inboxia.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7CA9E6166713;
+	Sat, 13 Sep 2025 22:36:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inboxia.org; s=dkim;
+	t=1757802974; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=dg58pqC1a3dSXa+6eFNI1bKCrcYCFjCJ/ft1V528zas=;
+	b=ejVdlobPsr+nkO/vflXoIUwqMlGMHaOAn2Z7mDMcIzJE/CimtrmDyckaktJnSekb7XYLy5
+	XxbZpbPyYCArOm46ws/vFqLeCr4419Ir1jyhv66IynDFNsR8OivXyv5QhNLnxkR5Q+RiNL
+	W4u1T75XQYYo0xRFlLF6nQ+aZxoOcjbbuO9IAjGrg5CODQC3u/gORgtOKO+eJMxzjnmoxU
+	hwUKmNOiTYFzckVElZAzNDHVWR3SNLZ1ZP1jpk98zBg6hqsJNN5TrGgB1gAkQJ0HvrnyQ0
+	Zxz+1RMMcSSBCCNvbUwX8I8/cDNEJrenZY/6jtWZ2xXq64RLo9ZNmbKYyx/TBw==
+From: Bou-Saan Che <yungmeat@inboxia.org>
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com,
+	Bou-Saan Che <yungmeat@inboxia.org>
+Subject: [PATCH 1/2] ALSA: hda: cs35l41: Support Lenovo Thinkbook 13x Gen 5
+Date: Sun, 14 Sep 2025 01:35:57 +0300
+Message-ID: <20250913223557.9116-1-yungmeat@inboxia.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aMRLIEtmcWc0XNmg@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
+This laptop does not contain _DSD so needs to be supported using the
+configuration table.
 
-On Fri, Sep 12, 2025 at 06:32:32AM -1000, Tejun Heo wrote:
-> Yeah, or I can make scx_tasks iteration smarter so that it can skip through
-> the list for tasks which aren't runnable. As long as it doesn't do lock ops
-> on every task, it should be fine. I think this is solvable one way or
-> another. Let's continue in the other subthread.
+Signed-off-by: Bou-Saan Che <yungmeat@inboxia.org>
+---
+ sound/pci/hda/cs35l41_hda_property.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thought more about it. There's another use case for this runnable list,
-which is the watchdog. As in the migration synchronization, I think the
-right thing to do here is just adding a nested lock. That doesn't add any
-overhead or complications to other sched classes and from sched_ext POV
-given how expensive migrations can be, if we make that a bit cheaper (and I
-believe we will with changes being discussed), added up, the outcome would
-likely be lower overhead.
-
-Thanks.
-
+diff --git a/sound/pci/hda/cs35l41_hda_property.c b/sound/pci/hda/cs35l41_hda_property.c
+index d8249d997c2a..16d5ea77192f 100644
+--- a/sound/pci/hda/cs35l41_hda_property.c
++++ b/sound/pci/hda/cs35l41_hda_property.c
+@@ -135,6 +135,8 @@ static const struct cs35l41_config cs35l41_config_table[] = {
+ 	{ "17AA38C8", 4, INTERNAL, { CS35L41_RIGHT, CS35L41_LEFT, CS35L41_RIGHT, CS35L41_LEFT }, 0, 2, -1, 1000, 4500, 24 },
+ 	{ "17AA38F9", 2, EXTERNAL, { CS35L41_RIGHT, CS35L41_LEFT, 0, 0 }, 0, 2, -1, 0, 0, 0 },
+ 	{ "17AA38FA", 2, EXTERNAL, { CS35L41_RIGHT, CS35L41_LEFT, 0, 0 }, 0, 2, -1, 0, 0, 0 },
++	{ "17AA3929", 4, INTERNAL, { CS35L41_RIGHT, CS35L41_LEFT, CS35L41_RIGHT, CS35L41_LEFT }, 0, 2, -1, 1000, 4500, 24 },
++	{ "17AA392B", 4, INTERNAL, { CS35L41_RIGHT, CS35L41_LEFT, CS35L41_RIGHT, CS35L41_LEFT }, 0, 2, -1, 1000, 4500, 24 },
+ 	{}
+ };
+ 
+@@ -558,6 +560,8 @@ static const struct cs35l41_prop_model cs35l41_prop_model_table[] = {
+ 	{ "CSC3551", "17AA38C8", generic_dsd_config },
+ 	{ "CSC3551", "17AA38F9", generic_dsd_config },
+ 	{ "CSC3551", "17AA38FA", generic_dsd_config },
++	{ "CSC3551", "17AA3929", generic_dsd_config },
++	{ "CSC3551", "17AA392B", generic_dsd_config },
+ 	{}
+ };
+ 
 -- 
-tejun
+2.51.0
+
 
