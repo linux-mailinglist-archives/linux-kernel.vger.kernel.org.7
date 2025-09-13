@@ -1,138 +1,49 @@
-Return-Path: <linux-kernel+bounces-814990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F5BB55D95
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:20:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B3DB55AD1
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB881B63E8D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:18:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71BD81C245B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ADF1D5CC6;
-	Sat, 13 Sep 2025 01:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAC113C695;
+	Sat, 13 Sep 2025 00:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JdasfyAT"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ltw4ZQrz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DFA1A23BE
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 01:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3957D098;
+	Sat, 13 Sep 2025 00:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757726375; cv=none; b=rK4eYAe6Njk9iDkMGEmndXZvtpgLwxxL8+2EYNm5iLXSFzMvwcZMBHrPwypYJ/YHzB9fe7veoBdzTLxWjk2FLORhvNd20/ndwWHiNWn4HOgFNF+aoEDuz68MFayQsXC07djcha4JLs5Ge5QdxrWDvs94gumeA0zuLfXxBEDzEMo=
+	t=1757724007; cv=none; b=Pv8wTkdyZMf4yrx3fhBh4F+2kzkJRljYATMVbIgbAqAmVDU0Bn7rEwejSvOWaFQAexvTU6QCQ9Nu2Z9uLJ5ElolHIy86RAad0Xfw+21l+kscjbygdhJ9UqeNbWIdtS8jW8r0iJcR/ynuXPS2FvTJqoFBpv7FOrJwfrvAikRr9lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757726375; c=relaxed/simple;
-	bh=0dZBfgRsarIoSXxUVt0yhSx8VT0ilXZcRzH3UEVxVxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=E68ljv0wItd3NHhW7Yf2NO4FPE/SbGYwvOcSiXkiuVprey53+ZUUSdwkt+LT2tne/zTPQdfIHOVm6l3wVEn2mDLYAYd4j6mnniDM4z+Ihkgebe1TeqAGRUx//h0u5GKJeo8Utzypumq27RyWr6TxJ8CbpI+h/VK/Pp5tZaHKhqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JdasfyAT; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-b07c38680b3so228178266b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 18:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757726370; x=1758331170; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=01GQX+A5wcxVOfa45EtHUSgPI4YB4B2sFvA+zw7J76I=;
-        b=JdasfyATZKgVuDGioUqz8M95vHmUjDA0X+pQzxpf/9WU/t+U6Kr5Hnn8A/pwyQbEEj
-         tG9d5C4koMLr9jbbHvOg3kmOIpnqmXdSH9FzLhmDOw7FKaw9Ew5j+I2E2DqtaAF0kBLZ
-         78wviOrJLl+vWbv0yCaEb7FNWVwdYcrEt3ieIj7Euu12bhdJuyE+iXc5Pb1FYjgjb8hF
-         cX5p4CCG19iBqFwJotgYe++od9U/7qY0/+Gz7PK70bhGuzPjXacGCU6LuDPtHZleKndu
-         uaVp9WGOG3lboi/Y241AWiDrohHR47mki0UFwavjwS1g6Qe4yDpW5hurcQZvXGxBtRDc
-         ssdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757726370; x=1758331170;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=01GQX+A5wcxVOfa45EtHUSgPI4YB4B2sFvA+zw7J76I=;
-        b=mUkkVjHree1ITOuYOxBaki10MD+sPI8Vp2/l0UuRtKIx1SFgpGnYpzjUZRVM2bTq1M
-         CEw1Kyas/mfv+eCIRMkXyaQKtmH0jeia83+Ck+gtQd9gU/mImHXb1BByapoP/72cGgar
-         g6ehyDKr3fmpJ8Y6b4axEYPhgo/5bGpNoq2FlIm6S90Hl/aU2ir24eJzuVNwh/ceKMq1
-         lQZ9xMZC6mkyPVHT7mN61YWHpRS6XKRf5wC+Oyu9lQQv3gsK2NT4lWVxAAxbGSo9TwXW
-         Jc3ftYulN1Vq8OzLqYAefKEH3lxehfTr1MCgMTrf+8y0D4eSYMzp30x04WJtLOtMHGn+
-         LrAA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5HQG1/FXyc7xunFPEfhdrrvThWtYC3NRlKLmbvgS+lHF1FJeXB9eDfq1AKZ1bh+rm3ftq3JT1fmiMyw8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQMSzOG/VOWPjfTi/8yWUGpnc+HSSzOM5IifwIZUCUa+gDnyv8
-	lQ2vJE94P1m0f4tLAoCFGYJdN+v+f4pGxwN67kzdE4hi8fgMwv40EuAD
-X-Gm-Gg: ASbGnctEIBNTQtFOL1skupvKYoyClOkcCBMciYDJJtBouPErx0qiyfnlR/UrRcKzDRj
-	+A6iYRU/WTvyaXc0r1BX0hHyGoLhAhtJmuLSK0flOcUmlR1khCvahApJRbK6XG/KmPLlFZLLqM6
-	ak0aJS+Y0V2vPyaoLvO6pGn2RVfTcuXZZVDboVDgkJP6UZC34Yj5S6KMlRSgQ6i4wpYM9udJPwl
-	Qz/XiHfy/T2EekgQ1B6P202tI6uBwThNYmiTVoqttCRJkirrUjKwPr5HypIFzwG1D81UwxYBf41
-	9mGMGRRfw/+ZDdW+egf2II8B5Cg8pDDgvxfLwETvMqma4hXHDmcdKLZwIXghbuZmSikRKuVLib/
-	GRgfspU+Db7zkp3lN6weBx0WFRMTHVg==
-X-Google-Smtp-Source: AGHT+IEzeVwYKpSq5hVwsza+AqQmwMGGceGxnApLyMFPwDCsoulMW4PoMJQ37ACnH/5BZ1euJLookQ==
-X-Received: by 2002:a17:906:2493:b0:b04:9822:1ab4 with SMTP id a640c23a62f3a-b07c35fb2e4mr458597866b.27.1757726369974;
-        Fri, 12 Sep 2025 18:19:29 -0700 (PDT)
-Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b32dd5bfsm465661666b.63.2025.09.12.18.19.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 18:19:29 -0700 (PDT)
-From: Askar Safin <safinaskar@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Aleksa Sarai <cyphar@cyphar.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
-	Julian Stecklina <julian.stecklina@cyberus-technology.de>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Art Nikpal <email2tema@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Eric Curtin <ecurtin@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Rob Landley <rob@landley.net>,
-	Lennart Poettering <mzxreary@0pointer.de>,
-	linux-arch@vger.kernel.org,
-	linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	linux-block@vger.kernel.org,
-	initramfs@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	"Theodore Y . Ts'o" <tytso@mit.edu>,
-	linux-acpi@vger.kernel.org,
-	Michal Simek <monstr@monstr.eu>,
-	devicetree@vger.kernel.org,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	patches@lists.linux.dev
-Subject: [PATCH RESEND 36/62] init: make mount_root static
-Date: Sat, 13 Sep 2025 00:38:15 +0000
-Message-ID: <20250913003842.41944-37-safinaskar@gmail.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250913003842.41944-1-safinaskar@gmail.com>
-References: <20250913003842.41944-1-safinaskar@gmail.com>
+	s=arc-20240116; t=1757724007; c=relaxed/simple;
+	bh=/If1N9NOSlwc8L+sHpjRvx9dOiYK2aUjqQPUwmsuyz8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ha/CVad5LFanBLSG7o6/ASmnxdH8ITLYsWSWuS7geySSHP3MZdsTgkY8DhQQi2EJDSQuLX3dDI6zuXgdOcprqNME0uuvRI5UJWOxcbD+ks4qULHGtT2FLlOGybqcZALZdG7BGbEOn94FSusTWdPmYToIGipy7KEUQrepOlo5xZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ltw4ZQrz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD67CC4CEF1;
+	Sat, 13 Sep 2025 00:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757724006;
+	bh=/If1N9NOSlwc8L+sHpjRvx9dOiYK2aUjqQPUwmsuyz8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=ltw4ZQrzVnZspO9WGo20Ef08O1IUeGnqBhCd3O7+zZby3CFmkGdV6iWHPJ7VKkFkB
+	 2GBMhTgThT8okaDuP8gmI/LE/VnrncNgooMc/ivhanKP0s7RsEZQDE4BW4kSykNBMz
+	 d/D8wOCW4ib1MaAH6hpVh3L5Vo0Q5ldFyaMTHIXYC6zZiDoylovfOJbViKVOpYIhCe
+	 26qWmyp51DarZg5MJ2a7v7Mh/mB23Cy6JNVOOkbn0GBPQyWNMaqHhKntX4oBztK2Pn
+	 vLqb0w2kYioncI1aZecYo9zeQaLemCGgGqwH76ukdvrz5FICQ5uEdrHiAV36gQpSnq
+	 t2WYbHFLkoiXw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E39383BF4E;
+	Sat, 13 Sep 2025 00:40:10 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -140,41 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] net: phy: micrel: Update Kconfig help text
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175772400901.3115588.7329713795469072529.git-patchwork-notify@kernel.org>
+Date: Sat, 13 Sep 2025 00:40:09 +0000
+References: <20250911-micrel-kconfig-v2-1-e8f295059050@pengutronix.de>
+In-Reply-To: <20250911-micrel-kconfig-v2-1-e8f295059050@pengutronix.de>
+To: Jonas Rebmann <jre@pengutronix.de>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This is cleanup after initrd removal
+Hello:
 
-Signed-off-by: Askar Safin <safinaskar@gmail.com>
----
- init/do_mounts.c | 2 +-
- init/do_mounts.h | 1 -
- 2 files changed, 1 insertion(+), 2 deletions(-)
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index c722351c991f..7ec5ee5a5c19 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -381,7 +381,7 @@ static inline void mount_block_root(char *root_device_name)
- }
- #endif /* CONFIG_BLOCK */
- 
--void __init mount_root(char *root_device_name)
-+static void __init mount_root(char *root_device_name)
- {
- 	switch (ROOT_DEV) {
- 	case Root_NFS:
-diff --git a/init/do_mounts.h b/init/do_mounts.h
-index f291c30f7407..90422fb07c02 100644
---- a/init/do_mounts.h
-+++ b/init/do_mounts.h
-@@ -12,7 +12,6 @@
- #include <linux/task_work.h>
- #include <linux/file.h>
- 
--void  mount_root(char *root_device_name);
- extern int root_mountflags;
- 
- /* Ensure that async file closing finished to prevent spurious errors. */
+On Thu, 11 Sep 2025 10:29:03 +0200 you wrote:
+> This driver by now supports 17 different Microchip (formerly known as
+> Micrel) chips: KSZ9021, KSZ9031, KSZ9131, KSZ8001, KS8737, KSZ8021,
+> KSZ8031, KSZ8041, KSZ8051, KSZ8061, KSZ8081, KSZ8873MLL, KSZ886X,
+> KSZ9477, LAN8814, LAN8804 and LAN8841.
+> 
+> Support for the VSC8201 was removed in commit 51f932c4870f ("micrel phy
+> driver - updated(1)")
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2] net: phy: micrel: Update Kconfig help text
+    https://git.kernel.org/netdev/net-next/c/fc006f5478fc
+
+You are awesome, thank you!
 -- 
-2.47.2
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
