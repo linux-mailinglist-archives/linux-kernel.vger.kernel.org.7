@@ -1,163 +1,180 @@
-Return-Path: <linux-kernel+bounces-815009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8792B55E18
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:26:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1BDB55E1D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1BF6A08109
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:26:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6494BA0869B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696141DE3DC;
-	Sat, 13 Sep 2025 03:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D941DE3AC;
+	Sat, 13 Sep 2025 03:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s8lMUvZN"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IunoaQ7d"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839582566
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 03:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550D535958
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 03:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757733988; cv=none; b=r25B2FD6aSvSMX2cbxUTHUj+BEQhphMEHLp1P/PCCQDLgkLqjrpa4eIe48MjhW0H0xPZpsBl6G2URtVUEfgXxaG5szS+GEAQUOVdIyywqY5gGmLSTvwavCeDF+EpkK/lr3unE3/wI9HIzaGSaFxs4SjG7oSUIMezvSLtatvzXEI=
+	t=1757734649; cv=none; b=ssVjvCB257hASMXaGU/froKeu9lxu2cxLbQxC6oU7M1kASTIep+2vowNhlBDxzYBYEZYvAbSNYecD0alR7K6MSRI3OswvUe+17TF+2nQv6LE83/3RFba8/W6Hv8buCLEZQFsnKLTzOQFwJNAZlJEJ+oRxJXu3Zr2RgTQMopUx9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757733988; c=relaxed/simple;
-	bh=ufXIhhGNY61fv/ll3s+7ydHirPh1AzwivwLHtinBWOo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dlllAiyEkdOjmI3DaMHKcRZ7Xdpf3iw7BMLXCmQNSuTeKUMQgeJgaWhzamTBta7NIWTuTJwJ394aziljd+GmBrVQVyO/RUaU6yAO6sMn68OXOFEF8IRwONmDWEF2zM3+ErlJqXF0OXLr3cvC23z5K7CTYdWFdq64twZPdYtaY3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s8lMUvZN; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757733984; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=LBPemiQvLMxvPRaP1xaM0T1pppLLfrD8DNU0toXcXBo=;
-	b=s8lMUvZNXSVQg4/b/wF+xJThTetnZEhAtxWpj7Y+zhMuUr6JFGkoBv3r4pcuL+hOebIMB65UGZI9826i4ydw0vQpYDNcuvsDmwrjtFgMWdyk2dCl1Y9553dbR4bcW/CmbmAuHJ52CkhntrbTiarBDpMYHoEy/rpD9NBS2rdV+M0=
-Received: from 30.134.50.220(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wnse-95_1757733982 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 13 Sep 2025 11:26:23 +0800
-Message-ID: <59ddf3bc-cfc0-40ab-ae2d-859724ef6168@linux.alibaba.com>
-Date: Sat, 13 Sep 2025 11:26:22 +0800
+	s=arc-20240116; t=1757734649; c=relaxed/simple;
+	bh=S9RgEf0sKLoUujoXKzI5jyp7RRc7a0WMvLCahxrVDpE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EpyeZgPD2PxLXOV+NgDyNIil2tcrn6jv0mQ7lVUTTQs9QlKCFznthsb8dC3JtugiNGgMTW4oirndDxuQTccHUsP3JigzC7m/vKcwLNAfByHBmzekg27Gn2KY5Yqo63w97aFR6qcsJRAcaCNXP+MN+zZD1SgFgcN4jvYgUxcKscA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IunoaQ7d; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-32ddfe3c8ccso2506677a91.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 20:37:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757734648; x=1758339448; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=K4uUqLHm1wv3jT3tEGcJTrI2K+259prtijoUXxYVBhQ=;
+        b=IunoaQ7dcbaWAqtC+oSt9VEMhBLJnUdDbD/bDWOD87mf0pDoH7E7DKuyr70tzldnVd
+         z+aq/DloV4IXdyQXGXjJdoc5in/TVUEB0bzILsWpACyXwg1WS+fWkgvlZuSdszWxxuQb
+         WKLfDxDztr3hvAOanUXMc08ySQvShxdTHRTvMOGpv9TeZTXzRh+DvYwXqnMnH4s1Vvwo
+         S2q9YNRB7kLrgY2WTsk8cL2778Wc0x7zuFTC8b0CcU60F5u6+MvEowdC8n2nZK4xWmm/
+         X6XOe05CbqjWPGjCyj26ZakuC3QvcTh/2HWtmreOFv9N2ZvJSz3V/0pK5Drdz1Q61w3e
+         EKSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757734648; x=1758339448;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K4uUqLHm1wv3jT3tEGcJTrI2K+259prtijoUXxYVBhQ=;
+        b=rmn+Kk2pu4Lvf4ahghwYzN+d/MRRgGMonuV70Pu5KQFqPwQG2I+UBJuVHyN4dVp6Qf
+         eQD6JSMLwwqaLNFTvAIZACLpd7r4hk+tTanw6MR6IDOBKTFFAIOIN8/2cml2LxrnIvFS
+         gSYdAT70PRUoqrLLy9XLAZPGwNfzF+2MC/0LVdZi8A3O4LgZcI+r7DdI1sVZKbg9ebVY
+         o41oMyiWYkOZ4J5p4Bhg6SRTSiPzM9fZHxH8pWhUYIAKTwAu4mEYj+WyVnZnej6d6HF9
+         PDUB3N+Yi+XK47wYkqSnS5DlCIl2ebxROC64k1XyS5OPVruS7SLnMeQ0VuuHRt4dZk30
+         SRJw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/Lvf8pnZs64BfqFInCFQD2U8QE5rrHePFR3T3NXgFRsHTcMSpC+bABc/+EOtBEUf8p5AXK1WK+QlbSMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6LwWssGZEf/N607mejQ1wfq4ZhPeRMp9YGh99qUtE6jbsejPq
+	EyWoKqwLNjs1kBWKwOu7OJbHgAheRCBJHNMtm3w4rG/FEOVAo6mEaX0a
+X-Gm-Gg: ASbGncsHZ7s/KOC5vTcWYudVxp8vnKUmQlyWD0DR79TX5YCmkGATN3Mc7nPAGyIj9So
+	2iu8nfUM2q7Pl41XRWOzXTfwyQPv1ubP8tMnAMMjMeS4I2wDm3VzMPcn4sYRVsW4vYJERk968S1
+	0UvbdjYgoqdvZ8EADlvmPcXoobSba1ioU4l7+qWDiJN1hoev5PCb1otxNWJ7mbG+fl1g71JUevE
+	esQpdIWg4Vx34ryQ4EL65pWy9ek5tawLEpt6WDatQN6MfrQY5oVCBKIj6Dn8qsGCTftEoyuGvJS
+	7xlatalt6GBEXi0A9lf93xf97rxRzoJ91qW4FaVusab5N2j+VFUXFGI/xsDDvoL3Knnss3ElZcL
+	2KNHPHVb9uftFAYxlSYIQ9/QxLVhSvmFlIA==
+X-Google-Smtp-Source: AGHT+IHs2Rsk72hJiBcf1dG1IHcVl6K6BhYFOSeWdIg9w0otcC2YgzWP62rCvvQj7XJcIaLvM51cww==
+X-Received: by 2002:a17:90b:1d0d:b0:32d:f4cb:7486 with SMTP id 98e67ed59e1d1-32df4cb757cmr3628309a91.19.1757734647593;
+        Fri, 12 Sep 2025 20:37:27 -0700 (PDT)
+Received: from VM-16-24-fedora.. ([43.153.32.141])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32dd98b439asm7150770a91.15.2025.09.12.20.37.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Sep 2025 20:37:27 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: hch@infradead.org,
+	brauner@kernel.org
+Cc: djwong@kernel.org,
+	yi.zhang@huawei.com,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH v4 0/4] allow partial folio write with iomap_folio_state
+Date: Sat, 13 Sep 2025 11:37:14 +0800
+Message-ID: <20250913033718.2800561-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/15] mm/shmem, swap: remove redundant error handling
- for replacing folio
-To: Kairui Song <ryncsn@gmail.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
- Chris Li <chrisl@kernel.org>, Barry Song <baohua@kernel.org>,
- Baoquan He <bhe@redhat.com>, Nhat Pham <nphamcs@gmail.com>,
- Kemeng Shi <shikemeng@huaweicloud.com>,
- Ying Huang <ying.huang@linux.alibaba.com>,
- Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>,
- Yosry Ahmed <yosryahmed@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Zi Yan <ziy@nvidia.com>,
- linux-kernel@vger.kernel.org
-References: <20250910160833.3464-1-ryncsn@gmail.com>
- <20250910160833.3464-10-ryncsn@gmail.com>
- <0cb2bc82-1957-4efe-8c85-8558743dcf80@linux.alibaba.com>
- <CAMgjq7Bc6r2=BcAPCeVPcVJ_hP8bXTs_pya2fWg8ZL-vTG9SAg@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAMgjq7Bc6r2=BcAPCeVPcVJ_hP8bXTs_pya2fWg8ZL-vTG9SAg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
+Currently, if a partial write occurs in a buffer write, the entire write will
+be discarded. While this is an uncommon case, it's still a bit wasteful and
+we can do better.
 
-On 2025/9/12 20:36, Kairui Song wrote:
-> On Fri, Sep 12, 2025 at 4:22 PM Baolin Wang
-> <baolin.wang@linux.alibaba.com> wrote:
->> On 2025/9/11 00:08, Kairui Song wrote:
->>> From: Kairui Song <kasong@tencent.com>
->>>
->>> Shmem may replace a folio in the swap cache if the cached one doesn't
->>> fit the swapin's GFP zone. When doing so, shmem has already double
->>> checked that the swap cache folio is locked, still has the swap cache
->>> flag set, and contains the wanted swap entry. So it is impossible to
->>> fail due to an XArray mismatch. There is even a comment for that.
->>>
->>> Delete the defensive error handling path, and add a WARN_ON instead:
->>> if that happened, something has broken the basic principle of how the
->>> swap cache works, we should catch and fix that.
->>>
->>> Signed-off-by: Kairui Song <kasong@tencent.com>
->>> Reviewed-by: David Hildenbrand <david@redhat.com>
->>> ---
->>>    mm/shmem.c | 42 ++++++++++++------------------------------
->>>    1 file changed, 12 insertions(+), 30 deletions(-)
->>>
->>> diff --git a/mm/shmem.c b/mm/shmem.c
->>> index 410f27bc4752..5f395fab489c 100644
->>> --- a/mm/shmem.c
->>> +++ b/mm/shmem.c
->>> @@ -1661,13 +1661,13 @@ int shmem_writeout(struct folio *folio, struct swap_iocb **plug,
->>>                }
->>>
->>>                /*
->>> -              * The delete_from_swap_cache() below could be left for
->>> +              * The swap_cache_del_folio() below could be left for
->>>                 * shrink_folio_list()'s folio_free_swap() to dispose of;
->>>                 * but I'm a little nervous about letting this folio out of
->>>                 * shmem_writeout() in a hybrid half-tmpfs-half-swap state
->>>                 * e.g. folio_mapping(folio) might give an unexpected answer.
->>>                 */
->>> -             delete_from_swap_cache(folio);
->>> +             swap_cache_del_folio(folio);
->>>                goto redirty;
->>>        }
->>>        if (nr_pages > 1)
->>> @@ -2045,7 +2045,7 @@ static struct folio *shmem_swap_alloc_folio(struct inode *inode,
->>>        new->swap = entry;
->>>
->>>        memcg1_swapin(entry, nr_pages);
->>> -     shadow = get_shadow_from_swap_cache(entry);
->>> +     shadow = swap_cache_get_shadow(entry);
->>
->> Again, there are still some issues with the patch split. The swapcache
->> related APIs replacement should be placed in Patch 8, otherwise there
->> will be buidling errors after applying Patch 8.
->>
->> With this issue fixed:
->> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>
-> 
-> Hi Baolin
-> 
-> Yeah you are right, I need to move these few changes to patch 8.
-> 
-> BTW I also found that the WARN_ON and irq unlock needs following fix,
-> the stats update need to be done with irq disabled:
+With iomap_folio_state, we can identify uptodate states at the block
+level, and a read_folio reading can correctly handle partially
+uptodate folios.
 
-Yes, indeed, I overlooked this.
+Therefore, when a partial write occurs, accept the block-aligned
+partial write instead of rejecting the entire write.
 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 957e40caba6e..c4d491c93506 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -2121,14 +2121,14 @@ static int shmem_replace_folio(struct folio
-> **foliop, gfp_t gfp,
->          /* Swap cache still stores N entries instead of a high-order entry */
->          xa_lock_irq(&swap_mapping->i_pages);
->          for (i = 0; i < nr_pages; i++) {
-> -               WARN_ON_ONCE(xas_store(&xas, new));
-> +               WARN_ON_ONCE(xas_store(&xas, new) != old);
->                  xas_next(&xas);
->          }
-> -       xa_unlock_irq(&swap_mapping->i_pages);
-> 
->          mem_cgroup_replace_folio(old, new);
->          shmem_update_stats(new, nr_pages);
->          shmem_update_stats(old, -nr_pages);
-> +       xa_unlock_irq(&swap_mapping->i_pages);
-> 
->          folio_add_lru(new);
->          *foliop = new;
+For example, suppose a folio is 2MB, blocksize is 4kB, and the copied
+bytes are 2MB-3kB.
+
+Without this patchset, we'd need to recopy from the beginning of the
+folio in the next iteration, which means 2MB-3kB of bytes is copy
+duplicately.
+
+ |<-------------------- 2MB -------------------->|
+ +-------+-------+-------+-------+-------+-------+
+ | block |  ...  | block | block |  ...  | block | folio
+ +-------+-------+-------+-------+-------+-------+
+ |<-4kB->|
+
+ |<--------------- copied 2MB-3kB --------->|       first time copied
+ |<-------- 1MB -------->|                          next time we need copy (chunk /= 2)
+                         |<-------- 1MB -------->|  next next time we need copy.
+
+ |<------ 2MB-3kB bytes duplicate copy ---->|
+
+With this patchset, we can accept 2MB-4kB of bytes, which is block-aligned.
+This means we only need to process the remaining 4kB in the next iteration,
+which means there's only 1kB we need to copy duplicately.
+
+ |<-------------------- 2MB -------------------->|
+ +-------+-------+-------+-------+-------+-------+
+ | block |  ...  | block | block |  ...  | block | folio
+ +-------+-------+-------+-------+-------+-------+
+ |<-4kB->|
+
+ |<--------------- copied 2MB-3kB --------->|       first time copied
+                                         |<-4kB->|  next time we need copy
+
+                                         |<>|
+                              only 1kB bytes duplicate copy
+
+Although partial writes are inherently a relatively unusual situation and do
+not account for a large proportion of performance testing, the optimization
+here still makes sense in large-scale data centers.
+
+This patchset has been tested by xfstests' generic and xfs group, and
+there's no new failed cases compared to the lastest upstream version kernel.
+
+Changelog:
+
+V4: path[4]: better documentation in code, and add motivation to the cover letter
+
+V3: https://lore.kernel.org/linux-xfs/aMPIDGq7pVuURg1t@infradead.org/
+    patch[1]: use WARN_ON() instead of BUG_ON()
+    patch[2]: make commit message clear
+    patch[3]: -
+    patch[4]: make commit message clear
+
+V2: https://lore.kernel.org/linux-fsdevel/20250810101554.257060-1-alexjlzheng@tencent.com/ 
+    use & instead of % for 64 bit variable on m68k/xtensa, try to make them happy:
+       m68k-linux-ld: fs/iomap/buffered-io.o: in function `iomap_adjust_read_range':
+    >> buffered-io.c:(.text+0xa8a): undefined reference to `__moddi3'
+    >> m68k-linux-ld: buffered-io.c:(.text+0xaa8): undefined reference to `__moddi3'
+
+V1: https://lore.kernel.org/linux-fsdevel/20250810044806.3433783-1-alexjlzheng@tencent.com/
+
+Jinliang Zheng (4):
+  iomap: make sure iomap_adjust_read_range() are aligned with block_size
+  iomap: move iter revert case out of the unwritten branch
+  iomap: make iomap_write_end() return the number of written length again
+  iomap: don't abandon the whole copy when we have iomap_folio_state
+
+ fs/iomap/buffered-io.c | 80 +++++++++++++++++++++++++++++-------------
+ 1 file changed, 55 insertions(+), 25 deletions(-)
+
+-- 
+2.49.0
 
 
