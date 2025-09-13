@@ -1,175 +1,226 @@
-Return-Path: <linux-kernel+bounces-815194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F318B56110
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:16:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15933B56113
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 364B57AF847
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:14:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB467561189
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30862EC0B5;
-	Sat, 13 Sep 2025 13:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4A12EDD5E;
+	Sat, 13 Sep 2025 13:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="eqYU++Js"
-Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u47l62QA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCED1145B27;
-	Sat, 13 Sep 2025 13:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2C7285C97;
+	Sat, 13 Sep 2025 13:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757769368; cv=none; b=n5yf9awCAnYKwpRjMC2YmmIkALMJlBnkqLgBxPj+yEvy23Id6u1aZ7GzOveoSMVrWsSY7/OK+njqx0LwmSjMg/EtJKWtKH/gNwgoUFAo6XZQhq6kvHrCRUK+Fme46aY6rX7DYaA6r1OremHKxzAEDVbEEMRRX+bVEDd1bGQNuDk=
+	t=1757769667; cv=none; b=BWsulUQX8+OcVF345qHcvLfxuk333vPiyutl29WF1KFqGMuYEG7sytK1OREM8mL6WgeZZ1p19x4G49jWGGOaoEzmBMrF5BanW2f7Tmr6b3jkjgwY2kjT2Vf13R9dCEyoWrhZvf+LA8ueQJv7qmhAc2nnQtQfztr2uc831f/jF7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757769368; c=relaxed/simple;
-	bh=HEcey3oOKkFMYxoJsTsYPxiXSLPXDv9uKA9bYgH7v9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=QfN/d9i/Dgq+2cyZjTrhXuKynMlk+JgqocXSocm3btxw70mvpOuMkTJE7n+46EQqpzjX5ZyA/l1rU9rTcsSeATK7l1zC5CCE+pEZK+Nx/QKSPUrc8LDIXRWGGnDxWN1CrpAJp4uxutY/YwSft2uHOb6lYLUquxJvT1z65XdMqQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=eqYU++Js; arc=none smtp.client-ip=89.58.62.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
-	s=new2025; t=1757769356;
-	bh=HEcey3oOKkFMYxoJsTsYPxiXSLPXDv9uKA9bYgH7v9A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
-	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
-	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
-	b=eqYU++JslmCu7DoyXBX6i5SPCggPQ4IXTmMJVoJbNGQRsVrsCQNcQigVW8zIE1XGN
-	 UjBIwUBdeLgG2L3SY1vvKr2OLXf14siWk9igYOxO6RErF+RHrsLh3GH0Jc/L37zNRa
-	 G2ArQMghy7iE3MNbkFqJIsLSKdAaiLLIztvPGMj0awnBFesdtjiFUr+pAbQJ7fJXtl
-	 gewXKajXgs6iBn81XVdAmgM4lYlyXI0+8K35aiIrN9FweD2/ip56fOqPXWPI3YEHHW
-	 K5Ixdw8GOhJO/Ch22Mji3fSXBF95quu95mYrJozGw1+l48dUByZUl1xJokxMCzdOML
-	 ejHjKrF/DdgPA==
-Received: from integral2.. (unknown [182.253.126.215])
-	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 9ECEE3127994;
-	Sat, 13 Sep 2025 13:15:52 +0000 (UTC)
-From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	io-uring Mailing List <io-uring@vger.kernel.org>,
-	dr.xiaosa@gmail.com,
-	Bart Van Assche <bvanassche@acm.org>,
-	Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Subject: [PATCH liburing v1] barrier: Convert C++ barrier functions into macros
-X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
-Date: Sat, 13 Sep 2025 20:15:47 +0700
-Message-Id: <20250913131547.466233-1-ammarfaizi2@gnuweeb.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757769667; c=relaxed/simple;
+	bh=NFy5BFwgI1BaFJmQCa91idv5aurWAF94mAYy1EKJnjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UI1+X6wiTuZvbPiYoDDkmSuXeoUAv5giaZIHHeW3+nBlqbKu7ABoudXy/mogU4U6INhImxerPiHC/26HDvlNvZT43uPrwvcxwPHf1ETJWIcnDhmrAFJQ/aXej+oTL842A/jvK5I6Ss3QbJOwbiCa+yh1N6cBwn1OIT9eHexaYAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u47l62QA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A12C4CEEB;
+	Sat, 13 Sep 2025 13:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757769667;
+	bh=NFy5BFwgI1BaFJmQCa91idv5aurWAF94mAYy1EKJnjU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u47l62QAK8E/EEWHs+xzlJyrw2tXSKhqF7OfvPobT3bkJj3a/yp5iLWXsAJ0rin/V
+	 Cb44yD3/qZbS7CabblwdTbsvlH5DIBGj+ayNFN/jE4Znsgh7owqGPsocMGpJ+URAmP
+	 oxpnEKAyuU5HDRtr2a+zcaojd8/ACk/nDo1G+Ls0RV87zqqdo9TNR+He7u4avdNcaw
+	 3Tyl65ncxv7vNjk5Fu2JA5yPhfO53Wzz4QlR3QHgf4fNyGbjSpCSCSPLiCIiJwiO5X
+	 WjIcD5dalpNBh27OFxY+1V2Ed7V6zavElpYURMYwSwBrdaY/C/P8HDFGztZMM3vaLy
+	 zQgeqClRDHkZA==
+Date: Sat, 13 Sep 2025 14:20:59 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v7 5/6] docs: iio: add documentation for ade9000 driver
+Message-ID: <20250913142059.1122a622@jic23-huawei>
+In-Reply-To: <20250908073531.3639-6-antoniu.miclaus@analog.com>
+References: <20250908073531.3639-1-antoniu.miclaus@analog.com>
+	<20250908073531.3639-6-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The C++20 module export feature fails to operate correctly with the C++
-version's static inline barrier functions:
+On Mon, 8 Sep 2025 07:35:25 +0000
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-  In file included from src/work.cpp:3:
-  ./include/liburing.h:343:20: error: \
-    ‘void io_uring_cq_advance(io_uring*, unsigned int)’ \
-    exposes TU-local entity ‘void io_uring_smp_store_release(T*, T) [with T = unsigned int]’
-    343 | IOURINGINLINE void io_uring_cq_advance(struct io_uring *ring, unsigned nr)
-        |                    ^~~~~~~~~~~~~~~~~~~
-  In file included from ./include/liburing.h:20:
-  ./include/liburing/barrier.h:42:20: note: \
-    ‘void io_uring_smp_store_release(T*, T) [with T = unsigned int]’ is a \
-    specialization of TU-local template \
-    ‘template<class T> void io_uring_smp_store_release(T*, T)’
-    42 | static inline void io_uring_smp_store_release(T *p, T v)
-        |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
-  ./include/liburing/barrier.h:42:20: note: \
-    ‘template<class T> void io_uring_smp_store_release(T*, T)’ declared with internal linkage
+> Add documentation for ade9000 driver which describes the driver
+> device files and shows how the user may use the ABI for various
+> scenarios (configuration, measurement, etc.).
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Please test your docs build and carefully look at the output.
+There were a few formatting errors in here that I have fixed up.
 
-Convert them into macros just like the C version to fix it.
+Jonathan
 
-Closes: https://github.com/axboe/liburing/issues/1457
-Reported-by: @xiaosa-zhz # A GitHub user
-Fixes: 3d74c677c45e ("Make the liburing header files again compatible with C++")
-Cc: dr.xiaosa@gmail.com
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Alviro Iskandar Setiawan <alviro.iskandar@gnuweeb.org>
-Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
----
- src/include/liburing/barrier.h | 55 ++++++++++++----------------------
- 1 file changed, 19 insertions(+), 36 deletions(-)
 
-diff --git a/src/include/liburing/barrier.h b/src/include/liburing/barrier.h
-index 985569f496a8..9bf1eaf374a3 100644
---- a/src/include/liburing/barrier.h
-+++ b/src/include/liburing/barrier.h
-@@ -23,46 +23,29 @@ after the acquire operation executes. This is implemented using
- 
- #ifdef __cplusplus
- #include <atomic>
--#define LIBURING_NOEXCEPT noexcept
-+#define IO_URING_WRITE_ONCE(var, val) \
-+	std::atomic_store_explicit( \
-+		reinterpret_cast<std::atomic<__typeof__(var)> *>(&(var)), \
-+		(val), std::memory_order_relaxed)
- 
--template <typename T>
--static inline void IO_URING_WRITE_ONCE(T &var, T val)
--	LIBURING_NOEXCEPT
--{
--	std::atomic_store_explicit(reinterpret_cast<std::atomic<T> *>(&var),
--				   val, std::memory_order_relaxed);
--}
--template <typename T>
--static inline T IO_URING_READ_ONCE(const T &var)
--	LIBURING_NOEXCEPT
--{
--	return std::atomic_load_explicit(
--		reinterpret_cast<const std::atomic<T> *>(&var),
--		std::memory_order_relaxed);
--}
-+#define IO_URING_READ_ONCE(var) \
-+	std::atomic_load_explicit( \
-+		reinterpret_cast<const std::atomic<__typeof__(var)> *>(&(var)), \
-+		std::memory_order_relaxed)
- 
--template <typename T>
--static inline void io_uring_smp_store_release(T *p, T v)
--	LIBURING_NOEXCEPT
--{
--	std::atomic_store_explicit(reinterpret_cast<std::atomic<T> *>(p), v,
--				   std::memory_order_release);
--}
-+#define io_uring_smp_store_release(p, v) \
-+	std::atomic_store_explicit( \
-+		reinterpret_cast<std::atomic<__typeof__(*(p))> *>((p)), \
-+		(v), std::memory_order_release)
- 
--template <typename T>
--static inline T io_uring_smp_load_acquire(const T *p)
--	LIBURING_NOEXCEPT
--{
--	return std::atomic_load_explicit(
--		reinterpret_cast<const std::atomic<T> *>(p),
--		std::memory_order_acquire);
--}
-+#define io_uring_smp_load_acquire(p) \
-+	std::atomic_load_explicit( \
-+		reinterpret_cast<const std::atomic<__typeof__(*(p))> *>((p)), \
-+		std::memory_order_acquire)
-+
-+#define io_uring_smp_mb() \
-+	std::atomic_thread_fence(std::memory_order_seq_cst)
- 
--static inline void io_uring_smp_mb()
--	LIBURING_NOEXCEPT
--{
--	std::atomic_thread_fence(std::memory_order_seq_cst);
--}
- #else
- #include <stdatomic.h>
- 
--- 
-Ammar Faizi
+
+> +
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| IIO Event Attribute                               | ADE9000 Datasheet Equivalent                             |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_voltage[0-2]_thresh_either_en                  | Zero crossing detection interrupt (ZXVx)                 |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altvoltage[0-2]_rms_thresh_rising_en           | RMS swell detection interrupt (SWELLx)                   |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altvoltage[0-2]_rms_thresh_rising_value        | RMS swell threshold (SWELL_LVL register)                 |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altvoltage[0-2]_rms_thresh_falling_en          | RMS sag/dip detection interrupt (DIPx)                   |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_altvoltage[0-2]_rms_thresh_falling_value       | RMS sag/dip threshold (DIP_LVL register)                 |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +| in_current[0-2]_thresh_either_en                  | Current zero crossing detection interrupt (ZXIx)         |
+> ++---------------------------------------------------+----------------------------------------------------------+
+> +
+> +Event directions:
+
+blank line before bulleted list.
+
+> +- ``rising``: Upper threshold crossing (swell detection)
+> +- ``falling``: Lower threshold crossing (sag/dip detection)
+> +- ``either``: Any threshold crossing (zero crossing detection)
+> +- ``none``: Timeout or non-directional events
+> +
+> +**Note**: Event attributes are only available if the corresponding interrupts
+> +(irq0, irq1, dready) are specified in the device tree. The driver works without
+> +interrupts but with reduced functionality.
+> +
+> +5. Device buffers
+> +=================
+> +
+> +This driver supports IIO buffers for waveform capture. Buffer functionality
+> +requires the dready interrupt to be connected.
+> +
+> +The device supports capturing voltage and current waveforms for power quality
+> +analysis. The waveform buffer can be configured to capture data from different
+> +channel combinations.
+> +
+> +Supported channel combinations for buffered capture:
+
+blank line before bulleted list.
+
+> +- Phase A: voltage and current (IA + VA)
+> +- Phase B: voltage and current (IB + VB)
+> +- Phase C: voltage and current (IC + VC)
+> +- All phases: all voltage and current channels
+> +- Individual channels: IA, VA, IB, VB, IC, VC
+> +
+> +Usage examples
+> +--------------
+> +
+> +Enable waveform capture for Phase A:
+> +
+> +.. code-block:: bash
+> +
+> +        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_current0_en
+> +        root:/sys/bus/iio/devices/iio:device0> echo 1 > scan_elements/in_voltage0_en
+> +
+> +Set buffer length and enable:
+> +
+> +.. code-block:: bash
+> +
+> +        root:/sys/bus/iio/devices/iio:device0> echo 100 > buffer/length
+> +        root:/sys/bus/iio/devices/iio:device0> echo 1 > buffer/enable
+> +
+> +6. Clock output
+> +===============
+> +
+> +The ADE9000 can provide a clock output via the CLKOUT pin when using an external
+> +crystal/clock source. This feature is enabled by specifying ``#clock-cells = <0>``
+> +in the device tree. The output clock will be registered as "clkout" and can be
+> +referenced by other devices.
+> +
+> +7. Usage examples
+> +=================
+> +
+> +Show device name:
+> +
+> +.. code-block:: bash
+> +
+> +	root:/sys/bus/iio/devices/iio:device0> cat name
+> +        ade9000
+> +
+> +Read voltage measurements:
+> +
+> +.. code-block:: bash
+> +
+> +        root:/sys/bus/iio/devices/iio:device0> cat in_voltage0_raw
+> +        12345
+> +        root:/sys/bus/iio/devices/iio:device0> cat in_voltage0_scale
+> +        0.000030517
+> +
+> +- Phase A voltage = in_voltage0_raw * in_voltage0_scale = 0.3769 V
+> +
+> +Read power measurements:
+> +
+> +.. code-block:: bash
+> +
+> +        root:/sys/bus/iio/devices/iio:device0> cat in_power0_active_raw
+> +        5678
+> +        root:/sys/bus/iio/devices/iio:device0> cat in_power0_scale
+> +        0.000244140
+> +
+> +- Phase A active power = in_power0_active_raw * in_power0_scale = 1.386 W
+> +
+> +Configure calibration gains:
+> +
+> +.. code-block:: bash
+> +
+> +        # Set current channel 0 calibration gain
+> +        root:/sys/bus/iio/devices/iio:device0> echo 0x800000 > in_current0_calibscale
+> +        # Set voltage channel 0 calibration gain
+> +        root:/sys/bus/iio/devices/iio:device0> echo 0x7FFFFF > in_voltage0_calibscale
+> +
+> +Configure RMS voltage event thresholds (requires interrupts):
+> +
+> +.. code-block:: bash
+> +
+> +        # Set RMS sag detection threshold
+> +        root:/sys/bus/iio/devices/iio:device0> echo 180000 > events/in_altvoltage0_rms_thresh_falling_value
+> +        # Enable RMS sag detection
+> +        root:/sys/bus/iio/devices/iio:device0> echo 1 > events/in_altvoltage0_rms_thresh_falling_en
+> +
+> +        # Set RMS swell detection threshold
+> +        root:/sys/bus/iio/devices/iio:device0> echo 260000 > events/in_altvoltage0_rms_thresh_rising_value
+> +        # Enable RMS swell detection
+> +        root:/sys/bus/iio/devices/iio:device0> echo 1 > events/in_altvoltage0_rms_thresh_rising_en
+> +
+> +8. IIO Interfacing Tools
+> +========================
+> +
+> +See ``Documentation/iio/iio_tools.rst`` for the description of the available IIO
+> +interfacing tools.
+> diff --git a/Documentation/iio/index.rst b/Documentation/iio/index.rst
+> index c106402a91f7..792c815286f4 100644
+> --- a/Documentation/iio/index.rst
+> +++ b/Documentation/iio/index.rst
+> @@ -28,6 +28,7 @@ Industrial I/O Kernel Drivers
+>     ad7606
+>     ad7625
+>     ad7944
+> +   ade9000
+>     adis16475
+>     adis16480
+>     adis16550
 
 
