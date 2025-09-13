@@ -1,235 +1,194 @@
-Return-Path: <linux-kernel+bounces-815100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01507B55FB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:06:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 148E7B55FC4
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B293A07193
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 09:06:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA30E174A63
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 09:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1ED26B95B;
-	Sat, 13 Sep 2025 09:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OiAHel96"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A342EA473;
+	Sat, 13 Sep 2025 09:09:25 +0000 (UTC)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D768A2EA464
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 09:06:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C89A1B5EB5
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 09:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757754388; cv=none; b=W7SOJzlcNMynBv2n3lprsg3HcxxVlPxp9nOfND8FB4Gou6823bXqdZAVt/KVp3IcEeyD2q4gcZ3JdqSQjCIn+Zgv8EoRxkH/7b/umniYD3iD3vXh7+54/rUZbeYM8xb7Ln7X2vjaamOmFuT7SkuvAMwAbPBk/A1OSPfNmNut4jM=
+	t=1757754565; cv=none; b=rdSzjKgX0wAr1b/TWg39EbS4BfHLnwaX9ZddfoBVHXAh7S/KzAWs/l+6RQPI1XUzotFCEu3YXr7be4iE7Ypbjm9Oqj6QaclRlhI2H8UcaKlaQrg9zgfS9w3ZwWiO8afpPzbvR/BTVthu0In7WNfnVPaSpJ3P1F5Jjcds1AGPIV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757754388; c=relaxed/simple;
-	bh=8dEp1AU6wmo+g+BbWCezxqlLsb7zc0IB8g7OnuHFGSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J5o9IT5rzw+ro5+TaQ5IV/dMChaR3awy2j04ibVfmZFxa45Gf9KsR+3Sj8nD59YC16mcL+NEYBpXsVggCBhAemvBJiMp4JHx2SROokad64mQE3BC5mHahQjiyQzrG/kN8nHEGf8iLwpOxNKmPvXj+8GVR2pFbViYvJLkq7hp5lI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OiAHel96; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757754385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uOsyKEsT4d7f0MxqTpsXQLTyDPQ6JiWR10VEY3czRBY=;
-	b=OiAHel96hdSqvygMwcXVsT10EtcUCX9BpTXezygfuP/jBvNclpxulxObdAR4cRtSCnhfK0
-	eOS8zfg4mS4hHcUwKXOXeMIDgoPV3qMpsU3qLttR/OXuilFYddzyAYRgzbuDMDkkFN7uaG
-	eALZPTwooHpmZAyA1bBp835V1xmHMj4=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-IZ3KfyuqNB-l5Fr7ro5nPQ-1; Sat, 13 Sep 2025 05:06:24 -0400
-X-MC-Unique: IZ3KfyuqNB-l5Fr7ro5nPQ-1
-X-Mimecast-MFC-AGG-ID: IZ3KfyuqNB-l5Fr7ro5nPQ_1757754383
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-41179d41311so5457315ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:06:24 -0700 (PDT)
+	s=arc-20240116; t=1757754565; c=relaxed/simple;
+	bh=3axRdzUJe+dWuKW8fyKBAG7j/3hD2bAE41+RVxf3jAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YcN9dFE8xuP6X03ocmZpxBGXB7ET1NgsrNY+qO05blZz4wcw2PzrAzADZL06Qv4KettNCFH3CdCG0dG9PaPr8DmwBDaGpoIrn5aetgbLuPX9IcMJAVyLQCtOBiZ+aTLQOujYJM/m2oLTsVom08YiqSxlTODqdpY0JB44YcELO3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-56d1b40ed70so2077366e87.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:09:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757754383; x=1758359183;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
+        d=1e100.net; s=20230601; t=1757754559; x=1758359359;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=uOsyKEsT4d7f0MxqTpsXQLTyDPQ6JiWR10VEY3czRBY=;
-        b=kYADDAQxqzwf3tWLs4ke7Qy1MqrtjyxW4xwbeE3Nvnvfc0bb9KZJ/GoNZnf3oFbQkq
-         kmAv/MbYCu9NA0ACKARj4oRECPM2X/1cS2UKEymyqm+wJspALK8ohHVbAuH0QRJdHxES
-         HdKmiilmAbCj167KMNxCnVM6YfpUil2Tx5/ASDC8hSWt0E4Gq5rZcVzqZPtTlDbOaZF0
-         HBXMW9xxMq+fa7Cw5E41f1OBOkucaununw6WxMVU0fXN/J6ltksu69Dopguj01z3QMuW
-         /djma0SRN13UoqSmw7TQU4iTkxwYQq6i+sdLZZzPVmTnXeQ1ykjRcNczUFo3eH8bVSez
-         SoJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW65xtm2CP6SZF0hEU1Uh/mjsxQL3jGVq8gdID6T0wmCEC8h07rnEZzjb4eOOFQaJeaLRH8w6imD8XvYxo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdne7sbNvNLJ09tdW5d0XGml0uXgerkkafEmt+bJEe9RaP+Ith
-	nuir5Zu2WKG5SWSnfm0HfYCX9FT4AlTHJra+PtXwpTgB5qBkQJ5EmXR6QL/w9EtpraN5szaxdx9
-	1tD7AX703COl65UkjxApo5SenpGU8qL3E9X460Y2TarZc9x0w1+kWP2sqtb9g5f/lsg==
-X-Gm-Gg: ASbGncucvc704+qhYe4oNkNVqfz8+4Sl9B+9mAFbsUuBcKuZwC1VDykOgnbldUuoEi/
-	CGMLQuKCrF6wvYtwUW8OUkhDkkZuJM7au6yubrMebyE5GUcAA0+zyWMwk9f1pJitYi27PPtNMpo
-	1oo7vF5yleBIvLcdTK7zAt7cwLQxd3UtakT72lN8Mze8/nO7evtiQhwsbJ8YCstBlMR1F8TERbt
-	sdtxxghAeJUgIx5z0FOZeoi3owRzb4stlCA8FjKrw7e2YLvu7Cs1rn2ZrzO5ygOcHrjtXIM7UP3
-	qFishZ2+fzUZuo2BVxVluXnEhX4RPmph3FdNSa4bLI4=
-X-Received: by 2002:a92:ca4d:0:b0:419:de32:2d01 with SMTP id e9e14a558f8ab-420a1bf0e2amr28604265ab.4.1757754383437;
-        Sat, 13 Sep 2025 02:06:23 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IENFwGsYCj5we8cqrgqcps0vU//BTqxnSv90KfRfiVLx0DBHmLiooNtsdQvyKhq4QCqGgNKww==
-X-Received: by 2002:a92:ca4d:0:b0:419:de32:2d01 with SMTP id e9e14a558f8ab-420a1bf0e2amr28604185ab.4.1757754383024;
-        Sat, 13 Sep 2025 02:06:23 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-41deede6d15sm31335025ab.7.2025.09.13.02.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 02:06:21 -0700 (PDT)
-Date: Sat, 13 Sep 2025 10:04:57 +0100
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Farhan Ali <alifm@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- helgaas@kernel.org, schnelle@linux.ibm.com, mjrosato@linux.ibm.com
-Subject: Re: [PATCH v3 08/10] vfio-pci/zdev: Add a device feature for error
- information
-Message-ID: <20250913100457.1af13cd7.alex.williamson@redhat.com>
-In-Reply-To: <20250911183307.1910-9-alifm@linux.ibm.com>
-References: <20250911183307.1910-1-alifm@linux.ibm.com>
-	<20250911183307.1910-9-alifm@linux.ibm.com>
-Organization: Red Hat
+        bh=4M9q1sBtoJdbch2HX+0f+gEgUbmufQuxtOpAtokmLRw=;
+        b=ponTLkn3JTwpKykmNSj/ARHA4F26kDJT63tKpGBFyftCaBX1jb0V2TW/dFo3VGuL6E
+         wEtJtIVsPTkPnmtVD/pI5UtnAWB3lgZxfuy77ezxHP8bLgxhS4yuKSEeHoymbCqm/GTu
+         cfDvrDyn9J/fSHk47gOAbShLlVqiJkGeFN4l7PHeV4QMh6kfAlildyGXVIx6xeHu4JfU
+         6iZBw1a/GsIkHA6xyY6gx5T1Buj0MVcVFu6q0SoLuF5cri7PlbSc9TFgSCs5y4nA285o
+         Nn3ao9L5z0m8WF7/wxc6rX/XyWdaZPjB/n2+bnLToKUsSjgZBsbV/JbIxsY7pdJN8iA/
+         fFwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzcb2IgRhLOwwI5EU8Ocma3lMs98gfIR7SAfb2F3HSlDCe+wQYQuYp8YTQye81K0XaHK6IaAI04P/7XxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQl31s1tSpT1dI9gCVmAT3B3Mx6AB2PvxGtDDZcxtuH8B4+6uQ
+	LcTMlUrazLqCHVvnMI/f0i3k8Lf0aSt3OMgFlLIBIkZU4pvdkcdTGVOYIidcw9Dv
+X-Gm-Gg: ASbGncsdXocVvCdX1zlb2NFh2N58teuRNdjr0NBQ4lm8AII9JoqEEdKK/wf5Ss6IZPt
+	03xC51przZfKcjggUA1hBOG9ac8zOALYT4SPXKPaP3GFsoui4HhzvlqqDqmBMkaGglt/AktrNw0
+	MniadRSbBzgwyaSa9ZOpAhKT+cW0TmZGtYyrLns1FJtzNyvfrBzTziIAEWqXhjjeHDaMye5PFPP
+	vg7I+6GhjQMyDmyInx8RgBOZZZb6NJUSoxdb8jIQc4dbWvaXGJwAZMOvDLdYmsNRq97brMkLtEY
+	dRvK1f9Hb2xvJ50ps5cKmZ3JaQZdViY5RgxM2BVCnZUQdIG8gjW96b88ZcVf+W3whdVwjwBrOLX
+	G2EqcYxsYrlplBz6I6uc7/bTmiHERC8egh98mp9lUu7iT9sf2D56vtC1OVZ6hc0431YWmK/vwxn
+	A3
+X-Google-Smtp-Source: AGHT+IFnIaKJtXJg3iN6DQv793NW1mJ+KYYlHxpHzfiGkXZSLhLAjRcTOovWMKYKj2Vb9KxLsNOGiQ==
+X-Received: by 2002:a05:6512:a83:b0:55f:4746:61ed with SMTP id 2adb3069b0e04-5704a8b5f14mr1845243e87.22.1757754558669;
+        Sat, 13 Sep 2025 02:09:18 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-571c6347384sm520216e87.37.2025.09.13.02.09.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 13 Sep 2025 02:09:18 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-33c9efd65eeso25796711fa.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:09:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUeN5tejFB7rWht5zZzz08RAwtmmToNbl++1gxKSrLfhI7yxTGuD4+ZTnUzoxVXF5dvN5qqO5biOc3oMIM=@vger.kernel.org
+X-Received: by 2002:a2e:bc13:0:b0:336:ed88:f3b1 with SMTP id
+ 38308e7fff4ca-3513a042fe1mr16058841fa.7.1757754557881; Sat, 13 Sep 2025
+ 02:09:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250831162536.2380589-1-lukas.schmid@netcube.li> <20250831162536.2380589-3-lukas.schmid@netcube.li>
+In-Reply-To: <20250831162536.2380589-3-lukas.schmid@netcube.li>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sat, 13 Sep 2025 17:09:05 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67fwg0x8HNE6Dp-M-LDyon1YipeonqvSvSY-BFH+f4E9w@mail.gmail.com>
+X-Gm-Features: Ac12FXypVtt3w9R-5_aPJlDVL7mEoeRUisSDiiTl2jorYCCDiG8XoTwLb6M_2sQ
+Message-ID: <CAGb2v67fwg0x8HNE6Dp-M-LDyon1YipeonqvSvSY-BFH+f4E9w@mail.gmail.com>
+Subject: Re: [PATCH v8 2/5] riscv: dts: allwinner: d1s-t113: Add pinctrl's
+ required by NetCube Systems Nagami SoM
+To: Lukas Schmid <lukas.schmid@netcube.li>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Alexandre Ghiti <alex@ghiti.fr>, Maxime Ripard <mripard@kernel.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 11 Sep 2025 11:33:05 -0700
-Farhan Ali <alifm@linux.ibm.com> wrote:
-
-> For zPCI devices, we have platform specific error information. The platform
-> firmware provides this error information to the operating system in an
-> architecture specific mechanism. To enable recovery from userspace for
-> these devices, we want to expose this error information to userspace. Add a
-> new device feature to expose this information.
-> 
-> Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+On Mon, Sep 1, 2025 at 12:26=E2=80=AFAM Lukas Schmid <lukas.schmid@netcube.=
+li> wrote:
+>
+> Added the following pinctrl's used by the NetCube Systems Nagami SoM
+>   * i2c2_pins
+>   * i2c3_pins
+>   * i2s1_pins, i2s1_din_pins, i2s1_dout_pins
+>   * spi1_pins, spi1_hold_pin, spi1_wp_pin
+>
+> Signed-off-by: Lukas Schmid <lukas.schmid@netcube.li>
 > ---
->  drivers/vfio/pci/vfio_pci_core.c |  2 ++
->  drivers/vfio/pci/vfio_pci_priv.h |  8 ++++++++
->  drivers/vfio/pci/vfio_pci_zdev.c | 34 ++++++++++++++++++++++++++++++++
->  include/uapi/linux/vfio.h        | 14 +++++++++++++
->  4 files changed, 58 insertions(+)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> index 7dcf5439dedc..378adb3226db 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -1514,6 +1514,8 @@ int vfio_pci_core_ioctl_feature(struct vfio_device *device, u32 flags,
->  		return vfio_pci_core_pm_exit(device, flags, arg, argsz);
->  	case VFIO_DEVICE_FEATURE_PCI_VF_TOKEN:
->  		return vfio_pci_core_feature_token(device, flags, arg, argsz);
-> +	case VFIO_DEVICE_FEATURE_ZPCI_ERROR:
-> +		return vfio_pci_zdev_feature_err(device, flags, arg, argsz);
->  	default:
->  		return -ENOTTY;
->  	}
-> diff --git a/drivers/vfio/pci/vfio_pci_priv.h b/drivers/vfio/pci/vfio_pci_priv.h
-> index a9972eacb293..a4a7f97fdc2e 100644
-> --- a/drivers/vfio/pci/vfio_pci_priv.h
-> +++ b/drivers/vfio/pci/vfio_pci_priv.h
-> @@ -86,6 +86,8 @@ int vfio_pci_info_zdev_add_caps(struct vfio_pci_core_device *vdev,
->  				struct vfio_info_cap *caps);
->  int vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev);
->  void vfio_pci_zdev_close_device(struct vfio_pci_core_device *vdev);
-> +int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 flags,
-> +			      void __user *arg, size_t argsz);
->  #else
->  static inline int vfio_pci_info_zdev_add_caps(struct vfio_pci_core_device *vdev,
->  					      struct vfio_info_cap *caps)
-> @@ -100,6 +102,12 @@ static inline int vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev)
->  
->  static inline void vfio_pci_zdev_close_device(struct vfio_pci_core_device *vdev)
->  {}
+>  .../boot/dts/allwinner/sunxi-d1s-t113.dtsi    | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>
+> diff --git a/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi b/arch/ris=
+cv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
+> index e4175adb028da..c00996d6275c5 100644
+> --- a/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
+> +++ b/arch/riscv/boot/dts/allwinner/sunxi-d1s-t113.dtsi
+> @@ -78,6 +78,36 @@ dsi_4lane_pins: dsi-4lane-pins {
+>                                 function =3D "dsi";
+>                         };
+>
+> +                       /omit-if-no-ref/
+> +                       i2c2_pins: i2c2-pins {
+> +                               pins =3D "PD20", "PD21";
+> +                               function =3D "i2c2";
+> +                       };
 > +
-> +static int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 flags,
-> +				     void __user *arg, size_t argsz);
-> +{
-> +	return -ENODEV;
-> +}
->  #endif
->  
->  static inline bool vfio_pci_is_vga(struct pci_dev *pdev)
-> diff --git a/drivers/vfio/pci/vfio_pci_zdev.c b/drivers/vfio/pci/vfio_pci_zdev.c
-> index 2be37eab9279..261954039aa9 100644
-> --- a/drivers/vfio/pci/vfio_pci_zdev.c
-> +++ b/drivers/vfio/pci/vfio_pci_zdev.c
-> @@ -141,6 +141,40 @@ int vfio_pci_info_zdev_add_caps(struct vfio_pci_core_device *vdev,
->  	return ret;
->  }
->  
-> +int vfio_pci_zdev_feature_err(struct vfio_device *device, u32 flags,
-> +			      void __user *arg, size_t argsz)
-> +{
-> +	struct vfio_device_feature_zpci_err err;
-> +	struct vfio_pci_core_device *vdev =
-> +		container_of(device, struct vfio_pci_core_device, vdev);
-> +	struct zpci_dev *zdev = to_zpci(vdev->pdev);
-> +	int ret;
-> +	int head = 0;
-> +
-> +	if (!zdev)
-> +		return -ENODEV;
-> +
-> +	ret = vfio_check_feature(flags, argsz, VFIO_DEVICE_FEATURE_GET,
-> +				 sizeof(err));
-> +	if (ret != 1)
-> +		return ret;
-> +
-> +	mutex_lock(&zdev->pending_errs_lock);
-> +	if (zdev->pending_errs.count) {
-> +		head = zdev->pending_errs.head % ZPCI_ERR_PENDING_MAX;
-> +		err.pec = zdev->pending_errs.err[head].pec;
-> +		zdev->pending_errs.head++;
-> +		zdev->pending_errs.count--;
-> +		err.pending_errors = zdev->pending_errs.count;
-> +	}
-> +	mutex_unlock(&zdev->pending_errs_lock);
-> +
-> +	if (copy_to_user(arg, &err, sizeof(err)))
-> +		return -EFAULT;
-> +
-> +	return 0;
-> +}
-> +
->  int vfio_pci_zdev_open_device(struct vfio_pci_core_device *vdev)
->  {
->  	struct zpci_dev *zdev = to_zpci(vdev->pdev);
-> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> index 75100bf009ba..a950c341602d 100644
-> --- a/include/uapi/linux/vfio.h
-> +++ b/include/uapi/linux/vfio.h
-> @@ -1478,6 +1478,20 @@ struct vfio_device_feature_bus_master {
->  };
->  #define VFIO_DEVICE_FEATURE_BUS_MASTER 10
->  
-> +/**
-> + * VFIO_DEVICE_FEATURE_ZPCI_ERROR feature provides PCI error information to
-> + * userspace for vfio-pci devices on s390x. On s390x PCI error recovery involves
-> + * platform firmware and notification to operating system is done by
-> + * architecture specific mechanism.  Exposing this information to userspace
-> + * allows userspace to take appropriate actions to handle an error on the
-> + * device.
-> + */
-> +struct vfio_device_feature_zpci_err {
-> +	__u16 pec;
-> +	int pending_errors;
-> +};
+> +                       /omit-if-no-ref/
+> +                       i2c3_pins: i2c3-pins {
+> +                               pins =3D "PG10", "PG11";
+> +                               function =3D "i2c3";
+> +                       };
 
-This should have some explicit alignment.  Thanks,
+Because i2c2 and i2c3 have multiple options, they should be named
+appropriately, like i2c2-pd-pins and i2c3-pg-pins
 
-Alex
-
-> +#define VFIO_DEVICE_FEATURE_ZPCI_ERROR 11
 > +
->  /* -------- API for Type1 VFIO IOMMU -------- */
->  
->  /**
+> +                       /omit-if-no-ref/
+> +                       i2s1_pins: i2s1-pins {
+> +                               pins =3D "PG12", "PG13";
+> +                               function =3D "i2s1";
+> +                       };
+> +
+> +                       /omit-if-no-ref/
+> +                       i2s1_din_pins: i2s1-din-pins {
+> +                               pins =3D "PG14";
+> +                               function =3D "i2s1_din";
+> +                       };
+> +
+> +                       /omit-if-no-ref/
+> +                       i2s1_dout_pins: i2s1-dout-pins {
+> +                               pins =3D "PG15";
+> +                               function =3D "i2s1_dout";
+> +                       };
 
+Should be *din0* and *dout0*, since you have din1 and dout1 on the same pin=
+s
+but swapped around.
+
+
+ChenYu
+
+> +
+>                         /omit-if-no-ref/
+>                         lcd_rgb666_pins: lcd-rgb666-pins {
+>                                 pins =3D "PD0", "PD1", "PD2", "PD3", "PD4=
+", "PD5",
+> @@ -126,6 +156,24 @@ spi0_pins: spi0-pins {
+>                                 function =3D "spi0";
+>                         };
+>
+> +                       /omit-if-no-ref/
+> +                       spi1_pins: spi1-pins {
+> +                               pins =3D "PD10", "PD11", "PD12", "PD13";
+> +                               function =3D "spi1";
+> +                       };
+> +
+> +                       /omit-if-no-ref/
+> +                       spi1_hold_pin: spi1-hold-pin {
+> +                               pins =3D "PD14";
+> +                               function =3D "spi1";
+> +                       };
+> +
+> +                       /omit-if-no-ref/
+> +                       spi1_wp_pin: spi1-wp-pin {
+> +                               pins =3D "PD15";
+> +                               function =3D "spi1";
+> +                       };
+> +
+>                         /omit-if-no-ref/
+>                         uart1_pg6_pins: uart1-pg6-pins {
+>                                 pins =3D "PG6", "PG7";
+> --
+> 2.39.5
+>
+>
 
