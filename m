@@ -1,152 +1,168 @@
-Return-Path: <linux-kernel+bounces-815071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B182EB55F03
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 08:43:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B5DB55F06
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 08:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2534A7BA8EA
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22BE91CC2827
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365F32E7F1E;
-	Sat, 13 Sep 2025 06:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RN2UHVVw"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C522E7BD5;
+	Sat, 13 Sep 2025 06:45:25 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D826B1D54E3;
-	Sat, 13 Sep 2025 06:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB6227E1B1
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 06:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757745773; cv=none; b=Ptn6NSgFa+fCIolUBBaE4tyazTtvFJbVJF0g1x1YUbYNkyZFnTqKYiRQbn6cVRdN3AtpbkXVuI3puZpzgVPyX+jiGsoDWCY4FIVa3mrrBZBSrg8ClMDZ+YiaXXkVW19hBjwf6U3huokiOxzqO9ePANb4u08/fYo/XNWufZVaCqc=
+	t=1757745925; cv=none; b=Dz+8jLwxbs3CECE/l8rnxMd4R9KJDZhp1JSDhtabJtz2vBPybCqTcVsjbbCKwiFMthcIJP4Ha7nw68f3lIf3+Vis5UXnZXLPffeGkG6hVS+IMKn7LvNaFBEWDBltHSsAni9uYBUKcKBGAGhY4j1ophrC57c9c5mb9peRyfDJ9F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757745773; c=relaxed/simple;
-	bh=cAQgM4iwRbR96lGPJHGjKeNg5XQvEsSIpl2F9xC29pE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bqd7ElyKTgx0LkBjQ1IDRnMr2PwzruUbxrceW0GL93d8G0FC71aayVLfTKR7hrfN31na3BMxXIF1s8wBih8S/dVrN6+cbK1cEER9JpvH6jfc1MdVdY7iRCrXSnrWUYMjUtp5QkkS3nXX+ot4tXuoyhGce5FnianAN0ztmppxyBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RN2UHVVw; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 58D6gRU0664142;
-	Sat, 13 Sep 2025 01:42:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1757745747;
-	bh=ykk5QGN4fnoQrsSb/DKTeAFELuUFHS/B90NVM1SCIQM=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=RN2UHVVwFsle+xKTitrbJgNXLBX0mOBbghT/5Ihgsv/4Y7S4gHmRk6332EZfm2MmG
-	 q1qrtlqbbT7Wrd70D2Y/ZbaLty7bGuTSzjo+yEqSmjiiJivWMudDhEoxY+J+0yhA6n
-	 iUMxheK1rtwCVOqadE3qj9WYQES1eHBPAOLLWiO8=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 58D6gQaR2531657
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sat, 13 Sep 2025 01:42:26 -0500
-Received: from DFLE201.ent.ti.com (10.64.6.59) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 13
- Sep 2025 01:42:26 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE201.ent.ti.com
- (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sat, 13 Sep 2025 01:42:26 -0500
-Received: from a0512632.dhcp.ti.com (a0512632.dhcp.ti.com [172.24.233.20])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 58D6g5v0543875;
-	Sat, 13 Sep 2025 01:42:20 -0500
-From: Swamil Jain <s-jain1@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <jyri.sarha@iki.fi>,
-        <tomi.valkeinen@ideasonboard.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-        <simona@ffwll.ch>, <aradhya.bhatia@linux.dev>
-CC: <h-shenoy@ti.com>, <devarsht@ti.com>, <praneeth@ti.com>, <u-kumar1@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <s-jain1@ti.com>
-Subject: [PATCH 2/2] arm64: dts: ti: k3-am625: Add OLDI support
-Date: Sat, 13 Sep 2025 12:12:05 +0530
-Message-ID: <20250913064205.4152249-3-s-jain1@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250913064205.4152249-1-s-jain1@ti.com>
-References: <20250913064205.4152249-1-s-jain1@ti.com>
+	s=arc-20240116; t=1757745925; c=relaxed/simple;
+	bh=PYlgmZhwhioZnSwJzR77QkbxJdvtLyYNPx/bF8eOzn8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oMII8iW3eu/h1Tlabh3SF0qltgDAdVoJevAeuGDPAGW4zbe0lh1xGBLtw22Kj+JYuf1iKhe2ksHeGucJexr+6j0Cgd1kAazTiamp6z6wc+Tc5F6shp+422AbEJbkaSJU4/HSnGUWj/q9xmxDBIu6KpQB+5EXT9mrB0BSw0CKxSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uxK0S-0003EI-0E; Sat, 13 Sep 2025 08:45:08 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uxK0P-0013XQ-2K;
+	Sat, 13 Sep 2025 08:45:05 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1uxK0P-00544Q-1t;
+	Sat, 13 Sep 2025 08:45:05 +0200
+Date: Sat, 13 Sep 2025 08:45:05 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Alan Stern <stern@rowland.harvard.edu>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
+	stable@vger.kernel.org, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Lukas Wunner <lukas@wunner.de>, Xu Yang <xu.yang_2@nxp.com>,
+	linux-usb@vger.kernel.org
+Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
+ PM to avoid MDIO runtime PM wakeups
+Message-ID: <aMUS8ZIUpZJ4HNNX@pengutronix.de>
+References: <20250908112619.2900723-1-o.rempel@pengutronix.de>
+ <CGME20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94@eucas1p2.samsung.com>
+ <b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com>
+ <aMLfGPIpWKwZszrY@shell.armlinux.org.uk>
+ <20250911075513.1d90f8b0@kernel.org>
+ <aMM1K_bkk4clt5WD@shell.armlinux.org.uk>
+ <22773d93-cbad-41c5-9e79-4d7f6b9e5ec0@rowland.harvard.edu>
+ <aMPawXCxlFmz6MaC@shell.armlinux.org.uk>
+ <a25b24ec-67bd-42b7-ac7b-9b8d729faba4@rowland.harvard.edu>
+ <aMQwQAaoSB0Y0-YD@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <aMQwQAaoSB0Y0-YD@shell.armlinux.org.uk>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-From: Aradhya Bhatia <a-bhatia1@ti.com>
+On Fri, Sep 12, 2025 at 03:37:52PM +0100, Russell King (Oracle) wrote:
+> On Fri, Sep 12, 2025 at 10:29:47AM -0400, Alan Stern wrote:
+> > On Fri, Sep 12, 2025 at 09:33:05AM +0100, Russell King (Oracle) wrote:
+> > > On Thu, Sep 11, 2025 at 10:30:09PM -0400, Alan Stern wrote:
+> > > > The USB subsystem uses only one pair of callbacks for suspend and resume 
+> > > > because USB hardware has only one suspend state.  However, the callbacks 
+> > > > do get an extra pm_message_t parameter which they can use to distinguish 
+> > > > between system sleep transitions and runtime PM transitions.
+> > > 
+> > > Unfortunately, this isn't the case. While a struct usb_device_driver's
+> > > suspend()/resume() methods get the pm_message_t, a struct usb_driver's
+> > > suspend()/resume() methods do not:
+> > > 
+> > > static int usb_resume_interface(struct usb_device *udev,
+> > >                 struct usb_interface *intf, pm_message_t msg, int reset_resume)
+> > > {
+> > >         struct usb_driver       *driver;
+> > > ...
+> > >         if (reset_resume) {
+> > >                 if (driver->reset_resume) {
+> > >                         status = driver->reset_resume(intf);
+> > > ...
+> > >         } else {
+> > >                 status = driver->resume(intf);
+> > > 
+> > > vs
+> > > 
+> > > static int usb_resume_device(struct usb_device *udev, pm_message_t msg)
+> > > {
+> > >         struct usb_device_driver        *udriver;
+> > > ...
+> > >         if (status == 0 && udriver->resume)
+> > >                 status = udriver->resume(udev, msg);
+> > > 
+> > > and in drivers/net/usb/asix_devices.c:
+> > > 
+> > > static struct usb_driver asix_driver = {
+> > > ...
+> > >         .suspend =      asix_suspend,
+> > >         .resume =       asix_resume,
+> > >         .reset_resume = asix_resume,
+> > > 
+> > > where asix_resume() only takes one argument:
+> > > 
+> > > static int asix_resume(struct usb_interface *intf)
+> > > {
+> > 
+> > Your email made me go back and check the code more carefully, and it 
+> > turns out that we were both half-right.  :-)
+> > 
+> > The pm_message_t argument is passed to the usb_driver's ->suspend 
+> > callback in usb_suspend_interface(), but not to the ->resume callback in 
+> > usb_resume_interface().  Yes, it's inconsistent.
+> > 
+> > I suppose the API could be changed, at the cost of updating a lot of 
+> > drivers.  But it would be easier if this wasn't necessary, if there was 
+> > some way to work around the problem.  Unfortunately, I don't know 
+> > anything about how the network stack handles suspend and resume, or 
+> > what sort of locking it requires, so I can't offer any suggestions.
+> 
+> I, too, am unable to help further as I have no bandwidth available
+> to deal with this. Sorry.
 
-The AM625 SoC has 2 OLDI TXes under the DSS. Add their support.
+Thanks for all the valuable input.
 
-Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-Signed-off-by: Swamil Jain <s-jain1@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62-main.dtsi | 47 ++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+I’ll process the feedback and investigate possible ways to proceed. As a
+first step I’ll measure the actual power savings from USB auto-suspend
+on AX88772 to see if runtime PM is worth the added complexity.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-index dcc71db8afd4..d240c157d819 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
-@@ -793,6 +793,53 @@ dss: dss@30200000 {
- 		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
- 		status = "disabled";
- 
-+		oldi-transmitters {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			oldi0: oldi@0 {
-+				reg = <0>;
-+				clocks = <&k3_clks 186 0>;
-+				clock-names = "serial";
-+				ti,oldi-io-ctrl = <&dss_oldi_io_ctrl>;
-+				status = "disabled";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					oldi0_port0: port@0 {
-+						reg = <0>;
-+					};
-+
-+					oldi0_port1: port@1 {
-+						reg = <1>;
-+					};
-+				};
-+			};
-+
-+			oldi1: oldi@1 {
-+				reg = <1>;
-+				clocks = <&k3_clks 186 0>;
-+				clock-names = "serial";
-+				ti,oldi-io-ctrl = <&dss_oldi_io_ctrl>;
-+				status = "disabled";
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					oldi1_port0: port@0 {
-+						reg = <0>;
-+					};
-+
-+					oldi1_port1: port@1 {
-+						reg = <1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		dss_ports: ports {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
+Best Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
