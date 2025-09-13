@@ -1,121 +1,233 @@
-Return-Path: <linux-kernel+bounces-815310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F932B56275
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:01:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E66B56277
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84476189EAAF
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:02:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38031174C6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42022116F4;
-	Sat, 13 Sep 2025 18:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3032135B9;
+	Sat, 13 Sep 2025 18:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nb0EuTHn"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WrDPKO9t";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ifqClj1M"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9343A1F7098
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F7E1D5146;
+	Sat, 13 Sep 2025 18:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757786497; cv=none; b=cfXfWHJtyLqLBycAtParfQd1xivmyNsvCFP23GTHaXuP/4KJ2XtIXonR55B++vRJDHOzm/ajaagp1tj2CJuXvcMd1E8FePpknjWaBfKPNaFNZb4QlRiU7iT+f3oLdjG55+SfM7m2w2u7J1Bevpkms8ZrvzR1aooQ73IbMNXgbtc=
+	t=1757786524; cv=none; b=pxR/bGojmRLygZ72MqmQ8b8TdzocRTwEwlWF2iDJREJfYO9Nu1k+uVop1ANQrvQ4ZkWRX8GzkEXbsBr6HU+NlOKtzHVJUMXebNfiW8QBQzaGcUqxsNnkWKPTVTmIyiquJHr+vmAmFw30MqIlOnDc4lNxSo4dsmrEiYwu7ZOnxiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757786497; c=relaxed/simple;
-	bh=UnaOqYluKu28oBnwPH0vnbCU+O6jr21CjF1YCAIsvFg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UX8zcacs2KhjEEJmnHFoIyZufhWCSn1gcuFI/N+51+qc1Gg8B9phf9rqiayWFPPaAktyMl2+ThvPhDO/eG9LZjLgtdWn/CwR0qoRsrgF9L4qz18WgzItFwFQnXU+tesFdifd0wgqaXqoliboi3KKKAp+gsucSbrldFtWBN0YAM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nb0EuTHn; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-723bc91d7bbso23819727b3.3
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:01:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757786494; x=1758391294; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NjHrIrhN/4pjfGuGdsD+5Ie4bMJa+37LDUXsJfR1WJM=;
-        b=Nb0EuTHnk1rU4+sqHEk9Mz5mpnQs/KBTBTng1Hhz678Q9HwjDl1TLzA0KsKQkGCzYA
-         jvJLACHZmVq69So4rWVOwFZlioYw8vsQ7nvMjkniKntOa312AJjbZDzqnknXXLfvWeSR
-         +/WdVba6LWds6ExTHDYbt5ZgrWi3CdtQPxdzq9j9UTvkoCx5p6EChzRxjrCkl5nrLG65
-         xycttFw6HPHGU5Npw+rEOdC26IQMI4/85fbcZ3ET87A6735jla5h8WJ64hc7KpvxcffE
-         Qa99/97mOmQ7QE2tJiZLd9XrT5snjtLqazOCoVelfzi69R/VqJ1GYcaBd/AnEjHt3TMm
-         voTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757786494; x=1758391294;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NjHrIrhN/4pjfGuGdsD+5Ie4bMJa+37LDUXsJfR1WJM=;
-        b=RtdXg0d/buVzMRrikNMk7l2nbBNkLDxJ5NoGPOcVnlVbHuz3NQYKUbTHyMbkIENn0x
-         caopZJgMzbDkYJyOEpzehAoOzTqWu+TEeKrGEOtWsdUZCUWHAtVmGBi3uwURSJYVFsqD
-         L5Roqx/mhg+FxQwg2Wctm1UC6Z2iXrl4Uq2BaHDF7pw7P1T+ydprHUbV9Tx4cMvDiU46
-         n7NxdvNyLsSQfjt3+1muhb4kB3J12Y5gp8bUI1TMOt3BHSA+H6MtLPrUFWTCVYh05euV
-         EhlRDvUqVFJboI2mmOjxlyCxN5SwzPkupE5p79vWW12Q94XPmKvQf03SOUi+s6aKisst
-         L1jg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNhSb4szOdEuQKY6kitOG8v0uk978VPGEa81GbZr5Z+wAyj0B9kCH+7+CajWGqvJhck3W+g7eYLqY5aGM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiqVVcU/67eOd4RzPKQEMfxL8ggu8ndHY+KU69PSeaCqliMDS6
-	gpICK+mW0lzNZVY9nxvKn+pFkiOohs+NFB2DDwQ/0Xbs3kMJQbNo9dJz
-X-Gm-Gg: ASbGncvXYODqZ1lZqG+8saLcIieQBtZ6uTkaAEG/SQO6I4JYuxdNyuLsNBxQucu348X
-	QYDL0TnUjfqgoDC94Hc6DV7D+4TVBayhLbYmDsTkSG88oGFAwMrcoJ8ON2E/okqF/TPKJECf9eO
-	3XAaCd8qXhjaL6lf0XfitEOqf+fGCSaTBqRKd5tJGY0EI4aOL9sMcaqsNf/j0Lhbf6GGekzFzXg
-	2T5sq6RX3siCPc/fRb8j+1gepcV6HH2ac2Wh6fa5W4G+g2E73R5Jd0DgSQfz1yS0MiaIm/1AEWN
-	wV6m/aooY1YHxoNQHkmtWeEEjfyboVCQnJb/SdtbaXixblZHESYU56oh1W8g19fTCsqgVhlMKjr
-	LgVLb8yYXCeAxk48ToYh3nyjq1c+dzZWmLsYp/AjpCmomFPHeuHv/HIrqXg==
-X-Google-Smtp-Source: AGHT+IHi0t1g25a3FWwQ5Y/nJHat0XL4SNgFHd21Ox1E7oZI7Dop3SdUOK6vuMiPxpkEVNb3sGWL/Q==
-X-Received: by 2002:a05:690c:620d:b0:721:28ef:8b5a with SMTP id 00721157ae682-73064cfc35fmr58784437b3.31.1757786494286;
-        Sat, 13 Sep 2025 11:01:34 -0700 (PDT)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-62484dd3e12sm1900016d50.8.2025.09.13.11.01.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 11:01:33 -0700 (PDT)
-From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-To: Ido Schimmel <idosch@nvidia.com>,
-	Petr Machata <petrm@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Subject: [PATCH] mlxsw: spectrum_cnt: use bitmap_empty() in mlxsw_sp_counter_pool_fini()
-Date: Sat, 13 Sep 2025 14:01:31 -0400
-Message-ID: <20250913180132.202593-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757786524; c=relaxed/simple;
+	bh=Ps+Pl01P0IfQwj66HPqHEiOcIWsQihuXbQnfO5Jovdo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JbhT4CK9r4rZpVQ9V+fr9KmQIKxiA2/9eUPNntKwaNiS1q6MhMexqEytEPi7BvLDU175GukY1iwbMUDaxrSJLLq/MPKqgACopml/71ENrcp/TF4JESwAVPOAaBJVksWB5Jghx93XRkn3ouVw9Cgw+NPze5nR8a7HrUHzEqps4VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WrDPKO9t; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ifqClj1M; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757786519;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rJrkNR8Djaw117twu3g48vyGNepCTuoaHbeLvsIJPc0=;
+	b=WrDPKO9tFY34kzid5bGf5l3cqv0nOiKxrfNBWunhn/8+gqCydNFVF+qvh7o+b5ejoAKORb
+	3tUcCtmuhpJdGn6fuZoqFFkQDcfAkmbA1wsK6lzTc+JqQ7ejVA9D15rfVZcwAlumCJTrUs
+	BtpaKyKOeHMc7oeQsE+hN4ha1D3sRo/uhFlZXct824XxkjxtVJTN6zCrqMKJDXvSMnLMTX
+	/5nzYGjNrK3ZWKgntU0Kf2Q52BBaNXjlS783MSNm2+jm/puqc7OfiaXlhUMpUAOTZwdK/R
+	Pcpdm4Suj82xE1ThrsiORtxo0FEPkfufBXnuz+k2r6npBhb0vhoLVUyUPyUInQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757786519;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rJrkNR8Djaw117twu3g48vyGNepCTuoaHbeLvsIJPc0=;
+	b=ifqClj1M/rTywWSB3Qli/BeWNUV1cyMMpn4zf0vjoNjjZOhjJPYrKgECwUjF3wB1nYB6r8
+	Uz3s/cQFYOGD0BDA==
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>,
+ =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, x86@kernel.org,
+ Alexander Viro
+ <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [patch 1/4] uaccess: Provide common helpers for masked user access
+In-Reply-To: <0424c6bc-aa12-4ee2-a062-68ce16603c26@csgroup.eu>
+References: <20250813150610.521355442@linutronix.de>
+ <20250813151939.601040635@linutronix.de>
+ <0424c6bc-aa12-4ee2-a062-68ce16603c26@csgroup.eu>
+Date: Sat, 13 Sep 2025 20:01:57 +0200
+Message-ID: <874it65izu.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The function opencodes bitmap_empty(). Switch to the proper API in sake
-of verbosity.
+On Tue, Aug 26 2025 at 09:04, Christophe Leroy wrote:
 
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
----
- drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+> Le 13/08/2025 =C3=A0 17:57, Thomas Gleixner a =C3=A9crit=C2=A0:
+>> commit 2865baf54077 ("x86: support user address masking instead of
+>> non-speculative conditional") provided an optimization for
+>> unsafe_get/put_user(), which optimizes the Spectre-V1 mitigation in an
+>> architecture specific way. Currently only x86_64 supports that.
+>>=20
+>> The required code pattern is:
+>>=20
+>> 	if (can_do_masked_user_access())
+>> 		dst =3D masked_user_access_begin(dst);
+>> 	else if (!user_write_access_begin(dst, sizeof(*dst)))
+>> 		return -EFAULT;
+>> 	unsafe_put_user(val, dst, Efault);
+>> 	user_read_access_end();
+>
+> You previously called user_write_access_begin(), so must be a=20
+> user_write_access_end() here not a user_read_access_end().
+>
+>> 	return 0;
+>> Efault:
+>> 	user_read_access_end();
+>
+> Same.
+>
+>> 	return -EFAULT;
+>>=20
+>> The futex code already grew an instance of that and there are other area=
+s,
+>> which can be optimized, when the calling code actually verified before,
+>> that the user pointer is both aligned and actually in user space.
+>>=20
+>> Use the futex example and provide generic helper inlines for that to avo=
+id
+>> having tons of copies all over the tree.
+>>=20
+>> This provides get/put_user_masked_uNN() where $NN is the variable size in
+>> bits, i.e. 8, 16, 32, 64.
+>
+> Couldn't the $NN be automatically determined through the type of the=20
+> provided user pointer (i.e. the 'from' and 'to' in patch 2) ?
+>
+>>=20
+>> The second set of helpers is to encapsulate the prologue for larger acce=
+ss
+>> patterns, e.g. multiple consecutive unsafe_put/get_user() scenarioes:
+>>=20
+>> 	if (can_do_masked_user_access())
+>> 		dst =3D masked_user_access_begin(dst);
+>> 	else if (!user_write_access_begin(dst, sizeof(*dst)))
+>> 		return -EFAULT;
+>> 	unsafe_put_user(a, &dst->a, Efault);
+>> 	unsafe_put_user(b, &dst->b, Efault);
+>> 	user_write_access_end();
+>> 	return 0;
+>> Efault:
+>> 	user_write_access_end();
+>> 	return -EFAULT;
+>>=20
+>> which allows to shorten this to:
+>>=20
+>> 	if (!user_write_masked_begin(dst))
+>> 		return -EFAULT;
+>> 	unsafe_put_user(a, &dst->a, Efault);
+>> 	...
+>
+> That's nice but ... it hides even deeper the fact that=20
+> masked_user_access_begin() opens a read/write access to userspace. On=20
+> x86 it doesn't matter because all userspace accesses are read/write. But=
+=20
+> on architectures like powerpc it becomes a problem if you do a=20
+> read/write open then only call user_read_access_end() as write access=20
+> might remain open.
+>
+> I have a patch (See [1]) that splits masked_user_access_begin() into=20
+> three versions, one for read-only, one for write-only and one for=20
+> read-write., so that they match user_read_access_end()=20
+> user_write_access_end() and user_access_end() respectively.
+>
+> [1]=20
+> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/7b570e237f7099d56=
+4d7b1a270169428ac1f3099.1755854833.git.christophe.leroy@csgroup.eu/
+>
+>
+>>=20
+>> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+>> ---
+>>   include/linux/uaccess.h |   78 +++++++++++++++++++++++++++++++++++++++=
++++++++++
+>>   1 file changed, 78 insertions(+)
+>>=20
+>> --- a/include/linux/uaccess.h
+>> +++ b/include/linux/uaccess.h
+>> @@ -569,6 +569,84 @@ static inline void user_access_restore(u
+>>   #define user_read_access_end user_access_end
+>>   #endif
+>>=20=20=20
+>> +/*
+>> + * Conveniance macros to avoid spreading this pattern all over the place
+>> + */
+>> +#define user_read_masked_begin(src) ({					\
+>> +	bool __ret =3D true;						\
+>> +									\
+>> +	if (can_do_masked_user_access())				\
+>> +		src =3D masked_user_access_begin(src);			\
+>
+> Should call a masked_user_read_access_begin() to perform a read-only=20
+> masked access begin, matching the read-only access begin below
+>
+>> +	else if (!user_read_access_begin(src, sizeof(*src)))		\
+>> +		__ret =3D false;						\
+>> +	__ret;								\
+>> +})
+>> +
+>> +#define user_write_masked_begin(dst) ({					\
+>> +	bool __ret =3D true;						\
+>> +									\
+>> +	if (can_do_masked_user_access())				\
+>> +		dst =3D masked_user_access_begin(dst);			\
+>
+> Should call masked_user_write_access_begin() to perform a write-only=20
+> masked access begin, matching the write-only access begin below
+>
+>> +	else if (!user_write_access_begin(dst, sizeof(*dst)))		\
+>> +		__ret =3D false;						\
+>> +	__ret;								\
+>> +})
+>
+> You are missing a user_masked_begin() for read-write operations.
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
-index 50e591420bd9..b1094aaffa5f 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
-@@ -170,8 +170,7 @@ void mlxsw_sp_counter_pool_fini(struct mlxsw_sp *mlxsw_sp)
- 	struct devlink *devlink = priv_to_devlink(mlxsw_sp->core);
- 
- 	mlxsw_sp_counter_sub_pools_fini(mlxsw_sp);
--	WARN_ON(find_first_bit(pool->usage, pool->pool_size) !=
--			       pool->pool_size);
-+	WARN_ON(!bitmap_empty(pool->usage, pool->pool_size));
- 	WARN_ON(atomic_read(&pool->active_entries_count));
- 	bitmap_free(pool->usage);
- 	devl_resource_occ_get_unregister(devlink,
--- 
-2.43.0
+Duh. Let me go and rewrite this correctly. I clearly wasn't thinking straig=
+ht.
 
+>> +GEN_GET_USER_MASKED(u8)
+>> +GEN_GET_USER_MASKED(u16)
+>> +GEN_GET_USER_MASKED(u32)
+>> +GEN_GET_USER_MASKED(u64)
+>> +#undef GEN_GET_USER_MASKED
+>
+> Do we need four functions ? Can't we just have a get_user_masked() macro=
+=20
+> that relies on the type of src , just like unsafe_get_user() ?
+
+Tried and the resulting macro maze is completely unreadable
+garbage. Having a readable implementation and the four functions for the
+types supported was definitely more palatable. It's not too much asked
+from a developer to pick the correct one.
+
+Thanks,
+
+        tglx
 
