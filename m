@@ -1,78 +1,153 @@
-Return-Path: <linux-kernel+bounces-815306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE2FB56268
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 19:50:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9775EB5626C
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 19:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF60716C5FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:50:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA54917DA6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:58:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E29021CC47;
-	Sat, 13 Sep 2025 17:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A887620E704;
+	Sat, 13 Sep 2025 17:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxS1ox4y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yr358pY0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RTWG5bvZ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24FA21257B;
-	Sat, 13 Sep 2025 17:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4AC11CA9;
+	Sat, 13 Sep 2025 17:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757785809; cv=none; b=T7Pd1kYvUdLkNhgeNDgTZC662aAmii30huQWwL4+JXV0RnhwF3hgiV1xytp3AI6p+AWgUzkAxvzJXTpnbtHDPgWnizNMASqgWb5kk3Bl41Cai58DcU9s6HVJpReWxmLluRuvlJjC50mewvh3vM10AFeZvQEJ42h1rLcmbrwk4FY=
+	t=1757786288; cv=none; b=lwi3a1lueM4MxNOFaYkjpJUnIhpzFDIKjtnImmn+UTyscT+aYD8Q9lEXI+jT/yFdargepqLilYPo8bTVGyzviATOd8Wau5qWUqUhmyt9djWrdwOIJiX4vJbRsKwMx2ILuLV/uG01tFJ3FRTYPjfZwkwBVMp8GnldRTYRjvApX8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757785809; c=relaxed/simple;
-	bh=Me2VK8B3yS3qdE9o8UQ6EC7qM1jLhNVcDooZE9Hcvww=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=r97L6TVzOx/o1Pt1Gf8FPN/sj8JLni9k2k9g6Y1X9flBp5dJJfxHifeZwY49mTF7RGJ8gHWDChdOkGOPNnHPYeL2dBndDq6AAekIT9PQSu+/znTq4UUK/xSYghe1kDPx+lvyrLksX8EVQPdDIrjXTEBRxhYptWwybyW5+dD9FKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxS1ox4y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A6AC4CEEB;
-	Sat, 13 Sep 2025 17:50:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757785809;
-	bh=Me2VK8B3yS3qdE9o8UQ6EC7qM1jLhNVcDooZE9Hcvww=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=nxS1ox4yE0jMCv6PV/YTOA4ycA82c5HpZd5giAMkx9ZjewM8hB/1fg6uCvjuNdoL0
-	 kecv9nOidkmuvlEkERLIZKq/Sp2+lzA90T+Q3672DVVG2UtjfiQIHuAk1a6qRgV1pT
-	 RvzKI3IxmNp/zTH+SfeczzwlD95wMXJleDXMdT612Y/W85QH5p1a+vEzH5zLvDbJD3
-	 vRb6HlGVNWu5Xo/jA59colAEGGHDJ5CqnTfoDmVZTjmI9RK9TCtPZ0OjkHDAteg+7Z
-	 gtgSXWFN1M5HQ6iYvWrJXgyCRGc2xGiEiGNWqDQ4Bg/7tFZ1Lc28m5pI8naENQuxOB
-	 ZV/ge35UBG+yQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AED71383BF57;
-	Sat, 13 Sep 2025 17:50:12 +0000 (UTC)
-Subject: Re: [GIT PULL] Ceph fixes for 6.17-rc6
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250913155830.96394-1-idryomov@gmail.com>
-References: <20250913155830.96394-1-idryomov@gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250913155830.96394-1-idryomov@gmail.com>
-X-PR-Tracked-Remote: https://github.com/ceph/ceph-client.git tags/ceph-for-6.17-rc6
-X-PR-Tracked-Commit-Id: cdbc9836c7afadad68f374791738f118263c5371
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 5cd64d4f92683afa691a6b83dcad5adfb2165ed0
-Message-Id: <175778581239.3289160.15887766996970675406.pr-tracker-bot@kernel.org>
-Date: Sat, 13 Sep 2025 17:50:12 +0000
-To: Ilya Dryomov <idryomov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1757786288; c=relaxed/simple;
+	bh=zgdz6n3ryg7t4I0el7j6ZzzfFc6HjcWsuZaIjbt8CRY=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=YOVcLfu1R2dt2WetoliNIhH62SPrzsfx8qB4hXjTEIPBRBTECuxCR2eCO2/JQsXpAJs9PdROXztVnHaOdB461of1zkqQsGkKVUZV5s1st8PLu9QBvznZKCOMe2r8o4A7dH/HuBcUcCcYnY7lki+71JdPQJp83XMkZ838wmkZRAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yr358pY0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RTWG5bvZ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 13 Sep 2025 17:57:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1757786277;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hpCHiUfY4iKXOHNIZfc6CvZL6560RzFW0kNpZQ0ilQ0=;
+	b=Yr358pY0KZUR4PN1y94g0xXaEY64h7pReTBb7ULpOdYcjcptiYiY02IUtbXeIRi2KkBkZR
+	RzvIISZm4UEwxg8enyRYXkidWWC32QBAc+EJtKPfhdLvnPIuXLfSNAJ4qiOnS5DomGa6KQ
+	kLWmQK9XxuBQ20RPpPaIdhIXWKBkoN0Erd734BD46C321qgvdedjGLehAoHeKFtBAH76Rh
+	MPEWKUpYHmMQ7vxAlJTcmA9J/reZNHZpr9O9fB7HCy3+NQyeWuun2qOwi1D6olB+uhKLCL
+	vjfdToZKOgdTvGG13mprZALjZ2yGiJsGda3YbpUrmq0pKtF2Qd/5ZvHRu9CZ0g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1757786277;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hpCHiUfY4iKXOHNIZfc6CvZL6560RzFW0kNpZQ0ilQ0=;
+	b=RTWG5bvZ02DxF/0R78iQFO2Opm+zEDtySYr/PAEa25EGXzxgppIQ/OIeJxHefPvAZAe6Ol
+	Ot0e1bxBU71JTQDQ==
+From: "tip-bot2 for Sean Christopherson" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/rseq] rseq/selftests: Use weak symbol reference, not
+ definition, to link with glibc
+Cc: Thomas Gleixner <tglx@linutronix.de>, Florian Weimer <fweimer@redhat.com>,
+ Sean Christopherson <seanjc@google.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, stable@vger.kernel.org,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250819222945.3052711-1-seanjc@google.com>
+References: <20250819222945.3052711-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Message-ID: <175778627632.709179.640101238691946998.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Sat, 13 Sep 2025 17:58:29 +0200:
+The following commit has been merged into the core/rseq branch of tip:
 
-> https://github.com/ceph/ceph-client.git tags/ceph-for-6.17-rc6
+Commit-ID:     a001cd248ab244633c5fabe4f7c707e13fc1d1cc
+Gitweb:        https://git.kernel.org/tip/a001cd248ab244633c5fabe4f7c707e13fc=
+1d1cc
+Author:        Sean Christopherson <seanjc@google.com>
+AuthorDate:    Tue, 19 Aug 2025 15:29:44 -07:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 13 Sep 2025 19:51:59 +02:00
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/5cd64d4f92683afa691a6b83dcad5adfb2165ed0
+rseq/selftests: Use weak symbol reference, not definition, to link with glibc
 
-Thank you!
+Add "extern" to the glibc-defined weak rseq symbols to convert the rseq
+selftest's usage from weak symbol definitions to weak symbol _references_.
+Effectively re-defining the glibc symbols wreaks havoc when building with
+-fno-common, e.g. generates segfaults when running multi-threaded programs,
+as dynamically linked applications end up with multiple versions of the
+symbols.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Building with -fcommon, which until recently has the been the default for
+GCC and clang, papers over the bug by allowing the linker to resolve the
+weak/tentative definition to glibc's "real" definition.
+
+Note, the symbol itself (or rather its address), not the value of the
+symbol, is set to 0/NULL for unresolved weak symbol references, as the
+symbol doesn't exist and thus can't have a value.  Check for a NULL rseq
+size pointer to handle the scenario where the test is statically linked
+against a libc that doesn't support rseq in any capacity.
+
+Fixes: 3bcbc20942db ("selftests/rseq: Play nice with binaries statically link=
+ed against glibc 2.35+")
+Reported-by: Thomas Gleixner <tglx@linutronix.de>
+Suggested-by: Florian Weimer <fweimer@redhat.com>
+Signed-off-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: stable@vger.kernel.org
+Closes: https://lore.kernel.org/all/87frdoybk4.ffs@tglx
+---
+ tools/testing/selftests/rseq/rseq.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/tools/testing/selftests/rseq/rseq.c b/tools/testing/selftests/rs=
+eq/rseq.c
+index 663a9ce..dcac5cb 100644
+--- a/tools/testing/selftests/rseq/rseq.c
++++ b/tools/testing/selftests/rseq/rseq.c
+@@ -40,9 +40,9 @@
+  * Define weak versions to play nice with binaries that are statically linked
+  * against a libc that doesn't support registering its own rseq.
+  */
+-__weak ptrdiff_t __rseq_offset;
+-__weak unsigned int __rseq_size;
+-__weak unsigned int __rseq_flags;
++extern __weak ptrdiff_t __rseq_offset;
++extern __weak unsigned int __rseq_size;
++extern __weak unsigned int __rseq_flags;
+=20
+ static const ptrdiff_t *libc_rseq_offset_p =3D &__rseq_offset;
+ static const unsigned int *libc_rseq_size_p =3D &__rseq_size;
+@@ -209,7 +209,7 @@ void rseq_init(void)
+ 	 * libc not having registered a restartable sequence.  Try to find the
+ 	 * symbols if that's the case.
+ 	 */
+-	if (!*libc_rseq_size_p) {
++	if (!libc_rseq_size_p || !*libc_rseq_size_p) {
+ 		libc_rseq_offset_p =3D dlsym(RTLD_NEXT, "__rseq_offset");
+ 		libc_rseq_size_p =3D dlsym(RTLD_NEXT, "__rseq_size");
+ 		libc_rseq_flags_p =3D dlsym(RTLD_NEXT, "__rseq_flags");
 
