@@ -1,179 +1,171 @@
-Return-Path: <linux-kernel+bounces-814931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9BB0B55A8F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:12:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B42B55A95
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A57A1D619E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:12:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A10C65C31AE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CF74C8F;
-	Sat, 13 Sep 2025 00:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B69712B94;
+	Sat, 13 Sep 2025 00:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KZruUw4f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bGYDJcYF"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB03139E
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 00:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBA8C2E0
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 00:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757722327; cv=none; b=KbNGbUJckp3cOYhG25e3LDpet4h1PpdnrrBIo9P7RG+NyhZHS1Al/YT3sjY6eQ+qmw1AF1No4cZdC6ryAu2pSGNRImbIPwRMIFulTMmZLTi2etVTuqXPVvZJQTnqtFHX5RXXIkWOx2Njr6p3CSmM3NOPLkEXjhn/3fmNF5vYsDg=
+	t=1757722701; cv=none; b=LOI64IJF7ZTBEl9s4T70/NCUpeStC09ycnBvKCjf/FkxmCU0qioybNLkxYHCL/Eh8rulcxSr3yF4BoKSVHJkyDkVrAwNc9mKsxwARptaeC2Hq7bBnpXKg8sqhQAFMqkRZ1XIKb0RI/myxYV5g6nxO3GHUSEHnItFDFD18YvhYv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757722327; c=relaxed/simple;
-	bh=WB5TOJtMW3h+GuYaL/izz3E14BoEMKkYzRjqP9SFXlA=;
+	s=arc-20240116; t=1757722701; c=relaxed/simple;
+	bh=Mh6aGJrEoSKc8SjghJ9/lN7NlH7QvKqYibdt1arxBbY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O7tQqCcgpYIJwEgWJ6oEHDzr4eivTLFzZXl1vhbEfPTnQzh6JRj6gScFDRc68TQkNpLzSe1Z8TqJiIHzDzaL9oFnmsXYpwK6Z8Q4Xz2Pv86MzzgDmsims1PXAf/yRjHCsEtWN65ivWh9RcY7GQutOaAevueRwUTdn6kIwgwfYwM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KZruUw4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 869FFC4CEFE
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 00:12:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757722327;
-	bh=WB5TOJtMW3h+GuYaL/izz3E14BoEMKkYzRjqP9SFXlA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KZruUw4fP4wRc7jPpcf4VgYHrnQT6LIIHFQB/QxYEcutyW06Y+TbgRm1jREA2uwcc
-	 zCeYsBQ570XiITWIwkXPgYY4yLeoKGy0GThh2tEGl2yLaAdkj3t07NMJJQBQ+UTnsG
-	 OJSelI294Fc8K6BfPJpBs1DBT2u6QH8gNdwhVQS9i7RyaMivg6YQpRsy/jjNoCr8sv
-	 ZtLvgAVJDZgX3ZUBo4I6cVl7OEfq3NVWR7LFjHKPM3wLfU/Npev9OfDqcwvs3KAu2R
-	 Qb84kseOs9LYsXlGMQyhBKy+3nBeqB0BbAqed8zchKG+XepOUz3NtkZm6s6tSP6cns
-	 XEygswxvEJsKQ==
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-80e2c52703bso203762385a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:12:07 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXUW9wu+V7NqumDPrLVhhrVaz7xtFwrS/qSTkBJzPWzynF7fuL4a6dZfip6OukINEJAKpV44N6ZKb1LSMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP2sSMAKcVyKGbML+3iIoF7QiL98NQrErdDmZwUia3FjfS358x
-	WI3zxSkPOVueFjWtWZsSkw1cdcbmW71dgPfxDFq1uodAE8ZtrQzBlZU6dnCwGVCMVcoqwNpiLAs
-	WC9ezaoeRL/EbV2udSmtAxp5NRjbu72g=
-X-Google-Smtp-Source: AGHT+IF+cYBBF4ywlJ9yslWSLlw3gny6F5tzpvcjxcpdDnw0945XcqUOCZLT3qoeAnYVE/yCviZrCOlwQNcK4h27VFk=
-X-Received: by 2002:a05:620a:1794:b0:815:2cc1:ed37 with SMTP id
- af79cd13be357-82404ba17bamr649870985a.86.1757722326540; Fri, 12 Sep 2025
- 17:12:06 -0700 (PDT)
+	 To:Cc:Content-Type; b=QAHEPOAeB4USy/62f4H5yP6eoHF3LGJpH51SwJeDDvzlZqvy1AlJ0qAwQaoOgiktIjGFE190nxFpFRfTj9AqDkL6JPKUXZI/U+2m+ZIpBjPoqsfxcOPBUAKQFjj7dNKke3TMvg59mMEKwzG8WOQ8jrhj8RGTXFO2QGADJ2oIq3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bGYDJcYF; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-25c90c3ba65so68785ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 17:18:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1757722700; x=1758327500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oE3G8ORdwUU6jAQHJONdXUYaEO2BnYkTOmxj8OqkFn8=;
+        b=bGYDJcYFTB8L6n5vjTI6ouZqtNyQs6JGh00JjAaQv8Ed8aFEVz694UhhtOEkwYI8mV
+         6ASzX/HgppuN0Y4ZH3EbnD6hE5XBrTTLD/r1Wowp+0NpTVqfCVTLZdeIdGyoIeelpOJN
+         d2j+ZEvar4GAhtHSXlzIpsJysS8WFp6nWY8Vq6G6lZPFjJfD1GdXCvhQ0sRlMN9FTJRp
+         IDXhswjxb8OkVGl939tGbOFD92whrxIQTka0cNeUbi/Z3fjgDaVzkqsY92Qjmslt5fzm
+         4CTfX1cAqESLcn483nYWvdCReceUV6aB3ZzrJ8frEZeySS6bATxAskN+xj17BLzZjsWf
+         LwPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757722700; x=1758327500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oE3G8ORdwUU6jAQHJONdXUYaEO2BnYkTOmxj8OqkFn8=;
+        b=bR/GXVaorXpUBoV9ExMPK4cm9dZ2AcvqY6fFrtIKwdRMbwtNZJ+J2L2DWSOXiTceql
+         UALtk/y/LiU8cGKkf8DWxqpYwEKY7O3vHNDBfW9aHa93MypT5czj8ZLC7OQWG8/AnYbX
+         1jvbNNAiTvWruwqkiDKojwatBiIdjy9MXRv5aYvMn7uYksgQlTqWgM4C/vb4V7VZyEzL
+         fY037ik9iDl8g1ifKtFJHUhTHiZSMoWZdYQPFWfo6TI4Fh+10uliD6FRvIRooL7xAeiC
+         puotHlG0JrKm/SVw29OKNC3s5sjYTUplDFeAZJrv4umJpa/zcYrQZ/coxEvyyW8re+f8
+         /mog==
+X-Forwarded-Encrypted: i=1; AJvYcCXxiibrtLIMYpv795NWS25ZsHr3MlJCGX42isoLSJoX0J1/34Eh7IhVgRoHyOpQt4OMwPp0f5FyXAFvkaM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiIa/Pfm1VnSV4u6IBw7jsuVWj5Usdi99uj5mqptMyLYOIb5as
+	5NmXaVK+R/tKBQI0wuKpUcOJnq9RkT2kILLFzwXNjOX09tw5NJ2HZKeqqvzsb0Hwa5BW8yZrdtW
+	4+dz8od7/kA32lVB02qaRj0Sbs5smxRtJfNtYMMkU
+X-Gm-Gg: ASbGncv9rgdNQXfwZ64EvjUL3Cvv/VOv6ytTQxlD+/3Iz9c9Lhw+4cRPhOMC1g8cAiI
+	VX7KkTSWTRCXX4A6Guf7zauHeAs2SyIUpPvxv1Ho7HVcEzfJDfdrtzRtUgf+ucsutow3wPr/1if
+	gaA7MLyrgUl2qhpq0C/Hfkwt7oN3rdYb9bPvdgobm8eHej95EOmxgbqgXndGWpcKwIaaGJjiSIP
+	dVHOmIqBmIr71xNXnwKNLFupFotwVGonobJyWJZ36TG
+X-Google-Smtp-Source: AGHT+IGzaRnKMgioFkIn9MZTAWIdQlLt1DnmIKhZcaFLkMy9Q3yssinqrzxX1g/AzMrr4tSaSGNncmZBKNCa8ms9HGE=
+X-Received: by 2002:a17:903:2343:b0:25b:fba3:afa7 with SMTP id
+ d9443c01a7336-260e5f7673cmr1151165ad.10.1757722699324; Fri, 12 Sep 2025
+ 17:18:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912222539.149952-1-dwindsor@gmail.com> <20250912222539.149952-2-dwindsor@gmail.com>
-In-Reply-To: <20250912222539.149952-2-dwindsor@gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Fri, 12 Sep 2025 17:11:54 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4phthSOfSGCrf5iFHqZH8DpTiGW+zgmTJQzNu0LByshw@mail.gmail.com>
-X-Gm-Features: Ac12FXzJeDfs8WQpSjWmoLJJrMKDVwMS6T8FuLd0g8xpZTMpLK5rqKm9ncM5Jz4
-Message-ID: <CAPhsuW4phthSOfSGCrf5iFHqZH8DpTiGW+zgmTJQzNu0LByshw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type and kfuncs
-To: David Windsor <dwindsor@gmail.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org
+References: <20250902111951.58315-1-kalyazin@amazon.com> <20250902111951.58315-2-kalyazin@amazon.com>
+ <CADrL8HV8+dh4xPv6Da5CR+CwGJwg5uHyNmiVmHhWFJSwy8ChRw@mail.gmail.com>
+ <87d562a1-89fe-42a8-aa53-c052acf4c564@amazon.com> <8e55ba3a-e7ae-422a-9c79-11aa0e17eae9@redhat.com>
+ <bc26eaf1-9f01-4a65-87a6-1f73fcd00663@amazon.com> <55b727fc-8fd3-4e03-8143-1ed6dcab2781@redhat.com>
+In-Reply-To: <55b727fc-8fd3-4e03-8143-1ed6dcab2781@redhat.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Fri, 12 Sep 2025 17:18:06 -0700
+X-Gm-Features: Ac12FXw70ExrJvBQi4rgyWRbyc1xOL8CupFdmrDzb2GfYcck5L74n4hu4AFRWBE
+Message-ID: <CAGtprH8QjeuR90QJ7byxoAPfb30kmUEDhRhzqNZqSpR8y_+z9g@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] KVM: guest_memfd: add generic population via write
+To: David Hildenbrand <david@redhat.com>
+Cc: kalyazin@amazon.com, James Houghton <jthoughton@google.com>, 
+	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"shuah@kernel.org" <shuah@kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "michael.day@amd.com" <michael.day@amd.com>, 
+	"Roy, Patrick" <roypat@amazon.co.uk>, "Thomson, Jack" <jackabt@amazon.co.uk>, 
+	"Manwaring, Derek" <derekmn@amazon.com>, "Cali, Marco" <xmarcalx@amazon.co.uk>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 3:25=E2=80=AFPM David Windsor <dwindsor@gmail.com> =
-wrote:
+On Fri, Sep 12, 2025 at 8:39=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> All other bpf local storage is obtained using helpers which benefit from
-> RET_PTR_TO_MAP_VALUE_OR_NULL, so can return void * pointers directly to
-> map values. kfuncs don't have that, so return struct
-> bpf_local_storage_data * and access map values through sdata->data.
+> >>>> What's meant to happen if we do use this for CoCo VMs? I would expec=
+t
+> >>>> write() to fail, but I don't see why it would (seems like we need/wa=
+nt
+> >>>> a check that we aren't write()ing to private memory).
+> >>>
+> >>> I am not so sure that write() should fail even in CoCo VMs if we acce=
+ss
+> >>> not-yet-prepared pages.  My understanding was that the CoCoisation of
+> >>> the memory occurs during "preparation".  But I may be wrong here.
+> >>
+> >> But how do you handle that a page is actually inaccessible and should
+> >> not be touched?
+> >>
+> >> IOW, with CXL you could crash the host.
+> >>
+> >> There is likely some state check missing, or it should be restricted t=
+o
+> >> VM types.
+> >
+> > Sorry, I'm missing the link between VM types and CXL.  How are they rel=
+ated?
 >
-> Signed-off-by: David Windsor <dwindsor@gmail.com>
-
-Maybe I missed something, but I think you haven't addressed Alexei's
-question in v1: why this is needed and why hash map is not sufficient.
-
-Other local storage types (task, inode, sk storage) may get a large
-number of entries in a system, and thus would benefit from object
-local storage. I don't think we expect too many creds in a system.
-hash map of a smallish size should be good in most cases, and be
-faster than cred local storage.
-
-Did I get this right?
-
-Thanks,
-Song
-
-The following are some quick feedbacks of the patch, but let's
-first address the question above.
-
-This is hitting KASAN BUG in CI:
-
-https://github.com/kernel-patches/bpf/actions/runs/17687566710/job/50275683=
-479
-
-(You may need to log in GitHub to see details).
-
-[...]
-
-> +
-> +__bpf_kfunc int bpf_cred_storage_delete(struct bpf_map *map, struct cred=
- *cred)
-> +{
-> +       if (!cred)
-> +               return -EINVAL;
-> +
-> +       return cred_storage_delete(cred, map);
-> +}
-> +
-> +BTF_KFUNCS_START(bpf_cred_storage_kfunc_ids)
-> +BTF_ID_FLAGS(func, bpf_cred_storage_delete, 0)
-> +BTF_ID_FLAGS(func, bpf_cred_storage_get, KF_RET_NULL)
-> +BTF_KFUNCS_END(bpf_cred_storage_kfunc_ids)
-> +
-> +static const struct btf_kfunc_id_set bpf_cred_storage_kfunc_set =3D {
-> +       .owner =3D THIS_MODULE,
-> +       .set   =3D &bpf_cred_storage_kfunc_ids,
-> +};
-> +
-> +static int __init bpf_cred_storage_init(void)
-> +{
-> +       int err;
-
-We need an empty line after the declaration.
-scripts/checkpatch.pl should warn this. Please fix other warnings
-from checkpatch.pl.
-
-> +       err =3D register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_cred_st=
-orage_kfunc_set);
-> +       if (err) {
-
-[...]
-
-> diff --git a/kernel/cred.c b/kernel/cred.c
-> index 9676965c0981..a1be27fe5f4c 100644
-> --- a/kernel/cred.c
-> +++ b/kernel/cred.c
-> @@ -38,6 +38,10 @@ static struct kmem_cache *cred_jar;
->  /* init to 2 - one for init_task, one to ensure it is never freed */
->  static struct group_info init_groups =3D { .usage =3D REFCOUNT_INIT(2) }=
-;
+> I think what you explain below clarifies it.
 >
-> +#ifdef CONFIG_BPF_LSM
-> +#include <linux/bpf_lsm.h>
-> +#endif
-
-We defined a dummy version of bpf_cred_storage_free
-in bpf_lsm.h, so the ifdef here is not needed.
-
-> +
->  /*
->   * The initial credentials for the initial task
->   */
-> @@ -76,6 +80,9 @@ static void put_cred_rcu(struct rcu_head *rcu)
->                       cred, atomic_long_read(&cred->usage));
+> >
+> > My thinking was it is a regular (accessible) page until it is "prepared=
+"
+> > by the CoCo hardware, which is currently tracked by the up-to-date flag=
+,
+> > so it is safe to assume that until it is "prepared", it is accessible
+> > because it was allocated by filemap_grab_folio() ->
+> > filemap_alloc_folio() and hasn't been taken over by the CoCo hardware.
+> > What scenario can you see where it doesn't apply as of now?
 >
->         security_cred_free(cred);
-> +#ifdef CONFIG_BPF_LSM
-> +       bpf_cred_storage_free(cred);
-> +#endif
+> Thanks for clarifying, see below.
+>
+> >
+> > I am aware of an attempt to remove preparation tracking from
+> > guest_memfd, but it is still at an RFC stage AFAIK [1].
+> >
+> >>
+> >> Do we know how this would interact with the direct-map removal?
+> >
+> > I'm using folio_test_uptodate() to determine if the page has been
+> > removed from the direct map as kvm_gmem_mark_prepared() is what
+> > currently removes the page from the direct map and marks it as
+> > up-to-date.  [2] is a Firecracker feature branch where the two work in
+> > combination.
+>
+> Ah, okay. Yes, I recalled [1] that we wanted to change these semantics
+> to be "uptodate: was zeroed", and that preparation handling would be
+> essentially handled by the arch backend.
 
-Ditto.
+Yes, I think we should not be overloading uptodate flag to be an
+indicator of what is private for CoCo guests. Uptodate flag should
+just mean zeroed/fresh folio. It's possible that future allocator
+backing for huge pages already provides uptodate folios.
 
->         key_put(cred->session_keyring);
->         key_put(cred->process_keyring);
->         key_put(cred->thread_keyring);
-[...]
+If there is no current use case for read/write for CoCo VMs, I think
+it makes sense to disable it for now by checking the VM type before
+adding further overloading of uptodate flags.
+
+>
+> --
+> Cheers
+>
+> David / dhildenb
+>
+>
 
