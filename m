@@ -1,121 +1,341 @@
-Return-Path: <linux-kernel+bounces-815003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9D7AB55DDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:48:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2620BB55DE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CC9C565BE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:48:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5802C1B24F40
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CA81B4248;
-	Sat, 13 Sep 2025 02:48:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFAF1991BF;
+	Sat, 13 Sep 2025 02:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="K+QLVMqx"
+Received: from mail-yx1-f43.google.com (mail-yx1-f43.google.com [74.125.224.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434E7A927
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D71D1C8626
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 02:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757731686; cv=none; b=HTIwz5btParlycPFrTFQ6V1QAuPdpH5fuQg8PX27CnPqqpzi6+rbS2xSeJY7MQdOg5ggbEQs56JAuKNPLIqbWolHeFr8VEK7cfft4Nfnk36leHRixE1iPgqP4PFO/VurdTuVd0bvR9q9yIHaxwud+VW7FJqnFfGUTY28d0ArKkA=
+	t=1757731706; cv=none; b=VH8RdecbwGv2d6/tTVValkJYqbxkiiOo6taB/vX9Llh0U9BK4MMfZJeJwulw0SnZegHCmN3Pa7oPaBFJFGjUvgyqBIPpo5WmLasAd87XKhKisL4UC4pOq+Wv6fWQxUiEgoexJ5takCk6NuLtrD4PeN+TpsDdlV4aKb5Qbg1iinc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757731686; c=relaxed/simple;
-	bh=p5p8YjdcT5chy807qIS4Su+o5uz6+R7AuqsMpjKZaaI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sHTuf2mVvZ2D0hLohxW7brG/Ns8CFG9Uu+enkk6Zg41nK/rda5YcfeKes/eg93cTzRjEnZZIPB/GFBeIYkqxiIt8BVPmyj8pU4Ymf8QtWcfMJb83OGzxf8dZcVhx+ciw2QVdcM/wpIqMqJyER1IlLcR4A7KhJsw0LmuI7uAHnJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-406d2dab9b0so36283805ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:48:04 -0700 (PDT)
+	s=arc-20240116; t=1757731706; c=relaxed/simple;
+	bh=ZgDzLUPuZXuQEWnXyNiXs6bEELAKGlfOKneMLqyun5Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c46+XJTUT5OouT9NmgFIFVee0XeAK769QNaCTUoyBZ/9QQ8Doy08wkOU7hWx1rQxjpdAQHy7P9dfCz6IQ4d40a1itF9DBfdoO0/ugiZ1cheg4I1ndAvrVHe7i9RbY8W3xYOpzjNkXaHck/8SJ6gDZLSwe+yWwCvxyNBTn24Zcr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=K+QLVMqx; arc=none smtp.client-ip=74.125.224.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-yx1-f43.google.com with SMTP id 956f58d0204a3-6296f6ce5ddso511768d50.3
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 19:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1757731703; x=1758336503; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dkY2yS7RSwh45nVEv3otHU3VH9SAKoF62TZrQgSQhHE=;
+        b=K+QLVMqxoe/VPwG14fizIyXZJhHeo7E909SiTRkxy9MdedQ555Co7frMx1W0bGNdHu
+         J9Z6k586KkpF1nTkU24dj438IUr7kXq8Fg1+SS2FPURLAsj2BD6dEtW0cGwrFlXvQFu8
+         x9kTdCxCxgjWni+ioxLM8cJChC0i7YV98xZqOGJpj8A/Ojo1eKB7H5X5VKKT+FWlMhSh
+         KmsQMaBcaOA3fHj7nwSFh0svbYDgVVAPMLUeZYI9+MAOZu6PtR55qG9KFZggk0v0G08F
+         fA1QIp0gIyjhpFQ7Uu/pjl55pqhyGWguUNDMYbFwYnpj5B7kf9/JmkGMMikznMBPKgB5
+         lgzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757731684; x=1758336484;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=blHSYevcFfXqjbcA1ip7wQWCgKXamj6MK+hm6awZujs=;
-        b=QxEnRfEYAUO+omnpLF80bO/cOfWUkrN2TaMYql2mY60nyo4hWSK2gjMtlJLzsYNOky
-         MKtmQQweu0n1iwJgT5p3ucI6pBav8rPYy3tmREom1vpQTgUwjYIljXUKV+NCLbSV0u62
-         +YaBV3iCQRz/9UzyLqtv76v4tgj594ujSauaLIL7k3XxuaPrFzgXNGJD5csX1B8B622J
-         6NvM+c8dRL7HAC6NHD6KNQ0I6l8g+9/zq769R0O+78bmeRDhq7piEPuSF+bPDz7D6IBX
-         s1NqoJsgA30V4Zyl/rAMuvyQ6QACIWca7FmTlhaRg9mlgSuqGWnUaV2hTAx+zyE8svb4
-         IklQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9/KGD71EPM8wOrLymK0SdH4I87iCcuCW+SPPevYQVhAKSfFolA0nui/Tw9sPYbbPwilsd/BXYYJawPsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1BSkckXxta9V0ul3SdgIdztMrpfEgG5IcriWFkCjar9+NlT8P
-	HfwsO3b6VjWa4mF3+FsTsUEwFrjHiE3/WV6g+S5PTYTbJaX6m1VKtkK7gHHwgsXFEFpO2EQX2a2
-	cMijSPNm7SLBHB+E5McrSQUcMH8XEBS4FbmyEj39V79f0t5zBxRe908/5aA8=
-X-Google-Smtp-Source: AGHT+IEa2jLIAbgrMnuH/2RPmOOPQsA/VMNCbMEzuCCh4/6JFqU4mnkNlOl3RfBw7ImaR6XaOZ8kpiYL5fxuMmPu1Wti6as2ruwc
+        d=1e100.net; s=20230601; t=1757731703; x=1758336503;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dkY2yS7RSwh45nVEv3otHU3VH9SAKoF62TZrQgSQhHE=;
+        b=bp+lF+HhSVIaeoScBTWHmhtRX1oi+nWgBtsOIXB2L77G0KQ1YFi+kEuJTF2Hs0OoOh
+         ZTl8UBJGha/NmS1RINVJ4eKFU+iC5kQmr6b1yCp/+2uPXykVKuWpQw0EaKIGmL3fkZAJ
+         zGXd6jJ3ZvFijkzn8gNYt9n7pdGthajX1d6fTJA1JIx8QPaKNzgJ0SYBMftGqba8qB8v
+         phOy4fvmxOJ0r/hUjIV+XKqqWkdjJTYRHkihgvj2hTRG30hex1KTJrR7EvZGvrubfLYA
+         uH0+QizvkQ9hJKfwo9tWNjLSBtbX5Odb7yiQsijtoymbE8VGCmD8eEeXu2NKb2aj0p29
+         A2AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgmzDsWH4i2h8OWmplhqMl3r8CJbvE7+kdqwVTI6RvZU3VU2aHM7IwljcDHsN7a08UcmXW/tp1fpSQa30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhnPkv24l0Z9toF0YWVHGZP7iWyr390QPH5N5bJxARbbkQGF3p
+	mgI0zc1+gEsZvxO9d1Z1gyk5EghzQtoXArLNY+6/umYEwfNeyGd/gt+07nKAiH4kgJcuc4LBOWA
+	DqSNoeVrIhEirGnxNIdQx4+mBV1VUo/k8hHCEJb6j7w==
+X-Gm-Gg: ASbGncuKE9ukTAoMXtkZ1I6CENy47v1UmNOvxRcudsIxbme48z/gIXglgQQxzlXlUYS
+	o9xzn7XPedzPjDKyQlTDk5XR4sSyHd+rj8cEuT4tlj9ATwxVcOZE7od3ZZdFsnvE+x7fzvTu124
+	S807TX/J3/HzGXWmdJbZHkEm9RxoNfpKozsGkfkRs5otZVhhYL+emYBmIY5kUy1PRkMXgQvY4qE
+	up4h/aRI6y/pkg=
+X-Google-Smtp-Source: AGHT+IGiKD+4jzf4TGq8bTBu8gsWjwWmWFiXXnkLbYhS2Yr6yBghdtRZuNxqqC+KU1Yu03Hdf+Hg2fEWLC9p8tq8dhA=
+X-Received: by 2002:a53:e712:0:b0:5fe:91c3:f0fb with SMTP id
+ 956f58d0204a3-627234f4904mr3827458d50.32.1757731703206; Fri, 12 Sep 2025
+ 19:48:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1fc9:b0:423:9063:f1e8 with SMTP id
- e9e14a558f8ab-4239063f364mr17482375ab.0.1757731684404; Fri, 12 Sep 2025
- 19:48:04 -0700 (PDT)
-Date: Fri, 12 Sep 2025 19:48:04 -0700
-In-Reply-To: <20250913012512.6904-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c4db64.050a0220.2ff435.036a.GAE@google.com>
-Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
-From: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <8957c526-d05c-4c0d-bfed-0eb6e6d2476c@linux.ibm.com> <BAEAC2F7-7D7F-49E4-AB21-10FC0E4BF5F3@linux.ibm.com>
+In-Reply-To: <BAEAC2F7-7D7F-49E4-AB21-10FC0E4BF5F3@linux.ibm.com>
+From: Julian Sun <sunjunchao@bytedance.com>
+Date: Sat, 13 Sep 2025 10:48:12 +0800
+X-Gm-Features: Ac12FXxyQ3rupesgBRE_rBBovmGPVj00T36Qe6boIv2jYp-KBN6pOz85tL_EOvs
+Message-ID: <CAHSKhteHC26yXVFtjgdanfM7+vsOVZ+HHWnBYD01A4eiRHibVQ@mail.gmail.com>
+Subject: Re: [External] Re: [linux-next20250911]Kernel OOPs while running
+ generic/256 on Pmem device
+To: Venkat <venkat88@linux.ibm.com>
+Cc: tj@kernel.org, akpm@linux-foundation.org, stable@vger.kernel.org, 
+	songmuchun@bytedance.com, shakeelb@google.com, hannes@cmpxchg.org, 
+	roman.gushchin@linux.dev, mhocko@suse.com, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, riteshh@linux.ibm.com, 
+	ojaswin@linux.ibm.com, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	cgroups@vger.kernel.org, linux-mm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi,
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in gid_table_release_one
+Does this fix make sense to you?
 
-------------[ cut here ]------------
-GID entry ref leak for dev syz1 index 2 ref=452
-WARNING: drivers/infiniband/core/cache.c:809 at release_gid_table drivers/infiniband/core/cache.c:806 [inline], CPU#1: kworker/u8:6/2125
-WARNING: drivers/infiniband/core/cache.c:809 at gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886, CPU#1: kworker/u8:6/2125
-Modules linked in:
-CPU: 1 UID: 0 PID: 2125 Comm: kworker/u8:6 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/18/2025
-Workqueue: ib-unreg-wq ib_unregister_work
-RIP: 0010:release_gid_table drivers/infiniband/core/cache.c:806 [inline]
-RIP: 0010:gid_table_release_one+0x346/0x4d0 drivers/infiniband/core/cache.c:886
-Code: e8 03 48 b9 00 00 00 00 00 fc ff df 0f b6 04 08 84 c0 75 3d 41 8b 0e 48 c7 c7 a0 56 91 8c 4c 89 e6 44 89 fa e8 7b a8 f4 f8 90 <0f> 0b 90 90 e9 e3 fe ff ff 44 89 e9 80 e1 07 80 c1 03 38 c1 0f 8c
-RSP: 0018:ffffc900050a7908 EFLAGS: 00010246
-RAX: aa4d2ac68a741700 RBX: ffff888075471cd8 RCX: ffff888029ac9e40
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000002
-RBP: 1ffff1100ea8e39b R08: 0000000000000003 R09: 0000000000000004
-R10: dffffc0000000000 R11: fffffbfff1c3a6c8 R12: ffff888028a5fe20
-R13: ffff888075471c00 R14: ffff8880291e4000 R15: 0000000000000002
-FS:  0000000000000000(0000) GS:ffff888125ae8000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555556a47588 CR3: 000000007a4a8000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- ib_device_release+0xda/0x1d0 drivers/infiniband/core/device.c:510
- device_release+0x9c/0x1c0 drivers/base/core.c:-1
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22b/0x480 lib/kobject.c:737
- process_one_work kernel/workqueue.c:3263 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3346
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3427
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index d0dfaa0ccaba..ed24dcece56a 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3945,9 +3945,10 @@ static void mem_cgroup_css_free(struct
+cgroup_subsys_state *css)
+                 * Not necessary to wait for wb completion which might
+cause task hung,
+                 * only used to free resources. See
+memcg_cgwb_waitq_callback_fn().
+                 */
+-               __add_wait_queue_entry_tail(wait->done.waitq, &wait->wq_ent=
+ry);
+                if (atomic_dec_and_test(&wait->done.cnt))
+-                       wake_up_all(wait->done.waitq);
++                       kfree(wait);
++               else
++                       __add_wait_queue_entry_tail(wait->done.waitq,
+&wait->wq_entry);;
+        }
+ #endif
+        if (cgroup_subsys_on_dfl(memory_cgrp_subsys) && !cgroup_memory_noso=
+cket)
+
+On Fri, Sep 12, 2025 at 8:33=E2=80=AFPM Venkat <venkat88@linux.ibm.com> wro=
+te:
+>
+>
+>
+> > On 12 Sep 2025, at 10:51=E2=80=AFAM, Venkat Rao Bagalkote <venkat88@lin=
+ux.ibm.com> wrote:
+> >
+> > Greetings!!!
+> >
+> >
+> > IBM CI has reported a kernel crash, while running generic/256 test case=
+ on pmem device from xfstests suite on linux-next20250911 kernel.
+> >
+> >
+> > xfstests: git://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git
+> >
+> > local.config:
+> >
+> > [xfs_dax]
+> > export RECREATE_TEST_DEV=3Dtrue
+> > export TEST_DEV=3D/dev/pmem0
+> > export TEST_DIR=3D/mnt/test_pmem
+> > export SCRATCH_DEV=3D/dev/pmem0.1
+> > export SCRATCH_MNT=3D/mnt/scratch_pmem
+> > export MKFS_OPTIONS=3D"-m reflink=3D0 -b size=3D65536 -s size=3D512"
+> > export FSTYP=3Dxfs
+> > export MOUNT_OPTIONS=3D"-o dax"
+> >
+> >
+> > Test case: generic/256
+> >
+> >
+> > Traces:
+> >
+> >
+> > [  163.371929] ------------[ cut here ]------------
+> > [  163.371936] kernel BUG at lib/list_debug.c:29!
+> > [  163.371946] Oops: Exception in kernel mode, sig: 5 [#1]
+> > [  163.371954] LE PAGE_SIZE=3D64K MMU=3DRadix  SMP NR_CPUS=3D8192 NUMA =
+pSeries
+> > [  163.371965] Modules linked in: xfs nft_fib_inet nft_fib_ipv4 nft_fib=
+_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_=
+ct nft_chain_nat nf_nat nf_conntrack bonding tls nf_defrag_ipv6 nf_defrag_i=
+pv4 rfkill ip_set nf_tables nfnetlink sunrpc pseries_rng vmx_crypto dax_pme=
+m fuse ext4 crc16 mbcache jbd2 nd_pmem papr_scm sd_mod libnvdimm sg ibmvscs=
+i ibmveth scsi_transport_srp pseries_wdt
+> > [  163.372127] CPU: 22 UID: 0 PID: 130 Comm: kworker/22:0 Kdump: loaded=
+ Not tainted 6.17.0-rc5-next-20250911 #1 VOLUNTARY
+> > [  163.372142] Hardware name: IBM,9080-HEX Power11 (architected) 0x8202=
+00 0xf000007 of:IBM,FW1110.01 (NH1110_069) hv:phyp pSeries
+> > [  163.372155] Workqueue: cgroup_free css_free_rwork_fn
+> > [  163.372169] NIP:  c000000000d051d4 LR: c000000000d051d0 CTR: 0000000=
+000000000
+> > [  163.372176] REGS: c00000000ba079b0 TRAP: 0700   Not tainted (6.17.0-=
+rc5-next-20250911)
+> > [  163.372183] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>=
+  CR: 28000000  XER: 00000006
+> > [  163.372214] CFAR: c0000000002bae9c IRQMASK: 0
+> > [  163.372214] GPR00: c000000000d051d0 c00000000ba07c50 c00000000230a60=
+0 0000000000000075
+> > [  163.372214] GPR04: 0000000000000004 0000000000000001 c000000000507e2=
+c 0000000000000001
+> > [  163.372214] GPR08: c000000d0cb87d13 0000000000000000 000000000000000=
+0 a80e000000000000
+> > [  163.372214] GPR12: c00e0001a1970fa2 c000000d0ddec700 c000000000208e5=
+8 c000000107b5e190
+> > [  163.372214] GPR16: c00000000d3e5d08 c00000000b71cf78 c00000000d3e5d0=
+5 c00000000b71cf30
+> > [  163.372214] GPR20: c00000000b71cf08 c00000000b71cf10 c000000019f5858=
+8 c000000004704bc8
+> > [  163.372214] GPR24: c000000107b5e100 c000000004704bd0 000000000000000=
+3 c000000004704bd0
+> > [  163.372214] GPR28: c000000004704bc8 c000000019f585a8 c000000019f53da=
+8 c000000004704bc8
+> > [  163.372315] NIP [c000000000d051d4] __list_add_valid_or_report+0x124/=
+0x188
+> > [  163.372326] LR [c000000000d051d0] __list_add_valid_or_report+0x120/0=
+x188
+> > [  163.372335] Call Trace:
+> > [  163.372339] [c00000000ba07c50] [c000000000d051d0] __list_add_valid_o=
+r_report+0x120/0x188 (unreliable)
+> > [  163.372352] [c00000000ba07ce0] [c000000000834280] mem_cgroup_css_fre=
+e+0xa0/0x27c
+> > [  163.372363] [c00000000ba07d50] [c0000000003ba198] css_free_rwork_fn+=
+0xd0/0x59c
+> > [  163.372374] [c00000000ba07da0] [c0000000001f5d60] process_one_work+0=
+x41c/0x89c
+> > [  163.372385] [c00000000ba07eb0] [c0000000001f76c0] worker_thread+0x55=
+8/0x848
+> > [  163.372394] [c00000000ba07f80] [c000000000209038] kthread+0x1e8/0x23=
+0
+> > [  163.372406] [c00000000ba07fe0] [c00000000000ded8] start_kernel_threa=
+d+0x14/0x18
+> > [  163.372416] Code: 4b9b1099 60000000 7f63db78 4bae8245 60000000 e8bf0=
+008 3c62ff88 7fe6fb78 7fc4f378 38637d40 4b5b5c89 60000000 <0fe00000> 600000=
+00 60000000 7f83e378
+> > [  163.372453] ---[ end trace 0000000000000000 ]---
+> > [  163.380581] pstore: backend (nvram) writing error (-1)
+> > [  163.380593]
+> >
+> >
+> > If you happen to fix this issue, please add below tag.
+> >
+> >
+> > Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+> >
+> >
+> >
+> > Regards,
+> >
+> > Venkat.
+> >
+> >
+>
+> After reverting the below commit, issue is not seen.
+>
+> commit 61bbf51e75df1a94cf6736e311cb96aeb79826a8
+> Author: Julian Sun <sunjunchao@bytedance.com>
+> Date:   Thu Aug 28 04:45:57 2025 +0800
+>
+>     memcg: don't wait writeback completion when release memcg
+>          Recently, we encountered the following hung task:
+>          INFO: task kworker/4:1:1334558 blocked for more than 1720 second=
+s.
+>     [Wed Jul 30 17:47:45 2025] Workqueue: cgroup_destroy css_free_rwork_f=
+n
+>     [Wed Jul 30 17:47:45 2025] Call Trace:
+>     [Wed Jul 30 17:47:45 2025]  __schedule+0x934/0xe10
+>     [Wed Jul 30 17:47:45 2025]  ? complete+0x3b/0x50
+>     [Wed Jul 30 17:47:45 2025]  ? _cond_resched+0x15/0x30
+>     [Wed Jul 30 17:47:45 2025]  schedule+0x40/0xb0
+>     [Wed Jul 30 17:47:45 2025]  wb_wait_for_completion+0x52/0x80
+>     [Wed Jul 30 17:47:45 2025]  ? finish_wait+0x80/0x80
+>     [Wed Jul 30 17:47:45 2025]  mem_cgroup_css_free+0x22/0x1b0
+>     [Wed Jul 30 17:47:45 2025]  css_free_rwork_fn+0x42/0x380
+>     [Wed Jul 30 17:47:45 2025]  process_one_work+0x1a2/0x360
+>     [Wed Jul 30 17:47:45 2025]  worker_thread+0x30/0x390
+>     [Wed Jul 30 17:47:45 2025]  ? create_worker+0x1a0/0x1a0
+>     [Wed Jul 30 17:47:45 2025]  kthread+0x110/0x130
+>     [Wed Jul 30 17:47:45 2025]  ? __kthread_cancel_work+0x40/0x40
+>     [Wed Jul 30 17:47:45 2025]  ret_from_fork+0x1f/0x30
+>          The direct cause is that memcg spends a long time waiting for di=
+rty page
+>     writeback of foreign memcgs during release.
+>          The root causes are:
+>         a. The wb may have multiple writeback tasks, containing millions
+>            of dirty pages, as shown below:
+>          >>> for work in list_for_each_entry("struct wb_writeback_work", =
+\
+>                                         wb.work_list.address_of_(), "list=
+"):
+>     ...     print(work.nr_pages, work.reason, hex(work))
+>     ...
+>     900628  WB_REASON_FOREIGN_FLUSH 0xffff969e8d956b40
+>     1116521 WB_REASON_FOREIGN_FLUSH 0xffff9698332a9540
+>     1275228 WB_REASON_FOREIGN_FLUSH 0xffff969d9b444bc0
+>     1099673 WB_REASON_FOREIGN_FLUSH 0xffff969f0954d6c0
+>     1351522 WB_REASON_FOREIGN_FLUSH 0xffff969e76713340
+>     2567437 WB_REASON_FOREIGN_FLUSH 0xffff9694ae208400
+>     2954033 WB_REASON_FOREIGN_FLUSH 0xffff96a22d62cbc0
+>     3008860 WB_REASON_FOREIGN_FLUSH 0xffff969eee8ce3c0
+>     3337932 WB_REASON_FOREIGN_FLUSH 0xffff9695b45156c0
+>     3348916 WB_REASON_FOREIGN_FLUSH 0xffff96a22c7a4f40
+>     3345363 WB_REASON_FOREIGN_FLUSH 0xffff969e5d872800
+>     3333581 WB_REASON_FOREIGN_FLUSH 0xffff969efd0f4600
+>     3382225 WB_REASON_FOREIGN_FLUSH 0xffff969e770edcc0
+>     3418770 WB_REASON_FOREIGN_FLUSH 0xffff96a252ceea40
+>     3387648 WB_REASON_FOREIGN_FLUSH 0xffff96a3bda86340
+>     3385420 WB_REASON_FOREIGN_FLUSH 0xffff969efc6eb280
+>     3418730 WB_REASON_FOREIGN_FLUSH 0xffff96a348ab1040
+>     3426155 WB_REASON_FOREIGN_FLUSH 0xffff969d90beac00
+>     3397995 WB_REASON_FOREIGN_FLUSH 0xffff96a2d7288800
+>     3293095 WB_REASON_FOREIGN_FLUSH 0xffff969dab423240
+>     3293595 WB_REASON_FOREIGN_FLUSH 0xffff969c765ff400
+>     3199511 WB_REASON_FOREIGN_FLUSH 0xffff969a72d5e680
+>     3085016 WB_REASON_FOREIGN_FLUSH 0xffff969f0455e000
+>     3035712 WB_REASON_FOREIGN_FLUSH 0xffff969d9bbf4b00
+>              b. The writeback might severely throttled by wbt, with a spe=
+ed
+>            possibly less than 100kb/s, leading to a very long writeback t=
+ime.
+>          >>> wb.write_bandwidth
+>     (unsigned long)24
+>     >>> wb.write_bandwidth
+>     (unsigned long)13
+>          The wb_wait_for_completion() here is probably only used to preve=
+nt
+>     use-after-free.  Therefore, we manage 'done' separately and automatic=
+ally
+>     free it.
+>          This allows us to remove wb_wait_for_completion() while preventi=
+ng the
+>     use-after-free issue.
+>      com
+>     Fixes: 97b27821b485 ("writeback, memcg: Implement foreign dirty flush=
+ing")
+>     Signed-off-by: Julian Sun <sunjunchao@bytedance.com>
+>     Acked-by: Tejun Heo <tj@kernel.org>
+>     Cc: Michal Hocko <mhocko@suse.com>
+>     Cc: Roman Gushchin <roman.gushchin@linux.dev>
+>     Cc: Johannes Weiner <hannes@cmpxchg.org>
+>     Cc: Shakeel Butt <shakeelb@google.com>
+>     Cc: Muchun Song <songmuchun@bytedance.com>
+>     Cc: <stable@vger.kernel.org>
+>     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+>
+> Regards,
+> Venkat.
+>
+> >
+>
 
 
-Tested on:
-
-commit:         590b221e Add linux-next specific files for 20250912
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16939934580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=12a1d1f3a8199632
-dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12a76b62580000
-
+--=20
+Julian Sun <sunjunchao@bytedance.com>
 
