@@ -1,65 +1,62 @@
-Return-Path: <linux-kernel+bounces-814991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED11BB55D96
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:25:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E854B55D98
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3511E1D605F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:25:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72EE81D605C8
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBEB1A23BE;
-	Sat, 13 Sep 2025 01:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE1127470;
+	Sat, 13 Sep 2025 01:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gatrplh7"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="V+6unkZn"
+Received: from smtp153-141.sina.com.cn (smtp153-141.sina.com.cn [61.135.153.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2B227470;
-	Sat, 13 Sep 2025 01:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 098F33E47B
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 01:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757726710; cv=none; b=fBf/kfBitKnOSa9uzlboM7/Dvp9cbeKIU3vwMrX11lIU2oFfK/YGjc+UF7LfwBYfzYdTpvY6ai6c17dhKNIq+e+IhCvz3WEzkTPjugZxKWYid/a4N6cX4+fkk8oagHFJV8EC23umflsAwHnyBTQM9BYACXiIuItFNFaZyiW6EyI=
+	t=1757726744; cv=none; b=AbSg+BJ3/PRr/6YBmBZwn+B9xvSa8cZtvJOY0bnywQmjz+6s+48EoKmImJFE8pLTN1DH2VoKaX/1Zk+6OC+4s8ADIkiaTBYln5T7xkIzTnCpkwBoyoUtb0uXIu10CAx9XtE6Hq56LtgQvnd4LQWfRzGM8lAIl/GQzU3Jv5FM+CY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757726710; c=relaxed/simple;
-	bh=agQt5ainiSQaSSr29rjPNCJ03YQQhjZJznYusqfo160=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WFaDD7LoRJEVchEOK3wTNR66dRzq5pyfME4TthvNHGhmC3EhzCF1wYCn1AC1B2A/PDgHEx9fwXBO7BZLewUcCDHbPX6IxXzQCyetKte1XwIgc/y46Ggv0SyNOqv78HLLctfo2YN6KTmYRID5zo8v+lbdHw9n2yjlprui4LMTmP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gatrplh7; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1757726699; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=9I5RI3u2DR62/QoMG7oALiPeUv+mWBlAeBBb+VygSaI=;
-	b=gatrplh7xClNZSZp8U23XzQnwJn6Fadfy2HTDEOp6uKmyyQ80dpjAjqqrFWBXKawO0we0Ya6YYDOwiu8NJmhAMKcmZJO+JPBTlrkClOwKvERaUPYwuA/yhQ5TaiPfgbNxH9UT1O4dTphnEae3KcsMfh5lxAtGb8Pb5+f/PvT02g=
-Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WnsD6mQ_1757726696 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Sat, 13 Sep 2025 09:24:58 +0800
-From: fangyu.yu@linux.alibaba.com
-To: fangyu.yu@linux.alibaba.com
-Cc: alex@ghiti.fr,
-	anup@brainfault.org,
-	aou@eecs.berkeley.edu,
-	atish.patra@linux.dev,
-	graf@amazon.com,
-	guoren@kernel.org,
-	jiangyifei@huawei.com,
-	kvm-riscv@lists.infradead.org,
-	kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH] RISC-V: KVM: Fix guest page fault within HLV* instructions
-Date: Sat, 13 Sep 2025 09:24:51 +0800
-Message-Id: <20250913012451.33829-1-fangyu.yu@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20250912140142.25147-1-fangyu.yu@linux.alibaba.com>
-References: <20250912140142.25147-1-fangyu.yu@linux.alibaba.com>
+	s=arc-20240116; t=1757726744; c=relaxed/simple;
+	bh=5lRR7Ul8iVmEoBGn9MLHDEYRBK8YAa7suDKBs74sWgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sojBxcZo3xcfaHMR0c3tNGY/97vHL/TiKRAyImYQIF0CDaAm014M/XIEApQsQBzTpmOqlpxpKaegBxKoYKiLbFZ9SV1LOnt2XJPdKWvciiG8mLKYiQ4z4bo9lUuFQp29DSJN9AMt+ftjCY/TAC2tnlLM1UPEDLu4fJWBGez09fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=V+6unkZn; arc=none smtp.client-ip=61.135.153.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757726733;
+	bh=gCwPDTo12ml/7P49MzS1++kQZokEKMzdUvTb31I04Gk=;
+	h=From:Subject:Date:Message-ID;
+	b=V+6unkZndlieacEjwLAfxd9RWr5LM98xBiHyO8cr9FNAnM4IuoHm2bwPwc7BIQfI1
+	 mW+9KOa/C5FO74ikVmGvOsM7P+FetrJyWpbvoP2fSGIA9QKj+2gJ5gNBZfU9Z6iuU+
+	 o5UxPhDHGhJ1QpA4R3oZnXftLTTkdJZjvZiKAnv8=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.31) with ESMTP
+	id 68C4C801000052EC; Sat, 13 Sep 2025 09:25:23 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6836876816405
+X-SMAIL-UIID: CD0B43F8A612476CA5294F786ADDCBCF-20250913-092523-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+b0da83a6c0e2e2bddbd4@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [rdma?] WARNING in gid_table_release_one (3)
+Date: Sat, 13 Sep 2025 09:25:11 +0800
+Message-ID: <20250913012512.6904-1-hdanton@sina.com>
+In-Reply-To: <68c2ec01.050a0220.3c6139.003f.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,75 +65,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
->>From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->>
->>When executing HLV* instructions at the HS mode, a guest page fault
->>may occur when a g-stage page table migration between triggering the
->>virtual instruction exception and executing the HLV* instruction.
->>
->>This may be a corner case, and one simpler way to handle this is to
->>re-execute the instruction where the virtual  instruction exception
->>occurred, and the guest page fault will be automatically handled.
->>
->>Fixes: 9f7013265112 ("RISC-V: KVM: Handle MMIO exits for VCPU")
->>Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
->>---
->> arch/riscv/kvm/vcpu_insn.c | 21 ++++++++++++++++++---
->> 1 file changed, 18 insertions(+), 3 deletions(-)
->>
->>diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
->>index 97dec18e6989..a8b93aa4d8ec 100644
->>--- a/arch/riscv/kvm/vcpu_insn.c
->>+++ b/arch/riscv/kvm/vcpu_insn.c
->>@@ -448,7 +448,12 @@ int kvm_riscv_vcpu_virtual_insn(struct kvm_vcpu *vcpu, struct kvm_run *run,
->> 			insn = kvm_riscv_vcpu_unpriv_read(vcpu, true,
->> 							  ct->sepc,
->> 							  &utrap);
->>-			if (utrap.scause) {
->>+			switch (utrap.scause) {
->>+			case 0:
->>+				break;
->>+			case EXC_LOAD_GUEST_PAGE_FAULT:
->>+				return KVM_INSN_CONTINUE_SAME_SEPC;
->>+			default:
->> 				utrap.sepc = ct->sepc;
->> 				kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
->> 				return 1;
->>@@ -503,7 +508,12 @@ int kvm_riscv_vcpu_mmio_load(struct kvm_vcpu *vcpu, struct kvm_run *run,
->> 		 */
->> 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
->> 						  &utrap);
->>-		if (utrap.scause) {
->>+		switch (utrap.scause) {
->>+		case 0:
->>+			break;
->>+		case EXC_LOAD_GUEST_PAGE_FAULT:
->>+			return KVM_INSN_CONTINUE_SAME_SEPC;
->>+		default:
->> 			/* Redirect trap if we failed to read instruction */
->> 			utrap.sepc = ct->sepc;
->> 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
->>@@ -629,7 +639,12 @@ int kvm_riscv_vcpu_mmio_store(struct kvm_vcpu *vcpu, struct kvm_run *run,
->> 		 */
->> 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
->> 						  &utrap);
->>-		if (utrap.scause) {
->>+		switch (utrap.scause) {
->>+		case 0:
->>+			break;
->>+		case EXC_LOAD_GUEST_PAGE_FAULT:
->
->Here should be EXC_STORE_GUEST_PAGE_FAULT, I will fix it next version.
+> Date: Thu, 11 Sep 2025 08:34:25 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    5f540c4aade9 Add linux-next specific files for 20250910
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=157dab12580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=5ed48faa2cb8510d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b0da83a6c0e2e2bddbd4
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b52362580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b41642580000
 
-Please ignore this comment, EXC_LOAD_GUEST_PAGE_FAULT is correct.
+#syz test
 
->
->>+			return KVM_INSN_CONTINUE_SAME_SEPC;
->>+		default:
->> 			/* Redirect trap if we failed to read instruction */
->> 			utrap.sepc = ct->sepc;
->> 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
->>--
->>2.49.0
->
+--- x/drivers/infiniband/core/device.c
++++ y/drivers/infiniband/core/device.c
+@@ -506,6 +506,7 @@ static void ib_device_release(struct dev
+ 	if (dev->hw_stats_data)
+ 		ib_device_release_hw_stats(dev->hw_stats_data);
+ 	if (dev->port_data) {
++		ib_cache_cleanup_one(dev);
+ 		ib_cache_release_one(dev);
+ 		ib_security_release_port_pkey_list(dev);
+ 		rdma_counter_release(dev);
+--- x/drivers/infiniband/core/cache.c
++++ y/drivers/infiniband/core/cache.c
+@@ -824,7 +824,7 @@ static void cleanup_gid_table_port(struc
+ 
+ 	mutex_lock(&table->lock);
+ 	for (i = 0; i < table->sz; ++i) {
+-		if (is_gid_entry_valid(table->data_vec[i]))
++		if (table->data_vec[i])
+ 			del_gid(ib_dev, port, table, i);
+ 	}
+ 	mutex_unlock(&table->lock);
+--
 
