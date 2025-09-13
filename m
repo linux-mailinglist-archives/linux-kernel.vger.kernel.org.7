@@ -1,126 +1,125 @@
-Return-Path: <linux-kernel+bounces-815164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C127BB56073
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:06:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B06BB56075
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107041645C7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:06:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F6A67AF1CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D9E2EC0A9;
-	Sat, 13 Sep 2025 11:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5732EC0A9;
+	Sat, 13 Sep 2025 11:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ctkjdq05"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZXDPMtQE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660B8246788;
-	Sat, 13 Sep 2025 11:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB7E246788
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757761581; cv=none; b=gTiif43BRkSkRUqSkbtyDnBRQu8pErgh8bbee1L4KR+Q9dkV4JWNhWCkOCfWPnQ5jfQ8PX82MjYImWq3PEDKUPyTbkfa3fXBp88oUqnVT0M1hPzelAR77CDjZld4QNrIOqw+KxKyNNq17xM0lXEyDNSzozU+9jTRtAr+/TQAKlg=
+	t=1757761755; cv=none; b=fHZyaPotSytQqKiLw2NwUJ/3ew2zrnYaoXRihdLi2SI1q4HzvmvRn5ypVI+M8u1dDwS8DXavkBbt/8WZjoOG22nmwGBgo9QSLECAbhb028axnezKnJoSK7ZvRq94GKyEQmBYRo2aITsSAPTAwZoY6pRk25jPnVRWOw1tZpa62BY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757761581; c=relaxed/simple;
-	bh=szFTrZp5S9Oy4p7ylGbdzdMqQBAOQWe3AlXIIsUOjWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JIJzCoDQBXNLS1GSOzie9rFvUKWVhAgX2aBdRTmOwQwtXMWwj5OLubl++Sg+LWO0Uje2872PQCnp3VupDw0Vn/6biYjK6MWgbJ2l6KN7D6/vg4lHK5+vAO0FbgQNshJ0/uxZ0kf9byihsZ/99da4QKKQ2tLadqA5TkCzpKOHrc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ctkjdq05; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 873B8C4CEEB;
-	Sat, 13 Sep 2025 11:06:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1757761579;
-	bh=szFTrZp5S9Oy4p7ylGbdzdMqQBAOQWe3AlXIIsUOjWQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ctkjdq05sdDXthTlFmPEY/dXi1Z23yu9NNw4emWqkHw4ot8Fbuo0HQ8wQ7lkhcaw3
-	 QhCAbNhFAIg1qdY+VsqVNCIU7CoUGuKuUd3tqTob2p5wd7yTEAH3ej7PxbAj/BCsDt
-	 pzqkP85QR6r7WIUYRcmfSK5TeSt7nRHXidg7p09k=
-Date: Sat, 13 Sep 2025 13:06:15 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: huangchenghai <huangchenghai2@huawei.com>
-Cc: Zhangfei Gao <zhangfei.gao@linaro.org>, wangzhou1@hisilicon.com,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	linux-crypto@vger.kernel.org, fanghao11@huawei.com,
-	shenyang39@huawei.com, qianweili@huawei.com,
-	linwenkai6@hisilicon.com, liulongfang@huawei.com
-Subject: Re: [PATCH 3/4] uacce: implement mremap in uacce_vm_ops to return
- -EPERM
-Message-ID: <2025091358-doornail-underpaid-35ca@gregkh>
-References: <20250822103904.3776304-1-huangchenghai2@huawei.com>
- <20250822103904.3776304-4-huangchenghai2@huawei.com>
- <2025082208-coauthor-pagan-e72c@gregkh>
- <CABQgh9GEZSasZq5bDthQrTZnJ_Uo8G-swDsrM_gWCecWbtTKgA@mail.gmail.com>
- <2025090608-afloat-grumbling-e729@gregkh>
- <868ceb0e-f4ba-4495-a1e1-0e387049281a@huawei.com>
+	s=arc-20240116; t=1757761755; c=relaxed/simple;
+	bh=X6lcWc9KVe36VtfHjKKWspbtw+Y7hlSjY7dQKGLg9A8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qudXvcgiI/t3OvYd+vd5FChNg432YBvLjzI0UEViPfESSVF5E8jQ5E/vs2Mca8wnItx0YrigyUFP55rso7gznFBlQynEbfuiGoVZ0AHHAYdXo/cHH1EU3oXKbBjOHUXT1Xu4LNHLWE5jQAu0kVA3DDsdkHzlOoSkj8SjJ3FwEk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZXDPMtQE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757761752;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K1kOs3Erdb9qfAALh69kcRAjtEQS3yPD4o2lsunznKM=;
+	b=ZXDPMtQEABg+5NbwJt3t4114LxRIk/RWrC0Q+CgMIGdU3KPoXF2UAeavN5gbhqEBlYe3Mn
+	9bhYbxlIr/WuKO5+QQu/PxCcdALYZzodU7co0NLMZlVhtxni4XvepVyLKPCqkTqLttAfFI
+	Sb7UcwoNW4geNbIDWUwq82xaOUj8t0c=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-k9aBWwj9OQ-tQDv0N_Ax-Q-1; Sat,
+ 13 Sep 2025 07:09:08 -0400
+X-MC-Unique: k9aBWwj9OQ-tQDv0N_Ax-Q-1
+X-Mimecast-MFC-AGG-ID: k9aBWwj9OQ-tQDv0N_Ax-Q_1757761747
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59252180045C;
+	Sat, 13 Sep 2025 11:09:07 +0000 (UTC)
+Received: from [10.45.224.175] (unknown [10.45.224.175])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 264F7300021A;
+	Sat, 13 Sep 2025 11:09:04 +0000 (UTC)
+Message-ID: <11fbd6f4-0cab-48cb-83e8-f62adc0ed493@redhat.com>
+Date: Sat, 13 Sep 2025 13:09:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <868ceb0e-f4ba-4495-a1e1-0e387049281a@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] dpll: fix clock quality level reporting
+To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, netdev@vger.kernel.org
+Cc: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250912093331.862333-1-ivecera@redhat.com>
+ <6c98a19e-473a-4935-a3aa-51c53618b2a9@linux.dev>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <6c98a19e-473a-4935-a3aa-51c53618b2a9@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sat, Sep 13, 2025 at 06:40:23PM +0800, huangchenghai wrote:
-> 
-> On Sat, 6 Sept 2025 at 20:03, Greg KH wrote:
-> > On Thu, Aug 28, 2025 at 01:59:48PM +0800, Zhangfei Gao wrote:
-> > > Hi, Greg
-> > > 
-> > > On Fri, 22 Aug 2025 at 19:46, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > On Fri, Aug 22, 2025 at 06:39:03PM +0800, Chenghai Huang wrote:
-> > > > > From: Yang Shen <shenyang39@huawei.com>
-> > > > > 
-> > > > > The current uacce_vm_ops does not support the mremap operation of
-> > > > > vm_operations_struct. Implement .mremap to return -EPERM to remind
-> > > > > users
-> > > > Why is this needed?  If mremap is not set, what is the value returned?
-> > > Did some debug locally.
-> > > 
-> > > By default, mremap is permitted.
-> > > 
-> > > With mremap, the original vma is released,
-> > > The vma_close is called and free resources, including q->qfr.
-> > > 
-> > > However, vma->vm_private_data (q) is copied to the new vma.
-> > > When the new vma is closed, vma_close will get q and q->qft=0.
-> > > 
-> > > So disable mremap here looks safer.
-> > > 
-> > > > And why is -EPERM the correct value to return here?  That's not what the
-> > > > man pages say is valid :(
-> > > if disable mremap, -1 is returned as MAP_FAILED.
-> > > The errno is decided by the return value, -EPERM (-1) or -EINVAL (-22).
-> > > man mremap only lists -EINVAL.
-> > > 
-> > > However, here the driver wants to disable mremap, looks -EPERM is more suitable.
-> > Disabling mremap is not a permission issue, it's more of an invalid
-> > call?  I don't know, what do other drivers do?
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> Hi Greg,
-> 
-> Thank you for your feedback.
-> 
-> The reason we need to explicitly disable mremap is that when the
-> driver does not implement .mremap, it uses the default mremap
-> method. This could lead to a risk scenario:
-> 
-> An application might first mmap address p1, then mremap to p2,
-> followed by munmap(p1), and finally munmap(p2). Since the default
-> mremap copies the original vma's vm_private_data (i.e., q) to the
-> new vma, both munmap operations would trigger vma_close, causing
-> q->qfr to be freed twice(qfr will be set to null here, so repeated release
-> is ok).
 
-Great, can you please include that in the changelog text?
 
-thanks,
+On 12. 09. 25 9:37 odp., Vadim Fedorenko wrote:
+> On 12.09.2025 10:33, Ivan Vecera wrote:
+>> The DPLL_CLOCK_QUALITY_LEVEL_ITU_OPT1_EPRC is not reported via netlink
+>> due to bug in dpll_msg_add_clock_quality_level(). The usage of
+>> DPLL_CLOCK_QUALITY_LEVEL_MAX for both DECLARE_BITMAP() and
+>> for_each_set_bit() is not correct because these macros requires bitmap
+>> size and not the highest valid bit in the bitmap.
+>>
+>> Use correct bitmap size to fix this issue.
+>>
+>> Fixes: a1afb959add1 ("dpll: add clock quality level attribute and op")
+>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
+>> ---
+>>   drivers/dpll/dpll_netlink.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
+>> index 036f21cac0a9..0a852011653c 100644
+>> --- a/drivers/dpll/dpll_netlink.c
+>> +++ b/drivers/dpll/dpll_netlink.c
+>> @@ -211,8 +211,8 @@ static int
+>>   dpll_msg_add_clock_quality_level(struct sk_buff *msg, struct 
+>> dpll_device *dpll,
+>>                    struct netlink_ext_ack *extack)
+>>   {
+>> +    DECLARE_BITMAP(qls, DPLL_CLOCK_QUALITY_LEVEL_MAX + 1) = { 0 };
+>>       const struct dpll_device_ops *ops = dpll_device_ops(dpll);
+>> -    DECLARE_BITMAP(qls, DPLL_CLOCK_QUALITY_LEVEL_MAX) = { 0 };
+> 
+> I believe __DPLL_CLOCK_QUALITY_LEVEL_MAX should be used in both places
 
-greg k-h
+I don't think so. I consider __DPLL_CLOCK_QUALITY_LEVEL_MAX to be an
+auxiliary value that should not be used directly.
+
+But it would be possible to rename it to DPLL_CLOCK_QUALITY_LEVEL_COUNT
+and use this.
+
+Thoughts?
+
+Ivan
+
 
