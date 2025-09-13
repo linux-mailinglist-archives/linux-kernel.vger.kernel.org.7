@@ -1,163 +1,113 @@
-Return-Path: <linux-kernel+bounces-815057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74526B55ED6
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 08:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F04A8B55EDA
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 08:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98DBB565D76
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:04:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 560111CC2869
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF2D2E6CC8;
-	Sat, 13 Sep 2025 06:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C232E6CD2;
+	Sat, 13 Sep 2025 06:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lu3CWZJB"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mn1gIkoh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C835D2E2845
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 06:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5736D2D94BF;
+	Sat, 13 Sep 2025 06:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757743439; cv=none; b=MbkPX7A8Z61Q1anE2bfw2+P00L5LchXzPubSwZHR4y+1iNs81BCB9XX1lkOCdxWQwnopI0esvZ7kkRJP+2xWCOHRlqDwYQ7po8/nNWk3fLM7YGO2J54wSoS/MVj1lT/GgeKR0XSJknsxdm5FtgLrRuKS2zW52T4CnanZZxnZ2A0=
+	t=1757743519; cv=none; b=sLsyN/5N4+UNe4hfZMjUGiQvbtrBNHRvURww6E+FLpmxodfO9vgF1w6PY9KryNCdJwWnweX4jBbcuOq555BNiXADAhvvVAer4UgVkjfjA5D9XqZYpblq4TQk3JLjGYazLR/5bI+iJVfVSRXSkY+vaEgpY4/0X/IGX04uQw2XhA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757743439; c=relaxed/simple;
-	bh=ix31eSL81pFOW9vzIfsqnpRQ/OW4z+xiuCQH9UQniT0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PnEmkFm51FQd+6XVb4iIpsoklSW55RQK2btWT/6vVE/AyeTmZ2b0TlhGugArQL+qnDpx8/3maWNeoO/ybmFEkzB2+q/JWmOlm7IMPzyQDRhs3MFHJmIewvVfj5TpJQVq4nY8s7cuz4cbuOq7OegzTu9FLeRsvakq6MP9szibaSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lu3CWZJB; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-2445826fd9dso31598825ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 23:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757743437; x=1758348237; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=41Zu+8Pun+PpMd8x6mUjfEY70mK6ipIOPQyqQYxTK8o=;
-        b=lu3CWZJBKw3WJX2GSKt1JXsZg67FitL42bfcsDg+psVq8AmVO1mi9sjARyYlvckT9a
-         w+tceOy40a8yRz/9RAspkZ/4fUBdIzwPZjPqI/LvjM4HkTEe/dCiGn/8hWe+C2PS/Ju2
-         dLEMjGMbQATPpqdijYjTUPvzAwWdmZJJd5tty25J+noivjKErHmq9a3XC+9RfNqrH1C0
-         qLmKvL8aj38ICSi7gCHO9j+WzY+zOsppzSgIDv8KwxedJpEhGqKd48LarTXrmLP5xc2f
-         vlPJsAWD201OVL6Jkrev0cFDsYfy65UXHzGDgrtqb7PfafWjyL8ZVBKo70XGbQ4vZUk9
-         Oacw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757743437; x=1758348237;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=41Zu+8Pun+PpMd8x6mUjfEY70mK6ipIOPQyqQYxTK8o=;
-        b=r+WhqV3Wtim3ztduNhcSzRB+9NmHrGKhJZbT7DPV0BHGfgszLBMrXjrHw5fwP9E/ry
-         ESZ6B3hyonxAHrG1MaQx6Drfw0XXmwdImF/8kBYX88G84tqjk9VwDBLPreCXUXULSzme
-         Q/Qyd/HSHkwrUwpNETs5PqWBiYxvfwBJrQuhnacjDsly7NKR+Zgnbei3xSiJxfKWzElo
-         lRdHDdqottd24/+ExT5fMluDxLCOAruV6+tKa12zmH6knNAhwvlGUJ5IBhCN8O6m35B8
-         zJ4bENU1W2r3I9EvAbWYlAsd76E2zP+O6kVq9Di5fIK54ZGUuTBd27dq25vY9AOm3fru
-         iKXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVw96xUm43LwEc2JSLtHxMxmYTdH9qW1PPhXQ+2BbcGPiaJdDnkva/ntHWQrnrZG6ynzMnM3L0sgE+RGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLbGFQNMtHNpQYlZv1+ffTuwLEGKZ9Fun42JlIQK8ec/n/MtM3
-	Z4LKlBP/KD9qMB3P979UcONMPzdgbSndEdMFZqAZmgouaLcamxFbX6KO
-X-Gm-Gg: ASbGnctc3V7moH2mXEPN6qMZMttGp+kKDBrTEi5g5/aAUMZVDcMGBG5xieU1WYaqGKV
-	/XE0+k4TniIj9OEWLJ/AFD8qBAG4osBpBMeqFxEAuMfy8WL/Fa9Wi/wYbdoJz31i2DhQlS8qLFR
-	1DKjOLGNYAvobGizAmO4JmsuZ6ZJrtZ6m9lml8Jf/mj3/h4QVF6AQMlUVMqBshpwdzBs5qxDXcg
-	rkx6ZzfldTRxuSKSR6aSkmKQTqSxc1F2URAlwPSbfPDsUYFyOdgMvK+m++N0RvvqxrX2XWfZc84
-	KRA3WWdtQx1kohEjKYdI54nqX1lVruwzguaRIJLAS2QOoxoUXGUi6WmtSzIPafKeQdF+Zu+0HLh
-	OMZmFOE/IpSm5vT0/a8elKvR1jnXwPfZIw3Yn2WIgsiNtwrEaKvHUpf4dPq4ccl1gW08=
-X-Google-Smtp-Source: AGHT+IEAfgG7M/u2SSxRv4ShiDR+vJqe2T44IbROgBQqdm+3/74ZEJbrOuuf/pP7mig0OgSHGmTtqw==
-X-Received: by 2002:a17:902:ef46:b0:24c:da3b:7376 with SMTP id d9443c01a7336-25d261781d4mr59102455ad.26.1757743437016;
-        Fri, 12 Sep 2025 23:03:57 -0700 (PDT)
-Received: from mythos-cloud ([121.159.229.173])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3ae29aefsm66340855ad.118.2025.09.12.23.03.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Sep 2025 23:03:56 -0700 (PDT)
-From: Yeounsu Moon <yyyynoom@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Yeounsu Moon <yyyynoom@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	eric.dumazet@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] net: natsemi: fix `rx_dropped` double accounting on `netif_rx()` failure
-Date: Sat, 13 Sep 2025 15:01:36 +0900
-Message-ID: <20250913060135.35282-3-yyyynoom@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1757743519; c=relaxed/simple;
+	bh=GyZIzWAtehw+usycPJMh6r6YySiZ3FIOwMksfbkFqUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qdNJXgQ/kIv7yS9dd1m6+dN+dsY1WzqJ8oN8yApOi+44T47eyjqRXfp6MQRwnziPrxgpWWbNWk0PR/zZKnallzSjOn3W/HHIm/XicyKrtf7HLUTX37FxdwhyupkA8/e+18Srt2db+dJIYsqXLWmZ5S+soGdaDVnK1tSN18Mrs3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mn1gIkoh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6754CC4CEEB;
+	Sat, 13 Sep 2025 06:05:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757743516;
+	bh=GyZIzWAtehw+usycPJMh6r6YySiZ3FIOwMksfbkFqUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mn1gIkoheGYCabLjCi2pDaCtXe+Vk7oADLAcFkBWdaRzFjMpnVqiShU2MsCWy4J0c
+	 vUXlrnxUJrYb+hgBzwqkqQY0sra8Ykwvt7hygbZnuTnG3mXiw1QjA2l6NjzGAnNnEs
+	 o5Tok+r0dEmY9lZh+56ofNibYfMNv+3+AWZQvVeE=
+Date: Sat, 13 Sep 2025 08:05:13 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: GuangFei Luo <luogf2025@163.com>
+Cc: rafael@kernel.org, dan.carpenter@linaro.org, lenb@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, lkp@intel.com, sre@kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] ACPI: battery: prevent sysfs_add_battery re-entry on
+ rapid events
+Message-ID: <2025091354-query-oblivion-9d18@gregkh>
+References: <2025091242-waltz-gruffly-0936@gregkh>
+ <20250912162516.692861-1-luogf2025@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250912162516.692861-1-luogf2025@163.com>
 
-`netif_rx()` already increments `rx_dropped` core stat when it fails.
-The driver was also updating `ndev->stats.rx_dropped` in the same path.
-Since both are reported together via `ip -s -s` command, this resulted
-in drops being counted twice in user-visible stats.
+On Sat, Sep 13, 2025 at 12:25:16AM +0800, GuangFei Luo wrote:
+> Hi Greg,
+> 
+> Thanks for your review and suggestion.
+> 
+> I've updated sysfs_add_battery() to address your comment.
+> The locking is now applied explicitly inside the function
+> to prevent re-entry issues, while keeping the function
+> self-contained for all call sites.
+> 
+> Patch version: v3
+> 
+> Thanks,
+> GuangFei
+> 
+> v3:
+>   - Modified the earlier approach: since sysfs_add_battery() is invoked
+>     from multiple places, the most reliable way is to add the lock inside
+>     the function itself.
+>   - sysfs_remove_battery() had a similar race issue in the past, which was
+>     fixed by adding a lock as well. Reference:
+>     https://lore.kernel.org/all/9c921c22a7f33397a6774d7fa076db9b6a0fd669
+> 	.1312318300.git.len.brown@intel.com/
+> 
+> v2:
+>  - Fix missing mutex_unlock in acpi_battery_update()
+>    (Reported-by: kernel test robot)
+> 
+> v1:
+> When removing and reinserting the laptop battery, ACPI can trigger
+> two notifications in quick succession:
 
-Keep the driver update on `if (unlikely(!skb))`, but skip it after
-`netif_rx()` errors.
+Note, none of the above should be here in the changelog body, it should
+be below the --- line.
 
-Fixes: caf586e5f23c ("net: add a core netdev->rx_dropped counter")
-Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
-changelog:
-v1: https://lore.kernel.org/netdev/20250911053310.15966-2-yyyynoom@gmail.com/
-v2:
-- Correct commit reference in `Fixes:` tag.
-- Fix incorrect commit message.
----
- drivers/net/ethernet/natsemi/ns83820.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+> diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
+> index 6905b56bf3e4..f6d4a8b39a9c 100644
+> --- a/drivers/acpi/battery.c
+> +++ b/drivers/acpi/battery.c
+> @@ -850,6 +850,12 @@ static void __exit battery_hook_exit(void)
+>  
+>  static int sysfs_add_battery(struct acpi_battery *battery)
+>  {
+> +	mutex_lock(&battery->sysfs_lock);
 
-diff --git a/drivers/net/ethernet/natsemi/ns83820.c b/drivers/net/ethernet/natsemi/ns83820.c
-index 56d5464222d9..cdbf82affa7b 100644
---- a/drivers/net/ethernet/natsemi/ns83820.c
-+++ b/drivers/net/ethernet/natsemi/ns83820.c
-@@ -820,7 +820,7 @@ static void rx_irq(struct net_device *ndev)
- 	struct ns83820 *dev = PRIV(ndev);
- 	struct rx_info *info = &dev->rx_info;
- 	unsigned next_rx;
--	int rx_rc, len;
-+	int len;
- 	u32 cmdsts;
- 	__le32 *desc;
- 	unsigned long flags;
-@@ -881,8 +881,10 @@ static void rx_irq(struct net_device *ndev)
- 		if (likely(CMDSTS_OK & cmdsts)) {
- #endif
- 			skb_put(skb, len);
--			if (unlikely(!skb))
-+			if (unlikely(!skb)) {
-+				ndev->stats.rx_dropped++;
- 				goto netdev_mangle_me_harder_failed;
-+			}
- 			if (cmdsts & CMDSTS_DEST_MULTI)
- 				ndev->stats.multicast++;
- 			ndev->stats.rx_packets++;
-@@ -901,15 +903,12 @@ static void rx_irq(struct net_device *ndev)
- 				__vlan_hwaccel_put_tag(skb, htons(ETH_P_IPV6), tag);
- 			}
- #endif
--			rx_rc = netif_rx(skb);
--			if (NET_RX_DROP == rx_rc) {
--netdev_mangle_me_harder_failed:
--				ndev->stats.rx_dropped++;
--			}
-+			netif_rx(skb);
- 		} else {
- 			dev_kfree_skb_irq(skb);
- 		}
- 
-+netdev_mangle_me_harder_failed:
- 		nr++;
- 		next_rx = info->next_rx;
- 		desc = info->descs + (DESC_SIZE * next_rx);
--- 
-2.51.0
+Again, can you use guard() to make this logic simpler?  That would turn
+this into a much smaller patch.
 
+thanks,
+
+greg k-h
 
