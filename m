@@ -1,112 +1,100 @@
-Return-Path: <linux-kernel+bounces-815240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF200B56198
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:34:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2144B5619A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7618FAA3B09
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:34:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6A2817F0E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6012A2EE294;
-	Sat, 13 Sep 2025 14:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF5A2F0694;
+	Sat, 13 Sep 2025 14:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="buvBGjOW"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvdJtFz4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6831C1E515
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 14:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3A0A2ECD1A;
+	Sat, 13 Sep 2025 14:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757774055; cv=none; b=H/cNj6H+hLiEpejd25+kWgkdPXvrm8yv3VwaRiJ1sLtKB4AtaGUK93GkJ8FDBDJ+pL30qYSwjPlImv4N6AaGzf/RbLfANtE7sV87bRCzjmzecIEJxL0xd/9RYSSuPd6ynKj0o3acNFsx7sIqqltpbjGMfOH/wPmg/QIbJBK5IIE=
+	t=1757774103; cv=none; b=jQs8WyP7BR9krPmNR3Li8HHf9IL/pQzd9GNn+GJGIPmgOHtVrkZOjSkrW4rmCQfwKlyy1R/qAj8Ag3JVdWy+ypLN0X7grzqDUrtupc8KejZD7SMEzeKDFtzsHaGC12b0q85hZyBMIwyWyeoRJIhuzgx7dvDCQNDoLcXpMmnb0J4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757774055; c=relaxed/simple;
-	bh=a1haQ6Fet/rTCQhy4Gs2PNfYQlgB/s6f3z2AhrX0E3A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qNW4hmI2VSpD95vCdAo/hOVmK54oknQZbTXMwvYMCa2Uwu1hU64+HeGCvuBdR4CFd3HGzdj9/XYM3IDsaSdmH6ZQQv/RBsEJCZdegxmYdgCmKePNWy6LluC3ao4X055+0Niv3y6SEhTtg/g5rOQkDS3jbxNYt0wRYZ2QsDjYl5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=buvBGjOW; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757774049;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=38c0O4DHueNfAwuKXk6VkV6MVbgVvv01gGk4jrB3i9c=;
-	b=buvBGjOWYZM5PY8vjnlXTFHSW7X+4XiObpo/Q+26eYQKiMRcSewVluLHf0lpN+uE935p9x
-	QyzpKFDZT/GqrJGw4aCHDQhRZcHu/+gcNfdGNfqUZauZmHzbeSRmFbzs9k2Ua/14c9YSBe
-	xdrZketrH4I3VUp7ilIJDtLokZu+Q2E=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Christoph Hellwig <hch@lst.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1757774103; c=relaxed/simple;
+	bh=mUNm4okNp29XKgDWmmCQhXnA0JTa73TiDnxRLFhXz5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R44PlsY32bRncsRDxjyWIOohDVYEfg7lsqenDKg/cULhgz05CjguJi9hGbZa4G1aZmhd8Rduy6GohmPygqz/0jynRO2vve0KQsurPayf4ftkCO3bPtvZdOniNx3Ssom1MJgCj4HCa/Ydr4qUNuWkIrdcpHz1gseYfA1MQsPFIe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvdJtFz4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F322BC4CEEB;
+	Sat, 13 Sep 2025 14:35:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757774102;
+	bh=mUNm4okNp29XKgDWmmCQhXnA0JTa73TiDnxRLFhXz5g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LvdJtFz48otkJeBu8uxmpzP4p/NGG9PDh6YaqfPobqxLQmrrm7TuhfpOu7ThB0Hph
+	 a2OIZs3RJ+rEt+ZsLiJH2fZapLE5SAIOXLE9VKW+bMhQw6SZry9pHTnKoJno+b1t8B
+	 9EYbr4vHwBjgwP8WEjLonFIo1zltie7ApDyOJ7qWri0P6t9afLcHyeZOvRMTRTc15n
+	 wwGlrYFn//FcoT4qf3gQgXoAqmZV/oS6ppayJgZbJHadUV5jjiYylbKOvtjEy0G82O
+	 pCXYj2aupyNarpdDA64VWJKsuzS1SyMxU8hl4bH2WtPUWd57iNECb0s9HnOPyb8E13
+	 kLEcaVw67G7EQ==
+Date: Sat, 13 Sep 2025 11:34:59 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Zecheng Li <zecheng@google.com>, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Xu Liu <xliuprof@google.com>, linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] initrd: Remove unused parameter 'pos' from identify_ramdisk_image()
-Date: Sat, 13 Sep 2025 16:33:02 +0200
-Message-ID: <20250913143300.1796122-3-thorsten.blum@linux.dev>
+Subject: Re: [PATCH v2 01/10] perf dwarf-aux: Use signed variable types in
+ match_var_offset
+Message-ID: <aMWBE4L2RtEXhxgG@x1>
+References: <20250825195412.223077-1-zecheng@google.com>
+ <20250825195412.223077-2-zecheng@google.com>
+ <aK_8kt5Yf9MDoPdu@google.com>
+ <aLhjnex4_SXpV_8N@x1>
+ <aLi7o0hB23v7wpJ9@x1>
+ <aLs_BuzNJZt6Wl2g@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aLs_BuzNJZt6Wl2g@google.com>
 
-Commit bef173299613 ("initrd: switch initrd loading to struct file based
-APIs") added the parameter 'loff_t pos' to the identify_ramdisk_image()
-function and passed 'in_pos' from rd_load_image(). However, the passed
-value is immediately overwritten inside identify_ramdisk_image() and
-therefore never used.
+On Fri, Sep 05, 2025 at 12:50:30PM -0700, Namhyung Kim wrote:
+> On Wed, Sep 03, 2025 at 07:05:23PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Sep 03, 2025 at 12:49:49PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > On Wed, Aug 27, 2025 at 11:52:02PM -0700, Namhyung Kim wrote:
+> > > > On Mon, Aug 25, 2025 at 07:54:03PM +0000, Zecheng Li wrote:
+> > > > > Change the signature of match_var_offset to use signed types (s64). This
+> > > > > ensures correct behavior when addr_offset or addr_type are negative.
+  
+> > > > > Signed-off-by: Zecheng Li <zecheng@google.com>
+   
+> > > > I've confirmed it produced slightly better results on my test sets.
+  
+> > > > Reviewed-by: Namhyung Kim <namhyung@kernel.org>
+  
+> > > Cherry picked this first patch to make a bit of progress in the
+> > > perf-tools-next front.
 
-Replace the function parameter with a local variable and update the call
-site accordingly.
-
-No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- init/do_mounts_rd.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index 9283fdd605f0..2085c864e9ca 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -55,8 +55,7 @@ static int __init crd_load(decompress_fn deco);
-  *	lz4
-  */
- static int __init
--identify_ramdisk_image(struct file *file, loff_t pos,
--		decompress_fn *decompressor)
-+identify_ramdisk_image(struct file *file, decompress_fn *decompressor)
- {
- 	const int size = 512;
- 	struct minix_super_block *minixsb;
-@@ -68,6 +67,7 @@ identify_ramdisk_image(struct file *file, loff_t pos,
- 	const char *compress_name;
- 	unsigned long n;
- 	int start_block = rd_image_start;
-+	loff_t pos;
+> > It is in perf-tools-next/perf-tools-next now (this first reviewed one):
  
- 	buf = kmalloc(size, GFP_KERNEL);
- 	if (!buf)
-@@ -202,7 +202,7 @@ int __init rd_load_image(char *from)
- 		goto noclose_input;
+> > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-tools-next
  
- 	in_pos = rd_image_start * BLOCK_SIZE;
--	nblocks = identify_ramdisk_image(in_file, in_pos, &decompressor);
-+	nblocks = identify_ramdisk_image(in_file, &decompressor);
- 	if (nblocks < 0)
- 		goto done;
- 
--- 
-2.51.0
+> Thanks for doing that.  Please pick up the patch 2 and 3 as well.
 
+Done.
+
+- Arnaldo
 
