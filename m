@@ -1,164 +1,210 @@
-Return-Path: <linux-kernel+bounces-815371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 679B5B5635B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 23:50:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D58DEB55FC9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5121B21E4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 21:51:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D11AAA8002
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 09:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089A9292B54;
-	Sat, 13 Sep 2025 21:50:38 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117CE28FFE7;
-	Sat, 13 Sep 2025 21:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD432EA49F;
+	Sat, 13 Sep 2025 09:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FWHFl+il"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C874230BDF;
+	Sat, 13 Sep 2025 09:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757800237; cv=none; b=YKAi14FzwLDLyz6HnRSfO9QhEiRYEns95VGqEbiMaOi4AGyO7A8PK1wr1Pgy/dJnTNc3+DnGcofbxFIZDPOdfqlUk7jvcZXF9whjft2McEFHSeIfeKlg54198le91Y1Zcqw2ezYGyqjZ8wAMMFKx2dAJyR9z5ZcHaeLsxOUprb0=
+	t=1757754865; cv=none; b=HbR6ZFsF16fm5+YEwx5IA8tz4+3vVH9kR/MHl4QYyA7WnqtQp61erCcopvvmuJPII5Ntz/xLqn6Na+rZxr0+nItDiahqQS/y8TuH5Sb3SCTglTMlSfaBYY+IgG7fFQDKmN8YU8JwH28qhhyDEVdvq4u7IC8P38LGqQ9eKiwBl4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757800237; c=relaxed/simple;
-	bh=pYXg+RjVUBMuFo6zpMi8H7R1wlDcj/Kh1n5x5Me1OyE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DUo29GnpvI2EzeDbEwONKHgvbwgMd9fxaJeABL5a4Q7kcNxHjDrJX2eZI1sZVHNz7oZK8C3e7ydbdwFvOUs2vz9DB6vygPl0GSblKReDnLT1c49qWBCc9QbQG3W0RpvriYbNirmendhmj385IDqZ+0Fq2mVLm0xCgMKvACCpXyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4cPPkc3BGyz9sW1;
-	Sat, 13 Sep 2025 23:36:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 0pGzEJhCBt9J; Sat, 13 Sep 2025 23:36:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4cPPhk19GGz9sdX;
-	Sat, 13 Sep 2025 23:35:02 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 179668C083;
-	Sat, 13 Sep 2025 11:14:33 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id d4O0pvgN9ca6; Sat, 13 Sep 2025 11:14:32 +0200 (CEST)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7A9638C07C;
-	Sat, 13 Sep 2025 11:14:32 +0200 (CEST)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: TRINH THAI Florent <florent.trinh-thai@cs-soprasteria.com>,
-	CASAUBON Jean Michel <jean-michel.casaubon@cs-soprasteria.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next] net: wan: framer: Add version sysfs attribute for the Lantiq PEF2256 framer
-Date: Sat, 13 Sep 2025 11:13:26 +0200
-Message-ID: <f9aaa89946f1417dc0a5e852702410453e816dbc.1757754689.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1757754865; c=relaxed/simple;
+	bh=+qnsQee1LyeezvoNoW0nM0bf6EfuWq5Ish2LHgXEN7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gy9emYCJMHyiC/mTCZI+9wMC14XjzYnIwsQJujFfh+8TeRcBpfGxSz1VeLbqNBsVCUKJaHXPueechr+LkIFdXtR3Nkz1OQ3rRMD+dg17CJqi+b4vQnCtYh9BJx2EL2xI8j1xIRSaZJBqS5rZ1giQq+5OGnwegRop6NVY4US2FJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FWHFl+il; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58D7afXo023364;
+	Sat, 13 Sep 2025 09:14:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=FoiVZdP+olli/54KUOjFx7GwmsNZliJqSYCn3idr9
+	MQ=; b=FWHFl+iljlhYxHEcrTFKQHDYUZ0OLX7b6P6PWWfccwy+jcgwHhoxcDC85
+	KuwzHXvGyX/oXcdzOM6W5IRjsLObM8NQKCnnlxe2NHzE4M07rCgcu+QodSOdTGQG
+	udCf6aeJv6gWYB9G0nZnn4oPvmHSfuHufNuuwXUcX/T0uaeos2JQYjysApEdgy0B
+	Hie6lM+/9a6tf9c/mn8rTNo6f2dG+5AsBIG7bEELi82R9Iki3mmTtN3y6zuScULT
+	iUYVk+kueS/OiQPeXzGw8w/Add81WsStBCH9lF/yurS0jok+Ruz2OB66ppiHnHh/
+	WGpMkkxD8FPKNxFkCKP6VUHQBb3Bg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49509xrvnn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Sep 2025 09:14:00 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 58D9DxbU004683;
+	Sat, 13 Sep 2025 09:13:59 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 49509xrvng-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Sep 2025 09:13:59 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 58D4emjC001198;
+	Sat, 13 Sep 2025 09:13:58 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 491203xpb7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 13 Sep 2025 09:13:58 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 58D9Ds2A47382940
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 13 Sep 2025 09:13:54 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7946020043;
+	Sat, 13 Sep 2025 09:13:54 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C3D0520040;
+	Sat, 13 Sep 2025 09:13:44 +0000 (GMT)
+Received: from li-621bac4c-27c7-11b2-a85c-c2bf7c4b3c07.ibm.com.com (unknown [9.43.33.146])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sat, 13 Sep 2025 09:13:44 +0000 (GMT)
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: hbathini@linux.ibm.com, sachinpb@linux.ibm.com, venkat88@linux.ibm.com,
+        andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+        daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org,
+        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+        sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+        iii@linux.ibm.com, shuah@kernel.org
+Subject: [PATCH v3 bpf-next] selftests/bpf: Fix arena_spin_lock selftest failure
+Date: Sat, 13 Sep 2025 14:43:37 +0530
+Message-ID: <20250913091337.1841916-1-skb99@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757754844; l=2774; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=pYXg+RjVUBMuFo6zpMi8H7R1wlDcj/Kh1n5x5Me1OyE=; b=tfC1xUh21QCNvBaXuRPGT0NhydxAWojncrDaZfhcS0B0AKGUYA16Khums+TTQAtYZ5xIQ1F9Y ncjv+E3Me0fDsKPbk9TUjvtm3Sxsv6doVTBTDkA/A8EGmcWLj3VsqZh
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDAyMCBTYWx0ZWRfX1C1+IaIOaBM7
+ A/zHZH/02LNF5rHF+6fw4W+aOT0mqcomI+iMlkXEie8zluqc2k8PzN3kbyn8bT8TqrcfZHv4RNm
+ aFKjhRxhbNsunQMW7pFJjmsEV7hUWQAlll3qyVhrrCqqAN4CZ9p1Y4VcwC/F8n7icSCp/FKut+p
+ W4b2if0kKK2Gpy1berG2oOIptvwD3a4AKdIUqw5WcBkvNgW46Tm1Otv5WRdbaiEeVsNIX0WABsa
+ eZNqtea+PfDtr/DZq5kka1zKoLmP5bh6RWWZtx8HKp+p5l6/OJt165BmjdlBqC0Ptd/6fH+MU6k
+ 9WFupfkojN/j60Yk3tKdSwxXH5T6n1W5z3LfkbtQChRnTgTGlX+rnvtP3aM/Xsk3+oi1KBAhm0C
+ nWM14lK0
+X-Authority-Analysis: v=2.4 cv=OPYn3TaB c=1 sm=1 tr=0 ts=68c535d8 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=VDBL6iswcQKEKxwn1pUA:9
+X-Proofpoint-GUID: NAWLiaGerAFNkwaix02iGaKY4vjUsgs3
+X-Proofpoint-ORIG-GUID: XwJnrVJ3HluXiykCE2VXzpV5TVpklbYB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-09-13_02,2025-09-12_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 clxscore=1015 phishscore=0 suspectscore=0 spamscore=0
+ bulkscore=0 malwarescore=0 impostorscore=0 priorityscore=1501
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2507300000 definitions=main-2509130020
 
-Lantiq PEF2256 framer has some little differences in behaviour
-depending on its version.
+For systems having CONFIG_NR_CPUS set to > 1024 in kernel config
+the selftest fails as arena_spin_lock_irqsave() returns EOPNOTSUPP.
+(eg - incase of powerpc default value for CONFIG_NR_CPUS is 8192)
 
-Add a sysfs attribute to allow user applications to know the
-version.
+The selftest is skipped incase bpf program returns EOPNOTSUPP,
+with a descriptive message logged.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Tested-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
 ---
- drivers/net/wan/framer/pef2256/pef2256.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wan/framer/pef2256/pef2256.c b/drivers/net/wan/framer/pef2256/pef2256.c
-index 1e4c8e85d598..2d56bc25af3c 100644
---- a/drivers/net/wan/framer/pef2256/pef2256.c
-+++ b/drivers/net/wan/framer/pef2256/pef2256.c
-@@ -37,6 +37,7 @@ struct pef2256 {
- 	struct device *dev;
- 	struct regmap *regmap;
- 	enum pef2256_version version;
-+	const char *version_txt;
- 	struct clk *mclk;
- 	struct clk *sclkr;
- 	struct clk *sclkx;
-@@ -114,6 +115,14 @@ enum pef2256_version pef2256_get_version(struct pef2256 *pef2256)
+Changes since v2:
+* Separated arena_spin_lock selftest fix patch from the arena
+  patchset as it has to go via bpf-next tree.
+* For EOPNOTSUPP set test_skip to 3, to differentiate it from
+  scenarios when run conditions are not met as suggested by Hari.
+* Tweaked message displayed on SKIP to remove display of online
+  cpus.
+
+v2:https://lore.kernel.org/all/20250829165135.1273071-1-skb99@linux.ibm.com/
+
+Changes since v1:
+Addressed comments from Alexei:
+* Removed skel->rodata->nr_cpus = get_nprocs() and its usage to get
+  currently online cpus(as it needs to be updated from userspace).
+
+v1:https://lore.kernel.org/all/20250805062747.3479221-1-skb99@linux.ibm.com/
+
+---
+ .../selftests/bpf/prog_tests/arena_spin_lock.c      | 13 +++++++++++++
+ tools/testing/selftests/bpf/progs/arena_spin_lock.c |  5 ++++-
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c b/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
+index 0223fce4db2b..693fd86fbde6 100644
+--- a/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
++++ b/tools/testing/selftests/bpf/prog_tests/arena_spin_lock.c
+@@ -40,8 +40,13 @@ static void *spin_lock_thread(void *arg)
+ 
+ 	err = bpf_prog_test_run_opts(prog_fd, &topts);
+ 	ASSERT_OK(err, "test_run err");
++
++	if (topts.retval == -EOPNOTSUPP)
++		goto end;
++
+ 	ASSERT_EQ((int)topts.retval, 0, "test_run retval");
+ 
++end:
+ 	pthread_exit(arg);
  }
- EXPORT_SYMBOL_GPL(pef2256_get_version);
  
-+static ssize_t version_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	struct pef2256 *pef2256 = dev_get_drvdata(dev);
+@@ -63,6 +68,7 @@ static void test_arena_spin_lock_size(int size)
+ 	skel = arena_spin_lock__open_and_load();
+ 	if (!ASSERT_OK_PTR(skel, "arena_spin_lock__open_and_load"))
+ 		return;
 +
-+	return sysfs_emit(buf, "%s\n", pef2256->version_txt);
-+}
-+DEVICE_ATTR_RO(version);
-+
- enum pef2256_gcm_config_item {
- 	PEF2256_GCM_CONFIG_1544000 = 0,
- 	PEF2256_GCM_CONFIG_2048000,
-@@ -697,7 +706,6 @@ static int pef2256_probe(struct platform_device *pdev)
- 	unsigned long sclkr_rate, sclkx_rate;
- 	struct framer_provider *framer_provider;
- 	struct pef2256 *pef2256;
--	const char *version_txt;
- 	void __iomem *iomem;
- 	int ret;
- 	int irq;
-@@ -763,18 +771,18 @@ static int pef2256_probe(struct platform_device *pdev)
- 	pef2256->version = pef2256_get_version(pef2256);
- 	switch (pef2256->version) {
- 	case PEF2256_VERSION_1_2:
--		version_txt = "1.2";
-+		pef2256->version_txt = "1.2";
- 		break;
- 	case PEF2256_VERSION_2_1:
--		version_txt = "2.1";
-+		pef2256->version_txt = "2.1";
- 		break;
- 	case PEF2256_VERSION_2_2:
--		version_txt = "2.2";
-+		pef2256->version_txt = "2.2";
- 		break;
- 	default:
- 		return -ENODEV;
+ 	if (skel->data->test_skip == 2) {
+ 		test__skip();
+ 		goto end;
+@@ -86,6 +92,13 @@ static void test_arena_spin_lock_size(int size)
+ 			goto end_barrier;
  	}
--	dev_info(pef2256->dev, "Version %s detected\n", version_txt);
-+	dev_info(pef2256->dev, "Version %s detected\n", pef2256->version_txt);
  
- 	ret = pef2556_of_parse(pef2256, np);
- 	if (ret)
-@@ -835,6 +843,8 @@ static int pef2256_probe(struct platform_device *pdev)
++	if (skel->data->test_skip == 3) {
++		printf("%s:SKIP: CONFIG_NR_CPUS exceed the maximum supported by arena spinlock\n",
++		       __func__);
++		test__skip();
++		goto end_barrier;
++	}
++
+ 	ASSERT_EQ(skel->bss->counter, repeat * nthreads, "check counter value");
+ 
+ end_barrier:
+diff --git a/tools/testing/selftests/bpf/progs/arena_spin_lock.c b/tools/testing/selftests/bpf/progs/arena_spin_lock.c
+index c4500c37f85e..086b57a426cf 100644
+--- a/tools/testing/selftests/bpf/progs/arena_spin_lock.c
++++ b/tools/testing/selftests/bpf/progs/arena_spin_lock.c
+@@ -37,8 +37,11 @@ int prog(void *ctx)
+ #if defined(ENABLE_ATOMICS_TESTS) && defined(__BPF_FEATURE_ADDR_SPACE_CAST)
+ 	unsigned long flags;
+ 
+-	if ((ret = arena_spin_lock_irqsave(&lock, flags)))
++	if ((ret = arena_spin_lock_irqsave(&lock, flags))) {
++		if (ret == -EOPNOTSUPP)
++			test_skip = 3;
  		return ret;
- 	}
- 
-+	device_create_file(pef2256->dev, &dev_attr_version);
-+
- 	return 0;
- }
- 
-@@ -849,6 +859,8 @@ static void pef2256_remove(struct platform_device *pdev)
- 	pef2256_write8(pef2256, PEF2256_IMR3, 0xff);
- 	pef2256_write8(pef2256, PEF2256_IMR4, 0xff);
- 	pef2256_write8(pef2256, PEF2256_IMR5, 0xff);
-+
-+	device_remove_file(pef2256->dev, &dev_attr_version);
- }
- 
- static const struct of_device_id pef2256_id_table[] = {
++	}
+ 	if (counter != limit)
+ 		counter++;
+ 	bpf_repeat(cs_count);
 -- 
-2.49.0
+2.43.5
 
 
