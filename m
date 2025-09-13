@@ -1,201 +1,104 @@
-Return-Path: <linux-kernel+bounces-815147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755CCB56046
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 119BCB5604A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:40:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2EDA189BD6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 10:40:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E0E1C82CBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 10:41:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45252EBB9B;
-	Sat, 13 Sep 2025 10:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587EF2367A0;
+	Sat, 13 Sep 2025 10:40:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBjJtdA7"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oQZyTZbN"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B861C1B5EB5
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB5918E25
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 10:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757759990; cv=none; b=iEgOOuVECIW+BQzCFas+nlGHvonqzZ5HnKDI5a1CIyqIeqwM8Hn8FtsZTlyU/e1WXA8wDnVH1GfxIOnlZqbfSmBN/7MtzUJwOPCF7iZlWq8RchppPEwepQ4rFwF1MwD78/ELb7lE6bEelybHzJ73SmzPPXrgR3HuRi2ZnlEVbPs=
+	t=1757760035; cv=none; b=l7p78IIZ4SkZWEiMo2XBh/I4S8sVOrJL/wpg15mduOxCk6NHpbksNKH7tLTkatr0E9cZ8+BKLarG2adtFtoUTR/qJxGJYwwYwf5DXroBQfzacnEdD+XKwXAkvRZCz/MYaXNKSc1PVhaNSw01ghg9at+PvkPMtQP4RMPoyRHaXO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757759990; c=relaxed/simple;
-	bh=gibUDWSmHucfE4SKklHD8ukPbGhakz9RlGTLtyQHa/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VU6bjVNMr+TEH0CEcbq9zLIWab56JhdahAkgqfiDHjtpgW9e0z9DJ89YXAvop1anBRBocjXQ/5affk/f+3fVbll84c428XBixk4EN2ZEu2t1lbfS7ThaM9knHiILz+WR8eYxaOzWBGtjLGV4JKIuj91BAmznBSaBof9mq56fDy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aBjJtdA7; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b54a588ad96so1704928a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 03:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757759988; x=1758364788; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TS5OtHNyHlR5D82gQ0sqpY8QZXPAbgv9ePCMmRvlP48=;
-        b=aBjJtdA70Cs4JA86yXqgQkGk1TG2Xuy95F48Q8bwGCwW1CyhbcqTuMd9WraKTzxTGf
-         R/cKfD3rJ3uvdzf23TLsqsKCJq9HYWCZdQNyxBFzXTyolYaQeyFbiaZiYKyMAj/szHUi
-         yuLf0q5cgey90HIOtcjnOUDLX6rceSiTsNB+Cp9/DjqvFGMArOWhiOLtUS5eNvoCAFxr
-         1N2/DzoF9M8DSKYz2V3w0nKz91aqegoDaR4ytQ5AyEEzAKqPS/F+UR6s1jRJyw0PhpcN
-         fHwfIj1iTt0bMGpkF1D/dtrrmMA8eM08p1I+3ENd1EnXXwcvgdw7c2PoZDzRwQ+oe4bA
-         5LOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757759988; x=1758364788;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TS5OtHNyHlR5D82gQ0sqpY8QZXPAbgv9ePCMmRvlP48=;
-        b=YZvJ9IurmVt4bdnb3OQmxbzKmYVGKr65u4SyD2zwJITwzjQdvwOQVavyzt84kK63g3
-         Pl+c+GxiGUyzd110NcoLgmtTRk7RMfjJ3JHPxBgZOyKmLXKGumKP2N1uWNRsam1Hzo6i
-         iezzJFyQDpPz2Vu+Srmcf/oTOixti+ciko4VsZTulrPc14qaxZ2RjRGftwcvGjmSlLtD
-         5KwHWifEcMfs4ztS9+6GWJ5dyF401sAgQ1Qod/kxx4J5lnd3H0v239UjEk0V1u86EPKF
-         uR5ahUdZjksxU4jvlbkjAmVLlUBuNzy8/Hyl8NVtHhK49AVar9uMBcmeCfJF7EL2WJoe
-         689w==
-X-Forwarded-Encrypted: i=1; AJvYcCWGkUw7e8AAJ6pOnceICVpgXbb+Y0sOwfP7et8lJRmhDmC4IaSQIPltNb8vS+h6g26DkPU0XM/8uWG57sI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvqnuMgXfpFHSY3Q7/Kp9sEj/IDAdmJMkHGeQD/2klsi2DVAF9
-	5Kia5r2kixxdsNo8Gp20zCHYDHnZcYEeSxxrgChexnhtO9BcnZKS3Vzc
-X-Gm-Gg: ASbGncvxb34o/jRlgi6g+oo7BROcDj6IVU3dnCB6qaeWBfG/g3WlsTkG+UivzjOW7Qd
-	2bgmx9FJ0WucpqFrXQtul12DrL2QP9bJ/791nsm0yc/oHVUSXYLb62qasTpWAVyLsmOpJYijNZn
-	LwFarnGmLWOpIdlbtIlFiDOaAvYFtYbXAMbTKYxa7Jr5LLSVReYS8gXI32MAVOJjq+G8sC49BXB
-	wqeLrEO83Q5KboEOgGQIkgRFrNMAJQYwL3+JqddP89TaWH9aaLEBaS5DDaQvZ7UixLhPQL04P/F
-	4Ps07nutLHDi7NXYQswsVZzfGLsz5BuxN7xp1GpLbRJnSjR6PvqeForzbsdPYg5K6hNIabtJcAe
-	skd26ufOHmcUzhkLWUkf55vTnISYzO/ya2VGPTnCwmLpw1Pd6TsUcOfl8loqeBCNN671tqhTWsh
-	4u4MuxxRwRxV5YVwZStvWN
-X-Google-Smtp-Source: AGHT+IFN0gqss6mtEr77tugnv2ax0P5Bgp77ssu7ZY3zwXxelN63682bQ6syqkn+6bxE0vQaZxOO8g==
-X-Received: by 2002:a17:902:f644:b0:25c:43f7:7e40 with SMTP id d9443c01a7336-25d2ab45d41mr74971735ad.10.1757759987829;
-        Sat, 13 Sep 2025 03:39:47 -0700 (PDT)
-Received: from OSC.. ([106.222.231.149])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c37293ef1sm74217875ad.41.2025.09.13.03.39.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 03:39:47 -0700 (PDT)
-From: Pavan Bobba <opensource206@gmail.com>
-To: mchehab@kernel.org,
-	hverkuil@kernel.org,
-	ribalda@chromium.org,
-	laurent.pinchart@ideasonboard.com,
-	yunkec@google.com,
-	sakari.ailus@linux.intel.com,
-	james.cowgill@blaize.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pavan Bobba <opensource206@gmail.com>
-Subject: [PATCH v2] media: v4l2-ctrls: add full AV1 profile validation in validate_av1_sequence()
-Date: Sat, 13 Sep 2025 16:09:27 +0530
-Message-ID: <20250913103939.25658-1-opensource206@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757760035; c=relaxed/simple;
+	bh=7kwY4K3spBa+KkC0kt2vnh741tWhEjIo0BO1Ky8KVtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=udROM4g2F1yolhHkFeW+roQ7tmAtEUSmzsSl93w+BhUehk/AQrAFRDUEQ30IRxnTgJBwdXvxg9R1okkY7D1z3/Xdt0ZTNTFk2mgwCgEcBycj2nXXO4z12utO/pVKf842wV6TDcQ2XJOPO+pf5TgdNUeF2t6osyL1YETcsF3jo1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oQZyTZbN; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1757760021;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bROeHm5yLYSDjWrQN66sseRBMeR9fQM3QsxmZdeOcXQ=;
+	b=oQZyTZbNyW/V3QofscmZ36jTcOBrwoxdDW+F5I4yeeWfEE1HrGuUapma1InOUtDCIgIfgh
+	yZSf1e8xOKvILCOIH80InZ9gQD48TeJYYVo9aT89UPE9YEvcYy3um3oqYKkSdqdyc+qrOK
+	P7QFy8e6rOatT2OcdhZJs6RPaKzAZ1M=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] initrd: Fix logged Minix/Ext2 block numbers in identify_ramdisk_image()
+Date: Sat, 13 Sep 2025 12:39:54 +0200
+Message-ID: <20250913103959.1788193-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Complete the "TODO: PROFILES" by enforcing profile-specific and
-monochrome constraints as defined by the AV1 specification
-(Section 5.5.2, "Color config syntax").
+Both Minix and Ext2 filesystems are located at 'start_block + 1'. Update
+the log messages to report the correct block numbers.
 
-The validator now checks:
+Replace printk(KERN_NOTICE) with pr_notice() to avoid checkpatch
+warnings.
 
- - Flags: reject any unknown bits set in sequence->flags
- - Profile range: only profiles 0..2 are valid
- - Profile 0: 8/10-bit only, subsampling must be 4:2:0 (sx=1, sy=1),
-   monochrome allowed
- - Profile 1: 8/10-bit only, subsampling must be 4:4:4 (sx=0, sy=0),
-   monochrome forbidden
- - Profile 2:
-    * 8/10-bit: only 4:2:2 allowed (sx=1, sy=0)
-    * 12-bit: 4:4:4 (sx=0, sy=0), 4:2:2 (sx=1, sy=0), or 4:2:0 (sx=1, sy=1)
-      allowed
- - Monochrome path (all profiles except 1): forces subsampling_x=1,
-   subsampling_y=1, separate_uv_delta_q=0
-
-These checks prevent userspace from providing invalid AV1 sequence
-headers that would otherwise be accepted, leading to undefined driver
-or hardware behavior.
-
-Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
-v1 -> v2 : Added more checks for subsampling combinations per profile.
-          : Added a TODO note in the function header for checks to be implemented later.
+ init/do_mounts_rd.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
- drivers/media/v4l2-core/v4l2-ctrls-core.c | 54 +++++++++++++++++++++--
- 1 file changed, 50 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls-core.c b/drivers/media/v4l2-core/v4l2-ctrls-core.c
-index 98b960775e87..3283ed04cc36 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls-core.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls-core.c
-@@ -852,14 +852,60 @@ static int validate_av1_sequence(struct v4l2_ctrl_av1_sequence *s)
- 	 V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q))
- 		return -EINVAL;
- 
--	if (s->seq_profile == 1 && s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME)
--		return -EINVAL;
--
- 	/* reserved */
- 	if (s->seq_profile > 2)
- 		return -EINVAL;
- 
--	/* TODO: PROFILES */
-+	/* Profile-specific checks */
-+	switch (s->seq_profile) {
-+	case 0:
-+		/* Bit depth: 8 or 10 */
-+		if (s->bit_depth != 8 && s->bit_depth != 10)
-+			return -EINVAL;
-+
-+		/* Subsampling must be 4:2:0 → x=1, y=1 */
-+		if (!(s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X) ||
-+		    !(s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y))
-+			return -EINVAL;
-+		break;
-+
-+	case 1:
-+		/* Monochrome is forbidden in profile 1 */
-+		if (s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME)
-+			return -EINVAL;
-+
-+		/* Bit depth: 8 or 10 */
-+		if (s->bit_depth != 8 && s->bit_depth != 10)
-+			return -EINVAL;
-+
-+		/* Subsampling must be 4:4:4 → x=0, y=0 */
-+		if ((s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X) ||
-+		    (s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y))
-+			return -EINVAL;
-+		break;
-+
-+	case 2:
-+		/* Bit depth: 8, 10, or 12 */
-+		if (s->bit_depth != 8 && s->bit_depth != 10 &&
-+		    s->bit_depth != 12)
-+			return -EINVAL;
-+
-+		/* Subsampling: 4:2:0, 4:2:2, or 4:4:4 allowed → no extra check */
-+		break;
-+	}
-+
-+	/* If monochrome flag is set, enforce spec rules */
-+	if (s->flags & V4L2_AV1_SEQUENCE_FLAG_MONO_CHROME) {
-+		/* Must signal subsampling_x=1, subsampling_y=1 */
-+		if (!(s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_X) ||
-+		    !(s->flags & V4L2_AV1_SEQUENCE_FLAG_SUBSAMPLING_Y))
-+			return -EINVAL;
-+
-+		/* separate_uv_delta_q must be 0 in monochrome */
-+		if (s->flags & V4L2_AV1_SEQUENCE_FLAG_SEPARATE_UV_DELTA_Q)
-+			return -EINVAL;
-+	}
-+
- 	return 0;
- }
- 
+diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
+index ac021ae6e6fa..9283fdd605f0 100644
+--- a/init/do_mounts_rd.c
++++ b/init/do_mounts_rd.c
+@@ -148,9 +148,8 @@ identify_ramdisk_image(struct file *file, loff_t pos,
+ 	/* Try minix */
+ 	if (minixsb->s_magic == MINIX_SUPER_MAGIC ||
+ 	    minixsb->s_magic == MINIX_SUPER_MAGIC2) {
+-		printk(KERN_NOTICE
+-		       "RAMDISK: Minix filesystem found at block %d\n",
+-		       start_block);
++		pr_notice("RAMDISK: Minix filesystem found at block %d\n",
++			  start_block + 1);
+ 		nblocks = minixsb->s_nzones << minixsb->s_log_zone_size;
+ 		goto done;
+ 	}
+@@ -158,9 +157,8 @@ identify_ramdisk_image(struct file *file, loff_t pos,
+ 	/* Try ext2 */
+ 	n = ext2_image_size(buf);
+ 	if (n) {
+-		printk(KERN_NOTICE
+-		       "RAMDISK: ext2 filesystem found at block %d\n",
+-		       start_block);
++		pr_notice("RAMDISK: ext2 filesystem found at block %d\n",
++			  start_block + 1);
+ 		nblocks = n;
+ 		goto done;
+ 	}
 -- 
-2.43.0
+2.51.0
 
 
