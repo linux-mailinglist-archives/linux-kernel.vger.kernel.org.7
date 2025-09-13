@@ -1,124 +1,129 @@
-Return-Path: <linux-kernel+bounces-815277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A74B5620D
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:43:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2365BB56216
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED728A02B44
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:42:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5E635640E1
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100FD2FAC0D;
-	Sat, 13 Sep 2025 15:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316962F1FE4;
+	Sat, 13 Sep 2025 15:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="UqbOVKLg"
-Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kcKXmzhT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 677D82F28F7;
-	Sat, 13 Sep 2025 15:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773EC2765D9;
+	Sat, 13 Sep 2025 15:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757778021; cv=none; b=i+zpoyO7MHrpWBP3oMYGAVpf05jPGXmD9QyBqjyrnGJUyLIJbk4YyVIChwdqrdVrn00oBq6zwb5BKdiSH5ZpP9NrXDvCW+4QfkPo3XnvckpB10aW1VHAMI9kHOuhisUH/t497G0dp/hn4GrBEr+1deVr+Jl+b5WtKdK991em1AM=
+	t=1757778952; cv=none; b=A2NguPjWTYTail2pEemljr3ccVlUoY6yPw+RM49Ci5DCyzbKWD8EVvpElwY17HiG3ECnTQUagAfpwHp2ZkEtSQVFwNEho8kMTq6NTAhjPi2cUjfsFGfvOmAhmwS2/2N0GkibgEo38BgNABakhtCHWeyr1iE+ZYPDZzTO6LHuGP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757778021; c=relaxed/simple;
-	bh=lzWx+a0dmfGLNa9KQBKgDX9o3geWkCG4XafSD5c/jTM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oYQm3n5nMp/55hhbf2PX3aVXfXfP9kwAukuew4v02h2AY7KFCczASjFM8XYmzkClNlgRhszGga4eYYz+9wcbrb05vFEH/aq/AJGUNfT12iGYOIjELRKOswQk/tRtJHUVsd2yXcbGFOouiJWKIWvMB90gr4qtHRgVQFfjTwniyQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=UqbOVKLg; arc=none smtp.client-ip=172.105.74.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
-Received: from [10.212.0.13] (unknown [IPv6:2a02:2f0e:3e0c:5b00:e2d5:5eff:fed9:f1c4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.subdimension.ro (Postfix) with ESMTPSA id 411D4173BFA;
-	Sat, 13 Sep 2025 18:40:12 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
-	s=mail; t=1757778012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4pA18o8EFs3MpHFqQmZXCGHKpMhUvAZNuJ+WPTR54bo=;
-	b=UqbOVKLgbgAZnJocHtRz6T9SsiHgXuhkgFirmNKwm8T1/YujV2wxDttgJi5JqVcT039gMG
-	8NrW7F2NvDTzHwlBBGhiFpa1bLwfOgQoGc1X8/cAO8ZEXyWLLEesj6850P/y6ggH9PwVDn
-	7TISS2IFJwAeOBXLiKOljADivLeGFLKmzPv+RdnGzti6GHKuGastxgq/+uNm0q/w0zmdLr
-	L2cBzZET8rWwUsAcOXU9nHpDV9JVnqXR1rkW0cwXTpHtwh2Z2n2E3a8pWhkubEyj+SHqMu
-	ipjmeQXnLd4aQ3vAWD3HvBiA7os3I0+VhdHIOcvWAtjiOPUC7O4sfDQbxN0VWg==
-From: Petre Rodan <petre.rodan@subdimension.ro>
-Date: Sat, 13 Sep 2025 18:39:39 +0300
-Subject: [PATCH v3 18/18] iio: accel: bma220: add maintainer
+	s=arc-20240116; t=1757778952; c=relaxed/simple;
+	bh=8EotSpc3a7iilL0C4StGG7T8TjUZb4j02ECZxhjqBig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ATP8p5oMPr2AzGRc5DoCvse3uBMmhzOyXdn6k5MuE1psBhlHMN+PXHqtCAMoDJPUwoQNXxdZt71HWL2A3XC4nVlyzYB5lqoK9EJUqcJf7yxoKwELQBV5jToXf0ofbacJoAw9gaE2lQrkkyW07hHl03CVDxrgvz/d5zhDjQaaxnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kcKXmzhT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D601C4CEEB;
+	Sat, 13 Sep 2025 15:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757778952;
+	bh=8EotSpc3a7iilL0C4StGG7T8TjUZb4j02ECZxhjqBig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kcKXmzhTsvpV07D5ufJDGqAPkPmWf7cYFthdf5CW1jMkKIo2pVABW/LCRruhanBpT
+	 g+ES/ReT0+/dg4uQVw5gtxys3QpazTAzQ8KmURptcUT6wMeXdCbA/1jxZcdtm9G86N
+	 RC/bUuuPNnhO1IYow6N6IZz8EyOUCqt3HgrXOtrRUdlP0Ukcyf7DUj1QS059bKuzAG
+	 XGyJuFZu3DqYW8NPq+WRhdMH+FM2QzLzSQyQcumIGsw0icV6s9fmjxfYjHOKxuySmY
+	 N+rZEY1prqdMaEX8u+hoY61Q9NjR5DXTfhOdhlbNf5SjdrBoERdMyxeDPAJMvvVG0V
+	 eqYSlPhOg78mA==
+Date: Sat, 13 Sep 2025 23:55:45 +0800
+From: Tzung-Bi Shih <tzungbi@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Benson Leung <bleung@chromium.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Dawid Niedzwiecki <dawidn@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev,
+	linux-kselftest@vger.kernel.org,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v3 0/5] platform/chrome: Fix a possible UAF via revocable
+Message-ID: <aMWUAS9jReia0jhy@tzungbi-laptop>
+References: <aMQW2jUFlx7Iu9U5@tzungbi-laptop>
+ <20250912132656.GC31682@pendragon.ideasonboard.com>
+ <2025091209-curfew-safari-f6e0@gregkh>
+ <CAMRc=MfdoB50o=3Q2p94o+f7S2Bzr=TAtWWQcDrC5Wf3Q5nqAA@mail.gmail.com>
+ <20250912135916.GF31682@pendragon.ideasonboard.com>
+ <2025091220-private-verse-d979@gregkh>
+ <20250912142646.GI31682@pendragon.ideasonboard.com>
+ <2025091237-cortex-carnage-5c34@gregkh>
+ <CAMRc=Mf76m51VKktGc2K1uT4eacDqhsroRxG2RgtRyhQrhx0WA@mail.gmail.com>
+ <20250912145416.GL31682@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250913-b4-bma220_improvements-v3-18-0b97279b4e45@subdimension.ro>
-References: <20250913-b4-bma220_improvements-v3-0-0b97279b4e45@subdimension.ro>
-In-Reply-To: <20250913-b4-bma220_improvements-v3-0-0b97279b4e45@subdimension.ro>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Petre Rodan <petre.rodan@subdimension.ro>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=875;
- i=petre.rodan@subdimension.ro; h=from:subject:message-id;
- bh=lzWx+a0dmfGLNa9KQBKgDX9o3geWkCG4XafSD5c/jTM=;
- b=owEBbQKS/ZANAwAIAc8mmZmETn8wAcsmYgBoxZBSrGtrBf8q/IsJC++D6a5b2R7PFtHZHTaXl
- ay/eev1idGJAjMEAAEIAB0WIQTYCn/BdhUZNew+X6nPJpmZhE5/MAUCaMWQUgAKCRDPJpmZhE5/
- MHQWEADLbgtArbU+DB0vNAvwlBchBF8G1CvOpCoR6vsS70AuHWyQbRrtUubeviw2LDcrtcthXgg
- NElCUcsUqhPU+edphgInTyoeVTG08B4Yt1gjhNwdzdrZ4STHR6Rye3qqnuiS1UDmLhZ+r+e3oHj
- B6DZFQttWSlKGoTv5BiO3xJ+17skOjxVBcDR2sjWKRvkpNMAUF8nTYR7bhaQZkAyZMrqDKmnCZf
- WrngtqElx1W+IE3WVeKPYhVK+Dr7geoyEamRb/iKvJHkb5Fmut3GO0CrV0biqB0DbcsCdXhmFRi
- BfKb6aXPs3OMmjhIGdkhuAnir1kp2y9Ax+/r8FvCrzl2vfN2lXjTRBoeVedPOHm1t3tNEOvoty5
- OnWxWfyL4y5kYCYu3cLDmVOcAoGdEvPpIUaoIVsmO738Q+s6Oz5ruZJHgD29VS62mimcZgI69bp
- 317OvRylYp8NpPKSOXnLmKgFZYWNuN7Fd/QKdjuWLkwOHkyyHx71T44PslR8ONGPZTaodV+PczZ
- dwJcgfPbYdbXsJF7FPhOeXmLMLehVaUC0s1lL1XN/A9WOlNUIY1jMigKNcIJtnaixqtlJ166Bgi
- cWUKxf7guvxOYoHEifzhOq424cJwTbGODihDiRSFV72pjwIja/OqI7KgSPlvotXPwKMb3Tjzl+T
- ut/x28udsWYGj4A==
-X-Developer-Key: i=petre.rodan@subdimension.ro; a=openpgp;
- fpr=D80A7FC176151935EC3E5FA9CF269999844E7F30
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250912145416.GL31682@pendragon.ideasonboard.com>
 
-Add maintainer for this driver.
+On Fri, Sep 12, 2025 at 05:54:16PM +0300, Laurent Pinchart wrote:
+> On Fri, Sep 12, 2025 at 04:44:56PM +0200, Bartosz Golaszewski wrote:
+> > On Fri, Sep 12, 2025 at 4:40 PM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > Dan's proposal here is a good start, but the "sleep in cdev_del() until
+> > > the device drains all existing opens" is going to not really work well
+> > > for what we want.
+> > >
+> > > So sure, make a new cdev api to use this, that's fine, then we will have
+> > > what, 5 different ways to use a cdev?  :)
+> > >
+> > > Seriously, that would be good, then we can work to convert things over,
+> > > but I think overall it will look much the same as what patch 5/5 does
+> > > here.  But details matter, I don't really known for sure...
+> > >
+> > > Either way, I think this patch series stands on its own, it doesn't
+> > > require cdev to implement it, drivers can use it to wrap a cdev if they
+> > > want to.  We have other structures that want to do this type of thing
+> > > today as is proof with the rust implementation for the devm api.
+> > 
+> > Yeah, I'm not against this going upstream. If more development is
+> > needed for this to be usable in other parts of the kernel, that can be
+> > done gradually. Literally no subsystem ever was perfect on day 1.
+> 
+> To be clear, I'm not against the API being merged for the use cases that
+> would benefit from it, but I don't want to see drivers using it to
+> protect from the cdev/unregistration race.
 
-Signed-off-by: Petre Rodan <petre.rodan@subdimension.ro>
----
-v1->v3 no change
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Based on the discussion thread, my main takeaways are:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 75615d82593e173a9e07fd269163fecdc4711e8b..eb985bd06b7d960bbc25941a8ea7b420d83483b0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4402,6 +4402,13 @@ F:	include/net/bond*
- F:	include/uapi/linux/if_bonding.h
- F:	tools/testing/selftests/drivers/net/bonding/
- 
-+BOSCH SENSORTEC BMA220 ACCELEROMETER IIO DRIVER
-+M:	Petre Rodan <petre.rodan@subdimension.ro>
-+L:	linux-iio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/iio/accel/bosch,bma220.yaml
-+F:	drivers/iio/accel/bma220*
-+
- BOSCH SENSORTEC BMA400 ACCELEROMETER IIO DRIVER
- M:	Dan Robertson <dan@dlrobertson.com>
- L:	linux-iio@vger.kernel.org
+- Current `revocable` is considered a low level API.  We shouldn't (and
+  likely can't) stop drivers, like the one in patch 5/5 in the series,
+  from using it directly to fix UAFs.
 
--- 
-2.49.1
+- Subsystems (like cdev) should build on this API to provide an easier
+  interface for their drivers to manage revocable resources.
 
+I'll create a PoC based on this.
+
+> > Tzung-Bi: I'm not sure if you did submit anything but I'd love to see
+> > this discussed during Linux Plumbers in Tokyo, it's the perfect fit
+> > for the kernel summit.
+
+Yes, and I just realized that in addition to the website submission, a
+separate email is also required (or at least encouraged).  I've just sent
+that email and am hoping it's not too late.
 
