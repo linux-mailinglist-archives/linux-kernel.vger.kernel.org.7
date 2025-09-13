@@ -1,119 +1,128 @@
-Return-Path: <linux-kernel+bounces-815336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474F1B562F5
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:47:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6F0B562FC
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A4944E0402
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:47:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4370E7B3042
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A752561A2;
-	Sat, 13 Sep 2025 20:47:30 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E96F2609DC;
+	Sat, 13 Sep 2025 20:52:49 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EEE635948
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 20:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0295081749;
+	Sat, 13 Sep 2025 20:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757796449; cv=none; b=rNIbQJyWncBrIzRp9TJOGpgynUx9eahc6rm3ruSa+PHjxOFZL4o7MkT3kgBFs874AExtrxvjSTrnsOBHqJBsr+8B2xSCw9vW30HAz+O3rAiazEcG1utEUOBv1R8UFE3U4ddhpJ7yP/r2AWZpdl//o/CqJqbxwYfh+sOy65WRaJU=
+	t=1757796769; cv=none; b=RTQwWTuaaqG3qhxoEsb6noNDLe4RYmRG3mk3IKdDECNpd0pJL3Bq4/VKfcTnCORDdonC2jvnIuH1uB8Qav/IMeFHcE2R65S+NFPguXjB5KgLfMpcThkIP/3qMLYhECYgFpJ6k4/4DYIPkaJaeEIUTCZC+P9EbZygIcnpaTXm/Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757796449; c=relaxed/simple;
-	bh=YmPTeGNJWJQzIK4aZjInjuHc1GZewTHwElFF/avJWH4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WnXy2X7vY/C0a09P7K7LfgAmiYrZMi1jsgepdjKqB2ASPNaNu88pQbeWam20JIHCjgGyaDQs5yamraA36nM5haPRCFukVqsSFoXUhSbz24XoORaVXo8iMxiKjqIopoQmI3zvEn/SUYbGX/0RZvDwR1alUSiSZLghsiBS0LjHbHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3f31ac5bd9cso40829355ab.3
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 13:47:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757796446; x=1758401246;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/WC4FpjWqLFn5mmBSnkjEWLq32iSjZwD0GeD4FCGNhY=;
-        b=FO9E3YqMmIZRTbRCkY88MdOiH5DAj3Sip8/y0AT5/qzjwujnTMvukPQfTxLqxCDeLx
-         zbukblGHBKHFNJmylFjRqacK8kiCtVenMFZUN2Inc5PJfoZ9znDL1M4MNVdfbhjc3YHh
-         Urn8DIsE4FmcBcJEm8bD1T7LydYehSC+qhTy8pA9jc3fRwZXHvVBOSryEPPOhc6rJ0Tg
-         jWYFiJeGagMd5ftjP99olftBmFndZ9kMoyrz5CTlnWlx+aiHnUMBEAjHYfe+NSp3BzHS
-         HJ7rncxkhCbb0atvHrlGj4c2hDzyY8G2MGBX4oQDtdbyvr7Wp9icZoAiF/fMgDqv2EWP
-         iCHQ==
-X-Gm-Message-State: AOJu0YwzmHd4Vl9yY485XWOB1ac9yWov4nJvJ2QN8bWbCt7tlhJYWRaE
-	T+p6FmJq6GD8sQYDFP3Ife3Ev5gPm+axZYmXVhrgfqqI4UuXLYVvH1ODjY6hSSC0E+hq0aIHUQ8
-	UJlPo2WFgKGqNA9eWc0iKYOv5Nq9ZAj0o3MU3TeaF0jcipCaAxr9D6FM3Q+8=
-X-Google-Smtp-Source: AGHT+IEEWkIobQ/TBC91FJnfs5WFhdMqQdSFgFuNJ+mT1tLx3DpI2IbfkGONVqfRVZbKqaS+uS69kxA8mN9dKOAWs5yTXX0evmxO
+	s=arc-20240116; t=1757796769; c=relaxed/simple;
+	bh=qxmH0JupSBzHnBD0xTfOMOX9SUpYPtoCs6tq6IT75fE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0hUjvapaT/AaxV1Kq8RnbSTr7287b+XoRx/Eo+5spHUZ57bHx3AwUbdBd0FTq1yp2mdzmW6J5tLxjEm4IliuFk/S5oB2XhfhGJGs0NnRitEgxDm88Zc15lERT4A79NftX1mOJSKvt5uWYdg+1XC9sVD3kpVvzfoxKbEsMcmGbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
+	id 2852E60309; Sat, 13 Sep 2025 22:52:44 +0200 (CEST)
+Date: Sat, 13 Sep 2025 22:52:43 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Elad Yifee <eladwf@gmail.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>, Phil Sutter <phil@nwl.cc>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next RFC] netfilter: flowtable: add CT metadata
+ action for nft flowtables
+Message-ID: <aMXZm_UL58OkoHlG@strlen.de>
+References: <20250912163043.329233-1-eladwf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12cf:b0:423:fbf3:18ec with SMTP id
- e9e14a558f8ab-423fbf31a9bmr11538895ab.31.1757796446452; Sat, 13 Sep 2025
- 13:47:26 -0700 (PDT)
-Date: Sat, 13 Sep 2025 13:47:26 -0700
-In-Reply-To: <68bacb3e.050a0220.192772.018d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68c5d85e.050a0220.3c6139.04d6.GAE@google.com>
-Subject: Forwarded: WARNING in reg_bounds_sanity_check (2)
-From: syzbot <syzbot+c950cc277150935cc0b5@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250912163043.329233-1-eladwf@gmail.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Elad Yifee <eladwf@gmail.com> wrote:
+> When offloading a flow via the default nft flowtable path,
+> append a FLOW_ACTION_CT_METADATA action if the flow is associated with a conntrack entry.
+> We do this in both IPv4 and IPv6 route action builders, after NAT mangles and before redirect.
+> This mirrors net/sched/act_ct.c’s tcf_ct_flow_table_add_action_meta() so drivers that already
+> parse FLOW_ACTION_CT_METADATA from TC offloads can reuse the same logic for nft flowtables.
+> 
+> Signed-off-by: Elad Yifee <eladwf@gmail.com>
+> ---
+>  net/netfilter/nf_flow_table_offload.c | 38 +++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
+> 
+> diff --git a/net/netfilter/nf_flow_table_offload.c b/net/netfilter/nf_flow_table_offload.c
+> index e06bc36f49fe..bccae4052319 100644
+> --- a/net/netfilter/nf_flow_table_offload.c
+> +++ b/net/netfilter/nf_flow_table_offload.c
+> @@ -12,6 +12,7 @@
+>  #include <net/netfilter/nf_conntrack_acct.h>
+>  #include <net/netfilter/nf_conntrack_core.h>
+>  #include <net/netfilter/nf_conntrack_tuple.h>
+> +#include <net/netfilter/nf_conntrack_labels.h>
+>  
+>  static struct workqueue_struct *nf_flow_offload_add_wq;
+>  static struct workqueue_struct *nf_flow_offload_del_wq;
+> @@ -679,6 +680,41 @@ nf_flow_rule_route_common(struct net *net, const struct flow_offload *flow,
+>  	return 0;
+>  }
+>  
+> +static void flow_offload_add_ct_metadata(const struct flow_offload *flow,
+> +					 enum flow_offload_tuple_dir dir,
+> +					 struct nf_flow_rule *flow_rule)
+> +{
+> +	struct nf_conn *ct = flow->ct;
+> +	struct flow_action_entry *entry;
+> +#if IS_ENABLED(CONFIG_NF_CONNTRACK_LABELS)
+> +	u32 *dst_labels;
+> +	struct nf_conn_labels *labels;
+> +#endif
+> +
+> +	if (!ct)
+> +		return;
 
-***
+Under what circumstances can flow->ct be NULL?
 
-Subject: WARNING in reg_bounds_sanity_check (2)
-Author: kriish.sharma2006@gmail.com
+> +	entry = flow_action_entry_next(flow_rule);
+> +	entry->id = FLOW_ACTION_CT_METADATA;
+> +
+> +#if IS_ENABLED(CONFIG_NF_CONNTRACK_MARK)
+> +	entry->ct_metadata.mark = READ_ONCE(ct->mark);
+> +#endif
+> +
+> +	entry->ct_metadata.orig_dir = (dir == FLOW_OFFLOAD_DIR_ORIGINAL);
+> +
+> +#if IS_ENABLED(CONFIG_NF_CONNTRACK_LABELS)
+> +	dst_labels = entry->ct_metadata.labels;
+> +	labels = nf_ct_labels_find(ct);
+> +	if (labels)
+> +		memcpy(dst_labels, labels->bits, NF_CT_LABELS_MAX_SIZE);
+> +	else
+> +		memset(dst_labels, 0, NF_CT_LABELS_MAX_SIZE);
+> +#else
+> +	memset(entry->ct_metadata.labels, 0, NF_CT_LABELS_MAX_SIZE);
+> +#endif
+> +}
 
-#syz test
+This looks almost identical tcf_ct_flow_table_add_action_meta().
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index c4f69a9e9af6..4c6000d32f46 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -16299,6 +16299,15 @@ static void regs_refine_cond_op(struct
-bpf_reg_state *reg1, struct bpf_reg_state
-        }
- }
-
-+static void __maybe_normalize_reg(struct bpf_reg_state *reg)
-+{
-+    if (reg->umin_value > reg->umax_value ||
-+        reg->smin_value > reg->smax_value ||
-+        reg->u32_min_value > reg->u32_max_value ||
-+        reg->s32_min_value > reg->s32_max_value)
-+        __mark_reg_unbounded(reg);
-+}
-+
- /* Adjusts the register min/max values in the case that the dst_reg and
-  * src_reg are both SCALAR_VALUE registers (or we are simply doing a BPF_K
-  * check, in which case we have a fake SCALAR_VALUE representing
-insn->imm).
-@@ -16325,11 +16334,15 @@ static int reg_set_min_max(struct
-bpf_verifier_env *env,
-        regs_refine_cond_op(false_reg1, false_reg2, rev_opcode(opcode),
-is_jmp32);
-        reg_bounds_sync(false_reg1);
-        reg_bounds_sync(false_reg2);
-+       __maybe_normalize_reg(false_reg1);
-+    __maybe_normalize_reg(false_reg2);
-
-        /* jump (TRUE) branch */
-        regs_refine_cond_op(true_reg1, true_reg2, opcode, is_jmp32);
-        reg_bounds_sync(true_reg1);
-        reg_bounds_sync(true_reg2);
-+       __maybe_normalize_reg(true_reg1);
-+    __maybe_normalize_reg(true_reg2);
-
-        err = reg_bounds_sanity_check(env, true_reg1, "true_reg1");
-        err = err ?: reg_bounds_sanity_check(env, true_reg2, "true_reg2");
--- 
-2.34.1
+Any chance to make it a common helper function? act_ct already depends
+on nf_flow_table anyway.
 
