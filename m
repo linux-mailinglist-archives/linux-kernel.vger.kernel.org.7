@@ -1,114 +1,156 @@
-Return-Path: <linux-kernel+bounces-815212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1C40B56148
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:52:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD2BB5614A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1196D1B27D42
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:52:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF8AD7B7A68
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9162EFDA5;
-	Sat, 13 Sep 2025 13:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716C42EBB81;
+	Sat, 13 Sep 2025 13:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOf0JO6+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="AkuxGq7A";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="loUPyhto"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F972EBB81;
-	Sat, 13 Sep 2025 13:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A9D3D81
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 13:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757771547; cv=none; b=hXxy9NaYZGEz+MKwk54TRJN420JDse5a2KmGZTNKvDlnU7YTiHJNytTTL+nWJo67D/Z9hXmuGIGWVCkipLd1mvnxs1MIT3BrCsAGrdnAYzb5L/LSGD3ouCRYTKVMOW/Bzb4KMmyK0szqsgzprwwcqVu1+SNdP7JG41MTELgUAb8=
+	t=1757771603; cv=none; b=qLqYGbTD7aFNRDotLgV1KYKl6fDqgeffBYSury4di2FHcr9WS7laWNqfuw6unE7BZnj0VaOCO+s02NipJm9eZoUtohZicJeGL1V1nx/PL4kIPynUNL2URJY+knHsdQH7buKp2NCA+Yla4l+Lu6l64VXZsrvHVywCLGPmrWclsRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757771547; c=relaxed/simple;
-	bh=JMpHgQCz20B3Y3hZWjjmgaUygxAetFE+uk1Dzrp1FjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ihM+soeRnYptAFWL6VASEroB3IpgFPKWSneRPaZboaqIjXF225XYuKGiPbPgnD064LpZj754VBrVvzXlFz6xnUGTe/0lG6FJa8kshSgqLucxrCQqFJMy5THj9Va42i/QNivTrahvgc4QxZuKjEBVXwjVjNP2jC5outpRIj3ag18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOf0JO6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3E16C4CEEB;
-	Sat, 13 Sep 2025 13:52:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757771547;
-	bh=JMpHgQCz20B3Y3hZWjjmgaUygxAetFE+uk1Dzrp1FjE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bOf0JO6+bs4ShFdnrjGZP0aft+EgYdUSA+NFGJ3YntZnYkWoh2UumzlrQNNuFVMAB
-	 KZ1qYGROVgf1lFLohePvI51Gx3mmnJKj1jN/2yj+il0dwuW0zJZVzgxHsds6qswLrv
-	 xAcYZOjfBGLGgsBsdGmz3Gi9KwpQ9yHD0Y7lQdbJ8ewH3MgFrK0DKRd+PhEotw2GtV
-	 Ruq3gQM0GUhpq+kewg53HbkSNWy/bpwXOhfMAh/fHWI7mLx7yoTJtYNhqW3PmX95UY
-	 JdSyjWccXgFfJ0z0lv73lv3wjhwe7c7XWBqeccASvORR/GD433Fq0c+slg8Lhr84Ff
-	 akjDRGN5YmTCA==
-Date: Sat, 13 Sep 2025 14:52:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 2/7] iio: buffer:
- iio_push_to_buffers_with_ts_unaligned() might_sleep()
-Message-ID: <20250913145218.03d1be7d@jic23-huawei>
-In-Reply-To: <7f71c489-410b-4fdb-9d78-9f2835c32379@baylibre.com>
-References: <20250912-iio-doc-push-to-buffers-context-v1-0-c4aad013d96e@baylibre.com>
-	<20250912-iio-doc-push-to-buffers-context-v1-2-c4aad013d96e@baylibre.com>
-	<aMRiCvmGt27JEYBz@smile.fi.intel.com>
-	<7f71c489-410b-4fdb-9d78-9f2835c32379@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757771603; c=relaxed/simple;
+	bh=+h3xkYAwkb6oyWgSwdpststNjCpd5puIo86iwh0OWg8=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=dC5iM4Y66IEK+Gu+ILjQur42CkbQ9eGuPqPsVXArVv2GWcJlyj8A1C8tWIy8hDQbhKWNRhPPrs25GtpV7lgjBeB1iYlVAY57a3BNLlDVHTkxJ6SFJ2bA/D3DqhSsQ5H/gCRUmAVG9vfpIIXjgfO2B0SIDo2VcNTfiKIwb9nlLm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=AkuxGq7A; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=loUPyhto; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 3A6807A0096;
+	Sat, 13 Sep 2025 09:53:19 -0400 (EDT)
+Received: from phl-imap-17 ([10.202.2.105])
+  by phl-compute-05.internal (MEProxy); Sat, 13 Sep 2025 09:53:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1757771599;
+	 x=1757857999; bh=d5lllfBWpkvhbNBBFkWW6ZTCvRDM182jtFLya47zQwQ=; b=
+	AkuxGq7AmrBftIoxxIej8BUeyCAcJG1Ymi9BYw7QKl5ttox4BOV65pbqJ9if+E1w
+	NUCJlc66mqTN5ToFVlKzlQ+jqZwvUluixJDuocP8B7RsOmuQCIAx6ugTX/jdjxMs
+	qcdigYpWpZ7CYM5WpAA/oX4qU0BEd57m7cGL+Ejp3uxnmFPSf30VvoTJXv+p/I4i
+	BAia8xzyYO2kQKUg0Y/KloaRtK6yNQF1mrVk62hMsonvauj2v81sKv3GvXMO4J4K
+	T73/GPZAyceH+HLAYUikLZJG8qJkKQ5qKRAXrGV99M7ZeQ5YuQ5GhgtcCBk3+t6t
+	BsOxhsu93obeMGRjVA5gkw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757771599; x=
+	1757857999; bh=d5lllfBWpkvhbNBBFkWW6ZTCvRDM182jtFLya47zQwQ=; b=l
+	oUPyhtomykpWaNzTOdArnwQLEKmzKcw+tg7OxeJ1cV0wZtzzbKa0+YCd8xzVW2/+
+	wNeoNZCVBKHbuWLCVzrzjq39hpI+s2CvjhVfUg6Mx7EqgnmEbW2LGlb/ItnGHRGd
+	b7yKNcwvvZysyeO5Q6fqVZ3+799e+uuHjqktyhvaJpB+gDi/yBDs/MdyrDJoZkgJ
+	Mh6AEdM2GH5ecP3m7RFWZsocS97aBFNytu2IMxL2gn3uK4KiBh6YmBoeyQZ5KPK+
+	trZY2d9ky23sUQpX0FmgVDUrLzOE1B4VSuaZYs8e89DqSjCrQbrqLT1ZGivk2sUC
+	RN/UaQI1qhWFDJaJiNRMQ==
+X-ME-Sender: <xms:TnfFaCrtr16oqbECbxj_4ca4M90MxSd3_ZcdfXuNTbkW1hRzb05eCw>
+    <xme:TnfFaArTqbaQfx7GoOHJwMWVNNdXdC04gpmo8vT0cbbn-t1DHAqb1EtK_V727rP02
+    YGoA8ZLRHxvZsAcCfw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefvddutdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdvieen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhrohhuphdrvghupd
+    hrtghpthhtohepmhhpvgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepohhf
+    fhhitghirghlthgvtghhfhhlrghshhihthesghhmrghilhdrtghomhdprhgtphhtthhope
+    grshhhsehhvgihqhhurghrkhdrtghomhdprhgtphhtthhopehlihhnuhigphhptgdquggv
+    vheslhhishhtshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrh
+    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprgifihhltghogies
+    fihilhgtohigqdhtvggthhdrtghomh
+X-ME-Proxy: <xmx:TnfFaMO5aQej02tLae0TqDFyjE0Fo2G3lNTEmNXdfq3VRmvHeW5jUA>
+    <xmx:TnfFaP4HOhIFMqSmh3Bd8_agKhw57LbwAcivjXW6IJqexvVE3oLJhw>
+    <xmx:TnfFaO649Pzb3ncpbNCaB0YaFXMGBlfcl6ox12PMceC85AeX2-vFJw>
+    <xmx:TnfFaNEf_5mogRldKoP-IeY-z61E1RdEQcAo5WZr-V5hE-NTB547hg>
+    <xmx:T3fFaLMeigsrZbMYxBbjKm405RmxLMYlK-2Nl69pCWSdRc5uqqPZEqNz>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4216CC40071; Sat, 13 Sep 2025 09:53:18 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-ThreadId: ADclxERWIs8s
+Date: Sat, 13 Sep 2025 15:52:58 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Ash Logan" <ash@heyquark.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>
+Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ officialTechflashYT@gmail.com, "A. Wilcox" <AWilcox@wilcox-tech.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>
+Message-Id: <432e049f-886d-4734-ad59-52569a796046@app.fastmail.com>
+In-Reply-To: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
+References: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
+Subject: Re: 32-bit HIGHMEM and game console downstreams
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On Fri, 12 Sep 2025 13:40:37 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+On Sat, Sep 13, 2025, at 12:53, Ash Logan wrote:
 
-> On 9/12/25 1:10 PM, Andy Shevchenko wrote:
-> > On Fri, Sep 12, 2025 at 11:05:53AM -0500, David Lechner wrote:  
-> >> Call might_sleep() in iio_push_to_buffers_with_ts_unaligned() since it
-> >> can allocate memory, which may sleep.  
-> > 
-> > It can or does it always do?
-> > If the first one is correct, better to use might_sleep_if().
-> >   
-> 
-> Just below this in the function is:
-> 
-> 	if (iio_dev_opaque->bounce_buffer_size !=  indio_dev->scan_bytes) {
-> 		void *bb;
-> 
-> 		bb = devm_krealloc(&indio_dev->dev,
-> 				   iio_dev_opaque->bounce_buffer,
-> 				   indio_dev->scan_bytes, GFP_KERNEL);
-> 		if (!bb)
-> 			return -ENOMEM;
-> 		iio_dev_opaque->bounce_buffer = bb;
-> 		iio_dev_opaque->bounce_buffer_size = indio_dev->scan_bytes;
-> 	}
-> 
-> 
-> Would it make sense to move the might_sleep() inside of this
-> if statement rather than repeat the condition in might_sleep_if()?
-> 
-> devm_krealloc() is the only part of this function that might sleep.
-> 
-Whilst true that the sleep is only at this point, we always go into
-this path the first time (assuming I remember correctly how this works).
+Hi Ash,
 
-So I'd argue a might_sleep() where you have it is appropriate
-as we will already have spat out the debug info if we get to the
-second case that doesn't sleep.
+> All of these are flatmem devices, as that's all the 32-bit PowerPC arch 
+> supports, with the Wii U additionally enabling highmem for its 2GB of 
+> RAM. Both devices have a small memory area (MEM1) with the "bulk" of RAM 
+> starting at 256MiB. The Wii U in particular sounds like a candidate 
+> system for densemem - I would like to read up more about this if I can, 
+> I was only able to find seemingly unrelated information about CXL when 
+> searching online.
 
-If this ever matters to a driver, we could add a new function
-to allocate the bounce buffer earlier. 
+I would not expect densemem to make a difference, at least if we go
+with 256MB chunks (the size has not been decided, and not much code
+exists in the first place).
 
-Jonathan
+Like most other machines, this one is probably fine with a combination
+of a custom LOWMEM_SIZE setting and using zram-highmem, even if we
+end up removing support for highmem page cache.
 
+The smaller devices are probable getting problematic sooner, 96MB
+in the Wii is already really tight and this only gets worse over
+time.
 
+> I know I'm talking about hobbyist use - and mostly downstream use at 
+> that - and I do suspect that in the event of a wider 32-bit deprecation 
+> we'd be fine on the final LTS, whatever that ends up being. Still, I 
+> think the Wii and Wii U represent a decent number of 32-bit users, so I 
+> wanted to add to the conversation here.
 
+Just to be clear: there is no general 32-bit deprecation going on. When
+I talked about phasing out 32-bit platforms over time, that is purely
+going to be those that have no users left, or the few ones that are
+causing more work than they are worth. E.g. The ppc405 ones got
+removed recently (after many years of discussion) because they were
+making ppc440 maintenance harder and had no known users.
+
+Highmem does get in the way, but unless more -mm folks make a strong
+argument in favor of removing it all, it's more likely that we'll
+go with Willy's suggestion of keeping highmem on page cache (anon
+and file mappings) than just keeling zram, and even that would
+still work.
+
+     Arnd
 
