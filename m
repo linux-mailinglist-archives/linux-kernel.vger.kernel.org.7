@@ -1,96 +1,136 @@
-Return-Path: <linux-kernel+bounces-815172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB392B56096
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB8AB5609B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C9441B2364A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:16:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B80E1B23C8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1A526FA54;
-	Sat, 13 Sep 2025 12:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924FF2EA47D;
+	Sat, 13 Sep 2025 12:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CvVrJbso"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTbqaubF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E28E1E4AB
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 12:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E601BEAF9;
+	Sat, 13 Sep 2025 12:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757765731; cv=none; b=jt1FfKTZykciC/4GZb+tiPdMYA16/su8PTPpwIJTCrO2MKKxhpSbQjRpCRfwfQFljVSyVhSrkgl10JaueLAa2Prbg+DaFSNkfzRRE5s2jAf5t1kXcDJ7o18kJ0lEL0mBGrO4XTNX2bv1F679nqlr4ZPNZxmJ0W72Qd2wQyE03Xc=
+	t=1757765853; cv=none; b=bbe6aUOU6p++L4CTLYScjJKtMMlk2BiC7dKcllDC5KTV6M+q2rwPq1abosNk6cfQ1bvXscfkITiKPwiETH4p4pLeKpGOXu2X3mnBb9trcOD+QAVKHDzGzbmcrjwjVFpYBzRnYCBMIVnkcU5i1anNlHQPdc3ZgT89QoP1oy8IqxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757765731; c=relaxed/simple;
-	bh=PfZXNJG/xSPRuRYlfKl/8Y13YarP7AvpsGLxf9wgfjY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EqKXDmPx6RQg5jwpfWQYIvtRLKREBxY6KJf4T+T7mjPJpvDk7eMgcEB5hITFn+Ewyj76GFsSOWLNeGOg/16iBRkP0nd6qjNtbavHiuYBcPRTdZjcvi3ya8VVUP9/+/Sq+Q+cEaPAokUovzlZMTI8i3vLV71xiKuhS0XzkpYDW88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CvVrJbso; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757765727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8uIVmqLTNP2ho9cEgGDB2Pyg3082OKfjVPPx4gDblF8=;
-	b=CvVrJbsoLjVNKWOnb7kb8rto5nY6ORGzgjSC0eDTySHLYRssVLVvBWCAU1VZBsHBd9jMkO
-	JpmP+m7P01SuWLwQsnYOOrtQZTb7qQ/WNoLpqf90oL6k9XkYSEV2HBGf1cQMFp6WqRU7dd
-	muBshufmz+9OQfacgpRIkzBLRA6J7kA=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] initrd: Remove unnecessary goto label 'successful_load'
-Date: Sat, 13 Sep 2025 14:15:14 +0200
-Message-ID: <20250913121514.1789204-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1757765853; c=relaxed/simple;
+	bh=rCmkDHYJzLWNF0ynhzocfkMVyfZWxwjArSYM0rxU2xM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PQkzQmc+a6P7HEjf5btcSXzybXnPVH2kNWu7d7+ueiqszxP48N5YLWQGdi5bHISMd0uFOtNCUFqePSm9kXZF+HBCtrPgCbXJfhpQ5GeBLmcSJtfCi3IBCV5oYu9nowMd/xcdn6QIkId/GgSm3L9Al9pttMkiipk59pZBwgvIWcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTbqaubF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F56AC4CEEB;
+	Sat, 13 Sep 2025 12:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757765852;
+	bh=rCmkDHYJzLWNF0ynhzocfkMVyfZWxwjArSYM0rxU2xM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tTbqaubFN+NGbGVtVMdBytlIsw952Yn1kOjlX/Nn5AUzai/mKF9qCh8dpoC5bPS6Y
+	 5nwBbLKdjs0EKzNSiWQkelbwZKmCVK4nQAVqXdWWxdZKoU2jNgi7/2AidWDt2i7TH9
+	 3D9Lv6rU0N7483fbKBHdTrrS62FmZA/YT+tZTpmp9sezRefjl4Q3CwodwNF9RSP89Q
+	 sLjo4NBjVmjjM83r2EZir+kluU4LHKZg9jwiCVwnx7Q5gK2sUzqBhodVldhuLvl1VM
+	 m7/gJvNHiJlybJyswuAbrvpgeGA3Btg8p1dUe2c1FGZ31fqj8EOOf3slZZLSVoKwhU
+	 0Q7VOFkZVWw3w==
+Date: Sat, 13 Sep 2025 13:17:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Akshay Jindal <akshayaj.lkd@gmail.com>, anshulusr@gmail.com,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ shuah@kernel.org, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7] iio: light: ltr390: Implement runtime PM support
+Message-ID: <20250913131724.111fa939@jic23-huawei>
+In-Reply-To: <CAHp75Vf+9PJgR5Eev_Z+QB4cp+VMctFfqpTMWuE3VsnGpZ6dJQ@mail.gmail.com>
+References: <20250909194649.10512-1-akshayaj.lkd@gmail.com>
+	<CAHp75VfpQ9c4cptnNGzFYakQxY7JjtUEMDsysS9KJ60xrzaE4g@mail.gmail.com>
+	<CAE3SzaTZ8PXM_B8FBetOTSfz2myGZ=WzPp8h2d79Q95zKLq5hw@mail.gmail.com>
+	<20250910201212.5d9f57bc@jic23-huawei>
+	<CAHp75Vf+9PJgR5Eev_Z+QB4cp+VMctFfqpTMWuE3VsnGpZ6dJQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The goto label 'successful_load' isn't really necessary. Set 'res = 1'
-immediately and let 'goto done' handle the rest.
+On Wed, 10 Sep 2025 23:24:22 +0300
+Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
 
-No functional changes.
+> On Wed, Sep 10, 2025 at 10:12=E2=80=AFPM Jonathan Cameron <jic23@kernel.o=
+rg> wrote:
+> > On Wed, 10 Sep 2025 18:06:32 +0530
+> > Akshay Jindal <akshayaj.lkd@gmail.com> wrote: =20
+>=20
+> > > Thank you very much for your valuable feedback.
+> > > I do have a small request regarding the review process. Over the past=
+ 3=E2=80=934
+> > > versions,most of the comments have been about fixing indentations and
+> > > improving code readability. I would kindly request if it would be pos=
+sible
+> > > to consolidate such cosmetic comments into a single review round.
+> > >
+> > > I completely understand that incremental feedback makes sense when th=
+e code
+> > > is actively changing, but if the changes are minimal, spreading out m=
+inor
+> > > suggestions over multiple review cycles tends to unnecessarily increa=
+se the
+> > > turnaround time.
+> > >
+> > > Your support in this would help me address the comments more efficien=
+tly. =20
+>=20
+> I can't always see _all_ problems at once, I am not a robot. I will
+> try my best, though.
+>=20
+> ...
+>=20
+> > Andy, if you are fine with the explanation I'll tidy up the minor stuff
+> > whilst applying. =20
+>=20
+> Yes, I am fine, go with it, thanks!
+>=20
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- init/do_mounts_rd.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Applied with this diff;
+diff --git a/drivers/iio/light/ltr390.c b/drivers/iio/light/ltr390.c
+index 2d8449aeab18..a2b804e9089a 100644
+--- a/drivers/iio/light/ltr390.c
++++ b/drivers/iio/light/ltr390.c
+@@ -284,8 +284,8 @@ static int ltr390_do_read_raw(struct iio_dev *iio_devic=
+e,
+ }
+=20
+ static int ltr390_read_raw(struct iio_dev *iio_device,
+-                          struct iio_chan_spec const *chan, int *val,
+-                          int *val2, long mask)
++                          struct iio_chan_spec const *chan,
++                          int *val, int *val2, long mask)
+ {
+        int ret;
+        struct ltr390_data *data =3D iio_priv(iio_device);
+@@ -749,7 +749,7 @@ static void ltr390_powerdown(void *priv)
+                        dev_err(dev, "failed to disable interrupts\n");
+=20
+                data->irq_enabled =3D false;
+-               pm_runtime_put_autosuspend(&data->client->dev);
++               pm_runtime_put_autosuspend(dev);
+        }
+=20
+        ret =3D regmap_clear_bits(data->regmap, LTR390_MAIN_CTRL, LTR390_SE=
+NSOR_ENABLE);
 
-diff --git a/init/do_mounts_rd.c b/init/do_mounts_rd.c
-index ac021ae6e6fa..97ddcdaba893 100644
---- a/init/do_mounts_rd.c
-+++ b/init/do_mounts_rd.c
-@@ -210,7 +210,7 @@ int __init rd_load_image(char *from)
- 
- 	if (nblocks == 0) {
- 		if (crd_load(decompressor) == 0)
--			goto successful_load;
-+			res = 1; /* load successful */
- 		goto done;
- 	}
- 
-@@ -264,8 +264,6 @@ int __init rd_load_image(char *from)
- 	}
- 	pr_cont("done.\n");
- 
--successful_load:
--	res = 1;
- done:
- 	fput(in_file);
- noclose_input:
--- 
-2.51.0
+Thanks,
 
+Jonathan
 
