@@ -1,168 +1,304 @@
-Return-Path: <linux-kernel+bounces-815073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5B5DB55F06
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 08:45:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8A2B55F0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 09:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22BE91CC2827
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:45:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24287AA345C
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C522E7BD5;
-	Sat, 13 Sep 2025 06:45:25 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BE82E8B66;
+	Sat, 13 Sep 2025 07:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AXuCVB/b"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB6227E1B1
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 06:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4039C8248B
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 07:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757745925; cv=none; b=Dz+8jLwxbs3CECE/l8rnxMd4R9KJDZhp1JSDhtabJtz2vBPybCqTcVsjbbCKwiFMthcIJP4Ha7nw68f3lIf3+Vis5UXnZXLPffeGkG6hVS+IMKn7LvNaFBEWDBltHSsAni9uYBUKcKBGAGhY4j1ophrC57c9c5mb9peRyfDJ9F8=
+	t=1757746863; cv=none; b=Wcic0kXN0tbLIq91okw8d9ZIM+2YLRrniEKPsmkYIIif5UEWChlUYyIWL7YRGSeIqhHbamGJJ7ScZs+q33uMiMoLJP5UcPd3j/xhrfiEVSvdOtWU0RPMtfq2Dt4uKzvMwz4PcYOZZh9WIqpEZahw7MQX2Nqq86EH53w/l02ajhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757745925; c=relaxed/simple;
-	bh=PYlgmZhwhioZnSwJzR77QkbxJdvtLyYNPx/bF8eOzn8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMII8iW3eu/h1Tlabh3SF0qltgDAdVoJevAeuGDPAGW4zbe0lh1xGBLtw22Kj+JYuf1iKhe2ksHeGucJexr+6j0Cgd1kAazTiamp6z6wc+Tc5F6shp+422AbEJbkaSJU4/HSnGUWj/q9xmxDBIu6KpQB+5EXT9mrB0BSw0CKxSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uxK0S-0003EI-0E; Sat, 13 Sep 2025 08:45:08 +0200
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uxK0P-0013XQ-2K;
-	Sat, 13 Sep 2025 08:45:05 +0200
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1uxK0P-00544Q-1t;
-	Sat, 13 Sep 2025 08:45:05 +0200
-Date: Sat, 13 Sep 2025 08:45:05 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Alan Stern <stern@rowland.harvard.edu>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Hubert =?utf-8?Q?Wi=C5=9Bniewski?= <hubert.wisniewski.25632@gmail.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Lukas Wunner <lukas@wunner.de>, Xu Yang <xu.yang_2@nxp.com>,
-	linux-usb@vger.kernel.org
-Subject: Re: [PATCH net v1 1/1] net: usb: asix: ax88772: drop phylink use in
- PM to avoid MDIO runtime PM wakeups
-Message-ID: <aMUS8ZIUpZJ4HNNX@pengutronix.de>
-References: <20250908112619.2900723-1-o.rempel@pengutronix.de>
- <CGME20250911135853eucas1p283b1afd37287b715403cd2cdbfa03a94@eucas1p2.samsung.com>
- <b5ea8296-f981-445d-a09a-2f389d7f6fdd@samsung.com>
- <aMLfGPIpWKwZszrY@shell.armlinux.org.uk>
- <20250911075513.1d90f8b0@kernel.org>
- <aMM1K_bkk4clt5WD@shell.armlinux.org.uk>
- <22773d93-cbad-41c5-9e79-4d7f6b9e5ec0@rowland.harvard.edu>
- <aMPawXCxlFmz6MaC@shell.armlinux.org.uk>
- <a25b24ec-67bd-42b7-ac7b-9b8d729faba4@rowland.harvard.edu>
- <aMQwQAaoSB0Y0-YD@shell.armlinux.org.uk>
+	s=arc-20240116; t=1757746863; c=relaxed/simple;
+	bh=8ThCdeAvTRKkdU5Rr9E7Uc/AVAz6MSd28rN3gb5BIPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QCwDpZccWodKE7GQSVZxSTezXg58pOMNnwTYMqLCZ1ZbZljlTYVY7tXFSfPLr+K5d41xboARi6iWZXM7ilK57JRJlS1Cw2j8q4AGXmoeu3JWScN/y6kP0MBfCEC9H1LJO3QjczMOn+/dT1nH50oKPinyrwUmusgPsg2ip9k+dh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AXuCVB/b; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757746860; x=1789282860;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=8ThCdeAvTRKkdU5Rr9E7Uc/AVAz6MSd28rN3gb5BIPk=;
+  b=AXuCVB/bEi7xBuE7eh/VRlDkje/0Q8Yf27iuKaYVhz3sov3UMuqI3FDa
+   sb35Jnlm1dVUuuj0bprJo6qfnaFKRYzF8fka5OITGnCDN9zf4ECK/A9hb
+   Lnb8RcOpQrJ00r0XVpaU2rOTgwLo4AHtYI66l5/EEVts2hC2CzUnZNj1j
+   Xivsu+CJlOeL55aMTWmzNy+nPQhCcLKdg3lpQKnitK6dCjjxK9/xhEMFM
+   cLiYFnGwRtSLz0gYdrLmm8XmN2qRkxAb5k7jdrpHhtS7HzCztrZ8+IFYQ
+   Kmo5c64rK3hwbZpct5p+CNamSw7z3aeJhn0XbD7RqordEYwWXK2p92dyi
+   A==;
+X-CSE-ConnectionGUID: ekTamzE2TZmNaSRaRm6lKg==
+X-CSE-MsgGUID: GON6cSV7T9eyHmRFWpwMDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="60190684"
+X-IronPort-AV: E=Sophos;i="6.18,261,1751266800"; 
+   d="scan'208";a="60190684"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2025 00:01:00 -0700
+X-CSE-ConnectionGUID: wUBEmxk6TdeE82i486vH4Q==
+X-CSE-MsgGUID: viNm20UGQLG0KpXaDITh5g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,261,1751266800"; 
+   d="scan'208";a="178190410"
+Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 13 Sep 2025 00:00:55 -0700
+Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uxKFX-0001Ou-3D;
+	Sat, 13 Sep 2025 07:00:52 +0000
+Date: Sat, 13 Sep 2025 14:59:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dave Penkler <dpenkler@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: drivers/staging/gpib/eastwood/fluke_gpib.c:1013:21: error: call to
+ undeclared function 'ioremap'; ISO C99 and later do not support implicit
+ function declarations
+Message-ID: <202509131412.Yordu9eb-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aMQwQAaoSB0Y0-YD@shell.armlinux.org.uk>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Sep 12, 2025 at 03:37:52PM +0100, Russell King (Oracle) wrote:
-> On Fri, Sep 12, 2025 at 10:29:47AM -0400, Alan Stern wrote:
-> > On Fri, Sep 12, 2025 at 09:33:05AM +0100, Russell King (Oracle) wrote:
-> > > On Thu, Sep 11, 2025 at 10:30:09PM -0400, Alan Stern wrote:
-> > > > The USB subsystem uses only one pair of callbacks for suspend and resume 
-> > > > because USB hardware has only one suspend state.  However, the callbacks 
-> > > > do get an extra pm_message_t parameter which they can use to distinguish 
-> > > > between system sleep transitions and runtime PM transitions.
-> > > 
-> > > Unfortunately, this isn't the case. While a struct usb_device_driver's
-> > > suspend()/resume() methods get the pm_message_t, a struct usb_driver's
-> > > suspend()/resume() methods do not:
-> > > 
-> > > static int usb_resume_interface(struct usb_device *udev,
-> > >                 struct usb_interface *intf, pm_message_t msg, int reset_resume)
-> > > {
-> > >         struct usb_driver       *driver;
-> > > ...
-> > >         if (reset_resume) {
-> > >                 if (driver->reset_resume) {
-> > >                         status = driver->reset_resume(intf);
-> > > ...
-> > >         } else {
-> > >                 status = driver->resume(intf);
-> > > 
-> > > vs
-> > > 
-> > > static int usb_resume_device(struct usb_device *udev, pm_message_t msg)
-> > > {
-> > >         struct usb_device_driver        *udriver;
-> > > ...
-> > >         if (status == 0 && udriver->resume)
-> > >                 status = udriver->resume(udev, msg);
-> > > 
-> > > and in drivers/net/usb/asix_devices.c:
-> > > 
-> > > static struct usb_driver asix_driver = {
-> > > ...
-> > >         .suspend =      asix_suspend,
-> > >         .resume =       asix_resume,
-> > >         .reset_resume = asix_resume,
-> > > 
-> > > where asix_resume() only takes one argument:
-> > > 
-> > > static int asix_resume(struct usb_interface *intf)
-> > > {
-> > 
-> > Your email made me go back and check the code more carefully, and it 
-> > turns out that we were both half-right.  :-)
-> > 
-> > The pm_message_t argument is passed to the usb_driver's ->suspend 
-> > callback in usb_suspend_interface(), but not to the ->resume callback in 
-> > usb_resume_interface().  Yes, it's inconsistent.
-> > 
-> > I suppose the API could be changed, at the cost of updating a lot of 
-> > drivers.  But it would be easier if this wasn't necessary, if there was 
-> > some way to work around the problem.  Unfortunately, I don't know 
-> > anything about how the network stack handles suspend and resume, or 
-> > what sort of locking it requires, so I can't offer any suggestions.
-> 
-> I, too, am unable to help further as I have no bandwidth available
-> to deal with this. Sorry.
+Hi Dave,
 
-Thanks for all the valuable input.
+First bad commit (maybe != root cause):
 
-I’ll process the feedback and investigate possible ways to proceed. As a
-first step I’ll measure the actual power savings from USB auto-suspend
-on AX88772 to see if runtime PM is worth the added complexity.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   22f20375f5b71f30c0d6896583b93b6e4bba7279
+commit: 165e8cc3cfec9ef51f3376b0d49b115294f34f3b staging: gpib: Add KBUILD files for GPIB drivers
+date:   11 months ago
+config: s390-randconfig-r133-20250913 (https://download.01.org/0day-ci/archive/20250913/202509131412.Yordu9eb-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250913/202509131412.Yordu9eb-lkp@intel.com/reproduce)
 
-Best Regards,
-Oleksij
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509131412.Yordu9eb-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/staging/gpib/eastwood/fluke_gpib.c:10:
+   In file included from drivers/staging/gpib/eastwood/fluke_gpib.h:9:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __raw_readb(PCI_IOBASE + addr);
+                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
+   #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
+                                                             ^
+   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
+   #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
+                                                        ^
+   In file included from drivers/staging/gpib/eastwood/fluke_gpib.c:10:
+   In file included from drivers/staging/gpib/eastwood/fluke_gpib.h:9:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+                                                           ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
+   #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
+                                                             ^
+   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
+   #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
+                                                        ^
+   In file included from drivers/staging/gpib/eastwood/fluke_gpib.c:10:
+   In file included from drivers/staging/gpib/eastwood/fluke_gpib.h:9:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/s390/include/asm/io.h:93:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writeb(value, PCI_IOBASE + addr);
+                               ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+                                                         ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsb(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsw(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           readsl(PCI_IOBASE + addr, buffer, count);
+                  ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesb(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesw(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+           writesl(PCI_IOBASE + addr, buffer, count);
+                   ~~~~~~~~~~ ^
+   drivers/staging/gpib/eastwood/fluke_gpib.c:196:23: warning: variable 'nec_priv' set but not used [-Wunused-but-set-variable]
+           struct nec7210_priv *nec_priv;
+                                ^
+>> drivers/staging/gpib/eastwood/fluke_gpib.c:1013:21: error: call to undeclared function 'ioremap'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+           nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
+                              ^
+>> drivers/staging/gpib/eastwood/fluke_gpib.c:1013:19: error: incompatible integer to pointer conversion assigning to 'void *' from 'int' [-Wint-conversion]
+           nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
+                            ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/staging/gpib/eastwood/fluke_gpib.c:1050:33: error: incompatible integer to pointer conversion assigning to 'void *' from 'int' [-Wint-conversion]
+           e_priv->write_transfer_counter = ioremap(e_priv->write_transfer_counter_res->start,
+                                          ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   13 warnings and 3 errors generated.
+
+
+vim +/ioremap +1013 drivers/staging/gpib/eastwood/fluke_gpib.c
+
+55936779f49612 Dave Penkler 2024-09-18   973  
+55936779f49612 Dave Penkler 2024-09-18   974  static int fluke_attach_impl(gpib_board_t *board, const gpib_board_config_t *config,
+55936779f49612 Dave Penkler 2024-09-18   975  			     unsigned int handshake_mode)
+55936779f49612 Dave Penkler 2024-09-18   976  {
+55936779f49612 Dave Penkler 2024-09-18   977  	struct fluke_priv *e_priv;
+55936779f49612 Dave Penkler 2024-09-18   978  	struct nec7210_priv *nec_priv;
+55936779f49612 Dave Penkler 2024-09-18   979  	int isr_flags = 0;
+55936779f49612 Dave Penkler 2024-09-18   980  	int retval;
+55936779f49612 Dave Penkler 2024-09-18   981  	int irq;
+55936779f49612 Dave Penkler 2024-09-18   982  	struct resource *res;
+55936779f49612 Dave Penkler 2024-09-18   983  	dma_cap_mask_t dma_cap;
+55936779f49612 Dave Penkler 2024-09-18   984  
+55936779f49612 Dave Penkler 2024-09-18   985  	if (!fluke_gpib_pdev) {
+55936779f49612 Dave Penkler 2024-09-18   986  		pr_err("No gpib platform device was found, attach failed.\n");
+55936779f49612 Dave Penkler 2024-09-18   987  		return -ENODEV;
+55936779f49612 Dave Penkler 2024-09-18   988  	}
+55936779f49612 Dave Penkler 2024-09-18   989  
+55936779f49612 Dave Penkler 2024-09-18   990  	retval = fluke_generic_attach(board);
+55936779f49612 Dave Penkler 2024-09-18   991  	if (retval)
+55936779f49612 Dave Penkler 2024-09-18   992  		return retval;
+55936779f49612 Dave Penkler 2024-09-18   993  
+55936779f49612 Dave Penkler 2024-09-18   994  	e_priv = board->private_data;
+55936779f49612 Dave Penkler 2024-09-18   995  	nec_priv = &e_priv->nec7210_priv;
+55936779f49612 Dave Penkler 2024-09-18   996  	nec_priv->offset = fluke_reg_offset;
+55936779f49612 Dave Penkler 2024-09-18   997  	board->dev = &fluke_gpib_pdev->dev;
+55936779f49612 Dave Penkler 2024-09-18   998  
+55936779f49612 Dave Penkler 2024-09-18   999  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 0);
+55936779f49612 Dave Penkler 2024-09-18  1000  	if (!res) {
+55936779f49612 Dave Penkler 2024-09-18  1001  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for cb7210 gpib\n");
+55936779f49612 Dave Penkler 2024-09-18  1002  		return -ENODEV;
+55936779f49612 Dave Penkler 2024-09-18  1003  	}
+55936779f49612 Dave Penkler 2024-09-18  1004  
+55936779f49612 Dave Penkler 2024-09-18  1005  	if (request_mem_region(res->start,
+55936779f49612 Dave Penkler 2024-09-18  1006  			       resource_size(res),
+55936779f49612 Dave Penkler 2024-09-18  1007  			       fluke_gpib_pdev->name) == NULL) {
+55936779f49612 Dave Penkler 2024-09-18  1008  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
+55936779f49612 Dave Penkler 2024-09-18  1009  		return -ENXIO;
+55936779f49612 Dave Penkler 2024-09-18  1010  	}
+55936779f49612 Dave Penkler 2024-09-18  1011  	e_priv->gpib_iomem_res = res;
+55936779f49612 Dave Penkler 2024-09-18  1012  
+55936779f49612 Dave Penkler 2024-09-18 @1013  	nec_priv->iobase = ioremap(e_priv->gpib_iomem_res->start,
+55936779f49612 Dave Penkler 2024-09-18  1014  				   resource_size(e_priv->gpib_iomem_res));
+55936779f49612 Dave Penkler 2024-09-18  1015  	pr_info("gpib: iobase %lx remapped to %p, length=%d\n",
+55936779f49612 Dave Penkler 2024-09-18  1016  		(unsigned long)e_priv->gpib_iomem_res->start,
+55936779f49612 Dave Penkler 2024-09-18  1017  		nec_priv->iobase, (int)resource_size(e_priv->gpib_iomem_res));
+55936779f49612 Dave Penkler 2024-09-18  1018  	if (!nec_priv->iobase) {
+55936779f49612 Dave Penkler 2024-09-18  1019  		dev_err(&fluke_gpib_pdev->dev, "Could not map I/O memory\n");
+55936779f49612 Dave Penkler 2024-09-18  1020  		return -ENOMEM;
+55936779f49612 Dave Penkler 2024-09-18  1021  	}
+55936779f49612 Dave Penkler 2024-09-18  1022  
+55936779f49612 Dave Penkler 2024-09-18  1023  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 1);
+55936779f49612 Dave Penkler 2024-09-18  1024  	if (!res) {
+55936779f49612 Dave Penkler 2024-09-18  1025  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for gpib dma port\n");
+55936779f49612 Dave Penkler 2024-09-18  1026  		return -ENODEV;
+55936779f49612 Dave Penkler 2024-09-18  1027  	}
+55936779f49612 Dave Penkler 2024-09-18  1028  	if (request_mem_region(res->start,
+55936779f49612 Dave Penkler 2024-09-18  1029  			       resource_size(res),
+55936779f49612 Dave Penkler 2024-09-18  1030  			       fluke_gpib_pdev->name) == NULL) {
+55936779f49612 Dave Penkler 2024-09-18  1031  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
+55936779f49612 Dave Penkler 2024-09-18  1032  		return -ENXIO;
+55936779f49612 Dave Penkler 2024-09-18  1033  	}
+55936779f49612 Dave Penkler 2024-09-18  1034  	e_priv->dma_port_res = res;
+55936779f49612 Dave Penkler 2024-09-18  1035  
+55936779f49612 Dave Penkler 2024-09-18  1036  	res = platform_get_resource(fluke_gpib_pdev, IORESOURCE_MEM, 2);
+55936779f49612 Dave Penkler 2024-09-18  1037  	if (!res) {
+55936779f49612 Dave Penkler 2024-09-18  1038  		dev_err(&fluke_gpib_pdev->dev, "Unable to locate mmio resource for write transfer counter\n");
+55936779f49612 Dave Penkler 2024-09-18  1039  		return -ENODEV;
+55936779f49612 Dave Penkler 2024-09-18  1040  	}
+55936779f49612 Dave Penkler 2024-09-18  1041  
+55936779f49612 Dave Penkler 2024-09-18  1042  	if (request_mem_region(res->start,
+55936779f49612 Dave Penkler 2024-09-18  1043  			       resource_size(res),
+55936779f49612 Dave Penkler 2024-09-18  1044  			       fluke_gpib_pdev->name) == NULL) {
+55936779f49612 Dave Penkler 2024-09-18  1045  		dev_err(&fluke_gpib_pdev->dev, "cannot claim registers\n");
+55936779f49612 Dave Penkler 2024-09-18  1046  		return -ENXIO;
+55936779f49612 Dave Penkler 2024-09-18  1047  	}
+55936779f49612 Dave Penkler 2024-09-18  1048  	e_priv->write_transfer_counter_res = res;
+55936779f49612 Dave Penkler 2024-09-18  1049  
+55936779f49612 Dave Penkler 2024-09-18  1050  	e_priv->write_transfer_counter = ioremap(e_priv->write_transfer_counter_res->start,
+55936779f49612 Dave Penkler 2024-09-18  1051  						 resource_size(e_priv->write_transfer_counter_res));
+55936779f49612 Dave Penkler 2024-09-18  1052  	pr_info("gpib: write transfer counter %lx remapped to %p, length=%d\n",
+55936779f49612 Dave Penkler 2024-09-18  1053  		(unsigned long)e_priv->write_transfer_counter_res->start,
+55936779f49612 Dave Penkler 2024-09-18  1054  		e_priv->write_transfer_counter,
+55936779f49612 Dave Penkler 2024-09-18  1055  		(int)resource_size(e_priv->write_transfer_counter_res));
+55936779f49612 Dave Penkler 2024-09-18  1056  	if (!e_priv->write_transfer_counter) {
+55936779f49612 Dave Penkler 2024-09-18  1057  		dev_err(&fluke_gpib_pdev->dev, "Could not map I/O memory\n");
+55936779f49612 Dave Penkler 2024-09-18  1058  		return -ENOMEM;
+55936779f49612 Dave Penkler 2024-09-18  1059  	}
+55936779f49612 Dave Penkler 2024-09-18  1060  
+55936779f49612 Dave Penkler 2024-09-18  1061  	irq = platform_get_irq(fluke_gpib_pdev, 0);
+55936779f49612 Dave Penkler 2024-09-18  1062  	pr_info("gpib: irq %d\n", irq);
+55936779f49612 Dave Penkler 2024-09-18  1063  	if (irq < 0) {
+55936779f49612 Dave Penkler 2024-09-18  1064  		dev_err(&fluke_gpib_pdev->dev, "fluke_gpib: request for IRQ failed\n");
+55936779f49612 Dave Penkler 2024-09-18  1065  		return -EBUSY;
+55936779f49612 Dave Penkler 2024-09-18  1066  	}
+55936779f49612 Dave Penkler 2024-09-18  1067  	retval = request_irq(irq, fluke_gpib_interrupt, isr_flags, fluke_gpib_pdev->name, board);
+55936779f49612 Dave Penkler 2024-09-18  1068  	if (retval) {
+55936779f49612 Dave Penkler 2024-09-18  1069  		dev_err(&fluke_gpib_pdev->dev,
+55936779f49612 Dave Penkler 2024-09-18  1070  			"cannot register interrupt handler err=%d\n",
+55936779f49612 Dave Penkler 2024-09-18  1071  			retval);
+55936779f49612 Dave Penkler 2024-09-18  1072  		return retval;
+55936779f49612 Dave Penkler 2024-09-18  1073  	}
+55936779f49612 Dave Penkler 2024-09-18  1074  	e_priv->irq = irq;
+55936779f49612 Dave Penkler 2024-09-18  1075  
+55936779f49612 Dave Penkler 2024-09-18  1076  	dma_cap_zero(dma_cap);
+55936779f49612 Dave Penkler 2024-09-18  1077  	dma_cap_set(DMA_SLAVE, dma_cap);
+55936779f49612 Dave Penkler 2024-09-18  1078  	e_priv->dma_channel = dma_request_channel(dma_cap, gpib_dma_channel_filter, NULL);
+55936779f49612 Dave Penkler 2024-09-18  1079  	if (!e_priv->dma_channel) {
+55936779f49612 Dave Penkler 2024-09-18  1080  		pr_err("fluke_gpib: failed to allocate a dma channel.\n");
+55936779f49612 Dave Penkler 2024-09-18  1081  		// we don't error out here because unaccel interface will still
+55936779f49612 Dave Penkler 2024-09-18  1082  		// work without dma
+55936779f49612 Dave Penkler 2024-09-18  1083  	}
+55936779f49612 Dave Penkler 2024-09-18  1084  
+55936779f49612 Dave Penkler 2024-09-18  1085  	return fluke_init(e_priv, board, handshake_mode);
+55936779f49612 Dave Penkler 2024-09-18  1086  }
+55936779f49612 Dave Penkler 2024-09-18  1087  
+
+:::::: The code at line 1013 was first introduced by commit
+:::::: 55936779f4961299efa99a6843c8ff3b019d3858 staging: gpib: Add Fluke cda based cards GPIB driver
+
+:::::: TO: Dave Penkler <dpenkler@gmail.com>
+:::::: CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
