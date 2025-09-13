@@ -1,184 +1,153 @@
-Return-Path: <linux-kernel+bounces-815048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CF3EB55E90
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:24:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7752CB55E98
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:37:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6DAAC7B4F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:24:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B3E58853B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:37:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2A82E2DF4;
-	Sat, 13 Sep 2025 05:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582FD7A13A;
+	Sat, 13 Sep 2025 05:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3KoHn/r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICTMjNwa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E221DD0D4
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A715723CB
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757741075; cv=none; b=U3IyRg5QieUb6B5GZzk0nFvgjFZOgLjoaEvlu+ADMSDbiNqBX3eaXdKw4+T4zXwrZM1FCEaPxOVoI3IuQ4b1I7oNebyfMgJBAPMxWyLeBGiK1UUsQcGmNw4KpESp1u+3wp4h/a062cbYrJR5teIfI+LAKTg0ElLkVpD110zLQ+c=
+	t=1757741857; cv=none; b=L9rGs1E3DXU8KsDLx1cdaSyyOqi5dQElIJk/38c799mdCMigm35mTIxajpzrc+bp/RJO4CvoO6cEp/S3MHIyrA9uMN7nt5swTElwdaISIcKLxx6gvzjvbfMTnJwDNB38iwehJ6ffYEXpMFip1ndrCrIgc7cQRKBokW5EId+rHOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757741075; c=relaxed/simple;
-	bh=ndtaFZkPNDUgMTuk/DI+nRVkfYYyHV/1NbW/hy/UTiU=;
+	s=arc-20240116; t=1757741857; c=relaxed/simple;
+	bh=IYW4ukJmhiyh831FAgDpMQ9/FYW2MvRC6jd5DAlHV3I=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d6OfHGVeDJdyGqNKlAkKwFWydcNF1bb5TYvCP+McML7fbAYj0+JMH91HXGDDdvKy+YDFoaaIZqk0l+QvRs0A767+eNWJA+Wbv8YMDrupvR04Sd4IV9sWwpxVpx9XpH/z9u4puk+GjuH9CHI51W//y1aCIUNCLZJT2SDK8W43pOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3KoHn/r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3403C4CEF9
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:24:34 +0000 (UTC)
+	 To:Cc:Content-Type; b=WBLg+EGVn2jqwhh0WKskc+yYUCOOxGMgVFNcybEip06TG4b/u/WJtZMp1zgPU1H6y/HuH7d9SAtc/0gJrhbJuuzIcaMIrw+MGluN2u1YWBSa0KxkqFl13vz/Y0JySnhj2PwQIGwtgg5dKYR/IqRjKnROn3eDI8uOdD6ldmWFL9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICTMjNwa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 441A7C4CEEB
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757741074;
-	bh=ndtaFZkPNDUgMTuk/DI+nRVkfYYyHV/1NbW/hy/UTiU=;
+	s=k20201202; t=1757741857;
+	bh=IYW4ukJmhiyh831FAgDpMQ9/FYW2MvRC6jd5DAlHV3I=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=T3KoHn/rdLOt+mwg8ydl/A0WLdKYmDgNZMpnI4hNMDc+UFSPaBnKljSvTIaLAoBFp
-	 Gg3KVWV17pnz92Q7VaHsNozXE9n+M0NA056WEUVKx2UtWFfVY6DgTZqElCMJOEpFOM
-	 aZchZls4kgvdorKioIbpC+0CoWWA4CI4YU9GRTurOCcMqkJl0ZulkilArUmnC6Kfnn
-	 sDMdilCWPgdgOd02n4Yi2pu6jHtwieHSVCY/f85+6neXlbqzbA01mjjvb9ObXiWOqi
-	 G5COk8OFx8gwKtv/PvwOohPmhRCaY9oWPLSIS+89L3xbxGXawgwUdKQ9i3oljyOTtx
-	 YTP6/39cXIWMA==
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3dcce361897so1737721f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:24:34 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX7Q15Mtw0t9MinxvGEqKy2zsd2UVFOY13H8XtLg/by66HZHj4w29kCXDGvrRrYSbQhYdbXnqsGESLs/I4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR2DkGlWYkHq3l932Edw9xWbofOsI+hr6PLEhEKcCNi1beRtAP
-	+1iZr593PMejZlN8pXaU2kexqSoxoZJZ557vptQfCIRiqvH3CNZtZnznBh9CsTWDjVHmwCvaOS4
-	QoF8Laax2tVgcQ+qefbm3CWWvE6udBf4=
-X-Google-Smtp-Source: AGHT+IGYTlvCo1WvcEHh91h2ZDsn0VW1EcDF9c5qsObu2X+gkm2UWwxkRXm7fnuygodN0nywuj843j1eBkLjOQTn8hY=
-X-Received: by 2002:a5d:4d81:0:b0:3e7:bbaf:6a07 with SMTP id
- ffacd0b85a97d-3e7bbbeb55cmr2183699f8f.6.1757741073221; Fri, 12 Sep 2025
- 22:24:33 -0700 (PDT)
+	b=ICTMjNwaoFdmOObo7GlgwXNqhYKniuUC9bbBP9/n6NYQ8wVbilxwNCPDPoZYZaSwQ
+	 upXKsmrkCS1yDxFO7hHtCRlEMUfj5Zt9k8NLYSsZGx2GcdJkmM4VCvgYR6yNmCwKpj
+	 ov2hsNQOFhGBFDIfQ3M3Wd2INX4+WC8VeHb7E0EcNcEY0U6m+i94yFXrxaGFw/aJZK
+	 2ujtX+x3wajikgjawbNGnM6lmjCv3/FDLRXSVqjF+vaBZODRahsMg+C7gkyYTtyzjQ
+	 w0FCTIxXMkE/6/Fk4TungT7rH1ovvmCqVklUV4xT9N7tt6ZpLwwyI4qTt9NLu5ficP
+	 lQYKcCDCV2DJg==
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2616549b925so1773135ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:37:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKPL69F11Z1TswSayd/SJK64bzIkgiYZl/JCCp5V5Le4qZ0RY9ZTLta23n5stc9Wix4BzNsUPqZSDPv+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjarTgSWJ1BwH3g3tcVBlfliUBF7QVd9EDeDe38rYlIaB7Bq7+
+	ii4pwmmHsnE6+aCt0w/IyxKrihFLN7NjEo4qWOaiRnmKaBpSTGXt69X4IWj1wIAPKWbzGP9Aja7
+	QgAlt4/UK0lJ7CQv9te6SasNdqE3Jv1g=
+X-Google-Smtp-Source: AGHT+IFHY4Za2HmzCLAoexGOZiMMxEVVOftmHmyAfiUrR/8e/oxJhcIRenCpLvzQcWsYVfuHvpcqlV1W7fV347nauNk=
+X-Received: by 2002:a17:902:d2c2:b0:248:96af:51e with SMTP id
+ d9443c01a7336-25d27d20531mr73419255ad.45.1757741856891; Fri, 12 Sep 2025
+ 22:37:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912122514.2303-1-cp0613@linux.alibaba.com>
-In-Reply-To: <20250912122514.2303-1-cp0613@linux.alibaba.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Sat, 13 Sep 2025 13:24:21 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTn6PhqjOPAxVfSy_8avb1_7BAeqOsFxPnvmZ3KF8sqog@mail.gmail.com>
-X-Gm-Features: AS18NWDOH5r854UR2hS_3wx8Jmy2rJ-1fVmoABF8wvrbI9Y09wJRDu310WBBPi8
-Message-ID: <CAJF2gTTn6PhqjOPAxVfSy_8avb1_7BAeqOsFxPnvmZ3KF8sqog@mail.gmail.com>
-Subject: Re: [PATCH v2] ACPI: SPCR: Support Precise Baud Rate filed
-To: cp0613@linux.alibaba.com
-Cc: rafael@kernel.org, lenb@kernel.org, jeeheng.sia@starfivetech.com, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250911225356.2678-1-wufan@kernel.org> <aMQcnoETIt4t4Tqz@wunner.de>
+ <CAKtyLkExV9dqMWa5j9O5n8oTHXh8McwVbjjCm6L9L=eFsH3HNw@mail.gmail.com> <aMT1O9PPhLHT-MZJ@wunner.de>
+In-Reply-To: <aMT1O9PPhLHT-MZJ@wunner.de>
+From: Fan Wu <wufan@kernel.org>
+Date: Fri, 12 Sep 2025 22:37:24 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkGYfnBnAandEOsTDVHt7oL8LXCWq6+7zEndZ-eQRGAtag@mail.gmail.com>
+X-Gm-Features: Ac12FXwk8fbqM4fNnwWg52qWyD447ZBoP6OtwY5KkW_meTUA6qmnn4Zowkv66Rk
+Message-ID: <CAKtyLkGYfnBnAandEOsTDVHt7oL8LXCWq6+7zEndZ-eQRGAtag@mail.gmail.com>
+Subject: Re: [PATCH] KEYS: X.509: Fix Basic Constraints CA flag parsing
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Fan Wu <wufan@kernel.org>, dhowells@redhat.com, ignat@cloudflare.com, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, jarkko@kernel.org, 
+	zohar@linux.ibm.com, eric.snowberg@oracle.com, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 12, 2025 at 8:25=E2=80=AFPM <cp0613@linux.alibaba.com> wrote:
+On Fri, Sep 12, 2025 at 9:38=E2=80=AFPM Lukas Wunner <lukas@wunner.de> wrot=
+e:
 >
-> From: Chen Pei <cp0613@linux.alibaba.com>
+> On Fri, Sep 12, 2025 at 02:14:49PM -0700, Fan Wu wrote:
+> > On Fri, Sep 12, 2025 at 6:14 AM Lukas Wunner <lukas@wunner.de> wrote:
+> > > On Thu, Sep 11, 2025 at 10:53:56PM +0000, wufan@kernel.org wrote:
+> > > > +++ b/crypto/asymmetric_keys/x509_cert_parser.c
+> > > > @@ -623,7 +625,7 @@ int x509_process_extension(void *context, size_=
+t hdrlen,
+> > > >               if (v[0] !=3D (ASN1_CONS_BIT | ASN1_SEQ))
+> > > >                       return -EBADMSG;
+> > > >               if (vlen < 2)
+> > > >                       return -EBADMSG;
+> > > >               if (v[1] !=3D vlen - 2)
+> > > >                       return -EBADMSG;
+> > > > -             if (vlen >=3D 4 && v[1] !=3D 0 && v[2] =3D=3D ASN1_BO=
+OL && v[3] =3D=3D 1)
+> > > > +             if (vlen >=3D 5 && v[1] !=3D 0 && v[2] =3D=3D ASN1_BO=
+OL && v[3] =3D=3D 1 && v[4] !=3D 0)
+> > > >                       ctx->cert->pub->key_eflags |=3D 1 << KEY_EFLA=
+G_CA;
+> > > >               return 0;
+> > > >       }
+> > >
+> > > Your patch is correct, however the conditions ...
+> > >
+> > >   vlen >=3D 5 && v[1] !=3D 0 && v[2] =3D=3D ASN1_BOOL && v[3] =3D=3D =
+1
+> > >
+> > > ... all check well-formedness of the BasicConstraints object,
+> > > so it seems if any of those checks fails, -EBADMSG should be returned=
+.
+> > >
+> > > The check "if (vlen < 2)" could be changed to "if (vlen < 5)" because
+> > > 5 bytes seems to be the minimum size of a well-formed BasicConstraint=
+s
+> > > object.  Then the "vlen >=3D 5" and "v[1] !=3D 0" checks can be dropp=
+ed.
+> >
+> > Actually, we need to be careful here. OpenSSL produces
+> > BasicConstraints with CA:FALSE as just an empty SEQUENCE:
+> >
+> > 06 03 55 1d 13 | 01 01 ff | 04 02 | 30 00
+> > [----OID------] [critical] [OCTET] [empty SEQ]
 >
-> The Microsoft Serial Port Console Redirection (SPCR) specification
-> revision 1.09 comprises additional field: Precise Baud Rate [1].
+> I see, thanks for the explanation.
 >
-> It is used to describe non-traditional baud rates (such as those
-> used by high-speed UARTs).
+> This behavior of OpenSSL doesn't seem spec-compliant, or is it?
+> RFC 5280 sec 4.2.1.9 says the pathLenConstraint is optional,
+> but the cA boolean is not optional.  Is there a rule that booleans
+> need not be rendered if they are false?
 >
-> It contains a specific non-zero baud rate which overrides the value
-> of the Configured Baud Rate field. If this field is zero or not
-The spec states that it would "override" the baud rate. That means it
-should happen behind the table->baud_rate or firmware still needs to
-give out a legal Configured Baud Rate for precise_baudrate.
+> BTW, I note that X.690 sec 11.1 says that for DER encoding,
+> all bits of a "true" boolean must be set, hence the 0xff value.
+> But I'm fine with your more permissive approach which checks for
+> a non-zero value, hence also allows BER encoding per X.690 sec 8.2.2.
+>
+> Thanks!
+>
+> Lukas
 
-Then, we move these:
-+       if (table->precise_baudrate)
-+               baud_rate =3D table->precise_baudrate;
-behind the "switch (table->baud_rate) {}".
+I double-checked RFC 5280 and X.690 after your comment. I found RFC
+5280 section 4.1 explicitly requires X.509 certificates to use DER
+encoding, so my original patch allowing any non-zero value was
+incorrect. I'll update the patch to check specifically for 0xFF and
+return -EBADMSG for any other value.
 
-Right?
+For OpenSSL's empty SEQUENCE, X.690 section 11.5 states: "The encoding
+of a set value or sequence value shall not include an encoding for any
+component value which is equal to its default value." Since RFC 5280
+defines BasicConstraints with "cA BOOLEAN DEFAULT FALSE", the field
+must be omitted when false under DER encoding. So OpenSSL's behavior
+is correct.
 
-> present, Configured Baud Rate is used.
->
-> Link: https://learn.microsoft.com/en-us/windows-hardware/drivers/serports=
-/serial-port-console-redirection-table # 1
->
-> Signed-off-by: Chen Pei <cp0613@linux.alibaba.com>
-> ---
->  drivers/acpi/spcr.c | 54 ++++++++++++++++++++++++++-------------------
->  1 file changed, 31 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
-> index cd36a97b0ea2..a97b02ee5538 100644
-> --- a/drivers/acpi/spcr.c
-> +++ b/drivers/acpi/spcr.c
-> @@ -146,29 +146,37 @@ int __init acpi_parse_spcr(bool enable_earlycon, bo=
-ol enable_console)
->                 goto done;
->         }
->
-> -       switch (table->baud_rate) {
-> -       case 0:
-> -               /*
-> -                * SPCR 1.04 defines 0 as a preconfigured state of UART.
-> -                * Assume firmware or bootloader configures console corre=
-ctly.
-> -                */
-> -               baud_rate =3D 0;
-> -               break;
-> -       case 3:
-> -               baud_rate =3D 9600;
-> -               break;
-> -       case 4:
-> -               baud_rate =3D 19200;
-> -               break;
-> -       case 6:
-> -               baud_rate =3D 57600;
-> -               break;
-> -       case 7:
-> -               baud_rate =3D 115200;
-> -               break;
-> -       default:
-> -               err =3D -ENOENT;
-> -               goto done;
-> +       /*
-> +        * SPCR 1.09 defines Precise Baud Rate Filed contains a specific
-> +        * non-zero baud rate which overrides the value of the Configured
-> +        * Baud Rate field. If this field is zero or not present, Configu=
-red
-> +        * Baud Rate is used.
-> +        */
-> +       if (table->precise_baudrate)
-> +               baud_rate =3D table->precise_baudrate;
-> +       else switch (table->baud_rate) {
-> +               case 0:
-> +                       /*
-> +                        * SPCR 1.04 defines 0 as a preconfigured state o=
-f UART.
-> +                        * Assume firmware or bootloader configures conso=
-le correctly.
-> +                        */
-> +                       baud_rate =3D 0;
-> +                       break;
-> +               case 3:
-> +                       baud_rate =3D 9600;
-> +                       break;
-> +               case 4:
-> +                       baud_rate =3D 19200;
-> +                       break;
-> +               case 6:
-> +                       baud_rate =3D 57600;
-> +                       break;
-> +               case 7:
-> +                       baud_rate =3D 115200;
-> +                       break;
-> +               default:
-> +                       err =3D -ENOENT;
-> +                       goto done;
->         }
->
->         /*
-> --
-> 2.49.0
->
+Thanks for catching the boolean encoding issue.
 
-
---=20
-Best Regards
- Guo Ren
+-Fan
 
