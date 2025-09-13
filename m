@@ -1,153 +1,170 @@
-Return-Path: <linux-kernel+bounces-815190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E989AB56106
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:03:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 551ECB56109
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:04:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A842A058C3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5830B1889B85
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E5752ED15C;
-	Sat, 13 Sep 2025 13:02:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298BE2ED15D;
+	Sat, 13 Sep 2025 13:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eflKHWT2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l3fg+FaN"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROOTANAu"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD9EA2EC573;
-	Sat, 13 Sep 2025 13:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37932EC57B
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 13:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757768578; cv=none; b=cdg3mURsIODMkA1MhHp6RfN6Mf7zcaF1XRiozoW/xl7XaI2craPgR3pR7AXnjjzAxQjRBNsesEM7ACHEpXc1Wz0liwzpQy37W14ooaBO/x3PibcnpoHaorB80WEs2zCYEi71piEAHkYUoRfJWzIOc0IivlfMVOfLJT97iPVS660=
+	t=1757768686; cv=none; b=FLqJh0IFDXMXfz7g4kLT7QeHJVBli7tPu3fcbhArnIYCoLx0L4QOalABijwmASaUuo3xq60GA1FnPaEuE/+YeRw/oFkOA1EsiWJBjA0B7oczTq5HruiPq+12rSnH7s77sO+rF0HJRA6H19sFNWgAb+tUSnx6O2RmacW3aMozt4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757768578; c=relaxed/simple;
-	bh=cDcuciOscDOY7uYodziBIFL75IKyJ7hyqbGfVmH2k7A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fppBpTSnEaU5UABT/ooaP2qnk0q7w11hOQBRKx5KjMiQ7TkjfGF4m3wFuSH8HyPOrV/Vlja1zk/jC68Nu5h62Ue1+QXPgk/lvOtoCQgqFX3BF8OSq3mVMM/u1j2Np5fLcd0hf0TZS6LpczCESreckNCXUU325Ty+fjiiz5De3x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eflKHWT2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l3fg+FaN; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757768573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gHlVUt8kQbE8EGvUw4N1Vb7/dUYSjnr6TDf3RdqDsvE=;
-	b=eflKHWT2mKA33JFbvUzflkEUX9945+wAATCO0WQRQdrotfV/50s/uANua/s+EnS1Tnk+n+
-	rEXxS9PkoecL5RUl0Z/TAX1n9yPnkLRP57mj03K9CZPjvvrFTtkBW5Ls2NMIh9QInvKZNR
-	9UPSEUWEbyhD1eHZyBhY7ba4jdG7xMjV17UluBWH6qbAugmNM06nKdp13nP+AN8w99Q8nf
-	3Sc1eu361u+NVmieLMahDPBURU11E/7L0MriAA5ltgo5CTMmsgS52/SOo9g9KZpOhQvL5+
-	jzA/fPMp63fcmUiSjCoywL1sHsAWithAjYASYGMX/CqQNZNjGkT+2jaxXkuxnA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757768573;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gHlVUt8kQbE8EGvUw4N1Vb7/dUYSjnr6TDf3RdqDsvE=;
-	b=l3fg+FaNgZGATP1yYXkmpRkrBkSm/F6v4PJM86dfiL1rRUednjMfOwBZomlGSYbq3XytOt
-	AE6VU5R8yRrmWfAg==
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Peter Zilstra <peterz@infradead.org>, "Paul E. McKenney"
- <paulmck@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Jonathan Corbet
- <corbet@lwn.net>, Prakash Sangappa <prakash.sangappa@oracle.com>, Madadi
- Vineeth Reddy <vineethr@linux.ibm.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>, Steven Rostedt <rostedt@goodmis.org>, Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>,
- linux-arch@vger.kernel.org, Florian Weimer <fweimer@redhat.com>,
- "carlos@redhat.com" <carlos@redhat.com>, libc-coord@lists.openwall.com
-Subject: Re: [patch 00/12] rseq: Implement time slice extension mechanism
-In-Reply-To: <a65dfd2c-b435-4d83-89d0-abc8002db7c7@efficios.com>
-References: <20250908225709.144709889@linutronix.de>
- <159c984d-37fc-4b63-acf3-d0409c9b57cd@efficios.com> <87plbwrbef.ffs@tglx>
- <3d16490f-e4d3-4e91-af17-62018e789da9@efficios.com> <87a52zr5sv.ffs@tglx>
- <a65dfd2c-b435-4d83-89d0-abc8002db7c7@efficios.com>
-Date: Sat, 13 Sep 2025 15:02:51 +0200
-Message-ID: <874it6qzd0.ffs@tglx>
+	s=arc-20240116; t=1757768686; c=relaxed/simple;
+	bh=b7tBpzh15qGN8uVwd9Pr+CjEOhF0/2vXJq5OskdvkFI=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRzEYoXa1fyK5oORk//waYfAfCH+LoLfN/sireGb4QjXlmJ0w7Jmn1SJggc85LuVfXszbaYTezY1ge81PPfoCwyQHv6LIGyQHSwfj0Q8V+Q/iFg5fXw+RT8OHNu1k1UscCkyXrE9V7NEup4akJA/wzXD2YKQSLGvQkjfwdP2/Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROOTANAu; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45ed646b656so19842145e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 06:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757768683; x=1758373483; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bn5g5etmrQRhW0GOll7653iUOWDP8XBcYnO++0L6iOw=;
+        b=ROOTANAuPag/jlv1nGo0RpkMHmO2JTrBDg2Yrw87LzqGxDemmhmp+U5etJ17YVcPl1
+         WxCTSa1CnoCQ9h5Y3ID4q+BkPhYPJHWrcj+elvYxZzSJ63kZ/XMjtbDDsAvmbhyKyoxv
+         tgS5LtxbLRxKp0B0VKzCg4FTcTnXIrgFLINkSq7uc8DfkaXiOjh8EJZsq0vqyOmjNfS0
+         RrcgpJ5Yae/3gol1jHciPc+CP/aPSRyqDTYlNzGfEq8tl+p0H5IrGeUGJ916r0Rw1IoI
+         KQ4dHe5K8+mgsBcxZ1A0FMqox0nnqLd5xSjm1r+3ocpoTE+HUVItkSN+4g0V1heE87W6
+         ufug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757768683; x=1758373483;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bn5g5etmrQRhW0GOll7653iUOWDP8XBcYnO++0L6iOw=;
+        b=PX5Yrx7K1zu8k4amWLthhOz8owtbTKlEVHKc4deY77kJKdQp3VmwWdmAHRVDwCXhCi
+         hVQiUlH7mEuE6vVYypJWvwwTO41kaomwxM5NlD6/Ltvwd75rPPrJU7ctmP8/QFxy1S2T
+         sXDxcqllJiubp7oDJhf06JQiVN/UO9umZ3hUi3U1jdvUOCws7CLGsS51LuxHhHsfAdYi
+         L4uEeVEhnwjj9dmba0QQxne4gSBi1i3HkaP1WLXp2vFedXGOcxrGMT+8/Sn7Yx9jPKQY
+         Bi/Z0O6ofu2R5hrIOsowHFzFxIa0rxlpTR33WfOslvxR+s3yDqd7cXUYzUIWwQCssQH9
+         z1+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWNw4Zp9pd+4DbWpObZRLB/UtukOVUsWIT7knLxehSs4r0ESXw4tl12feaeQft1X/ZwmbdAejeIAZ4yAjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOR8f84iOpNQdt1T3anbYtNQRMU4P2gNcftZ+64xF4ykLmnMji
+	Pc6G4WFv223SIQDsg1I2Uemn1sqm8wE60WURaUpK2lWS++8DRNXlpe6C
+X-Gm-Gg: ASbGnctHCVqMV1z6fdcG2r5odXr9rMvoccV9/Po5hG+/X9y+JeJX2/U2NAbUcAAFq1n
+	qRT7PzJTOaHr6/eJBnOB6o53/LD/7luAw6cG1pxJmzReiDcaEEpXKnokTCtgGFZYdfbnhtI9MJM
+	LMTOvPVxYo4J6etgs2FwgSuJfx99pmtFOJQsdBGnrF8S1WZZkk1rYC4rSmd5c7Y3y+zHp3znqMf
+	oxv8UlXE0VCFKPCVGFpETU6nWuK1UH9Tn7QhEQxI1+yD1tAHJwEAiQNfHhgBNU3MzU9dI8zfFsn
+	OwQhIEjGYBzpqyNiWN7FZX9Nan4yITlfdfTr0DucVEKwMhc6yOU/gg7I7D/PGz6rksIjKtUUcTK
+	is8Nj/iIaAaq9JLK5lkQgkFLRTRa6S/HF81kcEevWoqHPMzDTrCh2bZw/Qzo97FLDEOG+WqHHrP
+	qpbj8X
+X-Google-Smtp-Source: AGHT+IH7bqCK1wDu540Yv6h59nRCAcKulg0ljt7g6L2IwpwzA60j/nsTl5Zjtr2oKtoo9w4/vWv6Gg==
+X-Received: by 2002:a05:600c:a45:b0:45d:dd9c:4467 with SMTP id 5b1f17b1804b1-45f211ca33cmr60235475e9.7.1757768682776;
+        Sat, 13 Sep 2025 06:04:42 -0700 (PDT)
+Received: from Ansuel-XPS. (host-95-249-236-54.retail.telecomitalia.it. [95.249.236.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e015784c3sm105911875e9.10.2025.09.13.06.04.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 06:04:42 -0700 (PDT)
+Message-ID: <68c56bea.050a0220.a9dbf.b7c8@mx.google.com>
+X-Google-Original-Message-ID: <aMVr6Hkskt5mPfFP@Ansuel-XPS.>
+Date: Sat, 13 Sep 2025 15:04:40 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Simon Horman <horms@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Chester A. Unal" <chester.a.unal@arinc9.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next PATCH v17 6/8] mfd: an8855: Add support for Airoha
+ AN8855 Switch MFD
+References: <20250911133929.30874-1-ansuelsmth@gmail.com>
+ <20250911133929.30874-7-ansuelsmth@gmail.com>
+ <20250913130137.GL224143@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250913130137.GL224143@horms.kernel.org>
 
-On Fri, Sep 12 2025 at 15:26, Mathieu Desnoyers wrote:
-> On 2025-09-12 12:31, Thomas Gleixner wrote:
->>> 2) Slice requests are a good fit for locking. Locking typically
->>>      has nesting ability.
->>>
->>>      We should consider making the slice request ABI a 8-bit
->>>      or 16-bit nesting counter to allow nesting of its users.
->> 
->> Making request a counter requires to keep request set when the
->> extension is granted. So the states would be:
->> 
->>       request    granted
->>       0          0               Neutral
->>       >0         0               Requested
->>       >=0        1               Granted
+On Sat, Sep 13, 2025 at 02:01:37PM +0100, Simon Horman wrote:
+> On Thu, Sep 11, 2025 at 03:39:21PM +0200, Christian Marangi wrote:
+> > Add support for Airoha AN8855 Switch MFD that provide support for a DSA
+> > switch and a NVMEM provider.
+> > 
+> > Also make use of the mdio-regmap driver and register a regmap for each
+> > internal PHY of the switch.
+> > This is needed to handle the double usage of the PHYs as both PHY and
+> > Switch accessor.
+> > 
+> > Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> 
+> ...
+> 
+> > diff --git a/drivers/mfd/airoha-an8855.c b/drivers/mfd/airoha-an8855.c
+> 
+> ...
+> 
+> > +static int an855_mdio_register(struct device *dev, struct an8855_core_priv *priv)
+> > +{
+> > +	struct device_node *mdio_np;
+> > +	int ret;
+> > +
+> > +	mdio_np = of_get_child_by_name(dev->of_node, "mdio");
+> > +	if (!mdio_np)
+> > +		return -ENODEV;
+> > +
+> > +	for_each_available_child_of_node_scoped(mdio_np, phy_np) {
+> > +		ret = an8855_phy_register(dev, priv, phy_np);
+> > +		if (ret)
+> > +			break;
+> > +	}
+> 
+> Hi Christian,
+> 
+> Maybe it cannot happen, but if the loop above iterates zero times,
+> then ret will be used uninitialised below.
+> 
+> Flagged by Smatch.
 >
 
-Second thoughts on this.
+Do you have hint of how to run smatch on this? Is there a simple arg to
+make to enable this?
 
-Such a scheme means that slice_ctrl.request must be read only for the
-kernel because otherwise the user space decrement would need to be an
-atomic dec_if_not_zero(). We just argued the one atomic operation away. :)
+Anyway yes it goes against schema but it's possible somehow to have a
+very broken DT node with no phy in it.
 
-That means, the kernel can only set and clear Granted. That in turn
-loses the information whether a slice extension was denied or revoked,
-which was something the Oracle people wanted to have. I'm not sure
-whether that was a functional or more a instrumentation feature.
+> > +
+> > +	of_node_put(mdio_np);
+> > +	return ret;
+> > +}
+> 
+> ...
 
-But what's worse: this is a receipe for disaster as it creates obviously
-subtle and hard to debug ways to leak an increment, which means the
-request would stay active forever defeating the whole purpose.
-
-And no, the kernel cannot keep track of the counter and observe whether
-it became zero at some point or not. You surely could come up with a
-convoluted scheme to work around that in form of sequence counters or
-whatever, but that just creates extra complexity for a very dubious
-value.
-
-The point is that the time slice extension is just providing an
-opportunistic priority ceiling mechanism with low overhead and without
-guarantees.
-
-Once a request is not granted or revoked, the performance of that
-particular operation goes south no matter what. Nesting does not help
-there at all, which is a strong argument for using KISS as the primary
-engineering principle here.
-
-The simple boolean request/granted pair is simple and very well
-defined. It does not suffer from any of those problems.
-
-If user space wants nesting, then it can do so on its own without
-creating an ill defined and fragile kernel/user ABI. We created enough
-of them in the past and all of them resulted in long term headaches.
-
-> Handling syscall within granted extension by killing the process
-
-I'm absolutely not opposed to lift the syscall restriction to make
-things easier, but this is the wrong argument for it:
-
-> will likely reserve this feature to the niche use-cases.
-
-Having this used only by people who actually know what they are doing is
-actually the preferred outcome.
-
-We've seen it over and over that supposedly "easy" features result in
-mindless overutilization because everyone and his dog thinks they need
-them just because and for the very wrong reasons. The unconditional
-usage of the most power hungry floating point extensions just because
-they are available, is only one example of many.
-
-Thanks,
-
-        tglx
+-- 
+	Ansuel
 
