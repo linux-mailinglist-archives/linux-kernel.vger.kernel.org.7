@@ -1,137 +1,114 @@
-Return-Path: <linux-kernel+bounces-815041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F40EB55E80
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:54:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1F5B55E83
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 537DA1719B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:54:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35F41CC2FBE
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7DE2E0925;
-	Sat, 13 Sep 2025 04:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bStJjuLz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCC32E0417;
-	Sat, 13 Sep 2025 04:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8D42E0B4B;
+	Sat, 13 Sep 2025 04:58:24 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071AC2E0B4E;
+	Sat, 13 Sep 2025 04:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757739272; cv=none; b=ozRnHusAjWQG0S5GrFjAiIoN5crfQQpsLuhTwl1oEAqCBnew2yR0qoz4qrRdq69uE6hYqyaK4eEeZ7pmfAgLdDkzWGYkc8rUgylQodoYS4NOebmAqlWMDwlK2uD0MIfJUK4qixqO1M6ToAyJzvKMdUNQu9nVipoY1/2iLzKTOmI=
+	t=1757739503; cv=none; b=Mguot7/VN0nh7bRg5R2Fu3TC2vBDF9dhDGITYxa1M98lNRfGQ1TnQWskiZP1pGDk6kXk7gnFN/oZtLdrtEqHVEki9QhrnR4r9kqpg5kLqvip7kVu3NSO7fgIKZyV6TqG/ymEboiKh7VVrQq86cwM8eGbr2aqO3vkdGJypcbvDrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757739272; c=relaxed/simple;
-	bh=MBM/iaQTTN7Ecb2rHlHyrJfWh+aPzAuwB5BM8/YDByk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DP+8gVt0mEpjEwUL0+ovwLqE6oU6VEknPijM4V8NWUCQbEXz00hTn0YgsLJq0ffzR8/Ntnzzkg7YDdBSbNE1k3k4sbzTjVVaVWw/G99hC6IqB+b5KBsFP6DCWMaS/iGJ5+SEVtXpE0KwEYd6/XCn6YLz6c1ynXnd2VR/dQuv+zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bStJjuLz; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757739271; x=1789275271;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MBM/iaQTTN7Ecb2rHlHyrJfWh+aPzAuwB5BM8/YDByk=;
-  b=bStJjuLzmYqZSclF6Y0ydXGmKpU1aGbcLdJwFwHnov+n2PuZDvVYAY2s
-   ZZqWpCo0HfGSHukcYjO83VdslBUxthaREwGW1HTyNuEsx5Ssy3ItjmStz
-   ips5mhZba3jTz77186S4SlfoZPColCIQ5eUjFEfR/ZsRA6l6yoGWXko99
-   Q+g+41O+6A2w6hOudmkd3BxmzhFgn+U2RVLd9akZ4klujbiY7Ks7Jyc4R
-   P4vpnelXFoDFhGTciPSe2DwIJQU9JReO0oIPtgvoUTMVyt3bdMH9e9Qwx
-   y6tVDMrbSBFdRkoblMZGBTyMo2GA5gTNyIbem5LK/f3xBP7+SC/pN3WSQ
-   g==;
-X-CSE-ConnectionGUID: Objt6M4rQ76qr6gQGr/xig==
-X-CSE-MsgGUID: tmFTllNBRwCetXoPTq2jkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="47650688"
-X-IronPort-AV: E=Sophos;i="6.18,260,1751266800"; 
-   d="scan'208";a="47650688"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2025 21:54:30 -0700
-X-CSE-ConnectionGUID: 9XXEBugOQkGIfN3BuSqC4A==
-X-CSE-MsgGUID: 6XYEu5PASW24cEmBbWJRpw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,260,1751266800"; 
-   d="scan'208";a="174598591"
-Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 12 Sep 2025 21:54:27 -0700
-Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uxIHJ-0001Mm-01;
-	Sat, 13 Sep 2025 04:54:25 +0000
-Date: Sat, 13 Sep 2025 12:53:28 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mukesh Rathor <mrathor@linux.microsoft.com>,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arch@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-	arnd@arndb.de
-Subject: Re: [PATCH v1 6/6] x86/hyperv: Enable build of hypervisor crashdump
- collection files
-Message-ID: <202509131228.naboUNkE-lkp@intel.com>
-References: <20250910001009.2651481-7-mrathor@linux.microsoft.com>
+	s=arc-20240116; t=1757739503; c=relaxed/simple;
+	bh=QKdWbEhXOdjq4saRav6ZDCQr2csgoPOIuQoBxIZ+L5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W+G65pLj4t9agstZ3rALHzjlJKmWO6wg9wO+GEf1oWKyE9LOy9TPAqaJF2MHawqrLoW36fKI0smN6TzvAihJsGraLNDESxY674CGrLvpSmkMy4QBY4sireQ9lYX7MPsuirZZqela3E+LB9zGdirQ14HsGu5RiTzuCisCaj93sjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [153.35.206.47])
+	by gateway (Coremail) with SMTP id _____8BxE9Dd+cRoT_EJAA--.20814S3;
+	Sat, 13 Sep 2025 12:58:05 +0800 (CST)
+Received: from [192.168.86.5] (unknown [153.35.206.47])
+	by front1 (Coremail) with SMTP id qMiowJCxrsPb+cRo2Q2SAA--.53349S2;
+	Sat, 13 Sep 2025 12:58:04 +0800 (CST)
+Message-ID: <1f09322b-6bc5-437b-88b5-dec306748d80@loongson.cn>
+Date: Sat, 13 Sep 2025 12:58:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250910001009.2651481-7-mrathor@linux.microsoft.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] mmc: remove COMPILE_TEST from MMC_LOONGSON2
+To: Mikko Rapeli <mikko.rapeli@linaro.org>, linux-mmc@vger.kernel.org
+Cc: ulf.hansson@linaro.org, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
+ victor.shih@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw,
+ geert+renesas@glider.be, angelogioacchino.delregno@collabora.com,
+ dlan@gentoo.org, arnd@arndb.de, zhoubb.aaron@gmail.com
+References: <20250912142253.2843018-1-mikko.rapeli@linaro.org>
+ <20250912142253.2843018-4-mikko.rapeli@linaro.org>
+Content-Language: en-US
+From: Binbin Zhou <zhoubinbin@loongson.cn>
+In-Reply-To: <20250912142253.2843018-4-mikko.rapeli@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qMiowJCxrsPb+cRo2Q2SAA--.53349S2
+X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/1tbiAQEECGjDtiYabAAAsB
+X-Coremail-Antispam: 1Uk129KBj9xXoWrur1UtryDWryUZFyrKF47KFX_yoWDGFXEga
+	yjgwn7Gr12kryxZ3W0qF1kZry3ta1kWr1UXryrKrnxua43JFnYv3W3urn0qw13ua1UuFW2
+	9rWS9r1Svw48AosvyTuYvTs0mTUanT9S1TB71UUUUbUqnTZGkaVYY2UrUUUUj1kv1TuYvT
+	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
+	cSsGvfJTRUUUbTkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
+	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
+	oVCq3wAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa02
+	0Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_Wryl
+	Yx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x
+	0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCF
+	I7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r
+	106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AK
+	xVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7
+	xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_
+	Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jo_M-UUUUU=
 
-Hi Mukesh,
+Hi Mikko:
 
-kernel test robot noticed the following build warnings:
+Thanks for your patch.
 
-[auto build test WARNING on next-20250909]
-[also build test WARNING on v6.17-rc5]
-[cannot apply to tip/x86/core tip/master linus/master arnd-asm-generic/master tip/auto-latest v6.17-rc5 v6.17-rc4 v6.17-rc3]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+On 2025/9/12 22:22, Mikko Rapeli wrote:
+> It fails to link due to undeclared dependency
+> to regmap which is not enabled for COMPILE_TEST:
+> 
+> ERROR: modpost: "__devm_regmap_init_mmio_clk"
+> [drivers/mmc/host/loongson2-mmc.ko] undefined!
+> 
+> Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+> ---
+>   drivers/mmc/host/Kconfig | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 2db46291ae442..e2d9a7cf9f855 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -1113,7 +1113,7 @@ config MMC_OWL
+>   
+>   config MMC_LOONGSON2
+>   	tristate "Loongson-2K SD/SDIO/eMMC Host Interface support"
+> -	depends on LOONGARCH || COMPILE_TEST
+> +	depends on LOONGARCH
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mukesh-Rathor/x86-hyperv-Rename-guest-crash-shutdown-function/20250910-081309
-base:   next-20250909
-patch link:    https://lore.kernel.org/r/20250910001009.2651481-7-mrathor%40linux.microsoft.com
-patch subject: [PATCH v1 6/6] x86/hyperv: Enable build of hypervisor crashdump collection files
-config: x86_64-randconfig-073-20250913 (https://download.01.org/0day-ci/archive/20250913/202509131228.naboUNkE-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250913/202509131228.naboUNkE-lkp@intel.com/reproduce)
+How about add `select REGMAP_MMIO` instead.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509131228.naboUNkE-lkp@intel.com/
+>   	depends on HAS_DMA
+>   	help
+>   	  This selects support for the SD/SDIO/eMMC Host Controller on
 
-All warnings (new ones prefixed by >>):
+Thanks.
+Binbin
 
-   In file included from arch/x86/include/asm/mshyperv.h:272,
-                    from arch/x86/hyperv/hv_apic.c:29:
->> include/asm-generic/mshyperv.h:370:5: warning: "CONFIG_CRASH_DUMP" is not defined, evaluates to 0 [-Wundef]
-     370 | #if CONFIG_CRASH_DUMP
-         |     ^~~~~~~~~~~~~~~~~
-
-
-vim +/CONFIG_CRASH_DUMP +370 include/asm-generic/mshyperv.h
-
-   369	
- > 370	#if CONFIG_CRASH_DUMP
-   371	void hv_root_crash_init(void);
-   372	void hv_crash_asm32(void);
-   373	void hv_crash_asm64_lbl(void);
-   374	void hv_crash_asm_end(void);
-   375	#else   /* CONFIG_CRASH_DUMP */
-   376	static inline void hv_root_crash_init(void) {}
-   377	#endif  /* CONFIG_CRASH_DUMP */
-   378	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
