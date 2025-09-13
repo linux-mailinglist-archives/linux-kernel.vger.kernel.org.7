@@ -1,166 +1,121 @@
-Return-Path: <linux-kernel+bounces-815308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 580D4B5626F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 19:58:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F932B56275
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:01:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81DCD189E5EB
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:58:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84476189EAAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA8C213E6A;
-	Sat, 13 Sep 2025 17:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A42022116F4;
+	Sat, 13 Sep 2025 18:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Il2Fuzf5";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hBX3S+Wd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nb0EuTHn"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF95B1F8755;
-	Sat, 13 Sep 2025 17:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9343A1F7098
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757786289; cv=none; b=cPH8D47QWjFHX+QV2WRtWd+LWTkmKJH2DhDfIi4+H9ZAV5n82ThYfJSN+b6SJTLUaHNcbRuHxy0YedYFH5LL0jIQ2wRntQNEi7H7FF+Hwnc0sSl4599I5ajSmjRsVZrIzwPamYKIspJ9HXXPHxCcwRlPBof7zQrbpLur175sNe4=
+	t=1757786497; cv=none; b=cfXfWHJtyLqLBycAtParfQd1xivmyNsvCFP23GTHaXuP/4KJ2XtIXonR55B++vRJDHOzm/ajaagp1tj2CJuXvcMd1E8FePpknjWaBfKPNaFNZb4QlRiU7iT+f3oLdjG55+SfM7m2w2u7J1Bevpkms8ZrvzR1aooQ73IbMNXgbtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757786289; c=relaxed/simple;
-	bh=2LZvUgz0+ujuD7Av7wfeuscl1IarReSY88YOPWk5770=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OBX1UPUL/DnHMv7vy/+vBP3x2NyX06h/2ALJgc1J/V97SJ7G1LpgtZ601RchmgxBjmFC/Qr78fv348TdbNkjAonP61XeSuMOCEMTHXnp3uqOF0+xxyo5st4J1ZlTO7C2uX3xTX+3IvlHPJylJGmihlt+WhEeIr9s097u33UlwP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Il2Fuzf5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hBX3S+Wd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 13 Sep 2025 17:57:57 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1757786278;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Uoq7m//PTGreKxasKT+FkkfsHv7zRWFK64rf3auJEzI=;
-	b=Il2Fuzf52sS3HevGLIJ8d3Ynlr9PFqRjiaLW9LaxBCPyfLVbrQbKFtfJLGPMJpoMFGY8ud
-	QKIYh3tiz34MVxDGSUFmjSkY+H78DdN8iYCXvP461NJEDvj1QuUu7tdBIiJSn6f4qk9/tF
-	rY+EtR2T+pUbXYqprX5V3+22wHTOTunrHaQ1hmrRwZFYUF3m+FLs0aVXS5kjUnUWNzz3cW
-	mboSTZo68oo1Zxy5TegtK97gRRONQF484MdaUJ9TIoGNWbFaMtetMJazAmJooI56jIg+Jw
-	wbszVijBwbvDHEcxXFXXyHBuNiJ6ppCMIoVdLSJSDgzlKOAE4PPWRvExmP3zkA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1757786278;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Uoq7m//PTGreKxasKT+FkkfsHv7zRWFK64rf3auJEzI=;
-	b=hBX3S+WdVri1fSGGGRilXBbDnco4z8sGw9wlKLj45F9UL97RZBZsAaUeAnntrvHYRJ/uWE
-	AH4eD36rk2oIyIBg==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rseq] rseq: Protect event mask against membarrier IPI
-Cc: Thomas Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, stable@vger.kernel.org,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <87o6sj6z95.ffs@tglx>
-References: <87o6sj6z95.ffs@tglx>
+	s=arc-20240116; t=1757786497; c=relaxed/simple;
+	bh=UnaOqYluKu28oBnwPH0vnbCU+O6jr21CjF1YCAIsvFg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UX8zcacs2KhjEEJmnHFoIyZufhWCSn1gcuFI/N+51+qc1Gg8B9phf9rqiayWFPPaAktyMl2+ThvPhDO/eG9LZjLgtdWn/CwR0qoRsrgF9L4qz18WgzItFwFQnXU+tesFdifd0wgqaXqoliboi3KKKAp+gsucSbrldFtWBN0YAM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nb0EuTHn; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-723bc91d7bbso23819727b3.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757786494; x=1758391294; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NjHrIrhN/4pjfGuGdsD+5Ie4bMJa+37LDUXsJfR1WJM=;
+        b=Nb0EuTHnk1rU4+sqHEk9Mz5mpnQs/KBTBTng1Hhz678Q9HwjDl1TLzA0KsKQkGCzYA
+         jvJLACHZmVq69So4rWVOwFZlioYw8vsQ7nvMjkniKntOa312AJjbZDzqnknXXLfvWeSR
+         +/WdVba6LWds6ExTHDYbt5ZgrWi3CdtQPxdzq9j9UTvkoCx5p6EChzRxjrCkl5nrLG65
+         xycttFw6HPHGU5Npw+rEOdC26IQMI4/85fbcZ3ET87A6735jla5h8WJ64hc7KpvxcffE
+         Qa99/97mOmQ7QE2tJiZLd9XrT5snjtLqazOCoVelfzi69R/VqJ1GYcaBd/AnEjHt3TMm
+         voTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757786494; x=1758391294;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NjHrIrhN/4pjfGuGdsD+5Ie4bMJa+37LDUXsJfR1WJM=;
+        b=RtdXg0d/buVzMRrikNMk7l2nbBNkLDxJ5NoGPOcVnlVbHuz3NQYKUbTHyMbkIENn0x
+         caopZJgMzbDkYJyOEpzehAoOzTqWu+TEeKrGEOtWsdUZCUWHAtVmGBi3uwURSJYVFsqD
+         L5Roqx/mhg+FxQwg2Wctm1UC6Z2iXrl4Uq2BaHDF7pw7P1T+ydprHUbV9Tx4cMvDiU46
+         n7NxdvNyLsSQfjt3+1muhb4kB3J12Y5gp8bUI1TMOt3BHSA+H6MtLPrUFWTCVYh05euV
+         EhlRDvUqVFJboI2mmOjxlyCxN5SwzPkupE5p79vWW12Q94XPmKvQf03SOUi+s6aKisst
+         L1jg==
+X-Forwarded-Encrypted: i=1; AJvYcCXNhSb4szOdEuQKY6kitOG8v0uk978VPGEa81GbZr5Z+wAyj0B9kCH+7+CajWGqvJhck3W+g7eYLqY5aGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiqVVcU/67eOd4RzPKQEMfxL8ggu8ndHY+KU69PSeaCqliMDS6
+	gpICK+mW0lzNZVY9nxvKn+pFkiOohs+NFB2DDwQ/0Xbs3kMJQbNo9dJz
+X-Gm-Gg: ASbGncvXYODqZ1lZqG+8saLcIieQBtZ6uTkaAEG/SQO6I4JYuxdNyuLsNBxQucu348X
+	QYDL0TnUjfqgoDC94Hc6DV7D+4TVBayhLbYmDsTkSG88oGFAwMrcoJ8ON2E/okqF/TPKJECf9eO
+	3XAaCd8qXhjaL6lf0XfitEOqf+fGCSaTBqRKd5tJGY0EI4aOL9sMcaqsNf/j0Lhbf6GGekzFzXg
+	2T5sq6RX3siCPc/fRb8j+1gepcV6HH2ac2Wh6fa5W4G+g2E73R5Jd0DgSQfz1yS0MiaIm/1AEWN
+	wV6m/aooY1YHxoNQHkmtWeEEjfyboVCQnJb/SdtbaXixblZHESYU56oh1W8g19fTCsqgVhlMKjr
+	LgVLb8yYXCeAxk48ToYh3nyjq1c+dzZWmLsYp/AjpCmomFPHeuHv/HIrqXg==
+X-Google-Smtp-Source: AGHT+IHi0t1g25a3FWwQ5Y/nJHat0XL4SNgFHd21Ox1E7oZI7Dop3SdUOK6vuMiPxpkEVNb3sGWL/Q==
+X-Received: by 2002:a05:690c:620d:b0:721:28ef:8b5a with SMTP id 00721157ae682-73064cfc35fmr58784437b3.31.1757786494286;
+        Sat, 13 Sep 2025 11:01:34 -0700 (PDT)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 956f58d0204a3-62484dd3e12sm1900016d50.8.2025.09.13.11.01.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 11:01:33 -0700 (PDT)
+From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+To: Ido Schimmel <idosch@nvidia.com>,
+	Petr Machata <petrm@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+Subject: [PATCH] mlxsw: spectrum_cnt: use bitmap_empty() in mlxsw_sp_counter_pool_fini()
+Date: Sat, 13 Sep 2025 14:01:31 -0400
+Message-ID: <20250913180132.202593-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175778627751.709179.2586417410168504568.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the core/rseq branch of tip:
+The function opencodes bitmap_empty(). Switch to the proper API in sake
+of verbosity.
 
-Commit-ID:     6eb350a2233100a283f882c023e5ad426d0ed63b
-Gitweb:        https://git.kernel.org/tip/6eb350a2233100a283f882c023e5ad426d0=
-ed63b
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 13 Aug 2025 17:02:30 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 13 Sep 2025 19:51:59 +02:00
-
-rseq: Protect event mask against membarrier IPI
-
-rseq_need_restart() reads and clears task::rseq_event_mask with preemption
-disabled to guard against the scheduler.
-
-But membarrier() uses an IPI and sets the PREEMPT bit in the event mask
-from the IPI, which leaves that RMW operation unprotected.
-
-Use guard(irq) if CONFIG_MEMBARRIER is enabled to fix that.
-
-Fixes: 2a36ab717e8f ("rseq/membarrier: Add MEMBARRIER_CMD_PRIVATE_EXPEDITED_R=
-SEQ")
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: stable@vger.kernel.org
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
 ---
- include/linux/rseq.h | 11 ++++++++---
- kernel/rseq.c        | 10 +++++-----
- 2 files changed, 13 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/include/linux/rseq.h b/include/linux/rseq.h
-index bc8af3e..1fbeb61 100644
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -7,6 +7,12 @@
- #include <linux/preempt.h>
- #include <linux/sched.h>
-=20
-+#ifdef CONFIG_MEMBARRIER
-+# define RSEQ_EVENT_GUARD	irq
-+#else
-+# define RSEQ_EVENT_GUARD	preempt
-+#endif
-+
- /*
-  * Map the event mask on the user-space ABI enum rseq_cs_flags
-  * for direct mask checks.
-@@ -41,9 +47,8 @@ static inline void rseq_handle_notify_resume(struct ksignal=
- *ksig,
- static inline void rseq_signal_deliver(struct ksignal *ksig,
- 				       struct pt_regs *regs)
- {
--	preempt_disable();
--	__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
--	preempt_enable();
-+	scoped_guard(RSEQ_EVENT_GUARD)
-+		__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
- 	rseq_handle_notify_resume(ksig, regs);
- }
-=20
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index b7a1ec3..2452b73 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -342,12 +342,12 @@ static int rseq_need_restart(struct task_struct *t, u32=
- cs_flags)
-=20
- 	/*
- 	 * Load and clear event mask atomically with respect to
--	 * scheduler preemption.
-+	 * scheduler preemption and membarrier IPIs.
- 	 */
--	preempt_disable();
--	event_mask =3D t->rseq_event_mask;
--	t->rseq_event_mask =3D 0;
--	preempt_enable();
-+	scoped_guard(RSEQ_EVENT_GUARD) {
-+		event_mask =3D t->rseq_event_mask;
-+		t->rseq_event_mask =3D 0;
-+	}
-=20
- 	return !!event_mask;
- }
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
+index 50e591420bd9..b1094aaffa5f 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_cnt.c
+@@ -170,8 +170,7 @@ void mlxsw_sp_counter_pool_fini(struct mlxsw_sp *mlxsw_sp)
+ 	struct devlink *devlink = priv_to_devlink(mlxsw_sp->core);
+ 
+ 	mlxsw_sp_counter_sub_pools_fini(mlxsw_sp);
+-	WARN_ON(find_first_bit(pool->usage, pool->pool_size) !=
+-			       pool->pool_size);
++	WARN_ON(!bitmap_empty(pool->usage, pool->pool_size));
+ 	WARN_ON(atomic_read(&pool->active_entries_count));
+ 	bitmap_free(pool->usage);
+ 	devl_resource_occ_get_unregister(devlink,
+-- 
+2.43.0
+
 
