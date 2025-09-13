@@ -1,98 +1,107 @@
-Return-Path: <linux-kernel+bounces-815201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE214B56128
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:34:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BF2EB56129
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99B76480B46
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:34:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F42588146
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32E22F361D;
-	Sat, 13 Sep 2025 13:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4A12F39B5;
+	Sat, 13 Sep 2025 13:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l/ps5pxY"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEGru90Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55532EC54F
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 13:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756C32F3630;
+	Sat, 13 Sep 2025 13:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757770242; cv=none; b=sG2g0WLNU9c9g14i2PLXa9zzvi+CCq3VdkOYXT0Ph4bPHj86KhEqx+N0KwTePhhYoUgSFPPQ30YaMrGVmX8N36Wx2L2qOkg3o/ULkH3PoDfTpfrw6gYPwK3uQBPc6n0Yifx1gFPcxoSQe9VdXRH+6/bSxcbFYhiCzK+w+bypL2s=
+	t=1757770244; cv=none; b=HTJQpiR4nAMgADUsF1WejT2ZjOVcaK6seKpLZ6CfWO95c9k9NBqa92nbgaHBtXU8UW8OS6xU3vtxIp67HZF1Cx2zkCNJUeQcgFscr7AkArpxnTwnamUgXZcqNSdDORjp1eL4F1DxYokUDGOk6HBA02CqFcp6z2ZOnzfchosXDlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757770242; c=relaxed/simple;
-	bh=R+EwJWUL37Dd0XJ17zi8pxpqIyS/lb7ojPwcQ9X/6GY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=K54qndYiIS/DD3KHNwjxBR16obAvSsMNEQgK7C/HvFEj/ISjXKQj/LH4WCRAxMNk4Ig2fyzWgKwtMa1+UVfjuYZyAzL0iSnbPCf4ZR/ZYMqvS3Q9Tv75Virf6qNvqjg4GyvgAcx4Q99sLGYMb0say751HlELUpqnWJbC77zv154=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l/ps5pxY; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1757770228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R+EwJWUL37Dd0XJ17zi8pxpqIyS/lb7ojPwcQ9X/6GY=;
-	b=l/ps5pxYqVJaXQHQrGP0VRKQYuNIAxNGZ4QgWm/WIW8p3BHTkv1aMRjc1cX2FkWAW6Zo53
-	LRKEKod2HD6y6WeMMAtIR3Iflf0b1zPaK9yPuRdnBehoxMZpntvbLFX+Yqk7PB6ZVxB9hL
-	DwnS3nKDRP7U8eh1JEJ3j58/D6AKVOM=
+	s=arc-20240116; t=1757770244; c=relaxed/simple;
+	bh=uV6AIY3tX6ZFbEbK51nPPUHpEf3Vl5idHgfbQrj2RXs=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=q2tMG3o+PpHpLerdh3cZtop9Y1g8B1VBYaRs0nHzIL49pFX1UiJBhJjUeesfPpsAaYb7T46NLGBcaRdkCzuBRYERmkmldR5HHSwZ3A5745AN+ClIyVuGLMLrA4Lr9DNA32gM8afw9ac6JUsFvJbg0wjjqRTodg/cL9BSz7682+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEGru90Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C946C4CEF4;
+	Sat, 13 Sep 2025 13:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757770244;
+	bh=uV6AIY3tX6ZFbEbK51nPPUHpEf3Vl5idHgfbQrj2RXs=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=HEGru90QW4kc+aEL2YYRxXYkaCbmNxKMtYkOHgKiH/LaRkWhOjikL2I21k3MEhhWE
+	 w6k97DXeAQZ20nIexQdiEnhyxWzyox46F0JEDtqeTThu347OfGa96ORNp7h3TCYYQW
+	 weR8QKgDRRahKjU+kRdVLw2DLI3efPoLoX29RTgETFLorDFx0TB4lvMt4+15mIxsQn
+	 NMTQyzDWGSBoeUOaXOCBly0alT3C20yHjA3Gag40OIPoiufLibtm9MeuHyd6Iqay9O
+	 dnrFoDPTTYMIPfJ38pD3yEO3/EV0YRWx1H/lgF1aM3tNjcy/porZoJ46J3jk44wEOZ
+	 QZpSGK4696qnw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
-Subject: Re: [PATCH] initrd: Remove unnecessary goto label 'successful_load'
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <o2ijjlbcicrrfflp54o53sj5v6morqedtkkzizhhyvl6cqvezw@yl7hx3naojcn>
-Date: Sat, 13 Sep 2025 15:30:15 +0200
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <41D6E945-CB4B-4AE4-9ED7-277B59E9DC32@linux.dev>
-References: <20250913121514.1789204-1-thorsten.blum@linux.dev>
- <o2ijjlbcicrrfflp54o53sj5v6morqedtkkzizhhyvl6cqvezw@yl7hx3naojcn>
-To: Klara Modin <klarasmodin@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 13 Sep 2025 15:30:31 +0200
+Message-Id: <DCRPJKD0UHDQ.IOWSOB2IK06E@kernel.org>
+Subject: Re: [PATCH v5 02/12] gpu: nova-core: move GSP boot code to a
+ dedicated method
+Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
+ Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
+ Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
+ <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
+ Hubbard" <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
+ "Timur Tabi" <ttabi@nvidia.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <dri-devel@lists.freedesktop.org>
+To: "Joel Fernandes" <joelagnelf@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com>
+ <20250911-nova_firmware-v5-2-5a8a33bddca1@nvidia.com>
+ <e1755470-587b-4a43-8171-3d031b7fb4f4@kernel.org>
+ <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com>
+ <ce74db34-77bc-4207-94c8-6e0580189448@kernel.org>
+ <DCQ074EMFNIK.1OJLWJXWZLDXZ@nvidia.com> <20250913010226.GA1478480@joelbox2>
+In-Reply-To: <20250913010226.GA1478480@joelbox2>
 
-On 13. Sep 2025, at 15:11, Klara Modin wrote:
-> On 2025-09-13 14:15:14 +0200, Thorsten Blum wrote:
->> The goto label 'successful_load' isn't really necessary. Set 'res =3D =
-1'
->> immediately and let 'goto done' handle the rest.
->>=20
->> No functional changes.
->>=20
->> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
->> ---
->> ...
->=20
-> This is now the only place where res will be set to 1.
+On Sat Sep 13, 2025 at 3:02 AM CEST, Joel Fernandes wrote:
+> Any chance we can initialize the locks later? We don't need locking until
+> after the boot process is completed, and if there's a way we can dynamica=
+lly
+> "pin", where we hypothetically pin after the boot process completed, that
+> might also work. Though I am not sure if that's something possible in
+> Rust/rust4linux or if it makes sense.
 
-Sorry my bad.
+We can't partially initialize structures and then rely on accessing initial=
+ized
+data only. This is one of the sources for memory bugs that Rust tries to so=
+lve.
 
-> This does not seem correct? After this patch res is not updated to 1 =
-anymore
-> if execution reaches here without taking another goto, i.e. the return
-> value is changed by this patch.
+You can wrap fields into Option types and initialize them later, which woul=
+d
+defer pin-init calls for the price of having Option fields around.
 
-Thanks, I agree that it doesn't make sense. I only intended to delete
-the label, not the 'res =3D 1'.
+However, we should never do such things. If there's the necessity to do
+something like that, it indicates a design issue.
 
-Please ignore this patch (unless someone thinks removing the goto label
-is worth a v2) and sorry for the noise.
+In this case, there's no problem, we can use pin-init without any issues ri=
+ght
+away, and should do so.
 
-Thanks,
-Thorsten
-
+pin-init is going to be an essential part of *every* Rust driver given that=
+ a
+lot of the C infrastruture that we abstract requires pinned initialization,=
+ such
+as locks and other synchronization primitives.
 
