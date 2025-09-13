@@ -1,107 +1,115 @@
-Return-Path: <linux-kernel+bounces-815202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF2EB56129
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:35:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF080B5612D
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:37:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40F42588146
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F20A3AC7F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4A12F39B5;
-	Sat, 13 Sep 2025 13:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D38592ECE8C;
+	Sat, 13 Sep 2025 13:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEGru90Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DpSN/zUM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756C32F3630;
-	Sat, 13 Sep 2025 13:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B35134BD;
+	Sat, 13 Sep 2025 13:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757770244; cv=none; b=HTJQpiR4nAMgADUsF1WejT2ZjOVcaK6seKpLZ6CfWO95c9k9NBqa92nbgaHBtXU8UW8OS6xU3vtxIp67HZF1Cx2zkCNJUeQcgFscr7AkArpxnTwnamUgXZcqNSdDORjp1eL4F1DxYokUDGOk6HBA02CqFcp6z2ZOnzfchosXDlg=
+	t=1757770664; cv=none; b=gUDhxn2RpKbaWDJEW6W7nzpHV4/ejsOe0sCdg+ljh8dzcdShmb/pVjRN6kE4ctlcu6yhr37ojHHzYIPciS16elMrsTzHVFXYXmkPNxzWPyJJg2E6s+AH98LfMqHQcTM+KaCLfGkcUPtUkPXt8kaVpa5TfzfA1rKYjDcXdb6/KkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757770244; c=relaxed/simple;
-	bh=uV6AIY3tX6ZFbEbK51nPPUHpEf3Vl5idHgfbQrj2RXs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=q2tMG3o+PpHpLerdh3cZtop9Y1g8B1VBYaRs0nHzIL49pFX1UiJBhJjUeesfPpsAaYb7T46NLGBcaRdkCzuBRYERmkmldR5HHSwZ3A5745AN+ClIyVuGLMLrA4Lr9DNA32gM8afw9ac6JUsFvJbg0wjjqRTodg/cL9BSz7682+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEGru90Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C946C4CEF4;
-	Sat, 13 Sep 2025 13:30:34 +0000 (UTC)
+	s=arc-20240116; t=1757770664; c=relaxed/simple;
+	bh=XRpWYlvYZXNuae9oCQoPaR2UYC98Agqeom8LCI6MJzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kbYYERwj3WkceYEKYM49LMCaQwAJ+lDg9447BfYv+Iw3fuz8PyKHKgdC7gW7agew1rsjRSYiuzbv5Lw9pTyTqvLrNV7r2LCxVFf2T5KYHopV8sB/n6PGx2pvzLyRQBSEEszlpMFSGjaLDNkG1WQNTMhN92AykkgCMAcFlFgntl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DpSN/zUM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B208C4CEEB;
+	Sat, 13 Sep 2025 13:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757770244;
-	bh=uV6AIY3tX6ZFbEbK51nPPUHpEf3Vl5idHgfbQrj2RXs=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=HEGru90QW4kc+aEL2YYRxXYkaCbmNxKMtYkOHgKiH/LaRkWhOjikL2I21k3MEhhWE
-	 w6k97DXeAQZ20nIexQdiEnhyxWzyox46F0JEDtqeTThu347OfGa96ORNp7h3TCYYQW
-	 weR8QKgDRRahKjU+kRdVLw2DLI3efPoLoX29RTgETFLorDFx0TB4lvMt4+15mIxsQn
-	 NMTQyzDWGSBoeUOaXOCBly0alT3C20yHjA3Gag40OIPoiufLibtm9MeuHyd6Iqay9O
-	 dnrFoDPTTYMIPfJ38pD3yEO3/EV0YRWx1H/lgF1aM3tNjcy/porZoJ46J3jk44wEOZ
-	 QZpSGK4696qnw==
+	s=k20201202; t=1757770664;
+	bh=XRpWYlvYZXNuae9oCQoPaR2UYC98Agqeom8LCI6MJzg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DpSN/zUMdfTtdNiNMue4hx0+vNslJghcxWCkmn7p9Lqtc3pjFSJldrRrLuhRW2RxX
+	 k7rVFLjEWiDxGJJD50EbgYN38c3nC7kZfrYx7/CP9a78pzoKEtP+WgBLcKxIh1hXom
+	 2zfHalCYNGVBLf53SQgj2zuFbm2sdkKSqUKTL1em7F7MYRVo4CbBsRG23UwlNePm/v
+	 ovWrKSbKXIfju1xTlUD60988VbNkGDxqpvUbgY07ger64/gKXipDN8RjBenHh2hxnT
+	 PPJtdCWQx2bg2lkfwvGbkYMPk/7y79gdlLc1yqJs4RVCLuhkvSOgT2ZDK7UnDFOsKh
+	 2Y0PMJVOp/X+g==
+Date: Sat, 13 Sep 2025 14:37:34 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] iio: adc: ad7124: fix sample rate for multi-channel
+ use
+Message-ID: <20250913143734.5cbad7e5@jic23-huawei>
+In-Reply-To: <20250910-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v4-1-8ca624c6114c@baylibre.com>
+References: <20250910-iio-adc-ad7124-fix-samp-freq-for-multi-channel-v4-1-8ca624c6114c@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 13 Sep 2025 15:30:31 +0200
-Message-Id: <DCRPJKD0UHDQ.IOWSOB2IK06E@kernel.org>
-Subject: Re: [PATCH v5 02/12] gpu: nova-core: move GSP boot code to a
- dedicated method
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>,
- "Timur Tabi" <ttabi@nvidia.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com>
- <20250911-nova_firmware-v5-2-5a8a33bddca1@nvidia.com>
- <e1755470-587b-4a43-8171-3d031b7fb4f4@kernel.org>
- <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com>
- <ce74db34-77bc-4207-94c8-6e0580189448@kernel.org>
- <DCQ074EMFNIK.1OJLWJXWZLDXZ@nvidia.com> <20250913010226.GA1478480@joelbox2>
-In-Reply-To: <20250913010226.GA1478480@joelbox2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat Sep 13, 2025 at 3:02 AM CEST, Joel Fernandes wrote:
-> Any chance we can initialize the locks later? We don't need locking until
-> after the boot process is completed, and if there's a way we can dynamica=
-lly
-> "pin", where we hypothetically pin after the boot process completed, that
-> might also work. Though I am not sure if that's something possible in
-> Rust/rust4linux or if it makes sense.
+On Wed, 10 Sep 2025 12:33:29 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-We can't partially initialize structures and then rely on accessing initial=
-ized
-data only. This is one of the sources for memory bugs that Rust tries to so=
-lve.
-
-You can wrap fields into Option types and initialize them later, which woul=
-d
-defer pin-init calls for the price of having Option fields around.
-
-However, we should never do such things. If there's the necessity to do
-something like that, it indicates a design issue.
-
-In this case, there's no problem, we can use pin-init without any issues ri=
-ght
-away, and should do so.
-
-pin-init is going to be an essential part of *every* Rust driver given that=
- a
-lot of the C infrastruture that we abstract requires pinned initialization,=
- such
-as locks and other synchronization primitives.
+> Change how the FS[10:0] field of the FILTER register is calculated to
+> get consistent sample rates when only one channel is enabled vs when
+> multiple channels are enabled in a buffered read.
+> 
+> By default, the AD7124 allows larger sampling frequencies when only one
+> channel is enabled. It assumes that you will discard the first sample or
+> so to allow for settling time and then no additional settling time is
+> needed between samples because there is no multiplexing due to only one
+> channel being enabled. The conversion formula to convert between the
+> sampling frequency and the FS[10:0] field is:
+> 
+>     fADC = fCLK / (FS[10:0] x 32)
+> 
+> which is what the driver has been using.
+> 
+> On the other hand, when multiple channels are enabled, there is
+> additional settling time needed when switching between channels so the
+> calculation to convert between becomes:
+> 
+>     fADC = fCLK / (FS[10:0] x 32 x N)
+> 
+> where N depends on if SINGLE_CYCLE is set, the selected filter type and,
+> in some cases, the power mode.
+> 
+> The FILTER register has a SINGLE_CYCLE bit that can be set to force the
+> single channel case to use the same timing as the multi-channel case.
+> 
+> Before this change, the first formula was always used, so if all of the
+> in_voltageY_sampling_frequency attributes were set to 10 Hz, then doing
+> a buffered read with 1 channel enabled would result in the requested
+> sampling frequency of 10 Hz. But when more than one channel was
+> enabled, the actual sampling frequency would be 2.5 Hz per channel,
+> which is 1/4 of the requested frequency.
+> 
+> After this change, the SINGLE_CYCLE flag is now always enabled and the
+> multi-channel formula is now always used. This causes the sampling
+> frequency to be consistent regardless of the number of channels enabled.
+> 
+> For now, we are hard-coding N = 4 since the driver doesn't yet support
+> other filter types other than the default sinc4 filter.
+> 
+> The AD7124_FILTER_FS define is moved while we are touching this to
+> keep the bit fields in descending order to be consistent with the rest
+> of the file.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+Applied to the togreg branch of iio.git and pushed out as testing for all
+the normal reasons.
 
