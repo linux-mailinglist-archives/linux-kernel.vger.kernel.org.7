@@ -1,121 +1,80 @@
-Return-Path: <linux-kernel+bounces-815373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D84B5635F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 23:59:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1A9B56378
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:00:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D4A1B22A9E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 21:59:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 288957A4427
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 21:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C33B299924;
-	Sat, 13 Sep 2025 21:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5A62BD012;
+	Sat, 13 Sep 2025 22:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MqAZ3BL0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyuZs716"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D032989B4
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 21:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B6D29D29E;
+	Sat, 13 Sep 2025 22:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757800731; cv=none; b=j8LXmqOuX2C5jLd/reyvhnC4nftCtobm5gMS1vrTvh89bQB/vITulpRpZLpGdV4civWUBjKvJki65yOPio3InkXCqfX8LrmF9bwO7l3QutuIiRmR/CE2yDS7u4gq3Rz6dLSjsfEOm4S8u8G9yT7kt41GJhFdBBxtwSOiPwxM8Mo=
+	t=1757800824; cv=none; b=Fyed4gUpWJlGXeEIowLS+O0AYmR2bibS68rlUmGCSz7OrpA4DPujMFcpPBuITZGHnR5YCwYwjdFtScGyeHJs3GuXJxx8aNl3cmzjy9SqHKJVoThE1zV90W0rfeI0QgHAkRrHTOByxmKu8/7dETUcPcqmAEIYq0rz/fZMa5D4NH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757800731; c=relaxed/simple;
-	bh=LOkCsYvBCi1biYmhepUrhqSgx/AvwDKKOTu2pLbdFBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t4lvhHjBdi0MoEt/888mKIwy09Y1+WBJu+BkfBScma0gZ0JyGrlWDDgJV8+D6mDlfOM6Vv/K0rjIz/UI6Sf17Nbi74l1VtS9pxOyIw8t0QkwZSTBuMUSqWAGjWkhQw6vEg1zqvv6Lxv2rXaeEMKds3UCQOzIaA+DdzuvA5HlfT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MqAZ3BL0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9DEC4CEFD
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 21:58:51 +0000 (UTC)
+	s=arc-20240116; t=1757800824; c=relaxed/simple;
+	bh=zZ1OUc3zM/Cg73rU6Gn5fHp1VQlbaJwqo8Lcfm2ews4=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=aJw6gkqlRL88GtwZPz1U1+9hfrTdv4EuZRJIn888jW5cScY9JLS0EOXdHfC3rw493cQxNs2C4PuYEkuLeJHu8owacVYoldcwrjcsZYxHKUhX2IAONjM6bnbDqlHSZbuHLJZJaBJDryoU/fHzosd8i2SsAorjufqohE2sek+WJfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyuZs716; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E69C4CEEB;
+	Sat, 13 Sep 2025 22:00:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757800731;
-	bh=LOkCsYvBCi1biYmhepUrhqSgx/AvwDKKOTu2pLbdFBE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MqAZ3BL08G0VoegLZAmlWSt/9K9iPdP3cdcw0ykMDuUaKbKBfoiKSEbXawOgYYava
-	 ky5V0Xk2yeZ0HchvollUmChz5Kx/FZfG62uqvBCwNmOArkcGVIFqzzqhuIztwHfc+l
-	 H3j26G11wgk4Ep9vvGEoQ0qwcKV0koHXnru+j3tAv11n9VN+SP8NYhTWSjKpunqRET
-	 EplkYrU7Atx5Nw9PRUKmRV0XWVX0qBo2OgBRYktSfyRTl7x3nKdS9wTLdz9LJoG0aD
-	 X++73p2wC4mSbr7KGhL2z73oALBYlL7057CEveVuZc+SsqCNGsS78zQx2OXc0ka3+b
-	 aTle0E00pOzLg==
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-826fe3b3e2bso77251885a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 14:58:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDJaVMtZSABkzJo8Q1cVeBMHtEKOqE24Jah7nSu41fXJEr1ukeXkrz9A3PWNZcXIOztwPeImycupisMjk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9eo6boC2a9HomyRwy2sGTKb0+b+8x7RzH2kahsz72bgv0xesl
-	NP6HWsc6k5VJILWCKBLhjlni5KmJOUtweC+UgQAwtXzLWjV9lkUc+cbDEHNX5Re25yqp0rwAgdv
-	DyfPG5em3mImgC9Lr5LJIDZRXqFe/Py0=
-X-Google-Smtp-Source: AGHT+IFhdgDXcY38HLqUNK+yXTp4MrRWnBrSKYcSMoTNPz3CdZ7gKInWn6VzZRT6FZ8yo1siiDRAkb+w/GTh9xUoYc4=
-X-Received: by 2002:a05:620a:bca:b0:7f3:e3fc:c2f3 with SMTP id
- af79cd13be357-823fbde835cmr1050243985a.10.1757800730510; Sat, 13 Sep 2025
- 14:58:50 -0700 (PDT)
+	s=k20201202; t=1757800822;
+	bh=zZ1OUc3zM/Cg73rU6Gn5fHp1VQlbaJwqo8Lcfm2ews4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=fyuZs716eTJ7WPS2GiS4TdLlvTBU5QH2yzss1KHabropYqAQ3mFpYndd3B7HsP1K8
+	 DUHqzSxnUcS6JF7Q2E8xc4tUTV2tPVPVaMgpSxGV5fWl+0ZQuV5+jYVTYKs8pnyI0K
+	 5WF2hDgQ0mnCS6OFHAqJnb0RUFiQmAnA+5j1mtzz5joiP0/HPeLFyeO5NbL5kZZsw7
+	 elz9WmuogeE/UTKHpTHOk/WQz2o9X7hNvFi0LZpshjLdzpfwr6tVeNVFLICYdDZSnf
+	 VBuiipeKzSFzh0wHNk/WlDvwvbiPb/tC9CAEKJDufyKhWKTWOwpAD9jUg+0cBii9RY
+	 vR4ZI9RlvvJag==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250912222539.149952-1-dwindsor@gmail.com> <20250912222539.149952-2-dwindsor@gmail.com>
- <CAPhsuW4phthSOfSGCrf5iFHqZH8DpTiGW+zgmTJQzNu0LByshw@mail.gmail.com> <CAEXv5_gR1=OcH9dKg3TA1MGkq8dRSNX=phuNK6n6UzD=eh6cjQ@mail.gmail.com>
-In-Reply-To: <CAEXv5_gR1=OcH9dKg3TA1MGkq8dRSNX=phuNK6n6UzD=eh6cjQ@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Sat, 13 Sep 2025 14:58:39 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW44HznMHFZdaxCcdsVrYuYhJOQAPEjETxhm-j_fk18QUw@mail.gmail.com>
-X-Gm-Features: Ac12FXyEsLL2l0rxOgBvaBZs4-gra_5SMkSsrwtfeX4UksEfDcIiQIZ0bySh-RA
-Message-ID: <CAPhsuW44HznMHFZdaxCcdsVrYuYhJOQAPEjETxhm-j_fk18QUw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] bpf: Add BPF_MAP_TYPE_CRED_STORAGE map type and kfuncs
-To: David Windsor <dwindsor@gmail.com>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, martin.lau@linux.dev, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <aLyHtxrU4mGFfnFs@x1>
+References: <aLyHtxrU4mGFfnFs@x1>
+Subject: Re: [GIT PULL] clk: thead: Updates for v6.18
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, Michal Wilczynski <m.wilczynski@samsung.com>, Yao Zi <ziyao@disroot.org>, Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <fustini@kernel.org>
+Date: Sat, 13 Sep 2025 15:00:21 -0700
+Message-ID: <175780082175.4354.18337386109597093831@lazor>
+User-Agent: alot/0.11
 
-On Fri, Sep 12, 2025 at 5:27=E2=80=AFPM David Windsor <dwindsor@gmail.com> =
-wrote:
-[...]
-> >
-> > Maybe I missed something, but I think you haven't addressed Alexei's
-> > question in v1: why this is needed and why hash map is not sufficient.
-> >
-> > Other local storage types (task, inode, sk storage) may get a large
-> > number of entries in a system, and thus would benefit from object
-> > local storage. I don't think we expect too many creds in a system.
-> > hash map of a smallish size should be good in most cases, and be
-> > faster than cred local storage.
-> >
-> > Did I get this right?
-> >
-> > Thanks,
-> > Song
-> >
->
-> Yes I think I addressed in the cover letter of -v2:
->
-> "Like other local storage types (task, inode, sk), this provides automati=
-c
-> lifecycle management and is useful for LSM programs tracking credential
-> state across LSM calls. Lifetime management is necessary for detecting
-> credential leaks and enforcing time-based security policies."
->
-> You're right it's faster and there aren't many creds, but I feel like
-> in this case, it'll be a nightmare to manual cleanup with hashmaps. I
-> think the correctness we get with lifetime management is worth it in
-> this case, but could be convinced otherwise. Many cred usage patterns
-> are short lived and a hash map could quickly become stale...
+Quoting Drew Fustini (2025-09-06 12:12:55)
+> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
+85:
+>=20
+>   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/fustini/linux.git tags/th=
+ead-clk-for-v6.18
+>=20
+> for you to fetch changes up to c567bc5fc68c4388c00e11fc65fd14fe86b52070:
+>=20
+>   clk: thead: th1520-ap: set all AXI clocks to CLK_IS_CRITICAL (2025-08-1=
+8 14:58:23 -0700)
+>=20
+> ----------------------------------------------------------------
 
-We can clean up the hashmap in hook cred_free, no? The following
-check in security_cred_free() seems problematic:
-
-        if (unlikely(cred->security =3D=3D NULL))
-                return;
-
-But as far as I can tell, it is not really useful, and can be removed.
-With this removed, hash map will work just as well. Did I miss
-something?
-
-Thanks,
-Song
+Thanks. Pulled into to clk-next
 
