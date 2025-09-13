@@ -1,127 +1,397 @@
-Return-Path: <linux-kernel+bounces-815381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC6FB5638F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:10:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E821B56393
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A02691B24522
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:11:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE35B7A58FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075672BDC25;
-	Sat, 13 Sep 2025 22:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB3BB2BE642;
+	Sat, 13 Sep 2025 22:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TKeJR7NN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fAY7+glq"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616F927F724;
-	Sat, 13 Sep 2025 22:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2DC2BE651
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 22:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757801441; cv=none; b=idx0XzXA5c1uoUdZVj32eNOeD8/y5zX+CXd1+i8X8Fov/lRXbAUUxXpx+IZ4KV+GVJ1LsuIiXz6S1cOWHF58vE+fFsDwkHTVM5wpJg5xAl4o0r/ZneW+BZ3CtkKl6mmYBg4H1mmWDtBHhjoEHLmaNp81teqRJZEN8WqX5FDYNG8=
+	t=1757801958; cv=none; b=e2nnyn7puiuoOOLSE72b8Hgh7hHWHdqIMN6SnM/LsJKxUk6v+x75vEW7XxHnlVOETAnOvbhlkWvSO2fw8IUKkGNhLZb5L1kgOZGb7oLrS8uu2NrIu6SjnJx0Jx8e/Y+pCJtdBF+yTle8lpz/aSLPIVmDvVQjPPu5o4NFDxXlQAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757801441; c=relaxed/simple;
-	bh=i0bogOX/tsV96N7qxN1qW4aceR3AWq7X8gaP0+oii1w=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=KDhfazZGINMdAPlfa5AmuDFT8PcdWMz9YbqYPykSWaB9m23iKU+zCyVoIZONPlSeWXYX7acbzQT1GeCoxLJkWq0U6tC1kvL/ebrNu6+KH1vGug0qNl3DXi4p5Fxob0p+HS/LbvkqL61p205Li00mTiLuSIi0MyiAw14BjlLZXcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TKeJR7NN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5EE1C4CEEB;
-	Sat, 13 Sep 2025 22:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757801441;
-	bh=i0bogOX/tsV96N7qxN1qW4aceR3AWq7X8gaP0+oii1w=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=TKeJR7NN5+6GM7hgg+l7XOkW5kO9YlHTfypEzelJcP2u/m3HIy4n66/vDoUhL2rqa
-	 Lq3x1Q6bM2AaOMeLZwl8smilcoX/gMGV+8hBc/pw0hxwXAktv3EBJrs0pf6opfzGBl
-	 hDq7VB9fM2WLFtWdI/2h8jySg3JhfxyyoiWBzwPuBavyzQw/Se80sJNCQWOTi9dGoB
-	 qZctxBjOxjzJv2VHirrDqK1VLxxPfIUeOg3JwvWOA/1a/bEmpt9hEn8UUH03H+LNX1
-	 LNwtXjw5riMs4Tn4jNK7VJC/bNXYIiC5zsuXcxbVgEx89d0N7jpu8iEjJgWfTQf1kw
-	 eMS9bBmSwdzQQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1757801958; c=relaxed/simple;
+	bh=mK3bqz1lh5DOq/GSlY+/z3Eg/cIrTFA1sxSnKbvqraM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ky6FRwYj1c2qf79FLpNjmf+kTnK2hwDxdFmHynR+qpyrJShqk4a2jjCj2+8YjZakF0J7h581kU7ALJxQQZCvIFpNLD/lGH1xfBkK7x28TkWLOa45e3poWepB0la2LLD8/n0SaRWPlvOW94XNrntetnwigdMEjAevvDwY/sIYUm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fAY7+glq; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-620724883e6so5925617a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 15:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757801955; x=1758406755; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3RLnhj7G25qdMaXLVsgM9B42gj/5BiTnSzsDycCl5L4=;
+        b=fAY7+glqyaYff9QQ0YkrfVFWYDVc5+Zb8nBYce6ZmlqpFNdLyIb6295po72X9eNbeE
+         9kyIELvPZeqAT7ZU4CIjW1Xk608mkHZOywS+aGwPeAoxYaQHQUZAQh7GecGHJctHeTkM
+         vtiRTNBWT4hM009Rm90ucZ2eriZdvB7vb4bIhVCYtxipu9ayx19nIu6AvphvlGZWchza
+         pMAlgNvdu9sqDWj/7isNJ8BkPyP9q0K/k1D8WSHmnqJg3xtno/IkrOubbhjfVKESV881
+         DmW5mhZnhaYF2vh1h643W6YCS4Dd2XijmelDVFljKeXnMiDYgXfwInI++z0M6BadlrT/
+         qQJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757801955; x=1758406755;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3RLnhj7G25qdMaXLVsgM9B42gj/5BiTnSzsDycCl5L4=;
+        b=tMBokG6wrxmnO4dss4wDK4LMo7ceL7hkkYnuk7NFZ4I05eO3YYBUvaVLI0chn2B2CV
+         WGmA/vWAFIXB1FZezbCq/jNeghIsxd7FyMxjuAtZHpU9btpbs99LtNRObMvj2OoYZbkx
+         VQ3EJv82+3wo+teWJiH6Fbrlu7sZFpLluSdVJZF3ky2YTZvHnUdDblR/XbqBM/ifJCsG
+         zeNTLoQB/5PX9leDkTgL+Mjw7l7A8E+ff6OwPfsv78yL3fbtaRoKHqMATt34sDW1gJMY
+         aHllWOvGXIbtJEL2HrocZ8KEotQrTYP1oj370CgTWGyi+TRUOW/wEH1qGBkxDU1634Rp
+         Ts4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWl8McL0sh88p5ucppr6qQKvhZxKWOxD0WxPZThf5pvcgiRfaLZN/RcrW2dZDWA0T4A5mdRihRSvzOGx1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+EYF8/dK4YB21cfoVqpEu1h53HTRO/fdLMMj3cd69GP5m8hfr
+	8WsI1UY6u4dyd5rbRJyYm7MXTOS0eIp33jrcpCRX72BUqSuuZh5ejw2G0apiw8KP0UnaYPW1hYW
+	qQX+ygpcyvUzKDnxGqWsIIBecasK3kqw=
+X-Gm-Gg: ASbGnctNspBIfOlAQls4yAohU/xYPHMHyMF/ElPTdd8f+p71K/XVf00zyaBCEyWQID4
+	ZvdNmX1dCtsE8F8bIu4eVpltoB0LYgzgeq9uGZHcdbGW5VIvQepX/gnvzmdTAEl1dDVfNxBd0fP
+	vGRO10kRchykljm7oLu7BWR2+gQywaRCK7OKu4QK4c/QhX3I98zA2J7cJ2WqryFCV4syraFqi8D
+	aDi4Ct+RnRGngiMQmeutKRhg9aWpw==
+X-Google-Smtp-Source: AGHT+IE2lHR/3KJu91xQakdhwEaZeik3htU2ix/ewwP0SUcum9tVrS+wa98xrUE+9bFew3+1MR0f1wUqlsooW32ETBU=
+X-Received: by 2002:a05:6402:24c9:b0:629:1c5:808d with SMTP id
+ 4fb4d7f45d1cf-62ed80fd472mr6273515a12.3.1757801954530; Sat, 13 Sep 2025
+ 15:19:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250813224000.130292-1-eslam.medhat1993@gmail.com> <2e4334ac-ebd2-4686-8d5c-6d7a637a6d57@microchip.com>
+In-Reply-To: <2e4334ac-ebd2-4686-8d5c-6d7a637a6d57@microchip.com>
+From: Eslam Khafagy <eslam.medhat1993@gmail.com>
+Date: Sun, 14 Sep 2025 01:19:02 +0300
+X-Gm-Features: AS18NWAOu4BgbruQRdwVxLiqDLLs8nLi7Y1Q4QEyTGk0jZvNFbgORyQvtcpoX80
+Message-ID: <CAFRctSHGG-7tx0o5-hi2pZbsw-9jGV1FZrFquOOnFAB=i+O8Gw@mail.gmail.com>
+Subject: Re: [PATCH v4] drm: atmel-hlcdc: replace dev_* print functions with
+ drm_* variants
+To: Manikandan.M@microchip.com, Dharma Balasubiramani <Dharma.B@microchip.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Nicolas Ferre <Nicolas.Ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	open list <linux-kernel@vger.kernel.org>
+Cc: Eslam Khafagy <eslam.medhat1993@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aL8MXYrR5uoBa4cB@x1>
-References: <aL8MXYrR5uoBa4cB@x1>
-Subject: Re: [GIT PULL] clk: convert drivers from deprecated round_rate() to determine_rate() for v6.18
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>
-To: Brian Masney <bmasney@redhat.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Sat, 13 Sep 2025 15:10:40 -0700
-Message-ID: <175780144026.4354.7838864408360305570@lazor>
-User-Agent: alot/0.11
 
-Quoting Brian Masney (2025-09-08 10:03:25)
-> Hi Stephen and Michael,
->=20
-> Given the large number of patches that I have posted for the
-> round_rate() to determine_rate() conversion, and to avoid spamming
-> large numbers of people's inboxes where a v2 was needed on only a few
-> patches in a series with 114 patches, I submitted a v2 for only the
-> patches that needed it. Additionally, some of the other patches in the
-> large series have already been picked up by some of the clk
-> submaintainers, so should be excluded as well. This makes it more
-> complicated to merge everything, so I collected the most recent
-> versions of the conversion work for drivers/clk using the following b4
-> commands:
->=20
->     MAILDIR=3D$(mktemp -d)
->     b4 am -o "${MAILDIR}" --cherry-pick 1-1,3-3,5-8 \
->             20250828-clk-round-rate-v2-v1-0-b97ec8ba6cc4@redhat.com
->     b4 am -o "${MAILDIR}" \
->             --cherry-pick 1-37,39-47,52-63,65-67,69-89,91-91,94-94,96-96,=
-100-111,114-114 \
->             20250811-clk-for-stephen-round-rate-v1-0-b3bf97b038dc@redhat.=
-com
->     b4 am -o "${MAILDIR}" \
->             20250903-clk-tegra-round-rate-v2-v2-0-3126d321d4e4@redhat.com
->     b4 am -o "${MAILDIR}" \
->             20250811-b4-clk-ti-round-rate-v1-0-cc0840594a49@redhat.com
->     b4 am -o "${MAILDIR}" \
->             20250827-clk-scmi-round-rate-v2-1-3782a50835ed@redhat.com
->    =20
->     git am "${MAILDIR}"/20250828_bmasney_clk_convert_drivers_from_depreca=
-ted_round_rate_to_determine_rate.mbx
->     git am "${MAILDIR}"/20250811_bmasney_clk_convert_drivers_from_depreca=
-ted_round_rate_to_determine_rate.mbx
->     git am "${MAILDIR}"/v2_20250903_bmasney_clk_tegra_convert_from_clk_ro=
-und_rate_to_determine_rate.mbx
->     git am "${MAILDIR}"/20250811_bmasney_clk_ti_convert_from_clk_round_ra=
-te_to_determine_rate.mbx
->     git am "${MAILDIR}"/v2_20250827_bmasney_clk_scmi_migrate_round_rate_t=
-o_determine_rate.mbx
->=20
-> Additionally I included the patch series for drivers/clk/ti and
-> drivers/clk/tegra since this is all related work.
->=20
-> Note the v2 clk/tegra series that I posted mistakenly had extra Link
-> tags added when I posted them to the mailinglist. I dropped the Link
-> tag for these commits so that those tags don't appear in the git history
-> in Linus's tree.
->=20
->=20
-> The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d5=
-85:
->=20
->   Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
->=20
-> are available in the Git repository at:
->=20
->   https://github.com/masneyb/linux tags/clk-round-rate-6.18
->=20
-> for you to fetch changes up to 80cb2b6edd8368f7e1e8bf2f66aabf57aa7de4b7:
->=20
->   clk: scmi: migrate round_rate() to determine_rate() (2025-09-08 12:50:5=
-6 -0400)
->=20
-> ----------------------------------------------------------------
+Hello Manikandan,
+This patch has been reviewed for a while now. but i didn't get an
+update if it's been pulled yet or not .
 
-Thanks. Pulled into clk-next
+kindly can you kindly update if it's been pulled or not ?
+thanks in advance.
+
+
+On Mon, Aug 18, 2025 at 12:16=E2=80=AFPM <Manikandan.M@microchip.com> wrote=
+:
+>
+> On 14/08/25 4:09 am, Eslam Khafagy wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
+the content is safe
+> >
+> > Update the Atmel HLCDC code to use DRM print macros drm_*() instead of
+> > dev_warn() and dev_err(). This change ensures consistency with DRM
+> > subsystem logging conventions [1].
+> >
+> > [1]
+> > Link: https://docs.kernel.org/gpu/todo.html#convert-logging-to-drm-func=
+tions-with-drm-device-parameter
+> >
+> > Signed-off-by: Eslam Khafagy <eslam.medhat1993@gmail.com>
+>
+> Reviewed-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+>
+> > ---
+> >   .../gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c    | 21 ++++++++++--------=
+-
+> >   drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c  | 14 ++++++-------
+> >   .../gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c  |  3 ++-
+> >   .../gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c   |  6 +++---
+> >   4 files changed, 23 insertions(+), 21 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c b/drivers/g=
+pu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> > index 0f7ffb3ced20..e0efc7309b1b 100644
+> > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_crtc.c
+> > @@ -20,6 +20,7 @@
+> >   #include <drm/drm_atomic_helper.h>
+> >   #include <drm/drm_crtc.h>
+> >   #include <drm/drm_modeset_helper_vtables.h>
+> > +#include <drm/drm_print.h>
+> >   #include <drm/drm_probe_helper.h>
+> >   #include <drm/drm_vblank.h>
+> >
+> > @@ -215,32 +216,32 @@ static void atmel_hlcdc_crtc_atomic_disable(struc=
+t drm_crtc *c,
+> >                  if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, s=
+tatus,
+> >                                               !(status & ATMEL_XLCDC_CM=
+),
+> >                                               10, 1000))
+> > -                       dev_warn(dev->dev, "Atmel LCDC status register =
+CMSTS timeout\n");
+> > +                       drm_warn(dev, "Atmel LCDC status register CMSTS=
+ timeout\n");
+> >
+> >                  regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_XLCDC_SD);
+> >                  if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, s=
+tatus,
+> >                                               status & ATMEL_XLCDC_SD,
+> >                                               10, 1000))
+> > -                       dev_warn(dev->dev, "Atmel LCDC status register =
+SDSTS timeout\n");
+> > +                       drm_warn(dev, "Atmel LCDC status register SDSTS=
+ timeout\n");
+> >          }
+> >
+> >          regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_DISP);
+> >          if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+> >                                       !(status & ATMEL_HLCDC_DISP),
+> >                                      10, 1000))
+> > -               dev_warn(dev->dev, "Atmel LCDC status register DISPSTS =
+timeout\n");
+> > +               drm_warn(dev, "Atmel LCDC status register DISPSTS timeo=
+ut\n");
+> >
+> >          regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_SYNC);
+> >          if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+> >                                       !(status & ATMEL_HLCDC_SYNC),
+> >                                      10, 1000))
+> > -               dev_warn(dev->dev, "Atmel LCDC status register LCDSTS t=
+imeout\n");
+> > +               drm_warn(dev, "Atmel LCDC status register LCDSTS timeou=
+t\n");
+> >
+> >          regmap_write(regmap, ATMEL_HLCDC_DIS, ATMEL_HLCDC_PIXEL_CLK);
+> >          if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+> >                                       !(status & ATMEL_HLCDC_PIXEL_CLK)=
+,
+> >                                      10, 1000))
+> > -               dev_warn(dev->dev, "Atmel LCDC status register CLKSTS t=
+imeout\n");
+> > +               drm_warn(dev, "Atmel LCDC status register CLKSTS timeou=
+t\n");
+> >
+> >          clk_disable_unprepare(crtc->dc->hlcdc->sys_clk);
+> >          pinctrl_pm_select_sleep_state(dev->dev);
+> > @@ -269,32 +270,32 @@ static void atmel_hlcdc_crtc_atomic_enable(struct=
+ drm_crtc *c,
+> >          if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+> >                                       status & ATMEL_HLCDC_PIXEL_CLK,
+> >                                       10, 1000))
+> > -               dev_warn(dev->dev, "Atmel LCDC status register CLKSTS t=
+imeout\n");
+> > +               drm_warn(dev, "Atmel LCDC status register CLKSTS timeou=
+t\n");
+> >
+> >          regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_HLCDC_SYNC);
+> >          if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+> >                                       status & ATMEL_HLCDC_SYNC,
+> >                                       10, 1000))
+> > -               dev_warn(dev->dev, "Atmel LCDC status register LCDSTS t=
+imeout\n");
+> > +               drm_warn(dev, "Atmel LCDC status register LCDSTS timeou=
+t\n");
+> >
+> >          regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_HLCDC_DISP);
+> >          if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, status,
+> >                                       status & ATMEL_HLCDC_DISP,
+> >                                       10, 1000))
+> > -               dev_warn(dev->dev, "Atmel LCDC status register DISPSTS =
+timeout\n");
+> > +               drm_warn(dev, "Atmel LCDC status register DISPSTS timeo=
+ut\n");
+> >
+> >          if (crtc->dc->desc->is_xlcdc) {
+> >                  regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_XLCDC_CM);
+> >                  if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, s=
+tatus,
+> >                                               status & ATMEL_XLCDC_CM,
+> >                                               10, 1000))
+> > -                       dev_warn(dev->dev, "Atmel LCDC status register =
+CMSTS timeout\n");
+> > +                       drm_warn(dev, "Atmel LCDC status register CMSTS=
+ timeout\n");
+> >
+> >                  regmap_write(regmap, ATMEL_HLCDC_EN, ATMEL_XLCDC_SD);
+> >                  if (regmap_read_poll_timeout(regmap, ATMEL_HLCDC_SR, s=
+tatus,
+> >                                               !(status & ATMEL_XLCDC_SD=
+),
+> >                                               10, 1000))
+> > -                       dev_warn(dev->dev, "Atmel LCDC status register =
+SDSTS timeout\n");
+> > +                       drm_warn(dev, "Atmel LCDC status register SDSTS=
+ timeout\n");
+> >          }
+> >
+> >          pm_runtime_put_sync(dev->dev);
+> > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu=
+/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> > index fa8ad94e431a..acb017a2486b 100644
+> > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> > @@ -724,19 +724,19 @@ static int atmel_hlcdc_dc_modeset_init(struct drm=
+_device *dev)
+> >
+> >          ret =3D atmel_hlcdc_create_outputs(dev);
+> >          if (ret) {
+> > -               dev_err(dev->dev, "failed to create HLCDC outputs: %d\n=
+", ret);
+> > +               drm_err(dev, "failed to create HLCDC outputs: %d\n", re=
+t);
+> >                  return ret;
+> >          }
+> >
+> >          ret =3D atmel_hlcdc_create_planes(dev);
+> >          if (ret) {
+> > -               dev_err(dev->dev, "failed to create planes: %d\n", ret)=
+;
+> > +               drm_err(dev, "failed to create planes: %d\n", ret);
+> >                  return ret;
+> >          }
+> >
+> >          ret =3D atmel_hlcdc_crtc_create(dev);
+> >          if (ret) {
+> > -               dev_err(dev->dev, "failed to create crtc\n");
+> > +               drm_err(dev, "failed to create crtc\n");
+> >                  return ret;
+> >          }
+> >
+> > @@ -778,7 +778,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *d=
+ev)
+> >
+> >          ret =3D clk_prepare_enable(dc->hlcdc->periph_clk);
+> >          if (ret) {
+> > -               dev_err(dev->dev, "failed to enable periph_clk\n");
+> > +               drm_err(dev, "failed to enable periph_clk\n");
+> >                  return ret;
+> >          }
+> >
+> > @@ -786,13 +786,13 @@ static int atmel_hlcdc_dc_load(struct drm_device =
+*dev)
+> >
+> >          ret =3D drm_vblank_init(dev, 1);
+> >          if (ret < 0) {
+> > -               dev_err(dev->dev, "failed to initialize vblank\n");
+> > +               drm_err(dev, "failed to initialize vblank\n");
+> >                  goto err_periph_clk_disable;
+> >          }
+> >
+> >          ret =3D atmel_hlcdc_dc_modeset_init(dev);
+> >          if (ret < 0) {
+> > -               dev_err(dev->dev, "failed to initialize mode setting\n"=
+);
+> > +               drm_err(dev, "failed to initialize mode setting\n");
+> >                  goto err_periph_clk_disable;
+> >          }
+> >
+> > @@ -802,7 +802,7 @@ static int atmel_hlcdc_dc_load(struct drm_device *d=
+ev)
+> >          ret =3D atmel_hlcdc_dc_irq_install(dev, dc->hlcdc->irq);
+> >          pm_runtime_put_sync(dev->dev);
+> >          if (ret < 0) {
+> > -               dev_err(dev->dev, "failed to install IRQ handler\n");
+> > +               drm_err(dev, "failed to install IRQ handler\n");
+> >                  goto err_periph_clk_disable;
+> >          }
+> >
+> > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c b/drivers=
+/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+> > index 50fee6a93964..0b8a86afb096 100644
+> > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+> > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_output.c
+> > @@ -15,6 +15,7 @@
+> >   #include <drm/drm_bridge.h>
+> >   #include <drm/drm_encoder.h>
+> >   #include <drm/drm_of.h>
+> > +#include <drm/drm_print.h>
+> >   #include <drm/drm_simple_kms_helper.h>
+> >
+> >   #include "atmel_hlcdc_dc.h"
+> > @@ -92,7 +93,7 @@ static int atmel_hlcdc_attach_endpoint(struct drm_dev=
+ice *dev, int endpoint)
+> >          output->bus_fmt =3D atmel_hlcdc_of_bus_fmt(ep);
+> >          of_node_put(ep);
+> >          if (output->bus_fmt < 0) {
+> > -               dev_err(dev->dev, "endpoint %d: invalid bus width\n", e=
+ndpoint);
+> > +               drm_err(dev, "endpoint %d: invalid bus width\n", endpoi=
+nt);
+> >                  return -EINVAL;
+> >          }
+> >
+> > diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/=
+gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> > index 4a7ba0918eca..817284509b57 100644
+> > --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> > +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+> > @@ -1034,7 +1034,7 @@ static void atmel_hlcdc_irq_dbg(struct atmel_hlcd=
+c_plane *plane,
+> >          if (isr &
+> >              (ATMEL_HLCDC_LAYER_OVR_IRQ(0) | ATMEL_HLCDC_LAYER_OVR_IRQ(=
+1) |
+> >               ATMEL_HLCDC_LAYER_OVR_IRQ(2)))
+> > -               dev_dbg(plane->base.dev->dev, "overrun on plane %s\n",
+> > +               drm_dbg(plane->base.dev, "overrun on plane %s\n",
+> >                          desc->name);
+> >   }
+> >
+> > @@ -1051,7 +1051,7 @@ static void atmel_xlcdc_irq_dbg(struct atmel_hlcd=
+c_plane *plane,
+> >          if (isr &
+> >              (ATMEL_XLCDC_LAYER_OVR_IRQ(0) | ATMEL_XLCDC_LAYER_OVR_IRQ(=
+1) |
+> >               ATMEL_XLCDC_LAYER_OVR_IRQ(2)))
+> > -               dev_dbg(plane->base.dev->dev, "overrun on plane %s\n",
+> > +               drm_dbg(plane->base.dev, "overrun on plane %s\n",
+> >                          desc->name);
+> >   }
+> >
+> > @@ -1140,7 +1140,7 @@ static void atmel_hlcdc_plane_reset(struct drm_pl=
+ane *p)
+> >          if (state) {
+> >                  if (atmel_hlcdc_plane_alloc_dscrs(p, state)) {
+> >                          kfree(state);
+> > -                       dev_err(p->dev->dev,
+> > +                       drm_err(p->dev,
+> >                                  "Failed to allocate initial plane stat=
+e\n");
+> >                          return;
+> >                  }
+> > --
+> > 2.43.0
+> >
+>
+> --
+> Thanks and Regards,
+> Manikandan M.
+>
+
+
+--=20
+
+Eslam Medhat Khafagy
+
+https://www.linkedin.com/in/eslam-khafagy-a8a68159/
 
