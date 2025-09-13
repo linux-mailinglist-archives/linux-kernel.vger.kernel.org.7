@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-815018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37D35B55E35
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:08:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5977B55E34
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C12AA57E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:08:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 649A3586879
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 422211E9B0B;
-	Sat, 13 Sep 2025 04:08:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7233F1EB9F2;
+	Sat, 13 Sep 2025 04:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Q3gQjR+W"
-Received: from mail3-165.sinamail.sina.com.cn (mail3-165.sinamail.sina.com.cn [202.108.3.165])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zvj7+2VJ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7CF135968
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 04:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E9935968;
+	Sat, 13 Sep 2025 04:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757736519; cv=none; b=e2JEPbWZoKg9BfNzo0He2LvWfWX2k5xsjXhordncpIGe/hds83UXlkfmAjkozNLJlno8D0rZuUQd0A1OKd3nOyNuVjCt2YqFsReD+aSVm4Ned7YSLC76a9kh5hZA4eh9+P333OO0w1mIWUpi8o7udvNRj0jDQQMPI2YzFXJ7mj4=
+	t=1757736470; cv=none; b=a40kHDTc1CUdRoaw7jYIuKPN2mfPtR3Vq3wJ6UwBIdFttwlHSmf2j+O0sjxG3xx1BdAP3etWEevwYOPeuAQ0bC2AuTDNzORMwUCpJ/tdgFA/qjdtlTL6tqQE2XqlRCQU45IB64eWgIWRf9p/CZzkPURvmFe9srWpLLn/XupVVR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757736519; c=relaxed/simple;
-	bh=Jt33AzfLQIuLqIBPvJLVZ9RYYyN0qYenLlVwz0XaD+o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JDY6LQkTN8jSZrTIXoHrjxADPCRZqWQ2KiK5vUVL+sExjiZHegmsG1R3jcTIoXXXIAIUS1x2fv0lng40MNQ4LHic5JwBCs0cUpAk2mpcuxEIZaksaCJwiy59yk9dTpHGXv43O4l7NFxGAdazFiGdpZRvzIxE0FagJ/QwAJmqaqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Q3gQjR+W; arc=none smtp.client-ip=202.108.3.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1757736514;
-	bh=gGYwm0LRjTr770IHkOLO2QN58gYe1BuaylrhdxrBUiU=;
-	h=From:Subject:Date:Message-ID;
-	b=Q3gQjR+Wz13M42ATzfcdkYzaL2UmFXogvkquqzbNl5n4M7H5+uz5fZDozeaLDPQNb
-	 Sq1Uw19sLUE+O+Ne/Y7ZjTTXn71FNr0xk/7r0zRWDMQL+CVn8t7iJ1aSZE8YmiHQF4
-	 OlBhhlSTAaQoZOMgtVMlTo5tia/+u3RRwFcO3bl0=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 68C4ECF9000008D9; Sat, 13 Sep 2025 12:03:07 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 3389216685357
-X-SMAIL-UIID: 7CECBC62C76742E69A6671562AC2546A-20250913-120307-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+0e4ebcc970728e056324@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: wild-memory-access Read in l2cap_connect_cfm
-Date: Sat, 13 Sep 2025 12:02:51 +0800
-Message-ID: <20250913040256.6972-1-hdanton@sina.com>
-In-Reply-To: <68c44056.a70a0220.3543fc.0036.GAE@google.com>
-References: 
+	s=arc-20240116; t=1757736470; c=relaxed/simple;
+	bh=bzsI36RMc40NVQUbrU8x0jkLVmvncWaugvL4iQIAccU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KQTb4wel1AMHpvEzk2ene8+rTsIjJxUYZfnQnsN9E2FuNxo63SmV+EazmyT11B0oI/2b96lxEg7MpbFcn7pUKGRittBESIPfnawMkD98Jk/A6bCht3Qb/MXrHsqNDmZUL/zuCUo2yxNkVop2GdTje1tw0bKNyZE75ynX+hkhzNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zvj7+2VJ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
+	bh=ZkZpc5dBMnXI4POCZ2TCFFqEd7xijX/+QZHk6h+vWnA=; b=Zvj7+2VJQP1AUrM1oc0jI4D0df
+	kZLbrgoF6tWC1TSXrQCzaRwf64BcIFqWM9jqgctShxRWwA64Z3cH3ZJp9xtz/vExBAcClQcmfIZn7
+	yCcLB+AesJzDmEPSjA8I8PqMwPg+QtoHLtCCGQwR4t8mmkzazK/OjVldlPQMX7eK39OikaYuiFAkS
+	f3j34JKAUXKzXllob2T5kCBHPFSR85WlWQfJBGW6vvdYMXS8Z3QXIbkl5YsAeQ69QGvyvU6VGYXVL
+	zapYbucIouJWo+hLXEvQIBUIuwgelZEWHzU6JUYSd+NcP/fFDMoT6FMSctoEiTHXQLnPtkJJ7TQUx
+	RnGJ92cg==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uxHXd-0000000D5gz-1paw;
+	Sat, 13 Sep 2025 04:07:13 +0000
+Message-ID: <69198449-411b-4374-900a-16dc6cb91178@infradead.org>
+Date: Fri, 12 Sep 2025 21:07:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 15/21] mm/ksw: add test module
+To: Jinchao Wang <wangjinchao600@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Mike Rapoport <rppt@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Jonathan Corbet <corbet@lwn.net>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
+ <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Kees Cook <kees@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Rong Xu <xur@google.com>,
+ Naveen N Rao <naveen@kernel.org>, David Kaplan <david.kaplan@amd.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ Nam Cao <namcao@linutronix.de>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-mm@kvack.org, llvm@lists.linux.dev,
+ Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Vincenzo Frascino <vincenzo.frascino@arm.com>, kasan-dev@googlegroups.com,
+ "David S. Miller" <davem@davemloft.net>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org
+References: <20250912101145.465708-1-wangjinchao600@gmail.com>
+ <20250912101145.465708-16-wangjinchao600@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250912101145.465708-16-wangjinchao600@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> Date: Fri, 12 Sep 2025 08:46:30 -0700	[thread overview]
-> syzbot has found a reproducer for the following issue on:
-> 
-> HEAD commit:    590b221ed425 Add linux-next specific files for 20250912
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=161d1934580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9134e501f17b95a4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0e4ebcc970728e056324
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=111d1934580000
 
-#syz test
 
---- x/include/net/bluetooth/l2cap.h
-+++ y/include/net/bluetooth/l2cap.h
-@@ -938,6 +938,7 @@ static inline long l2cap_chan_no_get_snd
- 
- extern bool disable_ertm;
- extern bool enable_ecred;
-+extern struct mutex cfm_mutex;
- 
- int l2cap_init_sockets(void);
- void l2cap_cleanup_sockets(void);
---- x/net/bluetooth/l2cap_sock.c
-+++ y/net/bluetooth/l2cap_sock.c
-@@ -1411,6 +1411,7 @@ shutdown_already:
- 	return err;
- }
- 
-+DEFINE_MUTEX(cfm_mutex);
- static int l2cap_sock_release(struct socket *sock)
- {
- 	struct sock *sk = sock->sk;
-@@ -1422,9 +1423,11 @@ static int l2cap_sock_release(struct soc
- 	if (!sk)
- 		return 0;
- 
-+	mutex_lock(&cfm_mutex);
- 	lock_sock_nested(sk, L2CAP_NESTING_PARENT);
- 	l2cap_sock_cleanup_listen(sk);
- 	release_sock(sk);
-+	mutex_unlock(&cfm_mutex);
- 
- 	bt_sock_unlink(&l2cap_sk_list, sk);
- 
---- x/net/bluetooth/l2cap_core.c
-+++ y/net/bluetooth/l2cap_core.c
-@@ -7301,7 +7301,9 @@ next:
- 		pchan = next;
- 	}
- 
-+	mutex_lock(&cfm_mutex);
- 	l2cap_conn_ready(conn);
-+	mutex_unlock(&cfm_mutex);
- }
- 
- int l2cap_disconn_ind(struct hci_conn *hcon)
---
+On 9/12/25 3:11 AM, Jinchao Wang wrote:
+> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+> index fdfc6e6d0dec..46c280280980 100644
+> --- a/mm/Kconfig.debug
+> +++ b/mm/Kconfig.debug
+> @@ -320,3 +320,13 @@ config KSTACK_WATCH
+>  	  the recursive depth of the monitored function.
+>  
+>  	  If unsure, say N.
+> +
+> +config KSTACK_WATCH_TEST
+> +	tristate "KStackWatch Test Module"
+> +	depends on KSTACK_WATCH
+> +	help
+> +	  This module provides controlled stack exhaustion and overflow scenarios
+> +	  to verify the functionality of KStackWatch. It is particularly useful
+> +	  for development and validation of the KStachWatch mechanism.
+
+typo:	                                        ^^^^^^^^^^^
+
+> +
+> +	  If unsure, say N.
+
+-- 
+~Randy
+
 
