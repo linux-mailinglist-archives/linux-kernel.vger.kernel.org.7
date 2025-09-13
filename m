@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-815042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C1F5B55E83
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 06:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C2EB55E85
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35F41CC2FBE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 04:58:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A951CC465B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C8D42E0B4B;
-	Sat, 13 Sep 2025 04:58:24 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071AC2E0B4E;
-	Sat, 13 Sep 2025 04:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919522E1F10;
+	Sat, 13 Sep 2025 05:04:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOpqe6YD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A0019DFAB
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757739503; cv=none; b=Mguot7/VN0nh7bRg5R2Fu3TC2vBDF9dhDGITYxa1M98lNRfGQ1TnQWskiZP1pGDk6kXk7gnFN/oZtLdrtEqHVEki9QhrnR4r9kqpg5kLqvip7kVu3NSO7fgIKZyV6TqG/ymEboiKh7VVrQq86cwM8eGbr2aqO3vkdGJypcbvDrs=
+	t=1757739871; cv=none; b=U/KZUPVhhKIx43eT79J/vVivtZVFU1pXOTe6qqtircCDHy4EK5UEC6TQ3erkhn4k/s9ovRx1/8IlnX4HSg8hUwrBb8Lv79/a/5D0/W5iW17Q9uCL6VYSR5jY9uex9GvJCKi97p1W2eY9DAX1dq/m81SpsFmMnwKADPwusOqF6jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757739503; c=relaxed/simple;
-	bh=QKdWbEhXOdjq4saRav6ZDCQr2csgoPOIuQoBxIZ+L5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W+G65pLj4t9agstZ3rALHzjlJKmWO6wg9wO+GEf1oWKyE9LOy9TPAqaJF2MHawqrLoW36fKI0smN6TzvAihJsGraLNDESxY674CGrLvpSmkMy4QBY4sireQ9lYX7MPsuirZZqela3E+LB9zGdirQ14HsGu5RiTzuCisCaj93sjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [153.35.206.47])
-	by gateway (Coremail) with SMTP id _____8BxE9Dd+cRoT_EJAA--.20814S3;
-	Sat, 13 Sep 2025 12:58:05 +0800 (CST)
-Received: from [192.168.86.5] (unknown [153.35.206.47])
-	by front1 (Coremail) with SMTP id qMiowJCxrsPb+cRo2Q2SAA--.53349S2;
-	Sat, 13 Sep 2025 12:58:04 +0800 (CST)
-Message-ID: <1f09322b-6bc5-437b-88b5-dec306748d80@loongson.cn>
-Date: Sat, 13 Sep 2025 12:58:00 +0800
+	s=arc-20240116; t=1757739871; c=relaxed/simple;
+	bh=NsBrhjCbgwcv6TOH9wHnbRFiMp7v9AyhyhPf7J+3W0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XXo6fsW7dLxajlOtmhhffPds2OnzYfhpcxAujLT/8UgFDNb4g2yQfBmmPC4J72vPIMKh469qX93L6rlTGi+0rxKcQMSpHGw1XoGf0+e6ZnyWrNWzcj4J7XFGNu1DLAQMq3cKEPJsCtI+d1qvlV9lW52wkbrqMt0KYa+PMkuUnog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOpqe6YD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8505FC4CEEB
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:04:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757739870;
+	bh=NsBrhjCbgwcv6TOH9wHnbRFiMp7v9AyhyhPf7J+3W0Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QOpqe6YDfum7AQadumG3oelaFS3/wAJtA5tctn50YN1E2Xr1j/JvZNAdG6QAVRWbf
+	 XivzQOYCGYAKG55AQKD0IQloc++1ZoRKTxW2kmI5kCw0gcZs5WjzBH+9tz+8ksu8Jm
+	 VuxU3cwyUfd5yvOtNbUm3NUIegJXC8G6Z/h711fAGs46EqZ+GlL973txxYdRxAOgo0
+	 yP4pglpcK1iee2JDqfY4OwCRbHr1URVvLDQtBBI8M8D9mEmhC6ySjlq+v28UW6/4Lt
+	 ss+14BIkkdXmhytZusgDanwqrWekeglPUo2DHn4co0A+2qSYUJET2MaW/0/xr+tFB5
+	 Ds8ElZfwMJodA==
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45e03730f83so11701975e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:04:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcziOiqeHSQuN3Y0KG2icEl5i3iMfd09bSkd8+TM/DsYjd6EVQoX54iAO0EfEl4dmeZFNhteTkU4Qg+gg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLZD2K7n1oUTsd0a0bNYiLOmn4b1wG8xKMgEaMdeJgPMABvtqO
+	rfBMEf9IJ8m4bhko8o5fbWk8A65fjzApT4BtbKeigILRHtiQvnDtBCgiwx0g0SHIImCuTGjwEGa
+	TsKCLv1I1kXJWMlwiwRHUf0O6F2YHc+o=
+X-Google-Smtp-Source: AGHT+IFBqVpnm7lRLVpUFGSo3qvUKavvjqz/GXMLn8IvosVS5fR8h0RKtXq5fuAF6dWZpyMz9d/tvDJXi/GTFC9Zp9A=
+X-Received: by 2002:a05:600c:5251:b0:45f:28c9:c4aa with SMTP id
+ 5b1f17b1804b1-45f28c9c8cbmr2307625e9.9.1757739869033; Fri, 12 Sep 2025
+ 22:04:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] mmc: remove COMPILE_TEST from MMC_LOONGSON2
-To: Mikko Rapeli <mikko.rapeli@linaro.org>, linux-mmc@vger.kernel.org
-Cc: ulf.hansson@linaro.org, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
- victor.shih@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw,
- geert+renesas@glider.be, angelogioacchino.delregno@collabora.com,
- dlan@gentoo.org, arnd@arndb.de, zhoubb.aaron@gmail.com
-References: <20250912142253.2843018-1-mikko.rapeli@linaro.org>
- <20250912142253.2843018-4-mikko.rapeli@linaro.org>
-Content-Language: en-US
-From: Binbin Zhou <zhoubinbin@loongson.cn>
-In-Reply-To: <20250912142253.2843018-4-mikko.rapeli@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qMiowJCxrsPb+cRo2Q2SAA--.53349S2
-X-CM-SenderInfo: p2kr3uplqex0o6or00hjvr0hdfq/1tbiAQEECGjDtiYabAAAsB
-X-Coremail-Antispam: 1Uk129KBj9xXoWrur1UtryDWryUZFyrKF47KFX_yoWDGFXEga
-	yjgwn7Gr12kryxZ3W0qF1kZry3ta1kWr1UXryrKrnxua43JFnYv3W3urn0qw13ua1UuFW2
-	9rWS9r1Svw48AosvyTuYvTs0mTUanT9S1TB71UUUUbUqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbTkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_JrI_Jryl8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0
-	oVCq3wAaw2AFwI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa02
-	0Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jw0_Wryl
-	Yx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCY1x
-	0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCF
-	I7km07C267AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r
-	106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AK
-	xVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7
-	xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_
-	Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jo_M-UUUUU=
+References: <20250911184528.1512543-1-rabenda.cn@gmail.com> <20250911184528.1512543-4-rabenda.cn@gmail.com>
+In-Reply-To: <20250911184528.1512543-4-rabenda.cn@gmail.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Sat, 13 Sep 2025 13:04:17 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQN71ekFURQLNEMjhcKQbYhpHU1vcNwm+Rx7eONPjz9Jg@mail.gmail.com>
+X-Gm-Features: AS18NWBbpip28D6dSvULZTMJGPHyRhKbalh_uAdjJ70KBsVc__S9zGVR444ixV8
+Message-ID: <CAJF2gTQN71ekFURQLNEMjhcKQbYhpHU1vcNwm+Rx7eONPjz9Jg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] riscv: dts: thead: add zfh for th1520
+To: Han Gao <rabenda.cn@gmail.com>
+Cc: devicetree@vger.kernel.org, Drew Fustini <fustini@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Han Gao <gaohan@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mikko:
+On Fri, Sep 12, 2025 at 2:46=E2=80=AFAM Han Gao <rabenda.cn@gmail.com> wrot=
+e:
+>
+> th1520 support Zfh ISA extension [1].
+>
+> Link: https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1737721=
+869472/%E7%8E%84%E9%93%81C910%E4%B8%8EC920R1S6%E7%94%A8%E6%88%B7%E6%89%8B%E=
+5%86%8C%28xrvm%29_20250124.pdf [1]
+Agree with Conor's advice.
 
-Thanks for your patch.
+Linus just had some comment about the Link tag usage:
+https://www.phoronix.com/news/Linus-Torvalds-No-Link-Tags
 
-On 2025/9/12 22:22, Mikko Rapeli wrote:
-> It fails to link due to undeclared dependency
-> to regmap which is not enabled for COMPILE_TEST:
-> 
-> ERROR: modpost: "__devm_regmap_init_mmio_clk"
-> [drivers/mmc/host/loongson2-mmc.ko] undefined!
-> 
-> Signed-off-by: Mikko Rapeli <mikko.rapeli@linaro.org>
+We should be careful :-P
+
+>
+> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
+> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
 > ---
->   drivers/mmc/host/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 2db46291ae442..e2d9a7cf9f855 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -1113,7 +1113,7 @@ config MMC_OWL
->   
->   config MMC_LOONGSON2
->   	tristate "Loongson-2K SD/SDIO/eMMC Host Interface support"
-> -	depends on LOONGARCH || COMPILE_TEST
-> +	depends on LOONGARCH
+>  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/=
+thead/th1520.dtsi
+> index 7f07688aa964..2075bb969c2f 100644
+> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
+> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
+> @@ -26,7 +26,7 @@ c910_0: cpu@0 {
+>                         riscv,isa-base =3D "rv64i";
+>                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
+ "c",
+>                                                "ziccrse", "zicntr", "zics=
+r",
+> -                                              "zifencei", "zihpm",
+> +                                              "zifencei", "zihpm", "zfh"=
+,
+>                                                "xtheadvector";
+>                         thead,vlenb =3D <16>;
+>                         reg =3D <0>;
+> @@ -53,7 +53,7 @@ c910_1: cpu@1 {
+>                         riscv,isa-base =3D "rv64i";
+>                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
+ "c",
+>                                                "ziccrse", "zicntr", "zics=
+r",
+> -                                              "zifencei", "zihpm",
+> +                                              "zifencei", "zihpm", "zfh"=
+,
+>                                                "xtheadvector";
+>                         thead,vlenb =3D <16>;
+>                         reg =3D <1>;
+> @@ -80,7 +80,7 @@ c910_2: cpu@2 {
+>                         riscv,isa-base =3D "rv64i";
+>                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
+ "c",
+>                                                "ziccrse", "zicntr", "zics=
+r",
+> -                                              "zifencei", "zihpm",
+> +                                              "zifencei", "zihpm", "zfh"=
+,
+>                                                "xtheadvector";
+>                         thead,vlenb =3D <16>;
+>                         reg =3D <2>;
+> @@ -107,7 +107,7 @@ c910_3: cpu@3 {
+>                         riscv,isa-base =3D "rv64i";
+>                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
+ "c",
+>                                                "ziccrse", "zicntr", "zics=
+r",
+> -                                              "zifencei", "zihpm",
+> +                                              "zifencei", "zihpm", "zfh"=
+,
+>                                                "xtheadvector";
+>                         thead,vlenb =3D <16>;
+>                         reg =3D <3>;
+> --
+> 2.47.3
+>
 
-How about add `select REGMAP_MMIO` instead.
 
->   	depends on HAS_DMA
->   	help
->   	  This selects support for the SD/SDIO/eMMC Host Controller on
-
-Thanks.
-Binbin
-
+--=20
+Best Regards
+ Guo Ren
 
