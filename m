@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-814976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE44B55C7E
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:04:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D502B55C94
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:05:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DF587BF4DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:02:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D48283B3FA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D7014A60C;
-	Sat, 13 Sep 2025 01:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B1E17C203;
+	Sat, 13 Sep 2025 01:05:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RRwUyBVP"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXv4iNf2"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606A1136672
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 01:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12B5914A60C
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 01:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757725447; cv=none; b=GshyfTzmjv8e1J88PTefWfgoxB4BH5QfNJLwa71JhM4kSz5S44Kj+aZ2v7dX2snu0m8J0hGTp0/g0vn5U+XqLUzp21n764KQMW1i5pOirlI0J4cHSY2d2Np0jLp4WqFez5c7rCEUjPZ+PMQ/dvZ23lFKv/A8NVLqppGxCLJCrjs=
+	t=1757725513; cv=none; b=LDZCtBjYpIjd5gsgT+DypJX4DcNssjRBNOlJhFAH8JATzDCmkGp3WVvv42m/DvikTVLvVUIIJn0aur4OgEgwUsqxT9HNW2TrOYElWJVy/l1Y+Lqzy8UF744Gnv1mnt8bie/G645Tkws3mhY59pMddzmz0KA0zspsOUPMGZCFPOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757725447; c=relaxed/simple;
-	bh=XdKFLt7HKTWqlTaryS+0sdRR6IIe2s8E5XqHxfJZ80U=;
+	s=arc-20240116; t=1757725513; c=relaxed/simple;
+	bh=S+LMTI5gKh7jR4HnMBjppMSsjKCA+4Wi7QuAEkwwnu8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cOIypktUk5VUsGv2mIBWmtjLOtSfhyaAb4xgdwIhr/1dBLebF9w3eYa7Ig5l8rbwtDB3qnYRRpGCblz2v22GkcvUcugMVTb8mDfrumLuHmOcXI+xBW5EhRTsG/PuOeuPb/BqlyZeKxDfT6m1MWiwQHeZo8fv0L/dUfUBoEZQeGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RRwUyBVP; arc=none smtp.client-ip=209.85.208.53
+	 MIME-Version; b=thWa4+FaCplt0qoSr2d7a6kEGf8roE3oKCAvpQcJHXFVS05tg3eUybmk6k7uhXbiyBElHUV00O+TSprhmBLbMORC7COhKZG9cGrrRHP4f5PccSrbhT839vM7Me8UgOmxNDCUVk8vYdchy8RzXd5q0zZIx3OgAOlmy9FIiznTv9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dXv4iNf2; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-61cc281171cso4451781a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 18:04:05 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-afcb7322da8so470530966b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 18:05:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757725444; x=1758330244; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757725509; x=1758330309; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QP3KPO8+P4bejD4XvvOjfSlYK9K4kJKcAHCDef6XF+Q=;
-        b=RRwUyBVPnVlKd0QyX7QZ/B8xHbpig+Z2q2Rr0IXtkLN1RECSatPb94HGOD60tUFHa1
-         4qdgmLfCmT1u7a8yJxRMhTrlQ/FKgvxR+IXG16wPGbb4rybWPlqDYRmV67YUPEgCpqRn
-         MSir2IDCQdZySb6GZ/P0X94QU9neoYMzHjvPy7UXI/KEGAqdP5G0Rm/DnTvm8DF0rnMl
-         TvzpWt1calnnkQkXZGiRqKin9theNHhcOi/UoxpNd22vXN3ro2sBkWj1NX6p3NuoGJgL
-         YRJD68Kn6CszgFLoTHxMGcaDfHFvEGKbmLD0IdJUjzY4zNy1wmS+Yaqtzchrx/Eo+CpQ
-         qZ5g==
+        bh=5agMVhmWz9D3tLYyZnqIaP8gTBBboQ75Wn3D7w2vh+Q=;
+        b=dXv4iNf2H8URQWzVOiVcXlt/g9fQImXw5sgTfH+9HFtO7xY/TcP/JiWlyVtkxKLaYH
+         HKyZQoTqjJf8lbm+SDIT59oKVrtvwBs21iYZ589G+wHyCqc08cqtn0mlfzTt9OPuOBIS
+         MvOZqqIqMIPeNg/4A+FX8sv/zeDWyf0s8ePFAoOmS84Ek+oiXa1AVyB9nR4AHHeZvcpW
+         rV+hwVJHVPBaVpRxyXeBWkEBhVTD33JGA+xi5mxhx68lc2NZ32dDqjn31/VizAz9l7HR
+         +l0d4WIECCoTLmx+3hFjhe+LYu/MD207FATDiWTCBdqdHsiOU2u4rFNsDVidduqFAYo1
+         rrYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757725444; x=1758330244;
+        d=1e100.net; s=20230601; t=1757725509; x=1758330309;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QP3KPO8+P4bejD4XvvOjfSlYK9K4kJKcAHCDef6XF+Q=;
-        b=RUWfiuuKK48zRTVG4b5mfflAuOl1HcrR7u8CxALSqXpZ8XaCTP5QDlgMvZNcVEWhPn
-         OsUf/4NqPoQLvw73oFR7auMgywktDI4hlrHA0MXoyD1qn7jZZHl4ZUwe0v/CpCIYt5Nd
-         351vzVDCcAmUPB5uY/v+OWkKN4yZMdRn52Sz9e/31imv1HPlHc0OzV0jleeGubWPSHHq
-         AR9++VEDUUAxpTJf3vVlB4K20RIEMJm1Jy8DcbXdLpda0JvSGdIzZ20HeLJLp/apP+ni
-         xz2zEbrzkHHxodnoo2bDeXmvRL6uANd7QuMypipBqsHuxfqCsfGxThFyX6/xcIfqP3LK
-         pzpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXiZcK0WTRJIXVXYgAD4E5Ha7J40zbvDk1IWgf0JUKCINziTj3VWwdT9S3++DL8vM5Kc05DsPTnbRv2vFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzypPXBwliyA3weSm9TRvsWhP1u7Ea/ccALfVIzZrqRueYJmiBs
-	vOpxkh6nTo3C8RRK/PV1WvjULD7hFHX82kOjgUUo16P305H1HWaQd4bK
-X-Gm-Gg: ASbGncuss4YWpa8g3rX9aXdYKhj2PVt6cOipT3BhzcHip31Tn+SBBSw1TCLUUNSmGCA
-	FszL4GGXj5z2yeMkp1rVtG8eDQT50P8YxJ8ZR23sVJg+zjGZvjDyjnIQ8vSV8op0Qq5tbtHAkEl
-	ghwLyj9AfMirhAuKAc7IbwynRiSTceW4QC+x9WZUW91ysJYdY0pOZJsMTfMJg5ms6n9JkiHG9aq
-	d43l/PV99VwawvRtILDVZv/zCqtCdeD3e+dz6SHFbw9xf7t8psBQCcigvK9EHPNctgGS5vz+e9D
-	sHJb4LQINx32KsB6Z+ssQMFEwFOAk1yR9s8T7vPFiCSqbC8QBUCFyVnNlrRC9KpoWOxdArY1rtA
-	i41QXnchV5t4vZNp7H4/4LsXk1a8Lfg==
-X-Google-Smtp-Source: AGHT+IF5gJzNBXdtzBXv0OSH4ftjGJnmmybFv16rcAGk5hl57bAzoCs28S7e9w+ysKsSQWZRdIzUSQ==
-X-Received: by 2002:a05:6402:3482:b0:61d:249a:43fe with SMTP id 4fb4d7f45d1cf-62ed82c5a43mr4352436a12.24.1757725443498;
-        Fri, 12 Sep 2025 18:04:03 -0700 (PDT)
+        bh=5agMVhmWz9D3tLYyZnqIaP8gTBBboQ75Wn3D7w2vh+Q=;
+        b=BOpmwKZBvKxOh2ZtGupgPcFfeoqubOrP7je5neb9NtTLxPm2qiPu2AaovSyG19dkiZ
+         CUhSfEwVA9VDx63A1S4MRAeMQru3iBo3dvG7vnlyfeNclnXFx3ue5zCxIv4OZzlejI2I
+         0EiU7lrSh0TVep0X7GN00eAwBCzQbmvvbJmkFCfgAnNHLwk2xeCNGoB3vfj+ZC8vhcrg
+         pVZ6CV4cUo9GIplKGpu6dbfLMM0jwLAtokuiq33eszRpS8RHMCKUUoJ1S5A70/rJvWKT
+         WbT70DmWVHMmga11BMGmdBgL8GETmzqNIGQ2DXq6JfnBPB1fLDfGAcaf5gi+Q7I5y/gI
+         /JVA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0LWs5Z/0XbLgFtuJSOGRfz3aft+NCeWHkMeu67mHkMyX79RuFn4nFLFtlpu2up8sqm+/8PRwpsiDkaWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq1vx0BA7DDp3XqY+HrhmPiIBMVQMDHEC5BHDEXhVT/DqWqCUY
+	U7yS5JO9cZ4PDJplHe7bLn9l5WJ6OiERfaDbMEYs75mvg7OnAa/g3damNrJPgds2
+X-Gm-Gg: ASbGnctez+KWzOzS4alDBvOBlsFyieRmXrguGU5jQFfo01TQ9QvKZWX9QIPEHtK1zbj
+	7WKiksLJL8Baq+QQVWZf8eGONxrQMkJecaVXXQNP/t//GtUlsCcfVKUy7Q7YUKDNMvpYrAaStdg
+	PCvwWcTXzfEwE6QP0FvQklee+QQEqzkWoZQ55thAlrIkEfyYVtCd6ZWHT/td/lgpFIPXejYY1/Z
+	x6+J6rkPxfJ11fUgmiebo4c8wQ7H79499pXES+oo1/2RbImRWzNt8ueunblrA3Sqttl6oRB9vcv
+	e83bVWSc7NbmIEBZMTQkJPQ9XYyJo3+Vp0wyK+bQewNsM+9tu8MFX0Ah0AzaYMsLCHyffFP1wvj
+	PaoCtF5Prd3QHTIXH2xo=
+X-Google-Smtp-Source: AGHT+IHBVL7U9njYQbYDntatJDbtYTvNiZyrYrp6F3Zot8CfKJXHpFfpfQfFxJfdQecWj/pXbevxCg==
+X-Received: by 2002:a17:907:980a:b0:b04:7ea3:a10c with SMTP id a640c23a62f3a-b07c3551576mr448691266b.8.1757725509440;
+        Fri, 12 Sep 2025 18:05:09 -0700 (PDT)
 Received: from localhost ([212.73.77.104])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-62ec6b6cec5sm4014207a12.1.2025.09.12.18.03.57
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-b07b31291b0sm475372166b.34.2025.09.12.18.05.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Sep 2025 18:04:02 -0700 (PDT)
+        Fri, 12 Sep 2025 18:05:08 -0700 (PDT)
 From: Askar Safin <safinaskar@gmail.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
@@ -127,9 +127,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	Thorsten Blum <thorsten.blum@linux.dev>,
 	Heiko Carstens <hca@linux.ibm.com>,
 	patches@lists.linux.dev
-Subject: [PATCH RESEND 22/62] doc: remove obsolete mentions of pivot_root
-Date: Sat, 13 Sep 2025 00:38:01 +0000
-Message-ID: <20250913003842.41944-23-safinaskar@gmail.com>
+Subject: [PATCH RESEND 23/62] init: rename __initramfs_{start,size} to __builtin_initramfs_{start,size}
+Date: Sat, 13 Sep 2025 00:38:02 +0000
+Message-ID: <20250913003842.41944-24-safinaskar@gmail.com>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250913003842.41944-1-safinaskar@gmail.com>
 References: <20250913003842.41944-1-safinaskar@gmail.com>
@@ -141,44 +141,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-They refer to initrd, which was removed in previous commits
+Rename __initramfs_start to __builtin_initramfs_start and
+__initramfs_size to __builtin_initramfs_size .
+
+This is more clear
 
 Signed-off-by: Askar Safin <safinaskar@gmail.com>
 ---
- Documentation/admin-guide/device-mapper/dm-init.rst | 4 ++--
- Documentation/arch/arm/ixp4xx.rst                   | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/tools/relocs.c           | 2 +-
+ drivers/acpi/tables.c             | 4 ++--
+ include/asm-generic/vmlinux.lds.h | 6 +++---
+ include/linux/initrd.h            | 4 ++--
+ init/initramfs.c                  | 4 +---
+ usr/initramfs_data.S              | 4 ++--
+ 6 files changed, 11 insertions(+), 13 deletions(-)
 
-diff --git a/Documentation/admin-guide/device-mapper/dm-init.rst b/Documentation/admin-guide/device-mapper/dm-init.rst
-index 981d6a907699..586bb38d716b 100644
---- a/Documentation/admin-guide/device-mapper/dm-init.rst
-+++ b/Documentation/admin-guide/device-mapper/dm-init.rst
-@@ -5,8 +5,8 @@ Early creation of mapped devices
- It is possible to configure a device-mapper device to act as the root device for
- your system in two ways.
+diff --git a/arch/x86/tools/relocs.c b/arch/x86/tools/relocs.c
+index 5778bc498415..4b4e556f1b52 100644
+--- a/arch/x86/tools/relocs.c
++++ b/arch/x86/tools/relocs.c
+@@ -87,7 +87,7 @@ static const char * const	sym_regex_kernel[S_NSYMTYPES] = {
+ 	"__(start|stop)_notes|"
+ 	"__end_rodata|"
+ 	"__end_rodata_aligned|"
+-	"__initramfs_start|"
++	"__builtin_initramfs_start|"
+ 	"(jiffies|jiffies_64)|"
+ #if ELF_BITS == 64
+ 	"__end_rodata_hpage_align|"
+diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+index fa9bb8c8ce95..3160cb7dca00 100644
+--- a/drivers/acpi/tables.c
++++ b/drivers/acpi/tables.c
+@@ -429,8 +429,8 @@ void __init acpi_table_upgrade(void)
+ 	struct cpio_data file;
  
--The first is to build an initial ramdisk which boots to a minimal userspace
--which configures the device, then pivot_root(8) in to it.
-+The first is to build initramfs which boots to a minimal userspace
-+which configures the device, then switches to it.
+ 	if (IS_ENABLED(CONFIG_ACPI_TABLE_OVERRIDE_VIA_BUILTIN_INITRD)) {
+-		data = __initramfs_start;
+-		size = __initramfs_size;
++		data = __builtin_initramfs_start;
++		size = __builtin_initramfs_size;
+ 	} else {
+ 		data = (void *)initrd_start;
+ 		size = initrd_end - initrd_start;
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index ae2d2359b79e..a6bd2ff46f7e 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -46,8 +46,8 @@
+  * [_sdata, _edata] is the data section
+  *
+  * Some of the included output section have their own set of constants.
+- * Examples are: [__initramfs_start, __initramfs_end] for initramfs and
+- *               [__nosave_begin, __nosave_end] for the nosave data
++ * Examples are: [__builtin_initramfs_start, __builtin_initramfs_start + __builtin_initramfs_size]
++ * for initramfs and [__nosave_begin, __nosave_end] for the nosave data
+  */
  
- The second is to create one or more device-mappers using the module parameter
- "dm-mod.create=" through the kernel boot command line argument.
-diff --git a/Documentation/arch/arm/ixp4xx.rst b/Documentation/arch/arm/ixp4xx.rst
-index 17aafc610908..ac9cb28776c7 100644
---- a/Documentation/arch/arm/ixp4xx.rst
-+++ b/Documentation/arch/arm/ixp4xx.rst
-@@ -137,8 +137,8 @@ Intel IXDPG425 Development Platform
-    added. One issue with this board is that the mini-PCI slots only
-    have the 3.3v line connected, so you can't use a PCI to mini-PCI
-    adapter with an E100 card. So to NFS root you need to use either
--   the CSR or a WiFi card and a ramdisk that BOOTPs and then does
--   a pivot_root to NFS.
-+   the CSR or a WiFi card and initramfs that BOOTPs and then switches
-+   to NFS.
+ #include <asm-generic/codetag.lds.h>
+@@ -969,7 +969,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ #ifdef CONFIG_BLK_DEV_INITRD
+ #define INIT_RAM_FS							\
+ 	. = ALIGN(4);							\
+-	__initramfs_start = .;						\
++	__builtin_initramfs_start = .;						\
+ 	KEEP(*(.init.ramfs))						\
+ 	. = ALIGN(8);							\
+ 	KEEP(*(.init.ramfs.info))
+diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+index cc389ef1a738..e49c7166dbb3 100644
+--- a/include/linux/initrd.h
++++ b/include/linux/initrd.h
+@@ -21,8 +21,8 @@ static inline void wait_for_initramfs(void) {}
+ extern phys_addr_t phys_initrd_start;
+ extern unsigned long phys_initrd_size;
  
- Motorola PrPMC1100 Processor Mezanine Card
- http://www.fountainsys.com
+-extern char __initramfs_start[];
+-extern unsigned long __initramfs_size;
++extern char __builtin_initramfs_start[];
++extern unsigned long __builtin_initramfs_size;
+ 
+ void console_on_rootfs(void);
+ 
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 850cb0de873e..2866d7a0afd7 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -597,8 +597,6 @@ static int __init initramfs_async_setup(char *str)
+ }
+ __setup("initramfs_async=", initramfs_async_setup);
+ 
+-extern char __initramfs_start[];
+-extern unsigned long __initramfs_size;
+ #include <linux/initrd.h>
+ #include <linux/kexec.h>
+ 
+@@ -695,7 +693,7 @@ static inline bool kexec_free_initrd(void)
+ static void __init do_populate_rootfs(void *unused, async_cookie_t cookie)
+ {
+ 	/* Load the built in initramfs */
+-	char *err = unpack_to_rootfs(__initramfs_start, __initramfs_size);
++	char *err = unpack_to_rootfs(__builtin_initramfs_start, __builtin_initramfs_size);
+ 	if (err)
+ 		panic_show_mem("%s", err); /* Failed to decompress INTERNAL initramfs */
+ 
+diff --git a/usr/initramfs_data.S b/usr/initramfs_data.S
+index cd67edc38797..64ca648a80e2 100644
+--- a/usr/initramfs_data.S
++++ b/usr/initramfs_data.S
+@@ -27,8 +27,8 @@ __irf_start:
+ .incbin "usr/initramfs_inc_data"
+ __irf_end:
+ .section .init.ramfs.info,"a"
+-.globl __initramfs_size
+-__initramfs_size:
++.globl __builtin_initramfs_size
++__builtin_initramfs_size:
+ #ifdef CONFIG_64BIT
+ 	.quad __irf_end - __irf_start
+ #else
 -- 
 2.47.2
 
