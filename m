@@ -1,106 +1,281 @@
-Return-Path: <linux-kernel+bounces-815216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11E9B5614F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:57:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC025B56151
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 16:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AD4856717B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEC881C22049
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 739752EFDA5;
-	Sat, 13 Sep 2025 13:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BE52ED843;
+	Sat, 13 Sep 2025 14:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sieooh8H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G1pzWbuO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCDD5134BD;
-	Sat, 13 Sep 2025 13:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 127D6199FAB
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 14:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757771836; cv=none; b=hoCFTtGCGFAwdX6Wf0swQyRrXwRiqWslthbOIr3Q5N7DiNKewZdP+4XBODKIgxDtWsikiPd1XcUDvcHS+kNCrcVdqFYOqNjsyNydyO2vlgG/Rm9G+KQ4mXbZf1lV3PvPN8D381kXBMa1dEVcRtf0FR27f1QbaZHUKHFDfY0vG9Y=
+	t=1757772036; cv=none; b=tFGfjMoVB9AIcaUjwsER5jpR5/3zIIqrxDU5VQ0lggDRJnGHpnaVDeDg8k8uYtG3n9vqZZba+/uyQ4V4ppPrIeiyoetnKQospJEnikK7f4a/6SDtCHeU77X46mBQcOgwNeH8ZsK1qwXVZO3nyBvbkBDR5Yp2jg7MjFTBKJ0IUGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757771836; c=relaxed/simple;
-	bh=Hq33pKQBlDo40Z45GgzAh+CujESukr+426evEZ9vEA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vo9RpoChOunngn6A2hNbeUgfRefgHaFpUE56Oc3BBSdB3ixhLNZQgAawOum8IMaO+mwSV+YHt7A9pu3f02cnwnIpqQma/ZeycljH9wph+f5hWNhGuc47A1kDhXAKjqY8Us4CTtwgD0oV7r/2nYVCD8nP7ELWwbFBbK+P875CAkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sieooh8H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12A7AC4CEEB;
-	Sat, 13 Sep 2025 13:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757771836;
-	bh=Hq33pKQBlDo40Z45GgzAh+CujESukr+426evEZ9vEA0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Sieooh8HLOepv0+djlbziXmbiLQT2IFJsd7qPzpI08ReMBwrT+NW8pnYf6IW4YLmo
-	 v3voeZZHGZcU695fRHnsZrO4kqwZFoTsrh2GszWhRvhTpg3TWBAcDTx9iy48sL4mIX
-	 9styh8IMkGB+1dV2Be9IWQXhjfc48/TtRMMhVVNWODlNFrAsPs3OAXUg681Tym/VEG
-	 TbPd+LSrqSpkvVojkKNUdj7c9eqTV7hCidiItoXLWTQ3lOaIqE1S1Sv+H4b4LQLTTJ
-	 Nym7ltX7qULDOmhmav6HTawXYlU6SPALmLp2nyXXuoPLCdqWInGGixQJiAFXneEoVE
-	 qtYwTQRKlFokA==
-Date: Sat, 13 Sep 2025 14:57:09 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko
- <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Andy Shevchenko
- <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH 0/7] iio: buffer: document calling context when pushing
- to buffers
-Message-ID: <20250913145709.7950f975@jic23-huawei>
-In-Reply-To: <20250912-iio-doc-push-to-buffers-context-v1-0-c4aad013d96e@baylibre.com>
-References: <20250912-iio-doc-push-to-buffers-context-v1-0-c4aad013d96e@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1757772036; c=relaxed/simple;
+	bh=nEomdwrY0x+N627biNdsd37XgirP9L8af7tXqvHXYeA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WbPblTkahXRHa3Y/CRiSTdpdlNKYKN7Vw5s3J8Xysot0pFsTHPjISSYvWHieYAQR59FDGi3hQbb19irbh8CpK+xT5fzionrK5ZsvWQ9Nup1JaBjhh/Vojc7gpLjUKiKUV62NkoDxFzT1VmQxkdKCgHNvYxjZM9Zu0E4XGy1gxFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G1pzWbuO; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757772035; x=1789308035;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=nEomdwrY0x+N627biNdsd37XgirP9L8af7tXqvHXYeA=;
+  b=G1pzWbuOkiBHEwXS1vvT/zxIez4yjdDWF0NYKSZfhe8uV5x9TszoSIXN
+   RgVmmf+EGw6MlwsFGXi/3rYLY8FFeAknxFd5EhMp2k0TF+RxfvZ6gTFI9
+   MQCcM2MWL9ZiSfSjdSkh1/UY9FOr++oSv5OLACgr8rtpx7tnZy0SuSjRI
+   u/lFhJZb1O/7RWTDRZazXfwzYNHw678pSRin4Feeel/RcfWa6fRYsVuom
+   mP6VGltlyJGEwj9ha8nX818B6LrO22eTcJ7wBZOhQnBstKK/rFO/IADHy
+   C/8UETZdoAnmE9W4Y65WV1d7d4gRjIDi7cEKYT1hIPSZHsEf4MnZUfz+q
+   w==;
+X-CSE-ConnectionGUID: nfjO0sC9QxuG//SAP8jRjA==
+X-CSE-MsgGUID: ykXcZAqjQcWD+Jy3xHN8jQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11552"; a="62724445"
+X-IronPort-AV: E=Sophos;i="6.18,261,1751266800"; 
+   d="scan'208";a="62724445"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2025 07:00:34 -0700
+X-CSE-ConnectionGUID: 7vC6pctMTCy6XcykPzGg9g==
+X-CSE-MsgGUID: 4u37J0pkR22bZhtFWu/Yjw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,261,1751266800"; 
+   d="scan'208";a="174151474"
+Received: from igk-lkp-server01.igk.intel.com (HELO 0e586ad5e7f7) ([10.91.175.65])
+  by fmviesa006.fm.intel.com with ESMTP; 13 Sep 2025 07:00:32 -0700
+Received: from kbuild by 0e586ad5e7f7 with local (Exim 4.98.2)
+	(envelope-from <lkp@intel.com>)
+	id 1uxQnm-000000001dh-0Kc5;
+	Sat, 13 Sep 2025 14:00:30 +0000
+Date: Sat, 13 Sep 2025 16:00:27 +0200
+From: kernel test robot <lkp@intel.com>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>,
+	Elle Rhumsaa <elle@weathered-steel.dev>
+Subject: [tip:locking/core 1/13] error[E0425]: cannot find function
+ `atomic_add` in crate `bindings`
+Message-ID: <202509131610.IPwv7fy3-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, 12 Sep 2025 11:05:51 -0500
-David Lechner <dlechner@baylibre.com> wrote:
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
+head:   502ae97746ab6d7b7b48d54b6a85a11815f390d0
+commit: eb57133305f61b612252382d0c1478bba7f57b67 [1/13] rust: sync: Add basic atomic operation mapping framework
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250913/202509131610.IPwv7fy3-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250913/202509131610.IPwv7fy3-lkp@intel.com/reproduce)
 
-> It came up in a recent discussion [1] that we need to be careful about
-> the calling context for various iio_push_to_buffer*() functions. Here is
-> a series that adds some documentation in a number of places to make this
-> a bit more visible.
-> 
-> [1]: https://lore.kernel.org/linux-iio/CAHp75Vc8u2N2AHWtnPRmRXWKN3u8Qi=yvx5afbFh4NLNb8-y9A@mail.gmail.com/
-> 
-> ---
-> David Lechner (7):
->       iio: buffer: document iio_push_to_buffers_with_ts_unaligned() may sleep
->       iio: buffer: iio_push_to_buffers_with_ts_unaligned() might_sleep()
->       iio: buffer: document iio_push_to_buffers_with_ts()
->       iio: buffer: deprecated iio_push_to_buffers_with_timestamp()
->       iio: buffer: document iio_push_to_buffers() calling context
->       iio: buffer: document store_to() callback may be called in any context
->       iio: buffer: document that buffer callback must be context safe
-> 
->  drivers/iio/buffer/industrialio-buffer-cb.c |  1 +
->  drivers/iio/industrialio-buffer.c           |  8 ++++++++
->  include/linux/iio/buffer.h                  | 22 +++++++++++++++++-----
->  include/linux/iio/buffer_impl.h             |  3 ++-
->  include/linux/iio/consumer.h                |  3 ++-
->  5 files changed, 30 insertions(+), 7 deletions(-)
-> ---
-> base-commit: b8902d55155cec7bd743dc1129e0b32e70b1751f
-> change-id: 20250912-iio-doc-push-to-buffers-context-df3ca98fe0df
-> 
-> Best regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509131610.IPwv7fy3-lkp@intel.com/
 
-Whilst this is very nearly good to go (assuming the might_sleep() discussion
-is done), I'm going to be lazy and ask for a v2 to resolve that DEPRECATED
-comment style thing and the tiny change I asked for.
+All errors (new ones prefixed by >>):
 
-Thanks for doing this and I'm a bit embarrassed that I didn't document
-the with_ts() function when introducing it :( 
+>> error[E0425]: cannot find function `atomic_read_acquire` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   201 | / declare_and_impl_atomic_methods!(
+   202 | |     /// Basic atomic operations
+   203 | |     pub trait AtomicBasicOps {
+   204 | |         /// Atomic read (load).
+   ...   |
+   216 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic_read` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   201 | / declare_and_impl_atomic_methods!(
+   202 | |     /// Basic atomic operations
+   203 | |     pub trait AtomicBasicOps {
+   204 | |         /// Atomic read (load).
+   ...   |
+   216 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic_xchg_relaxed` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+   help: consider importing this function
+   |
+   7   + use core::intrinsics::atomic_xchg_relaxed;
+   |
+--
+>> error[E0425]: cannot find function `atomic_xchg` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic_try_cmpxchg_acquire` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic_try_cmpxchg_release` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic_try_cmpxchg_relaxed` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic_try_cmpxchg` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic64_xchg_acquire` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic64_xchg_release` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+--
+>> error[E0425]: cannot find function `atomic64_xchg_relaxed` in crate `bindings`
+   --> rust/kernel/sync/atomic/internal.rs:124:37
+   |
+   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
+   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
+   ...
+   218 | / declare_and_impl_atomic_methods!(
+   219 | |     /// Exchange and compare-and-exchange atomic operations
+   220 | |     pub trait AtomicExchangeOps {
+   221 | |         /// Atomic exchange.
+   ...   |
+   243 | | );
+   | |_- in this macro invocation
+   |
+   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
+..
 
-Jonathan
- 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
