@@ -1,51 +1,46 @@
-Return-Path: <linux-kernel+bounces-815258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2504B561D1
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:32:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97194B561D4
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1BCD1B25BD2
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 456931714A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 15:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE972F28EF;
-	Sat, 13 Sep 2025 15:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8E62F1FDD;
+	Sat, 13 Sep 2025 15:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="iGdsm5Ua"
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="WDogDo44"
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D9119E98C;
-	Sat, 13 Sep 2025 15:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0297F2DC775;
+	Sat, 13 Sep 2025 15:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757777532; cv=none; b=Jp3yxbLJ8QPDap8OGQkMciK3s/yu/byNod9uz5hlj6KWmRbYXVkNjFuOmPxyae874PstMw4uHBLKgn814lCKkrD8I0NEaLaPCIyzrAEv6rtFtWS7DV1s1U0hE6v+xfgCiqZggUd4IBSzs5sqxgF+FLgQnM8Q5zbM4gqDHl6JFBo=
+	t=1757777678; cv=none; b=moBG1bI1zEOFMW/p5F4zeqSpDpcvcd8alAkAkqOkyhUyXVa8+bwfoX6XFSgIV/wHybGitsnIFrenVimnEBKvixebJN2FI6XNxAlHPS9/9gzGCDg+nUiYpU1aIZLWOV9s/DpA0hmpL2z7x/WYhuOeTM0AVmQorKV8YfN/gnl+fwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757777532; c=relaxed/simple;
-	bh=TBfdcMiQonrtQcFEM0J7fs7KepDjCbzU2TgkLxqV1/M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IGfvL0yePBbNd20izug2DuP95JXmi51GK7OsOuWoIDojyT5Tw5OtrHYt6cpAoxvCKY5mpdI3wKhtV9JZGqsOmUKYC8VezHPvGhD+NZNbc7FLWff7tlz1jzAJyXE+AP1h0yWwTPkAkSubejvXONYMsyaSPvm7ZE5dAQ0Kku0Xe0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=iGdsm5Ua; arc=none smtp.client-ip=45.254.49.197
+	s=arc-20240116; t=1757777678; c=relaxed/simple;
+	bh=zDJkXksHNWkyV+fdAhhRBfBvys/CBOptat8c01q9QH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uCS08lcxn4IqxLGj7lxwexfqtHQwxFDLje+v6BM7qSk9jTIF9ltdVDLSM/oCNbLwhzH3Xaap8GJdlrG5H+YPWa+SWkff+uM9KvOVIXHq0uhjhfHP2uijJGGfyPBGPUUZK3HPTSyrx/vaeBIWut+9RO33Dybuuqpkp0K48iaWDCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=WDogDo44; arc=none smtp.client-ip=101.71.155.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
-Received: from LAPTOP-N070L597.localdomain (unknown [223.112.146.162])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 22b0da691;
-	Sat, 13 Sep 2025 23:31:57 +0800 (GMT+08:00)
+Received: from LAPTOP-N070L597.localdomain (unknown [58.241.16.34])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 22b0da6a0;
+	Sat, 13 Sep 2025 23:34:25 +0800 (GMT+08:00)
 From: Zilin Guan <zilin@seu.edu.cn>
-To: jgg@ziepe.ca
-Cc: yishaih@nvidia.com,
-	shameerali.kolothum.thodi@huawei.com,
-	kevin.tian@intel.com,
-	brett.creeley@amd.com,
-	alex.williamson@redhat.com,
-	kvm@vger.kernel.org,
+To: vkoul@kernel.org
+Cc: dmaengine@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	jianhao.xu@seu.edu.cn,
 	Zilin Guan <zilin@seu.edu.cn>
-Subject: [PATCH V2] vfio/pds: replace bitmap_free with vfree
-Date: Sat, 13 Sep 2025 15:31:54 +0000
-Message-Id: <20250913153154.1028835-1-zilin@seu.edu.cn>
+Subject: [PATCH V2] drivers/dma: replace dma_free_coherent with dma_free_wc
+Date: Sat, 13 Sep 2025 15:34:23 +0000
+Message-Id: <20250913153423.1030647-1-zilin@seu.edu.cn>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,26 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9943b45b3003a1kunm3b7c7b9d32b33a
+X-HM-Tid: 0a9943b69ccd03a1kunm5794e2c332b5f8
 X-HM-MType: 10
 X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSENDVklLTkNJSUNOSExNH1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJSUhVSkpJVUpPTVVKTUlZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVU
-	tZBg++
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDSkNJVkkeHh8fGB9DS0pMTFYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlOQ1VJT0pVSk1VSE9ZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0xVSktLVUtZBg
+	++
 DKIM-Signature: a=rsa-sha256;
-	b=iGdsm5Ua9G4VMuJua4zcPaC0tLCCofe2qMtwmSkXSc01VgtU9wsTU4UEOzr07BbA55cWVcGGyuTUugS2KnGiPmyBe3yb1VSAlO+RvD5KkGqaJOdOVzqEJAO6g7RSS9lkMv4pUfJaRAI1nidKm7xZTU70RaOtv7mOy4Uv7MnoKqg=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
-	bh=r5mWJk/Ysllkg7QlCphqR+IJ9ALHc3igH8VzjEuhodU=;
+	b=WDogDo44+fVb/f7/Dfff/7bKWN1cvDBDVQqJfIbxEGgDNj9FLrs0DKvMEO0UYM1zySz6xKR+8kTl4QLyqooZ6vKExKieNzZoVxKwp4i2GpjtLYqdVJDQQcrqiVg+lwWRAcodxuLCDlZ9q69Z/JCtDKm1tti/NvCpbW69Jx9yDSY=; s=default; c=relaxed/relaxed; d=seu.edu.cn; v=1;
+	bh=dyqR32UqNnk9Y8tN2tYYYzjHOOHBLhvnORrO7fpnSKI=;
 	h=date:mime-version:subject:message-id:from;
 
-host_seq_bmp is allocated with vzalloc but is currently freed with
-bitmap_free, which uses kfree internally. This mismach prevents the
-resource from being released properly and may result in memory leaks
+The DMA descriptor pool is allocated with dma_alloc_wc but freed with
+dma_free_coherent in the error handling path. This mismatch prevents
+the resource from being released properly and may lead to memory leaks
 or other issues.
 
-Fix this by freeing host_seq_bmp with vfree to match the vzalloc
-allocation.
+Fix this by freeing the DMA descriptor pool with dma_free_wc to match
+the dma_alloc_wc allocation.
 
-Fixes: f232836a9152 ("vfio/pds: Add support for dirty page tracking")
+Fixes: b503fa01990f ("dma: mv_xor: remove the pool_size from platform_data")
 Signed-off-by: Zilin Guan <zilin@seu.edu.cn>
 ---
 
@@ -81,22 +76,22 @@ Changes in v2:
 - Fix the incorrect description in the commit log.
 - Add "Fixes" tag accordingly.
 
- drivers/vfio/pci/pds/dirty.c | 2 +-
+ drivers/dma/mv_xor.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/vfio/pci/pds/dirty.c b/drivers/vfio/pci/pds/dirty.c
-index c51f5e4c3dd6..481992142f79 100644
---- a/drivers/vfio/pci/pds/dirty.c
-+++ b/drivers/vfio/pci/pds/dirty.c
-@@ -82,7 +82,7 @@ static int pds_vfio_dirty_alloc_bitmaps(struct pds_vfio_region *region,
- 
- 	host_ack_bmp = vzalloc(bytes);
- 	if (!host_ack_bmp) {
--		bitmap_free(host_seq_bmp);
-+		vfree(host_seq_bmp);
- 		return -ENOMEM;
- 	}
- 
+diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
+index 1fdcb0f5c9e7..58de208fc50d 100644
+--- a/drivers/dma/mv_xor.c
++++ b/drivers/dma/mv_xor.c
+@@ -1163,7 +1163,7 @@ mv_xor_channel_add(struct mv_xor_device *xordev,
+ err_free_irq:
+ 	free_irq(mv_chan->irq, mv_chan);
+ err_free_dma:
+-	dma_free_coherent(&pdev->dev, MV_XOR_POOL_SIZE,
++	dma_free_wc(&pdev->dev, MV_XOR_POOL_SIZE,
+ 			  mv_chan->dma_desc_pool_virt, mv_chan->dma_desc_pool);
+ err_unmap_dst:
+ 	dma_unmap_single(dma_dev->dev, mv_chan->dummy_dst_addr,
 -- 
 2.34.1
 
