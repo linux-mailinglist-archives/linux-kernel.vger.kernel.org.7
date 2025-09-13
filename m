@@ -1,224 +1,142 @@
-Return-Path: <linux-kernel+bounces-814974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AADB55C61
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:02:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED11BB55D96
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 03:25:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CEC51CC7E52
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:03:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3511E1D605F3
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 01:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B321042AA1;
-	Sat, 13 Sep 2025 01:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBEB1A23BE;
+	Sat, 13 Sep 2025 01:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AhigLUET"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gatrplh7"
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDD12745C;
-	Sat, 13 Sep 2025 01:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757725352; cv=fail; b=G2JeQJXD66o9Vq+DEVOaF7hEAVUM3fMbbzUCINGNCvo1idphX1FQm8qxrHG2MUZUxTrDyLWmzCY6PLfmI/AxS5UwfPmqBuzgLO8ZR6V+1eEsUDdoigQjSpw1qtey0l6FwoQesIzBceUjPcRd08kkEQEUxBJQ+pXZskbppQqJI8Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757725352; c=relaxed/simple;
-	bh=siIU7DQFfKlzRU2ARPuAuz9yHGJ/3JsLc1MgHWt77Kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LnFIu6PYWNftWk1Tz72RoU/f62nhMRmHazHzvG0mUpQtCiNHAMjuCQFzui7d24ycdCAtEm/LdDh/08FAKJd0M3d1fXeTgOyTyvczDkXLdF067tc/hlpogPsQs2itoCzW3qCwQbS0lfZbumBH2xTyjq7Mgrmzcom0vvFCTplJy/I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AhigLUET; arc=fail smtp.client-ip=40.107.93.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HRXdGjOiGU2aZw/pACB99OdjKEE3EGv4x0qvTmRY7R3TLWHrIz9DJVJtqMGjZJOEXc7CDhPWu153CNk5fWcgufPUbFxm6sFRKNL4OqontgrDu1E0dGwPc3J81pAS/cH5cxTLd9gVHZ8GA+f3I30PoLYxJyXiRY687qY3sbN8EQ5GjJKAhC1bdSeLHafDv+83UngjNu6ijk7u0rIIodhC5UiyZVp/ZYBGUGoodfeyf4RQjMej5omHMOoUl4jRRsglzpysvjTeDXP7kj1tWIy1jzQixyFK3ewjCFBVocgK/34OyS/ULjqX5YFdSrOFEt1vzFpO13aEyge46S375CN8MA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SptTuagc5TVSshUl1KAM/wXVFI+zzM6rLEc3P0vm4so=;
- b=ImeiphDT+7p0/ZwLUHE+1kt4nJlZD+iSQiTC3P1iGmYOPI2Cv1GmgIltMHV/reSKAQRhZjAx+F31ab8pZr9uOiqqU2Bb2kUG+QbJY6cK1uf6xpTXXp6UhKbsBY9bKWpEdgcEQyeaMeCVdtSk/qgMSBEpZ4gY+LnA6Tk3fT1ujG+n51ZdJlVOBgVVcTjY3QF3e6Ve4yHTNFJezzZtiH8iyH1PfOpzUEl5V3SXjlG2n2vrCxbVTG3L/zy9h+wwgproW3PYNp75zlF8xkCDdxvYkj2yGhmt/0YdTcueSUfVkn1rrWThfzqNfGW+1+e2LnqyrNDs5WqiPZ+u2Vw/PzZibQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SptTuagc5TVSshUl1KAM/wXVFI+zzM6rLEc3P0vm4so=;
- b=AhigLUETnRZ5hciwPHBZjBRMoxGBDiT5qlFK4+l0X1jaTfUrs21KTJadVQB7QEaC7K12zAhHHWecIfXRvdrJpxw9AVn0zKopyrQbjp3KDEeX3C7oprvdJHsmZP3A7n+hijmwRD7FzGmrRfmfYq+uJRZFVi45e8NPxXS3c15My0D+zhGj0NCV60eKgMmr2HojBWBpuO6ga4xKMw+7KSnlm80SjoNpnbh1BcDrfb5nENS9e8JkrMSleA69XAgaCS2hG0rm0y5LC8fPYyTy0vPP7aH3KeENhg3yh7zRSdFNBiWi5QH/shu45WsaS5QQFR3XLPPgqbC7fKk8qc8pYPworg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by CY8PR12MB7241.namprd12.prod.outlook.com (2603:10b6:930:5a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Sat, 13 Sep
- 2025 01:02:28 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%3]) with mapi id 15.20.9094.021; Sat, 13 Sep 2025
- 01:02:28 +0000
-Date: Fri, 12 Sep 2025 21:02:26 -0400
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v5 02/12] gpu: nova-core: move GSP boot code to a
- dedicated method
-Message-ID: <20250913010226.GA1478480@joelbox2>
-References: <20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com>
- <20250911-nova_firmware-v5-2-5a8a33bddca1@nvidia.com>
- <e1755470-587b-4a43-8171-3d031b7fb4f4@kernel.org>
- <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com>
- <ce74db34-77bc-4207-94c8-6e0580189448@kernel.org>
- <DCQ074EMFNIK.1OJLWJXWZLDXZ@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DCQ074EMFNIK.1OJLWJXWZLDXZ@nvidia.com>
-X-ClientProxiedBy: BL1PR13CA0439.namprd13.prod.outlook.com
- (2603:10b6:208:2c3::24) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2B227470;
+	Sat, 13 Sep 2025 01:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757726710; cv=none; b=fBf/kfBitKnOSa9uzlboM7/Dvp9cbeKIU3vwMrX11lIU2oFfK/YGjc+UF7LfwBYfzYdTpvY6ai6c17dhKNIq+e+IhCvz3WEzkTPjugZxKWYid/a4N6cX4+fkk8oagHFJV8EC23umflsAwHnyBTQM9BYACXiIuItFNFaZyiW6EyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757726710; c=relaxed/simple;
+	bh=agQt5ainiSQaSSr29rjPNCJ03YQQhjZJznYusqfo160=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WFaDD7LoRJEVchEOK3wTNR66dRzq5pyfME4TthvNHGhmC3EhzCF1wYCn1AC1B2A/PDgHEx9fwXBO7BZLewUcCDHbPX6IxXzQCyetKte1XwIgc/y46Ggv0SyNOqv78HLLctfo2YN6KTmYRID5zo8v+lbdHw9n2yjlprui4LMTmP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gatrplh7; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1757726699; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=9I5RI3u2DR62/QoMG7oALiPeUv+mWBlAeBBb+VygSaI=;
+	b=gatrplh7xClNZSZp8U23XzQnwJn6Fadfy2HTDEOp6uKmyyQ80dpjAjqqrFWBXKawO0we0Ya6YYDOwiu8NJmhAMKcmZJO+JPBTlrkClOwKvERaUPYwuA/yhQ5TaiPfgbNxH9UT1O4dTphnEae3KcsMfh5lxAtGb8Pb5+f/PvT02g=
+Received: from localhost.localdomain(mailfrom:fangyu.yu@linux.alibaba.com fp:SMTPD_---0WnsD6mQ_1757726696 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 13 Sep 2025 09:24:58 +0800
+From: fangyu.yu@linux.alibaba.com
+To: fangyu.yu@linux.alibaba.com
+Cc: alex@ghiti.fr,
+	anup@brainfault.org,
+	aou@eecs.berkeley.edu,
+	atish.patra@linux.dev,
+	graf@amazon.com,
+	guoren@kernel.org,
+	jiangyifei@huawei.com,
+	kvm-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	palmer@dabbelt.com,
+	paul.walmsley@sifive.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH] RISC-V: KVM: Fix guest page fault within HLV* instructions
+Date: Sat, 13 Sep 2025 09:24:51 +0800
+Message-Id: <20250913012451.33829-1-fangyu.yu@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+In-Reply-To: <20250912140142.25147-1-fangyu.yu@linux.alibaba.com>
+References: <20250912140142.25147-1-fangyu.yu@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|CY8PR12MB7241:EE_
-X-MS-Office365-Filtering-Correlation-Id: b7d8ef32-5623-4b53-af93-08ddf261357c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bMlBW4lfOcd7PwqKbwuaVs2iOxwTJVEYiRfdT8r+hW9pCugq0uRh2k227zOc?=
- =?us-ascii?Q?UiifLvu7p8fQoGcbCXB/olQQK1XFYjs5oLvuxxF4OP8h6xOjHRB7UwfcHJn+?=
- =?us-ascii?Q?GKKsZO6UiFhKuhLH+4Z+UFzYikw6xMj+LsI2Q9hPCUm7D2zAJuDWHPkle/Hr?=
- =?us-ascii?Q?5wwAc/hQQLFy4TenwgVdnMa3b/0vfubtq5qdu18ul5kWukX9fSFjTswbCdPU?=
- =?us-ascii?Q?WSsuooQs6Iseyl563pXqA3piyA+jfnX7m3B/gOIprBcMXcxTz0+EClyAjCzd?=
- =?us-ascii?Q?2oBmRRaySypEcw89vYyVWkXCMy3ZHXSyM3DfHs6xYuXg/EdcbhxyPPLt5uhm?=
- =?us-ascii?Q?DxJ86ujB85KUIPXYTEw44keeSZqICq1EDTiMusc4V3lxV9F7Kse7b3nj2A0N?=
- =?us-ascii?Q?znuSu6YKuIwnJYvmpJ6E7cvUS00VWQNrZyUTJhpEljVO77WP1VpyXqkorN2O?=
- =?us-ascii?Q?OvCgistjLuNUPrzQ6W7hje6W09eeJi81jnzV0i3N7VUAWzn8XNIokjfSLKhG?=
- =?us-ascii?Q?d5XGzwhOGeUdg2z6rKYnOi8CST+lMa4QLtsKhAOJnb6hDr5/NQIEZzz4ELqy?=
- =?us-ascii?Q?PX8xvkxOzQUjbB/zRxp+FylU1yV98VHR97jjS3ecuxmvFiCwtBbhSo4lV4BA?=
- =?us-ascii?Q?CfWgAsGVIyGN9Zy+tjGrFlCV7/NXtNjdbjNuq/h6be+T6OZflH48qUzP0Jke?=
- =?us-ascii?Q?biYtUm+2q+ia4F3+VFhKdXZvFKf60YIvAzbbSb0KXb3TWwr+krY2A+c7SV10?=
- =?us-ascii?Q?bDeEY9UGa87e08nCamFYgTVdmBxGB+7r2hGIuXGKC/9qWCs+HATq72eiv90d?=
- =?us-ascii?Q?sEDmvqlZQ0DGylWGsjJDw6Dl+gnQxycGpy7VgLBn+1HFuNsq51N3vCeq8QgH?=
- =?us-ascii?Q?jM6YrAmRMiffoUyIC8MaETHpV9tYtAd5j50H4YXU2NBQ/BNaV0JtMIMLkmxj?=
- =?us-ascii?Q?u4V6/SPcFUNfy1VTgYJAdiWVpJ/YD9nu413XAHdrlKyga4niondGtSdb6sH/?=
- =?us-ascii?Q?rPzXgws/kLoViJTrT+/1vuNT+uNkJ0oIF5cR6gNSji0CS2FSgsAvStvFtrNG?=
- =?us-ascii?Q?TmCBTvHX61+K2tVMC3TOuG0IYtPsOinpm6N8qE7ecL7Ew4PCKqfxLZw1BDXA?=
- =?us-ascii?Q?RdjtZtSte3aiW0lvjm+AmpBYUpm7g4sVa1JkTavleqzJ8KZbzoZzWNYXpQkZ?=
- =?us-ascii?Q?Xai5PfW//ipdRjQRxgelBAsXGHBe/QPNx7GVcYFSGIMJQg3beQ2hMHtdQI+i?=
- =?us-ascii?Q?Iu1Z7tkvjs4yyBSLv7fJFSC3wiqUZNISHCfD1k162uA8FC8Oh3NzwK5Op0Vz?=
- =?us-ascii?Q?sEhYcxGDJOb0toQB0/UjSQKWHj0C0wIPPZWAH61RZKNigDlV6bVHOUSENXrk?=
- =?us-ascii?Q?A69Bf2egeysNiBIf9I44JHa8+VXFj3vF9jlnEshgdM2oR6TFNwj0RYPE9Hz8?=
- =?us-ascii?Q?SxZOgLfFkvY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4s9k1D1qH4qdKXTnrZP0S8jyfw83iQtD9/79atwcTcA7PXuMhnGuqOdDsdQn?=
- =?us-ascii?Q?qef+1hAuuVwHD0+o8Zm0iTF4OYZuyCXzImJohphsMz7ViT02PFw+fMnzfXXI?=
- =?us-ascii?Q?6qXAqL10ziqa8OE0Xe0iN8h7223P6HpU5Do/W6W/A2qfdYUs/CkR2tmi6Umx?=
- =?us-ascii?Q?9f3pPawOhDFmN5rixSYB3527T30A2WpZq4QVLYRhtApuYAqInrujoTEMeiht?=
- =?us-ascii?Q?mKHZaEStgxOOUROlWabkKrO4eD2TVVmAuxrGB+uANMsDjq82m+EQoy+eNNck?=
- =?us-ascii?Q?xUcmepCHR1DOAv8NgfuZthuUD+TwZRHEpDrQItNQOdhVI1rF/fC2NPQu9vfi?=
- =?us-ascii?Q?Lu5Z8VOKzSUbMwCEhADFYI+A1n1xOJZOj0NOXAxk7LhJCNlWpVnDzW+NUoMi?=
- =?us-ascii?Q?NoRgw529gZobsk3ffyTyBmkoM3TnZxWj49EpfmYt00cazquP7o2CRp/bGIYW?=
- =?us-ascii?Q?+3QBmg9muOfMd5glycbCwY+nGuiN0392arNpSvwzLARYNh301qjt7PadWRN9?=
- =?us-ascii?Q?zbHFdKRer6mECYG52N3CmcnpSADeNK7m+CfXbaTSco/OdiIaq2RKNLHa2quU?=
- =?us-ascii?Q?O+Ah1sH9ZfcXk49VVgeprROwOPZpFqqsm39nMdg7fB/AU8W27VuIbL6tbckP?=
- =?us-ascii?Q?7BQH9nmAczLsIjdKkfFj8EKkosbFoLzywDfyNd2GJ4fYGfzZu2Q1PfCm5k+i?=
- =?us-ascii?Q?7Tvfv20dGKciB8KTO4R6vQkGTPYuOudaf5NyKmGfi7o45w8VBVSWyjtMN0n9?=
- =?us-ascii?Q?gJ8K7F9srXq9X69hncX9AAc2R8xBUaNssljDR5x7lq2MWEfHXXnPJxvBb8Mq?=
- =?us-ascii?Q?yjy80rGArDYGmWogrFrNENWbwWTkascSIizSQkaDwQBcvGciUi/rp6lYteda?=
- =?us-ascii?Q?3M9JGc4bitDOU4O5F6s7FhtLysly+vLGlNnGCTLIknAzNBbrQ/bV72PlS/rD?=
- =?us-ascii?Q?B1+keYZDRafwKFTJ/eTDHlTDDMnvVJulZbjmIQiepyAYLMtmoWnn4du4QSMS?=
- =?us-ascii?Q?I3GQy/8qxwtfXguayLOIXdZsf9BULzi2WOt2z5izc27KvHYyuVJZfG0F/gUd?=
- =?us-ascii?Q?YcFe9E151A2nroEoaFoDYMtObFb9o7XCuRFGrdnInV5beAmaq6WLyR0NS+9b?=
- =?us-ascii?Q?bfbB/Kgf498vlLbbfRaheumkASkM/htHoDoHtiAVy9yPP/Ui/ihzTrKpk9PG?=
- =?us-ascii?Q?+vwWl88zlX32KKk+wP9Pap4HidSAkFS4Bg9KAtwgm1TlPChXCLnaQ1apBAxw?=
- =?us-ascii?Q?B0TnQoyX/tTO3Drd8wPXFwIKo5gCWQXXKUqG5wbD5H6Tny/F07zLJMbyzwuy?=
- =?us-ascii?Q?o8GAk4wYg1vkZ7viATheNQra1MxSo7U7M4PNTAs1pXAyCQr3KQAmPutlEe46?=
- =?us-ascii?Q?sg8ue0bkamxdnEkz2P0MEn5FJe725Sgk+U2aTw8BNJFriaqwPtGFnUhlo1Qz?=
- =?us-ascii?Q?qOqcZLXCTTkhUFSYrd7u8WYeZJ5YfI38nP5LdsjPNpYuI2fmzIu4SdP1Ktyz?=
- =?us-ascii?Q?ABIvwyqGDtH5qbggf4axZV9xr5NjDST8KeLNoyLFgum9f7HieQi3Oorhzesm?=
- =?us-ascii?Q?QHXSwxHADOzXix5koDDaMzys9GK9k+8bqiWgJNI5?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b7d8ef32-5623-4b53-af93-08ddf261357c
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2025 01:02:28.1097
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D0C4K7zGI0vPFf8M4JsbpEOBE5JlXKnnRchIbWCsbhe+F1nbLCxx1uOCibWarimxjQZc5VdEZXZP4oqqJVkbOw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7241
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 11, 2025 at 10:26:08PM +0900, Alexandre Courbot wrote:
-> On Thu Sep 11, 2025 at 9:46 PM JST, Danilo Krummrich wrote:
-[..] 
-> >> By keeping the initialization in the GPU, we can keep the GSP object
-> >> architecture-independent, and I think it makes sense from a design point
-> >> of view. That's not to say this code should be in `gpu.rs`, maybe we
-> >> want to move it to a GPU HAL, or if we really want this as part of the
-> >> GSP a `gsp/boot` module supporting all the different archs. But I'd
-> >> prefer to think about this when we start supporting several
-> >> architectures.
-> >
-> > Didn't we talk about a struct Gsp that will eventually be returned by
-> > Self::start_gsp(), or did I make this up in my head?
-> >
-> > The way I think about this is that we'll have a struct Gsp that represents the
-> > entry point in the driver to mess with the GSP command queue.
-> >
-> > But either way, this throws up two questions, if Self::start_gsp() return a
-> > struct GspMemObjects instead (which is probably the same thing with a different
-> > name), then:
-> >
-> > Are we sure this won't need any locks? If it will need locking (which I expect)
-> > then it needs pin-init.
-> 
-> Sorry, I have been imprecise: I should I said: "it can be moved" rather
-> than "it doesn't need to be pinned". In that case I don't think
-> `Gsp::new` needs to return an `impl PinInit`, right?
+>>From: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+>>
+>>When executing HLV* instructions at the HS mode, a guest page fault
+>>may occur when a g-stage page table migration between triggering the
+>>virtual instruction exception and executing the HLV* instruction.
+>>
+>>This may be a corner case, and one simpler way to handle this is to
+>>re-execute the instruction where the virtual  instruction exception
+>>occurred, and the guest page fault will be automatically handled.
+>>
+>>Fixes: 9f7013265112 ("RISC-V: KVM: Handle MMIO exits for VCPU")
+>>Signed-off-by: Fangyu Yu <fangyu.yu@linux.alibaba.com>
+>>---
+>> arch/riscv/kvm/vcpu_insn.c | 21 ++++++++++++++++++---
+>> 1 file changed, 18 insertions(+), 3 deletions(-)
+>>
+>>diff --git a/arch/riscv/kvm/vcpu_insn.c b/arch/riscv/kvm/vcpu_insn.c
+>>index 97dec18e6989..a8b93aa4d8ec 100644
+>>--- a/arch/riscv/kvm/vcpu_insn.c
+>>+++ b/arch/riscv/kvm/vcpu_insn.c
+>>@@ -448,7 +448,12 @@ int kvm_riscv_vcpu_virtual_insn(struct kvm_vcpu *vcpu, struct kvm_run *run,
+>> 			insn = kvm_riscv_vcpu_unpriv_read(vcpu, true,
+>> 							  ct->sepc,
+>> 							  &utrap);
+>>-			if (utrap.scause) {
+>>+			switch (utrap.scause) {
+>>+			case 0:
+>>+				break;
+>>+			case EXC_LOAD_GUEST_PAGE_FAULT:
+>>+				return KVM_INSN_CONTINUE_SAME_SEPC;
+>>+			default:
+>> 				utrap.sepc = ct->sepc;
+>> 				kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+>> 				return 1;
+>>@@ -503,7 +508,12 @@ int kvm_riscv_vcpu_mmio_load(struct kvm_vcpu *vcpu, struct kvm_run *run,
+>> 		 */
+>> 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
+>> 						  &utrap);
+>>-		if (utrap.scause) {
+>>+		switch (utrap.scause) {
+>>+		case 0:
+>>+			break;
+>>+		case EXC_LOAD_GUEST_PAGE_FAULT:
+>>+			return KVM_INSN_CONTINUE_SAME_SEPC;
+>>+		default:
+>> 			/* Redirect trap if we failed to read instruction */
+>> 			utrap.sepc = ct->sepc;
+>> 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+>>@@ -629,7 +639,12 @@ int kvm_riscv_vcpu_mmio_store(struct kvm_vcpu *vcpu, struct kvm_run *run,
+>> 		 */
+>> 		insn = kvm_riscv_vcpu_unpriv_read(vcpu, true, ct->sepc,
+>> 						  &utrap);
+>>-		if (utrap.scause) {
+>>+		switch (utrap.scause) {
+>>+		case 0:
+>>+			break;
+>>+		case EXC_LOAD_GUEST_PAGE_FAULT:
+>
+>Here should be EXC_STORE_GUEST_PAGE_FAULT, I will fix it next version.
 
-If you don't mind clarifying for me, what is the difference between "it
-doesn't need to be pinned" and "it can be moved"? AFAICS, they mean the same
-thing. If you don't want move semantics on something, the only way to achieve
-that is pinning no?. If it can be moved, and it contains locks, then that will
-break unless pinned AFAICS. So if need locking in Gsp, which I think we'll
-need (to support sychrnoized command queue accesses), then I think pinning is
-unavoidable.
+Please ignore this comment, EXC_LOAD_GUEST_PAGE_FAULT is correct.
 
-On the other hand, if just the firmware loading part is kept separate,
-then perhaps that part can remain unpinned?
-
-Any chance we can initialize the locks later? We don't need locking until
-after the boot process is completed, and if there's a way we can dynamically
-"pin", where we hypothetically pin after the boot process completed, that
-might also work. Though I am not sure if that's something possible in
-Rust/rust4linux or if it makes sense.
-
-Other thoughts?
-
-thanks,
-
- - Joel
-
+>
+>>+			return KVM_INSN_CONTINUE_SAME_SEPC;
+>>+		default:
+>> 			/* Redirect trap if we failed to read instruction */
+>> 			utrap.sepc = ct->sepc;
+>> 			kvm_riscv_vcpu_trap_redirect(vcpu, &utrap);
+>>--
+>>2.49.0
+>
 
