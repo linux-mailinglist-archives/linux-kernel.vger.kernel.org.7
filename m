@@ -1,149 +1,103 @@
-Return-Path: <linux-kernel+bounces-815316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B210BB5628B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:28:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47ACDB56293
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F13E1B248C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:29:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B7256651B
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCD3212D7C;
-	Sat, 13 Sep 2025 18:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36B921B9CD;
+	Sat, 13 Sep 2025 18:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bzT1G6/c"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XbfTZai+"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DD81D5146
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A216F469D;
+	Sat, 13 Sep 2025 18:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757788121; cv=none; b=e9Bc82a3okKWdBE4Q/Tl/1dLup4YS0CGbVR8zRKwrrlSENhzHf+Tn6eRgLN0uz2j6XApFx//2QCH6NRUJt0dRzccUrnc9jkBZLt2WaWXdbZgLQfRlbOfl3RoMiAwOelVGaZCnrm4dLZAXWjRCS+zRrnDMoYCoavvY0Y6C53hftw=
+	t=1757788975; cv=none; b=ernMR2eS+sZgaVby4jaUbeRwf5aMU4iDgpek3nmCW9xKPn47QdKyBZwsQRrzwpL0fa4rlsq5Rh8ctkgWpvizUtA4BhGGaGR1tbun3/Xo4/PFzYxHgSuMWCzCIuCH2MYys/CrHu3QqR9Hp3itTPgPtfNiIonYBUHgU5JvldxNFrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757788121; c=relaxed/simple;
-	bh=gKcQeUu8cSavcrreJY9MpCvt84gelAsJxkM9T047X/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bj/NS2lYD+F1YmDBUOkoPIkRd1HU8gO530oQm0gmc6NDvSMwFFSQvfGN6V1yKGz31yRn4n1zd6EukqaXrwydbSREf6hszpj2CbJZ0BtrNhqMQBivhUZGgwpbbfv963kiPQaTfC6/38SyG80+TslrdRH/6aRMTvosHAlJJmPWdfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bzT1G6/c; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-72ce9790acdso26547987b3.0
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:28:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757788119; x=1758392919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2nCFUKUNYumkIxFj5PydzJTHinQbopV5LDcYIB4n3Xw=;
-        b=bzT1G6/c0AAIXet2nYBXQaLljAsfF8Zq6D65Vn5p3UcIMA7rRypprkWZFwnUMADc85
-         UzcNU8eQ1XC+NVvF7U0w71cJcXixrY0ql2mX8CfgVO1aRWbFR3OXjya9H4fp6W3HFaNf
-         /QBjyxmc+nQQ2Hk8AqPrI6U8e8ubXmcYweenKH5PYLVThL0r26d/u9R6Zl60OngRxnsP
-         7XU2x5uKmhvBagMKK6fo/qpC+O4BEsyZLDZWENHv6NuFsOBSZShqGb8dYzddAkbt2nOd
-         BQ8oO4OkwcX8PkomvPRB88mUnR/2R5iQoPgkXJW+mkCFUISpMRzeFO1i1tPbcgIJIpL4
-         6QBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757788119; x=1758392919;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2nCFUKUNYumkIxFj5PydzJTHinQbopV5LDcYIB4n3Xw=;
-        b=uC18rEEw1PCfNEKIyQunbQmudkwRCQQp5aY+2mApilxwdd5L4crFN+Vu+yx49+TO/d
-         zOOqKiAQFNSkwfgFWOW2lroOBkR7vYIJpRVak+jjD5ivLjCNVSDArHMOKcTXS90i7BLi
-         wofaQ/RqBadZhLUEy0Ol4+SFX68F5FmzyYZEzyjXgqE/X8ndwzbV74ZsrzcCKu2A61tU
-         6O0roE83H9xNwHzhSz1glHnwxmB7jkeUOONtgi9xXDYpYYTyhvXGiJced6I0A/WI/OsL
-         BXipIsLzJTiq2njrRiRZND8jXByEH6Svqwy6OyU9sgnSX/CTgEXUUGWH1eXjKOW0jYFp
-         2EGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4eF9xZRWws/glfSMFT4UhyrpoUotq6wJyVOapX+cOeaMRvaa/P5oXZOeCmxm6Y98Sg7/TeKa+PTEiwrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6dubw2ezjx0793djnNFglc1uC/CAn749wjRO/X/WbNr4gfv6M
-	OfccBFgpnX1aYl01k6aIge3iMULiiO/zgSAEumUsW5uMecqEpLNOiuT0
-X-Gm-Gg: ASbGncuCagyoGtCvo5Wy6g23sSveZFUz8Rlqy6XPboKFIyAoo8VZzgwQ0gIPp01/uPT
-	+jUimuhUTdh8x4sut2WL7upjaAhjTe4OyQ0h+XSrC7QEqNhgJp7PV9Sm+BFV0T+kLRd9rRxYTzV
-	6nr4IKFbRTxstAL9ZPLQd6SmhKuk7tOdBBoD6tQSDP1LSgCULQ3/lSUXv1VcAEodA3HljM+Uwdk
-	SvVr4ieoLjyvHSwAisu+jOZtCrGu3upR/JNb01ipL59P/9Kd/Q+4lxd8wWmnkYobeMNIGw6wsIh
-	tDrDfGasqEcPniaYkGGrjphH+1NezOqjG+HIrEkp2OqL5jkciVZcYRv67hj+czWxaT8gOIArJFq
-	c5cUedkwSOGXb0D6vXuJYY/FxdrFYolM2S2rOY9YoSaXHNgbfyY/0h4tE6qqbFplxqZZX
-X-Google-Smtp-Source: AGHT+IEr6TyIbto1lC165e2SsnhAZ4im9LgfNIlYS/9s75aaY/CPhmgjgyslAAEUaftUYJeDHyRk9Q==
-X-Received: by 2002:a05:690c:e0d:b0:71f:b944:100e with SMTP id 00721157ae682-73065cb1982mr69611127b3.53.1757788119092;
-        Sat, 13 Sep 2025 11:28:39 -0700 (PDT)
-Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-72f79a8c8f7sm19966357b3.69.2025.09.13.11.28.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 11:28:38 -0700 (PDT)
-From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-To: Andrei Botila <andrei.botila@oss.nxp.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sabrina Dubroca <sd@queasysnail.net>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
-Subject: [PATCH] net: phy: nxp-c45-tja11xx: use bitmap_empty() where appropriate
-Date: Sat, 13 Sep 2025 14:28:36 -0400
-Message-ID: <20250913182837.206800-1-yury.norov@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1757788975; c=relaxed/simple;
+	bh=SLuR8qxEMfqe5InDtzQ2oGLELyg+xNWm9EY+STIRKqw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=luDYyISFR9nX8c0aoQXtsVRM9ik6Xp/b7hsKV6q9opqZZheDRWrpY4kURyWjCJPh8CDCv52X2UzVD9v3WQ9GjSNPyHvcUeNygp90buTWCti3Pul/j6D7Yyep8Ey763ZA0/d/EMmgnj+zIoCOA3EhWusl6t2Kdo1mTn0gqZU/I2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XbfTZai+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=COxpmyOT+gvU5PDlLKI7BwcE7Zrd/1BXxX/O8Ztn2XE=; b=XbfTZai+eLISQeMJzWY9/6VOcL
+	l+cQ1JpB6HWKf7ZdSNDD+TzRTs3f6ZPlQPTsPYSYsVnX5ya2zrOm5cZk53bliqDH2iYKU1gS+EwqA
+	MIE7Bd55uhfsAHfGLShpFRm6E56bh8T3eUI3kbwNPNFp8oODheUKp1T55MHOp7xBsgcY+QkAP/iGq
+	c4dsFExPpKigAPVzsRzrBVl9hVdJwRGDdrCZgHUVMLo8W5Zqtl3lIVEO8x9ccghmQ/3+JBe6pY/Ao
+	Yeif04ako0h8Pp4gN3sbkEe/EuU498mmV3y7eCkrZDaKs5TcTlCo8rOEAeDvb+10jC8ZQTvoLsS7Y
+	VoWN2WDQ==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uxVCz-0000000FqhZ-024R;
+	Sat, 13 Sep 2025 18:42:49 +0000
+Message-ID: <208fa944-6aef-4acb-ba39-d351d364c53e@infradead.org>
+Date: Sat, 13 Sep 2025 11:42:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] docs: w1: ds2482: fix typo in buses
+To: Akiyoshi Kurita <weibu@redadmin.org>,
+ platform-driver-x86@vger.kernel.org, mpearson-lenovo@squebb.ca,
+ derekjohn.clark@gmail.com, W_Armin@gmx.de
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net
+References: <20250913173413.951378-1-weibu@redadmin.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250913173413.951378-1-weibu@redadmin.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The driver opencodes bitmap_empty() in a couple of funcitons. Switch to
-the proper and more verbose API.
 
-Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
----
- drivers/net/phy/nxp-c45-tja11xx-macsec.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/phy/nxp-c45-tja11xx-macsec.c b/drivers/net/phy/nxp-c45-tja11xx-macsec.c
-index 550ef08970f4..fc897ba79b03 100644
---- a/drivers/net/phy/nxp-c45-tja11xx-macsec.c
-+++ b/drivers/net/phy/nxp-c45-tja11xx-macsec.c
-@@ -926,7 +926,6 @@ static int nxp_c45_mdo_dev_open(struct macsec_context *ctx)
- 	struct phy_device *phydev = ctx->phydev;
- 	struct nxp_c45_phy *priv = phydev->priv;
- 	struct nxp_c45_secy *phy_secy;
--	int any_bit_set;
- 
- 	phy_secy = nxp_c45_find_secy(&priv->macsec->secy_list, ctx->secy->sci);
- 	if (IS_ERR(phy_secy))
-@@ -939,8 +938,7 @@ static int nxp_c45_mdo_dev_open(struct macsec_context *ctx)
- 	if (phy_secy->rx_sc)
- 		nxp_c45_rx_sc_en(phydev, phy_secy->rx_sc, true);
- 
--	any_bit_set = find_first_bit(priv->macsec->secy_bitmap, TX_SC_MAX);
--	if (any_bit_set == TX_SC_MAX)
-+	if (bitmap_empty(priv->macsec->secy_bitmap, TX_SC_MAX))
- 		nxp_c45_macsec_en(phydev, true);
- 
- 	set_bit(phy_secy->secy_id, priv->macsec->secy_bitmap);
-@@ -953,7 +951,6 @@ static int nxp_c45_mdo_dev_stop(struct macsec_context *ctx)
- 	struct phy_device *phydev = ctx->phydev;
- 	struct nxp_c45_phy *priv = phydev->priv;
- 	struct nxp_c45_secy *phy_secy;
--	int any_bit_set;
- 
- 	phy_secy = nxp_c45_find_secy(&priv->macsec->secy_list, ctx->secy->sci);
- 	if (IS_ERR(phy_secy))
-@@ -967,8 +964,7 @@ static int nxp_c45_mdo_dev_stop(struct macsec_context *ctx)
- 	nxp_c45_set_rx_sc0_impl(phydev, false);
- 
- 	clear_bit(phy_secy->secy_id, priv->macsec->secy_bitmap);
--	any_bit_set = find_first_bit(priv->macsec->secy_bitmap, TX_SC_MAX);
--	if (any_bit_set == TX_SC_MAX)
-+	if (bitmap_empty(priv->macsec->secy_bitmap, TX_SC_MAX))
- 		nxp_c45_macsec_en(phydev, false);
- 
- 	return 0;
+On 9/13/25 10:34 AM, Akiyoshi Kurita wrote:
+> Correct a spelling mistake in ds2482.rst
+> ("busses" -> "buses").
+> 
+> No functional change.
+> 
+> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+> ---
+>  Documentation/w1/masters/ds2482.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/w1/masters/ds2482.rst b/Documentation/w1/masters/ds2482.rst
+> index 17ebe8f660cd..5862024e4b15 100644
+> --- a/Documentation/w1/masters/ds2482.rst
+> +++ b/Documentation/w1/masters/ds2482.rst
+> @@ -22,7 +22,7 @@ Description
+>  -----------
+>  
+>  The Maxim/Dallas Semiconductor DS2482 is a I2C device that provides
+> -one (DS2482-100) or eight (DS2482-800) 1-wire busses.
+> +one (DS2482-100) or eight (DS2482-800) 1-wire buses.
+>  
+>  
+
+Well, I'll leave that one up to Jon. The $internet says that
+"buses" is preferred but also says:
+"In both British English and American English, busses is a less
+common but still acceptable variant."
+
+
 -- 
-2.43.0
+~Randy
 
 
