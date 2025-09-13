@@ -1,320 +1,126 @@
-Return-Path: <linux-kernel+bounces-815312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F7F4B5627C
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:13:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E68B5627E
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE801B21335
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91EF11B21571
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 18:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFB3214236;
-	Sat, 13 Sep 2025 18:13:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B5C2147F9;
+	Sat, 13 Sep 2025 18:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cSc4BL7q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FKngJ2y9"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA742DC796;
-	Sat, 13 Sep 2025 18:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0DC1FAC37
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757787195; cv=none; b=bvayRde9GwuDPFnlP8rgsZ6807sc1LKSkBAVXG3leUYWlc8wpTuQ2vbduuVWgYG5esu0i+tfeLGouyTccF61+hKpNf9hVM9IZ2bTi59tVoBLMX0CozqA5vJZ9443cSOOCFw0Dl1BhEhigbLHdyurbNsLrVYlY6syIYdYEMzybzg=
+	t=1757787230; cv=none; b=uB62Te5s377HntKXAxBGwLdB4OUF8nkTUwyU/YtfFy/udDDpEYCTHzqzxpHxPKYSQGFBmPdXkchmUsFQqZS4pR71yHzyYp+es3auRPAOm3cPK2iUML8Bdc9ORZJW0pa2BHMjSmQBipsAFEY6wXYW2nZZ8T1HjbhbQzwKSPrgcjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757787195; c=relaxed/simple;
-	bh=k7nNBspOXSSe/tLYVHuI4PsM5pE8ZoP9ghJYCBvc390=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpEOWiSo5znAOnS7VevZfmMlRiT2t2SNG4IzUryEzdgF3hDEkZFCJ4oKV8GuPOH3rEbEc8jtccv82tUjROSY/yEjUVw9HoFoYKWnxNxOAQS8zT86Og6j1qt2X7Pos+rCznj5vGcFm6O8zPIlDjRM09gWxXjpYM3HG+bJpbjW+08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cSc4BL7q; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757787192; x=1789323192;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=k7nNBspOXSSe/tLYVHuI4PsM5pE8ZoP9ghJYCBvc390=;
-  b=cSc4BL7qs0G1RXh5lrjpte6G56uPllH97ikEbaINMwHyCov3XOwmj8RI
-   eZGOP+I7/tNVuBl4iOB1YO2em8ArbOKPinYksjAbb2K2ERAYlrCwbP1Kd
-   OObc4l0VTKvUndKdlyDZSaro0KGpGkzSEAM+CChcuOJDN97ej6tsIszLR
-   VOUSSeztadpnuqQJWaH1ZcXLIcwk1o+CyyMlMAXjv5KtJNJ/rECeyEwQu
-   BuuDX0GwzVOfsfvtazm3OldkPi6cN2N2saLJzJmdZ4qMw2HgbaLXgBNTK
-   P/wJOOdX2tJyRQwrx3L3rpwaUxr9Ujfdt5SBH3seFgIfKzWSwgakse4Hg
-   w==;
-X-CSE-ConnectionGUID: LSbCQEpVTyiMIwy8gxaa2g==
-X-CSE-MsgGUID: sU1nymnHRWeEDimJa4QRWw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11552"; a="47670556"
-X-IronPort-AV: E=Sophos;i="6.18,262,1751266800"; 
-   d="scan'208";a="47670556"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2025 11:13:12 -0700
-X-CSE-ConnectionGUID: vrRUZh2uStimY4r131L/pA==
-X-CSE-MsgGUID: pM2BIAmMT+GPDoejCKmYAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,262,1751266800"; 
-   d="scan'208";a="178576358"
-Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 13 Sep 2025 11:13:08 -0700
-Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uxUkD-0001l2-0a;
-	Sat, 13 Sep 2025 18:13:05 +0000
-Date: Sun, 14 Sep 2025 02:12:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Petre Rodan <petre.rodan@subdimension.ro>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Petre Rodan <petre.rodan@subdimension.ro>
-Subject: Re: [PATCH v3 15/18] iio: accel: bma220: add interrupt trigger
-Message-ID: <202509140109.kB7kOKfZ-lkp@intel.com>
-References: <20250913-b4-bma220_improvements-v3-15-0b97279b4e45@subdimension.ro>
+	s=arc-20240116; t=1757787230; c=relaxed/simple;
+	bh=3rzaM2X/zFTxRZBZgEHTS2j0+xkHtGU3DGTzIAZHWIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CV1AssVpt4iUCV4XZKMWUo+DxIdw7q3cpfTh9CNZjRwwzIcRJLQwFPgBXAGkYXpePLF/d0Xl+ZrV0E+QjcPFsx8FgK7POaRPkTFqV9OjAe0+Hyu0/Sx/LG9TTrYyhAJPqKVG3tEw46OW+E0huf4B3aYFNTZgoUShC6aqaPwlhEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FKngJ2y9; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-ea3f49679ccso333550276.3
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757787228; x=1758392028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MqC6tk+ZfLggMyonbV+QWYHVZPiMQwp/bc2dZEheebg=;
+        b=FKngJ2y9BuPcidAcNLHInK8z3ZE40mdZbhYHrjtZLqW8NRmjkc0bYkNvW2xtKq4U8x
+         FaqhGRiNRqhTxNder2f1gUXu5+oapnqXyxRBNAzzhrmCwl7l0MsL1jaxEsCoCMkGjd/E
+         NcRWrJXaV6Ki/0cx4nR80Q58QiOgk0y26x94RhuZOpJmvq9qZ2v+tvEevtzyINmNK2qV
+         IMGF2sefTS+xM07Yz1TqnhGxGvmXGjUBnYTJLIa2k+UwMrtQwY5g1mvcgPtxAHBVaair
+         rxGUsNVTzoTiO1kfK7xyMD0vC78D87eB5c5apSd8pDHcUeL8zSgD9bgoI5r225bfciF2
+         A/Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757787228; x=1758392028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MqC6tk+ZfLggMyonbV+QWYHVZPiMQwp/bc2dZEheebg=;
+        b=lFt50fa3i74ejVcbRx5uic4Tq2dOlSTT/nvCEozntlk32TSJ7mMms6BC0/7JeQij5U
+         R6+6SuRDnMfZvIRoMJa15GQUfdTarxil9x57H9onStEP7BrMhZryeH2YbeS9+gS4/7Uq
+         ovrQ4a1bFxn5f072XSOK2i+9FY/dwf4orkLr4BjVaQshWWjOdT+vmGUVgaYJXpPq/2qM
+         vewSs/+10ZnHI1x0TdbJCSgruvB4U4JEVpRjuxhW/9f8yuYRfYtdwOwL5ZK/XiCon5cI
+         mVPHNlwUXkNezD6K42DxQcEhRnAedhvu+9WYjPsWCkFmg0mrnuUPTwa3o90Cw0+xzbki
+         epjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXI8wWE5JxPIEAMwyxiMkVeVkP4PiG/IynAUtcXy969aMJOzhpaQf1q2wjFX1C6qFEnoyvJWFeqHYh5/Zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWmirkRim6AHr1I+IWSwgat/VDQVznGZNpniYzZEV5zZgoQyZp
+	LOnTMR8+kwaqBdqTf2PuZzQbhcTf/M//3svwtFdzIvJ/+l6CFTglyLxd
+X-Gm-Gg: ASbGncvxkxlfdW6qEqcJEHNGRKVs0EqhdtOHOQA4/vom+s+co9G7hqmujAJFQZAGQVl
+	P0S785+Su9IEvEALJgka6gLwlqe5woG8J3IRR21dSMbYgZUOZFBmlc8Q1ON5p8nonrWLFyuScJp
+	dQtmh6CKhcVSZL6F4d9Ja58q3DIf9DBhQvF8MBH1ZEAM8s6AgSQ4jIiyZ70KosCSXDgx5StDg63
+	qRCfCxm+sg8C2CjVNULqtRhfwboQ5Zi2wwcEWZ54lFIAjNE1F+/4y5GwUflfLpPw+YOlieziLxZ
+	ebBnRJyIta91tP5ClV8e3JD2vU/qgeOGynEAswDgWdwM0/F09rYcm8qdrTgIenQUxK0MwFy/4N2
+	L0Tx4FCnnCrLsrll5pYC87TWjGLD4ecQcRltUAF+GgHhbq7OQSIRFWJpIAS6o67XeCKJWd0OcK0
+	x6wW0=
+X-Google-Smtp-Source: AGHT+IGXmfP8lhQsAEr8A4H+juDqXUoD1IEZHDk4WG2eYBTmnl9v+NYkqBaumyp94fhbs4FlMP4+2w==
+X-Received: by 2002:a05:690c:610e:b0:71f:e5c5:5134 with SMTP id 00721157ae682-730645316f8mr70119117b3.33.1757787227704;
+        Sat, 13 Sep 2025 11:13:47 -0700 (PDT)
+Received: from localhost (c-73-224-175-84.hsd1.fl.comcast.net. [73.224.175.84])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-72f76928fe2sm19907537b3.25.2025.09.13.11.13.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 11:13:47 -0700 (PDT)
+From: "Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	"Yury Norov (NVIDIA)" <yury.norov@gmail.com>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: renesas: rswitch: simplify rswitch_stop()
+Date: Sat, 13 Sep 2025 14:13:45 -0400
+Message-ID: <20250913181345.204344-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250913-b4-bma220_improvements-v3-15-0b97279b4e45@subdimension.ro>
+Content-Transfer-Encoding: 8bit
 
-Hi Petre,
+rswitch_stop() opencodes for_each_set_bit().
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Yury Norov (NVIDIA) <yury.norov@gmail.com>
+---
+ drivers/net/ethernet/renesas/rswitch.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-[auto build test ERROR on 661facba437e37c1685606825b9fd59be3f78771]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Petre-Rodan/dt-bindings-iio-accel-bosch-bma220-cleanup-typo/20250913-234451
-base:   661facba437e37c1685606825b9fd59be3f78771
-patch link:    https://lore.kernel.org/r/20250913-b4-bma220_improvements-v3-15-0b97279b4e45%40subdimension.ro
-patch subject: [PATCH v3 15/18] iio: accel: bma220: add interrupt trigger
-config: x86_64-buildonly-randconfig-002-20250913 (https://download.01.org/0day-ci/archive/20250914/202509140109.kB7kOKfZ-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250914/202509140109.kB7kOKfZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509140109.kB7kOKfZ-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from include/linux/linkage.h:7,
-                    from arch/x86/include/asm/cache.h:5,
-                    from include/vdso/cache.h:5,
-                    from include/linux/cache.h:6,
-                    from arch/x86/include/asm/current.h:10,
-                    from include/linux/sched.h:12,
-                    from include/linux/ratelimit.h:6,
-                    from include/linux/dev_printk.h:16,
-                    from include/linux/device.h:15,
-                    from drivers/iio/accel/bma220_core.c:12:
-   drivers/iio/accel/bma220_core.c: In function 'bma220_irq_handler':
->> drivers/iio/accel/bma220_core.c:521:22: error: non-static declaration of 'bma220_common_probe' follows static declaration
-     521 | EXPORT_SYMBOL_NS_GPL(bma220_common_probe, "IIO_BOSCH_BMA220");
-         |                      ^~~~~~~~~~~~~~~~~~~
-   include/linux/export.h:76:28: note: in definition of macro '__EXPORT_SYMBOL'
-      76 |         extern typeof(sym) sym;                                 \
-         |                            ^~~
-   drivers/iio/accel/bma220_core.c:521:1: note: in expansion of macro 'EXPORT_SYMBOL_NS_GPL'
-     521 | EXPORT_SYMBOL_NS_GPL(bma220_common_probe, "IIO_BOSCH_BMA220");
-         | ^~~~~~~~~~~~~~~~~~~~
-   drivers/iio/accel/bma220_core.c:457:5: note: previous definition of 'bma220_common_probe' with type 'int(struct device *, struct regmap *, int)'
-     457 | int bma220_common_probe(struct device *dev, struct regmap *regmap, int irq)
-         |     ^~~~~~~~~~~~~~~~~~~
->> drivers/iio/accel/bma220_core.c:523:12: error: invalid storage class for function 'bma220_suspend'
-     523 | static int bma220_suspend(struct device *dev)
-         |            ^~~~~~~~~~~~~~
->> drivers/iio/accel/bma220_core.c:531:12: error: invalid storage class for function 'bma220_resume'
-     531 | static int bma220_resume(struct device *dev)
-         |            ^~~~~~~~~~~~~
->> drivers/iio/accel/bma220_core.c:538:29: error: extern declaration of 'bma220_pm_ops' follows declaration with no linkage
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         |                             ^~~~~~~~~~~~~
-   include/linux/export.h:76:28: note: in definition of macro '__EXPORT_SYMBOL'
-      76 |         extern typeof(sym) sym;                                 \
-         |                            ^~~
-   include/linux/pm.h:393:57: note: in expansion of macro '_EXPORT_PM_OPS'
-     393 | #define _EXPORT_DEV_SLEEP_PM_OPS(name, license, ns)     _EXPORT_PM_OPS(name, license, ns)
-         |                                                         ^~~~~~~~~~~~~~
-   include/linux/pm.h:405:57: note: in expansion of macro '_EXPORT_DEV_SLEEP_PM_OPS'
-     405 | #define EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns)            _EXPORT_DEV_SLEEP_PM_OPS(name, "", #ns)
-         |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/pm.h:427:9: note: in expansion of macro 'EXPORT_NS_DEV_SLEEP_PM_OPS'
-     427 |         EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns) = { \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/accel/bma220_core.c:538:1: note: in expansion of macro 'EXPORT_NS_SIMPLE_DEV_PM_OPS'
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   In file included from include/linux/device.h:25:
-   drivers/iio/accel/bma220_core.c:538:29: note: previous declaration of 'bma220_pm_ops' with type 'const struct dev_pm_ops'
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         |                             ^~~~~~~~~~~~~
-   include/linux/pm.h:379:33: note: in definition of macro '_EXPORT_PM_OPS'
-     379 |         const struct dev_pm_ops name;                                   \
-         |                                 ^~~~
-   include/linux/pm.h:405:57: note: in expansion of macro '_EXPORT_DEV_SLEEP_PM_OPS'
-     405 | #define EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns)            _EXPORT_DEV_SLEEP_PM_OPS(name, "", #ns)
-         |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/pm.h:427:9: note: in expansion of macro 'EXPORT_NS_DEV_SLEEP_PM_OPS'
-     427 |         EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns) = { \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/accel/bma220_core.c:538:1: note: in expansion of macro 'EXPORT_NS_SIMPLE_DEV_PM_OPS'
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/iio/accel/bma220_core.c:538:29: error: declaration of 'bma220_pm_ops' with no linkage follows extern declaration
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         |                             ^~~~~~~~~~~~~
-   include/linux/pm.h:381:33: note: in definition of macro '_EXPORT_PM_OPS'
-     381 |         const struct dev_pm_ops name
-         |                                 ^~~~
-   include/linux/pm.h:405:57: note: in expansion of macro '_EXPORT_DEV_SLEEP_PM_OPS'
-     405 | #define EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns)            _EXPORT_DEV_SLEEP_PM_OPS(name, "", #ns)
-         |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/pm.h:427:9: note: in expansion of macro 'EXPORT_NS_DEV_SLEEP_PM_OPS'
-     427 |         EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns) = { \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/accel/bma220_core.c:538:1: note: in expansion of macro 'EXPORT_NS_SIMPLE_DEV_PM_OPS'
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/accel/bma220_core.c:538:29: note: previous declaration of 'bma220_pm_ops' with type 'const struct dev_pm_ops'
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         |                             ^~~~~~~~~~~~~
-   include/linux/export.h:76:28: note: in definition of macro '__EXPORT_SYMBOL'
-      76 |         extern typeof(sym) sym;                                 \
-         |                            ^~~
-   include/linux/pm.h:393:57: note: in expansion of macro '_EXPORT_PM_OPS'
-     393 | #define _EXPORT_DEV_SLEEP_PM_OPS(name, license, ns)     _EXPORT_PM_OPS(name, license, ns)
-         |                                                         ^~~~~~~~~~~~~~
-   include/linux/pm.h:405:57: note: in expansion of macro '_EXPORT_DEV_SLEEP_PM_OPS'
-     405 | #define EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns)            _EXPORT_DEV_SLEEP_PM_OPS(name, "", #ns)
-         |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/pm.h:427:9: note: in expansion of macro 'EXPORT_NS_DEV_SLEEP_PM_OPS'
-     427 |         EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns) = { \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/accel/bma220_core.c:538:1: note: in expansion of macro 'EXPORT_NS_SIMPLE_DEV_PM_OPS'
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/iio/accel/bma220_core.c:543:1: error: expected declaration or statement at end of input
-     543 | MODULE_LICENSE("GPL");
-         | ^~~~~~~~~~~~~~
->> drivers/iio/accel/bma220_core.c:538:29: warning: unused variable 'bma220_pm_ops' [-Wunused-variable]
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         |                             ^~~~~~~~~~~~~
-   include/linux/pm.h:381:33: note: in definition of macro '_EXPORT_PM_OPS'
-     381 |         const struct dev_pm_ops name
-         |                                 ^~~~
-   include/linux/pm.h:405:57: note: in expansion of macro '_EXPORT_DEV_SLEEP_PM_OPS'
-     405 | #define EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns)            _EXPORT_DEV_SLEEP_PM_OPS(name, "", #ns)
-         |                                                         ^~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/pm.h:427:9: note: in expansion of macro 'EXPORT_NS_DEV_SLEEP_PM_OPS'
-     427 |         EXPORT_NS_DEV_SLEEP_PM_OPS(name, ns) = { \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/iio/accel/bma220_core.c:538:1: note: in expansion of macro 'EXPORT_NS_SIMPLE_DEV_PM_OPS'
-     538 | EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-         | ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +/bma220_common_probe +521 drivers/iio/accel/bma220_core.c
-
-b019a92c1241f44 Petre Rodan 2025-09-13  456  
-9216bea3069746d Petre Rodan 2025-09-13 @457  int bma220_common_probe(struct device *dev, struct regmap *regmap, int irq)
-e51403e66843c16 Petre Rodan 2025-09-13  458  {
-e51403e66843c16 Petre Rodan 2025-09-13  459  	int ret;
-e51403e66843c16 Petre Rodan 2025-09-13  460  	struct iio_dev *indio_dev;
-e51403e66843c16 Petre Rodan 2025-09-13  461  	struct bma220_data *data;
-e51403e66843c16 Petre Rodan 2025-09-13  462  
-9216bea3069746d Petre Rodan 2025-09-13  463  	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
-e51403e66843c16 Petre Rodan 2025-09-13  464  	if (!indio_dev)
-e51403e66843c16 Petre Rodan 2025-09-13  465  		return -ENOMEM;
-e51403e66843c16 Petre Rodan 2025-09-13  466  
-e51403e66843c16 Petre Rodan 2025-09-13  467  	data = iio_priv(indio_dev);
-9216bea3069746d Petre Rodan 2025-09-13  468  	data->regmap = regmap;
-9216bea3069746d Petre Rodan 2025-09-13  469  	data->dev = dev;
-9216bea3069746d Petre Rodan 2025-09-13  470  
-9216bea3069746d Petre Rodan 2025-09-13  471  	ret = bma220_init(data);
-9216bea3069746d Petre Rodan 2025-09-13  472  	if (ret)
-9216bea3069746d Petre Rodan 2025-09-13  473  		return ret;
-9216bea3069746d Petre Rodan 2025-09-13  474  
-9216bea3069746d Petre Rodan 2025-09-13  475  	ret = devm_mutex_init(dev, &data->lock);
-9216bea3069746d Petre Rodan 2025-09-13  476  	if (ret)
-9216bea3069746d Petre Rodan 2025-09-13  477  		return ret;
-e51403e66843c16 Petre Rodan 2025-09-13  478  
-e51403e66843c16 Petre Rodan 2025-09-13  479  	indio_dev->info = &bma220_info;
-e51403e66843c16 Petre Rodan 2025-09-13  480  	indio_dev->name = BMA220_DEVICE_NAME;
-e51403e66843c16 Petre Rodan 2025-09-13  481  	indio_dev->modes = INDIO_DIRECT_MODE;
-e51403e66843c16 Petre Rodan 2025-09-13  482  	indio_dev->channels = bma220_channels;
-e51403e66843c16 Petre Rodan 2025-09-13  483  	indio_dev->num_channels = ARRAY_SIZE(bma220_channels);
-e51403e66843c16 Petre Rodan 2025-09-13  484  	indio_dev->available_scan_masks = bma220_accel_scan_masks;
-e51403e66843c16 Petre Rodan 2025-09-13  485  
-b019a92c1241f44 Petre Rodan 2025-09-13  486  	if (irq > 0) {
-b019a92c1241f44 Petre Rodan 2025-09-13  487  		data->trig = devm_iio_trigger_alloc(dev, "%s-dev%d",
-b019a92c1241f44 Petre Rodan 2025-09-13  488  						    indio_dev->name,
-b019a92c1241f44 Petre Rodan 2025-09-13  489  						    iio_device_id(indio_dev));
-b019a92c1241f44 Petre Rodan 2025-09-13  490  		if (!data->trig)
-b019a92c1241f44 Petre Rodan 2025-09-13  491  			return -ENOMEM;
-b019a92c1241f44 Petre Rodan 2025-09-13  492  
-b019a92c1241f44 Petre Rodan 2025-09-13  493  		data->trig->ops = &bma220_trigger_ops;
-b019a92c1241f44 Petre Rodan 2025-09-13  494  		iio_trigger_set_drvdata(data->trig, indio_dev);
-b019a92c1241f44 Petre Rodan 2025-09-13  495  
-b019a92c1241f44 Petre Rodan 2025-09-13  496  		ret = devm_iio_trigger_register(dev, data->trig);
-b019a92c1241f44 Petre Rodan 2025-09-13  497  		if (ret)
-b019a92c1241f44 Petre Rodan 2025-09-13  498  			return dev_err_probe(dev, ret,
-b019a92c1241f44 Petre Rodan 2025-09-13  499  					     "iio trigger register fail\n");
-b019a92c1241f44 Petre Rodan 2025-09-13  500  		indio_dev->trig = iio_trigger_get(data->trig);
-b019a92c1241f44 Petre Rodan 2025-09-13  501  		ret = devm_request_threaded_irq(dev, irq, NULL,
-b019a92c1241f44 Petre Rodan 2025-09-13  502  						&bma220_irq_handler,
-b019a92c1241f44 Petre Rodan 2025-09-13  503  						IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-b019a92c1241f44 Petre Rodan 2025-09-13  504  						indio_dev->name, indio_dev);
-b019a92c1241f44 Petre Rodan 2025-09-13  505  		if (ret)
-b019a92c1241f44 Petre Rodan 2025-09-13  506  			return dev_err_probe(dev, ret,
-b019a92c1241f44 Petre Rodan 2025-09-13  507  					     "request irq %d failed\n", irq);
-b019a92c1241f44 Petre Rodan 2025-09-13  508  	}
-b019a92c1241f44 Petre Rodan 2025-09-13  509  
-9216bea3069746d Petre Rodan 2025-09-13  510  	ret = devm_add_action_or_reset(dev, bma220_deinit, data);
-e51403e66843c16 Petre Rodan 2025-09-13  511  	if (ret)
-e51403e66843c16 Petre Rodan 2025-09-13  512  		return ret;
-e51403e66843c16 Petre Rodan 2025-09-13  513  
-d1258c485cdab0a Petre Rodan 2025-09-13  514  	ret = devm_iio_triggered_buffer_setup(dev, indio_dev, NULL,
-e51403e66843c16 Petre Rodan 2025-09-13  515  					      bma220_trigger_handler, NULL);
-9216bea3069746d Petre Rodan 2025-09-13  516  	if (ret < 0)
-9216bea3069746d Petre Rodan 2025-09-13  517  		dev_err_probe(dev, ret, "iio triggered buffer setup failed\n");
-e51403e66843c16 Petre Rodan 2025-09-13  518  
-9216bea3069746d Petre Rodan 2025-09-13  519  	return devm_iio_device_register(dev, indio_dev);
-e51403e66843c16 Petre Rodan 2025-09-13  520  }
-9216bea3069746d Petre Rodan 2025-09-13 @521  EXPORT_SYMBOL_NS_GPL(bma220_common_probe, "IIO_BOSCH_BMA220");
-e51403e66843c16 Petre Rodan 2025-09-13  522  
-e51403e66843c16 Petre Rodan 2025-09-13 @523  static int bma220_suspend(struct device *dev)
-e51403e66843c16 Petre Rodan 2025-09-13  524  {
-9216bea3069746d Petre Rodan 2025-09-13  525  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-9216bea3069746d Petre Rodan 2025-09-13  526  	struct bma220_data *data = iio_priv(indio_dev);
-e51403e66843c16 Petre Rodan 2025-09-13  527  
-9216bea3069746d Petre Rodan 2025-09-13  528  	return bma220_power(data, false);
-e51403e66843c16 Petre Rodan 2025-09-13  529  }
-e51403e66843c16 Petre Rodan 2025-09-13  530  
-e51403e66843c16 Petre Rodan 2025-09-13 @531  static int bma220_resume(struct device *dev)
-e51403e66843c16 Petre Rodan 2025-09-13  532  {
-9216bea3069746d Petre Rodan 2025-09-13  533  	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-9216bea3069746d Petre Rodan 2025-09-13  534  	struct bma220_data *data = iio_priv(indio_dev);
-e51403e66843c16 Petre Rodan 2025-09-13  535  
-9216bea3069746d Petre Rodan 2025-09-13  536  	return bma220_power(data, true);
-e51403e66843c16 Petre Rodan 2025-09-13  537  }
-e51403e66843c16 Petre Rodan 2025-09-13 @538  EXPORT_NS_SIMPLE_DEV_PM_OPS(bma220_pm_ops, bma220_suspend, bma220_resume,
-e51403e66843c16 Petre Rodan 2025-09-13  539  			    IIO_BOSCH_BMA220);
-e51403e66843c16 Petre Rodan 2025-09-13  540  
-e51403e66843c16 Petre Rodan 2025-09-13  541  MODULE_AUTHOR("Tiberiu Breana <tiberiu.a.breana@intel.com>");
-e51403e66843c16 Petre Rodan 2025-09-13  542  MODULE_DESCRIPTION("BMA220 acceleration sensor driver");
-e51403e66843c16 Petre Rodan 2025-09-13 @543  MODULE_LICENSE("GPL");
-
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index aba772e14555..9497c738b828 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -1627,9 +1627,7 @@ static int rswitch_stop(struct net_device *ndev)
+ 	if (bitmap_empty(rdev->priv->opened_ports, RSWITCH_NUM_PORTS))
+ 		iowrite32(GWCA_TS_IRQ_BIT, rdev->priv->addr + GWTSDID);
+ 
+-	for (tag = find_first_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT);
+-	     tag < TS_TAGS_PER_PORT;
+-	     tag = find_next_bit(rdev->ts_skb_used, TS_TAGS_PER_PORT, tag + 1)) {
++	for_each_set_bit(tag, rdev->ts_skb_used, TS_TAGS_PER_PORT) {
+ 		ts_skb = xchg(&rdev->ts_skb[tag], NULL);
+ 		clear_bit(tag, rdev->ts_skb_used);
+ 		if (ts_skb)
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
