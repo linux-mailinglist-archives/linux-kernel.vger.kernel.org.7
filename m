@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-815301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9878BB5625F
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 19:39:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12EAB56262
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 19:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 335E73B6C3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:39:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B2816DFD6
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 17:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFD8203710;
-	Sat, 13 Sep 2025 17:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC961FDE39;
+	Sat, 13 Sep 2025 17:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="vqMmsexm"
-Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Drf1A9hQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4831F872D;
-	Sat, 13 Sep 2025 17:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=157.107.129.37
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757785138; cv=pass; b=CAGaDiciJIdKUCOSUVLLOjsbVyKE9p1BAdTRq7DL52MGghevW61YcohYn/r4mLVHWI1wPA9fdipOnnwAHis7a53jx/Sf3GO0GUeavPsYArKeWuLsqtV1vQf1pqe+lyyOWcMxJnn1HN6pwhktUDe/ccUaYBd+puezY2/7p/hBIEY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757785138; c=relaxed/simple;
-	bh=dWCb/vnvK0BtdkWp3MFmAB/oC5jsmUMTgwfKeUuN9M0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u3DXNqhfud8blOeoALmirDO7YfR+tqy38Bp8NW1SnQnVqrMk9KmeWnGEl3oOQRSxuRQ8KdkhIVciJ87D36DRvwL7qQx2+fPlNF4veIU4vXkHn0oXCbyOfIrz1du8bjTAMBPTXiboloLdXYs9Y67uO3Gjug5wsU+uVXyDOGYeIpY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=vqMmsexm; arc=pass smtp.client-ip=157.107.129.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
-Received: from localhost (localhost [127.0.0.1])
-	by www.redadmin.org (Postfix) with ESMTP id 603E2104A17FC;
-	Sun, 14 Sep 2025 02:38:54 +0900 (JST)
-X-Virus-Scanned: amavis at redadmin.org
-Received: from www.redadmin.org ([127.0.0.1])
- by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id mP92b3jo6ITG; Sun, 14 Sep 2025 02:38:49 +0900 (JST)
-Received: by www.redadmin.org (Postfix, from userid 1000)
-	id CFC8D10B40B73; Sun, 14 Sep 2025 02:38:49 +0900 (JST)
-Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
-ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757785129;
-	cv=none; b=xgednUfirqTXObFn4EDkh9kHjBizEo12aR0ZaSDPdZJJkdiYghFB/cCva/cwc8k2S+eoAR4uXvFeU0RfqF5wYf7rqK99Q01CHY4+LDEeFRYG7C7OmMlD/lF5avVQZmswvwB2Djy3SJInHyT6BCPcaBKmacoN9QqVT6qPFXfZQwA=
-ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
-	t=1757785129; c=relaxed/relaxed;
-	bh=pB4FLnsJZ/3z3o0EVbQQcG9ZUrnntGwHKSlQlpuIDMM=;
-	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
-	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=P5pIICWkJu04ZCuy9nadqMcpUk3Gd+s7la1r9HR5tg7t62IK3HQPDnMQL7hGFvR+hEYWU/KNhpnssmM1Mq+UuBzSUAs8P2DkhpMu18ZKTyW2CN+T1C2BzkubxD3GKCTOUd3UcpQ3gMc5QzirWxJGq+EAEL/Fri1Cvb77v/xiZuQ=
-ARC-Authentication-Results: i=1; www.redadmin.org
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org CFC8D10B40B73
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
-	s=20231208space; t=1757785129;
-	bh=pB4FLnsJZ/3z3o0EVbQQcG9ZUrnntGwHKSlQlpuIDMM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=vqMmsexmT4Uaj05vG2wvB5U/IFcdDgpD+rtgXJMg0kvsKdnVqW+M9HmTq8gwJsncc
-	 7upuwVaqtFrwOEadLsQK+6JKZ4R9akcz8DkKagNXn8vbtz1OAtgzN1X5ypTtTcuurr
-	 xf1ySoTMFxUwJwtld4usHXCZJWzLT7fOAnyOG5BQ=
-From: Akiyoshi Kurita <weibu@redadmin.org>
-To: kvm@vger.kernel.org,
-	pbonzini@redhat.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	corbet@lwn.net,
-	Akiyoshi Kurita <weibu@redadmin.org>
-Subject: [PATCH] docs: wmi: lenovo-wmi-gamezone: fix typo in frequency
-Date: Sun, 14 Sep 2025 02:38:45 +0900
-Message-ID: <20250913173845.951982-1-weibu@redadmin.org>
-X-Mailer: git-send-email 2.47.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCBDEAF9;
+	Sat, 13 Sep 2025 17:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757785603; cv=none; b=m3X06+Qg4ZJHzUA6xy2j+4LEpqbwc+iY4uKNdmvRzgx/K+y2Y1ojut/WxmY+4+UjztBE7fB8YCKwosplaK+dkUGXAixEFdM4FL7nnVIDkldCfO4Zsm9w9ldfJxM7yUdlhfaB9c4eWrDDKFGtgv+1O6Fy4j1p5MQ8/2SlJFF8VoM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757785603; c=relaxed/simple;
+	bh=qEeDUMM2cPdTS1r7qPnD2EjgT3DkSIwjoi3Bsr9b0Bo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=D3fBWfT4Jl+1sxU+aI2sUIDqy9kSX924fIki4y1XAupZHxdd44yVrBNvT/vwcz5bQ1+6U0o9kHGWVW+CFDGlnyxDSqUgOCQnxNOpTJ4B04EJTzE1Us3KwMvXT+FZe/E95C1B8YZ5YjuvQ7R1s5yyN1fYgUkz7tp5o677MVP+WUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Drf1A9hQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD5DC4CEEB;
+	Sat, 13 Sep 2025 17:46:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757785603;
+	bh=qEeDUMM2cPdTS1r7qPnD2EjgT3DkSIwjoi3Bsr9b0Bo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Drf1A9hQ43XaKKhLKjVhxDn88Kz6iVuzp/kRiY0nJnlnkdGdLmlZ8KzEzCh+Qa1xq
+	 jv7vgYdYL7g9y6Svz68VX/IuittJpFY2UQY08ktTUlRDKbVQoqUz9uLM500As3lmdj
+	 Z+rZ0J5Q/IZhYDcHXEmy5jNbKnFuD3jybRhcol84vHA++F62HOoUr/JwCSN7rOG39O
+	 fv/djtOgRiuml3GEP5VBXKBX4fRL1zJfKYUn9Gy3A1phxWqBbcOr91CI1cgYnO6sRA
+	 +kv01BABMHAnIbV2PCNrSLP3sTKRa7YQqk+YVsRqlVgYy4WRDNfHE/DMCqZeU8jsUR
+	 Ub8xXS/P8xOUA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: Onur =?utf-8?Q?=C3=96zkan?= <work@onurozkan.dev>,
+ rust-for-linux@vger.kernel.org
+Cc: ojeda@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev,
+ masahiroy@kernel.org, aliceryhl@google.com,
+ thomas.weissschuh@linutronix.de, tamird@gmail.com,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, lossin@kernel.org, tmgross@umich.edu,
+ dakr@kernel.org, Onur =?utf-8?Q?=C3=96zkan?= <work@onurozkan.dev>
+Subject: Re: [PATCH] rust: add `rustcheck` make target for check-only builds
+In-Reply-To: <20250913100847.9234-1-work@onurozkan.dev>
+References: <-ebVaoKp9tTjZGmdSRi8rrH1o7SgmGyyzk-g2ALSCBKPJP44z7dSPCplhwKt-sibwLwqP7IPEml6qCkSpJhd8g==@protonmail.internalid>
+ <20250913100847.9234-1-work@onurozkan.dev>
+Date: Sat, 13 Sep 2025 19:46:28 +0200
+Message-ID: <87bjnei6tn.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Fix a spelling mistake in lenovo-wmi-gamezone.rst
-("freqency" -> "frequency").
+Onur =C3=96zkan <work@onurozkan.dev> writes:
 
-No functional change.
+> Adds a new `rustcheck` make target to run a check-only build
+> similar to `cargo check`. This allows us to verify that the Rust
+> sources can build without building/linking final artifacts,
+> which speeds up the iteration (a lot) during development.
+>
+> The target supports the same flags as other Rust build rules, so
+> it can also be used with `CLIPPY=3D1` (e.g., `make LLVM=3D1 rustcheck
+> CLIPPY=3D1) to run Clippy in a faster way.
+>
+> Also, unlike `make LLVM=3D1`, it doesn't compile large amounts of C
+> code (on a fresh checkout) when the goal is only to check that
+> Rust builds are not broken after some changes.
+>
 
-Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
----
- Documentation/wmi/devices/lenovo-wmi-gamezone.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I think this is a good idea! However, it looks like this target only
+checks rust code that live in rust/. Can we also check code that lives
+elsewhere, like drivers?
 
-diff --git a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst b/Documentat=
-ion/wmi/devices/lenovo-wmi-gamezone.rst
-index 997263e51a7d..167548929ac2 100644
---- a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
-+++ b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
-@@ -153,7 +153,7 @@ data using the `bmfdec <https://github.com/pali/bmfdec>=
-`_ utility:
-     [WmiDataId(1), read, Description("P-State ID.")] uint32 PStateID;
-     [WmiDataId(2), read, Description("CLOCK ID.")] uint32 ClockID;
-     [WmiDataId(3), read, Description("Default value.")] uint32 defaultvalu=
-e;
--    [WmiDataId(4), read, Description("OC Offset freqency.")] uint32 OCOffs=
-etFreq;
-+    [WmiDataId(4), read, Description("OC Offset frequency")] uint32 OCOffs=
-etFreq;
-     [WmiDataId(5), read, Description("OC Min offset value.")] uint32 OCMin=
-Offset;
-     [WmiDataId(6), read, Description("OC Max offset value.")] uint32 OCMax=
-Offset;
-     [WmiDataId(7), read, Description("OC Offset Scale.")] uint32 OCOffsetS=
-cale;
---=20
-2.47.3
+
+Best regards,
+Andreas Hindborg
+
 
 
