@@ -1,225 +1,130 @@
-Return-Path: <linux-kernel+bounces-815333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 379A2B562EE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:33:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28694B562F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 22:37:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67557189F708
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:33:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD97F561774
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 20:37:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E5FA258CDA;
-	Sat, 13 Sep 2025 20:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0442B260566;
+	Sat, 13 Sep 2025 20:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uL1vOO8A";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wq+V+a/Z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uL1vOO8A";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wq+V+a/Z"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aicbIYdG"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68A21EEA54
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 20:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5852566E9
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 20:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757795585; cv=none; b=tbcwyibdy7VvW0m91VfmLDknJsmyK9H36dsYu8BfohiWWEkLk3q901XqOZ30RXnZC29ZYYgwaQdvaYv25Op2ZZRBv+diPKFSqZUoOSfomqWIIHvwKZMPBHWo31IEV9yIbkVdvnYXXSnA6Cd/rEdMWFdQc4rR9zjHV5AO4DfitAw=
+	t=1757795868; cv=none; b=mLkDCgXU3yFkB4ahCxKPjRSqAfY1ngvI+pAyMBvwSd56G9UxPXW2GmRGw57T1lW3fHVf8AGPoDxH82BlXjpsGVxDnaMEoxyv2M8UGTbDgrTLLGM1U6qnCpjPb+NH19V19a4254ZxvgBeb92VZ2b/xAkvRAUXp9usUjs1AxNcOzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757795585; c=relaxed/simple;
-	bh=n6zfG5AhVCQcXfMVGOZ8FaOhEkSXWmBplM5abLqJERs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VEt9FR7PLYI2F4bKAMrVNT7dJyhrTQFOR7/bLDEMwE3MIAZeTXcQ7RIK8KsHeQkYUOErx+wp2XRAxG0t5RmVrfZVELfPdpOTeEYKBdGd81NzK8tl5EKC7aLLVOhtUdvxQkLuGnoUWB6BYDSdZ/IRRInLvERg92Y0BbRixb2Zbwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uL1vOO8A; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wq+V+a/Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uL1vOO8A; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wq+V+a/Z; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7EFC635226;
-	Sat, 13 Sep 2025 20:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757795574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dpRJZ9I95GmOVaMkK/sESDsiFIQvQ5KFj4dQmisZ5f0=;
-	b=uL1vOO8AMkos9j6t0UAlhApuIadXfq3j8WmqNpNZLPg2+cy2E/qVOxPALciFGZG2+NABuy
-	tRewSBF3AoZY4avZVQkvaO6IZJLc9cMacmXsFlxEyGiIpOUrw69ZDtcNf5T6XALFlBzJ/P
-	aYLTO6PW2CCrVPT/GI6b2XtdeapO4Vw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757795574;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dpRJZ9I95GmOVaMkK/sESDsiFIQvQ5KFj4dQmisZ5f0=;
-	b=wq+V+a/Z+AaQ7JDlKetlW214a3l4Kc3IhloUXUP4BBTPwLmiIIMYvUeqsxJP7Cq/BKW4Pk
-	iNwM+jfMPEct9nDA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=uL1vOO8A;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="wq+V+a/Z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757795574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dpRJZ9I95GmOVaMkK/sESDsiFIQvQ5KFj4dQmisZ5f0=;
-	b=uL1vOO8AMkos9j6t0UAlhApuIadXfq3j8WmqNpNZLPg2+cy2E/qVOxPALciFGZG2+NABuy
-	tRewSBF3AoZY4avZVQkvaO6IZJLc9cMacmXsFlxEyGiIpOUrw69ZDtcNf5T6XALFlBzJ/P
-	aYLTO6PW2CCrVPT/GI6b2XtdeapO4Vw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757795574;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dpRJZ9I95GmOVaMkK/sESDsiFIQvQ5KFj4dQmisZ5f0=;
-	b=wq+V+a/Z+AaQ7JDlKetlW214a3l4Kc3IhloUXUP4BBTPwLmiIIMYvUeqsxJP7Cq/BKW4Pk
-	iNwM+jfMPEct9nDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 616311372E;
-	Sat, 13 Sep 2025 20:32:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zXW8FvbUxWiYYQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Sat, 13 Sep 2025 20:32:54 +0000
-Message-ID: <b923fd8a-4f07-4689-a0cf-4ac5b85c6fe5@suse.cz>
-Date: Sat, 13 Sep 2025 22:32:54 +0200
+	s=arc-20240116; t=1757795868; c=relaxed/simple;
+	bh=mATTaO6ztWHtL31tz3fa3XmKHBNOJGaadXz3sI1bEqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XcYNr7M9XXp/YXrQ41V6YctFDZobpIdJsiCcxAT4X51hs3u/5LU5GtXgY+9ufVMW4yTOBmB3mETg/+pUSKnuJbntm3Ib4Gxxw7Z2EPMJhvQOyrMOwUj4XMPysfU/9aYxCFsI4zuenwjxQgv0TFoR/Ldxs+vt+45iX90IxtmYLMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aicbIYdG; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24cb6c57a16so3550865ad.2
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 13:37:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757795866; x=1758400666; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mATTaO6ztWHtL31tz3fa3XmKHBNOJGaadXz3sI1bEqM=;
+        b=aicbIYdGiH8VNGqjOQzBkUyuHU8uFGws2VWGJQo0fZQx21hdpG9qIAfStWBdFrpmL0
+         8W7cdIixRIwsWlocIhQJTUCvcLyJxux58ol0HRg8FnKduEmrl+MFQHFAALG1uKf9mWrL
+         s6zoeo4zZ5SYRWHV9HYQaUZ397KIQQew0IQ/ZOh0Vk+/VBoukNXETU/CEw2qCsOSL3jx
+         e+giTYBZdUjJJ6/qDd37w6bTDdjnzSSfklLPmF8S1TMBP6LDgO+5pJ3vmuD+/QnX/7Ag
+         ov5bQu0jKpW2wj13XsWULvhp9GYR4YxmN52RIfvP01Rvh5dKlfRuHxwyCTTw7QFBcPWF
+         nDxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757795866; x=1758400666;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mATTaO6ztWHtL31tz3fa3XmKHBNOJGaadXz3sI1bEqM=;
+        b=YRXpZBOYoXmpK+on6+D4x7KzLcrKMrgm1sIMpk74ob9vrpoya5vQgXhzLfbMldNT4W
+         iUbpVsgGyRgiAswPRk/3CsHu01RxjXjKFt99Z/lh+C5XN7wVRNEZBnxVYoKeqnJIGmhR
+         6Wdc6hVwzY8WQnw82ST/OfZwuDbkJRBVIBm4aKHW8N8IrmTlf0RT5YvO7PLK7MIyxuAf
+         +xxYM7wuYWLYW8MTOIo8JA0Rn0MFRR+dlpL+Ny/CvZ6b/PGYnYuP38kONEEuOENNo3g7
+         OZ7j6B/u+cbvPbgxNqvBMpJ1aLfsYG0i9m+iTzLtW7ph2dS/UstYZh/UkAMJUj9c7NQW
+         SnuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ6fDWz8s+sP5Umig56tcBoYJtmSXUR4g4s213V+/YWy/65v+PAucKcL3Xbe9qxHWkf+Ss5A5lPoG+fBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzOa0NTNrgHWEsFf07xSuVmZC5OQKM6aaAOK1YqLH1lqW2mq7W
+	xC2gCZixrK9yakpCM2MjAh2t2XH4ArMm6Chp/fPp94NWC/ptrFbgsUHXbnHodbbdvjPLyEPcReX
+	xoRw28gP0O7PNgrMjpkLHPQHRccXJnS0=
+X-Gm-Gg: ASbGncux7ou5IldZkLri5f/G1BO7DCcsKk24hpgznkqeN+dSo6v3oA5Z7s7Iez1+cwn
+	Y+kSoW/dSNLoeOUNPwfSwf1k9nMY/Qy8dAl5g7ZWnf5HUP/moXYh3iHbIEGybrNfxqr+mt+NUbC
+	xN37qWiNsOmHPvyPSkBwbIsdLnZ5dd4XBzirlFFWZyTxX2D7ptTn0M/etK7sUP6eaROt4YjmsOp
+	0VxSr+kEpuKVkV3IXowETQ4L5auFhicLxdIOpExj2cdx44mvGLA+gAZKmsMEBVZ/TBJX0DyGjeX
+	DJBL8VEJpj2xJifIYtnB4k0pN8z53OmWWKg4
+X-Google-Smtp-Source: AGHT+IHrVkKejELNksEXUkmKRimQGTe3Ad5+7htwK4BUNxGJGqqmJCijjdcznEeh8fuxUViY+RIMf0xL/mdPT29M8js=
+X-Received: by 2002:a17:902:ce87:b0:261:500a:5742 with SMTP id
+ d9443c01a7336-261500a594fmr14779775ad.10.1757795866176; Sat, 13 Sep 2025
+ 13:37:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/14] slab: add opt-in caching layer of percpu sheaves
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, Harry Yoo <harry.yoo@oracle.com>,
- Uladzislau Rezki <urezki@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
- maple-tree@lists.infradead.org
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
- <20250723-slub-percpu-caches-v5-1-b792cd830f5d@suse.cz>
- <ja3gd6bdckiuanm3xu4hszpjm7euvffm3k7tmu7drh6mdel7m6@oyr635vikumk>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <ja3gd6bdckiuanm3xu4hszpjm7euvffm3k7tmu7drh6mdel7m6@oyr635vikumk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 7EFC635226
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[google.com,oracle.com,gentwo.org,linux.dev,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.51
+References: <20250911-nova_firmware-v5-0-5a8a33bddca1@nvidia.com>
+ <20250911-nova_firmware-v5-2-5a8a33bddca1@nvidia.com> <e1755470-587b-4a43-8171-3d031b7fb4f4@kernel.org>
+ <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com> <ce74db34-77bc-4207-94c8-6e0580189448@kernel.org>
+ <DCQ074EMFNIK.1OJLWJXWZLDXZ@nvidia.com> <20250913010226.GA1478480@joelbox2>
+ <DCRPJKD0UHDQ.IOWSOB2IK06E@kernel.org> <20250913171357.GA1551194@joelbox2>
+In-Reply-To: <20250913171357.GA1551194@joelbox2>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 13 Sep 2025 22:37:34 +0200
+X-Gm-Features: AS18NWCCjEi2nGimzvlQTTclneuWdDWNwA3S6j0YpJVAggEoL-8q-kmCadYD0Hg
+Message-ID: <CANiq72n50MaMXeWdwvVOEQd3YEHbDRqeeRzbdY8hPnePtq-hnw@mail.gmail.com>
+Subject: Re: [PATCH v5 02/12] gpu: nova-core: move GSP boot code to a
+ dedicated method
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Alexandre Courbot <acourbot@nvidia.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, John Hubbard <jhubbard@nvidia.com>, 
+	Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/13/25 16:35, Mateusz Guzik wrote:
-> On Wed, Jul 23, 2025 at 03:34:34PM +0200, Vlastimil Babka wrote:
->> The sheaves do not distinguish NUMA locality of the cached objects.
-> 
-> While currently sheaves are opt-in, to my understanding the plan is to
-> make this the default.
-> 
-> I would argue a hard requirement for a general purpose allocator in this
-> day and age is to provide node-local memory by default. Notably if you
-> have a workload which was careful to bind itself to one node, it should
-> not receive memory backed by other nodes unless there is no other
-> option. AFAIU this is satisifed with the stock allocator on the grounds
-> of running on a given domain, without having to explicitly demand memory
-> from it for everyting.
-> 
-> I expect the lack of NUMA-awareness to result in increased accumulation
-> of "mismatched" memory as uptime goes up, violating the above.
+On Sat, Sep 13, 2025 at 7:14=E2=80=AFPM Joel Fernandes <joelagnelf@nvidia.c=
+om> wrote:
+>
+> I am not alone in that opinion.
 
-Yeah this is addressed in later patch in the series "mm, slub: skip percpu
-sheaves for remote object freeing" and then "mm, slab: allow NUMA restricted
-allocations to use percpu sheaves" further improves it. I should update
-commit log in this patch too.
+Hmm... I am not sure how to read this.
 
-> I admit though I don't have a good solution as to how to handle the
-> "bad" frees. Someone (I think you?) stated that one of the previous
-> allocators was just freeing to per-domain lists or arrays and that was
-> causing trouble -- perhaps this would work if it came with small limits
-> in place for how big these can get?
+> This should be first-class in a (systems) language, built into
+> the language itself?
 
-Yes, the alien arrays of SLAB, with their dreaded periodical flushing.
-To avoid that the later patch simply skips the percpu sheaf. Only about 5%
-of frees seem to be remote, so 95% will still benefit.
+I would suggest taking a look at our website and the links there (like
+issue #2) -- what we are doing upstream Rust is documented.
 
+(Danilo gave you a direct link, but I mention it this way because
+there are a lot of things going on, and it is worth a look and perhaps
+you may find something interesting you could help with).
+
+> except to satisfy paranoia
+
+Using unsafe code everywhere (or introducing unsoundness or UB for
+convenience) would defeat much of the Rust for Linux exercise.
+
+Cheers,
+Miguel
 
