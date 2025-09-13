@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-815165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B06BB56075
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:09:27 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563FBB5607A
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 13:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F6A67AF1CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:07:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3547F4E03D0
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 11:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5732EC0A9;
-	Sat, 13 Sep 2025 11:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECE02EC573;
+	Sat, 13 Sep 2025 11:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZXDPMtQE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="g7x2KQ45"
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB7E246788
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757761755; cv=none; b=fHZyaPotSytQqKiLw2NwUJ/3ew2zrnYaoXRihdLi2SI1q4HzvmvRn5ypVI+M8u1dDwS8DXavkBbt/8WZjoOG22nmwGBgo9QSLECAbhb028axnezKnJoSK7ZvRq94GKyEQmBYRo2aITsSAPTAwZoY6pRk25jPnVRWOw1tZpa62BY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757761755; c=relaxed/simple;
-	bh=X6lcWc9KVe36VtfHjKKWspbtw+Y7hlSjY7dQKGLg9A8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qudXvcgiI/t3OvYd+vd5FChNg432YBvLjzI0UEViPfESSVF5E8jQ5E/vs2Mca8wnItx0YrigyUFP55rso7gznFBlQynEbfuiGoVZ0AHHAYdXo/cHH1EU3oXKbBjOHUXT1Xu4LNHLWE5jQAu0kVA3DDsdkHzlOoSkj8SjJ3FwEk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZXDPMtQE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1757761752;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K1kOs3Erdb9qfAALh69kcRAjtEQS3yPD4o2lsunznKM=;
-	b=ZXDPMtQEABg+5NbwJt3t4114LxRIk/RWrC0Q+CgMIGdU3KPoXF2UAeavN5gbhqEBlYe3Mn
-	9bhYbxlIr/WuKO5+QQu/PxCcdALYZzodU7co0NLMZlVhtxni4XvepVyLKPCqkTqLttAfFI
-	Sb7UcwoNW4geNbIDWUwq82xaOUj8t0c=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-455-k9aBWwj9OQ-tQDv0N_Ax-Q-1; Sat,
- 13 Sep 2025 07:09:08 -0400
-X-MC-Unique: k9aBWwj9OQ-tQDv0N_Ax-Q-1
-X-Mimecast-MFC-AGG-ID: k9aBWwj9OQ-tQDv0N_Ax-Q_1757761747
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 59252180045C;
-	Sat, 13 Sep 2025 11:09:07 +0000 (UTC)
-Received: from [10.45.224.175] (unknown [10.45.224.175])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 264F7300021A;
-	Sat, 13 Sep 2025 11:09:04 +0000 (UTC)
-Message-ID: <11fbd6f4-0cab-48cb-83e8-f62adc0ed493@redhat.com>
-Date: Sat, 13 Sep 2025 13:09:03 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40C22E7180
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 11:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=157.107.129.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757762716; cv=pass; b=kIQWoelOmMnQ111XJB/n0h3Hwwtzm4C+lSq/L+lgFMtx/FdaidfxeOToSmCYiwKbY4SMVaqelxOLU4sy17NJFGU2w94862AgP2HUzCnn2Jca06lrxjgXT9FzBR7t7hW2M0MTksoKtgbkIVNxZIxPgzS0DqviGRMU+7IuPcBtYEI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757762716; c=relaxed/simple;
+	bh=/lLbsk13uGUkFZNp5M9ZI6OHD8QOwjwtdUkxXlpoP/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VtTTSSteQCn2eWBg1LJu+ofsDKapI5f5wrxJ4jVvROAfMxTXVcw5w7/2PEnM/3lFV3qJBtTuX0/+9EbVdcBucKHdD2SDV56fQVv/kn78hA1ohxEVNkP6HxXXEqR283EWSro62cZKEaao3gnCW+sN0nltS/jTxk97UOMDRICy/jA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=g7x2KQ45; arc=pass smtp.client-ip=157.107.129.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id 0C712107E491F;
+	Sat, 13 Sep 2025 20:25:05 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id HUJiUqTiyZUz; Sat, 13 Sep 2025 20:25:01 +0900 (JST)
+Received: by www.redadmin.org (Postfix, from userid 1000)
+	id EF19A107E491D; Sat, 13 Sep 2025 20:25:00 +0900 (JST)
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=127.0.0.1
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757762701;
+	cv=none; b=OEUy+2zj+EeuW1TVlropTf2eBMWhv2+BHOsohSwTE7KSZG4YDACJ2StYTDsSgjfKOyWFMOkqb7dyBV2mCgMzDo5/edLIgUYobdOxEJm6dNWkkruix5LGxgDgIHymwvplkIfDJtowxgNQzYIk/qtY+9XVr2Z7ItUklwCsN6dmv8c=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1757762701; c=relaxed/relaxed;
+	bh=Rv2C7/noojmqC2TRRtEf9Bz3sPzEahBwEFaiOr0bNE0=;
+	h=DKIM-Filter:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:Content-Transfer-Encoding; b=pPQqUIMJPYG1jZ1sSaGNIW6FNzpJSd5ZVpXSS0FPaO3tvOXmfSppMUBDBTx63cOePtiEI/lqNiWWuOxD6lySiSUiYGxFdO4gPfIiv9+uoo7dajrAkLQJH6jRYjjwklZaoe3HJT6uHarTlm7r1lt6VRBQ+5LmSi1C6EpH8B0KZO4=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org EF19A107E491D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1757762700;
+	bh=Rv2C7/noojmqC2TRRtEf9Bz3sPzEahBwEFaiOr0bNE0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=g7x2KQ45B0soKwZgFWNge10ScJ0FajKbPj1x2UiCJQf0B05N4OymhFLCy8FrItq6+
+	 BTsAfCCvYaemyDoPcDCWyDRnXhMj6RFbdgDSesR4N0MvT1fMGUjxK/2vlc5/pu7Uso
+	 VD08dYFyQarp64Zk0y/4piG0/Pi0CAZiOEpoonMo=
+From: Akiyoshi Kurita <weibu@redadmin.org>
+To: gregkh@linuxfoundation.org
+Cc: linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Akiyoshi Kurita <weibu@redadmin.org>
+Subject: [PATCH] staging: rtl8723bs: rtw_efuse.h: Fix prototype whitespace
+Date: Sat, 13 Sep 2025 20:24:58 +0900
+Message-ID: <20250913112458.910059-1-weibu@redadmin.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] dpll: fix clock quality level reporting
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, netdev@vger.kernel.org
-Cc: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250912093331.862333-1-ivecera@redhat.com>
- <6c98a19e-473a-4935-a3aa-51c53618b2a9@linux.dev>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <6c98a19e-473a-4935-a3aa-51c53618b2a9@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: quoted-printable
 
+Several function prototypes in rtw_efuse.h contained extra spaces
+between the type and variable name of the last argument.
 
+Remove these spaces to conform to the kernel coding style.
+No functional change is intended.
 
-On 12. 09. 25 9:37 odp., Vadim Fedorenko wrote:
-> On 12.09.2025 10:33, Ivan Vecera wrote:
->> The DPLL_CLOCK_QUALITY_LEVEL_ITU_OPT1_EPRC is not reported via netlink
->> due to bug in dpll_msg_add_clock_quality_level(). The usage of
->> DPLL_CLOCK_QUALITY_LEVEL_MAX for both DECLARE_BITMAP() and
->> for_each_set_bit() is not correct because these macros requires bitmap
->> size and not the highest valid bit in the bitmap.
->>
->> Use correct bitmap size to fix this issue.
->>
->> Fixes: a1afb959add1 ("dpll: add clock quality level attribute and op")
->> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
->> ---
->>   drivers/dpll/dpll_netlink.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/dpll/dpll_netlink.c b/drivers/dpll/dpll_netlink.c
->> index 036f21cac0a9..0a852011653c 100644
->> --- a/drivers/dpll/dpll_netlink.c
->> +++ b/drivers/dpll/dpll_netlink.c
->> @@ -211,8 +211,8 @@ static int
->>   dpll_msg_add_clock_quality_level(struct sk_buff *msg, struct 
->> dpll_device *dpll,
->>                    struct netlink_ext_ack *extack)
->>   {
->> +    DECLARE_BITMAP(qls, DPLL_CLOCK_QUALITY_LEVEL_MAX + 1) = { 0 };
->>       const struct dpll_device_ops *ops = dpll_device_ops(dpll);
->> -    DECLARE_BITMAP(qls, DPLL_CLOCK_QUALITY_LEVEL_MAX) = { 0 };
-> 
-> I believe __DPLL_CLOCK_QUALITY_LEVEL_MAX should be used in both places
+Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+---
+ drivers/staging/rtl8723bs/include/rtw_efuse.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I don't think so. I consider __DPLL_CLOCK_QUALITY_LEVEL_MAX to be an
-auxiliary value that should not be used directly.
-
-But it would be possible to rename it to DPLL_CLOCK_QUALITY_LEVEL_COUNT
-and use this.
-
-Thoughts?
-
-Ivan
+diff --git a/drivers/staging/rtl8723bs/include/rtw_efuse.h b/drivers/stagin=
+g/rtl8723bs/include/rtw_efuse.h
+index 669565fa1c69..ca1b58bbf3ab 100644
+--- a/drivers/staging/rtl8723bs/include/rtw_efuse.h
++++ b/drivers/staging/rtl8723bs/include/rtw_efuse.h
+@@ -92,10 +92,10 @@ extern u8 fakeBTEfuseModifiedMap[];
+=20
+ u8 Efuse_CalculateWordCnts(u8 word_en);
+ void EFUSE_GetEfuseDefinition(struct adapter *padapter, u8 efuseType, u8 t=
+ype, void *pOut, bool bPseudoTest);
+-u8 efuse_OneByteRead(struct adapter *padapter, u16 addr, u8 *data, bool	 b=
+PseudoTest);
+-u8 efuse_OneByteWrite(struct adapter *padapter, u16 addr, u8 data, bool	 b=
+PseudoTest);
++u8 efuse_OneByteRead(struct adapter *padapter, u16 addr, u8 *data, bool bP=
+seudoTest);
++u8 efuse_OneByteWrite(struct adapter *padapter, u16 addr, u8 data, bool bP=
+seudoTest);
+=20
+-void Efuse_PowerSwitch(struct adapter *padapter, u8 bWrite, u8  PwrState);
++void Efuse_PowerSwitch(struct adapter *padapter, u8 bWrite, u8 PwrState);
+=20
+ u8 EFUSE_Read1Byte(struct adapter *padapter, u16 Address);
+ void EFUSE_ShadowMapUpdate(struct adapter *padapter, u8 efuseType, bool bP=
+seudoTest);
+--=20
+2.47.3
 
 
