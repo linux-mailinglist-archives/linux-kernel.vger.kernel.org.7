@@ -1,135 +1,82 @@
-Return-Path: <linux-kernel+bounces-814939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-814940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F24B55AA8
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:23:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B6F0B55AAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 02:24:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C3FF1D619D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:23:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBC3BAA5193
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 00:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B0D29CE1;
-	Sat, 13 Sep 2025 00:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115842C1A2;
+	Sat, 13 Sep 2025 00:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NY3Ldt9G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIBMiDKH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B746811185;
-	Sat, 13 Sep 2025 00:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAA511CA9;
+	Sat, 13 Sep 2025 00:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757722985; cv=none; b=AEX+lTJXX4sNs6f1M7h579Yogx5SzNLEe7HQ73J269Ul/gQb2e24F7oce3gUP9XEN2Fu/BQA4IirWSN7C5AS71E2erPIIG89bAsDo6O5LDdDM7SoAwcICouMnXwKGJ3uKxMfTMw0H8iCNPVLGc9CH2lZpvjEfLPVgm4qTc6G9Oo=
+	t=1757723060; cv=none; b=raX7dhXPYWZyR7k6jpG9I2xyUY3sbEneoENJJxx8m3drOJMGhT/lkT64qapv6N44vHb6ZBixdNHwz9O1dYTCZXCIz9EYQ5TLDmBW8hEHNJFt2jVj/OlEWd88FZohAfS5uoAI+LUAp/nMRZ35daikdrQveSCFk4hKFzVkS/eGpsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757722985; c=relaxed/simple;
-	bh=ZKT13uU+rBRBiYqQ/UK9c0KZ6k2mp/1Cd8u0HxwFKfE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uQQeJAT+Ubt958GsmcsLSlsKGjWOR5mxSFSLV7bK5DWQ/ayXlriLt9r90pwWYzzUwMyKyQawN0/KyGWbfZDv564uCMtqMq2i+QbRMHoDtyQGZnCwPckN40j4p6SqQvdt6Q/h2cfwLfm97JPRc7JJPukI6YFan/xON3oiwNhFFmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NY3Ldt9G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D9CC4CEF1;
-	Sat, 13 Sep 2025 00:23:05 +0000 (UTC)
+	s=arc-20240116; t=1757723060; c=relaxed/simple;
+	bh=sxUedUP+MYOFlJfnA//ovQa/iV1ta0xI8YrzfhybySs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oE14ohE39iZNArBqSa5Ra1wiRBuK9H6WAPU5+JLKMhP/usl5x6Weyjz6+99wDYLkHDx7eGoxljB8EzPmBIYt99p40aVVIvGeQY5j+mq/j3FQpDAHE4sDWrmTYAfops99SayVav6vMiYzjzVFK6/fuqNBoI6khzkbkGvwiTFSkrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIBMiDKH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B0CC4CEF1;
+	Sat, 13 Sep 2025 00:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757722985;
-	bh=ZKT13uU+rBRBiYqQ/UK9c0KZ6k2mp/1Cd8u0HxwFKfE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NY3Ldt9GL64GBzIee72q72R+dzock9Ys6zdpbW17w1vzxS6Xn+dR/TaKR9F6nUNzU
-	 al+MiVJtz4CSHTeLyi11jY2AQD6WpyM2Qu+a7KUk4X8/J26c+zzloXbEVZoYnKhpAn
-	 U7rT0n+e6XPZvSrnMefm4ivp5l3yLzkDn+gLNbIpcOIPS5DM88wgMZitHyFAQpZTmJ
-	 DcrspigiTYLsNdRXA1ClCXZkESwCTYmNePAm8+jgZheKy5ctCFU7zeKqjh8wsyn+24
-	 Cu1Nc5GXewSGkwPD9w4DRUE7foII3qAblvjroz8xhK6MQcdvI5C0t3KzZosL7aMwVO
-	 ubGqpeSYNsAIA==
-Date: Fri, 12 Sep 2025 17:23:04 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Bagas Sanjaya <bagasdotme@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux XFS <linux-xfs@vger.kernel.org>,
-	David Chinner <david@fromorbit.com>,
-	Carlos Maiolino <cem@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Charles Han <hanchunchao@inspur.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] xfs: extend removed sysctls table
-Message-ID: <20250913002304.GR8117@frogsfrogsfrogs>
-References: <20250909000431.7474-1-bagasdotme@gmail.com>
+	s=k20201202; t=1757723060;
+	bh=sxUedUP+MYOFlJfnA//ovQa/iV1ta0xI8YrzfhybySs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RIBMiDKHAVVUuJHNTBDmqerPnclOmfi7GuLsEP09bz8J10RgAeUPNhjQslosxXHAu
+	 199aUWHzOW9CBiNw4Xy+gTZSpbgD2fVKfFRmvQQYvgNuUUEWiv1z4tpgL4JQ5bUYjG
+	 hQMqcSQ79TNXWbnmCDUmj6nfQH4JtSJ7NN5dfbnZNPTO+4jFgiSq0GRnMQYsSxUZxO
+	 bTOy+sMN1I+AHi1EzZOvMkDlMWurdJmFpyiq7gFXc3wOKdC325+Cii6nu1VPzVKPF6
+	 vi25oDG4KHp/diCBL7WtZ/vt1cegp+Aw0IvPPfA16OGBS058Uw0U87DGEhshW4HNCg
+	 cm4xItpq1JgZg==
+Date: Fri, 12 Sep 2025 17:24:18 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: =?UTF-8?B?QXNiasO4cm4=?= Sloth =?UTF-8?B?VMO4bm5lc2Vu?=
+ <ast@fiberby.net>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Simon Horman
+ <horms@kernel.org>, Jacob Keller <jacob.e.keller@intel.com>, Sabrina
+ Dubroca <sd@queasysnail.net>, wireguard@lists.zx2c4.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 06/13] tools: ynl-gen: deduplicate
+ fixed_header handling
+Message-ID: <20250912172418.1271771d@kernel.org>
+In-Reply-To: <20250911200508.79341-7-ast@fiberby.net>
+References: <20250911200508.79341-1-ast@fiberby.net>
+	<20250911200508.79341-7-ast@fiberby.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250909000431.7474-1-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 09, 2025 at 07:04:31AM +0700, Bagas Sanjaya wrote:
-> Commit 21d59d00221e4e ("xfs: remove deprecated sysctl knobs") moves
-> recently-removed sysctls to the removed sysctls table but fails to
-> extend the table, hence triggering Sphinx warning:
-> 
-> Documentation/admin-guide/xfs.rst:365: ERROR: Malformed table.
-> Text in column margin in table line 8.
-> 
-> =============================   =======
->   Name                          Removed
-> =============================   =======
->   fs.xfs.xfsbufd_centisec       v4.0
->   fs.xfs.age_buffer_centisecs   v4.0
->   fs.xfs.irix_symlink_mode      v6.18
->   fs.xfs.irix_sgid_inherit      v6.18
->   fs.xfs.speculative_cow_prealloc_lifetime      v6.18
-> =============================   ======= [docutils]
-> 
-> Extend "Name" column of the table to fit the now-longest sysctl, which
-> is fs.xfs.speculative_cow_prealloc_lifetime.
-> 
-> Fixes: 21d59d00221e ("xfs: remove deprecated sysctl knobs")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/linux-next/20250908180406.32124fb7@canb.auug.org.au/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-Oof, thanks for fixing that for me.
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-
---D
-
+On Thu, 11 Sep 2025 20:04:59 +0000 Asbj=C3=B8rn Sloth T=C3=B8nnesen wrote:
+> Fixed headers are handled nearly identical in print_dump(),
+> print_req() and put_req_nested(), generalize them and use a
+> common function to generate them.
+>=20
+> This only causes cosmetic changes to tc_netem_attrs_put() in
+> tc-user.c.
+>=20
+> Signed-off-by: Asbj=C3=B8rn Sloth T=C3=B8nnesen <ast@fiberby.net>
 > ---
->  Documentation/admin-guide/xfs.rst | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/xfs.rst b/Documentation/admin-guide/xfs.rst
-> index d6f531f2c0e694..c85cd327af284d 100644
-> --- a/Documentation/admin-guide/xfs.rst
-> +++ b/Documentation/admin-guide/xfs.rst
-> @@ -355,15 +355,15 @@ None currently.
->  Removed Sysctls
->  ===============
->  
-> -=============================	=======
-> -  Name				Removed
-> -=============================	=======
-> -  fs.xfs.xfsbufd_centisec	v4.0
-> -  fs.xfs.age_buffer_centisecs	v4.0
-> -  fs.xfs.irix_symlink_mode      v6.18
-> -  fs.xfs.irix_sgid_inherit      v6.18
-> -  fs.xfs.speculative_cow_prealloc_lifetime      v6.18
-> -=============================	=======
-> +==========================================   =======
-> +  Name                                       Removed
-> +==========================================   =======
-> +  fs.xfs.xfsbufd_centisec                    v4.0
-> +  fs.xfs.age_buffer_centisecs                v4.0
-> +  fs.xfs.irix_symlink_mode                   v6.18
-> +  fs.xfs.irix_sgid_inherit                   v6.18
-> +  fs.xfs.speculative_cow_prealloc_lifetime   v6.18
-> +==========================================   =======
->  
->  Error handling
->  ==============
-> 
-> base-commit: e90dcba0a350836a5e1a1ac0f65f9e74644d7d3b
-> -- 
-> An old man doll... just what I always wanted! - Clara
-> 
+>  tools/net/ynl/pyynl/ynl_gen_c.py | 39 ++++++++++++++++----------------
+>  1 file changed, 20 insertions(+), 19 deletions(-)
+
+This only makes the code longer and harder to follow.
 
