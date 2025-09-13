@@ -1,217 +1,87 @@
-Return-Path: <linux-kernel+bounces-815081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C422EB55F22
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 09:32:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91904B55F26
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 09:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B8B116ADCE
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:32:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FA3D7B64E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374B62E7F07;
-	Sat, 13 Sep 2025 07:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97BE02E8DF5;
+	Sat, 13 Sep 2025 07:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JKpcttha"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZRYrktNW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D62A45C14
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 07:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B858E45C14;
+	Sat, 13 Sep 2025 07:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757748757; cv=none; b=MT8BuhZhi23VUNagInYhHZtPIRgnYBOqtk8DCZbUxfW7tU4u28VlMzgJrOZsZQgjMHvCUQLNVYu7IoiQ7hCpf7KrGILDvOLR8WlRK0MmGVl3dj8Mu86Gl6/0SeMj4IUdv9N9etuGSWfSYJFMlyzy4bmeIrPQqYzBFAA8XYdTYxk=
+	t=1757748821; cv=none; b=WUcIWn94SM/sQRQL1otJCagklEjSQz2lyIv1Y+pFbTVr5UTzl0uU8wA93U5qxLy4GKACCv1AKkpgkRzEYOVz4hqp8yfLrsaoiDUrgor+4k+fk+enx3KBGsRABR/G/0+heSvMGUTmTlLwh2c449byBvGI+0GLRY0XONEqmsyjOHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757748757; c=relaxed/simple;
-	bh=+g8BB/aV3jQHrcBcBl5tNuNBL5YPe5N2YH2r0JbGq0c=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=D9+rv2KvT65cZx1+HXuPc7HwCLiP77cmi5doTEEGgBYawnZ5A4jH3BaN2gew3TXPsfNva6mhAI40r4EautEy2n4lb9kJG/nKCfAtYTchYq87kaId4FSm506DaTk5SRdYcCdDs3B6BKidQrTmFN90Bk6U+D+5ow3N57RmF1Q83js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JKpcttha; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757748755; x=1789284755;
-  h=date:from:to:cc:subject:message-id;
-  bh=+g8BB/aV3jQHrcBcBl5tNuNBL5YPe5N2YH2r0JbGq0c=;
-  b=JKpctthaMzyDi8GDP1T6ZTWClqdnb0qMKyOaYAZQUHqySIoSS8p3VZkR
-   ENuVpOzwvN1vJNDhWBrpNHyaWmnQqOGi4LnaQceVwrAgvbYa/FDYR/+8f
-   3eK4m7PJ4Vz7Vstqh214NY+x1eAB+VYIDjYbE+UtcaS1bxRwOngLDgP+E
-   KUVjRySg+0yJoumbnfC351dxmmtuaxhmXKr9B+VFq3AssL51+nbGsQt3u
-   tJB63Wova3KEPNgqmQ6ZP/3DBRRyf+OzZyDVueRyUnZqDcnC/qGKg53DM
-   GAyy8L0qO9GHHw98uHbDuw25CS2Ejv7eWVIWo/G5dggfmGszwdYp2jdce
-   Q==;
-X-CSE-ConnectionGUID: +wAWviavRgafTVmKnOpuJw==
-X-CSE-MsgGUID: qJbZNsUGSROx28mWkmM+NA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11551"; a="71454129"
-X-IronPort-AV: E=Sophos;i="6.18,261,1751266800"; 
-   d="scan'208";a="71454129"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2025 00:32:35 -0700
-X-CSE-ConnectionGUID: Ei6APBrvQ7mLiMHDJ8wkWg==
-X-CSE-MsgGUID: /35Ic//qQzq4EtsSaUNbuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,261,1751266800"; 
-   d="scan'208";a="173348585"
-Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
-  by orviesa006.jf.intel.com with ESMTP; 13 Sep 2025 00:32:34 -0700
-Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uxKkJ-0001PI-1P;
-	Sat, 13 Sep 2025 07:32:31 +0000
-Date: Sat, 13 Sep 2025 15:32:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- fc1ded58808520a1ced0c4e2e5fb0dbd33b33612
-Message-ID: <202509131555.KAzpS9WX-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1757748821; c=relaxed/simple;
+	bh=vsGwDuodr2tQy2mh//NV+yOBikhDYbj20ZKtEa9w99w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dNUBwXrnMCw/tfaviTjrqxtdEQfjEWHmntiqjEZiDnhSRtyLI2G04qKeheYck2WiYqhuOTHKfmCGp3PnCWj57WAJPifee94fxOtqbFdF0467Pjv0e+IFusEeMzJk4iykZaGlmhBvsJCKA2YoUBTM9uBNtbeqPl5sFsM7fyz0oyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZRYrktNW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC8D4C4CEEB;
+	Sat, 13 Sep 2025 07:33:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1757748820;
+	bh=vsGwDuodr2tQy2mh//NV+yOBikhDYbj20ZKtEa9w99w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZRYrktNWy0IdPXQTmm61HJk5eBYIk63uHY3b/BSScm8gubGr+vL1Z4I5qKj/gOBAd
+	 D8FGewItKhYR9kdCn26mi5zF/2LnGqtEsH/34phHKJ3aPzLB3WVf+/DBpvR/xnjwb2
+	 3rJ2dHn1sF+HLpccP/lnVErUZr1g80ynKLp3tTgw=
+Date: Sat, 13 Sep 2025 09:33:36 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: GuangFei Luo <luogf2025@163.com>
+Cc: rafael@kernel.org, dan.carpenter@linaro.org, lenb@kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, lkp@intel.com, sre@kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4] ACPI: battery: prevent sysfs_add_battery re-entry on
+ rapid events
+Message-ID: <2025091322-resilient-bottle-6d85@gregkh>
+References: <20250910142653.313360-1-luogf2025@163.com>
+ <20250913071925.697603-1-luogf2025@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250913071925.697603-1-luogf2025@163.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: fc1ded58808520a1ced0c4e2e5fb0dbd33b33612  Merge branch into tip/master: 'x86/tdx'
+On Sat, Sep 13, 2025 at 03:19:25PM +0800, GuangFei Luo wrote:
+> v4:
+>   - Uses guard(mutex) for battery->sysfs_lock in sysfs_add_battery().
+>   - Since sysfs_add_battery() now handles the battery->bat check with
+>     proper locking,the extra if (!battery->bat) check at the call site
+>     has become redundant.
+> 
+> v3:
+>   - Modified the earlier approach: since sysfs_add_battery() is invoked
+>     from multiple places, the most reliable way is to add the lock inside
+>     the function itself.
+>   - sysfs_remove_battery() had a similar race issue in the past, which was
+>     fixed by adding a lock as well. Reference:
+>     https://lore.kernel.org/all/9c921c22a7f33397a6774d7fa076db9b6a0fd669
+> 	.1312318300.git.len.brown@intel.com/
+> 
+> v2:
+>  - Fix missing mutex_unlock in acpi_battery_update()
+>    (Reported-by: kernel test robot)
+> 
+> v1:
+> When removing and reinserting the laptop battery, ACPI can trigger
+> two notifications in quick succession:
 
-elapsed time: 1446m
-
-configs tested: 125
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                   randconfig-001-20250912    gcc-10.5.0
-arc                   randconfig-002-20250912    gcc-12.5.0
-arm                              allmodconfig    gcc-15.1.0
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    gcc-15.1.0
-arm                           h3600_defconfig    gcc-15.1.0
-arm                        multi_v7_defconfig    gcc-15.1.0
-arm                   randconfig-001-20250912    clang-22
-arm                   randconfig-002-20250912    gcc-14.3.0
-arm                   randconfig-003-20250912    clang-22
-arm                   randconfig-004-20250912    gcc-10.5.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                 randconfig-001-20250912    clang-20
-arm64                 randconfig-002-20250912    clang-16
-arm64                 randconfig-003-20250912    clang-22
-arm64                 randconfig-004-20250912    clang-19
-csky                              allnoconfig    gcc-15.1.0
-csky                  randconfig-001-20250912    gcc-15.1.0
-csky                  randconfig-002-20250912    gcc-11.5.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon               randconfig-001-20250912    clang-22
-hexagon               randconfig-002-20250912    clang-22
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20250912    gcc-14
-i386        buildonly-randconfig-002-20250912    clang-20
-i386        buildonly-randconfig-003-20250912    gcc-13
-i386        buildonly-randconfig-004-20250912    clang-20
-i386        buildonly-randconfig-005-20250912    gcc-14
-i386        buildonly-randconfig-006-20250912    clang-20
-i386                                defconfig    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch             randconfig-001-20250912    gcc-15.1.0
-loongarch             randconfig-002-20250912    clang-22
-m68k                             alldefconfig    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20250912    gcc-11.5.0
-nios2                 randconfig-002-20250912    gcc-11.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250912    gcc-14.3.0
-parisc                randconfig-002-20250912    gcc-8.5.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                  iss476-smp_defconfig    gcc-15.1.0
-powerpc               randconfig-001-20250912    gcc-8.5.0
-powerpc               randconfig-002-20250912    clang-22
-powerpc               randconfig-003-20250912    clang-17
-powerpc                    sam440ep_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20250912    gcc-12.5.0
-powerpc64             randconfig-002-20250912    clang-22
-powerpc64             randconfig-003-20250912    clang-19
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250912    clang-16
-riscv                 randconfig-002-20250912    gcc-9.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250912    gcc-10.5.0
-s390                  randconfig-002-20250912    gcc-10.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250912    gcc-15.1.0
-sh                    randconfig-002-20250912    gcc-15.1.0
-sh                           se7721_defconfig    gcc-15.1.0
-sh                            shmin_defconfig    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250912    gcc-8.5.0
-sparc                 randconfig-002-20250912    gcc-13.4.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250912    gcc-8.5.0
-sparc64               randconfig-002-20250912    clang-20
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-14
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20250912    clang-22
-um                    randconfig-002-20250912    gcc-14
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250912    gcc-14
-x86_64      buildonly-randconfig-002-20250912    gcc-14
-x86_64      buildonly-randconfig-003-20250912    clang-20
-x86_64      buildonly-randconfig-004-20250912    clang-20
-x86_64      buildonly-randconfig-005-20250912    clang-20
-x86_64      buildonly-randconfig-006-20250912    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250912    gcc-9.5.0
-xtensa                randconfig-002-20250912    gcc-12.5.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Again, all of this goes below the --- line, not above it.
 
