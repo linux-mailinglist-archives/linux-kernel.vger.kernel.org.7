@@ -1,169 +1,360 @@
-Return-Path: <linux-kernel+bounces-815179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56B7B560E3
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:43:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2CBB560E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 14:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 065431C81696
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6723E56087F
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 12:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A1F2ECE9D;
-	Sat, 13 Sep 2025 12:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277D12ED14B;
+	Sat, 13 Sep 2025 12:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0Yu6R2r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cO1Q6ll9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E37226F29B
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 12:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B7C3199FB2;
+	Sat, 13 Sep 2025 12:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757767427; cv=none; b=ZpDiDxxHQFCYOdjgUMv8UHMGlBnethscGBNPAPx+2WTyOpzA+cqhud3BZZC0RS+vMQrGZC3KzaMp/NFFD5bI7+rswZcioUMZKTzKjrC8Gtv5W2l/TTnviy1f/bMuUTQ6jfee6EX8o32CiH/OUSA2mfYvroaQPlfTPZnY7nLH/NA=
+	t=1757767590; cv=none; b=HJdLIJaBCoF6Oya0SUhCqyYczeydGnn7EaLGAqXmZcTb70LyFcF2A17UcjUNPih9aWQh6t4xO6nxXsl2CmFk4fborE8OMsHNel79L3A556T6Gjky9iY14tS1AXWE0bNuTvM+vvoSU/69GNfredqp2C3Wi3xcdaqkvpoGSOuVv3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757767427; c=relaxed/simple;
-	bh=jfB70gQONh76s9eOb2k7EuWL0y+TqUWsvIBuoaHEIgk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PvI3IIk36uQ//zfn3rETZHnX3bQ2S2UCpjoqEpWtA0WR8FQcHnD8x4MB8AL39DKTJMKHt0011GAm0j7nq4dPtqFWO9mdxvKJtPre2BUZ+2pqkSOD6uxwzI48fhZj0Yo4bmkcHpwctorgeN5zBdTN3P6u8i5PIPidQ9KnzbV0Cwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0Yu6R2r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA9DC4CEEB
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 12:43:47 +0000 (UTC)
+	s=arc-20240116; t=1757767590; c=relaxed/simple;
+	bh=M3ucwWOkmd4GlagC3QAB3AkYHK0FWq/mlVQAJs0tkgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OKMERxyee2AQ4wdu/0JtLTQa5x5WP1WNx6lHhdGY8XpjPe2i1qaKJ0SMkgbhlK1oWOGZ2u3bPGen0AbkBIvqLavzhPepMCP6vr1IvMMyAbkRPyLeNdZcjB8Q9iuF/3UiS11MCPXJ9ygV/iNQKzfsae0xleHfxzYWQ19NBKj9JLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cO1Q6ll9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D69B7C4CEEB;
+	Sat, 13 Sep 2025 12:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757767427;
-	bh=jfB70gQONh76s9eOb2k7EuWL0y+TqUWsvIBuoaHEIgk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=I0Yu6R2ra4/DT88cl44PVNrMfOeFPiljiPHENl5VxvrHmS+ej9ozfV7A8c/PYgBZe
-	 scUc3sbvYnHIGJ9IRQlt3IPC3bgrWTQriV20RfRklMtvd2pKgOYr44J1FsReV0SFzf
-	 RpFIXWz7Ad0dwnisoRvoYb5ZuaRaRy8wEdnWRXHwlqtKjzpjoDD9dsJXXW+Pzr7amJ
-	 SiyjHa/c8jR0EDfSLQdHaGyTJkuyeTOXGMQOslwjJlNgvRHmrQo1mXp9PsMMoFDTww
-	 Cf7+FFrNDAwPze3x1i9OXPhy4ZJ9hDmFEjZzdaaHOrvLhlhwlH5nk6ww1MfqwWNOm8
-	 ayyXZeQdMi8Gw==
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7459d088020so1411901a34.3
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:43:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUXNa2WIb0qaS4bi5DNDVlnhxGWvNOG1Z9tcvcaT9NGey9qXlkD2OKoeBLYAhA1uBIRpqh9flao+bx3eYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTRarHOVvvx4kiEbkttxylQXYdYvFdhbWaG8o1fUcn6a4FiCku
-	iVHNoV5FraqyV5XwRVNDlccA8tbMhOOOeVzIAeSU9bjnzDeGY9Oh1dsa4ORNZw3/pYFdFDoopD+
-	rKeqWqOroJyJ0/d+waZ/Q7CjBmb6nhmk=
-X-Google-Smtp-Source: AGHT+IEAmiMQnLcYLV/Pkj3NHYryOaXFljpsolHDj1IzK9H2zh00ir+lNbAaqOUzWhVVfMZ1hKEiamyleS7v2ajPG3Y=
-X-Received: by 2002:a05:6830:6d15:b0:746:f391:9d71 with SMTP id
- 46e09a7af769-753550e2c12mr3640920a34.23.1757767426497; Sat, 13 Sep 2025
- 05:43:46 -0700 (PDT)
+	s=k20201202; t=1757767589;
+	bh=M3ucwWOkmd4GlagC3QAB3AkYHK0FWq/mlVQAJs0tkgA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cO1Q6ll9cwtVu0a8Lbt6yVbozMzHQs1pt5iRBbZUhVsXO+WaOQeLyvF3qeiu2QG0h
+	 p8lRBqwVgfc8ImjbpTrgTXP5HAiAXi3GJu+GBNCJlqNd1uLCrWF9JlM21sZvk7eDfC
+	 jd9BhIAit7SGV6DiC7KhhsGzucT6wWzoF6G4GLtubRxPlhHcD6cBB07kEeoO1ruql+
+	 1oai/onvFGf/4wDLu1RRtEQ1Wj+k2J40v54+punVOaoZM7iGGbbs1xpeVNRf2TBpql
+	 RbwhcM+MMx3+2cvcMdVyMwd0eymTPqG+u8/RkQadA0dhOuvUl31gZJ5F/WpCgiGayS
+	 h2h+75KYJJ/KQ==
+Date: Sat, 13 Sep 2025 13:46:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v7 4/6] iio: adc: add ade9000 support
+Message-ID: <20250913134621.226ed6df@jic23-huawei>
+In-Reply-To: <20250908073531.3639-5-antoniu.miclaus@analog.com>
+References: <20250908073531.3639-1-antoniu.miclaus@analog.com>
+	<20250908073531.3639-5-antoniu.miclaus@analog.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f8965cfe-de9a-439c-84e3-63da066aa74f@rowland.harvard.edu>
- <CAJZ5v0g9nip2KUs2hoa7yMMAow-WsS-4EYX6FvEbpRFw10C2wQ@mail.gmail.com>
- <CAJZ5v0gzFWW6roYTjUFeL2Tt8kKJ_g5Q=tp2=s87dy05x-Hvww@mail.gmail.com>
- <38b706cc-5966-4766-9165-51935fdcd790@rowland.harvard.edu>
- <CAJZ5v0h=i9XF_SQMOhz3P+4SAH3Qy-r1oUiiw7Bp=PcRnJjVbQ@mail.gmail.com>
- <59951c2d-60e8-47a8-a43c-00b92e095043@rowland.harvard.edu>
- <CAJZ5v0i6aFarDU8OTZ_3VS9dp4SaqKJ0SuiN4gFSxrRoAAV5CQ@mail.gmail.com>
- <24a69e4d-2f10-43fb-81d4-f7eea44a6b8d@rowland.harvard.edu>
- <CAJZ5v0gUjgY45WFye5STJ7kv30O4rQ=23qkOsHEMSxfwg8jO4g@mail.gmail.com>
- <385dccf3-234a-4f83-9610-81ac30bf1466@rowland.harvard.edu> <20250912222321.ct5ezgvsgyvos2ah@synopsys.com>
-In-Reply-To: <20250912222321.ct5ezgvsgyvos2ah@synopsys.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Sat, 13 Sep 2025 14:43:32 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jvDxpB_8Um=SgWWFU8S8YVe4jmLa+yP_676sj+NNM5Bw@mail.gmail.com>
-X-Gm-Features: Ac12FXzJER_E5HTgLjQMRgzyIRC7l3RKWw6eF7pJn9dN0S6FsvStekeOeK0QqhY
-Message-ID: <CAJZ5v0jvDxpB_8Um=SgWWFU8S8YVe4jmLa+yP_676sj+NNM5Bw@mail.gmail.com>
-Subject: Re: [PATCH] drvier: usb: dwc3: Fix runtime PM trying to activate
- child device xxx.dwc3 but parent is not active
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	ryan zhou <ryanzhou54@gmail.com>, Roy Luo <royluo@google.com>, 
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat, Sep 13, 2025 at 12:23=E2=80=AFAM Thinh Nguyen <Thinh.Nguyen@synopsy=
-s.com> wrote:
->
-> On Thu, Sep 04, 2025, Alan Stern wrote:
-> > On Thu, Sep 04, 2025 at 07:34:22PM +0200, Rafael J. Wysocki wrote:
-> > > On Thu, Sep 4, 2025 at 4:19=E2=80=AFPM Alan Stern <stern@rowland.harv=
-ard.edu> wrote:
-> > > >
-> > > > On Thu, Sep 04, 2025 at 04:08:47PM +0200, Rafael J. Wysocki wrote:
-> >
-> > > > > Say this is not the case and say that the device is runtime-suspe=
-nded
-> > > > > to start with.  Then the "suspend" callback has two choices: eith=
-er
-> > > > > (1) it can runtime-resume the device before doing anything to it,
-> > > > > which will also cause the device's parent and suppliers to
-> > > > > runtime-resume, or (2) it can update the device's state without
-> > > > > resuming it.
-> > > > >
-> > > > > If it chooses (1), then "resume" is straightforward.  If it choos=
-es
-> > > > > (2), "resume" may just reverse the changes made by "suspend" and
-> > > > > declare that the device is runtime-suspended.  And if it really r=
-eally
-> > > > > wants to resume the device then, why not call runtime_resume() on=
- it?
-> > > >
-> > > > That's what I meant by needing "cooperation from the driver".  The
-> > > > driver's ->resume callback needs to do this check to see which path=
-way
-> > > > to follow: (1) or (2).
-> > >
-> > > Unless "suspend" always does the same thing, so it always does (1) or
-> > > it always does (2).
-> > >
-> > > In that case, "resume" will know what to do without checking.
-> >
-> > It still has to check whether the device is runtime suspended.
-> >
-> > > I'd like to mention that if "suspend" chooses (2), it may need to
-> > > resume the suspended parent or suppliers to be able to access the
-> > > device even though the device itself won't be resumed.  I'm not sure
-> > > if (2) is really attractive then, though.
-> >
-> > True.
-> >
-> > > Also, in the example we've been considering so far, the assumption is
-> > > that B can just stay in runtime suspend, so why would it need to be
-> > > resumed by "resume"?  And if there is a specific reason for resuming
-> > > it, "resume" can just call runtime_resume() on it AFAICS.
-> >
-> > So it appears to boil down to this, as far as ->resume is concerned: At
-> > the start of the callback routine, there should be something like:
-> >
-> >       if (pm_runtime_suspended(dev)) {
-> >               if (the device needs to be woken up) {
-> >                       pm_runtime_resume(dev);
-> >                       ... whatever else is needed ...
-> >               }
-> >               return 0;
-> >       }
-> >
-> > If ->suspend is clever, it can clear or set the SMART_SUSPEND flag
-> > according to whether the device will need to be woken up.  Then the
-> > second conditional above will always be true whenever the callback runs=
-,
-> > so the test can be skipped.
-> >
->
-> So, can this solution be the default behavior in the PM core? That it
-> would initiate pm_runtime_resume by default?
+On Mon, 8 Sep 2025 07:35:24 +0000
+Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
 
-Not really because there are drivers that don't want that to be done.
-For example, everybody pointing their suspend/resume callbacks to
-pm_runtime_force_suspend/resume(), respectively, and not setting
-SMART_SUSPEND.
+> Add driver support for the ade9000. highly accurate,
+> fully integrated, multiphase energy and power quality
+> monitoring device.
+> 
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
 
-> Seems you want this to be handled in the device driver and not PM core
-> right? ie. the condition "the device needs to be woken up" will not be a
-> PM user flag/config but the device driver needs to check that itself.
+So, I made a few comments this time that I should probably have
+noticed in earlier versions.  I'm not particularly keen to delay
+an initial merge of the driver for them but I would like you consider
+the suggestion of a perphase structure look up table to
+reduce duplication as a potential follow up patch.
 
-Not necessarily.  I'll write more about this next week (well, hopefully).
+Jonathan
+
+> diff --git a/drivers/iio/adc/ade9000.c b/drivers/iio/adc/ade9000.c
+> new file mode 100644
+> index 000000000000..a3be4bd24686
+> --- /dev/null
+> +++ b/drivers/iio/adc/ade9000.c
+
+> +/* Voltage events (zero crossing on instantaneous voltage) */
+> +static const struct iio_event_spec ade9000_voltage_events[] = {
+> +	{
+> +		/* Zero crossing detection - datasheet: ZXV interrupts */
+> +		.type = IIO_EV_TYPE_THRESH,
+> +		.dir = IIO_EV_DIR_EITHER,
+> +		.mask_separate = BIT(IIO_EV_INFO_ENABLE),
+
+Perhaps this event might be easier to understand if we provide a value that
+is hard coded to 0?
+
+> +	},
+> +};
+> +
+> +/* Current events (zero crossing on instantaneous current) */
+> +static const struct iio_event_spec ade9000_current_events[] = {
+> +	{
+> +		/* Zero crossing detection - datasheet: ZXI interrupts */
+> +		.type = IIO_EV_TYPE_THRESH,
+> +		.dir = IIO_EV_DIR_EITHER,
+> +		.mask_separate = BIT(IIO_EV_INFO_ENABLE),
+
+As above.
+
+> +	},
+> +};
+
+> +static int ade9000_iio_push_streaming(struct iio_dev *indio_dev)
+> +{
+> +	struct ade9000_state *st = iio_priv(indio_dev);
+> +	struct device *dev = &st->spi->dev;
+> +	u32 current_page, i;
+> +	int ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	ret = spi_sync(st->spi, &st->spi_msg);
+> +	if (ret) {
+> +		dev_err_ratelimited(dev, "SPI fail in trigger handler\n");
+> +		return ret;
+> +	}
+> +
+> +	/* In streaming mode, only half the buffer is filled per interrupt */
+> +	for (i = 0; i < st->wfb_nr_samples / 2; i += st->wfb_nr_activ_chan)
+> +		iio_push_to_buffers(indio_dev, &st->rx_buff.word[i]);
+> +
+> +	ret = regmap_read(st->regmap, ADE9000_REG_WFB_PG_IRQEN, &current_page);
+> +	if (ret) {
+> +		dev_err_ratelimited(dev, "IRQ0 WFB read fail\n");
+> +		return ret;
+> +	}
+> +
+> +	if (current_page & ADE9000_MIDDLE_PAGE_BIT) {
+> +		ret = regmap_write(st->regmap, ADE9000_REG_WFB_PG_IRQEN,
+> +				   ADE9000_LAST_PAGE_BIT);
+> +		if (ret) {
+> +			dev_err_ratelimited(dev, "IRQ0 WFB write fail\n");
+> +			return ret;
+> +		}
+> +
+> +		ade9000_configure_scan(indio_dev,
+> +				       ADE9000_REG_WF_HALF_BUFF);
+> +	} else {
+> +		ret = regmap_write(st->regmap, ADE9000_REG_WFB_PG_IRQEN,
+> +				   ADE9000_MIDDLE_PAGE_BIT);
+> +		if (ret) {
+> +			dev_err_ratelimited(dev, "IRQ0 WFB write fail");
+> +			return IRQ_HANDLED;
+> +		}
+> +
+> +		ade9000_configure_scan(indio_dev,
+> +				       ADE9000_REG_WF_BUFF);
+
+Excessive wrap. Fits on one line.  I'll tidy this up if I pick up the patch.
+
+> +	}
+> +
+> +	return 0;
+> +}
+
+
+> +
+> +static int ade9000_read_event_config(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir)
+> +{
+> +	struct ade9000_state *st = iio_priv(indio_dev);
+> +	u32 interrupts1;
+> +	int ret;
+> +
+> +	/* All events use MASK1 register */
+> +	ret = regmap_read(st->regmap, ADE9000_REG_MASK1, &interrupts1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	switch (chan->channel) {
+> +	case ADE9000_PHASE_A_NR:
+> +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER)
+> +			return !!(interrupts1 & ADE9000_ST1_ZXVA_BIT);
+
+As below.  If you had a look up table with appropriate per phase structures
+the 3 repeats here could basically be change from code to data which is
+generally a good idea and is easier to read.
+
+> +		else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER)
+> +			return !!(interrupts1 & ADE9000_ST1_ZXIA_BIT);
+> +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING)
+> +			return !!(interrupts1 & ADE9000_ST1_SWELLA_BIT);
+> +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING)
+> +			return !!(interrupts1 & ADE9000_ST1_DIPA_BIT);
+> +		dev_err_ratelimited(&indio_dev->dev, "Invalid channel type %d or direction %d for phase A\n", chan->type, dir);
+> +		return -EINVAL;
+> +	case ADE9000_PHASE_B_NR:
+> +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER)
+> +			return !!(interrupts1 & ADE9000_ST1_ZXVB_BIT);
+> +		else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER)
+> +			return !!(interrupts1 & ADE9000_ST1_ZXIB_BIT);
+> +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING)
+> +			return !!(interrupts1 & ADE9000_ST1_SWELLB_BIT);
+> +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING)
+> +			return !!(interrupts1 & ADE9000_ST1_DIPB_BIT);
+> +		dev_err_ratelimited(&indio_dev->dev, "Invalid channel type %d or direction %d for phase B\n", chan->type, dir);
+> +		return -EINVAL;
+> +	case ADE9000_PHASE_C_NR:
+> +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER)
+> +			return !!(interrupts1 & ADE9000_ST1_ZXVC_BIT);
+> +		else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER)
+> +			return !!(interrupts1 & ADE9000_ST1_ZXIC_BIT);
+> +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING)
+> +			return !!(interrupts1 & ADE9000_ST1_SWELLC_BIT);
+> +		else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING)
+> +			return !!(interrupts1 & ADE9000_ST1_DIPC_BIT);
+> +		dev_err_ratelimited(&indio_dev->dev, "Invalid channel type %d or direction %d for phase C\n", chan->type, dir);
+> +		return -EINVAL;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int ade9000_write_event_config(struct iio_dev *indio_dev,
+> +				      const struct iio_chan_spec *chan,
+> +				      enum iio_event_type type,
+> +				      enum iio_event_direction dir,
+> +				      bool state)
+> +{
+> +	struct ade9000_state *st = iio_priv(indio_dev);
+> +	u32 bit_mask;
+> +	int ret;
+> +
+> +	/* Clear all pending events in STATUS1 register (write 1 to clear) */
+> +	ret = regmap_write(st->regmap, ADE9000_REG_STATUS1, GENMASK(31, 0));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Determine which interrupt bit to enable/disable */
+> +	switch (chan->channel) {
+> +	case ADE9000_PHASE_A_NR:
+> +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER) {
+
+Perhaps consider per phase look up tables?
+
+> +			bit_mask = ADE9000_ST1_ZXVA_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_ZXVA_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXVA_BIT;
+> +		} else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER) {
+> +			bit_mask = ADE9000_ST1_ZXIA_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_ZXIA_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXIA_BIT;
+> +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING) {
+> +			bit_mask = ADE9000_ST1_SWELLA_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_SWELL_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_SWELL_BIT;
+> +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING) {
+> +			bit_mask = ADE9000_ST1_DIPA_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_DIP_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_DIP_BIT;
+> +		} else {
+> +			dev_err_ratelimited(&indio_dev->dev, "Invalid channel type %d or direction %d for phase A\n",
+> +					    chan->type, dir);
+> +			return -EINVAL;
+> +		}
+> +		break;
+> +	case ADE9000_PHASE_B_NR:
+> +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER) {
+> +			bit_mask = ADE9000_ST1_ZXVB_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_ZXVB_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXVB_BIT;
+> +		} else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER) {
+> +			bit_mask = ADE9000_ST1_ZXIB_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_ZXIB_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXIB_BIT;
+> +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING) {
+> +			bit_mask = ADE9000_ST1_SWELLB_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_SWELL_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_SWELL_BIT;
+> +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING) {
+> +			bit_mask = ADE9000_ST1_DIPB_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_DIP_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_DIP_BIT;
+> +		} else {
+> +			dev_err_ratelimited(&indio_dev->dev, "Invalid channel type %d or direction %d for phase B\n",
+> +					    chan->type, dir);
+> +			return -EINVAL;
+> +		}
+> +		break;
+> +	case ADE9000_PHASE_C_NR:
+> +		if (chan->type == IIO_VOLTAGE && dir == IIO_EV_DIR_EITHER) {
+> +			bit_mask = ADE9000_ST1_ZXVC_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_ZXVC_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXVC_BIT;
+> +		} else if (chan->type == IIO_CURRENT && dir == IIO_EV_DIR_EITHER) {
+> +			bit_mask = ADE9000_ST1_ZXIC_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_ZXIC_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_ZXIC_BIT;
+> +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_RISING) {
+> +			bit_mask = ADE9000_ST1_SWELLC_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_SWELL_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_SWELL_BIT;
+> +		} else if (chan->type == IIO_ALTVOLTAGE && dir == IIO_EV_DIR_FALLING) {
+> +			bit_mask = ADE9000_ST1_DIPC_BIT;
+> +			if (state)
+> +				st->wfb_trg |= ADE9000_WFB_TRG_DIP_BIT;
+> +			else
+> +				st->wfb_trg &= ~ADE9000_WFB_TRG_DIP_BIT;
+> +		} else {
+> +			dev_err_ratelimited(&indio_dev->dev, "Invalid channel type %d or direction %d for phase C\n",
+> +					    chan->type, dir);
+> +			return -EINVAL;
+> +		}
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Set bits if enabling event, clear bits if disabling */
+> +	return regmap_assign_bits(st->regmap, ADE9000_REG_MASK1, bit_mask, state ? bit_mask : 0);
+> +}
+
+
+> +static int ade9000_setup(struct ade9000_state *st)
+> +{
+> +	struct device *dev = &st->spi->dev;
+> +	int ret;
+> +
+> +	ret = regmap_multi_reg_write(st->regmap, ade9000_initialization_sequence,
+> +				     ARRAY_SIZE(ade9000_initialization_sequence));
+Really trivial and I definitely not worth a respin but does feel like some
+abbreviation would have worked here! _init_seq maybe?
+
+
+
 
