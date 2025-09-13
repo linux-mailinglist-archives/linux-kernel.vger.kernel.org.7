@@ -1,79 +1,81 @@
-Return-Path: <linux-kernel+bounces-815348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B95B56321
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 23:21:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC854B56323
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 23:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9C10189E384
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 21:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0076B1B20631
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 21:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC47728003A;
-	Sat, 13 Sep 2025 21:21:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF0628314E;
+	Sat, 13 Sep 2025 21:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCixbt7L"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7mZP4sR"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB1E2367A8
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 21:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F929280312
+	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 21:21:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757798487; cv=none; b=AqtZXdTC+yKuxLqYjK2UbC3D8CZ6bkQvZFTQO4KC9CEdK+Ct4RUvB5pIhVFMk/eHbHgH6SiQsYz718HQyxzHnn2m/f9qRYD5PrEJlR7PHfnTP7a7t407z5LJAcxKCl428BFpZ94tqo9IYaGJx8pawZ/Ccp5Z9iRzyjGZ67Dd14c=
+	t=1757798488; cv=none; b=CoXk+Vt0FtJl3609ZR3pk+GHTYSE97mzBjM4RIADvJfSGX22objSadWGtadcUte30TJCZYdZfTJRYCSh3Z+t0Dk7PGESeSnYu1G7t3v9adsHmuNyf/1ykVJ+ucyhEGaCUNrBCOxs4SaTURmVlTUuIPKdt2qXoztM0C/WnYmMwMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757798487; c=relaxed/simple;
-	bh=TYNRK4+bphtWM7te51Y2NO2PW29CFLfANZF+pOwh/qQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XERt36TSCrHhP6JH2C1TBJctvrk5auis/3S7fF7iBd7tIb1QS8w/sLc2KB9D4nGgBjThAnMQxFwWy2wLPUR6CEO5Crgfien4WJcxBAFla+8MW/qu+3502U9D5lB/5x6k9ApU11M+OZxKvEdnMMfwC+WmDV1EtDufl+0NFkEkbMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCixbt7L; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1757798488; c=relaxed/simple;
+	bh=oaJUaCOYqaH1L8LbASqlVhMT0XivPLTV80hCIDJAMDY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=G3/hcXC38DEpAfBZhCVKpIwh0gGnEyMgCq93fbKB5kdg4GuJsGLFoOviTzSpUsnXCxo7RPI3uoRzDYZhXP5XzalQuO2drCGZpNZui9dp9Ke/2IXj2t8WO4WaOe/5c9EgJ/AGt5dhK2560xmDEZx2AR0i8SKI4nB5MpVgjOTreV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N7mZP4sR; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45deccb2c1eso23212295e9.1
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 14:21:25 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3e8123c07d7so447340f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 14:21:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757798484; x=1758403284; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UUfEoumCbzIEx8AGvj96Z7JPRJbPQvAkGwx1CilBgwE=;
-        b=eCixbt7LOfEiH+E5nkfZgb4/8nLdEDQTSesLwxt0ZVhx8Ng9bPN9Py8eC4Ej5DLt29
-         UeJdh5Gfc/foh5++YOHuousrgQOWpnO9eyPuo0uKs4aZKdAS8oZhRB7ySaQvN5tAcH3T
-         HP1x427+quB6qwnpkqdAn9WgF179YfFELVdFLFZ+gDutnSA67i/3+jZCVcY+F+f3fsTk
-         KbV7kFwFvzZYX8DyIKk485iXapkza9+1OHysvXLyUCedSPs8yOyf0yMG5IFLwtZ8cdNS
-         1wEzHME5gUgPL6N+f9FzsQiNwdTKnJpUKr7VFrAKnOXTfZD5fLBvhXTnR5VPK+L9qRdG
-         oB+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757798484; x=1758403284;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1757798485; x=1758403285; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UUfEoumCbzIEx8AGvj96Z7JPRJbPQvAkGwx1CilBgwE=;
-        b=vDD9BnYgi5EN8UM9dWKejVMAs7RRgPFSxTxHGW6ABscEmIH8v6+MZE15oKynSIvwLk
-         fA/G4OnT4Bzhf7R1YZ/n915j1WdSrHxl26eMGhnFtNC+3HpnKh4qZcxs/0eewr0/W1Xq
-         ktyRnLlp/I0r4XxaGBMBlCF1MCD0RD9XZwahurtMgqVKXVYsAZWLc0mlZlyshislKIGN
-         Y78dORoovt2cb5vpOVuAf4N7azZeujGabc6AWAF3+jvVJj7VVxhoEt3pH+TAJV7wtn5M
-         IncX5/JNKSFEnjNTq7mvtAE/m3ejWmEoNZazHx5drNjXC2mByF4qmATjoU4fkj0hAV/w
-         IcLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHRmJ8rikssiLx8wpQsElxKdIC93ubXeuLBnBc7llGfrWcxHHw2dX7lxQrzixEYd5bRrAc0GykbymlhXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzLMTSi7BWWrOJ49WXCsVmWE/GDdKUdnx+qQRDIBye0ND8e6am
-	9i6pL5rqHIQeH55WjSImr0x1XSYmTNlsxHg/2S9GrFfgu9U2bGzn4QjE
-X-Gm-Gg: ASbGncsB4XCy9mzyYUqyzRY8Jji9x1Tr0ezw3+kW6SjIWPIcfdxiwai6w9UcaQTgYr1
-	z6ZLlGgYO0ol872CzdhF8yfVlA+6jJP19jRG/zK3hBlpJYqgAcCmnonZZJhCgetvmdIPWeXrgdU
-	9cHV8lZsgpmOBQmV/V+6ldvZT64Y/oRp/FQEq+G4LkSBIRwp/FQcAL9WNfa5KXNynvHXi8I1lqZ
-	kSDGcH4F0ImH9yO7QI7M+qjpZ7ncoP7kgooUT4MQlzfrYX9iPeC4IkiuOVdWkq8ZbHBtu9wM178
-	OutqDUX3ubRzRZLR/3PEY3j5MXOf4B7qPwUDuj8M9eE6MsffPABU/vKIu+7qJKNUpKcS+VmajpA
-	fcrxtGoWUDZHs62DIFStXF++ciryLchkLRWjsCfyer7d3hCfqvHdw
-X-Google-Smtp-Source: AGHT+IG1Lbyz/LuhSCMvFaFvWIQA+e+oeS+V5WfPI22yr5MxxdIQ2TC5LggKVWnkSIrVed1aQHOliw==
-X-Received: by 2002:a7b:ca5a:0:b0:45d:e0cf:41c9 with SMTP id 5b1f17b1804b1-45f211f89d6mr50232345e9.22.1757798483764;
-        Sat, 13 Sep 2025 14:21:23 -0700 (PDT)
+        bh=sWd2b4T+HmUToKXe+DhMe4fckX1fCVdutnchyiOuReA=;
+        b=N7mZP4sRjyoAI4dZJI5PYtRdnvW2yj4yqf+bR3/sglvKusKfggZdoA6If1kNCi1JOd
+         dLfu3BR+v9xfoRYy3QDM1ivm1Yr3Ci6CxjnC/SD3RDaopXjg+7/16I1rYDw2/+25lLUm
+         anmffZXMBuiHf17B551yB6j+8XXVAd9sKeZi6nFApGNOKGyRkJY8d9Z1tANTKwbESSXt
+         jG7EP/1QWiUwOvSq/vU4KJyrhdArJ7R1dX8sBPmPddgY9qrFKIOWEVnljmemLGxeF0WD
+         puF7TNgAwSZV/DMSJQK1T40BD/NEmQNrALODOOHEVR2yqKkGO33+R4bv1I2HHV5qFdDy
+         vU5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757798485; x=1758403285;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sWd2b4T+HmUToKXe+DhMe4fckX1fCVdutnchyiOuReA=;
+        b=hxZKJ+2mLoy+0v3+XsnJ5hdrvZO0YuRocair5JqTu7Ft3iyL+TVaJ4uyQ3ORn4qeSb
+         9Q6wt3XXwNDKWmPJyhJCA3FzJDmbC8As72RGiXv2V3sN5EH7Q3EyeQw57T3giRb0oFRQ
+         z4x2/bKvbjKFz+zQksw6zvJmr2qkpmYQoPJj9c/aMS/eCL2YfJ9VQM2memMnlKcoJ8OZ
+         PX53PxWr7TbXonnVvEmaCKvR4G2RH3l6Sa4a5xckLuyfmbtm9iUKJ9wOGr5aQqjoY9Ps
+         NFHfJwIs7n4D43BY/e3vShthYYEpWbRIgRnsdblqLlMuFcNWAiTOtqB8bTG5QeQ4wsRb
+         M10g==
+X-Forwarded-Encrypted: i=1; AJvYcCUohJSh5ONEbWHZuWcZxB2I3CH5+i/i3vxd+ITdiFbEgT1bO37i3NhOIgWYYtI8Rqp7G3FZr1nmyn13z7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5g9ZXQOLQnadTYeRRhaK/9mCZF31D80iyivnCkcZ0ikHgXanA
+	77+mBHZ4gBnp5OWdMDE8oXYP94YgQX5SFj3bwpo8oADeS1fqYVsSLLUk
+X-Gm-Gg: ASbGncs2AgOrJ3GDtsowQ2Pai9Shb2tvRTagJSx3mOR+UNcgKQrIKiePeD8P1IjGrN9
+	IJqlYCvb60fSODNwOtOj+W6RiuPEGqqSfiwZiN4nSmpAEiD3Mu0MU0ml1vq8l7w6R3qtbnQIhke
+	Jx0VAOET83hnA+ZJzKb6fKkNHz5YoKS9X0DZuvxGXF4wdDt9GxHmEfhc0uJ6KG2XuE6dnA2pAVL
+	PGaQOI3Tlow89DOX+zJ7UjLVBSEasHd9JvP3Qu7R2qAotIDNX0xaUvuAptak+jQTFxyWvbhTVOa
+	dqWcrcxOPZwfo/VicBnVFmT6uQt4xRymtOiJ98W6ETPNpwQ/oB51kqRPq/9ktHKsc7ioe6nivGC
+	TT5taik5awIFzUbEioPBYl6J4TRbbs86fTGRg7UrfEA==
+X-Google-Smtp-Source: AGHT+IEGJzSKpd6zREOPWaWs/h+7A671p7jcXu2As5oGpHICFBcGGlWQqYtS0ly1bNsIo7cSV/bMuA==
+X-Received: by 2002:a5d:5f42:0:b0:3e8:6b2b:25e0 with SMTP id ffacd0b85a97d-3e86b2b278bmr2411238f8f.25.1757798485438;
+        Sat, 13 Sep 2025 14:21:25 -0700 (PDT)
 Received: from Radijator.localdomain ([93.140.65.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd6absm11576842f8f.34.2025.09.13.14.21.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e7607cd6absm11576842f8f.34.2025.09.13.14.21.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 14:21:22 -0700 (PDT)
+        Sat, 13 Sep 2025 14:21:24 -0700 (PDT)
 From: =?utf-8?q?Duje_Mihanovi=C4=87?= <dujemihanovic32@gmail.com>
-Subject: [PATCH RESEND 0/9] samsung,coreprimevelte DTS additions
-Date: Sat, 13 Sep 2025 23:21:02 +0200
-Message-Id: <20250913-pxa1908-dts-v1-0-8120cdc969b8@dujemihanovic.xyz>
+Date: Sat, 13 Sep 2025 23:21:03 +0200
+Subject: [PATCH RESEND 1/9] arm64: dts: marvell: samsung,coreprimevelte:
+ Add backlight
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,6 +84,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250913-pxa1908-dts-v1-1-8120cdc969b8@dujemihanovic.xyz>
+References: <20250913-pxa1908-dts-v1-0-8120cdc969b8@dujemihanovic.xyz>
+In-Reply-To: <20250913-pxa1908-dts-v1-0-8120cdc969b8@dujemihanovic.xyz>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>, 
  Tony Luck <tony.luck@intel.com>, 
@@ -92,42 +97,44 @@ Cc: Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
  linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
  =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1213;
- i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=TYNRK4+bphtWM7te51Y2NO2PW29CFLfANZF+pOwh/qQ=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBlHH/jV+J233T/1YRr7LA/+q+zzuV2uNy35qlfiltS9f
- 7PmHwmdjlIWBjEuBlkxRZbc/47XeD+LbN2evcwAZg4rE8gQBi5OAZgIexPDXzGZg+FHP2t9rNgW
- nql9ZntQ4APjT2v3POL9smtm9o0HgUwMf2Wkwv6F2M472b7v/66Tv1cwKEc9YfYV6PBy/Faiyt6
- 1kBUA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=895; i=duje@dujemihanovic.xyz;
+ s=20240706; h=from:subject:message-id;
+ bh=3n1cVAjfm4iMd5ytnRCe0bLiwYBnKiHaKl8qPthmrxY=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBlHH/hXRhoe8Uv9obNo0ed8oRy98/4WF0LNYuP3zt/In
+ WfmFnK1o5SFQYyLQVZMkSX3v+M13s8iW7dnLzOAmcPKBDKEgYtTACayai3DX7ni9SVTgjLbf5mH
+ etXa+kVFmPX1CnXJdps82B1ZJK7izvA/2tDK/nTfb2vDI2slt2+/LPXgmW4+rxfXapNP3yXbUjV
+ 5AQ==
 X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
  fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
-This series adds some hardware support for the PXA1908 SoC and
-samsung,coreprimevelte board which has accumulated before the initial
-support series was merged.
+From: Duje Mihanović <duje@dujemihanovic.xyz>
+
+Add a node for the KTD2801 backlight chip found on the board.
 
 Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
 ---
-Duje Mihanović (9):
-      arm64: dts: marvell: samsung,coreprimevelte: Add backlight
-      arm64: dts: marvell: samsung,coreprimevelte: Correct CD GPIO
-      arm64: dts: marvell: samsung,coreprimevelte: Enable eMMC
-      arm64: dts: marvell: pxa1908: Add PWMs
-      arm64: dts: marvell: samsung,coreprimevelte: Add vibrator
-      arm64: dts: marvell: pxa1908: Move ramoops to SoC dtsi
-      arm64: dts: marvell: samsung,coreprimevelte: Drop some reserved memory
-      arm64: dts: marvell: samsung,coreprimevelte: Fill in memory node
-      arm64: dts: marvell: samsung,coreprimevelte: Add USB connector
+ arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
- .../marvell/mmp/pxa1908-samsung-coreprimevelte.dts | 157 ++++++++++++++++-----
- arch/arm64/boot/dts/marvell/mmp/pxa1908.dtsi       |  46 ++++++
- 2 files changed, 169 insertions(+), 34 deletions(-)
----
-base-commit: b320789d6883cc00ac78ce83bccbfe7ed58afcf0
-change-id: 20250902-pxa1908-dts-65d86a5d2d85
+diff --git a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
+index 47a4f01a7077bfafe2cc50d0e59c37685ec9c2e9..b9628b1f59f2f749804799e3d9faa48e3036e81a 100644
+--- a/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
++++ b/arch/arm64/boot/dts/marvell/mmp/pxa1908-samsung-coreprimevelte.dts
+@@ -115,6 +115,12 @@ key-voldown {
+ 			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
+ 		};
+ 	};
++
++	backlight {
++		compatible = "kinetic,ktd2801";
++		ctrl-gpios = <&gpio 97 GPIO_ACTIVE_HIGH>;
++		max-brightness = <210>;
++	};
+ };
+ 
+ &smmu {
 
-Best regards,
 -- 
-Duje Mihanović <duje@dujemihanovic.xyz>
+2.51.0
 
 
