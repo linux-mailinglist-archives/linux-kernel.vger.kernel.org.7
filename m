@@ -1,160 +1,133 @@
-Return-Path: <linux-kernel+bounces-815043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C2EB55E85
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:04:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D89DB55E87
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 07:07:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4A951CC465B
-	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:04:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4E3F17BBC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 13 Sep 2025 05:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919522E1F10;
-	Sat, 13 Sep 2025 05:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F6F2E2846;
+	Sat, 13 Sep 2025 05:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOpqe6YD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="DfFHlaZt"
+Received: from out28-149.mail.aliyun.com (out28-149.mail.aliyun.com [115.124.28.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A0019DFAB
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D40218E20;
+	Sat, 13 Sep 2025 05:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757739871; cv=none; b=U/KZUPVhhKIx43eT79J/vVivtZVFU1pXOTe6qqtircCDHy4EK5UEC6TQ3erkhn4k/s9ovRx1/8IlnX4HSg8hUwrBb8Lv79/a/5D0/W5iW17Q9uCL6VYSR5jY9uex9GvJCKi97p1W2eY9DAX1dq/m81SpsFmMnwKADPwusOqF6jQ=
+	t=1757740011; cv=none; b=rqEcMbmEET+UZbPaI69apw4Zy5yIFgteYR2+6A5XhA1p/nrG5Fx8yyDnZg68J7kgTN29ogpR33OrYqRTsLQl0cmIcMdWLtONtcRb4zVdoDcjZ3KZhG3/OWKKW7G8E65KARCZu5N8O+d7cJhyP9zUjMRU1g5gUWUIWhRRB9x+sDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757739871; c=relaxed/simple;
-	bh=NsBrhjCbgwcv6TOH9wHnbRFiMp7v9AyhyhPf7J+3W0Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XXo6fsW7dLxajlOtmhhffPds2OnzYfhpcxAujLT/8UgFDNb4g2yQfBmmPC4J72vPIMKh469qX93L6rlTGi+0rxKcQMSpHGw1XoGf0+e6ZnyWrNWzcj4J7XFGNu1DLAQMq3cKEPJsCtI+d1qvlV9lW52wkbrqMt0KYa+PMkuUnog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QOpqe6YD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8505FC4CEEB
-	for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 05:04:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757739870;
-	bh=NsBrhjCbgwcv6TOH9wHnbRFiMp7v9AyhyhPf7J+3W0Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=QOpqe6YDfum7AQadumG3oelaFS3/wAJtA5tctn50YN1E2Xr1j/JvZNAdG6QAVRWbf
-	 XivzQOYCGYAKG55AQKD0IQloc++1ZoRKTxW2kmI5kCw0gcZs5WjzBH+9tz+8ksu8Jm
-	 VuxU3cwyUfd5yvOtNbUm3NUIegJXC8G6Z/h711fAGs46EqZ+GlL973txxYdRxAOgo0
-	 yP4pglpcK1iee2JDqfY4OwCRbHr1URVvLDQtBBI8M8D9mEmhC6ySjlq+v28UW6/4Lt
-	 ss+14BIkkdXmhytZusgDanwqrWekeglPUo2DHn4co0A+2qSYUJET2MaW/0/xr+tFB5
-	 Ds8ElZfwMJodA==
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45e03730f83so11701975e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 12 Sep 2025 22:04:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUcziOiqeHSQuN3Y0KG2icEl5i3iMfd09bSkd8+TM/DsYjd6EVQoX54iAO0EfEl4dmeZFNhteTkU4Qg+gg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLZD2K7n1oUTsd0a0bNYiLOmn4b1wG8xKMgEaMdeJgPMABvtqO
-	rfBMEf9IJ8m4bhko8o5fbWk8A65fjzApT4BtbKeigILRHtiQvnDtBCgiwx0g0SHIImCuTGjwEGa
-	TsKCLv1I1kXJWMlwiwRHUf0O6F2YHc+o=
-X-Google-Smtp-Source: AGHT+IFBqVpnm7lRLVpUFGSo3qvUKavvjqz/GXMLn8IvosVS5fR8h0RKtXq5fuAF6dWZpyMz9d/tvDJXi/GTFC9Zp9A=
-X-Received: by 2002:a05:600c:5251:b0:45f:28c9:c4aa with SMTP id
- 5b1f17b1804b1-45f28c9c8cbmr2307625e9.9.1757739869033; Fri, 12 Sep 2025
- 22:04:29 -0700 (PDT)
+	s=arc-20240116; t=1757740011; c=relaxed/simple;
+	bh=Z3Bsk4yeuSaWiOfI2QPSAKBu+5jfsIQ/9hW08Kg+oas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PpOvhSCpVfI7XfujAw35DWB0jw8IjddEp/iVYiKI4Lx11IF4h6ft8kim03Whrh130/ngakVo8YKBf9hGDHdTmm0N6x6pmdYxzXZi1qLc1IGBMWWboPbE9cW21IOR+vEe2QduUq0U0EnJR+jgWdSK4pokZuYyjvWnv0cECLLScb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=DfFHlaZt; arc=none smtp.client-ip=115.124.28.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1757740004; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=r1khi3w4XkNENikcoeGAA5mHsJaRYmGZ2SI2OOjmJew=;
+	b=DfFHlaZtiR1yCRRQCD9IbEHH1VvxMt0Fjux6W4JZEaZOcZF7pLsuKjgPLWZ2fhkkjXU0nS1DJmqzERNexy5HO6MxCjtJAqurRyu98htIME3p5oLy9ONPJmxQz2Uyb28Vdy5GcGhqJC6gI/FeVEGukBDk1jDrW8JjSo3QAGtVJzk=
+Received: from localhost(mailfrom:houwenlong.hwl@antgroup.com fp:SMTPD_---.ee6pIz1_1757740003 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Sat, 13 Sep 2025 13:06:44 +0800
+Date: Sat, 13 Sep 2025 13:06:43 +0800
+From: Hou Wenlong <houwenlong.hwl@antgroup.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: x86: Remove outdated comments and code in
+ kvm_on_user_return()
+Message-ID: <20250913050643.GA50691@k08j02272.eu95sqa>
+References: <c10fb477105231e62da28f12c94c5452fa1eff74.1757662000.git.houwenlong.hwl@antgroup.com>
+ <aMPbNBofTCFGTCs6@intel.com>
+ <20250912093822.GA10794@k08j02272.eu95sqa>
+ <20250912141132.GA85606@k08j02272.eu95sqa>
+ <aMQw67a7Ku7wXTXO@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250911184528.1512543-1-rabenda.cn@gmail.com> <20250911184528.1512543-4-rabenda.cn@gmail.com>
-In-Reply-To: <20250911184528.1512543-4-rabenda.cn@gmail.com>
-From: Guo Ren <guoren@kernel.org>
-Date: Sat, 13 Sep 2025 13:04:17 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTQN71ekFURQLNEMjhcKQbYhpHU1vcNwm+Rx7eONPjz9Jg@mail.gmail.com>
-X-Gm-Features: AS18NWBbpip28D6dSvULZTMJGPHyRhKbalh_uAdjJ70KBsVc__S9zGVR444ixV8
-Message-ID: <CAJF2gTQN71ekFURQLNEMjhcKQbYhpHU1vcNwm+Rx7eONPjz9Jg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] riscv: dts: thead: add zfh for th1520
-To: Han Gao <rabenda.cn@gmail.com>
-Cc: devicetree@vger.kernel.org, Drew Fustini <fustini@kernel.org>, 
-	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Han Gao <gaohan@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aMQw67a7Ku7wXTXO@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Fri, Sep 12, 2025 at 2:46=E2=80=AFAM Han Gao <rabenda.cn@gmail.com> wrot=
-e:
->
-> th1520 support Zfh ISA extension [1].
->
-> Link: https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1737721=
-869472/%E7%8E%84%E9%93%81C910%E4%B8%8EC920R1S6%E7%94%A8%E6%88%B7%E6%89%8B%E=
-5%86%8C%28xrvm%29_20250124.pdf [1]
-Agree with Conor's advice.
+On Fri, Sep 12, 2025 at 07:40:43AM -0700, Sean Christopherson wrote:
+> On Fri, Sep 12, 2025, Hou Wenlong wrote:
+> > On Fri, Sep 12, 2025 at 05:38:22PM +0800, Hou Wenlong wrote:
+> > > On Fri, Sep 12, 2025 at 04:35:00PM +0800, Chao Gao wrote:
+> > > > On Fri, Sep 12, 2025 at 03:35:29PM +0800, Hou Wenlong wrote:
+> > > > >The commit a377ac1cd9d7b ("x86/entry: Move user return notifier out of
+> > > > >loop") moved fire_user_return_notifiers() into the section with
+> > > > >interrupts disabled, so the callback kvm_on_user_return() cannot be
+> > > > >interrupted by kvm_arch_disable_virtualization_cpu() now. Therefore,
+> > > > >remove the outdated comments and local_irq_save()/local_irq_restore()
+> > > > >code in kvm_on_user_return().
+> > > > >
+> > > > >Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+> > > > >---
+> > > > > arch/x86/kvm/x86.c | 16 +++++-----------
+> > > > > 1 file changed, 5 insertions(+), 11 deletions(-)
+> > > > >
+> > > > >diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > > >index 33fba801b205..10afbacb1851 100644
+> > > > >--- a/arch/x86/kvm/x86.c
+> > > > >+++ b/arch/x86/kvm/x86.c
+> > > > >@@ -568,18 +568,12 @@ static void kvm_on_user_return(struct user_return_notifier *urn)
+> > > > > 	struct kvm_user_return_msrs *msrs
+> > > > > 		= container_of(urn, struct kvm_user_return_msrs, urn);
+> > > > > 	struct kvm_user_return_msr_values *values;
+> > > > >-	unsigned long flags;
+> > > > >
+> > > > >-	/*
+> > > > >-	 * Disabling irqs at this point since the following code could be
+> > > > >-	 * interrupted and executed through kvm_arch_disable_virtualization_cpu()
+> > > > >-	 */
+> > > > >-	local_irq_save(flags);
+> > > > >-	if (msrs->registered) {
+> > > > >-		msrs->registered = false;
+> > > > >-		user_return_notifier_unregister(urn);
+> > > > >-	}
+> > > > >-	local_irq_restore(flags);
+> > > > >+	lockdep_assert_irqs_disabled();
+> > > > 
+> > > > kvm_offline_cpu() may call into this function. But I am not sure if interrupts
+> > > > are disabled in that path.
+> > > >
+> > > Thanks for pointing that out. I see that interrupts are enabled in the
+> > > callback during the CPU offline test. I'll remove the
+> > > lockdep_assert_irqs_disabled() here.
+> > >
+> > 
+> > Upon a second look, can we just disable interrupts in kvm_cpu_offline()?
+> > The other paths that call kvm_disable_virtualization_cpu() are all in an
+> > interrupt-disabled state, although it seems that
+> > kvm_disable_virtualization_cpu() cannot be reentered.
+> 
+> Why do we care?  I.e. what is the motivation for changing this code?  I'm hesitant
+> to touch this code without good reason given its fragility and subtlety.
+Hi, Sean.
 
-Linus just had some comment about the Link tag usage:
-https://www.phoronix.com/news/Linus-Torvalds-No-Link-Tags
+I'm just reworking the shared MSRs part in our inner multi-KVM. First, I
+noticed that the comment mentions that kvm_on_user_return() can be
+interrupted or reentered, which is a little confusing to me. Then, I
+found that the comment is outdated, so I decided to remove it and also
+make changes to the code. I agree that this code is fragile, maybe
+just change the comment?
 
-We should be careful :-P
-
->
-> Signed-off-by: Han Gao <rabenda.cn@gmail.com>
-> Signed-off-by: Han Gao <gaohan@iscas.ac.cn>
-> ---
->  arch/riscv/boot/dts/thead/th1520.dtsi | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/=
-thead/th1520.dtsi
-> index 7f07688aa964..2075bb969c2f 100644
-> --- a/arch/riscv/boot/dts/thead/th1520.dtsi
-> +++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-> @@ -26,7 +26,7 @@ c910_0: cpu@0 {
->                         riscv,isa-base =3D "rv64i";
->                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
- "c",
->                                                "ziccrse", "zicntr", "zics=
-r",
-> -                                              "zifencei", "zihpm",
-> +                                              "zifencei", "zihpm", "zfh"=
-,
->                                                "xtheadvector";
->                         thead,vlenb =3D <16>;
->                         reg =3D <0>;
-> @@ -53,7 +53,7 @@ c910_1: cpu@1 {
->                         riscv,isa-base =3D "rv64i";
->                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
- "c",
->                                                "ziccrse", "zicntr", "zics=
-r",
-> -                                              "zifencei", "zihpm",
-> +                                              "zifencei", "zihpm", "zfh"=
-,
->                                                "xtheadvector";
->                         thead,vlenb =3D <16>;
->                         reg =3D <1>;
-> @@ -80,7 +80,7 @@ c910_2: cpu@2 {
->                         riscv,isa-base =3D "rv64i";
->                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
- "c",
->                                                "ziccrse", "zicntr", "zics=
-r",
-> -                                              "zifencei", "zihpm",
-> +                                              "zifencei", "zihpm", "zfh"=
-,
->                                                "xtheadvector";
->                         thead,vlenb =3D <16>;
->                         reg =3D <2>;
-> @@ -107,7 +107,7 @@ c910_3: cpu@3 {
->                         riscv,isa-base =3D "rv64i";
->                         riscv,isa-extensions =3D "i", "m", "a", "f", "d",=
- "c",
->                                                "ziccrse", "zicntr", "zics=
-r",
-> -                                              "zifencei", "zihpm",
-> +                                              "zifencei", "zihpm", "zfh"=
-,
->                                                "xtheadvector";
->                         thead,vlenb =3D <16>;
->                         reg =3D <3>;
-> --
-> 2.47.3
->
-
-
---=20
-Best Regards
- Guo Ren
+Thanks!
 
