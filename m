@@ -1,223 +1,125 @@
-Return-Path: <linux-kernel+bounces-815436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E81B56440
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 04:21:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C61B56446
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 04:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB862189E640
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:22:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7B2517D299
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DF0246BA4;
-	Sun, 14 Sep 2025 02:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC6124A06D;
+	Sun, 14 Sep 2025 02:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXNQOL9l"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XtgqFScy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BC723BF96
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 02:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F9E2459E5
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 02:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757816508; cv=none; b=WYFpbwsYErE8G8e10D+c99CKgwqdoeChq8LeXzzLk5mjAmX3KDwJzMl1bNBXR2f45Pgo/MBzgPNgeJ5FTJkrqPFgt6j6lXZhXZbMvc+Ec9hq4b4aYtKYjkVYGhqVyovs6mI13gEVw9qqfad0IWCWYSGOuhwuPTIq7Fgg/DGnl7U=
+	t=1757816572; cv=none; b=aXV9BdxNOQdJvO46Ix202apvEvF3myRkHLhgcG6QZO8tSvFZOJr2uV8YP1WgedLKCAT2CfiT18LL8anqfC+zExTeA0Z36caFVpXbAjDewBqxydkA+KLOSy16yyubLYFGyiUv9jRPGdxt+PWksytT/zjrTpe07uHTi+RyLGMKsKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757816508; c=relaxed/simple;
-	bh=kS8JHpcfhYM5CdW9CB6tUor9f9vwCDwkONQoLHpHv6s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P04YUNOW971SZGjx4H8rq3KPdX7tMtP9RfI2rn7xZsfuOAwG3HjwhFko3HGCG/K4yeS68own7Puvln+5VhT+fyzrI5SzGs8amiFWe5wRZ0hNV8mnR0sS9OKjPfOojyUzaFDOoE/EQL7cIaY4GUHTLfUkhPDnP4ZZVp6Y0E6Lkww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXNQOL9l; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso1936724a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 19:21:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757816506; x=1758421306; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MqdYb43+ykEUj742mo0iH3T4ooAsVFSgAqPeQX3wifY=;
-        b=nXNQOL9lJIyPmLivfpjw89AdGKte0lgQ27JkFImHvIckSTUzDB+glOuS6UaPclGGC2
-         ERhHHEYsTIcnZF7upX03AuGF4DFkCZG9rHPczcy6BvVWAE/dg2Qsi19G1yaS+xm0D28t
-         xail3/NNkVQQQpnOUutyr7Esq9RQx2uQrKTj6gZHN9wL6vZw+08zYRzGGaiyH7Mkisu8
-         XBXRa7WcGgW00JQ78xwPxE9yMaIx17rCPiQyMpxb3wdx7gwy5vJgW3Kj14wPXeA7rpv5
-         2H5+4yCD6dYB5DA+XcfvFdZs5o9DGXJeYeV4OeEEyxWpWiOhLWBB2asi3AuiuYAVku9G
-         srnA==
+	s=arc-20240116; t=1757816572; c=relaxed/simple;
+	bh=EX3TyOfBuaXKwQxkn392r7BCMjWDwZpQoG4WIyx3PWI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dmL5CmZ/WLO9gWBAg+PM046rudwgfWnxCMkFYLe7SBwcCManDDf3n12SIeX+yab++WJyGv1zg4DlZxiA0XVjR0OzAAgyk05oQ7uOGF2nydki3BU/pk6XLcYZ8wSrilVlcSY+6eGFYyQNa9MZy3K4JE6e/Ai2NOUOlFHF5U4ZBmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XtgqFScy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757816569;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EX3TyOfBuaXKwQxkn392r7BCMjWDwZpQoG4WIyx3PWI=;
+	b=XtgqFScyhPMV4e4PiBwmnzAW0m80TjHOv7Q30y2+5/93j4HlSjZo40SH86o24yZvI1LNon
+	sWGrokUpkBbZ81gHzNuxJQsnbgQtnzPVMT3CcrZJVV0L7aWiDoV5cMhc7OsADEprWhjCAK
+	DcAXvxOWbV+R8AD5pR+e4drxDptRwhQ=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-sPL7IEAKM1KvjoYkAJp9Hw-1; Sat, 13 Sep 2025 22:22:48 -0400
+X-MC-Unique: sPL7IEAKM1KvjoYkAJp9Hw-1
+X-Mimecast-MFC-AGG-ID: sPL7IEAKM1KvjoYkAJp9Hw_1757816567
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-571c4a20da8so1566922e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 19:22:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757816506; x=1758421306;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MqdYb43+ykEUj742mo0iH3T4ooAsVFSgAqPeQX3wifY=;
-        b=uWrmLfDNSntyGQbS7EzjP9pA03tJM3oIgOkC/1u92EhM/h8WinnwAnVutTZTQeK5yO
-         JkXsYwQHs1wXhALveXKDzYpm5v0+1yVpF2g/bgjQ61m6DyM5qOY2KXcAYwBW/dzJIGcG
-         vES7q3qpBzfY59416pLIZdltgqA1sQjnN1O2AHlW0ab+bXbngt051893ojQn5B8gGKtE
-         t4vxMeYxOyYdaiwEFhyb5WvtzxYHbjFI7uxG+9x+U1JQBUQbbJyiodEisbQtzf2LUtUY
-         53QsckFErOJXE3ZBzvicAZSTp+fDBsZcGfVtdWH8UrTNeuGF3gjkrymsZ5EEut9+ydFU
-         ZJ1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXl5oAsxptuP1RAyrhQ3NDG7R1dl88Dyy9iZNLVfSyyp7xMpOhfV6g16f3qcHlOLh5E1Z74Uc5DnxHt/Vc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9orf6I0P8edsnc7x1RTdr+7+RMcH5YKm8JRuYcIN7Nwq0vWu2
-	oQhCVy08zAuO6nYQt/WIE/ajQBcXszUyweVy6o++krrhgnUnHQn1cf/d
-X-Gm-Gg: ASbGnctD1gG1j0sL7jT3iGj6AtetfSwnawI7NcPP+pMFl7UQ7BH3w5NBW0ILGIoXkJg
-	TGFrTI3sg+eHPhoq909P2nmK8//ctfR/SvPXP2oRV3LQ7jGeYWhufTA7PI5RsSGr3Z3reaXyG28
-	Gh9GMEZtrEIPhZpQVZPadRET5sRe9pP1/8Uo64wPlHeMAXNl6Sgg0swzPSOowobby6J9PYlGmxc
-	o9dKGeSwUDFVcIiUwoJAOfL9tOFtK7qZMFIBMiMWyvEAMxUdEiQARQTyfQo3JA/VeWYmdSQCEvS
-	3tK9YmmpmtWqip9VYKjbEyHB6e+cR71O4zMvd6asDrkWe63GIhKPtTiO1zCgTWBhq+Og8vZ/VRt
-	cGAHHRbovku62am7o58VagMueLjl/AjUdlA==
-X-Google-Smtp-Source: AGHT+IFoR2P5g3/f0mGeIuy3+0+zAJUbfdsUl2n3PtZNSOt3j4dOvKJKtvTfVzY7igk5GaUMCr6Mew==
-X-Received: by 2002:a17:903:1b4c:b0:24c:b2a4:7089 with SMTP id d9443c01a7336-25d26077175mr98369385ad.31.1757816505822;
-        Sat, 13 Sep 2025 19:21:45 -0700 (PDT)
-Received: from fedora ([172.59.162.206])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-261d3dd0285sm27968685ad.8.2025.09.13.19.21.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Sep 2025 19:21:45 -0700 (PDT)
-From: Alex Tran <alex.t.tran@gmail.com>
-To: broonie@kernel.org
-Cc: linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Alex Tran <alex.t.tran@gmail.com>
-Subject: [PATCH v1] spi: spi-omap2-mcspi: fallback to PIO when DMA transfer fails
-Date: Sat, 13 Sep 2025 19:21:32 -0700
-Message-ID: <20250914022132.319227-1-alex.t.tran@gmail.com>
-X-Mailer: git-send-email 2.51.0
+        d=1e100.net; s=20230601; t=1757816567; x=1758421367;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EX3TyOfBuaXKwQxkn392r7BCMjWDwZpQoG4WIyx3PWI=;
+        b=V0pk3M9/YAb9xmKWFJIaNncEsS2alJ0kD+0m01e34hvCiQhBRLv+/GMxY0hQqq84lm
+         oV32+HqZ/jsGtlPfGJ0s/YUKDg5qox8N4G9Zn2vEkAEDE2IOWug2qLAX+hxQ5YNr2cPX
+         fMFw3PRQmyt6wU/f+1A78ThDYX/E8GbuPABnP3yTQMu5IBF5x1Vyjo4A7wcXIzK5rVzK
+         iM+Ep3WnoMxd3Bf6G/qoV7bAzjGAo8yT6c+9f1EN09HoClkE5p+TrCEymBIMUD3omlbi
+         yI4nMujp8Hq4mDD+AgujfiDcSlEZsu/l0Z6El+gVahyMdbT2ywlzh/NL0M7Z2lnuLqUo
+         NTWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkadojL+RfHs96Fw7qLIC3+OXtFv/NBS6IXLZqC3G9T5tWkUWEnvJNB4end6mdN4ke/sHvYiZgof6Y2E4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1e95NIBghi1T7E+V9y9K+80RoTUw5nSNSdsSYbxTzNCG670jK
+	KsDv9vms1WaAAidmHTsGbJd4vZxuiChkpIXcAsWuRwAwSHEIufNxeZntBJ+YbF95BD2+S4dsr5l
+	AS8pg93VSBjVfecqPzt1EJumppZWXIB7kuForz8UVQzaZUPpx26qPX8WazJZtAn5mYiUhElNtqI
+	pUurTeBZmYQo1msyW5LrOSXTUnq02stZUH4/pc/vgD
+X-Gm-Gg: ASbGnctmv+vPivdepHVJDwNuc0bQWg5U+TtTuZZEXFa4iZWJstc6hyJ/VOqELVzT+xF
+	ciSI20AesrqXPVbWjv8eqLHFs09owOLEQF55FtQL9A/9K7UWjvMcaZC9ptn6xRCX5q/SIPTkV0R
+	rD0C1sl9oi5FRdGVCrsNxrNQ==
+X-Received: by 2002:a05:6512:61cf:20b0:560:9993:f14d with SMTP id 2adb3069b0e04-5704a3e6909mr2406233e87.3.1757816566876;
+        Sat, 13 Sep 2025 19:22:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6LBuQC+0fECjQxQjn7BzUOWmOXhHvsIC5jjwUVw3z05iv8yLPovYye6qdflldAjCnE1SB/JiNJw+Ng3RRT8o=
+X-Received: by 2002:a05:6512:61cf:20b0:560:9993:f14d with SMTP id
+ 2adb3069b0e04-5704a3e6909mr2406223e87.3.1757816566498; Sat, 13 Sep 2025
+ 19:22:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250913062810.11141-1-litian@redhat.com> <bacbeaf2-104f-4da5-a66b-b8aee2b2de12@lunn.ch>
+In-Reply-To: <bacbeaf2-104f-4da5-a66b-b8aee2b2de12@lunn.ch>
+From: Li Tian <litian@redhat.com>
+Date: Sun, 14 Sep 2025 10:22:35 +0800
+X-Gm-Features: AS18NWARZWkoG_VR78fDtIJydZ_R8xlJD5gNpW5l3SKmCv3wXuhvflXEKdZ8Jf8
+Message-ID: <CAHhBTWvcd45s5P-TfKBVzHy00jofbgoWtX+z3Uaj+5ZEBTNLfQ@mail.gmail.com>
+Subject: Re: [PATCH net] net/mlx5: report duplex full when speed is known
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>, 
+	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>, Leon Romanovsky <leon@kernel.org>, 
+	linux-rdma@vger.kernel.org, Haiyang Zhang <haiyangz@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add fallback to PIO mode when DMA preparation fails.
-Allows SPI transfers to complete successfully, even
-on a DMA preparation failure.
+On Sat, Sep 13, 2025 at 10:12=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote=
+:
 
-Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
----
- drivers/spi/spi-omap2-mcspi.c | 46 +++++++++++++++++++++++------------
- 1 file changed, 31 insertions(+), 15 deletions(-)
+> I'm confused with your commit message. You say DUPLEX used to be
+> reported as Full if the speed is known. How does c268ca6087f55 change
+> this?
 
-diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
-index 6dc58a308..0b3b7ff0c 100644
---- a/drivers/spi/spi-omap2-mcspi.c
-+++ b/drivers/spi/spi-omap2-mcspi.c
-@@ -414,9 +414,8 @@ static void omap2_mcspi_tx_callback(void *data)
- 	complete(&mcspi_dma->dma_tx_completion);
- }
- 
--static void omap2_mcspi_tx_dma(struct spi_device *spi,
--				struct spi_transfer *xfer,
--				struct dma_slave_config cfg)
-+static int omap2_mcspi_tx_dma(struct spi_device *spi, struct spi_transfer *xfer,
-+			      struct dma_slave_config cfg)
- {
- 	struct omap2_mcspi	*mcspi;
- 	struct omap2_mcspi_dma  *mcspi_dma;
-@@ -436,13 +435,15 @@ static void omap2_mcspi_tx_dma(struct spi_device *spi,
- 		tx->callback_param = spi;
- 		dmaengine_submit(tx);
- 	} else {
--		/* FIXME: fall back to PIO? */
-+		dev_warn(mcspi->dev, "%s: failed to prepare DMA engine\n", __func__);
-+		return -EINVAL;
- 	}
- 	dma_async_issue_pending(mcspi_dma->dma_tx);
- 	omap2_mcspi_set_dma_req(spi, 0, 1);
-+	return 0;
- }
- 
--static unsigned
-+static int
- omap2_mcspi_rx_dma(struct spi_device *spi, struct spi_transfer *xfer,
- 				struct dma_slave_config cfg,
- 				unsigned es)
-@@ -522,7 +523,8 @@ omap2_mcspi_rx_dma(struct spi_device *spi, struct spi_transfer *xfer,
- 		tx->callback_param = spi;
- 		dmaengine_submit(tx);
- 	} else {
--		/* FIXME: fall back to PIO? */
-+		dev_warn(mcspi->dev, "%s: failed to prepare DMA engine\n", __func__);
-+		return -EINVAL;
- 	}
- 
- 	dma_async_issue_pending(mcspi_dma->dma_rx);
-@@ -589,13 +591,13 @@ omap2_mcspi_rx_dma(struct spi_device *spi, struct spi_transfer *xfer,
- 	return count;
- }
- 
--static unsigned
--omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
-+static int omap2_mcspi_txrx_dma(struct spi_device *spi,
-+				struct spi_transfer *xfer)
- {
- 	struct omap2_mcspi	*mcspi;
- 	struct omap2_mcspi_cs	*cs = spi->controller_state;
- 	struct omap2_mcspi_dma  *mcspi_dma;
--	unsigned int		count;
-+	int		count;
- 	u8			*rx;
- 	const u8		*tx;
- 	struct dma_slave_config	cfg;
-@@ -642,13 +644,19 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 			mcspi_write_reg(spi->controller,
- 					OMAP2_MCSPI_IRQENABLE,
- 					OMAP2_MCSPI_IRQSTATUS_EOW);
--		omap2_mcspi_tx_dma(spi, xfer, cfg);
-+		if (omap2_mcspi_tx_dma(spi, xfer, cfg) < 0) {
-+			count = -EINVAL;
-+			goto pio_fallback;
-+		}
- 	}
- 
--	if (rx != NULL)
-+	if (rx) {
- 		count = omap2_mcspi_rx_dma(spi, xfer, cfg, es);
-+		if (count < 0)
-+			goto pio_fallback;
-+	}
- 
--	if (tx != NULL) {
-+	if (tx) {
- 		int ret;
- 
- 		ret = mcspi_wait_for_completion(mcspi, &mcspi_dma->dma_tx_completion);
-@@ -695,6 +703,8 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
- 				dev_err(&spi->dev, "EOT timed out\n");
- 		}
- 	}
-+
-+pio_fallback:
- 	return count;
- }
- 
-@@ -1206,7 +1216,7 @@ static int omap2_mcspi_transfer_one(struct spi_controller *ctlr,
- 	mcspi_write_chconf0(spi, chconf);
- 
- 	if (t->len) {
--		unsigned	count;
-+		int count;
- 
- 		if ((mcspi_dma->dma_rx && mcspi_dma->dma_tx) &&
- 		    spi_xfer_is_dma_mapped(ctlr, spi, t))
-@@ -1220,10 +1230,16 @@ static int omap2_mcspi_transfer_one(struct spi_controller *ctlr,
- 					+ OMAP2_MCSPI_TX0);
- 
- 		if ((mcspi_dma->dma_rx && mcspi_dma->dma_tx) &&
--		    spi_xfer_is_dma_mapped(ctlr, spi, t))
-+		    spi_xfer_is_dma_mapped(ctlr, spi, t)) {
- 			count = omap2_mcspi_txrx_dma(spi, t);
--		else
-+			if (count < 0) {
-+				dev_warn(mcspi->dev,
-+					 "%s: falling back to PIO\n", __func__);
-+				count = omap2_mcspi_txrx_pio(spi, t);
-+			}
-+		} else {
- 			count = omap2_mcspi_txrx_pio(spi, t);
-+		}
- 
- 		if (count != t->len) {
- 			status = -EIO;
--- 
-2.51.0
+Because in some circumstances like Azure, mlx5e_port_ptys2speed (now
+mlx5_port_ptys2info) does not return a speed. And thus it relies on
+data_rate_oper. It reads to me as long as there's no issue acquiring
+the speed duplex should be set to full.
+
+> You don't say in the commit message. Why is Half duplex
+> important to this fix? I don't see Half anywhere in the code.
+
+It does not return half duplex at all. It would be unknown. I'm just
+saying that half duplex shouldn't exist in modern Mellanox 5.
+
+> Also, what sort of problems do you see with duplex unknown?
+
+There were reports of RHEL seeing duplex unknown in ethtool
+on Azure Mellanox 5. The intention is to fix this.
+
+Thanks for reviewing.
+
+Li Tian
 
 
