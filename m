@@ -1,174 +1,80 @@
-Return-Path: <linux-kernel+bounces-815737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E829B56A8E
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:23:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19716B56A94
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7E437A8E04
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:21:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAEC517B39F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB762DCF6C;
-	Sun, 14 Sep 2025 16:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="o6BzjhQT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="e9vHFZqc"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916F82DCF6A;
+	Sun, 14 Sep 2025 16:29:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A1C2857CD;
-	Sun, 14 Sep 2025 16:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263472D9EF3;
+	Sun, 14 Sep 2025 16:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757866986; cv=none; b=oiuSXwLlq0vXPFiGgYKNlW5Nl+JDzRzH0qym6bzlkpBxxZse1o6japn6fgsSguKdnMY8fN4SDI9SUVRfDSs7iOEUoGxOXdL1u0K17khHi4hecHcGhjGUqmgr8qbkvwUOVV3Y+6GhA/qpJg3xERGaBOcikKsE6Kpk0iMcsuxIczw=
+	t=1757867390; cv=none; b=Sw1XK6iMHq5q8um/3QeBWEUq9lNi54eReplmqtimmwjoLGK527hVR7z1j3HLXmMz4i9KmrGkpdrYfLjT8x+gNAokGKB67G7qWxptmaFIVAGZTRUpUCOsQCwlPJpO1h+suzyLJkMcyMxvCNLX0Wa2oJdCHhHavPE+kqGC37DsggM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757866986; c=relaxed/simple;
-	bh=dQxeITb5hY6qfYJHe0khMY48r+n3JwUcweNzQW8TgQM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=F+B1Nm33z32rc80mYZmIq8deKbJ5idn7fT40zqT4OZ2PN4TV4OPjyPdCzB6YTUBS7XDGsyIGPacCyJFgCi65Tfe+WpZ0khpq+ciuqHqZeOCSk45qF9TcvR1erHge06ErDT2kYfMPR9rpf3uTmQQjIXsMUqVPYj+IJDBJcGLHlwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=o6BzjhQT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=e9vHFZqc; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 2AD5AEC0A77;
-	Sun, 14 Sep 2025 12:23:04 -0400 (EDT)
-Received: from phl-imap-09 ([10.202.2.99])
-  by phl-compute-01.internal (MEProxy); Sun, 14 Sep 2025 12:23:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1757866984;
-	 x=1757953384; bh=GczAxd/yOSl3eyN3svqHIDHZRTOmApw3DytFsK5tSX8=; b=
-	o6BzjhQTP5L8iMh5iwoe0nwR2vEB6NL2HM1yh20N1T67qvJxkbtvyHVSHcfBozG5
-	xt/2Sb0flapuO8VrdLs0hzh9IUHcUAaIdWmptEaQjAyKBDiL4f1TwkJUE/QkmTPv
-	uEvaxkyBEwhsFb3zYNFQLfZzpjvJ2CzDI1qdWMlAa9XvtA/4wUo6xvd8ap+MIPbJ
-	zQttLtiY3z7wCHKR3j+XyhxvHQ2URGvdhNCMu9JBdh9zHmVFdZwOm7Eb65kOuOsv
-	42Ti13OeB1AZSydiu5rzfv3zAaDIsOo7Q9WzO0RyrEkNtg8RXftXWhwGVJzoejTi
-	zD/lZUHhekmAxVc00k0Vcw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1757866984; x=
-	1757953384; bh=GczAxd/yOSl3eyN3svqHIDHZRTOmApw3DytFsK5tSX8=; b=e
-	9vHFZqcSBnE7AlrCG++OwRj8Z/hghx12ugNsgf1QNu+TD7vYLFRX4qshSWfMCNgs
-	PRIbxCAmbZy14eBNjGHuh68RX3/3hUtWJZists/pjouPAibe9m368whsGYq8H0SP
-	CHq9PcFJsxX1EeJK/JvpwMdO05iNczBDkig5EgSKj+io5tgCS3wkaiDSkUnliM7q
-	pFKnibyhFCQkOnF2F9amLC0EtFXYC3I1vhJm7YH+AuC9zbZVfehJohp3wtVVQZOF
-	nf4bFSPrK3jJpEYpnRSSEUyIdpmgqhY5OriElkSqGnulubkeH/qfPtTn/2TkT6X8
-	g+uJloEzpl+PnlXX3VytA==
-X-ME-Sender: <xms:6OvGaFqpOjQHw1xk3ksYXbQCpUffVgQBGYEx1tnN57wACc3Q20EXng>
-    <xme:6OvGaHoTD2QANLuMeB62khLtZ0rwZKi1ayIJy-Zz9CClkesL9Hb-66tJl72q5rnjm
-    nGH2pDrl32oicMAW5U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefhedvkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdflrghnnhgv
-    ucfirhhunhgruhdfuceojhgrnhhnvgesjhgrnhhnrghurdhnvghtqeenucggtffrrghtth
-    gvrhhnpefhjeehgfelteeggfehveejffeiffetiefhfedvgedvhfeuhefhfeevvedujeej
-    ueenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhgrnhhnvgesjhgrnhhnrghurdhnvghtpdhn
-    sggprhgtphhtthhopedugedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthiiih
-    hmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopeguvghvihgtvghtrhgvvges
-    vhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegumhgrvghnghhinhgvsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqsghluhgvthhoohht
-    hhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgtlhhkse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqghhpihhosehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihdvtgesvhhgvg
-    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
-    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:6OvGaLO6OGSABlTgyVpCBq4izaQXqPCLnwPq1zJn6Wb8CqmwFXIu9g>
-    <xmx:6OvGaHfsyb22a_XpgwB4rkFxKLcTn8av3ij_3k9M2ALzaMizaBQkvA>
-    <xmx:6OvGaH5xxovP0RM7_DjTNkipNuxf-ldkaY53k1ywEIWhwMbdjL9iMQ>
-    <xmx:6OvGaHI5Xb6MzhkDL3DMaJRpOPyCFgroir9wessjpzB6xBDGQzbhyw>
-    <xmx:6OvGaFA97CvX_IKWQ_UH_Jswf1GDUi8s5cO4sx4IrLCj-6mCdJcqRJ2w>
-Feedback-ID: i449149f6:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EAFF03020073; Sun, 14 Sep 2025 12:23:03 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1757867390; c=relaxed/simple;
+	bh=mZD/bFCu6t2r9aNMbFnqym/HZvECftNyi+dZ52WyBK0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=q4KrR4KUrckjWrX5L004m98wAOo94Nkrdv9ZR5wL7IxSUomxzPBOr/hIqIPmz9LgzeB2RMUJH9vD90zW4h6FxFKUnvheDieQc0AO28KOvle8mOIbI/SZ76I031T4ktLb/MLhVrMc9aklWZRjYj6vu2hIdptq6aoPUP5K39yVTYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A2FBC4CEF0;
+	Sun, 14 Sep 2025 16:29:49 +0000 (UTC)
+Received: from wens.tw (localhost [127.0.0.1])
+	by wens.tw (Postfix) with ESMTP id 2DD115FCBF;
+	Mon, 15 Sep 2025 00:29:47 +0800 (CST)
+From: Chen-Yu Tsai <wens@csie.org>
+To: Jernej Skrabec <jernej@kernel.org>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@kernel.org>
+Cc: linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250913102450.3935943-1-wens@kernel.org>
+References: <20250913102450.3935943-1-wens@kernel.org>
+Subject: Re: [PATCH 1/3] arm64: dts: allwinner: a527: cubie-a5e: Drop
+ external 32.768 KHz crystal
+Message-Id: <175786738718.280883.11594143436051438631.b4-ty@csie.org>
+Date: Mon, 15 Sep 2025 00:29:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: ATYmlVkkxBG-
-Date: Sun, 14 Sep 2025 18:22:36 +0200
-From: "Janne Grunau" <janne@jannau.net>
-To: "Sven Peter" <sven@kernel.org>,
- "Alyssa Rosenzweig" <alyssa@rosenzweig.io>,
- "Neal Gompa" <neal@gompa.dev>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>, "Hector Martin" <marcan@marcan.st>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Joerg Roedel" <joro@8bytes.org>,
- "Will Deacon" <will@kernel.org>, "Robin Murphy" <robin.murphy@arm.com>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Mark Kettenis" <kettenis@openbsd.org>,
- "Andi Shyti" <andi.shyti@kernel.org>,
- "Jassi Brar" <jassisinghbrar@gmail.com>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Sasha Finkelstein" <fnkl.kernel@gmail.com>,
- "Marcel Holtmann" <marcel@holtmann.org>,
- "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "van Spriel" <arend@broadcom.com>, "Lee Jones" <lee@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- "Stephen Boyd" <sboyd@kernel.org>,
- "Wim Van Sebroeck" <wim@linux-watchdog.org>,
- "Guenter Roeck" <linux@roeck-us.net>,
- "Michael Turquette" <mturquette@baylibre.com>,
- =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
- "Vinod Koul" <vkoul@kernel.org>, "Liam Girdwood" <lgirdwood@gmail.com>,
- "Mark Brown" <broonie@kernel.org>, "Marc Zyngier" <maz@kernel.org>,
- "Ulf Hansson" <ulf.hansson@linaro.org>,
- "Keith Busch" <kbusch@kernel.org>, "Jens Axboe" <axboe@kernel.dk>,
- "Christoph Hellwig" <hch@lst.de>, "Sagi Grimberg" <sagi@grimberg.me>,
- "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- "Janne Grunau" <j@jannau.net>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-bluetooth@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-clk@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-nvme@lists.infradead.org
-Message-Id: <175786548038.4027671.16854298573806924090.b4-ty@jananu.net>
-In-Reply-To: <20250828-dt-apple-t6020-v1-31-bb8e1b87edef@jannau.net>
-References: <20250828-dt-apple-t6020-v1-31-bb8e1b87edef@jannau.net>
-Subject: Re: (subset) [PATCH 31/37] spi: apple: Add "apple,t8103-spi" compatible
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-
-On Thu, 28 Aug 2025 16:52:09 +0200, Janne Grunau wrote:
-> After discussion with the devicetree maintainers we agreed to not extend
-> lists with the generic compatible "apple,spi" anymore [1]. Use
-> "apple,t8103-spi" as base compatible as it is the SoC the driver and
-> bindings were written for.
+On Sat, 13 Sep 2025 18:24:48 +0800, Chen-Yu Tsai wrote:
+> The Radxa Cubie A5E has empty pads for a 32.768 KHz crystal, but it is
+> left unpopulated, as per the schematics and seen on board images. A dead
+> give away is the RTC's LOSC auto switch register showing the external
+> OSC to be abnormal.
 > 
-> [1]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
+> Drop the external crystal from the device tree. It was not referenced
+> anyway.
 > 
 > [...]
 
-Applied, thanks!
+Applied to sunxi/dt-for-6.18 in local tree, thanks!
 
-[31/37] spi: apple: Add "apple,t8103-spi" compatible
-        commit: 3f2ed0057369d07c20c7ab48c1c46dc77eb436c2
-[32/37] spi: dt-bindings: apple,spi: Add t6020-spi compatible
-        commit: ffea30e9e6178eeb7d9c165b0b0b2d2e7c5f4fbf
+[1/3] arm64: dts: allwinner: a527: cubie-a5e: Drop external 32.768 KHz crystal
+      commit: 9f01e1e14e71defefcb4d6823b8476a15f3cf04a
+[2/3] arm64: dts: allwinner: t527: avaota-a1: hook up external 32k crystal
+      commit: 3d5e1ba00af8dd34ae1e573c2c07e00b5ec65267
+[3/3] arm64: dts: allwinner: t527: orangepi-4a: hook up external 32k crystal
+      commit: bd1ce7ef6aef4ee7349eb3124166e712693650ce
 
 Best regards,
 -- 
-Janne Grunau <j@jananu.net>
+Chen-Yu Tsai <wens@csie.org>
+
 
