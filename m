@@ -1,192 +1,125 @@
-Return-Path: <linux-kernel+bounces-815584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623CCB5688C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:22:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95FD0B56891
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0150C17B456
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:22:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53AF817A8B2
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD0325D208;
-	Sun, 14 Sep 2025 12:22:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EDB261B70;
+	Sun, 14 Sep 2025 12:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COMtpCI5"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lxZsVIyJ"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E5922A1D4
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 12:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80214438B;
+	Sun, 14 Sep 2025 12:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757852530; cv=none; b=KJKvib7krhkxXI+MLKBTiRMB/ph1YRcgDbwG2HgBJ/mv0BBoVBswQaawUiiqnZwRAsjmEXYNVMFodNVTpBNb6XE8MoZUzBmGtL3b+RvOayQPyapTNWkXDhyMv/ZE1+pj8+H36D8baCDilK3c3EMecYrO4yv7/F2gqRwgiOAeqzk=
+	t=1757853033; cv=none; b=Y0OJ72I09iB4n+O6vxo4W9JiBSAG7lh3MNmNy+ylWoihFo2Q4UHVdpjdoBYFGooh3/L6US+LMoNiiEkbBLz7WsAtr9KO6YkYNFblovI0vJCHS3065q4odUBh0E/786nmVrTm+qpE1Z+YvHJuyXylPNWqoKqWNvbvfj9J5RVqZ1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757852530; c=relaxed/simple;
-	bh=uVAD7Nd5JqQr1nPvyOiUvaoii6c7e6FiNLqVi43wTjU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LPoui/ohTAZ2TqtSPxPZm38DkdryEMEICDy1BsEG3V0Ti8TukbScIGoR3s7pepxI+axM4ue36n/nrXm8Fu133ELgP+Mk2RrqpEOwvfjyFt2YFW22vflXNIuTfdrH5rQB5wm+BV2hUKnM491SnCqFFs8Vb2v/F9tq9ZUCIDfxqE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=COMtpCI5; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b04ba58a84fso445309566b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 05:22:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757852527; x=1758457327; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A+CdOd+5hboBzzrypv4TBZOzQUWEMdeTb1+ZlCkivME=;
-        b=COMtpCI5gHdF9bhdOc+vyob4u5SR4KTyORkTfxkxualPuvY7HHbjQed9oU07jXMR8f
-         Yb+JcSsWgq5gR0bmMVVMeY6KNGr1NGgnFIlacQmtF/IPswV9nL5Ks0HTSO4KnUXAIcw2
-         vgFC+1/0ExwjtJ785KFxP0KqZ6dKsFHXXoE7rWcEUD8MHQZkF6PPR04wjkRq4b/nqUXi
-         Ng26OXCg3G2qfTiPpyXD7T7ch8SsUheyx+oMBKZGdkBvj4JHoeX2lcuTg0yUMyBZEwoQ
-         W0SCsu10kaxoID10XwXSiI+vAWwkotn/2f1yGpc2bzJDgqRtvvaeG5JyklHgWFYMK7+z
-         xVdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757852527; x=1758457327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A+CdOd+5hboBzzrypv4TBZOzQUWEMdeTb1+ZlCkivME=;
-        b=h/eR3icwm0O82nqbNpwJ3uRdgMThotEyJTROTzWP0+S93nYLRmw0uzFNb530w675kI
-         Bj6LwrrXl1jTMPLUGGUh35+sjoNfedYgHxy9emK7YOrAIz4mhT/+k8bM/XWoHgg98L6j
-         zEH0GrEODh2qV7163WM0mmxMzwDiw4H5PLIpVDOErd+QM2SKuRSrWUVzDQEwDD1H0Bp1
-         kTVhTdhxg+R9vgHLa78pEohSLtgi2QfxOnOGMSQK2rAGAoKowT4vhuPlfU4ptwDhwred
-         aG8bFel7WpH7VmPRf2qd7sJf5WoT8o6QPGJ/1gUu5JzfbCjB3o5gyDneX1HGWFjyJ7O8
-         kmyw==
-X-Forwarded-Encrypted: i=1; AJvYcCULEl4tfgGEtyyQQVjtRZygS54feplxZrn2szZj6+w0pVr4cSTDX9RheRBse8qq9D7Fd8dOHXJYdhixOGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgPNTu/hUJ6Mxc/fXv9kpg65vEIR/wNwaonq3PO/wtV+1SIIAO
-	ln/KiWywzHQRVJg5WRG+HhsetdeRBnsNu7lDHkGnXp/gnLyFMN6/uhRf84G0gd0+EFttmiiasaF
-	CZc/d9T14EsctNEp+ajve6A9wSalC6iY=
-X-Gm-Gg: ASbGncuFpzozvOs7mMv59rzabwo8xorFGajDxC6OwXRsd4i3CE7z+UJV2nXt8tIX+CO
-	N50cFiN+EDhHnOIwQnHuPgruwu+6OhnWD4XVxjAdkSenkKKQI/7CXvu8WigT8cd1A9NfRFryEN7
-	a607lORpU0Zd4ctPVCyohfUsVxarCx+8gQU/qmCOh/GRtanC46ch1RvE327n5OgNC9uWvePxm5T
-	+6Yar4sJxYyIIXKoI+uisuCPfHN
-X-Google-Smtp-Source: AGHT+IE14zHWzRdVzlNbqbaDr76xCVptSdXjAPmn1nowfkFlR46z0SIyVtu6vZkGhFa+Ksu41Dvy8lL3QLdMaM/qRow=
-X-Received: by 2002:a17:907:e989:b0:b07:b19c:1381 with SMTP id
- a640c23a62f3a-b07c383f11emr806861966b.50.1757852527057; Sun, 14 Sep 2025
- 05:22:07 -0700 (PDT)
+	s=arc-20240116; t=1757853033; c=relaxed/simple;
+	bh=jYSXKlsgfN4x80fjVe8fDpEouCHKUGV+Gbl5lYfi5IU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ogb5aMW//suaHusEXw7KXYmJ5+MYCafMmyVZdzUtoRVxcBjVZBX1YTPO0RlcPsUsjaDuPAr/YMD7EVZZz4u2SrT3+1C/Kj6Ex4nFkttRcn0HTOe+IH6Ke+8p1o9T1OazFV/yhtJ6SSojjLywTlokUFP9jMy/mB+pTWDiKytNxj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lxZsVIyJ; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 924cf46a916611f0bd5779446731db89-20250914
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=8EG6l//2RPlmpS9c/r6hvNChHCCIsYeYKWB2oaD0rvg=;
+	b=lxZsVIyJPGc2u1FsNpdnSBW81wqvPAkhjwCwUK5WAK4FyuKwmgshYVtGYsFPUNkeRhhiKaVh46+OS66RGg5QsqLYnX6J8Om5ysiyS7WedistLECO/hcBKW+edgf5IpX90SLlfF7TmP9at/CG8BZukF18fZwMdLr6kxNDme+tnA4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.4,REQID:1104c8da-20c5-4939-9cf6-bc8f8687d6e2,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:1ca6b93,CLOUDID:c3be46f8-ebfe-43c9-88c9-80cb93f22ca4,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|102,TC:-5,Content:0|15|50,EDM:-3,
+	IP:nil,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 924cf46a916611f0bd5779446731db89-20250914
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
+	(envelope-from <xiangzhi.tang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 19579633; Sun, 14 Sep 2025 20:30:17 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.39; Sun, 14 Sep 2025 20:30:13 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.39 via Frontend Transport; Sun, 14 Sep 2025 20:30:12 +0800
+From: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
+To: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
+	<mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>, "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"Matthias Brugger" <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Xiangzhi Tang
+	<Xiangzhi.Tang@mediatek.com>
+CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Jjian Zhou <Jjian.Zhou@mediatek.com>,
+	Hailong Fan <Hailong.Fan@mediatek.com>, Xiangzhi Tang
+	<xiangzhi.tang@mediatek.com>
+Subject: [PATCH v2 0/4] ASoC: mediatek: Add support of VCP on Mediatek mt8196 SoC.
+Date: Sun, 14 Sep 2025 20:29:23 +0800
+Message-ID: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250913-b4-bma220_improvements-v3-0-0b97279b4e45@subdimension.ro>
- <20250913-b4-bma220_improvements-v3-10-0b97279b4e45@subdimension.ro>
-In-Reply-To: <20250913-b4-bma220_improvements-v3-10-0b97279b4e45@subdimension.ro>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sun, 14 Sep 2025 15:21:30 +0300
-X-Gm-Features: Ac12FXzwj-89adIuBi8E9szmgDmB4nMvl3rrahdP-cQBRXngkzQGfrE9wjEceE0
-Message-ID: <CAHp75Vf0W9Lge8ycQrx=Y-xKyH4rBr7EVsxLy8gsLZhtE2oqrA@mail.gmail.com>
-Subject: Re: [PATCH v3 10/18] iio: accel: bma220: migrate to regmap API
-To: Petre Rodan <petre.rodan@subdimension.ro>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Sat, Sep 13, 2025 at 6:40=E2=80=AFPM Petre Rodan <petre.rodan@subdimensi=
-on.ro> wrote:
->
-> Switch to regmap API.
+Add support MediaTek's Video Companion Processor(VCP) host driver to
+control the MediaTek VCP Risc-V coprocessor.
 
-...
+> This series is based on linux-next, tag: next-20250912.
+> 
+> Changes in v2:
+> - Refactor: split vcp driver patch to mult diff
+> - Fix reviewer's comments
+> This series patches dependent on:
+> [1]
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20250623120154.109429-2-angelogioacchino.delregno@collabora.com/
+> [2]
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20250822021217.1598-3-jjian.zhou@mediatek.com/
 
->  #define _BMA220_H
->
->  #include <linux/pm.h>
-> +#include <linux/regmap.h>
->
-> +extern const struct regmap_config bma220_spi_regmap_config;
->  extern const struct dev_pm_ops bma220_pm_ops;
+Xiangzhi Tang (4):
+  dt-bindings: remoteproc: Add VCP support for mt8196
+  remoterpoc: mediatek: vcp: Add vcp remoteproc driver
+  remoterpoc: mediatek: vcp: Add ipi-mbox communication
+  remoterpoc: mediatek: vcp: Add vcp suspned and resume feature
 
-> -struct spi_device;
+ .../remoteproc/mediatek,mt8196-vcp.yaml       |  165 +++
+ drivers/remoteproc/Kconfig                    |   12 +
+ drivers/remoteproc/Makefile                   |    3 +
+ drivers/remoteproc/mtk_vcp_common.c           | 1015 +++++++++++++++++
+ drivers/remoteproc/mtk_vcp_common.h           |  284 +++++
+ drivers/remoteproc/mtk_vcp_rproc.c            |  544 +++++++++
+ drivers/remoteproc/mtk_vcp_rproc.h            |   93 ++
+ include/linux/remoteproc/mtk_vcp_public.h     |  141 +++
+ include/linux/soc/mediatek/mtk_sip_svc.h      |    3 +
+ 9 files changed, 2260 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+ create mode 100644 drivers/remoteproc/mtk_vcp_common.c
+ create mode 100644 drivers/remoteproc/mtk_vcp_common.h
+ create mode 100644 drivers/remoteproc/mtk_vcp_rproc.c
+ create mode 100644 drivers/remoteproc/mtk_vcp_rproc.h
+ create mode 100644 include/linux/remoteproc/mtk_vcp_public.h
 
-So, you want
+-- 
+2.46.0
 
-struct device;
-
-instead.
-
-> -int bma220_common_probe(struct spi_device *dev);
-> +int bma220_common_probe(struct device *dev, struct regmap *regmap, int i=
-rq);
->
->  #endif
-
-...
-
->  #include <linux/bits.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/device.h>
->  #include <linux/kernel.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
->  #include <linux/mutex.h>
->  #include <linux/pm.h>
-> +#include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/types.h>
-> -#include <linux/spi/spi.h>
-
-...
-
-> +#define BMA220_WDT_MASK                                GENMASK(2, 1)
-> +#define BMA220_WDT_OFF                         0x0
-> +#define BMA220_WDT_1MS                         BIT(1)
-> +#define BMA220_WDT_10MS                                GENMASK(1, 0)
-
-These do not look like bitfields, please use plain numbers (0, 2, 3).
-I feel like I commented on this previous time and my comment was ignored...
-
-...
-
->  struct bma220_data {
-> -       struct spi_device *spi_device;
-> +       struct device *dev;
-> +       struct regmap *regmap;
-
-Why do you need both? One can be derived from the other.
-
->         struct mutex lock;
-> +       u8 range_idx;
->         struct {
->                 s8 chans[3];
->                 /* Ensure timestamp is naturally aligned. */
->                 aligned_s64 timestamp;
-> -       } scan;
-> -       u8 tx_buf[2] __aligned(IIO_DMA_MINALIGN);
-> +       } scan __aligned(IIO_DMA_MINALIGN);
->  };
-
-...
-
-> +       struct device *dev =3D data->dev;
->         static const char * const regulator_names[] =3D { "vddd", "vddio"=
-, "vdda" };
->
-> -       ret =3D devm_regulator_bulk_get_enable(&spi->dev,
-> +       ret =3D devm_regulator_bulk_get_enable(dev,
->                                              ARRAY_SIZE(regulator_names),
->                                              regulator_names);
->         if (ret)
-> -               return dev_err_probe(&spi->dev, ret, "Failed to get regul=
-ators\n");
-> +               return dev_err_probe(dev, ret, "Failed to get regulators\=
-n");
-
-As I said... Do it early and you will have less unneeded churn in the futur=
-e.
-
---=20
-With Best Regards,
-Andy Shevchenko
 
