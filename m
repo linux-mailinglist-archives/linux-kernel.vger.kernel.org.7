@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-815760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE363B56ADA
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 19:32:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C554B56ADD
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 19:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 971CA3B7753
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:32:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2280189619B
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B21511DF742;
-	Sun, 14 Sep 2025 17:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89302DCF70;
+	Sun, 14 Sep 2025 17:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZ5TpHsP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQaheMG3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E542DC783
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 17:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203992627EC;
+	Sun, 14 Sep 2025 17:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757871116; cv=none; b=nIjfLVXGuv/WljEgti0QhiZ8+ml21HmlShvg5hXR6X6jbCU6QUYGa+KRBvPLcMqfTgYmK6uG7RpzINz5iP7JLp42mfwvqbEcwHr7rnPIDQhb0SmwesdByimVUNJ/uprqEcpK27vYAIjBz0PkEf8f3PlT8gbk6NephLOiht+Uq3U=
+	t=1757871404; cv=none; b=OGuCujpjRxomxGctmoEVJ8PqxQ4YxvgdREZaekHeVmqQg5wXnMgwB8e+DXSJ0eIHQRV5vgB0ShuyILSm9EdcfbDeYxrjwGfr8lkGuVrdy0GmTF+aIUsxjLLVfxUzo154+W6GE7pkijBa1DWQx4WhI7FgcH0v8E89X+6RHJUBB4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757871116; c=relaxed/simple;
-	bh=hdAnNaYFcn9BFHppfBa/NijJQoXlrl8FDF1feJvGics=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=L8dqlgOVMZotGcg+7iYs31Ao6YpwEgeLEh0EoZIJGtXxCUiY7D/ZDxw9Dvg8QXsBE6zl1YGPOQDJO3Efk17viaNv0xVsZ2re1SQkqogbfuMl8+R88nsWVPTdDK6NCJ9QHnq1FbP2HONF8OmvbW2vme7RCY2D4yAb+gQrdG6UPm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZ5TpHsP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17100C4CEF0;
-	Sun, 14 Sep 2025 17:31:54 +0000 (UTC)
+	s=arc-20240116; t=1757871404; c=relaxed/simple;
+	bh=chLCHQAK8H+A5xuSK39+4gpfILucvs7oZSFREWWB9aI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GEXc9VNhNcIbKqu/RptV92FtRHE+n/OF3c1emZiqjamDpYAxVBtHC2prUWKV26zGjIAbbN+wH9D6yI5PEDXNhdK0PFRzVXX3KkCrAy4tphR7vg7YWG+japUPLkbc1EJoDphVbUR5FatWloQYNmbXMs59PcPgMouHI4wGOWuUBqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQaheMG3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9066C4CEF0;
+	Sun, 14 Sep 2025 17:36:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757871115;
-	bh=hdAnNaYFcn9BFHppfBa/NijJQoXlrl8FDF1feJvGics=;
-	h=Date:From:To:Cc:Subject:From;
-	b=FZ5TpHsPWJB3Axv1rrulaQJ7gzObIPBK4gDhNAQYMgO/Pr+XeDILpQzK4Ow32YKOe
-	 reAKRipUzyqbTSy/o81OXpbgq9Z0YO6qRX3MFKu+FEEbpClK6cI1H9cfcim2Zl1zIf
-	 y+gY+e/5LL47TpCmnBRHM2kw2gkoeo3vDCVw7vz6JCMpy/erFRpWx6qMJFnOnIzW8T
-	 30+2k2uqmuwD9qb52SyYhCXymfqe1o2Pj3JNZbr4o/914xI7O+v4EYi4aQdFZcyr4Q
-	 GcbfobdEozioVloqnfQX9e4yqOz4c2Hk9p9DAsSXAxNLRrPr4vtoJFso+iq74YmRFz
-	 CgT2zd/yscZfA==
-Date: Sun, 14 Sep 2025 23:01:51 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: Generic phy fixes for v6.17
-Message-ID: <aMb8B6czM8mgaOZS@vaman>
+	s=k20201202; t=1757871403;
+	bh=chLCHQAK8H+A5xuSK39+4gpfILucvs7oZSFREWWB9aI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pQaheMG3266kOd8YFxZIObzVsUPj7U4LWaFW/Z8iY2PPsmOCa+8xv/PMCfg9X0uma
+	 Ba/h3G17+pW4CiYK91kdUhaMMLzR58fVCH46MMFm2T8nkXFQH4xyHOxJlEdDkp06GW
+	 euwlg9pR+UP2CnFmFQQ7xOTVbBPi0oujAbgtnxwchVcZ6dsMfmsQSE1f2D0mn7bmN0
+	 wKgZVoYmG2vqENONhC9PM2RDdL5rbZqodKR+sENuajrgtOTn+bGTOLgLue2R1CDa8b
+	 28fA78TlfIq17crTMAnVPzNFZ1I8zrefghwyyVIJ2zCI1zWazRRuwTcj19K7QXbJy3
+	 4woO+ZT+QwtEA==
+Message-ID: <0a766f8d-657d-42bc-b3b4-33997b919d7f@kernel.org>
+Date: Sun, 14 Sep 2025 19:36:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="B5a0RPlIOoHpXmq4"
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH DNM v2 3/5] arm64: dts: qcom: qcs6490-radxa-dragon-q6a:
+ Enable all available QUP SEs
+To: Xilin Wu <sophon@radxa.com>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>,
+ Viken Dadhaniya <viken.dadhaniya@oss.qualcomm.com>,
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+References: <20250914-radxa-dragon-q6a-v2-0-045f7e92b3bb@radxa.com>
+ <20250914-radxa-dragon-q6a-v2-3-045f7e92b3bb@radxa.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250914-radxa-dragon-q6a-v2-3-045f7e92b3bb@radxa.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 14/09/2025 17:57, Xilin Wu wrote:
+> Add and enable all available QUP SEs on this board, allowing I2C, SPI and
+> UART functions from the 40-Pin GPIO header to work.
+> 
+> Signed-off-by: Xilin Wu <sophon@radxa.com>
+> 
+> ---
+> 
+> This change depends on the following patch series:
+> https://lore.kernel.org/all/20250911043256.3523057-1-viken.dadhaniya@oss.qualcomm.com/
 
 
---B5a0RPlIOoHpXmq4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No, why? It does not. If your DTS depends on drivers it's a mistake to fix.
 
-Hey Linus,
+Fix dependency or squash the patches.
 
-Please pull to receive fixes for Generic phy subsystem which has few
-driver fixes for this cycle.
 
-The following changes since commit 8f5ae30d69d7543eee0d70083daf4de8fe15d585:
 
-  Linux 6.17-rc1 (2025-08-10 19:41:16 +0300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git tags/phy-=
-fix-6.17
-
-for you to fetch changes up to 6cb8c1f957f674ca20b7d7c96b1f1bb11b83b679:
-
-  phy: qcom: qmp-pcie: Fix PHY initialization when powered down by firmware=
- (2025-09-01 22:29:20 +0530)
-
-----------------------------------------------------------------
-Generic phy driver fixes for 6.17
-
- - Qualcomm repeater override properties, qmp pcie bindings fix for
-   clocks and initialization sequence for firmware power down case
- - Marvell comphy bindings clock and child node constraints
- - Tegra xusb device reference leaks fix
- - TI omap usb device ref leak on unbind and RGMII IS settings fix
-
-----------------------------------------------------------------
-Johan Hovold (3):
-      phy: tegra: xusb: fix device and OF node leak at probe
-      phy: ti: omap-usb2: fix device leak at unbind
-      phy: ti-pipe3: fix device leak at unbind
-
-Michael Walle (1):
-      phy: ti: gmii-sel: Always write the RGMII ID setting
-
-Pengyu Luo (1):
-      phy: qualcomm: phy-qcom-eusb2-repeater: fix override properties
-
-Rob Herring (Arm) (1):
-      dt-bindings: phy: marvell,comphy-cp110: Fix clock and child node cons=
-traints
-
-Stephan Gerhold (1):
-      phy: qcom: qmp-pcie: Fix PHY initialization when powered down by firm=
-ware
-
-Ziyue Zhang (1):
-      dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Update pcie phy bindings
-
- .../bindings/phy/marvell,comphy-cp110.yaml         | 29 +++++++++----
- .../bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml   |  4 +-
- drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c     |  4 +-
- drivers/phy/qualcomm/phy-qcom-qmp-pcie.c           | 25 +++++++++---
- drivers/phy/tegra/xusb-tegra210.c                  |  6 ++-
- drivers/phy/ti/phy-gmii-sel.c                      | 47 ++++++++++++++++++=
-----
- drivers/phy/ti/phy-omap-usb2.c                     | 13 ++++++
- drivers/phy/ti/phy-ti-pipe3.c                      | 13 ++++++
- 8 files changed, 114 insertions(+), 27 deletions(-)
-
---=20
-~Vinod
-
---B5a0RPlIOoHpXmq4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmjG/AcACgkQfBQHDyUj
-g0dAUxAAgy/Bhf4b9zT30OZvoOW6RaeCKuoyisfOcmQYpAYXQWaXL1obbk/bKRnC
-yAzf/61XsNM6drgaRhThJmf7K16jedkVA7a7A75RczaF4+bdzURL8exk1isrlHNT
-+00BRoI8AwpYC95GhmUfgflB+gGEqmTPlrgUlbLTi2uxj/z/Ow3v98RA4n09yrDO
-+JsKFXdNVV7sbUF2esFjQIC4/wdGaeadl2ZozCZWzrEX8hOCtlKhVtNsPxEMUUzY
-d3nS6/88Kdrh5VZye+bTduJ678q6wAdOaDdZUyouZppSk/ZWbiXyQjY9UH5gQwj8
-IhecLy9DQ+XulrjeCobk5IhaiLpLQrZcABQs11dUYF0fNeOiFAqIENRGDpAj1jBx
-lcCVZ8DiRAPHAzonAxW8kJy9oTO1ZrC84fJeiNqQSYW00HEFTGRYDIPrccqfjByB
-K8dTpNDKF4Hm/DWC8zUQTTZJ3S+szqj30hHUqvT5Kl2DfCl+JnOybCee8+lsdIBm
-NPnbgOOzG1NxOXOpp/1NzXmINWsxT2PVukjS8rpLST4P6mO9CtW6NHMaJxZeiuLf
-Jgy4WBf0ICVyTDcWaLdawPHjf8jiQPZ6D6Wz5xh5c5Yc18U0I7HsFPynYKB9BkRF
-IK9pmtul1eNP0EWNQa7BzR7uDuZqRUfLHplvE9PL7WkUlE2/Obo=
-=xAcw
------END PGP SIGNATURE-----
-
---B5a0RPlIOoHpXmq4--
+Best regards,
+Krzysztof
 
