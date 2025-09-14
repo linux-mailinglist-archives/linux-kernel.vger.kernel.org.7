@@ -1,143 +1,143 @@
-Return-Path: <linux-kernel+bounces-815669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD47B569A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:15:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C54B569A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388FA164F83
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:15:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE0F1899B86
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1100420A5EB;
-	Sun, 14 Sep 2025 14:15:04 +0000 (UTC)
-Received: from gate.crashing.org (gate.crashing.org [63.228.1.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101D32566
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 14:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.228.1.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 948F620102B;
+	Sun, 14 Sep 2025 14:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JTYB9lZj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B2D8287E;
+	Sun, 14 Sep 2025 14:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757859303; cv=none; b=a9JahY3tRjY2Mw4LIYbv/acI6e69UYEwj1eGDGTaW+QiYPvDorbMkoQlA62nFv7HcagUm7zi4SWaVudNsoHRkV/S0e3boMXPXSn+J8Oh2fSZUZ4YTm2CqEfOje8cMcie50qBBRHO1wDM3/gZjv2BA6kQ/WsQLhslvT1+h3bO1go=
+	t=1757859396; cv=none; b=QXGCGwIUmiA7rfFSlYxX3XmuRCAq42vPkS1koA/CgDP2WcU164+o/v0L23FlbfbQSk3n7zXl/1wBdrWTMm1bmun4cejlo044RwZtzpdDHkbOscCT51aC69CJnO037FYupqYEihILDYypcXojgpkZj+Kq/7dV/Ea0VkqhSe86kWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757859303; c=relaxed/simple;
-	bh=8OWzVDOeqjw5yvefV0UbCW1zk+30jAKzYbBKLL82ytA=;
+	s=arc-20240116; t=1757859396; c=relaxed/simple;
+	bh=LC3H0PVcyqKsgsnH8G6RjhY7nYzGXX6eP+wpc+zEEsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1KLjMXFGPMiWpVHd0bQ4DbDgArvqPrl+EbOgnkodaLTAZDBxhltK/tw168iTtknxDN+Wz0yls3Kw2uZdlZ6CrHif3zvryfhdoLv2cRIETLSevQ2juPVl1hWqSPDQ/6sPEXkHHBPFewMzMU980/j2pkvGHk3MTSVS3JuKQwkrvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org; spf=pass smtp.mailfrom=kernel.crashing.org; arc=none smtp.client-ip=63.228.1.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.crashing.org
-Received: from gate.crashing.org (localhost [127.0.0.1])
-	by gate.crashing.org (8.18.1/8.18.1/Debian-2) with ESMTP id 58EEEPWI157725;
-	Sun, 14 Sep 2025 09:14:25 -0500
-Received: (from segher@localhost)
-	by gate.crashing.org (8.18.1/8.18.1/Submit) id 58EEEOtL157724;
-	Sun, 14 Sep 2025 09:14:24 -0500
-X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
-Date: Sun, 14 Sep 2025 09:14:24 -0500
-From: Segher Boessenkool <segher@kernel.crashing.org>
-To: Ash Logan <ash@heyquark.com>
-Cc: arnd@arndb.de, christophe.leroy@csgroup.eu,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        officialTechflashYT@gmail.com, AWilcox@wilcox-tech.com,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: 32-bit HIGHMEM and game console downstreams
-Message-ID: <aMbNwBrxtBSPl8NQ@gate>
-References: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJVjXj5dAn/KElCMuCNeIRFS6iEW+A3EgtQx8iv1+JCVKhlG71Q8F+SAPrk4GTO9OAQ9/rCApRWxC6umKvvuB5wnwU0ElkLVPSyWdH5ziYQBMImzBh0ICoMsfMxGOBV47rtuhvGzDv1JTpgc945kDrU2YEnNxQriE0Xnuh7/Jrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JTYB9lZj; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1757859394; x=1789395394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LC3H0PVcyqKsgsnH8G6RjhY7nYzGXX6eP+wpc+zEEsM=;
+  b=JTYB9lZjPD+zk2eMHjOaN5wVD+7PC7Rnr4CifeHV8Blj4ixpOhz1fnzn
+   s5Og+SFO4aoFaWsXyU5XghEW17N1XPEotKSbpAiEzUE7eCtCP1DByVoXm
+   33QJr00lDj4DY2YKY/BtN76ugsx9ZG/L7O/Jh0hJAGIzTasQPNxqE8avM
+   N1scrIDBqSAeKJoo6V/pIjK+ENJ6VW38ZMyStcmzIkztWCcggRqb2b7l5
+   DmyEg7cTxibD+DnCNxBdVtiRjlQhE3Dy73druFUnmvTRQ7XhL8oVAqouL
+   pi9qGf/q0g4ncn1pA8fn+hp49vmL1t+66S7UEo9DaQUPfwhHkdXFEZQ6l
+   w==;
+X-CSE-ConnectionGUID: hKcCLeKvQ6+/p9MEzuBpRw==
+X-CSE-MsgGUID: XOlwq7e4TIukCBqyfFjvoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11553"; a="71503324"
+X-IronPort-AV: E=Sophos;i="6.18,264,1751266800"; 
+   d="scan'208";a="71503324"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Sep 2025 07:16:33 -0700
+X-CSE-ConnectionGUID: fKFq+2jnSAaSeZDt1z3VvQ==
+X-CSE-MsgGUID: Zi1Q9B4xRvyVk5+bxvVdOw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.18,264,1751266800"; 
+   d="scan'208";a="174224891"
+Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
+  by orviesa007.jf.intel.com with ESMTP; 14 Sep 2025 07:16:30 -0700
+Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uxnWi-0002Sy-0K;
+	Sun, 14 Sep 2025 14:16:24 +0000
+Date: Sun, 14 Sep 2025 22:16:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
+Message-ID: <202509142156.qb0htmwo-lkp@intel.com>
+References: <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3e8cb683-a084-4847-8f69-e1f4d9125c45@heyquark.com>
+In-Reply-To: <20250914122116.2616801-6-ivo.ivanov.ivanov1@gmail.com>
 
-Hi!
+Hi Ivaylo,
 
-On Sat, Sep 13, 2025 at 08:53:08PM +1000, Ash Logan wrote:
-> Wii (2006)
-> - 1x PowerPC 750CL "Broadway" @ 729MHz
-> - 24MB "MEM1" + 64MB "MEM2" (non-contiguous - MEM2 starts 256MiB in)
-> - Kernel 4.19 (+ CIP patchset), dev has been working on forward-porting all
-> the drivers one major version at a time (he's currently up to 5.15 last I
-> checked) + limited upstream support (hardware bringup, UART, not many
-> peripherals)
+kernel test robot noticed the following build errors:
 
-There *aren't* many peripherals, so that is quite okay :-)
+[auto build test ERROR on krzk-dt/for-next]
+[also build test ERROR on linus/master v6.17-rc5]
+[cannot apply to krzk/for-next clk/clk-next next-20250912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> Wii U (2012)
-> - 3x PowerPC 750CL "Espresso" @ 1.2GHz
+url:    https://github.com/intel-lab-lkp/linux/commits/Ivaylo-Ivanov/dt-bindings-clock-add-exynos8890-SoC/20250914-202302
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux-dt.git for-next
+patch link:    https://lore.kernel.org/r/20250914122116.2616801-6-ivo.ivanov.ivanov1%40gmail.com
+patch subject: [PATCH v1 5/5] clk: samsung: introduce exynos8890 clock driver
+config: csky-randconfig-001-20250914 (https://download.01.org/0day-ci/archive/20250914/202509142156.qb0htmwo-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250914/202509142156.qb0htmwo-lkp@intel.com/reproduce)
 
-It is not a 750CL.  We never found out what the model # is, if indeed it
-has one!  But the CPU cores are compatible to the Broadway, sure, there
-even are configuration bits to make it do the bugs that were fixed in
-Espresso!  (Just like Broadway can emulate a Gekko, 750CXe, the GCN
-thing).
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202509142156.qb0htmwo-lkp@intel.com/
 
-It does have its own PVR value of course, that is something at least :-)
+All errors (new ones prefixed by >>):
 
-(Espresso is one chip btw, with three mostly symmetrical cores).
-
-> - 32MB "MEM1" + 2GB "MEM2" (also starts 256MiB in) + various small SRAMs
-
-It has 32MB MEM1?  Huh.  Why?
-
-> Special mention to the GameCube, basically a slower Wii with only 24MB
-> direct RAM and 16MB of non-mapped "ARAM". Wii Linux has experimental support
-> for this where they use the ARAM as swap.
-
-The main memory on the GCN was very fast, low-latency, ram.  "1T-SRAM",
-named so because it isn't SRAM, and not really single cycle access
-either :-)
-
-There is a block of it for graphics, too.  No idea where that is direct-
-mapped, if at all.
-
-> There is a somewhat active userbase for both devices.
-
-Still?  Nice to hear!
-
-> I only have stats for
-> the Wii U side, but some rough nginx grepping for the last few days - Sep
-> 7th-Sep 12th - shows 39 downloads of distribution tarballs and bootloader
-> binaries in that period, not including torrents. In the past 2 weeks - Aug
-> 29th-Sep 12th - 9 people joined the community Discord, 442 total.
-> Anecdotally, the Wii Linux userbase appears at least twice as big (based on
-> their Discord activity).
-
-That makes sense, there are way more Wii devices than WiiU devices, but
-the latter is newer and somewhat nicer (bigger) to run Linux on.
-
-> Distribution-wise, we're supported by ArchPOWER [5], Adélie Linux [6], and
-> other distros. The Wii U's Espresso has CPU errata requiring a patched
-> compiler,
-
-Can you remind me what that is about?  It shouldn't be too hard to
-include it in mainline GCC.
-
-> and both distributions ship separate package repos for this CPU.
-> ArchPOWER requested I rebase onto 6.6 so they could have firmware
-> compression - previously the Wii U was on 4.19 - so there is some demand for
-> newer kernel features as well.
-> 
-> I know I'm talking about hobbyist use - and mostly downstream use at that -
-> and I do suspect that in the event of a wider 32-bit deprecation we'd be
-> fine on the final LTS, whatever that ends up being. Still, I think the Wii
-> and Wii U represent a decent number of 32-bit users, so I wanted to add to
-> the conversation here.
-
-Hey, at least you hobbyists are responsive!
-
-I don't see any real reason to no longer support 32-bit systems in
-Linux -- all of the ways where that needs different treatment have been
-figured out decades ago already, and perhaps not too many people still
-use it, but for some architectures it is the only option and that will
-never change.  Not all of the world is x86.  Even with Arm there are
-many 32-bit only systems in the wild, some pretty new even!
+   drivers/clk/samsung/clk-exynos8890.c: In function 'exynos8890_init_clocks':
+>> drivers/clk/samsung/clk-exynos8890.c:49:45: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+      49 | #define QCH_DIS                 (QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
+         |                                             ^~~~~~~~~~
+   drivers/clk/samsung/clk-exynos8890.c:88:31: note: in expansion of macro 'QCH_DIS'
+      88 |                         val = QCH_DIS;
+         |                               ^~~~~~~
 
 
-Segher
+vim +/FIELD_PREP +49 drivers/clk/samsung/clk-exynos8890.c
+
+    39	
+    40	/*
+    41	 * As exynos8890 first introduced hwacg, cmu registers are mapped similarly
+    42	 * to exynos7, with the exception of the new q-state and q-ch registers that
+    43	 * can set the behavior of automatic gates.
+    44	 */
+    45	
+    46	/* decoded magic number from downstream */
+    47	#define QCH_EN_MASK		BIT(0)
+    48	#define QCH_MASK		(GENMASK(19, 16) | BIT(12))
+  > 49	#define QCH_DIS			(QCH_MASK | FIELD_PREP(QCH_EN_MASK, 0))
+    50	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
