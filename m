@@ -1,140 +1,169 @@
-Return-Path: <linux-kernel+bounces-815806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F48B56B40
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:34:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB5FB56B44
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E427189C448
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0C7165293
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2C98287E;
-	Sun, 14 Sep 2025 18:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tvnIkiOP"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A912DEA73;
+	Sun, 14 Sep 2025 18:35:01 +0000 (UTC)
+Received: from shrimp.cherry.relay.mailchannels.net (shrimp.cherry.relay.mailchannels.net [23.83.223.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507EB42A96
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757874840; cv=none; b=k75bXW0Hce9ZaGkhuvtLa3GtBGbamdM4i4TuLA7BdnRvUaNbduGdxCWYsBn5Rycnlqw6X4PKujzBg77eH8lURj8H9JDxotO+P5MMDrTxBw6oy4mzwGxubH5FkRkaD7Gr4bcwOCJars9J1xwYi+IfEbSJJMPwdp4+L9UMwjPbG9s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757874840; c=relaxed/simple;
-	bh=dmBpq3/7O/v41r+GDh+rnnlXPTGB3FAZAyg8cX0y2xw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=QOa1jKeq6l0wW4SrqA+YHIQk8x5KWrEL4tVBAzLosqvB5Ic5+/5tm1Vbzq+NU23JwuZ1K8OPf75tPwe/Ysvgak5OzbCRqVfTFRbYCBUkXmU+QvoNsJAUlBMoc5uPBQeaq4TS0OAJKnHWQVyuupTT9fxoiVJ5X+xV9JXokbg5l0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tvnIkiOP; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2507ae2fa99so65831025ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:33:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757874838; x=1758479638; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wN2iccbVuVBwktRQK01qZKdZc7wUELk9NMoe4QbKLb8=;
-        b=tvnIkiOPQlZ0+J2taqiJ19RVylVtaBSwRtVHFbWDENDa3vVsycGkAhM9CQCPjbyQJH
-         d75/YTw+LZm/En8iBpXHRJqto2illYNmi6GfNX+UYJYkZtTORVrsxaGIORzr2UE4q7KC
-         DjQ+QztOie+S03YI2az2R0ODmClS+DDxj6XqPwm5Azobr2SCnM0p3owSP3PwKgjo+5Dr
-         AVUqYK8kGcT7pEKoK1cEslQl2KuB6F1DZr2WeyLx92Oqlz/YD5qLtr96cifJoWl8fOv6
-         RsUCmfLE2lccr7Y37DHIwiYCJyf/hmIFdOt69XtzETpEl3zhCETFoxB+vO74qAmWxLVv
-         S/Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757874838; x=1758479638;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wN2iccbVuVBwktRQK01qZKdZc7wUELk9NMoe4QbKLb8=;
-        b=HJ4RfTm8FW63oGooIa9R8Wo+6Ubyne9YHPDjepXlGby2nPWjTu7zPzW+fGPD/kCqOw
-         iMhYZrM1HU/Y5HAsrTyfQk1oDk8eGWt8M1fd1KdwVlqunraxqBnnivY3nilvhfA8j7pe
-         Twjs2vxbCD7wYfBA0c0lh4OuTEAKhlxif2vClQXNylVNzr6AyRQG/b6MIFZ2uom1QJeP
-         HxesIbV6bqEP4IiM+DWF/alpNgA4acynbKFuDLk8JNGKOLKjSMaFEmvyi2n+rdx7STP4
-         EX7wlqCPY+cLzAcrQmW1Dfqltu74nnoXdu9hmq4ddZ5AxrwZnIsYb1Tf5bMh9NizF14r
-         0Kmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXnqos2sbffWvsvJAObS5Ecs+iKJE7lZJvv1BMn+6XyHVgOUqsGGmD+EGqglge5r+sSaBH8X7fgv1dQZYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwezbLwR6VGaTajRQoih/q00Vi2lEILQX8VV+ybtRpq7rl2eHca
-	lTYMJMnQ8hhm/zcH6CTGskZKd266s3fkpbe1Kmh88uMBVLYm5r2ALKw6qSgbxilp5+0j5fYqM1S
-	z1hZGbwqDFg==
-X-Google-Smtp-Source: AGHT+IF5F7RkNRcG5yv3XsFGcxWPT1s6w1jEj6xSWNSgWac2TDVnOvfsv/01vPbaqPE58WtPgrCmaFZ8kLx3
-X-Received: from plkh5.prod.google.com ([2002:a17:903:19e5:b0:24b:12ba:f799])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1aa4:b0:24b:15b3:223d
- with SMTP id d9443c01a7336-25d24da6cf9mr129138075ad.16.1757874838626; Sun, 14
- Sep 2025 11:33:58 -0700 (PDT)
-Date: Sun, 14 Sep 2025 11:33:53 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B0991F5842;
+	Sun, 14 Sep 2025 18:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.164
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757874901; cv=pass; b=UokkCn5Ch0F1dlJaPHK/e48xEJ535und1wbeVnYH8RuzWiWqNYd123i1+C84/uiurMM21fM5NHA63KzlEfCEQ+rpzPv2KQKOXjLfGvFCX9WFjpGWJN1F9z/IfBtQJb2vyb0i46Q7/4Jjh98zLZq3zsZVxiCwxNUoWt9uKRTYuRc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757874901; c=relaxed/simple;
+	bh=jwdJ57SPFeChMt3qLbsltswA6/cvWM94uNE0Q/m7Nmc=;
+	h=From:Subject:Message-Id:MIME-Version:Content-Type:To:Cc:Date; b=U0Bnm/pyOZDaVr6+fzhAMTS3KzgsCWcA6aNVxFY0maPOEGZ9+vy1z0qWFbovBUZbhuT+l+oYDqtl+DftfkWdCq97qdSi9vZ8L413Jcg1Ew6W5Yd2bB/aXWO+CItgEVXE8PrMkJDzroYESu5Lte+fE2jGK4ALNLpLOn6a5nMWwgA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com; spf=pass smtp.mailfrom=smankusors.com; arc=pass smtp.client-ip=23.83.223.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smankusors.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id E73546C0D51;
+	Sun, 14 Sep 2025 18:34:49 +0000 (UTC)
+Received: from uk-fast-smtpout10.hostinger.io (100-107-5-190.trex-nlb.outbound.svc.cluster.local [100.107.5.190])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id C97FE6C0D20;
+	Sun, 14 Sep 2025 18:34:44 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1757874887; a=rsa-sha256;
+	cv=none;
+	b=13JhPclN37mXgfrnYhvcGJFkdeUPPbmJ8ys1WYjMW+haB3dddrJyQ+/jdWnS5MQjgWEspr
+	4sbv4XRU7k/TPmFHmvwXU+7zGfCKiXl0utfiRuIzavBH3W1OxEjo8e+349omKn+46KuN6m
+	R6iGKWEW3bL7yIsKxaMqJitiqAehM5Tz64ARenfjKGeiBYMSDlcE9wv00Cezaecssm94WA
+	xVK19qAzrpjIb77hifJt6m5h7Z1Le8GFUoAr+/eekAq3grVlOZ9N7iy28MI1w7KIftkekB
+	0L5c8sW/I2dO9U/Lu3x+IFXBlJhHU1rmnF17wNfK1AMV4w309QXkvFNaveZfoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1757874887;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=REfKBUMlwDoG5LT4Qmitt7dxpBlc/HPo7D6odawzDm8=;
+	b=uy0rvurB6uC+a//v6tOxeS8DSDYONBMcuQtcxe3QuJlsAnoMR59ZgZp3OT0JQXhuiY6Nl9
+	mTscyyhrGyVXYNCwjXFz3fKRK76HfzKLaTcHUGOGejQ0y74AoJIwApI/LyLc4r0HAZ3mmi
+	oyTZ5JXZUUIzVKp6Je49+ct37PdfMIItJ+sS2AYsDaC1b8XqbkSAJUDBvIyJQA8U0yV1Nd
+	nEECtNpM2neWXGlQk8c/oOe9J1isduKszkkkF20GVXkycTSa2Ad58Ucf2E+523lQZipTza
+	lPgczBXHI74OSZnqmLJhIYMV2yo0u+9QnLN42WFObRdodJg6h/pPKdPz0jVG6A==
+ARC-Authentication-Results: i=1;
+	rspamd-54bcd779b6-sqm4z;
+	auth=pass smtp.auth=hostingeremail smtp.mailfrom=linux@smankusors.com
+X-Sender-Id: hostingeremail|x-authuser|linux@smankusors.com
+X-MC-Relay: Neutral
+X-MC-Copy: stored-urls
+X-MailChannels-SenderId: hostingeremail|x-authuser|linux@smankusors.com
+X-MailChannels-Auth-Id: hostingeremail
+X-Whimsical-Eyes: 6b96161a1abc02c0_1757874889625_1313890535
+X-MC-Loop-Signature: 1757874889625:1636616220
+X-MC-Ingress-Time: 1757874889625
+Received: from uk-fast-smtpout10.hostinger.io (uk-fast-smtpout10.hostinger.io
+ [145.14.155.68])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.107.5.190 (trex/7.1.3);
+	Sun, 14 Sep 2025 18:34:49 +0000
+Received: from [172.17.0.2] (unknown [110.138.220.153])
+	(Authenticated sender: linux@smankusors.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4cPxf723bmzFK6mV;
+	Sun, 14 Sep 2025 18:34:38 +0000 (UTC)
+From: Antony Kurniawan Soemardi <linux@smankusors.com>
+Subject: [PATCH 0/6] ARM: dts: qcom: msm8960: cleanup and add missing I2C
+ nodes
+Message-Id: <20250915-msm8960-reorder-v1-0-84cadcd7c6e3@smankusors.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250914183353.1962899-1-irogers@google.com>
-Subject: [PATCH v1] perf sched: Avoid union type punning undefined behavior
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHYKx2gC/x3MOwqAMBBF0a3I1AYS4ye6FbEQ89QpojIBESR7N
+ 1ie4t6XIoQRaSheEtwc+TwyTFnQss/HBsU+mypdNdpZo0IMrm+1EpziIcq4uveAdaZbKVeXYOX
+ nP45TSh9vOxzjYQAAAA==
+X-Change-ID: 20250831-msm8960-reorder-1849dee3817f
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-gpio@vger.kernel.org, David Heidelberg <david@ixit.cz>, 
+ Max Shevchenko <wctrl@proton.me>, Rudraksha Gupta <guptarud@gmail.com>, 
+ Shinjo Park <peremen@gmail.com>, 
+ Antony Kurniawan Soemardi <linux@smankusors.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757874878; l=2340;
+ i=linux@smankusors.com; s=20250609; h=from:subject:message-id;
+ bh=jwdJ57SPFeChMt3qLbsltswA6/cvWM94uNE0Q/m7Nmc=;
+ b=aj83fKSEVrbAz5jLUJ+BWO2KgrjsHjAfOpKQblx0XkM7pa+WOygJQAGZO3DHqGVErAO/IZCvY
+ 8d7cWJ9QE8VCjQjK9wxrutVdH8lz1UMDVzx/bMlZ6XMFIeqaajJV9WU
+X-Developer-Key: i=linux@smankusors.com; a=ed25519;
+ pk=65wTy06fJl2/h/EJwjr704YG+yjHFhZObJBWzzK+N00=
+Date: Sun, 14 Sep 2025 18:34:38 +0000 (UTC)
+X-CM-Envelope: MS4xfHdV8pYgGT2KC9F9XckX976bcsuuN2D1O5znkT15m46YwZt8zbpFoniUu8z8gD8YyxzouGHItdWk6HkMCuVJXqGZwtbPFGO7cbLQ2A5ySllCMBYpJbbU SgpTje4ROyQN8c2ukKr9FLinurxC0+hZ+PigIZl6vyplozMgStHUaTYBhgM/uTahCC1fB7CwI+Er9A33eFloJili4VVghO+RhRHBJZpyrWJfa10Jr8fppiCJ uOfctqJ3d0hvuz45mzr/6nSFP9M8D6fENKiaYt1wG6vlpAMwyMH2YlS2EyIbXsEz63DqukyD4ZO5vPjUzeDKPBbr9HSgR1EwF552UBmU2eJxcybvHhqPyK8R TNOESYVP8EQeC15+QK7LQCVgGI/TgGZdJRPU57i8y0xPExr3tsuHnEjCZitqb9M8BmVoabPlwC3qNNTB4gVexavSy7gpR2WIfyuYDLBNb5SZkMhI7JXcvKAN 6kBxL/2OkawG0ILtM9aHKPCNZaY+ambJv9BP9VK9vLxEwdAYY4yXJMSbsny/eHVEogL4W+nhriSX4iTKOt4eFBkJFsgxHufqQvyaQMkUQpoPsA4sWimmaKvi 3mNM36yaUzLAEN0AKI5tLuL2kcVraYBw5YianLOPH+i655YpMOET2CPCqyvEgxwXUMOK1SFHkABCMv0V46/tu2VcbTgzuHbKwK/8ewNDugN1FA==
+X-CM-Analysis: v=2.4 cv=LvvAyWdc c=1 sm=1 tr=0 ts=68c70ac2 a=3tJJDl7MZm1GcYeSp/W8Jw==:117 a=3tJJDl7MZm1GcYeSp/W8Jw==:17 a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=wxLWbCv9AAAA:8 a=Fg_ZwnXJ7CBUc7Ulf-0A:9 a=QEXdDO2ut3YA:10 a=QJY96suAAestDpCc5Gi9:22
+X-AuthUser: linux@smankusors.com
 
-A union is used to set the priv value in thread (a void*) to a boolean
-value through type punning. Undefined behavior sanitizer fails on this.
+While working on adding support for the Sony Xperia SP (msm8960t), it
+was pointed out [1] that the msm8960 dtsi could use some general
+cleanup and reordering. This series applies those suggestions and also
+fills in missing I2C nodes that are required by several phones based on
+msm8960.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+Changes included:
+
+1. Reorders nodes by unit address and sorts properties to comply with
+   the Devicetree style guide. Cosmetic only.
+2. Inlines qcom-msm8960-pins.dtsi into the main SoC dtsi. Most Qualcomm
+   SoCs embed their TLMM definitions directly, so this removes an
+   uncommon split file pattern. Cosmetic only.
+3. Adds I2C child nodes for GSBI10 and GSBI12, which are present on
+   MSM8960 and required by devices such as the Sony Xperia SP.
+4. Adds I2C child nodes for GSBI1 and GSBI8, which are present on
+   MSM8960 and required by devices such as the Casio G'zOne. This work
+   was contributed by Shinjo Park.
+5. Updates the binding documentation to rename the GPIO controller node
+   from "msmgpio" to "tlmm".
+5. Renames the GPIO controller node label from "msmgpio" to "tlmm" to
+   match the convention used by other Qualcomm SoCs. Cosmetic only.
+
+[1] https://lore.kernel.org/all/rcazqdcr747ujkba6z2j2oci27ajkqfi4hydgc2kiavm73y37x@g63jga2fcwmo/
+
+Thanks,
+
 ---
- tools/perf/builtin-sched.c | 19 ++++---------------
- 1 file changed, 4 insertions(+), 15 deletions(-)
+Antony Kurniawan Soemardi (6):
+      ARM: dts: qcom: msm8960: reorder nodes and properties
+      ARM: dts: qcom: msm8960: inline qcom-msm8960-pins.dtsi
+      ARM: dts: qcom: msm8960: add I2C nodes for gsbi10 and gsbi12
+      ARM: dts: qcom: msm8960: add I2C nodes for gsbi1 and gsbi8
+      dt-bindings: pinctrl: qcom: msm8960: rename msmgpio node to tlmm
+      ARM: dts: qcom: msm8960: rename msmgpio node to tlmm
 
-diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
-index f166d6cbc083..eca3b1c58c4b 100644
---- a/tools/perf/builtin-sched.c
-+++ b/tools/perf/builtin-sched.c
-@@ -1532,35 +1532,24 @@ static int process_sched_wakeup_ignore(const struct perf_tool *tool __maybe_unus
- 	return 0;
- }
- 
--union map_priv {
--	void	*ptr;
--	bool	 color;
--};
--
- static bool thread__has_color(struct thread *thread)
- {
--	union map_priv priv = {
--		.ptr = thread__priv(thread),
--	};
--
--	return priv.color;
-+	return thread__priv(thread) != NULL;
- }
- 
- static struct thread*
- map__findnew_thread(struct perf_sched *sched, struct machine *machine, pid_t pid, pid_t tid)
- {
- 	struct thread *thread = machine__findnew_thread(machine, pid, tid);
--	union map_priv priv = {
--		.color = false,
--	};
-+	bool color = false;
- 
- 	if (!sched->map.color_pids || !thread || thread__priv(thread))
- 		return thread;
- 
- 	if (thread_map__has(sched->map.color_pids, tid))
--		priv.color = true;
-+		color = true;
- 
--	thread__set_priv(thread, priv.ptr);
-+	thread__set_priv(thread, color ? ((void*)1) : NULL);
- 	return thread;
- }
- 
--- 
-2.51.0.384.g4c02a37b29-goog
+ .../bindings/pinctrl/qcom,msm8960-pinctrl.yaml     |   4 +-
+ arch/arm/boot/dts/qcom/qcom-msm8960-cdp.dts        |  10 +-
+ arch/arm/boot/dts/qcom/qcom-msm8960-pins.dtsi      |  59 --
+ .../dts/qcom/qcom-msm8960-samsung-expressatt.dts   |  12 +-
+ .../boot/dts/qcom/qcom-msm8960-sony-huashan.dts    |   2 +-
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi           | 727 ++++++++++++++-------
+ 6 files changed, 491 insertions(+), 323 deletions(-)
+---
+base-commit: 9e410f58e82ea0c0e865f688d84edad1da7824d2
+change-id: 20250831-msm8960-reorder-1849dee3817f
+
+Best regards,
+--
+Antony Kurniawan Soemardi <linux@smankusors.com>
 
 
