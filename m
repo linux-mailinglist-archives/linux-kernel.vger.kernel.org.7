@@ -1,143 +1,93 @@
-Return-Path: <linux-kernel+bounces-815873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39EF9B56C28
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 22:28:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC69B56C2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 22:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7B75178CFC
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:28:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368013A72A0
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1F92E2665;
-	Sun, 14 Sep 2025 20:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D812DA77E;
+	Sun, 14 Sep 2025 20:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7A+ekkF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VbdmkuMN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568151A38F9;
-	Sun, 14 Sep 2025 20:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75C238DDB;
+	Sun, 14 Sep 2025 20:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757881680; cv=none; b=EKOsOEt33TWoEp+4wDnLrtgYKd5KuNszaubGUyRj+vYyXNqdIiMKsQUrUh2D2jDmgl78ei0Dp95bTm7b0bvBZ2+yaCZA5dzeqYLL+s0UP+vIiw2T4cdyjDDrO0QySKt9BU+FxJ9BQ5f9MWW9Yf6dVIBkvvRzR1FZgV7m67dRmzk=
+	t=1757881912; cv=none; b=gFxSSTXo52DMBI4Z0pUDQIkqiC8X96XHSeixmNMozcYjkTTTKvjbAa1+saOLbQVvcNW2Qw150ifqZrZyXFq/7c+ey8sHzjTfO0eLYtqZpFVxMtw1eUWO1FP9sfagTt2p555xVRvpHYgfzZxP13p5SPunkLWZlSdxhjpC9M5c/Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757881680; c=relaxed/simple;
-	bh=D0n5ETJv3R8O+fczQgdPp8EqHieV5Ctrcdn9KrkWRvw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AKa/kEZHWOQ4oIZ+6WPY2ohgmqpE3uzkCXu1EwWjh1aOMaUlq0z+7Myx8B/qBMT1czTR9AY6JUBqSaCO94YUE9Dcy1p6H29CvI/VdOjci5UhULyPgACZ5fGKlHFAd5brbTyQqccquxsrfjj2r8xSDLJD5HhcB1w1qZOQ7Lppz7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7A+ekkF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D97C4CEF0;
-	Sun, 14 Sep 2025 20:27:59 +0000 (UTC)
+	s=arc-20240116; t=1757881912; c=relaxed/simple;
+	bh=avc3T9OKXOTUPbjbWJB+zkAClQK4ZtLW+SC5KE/5ISc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HJxwmod7eud4E2tZ4sGKO10xpUuj+L2A1xDX1vcMcSbBwj+dNg763cdZZ50ONWUB1Enktw8DO0dJwHSFaKGexzwQuNiHPNb0CUpQh2otSDnmGbNQNC8IKnsnoXrHTf6pNW5RGclI7/iStcoVEELAeOh96YQBC3uEDXu2FRN8k0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VbdmkuMN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BA24C4CEF0;
+	Sun, 14 Sep 2025 20:31:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757881679;
-	bh=D0n5ETJv3R8O+fczQgdPp8EqHieV5Ctrcdn9KrkWRvw=;
+	s=k20201202; t=1757881912;
+	bh=avc3T9OKXOTUPbjbWJB+zkAClQK4ZtLW+SC5KE/5ISc=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I7A+ekkFx+MmNjmDBQ0/KTElBERoYXwPeRTCLw4lLb6/DXdWxSWu5bXicPO0Obz7T
-	 9sIYTiTC6Znl6EdSXH/w86jAyWRE0yDOpFNz21ofxAbWdNi7PAnl/qHgLqUURJqOLk
-	 G13O9a44Deh6CbSPRWdyQ2FOij1zVuCyBJ5RXuLdXC30lORs6vBSCOpY+pYcOetscs
-	 MvdlQMuDEpFAGmITJ50TbaxBOtXBM6VGpkJsA6hTP6NKxCZ0UKYYEpzF5Rnl1LBO/N
-	 Gk/tj7Rim9T3DwlvaI2GoPY3WmCIdP+lcmQYnU+xrUhXqHtZVJK/XH1EasFhRzZxk+
-	 D80BVzfZMPP7Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <maz@kernel.org>)
-	id 1uxtKH-00000006Ar2-1oaU;
-	Sun, 14 Sep 2025 20:27:57 +0000
-Date: Sun, 14 Sep 2025 21:27:57 +0100
-Message-ID: <878qigzsmq.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Jinqian Yang <yangjinqian1@huawei.com>,
-	yuzenghui@huawei.com,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	liuyonglong@huawei.com,
-	wangzhou1@hisilicon.com
-Subject: Re: [PATCH v3 1/2] KVM: arm64: Make ID_AA64MMFR1_EL1.{HCX, TWED} writable from userspace
-In-Reply-To: <aMSV_tLO-W4VKYRX@linux.dev>
-References: <20250911114621.3724469-1-yangjinqian1@huawei.com>
-	<20250911114621.3724469-2-yangjinqian1@huawei.com>
-	<aMSV_tLO-W4VKYRX@linux.dev>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	b=VbdmkuMNZd9Z5TV+M6sgMDbT7/nJ17GwAlIRxC+on3xA0K2OzxuSihvuoozTQHLB3
+	 TZVYIyFNH1u5OujgQW/W68g2gZoEs5mGwzNy6hepDb6qkOmBa/gKoJ/Hzxc8XFnNfV
+	 aG9AwH53wh1Up16yGQjvUWv1lB2HEvwGxlrPM23g5O87Y8dVoj/eqTTmIvS+cuYS2t
+	 P2INuRb85r9hkCfcQb/6a7++Vr5woRYemXCHInp0+WFFgDQEeGsszg/8gSYgOYrA/J
+	 blaHs9YteWzGMFhVFddm53XLqYTLxCg6mV5bUNxq7dpEmW4ZfmYZR3SsAbr6K5KQYQ
+	 glZDUocq7SeQQ==
+Date: Sun, 14 Sep 2025 13:31:50 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Bhargava Marreddy <bhargava.marreddy@broadcom.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ andrew+netdev@lunn.ch, horms@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, vsrama-krishna.nemani@broadcom.com,
+ vikas.gupta@broadcom.com, Rajashekar Hudumula
+ <rajashekar.hudumula@broadcom.com>
+Subject: Re: [v7, net-next 06/10] bng_en: Allocate packet buffers
+Message-ID: <20250914133150.429b5f70@kernel.org>
+In-Reply-To: <20250911193505.24068-7-bhargava.marreddy@broadcom.com>
+References: <20250911193505.24068-1-bhargava.marreddy@broadcom.com>
+	<20250911193505.24068-7-bhargava.marreddy@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, yangjinqian1@huawei.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, liuyonglong@huawei.com, wangzhou1@hisilicon.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Fri, 12 Sep 2025 22:51:58 +0100,
-Oliver Upton <oliver.upton@linux.dev> wrote:
-> 
-> Hi Jinqian,
-> 
-> On Thu, Sep 11, 2025 at 07:46:20PM +0800, Jinqian Yang wrote:
-> > Allow userspace to downgrade {HCX, TWED} in ID_AA64MMFR1_EL1. Userspace can
-> > only change the value from high to low.
-> > 
-> > Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
-> > ---
-> >  arch/arm64/kvm/sys_regs.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> > index 82ffb3b3b3cf..db49beb8804e 100644
-> > --- a/arch/arm64/kvm/sys_regs.c
-> > +++ b/arch/arm64/kvm/sys_regs.c
-> > @@ -3002,8 +3002,6 @@ static const struct sys_reg_desc sys_reg_descs[] = {
-> >  				      ~(ID_AA64MMFR0_EL1_RES0 |
-> >  					ID_AA64MMFR0_EL1_ASIDBITS)),
-> >  	ID_WRITABLE(ID_AA64MMFR1_EL1, ~(ID_AA64MMFR1_EL1_RES0 |
-> > -					ID_AA64MMFR1_EL1_HCX |
-> > -					ID_AA64MMFR1_EL1_TWED |
-> >  					ID_AA64MMFR1_EL1_XNX |
-> >  					ID_AA64MMFR1_EL1_VH |
-> >  					ID_AA64MMFR1_EL1_VMIDBits)),
-> 
-> I still have a bone to pick with Marc regarding the NV implications of
-> this :) Attaching conversation below. Although for non-nested this LGTM.
-> 
-> On Tue, Sep 09, 2025 at 11:10:28AM +0100, Marc Zyngier wrote:
-> > My concern here is the transitive implications of FEAT_HCX being
-> > disabled: a quick look shows about 20 features that depend on
-> > FEAT_HCX, and we don't really track this. I can probably generate the
-> > dependency graph, but that's not going to be small. Or very useful.
-> >
-> > However, we should be able to let FEAT_HCX being disabled without
-> > problem if the downgrading is limited to non-EL2 VMs. Same thing for
-> > FEAT_VHE.
-> >
-> > What do you think?
-> 
-> So I'm a bit worried about making fields sometimes-writable, it creates
-> a very confusing UAPI behavior. On top of that, our writable masks are
-> currently static.
-> 
-> What if we treat the entire register as RES0 in this case? It seems to
-> be consistent with all the underlying bits / features being NI. A
-> mis-described VM isn't long for this world anyway (e.g. FEAT_SCTLR2 && !FEAT_HCX)
-> and in that case I'd prefer an approach that keeps the KVM code as
-> simple as possible.
+On Fri, 12 Sep 2025 01:05:01 +0530 Bhargava Marreddy wrote:
+> +static void bnge_alloc_one_rx_pkt_mem(struct bnge_net *bn,
+> +				      struct bnge_rx_ring_info *rxr,
+> +				      int ring_nr)
+> +{
+> +	u32 prod;
+> +	int i;
+> +
+> +	prod = rxr->rx_prod;
+> +	for (i = 0; i < bn->rx_ring_size; i++) {
+> +		if (bnge_alloc_rx_data(bn, rxr, prod, GFP_KERNEL)) {
+> +			netdev_warn(bn->netdev, "init'ed rx ring %d with %d/%d skbs only\n",
+> +				    ring_nr, i, bn->rx_ring_size);
+> +			break;
+> +		}
+> +		prod = NEXT_RX(prod);
+> +	}
+> +	rxr->rx_prod = prod;
 
-I've pushed out a branch implementing this[1], though it hasn't had
-much testing yet. I'll post it once I've convinced myself that this is
-sane enough.
-
-	M.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=kvm-arm64/el2-res0
-
+You should have some sort of minimal fill level of the Rx rings.
+Right now ndo_open will succeed even when Rx rings are completely empty.
+Looks like you made even more functions void since v6, this is going in
+the wrong direction. Most drivers actually expect the entire ring to be
+filled. You can have a partial fill, but knowing bnxt I'm worried the
+driver will actually never try to fill the rings back up.
 -- 
-Jazz isn't dead. It just smells funny.
+pw-bot: cr
 
