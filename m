@@ -1,158 +1,137 @@
-Return-Path: <linux-kernel+bounces-815630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A4EB5692B
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:16:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F49B56928
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 772503BC899
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145723A7130
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF0F223DDA;
-	Sun, 14 Sep 2025 13:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BB7221FAE;
+	Sun, 14 Sep 2025 13:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PX3oYHsu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="prEH72Yo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141AD19DFA2
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:16:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 713B52C9D;
+	Sun, 14 Sep 2025 13:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757855779; cv=none; b=aS5GuLCPklw+QxPPDCPMXITEFaloFcr/bpgTpiSGnd62Nx+sq5Qhwv7+7IV0nO8EubSEX/i3h+MoyYVXkChtVJuU2cx+CqWPSWWmJQIOyPVuEVxTrxHJxPATTVzzcUDjucLLDwmUcSgQz/acb8UUC2kfE9gLSDsl9zJEXNUXTL4=
+	t=1757855771; cv=none; b=D4mNLydI1++ccKI60CFiDCuPUtFtQtLb6NC5vkfH84e5DXQV3reOmaSN8NJc1YTJLnMBXlNGBiBE1DSbo5UbPvMqYuTWZv0ksWA1YzkiN73/WoUqu5FHrK7H82xbSSe20t2w1z0ljEdZHa++Mc5l8oOha+Ui1qA4Z1rj6HZ6ODA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757855779; c=relaxed/simple;
-	bh=ASTRe5VOEhSFShtU7AUd8KiTkDSRQRHKvy7Cf4rPWBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hz5QdL3TqTN/UOSapiwSkCbWdxvirliKH4q+Gr+Ex7RKdlbVgAGQFlHRtlMaVOTN6Tp06Sg/Rt2ZlTgYK0lp0d9Xw60mWSg+xH4jvAjFO3LbzWs2RBqRaWZDip/Xe3JoF2vg6tnWyRH2EnPv+jK4tiMJ/yO30A3EWPvdAbDiOTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PX3oYHsu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 58E9mtQH013107
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:16:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=cFsUhwbH3X0sd7hf9crCeGPj7gKsS7ptnZR
-	waiXgaJw=; b=PX3oYHsu8T4Z6xb2oqG3grWhQA4zLO3eQsKhLHqogZoHw5RWlT4
-	KI/zzo2H2Y/Tk7uZzv8lOiB2LutOJtU1MMXT0qQL5RmPPwa37zyVbCGPxRtFPJGT
-	kBqv8fXlaUPKluNVTQl4bWRUs7A9d3zI0WoAtTlZw1GZy4zR5tsJliT0LEMxaZIw
-	d8y0V5VyzbS3kSQk8jl4It+PywezVjrXyU5Wceyb47YYSp5nOKovHG6B8dnx60Tf
-	FlKo8YNBA/xUEk/jkKTrLComVq9SV2rFj8cPsvu+nUCTNF+iptPXszMeWSy+ai4l
-	43YJ5uTRBYrtW0h3cRMT9rTYOdS7NcWFjPA==
-Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4951wba5c3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:16:16 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-265c4769c9eso1555835ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:16:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757855775; x=1758460575;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cFsUhwbH3X0sd7hf9crCeGPj7gKsS7ptnZRwaiXgaJw=;
-        b=tF7NiMMIlvVf+8GzMELrRnuwaVgX0BDkM6S78RQyUL+vCjcnVlSavmYW2cgiXDGJe0
-         XzgH+dBwhmi22NLR8MLNFruP8yvG9xSK9+CaJ4c7jJSowSwfX+xzW29OX5i3zgp/7DL3
-         T2B7Q8/e1vuGxKMUnzrTgISYLyAVOPdmrZyYKgZW8ST2SI2bSwKFLCDX7wo4sL+pUjcG
-         /RMbPuQaBPjiXqpztgusIJOHzgRXaTG1AkTYrmzOhCFlPV5+Q4y9O2xWT2eSO8vtqM2E
-         akS4Y60QlyS/kbPh3iOzrxnzNZG0dW+EU597D9XzzRB0/H5UFrzYEwCMEq/5th7lZ63n
-         ekbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVhCJc018g7RLXCWByQxCbsrmpRDZpKYQAJgFnk6vAPRNKi6AGSv+5qrSJMkQnMazpXhrKCQW4uTl2D0A8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6e4UotKOPLScuWuX4UmTBUbbiWHpGiCOP1yTaUa7zju5g1Vzz
-	Q/Yj2WQc73xed56q+kAvF5nl7NzOEVtSaF73g3aBETd8zvghlYj/jZ9/FDGBb7pHJws7QvIwmN6
-	NaKIQ+qQORGbjFRunjJ/CEFxG/MqQQEdIklnFaHaLNsMDfWZEZEESkaiy5VfXTUFrd/8=
-X-Gm-Gg: ASbGncsw3HSxT/QLdcYBZvUjIIuEUofYU82SpdR4WDVqwRpnnHniUax5Hw1dGeqgxrF
-	uOxxKSu+Z6/qslTVJj/ICKUww41ddAYqz1VfqYQZJxYR1pGZ29bKYCayhwXEbZpcRz0hVq5706M
-	k/dzhIIba5p5J5CVXEGsp01pYTfmq3rxdrH2eTgKmHx30gBk0+TDTzU/nSIh9Hv2BheCVt7Znws
-	AA1DnJ2RjYsW8CAdwKsKzg58R7vuuuYJZooPbLlWQNHRWKbr2w/2SkoxAi2XI60gw60CI09je1u
-	mJPXAmSfU4LinjYQSZlkACFPtcieNi1a/Rn12f26zjhQnhclVbjl+yVGASiuhJ3YW/nT76DmJmh
-	M
-X-Received: by 2002:a17:902:d4c6:b0:25c:4902:7c0 with SMTP id d9443c01a7336-25d23d1bb3bmr118454015ad.3.1757855775134;
-        Sun, 14 Sep 2025 06:16:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJuy1SPEO/XjEKKhYEvmFIgN+JNIp7NY0Hu7kXU50Dz/94OCkRLrYzCtcat0KvAIgfcL9GgA==
-X-Received: by 2002:a17:902:d4c6:b0:25c:4902:7c0 with SMTP id d9443c01a7336-25d23d1bb3bmr118453725ad.3.1757855774712;
-        Sun, 14 Sep 2025 06:16:14 -0700 (PDT)
-Received: from hu-mohs-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3ad33ff0sm97871205ad.115.2025.09.14.06.16.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 06:16:14 -0700 (PDT)
-From: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
-To: Srinivas Kandagatla <srini@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Prasad Kumpatla <quic_pkumpatl@quicinc.com>
-Cc: linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel@oss.qualcomm.com,
-        prasad.kumpatla@oss.qualcomm.com, ajay.nandam@oss.qualcomm.com,
-        stable@vger.kernel.org
-Subject: [PATCH v1] ASoC: qcom: sc8280xp: Fix sound card driver name match data for QCS8275
-Date: Sun, 14 Sep 2025 18:45:49 +0530
-Message-Id: <20250914131549.1198740-1-mohammad.rafi.shaik@oss.qualcomm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1757855771; c=relaxed/simple;
+	bh=Qfy7zc1tXyunTXwjXB0ZZi9xv2Y5vexlpBPP06F4wrE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f1Er4Yj4SWSBuQLyECzNFhV9rzuAv74OWFJMxrbJ9MpANwuTUChtp5Qq0IAFnrS9MmsxMpQBlsSYuArRk6WL0FKbsoYwZdxvJ73xBjyCjyiXK4VFIa6g34No5NB6+6e6GbU7R3yFVvTroBsjCLGbvrJ+AObWX/i0iTfj39kfT4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=prEH72Yo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89984C4CEF0;
+	Sun, 14 Sep 2025 13:16:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757855770;
+	bh=Qfy7zc1tXyunTXwjXB0ZZi9xv2Y5vexlpBPP06F4wrE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=prEH72YobiBueg4ccHs9oN4i7Xr/7EYzW91MR3BSgcqOPxH9K5emOLnsvwu8x39k5
+	 UClHj/X6dROo2n6V+5DTY9X/7xfOT0w565sfN4zpKKGZFcze0mgbUXZ8r0lpaG43Lx
+	 WhCItjCBmfQwakpFmA8zn4eiQtj3fCDcG+PAFipMBWd9fuDHBa7i9Y9Qtf74Y1DzNc
+	 tnRvI31fOyIDOx8JyOgsht1rtzibE+Pt24jbYvG659caY+lvIpd9AGoTrJYYOFQxmw
+	 CIzyg9YpnJYmYC/AnV9GPW6XbVtp2l9P2Qa3gI4B7/38dfkmJTIahQLZFA8+wnaQFt
+	 YUxABonb3UBtw==
+Message-ID: <535478d3-d1ed-4caa-ad15-64f99324f7d6@kernel.org>
+Date: Sun, 14 Sep 2025 15:16:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=XYKJzJ55 c=1 sm=1 tr=0 ts=68c6c020 cx=c_pps
- a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=yJojWOMRYYMA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=687F3S6WDAOtLpWcfGQA:9
- a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-ORIG-GUID: zlBcYMPeZIXTy3XL6r5tQ-6xc3DBLntD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwOTEzMDA0MiBTYWx0ZWRfX7v/d9EcsR+2z
- efpJtyPtwUg69VAif7/5/entUL4bN6GYk+X+Uv7eAAODZ9V+Bzs5GaIL3t2bPjNo+bWHm7Lpz8n
- CMLbaZYv7pdHxCmMJ+M/HD5G/6xX7stLHtTJoRIGKZSWdMsWoxzTez6e8RfBSar5Dx0LMIOIFe0
- 4OJzLUYU3SqykQOVv1NoMQYFo3X1aPTPM9ZUeqXHbsLxwhxaHg6W0umaPMK0KImySHBWgKHOw1x
- R5rV0dxxo4zNooCqpxMIRMzVCvPmqE5O9DjYqFjLOA0uE6nc4tUtzKJW40MNJPGmXCN/FB5XrKv
- Ui3jB6FxIhxOggmZ31kEc3b3594+XKW5BSNNiO1WHyzb5aFLHt5cDz6vG8eEeO9rm8apbip+QhP
- 9u0OaPpw
-X-Proofpoint-GUID: zlBcYMPeZIXTy3XL6r5tQ-6xc3DBLntD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1117,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-09-14_05,2025-09-12_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 suspectscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
- malwarescore=0 bulkscore=0 adultscore=0 phishscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2507300000 definitions=main-2509130042
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/4] ASoC: mediatek: Add support of VCP on Mediatek
+ mt8196 SoC.
+To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Jjian Zhou <Jjian.Zhou@mediatek.com>,
+ Hailong Fan <Hailong.Fan@mediatek.com>
+References: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The QCS8275 board is based on Qualcomm's QCS8300 SoC family, and all
-supported firmware files are located in the qcs8300 directory. The
-sound topology and ALSA UCM configuration files have also been migrated
-from the qcs8275 directory to the actual SoC qcs8300 directory in
-linux-firmware. With the current setup, the sound topology fails
-to load, resulting in sound card registration failure.
+On 14/09/2025 14:29, Xiangzhi Tang wrote:
+> Add support MediaTek's Video Companion Processor(VCP) host driver to
+> control the MediaTek VCP Risc-V coprocessor.
+> 
+>> This series is based on linux-next, tag: next-20250912.
+>>
+>> Changes in v2:
+>> - Refactor: split vcp driver patch to mult diff
+>> - Fix reviewer's comments
 
-This patch updates the driver match data to use the correct driver name
-qcs8300 for the qcs8275-sndcard, ensuring that the sound card driver
-correctly loads the sound topology and ALSA UCM configuration files
-from the qcs8300 directory.
+What exactly changed? That's too vague.
 
-Fixes: 34d340d48e595 ("ASoC: qcom: sc8280xp: Add support for QCS8275")
-Cc: stable@vger.kernel.org
-Signed-off-by: Mohammad Rafi Shaik <mohammad.rafi.shaik@oss.qualcomm.com>
----
- sound/soc/qcom/sc8280xp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>> This series patches dependent on:
+>> [1]
+>> https://patchwork.kernel.org/project/linux-mediatek/patch/20250623120154.109429-2-angelogioacchino.delregno@collabora.com/
 
-diff --git a/sound/soc/qcom/sc8280xp.c b/sound/soc/qcom/sc8280xp.c
-index 73f9f82c4e25..db48168b7d3f 100644
---- a/sound/soc/qcom/sc8280xp.c
-+++ b/sound/soc/qcom/sc8280xp.c
-@@ -186,7 +186,7 @@ static int sc8280xp_platform_probe(struct platform_device *pdev)
- static const struct of_device_id snd_sc8280xp_dt_match[] = {
- 	{.compatible = "qcom,qcm6490-idp-sndcard", "qcm6490"},
- 	{.compatible = "qcom,qcs6490-rb3gen2-sndcard", "qcs6490"},
--	{.compatible = "qcom,qcs8275-sndcard", "qcs8275"},
-+	{.compatible = "qcom,qcs8275-sndcard", "qcs8300"},
- 	{.compatible = "qcom,qcs9075-sndcard", "qcs9075"},
- 	{.compatible = "qcom,qcs9100-sndcard", "qcs9100"},
- 	{.compatible = "qcom,sc8280xp-sndcard", "sc8280xp"},
--- 
-2.34.1
+Why? This received clear feedback that needs changes, so why would you
+now send something based on obsolete patchset?
 
+
+
+Best regards,
+Krzysztof
 
