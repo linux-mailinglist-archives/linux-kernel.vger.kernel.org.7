@@ -1,397 +1,78 @@
-Return-Path: <linux-kernel+bounces-815713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2CD9B56A47
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:42:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1185B56A49
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A78CD17A477
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:42:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 478B4189B35D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 434B72D9ED8;
-	Sun, 14 Sep 2025 15:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76AD92DC33F;
+	Sun, 14 Sep 2025 15:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="l/g9KF8Q"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKENvc1e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A085A2882DE
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74D82D9ED8;
+	Sun, 14 Sep 2025 15:43:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757864571; cv=none; b=occjocJJrGo+qoF0HFAHd3jOKjnq1OI/okLCW0zJq0wavhaKibzehbA8ov0TdjXx4KsQhwKLadUbUy4gzqWmDyUkT/Ug959H1dp05cWsvCbcqgE3Bp/PBADmPZCxpQeml2LhRF9zeQf28364vgOQTfQ1/lfhIKocdrwXHqq+oTo=
+	t=1757864589; cv=none; b=GOhvxpgFaLdvoFOpmYggnJwu6pkkJONLZF9b/ju7VvAy+uh05KLnmvaxNvUYUcvz2CmHvgLSYsWIgcZsbudPDp04C7ZnJQxEmgQD/Sne1Wy5WLMslzkJpbY1MHjhn8AqoRHnQF8P8+yr43kr/nQQ6ttXDbH/+xpQMqbAxFa02nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757864571; c=relaxed/simple;
-	bh=2kTO7fSnhMVyK+qYKRpBlWVwUbkQabm7L4Mhbd3GzUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qiDyFJhaD7Oz6ZYM10E80yxUyHiLGJ3zem3gPDAAZC8SNpnkHeVSQ21Oys3pkAiQR4E4mteQoBvswlZP6aR0oyCJ0V/BTPK3+BHjY0mSRSOkq1JHv265s5ylNwsPpFuCHL/DPBP1iPaRE2iPLyufDqPM2T4cXRT97gCRHoXbMtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=l/g9KF8Q; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3ea7af25f8aso98717f8f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 08:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1757864566; x=1758469366; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=lF7TefPrj8nTqh1Zwwwayl7uZBox7tbKj5sj7DEzwK4=;
-        b=l/g9KF8QnqhdqAoEkVzcH1WJF3Y3CW7ZQ7735QkqJW4I5f66Agp87z+L4ML/thusA6
-         vQ46bzcz8/6SeJDSE+yNwXVVHTNa4bkOjersD22uQpqEMmgUjePDFKWsTV1YzchmDQ88
-         8WCNlM4gdKX4b6dqbEudtkxouOBXbWDr09RjCY8/ucgijh5tNGmJx9LpKwdUangQbkWc
-         2fD4zHQp6bjKmYp3/C/jrfOF5wIePJ3PdgB/0X60GLOKdcoIiYVuucGFR1Wx04bvJBBJ
-         lUpwm05OD3Fn8sAjvxDKFl88d7GoT09QuQp8n/Ewix587A/sNjm7HNs8yZVHQbx8AK6G
-         31ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757864566; x=1758469366;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lF7TefPrj8nTqh1Zwwwayl7uZBox7tbKj5sj7DEzwK4=;
-        b=cYqWPF3WuCk4PFnNmBh8inm6lSRa/WTkSKnHzSs6+nrZpQ7RomGqiDKO40rCxBGgek
-         b28INvgFKKmr2xINj9LTIONOFSRt65UBGgeV0LFGVsnN0R5IZ4RtYZi1DuIi01b1O4Y7
-         DrR2wtU3+Fi9A4dp2jQtv+wzzubMKU218pMJ1jlOhL3hcFnMvPWDFOn3oXDW/8ZtUmAg
-         VDjPhmT244zeS/MZpOyO2jhSYTSIq9uau6XDgl1IZrZMUV3gij3SCkhPztiRbLBxEaxX
-         5Vo1lVQajWI1VEseHMfKLJJuc0jg25QaykQFbKQdOxgl8LLwXH58H9pfAvY0RfgGgYl+
-         GJKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjgHZZcMvbL8Oes61Bt4td0trQ9O2RHkhJxnM9ohWF2fiymWyvmt3NxFcNj36Mn2ArWKwGMo8olsaLLwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkKScn2rSaL0pQsFiIAj5MiChdG1bQGt2py7kYIBCTJ3caO8z8
-	o+jRSfUEFBzdOFVpZpY4Vu2sWkzMZxc6/TzSxU9BDh84fdicjiYcR9LeOaxNurcfU4w=
-X-Gm-Gg: ASbGncvEkVYYmUX8o6iUrMDP6xeISE9oKONH2SfS+jrza84u/EDaeMIQoazP9ecH6tr
-	T4sJj/FJLEGp9Lfx5AgtSWQMNwID+UEGFkT6WIavDYbLDEpcwiepCSutfrNl6WIxJlDllAzu1NM
-	w8tMwkLF1MKoM3TNzOq42F1cQaWv5Lmckl9hF+4JKk7te8jTMeXcxYAFjRLBSl3X4ALvEoPRwRe
-	440QAS/UX2UVyW8+SioGNs8ox+rpQOgHkKeAaxPqoBXH83QK8XP1+Uks+2/lhttYIPjm4fDxX9E
-	SGUFwZwAK48bsH760xkqgs/ddmQyMcKJqVxEo10lhQm9NvZD4CkOTHpbzIfEcv4rOP8N4IsKQ+a
-	2dx3xTLapvf0vVAkgEOsU9zDZLhRHmol3/tbEueROzQ==
-X-Google-Smtp-Source: AGHT+IFzwsBtZqrEsafWUsUxi583ZTfa92WFIWs6GNlc6Hk5flYFXVJ+chnYflQbOkJeB1ew0UPusg==
-X-Received: by 2002:a5d:5d05:0:b0:3e4:f194:2886 with SMTP id ffacd0b85a97d-3e7657b9d92mr7371826f8f.19.1757864565702;
-        Sun, 14 Sep 2025 08:42:45 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e8237cfdddsm7414702f8f.60.2025.09.14.08.42.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 14 Sep 2025 08:42:45 -0700 (PDT)
-Message-ID: <3a3a3e2c-2156-40bb-9233-fc2e6320eaa6@tuxon.dev>
-Date: Sun, 14 Sep 2025 18:42:43 +0300
+	s=arc-20240116; t=1757864589; c=relaxed/simple;
+	bh=9001B5HaZrz6Q3CQIwyU+IspGpd28KUY6na6wCKgS30=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=KrNmt8B5tIwIkNy03AsVR46pzoK4MuVI3RUxkx5lQodn+3uaMnDXwqs2YydfjMBITkf5hlDj/n1PGpPyaSvMXtPCGM5fttY3PCVLfj7RdVkVI3HvhXXKZRMMKj6PfU+Keio5YwOGEa5aRlt2P7H+12tj65iWOzpPOstw4T0JoyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKENvc1e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9E81C4CEF0;
+	Sun, 14 Sep 2025 15:43:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757864589;
+	bh=9001B5HaZrz6Q3CQIwyU+IspGpd28KUY6na6wCKgS30=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=eKENvc1euTfQDDtUosUmW9N/Ml0ta2mxHd+kD/tw94UaBISYCMGF6QK5cl1LF2uW3
+	 BhkJzH4M3v0YlDdfMtnB/mXPmgEAJ2uBjUaqtIpHpFBBlpc34kDzRJoOLelWlqE60l
+	 xd+Z9q6c7QJoGP32e/KjJEvGbCVaaiob1VN4iU0LqnfojmiROMS1SrbCHNlQBC0nDd
+	 sKMQhtMIZqXlOcgmIp5VQT4I1lnukAl9wyABQPOoqQ1J3gaU80w1Ci9ZvQu6LA29i5
+	 d7HPptvclwYhFx83DL4j2mWycvs/FiwYftl2+ysMzRuslJTUfPsmDaY6tP9UW1PS2C
+	 oaXGGIe+swD/Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF7E39B167D;
+	Sun, 14 Sep 2025 15:43:12 +0000 (UTC)
+Subject: Re: [git pull] Input updates for v6.17-rc5
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <pr27r442uxseunxtnoko5fquveeb2qg7kxue7uht4marr45ais@ce4alsq7hatm>
+References: <pr27r442uxseunxtnoko5fquveeb2qg7kxue7uht4marr45ais@ce4alsq7hatm>
+X-PR-Tracked-List-Id: <linux-input.vger.kernel.org>
+X-PR-Tracked-Message-Id: <pr27r442uxseunxtnoko5fquveeb2qg7kxue7uht4marr45ais@ce4alsq7hatm>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.17-rc5
+X-PR-Tracked-Commit-Id: 30989f67650cbf8dc763f7c22e3a210f70a8d7d0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 563b3f6ef521895045117055bf3ee08fbe27a8a7
+Message-Id: <175786459138.3496327.2667667875447283955.pr-tracker-bot@kernel.org>
+Date: Sun, 14 Sep 2025 15:43:11 +0000
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/15] nvmem: microchip-otpc: rework to access packets
- based on tag
-To: Varshini Rajendran <varshini.rajendran@microchip.com>,
- eugen.hristev@linaro.org, jic23@kernel.org, dlechner@baylibre.com,
- nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, srini@kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250804100219.63325-1-varshini.rajendran@microchip.com>
- <20250804100219.63325-3-varshini.rajendran@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250804100219.63325-3-varshini.rajendran@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi, Varshini,
+The pull request you sent on Sat, 13 Sep 2025 18:20:39 -0700:
 
-On 8/4/25 13:02, Varshini Rajendran wrote:
-> Rework the driver to change the packet access technique based on the TAG
-> instead of the currently in use "id".
-> 
-> Since there is no way of knowing the OTP memory mapping in advance or the
-> changes it can go through with time, the id based approach is not reliable.
-> Accessing the packets based on the associated tags is a fail-proof
-> approach. This method is aided by adding a table of contents to store the
-> payload information which makes it easier to traverse through the OTP
-> memory and read the data of the intended packet. The stride of the nvmem
-> device is adjusted to 1 to support the TAG being treated as an offset.
-> The only reliable way to recognize a packet without being aware of the
-> flashed contents of the OTP memory is the TAG of the packet.
-> 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-> ---
->  drivers/nvmem/microchip-otpc.c | 130 +++++++++++++++++++++++++--------
->  1 file changed, 101 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/nvmem/microchip-otpc.c b/drivers/nvmem/microchip-otpc.c
-> index df979e8549fd..e922c882af72 100644
-> --- a/drivers/nvmem/microchip-otpc.c
-> +++ b/drivers/nvmem/microchip-otpc.c
-> @@ -18,16 +18,27 @@
->  #define MCHP_OTPC_CR_READ		BIT(6)
->  #define MCHP_OTPC_MR			(0x4)
->  #define MCHP_OTPC_MR_ADDR		GENMASK(31, 16)
-> +#define MCHP_OTPC_MR_EMUL		BIT(7)
->  #define MCHP_OTPC_AR			(0x8)
->  #define MCHP_OTPC_SR			(0xc)
->  #define MCHP_OTPC_SR_READ		BIT(6)
->  #define MCHP_OTPC_HR			(0x20)
->  #define MCHP_OTPC_HR_SIZE		GENMASK(15, 8)
-> +#define MCHP_OTPC_HR_PACKET_TYPE	GENMASK(2, 0)
->  #define MCHP_OTPC_DR			(0x24)
->  
->  #define MCHP_OTPC_NAME			"mchp-otpc"
->  #define MCHP_OTPC_SIZE			(11 * 1024)
->  
-> +enum packet_type {
-> +	PACKET_TYPE_REGULAR = 1,
-> +	PACKET_TYPE_KEY	= 2,
-> +	PACKET_TYPE_BOOT_CONFIG = 3,
-> +	PACKET_TYPE_SECURE_BOOT_CONFIG = 4,
-> +	PACKET_TYPE_HARDWARE_CONFIG = 5,
-> +	PACKET_TYPE_CUSTOM = 6,
+> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.17-rc5
 
-You can drop unused packet types.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/563b3f6ef521895045117055bf3ee08fbe27a8a7
 
-> +};
-> +
->  /**
->   * struct mchp_otpc - OTPC private data structure
->   * @base: base address
-> @@ -42,6 +53,25 @@ struct mchp_otpc {
->  	u32 npackets;
->  };
->  
-> +/**
-> + * struct mchp_otpc_payload_info - OTP packet's payload information
-> + *				retrieved from the packet's header
-> + * @id: driver assigned packet ID
-> + * @packet_offset: offset address of the packet to be written in the
-> + *			register OTPC_MR.ADDR to access the packet
-> + * @payload_length: length of the packet's payload
-> + * @packet_type: type of the packet
-> + * @packet_tag: TAG corresponding to the packet. Applicable for most
-> + *		of the regular packets
-> + */
-> +struct mchp_otpc_payload_info {
-> +	u32 id;
-> +	u32 packet_offset;
+Thank you!
 
-Can you keep packet specific members in struct mchp_otpc_packet?
-
-> +	u32 payload_length;
-> +	u32 packet_type;
-> +	u32 packet_tag;
-
-Will this technique limit the number of packets that can be in memory? I
-think this is not an issue with the current devices? What about the upcomming?
-
-> +};
-> +
->  /**
->   * struct mchp_otpc_packet - OTPC packet data structure
->   * @list: list head
-> @@ -50,20 +80,16 @@ struct mchp_otpc {
->   */
->  struct mchp_otpc_packet {
->  	struct list_head list;
-> -	u32 id;
-> -	u32 offset;
-> +	struct mchp_otpc_payload_info payload_info;
-
-Warning: ../drivers/nvmem/microchip-otpc.c:83 struct member 'payload_info'
-not described in 'mchp_otpc_packet'
-
->  };
->  
-> -static struct mchp_otpc_packet *mchp_otpc_id_to_packet(struct mchp_otpc *otpc,
-> -						       u32 id)
-> +static struct mchp_otpc_packet *mchp_otpc_tag_to_packet(struct mchp_otpc *otpc,
-> +							u32 tag)
->  {
->  	struct mchp_otpc_packet *packet;
->  
-> -	if (id >= otpc->npackets)
-> -		return NULL;
-> -
->  	list_for_each_entry(packet, &otpc->packets, list) {
-> -		if (packet->id == id)
-> +		if (packet->payload_info.packet_tag == tag)
->  			return packet;
->  	}
->  
-> @@ -140,8 +166,27 @@ static int mchp_otpc_prepare_read(struct mchp_otpc *otpc,
->   * offset returned by hardware.
->   *
->   * For this, the read function will return the first requested bytes in the
-> - * packet. The user will have to be aware of the memory footprint before doing
-> - * the read request.
-> + * packet. The user won't have to be aware of the memory footprint before doing
-> + * the read request since it is abstracted and taken care by this driver.
-> + *
-> + * There is no way of knowing the Mapping of the OTP memory table in advance. In
-> + * this read function the offset requested is treated as the identifier string
-> + * i.e., Packet TAG, to acquire the payload with reliability. The packet Tag
-> + * is the only way to recognize a packet without being aware of the flashed
-> + * OTP memory map table.
-> + */
-> +
-> +/**
-> + * mchp_otpc_read() - Read the OTP packets and fill the buffer based on the TAG
-> + *		      of the packet treated as the offset.
-> + * @priv: Pointer to device structure.
-> + * @off: offset of the OTP packet to be read. In this case, the TAG of the
-> + *	 corresponding packet.
-> + * @val: Pointer to data buffer
-> + * @bytes: length of the buffer
-> + *
-> + * A value of zero will be returned on success, a negative errno will be
-> + * returned in error cases.
->   */
->  static int mchp_otpc_read(void *priv, unsigned int off, void *val,
->  			  size_t bytes)
-> @@ -154,30 +199,23 @@ static int mchp_otpc_read(void *priv, unsigned int off, void *val,
->  	int ret, payload_size;
->  
->  	/*
-> -	 * We reach this point with off being multiple of stride = 4 to
-> -	 * be able to cross the subsystem. Inside the driver we use continuous
-> -	 * unsigned integer numbers for packet id, thus divide off by 4
-> -	 * before passing it to mchp_otpc_id_to_packet().
-> +	 * From this point the packet tag received as the offset has to be translated
-> +	 * into the actual packet. For this we traverse the table of contents stored
-> +	 * in a list "packet" and look for the tag.
->  	 */
-> -	packet = mchp_otpc_id_to_packet(otpc, off / 4);
-> +
-> +	packet = mchp_otpc_tag_to_packet(otpc, off);
->  	if (!packet)
->  		return -EINVAL;
-
-If one would want to read the full content of the memory will this function
-return first time offset will not corresond to a valid packet?
-
-> -	offset = packet->offset;
-> +	offset = packet->payload_info.packet_offset;
->  
-> -	while (len < bytes) {
-> +	if (len < bytes) {
-
-The approach now is that a single packet can be read at a moment, right? Is
-this intended?
-
->  		ret = mchp_otpc_prepare_read(otpc, offset);
->  		if (ret)
->  			return ret;
->  
-> -		/* Read and save header content. */
-> -		*buf++ = readl_relaxed(otpc->base + MCHP_OTPC_HR);
-> -		len += sizeof(*buf);
-> -		offset++;
-> -		if (len >= bytes)
-> -			break;
-> -
-
-Dropping this will not return the header content anymore. Is this intended?
-
->  		/* Read and save payload content. */
-> -		payload_size = FIELD_GET(MCHP_OTPC_HR_SIZE, *(buf - 1));
-> +		payload_size = packet->payload_info.payload_length;
->  		writel_relaxed(0UL, otpc->base + MCHP_OTPC_AR);
->  		do {
->  			*buf++ = readl_relaxed(otpc->base + MCHP_OTPC_DR);
-> @@ -190,6 +228,20 @@ static int mchp_otpc_read(void *priv, unsigned int off, void *val,
->  	return 0;
->  }
->  
-> +static int mchp_otpc_read_packet_tag(struct mchp_otpc *otpc, unsigned int offset, unsigned int *val)
-
-This exceeed 100 chars.
-
-> +{
-> +	int ret;
-> +
-> +	ret = mchp_otpc_prepare_read(otpc, offset);
-> +	if (ret)
-> +		return ret;
-> +
-> +	writel_relaxed(0UL, otpc->base + MCHP_OTPC_AR);
-> +	*val = readl_relaxed(otpc->base + MCHP_OTPC_DR);
-> +
-> +	return 0;
-> +}
-> +
->  static int mchp_otpc_init_packets_list(struct mchp_otpc *otpc, u32 *size)
->  {
->  	struct mchp_otpc_packet *packet;
-> @@ -213,8 +265,15 @@ static int mchp_otpc_init_packets_list(struct mchp_otpc *otpc, u32 *size)
->  		if (!packet)
->  			return -ENOMEM;
->  
-> -		packet->id = id++;
-> -		packet->offset = word_pos;
-> +		packet->payload_info.id = id++;
-> +		packet->payload_info.packet_offset = word_pos;
-> +		packet->payload_info.payload_length = payload_size;
-> +		packet->payload_info.packet_type = FIELD_GET(MCHP_OTPC_HR_PACKET_TYPE, word);
-> +
-> +		if (packet->payload_info.packet_type == PACKET_TYPE_REGULAR)
-> +			ret = mchp_otpc_read_packet_tag(otpc, packet->payload_info.packet_offset,
-> +							&packet->payload_info.packet_tag);
-> +
->  		INIT_LIST_HEAD(&packet->list);
->  		list_add_tail(&packet->list, &otpc->packets);
->  
-> @@ -236,7 +295,7 @@ static struct nvmem_config mchp_nvmem_config = {
->  	.type = NVMEM_TYPE_OTP,
->  	.read_only = true,
->  	.word_size = 4,
-> -	.stride = 4,
-> +	.stride = 1,
->  	.reg_read = mchp_otpc_read,
->  };
->  
-> @@ -244,8 +303,9 @@ static int mchp_otpc_probe(struct platform_device *pdev)
->  {
->  	struct nvmem_device *nvmem;
->  	struct mchp_otpc *otpc;
-> -	u32 size;
-> +	u32 size, tmp;
->  	int ret;
-> +	bool emul_enable;
->  
->  	otpc = devm_kzalloc(&pdev->dev, sizeof(*otpc), GFP_KERNEL);
->  	if (!otpc)
-> @@ -256,10 +316,22 @@ static int mchp_otpc_probe(struct platform_device *pdev)
->  		return PTR_ERR(otpc->base);
->  
->  	otpc->dev = &pdev->dev;
-> +
-> +	tmp = readl_relaxed(otpc->base + MCHP_OTPC_MR);
-> +	emul_enable = tmp & MCHP_OTPC_MR_EMUL;
-> +	if (emul_enable)
-> +		dev_info(otpc->dev, "Emulation mode enabled\n");
-
-Can you update the commit with the meaning of these?
-
-> +
->  	ret = mchp_otpc_init_packets_list(otpc, &size);
->  	if (ret)
->  		return ret;
->  
-> +	if (size == 0) {
-> +		dev_err(otpc->dev, "Cannot access OTP memory !\n");
-
-Space before !
-
-> +		if (!emul_enable)
-> +			dev_err(otpc->dev, "Boot packet not configured & Emulation mode not enabled !\n");
-
-Do you still want to register the driver in case size == 0?
-
-Thank you,
-Claudiu
-
-> +	}
-> +
->  	mchp_nvmem_config.dev = otpc->dev;
->  	mchp_nvmem_config.add_legacy_fixed_of_cells = true;
->  	mchp_nvmem_config.size = size;
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
