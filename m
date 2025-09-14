@@ -1,282 +1,117 @@
-Return-Path: <linux-kernel+bounces-815480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E4E1B56709
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 08:10:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3270B5670F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 08:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9EE4189EF91
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 06:11:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C5381A20913
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 06:27:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF7227817F;
-	Sun, 14 Sep 2025 06:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF77C275106;
+	Sun, 14 Sep 2025 06:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PVdKwwxB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYQf7AAb"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEA52773F0
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499CB1F419B
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757830241; cv=none; b=AgssDOdFbHa+bbmPK04g94LYAgt3iagWuk3ufIeRiC9K8yh8vMJbkNYg4r9ezhsqlN582EnYL4qginmcGe45/fcwuRbxbKqcY4jgSClGR0CaT9nYMv0LEpEFNospxEAHTPVudNOb/He105TxMvJqI0Xel02UsZqzNvJqizQdLwE=
+	t=1757831203; cv=none; b=E3tb9mMY5/dchiPN3NP5AT+6u2d0H4A9wVLgYIjx7vch7v7h5QWUA7N5N2GPfl+2bFaUmVLEh40C/nw/7mWfb28an+IDBCoiLNMQlqm5nouYkOwzyHyjVPx85IWYUbNSbr3ZkG7onXF0uXTm7HK0aqXJrO5WEGJHkabclPEVdWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757830241; c=relaxed/simple;
-	bh=TnYOG+zU80fUH9AlYIHN4VWeKwWBClKGHV+KnhdenSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=F1kmYQVpeM5HxAR3HoPIAUuAURVnh55oAQ7b6uEiEGfUsQaBpRdHrcO41LcbN2NuawB3RnDqgOQSJ04aD53npVris3A2O2oXSzC48hRK9zvOIuN6gzt3Deh/xrPv8aP8+i5MGp2kju5o7UhSvI2d803lZIp6eKVF/gvjUtQpjVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PVdKwwxB; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1757830240; x=1789366240;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=TnYOG+zU80fUH9AlYIHN4VWeKwWBClKGHV+KnhdenSo=;
-  b=PVdKwwxBFn4wyJFy7hTMGxJ8er5P06D0tGwuNTOkGdubfQ/ix+i9WZIn
-   PvYEReyh1L0Vwo6hoP4TAQpIb5hgg3ik3IxrcQhictjW1DnMluERKsw49
-   LeDZfJiGRRm/EANyu+Eb4Unx3hqe4+McKWt7f3W3AlwMCpkbc5sIN1TOr
-   n9MZRZP9uhFqBV1bivdR4MpIoVUEK2NmFyeT2FA8tB+p/U0bzCId/1eiB
-   7UaLlecq/azS/BDlbk9OLkMHc71cln9CcXVRuM4I98u4UVP4OOKcDIVsT
-   DSao2uGnjjpzTTeCVO0O2Yv3dTK1oHNuzDHZE3d3TlV+TcJ5rDpAAmXmu
-   A==;
-X-CSE-ConnectionGUID: nR1KeE7eRwSKzXg5GXbk8g==
-X-CSE-MsgGUID: X8/qUjXHQN2nWeKAsfYf3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11552"; a="60186121"
-X-IronPort-AV: E=Sophos;i="6.18,263,1751266800"; 
-   d="scan'208";a="60186121"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2025 23:10:39 -0700
-X-CSE-ConnectionGUID: 2ICbEcbwTYKefiZAIZPEyQ==
-X-CSE-MsgGUID: b9+ZbyOvQfq6A7QlUK1q+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.18,263,1751266800"; 
-   d="scan'208";a="198048155"
-Received: from lkp-server02.sh.intel.com (HELO eb5fdfb2a9b7) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 13 Sep 2025 23:10:37 -0700
-Received: from kbuild by eb5fdfb2a9b7 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uxfwY-00029d-33;
-	Sun, 14 Sep 2025 06:10:34 +0000
-Date: Sun, 14 Sep 2025 14:10:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alice Ryhl <aliceryhl@google.com>, Benno Lossin <lossin@kernel.org>,
-	Elle Rhumsaa <elle@weathered-steel.dev>
-Subject: [tip:locking/core 1/13] error[E0425]: cannot find function
- `atomic_add` in crate `bindings`
-Message-ID: <202509141437.5iiM1sOF-lkp@intel.com>
+	s=arc-20240116; t=1757831203; c=relaxed/simple;
+	bh=YpuAcY5BhVGhX+vCzPkKqiO0eWSE/MtMicMqARPCFKg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DKAcbEWEr/IJfBAfcYu82HiSLXH2DMJFrBUBlfrC1M3t/eKBz5bWhAXJ7naxLQzBCTAQOUWXkxOMnaq3apjBkcalUyXn0HbYPBvREoOarj+UtxCuCf6ELnY6BKoPEvV9ajbwXegaiitBxBN5xDKB80ZKL0TC3ww3C+6RHJ/x3l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HYQf7AAb; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-b07dac96d1eso220343966b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 23:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757831198; x=1758435998; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YpuAcY5BhVGhX+vCzPkKqiO0eWSE/MtMicMqARPCFKg=;
+        b=HYQf7AAb2VdLSAhRPfFCkuW+fJDww4LE9zGBUOVdhsQ+H2ZXNPygNMgKhwFEt0ImVC
+         9eJ9eqQ/rfCY7D8arV3l2b+bVbGxl8mpiA8ranw9ZLY57gXJgCtuszfRgv+DbhwyJS/2
+         yib3Iozuvd0a5QoovnYo0CgS4v9fW928pAZmReDZEVWPXw1WzcCeUhvBnIP9JkfsgTLm
+         rrgP73e+oBTs+7WWujv+ATL6eAIfzBTCMHdIk6vGKXydV1jzj5tanw3NR1Up3nrd7C0Q
+         Via2Q5H8xxsUuWkoArjNQb0uyL/ifxJIiCFcfjV/DYGgE4vxLtauhnsrh52gdiYMRoQi
+         5XBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757831198; x=1758435998;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YpuAcY5BhVGhX+vCzPkKqiO0eWSE/MtMicMqARPCFKg=;
+        b=d/pcXQ/qR6fIg2nwVZPIu0Qf6dfdE0V3bzMQtxsl24yGgtUAQRqf240CCC4Sp6ZO6E
+         JOd3GSlPDoJ0/Hpc9/nJnbAXMk1FVAOx2oUHrb2lmxgeDe1QgFuBSgEe6vBQ15s2ZK3f
+         AGySxtl+id1Xfhf/8XqAWJRCvqHgsUKT0xD72U2iXnRQsdv3F1JJlq4QrSbbsE2t/Hzu
+         ULQflBtJOQxVmZ386tnYHCHobmIrEGQtN1MjjR8dU2isagZrDaSE/obWe1KljO8ti2eA
+         EhOt6JCg0Bw0C5xcxn4mSE2tmlDjwaLnlO4Pl60kARf8mx0ldoGv/6RBtKtmi74p+jaN
+         Q9cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVnrdLPvjfNI7+A8feI028Y70qBfJ5i47n2hnvUCgKfc5PZtW3Ag6h8K+nlmpGQz/4l71aD58alv2KaerE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKktJHRugX82t1/yqsTI3gSjVKZNW9T6ArGfHebg2Km86yp3Yk
+	fb1HCwJFu20cdvc53y3YtCQcimOvDYuxQhS5BtoEeTg26f0l+yZ3s9Jh
+X-Gm-Gg: ASbGnctmcWK4H2itXS3SCHyBHEucse/HHzlk54ulE91MsKBqFUrbrFBUyY6feuYHXBe
+	WAF96GSeuCgECqWYwdvcQ7LblqcopaE75/mh+/cCb1w9ymo85hTTzm257XEY95DGMUlpnsEen/o
+	5dGBTssV86ih0uATvQt014TX3LbH3AND5VmyPM7e6LD1/KvknOkJNBzXIgzsC6Hd2AqFR3Xl4Al
+	ubmHfvf1UZIFRQDivnQAcYNBD/DPJzbl8g15wwBJ/2txEeRrXLp7urvNq77w5sEMxFF7j/5dcO8
+	LwaYyPIKXqXuAkNhzb2mghKMtH1Sy5N6nVpCktqnucGXWOqQbxD8n9IYjrpPqsp3tM5WF0QQ0oR
+	msw3QbexehjMZ0vKlBwve0VbHUWiP7ALDKVdQCa0FBrdhXENDaHdXf18=
+X-Google-Smtp-Source: AGHT+IFgeECwBC/iiy6U4djD4RbKGuu6VUzMWKgjTe6SxUwypL1QszvVkCmMnx5qTasPZMrBF3ONRQ==
+X-Received: by 2002:a17:907:7f94:b0:ae1:a69c:ea76 with SMTP id a640c23a62f3a-b07a68b646amr1170055866b.23.1757831198374;
+        Sat, 13 Sep 2025 23:26:38 -0700 (PDT)
+Received: from jernej-laptop.localnet ([188.159.248.16])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b07b30da427sm699505566b.7.2025.09.13.23.26.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 23:26:37 -0700 (PDT)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
+ Samuel Holland <samuel@sholland.org>,
+ Andre Przywara <andre.przywara@arm.com>, Chen-Yu Tsai <wens@kernel.org>
+Cc: linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH] arm64: dts: allwinner: sun55i: Complete AXP717A sub-functions
+Date: Sun, 14 Sep 2025 08:26:36 +0200
+Message-ID: <2235173.irdbgypaU6@jernej-laptop>
+In-Reply-To: <20250913173511.4064176-1-wens@kernel.org>
+References: <20250913173511.4064176-1-wens@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/core
-head:   502ae97746ab6d7b7b48d54b6a85a11815f390d0
-commit: eb57133305f61b612252382d0c1478bba7f57b67 [1/13] rust: sync: Add basic atomic operation mapping framework
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250914/202509141437.5iiM1sOF-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-rustc: rustc 1.88.0 (6b00bc388 2025-06-23)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250914/202509141437.5iiM1sOF-lkp@intel.com/reproduce)
+Dne sobota, 13. september 2025 ob 19:35:11 Srednjeevropski poletni =C4=8Das=
+ je Chen-Yu Tsai napisal(a):
+> From: Chen-Yu Tsai <wens@csie.org>
+>=20
+> When the AXP717A PMIC is missing nodes for the sub-functions, the kernel
+> complains about not found nodes.
+>=20
+> Add all the remaining nodes corresponding to the defined functions for
+> the dev boards, which have publicly available schematics to base this
+> change on. The battery charger on all of them are disabled. Also add
+> an "iio-hwmon" node to express some of the ADC channels as hwmon
+> sensors.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202509141437.5iiM1sOF-lkp@intel.com/
+Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-All errors (new ones prefixed by >>):
+Best regards,
+Jernej
 
->> error[E0425]: cannot find function `atomic_read_acquire` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   201 | / declare_and_impl_atomic_methods!(
-   202 | |     /// Basic atomic operations
-   203 | |     pub trait AtomicBasicOps {
-   204 | |         /// Atomic read (load).
-   ...   |
-   216 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_read` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   201 | / declare_and_impl_atomic_methods!(
-   202 | |     /// Basic atomic operations
-   203 | |     pub trait AtomicBasicOps {
-   204 | |         /// Atomic read (load).
-   ...   |
-   216 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_xchg_relaxed` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-   help: consider importing this function
-   |
-   7   + use core::intrinsics::atomic_xchg_relaxed;
-   |
---
->> error[E0425]: cannot find function `atomic_xchg` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_try_cmpxchg_acquire` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_try_cmpxchg_release` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_try_cmpxchg_relaxed` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic_try_cmpxchg` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic64_xchg_acquire` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic64_xchg_release` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
---
->> error[E0425]: cannot find function `atomic64_xchg_relaxed` in crate `bindings`
-   --> rust/kernel/sync/atomic/internal.rs:124:37
-   |
-   124 |                   $unsafe { bindings::[< $ctype _ $func >]($($c_arg,)*) }
-   |                                       ^^^^^^^^^^^^^^^^^^^^ not found in `bindings`
-   ...
-   218 | / declare_and_impl_atomic_methods!(
-   219 | |     /// Exchange and compare-and-exchange atomic operations
-   220 | |     pub trait AtomicExchangeOps {
-   221 | |         /// Atomic exchange.
-   ...   |
-   243 | | );
-   | |_- in this macro invocation
-   |
-   = note: this error originates in the macro `impl_atomic_method` which comes from the expansion of the macro `declare_and_impl_atomic_methods` (in Nightly builds, run with -Z macro-backtrace for more info)
-..
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
