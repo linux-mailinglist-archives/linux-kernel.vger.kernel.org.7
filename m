@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-815787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E6DEB56B20
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84028B56B21
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C107D17B210
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:15:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A849116BDDD
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE542E7BDB;
-	Sun, 14 Sep 2025 18:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5A02E612E;
+	Sun, 14 Sep 2025 18:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JCQhdvr5"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EPEd1TF/"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451D4635
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F4F2E718E
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757873522; cv=none; b=R86EP8oe5+z6sxZmPwaH6Oj3GsU4jf1SLKhh2rTkBLSKowPzqnqOk02Au9qWwu2zsd1xeqwDaybjId7kEmj4Wf+Q+uM3cw/qjaLzbGmyEHxr8tbCOVnyS6ceAf/gkGRn/cikHFeZZHsu8lIGGKJgY2Ve4adOGm7GzRAmLG4uCBc=
+	t=1757873523; cv=none; b=Yd6dbOx4ajIlQzowZkbtQOKcv1GvWtLcSKhIQCLLUuWSGBhCJzICmiY/d5OMu7palmvPXVdMb0myNMMdGxTHt41y4ftEncQLgGs4x+MfhRoQ9L0yijlQfEHVjgu8BYAHVe0V7GPPJdpB9p+iydPbTotfOT9X/npCfXdjTe5u0IY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757873522; c=relaxed/simple;
-	bh=k9ZldP0/SVz9h/5AqDx45Gk8Qm/IOPK3wPViOLuKkOA=;
+	s=arc-20240116; t=1757873523; c=relaxed/simple;
+	bh=h4sXefZhOxCEKIvBSymmqcVW8M/ts7r+91O3C+eEVL0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=BlLXUmaDUoSD1y1ww3jmFtxBSNR1NompQEyoHggv9oTMWK/cuTvq8J5sQuNQAWhgWwzceA3YjPb8DmNrGYeM9l57pRRl9KbS6PwQaJWlWxsqAJ+S2fJUuPfAlxNr7oqBgIY0fj8dYjzdErjOZPQMu1yWe/QyKzeHcQQMn5KSKSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JCQhdvr5; arc=none smtp.client-ip=209.85.214.202
+	 To:Content-Type; b=NTn3Rjd6WNxEYHWlcgtAt1uV7OLv1atzl6GAkApmP/tjp+4/cybrLaPOwy/J9LBGf5Zul+MU+HNss62NKgpeV+pX4k9gFQ434ZUVw+yKQ78fWheOwgRU9BJKvpNlmZI4RssV5LbG0KQdOlHMlRV5YIomJA7roFCqME8zcH2Rkag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EPEd1TF/; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-265c4769c9eso2482425ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:11:59 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-24ca417fb41so33737875ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:12:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757873518; x=1758478318; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1757873521; x=1758478321; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=rnAf+Rem08cXbs+wXch3cnb2eg6uZShB+fau+Osjdyg=;
-        b=JCQhdvr5KxZ8IkS0bLA25oEC7GP+mjRMEiHYeH04GXFBh1+fiC870qh+vRIBjQ+s4h
-         c04v59ZXUi0HR+CBRXRs3OJwxQOIoWxbcmdhl5v7R4CTHE1J5kRlQKY0OkEP2vRdWEO4
-         vPo+HTibQ+VUq5siBanLMUdCDtSvFB/tXMi+lP0ZKCdYPBDzrHfwuWQbgzHtukTYeCBj
-         7q3ephiTnwIaB1bHt/h+qjFbG7QDoat38gzoG9tWGeS6cyC9JZIQGurc0wb18y4sPgAx
-         G2bw5cIQgCHedVCt2RVSD1ju1TjmsK5pyepcDIHKmK5shzaViEg0mFPVpRSYADf/IkYw
-         4+Qw==
+        bh=RjylI1Ng5NnBN9pwU555o9z4A/tVaFnze9kkfZFImEo=;
+        b=EPEd1TF/g+sUy8vUx5BrC3+BRQNE5M2b8/f4tYYAQXrzJPfVs1jpnEDjBfkiuEI4ab
+         t02kCy2Igs4rm1q7+s/hEBNvqNQZ/hKk3CESncvBjcMccjtU0a7+bZ1EQKLUhNAfzcoH
+         tbSiRy2vwoe4g9KU5gIUKAVFiXlpLzWujm7VPEMFkg8ssirvlSPMQGWeTH26I++yfFji
+         1Qs8+wtYCdw53/8Nzr1aZQ3ATcB6LhVT4+e1UtYjNkHyTj4Hjy7JW7Uq91f+elEwSiO4
+         9mI/WnNF6ya27hs7Sp1bQcSZthAdcznwlzUROj5IWD1ZW1avU2unTlaJqbFd8Jw5Ffg2
+         0/nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757873518; x=1758478318;
+        d=1e100.net; s=20230601; t=1757873521; x=1758478321;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rnAf+Rem08cXbs+wXch3cnb2eg6uZShB+fau+Osjdyg=;
-        b=pdYiaK2eBdOAGcyAWvLhA+Wq9577/SrkUlpB0zo4X6xv8wM/6os9+R6yq2pPmtgCsg
-         4hhKkYJYKIWuvNL40qXLQB+PIK2fF3D8U8YUOZasXve+y95E5afwYds4PU6YMvyK5VBS
-         bz4E5uCzJzXtFCk3/3EJnqymz450zX+yyxWQftOtCQTZxYEOnwiiOTquUc5qWkenU8AD
-         /VsK9KaMRhgY1roCAxZtNMEPgZ6MDOF/emF944GrjCS47wJ+UREU6/EdICGpGp9GZ7GZ
-         +zas8zs9mfKtu5cGYwRfC2WH3wz5dNduAZQygyX0MHjQ3ww8/oyMjt0C14ZFjTptY1Jo
-         F18Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWFIbiO8UbYJ8o8sV1szYlR5o0JcSdRpz0Vy2OEzZVxnSGjkXDsPZpiboYJ2kK+PCGTmlZIWG4l/k5EG20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzapKa3BCqmacBvVJp6WabHiBu99XHfLeF/+1F3RZu4H5wPPfun
-	wdxdizYFgjF176ZoRhpkyPKl7pSH7v/ipwT35raFLLgxXWz/jJ8+VKfGMcb1wiKmX8G/GIlyHuQ
-	swZMQqJeq0w==
-X-Google-Smtp-Source: AGHT+IGxhychhrWRfiCMHOdHSTzWtf1nrmSSoRnHNe7nXE0q5y82P53EwLDheSjVi9tvYLuwibnTik0KWayw
-X-Received: from plbmn7.prod.google.com ([2002:a17:903:a47:b0:265:d4bc:38cb])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ce0d:b0:261:6d61:f28d
- with SMTP id d9443c01a7336-2616d61f5f4mr61952365ad.50.1757873518423; Sun, 14
- Sep 2025 11:11:58 -0700 (PDT)
-Date: Sun, 14 Sep 2025 11:11:17 -0700
+        bh=RjylI1Ng5NnBN9pwU555o9z4A/tVaFnze9kkfZFImEo=;
+        b=vrAZgxcFrIP86sUVG+Q6KHqM9IFZMWs/96s9rYVou3obDJ7flj45Ptx7C4dle/4SdA
+         5B411zGJzjSza8lXdwKOAvEp7zkersUgNf7hzLkAPaJwi+oXDyd2OnexjYbISo8vdb0n
+         ERP5TnNyMPHgPxMclJO38yn7WCZN3jAzbyLHc7REb+7vN7CnsDmH3Bz6smNi1RSNScIo
+         X/jQYK7Eqvizd2VB51AuKbpfbMS28+n49DlMT4LKWIaR+/F90tajmbkkATcz1pllQNqP
+         FVIyx6F53yLBdPp0BOW19AVbZepCAcNA8SaeYmd4X7Y17E/K9pJ+JYR5c7h9SNtcZPfH
+         JUgw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+giACo4dmb8VWHZN9RRJmgxlXqZFqyAmWu474Uaj+bJRedOP/thV2m4gpFtpbBZfyBjrV2K7QWcFqACE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA884cFQf702I9eKUTGcBuXY0bwWmzWF/5SAYl61/TiHbmWJ8f
+	qIdpStp0mPubd8EO2orU6tj6W2Fz8IPRZ3fbK8SP8jppFCuR+V9DgeDueK45JDc1o+PjNUDM4Qy
+	a2xya6XxJYA==
+X-Google-Smtp-Source: AGHT+IGnn2xJFltc6k0PjS03jSoP/OrGc3R18b/p/EPkWiXKByR1WFESRAYFW+wv288N7SKObI6ml3yvLFPW
+X-Received: from plaq13.prod.google.com ([2002:a17:903:204d:b0:25c:8c4a:ec84])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d4c6:b0:25c:4902:7c0
+ with SMTP id d9443c01a7336-25d23d1bb3bmr127571745ad.3.1757873520615; Sun, 14
+ Sep 2025 11:12:00 -0700 (PDT)
+Date: Sun, 14 Sep 2025 11:11:18 -0700
 In-Reply-To: <20250914181121.1952748-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250914181121.1952748-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250914181121.1952748-18-irogers@google.com>
-Subject: [PATCH v4 17/21] perf top: Use evlist__new_default when no events specified
+Message-ID: <20250914181121.1952748-19-irogers@google.com>
+Subject: [PATCH v4 18/21] perf evlist: Avoid scanning all PMUs for evlist__new_default
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -89,36 +89,48 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Vince Weaver <vincent.weaver@maine.edu>
 Content-Type: text/plain; charset="UTF-8"
 
-Rather than distributing the code doing similar things to
-evlist__new_default, use the one implementation so that paranoia and
-wildcard scanning can be optimized.
+Rather than wildcard matching the cycles event specify only the core
+PMUs. This avoids potentially loading unnecessary uncore PMUs.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-top.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ tools/perf/util/evlist.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 30a7b55335df..067af9b7be1a 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1698,11 +1698,13 @@ int cmd_top(int argc, const char **argv)
- 		goto out_delete_evlist;
+diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+index 80d8387e6b97..e8217efdda53 100644
+--- a/tools/perf/util/evlist.c
++++ b/tools/perf/util/evlist.c
+@@ -101,16 +101,24 @@ struct evlist *evlist__new_default(void)
+ {
+ 	struct evlist *evlist = evlist__new();
+ 	bool can_profile_kernel;
+-	int err;
++	struct perf_pmu *pmu = NULL;
  
- 	if (!top.evlist->core.nr_entries) {
--		bool can_profile_kernel = perf_event_paranoid_check(1);
--		int err = parse_event(top.evlist, can_profile_kernel ? "cycles:P" : "cycles:Pu");
-+		struct evlist *def_evlist = evlist__new_default();
+ 	if (!evlist)
+ 		return NULL;
  
--		if (err)
-+		if (!def_evlist)
- 			goto out_delete_evlist;
+ 	can_profile_kernel = perf_event_paranoid_check(1);
+-	err = parse_event(evlist, can_profile_kernel ? "cycles:P" : "cycles:Pu");
+-	if (err) {
+-		evlist__delete(evlist);
+-		return NULL;
 +
-+		evlist__splice_list_tail(top.evlist, &def_evlist->core.entries);
-+		evlist__delete(def_evlist);
++	while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
++		char buf[256];
++		int err;
++
++		snprintf(buf, sizeof(buf), "%s/cycles/%s", pmu->name,
++			 can_profile_kernel ? "P" : "Pu");
++		err = parse_event(evlist, buf);
++		if (err) {
++			evlist__delete(evlist);
++			return NULL;
++		}
  	}
  
- 	status = evswitch__init(&top.evswitch, top.evlist, stderr);
+ 	if (evlist->core.nr_entries > 1) {
 -- 
 2.51.0.384.g4c02a37b29-goog
 
