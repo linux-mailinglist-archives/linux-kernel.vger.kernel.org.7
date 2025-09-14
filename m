@@ -1,116 +1,152 @@
-Return-Path: <linux-kernel+bounces-815510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B27CCB5679A
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BAFFB567B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 12:15:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7250D42080F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 10:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820203A5629
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 10:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0D823AB87;
-	Sun, 14 Sep 2025 10:09:32 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD51624338F;
+	Sun, 14 Sep 2025 10:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1owBbbb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45B7038FA3;
-	Sun, 14 Sep 2025 10:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C7650276;
+	Sun, 14 Sep 2025 10:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757844572; cv=none; b=M42s/Duo8YRv3jKK4FowlvFnn0zvKf5UxbBiCO/K8Tznzs/4tvLFaQRfboAAKi2KVu8ERbxBtm9AIhnmuabZYELmbapwkHDETzRxAC8I+cL0xt8HywOhtKiNfHAGo0ZiCSEIsnjFSsqdO8K+Br7TohI9eUinaKSJUWBUqNEL9xo=
+	t=1757844919; cv=none; b=KCBj1mWHeK1hcYn2Id/TPY5dRbsNk2zZ3ixSgSb2NHdUiNg79Ir6zv5vPnDp64QSyUwmlhrUo7dhMCqkvBhvRth8+54jOplE31zR6NVnBsSqhp93n+h3xKvACIrqhT9QjyV/esZ3uZFgBi/+1DbH4JrhV2YEz1ci/T7jAu87tsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757844572; c=relaxed/simple;
-	bh=M2ThSKpzt7GdA/27mjv6ElG3/dqKz2T0xkiCRUebYSo=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=RgbPQhGaHR+VSN+5pcVKIMmxh9gRPCpbDGzzAox+bHrfbb72TlHQIOggTtSRJvcVsJX4axIbrpFtSvH2LwQvzelYagkAAqqHjtm4tvi6YxmFujZgFZr8NvuhCE3LE4p5Kr0eBVEEElr1FklJGzTzs7Dof55iEKJH9o3+vjt5G8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4cPkRB344fz8Xs6y;
-	Sun, 14 Sep 2025 18:09:26 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl2.zte.com.cn with SMTP id 58EA9Mnv094684;
-	Sun, 14 Sep 2025 18:09:22 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Sun, 14 Sep 2025 18:09:23 +0800 (CST)
-Date: Sun, 14 Sep 2025 18:09:23 +0800 (CST)
-X-Zmail-TransId: 2af968c69453eea-683f6
-X-Mailer: Zmail v1.0
-Message-ID: <202509141809235737ZDUkOKaORJCGqQOQhM9q@zte.com.cn>
-In-Reply-To: <20250914180031197jk6ngo5pQjpXkNtNsjzSo@zte.com.cn>
-References: 20250914180031197jk6ngo5pQjpXkNtNsjzSo@zte.com.cn
+	s=arc-20240116; t=1757844919; c=relaxed/simple;
+	bh=YOiXMP4qhqUVJERQ/wa0Y3qAWcdtKSQrh1JK66PXogI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OwLf5D2AyL8nr05gZW8a+IrxWxdXIqHELKvHTknG1AWt4xYjV8TZYsC2EPylhp63MMQzMbiXpaiXNSxuRvuEVJy5wvJww51D/2Wq9/eVAbGNvjrb4DUVx2hVwzA8MLiiOcTPV6CGWXhVx+vHMssSLJIzCJ7Wo6ZFAqEcWJRoWCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1owBbbb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D24FC4CEF0;
+	Sun, 14 Sep 2025 10:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757844918;
+	bh=YOiXMP4qhqUVJERQ/wa0Y3qAWcdtKSQrh1JK66PXogI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=F1owBbbbhYucUaUlIBBEwPmqcVtK7Zc3gW5J8+Enx/4u2I1ZETbqAFqQw3jQd5kyX
+	 ogB3FnBjL/RyAvsjBFluEhBLbqTzNkBAWQ6b/ChaigtXNh2MgmMkBMmGQVdg2c/Ka9
+	 bQFLZ/GwI+QrZC9al7OqZwIvALZJDg+3XFiyKGh8FjkZz+DPZ7YMzWdu36Tnx6Pbai
+	 +mec63x4FyxGwgfpg00xhT3cvKK93olSoXjDe87QSDuSakrzxH4r9gmBcFaTJJQvdP
+	 2VjPt+vCen31tYbXWIj9552tr1EJdTM9v2ROeP2dfO0vEHS8S6F/FJUBoU54xWhhcb
+	 OZcNHN7b6aToA==
+Message-ID: <c3449621-546d-4911-9692-a465c6fa9697@kernel.org>
+Date: Sun, 14 Sep 2025 12:15:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <akpm@linux-foundation.org>
-Cc: <akpm@linux-foundation.org>, <shakeel.butt@linux.dev>,
-        <hannes@cmpxchg.org>, <mhocko@kernel.org>, <roman.gushchin@linux.dev>,
-        <david@redhat.com>, <chengming.zhou@linux.dev>,
-        <muchun.song@linux.dev>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <cgroups@vger.kernel.org>, <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHYyIDUvNV0gRG9jdW1lbnRhdGlvbjogYWRkIEtTTSBzdGF0aXN0aWMgY291bnRlcnMgZGVzY3JpcHRpb24gaW4gY2dyb3VwLXYyLnJzdA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 58EA9Mnv094684
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: xu.xin16@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Sun, 14 Sep 2025 18:09:26 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68C69456.000/4cPkRB344fz8Xs6y
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] pcie: s32g: Add initial PCIe support (RC)
+To: Vincent Guittot <vincent.guittot@linaro.org>, chester62515@gmail.com,
+ mbrugger@suse.com, ghennadi.procopciuc@oss.nxp.com, s32@nxp.com,
+ lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ Ionut.Vicovan@nxp.com, larisa.grigore@nxp.com, Ghennadi.Procopciuc@nxp.com,
+ ciprianmarian.costea@nxp.com, bogdan.hamciuc@nxp.com,
+ linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250912141436.2347852-1-vincent.guittot@linaro.org>
+ <20250912141436.2347852-4-vincent.guittot@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250912141436.2347852-4-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: xu xin <xu.xin16@zte.com.cn>
+On 12/09/2025 16:14, Vincent Guittot wrote:
+> +
+> +static u64 s32g_get_coherency_boundary(struct device *dev)
+> +{
+> +	struct device_node *np;
+> +	struct resource res;
+> +
+> +	np = of_find_node_by_type(NULL, "memory");
 
-This add KSM-related statistic counters description in cgroup-v2.rst,
-including "ksm_rmap_items", "ksm_zero_pages", "ksm_merging_pages" and
-"ksm_profit".
+You leak OF node.
 
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
----
- Documentation/admin-guide/cgroup-v2.rst | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+> +
+> +	if (of_address_to_resource(np, 0, &res)) {
+> +		dev_warn(dev, "Fail to get coherency boundary\n");
+> +		return 0;
+> +	}
+> +
+> +	return res.start;
+> +}
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index a1e3d431974c..c8c4faa4e3fd 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1776,6 +1776,23 @@ The following nested keys are defined.
- 		up if hugetlb usage is accounted for in memory.current (i.e.
- 		cgroup is mounted with the memory_hugetlb_accounting option).
 
-+	  ksm_rmap_items
-+		Number of ksm_rmap_item structures in use. The structure
-+		ksm_rmap_item stores the reverse mapping information for virtual
-+		addresses.  KSM will generate a ksm_rmap_item for each
-+		ksm-scanned page of the process.
-+
-+	  ksm_zero_pages
-+		Number of empty pages are merged with kernel zero pages by KSM,
-+		which is only useful when /sys/kernel/mm/ksm/use_zero_pages.
-+
-+	  ksm_merging_pages
-+		Number of pages of this process are involved in KSM merging
-+		(not including ksm_zero_pages).
-+
-+	  ksm_profit
-+		Amount of profitable memory that KSM brings (Saved bytes).
-+
-   memory.numa_stat
- 	A read-only nested-keyed file which exists on non-root cgroups.
 
--- 
-2.25.1
+...
+
+
+> +
+> +static struct platform_driver s32g_pcie_driver = {
+> +	.driver = {
+> +		.name	= "s32g-pcie",
+> +		.owner	= THIS_MODULE,
+
+That 12-yo code. My litmus test from last talk...
+
+Please clean it up from such old coding style. BTW, tools are reporting
+this since years (in this case coccinelle), so be sure that you actually
+run standard static checks on new driver code (smatch, sparse, coccinelle).
+
+
+Best regards,
+Krzysztof
 
