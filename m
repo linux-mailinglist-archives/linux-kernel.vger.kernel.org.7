@@ -1,231 +1,362 @@
-Return-Path: <linux-kernel+bounces-815706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DFEBB56A34
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:25:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44663B56A38
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6C861899905
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:26:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0468C3BAC4A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 025202DA771;
-	Sun, 14 Sep 2025 15:25:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BC62D9EFE;
+	Sun, 14 Sep 2025 15:25:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b="fqniaA4n";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Vj23bhcy"
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="YBmKBa2G"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932A9E55A;
-	Sun, 14 Sep 2025 15:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3D4288C27
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:25:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757863527; cv=none; b=KF/+pcMACm7ObV85zo8vM6aIaeYqgg/RWTOOwffP869F9fKrFttweX2mCAaLDBhD93Lgn7+mR9F89W44ISFdX9W5GUWFwgpP92yaSKGbu7Sr08R5JWcfdow34SraYAJ7ufK2TDazJSaJgt1Tn1ihYlHjzhgmK4piZnUJYfPLmiM=
+	t=1757863550; cv=none; b=pPDI0NPWnyW6sIRQMlngY7NGze0mTSoVxcIRJMaZhSIntkqw6U7lWTt8rs68EOX90gX9hB+v3jw3O+d3avFlX0SWjen61VFH4gO3B30JlD8sraK8OBp0iy00eyDxwyt1bT6ADgNRoUiNo9FNovYQvGcMtIOnyY1LvsPlxU7orP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757863527; c=relaxed/simple;
-	bh=pzjFWi3vSizi+sDsUA5hWojROcQ85d1CDLAbV4UkiYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=diuB/VKmqxYjKGY2fFwWQEl2UH3PcxRxUfDekQSFonP3nk/kVPKedeJHeIoknhbixllfQtoRjCynangPYIoVT6B4QVeQcYOWPD+fvj3Y+3s19mpj1+UjRuy8ziPobpzty8HbRVgekknHkyoI+5KLP3lqavmiha+jhpy66VxZXuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net; spf=pass smtp.mailfrom=jannau.net; dkim=pass (2048-bit key) header.d=jannau.net header.i=@jannau.net header.b=fqniaA4n; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Vj23bhcy; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jannau.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jannau.net
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailflow.phl.internal (Postfix) with ESMTP id 9FD391380371;
-	Sun, 14 Sep 2025 11:25:24 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Sun, 14 Sep 2025 11:25:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jannau.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1757863524; x=1757870724; bh=tWnDpBVNIk
-	8/6xOJajwpS5PW/ODB8z60GmMpvcHEyLY=; b=fqniaA4no7nBvtwisVO0EAziaY
-	zEu1OxB2nmfd9hxQQ6FceNaEfgPI/uOeA3ZUMlixYSgDNmwiIjnghzegCeXC7ooM
-	LvWC+S6IFuwyUZIiDef/lCWKT4qBsufKdFw30aP8oBZazgmYwz3BDB+ZmycSta6t
-	xptfu7gQpOG7ehf9onSRjHDPp99xdgiS7wuPGm4N3NTF+9TI+D6pUYs4H+vp6SZw
-	M5/GnUj+UjYiCszBHilRciH7Xg30wJ4oaajlksr0rV95z7TNExSNAABZPiumrshE
-	FvdljC6vKY79xqhNPoz+sv/5ZzI32UEqoetagTR1nlRh8Hs/vE+pwru4KkFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757863524; x=1757870724; bh=tWnDpBVNIk8/6xOJajwpS5PW/ODB8z60GmM
-	pvcHEyLY=; b=Vj23bhcyVMjkmI+SG5zcvx9xWXRofAidImGdIqDbcLHM0WUXLc8
-	VdJ5/Ah1c+SQLupMy8hPB6g+eQtldDZoSyTcdvRRHeqbzvU0Cza12fMqqwBCwKIx
-	XRXQG97RFEtAOSU5a+qagQeuIAZpU+z4/twkaZZ9fF8rbZYTKJJUunKkcHe13HsO
-	taCZKYFvYUAnhVBpORJEKOyg2/M2EAShulAaGjcM8zm5gq5xLiBnzeFc2Kbds8Kl
-	cjiBRbNIWFH6ATBWXfkEOIb9VhsgtBfbtq1YELEVGHuugIERRPgQ8SsFlhE1Cyyg
-	dvlCSYfmupMutudH+yvoMkyjyO68z9vORGw==
-X-ME-Sender: <xms:YN7GaCTuMx0f0t2jRi7MjfjequzWOeswX29HOTcvvGYGS0MYiIBHUg>
-    <xme:YN7GaL6QBGhruZL6oRXxCEfZI4zo5kPWLdpjuyLcU_mz4EuO5tln9nxooV2UWTC9E
-    tIpfL6jS9L3FfQQEuI>
-X-ME-Received: <xmr:YN7GaLYUVdoEvMx6ZIn2invZ0We4bPduj51BqChNtRqO21phkH22Zsg10x0DzgL7UQBL86YCGWtRbrW6wbE3W7edo_aBudk-3-k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefhedujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpeffhffvvefukfhfgggtuggjsehttdertddttdejnecuhfhrohhmpeflrghnnhgvucfi
-    rhhunhgruhcuoehjsehjrghnnhgruhdrnhgvtheqnecuggftrfgrthhtvghrnhepgfduue
-    ffleefkeegueektdehkeejtedtffdtudejhfdvheetgfeigfeltdeufeejnecuffhomhgr
-    ihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehjsehjrghnnhgruhdrnhgvthdpnhgspghrtghpthhtohepieef
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehulhhfrdhhrghnshhsohhnsehlih
-    hnrghrohdrohhrghdprhgtphhtthhopehsvhgvnheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheprghlhihsshgrsehrohhsvghniiifvghighdrihhopdhrtghpthhtohepnhgvrg
-    hlsehgohhmphgrrdguvghvpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtoh
-    hnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepmhgrrhgtrghnsehmrghr
-    tggrnhdrshhtpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:YN7GaATZo9SilxufSz1EnUQzaOFsuTqisab9144SXip2OdtK6SNNLA>
-    <xmx:YN7GaJKV9V5TpZEISgGyVcxs3hzxjRHlCRxpZ1ubu5AZbXZ1dg9h1Q>
-    <xmx:YN7GaLtfn-mnCoeiXQaPsWDk9zzhoxZfBvlAx4p97b2D9kfTWnImVA>
-    <xmx:YN7GaPJNXrp5QdJBPMY7CemSNwxQLBjHfnIQrKLxRmSJmLsfz5TGDQ>
-    <xmx:ZN7GaF5XtQVAFSjVp-zByym9kYneBv_lXsjnvFHPMbeT2w1HFN8_DQfJ>
-Feedback-ID: i47b949f6:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Sep 2025 11:25:19 -0400 (EDT)
-Date: Sun, 14 Sep 2025 17:25:18 +0200
-From: Janne Grunau <j@jannau.net>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sven Peter <sven@kernel.org>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,	Hector Martin <marcan@marcan.st>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,	Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>,	Robin Murphy <robin.murphy@arm.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Mark Kettenis <kettenis@openbsd.org>,	Andi Shyti <andi.shyti@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Sasha Finkelstein <fnkl.kernel@gmail.com>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	van Spriel <arend@broadcom.com>, Lee Jones <lee@kernel.org>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Vinod Koul <vkoul@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, iommu@lists.linux.dev,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-bluetooth@vger.kernel.org,
-	linux-wireless@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, linux-clk@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH 00/37] arm64: Add initial device trees for Apple M2
- Pro/Max/Ultra devices
-Message-ID: <20250914152518.GB1645557@robin.jannau.net>
-References: <20250828-dt-apple-t6020-v1-0-507ba4c4b98e@jannau.net>
- <CAPDyKFr3WO5nLXYWoyH13KirmfNU+sVrvhefuwC+GrpAgynBgQ@mail.gmail.com>
+	s=arc-20240116; t=1757863550; c=relaxed/simple;
+	bh=0zd28JTOovx4fLSAD9mCxazQ/M6cAcI5y8nrgDO9X9k=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=AkgU8qZyGw3+JaAnEHN+6H4QD3JBZUkSWZ7e4nDMUfPX9O3EmKARAOFTd8e7KkCEJGps+gjm3lEN6vK6Ipfxrh3V0hixc/toyBCPdesdtt2kr+Am6l+TOOKMRl/Bs03YYCTyxDqPPPnwNbvzH2qkfb0wY2h6WM6YdMduU/ApdY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=YBmKBa2G; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+DKIM-Signature: a=rsa-sha256; b=YBmKBa2GiRqiCVwNT7VpmxoJB1SvLwOsBjsrHGOEA7OMko5u5D808u8N9NZaaPCNcxmbVaPZZRki5e/+ublLjRP52kI/uT3RMoRzjHXXpsPVAar2bPFeBIqbhbe7GBMn794KmBi5KEYmBo5yo/bpQ25+evBaNFsCX4F+XznUMQf+h8De6Gd4Lw+XMa6Q1j06aZZKDcBiABn7eGiDT1clPZw5HYt+jHIYw7nhoW2s9qMfaxveG5jOcOsHHtCh8fmoho81frzOTQReKPkaKIL0M9y63P2Dwjm7cDWXK/A6JvnhWx0+D6ioEkXAZBW7JmcnXGWGki8zi4xMc9nETIfuzw==; s=purelymail3; d=purelymail.com; v=1; bh=0zd28JTOovx4fLSAD9mCxazQ/M6cAcI5y8nrgDO9X9k=; h=Feedback-ID:Received:Date:To:Subject:From;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -917512701;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Sun, 14 Sep 2025 15:25:31 +0000 (UTC)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFr3WO5nLXYWoyH13KirmfNU+sVrvhefuwC+GrpAgynBgQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 14 Sep 2025 17:25:29 +0200
+Message-Id: <DCSMM4ZWOFI3.1O1X64E61A7DA@mentallysanemainliners.org>
+To: "Ivaylo Ivanov" <ivo.ivanov.ivanov1@gmail.com>, "Krzysztof Kozlowski"
+ <krzk@kernel.org>, "Rob Herring" <robh@kernel.org>, "Liam Girdwood"
+ <lgirdwood@gmail.com>, "Mark Brown" <broonie@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 2/2] regulator: max77838: add max77838 regulator
+ driver
+From: "Igor Belwon" <igor.belwon@mentallysanemainliners.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250914130230.2622030-1-ivo.ivanov.ivanov1@gmail.com>
+ <20250914130230.2622030-3-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250914130230.2622030-3-ivo.ivanov.ivanov1@gmail.com>
 
-On Thu, Sep 04, 2025 at 12:41:58PM +0200, Ulf Hansson wrote:
-> On Thu, 28 Aug 2025 at 16:01, Janne Grunau <j@jannau.net> wrote:
-> >
-> > This series adds device trees for Apple's M2 Pro, Max and Ultra based
-> > devices. The M2 Pro (t6020), M2 Max (t6021) and M2 Ultra (t6022) SoCs
-> > follow design of the t600x family so copy the structure of SoC *.dtsi
-> > files.
-> >
-> > t6020 is a cut-down version of t6021, so the former just includes the
-> > latter and disables the missing bits.
-> >
-> > t6022 is two connected t6021 dies. The implementation seems to use
-> > t6021 and disables blocks based on whether it is useful to carry
-> > multiple instances. The disabled blocks are mostly on the second die.
-> > MMIO addresses on the second die have a constant offset. The interrupt
-> > controller is multi-die aware. This setup can be represented in the
-> > device tree with two top level "soc" nodes. The MMIO offset is applied
-> > via "ranges" and devices are included with preprocessor macros to make
-> > the node labels unique and to specify the die number for the interrupt
-> > definition.
-> >
-> > The devices itself are very similar to their M1 Pro, M1 Max and M1 Ultra
-> > counterparts. The existing device templates are SoC agnostic so the new
-> > devices can reuse them and include their t602{0,1,2}.dtsi file. The
-> > minor differences in pinctrl and gpio numbers can be easily adjusted.
-> >
-> > With the t602x SoC family Apple introduced two new devices:
-> >
-> > The M2 Pro Mac mini is similar to the larger M1 and M2 Max Mac Studio. The
-> > missing SDHCI card reader and two front USB3.1 type-c ports and their
-> > internal USB hub can be easily deleted.
-> >
-> > The M2 Ultra Mac Pro (tower and rack-mount cases) differs from all other
-> > devices but may share some bits with the M2 Ultra Mac Studio. The PCIe
-> > implementation on the M2 Ultra in the Mac Pro differs slightly. Apple
-> > calls the PCIe controller "apcie-ge" in their device tree. The
-> > implementation seems to be mostly compatible with the base t6020 PCIe
-> > controller. The main difference is that there is only a single port with
-> > with 8 or 16 PCIe Gen4 lanes. These ports connect to a Microchip
-> > Switchtec PCIe switch with 100 lanes to which all internal PCIe devices
-> > and PCIe slots connect too.
-> >
-> > This series does not include PCIe support for the Mac Pro for two
-> > reasons:
-> > - the linux switchtec driver fails to probe and the downstream PCIe
-> >   connections come up as PCIe Gen1
-> > - some of the internal devices require PERST# and power control to come
-> >   up. Since the device are connected via the PCIe switch the PCIe
-> >   controller can not do this. The PCI slot pwrctrl can be utilized for
-> >   power control but misses integration with PERST# as proposed in [1].
-> >
-> > This series depends on "[PATCH v2 0/5] Apple device tree sync from
-> > downstream kernel" [2] due to the reuse of the t600x device templates
-> > (patch dependencies and DT compilation) and 4 page table level support
-> > in apple-dart and io-pgtable-dart [3] since the dart instances report
-> > 42-bit IAS (IOMMU device attach fails without the series).
-> >
-> > After discussion with the devicetree maintainers we agreed to not extend
-> > lists with the generic compatibles anymore [1]. Instead either the first
-> > compatible SoC or t8103 is used as fallback compatible supported by the
-> > drivers. t8103 is used as default since most drivers and bindings were
-> > initially written for M1 based devices.
-> >
-> > The series adds those fallback compatibles to drivers where necessary,
-> > annotates the SoC lists for generic compatibles as "do not extend" and
-> > adds t6020 per-SoC compatibles.
-> >
-> > [1]: https://lore.kernel.org/linux-pci/20250819-pci-pwrctrl-perst-v1-0-4b74978d2007@oss.qualcomm.com/
-> > [2]: https://lore.kernel.org/asahi/20250823-apple-dt-sync-6-17-v2-0-6dc0daeb4786@jannau.net/
-> > [3]: https://lore.kernel.org/asahi/20250821-apple-dart-4levels-v2-0-e39af79daa37@jannau.net/
-> > [4]: https://lore.kernel.org/asahi/12ab93b7-1fc2-4ce0-926e-c8141cfe81bf@kernel.org/
-> >
-> > Signed-off-by: Janne Grunau <j@jannau.net>
-> 
-> Is it okay for me to pick up the pmdomain patches (patch3 and patch4)
-> by now - or what route are you planning to get this merged through?
+Hi Ivaylo,
 
-Sorry, I forgot to mention the merge strategy in the cover letter. I've
-picking up all acked patches that are not yet picked up and we'll merge
-them through the apple-soc tree.
-This includes all dt-binding patches, patch4.
+On Sun Sep 14, 2025 at 3:02 PM CEST, Ivaylo Ivanov wrote:
+> The max77838 PMIC contains a BUCK regulator and 4 LDOs. It's primarily
+> used in the Samsung Galaxy S7 lineup and is accessed over I2C.
+>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
+>  MAINTAINERS                            |   1 +
+>  drivers/regulator/Kconfig              |   8 +
+>  drivers/regulator/Makefile             |   1 +
+>  drivers/regulator/max77838-regulator.c | 221 +++++++++++++++++++++++++
+>  4 files changed, 231 insertions(+)
+>  create mode 100644 drivers/regulator/max77838-regulator.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a4916a178..276374ba7 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15066,6 +15066,7 @@ M:	Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+>  L:	linux-kernel@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/regulator/maxim,max77838.yaml
+> +F:	drivers/regulator/max77838-regulator.c
+> =20
+>  MAXIM MAX77976 BATTERY CHARGER
+>  M:	Luca Ceresoli <luca@lucaceresoli.net>
+> diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+> index 41b56b647..18601bdc0 100644
+> --- a/drivers/regulator/Kconfig
+> +++ b/drivers/regulator/Kconfig
+> @@ -777,6 +777,14 @@ config REGULATOR_MAX77826
+>  	  It includes support for control of output voltage. This
+>  	  regulator is found on the Samsung Galaxy S5 (klte) smartphone.
+> =20
+> +config REGULATOR_MAX77838
+> +	tristate "Maxim 77838 regulator"
+> +	depends on REGMAP_I2C
 
-Feel free to pick up or ack patch3
+REGMAP_I2C should be selected by the driver.
+The driver should depend on I2C.
 
-Janne
+> +	help
+> +	  This driver controls a Maxim 77838 regulator via I2C bus.
+> +	  The regulator include 4 LDOs and a BUCK regulator. It's
+> +	  present on the Samsung Galaxy S7 lineup of smartphones.
+> +
+>  config REGULATOR_MC13XXX_CORE
+>  	tristate
+> =20
+> diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
+> index be98b29d6..0622e9de6 100644
+> --- a/drivers/regulator/Makefile
+> +++ b/drivers/regulator/Makefile
+> @@ -92,6 +92,7 @@ obj-$(CONFIG_REGULATOR_MAX77686) +=3D max77686-regulato=
+r.o
+>  obj-$(CONFIG_REGULATOR_MAX77693) +=3D max77693-regulator.o
+>  obj-$(CONFIG_REGULATOR_MAX77802) +=3D max77802-regulator.o
+>  obj-$(CONFIG_REGULATOR_MAX77826) +=3D max77826-regulator.o
+> +obj-$(CONFIG_REGULATOR_MAX77838) +=3D max77838-regulator.o
+>  obj-$(CONFIG_REGULATOR_MAX77857) +=3D max77857-regulator.o
+>  obj-$(CONFIG_REGULATOR_MC13783) +=3D mc13783-regulator.o
+>  obj-$(CONFIG_REGULATOR_MC13892) +=3D mc13892-regulator.o
+> diff --git a/drivers/regulator/max77838-regulator.c b/drivers/regulator/m=
+ax77838-regulator.c
+> new file mode 100644
+> index 000000000..9faddbfd2
+> --- /dev/null
+> +++ b/drivers/regulator/max77838-regulator.c
+> @@ -0,0 +1,221 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +//
+> +// regulator driver for Maxim MAX77838
+> +//
+> +// based on max77826-regulator.c
+> +//
+> +// Copyright (c) 2025, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/init.h>
+> +#include <linux/err.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regulator/driver.h>
+> +#include <linux/regulator/of_regulator.h>
+> +#include <linux/i2c.h>
+> +#include <linux/regmap.h>
+> +
+> +enum max77838_registers {
+> +	MAX77838_REG_DEVICE_ID =3D 0x00,
+> +	MAX77838_REG_TOPSYS_STAT,
+> +	MAX77838_REG_STAT,
+> +	MAX77838_REG_EN,
+> +	MAX77838_REG_GPIO_PD_CTRL,
+> +	MAX77838_REG_UVLO_CFG1,
+> +	/* 0x06 - 0x0B: reserved */
+> +	MAX77838_REG_I2C_CFG =3D 0x0C,
+> +	/* 0x0D - 0x0F: reserved */
+> +	MAX77838_REG_LDO1_CFG =3D 0x10,
+> +	MAX77838_REG_LDO2_CFG,
+> +	MAX77838_REG_LDO3_CFG,
+> +	MAX77838_REG_LDO4_CFG,
+> +	/* 0x14 - 0x1F: reserved */
+> +	MAX77838_REG_BUCK_CFG1 =3D 0x20,
+> +	MAX77838_REG_BUCK_VOUT,
+> +};
+> +
+> +enum max77838_regulators {
+> +	MAX77838_LDO1 =3D 0,
+> +	MAX77838_LDO2,
+> +	MAX77838_LDO3,
+> +	MAX77838_LDO4,
+> +	MAX77838_BUCK,
+> +	MAX77838_MAX_REGULATORS,
+> +};
+> +
+> +#define MAX77838_MASK_LDO		0x7f
+> +#define MAX77838_MASK_BUCK		0xff
+> +
+> +#define MAX77838_LDO1_EN		BIT(0)
+> +#define MAX77838_LDO2_EN		BIT(1)
+> +#define MAX77838_LDO3_EN		BIT(2)
+> +#define MAX77838_LDO4_EN		BIT(3)
+> +#define MAX77838_BUCK_EN		BIT(4)
+> +
+> +#define MAX77838_BUCK_AD		BIT(3)
+> +#define MAX77838_LDO_AD			BIT(7)
+> +
+> +#define MAX77838_LDO_VOLT_MIN		600000
+> +#define MAX77838_LDO_VOLT_MAX		3775000
+> +#define MAX77838_LDO_VOLT_STEP		25000
+> +
+> +#define MAX77838_BUCK_VOLT_MIN		500000
+> +#define MAX77838_BUCK_VOLT_MAX		2093750
+> +#define MAX77838_BUCK_VOLT_STEP		6250
+> +
+> +#define MAX77838_VOLT_RANGE(_type)				\
+> +	((MAX77838_ ## _type ## _VOLT_MAX -			\
+> +	  MAX77838_ ## _type ## _VOLT_MIN) /			\
+> +	  MAX77838_ ## _type ## _VOLT_STEP + 1)
+> +
+> +#define MAX77838_LDO(_id)							\
+> +	[MAX77838_LDO ## _id] =3D {						\
+> +		.id =3D MAX77838_LDO ## _id,					\
+> +		.name =3D "ldo"#_id,						\
+> +		.of_match =3D of_match_ptr("ldo"#_id),				\
+> +		.regulators_node =3D "regulators",				\
+> +		.ops =3D &max77838_regulator_ops,					\
+> +		.min_uV =3D MAX77838_LDO_VOLT_MIN,				\
+> +		.uV_step =3D MAX77838_LDO_VOLT_STEP,				\
+> +		.n_voltages =3D MAX77838_VOLT_RANGE(LDO),				\
+> +		.enable_reg =3D MAX77838_REG_EN,					\
+> +		.enable_mask =3D MAX77838_LDO ## _id ## _EN,			\
+> +		.vsel_reg =3D MAX77838_REG_LDO ## _id ## _CFG,			\
+> +		.vsel_mask =3D MAX77838_MASK_LDO,					\
+> +		.active_discharge_off =3D 0,					\
+> +		.active_discharge_on =3D MAX77838_LDO_AD,				\
+> +		.active_discharge_mask =3D MAX77838_LDO_AD,			\
+> +		.active_discharge_reg =3D MAX77838_REG_LDO ## _id ## _CFG,	\
+> +		.owner =3D THIS_MODULE,						\
+> +	}
+> +
+> +#define MAX77838_BUCK_DESC					\
+> +	[MAX77838_BUCK] =3D {					\
+> +		.id =3D MAX77838_BUCK,				\
+> +		.name =3D "buck",					\
+> +		.of_match =3D of_match_ptr("buck"),		\
+> +		.regulators_node =3D "regulators",		\
+> +		.ops =3D &max77838_regulator_ops,			\
+> +		.min_uV =3D MAX77838_BUCK_VOLT_MIN,		\
+> +		.uV_step =3D MAX77838_BUCK_VOLT_STEP,		\
+> +		.n_voltages =3D MAX77838_VOLT_RANGE(BUCK),	\
+> +		.enable_reg =3D MAX77838_REG_EN,			\
+> +		.enable_mask =3D MAX77838_BUCK_EN,		\
+> +		.vsel_reg =3D MAX77838_REG_BUCK_VOUT,		\
+> +		.vsel_mask =3D MAX77838_MASK_BUCK,		\
+> +		.active_discharge_off =3D 0,			\
+> +		.active_discharge_on =3D MAX77838_BUCK_AD,	\
+> +		.active_discharge_mask =3D MAX77838_BUCK_AD,	\
+> +		.active_discharge_reg =3D MAX77838_REG_BUCK_CFG1,	\
+> +		.owner =3D THIS_MODULE,				\
+> +	}
+> +
+
+nit: Could you make the indentation between VOLT_RANGE, LDO and
+BUCK_DESC consistent?
+
+> +struct max77838_regulator_info {
+> +	struct regmap *regmap;
+> +};
+> +
+> +static const struct regmap_config max77838_regmap_config =3D {
+> +	.reg_bits =3D 8,
+> +	.val_bits =3D 8,
+> +	.max_register =3D MAX77838_REG_BUCK_VOUT,
+> +};
+> +
+> +static const struct regulator_ops max77838_regulator_ops =3D {
+> +	.enable			=3D regulator_enable_regmap,
+> +	.disable		=3D regulator_disable_regmap,
+> +	.is_enabled		=3D regulator_is_enabled_regmap,
+> +	.list_voltage		=3D regulator_list_voltage_linear,
+> +	.map_voltage		=3D regulator_map_voltage_linear,
+> +	.get_voltage_sel	=3D regulator_get_voltage_sel_regmap,
+> +	.set_voltage_sel	=3D regulator_set_voltage_sel_regmap,
+> +	.set_active_discharge	=3D regulator_set_active_discharge_regmap,
+> +};
+> +
+> +static const struct regulator_desc max77838_regulators_desc[] =3D {
+> +	MAX77838_LDO(1),
+> +	MAX77838_LDO(2),
+> +	MAX77838_LDO(3),
+> +	MAX77838_LDO(4),
+> +	MAX77838_BUCK_DESC,
+> +};
+> +
+> +static int max77838_read_device_id(struct regmap *regmap, struct device =
+*dev)
+> +{
+> +	unsigned int device_id;
+> +	int ret;
+> +
+> +	ret =3D regmap_read(regmap, MAX77838_REG_DEVICE_ID, &device_id);
+> +	if (!ret)
+> +		dev_dbg(dev, "DEVICE_ID: 0x%x\n", device_id);
+> +
+> +	return ret;
+> +}
+> +
+> +static int max77838_i2c_probe(struct i2c_client *client)
+> +{
+> +	struct device *dev =3D &client->dev;
+> +	struct max77838_regulator_info *info;
+> +	struct regulator_config config =3D {};
+> +	struct regulator_dev *rdev;
+> +	struct regmap *regmap;
+> +	int i;
+> +
+> +	info =3D devm_kzalloc(dev, sizeof(struct max77838_regulator_info),
+> +			    GFP_KERNEL);
+> +	if (!info)
+> +		return -ENOMEM;
+> +
+> +	regmap =3D devm_regmap_init_i2c(client, &max77838_regmap_config);
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(dev, "Failed to allocate regmap!\n");
+> +		return PTR_ERR(regmap);
+> +	}
+> +
+> +	info->regmap =3D regmap;
+> +	i2c_set_clientdata(client, info);
+> +
+> +	config.dev =3D dev;
+> +	config.regmap =3D regmap;
+> +	config.driver_data =3D info;
+> +
+> +	for (i =3D 0; i < MAX77838_MAX_REGULATORS; i++) {
+> +		rdev =3D devm_regulator_register(dev,
+> +					       &max77838_regulators_desc[i],
+> +					       &config);
+> +		if (IS_ERR(rdev)) {
+> +			dev_err(dev, "Failed to register regulator!\n");
+> +			return PTR_ERR(rdev);
+> +		}
+> +	}
+> +
+> +	return max77838_read_device_id(regmap, dev);
+> +}
+> +
+> +static const struct of_device_id __maybe_unused max77838_of_match[] =3D =
+{
+> +	{ .compatible =3D "maxim,max77838" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, max77838_of_match);
+> +
+> +static const struct i2c_device_id max77838_id[] =3D {
+> +	{ "max77838-regulator" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(i2c, max77838_id);
+> +
+> +static struct i2c_driver max77838_regulator_driver =3D {
+> +	.driver =3D {
+> +		.name =3D "max77838",
+> +		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
+> +		.of_match_table =3D of_match_ptr(max77838_of_match),
+> +	},
+> +	.probe =3D max77838_i2c_probe,
+> +	.id_table =3D max77838_id,
+> +};
+> +module_i2c_driver(max77838_regulator_driver);
+> +
+> +MODULE_AUTHOR("Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>");
+> +MODULE_DESCRIPTION("MAX77838 PMIC regulator driver");
+> +MODULE_LICENSE("GPL");
+
+Kind regards,
+Igor
 
