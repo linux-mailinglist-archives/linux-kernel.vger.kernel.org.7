@@ -1,244 +1,143 @@
-Return-Path: <linux-kernel+bounces-815872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68846B56C27
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 22:24:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39EF9B56C28
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 22:28:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19B32178371
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:24:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7B75178CFC
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495962DAFA8;
-	Sun, 14 Sep 2025 20:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF1F92E2665;
+	Sun, 14 Sep 2025 20:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="18xK0+w4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q7Rhd/9S";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="18xK0+w4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q7Rhd/9S"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7A+ekkF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B631A38F9
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 20:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568151A38F9;
+	Sun, 14 Sep 2025 20:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757881463; cv=none; b=O0K8r0vqkxnKl8OAkQRQfrug1OK18d6rrhSd/Ut6IXx8/QCEfr3/SF+UhC+rnJFfWzkeYfaYSri+r7YeyQ4KjhJ23KncPlmgsTVAN6G2fdd6XQXdw7NQH5LExQuFW5rEhJzBM2RRHx0CDEYwCzSy6SO0/Hzu4MupUiZGpDPkWTI=
+	t=1757881680; cv=none; b=EKOsOEt33TWoEp+4wDnLrtgYKd5KuNszaubGUyRj+vYyXNqdIiMKsQUrUh2D2jDmgl78ei0Dp95bTm7b0bvBZ2+yaCZA5dzeqYLL+s0UP+vIiw2T4cdyjDDrO0QySKt9BU+FxJ9BQ5f9MWW9Yf6dVIBkvvRzR1FZgV7m67dRmzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757881463; c=relaxed/simple;
-	bh=2f+hX1F/qL3jbgRtjlkr7DY8AY6bayQ09p+QsGDGVJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MkAbHNgTfmVjtxwTGoeDxpMA/JifQYEh0Yyhyd6V9RpDBAXXX38S00GtxD0seQ+oECEL0S8STguATNm7V1NFyVRAgUPuWF6u/QbULPXFe9tbgQoMg/a9vmJwoyzL/8cVfXZGqggAmEjGlNTAGijpQYwrA3YjZOELsahj9jvOf0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=18xK0+w4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q7Rhd/9S; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=18xK0+w4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q7Rhd/9S; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 736911F769;
-	Sun, 14 Sep 2025 20:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757881459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/1RrKipMkrXfC/ghghu9BRVvYF8cwFoT1zHSSPQh0bk=;
-	b=18xK0+w4i+mY9aX74zo7Z263OgzVwvThg8K5pqiQ0i1ng84TiE1oetVCpxtV5AsrFkuMII
-	EViJ5T+sx3UPXHRLsWMFX7eopIvazH8VTjsg6j3eZauAV4+MZf1Ot6+5gg6DQcvFTkMGYp
-	kI4b//UlbSjMHEd12SZkqLOSC7ES9J0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757881459;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/1RrKipMkrXfC/ghghu9BRVvYF8cwFoT1zHSSPQh0bk=;
-	b=Q7Rhd/9SrlHt3186nF/+ljPxl5v45mJW810N8C0tA4Dx2Njwc4twuExFNcMEDfXiS/U9sR
-	epjW4PPBIfvHAUCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=18xK0+w4;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="Q7Rhd/9S"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1757881459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/1RrKipMkrXfC/ghghu9BRVvYF8cwFoT1zHSSPQh0bk=;
-	b=18xK0+w4i+mY9aX74zo7Z263OgzVwvThg8K5pqiQ0i1ng84TiE1oetVCpxtV5AsrFkuMII
-	EViJ5T+sx3UPXHRLsWMFX7eopIvazH8VTjsg6j3eZauAV4+MZf1Ot6+5gg6DQcvFTkMGYp
-	kI4b//UlbSjMHEd12SZkqLOSC7ES9J0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1757881459;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/1RrKipMkrXfC/ghghu9BRVvYF8cwFoT1zHSSPQh0bk=;
-	b=Q7Rhd/9SrlHt3186nF/+ljPxl5v45mJW810N8C0tA4Dx2Njwc4twuExFNcMEDfXiS/U9sR
-	epjW4PPBIfvHAUCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5906D13419;
-	Sun, 14 Sep 2025 20:24:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oEmRFHMkx2g6LwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Sun, 14 Sep 2025 20:24:19 +0000
-Message-ID: <bbdb72e1-ada9-44e2-9ec1-53fd6ed92e84@suse.cz>
-Date: Sun, 14 Sep 2025 22:24:19 +0200
+	s=arc-20240116; t=1757881680; c=relaxed/simple;
+	bh=D0n5ETJv3R8O+fczQgdPp8EqHieV5Ctrcdn9KrkWRvw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AKa/kEZHWOQ4oIZ+6WPY2ohgmqpE3uzkCXu1EwWjh1aOMaUlq0z+7Myx8B/qBMT1czTR9AY6JUBqSaCO94YUE9Dcy1p6H29CvI/VdOjci5UhULyPgACZ5fGKlHFAd5brbTyQqccquxsrfjj2r8xSDLJD5HhcB1w1qZOQ7Lppz7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7A+ekkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1D97C4CEF0;
+	Sun, 14 Sep 2025 20:27:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757881679;
+	bh=D0n5ETJv3R8O+fczQgdPp8EqHieV5Ctrcdn9KrkWRvw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I7A+ekkFx+MmNjmDBQ0/KTElBERoYXwPeRTCLw4lLb6/DXdWxSWu5bXicPO0Obz7T
+	 9sIYTiTC6Znl6EdSXH/w86jAyWRE0yDOpFNz21ofxAbWdNi7PAnl/qHgLqUURJqOLk
+	 G13O9a44Deh6CbSPRWdyQ2FOij1zVuCyBJ5RXuLdXC30lORs6vBSCOpY+pYcOetscs
+	 MvdlQMuDEpFAGmITJ50TbaxBOtXBM6VGpkJsA6hTP6NKxCZ0UKYYEpzF5Rnl1LBO/N
+	 Gk/tj7Rim9T3DwlvaI2GoPY3WmCIdP+lcmQYnU+xrUhXqHtZVJK/XH1EasFhRzZxk+
+	 D80BVzfZMPP7Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=lobster-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1uxtKH-00000006Ar2-1oaU;
+	Sun, 14 Sep 2025 20:27:57 +0000
+Date: Sun, 14 Sep 2025 21:27:57 +0100
+Message-ID: <878qigzsmq.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: Jinqian Yang <yangjinqian1@huawei.com>,
+	yuzenghui@huawei.com,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	liuyonglong@huawei.com,
+	wangzhou1@hisilicon.com
+Subject: Re: [PATCH v3 1/2] KVM: arm64: Make ID_AA64MMFR1_EL1.{HCX, TWED} writable from userspace
+In-Reply-To: <aMSV_tLO-W4VKYRX@linux.dev>
+References: <20250911114621.3724469-1-yangjinqian1@huawei.com>
+	<20250911114621.3724469-2-yangjinqian1@huawei.com>
+	<aMSV_tLO-W4VKYRX@linux.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/14] slab: add opt-in caching layer of percpu sheaves
-Content-Language: en-US
-To: Hillf Danton <hdanton@sina.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250723-slub-percpu-caches-v5-0-b792cd830f5d@suse.cz>
- <20250914022258.7062-1-hdanton@sina.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250914022258.7062-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_TO(0.00)[sina.com];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[sina.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 736911F769
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: oliver.upton@linux.dev, yangjinqian1@huawei.com, yuzenghui@huawei.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, liuyonglong@huawei.com, wangzhou1@hisilicon.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On 9/14/25 04:22, Hillf Danton wrote:
-> On Wed, 23 Jul 2025 15:34:34 +0200 Vlastimil Babka wrote:
->> +
->> +/*
->> + * Caller needs to make sure migration is disabled in order to fully flush
->> + * single cpu's sheaves
->> + *
-> This misguides, see below for a workqueue case.
+On Fri, 12 Sep 2025 22:51:58 +0100,
+Oliver Upton <oliver.upton@linux.dev> wrote:
 > 
->> + * must not be called from an irq
->> + *
->> + * flushing operations are rare so let's keep it simple and flush to slabs
->> + * directly, skipping the barn
->> + */
->> +static void pcs_flush_all(struct kmem_cache *s)
->> +{
->> +	struct slub_percpu_sheaves *pcs;
->> +	struct slab_sheaf *spare;
->> +
->> +	local_lock(&s->cpu_sheaves->lock);
->> +	pcs = this_cpu_ptr(s->cpu_sheaves);
->> +
->> +	spare = pcs->spare;
->> +	pcs->spare = NULL;
->> +
->> +	local_unlock(&s->cpu_sheaves->lock);
->> +
->> +	if (spare) {
->> +		sheaf_flush_unused(s, spare);
->> +		free_empty_sheaf(s, spare);
->> +	}
->> +
->> +	sheaf_flush_main(s);
->> +}
->> +
->> @@ -3326,30 +3755,18 @@ struct slub_flush_work {
->>  static void flush_cpu_slab(struct work_struct *w)
->>  {
->>  	struct kmem_cache *s;
->> -	struct kmem_cache_cpu *c;
->>  	struct slub_flush_work *sfw;
->>  
->>  	sfw = container_of(w, struct slub_flush_work, work);
->>  
->>  	s = sfw->s;
->> -	c = this_cpu_ptr(s->cpu_slab);
->>  
->> -	if (c->slab)
->> -		flush_slab(s, c);
->> +	if (s->cpu_sheaves)
->> +		pcs_flush_all(s);
->>  
-> Migration is not disabled.
+> Hi Jinqian,
+> 
+> On Thu, Sep 11, 2025 at 07:46:20PM +0800, Jinqian Yang wrote:
+> > Allow userspace to downgrade {HCX, TWED} in ID_AA64MMFR1_EL1. Userspace can
+> > only change the value from high to low.
+> > 
+> > Signed-off-by: Jinqian Yang <yangjinqian1@huawei.com>
+> > ---
+> >  arch/arm64/kvm/sys_regs.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> > index 82ffb3b3b3cf..db49beb8804e 100644
+> > --- a/arch/arm64/kvm/sys_regs.c
+> > +++ b/arch/arm64/kvm/sys_regs.c
+> > @@ -3002,8 +3002,6 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+> >  				      ~(ID_AA64MMFR0_EL1_RES0 |
+> >  					ID_AA64MMFR0_EL1_ASIDBITS)),
+> >  	ID_WRITABLE(ID_AA64MMFR1_EL1, ~(ID_AA64MMFR1_EL1_RES0 |
+> > -					ID_AA64MMFR1_EL1_HCX |
+> > -					ID_AA64MMFR1_EL1_TWED |
+> >  					ID_AA64MMFR1_EL1_XNX |
+> >  					ID_AA64MMFR1_EL1_VH |
+> >  					ID_AA64MMFR1_EL1_VMIDBits)),
+> 
+> I still have a bone to pick with Marc regarding the NV implications of
+> this :) Attaching conversation below. Although for non-nested this LGTM.
+> 
+> On Tue, Sep 09, 2025 at 11:10:28AM +0100, Marc Zyngier wrote:
+> > My concern here is the transitive implications of FEAT_HCX being
+> > disabled: a quick look shows about 20 features that depend on
+> > FEAT_HCX, and we don't really track this. I can probably generate the
+> > dependency graph, but that's not going to be small. Or very useful.
+> >
+> > However, we should be able to let FEAT_HCX being disabled without
+> > problem if the downgrading is limited to non-EL2 VMs. Same thing for
+> > FEAT_VHE.
+> >
+> > What do you think?
+> 
+> So I'm a bit worried about making fields sometimes-writable, it creates
+> a very confusing UAPI behavior. On top of that, our writable masks are
+> currently static.
+> 
+> What if we treat the entire register as RES0 in this case? It seems to
+> be consistent with all the underlying bits / features being NI. A
+> mis-described VM isn't long for this world anyway (e.g. FEAT_SCTLR2 && !FEAT_HCX)
+> and in that case I'd prefer an approach that keeps the KVM code as
+> simple as possible.
 
-Can you elaborate how it's not? There's a comment above the function saying
-"Called from CPU work handler with migration disabled." and we have relied
-on this before sheaves. queue_work_on() says it will run on the specific
-cpu. AFAIK the workqueue workers are bound which is effectively disabled
-migration (we hold the cpu hotplug lock).
+I've pushed out a branch implementing this[1], though it hasn't had
+much testing yet. I'll post it once I've convinced myself that this is
+sane enough.
 
->> -	put_partials(s);
->> +	flush_this_cpu_slab(s);
->>  }
+	M.
 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=kvm-arm64/el2-res0
+
+-- 
+Jazz isn't dead. It just smells funny.
 
