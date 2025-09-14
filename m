@@ -1,123 +1,204 @@
-Return-Path: <linux-kernel+bounces-815638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2166EB56947
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:22:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2F3B56961
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC34189C723
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:22:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D8773BEC73
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DBC221FAE;
-	Sun, 14 Sep 2025 13:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E1D1D9346;
+	Sun, 14 Sep 2025 13:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H6+UKgGD"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="kbax5zU5"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278081D9663
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E781373;
+	Sun, 14 Sep 2025 13:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757856129; cv=none; b=ZhLQtOoaMI+BdVW64W9CSB3vsH3Fc1Dm4W+iozZCF96jP2bHegvw0VrxJpY80KZ8W718irE13Gs+RXi1VXxCycfTwdw+LCabJ3O8vKD/7IQiQ8qfYNXKnoMxM5DnlEwa1JSWbhf4toklnTg0Wp6ksD9o0HjwIq2GJ1lEOiGxHnQ=
+	t=1757857017; cv=none; b=ifFiB0MEiR8+DTZDNfJlL5IIvsznfS7nmcJujUxTuqZlQVEhWv6p6W+0fzf0Ptro+XTOX2C2jWuq15yT3VBr5iMKoRnPq9nI/stc/pXgqE5t+n89Zg5Bo3V2Fcu6+MV1M89g6gt+UA6j2PQOs6xnNvXoiajD4vD2GEbnDo/4UEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757856129; c=relaxed/simple;
-	bh=D+jsMAX5sO7tM7JCwP4lIE5kV4IK9JY+U63ovtSevuw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bN5WtXzISa6Fr1ZfkGIUzB2d0DnwA5CPgyPCAaxY7ULSYooAAvwskfEd4PG/qqFJc3U/wugTDVxmdAO0fNobegyjYrdEQbbBXQgTCvdXatXZNzDv+I79xs1Yy14iRQTDzz6UEjD/EEuNaXy9V3QpGiEzk99AIZqAli2RK217zls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H6+UKgGD; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3df3be0e098so2001594f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:22:07 -0700 (PDT)
+	s=arc-20240116; t=1757857017; c=relaxed/simple;
+	bh=cep6ppNyfti/9r4QwBmFXdY7gr/J/HqDlQvs+irvF9o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=At+GqiM6NuaB/fHi4bPZ/QvBGy31kEDmGL/qpZxOLjTtLK9s/uLsOEwVwyc2gOyxOyW0thwvcpdpa0tqJqayATtYcbNPlSxtSkJND80IDtMUOVunNuMtMRVo6v3ABPNI0vU33y0gFw+j0ZjElNmm2O9C5KswatZExowRafmfH9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=kbax5zU5; arc=none smtp.client-ip=212.227.126.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757856126; x=1758460926; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gwU2jvcuEz7Zmi2rF3iYuLef34+LUaEBtsQc2TxOPc=;
-        b=H6+UKgGDXpBjQelfL2yrkcSgIbnVCS+reMOREteoSOhB3VOXmfwkqpmxu6Ie1x2Jlt
-         fig6llTKXCF8mTRU3fqhvxdLwgTkh1rhNwlHmAggvKNNZdI6MKIqh/9iA7ZPMIaNrvsu
-         6X0nQAmqwhGAG/H+jFULf5xVHCzmjRnC5aeXCaY1R51sQp4ojphTqJKVOdqwWozY1mdb
-         8J3kflnotSEtcUFJfqyFKOvh9AMj5mXB4tSsMPUzZE/OEmI+XrshBMF2B1lls6hZ0vvT
-         9FZezbDrWkETuSQnUS4rghdibCXtvvSQj/0i7zSXgljhX/ZVIJHAv+CeWge7mhhScu5E
-         fYUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757856126; x=1758460926;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0gwU2jvcuEz7Zmi2rF3iYuLef34+LUaEBtsQc2TxOPc=;
-        b=gYnnGWYLsXW1Yb7UoJIuUkLtF4JUughhnlEZ5gyHtIKim4rW0ysm8Ro2cjMuw+He3e
-         XTK92UOPd3396I21Mf0Qzs+9jm3p7OD7/MlPjYg6gM7W00Cf3djgJHOntKfv4NkXWHNl
-         sfPfSvv8S0pIUpCPKXz/JjAVY6PJjNAJ+ex69gjOrsmKCxxumyzfR6W8jwC4HZQYw0Vm
-         B8HNWU3LqYOun1Y5SpdOKRTPnB4tbSTOo96MGovunuEFDe8GRsqhRUJLV7tok2GSu5Wy
-         UmI64bnz6ZkQFKzldeaB6mPhW/neGBcFWZNIgLrW3kgr5V2S7Kw9Nn+u8TMpCwWNC2CP
-         U5Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+z/eP5iDiqXZ6ji1uwWB8IllX15NGrLY2DTqygpwVCCcwd2XW6PTw6KNZF6YaPd/B0Kif7QGfWlMzBeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzEC0yD2hlBr1ZIYLvKTQIfbyzaSxbVCTN8a080PdNnhUgLAcc
-	cJEY+PiVOIe8Dfwe3xER5C8m0POEPAB0E7PDbo9F6YB1Xa+bXLwfDesz
-X-Gm-Gg: ASbGncvX7WNfGsVdoQj89mvdU+nDX533nwdcgD8R+LyRRxmk6LJGJhMIL2tqmCTrnKu
-	i93+0mkVMflFYDTzcafoBGUON37FVubu5FiN1MZxffhpaTawXGAJN2isW3U1NtrtIE21BNUjO4u
-	CZd0eosSGPRLjSjZK/lbySpi0eltKc8ZfIRXTpqRBdbmfTZlaFcDFEIfEPxweTGtwRKx+IjsKqg
-	yk/6S9yEStnb1rVJh/wlaznoMXah7zZhLdZN7SreLNNiZjBn1ELWig3BAQh9barXJG7o8Zn0MQA
-	W31CnxzxqFT+oQOglTU2zzEf2aQavVlY+Dzk2vE/qq5BVn+mr9tzPD+kse/lXu+tIqKSL/5UVl0
-	WZD8b/Ao6zfZBGKAwSLdZyQr8e67mrtfR7LL2bqtN/xs4HbhE7JOEmTrnzZl+lyz1+RJZqJ/GFa
-	9PI5mSt/N/
-X-Google-Smtp-Source: AGHT+IE7WXHLfVH2u4+DSdlsFQ3ngfdBOj6lQTdYHkhX00KlElTNErFlDHZmemjLFy+aNAvICL1RWA==
-X-Received: by 2002:a5d:5f42:0:b0:3e8:68:3a91 with SMTP id ffacd0b85a97d-3e800683aeemr6491401f8f.60.1757856126372;
-        Sun, 14 Sep 2025 06:22:06 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3e80da7f335sm7274707f8f.8.2025.09.14.06.22.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 06:22:06 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: serial: samsung: add samsung,exynos8890-uart compatible
-Date: Sun, 14 Sep 2025 16:22:01 +0300
-Message-ID: <20250914132201.2622955-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	d=oldschoolsolutions.biz; s=s1-ionos; t=1757857008; x=1758461808;
+	i=jens.glathe@oldschoolsolutions.biz;
+	bh=V8HxM2RBb75N6iacViKzD4Nxie/izh1GFeazB7D2ppE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=kbax5zU5LqABuLZt03VT+ySbK1mQvG3LrZTCQ2sJIXzXKuoZX1H1clAS//yeQ4S9
+	 WSpdgHbv7UNBUdKYsgW31jwDDgHXHXe7eUMoTjGfvoILQvP9qQLp4MjqJIk4twGkZ
+	 RZfQK8GIQFyQtT/h1tQqsaenJMg5faRbBwt4JVgmCmZWlYrT2ac0HctqH9m4x8VTe
+	 BoVci/kyheNbmRkQkLt4GdFFzIMMlMa9vTQiojZT5AtkJFifo6IegRBhCsGXAw0SG
+	 AxVPYQn9g9ME5GxLdRsf/494A3pSOm9xQNCbLGAXMkCtEQr6ogTS6Ipm1rphEO4NA
+	 pVEp3KlBz8qgmkxHtw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from [192.168.0.174] ([80.128.171.52]) by mrelayeu.kundenserver.de
+ (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MDhQt-1v5FTK09Sx-00G2pY; Sun, 14 Sep 2025 15:23:05 +0200
+Message-ID: <cdd2ac5e-d02e-4dc8-a4b4-06baad5679e9@oldschoolsolutions.biz>
+Date: Sun, 14 Sep 2025 15:23:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH v8 2/3] arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook X14
+ device tree structure
+To: Stephan Gerhold <stephan.gerhold@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250909-hp-x14-x1p-v8-0-8082ab069911@oldschoolsolutions.biz>
+ <20250909-hp-x14-x1p-v8-2-8082ab069911@oldschoolsolutions.biz>
+ <aMbBOgNc-382vwMY@linaro.org>
+Content-Language: en-US
+From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+In-Reply-To: <aMbBOgNc-382vwMY@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YlzvjqDmjC5WJzo6NtUJb3yJu7LsgeM7OwrNS2wGl2kVA6o6jy3
+ yvnT151gq24mTZT8i6GlAx+if51YocJrluBfiBimQdpik4RFz0YFN/vX0YeBDv3sLTRzXPj
+ zUUfxY6JG69hWnt8cFhmxcGIe4wucwRXr4jJR1tNMioqgH9HhnN3u9MHITbY21k5xFiyzVI
+ hroISMkqd92AeoBiCfYLA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:4IE65x+rPqU=;EMuMqg+XNeGuitKc4A6yssdqF+o
+ dQLf/DABj7rgwQmUFIqsdOzT+5At72uSn3RAN5aLfjUYarLXojMpfHyQCab/67lE4uH73BmhJ
+ FYnoFLBqwoSoHUTYkDHifI3mW6RNTHn3RLzZhbjrpsDCwB8E4t0D8PXPCzo3QABAyu6NZHJLr
+ vQxNNWLlojGRPN6ABI7ESVrxuIXNp3mb4Akubw0wl6JtnBZr1T2qQQzROlfQ8LqIISHcCwLSX
+ RaNSwedOAvzUhOfnJBIKT9HzAyJdyoxn7MWnm9cITv69TmtyZ6+ts1RRjaaqE0NsUyL32Ys8b
+ ERtaItCDMPMvFXpPbGF/Si0yR1HgbdYaUtGMFh1U4qzF6bQzoOJDbswnhVil4eAgTwXhS0wUv
+ JaWtO4KJctbmkQYM3tsVQRr8fM33WYUMX/DESwufXFvmwykisnVdSjZ57xEuh+lndCfmnIybp
+ EwdqdPZZAW+SurCIzYx37yUDd6Z/iXf5SucCh5r3UY902yVBoFWgPq6ut06b0M18G1jk7dYaw
+ IfMz0XMl7Sql2a/ZEyaaiognxDRsijazECEDi+M66ntuSeeZSOTKHVcSWoKrsM/doCzndr2hL
+ TC7rf4xumsz8KIug782rgp4CAoH8JdwwdOIX8b/TCOtA2uUnbweGjuh2YwHlYZ32V/PZlw0kT
+ j9hGaQ4YLmeG7ckOZo4PWIPRK0dk6s0AvtAQ6UWfT3Ei5fXrmJrIcEq6sf/RPEczqu77Fo8/A
+ +CSk03uep7/IqQKPFFgStqfeXYJEUtriIGoMZJBemNuEgqZQj4Txm3q46u7n1n1G2Q873yiDB
+ fXYveURNlcSfUI/AJp3n6dUhraIvSUq4yORk/CC6ObgNG3MlhLsMckZT5pmpW3mRcgyZCfTpf
+ I+9SlSrXbBqQjHxv0B6G/GZ9cc/F9EWxRJ7+iDWnFIpCovG5oMTsUEkS45t1FsUiDUeo0i90e
+ MYbJwR+5ruSH4aJxLuHMtPTn2A8S+2KyHm6cpizN4TGqIfi9YnGmZgYEG/XP4t4ivABYnoOde
+ lW623Xqu1Zovi9WDx7spdeMMCCEwC176GJDC74hfPd+s628gxS7p6Nk8KT0fnfX87emae5u2v
+ b4CP7R0WI6lobBcI3isbggMblOF5HFAXFp6NitFk6lFPreEicBVxnAHFs+9g2bXiZPOI9P2Fe
+ jpjLRmvaoDKaXJgmXy3IdZXlUjCYGv7Ivpj4D2Co5TceDLs10EH0aEBv9R3CzgRETIMMdEs7R
+ NSRBwf9/6rUAGcgX/AJGywqO/gf+U4JKSCwlFPHVuSSH5GgQC5KpQ/y7Qp6RTe0VPbZ1zsMGM
+ FDuy8NIIkwrme4IP/8AfRzbozbLf9LSI4nZnMYvJpKcbJCp5/W0w/wOv+cs8XHcZ8iTZy7D3N
+ tlDVBSTVw3UVF1CSkmSFyAQsVzeIFT0pZfvXxJLSjdXF5BT93ydQpc2uvl0csrBRYkVjD9GtO
+ z2F/81PkRf3jNFUlGdna9iRYctZ34XWgQLy5pTbR0raFIinHm+kQhdcNPslWbeCWR8osQC6im
+ 6F0FUgsgNg1b561q2H+HDng5cFnDOXmCVKYo5Z+ed+6hlQyeTYlvA7S1dpBFVztrHw416Kw+K
+ 1k6OdbNN5LGjOi6QT7xAis56ROmT9+EuypjUAnjx73fY2lBobXF1CchN1XJRXaQByFjjEBLJX
+ N5hjCdt5h86Au0KUMIqDmTocEt1/s7dn+bx9esP6EUQv74+e4jBXSvESDb0wlpZZJZb1MgJ1E
+ i1JErCOP31Sl5EFaon8PZSyIKWUt7314Dzw==
 
-Add dedicated samsung,exynos8890-uart compatible to the dt-schema for
-representing uart of the exynos8890.
+On 14.09.25 15:20, Stephan Gerhold wrote:
+> On Tue, Sep 09, 2025 at 07:02:34PM +0200, Jens Glathe via B4 Relay wrote=
+:
+>> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>>
+>> Extract common elements into a shared .dtsi file for HP Omnibook X14 to
+>> support both Hamoa (x1e*/x1p6*) and Purwa (x1p4*/x1*) variants.
+>> Required because the device trees are not compatible.
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+>> ---
+>>   ...hp-omnibook-x14.dts =3D> x1-hp-omnibook-x14.dtsi} |   48 +-
+>>   .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1606 +----------=
+=2D--------
+>>   2 files changed, 48 insertions(+), 1606 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts b/ar=
+ch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
+>> similarity index 97%
+>> copy from arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+>> copy to arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
+>> index 716205b437df55489cfb7d29846cdaf8e403cf72..e6851dbaba121029bde9263=
+10616169e319cf5e3 100644
+>> --- a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+>> +++ b/arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
+>> [...]
+>> @@ -1028,6 +1015,7 @@ &mdss_dp0 {
+>>   };
+>>  =20
+>>   &mdss_dp0_out {
+>> +	data-lanes =3D <0 1>;
+>>   	link-frequencies =3D /bits/ 64 <1620000000 2700000000 5400000000 810=
+0000000>;
+>>   };
+>>  =20
+>> @@ -1036,15 +1024,13 @@ &mdss_dp1 {
+>>   };
+>>  =20
+>>   &mdss_dp1_out {
+>> +	data-lanes =3D <0 1>;
+>>   	link-frequencies =3D /bits/ 64 <1620000000 2700000000 5400000000 810=
+0000000>;
+>>   };
+>>  =20
+>>   &mdss_dp3 {
+>>   	/delete-property/ #sound-dai-cells;
+>>  =20
+>> -	pinctrl-0 =3D <&edp0_hpd_default>;
+>> -	pinctrl-names =3D "default";
+>> -
+>>   	status =3D "okay";
+>>  =20
+>>   	aux-bus {
+>> @@ -1061,13 +1047,19 @@ edp_panel_in: endpoint {
+>>   			};
+>>   		};
+>>   	};
+>> -};
+>>  =20
+>> -&mdss_dp3_out {
+>> -	data-lanes =3D <0 1 2 3>;
+>> -	link-frequencies =3D /bits/ 64 <1620000000 2700000000 5400000000 8100=
+000000>;
+>> +	ports {
+>> +		port@1 {
+>> +			reg =3D <1>;
+>> +
+>> +			mdss_dp3_out: endpoint {
+>> +				data-lanes =3D <0 1 2 3>;
+>> +				link-frequencies =3D /bits/ 64 <1620000000 2700000000 5400000000 8=
+100000000>;
+>>  =20
+>> -	remote-endpoint =3D <&edp_panel_in>;
+>> +				remote-endpoint =3D <&edp_panel_in>;
+>> +			};
+>> +		};
+>> +	};
+>>   };
+>>  =20
+>>   &mdss_dp3_phy {
+> Please review the resulting diff carefully when you rebase changes with
+> conflicts. You're reverting other changes (4 lane DP, eDP HPD pinctrl)
+> here. :-)
 
-Like exynos8895, it has a required DT property samsung,uart-fifosize,
-so reuse support for it.
+oof wow thanks for the hint. Will redo.
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- Documentation/devicetree/bindings/serial/samsung_uart.yaml | 1 +
- 1 file changed, 1 insertion(+)
+with best regards
 
-diff --git a/Documentation/devicetree/bindings/serial/samsung_uart.yaml b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-index 1a1f991d5..6ebe8a869 100644
---- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-+++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-@@ -49,6 +49,7 @@ properties:
-       - items:
-           - enum:
-               - samsung,exynos7870-uart
-+              - samsung,exynos8890-uart
-           - const: samsung,exynos8895-uart
- 
-   reg:
--- 
-2.43.0
+Jens
+
 
 
