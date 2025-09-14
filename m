@@ -1,116 +1,111 @@
-Return-Path: <linux-kernel+bounces-815679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 820BFB569C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:27:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAC6B569C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 435A3179033
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:27:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003733BD2F7
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1DF21423C;
-	Sun, 14 Sep 2025 14:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fF/26pSt"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA591F5435;
+	Sun, 14 Sep 2025 14:38:04 +0000 (UTC)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4781E47B3;
-	Sun, 14 Sep 2025 14:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72ABD198851
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 14:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757860036; cv=none; b=g614fhLQ2Rs8X6hxrwgTVZ7Vu5SzfkyUIByN9/VLUN/7jvzO7aNGOdByp2eLP5uFjnjSkPnVxQ98OzU0m8EJqhRGIHPe3kfJNXzXqdsCc8Dao5D9BQX7rSVf/Z4M6JBueEXn/aYgpBqMIFB/jtUSH6j8zO1x6qSSw6Qz7oasMuw=
+	t=1757860684; cv=none; b=IwonVCP/wIFQMERXHicWLdKHzUkN7AA5CII1wkOWcgJynfMu7abpln4GGT+M9wq4L55UjUfm0qMmf8TU3n//FetEyI5J/5sZ8O1EqbqD97zKz4KDPXF/FHdfLWza7TyuhQDXuFSdLuu51dC2jthVWF8k+nbJza9tmzgOJ8AITls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757860036; c=relaxed/simple;
-	bh=l9i1JOoE9xct7TAw7yGRuCGe7oON0LrN12HBv4aua6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bEQCO5Ubwk07KNR+liJNpfyrz32A7DsQCTshmisihKzZtf+S6E7FuXrDpE9UEVOhcKoItggadTXLX0eIDkNYlXPioxdkXUr6POMgrov0/AGhFf3W+S0RlIei+ZqBAk/bnHz7aQcNXCmpUWzleb4KfE0U+gJllZQOY0WX3lyfChc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fF/26pSt; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=an9Yth3zuqwupnWSHxyQHPNMhHnRBJyE4Xw/D6M144A=; b=fF/26pStELSIaGPcAH6ff7U6dr
-	L1qbzoep8I4H4LOyTOr4NFtZCf8zQqVMHii8T2GKxQrmrARzobsesSnyZT2BaTOAxq3Vsde3knI2A
-	GLNjO6WhwwG+Xskn5DhtUht1TEQg+mY0+EfUOGsAb3mBr/0hrlmsMK0rtE7sE7nuCzew=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uxngk-008LrZ-1F; Sun, 14 Sep 2025 16:26:46 +0200
-Date: Sun, 14 Sep 2025 16:26:46 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Vivian Wang <wangruikang@iscas.ac.cn>
-Cc: Vivian Wang <uwu@dram.page>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Junhui Liu <junhui.liu@pigmoral.tech>,
-	Simon Horman <horms@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	s=arc-20240116; t=1757860684; c=relaxed/simple;
+	bh=dgsEsdam5JGmqWJk49+ad+hsFPUkC4nyvv4QvY6fmqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vz0SrP+x2VEN5xVmc4lTzPUAnvnw+Cteq3H0cdK4O5+k5aSViuILoiH8nh4HxiM4K8w8+P9yQuR9WAO0oITTgQP3PvPSvTegvFkHl2qtc2x+7Hw83m09qK5HWGt8eLCdhxll1f7bk48dnJtAuLt2iwZJHJzB5hj+plXdhXwwus4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso2086120a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 07:38:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757860682; x=1758465482;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RmvHTqHdaE7BmVovCvT1+fW6WEaXEbDVIul7sfnvtOY=;
+        b=GOSMtFey+6chYrFwTb0pffUXjDiDLQhiq0tgrn11dp/x36T3sRyzAolMOApm8OQ7L3
+         MRv+2mMX+R8vIxPHnqS7Z9XW8i9XrqSwcDzEh+KdbPNwiNq2tV1+H/tinGGoOXElTnC2
+         MFf2LqQFhcvSvRCqgZN5h6TyKlYT1SX5bdHy82IoJCmTL1+8MISjSlifDTXBMRdnxO4V
+         goEZLvW1dyY/gm6aHY9Qky0cLfWJ+XN8lRVVeE4gjPVwf3fDVCLAciMDnUcF1owqVNju
+         vBe5x0QtKbVfcxQjjZLvopjMeL0xX63JRKJSah0jjt/MIMvVFrC4UuGVldkJr8Jsg82O
+         6UiA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQsuqB3QNQLb+yB2QakNIckNj3H1QB+YqYasa4EMlOTvNjnabWkmg3LrDqSpgNYQeNCrJazWQzQzmlnhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfBxNa4vo05BnsRmuWc0QtaLLVpsIT2tMauPix7gIe2UNSuiD8
+	godBY9H/tgAHwsPaolKx/ksMnlyJQxfaIWQP9OQL7MrG2n+Qy5EmzESO
+X-Gm-Gg: ASbGncsUPRa8QtrKxaAmWurM7J3VMnrXtD5U8TofGyuTQZrIdnupmiQVB9RPNpKTCHA
+	O0TeH65SRPQTI9EYBvmoBhTVHLbqYwR9I4F2NUVadj7gX1H83PaXvJAuIoTTLNkjSbvIg+dnRNB
+	33fPL5N117vhMETtwJcpbudXUKhrYwmomrLG4XIjwVMME2vXsqPYpisvnd8QQqjBNcsLOWo2lKa
+	tOlB2MQ7VCX0c+evpO9RruqB+LLUciHqPoF66l+C3OcV3TVdCteDyzpQrCmEFPl70kFWCNRqhJj
+	PaQdmzuvuky3GaooZDe8yFLUQP2y88MvZqptBZiil5kvk0PH9x+mAEDU2GomnL4IX4NQs/GvchB
+	+TvOuMMhB+iySC5/w4qjqLWikZaj8IE7R
+X-Google-Smtp-Source: AGHT+IEgy5aUMGrcJq0MScnJLtTMl7Y1Ye9tOVXxymZvMtyMYqBE1aPfDaPaJfRGuGgTJYfRp2tS2w==
+X-Received: by 2002:a17:902:e78f:b0:25c:8005:3efb with SMTP id d9443c01a7336-25d2703b924mr119351345ad.54.1757860681783;
+        Sun, 14 Sep 2025 07:38:01 -0700 (PDT)
+Received: from localhost.localdomain ([2a11:3:200::10b2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3b0219f9sm102571545ad.123.2025.09.14.07.37.53
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 14 Sep 2025 07:38:01 -0700 (PDT)
+From: Lance Yang <lance.yang@linux.dev>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com
+Cc: ziy@nvidia.com,
+	baolin.wang@linux.alibaba.com,
+	Liam.Howlett@oracle.com,
+	npache@redhat.com,
+	ryan.roberts@arm.com,
+	dev.jain@arm.com,
+	baohua@kernel.org,
+	ioworker0@gmail.com,
 	linux-kernel@vger.kernel.org,
-	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Subject: Re: [PATCH net-next v12 4/5] riscv: dts: spacemit: Add Ethernet
- support for BPI-F3
-Message-ID: <6ace8fca-21db-40f1-b44d-28e4a1d3d2da@lunn.ch>
-References: <20250914-net-k1-emac-v12-0-65b31b398f44@iscas.ac.cn>
- <20250914-net-k1-emac-v12-4-65b31b398f44@iscas.ac.cn>
- <007c08ab-b432-463f-abd8-215371e117c4@iscas.ac.cn>
+	linux-mm@kvack.org
+Subject: [PATCH mm-new 0/3] mm/khugepaged: optimize collapse candidate detection
+Date: Sun, 14 Sep 2025 22:35:44 +0800
+Message-ID: <20250914143547.27687-1-lance.yang@linux.dev>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <007c08ab-b432-463f-abd8-215371e117c4@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Sep 14, 2025 at 12:31:04PM +0800, Vivian Wang wrote:
-> On 9/14/25 12:23, Vivian Wang wrote:
-> > Banana Pi BPI-F3 uses an RGMII PHY for each port and uses GPIO for PHY
-> > reset.
-> >
-> > Tested-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-> > Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
-> > Reviewed-by: Yixun Lan <dlan@gentoo.org>
-> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> > ---
-> >  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 48 +++++++++++++++++++++++++
-> >  1 file changed, 48 insertions(+)
-> >
-> > diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > index fe22c747c5012fe56d42ac8a7efdbbdb694f31b6..33e223cefd4bd3a12fae176ac6cddd8276cb53dc 100644
-> > --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> > @@ -11,6 +11,8 @@ / {
-> >  	compatible = "bananapi,bpi-f3", "spacemit,k1";
-> >  
-> >  	aliases {
-> > +		ethernet0 = &eth0;
-> > +		ethernet1 = &eth1;
-> 
-> Hi Andrew,
-> 
-> I added these two aliases in v12, but kept your Reviewed-by for v11
-> because this is fairly trivial. Same for patch 5.
-> 
-> Is this okay?
+Hi all,
 
-Yes, this is fine.
+This series contains a couple of small optimizations for the scanner. The
+idea is to detect unsuitable collapse candidates, like mlocked VMAs or
+guard PTEs, earlier in the scan and bail out to avoid wasted work ;)
 
-	Andrew
+Thanks,
+Lance
+
+Lance Yang (3):
+  mm/khugepaged: skip unsuitable VMAs earlier in
+    khugepaged_scan_mm_slot()
+  mm: clean up and expose is_guard_pte_marker()
+  mm/khugepaged: abort collapse scan on guard PTEs
+
+ include/linux/mm.h      |  6 +++++-
+ include/linux/swapops.h |  6 ++++++
+ mm/huge_memory.c        |  2 +-
+ mm/khugepaged.c         | 26 +++++++++++++++++++++++++-
+ mm/madvise.c            |  6 ------
+ 5 files changed, 37 insertions(+), 9 deletions(-)
+
+-- 
+2.49.0
+
 
