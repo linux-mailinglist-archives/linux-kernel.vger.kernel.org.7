@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-815687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B42EB569D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:49:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C20F1B569DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4321189E60C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79A9717A806
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36B2254855;
-	Sun, 14 Sep 2025 14:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0584D2586CE;
+	Sun, 14 Sep 2025 14:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i1aSqGOu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="C+mmaTMw"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4811DED4C;
-	Sun, 14 Sep 2025 14:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDF92522B5
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757861334; cv=none; b=WMxpVRePm6bafsoWbWuwFdwyzO4Q5+iT4vQCPUQU3m0s7oN1ve9H6csdDpze2Jqqe4nxrKTPV3YgRDDPjClLErOOEPxGclffNlnuMj/oEleX25xJPRNoNXUDI0GGrO4VzIl3OWj7UgiMZQUd6YekLZvUHSmaS2KK+MMAvZJasrs=
+	t=1757861683; cv=none; b=huiKks8oB/3PdJXeQELCer0ldzNuzMutKzITGgsr2WH4xFO/jd9wnBemeVx8r6voPvMj0ad/KWW1JFQXBrmqi6HnOrmA0pKYsryjtz7jeMQFH8hb4sFyHx+yw9l/JULiZ7DMaoPyQQquCzwc+RvMcyY54+nkR92tgGzA5mdRo74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757861334; c=relaxed/simple;
-	bh=A3DqbfH85ApdUqc/nT+yRXDnl6a/OnG+Mb5W9g2EwxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cguaAIVo0qfJSwKNXuGd9+QoXT9of2VoffpNCaV0GCtajyQRHOI6TwUZTeGA0iUgexDXXOqmZgch5NWGrppFNmiuDS35ktKB9Ym9JIRFy2bxYy7QPiprVPPDLGPiC5MUYKXXeBM9gwRwzl4WaxYETq9UU+wDyaP+oI/8qh/syME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i1aSqGOu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C45FC4CEF0;
-	Sun, 14 Sep 2025 14:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757861333;
-	bh=A3DqbfH85ApdUqc/nT+yRXDnl6a/OnG+Mb5W9g2EwxA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i1aSqGOuMC2YFjPEJq4xyWkuu8CN3bOluKHH1KaNf9D59w46Klb2K0VQmu5eXAkee
-	 n0usC8ZGUZ54Pi7URhkLrS+Nqm/NLdoyEh06DTUDSYN212EdzboStxeR/chr6UWTqn
-	 syvrehWZFWkG4gMgoZp6VRXnYOlMBiKXux5WBTqct8kTHviUYl1461Ifrd1CUbOGSw
-	 /TqIixq4Gn2Q8nXgpnqw9Htr/W9XnJzgswDKHYtYYC3tFjBMdTiPIOeNEmkipfDHB/
-	 Nh04bcUFlNAk82nCgHgzeARGjsYTNd7G/2fHwIoXrw+h3h4qOJH4kYpWvlbwUNO7Yz
-	 +N7bcgmM37Bfw==
-Message-ID: <716da762-3aa8-4c39-b9fe-8e923b20a0d5@kernel.org>
-Date: Sun, 14 Sep 2025 16:48:49 +0200
+	s=arc-20240116; t=1757861683; c=relaxed/simple;
+	bh=9DkDs73cZykCmkmg3df0Vd7zFxbD5eZBfhpDkbzHxAE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GnxBjCho5GAywjEjwj1JcFs+DCRGXgCR6q3iaN+6PbcupBo85BuHdza/qs/v1y9+Qre9TsLoqAc+/g3jFikJ+v+jceMF0sCkM9gMQHOzscf1HfOkjAAZ5j2m9U7a0ni+2zrt7FOUTaiilvQ/XeSKKOFMYErX8NwxItEfthfamyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=C+mmaTMw; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=C+mmaTMwjnogU5w2g633397v2KlZAuXWdNLGk/OIvLZ0ImFKhCkwQgWzUK6BPcw0Ho9KGvfWvL2b0cWRVveI7CRtZoVNfCDWhTuGeW1fEPNU6eCtdyUrYBVAf4KopmagI3A+Y61LQeNnskIRZ98LG+T2Kbo+PkTfgXQPJUGuWvS4u7WXgcrH3ydUMKe7rTCfxSiyVfhuM84d+8SWCH1c966Wxd/72iFVMa0gtUpNRTXtsEWe4wQFXkf6M1xxjtGZKahCQAjHIQmWtzNADTotuWyeP1PGiJq/eTXN5L5FvVixyY7qshBSuyAa6LlTpuxEmpXwfpF3CvATGSSf1mkNkw==; s=purelymail3; d=purelymail.com; v=1; bh=9DkDs73cZykCmkmg3df0Vd7zFxbD5eZBfhpDkbzHxAE=; h=Feedback-ID:Received:From:Subject:Date:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -1880024390;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Sun, 14 Sep 2025 14:54:29 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Subject: [PATCH v2 0/4] Add support for mt6878 pinctrl
+Date: Sun, 14 Sep 2025 16:51:58 +0200
+Message-Id: <20250914-mt6878-pinctrl-support-v2-0-254731aa3fc2@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] dt-bindings: input: add ST-Microelectronics
- FTS2BA61Y touchscreen binding
-To: =?UTF-8?Q?Eric_Gon=C3=A7alves?= <ghatto404@gmail.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Henrik Rydberg <rydberg@bitmath.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- linux-input@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250911211910.45903-1-ghatto404@gmail.com>
- <20250911211910.45903-2-ghatto404@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250911211910.45903-2-ghatto404@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAI7WxmgC/4WNQQ6CMBBFr0K6dkyLKNWV9zAsCgwwSWmbaSUSw
+ t2tXMDle8l/fxMRmTCKR7EJxoUieZehPBWim4wbEajPLEpZXuVdapjTTdcaArkusYX4DsFzAqN
+ 6pWpVSRxakceBcaDPEX41mSeKyfN6/CzqZ/8mFwUSLkNb606btkL9nNElY+0ajcPZkLPkkOPZ8
+ yiafd+/CP+FMs0AAAA=
+X-Change-ID: 20250908-mt6878-pinctrl-support-a1d117140efb
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sean Wang <sean.wang@kernel.org>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1757861668; l=1670;
+ i=igor.belwon@mentallysanemainliners.org; s=20250908;
+ h=from:subject:message-id; bh=9DkDs73cZykCmkmg3df0Vd7zFxbD5eZBfhpDkbzHxAE=;
+ b=KUK37uPMFx1/1uBIfny5ukgD3ZcYfWwEoKjIjy9Qm4d26LSJfkA+EiPjTOLjqjHGVFCRUwNWA
+ qGnY10D1OmeDdSXKmMFXqJi5u11RgnRiERGGA4+1flfnzR/o0bqSomg
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=t9Kz6B3jEwJD7YAKcp8XftfEz7SUSlGbrsfFlbrrFwA=
 
-On 11/09/2025 23:19, Eric Gonçalves wrote:
-> Add the bindings for ST-Microelectronics FTS2BA61Y capacitive touchscreen.
+Hi all,
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+This patchset adds support for the pin controller found in the MediaTek
+MT6878 SoC. This SoC has 9 pinctrl groups, and 4 EINT controller
+instances.
 
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+This SoC also uses the new "eh" bit for controlling i2c driving, support
+for which is also added here.
 
-> 
-> Signed-off-by: Eric Gonçalves <ghatto404@gmail.com>
+Changes in V2:
+- (Krzysztof) Move over the pinfunc macro header to dts directory
+- (Angelo) Drop useless eh bit commit
+- (Angelo) Fix s-o-b on debounce times
+- (Angelo) Massively simplify pinctrl driver, use PIN_FIELD macro,
+  change eh to drv_adv
 
+Kind regards,
+Igor
 
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+Igor Belwon (4):
+      dt-bindings: pinctrl: mediatek: Document MT6878 pin controller bindings
+      pinctrl: mediatek: Add debounce times for MT6878
+      pinctrl: mediatek: Add support for MT6878 pinctrl
+      arm64: dts: mediatek: Add MT6878 pinmux macro header file
 
-> +
-> +properties:
-> +  compatible:
-> +    const: st,fts2ba61y
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  avdd-supply: true
-> +  vdd-supply: true
-> +
-> +unevaluatedProperties: false
-
-This goes after required: field.
-
-Other than that - why isn't this finished (non RFC)? Code looks ok, but
-I also did not look that thorough.
+ .../bindings/pinctrl/mediatek,mt6878-pinctrl.yaml  |  210 ++
+ arch/arm64/boot/dts/mediatek/mt6878-pinfunc.h      | 1201 +++++++++++
+ drivers/pinctrl/mediatek/Kconfig                   |   10 +
+ drivers/pinctrl/mediatek/Makefile                  |    1 +
+ drivers/pinctrl/mediatek/mtk-eint.c                |    5 +
+ drivers/pinctrl/mediatek/mtk-eint.h                |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6878.c          | 1478 +++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6878.h      | 2248 ++++++++++++++++++++
+ 8 files changed, 5154 insertions(+)
+---
+base-commit: 9bee9db994df9f1a2572e3ecd61996fbe9a871b0
+change-id: 20250908-mt6878-pinctrl-support-a1d117140efb
 
 Best regards,
-Krzysztof
+-- 
+Igor Belwon <igor.belwon@mentallysanemainliners.org>
+
 
