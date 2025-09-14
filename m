@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-815795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B783B56B2F
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:24:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2732EB56B3A
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDC427A501D
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:23:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F08D4188AC17
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 598C3243968;
-	Sun, 14 Sep 2025 18:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033C62DE202;
+	Sun, 14 Sep 2025 18:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gCuPDNuy"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIwJXodn"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674B684A3E
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C911199FB2
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757874282; cv=none; b=PYP4Bj1ICJNWhGzt2+xDO6XgDfMKjA+sNUGKRG0avjT0xMkOjTGLj+53aQTYrS1n+nfX8YJxQPjdxw9lAFd2NH7qrgzL0mdwQGm1pjB0s2vXMgKOKUGUY1Z8/f9WrvgcYP2XISrinFmpdO13jBU0CVkBIKn8uRPWpNrZ9b/IWkE=
+	t=1757874662; cv=none; b=aeUKot2Kls5yOQ1cP7FNNSVKHwEWVqD8bINbV6LGUwI68DObnKIMc3dGGIJUzJqZZt+eRuBe5yfH939ftkWo9m4IGTVvVZaasQ4kp2fm7sxm4tZGAwif68AtUIaUa8BMTIsR8THKw6VaUZe7e9goWQGlg6GNdKz34m7x//zqYrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757874282; c=relaxed/simple;
-	bh=c1zhOVVMQ8wU+7mhRUNPp+wxtAoMdBZyfu+0+9wUxd0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=Dct9Nx1URLys/1L5zkfTpHQKmIMNylCK//dOrxzaqrMR91yl+9j2iaJwNWiHyXRsYUAXGH6I/oJ6K//lLYYD7L5GrPTCCahyfKP/n6GrXZvzFPQBF1VwQwP7GAR4MZpZsRp+3PVq0QD+Evm7urDGv5n1AGYjFeeS7dj3gMRwPEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gCuPDNuy; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-25d21fddb85so46072505ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:24:41 -0700 (PDT)
+	s=arc-20240116; t=1757874662; c=relaxed/simple;
+	bh=Uwjoc4sfboPE3RMtWZnJ0FopewFyBEbkr5T2274bxJc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Aq9ooVHv5mjWiYTuBwhdebHlBj+CIMUQZt0/1RVslSuOqneXRb4jEY0dV0wD2beUYBy0iBWeWCouXiMszEcQ+1w2VR7DULBVKuBoyjCiod7lv2diMPnwJFc++t7X5NA7SeKgsgReqWxAKco162rmb/YmogqhBgoSyadjgj9iFmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIwJXodn; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-26060bcc5c8so13411825ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757874281; x=1758479081; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IE+Ce4sKejx+7TLffAwOq5GqAqr/hiqBaebc9tZypdw=;
-        b=gCuPDNuyiH4TcTrmuWSyE0jSnaTxfRVxOPFdEIeTfFPeYe0okwSc+yzS91nKQdc/uy
-         bl1n7M0zTauWiF7VITlmMVkGWM8ob9i024OI6hSockcoUCnq66DtUfnsa1bEmh9jnXg/
-         Om/LV44mfnwJwBBn1kZ5RUxCUWWEec7x9Ol4313L4FVnd4WAONtwAmQsJRQc/IeEV0XG
-         6bIKJwF0yIAZ1NwpwAvmuzdgjxg6UHvEm+LAxmw877TOGR0kXgDFkYKxkphvT6qKFvl7
-         Fs8PgbYx1HVVV4/LLJUVWIYmEocxjc2qo/wmbIPDhMvuqHGomX6CvMZF4tBofPvEFrjT
-         349Q==
+        d=gmail.com; s=20230601; t=1757874660; x=1758479460; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v7OkyHoQryuvQTvU/byTYmQXFC8TRTuccWQSN7suKqI=;
+        b=AIwJXodnxWBQEg6vhtqfed3LvIrxHZRi72ujD3i/XM81xIj4d1bzgDA/YU0xg1ZjZb
+         WVZ2l318ZwsyElErY/qypXDUHGOoVZmjHKpW2Rc9MNg7b+3PC7rESUDUvPpJNqcTyONC
+         vBv4EnMoXKw3naSMC0q9ohoneXwkQTw+kRFFJ4GnH0UrZXxtk8HUSOR9Vuv3KbZ8vlOh
+         yZ2kqEIQRyHiDDffuyn5vqvBm+bhrSHRLO8JcY4s/XJMjMAAWy4LSxgGSxMJ5xfoyCI5
+         X2FcroZ14gfxN52ayEi15aWXJVd/8p0YE4PSJhUkCa0ZYqEdjTNATMMiuKs8WnfNsfyL
+         tRig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757874281; x=1758479081;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IE+Ce4sKejx+7TLffAwOq5GqAqr/hiqBaebc9tZypdw=;
-        b=T3yOdFXwiv4Nuh5pZ9AlVdh5oXoqKutVpnznE6OExzaRbEYIRZs47/PQwqywY5gOR2
-         2gXit3RimJl2mO3MqSbQgjDp1yBoaIiPdZZn9gGSWMZS7SmS/drN6BOukkLE6SN7gOpT
-         iVHLA5ck/pCVDlC8qPJoDbyOaIbhiAozPObQUZrkWZD2E5ItZV1S2nUeBgNzAvlPNrW4
-         saJQ/kYvZNeVE6Aw3OG1ox5X2JJnrsFtCRBPoWIFfxlvmPPU96Irb1eCwLiWp/3AqGCW
-         f56SGf77c6QCpHImmqm/zP5pr2NH+IUox8BSYl6cbnoYZ2UmzdZNOJ/6OUn85Fwl5RBj
-         9oiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXquq8Hui8ZLwhT/hTFMnqvXEiDRqdyLj5D5b4lAl5wCFsDfA1VZphHe8tEFlUA/gBCXCr3sAmvygrpiHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUb6M4Jzc3uU8Cdddm9Sijx6KCJAJx5mRJP11+zvI8sLFHQQ0O
-	uR57o+VYzNR5ZSFF62rBoKm4J0kRaL1GhcraKOQhVaYCW59qfPb1RRwKX7X0POmsaJzRbFkhAGB
-	LGc3h0SV5QA==
-X-Google-Smtp-Source: AGHT+IEni+sfrUT3uNfCX7z902e/80bK4Z6raO5OgXAr7WxdCZ+MhDqLjdto7FL8yKctv7osY/7uM7ublLqw
-X-Received: from plsl15.prod.google.com ([2002:a17:903:244f:b0:25b:db75:cd39])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:d512:b0:263:b8f:77dd
- with SMTP id d9443c01a7336-2630b8f7bedmr59519585ad.57.1757874280773; Sun, 14
- Sep 2025 11:24:40 -0700 (PDT)
-Date: Sun, 14 Sep 2025 11:24:37 -0700
+        d=1e100.net; s=20230601; t=1757874660; x=1758479460;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v7OkyHoQryuvQTvU/byTYmQXFC8TRTuccWQSN7suKqI=;
+        b=iiIQTZGtg3ikw0Aje4tDwUxsDYhaRGUvaBY3RkKul+VESow7oemUrA9YeIoud7TiuR
+         VXisZ/TruX1Ke/qPbtpVWsXnKEI2k/fYZhmNQekqeOvN5bBTz6YSrUBlCXWek2d1BuYK
+         FP2Jkfy7cW4qgYyU0OvksvcyXUQt3JDWROA4AF8iTflOCrzywsXGknuP25HerbW7rdut
+         882mAxE2/aT6xVW0mZ/UIJrc+BVquWEvRDz2i0RSrfvyk5Knp9oKc5p77dVos2ZoQiir
+         EhsrJU/XKkJXSgp/PmHdgl+i+O6ArRwYWqgH1ZkCbl2z2kSRghiIQfRcRJslFFe+xg+I
+         PFUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUviuQ76uxCfHfPId3Zz9KqQmVecuuyEr4lTD4Osj8OTqc/6dwMNjDIF7RIx7FkTa6tDaiwscoD7Ihd2b0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtjDWYLswZ41gU4a0GaNzPgsOBGL2YvguFfjvOCfp9hz4ATRL1
+	M1IWY1JW+tHlAvNTyypcU1FWVljpyak9EY2Xcd5XcGct4OWMvDuTtGYS
+X-Gm-Gg: ASbGncsv2fviHFmErUBcaNVL4+Avf9faQBQjzBV1CCNHNYHC9yMNiVpLifHgRmTEf9s
+	d8o1gThF9JNfQh2zKCpWyT7ZgHiwuZoaOqwLkFGnaUvwFnWFeP/uwCuvDGK3jHHg+5Laf7AVrVu
+	Fild4/IYzCkoia1bW/fDs3nA+5Q5BLDXdlyWCBgm35iSUAsaJgVGodaGRtRSyPlP8tBoeG4vNcn
+	pYc+ohHlOcfi4smjDPrIWg3PyU5cxR8XiaPXjXTl4MCYMDX+efI9KpP+bVSSXj/4Nsl+2bVPu3U
+	UsiMGyQVq4LGyOr97zYpQzR4exQevvufOxmquCegQJZ8S82bL1xyGQE/JnzqNNlayhdiYZOyzHu
+	OAVfCcxs8kIT4LkYrjfiT5A7JXoKkQOSTF2kK5EsqRK1m8pmi76hjlg5GslOogejb6sQ=
+X-Google-Smtp-Source: AGHT+IFiTY1M/iqKWna3+l676xlEG6ziqliQbShqS23NxA6fN6O/AmQSqKLL9218+IRckCYFCn+0oA==
+X-Received: by 2002:a17:903:2346:b0:263:671e:397c with SMTP id d9443c01a7336-263671e3cc7mr50657935ad.5.1757874660216;
+        Sun, 14 Sep 2025 11:31:00 -0700 (PDT)
+Received: from mythos-cloud ([121.159.229.173])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25e2fb546f9sm71760225ad.127.2025.09.14.11.30.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 11:30:59 -0700 (PDT)
+From: Yeounsu Moon <yyyynoom@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yeounsu Moon <yyyynoom@gmail.com>
+Subject: [PATCH net v2 0/2] net: dlink: handle copy_thresh allocation
+Date: Mon, 15 Sep 2025 03:26:52 +0900
+Message-ID: <20250914182653.3152-2-yyyynoom@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250914182437.1959331-1-irogers@google.com>
-Subject: [PATCH v1] libperf mmap: In user mmap rdpmc avoid undefined behavior
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-A shift left of a signed 64-bit s64 may overflow and result in
-undefined behavior caught by ubsan. Switch to a u64 instead.
+This series contains two patches:
 
-Signed-off-by: Ian Rogers <irogers@google.com>
+1. clean up whitespace around function calls to follow coding style.
+(No functional change intended.)
+
+2. Fix the memory handling issue with copybreak in the rx path.
+
+Both patches have been tested on hardware.
+
+Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
 ---
- tools/lib/perf/mmap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changelog:
+v1: https://lore.kernel.org/netdev/20250912145339.67448-2-yyyynoom@gmail.com/
+v2:
+- split into two patches: whitespace cleanup and functional fix
+---
 
-diff --git a/tools/lib/perf/mmap.c b/tools/lib/perf/mmap.c
-index c1a51d925e0e..ec124eb0ec0a 100644
---- a/tools/lib/perf/mmap.c
-+++ b/tools/lib/perf/mmap.c
-@@ -508,7 +508,7 @@ int perf_mmap__read_self(struct perf_mmap *map, struct perf_counts_values *count
- 		idx = READ_ONCE(pc->index);
- 		cnt = READ_ONCE(pc->offset);
- 		if (pc->cap_user_rdpmc && idx) {
--			s64 evcnt = read_perf_counter(idx - 1);
-+			u64 evcnt = read_perf_counter(idx - 1);
- 			u16 width = READ_ONCE(pc->pmc_width);
- 
- 			evcnt <<= 64 - width;
+Yeounsu Moon (2):
+  net: dlink: fix whitespace around function call
+  net: dlink: handle copy_thresh allocation failure
+
+ drivers/net/ethernet/dlink/dl2k.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
+
 -- 
-2.51.0.384.g4c02a37b29-goog
+2.51.0
 
 
