@@ -1,282 +1,313 @@
-Return-Path: <linux-kernel+bounces-815434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B44B56433
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 03:50:00 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 684F8B56437
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 03:57:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46E9C201440
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 01:50:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C71A4E05A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 01:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C64A23B604;
-	Sun, 14 Sep 2025 01:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFF923B627;
+	Sun, 14 Sep 2025 01:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="T67207YJ"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2068.outbound.protection.outlook.com [40.107.95.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rm3eVyeW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD64D17BA6;
-	Sun, 14 Sep 2025 01:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757814591; cv=fail; b=vDYhC73sKv47jq2Q/3YrY5/d4hjNW0EwZOmhp63j2erRd+yW4F7yzyFflcqkZBrdRZPWV9Y2ID/wXtQ4MlLh9vT73PF6t9FMWcoM5e2gx1WNokU7r4kLwz7Gs4BoPeNhBugvpauBtFerwP8bJUh9XM/rAe+hGVjq1tBh3j9SlSA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757814591; c=relaxed/simple;
-	bh=yIaSA7oINAGXrDdtRtzUfLsxwmKV0Da+k5BVckrsy2k=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=jXQw+AUVNWuWsIXmc4mJkN69bSm5wbkd95PvWXm71EoYNkEuSWyQVNumUEhC0/kPkUyRCgr9ik0JPdQEtbf0hKHwGrrTlPvmvP047XKZgxTU1g5KEPGW2WLksf/JrD6fBLrF0O0AgHrWtEp5N0gL04IdAie1PvNZUkiulyyMsIE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=T67207YJ; arc=fail smtp.client-ip=40.107.95.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K4lizrG+CywqNbtk4jijafPVFTq50doNePDq65Gscb3IDsZLvfX6TwBcIWuSVWZ8p9EH1+oUQ9lrJeG3YXc/rTJk+XMcC1/TVWxl6HPhO11I1gkAcDIkpnK7UAZPU+KulNF/QyHSdsfAzsSJhBb6pzMLu/bjRPFFB8JB9nIylWGoExczZwxwjcbwbmA5/7W47xOhUPJAsf7n1ta0bmXDSqlycWVoXVxOt/h4juvH1Gzw29+22hW9HUfFn/sZt0nZ0pUlO7Eajb4OF3+ojV7Q96Bye0pwQepyIPZt+VSBPjEKoh69xTDvVevXLCsKgV7YvdNLLoUvNyB3KcmxwJTW1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qYR4BB+/3Tlm1ajElahxB2VbPZe/32IrMRlzXxXKk/0=;
- b=eQ77omBe8PZxe9rzwuwNN317ozZAmTV4SuqbvrKjw1y5KbEK366DLBDSDzVeI4pijy1I26SNyTrE8ZBESmcOgUdyPW3UJnNNMcNy+saq7qegZgfWKrowsojLtM2gGvT7OMCuBQ6T/Xkb8jAKjMYc7mjbGlYtJCTIFgXLmJztzlYZ4vABoKqWEDOwucmpqtobeaVsfN8fHvlOwV+MXAqp3kHxnxW8+BvUM+gSpw2htx56oFaa+p6bXUGzzuzb79go8dxOT8Gy5c4UTznqfJvL6ZRfXP+1Fw6Z9LwvRE6GbKOy9Nb9hZbyxro0TDa6q2SuR6vmoennusr69oUF42/3pQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qYR4BB+/3Tlm1ajElahxB2VbPZe/32IrMRlzXxXKk/0=;
- b=T67207YJE5JBfVBntwFxeONZRp4AGl/uETrjbWjN9c5IQD8HDEwuOTcV0FMMKmpaEyQJK/aaoG4QDJC5D21Zwa0hBHXHdPhnzXH7rXZhK5yU1Sw/Wg0aDkhaYEYeRAzte7fbjUAZBnZRPG5jmw1f+oehurf+NBRfVQ7gHOxGtjOJ0KNkc+WcfI1/17FASbfqEuarhCId9tMtM2nFwDXp5+5AfwIfQpd7XzG4PRuAx/NOfrFI+ePVMcp1OrAGAceOJ+1ySwi2Y3wwdGMU/rUuRfvle62GtYDg5GzV0LgcS3+MGG6SeHsNvUIOIgw/G0Nm9I3rB21XXZdz8xT6wn9hqQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SJ1PR12MB6172.namprd12.prod.outlook.com (2603:10b6:a03:459::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9094.22; Sun, 14 Sep
- 2025 01:49:44 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9094.021; Sun, 14 Sep 2025
- 01:49:44 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 14 Sep 2025 10:49:40 +0900
-Message-Id: <DCS59IDCIKH1.2M3I6H0NVD0RG@nvidia.com>
-Cc: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Danilo Krummrich"
- <dakr@kernel.org>, "Alexandre Courbot" <acourbot@nvidia.com>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "David
- Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>, "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Alistair
- Popple" <apopple@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v5 02/12] gpu: nova-core: move GSP boot code to a
- dedicated method
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>, "John Hubbard"
- <jhubbard@nvidia.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250911-nova_firmware-v5-2-5a8a33bddca1@nvidia.com>
- <e1755470-587b-4a43-8171-3d031b7fb4f4@kernel.org>
- <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com>
- <ce74db34-77bc-4207-94c8-6e0580189448@kernel.org>
- <DCQ074EMFNIK.1OJLWJXWZLDXZ@nvidia.com> <20250913010226.GA1478480@joelbox2>
- <DCRPJKD0UHDQ.IOWSOB2IK06E@kernel.org> <20250913171357.GA1551194@joelbox2>
- <CANiq72n50MaMXeWdwvVOEQd3YEHbDRqeeRzbdY8hPnePtq-hnw@mail.gmail.com>
- <b1aea815-68b4-4d6c-9e12-3a949ee290c6@nvidia.com>
- <20250913220625.GA1564550@joelbox2>
-In-Reply-To: <20250913220625.GA1564550@joelbox2>
-X-ClientProxiedBy: TYCP286CA0093.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b4::6) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D78233145
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 01:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757815041; cv=none; b=dVfvnBZ4J8dJs3p3JSxC2gsYgkmIGYFZX6DTJQqrTKU8T+HPbkmgjHlKTI3rArWOuVUH6iHVORBFMDmXYUi5449MEkUrVZ5oMlgpm0jrmlbp5/TKJ7Sni472/KYr6k4XlI5LVPH+0UjXmWq3ZMv57QFmb04u2tWNDDE82mpoe98=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757815041; c=relaxed/simple;
+	bh=2bA54a8XQO3oplu+GpK3brlzTVegVik1P3OTH4QDtaA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PTyLbGG75eXIW7u70JkZocPUNLT3Owootmtu5AgGwTCG1oieTHc70o+hbTGa5S0sKU5y92NapFKOdvHMLor+3dWiV+D3cX3JEl+WKeyfKNMNWAz7Flr1fF3iHmSRMkKTPbfnRp0BmsWYca0r8z6S126WLSCw3AtBiqke3WhXdyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rm3eVyeW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C67C4CEEB
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 01:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757815041;
+	bh=2bA54a8XQO3oplu+GpK3brlzTVegVik1P3OTH4QDtaA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Rm3eVyeWLB90tjDfWg4cd/8Go+FYh4GNgJ1W6mCc90EgnEawb6rEmy85Gc2qk363q
+	 7fkERHY/yaKy0MFH3jz6eGDHtw2DW40CUoz7fqxmKVJ8xERjRWA4kDe862vX/bj7G1
+	 ynMp7dssLS3BO2so51EkIylPmSxKqIdytEiA3f9NihGSsLojIvukfGIYA126ZXvzZ4
+	 gJ3guL1jlqUTzll1FgnsMcUn+aPikz9M5Cb0UOrVQVSzLHlZcquIewKvgz9Sgs9ZNk
+	 rRMVUahfCoMFBLuf1UW3uEEdh/ClhwEMn/Y/179kr883A079sMr8yeCi8dtFmmGvYm
+	 HHNUaACLchAxA==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b046fc9f359so471171466b.0
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:57:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyICvMbV2tmyWbYaUe+36/unaOMZLSq46WlnRf+qdvHNAYjjabPy+Zgs17nQMIgZtBVqiWr7sWOUCawOQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD3Cf65HqT/fT07BmorLQphWcYlIbU3U7XibhW4nbta2crjHSi
+	eo9TklUkBGq+/c2W7KrSpt4XwlfM/vjuYbBQtT8TVJkQEoi7RcTvnaciN2UsbdOoHoovUs+EAoW
+	tOOJbugZvfNyaw3Q0X6eTDArsmHl7PI4=
+X-Google-Smtp-Source: AGHT+IFfNmQmnqGZYX0ngUS0c2d+ly5r+Z8sFAk/gU9hnaLKvZrHmV0tDaiOU94759FUb8SGhbBwfAAm52QYlnu9vvg=
+X-Received: by 2002:a17:907:3e9f:b0:b04:a1ec:d06f with SMTP id
+ a640c23a62f3a-b07c35bcc13mr854776466b.25.1757815039974; Sat, 13 Sep 2025
+ 18:57:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ1PR12MB6172:EE_
-X-MS-Office365-Filtering-Correlation-Id: c2853f18-1be5-4f65-0723-08ddf330fa21
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|366016|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?V1BXY3BjNXdiUGMrWHhmUW1ER1ltY1VlMjNWODl5THhNczRobkwxaXZudmly?=
- =?utf-8?B?RXlLbHdqMlVDdXM2Ri9TTHJaeXEzbFluQ2Zra3VtUmwzY0F4SlE3UTQ3RUhX?=
- =?utf-8?B?aTJvNWFFQkpINHFiYmVlclJIazEzQ2JIbytVSDVUdllqcmpqZ1d0UVlPWS9k?=
- =?utf-8?B?aVFKWWp3d0RDcnNzTGNFNVo0UDJ2TjliR2JmeUlIUjhPa2VNc2w2T3ZqMTJq?=
- =?utf-8?B?M3ZteFJ0dUNrTHFCNUlZaWpnQmMrNktZVk1HNU81K3Q2MG81bUpIZCtSRnlv?=
- =?utf-8?B?M1o2aDNCc09xb0ZucFRaUlVNUDhKZGdteWt1Z2ZLNEEzVVUyVnlOTXVQRGFs?=
- =?utf-8?B?cGlJZmdQbG95T3EvbXBwQittZnBlZkE2TFZjZVpJMmNYeGpDSlZQdlBxSW1S?=
- =?utf-8?B?bHlaL01SYkFFenhhMzZPakFSdnRvVUUybkQ4R09wd3dFdk5oSisxTGtOY2Ux?=
- =?utf-8?B?VzJTeUM1VDBGZkIxY3BmVnNmbm5abmVZall0ejlvWjJDN0xTRGNpQTI1UDdZ?=
- =?utf-8?B?eVBudEF3SFdKeFF2bnd3SnJLaWE2N3lqSWIwSkZIQThmTmR4VWhjR1MwQVZn?=
- =?utf-8?B?NE83SzB3b0FhS3VMMmhuQ2swS0JpM25nSWhVWDZWd2lkd0hZbkk4QUgxYmpO?=
- =?utf-8?B?N2tSRFB1cWdRck5JdFBHTDlLUlRsSEYyZHZ0OXFpWlNCNTZtdXQ0NWJSL1Fq?=
- =?utf-8?B?Zm5ibUJ3OVdsZUcxV05Rd1EwWGxGbGlpTlRQTWJyTUNyeTlnOVNjSEJVTlFu?=
- =?utf-8?B?bTFyMHZneWZ1YVcwNXU5ZU95aXRpRlFkWUdTUlduMWgydXRLRks3cUs5dHpn?=
- =?utf-8?B?VTFWNkNOMEdIczZzRkE1M3ZaOUdzM1hsdjR3YVM4MitFYjFUb3VQUmN6R1Br?=
- =?utf-8?B?cTh5Qi9HLzVGUHNoWFF6Y0FDY2xyVVc3d0hLOW9mMFp6NXVMQ0orNnk5bmpm?=
- =?utf-8?B?UTVuOXRYVnA5WVJOMHR2OWtIVUN2eTdhNUN3MFcwODBwcHExenNiVmRHaGhr?=
- =?utf-8?B?SUk5NkwvY2dJZGZVMDRpNm9KVmxNN245TDgyMnJyOW1xVmR0b0U5djRJZ1R3?=
- =?utf-8?B?UWd1SmxtS0svRnRuVytkRzR1dU8yUFNrWWhseTA3ZVRjT3kzREVEYklMWWNl?=
- =?utf-8?B?ZXF5QUo4YWRLakcxV2F5c1VIM0NQWG9tTmtVLzBhZ21UTnVOWVlSVXprRGwz?=
- =?utf-8?B?QzB3S3lveklvNjdTSkUreFpwTWF4aFNvSkpNUFExZzVlQjJPUFVYd3hYSXlE?=
- =?utf-8?B?bExwbTVnV09MakdwQS82QTZMZjZNaGJ2ekNsRW5pZXluekJVUlh1b1RleExr?=
- =?utf-8?B?WE1LdnNJR3lQQWdxanUyRUZCRGNQTHFRamFpVlpzWjUvMWhGbkNqTVVkMXhE?=
- =?utf-8?B?bFgvcTc3ZnQxWEFTa1BTcDUvbVRKZVZ6cEw0Z2RSc3FTZE1SelZqVXNtZDlJ?=
- =?utf-8?B?UHE3SjJrU0ZLS2VMUEZBZVQ3a1ZmZnI5UU04eDlaMW1iZUpxRTRCQ0ZFMmQv?=
- =?utf-8?B?cUEvcUtyUHZqQ09wZkR0MWNjbC90U1VhQ1d1cExUdmtVaFFST043VnpNOFox?=
- =?utf-8?B?UG9QLzZWOGdNVmJGREIyVWRTNDlBaVJ5cFFjMXlBcHFlclNXNUUwVkl1eGN6?=
- =?utf-8?B?U2tTeWpzK1d4dGFuRWtzMGlQbnY3Snl5ZVh5MkhhcTVXTGxyZjdUMWxVem1W?=
- =?utf-8?B?cHQwdTFuVnBxMUhMNUJXYjU2eWg1SzhiV2pyTzhUZ3VxWVVsdXBxVWZsVTRs?=
- =?utf-8?B?STJtbHNJdjNGNHYrZExFUGRKaUN6UVVWcjVvVXVwRHkwTHcxWnBFMEYyeDdm?=
- =?utf-8?B?d3pjRTVQV1EyZXJoYWtVZ0ZBci9EK1B0UU1FNkMzM0ZkVzcvQXFleUtRcEdt?=
- =?utf-8?B?QWhTN3dnT0dtaU12bWF0WGpGbFpBZVNCQnN5SmZoNUxFM0hPYWYrNitsdEw5?=
- =?utf-8?Q?B/9L2sIaTvk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?b2hGdTRlR1dOd01lblVuZllBYVdPZkJwNVFmcmd0dGxZeVRFMGhnQmFXOGZx?=
- =?utf-8?B?cEdrZ2dLNmViMFloSzFGK0RycUVJZ1NZQU5jclowSlQwWDhZRnViSkNoV3A2?=
- =?utf-8?B?alFaYVZwS210akVkQmsxVDhwaHNYUE1WNWpXVSsrNFFrN1dvNzlBcUM4YURB?=
- =?utf-8?B?Q2MwV1dSKzMyTm91TmNYdWRjL3BRM01qZ3M5WGYzNFdLQUVZKzNNcG0rWE10?=
- =?utf-8?B?a3JTMkZ3bUZHQytWbzBzd0tZYW1GU2VrbEZrMkorNDB2OXlBRmd2SHVXL011?=
- =?utf-8?B?d0JKYnlMWUIzSGN1a0IvUExIWmF6UWVZbHFkQklhcGx0Ym5UeElnbCtRT2V4?=
- =?utf-8?B?aFptTEY5SmYzM0hDbnhiK21iNVJ1ZnpyUndCcGVqV055UElESzNrbzhYbUs5?=
- =?utf-8?B?WTg5eE4wY0hZVmlIMml3OVR0MXh2UEQvL1dEMW80c3AwK09VejY0eEpJV1dm?=
- =?utf-8?B?dlB2VHBBZkZyVjNWSFR5cUZYczZCb3huVHN1NDBwOEUvY0c1THFMYjN2ZzVk?=
- =?utf-8?B?YzNhajlXdXVpNEZndFkvWXRMWVdsbVFsQWFmWU9SUUJZL2RQb2xUS0JnaGgy?=
- =?utf-8?B?ZFJrcVVta3hIRHVZM2pVZjdXdGt1SUJPeVgvWFlqb3F0UEMrQ3JENklyanRl?=
- =?utf-8?B?bmp2czRva0ZJQ2lCYmZ2RTgvYW5QWCtiWmVJLzVKaVYvTElLS1c4UnlKSTVK?=
- =?utf-8?B?ZFBjSEJuQlVvVjQ4UGY1TmZuVSt1cmJsTXcrSFJkbGIveU5kVHNJQzEvbTg1?=
- =?utf-8?B?WFl4Q0luTVZIeXEzeDVyVndMdXByN1Z0T2M4KzdxQUR3UTZtRE9WNkMvSFFC?=
- =?utf-8?B?RDhpRFhZTkJhZFVTcHJBcEJTeVJoTEtmZUxkNzAxKzRJV2Z1ZGFCSktTRmo3?=
- =?utf-8?B?V0lvNDF0d1N1TGVkL3owMmhndTd3ZThCYUZtcFI2eVBCRXNhKzZ1NEVCRWlj?=
- =?utf-8?B?MkZScXFwSnY3SHdDNGdRS01HV2VVUUMyRnBLTC9HNUc4RHV4S2R3a2JBRjR5?=
- =?utf-8?B?Q3lBb1hFd0hMT1dWTllGK3g3RHcwUEhtS1Z1ZUMvdEkrOW9DclE2aXFJVmZn?=
- =?utf-8?B?cU9kT2FYNy9wT3g2WWFEM211dGhjTGJ6N29OcnN6RW5DbXUvQzZJWFMwY2dJ?=
- =?utf-8?B?TGRsSkgrUFRzVXZaV0R5MXl2Yzl5L1pjbTFyU054MENIQytqbUJ4amUyT3lM?=
- =?utf-8?B?OHNFcDFnT3N1ci9tNjJnSHhmUXJBOXl5bDJhZVJxcDRjUHVqQXNKcnpRRXZl?=
- =?utf-8?B?aVk3YTJqOGRCejhFTlY0TzBsYlhLcVpybG82a2dZVFZYamxBVXZ1UUlsUzdL?=
- =?utf-8?B?Y2FCOTZvRWNhblhnMXp6YXNTelMzcm5zb0llbGtBb2ZTRUlVbXZhenlSbWtF?=
- =?utf-8?B?MFZpOG5XWTlpb1R0SmRQZnR4cEZsVG9pazczVVpMY3VtcUlPbDI5dVJoa3dK?=
- =?utf-8?B?S0h6Mi9XRkNSOUJhM1U3clY3ZjYySmVab2p1OE9hMjMvdFZQakVKKzY2RERS?=
- =?utf-8?B?TjNnVERwL0g5OGdrTDZnWldTVDV0SWhKMWYzZXVTKzNLY0NJNWhzbldIUk8w?=
- =?utf-8?B?VE1BVUI1dEc2OFNTRmROcFR1VmM3ZTVBd1RiUTdtVlNIZWIxSkc2RHpaWFNs?=
- =?utf-8?B?RHJ3cURTaTlLYmt5ZGlhQkpXQklJSWs3NytYNUhCRXp2SWNhRW1vMGFRWDRX?=
- =?utf-8?B?NjdVUDVZaFBZMTM5bjUzL21ya3FDYm96T205aElQbmZseE4zZVlCc0xRWXVT?=
- =?utf-8?B?dndGbXZ4U1h3cnhXMVFtajhGb0NMc0ZOb1lVRWIxNzI0R3JMRFViRHNZandh?=
- =?utf-8?B?R2w3NGhKclExeWxpNWpjMDRUM0dZMks2eUE5ejRWVzd4TWN1UWo2TWpta2c5?=
- =?utf-8?B?TmVkVGplK2F2enI3eTdUaFZad3NqZFZ5c1ZmcnMzRWo1TUxERFBjb2Nqdkdq?=
- =?utf-8?B?blNzQjlHWmthK0JqZ0hTYTB0RkpjRkx5M2dNWTYxSDVyZ0wzRW5oS1krUHlF?=
- =?utf-8?B?R1ZnZEpUZzc3cVFSUTd3T1M5aTdUVTMxdnJHZnI0Nk8rUC8vQVdnY3FGeFo0?=
- =?utf-8?B?OHZ5R0RkS0NLaUR0Rkt5QmlLK0FYTStES0ZSSjgwSGxGZzAwS3daNHgyeDJJ?=
- =?utf-8?B?QUtQWC83M3ZVeFl3Q01EOEtqNVNLRkI1U2ZuOGJSaHRnVSsxUXA5RERNR0hC?=
- =?utf-8?Q?IljUxs/CJxroT8s04R0kUminYM2IuCSTTtWPbFOv1MRE?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2853f18-1be5-4f65-0723-08ddf330fa21
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Sep 2025 01:49:44.3873
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DH72ay84yq4EvX8va4+moDnK3VVKZsVQK8ZchbQN9ciF4xRMd0Kj8+m2YGeHdgu5IoDQ9S/HaqzxNblkIYiZIQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6172
+References: <20250910071429.3925025-1-maobibo@loongson.cn>
+In-Reply-To: <20250910071429.3925025-1-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Sun, 14 Sep 2025 09:57:08 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H65H_iREuETGU_v9oZdaPFoQj1VZV46XSNTC8ppENXzuQ@mail.gmail.com>
+X-Gm-Features: Ac12FXzfN2bNWTNhJRbB-SLTolLXMjAH5r5IpQVt22wgOskPBdaWpLkZgPjmVEs
+Message-ID: <CAAhV-H65H_iREuETGU_v9oZdaPFoQj1VZV46XSNTC8ppENXzuQ@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: KVM: Fix VM migration failure with PTW enabled
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun Sep 14, 2025 at 7:06 AM JST, Joel Fernandes wrote:
-> On Sat, Sep 13, 2025 at 02:29:54PM -0700, John Hubbard wrote:
-> [..]
+Hi, Bibo,
+
+On Wed, Sep 10, 2025 at 3:14=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
+e:
 >
->> >=20
->> > I would suggest taking a look at our website and the links there (like
->> > issue #2) -- what we are doing upstream Rust is documented.
->>=20
->> ...and my question was asked before reading through issue #2. So your
->> and Danilo's responses seem to be saying that there is already some
->> understanding that this is an area that could be improved.
->>=20
->> Good!
->>=20
->> I believe "issue #2" refers to this, right?
->>=20
->>    https://github.com/Rust-for-Linux/linux/issues/2
->>=20
->> That's going to take some time to figure out if it interects
->> what I was requesting, but I'll have a go at it.
+> With PTW disabled system, bit Dirty is HW bit for page writing, however
+> with PTW enabled system, bit Write is HW bit for page writing. Previously
+> bit Write is treated as SW bit to record page writable attribute for fast
+> page fault handling in the secondary MMU, however with PTW enabled machin=
+e,
+> this bit is used by HW already.
 >
-> Indeed, kudos to rust-for-linux community for working on missing Rust
-> features and on pinning itself.
+> Here define KVM_PAGE_SOFT_WRITE with SW bit _PAGE_MODIFIED, so that it ca=
+n
+> work on both PTW disabled and enabled machines. And with HW write bit, bo=
+th
+> bit Dirty and Write is set or clear.
 >
->> >=20
->> > (Danilo gave you a direct link, but I mention it this way because
->> > there are a lot of things going on, and it is worth a look and perhaps
->> > you may find something interesting you could help with).
->> >=20
->> > > except to satisfy paranoia
->> >=20
->> > Using unsafe code everywhere (or introducing unsoundness or UB for
->> > convenience) would defeat much of the Rust for Linux exercise.
->> >=20
->>=20
->> Yes. It's only "paranoia" if the code is bug-free. So Rust itself
->> naturally will look "a little" paranoid, that's core to its mission. :)
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> ---
+>  arch/loongarch/include/asm/kvm_mmu.h | 20 ++++++++++++++++----
+>  arch/loongarch/kvm/mmu.c             |  8 ++++----
+>  2 files changed, 20 insertions(+), 8 deletions(-)
 >
-> This seems to be taken out-of-context, I said "paranoia" mainly because I=
- am
-> not sure if excessive use of pinning may tend to cause other problems. Th=
-e
-> "paranoia" is about over-usage of pinning. Personally, I don't prefer to =
-pin
-> stuff in my code until I absolutely need to, or when I start having needs=
- for
-> pinning, like using spinlocks. Maybe I am wrong, but the way I learnt Rus=
-t,
-> data movement is baked into it. I am not yet confident pinning will not
-> constraint Rust code gen -- but that could just be a part of my learning
-> journey that I have to convince myself it is Ok to do so in advance of
-> actually requiring it even if you simply hypothetically anticipate needin=
-g it
-> (as Danilo pointed out that in practice this is not an issue and I do ten=
-d to
-> agree with Miguel and Danilo because they are usually right :-D). I am
-> researching counter examples :-)
+> diff --git a/arch/loongarch/include/asm/kvm_mmu.h b/arch/loongarch/includ=
+e/asm/kvm_mmu.h
+> index 099bafc6f797..efcd593c42b1 100644
+> --- a/arch/loongarch/include/asm/kvm_mmu.h
+> +++ b/arch/loongarch/include/asm/kvm_mmu.h
+> @@ -16,6 +16,13 @@
+>   */
+>  #define KVM_MMU_CACHE_MIN_PAGES        (CONFIG_PGTABLE_LEVELS - 1)
+>
+> +/*
+> + * _PAGE_MODIFIED is SW pte bit, it records page ever written on host
+> + * kernel, on secondary MMU it records page writable in order to fast
+> + * path handling
+> + */
+> +#define KVM_PAGE_SOFT_WRITE    _PAGE_MODIFIED
+KVM_PAGE_WRITEABLE is more suitable.
 
-You can look at the definition for `Pin` in [1], but it is so short we
-can paste it here:
+> +
+>  #define _KVM_FLUSH_PGTABLE     0x1
+>  #define _KVM_HAS_PGMASK                0x2
+>  #define kvm_pfn_pte(pfn, prot) (((pfn) << PFN_PTE_SHIFT) | pgprot_val(pr=
+ot))
+> @@ -52,11 +59,16 @@ static inline void kvm_set_pte(kvm_pte_t *ptep, kvm_p=
+te_t val)
+>         WRITE_ONCE(*ptep, val);
+>  }
+>
+> -static inline int kvm_pte_write(kvm_pte_t pte) { return pte & _PAGE_WRIT=
+E; }
+> -static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & _PAGE_DIRT=
+Y; }
+> +static inline int kvm_pte_soft_write(kvm_pte_t pte) { return pte & KVM_P=
+AGE_SOFT_WRITE; }
+The same, kvm_pte_mkwriteable() is more suitable.
 
-    #[repr(transparent)]
-    #[derive(Copy, Clone)]
-    pub struct Pin<Ptr> {
-        pointer: Ptr,
-    }
+> +static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & __WRITEABL=
+E; }
+_PAGE_DIRTY and _PAGE_WRITE are always set/cleared at the same time,
+so the old version still works.
 
-There isn't much getting in the way of optimized code generation - its
-purpose is simply to constraint the acquisition of mutable references to
-prevent moving the pointee out.
+>  static inline int kvm_pte_young(kvm_pte_t pte) { return pte & _PAGE_ACCE=
+SSED; }
+>  static inline int kvm_pte_huge(kvm_pte_t pte) { return pte & _PAGE_HUGE;=
+ }
+>
+> +static inline kvm_pte_t kvm_pte_mksoft_write(kvm_pte_t pte)
+> +{
+> +       return pte | KVM_PAGE_SOFT_WRITE;
+> +}
+> +
+>  static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
+>  {
+>         return pte | _PAGE_ACCESSED;
+> @@ -69,12 +81,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t pte)
+>
+>  static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
+>  {
+> -       return pte | _PAGE_DIRTY;
+> +       return pte | __WRITEABLE;
+>  }
+>
+>  static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
+>  {
+> -       return pte & ~_PAGE_DIRTY;
+> +       return pte & ~__WRITEABLE;
+>  }
+>
+>  static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
+> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+> index ed956c5cf2cc..68749069290f 100644
+> --- a/arch/loongarch/kvm/mmu.c
+> +++ b/arch/loongarch/kvm/mmu.c
+> @@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, u=
+nsigned long gpa, bool writ
+>         /* Track access to pages marked old */
+>         new =3D kvm_pte_mkyoung(*ptep);
+>         if (write && !kvm_pte_dirty(new)) {
+> -               if (!kvm_pte_write(new)) {
+> +               if (!kvm_pte_soft_write(new)) {
+>                         ret =3D -EFAULT;
+>                         goto out;
+>                 }
+> @@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsign=
+ed long gpa, bool write)
+>                 prot_bits |=3D _CACHE_SUC;
+>
+>         if (writeable) {
+> -               prot_bits |=3D _PAGE_WRITE;
+> +               prot_bits =3D kvm_pte_mksoft_write(prot_bits);
+>                 if (write)
+> -                       prot_bits |=3D __WRITEABLE;
+> +                       prot_bits =3D kvm_pte_mkdirty(prot_bits);
+>         }
+>
+>         /* Disable dirty logging on HugePages */
+> @@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsign=
+ed long gpa, bool write)
+>         kvm_release_faultin_page(kvm, page, false, writeable);
+>         spin_unlock(&kvm->mmu_lock);
+>
+> -       if (prot_bits & _PAGE_DIRTY)
+> +       if (kvm_pte_dirty(prot_bits))
+>                 mark_page_dirty_in_slot(kvm, memslot, gfn);
+>
+>  out:
+To save time, I just change the whole patch like this, you can confirm
+whether it woks:
 
-I started this patchset a little bit skeptical about the need to pin so
-many things, but after seeing the recent additions to `pin_init` and
-rewriting the code as Danilo suggested, it starteds to click. The
-supposed restrictions are in practice avoided by embracing the concept
-fully, and in the end I got that feeling (familiar when writing Rust) of
-being guided towards the right design - a bit like playing bowling with
-gutter guards.
+diff --git a/arch/loongarch/include/asm/kvm_mmu.h
+b/arch/loongarch/include/asm/kvm_mmu.h
+index 099bafc6f797..882f60c72b46 100644
+--- a/arch/loongarch/include/asm/kvm_mmu.h
++++ b/arch/loongarch/include/asm/kvm_mmu.h
+@@ -16,6 +16,13 @@
+  */
+ #define KVM_MMU_CACHE_MIN_PAGES        (CONFIG_PGTABLE_LEVELS - 1)
 
-Yes, that means redesigning and rebasing our code, but that's also the
-cost of learning a new language.
++/*
++ * _PAGE_MODIFIED is SW pte bit, it records page ever written on host
++ * kernel, on secondary MMU it records page writable in order to fast
++ * path handling
++ */
++#define KVM_PAGE_WRITEABLE     _PAGE_MODIFIED
++
+ #define _KVM_FLUSH_PGTABLE     0x1
+ #define _KVM_HAS_PGMASK                0x2
+ #define kvm_pfn_pte(pfn, prot) (((pfn) << PFN_PTE_SHIFT) |
+pgprot_val(prot))
+@@ -56,6 +63,7 @@ static inline int kvm_pte_write(kvm_pte_t pte) {
+return pte & _PAGE_WRITE; }
+ static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte &
+_PAGE_DIRTY; }
+ static inline int kvm_pte_young(kvm_pte_t pte) { return pte &
+_PAGE_ACCESSED; }
+ static inline int kvm_pte_huge(kvm_pte_t pte) { return pte &
+_PAGE_HUGE; }
++static inline int kvm_pte_writeable(kvm_pte_t pte) { return pte &
+KVM_PAGE_WRITEABLE; }
 
-And yes, things can still be a little bit rough around the edges, but
-there is awareness and action taken to address these issues, at the
-compiler level when relevant. This makes me confident for the future.
+ static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
+ {
+@@ -69,12 +77,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t
+pte)
 
-[1] https://doc.rust-lang.org/src/core/pin.rs.html#1094
+ static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
+ {
+-       return pte | _PAGE_DIRTY;
++       return pte | __WRITEABLE;
+ }
+
+ static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
+ {
+-       return pte & ~_PAGE_DIRTY;
++       return pte & ~__WRITEABLE;
+ }
+
+ static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
+@@ -87,6 +95,11 @@ static inline kvm_pte_t kvm_pte_mksmall(kvm_pte_t
+pte)
+        return pte & ~_PAGE_HUGE;
+ }
+
++static inline kvm_pte_t kvm_pte_mkwriteable(kvm_pte_t pte)
++{
++       return pte | KVM_PAGE_WRITEABLE;
++}
++
+ static inline int kvm_need_flush(kvm_ptw_ctx *ctx)
+ {
+        return ctx->flag & _KVM_FLUSH_PGTABLE;
+diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+index ed956c5cf2cc..7c8143e79c12 100644
+--- a/arch/loongarch/kvm/mmu.c
++++ b/arch/loongarch/kvm/mmu.c
+@@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu
+*vcpu, unsigned long gpa, bool writ
+        /* Track access to pages marked old */
+        new =3D kvm_pte_mkyoung(*ptep);
+        if (write && !kvm_pte_dirty(new)) {
+-               if (!kvm_pte_write(new)) {
++               if (!kvm_pte_writeable(new)) {
+                        ret =3D -EFAULT;
+                        goto out;
+                }
+@@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu,
+unsigned long gpa, bool write)
+                prot_bits |=3D _CACHE_SUC;
+
+        if (writeable) {
+-               prot_bits |=3D _PAGE_WRITE;
++               prot_bits =3D kvm_pte_mkwriteable(prot_bits);
+                if (write)
+-                       prot_bits |=3D __WRITEABLE;
++                       prot_bits =3D kvm_pte_mkdirty(prot_bits);
+        }
+
+        /* Disable dirty logging on HugePages */
+@@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu,
+unsigned long gpa, bool write)
+        kvm_release_faultin_page(kvm, page, false, writeable);
+        spin_unlock(&kvm->mmu_lock);
+
+-       if (prot_bits & _PAGE_DIRTY)
++       if (kvm_pte_dirty(prot_bits))
+                mark_page_dirty_in_slot(kvm, memslot, gfn);
+
+ out:
+
+Huacai
+
+>
+> base-commit: 9dd1835ecda5b96ac88c166f4a87386f3e727bd9
+> --
+> 2.39.3
+>
+>
 
