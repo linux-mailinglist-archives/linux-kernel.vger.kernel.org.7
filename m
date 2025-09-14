@@ -1,119 +1,180 @@
-Return-Path: <linux-kernel+bounces-815636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC72B5693E
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FACEB56943
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39B753B752A
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:20:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15CE13B65AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AABD246778;
-	Sun, 14 Sep 2025 13:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022791D6194;
+	Sun, 14 Sep 2025 13:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AgDbDHPL"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pipUxAyu"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDAB1922F5
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64AC2356C9
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 13:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757856043; cv=none; b=d3VXh8y54y03HghheBaltOBEIi2nRlsQOrfVPF7cuSrFUpRgp6ngEeKxyk3lYaFhAw6FtwaVNtND+OBfjj67OsjzV0TK3d02+9C947ChpAtaix3e1oQ/sfJ3C/K4w9udtCABFGDrHSGGu4dSRc8ZUVAdT2Od+6/UAylsGxqAk68=
+	t=1757856066; cv=none; b=WABVMlyu6EvwbaJZnOYdD9FG3ngjOpWZo7ZTbpdlbSefhi5vmRfpT2e5roO+PXIdw+kV3nCTgFjzDXFYpZWtMDMAyRehGY7x8u0BOqbUeTtLBTEC+beYQNd7nrhTcNqHu5cQ2tdPvEH3pHbhCGZbb9T/6Bg2pkivb3MmN9pizWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757856043; c=relaxed/simple;
-	bh=rruUm1ocHEpQZ4MUQAAECVBOSGcNHmVZdbgaderWfw8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E+jLnkBWEwAfqzoQxLH1eRQECDV3aKyYbOvcT5CvYDDdf5YFPSLWiqqXHIN3wgyyX8Emyv4DZgFD2b0kW3+wvhwv0SD3Nq0aXNInrtNmbqiIgN6c8X0KusoK1DKh529iLzfom2b9CVyIAdh8CIV8fGIGqjemAmfbO5QfSkIRrVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AgDbDHPL; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45dcff2f313so21304425e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:20:42 -0700 (PDT)
+	s=arc-20240116; t=1757856066; c=relaxed/simple;
+	bh=FHRGm7LXfDWxk3h6js0O3WyYp7ia2gmJ2X8rfluSTRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mh752X4TQ8KABS4u3vTXJIQCtRsbo/t+wn8x28mzW3D2z2jJwx9qZErQ0GMs0TrePs15sVRwC6aGS7jlOCu00+Df0ZwNZhAIw0UX6wlhRu6m3ilTAdpvrq60GpxqfSm8HYeMJKxlwps/cbpIhpuXjXxUQ9s+HqEQGmxn7JzPUQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pipUxAyu; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45cb6180b60so23047655e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:21:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757856041; x=1758460841; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kAG7m9JuJHlEHyVLrilF0p1L19ca1FzfGVRDxZu6tYk=;
-        b=AgDbDHPLIqFZiytWd5LyzSqkMHtBXGA82UWkS/u5tJmXGD60lFGq7TejRYt1PeEfby
-         1tXlPkygBsaoRHT2H9dJpYq94mcJBDqhC0dQ+fvJVa3AElH8oDRzmJ1+343jS1WHVT4f
-         PHEzfY9Irqwi/KVpL47lU+Mn//GWVoZX+Ci4nmM+MyFJR/1afC1huJ1BMubPkU5KB+up
-         /1niqx6GlwJeEnBqKwHUBXGMpJMBA0sohIw3ht5swibQ/rjzAgkaiw/F/Kj3LfR0FytK
-         Ue1RTqm8TKvqPX+gZL8GbzZLR3u+C0HWHHSl+99/6eOV6j5ic627vthA/PjUbYM+6qWn
-         kTZw==
+        d=linaro.org; s=google; t=1757856062; x=1758460862; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+GK7SXOR7eYPYSb3rZX+Z9MMo2wc8zU01qlT09Kxeb8=;
+        b=pipUxAyuqNUWuA1Ga05hUOnaXY3TMCUFJQum+4Wa/K9XYSAGP9TSNlAdPb2f2LVDVQ
+         haIEH5XbNLYnTrXWa4WvPiQObfPbcK5Z+HuAn2hIyRitWJ4f9ImZuqzpFo/JLxztbCx2
+         b6PeTrek309s/G9XSSZdrp20ayPdaX/SOiMBniGhjTGrl9yVRbsRuTtwhVtkIf7qDlvR
+         6GLsJHnU2sRar6Dq5HgTcR/Qn5pEN9y7GFQi5+zDxrLfMkS6kPO3QfiBX0bUVF/mEn0G
+         5UxW5Dt+Aakhjs5jfNzRdbzR6mU9I1E7F1/114HiX9iZ2/9s8It15X4piDd9+z1H1qJW
+         jz3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757856041; x=1758460841;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kAG7m9JuJHlEHyVLrilF0p1L19ca1FzfGVRDxZu6tYk=;
-        b=UCNjm4VbeOe5FRsUza3OQ3SiohaLfiplcZfc21VYThiYvyVzF6psys/eo6+ky5Ffx7
-         B4eniDdbI4Ux+pH2kIYOVA3x2jjkTiA6q1rxc2UbulYMOuSFanqEf9vNgEsIl38z97FQ
-         lP6jPITkScYOezt4vIYaF5oDE6MKGHLgvENpw/C4m51aO14ojHwDAgOm0EstZ9J5dGVZ
-         7h+bMw0JCT7ZSGE2NDQL3JWEOw0arsPPSrD2lLrfBnyTTM1+1DbYtGKBQfzTH0jI/Xwe
-         TpEC+dyYoew1MCRLmeo3shaQUwvTMJ6p8nTKUCsFW57S9S16nkGj0BvAeesMBrL8Daus
-         o9zA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhMzfPL3vSa5GuTt3FQIBauPnTzQfzzWEuZqMjR2Ggt4yyCAP3bNoTpgFLpY8taZv1Tw0TFYOrdS6oMWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIGKarz/EZ+8/UhAX7m5LZIjfQdiEs8FzydmjXgElwA+/ITWpr
-	/goe0TL0RRbbhOS+7ucenV//3lAbhkgtQNiO+fxOMK/UVhVgIG5sAs57
-X-Gm-Gg: ASbGnctJvl9yBpCwJdXUWFVGJ2j+nVgsoa8h3rINkeoKwmfQmn0JFkh49R/0IroR5e2
-	Hu3+A8zZ3bGcfv2Klhyfi1uos2QEIwexYQ+1LlZtH/zajRdC3YOtQWMjsL6befypsbvWb1z0Od7
-	40sHiV43IBpMvxTjrK2gv93hDQMSMEenijWGtzv/RcOZOnA1iuJgmaYhMUcq8NXWhFebBWl8xMp
-	7sKgOTEl7hq7Hy7j1kcviC89iJLVN1M9OwWUEWPfqw4NRCsYn0hBbgYwLdHZ5jB2Hvq9kC16Csv
-	hXZMPDPf1qJqjJ407AcEzirZOdln7xlTUYj1xEyKWorWtOBncZvm9gUTwW7OwXNv+je1UFy54GL
-	jmM51dyNKH+vmjSKM4ovY0u2h3RN1CQWCiIQ67UKZegKJoG4D2NwPDA8cCW/SKPrbkpqaIUaQsS
-	i6wMHl9Hem
-X-Google-Smtp-Source: AGHT+IGXHijtzVt4eJs2ZV02TN6C9aMKH+pvbvhPrJQNoOx9E+tCmvs9kL5J7Zm+EWTDt2YmA/iNKA==
-X-Received: by 2002:a7b:cb87:0:b0:45c:a955:4578 with SMTP id 5b1f17b1804b1-45f211f7f55mr62938465e9.21.1757856040463;
-        Sun, 14 Sep 2025 06:20:40 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45f2acbeee0sm29595095e9.0.2025.09.14.06.20.39
+        d=1e100.net; s=20230601; t=1757856062; x=1758460862;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+GK7SXOR7eYPYSb3rZX+Z9MMo2wc8zU01qlT09Kxeb8=;
+        b=foBfWjoAe2OMaPnLECWvK0e27QK7u7ULnU7EBLWi9QP3oFkY8OMmA3PDySKb05NZbH
+         vSRM8v8Ye1W3iXyFRB5ZbJ8daTxtUU028MB8vay2zgYFSIdL2nH/Ym6ix5Sl8hUOOTCT
+         heq2D5L1RFZI4l4uoCrUriJfmXYJSYNK4xtz13zsRkyq+cAl/DoyY+wY4dZapB3BOmiJ
+         mPobt8p7wtXsITLQxWJtEHwbaIL/280aQ5dLWiltR85X663DAfVthv01T94h8nQrV4Bc
+         uIPTEQzvMuQ04cRohud3R4L+wtImQDq+nlUpU1iAW5G4S8cRF+IcNEgd6UCTWZZB6QKL
+         PxfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWaphDlhg1iZMY+amFDt1hGKcGpJ+EeMJ8/a5Tg5HN16bf7tNI1+Uu00aClC38BJ8nOD4cK2wrHgK4qE7M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUCLy40pJZQccty78vQEvYfHHrwczvVde8SWrnEPL0GDlxpmLk
+	2sg0sYZ4UkmiH+wRiN0dszlHTl8+8mmdROOTMddAZw18yWou7M/CfjnI5GT2smQOee0=
+X-Gm-Gg: ASbGncs1lO4Xc+XkNUWf19c1UiVxJxNaCBKvsfW1DEk8Go0nEANg29i0Pfd+QLNWM65
+	gYicHywYNQ0m44I5CUsCn1GsQXcWQYz8U1/ow++g9oZ0T7bV+8jT7bBZrvr6tu2X2zW0m50bi/M
+	8uD4xQDzFnLQv/tj9ayr2mI21hwl31HAgad/666SSq0qXJes5K/5l6YEeQSenPyvmryglo/l0df
+	59JH7RWhzVwkyq62BTN4JfD6cRqLJ9nbbu/iC9LVwtCoMj2OUhKwTylwkAwOaqoiUdkmEe24p4e
+	djkeV2cCUoh5kV+k2lvDasTCrULcFZdk2GKlKDV1jUA7tLhQD62A824iXSTQ8MRsQ7MLze/tBW/
+	pKD/JLFKKW65nL7fe04EOwO5E1KDnstkND0XJKiwfPg==
+X-Google-Smtp-Source: AGHT+IHdgLvDTL4KVtGGIiFe+3oBC8tJ3o8FsHsupq0zhyzo+pH1R1CU6WA9dvqZ9/RfqTpJ+CDSUw==
+X-Received: by 2002:a05:600c:1f8c:b0:45b:64bc:56ea with SMTP id 5b1f17b1804b1-45f211f8841mr78216515e9.23.1757856062040;
+        Sun, 14 Sep 2025 06:21:02 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:30:52cc:acc0:aba:120d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037c9d91sm133143445e9.20.2025.09.14.06.21.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 14 Sep 2025 06:20:40 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Sun, 14 Sep 2025 06:21:01 -0700 (PDT)
+Date: Sun, 14 Sep 2025 15:20:58 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: jens.glathe@oldschoolsolutions.biz
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
 	Rob Herring <robh@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pwm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: pwm: samsung: add exynos8890 compatible
-Date: Sun, 14 Sep 2025 16:20:33 +0300
-Message-ID: <20250914132033.2622886-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v8 2/3] arm64: dts: qcom: x1-hp-x14: Unify HP Omnibook
+ X14 device tree structure
+Message-ID: <aMbBOgNc-382vwMY@linaro.org>
+References: <20250909-hp-x14-x1p-v8-0-8082ab069911@oldschoolsolutions.biz>
+ <20250909-hp-x14-x1p-v8-2-8082ab069911@oldschoolsolutions.biz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250909-hp-x14-x1p-v8-2-8082ab069911@oldschoolsolutions.biz>
 
-Add samsung,exynos8890-pwm compatible string to binding document.
+On Tue, Sep 09, 2025 at 07:02:34PM +0200, Jens Glathe via B4 Relay wrote:
+> From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> 
+> Extract common elements into a shared .dtsi file for HP Omnibook X14 to
+> support both Hamoa (x1e*/x1p6*) and Purwa (x1p4*/x1*) variants.
+> Required because the device trees are not compatible.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> ---
+>  ...hp-omnibook-x14.dts => x1-hp-omnibook-x14.dtsi} |   48 +-
+>  .../boot/dts/qcom/x1e80100-hp-omnibook-x14.dts     | 1606 +-------------------
+>  2 files changed, 48 insertions(+), 1606 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts b/arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
+> similarity index 97%
+> copy from arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+> copy to arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
+> index 716205b437df55489cfb7d29846cdaf8e403cf72..e6851dbaba121029bde926310616169e319cf5e3 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-hp-omnibook-x14.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1-hp-omnibook-x14.dtsi
+> [...]
+> @@ -1028,6 +1015,7 @@ &mdss_dp0 {
+>  };
+>  
+>  &mdss_dp0_out {
+> +	data-lanes = <0 1>;
+>  	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+>  };
+>  
+> @@ -1036,15 +1024,13 @@ &mdss_dp1 {
+>  };
+>  
+>  &mdss_dp1_out {
+> +	data-lanes = <0 1>;
+>  	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+>  };
+>  
+>  &mdss_dp3 {
+>  	/delete-property/ #sound-dai-cells;
+>  
+> -	pinctrl-0 = <&edp0_hpd_default>;
+> -	pinctrl-names = "default";
+> -
+>  	status = "okay";
+>  
+>  	aux-bus {
+> @@ -1061,13 +1047,19 @@ edp_panel_in: endpoint {
+>  			};
+>  		};
+>  	};
+> -};
+>  
+> -&mdss_dp3_out {
+> -	data-lanes = <0 1 2 3>;
+> -	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+> +	ports {
+> +		port@1 {
+> +			reg = <1>;
+> +
+> +			mdss_dp3_out: endpoint {
+> +				data-lanes = <0 1 2 3>;
+> +				link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+>  
+> -	remote-endpoint = <&edp_panel_in>;
+> +				remote-endpoint = <&edp_panel_in>;
+> +			};
+> +		};
+> +	};
+>  };
+>  
+>  &mdss_dp3_phy {
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
----
- Documentation/devicetree/bindings/pwm/pwm-samsung.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Please review the resulting diff carefully when you rebase changes with
+conflicts. You're reverting other changes (4 lane DP, eDP HPD pinctrl)
+here. :-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-index 17a2b927a..97acbdec3 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-+++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-@@ -31,6 +31,7 @@ properties:
-           - enum:
-               - samsung,exynos5433-pwm
-               - samsung,exynos7-pwm
-+              - samsung,exynos8890-pwm
-               - samsung,exynosautov9-pwm
-               - samsung,exynosautov920-pwm
-               - tesla,fsd-pwm
--- 
-2.43.0
-
+Thanks,
+Stephan
 
