@@ -1,90 +1,106 @@
-Return-Path: <linux-kernel+bounces-815896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E43BB56C66
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:17:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61956B56C6B
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25641175D49
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:17:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE3627A1D82
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6365E22D7A5;
-	Sun, 14 Sep 2025 21:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929A42E6135;
+	Sun, 14 Sep 2025 21:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="sTyV6vcQ"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b="pjRdCZxZ"
+Received: from mail-4317.protonmail.ch (mail-4317.protonmail.ch [185.70.43.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325112DEA75;
-	Sun, 14 Sep 2025 21:17:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF2621A457
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 21:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757884658; cv=none; b=TdfHfSfhGVFH62RKnyMsWdfQJjyc0VAVbj00Vrcq7frKzNK8hPSyy3rPYrt1q+uNCcYIapzUYR82+8wztkZdDZjnq9QfPY/uGexztbouFQ/Y45rUlj1wrH1VqfCH8Gfvqj5mLWrxz3sfrnyMwchfPfy3i+s74/Wt/LL4eIOqH2g=
+	t=1757884759; cv=none; b=RbBeoNgcZRsKYSqTCngm3YbLf4IKCaZlXHZ3izvQ5L3hRtMMQMw5TFSfxLOAEqR/fC9tEsHyR6D9E5dzxX6fag28wKnLpuSihegN837lOUt0zpO5hZSawF6/QAPhFsPlUZ9MyH2J4waY/ZRhojEHCj9z0ajedQ//Ac+1jEnA080=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757884658; c=relaxed/simple;
-	bh=eS4EkHT9wQ8dbFeDRO9liwQC9Uky0mZDAzalZEYEZJc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R//NucCrqz/ngWdtW6RyM+VWC2+ZqnwCvhFV4wXq29YHL55Ikeo0JXJEKDzLLhNdsfyrYXqMR3ZivSqPKpR/8H6Q4pTeneGTuXSIAfg/vqRAl0Kqw5Yoo0qF7CW+Jn9a5hJ9bDZnKQOFN7tAudwWHfBToZ2VbtU0vxJWGP0Mz3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=sTyV6vcQ; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id AC3964E40BD1;
-	Sun, 14 Sep 2025 21:17:35 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 830106063F;
-	Sun, 14 Sep 2025 21:17:35 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 91E20102F2A7F;
-	Sun, 14 Sep 2025 23:17:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1757884655;
-	h=from:subject:date:message-id:to:mime-version:content-type:in-reply-to:
-	 references; bh=bwgYGLVw4FvwSrXLDhUaGBwyd0Ch8i1Emb7X+v26uqM=;
-	b=sTyV6vcQ7aNeiJCqjTT936B7vdGy4WQNWApnGTKPcAvq33b9pTGYDOqPtLP3F7MkcqtcJm
-	hE9fG1ocfnFKfXQMG76eqQrKMNORE+t9YvpCu7MBm++2HSX2heXFqKt5095bCKjTfgsB9m
-	umbnvx+lcyASn7p1fied5B3bziruG6oPy/ZKOKwXVtKsxHW9eyZD+fD7zc0cywVyjIuhSt
-	bleGV4f3Zj5nlNDMtT9nXCQEsYX6dT+zWr4oACeugEFWcr2lAoD/b5vvJdjtx/IsZn4G2/
-	Pmpb0Kn9Suq/uVoVJYVOIcrVZt935hd+Q1AE+xQ/fdK4l0zU9keEDeKNATbZhw==
-Date: Sun, 14 Sep 2025 23:17:34 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH 1/3] rtc: s3c: Drop unused defines
-Message-ID: <175788449952.388732.603913346670882108.b4-ty@bootlin.com>
-References: <20250830130024.142815-4-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1757884759; c=relaxed/simple;
+	bh=Mp3ThDTfoGcWOtSNWR2msXKzQUo3f7rECaxqSDi7tvo=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ps4TTRNWe1hxonNmKqNaD4ouJ3Ox402NauSPTPZ1JYFH2WFxfHLj+/y36QB36bFGBk1hN6CGoEgbgqwW+JhpVx8yRXt1DeAAoduZZ2X7dbQeL53qz1zZl01Yan4sGoNUW+C+YmHUfQF6e2bCan88LmMjYpbXdkcLbtlJ8ePQtIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro; spf=pass smtp.mailfrom=chimac.ro; dkim=pass (2048-bit key) header.d=chimac.ro header.i=@chimac.ro header.b=pjRdCZxZ; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chimac.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chimac.ro
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chimac.ro;
+	s=protonmail; t=1757884755; x=1758143955;
+	bh=sJdatwuItQDKsBxIYrlY3ZlspqT7UZOXCVPAjQosROw=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=pjRdCZxZYjv593LAaJYmmeAdRJYgbg4+m8zmgYUrZnk1HfnCX+zVZy5r516/ukeR5
+	 HRyNQ1XTojQVzmtmxIbFZMEJz8hjyyPZ8SK/oy/caVDpGBqSliy0EBZWXTJb7WDdVc
+	 /X6uGiLa7wje4dhrAZviuEebtrh3msO7WlgQp5NGRwOABM25CMAF72dqzsCbA2+gaS
+	 bqZXHsKzBvJJIELK0BrD3O1bhVhcF4R/Dz5qgYZgSHuBGAQRxxjlo9mXEH/eu9NbtT
+	 FccXs+6ZT4t3gZtcrC8uiZahoL74B62FTNss2rbvzkB4WAIeAJ21QwPsvlejEH8NsF
+	 WMGN9I9MW5sKw==
+Date: Sun, 14 Sep 2025 21:19:10 +0000
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alexandru Chimac <alexchimac@protonmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+From: Alexandru Chimac <alex@chimac.ro>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Alexandru Chimac <alex@chimac.ro>
+Subject: [PATCH 0/8] clk: samsung: Introduce support for Exynos9610 clocks.
+Message-ID: <20250915-exynos9610-clocks-v1-0-3f615022b178@chimac.ro>
+Feedback-ID: 139133584:user:proton
+X-Pm-Message-ID: 7100008c38a354ce31d7f13b8a0b76ba06752ed9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250830130024.142815-4-krzysztof.kozlowski@linaro.org>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 30 Aug 2025 15:00:25 +0200, Krzysztof Kozlowski wrote:
-> Drop defines for S3C2416 and S3C2443 SoCs which are not used anywhere.
-> 
-> 
+This patchset adds partial support for clocks (no SHUB, USB, MIF0/1, ISP,=
+=20
+VIPX1/2, MFC) on Exynos9610.
 
-Applied, thanks!
+Signed-off-by: Alexandru Chimac <alex@chimac.ro>
+---
+Alexandru Chimac (8):
+      dt-bindings: clock: samsung: Add Exynos9610 CMU bindings
+      clk: samsung: clk-pll: Add support for pll_1061x
+      clk: samsung: Introduce Exynos9610 clock controller driver
+      arm64: dts: exynos9610: Enable clock support
+      dt-bindings: soc: exynos-sysreg: Add Exynos9610 SYSREG bindings
+      arm64: dts: exynos9610: Add SYSREG nodes
+      arm64: dts: exynos9610: Assign clocks to existing nodes
+      arm64: dts: exynos9610-gta4xl: Assign clocks to existing nodes
 
-[1/3] rtc: s3c: Drop unused defines
-      https://git.kernel.org/abelloni/c/06625ab00682
-[2/3] rtc: s3c: Drop support for S3C2410
-      https://git.kernel.org/abelloni/c/1e41547c2041
-[3/3] dt-bindings: rtc: s3c: Drop S3C2410
-      https://git.kernel.org/abelloni/c/063544dad4a7
+ .../bindings/clock/samsung,exynos9610-clock.yaml   |  344 ++
+ .../soc/samsung/samsung,exynos-sysreg.yaml         |   20 +
+ arch/arm64/boot/dts/exynos/exynos9610-gta4xl.dts   |    2 +
+ arch/arm64/boot/dts/exynos/exynos9610.dtsi         |  277 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos9610.c               | 3652 ++++++++++++++++=
+++++
+ drivers/clk/samsung/clk-pll.c                      |   29 +-
+ drivers/clk/samsung/clk-pll.h                      |    1 +
+ include/dt-bindings/clock/samsung,exynos9610.h     |  720 ++++
+ 9 files changed, 5039 insertions(+), 7 deletions(-)
+---
+base-commit: 48c4c0b684f394721b7db809e1cc282fccdb33da
+change-id: 20250914-exynos9610-clocks-2fba704e6030
+prerequisite-message-id: <20250914-exynos9610-devicetree-v1-0-2000fc3bbe0b@=
+chimac.ro>
+prerequisite-patch-id: fb1e2f83c03a3b3a330c72d5d9c9fd8cd95ef2ce
+prerequisite-patch-id: b42a7c0c72b1bfe33bb65fb911bf28e3e101fa55
+prerequisite-patch-id: 4c5c21cf62e50db603fe4e2df17ee664ff0b243e
+prerequisite-message-id: <20250914-exynos9610-pinctrl-v1-0-90eda0c8fa03@chi=
+mac.ro>
+prerequisite-patch-id: 27e949ada132a43ba3dbf880af3e6168ec94eaf9
+prerequisite-patch-id: f446d396d0258709db47aef69e68821eb72582dc
+prerequisite-patch-id: e3bf016be9509ee79beb3d51907ef6cd58fb98b1
 
 Best regards,
+--=20
+Alexandru Chimac <alex@chimac.ro>
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+
 
