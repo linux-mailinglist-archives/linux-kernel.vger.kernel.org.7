@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-815684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0E9B569C9
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:42:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE372B569CD
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2825E189E5D6
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41D45189E5FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D46D229B2E;
-	Sun, 14 Sep 2025 14:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6571F24BBF0;
+	Sun, 14 Sep 2025 14:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyJ9u22k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="RfedOOUv"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB7702264C6;
-	Sun, 14 Sep 2025 14:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C174419047F;
+	Sun, 14 Sep 2025 14:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757860970; cv=none; b=i/yyF6fzdqFgij1Fcnvlpm3vRHrpktJe3I5zmfI//Z6KI3fjx4MyGru2yv+QA38GJmPzZCFGgrSLog1GUTNn6hw4TuatKKzWpx8yIeIVyo7TSR1IUQMxwUl8wtowNpvQPIdREgKHpQe5RtNaWFLQJGCcz7xQNO6VM5ObQDsU9XA=
+	t=1757861162; cv=none; b=rWpar75kDoxECV1NYUXmzRrdcrrot95VT9VhAwmbF+7CZaAzBkTGr1t9XfBo3lxzF0oQ9nFUNx1sN7XV9p1zKcHR8ycTLR4O4mbgiDHPXwNTqaviPF0aVaUA5ToPLKqdDSEmN+8e+AehwHsHjjpWMbPk0DzHiMQPowUGEYlGeI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757860970; c=relaxed/simple;
-	bh=PzQNP+iXhbAYk0sG25Qch7JW6l/swG0JTlYB7VYGAkA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=pvIVnJiFMwuqDuLpFPMszpF0A5s+RWRWZEqD35Us8VbmyiGNVHym99YRnRm/CcM0krK9RSEeKTV+0XZRnKuOjb1c4LtVz0CzHdHBQJctAdSt+G6Q3pzp7f1YFp/zu8Sf8DV4Cgg1dEWaWlQ30V7Ydr7AdUaYHMVnOjt7xjrAp8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SyJ9u22k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90FD2C4CEF0;
-	Sun, 14 Sep 2025 14:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757860970;
-	bh=PzQNP+iXhbAYk0sG25Qch7JW6l/swG0JTlYB7VYGAkA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=SyJ9u22kZEM6Iy0bBBL385iaJikOGqSCcxn6kHCIXdE55aDFRSzFnWoOFyM8oO2X0
-	 SIL5oADcHfk8ScoXvbqrIvH88vkT7H3zunH9yAL589yrZK/X/QOED+GFejo1JvVYg7
-	 eV9Yeo3L2S++pidfDuVhbjGcdf0vd/c43fH5nZTCgI4Ri77mgfZdUaVIQj8XG6xfy1
-	 cn2GN9mUONavKphnFQbAXXjp/iq0y4OBSwwEh3oCRldFO1PpmE5jRUkaAxcy/eAilS
-	 ZftbG+SKU7MEC8+hUcYjMkalaZWheyBM3F+hIagCwjlSVt4O+l1wwEJydCF0uO+TsU
-	 4k38Rf3H52BkQ==
+	s=arc-20240116; t=1757861162; c=relaxed/simple;
+	bh=HnvDW2zHErnh0GG+Edrb3yLGMisILDbYZ1ovzp9d8wM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TO2SX2Y9VDKCeVpnxlYuqhDH/YE4r0m0BTP6tOK8vSzBSGg+QGsi65K2j84BIF2TAcbMOhgUbbxfjwEBZfFS1YR4aS/xfNyLreu4Aos2U1CNfqXBZZgEU9PxmOLNIOqPTPFhToZRxwA4+u0D29FRlgB2+K5W+tdeEEsL311BzRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=RfedOOUv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ZbZXc/D4E+4fCZ1w+feXVqgq8luXyPiNNgM1LGA/m8o=; b=RfedOOUvR/F4TFMNZdMcqcCC8A
+	OFjRBvn0JANMl83LFEOY6EGrjNEuc76sQ6yJMJGEXui20i7lQUJsqkrExoYam8I0id19u5aEmyT94
+	3jRFXEG4vzmU7ketV9mfVtvF6lisVPsWBTsNEehw0hJq1VRKlVuQ4EPi2uAQCSTJVvEg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uxnzE-008Luw-Ad; Sun, 14 Sep 2025 16:45:52 +0200
+Date: Sun, 14 Sep 2025 16:45:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Yeounsu Moon <yyyynoom@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: dlink: handle copy_thresh allocation failure
+Message-ID: <d8494b1b-e110-4c73-87e0-d188d3f1beb5@lunn.ch>
+References: <20250912145339.67448-2-yyyynoom@gmail.com>
+ <57d58296-c656-4dab-a2e2-faf2452fb4de@lunn.ch>
+ <DCSE8SBC2ZD1.Z7BOJYSEIELY@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 14 Sep 2025 16:42:40 +0200
-Message-Id: <DCSLPCSQRYOY.3BX3008H5CVQP@kernel.org>
-Cc: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Danilo Krummrich"
- <dakr@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Alice Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "Alistair
- Popple" <apopple@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <nouveau@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v5 02/12] gpu: nova-core: move GSP boot code to a
- dedicated method
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>, "Joel Fernandes"
- <joelagnelf@nvidia.com>, "John Hubbard" <jhubbard@nvidia.com>
-X-Mailer: aerc 0.21.0
-References: <20250911-nova_firmware-v5-2-5a8a33bddca1@nvidia.com>
- <e1755470-587b-4a43-8171-3d031b7fb4f4@kernel.org>
- <DCPYQNZG1OJK.2EE4JWJAROK57@nvidia.com>
- <ce74db34-77bc-4207-94c8-6e0580189448@kernel.org>
- <DCQ074EMFNIK.1OJLWJXWZLDXZ@nvidia.com> <20250913010226.GA1478480@joelbox2>
- <DCRPJKD0UHDQ.IOWSOB2IK06E@kernel.org> <20250913171357.GA1551194@joelbox2>
- <CANiq72n50MaMXeWdwvVOEQd3YEHbDRqeeRzbdY8hPnePtq-hnw@mail.gmail.com>
- <b1aea815-68b4-4d6c-9e12-3a949ee290c6@nvidia.com>
- <20250913220625.GA1564550@joelbox2> <DCS59IDCIKH1.2M3I6H0NVD0RG@nvidia.com>
-In-Reply-To: <DCS59IDCIKH1.2M3I6H0NVD0RG@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DCSE8SBC2ZD1.Z7BOJYSEIELY@gmail.com>
 
-On Sun Sep 14, 2025 at 3:49 AM CEST, Alexandre Courbot wrote:
-> On Sun Sep 14, 2025 at 7:06 AM JST, Joel Fernandes wrote:
->> On Sat, Sep 13, 2025 at 02:29:54PM -0700, John Hubbard wrote:
->>> Yes. It's only "paranoia" if the code is bug-free. So Rust itself
->>> naturally will look "a little" paranoid, that's core to its mission. :)
->>
->> This seems to be taken out-of-context, I said "paranoia" mainly because =
-I am
->> not sure if excessive use of pinning may tend to cause other problems. T=
-he
->> "paranoia" is about over-usage of pinning. Personally, I don't prefer to=
- pin
->> stuff in my code until I absolutely need to, or when I start having need=
-s for
->> pinning, like using spinlocks. Maybe I am wrong, but the way I learnt Ru=
-st,
->> data movement is baked into it. I am not yet confident pinning will not
->> constraint Rust code gen -- but that could just be a part of my learning
->> journey that I have to convince myself it is Ok to do so in advance of
->> actually requiring it even if you simply hypothetically anticipate needi=
-ng it
->> (as Danilo pointed out that in practice this is not an issue and I do te=
-nd to
->> agree with Miguel and Danilo because they are usually right :-D). I am
->> researching counter examples :-)
->
-> You can look at the definition for `Pin` in [1], but it is so short we
-> can paste it here:
->
->     #[repr(transparent)]
->     #[derive(Copy, Clone)]
->     pub struct Pin<Ptr> {
->         pointer: Ptr,
->     }
->
-> There isn't much getting in the way of optimized code generation - its
-> purpose is simply to constraint the acquisition of mutable references to
-> prevent moving the pointee out.
->
-> I started this patchset a little bit skeptical about the need to pin so
-> many things, but after seeing the recent additions to `pin_init` and
-> rewriting the code as Danilo suggested, it starteds to click. The
-> supposed restrictions are in practice avoided by embracing the concept
-> fully, and in the end I got that feeling (familiar when writing Rust) of
-> being guided towards the right design - a bit like playing bowling with
-> gutter guards.
+On Sun, Sep 14, 2025 at 05:51:54PM +0900, Yeounsu Moon wrote:
+> On Sat Sep 13, 2025 at 5:39 AM KST, Andrew Lunn wrote:
+> >> -				skb_copy_to_linear_data (skb,
+> >> +				skb_copy_to_linear_data(skb,
+> >>  						  np->rx_skbuff[entry]->data,
+> >>  						  pkt_len);
+> >> -				skb_put (skb, pkt_len);
+> >> +				skb_put(skb, pkt_len);
+> >
+> > Please don't include white space changes with other changes. It makes
+> > the patch harder to review.
+> >
+> >     Andrew
+> Thank you for reviewing!
+> 
+> As you mentioned, it indeed becomes harder to see what the real changes
+> are. I have a few questions related to that:
+> 
+> 1. If I remove the whitespace between the funciton name and the
+> parenthesis, `checkpatch.pl` will warn about it. Of course, I understand
+> that we don't need to follow such rules in a mindessly robotic way.
+> 
+> 2. However, I also read in the netdev FAQ that cleanup-only patches are
+> discouraged. So I thought it would be better to include the cleanup
+> together with the patch. But I see your point, and I'll be more careful
+> not to send patches that cause such confusion in the future.
+> 
+> 3. This is more of a personal curiosity: in that case, what would be the
+> proper way to handle cleanup patches?
 
-That's a great way to put it -- I had a similar experience when writing
-pin-init and thinking about it purely theoretically. Good to see that it
-works out in practice (and continues to do so :).
+The problem with cleanup patches is that they are often done by
+developers who don't have the hardware, and so don't do any
+testing. White space changes like this a low risk, but other cleanup
+patches are much more risky. So some cleanup patches end up breaking
+stuff. We reviewers know this, and so put in more time looking at such
+patches and try to make sure they are correct. But cleanup is
+generally lower priority than new code. So to some extent, we prefer
+the code is left 'dirty but working'.
 
-> Yes, that means redesigning and rebasing our code, but that's also the
-> cost of learning a new language.
->
-> And yes, things can still be a little bit rough around the edges, but
-> there is awareness and action taken to address these issues, at the
-> compiler level when relevant. This makes me confident for the future.
+In this case, you have the hardware. You are testing your change, so
+we are much happier to accept such a cleanup patch as part of a
+patchset fixing a real problem.
 
-If you have an issue that you cannot work around, or something that
-looks off, let me know. Maybe that's something that pin-init can deal
-better with or we can have another library that helps with it. After all
-pin-init is specially tailored for the kernel to work :)
+Please submit two patches in a patchset. The first patch fixes the
+whitespace. The second fixes the memory problem with copy break. That
+should be checkpatch clean. And mention in the commit message that
+this has been tested on hardware.
 
----
-Cheers,
-Benno
+     Andrew
 
