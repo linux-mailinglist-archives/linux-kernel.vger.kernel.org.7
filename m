@@ -1,119 +1,312 @@
-Return-Path: <linux-kernel+bounces-815477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8E1B566C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 06:31:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C80B566D9
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 06:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3B2B3BFA29
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 04:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E676717AA40
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 04:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83669275845;
-	Sun, 14 Sep 2025 04:31:50 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B54272E67;
+	Sun, 14 Sep 2025 04:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WwnqoyRI"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FB41EEE6;
-	Sun, 14 Sep 2025 04:31:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C899E1C3C11
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 04:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757824310; cv=none; b=UKWM0R9QoATmV+k0G+EsDtOGvLwwkL96pdDlulKzPKwTFlw4VZXNGvIhB97D9r/RXkQZINHQU8fUsbZQm5fAGEYdHg2J2ZNDcrzkDjXxQkgRIVto3hrifE9DAkDitAVnAIleO9CzNrsURmzWxBsB66T6/2TSBZ+mfDU5B0T0BFI=
+	t=1757824823; cv=none; b=pot/zNQv7FNeZ+z3aHbvsd55npc/77ge+sXttkS21NW7NwufooXKEuTxVN0WycZVg5JWDEH0enbsaxw+XIfGsxlliiprVzyOvDgzFUwbiZhdXvUPpJAaEGImo0NXLDLDL7rk+BUwHW6sy685tqZxubw2MTG56rLU3sGORso15u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757824310; c=relaxed/simple;
-	bh=lzkC6hsqY0cN0BnhaYYUseeH+o3sfSLh9lERclKfni4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XP6pblpgvlSPFdBypRmKwj4Bg6OeJVSWZwQc1linr6E9ON0xH/jcUVq5aFs/BHZCBt0cjfkeuPLtIljJBGJ6Cd2mG5XqYi1uHpT7E27lHRmFqFwkNr9epUQGB86ifDvWqCRSqBB6S6t+w0h6nqxuXoQsGXPasdTYiw9gXaMiWFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.109] (unknown [114.241.87.235])
-	by APP-03 (Coremail) with SMTP id rQCowABXqIIIRcZoMBfCAg--.61041S2;
-	Sun, 14 Sep 2025 12:31:04 +0800 (CST)
-Message-ID: <007c08ab-b432-463f-abd8-215371e117c4@iscas.ac.cn>
-Date: Sun, 14 Sep 2025 12:31:04 +0800
+	s=arc-20240116; t=1757824823; c=relaxed/simple;
+	bh=L7PSsPt5nOa6SmmyE4vt07F4jeXT0e7Gyuh9X0cRwkw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H1VZuUPYq0fZkiFtsIp5S/f9jJklt4V3fr2kL4BseDbgCSTYNO4TMrTQN3iJJfGqsSNw9vqqTvJ5xM/CRApyfzaX2bPuuknCLdAm+foQbTcoAUifxcDrKC9Jqj7LHPBi060kIr4FBcTDgyiPXw5j5dryG6gMwiLXbu4/34IFjCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WwnqoyRI; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-ea3e7c4aef5so985100276.2
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 21:40:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757824821; x=1758429621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NJuc06CLvzvefazICn2kg2FfQTrT836049eOQrVgizI=;
+        b=WwnqoyRI6ku2N3o5sWZz33WYcJI9tY0pMNTIPh4BtydgZpjBHbIhT56xjkas6M7Xg1
+         bikvbDFX3XGkYr0Ta9UM0Ti+JNAkZXhT2vOgiJBBm2GtfDvb4tQYvkl+d8BXbyA+EIZe
+         oX6jYrZnj7zI9x0P7O9tKFI8Q8C8CS8Er/q2Pwv42jdvZdWAkdKKI9lLubEmhjpsvXmz
+         jwCGIyGfdREiMe3rEsJwAWrNCwErDY6zSHbRt9GKQFGRzA5QjZ+ZftS0XPn2tjfHxWMH
+         QDEKJzUTu2rKKKRaGfwZEMNM2WEs6kk3eDD7z8lFVymnI6VfpYWR6vLoSAH7/CXn9GED
+         CX0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757824821; x=1758429621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NJuc06CLvzvefazICn2kg2FfQTrT836049eOQrVgizI=;
+        b=I0IRAElzwVyO1dExuKqDk05jpzo0HKjHWS+Z4a8ycPnoJBo+a2wtaQbvmKOhbJtxQr
+         W0udRHwxWAKt1K1kxrDSBA2yzRwHD2hHlexsTof/+pFQtICD1D+V1REsFodJT/fncQt4
+         zY4A/gkppb8gbs87cc1gSxQ6tjyqVYwPczmeOiFOAgaoh+pYtY3DE4SSUe95qomuk6a2
+         jr6XXViZrV81tE1ilKHAWmtpjLEtPv7X+ksE5wQhO1gmdDEOBiF9wgOrQy/frK+R6ltM
+         WXKV8iYe5wTOofmOZ0hYX5jAhNjl4Tepao5oAJcJVISs7FmyzcQwJ0HqzJFVNoLNJ8Sx
+         MmxA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhPPT0u0+Sv0mhbc3wYQ5MCpdllQJCb5cWsN7T5sGdcKkPWzPNRdqk8hIfgHBPQgGdiB3mVkOsh1L6aNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcqSnkcM1ocfn2oRjsQ2Tcc2Qua/kuOrVSC6AIeAU1ufqn7E0B
+	x4e20DDqE0oMC9n9pEZb+iOMrMNi5DaPZq5oSkU8lQvcIPm7UDoLcVq011+p9TAj46tEkphPtHL
+	q80k7raZZIkoBa/BEJ12s/TNBQ34x3YYx5MEs
+X-Gm-Gg: ASbGncvZpnsSi2hfZcNMe+J1IgR8+9eV/41lmnaBSIGrMdhk6sAZpMBbeVrF32MTSkG
+	0DzVm0KTnrHa7WuADrowjWo4f2ML4b36jBB4XiLC2veoXxNW6beQ/+f+G8+2G3acdpO0DCxaOEz
+	XACiH3eCKtXyoFEZUTGqJJ62/kkpEoqgyoIXAe/fJ9vDnrRjCMcK0gyU1gtwDn0xhMn9JPAr09X
+	ioK9yJPD6z12jV8
+X-Google-Smtp-Source: AGHT+IFwowBUT4w82UxP3EWh8JF9wnTyQoGwTI8gw6DzKr/6JoNVgiVx4nXNyZ9/P02jJ6OKcSP+pFOP3VdS948GnbM=
+X-Received: by 2002:a05:6902:1208:b0:ea4:3db:3cc1 with SMTP id
+ 3f1490d57ef6-ea403db401amr677102276.26.1757824820699; Sat, 13 Sep 2025
+ 21:40:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 4/5] riscv: dts: spacemit: Add Ethernet
- support for BPI-F3
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Vivian Wang <uwu@dram.page>, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Junhui Liu <junhui.liu@pigmoral.tech>, Simon Horman <horms@kernel.org>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
- Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-References: <20250914-net-k1-emac-v12-0-65b31b398f44@iscas.ac.cn>
- <20250914-net-k1-emac-v12-4-65b31b398f44@iscas.ac.cn>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <20250914-net-k1-emac-v12-4-65b31b398f44@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:rQCowABXqIIIRcZoMBfCAg--.61041S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7XF4kJF48GF13JF1DuFyUWrg_yoWkCFc_Wa
-	n7ua4I9FWkGFWxGF9ag3WfGayxuws5Ar1jv3Z8JryUGwn8XrZrJFyUta1ktry5G34avr95
-	GrWxJr4fCr1DtjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb38YjsxI4VWDJwAYFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I
-	6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
-	8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0
-	cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4
-	vEx4A2jsIEc7CjxVAFwI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkI
-	wI1lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
-	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
-	17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcV
-	C0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWI
-	evJa73UjIFyTuYvjxUsuWlDUUUU
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+References: <CAEVj2t=mHasbuve8cwWpuPRsN=Wvsfrf+u5hLP_16GR3XqkMfg@mail.gmail.com>
+ <20250214225826.154144-1-coolreader18@gmail.com>
+In-Reply-To: <20250214225826.154144-1-coolreader18@gmail.com>
+From: Daniel Ogorchock <djogorchock@gmail.com>
+Date: Sun, 14 Sep 2025 00:40:09 -0400
+X-Gm-Features: AS18NWB-f2YJUIlKnHoF9e7Dl3OwIimhPiwVvhJKUBjBZikl33nAe_hc-ONqBW4
+Message-ID: <CAEVj2tkb5WTj9gAJmxgnymPRi7sdO3HbvMn88wOHgby2XgXHjQ@mail.gmail.com>
+Subject: Re: [PATCH] HID: nintendo: enable HW LED blinking
+To: Noa <coolreader18@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/14/25 12:23, Vivian Wang wrote:
-> Banana Pi BPI-F3 uses an RGMII PHY for each port and uses GPIO for PHY
-> reset.
+Hi Noa,
+
+I tried building with this version of the patch and hit the following error=
+:
+
+drivers/hid/hid-nintendo.c:2229:14: error: type defaults to =E2=80=98int=E2=
+=80=99 in
+declaration of =E2=80=98JC_LED_BLINK_DELAY_ON_MS=E2=80=99 [-Wimplicit-int]
+ 2229 | static const JC_LED_BLINK_DELAY_ON_MS =3D 500;
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~
+drivers/hid/hid-nintendo.c:2230:14: error: type defaults to =E2=80=98int=E2=
+=80=99 in
+declaration of =E2=80=98JC_LED_BLINK_DELAY_OFF_MS=E2=80=99 [-Wimplicit-int]
+ 2230 | static const JC_LED_BLINK_DELAY_OFF_MS =3D 200;
+      |              ^~~~~~~~~~~~~~~~~~~~~~~~~
+make[4]: *** [scripts/Makefile.build:287: drivers/hid/hid-nintendo.o] Error=
+ 1
+make[3]: *** [scripts/Makefile.build:555: drivers/hid] Error 2
+
+Making these 'static const unsigned long' fixed that issue. Probably
+toolchain version dependent whether it succeeds or fails with the
+implicit int.
+
+I also noticed that the HW blink functionality only works in bluetooth
+mode. In USB mode it forces the LEDs on.
+That seems to match up with the note here:
+https://github.com/dekuNukem/Nintendo_Switch_Reverse_Engineering/blob/maste=
+r/bluetooth_hid_subcommands_notes.md#subcommand-0x30-set-player-lights
+
+
+I was able to modify your patch to gate the new HW logic to only be
+active when using bluetooth.
+
+Also please include the commit summary message/description above your
+signed-off-by line like you did in v1 of the patch.
+
+Below is my quick modification to your patch that seemed to get things
+working right on my local setup. Please feel free to
+incorporate it or make your own modifications in v3 to fix the USB
+mode. It's probably also worth adding a comment describing
+why it doesn't use the HW support for USB:
+
+---
+ drivers/hid/hid-nintendo.c | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/hid/hid-nintendo.c b/drivers/hid/hid-nintendo.c
+index 14aed2500a96..03f24e709949 100644
+--- a/drivers/hid/hid-nintendo.c
++++ b/drivers/hid/hid-nintendo.c
+@@ -2201,7 +2201,8 @@ static int joycon_update_player_leds(struct device *d=
+ev)
+     }
+
+     for (i =3D 0; i < JC_NUM_LEDS; i++) {
+-        if (ctlr->leds[i].blink_delay_on || ctlr->leds[i].blink_delay_off)
++        if ((ctlr->leds[i].blink_delay_on || ctlr->leds[i].blink_delay_off=
+) &&
++            !joycon_using_usb(ctlr))
+             flash |=3D 1 << i;
+         else if (ctlr->leds[i].brightness)
+             val |=3D 1 << i;
+@@ -2217,17 +2218,26 @@ static int joycon_update_player_leds(struct device =
+*dev)
+ static int joycon_player_led_brightness_set(struct led_classdev *led,
+                         enum led_brightness brightness)
+ {
++    struct hid_device *hdev =3D to_hid_device(led->dev->parent);
++    struct joycon_ctlr *ctlr;
++
++    ctlr =3D hid_get_drvdata(hdev);
++    if (!ctlr) {
++        hid_err(hdev, "No controller data\n");
++        return -ENODEV;
++    }
++
+     led->brightness =3D brightness;
+
+-    if (!brightness)
++    if (!brightness && !joycon_using_usb(ctlr))
+         led->blink_delay_on =3D led->blink_delay_off =3D 0;
+
+     return joycon_update_player_leds(led->dev->parent);
+ }
+
+ /* the blink period of the leds can't be changed, and is always these valu=
+es */
+-static const JC_LED_BLINK_DELAY_ON_MS =3D 500;
+-static const JC_LED_BLINK_DELAY_OFF_MS =3D 200;
++static const unsigned long JC_LED_BLINK_DELAY_ON_MS =3D 500;
++static const unsigned long JC_LED_BLINK_DELAY_OFF_MS =3D 200;
+ /* the different leds on a joycon can't actually be set to hw blink
+independently
+  * of each other, since they all use the same one subcommand, so this func=
+tion
+  * actually resets the cycle of all the leds */
+@@ -2299,7 +2309,8 @@ static int joycon_leds_create(struct joycon_ctlr *ctl=
+r)
+         led->max_brightness =3D 1;
+         led->brightness_set_blocking =3D
+                     joycon_player_led_brightness_set;
+-        led->blink_set =3D joycon_player_led_blink_set;
++        if (!joycon_using_usb(ctlr))
++            led->blink_set =3D joycon_player_led_blink_set;
+         led->flags =3D LED_CORE_SUSPENDRESUME | LED_HW_PLUGGABLE;
+
+         led_val |=3D joycon_player_led_patterns[player_led_pattern][i] << =
+i;
+--=20
+2.51.0
+
+
+
+On Fri, Feb 14, 2025 at 5:58=E2=80=AFPM Noa <coolreader18@gmail.com> wrote:
 >
-> Tested-by: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>
-> Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
-> Reviewed-by: Yixun Lan <dlan@gentoo.org>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Updated with proper commit title and clearer constant names.
+>
+> Signed-off-by: Noa <coolreader18@gmail.com>
 > ---
->  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 48 +++++++++++++++++++++++++
->  1 file changed, 48 insertions(+)
+>  drivers/hid/hid-nintendo.c | 45 ++++++++++++++++++++++++++++++++------
+>  1 file changed, 38 insertions(+), 7 deletions(-)
 >
-> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> index fe22c747c5012fe56d42ac8a7efdbbdb694f31b6..33e223cefd4bd3a12fae176ac6cddd8276cb53dc 100644
-> --- a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
-> @@ -11,6 +11,8 @@ / {
->  	compatible = "bananapi,bpi-f3", "spacemit,k1";
->  
->  	aliases {
-> +		ethernet0 = &eth0;
-> +		ethernet1 = &eth1;
-
-Hi Andrew,
-
-I added these two aliases in v12, but kept your Reviewed-by for v11
-because this is fairly trivial. Same for patch 5.
-
-Is this okay?
+> diff --git a/drivers/hid/hid-nintendo.c b/drivers/hid/hid-nintendo.c
+> index 11ac246176ae..f4cdd35eef2a 100644
+> --- a/drivers/hid/hid-nintendo.c
+> +++ b/drivers/hid/hid-nintendo.c
+> @@ -2183,14 +2183,13 @@ static int joycon_input_create(struct joycon_ctlr=
+ *ctlr)
+>         return 0;
+>  }
+>
+> -/* Because the subcommand sets all the leds at once, the brightness argu=
+ment is ignored */
+> -static int joycon_player_led_brightness_set(struct led_classdev *led,
+> -                                           enum led_brightness brightnes=
+s)
+> +/* Update the on/flash status of the leds according to their led_classde=
+v fields */
+> +static int joycon_update_player_leds(struct device *dev)
+>  {
+> -       struct device *dev =3D led->dev->parent;
+>         struct hid_device *hdev =3D to_hid_device(dev);
+>         struct joycon_ctlr *ctlr;
+>         int val =3D 0;
+> +       int flash =3D 0;
+>         int i;
+>         int ret;
+>
+> @@ -2200,16 +2199,47 @@ static int joycon_player_led_brightness_set(struc=
+t led_classdev *led,
+>                 return -ENODEV;
+>         }
+>
+> -       for (i =3D 0; i < JC_NUM_LEDS; i++)
+> -               val |=3D ctlr->leds[i].brightness << i;
+> +       for (i =3D 0; i < JC_NUM_LEDS; i++) {
+> +               if (ctlr->leds[i].blink_delay_on || ctlr->leds[i].blink_d=
+elay_off)
+> +                       flash |=3D 1 << i;
+> +               else if (ctlr->leds[i].brightness)
+> +                       val |=3D 1 << i;
+> +       }
+>
+>         mutex_lock(&ctlr->output_mutex);
+> -       ret =3D joycon_set_player_leds(ctlr, 0, val);
+> +       ret =3D joycon_set_player_leds(ctlr, flash, val);
+>         mutex_unlock(&ctlr->output_mutex);
+>
+>         return ret;
+>  }
+>
+> +static int joycon_player_led_brightness_set(struct led_classdev *led,
+> +                                           enum led_brightness brightnes=
+s)
+> +{
+> +       led->brightness =3D brightness;
+> +
+> +       if (!brightness)
+> +               led->blink_delay_on =3D led->blink_delay_off =3D 0;
+> +
+> +       return joycon_update_player_leds(led->dev->parent);
+> +}
+> +
+> +/* the blink period of the leds can't be changed, and is always these va=
+lues */
+> +static const JC_LED_BLINK_DELAY_ON_MS =3D 500;
+> +static const JC_LED_BLINK_DELAY_OFF_MS =3D 200;
+> +/* the different leds on a joycon can't actually be set to hw blink inde=
+pendently
+> + * of each other, since they all use the same one subcommand, so this fu=
+nction
+> + * actually resets the cycle of all the leds */
+> +static int joycon_player_led_blink_set(struct led_classdev *led,
+> +                                    unsigned long *delay_on,
+> +                                    unsigned long *delay_off)
+> +{
+> +       led->blink_delay_on =3D *delay_on =3D JC_LED_BLINK_DELAY_ON_MS;
+> +       led->blink_delay_off =3D *delay_off =3D JC_LED_BLINK_DELAY_OFF_MS=
+;
+> +
+> +       return joycon_update_player_leds(led->dev->parent);
+> +}
+> +
+>  static int joycon_home_led_brightness_set(struct led_classdev *led,
+>                                           enum led_brightness brightness)
+>  {
+> @@ -2268,6 +2298,7 @@ static int joycon_leds_create(struct joycon_ctlr *c=
+tlr)
+>                 led->max_brightness =3D 1;
+>                 led->brightness_set_blocking =3D
+>                                         joycon_player_led_brightness_set;
+> +               led->blink_set =3D joycon_player_led_blink_set;
+>                 led->flags =3D LED_CORE_SUSPENDRESUME | LED_HW_PLUGGABLE;
+>
+>                 led_val |=3D joycon_player_led_patterns[player_led_patter=
+n][i] << i;
+> --
+> 2.48.1
+>
 
 Thanks,
-Vivian "dramforever" Wang
-
+Daniel
 
