@@ -1,115 +1,169 @@
-Return-Path: <linux-kernel+bounces-815791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A2EB56B25
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D57EB56B2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A71E17BC2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:15:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0CF0161CB5
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573912E7F04;
-	Sun, 14 Sep 2025 18:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7262E2C18A;
+	Sun, 14 Sep 2025 18:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W6gCMLKU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mh1R1s8S"
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05702E8E05
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B82C635
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 18:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757873528; cv=none; b=n2qGKYJT1jnJjTkub5G/o+jswiTTV4Na8lKo+6KB9H6MIRPVZz/iKBtWKmoA74rxuKrT83EgEW415JIuITxgMBHbDSdYPe6O652lukHZYMg6abNppoTtNvFLPTuWdjzQRQgTCxyEbfUuNZj0ONdyGm9PcaQZ2a/OtfcE8NxrE8I=
+	t=1757873899; cv=none; b=NA/FHmPS+nhlrn8qpQzIi1saCxob9BwOZrAdVgvdu5rUlTINrzTI97JbfIdc23IxE3qFNwMVPdOakV2CxC7okTXLQQJlBLWjXfizlKC1BgiAdA7Fob7t4RvlqDs5MktlaZif5ciZ8grDL47o21H4OsRyjfFjogkh+D1GZsW5ZmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757873528; c=relaxed/simple;
-	bh=/lWVvuqK7ZPO8OlTvbP03ml/m9hkltI7r5Lnp5abMlk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=SCmdJCYEMirkRKSdKIMV7sYXxKXD2AQFI+QH3GgFerKUiu1C50gZbMECjXdntWhtZajIOpVOw9OpmGBBJNJO/OgFV5ZXUZ+A5uGFup38xIXmjii2v6rkEejqP2xoYm68VOvdPJsYOgqkOamwhVI2RUX3dp+zVHUTchpGxFAjt8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W6gCMLKU; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1757873899; c=relaxed/simple;
+	bh=2cGC2IX7m/qq5OqemImtqzbxOfAoC13cZti4xGjvr2M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=COzEbq23+a6DVd7niJq9Z+es/PvXJxnsLnGAvYZHQgZ0AcBIZIA5K8lo76x2aEfwb7l+wkiyCr+2lks65+NPoGqTEOWJft938DZbutypd8VaZxWvH/6GoAk8dP8GkGb5hlMVGRYvjOyir/zZ64P6eXw/+aWsIz9OvewuNXGshCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mh1R1s8S; arc=none smtp.client-ip=209.85.214.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-24ced7cfa07so37543585ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:12:06 -0700 (PDT)
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-25bdf8126ceso65073865ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:18:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1757873526; x=1758478326; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KYSFwqlAy6DXlbte7Dca09XDOUDeXcrwb6x4Txuv9Fo=;
-        b=W6gCMLKUf1Qdm0m8sZSIvC6nlStPHkMem3QGkMeeU/Jyn0BZIb+fvOMieAe2nP8Lct
-         4i8YONekC7OySn9xo4aHCYd5t/D4MkOhXhqsZWnFMVHZIY0svCcsXj9XlYmgWeIRKklj
-         uOaZVw37+qBD7I1Q+2ORHQwtzjoI1mn1JBqPs3sEE6jAKuMk90qf3Jyx2pNhzb3vbGcj
-         PiKtjrre9fwcRdS2nJU20t3vC7mRWXnPcbg2Bj8Ot4ZLQmTuQ5wdI89Ehb+UR9nOGkPp
-         VMSgY+aH56YJ8Pdqb73hmJSFhfCLDANoMsKmw2nIBPKe/sPs3mfsmftvc+sHRpn3HlDS
-         e1dA==
+        d=google.com; s=20230601; t=1757873896; x=1758478696; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Bi0k3TpX+saOMQswzu6XG0cElzWGEVMTmu4d6zBBHZg=;
+        b=mh1R1s8SthdO5u85FADH/UbV87H6cQCdcU8uwuTZrDawsFcTugopwkDcT3Z/Yo214C
+         /1cI/zpaCNubGnqMcLJR5AaKUNzYSXAcJD7E8+uiONNCqjM5ZEyK0WMgHYojBTvyrvhC
+         m7iRcaTDja7ljzqGtXoEld5THGUggv9Kc90q8N+pWoyN8sarx6prcD+yHzs6XIpjOGLV
+         AT0LldVqfmut0cIZTqWkIo8wSX29Nb/wlT06aMvejf5OFt/UQIq/ODoYnM/Y9XzGyzff
+         ICal47aNZQI0tpJT6paZcEmxAnoZvuhKYfaPDADCltK3v0Fdt3E874aAVd1zoDptEdao
+         FYAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757873526; x=1758478326;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KYSFwqlAy6DXlbte7Dca09XDOUDeXcrwb6x4Txuv9Fo=;
-        b=JKjgPsDJQ9Z0wa5PXmNrjygpF66lbv79bW8dj4SrleUnuQoK30gRMeD/jNWfB6zfDt
-         iCe43OfGsuI4obaph4uDLreEqTx3X6g2FpjnpkCwAGTk3S1VYdqNDS3u3B0h4rq8T/QR
-         UVtl5bKDahMIWjYLyutE83UFhKu5Nivsfk+WyO7Si7tzL7+GbrV5gZVIgfS0FTmwT+/w
-         YRQ2z90w2+FH58f8nugSmra+xxDdu837I2/SNcDd621obR/J432DdooHvTg7Ia+tnxvM
-         FGhPD44gzQ6/xiqr9b7hvKbigwXHCV7weu6tfvrOTsrxSr6x1OY1mfWzsFmD+rhgNLbY
-         xn6A==
-X-Forwarded-Encrypted: i=1; AJvYcCW3zYYREVmdAAX9/Ob30ufjlZGX/gEjEtxxPsd2zzr1NcWWqGd5cbwsYjiOEj2I3dVcreUDbOJz1bdk3V0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwW9vm1j33iCUyIS1q07EXlV05d9Qxk5U39iYK8PR1a5ciYdLH+
-	ZX63YFYPP8/kZEDSGw2jKxR0O8Ob2vf9qHe6qw68YDjMkqBSStlHTgoAz5NqrTRsNMaldJoA47N
-	/Hzg++cI4HQ==
-X-Google-Smtp-Source: AGHT+IEEErKdREcN8hd/P7bK3uoM7X5PVPYZyYex0CAoLECSrtA99Rqt2eeKZc9BNuOL1rvt04CzwP6Ktni/
-X-Received: from plsl15.prod.google.com ([2002:a17:903:244f:b0:25b:db75:cd39])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1590:b0:24e:af92:70c2
- with SMTP id d9443c01a7336-25d24ea0302mr124377165ad.24.1757873526082; Sun, 14
- Sep 2025 11:12:06 -0700 (PDT)
-Date: Sun, 14 Sep 2025 11:11:21 -0700
-In-Reply-To: <20250914181121.1952748-1-irogers@google.com>
+        d=1e100.net; s=20230601; t=1757873896; x=1758478696;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Bi0k3TpX+saOMQswzu6XG0cElzWGEVMTmu4d6zBBHZg=;
+        b=lf+WDwCnfIXT1MIKHzF/m/bGXT6Bs1EBS5GSVL2IGPHtiBLiGK0PGxUzRPe4LoZREH
+         GNUXwqOxE3Cv4/Ptbtm9qRUT7c5mAng5/8MKHjRWWcgPOkND7V3qUDsXHokKWcFGu8ju
+         pYUfILpwMU+Lsya3r3uF2jRwImAM2XghK5TB15bUSxIY/3cM7byyuSXrlOTQ4cGX8sA2
+         HnD6HuafepP2iWhZkeWl3+Lq57wndPoAwVkxwOFd3YvhKPV2E1QfnvdZ38wFpHbgYOy/
+         TlEfsrY7CkTLdF32rCxaeYzFO8H0LiNbCdkHDMShI5e9avU6Taz2FIZ/uZZU4YXD9sTF
+         k1fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8DpCb4IXAUrXuxBC1Oz0wf31P9ckn7seEEe7FoBJOOz8Tf1QKD8iGG4wtZTG751v35HY8U7oVq7+pw88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytNXtrxn944TAsb8wutvTmAU6KodcL6NNA3Z+2YzykUQ/gbHp5
+	1YgMuw6EbqE9A8dmTp8PI7vXkpJOj/AXcZniDTVQhM21+RN3XKXN4XTxjbN+tLFOO82cMfzKb8s
+	0XmLq2Bp2fA==
+X-Google-Smtp-Source: AGHT+IHTbTCs1wnw2lFNLVJJ8yhyLkuzjt3S0GvGOyaObENDRkwG86pcQRHmlGQUqT79gvZ1avanwlpjwPix
+X-Received: from plei5.prod.google.com ([2002:a17:902:e485:b0:245:f002:d659])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc45:b0:261:1abb:e302
+ with SMTP id d9443c01a7336-2611abbf094mr65953605ad.14.1757873895767; Sun, 14
+ Sep 2025 11:18:15 -0700 (PDT)
+Date: Sun, 14 Sep 2025 11:18:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250914181121.1952748-1-irogers@google.com>
 X-Mailer: git-send-email 2.51.0.384.g4c02a37b29-goog
-Message-ID: <20250914181121.1952748-22-irogers@google.com>
-Subject: [PATCH v4 21/21] perf test: Make stat grep more robust
+Message-ID: <20250914181808.1957729-1-irogers@google.com>
+Subject: [PATCH v1] perf maps: Ensure kmap is set up for all inserts
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
 	Mark Rutland <mark.rutland@arm.com>, 
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
 	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Xu Yang <xu.yang_2@nxp.com>, Thomas Falcon <thomas.falcon@intel.com>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
-	Atish Patra <atishp@rivosinc.com>, Beeman Strong <beeman@rivosinc.com>, Leo Yan <leo.yan@arm.com>, 
-	Vince Weaver <vincent.weaver@maine.edu>
+	"Liang, Kan" <kan.liang@linux.intel.com>, Chun-Tse Shao <ctshao@google.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-If no cycles event is found by grep don't fail the grep.
-Tweak the reg-exp to allow cpu-cycles on ARM.
+__maps__fixup_overlap_and_insert may split or directly insert a map,
+when doing this the map may need to have a kmap set up for the sake of
+the kmaps. The missing kmap set up fails the check_invariants test in
+maps, later "Internal error" reports from map__kmap and ultimately
+causes segfaults.
 
+Similar fixes were added in commit e0e4e0b8b7fa ("perf maps: Add
+missing map__set_kmap_maps() when replacing a kernel map") and commit
+25d9c0301d36 ("perf maps: Set the kmaps for newly created/added kernel
+maps") but they missed cases. To try to reduce the risk of this,
+update the kmap directly following any manual insert. This identified
+another problem in maps__copy_from.
+
+Fixes: e0e4e0b8b7fa ("perf maps: Add missing map__set_kmap_maps() when replacing a kernel map")
+Fixes: 25d9c0301d36 ("perf maps: Set the kmaps for newly created/added kernel maps")
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/shell/stat.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/maps.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-index 8a100a7f2dc1..45041827745d 100755
---- a/tools/perf/tests/shell/stat.sh
-+++ b/tools/perf/tests/shell/stat.sh
-@@ -196,7 +196,7 @@ test_hybrid() {
-   fi
+diff --git a/tools/perf/util/maps.c b/tools/perf/util/maps.c
+index 85b2a93a59ac..779f6230130a 100644
+--- a/tools/perf/util/maps.c
++++ b/tools/perf/util/maps.c
+@@ -477,6 +477,7 @@ static int __maps__insert(struct maps *maps, struct map *new)
+ 	}
+ 	/* Insert the value at the end. */
+ 	maps_by_address[nr_maps] = map__get(new);
++	map__set_kmap_maps(new, maps);
+ 	if (maps_by_name)
+ 		maps_by_name[nr_maps] = map__get(new);
  
-   # Run default Perf stat
--  cycles_events=$(perf stat -- true 2>&1 | grep -E "/cycles/[uH]*|  cycles[:uH]*  " -c)
-+  cycles_events=$(perf stat -- true 2>&1 | grep -E "cycles/[uH]*|  cycles[:uH]*  " -c || true)
+@@ -502,8 +503,6 @@ static int __maps__insert(struct maps *maps, struct map *new)
+ 	if (map__end(new) < map__start(new))
+ 		RC_CHK_ACCESS(maps)->ends_broken = true;
  
-   # The expectation is that default output will have a cycles events on each
-   # hybrid PMU. In situations with no cycles PMU events, like virtualized, this
+-	map__set_kmap_maps(new, maps);
+-
+ 	return 0;
+ }
+ 
+@@ -891,6 +890,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
+ 		if (before) {
+ 			map__put(maps_by_address[i]);
+ 			maps_by_address[i] = before;
++			map__set_kmap_maps(before, maps);
+ 
+ 			if (maps_by_name) {
+ 				map__put(maps_by_name[ni]);
+@@ -918,6 +918,7 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
+ 			 */
+ 			map__put(maps_by_address[i]);
+ 			maps_by_address[i] = map__get(new);
++			map__set_kmap_maps(new, maps);
+ 
+ 			if (maps_by_name) {
+ 				map__put(maps_by_name[ni]);
+@@ -942,14 +943,13 @@ static int __maps__fixup_overlap_and_insert(struct maps *maps, struct map *new)
+ 				 */
+ 				map__put(maps_by_address[i]);
+ 				maps_by_address[i] = map__get(new);
++				map__set_kmap_maps(new, maps);
+ 
+ 				if (maps_by_name) {
+ 					map__put(maps_by_name[ni]);
+ 					maps_by_name[ni] = map__get(new);
+ 				}
+ 
+-				map__set_kmap_maps(new, maps);
+-
+ 				check_invariants(maps);
+ 				return err;
+ 			}
+@@ -1019,6 +1019,7 @@ int maps__copy_from(struct maps *dest, struct maps *parent)
+ 				err = unwind__prepare_access(dest, new, NULL);
+ 				if (!err) {
+ 					dest_maps_by_address[i] = new;
++					map__set_kmap_maps(new, dest);
+ 					if (dest_maps_by_name)
+ 						dest_maps_by_name[i] = map__get(new);
+ 					RC_CHK_ACCESS(dest)->nr_maps = i + 1;
 -- 
 2.51.0.384.g4c02a37b29-goog
 
