@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-815681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7114AB569C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:38:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BBA5B569C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042A417ACBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:38:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C12117AC4F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D6D1F5435;
-	Sun, 14 Sep 2025 14:38:13 +0000 (UTC)
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B8B202C46;
+	Sun, 14 Sep 2025 14:38:22 +0000 (UTC)
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6D1198851
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 14:38:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91FC21EB5D6
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 14:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757860693; cv=none; b=ji+VAVqecu/0L9ZuaDEDbKmoQCzwnp8atvLa+/QgcUnsld1z7GTBa8yjDWVAvL1OUN/2EfNsAPVCL8WDcTLValPEDqYVN6nhk2gUUjvJveJZ414l6VVawaefAdc8TA3CGW9dcQXBcnXvxe505XHk9rR8lEeY/HaPEoZz3O58Bsw=
+	t=1757860702; cv=none; b=qVQgih2f7nq/1ln1g7mpP18DGIgEkyt4id3Pdq7tBYo08T8sRSvTSuM6o4Y4y/B45Y84Wr6g4bSGw38zLf1yvaSjsgOfCavqehzlWdPvQVhpMimBI+uQphghsFthy3ZB0PTjCpHoDV+hXmz5CdrpgHtNPXY3fuZeV3b29Qpr/pU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757860693; c=relaxed/simple;
-	bh=22fXo1JxvKYKi41UuqLqIPUSHXuBWiFsOfVDn7AId5E=;
+	s=arc-20240116; t=1757860702; c=relaxed/simple;
+	bh=J9cLNsJfyur8O+nkDKHmFCE1YE+4wOO3Ei/ieq0Ccn8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rKUi0RSNMqSAfeHfJZo4vYVKo57aXSXvGnf5Z3LAPxl9TM4m6mdMnCSE1Pzd+JgixIXZNarpYXHICOV/GnspEfzlpTTJjcsw3W5OV74eD3suJqfkJrRpqv4p8wDFETnikqaj6556p+qM/MIuR/lVbThxLRepFiTLii9arUbws7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=CXST7SwjC2xdQRiP6RseJp21PdlDe+e+8WlHG0Z8m7fLYa3ttdwYdAl8nemf+beG2phPVPTDJMiLwJzq2wOaEFulvUoSjp1bly06JcJQL3fGS56hCwtwB+NBKsyGJIoBrGW8n5fx6RKlgHv3q6R1G/lYS3cAOnRKO/yfsOK7jVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2570bf605b1so31195375ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 07:38:11 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b49c1c130c9so2302910a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 07:38:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757860691; x=1758465491;
+        d=1e100.net; s=20230601; t=1757860700; x=1758465500;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dc2ToHGvqgetretFJ5TWWHKSy1o0O/m6boNyeBXRweQ=;
-        b=qhrvhH+D1hqvwTE13motowiGhNDFsyQ3LONu0kGiX5naQPBMYbJ8wfRxfniBhsssnb
-         gvGW+LbCgYyscalch6G6qSUvvxlX6K01Dol7SQhWhMH+rgdQV3f1xOPz2Swrl7exE1cN
-         cHt1Ub4covXe9sfuwuK/dDSgQtD/E+3Qjv3fg+s45+SPvvzjNiaGcoB3VKoVRDv4vrbT
-         RVCNzChrthyv3fXEM1rDh4ylA1rDRd64lucn+oXq3SiIdHu3jWSheZQpQrYsViPS1Z5X
-         CVohaa54YvJ9+A5B2z9Yomydni37ddbK0SvsFHBySpcI55IhA9acB8QrdVPav2QJAvnt
-         4yag==
-X-Forwarded-Encrypted: i=1; AJvYcCXJcKpCq7knmS/RJv5IdjW8jG1b7AM++eAbVpiUvohVJw3eZ5CrqbX7NHlNzDx40Sr1VVitoclAxOwmYLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+INSNM7SC66635XCYoWtoVmfPXQfolU/bLM9D6YMVblFSkxcL
-	C/Ig5VC1XZ04JaAwdIPvM5hv4gKAC8MhJ3WTybUuS93uT62a/Riw3HeH
-X-Gm-Gg: ASbGncsSYeUljp5nFj6jWOR8X6HVPpmfviT3KR0NwjMeBypcSOmFHeavpDtTHdjS6Gr
-	Ws+ixiIwzMm9TOM97hiOzd7ojK99Ynfp27PI/Qdvu/lArvZSPPofJQ5PFfyCMz1miJQaqv8mOtC
-	3J2B8xvEmkqv+QUSQp/EtaFuePL8Ntj0FWlnbKJuiWvl2QqvPYF4hzgUdFBU+AWBEMKytCyHfzL
-	YaOnI0G+ePLjT1r1RAw25psrDwDctfcaahFCzmfpfEB9KlbX27pvfgl/sVAq7phO1klrOM77Nz7
-	V9mAAjwQFFM5X/0NIMySKFcnG8xBAaCMP7rPfeXk+Ww8Pu8qHgAxeTOTsZceaWcuXotFQfwPlvi
-	bcUTV6ZfwWCw=
-X-Google-Smtp-Source: AGHT+IEr2DMCdCdoOyIsL92HGAQ+R3HSje6j05Zrq3wRDfxpMSO6h+wpKjwZO7jrA4WHFzd1zkhsiQ==
-X-Received: by 2002:a17:902:ce90:b0:264:4e4a:904e with SMTP id d9443c01a7336-2644e4a928bmr38635145ad.23.1757860691127;
-        Sun, 14 Sep 2025 07:38:11 -0700 (PDT)
+        bh=o9wU/W+z4HWlBo+SMsLu49fjjkbDPftXMJWXc0qCbjY=;
+        b=r5fLREjk5rKSu1idNaDohsPD7nKF+oWZbqoU+Ci0CSnCBtirXFbJdxJn4HVjsqztri
+         NpVIkrAmW/8BV0fNtfBN8X6nWk19TxAK4j0ZwxYZuEzhclMXoq4h1Mv3bEJ0ksq6zGkk
+         3VV3Q/14XqzzF7YfeXjMT6Fd7ttTTjndAnd7TtItFC+UMc8YVI+MdQPJY119+XEA7i4I
+         rCCojqAZxW9TWlDTtMEpHkUL6xkZIuaNkrdL93BP2AmxNeEbzkH/CF39k6RvkQ1Uo8Lp
+         emYcaG5TnDWz7rVG76ryV4kxRi+r3nwyJmtvy50r1zovatBRVfEux/q/NcVJfW9RFJBo
+         B2Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCUZAcv+iIRuff+8zGOM9q9cBH9DboUBDb33YnxtdZvyxZGxhW/bNM4kHEN+Ib6xCGWCbEp3jD7lhM5XbK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW02d3/Ftw5RAvfNPniVtw+G5YXCYXSHqVpMRbwkrMrb8tc/nk
+	QZXd3Rla8YfTEmGv3RmUD0TjFgxNW7ZUNOn94hQxqF35Kj3MZ8D6FO1/
+X-Gm-Gg: ASbGncvIoJm2W/YWvuK0T4/Mhfa/8b60rFGAq+3naTCETDcAO35R+YD+lMmgvs0oKqC
+	tpIytQqgwAQ4U7N8W01bASPi2XmX2568O9Xt6VHexjasDXJLykDGKb4bVUBz1bSWWvyaSCH9zwZ
+	v4I+RUP44gt/RgWSlR8CR7uIyuQenNUOOCGE8kd3VrNLnXXK5tdeal4YjMnkqc4azv9OOgv6ikw
+	P0RzzA+87FFtgv5ldIv/kIBOFGN3PGHd73V0cFUPSw3PU5/4pCQgWyeAcnzINRq6QOSJbZBbVzj
+	0arskD84+v3d/bNPQB+H6HRACjRbCffVkEMIHYvaom4igjEt0923TOAw9kn73UNsrlO+ZKaUog3
+	TDuUiXWOZ7i8KOdhGTVcqyA==
+X-Google-Smtp-Source: AGHT+IFE+Wpu/pBUtNagskZ5QY9uGCvmN51O/TiqoKWmlQZLPEx1SxIwpA5S3oFgwluS1EavPOZLkg==
+X-Received: by 2002:a17:902:ebc2:b0:24b:25f:5f7f with SMTP id d9443c01a7336-25d2801094emr94123065ad.60.1757860699829;
+        Sun, 14 Sep 2025 07:38:19 -0700 (PDT)
 Received: from localhost.localdomain ([2a11:3:200::10b2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3b0219f9sm102571545ad.123.2025.09.14.07.38.02
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-25c3b0219f9sm102571545ad.123.2025.09.14.07.38.12
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 14 Sep 2025 07:38:10 -0700 (PDT)
+        Sun, 14 Sep 2025 07:38:19 -0700 (PDT)
 From: Lance Yang <lance.yang@linux.dev>
 To: akpm@linux-foundation.org,
 	david@redhat.com,
@@ -72,10 +72,11 @@ Cc: ziy@nvidia.com,
 	ioworker0@gmail.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
+	Kairui Song <kasong@tencent.com>,
 	Lance Yang <lance.yang@linux.dev>
-Subject: [PATCH mm-new 1/3] mm/khugepaged: skip unsuitable VMAs earlier in khugepaged_scan_mm_slot()
-Date: Sun, 14 Sep 2025 22:35:45 +0800
-Message-ID: <20250914143547.27687-2-lance.yang@linux.dev>
+Subject: [PATCH mm-new 2/3] mm: clean up and expose is_guard_pte_marker()
+Date: Sun, 14 Sep 2025 22:35:46 +0800
+Message-ID: <20250914143547.27687-3-lance.yang@linux.dev>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250914143547.27687-1-lance.yang@linux.dev>
 References: <20250914143547.27687-1-lance.yang@linux.dev>
@@ -89,87 +90,62 @@ Content-Transfer-Encoding: 8bit
 
 From: Lance Yang <lance.yang@linux.dev>
 
-Let's skip unsuitable VMAs early in the khugepaged scan; specifically,
-mlocked VMAs should not be touched.
+is_guard_pte_marker() performs a redundant check because it calls both
+is_pte_marker() and is_guard_swp_entry(), both of which internally check
+for a PTE marker.
 
-Note that the only other user of the VM_NO_KHUGEPAGED mask is
- __thp_vma_allowable_orders(), which is also used by the MADV_COLLAPSE
-path. Since MADV_COLLAPSE has different rules (e.g., for mlocked VMAs), we
-cannot simply make the shared mask stricter as that would break it.
+is_guard_pte_marker()
+ |- is_pte_marker()
+ |   `- is_pte_marker_entry()  // First check
+ `- is_guard_swp_entry()
+     `- is_pte_marker_entry()  // Second, redundant check
 
-So, we also introduce a new VM_NO_THP_COLLAPSE mask for that helper,
-leaving the stricter checks to be applied only within the khugepaged path
-itself.
+While a modern compiler could likely optimize this away, let's have clean
+code and not rely on it ;)
 
+Also, make it available for hugepage collapsing code.
+
+Cc: Kairui Song <kasong@tencent.com>
 Signed-off-by: Lance Yang <lance.yang@linux.dev>
 ---
- include/linux/mm.h |  6 +++++-
- mm/huge_memory.c   |  2 +-
- mm/khugepaged.c    | 14 +++++++++++++-
- 3 files changed, 19 insertions(+), 3 deletions(-)
+ include/linux/swapops.h | 6 ++++++
+ mm/madvise.c            | 6 ------
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index be3e6fb4d0db..cb54d94b2343 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -505,7 +505,11 @@ extern unsigned int kobjsize(const void *objp);
- #define VM_REMAP_FLAGS (VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP)
+diff --git a/include/linux/swapops.h b/include/linux/swapops.h
+index 59c5889a4d54..7f5684fa043b 100644
+--- a/include/linux/swapops.h
++++ b/include/linux/swapops.h
+@@ -469,6 +469,12 @@ static inline int is_guard_swp_entry(swp_entry_t entry)
+ 		(pte_marker_get(entry) & PTE_MARKER_GUARD);
+ }
  
- /* This mask prevents VMA from being scanned with khugepaged */
--#define VM_NO_KHUGEPAGED (VM_SPECIAL | VM_HUGETLB)
-+#define VM_NO_KHUGEPAGED \
-+	(VM_SPECIAL | VM_HUGETLB | VM_LOCKED_MASK | VM_NOHUGEPAGE)
-+
-+/* This mask prevents VMA from being collapsed by any THP path */
-+#define VM_NO_THP_COLLAPSE	(VM_SPECIAL | VM_HUGETLB)
- 
- /* This mask defines which mm->def_flags a process can inherit its parent */
- #define VM_INIT_DEF_MASK	VM_NOHUGEPAGE
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index d6fc669e11c1..2e91526a037f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -134,7 +134,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 	 * Must be checked after dax since some dax mappings may have
- 	 * VM_MIXEDMAP set.
- 	 */
--	if (!in_pf && !smaps && (vm_flags & VM_NO_KHUGEPAGED))
-+	if (!in_pf && !smaps && (vm_flags & VM_NO_THP_COLLAPSE))
- 		return 0;
- 
- 	/*
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index 7c5ff1b23e93..e54f99bb0b57 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -345,6 +345,17 @@ struct attribute_group khugepaged_attr_group = {
- };
- #endif /* CONFIG_SYSFS */
- 
-+/**
-+ * khugepaged_should_scan_vma - check if a VMA is a candidate for collapse
-+ * @vm_flags: The flags of the VMA to check.
-+ *
-+ * Returns: true if the VMA should be scanned by khugepaged, false otherwise.
-+ */
-+static inline bool khugepaged_should_scan_vma(vm_flags_t vm_flags)
++static inline bool is_guard_pte_marker(pte_t ptent)
 +{
-+	return !(vm_flags & VM_NO_KHUGEPAGED);
++	return is_swap_pte(ptent) &&
++	       is_guard_swp_entry(pte_to_swp_entry(ptent));
 +}
 +
- int hugepage_madvise(struct vm_area_struct *vma,
- 		     vm_flags_t *vm_flags, int advice)
+ /*
+  * This is a special version to check pte_none() just to cover the case when
+  * the pte is a pte marker.  It existed because in many cases the pte marker
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 35ed4ab0d7c5..bd46e6788fac 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -1069,12 +1069,6 @@ static bool is_valid_guard_vma(struct vm_area_struct *vma, bool allow_locked)
+ 	return !(vma->vm_flags & disallowed);
+ }
+ 
+-static bool is_guard_pte_marker(pte_t ptent)
+-{
+-	return is_pte_marker(ptent) &&
+-		is_guard_swp_entry(pte_to_swp_entry(ptent));
+-}
+-
+ static int guard_install_pud_entry(pud_t *pud, unsigned long addr,
+ 				   unsigned long next, struct mm_walk *walk)
  {
-@@ -2443,7 +2454,8 @@ static unsigned int khugepaged_scan_mm_slot(unsigned int pages, int *result,
- 			progress++;
- 			break;
- 		}
--		if (!thp_vma_allowable_order(vma, vma->vm_flags, TVA_KHUGEPAGED, PMD_ORDER)) {
-+		if (!khugepaged_should_scan_vma(vma->vm_flags) ||
-+		    !thp_vma_allowable_order(vma, vma->vm_flags, TVA_KHUGEPAGED, PMD_ORDER)) {
- skip:
- 			progress++;
- 			continue;
 -- 
 2.49.0
 
