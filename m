@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-815484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B379B56722
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 08:56:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78BBDB56726
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 09:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5C53BA71C
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 06:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0557B17C539
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 07:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AF727AC4C;
-	Sun, 14 Sep 2025 06:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64FA125A9;
+	Sun, 14 Sep 2025 07:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+W4DQlK"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVEriKaV"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5A91D7984
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 06:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9E81E8322
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 07:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757833000; cv=none; b=ZzIqSk38zuUJTWN8Gei0MFtIhzLyVWFSh3s8+ixOCDyGIqEq+yUOw0MoQx4RR5yUipsG8lEzgVhTX58RFWeVKaY91FGfsyCSfm1CrkVtUPbBE+TRCKLFizVkjSMqpdTsCmifQC0vHRKdesVbmVdYFJh8/sqPRiVSnRqs4yMisDs=
+	t=1757834243; cv=none; b=cWOaiCvXZv40jd0+UKk4LPXNs33ugZw1tcLuqnD6xFnytNDL+jOSAZ2FRBQ+qPTYRi5GnAgomb98MKAFfO+MwaEHGcZOd2gr7Gui3pitV+IsvzlIUO9uhLDAKP8HuWFdZxY1c7BDZk0Jos5c9fOxFSpqPn6tae+qyvG5tOCFIZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757833000; c=relaxed/simple;
-	bh=Q812AXx6dejqCWgirZNijQXyD/Rb4pPDTgkvtVVfJtc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=mTlIfV7/QsXJnDwW9HJNy2qgby3bdlQqXqtAJi8ODMP8MvTG8r8ocqp/D1WhtKN+f7l/O2mkdIvFbDIaL8Qbat7GXYx4t5OmdCsEwL47DJoyiNqMI5vZ6/BfrFxJ4cvMneX78G3NJNrOw3HNJt1NtzPVrdg0OpBKOXkprNQI244=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U+W4DQlK; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1757834243; c=relaxed/simple;
+	bh=G9zdYvr6zoyBaWWF4RcGMv4hY9mXUIz9lI5ZVt3JFEQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=G+ufOiEW+lzZzuQ51bm8Y6FRA1yDStgAyQNuQ8Z29OetCNO6XMuf1j0EVMJ1XLXBc9sAxNW/JKyNOCwu8G0PbntfwpomjrUzQYcmwIbsn7euz+48aOy2K1BDacxM4RsEEPQICWCiae2tba/7D3CG6LV6ea75NXt+nh9k22P4PN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVEriKaV; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7724df82cabso3324505b3a.2
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 23:56:38 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-55f74c6d316so3416897e87.0
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 00:17:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757832998; x=1758437798; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1757834240; x=1758439040; darn=vger.kernel.org;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j3j+6RFJp8fBl5UFi4n25Nhq071AJDVG4+e0E5+b4Qw=;
-        b=U+W4DQlKYhCsMuDEhJw3Bj0AzjKY0PDui+fN5SISBCuL2fXCJXRHbF1AJgL4NtBqPN
-         dmXD8WzYcbNozXJh7co8cC2f+wP7lZl91sj5xRuxjQ7RtoWxVb5HyKnh9+BaKfeAaNnC
-         a6Vno9HpBYoxzq6rSuiXd7sj2GrZEGDBfBUWGRL1H2bB2OqUc5HPrDJniCflaY4ECd6w
-         CxAX+cV+fvyNQlCT/cIFGMQATHZ29NMnxIDRN1LKEGbEhjgYb3w/RA+sIb+ndkjEcOMd
-         v7QFc14esfwfdGKGrSgVknb5GWjhw2xQoZ4L2PBUpOGpZ0VU3bvkU0CnUTf7zJXa7xqo
-         yeFQ==
+        bh=bG3IzL2LjXVOtESbexoXtNfTjZZg9on0erahEnGwuyw=;
+        b=eVEriKaVPaysWMyRbjl8ZUI5bzFQm1cn/14TVjDuK2a0JC3/VS69knkyOamMemHhsm
+         QOc8DV83dDPGJzsib3pAnzu+UPWXSWBPqs4Q9MaRjY7RuzCyBNmw7kVL8nq8DwkqJ+o1
+         6NFHNMe65GXZUpeNJp5KqG//KQWjiYSgNKldGop6OZJ7ZODL/Z6jr5zBOjjQobwZ2XZc
+         5JrDKWs4frjNxHCMwJ4EecbkEbPdsvGBcdtsMuLVvNOQODdXUNaT3mrzqtYeJsJVUuga
+         7rBU/VhSSb1HqaulWUgTYYFJIK8P2NLhLnMO1IwdbaZ7uuxr5gFX1zlbsgHPZh39m/qT
+         IRnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757832998; x=1758437798;
+        d=1e100.net; s=20230601; t=1757834240; x=1758439040;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=j3j+6RFJp8fBl5UFi4n25Nhq071AJDVG4+e0E5+b4Qw=;
-        b=A9/2RPdC7fkyRg9rwuB3ixsWi2pq5kTHcMS7MFnquyzaladZPh6uYQ6rmf52tdp8Kt
-         hKgxYu20q48MuAQFTdt2KoBR7TtCqq/ieP+cF8ii0b+AODDgyrunoS1oyz+DFvfymKE6
-         0TwejgTMNPIc4JnnzA9EKEVDolEBANdNrfTDUiwL9Tmg5zTxCOjLUi/wTFLFgGrFwQMt
-         X3nAaucY1xhcuZBn+9+HJ83Q5rJ3XHYCVC/UDZ8WSXPN1IO/CEGzZAdLtvFYGpXoCo4z
-         MDTYLHPOjohMTM6P4rYWF0cdGoaaPEnPhpUgbQmK2bCwmW4gQQnoEt7y0CzJAy0mVVwu
-         SFjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiA5bdbAt0DcZmutSvr5bob1W6j9xShoV1L4Nc/8ukZvVVtsVkV+euLe3UVgVV/mNsbytcyocGTuWJuOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbsOchzDaGs+jlwW7XOUZhsSS3Eut0FFgxyftnzOHaU8n5uLuX
-	nNgpZGyDLb9U16lE+ne82xjtmHFKya2Lt/7pcLU02L8W9rXeBW7bngmJ
-X-Gm-Gg: ASbGncvoYrmcmaKP3cQk+q+K7E0VeLXNeLUPGK5FnvnFl+t6WGRCgxkdXRTdqruC+mc
-	yqn8kRGnlkgt2W1g/gi+4BT11ViU4uN5MLfW0G+1EgAJuZzuhlLcW9U37GB4cHBIPS9UlanmA/N
-	zgv8CbPCoHRwaYcSij14dSjMmZ1Fc8wouIYZynT+eL5KXBC5yNFFWHGLRbNZF8FtcKOHzoG6wMF
-	aB5fVOQTlbD1HQ4mOPqmxhixjEiVXClEmzxw8bFoAamp7iTz8iqGLkN7/dx/ixh391+a2IUIePe
-	ST0ivSl0DpcfG2IlszckhO05UrAsT3DAd+WcDtEbhO7lrHR09mZeFscFrLJ7thDnVaWmplcSxTy
-	OQI4FFIsa1CUAeeB33zCFvktUQ0QDcrM=
-X-Google-Smtp-Source: AGHT+IGznuor/LGxwCbRZQ1XmIF0s2BXLDSzFLDiBks6mLGDvb81hNwtxuW7F5JOgR4jeZyqmWNTwQ==
-X-Received: by 2002:a05:6a00:3d51:b0:772:5513:ba3b with SMTP id d2e1a72fcca58-77612077d87mr9562392b3a.5.1757832998188;
-        Sat, 13 Sep 2025 23:56:38 -0700 (PDT)
-Received: from localhost ([159.117.70.219])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-77607b18ec7sm10171435b3a.54.2025.09.13.23.56.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 13 Sep 2025 23:56:37 -0700 (PDT)
-From: Nai-Chen Cheng <bleach1827@gmail.com>
-Date: Sun, 14 Sep 2025 14:56:18 +0800
-Subject: [PATCH] Bluetooth: hci_bcm: use str_low_high() helper instead of
- ternary operator
+        bh=bG3IzL2LjXVOtESbexoXtNfTjZZg9on0erahEnGwuyw=;
+        b=xAJrgK4PSXPxHjvMMH1DO+UBsFXCUanL5FMYBBscH/bQ0w4jlXTRqmyC/zUTkrTqgx
+         eiwBexY+iGoMuybGEGHk1eJ9/WGm9yNklTj0NkICWvsIiPdmM6dIUaUmwCfxJX/Wx1J6
+         h9YkVm83qA8+7tPcwteH0qDrHpNe1mNb+rFXPO8phiXJG3nh5ggzSbpXGwnLf6HeWEZA
+         hFZ9hu+BwNRX8Zcsh5tQUlkl3kt+XRewvrbRQ6vURbGxuXNK4/ODbwVOuRfXxlZ+DhJF
+         wlrUxBWwDl2Sg8mKuxmaSDIz84WQggRoyyyhFvV7WeW3ZLW37X2FMQqfP7ZkZO4n1lwG
+         G9fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWGuyCKLH3vNvlNOBxzU1hnaAidlGTRxaPoQrKEVqPsoyavjtkbFKGkGEz8/Cz+HCnkKHkIZlvXs41gwmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrzvulgxllTzEEg8an0+gsnuxRQLhu198+2sbJE88nuLbG7zCW
+	MZYseu5MmwI7idD4+QMIgNOncW2YGZMroahQuP/nNCPS1s63MSpLx7z6p2NdbRQlZ8QBGQ==
+X-Gm-Gg: ASbGnct5D5ExePQxO0n6oVzAZ6MfksBKLibX2T5Qw88r/gKCk+i19ra/rVSt6V57LFk
+	h8Pbxd+/dgmTTgCDQev22txcV0RW87Bu8US2n/7KNXXOBV3RuxhJp1FUuVUfd2IIPY59sTXxg3P
+	oR5Tbltt9pwOnLmibcqv7/fDZB0n4nt3riHrzcxtY/AajpCWbXgBjZFu11v1wm/wNvO8LOrHcO5
+	wiFCS1n3jQpEds/Ty3p/q2oIkBgIvvPaE4Z70b3PcoKeycJHHyJcIFZcOcdtpWm1GmJv41K6nN9
+	87QKhIS/B3tcblhIivbCCpM2Wf1CEU9XaxxFuAey4+sLanjUyrgyKxVvSXSx8xSZsdt/6lu0JrR
+	AHPYS
+X-Google-Smtp-Source: AGHT+IGuqlVGw+pNXypOYIGLs5ZdoCHzOKrf3n1RDu4cLKNgN6KSPHqq382i7oXWa1WvUEscJbrQ1g==
+X-Received: by 2002:a05:6512:3043:b0:560:956e:4392 with SMTP id 2adb3069b0e04-570489fca64mr2505069e87.9.1757834239309;
+        Sun, 14 Sep 2025 00:17:19 -0700 (PDT)
+Received: from minun.felixc.at ([2a01:4f9:6b:1cc4::2])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-56e5c3b62c9sm2572478e87.27.2025.09.14.00.17.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 00:17:18 -0700 (PDT)
+From: Asuna Yang <spriteovo@gmail.com>
+X-Google-Original-From: Asuna Yang <SpriteOvO@gmail.com>
+Date: Sun, 14 Sep 2025 15:16:40 +0800
+Subject: [PATCH v3] RISC-V: re-enable gcc + rust builds
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,61 +82,239 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250914-bluetooth-hci_bcm-string-choice-helper-v1-1-05e05bf0e21f@gmail.com>
-X-B4-Tracking: v=1; b=H4sIABFnxmgC/x3N0QrCMAxA0V8ZeTbQFgfOXxGRNsYlMNuRdiKM/
- bvFx/Ny7w6VTbnCddjB+KNVS+7wpwFIYp4Z9dkNwYXRTf6Madm4ldIEhfSR6I21meYZSYoSo/C
- ysmGM7EaayF9SgB5bjV/6/Y9u9+P4AeoxQfJ4AAAA
-X-Change-ID: 20250914-bluetooth-hci_bcm-string-choice-helper-aae05c9c18b2
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kernel-mentees@lists.linux.dev, Nai-Chen Cheng <bleach1827@gmail.com>
+Message-Id: <20250914-gcc-rust-v3-v3-1-34d4d5864144@gmail.com>
+X-B4-Tracking: v=1; b=H4sIANdrxmgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDS0MT3fTkZN2i0uIS3TJj3UQTQ1OTRAsjMwMTUyWgjoKi1LTMCrBp0bG
+ 1tQBGHRiyXQAAAA==
+X-Change-ID: 20250914-gcc-rust-v3-a4154a826045
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+ Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+ Han Gao <rabenda.cn@gmail.com>, Jason Montleon <jmontleo@redhat.com>, 
+ Conor Dooley <conor@kernel.org>
+Cc: rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-kbuild@vger.kernel.org, llvm@lists.linux.dev, 
+ Asuna Yang <SpriteOvO@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1757832995; l=1308;
- i=bleach1827@gmail.com; s=20250730; h=from:subject:message-id;
- bh=Q812AXx6dejqCWgirZNijQXyD/Rb4pPDTgkvtVVfJtc=;
- b=KFujJ9fybEPgVWX3e1HODwtSS+x2VXNY21xe436FpBVJyjq65+B8JpNBYc09NOVfTF6ClgkUd
- qkNZqgIwnraBHy710hekebvsj59+EQdtU/Ti6iez22l7o+TI9SHmg96
-X-Developer-Key: i=bleach1827@gmail.com; a=ed25519;
- pk=jahFPRplw20Aaim8fIt8SxlFMqkHbJ+s8zYBGbtHH5g=
 
-Replace the ternary operator: 'dev->irq_active_low ? "low" : "high"'
-with the str_low_high() helper function. This enhances code readability
-and maintains consistency.
+Commit 33549fcf37ec ("RISC-V: disallow gcc + rust builds") disabled GCC
++ Rust builds for RISC-V due to differences in extension handling
+compared to LLVM.
 
-Signed-off-by: Nai-Chen Cheng <bleach1827@gmail.com>
+Add a Kconfig symbol to indicate the version of libclang used by Rust
+bindgen and add conditions for the availability of libclang to the
+RISC-V extension Kconfig symbols that depend on the cc-option function.
+
+For Zicsr/Zifencei special handling, since LLVM/Clang always enables
+these two extensions, either don't pass them to -march, or pass them
+explicitly and Rust bindgen libclang must recognize them.
+
+Clang does not support -mno-riscv-attribute flag, filter it out to
+resolve error: unknown argument: '-mno-riscv-attribute'.
+
+Define BINDGEN_TARGET_riscv to pass the target triplet to Rust bindgen
+libclang for RISC-V to resolve error: unsupported argument 'medany' to
+option '-mcmodel=' for target 'unknown'. Improve to output a clearer
+error message if the target triplet is undefined for Rust bindgen
+libclang.
+
+Update the documentation, GCC + Rust builds are now supported.
+
+Signed-off-by: Asuna Yang <SpriteOvO@gmail.com>
 ---
- drivers/bluetooth/hci_bcm.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/rust/arch-support.rst |  2 +-
+ arch/riscv/Kconfig                  | 30 +++++++++++++++++++++++++++++-
+ init/Kconfig                        |  6 ++++++
+ rust/Makefile                       |  7 ++++++-
+ scripts/Kconfig.include             |  1 +
+ 5 files changed, 43 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index f96617b85d8777972137ca146ab99a3d8da12584..65740b86c49c42b65a67cbd892daec2358a09394 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -26,6 +26,7 @@
- #include <linux/dmi.h>
- #include <linux/pm_runtime.h>
- #include <linux/serdev.h>
-+#include <linux/string_choices.h>
+diff --git a/Documentation/rust/arch-support.rst b/Documentation/rust/arch-support.rst
+index 6e6a515d08991a130a8e79dc4ad7ad09da244020..5282e0e174e8de66b4c6fec354cf329fd2aec873 100644
+--- a/Documentation/rust/arch-support.rst
++++ b/Documentation/rust/arch-support.rst
+@@ -18,7 +18,7 @@ Architecture   Level of support  Constraints
+ ``arm``        Maintained        ARMv7 Little Endian only.
+ ``arm64``      Maintained        Little Endian only.
+ ``loongarch``  Maintained        \-
+-``riscv``      Maintained        ``riscv64`` and LLVM/Clang only.
++``riscv``      Maintained        ``riscv64`` only.
+ ``um``         Maintained        \-
+ ``x86``        Maintained        ``x86_64`` only.
+ =============  ================  ==============================================
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 51dcd8eaa24356d947ebe0f1c4a701a3cfc6b757..3e892864f930778218073e8ee5980eb8f4e1594a 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -191,7 +191,7 @@ config RISCV
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RETHOOK if !XIP_KERNEL
+ 	select HAVE_RSEQ
+-	select HAVE_RUST if RUSTC_SUPPORTS_RISCV && CC_IS_CLANG
++	select HAVE_RUST if RUSTC_SUPPORTS_RISCV && TOOLCHAIN_MATCHES_ZICSR_ZIFENCEI
+ 	select HAVE_SAMPLE_FTRACE_DIRECT
+ 	select HAVE_SAMPLE_FTRACE_DIRECT_MULTI
+ 	select HAVE_STACKPROTECTOR
+@@ -629,6 +629,8 @@ config TOOLCHAIN_HAS_V
+ 	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32imv)
+ 	depends on LLD_VERSION >= 140000 || LD_VERSION >= 23800
+ 	depends on AS_HAS_OPTION_ARCH
++	# https://github.com/llvm/llvm-project/commit/e6de53b4de4aecca4ac892500a0907805896ed27
++	depends on !RUST || RUST_BINDGEN_LIBCLANG_VERSION >= 140000
  
- #include <net/bluetooth/bluetooth.h>
- #include <net/bluetooth/hci_core.h>
-@@ -1213,7 +1214,7 @@ static int bcm_acpi_probe(struct bcm_device *dev)
- 	if (irq_polarity != -1) {
- 		dev->irq_active_low = irq_polarity;
- 		dev_warn(dev->dev, "Overwriting IRQ polarity to active %s by module-param\n",
--			 dev->irq_active_low ? "low" : "high");
-+			 str_low_high(dev->irq_active_low));
- 	}
+ config RISCV_ISA_V
+ 	bool "Vector extension support"
+@@ -693,6 +695,8 @@ config TOOLCHAIN_HAS_ZABHA
+ 	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zabha)
+ 	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zabha)
+ 	depends on AS_HAS_OPTION_ARCH
++	# https://github.com/llvm/llvm-project/commit/6b7444964a8d028989beee554a1f5c61d16a1cac
++	depends on !RUST || RUST_BINDGEN_LIBCLANG_VERSION >= 190100
  
- 	return 0;
+ config RISCV_ISA_ZABHA
+ 	bool "Zabha extension support for atomic byte/halfword operations"
+@@ -711,6 +715,8 @@ config TOOLCHAIN_HAS_ZACAS
+ 	depends on !64BIT || $(cc-option,-mabi=lp64 -march=rv64ima_zacas)
+ 	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zacas)
+ 	depends on AS_HAS_OPTION_ARCH
++	# https://github.com/llvm/llvm-project/commit/614aeda93b2225c6eb42b00ba189ba7ca2585c60
++	depends on !RUST || RUST_BINDGEN_LIBCLANG_VERSION >= 200100
+ 
+ config RISCV_ISA_ZACAS
+ 	bool "Zacas extension support for atomic CAS"
+@@ -730,6 +736,8 @@ config TOOLCHAIN_HAS_ZBB
+ 	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zbb)
+ 	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
+ 	depends on AS_HAS_OPTION_ARCH
++	# https://github.com/llvm/llvm-project/commit/33d008b169f3c813a4a45da220d0952f795ac477
++	depends on !RUST || RUST_BINDGEN_LIBCLANG_VERSION >= 140000
+ 
+ # This symbol indicates that the toolchain supports all v1.0 vector crypto
+ # extensions, including Zvk*, Zvbb, and Zvbc.  LLVM added all of these at once.
+@@ -745,6 +753,8 @@ config TOOLCHAIN_HAS_ZBA
+ 	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zba)
+ 	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
+ 	depends on AS_HAS_OPTION_ARCH
++	# https://github.com/llvm/llvm-project/commit/33d008b169f3c813a4a45da220d0952f795ac477
++	depends on !RUST || RUST_BINDGEN_LIBCLANG_VERSION >= 140000
+ 
+ config RISCV_ISA_ZBA
+ 	bool "Zba extension support for bit manipulation instructions"
+@@ -780,6 +790,8 @@ config TOOLCHAIN_HAS_ZBC
+ 	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zbc)
+ 	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
+ 	depends on AS_HAS_OPTION_ARCH
++	# https://github.com/llvm/llvm-project/commit/33d008b169f3c813a4a45da220d0952f795ac477
++	depends on !RUST || RUST_BINDGEN_LIBCLANG_VERSION >= 140000
+ 
+ config RISCV_ISA_ZBC
+ 	bool "Zbc extension support for carry-less multiplication instructions"
+@@ -803,6 +815,8 @@ config TOOLCHAIN_HAS_ZBKB
+ 	depends on !32BIT || $(cc-option,-mabi=ilp32 -march=rv32ima_zbkb)
+ 	depends on LLD_VERSION >= 150000 || LD_VERSION >= 23900
+ 	depends on AS_HAS_OPTION_ARCH
++	# https://github.com/llvm/llvm-project/commit/7ee1c162cc53d37f717f9a138276ad64fa6863bc
++	depends on !RUST || RUST_BINDGEN_LIBCLANG_VERSION >= 140000
+ 
+ config RISCV_ISA_ZBKB
+ 	bool "Zbkb extension support for bit manipulation instructions"
+@@ -890,6 +904,20 @@ config TOOLCHAIN_NEEDS_OLD_ISA_SPEC
+ 	  versions of clang and GCC to be passed to GAS, which has the same result
+ 	  as passing zicsr and zifencei to -march.
+ 
++config TOOLCHAIN_MATCHES_ZICSR_ZIFENCEI
++	def_bool y
++	# https://github.com/llvm/llvm-project/commit/22e199e6afb1263c943c0c0d4498694e15bf8a16
++	depends on TOOLCHAIN_NEEDS_OLD_ISA_SPEC || !TOOLCHAIN_NEEDS_EXPLICIT_ZICSR_ZIFENCEI || RUST_BINDGEN_LIBCLANG_VERSION >= 170000
++	help
++	  LLVM/Clang >= 17.0.0 starts recognizing Zicsr/Zifencei in -march, passing
++	  them to -march doesn't generate an error anymore, and passing them or not
++	  doesn't have any real difference, it still follows ISA before version
++	  20190608 - Zicsr/Zifencei are included in base ISA.
++
++	  The current latest version of LLVM/Clang still does not require explicit
++	  Zicsr/Zifencei to enable these two extensions, Clang just accepts them in
++	  -march and then silently ignores them.
++
+ config FPU
+ 	bool "FPU support"
+ 	default y
+diff --git a/init/Kconfig b/init/Kconfig
+index e3eb63eadc8757a10b091c74bbee8008278c0521..0859d308a48591df769c7dbaef6f035324892bd3 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -82,6 +82,12 @@ config RUSTC_LLVM_VERSION
+ 	int
+ 	default $(rustc-llvm-version)
+ 
++config RUST_BINDGEN_LIBCLANG_VERSION
++	int
++	default $(rustc-bindgen-libclang-version)
++	help
++	  This is the version of `libclang` used by the Rust bindings generator.
++
+ config CC_CAN_LINK
+ 	bool
+ 	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(USERCFLAGS) $(USERLDFLAGS) $(m64-flag)) if 64BIT
+diff --git a/rust/Makefile b/rust/Makefile
+index bfa915b0e58854045b367557342727fee4fe2808..8c6f84487c41880816d1e55ba4c0df0e5af4e8fd 100644
+--- a/rust/Makefile
++++ b/rust/Makefile
+@@ -290,20 +290,25 @@ bindgen_skip_c_flags := -mno-fp-ret-in-387 -mpreferred-stack-boundary=% \
+ 	-fno-inline-functions-called-once -fsanitize=bounds-strict \
+ 	-fstrict-flex-arrays=% -fmin-function-alignment=% \
+ 	-fzero-init-padding-bits=% -mno-fdpic \
+-	--param=% --param asan-%
++	--param=% --param asan-% -mno-riscv-attribute
+ 
+ # Derived from `scripts/Makefile.clang`.
+ BINDGEN_TARGET_x86	:= x86_64-linux-gnu
+ BINDGEN_TARGET_arm64	:= aarch64-linux-gnu
+ BINDGEN_TARGET_arm	:= arm-linux-gnueabi
+ BINDGEN_TARGET_loongarch	:= loongarch64-linux-gnusf
++BINDGEN_TARGET_riscv	:= riscv64-linux-gnu
+ BINDGEN_TARGET_um	:= $(BINDGEN_TARGET_$(SUBARCH))
+ BINDGEN_TARGET		:= $(BINDGEN_TARGET_$(SRCARCH))
+ 
++ifeq ($(BINDGEN_TARGET),)
++$(error add '--target=' option to rust/Makefile)
++else
+ # All warnings are inhibited since GCC builds are very experimental,
+ # many GCC warnings are not supported by Clang, they may only appear in
+ # some configurations, with new GCC versions, etc.
+ bindgen_extra_c_flags = -w --target=$(BINDGEN_TARGET)
++endif
+ 
+ # Auto variable zero-initialization requires an additional special option with
+ # clang that is going to be removed sometime in the future (likely in
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index 33193ca6e8030e659d6b321acaea1acd42c387a4..b893bbc130f774bdca831893fed9b76d42bf540a 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -67,6 +67,7 @@ m64-flag := $(cc-option-bit,-m64)
+ 
+ rustc-version := $(shell,$(srctree)/scripts/rustc-version.sh $(RUSTC))
+ rustc-llvm-version := $(shell,$(srctree)/scripts/rustc-llvm-version.sh $(RUSTC))
++rustc-bindgen-libclang-version := $(shell,trap 'echo 0' EXIT; $(BINDGEN) $(srctree)/scripts/rust_is_available_bindgen_libclang.h 2>&1 | sed -nE 's:.*clang version ([0-9]+\.[0-9]+\.[0-9]+).*:\1:p' | awk -F'.' '{print $1 * 10000 + $2 * 100 + $3}')
+ 
+ # $(rustc-option,<flag>)
+ # Return y if the Rust compiler supports <flag>, n otherwise
 
 ---
-base-commit: f83a4f2a4d8c485922fba3018a64fc8f4cfd315f
-change-id: 20250914-bluetooth-hci_bcm-string-choice-helper-aae05c9c18b2
+base-commit: f777d1112ee597d7f7dd3ca232220873a34ad0c8
+change-id: 20250914-gcc-rust-v3-a4154a826045
 
 Best regards,
 -- 
-Nai-Chen Cheng <bleach1827@gmail.com>
+Asuna Yang <SpriteOvO@gmail.com>
 
 
