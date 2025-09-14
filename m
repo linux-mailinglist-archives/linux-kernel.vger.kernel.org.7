@@ -1,97 +1,70 @@
-Return-Path: <linux-kernel+bounces-815535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B75B567D8
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:09:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A4CB567DA
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 13:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B4F3BED6E
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 11:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61229189DC56
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 11:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9E42153C1;
-	Sun, 14 Sep 2025 11:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A374239086;
+	Sun, 14 Sep 2025 11:10:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="XQ/Sl+QQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Jx/a43Tf"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TNdEQwM/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFBB1F419B
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7321DF99C
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 11:10:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757848147; cv=none; b=kfJ7EcuYRNbFX2JxovaCZp+/C94UWW4rpJkocm/XDjmcuZPo49T5ycNva+1AhnXTE7IHKYWRuUJ6KhBUHcBVVSjgUGhnrcpM/Kgipz6ZeU2qS9hZLJPRnYaI3+ZnK81Osy6rR18/fj4lMUvOWNoz91ey1FZ0SOD5d5j/MXW4t1g=
+	t=1757848245; cv=none; b=YKhjVv+7iD0xfOy2tBK80So8Ngf+nzrcKLJUI9OLCQCqlZOO3qE99YX+ZtdgoYRVnIxgTJ9wLNCCUF3WETTR3jjCdKyt4/An6VO5hparZ9qPIpZptBJidr4L401Vg404VEKa8j1gtX2OTo4RsRPboNWzi6MJxqrJa+8nEtjuiVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757848147; c=relaxed/simple;
-	bh=k9jyVmkX5fMDBOoZEoV8ODwcCLTV/UX6ID1OBw3UWjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hRXLEK7yV9C9cQ3sw8UrzNAxox7O5LOpL9PsVdxifYWWFt9n2+AU0M9XJuTCKMmI/HbdtM2Whhd/pgW1Dwja4oiRR+yINTDHLyaLgyp2wGSjHK6Pruuu3n4t1LxmO1QxjynTjoiX5oCpH4SA/eLI/2GLMTp2Enrrv3adL3D83LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=XQ/Sl+QQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Jx/a43Tf; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
-	by mailfout.stl.internal (Postfix) with ESMTP id 90AF51D00128;
-	Sun, 14 Sep 2025 07:09:02 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Sun, 14 Sep 2025 07:09:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1757848142; x=
-	1757934542; bh=tH3Pdo3XCxD2G7LY3bRhxANbsEYpYS7cvhjxLNZyzLg=; b=X
-	Q/Sl+QQSgnuA81L+G6n3jpONe7z76pog7lJZICew0fQTfaMqNJOcDoMbvaxtRFsk
-	s02HZVIRc3Ixw43yktlEv9e+VwYvJg3r4d+/8yX3ZC1x6EIfInENJ7uVP2Hdax1G
-	oKAZE8sWkIVhBE3Cryq5vH33Umsw8YEyafcWPrvbPzfsElFAQ0f7bUTXASQa6qAH
-	YHMYdD88guVbYkAIR9bMqjnNIXMw6JvQW89jSAlFcHHPunOgjlfzC1Z/SVPxpcaL
-	ZgUhISYPrwioTfC8sxL7PsSfpP0ZN6gsQSHpEyK6i9OihHdMEdj40kJIxzuIDKVo
-	a1v+nYSwEpHk2sSlrJTYw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1757848142; x=1757934542; bh=tH3Pdo3XCxD2G7LY3bRhxANbsEYpYS7cvhj
-	xLNZyzLg=; b=Jx/a43Tfd+o+Z1R0GcoyQfeUuYLWH3mAVfRjXlQ98EoEtNGmXGP
-	e8z355+4p2lU7w4Sqt3SuiPMTlJQA2SwgwQblxdsM00OWE3o+Fr2Apjcm20sSfBB
-	Nn0Icb3oMXOWwF3/O63djHFEMN9Uk9LOsBR8C81e7O+SWQYqZS7moLcaVYIVXYOz
-	tFiI/DXPID646n1y8dpVMbYa2bnfP9Z41QDGUXYwnm6hNj1YYNJB0EYQ+NpC3Df4
-	iyWSLf1ncy7giIx7I5pHGocucQwOSfjqv0qrEYhjquhkqOgvQi5VApr6zrUE7Zmp
-	hg+15RRAtDUIx1KpmchLlXzDvkvGYpLHeEw==
-X-ME-Sender: <xms:TqLGaGhHkUIx3hzPkTlT_a8klfvmXqNC-ffALSrL3xfXT3w4NwfJMg>
-    <xme:TqLGaP9UqctLh5P1hg2zz931ArB7pJ8nLvLPsvKslb2Ddixo_B9-r-RU2yKKccav9
-    JFsA89YUwU6yTBAaDE>
-X-ME-Received: <xmr:TqLGaAA2IvQBjSelWvSCCrteQxVDfXTWSY2JGCNjXIFV7MRk7mWNjjtyg5d1WjYVT7KS5ThbzN8KWzn9SCeE8VeLM1pCCYZCti5q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdefgeeiiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesthdtredttd
-    dtvdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
-    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfettefgke
-    dvieeuffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfu
-    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
-    grmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhht
-    pdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslhhishhtshdrshhouhhrtg
-    gvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:TqLGaMKwqVKJM6Eohdvf7E_OBPmz_wIjoo8lFSvSeGl2JvwUpx30Vw>
-    <xmx:TqLGaDmGuIfBcrku3RCXZrf1bnIQCm2637dorLKBL_TfLYHNwm2IQg>
-    <xmx:TqLGaKFkMvGnK6vWS4JTxFRNEX8vMriH78NZCZ6iwm7Hc5w1r5Mtlw>
-    <xmx:TqLGaDECFERApJotWnG7HBOL1-qEJPBdZXbiVOsRqpfdIHGxGY1l9A>
-    <xmx:TqLGaNnDLJeKxpvbbnMzx6xmGOfSKUwJsU0qYd7N-9hIz15NVMoZ9LKM>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 14 Sep 2025 07:09:01 -0400 (EDT)
-Date: Sun, 14 Sep 2025 20:08:58 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] firewire: core: use macro for magic numbers related
- to bus manager work
-Message-ID: <20250914110858.GA802269@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-References: <20250913105737.778038-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1757848245; c=relaxed/simple;
+	bh=dbX8W8Q5r2e72/1ZnC01YbJGzfiuQmxjVGW9+UZ0SC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ozYY3+RD9uRINDbtbEq8mJRqT4zRZ2PdTWupU0n9oz8YTjawFldhLzQoiO6qz0V8fX+FNK6U06Acuu9L4qZxV1umIX77PraXTC0xBbxvrsglSKPDho3Njc/dfIxqEbGzLq5O2OVMCgUPQDwQeoLuZFNpoXE+7i3gsXg+yAM7wco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TNdEQwM/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1757848243;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=J03Vf1QZRLxmIqPY7ceh1wswPEAfBZ2Jk1Fje+LP2Bg=;
+	b=TNdEQwM/2uMAJMSV2i3uAUwGHig0osup4tV6ZRNSLCiRSf46RVRLJXDJvVAPwSC6WoSo4J
+	k6SYAUOf9Oh6Hk9iGsReQDeR66Oh58w6KbqJFvbYOq1UPsKNduYkENKpH47ne2F0+O/ymU
+	AaRnkTWcX7k9cHqcPWeLLj6d2dd5W5M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-662-GdNrTbS-MMy06eF_t1TxWQ-1; Sun,
+ 14 Sep 2025 07:10:37 -0400
+X-MC-Unique: GdNrTbS-MMy06eF_t1TxWQ-1
+X-Mimecast-MFC-AGG-ID: GdNrTbS-MMy06eF_t1TxWQ_1757848236
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E44271956053;
+	Sun, 14 Sep 2025 11:10:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.10])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D7C0C300021A;
+	Sun, 14 Sep 2025 11:10:33 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun, 14 Sep 2025 13:09:11 +0200 (CEST)
+Date: Sun, 14 Sep 2025 13:09:08 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Mateusz Guzik <mjguzik@gmail.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] fix the wrong comment on task_lock() nesting with
+ tasklist_lock
+Message-ID: <20250914110908.GA18769@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,31 +73,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250913105737.778038-1-o-takashi@sakamocchi.jp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Sat, Sep 13, 2025 at 07:57:35PM +0900, Takashi Sakamoto wrote:
-> Hi,
-> 
-> Some magic numbers are used for bus manager work. This patchset adds
-> some macros to replace the magic numbers.
-> 
-> * 0x3f: BUS_MANAGER_ID_NOT_REGISTERED
-> * 0: GAP_COUNT_MISMATCHED
-> 
-> Takashi Sakamoto (2):
->   firewire: core: use macro expression for gap count mismatch
->   firewire: core: use macro expression for not-registered state of
->     BUS_MANAGER_ID
-> 
->  drivers/firewire/core-card.c     | 14 +++++++++-----
->  drivers/firewire/core-topology.c |  2 +-
->  drivers/firewire/core.h          |  6 ++++++
->  3 files changed, 16 insertions(+), 6 deletions(-)
+The ancient comment above task_lock() states that it can be nested outside
+of read_lock(&tasklist_lock), but this is no longer true:
 
-Applied to for-next branch.
+  CPU_0			CPU_1			CPU_2
+
+  task_lock()		read_lock(tasklist)
+  						write_lock_irq(tasklist)
+  read_lock(tasklist)	task_lock()
+
+Unless CPU_0 calls read_lock() in IRQ context, queued_read_lock_slowpath()
+won't get the lock immediately, it will spin waiting for the pending writer
+on CPU_2, resulting in a deadlock.
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ include/linux/sched/task.h | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index ea41795a352b..8ff98b18b24b 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -210,9 +210,8 @@ static inline struct vm_struct *task_stack_vm_area(const struct task_struct *t)
+  * pins the final release of task.io_context.  Also protects ->cpuset and
+  * ->cgroup.subsys[]. And ->vfork_done. And ->sysvshm.shm_clist.
+  *
+- * Nests both inside and outside of read_lock(&tasklist_lock).
+- * It must not be nested with write_lock_irq(&tasklist_lock),
+- * neither inside nor outside.
++ * Nests inside of read_lock(&tasklist_lock). It must not be nested with
++ * write_lock_irq(&tasklist_lock), neither inside nor outside.
+  */
+ static inline void task_lock(struct task_struct *p)
+ {
+-- 
+2.25.1.362.g51ebf55
 
 
-Regards
-
-Takashi Sakamoto
 
