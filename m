@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-815924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7D5B56CF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:19:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3622B56CF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 15 Sep 2025 01:37:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA6189AA48
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A281E3B2C22
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039A21E1DEC;
-	Sun, 14 Sep 2025 23:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C4C25F798;
+	Sun, 14 Sep 2025 23:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwrEDDwU"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b="Nu4zsvdB"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03AD23C50C
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9ED2DC788
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 23:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757891981; cv=none; b=InylbV7yAybitZ8mMl640NhEcV3xVwy6X5w5hSu6iAzOX1hWesZ6ffk8KUDzYqDbxSNSihb7NuT0APIa1KYp0ymH0SKFdl7C1A8MIJ8ZkHUQOsrSuOAY9zASncyHqGq923olrZKOskjp8Tyedxj4Y5HXhL5FbQLvPRAF6YQIGxg=
+	t=1757893041; cv=none; b=p1Wf2YQHHqISJH5kFCfsLRWDAg3bNcAZd1dUlw1vb6wx3BmX+zeh3AEsFflINjN0vZvK1xQGEGGV1vY+PEib5uVSl0yo9KMCJ9NajhpYVJ7NuHHvh70skX3Eyj/0AuOVTKyjNdb7e1GvkU+HF6uQBwTkp3xSsNQcoX+jmygTkFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757891981; c=relaxed/simple;
-	bh=pHXoHH5RRUugrHmOu9g05vKyxCyEE7WNLmye7njoGms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gD3GSvR+adR27G3j8DdHf5Oh6ZdoHWxnABoiO9ecQ5VqSPNZCsWS+Qa7zJnXde2qy60pI81mj0TjVY69Xiub8DdnoN3PseS7lrvHTFAXcnOWgF+WR0cSIPOzEHo4HB+UDTTZURPFhCHJbHd9KoawXC0dLz9FMgK5wECxTQbUFgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PwrEDDwU; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-25f897894bfso3832625ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 16:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1757891979; x=1758496779; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wr1SRhKN9RJNHAY9fHUf/uZeZSb2ann41OGAwqEckBk=;
-        b=PwrEDDwU3WQ5ezDeqxpBM7emjnq2AHFKoJwVFfGX+e0XbuyoT/9bFS7ot/137z1u6L
-         BT6hN1QPIQmBQQyUe4fzYpOcrdAR0FW4IjSApibK7d9AdBghstvPnysw5lam4B3Jg51w
-         oFJsCQJumHejz23F0RTq0GrE8x8J/HIs2R2R8WvDofYOUafED4tWdyjSO/WerTz+bgdK
-         scoDXdqZhVN5bzXYW/srl7I4Q6mdVg1TIdgpCmUmhkNdEM6YaAA3pVQgNEdu2cSg6J8/
-         9wOkWYvvXm9apTyf70oEWhjKba3Aa/cHRm+SCLODsIhLUOSMQ7Z80ahCq66AiM6cJdfP
-         XPnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1757891979; x=1758496779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wr1SRhKN9RJNHAY9fHUf/uZeZSb2ann41OGAwqEckBk=;
-        b=RW5gh347yZOIQugK8ifmgf1DOzxd/A2QU0pJzB0xANppT3gXydArCa+58tMqikGt2J
-         R+QojHl217p77VWNoRLcVLMuzacfvw4GkYb9WaJrkHHJiS/FI3Ztk8IxbF+PCkr/5Y7B
-         YTm1JtXWPgjAHUZ/KgFpNHeQXMy/lqL4xD+M5CvKhwvlSLGbqPTS5e+WIMGpXfzYtnNB
-         2oSwWy00qjJ9MdqJsaKlb8dQrhCTFRjBUvNJP1+SfXesM7wOlAYYfOh38kxKZ/1uQqcZ
-         EjRjmbbOq78qhkbrRt13UAL1P0qkdmRWqpd9QYmEmLULwZmOt/Mt/ca5ff05vsp95jNa
-         NDsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpHvWUB3LPUujTl6kscQ/mdGr1KyuOOchHebOwLwz+Y7HmRc460doFXNq5Ddl3TZ6j/XhC7hYezgIyqn4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaYSeD1qiBvHu9YpyY5vPMzZytmx9ZQEVOx/ZVH3FPaj6ogP/m
-	vZX208z+VW6+4MZUsiRE5UXHHV1QpV5YibnOW91iwWxIxfz0Dl6j2s+O4m4ThCX1jV1PfqC3Z6D
-	653XQsWFzdJIdAtPgmzO3wiTey6GAS3A=
-X-Gm-Gg: ASbGncvn+ZHsi6sJgodbmN9i8izuxwEwPAKIEGQSwSPqCCwwWg/ztb+lfORFPTu0QWm
-	ADSbtP8HmremHdjDhnImp9OLWAK8bis8+guRSTLOextmyhFXT7KeWKPMv0joPDWVGlw2xIXAUX9
-	m1sHdcKwhe6AOEsnERnz5ZTPs2Kxg2CA9FsZ3apGtGfC4EekILFhyR8xppzNkd6tyGR5hHxJHh0
-	J0lPEtINs35suzANGNKd8AVSOdCA/thB66/SxCbrkOLb0n1jKUy+ZXjy1sHpVBfxv+bkf8/HtCV
-	9h1fa8Q/yFpuZmr+gr5rNpRP1A==
-X-Google-Smtp-Source: AGHT+IGhpkmNSnE/555/rmLedmEw7I+1SCyv5XhUvG9ewb3MUhstOJJKEYHDfT7SRZL2g28uuiuKafYeYRMNCxOJ2uw=
-X-Received: by 2002:a17:902:ce83:b0:265:98c5:3efc with SMTP id
- d9443c01a7336-26598c54355mr15027375ad.9.1757891979049; Sun, 14 Sep 2025
- 16:19:39 -0700 (PDT)
+	s=arc-20240116; t=1757893041; c=relaxed/simple;
+	bh=odlrz20IXfc9MUnEwi5nRwEYXd3V+Xkv2SYseouBhLA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DY9zCoPPG8Iuhh9WUREM5B92Vjmn9hmuR5fnMp2t9dSVDvY+EtKb2bwJVtLhrK5+JYfXTdNclM3ptkV8ObcKqjc/ARnBMlHAxCID1/bcbjzIDkdMUhuYEVgdNgiF6KDKWaoSxIrkjc6Qi1TbLCp7Y4WshEEESdx5ZxQgc05XWfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (2048-bit key) header.d=posteo.net header.i=@posteo.net header.b=Nu4zsvdB; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 577B5240029
+	for <linux-kernel@vger.kernel.org>; Mon, 15 Sep 2025 01:37:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net; s=2017;
+	t=1757893036; bh=5xTBfcIgxXN2CX1CLHSz7aQ83atl75CzIOg3qYAIU7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 From;
+	b=Nu4zsvdBfdYU3OBXmUfXiAlMIAXTIpKNSYQ+pcZxA2iEjRrS6cjgXj8XS55CFKlrk
+	 KO1jdKhOrSSDbNIgJsUgNuLtE3HyYVB360Ht0GMHaZ9zU+BkmZn3UIe55pXVRQ5R89
+	 ki8eJ9VS9Y8Yfcvgkw1OhtmJS9B4TUZytXgs0OQYH2IsJps0rBrhc+TX9lJpUYo3kR
+	 OKZ8qAAMEXoJOQar+7YQiGID8ye8+8VDM9iPEaCDbww4br+EGRIwm4efNbTjg4znpH
+	 3XMjgGW0nNFR2C7HdBnZujtFGAynvJAHX34Q4+L5EKQ5vlJVBWZBzpme/zw5cJGsYI
+	 tpCoj+guDKJSA==
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4cQ4MB58Twz6tn4;
+	Mon, 15 Sep 2025 01:37:10 +0200 (CEST)
+From: Charalampos Mitrodimas <charmitro@posteo.net>
+To: syzbot <syzbot+9767c7ed68b95cfa69e6@syzkaller.appspotmail.com>
+Cc: alexei.starovoitov@gmail.com,  andrii@kernel.org,  ast@kernel.org,
+  bpf@vger.kernel.org,  daniel@iogearbox.net,  davem@davemloft.net,
+  eddyz87@gmail.com,  edumazet@google.com,  haoluo@google.com,
+  horms@kernel.org,  jiayuan.chen@linux.dev,  john.fastabend@gmail.com,
+  jolsa@kernel.org,  kpsingh@kernel.org,  kuba@kernel.org,
+  linux-kernel@vger.kernel.org,  linux-kselftest@vger.kernel.org,
+  martin.lau@linux.dev,  mykolal@fb.com,  netdev@vger.kernel.org,
+  pabeni@redhat.com,  sdf@fomichev.me,  shuah@kernel.org,  song@kernel.org,
+  syzkaller-bugs@googlegroups.com,  tj@kernel.org,  yangfeng@kylinos.cn,
+  yonghong.song@linux.dev
+Subject: Re: [syzbot] [net?] WARNING: suspicious RCU usage in corrupted (3)
+In-Reply-To: <68bf3893.050a0220.192772.0885.GAE@google.com> (syzbot's message
+	of "Mon, 08 Sep 2025 13:12:03 -0700")
+References: <68bf3893.050a0220.192772.0885.GAE@google.com>
+Date: Sun, 14 Sep 2025 23:37:15 +0000
+Message-ID: <87h5x4obbt.fsf@posteo.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724172005.11641-1-boqun.feng@gmail.com>
-In-Reply-To: <20250724172005.11641-1-boqun.feng@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 15 Sep 2025 01:19:25 +0200
-X-Gm-Features: AS18NWBLpcVZaz0uXp5qhEnAAfVLnpu8P6jVe1KdZV4E_JnrY3DZ1aw-Ou0NaW8
-Message-ID: <CANiq72=5gPRSFEDZCL5kSiinZVJCFd6UX+vzkx+oM+AvotCXsw@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: list: Add an example for `ListLinksSelfPtr` usage
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, I Hsin Cheng <richard120310@gmail.com>, 
-	Albin Babu Varghese <albinbabuvarghese20@gmail.com>, Tamir Duberstein <tamird@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, Jul 24, 2025 at 7:20=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
+syzbot <syzbot+9767c7ed68b95cfa69e6@syzkaller.appspotmail.com> writes:
+
+> syzbot suspects this issue was fixed by commit:
 >
-> It appears that the support for `ListLinksSelfPtr` is dead code at the
-> moment [1]. Altough some tests were added at [2] for impl `ListItem`
-> using `ListLinksSelfPtr` field, still we could use more examples
-> demonstrating and testing the usage of `ListLinksSelfPtr`. Hence add an
-> example similar to `ListLinks` usage.
+> commit 7f12c33850482521c961c5c15a50ebe9b9a88d1e
+> Author: Charalampos Mitrodimas <charmitro@posteo.net>
+> Date:   Wed Jun 11 17:20:43 2025 +0000
 >
-> The example is mostly based on Alice's usage in binder driver [3].
+>     net, bpf: Fix RCU usage in task_cls_state() for BPF programs
 >
-> Link: https://lore.kernel.org/rust-for-linux/20250719183649.596051-1-ojed=
-a@kernel.org/ [1]
-> Link: https://lore.kernel.org/rust-for-linux/20250709-list-no-offset-v4-5=
--a429e75840a9@gmail.com/ [2]
-> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-4-08=
-ba9197f637@google.com/ [3]
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13745562580000
+> start commit:   079e5c56a5c4 bpf: Fix error return value in bpf_copy_from_..
+> git tree:       bpf-next
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=c6c517d2f439239
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9767c7ed68b95cfa69e6
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=114915f4580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15566170580000
+>
+> If the result looks correct, please mark the issue as fixed by replying with:
+>
+> #syz fix: net, bpf: Fix RCU usage in task_cls_state() for BPF programs
 
-Applied to `rust-next` -- thanks everyone!
+Correct, also did test-run to make sure.
 
-    [ Fixed typo. - Miguel ]
+#syz fix: net, bpf: Fix RCU usage in task_cls_state() for BPF programs
 
-Cheers,
-Miguel
+C. Mitrodimas
+
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
