@@ -1,146 +1,129 @@
-Return-Path: <linux-kernel+bounces-815694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8FFBB569E4
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C569AB569F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 16:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A69D17B5BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:56:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEB33B735F
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 14:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A3735898;
-	Sun, 14 Sep 2025 14:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED47288AD;
+	Sun, 14 Sep 2025 14:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0kD8Jvb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqxMqJ/k"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D40C1DEFE7;
-	Sun, 14 Sep 2025 14:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA641DEFE7
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 14:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757861749; cv=none; b=d4IrcffltoKn1Ro6S6ZFMAgfqHTMcV4vkV7ETVKSOqlQDtHeIt6eDbB+kX8kCcKCTLUXc13QN4qWPDdoSyhk9HnR9jvZUjxuE74IIMnZ/2hZEh2wbLyatai+kvY4v1WWEGgidq2RfmXE+Sud5PkUS7sfeigx1+3GWVpe3Kihf3c=
+	t=1757861769; cv=none; b=djL7CBj5OnJJi/bEoPeRi1BBr5jLss6VeGy8K7iQrbLz4dEse3kMufs5Np5WiweB4LPftF24VbTRCW0hfGxo0JzS1sGHmZPiZ+j6Ge13xmv6ABNMB3eCiF5dln2Gn8i7h0hH8oJ8fjS5iCETKwkbOU8hgnTz/vyOU7DiEoxpMzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757861749; c=relaxed/simple;
-	bh=mvzveFHUPhU7QOT/r8Tr+q2EpLCdTzKQNObaX0/xIXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SwNMJyYH5ptycMRe6sydAnHvtUsOuQb+EAh/wm5d5UN9afBwgPSNQcDFjkwfA9BHYSM9HGDstInIRJbdu1wu9Huy/P1a0sI9UQRX1Fd+NU2rhp7u943KdQuYKmXQG69muP4PEXohZlDCcCEEwjvrQo77N7NI9TX93Z6YmQJ3kUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0kD8Jvb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AF4DC4CEF1;
-	Sun, 14 Sep 2025 14:55:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757861747;
-	bh=mvzveFHUPhU7QOT/r8Tr+q2EpLCdTzKQNObaX0/xIXo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R0kD8JvbA6yCuOefGwrMhOs1YacP+tIE+i9qWgVqAPb3TMvZytLwSCKkgGhgomqIP
-	 Xx4X82njNYaJTnCHkJ28vNShG3SShl0WPECZ+rUlcjYfMENkfWqAOXorM5dfluzuSd
-	 lQKEY6Yqp9eepPxXuEWVlxbTcrUxS4sRdeO+Hu81Qfc58nc5m8YNzP+BJDxFiltXFA
-	 IJdt3Z1ZIQpwA/waHVEQKZwZfQx8tRGDhxGSfLbytstsglv2zPc7p6HHhsysYEIVr9
-	 acgeQvmteGlrMJOjI4tNsX4lJWdSN3CkHL9mSeR1p5Ktnn8ojxm6mrNvRdaLgzgmWj
-	 RsY+D4NwEo8IA==
-Message-ID: <674b78ca-e4eb-4921-9564-a4490e7ddbca@kernel.org>
-Date: Sun, 14 Sep 2025 16:55:41 +0200
+	s=arc-20240116; t=1757861769; c=relaxed/simple;
+	bh=GtzfjRzPIcRz3TlDPzQkhFG0JB1MRNghy5cWBQyLfB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UnfvAEz0PIAHMqrsUjBVCR7+BCWWKQgURKZ3lSz+v2fofQvIV/f0U6aclk3F9onBokB5Lg+kNjYJl00CcnCz0PQT56GozSh0ykT3iLiNy3flix/JJ5FWNbCuNQZv4RHQgYM4pnrLyIG3kM2eA3mPGgCXeiYowMZ/VCsLNCGXEhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqxMqJ/k; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3e92ce28278so702475f8f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 07:56:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757861765; x=1758466565; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5qapOJtKxyY0MNaqH7qXtB8qqR3nlxKXEctWyb1YrfM=;
+        b=eqxMqJ/kF3Uo4/Bf1swgDqKzqb1RNYU4W1rBYitmTmYaurnEh2yJQVCiwyGpfknVBw
+         sbbjw8eVEHm6ZcSVXTNYNJl9x8QHDKk2AKP4/bT/nu732Okan662mosSeei4G6UTceYh
+         YGGiNqCDBzYf21KUc7ufl3ztwjn5ETniKHGbZbu6P59KBrVw89Sq11Ur+6uYBQ9IRvD2
+         qLXVPrVsEhJSep1r8Whv+axZNrbqILqIsAQGA6o6LIfhkPWCjJEnm4yDQXmxSMuhew0z
+         TrYOs5guhHIoqcW+GB4AmW1jYcr95SD3XQ3ZBkc3BDWwumcrvLPRcpW9Pp7mHaK7ws1D
+         r7ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757861766; x=1758466566;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5qapOJtKxyY0MNaqH7qXtB8qqR3nlxKXEctWyb1YrfM=;
+        b=uYuWxBjH9L+X2qtGVMe1OxlDbFXR+JBX09ciMHflW6Y7RfCtvaa63v3oqhZV2hhyD8
+         caeSMIzCnydQYdPhJJb3J8r0CG980D7ewQiI8/HZbXb9sAV6285PII3nxAw4UUtnygUG
+         z2B5Uq4HvrNNKF5p1DhPly93F0eEn5HF8XvRQ/No28cPVJP2k86Hq2HwOHE1tq/DjfIa
+         1vGXstyBjt05YxDY3jVdePtnmcPv/oLsk7PfuQ11jm7/egyEQAW30OIeahk120cndrlL
+         zZBJYb0SpRd8gDruFRMSodNUbD4sV8VU9qRpYttTVdP0y2wwLVsI3QoP0cdOPw2ON/y6
+         IXOg==
+X-Forwarded-Encrypted: i=1; AJvYcCULD6EVNNIkJ/iDFTBQEekpjPB+Ztlz+0Kv8YhuxsrvKyBsNR5jCI6pJ87GHykGo7MwKc/+YErcyncHpVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNeYXuv0YB6bZPHUH2DIOTzpTI0DrFBbVOudimVO3ULuRk0dv4
+	CwdcRXhDLhC4A/oKwZb3kIZkM7SNNT8jQ7uElQh9YmGPn0m2WgF8Fs6q
+X-Gm-Gg: ASbGncuFyY0p9VOPnmI2p4Q0uc7oEQW/fyYKjk5oa3Q1LoaKWvg8Kts6r7FyR5Hi0Q/
+	T9cXrHWqreJikUznZorsGObz1WWPtDVf9Co01wGCNYdIq0+QXmwowkVTVKxF3Lw4mTCoh36T/mx
+	WKTsiJpseWYqR/O+YMfLAQVRSg0aC05yDzVeMLq72YwXgStRNl49SDU3Z0fX4Wg1Twd2q0TRniU
+	cdp5tTC5U3HK7wUXKLAkgv8IDcebJtAmCeiHdcUdkflPQ3tKfvsnn7Y+BOZWN191OkF9jcv4wPA
+	40EYBCogRsgEJxuAd8Ky3vhaIhi5OUw2QCktY/eUGU+y4TgurpUm5v4PCR8/EnbsIq329n0wt33
+	x4Ne80j3d7UIlADamnZ2l09bfOArwb8dZGZkU0E/Aha4rmRRmisTWReAgkvyNmMvH9gnDa9SIQw
+	==
+X-Google-Smtp-Source: AGHT+IFV/3JZpFtVZv9IijfdfagkrdK3hCy/JcOZd8MWso5BvseWKVtiecc8/LFjzi/kNn1nTtuUIw==
+X-Received: by 2002:a05:6000:2486:b0:3e7:404f:685 with SMTP id ffacd0b85a97d-3e765a197ebmr8559306f8f.44.1757861765516;
+        Sun, 14 Sep 2025 07:56:05 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45e037d62besm136303475e9.21.2025.09.14.07.56.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 14 Sep 2025 07:56:05 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] phy: exynos5-usbdrd: support the exynos8890 USBDRD
+Date: Sun, 14 Sep 2025 17:55:53 +0300
+Message-ID: <20250914145555.2631595-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: usb/ti,am62-usb.yaml: Add
- ti,lane-reverse property
-To: Richard GENOUD <richard.genoud@bootlin.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Thinh Nguyen
- <Thinh.Nguyen@synopsys.com>, Aswath Govindraju <a-govindraju@ti.com>,
- linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20250908162052.355341-1-richard.genoud@bootlin.com>
- <20250908162052.355341-2-richard.genoud@bootlin.com>
- <20250909-curvy-happy-pug-eeffda@kuoka>
- <464f5995-be7d-41f6-8e95-7d724e2b5308@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <464f5995-be7d-41f6-8e95-7d724e2b5308@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 09/09/2025 11:11, Richard GENOUD wrote:
->>> diff --git a/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml b/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
->>> index f6e6d084d1c5..ba894d610af0 100644
->>> --- a/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
->>> +++ b/Documentation/devicetree/bindings/usb/ti,am62-usb.yaml
->>> @@ -36,6 +36,11 @@ properties:
->>>       items:
->>>         - const: ref
->>>   
->>> +  ti,lane-reverse:
->>> +    description:
->>> +      Should be present if D+ and D- lanes have to be swapped.
->>> +    type: boolean
->>
->> What is not working with existing data-lanes property?
-> Hum, indeed. data-lanes could definitely be used here.
-> 
->>
->> Plus, lanes are swapped per port, not for entire device, no?
-> I'm not sure to get what you mean here.
-> The use case I'm trying to address is:
-> pin AD10(USB1_DM) of the AM625 is routed to USB_DP pin of an USB connector.
-> And pin AE9(USB1_DP) of the AM625 is routed to USB_DM pin of an USB 
+Hey folks,
 
-I understand what you are trying to achieve and my comment was exactly
-about it. You want to change properties of specific connection, high
-speed in that case, right? So this belongs to specific port. Just do the
-homework and run `git grep data-lanes`.
+This patchset adds support for the usbdrd phy for exynos8890. The SoC
+features 2 dwc3 controllers and 2 usb phy controllers. One of the USBs
+is used for DRD, whereas the second - for host. The host one seems to
+only be used on the MV8890 SBC, which... I don't think anyone has,
+really.
 
+Code from this patchset can and will be reused for 8895 (I actually based
+it on my old 8895 work but decided to upstream it)
 
 Best regards,
-Krzysztof
+Ivaylo
+
+Changes in v2:
+- fix up the messed series (a patch from another subsystem was accidentally
+  sent)
+
+Ivaylo Ivanov (2):
+  dt-bindings: phy: samsung,usb3-drd-phy: add exynos8890 support
+  phy: exynos5-usbdrd: support the exynos8890 USBDRD controller
+
+ .../bindings/phy/samsung,usb3-drd-phy.yaml    |  25 +++
+ drivers/phy/samsung/phy-exynos5-usbdrd.c      | 210 ++++++++++++++++++
+ 2 files changed, 235 insertions(+)
+
+-- 
+2.43.0
+
 
