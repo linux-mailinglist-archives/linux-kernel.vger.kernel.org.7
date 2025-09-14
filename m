@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-815708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA349B56A39
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:29:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 607E6B56A3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 17:29:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D56C3B1CE2
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270F417BC97
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 15:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9583F2DAFB1;
-	Sun, 14 Sep 2025 15:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B0B2DAFC7;
+	Sun, 14 Sep 2025 15:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b="Zrd6Wehq"
-Received: from smtp1.iitb.ac.in (smtpd9.iitb.ac.in [103.21.126.64])
+	dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b="Dd4hd1d7"
+Received: from www.redadmin.org (ag129037.ppp.asahi-net.or.jp [157.107.129.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0BA26E6F4
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.21.126.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757863747; cv=none; b=eh7lOLetO6Y4E6HRiZsfTJfbzAtuJ2V/awtztgi7wlx1/x/i+wsRx64KxpPIQKgpjS+quTPSpJMKMgOIVa5lCTefky/0DqxNjRFcuZH9E8ADkW5mF6yui49dzBQBTERzpUHUGbcDs2y60I6K04MMcdijUNLHdnEqyxhXiLo424U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757863747; c=relaxed/simple;
-	bh=LPkK3jmQR33RMe+1MmDw4dMC0OqA+N1omWuhB09kNq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=atdWbIEvfGJY8p+ZnSsDwW+mXYHyS6+39DH8KyFrRAQVHYoBzW1VoLT1/YEvUI8BFJo33Ho04c13kE7185z+PHf8vYAeUcyB2KHR4c1qBkl5/+lUSC1x33n0oW00ZMLXkbzK0+h3xIWzPwKwwQ1s573AGTopFFq3b41JHc1rqD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in; spf=pass smtp.mailfrom=ee.iitb.ac.in; dkim=pass (1024-bit key) header.d=iitb.ac.in header.i=@iitb.ac.in header.b=Zrd6Wehq; arc=none smtp.client-ip=103.21.126.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ee.iitb.ac.in
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ee.iitb.ac.in
-Received: from ldns2.iitb.ac.in (ldns2.iitb.ac.in [10.200.12.2])
-	by smtp1.iitb.ac.in (Postfix) with SMTP id 5A3B2104C1C3
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 20:58:52 +0530 (IST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.iitb.ac.in 5A3B2104C1C3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=iitb.ac.in; s=mail;
-	t=1757863732; bh=LPkK3jmQR33RMe+1MmDw4dMC0OqA+N1omWuhB09kNq4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Zrd6WehqccKCXVVYd3Kf/c/5vP4PTj6N/JoyZ75d1MVzeknjjQ0B9d/P9wTBf7Og9
-	 CTYOhilWPjFutOXJnIChqjtv/YGKDnhoFCCiYXUHJPGLC9pFL4LOK7eaDGJdEnDJsI
-	 NNCh+WF2WsMcnlMdzKiKKXA8nMYOXU+RZDAYgMm0=
-Received: (qmail 23281 invoked by uid 510); 14 Sep 2025 20:58:52 +0530
-X-Qmail-Scanner-Diagnostics: from 10.200.1.25 by ldns2 (envelope-from <akhilesh@ee.iitb.ac.in>, uid 501) with qmail-scanner-2.11
- spamassassin: 3.4.1. mhr: 1.0. {clamdscan: 0.100.0/26337} 
- Clear:RC:1(10.200.1.25):SA:0(0.0/7.0):. Processed in 5.04255 secs; 14 Sep 2025 20:58:52 +0530
-X-Spam-Level: 
-X-Spam-Pyzor: Reported 0 times.
-X-Envelope-From: akhilesh@ee.iitb.ac.in
-X-Qmail-Scanner-Mime-Attachments: |
-X-Qmail-Scanner-Zip-Files: |
-Received: from unknown (HELO ldns2.iitb.ac.in) (10.200.1.25)
-  by ldns2.iitb.ac.in with SMTP; 14 Sep 2025 20:58:47 +0530
-Received: from bhairav.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	by ldns2.iitb.ac.in (Postfix) with ESMTP id CBFCA3414EA;
-	Sun, 14 Sep 2025 20:58:46 +0530 (IST)
-Received: from bhairav-test.ee.iitb.ac.in (bhairav.ee.iitb.ac.in [10.107.1.1])
-	(Authenticated sender: akhilesh)
-	by bhairav.ee.iitb.ac.in (Postfix) with ESMTPSA id 9DF5C1E8130D;
-	Sun, 14 Sep 2025 20:58:45 +0530 (IST)
-Date: Sun, 14 Sep 2025 20:58:41 +0530
-From: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-To: shuah@kernel.org, lizhijian@fujitsu.com
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-Subject: [PATCH] selftests: watchdog: skip ping loop if WDIOF_KEEPALIVEPING
- not supported
-Message-ID: <20250914152840.GA3047348@bhairav-test.ee.iitb.ac.in>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B599726E6F4
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 15:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=157.107.129.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1757863755; cv=pass; b=R8q5HCMbYgbLmGJnmCMRWojJmFXgWrD9FVAIyfAzgGBrekJQjUu/Uf99KDlmReR/EmY7j0OmyzN9IJ11K8b/n15595IjiFvdxWw0Ja7AutYX7P0NoViFW0o8eFh9uL5qx+k/D59sJz/lOsrJKZRKEFt/5mF1LAMPxgatXtMC9gc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1757863755; c=relaxed/simple;
+	bh=3IbcCx+AzyrNphEQIcDTAkdn1N1em1rTzkiZ6HKjbc8=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=slFIS9KqPJLPI7YQPvk8WZXZcsxrs+T6ZQ8SpDdQESxbEz9SdxWt1Vp3oyQWMnd2KxIkAT3KA3MmPw7jgda0fZ9W5qXYj8Ut4uANeJI8zjG/DhuMkSh27UTQQUYDx92+LoGjqe7aNOc7XU+h2g0PB4xL3Q3D3qfdnhHWhdz7Sy8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org; spf=pass smtp.mailfrom=redadmin.org; dkim=pass (1024-bit key) header.d=redadmin.org header.i=@redadmin.org header.b=Dd4hd1d7; arc=pass smtp.client-ip=157.107.129.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redadmin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redadmin.org
+Received: from localhost (localhost [127.0.0.1])
+	by www.redadmin.org (Postfix) with ESMTP id AA0F110B40B64;
+	Mon, 15 Sep 2025 00:29:04 +0900 (JST)
+X-Virus-Scanned: amavis at redadmin.org
+Received: from www.redadmin.org ([127.0.0.1])
+ by localhost (redadmin.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id KDMaOXrOWeDG; Mon, 15 Sep 2025 00:29:01 +0900 (JST)
+Received: from webmail.redadmin.org (redadmin.org [192.168.11.50])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-256) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: weibu@redadmin.org)
+	by www.redadmin.org (Postfix) with ESMTPSA id 0EC30109D55C3;
+	Mon, 15 Sep 2025 00:29:01 +0900 (JST)
+DMARC-Filter: OpenDMARC Filter v1.4.2 www.redadmin.org 0EC30109D55C3
+Authentication-Results: www.redadmin.org; arc=none smtp.remote-ip=192.168.11.50
+ARC-Seal: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space; t=1757863741;
+	cv=none; b=eG7Am4rUAHxQanyz5AOdYQFhTRe1HEoGQvkv6cJVzpNyk3dSwao0HsCBJsrk53BmDbbTV2BT8Xv/PrM59D5SGiHAyU7BrQk/LEp/4kKfjTGiXmeRaB6ZgS1lfBjyKRnEpbDK6AnpIAsa6cIG0S9agg5r5l3A5k7BUqWNAmCJEHY=
+ARC-Message-Signature: i=1; a=rsa-sha256; d=redadmin.org; s=20231208space;
+	t=1757863741; c=relaxed/relaxed;
+	bh=IG/wxvFjZ4KF1WA6DzU9Avkd2drHlzCGrrowgiuJ+yg=;
+	h=DKIM-Filter:DKIM-Signature:MIME-Version:Date:From:To:Cc:Subject:
+	 In-Reply-To:References:Message-ID:X-Sender:Content-Type:
+	 Content-Transfer-Encoding; b=OLyGn81QNDE5TGf+3wQr3dF5CwJSSZKu2ryECmODDCfkR8O91iQPJUWa9BKYqVh04iZTJcGqc00RJNTwla0obimUdDJahC201BLMEzrdfvRI8I7Y7Ar3JLoPQgsTBLJahiGtYyiA1o2zu1Jo8hrW4i3mjcwCd19f3A2eK4CF8ZE=
+ARC-Authentication-Results: i=1; www.redadmin.org
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.redadmin.org 0EC30109D55C3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redadmin.org;
+	s=20231208space; t=1757863741;
+	bh=IG/wxvFjZ4KF1WA6DzU9Avkd2drHlzCGrrowgiuJ+yg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Dd4hd1d7YN090V777FZrg+E09AWr2lywkVZq8Z6rDNl9rsxTZM5xhrlb6GOGWWcUr
+	 Q6zuO+u5yRAikJj/I6R/tttQfacvbG7QMBVG74oHm3jbrCe9Y1IZK2gjc//x3fB0bq
+	 2D+TwVnT1Af03BUrt82E9VGbPIIcxOZm+uIPBzu8=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date: Mon, 15 Sep 2025 00:29:00 +0900
+From: weibu@redadmin.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: rtw_efuse.h: Fix prototype whitespace
+In-Reply-To: <2025091454-popular-overall-9864@gregkh>
+References: <20250913112458.910059-1-weibu@redadmin.org>
+ <2025091454-popular-overall-9864@gregkh>
+Message-ID: <1d0fdc3bde254057539b7e8506d0c211@redadmin.org>
+X-Sender: weibu@redadmin.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-Check if watchdog device supports WDIOF_KEEPALIVEPING option before
-entering keep_alive() ping test loop. Fix watchdog-test silently looping
-if ioctl based ping is not supported by the device. Exit from test in
-such case instead of stucking in loop executing failing keep_alive()
+Hi Greg,
 
-Fixes: d89d08ffd2c5 ("selftests: watchdog: Fix ioctl SET* error paths to take oneshot exit path")
-Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
----
+Thanks for the heads-up. That patch was generated against linux-next
+(next-2025-09-12). I’ll rebase it onto your staging.git 
+`staging-testing`
+branch and resend it as v2.
 
-Testing: 
+Thanks,
+Akiyoshi
 
-# wdt_test_1 -f /dev/watchdog0 -i
-watchdog_info:
- identity:              m41t93 rtc Watchdog
- firmware_version:      0
-Support/Status: Set timeout (in seconds)
-Support/Status: Watchdog triggers a management or other external alarm not a reboot
-
-# wdt_test_1 -f /dev/watchdog0 -d -t 5 -p 2 -e
-Watchdog card disabled.
-Watchdog timeout set to 5 seconds.
-Watchdog ping rate set to 2 seconds.
-Watchdog card enabled.
-WDIOC_KEEPALIVE not supported by this device
-
-without this change 
-# wdt_test_2 -f /dev/watchdog0 -d -t 5 -p 2 -e
-Watchdog card disabled.
-Watchdog timeout set to 5 seconds.
-Watchdog ping rate set to 2 seconds.
-Watchdog card enabled.
-Watchdog Ticking Away!
-^C
-(Where test stuck here forver silently)
----
- tools/testing/selftests/watchdog/watchdog-test.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
-index a1f506ba5578..4f09c5db0c7f 100644
---- a/tools/testing/selftests/watchdog/watchdog-test.c
-+++ b/tools/testing/selftests/watchdog/watchdog-test.c
-@@ -332,6 +332,12 @@ int main(int argc, char *argv[])
- 	if (oneshot)
- 		goto end;
- 
-+	/* Check if WDIOF_KEEPALIVEPING is supported */
-+	if (!(info.options & WDIOF_KEEPALIVEPING)) {
-+		printf("WDIOC_KEEPALIVE not supported by this device\n");
-+		goto end;
-+	}
-+
- 	printf("Watchdog Ticking Away!\n");
- 
- 	/*
--- 
-2.34.1
-
+2025-09-15 00:09 に Greg KH さんは書きました:
+> On Sat, Sep 13, 2025 at 08:24:58PM +0900, Akiyoshi Kurita wrote:
+>> Several function prototypes in rtw_efuse.h contained extra spaces
+>> between the type and variable name of the last argument.
+>> 
+>> Remove these spaces to conform to the kernel coding style.
+>> No functional change is intended.
+>> 
+>> Signed-off-by: Akiyoshi Kurita <weibu@redadmin.org>
+>> ---
+>>  drivers/staging/rtl8723bs/include/rtw_efuse.h | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> This does not apply to my current tree, what did you make it against?
+> 
+> thanks,
+> 
+> greg k-h
 
