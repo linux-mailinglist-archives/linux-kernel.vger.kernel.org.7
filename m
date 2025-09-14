@@ -1,89 +1,120 @@
-Return-Path: <linux-kernel+bounces-815911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F92B56CA2
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:46:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F156B56CBF
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 23:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6267E4E158B
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:45:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C5E2177747
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0072E6CA9;
-	Sun, 14 Sep 2025 21:45:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722232E7165;
+	Sun, 14 Sep 2025 21:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVe0CahP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIfT072Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE00192D8A;
-	Sun, 14 Sep 2025 21:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0BB1D7E4A;
+	Sun, 14 Sep 2025 21:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757886351; cv=none; b=i5bzNzELGx2kZOU0ZdTSJwTsJHVRH6yKGymIaBmKwtDx4nJ5pCQX4ccKN635Rqyp/CF2GqDbdqebXoczqSVq+lqgBaqHpy3KaUfpy+8EJ7mnOl3wHXjhhGpPL8rK/J532wJ4uOpbXObWAIBkg5zBocY6MJlDV0UXyH5hrhJZFY8=
+	t=1757887059; cv=none; b=YgCmCA+Vn8IfmOWifkYrbKJxdqGLrvaAVFviM964kdh0fkd0ZUra+QFoU4GEJfrQuSrsqGkmLNyYvjQOU8cj/Z0ecETZoPwSXIuZiAdWZwdhLMJYZQRfwG6MxWyGe3XrTO8jpfNNnn4o/i8qMXXx2H9kPECDYqe38tk7+3+fIrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757886351; c=relaxed/simple;
-	bh=PYuyqZRGrl0BoDAtblCL5VEywWNNDkx+2UfVtcus59c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DfuER6nIRzkfTYOS79fRulRWQSWiDUjZaQSZLWF+drVZseE2/PLExyjRg2w65590hadHw+tXoXQ/QNiLPTQxhAJ3rVjYAJR/I/Ezj/i3Uhjlt0p9lFKSAecht8c59CJ/5HqVma2MrLD2zcOpJCIYWZt7m4F+LKZOUIbm+GyZjg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVe0CahP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8823DC4CEF0;
-	Sun, 14 Sep 2025 21:45:50 +0000 (UTC)
+	s=arc-20240116; t=1757887059; c=relaxed/simple;
+	bh=UzomXMO2OVf/W47Q+4CtX5NoW3MYQVWQvopO9CDJOjc=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=J+JQgt09/sGyhMJTI1aZZLJgGMCqJDtAvZA620D7e0V+a1mGYXymOIZO3A9FmOx/MHqEzfNSZ7huDzhcQdvgk3p0bDF5DX9VyyO/DpqoSiFKIBcVV69x3ldQbmw1X3aIxp3FDD86vgBiMYF1v3ZemwebeDzMF781C2A/PeTQNjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIfT072Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 651FEC4CEF0;
+	Sun, 14 Sep 2025 21:57:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757886351;
-	bh=PYuyqZRGrl0BoDAtblCL5VEywWNNDkx+2UfVtcus59c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MVe0CahPumcseRpF6VvQrIZLiZsPIvXwd7J/gYWncGAW6kzBTmkctFinBAlaXk/Zf
-	 yH5zh4TPE6u21DoUmg04B5tLZCqAxDv3TZ6OUOJ/NGMSElXcNSd766ZuvQ7RGeddQ6
-	 Lf6GaUSNfJrrYuAWp4qnLcD4SBeOcB+kxUWLM6bjS0TePUaVbiDP6MHaeNTHqusfNP
-	 dKtmAs6h5DBXQ5AM4Xw3rhzL2vA4hQB8turt2HkshDreHU2qLOksvhgJ8+qQyTHFYx
-	 5N3yMlzgV0xJ56dVI1iWrpNBQdO+l3TJ2qCg/xFwgSLq0DX9ezprfqxTJ1NkgOJn3R
-	 A+ClW9j0FEmoQ==
-Date: Sun, 14 Sep 2025 14:45:49 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Ivan Vecera <ivecera@redhat.com>
-Cc: netdev@vger.kernel.org, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
- Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Prathosh
- Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>, Petr
- Oros <poros@redhat.com>
-Subject: Re: [PATCH net-next v6 3/5] dpll: zl3073x: Add firmware loading
- functionality
-Message-ID: <20250914144549.2c8d7453@kernel.org>
-In-Reply-To: <20250909091532.11790-4-ivecera@redhat.com>
-References: <20250909091532.11790-1-ivecera@redhat.com>
-	<20250909091532.11790-4-ivecera@redhat.com>
+	s=k20201202; t=1757887059;
+	bh=UzomXMO2OVf/W47Q+4CtX5NoW3MYQVWQvopO9CDJOjc=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=DIfT072ZUKWuwafbT+XzNyblKmtqMiLwjIe2LsTqvzKFVgkD24Hil6F9doh8y3HN5
+	 RBiGg4uRdZK3CtZiPyKr5uVsP6N/LDKF+FzhiurEBJM+4hxaYkS2POFMncjxOiKEIE
+	 k8hKs8rKCaxqjEpT+EZAyTbDij3gjHnyvxFxXe5T2BkLt6NhBGurpnWhLp4oppvUZK
+	 xLMk0HIWgRlKr1CTpkx6w7zI8YC7HsSBfyDX7rgGRYwdpCJiK3GM7SK7X6oN0X1Fzu
+	 +b1HnZhGitHed6KFpMgxJusg5De/AlcTNy8iezumCH1hA1lwQ+X94hSDfgqttsqCSU
+	 LNHOBCO5hj25g==
+Date: Sun, 14 Sep 2025 16:57:39 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>, devicetree@vger.kernel.org, 
+ linux-remoteproc@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Jjian Zhou <Jjian.Zhou@mediatek.com>, 
+ Xiangzhi Tang <Xiangzhi.Tang@mediatek.com>, 
+ linux-mediatek@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Hailong Fan <Hailong.Fan@mediatek.com>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
+In-Reply-To: <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
+References: <20250914122943.10412-1-xiangzhi.tang@mediatek.com>
+ <20250914122943.10412-2-xiangzhi.tang@mediatek.com>
+Message-Id: <175788697866.1955455.17302760216827607004.robh@kernel.org>
+Subject: Re: [PATCH v2 1/4] dt-bindings: remoteproc: Add VCP support for
+ mt8196
 
-On Tue,  9 Sep 2025 11:15:30 +0200 Ivan Vecera wrote:
-> +	/* Fetch image name and size from input */
-> +	strscpy(buf, *psrc, min(sizeof(buf), *psize));
-> +	rc = sscanf(buf, "%15s %u %n", name, &count, &pos);
-> +	if (!rc) {
-> +		/* No more data */
-> +		return 0;
-> +	} else if (rc == 1 || count > U32_MAX / sizeof(u32)) {
-> +		ZL3073X_FW_ERR_MSG(extack, "invalid component size");
-> +		return -EINVAL;
-> +	}
-> +	*psrc += pos;
-> +	*psize -= pos;
 
-Still worried about pos not being bounds checked.
-Admin can crash the kernel with invalid FW file.
+On Sun, 14 Sep 2025 20:29:24 +0800, Xiangzhi Tang wrote:
+> Add the new binding document for MediaTek Video Companion
+> Processor(VCP) on MediaTek mt8196.
+> 
+> Signed-off-by: Xiangzhi Tang <xiangzhi.tang@mediatek.com>
+> ---
+>  .../remoteproc/mediatek,mt8196-vcp.yaml       | 165 ++++++++++++++++++
+>  1 file changed, 165 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml
+> 
 
-	if (pos > *psize)
-		/* error */
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Also what if sscanf() return 2? pos is uninitialized?
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.yaml: patternProperties:^vcp@[a-f0-9]+$:properties:mtk,vcp-core-twohart: 'anyOf' conditional failed, one must be fixed:
+	'description' is a dependency of '$ref'
+	'/schemas/types.yaml#/definitions/uint32' does not match '^#/(definitions|\\$defs)/'
+		hint: A vendor property can have a $ref to a a $defs schema
+	hint: Vendor specific properties must have a type and description unless they have a defined, common suffix.
+	from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
+Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.example.dts:26:18: fatal error: dt-bindings/power/mt8196-power.h: No such file or directory
+   26 |         #include <dt-bindings/power/mt8196-power.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.dtbs:132: Documentation/devicetree/bindings/remoteproc/mediatek,mt8196-vcp.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1525: dt_binding_check] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250914122943.10412-2-xiangzhi.tang@mediatek.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
