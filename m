@@ -1,79 +1,97 @@
-Return-Path: <linux-kernel+bounces-815818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E11B56B69
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 20:56:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB01FB56B70
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 21:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01F437ACD49
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:54:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CCD7A52E3
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 18:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6698C2D0C90;
-	Sun, 14 Sep 2025 18:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC042DF15D;
+	Sun, 14 Sep 2025 19:00:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qCDfEqdC"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pf5Kjbqn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E3E1DE8A4;
-	Sun, 14 Sep 2025 18:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774FB2DECB7;
+	Sun, 14 Sep 2025 19:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757876167; cv=none; b=dsTpr3nQHK/+owmfMAIcs8GbeeZTur3cIcXSjhYQ7qFuT/vf0IXYk/3ywP05ivhNpskYP++HxJACo4EyTlscFiuampymI4J9KUfgTQbc+RoMHboAbpZRNrGw2wLAeKXxLmo6AhiQN/VBV/o5LyY5f/VhMMlFtK16IsAANXlJbk0=
+	t=1757876417; cv=none; b=jq1ulH7ivrLp7+IMiu1Us8pDe+DaFyeCMbWhnXDq2U99Pu/g+j7Gyyhm52Mg9t7jkVo8FZFKUG8eiQ/3SK3xu7vIDeW3EjhVXMAIK4RsgKoyD+gBCYsDn0UUt1BtUuTWo7EF+ORl4nfubaOQiJmS066292fabHzAlKlZWyLB+jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757876167; c=relaxed/simple;
-	bh=owSCmTywugDQT5TmSEcAhrDCWd18bU9phloIb4CEgt0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hz3eYVPU9Sra1kXR+zb6kI8qOPtUvU4Y6uw3IInB0e504hy/gHHbYQ9FYFaPA1vzmYs4CtDdo0Lr5/dtiY1xrJ7G64DOPffzoaFvXwIWyufIcQlfebTDl56McLWZ+0OpaL7K5FOHAFC4puI6RcRFPHsKXPFjlOUlB6Gkgg4lTH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qCDfEqdC; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=XLxHUmBnsIL7oqRRVA9M1wQh0Xlcvzf20qSXcEazRTI=; b=qCDfEqdCebqShsXWd9Kx86iupW
-	MIT4c5zj1K90xUZfvRioN/LPt+PEmf8MbctDv8Isvns/MHU6KWGfAIEMeEgk6m2LP67QGMdMJgr4F
-	S7AaeM0XlzoABzJgWGX0FsvqKMxkRzEBG4eJXtbSg5et9a/f+3twErBuDt1rY3nllRXo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uxrtF-008MXn-VN; Sun, 14 Sep 2025 20:55:57 +0200
-Date: Sun, 14 Sep 2025 20:55:57 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yeounsu Moon <yyyynoom@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2 1/2] net: dlink: fix whitespace around function
- call
-Message-ID: <b1a52aab-9b8a-44f3-ad2b-dbaa0e56abd7@lunn.ch>
-References: <20250914182653.3152-2-yyyynoom@gmail.com>
- <20250914182653.3152-3-yyyynoom@gmail.com>
+	s=arc-20240116; t=1757876417; c=relaxed/simple;
+	bh=FyF93LpmLxOF9lXH95/wzI5wWyR0u+UOFAJa12hmQhg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=FEGj4Wks/1HUlUZJd3oZ/Noj+N52LVX7fdTIwNZ6XViUnuS+u5+k/ibOgGc0UShZ4tNvsvalORlgnVrEsRqeb71LOxRbSlAg1J39OD9T3txuFC+hFzI5iYVhNJRpT4/W+/qui28TCkEbGdxn/H7Td7xhBpx/akB4lijSiOyrLQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pf5Kjbqn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3C8EC4CEFC;
+	Sun, 14 Sep 2025 19:00:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757876417;
+	bh=FyF93LpmLxOF9lXH95/wzI5wWyR0u+UOFAJa12hmQhg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Pf5KjbqnWbLlP28YltZXv3tY2PXYGTN1AFUV0GVv6/CosQ4OTBdUHWvyM7RXw80Bv
+	 p07gUwPwC8gN13XTqBLEHllQZ6g66dtxSL5lrMVjZ8lAh5yfVNNHQfVWsh5B5/vwu4
+	 SKwMQvDKYelSnnGmPk+6K03E+BWzynKoeMiaQjhJGm99ieckiF655ijgvbvXAEJbN3
+	 fpAXJTt9q0K4HqPQV24HwyjdZe192tct6ea0QwQvw4a1fl4rxSM1b7Ou2zXEnJAvhO
+	 oGILmzmY4ZzUCEAoMlLnIFvWat1MGb8IySkskT0fMA+Sye8zuPjeou9v8fxzlT1EEJ
+	 yMkkWCCazdf5g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEC039B167D;
+	Sun, 14 Sep 2025 19:00:19 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250914182653.3152-3-yyyynoom@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: mana: Reduce waiting time if HWC not
+ responding
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175787641849.3528285.16103963300533493791.git-patchwork-notify@kernel.org>
+Date: Sun, 14 Sep 2025 19:00:18 +0000
+References: <1757537841-5063-1-git-send-email-haiyangz@linux.microsoft.com>
+In-Reply-To: <1757537841-5063-1-git-send-email-haiyangz@linux.microsoft.com>
+To: Haiyang Zhang <haiyangz@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ haiyangz@microsoft.com, decui@microsoft.com, kys@microsoft.com,
+ wei.liu@kernel.org, edumazet@google.com, davem@davemloft.net,
+ kuba@kernel.org, pabeni@redhat.com, longli@microsoft.com,
+ ssengar@linux.microsoft.com, ernis@linux.microsoft.com,
+ dipayanroy@linux.microsoft.com, kotaranov@microsoft.com,
+ shirazsaleem@microsoft.com, andrew+netdev@lunn.ch,
+ linux-kernel@vger.kernel.org
 
-On Mon, Sep 15, 2025 at 03:26:53AM +0900, Yeounsu Moon wrote:
-> Remove unnecessary whitespace between function names and the opening
-> parenthesis to follow kernel coding style.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Wed, 10 Sep 2025 13:57:21 -0700 you wrote:
+> From: Haiyang Zhang <haiyangz@microsoft.com>
 > 
-> No functional change intended.
+> If HW Channel (HWC) is not responding, reduce the waiting time, so further
+> steps will fail quickly.
+> This will prevent getting stuck for a long time (30 minutes or more), for
+> example, during unloading while HWC is not responding.
 > 
-> Tested-on: D-Link DGE-550T Rev-A3
-> Signed-off-by: Yeounsu Moon <yyyynoom@gmail.com>
+> [...]
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Here is the summary with links:
+  - [net-next] net: mana: Reduce waiting time if HWC not responding
+    https://git.kernel.org/netdev/net-next/c/c4deabbc1abe
 
-    Andrew
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
