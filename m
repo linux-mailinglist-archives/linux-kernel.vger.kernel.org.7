@@ -1,104 +1,107 @@
-Return-Path: <linux-kernel+bounces-815422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B82CB56408
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:27:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4F4B56401
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:04:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5190117FB70
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:27:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8642D3A8003
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 00:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951B678F39;
-	Sun, 14 Sep 2025 00:27:20 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092AA320F;
+	Sun, 14 Sep 2025 00:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YonLBBL9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EBD163;
-	Sun, 14 Sep 2025 00:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5974C163
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 00:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757809640; cv=none; b=r9MCBqNubJYMlwaU3s8U8bnm/fjl6TTvW1V9i63vnetX1huNYf1XP1yU6PUxWQeN4O9mIM7YBuo1ZqfgMkE1Aa5D/HRN3RrCFP/I55se4kcF4k4YTeAzMF4JUeSn+HFh+pk6WqUff7FRdbRd4HPGpTg1jxjvZ/dqcY2cQYIb3JU=
+	t=1757808293; cv=none; b=NbxBwjOuPJP7ZKO9TOHnclEwASakHOXMH+FOWbqCbk9Yxun9yX7vYpSODx6JuvXAtiGe0W/dq/pYADG5FZRHCeyrhYtQqhWVycsfqgJB4wtaJgDCNE2XQNIkHFSzRZZW4hG3gwPb0ehACSBfytouzMfija5QT1aIP+Gm85PDVJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757809640; c=relaxed/simple;
-	bh=XhAY2Nc3nA6iDpUI121blFa1UrnZBHRgmQH83AHqnJU=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AzQOonlNNHWvLpITLKhWcv6NI+R+twO//NE2q6wtlCBbtsNsPSmli6QiWuBOcu622XkAqvw4avrXR2h+8ePilni/dpWxHZ3JT7kjX9BnmwXxWeszGdBR+mCf1u7/VdIFDXxnHiUkFw5/U/HSamk9r/NCbkrdskHf8yTOfuaaSkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1uxa9C-0000000077z-2TM1;
-	Sat, 13 Sep 2025 23:59:14 +0000
-Date: Sun, 14 Sep 2025 00:59:11 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Yu Jiaoliang <yujiaoliang@vivo.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Changqi Hu <changqi.hu@mediatek.com>,
-	Sam Shih <sam.shih@mediatek.com>,
-	Steven Liu <steven.liu@mediatek.com>,
-	John Crispin <john@phrozen.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH] tty: serial: 8250_mtk: enable baud clock
-Message-ID: <5d6acd2273e3c98a5cbc685ad94eff19c6b6d044.1757807642.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1757808293; c=relaxed/simple;
+	bh=jhxlJQ1D3aXAHnveeb4Bqd8Arf+9bkmDUaPFFpf52EY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CMSOsfufbp+2UQUXkp97I9ZnakQiowYUCQ6FpUVWqAmHQ0XmN5iQR4SWNybXhbKh8AUZT/iGz1/nYB4bb2Z71IzmrzYaoxNvGAjmugzS66mSdueeRmAc5Iowe7VS96LjGVvWtKAamd0onO7N9R7q7mHc34gISYhaLSTy4qTHrm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YonLBBL9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46D9EC4CEEB;
+	Sun, 14 Sep 2025 00:04:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1757808292;
+	bh=jhxlJQ1D3aXAHnveeb4Bqd8Arf+9bkmDUaPFFpf52EY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=YonLBBL9XtJ+Z0e/O+tCbfXvL6N+OUUSx0O+4ZY8zkbqFYwwcuGwb2DQzzvMViBOW
+	 eJr3CoHMaKPAqlWFmGWX6Mas2AmXCk77nBobHu1BO1j4fBwqSJ8EydCWmneA2gEBlP
+	 ig/rjUXLR8YnHz2BWaaeKaSjyXMtHbZRraBeGF7HY04+K6ckCdplV9V7jqKDvdMsVp
+	 vcixJuiiHTFjqePvV5DqEudbzflM+waY/0r8P4ZUG3wCCRj8aMHiapYZpuFs6cl8ea
+	 7ZKn+DHyu69hW42bOSXoxvS/PSsu1bDnzbOBXrZMm+2iDENxhktNDGDDx0U9wifgBa
+	 dw553Bv7E3xKg==
+Date: Sun, 14 Sep 2025 08:04:47 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	Yuezhang Mo <Yuezhang.Mo@sony.com>, Chao Yu <chao@kernel.org>
+Subject: [GIT PULL] erofs fixes for 6.17-rc6
+Message-ID: <aMYGn1hQjWaQCaiM@debian>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	Yuezhang Mo <Yuezhang.Mo@sony.com>, Chao Yu <chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 
-Some MediaTek SoCs got a gated UART baud clock, which currently gets
-disabled as the clk subsystem believes it would be unused. This results in
-the uart freezing right after "clk: Disabling unused clocks" on those
-platforms.
+Hi Linus,
 
-To fix this request the "baud" clock as enabled to prevent disabling it
-among with the unused clocks.
-Runtime power management can probably also be restored to the state before
-commit e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock
-management"), but that isn't strictly needed to fix the regression
-introduced by that commit.
+Could you consider those fixes for 6.17-rc6?
 
-Fixes: e32a83c70cf9 ("serial: 8250-mtk: modify mtk uart power and clock management")
-Suggested-by: Sam Shih <sam.shih@mediatek.com>
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- drivers/tty/serial/8250/8250_mtk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+A few new random fixes as shown below..
 
-diff --git a/drivers/tty/serial/8250/8250_mtk.c b/drivers/tty/serial/8250/8250_mtk.c
-index b44de2ed7413..9329ed1f759d 100644
---- a/drivers/tty/serial/8250/8250_mtk.c
-+++ b/drivers/tty/serial/8250/8250_mtk.c
-@@ -475,13 +475,13 @@ static int mtk8250_probe_of(struct platform_device *pdev, struct uart_port *p,
- 	int dmacnt;
- #endif
- 
--	data->uart_clk = devm_clk_get(&pdev->dev, "baud");
-+	data->uart_clk = devm_clk_get_enabled(&pdev->dev, "baud");
- 	if (IS_ERR(data->uart_clk)) {
- 		/*
- 		 * For compatibility with older device trees try unnamed
- 		 * clk when no baud clk can be found.
- 		 */
--		data->uart_clk = devm_clk_get(&pdev->dev, NULL);
-+		data->uart_clk = devm_clk_get_enabled(&pdev->dev, NULL);
- 		if (IS_ERR(data->uart_clk)) {
- 			dev_warn(&pdev->dev, "Can't get uart clock\n");
- 			return PTR_ERR(data->uart_clk);
--- 
-2.51.0
+Thanks,
+Gao Xiang
+
+The following changes since commit c17b750b3ad9f45f2b6f7e6f7f4679844244f0b9:
+
+  Linux 6.17-rc2 (2025-08-17 15:22:10 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.17-rc6-fixes
+
+for you to fetch changes up to 1fcf686def19064a7b5cfaeb28c1f1a119900a2b:
+
+  erofs: fix long xattr name prefix placement (2025-09-12 03:37:07 +0800)
+
+----------------------------------------------------------------
+Changes since last update:
+
+ - Fix invalid algorithm dereference in encoded extents;
+
+ - Add missing dax_break_layout_final(), since recent FSDAX fixes
+   didn't cover EROFS;
+
+ - Arrange long xattr name prefixes more properly.
+
+----------------------------------------------------------------
+Gao Xiang (2):
+      erofs: fix invalid algorithm for encoded extents
+      erofs: fix long xattr name prefix placement
+
+Yuezhang Mo (1):
+      erofs: fix runtime warning on truncate_folio_batch_exceptionals()
+
+ fs/erofs/erofs_fs.h |  8 ++++---
+ fs/erofs/internal.h |  1 +
+ fs/erofs/super.c    | 12 ++++++++++
+ fs/erofs/xattr.c    | 13 ++++++++---
+ fs/erofs/zmap.c     | 67 +++++++++++++++++++++++++++++------------------------
+ 5 files changed, 65 insertions(+), 36 deletions(-)
 
