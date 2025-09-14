@@ -1,313 +1,223 @@
-Return-Path: <linux-kernel+bounces-815435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-815436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684F8B56437
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 03:57:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E81B56440
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 04:21:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0C71A4E05A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 01:57:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB862189E640
+	for <lists+linux-kernel@lfdr.de>; Sun, 14 Sep 2025 02:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFF923B627;
-	Sun, 14 Sep 2025 01:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DF0246BA4;
+	Sun, 14 Sep 2025 02:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rm3eVyeW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXNQOL9l"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D78233145
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 01:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BC723BF96
+	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 02:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1757815041; cv=none; b=dVfvnBZ4J8dJs3p3JSxC2gsYgkmIGYFZX6DTJQqrTKU8T+HPbkmgjHlKTI3rArWOuVUH6iHVORBFMDmXYUi5449MEkUrVZ5oMlgpm0jrmlbp5/TKJ7Sni472/KYr6k4XlI5LVPH+0UjXmWq3ZMv57QFmb04u2tWNDDE82mpoe98=
+	t=1757816508; cv=none; b=WYFpbwsYErE8G8e10D+c99CKgwqdoeChq8LeXzzLk5mjAmX3KDwJzMl1bNBXR2f45Pgo/MBzgPNgeJ5FTJkrqPFgt6j6lXZhXZbMvc+Ec9hq4b4aYtKYjkVYGhqVyovs6mI13gEVw9qqfad0IWCWYSGOuhwuPTIq7Fgg/DGnl7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1757815041; c=relaxed/simple;
-	bh=2bA54a8XQO3oplu+GpK3brlzTVegVik1P3OTH4QDtaA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PTyLbGG75eXIW7u70JkZocPUNLT3Owootmtu5AgGwTCG1oieTHc70o+hbTGa5S0sKU5y92NapFKOdvHMLor+3dWiV+D3cX3JEl+WKeyfKNMNWAz7Flr1fF3iHmSRMkKTPbfnRp0BmsWYca0r8z6S126WLSCw3AtBiqke3WhXdyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rm3eVyeW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68C67C4CEEB
-	for <linux-kernel@vger.kernel.org>; Sun, 14 Sep 2025 01:57:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1757815041;
-	bh=2bA54a8XQO3oplu+GpK3brlzTVegVik1P3OTH4QDtaA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Rm3eVyeWLB90tjDfWg4cd/8Go+FYh4GNgJ1W6mCc90EgnEawb6rEmy85Gc2qk363q
-	 7fkERHY/yaKy0MFH3jz6eGDHtw2DW40CUoz7fqxmKVJ8xERjRWA4kDe862vX/bj7G1
-	 ynMp7dssLS3BO2so51EkIylPmSxKqIdytEiA3f9NihGSsLojIvukfGIYA126ZXvzZ4
-	 gJ3guL1jlqUTzll1FgnsMcUn+aPikz9M5Cb0UOrVQVSzLHlZcquIewKvgz9Sgs9ZNk
-	 rRMVUahfCoMFBLuf1UW3uEEdh/ClhwEMn/Y/179kr883A079sMr8yeCi8dtFmmGvYm
-	 HHNUaACLchAxA==
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-b046fc9f359so471171466b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 18:57:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUyICvMbV2tmyWbYaUe+36/unaOMZLSq46WlnRf+qdvHNAYjjabPy+Zgs17nQMIgZtBVqiWr7sWOUCawOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD3Cf65HqT/fT07BmorLQphWcYlIbU3U7XibhW4nbta2crjHSi
-	eo9TklUkBGq+/c2W7KrSpt4XwlfM/vjuYbBQtT8TVJkQEoi7RcTvnaciN2UsbdOoHoovUs+EAoW
-	tOOJbugZvfNyaw3Q0X6eTDArsmHl7PI4=
-X-Google-Smtp-Source: AGHT+IFfNmQmnqGZYX0ngUS0c2d+ly5r+Z8sFAk/gU9hnaLKvZrHmV0tDaiOU94759FUb8SGhbBwfAAm52QYlnu9vvg=
-X-Received: by 2002:a17:907:3e9f:b0:b04:a1ec:d06f with SMTP id
- a640c23a62f3a-b07c35bcc13mr854776466b.25.1757815039974; Sat, 13 Sep 2025
- 18:57:19 -0700 (PDT)
+	s=arc-20240116; t=1757816508; c=relaxed/simple;
+	bh=kS8JHpcfhYM5CdW9CB6tUor9f9vwCDwkONQoLHpHv6s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P04YUNOW971SZGjx4H8rq3KPdX7tMtP9RfI2rn7xZsfuOAwG3HjwhFko3HGCG/K4yeS68own7Puvln+5VhT+fyzrI5SzGs8amiFWe5wRZ0hNV8mnR0sS9OKjPfOojyUzaFDOoE/EQL7cIaY4GUHTLfUkhPDnP4ZZVp6Y0E6Lkww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXNQOL9l; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b4f9d61e7deso1936724a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 13 Sep 2025 19:21:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1757816506; x=1758421306; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MqdYb43+ykEUj742mo0iH3T4ooAsVFSgAqPeQX3wifY=;
+        b=nXNQOL9lJIyPmLivfpjw89AdGKte0lgQ27JkFImHvIckSTUzDB+glOuS6UaPclGGC2
+         ERhHHEYsTIcnZF7upX03AuGF4DFkCZG9rHPczcy6BvVWAE/dg2Qsi19G1yaS+xm0D28t
+         xail3/NNkVQQQpnOUutyr7Esq9RQx2uQrKTj6gZHN9wL6vZw+08zYRzGGaiyH7Mkisu8
+         XBXRa7WcGgW00JQ78xwPxE9yMaIx17rCPiQyMpxb3wdx7gwy5vJgW3Kj14wPXeA7rpv5
+         2H5+4yCD6dYB5DA+XcfvFdZs5o9DGXJeYeV4OeEEyxWpWiOhLWBB2asi3AuiuYAVku9G
+         srnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1757816506; x=1758421306;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MqdYb43+ykEUj742mo0iH3T4ooAsVFSgAqPeQX3wifY=;
+        b=uWrmLfDNSntyGQbS7EzjP9pA03tJM3oIgOkC/1u92EhM/h8WinnwAnVutTZTQeK5yO
+         JkXsYwQHs1wXhALveXKDzYpm5v0+1yVpF2g/bgjQ61m6DyM5qOY2KXcAYwBW/dzJIGcG
+         vES7q3qpBzfY59416pLIZdltgqA1sQjnN1O2AHlW0ab+bXbngt051893ojQn5B8gGKtE
+         t4vxMeYxOyYdaiwEFhyb5WvtzxYHbjFI7uxG+9x+U1JQBUQbbJyiodEisbQtzf2LUtUY
+         53QsckFErOJXE3ZBzvicAZSTp+fDBsZcGfVtdWH8UrTNeuGF3gjkrymsZ5EEut9+ydFU
+         ZJ1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXl5oAsxptuP1RAyrhQ3NDG7R1dl88Dyy9iZNLVfSyyp7xMpOhfV6g16f3qcHlOLh5E1Z74Uc5DnxHt/Vc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9orf6I0P8edsnc7x1RTdr+7+RMcH5YKm8JRuYcIN7Nwq0vWu2
+	oQhCVy08zAuO6nYQt/WIE/ajQBcXszUyweVy6o++krrhgnUnHQn1cf/d
+X-Gm-Gg: ASbGnctD1gG1j0sL7jT3iGj6AtetfSwnawI7NcPP+pMFl7UQ7BH3w5NBW0ILGIoXkJg
+	TGFrTI3sg+eHPhoq909P2nmK8//ctfR/SvPXP2oRV3LQ7jGeYWhufTA7PI5RsSGr3Z3reaXyG28
+	Gh9GMEZtrEIPhZpQVZPadRET5sRe9pP1/8Uo64wPlHeMAXNl6Sgg0swzPSOowobby6J9PYlGmxc
+	o9dKGeSwUDFVcIiUwoJAOfL9tOFtK7qZMFIBMiMWyvEAMxUdEiQARQTyfQo3JA/VeWYmdSQCEvS
+	3tK9YmmpmtWqip9VYKjbEyHB6e+cR71O4zMvd6asDrkWe63GIhKPtTiO1zCgTWBhq+Og8vZ/VRt
+	cGAHHRbovku62am7o58VagMueLjl/AjUdlA==
+X-Google-Smtp-Source: AGHT+IFoR2P5g3/f0mGeIuy3+0+zAJUbfdsUl2n3PtZNSOt3j4dOvKJKtvTfVzY7igk5GaUMCr6Mew==
+X-Received: by 2002:a17:903:1b4c:b0:24c:b2a4:7089 with SMTP id d9443c01a7336-25d26077175mr98369385ad.31.1757816505822;
+        Sat, 13 Sep 2025 19:21:45 -0700 (PDT)
+Received: from fedora ([172.59.162.206])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-261d3dd0285sm27968685ad.8.2025.09.13.19.21.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Sep 2025 19:21:45 -0700 (PDT)
+From: Alex Tran <alex.t.tran@gmail.com>
+To: broonie@kernel.org
+Cc: linux-spi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alex Tran <alex.t.tran@gmail.com>
+Subject: [PATCH v1] spi: spi-omap2-mcspi: fallback to PIO when DMA transfer fails
+Date: Sat, 13 Sep 2025 19:21:32 -0700
+Message-ID: <20250914022132.319227-1-alex.t.tran@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250910071429.3925025-1-maobibo@loongson.cn>
-In-Reply-To: <20250910071429.3925025-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sun, 14 Sep 2025 09:57:08 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H65H_iREuETGU_v9oZdaPFoQj1VZV46XSNTC8ppENXzuQ@mail.gmail.com>
-X-Gm-Features: Ac12FXzfN2bNWTNhJRbB-SLTolLXMjAH5r5IpQVt22wgOskPBdaWpLkZgPjmVEs
-Message-ID: <CAAhV-H65H_iREuETGU_v9oZdaPFoQj1VZV46XSNTC8ppENXzuQ@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: KVM: Fix VM migration failure with PTW enabled
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi, Bibo,
+Add fallback to PIO mode when DMA preparation fails.
+Allows SPI transfers to complete successfully, even
+on a DMA preparation failure.
 
-On Wed, Sep 10, 2025 at 3:14=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrot=
-e:
->
-> With PTW disabled system, bit Dirty is HW bit for page writing, however
-> with PTW enabled system, bit Write is HW bit for page writing. Previously
-> bit Write is treated as SW bit to record page writable attribute for fast
-> page fault handling in the secondary MMU, however with PTW enabled machin=
-e,
-> this bit is used by HW already.
->
-> Here define KVM_PAGE_SOFT_WRITE with SW bit _PAGE_MODIFIED, so that it ca=
-n
-> work on both PTW disabled and enabled machines. And with HW write bit, bo=
-th
-> bit Dirty and Write is set or clear.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> ---
->  arch/loongarch/include/asm/kvm_mmu.h | 20 ++++++++++++++++----
->  arch/loongarch/kvm/mmu.c             |  8 ++++----
->  2 files changed, 20 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/loongarch/include/asm/kvm_mmu.h b/arch/loongarch/includ=
-e/asm/kvm_mmu.h
-> index 099bafc6f797..efcd593c42b1 100644
-> --- a/arch/loongarch/include/asm/kvm_mmu.h
-> +++ b/arch/loongarch/include/asm/kvm_mmu.h
-> @@ -16,6 +16,13 @@
->   */
->  #define KVM_MMU_CACHE_MIN_PAGES        (CONFIG_PGTABLE_LEVELS - 1)
->
-> +/*
-> + * _PAGE_MODIFIED is SW pte bit, it records page ever written on host
-> + * kernel, on secondary MMU it records page writable in order to fast
-> + * path handling
-> + */
-> +#define KVM_PAGE_SOFT_WRITE    _PAGE_MODIFIED
-KVM_PAGE_WRITEABLE is more suitable.
+Signed-off-by: Alex Tran <alex.t.tran@gmail.com>
+---
+ drivers/spi/spi-omap2-mcspi.c | 46 +++++++++++++++++++++++------------
+ 1 file changed, 31 insertions(+), 15 deletions(-)
 
-> +
->  #define _KVM_FLUSH_PGTABLE     0x1
->  #define _KVM_HAS_PGMASK                0x2
->  #define kvm_pfn_pte(pfn, prot) (((pfn) << PFN_PTE_SHIFT) | pgprot_val(pr=
-ot))
-> @@ -52,11 +59,16 @@ static inline void kvm_set_pte(kvm_pte_t *ptep, kvm_p=
-te_t val)
->         WRITE_ONCE(*ptep, val);
->  }
->
-> -static inline int kvm_pte_write(kvm_pte_t pte) { return pte & _PAGE_WRIT=
-E; }
-> -static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & _PAGE_DIRT=
-Y; }
-> +static inline int kvm_pte_soft_write(kvm_pte_t pte) { return pte & KVM_P=
-AGE_SOFT_WRITE; }
-The same, kvm_pte_mkwriteable() is more suitable.
-
-> +static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte & __WRITEABL=
-E; }
-_PAGE_DIRTY and _PAGE_WRITE are always set/cleared at the same time,
-so the old version still works.
-
->  static inline int kvm_pte_young(kvm_pte_t pte) { return pte & _PAGE_ACCE=
-SSED; }
->  static inline int kvm_pte_huge(kvm_pte_t pte) { return pte & _PAGE_HUGE;=
+diff --git a/drivers/spi/spi-omap2-mcspi.c b/drivers/spi/spi-omap2-mcspi.c
+index 6dc58a308..0b3b7ff0c 100644
+--- a/drivers/spi/spi-omap2-mcspi.c
++++ b/drivers/spi/spi-omap2-mcspi.c
+@@ -414,9 +414,8 @@ static void omap2_mcspi_tx_callback(void *data)
+ 	complete(&mcspi_dma->dma_tx_completion);
  }
->
-> +static inline kvm_pte_t kvm_pte_mksoft_write(kvm_pte_t pte)
-> +{
-> +       return pte | KVM_PAGE_SOFT_WRITE;
-> +}
-> +
->  static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
->  {
->         return pte | _PAGE_ACCESSED;
-> @@ -69,12 +81,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t pte)
->
->  static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
->  {
-> -       return pte | _PAGE_DIRTY;
-> +       return pte | __WRITEABLE;
->  }
->
->  static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
->  {
-> -       return pte & ~_PAGE_DIRTY;
-> +       return pte & ~__WRITEABLE;
->  }
->
->  static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
-> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-> index ed956c5cf2cc..68749069290f 100644
-> --- a/arch/loongarch/kvm/mmu.c
-> +++ b/arch/loongarch/kvm/mmu.c
-> @@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, u=
-nsigned long gpa, bool writ
->         /* Track access to pages marked old */
->         new =3D kvm_pte_mkyoung(*ptep);
->         if (write && !kvm_pte_dirty(new)) {
-> -               if (!kvm_pte_write(new)) {
-> +               if (!kvm_pte_soft_write(new)) {
->                         ret =3D -EFAULT;
->                         goto out;
->                 }
-> @@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsign=
-ed long gpa, bool write)
->                 prot_bits |=3D _CACHE_SUC;
->
->         if (writeable) {
-> -               prot_bits |=3D _PAGE_WRITE;
-> +               prot_bits =3D kvm_pte_mksoft_write(prot_bits);
->                 if (write)
-> -                       prot_bits |=3D __WRITEABLE;
-> +                       prot_bits =3D kvm_pte_mkdirty(prot_bits);
->         }
->
->         /* Disable dirty logging on HugePages */
-> @@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsign=
-ed long gpa, bool write)
->         kvm_release_faultin_page(kvm, page, false, writeable);
->         spin_unlock(&kvm->mmu_lock);
->
-> -       if (prot_bits & _PAGE_DIRTY)
-> +       if (kvm_pte_dirty(prot_bits))
->                 mark_page_dirty_in_slot(kvm, memslot, gfn);
->
->  out:
-To save time, I just change the whole patch like this, you can confirm
-whether it woks:
-
-diff --git a/arch/loongarch/include/asm/kvm_mmu.h
-b/arch/loongarch/include/asm/kvm_mmu.h
-index 099bafc6f797..882f60c72b46 100644
---- a/arch/loongarch/include/asm/kvm_mmu.h
-+++ b/arch/loongarch/include/asm/kvm_mmu.h
-@@ -16,6 +16,13 @@
-  */
- #define KVM_MMU_CACHE_MIN_PAGES        (CONFIG_PGTABLE_LEVELS - 1)
-
-+/*
-+ * _PAGE_MODIFIED is SW pte bit, it records page ever written on host
-+ * kernel, on secondary MMU it records page writable in order to fast
-+ * path handling
-+ */
-+#define KVM_PAGE_WRITEABLE     _PAGE_MODIFIED
+ 
+-static void omap2_mcspi_tx_dma(struct spi_device *spi,
+-				struct spi_transfer *xfer,
+-				struct dma_slave_config cfg)
++static int omap2_mcspi_tx_dma(struct spi_device *spi, struct spi_transfer *xfer,
++			      struct dma_slave_config cfg)
+ {
+ 	struct omap2_mcspi	*mcspi;
+ 	struct omap2_mcspi_dma  *mcspi_dma;
+@@ -436,13 +435,15 @@ static void omap2_mcspi_tx_dma(struct spi_device *spi,
+ 		tx->callback_param = spi;
+ 		dmaengine_submit(tx);
+ 	} else {
+-		/* FIXME: fall back to PIO? */
++		dev_warn(mcspi->dev, "%s: failed to prepare DMA engine\n", __func__);
++		return -EINVAL;
+ 	}
+ 	dma_async_issue_pending(mcspi_dma->dma_tx);
+ 	omap2_mcspi_set_dma_req(spi, 0, 1);
++	return 0;
+ }
+ 
+-static unsigned
++static int
+ omap2_mcspi_rx_dma(struct spi_device *spi, struct spi_transfer *xfer,
+ 				struct dma_slave_config cfg,
+ 				unsigned es)
+@@ -522,7 +523,8 @@ omap2_mcspi_rx_dma(struct spi_device *spi, struct spi_transfer *xfer,
+ 		tx->callback_param = spi;
+ 		dmaengine_submit(tx);
+ 	} else {
+-		/* FIXME: fall back to PIO? */
++		dev_warn(mcspi->dev, "%s: failed to prepare DMA engine\n", __func__);
++		return -EINVAL;
+ 	}
+ 
+ 	dma_async_issue_pending(mcspi_dma->dma_rx);
+@@ -589,13 +591,13 @@ omap2_mcspi_rx_dma(struct spi_device *spi, struct spi_transfer *xfer,
+ 	return count;
+ }
+ 
+-static unsigned
+-omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
++static int omap2_mcspi_txrx_dma(struct spi_device *spi,
++				struct spi_transfer *xfer)
+ {
+ 	struct omap2_mcspi	*mcspi;
+ 	struct omap2_mcspi_cs	*cs = spi->controller_state;
+ 	struct omap2_mcspi_dma  *mcspi_dma;
+-	unsigned int		count;
++	int		count;
+ 	u8			*rx;
+ 	const u8		*tx;
+ 	struct dma_slave_config	cfg;
+@@ -642,13 +644,19 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
+ 			mcspi_write_reg(spi->controller,
+ 					OMAP2_MCSPI_IRQENABLE,
+ 					OMAP2_MCSPI_IRQSTATUS_EOW);
+-		omap2_mcspi_tx_dma(spi, xfer, cfg);
++		if (omap2_mcspi_tx_dma(spi, xfer, cfg) < 0) {
++			count = -EINVAL;
++			goto pio_fallback;
++		}
+ 	}
+ 
+-	if (rx != NULL)
++	if (rx) {
+ 		count = omap2_mcspi_rx_dma(spi, xfer, cfg, es);
++		if (count < 0)
++			goto pio_fallback;
++	}
+ 
+-	if (tx != NULL) {
++	if (tx) {
+ 		int ret;
+ 
+ 		ret = mcspi_wait_for_completion(mcspi, &mcspi_dma->dma_tx_completion);
+@@ -695,6 +703,8 @@ omap2_mcspi_txrx_dma(struct spi_device *spi, struct spi_transfer *xfer)
+ 				dev_err(&spi->dev, "EOT timed out\n");
+ 		}
+ 	}
 +
- #define _KVM_FLUSH_PGTABLE     0x1
- #define _KVM_HAS_PGMASK                0x2
- #define kvm_pfn_pte(pfn, prot) (((pfn) << PFN_PTE_SHIFT) |
-pgprot_val(prot))
-@@ -56,6 +63,7 @@ static inline int kvm_pte_write(kvm_pte_t pte) {
-return pte & _PAGE_WRITE; }
- static inline int kvm_pte_dirty(kvm_pte_t pte) { return pte &
-_PAGE_DIRTY; }
- static inline int kvm_pte_young(kvm_pte_t pte) { return pte &
-_PAGE_ACCESSED; }
- static inline int kvm_pte_huge(kvm_pte_t pte) { return pte &
-_PAGE_HUGE; }
-+static inline int kvm_pte_writeable(kvm_pte_t pte) { return pte &
-KVM_PAGE_WRITEABLE; }
-
- static inline kvm_pte_t kvm_pte_mkyoung(kvm_pte_t pte)
- {
-@@ -69,12 +77,12 @@ static inline kvm_pte_t kvm_pte_mkold(kvm_pte_t
-pte)
-
- static inline kvm_pte_t kvm_pte_mkdirty(kvm_pte_t pte)
- {
--       return pte | _PAGE_DIRTY;
-+       return pte | __WRITEABLE;
++pio_fallback:
+ 	return count;
  }
+ 
+@@ -1206,7 +1216,7 @@ static int omap2_mcspi_transfer_one(struct spi_controller *ctlr,
+ 	mcspi_write_chconf0(spi, chconf);
+ 
+ 	if (t->len) {
+-		unsigned	count;
++		int count;
+ 
+ 		if ((mcspi_dma->dma_rx && mcspi_dma->dma_tx) &&
+ 		    spi_xfer_is_dma_mapped(ctlr, spi, t))
+@@ -1220,10 +1230,16 @@ static int omap2_mcspi_transfer_one(struct spi_controller *ctlr,
+ 					+ OMAP2_MCSPI_TX0);
+ 
+ 		if ((mcspi_dma->dma_rx && mcspi_dma->dma_tx) &&
+-		    spi_xfer_is_dma_mapped(ctlr, spi, t))
++		    spi_xfer_is_dma_mapped(ctlr, spi, t)) {
+ 			count = omap2_mcspi_txrx_dma(spi, t);
+-		else
++			if (count < 0) {
++				dev_warn(mcspi->dev,
++					 "%s: falling back to PIO\n", __func__);
++				count = omap2_mcspi_txrx_pio(spi, t);
++			}
++		} else {
+ 			count = omap2_mcspi_txrx_pio(spi, t);
++		}
+ 
+ 		if (count != t->len) {
+ 			status = -EIO;
+-- 
+2.51.0
 
- static inline kvm_pte_t kvm_pte_mkclean(kvm_pte_t pte)
- {
--       return pte & ~_PAGE_DIRTY;
-+       return pte & ~__WRITEABLE;
- }
-
- static inline kvm_pte_t kvm_pte_mkhuge(kvm_pte_t pte)
-@@ -87,6 +95,11 @@ static inline kvm_pte_t kvm_pte_mksmall(kvm_pte_t
-pte)
-        return pte & ~_PAGE_HUGE;
- }
-
-+static inline kvm_pte_t kvm_pte_mkwriteable(kvm_pte_t pte)
-+{
-+       return pte | KVM_PAGE_WRITEABLE;
-+}
-+
- static inline int kvm_need_flush(kvm_ptw_ctx *ctx)
- {
-        return ctx->flag & _KVM_FLUSH_PGTABLE;
-diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-index ed956c5cf2cc..7c8143e79c12 100644
---- a/arch/loongarch/kvm/mmu.c
-+++ b/arch/loongarch/kvm/mmu.c
-@@ -569,7 +569,7 @@ static int kvm_map_page_fast(struct kvm_vcpu
-*vcpu, unsigned long gpa, bool writ
-        /* Track access to pages marked old */
-        new =3D kvm_pte_mkyoung(*ptep);
-        if (write && !kvm_pte_dirty(new)) {
--               if (!kvm_pte_write(new)) {
-+               if (!kvm_pte_writeable(new)) {
-                        ret =3D -EFAULT;
-                        goto out;
-                }
-@@ -856,9 +856,9 @@ static int kvm_map_page(struct kvm_vcpu *vcpu,
-unsigned long gpa, bool write)
-                prot_bits |=3D _CACHE_SUC;
-
-        if (writeable) {
--               prot_bits |=3D _PAGE_WRITE;
-+               prot_bits =3D kvm_pte_mkwriteable(prot_bits);
-                if (write)
--                       prot_bits |=3D __WRITEABLE;
-+                       prot_bits =3D kvm_pte_mkdirty(prot_bits);
-        }
-
-        /* Disable dirty logging on HugePages */
-@@ -904,7 +904,7 @@ static int kvm_map_page(struct kvm_vcpu *vcpu,
-unsigned long gpa, bool write)
-        kvm_release_faultin_page(kvm, page, false, writeable);
-        spin_unlock(&kvm->mmu_lock);
-
--       if (prot_bits & _PAGE_DIRTY)
-+       if (kvm_pte_dirty(prot_bits))
-                mark_page_dirty_in_slot(kvm, memslot, gfn);
-
- out:
-
-Huacai
-
->
-> base-commit: 9dd1835ecda5b96ac88c166f4a87386f3e727bd9
-> --
-> 2.39.3
->
->
 
